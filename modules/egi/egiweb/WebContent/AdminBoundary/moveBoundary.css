@@ -1,0 +1,61 @@
+#body{
+	background-color:white; 
+	margin:0px;
+	overflow:yes;
+}
+.shiftconfbox{
+	position:absolute;
+	width:70%;
+	height:96.5%;
+	top:20px;
+	left:30%;
+	background:white;
+	border : 1px solid skyblue;
+}
+#shiftconfbox{
+	display:none;
+}
+.info {
+position:absolute;
+bottom:10px;
+height:5px;
+width:50%;
+left:31%;
+font-size:10px;
+}
+.fld1{
+	border-left:1px skyblue solid;
+	border-top:0px skyblue solid;
+	border-bottom:1px skyblue solid;
+	width:30%;
+	overflow:auto;
+	padding-left:15px;
+	height:96.5%;
+	background:whitesmoke;
+}
+.lgnd1{
+	border-bottom:1px black dotted;
+	height:16px;
+	cursor:default;
+	font-weight:bold;
+}
+.bordertop {
+	background-color:#666666;
+}
+
+.borderbtm{
+	background-color:#333333;
+	border-bottom:1px skyblue solid;
+}
+.title{
+	color:white;
+	font-weight:bolder;
+	position:absolute;
+	top:0px;
+}
+.shifttbl {
+	font-family:verdana;
+	position:absolute;
+	top:100px;
+	left:150px;
+}

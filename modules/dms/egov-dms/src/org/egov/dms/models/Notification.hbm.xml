@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping >
+	<class name="org.egov.dms.models.Notification" table="EGDMS_NOTIFICATION"> 
+		<id name="id" type="long" column="ID">
+	        <generator class="sequence">
+	            <param name="sequence">SEQ_EGDMS_NOTIFICATION</param>
+	        </generator>
+	    </id>
+	    <many-to-one name="position" class="org.egov.pims.commons.Position"  column="POSITION_ID" />       
+		<many-to-one name="file" class="org.egov.dms.models.GenericFile"  column="FILE_ID" />        
+	 </class>
+</hibernate-mapping>

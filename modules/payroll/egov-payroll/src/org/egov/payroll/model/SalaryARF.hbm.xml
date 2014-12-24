@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.egov.payroll.model">
+    <joined-subclass name="SalaryARF" table="EGPAY_SALADVANCES_ARF" extends="org.egov.model.advance.EgAdvanceRequisition">
+        
+        <key column="ID" />
+
+     	<many-to-one name="advance" class="org.egov.payroll.model.Advance" fetch="select">
+            <column name="ADVANCE_ID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+	</joined-subclass>
+</hibernate-mapping>

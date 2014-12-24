@@ -1,0 +1,46 @@
+#created on: 5 Oct, 2008
+package works_routing
+
+#list any import classes here.
+
+import org.egov.payroll.model.SalaryCodes
+import org.egov.payroll.services.payhead.PayheadManagerBean
+import org.egov.payroll.model.EmpPayroll
+import org.egov.payroll.model.Earnings
+import org.egov.payroll.model.SalaryCodes
+import org.egov.payroll.rules.PayheadRuleUtil
+import org.egov.payroll.services.payslip.PayRollManagerBean
+import java.util.HashSet
+import java.math.*
+
+
+rule "isRullBased"
+	salience 10
+	when
+		$currPayslip : EmpPayroll($earningsSet : earningses)		  
+		$currEarning : Earnings()		
+		$ruleUtill : PayheadRuleUtil()
+		SalaryCodes(head=="rulePayhead") from $currEarning.getSalaryCodes()			
+		#Getting Basic earnings from current payslip		
+		$basicEarning : Earnings() from $ruleUtill.getEarningByNameFormPayslip($currPayslip,"Basic")
+   				
+		#Getting Basic earnings from current payslip
+		$hraEarning : Earnings() from $ruleUtill.getEarningByNameFormPayslip($currPayslip,"H.REN")		
+		
+	then
+		BigDecimal basicPct = new BigDecimal(10);
+		BigDecimal hraPct = new BigDecimal(20);
+		System.out.println("Rule is fired in isRullBased nad started calculation for DA----------");
+		System.out.println("Basic amount------"+$basicEarning.getAmount());		
+		System.out.println("HRA amount------"+$hraEarning.getAmount());
+		
+		BigDecimal basic = $basicEarning.getAmount();
+		BigDecimal hra = $hraEarning.getAmount();		
+		BigDecimal basicCal = basic.multiply(basicPct).divide(new BigDecimal(100));		
+		BigDecimal hraCal = hra.multiply(hraPct).divide(new BigDecimal(100));
+		
+		System.out.println("Basic calculated amount------"+basicCal);
+		System.out.println("HRA calculated amount------"+hraCal);
+		$currEarning.setAmount(basicCal.add(hraCal));
+		//update($currEarning);
+end

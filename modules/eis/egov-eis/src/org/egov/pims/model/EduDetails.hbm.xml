@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 9, 2007 3:21:11 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.pims.model.EduDetails" table="EGEIS_EDU_DETAILS" >
+        
+        
+        <id
+					name="educationDetailsId"
+					column="EDUCATION_DETAILS_ID"
+					type="int">
+					<generator class="sequence">
+						<param name="sequence">EGPIMS_EDU_DETAILS_SEQ</param>
+					</generator>
+		</id>
+        
+        <property name="uniBoard" type="string">
+	            <column name="UNIVERSITY_BOARD" length="256" />
+        </property>
+	
+        <property name="qulificationMaster" type="string">
+	            <column name="EDU_QUL" length="256" />
+        </property>
+        <property name="majorSubject" type="string">
+            <column name="MAJOR_SUBJECT" length="256" />
+        </property>
+        <property name="monthYearPass" type="date">
+            <column name="MONTH_YEAR_PASS" length="7" />
+        </property>
+        
+          <property name="docNo" type="long">
+            <column name="DOC_NO" />
+        </property>
+        
+    </class>
+</hibernate-mapping>

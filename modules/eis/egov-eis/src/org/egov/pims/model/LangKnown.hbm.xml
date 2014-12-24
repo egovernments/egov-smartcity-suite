@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 9, 2007 3:21:11 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.pims.model.LangKnown" table="EGEIS_LANG_KNOWN" >
+        
+        <id
+	name="id"
+	column="ID_LANG"
+	type="int">
+	<generator class="sequence">
+		<param name="sequence">EGPIMS_LANG_KNOWN_SEQ</param>
+	</generator>
+</id>
+        
+        
+        
+        <many-to-one name="langKnown" column="LANGUAGES_KNOWN_ID" 
+	class="org.egov.pims.model.LanguagesKnownMaster"/>
+        
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+	default-lazy-init="true">
+    
+    <bean name="tradelicenseSchedular" id="tradelicenseSchedular" parent="egovSchedular" lazy-init="false">
+		<property name="schedulerName" value="tradelicense-scheduler"/>
+		<property name="triggers">
+	    	<list>
+				<ref bean="dailyCancelProvisionalNocTradeCronTrigger" />
+	    	</list>
+		</property>	
+		<property name="applicationContextSchedulerContextKey" value="applicationQuartzContext-tradelicense" /> 
+   </bean>
+   
+   <bean name="dailyCancelProvisionalNocTradeJobDetail" id="complaintEscalationJobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" lazy-init="false"> 
+		<property name="group" value="TL_JOB_GROUP"/>
+   		<property name="name" value="TL_DAILY_CANCEL_PROVNOC_JOB"/>
+   		<property name="durability" value="true" /> 
+   		<property name="jobClass" value="org.egov.license.trade.services.scheduler.jobs.DailyCancelProvisionalNocTradeJob"/>
+   		<property name="requestsRecovery" value="true"/>
+		<property name="jobDataAsMap">
+            <map>
+                <entry key="jobBeanName" value="dailyCancelProvisionalNocTradeJob"/>
+				<entry key="userName" value="egovernments"/>
+				<entry key="transactional"  value="true" />
+				<entry key="moduleName" value="tradelicense"/>
+            </map>
+        </property>   	
+	</bean>
+	
+	<bean id="dailyCancelProvisionalNocTradeJob" class="org.egov.license.trade.services.scheduler.jobs.DailyCancelProvisionalNocTradeJob" lazy-init="true"> 	
+		<property name="persistenceService" ref="persistenceService" />   
+		<property name="auditEventService" ref="auditEventService"/>
+		<property name="tradeLicenseService" ref="tps" />   
+    </bean>
+   
+   <bean id="dailyCancelProvisionalNocTradeCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" lazy-init="true">
+        <property name="jobDetail" ref="dailyCancelProvisionalNocTradeJobDetail" />
+		<property name="group" value="TL_CANCEL_PROVNOC_TRIGGER_GROUP" />
+		<property name="name" value="TL_CANCEL_PROVNOC_TRIGGER" />
+		<property name="cronExpression" value="0 0 1 * * ?" />
+    </bean>
+</beans>

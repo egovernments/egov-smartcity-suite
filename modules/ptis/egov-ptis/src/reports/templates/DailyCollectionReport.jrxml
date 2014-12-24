@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DailyCollectionReport" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="org.egov.infstr.reporting.util.*"/>
+	<import value="org.egov.ptis.bean.*"/>
+	<field name="collByCash" class="java.math.BigDecimal"/>
+	<field name="collByCheque" class="java.math.BigDecimal"/>
+	<field name="otherColl" class="java.math.BigDecimal"/>
+	<field name="eduEgsCurrColl" class="java.math.BigDecimal"/>
+	<field name="eduEgsArrColl" class="java.math.BigDecimal"/>
+	<field name="totalCurrColl" class="java.math.BigDecimal"/>
+	<field name="totalArrColl" class="java.math.BigDecimal"/>
+	<field name="grandTotal" class="java.math.BigDecimal"/>
+	<field name="rcptInfoList" class="java.util.List"/>
+	<field name="operator" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="132" splitType="Stretch">
+			<staticText>
+				<reportElement x="1" y="49" width="802" height="23"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Daily Cash Collection Report]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="1" width="802" height="23"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Nagpur Municipal Corporation, Nagpur]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="24" width="802" height="23"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Property Tax Department]]></text>
+			</staticText>
+			<image>
+				<reportElement x="58" y="5" width="65" height="65"/>
+				<imageExpression class="java.io.InputStream"><![CDATA[ReportUtil.getLogoImageAsStream()]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="14" y="80" width="78" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Report Date : ]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="92" y="80" width="100" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="14" y="100" width="78" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Operator : ]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="92" y="100" width="167" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{operator}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="62" splitType="Stretch">
+			<line>
+				<reportElement x="2" y="1" width="798" height="1"/>
+			</line>
+			<line>
+				<reportElement x="800" y="1" width="1" height="61"/>
+			</line>
+			<line>
+				<reportElement x="61" y="1" width="1" height="60"/>
+			</line>
+			<line>
+				<reportElement x="116" y="1" width="1" height="60"/>
+			</line>
+			<line>
+				<reportElement x="164" y="1" width="1" height="60"/>
+			</line>
+			<line>
+				<reportElement x="209" y="1" width="1" height="60"/>
+			</line>
+			<line>
+				<reportElement x="259" y="2" width="1" height="60"/>
+			</line>
+			<line>
+				<reportElement x="311" y="2" width="1" height="60"/>
+			</line>
+			<line>
+				<reportElement x="406" y="2" width="1" height="60"/>
+			</line>
+			<line>
+				<reportElement x="451" y="1" width="1" height="60"/>
+			</line>
+			<line>
+				<reportElement x="496" y="1" width="1" height="60"/>
+			</line>
+			<line>
+				<reportElement x="540" y="1" width="1" height="60"/>
+			</line>
+			<line>
+				<reportElement x="585" y="1" width="1" height="60"/>
+			</line>
+			<line>
+				<reportElement x="630" y="1" width="1" height="60"/>
+			</line>
+			<line>
+				<reportElement x="680" y="1" width="1" height="60"/>
+			</line>
+			<line>
+				<reportElement x="361" y="2" width="1" height="60"/>
+			</line>
+			<line>
+				<reportElement x="727" y="1" width="1" height="60"/>
+			</line>
+			<staticText>
+				<reportElement x="736" y="5" width="64" height="55"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Cheque No
+Cheque Date
+Bank Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="681" y="5" width="46" height="55"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Mode Of
+Payment
+(Cash/
+Cheque)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="311" y="5" width="50" height="55"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[General
+Tax]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="63" y="5" width="50" height="23"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="631" y="5" width="50" height="55"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="586" y="5" width="45" height="55"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Misc Tax]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="540" y="5" width="46" height="55"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Big
+Building
+Cess]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="496" y="5" width="45" height="55"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[E.G.S
+Cess]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="451" y="5" width="45" height="55"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Edu
+Cess]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="406" y="5" width="45" height="55"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Light
+Tax]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="361" y="5" width="45" height="55"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Fire
+Tax]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="261" y="5" width="50" height="55"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Water
+Tax]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="209" y="5" width="51" height="55"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Sewerage
+Tax]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="117" y="5" width="47" height="55"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Receipt No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="5" width="50" height="55"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Index No
+Ward No
+House No]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1" y="1" width="1" height="61"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="71" splitType="Stretch">
+			<subreport>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="802" height="71"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{rcptInfoList},false)]]></dataSourceExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[ReportUtil.getTemplateAsStream("CollectionInfo.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="78" splitType="Stretch">
+			<line>
+				<reportElement x="1" y="76" width="800" height="1"/>
+			</line>
+			<line>
+				<reportElement x="800" y="0" width="1" height="76"/>
+			</line>
+			<line>
+				<reportElement x="1" y="0" width="1" height="76"/>
+			</line>
+			<line>
+				<reportElement x="221" y="1" width="1" height="76"/>
+			</line>
+			<line>
+				<reportElement x="298" y="0" width="1" height="76"/>
+			</line>
+			<line>
+				<reportElement x="680" y="0" width="1" height="76"/>
+			</line>
+			<staticText>
+				<reportElement x="301" y="2" width="71" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[By Cheque]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="377" y="2" width="71" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Others]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="452" y="2" width="137" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Edu Cess + Egs Cess]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="590" y="2" width="88" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Total Current]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="590" y="25" width="88" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Total Arrears]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="590" y="51" width="88" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Grand Total]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1" y="51" width="800" height="1"/>
+			</line>
+			<line>
+				<reportElement x="1" y="24" width="800" height="1"/>
+			</line>
+			<line>
+				<reportElement x="450" y="0" width="1" height="76"/>
+			</line>
+			<line>
+				<reportElement x="500" y="25" width="1" height="51"/>
+			</line>
+			<staticText>
+				<reportElement x="453" y="25" width="47" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Current]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="451" y="50" width="49" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Arrears]]></text>
+			</staticText>
+			<line>
+				<reportElement x="589" y="0" width="1" height="76"/>
+			</line>
+			<line>
+				<reportElement x="374" y="0" width="1" height="76"/>
+			</line>
+			<textField pattern="#,##0.00">
+				<reportElement x="224" y="28" width="71" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{collByCash}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="301" y="28" width="71" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{collByCheque}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="377" y="28" width="71" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{otherColl}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="502" y="28" width="82" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{eduEgsCurrColl}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="502" y="54" width="82" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{eduEgsArrColl}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="684" y="2" width="107" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{totalCurrColl}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="684" y="28" width="107" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{totalArrColl}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="684" y="54" width="107" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{grandTotal}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="224" y="2" width="71" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[By Cash]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

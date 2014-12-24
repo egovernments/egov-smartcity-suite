@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Aug 28, 2007 7:45:39 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.payroll.model.BatchGenDetails" table="EGPAY_BATCHGENDETAILS" >
+        <id name="id" type="long">
+            <column name="ID" precision="12" scale="0" />
+            <generator class="sequence">
+	    	    <param name="sequence">EISPAYROLL_BATCHGENDETAILS_SEQ</param>
+        	</generator>
+        </id>
+        <many-to-one name="department" class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
+	   		<column name="ID_DEPT" precision="12" scale="0"  />
+       </many-to-one>
+        <many-to-one name="functionary" class="org.egov.commons.Functionary" fetch="select">
+	   		<column name="ID_FUNCTIONARY" precision="12" scale="0"  />
+       </many-to-one>
+        <many-to-one name="function" class="org.egov.commons.CFunction" fetch="select">
+	   		<column name="ID_FUNCTION" precision="12" scale="0"  />
+       </many-to-one>
+       <many-to-one name="financialyear" class="org.egov.commons.CFinancialYear" fetch="select">
+	    	<column name="FINANCIALYEARID" precision="12" scale="0" not-null="true" />
+        </many-to-one>
+        <property name="month" type="big_decimal">
+	    	<column name="MONTH" precision="22" scale="0" not-null="true" />
+        </property>
+        <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" fetch="select">
+           <column name="CREATEDBY" precision="12" scale="0" not-null="true" />
+        </many-to-one>
+        <property name="createdDate" type="timestamp">
+            <column name="CREATEDDATE" not-null="true"></column>
+        </property>
+        <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" fetch="select">
+           <column name="MODIFIEDBY" precision="12" scale="0" not-null="true" />
+        </many-to-one>
+        <property name="modifiedDate" type="timestamp">
+            <column name="MODIFIEDDATE" not-null="true"></column>
+        </property>
+        <property name="fromDate" type="date">
+	    	<column name="FROMDATE" length="7"  />
+	    </property>
+	    <property name="toDate" type="date">
+	    	<column name="TODATE" length="7" />
+        </property>
+        <property name="remarks" type="string">
+            <column name="remarks" length="300" />
+        </property>
+        <property name="succCount" type="integer">
+	    	<column name="succcount" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="failCount" type="integer">
+	    	<column name="failcount" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="status" type="integer">
+	    	<column name="status" not-null="true" />
+        </property>
+        
+        <property name="schJobGroupName" type="string">
+            <column name="SCH_JOB_GROUP_NAME" length="100" />
+        </property>
+        <property name="schJobName" type="string">
+            <column name="SCH_JOB_NAME" length="100" />
+        </property>
+        
+        <many-to-one name="billNumber" class="org.egov.masters.model.BillNumberMaster" column="ID_BILLNUMBER" />
+        
+    </class>
+</hibernate-mapping>

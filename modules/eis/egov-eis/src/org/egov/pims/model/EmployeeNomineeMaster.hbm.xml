@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Feb 15, 2010 3:21:11 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+
+<class name="org.egov.pims.model.EmployeeNomineeMaster" table="EGEIS_NOMINEE_MASTER" >
+<id
+	name="id"
+	column="ID"
+	type="long">
+	<generator class="sequence">
+		<param name="sequence">SEQ_EGEIS_NOMINEE_MASTER</param>
+	</generator>
+</id>
+
+
+<property name="nomineeName" type="string">
+            <column name="NAME" length="256" />
+</property>
+
+<property name="nomineeAge" >
+            <column name="AGE"  />
+        </property>
+        
+        <property name="nomineeDob" type="date">
+                   <column name="DOB"  />
+        </property>
+	  
+<many-to-one name="relationType" class="org.egov.pims.model.EisRelationType" fetch="select">
+            <column name="ID_RELATION_TYPE" precision="12" scale="0" not-null="true" />
+        </many-to-one>
+
+<property name="maritalStatus" type="integer">
+            <column name="MARITAL_STATUS" precision="12" scale="0" />
+ </property>
+ 
+ <property name="isActive" type="integer">
+            <column name="ISACTIVE" precision="12" scale="0" />
+ </property>
+      
+ <many-to-one name="bankBranch" class="org.egov.commons.Bankbranch" fetch="select">
+       <column name="BRANCH_ID" precision="12" scale="0" />
+ </many-to-one>  
+ 
+       <property name="accountNumber" type="string">
+			 <column name="ACCOUNT_NUMBER" length="256" />
+	    </property>
+	    
+<property name="isWorking" type="integer">
+            <column name="ISWORKING" precision="12" scale="0" />
+ </property>
+ 
+ 
+ <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" fetch="select">
+     <column name="CREATED_BY" precision="12" scale="0" />
+</many-to-one>
+
+<property name="createdDate" type="date">
+    <column name="CREATED_DATE" length="7" />
+</property>
+
+<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" fetch="select">
+    <column name="MODIFIED_BY" precision="12" scale="0" />
+</many-to-one>
+
+<property name="modifiedDate" type="java.util.Date">
+     <column name="MODIFIED_DATE" not-null="true" />
+</property>
+ 
+<many-to-one name="employeeId" class="org.egov.pims.model.PersonalInformation" fetch="select" insert="false" update="false">
+    <column name="EMP_ID" precision="12" scale="0" />
+</many-to-one> 
+ 
+<property name="guardianName" type="string">
+            <column name="GUARDIAN_NAME" length="256" />
+</property>
+
+<property name="guardianRelationship" type="string">
+            <column name="GUARDIAN_RELATIONSHIP" length="128" />
+</property>
+
+<property name="nomineeAddress" type="string">
+            <column name="NOMINEE_ADDRESS" length="512" />
+</property>
+
+<many-to-one name="disburseType" class="org.egov.commons.DisbursementMode" fetch="select" cascade="none">
+            <column name="DISBURSEMENT_TYPE" precision="12" scale="0" />
+</many-to-one>
+
+ 
+</class>
+
+<query name="ACTIVE_NOMINEES">
+	from org.egov.pims.model.EmployeeNomineeMaster as nom where nom.employeeId.StatusMaster.moduletype = 'Employee'	and 
+	(nom.employeeId.StatusMaster.description='Retired' or nom.employeeId.StatusMaster.description='Deceased') order by nom.nomineeName
+</query>
+<query name="ACTIVE_NOMINEES_STARTSWITH">
+	from EmployeeNomineeMaster  where employeeId.StatusMaster.id =(select id from EgwStatus where moduletype='Employee' and 
+	(description='Retired' or description='Deceased')) and (employeeId.employeeCode like ? or upper(nomineeName) like ? ) 
+	order by nomineeName
+</query>
+
+
+</hibernate-mapping>

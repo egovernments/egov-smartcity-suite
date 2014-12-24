@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.ptis.domain.entity.property.PropertyMutationMaster" table="EGPT_MUTATION_MASTER">
+		<id
+			name="idMutation" column="ID_MUTATION" type="int">
+			<generator class="sequence">
+					<param name="sequence">SEQ_PROP_MUTATION_MSTR</param>
+			</generator>
+		</id>
+		<property
+			name="mutationName"
+			column="MUTATION_NAME"
+			type="string"
+		/>
+		<property
+			name="mutationDesc"
+			column="MUTATION_DESC"
+			type="string"
+		/>
+		<property
+			name="type"
+			column="TYPE"
+			type="string"
+		/>
+	
+		<property
+			name="code"
+			column="CODE"
+		/>
+		
+		<property
+			name="orderId"
+			column="ORDER_ID"
+		/>
+	</class>
+</hibernate-mapping>

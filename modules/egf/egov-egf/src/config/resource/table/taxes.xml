@@ -1,0 +1,23 @@
+<?xml  version="1.0"?>
+<Taxes name="taxes"
+		 keyColumnName="ID"
+		 keyRequiresQuote="No">
+	<columnDefinition 
+		name="code" 
+		dataType="alphaNumeric"
+		isRequired="yes"
+		maxLength="10"
+		/>
+	<columnDefinition 
+		name="name" 
+		dataType="anyChar"
+		isRequired="yes"
+		maxLength="50"
+		/>
+	<columnDefinition 
+		name="glCodeId" 
+		dataType="unsignedInt"
+		isRequired="yes"
+		maxLength="4"
+		/>
+</Taxes>

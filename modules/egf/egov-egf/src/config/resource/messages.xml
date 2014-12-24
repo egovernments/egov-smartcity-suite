@@ -1,0 +1,68 @@
+<?xml  version="1.0"?>
+<Messages>
+	<message id="exilNothingToUpdate" sevirity="4"  text="No values supplied for update operation into table @1."/>
+	<message id="exilNothingToInsert" sevirity="4"  text="No values supplied for insert operation into table @1."/>
+	<message id="exilNoServiceName" sevirity="4"  text="A service by name @1 has not been setup for ServiceAgent"/>
+	<message id="exilServerError" sevirity="4"  text="Error on the server. @1"/>
+	<message id="exilDBError" sevirity="4"  text="Database Error. @1. SQL being tried = @2"/>
+	<message id="exilNoJobDefinition" sevirity="4"  text="Job with name=@1 is not defined in resource/jobs.xml"/>
+	<message id="exilNoSQLTemplate" sevirity="4"  text="SQL template with name='@1' is not specified in resource/sqlTemplates.xml"/>
+	<message id="exilInvalidField" sevirity="4"  text="Value '@2' is not valid for field @1. "/>
+	<message id="exilNoData" sevirity="4"  text="No data found. Sql being tried is @1"/>
+	<message id="exilNoServiceID" sevirity="4"  text="Client page that requested the service did not specify a value for ServiceID."/>
+	<message id="exilNoDescriptionSQL" sevirity="4"  text="An entry for @1 not found as descriptionSQL "/>
+	<message id="exilSQLException" sevirity="4"  text="SQL error. SQL being tried is @1. Error is @2"/>
+	<message id="exilNoValueForParameter" sevirity="4"  text="Value for Paramater @1 in SQL Template @2 is not supplied by the client"/>
+	<message id="exilNoKeyForUpdate" sevirity="4"  text="Table @1 has a key field @2. Value is not supplied for this field through @3"/>
+	<message id="exilParameterMismatch" sevirity="4"  text="SQL Template @1 does not contain @@2 symbol for the corresponding parameter"/>
+	<message id="exilUnmatchedBraces" sevirity="4"  text="SQL Template @1 has unmatched braces when no parameters are specified."/>
+	<message id="exilNoValuesToInsert" sevirity="4"  text="No columns defined for table @1."/>
+	<message id="exilColumnMismatch" sevirity="4"  text="Grid @1 is designated to hold values to insert into table @2. However, it has no column names, and it has @3 number of columns gainst @4 columns defoined for this table."/>
+	<message id="exilNoDefaultValueForColumn" sevirity="4"  text="Grid  @1 is to contain values for inserting rows into table @2. It should have a column with name @3 for the table field @4."/>
+	<message id="exilNoTimeStamp" sevirity="4"  text="Table @1 requires a timestamp field @2 to be matched against the field @3 in the grid. This field is not available in the grid."/>
+	<message id="exilNoColumns" sevirity="4"  text="Table @1 has no column definitions."/>
+	<message id="exilInvalidBulkAction" sevirity="4"  text="Action @2 is not a valid bulk action code for table @1."/>
+	<message id="exilDeleteNotAllowed" sevirity="4"  text="Delete operation not allowed for table @1."/>
+	<message id="exilNoClass" sevirity="4"  text="User defined class @1 is not found."/>
+	<message id="exilNoInstance" sevirity="4"  text="Unable to instantiate an object for user defined class @1."/>
+	<message id="exilNoTaskType" sevirity="4"  text="Task type @1 is not a known task type. Please check job and job step definition."/>
+	<message id="exilNoJobSteps" sevirity="4"  text="Job '@1' has no job steps"/>
+	<message id="exilNoBraces" sevirity="4"  text="SQL Template @1 does not have braces for parameter @2. Since this parameter is optionsal, you MUST provide braces around the text to be removed if the parameter is not specified."/>
+	<message id="exilBracesNotFound" sevirity="4"  text="SQL Template @1 does not have braces for parameter @2. Since this parameter is optionsal, you MUST provide braces around the text to be removed if the parameter is not specified."/>
+	<message id="exilNotaskType" sevirity="4"  text="Task type @1 is not valid"/>
+	<message id="exilNoRowsAffected" sevirity="4"  text="Update/Insert operation did not go through."/>	
+<!-- Pushpendra -->
+	<message id="exilInvalidId" sevirity="4"  text="@1 id @2 is invalid"/>	
+	<message id="exilInvalidGLCode" sevirity="4"  text="glCode @1 is invalid"/>	
+	<message id="exilDuplicateGLCode" sevirity="4"  text="glCode @1 present more than once"/>
+	<message id="exilError" sevirity="4"  text="@1"/>	
+	<message id="exilNotDetailAccount" sevirity="4"  text="Account code @1 is not a detail code."/>	
+	
+
+<!-- EOF Pushpendra -->
+<!-- Siddhu -->
+	<message id="exilInvalidCode" sevirity="4"  text="Code @1 is Invalid"/>
+	<message id="exilInActiveAccount" sevirity="4"  text="@1 Account is Inactive"/>
+	<message id="exilInvalidTrxn" sevirity="4"  text="Debit And Credit Amount Cannot Be Specified In Same Entry"/>
+	<message id="exilDataInsufficient" sevirity="4"  text="Please input all required data. Press the CLICK link on each line to input data."/>
+	<message id="exilWrongTrxn" sevirity="4"  text="A Transaction should be Double Entry.."/>
+	<message id="exilAmountMismatch" sevirity="4"  text="Transaction Debit And Credit Amount Should Be Same."/>	
+	<message id="exilWrongData" sevirity="4"  text="@1 is Not Valid."/>
+	<message id="exilSQLError" sevirity="4"  text="@1"/>	
+	<message id="exilRPError" sevirity="4"  text=" @1 "/>
+	<message id="eGovSuccess" sevirity="2"  text="Transaction executed successfully for @1"/>
+	<message id="masterInsertUpdate" sevirity="2"  text="Executed Successfully"/>
+	<message id="eGovFailure" sevirity="2"  text="Transaction Failed for @1"/>
+	<message id="exilPostingPeriodError" sevirity="4"  text="Voucher Date is not within an open period. Please use an open period for posting"/>
+	<message id="exilBankBalanceError" sevirity="4"  text="Bank Balance is insufficient for this transaction"/>
+
+<!-- /Siddhu -->
+
+<!--Nagaraj-->
+	<message id="userSuccess" sevirity="2"  text="@1 @2"/>
+	<message id="userFailure" sevirity="4"  text="@1"/>
+	<message id="userMessege" sevirity="4"  text="@1"/>
+<!--EOF Nagaraj-->
+
+	<message id="exilDuplicate" sevirity="4" text="Duplicate Record Found"/>
+</Messages>

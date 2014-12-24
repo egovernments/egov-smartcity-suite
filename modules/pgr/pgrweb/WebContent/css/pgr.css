@@ -1,0 +1,405 @@
+@charset "utf-8";
+
+div.topbar {
+	background-color: #EFAD49;
+	height: 70px;
+	width: 100%;
+	border-bottom-width: 3px;
+	border-bottom-style: double;
+	border-bottom-color: #CCCCCC;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 24px;
+	font-weight: normal;
+	color: #000000;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	vertical-align: middle;
+	text-align: center;
+	}
+div.insidecontent {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #333333;
+	background-color: #F3F3F3;
+	text-align: left;
+	clip: rect(auto,auto,5px,auto);
+	line-height: 18px;
+	margin-bottom: 10px;
+	padding-top: 2px;
+	padding-right: 15px;
+	padding-bottom: 15px;
+	padding-left: 15px;
+}
+select {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #333333;
+	background-color: #FFFFFF;
+	border: 1px solid #CCCCCC;
+	padding-top: 2px;
+	padding-right: 2px;
+	padding-bottom: 2px;
+	padding-left: 4px;
+	}
+	
+div.formheading {
+	width: 100%;
+	height:23px;
+	background-image:url(../image/gbluebg.gif);
+	background-repeat: repeat-x;
+	}
+	
+h1.subhead {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	color: #008000;
+	margin-bottom: 5px;
+	padding: 0px;
+	margin-top: 8px;
+	}
+div.signature {
+	padding: 12px;
+	margin-top: 12px;
+	margin-right: 0px;
+	margin-bottom: 5px;
+	margin-left: 0px;
+	text-align: left;
+	border: 1px solid #CCCCCC;
+	background-color: #F5FAF5;
+	font-size: 11px;
+	color: #000000;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+}
+
+table.tablebottom {
+	border-top-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-left-style: solid;
+	border-top-color: #CCCCCC;
+	border-left-color: #CCCCCC;
+	margin-top: 0px;
+	}
+td.greenbox {
+	background-color: #E4EEE3;
+	border-bottom: 1px solid white;
+	border-top: 1px solid white;
+	font-size: 11px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-right: 5px;
+	padding-left: 5px;
+	color: #000000;
+	text-align: left;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+}
+div.shadow {
+	width: 100%;
+	height:17px;
+	background-image:url(../image/shadow.gif);
+	background-repeat: repeat-x;
+	margin-bottom: 2px;
+}
+td.borderfortd {
+	background-color: #FFFFFF;
+	font-size: 11px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-right: 5px;
+	padding-left: 5px;
+	color: #000000;
+	text-align: left;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-right-color: #CCCCCC;
+	border-bottom-color: #CCCCCC;
+}
+th.bgheadtd {
+	background-image: url(../image/thbg.gif);
+	background-repeat: repeat-x;
+	height: 32px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-right-color: #CCCCCC;
+	border-bottom-color: #CCCCCC;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-weight: bold;
+	color: #3A5C3C;
+	padding-right: 2px;
+	padding-left: 2px;
+	text-align: center;
+}
+td.totalbg {
+	background-color: #E4E4E4;
+	font-size: 11px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-right: 5px;
+	padding-left: 5px;
+	color: #000000;
+	text-align: right;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-right-color: #CCCCCC;
+	border-bottom-color: #CCCCCC;
+	font-weight: bold;
+}
+#subhead2 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	font-weight: bold;
+	color: #008000;
+	margin-bottom: 6px;
+	margin-top: 10px;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #d5d5d5;
+	padding-top: 0px;
+	padding-right: 0px;
+	padding-bottom: 2px;
+	padding-left: 0px;
+}
+#subhead3 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	color: #0066CC;
+	margin-bottom: 6px;
+	padding: 0px;
+	margin-top: 10px;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #d5d5d5;
+	margin-left: 0%;
+}
+a.links1 {
+	font-size: 12px;
+	color: #000000;
+	font-family: Arial, Helvetica, sans-serif;
+}
+a.links1:link {
+	color: #0033CC;
+	text-decoration: underline;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+a.links1:visited {
+	color: #0033CC;
+	text-decoration: none;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+a.links1:hover {
+	color: #EFAD49;
+	text-decoration: none;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+a.links1:active {
+	color: #0033CC;
+	text-decoration: none;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+
+.rbroundbox {
+	background-image: url(../image/nt.gif);
+	background-repeat: repeat;
+}
+.rbtop div { background: url(../image/tl.gif) no-repeat top left; }
+.rbtop { background: url(../image/tr.gif) no-repeat top right; }
+.rbbot div { background: url(../image/bl.gif) no-repeat bottom left; }
+.rbbot { background: url(../image/br.gif) no-repeat bottom right; }
+
+.rbtop div, .rbtop, .rbbot div, .rbbot {
+	width: 100%;
+	height: 7px;
+	font-size: 1px;
+}
+.rbcontent {
+	margin-top: 0;
+	margin-right: 7px;
+	margin-bottom: 0;
+	margin-left: 7px;
+	padding-top: 2px;
+	padding-right: 12px;
+	padding-bottom: 12px;
+	padding-left: 12px;
+}
+.rbroundbox {
+	width: 49%;
+	margin-top: 1em;
+	margin-right: auto;
+	margin-bottom: 1em;
+	margin-left: 2px;
+}
+
+.rbroundbox1 {
+	background-image: url(../image/nt.gif);
+	background-repeat: repeat;
+	float: right;
+	}
+.rbtop1 div { background: url(../image/tl.gif) no-repeat top left; }
+.rbtop1 { background: url(../image/tr.gif) no-repeat top right; }
+.rbbot1 div { background: url(../image/bl.gif) no-repeat bottom left; }
+.rbbot1 { background: url(../image/br.gif) no-repeat bottom right; }
+.rbtop1 div, .rbtop1, .rbbot1 div, .rbbot1 {
+	width: 100%;
+	height: 7px;
+	font-size: 1px;
+}
+.rbcontent1 {
+	margin-top: 0;
+	margin-right: 7px;
+	margin-bottom: 0;
+	margin-left: 7px;
+	padding-top: 2px;
+	padding-right: 12px;
+	padding-bottom: 12px;
+	padding-left: 12px;
+}
+.rbroundbox1 {
+	width: 49%;
+	margin-top: 1em;
+	margin-right: auto;
+	margin-bottom: 1em;
+	margin-left: auto;
+}
+.highlight {
+	background-color: #FFFF99;
+}
+div.cityadmin {
+	text-align: left;
+	vertical-align: bottom;
+	height: 75px;
+	width: 45%;
+	margin-bottom: 15px;
+	margin-left: 21px;
+}
+/*******Added by Chandrakanth *************************/
+
+
+/* overidden to display error message in desired color */
+.errorMessage{
+	color: #CC0000;
+	}
+
+/* overidden to remove the bullets from action error & field error messages*/
+ul, menu, dir {
+	-moz-padding-start:40px;
+	display:block;
+	list-style-type:none;
+	margin:1em 0;
+	}
+
+/* overidden to display (required fields)* mark in desired color */
+.required {
+	  color: #CC0000;
+	}
+
+label{
+	font:  11px Verdana, Geneva, Arial, Helvetica, sans-serif; 
+ 	color: #3670A7; 
+ 	background-color: transparent; 
+ 	margin-left:45px
+     }
+
+
+.tableStylenew {
+		width:635px;
+ 		background-color: #F9FBFD; 
+ 		color: #000000; 
+ 		border: 1px solid #D7E5F2; 
+ 		border-collapse: collapse; 
+ 		margin-left:105px
+ 		
+} 
+
+.tableheadernew { 
+   		font:  bold 12pt Verdana, sans-serif  ; 
+   		color: #3670A7;
+   		background-color:#dddddd ;
+   		padding-left:185px; 
+   		width:420px; 
+   		height:6px;
+   }
+
+ .buttonright { 
+   		font: 11px Verdana, Geneva, Arial, Helvetica, sans-serif; 
+   		background-color: #D7E5F2; 
+   		color: #102132; 
+   		margin-top: 4px; 
+   		margin-right: 0px; 
+   		margin-bottom: 0px; 
+   		margin-left: 10px;
+   	       }
+   	       
+.buttonleft { 
+   		font: 11px Verdana, Geneva, Arial, Helvetica, sans-serif; 
+   		background-color: #D7E5F2; 
+   		color: #102132; 
+   		margin-top: 0px; 
+  		margin-right:0px; 
+  		margin-bottom: 0px; 
+  		margin-left: 190px;
+    }
+  
+.buttonareanew {
+	padding-top: 10px; 
+	padding-right:0px; 
+	padding-bottom: 0px; 
+	padding-left: 0px;
+	text-align:center;
+}  
+.checkboxareanew {
+	padding-top: 15px; 
+	padding-right:0px; 
+	padding-bottom: 0px; 
+	padding-left:240px;
+	
+	}
+
+
+.outputmsg{
+	margin-left:60px;
+	font: 15px bold Verdana, Geneva, Arial, Helvetica, sans-serif ;
+	color: #102132; 
+}
+.mastertable {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	width:70%;
+	margin-left:110px;
+	margin-top:0px;
+	margin-right:0px;
+	margin-bottom:140px;
+	background-color: #F9FBFD; 
+	color: #000000; 
+	border: 1px solid #D7E5F2; 
+ 	border-collapse: collapse;
+}
+
+/******Added by Chandrakanth on 14/101-/09 **********/
+
+.checkboxstyle {
+	margin-left:15px;
+	margin-right:70px;
+	}
+
+.checkboxlabelstyle {
+	 margin-left:18px;
+	 padding-left:11px
+	}
+

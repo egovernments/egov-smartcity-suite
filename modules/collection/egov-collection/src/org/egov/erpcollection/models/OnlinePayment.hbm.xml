@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+	<!-- Generated 10 Sep, 2009 12:59:28 PM by Hibernate Tools 3.2.0.CR1 -->
+<hibernate-mapping auto-import="false">
+	<class name="org.egov.erpcollection.models.OnlinePayment" table="EGCL_ONLINEPAYMENTS">
+		<id name="id" type="long">
+			<column name="ID" precision="22" scale="0" />
+			<generator class="sequence">
+				<param name="sequence">SEQ_EGCL_ONLINEPAYMENTS</param>
+			</generator>
+		</id>
+
+		<many-to-one name="receiptHeader" class="org.egov.erpcollection.models.ReceiptHeader" fetch="select">
+            <column name="RECEIPTID" precision="22" scale="0" />
+        </many-to-one>
+        
+        			
+		<many-to-one name="service" class="org.egov.infstr.models.ServiceDetails"
+			fetch="select">
+			<column name="SERVICEID" precision="22" scale="0" not-null="true" />
+		</many-to-one>
+		
+		<property name="transactionNumber" type="string">
+			<column name="TRANSACTIONNUMBER" length="50" />
+		</property>
+		
+		<property name="transactionAmount" type="big_decimal">
+			<column name="TRANSACTIONAMOUNT" precision="22" scale="0" />
+		</property>
+		
+		<property name="transactionDate" type="date">
+			<column name="TRANSACTIONDATE" length="7" />
+		</property>
+
+		
+		<many-to-one name="status" class="org.egov.commons.EgwStatus"
+			fetch="select">
+			<column name="STATUSID" precision="22" scale="0" not-null="true" />
+		</many-to-one>
+		
+		<property name="authorisationStatusCode" type="string">
+			<column name="AUTHORISATION_STATUSCODE" precision="22" scale="0" />
+		</property>
+		
+		<property name="remarks" type="string">
+			<column name="REMARKS" precision="22" scale="0" />
+		</property>
+		
+		
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl"
+			fetch="select">
+			<column name="CREATED_BY" precision="22" scale="0" />
+		</many-to-one>
+		
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl"
+			fetch="select">
+			<column name="MODIFIED_BY" precision="22" scale="0" />
+		</many-to-one>
+		
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+		
+	</class>
+	
+	<query name="ONLINERECEIPTS_BY_STATUSCODE">
+    <![CDATA[select receipt from org.egov.erpcollection.models.OnlinePayment as receipt where receipt.status.code = ?]]></query> 
+	    
+</hibernate-mapping>

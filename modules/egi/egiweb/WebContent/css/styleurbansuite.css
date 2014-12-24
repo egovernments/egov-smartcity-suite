@@ -1,0 +1,72 @@
+@charset "utf-8";
+/* CSS Document */
+
+div.header {
+	background-color:#ffad01;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 35px;
+	font-weight: normal;
+	color: #000;
+	padding: 15px;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #C90;
+}
+div.headernavstrip {
+	background-color:#416a9c;
+	text-align:right;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #FFF;
+	padding-top: 5px;
+	padding-right: 15px;
+	padding-bottom: 6px;
+	padding-left: 5px;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #304F74;
+}
+div.linkContainer {
+	margin-top:10em;
+	margin-bottom:10em;
+	font-size:12px;
+	text-align:left;
+	width:30%;
+	margin-left:auto;
+	margin-right:auto;
+	padding:15px;
+	background-color:#F7F7F7;
+	border-top-width: 1px;
+	border-right-width: 2px;
+	border-bottom-width: 2px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #93c8e9;
+	border-right-color: #93c8e9;
+	border-bottom-color: #93c8e9;
+	border-left-color: #93c8e9;
+	}
+a.white {color:#FFF; font-size:12px;}
+a.largelink {font-size:12px; color:#036;}
+a.smalllink {font-size:11px; color:#036;}
+div.footerNew {
+	margin-top:auto;
+	padding:25px;
+	border-top-width:1px;
+	border-top-style:solid;
+	border-top-color:#CCC;
+	margin-bottom:0px;
+
+}
+div.headerinsidebox {
+	background-color:#416a9c;
+	color:#cccccc;
+	padding:5px;
+	margin-bottom:15px;
+	font-size: 14px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+}

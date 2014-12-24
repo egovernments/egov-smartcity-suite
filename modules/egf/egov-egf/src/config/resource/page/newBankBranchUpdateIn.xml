@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<pageMap name="supplierDataIn" > 
+	<gridMap name="bankAccountGrid">
+		<columnMap name="bankAccount_id" serverFieldName="1"/>
+		<columnMap name="bankAccount_accountNumber" serverFieldName="1"/>
+		<columnMap name="bankAccount_accountType" serverFieldName="1"/>
+		<columnMap name="bankAccount_narration" serverFieldName="1"/>  		
+		<columnMap name="bankAccount_isActive" serverFieldName="1"/>	
+		
+		<columnMap name="accountHead_id" serverFieldName="1"/>
+		<columnMap name="accountDetailKey_id" serverFieldName="1"/>
+		<columnMap name="fund_id" serverFieldName="1"/>
+		<columnMap name="pay_To" serverFieldName="1"/>
+		<columnMap name="bankAccount_type" serverFieldName="1"/>
+		
+	</gridMap>
+	<gridMap name="chequetableGrid">
+		<columnMap name="fromChequeNo" serverFieldName="1"/>
+		<columnMap name="toChequeNo" serverFieldName="1"/>
+		<columnMap name="ReceivedDate" serverFieldName="1"/>
+		<columnMap name="isExh" serverFieldName="1"/>
+		<columnMap name="nxtChqNo" serverFieldName="1"/>
+		<columnMap name="isAllottedTo" serverFieldName="1"/>
+	</gridMap>
+</pageMap>

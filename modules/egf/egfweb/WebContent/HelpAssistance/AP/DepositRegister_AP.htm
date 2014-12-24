@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Deposit Register Report Help</title>
+</head>
+<LINK REL=StyleSheet HREF="egov.css" TYPE="text/css" />
+<style type="text/css">
+html {
+background-color:#FFF9EF;
+}
+body {
+background-color:#FFF9EF;
+}
+a {
+text-decoration:none;
+}
+table {
+border-top: 1px solid gray;
+border-left: 1px solid gray;
+}
+th {
+background-color:#FFF9EF;
+border-right: 1px solid gray;
+border-bottom: 1px solid gray;
+text-align: center;
+}
+td {
+background-color:white;
+border-bottom: 1px solid gray;
+border-right: 1px solid gray;
+}
+
+#hheader {
+background-color:#EFDFC2;
+text-align: right;
+padding: 10px;
+font-size: 130%;
+font-weight: bold;
+border-bottom: 1px solid gray;
+}
+
+#hnav {
+background-color:#FFF9EF;
+text-align: right;
+padding-right: 10px;
+border-bottom: 1px solid gray;
+}
+
+#hnav a:hover{
+border-bottom: 2px solid #CFC1A8;
+}
+
+#hcontent {
+background-color:white;
+text-align: left;
+padding: 10px;
+}
+
+#hfooter {
+background-color:#FFF9EF;
+text-align: center;
+margin-top: 0px;
+padding-right: 10px;
+padding-left: 10px;
+margin-bottom: 10px;
+border-bottom: 1px solid gray;
+border-top: 1px solid gray;
+
+}
+.hbold0 {
+font-size: 105%;
+font-weight: bold;
+text-transform: uppercase;
+}
+.hbold {
+font-size: 100%;
+font-weight: bold;
+}
+</style>
+
+<body>
+<div id="hheader">
+eGov Product-Customization-Functionality Help
+</div>
+<div id="hnav">
+<a href="#">Home</a>&nbsp;|&nbsp;
+<a href="http://www.egovernments.org">About Us</a>&nbsp;|&nbsp;
+<a href="mailto:contact@egovernments.org">Contact Us</a>
+</div>
+
+<div id="hcontent">
+<!-- Objective Section Stats -->
+<span class="hbold0">
+Objective: </span>This report will list out the entries, which is made for the Deposit Received Accounts .
+<br /><br />
+<!-- Objective Section ENDS -->
+
+<!-- Fields Definition Section ENDS -->
+<span class="hbold0">
+Field Description Table:</span><br /><br />
+<table width="80%" cellpadding="2px" cellspacing="0px">
+<tr>
+<th>FieldName</th>
+<th>FieldType</th>
+<th>FieldDescription</th>
+</tr>
+<tr>
+<td>Start Date</td>
+<td>Date</td>
+<td>Start date of the report</td>
+</tr>
+<tr>
+<td>End Date</td>
+<td>Date</td>
+<td>End date of the report</td>
+</tr>
+<tr>
+<td>Fund</td>
+<td>Text</td>
+<td>Drop down: List of funds</td>
+</tr>
+<tr>
+<td>Field</td>
+<td>Text</td>
+<td>Drop down: List of fields</td>
+</tr>
+<tr>
+<td>Date</td>
+<td>Date</td>
+<td>Vocuher Date of the Deposit transaction like Receipts.</td>
+</tr>
+<tr>
+<td>Payee Name</td>
+<td>Text</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Nature/ Type/ Kind of Deposit</td>
+<td>Text</td>
+<td>Type of Deposit like Cash,Cheque or Bank</td>
+</tr>
+<tr>
+<td>Receipt Number</td>
+<td>Text</td>
+<td>Receipt Number</td>
+</tr>
+<tr>
+<td>Amount (Rs.)</td>
+<td>Number</td>
+<td>Deposit Amount through receipt</td>
+</tr>
+<tr>
+<td>Voucher Number & Date</td>
+<td>Text</td>
+<td>Voucher Number and date of the transaction, which is made for Refund or Adjustments</td>
+</tr>
+<tr>
+<td>Income</td>
+<td>Text</td>
+<td>Account code and description of Refund or Adjustment</td>
+</tr>
+<tr>
+<td>Year</td>
+<td>Text</td>
+<td>Financial Year</td>
+</tr>
+<tr>
+<td>Amount</td>
+<td>Number</td>
+<td>Adjustment amount from the Payment or Journal voucher</td>
+</tr>
+<tr>
+<td>Balance Deposit</td>
+<td>Number</td>
+<td>Running Balance</td>
+</tr>
+</table>
+
+<br />
+<!-- Fields Definition Section ENDS -->
+
+<!-- Expected Results and/or Workflow Section Begins -->
+<span class="hbold0">
+Expected Results and/or Workflow:
+</span><br />
+<br /><br />
+<table width="80%" cellpadding="2px" cellspacing="0px">
+<tr>
+<th>Action</th>
+<th>Expeced Result</th>
+</tr>
+<tr>
+<td>Create a receipt transaction for deposit account </td>
+<td>This entry should reflect in the receipt section</td>
+</tr>
+<tr>
+<td>Create a payment or JV for that deposit account</td>
+<td>This entry should reflect in the Refund or Adjustments section</td>
+</tr>
+</table>
+
+<!-- Expected Results and/or Workflow Section ENDS -->
+<br />
+
+<!-- Troubleshooting Section Begins -->
+<span class="hbold0">
+Troubleshooting:
+</span><br />
+<span class="hbold">Question1:</span><br />
+If you take the report, from date and to date range is more.<br />
+<span class="hbold">Answer1:</span><br />
+Report will take time to get it.<br />
+<!-- Troubleshooting Section ENDS -->
+
+<!-- Footer Starts here -->
+<div id="hfooter">
+&copy egovernments Foundation 
+<script type="JavaScript">
+document.write(time());
+</script>
+</div>
+<!-- Footer ENDS here -->
+
+</body>
+</html>

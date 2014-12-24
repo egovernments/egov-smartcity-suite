@@ -1,0 +1,418 @@
+<project name="egf" default="usage" basedir=".">
+	<property name="config.dir" value="${basedir}/src/config" />
+	<property file="${config.dir}/${user.name}.properties" />
+	<property file="${config.dir}/build.properties" />
+	<property name="project.home" value="${basedir}/.." />
+	<property name="src.dir" value="${basedir}/src" />
+	<property name="egf.version" value="2.2.0" />
+	<property name="tag" value="_1"/>
+	<property name="egi.version" value="2.1.15" />
+	<property name="pims.version" value="1.2_11" />
+	<property name="ear.project" value="${basedir}/../egf" />
+	<property name="ear.libs" value="${ear.project}/lib" />
+	<property name="lib" value="${basedir}/libraries" />
+	<property name="web.dir" value="../egfwar/egf.war" />
+	<property name="commons.dir" value="../egfwar/commons.war" />
+	<property name="egfjava.dir" value="../egfjava" />
+	<property name="egf.libs" value="${egfjava.dir}/libraries" />
+	<property name="appcontext.path" value="${web.dir}/WEB-INF/applicationContext.xml"/>
+	<property name="egi.home" value="${project.home}/pims/egi/egijava"/>
+	<property name="pims.home" value="${project.home}/pims/pimsjava"/>
+	<property name="mappings.folder" value="${ear.project}/mappings.jar" />
+	<property name="deploy.owner" value="" />
+	<property name="test.dir" value="${basedir}/junit" />
+	<property name="tools.dir" value="${basedir}/../pims/egi/egijava/tools"/>
+	<property name="egi.admin.dir" value="${basedir}/../pims/egi/egiadmin/admin.war"/>
+	
+	<property name="deploy.owner" value="snv.venkatesh"/>
+	<property name="home.dir" value="/home" /> 
+	<property name="deploy.root" value="${home.dir}/${deploy.owner}/Financials" /> 
+	<!--<property name="deploy.dir" value="${deploy.root}/jboss-4.2.3.GA-${client}/server/default/deploy/"/>-->
+	<property name="deploy.dir" value="E:/jboss-4.2.3.GA/server/default/deploy/"/>
+	
+	<echo message="${ear.project}"/>
+	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="class.path" />
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${lib}/misc/ant-contrib-1.0b3.jar"/>
+	<if>
+		<equals arg1="${client}" arg2="nn" />
+			<then>
+				<property name="tempclient" value="nn" />
+				<property name="tempproperty" value="nn" />
+			</then>
+		<else>
+			<property name="tempclient" value="resource" />
+			<property name="tempproperty" value="." />
+		</else>
+	</if>
+	
+	<target name="setpath">
+		<path refid="class.path"/>
+	</target>
+	
+	<property name="jsunittestdir" value="${web.dir}/jsunittest/test"/>
+	<osfamily property="OS"/>
+	 <target name="jsunittest">
+		<if>
+			<equals arg1="${OS}" arg2="windows" />
+			<then>
+				<apply executable="C:/Program Files/Internet Explorer/iexplore.exe">
+					<fileset dir="${jsunittestdir}" includes="*.html"/>
+			 	</apply>
+			 </then>
+			<else>
+				<apply executable="firefox">
+					<fileset dir="${jsunittestdir}" includes="*.html"/>
+				</apply>
+			</else>
+		</if>
+	 </target>
+	 
+	
+	<path id="cobertura.classpath">
+		<path refid="class.path"/>
+		<fileset dir="${basedir}/libraries/cobertura">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	<path id="svnant.class.path">
+		<fileset dir="${lib}/svnant" includes="*.jar"/>
+	</path>
+	
+	<import file="${project.home}/pims/egi/egijava/common-build.xml"/>
+	<import file="${basedir}/database/evolve.xml"/>
+	<taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
+
+	<target name="clean.all">
+		<antcall target="base.clean"/>
+		<delete dir="${ear.libs}" includes="*" failonerror="false"/>
+		<delete dir="${ear.project}" excludes="META-INF/*.xml,.settings,.project,**/.svn/**,lib" includeemptydirs="true" failonerror="false"/>
+	</target>
+
+	<target name="init.all">
+		<mkdir dir="${ear.libs}" />
+		<antcall target="base.init"/>
+		<path id="class.path">
+				<fileset dir="${lib}" includes="**/*.jar" excludes="hibernate/**/slf*.jar" />
+				<pathelement location="${build.classes}" />
+				<pathelement location="${config.dir}" />
+				<pathelement location="${ear.project}" />
+				<fileset dir="${ear.project}" includes="**/*.jar,*.jar"  />
+				<fileset dir="${ear.libs}" includes="**/*.jar,*.jar"  />
+				<pathelement location="${test.dir}" />
+				<pathelement location="${ear.project}" />
+				<path location="${test.dir}" />
+		</path>
+	</target>
+	<target name="setup" depends="setup.jboss.hibernate,setup.dependencies"/>
+
+	<target name="setup.dependencies" depends="clean.all,init.all">
+		<copy todir="${build.classes}">
+			<fileset dir="${src.dir}" includes="**/*.drl" />
+		</copy>
+		<antcall target="get.pims" />			
+		<antcall target="getjars" />
+	</target>
+	<target name="getjars" >
+		 <get src="http://${download.server}/downloads/libs/general/web/ChartDirector.jar" dest="${ear.project}/lib/ChartDirector.jar" verbose="true" usetimestamp="true"/>
+		 <get src="http://${download.server}/downloads/libs/general/web/sitemesh-2.2.1.jar" dest="${ear.project}/lib/sitemesh-2.2.1.jar" verbose="true" usetimestamp="true"/>
+	</target>
+
+	<target name="get.pims">
+		<ant antfile="${pims.home}/build-pimsErp.xml" target="build.ear" dir="${pims.home}" inheritall="false" />
+		<copy overwrite="true" todir="${ear.project}" >
+			<fileset dir="${pims.home}/dist/egov.ear" excludes="**/application.xml" />
+		</copy>
+	</target>
+
+
+
+	<!-- COMPILE TARGET -->
+	<target name="compile" depends="getjars,setup.dependencies" description="Compiles the source files">
+   	 
+		<delete dir="${build.dir}/classes/com/egov/servletFilter"/>
+		<copy todir="${build.dir}/classes/com/egov/servletFilter">
+	     	 <fileset dir="src/com/egov/servletFilter"/>
+	  	</copy>
+	  	<javac sourcepath="" srcdir="src" destdir="${build.dir}/classes"  nowarn="true" debug="true">
+		      <include name="**/*.java"/>
+		      <exclude name="**/ndmc*.java"/>
+		      <exclude name="**/*ndmc*.java"/>
+		      <exclude name="**/NDMC*.java"/>
+		      <exclude name="**/*NDMC.java"/>
+		      <exclude name="**/*NDMC.java"/>
+		      <exclude name="**/MCD*.java"/>
+		      <exclude name="**/*MCD.java"/>
+		      <exclude name="**/mcd*.java"/>
+		      <exclude name="**/*mcd.java"/>
+		      <exclude name="**/config/**/*.java"/>
+	      
+	     	 <classpath refid="class.path"/>
+		  <classpath path="${build.dir}"/>
+	    	</javac>
+		<javac sourcepath="" srcdir="junit" destdir="${build.dir}/classes"  nowarn="true" debug="true">
+	      	   <include name="**/*.java"/>
+		   <classpath refid="class.path"/>
+		   <classpath path="${build.dir}"/>
+		</javac>
+		
+		
+		
+		
+		<taskdef name="jrc" classname="net.sf.jasperreports.ant.JRAntCompileTask"> 
+        		<classpath refid="class.path" />
+   		 </taskdef>
+	    <jrc srcdir="src" destdir="${build.dir}/classes" >
+		 <classpath refid="class.path"/>
+		<include name="**/*.jrxml"/> 
+	    </jrc>
+	
+	</target>
+	<!-- End target compile -->
+
+	<target name="compile.reports">
+	<taskdef name="jrc" classname="net.sf.jasperreports.ant.JRAntCompileTask">
+	<classpath refid="class.path" />
+	</taskdef>
+	<jrc srcdir="src" destdir="${build.dir}/classes" >
+	<classpath refid="class.path"/>
+	<include name="*/.jrxml"/>
+	</jrc>
+
+
+	</target>
+	<target name="quick.deploy" depends="compile,compile.reports,build,deploy"/>
+	<target name="build" depends="setup.dependencies,build.ear"/>
+	
+	<target name="packagejar" depends="compile,compile.reports" description="Build the dated jar ball file with the proper structure and manifest file.">
+		<echo message="Packaging jars..."/>	
+		<copy file="src/org/egov/billsaccounting/workflow/processdefinations/Works.xml" todir="${build.dir}/classes/org/egov/billsaccounting/workflow/processdefinations/"/>
+		<copy file="src/org/egov/billsaccounting/workflow/processdefinations/CBill.xml" todir="${build.dir}/classes/org/egov/billsaccounting/workflow/processdefinations/"/>
+		<jar destfile="${ear.project}/egf.jar" basedir="${build.dir}/classes"  includes="com/exilant/**/*.class,org/egov/**/*.class    org/egov/**/processdefinations/*.xml org/egov/**/*.jasper"  >
+			<metainf dir="${basedir}\src\META-INF" includes="**.xml" />
+			<zipfileset dir="${src.dir}" includes="org/**/*.properties"/>
+		</jar>
+	</target> <!-- End target PACKAGE JAR -->
+	  
+	<target name="packagemappings" depends="packagejar" description="Build the  jar  file for config files.">
+	    <tstamp>
+	      <format property="jar.date" pattern="dd-MM-yyyy" unit="hour"/>
+	    </tstamp>
+	    <manifest file="${build.dir}/MANIFEST.MF">
+		    <attribute name="Built-By" value="${user.name}"/>
+		    <section name="Main">
+				<attribute name="Specification-Title" value="egf-${client}"/>
+				<attribute name="Specification-Version" value="${egf.version}"/>
+				<attribute name="Specification-Vendor" value="eGovernments Foundation"/>
+				<attribute name="Specification-Date" value="${war.date}"/>
+		    </section>
+	  	</manifest>
+		<mkdir dir="${build.dir}/mappings.jar"/>
+  		<jar destfile="${build.dir}/mappings.jar/egf-mappings.jar">
+		 	<zipfileset dir="src" includes="org/egov/**/model/**/*hbm.xml" excludes="hibernate-service.xml,application.xml,jbpm*.xml"/>
+		</jar>
+    </target>
+	
+	<target name="packagewar" depends="packagemappings"  description="Build the dated war ball file with the proper structure and manifest file.">
+	    
+		<copy file="src/config/${tempproperty}/EgfApplicationResources.properties" todir="${build.dir}/classes" overwrite="true"/>
+  		<replace file="${build.dir}/classes/EgfApplicationResources.properties" token="@version@" value="${egf.version}"/>
+		<copy file="${web.dir}/WEB-INF/classes/displaytag.properties" todir="${build.dir}/classes" overwrite="true"/>
+	 	<copy file="${egi.admin.dir}/WEB-INF/security.xml" todir="${web.dir}/WEB-INF/" overwrite="true"/>
+		<copy file="${egi.admin.dir}/WEB-INF/applicationContext.xml" todir="${web.dir}/WEB-INF/" overwrite="true"/>
+		<copy file="${egi.admin.dir}/WEB-INF/infra-action-beans.xml" todir="${web.dir}/WEB-INF/" overwrite="true"/>
+
+		<tstamp>
+			<format property="war.date" pattern="dd-MM-yyyy" unit="hour"/>
+	    </tstamp>
+	    <manifest file="${build.dir}/MANIFEST.MF">
+	    <attribute name="Built-By" value="${user.name}"/>
+			<section name="Main">
+		        <attribute name="Specification-Title" value="egf"/>
+		        <attribute name="Specification-Version" value="${egf.version}"/>
+		        <attribute name="Specification-Vendor" value="eGovernments Foundation"/>
+		        <attribute name="Specification-Date" value="${war.date}"/>
+			</section>
+	    </manifest>      
+	    <mkdir  dir="${build.dir}/infratemp" />
+		<unzip src= "${ear.project}/infrastructure.war" dest="${build.dir}/infratemp"/>
+	    <war destfile="${build.dir}/egf.war" excludes=".svn/**/*, **/.svn" webxml="${web.dir}/WEB-INF/web.xml"  duplicate="preserve">		       			     
+			<classes dir="${build.dir}/classes">
+				<include name="*.xml" />
+				<include name="*.properties"/>
+				<exclude name="jboss-web.xml" />
+	      	    <exclude name="**/*.class"/>
+	        </classes>
+
+	  		<lib dir="${egf.libs}/misc">
+        		<include name="sitemesh-2.2.1.jar"/>
+     		</lib>
+	     	<fileset dir="${web.dir}">
+				<exclude name="WEB-INF/jboss-web.xml"/>
+		        <exclude name="WEB-INF/lib/**"/>
+	     		<exclude name="jsunittest/**"/>
+		        <exclude name="HTML/NDMC/**"/>
+		        <exclude name="HTML/MCD/**"/>
+				<exclude name="HTML/NN/**"/>
+			 	<exclude name="WEB-INF/classes/**"/>
+	      	</fileset>
+			<fileset dir="${egi.admin.dir}">
+				<include name="commonjs/**/*.*"/>
+				<include name="commonyui/build/**/*.*"/>
+				<include name="commonyui/egov/**/*.*"/>
+				<include name="css/**/*.*"/>
+				<include name="inbox/**/*.*"/>
+				<include name="includes/**/*.*"/>
+				<include name="login/**/*.*"/>
+				<include name="WEB-INF/tags/*.*"/>
+			</fileset>
+	     </war>
+	    <move file="${build.dir}/egf.war" tofile="${ear.project}/egf.war"/>
+	</target> <!-- End target PACKAGE WAR -->
+	
+	<target name="packageconfig" depends="packagewar" description="Build the  jar  file for config files.">
+    	<copy file="src/config/${client}/egf_config.xml" todir="${ear.project}/config" overwrite="true"/>
+    	<copy file="src/config/egf_sqlconfig.xml" todir="${ear.project}/config" overwrite="true"/>
+    	<copy file="src/config/${client}/egov_config.xml" todir="${ear.project}/config" overwrite="true"/>
+    	<copy todir="${ear.project}/config/resource">
+		  	<fileset dir="${basedir}/src/config/resource" includes="**/*.*"/>
+		</copy>
+		
+		<copy file="src/config/${tempclient}/Jobs.xml" todir="${ear.project}/config/resource" overwrite="true"/>
+		<copy file="src/config/${tempclient}/sqlTemplates.xml" todir="${ear.project}/config/resource" overwrite="true"/>
+    </target>
+	    
+	<target name="distribution" depends="packageconfig">
+	    <zip destfile="egf-${client}-${egf.version}.zip" >
+		    <zipfileset dir="${ear.project}">
+				<include name="egf.jar"/>
+			    <include name="config/**/*.*"/>
+		      	<exclude name="config/egov_config.xml"/>
+		      	<include name="egf.war"/>
+		    </zipfileset>
+			<zipfileset dir="${build.dir}">
+				<include name="mappings.jar/egf-mappings.jar"/>
+			</zipfileset>
+	    </zip>
+	</target>
+	
+	<property name="ear" value="${dist.dir}/egf-{egf.version}{tag}.ear" />
+	<target name="build.ear"  depends="distribution" >
+	 
+		<delete dir="${ear}"/>
+		<mkdir dir="${ear}"/>
+		<mkdir dir="${ear}/lib"/>
+		
+		<copy todir="${ear}">
+			<fileset dir="${ear.project}" excludes="**/.svn/**,.project"/>
+		</copy>
+		<copy todir="${ear}/mappings.jar/" file="${build.dir}/mappings.jar/egf-mappings.jar" />
+		<copy todir="${ear}" file="src/config/${client}/oracle-ds.xml" overwrite="true"/>
+     	<copy todir="${ear}" file="src/config/${client}/replSync-optimistic-service.xml" overwrite="true"/> 
+		<copy todir="${ear}/META-INF" file="${ear.project}/META-INF/application.xml" overwrite="true" />
+		
+			
+		<copy file="${ear.project}/egf.jar" todir="${ear}" />	
+		<copy file="${ear.project}/lib/ChartDirector.jar" todir="${ear}/lib" />	  
+  		
+		<delete dir="${ear}/database" includes="**" includeemptydirs="true"/>
+		<copy todir="${ear}/test" overwrite="true">
+			<fileset dir="${basedir}/junit" includes="*.xml"/>
+		</copy>
+
+		<copy todir="${ear}/database" overwrite="true">
+			<fileset dir="${basedir}/libraries/misc" includes="evolve*.jar"/>
+			<fileset file="${basedir}/junit/dbtest.properties"/>
+			<fileset file="${basedir}/database/evolve.xml" />
+			<fileset dir="${basedir}/database" />
+		</copy>
+		<copy todir="${ear}/lib" file="${basedir}/libraries/commons/commons-fileupload-1.2.1.jar" overwrite="true"/>
+		<copy todir="${ear}/lib" overwrite="true">
+			<fileset dir="${basedir}/libraries/struts2/" includes="*.jar"/>
+		</copy>
+		<copy todir="${ear}/lib" overwrite="true">
+			<fileset dir="${basedir}/libraries/reporting/" includes="*.jar"/>
+		</copy>
+		<copy todir="${ear}/lib" overwrite="true">
+			<fileset dir="${basedir}/libraries/jython/" includes="*.jar"/>
+		</copy>
+	</target>
+
+	<target name="deploy" depends="build">
+		<delete dir="${deploy.dir}/egov.ear" includeemptydirs="true"/>
+		<copy todir="${deploy.dir}/egov.ear">
+			<fileset dir="${ear}"/>
+		</copy>
+		<exec dir="${home.dir}" executable="chown">
+			<arg line="-R ${deploy.owner}:${deploy.owner} ${deploy.root}"/>
+		</exec>
+	</target>
+
+	<target name="publish" >
+		<antcall target="build" />
+		<zip destfile="${publish.dir}/${ant.project.name}-${continuum.project.nextBuild.number}.zip">
+			<zipfileset dir="${ear}" prefix="egf.ear">
+			</zipfileset>
+		</zip>
+	</target>
+
+	<target name="usage">
+		<echo >
+			<![CDATA[
+		* !!!IMPORTANT!!! Prerequisites:
+			 Oracle XE
+			 A database user egov with password egov
+			 JBoss 4.2.3
+			 A properties file named <your username>.properties, which has this property
+			 jboss.home=PATH_TO_YOUR_JBOSS
+		Once you have done the above,run
+			
+			ant setup - This will uegfade JBoss hibernate, download the project dependencies and set them up
+		Other targets of interest:
+			clean.all             -  clean everything
+			clean                 -  clean build folders
+			compile,junitcompile  -  compile sources and tests
+			build            -  build the deployable ear
+			deploy			  -  deploy the ear to JBoss
+			evolve.common                -  evolve the database schema to the latest revision
+			publish               -  used by continuum to publish the build for downloading
+		]]>
+		</echo>
+	</target>
+	<target name="scaffold">
+		<property name="model.base.pkg" value="org.egov.egf.models"/>
+		<property name="action.base.pkg" value="org.egov.egf.web.actions"/>
+		<property name="views.dir" value="${web.dir}/WEB-INF/jsp"/>
+		<property name="appcontext.path" value="${ear.project}/test/appContextTest.xml"/>
+		<java classname="com.bluerain.quickweb.Scaffolder" classpathref="class.path">
+			<arg value="${model.base.pkg}.${model}"/>
+			<arg value="${action.base.pkg}"/>
+			<arg value="${src.dir}"/>
+			<arg value="${views.dir}"/>
+			<arg value="${appcontext.path}"/>
+		</java>
+	</target>
+
+	<target name="index">
+		<copy todir="${basedir}/test" file="${basedir}/src/dbtest.properties"/>
+		<copy todir="${basedir}/test" file="${basedir}/src/${user.name}.properties"/>
+		<java classname="org.egov.egf.models.Indexer">
+			<classpath>
+				<pathelement location="${basedir}/test" />
+				<pathelement location="${basedir}" />
+				<pathelement location="${build.instrumented}" />
+				<pathelement location="${build.classes}" />
+				<pathelement location="${basedir}/junit/" />
+				<path refid="class.path"/>
+				<fileset dir="${ear.libs}">
+					<include name="**/*.jar" />
+				</fileset>
+				<fileset dir="${cobertura.lib}">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+		</java>
+		<move todir="${jboss.home}/bin">
+			<fileset dir="${basedir}" includes="org*/**"/>
+		</move>
+	</target>
+</project>

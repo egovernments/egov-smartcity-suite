@@ -1,0 +1,29 @@
+/**********
+*
+* Row Expansion DataTable for YUI 2
+* Author: gelinase@yahoo-inc.com / Eric Gelinas
+*
+* Modified by Daniel Barreiro (satyam@satyam.com.ar)
+***********/
+.yui-dt-expansion-trigger {
+	width:18px;
+	height:22px;
+	cursor:pointer;
+}
+.yui-dt .yui-dt-expansion-trigger .yui-dt-liner{
+	padding:0;
+	margin:0;
+}
+.yui-dt-expansion-expanded .yui-dt-expansion-trigger{
+	background:url(http://developer.yahoo.com/yui/examples/datatable/assets/images/arrow_open.png) 4px 4px no-repeat;
+}
+.yui-dt-expansion-trigger, .yui-dt-expansion-collapsed .yui-dt-expansion-trigger{
+	background:url(http://developer.yahoo.com/yui/examples/datatable/assets/images/arrow_closed.png) 4px 4px no-repeat;
+}
+/* not currently in use
+.yui-dt-expansion-expanded .yui-dt-expansion-trigger.spinner{
+	background:url(http://developer.yahoo.com/yui/examples/datatable/assets/img/spinner.gif) 1px 4px no-repeat;
+}*/
+.yui-dt-expansion-liner {
+	margin-left:18px;
+}

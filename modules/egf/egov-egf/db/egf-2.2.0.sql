@@ -1,0 +1,11 @@
+insert into  EGF_ACCOUNTCODE_PURPOSE values (36,'Wages Payable');
+ALTER TABLE VOUCHERMIS ADD (functionaryid NUMBER);
+ALTER TABLE VOUCHERMIS ADD CONSTRAINT FK_VMIS_FUNCTIONARY  FOREIGN KEY ( functionaryid) REFERENCES FUNCTIONARY(id);
+update chartofaccounts set purposeid=36 where glcode='350110200' and isactiveforposting = 1 and classification=4;
+commit;
+ALTER TABLE EGW_WORKS_MIS  ADD ISFIXEDASSET NUMBER(1) DEFAULT 0;
+
+
+
+CREATE UNIQUE INDEX UNIQUE_PAN_TINNO ON RELATION
+(PANNO, TINNO);

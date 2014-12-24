@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 9, 2007 3:21:11 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.pims.model.BankDet" table="EGEIS_BANK_DET" >
+        <id
+	name="id"
+	column="ID_BANK"
+	type="int">
+	<generator class="sequence">
+		<param name="sequence">EGPIMS_BANK_DET_SEQ</param>
+	</generator>
+	</id>
+        <property name="salaryBank" type="big_decimal">
+            <column name="SALARY_BANK" precision="22" scale="0" />
+        </property>
+        <many-to-one name="bank" class="org.egov.commons.Bank" fetch="select">
+		    <column name="BANK" precision="32" scale="0" />
+	</many-to-one>
+	<many-to-one name="branch" class="org.egov.commons.Bankbranch" fetch="select">
+		    <column name="BRANCH" precision="22" scale="0" />
+	</many-to-one>
+	
+	<property name="accountNumber" type="string">
+			    <column name="ACCOUNT_NUMBER" length="256" />
+	</property>
+	 
+    </class>
+</hibernate-mapping>

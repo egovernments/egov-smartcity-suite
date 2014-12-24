@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.works.models.qualityControl.TestMaster" table="EGW_QC_TEST_MASTER">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_QC_TEST_MASTER_SEQ</param>
+			</generator>
+		</id>
+		
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
+		<property column="MODIFIED_DATE" name="modifiedDate" type="timestamp" />
+		
+		<property name="testName" type="string">
+            <column name="TEST_NAME" length="256" not-null="true"/>
+        </property>
+		
+		<property name="remarks" type="java.lang.String">
+			<column name="REMARKS" length="1024" />
+		</property>
+		
+		<property name="unit" type="string">
+            <column name="UNIT" length="256" />
+        </property>
+        
+        <many-to-one name="materialType" column="MATERIALTYPE_ID" fetch="join" not-null="true"  cascade="all" />
+        
+        <list name="testRates" cascade="all,delete-orphan">
+			<key column="TESTMASTER_ID" not-null="true" />
+			<list-index column="TESTRATE_INDEX" />
+			<one-to-many
+				class="org.egov.works.models.qualityControl.TestRate" />
+		</list>
+     </class> 
+</hibernate-mapping>		

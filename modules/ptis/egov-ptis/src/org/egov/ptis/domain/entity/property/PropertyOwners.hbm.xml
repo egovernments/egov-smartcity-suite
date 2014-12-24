@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.ptis.domain.entity.property.PropertyOwners" table="EGPT_PROPERTY_OWNER">
+		<id
+			name="property_Owner_Id" column="PROPERTY_OWNER_ID" type="int">
+			<generator class="sequence">
+					<param name="sequence">SEQ_PROPERTY_OWNERS</param>
+			</generator>
+		</id>
+		<many-to-one name="source" 
+        	class="org.egov.ptis.domain.entity.property.PropertySource" column="ID_SOURCE" />
+		
+		<!--<property name="ownerId" column="OWNERID" />    
+		
+		<property name="Id_Property" column="ID_PROPERTY" /> -->
+			
+	</class>
+</hibernate-mapping>

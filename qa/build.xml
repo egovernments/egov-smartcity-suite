@@ -1,0 +1,117 @@
+<project name="erpbuild" default="deploy" basedir=".">
+	<property file="${user.name}.properties" />
+	<property file="build.properties" />
+	<property name="product" value="egov"/>
+	<property name="artifactdir" value="urban${version}"/>
+	<property name="deploy.dir" value="${jboss.home}/server/default/deploy" />
+	<property name="oracle.bin" value="D:\oraclexe\app\oracle\product\10.2.0\server\BIN"/>
+	<property name="oracle.pwd" value="egov"/>
+	<property name="oracle.tns" value="xe"/>
+	<property name="continuum.server" value="192.168.1.45"/>
+	<!--<property name="continuum.port" value="81"/>
+	<property name="continuum.user" value="egov"/>
+	<property name="continuum.pass" value="egov1234"/>
+	<property name="continuum.projectId" value="156"/>-->
+	<property name="server.http.port" value="8080"/>
+	<property name="server.host" value="localhost"/>
+	<property name="host.config" value="192.168.1.46"/>
+	<property name="version" value=""/>
+	<property name="build.no" value="latest"/>
+	
+	<path id="class.path">
+		<fileset dir="${jboss.home}/lib/endorsed" includes="*.jar" />
+		<fileset dir="libs" includes="*.jar" />
+	</path>
+	<target name="remove.old.artifacts">
+		<delete dir="${basedir}" includes="*.zip"/>
+	</target>
+	<target name="regression" >
+	        <antcall target="stopserver"/>
+	        <antcall target="recreate.schema"/>
+		<antcall target="deploy"/>
+		<parallel>
+			<antcall target="startserver"/>
+			<waitfor maxwait="10" maxwaitunit="minute" checkevery="1000">
+		    	<http url="http://${server.host}:${server.http.port}" />
+			</waitfor>
+		</parallel>
+		<antcall target="run.watir"/>
+		<antcall target="publish.build.number"/>
+		<parallel>
+		<antcall target="stopserver"/>
+		</parallel>
+	</target>
+	
+	<target name="run.watir">
+		<delete dir="test" />
+		<exec dir="${basedir}" executable="ruby">
+			<env key="QA_HOME" value="${basedir}"/>
+			<arg value="common/suite.rb" />
+		</exec>
+	</target>
+	<target name="recreate.schema">
+	   <exec executable="${oracle.bin}/sqlplus.exe" dir="${oracle.bin}" failonerror="true">
+	   	<arg value="system/${oracle.pwd}@${oracle.tns}"/>
+	   	<arg value="@${basedir}/recreate.sql"/>
+	   </exec>
+	</target>
+	
+	<target name="set.shell.ext">
+		<condition property="shell.ext" value="sh" else="bat" >
+			<os family="unix"/>
+		</condition>
+	</target>
+	
+	<target name="clean.deploy" depends="stopserver,recreate.schema,deploy,startserver"/>
+	
+	<target name="stopserver"  depends="set.shell.ext">
+		<echo message="Shutdown the jboss server........" />
+		<exec dir="${jboss.home}/bin" executable="${jboss.home}/bin/shutdown.${shell.ext}">
+			<arg line="-e 0 -s jnp://localhost:1099" />
+		</exec>
+	</target>
+	
+	<target name="startserver" depends="set.shell.ext">
+		<exec dir="${jboss.home}/bin" executable="${jboss.home}/bin/run.${shell.ext}" spawn="true"/>
+	</target>
+
+	<!--<target name="latest.build" unless="build.no">
+		<java classpathref="class.path" classname="com.motn.continuum.LatestBuild" outputproperty="build.no" >
+			<arg value="http://${continuum.server}:${continuum.port}/continuum/xmlrpc"/>
+			<arg value="${continuum.user}"/>
+			<arg value="${continuum.pass}"/>
+			<arg value="${continuum.projectId}"/>
+		</java>
+		<echo>${build.no}</echo>
+	</target>-->
+	<target name="deploy">
+		<property name="build.file" value="${ant.project.name}${version}-${build.no}.zip"/>
+		<get dest="${basedir}/${build.file}" src="http://${continuum.server}/artifacts/${artifactdir}/${build.file}" />
+		<antcall target="remove.old.egov.ear"/>
+		<unzip dest="${basedir}" src="${build.file}" />
+		<replace file="${basedir}/${product}.ear/config/egov_config.xml" token="ip192:168:1:6" value="ip${host.config}" />
+		<replace file="${basedir}/${product}.ear/config/egov_config.xml" token="ip125:99:252:89" value="ip${host.externalconfig}" />
+		<replace file="${basedir}/${product}.ear/struts.xml" >
+		<replacefilter token="&lt;constant name=&quot;struts.devMode&quot; value=&quot;true&quot; /&gt;" value="&lt;constant name=&quot;struts.devMode&quot; value=&quot;false&quot; /&gt;"/>
+		</replace>
+		
+		<replace file="${basedir}/${product}.ear/replSync-optimistic-service.xml" token="@ipaddress" value="${cache.ip}" />
+		<replace file="${basedir}/${product}.ear/replSync-optimistic-service.xml" token="@port" value="${port.number}" />
+		<replace file="${basedir}/${product}.ear/replSync-optimistic-service.xml" token="@local" value="${cache.mode}" />
+		
+		<copy file="${basedir}/${user.name}.properties" todir="${product}.ear/database"/>
+		<ant antfile="deploy.xml" dir="${product}.ear"  target="setup"/>
+		<delete dir="${deploy.dir}/${product}.ear"/>
+		<copy todir="${deploy.dir}/${product}.ear">
+		      <fileset dir="${basedir}/${product}.ear" />
+		</copy>
+		<antcall target="remove.old.artifacts"/>
+	</target>
+	<target name="publish.build.number">
+		<echo file="current_build.txt">${label}</echo>
+		<echo>Current build:${label}</echo>
+	</target>
+	<target name="remove.old.egov.ear" unless="fresh.deploy">
+	<delete dir="${basedir}/egov.ear" />
+</target>
+</project>

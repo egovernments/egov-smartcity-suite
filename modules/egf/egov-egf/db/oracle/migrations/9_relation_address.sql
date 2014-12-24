@@ -1,0 +1,1 @@
+alter table relation modify(address1 varchar(150), address2 varchar(150));

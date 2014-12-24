@@ -1,0 +1,107 @@
+#header_font
+           {
+            /* font size="6" */
+             font-size   : 24pt
+           }
+#header_font_arial
+           {
+            /* font size="6" */
+             font-family : Arial, Helvetica;
+             font-size   : 24pt
+           }         
+       
+#header_form_font
+	   {
+	    /* font size="5" */
+	     font-size   : 18pt;
+	     color       : #0000ff
+	   }
+#heading_form
+           {
+             font-family : Arial, Helvetica; 
+             font-size   : 18pt
+           }
+	
+#header_table_font
+	   {
+	     font-size   : 18pt
+	   }
+         
+#table_row_font
+ 	   {
+ 	    /* font size="3" */
+ 	     font-family : Arial, Helvetica;
+ 	     font-size   : 12pt
+ 	   }
+#row_red
+	   {
+	     font-family : Arial, Helvetica;
+             color       : #FF0000
+           }       
+#normal_font
+           { 
+            /* font size="2" */
+             font-family : Arial, Helvetica;
+             font-size   : 10pt
+           }
+#welcome_font
+           {
+             font-family : Verdana;
+             font-size   : 10pt
+           } 
+#form_main
+           {
+            /* font size="4" */
+             font-family : Arial, Helvetica;
+             font-size   : 13.5pt;
+           }
+#text_color
+	   {
+	    /* font size="4" */
+	     font-size   : 13.5pt;
+	     color       : #0000FF
+           }
+#form_row_font
+	   {
+	     font-size   : 13.5pt;
+	   }
+#font_arial
+           {
+             font-family : Arial, Helvetica;
+           }
+#normal_color0000FF
+	   {
+             font-size   : 10pt; 
+             color       : #0000FF
+	   }
+#normal_colorRed
+           {
+             font-family : Arial, Helvetica;
+             color       : #993366
+           }
+#normal_colorBlue
+           {
+             font-family : Arial, Helvetica;
+             color       : #003366          
+           }
+#comp_heading_font
+           {
+             font-family : Garamond;
+             font-size   : 12pt
+           }
+#comp_msg_font
+           { 
+             font-family : Garamond;
+             font-size   : 13.5pt; 
+             color       : #003366
+           }
+#footer_font
+           {
+             font-size   : 10pt
+           }
+#logout_font
+           {
+             font-size   : 13pt;
+             color       : #0000FF
+           }
+

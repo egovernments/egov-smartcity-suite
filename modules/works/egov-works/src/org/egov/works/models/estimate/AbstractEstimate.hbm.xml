@@ -1,0 +1,224 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 19, 2007 2:57:28 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+	<class name="org.egov.works.models.estimate.AbstractEstimate"
+		table="EGW_ABSTRACTESTIMATE">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_ABSTRACTESTIMATE_SEQ</param>
+			</generator>
+		</id>
+		
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY" fetch="select"/>
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" />
+		<property column="MODIFIEDDATE" name="modifiedDate" type="timestamp" />
+		
+		<many-to-one name="ward"
+			class="org.egov.lib.admbndry.BoundaryImpl">
+			<column name="WARD" />
+		</many-to-one>
+		<component name="workValue">
+			<property name="value" type="double" precision="2"
+				scale="20" />
+		</component>
+		<many-to-one name="state" class="org.egov.infstr.models.State"
+			cascade="all">
+			<column name="STATE_ID" />
+		</many-to-one>
+
+		<list name="overheadValues" cascade="all,delete-orphan">
+			<key column="abstractestimate_id" not-null="true" />
+			<list-index column="oh_index" />
+			<one-to-many
+				class="org.egov.works.models.estimate.OverheadValue" />
+		</list>
+		<list name="assetValues" cascade="all,delete-orphan">
+			<key column="abstractestimate_id" not-null="true" />
+			<list-index column="ass_index" />
+			<one-to-many
+				class="org.egov.works.models.estimate.AssetsForEstimate" />
+		</list>
+		<list name="multiYearEstimates" cascade="all,delete-orphan">
+			<key column="abstractestimate_id" not-null="true" />
+			<list-index column="my_index" />
+			<one-to-many
+				class="org.egov.works.models.estimate.MultiYearEstimate" />
+		</list>
+		
+		<set name="technicalSanctions" fetch="select" >
+			<key column="ABSTRACTESTIMATE_ID" />
+			<one-to-many class="org.egov.works.models.estimate.TechnicalSanction"  />
+		</set>
+		
+		<list name="financialDetails" cascade="all,delete-orphan">
+			<key column="abstractestimate_id" not-null="true" />
+			<list-index column="fin_index" />
+			<one-to-many
+				class="org.egov.works.models.estimate.FinancialDetail" />
+		</list>
+		<list name="estimateRateContractList" cascade="all,delete-orphan" >
+			<key column="ESTIMATE_ID" not-null="true" />
+			<list-index column="ESTIMATERATECONTRACT_INDEX" /> 
+			<one-to-many class="org.egov.works.models.estimate.EstimateRateContract" /> 
+		</list>
+		<list name="activities" cascade="all,delete-orphan">
+			<key column="abstractestimate_id" not-null="true" />
+			<list-index column="activity_index" />
+			<one-to-many
+				class="org.egov.works.models.estimate.Activity" />
+		</list>	
+		
+		<property name="estimateDate" type="date">
+			<column name="ESTIMATEDATE" length="7" />
+		</property>
+		<property name="name" type="string">
+			<column name="NAME" length="1024" not-null="true" /> 
+		</property>
+		<property name="description" type="string">
+			<column name="DESCRIPTION" length="1024" not-null="true"/>
+		</property>
+		<property name="necessity" type="string">
+			<column name="NECESSITY" length="4000" />
+		</property>
+		<property name="scopeOfWork" type="string">
+			<column name="SCOPEOFWORK" length="4000" />
+		</property> 
+		<property name="location" type="string">
+			<column name="LOCATION" length="250" /> 
+		</property>
+		<many-to-one name="type"
+			class="org.egov.works.models.estimate.WorkType" fetch="select">
+			<column name="TYPE" />
+		</many-to-one>
+		<many-to-one name="depositCode"
+			class="org.egov.works.models.masters.DepositCode" fetch="select">
+			<column name="DESPOSITCODE_ID" />
+		</many-to-one>
+		<many-to-one name="category"
+			class="org.egov.commons.EgwTypeOfWork" fetch="select"> 
+			<column name="CATEGORY" />
+		</many-to-one>
+		<many-to-one name="parentCategory"
+			class="org.egov.commons.EgwTypeOfWork" fetch="select">
+			<column name="PARENT_CATEGORY" />
+		</many-to-one>
+		<many-to-one name="userDepartment"
+			class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
+			<column name="USERDEPARTMENT" />
+		</many-to-one>
+		<many-to-one name="executingDepartment"
+			class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
+			<column name="EXECUTINGDEPARTMENT" />
+		</many-to-one>
+		<many-to-one name="estimatePreparedBy"
+			class="org.egov.pims.model.PersonalInformation">
+			<column name="PREPAREDBY" />
+		</many-to-one>
+		<many-to-one name="projectCode" column="PROJECTCODE_ID"
+			class="org.egov.works.models.estimate.ProjectCode"
+			not-null="false">
+		</many-to-one>
+		<property name="estimateNumber" type="string">
+			<column name="ESTIMATE_NUMBER" length="256" />
+		</property>
+		<property name="budgetApprNo" type="string">
+			<column name="BUDGETAPPRNO" length="256" />
+		</property>		
+		<property name="documentNumber" type="long">
+            <column name="DOCUMENT_NUMBER"/>
+        </property>
+        <!-- on March23 -->
+        <property name="resolutionNumber" type="string">
+			<column name="RESOLUTION_NUMBER" length="256" />
+		</property>
+		<property name="resolutionDate" type="date">
+			<column name="RESOLUTION_DATE" length="7" />
+		</property>		
+		<many-to-one name="fundSource" class="org.egov.commons.Fundsource" fetch="select">
+			<column name="FUNDSOURCEID" />
+		</many-to-one>
+        <property name="document" type="text">
+        	<column name="DOCUMENT"></column>
+        </property>
+        <property name="budgetAvailable">
+			<column name="BUDGETAVAILABLE" />
+		</property>	
+		<property name="budgetRejectionNo" type="string">
+			<column name="BUDGETREJECTIONNO" length="256" />
+		</property>
+		<property name="isEmergencyWorks" type="boolean">
+			<column name="ISEMERGENCYWORKS" />
+		</property>
+		<property name="isSpillOverWorks" type="boolean">
+			<column name="ISSPILLOVERWORKS" />
+		</property>
+		<property name="adminsanctionNo" type="string">
+			<column name="ADMINSANCTIONNO" length="256" />	
+		</property>
+		<property name="adminsanctionDate" type="date">
+			<column name="ADMIN_SANCTION_DATE" length="7" />
+		</property>
+		<many-to-one name="parent" column="PARENTID" />
+		<many-to-one name="egwStatus" column="STATUS_ID" /> 
+		<property name="lon">
+			<column name="LON" />
+		</property>
+		<property name="lat">
+			<column name="LAT"/> 
+		</property>
+	</class>
+	<query name="MY_NEW_ESTIMATES">
+		<![CDATA[
+     	from AbstractEstimate as ae where ae.state.value='CREATED' and ae.createdBy=?
+    ]]>
+	</query>
+	<query name="MY_APPROVAL_PENDING_ESTIMATES">
+		<![CDATA[
+     	from AbstractEstimate as ae where ae.state.owner.id=? and ae.state.value='CREATED' and ae.state.nextAction!=''
+    ]]>
+	</query>
+	<query name="MY_REJECTED_ESTIMATES">
+		<![CDATA[
+     	from AbstractEstimate as ae where ae.state.owner.id=? and ae.state.value='REJECTED'
+    ]]>
+	</query>
+	<query name="ALL_ESTIMATES_BY_STATUS">
+		<![CDATA[
+     	from AbstractEstimate as ae where ae.state.value=? order by ae.executingDepartment.deptName
+    ]]>
+	</query>
+	<query name="ALL_ESTIMATES_BY_EXECUTINGDEPARTMENT">
+		<![CDATA[
+     	from AbstractEstimate as ae where ae.state.value=? and ae.executingDepartment.deptName = ? order by ae.executingDepartment.deptName
+    ]]>
+	</query>
+	<query name="MY_TECH_SANCTIONED_ESTIMATES">
+		<![CDATA[
+     	from AbstractEstimate as ae where ae.state.owner.id=? and ae.state.value='TECH_SANCTIONED'
+    ]]>
+	</query>
+		<query name="MY_CANCELLED_ESTIMATES">
+		<![CDATA[
+     	from AbstractEstimate as ae where ae.state.owner.id=? and ae.state.value='CANCELLED'
+    ]]>
+	</query>
+	<query name="getAbEstimateListById">
+		<![CDATA[
+     	from AbstractEstimate ab where ab.id in(:param_0)
+    	]]>
+	</query>
+	<query name="getAbEstimateListByNumber">
+		<![CDATA[
+     	from AbstractEstimate ab where ab.estimateNumber =?
+    	]]>
+	</query>
+	<query name="HAS_REVISION_ESTIMATES">
+		<![CDATA[
+     	from AbstractEstimate ae where ae.parent.id=? and ae.egwStatus.code='APPROVED' order by ae.id 
+    ]]>
+	</query>
+</hibernate-mapping>

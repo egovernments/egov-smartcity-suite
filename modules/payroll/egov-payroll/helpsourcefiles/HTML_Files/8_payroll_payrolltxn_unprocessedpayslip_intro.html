@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+  <title>Unprocessed Payslips Overview</title>
+  <meta name="generator" content="Amaya, see http://www.w3.org/Amaya/" />
+  <link href="../css/egovhelp.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<h2>Resolving an Unprocessed Payslip</h2>
+
+<p>During batch generation, some employee payslips are not generated. These
+payslips are known as unprocessed payslips. All unprocessed payslips have to be
+processed manually and then sent for approval.</p>
+
+<p>Reasons for not getting the payslips generated could be as follows:</p>
+<ul>
+  <li style="margin-left:0;"><p>No approved payslip for the previous month
+    exists. This occurs when the payslip of a new employee is sent for batch
+    generation.</p>
+  </li>
+  <li style="margin-left:0;">Errors occur during batch generation. For this,
+    you need to manually check the reason the error has occurred and rectify
+    it. Errors could occur when: 
+    <ul>
+      <li style="margin-left:0;">The employee's basic pay exceeds the assigned
+        payscale due to an increment. </li>
+      <li style="margin-left:0;">No designation or department has been assigned
+        to the employee</li>
+      <li style="margin-left:0;">Payheads have not been defined correctly</li>
+      <li style="margin-left:0;">The salary is a negative value</li>
+    </ul>
+  </li>
+  <li style="margin-left:0;">An exception situation has occurred. For example,
+    the employee has been suspended, or has resigned from the organization. See
+    <a href="8_payroll_payrolltxn_payscexcptn_create.html#Payroll">Creating
+    Exception Payslips</a> for details. </li>
+</ul>
+
+<p>To view a list of unprocessed payslips and resolve them, perform the
+following steps:</p>
+
+<p>1. In the <strong>Payroll</strong> menu, click <strong>Payslip</strong>.</p>
+
+<p>2. Click <strong>Unprocessed payslip</strong>s to open the Batch Payslip
+Failure Details screen.</p>
+
+<p>3. To search for unprocessed payslips, enter the details as described in <a
+href="#Table">Table 1</a>.</p>
+
+<p>4. Click <strong>Search Payslips</strong>.</p>
+
+<p style="margin-left:2em;">A list of unprocessed payslips is displayed with
+the employee name, employee code, department name, payslip date, and the reason
+for which the payslip remains unprocessed.</p>
+
+<p style="margin-left:2em;">Based on the reason in the <strong>Remarks</strong>
+field, you have to resolve the error. See <a href="#Table">Table 2</a> for more
+information.</p>
+
+<p style="margin-left:2em;">The payslips needs to be processed manually based
+on the reason for payslip failure. If there are no previously approved
+payslips, all details in the payslip have to be manually entered.</p>
+
+<p>5. Click <strong>Resolve</strong> in the row that has the employee payslip
+you need to process. </p>
+
+<p style="margin-left:2em;">The Generate Payslip screen is displayed where you
+can edit the following details: </p>
+<ul>
+  <li style="margin-left:2em">% field to calculate the Earnings based on the
+    Calculation Type</li>
+  <li style="margin-left:2em">% Basis field to calculate the Earnings based on
+    the Basic</li>
+  <li style="margin-left:2em">Amount earned for the relevant payhead </li>
+  <li style="margin-left:2em">Deduction amount for Taxes </li>
+  <li style="margin-left:2em">Amount for Other Deductions </li>
+  <li style="margin-left:2em">Deduction amount for Advance Adjustments, if the
+    employee has taken an advance</li>
+</ul>
+
+<p>6. If the Payroll Master has been recently updated click <strong>Recompute
+Deductions</strong> to recalculate the payhead values.</p>
+
+<p style="margin-left:2em;"><strong>NOTE</strong>: The recalculated payhead
+values need to be saved. If this is not done, the previous payhead values are
+used during payslip generation.</p>
+
+<p>7. After the details have been entered, the NET PAY is displayed. You
+can:</p>
+<ul>
+  <li style="margin-left:0;">Click <strong>Save &amp; View</strong>. This saves
+    the unprocessed payslip and the payslip is displayed. </li>
+  <li style="margin-left:0;">Click <strong>Save &amp; New</strong>. This saves
+    the payslip and opens another Generate Payslip screen. </li>
+  <li style="margin-left:0;">Click <strong>Cancel</strong> to discard the
+    details entered in this screen.</li>
+</ul>
+
+<p style="margin-left:2em"><strong>NOTE</strong>: In the employee payslip: </p>
+<ul>
+  <li style="margin-left:0;">Click the + icon to add another row for the
+    payhead component such as HRA, DA, Advance Adjustments, Other Deductions
+    and so on. </li>
+  <li style="margin-left:0;">Click the - icon to delete a payhead component
+  row.</li>
+</ul>
+
+<p></p>
+
+<table border="1" style="width: 100%">
+  <caption><strong><a name="Table" id="Table">Table 1: Searching Unprocessed
+  Payslips</a></strong></caption>
+  <col />
+  <col />
+  <tbody>
+    <tr>
+      <td
+        style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt"><strong>Field</strong></td>
+      <td
+        style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt"><strong>Description</strong></td>
+    </tr>
+    <tr>
+      <td
+      style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">*Month</td>
+      <td style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">Select
+        the month-for which you want to see the unprocessed payslips -from the
+        <strong>Month</strong> drop-down list.</td>
+    </tr>
+    <tr>
+      <td
+      style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">*Year</td>
+      <td style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">Select
+        the year-for which you want to see the unprocessed payslips -from the
+        <strong>Year</strong> drop-down list.</td>
+    </tr>
+    <tr>
+      <td
+        style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">Department
+        List</td>
+      <td style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">Select
+        a department from the <strong>Department List</strong> drop-down
+        list-to see the unprocessed paylips of the employees-in that
+      department.</td>
+    </tr>
+    <tr>
+      <td
+        style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">Functionary
+        List</td>
+      <td style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">Select
+        the functionary from the <strong>Functionary List</strong> drop-down
+        list.</td>
+    </tr>
+    <tr>
+      <td
+        style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">Employee
+        Code</td>
+      <td style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">To
+        find the unprocessed pay slip of a particular employee, type his/her
+        employee code.</td>
+    </tr>
+    <tr>
+      <td style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">All
+        Errors</td>
+      <td style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">To
+        view all types of error payslips, select the <strong>All
+        Errors</strong> check box. If the check box is not selected, then the
+        error payslips of the selected month alone will be displayed.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p></p>
+
+<table border="1" style="width: 70%">
+  <caption><strong id="Table1"><a name="Table2" id="Table2">Table 2: Resolving
+  Error</a></strong></caption>
+  <col />
+  <col />
+  <col />
+  <tbody>
+    <tr>
+      <td
+        style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt"><strong>Reason
+        in the Remarks column</strong></td>
+      <td
+        style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt"><strong>Description</strong></td>
+      <td
+        style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt"><strong>To
+        Resolve Error</strong></td>
+    </tr>
+    <tr>
+      <td
+        style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">Previous
+        payslip does not exist</td>
+      <td style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">This
+        is displayed when no approved payslip exists for the previous month.
+        Typical for a new employee.</td>
+      <td style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">Create
+        a new employee payslip.</td>
+    </tr>
+    <tr>
+      <td
+        style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">Negative
+        total</td>
+      <td style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">This
+        is displayed when the deductions of the employee exceed the
+      earnings.</td>
+      <td style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">Remove
+        deductions that need to be paid this month and divide it across other
+        months.</td>
+    </tr>
+    <tr>
+      <td style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">End of
+        his tenure</td>
+      <td style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">This
+        is displayed if the employee retires in the current month.</td>
+      <td style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">Create
+        a supplementary payslip for final settlement fpr the employee based on
+        the attendance.</td>
+    </tr>
+    <tr>
+      <td
+        style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">Exception
+        created</td>
+      <td style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">This
+        is displayed when the employee is marked for an exception payslip. See
+        <a href="8_payroll_payrolltxn_payscexcptn_create.html#Payroll">Payslip
+        Exception</a> for details.</td>
+      <td
+        style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">Generate
+        (or do not generate) employee payslip based on the exception. For
+        example, if the employee is retiring from the organization, and a
+        payroll exception has been created, the payslip needs to be generated
+        manually.</td>
+    </tr>
+    <tr>
+      <td
+        style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">Payslip
+        already exists</td>
+      <td style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">This
+        is displayed when the employee payslip has already been generated.</td>
+      <td style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">Check
+        the reason for the duplicate payslip.</td>
+    </tr>
+    <tr>
+      <td style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">Basic
+        exceeds his limit</td>
+      <td style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">This
+        is displayed when the basic salary component exceeds the assigned
+        payscale limit when an increment is added.</td>
+      <td style="font-family: Arial,Helvetica,sans-serif;font-size: 9pt">You
+        can do one of the following: 
+
+        <p>1. Change the payscale assigned to the employee.</p>
+
+        <p>2. Decrease the increment value.</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>

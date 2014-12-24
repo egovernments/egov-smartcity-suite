@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+	default-lazy-init="true">
+	
+	<!-- ==============================   CACHE   ============================= -->
+	<!-- Custom Cache Key Generator
+	 <bean id="cacheKeyGenerator" class="org.egov.infstr.cache.config.CacheKeyBuilder" />
+	-->
+	
+	<!-- Annotation based caching  
+		<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+			<property name="configLocation"  value="classpath:org/egov/infstr/cache/config/ehcache.xml" />
+		</bean>
+			
+		<bean id="cache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+			<property name="cacheManager" ref="cacheManager" />
+			<property name="cacheName" value="GLOBAL_CACHE" />
+		</bean>
+	
+		<bean id="cacheAdvisor" class="org.egov.infstr.cache.interceptor.AnnotationCachingInterceptor">
+			<property name="cache" ref="cache" />
+			<property name="cacheKeyGenerator" ref="cacheKeyGenerator" />
+		</bean>
+		
+		<aop:config>
+			<aop:advisor  advice-ref="cacheAdvisor" pointcut="execution(@org.egov.infstr.cache.annotation.Cache * *(..))"/>
+			<aop:advisor  advice-ref="cacheAdvisor" pointcut="execution(@org.egov.infstr.cache.annotation.EvictCache * *(..))" />
+		</aop:config>
+	-->
+	
+	<!-- Declarative caching using spring proxy and jbosscache example
+	
+	<bean id="cacheManager" class="org.springmodules.cache.provider.jboss.JbossCacheManagerFactoryBean">
+		<property name="configLocation" value="classpath:replSync-optimistic-service.xml" />
+	</bean>
+	
+	<bean id="cacheProviderFacade" class="org.springmodules.cache.provider.jboss.JbossCacheFacade">
+		<property name="cacheManager" ref="cacheManager" />
+	</bean>
+	
+	<bean id="chartOfAccountPersistenceServicetTgt" class="org.egov.infstr.services.PersistenceService">
+	   <property name="sessionFactory" ref="egovSessionFactory" />
+       <property name="type" value="org.egov.commons.CChartOfAccounts"/>
+	</bean>
+	
+	<bean id="chartOfAccountPersistenceService"  class="org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean"> 
+		<property name="cacheKeyGenerator" ref="cacheKeyGenerator" />
+		<property name="cacheProviderFacade" ref="cacheProviderFacade" />
+		<property name="cachingModels">
+			<props>
+				<prop key="findAll*">node=coaCache</prop>
+			</props>
+		</property>
+		<property name="flushingModels">
+			<props>
+				<prop key="create*">nodes=coaCache</prop>
+			</props>
+		</property>
+		<property name="target" ref="chartOfAccountPersistenceServicetTgt" />
+		<property name="proxyTargetClass" value="true" />
+	</bean>   
+	
+	-->	
+</beans>

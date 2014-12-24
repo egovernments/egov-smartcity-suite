@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated OCT 27, 2009 12:54:43 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+	<class name="org.egov.payroll.model.providentfund.PFTriggerDetail" table="EGPAY_PFTRIGGER_DETAIL">
+		<id name="id" type="long">
+			<column name="ID" precision="10" scale="0"></column>
+			<generator class="native" >
+            	<param name="sequence">SEQ_PFTRIGGER_DETAIL</param>
+            </generator>
+		</id>
+		<property name ="pfType" type="string">
+			<column name="PF_TYPE" length="10"></column>
+		</property>
+		<property name="month" type="integer">
+            <column name="MONTH" precision="10" />
+        </property>
+		<many-to-one name="financialYear" class="org.egov.commons.CFinancialYear" fetch="select">
+            <column name="FINANCIALYEARID" precision="12" />
+        </many-to-one>
+        <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY"/>
+        <property name="createdDate" column="CREATEDDATE" type="date"/>
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Aug 28, 2007 7:45:39 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.payroll.model.EmpPayroll" table="EGPAY_EMPPAYROLL" >
+        <id name="id" >
+            <column name="ID" precision="12" scale="0" />
+            <generator class="sequence">
+	    	  <param name="sequence">EISPAYROLL_EMPPAYROLL_SEQ</param>
+        	</generator>
+        </id>
+        
+        
+
+        
+      <!--<timestamp name="modifiedDate" column="LASTMODIFIEDDATE" access="property" source="db" unsaved-value="null"/>-->		 
+       <property name="modifiedDate">
+            <column name="LASTMODIFIEDDATE" />
+        </property>         
+      	<!--<timestamp name="modifiedDate" column="LASTMODIFIEDDATE" 
+        	access="property" unsaved-value="null" />	-->   		
+        
+        <many-to-one name="financialyear" class="org.egov.commons.CFinancialYear" fetch="select">
+            <column name="FINANCIALYEARID" precision="12" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="billRegister" class="org.egov.model.bills.EgBillregister" fetch="select" cascade="all">
+	   		 <column name="ID_BILLREGISTER" precision="12" scale="0"  />
+		</many-to-one>
+		<many-to-one name="empAssignment" class="org.egov.pims.model.Assignment" fetch="select">
+	    	<column name="ID_EMP_ASSIGNMENT" precision="12" scale="0" not-null="true" />
+		</many-to-one>
+		<many-to-one name="employee" class="org.egov.pims.model.PersonalInformation" fetch="select">
+	    	<column name="ID_EMPLOYEE" precision="12" scale="0" not-null="true" />
+        </many-to-one>
+        <!--<property name="createdBy" column="CREATEDBY" type="long" />-->
+        <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" fetch="select">
+            <column name="CREATEDBY" precision="12" scale="0"  />
+        </many-to-one>	
+        <many-to-one name="status" class="org.egov.commons.EgwStatus" fetch="select">
+	   		 <column name="STATUS" precision="12" scale="0" not-null="true" />
+        </many-to-one>
+        <property name="grossPay" type="big_decimal">
+            <column name="GROSS_PAY" precision="15" not-null="true" />
+        </property>
+        <property name="netPay" type="big_decimal">
+            <column name="NET_PAY" precision="15" not-null="true" />
+        </property>
+        <property name="basicPay" type="big_decimal">
+            <column name="BASIC_PAY" precision="15" not-null="true" />
+        </property> 
+       <property name="createdDate" type="date">
+            <column name="CREATEDDATE" length="7" not-null="true" />
+        </property>
+        <property name="numdays" type="double">
+            <column name="NUMDAYS" precision="12" scale="0" not-null="true" />
+        </property>
+        <property name="month" type="big_decimal">
+            <column name="MONTH" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="exceptionComments" type="string">
+            <column name="EXCEPTION_COMMENTS" length="512" />
+        </property>
+        <property name="fromDate" type="date">
+	    	<column name="FROMDATE" length="7" />
+	    </property>
+	    <property name="toDate" type="date">
+	    	<column name="TODATE" length="7" />
+        </property>
+        <property name="workingDays">
+            <column name="workingDays" precision="12" scale="0" not-null="true" />
+        </property>
+        <property name="modifyRemarks" type="string">
+	    	<column name="MODIFY_REMARKS" length="512" />
+        </property>      
+        
+		<many-to-one name="payType" class="org.egov.payroll.model.PayTypeMaster" fetch="select">
+	   		 <column name="PAYTYPE" not-null="true" />
+        </many-to-one>
+        
+        <many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+            <column name="STATE_ID"/>
+        </many-to-one>
+        
+    	<set name="earningses" inverse="true"  cascade="all-delete-orphan"> 
+            <key>
+            <column name="ID_EMPPAYROLL" precision="12" scale="0" not-null="true" />
+            </key>
+			<one-to-many class="org.egov.payroll.model.Earnings" />
+         </set>
+
+	<set name="deductionses"  inverse="true"  cascade="all-delete-orphan">
+	    <key>
+		<column name="ID_EMPPAYROLL" precision="12" scale="0" not-null="true" />
+	    </key>
+	    <one-to-many class="org.egov.payroll.model.Deductions" />
+        </set>
+        
+        <many-to-one name="billNumber" class="org.egov.masters.model.BillNumberMaster" column="ID_BILLNUMBER" />
+        
+    </class>
+    <query name="ISPAYSLIPEXIST_FOREMP_FROMDATE" comment="return payslipfor given fromdate and empployee any payslip exist">
+    <![CDATA[from EmpPayroll pay where pay.employee.idPersonalInformation = :param_0  
+    			and pay.fromDate<=:param_1 and pay.toDate>= :param_1  
+    			and pay.payType.id= :param_2 
+    			and pay.status.description not in ( :param_3)
+     ]]>
+    </query>
+   </hibernate-mapping>

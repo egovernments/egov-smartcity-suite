@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+
+<ruleset name="All Java Rules" 
+    xmlns="http://pmd.sf.net/ruleset/1.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
+    xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
+    <description>Every Java Rule in PMD</description>
+
+    <rule ref="rulesets/basic.xml"/>
+    <!-- <rule ref="rulesets/braces.xml"/> -->
+    <rule ref="rulesets/imports.xml">
+    	<exclude name="ImportFromSamePackage"/>
+    	<exclude name="UnusedImports"/>
+    </rule>
+    <rule ref="rulesets/logging-jakarta-commons.xml"/>
+    <rule ref="rulesets/logging-java.xml"/>
+    <rule ref="rulesets/strictexception.xml">
+    	<exclude name="SignatureDeclareThrowsException"/>
+    </rule>
+    <rule ref="rulesets/strings.xml">
+    	<exclude name="UseEqualsToCompareStrings"/> <!-- is caught in FIndBugs too -->
+    </rule>    
+    <rule ref="rulesets/unusedcode.xml"/>
+    <rule ref="rulesets/typeresolution.xml">    
+          <exclude name="CloneMethodMustImplementCloneable"/>
+          <exclude name="SignatureDeclareThrowsException"/>
+          <exclude name="UnusedImports"/>
+    </rule> 
+    <rule ref="rulesets/design.xml">
+    	<exclude name="UncommentedEmptyConstructor"/>
+    	<exclude name="UseLocaleWithCaseConversions"/>    	
+    </rule>
+    
+    
+    <rule ref="rulesets/j2ee.xml/StaticEJBFieldShouldBeFinal"/>
+    <rule ref="rulesets/j2ee.xml/DoNotUseThreads"/>
+
+
+<!--  Commented for time being  -->
+<!--
+    <rule ref="rulesets/clone.xml"/>
+    <rule ref="rulesets/codesize.xml"/>
+    <rule ref="rulesets/controversial.xml"/>
+    <rule ref="rulesets/coupling.xml"/>
+   
+    <rule ref="rulesets/finalizers.xml"/>
+    <rule ref="rulesets/j2ee.xml"/>
+    <rule ref="rulesets/javabeans.xml"/>
+    <rule ref="rulesets/junit.xml"/>
+    <rule ref="rulesets/migrating.xml"/>
+    <rule ref="rulesets/naming.xml"/>
+    <rule ref="rulesets/optimizations.xml"/>
+    <rule ref="rulesets/sunsecure.xml"/>
+-->
+
+</ruleset>

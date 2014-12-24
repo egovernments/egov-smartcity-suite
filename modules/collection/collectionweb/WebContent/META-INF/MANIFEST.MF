@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.7.0
+Created-By: 1.5.0_06-b05 (Sun Microsystems Inc.)
+Built-By: Admin
+
+Name: Main
+Specification-Title: eGov Collection
+Specification-Version: 1.0
+Specification-Vendor: eGovernments Foundation
+Specification-Date: September-01-2009
+

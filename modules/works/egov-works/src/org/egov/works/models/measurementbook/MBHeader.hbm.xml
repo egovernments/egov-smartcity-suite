@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+	<!-- Generated on 8th dec 09 -->
+<hibernate-mapping>
+	<class name="org.egov.works.models.measurementbook.MBHeader" table="EGW_MB_HEADER">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_MB_HEADER_SEQ</param>
+			</generator>
+		</id>
+		<many-to-one name="workOrder"
+			class="org.egov.works.models.workorder.WorkOrder" column="WORKORDER_ID"
+			not-null="true" fetch="select" />
+		<many-to-one name="workOrderEstimate"
+			class="org.egov.works.models.workorder.WorkOrderEstimate" column="WORKORDER_EST_ID"
+			not-null="true" fetch="select" />
+		<many-to-one name="mbPreparedBy"
+			class="org.egov.pims.model.PersonalInformation" column="PREPARED_BY"
+			not-null="true" fetch="select" />
+		<!-- <many-to-one name="egBillregister" class="org.egov.model.bills.EgBillregister" column="BILLREGISTER_ID" fetch="select" /> -->
+		<set name="mbBills" inverse="true" >
+			<key column="MB_HEADER_ID" />
+			<one-to-many class="org.egov.works.models.measurementbook.MBBill"  />
+		</set>
+		<property name="mbRefNo" type="string">
+			<column name="MB_REFNO" length="100" not-null="true"/>
+		</property>
+		
+		<property name="contractorComments" type="string">
+			<column name="CON_COMMENTS" length="400" />
+		</property>
+		
+		<property name="mbAbstract" type="string">
+			<column name="ABSTRACT" length="400" not-null="true"/>
+		</property>
+		
+		<property name="mbDate" type="date">
+			<column name="MB_DATE"/>
+		</property>
+		
+		<property name="fromPageNo" type="integer">
+			<column name="FROM_PAGE_NO" precision="20" not-null="true"/>
+		</property>
+		
+		<property name="toPageNo" type="integer">
+			<column name="TO_PAGE_NO" precision="20" />
+		</property>
+		
+		<property name="documentNumber" type="long">
+			<column name="DOCUMENT_NUMBER" /> 
+		</property>
+		
+		<list name="mbDetails" cascade="all,delete-orphan">
+    		<key column="MBHEADER_ID"  not-null="true" />
+    		<list-index column="MBD_MBH_INDEX"/>
+    		<one-to-many class="org.egov.works.models.measurementbook.MBDetails" />	
+   		</list>	
+   		<many-to-one name="egwStatus" column="STATUS_ID" />
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" not-null="true" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true"/>	
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" not-null="true"/>
+		<!-- added on jan 14th for workflow -->
+		<many-to-one name="state" class="org.egov.infstr.models.State"
+			cascade="all">
+			<column name="STATE_ID" />
+		</many-to-one>
+		
+		<many-to-one name="revisionEstimate" column="REVISION_ESTIMATE" />
+		
+	</class>
+	<query name="getApprovedMBList">
+		<![CDATA[
+     	select distinct mbh from MBHeader mbh where mbh.state.previous.value = 'APPROVED' and trunc(mbh.state.createdDate) <= ? 
+     	and mbh.workOrder.id = ? and mbh.workOrderEstimate.id = ?
+    	]]>
+	</query>
+	<query name="getPartBillList">
+		<![CDATA[
+     	select distinct mbh from MBHeader mbh left join mbh.mbBills as reg left join reg.egBillregister.state as state where 
+     	mbh.state.previous.value = 'APPROVED' 
+     	and mbh.workOrder.id = ? and (reg.egBillregister is not null or state.value != 'CANCELLED') and reg.egBillregister.billtype=?
+    	]]>
+	</query>
+	<query name="getAllBilledMBs">
+		<![CDATA[
+     	select reg.egBillregister.billdate from MBHeader mbh left join mbh.mbBills as reg where mbh.state.previous.value = 'APPROVED' and 
+     	mbh.workOrder.id = ? and reg is not null  order by reg.egBillregister.billdate desc 
+    	]]>
+	</query>
+	<query name="getAllBills">
+		<![CDATA[
+     	select reg.egBillregister.id from MBHeader mbh left join mbh.mbBills as reg where mbh.workOrderEstimate.id = ? and reg is not null order by reg.egBillregister.id desc
+    	]]>
+	</query>
+	<query name="getAllMBsForBillId">
+		<![CDATA[
+     	select mbh from MBHeader mbh left join mbh.mbBills mbBills where mbh.state.previous.value = 'APPROVED' and 
+     	mbBills is not null and mbBills.egBillregister.id = ?
+    	]]>
+	</query>
+	<query name="getMBbyWorkOrderEstID">
+		<![CDATA[
+		select mbh from MBHeader mbh  where mbh.workOrderEstimate.id=? and mbh.state.previous.value!='CANCELLED' and 
+     	mbh.workOrderEstimate.id not in (select mb.workOrderEstimate.id from MBHeader mb left join mb.mbBills mbBills where mbBills.egBillregister.billtype='Final Bill'
+     	and mbBills.egBillregister.billstatus!='CANCELLED') 
+    	]]>
+	</query>
+	
+	<query name="getAllMBHeadersbyBillId">
+		<![CDATA[
+     	Select distinct mbHeader from MBHeader mbHeader left join mbHeader.mbBills mbBills where mbBills.egBillregister.id=? 
+    	]]>
+	</query>
+	
+	<query name="getAllMBNosbyWorkEstimate">
+		<![CDATA[
+     	Select distinct mbHeader.mbRefNo from MBHeader mbHeader where mbHeader.state.previous.value = 'APPROVED'  
+     	and mbHeader.workOrderEstimate.id=? 
+     	
+    	]]>
+	</query>
+	<query name="getAllMBHeadersbyBillIdTillDate">
+		<![CDATA[
+		Select distinct mbHeader from MBHeader mbHeader left join mbHeader.mbBills mbBills where mbHeader.workOrderEstimate.id = ? and mbBills.egBillregister.id<=?
+	
+    	]]>
+	</query>
+</hibernate-mapping>

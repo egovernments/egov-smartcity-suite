@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Aug 31, 2007 11:23:02 AM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.payroll.model.SalaryCodes" table="EGPAY_SALARYCODES" >
+        <id name="id" >
+            <column name="ID" precision="12" scale="0" />
+            <generator class="sequence">
+	   	    <param name="sequence">EISPAYROLL_SALARYCODES_SEQ</param>
+        	</generator>
+        </id>
+        
+        <timestamp name="lastmodifieddate" column="LASTMODIFIEDDATE" 
+        	access="property" unsaved-value="null" />
+        
+        
+        <many-to-one name="salaryCodes" class="org.egov.payroll.model.SalaryCodes" fetch="select">
+            <column name="PCT_BASIS" precision="12" scale="0" />
+        </many-to-one>
+        <many-to-one name="chartofaccounts" class="org.egov.commons.CChartOfAccounts" fetch="select">
+            <column name="GLCODEID" precision="12" scale="0" />
+        </many-to-one>
+        <many-to-one name="interestAccount" class="org.egov.commons.CChartOfAccounts" fetch="select">
+            <column name="INTEREST_GLCODEID" precision="12" scale="0" />
+        </many-to-one>
+        <many-to-one name="categoryMaster" class="org.egov.payroll.model.SalaryCategoryMaster" fetch="select">
+            <column name="CATEGORYID" precision="12" scale="0" not-null="true" />
+        </many-to-one>
+        <property name="head" type="string">
+            <column name="HEAD" length="64" not-null="true" />
+        </property>
+        
+        <many-to-one name="lastmodifiedby" class="org.egov.lib.rjbac.user.UserImpl" fetch="select">
+            <column name="LASTMODIFIEDBY" precision="12" scale="0" />
+        </many-to-one>
+        <many-to-one name="createdby" class="org.egov.lib.rjbac.user.UserImpl" fetch="select">
+            <column name="CREATEDBY" precision="12" scale="0" not-null="true" />
+        </many-to-one>        
+       
+        <property name="createddate" type="date">
+            <column name="CREATEDDATE" length="7" not-null="true" />
+        </property>
+        
+        
+        	
+        <property name="description" type="string">
+            <column name="DESCRIPTION"  />
+        </property>
+        <property name="isTaxable" type="char">
+            <column name="IS_TAXABLE" length="1" not-null="true" />
+        </property>
+        <property name="isAttendanceBased" type="char">
+            <column name="isAttendanceBased" length="1" not-null="true" />
+        </property>
+        <property name="isRecomputed" type="char">
+            <column name="isRecomputed" length="1" not-null="true" />
+        </property>
+        <property name="isRecurring" type="char">
+            <column name="isRecurring" length="1" not-null="true" />
+        </property>
+        <property name="calType" type="string">
+            <column name="CAL_TYPE" length="32" not-null="true" />
+        </property>
+        <property name="orderId" type="java.lang.Long">
+            <column name="ORDER_ID" precision="12" scale="0" />
+        </property>
+        <property name="localLangDesc" type="string">
+            <column name="LOCAL_LANG_DESC"  />
+        </property>
+        <property name="captureRate" type="char">
+            <column name="CAPTURE_RATE" length="1" not-null="true" />
+        </property>
+        <!-- <property name="isValidateByRule" type="char">
+            <column name="IS_VALIDATE_BY_RULE" length="1" />
+        </property>	-->
+        <many-to-one name="validationRuleScript" class="org.egov.infstr.workflow.Action" lazy="false" fetch="select">
+			<column name="ID_WF_ACTION" precision="19" />
+		</many-to-one>
+        <many-to-one name="tdsId" class="org.egov.model.recoveries.Recovery" fetch="select">
+            <column name="TDS_ID" precision="12" scale="0"  />
+        </many-to-one>
+        
+        
+        <set name="salaryCodeses" inverse="true">
+            <key>
+                <column name="PCT_BASIS" precision="12" scale="0" />
+            </key>
+            <one-to-many class="org.egov.payroll.model.SalaryCodes" />
+        </set>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,85 @@
+<bill-collect>
+  <!-- Service code of the billing service. This should match the code in EG_SERVICEDETAILS table -->
+  <serviceCode>PT</serviceCode>
+  <fundCode>03</fundCode>
+  <functionaryCode>348</functionaryCode>
+  <fundSourceCode>01</fundSourceCode>
+  <departmentCode>R</departmentCode>
+
+  <!-- Part payment allowed 1 = YES, 0 = NO 
+	Part payment is NOT ALLOWED -->
+  <partPaymentAllowed>1/0</partPaymentAllowed>
+
+  <!-- Allow manual apportioning of (all the) bill(s) during receipt creation 
+	By default system does apportioning based on order passed in <account> 
+	tag under <bill> tag. 1 = YES, 0 = NO -->
+  <overrideAccountHeadsAllowed>1/0</overrideAccountHeadsAllowed>
+
+  <!-- Modes of payment NOT ALLOWED for this payment 
+	valid values: cash,cheque,dd,card -->
+  <collectionModesNotAllowed>
+    <mode>cheque</mode>
+    <mode>card</mode>
+  </collectionModesNotAllowed>
+
+  <!-- Any additional information/message that the billing system wants
+	to be displayed on screen during receipt creation.
+	IMPORTANT: This is only DISPLAYED on screen and is NOT
+	SAVED to database, so can't be printed on the receipt. -->
+  <displayMessage>message</displayMessage>
+
+  <!-- List of payees whose bills are being paid 
+	One payee may have multiple bills to be paid
+	(e.g. a person owning multiple properties)
+	and there could be multiple such payees -->
+  <payees>
+    <!-- Payee #1 details including all bills of this payee -->
+    <payee>
+      <payeeName>Mrs. XYZ</payeeName>
+      <payeeAddress>221/16 LMN Street, Bangalore</payeeAddress>
+      <!-- List of bills (to be paid) of this payee -->
+      <bills>
+	<!-- Bill #1 details. -->
+	<bill refNo="billrefno" billdate="dd/MM/yyyy">
+	  <boundaryNum>3</boundaryNum>
+	  <boundaryType>ZONE</boundaryType>
+
+	  <!-- description may contain bill information like property details. 
+		This will be displayed on screen during receipt creation. It will 
+		also be saved in database and can be printed on receipt if required. -->
+	  <description>Property: 221/16 LMN Street, Bangalore for period 2008-09</description>
+
+	  <totalAmount>789.9</totalAmount>
+
+	  <!-- Minimum Amount to be paid for the bill -->
+	  <minimumAmount>300</minimumAmount>
+
+	  <!-- Account head wise amount break-up along with order number.
+		Order number is used for automatic apportioning of
+		the bill amount in case of part payments.
+		If accountdescription is null, then is picked from ChartOfAccounts-->
+	  <accounts>
+	    <account glCode="3501001" order="1" accountdescription="">
+		<crAmount>567.9</crAmount>
+		<drAmount>0</drAmount>
+		<functionCode>00</functionCode>
+	    </account>
+            <account glCode="3501002" order="2">
+          	<crAmount>222.0</crAmount>
+          	<drAmount>0.0</drAmount>
+          	<functionCode>00</functionCode>
+     	  </account>
+	  </accounts>
+	</bill>
+
+	<!-- Bill #2 details. -->
+	<bill>
+	</bill>
+      </bills>
+    </payee>
+
+    <!-- Payee #2 details -->
+    <payee>
+    </payee>
+  </payees>
+</bill-collect>

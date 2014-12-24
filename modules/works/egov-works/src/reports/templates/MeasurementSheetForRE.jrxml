@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MeasurementSheetForRE" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<import value="org.egov.infstr.reporting.util.*"/>
+	<import value="org.egov.infstr.utils.*"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/malathi/Works-Proj/NMC-WORKS/modules/works/worksweb/src/reports/templates/"]]></defaultValueExpression>
+	</parameter>
+	<field name="activities" class="java.util.List"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="1" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="39" splitType="Prevent">
+			<subreport>
+				<reportElement x="0" y="1" width="802" height="38"/>
+				<subreportParameter name="revisionEstimateNo">
+					<subreportParameterExpression><![CDATA[$F{activities}.get(0).getAbstractEstimate().getEstimateNumber()]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{activities}, false)]]></dataSourceExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[ReportUtil.getTemplateAsStream("MeasurementsSheetForRE1.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="114" splitType="Stretch">
+			<staticText>
+				<reportElement x="354" y="83" width="100" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[S.D.E.(H.Q.)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="634" y="83" width="100" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Jr.Engineer]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="73" y="83" width="100" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[E.E.(Project)]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

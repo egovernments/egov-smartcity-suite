@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="evolve">
+    <property environment="env"/>
+	<property name="to.rev" value="100000"/>
+	
+    <!-- Replaces tokens in .sql files to create _exec.sql files -->
+    <target name="db.substitute.tokens">
+        <echo message="Substituting db tokens..." /> 
+        <filter token="ERP_DB_SUFFIX" value="${env.ERP_DB_SUFFIX}" />
+        <filter token="ERP_DMS_SUFFIX" value="${env.ERP_DMS_SUFFIX}" />
+        <copy file="${database.dir}/${database.type}/schema/create_egovdms.sql" tofile="${database.dir}/${database.type}/schema/create_egovdms_exec.sql" filtering="true" overwrite="true" />
+        <copy file="${database.dir}/${database.type}/schema/grant_user.sql"     tofile="${database.dir}/${database.type}/schema/grant_user_exec.sql" filtering="true" overwrite="true" />
+        <copy file="${database.dir}/${database.type}/schema/grant_ro.sql"       tofile="${database.dir}/${database.type}/schema/grant_ro_exec.sql" filtering="true" overwrite="true" />
+        <copy file="${database.dir}/${database.type}/schema/grant_user_seq.sql" tofile="${database.dir}/${database.type}/schema/grant_user_seq_exec.sql" filtering="true" overwrite="true" />
+        <copy file="${database.dir}/${database.type}/schema/grant_ro_seq.sql"   tofile="${database.dir}/${database.type}/schema/grant_ro_seq_exec.sql" filtering="true" overwrite="true" />
+	<copy file="${database.dir}/${database.type}/schema/revoke_grant.sql" tofile="${database.dir}/${database.type}/schema/revoke_grant_exec.sql" filtering="true" overwrite="true" />
+    </target>
+    
+    <target name="recreate.schema">
+        <echo message="db.server: ${env.ERP_DB_SERVER}"/>
+        <echo message="db.port: ${env.ERP_DB_PORT}"/>
+        <echo message="db.name: ${env.ERP_DB_NAME}"/>
+        <echo message="JAVA_HOME: ${env.JAVA_HOME}"/>
+        
+        <!-- Replaces tokens in .sql files to create _exec.sql files -->   
+        <antcall target="db.substitute.tokens" />
+
+        <echo message="Dropping and creating schemas egoverp${env.ERP_DB_SUFFIX} and egovdms, this may take several minutes to run..." />   
+        <sql driver="org.postgresql.Driver" url="jdbc:postgresql://${env.ERP_DB_SERVER}:${env.ERP_DB_PORT}/${env.ERP_DB_NAME}" userid="${env.SA_DB_USER}" 
+             autocommit="false" password="${env.SA_DB_PWD}" classpathref="class.path" onerror="continue" print="true">
+          <transaction>DROP SCHEMA egovdms CASCADE;</transaction>
+          <transaction>DROP SCHEMA egoverp CASCADE;</transaction>
+	  <transaction>DROP SCHEMA public CASCADE;</transaction>
+          <!--transaction>DROP SCHEMA egoverp${env.ERP_DB_SUFFIX} CASCADE;</transaction-->
+	  <!--==transaction src="${database.dir}/${database.type}/schema/revoke_grant_exec.sql" /-->
+          <transaction>DROP USER erp_owner${env.ERP_DB_SUFFIX};</transaction>
+          <transaction>DROP USER erp_user${env.ERP_DB_SUFFIX};</transaction>
+          <transaction>DROP USER erp_ro${env.ERP_DB_SUFFIX};</transaction>
+          <transaction>DROP USER erp_dms_owner${env.ERP_DMS_SUFFIX};</transaction>
+	  
+
+          <transaction>CREATE USER erp_owner${env.ERP_DB_SUFFIX} with password 'erp_owner${env.ERP_DB_SUFFIX}';</transaction>
+          <transaction>CREATE USER erp_user${env.ERP_DB_SUFFIX}  with password 'erp_user${env.ERP_DB_SUFFIX}';</transaction>
+          <transaction>CREATE USER erp_ro${env.ERP_DB_SUFFIX}    with password 'erp_ro${env.ERP_DB_SUFFIX}';</transaction>
+          <transaction>CREATE SCHEMA public AUTHORIZATION erp_owner${env.ERP_DB_SUFFIX};</transaction>
+          <transaction>ALTER USER erp_owner${env.ERP_DB_SUFFIX} set search_path = public;</transaction>
+          <transaction>ALTER USER erp_user${env.ERP_DB_SUFFIX}  set search_path = public;</transaction>
+          <transaction>ALTER USER erp_ro${env.ERP_DB_SUFFIX}    set search_path = public;</transaction>
+          
+          <transaction>CREATE USER erp_dms_owner${env.ERP_DMS_SUFFIX} with password 'erp_dms_owner${env.ERP_DMS_SUFFIX}';</transaction>
+          <transaction>CREATE SCHEMA egovdms AUTHORIZATION erp_dms_owner${env.ERP_DMS_SUFFIX};</transaction>
+          <transaction src="${database.dir}/${database.type}/schema/create_egovdms_exec.sql" />
+        </sql>  
+        
+        <echo message="Importing dump..." />   
+        <condition property="import_executable" value="restore_dump.sh">
+            <os family="unix" />
+        </condition>
+        <condition property="import_executable" value="restore_dump.bat">
+            <os family="windows" />
+        </condition>
+        <exec dir="${database.dir}/${database.type}" executable="${database.dir}/${database.type}/${import_executable}" >
+            <arg value="${env.ERP_DB_SERVER}" />
+            <arg value="${env.ERP_DB_PORT}" />
+            <arg value="${env.ERP_DB_NAME}" />
+            <arg value="erp_owner${env.ERP_DB_SUFFIX}" />
+            <arg value="erp_owner${env.ERP_DB_SUFFIX}" />
+        </exec>
+        
+        <echo message="Giving grants and renaming schema egoverp to egoverp${env.ERP_DB_SUFFIX}..." />   
+        <sql driver="org.postgresql.Driver" url="jdbc:postgresql://${env.ERP_DB_SERVER}:${env.ERP_DB_PORT}/${env.ERP_DB_NAME}" userid="${env.SA_DB_USER}" 
+             autocommit="false" password="${env.SA_DB_PWD}" classpathref="class.path" onerror="continue" print="true">
+            <transaction src="${database.dir}/${database.type}/schema/grant_user_exec.sql" />
+            <transaction src="${database.dir}/${database.type}/schema/grant_ro_exec.sql" />
+            <transaction src="${database.dir}/${database.type}/schema/grant_user_seq_exec.sql" />
+            <transaction src="${database.dir}/${database.type}/schema/grant_ro_seq_exec.sql" />
+            <transaction>alter schema public rename to egoverp${env.ERP_DB_SUFFIX};</transaction>
+            <transaction>ALTER USER erp_owner${env.ERP_DB_SUFFIX} set search_path = egoverp${env.ERP_DB_SUFFIX}, public;</transaction>
+            <transaction>ALTER USER erp_user${env.ERP_DB_SUFFIX}  set search_path = egoverp${env.ERP_DB_SUFFIX}, public;</transaction>
+            <transaction>ALTER USER erp_ro${env.ERP_DB_SUFFIX}    set search_path = egoverp${env.ERP_DB_SUFFIX}, public;</transaction>
+        </sql>  
+    </target>
+
+    <target name="evolve.main">
+        <antcall target="evolve.common">
+            <param name="package.path" value="evolve.main"/>
+            <param name="version.table" value="egovintegrated_schema_versions"/>
+            <param name="strict.validation.from.rev" value="1"/>
+        </antcall>
+        <echo message="Giving additional grants after running evolve.main..." />   
+        <sql driver="org.postgresql.Driver" url="jdbc:postgresql://${env.ERP_DB_SERVER}:${env.ERP_DB_PORT}/${env.ERP_DB_NAME}" userid="erp_owner${env.ERP_DB_SUFFIX}" 
+             autocommit="false" password="erp_owner${env.ERP_DB_SUFFIX}" classpathref="class.path" onerror="continue" print="false" showtrailers="false">
+          <transaction src="${database.dir}/${database.type}/schema/grants_after_evolve_exec.sql" />
+        </sql>  
+    </target>
+
+    <target name="evolve.sample.data" unless="no.sample.data">
+        <antcall target="evolve.common">
+            <param name="package.path" value="evolve.sample_data"/>
+            <param name="version.table" value="egovsampledata_schema_versions"/>
+            <param name="strict.validation.from.rev" value="99999"/>
+        </antcall>
+    </target>
+
+    <!-- For testing only. This target should be defined in another buildfile, like deploy.xml. -->
+    <target name="evolve.customer">
+        <antcall target="evolve.common">
+            <param name="package.path" value="evolve.customer"/>
+            <param name="version.table" value="egovcustomer_schema_versions"/>
+            <param name="strict.validation.from.rev" value="1"/>
+        </antcall>
+        <echo message="Giving additional grants after running evolve.customer..." />   
+        <sql driver="org.postgresql.Driver" url="jdbc:postgresql://${env.ERP_DB_SERVER}:${env.ERP_DB_PORT}/${env.ERP_DB_NAME}" userid="erp_owner${env.ERP_DB_SUFFIX}" 
+             autocommit="false" password="erp_owner${env.ERP_DB_SUFFIX}" classpathref="class.path" onerror="continue" print="false" showtrailers="false">
+          <transaction src="${database.dir}/${database.type}/schema/grants_after_evolve_exec.sql" />
+        </sql>  
+    </target>
+
+	<target name="evolve.common" >
+        <filter token="ERP_DB_SERVER" value="${env.ERP_DB_SERVER}" />
+        <filter token="ERP_DB_PORT" value="${env.ERP_DB_PORT}" />
+        <filter token="ERP_DB_NAME" value="${env.ERP_DB_NAME}" />
+        <filter token="ERP_DB_USER" value="erp_owner${env.ERP_DB_SUFFIX}" />
+        <filter token="ERP_DB_PWD" value="erp_owner${env.ERP_DB_SUFFIX}" />
+        <filter token="ERP_DB_SUFFIX" value="${env.ERP_DB_SUFFIX}" />
+        
+        <copy file="${database.dir}/${database.type}/evolver_tokenized.properties" tofile="${database.dir}/${database.type}/evolver.properties" filtering="true" overwrite="true" />
+        <copy file="${database.dir}/${database.type}/schema/grants_after_evolve.sql" tofile="${database.dir}/${database.type}/schema/grants_after_evolve_exec.sql" filtering="true" overwrite="true" />
+        
+		<path id="evolve.cp">
+			<path location="${database.dir}/${database.type}"/>
+			<path refid="class.path"/>
+		</path>
+        <!--uncomment this to debug evolve classpath -->
+        <!--property name="evolvecp" refid="evolve.cp" /><echo message="Evolve Classpath: ${evolvecp}" /-->
+		
+        <java  classpathref="evolve.cp" classname="com.motn.evolve.Evolver" failonerror="true" logerror="true">
+            <arg value="${to.rev}" />
+            <sysproperty key="package" value="${package.path}" />
+            <sysproperty key="version.table" value="${version.table}" />
+            <sysproperty key="strict.validation.from.rev" value="${strict.validation.from.rev}" />
+        </java> 
+	</target>
+
+</project>

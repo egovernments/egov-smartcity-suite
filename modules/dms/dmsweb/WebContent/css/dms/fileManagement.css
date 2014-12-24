@@ -1,0 +1,249 @@
+div.commontopyellowbg {
+	background-image:url(../images/commonnewTopbg.jpg);
+	background-color: #ffad01;
+	background-position: right bottom;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 20px;
+	font-weight: bold;
+	color: #FFF;
+	text-align: center;
+	white-space: normal;
+	background-repeat: no-repeat; 
+	padding-top:12px;
+	padding-bottom:14px;
+	font-style: normal;
+	display: block;
+}
+div.commontopbluebg {
+	background-image:url(../images/commonnewTop2bg.jpg);
+	background-color: #486f9f;
+	background-position: right bottom;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #cccccc;
+	text-align: left;
+	white-space: normal;
+	background-repeat: repeat;
+	padding-top:9px;
+	padding-bottom:9px;
+	font-style: normal;
+	display: block;
+	padding-right: 15px;
+	padding-left: 15px;
+}
+div.commontopdate {
+	width:150px;
+	float:right;
+	text-align: right;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #000;
+}
+div.commontopbreadc {
+	background-color: #FFF;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #999;
+	text-align: left;
+	white-space: normal;
+	padding-top:9px;
+	padding-bottom:9px;
+	font-style: normal;
+	display: block;
+	padding-right: 15px;
+	padding-left: 15px;
+	background-image: url(../images/commonnewTopbc.jpg);
+	background-repeat: repeat;
+	background-position: center top;
+}
+
+.commonbcarrow {
+	font-family:Verdana, Geneva, sans-serif;
+	color:#416a9c;
+	font-weight: bold;
+	font-size:10px;
+	margin-left:4px;
+	margin-right: 4px;}
+	.bold {
+	font-weight: bold;
+	}
+body {
+	margin: 0px;
+}
+
+body,td,th {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #333;
+}
+
+.whitebox {
+	background-color: #FFF;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.graybox {
+	background-color: #f7f7f7;
+	padding: 5px;
+}
+
+.mandatory {
+	font-weight: normal;
+	color: #cc0000;
+}
+
+.cal {
+	z-index: 1000;
+	position: absolute;
+	top: 100px;
+	left: 500px;
+}
+
+.loading {
+	right:0%;
+	left:0%;
+	top: 0%;
+	bottom:0%;
+	margin:0%;
+	clear:both;
+	position: absolute;
+	z-index: 20001;
+	display: none;
+	font-weight: bolder;
+	text-align:center;
+	color: white;
+	width: 100%;
+	height: 100%;
+	padding-left: 0px;	
+	padding-top: 350px;
+	background-color: black;
+	opacity: .70;
+	filter: alpha(opacity = 60);
+	font-size: 13px;
+	font-family: tahoma, sans-serif;
+}
+
+.urlcontainer {
+	position: relative;
+	bottom: 0px;
+	background-color: #999;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 6px;
+	padding-bottom: 6px;
+	text-align: center;
+	color: #333;
+	font-size: 11px;
+}
+
+.mainhead {
+	padding-top: 4px;
+	padding-bottom: 4px;
+	padding-left: 12px;
+	font-weight: bold;
+	font-size: 16px;
+	margin-bottom: 15px;
+	text-align:center; 
+}
+
+.viewdiv {
+	word-wrap: break-word;
+	width: 300px;
+	color: #00438c
+}
+
+.info {
+	display: none;
+	position: absolute;
+	top: 260px;
+	left: 500px;
+	width: 300px;
+	height: 160px;
+	overflow: hidden;
+	z-index: 1000;
+	background-color: #FCEF6F;
+	border: 1px solid black;
+}
+
+.infodiv {
+	margin-top: 5px;
+	overflow: auto;
+	width: 280px;
+	height: 124px;
+	padding-right: 10px;
+	float: right;
+	margin-left: 10px;
+	font-size: 11px;
+	word-wrap: break-word;
+	margin-bottom: 10px;
+	text-align: left;
+}
+
+.infocls {
+	float: right;
+	margin-right: 2px;
+	margin-top: 2px
+}
+
+#errorconsole {
+position:absolute;
+background-color:white;
+text-align:left;
+width:500px;
+z-index:20010;
+border:1px outset gray;
+right:10%;
+left:30%;
+top:30%;
+}
+
+#searchrslt {
+	width: 100%;
+	display: none;
+	border: 1px solid skyblue;
+}
+
+.srchrsltdiv {
+	height: 300;
+	overflow: auto;
+	width: 100%;
+}
+
+autoComContainer {
+	width: auto;	
+	z-index: 998;
+}
+
+.yui-skin-sam .yui-dt table {
+	font-family: verdana;
+	font-size: 10px;
+	width:100%;
+}
+
+.yui-skin-sam .yui-dt-liner {
+	white-space: nowrap;
+}
+
+
+.grpsrch{
+	width: 1243px;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#paginated {text-align: center;}
+#paginated table {margin-left:auto; margin-right:auto;}
+#paginated, #paginated .yui-dt-loading {text-align: center; background-color: transparent;}
+
+.fileHistoryCtnr {
+	display:none;
+	width:100%;
+	overflow:auto;
+}
+
+fieldset{
+margin:5px;
+}
+
+

@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN"
+          "http://struts.apache.org/dtds/struts-config_1_2.dtd">
+<!--
+  Default configuration file for examples application.
+  Each module also has its own struts-config under: /WEB-INF/$MODULE/
+  @version $Revision: 1.9 $ $Date: 2004/09/07 02:50:06 $
+-->
+<struts-config>
+  <data-sources />
+  
+
+  <form-beans >	
+	<form-bean name="roleForm" type="org.egov.infstr.client.administration.rjbac.role.RoleForm" />
+		
+		<form-bean name="deptForm" type="org.egov.infstr.client.administration.rjbac.dept.DepartmentForm" />
+	 	<form-bean name="setUpDeleteEditDeptForm" type="org.egov.infstr.client.administration.rjbac.dept.DepartmentForm" />
+	 	<form-bean name="hierarchyForm" type="org.egov.infstr.client.adminBoundry.HierarchyForm" />
+		<form-bean name="cityForm" type="org.egov.infstr.client.adminBoundry.CityForm" />
+	 	<form-bean name="userForm" type="org.egov.infstr.client.administration.rjbac.user.UserForm" />
+ 		<form-bean name="setUpDeleteEditUserForm" type="org.egov.infstr.client.administration.rjbac.user.DeleteUserForm" />
+ 		<form-bean name="boundryTypeForm" type="org.egov.infstr.client.adminBoundry.BoundryTypeForm" />
+ 		<form-bean name="boundryForm" type="org.egov.infstr.client.adminBoundry.BoundryForm" />
+ 		<form-bean name="moduleForm" type="org.egov.infstr.client.administration.rjbac.module.ModuleForm"/>
+		<form-bean name="actionnForm" type="org.egov.infstr.client.administration.rjbac.action.ActionnForm"/>
+		<form-bean name="roleActionForm" type="org.egov.infstr.client.administration.rjbac.action.RoleActionForm"/> 
+		<form-bean name="CancelChequeForm" type="org.egov.infstr.cancellation.CancelChequeForm"/>
+		<form-bean name="LocationForm" type="org.egov.lib.security.terminal.client.LocationForm"/>
+		<form-bean name="UserCounterMapForm" type="org.egov.lib.security.terminal.client.UserCounterMapForm"/>
+		<form-bean name="UserValidateForm" type="org.egov.lib.security.terminal.client.UserValidateForm"/> 
+		<form-bean name="userCounterReportsForm" type="org.egov.lib.security.terminal.client.UserCounterReportsForm" />
+		<form-bean name="chgPasswordForm" type="org.egov.infstr.client.administration.rjbac.user.ChangePasswordForm" />
+		<form-bean name="errorForm" type="org.apache.struts.action.DynaActionForm"/>
+		<form-bean name="masterDataForm" type="org.egov.infstr.config.client.MasterDataForm"/>
+ </form-beans> 
+  
+  <global-exceptions>
+	<exception
+	key="error.generic"
+	type="org.egov.EGOVException"
+	path="/error/error.jsp"/>
+  </global-exceptions>
+  
+  <global-forwards>
+  	<forward name="login" path="/login.jsp" />
+  	<forward name="error" path="/error/error.jsp" /> 
+  	<forward name="failure" path="/error/error.jsp" />
+  	<forward name="success" path = "/administration/rjbac/acknowledgement.jsp"/> 	
+  </global-forwards>
+       
+  <action-mappings>
+  	
+		<!-- Action mapping for MoveBoundary, Used to Move a Boundary to another Parent Boundary -->
+		 <action path="/AdminBoundary/moveBoundary"
+  				    type="org.springframework.web.struts.DelegatingActionProxy" 
+  				    scope="request"
+  				    input="/AdminBoundary/moveBoundary.jsp">  				
+  				 <forward name = "success" path = "/AdminBoundary/moveBoundary.jsp"/> 	 
+				 <forward name = "AJAX" path = "/AdminBoundary/plainAjaxResponse.jsp"/> 	   				
+		</action>
+
+  	   <!-- common action element rjbac is used for user,role and department related features -->
+  	
+		<action path="/rjbac" 
+				type="org.egov.infstr.client.administration.rjbac.role.RjbacAction" 	   	   
+				scope="request">
+				<forward name = "success" path = "/administration/rjbac/role/crtRole.jsp"/> 	   
+				<forward name = "todeleteUser" path = "/administration/rjbac/user/deleteUser.jsp"/>
+				<forward name = "todeleteDept" path = "/administration/rjbac/department/deleteDepartment.jsp"/>
+				<forward name = "todeleteRole" path = "/administration/rjbac/role/deleteRole.jsp"/>
+		</action>
+		
+	  		<action path="/error/errorPage"   
+				scope="request" 
+				type="org.egov.infstr.utils.ErrorMailAction"
+				parameter="submitType"
+				name="errorForm">  
+				<forward name="success" path="/error/error.jsp"/> 
+				<forward name="failure" path="/error.jsp"/>    
+	  		</action> 
+		
+		
+		<action path="/admin/chgPassword"
+			type="org.springframework.web.struts.DelegatingActionProxy"  
+			name="chgPasswordForm" 
+			scope="request"
+			validate="true"
+			input="/administration/rjbac/user/changePassword.jsp">
+		  <forward name = "success" path = "/administration/rjbac/acknowledgement.jsp"/>
+		  <forward name = "incorrect" path = "/administration/rjbac/acknowledgement.jsp"/>
+		</action> 
+		
+		<action path="/admin/directChgPassword" scope="request" parameter="/administration/rjbac/user/changePassword.jsp"
+			type="org.apache.struts.actions.ForwardAction">
+		</action> 
+
+
+  	<!-- Role related action elements are defined  -->
+	  	
+	  	<action path="/Role" 
+		   	    type="org.egov.infstr.client.administration.rjbac.role.UserRoleAction" 
+		   	    name="roleForm" 
+		   	    scope="session"
+		   	    validate="false"	   	   
+		   	   input="/administration/rjbac/role/createRole.jsp">
+		       <forward name = "success" path = "/administration/rjbac/acknowledgement.jsp"/> 	   
+		       <forward name = "toUpdateRole" path = "/administration/rjbac/role/createRole.jsp"/>
+		       <forward name = "toViewRole" path = "/administration/rjbac/role/viewRole.jsp"/> 
+		       <forward name = "toconfDelete" path = "/administration/rjbac/role/confirmDeleteRole.jsp"/>
+	</action>
+  		   <action path="/SetupRole" 
+  				 type="org.egov.infstr.client.administration.rjbac.role.SetupRoleAction" 	   	   
+  				 name="roleForm" 
+  				 scope="session"
+  				 input="/administration/rjbac/role/createRole.jsp">
+  				 
+  				<forward name = "viewRole" path = "/administration/rjbac/role/viewRoleCreation.jsp"/> 
+  				<forward name = "updateRole" path = "/administration/rjbac/role/updateRole.jsp"/> 
+  			       <forward name = "success" path = "/administration/rjbac/role/setupRole.jsp"/> 	   
+  			      </action>
+  	
+		 
+  		 <action path="/CreateRole"
+  				    type="org.egov.infstr.client.administration.rjbac.role.RoleAction" 
+  				    name="roleForm" 
+  				    scope="session"
+  				    validate="true"
+  				    input="/administration/rjbac/role/createRole.jsp">
+  				
+  				 <forward name = "success" path = "/administration/rjbac/role/roleAcknowledgement.jsp"/> 	   
+  				
+		</action>
+		
+		
+	<!-- Department related action elements are defined  -->
+		
+	<action path="/Department"   
+				type="org.egov.infstr.client.administration.rjbac.dept.DepartmentAction" 
+				name="deptForm" 
+				scope="session"
+				validate="true"
+				input="/administration/rjbac/department/createDepartment.jsp">
+			<forward name = "success" path = "/administration/rjbac/department/acknowledgementDept.jsp"/> 	   
+		</action>
+	   <action path="/SetupDepartment" 
+			 type="org.egov.infstr.client.administration.rjbac.dept.SetupDepartmentAction" 	   	   
+			 name="deptForm" 
+			 scope="session"
+			 input="/administration/rjbac/department/createDepartment.jsp">
+
+			<forward name = "viewDept" path = "/administration/rjbac/department/viewDept.jsp"/> 
+			<forward name = "updateDept" path = "/administration/rjbac/department/updateDept.jsp"/> 
+		       <forward name = "success" path = "/administration/rjbac/department/setupDepartment.jsp"/> 	   
+		    	</action>
+		<action path="/UpdateDepartment"   
+				type="org.egov.infstr.client.administration.rjbac.dept.UpdateDepartmentAction" 
+				name="setUpDeleteEditDeptForm" 
+				scope="request"
+
+				validate="false"
+				input="/administration/rjbac/department/createDepartment.jsp">
+			<forward name = "success" path = "/administration/rjbac/acknowledgement.jsp"/> 	   
+				   
+		</action>
+
+
+		<action path="/DeleteUpdateDepartment"
+				type="org.egov.infstr.client.administration.rjbac.dept.DeleteUpdateDeptAction" 
+				name="setUpDeleteEditDeptForm" 
+				scope="request"
+				validate="false"
+				input="/administration/rjbac/department/viewDepartment.jsp">
+			 <forward name = "success" path = "/administration/rjbac/acknowledgement.jsp"/> 	
+			 <forward name = "toViewDept" path = "/administration/rjbac/department/viewDepartment.jsp"/> 
+			 <forward name = "toUpdateDept" path = "/administration/rjbac/department/updateDepartment.jsp"/> 
+			 <forward name = "toconfDelete" path = "/administration/rjbac/department/confirmDelete.jsp"/>
+				  
+  		</action>
+	<!-- City related action elements are defined  -->
+	
+	   <action path="/SetupCity" 
+			   type="org.egov.infstr.client.adminBoundry.SetupCityAction" 	   	   
+			   scope="request">
+		       <forward name = "success" path = "/BndryAdmin/citySetup.jsp"/> 	   
+		       </action>
+			
+			
+			
+			 <action path="/CreateCitySetup"
+			    type="org.egov.infstr.client.adminBoundry.CityAction" 
+			    name="cityForm" 
+			    scope="session"
+			    validate="true"
+			    input="/BndryAdmin/citySetup.jsp">
+	
+			 <forward name = "success" path = "/BndryAdmin/cityAcknowledgement.jsp"/> 	   
+			 
+		</action> 
+	
+	
+	<!-- User related action elements are defined  -->
+		
+		<action path="/SetupUser" 
+			   type="org.springframework.web.struts.DelegatingActionProxy"  	   	   
+			   scope="request">
+		       <forward name = "success" path = "/administration/rjbac/user/createUser.jsp"/> 	   
+		      </action>
+			
+			
+			<action path="/SetupUpdateUser" 
+			   type="org.egov.infstr.client.administration.rjbac.user.SetupUpdateUserAction" 
+			     name="userForm" 
+			     scope="session"
+			     validate="true"
+			 input="/administration/rjbac/user/updateUser.jsp">
+		       <forward name = "success" path = "/administration/rjbac/user/updateUser.jsp"/> 	   
+		       </action>
+			
+			<action path="/SubmitUser"
+				    type="org.egov.infstr.client.administration.rjbac.user.UserAction" 
+				    name="userForm" 
+				    scope="session"
+				    validate="true"
+				   input="/administration/rjbac/user/createUser.jsp">
+				 <forward name = "success" path = "/administration/rjbac/acknowledgement.jsp"/> 	   
+				</action> 
+			
+		   		   	 <action path="/SearchUser"
+						    type="org.egov.infstr.client.administration.rjbac.user.SetupUpdateUserAction" 
+						    name="userForm" 
+						    scope="request"
+						    validate="true"
+						     input="/administration/rjbac/user/searchUser.jsp">
+						 <forward name = "success" path = "/administration/rjbac/user/searchUser.jsp" redirect="true"/> 	   
+							
+					</action> 
+
+		
+	    
+		<action path="/DeleteUpdateUserView"
+			   	type="org.egov.infstr.client.administration.rjbac.user.DeleteUpdateUserAction" 
+			   	name="setUpDeleteEditUserForm" 
+			   	scope="session"
+			   	validate="false"
+				input="/administration/rjbac/user/viewUser.jsp">
+			
+			<forward name = "toViewUser" path = "/administration/rjbac/user/viewUser.jsp"/>
+			
+		</action> 
+		
+		<action path="/DeleteUpdateUser"
+				type="org.egov.infstr.client.administration.rjbac.user.DeleteUpdateUserAction" 
+				name="setUpDeleteEditUserForm"
+				scope="session"
+				validate="false"
+				input="/administration/rjbac/user/updateUser.jsp">
+			<forward name = "success" path = "/administration/rjbac/acknowledgement.jsp"/> 	   
+			<forward name = "toUpdateUser" path = "/administration/rjbac/user/updateUser.jsp"/> 
+			<forward name = "toconfDelete" path = "/administration/rjbac/user/confirmDeleteUser.jsp"/>
+		</action> 
+	
+		<action path="/UpdateUser"
+				   	type="org.egov.infstr.client.administration.rjbac.user.UpdateUserAction" 
+				   	name="setUpDeleteEditUserForm" 
+				   	scope="session"
+				   	validate="false"
+					input="/administration/rjbac/user/updateUser.jsp">
+				<forward name = "success" path = "/administration/rjbac/acknowledgement.jsp"/>
+				<forward name = "newJuris" path = "/administration/rjbac/user/updateJurisdiction.jsp"/> 
+		</action> 
+		<action path="/BeforeJurisdiction" 
+		   type="org.egov.infstr.client.administration.rjbac.user.BeforeUserJurisdictionAction" 
+		   name="userForm" 
+		   scope="request">
+	       <forward name = "success" path = "/administration/rjbac/user/userJurisdiction.jsp"/> 	   
+	       </action>
+
+		<action path="/CreateJurisdiction" 
+		   type="org.egov.infstr.client.administration.rjbac.user.UserJurisdictionAction" 
+		   name="userForm" 
+		   parameter="submitType"
+		   scope="request">
+	       <forward name = "success" path = "/administration/rjbac/acknowledgement.jsp"/> 
+	       <forward name = "view" path = "/administration/rjbac/user/viewUserJurisdiction.jsp"/> 
+	       </action>
+		<action path="/SetupHierarchyType" 
+			 type="org.egov.infstr.client.adminBoundry.SetupHierarchyTypeAction" 	   	   
+			 name="hierarchyForm" 
+			  scope="session"
+			validate="true">
+			
+		       <forward name = "success" path = "/BndryAdmin/hierarchyType.jsp"/> 	   
+		         <forward name = "viewHierarchy" path = "/BndryAdmin/viewHierarchy.jsp"/> 
+		          <forward name = "updateHierarchy" path = "/BndryAdmin/updateHierarchy.jsp"/> 
+			</action>
+			
+			
+			 <action path="/CreateHierarchy"
+				    type="org.egov.infstr.client.adminBoundry.HierarchyAction" 
+				    name="hierarchyForm" 
+				    scope="session"
+				    validate="true"
+				     input="/BndryAdmin/createHierarchy.jsp">
+				
+				 <forward name = "success" path = "/BndryAdmin/acknowledgementHierarchy.jsp"/> 	   
+				</action> 
+		
+		<action path="/BoundryType" 
+		   type="org.egov.infstr.client.adminBoundry.BoundryTypeAction" 
+		   name="boundryTypeForm" 
+		   scope="request"
+		   validate="true"
+		   input="/BndryAdmin/addUpdateDeleteBoundaryType.jsp">
+		 <forward name = "success" path = "/BndryAdmin/ackBndryType.jsp" redirect="true"/>
+		</action>
+		
+	
+
+  		<action path="/SetupBoundry" 
+	  	type="org.egov.infstr.client.adminBoundry.SetupBoundryAction" 
+		   name="boundryForm" 
+		   scope="request"
+		   validate="true"
+		   input="/BndryAdmin/addUpdateDeleteBoundary.jsp">
+		 <forward name = "update" path = "/BndryAdmin/updateDeleteBoundry.jsp"/> 	   
+		 
+		 </action>
+		 
+		 <action path="/SearchBoundry" 
+			type="org.egov.infstr.client.adminBoundry.BeforeBoundaryAction" 
+			   name="boundryForm" 
+			   scope="request"
+			   input="/BndryAdmin/boundarySearch.jsp">
+			 <forward name = "success" path = "/BndryAdmin/boundary.jsp"/> 	   
+			 </action>
+		 
+		<action path="/BeforeCreateBndryType" 
+		   type="org.egov.infstr.client.adminBoundry.BeforeBoundryTypeAction" 
+		   name="boundryTypeForm" 
+		   scope="request">
+		 <forward name = "success" path = "/BndryAdmin/createBoundaryType.jsp"/> 	   
+		</action>
+		
+		<action path="/Boundry" 
+		   type="org.egov.infstr.client.adminBoundry.BoundryAction" 
+		   name="boundryForm" 
+		   scope="request"
+		   validate="true"
+		   input="/BndryAdmin/addUpdateDeleteBoundary.jsp">
+		 <forward name = "success" path = "/administration/rjbac/acknowledgement.jsp"/> 	   
+		</action>
+		<action path="/admin/BeforeCreateModule"
+				 type="org.egov.infstr.client.administration.rjbac.module.BeforeCreateModuleAction"	
+				 name="moduleForm"
+				 scope="request"
+				 validate="true">
+				 <forward name ="success" path = "/administration/rjbac/module/CreateModule.jsp"/>
+		  </action>
+		  <action path="/admin/CreateModule"
+			 type="org.springframework.web.struts.DelegatingActionProxy"	
+			 name="moduleForm"
+			 scope="request"
+			 validate="true">
+			 <forward name ="success" path = "/admin/BeforeViewModule.do"/>
+		 </action>
+		  <action path="/admin/BeforeViewModule"
+					 type="org.egov.infstr.client.administration.rjbac.module.BeforeViewModuleAction"	
+					 name="moduleForm"
+					 scope="request"
+					 validate="true">
+					 <forward name ="success" path = "/administration/rjbac/module/ViewModule.jsp"/>
+		 </action>
+		  <action path="/admin/BeforeUpdateModule"
+				 type="org.springframework.web.struts.DelegatingActionProxy"	
+				 name="moduleForm"
+				 scope="request"
+				 validate="true"
+				 input="/administration/rjbac/module/ViewModule.jsp">
+				 <forward name ="success" path = "/administration/rjbac/module/UpdateModule.jsp"/>
+		 </action>
+		  <action path="/admin/UpdateModule"
+			 type="org.springframework.web.struts.DelegatingActionProxy"	
+			 name="moduleForm"
+			 scope="request"
+			 validate="true"
+			 input="/administration/rjbac/module/UpdateModule.jsp">
+			 <forward name ="success" path = "/admin/BeforeViewModule.do"/>
+		 </action>
+		  <action path="/admin/BeforeCreateOrUpdateAction"
+			 type="org.springframework.web.struts.DelegatingActionProxy"	
+			 name="actionnForm"
+			 scope="request"
+			 validate="true"
+			 input="/administration/rjbac/module/ViewModule.jsp">
+			 <forward name ="success" path = "/administration/rjbac/action/CreateOrUpdateAction.jsp"/>
+		</action>
+		  <action path="/admin/CreateOrUpdateAction"
+				 type="org.springframework.web.struts.DelegatingActionProxy"	
+				 name="actionnForm"
+				 scope="request"
+				 validate="true"
+				 input="/administration/rjbac/action/CreateOrUpdateAction.jsp">
+				 <forward name ="success" path = "/admin/BeforeViewModule.do"/>
+		 </action>
+		  <action path="/admin/BeforeViewRoleModule"
+				 type="org.springframework.web.struts.DelegatingActionProxy"	
+				 name="roleActionForm"
+				 scope="request"
+				 validate="true">
+				 <forward name ="success" path = "/administration/rjbac/action/ViewModuleRole.jsp"/>
+		 </action>
+		  <action path="/admin/BeforeCreateOrUpdateRoleAction"
+				 type="org.springframework.web.struts.DelegatingActionProxy"	
+				 name="roleActionForm"
+				 scope="request"
+				 validate="true"
+				 input="/administration/rjbac/action/ViewModuleRole.jsp">
+				 <forward name ="success" path = "/administration/rjbac/action/CreateOrUpdateRoleAction.jsp"/>
+		  </action>
+		  <action path="/admin/CreateOrUpdateRoleAction"
+				 type="org.springframework.web.struts.DelegatingActionProxy"	
+				 name="roleActionForm"
+				 scope="request"
+				 validate="true"
+				 input="/administration/rjbac/action/CreateOrUpdateRoleAction.jsp">
+				 <forward name ="success" path = "/admin/BeforeViewRoleModule.do"/>
+		</action>
+	  	
+	  	<!-- cancellation of the cheque -->
+		  	<action path="/cancellation/ChequeCancel" 
+			   type="org.egov.infstr.cancellation.CancelChequeAction" 
+			   name="CancelChequeForm" 
+			   scope="request">
+			   <forward name = "success" path = "/cancellation/ChequeCancelAck.jsp"/> 	   
+			   <forward name = "error" path = "/cancellation/CancelVouchererrAck.jsp"/> 	   
+			   <forward name = "canceled" path = "/cancellation/CanceledVoucherAck.jsp"/> 	   
+			   <forward name = "bouncederror" path = "/cancellation/BouncederrorAck.jsp"/>
+			   <forward name = "canceledCheque" path = "/cancellation/CancelledChequeAck.jsp"/>
+			  </action>
+					
+					
+					
+					
+		
+	       <action path="/terminal/location" 
+			scope="request" 
+			type="org.egov.lib.security.terminal.client.LocationAction" 
+			name="LocationForm"
+			parameter="submitType"
+			validate="false">
+		  <forward name="loadcreatedata" path="/terminal/Location.jsp"/>
+		  <forward name="loadmodifydata" path="/terminal/Location.jsp" />
+		  <forward name="loadviewdata" path="/terminal/Location.jsp" />
+		  <forward name="saveorupdate" path="/terminal/loadlocationcentral.do" redirect="true"/>
+		  <forward name="delete" path="/terminal/loadlocationcentral.do" redirect="true"/>
+		 </action> 
+
+		<action path="/terminal/loadlocationcentral" scope="request" parameter="/terminal/LocationCentral.jsp"
+			type="org.apache.struts.actions.ForwardAction">
+		</action> 
+
+		<action path="/terminal/usercountermap" 
+			scope="request" 
+			type="org.egov.lib.security.terminal.client.UserCounterMapAction" 
+			name="UserCounterMapForm"
+			parameter="submitType"
+			validate="false">
+		  <forward name="loadcreatedata" path="/terminal/userCounterMapType.jsp" redirect="true"/>
+		  <forward name="currentDate" path="/terminal/UserCounterMap.jsp"/>
+		  <forward name="showAll" path="/terminal/UserCounterMap.jsp"/>
+		</action> 
+		
+		<action path="/reports/UserCountersReports" 
+			scope="request" 
+			type="org.egov.lib.security.terminal.client.UserCounterReportsAction" 
+			name="userCounterReportsForm"
+			parameter="submitType"
+			validate="false">
+		  <forward name="success" path="/reports/result.jsp" />
+		</action> 
+
+		<action path="/terminal/user" 
+			scope="request" 
+			type="org.egov.lib.security.terminal.client.UserValidateAction" 
+			name="UserValidateForm"
+			parameter="submitType"
+			validate="false">
+		  <forward name="success" path="/terminal/Login.jsp"/>
+		  </action>    
+
+		  <action path="/config/MasterSetUpAction" 
+				type="org.springframework.web.struts.DelegatingActionProxy" 
+				name="masterDataForm" 
+				parameter="submitType"
+				scope="request">
+				<forward name = "listOfModules" path ="/config/searchModuleForMasterSetup.jsp" />
+				<forward name = "listOfKeysView" path ="/config/viewMasterSetUp.jsp" />
+				<forward name = "listOfKeysCreate" path ="/config/createMasterSetUp.jsp" />
+				<forward name = "afterSave" path = "/config/MasterSetUpAction.do?mode=create&amp;submitType=searchModuleForMastersetup" redirect="true"/>
+		  </action>	
+		
+  </action-mappings>
+  	
+  <message-resources parameter="InfraApplicationResources" />
+  
+  <plug-in className="org.apache.struts.validator.ValidatorPlugIn">
+        <set-property property="pathnames" value="/WEB-INF/validator-rules.xml,/WEB-INF/validation.xml"/>
+        <!-- <set-property property="stopOnFirstError" value="false"/> -->
+  </plug-in>
+  
+  <plug-in className="org.springframework.web.struts.ContextLoaderPlugIn">
+        <set-property property="contextConfigLocation" value="/WEB-INF/infra-action-beans.xml"/>
+ </plug-in>
+    
+</struts-config>

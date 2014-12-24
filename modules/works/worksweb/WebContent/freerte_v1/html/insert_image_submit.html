@@ -1,0 +1,39 @@
+<script>
+function rteInsertHTML() {
+	html = "<input type=\"image\" name=\"" + document.getElementById("name").value + "\" src=\"" + document.getElementById("url").value + "\">";
+	window.opener.rteInsertHTML(html);
+	window.close();
+}
+</script>
+<style>
+body, td {
+background-color:#ECE9D8;
+font-family:arial;
+font-size:11px;
+}
+input {
+font-family:arial;
+font-size:11px;
+}
+select {
+font-family:arial;
+font-size:11px;
+}
+</style>
+<fieldset>
+<legend><b>Insert Image Submit Button</b></legend>
+<table width="100%" cellspacing="2" cellpadding="0" border="0">
+<tr>
+<td align="right">Name: </td>
+<td><input type="text" id="name" style="width:150px;"></td>
+</tr>
+<tr>
+<td align="right">Image URL: </td>
+<td><input type="text" id="url" style="width:150px;"></td>
+</tr>
+<tr>
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<div align="center"><input type="button" value="Insert Image Submit Button" onClick="rteInsertHTML();"></div>
+</fieldset>

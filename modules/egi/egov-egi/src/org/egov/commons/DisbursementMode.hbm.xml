@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.egov.commons.DisbursementMode" table="EG_DISBURSEMENT_MODE" >
+        <id name="id" >
+            <column name="ID" precision="22" scale="0" />
+            <generator class="sequence" >
+            <param name="sequence">SEQ_EG_DISBURSEMENT_MODE</param>
+            </generator>
+        </id>
+        <property name="type" type="java.lang.String">
+            <column name="TYPE" length="64" unique="true" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated on 8th dec 09 -->
+<hibernate-mapping>		
+		<class name="org.egov.works.models.workorder.WorkCompletionDetail"
+		table="EGW_WORK_COMPLETION_DETAILS">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_WORK_COMPL_DETAILS_SEQ</param>
+			</generator>
+		</id>
+		<many-to-one name="workOrder" column="WORK_ORDER_ID" not-null="true" fetch="select"/>
+		<property name="workCompletionDate" column="WORK_COMPLETION_DATE" />
+		<property name="contractPeriod"  column="CONTRACT_PERIOD" />		
+		<property name="defectLiabilityPeriod" type="double" precision="2" scale="10" column="DEFECT_LIABILITY_PERIOD"/>
+		<property name="reasonForExtension" column="REASON_FOR_EXTENDING" />	
+		<many-to-one name="egwStatus" column="STATUS_ID" />
+		<many-to-one name="state" class="org.egov.infstr.models.State"
+			cascade="all">
+			<column name="STATE_ID" />
+		</many-to-one>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" not-null="true" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true"/>	
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" not-null="true"/>
+	
+	</class>
+	
+</hibernate-mapping>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<pageMap name="budgetIn" > 
+	<gridMap name="mainData">
+		<columnMap name="chartOfAccounts_id" serverFieldName="1"/>		
+		<columnMap name="budget_Amount" serverFieldName="2"/>
+		<columnMap name="budget_revisedAmount" serverFieldName="3"/>
+		<columnMap name="budget_id" serverFieldName="4"/>
+	</gridMap>
+</pageMap>

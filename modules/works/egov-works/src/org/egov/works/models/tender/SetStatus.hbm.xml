@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 19, 2007 2:57:28 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+	<class name="org.egov.works.models.tender.SetStatus" table="EGW_WORKS_STATUS">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">			
+				<param name="sequence">EGW_WORKS_STATUS_SEQ</param>
+			</generator>
+		</id>
+		<property name="statusDate" type="date">
+			<column name="STATUS_DATE" />
+		</property>
+		<property name="objectType" type="string">
+			<column name="OBJECT_TYPE" not-null="true" />
+		</property>
+		<property name="objectId" >
+			<column name="OBJECT_ID" not-null="true" />
+		</property>
+		<many-to-one name="egwStatus"
+			class="org.egov.commons.EgwStatus">
+			<column name="STATUS_ID" />
+		</many-to-one>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" not-null="true" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />	
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+	</class>
+	<query name="getStatusByObjectId">
+		<![CDATA[
+     	from SetStatus st where st.objectId=? and st.objectType=? order by id
+    ]]>	
+    </query>
+    
+    <query name="getStatusDateByObjectId_Type_Desc">
+		<![CDATA[
+     	from SetStatus st where st.objectId=? and st.objectType=? and st.egwStatus.description=? order by id
+    ]]>	
+    </query>
+    <query name="getmaxStatusByObjectId">
+		<![CDATA[
+     from SetStatus st where st.objectId=? and st.id=(select max(id) from SetStatus where objectId=?) and st.objectType=?
+    ]]>	
+    </query>
+    <query name="getmaxStatusByObjectId_Type"> 
+		<![CDATA[
+     from SetStatus st where st.objectId=? and st.id=(select max(id) from SetStatus where objectId=? and objectType=?) and st.objectType=?
+    ]]>	
+    </query>
+</hibernate-mapping> 

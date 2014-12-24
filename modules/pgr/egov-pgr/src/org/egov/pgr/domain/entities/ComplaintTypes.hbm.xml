@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.egov.pgr.domain.entities.ComplaintTypes" table="EGGR_COMPLAINTTYPES" >
+        <id name="id" type="java.lang.Long">
+            <column name="COMPLAINTTYPEID"/>
+            <generator class="sequence">
+            	<param name="sequence">SEQ_EGGR_COMPLAINTTYPES</param>
+            </generator>
+        </id>
+        <many-to-one name="department" class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
+            <column name="DEPTID" />
+        </many-to-one>
+        <many-to-one name="complaintGroup" class="org.egov.pgr.domain.entities.ComplaintGroup" fetch="select">
+            <column name="COMPLAINTGROUP_ID" not-null="true" />
+        </many-to-one>
+        <many-to-one name="category" class="org.egov.pgr.domain.entities.Category" fetch="select">
+            <column name="CATEGORY" />
+        </many-to-one>
+        <property name="name" type="java.lang.String">
+            <column name="COMPLAINTTYPENAME" length="128" />
+        </property>
+        <property name="nameLocal" type="java.lang.String">
+            <column name="COMPLAINTTYPENAME_LOCAL" length="128" />
+        </property>
+        <property name="code" type="java.lang.String">
+            <column name="COMPLAINT_TYPE_CODE" length="16" unique="true" />
+        </property>
+        <property name="noofdays" type="java.lang.Integer">
+            <column name="noofdays" />
+        </property>
+        <property name="isActive" type="java.lang.String">
+            <column name="IS_ACTIVE" length="1" />
+        </property>
+    </class>
+    <query name="getAllCompTypeByGroup">
+		<![CDATA[
+         from ComplaintTypes where complaintGroup.id=?
+    ]]>
+	</query>
+</hibernate-mapping>

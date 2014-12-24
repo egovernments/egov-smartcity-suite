@@ -1,0 +1,468 @@
+<project name="common-build">
+	<property file="${user.name}.properties" />
+	<property file="build.properties" />
+	<property name="db" value="${basedir}/database" />
+	<property name="download.server" value="192.168.1.3" />
+	<property name="egov.version" value="1.0" />
+	<property name="to.rev" value="999999" />
+	<property name="continuum.project.nextBuild.number" value="1" />
+	<property name="internal.ip" value="192:168:1:6"/>
+	<property name="external.ip" value="125:99:252:89"/>
+	<property name="cache.ip" value="125.99.252.89"/>
+	<property name="port.number" value="56789"/>
+	<property name="cache.mode" value="LOCAL"/>
+	<property name="allclasses.dir" value="${basedir}/build/classes"/>
+	<property name="earlibdir" value="${basedir}/earlibjars/"/>
+	<property name="build.classes" value="${build.dir}/classes" />
+	<property name="reports.dir" value="${build.dir}/reports" />
+	<property name="build.instrumented" value="${build.dir}/instrumented"/>
+	<property name="tools.dir" value="${basedir}/tools"/>
+	<property name="tools.cobertura" value="${tools.dir}/cobertura"/>
+	<property name="tools.pmd" value="${tools.dir}/pmd"/>
+	<property name="tools.qalab" value="${tools.dir}/qalab"/>
+	<property name="tools.findbugs" value="${tools.dir}/findbugs"/>
+	<property name="cobertura.lib" value="${lib}/cobertura"/>
+	<property name="pmd.lib" value="${lib}/pmd"/>
+	<property name="qalab.lib" value="${lib}/qalab"/>
+	<property name="test.reports" value="${reports.dir}/unit" />
+	<property name="coverage.reports" value="${reports.dir}/cobertura"/>
+	<property name="pmd.reports" value="${reports.dir}/pmd"/>
+	<property name="findbugs.reports" value="${reports.dir}/findbugs"/>
+	<property name="charts" value="${reports.dir}/charts"/>
+	<property name="egi.war.dir" value="modules/egi/egiweb/WebContent" />
+
+	<tstamp>
+		<format property="jar.date" pattern="dd-MM-yyyy" unit="hour"/>
+	</tstamp>
+
+	<import file="${basedir}/custom-build.xml"/>
+
+	<target name="base.init">
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${allclasses.dir}" />
+		<mkdir dir="${ear}"/>
+		<touch file="${dist.dir}/egov.ear.dodeploy"/> 
+		<mkdir dir="${ear.libs}"/>
+		<mkdir dir="${ear.libs}/mappings"/>
+		<mkdir dir="${ear}/META-INF" />
+		<delete file="${coverage.reports}/cobertura.ser"/>
+	</target>
+
+	<path id="svnant.class.path">
+		<fileset dir="${lib}/svnant" includes="*.jar"/>
+	</path>
+	
+	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svnant.class.path" />
+
+	<target name="base.clean">
+		<tstamp>
+		  <format property="build.start.time" pattern="yyyy-MM-dd hh:mm:ss" />
+		</tstamp>
+		<echo message="BUILD START TIME : ${build.start.time}" />
+		<delete dir="${dist.dir}" failonerror="false" />
+		<delete dir="${allclasses.dir}" failonerror="false"/>
+		<delete file="junitrun.status" />
+	</target>
+    
+	<target name="init.junitrun" >
+		<delete file="junitrun.status" />
+		<delete file="${ear}/META-INF/MANIFEST.MF" failonerror="true"/>
+		<copy todir="${ear}/database" overwrite="true">
+			<fileset dir="${basedir}/libraries/misc" includes="evolve*.jar"/>
+			<fileset file="${basedir}/config/junit.properties"/>
+			<fileset file="${basedir}/database/evolve.xml"/>
+			<fileset dir="${basedir}/database" />
+		</copy>
+	</target>
+
+
+    
+	<target name="update.security.xml" if="custom.security.xml">
+		<unwar src="${ear}/${product.name}web.war" dest="${basedir}/tmp" />
+		<copy file="${web.dir}/WEB-INF/applicationSecurityContext.xml" todir="${basedir}/tmp/WEB-INF" overwrite="true" />
+		<war destfile="${ear}/${product.name}web.war" basedir="${basedir}/tmp" />
+		<delete dir="${basedir}/tmp" includeemptydirs="true" />
+	</target>
+
+	<target name="check.reports.templates">
+		<echo message="Checking jasperreports templates..." />
+	    	<available file="${src.dir}/reports/templates" property="reports.templates.present"/>
+		<available file="${home.dir}/junit/reports/templates" property="reports.templates.present"/>
+		<echo message="${reports.templates.present}" />
+	</target>
+
+	<target name="compile.jasper" depends="check.reports.templates" if="reports.templates.present">
+		<taskdef name="compileJasper" classname="net.sf.jasperreports.ant.JRAntCompileTask">
+			<classpath refid="class.path"/>
+		</taskdef>
+		<echo message="Compiling jasperreports templates..." />
+		<compileJasper srcdir="${src.dir}/reports/templates" destdir="${build.classes}/reports/templates" tempdir="${build.classes}/reports/templates" keepjava="false" xmlvalidation="true" >
+			<classpath refid="class.path"/>
+			<include name="**/*.jrxml"/>
+		</compileJasper>
+		<compileJasper srcdir="${home.dir}/junit/reports/templates" destdir="${build.classes}/reports/templates" tempdir="${build.classes}/reports/templates" keepjava="false" xmlvalidation="true" >
+			<classpath refid="class.path"/>
+			<include name="**/*.jrxml"/>
+		</compileJasper>
+	</target>
+	
+	<target name="compile" if="common.set">
+		<echo message="Compiling core classes..." />
+		<javac srcdir="${src.dir}" classpathref="class.path" destdir="${build.classes}" debug="true" />
+		<antcall target="compile.jasper" />
+		<copy todir="${build.classes}">
+			<fileset dir="${src.dir}" includes="**/config/*,**/*.properties, **/*.jasper,*.xml,*.properties" />
+		</copy>
+	</target>
+
+	<target name="junitcompile" unless="dc.set" depends="compile">
+		<echo message="Compiling test classes..." />
+		<javac srcdir="${test.dir}" classpathref="class.path" destdir="${build.classes}" debug="true" />
+	</target>
+
+    <target name="init.ear" depends="base.clean,base.init" >
+        <copy todir="${ear}/lib">
+            <fileset dir="${earlibdir}" includes="*.jar"/>
+        </copy>
+        <copy todir="${ear}/META-INF" file="${basedir}/META-INF/application.xml" overwrite="true" />
+	<copy todir="${ear}/META-INF" file="${basedir}/META-INF/jboss-deployment-structure.xml" overwrite="true" />
+        <copy todir="${ear}/database" overwrite="true">
+            <fileset dir="${basedir}/database">
+                <exclude name="**/*.dmp" />
+                <exclude name="**/sample_data/**" />
+                <exclude name="**/postgres/**" /> <!-- TODO: for postgres projects, this has to be changed or parameterized somehow. -->
+            </fileset>
+        </copy>
+        <!--copy todir="${ear}" file="common-build.xml" overwrite="true" />
+        <copy todir="${ear}" file="erp-build.xml" overwrite="true" /-->
+        <copy todir="${ear}" file="deploy.xml" overwrite="true" />
+        <!-- jars needed to run ant and evolve during deployment -->
+        <mkdir dir="${ear}/deploy_libs" />
+        <!--copy todir="${ear}/deploy_libs" file="${basedir}/libraries/test/ojdbc6.jar" overwrite="true" /-->
+        <copy todir="${ear}/deploy_libs" file="${basedir}/libraries/misc/evolve-maven-1.0.jar" overwrite="true" />
+        <copy todir="${ear}/deploy_libs" file="${basedir}/libraries/misc/ant-contrib-1.0b3.jar" overwrite="true" />
+    </target>
+
+	<target name="module.clean">
+		<delete dir="${build.classes}" failonerror="false" />
+		<delete dir="${build.instrumented}" failonerror="false" />
+		<delete dir="${reports.dir}" includeemptydirs="true" failonerror="false" />
+	</target>
+
+	<target name="module.init">
+		<delete file="${build.dir}/MANIFEST.MF" failonerror="true" />
+		<var name="build.instrumented" value="${build.dir}/instrumented" />
+		<var name="cobertura.lib" value="${lib}/cobertura"/>
+		<var name="pmd.lib" value="${lib}/pmd"/>
+		<var name="qalab.lib" value="${lib}/qalab"/>
+		<var name="reports.dir" value="${build.dir}/reports" />
+		<var name="test.reports" value="${reports.dir}/unit" />
+		<var name="coverage.reports" value="${reports.dir}/cobertura"/>
+		<var name="pmd.reports" value="${reports.dir}/pmd"/>
+		<var name="findbugs.reports" value="${reports.dir}/findbugs"/>
+		<var name="charts" value="${reports.dir}/charts"/>
+		<var name="build.classes" value="${build.dir}/classes"/>
+		<var name="reports.templates" value="${build.dir}/classes/reports/templates"/>
+		<var name="norun.reports" unset="true"/>
+		<condition property="norun.reports">
+			<or>
+				<equals arg1="${dc.set}" arg2="true"/>
+				<equals arg1="${incr.build}" arg2="true"/>
+			</or>
+		</condition>
+		<antcall target="module.clean" />
+		<mkdir dir="${build.instrumented}" />
+		<!-- Make the folder that the DocumentManager tests require -->
+		<if>
+			<equals arg1="${product.name}" arg2="egi" />
+			<then>
+				<mkdir dir="${build.instrumented}/${jcrContentRepo}" />
+			</then>
+		</if>		
+		<mkdir dir="${build.classes}"/>
+		<mkdir dir="${reports.templates}"/>
+		<mkdir dir="${pmd.lib}"/>
+		<mkdir dir="${qalab.lib}"/>
+		<mkdir dir="${reports.dir}"/>
+		<mkdir dir="${test.reports}"/>
+		<mkdir dir="${coverage.reports}"/>
+		<mkdir dir="${pmd.reports}"/>
+		<mkdir dir="${findbugs.reports}"/>
+		<mkdir dir="${charts}"/>
+		<manifest file="${build.dir}/MANIFEST.MF">
+			<attribute name="Built-By" value="${user.name}"/>
+			<attribute name="Built-On" value="${jar.date}"/>
+			<section name="Main">
+				<attribute name="Version" value="${version}"/>
+				<attribute name="Build-Number" value="${continuum.project.nextBuild.number}" />
+				<attribute name="Description" value="eGov ${product.name} module"/>
+			</section>
+		</manifest>
+	</target>
+
+	<!-- custom mapping jars built for ptis -->
+	<target name="packagemappings" unless="custommappings.set">
+		<echo message="Packaging hbm files..."/>
+		<jar destfile="${ear}/lib/mappings/${product.name}${mappings.jar.postfix}.jar" basedir="${src.dir}" includes="**/*.hbm.*">
+		</jar>
+	</target>
+
+	<target name="packagejar" depends="junitcompile">		
+		<jar destfile="${ear}/lib/${product.jar.prefix}${product.name}.jar" manifest="${src.dir}/META-INF/MANIFEST.MF" basedir="${build.classes}" excludes="**/*.hbm.*,**/junit/**,**/dbunit/**,**/egov/models/**,**/*Test$*.class,**/*Test.class" >
+			<fileset dir="${src.dir}" excludes="**/junit/*,**/*.java,**/*.properties,*.properties,**/*.hbm.*,**/config/*,*.xml"/>
+		</jar>
+	</target>
+
+	<!-- no wars for eislite, demand and collection -->
+	<target name="packagewar" unless="nowar.set" >
+		<war destfile="${ear}/${product.name}web.war" manifest="${build.dir}/MANIFEST.MF" webxml="${web.dir}/WEB-INF/web.xml" excludes=".svn/**/*, **/.svn" duplicate="preserve">
+			<classes dir="${build.classes}">
+				<include name="*.properties" />
+			</classes>
+			<!--classes dir="${config.dir}">
+				<include name="*.properties" />
+				<exclude name="jasperreports.properties" />
+			</classes-->
+
+			<fileset dir="${web.dir}">
+				<exclude name="WEB-INF/applicationSecurityContext.xml"/>
+			</fileset>
+
+			<webinf dir="${egi.war.dir}/WEB-INF">
+				<include name="*.tld"/>
+				<include name="applicationContext.xml"/>
+				<include name="validator-rules.xml"/>
+				<include name="applicationSecurityContext.xml"/>
+				<include name="web.xml"/>
+				<include name="tags/**"/>
+			</webinf>
+			<fileset dir="${egi.war.dir}">
+				<include name="javascript/**"/>
+				<include name="login/**"/>
+				<include name="script/**"/>
+				<include name="commonjs/**"/>
+				<include name="commons/**"/>
+				<include name="commonyui/**"/>
+				<include name="error/**"/>
+				<include name="images/**"/>
+				<include name="img/**"/>
+				<include name="css/**"/>
+				<include name="includes/**"/>
+				<include name="inbox/**"/>
+			</fileset>
+		</war>
+        <antcall target="update.security.xml"/>
+	</target>
+
+	<target name="package" depends="packagejar,packagemappings,packagewar">		
+			
+	</target>
+
+	<!--target name="create.ear" depends="module.init,package,mergestat"-->
+	<!-- <target name="create.ear" depends="module.init,package,junitrun">-->
+	 <target name="create.ear" depends="module.init,package,junitrun">		
+	</target>
+
+
+	<target name="instrument"  unless="dc.set" description="instrument the class file in src.">
+		<path id="corbertura.classpath" >
+			<fileset dir="${cobertura.lib}">
+				<include name="**/*.jar" />
+			</fileset>
+		</path>
+		<taskdef name="cobertura-instrument" classname="net.sourceforge.cobertura.ant.InstrumentTask" classpathref="corbertura.classpath"/>
+
+		<cobertura-instrument todir="${build.instrumented}" datafile="${coverage.reports}/cobertura.ser">
+			<ignore regex="org.apache.log4j.*" />
+			<fileset dir="${build.classes}" includes="**/*.class" excludes="**/*Test.class,**/*Test$*.class, **/*ObjectFactory.class,**/pension/*.class">
+	        </fileset>
+		</cobertura-instrument>
+
+		<copy todir="${build.instrumented}">
+			<fileset dir="${home.dir}/junit" includes="**/*.xml,**/*.properties" excludes="${user.name}.properties"/>
+			<fileset dir="${src.dir}" includes="**/*.properties,*.xml,config/*.xml" />
+			<fileset dir="${ear}" includes="*.xml" />
+			<fileset dir="${ear}" includes="config/*config.xml" />
+		</copy>
+		<copy todir="${build.instrumented}/config">
+			<fileset dir="${config.dir}" includes="*.xml" />
+		</copy>
+	</target>
+
+	
+	<target name="junitrun" unless="dc.set">  <!--depends="junitcompile"> ,instrument"-->
+            <path id="junit_classpath">
+                <pathelement location="${basedir}/config" />
+                <pathelement location="${build.instrumented}" />
+                <pathelement location="${build.classes}" />
+                <pathelement location="${ear}/lib" />
+                <fileset dir="${lib}" includes="**/*.jar" excludes="**/asm-2.2.1.jar,**/asm-tree-2.2.1.jar"/>
+            </path>
+            
+        <property name="junitcp" refid="junit_classpath" />
+        <echo message="Junit Classpath: ${junitcp}" />
+
+        <junit printsummary="yes" maxmemory="1024m" failureproperty="test.fail" fork="yes" forkmode="once">
+			<jvmarg value="-XX:MaxPermSize=512m"/>
+			<jvmarg value="-Duser.timezone=IST"/>
+			<jvmarg value="-Djava.awt.headless=true"/>
+			<sysproperty key="net.sourceforge.cobertura.datafile" file="${coverage.reports}/cobertura.ser" />
+			<classpath>
+				<pathelement location="${basedir}/config" />
+				<pathelement location="${build.instrumented}" />
+				<pathelement location="${build.classes}" />
+				<pathelement location="${ear}/lib" />
+				<pathelement location="${basedir}/modules/egi/egov-egi/build/classes"/>
+				<pathelement location="${ear}/lib/mappings" />
+				<fileset dir="${lib}" includes="**/*.jar" excludes="**/asm-2.2.1.jar,**/asm-tree-2.2.1.jar"/>
+				<fileset dir="${ear}/lib" includes="**/*.jar"/>
+			</classpath>
+			
+			<formatter type="xml"/>
+			<batchtest todir="${test.reports}">
+				<fileset dir="${home.dir}/junit">
+					<include name="**/*Test.java" />
+					<exclude name="org/egov/infstr/junit/**/*.*" />
+					<exclude name="org/egov/models/*.*" />
+				</fileset>
+			</batchtest>
+		</junit>
+		<if>
+			<isset property="test.fail" />
+			<then>
+                <echo message="WARNING: SOME JUNIT TESTS FAILED."/>
+				<!--echo file="junitrun.status" append="true" message="${test.fail}${line.separator}" /-->
+			</then>
+		</if>
+	</target>
+
+	<target name="coverage-reports" unless="norun.reports" depends="junitrun">
+		<taskdef name="cobertura-report" classname="net.sourceforge.cobertura.ant.ReportTask" classpath="${cobertura.lib}/cobertura.jar">
+			<classpath>
+				<fileset dir="${cobertura.lib}">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+		</taskdef>
+		<cobertura-report format="xml" destdir="${coverage.reports}" srcdir="${src.dir}" datafile="${coverage.reports}/cobertura.ser"/>
+		<cobertura-report format="html" destdir="${coverage.reports}" srcdir="${src.dir}" datafile="${coverage.reports}/cobertura.ser"/>
+	</target>
+
+	<target name="run-pmd" unless="incr.build">
+		<path id="pmd.classpath">
+			<pathelement location="${tools.pmd}"/>
+			<fileset dir="${pmd.lib}" includes="pmd-4.2.4.jar" />
+		</path>
+		<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask"   classpathref="pmd.classpath"  />
+		<pmd  rulesetfiles="egovRuleset.xml"  failurespropertyname="pmd.failurecount">
+			<fileset dir="${src.dir}" includes="**/*.java"/>
+			<formatter   type="xml" toFile="${pmd.reports}/pmd_report.xml"/>
+		</pmd>
+		<echo	file= "${pmd.reports}/pmdErrorCnt.txt" 	append= "false"   
+				  			message="=======================================${line.separator}${pmd.failurecount} checks failed.${line.separator}For more details see report at reports/pmd/pmd_report.xmll${line.separator}=======================================" />
+		<xslt in="${pmd.reports}/pmd_report.xml" style="${tools.pmd}/xslt/wz-pmd-report.xslt" out="${pmd.reports}/pmd_report.html" />
+	</target>
+
+	<target name="run-findbugs" unless="incr.build">
+		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask">
+			<classpath refid="class.path" />
+		</taskdef>
+		<findbugs home="${lib}/findbugs" output="xml:withMessages" outputFile="${findbugs.reports}/fb-report.xml" jvmArgs="-Xms256M -Xmx1024M"
+				  excludefilter="${tools.findbugs}/findBugExcludeTests.xml">
+			<auxClasspath>
+				<fileset dir="${ear}/lib" includes="*.jar"/>
+				<fileset dir="${lib}/jboss" includes="*.jar"/>
+				<fileset dir="${lib}/hibernate" includes="*.jar"/>
+			</auxClasspath>
+			<sourcePath path="${src.dir}" />
+			<class location="${build.dir}/classes" />
+		</findbugs>
+		<xslt in="${findbugs.reports}/fb-report.xml" style="${tools.findbugs}/summary.xsl" out="${findbugs.reports}/fb-report_summary.html" />
+		<xslt in="${findbugs.reports}/fb-report.xml" style="${tools.findbugs}/default.xsl" out="${findbugs.reports}/fb-report_default.html" />
+		<xslt in="${findbugs.reports}/fb-report.xml" style="${tools.findbugs}/fancy.xsl" out="${findbugs.reports}/fb-report_fancy.html" />
+	</target>
+
+
+	<target name="mergestat" unless="norun.reports" depends="run-pmd,run-findbugs,coverage-reports">
+		<path id="qalab.class.path">
+			<fileset dir="${qalab.lib}">
+				<include name="*.jar" />
+			</fileset>
+		</path>
+		<taskdef name="mergestat" classname="net.objectlab.qalab.ant.BuildStatMergeTask" classpathref="qalab.class.path" onerror="report"/>
+		<tstamp>
+			<format property="TIME" pattern="yyyy-MM-dd HH:mm:ss"/>
+		</tstamp>
+		<mergestat inputFile="${pmd.reports}/pmd_report.xml" 
+	                    outputFile="${tools.qalab}/qalab.xml" 
+	                    srcDir="${src.dir}" 
+	                    handler="net.objectlab.qalab.parser.PMDStatMerge" 
+			    quiet="true"
+	                    mergerTimeStamp="${TIME}"/>
+		<mergestat inputFile="${coverage.reports}/coverage.xml" 
+	                    outputFile="${tools.qalab}/qalab.xml" 
+	                    srcDir="${src.dir}" 
+	                    handler="net.objectlab.qalab.parser.CoberturaLineStatMerge" 
+			    quiet="true"
+	                    mergerTimeStamp="${TIME}"/>
+
+		<mergestat inputFile="${coverage.reports}/coverage.xml" 
+	                    outputFile="${tools.qalab}/qalab.xml" 
+	                    srcDir="${src.dir}" 
+	                    handler="net.objectlab.qalab.parser.CoberturaBranchStatMerge" 
+			    quiet="true"
+	                    mergerTimeStamp="${TIME}"/>
+
+		<taskdef name="buildchart" classname="net.objectlab.qalab.ant.BuildStatChartTask" classpathref="qalab.class.path" onerror="report"/>
+
+		<buildchart inputFile="${tools.qalab}/qalab.xml"
+	           toDir="${charts}"
+	           movingAverage="10"
+	           width="500" height="333"
+	           summaryOnly="true"
+	           summaryType="pmd,cobertura-line,cobertura-branch"
+	           type="pmd,cobertura-line,cobertura-branch"
+	           quiet="true"/>
+
+	</target>
+
+	<target name="scaffold">
+		<java classname="com.bluerain.quickweb.Scaffolder" classpathref="class.path">
+			<arg value="${model.base.pkg}.${model}"/>
+			<arg value="${action.base.pkg}"/>
+			<arg value="${src.dir}"/>
+			<arg value="${views.dir}"/>
+			<arg value="${appcontext.path}"/>
+		</java>
+	</target>
+
+	<!-- ### Help Docs target ### -->
+	<target name="helpdocs" description="Generate Help Docs for this product" >
+		<!-- Update war target -->
+		<war destfile="${ear}/${product.name}.war" update="true">
+			<zipfileset dir="${help.dir}" prefix="${war.help.dir}">
+				<include name="*.html"/>
+			</zipfileset>
+		</war>
+
+		<!-- Generate PDF -->
+		<mkdir dir="${build.dir}/help/output"/>
+		<mkdir dir="${build.dir}/help/files"/>
+		<mkdir dir="${build.dir}/help/css"/>
+		<!-- Copy the entire help structure under build/help/ -->
+		<copy todir="${build.dir}/help/files">
+			<fileset dir="${help.dir}" excludes="*.pdf"/>
+		</copy>
+		<!-- <replace file="${build.dir}/help/files/1_payroll_title.html" token="@VERSION@" value="${version}"/> -->
+
+		<copy todir="${build.dir}/help/css">
+			<fileset dir="modules/egi/egiweb/WebContent/css" includes="*.css" />
+		</copy>
+
+		<echo message="INFO : Generating User Manual PDF..."/>
+		<!-- Run the htmldoc utility with correct arguments to generate User Manual -->
+		<exec dir="${build.dir}/help/files" executable="htmldoc" searchpath="true">
+			<arg line="--batch ${helpbook.name}"/>
+		</exec>
+	</target>
+</project>

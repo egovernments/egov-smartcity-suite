@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.assets.model.AssetActivities" table="EGASSET_ACTIVITIES">
+        <id name="id" type="java.lang.Long">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="sequence">
+            	<param name="sequence">seq_egasset_activities</param>
+            </generator>
+        </id>
+        <many-to-one name="asset" class="org.egov.assets.model.Asset" column="ASSETID"/>
+        <property name="additionAmount" type="big_decimal" column="ADDITIONAMOUNT"/>
+        <property name="deductionAmount" type="big_decimal" column="DEDUCTIONAMOUNT"/>
+        <property name="activityDate" type="java.util.Date" column="ACTIVITYDATE"/>
+        <many-to-one name="voucherHeader" class="org.egov.commons.CVoucherHeader" column="VOUCHERHEADERID"/>
+        <property name="identifier" column="IDENTIFIER">
+			<type name="org.egov.infstr.models.EnumUserType">       
+				<param name="enumClassName">org.egov.assets.util.AssetIdentifier</param>     
+			</type>   
+		</property>
+        <property column="MODIFIEDDATE" name="modifiedDate" type="timestamp"/>
+		<property column="CREATEDDATE" name="createdDate"/>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY"/>
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY"/>
+		<property name="description" type="string" column="DESCRIPTION"/>
+         <many-to-one name="status" class="org.egov.commons.EgwStatus" column="STATUSID"/>
+		 <many-to-one name="state" class="org.egov.infstr.models.State"  cascade="save-update,persist" fetch="select">
+	                <column name="STATE_ID"/>
+          </many-to-one>
+    </class>
+</hibernate-mapping>

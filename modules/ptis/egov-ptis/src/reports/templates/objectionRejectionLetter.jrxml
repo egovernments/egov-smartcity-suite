@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<import value="org.egov.infstr.reporting.util.*"/>
+	<parameter name="objectionNo" class="java.lang.String"/>
+	<parameter name="date" class="java.lang.String"/>
+	<parameter name="slNo" class="java.lang.String"/>
+	<parameter name="owner" class="java.lang.String"/>
+	<parameter name="objectionDate" class="java.lang.String"/>
+	<parameter name="zoneNo" class="java.lang.String"/>
+	<parameter name="address" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="127" splitType="Stretch">
+			<staticText>
+				<reportElement x="132" y="13" width="412" height="20"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[OFFICE OF THE CORPORATION OF THE CITY,NAGPUR.           ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="229" y="36" width="178" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[  (Officer Of Objection Officer)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="258" y="56" width="60" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ZONE NO : ${zoneno}]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="430" y="46" width="67" height="20"/>
+				<textElement/>
+				<text><![CDATA[P.B.X.NO.84,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="407" y="66" width="127" height="20"/>
+				<textElement/>
+				<text><![CDATA[Mahanagarpalika Marg,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="449" y="86" width="48" height="20"/>
+				<textElement/>
+				<text><![CDATA[Nagpur]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="318" y="56" width="68" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{zoneNo}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="24" y="10" width="67" height="66"/>
+				<imageExpression class="java.io.InputStream"><![CDATA[ReportUtil.getLogoImageAsStream()]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="85" splitType="Stretch">
+			<staticText>
+				<reportElement x="24" y="18" width="87" height="20"/>
+				<textElement/>
+				<text><![CDATA[OBJECTION NO : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="374" y="18" width="56" height="20"/>
+				<textElement/>
+				<text><![CDATA[DATED : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="24" y="55" width="52" height="20"/>
+				<textElement/>
+				<text><![CDATA[SR NO : ]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="111" y="18" width="100" height="20"/>
+				<textElement>
+					<font isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{objectionNo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="430" y="18" width="100" height="20"/>
+				<textElement>
+					<font isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{date}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="76" y="55" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{slNo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="298" splitType="Stretch">
+			<staticText>
+				<reportElement x="24" y="16" width="20" height="20"/>
+				<textElement/>
+				<text><![CDATA[To]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="58" y="36" width="52" height="20"/>
+				<textElement/>
+				<text><![CDATA[Shri/Smt,]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="111" y="36" width="285" height="20"/>
+				<textElement>
+					<font isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{owner}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="24" y="134" width="281" height="20"/>
+				<textElement/>
+				<text><![CDATA[Reference : - Your objection/s 128 of C.N.C Act 1948]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="349" y="134" width="100" height="20"/>
+				<textElement>
+					<font isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{objectionDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="330" y="134" width="16" height="20"/>
+				<textElement/>
+				<text><![CDATA[Dt]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="24" y="168" width="64" height="20"/>
+				<textElement/>
+				<text><![CDATA[Sir/Madam]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="88" y="188" width="217" height="20"/>
+				<textElement/>
+				<text><![CDATA[This is to inform you that yor objection Dt.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="307" y="188" width="67" height="20"/>
+				<textElement>
+					<font isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{objectionDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="374" y="188" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[is here by rejected]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="88" y="226" width="120" height="20"/>
+				<textElement/>
+				<text><![CDATA[For information please]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="32" y="246" width="44" height="20"/>
+				<textElement/>
+				<text><![CDATA[Nagpur]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="32" y="266" width="26" height="20"/>
+				<textElement/>
+				<text><![CDATA[Dt]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="110" y="56" width="286" height="20"/>
+				<textElement>
+					<font isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{address}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="115" splitType="Stretch">
+			<staticText>
+				<reportElement x="24" y="45" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Objection Officer,                      ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="32" y="65" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[N.M.C Nagpur]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="409" y="25" width="50" height="20"/>
+				<textElement/>
+				<text><![CDATA[Reader,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="330" y="45" width="177" height="20"/>
+				<textElement/>
+				<text><![CDATA[Office of Objection officer,Zone No]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="507" y="45" width="52" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{zoneNo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="349" y="65" width="166" height="20"/>
+				<textElement/>
+				<text><![CDATA[Nagpur Municipal Corporation]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="407" y="85" width="52" height="20"/>
+				<textElement/>
+				<text><![CDATA[Nagpur.]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

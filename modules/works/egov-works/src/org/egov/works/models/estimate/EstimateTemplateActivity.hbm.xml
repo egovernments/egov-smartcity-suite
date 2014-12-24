@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<class name="org.egov.works.models.estimate.EstimateTemplateActivity" table="EGW_EST_TEMP_ACTIVITY">
+		<id
+			name="id"
+			column="ID"
+			type="long"
+			unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">EGW_EST_TEMP_ACTIVITY_SEQ</param>
+			</generator>
+		</id>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+       
+       <many-to-one name="estimateTemplate" class="org.egov.works.models.estimate.EstimateTemplate" fetch="select" insert="false" update="false">
+            <column name="ESTIMATE_TEMPLATE_ID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="schedule" class="org.egov.works.models.masters.ScheduleOfRate" fetch="join">
+            <column name="SCHEDULEOFRATE_ID" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="uom" class="org.egov.infstr.commonMasters.EgUom" fetch="select">
+	    	<column name="UOM_ID" />
+		</many-to-one>
+        <many-to-one name="nonSor" class="org.egov.works.models.estimate.NonSor" fetch="join" cascade="all">
+            <column name="NONSOR_ID" precision="22" scale="0" />
+        </many-to-one>
+        
+     <component name="rate">
+		<property name="value" type="double" precision="2" scale="20" not-null="true"/>
+	</component>
+		   
+</class>
+</hibernate-mapping>

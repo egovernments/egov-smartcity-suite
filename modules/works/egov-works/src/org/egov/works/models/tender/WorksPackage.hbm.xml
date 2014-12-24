@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 19, 2007 2:57:28 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+	<class name="org.egov.works.models.tender.WorksPackage" table="EGW_WORKSPACKAGE">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">			
+				<param name="sequence">EGW_WORKSPACKAGE_SEQ</param>
+			</generator>
+		</id>
+		<property name="packageDate" type="date">
+			<column name="PACKAGEDATE" />
+		</property>
+		<property name="name" type="string">
+			<column name="NAME" not-null="true" />
+		</property>
+		<property name="description" type="string">
+			<column name="DESCRIPTION" />
+		</property>	
+		<property name="wpNumber" type="string">
+			<column name="WPNUMBER" />
+		</property>		 
+		<property name="tenderFileNumber" type="string">
+			<column name="TENDER_FILE_NUMBER" not-null="true"/>
+		</property>	 
+		<property name="documentNumber" type="long">
+			<column name="DOCUMENT_NUMBER" />
+		</property>	
+		 	        			        	
+		<many-to-one name="userDepartment"
+			class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
+			<column name="DEPARTMENT" />
+		</many-to-one>
+		<many-to-one name="preparedBy"
+			class="org.egov.pims.model.PersonalInformation"> 
+			<column name="PREPAREDBY" />
+		</many-to-one>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" not-null="true" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />	
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+		<list name="worksPackageDetails" cascade="all,delete-orphan">
+			<key column="ID_WORKSPACKAGE" not-null="true" />
+			<list-index column="wp_index" />
+			<one-to-many
+				class="org.egov.works.models.tender.WorksPackageDetails" />
+		</list>
+		<many-to-one name="state" class="org.egov.infstr.models.State"
+			cascade="all">
+			<column name="STATE_ID" />
+		</many-to-one>
+	</class>
+	<query name="TenderFileNumberUniqueCheck">
+    	<![CDATA[
+    	 	select worksPackage.id from WorksPackage worksPackage where worksPackage.tenderFileNumber=?
+    		]]>
+   		</query>
+   		 
+   		 <sql-query name="TenderFileNumberUniqueCheckForEdit">
+     		<![CDATA[
+     			SELECT worksPackage.id FROM WorksPackage worksPackage
+     			WHERE worksPackage.tenderFileNumber=? and worksPackage.id!=?
+    		]]>
+    	</sql-query>
+    	
+    	<query name="GET_WORKSPACKAGE_PACKAGENUMBER">
+    	<![CDATA[
+    	 	from WorksPackage worksPackage where worksPackage.wpNumber=?
+    		]]>
+   		</query>
+	
+</hibernate-mapping>

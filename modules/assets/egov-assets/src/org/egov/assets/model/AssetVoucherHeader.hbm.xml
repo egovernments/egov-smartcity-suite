@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.assets.model.AssetVoucherHeader" table="EGASSET_VOUCHERHEADER">
+        <id name="id" type="java.lang.Long">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="sequence">
+            	<param name="sequence">SEQ_EGASSET_VOUCHERHEADER</param>
+            </generator>
+        </id>
+        <property name="assetRefId" type="java.lang.Long" column="ASSETREFID"/>
+        <many-to-one name="fund" class="org.egov.commons.Fund" column="FUNDID" />
+        <many-to-one name="department" class="org.egov.lib.rjbac.dept.DepartmentImpl" column="DEPARTMENTID" />
+        <many-to-one name="scheme" class="org.egov.commons.Scheme" column="SCHEMEID" />
+        <many-to-one name="subscheme" class="org.egov.commons.SubScheme" column="SUBSCHEMEID"  />
+        <many-to-one name="functionary" class="org.egov.commons.Functionary" column="FUNCTIONARYID" />
+        <many-to-one name="fundsource" class="org.egov.commons.Fundsource" column="FUNDSOURCEID" />
+        <many-to-one name="field" class="org.egov.lib.admbndry.BoundaryImpl" column="FIELDID" />
+        <many-to-one name="function" class="org.egov.commons.CFunction" column="FUNCTIONID" />
+        <property column="MODIFIEDDATE" name="modifiedDate" type="timestamp"/>
+		<property column="CREATEDDATE" name="createdDate" type="timestamp"/>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY"/>
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY"/>
+		<property column="VOUCHERDATE" name="voucherDate" type="date"/>
+		<property column="DESCRIPTION" name="description" type="string"/>
+		
+      </class>
+</hibernate-mapping>

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.lib.admbndry.HeirarchyTypeImpl" table="EG_HEIRARCHY_TYPE">
+		<id name="id" column="ID_HEIRARCHY_TYPE" type="integer">
+			<generator class="native">
+				<param name="sequence">SEQ_EG_HEIRARCHY_TYPE</param>
+			</generator>
+		</id>
+		<timestamp column="updatedtime" name="updatedTime" access="property" unsaved-value="null" />
+		<property name="name" column="TYPE_NAME" type="string" />
+		<property name="code" column="TYPE_CODE" type="string" />
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 6, 2008 11:33:36 AM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping >
+    <class name="org.egov.billsaccounting.model.Worksdetail" table="WORKSDETAIL" >
+        <id name="id" type="integer">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="sequence" >
+            <param name="sequence">SEQ_WORKSDETAIL </param>
+            </generator>
+        </id>
+        <many-to-one name="worksdetail" class="org.egov.billsaccounting.model.Worksdetail" fetch="select">
+            <column name="PARENTID" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="recovery" class="org.egov.model.recoveries.Recovery" fetch="select">
+            <column name="WORKSTDS" precision="3" scale="0" />
+        </many-to-one>
+        <many-to-one name="relation" class="org.egov.commons.Relation" fetch="select">
+            <column name="RELATIONID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="fundsource" class="org.egov.commons.Fundsource" fetch="select">
+            <column name="FUNDSOURCEID" precision="10" scale="0" />
+        </many-to-one>
+        <many-to-one name="fund" class="org.egov.commons.Fund" fetch="select">
+            <column name="FUNDID" precision="10" scale="0" />
+        </many-to-one>
+        <property name="code" type="string">
+            <column name="CODE" length="50" not-null="true" unique="true" />
+        </property>
+        <property name="orderdate" type="date">
+            <column name="ORDERDATE" length="7" not-null="true" />
+        </property>
+        <property name="totalvalue" type="big_decimal">
+            <column name="TOTALVALUE" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="paidamount" type="big_decimal">
+            <column name="PAIDAMOUNT" precision="22" scale="0" />
+        </property>
+        <property name="advancepayable" type="big_decimal">
+            <column name="ADVANCEPAYABLE" precision="22" scale="0" />
+        </property>
+        <property name="advanceamount" type="big_decimal">
+            <column name="ADVANCEAMOUNT" precision="22" scale="0" />
+        </property>
+        <property name="isactive" type="big_decimal">
+            <column name="ISACTIVE" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="created" type="date">
+            <column name="CREATED" length="7" not-null="true" />
+        </property>
+        <property name="lastmodified" type="date">
+            <column name="LASTMODIFIED" length="7" />
+        </property>
+        <property name="modifiedby" type="big_decimal">
+            <column name="MODIFIEDBY" precision="22" scale="0" />
+        </property>
+        <property name="name" type="string">
+            <column name="NAME" length="120" not-null="true" />
+        </property>
+        <property name="authorizedby" type="string">
+            <column name="AUTHORIZEDBY" length="50" />
+        </property>
+        <property name="levelofwork" type="string">
+            <column name="LEVELOFWORK" length="20" not-null="true" />
+        </property>
+        <property name="wardid" type="big_decimal">
+            <column name="WARDID" precision="22" scale="0" />
+        </property>
+        <property name="schemeid" type="big_decimal">
+            <column name="SCHEMEID" precision="22" scale="0" />
+        </property>
+        <property name="tdsid" type="big_decimal">
+            <column name="TDSID" precision="22" scale="0" />
+        </property>
+        <property name="securitydeposit" type="string">
+            <column name="SECURITYDEPOSIT" length="50" />
+        </property>
+        <property name="retention" type="big_decimal">
+            <column name="RETENTION" precision="22" scale="0" />
+        </property>
+        <property name="bankguarantee" type="string">
+            <column name="BANKGUARANTEE" length="150" />
+        </property>
+        <property name="glcodeid" type="java.lang.Long">
+            <column name="GLCODEID" precision="10" scale="0" />
+        </property>
+        <property name="passedamount" type="big_decimal">
+            <column name="PASSEDAMOUNT" precision="15" />
+        </property>
+        <property name="type" type="big_decimal">
+            <column name="TYPE" precision="22" scale="0" />
+        </property>
+        <property name="advanceadj" type="big_decimal">
+            <column name="ADVANCEADJ" precision="15" />
+        </property>
+        <property name="sanctionno" type="string">
+            <column name="SANCTIONNO" length="30" />
+        </property>
+        <property name="remarks" type="string">
+            <column name="REMARKS" length="250" />
+        </property>
+        <property name="sanctiondate" type="date">
+            <column name="SANCTIONDATE" length="7" />
+        </property>
+        <property name="userdeptid" type="big_decimal">
+            <column name="USERDEPTID" precision="22" scale="0" />
+        </property>
+        <property name="execdeptid" type="big_decimal">
+            <column name="EXECDEPTID" precision="22" scale="0" />
+        </property>
+        <property name="shipto" type="big_decimal">
+            <column name="SHIPTO" precision="22" scale="0" />
+        </property>
+        <property name="billto" type="string">
+            <column name="BILLTO" length="300" />
+        </property>
+        <property name="statusid" type="big_decimal">
+            <column name="STATUSID" precision="22" scale="0" />
+        </property>
+        <property name="createdby" type="big_decimal">
+            <column name="CREATEDBY" precision="22" scale="0" />
+        </property>
+        <property name="actCommDate" type="date">
+            <column name="ACT_COMM_DATE" length="7" />
+        </property>
+        <property name="actCompDate" type="date">
+            <column name="ACT_COMP_DATE" length="7" />
+        </property>
+        <property name="commDate" type="date">
+            <column name="COMM_DATE" length="7" />
+        </property>
+        <property name="compDate" type="date">
+            <column name="COMP_DATE" length="7" />
+        </property>
+        <property name="worklocation" type="string">
+            <column name="WORKLOCATION" length="250" />
+        </property>
+        <property name="workcategory" type="big_decimal">
+            <column name="WORKCATEGORY" precision="22" scale="0" />
+        </property>
+        <property name="subcategory" type="big_decimal">
+            <column name="SUBCATEGORY" precision="22" scale="0" />
+        </property>
+      
+    </class>
+</hibernate-mapping>

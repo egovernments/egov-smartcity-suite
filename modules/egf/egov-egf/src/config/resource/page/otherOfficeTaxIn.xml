@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<pageMap name="otherOfficeTaxIn" > 
+	<gridMap name="T_OfficeGrid" serverFieldName="T_OfficeGrid" containsNames="true">
+		<columnMap name="otherTaxDetail_period" serverFieldName="1"/>
+		<columnMap name="taxCode" serverFieldName="0"/>
+		<columnMap  name="accountHead" serverFieldName="1"/>
+		<columnMap  name="totalAmount" serverFieldName="1"/>
+		<columnMap name="interest" serverFieldName="0"/>
+		
+	</gridMap>
+	<gridMap name="entities_grid">
+					<columnMap name="grid_detTypeId" serverFieldName="1"/>
+					<columnMap name="grid_detKeyId" serverFieldName="1"/>
+					<columnMap name="grid_detValue" serverFieldName="1"/>
+					<columnMap name="grid_rowIndex" serverFieldName="1"/>
+	</gridMap>
+</pageMap>

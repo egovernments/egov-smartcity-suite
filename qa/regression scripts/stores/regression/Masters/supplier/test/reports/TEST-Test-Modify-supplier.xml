@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite tests="5" name="Test_Modify_supplier" failures="0" errors="0" time="98.128" assertions="30">
+  <testcase name="test_0050_modify_supplier_valid" time="23.577" assertions="6">
+  </testcase>
+  <testcase name="test_0060_modify_supplier_valid" time="17.617" assertions="6">
+  </testcase>
+  <testcase name="test_0070_modify_supplier_status_Active" time="19.552" assertions="6">
+  </testcase>
+  <testcase name="test_0080_modify_supplier_status_inactive" time="17.849" assertions="6">
+  </testcase>
+  <testcase name="test_0090_modify_supplier_status_approved" time="19.529" assertions="6">
+  </testcase>
+  <system-out>
+    <![CDATA[]]>
+  </system-out>
+  <system-err>
+    <![CDATA[]]>
+  </system-err>
+</testsuite>

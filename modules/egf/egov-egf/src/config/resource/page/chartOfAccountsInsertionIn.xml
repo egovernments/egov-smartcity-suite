@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<pageMap name="chartOfAccountsInsertionIn" > 
+	<gridMap name="accIDandName" containsNames="true">
+		<columnMap name="required"  serverFieldName="1"/>
+		<columnMap name="accountdetailtype_ID"  serverFieldName="2"/>
+		<columnMap name="chartOfAccounts_realCode"  serverFieldName="3"/>
+		<columnMap name="dv"  serverFieldName="4"/>
+		<columnMap name="ctrlCode"  serverFieldName="5"/>
+	</gridMap>	
+</pageMap>

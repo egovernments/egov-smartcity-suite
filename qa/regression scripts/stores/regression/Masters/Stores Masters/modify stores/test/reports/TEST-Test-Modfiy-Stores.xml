@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Test_Modfiy_Stores" failures="0" errors="1" time="17.292" tests="1" assertions="3">
+  <testcase name="test_0010_modify_stores_valid_data" time="17.289" assertions="3">
+    <failure type="Watir::Exception::NoValueFoundException" message="No option with text of STORE-90 in this select element">
+No option with text of STORE-90 in this select element (Watir::Exception::NoValueFoundException)
+c:/ruby/lib/ruby/gems/1.8/gems/watir-1.6.2/lib/watir/input_elements.rb:82:in `select_item_in_select_list'
+c:/ruby/lib/ruby/gems/1.8/gems/watir-1.6.2/lib/watir/input_elements.rb:47:in `set'
+c:/stores_qa/regression/Masters/Stores Masters/stores_stores_methods.rb:218:in `modify_stores'
+test_modify_stores.rb:42:in `test_0010_modify_stores_valid_data'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `__send__'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+c:/ruby/lib/ruby/1.8/test/unit.rb:278
+test_modify_stores.rb:97    </failure>
+  </testcase>
+  <system-out>
+    <![CDATA[Unable to locate element, using :id, "j_username"
+]]>
+  </system-out>
+  <system-err>
+    <![CDATA[]]>
+  </system-err>
+</testsuite>

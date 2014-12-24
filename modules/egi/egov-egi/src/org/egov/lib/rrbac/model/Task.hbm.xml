@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="false">
+	<class name="org.egov.lib.rrbac.model.Task" table="EG_TASKS">
+		<id name="id" column="ID" type="integer">
+			<generator class="native">
+				<param name="sequence">SEQ_EG_TASKS</param>
+			</generator>
+		</id>
+		<timestamp column="updatedtime" name="updatedTime" access="property" unsaved-value="null" />
+		<property name="name" column="Name" type="string" />
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
+	default-lazy-init="true">
+
+	<bean id="tradeLicenseWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="persistenceService" index="0" />
+		<constructor-arg value="org.egov.license.trade.domain.entity.TradeLicense"
+			index="1" />
+	</bean>
+
+	<bean id="transferLicenseWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="persistenceService" index="0" />
+		<constructor-arg
+			value="org.egov.license.domain.entity.transfer.LicenseTransfer"
+			index="1" />
+	</bean>
+
+	<bean id="tps" parent="persistenceService" scope="prototype">
+		<property name="type"
+			value="org.egov.license.trade.domain.entity.TradeLicense" />
+	</bean>
+
+	<bean id="ts" class="org.egov.license.trade.domain.service.TradeService"
+		parent="baseLicenseService" scope="prototype">
+		<property name="tps" ref="tps" />
+		<property name="eisCommonsService" ref="eisCommonsService" />
+		<property name="tradeLicenseWorkflowService" ref="tradeLicenseWorkflowService" />
+	</bean>
+
+	<bean id="objectionService"
+		class="org.egov.license.domain.service.objection.ObjectionService"
+		parent="persistenceService" scope="prototype">
+		<property name="type"
+			value="org.egov.license.domain.entity.objection.LicenseObjection" />
+		<property name="eisCommonsService" ref="eisCommonsService" />
+		<property name="licenseService" ref="ts" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="objectionWorkflowService" ref="objectionWorkflowService" />
+	</bean>
+
+	<bean id="licenseBill" class="org.egov.license.domain.service.integration.LicenseBill"
+		scope="prototype">
+		<property name="moduleName" value="Trade License" />
+		<property name="serviceCode" value="TL" />
+		<property name="billDao" ref="billDao" />
+		<property name="licenseUtils" ref="licenseUtils" />
+	</bean>
+
+</beans>

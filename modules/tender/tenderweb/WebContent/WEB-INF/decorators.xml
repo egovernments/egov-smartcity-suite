@@ -1,0 +1,22 @@
+<decorators defaultdir="/decorators">
+    <excludes>
+            <pattern>/40*.jsp</pattern>       	
+            <pattern>/commonyui/egov/genericScreenWithLeaf.jsp</pattern>
+            <pattern>/commonyui/egov/menutree.jsp</pattern>
+            <pattern>/*Ajax.action</pattern>
+            <pattern>/*Ajax.do</pattern>
+    </excludes>
+    <decorator name="mainpopup" page="default.jsp">
+
+      <pattern>/index.jsp</pattern>
+      <pattern>/*.action</pattern>
+      <pattern>/*.do</pattern>
+     </decorator>
+   
+    <decorator name="default" page="titlePage.jsp">
+	<pattern>/index.jsp</pattern>
+	
+    </decorator>
+	
+	
+</decorators>

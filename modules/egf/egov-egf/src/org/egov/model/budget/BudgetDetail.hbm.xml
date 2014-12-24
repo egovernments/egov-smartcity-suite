@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.model.budget.BudgetDetail" table="EGF_BUDGETDETAIL"> 
+		<!-- A squence pk generator -->
+		<id name="id" type="long" unsaved-value="null" >
+			<column name="ID" not-null="true"/>
+			<generator class="sequence">
+				<param name="sequence">SEQ_EGF_BUDGETDETAIL</param>
+			</generator>
+		</id>
+		<property column="MODIFIEDDATE" name="modifiedDate" type="timestamp"/>
+		<property column="CREATEDDATE" name="createdDate"/>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY"/>
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY"/>
+		
+		<property name="originalAmount">
+			<column name="ORIGINALAMOUNT" />
+		</property>	
+		<property name="approvedAmount">
+			<column name="APPROVEDAMOUNT" />
+		</property>	
+		<property name="budgetAvailable">
+			<column name="BUDGETAVAILABLE" />
+		</property>	
+		<property name="anticipatoryAmount">
+			<column name="ANTICIPATORY_AMOUNT" />
+		</property>
+		<property name="documentNumber" column="DOCUMENT_NUMBER"/>
+		<many-to-one name="budgetGroup" class="org.egov.model.budget.BudgetGroup" column="BUDGETGROUP"  />
+		<many-to-one name="usingDepartment" class="org.egov.lib.rjbac.dept.DepartmentImpl" column="USING_DEPARTMENT" />
+		<many-to-one name="executingDepartment" class="org.egov.lib.rjbac.dept.DepartmentImpl" column="EXECUTING_DEPARTMENT" />
+		<many-to-one name="function" class="org.egov.commons.CFunction" column="FUNCTION"  />
+		<many-to-one name="budget" class="org.egov.model.budget.Budget" column="BUDGET" />
+		<many-to-one name="scheme" class="org.egov.commons.Scheme" column="SCHEME" />
+		<many-to-one name="fund" class="org.egov.commons.Fund" column="FUND" />
+		<many-to-one name="subScheme" class="org.egov.commons.SubScheme" column="SUBSCHEME"  />
+		<many-to-one name="functionary" class="org.egov.commons.Functionary" column="FUNCTIONARY"  />
+		<many-to-one name="boundary" class="org.egov.lib.admbndry.BoundaryImpl" column="BOUNDARY" />
+		<property name="materializedPath" column="materializedPath" type="string"/>
+		<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all" fetch="join">
+               <column name="STATE_ID"/>
+        </many-to-one>
+		<set name="budgetReAppropriations" inverse="true" cascade="all">
+            <key>
+                <column name="BUDGETDETAIL"/>
+            </key>
+            <one-to-many class="org.egov.model.budget.BudgetReAppropriation" />
+        </set>
+	</class>
+	<query name="DETAILS_WITH_BUDGET_IN_LIST">
+	<![CDATA[
+     	from BudgetDetail as b where b.budget in (:param_0)
+    ]]>
+	
+	</query>
+</hibernate-mapping>
+						

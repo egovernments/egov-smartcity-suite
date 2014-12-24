@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite assertions="2" tests="1" name="Test_Create_Material_Indnet_issue" failures="0" time="14.692" errors="1">
+  <testcase assertions="2" name="test_0030_create_Material_indent_issue_with_alphanumeric_values" time="14.691">
+    <failure type="Watir::Exception::UnknownObjectException" message="Unable to locate element, using :text, &quot;RQ45/06/0910&quot;">
+Unable to locate element, using :text, "RQ45/06/0910" (Watir::Exception::UnknownObjectException)
+c:/ruby/lib/ruby/gems/1.8/gems/watir-1.6.2/lib/watir/element.rb:52:in `assert_exists'
+c:/ruby/lib/ruby/gems/1.8/gems/watir-1.6.2/lib/watir/element.rb:284:in `enabled?'
+c:/ruby/lib/ruby/gems/1.8/gems/watir-1.6.2/lib/watir/element.rb:56:in `assert_enabled'
+c:/ruby/lib/ruby/gems/1.8/gems/watir-1.6.2/lib/watir/element.rb:229:in `click!'
+c:/ruby/lib/ruby/gems/1.8/gems/watir-1.6.2/lib/watir/element.rb:215:in `click'
+c:/stores_qa/regression/Transactions/Material indent issue/stores_mii_methods.rb:299:in `create_mii'
+test_create_MII.rb:130:in `test_0030_create_Material_indent_issue_with_alphanumeric_values'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `__send__'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+c:/ruby/lib/ruby/1.8/test/unit.rb:278
+test_create_MII.rb:147    </failure>
+  </testcase>
+  <system-out>
+    <![CDATA[]]>
+  </system-out>
+  <system-err>
+    <![CDATA[]]>
+  </system-err>
+</testsuite>

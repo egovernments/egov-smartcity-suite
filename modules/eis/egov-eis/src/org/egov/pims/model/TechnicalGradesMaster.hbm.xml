@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping
+PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.pims.model.TechnicalGradesMaster" table="EGEIS_TECHNICAL_GRADES_MSTR">
+		
+		<id
+		name="id"
+		column="TECK_GRADES_ID"
+		type="int">
+		<generator class="sequence">
+			<param name="sequence">EGPIMS_TECK_GRADES_SEQ1</param>
+		</generator>
+		</id>
+		
+		 <many-to-one name="skillMaster" class="org.egov.pims.model.SkillMaster" >
+            <column name="SKILL_ID" not-null="true"/>
+        </many-to-one>
+		
+		<property
+		name="gradeName"
+		column="TECK_GRADES_VALUE"
+		/>
+		<property
+					name="fromDate"
+					column="START_DATE"
+		
+				/>
+						<property
+									name="toDate"
+									column="END_DATE"
+									
+		/>
+	</class>
+</hibernate-mapping>

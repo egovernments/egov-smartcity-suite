@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping
+PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.pims.model.TestNameMaster" table="EGEIS_NAME_OF_TEST_MSTR">
+		
+		<id
+							name="id"
+							column="NAME_OF_TEST_ID"
+							type="int">
+							<generator class="sequence">
+								<param name="sequence">EGPIMS_NAME_OF_TEST_SEQ</param>
+							</generator>
+		</id>
+		<property
+			name="name"
+			column="NAME_OF_TEST_VALUE"
+			
+		/>
+		
+		<property
+					name="fromDate"
+					column="START_DATE"
+					
+		/>
+		<property
+					name="toDate"
+					column="END_DATE"
+					
+		/>	
+	</class>
+</hibernate-mapping>

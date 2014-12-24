@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="erp3build" default="usage" basedir=".">
+    <property file="build.properties" />
+    <property file="${basedir}/config/junit.properties" />
+    <property name="lib" value="${basedir}/libraries" />
+    <property name="dist.dir" value="${basedir}/dist" />
+    <property name="publish.dir" value="${dist.dir}" />
+    <property name="ear" value="${dist.dir}/egov.ear" />
+    <property name="database.dir" value="${basedir}/database" />
+    <property name="build.libs.dir" value="${ear}/lib" />
+    <property name="product.jar.prefix" value="egov-" />
+    <property name="mappings.jar.postfix" value="-mappings" />
+    <property name="ear.libs" value="${ear}/lib" />
+    <property name="download.server" value="192.168.1.3" />
+    <property name="database.type" value="postgres" />
+    <property environment="env" />
+
+    <path id="class.path">
+        <fileset dir="${lib}" includes="**/*.jar" excludes="hibernate/**/slf*.jar" />
+        <fileset dir="${lib}/jackrabbit" includes="*.rar" />
+        <pathelement location="${build.classes}" />
+        <pathelement location="${basedir}/config" />
+        <pathelement location="${config.dir}" />
+        <pathelement location="${basedir}/modules/egi/egov-egi/build/classes" />
+        <pathelement location="${ear}" />
+        <fileset dir="${ear.libs}" includes="egov-*.jar" excludes="mappings/**" />
+    </path>
+
+    <path id="svnant.class.path">
+        <fileset dir="${lib}/svnant" includes="*.jar" />
+    </path>
+    <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svnant.class.path" />
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${lib}/misc/ant-contrib-1.0b3.jar" />
+
+    <import file="${basedir}/database/${database.type}/evolve.xml" />
+    <import file="${basedir}/common-build.xml" />
+
+    <property name="dependencies.base.url" value="http://${download.server}/downloads/libs/egov" />
+
+    <target name="clean.all">
+        <antcall target="base.clean" />
+        <delete dir="${ear.libs}" includes="*" failonerror="false" />
+    </target>
+
+    <target name="setupdb" depends="evolve.main" />
+    
+   <target name="build.config">		
+	<jar destfile="${ear}/lib/egov-config.jar" manifest="modules/egi/egov-config/resources/META-INF/MANIFEST.MF">
+	    <fileset dir="modules/egi/egov-config/resources" excludes="**/test/"/>
+	</jar>
+   </target>
+
+    <target name="build.egi" depends="build.config">
+        <var name="product.home" value="modules/egi/egov-egi" />
+        <var name="webh.dir" value="modules/egi/egiweb/WebContent" />
+        <var name="help.dir" value="modules/egi/help/webhelp" />
+        <var name="product.name" value="egi" />
+        <var name="common.set" value="true" />
+        <copy todir="${webh.dir}/help">
+            <fileset dir="${help.dir}" excludes=".svn/" />
+        </copy>
+
+        <delete dir="${product.home}/build" failonerror="false" />
+        <antcall target="create.ear">
+            <param name="src.dir" value="${product.home}/src" />
+            <param name="web.dir" value="modules/egi/egiweb/WebContent" />
+            <param name="test.dir" value="${product.home}/junit" />
+            <param name="build.dir" value="${product.home}/build" />
+            <param name="home.dir" value="${product.home}" />
+        </antcall>
+        <var name="common.set" unset="true" />
+    </target>
+
+    <target name="build.eis">
+        <var name="product.home" value="modules/eis/egov-eis" />
+        <var name="webh.dir" value="modules/eis/eisweb/WebContent"/>
+        <var name="help.dir" value="modules/eis/help/webhelp"/>
+        <var name="product.name" value="eis"/>
+        <var name="common.set" value="true"/>
+        <copy todir="${webh.dir}/help">
+        <fileset dir="${help.dir}" excludes=".svn/" />
+        </copy>
+        <antcall target="create.ear">
+        <param name="src.dir" value="${product.home}/src"/>
+        <param name="web.dir" value="modules/eis/eisweb/WebContent"/>
+        <param name="test.dir" value="${product.home}/junit"/>
+        <param name="config.dir" value="${product.home}/src/config"/>
+        <param name="build.dir" value="${product.home}/build"/>
+        <param name="home.dir" value="${product.home}"/>
+        </antcall>
+        <var name="common.set" unset="true"/>
+    </target>
+    
+    <target name="build.dms">
+       	<var name="product.home" value="modules/dms/egov-dms" />
+        <var name="webh.dir" value="modules/dms/dmsweb/WebContent"/>
+        <var name="help.dir" value="modules/dms/help/webhelp"/>
+        <var name="product.name" value="dms"/>
+        <var name="common.set" value="true"/>
+        <copy todir="${webh.dir}/help">
+        <fileset dir="${help.dir}" excludes=".svn/" />
+        </copy>
+        <mkdir dir="${product.home}/src/config"/>
+        <antcall target="create.ear">
+        <param name="src.dir" value="${product.home}/src"/>
+        <param name="web.dir" value="modules/dms/dmsweb/WebContent"/>
+        <param name="test.dir" value="${product.home}/junit"/>
+        <param name="config.dir" value="${product.home}/src/config"/>
+        <param name="build.dir" value="${product.home}/build"/>
+        <param name="home.dir" value="${product.home}"/>
+        </antcall>
+        <var name="common.set" unset="true"/>
+    </target>
+
+
+    <target name="build.egf" >
+        <var name="product.home" value="modules/egf/egov-egf" />
+        <var name="webh.dir" value="modules/egf/egfweb/WebContent"/>
+        <var name="help.dir" value="modules/egf/help/webhelp/"/>
+        <var name="product.name" value="egf"/>
+        <var name="common.set" value="true"/>
+        <copy todir="${webh.dir}/help">
+        <fileset dir="${help.dir}" excludes=".svn/" />
+        </copy>
+        <antcall target="create.ear">
+        <param name="src.dir" value="${product.home}/src"/>
+        <param name="web.dir" value="modules/egf/egfweb/WebContent"/>
+        <param name="test.dir" value="${product.home}/junit"/>
+        <param name="config.dir" value="${product.home}/src/config"/>
+        <param name="build.dir" value="${product.home}/build"/>
+        <param name="home.dir" value="${product.home}"/>
+        </antcall>
+        <var name="common.set" unset="true"/>
+    </target>
+
+       <target name="build.payroll">
+        <var name="product.home" value="modules/payroll/egov-payroll" />
+        <var name="webh.dir" value="modules/payroll/payrollweb/WebContent"/>
+        <var name="help.dir" value="modules/payroll/help/webhelp"/>
+        <var name="product.name" value="payroll"/>
+        <var name="common.set" value="true"/>
+        <copy todir="${webh.dir}/help">
+        <fileset dir="${help.dir}" excludes=".svn/" />
+        </copy>
+        <antcall target="create.ear">
+        <param name="src.dir" value="${product.home}/src"/>
+        <param name="web.dir" value="modules/payroll/payrollweb/WebContent"/>
+        <param name="test.dir" value="${product.home}/junit"/>
+        <param name="config.dir" value="${product.home}/src/config"/>
+        <param name="build.dir" value="${product.home}/build"/>
+        <param name="home.dir" value="${product.home}"/>
+        </antcall>
+        <var name="common.set" unset="true"/>
+        </target>
+
+        <!-- <target name="build.bnd" >
+        <var name="product.home" value="modules/bnd/egov-bnd" />
+        <var name="webh.dir" value="modules/bnd/bndwar/WebContent"/>
+        <var name="help.dir" value="modules/bnd/help/webhelp/"/>
+        <var name="product.name" value="bnd"/>
+        <var name="common.set" value="true"/>
+        <copy todir="${webh.dir}/help">
+        <fileset dir="${help.dir}" excludes=".svn/" />
+        </copy>
+        <antcall target="create.ear">
+        <param name="src.dir" value="${product.home}/src"/>
+        <param name="web.dir" value="modules/bnd/bndwar/WebContent"/>
+        <param name="test.dir" value="${product.home}/junit"/>
+        <param name="config.dir" value="${product.home}/src/config"/>
+        <param name="build.dir" value="${product.home}/build"/>
+        <param name="home.dir" value="${product.home}"/>
+        </antcall>
+        <var name="common.set" unset="true"/>
+        </target>
+-->
+        <target name="build.pgr" >
+        <var name="product.home" value="modules/pgr/egov-pgr" />
+        <var name="webh.dir" value="modules/pgr/pgrweb/WebContent"/>
+        <var name="help.dir" value="modules/pgr/help/webhelp/"/>
+        <var name="product.name" value="pgr"/>
+        <var name="common.set" value="true"/>
+        <copy todir="${webh.dir}/help">
+        <fileset dir="${help.dir}" excludes=".svn/" />
+        </copy>
+        <antcall target="create.ear">
+        <param name="src.dir" value="${product.home}/src"/>
+        <param name="web.dir" value="modules/pgr/pgrweb/WebContent"/>
+        <param name="test.dir" value="${product.home}/junit"/>
+        <param name="config.dir" value="${product.home}/src/config"/>
+        <param name="build.dir" value="${product.home}/build"/>
+        <param name="home.dir" value="${product.home}"/>
+        </antcall>
+        <var name="common.set" unset="true"/>
+        </target>
+
+        <target name="build.tender">
+	        <var name="product.home" value="modules/tender/egov-tender" />
+	        <var name="webh.dir" value="modules/tender/tenderweb/WebContent"/>
+	        <var name="help.dir" value="modules/tender/help/webhelp"/>
+	        <var name="product.name" value="tender"/>
+	        <var name="common.set" value="true"/>
+        	<copy todir="${webh.dir}/help">
+        		<fileset dir="${help.dir}" excludes=".svn/" />
+        	</copy>
+        	<antcall target="create.ear">
+		        <param name="src.dir" value="${product.home}/src"/>
+		        <param name="web.dir" value="modules/tender/tenderweb/WebContent"/>
+		        <param name="test.dir" value="${product.home}/junit"/>
+		        <param name="config.dir" value="${product.home}/config"/>
+		        <param name="build.dir" value="${product.home}/build"/>
+		        <param name="home.dir" value="${product.home}"/>
+        	</antcall>
+        	<var name="common.set" unset="true"/>
+        </target>
+
+        <target name="build.collection">
+        <var name="product.home" value="modules/collection/egov-collection" />
+        <var name="webh.dir" value="modules/collection/collectionweb/WebContent"/>
+        <var name="help.dir" value="modules/tender/help/webhelp"/>
+        <var name="product.name" value="collection"/>
+        <var name="common.set" value="true"/>
+        <copy todir="${webh.dir}/help">
+        <fileset dir="${help.dir}" excludes=".svn/" />
+        </copy>
+        <antcall target="create.ear">
+        <param name="src.dir" value="${product.home}/src"/>
+        <param name="web.dir" value="modules/collection/collectionweb/WebContent"/>
+        <param name="test.dir" value="${product.home}/junit"/>
+        <param name="config.dir" value="${product.home}/src/config"/>
+        <param name="build.dir" value="${product.home}/build"/>
+        <param name="home.dir" value="${product.home}"/>
+        </antcall>
+        <var name="common.set" unset="true"/>
+        </target>
+
+
+	<target name="build.demand">
+           <var name="product.home" value="modules/demand/egov-demand" />
+           <var name="product.name" value="demand"/>
+           <var name="common.set" value="true"/>
+	   <var name="dc.set" value="true"/>
+           <var name="nowar.set" value="true"/>
+           <antcall target="create.ear">
+             <param name="src.dir" value="${product.home}/src"/>
+             <param name="config.dir" value="${product.home}/config"/>
+             <param name="build.dir" value="${product.home}/build"/>
+             <param name="home.dir" value="${product.home}"/>
+             <param name="test.dir" value="${product.home}/junit"/>
+           </antcall>
+           <var name="nowar.set" unset="true"/>
+           <var name="dc.set" unset="true"/>
+        </target>
+	
+	<target name="build.license" >
+	   <var name="product.home" value="modules/license/egov-license"/>
+	   <var name="product.name" value="license"/>
+	   <var name="common.set" value="true"/>
+	   <var name="nowar.set" value="true"/>
+	   <antcall target="create.ear">
+	     <param name="src.dir" value="${product.home}/src"/>
+	     <param name="test.dir" value="${product.home}/junit"/>
+	     <param name="config.dir" value="${product.home}/src/config"/>
+	     <param name="build.dir" value="${product.home}/build"/>
+	     <param name="home.dir" value="${product.home}"/>
+	   </antcall>
+	   <var name="common.set" unset="true"/>
+	   <var name="nowar.set" unset="true"/>
+	</target>
+
+	<target name="build.tradelicense">
+	        <var name="product.home" value="modules/license/egov-tradelicense" />
+	        <var name="product.name" value="tradelicense"/>
+	        <var name="common.set" value="true"/>
+		<var name="custom.security.xml" value="true"/>
+        	<antcall target="create.ear">
+		        <param name="src.dir" value="${product.home}/src"/>
+		        <param name="web.dir" value="modules/license/tradelicenseweb/WebContent"/>
+		        <param name="test.dir" value="${product.home}/junit"/>
+		        <param name="config.dir" value="${product.home}/config"/>
+		        <param name="build.dir" value="${product.home}/build"/>
+		        <param name="home.dir" value="${product.home}"/>
+        	</antcall>
+        	<var name="common.set" unset="true"/>
+		<var name="custom.security.xml" unset="true"/>
+        </target>
+
+        <target name="build.asset">
+        	<var name="product.home" value="modules/assets/egov-assets" />
+       		<var name="product.name" value="assets"/>
+        	<var name="common.set" value="true"/>
+        	<antcall target="create.ear">
+		        <param name="src.dir" value="${product.home}/src"/>
+		        <param name="web.dir" value="modules/assets/assetsweb/WebContent"/>
+		        <param name="test.dir" value="${product.home}/junit"/>
+		        <param name="config.dir" value="${product.home}/config"/>
+		        <param name="build.dir" value="${product.home}/build"/>
+		        <param name="home.dir" value="${product.home}"/>
+        	</antcall>
+        	<var name="common.set" unset="true"/>
+        </target>
+	
+        <target name="build.works">
+	        <var name="product.home" value="modules/works/egov-works" />
+	        <var name="product.name" value="works"/>
+	        <var name="common.set" value="true"/>
+        	<antcall target="create.ear">
+		        <param name="src.dir" value="${product.home}/src"/>
+		        <param name="web.dir" value="modules/works/worksweb/WebContent"/>
+		        <param name="test.dir" value="${product.home}/junit"/>
+		        <param name="config.dir" value="${product.home}/config"/>
+		        <param name="build.dir" value="${product.home}/build"/>
+		        <param name="home.dir" value="${product.home}"/>
+        	</antcall>
+        	<var name="common.set" unset="true"/>
+        </target>
+
+	<target name="build.pentaho">
+	  <copy todir="${ear}/pentaho.war" overwrite="true">
+	    <fileset dir="modules/pentaho/pentaho.war">
+	      <exclude name="docs/"/>
+	      <exclude name=".settings/"/>
+	      <exclude name=".svn/**/*, **/.svn"/>
+	    </fileset>
+	  </copy>
+	  <copy todir="${ear}/pentaho.war" overwrite="true">
+	    <fileset dir="modules/egi/egiweb/WebContent">
+	      <include name="login/**"/>
+	      <include name="error/**"/>
+	      <include name="images/**"/>
+	      <include name="img/**"/>
+	      <include name="css/**"/>
+	      <include name="includes/**"/>
+	    </fileset>
+	  </copy>
+	  <copy todir="${ear}/pentaho-solutions" overwrite="true">
+	    <fileset dir="modules/pentaho/pentaho-solutions"/>
+	  </copy>
+	</target>
+<!--
+
+        <target name="build.landestate">
+        <var name="product.home" value="modules/landestate/egov-landestate" />
+        <var name="webh.dir" value="modules/landestate/landestatewar/landestate.war"/>
+        <var name="help.dir" value="modules/landestate/help/webhelp"/>
+        <var name="product.name" value="landestate"/>
+        <var name="common.set" value="true"/>
+        <copy todir="${webh.dir}/help">
+        <fileset dir="${help.dir}" excludes=".svn/" />
+        </copy>
+        <antcall target="create.ear">
+        <param name="src.dir" value="${product.home}/src"/>
+        <param name="web.dir" value="modules/landestate/lndwar/WebContent"/>
+        <param name="test.dir" value="${product.home}/junit"/>
+        <param name="config.dir" value="${product.home}/config"/>
+        <param name="build.dir" value="${product.home}/build"/>
+        <param name="home.dir" value="${product.home}"/>
+        </antcall>
+        <var name="common.set" unset="true"/>
+        </target>
+
+        <target name="build.lcms">
+        <var name="product.home" value="modules/eglcms/egov-eglcms" />
+        <var name="webh.dir" value="modules/eglcms/eglcmsweb/lcm.war"/>
+        <var name="help.dir" value="modules/eglcms/help/webhelp"/>
+        <var name="product.name" value="eglcm"/>
+        <var name="common.set" value="true"/>
+        <copy todir="${webh.dir}/help">
+        <fileset dir="${help.dir}" excludes=".svn/" />
+        </copy>
+        <antcall target="create.ear">
+        <param name="src.dir" value="${product.home}/src"/>
+        <param name="web.dir" value="modules/eglcms/eglcmsweb/WebContent"/>
+        <param name="test.dir" value="${product.home}/junit"/>
+        <param name="config.dir" value="${product.home}/src/config"/>
+        <param name="build.dir" value="${product.home}/build"/>
+        <param name="home.dir" value="${product.home}"/>
+        </antcall>
+        </target>
+    -->
+
+    <target name="build.ear" depends="init.ear,setupdb,build.egi" />
+    <!--target name="build.ear" depends="init.ear,setupdb,build.egi, build.eis,build.dms,build.egf,build.payroll,build.lcms,build.bnd,build.tender,build.collection,build.demand,build.asset,build.landestate,build.works" /> -->
+
+    <target name="deploy">
+        <delete dir="${deploy.dir}/egov.ear" includeemptydirs="true" />
+        <copy todir="${deploy.dir}/egov.ear">
+            <fileset dir="${ear}" />
+        </copy>
+    </target>
+
+    <target name="publish">
+        <!-- If junitrun.status file is created, it means some tests failed. -->
+        <!-- Do not create the zip file and FAIL THE BUILD. -->
+        <!-- available file="junitrun.status" property="junitrun.failed" /-->
+        <if>
+
+            <isset property="junitrun.failed" />
+            <then>
+                <fail message="One or more tests failed. Packaging step skipped." />
+                <delete file="junitrun.status" />
+            </then>
+            <else>
+                <!-- Update MANIFEST file with revision info and then create ear zip file -->
+                <exec failonerror="false" failifexecutionfails="false" outputproperty="svnrev.info" executable="svn"
+                    dir="${basedir}">
+                    <arg line="log" />
+                    <arg line="-v" />
+                    <arg line="--limit" />
+                    <arg line="1" />
+                </exec>
+                <tstamp>
+                    <format property="ear.date" pattern="dd-MM-yyyy" unit="hour" />
+                </tstamp>
+                <manifest file="${ear}/META-INF/MANIFEST.MF">
+                    <attribute name="Built-By" value="${user.name}" />
+                    <attribute name="Built-On" value="${ear.date}" />
+                    <section name="Main">
+                        <attribute name="Version" value="${version}" />
+                        <attribute name="Build-Number" value="${env.BUILD_NUMBER}" />
+                        <attribute name="Description" value="eGov Urban Suite" />
+                    </section>
+                    <!--section name="Revision_Details">
+                        <attribute name="Revision" value="${svnrev.info}"/>
+                        </section -->
+                </manifest>
+                <zip destfile="${publish.dir}/${ant.project.name}${version}-${env.BUILD_NUMBER}.zip">
+                    <zipfileset dir="${ear}" prefix="egov.ear">
+                    </zipfileset>
+                </zip>
+                <symlink link="${publish.dir}/${ant.project.name}${version}-latest.zip"
+                    resource="${publish.dir}/${ant.project.name}${version}-${env.BUILD_NUMBER}.zip"
+                    overwrite="true" />
+            </else>
+        </if>
+    </target>
+
+    <target name="reset.db.props">
+        <!-- For continuum server to reset db props with token -->
+        <replace file="${basedir}/config/root.properties" token="db.user=${db.user}" value="@DBUSR@" />
+        <replace file="${basedir}/config/root.properties" token="db.pwd=${db.pwd}" value="@DBPWD@" />
+    </target>
+
+    <target name="check.junit.status">
+        <!-- If junitrun.status file is created, it means some tests failed. -->
+        <available file="junitrun.status" property="junitrun.failed" />
+        <if>
+            <isset property="junitrun.failed" />
+            <then>
+                <fail message="One or more tests failed." />
+                <delete file="junitrun.status" />
+            </then>
+            <else>
+                <delete file="junitrun.status" />
+                <echo message="junits run successful." />
+            </else>
+        </if>
+    </target>
+
+    <target name="prepare.eclipse.web">
+        <echo message="prepare.eclipse.web for module ${erp.module}" />
+        <copy todir="${basedir}/modules/${erp.module}/${erp.module}web/WebContent/WEB-INF/tags" overwrite="true">
+            <fileset dir="${basedir}/modules/egi/egiweb/WebContent/WEB-INF/tags" />
+        </copy>
+        <copy todir="${basedir}/modules/${erp.module}/${erp.module}web/WebContent/WEB-INF" overwrite="true">
+            <fileset dir="${basedir}/modules/egi/egiweb/WebContent/WEB-INF">
+                <include name="*.tld"/>
+            </fileset>
+        </copy>
+        <copy todir="${basedir}/modules/${erp.module}/${erp.module}web/WebContent/includes" overwrite="true">
+            <fileset dir="${basedir}/modules/egi/egiweb/WebContent/includes" />
+        </copy>
+    </target>
+    
+</project>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

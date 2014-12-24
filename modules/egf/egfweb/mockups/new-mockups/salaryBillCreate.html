@@ -1,0 +1,468 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>NDMC Delhi - Payment System</title>
+<link href="common/css/budget.css" rel="stylesheet" type="text/css" />
+<link href="common/css/commonegov.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="common/js/payment.js"></script>
+</head>
+<body>
+<div class="topbar"><div class="egov"><img src="common/image/eGov.png" alt="eGov" width="54" height="58" /></div><div class="gov"><img src="common/image/india.png" alt="India" width="54" height="58" /></div>
+  <div class="mainheading"> Payment System</div>
+</div>
+<div class="navibar"><div align="right">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+           <td><div align="left"><ul id="tabmenu" class="tabmenu">
+<li><a href="collectionSRSHome.html">Home</a></li>
+        <li><a href="#" target="_parent">Log out</a></li>
+        </ul></div></td>
+           <td width="63" align="right"><img src="common/image/print.gif" alt="Print" width="18" height="18" border="0" align="absmiddle" /> <a href="#">Print</a></td>
+      <td width="63" align="right"><img src="common/image/help.gif" alt="Help" width="18" height="18" border="0" align="absmiddle" /> <a href="#">Help</a></td>
+    </tr>
+  </table></div>
+</div>
+<div class="formmainbox"><div class="formheading"></div>
+<div class="subheadnew">Salary Bill Create</div>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+  <td width="9%" class="bluebox">&nbsp;</td>
+    <td width="18%" class="bluebox">Bill Date:<span class="mandatory">*</span></td>
+    <td width="23%" class="bluebox"><input name="dt32" type="text" size="30"/> <a href="#"><img src="common/image/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a></td>
+    <td width="17%" class="bluebox">&nbsp;</td>
+    <td width="33%" class="bluebox"></td>
+  </tr>
+  <tr>
+    <td class="greybox">&nbsp;</td>
+    <td class="greybox">For the Month of:<span class="mandatory">*</span></td>
+    <td class="greybox"><select name="select5">
+      <option selected="selected">------Choose-----</option>
+      <option value="1"> January</option> 
+      <option value="2">February</option> 
+      <option value="3">March</option> 
+      <option value="4">April</option> 
+      <option value="5">May</option> 
+      <option value="6">June</option> 
+      <option value="7">July</option> 
+      <option value="8">August</option> 
+      <option value="9">September</option> 
+      <option value="10">October</option> 
+      <option value="11">November</option> 
+      <option value="12">December</option>
+      </select></td>
+    <td class="greybox"> Financial year:<span class="mandatory">*</span></td>
+    <td class="greybox"><select name="select7">
+      <option selected="selected">------Choose-----</option>
+      <option value="13">2010-11</option>
+      <option value="14">2009-10</option>
+      <option value="15">2008-09</option>
+      <option value="16">2007-08</option>
+      <option value="17">2006-07</option>
+      <option value="18">2005-06</option>
+      <option value="19">2004-05</option>
+      <option value="20">2003-04</option>
+      <option value="21">2002-03</option>
+      <option value="22">2001-02</option>
+    </select></td>
+  </tr>
+  <tr>
+    <td class="bluebox">&nbsp;</td>
+    <td class="bluebox"> Field:</td>
+    <td class="bluebox"><select name="select2">
+      <option>------Choose-----</option>
+    </select></td>
+    <td class="bluebox"> Department<span class="greybox">:<span class="mandatory">*</span></span></td>
+    <td class="bluebox"><select name="select3">
+      <option>------Choose-----</option>
+    </select></td>
+  </tr>
+  <tr>
+    <td class="greybox">&nbsp;</td>
+    <td class="greybox">Status<span class="bluebox">:</span></td>
+    <td class="greybox"><span class="bluebox">
+      <input name="dt" type="text" size="30"/>
+      </span></td>
+    <td class="greybox"> Function:</td>
+    <td class="greybox">
+      <input name="dt2" type="text" size="30"/>
+    <img src="common/image/searchicon.gif" alt="Search" width="18" height="18" border="0" class="holder" /></td>
+  </tr>
+  <tr>
+    <td class="bluebox">&nbsp;</td>
+    <td class="bluebox"> Functionary:</td>
+    <td class="bluebox"><span class="greybox">
+      <select name="select">
+        <option selected="selected">------Choose-----</option>
+        <option value="#">Town Planning Section</option>
+        </select>
+      </span></td>
+    <td class="bluebox">&nbsp;</td>
+    <td class="bluebox">&nbsp;</td>
+  </tr>
+</table><table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablebottom">
+        <tr>
+          <th colspan="8"><div class="subheadsmallnew">Earnings</div></th>
+        </tr>
+        <tr>
+          <th class="bluebgheadtd" width="7%" >SL No</th>
+          <th class="bluebgheadtd" width="10%" > Head</th>
+          <th class="bluebgheadtd" width="10%" >Account Code</th>
+          <th colspan="2" class="bluebgheadtd" > Account Description</th>
+          <th class="bluebgheadtd" width="11%" >Credit Amount</th>
+          <th class="bluebgheadtd" width="13%" >Add Sub-Ledger Details</th>
+          <th class="bluebgheadtd" width="5%" >Add/ Del</th>
+          </tr>
+        <tr>
+          <td class="blueborderfortd"><div align="center">
+            <input name="textfield" type="text" value="1" size="3"/>
+          </div></td>
+          <td class="blueborderfortd"><div align="center">
+            <input name="textfield" type="text" size="18" id="textfield"/>
+            </div></td>
+          <td class="blueborderfortd">
+            <input name="textfield" type="text" size="12" id="textfield"/>
+            <a href="#"><img src="common/image/searchicon.gif" alt="Search" width="18" height="18" border="0" class="holder" /></a></td>
+          <td colspan="2" class="blueborderfortd"><input name="textfield6" type="text" id="textfield2" style="width:96%"/></td>
+          <td class="blueborderfortd"><div align="center">
+            <input name="textfield" type="text" class="amount" size="12" id="textfield"/>
+          </div></td>
+          <td class="blueborderfortd"><div id="bobcontent1-title" style="width:140px;cursor:pointer"><strong>Sub-ledger details&gt;&gt;</strong></div></td>
+          <td class="blueborderfortd"><div align="center"><a href="#"><img src="common/image/add.png" alt="Add" width="16" height="16" border="0" /></a> <a href="#"><img src="common/image/cancel.png" alt="Del" width="16" height="16" border="0" /></a></div></td>
+          </tr>
+        <tr>
+          <td colspan="8" class="blueborderfortd3"><div id="bobcontent1" class="switchgroup1" style="margin:5px">
+            <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablebottom">
+              <tr>
+                <th class="bluebgheadtd" width="5%" >SL No</th>
+                <th class="bluebgheadtd" width="30%" >Sub-ledger Type</th>
+                <th class="bluebgheadtd" width="17%" >Code</th>
+                <th class="bluebgheadtd" width="29%" >Name</th>
+                <th class="bluebgheadtd" width="13%" >Amount</th>
+                <th class="bluebgheadtd" width="6%" >Add/ Del</th>
+              </tr>
+              <tr>
+                <td class="blueborderfortd"><div align="center">
+                  <input name="textfield2" type="text" value="1" size="1"/>
+                </div></td>
+                <td class="blueborderfortd"><div align="center">
+                  <input name="textfield2" type="text" width="80%"/>
+                </div></td>
+                <td class="blueborderfortd"><div align="center">
+                  <input name="textfield2" type="text" size="12"/>
+                </div></td>
+                <td class="blueborderfortd"><div align="center">
+                  <input name="textfield2" type="text" width="99%"/>
+                </div></td>
+                <td class="blueborderfortd"><div align="center">
+                  <input name="textfield2" type="text" class="amount" size="12"/>
+                </div></td>
+                <td class="blueborderfortd"><div align="center"><a href="#"><img src="common/image/add.png" alt="Add" width="16" height="16" border="0" /></a> <a href="#"><img src="common/image/cancel.png" alt="Del" width="16" height="16" border="0" /></a></div></td>
+              </tr>
+              <tr>
+                <td colspan="4" class="blueborderfortd1"><div align="right" class="bold">Total Amount:</div></td>
+                <td class="blueborderfortd1"><div align="center">
+                  <input name="textfield4" type="text" class="amount" size="12"/>
+                </div></td>
+                <td class="blueborderfortd1">&nbsp;</td>
+              </tr>
+            </table>
+          </div></td>
+          </tr>
+        <tr>
+          <td class="blueborderfortd"><div align="center">
+            <input name="textfield" type="text" value="2" size="3"/>
+          </div></td>
+          <td class="blueborderfortd"><div align="center">
+            <input name="textfield" type="text" size="18" id="textfield"/>
+          </div></td>
+          <td class="blueborderfortd">
+            <input name="textfield" type="text" size="12" id="textfield"/>
+          <a href="#"><img src="common/image/searchicon.gif" alt="Search" width="18" height="18" border="0" class="holder" /></a></td>
+          <td colspan="2" class="blueborderfortd"><input name="textfield7" type="text" id="textfield3" style="width:96%"/></td>
+          <td class="blueborderfortd"><div align="center">
+            <input name="textfield" type="text" class="amount" size="12" id="textfield"/>
+          </div></td>
+          <td class="blueborderfortd"><div id="bobcontent2-title" style="width:140px;cursor:pointer"><strong>Sub-ledger details&gt;&gt; </strong></div></td>
+          <td class="blueborderfortd"><div align="center"><a href="#"><img src="common/image/add.png" alt="Add" width="16" height="16" border="0" /></a> <a href="#"><img src="common/image/cancel.png" alt="Del" width="16" height="16" border="0" /></a></div></td>
+        </tr>
+        <tr>
+          <td colspan="8" class="blueborderfortd3"><div id="bobcontent2" class="switchgroup1" style="margin:5px">
+            <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablebottom">
+              <tr>
+                <th class="bluebgheadtd" width="5%" >SL No</th>
+                <th class="bluebgheadtd" width="30%" >Sub-ledger Type</th>
+                <th class="bluebgheadtd" width="17%" >Code</th>
+                <th class="bluebgheadtd" width="29%" >Name</th>
+                <th class="bluebgheadtd" width="11%" >Amount</th>
+                <th class="bluebgheadtd" width="8%" >Add/ Del</th>
+              </tr>
+              <tr>
+                <td class="blueborderfortd"><div align="center">
+                  <input name="textfield3" type="text" value="1" size="1"/>
+                </div></td>
+                <td class="blueborderfortd"><div align="center">
+                  <input name="textfield3" type="text" width="80%"/>
+                </div></td>
+                <td class="blueborderfortd"><div align="center">
+                  <input name="textfield3" type="text"  size="12"/>
+                </div></td>
+                <td class="blueborderfortd"><div align="center">
+                  <input name="textfield3" type="text" />
+                </div></td>
+                <td class="blueborderfortd"><div align="center">
+                  <input name="textfield3" type="text" class="amount" size="12"/>
+                </div></td>
+                <td class="blueborderfortd"><div align="center"><a href="#"><img src="common/image/add.png" alt="Add" width="16" height="16" border="0" /></a> <a href="#"><img src="common/image/cancel.png" alt="Del" width="16" height="16" border="0" /></a></div></td>
+              </tr>
+              <tr>
+                <td colspan="4" class="blueborderfortd1"><div align="right" class="bold">Total Amount:</div></td>
+                <td class="blueborderfortd1"><div align="center">
+                  <input name="textfield3" type="text" class="amount" size="12"/>
+                </div></td>
+                <td class="blueborderfortd1">&nbsp;</td>
+              </tr>
+            </table>
+          </div></td>
+          </tr>
+        <tr>
+          <td colspan="5" class="blueborderfortd1"><div align="right" class="bold">Total Earnings:</div></td>
+          <td class="blueborderfortd1"><div align="center">
+            <input name="textfield8" type="text" class="amount" size="12"/>
+          </div></td>
+          <td class="blueborderfortd1">&nbsp;</td>
+          <td class="blueborderfortd1">&nbsp;</td>
+          </tr>
+        </table><br />
+<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablebottom">
+          <tr>
+            <th colspan="8"><div class="subheadsmallnew">Deductions</div></th>
+          </tr>
+          <tr>
+            <th class="bluebgheadtd" width="7%" >SL No</th>
+            <th class="bluebgheadtd" width="9%" > Head</th>
+            <th class="bluebgheadtd" width="10%" >Account Code</th>
+            <th colspan="2" class="bluebgheadtd" > Account Description</th>
+            <th class="bluebgheadtd" width="11%" >Credit Amount</th>
+            <th class="bluebgheadtd" width="13%" >Add Sub-Ledger Details</th>
+            <th class="bluebgheadtd" width="5%" >Add/ Del</th>
+          </tr>
+          <tr>
+            <td class="blueborderfortd"><div align="center">
+              <input name="textfield5" type="text" value="1" size="3"/>
+            </div></td>
+            <td class="blueborderfortd"><div align="center">
+              <input name="textfield5" type="text" size="18" id="textfield4"/>
+            </div></td>
+            <td class="blueborderfortd">
+              <input name="textfield5" type="text" size="12" id="textfield4"/>
+              <a href="#"><img src="common/image/searchicon.gif" alt="Search" width="18" height="18" border="0" class="holder" /></a></td>
+            <td colspan="2" class="blueborderfortd"><input name="textfield5" type="text" id="textfield5" style="width:96%"/></td>
+            <td class="blueborderfortd"><div align="center">
+              <input name="textfield5" type="text" class="amount" size="12" id="textfield4"/>
+            </div></td>
+            <td class="blueborderfortd"><div id="bobcontent3-title" style="width:140px;cursor:pointer"><strong>Sub-ledger details&gt;&gt;</strong></div></td>
+            <td class="blueborderfortd"><div align="center"><a href="#"><img src="common/image/add.png" alt="Add" width="16" height="16" border="0" /></a> <a href="#"><img src="common/image/cancel.png" alt="Del" width="16" height="16" border="0" /></a></div></td>
+          </tr>
+          <tr>
+            <td colspan="8" class="blueborderfortd3"><div id="bobcontent3" class="switchgroup1" style="margin:5px">
+              <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablebottom">
+                <tr>
+                  <th class="bluebgheadtd" width="5%" >SL No</th>
+                  <th class="bluebgheadtd" width="30%" >Sub-ledger Type</th>
+                  <th class="bluebgheadtd" width="17%" >Code</th>
+                  <th class="bluebgheadtd" width="29%" >Name</th>
+                  <th class="bluebgheadtd" width="13%" >Amount</th>
+                  <th class="bluebgheadtd" width="6%" >Add/ Del</th>
+                </tr>
+                <tr>
+                  <td class="blueborderfortd"><div align="center">
+                    <input name="textfield5" type="text" value="1" size="1"/>
+                  </div></td>
+                  <td class="blueborderfortd"><div align="center">
+                    <input name="textfield5" type="text" width="80%"/>
+                  </div></td>
+                  <td class="blueborderfortd"><div align="center">
+                    <input name="textfield5" type="text" size="12"/>
+                  </div></td>
+                  <td class="blueborderfortd"><div align="center">
+                    <input name="textfield5" type="text" width="99%"/>
+                  </div></td>
+                  <td class="blueborderfortd"><div align="center">
+                    <input name="textfield5" type="text" class="amount" size="12"/>
+                  </div></td>
+                  <td class="blueborderfortd"><div align="center"><a href="#"><img src="common/image/add.png" alt="Add" width="16" height="16" border="0" /></a> <a href="#"><img src="common/image/cancel.png" alt="Del" width="16" height="16" border="0" /></a></div></td>
+                </tr>
+                <tr>
+                  <td colspan="4" class="blueborderfortd1"><div align="right" class="bold">Total Amount:</div></td>
+                  <td class="blueborderfortd1"><div align="center">
+                    <input name="textfield5" type="text" class="amount" size="12"/>
+                  </div></td>
+                  <td class="blueborderfortd1">&nbsp;</td>
+                </tr>
+              </table>
+            </div></td>
+          </tr>
+          <tr>
+            <td class="blueborderfortd"><div align="center">
+              <input name="textfield5" type="text" value="2" size="3"/>
+            </div></td>
+            <td class="blueborderfortd"><div align="center">
+              <input name="textfield5" type="text" size="18" id="textfield4"/>
+            </div></td>
+            <td class="blueborderfortd">
+              <input name="textfield5" type="text" size="12" id="textfield4"/>
+              <a href="#"><img src="common/image/searchicon.gif" alt="Search" width="18" height="18" border="0"  class="holder"/></a></td>
+            <td colspan="2" class="blueborderfortd"><input name="textfield5" type="text" id="textfield6" style="width:96%"/></td>
+            <td class="blueborderfortd"><div align="center">
+              <input name="textfield5" type="text" class="amount" size="12" id="textfield4"/>
+            </div></td>
+            <td class="blueborderfortd"><div id="bobcontent4-title" style="width:140px;cursor:pointer"><strong>Sub-ledger details&gt;&gt; </strong></div></td>
+            <td class="blueborderfortd"><div align="center"><a href="#"><img src="common/image/add.png" alt="Add" width="16" height="16" border="0" /></a> <a href="#"><img src="common/image/cancel.png" alt="Del" width="16" height="16" border="0" /></a></div></td>
+          </tr>
+          <tr>
+            <td colspan="8" class="blueborderfortd3"><div id="bobcontent4" class="switchgroup1" style="margin:5px">
+              <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablebottom">
+                <tr>
+                  <th class="bluebgheadtd" width="5%" >SL No</th>
+                  <th class="bluebgheadtd" width="30%" >Sub-ledger Type</th>
+                  <th class="bluebgheadtd" width="17%" >Code</th>
+                  <th class="bluebgheadtd" width="29%" >Name</th>
+                  <th class="bluebgheadtd" width="11%" >Amount</th>
+                  <th class="bluebgheadtd" width="8%" >Add/ Del</th>
+                </tr>
+                <tr>
+                  <td class="blueborderfortd"><div align="center">
+                    <input name="textfield5" type="text" value="1" size="1"/>
+                  </div></td>
+                  <td class="blueborderfortd"><div align="center">
+                    <input name="textfield5" type="text" width="80%"/>
+                  </div></td>
+                  <td class="blueborderfortd"><div align="center">
+                    <input name="textfield5" type="text"  size="12"/>
+                  </div></td>
+                  <td class="blueborderfortd"><div align="center">
+                    <input name="textfield5" type="text" />
+                  </div></td>
+                  <td class="blueborderfortd"><div align="center">
+                    <input name="textfield5" type="text" class="amount" size="12"/>
+                  </div></td>
+                  <td class="blueborderfortd"><div align="center"><a href="#"><img src="common/image/add.png" alt="Add" width="16" height="16" border="0" /></a> <a href="#"><img src="common/image/cancel.png" alt="Del" width="16" height="16" border="0" /></a></div></td>
+                </tr>
+                <tr>
+                  <td colspan="4" class="blueborderfortd1"><div align="right" class="bold">Total Amount:</div></td>
+                  <td class="blueborderfortd1"><div align="center">
+                    <input name="textfield5" type="text" class="amount" size="12"/>
+                  </div></td>
+                  <td class="blueborderfortd1">&nbsp;</td>
+                </tr>
+              </table>
+            </div></td>
+          </tr>
+          <tr>
+            <td colspan="5" class="blueborderfortd1"><div align="right" class="bold">Total Deduction:</div></td>
+            <td class="blueborderfortd1"><div align="center">
+              <input name="textfield5" type="text" class="amount" size="12"/>
+            </div></td>
+            <td class="blueborderfortd1">&nbsp;</td>
+            <td class="blueborderfortd1">&nbsp;</td>
+          </tr>
+        </table><br /><table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablebottom">
+          <tr>
+            <th colspan="8"><div class="subheadsmallnew">Net Pay</div></th>
+          </tr>
+          <tr>
+            <th class="bluebgheadtd" width="7%" >SL No</th>
+            <th class="bluebgheadtd" width="9%" > Head</th>
+            <th class="bluebgheadtd" width="10%" >Account Code</th>
+            <th colspan="2" class="bluebgheadtd" > Account Description</th>
+            <th class="bluebgheadtd" width="11%" >Credit Amount</th>
+            <th class="bluebgheadtd" width="13%" >Add Sub-Ledger Details</th>
+            <th class="bluebgheadtd" width="5%" >Add/ Del</th>
+          </tr>
+          <tr>
+            <td class="blueborderfortd"><div align="center">
+              <input name="textfield5" type="text" value="1" size="3"/>
+            </div></td>
+            <td class="blueborderfortd"><div align="center">
+              <input name="textfield5" type="text" size="18" id="textfield4"/>
+            </div></td>
+            <td class="blueborderfortd">
+              <input name="textfield5" type="text" size="12" id="textfield4"/>
+              <a href="#"><img src="common/image/searchicon.gif" alt="Search" width="18" height="18" border="0" class="holder" /></a></td>
+            <td colspan="2" class="blueborderfortd"><input name="textfield5" type="text" id="textfield5" style="width:96%"/></td>
+            <td class="blueborderfortd"><div align="center">
+              <input name="textfield5" type="text" class="amount" size="12" id="textfield4"/>
+            </div></td>
+            <td class="blueborderfortd"><div id="bobcontent5-title" style="width:140px;cursor:pointer"><strong>Sub-ledger details&gt;&gt;</strong></div></td>
+            <td class="blueborderfortd"><div align="center"><a href="#"><img src="common/image/add.png" alt="Add" width="16" height="16" border="0" /></a> <a href="#"><img src="common/image/cancel.png" alt="Del" width="16" height="16" border="0" /></a></div></td>
+          </tr>
+          <tr>
+            <td colspan="8" class="blueborderfortd3"><div id="bobcontent5" class="switchgroup1" style="margin:5px">
+              <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablebottom">
+                <tr>
+                  <th class="bluebgheadtd" width="5%" >SL No</th>
+                  <th class="bluebgheadtd" width="30%" >Sub-ledger Type</th>
+                  <th class="bluebgheadtd" width="17%" >Code</th>
+                  <th class="bluebgheadtd" width="29%" >Name</th>
+                  <th class="bluebgheadtd" width="13%" >Amount</th>
+                  <th class="bluebgheadtd" width="6%" >Add/ Del</th>
+                </tr>
+                <tr>
+                  <td class="blueborderfortd"><div align="center">
+                    <input name="textfield5" type="text" value="1" size="1"/>
+                  </div></td>
+                  <td class="blueborderfortd"><div align="center">
+                    <input name="textfield5" type="text" width="80%"/>
+                  </div></td>
+                  <td class="blueborderfortd"><div align="center">
+                    <input name="textfield5" type="text" size="12"/>
+                  </div></td>
+                  <td class="blueborderfortd"><div align="center">
+                    <input name="textfield5" type="text" width="99%"/>
+                  </div></td>
+                  <td class="blueborderfortd"><div align="center">
+                    <input name="textfield5" type="text" class="amount" size="12"/>
+                  </div></td>
+                  <td class="blueborderfortd"><div align="center"><a href="#"><img src="common/image/add.png" alt="Add" width="16" height="16" border="0" /></a> <a href="#"><img src="common/image/cancel.png" alt="Del" width="16" height="16" border="0" /></a></div></td>
+                </tr>
+                <tr>
+                  <td colspan="4" class="blueborderfortd1"><div align="right" class="bold">Net Pay:</div></td>
+                  <td class="blueborderfortd1"><div align="center">
+                    <input name="textfield5" type="text" class="amount" size="12"/>
+                  </div></td>
+                  <td class="blueborderfortd1">&nbsp;</td>
+                </tr>
+              </table>
+            </div></td>
+          </tr>
+        </table>
+        <div class="subheadsmallnew"></div>
+<div align="left" class="mandatory">* Mandatory Fields</div>
+</div>
+<script type="text/javascript">
+// MAIN FUNCTION: new switchcontent("class name", "[optional_element_type_to_scan_for]") REQUIRED
+// Call Instance.init() at the very end. REQUIRED
+var bobexample=new switchcontent("switchgroup1", "div") //Limit scanning of switch contents to just "div" elements
+bobexample.collapsePrevious(true) //Only one content open at any given time
+bobexample.init()
+</script>
+<div class="buttonbottom">
+  <label>
+  <input name="button" type="submit" class="buttonsubmit" id="button" onclick="MM_goToURL('parent','collectionSRSHome.html');return document.MM_returnValue" value="Save &amp;  New" />
+  </label>&nbsp;&nbsp;
+    <label>
+  <input name="button" type="submit" class="buttonsubmit" id="button" onclick="MM_goToURL('parent','collectionSRSHome.html');return document.MM_returnValue" value="Save &amp; Close" />
+  </label>&nbsp;&nbsp;
+<input type="submit" name="button3" id="button3" value="Cancel" class="button" />
+&nbsp;&nbsp;<input type="submit" name="button2" id="button2" value="Close" class="button" />
+</div>
+<script type="text/javascript">
+// MAIN FUNCTION: new switchcontent("class name", "[optional_element_type_to_scan_for]") REQUIRED
+// Call Instance.init() at the very end. REQUIRED
+var bobexample=new switchcontent("switchgroup1", "div") //Limit scanning of switch contents to just "div" elements
+bobexample.collapsePrevious(true) //Only one content open at any given time
+bobexample.init()
+</script>
+</body>
+</html>

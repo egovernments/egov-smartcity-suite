@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite failures="0" errors="0" name="Test_Create_UOM_category" assertions="10" tests="2" time="33.672">
+  <testcase name="test_0010_view_uom_category_selecting_uom_category" assertions="5" time="18.16">
+  </testcase>
+  <testcase name="test_0020_view_uom_category_without_selecting_uom_category" assertions="5" time="15.51">
+  </testcase>
+  <system-out>
+    <![CDATA[]]>
+  </system-out>
+  <system-err>
+    <![CDATA[]]>
+  </system-err>
+</testsuite>

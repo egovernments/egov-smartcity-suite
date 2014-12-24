@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite failures="0" errors="3" name="Test_Approve_MMRN" time="11.319" assertions="6" tests="3">
+  <testcase name="test_0010_approve_user_manager" time="3.783" assertions="2">
+    <failure type="Watir::Exception::UnknownObjectException" message="Unable to locate element, using :id, &quot;j_username&quot;">
+Unable to locate element, using :id, "j_username" (Watir::Exception::UnknownObjectException)
+c:/ruby/lib/ruby/gems/1.8/gems/watir-1.6.2/lib/watir/element.rb:52:in `assert_exists'
+c:/ruby/lib/ruby/gems/1.8/gems/watir-1.6.2/lib/watir/element.rb:284:in `enabled?'
+c:/ruby/lib/ruby/gems/1.8/gems/watir-1.6.2/lib/watir/element.rb:56:in `assert_enabled'
+c:/ruby/lib/ruby/gems/1.8/gems/watir-1.6.2/lib/watir/input_elements.rb:323:in `set'
+c:/stores_qa/regression/Transactions/MMRN/stores_mmrn_methods.rb:19:in `login_to_stores'
+c:/stores_qa/regression/Transactions/MMRN/test_approve_mmrn.rb:35:in `test_0010_approve_user_manager'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `__send__'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+c:/ruby/lib/ruby/1.8/test/unit.rb:278
+suite.rb:1    </failure>
+  </testcase>
+  <testcase name="test_0020_approve_user_reject_manager" time="3.466" assertions="2">
+    <failure type="Watir::Exception::UnknownObjectException" message="Unable to locate element, using :id, &quot;j_username&quot;">
+Unable to locate element, using :id, "j_username" (Watir::Exception::UnknownObjectException)
+c:/ruby/lib/ruby/gems/1.8/gems/watir-1.6.2/lib/watir/element.rb:52:in `assert_exists'
+c:/ruby/lib/ruby/gems/1.8/gems/watir-1.6.2/lib/watir/element.rb:284:in `enabled?'
+c:/ruby/lib/ruby/gems/1.8/gems/watir-1.6.2/lib/watir/element.rb:56:in `assert_enabled'
+c:/ruby/lib/ruby/gems/1.8/gems/watir-1.6.2/lib/watir/input_elements.rb:323:in `set'
+c:/stores_qa/regression/Transactions/MMRN/stores_mmrn_methods.rb:19:in `login_to_stores'
+c:/stores_qa/regression/Transactions/MMRN/test_approve_mmrn.rb:60:in `test_0020_approve_user_reject_manager'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `__send__'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+c:/ruby/lib/ruby/1.8/test/unit.rb:278
+suite.rb:1    </failure>
+  </testcase>
+  <testcase name="test_0030_reject_user" time="4.07" assertions="2">
+    <failure type="Watir::Exception::UnknownObjectException" message="Unable to locate element, using :id, &quot;j_username&quot;">
+Unable to locate element, using :id, "j_username" (Watir::Exception::UnknownObjectException)
+c:/ruby/lib/ruby/gems/1.8/gems/watir-1.6.2/lib/watir/element.rb:52:in `assert_exists'
+c:/ruby/lib/ruby/gems/1.8/gems/watir-1.6.2/lib/watir/element.rb:284:in `enabled?'
+c:/ruby/lib/ruby/gems/1.8/gems/watir-1.6.2/lib/watir/element.rb:56:in `assert_enabled'
+c:/ruby/lib/ruby/gems/1.8/gems/watir-1.6.2/lib/watir/input_elements.rb:323:in `set'
+c:/stores_qa/regression/Transactions/MMRN/stores_mmrn_methods.rb:19:in `login_to_stores'
+c:/stores_qa/regression/Transactions/MMRN/test_approve_mmrn.rb:85:in `test_0030_reject_user'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `__send__'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+c:/ruby/lib/ruby/1.8/test/unit.rb:278
+suite.rb:1    </failure>
+  </testcase>
+  <system-out>
+    <![CDATA[]]>
+  </system-out>
+  <system-err>
+    <![CDATA[]]>
+  </system-err>
+</testsuite>

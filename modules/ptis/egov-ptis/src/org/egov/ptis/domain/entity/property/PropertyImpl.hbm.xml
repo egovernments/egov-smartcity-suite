@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.ptis.domain.entity.property.PropertyImpl" table="EGPT_PROPERTY"
+		polymorphism="explicit">
+		<id name="id" column="ID_PROPERTY" type="java.lang.Long">
+			<generator class="sequence">
+				<param name="sequence">SEQ_PROP</param>
+			</generator>
+		</id>
+		<property name="createdDate" type="java.util.Date">
+			<column name="CREATED_DATE" not-null="true" />
+		</property>
+		<property name="modifiedDate" type="java.util.Date">
+			<column name="MODIFIED_DATE" not-null="true" />
+		</property>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl">
+			<column name="CREATED_BY" />
+		</many-to-one>
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl">
+			<column name="MODIFIED_BY" />
+		</many-to-one>
+
+		<many-to-one name="propertySource"
+			class="org.egov.ptis.domain.entity.property.PropertySource" column="ID_SOURCE" />
+
+		<property name="extra_field1" column="EXTRA_FIELD1" />
+		<property name="extra_field2" column="EXTRA_FIELD2" />
+		<property name="extra_field3" column="EXTRA_FIELD3" />
+		<property name="extra_field4" column="EXTRA_FIELD4" />
+		<property name="extra_field5" column="EXTRA_FIELD5" />
+		<property name="extra_field6" column="EXTRA_FIELD6" />
+		<property name="effectiveDate" column="EFFECTIVE_DATE" />
+		<property name="status" column="STATUS" />
+
+		<many-to-one name="basicProperty"
+			class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" column="ID_BASIC_PROPERTY"
+			insert="false" update="false" />
+
+		<one-to-one name="propertyDetail"
+			class="org.egov.ptis.domain.entity.property.PropertyDetail" property-ref="property"
+			cascade="all" />
+
+		<set name="ptDemandSet" cascade="all-delete-orphan" table="EGPT_PTDEMAND">
+			<key column="ID_PROPERTY" not-null="true" />
+			<one-to-many class="org.egov.ptis.domain.entity.demand.Ptdemand" />
+		</set>
+		
+		<property name="isDefaultProperty" column="IS_DEFAULT_PROPERTY" />
+
+		<properties name="defaultBasicProperty">
+			<many-to-one name="basicProperty"
+				class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" column="ID_BASIC_PROPERTY"
+				insert="false" update="false" />
+			<property name="isDefaultProperty" column="IS_DEFAULT_PROPERTY"
+				insert="false" update="false" />
+			<property name="status" column="STATUS" insert="false"
+				update="false" />
+		</properties>
+
+		<many-to-one name="propertyModifyReason" column="ID_MODIFY_REASON"
+			class="org.egov.ptis.domain.entity.property.PropertyModifyReason" unique="true" />
+
+		<set name="propertyOwnerSet" cascade="all-delete-orphan" table="EGPT_PROPERTY_OWNER">
+			<key column="ID_PROPERTY" not-null="true" />
+			<many-to-many class="org.egov.lib.citizen.model.Owner"
+				column="OWNERID" />
+		</set>
+
+		<set name="propertyTenantSet" cascade="all-delete-orphan" table="EGPT_PROPERTY_TENANTS">
+			<key column="ID_PROPERTY" not-null="true" />
+			<many-to-many class="org.egov.lib.citizen.model.Owner"
+				column="CITIZENID" />
+		</set>
+		<property name="isChecked" column="ISCHECKED" />
+		<property name="remarks" column="REMARKS" type="string" />
+
+		<set name="ptDemandARVSet" order-by="FROMDATE" cascade="all-delete-orphan"
+			table="EGPT_PTDEMAND_ARV"
+			where="IS_HISTORY='N' and (ARV_TYPE ='Assessed' or ARV_TYPE ='Confirmed')">
+			<key column="ID_PROPERTY" not-null="true" />
+			<one-to-many class="org.egov.ptis.domain.entity.property.PtDemandARV" />
+		</set>
+		<many-to-one name="installment" class="org.egov.commons.Installment"
+			column="ID_INSTALLMENT" />
+				
+		<many-to-one name="state" class="org.egov.infstr.models.State" cascade="save-update">
+			<column name="STATE_ID"/>
+		</many-to-one>
+		
+		<property name="isExemptedFromTax" column="isExemptedFromTax" />
+		<property name="taxExemptReason" column="taxExemptReason"/>
+		<property name="docNumber" column="DOC_NUMBER"/>
+		
+		<many-to-one name="areaBndry" class="org.egov.lib.admbndry.BoundaryImpl"
+			column="AREA_BNDRY" />
+		
+ 	</class>
+	
+	<query name="PROPERTYIMPL_BYID">
+        <![CDATA[from PropertyImpl where id=?]]></query>	
+
+</hibernate-mapping>

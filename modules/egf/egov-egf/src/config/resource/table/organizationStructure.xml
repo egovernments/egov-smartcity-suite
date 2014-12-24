@@ -1,0 +1,50 @@
+<?xml  version="1.0"?>
+<OrgStructure  name="organizationStructure"
+		 keyColumnName="ID"
+		 keyRequiresQuote="No">
+
+	<columnDefinition 
+		name="code" 
+		dataType="alphaNumeric"
+		isRequired="yes"
+		maxLength="10"
+		/>
+	<columnDefinition 
+		name="name" 
+		dataType="anyChar"
+		isRequired="yes"
+		maxLength="50"
+		/>
+	
+	<columnDefinition 
+		name="description" 
+		dataType="anyChar"
+		defaultValue=""
+		isRequired="yes"
+		maxLength="250"
+		/>
+	<columnDefinition 
+		name="parentId" 
+		dataType="unsignedInt"
+		defaultValue="null"
+		isRequired="yes"
+
+		maxLength="4"
+		/>
+	<columnDefinition 
+		name="cashInHand" 
+		dataType="unsignedInt"
+		defaultValue="0"
+		isRequired="yes"
+		maxLength="4"
+		/>
+	<columnDefinition 
+		name="chequeInHand" 
+		dataType="unsignedInt"
+		defaultValue="0"
+		isRequired="yes"
+		maxLength="4"
+		/>
+	
+	
+</OrgStructure>

@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.works.models.qualityControl.TestSheetHeader" table="EGW_QC_TESTSHEET_HEADER">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_QC_TESTSHEET_HEADER_SEQ</param>
+			</generator>
+		</id>
+		
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
+		<property column="MODIFIED_DATE" name="modifiedDate" type="timestamp" />
+		
+		<property name="testSheetNumber" type="string">
+            <column name="TESTSHEET_NUMBER" length="256" not-null="true"/> 
+        </property>
+        
+		<property name="testSheetDate" type="date">
+			<column name="TESTSHEET_DATE" length="7" />
+		</property>
+		
+        <many-to-one name="workOrder" column="WORKORDER_ID" fetch="join" not-null="true"  />
+        <many-to-one name="egwStatus" column="STATUS_ID" not-null="true" />
+        <many-to-one name="state" class="org.egov.infstr.models.State"
+			cascade="all">
+			<column name="STATE_ID" />
+		</many-to-one>
+        
+        <list name="testSheetDetails" cascade="all,delete-orphan">
+			<key column="TESTSHEETHEADER_ID" not-null="true" />
+			<list-index column="TESTSHEETDETAILS_INDEX" />
+			<one-to-many
+				class="org.egov.works.models.qualityControl.TestSheetDetails" />
+		</list>
+     </class> 
+     
+     <query name="getTestSheetContractorsWithNoSampleLetter">
+		<![CDATA[
+     	select distinct tsh.workOrder.contractor from TestSheetHeader tsh where tsh.id not in ( select testSheetHeader.id from SampleLetterHeader where egwStatus.code!='CANCELLED') and tsh.egwStatus.code='APPROVED' order by tsh.workOrder.contractor.code 
+    ]]>
+	</query>
+	
+	<query name="getContractorsWithTestSheet">
+		<![CDATA[
+     	select distinct tsh.workOrder.contractor from TestSheetHeader tsh where tsh.egwStatus.code!='NEW' order by tsh.workOrder.contractor.code 
+    ]]>
+	</query>
+	
+</hibernate-mapping>

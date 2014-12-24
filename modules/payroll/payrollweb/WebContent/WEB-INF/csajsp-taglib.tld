@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE taglib
+PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
+"http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+<!-- a tag library descriptor -->
+<taglib>
+<!-- after this the default space is
+"http://java.sun.com/j2ee/dtds/jsptaglibrary_1_2.dtd"
+-->
+<tlibversion>1.0</tlibversion>
+<jspversion>1.1</jspversion>
+<shortname>csajsp</shortname>
+<uri>http://localhost/WEB-INF/lib/egov_taglibs.jar</uri>
+<info>
+A tag library from Core Servlets and JavaServer Pages,
+</info>
+
+
+<tag>
+	<name>select</name>
+	<tagclass>org.egov.infstr.client.taglib.BoundryTag</tagclass>
+	<bodycontent>empty</bodycontent>
+	<info>info</info>
+	<attribute>
+	<name>name</name>
+	<required>true</required>
+	<rtexprvalue>true</rtexprvalue>
+	</attribute>
+	<attribute>
+		<name>formName</name>
+	</attribute>
+	<attribute>
+		<name>functionName</name>
+		<rtexprvalue>true</rtexprvalue>
+	</attribute>
+	
+</tag>
+<tag>
+	<name>selectgreview</name>
+	<tagclass>org.egov.infstr.client.taglib.BndryTagForGreView</tagclass>
+	<bodycontent>empty</bodycontent>
+	<info>info</info>
+	<attribute>
+	<name>name</name>
+	<required>true</required>
+	<rtexprvalue>true</rtexprvalue>
+	</attribute>
+	
+	
+</tag>
+<tag>
+	<name>extraFiels</name>
+	<tagclass>org.egov.infstr.client.taglib.ExtraFieldTag</tagclass>
+	<bodycontent>empty</bodycontent>
+	<info>info</info>
+	<attribute>
+	<name>extraFieldMap</name>
+	<required>true</required>
+	<rtexprvalue>true</rtexprvalue>
+	</attribute>
+	
+	
+</tag>
+<tag>
+	<name>selectgreviewreports</name>
+	<tagclass>org.egov.infstr.client.taglib.TagGreViewReports</tagclass>
+	<bodycontent>empty</bodycontent>
+	<info>info</info>
+	
+</tag>
+<!-- Other tags defined later... -->
+</taglib>

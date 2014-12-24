@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Aug 28, 2007 7:45:39 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.payroll.model.PayScaleDetails" table="EGPAY_PAYSCALE_DETAILS" >
+        <id name="id" >
+            <column name="ID" precision="12" scale="0" />
+            <generator class="sequence">
+	    	  <param name="sequence">SEQ_PAYHEADER_DETAILS</param>
+        	</generator>
+        </id>
+       	<many-to-one name="payHeader" class="org.egov.payroll.model.PayScaleHeader" fetch="select">
+	    <column name="ID_PAYHEADER" precision="12" scale="0" not-null="true" />
+        </many-to-one>
+       <many-to-one name="salaryCodes" class="org.egov.payroll.model.SalaryCodes" fetch="select">
+	    <column name="ID_SALARYCODES" precision="12" scale="0" not-null="true" />
+        </many-to-one>
+        <property name="pct" type="big_decimal">
+            <column name="PCT" precision="12" />
+        </property>
+        <property name="amount" type="big_decimal">
+            <column name="AMOUNT" precision="15" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

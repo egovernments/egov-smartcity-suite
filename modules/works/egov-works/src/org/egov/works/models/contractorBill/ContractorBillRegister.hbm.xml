@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.egov.works.models.contractorBill">  
+	<joined-subclass name="ContractorBillRegister" table="EGW_CONTRACTORBILL"
+		extends="org.egov.model.bills.EgBillregister">
+		<key column="ID" />
+		<list name="assetDetailsList" inverse="false" cascade="all,delete-orphan">
+			<key column="ID_BILL" not-null="true" />
+			<list-index column="asset_index" />
+			<one-to-many class="org.egov.works.models.contractorBill.AssetForBill" />
+		</list>
+		<list name="deductionTypeList" inverse="false" cascade="all,delete-orphan">
+			<key column="ID_BILL" not-null="true" />
+			<list-index column="deductionbill_index" />
+			<one-to-many class="org.egov.works.models.contractorBill.DeductionTypeForBill" />
+		</list>
+		
+		<list name="statutoryDeductionsList" inverse="false" cascade="all,delete-orphan">
+			<key column="ID_BILL" not-null="true" />
+			<list-index column="statutorydeductionbill_index" />
+			<one-to-many class="org.egov.works.models.contractorBill.StatutoryDeductionsForBill" />
+		</list> 
+		
+		<property name="partbillNo">
+			<column name="PART_BILLNUMBER"/>
+		</property>
+		<property name="documentNumber" type="long"><column name="DOCUMENT_NUMBER" /></property>
+		<property name="contractCertificateNumber" type="string"><column name="CERTIFICATE_NUMBER" /></property>
+		<property name="workRecordedAmount" >
+            <column name="WORK_RECORDED_AMOUNT" />
+        </property>
+	</joined-subclass>
+	<query name="RetentionMoneyDeductionList">
+		<![CDATA[
+     	from EgBilldetails ebd where ebd.egBillregister.id=? and ebd.glcodeid in(:param_1) and  ebd.creditamount!=null 
+    	]]>
+	</query>
+	<query name="CustomDeductionList">
+		<![CDATA[
+     	from EgBilldetails ebd where ebd.egBillregister.id=? and ebd.glcodeid not in(:param_1) and  ebd.creditamount!=null 
+    	]]>
+	</query>
+	<query name="AccountDetailsList">
+		<![CDATA[
+     	from EgBilldetails ebd where ebd.egBillregister.id=? and ebd.glcodeid not in(:param_1) and  ebd.debitamount!=null 
+    	]]>
+	</query>
+	<query name="getStatutoryTotAmt">
+		<![CDATA[
+		from StatutoryDeductionsForBill sdb where sdb.egBillPayeeDtls.recovery.chartofaccounts.id=? and sdb.egBillPayeeDtls.egBilldetailsId.egBillregister.id in(:param_1)
+    	]]>
+	</query>
+	<query name="getAdvanceAjustementTotAmt">
+		<![CDATA[
+		from EgBilldetails ebd where ebd.glcodeid=? and ebd.egBillregister.id in(:param_1)
+    	]]>
+	</query>
+	
+	
+	<query name="getStandardTotAmt">
+		<![CDATA[
+		from DeductionTypeForBill dtb where dtb.coa.id=? and dtb.egbill.id in(:param_1)
+    	]]>
+	</query>
+		<query name="getCustomDeductionTotAmt">
+		<![CDATA[
+		from EgBilldetails ebd where ebd.glcodeid=? and ebd.creditamount!=null and ebd.egBillregister.id in(:param_1) 
+    	]]>
+	</query>
+	<query name="getContractorBillRegister">
+		<![CDATA[
+		from ContractorBillRegister egBillregister where egBillregister.billnumber=?
+	    		
+    	]]>
+	</query>
+	<query name="ReleaseWithHoldAmountList">
+		<![CDATA[
+     	from EgBilldetails ebd where ebd.egBillregister.id=? and ebd.glcodeid in(:param_1) and  ebd.debitamount!=null 
+    	]]>
+	</query>
+	<query name="getWithHeldAmountList">
+		<![CDATA[
+     	from EgBilldetails bd where bd.egBillregister.billstatus='APPROVED' and bd.egBillregister.id in(select mbBills.egBillregister.id from MBHeader mbh left join mbh.mbBills  mbBills  where mbh.workOrderEstimate.id=?) and bd.glcodeid=? and bd.egBillregister.billdate <=? 
+    	]]>
+	</query>
+	<query name="getReleaseWithHoldAmountTotalList">
+		<![CDATA[
+     	from EgBilldetails ebd where ebd.glcodeid =? and ebd.debitamount!=null and ebd.egBillregister.id in(:param_1)
+    	]]>
+	</query>
+		<query name="getAllAccountDetailList">
+		<![CDATA[
+     	from EgBilldetails ebd where ebd.egBillregister.id=? and  ebd.debitamount!=null
+    	]]>
+	</query>
+</hibernate-mapping>  

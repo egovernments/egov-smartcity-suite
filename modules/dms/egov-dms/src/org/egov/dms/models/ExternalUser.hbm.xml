@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping >
+	<class name="org.egov.dms.models.ExternalUser" table="EGDMS_EXTNL_USER"> 
+		<id name="id" type="long" column="ID">
+	        <generator class="sequence">
+	            <param name="sequence">SEQ_EGDMS_EXTNL_USER</param>
+	        </generator>
+	    </id>
+	    <property name="userName" type="string" column="USER_NAME"/>
+	    <property name="userAddress" type="string" column="USER_ADDRESS"/>
+	    <property name="userPhNumber" type="string" column="USER_PHNUM"/>
+	    <property name="userEmailId" type="string" column="USER_MAILID"/>
+	    <property name="addressedTo" type="string" column="ADDRESSED_TO"/>
+	    <many-to-one name="userType" class="org.egov.dms.models.ExternalUserType" column="USER_TYPE"/> 	   
+	    <many-to-one name="userSource" class="org.egov.dms.models.FileSource" column="USER_SOURCE"/> 	   
+	    <property name="outboundFileNumber" type="string" column="OUTBOUND_FILENUM" />
+	 </class>
+</hibernate-mapping>

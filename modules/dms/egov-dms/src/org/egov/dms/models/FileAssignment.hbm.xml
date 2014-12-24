@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping >
+	<class name="org.egov.dms.models.FileAssignment" table="EGDMS_FILE_ASSIGNMENT"> 
+		<id name="id" type="long" column="ID">
+	        <generator class="sequence">
+	            <param name="sequence">SEQ_EGDMS_FILE_ASSIGNMENT</param>
+	        </generator>
+	    </id>
+	    <property name="userType" type="string" column="USER_TYPE" />
+
+		<many-to-one name="internalUser" class="org.egov.dms.models.InternalUser" column="INTERNAL_USER" cascade="all"/> 
+		<many-to-one name="externalUser" class="org.egov.dms.models.ExternalUser" column="EXTERNAL_USER" cascade="all"/>   
+	</class>
+</hibernate-mapping>

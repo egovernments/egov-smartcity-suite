@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:security="http://www.springframework.org/schema/security" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	   http://www.springframework.org/schema/security
+	   http://www.springframework.org/schema/security/spring-security-3.1.xsd" default-lazy-init="true">
+	
+	<bean id="securityFilterChain" name="securityFilterChain" class="org.springframework.security.web.FilterChainProxy">
+		<constructor-arg>
+			<list>
+				<security:filter-chain pattern="/login/securityLogin.jsp*" filters="none" />
+				<security:filter-chain pattern="/login/TerminalAjax.jsp*" filters="none" />
+				<security:filter-chain pattern="/error/**" filters="none" />
+				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,simpleSSOFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
+			</list>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="filterSecurityInterceptor" class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
+		<property name="authenticationManager" ref="authenticationManager" />
+		<property name="accessDecisionManager" ref="accessDecisionManager" />
+		<property name="securityMetadataSource" ref="egovFilterInvocationDefinitionSource" />
+		<property name="rejectPublicInvocations" value="false" />
+	</bean>
+		
+	<bean id="egovFilterInvocationDefinitionSource" class="org.egov.infstr.security.spring.EGovFilterInvocationDefinitionSource">
+		<property name="rbacService" ref="rbacService" />
+		<property name="excludePatterns">
+          <list>       
+          	<value>/citizen</value>
+          	<value>/common</value>
+          	<value>/viewtradelicense</value> 
+          </list>
+      </property>
+	</bean>
+</beans>

@@ -1,0 +1,293 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Miscellaneous Receipt-Create Help</title>
+</head>
+<LINK REL=StyleSheet HREF="egov.css" TYPE="text/css" />
+<style type="text/css">
+html {
+background-color:#FFF9EF;
+}
+body {
+background-color:#FFF9EF;
+}
+a {
+text-decoration:none;
+}
+table {
+border-top: 1px solid gray;
+border-left: 1px solid gray;
+}
+th {
+background-color:#FFF9EF;
+border-right: 1px solid gray;
+border-bottom: 1px solid gray;
+text-align: center;
+}
+td {
+background-color:white;
+border-bottom: 1px solid gray;
+border-right: 1px solid gray;
+}
+
+#hheader {
+background-color:#EFDFC2;
+text-align: right;
+padding: 10px;
+font-size: 130%;
+font-weight: bold;
+border-bottom: 1px solid gray;
+}
+
+#hnav {
+background-color:#FFF9EF;
+text-align: right;
+padding-right: 10px;
+border-bottom: 1px solid gray;
+}
+
+#hnav a:hover{
+border-bottom: 2px solid #CFC1A8;
+}
+
+#hcontent {
+background-color:white;
+text-align: left;
+padding: 10px;
+}
+
+#hfooter {
+background-color:#FFF9EF;
+text-align: center;
+margin-top: 0px;
+padding-right: 10px;
+padding-left: 10px;
+margin-bottom: 10px;
+border-bottom: 1px solid gray;
+border-top: 1px solid gray;
+
+}
+.hbold0 {
+font-size: 105%;
+font-weight: bold;
+text-transform: uppercase;
+}
+.hbold {
+font-size: 100%;
+font-weight: bold;
+}
+</style>
+
+<body>
+<div id="hheader">
+eGov Product-Customization-Functionality Help
+</div>
+<div id="hnav">
+<a href="#">Home</a>&nbsp;|&nbsp;
+<a href="http://www.egovernments.org">About Us</a>&nbsp;|&nbsp;
+<a href="mailto:contact@egovernments.org">Contact Us</a>
+</div>
+
+<div id="hcontent">
+<!-- Objective Section Stats -->
+<span class="hbold0">
+Objective: </span>This screen is used for creating Miscellaneous Receipt.<br /><br />
+<!-- Objective Section ENDS -->
+
+<!-- Fields Definition Section ENDS -->
+<span class="hbold0">
+Field Description Table:</span><br /><br />
+<table width="80%" cellpadding="2px" cellspacing="0px">
+<tr>
+<th>Field Name</th>
+<th>Field Type</th>
+<th>Field Description</th>
+</tr>
+<tr>
+<td>Voucher No.</td>
+<td>Text</td>
+<td>Voucher number for the Receipt.If it is auto voucher generation no need to give voucher number. </td>
+</tr>
+<tr>
+<td>Counter</td>
+<td>Drop down list</td>
+<td>Counters are defined on the Collection Agent Screen.</td>
+</tr>
+<tr>
+<td>Voucher Date</td>
+<td>Date</td>
+<td>Voucher Date. This date needs to be in an Open Period.</td>
+</tr>
+<tr>
+<td>Collection Mode</td>
+<td>Option button</td>
+<td>Cash/Cheque/Bank</td>
+</tr>
+<tr>
+<td>Bank</td>
+<td>Option button</td>
+<td>List of Banks where the ULB has an account under the Fund.</td>
+</tr>
+<tr>
+<td>Fund</td>
+<td>Drop down list</td>
+<td>List of active funds.</td>
+</tr>
+<tr>
+<td>Scheme</td>
+<td>Drop down list</td>
+<td>List of Scheme based on the Fund.</td>
+</tr>
+<tr>
+<td>Sub Scheme</td>
+<td>Drop down list</td>
+<td>List of Sub Scheme based on the Scheme.</td>
+</tr>
+<tr>
+<td>Financing Source</td>
+<td>Drop down list</td>
+<td>List of Financing Sources.</td>
+</tr>
+<tr>
+<td>Field</td>
+<td>Drop down list</td>
+<td>List of Fields.</td>
+</tr>
+<tr>
+<td>Amount</td>
+<td>Numeric</td>
+<td>Amount Received.</td>
+</tr>
+<tr>
+<td>Narration</td>
+<td>Alphanumeric</td>
+<td>Description.</td>
+</tr>
+<tr>
+<td>Cheque No</td>
+<td>Numeric</td>
+<td>Cheque number if Mode: Cheque.</td>
+</tr>
+<tr>
+<td>Cheque Date</td>
+<td>Date</td>
+<td>Cheque Date if Mode: Cheque.</td>
+</tr>
+<tr>
+<td>Cheque Amount</td>
+<td>Numeric</td>
+<td>Cheque Amount if Mode: Cheque.</td>
+</tr>
+<tr>
+<td>Boundary Level</td>
+<td>Drop-down: List of Administrative boundaries at which accounting is managed</td>
+<td>Defaulted to the ULB since all cheque-in-hand/cash accounts are
+defined at the ULB level</td>
+</tr>
+<tr>
+<td>Cheque-in-hand/Cash-in-hand Account</td>
+<td>Defaulted from setup</td>
+<td>Account defined from the Setup Cheque-in-hand/Cash-in-hand Screen.</td>
+</tr>
+<tr>
+<td>Function</td>
+<td>Text</td>
+<td>The function is set to required for the Account head.</td>
+</tr>
+<tr>
+<td>Account Code</td>
+<td>Text</td>
+<td>The Account code is set to required for the Account head.</td>
+</tr>
+<tr>
+<td>Account Head</td>
+<td>Display</td>
+<td>From the Chart of accounts.</td>
+</tr>
+<tr>
+<td>Dr Amount</td>
+<td>Numeric</td>
+<td>Debit Amount.</td>
+</tr>
+<tr>
+<td>Cr Amount</td>
+<td>Numeric</td>
+<td>Credit Amount.</td>
+</tr>
+<tr>
+<td>Click</td>
+<td>Additional details</td>
+<td>Only if additional details are required for any control account code.</td>
+</tr>
+
+</table>
+
+<br />
+<!-- Fields Definition Section ENDS -->
+
+<!-- Expected Results and/or Workflow Section Begins -->
+<span class="hbold0">
+Expected Results and/or Workflow:
+</span><br />
+Create the receipt for the particular income code.
+<br /><br />
+<table width="80%" cellpadding="2px" cellspacing="0px">
+<tr>
+<th>Action</th>
+<th>Expected Result</th>
+</tr>
+<tr>
+<td>Save& New</td>
+<td>Submits the transaction. On successful submit, the system generates the Receipt Voucher Number. The same screen is made available for entering a new record.</td>
+</tr>
+<tr>
+<td>Save&Close</td>
+<td>Submits the transaction. On successful submit, the system generates the Receipt Voucher Number. The screen is closed.</td>
+</tr>
+<tr>
+<td>Save&View</td>
+<td>Submits the transaction. On successful submit, the system generates the Receipt Voucher Number and it will open new screen in view mode with transaction
+details.Here Exit and Print option is available.</td>
+</tr>
+<tr>
+<td>Cancel</td>
+<td>Cancels the transaction.</td>
+</tr>
+<tr>
+<tr>
+<td>Show GL Entry</td>
+<td>Shows the entry that will passed to the GL on submitting the transaction.</td>
+</tr>
+<tr>
+</table>
+
+<!-- Expected Results and/or Workflow Section ENDS -->
+<br />
+
+<!-- Troubleshooting Section Begins -->
+<span class="hbold0">
+Troubleshooting:
+</span><br />
+<span class="hbold">Question 1:</span><br />
+If you enter the Amount less/greater than the sum of total credit amount.
+<br />
+<span class="hbold">Answer 1:</span><br />
+Difference between Total Cr Amount and Total Dr Amount should be equal to the Amount,this alert message will come.
+<br />
+
+
+</div>
+<!-- Troubleshooting Section ENDS -->
+
+<!-- Footer Starts here -->
+<div id="hfooter">
+&copy eGovernments Foundation
+<script type="JavaScript">
+document.write(time());
+</script>
+</div>
+<!-- Footer ENDS here -->
+
+</body>
+</html>

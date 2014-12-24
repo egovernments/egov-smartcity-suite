@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite failures="0" name="Stores_TC_View_GMI" tests="1" errors="0" time="103.321" assertions="24">
+  <testcase name="test_0010_create_GMI_Inter_Store_Transfer" time="103.321" assertions="24">
+  </testcase>
+  <system-out>
+    <![CDATA[document
+    OLE error code:80004005 in <Unknown>
+      <No Description>
+    HRESULT error code:0x80020009
+      Exception occurred.
+]]>
+  </system-out>
+  <system-err>
+    <![CDATA[]]>
+  </system-err>
+</testsuite>

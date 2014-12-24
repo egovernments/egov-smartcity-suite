@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Aug 28, 2007 7:45:39 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.payroll.model.IncrementDetails" table="EGPAY_INCREMENTDETAILS" >
+        <id name="id" >
+            <column name="ID" precision="12" scale="0" />
+            <generator class="sequence">
+	    	    <param name="sequence">EISPAYROLL_INCREMENTDET_SEQ</param>
+        	</generator>
+        </id>
+        
+	<many-to-one name="financialyear" class="org.egov.commons.CFinancialYear" fetch="select">
+	    	<column name="FINANCIALYEARID" precision="12" scale="0" not-null="true" />
+        </many-to-one>
+        <property name="month" type="big_decimal">
+	    	<column name="MONTH" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="incrementDate" type="date">
+	    	<column name="incrementdate" length="7"  not-null="true"/>
+	    </property>
+        <property name="amount">
+	    <column name="amount" precision="10" scale="3" />
+        </property>
+        <many-to-one name="employee" class="org.egov.pims.model.PersonalInformation" fetch="select">
+		    <column name="empid" precision="12" scale="0" not-null="true" />
+        </many-to-one>        
+        <many-to-one name="createdby" class="org.egov.lib.rjbac.user.UserImpl" fetch="select">
+           <column name="CREATEDBY" precision="12" scale="0" not-null="true" />
+        </many-to-one>
+          <property name="createddate" type="date">
+        <column name="createddate" length="7"  not-null="true"></column>
+        </property>
+        <property name="status" type="integer">
+        <column name="status" not-null="true" />
+        </property>
+        
+    </class>
+</hibernate-mapping>

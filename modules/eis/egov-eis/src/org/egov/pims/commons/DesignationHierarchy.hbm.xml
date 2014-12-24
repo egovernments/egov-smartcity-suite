@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Created 06 April 2010 -->
+<hibernate-mapping>
+    <class name="org.egov.pims.commons.DesignationHierarchy" table="EGEIS_DESIG_HIERARCHY" >
+        
+        <id	name="id"	column="ID"	type="long">
+			<generator class="sequence">
+				<param name="sequence">SEQ_EGEIS_DESIG_HIERARCHY</param>
+			</generator>
+		</id>
+        
+	    <many-to-one name="objectType" class="org.egov.commons.ObjectType" fetch="select">
+			<column name="OBJECT_TYPE_ID"   />
+		</many-to-one>
+		
+		<many-to-one name="department" class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
+			<column name="DEPARTMENT_ID"   />
+		</many-to-one>
+        
+        <many-to-one name="fromDesig" class="org.egov.pims.commons.DesignationMaster" fetch="select">
+			<column name="FROM_DESIG_ID"   />
+	  	</many-to-one>
+	  	
+	  	<many-to-one name="toDesig" class="org.egov.pims.commons.DesignationMaster" fetch="select">
+	  		<column name="TO_DESIG_ID"   />
+	  	</many-to-one>
+		
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" fetch="select">
+  	 		<column name="CREATED_BY" precision="12" scale="0"  />
+	 	</many-to-one>
+     
+     	<property name="createdDate" type="date">
+          <column name="CREATED_DATE" length="7"  />
+     	</property>
+     
+     	<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" fetch="select">
+  	 		<column name="MODIFIED_BY" precision="12" scale="0"  />
+	 	</many-to-one>  
+	 	
+	 	<property name="modifiedDate" type="java.util.Date">
+            <column name="MODIFIED_DATE" not-null="true" />
+    	</property>
+        
+    </class>
+</hibernate-mapping>

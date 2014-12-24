@@ -1,0 +1,43 @@
+<script>
+function rteInsertHTML() {
+	html = "<input type=\"reset\" name=\"" + document.getElementById("name").value + "\"";
+	if (document.getElementById("value").value != "") {
+		html += " value=\"" + document.getElementById("value").value + "\"";
+	}
+	html += ">";
+	window.opener.rteInsertHTML(html);
+	window.close();
+}
+</script>
+<style>
+body, td {
+background-color:#ECE9D8;
+font-family:arial;
+font-size:11px;
+}
+input {
+font-family:arial;
+font-size:11px;
+}
+select {
+font-family:arial;
+font-size:11px;
+}
+</style>
+<fieldset>
+<legend><b>Insert Reset Button</b></legend>
+<table width="100%" cellspacing="2" cellpadding="0" border="0">
+<tr>
+<td align="right">Name: </td>
+<td><input type="text" id="name" style="width:150px;"></td>
+</tr>
+<tr>
+<td align="right">Button Label: </td>
+<td><input type="text" id="value" style="width:150px;"></td>
+</tr>
+<tr>
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<div align="center"><input type="button" value="Insert Reset Button" onClick="rteInsertHTML();"></div>
+</fieldset>

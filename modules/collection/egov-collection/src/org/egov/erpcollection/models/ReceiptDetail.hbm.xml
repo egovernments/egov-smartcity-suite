@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 10 Sep, 2009 12:59:28 PM by Hibernate Tools 3.2.0.CR1 -->
+<hibernate-mapping>
+    <class name="org.egov.erpcollection.models.ReceiptDetail" table="EGCL_COLLECTIONDETAILS">
+        <id name="id" type="long">
+            <column name="ID" precision="22" scale="0" />
+           <generator class="sequence" >
+            <param name="sequence">SEQ_EGCL_COLLECTIONDETAILS</param>
+            </generator>
+        </id>
+        <many-to-one name="receiptHeader" class="org.egov.erpcollection.models.ReceiptHeader" fetch="select">
+            <column name="ID_COLLECTIONHEADER" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="accounthead" class="org.egov.commons.CChartOfAccounts" fetch="select">
+            <column name="ID_ACCOUNTHEAD" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        <property name="dramount" type="big_decimal">
+            <column name="DRAMOUNT" precision="22" scale="0" />
+        </property>
+        <property name="cramount" type="big_decimal">
+            <column name="CRAMOUNT" precision="22" scale="0" />
+        </property>
+        <property name="cramountToBePaid" type="big_decimal">
+            <column name="ACTUALCRAMOUNTTOBEPAID" precision="22" scale="0" />
+        </property>
+        <property name="ordernumber" type="long">
+            <column name="ORDERNUMBER" precision="22" scale="0" />
+        </property>
+        <property name="description" type="string">
+			<column name="DESCRIPTION" length="500" />
+		</property>
+		<property name="isActualDemand" type="long">
+            <column name="ISACTUALDEMAND" precision="22" scale="0" />
+        </property>
+        <many-to-one name="function" class="org.egov.commons.CFunction" fetch="select">
+            <column name="ID_FUNCTION" precision="22" scale="0" />
+        </many-to-one>
+        <set name="accountPayeeDetails" inverse="true" cascade="all,delete-orphan">
+			<key>
+				<column name="ID_COLLECTIONDETAILS" precision="22" scale="0" />
+			</key>
+			<one-to-many class="org.egov.erpcollection.models.AccountPayeeDetail" />
+		</set>
+	 <many-to-one name="financialYear" class="org.egov.commons.CFinancialYear" fetch="select">
+            <column name="ID_FINANCIALYEAR" precision="22" scale="0" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>

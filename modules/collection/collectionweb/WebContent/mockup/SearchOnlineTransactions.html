@@ -1,0 +1,629 @@
+<html><head>
+
+
+
+
+
+
+
+
+  
+ 
+ 
+
+
+
+
+
+
+    
+<style type="text/css">
+#receiptNumberSearch_autocomplete {
+    width:15em; /* set width here or else widget will expand to fit its container */
+    padding-bottom:2em;
+}
+strong{font-style:normal;font-weight:normal;}
+.style1 {
+				border-left-style: solid;
+				border-left-width: 1px;
+				border-right: 1px solid #C0C0C0;
+				border-top-style: solid;
+				border-top-width: 1px;
+				border-bottom: 1px solid #C0C0C0;
+}
+.style2 {
+				background-color: #E4E4E4;
+}
+</style>
+
+
+
+
+
+
+
+  
+ 
+ 
+
+
+
+
+
+
+    
+	<link rel="stylesheet" type="text/css" href="searchReceipt.action_files/autocomplete.css">
+
+
+
+
+
+
+
+
+  
+ 
+ 
+
+
+
+
+
+
+    
+                <!-- HTTP 1.1 -->
+        <meta http-equiv="Cache-Control" content="no-store">
+
+        <!-- HTTP 1.0 -->
+        <meta http-equiv="Pragma" content="no-cache">
+        <!-- Prevents caching at the Proxy Server -->
+        <meta http-equiv="Expires" content="0">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="icon" href="http://118.102.160.134:9780/collection/images/favicon.ico">
+        <title>eGov-Search Receipts </title>
+
+       		<script type="text/javascript" src="searchReceipt.action_files/jsCommonMethods.js"></script>
+
+	   
+		<!--add css starts-->
+		<link href="searchReceipt.action_files/commonegov.css" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" type="text/css" href="searchReceipt.action_files/collections.css">
+		<link rel="stylesheet" type="text/css" href="searchReceipt.action_files/fonts-min.css">
+		<link rel="stylesheet" type="text/css" href="searchReceipt.action_files/datatable.css">
+		<link rel="stylesheet" href="searchReceipt.action_files/modalbox.css" type="text/css" media="screen">
+		
+		<script type="text/javascript" src="searchReceipt.action_files/yahoo-dom-event.js"></script>
+		<script type="text/javascript" src="searchReceipt.action_files/calendar-min.js"></script> 
+		<script type="text/javascript" src="searchReceipt.action_files/yahoo.js"></script>
+
+		<script type="text/javascript" src="searchReceipt.action_files/yahoo-dom-event.js"></script>
+		<script type="text/javascript" src="searchReceipt.action_files/dragdrop.js"></script>
+		<script type="text/javascript" src="searchReceipt.action_files/element.js"></script>
+		<script type="text/javascript" src="searchReceipt.action_files/connection-min.js"></script>
+		<script type="text/javascript" src="searchReceipt.action_files/datasource-min.js"></script>
+		<script type="text/javascript" src="searchReceipt.action_files/autocomplete-min.js"></script>
+
+		<script type="text/javascript" src="searchReceipt.action_files/datatable.js"></script>
+		<script type="text/javascript" src="searchReceipt.action_files/animation-min.js"></script>
+
+		<script type="text/javascript" src="searchReceipt.action_files/ajaxCommonFunctions.js"></script>  
+		<script type="text/javascript" src="searchReceipt.action_files/calender.js"></script>
+		<script type="text/javascript" src="searchReceipt.action_files/calendar.js"></script>
+		<script type="text/javascript" src="searchReceipt.action_files/validations.js"></script>
+
+		<script type="text/javascript" src="searchReceipt.action_files/jsCommonMethods.js"></script>
+		
+		<script type="text/javascript" src="searchReceipt.action_files/collections.js"></script>
+		<script type="text/javascript" src="searchReceipt.action_files/prototype.js"></script>
+   		<script type="text/javascript" src="searchReceipt.action_files/scriptaculous.js"></script><script type="text/javascript" src="searchReceipt.action_files/effects.js"></script>
+   		<script type="text/javascript" src="searchReceipt.action_files/modalbox.js"></script>
+   		<script type="text/javascript" src="searchReceipt.action_files/helper.js"></script>
+
+	<!--add css ends-->
+        <script>
+
+function isChecked(chk) {
+	if (chk.length == undefined) {
+ 	if (chk.checked == true)
+  	return true;
+ 	else return false;	
+ } else {
+ 	for (i = 0; i < chk.length; i++)
+		{
+			if (chk[i].checked == true ) return true;
+		}
+	return false;
+ }
+}
+
+function checkselectedreceiptcount(obj)
+{
+	var cnt=document.getElementsByName('selectedReceipts');
+	var receiptstatus=document.getElementsByName('receiptstatus');
+	var j=0;
+	for (i = 0; i < cnt.length; i++)
+	{
+		if (cnt[i].checked == true )
+		{
+			j++; 
+			if(obj=='cancel' && receiptstatus[i].value=="Cancelled")
+			{
+				dom.get("selectedcancelledreceiptserror").style.display="block";
+				return -1;
+			}
+			else
+			{
+				dom.get("selectedcancelledreceiptserror").style.display="none";
+			}
+		}
+		else
+		{
+			dom.get("selectedcancelledreceiptserror").style.display="none";
+		}
+	}
+	if(j==0)
+		return 0;
+	else if(j>1)
+		return 2;
+	else 
+		return 1;
+}
+
+function checkcancelforselectedrecord()
+{
+    dom.get("pendingreceiptcancellationerror").style.display="none";
+	dom.get("selectcancelerror").style.display="none";
+	var check=checkselectedreceiptcount('cancel');
+	// more than one receipt has been chosen. Should not allow cancellation
+	if(check==2)
+	{
+		dom.get("norecordselectederror").style.display="none";
+		dom.get("selectcancelerror").style.display="block";
+		dom.get("selectprinterror").style.display="none";
+		window.scroll(0,0);
+		return false;
+	}
+	// no receipts have been chosen. should not allow cancellation
+	else if(check==0)
+	{
+		dom.get("selectcancelerror").style.display="none";
+		dom.get("norecordselectederror").style.display="block";
+		dom.get("selectprinterror").style.display="none";
+		window.scroll(0,0);
+		return false;
+	}
+	// one or more cancelled receipts have been chosen. should not allow cancellation
+	else if(check==-1)
+	{
+		dom.get("selectcancelerror").style.display="none";
+		dom.get("norecordselectederror").style.display="none";
+		dom.get("selectprinterror").style.display="none";
+		window.scroll(0,0);
+		return false;
+	}
+	//one receipt has been chosen. Cancellation is allowed
+	else
+	{
+		var cnt=document.getElementsByName('selectedReceipts');
+		var receiptstatus=document.getElementsByName('receiptstatus');
+		var j=0;
+		for (m = 0; m < cnt.length; m++)
+		{
+			if (cnt[m].checked == true )
+			{
+				if(receiptstatus[m].value=="Pending")
+				{
+					dom.get("pendingreceiptcancellationerror").style.display="block";
+					window.scroll(0,0);
+					return false;
+				}
+				
+			}
+		}
+		dom.get("selectcancelerror").style.display="none";
+		var receipttype=document.getElementsByName('receipttype');
+		var cnt=document.getElementsByName('selectedReceipts');
+		
+		for (m = 0; m < cnt.length; m++)
+		{
+			if (cnt[m].checked == true )
+			{
+				if(receipttype[m].value=="A" || receipttype[m].value=="B")
+				{
+					document.searchReceiptForm.action="receipt!cancel.action";
+				}
+				if(receipttype[m].value=='C')
+				{
+					document.searchReceiptForm.action="challan!cancelReceipt.action";
+				}
+				
+			}
+		}
+		document.searchReceiptForm.submit();
+	}
+}
+function checkprintforselectedrecord()
+{
+	var check=checkselectedreceiptcount('print');
+	// more than one receipts have been chosen. should not print
+	if(check==2)
+	{
+		dom.get("norecordselectederror").style.display="none";
+		dom.get("selectprinterror").style.display="block";
+		dom.get("selectcancelerror").style.display="none";
+		window.scroll(0,0);
+		return false;
+	}
+	// no receipts ahev been chosen for print
+	else if(check==0)
+	{
+		dom.get("selectprinterror").style.display="none";
+		dom.get("norecordselectederror").style.display="block";
+		dom.get("selectcancelerror").style.display="none";
+		window.scroll(0,0);
+		return false;
+	}
+	// single receipt has been chosen. Print is allowed
+	else
+	{
+		dom.get("selectprinterror").style.display="none";
+		document.searchReceiptForm.action="receipt!printReceipts.action";
+		document.searchReceiptForm.submit();
+	}
+}
+
+function validate()
+{
+	var fromdate=dom.get("fromDate").value;
+	var todate=dom.get("toDate").value;
+	if(fromdate!="" && todate!="" && fromdate!=todate)
+	{
+		if(!checkFdateTdate(fromdate,todate))
+		{
+			dom.get("comparedatemessage").style.display="block";
+			window.scroll(0,0);
+			return false;
+		}
+	}
+	else
+	{
+		dom.get("comparedatemessage").style.display="none";
+		return true;
+	}
+}
+
+var receiptNumberSelectionEnforceHandler = function(sType, arguments) {
+      		warn('improperreceiptNumberSelection');
+}
+var receiptNumberSearchSelectionHandler = function(sType, arguments) { 
+			var oData = arguments[2];
+			dom.get("receiptNumberSearch").value=oData[0];
+}
+
+function checkviewforselectedrecord()
+{
+	dom.get("norecordselectederror").style.display="none";
+	dom.get("selectprinterror").style.display="none";
+	dom.get("selectcancelerror").style.display="none";
+	var cnt=document.getElementsByName('selectedReceipts');
+	var receiptstatus=document.getElementsByName('receiptstatus');
+	var j=0;
+	for (i = 0; i < cnt.length; i++)
+	{
+		if (cnt[i].checked == true )
+		{
+			j++; 
+		}
+	}
+	//no records have been selected for view
+	if(j==0)
+	{
+		dom.get("norecordselectederror").style.display="block";
+		window.scroll(0,0);
+		return false;
+	}
+	// multiple records have been chosen . Viewing is allowed
+	else
+	{	
+		document.searchReceiptForm.action="receipt!viewReceipts.action";
+		document.searchReceiptForm.submit();
+	}	
+
+}
+
+</script>
+    </head><body>
+
+
+
+
+
+
+
+
+
+<div class="commontopyellowbg"></div>
+
+<div class="commontopbluebg"><div class="commontopdate">Today is: <span class="bold" style="color: black;">
+10/06/2010
+</span></div>Welcome <span class="bold" style="color: rgb(204, 204, 204);">
+egovernments</span></div>
+<div class="commontopbreadc" id="breadcrumb">&nbsp;<!--%=breadCrumb%> --></div>
+<li>
+  <form id="searchReceipt" name="searchReceiptForm" onsubmit="return true;" action="/collection/receipts/searchReceipt.action" method="post">
+<div class="formmainbox"><div class="subheadnew">Search Online Transactions in 
+				Unknown Status</div>
+<div class="subheadsmallnew"><span class="subheadnew">Search Criteria</span></div>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+
+	    <tbody><tr>
+	      <td class="bluebox2" width="4%">&nbsp;</td>
+	      <td class="bluebox2" width="21%">Service Type:</td>
+	      <td class="bluebox2" width="24%"><select name="serviceTypeId" id="serviceType" class="selectwk">
+    <option value="-1" selected="selected">Select Service Type</option>
+    <option value="7">Baarat Ghar</option>
+    <option value="5">Bill Desk Payment Gateway</option>
+
+    <option value="4">Billing Stub</option>
+    <option value="1">Collections</option>
+    <option value="6">Community Center</option>
+    <option value="2">Property Tax</option>
+    <option value="3">Trade License Revenue</option>
+
+
+</select> </td>
+	      <td class="bluebox2" width="21%">&nbsp;</td>
+	      <td class="bluebox2" width="30%">&nbsp;</td>
+	    </tr>
+	     <tr>
+	      <td class="bluebox" width="4%">&nbsp;</td>
+	      <td class="bluebox" width="21%">From Date:</td>
+		  
+		  <td class="bluebox" width="24%"><input name="fromDate" id="fromDate" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')" type="text"><a href="javascript:show_calendar('forms[0].fromDate');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"><img src="searchReceipt.action_files/calendaricon.gif" alt="Date" width="18" align="absmiddle" border="0" height="18"></a><div class="highlight2" style="width: 80px;">DD/MM/YYYY</div></td>
+
+	      <td class="bluebox" width="21%">To Date:</td>
+	      
+		  <td class="bluebox" width="30%"><input name="toDate" id="toDate" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')" type="text"><a href="javascript:show_calendar('forms[0].toDate');" onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"><img src="searchReceipt.action_files/calendaricon.gif" alt="Date" width="18" align="absmiddle" border="0" height="18"></a><div class="highlight2" style="width: 80px;">DD/MM/YYYY</div></td>
+	    </tr>
+	     <tr>
+	      <td class="bluebox" width="4%">&nbsp;</td>
+	      <td class="bluebox" width="21%">Reference ID</td>
+		  
+		  <td class="bluebox" width="24%"><input name="Text1" type="text"></td>
+
+	      <td class="bluebox" width="21%">Transaction Status</td>
+	      
+		  <td class="bluebox" width="30%"><select name="Select3">
+			<option>ALL</option>
+			<option>PENDING</option>
+			<option>SUCCESS</option>
+			<option>TO BE REFUNDED</option>
+
+			<option>REFUNDED</option>
+			</select></td>
+	    </tr>
+	    <tr>
+	      <td class="bluebox2" width="4%">&nbsp;</td>
+	   
+	    </tr>	    
+	    </tbody></table>
+</div>
+    <div class="buttonbottom">
+
+      <label><input id="button" name="method:search" value="Search" class="buttonsubmit" onclick="return validate();" type="submit">
+</label>&nbsp;
+      <label><input id="searchReceipt__reset" name="method:reset" value="Reset" class="button" type="submit">
+</label>&nbsp;
+      
+      	<input name="closebutton" class="button" id="closebutton" value="Close" onclick="window.close();" type="button">
+      
+      
+</div>
+
+
+
+
+	
+
+
+
+</form>
+	
+	
+	
+	
+   <table width="100%" cellpadding="0" cellspacing="0" class="style1">
+
+	
+	
+	  <tbody>	 
+	 
+      <tr>
+	   <td class="bluebox"> Sr.no</td>
+	  <td class="bluebox">Transaction Date</td> 
+	  <td class="bluebox">Bill Number</td> 
+	  <td class="bluebox" style="width: 44px">Reference ID</td> 
+	  <td class="bluebox">Transaction&nbsp; #</td> 
+	  <td class="bluebox">Department</td> 
+	  <td class="bluebox">Amount</td> 
+	  <td class="bluebox">Service Type</td> 
+	  <td class="bluebox">Status</td> 
+	  <td class="bluebox">Change Status</td> 
+	  <td class="bluebox">Transaction ID</td> 
+	  <td class="bluebox">Remarks</td> 
+     </tr>	 
+	 
+      <tr>
+
+	<td class="greybox">1</td>
+	<td class="greybox">
+	10-06-2010</td>
+	<td class="greybox">
+	<a href="s/">XXXXXX</a></td>
+	<td class="greybox" style="width: 44px">
+	12345555</td>
+
+	<td class="greybox">
+	12448998</td>
+	<td class="greybox">
+	DEPT-1</td>
+	<td class="greybox">
+	100.00</td>
+	<td class="greybox">
+
+	PROPERTY TAX</td>
+	<td class="greybox">
+	SUCCESS</td>
+	<td class="greybox">
+	<form method="post">
+					<br>
+      		<select name="Select7">
+			<option>SUCCESS</option>
+
+			</select></form>
+	</td>
+	<td class="greybox">
+	<form method="post">
+					<input name="Text2" type="text" value="12448998" class="style2"></form>
+	</td>
+	<td class="greybox">
+	<form method="post">
+					<input name="Text3" type="text"></form>
+
+	</td>
+     </tr>	
+     <tr>
+      	<td class="bluebox">2</td>
+      	<td class="bluebox">
+      		10-06-2010</td>	
+      	<td class="bluebox">
+      		<a href="a">XXXXXXX</a></td>	
+      	<td class="bluebox" style="width: 44px">
+
+      		6898698</td>	
+      	<td class="bluebox">
+      		-</td>	
+      	<td class="bluebox">
+      		DEPT-2</td>	
+      	<td class="bluebox">
+      		2000.00</td>	
+      	<td class="bluebox">
+      		PROF TAX</td>	
+      	<td class="bluebox">
+
+      		PENDING</td>	
+      	<td class="bluebox">
+      		<select name="Select5">
+			<option>SUCCESS</option>
+			<option>PENDING</option>
+			<option>TO BE REFUNDED</option>
+			<option>REFUNDED</option>
+
+			</select></td>	
+      	<td class="bluebox">
+      		<form method="post">
+							<input name="Text4" type="text"></form>
+		</td>	
+      	<td class="bluebox">
+      		<form method="post">
+							<input name="Text7" type="text"></form>
+		</td>	
+      </tr>
+
+       
+      
+     
+	  
+     <tr>
+      	<td class="bluebox" style="height: 20px">3</td>
+      	<td class="bluebox" style="height: 20px">
+      		10-06-2010</td>	
+      	<td class="bluebox" style="height: 20px">
+      		<a href="q">YYYYYY</a></td>	
+      	<td class="bluebox" style="width: 44px; height: 20px;">
+      		38989898</td>	
+      	<td class="bluebox" style="height: 20px">
+
+      		-</td>	
+      	<td class="bluebox" style="height: 20px">
+      		DEPT-2</td>	
+      	<td class="bluebox" style="height: 20px">
+      		1000.00</td>	
+      	<td class="bluebox" style="height: 20px">
+      		BHARAT HAR</td>	
+      	<td class="bluebox" style="height: 20px">
+      		TO BE REFUNDED</td>	
+      	<td class="bluebox" style="height: 20px">
+
+      		<select name="Select6">
+			<option>REFUNDED</option>
+			<option>SUCCESS</option>
+			<option>PENDING</option>
+			<option>TO BE REFUNDED</option>
+			</select></td>	
+      	<td class="bluebox" style="height: 20px">
+
+							<input name="Text6" type="text"></td>	
+      	<td class="bluebox" style="height: 20px">
+							<input name="Text8" type="text"></td>	
+      </tr>
+       
+      
+     
+	  
+     <tr>
+      	<td class="bluebox">&nbsp;</td>
+      	<td class="bluebox">
+      		&nbsp;</td>	
+      	<td class="bluebox">
+      		&nbsp;</td>	
+      	<td class="bluebox" style="width: 44px">
+
+      		&nbsp;</td>	
+      	<td class="bluebox">
+      		&nbsp;</td>	
+      	<td class="bluebox">
+      		&nbsp;</td>	
+      	<td class="bluebox">
+      		&nbsp;</td>	
+      	<td class="bluebox">
+      		&nbsp;</td>	
+      	<td class="bluebox">
+      		&nbsp;</td>	
+      	<td class="bluebox">
+
+      		&nbsp;</td>	
+      	<td class="bluebox">
+      		&nbsp;</td>	
+      	<td class="bluebox">
+      		&nbsp;</td>	
+      </tr>
+       
+      
+     
+	  
+       </tbody></table>
+	
+
+	
+	
+    <div class="buttonbottom">
+      <label>
+		<input id="button0" name="method:search0" value="Submit" class="buttonsubmit" onclick="return validate();" type="submit">
+
+</label>&nbsp;
+      <label>&nbsp;</label>&nbsp;
+      
+      	<input name="closebutton0" class="button" id="closebutton0" value="Close" onclick="window.close();" type="button">
+      
+      
+</div>
+
+
+
+
+	
+
+
+
+	</body></html>

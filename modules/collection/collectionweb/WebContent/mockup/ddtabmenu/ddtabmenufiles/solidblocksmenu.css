@@ -1,0 +1,49 @@
+.solidblockmenu ul{
+margin: 0;
+padding: 0;
+float: left;
+font: bold 13px Arial;
+width: 100%;
+border: 1px solid #625e00;
+border-width: 1px 0;
+background: black url(media/blockdefault.gif) center center repeat-x;
+}
+
+.solidblockmenu li{
+display: inline;
+}
+
+.solidblockmenu li a{
+float: left;
+color: white;
+padding: 9px 11px;
+text-decoration: none;
+border-right: 1px solid white;
+}
+
+.solidblockmenu li a:visited{
+color: white;
+}
+
+.solidblockmenu li a:hover, .solidblockmenu li a.current{
+color: white;
+background: transparent url(media/blockactive.gif) center center repeat-x;
+}
+
+.tabcontainer{
+clear: left;
+width:95%; /*width of 2nd level sub menus*/
+height:1.5em; /*height of 2nd level sub menus. Set to largest's sub menu's height to avoid jittering.*/
+}
+
+*:first-child+html .ieclass{ /*IE7 hack to remove gap between menu and sub contents*/
+margin-top: -1em;
+}
+
+* html .ieclass{ /*IE6 and below hack to remove gap between menu and sub contents*/
+margin-top: -1em;
+}
+
+.tabcontent{
+display:none;
+}

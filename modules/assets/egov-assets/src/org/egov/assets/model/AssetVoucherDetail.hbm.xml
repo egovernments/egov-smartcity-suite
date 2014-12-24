@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.assets.model.AssetVoucherDetail" table="EGASSET_VOUCHERDETAIL">
+        <id name="id" type="java.lang.Long">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="sequence">
+            	<param name="sequence">SEQ_EGASSET_VOUCHERDETAIL</param>
+            </generator>
+        </id>
+         <many-to-one name="assetVhId" class="org.egov.assets.model.AssetVoucherHeader" column="ASSETVOUCHERID" />
+         <many-to-one name="glCodeId" class="org.egov.commons.CChartOfAccounts" column="GLCODEID" />
+         <property name="debitAmount"  type="big_decimal" column="DEBITAMOUNT"/>
+         <property name="creditAmount"  type="big_decimal" column="CREDITAMOUNT"/>
+      </class>
+</hibernate-mapping>

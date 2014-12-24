@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Aug 8, 2007 6:26:42 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+	<class name="org.egov.pims.empLeave.model.CompOff"
+		table="EGEIS_COMPOFF">
+		<id name="id" column="ID" type="long">
+			<generator class="sequence">
+				<param name="sequence">SEQ_COMPOFF</param>
+			</generator>
+		</id>
+		<many-to-one name="approvedBy"
+			class="org.egov.lib.rjbac.user.UserImpl" fetch="select">
+			<column name="APPROVED_BY" />
+		</many-to-one>
+		<many-to-one name="status" column="STATUS_ID"
+			class="org.egov.pims.model.StatusMaster" />
+		<property name="compOffDate" type="date">
+			<column name="COMPOFF_DATE" />
+		</property>
+		<many-to-one name="createdBy"
+			class="org.egov.lib.rjbac.user.UserImpl" fetch="select">
+			<column name="CREATED_BY" />
+		</many-to-one>
+		<many-to-one name="attObj"
+			class="org.egov.pims.empLeave.model.Attendence" fetch="select">
+			<column name="ATT_ID" />
+		</many-to-one>
+		<many-to-one name="state" class="org.egov.infstr.models.State"
+			cascade="all">
+			<column name="STATE_ID" />
+		</many-to-one>
+
+		<property name="createdDate" type="date">
+			<column name="CREATEDDATE" length="7" not-null="true" />
+		</property>
+		
+
+	</class>
+	
+		<query name="COMPOFF_BYEMP_STATUS">
+		<![CDATA[ from CompOff where attObj.employee.idPersonalInformation in (:param_0) and (status in (:param_1) or status is null)]]>
+		</query>
+		
+		
+</hibernate-mapping>

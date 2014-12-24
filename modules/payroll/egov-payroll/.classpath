@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="lib" path="/libraries/cobertura/log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="/libraries/hibernate/hibernate-core-4.2.0.Final-redhat-1.jar"/>
+	<classpathentry kind="lib" path="/libraries/hibernate/hibernate-search-orm-4.2.0.Final-redhat-wfk-2.jar"/>
+	<classpathentry kind="lib" path="/libraries/struts2/xwork-core-2.3.15.1.jar"/>
+	<classpathentry kind="lib" path="/libraries/hibernate/validation-api-1.0.0.GA-redhat-2.jar"/>
+	<classpathentry kind="lib" path="/libraries/test/slf4j-api-1.6.4.jar"/>
+	<classpathentry kind="lib" path="/libraries/displaytags/displaytag-1.1.jar"/>
+	<classpathentry kind="lib" path="/libraries/struts2/freemarker-2.3.19.jar"/>
+	<classpathentry kind="lib" path="/libraries/reporting/groovy-all-2.1.5.jar"/>
+	<classpathentry kind="lib" path="/libraries/reporting/jasperreports-javaflow-5.2.0.jar"/>
+	<classpathentry kind="lib" path="/libraries/jboss/jboss-jsp-api_2.2_spec-1.0.0.Final.jar"/>
+	<classpathentry kind="lib" path="/libraries/jboss/jboss-servlet-api_3.0_spec-1.0.0.Final.jar"/>
+	<classpathentry kind="lib" path="/libraries/commons/commons-lang-2.5.jar"/>
+	<classpathentry kind="lib" path="/libraries/struts2/struts2-core-2.3.15.1.jar"/>
+	<classpathentry kind="lib" path="/libraries/struts1/struts.jar"/>
+	<classpathentry kind="lib" path="/libraries/commons/commons-beanutils-1.8.3.jar"/>
+	<classpathentry kind="lib" path="/libraries/spring/spring-orm-3.2.3.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/libraries/spring/spring-tx-3.2.3.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/libraries/spring/spring-context-3.2.3.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/libraries/spring/spring-beans-3.2.3.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/libraries/struts2/struts2-convention-plugin-2.3.15.1.jar"/>
+	<classpathentry kind="lib" path="/libraries/security/owasp/xalan-2.7.0.jar"/>
+	<classpathentry kind="lib" path="/libraries/spring/spring-core-3.2.3.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/libraries/scheduler/quartz-all-2.1.7.jar"/>
+	<classpathentry kind="lib" path="/libraries/spring/spring-context-support-3.2.3.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/libraries/cobertura/jbpm-jpdl-3.2.3.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/egov-egf"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/egov-egi"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/egov-eis"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/egov-dms"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

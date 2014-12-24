@@ -1,0 +1,77 @@
+<!-- Include the Free Rich Text Editor Variables Page -->
+<script>
+rteName = window.opener.document.getElementById("iframe_name").value;
+function rteInsertHTML() {
+if (document.getElementById("url").value == "")
+{
+	alert('The URL field must be filled in.');
+}
+else
+{
+		window.opener.document.getElementById(rteName).contentWindow.document.execCommand("createlink", false, document.getElementById("url").value);
+		if (window.getSelection)
+		{
+			var selected_obj = window.opener.document.getElementById(rteName).contentWindow.window.getSelection().focusNode;
+		}
+		else if (document.getSelection)
+		{
+			var selected_obj = window.opener.document.getElementById(rteName).contentWindow.document.getSelection().focusNode;
+		}
+		else if (document.selection)
+		{
+			var selected_obj = window.opener.document.getElementById(rteName).contentWindow.document.selection.createRange().parentElement();
+		}
+		var current_tag = selected_obj;
+		var previous_tagName = selected_obj.tagName;
+		while(previous_tagName != "HTML"){
+			if (previous_tagName == "A") {
+				current_tag.href = document.getElementById("url").value;
+				current_tag.target = document.getElementById("target").value;
+				break;
+			}
+				current_tag = current_tag.parentNode;
+				previous_tagName = current_tag.tagName;
+		}
+	window.close();
+}
+}
+</script>
+<style>
+body, td {
+background-color:#ECE9D8;
+font-family:arial;
+font-size:11px;
+}
+input {
+font-family:arial;
+font-size:11px;
+}
+select {
+font-family:arial;
+font-size:11px;
+}
+</style>
+<fieldset>
+<legend><b>Insert Link </b></legend>
+<table width="100%" cellspacing="2" cellpadding="0" border="0">
+<tr>
+<td align="right">URL: </td>
+<td><input type="text" id="url" style="width:150px;"></td>
+</tr>
+<tr>
+  <td align="right">Target</td>
+  <td><select id="target">
+    <option selected="selected"> </option>
+    <option value="_blank">_blank</option>
+    <option value="_parent">_parent</option>
+    <option value="_self">_self</option>
+    <option value="_top">_top</option>
+  </select></td>
+</tr>
+<tr>
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<div align="center"><input type="button" value="Insert Link" onClick="rteInsertHTML();">
+</div>
+</fieldset>

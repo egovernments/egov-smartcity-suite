@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.ptis.domain.entity.property.PropertyDocs" table="EGPT_PROPERTY_DOCS">
+		<id
+			name="id" column="ID" type="java.lang.Long">
+			<generator class="sequence">
+					<param name="sequence">SEQ_EGPT_PROP_DOCS</param>
+			</generator>
+		</id>
+		<property name="modifiedDate" column="MODIFIED_DATE" />  
+		<property
+			name="docNumber"
+			column="DOC_NUMBER"
+			type="string"
+		/>
+		
+		<property
+			name="reason"
+			column="REASON"
+			type="string"
+		/>
+		<many-to-one name="basicProperty" class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" fetch="select" insert="false" update="false">
+            <column name="id_basic_property"  not-null="true" />
+        </many-to-one>
+			
+		<property name="createdDate" column="CREATED_DATE" update="false"/>  
+		
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.infstr.models.ServiceCategory" table="EG_SERVICECATEGORY">
+		<id name="id" column="ID" type="long" unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">SEQ_EG_SERVICECATEGORY</param>
+			</generator>
+		</id>
+		<property name="name" column="NAME" type="string" />
+		<property name="code" column="CODE" type="string" />
+		<property name="isActive" column="ISACTIVE" type="java.lang.Boolean"/>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" fetch="select">
+			<column name="CREATED_BY" precision="22" scale="0" />
+		</many-to-one>
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" fetch="select">
+			<column name="MODIFIED_BY" precision="22" scale="0" />
+		</many-to-one>
+		<property name="createdDate" column="CREATED_DATE"  type="date"/>
+		<property name="modifiedDate" column="MODIFIED_DATE" type="date"/>		
+		<set name="services" inverse="true" cascade="all,delete-orphan">
+			<key>
+				<column name="ID_SERVICE_CATEGORY" precision="22" scale="0" />
+			</key>
+			<one-to-many class="org.egov.infstr.models.ServiceDetails" />
+		</set>
+	</class>
+	<query name="SERVICE_CATEGORY_ALL">
+		<![CDATA[
+     	from org.egov.infstr.models.ServiceCategory where isActive=1 order by name   
+    ]]>
+	</query>
+</hibernate-mapping>

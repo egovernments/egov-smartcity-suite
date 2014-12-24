@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd" 
+  default-lazy-init="true">
+  	
+	<bean id="basicPrpertyService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.ptis.domain.entity.property.BasicPropertyImpl" />
+	</bean>
+	
+	<bean id="propertyImplService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.ptis.domain.entity.property.PropertyImpl" />
+	</bean>
+
+	<bean id="floorService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.ptis.domain.entity.property.FloorIF" />
+	</bean>
+	
+	<bean class="org.egov.ptis.nmc.util.PropertyTaxNumberGenerator"
+		id="propertyTaxNumberGenerator" scope="prototype">
+		<property name="sequenceNumberGenerator" ref="sequenceNumberGenerator" />
+	</bean>
+	
+	<bean id="nmcPtBillServiceImpl" class="org.egov.ptis.nmc.bill.NMCPTBillServiceImpl" scope="prototype" lazy-init="false">
+		<property name="propertyTaxUtil" ref="propertyTaxUtil" />
+		<property name="propertyTaxCollection" ref="propertyTaxCollection" />
+	</bean>
+	
+	<bean id="boundaryDao" class="org.egov.lib.admbndry.BoundaryDAO" scope="prototype"/>
+
+   <bean id="deactivatePropertyDelegate" class="org.egov.ptis.property.delegate.DeactivatePropertyDelegate" scope="prototype">
+       	<property name="scriptService" ref="scriptService"/>
+     </bean>
+     	
+     <bean id="propertyService" class="org.egov.ptis.property.services.property.PropertyService" scope="prototype">
+     	<property name="deactivatePropertyDelegate" ref="deactivatePropertyDelegate"/>
+     </bean> 
+     
+	<bean id="ActionsBaseWFFilter" class="org.egov.ptis.workflow.filter.ActionsBasedOnWorkFlowFilter" scope="prototype">
+    	<property name="actionDao" ref="actionDao" />
+    	<property name="scriptService" ref="scriptService"/>
+    	<property name="workFlowPerService" ref="persistenceService"/>
+    </bean> 
+    
+	<bean id="dcbService" class="org.egov.dcb.service.DCBServiceImpl"  scope="prototype" />
+	
+	<bean id="transferOwnerService" class="org.egov.ptis.domain.service.transfer.TransferOwnerService">
+		<property name="trnsfOwnerPerService" ref="persistenceService"/>
+		<property name="basicPrpertyService" ref="basicPrpertyService"/>
+		<property name="propertyTaxNumberGenerator" ref="propertyTaxNumberGenerator"/>
+	</bean> 
+	
+	<bean id="propService" class="org.egov.ptis.domain.service.property.PropertyService" scope="prototype" >
+		<property name="propPerServ" ref="persistenceService"/>
+		<property name="propertyTaxUtil" ref="propertyTaxUtil" />
+		<property name="taxCalculator" ref="taxCalculator" />
+		<property name="eisCommonsService" ref="eisCommonsService" />
+		<property name="basicPrpertyService" ref="basicPrpertyService" />
+	</bean> 
+	
+	
+	<bean id="propertyTaxUtil" class="org.egov.ptis.nmc.util.PropertyTaxUtil" scope="prototype">
+        <property name="persistenceService" ref="persistenceService" />
+        <property name="employeeService" ref="employeeService" />
+        <property name="userService" ref="userService" />
+        <property name="genericDao" ref="genericDao" />
+        <property name="auditEventService" ref="auditEventService" />
+    </bean>
+    
+    <bean id="residentialUnitTaxCalculator" class="org.egov.ptis.nmc.service.ResidentialUnitTaxCalculator" scope="prototype">
+        <property name="propertyTaxUtil" ref="propertyTaxUtil" />
+        <property name="persistenceService" ref="persistenceService" />
+    </bean>
+    
+    <bean id="nonResidentialUnitTaxCalculator" class="org.egov.ptis.nmc.service.NonResidentialUnitTaxCalculator" scope="prototype">
+        <property name="propertyTaxUtil" ref="propertyTaxUtil" />
+        <property name="persistenceService" ref="persistenceService" />
+    </bean>
+    
+    <bean id="openPlotUnitTaxCalculator" class="org.egov.ptis.nmc.service.OpenPlotUnitTaxCalculator" scope="prototype">
+        <property name="propertyTaxUtil" ref="propertyTaxUtil" />
+        <property name="persistenceService" ref="persistenceService" />
+    </bean>
+    
+    <bean id="govtPropertyUnitTaxCalculator" class="org.egov.ptis.nmc.service.GovtPropertyUnitTaxCalculator" scope="prototype">
+        <property name="propertyTaxUtil" ref="propertyTaxUtil" />
+    </bean>
+    
+    <bean id="resdAndNonResdUnitTaxCalculator" class="org.egov.ptis.nmc.service.ResdAndNonResdUnitTaxCalculator" scope="prototype">
+    	<property name="propertyTaxUtil" ref="propertyTaxUtil" />
+    	<property name="persistenceService" ref="persistenceService" />
+    </bean>
+    
+    <bean id="taxCalculator" class="org.egov.ptis.nmc.service.TaxCalculator" scope="prototype">
+        <property name="propertyTaxUtil" ref="propertyTaxUtil" />
+        <property name="residentialUnitTaxCalculator" ref="residentialUnitTaxCalculator" />
+        <property name="nonResidentialUnitTaxCalculator" ref="nonResidentialUnitTaxCalculator" />
+        <property name="openPlotUnitTaxCalculator" ref="openPlotUnitTaxCalculator" />
+        <property name="govtPropertyUnitTaxCalculator" ref="govtPropertyUnitTaxCalculator"/>
+        <property name="resdAndNonResdUnitTaxCalculator" ref="resdAndNonResdUnitTaxCalculator"/>
+    </bean> 
+    
+   <bean id="workflowBean" class="org.egov.ptis.domain.entity.property.WorkflowBean" scope="prototype" />
+  	
+  	<bean id="propertyWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
+		<constructor-arg index="0" ref="propertyImplService"/>
+	</bean>
+	<bean id="objectionService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.ptis.domain.entity.objection.Objection" />
+	</bean>
+	<bean id="objectionWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
+		<constructor-arg index="0" ref="objectionService"/>
+	</bean>
+	
+	<bean id="recoveryService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.ptis.domain.entity.recovery.Recovery" />
+	</bean>
+	<bean id="recoveryWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
+		<constructor-arg index="0" ref="recoveryService"/>
+	</bean>
+	
+	<bean id="propertyMutationService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.ptis.domain.entity.property.PropertyMutation" />
+	</bean>
+	
+	<bean id="propertyTaxCollection" class="org.egov.ptis.service.collection.PropertyTaxCollection" scope="prototype">
+		<property name="persistenceService" ref="persistenceService" />
+	</bean>
+	
+	<bean id="noticeService" class="org.egov.ptis.domain.service.notice.NoticeService" scope="prototype">
+		<!-- TODO we're not using doc service any more, and this was giving an error on lazy init, so commenting out -->
+        <!-- property name="documentManagerService" ref="documentManagerService"/-->
+		<property name="basicPrpertyService" ref="basicPrpertyService"/>
+	</bean>
+	<bean id="financialUtil" class="org.egov.ptis.nmc.util.FinancialUtil" scope="prototype">
+	</bean>
+	
+	<bean id="billService" class="org.egov.ptis.domain.service.bill.BillService" scope="prototype">
+	    <property name="reportService" ref="reportService"/>
+	    <property name="noticeService" ref="noticeService"/>
+	    <property name="propertyTaxUtil" ref="propertyTaxUtil"/>
+	    <property name="nmcPtBillServiceImpl" ref="nmcPtBillServiceImpl"/>
+	    <property name="propertyTaxNumberGenerator" ref="propertyTaxNumberGenerator"/>	    
+	</bean>
+	
+	<!--  SCHEDULER CONFIGURATIONS START -->
+ 
+	<bean name="bulkBillGenerationJobDetailBean" id="bulkBillGenerationJobDetailBean"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean" lazy-init="false">
+		<property name="jobClass" value="org.egov.ptis.scheduler.BulkBillGenerationJob" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="city" value="localhost"></entry>				
+				<entry key="userService" value-ref="userService" />
+				<entry key="billsCount" value="10" />
+				<entry key="billService" value-ref="billService" />
+			</map>
+		</property>
+        <!-- added to avoid "org.quartz.SchedulerException: Jobs added with no trigger must be durable"... -->
+        <property name="durability" value="true" />
+	</bean>
+	
+	<bean id="bulkBillGenerationJobCronTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		name="">
+		<property name="jobDetail" ref="bulkBillGenerationJobDetailBean" />
+		<property name="cronExpression" value="0 */5 * * * ?" />
+	</bean>
+	
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
+		lazy-init="false">
+		<property name="startupDelay" value="600" />
+		<property name="schedulerName" value="ptisScheduler" />		
+		<property name="applicationContextSchedulerContextKey" value="applicationContext" />
+		<property name="overwriteExistingJobs" value="true" />
+		<property name="autoStartup" value="true" />
+		<property name="triggers">
+			<list>
+				<ref bean="bulkBillGenerationJobCronTriggerBean" />
+			</list>
+		</property>
+	</bean> 
+	
+	<!--  SCHEDULER CONFIGURATIONS END -->
+</beans>

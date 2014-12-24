@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 19, 2007 2:57:28 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+	<class name="org.egov.works.models.tender.TenderFileIndentDetail" table="EGW_TENDERFILE_INDENTDETAIL">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_TENDERFILE_INDDETAIL_SEQ</param>
+			</generator>
+		</id>
+		<many-to-one name="tenderFileDetail" class="org.egov.works.models.tender.TenderFileDetail" fetch="select" insert="false" update="false">
+            <column name="TENDERFILE_DETAIL_ID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        
+        <many-to-one name="indentDetail" class="org.egov.works.models.rateContract.IndentDetail" fetch="join">
+            <column name="INDENTDETAIL_ID" precision="22" scale="0" />
+        </many-to-one>
+		
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" fetch="select" not-null="true"/>
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY" fetch="select"/>
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" not-null="true"/>
+		<property name="modifiedDate" column="MODIFIEDDATE" type="timestamp" />	
+	</class>
+</hibernate-mapping>

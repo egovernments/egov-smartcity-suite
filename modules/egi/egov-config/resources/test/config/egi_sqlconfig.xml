@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<!-- Configuration file for egi sql queries -->
+
+<properties>
+
+<sql>
+
+<egi-department>
+	<type>hql</type>
+	<query>from DepartmentImpl order by DEPT_NAME</query>
+</egi-department> 
+
+<egi-DesignationMaster>
+	<type>hql</type>
+	<query>from DesignationMaster </query>
+</egi-DesignationMaster> 
+
+<egi-ward>
+	<type>hql</type>
+	<query>from BoundaryImpl BI left join fetch BI.children where upper(BI.boundaryType.name) = 'WARD' order by BI.id</query>
+</egi-ward> 
+
+<egi-boundary>
+	<type>hql</type>
+	<query>from BoundaryImpl BI order by BI.id</query>
+</egi-boundary> 
+
+
+<egi-accountCodes>
+	<type>hql</type>
+	<query>from CChartOfAccounts c where c.classification=4  and c.type in('I'\,'A'\,'L') order by c.glcode </query>
+</egi-accountCodes>
+
+	
+<egi-function>
+	<type>hql</type>
+	<query>from CFunction where isactive = 1 AND isnotleaf=0 order by upper(name)</query>
+</egi-function> 
+
+<egi-fund>
+	<type>hql</type>
+	<query>from Fund where isactive = 1 and isNotLeaf!=1 order by upper(name)</query>
+</egi-fund> 
+
+<egi-fundSource>
+	<type>hql</type>
+	<query>from Fundsource where isActive='1' order by upper(name)</query>
+</egi-fundSource>
+
+<egi-functionary>
+	<type>hql</type>
+	<query>from Functionary where isactive=1 order by upper(name) </query>
+</egi-functionary> 
+<egi-chartOfAccounts>
+	<type>hql</type>
+	<query>select acc from CChartOfAccounts acc where acc.classification='4' and acc.isActiveForPosting = 1 order by acc.glcode</query>
+</egi-chartOfAccounts>
+
+<egi-subscheme>
+	<type>hql</type>
+	<query>from SubScheme where isactive=1 order by upper(name)</query>
+</egi-subscheme>
+
+<egi-uom>
+	<type>hql</type>
+	<query>from EgUom  order by uom</query>
+</egi-uom>
+
+<egi-coaPurposeId10>
+	<type>hql</type>
+	<query>from CChartOfAccounts coa where purposeId = 10 order by glcode</query>
+</egi-coaPurposeId10>
+
+<egi-tds>
+	<type>hql</type>
+	<query>from Tds order by upper(type)</query>
+</egi-tds>
+<egi-uomcategory>
+	<type>hql</type>
+	<query>from EgUomcategory order by category</query>
+</egi-uomcategory>
+<egi-relationtype>
+	<type>hql</type>
+	<query>from Relationtype order by id desc</query>
+</egi-relationtype> 
+<egi-suppliers>
+	<type>hql</type>
+	<query>from Relation rel where relationtypeid = 1 order by upper(name)</query>
+</egi-suppliers>
+<egi-activesuppliers>
+	<type>hql</type>
+	<query>from Relation rel where relationtypeid = 1 and (statusid = 5 or isactive = 1)order by upper(name)</query>
+</egi-activesuppliers>
+<egi-contractors>
+	<type>hql</type>
+	<query>from Relation rel where relationtypeid = 2 order by upper(name)</query>
+</egi-contractors>
+<egi-coaCodes>
+	<type>sql</type>
+	<query>SELECT ID\,GLCODE FROM CHARTOFACCOUNTS WHERE CLASSIFICATION = 4 AND ISACTIVEFORPOSTING=1 ORDER BY GLCODE</query>
+</egi-coaCodes>
+<egi-activeCoaCodes>
+	<type>sql</type>
+	<query>select glcode||'`-`'||name||'`-`'||ID as "code" from chartofaccounts where classification=4 and isactiveforposting = 1  order by glcode </query>
+</egi-activeCoaCodes>	
+
+<egi-coaCodesForLiability>
+	<type>sql</type>
+	<query>	select ca.id\, ca.glcode||'`-`'||ca.name as "code" from   chartofaccounts  ca   
+where ca.ID in(select cd.glcodeID  from  chartofaccountdetail cd ) and   ca.classification=4  and ca.type in('A'\,'L') and ca.isactiveforposting = 1    order by ca.glcode\,ca.type</query>
+</egi-coaCodesForLiability>	
+
+<!-- this is only for employee earnings it need not be control code -->
+
+<egi-AllCoaCodesOfEarning>
+<type>sql</type>
+<query>select ca.id\, ca.glcode||'`-`'||ca.name as "code" from chartofaccounts  ca 
+where ca.classification=4  and ca.type in('E') and ca.isactiveforposting = 1   order by ca.glcode\,ca.type</query>
+</egi-AllCoaCodesOfEarning>
+
+<egi-partyTypeMaster>
+	<type>sql</type>
+	<query>select id\, code as "typecode" from eg_partytype pt where pt.PARENTID is null order by code</query>
+</egi-partyTypeMaster>	
+
+<egi-partyTypeAllChild>
+	<type>sql</type>
+	<query>select id\, code as "typecode" from eg_partytype pt where pt.PARENTID is not null order by code</query>
+</egi-partyTypeAllChild>
+
+<egi-typeOfWorkParent>
+	<type>sql</type>
+	<query>select id\, code as "typecode" from egw_typeofwork tw where tw.PARENTID is null and PARTYTYPEID is not null order by code</query>
+</egi-typeOfWorkParent>	
+
+<egi-tdsType>
+	<type>sql</type>
+	<query>select id\, type as "tdstype" from tds td where td.PARTYTYPEID is not null order by upper(type)</query>
+</egi-tdsType>	
+
+
+
+<egi-activeFunctions>
+	<type>sql</type>
+	<query>select name||'`-`'||id as "code" from function where  isactive = 1 AND isnotleaf=0 order by name </query>
+</egi-activeFunctions>
+<egi-roles>
+	<type>hql</type>
+	<query>from RoleImpl</query>
+</egi-roles>
+
+<egi-egwTypeOfWork>
+	<type>hql</type>
+	<query>from EgwTypeOfWork typeOfWork order by upper(code)</query>
+</egi-egwTypeOfWork>
+
+<egi-egwSubTypeOfWork>
+	<type>hql</type>
+	<query>from EgwTypeOfWork etw1 where etw1.parentid is null and etw1.id in (select etw2.parentid from EgwTypeOfWork etw2 where etw2.parentid = etw1.id) order by upper(code)</query>
+</egi-egwSubTypeOfWork> 
+<egi-dept>
+	<type>sql</type>
+	<query>select id_dept\,dept_name from eg_department order by id_dept desc</query>
+</egi-dept>
+<egi-recovery>
+	<type>hql</type>
+	<query>from Tds tds where tds.isactive=1 order by upper(type)</query>
+</egi-recovery>
+
+<egi-activeFinYr>
+	<type>hql</type>
+	<query>from CFinancialYear cfinancialyear where isActive=1 order by id desc</query>
+</egi-activeFinYr>
+<egi-domain>
+	<type>sql</type>
+	<query>SELECT ID\,NAME FROM EG_APPL_DOMAIN ORDER BY NAME</query>
+</egi-domain>
+
+<egi-domainwtoref>
+	<type>sql</type>
+	<query>SELECT ID\,NAME FROM EG_APPL_DOMAIN WHERE ID NOT IN (SELECT DISTINCT APPL_DOMAINID FROM EG_ATTRIBUTETYPE) ORDER BY NAME</query>
+</egi-domainwtoref>
+
+<egi-location>
+	<type>hql</type>
+	<query>from Location order by name</query>
+</egi-location>
+
+
+
+<egi-locationparent>
+	<type>hql</type>
+	<query>from Location where locationId is null order by name</query>
+</egi-locationparent>
+<egi-position>
+  	<type>sql</type>
+  	<query>select position_name||'`-`'||id as "code" from eg_position</query>
+ </egi-position>
+<egi-userlist>
+	<type>hql</type>
+	<query>from UserImpl order by firstName</query>
+</egi-userlist>
+
+<egi-usercountermap>
+	<type>hql</type>
+	<query>from UserCounterMap</query>
+</egi-usercountermap>
+
+<egi-liabilityCOACodes>
+	<type>sql</type>
+	<query>select ca.id\, ca.glcode||' : '||ca.name from chartofaccounts  ca where ca.classification=4  and ca.type in('L') and ca.isactiveforposting = 1 order by ca.glcode</query>
+</egi-liabilityCOACodes>	
+
+<egi-locationIP>
+	<type>hql</type>
+	<query>from LocationIPMap order by id</query>
+</egi-locationIP>
+
+ 
+
+
+
+
+<egi-hierarchyType>
+	<type>sql</type>
+	<query>SELECT ID_HEIRARCHY_TYPE\,TYPE_NAME FROM EG_HEIRARCHY_TYPE ORDER BY ID_HEIRARCHY_TYPE</query>
+</egi-hierarchyType>
+
+<egi-location>
+	<type>hql</type>
+	<query>from Location order by name</query>
+</egi-location>
+
+<egi-locationparent>
+	<type>hql</type>
+	<query>from Location where locationId is null order by name</query>
+</egi-locationparent>
+
+<egi-userlist>
+	<type>hql</type>
+	<query>from UserImpl order by firstName</query>
+</egi-userlist>
+
+<egi-usercountermap>
+	<type>hql</type>
+	<query>from UserCounterMap</query>
+</egi-usercountermap>
+
+
+ <egi-userName>
+ 	<type>sql</type>
+ 	<query>SELECT USER_NAME FROM EG_USER</query>
+ </egi-userName>
+ 
+ 
+ <egi-position>
+  	<type>sql</type>
+  	<query>select position_name||'`-`'||id as "code" from eg_position</query>
+ </egi-position>
+<egi-locationIP>
+	<type>hql</type>
+	<query>from LocationIPMap order by id</query>
+</egi-locationIP>
+<egi-Position>
+	<type>hql</type>
+	<query>from Position  </query>
+</egi-Position> 
+
+
+<egi-ObjectType>
+	<type>hql</type>
+	<query>from ObjectType </query>
+</egi-ObjectType> 
+
+</sql>
+
+</properties> 

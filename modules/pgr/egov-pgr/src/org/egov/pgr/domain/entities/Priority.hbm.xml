@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.egov.pgr.domain.entities.Priority" table="EGGR_PRIORITY" >
+        <id name="id" type="java.lang.Long">
+            <column name="PRIORITYID"  />
+           <generator class="sequence">
+            	<param name="sequence">SEQ_EGGR_PRIORITY</param>
+            </generator>
+        </id>
+        <property name="name" type="java.lang.String">
+            <column name="PRIORITYNAME" length="32" not-null="true" />
+        </property>
+
+    </class>
+    
+    <query name="getPriorityByName">
+		<![CDATA[
+         from Priority where name=?
+    ]]>
+    </query>
+</hibernate-mapping>

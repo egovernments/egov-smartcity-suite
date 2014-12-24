@@ -1,0 +1,750 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd"
+	default-lazy-init="true">
+
+
+	<bean id="payslipProcessImpl" class="org.egov.payroll.services.payslip.PayslipProcessImpl">
+		<property name="payslipWorkflowService">
+			<ref bean="payslipWorkflowService" />
+		</property>
+		<property name="payslipService">
+			<ref bean="payslipService" />
+		</property>
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+	</bean>
+
+
+	<bean name="/reports/payslipExceptionReports" class="org.egov.payroll.reports.PayslipExceptionReportAction">
+		<property name="payslipProcess">
+			<ref bean="payslipProcessImpl" />
+		</property>
+	</bean>
+
+	<bean name="/bulkRuleUpdation/BulkUpdateMasterAction"
+		class="org.egov.payroll.client.bulkRuleUpdation.BulkUpdateMasterAction">
+		<property name="payheadService">
+			<ref bean="payheadService" />
+		</property>
+
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+		<property name="payRollService">
+			<ref bean="payRollService" />
+		</property>
+		<property name="persistenceService">
+			<ref bean="persistenceService" />
+		</property>
+
+	</bean>
+
+	<bean name="/payhead/payheadRule" class="org.egov.payroll.client.payhead.PayheadRuleAction">
+		<property name="payheadService">
+			<ref bean="payheadService" />
+		</property>
+		<property name="actionService">
+			<ref bean="actionService" />
+		</property>
+	</bean>
+
+	<bean name="/empPayroll/payrollModify" class="org.egov.pims.client.BeforeSearchAction">
+		<property name="employeeService">
+			<ref bean="employeeService" />
+		</property>
+		<property name="eisService">
+			<ref bean="eisService" />
+		</property>
+
+	</bean>
+
+	<bean name="/empPayroll/payrollBeforeCreate"
+		class="org.egov.payroll.client.empPayroll.BeforePayrollDetailAction">
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+		<property name="payRollService">
+			<ref bean="payRollService" />
+		</property>
+		<property name="persistenceService">
+			<ref bean="persistenceService" />
+		</property>
+	</bean>
+
+	<bean name=" /empPayroll/payrollCreate"
+		class="org.egov.payroll.client.empPayroll.AfterPayRollDetailAction">
+
+		<property name="payRollService">
+
+			<ref bean="payRollService" />
+		</property>
+
+		<property name="payrollExternalInterface">
+
+			<ref bean="payrollExternalInterface" />
+		</property>
+		<property name="auditEventService">
+			<ref bean="auditEventService" />
+		</property>
+	</bean>
+
+	<bean name="/empPayroll/executeSearch" class="org.egov.pims.client.AfterSearchAction">
+		<property name="employeeService">
+			<ref bean="employeeService" />
+		</property>
+
+		<property name="eisLeaveService">
+			<ref bean="eisLeaveService" />
+		</property>
+	</bean>
+
+	<bean name="/payslip/BeforeCreatePayScale"
+		class="org.egov.payroll.client.payslip.BeforeManualGenPaySlipsAction">
+		<property name="actionService">
+			<ref bean="actionService" />
+		</property>
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+		<property name="eisService">
+			<ref bean="eisService" />
+		</property>
+		<property name="employeeService">
+			<ref bean="employeeService" />
+		</property>
+	</bean>
+
+	<bean name="/payslip/createPayScale" class="org.egov.payroll.client.payslip.PayScaleDetailsAction">
+		<property name="actionService">
+			<ref bean="actionService" />
+		</property>
+	</bean>
+
+	<bean name="/payslip/createPayScaleAgain" class="org.egov.payroll.client.payslip.PayScaleDetailsAction">
+		<property name="actionService">
+			<ref bean="actionService" />
+		</property>
+	</bean>
+
+	<bean name="/payslip/viewPayScale"
+		class="org.egov.payroll.client.payslip.BeforeManualGenPaySlipsAction">
+		<property name="actionService">
+			<ref bean="actionService" />
+		</property>
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+		<property name="eisService">
+			<ref bean="eisService" />
+		</property>
+		<property name="employeeService">
+			<ref bean="employeeService" />
+		</property>
+	</bean>
+
+	<bean name="/payslip/modifyPayScale"
+		class="org.egov.payroll.client.payslip.BeforeManualGenPaySlipsAction">
+		<property name="actionService">
+			<ref bean="actionService" />
+		</property>
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+		<property name="eisService">
+			<ref bean="eisService" />
+		</property>
+		<property name="employeeService">
+			<ref bean="employeeService" />
+		</property>
+	</bean>
+
+	<bean name="/payslip/modifyGenPayScale" class="org.egov.payroll.client.payslip.PayScaleDetailsAction">
+		<property name="actionService">
+			<ref bean="actionService" />
+		</property>
+	</bean>
+
+
+	<!--Payslip workflow -->
+
+	<bean id="egovSessionFactory" class="org.egov.infstr.services.SessionFactory" />
+	<bean id="persistenceService" class="org.egov.infstr.services.PersistenceService">
+		<property name="sessionFactory" ref="egovSessionFactory" />
+	</bean>
+	
+	<bean id="advanceService" class="org.egov.payroll.services.advance.AdvanceServiceImpl"></bean>
+	 
+	<bean id="payslipWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="payslipService" />
+		<constructor-arg value="org.egov.payroll.model.EmpPayroll" />
+	</bean>
+	<bean id="payslipService" class="org.egov.payroll.workflow.payslip.PayslipService"
+		parent="persistenceService">
+		<property name="type" value="org.egov.payroll.model.EmpPayroll" />
+		<property name="advanceManager" ref="advanceManager" />
+		<property name="payrollExternalInterface" ref="payrollExternalInterface" />
+		<property name="eisService" ref="eisService" />
+		<property name="billNumberMasterService" ref="billNumberMasterService" />
+	</bean>
+
+
+	<!-- <bean id="applicationContext" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"> 
+		<property name="applicationContextSchedulerContextKey"> <value>applicationContext</value> 
+		</property> </bean> -->
+
+
+	<bean name="/payslip/generatePaySlips"
+		class="org.egov.payroll.client.payslip.AfterManualGenPaySlipsAction">
+		<property name="payslipProcess">
+			<ref bean="payslipProcessImpl" />
+		</property>
+		<property name="payrollExternalInterface" ref="payrollExternalInterface" />
+	</bean>
+
+	<bean name="/payslip/generateBatchPaySlips"
+		class="org.egov.payroll.client.payslip.CreateBulkPaySlipsAction"
+		lazy-init="false" scope="prototype">
+		<property name="scheduler">
+			<ref bean="scheduler" />
+		</property>
+		<property name="actionService">
+			<ref bean="actionService" />
+		</property>
+		<property name="eisService">
+			<ref bean="eisService" />
+		</property>
+		<property name="payRollService">
+			<ref bean="payRollService" />
+		</property>
+		<property name="userService">
+			<ref bean="userService" />
+		</property>
+		<property name="billNumberMasterService" ref="billNumberMasterService" />
+	</bean>
+	<bean name="/payslip/generatePaySlipsAgain"
+		class="org.egov.payroll.client.payslip.AfterManualGenPaySlipsAction">
+		<property name="payslipProcess">
+			<ref bean="payslipProcessImpl" />
+		</property>
+		<property name="payrollExternalInterface" ref="payrollExternalInterface" />
+	</bean>
+
+
+	<!-- <bean id="autoGenerationPaySlipJob" class="org.egov.payroll.services.payslip.AutoGenerationPaySlipJob"> 
+		<property name="payslipProcess"> <ref bean="payslipProcessImpl"/> </property> 
+		</bean> -->
+
+	<bean name="/providentfund/pfsetup" class="org.egov.payroll.client.providentfund.PFAction">
+		<property name="persistenceService">
+			<ref bean="persistenceService" />
+		</property>
+		<property name="pfDelegate" ref="pfDelegate" />
+		<property name="scheduler">
+			<ref bean="scheduler" />
+		</property>
+	</bean>
+
+	<bean id="actionService" parent="persistenceService"
+		autowire-candidate="true" autowire="default">
+		<property name="type" value="org.egov.infstr.workflow.Action"></property>
+	</bean>
+
+	<bean id="cpfService" parent="persistenceService"
+		autowire-candidate="true" autowire="default">
+		<property name="type"
+			value="org.egov.payroll.model.providentfund.PFHeader" />
+	</bean>
+
+	<bean id="pfTriggerDtlService" parent="persistenceService"
+		autowire-candidate="true" autowire="default">
+		<property name="type"
+			value="org.egov.payroll.model.providentfund.PFTriggerDetail" />
+	</bean>
+
+	<!-- bean definition for cpfdelegate -->
+	<bean name="cpfDelegate" class="org.egov.payroll.services.providentfund.CPFDelegate">
+		<property name="persistenceService">
+			<ref bean="persistenceService" />
+		</property>
+		<property name="payrollExternalInterface" ref="payrollExternalInterface" />
+		<property name="cpfTriggerDtlService" ref="pfTriggerDtlService" />
+	</bean>
+
+	<!-- bean definition for pfdelegate -->
+	<bean name="pfDelegate" class="org.egov.payroll.services.providentfund.PFDelegate">
+		<property name="payrollExternalInterface" ref="payrollExternalInterface" />
+	</bean>
+	<bean id="payrollExternalInterface" class="org.egov.payroll.utils.PayrollExternalImpl">
+		<property name="recoveryService" ref="recoveryService" />
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="voucherService" ref="voucherService" />
+		<property name="scriptExecutionService" ref="scriptExecutionService" />
+		<property name="auditEventService" ref="auditEventService" />
+	</bean>
+	<!-- Added for recoveryservice -->
+	<bean id="recoveryService" class="org.egov.services.recoveries.RecoveryService"
+		parent="persistenceService">
+		<property name="type" value="org.egov.model.recoveries.Recovery" />
+		<property name="egDeductionDetHibernateDao" ref="egDeductionDetHibernateDao" />
+		<property name="tdsHibernateDAO" ref="tdsHibernateDAO" />
+	</bean>
+	<bean id="egDeductionDetHibernateDao" class="org.egov.dao.recoveries.EgDeductionDetailsHibernateDAO">
+		<constructor-arg index="0"
+			value="org.egov.model.recoveries.EgDeductionDetails" />
+		<constructor-arg index="1">
+			<null />
+		</constructor-arg>
+	</bean>
+	<bean id="tdsHibernateDAO" class="org.egov.dao.recoveries.TdsHibernateDAO">
+		<constructor-arg index="0"
+			value="org.egov.model.recoveries.Recovery" />
+		<constructor-arg index="1">
+			<null />
+		</constructor-arg>
+	</bean>
+
+	<bean id="exceptionWorkflowService" class="org.egov.payroll.workflow.exception.ExceptionWorkflowService"
+		parent="persistenceService">
+		<property name="type" value="org.egov.payroll.model.EmpException" />
+		<property name="payrollExternalInterface" ref="payrollExternalInterface" />
+		<property name="exceptionWfService" ref="exceptionWfService" />
+	</bean>
+
+	<bean id="exceptionWfService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="exceptionWorkflowService" />
+		<constructor-arg value="org.egov.payroll.model.EmpException" />
+	</bean>
+	<bean name="/exception/beforeException"
+		class="org.egov.payroll.client.exception.BeforeExceptionAction">
+		<property name="persistenceService">
+			<ref bean="persistenceService" />
+		</property>
+		<property name="exceptionWorkflowService">
+			<ref bean="exceptionWorkflowService" />
+		</property>
+		<property name="disciplinaryPunishmentService">
+			<ref bean="disciplinaryPunishmentService" />
+		</property>
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+	</bean>
+
+	<bean id="salaryCodeService" parent="persistenceService"
+		lazy-init="true">
+		<property name="type">
+			<value>org.egov.payroll.model.SalaryCodes</value>
+		</property>
+	</bean>
+
+	<bean id="nominationHeaderService" parent="persistenceService"
+		lazy-init="true">
+		<property name="type">
+			<value>org.egov.payroll.model.NominationHeader</value>
+		</property>
+	</bean>
+
+
+
+	<!-- workflow definitions for advance -->
+
+	<bean name="/salaryadvance/afterSalaryadvance" class="org.egov.payroll.client.advance.AfterAdvanceAction">
+
+		<property name="scriptService" ref="scriptExecutionService" />
+		<property name="advanceWorkflowService">
+			<ref bean="advanceWorkflowService" />
+		</property>
+		<property name="salaryARFWorkflowService">
+			<ref bean="salaryARFWorkflowService" />
+		</property>
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+	</bean>
+
+	<bean id="advancePersistenceService" parent="persistenceService"
+		lazy-init="true">
+		<property name="type">
+			<value>org.egov.payroll.model.Advance</value>
+		</property>
+	</bean>
+
+	<bean id="salaryARFPersistenceService" parent="persistenceService"
+		lazy-init="true">
+		<property name="type">
+			<value>org.egov.payroll.model.SalaryARF</value>
+		</property>
+	</bean>
+
+	<bean id="advanceSimpleWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="advanceWorkflowService" />
+		<constructor-arg value="org.egov.payroll.model.Advance" />
+	</bean>
+
+	<bean id="salaryARFSimpleWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="salaryARFWorkflowService" />
+		<constructor-arg value="org.egov.payroll.model.SalaryARF" />
+	</bean>
+
+	<bean id="advanceWorkflowService"
+		class="org.egov.payroll.workflow.advance.AdvanceWorkflowService"
+		parent="persistenceService">
+		<property name="type" value="org.egov.payroll.model.Advance" />
+		<property name="advanceSimpleWorkflowService">
+			<ref bean="advanceSimpleWorkflowService" />
+		</property>
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+		<property name="advanceService" ref="advanceService" />
+	</bean>
+
+	<bean id="salaryARFWorkflowService"
+		class="org.egov.payroll.workflow.advance.SalaryARFWorkflowService"
+		parent="persistenceService">
+		<property name="type" value="org.egov.payroll.model.SalaryARF" />
+		<property name="salaryARFSimpleWorkflowService">
+			<ref bean="salaryARFSimpleWorkflowService" />
+		</property>
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+		<property name="advanceService" ref="advanceService" />
+	</bean>
+
+	<bean name="advanceWorkflowAXN" class="org.egov.payroll.client.advance.AdvanceWorkflowAction">
+		<property name="advanceWorkflowService">
+			<ref bean="advanceWorkflowService" />
+		</property>
+		<property name="advancePersistenceService">
+			<ref bean="advancePersistenceService" />
+		</property>
+		<property name="salaryARFPersistenceService">
+			<ref bean="salaryARFPersistenceService" />
+		</property>
+		<property name="payrollExternalInterface" ref="payrollExternalInterface" />
+	</bean>
+
+	<bean id="chartOfAccountPersistenceService" parent="persistenceService"
+		lazy-init="true">
+		<property name="type">
+			<value>org.egov.commons.CChartOfAccounts</value>
+		</property>
+	</bean>
+
+
+
+	<!-- Used for Nomination module -->
+
+	<!-- <bean id="nomineeMasterService" parent="persistenceService"
+		lazy-init="true">
+		<property name="type">
+			<value>org.egov.pims.model.EmployeeNomineeMaster</value>
+		</property>
+	</bean>
+	<bean id="nomineePayheadService" parent="persistenceService"
+		lazy-init="true">
+		<property name="type">
+			<value>org.egov.payroll.model.NomineePayheadDet</value>
+		</property>
+	</bean>
+	<bean id="employeeService" parent="persistenceService" lazy-init="true">
+		<property name="type">
+			<value>org.egov.pims.model.PersonalInformation</value>
+		</property>
+	</bean>
+	<bean id="nomineeService" class="org.egov.payroll.services.nominee.NomineeService"
+		parent="persistenceService">
+		<property name="nominationHeaderService">
+			<ref bean="nominationHeaderService" />
+		</property>
+	</bean>
+
+
+	<bean id="gratuityWFService" class="org.egov.payroll.workflow.pension.GratuityWFService"
+		parent="persistenceService">
+		<property name="type"
+			value="org.egov.payroll.model.pension.PensionDetails" />
+		<property name="payrollExternalInterface" ref="payrollExternalInterface" />
+		<property name="simpleGratuityWFService" ref="simpleGratuityWFService" />
+	</bean>
+
+	<bean id="simpleGratuityWFService" class="org.egov.infstr.workflow.SimpleWorkflowService">
+		<constructor-arg ref="gratuityWFService" />
+		<constructor-arg value="org.egov.payroll.model.pension.PensionDetails" />
+	</bean>-->
+
+	<!-- Created for PensionManager moved from ejb to simple bean -->
+	<!--<bean id="pensionManager" class="org.egov.payroll.services.pension.PensionManagerBean">
+		<property name="scriptService" ref="scriptExecutionService" />
+		<property name="gratuityWFService" ref="gratuityWFService" />
+	</bean>
+
+	<bean name="/pension/gratuityAJAXAction" class="org.egov.payroll.client.pension.GratuityAJAXAction">
+		<property name="pensionManager">
+			<ref bean="pensionManager" />
+		</property>
+	</bean>
+
+	<bean name="/pension/checkNomineeEligibility"
+		class="org.egov.payroll.client.pension.CheckNomineeEligibilityAction">
+		<property name="empPensionManager">
+			<ref bean="employeePnsnMgr" />
+		</property>
+	</bean>
+
+	<bean name="/pension/PensionHeaderAJAX"
+		class="org.egov.payroll.client.pension.PensionHeaderAJAXAction">
+	</bean>-->
+
+
+
+	<bean name="/payhead/beforePayhead"
+		class="org.egov.payroll.client.payhead.BeforePayheadDefineAction">
+		<property name="actionService">
+			<ref bean="actionService" />
+		</property>
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+	</bean>
+	<bean name="/payhead/showPayhead" class="org.egov.payroll.client.payhead.PayheadDefineAction">
+		<property name="actionService">
+			<ref bean="actionService" />
+		</property>
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+	</bean>
+
+	<bean name="/payhead/modifyPayhead" class="org.egov.payroll.client.payhead.ModifyPayheadAction">
+		<property name="actionService">
+			<ref bean="actionService" />
+		</property>
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+	</bean>
+
+	<bean name="/payhead/searchPayhead" class="org.egov.payroll.client.payhead.SearchPayheadAction">
+		<property name="actionService">
+			<ref bean="actionService" />
+		</property>
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+	</bean>
+
+	<bean name="/payslip/BeforeManualGenPaySlips"
+		class="org.egov.payroll.client.payslip.BeforeManualGenPaySlipsAction">
+		<property name="actionService">
+			<ref bean="actionService" />
+		</property>
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+		<property name="eisService">
+			<ref bean="eisService" />
+		</property>
+	</bean>
+	<bean name="/payslip/modifyPaySlips"
+		class="org.egov.payroll.client.payslip.BeforeManualGenPaySlipsAction">
+		<property name="actionService">
+			<ref bean="actionService" />
+		</property>
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+		<property name="eisService">
+			<ref bean="eisService" />
+		</property>
+		<property name="employeeService">
+			<ref bean="employeeService" />
+		</property>
+	</bean>
+	<bean name="/payslip/BeforeviewGenPaySlips"
+		class="org.egov.payroll.client.payslip.BeforeManualGenPaySlipsAction">
+		<property name="actionService">
+			<ref bean="actionService" />
+		</property>
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+		<property name="eisService">
+			<ref bean="eisService" />
+		</property>
+		<property name="employeeService" ref="employeeService" />
+	</bean>
+	<bean name="/payslip/ManualGenPaySlipsCentralAction"
+		class="org.egov.payroll.client.payslip.BeforeManualGenPaySlipsAction">
+		<property name="actionService">
+			<ref bean="actionService" />
+		</property>
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+		<property name="eisService">
+			<ref bean="eisService" />
+		</property>
+		<property name="employeeService">
+			<ref bean="employeeService" />
+		</property>
+	</bean>
+	<bean name="/payslip/viewGenPaySlips"
+		class="org.egov.payroll.client.payslip.BeforeManualGenPaySlipsAction">
+		<property name="actionService">
+			<ref bean="actionService" />
+		</property>
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+		<property name="eisService">
+			<ref bean="eisService" />
+		</property>
+		<property name="employeeService" ref="employeeService" />
+	</bean>
+
+
+
+	<bean name="/salaryadvance/afterModifyAdvance"
+		class="org.egov.payroll.client.advance.AfterModifyAdvanceAction">
+		<property name="scriptService" ref="scriptExecutionService" />
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+	</bean>
+
+
+	<bean name="/salaryadvance/beforeModifyAdvance"
+		class="org.egov.payroll.client.advance.BeforeModifyAdvanceAction">
+		<property name="employeeService" ref="employeeService" />
+	</bean>
+
+	<bean name="/salaryadvance/beforeSalaryadvance" class="org.egov.payroll.client.advance.BeforeAdvanceAction">
+		<property name="actionService">
+			<ref bean="actionService" />
+		</property>
+		<property name="employeeService" ref="employeeService" />
+	</bean>
+
+	<bean name="/salaryadvance/modifyAdvanceInfo" class="org.egov.payroll.client.advance.AdvanceInfoAction">
+
+	</bean>
+
+
+
+	<bean name="/payslip/modifyGenPaySlips"
+		class="org.egov.payroll.client.payslip.AfterManualGenPaySlipsAction">
+		<property name="payslipProcess">
+			<ref bean="payslipProcessImpl" />
+		</property>
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+	</bean>
+
+	<bean name="/payslip/generateSuppPaySlip"
+		class="org.egov.payroll.client.payslip.CreateSupplementaryPaySlips">
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+	</bean>
+
+	<bean name="/payslipapprove/afterPayslipApprove"
+		class="org.egov.payroll.client.payslipApprove.AfterPayslipApproveAction">
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+		<property name="salaryPaybill">
+			<ref bean="salaryPaybill" />
+		</property>
+	</bean>
+
+	<bean name="/reports/paysummary" class="org.egov.payroll.reports.ReportCommonAction">
+		<property name="eisService">
+			<ref bean="eisService" />
+		</property>
+	</bean>
+
+	<bean name="/reports/paylipException" class="org.egov.payroll.reports.ReportCommonAction">
+		<property name="eisService">
+			<ref bean="eisService" />
+		</property>
+	</bean>
+
+	<bean name="/reports/paylipHistory" class="org.egov.payroll.reports.ReportCommonAction">
+		<property name="eisService">
+			<ref bean="eisService" />
+		</property>
+	</bean>
+
+	<bean name="/reports/functionaryPayhead" class="org.egov.payroll.reports.ReportCommonAction">
+		<property name="eisService">
+			<ref bean="eisService" />
+		</property>
+	</bean>
+
+	<bean name="/reports/payBillSummaryReport" class="org.egov.payroll.reports.ReportCommonAction">
+		<property name="eisService">
+			<ref bean="eisService" />
+		</property>
+	</bean>
+
+	<bean name="/payslip/unprocessPayslips"
+		class="org.egov.payroll.client.payslip.BeforeUnprocessPayslipAction">
+		<property name="eisService">
+			<ref bean="eisService" />
+		</property>
+	</bean>
+
+	<bean name="/reports/selfService" class="org.egov.payroll.client.reports.SelfServiceReports">
+		<property name="employeeService" ref="employeeService" />
+		<property name="commonsService" ref="commonsService" />
+	</bean>
+
+	<bean id="disciplinaryPunishmentService"
+		class="org.egov.pims.workflow.disciplinaryPunishment.DisciplinaryPunishmentService"
+		parent="persistenceService">
+		<property name="type" value="org.egov.pims.model.DisciplinaryPunishment" />
+		<property name="disciplinaryPunishmentWorkflowService" ref="disciplinaryPunishmentWorkflowService" />
+		<property name="employeeService">
+			<ref bean="employeeService" />
+		</property>
+		<property name="rbacService">
+			<ref bean="rbacService" />
+		</property>
+		<property name="eisService">
+			<ref bean="eisService" />
+		</property>
+	</bean>
+
+	<bean id="disciplinaryPunishmentWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="disciplinaryPunishmentService" />
+		<constructor-arg value="org.egov.pims.model.DisciplinaryPunishment" />
+	</bean>
+
+	<bean name="/generatePDF"
+		class="org.egov.payroll.client.payslip.GeneratePDFForPayslipsAction">
+		<property name="monthlyPayslipReport">
+			<ref bean="monthlyPayslipReport" />
+		</property>
+	</bean>
+	<bean id="monthlyPayslipReport" class="org.egov.payroll.reports.MonthlyPayslipReports">
+		<property name="reportService" ref="reportService" />
+	</bean>
+	<bean id="billNumberMasterService" parent="persistenceService"
+		scope="prototype">
+		<property name="type" value="org.egov.masters.model.BillNumberMaster" />
+	</bean>
+
+
+</beans>

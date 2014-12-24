@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<pageMap name="cancelBilIn" > 	
+	<gridMap name="BillSearchGrid" containsNames="true">
+		<columnMap name="billId" serverFieldName="1"/>
+		<columnMap name="BillRegister_isConfirmed" serverFieldName="2"/>
+	</gridMap>	
+</pageMap>

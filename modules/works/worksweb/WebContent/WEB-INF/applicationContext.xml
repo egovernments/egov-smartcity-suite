@@ -1,0 +1,948 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+	default-lazy-init="true">
+
+	<!-- on may 14 for egf changes -->
+	<bean id="recoveryService" class="org.egov.services.recoveries.RecoveryService"
+		parent="persistenceService">
+		<property name="type" value="org.egov.model.recoveries.Recovery" />
+		<property name="egDeductionDetHibernateDao" ref="egDeductionDetHibernateDao" />
+		<property name="tdsHibernateDAO" ref="tdsHibernateDAO" />
+	</bean>
+
+
+	<bean id="egDeductionDetHibernateDao" class="org.egov.dao.recoveries.EgDeductionDetailsHibernateDAO">
+		<constructor-arg index="0"
+			value="org.egov.model.recoveries.EgDeductionDetails" />
+		<constructor-arg index="1">
+			<null />
+		</constructor-arg>
+	</bean>
+
+	<bean id="tdsHibernateDAO" class="org.egov.dao.recoveries.TdsHibernateDAO">
+		<constructor-arg index="0"
+			value="org.egov.model.recoveries.Recovery" />
+		<constructor-arg index="1">
+			<null />
+		</constructor-arg>
+	</bean>
+
+	<bean id="scheduleOfRateService" parent="persistenceService">
+		<property name="type" value="org.egov.works.models.masters.ScheduleOfRate" />
+	</bean>
+	<bean id="scheduleCategoryService" parent="persistenceService">
+		<property name="type"
+			value="org.egov.works.models.masters.ScheduleCategory" />
+	</bean>
+	<bean id="worksStatusService" parent="persistenceService">
+		<property name="type" value="org.egov.works.models.tender.SetStatus" />
+	</bean>
+	<bean id="workTypeService" parent="persistenceService">
+		<property name="type" value="org.egov.works.models.estimate.WorkType"></property>
+	</bean>
+	<bean class="org.egov.works.services.AbstractEstimateService" id="abstractEstimateService"
+		parent="persistenceService" scope="prototype">
+		<property name="estimateNumberGenerator" ref="estimateNumberGenerator" />
+		<property name="projectcodeGenerator" ref="projectcodeGenerator" />
+		<property name="budgetNumberGenerator" ref="budgetNumberGenerator" />
+		<property name="projectCodeService" ref="projectCodeService" />
+		<property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
+		<property name="genericHibDao" ref="genericHibDao" />
+		<property name="employeeService" ref="employeeService" />
+		<property name="egovCommon" ref="egovCommon" />
+		<property name="worksService" ref="worksService" />
+		<property name="commonsService" ref="commonsService" />
+		<property name="depositWorksUsageService" ref="depositWorksUsageService" />
+		<property name="technicalSanctionNumberGenerator" ref="technicalSanctionNumberGenerator" />
+		<property name="technicalSanctionService" ref="technicalSanctionService" />
+		<property name="adminSanctionNumberGenerator" ref="adminSanctionNumberGenerator" />
+		<property name="revisionAbstractEstimateService" ref="revisionAbstractEstimateService" />
+	</bean>
+
+	<bean id="estimateWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="abstractEstimateService" />
+		<constructor-arg value="org.egov.works.models.estimate.AbstractEstimate" />
+	</bean>
+
+	<bean id="packageWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="workspackageWFService" />
+		<constructor-arg value="org.egov.works.models.tender.WorksPackage" />
+	</bean>
+
+	<bean class="org.egov.works.services.WorkspackageWFService" id="workspackageWFService"
+		parent="persistenceService">
+		<property name="employeeService" ref="employeeService" />
+	</bean>
+
+	<bean id="checklistService" parent="persistenceService">
+		<property name="type" value="org.egov.infstr.models.EgChecklists" />
+	</bean>
+
+	<bean class="org.egov.works.models.estimate.EstimateNumberGenerator"
+		id="estimateNumberGenerator">
+		<property name="scriptService" ref="scriptService" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="scriptExecutionService" ref="scriptExecutionService" />
+	</bean>
+
+	<bean class="org.egov.works.web.actions.estimate.EstimatePDFGenerator"
+		id="estimatePDFGenerator">
+		<property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
+	</bean>
+
+	<bean class="org.egov.works.models.estimate.BudgetNumberGenerator"
+		id="budgetNumberGenerator">
+		<property name="scriptService" ref="scriptService" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="scriptExecutionService" ref="scriptExecutionService" />
+	</bean>
+	<!-- <bean class="org.egov.works.models.tender.WorkOrderNumberGenerator" 
+		id="workOrderNumberGenerator"> <property name="scriptService" ref="scriptService"/> 
+		<property name="sequenceGenerator" ref="sequenceGenerator"/> </bean> -->
+
+	<bean
+		class="org.egov.works.models.contractorBill.ContractorBillNumberGenerator"
+		id="contractorBillNumberGenerator">
+		<property name="scriptService" ref="scriptService" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="scriptExecutionService" ref="scriptExecutionService" />
+	</bean>
+
+	<bean
+		class="org.egov.works.models.contractorBill.ContractCertificateNumberGenerator"
+		id="contractCertificateNumberGenerator">
+		<property name="scriptService" ref="scriptService" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="scriptExecutionService" ref="scriptExecutionService" />
+	</bean>
+
+	<bean class="org.egov.works.models.estimate.ProjectCodeGenerator"
+		id="projectcodeGenerator">
+		<property name="scriptService" ref="scriptService" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="scriptExecutionService" ref="scriptExecutionService" />
+	</bean>
+
+	<bean id="egwTypeOfWorkService" parent="persistenceService">
+		<property name="type" value="org.egov.commons.EgwTypeOfWork"></property>
+	</bean>
+
+	<bean id="overheadService" parent="persistenceService">
+		<property name="type" value="org.egov.works.models.masters.Overhead" />
+	</bean>
+
+	<bean id="boundaryService" parent="persistenceService">
+		<property name="type" value="org.egov.lib.admbndry.Boundary" />
+	</bean>
+
+	<bean id="mastersMgr"
+		class="org.springframework.ejb.access.LocalStatelessSessionProxyFactoryBean"
+		lazy-init="true">
+		<property name="jndiName">
+			<value>MastersManagerHome</value>
+		</property>
+		<property name="businessInterface">
+			<value>org.egov.masters.services.MastersManager</value>
+		</property>
+	</bean>
+
+	<bean id="projectCodeService" parent="persistenceService">
+		<property name="type" value="org.egov.works.models.estimate.ProjectCode" />
+	</bean>
+
+	<bean id="assetsForEstimateService" parent="persistenceService">
+		<property name="type"
+			value="org.egov.works.models.estimate.AssetsForEstimate" />
+	</bean>
+
+	<bean id="budgetDetailsDAO" class="org.egov.dao.budget.BudgetDetailsHibernateDAO">
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="genericDao" ref="genericHibDao" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="scriptExecutionService" ref="scriptExecutionService" />
+	</bean>
+
+	<!-- changing budgetservice with budgetgropDao -->
+	<bean id="budgetGroupDAO" class="org.egov.dao.budget.BudgetGroupHibernateDAO">
+		<property name="commonsService" ref="commonsService" />
+	</bean>
+
+	<!-- <bean id="tenderHeaderService" parent="persistenceService"> <property 
+		name="type" value="org.egov.works.models.tender.TenderHeader" /> </bean> -->
+
+	<bean id="financialDetailService" parent="persistenceService">
+		<property name="type"
+			value="org.egov.works.models.estimate.FinancialDetail" />
+	</bean>
+
+	<!-- <bean class="org.egov.works.models.tender.NegotiationNumberGenerator" 
+		id="negotiationNumberGenerator"> <property name="scriptService" ref="scriptService"/> 
+		<property name="sequenceGenerator" ref="sequenceGenerator"/> </bean> -->
+
+	<!-- <bean class="org.egov.works.services.TenderResponseService" id="tenderResponseService" 
+		parent="persistenceService" scope="prototype"> <property name="type" value="org.egov.works.models.tender.TenderResponse" 
+		/> <property name="employeeService" ref="employeeService"/> <property name="negotiationStatusService" 
+		ref="negotiationStatusService"/> </bean> <bean id="tenderResponseWorkflowService" 
+		class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype"> 
+		<constructor-arg ref="tenderResponseService" /> <constructor-arg value="org.egov.works.models.tender.TenderResponse"/> 
+		</bean> -->
+
+
+	<!-- added on jan6 -->
+	<bean class="org.egov.works.services.impl.MeasurementBookServiceImpl"
+		id="measurementBookService" scope="prototype">
+		<constructor-arg>
+			<bean parent="persistenceService">
+				<property name="type"
+					value="org.egov.works.models.measurementbook.MBHeader" />
+			</bean>
+		</constructor-arg>
+		<property name="genericService" ref="persistenceService" />
+		<property name="worksService" ref="worksService" />
+	</bean>
+
+	<bean class="org.egov.works.services.impl.WorksPackageServiceImpl"
+		id="workspackageService" scope="prototype">
+		<constructor-arg>
+			<bean parent="persistenceService">
+				<property name="type" value="org.egov.works.models.tender.WorksPackage" />
+			</bean>
+		</constructor-arg>
+		<property name="workspackageGenerator" ref="workspackageGenerator" />
+	</bean>
+
+	<!-- on dec14th -->
+	<bean class="org.egov.works.models.workorder.WorkOrderNumberGenerator"
+		id="workOrderNumberGenerators">
+		<property name="scriptService" ref="scriptService" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="scriptExecutionService" ref="scriptExecutionService" />
+	</bean>
+
+	<bean class="org.egov.works.models.tender.WorksPackageNumberGenerator"
+		id="workspackageGenerator">
+		<property name="scriptService" ref="scriptService" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="scriptExecutionService" ref="scriptExecutionService" />
+	</bean>
+
+	<!-- prashanth on dec18 for set status -->
+	<!-- <bean class="org.egov.works.services.NegotiationStatusService" id="negotiationStatusService" 
+		parent="persistenceService" scope="prototype"> <property name="employeeService" 
+		ref="employeeService"/> </bean> <bean id="negotiationStatusWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" 
+		scope="prototype"> <constructor-arg ref="negotiationStatusService"/> <constructor-arg 
+		value="org.egov.works.models.tender.NegotiationStatus"/> </bean> -->
+	<bean id="egwStatusService" parent="persistenceService">
+		<property name="type" value="org.egov.commons.EgwStatus" />
+	</bean>
+
+	<bean class="org.egov.works.services.impl.WorkOrderServiceImpl"
+		id="workOrderService" scope="prototype">
+		<constructor-arg>
+			<bean parent="persistenceService">
+				<property name="type" value="org.egov.works.models.workorder.WorkOrder" />
+			</bean>
+		</constructor-arg>
+		<property name="contractorService" ref="contractorService" />
+		<property name="worksService" ref="worksService" />
+		<property name="workOrderNumberGenerators" ref="workOrderNumberGenerators" />
+		<property name="genericService" ref="persistenceService" />
+		<property name="workspackageService" ref="workspackageService" />
+		<property name="measurementBookService" ref="measurementBookService" />
+		<property name="returnSecurityDepositService" ref="returnSecurityDepositService" />
+		<property name="retentionMoneyRefundService" ref="retentionMoneyRefundService" />
+	</bean>
+	<!-- workflow for measurementbook -->
+	<bean class="org.egov.works.services.MeasurementBookWFService" id="measurementBookWFService"
+		parent="persistenceService" scope="prototype">
+		<property name="employeeService" ref="employeeService" />
+	</bean>
+	<bean id="measurementBookWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="measurementBookWFService" />
+		<constructor-arg value="org.egov.works.models.measurementbook.MBHeader" />
+	</bean>
+	<bean class="org.egov.works.services.ContractorBillWFService" id="contractorBillWFService"
+		parent="persistenceService" scope="prototype">
+		<property name="employeeService" ref="employeeService" />
+	</bean>
+	<bean id="contractorBillWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="contractorBillWFService" />
+		<constructor-arg value="org.egov.model.bills.EgBillregister" />
+	</bean>
+	<bean id="egovCommon" class="org.egov.egf.commons.EgovCommon"
+		scope="prototype">
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="genericDao" ref="genericDao" />
+	</bean>
+	<bean class="org.egov.works.services.impl.ContractorBillServiceImpl"
+		id="contractorBillService" scope="prototype">
+		<constructor-arg>
+			<bean parent="persistenceService">
+				<property name="type" value="org.egov.model.bills.EgBillregister" />
+			</bean>
+		</constructor-arg>
+		<property name="genericService" ref="persistenceService" />
+		<property name="worksService" ref="worksService" />
+		<property name="contractorBillNumberGenerator" ref="contractorBillNumberGenerator" />
+		<property name="contractCertificateNumberGenerator" ref="contractCertificateNumberGenerator" />
+		<property name="egovCommon" ref="egovCommon" />
+		<property name="commonsService" ref="commonsService" />
+		<property name="checklistService" ref="checklistService" />
+		<property name="commonAssetsService" ref="commonAssetsService" />
+		<property name="assetService" ref="assetService" />
+		<property name="genericTenderResponseService" ref="genericTenderResponseService" />
+		<property name="measurementBookService" ref="measurementBookService" />
+		<property name="genericTenderService" ref="genericTenderService" />
+	</bean>
+	<bean class="org.egov.assets.service.AppService" id="appService"
+		scope="prototype">
+		<property name="genericHibDao" ref="genericHibDao" />
+	</bean>
+	<bean class="org.egov.assets.service.CommonAssetsService" id="commonAssetsService"
+		scope="prototype">
+		<property name="genericService" ref="persistenceService" />
+		<property name="assetCategoryService" ref="assetCategoryService" />
+		<property name="assetService" ref="assetService" />
+	</bean>
+	<bean class="org.egov.assets.model.AssetCategoryNumberGenrator" id="assetCategoryNumberGenrator">
+		<property name="scriptService" ref="scriptService" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="scriptExecutionService" ref="scriptExecutionService"/>
+	</bean>
+	<bean class="org.egov.assets.service.impl.AssetCategoryServiceImpl"
+		id="assetCategoryService" scope="prototype">
+		<constructor-arg>
+			<bean parent="persistenceService">
+				<property name="type" value="org.egov.assets.model.AssetCategory" />
+			</bean>
+		</constructor-arg>
+		<property name="genericService" ref="persistenceService" />
+		<property name="appService" ref="appService" />
+		<property name="assetCategoryNumberGenrator" ref="assetCategoryNumberGenrator" />
+	</bean>
+	<bean class="org.egov.assets.model.AssetNumberGenrator" id="assetNumberGenrator">
+		<property name="scriptService" ref="scriptService" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="scriptExecutionService" ref="scriptExecutionService"/>
+	</bean>
+	<bean class="org.egov.assets.service.impl.AssetServiceImpl" id="assetService"
+		scope="prototype">
+		<constructor-arg>
+			<bean parent="persistenceService">
+				<property name="type" value="org.egov.assets.model.Asset" />
+			</bean>
+		</constructor-arg>
+		<property name="genericService" ref="persistenceService" />
+		<property name="appService" ref="appService" />
+		<property name="assetNumberGenrator" ref="assetNumberGenrator" />
+	</bean>
+	<bean class="org.egov.works.services.WorkOrderWFService" id="workOrderWFService"
+		parent="persistenceService" scope="prototype">
+		<property name="employeeService" ref="employeeService" />
+	</bean>
+	<bean id="workOrderWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="workOrderWFService" />
+		<constructor-arg value="org.egov.works.models.workorder.WorkOrder" />
+	</bean>
+	<bean id="voucherService" class="org.egov.services.voucher.VoucherService"
+		parent="persistenceService" scope="prototype">
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
+		<property name="scriptExecutionService" ref="scriptExecutionService" />
+		<property name="employeeService" ref="employeeService" />
+		<property name="eisService" ref="eisService" />
+	</bean>
+
+
+	<bean id="depositCodeService" parent="persistenceService">
+		<property name="type" value="org.egov.works.models.masters.DepositCode" />
+	</bean>
+
+	<bean class="org.egov.works.models.masters.DepositCodeGenerator"
+		id="depositCodeGenerator">
+		<property name="scriptService" ref="scriptService" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="scriptExecutionService" ref="scriptExecutionService"/>
+	</bean>
+	<bean class="org.egov.works.services.impl.DepositWorksUsageServiceImpl"
+		id="depositWorksUsageService" scope="prototype">
+		<constructor-arg>
+			<bean parent="persistenceService">
+				<property name="type"
+					value="org.egov.works.models.estimate.DepositWorksUsage" />
+			</bean>
+		</constructor-arg>
+		<property name="genericService" ref="persistenceService" />
+		<property name="egovCommon" ref="egovCommon" />
+	</bean>
+
+	<!-- <bean id="tenderResponseContractorsService" parent="persistenceService"> 
+		<property name="type" value="org.egov.works.models.tender.TenderResponseContractors"></property> 
+		</bean> <bean id="tenderResponseActivityService" parent="persistenceService"> 
+		<property name="type" value="org.egov.works.models.tender.TenderResponseActivity"></property> 
+		</bean> -->
+	<bean id="activityService" parent="persistenceService">
+		<property name="type" value="org.egov.works.models.estimate.Activity"></property>
+	</bean>
+	<bean id="cancelBillService" parent="persistenceService">
+		<property name="type"
+			value="org.egov.works.models.measurementbook.MBForCancelledBill" />
+	</bean>
+
+
+	<bean id="budgetService" class="org.egov.services.budget.BudgetService"
+		parent="persistenceService" scope="prototype">
+	</bean>
+
+	<bean id="estimateTemplateService" parent="persistenceService">
+		<property name="type"
+			value="org.egov.works.models.estimate.EstimateTemplate" />
+	</bean>
+
+	<bean class="org.egov.works.models.estimate.TechnicalSanctionNumberGenerator"
+		id="technicalSanctionNumberGenerator">
+		<property name="scriptService" ref="scriptService" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="scriptExecutionService" ref="scriptExecutionService" />
+	</bean>
+
+	<bean class="org.egov.works.models.estimate.AdminSanctionNumberGenerator"
+		id="adminSanctionNumberGenerator">
+		<property name="scriptService" ref="scriptService" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="scriptExecutionService" ref="scriptExecutionService" />
+	</bean>
+
+	<bean id="technicalSanctionService" parent="persistenceService">
+		<property name="type"
+			value="org.egov.works.models.estimate.TechnicalSanction" />
+	</bean>
+
+	<bean class="org.egov.works.services.impl.TenderFileServiceImpl"
+		id="tenderFileService" scope="prototype">
+		<constructor-arg>
+			<bean parent="persistenceService">
+				<property name="type" value="org.egov.works.models.tender.TenderFile" />
+			</bean>
+		</constructor-arg>
+		<property name="tenderFileNumberGenerator" ref="tenderFileNumberGenerator" />
+	</bean>
+
+	<bean class="org.egov.works.services.TenderFileWFService" id="tenderFileWFService"
+		parent="persistenceService">
+		<property name="employeeService" ref="employeeService" />
+		<property name="commonsService" ref="commonsService" />
+	</bean>
+
+	<bean id="tenderFileWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="tenderFileWFService" />
+		<constructor-arg value="org.egov.works.models.tender.TenderFile" />
+	</bean>
+
+	<bean class="org.egov.works.models.tender.TenderFileNumberGenerator"
+		id="tenderFileNumberGenerator">
+		<property name="scriptService" ref="scriptService" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="scriptExecutionService" ref="scriptExecutionService" />
+	</bean>
+
+	<bean class="org.egov.works.services.impl.ReturnSecurityDepositServiceImpl"
+		id="returnSecurityDepositService" scope="prototype">
+		<constructor-arg>
+			<bean parent="persistenceService">
+				<property name="type"
+					value="org.egov.works.models.securityDeposit.ReturnSecurityDeposit" />
+			</bean>
+		</constructor-arg>
+		<property name="worksService" ref="worksService" />
+		<property name="genericService" ref="persistenceService" />
+		<property name="commonsService" ref="commonsService" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="scriptExecutionService" ref="scriptExecutionService" />
+		<property name="egovCommon" ref="egovCommon" />
+
+	</bean>
+
+	<bean class="org.egov.works.services.impl.RetentionMoneyRefundServiceImpl"
+		id="retentionMoneyRefundService" scope="prototype">
+		<constructor-arg>
+			<bean parent="persistenceService">
+				<property name="type"
+					value="org.egov.works.models.retentionMoney.RetentionMoneyRefund" />
+			</bean>
+		</constructor-arg>
+		<property name="worksService" ref="worksService" />
+		<property name="genericService" ref="persistenceService" />
+		<property name="commonsService" ref="commonsService" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="scriptExecutionService" ref="scriptExecutionService" />
+		<property name="egovCommon" ref="egovCommon" />
+	</bean>
+
+	<bean class="org.egov.works.services.ReturnSecurityDepositWFService"
+		id="returnSecurityDepositWFService" parent="persistenceService" scope="prototype">
+		<property name="employeeService" ref="employeeService" />
+	</bean>
+
+	<bean id="returnSecurityDepositWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="returnSecurityDepositWFService" />
+		<constructor-arg
+			value="org.egov.works.models.securityDeposit.ReturnSecurityDeposit" />
+	</bean>
+
+	<bean class="org.egov.works.services.RetentionMoneyRefundWFService"
+		id="retentionMoneyRefundWFService" parent="persistenceService" scope="prototype">
+		<property name="employeeService" ref="employeeService" />
+	</bean>
+
+	<bean id="retentionMoneyRefundWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="retentionMoneyRefundWFService" />
+		<constructor-arg
+			value="org.egov.works.models.retentionMoney.RetentionMoneyRefund" />
+	</bean>
+
+	<bean id="egBillregisterService" parent="persistenceService">
+		<property name="type" value="org.egov.model.bills.EgBillregister"></property>
+	</bean>
+
+	<bean
+		class="org.egov.works.models.rateContract.IndentRateContractNumberGenerator"
+		id="indentRateContractNumberGenerator">
+		<property name="scriptService" ref="scriptService" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="scriptExecutionService" ref="scriptExecutionService" />
+	</bean>
+
+	<bean class="org.egov.works.services.impl.IndentRateContractServiceImpl"
+		id="indentRateContractService" scope="prototype">
+		<constructor-arg>
+			<bean parent="persistenceService">
+				<property name="type" value="org.egov.works.models.rateContract.Indent" />
+			</bean>
+		</constructor-arg>
+		<property name="indentRateContractNumberGenerator" ref="indentRateContractNumberGenerator" />
+		<property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
+	</bean>
+
+	<bean id="genericTenderService" class="org.egov.tender.services.common.GenericTenderService">
+		<property name="persistenceService" ref="persistenceService" />
+	</bean>
+	<bean id="tenderCommonService" class="org.egov.tender.services.common.TenderCommonService">
+
+		<property name="eisService" ref="eisService" />
+		<property name="bidderTypeServiceMap">
+			<map>
+				<entry>
+					<key>
+						<value>supplierService</value>
+					</key>
+					<ref bean="relationService" />
+				</entry>
+				<entry>
+					<key>
+						<value>contractorService</value>
+					</key>
+					<ref bean="contractorBidderService" />
+				</entry>
+			</map>
+		</property>
+		<property name="persistenceService" ref="persistenceService" />
+	</bean>
+	<bean id="relationService" class="org.egov.commons.service.RelationService"
+		parent="persistenceService">
+		<property name="type" value="org.egov.commons.Relation" />
+	</bean>
+	<bean id="contractorBidderService" class="org.egov.works.services.ContractorService"
+		parent="persistenceService">
+		<property name="type" value="org.egov.works.models.masters.Contractor" />
+	</bean>
+	<bean id="eisService" class="org.egov.pims.service.EisUtilService"
+		scope="prototype">
+		<property name="persistenceService" ref="persistenceService" />
+	</bean>
+	<bean
+		class="org.egov.works.services.serviceOrder.impl.ServiceTemplateServiceImpl"
+		id="serviceTemplateSer" scope="prototype">
+		<constructor-arg>
+			<bean parent="persistenceService">
+				<property name="type"
+					value="org.egov.works.models.serviceOrder.ServiceTemplate" />
+			</bean>
+		</constructor-arg>
+
+	</bean>
+	<bean
+		class="org.egov.works.services.serviceOrder.impl.ServiceOrderServiceImpl"
+		id="serviceOrderSer" scope="prototype">
+		<constructor-arg>
+			<bean parent="persistenceService">
+				<property name="type"
+					value="org.egov.works.models.serviceOrder.ServiceOrder" />
+			</bean>
+		</constructor-arg>
+
+	</bean>
+
+	<bean
+		class="org.egov.works.services.serviceOrder.impl.MeasurementHeaderServiceImpl"
+		id="measurementHService" scope="prototype">
+		<constructor-arg>
+			<bean parent="persistenceService">
+				<property name="type"
+					value="org.egov.works.models.serviceOrder.SoMeasurementHeader" />
+			</bean>
+		</constructor-arg>
+
+	</bean>
+
+
+	<bean id="cbillSer"
+		class="org.egov.works.web.actions.serviceOrder.ExpenseBillService"
+		scope="prototype">
+		<property name="genericDao" ref="genericDao" />
+		<property name="commonsService" ref="commonsService" />
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="scriptExecutionService" ref="scriptExecutionService" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="voucherService" ref="voucherService" />
+		<property name="employeeService" ref="employeeService" />
+		<property name="eisCommonsService" ref="eisCommonsService" />
+	</bean>
+	<bean id="billRegisterWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="cbillService" />
+		<constructor-arg value="org.egov.egf.bills.model.Cbill" />
+	</bean>
+	<bean id="cbillService" parent="persistenceService">
+		<property name="type" value="org.egov.egf.bills.model.Cbill" />
+	</bean>
+
+	<bean class="org.egov.works.services.IndentWFService" id="indentWFService"
+		parent="persistenceService">
+		<property name="employeeService" ref="employeeService" />
+		<property name="commonsService" ref="commonsService" />
+		<property name="indentRateContractService" ref="indentRateContractService" />
+	</bean>
+	<bean id="indentWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="indentWFService" />
+		<constructor-arg value="org.egov.works.models.rateContract.Indent" />
+	</bean>
+
+	<bean class="org.egov.works.services.RateContractWFService" id="rateContractWFService"
+		parent="persistenceService">
+		<property name="rateContractService" ref="rateContractService" />
+	</bean>
+
+
+
+	<bean id="rateContractWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="rateContractWFService" />
+		<constructor-arg value="org.egov.works.models.rateContract.RateContract" />
+	</bean>
+
+	<bean id="genericTenderResponseService"
+		class="org.egov.tender.services.tenderresponse.TenderResponseService"
+		parent="persistenceService">
+		<property name="type" value="org.egov.tender.model.GenericTenderResponse" />
+		<property name="eisService" ref="eisService" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="tenderCommonService" ref="tenderCommonService" />
+	</bean>
+
+	<bean id="tenderService" parent="persistenceService">
+		<property name="type" value="org.egov.works.models.tender.TenderFile" />
+	</bean>
+
+	<bean class="org.egov.works.models.rateContract.RateContractNumberGenerator"
+		id="rateContractNumberGenerator">
+		<property name="scriptService" ref="scriptService" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="scriptExecutionService" ref="scriptExecutionService" />
+	</bean>
+	<bean class="org.egov.works.services.impl.RateContractServiceImpl"
+		id="rateContractService" scope="prototype">
+		<constructor-arg>
+			<bean parent="persistenceService">
+				<property name="type"
+					value="org.egov.works.models.rateContract.RateContract" />
+			</bean>
+		</constructor-arg>
+		<property name="rateContractNumberGenerator" ref="rateContractNumberGenerator" />
+		<property name="genericService" ref="persistenceService" />
+	</bean>
+	<bean id="nonSorService" parent="persistenceService">
+		<property name="type" value="org.egov.works.models.estimate.NonSor" />
+	</bean>
+	<bean id="revisionAbstractEstimateService" parent="persistenceService">
+		<property name="type"
+			value="org.egov.works.models.revisionEstimate.RevisionAbstractEstimate" />
+	</bean>
+
+
+	<bean class="org.egov.works.services.RevisionEstimateWFService"
+		id="revisionEstimateWFService" parent="persistenceService">
+		<property name="abstractEstimateService" ref="abstractEstimateService" />
+	</bean>
+
+	<bean id="revisionEstimateWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="revisionEstimateWFService" />
+		<constructor-arg
+			value="org.egov.works.models.revisionEstimate.RevisionAbstractEstimate" />
+	</bean>
+	<bean id="mbBillService" parent="persistenceService">
+		<property name="type" value="org.egov.works.models.measurementbook.MBBill" />
+	</bean>
+
+
+	<!-- SCHEDULER CONFIGURATIONS START -->
+<!-- TODO 
+	Enable scheduler once web application works fine
+ -->
+<!-- 
+	<bean name="worKOrderCompletionUpdateJobScheduler" id="worKOrderCompletionUpdateJobScheduler"
+		class="org.springframework.scheduling.quartz.JobDetailBean" lazy-init="false">
+		<property name="jobClass" value="org.egov.infstr.scheduler.EgovJobScheduler" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="cityList" value="localhost"></entry>
+				<entry key="delay" value="30000"></entry>
+				<entry key="jobDelegate">
+					<ref local="worKOrderCompletionUpdateJobDelegate" />
+				</entry>
+				<entry key="userService">
+					<ref bean="userService"/>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<bean class="org.egov.works.services.WorKOrderCompletionUpdateJob"
+		id="worKOrderCompletionUpdateJobDelegate" lazy-init="false">
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="workOrderService" ref="workOrderService" />
+		<property name="fileMgmtService" ref="fileMgmtService" />
+		<property name="genericDao" ref="genericDao" />
+		<property name="employeeService" ref="employeeService" />
+	</bean>
+
+	<bean id="completionDateNotificationCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"
+		name="">
+		<property name="jobDetail" ref="worKOrderCompletionUpdateJobScheduler" />
+		<property name="cronExpression" value="0 0 0 * * ?" />
+	</bean>
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
+		lazy-init="false">
+		<property name="triggers">
+			<list>
+				<ref bean="completionDateNotificationCronTrigger" />
+			</list>
+		</property>
+		<property name="applicationContextSchedulerContextKey" value="applicationContext" />
+
+		<property name="autoStartup" value="true" />
+	</bean>
+-->
+	<bean id="workCompletionDetailService" parent="persistenceService">
+		<property name="type"
+			value="org.egov.works.models.workorder.WorkCompletionDetail"></property>
+	</bean>
+
+	<bean class="org.egov.works.services.WorkCompletionDetailWFService"
+		id="workCompletionDetailWFService" parent="persistenceService">
+		<property name="employeeService" ref="employeeService" />
+	</bean>
+
+	<bean id="workCompletionDetailWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="workCompletionDetailWFService" />
+		<constructor-arg
+			value="org.egov.works.models.workorder.WorkCompletionDetail" />
+	</bean>
+
+	<bean id="milestoneTemplateService" parent="persistenceService">
+		<property name="type"
+			value="org.egov.works.models.masters.MilestoneTemplate" />
+	</bean>
+
+	<bean id="milestoneService" parent="persistenceService">
+		<property name="type" value="org.egov.works.models.milestone.Milestone" />
+	</bean>
+
+	<bean id="trackMilestoneService" parent="persistenceService">
+		<property name="type"
+			value="org.egov.works.models.milestone.TrackMilestone" />
+	</bean>
+
+	<bean id="revisionWorkOrderService" parent="persistenceService">
+		<property name="type"
+			value="org.egov.works.models.revisionEstimate.RevisionWorkOrder" />
+	</bean>
+
+	<bean class="org.egov.works.services.RevisionWorkOrderWFService"
+		id="revisionWorkOrderWFService" parent="persistenceService">
+		<property name="abstractEstimateService" ref="abstractEstimateService" />
+	</bean>
+
+	<bean id="revisionWorkOrderWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="revisionWorkOrderWFService" />
+		<constructor-arg
+			value="org.egov.works.models.revisionEstimate.RevisionWorkOrder" />
+	</bean>
+
+	<bean id="materialTypeService" parent="persistenceService">
+		<property name="type"
+			value="org.egov.works.models.qualityControl.MaterialType" />
+	</bean>
+
+	<bean id="testMasterService" parent="persistenceService">
+		<property name="type"
+			value="org.egov.works.models.qualityControl.TestMaster" />
+	</bean>
+
+	<!--<bean id="contractorController" class="org.egov.works.services.ContractorController"> 
+		</bean> <bean id="tenderResponseClient" class="org.egov.works.services.TenderResponseClient"> 
+		<property name="contractorBidderService" ref="contractorBidderService" /> 
+		</bean> -->
+
+	<!-- <bean id="defaultTenderService" class="org.egov.tender.services.common.DefaultTenderService"> 
+		<property name="persistenceService" ref="persistenceService"/> <property 
+		name="scriptService" ref="scriptExecutionService"/> <property name="sequenceGenerator" 
+		ref="sequenceGenerator"/> </bean> -->
+
+
+	<bean class="org.egov.works.services.qualityControl.TestSheetHeaderService"
+		id="testSheetHeaderService" parent="persistenceService" scope="prototype">
+		<property name="testSheetNumberGenerator" ref="testSheetNumberGenerator" />
+		<property name="commonsService" ref="commonsService" />
+	</bean>
+
+	<bean id="testResultHeaderService" parent="persistenceService">
+		<property name="type"
+			value="org.egov.works.models.qualityControl.TestResultHeader" />
+	</bean>
+
+	<bean class="org.egov.works.models.qualityControl.TestSheetNumberGenerator"
+		id="testSheetNumberGenerator">
+		<property name="scriptService" ref="scriptService" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="scriptExecutionService" ref="scriptExecutionService" />
+	</bean>
+
+	<bean
+		class="org.egov.works.services.qualityControl.impl.SampleLetterServiceImpl"
+		id="sampleLetterService" scope="prototype">
+		<constructor-arg>
+			<bean parent="persistenceService">
+				<property name="type"
+					value="org.egov.works.models.qualityControl.SampleLetterHeader" />
+			</bean>
+		</constructor-arg>
+		<property name="commonsService" ref="commonsService" />
+		<property name="sampleLetterNumberGenerator" ref="sampleLetterNumberGenerator" />
+		<property name="coveringLetterNumberGenerator" ref="coveringLetterNumberGenerator" />
+	</bean>
+
+	<bean
+		class="org.egov.works.models.qualityControl.SampleLetterNumberGenerator"
+		id="sampleLetterNumberGenerator">
+		<property name="scriptService" ref="scriptService" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="scriptExecutionService" ref="scriptExecutionService" />
+	</bean>
+
+	<bean
+		class="org.egov.works.models.qualityControl.CoveringLetterNumberGenerator"
+		id="coveringLetterNumberGenerator">
+		<property name="scriptService" ref="scriptService" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="scriptExecutionService" ref="scriptExecutionService" />
+	</bean>
+
+	<!-- workflow for SampleLetter -->
+	<bean class="org.egov.works.services.qualityControl.SampleLetterWFService"
+		id="sampleLetterWFService" parent="persistenceService" scope="prototype">
+		<property name="employeeService" ref="employeeService" />
+	</bean>
+	<bean id="sampleLetterWorkFlowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="sampleLetterWFService" />
+		<constructor-arg
+			value="org.egov.works.models.qualityControl.SampleLetterHeader" />
+	</bean>
+
+	<bean id="tenderNoticeService"
+		class="org.egov.tender.services.tendernotice.TenderNoticeService">
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="type" value="org.egov.tender.model.TenderNotice" />
+	</bean>
+
+	<!-- workflow for Test Sheet -->
+	<bean class="org.egov.works.services.qualityControl.TestSheetWFService"
+		id="testSheetWFService" parent="persistenceService" scope="prototype">
+		<property name="employeeService" ref="employeeService" />
+	</bean>
+	<bean id="testSheetWorkFlowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="testSheetWFService" />
+		<constructor-arg
+			value="org.egov.works.models.qualityControl.TestSheetHeader" />
+	</bean>
+
+	<bean class="org.egov.works.services.qualityControl.TestResultWFService"
+		id="testResultWFService" parent="persistenceService" scope="prototype">
+		<property name="employeeService" ref="employeeService" />
+	</bean>
+	<bean id="testResultWorkFlowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="testResultWFService" />
+		<constructor-arg
+			value="org.egov.works.models.qualityControl.TestResultHeader" />
+	</bean>
+	<bean
+		class="org.egov.works.services.qualityControl.impl.AllocateJobServiceImpl"
+		id="allocateJobService" scope="prototype">
+		<constructor-arg>
+			<bean parent="persistenceService">
+				<property name="type"
+					value="org.egov.works.models.qualityControl.JobHeader" />
+			</bean>
+		</constructor-arg>
+		<property name="commonsService" ref="commonsService" />
+		<property name="jobNumberGenerator" ref="jobNumberGenerator" />
+	</bean>
+
+	<bean class="org.egov.works.models.qualityControl.JobNumberGenerator"
+		id="jobNumberGenerator">
+		<property name="scriptService" ref="scriptService" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="scriptExecutionService" ref="scriptExecutionService" />
+	</bean>
+
+	<!-- workflow for Quality Control - Job Number -->
+	<bean class="org.egov.works.services.qualityControl.AllocateJobWFService"
+		id="allocateJobWFService" parent="persistenceService" scope="prototype">
+		<property name="employeeService" ref="employeeService" />
+	</bean>
+	<bean id="allocateJobWorkFlowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="allocateJobWFService" />
+		<constructor-arg value="org.egov.works.models.qualityControl.JobHeader" />
+	</bean>
+
+</beans>

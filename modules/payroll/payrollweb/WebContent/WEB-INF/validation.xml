@@ -1,0 +1,1375 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE form-validation PUBLIC
+"-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.0//EN"
+"http://jakarta.apache.org/commons/dtds/validator_1_0.dtd">
+<form-validation>   
+<formset>
+<form name="registerForm"> 
+    <field property="dateOfEvent"
+       depends="required,date">
+       <arg0 key="Date of birth" resource="false" />
+       <arg1 key="Pattern of date of birth" resource="false" />
+       <var>
+       <var-name>datePattern</var-name>
+       <var-value>dd/MM/yyyy</var-value>
+       </var>
+     </field>
+     <field property="citizen.firstName"
+		depends="required">
+		<arg0 key="First name of child" resource="false" />
+     </field>
+     <field property="mother.firstName"
+		depends="required">
+		<arg0 key="Mother's first name" resource="false" />
+     </field>
+     <field property="informant.firstName"
+		depends="required">
+	   <arg0 key="Informant's first name" resource="false" />
+     </field>
+     <field property="citizen.address.streetAddress1"
+	depends="required">
+	<arg0 key="Parent's Street Address 1" resource="false" />
+     </field>
+     <field property="citizen.address.cityTownVillage"
+	depends="required">
+	<arg0 key="Parent's City" resource="false" />
+     </field>
+     <field property="citizen.address.district"
+     	depends="required">
+     	<arg0 key="Parent's district" resource="false" />
+     </field>
+     <field property="citizen.address.pinCode"
+     	depends="required,integer,minlength,maxlength">
+     	<arg0 key="Parent's pincode" resource="false" />
+     	<arg1 name="minlength" key="${var:minlength}" resource="false"/>
+	<arg2 name="maxlength" key="${var:maxlength}" resource="false"/>
+	<var><var-name>minlength</var-name><var-value>6</var-value></var>
+	<var><var-name>maxlength</var-name><var-value>6</var-value></var>
+     </field>
+     <field property="informant.address.streetAddress1"
+	depends="required">
+	<arg0 key="informant's Street Address 1" resource="false" />
+     </field>
+     <field property="informant.address.cityTownVillage"
+	depends="required">
+	<arg0 key="informant's City" resource="false" />
+     </field>
+     <field property="informant.address.district"
+     	depends="required">
+     	<arg0 key="informant's district" resource="false" />
+     </field>
+     <field property="informant.address.pinCode"
+     	depends="required,integer,minlength,maxlength">
+     	<arg0 key="informant's pincode" resource="false" />
+     	<arg1 name="minlength" key="${var:minlength}" resource="false"/>
+	<arg2 name="maxlength" key="${var:maxlength}" resource="false"/>
+	<var><var-name>minlength</var-name><var-value>6</var-value></var>
+	<var><var-name>maxlength</var-name><var-value>6</var-value></var>
+     </field>    
+      <field property="birthWeight"
+     	depends="float,floatRange">
+     	<arg0 key="Birth weight" resource="false" />
+	<arg1 name="floatRange" key="${var:min}" resource="false"/>
+        <arg2 name="floatRange" key="${var:max}" resource="false"/>
+        <var><var-name>min</var-name><var-value>0.00</var-value></var>
+        <var><var-name>max</var-name><var-value>9.99</var-value></var>
+     </field>    
+</form>
+<form name="stillbirthForm">
+    <field property="dateOfEvent"
+       depends="required,date">
+       <arg0 key="Date of birth" resource="false" />
+       <arg1 key="Pattern of date of birth" resource="false" />
+       <var>
+       <var-name>datePattern</var-name>
+       <var-value>dd/MM/yyyy</var-value>
+       </var>
+     </field>
+     <field property="mother.firstName"
+		depends="required">
+		<arg0 key="Mother's first name" resource="false" />
+     </field>
+     <field property="informant.firstName"
+		depends="required">
+	   <arg0 key="Informant's first name" resource="false" />
+     </field>
+     <field property="citizen.address.streetAddress1"
+	depends="required">
+	<arg0 key="Parent's Street Address 1" resource="false" />
+     </field>
+     <field property="citizen.address.cityTownVillage"
+	depends="required">
+	<arg0 key="Parent's City" resource="false" />
+     </field>
+     <field property="citizen.address.district"
+     	depends="required">
+     	<arg0 key="Parent's district" resource="false" />
+     </field>
+     <field property="citizen.address.pinCode"
+     	depends="required,integer,minlength,maxlength">
+     	<arg0 key="Parent's pincode" resource="false" />
+     	<arg1 name="minlength" key="${var:minlength}" resource="false"/>
+	<arg2 name="maxlength" key="${var:maxlength}" resource="false"/>
+	<var><var-name>minlength</var-name><var-value>6</var-value></var>
+	<var><var-name>maxlength</var-name><var-value>6</var-value></var>
+     </field>
+     <field property="informant.address.streetAddress1"
+	depends="required">
+	<arg0 key="informant's Street Address 1" resource="false" />
+     </field>
+     <field property="informant.address.cityTownVillage"     
+	depends="required">
+	<arg0 key="informant's City" resource="false" />
+     </field>
+     <field property="informant.address.district"
+     	depends="required">
+     	<arg0 key="informant's district" resource="false" />
+     </field>
+     <field property="informant.address.pinCode"
+     	depends="required,integer,minlength,maxlength">
+     	<arg0 key="informant's pincode" resource="false" />
+     	<arg1 name="minlength" key="${var:minlength}" resource="false"/>
+	<arg2 name="maxlength" key="${var:maxlength}" resource="false"/>
+	<var><var-name>minlength</var-name><var-value>6</var-value></var>
+	<var><var-name>maxlength</var-name><var-value>6</var-value></var>
+     </field>
+      
+</form>
+
+<form name="deathForm">
+    <field property="dateOfEvent"
+       depends="required,date">
+       <arg0 key="Date of Death" resource="false" />
+       <arg1 key="Pattern of date of death" resource="false" />
+       <var>
+       <var-name>datePattern</var-name>
+       <var-value>dd/MM/yyyy</var-value>
+       </var>
+     </field>
+     <field property="informant.firstName"
+		depends="required">
+	   <arg0 key="Informant's first name" resource="false" />
+     </field>
+     <field property="age"
+     		depends="required">
+     	   <arg0 key="Age" resource="false" />
+     </field>
+     <field property="citizen.address.streetAddress1"
+	depends="required">
+	<arg0 key="Citizen's Street Address 1" resource="false" />
+     </field>
+     <field property="citizen.address.cityTownVillage"
+	depends="required">
+	<arg0 key="Citizen's City" resource="false" />
+     </field>
+     <field property="citizen.address.district"
+     	depends="required">
+     	<arg0 key="Citizen's district" resource="false" />
+     </field>
+     <field property="citizen.address.pinCode"
+     	depends="required,integer,minlength,maxlength">
+     	<arg0 key="Citizen's pincode" resource="false" />
+     	<arg1 name="minlength" key="${var:minlength}" resource="false"/>
+	<arg2 name="maxlength" key="${var:maxlength}" resource="false"/>
+	<var><var-name>minlength</var-name><var-value>6</var-value></var>
+	<var><var-name>maxlength</var-name><var-value>6</var-value></var>
+     </field>
+     <field property="informant.address.streetAddress1"
+	depends="required">
+	<arg0 key="informant's Street Address 1" resource="false" />
+     </field>
+     <field property="informant.address.cityTownVillage"
+	depends="required">
+	<arg0 key="informant's City" resource="false" />
+     </field>
+     <field property="informant.address.district"
+     	depends="required">
+     	<arg0 key="informant's district" resource="false" />
+     </field>
+     <field property="informant.address.pinCode"
+     	depends="required,integer,minlength,maxlength">
+     	<arg0 key="informant's pincode" resource="false" />
+     	<arg1 name="minlength" key="${var:minlength}" resource="false"/>
+	<arg2 name="maxlength" key="${var:maxlength}" resource="false"/>
+	<var><var-name>minlength</var-name><var-value>6</var-value></var>
+	<var><var-name>maxlength</var-name><var-value>6</var-value></var>
+     </field>
+      
+</form>
+<!-- ****************** added by suhasini ********************* -->
+
+
+<form name="srchPropIdForm">
+
+<field property="propertyId" depends="required">
+<arg0 key="property Id" resource="false"/>
+</field>
+     
+</form>
+
+<form name="srchRecNumForm">
+
+<field property="receiptNumber" depends="required">
+<arg0 key="Receipt Number " resource="false"/>
+</field>
+     
+</form>
+
+
+<form name="srchBndryOwnernamePhnumForm">
+
+<field property="phoneNumber" depends="long,minlength,maxlength">
+<arg0 key="Phone Number" resource="false" />
+<arg1 name="minlength" key="${var:minlength}" resource="false"/>
+<arg1 name="maxlength" key="${var:maxlength}" resource="false"/>
+<var><var-name>minlength</var-name><var-value>6</var-value></var>
+<var><var-name>maxlength</var-name><var-value>11</var-value></var>
+</field>
+        
+<field property="adminBndry1" depends="required,mask">
+<arg0 key="Ward" resource="false"/>
+<var><var-name>mask</var-name><var-value>^[0-9]*$</var-value></var>
+</field>
+     
+<!--<field property="adminBndry2" depends="required,mask">
+     <arg0 key="Block" resource="false"/>
+     <var><var-name>mask</var-name><var-value>^[0-9]*$</var-value></var>
+</field>
+     
+<field property="adminBndry3"  depends="required,mask">
+     <arg0 key="Street " resource="false"/>
+     <var><var-name>mask</var-name><var-value>^[0-9]*$</var-value></var>
+</field>-->
+
+
+     
+</form> 
+
+<form name="srchBndryOwnernameAddrForm">
+	<!--<field property="adminBndry1" depends="required,mask">
+		<arg0 key="Ward" resource="false"/>
+		<var><var-name>mask</var-name><var-value>^[0-9]*$</var-value></var>
+	</field>-->
+	
+	<field property="assesseeFullName" depends="mask">
+		<var>
+		  <var-name>mask</var-name> 
+		  <var-value>^[a-zA-Z]*$</var-value> 
+		</var>
+        </field>		
+        </form> 
+        
+ <form name="modifyPropertyForm">
+       <field property="rsnForChangePropParti" depends="required">
+       </field>
+ </form>
+
+<form name="srchKhataNoForm">
+<field property="khataNumber" depends="required">
+<arg0 key="khata Number " resource="false"/>
+</field>
+</form>
+
+<!-- ******** Added by Rajalakshmi D.N. ********* -->
+<form name="paymentForm">
+	<field property="collectedBank" depends="required">
+		<arg0 key="Selection of Bank" resource="false" />
+	</field>
+
+	<field property="currentPTCollection" depends="required,float">
+		<arg0 key="Property Tax " resource="false" />
+	</field>
+
+	<field property="currentCessCollection" depends="required,float">
+		<arg0 key="Cess " resource="false" />
+	</field>
+ 
+	<field property="totalAmountPaid" depends="required,float">
+		<arg0 key="Total amount paid " resource="false" />
+	</field>
+
+	<field property="modeOfPayment" depends="required">
+		<arg0 key="Selection of Mode of Payment " resource="false" />
+	</field>
+
+</form>
+ 
+
+<!-- ****************** added by Murali ********************* -->
+
+<form name="dcbEntryForm">
+	
+	<field property="source"
+		depends="required,mask">
+		<arg0 key="Source of Demand" resource="false" />
+		<var> 
+		<var-name>mask</var-name> 
+		<var-value>^[1-9]*$</var-value> 
+	        </var> 
+	</field>
+	
+	<field property="demandAmount"
+		depends="required,integer">
+		<arg0 key="Demand Amount" resource="false" />
+		<arg1 key="Demand Amount" resource="false" />
+	</field>
+	
+	<field property="cessAmt"
+		depends="required,integer,mask">
+		<arg0 key="Cess part of Demand" resource="false" />
+		<var> 
+		<var-name>mask</var-name> 
+		<var-value>^[0-9]*$</var-value> 
+		</var> 
+	</field>
+	<field property="taxCollection"
+		depends="required,integer">
+		<arg0 key="Tax part of Collection" resource="false" />
+		<arg1 key="Tax part of Collection" resource="false" />
+	</field>
+	
+	<field property="cessCollection"
+		depends="required,integer">
+		<arg0 key="Cess part of Collection" resource="false" />
+		<arg1 key="Cess part of Collection" resource="false" />
+	</field>
+	
+</form>
+
+<form name="defaultersForm">
+	
+	<field property="adminBndry1"
+		depends="required,mask">
+		<arg0 key="Ward" resource="false" />
+		<var> 
+		<var-name>mask</var-name> 
+		<var-value>^[0-9]*$</var-value> 
+	        </var> 
+	</field>
+	
+	<!--<field property="adminBndry2"
+		depends="required,mask">
+		<arg0 key="Block" resource="false" />
+		<var> 
+		<var-name>mask</var-name> 
+		<var-value>^[0-9]*$</var-value> 
+		</var> 
+	</field>-->
+	
+	<!--<field property="adminBndry3"
+		depends="required,mask">
+		<arg0 key="Street" resource="false" />
+		<var> 
+		<var-name>mask</var-name> 
+		<var-value>^[0-9]*$</var-value> 
+		</var> 
+	</field>-->
+	
+	<field property="lowerLimit"
+		depends="required,integer">
+		<arg0 key="Lower Limit" resource="false" />
+		<arg1 key="Lower Limit" resource="false" />
+	</field>
+	
+	<field property="upperLimit"
+		depends="required,integer">
+		<arg0 key="Upper Limit" resource="false" />
+		<arg1 key="Upper Limit" resource="false" />
+	</field>
+
+</form>
+
+
+<form name="propWithTaxCollectionForm">
+
+
+
+<!--
+<field property="adminBndry1" depends="required,mask">
+<arg0 key="Ward" resource="false"/>
+<var><var-name>mask</var-name><var-value>^[0-9]*$</var-value></var>
+</field>
+     
+
+
+<field property="adminBndry2" depends="required,mask">
+     <arg0 key="Block" resource="false"/>
+     <var><var-name>mask</var-name><var-value>^[0-9]*$</var-value></var>
+</field>
+     
+<field property="adminBndry3"  depends="required,mask">
+     <arg0 key="Street " resource="false"/>
+     <var><var-name>mask</var-name><var-value>^[0-9]*$</var-value></var>
+</field>
+
+-->
+
+<field property="propertyNo" depends="required">
+	<arg0 key="Property No" resource="false"/>
+</field>
+
+<field property="layoutName" depends="required">
+	<arg0 key="Block / Locality " resource="false"/>
+</field>
+
+<field property="city" depends="required">
+	<arg0 key="City" resource="false"/>
+</field>
+
+<!--
+<field property="pinCode" depends="required">
+	<arg0 key="Pin Code" resource="false"/>
+</field>
+-->
+
+<field property="firstName" depends="required">
+	<arg0 key="First Name" resource="false"/>
+</field>
+
+<field property="assessmentYear" depends="required,mask">
+<arg0 key="Payment Year" resource="false" />
+<var> 
+<var-name>mask</var-name> 
+<var-value>^[0-9]*$</var-value> 
+</var> 
+</field>
+
+<field property="currentPTCollection" depends="required,integer">
+	<arg0 key="Property Tax" resource="false" />
+	<arg1 key="Property Tax" resource="false" />
+</field>
+
+<field property="currentCessCollection" depends="required,integer">
+	<arg0 key="Cess" resource="false" />
+	<arg1 key="Cess" resource="false" />
+</field>
+
+<field property="collectedBank" depends="required,mask">
+<arg0 key="Bank Name" resource="false" />
+<var> 
+<var-name>mask</var-name> 
+<var-value>^[0-9]*$</var-value> 
+</var> 
+</field>
+
+<field property="bankChalanNumber" depends="required">
+	<arg0 key="Chalan Number" resource="false"/>
+</field>
+
+
+     
+</form>
+
+<!--  ****************** added by Raghavendra *********************   --> 
+ 
+<form name="statusForm">
+ <field property="statusName" depends="required,mask">
+  <arg0 key="statusForm.name" /> 
+ <var>
+  <var-name>mask</var-name> 
+  <var-value>^[a-zA-Z]*$</var-value> 
+  </var>
+  </field>
+  </form>
+ <form name="propertySourceForm">
+ <field property="sourceName" depends="required,mask">
+  <arg0 key="propertySrcForm.name" /> 
+ <var>
+  <var-name>mask</var-name> 
+  <var-value>^[a-zA-Z]*$</var-value> 
+  </var>
+  </field>
+  </form>
+  
+  
+  
+  <form name="AfterUpdateBndryCategoryForm">
+    	
+    	  	<field property="categ"
+  	  			depends="required,mask">
+  	  			<arg0 key="Category" resource="false"/>
+  	  			<var> 
+  	  			<var-name>mask</var-name> 
+  	  			<var-value>^[1-9]*$</var-value> 
+  	  	           </var>		
+    	</field>
+  </form>
+  
+  <form name="afterBndryCategoryForm">
+  	
+  	<field property="adminBndry1"
+	  			depends="required,mask">
+	  			<arg0 key="Ward" resource="false"/>
+	  			<var> 
+	  			<var-name>mask</var-name> 
+	  			<var-value>^[1-9]*$</var-value> 
+	  	           </var>		
+  	</field>
+  	
+  	
+  	
+  	
+  	<field property="adminBndry2"
+	  			depends="required,mask">
+	  			<arg0 key="Block" resource="false"/>
+	  			<var> 
+	  			<var-name>mask</var-name> 
+	  			<var-value>^[1-9]*$</var-value> 
+	  	           </var>		
+  	</field>
+  	
+  	
+  	
+  	<field property="adminBndry3"
+  			depends="required,mask">
+  			<arg0 key="Street" resource="false"/>
+  			<var> 
+  			<var-name>mask</var-name> 
+  			<var-value>^[1-9]*$</var-value> 
+  	           </var>		
+  	</field>
+  	
+  	<field property="categ"
+	  			depends="required,mask">
+	  			<arg0 key="Category" resource="false"/>
+	  			<var> 
+	  			<var-name>mask</var-name> 
+	  			<var-value>^[1-9]*$</var-value> 
+	  	           </var>		
+  	</field>
+  </form>
+
+<form name="categoryForm">
+	
+	<field property="categoryName"
+			depends="required">
+			<arg0 key="Category Name" resource="false"/>
+			
+		</field>
+	
+	
+	
+	
+	<field property="categoryAmt"
+			depends="required,float">
+			<arg0 key="Category Amount " resource="false"/>
+				
+		</field>
+	
+	
+	
+	<field property="fdate"
+			depends="required,mask">
+			<arg0 key="Start Installment date" resource="false"/>
+			<var> 
+			<var-name>mask</var-name> 
+			<var-value>^[1-9]*$</var-value> 
+	           </var>		
+	</field>
+	
+	
+</form>
+
+
+<form name="afterUpdateCategoryForm">
+	
+	<field property="categName"
+			depends="required">
+			<arg0 key="Category Name" resource="false"/>
+			
+		</field>
+	
+	
+	
+	
+	<field property="categAmt"
+			depends="required,float">
+			<arg0 key="Category Amount " resource="false"/>
+				
+		</field>
+	
+	
+	
+	<field property="fdate"
+			depends="required,mask">
+			<arg0 key="Start Installment date" resource="false"/>
+			<var>
+					 <var-name>mask</var-name>
+					 <var-value>^[1-9]*$</var-value>
+		       </var>		
+	</field>
+	
+	
+</form>
+
+
+<form name="strucClsForm">
+	
+	<field property="constrType"
+			depends="required">
+			<arg0 key="Construction Type" resource="false"/>
+			
+		</field>
+	
+	<field property="constrNum"
+		depends="required,mask">
+		<arg0 key="Construction Number " resource="false"/>
+		 <var>
+		 <var-name>mask</var-name>
+		 <var-value>^[0-9]*$</var-value>
+		 </var>
+	</field>
+	
+	
+	<field property="constrFactr"
+			depends="required,float">
+			<arg0 key="Construction factor " resource="false"/>
+				
+		</field>
+	
+	
+	
+	<field property="fdate"
+			depends="required,mask">
+			<arg0 key="Start Installment date" resource="false"/>
+			<var> 
+			<var-name>mask</var-name> 
+			<var-value>^[1-9]*$</var-value> 
+	           </var> 
+					
+	</field>
+	
+	
+</form>
+
+<form name="afterUpdateStrucClsForm">
+	
+	<field property="constrType"
+			depends="required">
+			<arg0 key="Construction Type" resource="false"/>
+			
+		</field>
+	
+	<field property="strucNum"
+		depends="required,mask">
+		<arg0 key="Construction Number " resource="false"/>
+		 <var>
+		 <var-name>mask</var-name>
+		 <var-value>^[0-9]*$</var-value>
+		 </var>
+	</field>
+	
+	
+	<field property="strucFact"
+			depends="required,float">
+			<arg0 key="Construction factor " resource="false"/>
+				
+		</field>
+	
+	
+	
+	<field property="fdate"
+			depends="required,mask">
+			<arg0 key="Start Installment date" resource="false"/>
+			<var>
+		 		<var-name>mask</var-name>
+		 		<var-value>^[0-9]*$</var-value>
+		 	</var>		
+	</field>
+	
+	
+</form>
+
+<form name="transactionLocForm">
+	
+	<field property="ipAddress"
+			depends="required">
+			<arg0 key="IP Address" resource="false"/>
+			
+		</field>
+	
+	<field property="terminalName"
+		depends="required">
+		<arg0 key="Terminal Name " resource="false"/>
+		 
+	</field>
+	
+	<field property="terminalType"
+		depends="required">
+				<arg0 key="Terminal Type " resource="false"/>
+				 
+				
+	</field>
+	
+</form>
+<form name="afterUpdateTransactionForm">
+	
+	<field property="ipAddress"
+			depends="required">
+			<arg0 key="IP Address" resource="false"/>
+			
+		</field>
+	
+	<field property="terminalName"
+		depends="required">
+		<arg0 key="Terminal Name " resource="false"/>
+		 
+	</field>
+	
+	<field property="terminalType"
+		depends="required">
+				<arg0 key="Terminal Type " resource="false"/>
+				 
+				
+	</field>
+	
+</form>
+<form name="DepreciationMasterForm">
+	
+	<field property="depreciationYear"
+			depends="required,integer">
+			<arg0 key="Depreciation Year" resource="false"/>
+			<var> 
+			   <var-name>mask</var-name> 
+		           <var-value>^[0-9]*$</var-value> 
+		        </var> 
+		</field>
+	
+	<field property="depreciationPct"
+		depends="required,float">
+		<arg0 key="Depreciation Percentage " resource="false"/>
+			
+	</field>
+	
+	<field property="fdate"
+		depends="required,mask">
+		<arg0 key="Start Installment date" resource="false"/>
+		<var> 
+			<var-name>mask</var-name> 
+			<var-value>^[1-9]*$</var-value> 
+	           </var> 		
+	</field>
+	
+</form>
+
+<form name="afterUpdateDepreciationForm">
+	
+	<field property="deprecYear"
+			depends="required,integer">
+			<arg0 key="Depreciation Year" resource="false"/>
+			
+		</field>
+	
+	<field property="deprecPct"
+		depends="required,float">
+		<arg0 key="Depreciation Percentage " resource="false"/>
+			
+	</field>
+	
+	<field property="fdate"
+		depends="required,mask">
+		<arg0 key="Start Installment date" resource="false"/>
+		<var> 
+			   <var-name>mask</var-name> 
+		           <var-value>^[a-zA-Z]*$</var-value> 
+		        </var> 		
+	</field>
+	
+</form>
+<form name="cessMasterForm">
+	
+	<field property="cessMasterReason"
+			depends="required">
+			<arg0 key="Cess Reason" resource="false"/>
+			
+		</field>
+	
+	<field property="cessPct"
+		depends="required,float">
+		<arg0 key="Cess Percentage " resource="false"/>
+			
+	</field>
+	
+	<field property="fdate"
+		depends="required,mask">
+		<arg0 key="Start Installment date" resource="false"/>
+		<var> 
+			<var-name>mask</var-name> 
+			<var-value>^[1-9]*$</var-value> 
+	           </var>		
+	</field>
+	
+</form>
+
+
+
+<form name="afterUpdateCessForm">
+	<field property="cessReason"
+		depends="required">
+		<arg0 key="Cess Reason" resource="false"/>
+		
+	</field>
+	<field property="cessPct"
+			depends="required,float">
+			<arg0 key="Cess Percentage" resource="false"/>
+				
+		</field>
+		
+		<field property="fdate"
+			depends="required,mask">
+			<arg0 key="Start Installment date" resource="false"/>
+			<var> 
+				<var-name>mask</var-name> 
+				<var-value>^[1-9]*$</var-value> 
+	        	</var> 		
+		</field>
+		
+</form>
+
+
+
+
+<form name="afterUpdateInterestForm">
+	<field property="interestPct"
+		depends="required,float">
+		<arg0 key="Interest Percentage" resource="false"/>
+		
+	</field>
+	
+	<field property="interestDueDate"
+		depends="required,date">
+		<arg0 key="Due Date " resource="false"/>
+			
+	</field>
+	
+	<field property="fdate"
+		depends="required,mask">
+		<arg0 key="Start Installment date" resource="false"/>
+		<var> 
+			<var-name>mask</var-name> 
+			<var-value>^[1-9]*$</var-value> 
+	           </var> 		
+	</field>
+	
+</form>
+
+<form name="interestMasterForm">
+	<field property="interestPct"
+		depends="required,float">
+		<arg0 key="Interest Percentage" resource="false"/>
+		
+	</field>
+	
+	<field property="dueDate"
+		depends="required,date">
+		<arg0 key="Due Date " resource="false"/>
+			
+	</field>
+	
+	<field property="fdate"
+		depends="required,mask">
+		<arg0 key="Start Installment date" resource="false"/>
+		<var> 
+			<var-name>mask</var-name> 
+			<var-value>^[1-9]*$</var-value> 
+	           </var> 		
+	</field>
+	
+	
+</form>
+
+
+
+<form name="rebateMasterForm">
+	<field property="rebateMasterReason"
+		depends="required">
+		<arg0 key="Rebate Reason" resource="false"/>
+		 
+	</field>
+	
+	<field property="rebatePct"
+		depends="required,float">
+		<arg0 key="Rebate Percentage" resource="false"/>
+			
+	</field>
+	
+	<field property="fdate"
+		depends="required,mask">
+		<arg0 key="Start Installment date" resource="false"/>
+		<var> 
+			<var-name>mask</var-name> 
+			<var-value>^[1-9]*$</var-value> 
+	           </var> 		
+	</field>
+	
+</form>
+
+<form name="afterUpdateRebateForm">
+	<field property="rebateReason"
+		depends="required">
+		<arg0 key="Rebate Reason" resource="false"/>
+		
+	</field>
+	
+	<field property="rebatePct"
+		depends="required,float">
+		<arg0 key="Rebate Percentage" resource="false"/>
+			
+	</field>
+	
+	<field property="fdate"
+		depends="required,mask">
+		<arg0 key="Start Installment date" resource="false"/>
+		<var> 
+		   <var-name>mask</var-name> 
+	           <var-value>^[1-9]*$</var-value> 
+	        </var> 		
+	</field>
+	
+</form>
+
+
+<form name="exemptionForm">
+	<field property="exemptionReason"
+		depends="required">
+		<arg0 key="Exemption Reason" resource="false"/>
+		
+	</field>
+	<field property="exemptionPct"
+			depends="required,float">
+			<arg0 key="Exemption Percentage" resource="false"/>
+				
+		</field>
+		
+		<field property="fdate"
+			depends="required,mask">
+			<arg0 key="Start Installment date" resource="false"/>
+			<var> 
+				<var-name>mask</var-name> 
+				<var-value>^[1-9]*$</var-value> 
+	        	</var> 			
+		</field>
+		
+</form>
+
+<form name="afterUpdateExemptionForm">
+	<field property="exemptionReason"
+		depends="required">
+		<arg0 key="Exemption Reason" resource="false"/>
+		
+	</field>
+	<field property="exemptionPct"
+			depends="required,float">
+			<arg0 key="Exemption Percentage" resource="false"/>
+				
+		</field>
+		
+		<field property="fdate"
+			depends="required,mask">
+			<arg0 key="Start Installment date" resource="false"/>
+			<var> 
+				<var-name>mask</var-name> 
+				<var-value>^[1-9]*$</var-value> 
+	        	</var> 		
+		</field>
+		
+</form>
+
+<form name="beforeUpdateExemptionForm">
+			
+		<field property="selExemYearId"
+			depends="required,mask">
+			<arg0 key="Excemption Reason" resource="false"/>
+			<var> 
+				<var-name>mask</var-name> 
+				<var-value>^[1-9]*$</var-value> 
+	        	</var> 		
+		</field>
+		
+</form>
+<form name="beforeUpdateCessForm">
+			
+		<field property="selCessYearId"
+			depends="required,mask">
+			<arg0 key="Cess Reason" resource="false"/>
+			<var> 
+				<var-name>mask</var-name> 
+				<var-value>^[1-9]*$</var-value> 
+	        	</var> 		
+		</field>
+		
+</form>
+<form name="beforeUpdateInterestForm">
+			
+		<field property="selectedInterestID"
+			depends="required,mask">
+			<arg0 key="Interest Percentage" resource="false"/>
+			<var> 
+				<var-name>mask</var-name> 
+				<var-value>^[1-9]*$</var-value> 
+	        	</var> 		
+		</field>
+		
+</form>
+
+<form name="beforeUpdateRebateForm">
+			
+		<field property="selRebYearId"
+			depends="required,mask">
+			<arg0 key="Rebate Reason" resource="false"/>
+			<var> 
+				<var-name>mask</var-name> 
+				<var-value>^[1-9]*$</var-value> 
+	        	</var> 		
+		</field>
+		
+</form>
+
+<form name="beforeUpdateDepreciatoinForm">
+			
+		<field property="selDepYearId"
+			depends="required,mask">
+			<arg0 key="Depreciation Year" resource="false"/>
+			<var> 
+				<var-name>mask</var-name> 
+				<var-value>^[1-9]*$</var-value> 
+	        	</var> 		
+		</field>
+		
+</form>
+
+<form name="beforeUpdateTransactionForm">
+			
+		<field property="transLocID"
+			depends="required,mask">
+			<arg0 key="Transaction Location " resource="false"/>
+			<var> 
+				<var-name>mask</var-name> 
+				<var-value>^[1-9]*$</var-value> 
+	        	</var> 		
+		</field>
+		
+</form>
+
+<form name="beforeUpdateCategoryForm">
+			
+		<field property="selCategYearId"
+			depends="required,mask">
+			<arg0 key="Category  " resource="false"/>
+			<var> 
+				<var-name>mask</var-name> 
+				<var-value>^[1-9]*$</var-value> 
+	        	</var> 		
+		</field>
+		
+</form>
+
+<form name="beforeUpdateStrucClsForm">
+			
+		<field property="selStrClsYearId"
+			depends="required,mask">
+			<arg0 key="Construction Type " resource="false"/>
+			<var> 
+				<var-name>mask</var-name> 
+				<var-value>^[1-9]*$</var-value> 
+	        	</var> 		
+		</field>
+		
+</form>
+ <form name="srchBndryForm">
+  	
+  	<field property="adminBndry1"
+	  			depends="required,mask">
+	  			<arg0 key="Ward" resource="false"/>
+	  			<var> 
+	  			<var-name>mask</var-name> 
+	  			<var-value>^[1-9]*$</var-value> 
+	  	           </var>		
+  	</field>
+  	
+  	
+  	
+  	
+  	<field property="adminBndry2"
+	  			depends="required,mask">
+	  			<arg0 key="Block" resource="false"/>
+	  			<var> 
+	  			<var-name>mask</var-name> 
+	  			<var-value>^[1-9]*$</var-value> 
+	  	           </var>		
+  	</field>
+  	
+  	
+  	
+  	<field property="adminBndry3"
+  			depends="required,mask">
+  			<arg0 key="Street" resource="false"/>
+  			<var> 
+  			<var-name>mask</var-name> 
+  			<var-value>^[1-9]*$</var-value> 
+  	           </var>		
+  	</field>
+  	
+  	
+  </form>
+  
+ 
+  <form name="srchOldMunNoForm">
+  
+  <field property="oldMuncipalNo" depends="required">
+  <arg0 key="Old MunicipalNo" resource="false"/>
+  </field>
+       
+</form>
+
+ <form name="deptForm">
+ 	<field property="deptName"
+ 		depends="required,mask">
+ 		<arg0 key="Deptname"  />
+ 		<var>
+ 			<var-name>mask</var-name>
+ 			<var-value>^[a-zA-Z\s]*$</var-value>
+ 		</var>
+ 	 </field>  
+ 	 
+ 	 <field property="deptCode"
+	  		depends="required">
+	  		<arg0 key="DeptCode"  />
+	  		
+ 	 </field>  
+ 	 
+ 	 <field property="deptDetails"
+ 		depends="mask"> 
+ 		<arg0 key="DeptDesc"  />
+ 		<var>
+ 			<var-name>mask</var-name>
+ 			<var-value>^[a-zA-Z\s]*$</var-value>
+ 		</var>
+ 	 </field>
+ </form>
+ 
+ <form name="setUpDeleteEditDeptForm">
+ 	
+ 	<field property="deptName"
+ 		depends="required,mask">
+ 		<arg0 key="Deptname"  />
+ 		<var>
+ 			<var-name>mask</var-name>
+ 			<var-value>^[a-zA-Z\s]*$</var-value>
+ 		</var>
+ 	</field>  
+ 	<field property="deptCode"
+		  		depends="required">
+		  		<arg0 key="DeptCode"  />
+		  		
+ 	 </field>  
+ 	<field property="deptDetails"
+ 		depends="mask"> 
+ 		<arg0 key="DeptDesc"  />
+ 		<var>
+ 			<var-name>mask</var-name>
+ 			<var-value>^[a-zA-Z\s]*$</var-value>
+ 		</var>
+ 	</field>
+ </form>
+ <form name="userForm">
+ 	<field property="firstName"
+ 		depends="required,mask">
+ 		<arg0 key="FirstName"  resource="false" />
+ 		<var>
+ 			<var-name>mask</var-name>
+ 			<var-value>^[a-zA-Z]*$</var-value>
+ 		</var>
+ 	 </field>  
+ 	
+ 	 <field property="middleName"
+ 		depends="mask"> 
+ 		<arg0 key="MiddleName"  resource="false" />
+ 		<var>
+ 			<var-name>mask</var-name>
+ 			<var-value>^[a-zA-Z]*$</var-value>
+ 		</var>
+ 	 </field>
+ 	 <field property="lastName"
+ 			depends="mask"> 
+ 			<arg0 key="LastName"  resource="false" />
+ 			<var>
+ 				<var-name>mask</var-name>
+ 				<var-value>^[a-zA-Z]*$</var-value>
+ 			</var>
+ 	 </field>
+ 	 <field property="salutation"
+ 			depends="maxlength,mask"> 
+ 			<arg0 key="Salutaion"  resource="false" />
+ 			<arg1 name="maxlength" key="${var:maxlength}" resource="false"/>
+ 			<var>
+ 				<var-name>mask</var-name>
+ 				<var-value>^[a-zA-Z]*$</var-value>
+ 			</var>
+ 			<var>
+ 				<var-name>maxlength</var-name>
+ 				<var-value>3</var-value>
+ 			</var>
+ 	 </field>
+ 	 <field property="userName"
+ 			depends="required"> 
+ 			<arg0 key="UserName"  resource="false" />
+ 	</field>
+ 	 <field property="pwd"
+		depends="required,minlength,maxlength"> 
+		<arg0 key="Password"  resource="false" />
+		<arg1 name="minlength" key="${var:minlength}" resource="false"/>
+		<arg2 name="maxlength" key="${var:maxlength}" resource="false"/>
+		<var>
+			<var-name>minlength</var-name>
+			<var-value>5</var-value>
+		</var>
+		<var>
+			<var-name>maxlength</var-name>
+			<var-value>12</var-value>
+		</var>
+ 	 </field>
+ 	 <field property="pwdReminder"
+ 				depends="required,minlength,maxlength"> 
+ 				<arg0 key="Repeat Password"  resource="false" />
+ 				<arg1 name="minlength" key="${var:minlength}" resource="false"/>
+				<arg2 name="maxlength" key="${var:maxlength}" resource="false"/>
+				<var>
+					<var-name>minlength</var-name>
+					<var-value>5</var-value>
+				</var>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>12</var-value>
+				</var>
+ 	 </field>
+ 
+ 	 <field property="topBoundaryID"
+ 				depends="required"> 
+ 				<arg0 key="CityName"  resource="false" />
+ 	 </field>
+ 	 <field property="departmentId"
+ 					depends="required"> 
+ 					<arg0 key="Department"  resource="false" />
+ 	 </field>
+ 	 <field property="roleId"
+ 	 			depends="required"> 
+ 	 			<arg0 key="User Role"  resource="false" />
+ 	 </field>
+ 	<field property="bndries"
+ 			depends="required"> 
+ 			<arg0 key="Jursidiction Value"  resource="false" />
+ 	</field>
+ 	<field property="level"
+ 			depends="required"> 
+ 			<arg0 key="Jursidiction Level"  resource="false" />
+ 	</field>
+ 
+ 
+ </form>
+  
+  <form name="setUpDeleteEditUserForm">
+  	<field property="firstName"
+  			depends="required">
+  			<arg0 key="FirstName" resource="false" />
+  	</field>
+  </form>
+ 
+  <form name="roleForm">
+ 	<field property="roleName"
+ 		depends="required,mask">
+ 		<arg0 key="RoleName"  />
+ 		<var>
+ 			<var-name>mask</var-name>
+ 			<var-value>^[a-zA-Z\s]*$</var-value>
+ 		</var>
+ 	 </field>  
+ 	 <field property="roleDesc"
+ 		depends="mask"> 
+ 		<arg0 key="RoleDesc"  />
+ 		<var>
+ 			<var-name>mask</var-name>
+ 			<var-value>^[a-zA-Z\s]*$</var-value>
+ 		</var>
+ 	 </field>
+ 	 <field property="departmentId"
+ 		depends="required">
+ 		<arg0 key="Department" resource="false" />
+ 	 </field>
+ </form>
+ 
+ <form name="AdvanceDisbursementByChequeForm">	 	
+	<field  property="voucherNo" depends="required,mask">
+		<arg0 key="Voucher Number" resource="false"/>
+		<msg name="mask" key="errors.alphanumeric"/>
+		<var>
+			<var-name>mask</var-name>
+			<var-value>^[a-zA-Z0-9]*$</var-value>
+		</var>
+	</field>
+	<field  property="voucherDate" depends="required,date">
+		<arg0 key="Voucher Date" resource="false" />
+		 <var>
+		    <var-name>datePattern</var-name>
+		    <var-value>dd/MM/yyyy</var-value>
+		 </var>
+	</field>		
+  </form>  
+  
+  <form name="AdvanceDisbursementForm">	 	
+  	<field  property="voucherNo" depends="required,mask">
+  		<arg0 key="Voucher Number" resource="false"/>
+  		<msg name="mask" key="errors.alphanumeric"/>
+  		<var>
+  			<var-name>mask</var-name>
+  			<var-value>^[a-zA-Z0-9]*$</var-value>
+  		</var>
+  	</field>
+  	<field  property="voucherDate" depends="required,date">
+  		<arg0 key="Voucher Date" resource="false" />
+  		 <var>
+  		    <var-name>datePattern</var-name>
+  		    <var-value>dd/MM/yyyy</var-value>
+  		 </var>
+  	</field>		
+  </form>  
+  <form name = "pIMSForm" >
+	  <field property= "firstName" depends = "mask">
+	  	<arg0 key ="employeefirstname" resource="false"/>
+	  	<var>
+	  		<var-name>mask</var-name>
+	  		<var-value>^[a-zA-Z0-9]*$</var-value>
+	  	</var>
+	  </field>
+  	<field property= "middleName" depends="mask">
+  		<arg0 key = "middlename" resource="false"/>
+  		<var>
+  			<var-name>mask</var-name>
+  			<var-value>^[a-zA-Z0-9]*$</var-value>
+  		</var>
+  	</field>
+  	<field property = " lastName" depends= "mask">
+  		<arg0 key = "lastname" resource = "false"/>
+  		<var>
+  			<var-name>mask</var-name>
+  			<var-value>^[a-zA-Z0-9]*$</var-value>
+  		</var>
+  
+  	</field>
+  	<field property ="panNumber" depends="maxlength">
+  	<arg0 key="panNumber"  resource="false" />
+		<arg1 name="minlength" key="${var:maxlength}" resource="false"/>
+		<var>
+		<var-name>maxlength</var-name>
+		<var-value>12</var-value>
+	</var>
+	</field>
+  </form>  
+   <form name = "payheadForm" >	
+		<field property ="name" depends="required">
+		 <arg0 key="Payhead name" resource="false" />
+		</field>
+   </form>
+
+ </formset>
+</form-validation>

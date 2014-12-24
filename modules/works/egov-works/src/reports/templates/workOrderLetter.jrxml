@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="workOrderLetter" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true">
+	<import value="org.egov.infstr.reporting.util.*"/>
+	<import value="org.egov.infstr.utils.*"/>
+	<parameter name="deptName" class="java.lang.String"/>
+	<parameter name="logoPath" class="java.lang.String"/>
+	<parameter name="deptAddress" class="java.lang.String"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="contractorAddress" class="java.lang.String"/>
+	<parameter name="WorkOrderObj" class="org.egov.works.models.workorder.WorkOrder" isForPrompting="false"/>
+	<parameter name="projectCode" class="java.lang.String"/>
+	<parameter name="estimateDate" class="java.util.Date"/>
+	<parameter name="estimateNo" class="java.lang.String"/>
+	<parameter name="aeWorkNameForEstimate" class="java.lang.String"/>
+	<parameter name="negotiatedAmtForEstimate" class="java.lang.Double"/>
+	<parameter name="WORKORDER_BILLOFQUANTITIES_LIST" class="java.util.List"/>
+	<parameter name="revisedWorkOrderList" class="java.util.List"/>
+	<parameter name="budgetHead" class="java.lang.String"/>
+	<parameter name="estimateAmount" class="java.math.BigDecimal"/>
+	<parameter name="jurisdiction" class="java.lang.String"/>
+	<parameter name="tenderNoticeDate" class="java.lang.String"/>
+	<parameter name="estFinancialSancDate" class="java.lang.String"/>
+	<parameter name="bidType" class="java.lang.String"/>
+	<parameter name="bidPercentage" class="java.math.BigDecimal"/>
+	<parameter name="tenderNoticeNumber" class="java.lang.String"/>
+	<parameter name="timePeriod" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="722" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Transparent" x="0" y="0" width="555" height="722"/>
+			</rectangle>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="48" y="266" width="489" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{WorkOrderObj}.getContractor().getName()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="471" y="222" width="64" height="28"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{WorkOrderObj}.getWorkOrderDate()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="101" y="291" width="436" height="32"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{aeWorkNameForEstimate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="10" y="222" width="29" height="20"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[No  : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="176" y="77" width="202" height="20"/>
+				<textElement>
+					<font fontName="Times New Roman" size="12" isBold="true" isItalic="true" pdfFontName="Times-BoldItalic" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[OFFICE OF THE CITY ENGINEER]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="441" y="222" width="30" height="16"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Date : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="18" y="402" width="521" height="48"/>
+				<textElement lineSpacing="Single">
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[           You are requested to obtain license from the Registering officer, The Contract Labour (Registration and Abolition) Act. 1970 Nagpur, Division Nagpur, for engaging  workmen and contract labour under you failing which you will be held responsible for contravention of the provision under the said act and  rules and complications arising thereof. ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="38" y="57" width="481" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Ph - 0712 - 2567022 (D) Ph - 0712 - 531551, 2, 533550, Extn. 114.  Fax No. - 0712 - 2561584.]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Transparent" x="38" y="222" width="210" height="20"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{WorkOrderObj}.getWorkOrderNumber()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="19" y="353" width="518" height="48"/>
+				<textElement textAlignment="Left" lineSpacing="Single" markup="none">
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["       Hon’ble Municipal Commissioner, Nagpur Municipal Corporation vide his sanction dated "+($P{estFinancialSancDate}==null?"":$P{estFinancialSancDate})+" has awarded the above mentioned work amounting to Rs. "+NumberUtil.formatNumber($P{WorkOrderObj}.getWorkOrderAmount())+"/- "+(($P{bidType}=="RATE")?"i.e. at your approved tendered rates.":(" at "+(($P{bidPercentage}.toString().contains("-"))?($P{bidPercentage}.toString().replace("-","")+" % below/at par"):($P{bidPercentage}.toString()+" % above/at par"))+" of estimated rates, i.e., at your approved tendered rates."))+" Please start the work immediately so that it is completed within the period of "+$P{timePeriod}+" day(s)."+" For further details/instruction you are requested to contact Deputy Engineer of "+$P{jurisdiction}+"."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="213" y="182" width="122" height="21"/>
+				<textElement>
+					<font fontName="Times New Roman" size="16" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[WORK ORDER]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement mode="Opaque" x="14" y="164" width="523" height="10" backcolor="#4C3434"/>
+			</rectangle>
+			<staticText>
+				<reportElement mode="Transparent" x="90" y="37" width="381" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[First Floor, North Wing, Mahanagarpalika Marg, Civil Lines, Nagpur - 440 001.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="43" y="320" width="58" height="15"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Reference :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="101" y="320" width="436" height="33"/>
+				<textElement markup="none">
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Your tender dated "+$P{tenderNoticeDate}+" vide tender Id No. "+$P{tenderNoticeNumber}+" for the subjected work under "+" "+$P{budgetHead}+" having net estimated cost Rs. "+NumberUtil.formatNumber($P{estimateAmount})+"/-."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="45" y="291" width="56" height="15"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Subject    : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="12" y="266" width="33" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[M/s : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="10" y="243" width="21" height="23"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[To,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="72" y="498" width="465" height="35"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[If the underground utility services i.e. Water pipe line, cable sewer line, Storm water drain line etc. are damaged during the execution work, then cost will be recovered from the bills of the contractors. ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="71" y="606" width="466" height="20"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Concerned Deputy Engineer shall confirm that work is not split up in different parts.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="478" width="23" height="20"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[2)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="533" width="22" height="53"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[4)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="498" width="22" height="35"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[3)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="49" y="452" width="22" height="24"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[1)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="606" width="22" height="20"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[6)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="586" width="22" height="20"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[5)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="72" y="533" width="202" height="14"/>
+				<textElement markup="none">
+					<font fontName="Times New Roman" size="10" isUnderline="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Contractor will have to get the work insured from ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="71" y="586" width="466" height="20"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Before receiving work order please confirm that an Agreement is duly signed by you or not.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="626" width="21" height="20"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[7)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="72" y="478" width="465" height="20"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[The contractor should provide all safety measures for digging work.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="71" y="626" width="466" height="20"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[The contractor shall have to  plant trees as per Tender Condition.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="19" y="452" width="29" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Note:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="363" y="680" width="180" height="32"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[City Engineer
+Nagpur Municipal Corporation]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="114" y="5" width="338" height="29"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="18" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[NAGPUR MUNICIPAL CORPORATION]]></text>
+			</staticText>
+			<image>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="247" y="101" width="140" height="57"/>
+				<imageExpression class="java.io.InputStream"><![CDATA[ReportUtil.getLogoImageAsStream()]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="71" y="452" width="466" height="24"/>
+				<textElement>
+					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Site should be fully cleared after execution of work and for this certificate from respective Health Officer be obtained. ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="274" y="533" width="251" height="14"/>
+				<textElement markup="none">
+					<font fontName="Times New Roman" size="10" isUnderline="true" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[The Oriental Insurance Co.Ltd,Nagpur Divisonal Office 3269 ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="73" y="547" width="384" height="14"/>
+				<textElement markup="none">
+					<font fontName="Times New Roman" size="10" isUnderline="true" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Sharda Complex,269, above HDFC Bank of Chhapru Nagar Chowk,CA Road, Nagpur-440008.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="73" y="559" width="465" height="27"/>
+				<textElement markup="none">
+					<font fontName="Times New Roman" size="10" isUnderline="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[submit the receipt of premium paid, after issuance of work order & before commencement of work, failing which their bill will not be passed for payment. ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="457" y="547" width="62" height="14"/>
+				<textElement markup="none">
+					<font fontName="Times New Roman" size="10" isUnderline="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[They should ]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="722" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Transparent" x="0" y="0" width="555" height="722"/>
+			</rectangle>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="10" y="11" width="136" height="19"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isBold="true" isUnderline="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Copy forwarded to :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="36" y="50" width="501" height="34"/>
+				<textElement textAlignment="Left" lineSpacing="1_1_2" markup="none">
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[2) Chief account & finance officer, Nagpur Municipal Corporation, for information please.
+3) The Registering Officer, The Contract Labour ( Regulation and abolition ) Act 1970, Nagpur Division Nagpur office of the ]]></text>
+			</staticText>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="35" y="35" width="502" height="15"/>
+				<textElement markup="none">
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["1) The Deputy Engineer, "+$P{jurisdiction}+"  for favour of information and further follow up."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="49" y="85" width="486" height="20"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Dy. Commissioner of Labour, Bhosala Chamber Civil lines, Nagpur.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="36" y="103" width="501" height="70"/>
+				<textElement lineSpacing="1_1_2">
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[4) P.A. to Hon'ble Municipal Commissioner for information please.
+5) The Secretary, Nagpur Municipal Corporation.
+6) Insurance Director (M.R.) Bombay.
+7) Deputy Engineer Quality Control Laboratory, Nagpur Municipal Corporation.]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<summary>
+		<band height="26" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="543" height="23"/>
+				<subreportParameter name="deptName">
+					<subreportParameterExpression><![CDATA[$P{deptName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="estimateDate">
+					<subreportParameterExpression><![CDATA[$P{estimateDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="deptAddress">
+					<subreportParameterExpression><![CDATA[$P{deptAddress}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="projectCode">
+					<subreportParameterExpression><![CDATA[$P{projectCode}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="aeWorkNameForEstimate">
+					<subreportParameterExpression><![CDATA[$P{aeWorkNameForEstimate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cityName">
+					<subreportParameterExpression><![CDATA[$P{cityName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="WORKORDER_BILLOFQUANTITIES_LIST">
+					<subreportParameterExpression><![CDATA[$P{WORKORDER_BILLOFQUANTITIES_LIST}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="estimateNo">
+					<subreportParameterExpression><![CDATA[$P{estimateNo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="negotiatedAmtForEstimate">
+					<subreportParameterExpression><![CDATA[$P{negotiatedAmtForEstimate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="WorkOrderObj">
+					<subreportParameterExpression><![CDATA[$P{WorkOrderObj}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="logoPath">
+					<subreportParameterExpression><![CDATA[$P{logoPath}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="revisedWorkOrderList">
+					<subreportParameterExpression><![CDATA[$P{revisedWorkOrderList}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="contractorAddress">
+					<subreportParameterExpression><![CDATA[$P{contractorAddress}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{WORKORDER_BILLOFQUANTITIES_LIST}, false)]]></dataSourceExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[ReportUtil.getTemplateAsStream("workorderForEstimate.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.works.models.contractorBill.DeductionTypeForBill" table="EGW_DEDUCTIONTYPE_BILL">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_DEDUCTIONTYPE_BILL_SEQ</param>
+			</generator>
+		</id>
+		<many-to-one name="workOrder"
+			class="org.egov.works.models.workorder.WorkOrder" column="ID_WORKORDER"
+			not-null="true" fetch="select" />
+		<many-to-one name="egbill" class="org.egov.model.bills.EgBillregister" column="ID_BILL" insert="false" update="false"/>
+		<many-to-one name="coa" class="org.egov.commons.CChartOfAccounts" column="ID_COA" fetch="select" />
+		<property name="deductionType">
+			<column name="DEDUCTIONTYPE" not-null="true"/>
+		</property>
+		<property name="creditamount">
+			<column name="AMOUNT" not-null="true"/>
+		</property>
+		<property name="narration">
+			<column name="NARRATION"/>
+		</property>
+	</class>  
+	
+</hibernate-mapping>

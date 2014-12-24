@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.works.models.estimate.MultiYearEstimate" table="EGW_MULTIYEARESTIMATE">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_MULTIYEARESTIMATE_SEQ</param>
+			</generator>
+		</id>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+ 		<many-to-one name="abstractEstimate" column="ABSTRACTESTIMATE_ID" not-null="true" insert="false" update="false"/>
+        <many-to-one name="financialYear" class="org.egov.commons.CFinancialYear" fetch="select">
+            <column name="FINANCIALYEAR_ID" not-null="true" />
+        </many-to-one>
+		<property name="percentage" column="PERCENTAGE" type="double" not-null="true"/>
+	</class>
+</hibernate-mapping>

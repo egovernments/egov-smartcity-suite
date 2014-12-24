@@ -1,0 +1,257 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Recovery Create Help</title>
+</head>
+<LINK REL=StyleSheet HREF="file:///C:/DOCUME~1/MRC/LOCALS~1/Temp/egov.css" TYPE="text/css" />
+<style type="text/css">
+html {
+background-color:#FFF9EF;
+}
+body {
+background-color:#FFF9EF;
+}
+a {
+text-decoration:none;
+}
+table {
+border-top: 1px solid gray;
+border-left: 1px solid gray;
+}
+th {
+background-color:#FFF9EF;
+border-right: 1px solid gray;
+border-bottom: 1px solid gray;
+text-align: center;
+}
+td {
+background-color:white;
+border-bottom: 1px solid gray;
+border-right: 1px solid gray;
+}
+
+#hheader {
+background-color:#EFDFC2;
+text-align: right;
+padding: 10px;
+font-size: 130%;
+font-weight: bold;
+border-bottom: 1px solid gray;
+}
+
+#hnav {
+background-color:#FFF9EF;
+text-align: right;
+padding-right: 10px;
+border-bottom: 1px solid gray;
+}
+
+#hnav a:hover{
+border-bottom: 2px solid #CFC1A8;
+}
+
+#hcontent {
+background-color:white;
+text-align: left;
+padding: 10px;
+}
+
+#hfooter {
+background-color:#FFF9EF;
+text-align: center;
+margin-top: 0px;
+padding-right: 10px;
+padding-left: 10px;
+margin-bottom: 10px;
+border-bottom: 1px solid gray;
+border-top: 1px solid gray;
+
+}
+.hbold0 {
+font-size: 105%;
+font-weight: bold;
+text-transform: uppercase;
+}
+.hbold {
+font-size: 100%;
+font-weight: bold;
+}
+</style>
+
+<body>
+<div id="hheader">
+Recovery Create.. Help
+</div>
+<div id="hnav">
+<a href="mailto:contact@egovernments.org">Contact Us</a>
+</div>
+
+<div id="hcontent">
+<span class="hbold0">Recovery Create:&nbsp; </span>
+	
+<p></p>
+
+<!-- Objective Section Stats -->
+<span class="hbold0">
+Objective: </span>
+<p class="MsoNormal">The Recovery types that are created will be mapped to the above Work/Contract types and Party types. Hence any Invoice that is made for that work type WO and Party type will list only those Recovery types that are mapped to the work type and Party type. 
+Every deduction/Recovery in the invoice should be made using the “Recovery type” that is defined in the master. Any deduction that is entered without the deduction type in the Invoice cannot be remitted using remittance module. 
+</p>
+<p><span class="hbold0">
+Field Description Table:</span></p>
+<p><span class="hbold0">Header Section:</span><br /><br />
+</p>
+</p>
+<table width="80%" cellpadding="2px" cellspacing="0px">
+<tr>
+<th>Field Name</th>
+<th>Field Type</th>
+<th width="425">Field Description</th>
+</tr>
+<tr>
+<td>Recovery Code</td>
+<td>User Entry</td>
+<td width="425">The user defined&nbsp; code for recovery Type.</td>
+</tr>
+<tr>
+<td>Recovery Name </td>
+<td>Text</td>
+<td width="425">The name for the recovery code created. </td>
+</tr>
+<tr>
+<td>Account Code  </td>
+<td>Select List</td>
+<td width="425">The 
+Ledger account code that will be credited for the deduction amount in the 
+invoice. When the Recovery/deduction type is selected in the invoice, the 
+account code will be automatically retrieved.</td>
+</tr>
+
+<tr>
+<td>Applied To</td>
+<td>Select List</td>
+<td width="425">&nbsp;The type of party to which the deduction/recovery is linked. This means, the defining recovery code can be selected only in those invoice that is done for the party who is mapped to the type selected here.</td>
+</tr>
+<tr>
+<td>Remitted To</td>
+<td>Text </td>
+<td width="425">&nbsp;Enter the name of the party/Gov body/institution to which the deduction made will be remitted later using remittance module</td>
+</tr>
+<tr>
+<td>BSR Code</td>
+<td>Text </td>
+<td width="425">&nbsp;Enter BSR code as applicable if it is remitted into the particular deduction’s bank account.</td>
+</tr>
+</table>
+
+<br />
+<!-- Fields Definition Section ENDS -->
+<p><span class="hbold0">Detail Section:</span><br /><br />
+
+<table width="80%" cellpadding="2px" cellspacing="0px">
+<tr>
+<th>Field Name</th>
+<th>Field Type</th>
+<th width="425">Field Description</th>
+</tr>
+<tr>
+<td>Party Type</td>
+<td>Select List</td>
+<td width="425"><span style="font-size: 11.0pt; font-family: Book Antiqua">
+Specific Sub type (if it is applicable only to the sub type).</span></td>
+</tr>
+<tr>
+<td>Doc Type </td>
+<td>Select List</td>
+<td width="425">The type of work to which the deduction/Recovery is linked. This means, the defining recovery code can be selected only in those invoice that is made for the WO, which is of work/contract type selected here. </td>
+</tr>
+<tr>
+<td>Doc Sub type  </td>
+<td>Select List</td>
+<td width="425">Specific Sub type (if recovery is applicable only to the sub type).</td>
+</tr>
+
+<tr>
+<td>Date (From/To)</td>
+<td>Date</td>
+<td width="425">Date range between which the recovery code is valid. The recovery code will not be shown in the deductions list of invoices before or after these dates.</td>
+</tr>
+<tr>
+<td>Payment Limit (Low/High)</td>
+<td>Number </td>
+<td width="425">The invoice amount-range for which the Recovery code are applicable.</td>
+</tr>
+<tr>
+<td>Percentage (IT /Sur Charge/Edu Cess/Total)</td>
+<td>Number </td>
+<td width="425">Percentage 
+of various components that should applied in the invoice when this recovery code 
+is selected. Total will show the total of all the components entered. The total 
+percentage is considered at the invoice to calculate the deduction amount.</td>
+</tr>
+<tr>
+<td>Flat Amount</td>
+<td>Number</td>
+<td width="425">If the recovery is for a definite amount, then the flat amount can be entered instead of the percentages.</td>
+</tr>
+<tr>
+<td>Add Row</td>
+<td>Button</td>
+<td width="425">Click button to add a row in which a new date range, payment limit and percentage can be entered for the same recovery code. If a deduction’s percentage is varying from one quarter to another, it can be configured in the new row or even if the percentage is differing based on the invoice amount, it can be configured as a new row.</td>
+</tr>
+<tr>
+<td>Delete Row</td>
+<td>Button </td>
+<td width="425">Click this button to delete a row in the grid.</td>
+</tr>
+</table>
+
+
+<!-- Expected Results and/or Workflow Section Begins -->
+<p><span class="hbold0">
+
+Expected Results :
+</span><br />
+</p>
+<table width="82%" cellpadding="2px" cellspacing="0px">
+<tr>
+<th>Action</th>
+<th >Expected Result</th>
+</tr>
+<tr>
+<td>Save & Close</td>
+<td>Submits the transaction. On successful submit, the system creates the 
+recovery code and the screen is closed.</td>
+</tr>
+<tr>
+<td>Save & New</td>
+<td>Submits the transaction. On successful submit, the system creates the type and the same screen is made available for entering a new record</td>
+</tr>
+
+<tr>
+<td>Cancel</td>
+<td >Cancels the transaction and loads the page afresh.</td>
+</tr>
+
+<tr>
+<td>Close</td>
+<td width="679">Closes the screen.</td>
+</tr>
+
+</table>
+
+<br />
+
+
+<!-- Footer Starts here -->
+<div id="hfooter">
+&copy eGovernments Foundation 
+<script type="JavaScript">
+document.write(time());
+</script>
+</div>
+<!-- Footer ENDS here -->
+
+</body>
+</html>

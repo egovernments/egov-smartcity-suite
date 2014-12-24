@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<pageMap name="propertyTaxFieldOut" > 
+	<gridMap name="voucherDetailsGrid"  containsNames="true">
+		<columnMap name="period" serverFieldName="column5"/>
+		<columnMap name="totalAmount" serverFieldName="column3"/>		
+		<columnMap name="penalty" serverFieldName="column1"/>
+		<columnMap name="financialyear_id" serverFieldName="column6"/>
+	</gridMap>
+	<gridMap name="chequeGrid">
+		<columnMap name="chequeGrid_chequeId" serverFieldName="1"/>
+		<columnMap name="chequeGrid_chequeNo" serverFieldName="1"/>
+		<columnMap name="chequeGrid_chequeAmount" serverFieldName="1"/>
+		<columnMap name="chequeGrid_chequeDate" serverFieldName="1"/>
+	</gridMap>
+</pageMap>

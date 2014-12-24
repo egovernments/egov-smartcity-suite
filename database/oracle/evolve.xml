@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="evolve">
+    <property environment="env"/>
+    <property name="env.ERP_DB_SUFFIX" value="" /> <!--this is needed to avoid strange ant behaviour when command line value was empty i.e. no suffix -->
+    <property name="to.rev" value="100000"/>
+    <property name="oracle.data.pump.dir" value="/usr/lib/oracle/xe/app/oracle/admin/XE/dpdump"/>
+
+    <target name="recreate.schema">
+        <echo message="env.ERP_DB_SERVER: ${env.ERP_DB_SERVER}"/>
+        <echo message="env.ERP_DB_PORT: ${env.ERP_DB_PORT}"/>
+        <echo message="env.ERP_DB_NAME: ${env.ERP_DB_NAME}"/>
+        <echo message="env.ERP_DB_SUFFIX: ${env.ERP_DB_SUFFIX}"/>
+        <echo message="env.SA_DB_USER: ${env.SA_DB_USER}"/>
+        <echo message="env.SA_DB_PWD: ************"/>
+        <echo message="JAVA_HOME: ${env.JAVA_HOME}"/>
+        <echo message="Dropping and recreating user erp_owner${env.ERP_DB_SUFFIX}..." />   
+        <sql driver="oracle.jdbc.driver.OracleDriver" url="jdbc:oracle:thin:@${env.ERP_DB_SERVER}:${env.ERP_DB_PORT}:${env.ERP_DB_NAME}" userid="${env.SA_DB_USER}" 
+                autocommit="false" password="${env.SA_DB_PWD}" classpathref="class.path" onerror="stop" print="true">
+            <transaction>
+                select username, osuser, machine, terminal, sid, serial#, status from v$session where username=upper('${env.SA_DB_USER}');
+                DROP USER erp_owner${env.ERP_DB_SUFFIX} cascade;
+                CREATE USER erp_owner${env.ERP_DB_SUFFIX} IDENTIFIED BY erp_owner${env.ERP_DB_SUFFIX} default tablespace users quota 1G on users;
+                grant new_user to erp_owner${env.ERP_DB_SUFFIX};
+                grant create sequence to erp_owner${env.ERP_DB_SUFFIX};
+            </transaction>
+        </sql>
+        <echo message="Importing dump..." />   
+        <copy file="${database.dir}/${database.type}/dump/erp3_0_oracledump.dmp" tofile="${oracle.data.pump.dir}/erp3_0_oracledump.dmp" overwrite="true" />
+        <exec dir="${database.dir}" executable="${database.dir}/${database.type}/restore_dump.sh" >
+            <arg value="${env.ERP_DB_NAME}" />
+            <arg value="${env.SA_DB_USER}" />
+            <arg value="${env.SA_DB_PWD}" />
+            <arg value="erp_owner${env.ERP_DB_SUFFIX}" />
+        </exec>
+    </target>
+
+    <target name="evolve.main">
+        <antcall target="evolve.common">
+            <param name="package.path" value="evolve.main"/>
+            <param name="version.table" value="egovintegrated_schema_versions"/>
+            <param name="strict.validation.from.rev" value="1"/>
+        </antcall>
+    </target>
+
+    <target name="evolve.sample.data" unless="no.sample.data">
+        <antcall target="evolve.common">
+            <param name="package.path" value="evolve.sample_data"/>
+            <param name="version.table" value="egovsampledata_schema_versions"/>
+            <param name="strict.validation.from.rev" value="99999"/>
+        </antcall>
+    </target>
+
+    <!-- For testing only. This target should be defined in another buildfile, like deploy.xml. -->
+    <target name="evolve.customer">
+        <antcall target="evolve.common">
+            <param name="package.path" value="evolve.customer"/>
+            <param name="version.table" value="egovcustomer_schema_versions"/>
+            <param name="strict.validation.from.rev" value="1"/>
+        </antcall>
+    </target>
+
+    <target name="evolve.common" >
+        <filter token="ERP_DB_SERVER" value="${env.ERP_DB_SERVER}" />
+        <filter token="ERP_DB_PORT" value="${env.ERP_DB_PORT}" />
+        <filter token="ERP_DB_NAME" value="${env.ERP_DB_NAME}" />
+        <filter token="ERP_DB_USER" value="erp_owner${env.ERP_DB_SUFFIX}" />
+        <filter token="ERP_DB_PWD" value="erp_owner${env.ERP_DB_SUFFIX}" />
+        <filter token="ERP_DB_SUFFIX" value="${env.ERP_DB_SUFFIX}" />
+        <copy file="${database.dir}/${database.type}/evolver_tokenized.properties" tofile="${database.dir}/${database.type}/evolver.properties" filtering="true" overwrite="true" />
+        <path id="evolve.cp">
+            <path location="${database.dir}/${database.type}"/>
+            <path refid="class.path"/>
+        </path>
+        <!--uncomment this to debug evolve classpath -->
+        <!--property name="evolvecp" refid="evolve.cp" /><echo message="Evolve Classpath: ${evolvecp}" /-->
+        <java  classpathref="evolve.cp" classname="com.motn.evolve.Evolver" failonerror="true" logerror="true">
+            <arg value="${to.rev}" />
+            <sysproperty key="package" value="${package.path}" />
+            <sysproperty key="version.table" value="${version.table}" />
+            <sysproperty key="strict.validation.from.rev" value="${strict.validation.from.rev}" />
+        </java> 
+    </target>
+
+</project>

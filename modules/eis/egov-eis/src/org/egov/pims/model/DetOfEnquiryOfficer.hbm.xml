@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 9, 2007 3:21:11 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.pims.model.DetOfEnquiryOfficer" table="EGEIS_DET_OF_ENQUIRY_OFFICER" >
+        <id	name="enquiryOfficerId"
+		column="ENQUIRY_OFFICER_ID"
+		type="int">
+		<generator class="sequence">
+		<param name="sequence">EGPIMS_DET_OF_ENQUIRY_OFF_SEQ</param>
+		</generator>
+		</id>
+	
+		<property name="enquiryOfficerName" type="string">
+	            <column name="ENQUIRY_OFFICER_NAME" length="256" />
+        </property>
+        <property name="designation" type="string">
+	            <column name="EO_DESIGNATION" length="256" />
+        </property>
+        
+        <property name="nominatedDate" type="date">
+            <column name="NOMINATED_DATE" length="7" />
+        </property>
+        <property name="reportDate" type="date">
+            <column name="REPORT_DATE" length="7" />
+        </property>
+        
+        
+        <many-to-one name="disciplinarypunishmentId" class="org.egov.pims.model.DisciplinaryPunishment" fetch="select">
+		    <column name="DIS_PUN_ID"   />
+		  </many-to-one>
+		 
+		 
+		<many-to-one name="employeeId" class="org.egov.pims.model.PersonalInformation" fetch="select">
+			<column name="EMP_ID"   />
+		</many-to-one>
+
+    </class>
+</hibernate-mapping>

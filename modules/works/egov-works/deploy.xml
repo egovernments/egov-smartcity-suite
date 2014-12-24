@@ -1,0 +1,75 @@
+<project name="Database evolution" default="setup">
+	<property file="${basedir}/database/${user.name}.properties"/>
+	<property file="${basedir}/database/dbtest.properties"/>
+	<property name="to.rev" value="99999"/>
+	<path id="class.path">
+		<fileset dir="${basedir}/lib" includes="*.jar"/>
+		<fileset dir="${basedir}/test" includes="*.jar"/>
+		<fileset dir="${jboss.home}/server/default/lib" includes="*.jar"/>
+		<fileset dir="${jboss.home}/lib/endorsed" includes="*.jar"/>
+	</path>
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/lib/ant-contrib-1.0b3.jar"/>
+	<import file="${basedir}/database/evolve.xml"/>
+	<target name="index">
+		<copy todir="${basedir}/test" file="${basedir}/database/dbtest.properties"/>
+		<copy todir="${basedir}/test" file="${basedir}/database/${user.name}.properties"/>
+		<java classname="org.egov.infstr.models.Indexer" failonerror="true">
+			<arg value="org.egov.works.models.masters.ScheduleOfRate"/>
+			<arg value="org.egov.works.models.masters.ScheduleCategory"/>
+			<classpath>
+				<pathelement location="${basedir}/test" />
+				<pathelement location="${basedir}" />
+            	<path refid="class.path"/>
+				<fileset dir="${basedir}" includes="*.jar"/>
+			</classpath>
+		</java>
+
+		<delete dir="${jboss.home}/bin" includes="org*/**"/>
+		<copy todir="${jboss.home}/bin">
+			<fileset dir="${basedir}" includes="org*/**"/>
+		</copy>
+	</target>
+	<target name="evolve" depends="evolve.common"/>
+	<target name="setup">
+		<antcall target="setup.datasource"/>
+		<antcall target="evolve"/>
+		<antcall target="setup.devmode"/>
+		<antcall target="insert.sample.data"/>
+	</target>
+	<target name="setup.datasource">
+		<replace file="${basedir}/oracle-ds.xml" >
+			<replacefilter token="jdbc:oracle:thin:@localhost:1521:xe" value="jdbc:oracle:thin:@${db.server}:${db.port}:${db.name}"/>
+			<replacefilter token="&lt;user-name&gt;egov&lt;/user-name&gt;" value="&lt;user-name&gt;${db.user}&lt;/user-name&gt;"/>
+			<replacefilter token="&lt;password&gt;egov&lt;/password&gt;" value="&lt;password&gt;${db.pwd}&lt;/password&gt;"/>
+		</replace>
+	</target>
+	<target name="setup.devmode">	
+		<replace file="${basedir}/struts.xml" >
+			<replacefilter token="&lt;constant name=&quot;struts.devMode&quot; value=&quot;true&quot; /&gt;" value="&lt;constant name=&quot;struts.devMode&quot; value=&quot;true&quot; /&gt;"/>
+		</replace>
+	</target>
+	
+	<target name="insert.sample.data">
+	      <antcall target="evolve.common">
+	          <param name="override" value="true" />
+	          <param name="pkg.name" value="sample_data"/>
+	          <param name="table.name" value="eGovSampledata_schema_versions"/>
+	      </antcall>
+  	</target>
+	
+	<target name="insert.qa.sample.data" >
+			<concat destfile="${basedir}/qa_sample_data.sql" fixlastline="true" >
+				<fileset dir="${basedir}/database/qa_sampledata" includes="*.sql"></fileset>
+			</concat>
+			<replace file="${basedir}/qa_sample_data.sql" token="commit;" value=""/>
+			<replace file="${basedir}/qa_sample_data.sql" token="COMMIT;" value=""/>
+			<sql driver="oracle.jdbc.driver.OracleDriver" url="jdbc:oracle:thin:@${db.server}:${db.port}:${db.name}" userid="${db.user}" 
+				autocommit="false" password="${db.pwd}" classpathref="class.path" onerror="continue">
+				<transaction src="${basedir}/qa_sample_data.sql">
+				</transaction>
+	
+			</sql>
+			<delete file="${basedir}/qa_sample_data.sql">
+			</delete> 
+	</target>
+</project>

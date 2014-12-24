@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping >
+	<class name="org.egov.dms.models.ExternalUserType" table="EGDMS_EXTNL_USER_TYPE"> 
+		<id name="id" type="long" column="ID">
+	        <generator class="sequence">
+	            <param name="sequence">SEQ_EGDMS_EXTNL_USER_TYPE</param>
+	        </generator>
+	    </id>	    
+	    <property name="typeCode" type="string" column="TYPE_CODE" />
+	    <property name="typeName" type="string" column="TYPE_NAME" />
+	    <property name="typeDescription" type="string" column="TYPE_DESC" />	   
+	 </class>
+</hibernate-mapping>

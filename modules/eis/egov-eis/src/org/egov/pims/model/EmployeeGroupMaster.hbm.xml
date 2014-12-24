@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping
+PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.pims.model.EmployeeGroupMaster" table="EGEIS_EMPLOYEECATEGORY_MSTR">
+		
+		<id
+			name="id"
+			column="CATEGORY_ID"
+			type="int">
+			<generator class="sequence">
+				<param name="sequence">SEQ_EGEIS_EMPGROUP_MSTR</param>
+			</generator>
+		</id>
+		
+		<property	name="name"	column="CATEGORY_NAME"	/>
+		
+		<property name="fromDate" column="START_DATE"/>
+		<property name="toDate"	column="END_DATE"/>		
+		<property	name="orderNumber" column="ORDER_NUMBER"/>
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,189 @@
+<project name="works" default="usage" basedir=".">
+	<property name="config.dir" value="${basedir}/config" />
+	<property file="${config.dir}/${user.name}.properties" />
+	<property file="${config.dir}/build.properties" />
+
+	<!-- Basic properties for compiling, running tests-->
+	<property name="project.home" value="${basedir}/.." />
+	<property name="ear.project" value="${basedir}/../works" />
+	<property name="ear.libs" value="${ear.project}/lib" />
+	<property name="mappings.folder" value="${ear.project}/mappings.jar" />
+	<property name="lib" value="${basedir}/libraries" />
+	<property name="web.dir" value="${basedir}/works.war" />
+	<property name="build.dir" value="${basedir}/build" />
+	<property name="build.classes" value="${basedir}/build/classes" />
+	<property name="test.dir" value="${basedir}/junit" />
+
+	<!-- Properties for fetching dependenncies -->
+	<property name="egi.version" value="2.1.15" />
+	<property name="egworks.version" value="1.0" />
+	<property name="pims.version" value="1.2_06" />
+	<property name="pims.tag.version" value="1.2_06" />
+	<property name="egf.version" value="2.1.0" />
+	<property name="egf.file" value="egf-${egf.version}.zip" />
+	<property name="egf.client" value="ap" />
+	<property name="egi.file" value="infrastructure-ear-${egi.version}.zip" />
+	<property name="egf.home" value="${project.home}/assets/egf/egfjava"/>
+	<property name="assets.home" value="${project.home}/assets/assetsweb"/>
+	<property name="egi.web" value="${project.home}/assets/egf/pims/egi/egiadmin/admin.war"/>
+	<!-- scaffold related properties -->
+	<property name="model.base.pkg" value="org.egov.works.models"/>
+	<property name="action.base.pkg" value="org.egov.works.web.actions"/>
+	<property name="views.dir" value="${web.dir}/WEB-INF/jsp"/>
+	<property name="appcontext.path" value="${web.dir}/WEB-INF/applicationContext.xml"/>
+		
+	<path id="class.path">
+		<fileset dir="${lib}" includes="**/*.jar" excludes="hibernate/**/slf*.jar" />
+		<pathelement location="${build.classes}" />
+		<pathelement location="${config.dir}" />
+		<pathelement location="${ear.project}" />
+		<path location="${test.dir}" />
+		<fileset dir="${ear.project}" includes="*.jar" />
+		<fileset dir="${ear.libs}" includes="*.jar" />
+	</path>
+	<path id="svnant.class.path">
+		<fileset dir="${lib}/svnant" includes="*.jar"/>
+	</path>
+	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svnant.class.path" /> 
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${lib}/misc/ant-contrib-1.0b3.jar"/>
+
+	<import file="${basedir}/database/evolve.xml"/>
+	<import file="${project.home}/assets/egf/pims/egi/egijava/common-build.xml"/>
+
+	<property name="dependencies.base.url" value="http://${download.server}/downloads/libs/egov"/>
+	
+	<target name="clean.all">
+		<antcall target="base.clean"/>
+		<delete dir="${ear.libs}" includes="*" failonerror="false"/>
+		<delete dir="${ear.project}" excludes="META-INF/*.xml,.settings,.project,**/.svn/**,lib" includeemptydirs="true" failonerror="false"/>
+	</target>
+	
+	<target name="init.all">
+		<mkdir dir="${ear.libs}" />
+		<antcall target="base.init"/>
+	</target>
+
+	<target name="setup" depends="setup.jboss.hibernate,setup.dependencies"/>
+	
+	<target name="setup.dependencies" depends="clean.all,init.all">
+		<antcall target="get.assets" />
+	</target>
+	
+	<!-- Not In USE-->
+	<target name="get.egf">
+		<ant antfile="${egf.home}/build-egf.xml" target="build.ear" dir="${egf.home}" inheritall="false">
+			<property name="client" value="${egf.client}"/>
+		</ant>
+		<copy todir="${ear.project}">
+			<fileset dir="${egf.home}/dist/egov.ear" excludes="**/application.xml" />
+		</copy>		
+	</target>
+	
+	<!-- CI with Assets-->
+	<target name="get.assets">
+			<ant antfile="${assets.home}/build.xml" target="build.ear" dir="${assets.home}" inheritall="false"/>
+			<copy todir="${ear.project}">
+				<fileset dir="${assets.home}/dist/egov.ear" excludes="**/application.xml" />
+			</copy>		
+		</target>
+	
+	<target name="quick.deploy" depends="compile,create.ear,deploy"/>
+	<target name="build.ear" depends="mergestat,create.ear"/>
+	
+	<target name="create.ear" >
+		<delete dir="${ear}"/>
+		<mkdir dir="${ear}"/>
+		<mkdir dir="${ear}/lib"/>
+		<jar destfile="${ear}/lib/${ant.project.name}.jar" basedir="${build.classes}" includes="**/package.properties,**/*.class">
+			<manifest>
+				<attribute name="Version" value="${egworks.version}"/>
+				<attribute name="Description" value="eGov works module"/>
+			</manifest>
+		</jar>
+		<copy todir="${ear}/${ant.project.name}.war" >
+			<fileset dir="${web.dir}"/>
+		</copy>
+		<copy todir="${ear}/${ant.project.name}.war/WEB-INF/tags" >
+			<fileset dir="${egi.web}/WEB-INF/tags/" includes="*.*"/>
+		</copy>
+		<copy todir="${ear}/${ant.project.name}.war" >
+			<fileset dir="${egi.web}">
+				<include name="script/**"/>
+				<include name="commonyui/**"/>
+			</fileset>
+		</copy>
+		<copy todir="${ear}">
+			<fileset file="${basedir}/deploy.xml"/>
+			<fileset dir="${ear.project}" excludes="**/.svn/**"/>
+		</copy>
+		<jar destfile="${ear}/mappings.jar/${ant.project.name}-mappings.jar" basedir="${build.classes}" excludes="**/*.class,**/dbtest.properties,**/*hibernate.cfg.xml,**/*Test.xml" includes="**/*.xml">
+			<manifest>
+				<attribute name="Version" value="${egworks.version}"/>
+				<attribute name="Description" value="eGov works module mapping files"/>
+			</manifest>
+		</jar>
+		<copy todir="${ear}/lib">
+			<fileset dir="${lib}/struts2" includes="*.jar"/>
+			<fileset dir="${lib}/displaytags" includes="itext*.jar"/>
+			<fileset dir="${lib}/commons" includes="*.jar"/>
+			<fileset dir="${lib}/jython" includes="*.jar"/>
+			<fileset dir="${lib}/misc" includes="sitemesh*.jar,joda*.jar,evolve*"/>
+			<fileset dir="${lib}/hibernate/search" includes="hibernate*.jar,lucene*.jar,solr*.jar,jsr*.jar"/>
+		</copy>
+		<!-- to run evolve -->
+		<copy file="${lib}/misc/ant-contrib-1.0b3.jar" todir="${ear}/lib" verbose="true"   />
+		<delete dir="${ear}/database" includes="**" includeemptydirs="true"/>
+		<copy todir="${ear}/test" overwrite="true">
+			<fileset dir="${basedir}/junit" includes="*.xml"/>
+		</copy>
+
+		<copy todir="${ear}/database" overwrite="true">
+			<fileset dir="${basedir}/libraries/misc" includes="evolve*.jar"/>
+			<fileset file="${basedir}/junit/dbtest.properties"/>
+			<fileset file="${basedir}/database/evolve.xml"/>
+			<fileset dir="${basedir}/database" />
+		</copy>
+		 <replace file="${ear}/replSync-optimistic-service.xml" token="CacheMode&quot;&gt;REPL_SYNC" value="CacheMode&quot;&gt;LOCAL" />
+	</target>
+	<target name="deploy.ear" depends="build.ear,deploy"/>
+		
+	<target name="deploy">
+		<delete dir="${deploy.dir}/egov.ear" includeemptydirs="true"/>
+		<copy todir="${deploy.dir}/egov.ear">
+			<fileset dir="${ear}"/>
+		</copy>
+	</target>
+	
+	<target name="publish">
+		<antcall target="setup.dependencies" />
+		<antcall target="build.ear" />
+		<zip destfile="${publish.dir}/${ant.project.name}-${continuum.project.nextBuild.number}.zip">
+			<zipfileset dir="${ear}" prefix="${ant.project.name}.ear">
+			</zipfileset>
+		</zip>
+	</target>
+	
+	<target name="usage">
+		<echo ><![CDATA[
+		* !!!IMPORTANT!!! Prerequisites:
+			 Oracle XE
+			 A database user egov with password egov
+			 JBoss 4.2.3
+			 A properties file named <your username>.properties, which has this property
+				jboss.home=PATH_TO_YOUR_JBOSS
+		Once you have done the above,run
+			
+			ant setup - This will upgrade JBoss hibernate, download the project dependencies and set them up
+		Other targets of interest:
+			clean.all             -  clean everything
+			clean                 -  clean build folders
+			compile,junitcompile  -  compile sources and tests
+			build.ear             -  build the deployable ear
+			deploy.ear			  -  deploy the ear to JBoss
+			evolve.common                -  evolve the database schema to the latest revision
+			publish               -  used by continuum to publish the build for downloading
+		]]>
+		</echo>
+		
+	</target>
+</project>

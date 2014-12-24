@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="notice134_floordetails" language="groovy" pageWidth="595" pageHeight="810" orientation="Landscape" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true">
+	<queryString>
+		<![CDATA[SELECT]]>
+	</queryString>
+	<field name="occupantName" class="java.lang.String"/>
+	<field name="unitNum" class="java.lang.Integer"/>
+	<field name="alv" class="java.lang.String"/>
+	<field name="sewerageTax" class="java.lang.String"/>
+	<field name="waterTax" class="java.lang.String"/>
+	<field name="genTax" class="java.lang.String"/>
+	<field name="fireServiceTax" class="java.lang.String"/>
+	<field name="lightTax" class="java.lang.String"/>
+	<field name="eduCess" class="java.lang.String"/>
+	<field name="bigResBldgTax" class="java.lang.String"/>
+	<field name="empGrnteTax" class="java.lang.String"/>
+	<field name="occupant" class="java.lang.String"/>
+	<field name="effectiveAssessment" class="java.lang.String"/>
+	<field name="totalTax" class="java.lang.String"/>
+	<field name="instDate" class="java.lang.String"/>
+	<field name="unitOccupation" class="java.lang.String"/>
+	<field name="totalServChrg" class="java.lang.String"/>
+	<detail>
+		<band height="25">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="23" y="0" width="60" height="25" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" forecolor="#585151" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5" lineColor="#FF0000"/>
+					<topPen lineWidth="0.0" lineColor="#FF0000"/>
+					<leftPen lineWidth="0.5" lineColor="#FF0000"/>
+					<bottomPen lineWidth="0.0" lineColor="#FF0000"/>
+					<rightPen lineWidth="0.0" lineColor="#FF0000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="7" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{unitOccupation}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="1" y="0" width="22" height="25" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="0.5" lineColor="#FF0000"/>
+					<topPen lineWidth="0.0" lineColor="#FF0000"/>
+					<leftPen lineWidth="0.5" lineColor="#FF0000"/>
+					<bottomPen lineWidth="0.0" lineColor="#FF0000"/>
+					<rightPen lineWidth="0.0" lineColor="#FF0000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="7" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{unitNum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="122" y="0" width="38" height="25" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" forecolor="#585151" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5" lineColor="#FF0000"/>
+					<topPen lineWidth="0.0" lineColor="#FF0000"/>
+					<leftPen lineWidth="0.5" lineColor="#FF0000"/>
+					<bottomPen lineWidth="0.0" lineColor="#FF0000"/>
+					<rightPen lineWidth="0.0" lineColor="#FF0000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font fontName="Times New Roman" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+                    <paragraph lineSpacing="Single" />
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sewerageTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="160" y="0" width="38" height="25" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" forecolor="#585151" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5" lineColor="#FF0000"/>
+					<topPen lineWidth="0.0" lineColor="#FF0000"/>
+					<leftPen lineWidth="0.5" lineColor="#FF0000"/>
+					<bottomPen lineWidth="0.0" lineColor="#FF0000"/>
+					<rightPen lineWidth="0.0" lineColor="#FF0000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font fontName="Times New Roman" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+                    <paragraph lineSpacing="Single" />
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{waterTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="198" y="0" width="38" height="25" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" forecolor="#585151" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5" lineColor="#FF0000"/>
+					<topPen lineWidth="0.0" lineColor="#FF0000"/>
+					<leftPen lineWidth="0.5" lineColor="#FF0000"/>
+					<bottomPen lineWidth="0.0" lineColor="#FF0000"/>
+					<rightPen lineWidth="0.0" lineColor="#FF0000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font fontName="Times New Roman" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+                    <paragraph lineSpacing="Single" />
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{genTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="265" y="0" width="29" height="25" forecolor="#585151" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5" lineColor="#FF0000"/>
+					<topPen lineWidth="0.0" lineColor="#FF0000"/>
+					<leftPen lineWidth="0.5" lineColor="#FF0000"/>
+					<bottomPen lineWidth="0.0" lineColor="#FF0000"/>
+					<rightPen lineWidth="0.0" lineColor="#FF0000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font fontName="Times New Roman" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+                    <paragraph lineSpacing="Single" />
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{lightTax}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="83" y="0" width="39" height="25" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" forecolor="#585151" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5" lineColor="#FF0000"/>
+					<topPen lineWidth="0.0" lineColor="#FF0000"/>
+					<leftPen lineWidth="0.5" lineColor="#FF0000"/>
+					<bottomPen lineWidth="0.0" lineColor="#FF0000"/>
+					<rightPen lineWidth="0.0" lineColor="#FF0000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font fontName="Times New Roman" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+                    <paragraph lineSpacing="Single" />
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{alv}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="236" y="0" width="29" height="25" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" forecolor="#585151" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5" lineColor="#FF0000"/>
+					<topPen lineWidth="0.0" lineColor="#FF0000"/>
+					<leftPen lineWidth="0.5" lineColor="#FF0000"/>
+					<bottomPen lineWidth="0.0" lineColor="#FF0000"/>
+					<rightPen lineWidth="0.0" lineColor="#FF0000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font fontName="Times New Roman" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+                    <paragraph lineSpacing="Single" />
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{fireServiceTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="294" y="0" width="39" height="25" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" forecolor="#585151" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5" lineColor="#FF0000"/>
+					<topPen lineWidth="0.0" lineColor="#FF0000"/>
+					<leftPen lineWidth="0.5" lineColor="#FF0000"/>
+					<bottomPen lineWidth="0.0" lineColor="#FF0000"/>
+					<rightPen lineWidth="0.0" lineColor="#FF0000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+                    <paragraph lineSpacing="Single" />
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{totalTax}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="373" y="0" width="38" height="25" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" forecolor="#585151" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5" lineColor="#FF0000"/>
+					<topPen lineWidth="0.0" lineColor="#FF0000"/>
+					<leftPen lineWidth="0.5" lineColor="#FF0000"/>
+					<bottomPen lineWidth="0.0" lineColor="#FF0000"/>
+					<rightPen lineWidth="0.0" lineColor="#FF0000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font fontName="Times New Roman" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+                    <paragraph lineSpacing="Single" />
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{eduCess}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="411" y="0" width="38" height="25" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" forecolor="#585151" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5" lineColor="#FF0000"/>
+					<topPen lineWidth="0.0" lineColor="#FF0000"/>
+					<leftPen lineWidth="0.5" lineColor="#FF0000"/>
+					<bottomPen lineWidth="0.0" lineColor="#FF0000"/>
+					<rightPen lineWidth="0.0" lineColor="#FF0000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font fontName="Times New Roman" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+                    <paragraph lineSpacing="Single" />
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{empGrnteTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="449" y="0" width="38" height="25" forecolor="#585151" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5" lineColor="#FF0000"/>
+					<topPen lineWidth="0.0" lineColor="#FF0000"/>
+					<leftPen lineWidth="0.5" lineColor="#FF0000"/>
+					<bottomPen lineWidth="0.0" lineColor="#FF0000"/>
+					<rightPen lineWidth="0.0" lineColor="#FF0000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font fontName="Times New Roman" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+                    <paragraph lineSpacing="Single" />
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{bigResBldgTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="487" y="0" width="40" height="25" forecolor="#585151" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5" lineColor="#FF0000"/>
+					<topPen lineWidth="0.0" lineColor="#FF0000"/>
+					<leftPen lineWidth="0.5" lineColor="#FF0000"/>
+					<bottomPen lineWidth="0.0" lineColor="#FF0000"/>
+					<rightPen lineWidth="0.5" lineColor="#FF0000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+                    <paragraph lineSpacing="Single" />
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{instDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="333" y="0" width="40" height="25" forecolor="#585151" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5" lineColor="#FF0000"/>
+					<topPen lineWidth="0.0" lineColor="#FF0000"/>
+					<leftPen lineWidth="0.5" lineColor="#FF0000"/>
+					<bottomPen lineWidth="0.0" lineColor="#FF0000"/>
+					<rightPen lineWidth="0.5" lineColor="#FF0000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Times New Roman" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+                    <paragraph lineSpacing="Single" />
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{totalServChrg}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

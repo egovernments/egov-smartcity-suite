@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd" default-lazy-init="true">
+
+	<bean class="org.egov.erpcollection.services.ChallanService"
+		id="challanService" parent="persistenceService">
+		<property name="type" value="org.egov.erpcollection.models.Challan" />
+		<property name="collectionsUtil" ref="collectionsUtil" />
+		<property name="challanWorkflowService" ref="challanWorkflowService" />
+	</bean>
+
+	<bean id="challanWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService"
+		scope="prototype">
+		<constructor-arg ref="challanService" />
+		<constructor-arg value="org.egov.erpcollection.models.Challan" />
+	</bean>
+
+	<bean id="serviceDetailsService" parent="persistenceService">
+		<property name="type" value="org.egov.infstr.models.ServiceDetails" />
+	</bean>
+	   <bean id="serviceCategoryService" parent="persistenceService">
+        <property name="type" value="org.egov.infstr.models.ServiceCategory" />
+    </bean>
+	<bean id="collStgReceiptService" parent="persistenceService">
+		<property name="type" value="org.egov.erpcollection.models.CollectionStgReceipt" />
+	</bean>
+	
+	<bean id="xmlHandler"
+		class="org.egov.erpcollection.web.handler.BillCollectXmlHandler">
+	</bean>
+
+	<bean id="bankService" parent="persistenceService">
+		<property name="type" value="org.egov.commons.Bank" />
+	</bean>
+	
+	<bean id="BDPGIPaymentGatewayAdaptor" class="org.egov.erpcollection.integration.pgi.BillDeskAdaptor" />
+
+	<bean id="userMgr"
+		class="org.springframework.ejb.access.LocalStatelessSessionProxyFactoryBean"
+		lazy-init="true">
+		<property name="jndiName">
+			<value>UserManagerHome</value>
+		</property>
+		<property name="resourceRef">
+			<value>false</value>
+		</property>
+		<property name="businessInterface">
+			<value>org.egov.lib.rjbac.user.ejb.api.UserService</value>
+		</property>
+	</bean>
+
+
+	<!--  SCHEDULER CONFIGURATIONS START 
+
+	<bean name="updateDishonoredInstrumentsJobScheduler" id="updateDishonoredInstrumentsJobScheduler"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean " lazy-init="false">
+		<property name="jobClass" value="org.egov.infstr.scheduler.GenericJob" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="cityList" value="localhost"></entry>
+				<entry key="delay" value="30000"></entry>
+				<entry key="className" value="org.egov.erpcollection.scheduler.UpdateDishonoredInstrumentsJob"></entry>
+				<entry key="jobDelegate">
+					<ref local="updateDishonoredInstrumentsJobDelegate" />
+				</entry>
+				<entry key="userMgr">
+					<ref local="userMgr" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+	
+	<bean class="org.egov.erpcollection.scheduler.UpdateDishonoredInstrumentsJob"
+		id="updateDishonoredInstrumentsJobDelegate" lazy-init="false">
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="instrumentService" ref="instrumentService" />
+		<property name="receiptPayeeDetailsService" ref="receiptPayeeDetailsService" />
+		<property name="genericDao" ref="genericDao" />
+	</bean>
+	
+	<bean id="bouncedChqInstrCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		name="">
+		<property name="jobDetail" ref="updateDishonoredInstrumentsJobScheduler" />
+		<property name="cronExpression" value="0 0 14,18 * * ?" />
+	</bean>
+	
+	<bean name="onlinePaymentUnknownStatusTrackerJobScheduler" id="onlinePaymentUnknownStatusTrackerJobScheduler"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean" lazy-init="false">
+		<property name="jobClass" value="org.egov.infstr.scheduler.GenericJob" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="cityList" value="localhost"></entry>
+				<entry key="delay" value="30000"></entry>
+				<entry key="className" value="org.egov.erpcollection.scheduler.OnlinePaymentUnknownStatusTrackerJob"></entry>
+				<entry key="jobDelegate">
+					<ref local="onlinePaymentUnknownStatusTrackerJobDelegate" />
+				</entry>
+				<entry key="userMgr">
+					<ref local="userMgr" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+	
+	<bean class="org.egov.erpcollection.scheduler.OnlinePaymentUnknownStatusTrackerJob" id="onlinePaymentUnknownStatusTrackerJobDelegate" lazy-init="false">
+		<property name="persistenceService" ref="persistenceService" />
+	</bean>
+	
+	
+	<bean id="onlinePaymentUnknownStatusTrackerCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		name="">
+		<property name="jobDetail" ref="onlinePaymentUnknownStatusTrackerJobScheduler" />
+		<property name="cronExpression" value="0 30 17 * * ?" />
+	</bean>
+	
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
+		lazy-init="false">
+		<property name="triggers">
+			<list>
+				<ref bean="bouncedChqInstrCronTrigger" />
+				<ref bean="onlinePaymentUnknownStatusTrackerCronTrigger" />
+			</list>
+		</property>
+		<property name="applicationContextSchedulerContextKey" value="applicationContext" />
+		<property name="overwriteExistingJobs" value="true" />
+		<property name="autoStartup" value="true" />
+	</bean> -->
+
+	<!--  SCHEDULER CONFIGURATIONS END -->
+
+</beans>

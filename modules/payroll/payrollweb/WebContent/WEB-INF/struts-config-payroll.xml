@@ -1,0 +1,724 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN"
+          "http://struts.apache.org/dtds/struts-config_1_2.dtd">
+<!--
+  Default configuration file for examples application.
+  Each module also has its own struts-config under: /WEB-INF/$MODULE/
+  @version $Revision: 1.9 $ $Date: 2004/09/07 02:50:06 $
+-->
+<struts-config> 
+  <data-sources />
+  
+  <form-beans>
+    <form-bean name="payheadForm" type="org.egov.payroll.client.payhead.PayheadDefineForm"></form-bean>
+    <form-bean name="payslipApproveFrom" type="org.egov.payroll.client.payslipApprove.PayslipApproveForm"></form-bean>
+    <form-bean name="showPayslipForm" type="org.egov.payroll.client.payslipApprove.ShowPayslipForm"></form-bean>	 
+	<form-bean name="payslipInfoForm" type="org.egov.payroll.client.payslipApprove.PayslipInfoForm"></form-bean>	 
+    <form-bean name="salaryPaySlipForm" type="org.egov.payroll.client.payslip.SalaryPaySlipForm"></form-bean>
+    <form-bean name="advanceForm" type="org.egov.payroll.client.advance.AdvanceForm"></form-bean>
+	<form-bean name="exceptionForm" type="org.egov.payroll.client.exception.ExceptionForm"></form-bean>
+	<!-- form-bean name="AdvanceDisbursementByChequeForm" type="org.egov.payroll.client.advance.AdvanceDisbursementByChequeForm" />
+	<form-bean name="AdvanceDisbursementForm" type="org.egov.payroll.client.advance.AdvanceDisbursementForm" / -->
+	<form-bean name="payslipSearchForm" type="org.egov.payroll.reports.SearchForm" />
+	<form-bean name="PFForm" type="org.egov.payroll.client.providentfund.PFSetupForm"/>
+	<form-bean name="gratuityForm" type="org.egov.payroll.client.pension.GratuityForm"/>
+	<form-bean name="pensionForm" type="org.egov.payroll.client.pension.PensionForm"/>
+	<form-bean name="pensionNomineeTransferForm" type="org.egov.payroll.client.pension.PensionNomineeTransferForm"/>
+	<form-bean name="BulkMasterForm" type="org.egov.payroll.client.bulkRuleUpdation.BulkMasterForm"/>
+	<form-bean name="payheadRuleForm" type="org.egov.payroll.client.payhead.PayheadRuleForm"/>
+	<form-bean name="searchForm" type="org.egov.pims.client.SearchForm" />
+	   <form-bean name="genericBeforeForm" type="org.egov.pims.client.GenericBeforeForm"/>
+			  <form-bean name="payrollForm" type="org.apache.struts.validator.LazyValidatorForm">	
+ 
+			   <form-property name="payScaleHeader" type="java.lang.String[]"/>
+			   <form-property name="effDate" type="java.lang.String[]"/>
+			   <form-property name="annualIncrDate" type="java.lang.String[]"/>
+				<form-property name="currMnthPay" type="java.lang.String[]"/>
+					<form-property name="currDailyPay" type="java.lang.String[]"/>
+				<form-property name="stagnantPay" type="java.lang.String[]"/>
+				<form-property name="stagnantPayId" type="java.lang.String[]"/>
+</form-bean>	
+	<!-- pension moved from pims to payroll -->
+	<form-bean name="employeePensionForm" type="org.egov.payroll.client.pension.PensionmasterForm"/>
+	
+ </form-beans> 
+
+  <global-forwards type="org.apache.struts.action.ActionForward">  
+        <forward name="error" path="/error/payrollError.jsp"/>
+        <forward name="essError" path="/error/payrollessError.jsp"/>
+  </global-forwards>
+
+ <action-mappings>
+		
+		<action path="/payhead/AckPayheadAction" scope="request"
+			parameter="/payhead/createdPayhead.jsp"
+			type="org.apache.struts.actions.ForwardAction">
+		</action>
+		
+		<action name="payheadForm" path="/payhead/beforePayhead" scope="request"
+			type="org.springframework.web.struts.DelegatingActionProxy" validate="false" >
+			<forward name="success" path="/payhead/payhead.jsp" />
+		</action>
+
+		<action name="payheadForm" path="/payhead/showPayhead" scope="request"
+			type="org.springframework.web.struts.DelegatingActionProxy" validate="false" >
+			<forward name="payheadDetails" path="/payhead/AckPayheadAction.do" redirect="true" />
+		</action>
+		
+		<action name="payheadForm" path="/payhead/modifyPayhead" scope="request"
+			type="org.springframework.web.struts.DelegatingActionProxy" validate="false" >
+			<forward name="success" path="/payhead/createdPayhead.jsp" />
+			<forward name="error" path="/payhead/payrollError.jsp"/>
+		</action>
+
+		<action name="payheadForm" path="/payhead/searchPayhead" scope="request"
+			type="org.springframework.web.struts.DelegatingActionProxy" validate="false" >
+			<forward name="success" path="/payhead/searchPayhead.jsp" />
+			<forward name="Modify" path="/payhead/modifyPayhead.jsp" />
+			<forward name="View" path="/payhead/viewPayhead.jsp" />
+		</action>
+
+
+		<action name="showPayslipForm" path="/payslipapprove/showPayslip" scope="request"
+			type="org.egov.payroll.client.payslipApprove.ShowPayslipApproveAction" validate="false" >
+			<forward name="success" path="/payslipapprove/approvePayslip.do" />
+		</action>
+
+		<action name="payslipApproveFrom" path="/payslipapprove/approvePayslip" scope="request"
+			type="org.egov.payroll.client.payslipApprove.PayslipApproveAction" validate="false" >
+			<forward name="regularPayslip" path="/payslipapprove/regularPayslipApprove.jsp" />
+			<forward name="afterApprove" path="/payslipapprove/afterPayslipApprove.do" />
+			<forward name="noPayslip" path="/payslipapprove/noPayslip.jsp" />
+		</action>
+
+		<action name="payslipInfoForm" path="/payslipapprove/payslipInfo" scope="request"
+			type="org.egov.payroll.client.payslipApprove.PayslipInfoAction" validate="false" >
+			<forward name="success" path="/payslipapprove/info.jsp" />
+		</action>
+
+		<action name="payslipApproveFrom" path="/payslipapprove/afterPayslipApprove" scope="request"
+			type="org.springframework.web.struts.DelegatingActionProxy" validate="false" >
+			<forward name="success" path="/payslipapprove/successfullApprove.jsp" />
+		</action>
+
+	    <!--		advance			-->
+		
+		<action name="advanceForm" path="/salaryadvance/beforeSalaryadvance" scope="request"
+			type="org.springframework.web.struts.DelegatingActionProxy" validate="false" >
+			<forward name="success" path="/advance/advance.jsp" />
+		</action>
+		<action name="advanceForm" path="/salaryadvance/afterSalaryadvance" scope="request"
+			 type="org.springframework.web.struts.DelegatingActionProxy" validate="false" >
+			<forward name="Save" path="/advance/viewAdvance.jsp" redirect="true"/>			
+			<forward name="Save and New" path="/salaryadvance/beforeSalaryadvance.do" redirect="true" />
+			<forward name="failure" path="/advance/error.jsp" />
+		</action>
+		
+		<action name="advanceForm" path="/salaryadvance/beforeModifyAdvance" scope="request"
+			type="org.springframework.web.struts.DelegatingActionProxy" validate="false" >
+			<forward name="modify" path="/advance/beforeModifyAdvance.jsp" />
+			<forward name="view" path="/advance/beforeViewAdvance.jsp" />
+		</action>
+		<action name="advanceForm" path="/salaryadvance/modifyAdvanceInfo" scope="request"
+			type="org.springframework.web.struts.DelegatingActionProxy" validate="false" >
+			<forward name="modify" path="/advance/modifyAdvance.jsp" />
+			<forward name="view" path="/advance/viewAdvance.jsp" />
+		</action>
+		<action name="advanceForm" path="/salaryadvance/afterModifyAdvance" scope="request"
+			type="org.springframework.web.struts.DelegatingActionProxy" validate="false" >
+			<forward name="modify" path="/salaryadvance/beforeModifyAdvance.do" />
+		</action>
+
+		<!-- action name="advanceForm" path="/salaryadvance/beforeSanction" scope="request"
+			type="org.egov.payroll.client.advance.BeforeSanctionAction" validate="false" >
+			<forward name="success" path="/advance/showAdvances.jsp" />			
+		</action>
+		
+		<action name="advanceForm" path="/salaryadvance/salaryadvanceInfo" scope="request"
+			type="org.egov.payroll.client.advance.AdvanceInfoAction" validate="false" >
+			<forward name="success" path="/advance/sanctionAdvance.jsp" />			
+		</action>
+		
+		<action name="advanceForm" path="/salaryadvance/afterSanction" scope="request"
+			type="org.egov.payroll.client.advance.AfterSanctionAction" validate="false" >
+			<forward name="sanction" path="/advance/viewAdvance.jsp" redirect="true"/>
+			<forward name="sanction" path="/salaryadvance/showAdvance.do" redirect="true"/>
+			<forward name="reject" path="/advance/searchAdvances.jsp" redirect="true"/>
+			<forward name="sanction and next" path="/salaryadvance/beforeSanction.do" redirect="true" />
+		</action -->
+
+
+		<action path="/payslip/PrintPayScale" scope="request"
+			parameter="/payslip/PrintPayScale.jsp"
+			type="org.apache.struts.actions.ForwardAction">
+		</action>
+		
+		<action path="/payslip/AckPaySlipAction" scope="request"
+			parameter="/payslip/SalarySlip.jsp"
+			type="org.apache.struts.actions.ForwardAction">
+		</action>
+		
+		<action  path="/payslip/BeforeManualGenPaySlips" 
+			type="org.springframework.web.struts.DelegatingActionProxy" 
+			scope="request"
+			name="salaryPaySlipForm"
+			validate="false"
+			input="/payslip/generatePaySlip.jsp">
+		<forward name="success" path="/payslip/generatePaySlip.jsp" />
+		<forward name="failure" path="/payslip/paySlipError.jsp" />
+		</action>
+		
+		<action  path="/payslip/BeforeCreatePayScale" 
+			type="org.springframework.web.struts.DelegatingActionProxy" 
+			scope="request"
+			name="salaryPaySlipForm"
+			validate="false">
+		<forward name="success" path="/payslip/CreatePayScale.jsp" />
+		</action>
+		
+		<action  path="/payslip/BeforeviewGenPaySlips" 
+			type="org.springframework.web.struts.DelegatingActionProxy" 
+			scope="request"
+			name="salaryPaySlipForm"
+			validate="false">
+		<forward name="success" path="/payslip/viewPayslip.jsp" />
+		</action>
+		
+		<action  path="/payslip/ManualGenPaySlipsCentralAction" 
+			type="org.springframework.web.struts.DelegatingActionProxy" 
+			scope="request"
+			name="salaryPaySlipForm"
+			validate="false">
+		<forward name="success" path="/payslip/viewPayslip.jsp" />
+		</action>
+		
+		<action  path="/payslip/viewGenPaySlips" 
+			type="org.springframework.web.struts.DelegatingActionProxy" 
+			scope="request"
+			name="salaryPaySlipForm"
+			validate="false">
+		<forward name="viewPayslips" path="/payslip/viewPayslip.jsp" />
+		</action>
+
+		<action  path="/payslip/viewPaySlip" 
+			type="org.egov.payroll.client.payslip.PayslipInfoAction" 
+			scope="request"
+			name="salaryPaySlipForm"
+			validate="false">
+		<forward name="success" path="/payslip/SalarySlip.jsp" />
+		</action>
+		
+		<action  path="/payslip/viewPayScale" 
+			type="org.springframework.web.struts.DelegatingActionProxy" 
+			scope="request"
+			name="salaryPaySlipForm"
+			validate="false">
+		<forward name="success" path="/payslip/PrintPayScale.jsp" />
+		</action>
+		
+		<action  path="/payslip/modifyPaySlips" 
+			type="org.springframework.web.struts.DelegatingActionProxy" 
+			scope="request"
+			name="salaryPaySlipForm"
+			validate="false">
+		<forward name="success" path="/payslip/revisePayslip.jsp" />
+		</action>
+		  
+		  <action  path="/payslip/modifyPayScale" 
+			type="org.springframework.web.struts.DelegatingActionProxy" 
+			scope="request"
+			name="salaryPaySlipForm"
+			validate="false">
+		<forward name="success" path="/payslip/modifyPayScale.jsp" />
+		</action>
+		
+		<action  path="/payslip/generatePaySlips" 
+			 type="org.springframework.web.struts.DelegatingActionProxy" 
+			 name="salaryPaySlipForm"
+			 scope="request"
+			validate="false"
+			input="/payslip/generatePaySlip.jsp">
+		<forward name="success" path="/payslip/AckPaySlipAction.do" redirect="true"/>
+		<forward name="failure" path="/payslip/paySlipError.jsp" />
+		</action>
+			 
+			
+		<action  path="/generatePDF" 
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			name="salaryPaySlipForm"
+			validate="false">
+		</action>
+		<action  path="/payslip/generateBatchPaySlips"
+			 type="org.springframework.web.struts.DelegatingActionProxy" 
+			 name="salaryPaySlipForm"
+			 scope="request"
+			validate="false">
+		<forward name="success" path="/payslip/genBatchPaySlips.jsp" redirect="true"/>
+		<forward name="failure" path="/payslip/paySlipError.jsp" />
+		<forward name="multi" path="/payslip/genBatchPaySlips.jsp" />
+		<forward name="beforeBatchPayslip" path="/payslip/genBatchPaySlips.jsp" />
+		</action>
+		
+		
+		<!-- Action definitions for reports -->
+		
+		<action  path="/reports/payslipreports"
+				 type="org.egov.payroll.reports.SearchAction" 
+				 name="payslipSearchForm"
+				 scope="request"
+				validate="false">
+			<forward name="success" path="/reports/paySlipsReport.jsp"/>
+			<forward name="failure" path="/error.jsp" />
+		</action>
+		
+		<action  path="/reports/payslipHistoryReport"
+				 type="org.egov.payroll.reports.PayslipHistoryReportAction" 
+				 name="payslipSearchForm"
+				 scope="request"
+				validate="false">
+			<forward name="success" path="/reports/payslipHistory.jsp"/>
+			<forward name="failure" path="/error.jsp" />
+		</action>
+
+		<!--  Payslip Exception report	-->
+		<action  path="/reports/payslipExceptionReports"
+				 type="org.egov.payroll.reports.PayslipExceptionReportAction" 
+				 name="payslipSearchForm"
+				 scope="request"
+				validate="false">
+			<forward name="success" path="/reports/payslipExceptionReport.jsp"/>
+			<forward name="failure" path="/error.jsp" />
+		</action>
+		
+		<action  path="/reports/paysumarryreport"
+						 type="org.egov.payroll.reports.PaySummaryReport" 
+						 name="payslipSearchForm"
+						 scope="request"
+						validate="false">
+					<forward name="success" path="/reports/paysummary.jsp"/>
+					<forward name="failure" path="/error.jsp" />
+		</action>
+		
+		<action  path="/payslip/createPayScale" 
+			type="org.springframework.web.struts.DelegatingActionProxy" 
+			name="salaryPaySlipForm"
+			scope="request"
+			validate="false"
+			input="/payslip/CreatePayScale.jsp">
+		<forward name="success" path="/payslip/PrintPayScale.do" redirect="true"/>
+		<forward name="failure" path="/payslip/paySlipError.jsp" />
+		<forward name="viewPayscale" path="/payslip/ViewPayscale.jsp"/>
+		</action>
+		
+		<action  path="/payslip/modifyGenPayScale" 
+			type="org.springframework.web.struts.DelegatingActionProxy" 
+			name="salaryPaySlipForm"
+			scope="request"
+			validate="false"
+			input="/payslip/modifyPayScale.jsp">
+		<forward name="success" path="/payslip/PrintPayScale.do" redirect="true"/>
+		<forward name="failure" path="/payslip/paySlipError.jsp" />
+		</action>
+		
+		<action  path="/payslip/modifyGenPaySlips" 
+			 type="org.springframework.web.struts.DelegatingActionProxy" 
+			 name="salaryPaySlipForm"
+			 scope="request"
+			validate="false"
+			input="/payslip/revisePayslip.jsp">
+		<forward name="success" path="/payslip/AckPaySlipAction.do" />
+		<forward name="failure" path="/payslip/paySlipError.jsp" />
+		</action>
+		
+		<action  path="/payslip/generatePaySlipsAgain" 
+			 type="org.springframework.web.struts.DelegatingActionProxy" 
+			 name="salaryPaySlipForm"
+			 scope="request"
+			validate="false"
+			input="/payslip/generatePaySlip.jsp">
+		<forward name="success" path="/payslip/BeforeManualGenPaySlips.do" redirect="true"/>
+		<forward name="successAndResolve" path="/reports/payslipreports.do" redirect="true"/>
+		<forward name="successAndSupplement" path="/payslip/generateSuppPaySlip.do?submitType=beforeSuppPayslip" redirect="true"/>
+		<forward name="successAndNew" path="/payslip/ManualGenPaySlipsCentralAction.do?mode=central" redirect="true"/>
+		<forward name="failure" path="/payslip/paySlipError.jsp" />
+		</action>	
+
+		<action  path="/payslip/generateSuppPaySlip" 
+					 type="org.springframework.web.struts.DelegatingActionProxy" 
+					 name="salaryPaySlipForm"
+					 parameter="submitType"
+					 scope="request"
+					validate="false">
+				<forward name="success" path="/payslip/BeforeManualGenPaySlips.do" redirect="true"/>
+				<forward name="failure" path="/payslip/paySlipError.jsp" />
+				<forward name = "reGeneratePaySlip" path = "/payslip/BeforeManualGenPaySlips.do"/>
+				<forward name = "beforeSuppPayslip" path = "/payslip/supplementaryPayslip.jsp"/>
+				<forward name = "leaveEncashment" path = "/payslip/BeforeManualGenPaySlips.do"/>
+				
+		</action>
+
+
+		<action path="/exception/beforeException" 
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			name="exceptionForm"
+			parameter="submitType"
+			scope="request">
+		<forward name = "showExceptionJsp" path = "/exception/createException.jsp" />
+		<forward name = "createExceptionJsp" path = "/exception/successFullException.jsp" redirect="true"/>		
+		<forward name = "showExceptions" path = "/exception/showExceptions.jsp"/>	
+		<forward name = "editException" path = "/exception/editException.jsp"/>	
+		<forward name = "viewException" path = "/exception/viewException.jsp"/>	
+		<forward name = "afterEditException" path = "/exception/editException.jsp"/>
+		<forward name = "reGeneratePaySlip" path = "/payslip/modifyPaySlips.do"/>	
+		<forward name = "ReleasePay" path = "/exception/editException.jsp"/>	
+		</action>
+		
+
+		<action  path="/payslip/createPayScaleAgain" 
+			 type="org.springframework.web.struts.DelegatingActionProxy" 
+			 name="salaryPaySlipForm"
+			 scope="request"
+			validate="false"
+			input="/payslip/CreatePayScale.jsp">
+		<forward name="success" path="/payslip/BeforeCreatePayScale.do?mode=payscale" redirect="true"/>
+		<forward name="failure" path="/payslip/paySlipError.jsp" />
+		</action>
+
+		<!--   Advance Disbursement			    		
+		<action path="/salaryadvance/disbursementByCheque" 
+			scope="request" 
+			type="org.egov.payroll.client.advance.AdvanceDisbursementByChequeAction" 
+			name="AdvanceDisbursementByChequeForm"
+			parameter="submitType"
+			input="/advance/DisbursementByCheque.jsp">
+			<forward name="createDisbursement" path="/advance/DisbursementByCheque.jsp"/>
+			<forward name="viewModifyDisbursement" path="/advance/DisbursementByCheque.jsp"/>
+			<forward name="disbursementList" path="/advance/ChequeDisbursementList.jsp"/>
+			<forward name="printDetails" path="/advance/Reports/ChequeDisbursementReport.jsp"/>
+			<forward name="error" path="/error/payrollError.jsp"/>			
+		</action>
+		<action path="/salaryadvance/advanceDisbursement" 
+			scope="request" 
+			type="org.egov.payroll.client.advance.AdvanceDisbursementAction" 
+			name="AdvanceDisbursementForm"
+			parameter="submitType"
+			input="/advance/AdvanceDisbursement.jsp">
+			<forward name="getEmployeeDetails" path="/advance/EmployeeDetails.jsp"/>
+			<forward name="createDisbursement" path="/advance/AdvanceDisbursement.jsp"/>
+			<forward name="viewModifyDisbursement" path="/advance/AdvanceDisbursement.jsp"/>
+			<forward name="disbursementList" path="/advance/AdvanceDisbursementList.jsp"/>
+			<forward name="printDetails" path="/advance/Reports/AdvanceDisbursementReport.jsp"/>
+			<forward name="error" path="/error/payrollError.jsp"/>			
+		</action-->
+
+	<!-- Provident Fund Module -->
+		<action path="/providentfund/pfsetup" scope="request" type="org.springframework.web.struts.DelegatingActionProxy" 
+			name="PFForm" parameter="submitType">			    
+			<forward name="loadData" path="/providentfund/PFSetup.jsp" />
+			<forward name="quartzform" path="/providentfund/quartz.jsp" />
+			<forward name="error"   path="/error/rrbacerror.jsp"/>
+		</action>
+
+
+
+	<!--  Pension module		-->	
+	<!--	
+		<action path="/pension/gratuityAction"
+			type="org.egov.payroll.client.pension.GratuityAction"
+			name="gratuityForm"
+			parameter="submitType"
+			scope="request"
+			input="/pension/searchForGratuityCreate.jsp">
+			<forward name="beforeGratuityCreate" path="/pension/searchForGratuityCreate.jsp" />
+			<forward name="gratuityCreate" path="/pension/createEmpGratuity.jsp" redirect="true"/>
+			<forward name="beforeGratuityModify" path="/pension/searchForGratuityModify.jsp" />
+			<forward name="error" path="/error/payrollError.jsp"/>
+		</action>	-->
+
+
+
+	<!--  Pension module		-->	
+	
+
+	<!--	<action path="/pension/AckGratuityAction" scope="request" type="org.egov.payroll.client.pension.AckGratuity" name="gratuityForm">
+			<forward name="ack" path="/pension/createdGratuity.jsp"/>
+		</action>		-->
+
+		<action path="/pension/gratuityAction"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			name="gratuityForm"
+			parameter="submitType"
+			scope="request" 
+			input="/recordRecovery/search.jsp">
+			<forward name="beforeGratuityCreate" path="/pension/gratuityCreate.jsp" />
+			<forward name="gratuityCreated" path="/pension/createdGratuity.jsp" redirect="true"/>
+			<forward name="beforeGratuityModify" path="/pension/gratuityModify.jsp" />
+			<forward name="beforeGratuityView" path="/pension/gratuityAction.do?mode=view&amp;submitType=gratuityView" redirect="true"  />
+			<forward name="gratuityView" path="/pension/gratuityView.jsp" />
+			<forward name="beforeRecordRecovery" path="/recordRecovery/recordRecoveries.jsp" />
+			<forward name="createdRecovery" path="/pension/gratuityAction.do?mode=view&amp;submitType=viewRecovery" redirect="true" />
+			<forward name="viewRecovery" path="/recordRecovery/viewRecovery.jsp" />
+			<forward name="beforeGratuityDisburse" path="/pension/gratuityDisburse.jsp" />
+			<forward name="errorBeforeGratuityDisburse" path="/pension/searchForGratuityDisburse.jsp?mode=create" />
+			<forward name="createdGratuityDisburse" path="/pension/gratuityAction.do?submitType=viewGratuityDisburse" redirect="true" />
+			<forward name="viewGratuityDisburse" path="/pension/gratuityDisbursementReport.jsp" />
+			<forward name="error" path="/error/payrollError.jsp"/>
+		</action>
+
+		<action path="/pension/pensionAction"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			name="pensionForm"
+			parameter="submitType"
+			scope="request">
+			<forward name="createdPensionDisburse" path="/pension/pensionAction.do?submitType=viewPensionDisburse" redirect="true" />
+			<forward name="viewPensionDisburse" path="/pensionDisbursement/pensionDisbursementReport.jsp" />
+			<forward name="errorBeforePensionDisburse" path="/pensionDisbursement/pensionDisbursement.jsp?mode=create" />
+		</action>
+
+		<action  path="/pension/generateBatchPensionDisburse"
+			 type="org.egov.payroll.client.pension.BulkPensionDisburseAction" 
+			 name="pensionForm"
+			 scope="request"
+			validate="false">
+		<forward name="success" path="/pensionDisbursement/batchPensionDisbursement.jsp"/>
+		
+		</action>
+
+		 <action path="/nomineeTransfer/AfterNomineeAction" 
+			type="org.springframework.web.struts.DelegatingActionProxy" 
+			name="pensionNomineeTransferForm" 
+			parameter="submitType"
+			scope="request">
+			<forward name = "createScreen" path = "/nomineeTransfer/viewNomineeDetails.jsp" /> 	
+			<forward name = "updateNominee" path = "/nomineeTransfer/viewDetails.jsp" /> 
+			<forward name = "terminateNominee" path = "/nomineeTransfer/employeeNomineeDetail.jsp" /> 
+			<forward name = "searchScreen" path = "/nomineeTransfer/employeeNomineeDetail.jsp" /> 
+			<forward name="error" path="/error/payrollError.jsp"/>
+	   </action>
+		
+		<!--  Payslip Exception report	-->
+		<action  path="/reports/payslipExceptionReports"
+				 type="org.springframework.web.struts.DelegatingActionProxy" 
+				 name="payslipSearchForm"
+				 scope="request"
+				validate="false">
+			<forward name="success" path="/reports/payslipExceptionReport.jsp"/>
+			<forward name="failure" path="/error.jsp" />
+		</action>
+
+    <!-- Bulk Rule Updation -->
+
+		<action  path="/bulkRuleUpdation/BulkUpdateMasterAction"
+				 type="org.springframework.web.struts.DelegatingActionProxy" 
+				 name="BulkMasterForm"
+				 parameter="submitType"
+				 scope="request"
+				validate="false">
+			<forward name="salaryCode" path="/bulkRuleUpdation/bulkRuleMasterUpdation.jsp"/>
+			<forward name="success" path="/bulkRuleUpdation/BulkUpdateMasterAction.do?submitType=viewRule" redirect="true" />
+			<forward name="view" path="/bulkRuleUpdation/viewBulkRuleMasterUpdation.jsp"/>
+			<forward name="searchRule" path="/bulkRuleUpdation/searchRule.jsp"/>
+			<forward name="error" path="/error/payrollError.jsp"/>
+
+			<forward name="NoResult" path="/bulkRuleUpdation/BulkUpdateMasterAction.do?submitType=searchBeforeLoad"/>
+			<forward name="showList" path="/bulkRuleUpdation/searchRule.jsp"/>
+			<forward name="viewResult" path="/bulkRuleUpdation/bulkRuleMasterUpdation.jsp"/>
+		</action>
+
+<!--	Payhead Rule	-->
+		<action  path="/payhead/payheadRule"
+				 type="org.springframework.web.struts.DelegatingActionProxy" 
+				 name="payheadRuleForm"
+				 parameter="submitType"
+				 scope="request"
+				validate="false">
+			<forward name="beforePayheadRule" path="/payhead/searchPayhead.do"/>
+			<forward name="createdPayheadRule" path="/payhead/payheadRule.do?submitType=viewPayheadRule" redirect="true"/>
+		    <forward name="createmodifyPayheadRule" path="/payhead/createPayheadRule.jsp" redirect="true"/>
+			<forward name="viewPayheadRule" path="/payhead/viewPayheadRule.jsp"/>
+			
+		</action>
+ <!--   EMployee Payroll  -->
+	        <action path="/empPayroll/payrollModify" scope="request" 
+	        type="org.springframework.web.struts.DelegatingActionProxy"
+			name="genericBeforeForm" >    
+		    <forward name ="empPayroll" path ="/empPayroll/SearchEmployee.jsp" />
+			<forward name ="searchEmployee" path ="/empPension/searchEmployee.jsp" />
+		    </action>
+			
+			 <action path="/empPayroll/executeSearch"  type="org.springframework.web.struts.DelegatingActionProxy"
+			name="searchForm" 
+			parameter="submitType"
+			scope="session">
+		    <forward name ="payrollSearch" path ="/empPayroll/SearchEmployee.jsp" />
+			<forward name ="successPension" path ="/empPension/searchEmployee.jsp" />
+		    </action>
+          
+		    <action path="/empPayroll/payrollBeforeCreate"  type="org.springframework.web.struts.DelegatingActionProxy"
+			name="genericBeforeForm" 
+			parameter="submitType"
+			scope="session">
+		    <forward name ="success" path ="/empPayroll/PayScaleTab.jsp" />
+		    <forward name ="noPaystructre" path ="/empPayroll/SearchEmployee.jsp" />
+		    </action>
+           
+		    <action path="/empPayroll/payrollCreate" scope="request" 
+	        type="org.springframework.web.struts.DelegatingActionProxy"
+			name="payrollForm"
+            parameter="submitType">    
+		    <forward name ="empPayroll" path ="/empPayroll/SearchEmployee.jsp" />
+			<forward name = "success" path = "/empPayroll/sucsModify.jsp"/>
+		    </action>
+
+
+		  <!--   EMployee Payroll  -->
+
+		<!--pension mapping -->
+		<action path="/empPension/BeforePensionSearchAction" 
+			type="org.springframework.web.struts.DelegatingActionProxy" 
+			name="employeePensionForm" 
+			parameter="submitType"
+			scope="request">
+			<forward name = "SearchScreen" path = "/empPension/searchForPensionById.jsp"/> 	   			
+		</action>
+       
+	<action path="/empPension/AfterPensionSearchAction" 
+		type="org.springframework.web.struts.DelegatingActionProxy" 
+		name="employeePensionForm" 
+		parameter="submitType"
+		scope="request">
+		<forward name = "createScreen" path = "/empPension/pensionMasterCreate.jsp"/> 	   
+		<forward name = "firstModifyScreen" path = "/empPayroll/payrollModify.do?module=Pension&amp;masters=Pension&amp;mode=Modify"/>
+	        <forward name = "firstCreateScreen" path = "/empPayroll/payrollModify.do?module=Pension&amp;masters=Pension&amp;mode=Create"/>
+                <forward name = "firstViewScreen" path = "/empPayroll/payrollModify.do?module=Pension&amp;masters=Pension&amp;mode=View"/>
+		<forward name = "modifyScreen" path="/empPension/modifyPensionheader.jsp"/>
+
+	</action>
+       
+         
+	<action path="/empPension/AfterPensionHeaderAction" 
+		type="org.springframework.web.struts.DelegatingActionProxy" 
+		name="employeePensionForm" 
+		parameter="submitType"
+		scope="request">
+	<forward name = "success" path = "/empPension/viewPensionHeader.jsp" /> 	 
+	<forward name = "successModify" path = "/empPension/AfterPensionSearchAction.do?submitType=beforeViewDetails" /> 	  
+	</action>
+	
+	 	<action path="/empPension/MasterSetUpAction" 
+		type="org.springframework.web.struts.DelegatingActionProxy" 
+		name="masterDataForm" 
+		parameter="submitType"
+		scope="request">
+		<forward name = "listOfKeysView" path ="/empPension/viewMasterSetUp.jsp" />
+		<forward name = "listOfKeysCreate" path ="/empPension/createMasterSetUp.jsp" /> 
+
+				
+	 </action>	
+
+	<action  path="/reports/PayBillSummaryReport"
+		type="org.egov.payroll.reports.PayBillSummaryReport" 
+		name="payslipSearchForm"
+		scope="request"
+		validate="false">
+		<forward name="success" path="/reports/payBillSummaryReport.jsp"/>
+		<forward name="failure" path="/error.jsp" />
+	</action>
+	
+	<action  path="/reports/funcPayheadSummaryReport"
+		type="org.egov.payroll.reports.FunctionaryPayheadSummaryReport" 
+		name="payslipSearchForm"
+	 	scope="request"
+		validate="false">
+		<forward name="success" path="/reports/functionaryPayheadSummary.jsp"/>
+		<forward name="failure" path="/error.jsp" />
+	</action>		
+	
+	<action  path="/pension/gratuityAJAXAction"
+		type="org.springframework.web.struts.DelegatingActionProxy" 
+		name="gratuityForm"
+	 	scope="request"
+		validate="false">
+		<forward name="success" path="/commons/gratuityAJAX.jsp"/>
+	</action>
+	
+	<action  path="/pension/checkNomineeEligibility"
+		type="org.springframework.web.struts.DelegatingActionProxy" 
+		name="employeePensionForm"
+	 	scope="request"
+		validate="false">
+		<forward name="success" path="/empPension/checkNomineeEligibility.jsp"/>
+	</action>
+	
+	<action  path="/pension/PensionHeaderAJAX"
+		type="org.springframework.web.struts.DelegatingActionProxy" 
+		name="employeePensionForm"
+	 	scope="request"
+		validate="false">
+		<forward name="success" path="/empPension/nomineePopulateAjax.jsp"/>
+	</action>
+	
+	<action  path="/reports/paysummary"
+		type="org.springframework.web.struts.DelegatingActionProxy" 
+	 	scope="request">
+		<forward name="success" path="/reports/paysummary.jsp"/>
+	</action>	
+
+<action  path="/reports/paylipException"
+		type="org.springframework.web.struts.DelegatingActionProxy" 
+	 	scope="request">
+		<forward name="success" path="/reports/payslipExceptionReport.jsp"/>
+	</action>
+	
+	<action  path="/reports/paylipHistory"
+		type="org.springframework.web.struts.DelegatingActionProxy" 
+	 	scope="request">
+		<forward name="success" path="/reports/payslipHistory.jsp"/>
+	</action>
+	
+	<action  path="/reports/functionaryPayhead"
+		type="org.springframework.web.struts.DelegatingActionProxy" 
+	 	scope="request">
+		<forward name="success" path="/reports/functionaryPayheadSummary.jsp"/>
+	</action>
+	
+	<action  path="/reports/payBillSummaryReport"
+		type="org.springframework.web.struts.DelegatingActionProxy" 
+	 	scope="request">
+		<forward name="success" path="/reports/payBillSummaryReport.jsp"/>
+	</action>
+	
+	<action  path="/payslip/unprocessPayslips"
+		type="org.springframework.web.struts.DelegatingActionProxy" 
+	 	scope="request">
+		<forward name="success" path="/reports/paySlipsReport.jsp?mode=resolve"/>
+	</action>
+	
+	<action  path="/reports/selfService" 
+						 type="org.springframework.web.struts.DelegatingActionProxy" 
+					 parameter="reportType"
+					 scope="request"
+					  name="payslipSearchForm"
+					validate="false">
+				<forward name="pfReport" path="/reports/PFReport.jsp"/>
+				<forward name="paySummaryReport" path="/reports/paysumarryreport.do"/>
+				<forward name="payslipHistory" path="/reports/payslipHistoryReport.do"/>
+				<forward name="essError" path="/error/error.jsp" />
+
+	</action>
+
+
+</action-mappings>
+     
+  	
+	<message-resources parameter="EISPayrollApplicationResources" />
+	<plug-in className="org.springframework.web.struts.ContextLoaderPlugIn">
+        <set-property property="contextConfigLocation" value="/WEB-INF/payroll_action_beans.xml"/>
+	 </plug-in>
+    <plug-in className="org.apache.struts.validator.ValidatorPlugIn">
+              <set-property property="pathnames" value="/WEB-INF/validator-rules.xml,/WEB-INF/validation.xml"/>
+              <!-- <set-property property="stopOnFirstError" value="false"/> -->
+	</plug-in>
+	
+</struts-config>

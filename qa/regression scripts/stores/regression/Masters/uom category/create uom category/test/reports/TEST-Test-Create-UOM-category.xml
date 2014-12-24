@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite failures="1" errors="0" name="Test_Create_UOM_category" time="13.648" assertions="4" tests="1">
+  <testcase name="test_0010_create_uom_category_with_alphanumerics" time="13.648" assertions="4">
+    <failure type="Test::Unit::AssertionFailedError" message="TC: 0010. Couldn't find text: eGov Stores - UOM Category. Create UOM category Screen....">
+TC: 0010. Couldn't find text: eGov Stores - UOM Category. Create UOM category Screen.
+&lt;nil&gt; expected to not be nil. (Test::Unit::AssertionFailedError)
+c:/stores_qa/regression/Masters/uom category/stores_uom_category_methods.rb:51:in `check_for_create_uom_category_success'
+test_create_uom_category.rb:38:in `test_0010_create_uom_category_with_alphanumerics'    </failure>
+  </testcase>
+  <system-out>
+    <![CDATA[5
+2
+5
+3
+5
+4
+5
+5
+]]>
+  </system-out>
+  <system-err>
+    <![CDATA[]]>
+  </system-err>
+</testsuite>

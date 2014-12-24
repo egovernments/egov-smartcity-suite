@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 19, 2007 2:57:28 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+	<class name="org.egov.works.models.masters.NewsPaper"
+		table="EGW_NEWSPAPER_MASTER">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_NEWSPAPER_MASTER_SEQ</param>
+			</generator>
+		</id>
+	
+		<property name="code" type="string" >
+			<column name="CODE" length="50" not-null="true" unique="true" />
+		</property>
+		<property name="name" type="string">
+			<column name="NAME" length="255" not-null="true" /> 
+		</property>
+		<property name="sequence" type="double">
+            <column name="SEQUENCE" precision="20" not-null="true" />
+        </property>
+		<property name="isEnabled" type="boolean">
+			<column name="ISENABLED" />
+		</property>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" fetch="select" not-null="true"/>
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY" fetch="select"/>
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" not-null="true"/>
+		<property name="modifiedDate" column="MODIFIEDDATE" type="timestamp" />	
+	</class>
+	<query name="ACTIVE_NEWSPAPERS">
+		<![CDATA[
+     	from NewsPaper where isEnabled=1 order by sequence asc
+    ]]>
+	</query>
+	
+	<query name="GETNEWSPAPERSBYID">
+		<![CDATA[
+     	from NewsPaper where id in(:param_0)
+    	]]>
+	</query>
+</hibernate-mapping>

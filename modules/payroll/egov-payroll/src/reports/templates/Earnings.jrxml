@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Earnings-test" language="groovy" pageWidth="612" pageHeight="792" columnWidth="610" leftMargin="1" rightMargin="1" topMargin="1" bottomMargin="1">
+	<parameter name="CURRENT_PAYID" class="java.math.BigDecimal"/>
+	<queryString>
+		<![CDATA[SELECT sal.head , earn.AMOUNT,RULE.PERCENTAGE, sal.order_id AS ORDERID FROM EGPAY_EARNINGS earn LEFT JOIN
+EGPAY_SALARYCODES sal ON  earn.ID_SALCODE = sal.ID  LEFT JOIN EGPAY_PAYGENRULESSETUP_MSTR RULE  ON sal.ID=RULE.SALARYCODE_ID,eg_employee emp,EGPAY_EMPPAYROLL pay WHERE
+earn.ID_EMPPAYROLL =$P{CURRENT_PAYID} AND earn.ID_EMPPAYROLL=pay.ID AND pay.ID_EMPLOYEE=emp.ID  AND  (RULE.ID IS NULL OR  RULE.ID= (SELECT MAX(rl.ID) FROM EGPAY_PAYGENRULESSETUP_MSTR rl WHERE
+ rl.EFFECTIVE_DATE<=(SELECT pr.TODATE FROM EGPAY_EMPPAYROLL pr WHERE pr.ID=$P{CURRENT_PAYID}) AND rl.SALARYCODE_ID=RULE.SALARYCODE_ID AND (rl.EMPGROUPMSTR_ID IS NULL OR rl.EMPGROUPMSTR_ID=emp.EMPCATMSTR_ID))) ORDER BY sal.order_id ASC]]>
+	</queryString>
+	<field name="HEAD" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="AMOUNT" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="PERCENTAGE" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ORDERID" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="basicAmt" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$V{basicAmt}.add($F{AMOUNT}).setScale(2,java.math.BigDecimal.ROUND_FLOOR)]]></variableExpression>
+		<initialValueExpression><![CDATA[Integer.valueOf(0)]]></initialValueExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="29" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="1" width="108" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{HEAD}+($F{PERCENTAGE}!=null?"("+$F{PERCENTAGE}+"%)":"")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="108" y="1" width="110" height="13"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{AMOUNT}.setScale(2,java.math.BigDecimal.ROUND_FLOOR)]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="false">
+				<reportElement x="108" y="14" width="109" height="15" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[Boolean.valueOf($F{HEAD}.equals("GP"))]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{basicAmt}.setScale(2,java.math.BigDecimal.ROUND_FLOOR)]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="14" width="108" height="15" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[Boolean.valueOf($F{HEAD}.equals("GP"))]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<text><![CDATA[Total(Basic+GP)]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

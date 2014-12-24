@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.lib.rjbac.jurisdiction.Jurisdiction" table="EG_USER_JURLEVEL">
+		<id name="id" column="ID_USER_JURLEVEL" type="integer">
+			<generator class="native">
+				<param name="sequence">SEQ_EG_USER_JURLEVEL</param>
+			</generator>
+		</id>
+		<timestamp column="UPDATETIME" name="updateTime" access="property" unsaved-value="null" />
+		<many-to-one name="user" column="ID_USER" class="org.egov.lib.rjbac.user.UserImpl" />
+		<many-to-one name="jurisdictionLevel" column="ID_BNDRY_TYPE" class="org.egov.lib.admbndry.BoundaryTypeImpl" />
+		<set name="jurisdictionValues" inverse="true" cascade="save-update,persist">
+			<key>
+				<column name="ID_USER_JURLEVEL" />
+			</key>
+			<one-to-many class="org.egov.lib.rjbac.jurisdiction.JurisdictionValues" />
+		</set>
+	</class>
+</hibernate-mapping>

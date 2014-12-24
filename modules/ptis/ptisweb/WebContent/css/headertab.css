@@ -1,0 +1,122 @@
+@charset "utf-8";
+
+
+#header {
+	FONT-SIZE: 10px;
+	FLOAT: left;
+	LINE-HEIGHT: normal;
+	background-color: #CCCCCC;
+	background-repeat: repeat-x;
+	background-position: 50% bottom;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+}
+
+#header UL {
+	PADDING-RIGHT: 1px;
+	PADDING-LEFT: 0px;
+	MARGIN: -4px;
+	PADDING-TOP: 5px;
+	LIST-STYLE-TYPE: none
+}
+
+#header LI {
+	PADDING-RIGHT: 0px;
+	PADDING-LEFT: 9px;
+	FLOAT: left;
+	PADDING-BOTTOM: 0px;
+	MARGIN: 0px;
+	PADDING-TOP: 0px;
+	
+	background-repeat: no-repeat;
+	background-position: left top;
+}
+
+#header A {
+	PADDING-RIGHT: 15px;
+	DISPLAY: block;
+	PADDING-LEFT: 6px;
+	FONT-WEIGHT: bold;
+	FLOAT: left;
+	PADDING-BOTTOM: 4px;
+	COLOR: #FFFFFF;
+	PADDING-TOP: 5px;
+	TEXT-DECORATION: none;
+	
+	background-repeat: no-repeat;
+	background-position: right top;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+}
+
+#header A {
+	FLOAT: none
+}
+
+#header A:hover {
+	COLOR: #09589F
+}
+
+#header #current {
+	
+}
+
+#header #current A {
+	
+	PADDING-BOTTOM: 5px;
+	COLOR: #09589F
+}
+
+
+#Tabs {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	list-style: none;
+	font-weight: bold;
+	margin: 0 auto 0;
+	padding: 4px 10px 3px ;
+	float: left;
+	font-size: 85%;
+}
+
+#Tabs li {
+	padding: 0;
+	margin: 0;
+	
+}
+
+#Tabs a {
+	
+	padding: 5px 30px 6px 8px;
+	float: left;
+	color: #fff;
+	text-align: center;
+	text-decoration: none;
+}
+
+#Tabs li.Active {
+	background-color : #FFFFFF
+}
+
+#Tabs li.Active a {
+	color: #005C7D;
+	
+	text-decoration: none;
+}
+
+#Tabs li.First {
+	border-left: 1px solid;
+	padding-left: 11px;
+}
+
+#Tabs li.Last a {
+	
+}
+
+#Tabs li.BeforeActive a {
+	
+}
+
+#Tabs li.ActiveLast a {
+	
+}
+

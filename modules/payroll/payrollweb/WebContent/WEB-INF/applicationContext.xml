@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+   <beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+    default-lazy-init="true">
+
+    <bean id="eisLeaveService" class="org.egov.pims.empLeave.service.EmpLeaveServiceImpl"></bean>
+    
+	<bean id="payRollService" class="org.egov.payroll.services.payslip.PayRollServiceImpl"></bean>
+
+	<!-- <bean id="employeePnsnMgr" class="org.egov.payroll.services.pension.EmpPensionManager"></bean> -->
+
+	<!-- <bean id="pensionManager" class="org.springframework.ejb.access.LocalStatelessSessionProxyFactoryBean" 
+		lazy-init="true"> <property name="jndiName"> <value>PensionManagerHome</value> 
+		</property> <property name="resourceRef"> <value>false</value> </property> 
+		<property name="businessInterface"> <value>org.egov.payroll.services.pension.PensionManager</value> 
+		</property> </bean> -->
+
+	<bean id="payheadService" class="org.egov.payroll.services.payhead.PayheadServiceImpl"></bean>
+
+	<bean id="employeeVewService" parent="persistenceService"
+		lazy-init="true">
+		<property name="type">
+			<value>org.egov.pims.model.EmployeeView</value>
+		</property>
+	</bean>
+
+     <bean name="scheduler"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
+		lazy-init="false">
+		<property name="applicationContextSchedulerContextKey">
+			<value>applicationContext</value>
+		</property>
+		<!-- <property name="configLocation">
+			<value>classpath:quartz-payroll.properties</value>
+		</property> -->
+		<property name="startupDelay">
+			<value>300</value>
+		</property>
+	</bean> 
+
+
+
+  	<bean name="jobDetail"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass"
+			value="org.egov.payroll.services.payslip.AutoGenerationPaySlipJob" />
+	</bean>
+	<bean id="payslipProcessImpl" class="org.egov.payroll.services.payslip.PayslipProcessImpl">
+		<property name="payslipWorkflowService">
+			<ref bean="payslipWorkflowService" />
+		</property>
+		<property name="payrollExternalInterface">
+			<ref bean="payrollExternalInterface" />
+		</property>
+	</bean> 
+
+	<bean id="batchGenDtlService" parent="persistenceService"
+		lazy-init="true">
+		<property name="type">
+			<value>org.egov.payroll.model.BatchGenDetails</value>
+		</property>
+	</bean>
+
+	<bean id="salaryPaybill" class="org.egov.payroll.services.payslipApprove.SalaryPaybill">
+		<property name="payrollExternalInterface" ref="payrollExternalInterface" />
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="commonsService" ref="commonsService" />
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="scriptExecutionService" ref="scriptExecutionService" />
+	</bean>
+
+	<bean id="payrollReportService" class="org.egov.payroll.services.reports.PayrollReportService">
+		<property name="sessionFactory" ref="egovSessionFactory" />
+	</bean>
+
+	<bean id="billNumberMasterService" parent="persistenceService"
+		scope="prototype">
+		<property name="type" value="org.egov.masters.model.BillNumberMaster" />
+	</bean>
+	<bean id="reportHelper" class="org.egov.utils.ReportHelper" />
+</beans>

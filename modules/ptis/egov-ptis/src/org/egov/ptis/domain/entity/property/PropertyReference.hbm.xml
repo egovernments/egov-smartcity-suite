@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.ptis.domain.entity.property.PropertyReference" table="EGPT_PROP_REF">
+		<id
+			name="idPropertyRef" column="ID_PROPREF" type="int">
+			<generator class="sequence">
+					<param name="sequence">SEQ_PROP_REF</param>
+			</generator>
+		</id>
+		<property name="fileNo" column="FILE_NO" />
+		<property name="fileDate" column="FILE_DATE" />
+		<property name="surveyNo" column="SURVEY_NO" />
+		<property name="isHistory" column="IS_HISTORY" />
+		<many-to-one name="basicProperty" column="ID_BASIC_PROPERTY"
+		class="org.egov.ptis.domain.entity.property.BasicPropertyImpl"  />
+		<properties name="defaultPropertyReference">
+    	    <many-to-one name="basicProperty" class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" column="ID_BASIC_PROPERTY" insert="false" update="false" /> 
+    	    <property name="isHistory" column="IS_HISTORY" insert="false" update="false"  /><!--  to refer nonHistory property included by Suhasini -->
+	    </properties>  
+		
+	</class>
+</hibernate-mapping>

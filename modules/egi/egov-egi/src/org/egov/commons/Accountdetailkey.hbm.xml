@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.egov.commons.Accountdetailkey" table="ACCOUNTDETAILKEY" >
+        <id name="id" type="integer">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="native">
+			<param name="sequence">SEQ_ACCOUNTDETAILKEY</param>
+	</generator>
+        </id>
+        <many-to-one name="accountdetailtype" class="org.egov.commons.Accountdetailtype" column="DETAILTYPEID"/>
+        <many-to-one name="chartofaccounts" class="org.egov.commons.CChartOfAccounts" column="GLCODEID"/>
+        <property name="groupid" column="GROUPID" 	/>
+        <property name="detailname" column="DETAILNAME" 	/>
+        <property name="detailkey" column="DETAILKEY" />       
+      </class>
+</hibernate-mapping>

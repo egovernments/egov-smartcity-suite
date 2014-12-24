@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated on 8th dec 09 -->
+<hibernate-mapping>		
+		<class name="org.egov.works.models.workorder.WorkOrderActivity"
+		table="EGW_WORK_ORDER_ACTIVITY">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_WORK_ORDER_ACTIVITY_SEQ</param>
+			</generator> 
+		</id>
+		<many-to-one name="workOrderEstimate" column="WORKORDER_ESTIMATE_ID" not-null="true" insert="false" update="false" fetch="select"/>
+		<many-to-one name="activity" class="org.egov.works.models.estimate.Activity" column="ACTIVITY_ID" not-null="true" fetch="join"/>
+		
+		<property name="approvedRate" type="double">
+            <column name="APPROVED_RATE" precision="20" not-null="true" />
+        </property>
+        <property name="approvedQuantity" type="double">
+            <column name="APPROVED_QUANTITY" precision="20" not-null="true" /> 
+        </property>
+        <property name="approvedAmount" type="double">
+            <column name="APPROVED_AMOUNT" precision="20" not-null="true" />
+        </property>     
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY" not-null="true" fetch="select"/>
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" />	
+		<property name="modifiedDate" column="MODIFIEDDATE" type="timestamp" />	
+		<property name="remarks" column="REMARKS" />	
+		
+		<list name="woMeasurementSheetList" inverse="false" cascade="all,delete-orphan" >
+			<key column="WORKORDER_ACTIVITY_ID" not-null="true" />
+			<list-index column="WOMEASUREMENTSHEET_INDEX" />
+			<one-to-many class="org.egov.works.models.workorder.WorkOrderMeasurementSheet" />
+		</list>
+	</class>
+	
+	<query name="getallWorkOrderActivityWithMB">
+		<![CDATA[
+     	Select mbDetails.workOrderActivity.id,sum(mbDetails.quantity) from MBDetails mbDetails 
+     	 where mbDetails.mbHeader.workOrderEstimate.id=?
+     	  and mbDetails.mbHeader.state.previous.value = 'APPROVED' group by mbDetails.workOrderActivity
+    	]]>
+	</query>
+	<query name="getallWorkOrderActivityWithoutMB">
+		<![CDATA[
+     from WorkOrderActivity woe where woe.workOrderEstimate.id=? and woe.workOrderEstimate.workOrder.state.previous.value!='CANCELLED' 
+	and woe.id not in  (Select distinct(mbDetails.workOrderActivity.id) from MBDetails mbDetails 
+	 where mbDetails.mbHeader.workOrderEstimate.id=?  and mbDetails.mbHeader.state.previous.value = 'APPROVED') ]]>
+	</query>
+	
+	<query name="getAssignedQuantityForActivity">
+		<![CDATA[
+     	Select sum(woa.approvedQuantity) from WorkOrderActivity woa where
+     	 woa.workOrderEstimate.workOrder.tenderNumber=? AND 
+     	 woa.workOrderEstimate.workOrder.state.previous.value !='CANCELLED'
+     	  group by woa.activity having woa.activity.id = ?  
+     	  
+    	]]>
+	</query>
+	
+	<query name="getAssignedQuantityForActivityForNewWO">
+		<![CDATA[
+     	Select sum(woa.approvedQuantity) from WorkOrderActivity woa where
+     	 woa.workOrderEstimate.workOrder.tenderNumber=? AND 
+     	 woa.workOrderEstimate.workOrder.state.value ='NEW' group by woa.activity having woa.activity.id = ?  
+     	  
+    	]]>
+	</query>
+	
+	<query name="getTotalQuantityForWO">
+		<![CDATA[
+     	Select sum(woa.approvedQuantity) from WorkOrderActivity woa where
+     	 woa.workOrderEstimate.workOrder.negotiationNumber=? AND 
+     	 woa.workOrderEstimate.workOrder.state.previous.value !='CANCELLED'
+     	  
+    	]]>
+	</query>
+	
+	<query name="getTotalQuantityForNewWO">
+		<![CDATA[
+     	Select sum(woa.approvedQuantity) from WorkOrderActivity woa where
+     	 woa.workOrderEstimate.workOrder.negotiationNumber=? AND woa.workOrderEstimate.workOrder.state.value ='NEW' 
+     	  
+    	]]>
+	</query>
+	
+	<query name="getTenderResponseLineByIds">
+		<![CDATA[
+     	from TenderResponseLine trl where trl.id in(:param_0)
+    	]]>
+	</query>
+	
+	<query name="getRevisedTotalQuantityForWOE">
+		<![CDATA[
+     	select sum(woa.approvedQuantity) from WorkOrderActivity woa where
+     	 woa.workOrderEstimate.estimate.parent.id=? and woa.workOrderEstimate.workOrder.egwStatus.code !='CANCELLED' 
+     	 ]]>
+	</query>
+	
+	
+	<query name="getallWorkOrderActivityForRE">
+		<![CDATA[
+     	from WorkOrderActivity woa where id in (select mbd.workOrderActivity.id from MBDetails mbd where (mbd.mbHeader.createdDate 
+     	< (select createdDate from MBHeader where id = ?) or (select count(*) from MBHeader where id = ?) = 0 )
+     	and mbd.mbHeader.state.previous.value != 'CANCELLED') and (woa.activity.id=? or (woa.activity.parent is not null and woa.activity.parent.id=? )) 
+     	and woa.workOrderEstimate.estimate.id in(:param_4) order by woa.id   
+    	]]>
+	</query>
+</hibernate-mapping>

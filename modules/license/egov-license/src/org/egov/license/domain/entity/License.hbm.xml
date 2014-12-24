@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+	<class name="org.egov.license.domain.entity.License" table="EGL_LICENSE">
+		<id name="id" column="ID" type="java.lang.Long" unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">SEQ_EGL_LICENSE</param>
+			</generator>
+		</id>
+		<discriminator column="LICENSE_TYPE" type="string" />
+		<property name="licenseNumber" column="LICENSE_NUMBER" />
+		<property name="oldLicenseNumber" column="OLD_LICENSE_NUMBER" />
+		<property name="dateOfCreation" column="DATEOFCREATION" />
+		<property name="dateOfExpiry" column="DATEOFEXPIRY" />
+		<property name="licenseCheckList" column="CHECKLIST" />
+		<property name="applicationNumber" column="APPL_NUM" />
+		<property name="docNumber" column="DOC_NUMBER"/>
+		<property name="applicationDate" column="APPL_DATE" />
+		<property name="bioMedicalWasteReg" column="BIO_MEDICAL_WASTE_REG" />
+		<property name="docImageNumber" column="DOC_IMAGE_NUMBER"/>
+		<property name="namePowerOfAttorney" column="POWER_OF_ATTORNEY" />
+		<property name="companyPanNumber" column="COMPANY_PAN_NUMBER" />
+		<property name="vatNumber" column="VAT_NUMBER" />
+		<property name="typeOfFirm" column="TYPE_OF_FIRM" />
+		<property name="nameSoleProprietor" column="NAME_SOLE_PROPRIETOR" />
+		<property name="bankerName" column="BANKER_NAME" />
+		<property name="minSolvency" column="MIN_SOLVENCY" />
+		<property name="executeWorksWorth" column="EXECUTE_WORKS_WORTH" />
+		<property name="avgAnnualTurnover" column="AVG_ANNUAL_TURNOVER" />
+		<property name="costOfWorksHand" column="COST_OF_WORKS_HAND" />
+		<property name="bankIfscCode" column="BANK_IFSC_CODE" />
+		<property name="feeExemption" column="FEE_EXEMPTION" />
+		<property name="isUpgrade" column="IS_UPGRADE" />
+		<property name="tempLicenseNumber" column="TEMP_LICENSE_NUMBER" />
+		<property name="bankAddress" column="BANK_ADDRESS"/>
+		<property name="placeOfBusiness" column="PLACE_OF_BUSINESS"/>
+		<property name="officeEmailId" column="OFFICE_EMAILID"/>
+		<property name="contractorCode" column="CONTRACTOR_CODE"/>	
+		<bag name="objections" inverse="true" table="EGL_OBJECTION" fetch="select">
+			<key>
+				<column name="ID_LICENSE"></column>
+			</key>
+			<one-to-many class="org.egov.license.domain.entity.objection.LicenseObjection" />
+		</bag>
+		<many-to-one name="address" column="ID_ADDRESS" class="org.egov.lib.address.model.Address" cascade="all"
+			unique="true" />
+
+		<property name="createdDate" type="java.util.Date">
+			<column name="CREATEDDATE" not-null="true" />
+		</property>
+
+		<property name="modifiedDate" type="java.util.Date">
+			<column name="LASTMODIFIEDDATE" not-null="true" />
+		</property>
+
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" not-null="true"
+			fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="LASTMODIFIEDBY" not-null="true"
+			fetch="select" />
+
+
+		<property name="servicetaxNumber" column="SERVICE_TAX_NUM" />
+
+		<property name="isActive" column="IS_ACTIVE" />
+
+		<many-to-one name="status" class="org.egov.license.domain.entity.LicenseStatus">
+			<column name="ID_STATUS" />
+		</many-to-one>
+
+		<property name="tinNumber" column="TIN_NUM" />
+		<many-to-one name="boundary" class="org.egov.lib.admbndry.BoundaryImpl" column="ID_ADM_BNDRY" unique="true" />
+		<many-to-one name="tradeName" class="org.egov.license.domain.entity.SubCategory" fetch="select" unique="true">
+			<column name="ID_SUB_CATEGORY" precision="22" scale="0" />
+		</many-to-one>
+		<many-to-one name="licenseTransfer" class="org.egov.license.domain.entity.transfer.LicenseTransfer" fetch="select"
+			cascade="all">
+			<column name="ID_LICENSETRANSFER" precision="22" scale="0" />
+		</many-to-one>
+		<property name="nameOfEstablishment" column="NAME_OF_ESTAB" />
+		<property name="buildingType" column="BUILDINGTYPE" />
+		<property name="noOfRooms" column="NOOFROOMS" type="java.lang.Integer" />
+		<property name="phoneNumber" column="PHONENUMBER" />
+
+		<property name="remarks" column="REMARKS" />
+
+		<property name="companyDetails" column="COMPANY_DETAIL" />
+
+		<property name="rentalAgreement" column="rentalAgreement" />
+
+		<property name="rentPaid" column="RENT_PAID" />
+		<property name="feeTypeStr" column="FEETYPETEXT" />
+		<set name="demandSet" cascade="all,delete,delete-orphan" inverse="true">
+			<key>
+				<column name="ID_LICENSE" precision="22" scale="0" />
+			</key>
+			<one-to-many class="org.egov.license.domain.entity.LicenseDemand" />
+		</set>
+		<set name="licenseStatusValuesSet" cascade="all" table="EGL_STATUS_VALUES" order-by="CREATED_DATE">
+			<key column="ID_LICENSE" not-null="true" />
+			<one-to-many class="org.egov.license.domain.entity.LicenseStatusValues" />
+		</set>
+		
+		<many-to-one name="egLicense" class="org.egov.license.domain.entity.License" >
+            <column name="PARENT_ID"  />
+        </many-to-one>
+        
+        <many-to-one name="licenseSubType" class="org.egov.license.domain.entity.LicenseSubType"
+					cascade="all">
+					<column name="ID_LICENSE_SUB_TYPE" />
+		</many-to-one>
+
+		<one-to-one name="licensee" lazy="proxy" class="org.egov.license.domain.entity.Licensee" property-ref="license"
+			cascade="all" />
+
+		<!-- <subclass name="org.egov.license.hospital.domain.entity.HospitalLicense" discriminator-value="hospitallicense">
+			<join table="EGL_HOSPITAL_LICENSE">
+				<key column="ID" />
+				<property name="briefDescription" column="BRIEF_DESC" />
+				<property name="premises" column="PREMISES" />
+				<property name="premisesDescription" column="PREMISES_DESC" />
+				<property name="numOfMeternityBeds" column="METERNITY_BEDS" type="java.lang.Integer" />
+				<property name="numOfBplBeds" column="BPL_BEDS" type="java.lang.Integer" />
+				<property name="numOfOtherBeds" column="OTHER_BEDS" type="java.lang.Integer" />
+				<property name="typeOfArea" column="TYPE_OF_AREA" />
+				<property name="licenseCategory" column="LICENSE_CATEGORY" />
+				<property name="hospitalType" column="HOSPITAL_TYPE" />
+				<property name="hospitalSubType" column="HOSPITAL_SUB_TYPE" />
+				<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+					<column name="STATE_ID" />
+				</many-to-one>
+
+			</join>
+		</subclass>
+		<subclass name="org.egov.license.hawker.domain.entity.HawkerLicense" discriminator-value="hawkerlicense">
+			<join table="EGL_HAWKER_LICENSE">
+				<key column="ID" />
+				<property name="hawkerSpot" column="HAWKER_SPOT"/>
+				<property name="hawkerType" column="HAWKER_TYPE"/>
+				<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+					<column name="STATE_ID" />
+				</many-to-one>
+
+			</join>
+		</subclass>
+		
+		<subclass name="org.egov.license.waterworks.domain.entity.WaterworksLicense" discriminator-value="waterworkslicense">
+			<join table="EGL_WATERWORKS_LICENSE">
+				<key column="ID" />
+				<property name="dateOfBirth" column="DOB"/>
+				<property name="examDate" column="EXAM_DATE" />
+				<property name="examResult" column="EXAM_RESULT" />
+				<property name="technicalQualification" column="TECHNICALQUALIFICATION" />
+				<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+					<column name="STATE_ID" />
+				</many-to-one>
+
+			</join>
+		</subclass>
+		<subclass name="org.egov.license.veterinary.domain.entity.VeterinaryLicense" discriminator-value="veterinarylicense">
+			<join table="EGL_VETERINARY_LICENSE">
+				<key column="ID" />
+				<property name="animalName" column="ANIMALNAME"/>
+				<property name="animalBreed" column="ANIMALBREED"/>
+				<property name="animalColour" column="ANIMALCOLOR"/>
+				<property name="otherDescription" column="OTHER_DESC"/>
+				<property name="previousOwnerName" column="PREV_OWNERNAME"/>
+				<property name="previousLicenseNumber" column="PREV_LICENSENUM"/>
+				<property name="hasPreviousOwner" column="HAS_PREV_OWNER" type="character"/>
+				<property name="animalAgeMonth" column="AGEMONTH" type="java.lang.Integer"/>
+				<property name="animalAgeYear" column="AGEYEAR" type="java.lang.Integer"/>
+				<property name="surgeonName" column="SURGEONNAME"/>
+				<property name="surgeonQualification" column="SURGEON_QUALIF"/>
+				<property name="dosage" column="DOSAGE"/>
+				<property name="batchNumber" column="BATCHNUMBER"/>
+				<property name="inoculationDate" column="INOCULATIONDATE" type="java.util.Date"/>
+				<property name="dueDate" column="DUEDATE" type="java.util.Date"/>
+				<property name="dateOfBirth" column="DOB" type="java.util.Date"/>
+				<property name="surgeonRegistrationNo" column="SURGEON_REG_NO"/>
+				<property name="vaccineName" column="VACCINE_NAME"/>
+				<property name="hasVaccineCertificate" column="HAS_VACCINE_CERTIFICATE"/>
+				<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+					<column name="STATE_ID" />
+				</many-to-one>
+			</join>
+		</subclass>
+		<subclass
+			name="org.egov.license.pwdcontractor.domain.entity.PwdContractorLicense"
+			discriminator-value="pwdcontractorlicense">
+			<join table="EGL_PWDCONTRACTOR_LICENSE">
+				<key column="ID" />
+				<property name="emdExemption" column="EMD_EXEMPTION"/>
+				<property name="solvencyAmount" column="SOLVENCY_AMOUNT"/>
+				<property name="solvencyDate" column="SOLVENCY_DATE"/>
+				<property name="solvencyInformation" column="SOLVENCY_INFORMATION"/>
+				<many-to-one name="state" class="org.egov.infstr.models.State"
+					cascade="all">
+					<column name="STATE_ID" />
+				</many-to-one>
+			</join>
+		</subclass>
+		<subclass
+			name="org.egov.license.electricalcontractor.domain.entity.ElectricalContractorLicense"
+			discriminator-value="electricalcontractorlicense">
+			<bag name="majorWorksList" inverse="true" table="EGL_MAJOR_WORKS" cascade="all,delete-orphan">
+				<key>
+					<column name="ID_LICENSE"></column>
+				</key>
+				<one-to-many class="org.egov.license.domain.entity.MajorWorks" />
+			</bag>
+			<join table="EGL_ELECTRICAL_LICENSE">
+				<key column="ID" />
+				<property name="contactPersonName" column="CONTACT_PERSON_NAME" />
+				<property name="contactpersonPhoneNo" column="CONTACT_PERSON_PHONE_NO"/>
+				<property name="lumpsumSecurity" column="LUMPSUMSECURITY"/>
+                <property name="whetherEngagedFirm" column="WHETHERENGAGEDFIRM"/>
+                <property name="processEngagedFirm" column="PROCESSENGAGEDFIRM"/>
+                <property name="stateISOCertified" column="STATEISOCERTIFIED"/>
+                <property name="stateISIMark" column="STATEISIMARK"/>
+                <property name="sodiumVapourLamps" column="SODIUMVAPOURLAMPS"/>
+                <property name="lumenOutputLamps" column="LUMENOUTPUTLAMPS"/>
+                <property name="whetherExciseDuty" column="WHETHEREXCISEDUTY"/>
+                <property name="listOfToolsnPlants" column="LISTOFTOOLSNPLANTS"/> 
+                <property name="technicalQualnExp" column="TECHNICALQUALNEXP"/>
+                <property name="workMachToolPlant" column="WORKMACHTOOLPLANT"/>
+                <property name="enlistedDepartment" column="ENLISTEDDEPARTMENT"/>
+                <property name="blackListedByGovt" column="BLACKLISTEDBYGOVT"/>
+                <property name="terminationContract" column="TERMINATIONCONTRACT"/>
+                <property name="elsewhereRegistration" column="ELSEWHEREREGISTRATION"/>
+                <property name="upToDateTaxCleCert" column="UPTODATETAXCLECERT"/>
+                <property name="amtofSolvncyCertificate" column="AMTOFSOLVNCYCERTIFICATE"/>
+                <property name="annualTurnOverFirm" column="ANNUALTURNOVERFIRM"/>
+                <property name="whetherRegisteredWork" column="WHETHERREGISTEREDWORK"/>
+                <property name="attestedRegCertificate" column="ATTESTEDREGCERTIFICATE"/>
+                <property name="certifyMoreThanOneName" column="CERTIFYMORETHANONENAME"/>
+                <property name="detailsOfEleLicenseCert" column="DETAILSOFELELICENSECERT"/>
+                <property name="listOfToolsnPlantsContractor" column="LISTOFTOOLSNPLANTSCONTRACTOR"/>
+                <property name="workMachToolPlantOwnedByApp" column="WORKMACHTOOLPLANTOWNEDBYAPP"/>
+                <property name="registrationMahaPwd" column="REGISTRATIONMAHAPWD"/>
+                <property name="employeeOfNmc" column="EMPLOYEEOFNMC"/>
+                <property name="listOfDistributor" column="LISTOFDISTRIBUTOR"/>
+                <property name="listOfDealer" column="LISTOFDEALER"/>
+                <property name="registUnderShop" column="REGISTUNDERSHOP"/>
+                <property name="liftLicenseMahaPwd" column="LIFTLICENSEMAHAPWD"/>
+                <property name="manuOrigEqupLift" column="MANUORIGEQUPLIFT"/>
+                <property name="ManuRoomLessLift" column="MANUROOMLESSLIFT"/>
+                <property name="classAaDeptNmc" column="CLASSAADEPTNMC"/>
+                <property name="brandOwnerLumManu" column="BRANDOWNERLUMMANU"/>
+                <property name="manuOfContrFeeFac" column="MANUOFCONTRFEEFAC"/>
+                <property name="lightingDeptNmc" column="LIGHTINGDEPTNMC"/>
+                <property name="servicingInverter" column="SERVICINGINVERTER"/>
+                <property name="MouExeWitEleCont" column="MOUEXEWITELECONT"/>
+                <property name="firmISLicensedElectrical" column="FIRMISLICENSEDELECTRICAL"/>
+                <property name="classOfRegistration" column="CLASSOFREGISTRATION"/>
+                <property name="employeeProvidentFund" column="EMPLOYEEPROVIDENTFUND"/>
+                <property name="registProfessTaxComp" column="REGISTPROFESSTAXCOMP"/>
+                <property name="valueAddedTaxMaha" column="VALUEADDEDTAXMAHA"/>
+                <property name="secndAnnualTurnOverFirm" column="SECNDANNUALTURNOVERFIRM"/>
+                <property name="thirdAnnualTurnOverFirm" column="THIRDANNUALTURNOVERFIRM"/>
+                <property name="licenseAuthorityFire" column="LICENSEAUTHORITYFIRE"/>
+                <property name="firstFinancialYear" column="FIRST_FINANCIAL_YEAR"/>
+                <property name="secondFinancialYear" column="SECOND_FINANCIAL_YEAR"/>
+                <property name="thirdFinancialYear" column="THIRD_FINANCIAL_YEAR"/>
+                <property name="aplcntCorspndnceAdrs" column="APLCNTCORSPNDNCEADRS"/>
+                <property name="aplcntCorspndncePinCodeNumbr" column="APLCNTCORSPNDNCEPINCODENUMBR"/>
+                <property name="licnsePermanentAdrs" column="LICNSEPERMANENTADRS"/>
+                <property name="licnsePermanentPinCodeNumbr" column="LICNSEPERMANENTPINCODENUMBR"/>
+                <property name="commonSolvencyCertificateInfo" column="COMMONSOLVENCYCERTIFICATEINFO"/>
+                <property name="commonSolvencyCertificateDate" column="COMMONSOLVENCYCERTIFICATEDATE"/>
+				<many-to-one name="state" class="org.egov.infstr.models.State"
+					cascade="all">
+					<column name="STATE_ID" />
+				</many-to-one>
+			</join>
+		</subclass> -->
+	</class>
+	<query name="getLicenseDetailsByApplicationNumber">
+      from org.egov.license.domain.entity.License where applicationNumber=?
+    </query>
+    
+</hibernate-mapping>

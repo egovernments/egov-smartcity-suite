@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<!-- Configuration file for Works sql queries -->
+
+<properties>
+
+<sql>
+
+<pay-payScaleHeader>
+	<type>hql</type>
+	<query>from PayScaleHeader p order by p.id</query>
+</pay-payScaleHeader>
+
+<pay-salaryCodes> 
+	<type>hql</type>
+	<query>from SalaryCodes S order by S.orderId</query> 
+</pay-salaryCodes> 
+
+<pay-salAdvances> 
+	<type>hql</type>
+	<query>from Advance sal where sal.status.moduletype='Salaryadvance' and sal.status.description='Disbursed' order by sal.id</query> 
+</pay-salAdvances> 
+
+<pay-createdSalAdvances> 
+	<type>hql</type>
+	<query>from Advance sal where sal.status.moduletype='Salaryadvance' and sal.status.description='Created' order by sal.id</query> 
+</pay-createdSalAdvances> 
+
+<pay-category>
+	<type>hql</type>
+	<query>from SalaryCategoryMaster scm</query>
+</pay-category>
+
+<pay-empExceptions> 
+	<type>hql</type>
+	<query>from EmpException ex order by ex.status</query> 
+</pay-empExceptions> 
+
+</sql>
+
+</properties> 

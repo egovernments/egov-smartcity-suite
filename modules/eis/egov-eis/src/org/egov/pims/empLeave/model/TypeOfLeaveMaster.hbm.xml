@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping
+PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.pims.empLeave.model.TypeOfLeaveMaster" table="EGEIS_TYPE_OF_LEAVE_MSTR">
+		
+		<id
+							name="id"
+							column="TYPE_OF_LEAVE_ID"
+							type="int">
+							<generator class="sequence">
+								<param name="sequence">EGPIMS_TYPE_OF_LEAVE_SEQ</param>
+							</generator>
+		</id>
+		<property
+			name="name"
+			column="TYPE_OF_LEAVE_VALUE"
+			
+		/>	
+		<property name="accumulate" type="java.lang.Character">
+			            <column name="ACCUMULATE" length="1"  />
+		        </property>
+		        <property name="payElegible" type="java.lang.Character">
+			            <column name="PAY_ELIGIBLE" length="1"  />
+        </property>
+		<property name="isHalfDay" type="java.lang.Character">
+					            <column name="IS_HALF_DAY" length="1"  />
+        </property>
+        <property name="isEncashable" type="java.lang.Character">
+					            <column name="IS_ENCASHABLE" length="1"  />
+        </property>
+		
+	</class>
+</hibernate-mapping>

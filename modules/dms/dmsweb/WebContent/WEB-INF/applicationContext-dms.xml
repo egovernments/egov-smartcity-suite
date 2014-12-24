@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+	default-lazy-init="true">
+	
+	<bean id="inboundFilePersistenceService" parent="persistenceService">
+		<property name="type" value="org.egov.dms.models.InboundFile"/>
+	</bean>
+	
+	<bean id="inboundFileWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService">
+		<constructor-arg index="0" ref="inboundFilePersistenceService"/>
+	</bean>
+	
+	<bean id="outboundFilePersistenceService" parent="persistenceService">
+		<property name="type" value="org.egov.dms.models.OutboundFile"/>
+	</bean>
+	
+	<bean id="outboundFileWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService">
+		<constructor-arg index="0" ref="outboundFilePersistenceService"/>
+	</bean>
+	
+	<bean id="internalFilePersistenceService" parent="persistenceService">
+		<property name="type" value="org.egov.dms.models.InternalFile"/>
+	</bean>
+	
+	<bean id="internalFileWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService">
+		<constructor-arg index="0" ref="internalFilePersistenceService"/>
+	</bean>		
+	
+	<bean id="fileService" class="org.springframework.aop.framework.ProxyFactoryBean">
+       	<property name="target" ref="fileServiceTarget" />
+        <property name="interceptorNames">              
+        	<list>
+              	<value>aclMethodSecurityInterceptor</value>                   
+            </list>
+        </property>
+        <property name="proxyTargetClass" value="true"/>
+    </bean>
+    
+	<bean id="fileServiceTarget" parent="persistenceService"  autowire-candidate="true" autowire="byName" class="org.egov.dms.services.FileService" >
+		<property name="type" value="org.egov.dms.models.GenericFile" />
+	</bean>
+	
+	<bean id="aclObjectReadVoter" name="aclObjectReadVoter" class="org.egov.dms.acl.DocumentAclVoter" scope="prototype">
+      <constructor-arg ref="persistenceService"/>
+        <constructor-arg value="ACL_OBJECT_READ"/>
+        <constructor-arg>
+            <list>
+                <ref bean="readPermission"/>
+            </list>
+        </constructor-arg>
+       <property name="eisService" ref="eisService"/>
+       <property name="rbacManager" ref="rbacMgr"/> 
+    </bean>
+    
+     <bean id="aclMethodSecurityInterceptor" name="aclMethodSecurityInterceptor" class="org.springframework.security.access.intercept.aopalliance.MethodSecurityInterceptor" autowire="byType" >
+        <property name="accessDecisionManager" ref="businessAccessDecisionManager"/>
+        <property name="afterInvocationManager" ref="afterInvocationManager"/> 
+        <property name="objectDefinitionSource" >
+        <value>org.egov.dms.services.FileService.*=ACL_USER_READ  </value></property>
+    </bean>
+    
+	
+</beans>

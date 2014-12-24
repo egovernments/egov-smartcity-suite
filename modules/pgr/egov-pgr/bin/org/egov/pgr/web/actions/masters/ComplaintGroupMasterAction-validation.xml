@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+        <!DOCTYPE validators PUBLIC 
+
+  		"-//OpenSymphony Group//XWork Validator 1.0.2//EN" 
+
+  		"http://www.opensymphony.com/xwork/xwork-validator-1.0.2.dtd">
+
+        
+
+ <validators>
+	<field name="model.complaintGroupName">
+		<field-validator type="requiredstring">
+			<param name="trim">true</param>
+			<message>Complaint Group Name is required</message>
+		</field-validator>
+		<field-validator type="regex">
+			<param name="expression">^[a-zA-Z/ ]*$</param>
+			<message>complaintGroupName should be alphabetic</message>
+		</field-validator>
+	</field>
+	
+	
+</validators>

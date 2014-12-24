@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Receipt Register Report Help</title>
+</head>
+<LINK REL=StyleSheet HREF="egov.css" TYPE="text/css" />
+<style type="text/css">
+html {
+background-color:#FFF9EF;
+}
+body {
+background-color:#FFF9EF;
+}
+a {
+text-decoration:none;
+}
+table {
+border-top: 1px solid gray;
+border-left: 1px solid gray;
+}
+th {
+background-color:#FFF9EF;
+border-right: 1px solid gray;
+border-bottom: 1px solid gray;
+text-align: center;
+}
+td {
+background-color:white;
+border-bottom: 1px solid gray;
+border-right: 1px solid gray;
+}
+
+#hheader {
+background-color:#EFDFC2;
+text-align: right;
+padding: 10px;
+font-size: 130%;
+font-weight: bold;
+border-bottom: 1px solid gray;
+}
+
+#hnav {
+background-color:#FFF9EF;
+text-align: right;
+padding-right: 10px;
+border-bottom: 1px solid gray;
+}
+
+#hnav a:hover{
+border-bottom: 2px solid #CFC1A8;
+}
+
+#hcontent {
+background-color:white;
+text-align: left;
+padding: 10px;
+}
+
+#hfooter {
+background-color:#FFF9EF;
+text-align: center;
+margin-top: 0px;
+padding-right: 10px;
+padding-left: 10px;
+margin-bottom: 10px;
+border-bottom: 1px solid gray;
+border-top: 1px solid gray;
+
+}
+.hbold0 {
+font-size: 105%;
+font-weight: bold;
+text-transform: uppercase;
+}
+.hbold {
+font-size: 100%;
+font-weight: bold;
+}
+</style>
+
+<body>
+<div id="hheader">
+eGov Product-Customization-Functionality Help
+</div>
+<div id="hnav">
+<a href="#">Home</a>&nbsp;|&nbsp;
+<a href="http://www.egovernments.org">About Us</a>&nbsp;|&nbsp;
+<a href="mailto:contact@egovernments.org">Contact Us</a>
+</div>
+
+<div id="hcontent">
+<!-- Objective Section Stats -->
+<span class="hbold0">
+Objective: </span> To List out the Receipt entries for a given fund and between the date range.
+<br /><br />
+<!-- Objective Section ENDS -->
+
+<!-- Fields Definition Section ENDS -->
+<span class="hbold0">
+Field Description Table:</span><br /><br />
+<table width="80%" cellpadding="2px" cellspacing="0px">
+<tr>
+<th>FieldName</th>
+<th>FieldType</th>
+<th>FieldDescription</th>
+</tr>
+<tr>
+<td>Fund</td>
+<td>Text</td>
+<td>Fund Name</td>
+</tr>
+<tr>
+<td>Start Date</td>
+<td>Date</td>
+<td>Starting Date of the Report</td>
+</tr>
+<tr>
+<td>End Date</td>
+<td>Date</td>
+<td>Ending Date of the Report</td>
+</tr>
+<tr>
+<td>Sl. No.</td>
+<td>Number</td>
+<td>Running Sequence Number</td>
+</tr>
+<tr>
+<td>Receipt Number</td>
+<td>Text</td>
+<td>Receipt Number</td>
+</tr>
+<tr>
+<td>Receipt Date</td>
+<td>Date</td>
+<td>Receipt Date</td>
+</tr>
+<tr>
+<td>Cheque/Draft No</td>
+<td>Text</td>
+<td>Cheque Detail.Cheque No</td>
+</tr>
+<tr>
+<td>Cheque Amount</td>
+<td>Number</td>
+<td>Amount specified in the Receipt, if the Mode of collection is Cheque</td>
+</tr>
+<tr>
+<td>Cash(for amounts recieved by Cash)</td>
+<td>Number</td>
+<td>Amount specified in the Receipt, if the Mode of collection is Cash</td>
+</tr>
+<tr>
+<td>Deposited into Bank Account No</td>
+<td>Text</td>
+<td>Bank account no. specified in the Receipt, if the Mode of collection is Cash</td>
+</tr>
+<tr>
+<td>Date of Deposit</td>
+<td>Date</td>
+<td>Payin Slip Date</td>
+</tr>
+<tr>
+<td>Date of Realisation</td>
+<td>Date</td>
+<td>Bank Reconcilation Date</td>
+</tr>
+<tr>
+<td>Whether Returned</td>
+<td>Text</td>
+<td>If the cheque is dishonoured, it will print as Yes, otherwise empty</td>
+</tr>
+<tr>
+<td>Remarks</td>
+<td>Text</td>
+<td>-</td>
+</tr>
+</table>
+
+<br />
+<!-- Fields Definition Section ENDS -->
+
+<!-- Expected Results and/or Workflow Section Begins -->
+<span class="hbold0">
+Expected Results and/or Workflow:
+</span><br />
+<br />
+<table width="80%" cellpadding="2px" cellspacing="0px">
+<tr>
+<th>Action</th>
+<th>Expeced Result</th>
+</tr>
+<tr>
+<td>Create the Receipt and check the report is printing or not</td>
+<td>Report will print receipt entry</td>
+</tr>
+<tr>
+<td>Do the Payin slip</td>
+<td>Deposit date will print based on the Payin slip date</td>
+</tr>
+<tr>
+<td>Do the Bank Reconcilation</td>
+<td>Date of Realisation will print based on the Payin slip date</td>
+</tr>
+</table>
+
+<!-- Expected Results and/or Workflow Section ENDS -->
+<br />
+
+<!-- Troubleshooting Section Begins -->
+<span class="hbold0">
+Troubleshooting:
+</span><br />
+<span class="hbold">Question1:</span><br />
+If you take the report, from date and to date range is more than one year<br />
+<span class="hbold">Answer1:</span><br />
+Report will take time to get it<br />
+</div>
+<!-- Troubleshooting Section ENDS -->
+
+<!-- Footer Starts here -->
+<div id="hfooter">
+&copy egovernments Foundation 
+<script type="JavaScript">
+document.write(time());
+</script>
+</div>
+<!-- Footer ENDS here -->
+
+</body>
+</html>

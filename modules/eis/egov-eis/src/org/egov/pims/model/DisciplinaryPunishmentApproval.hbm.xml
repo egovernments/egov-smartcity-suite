@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Aug 8, 2007 6:26:42 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.pims.model.DisciplinaryPunishmentApproval" table="EGEIS_DISCIPLINARY_APPROVAL" >
+        <id
+		name="id"
+		column="ID"
+		type="int">
+		<generator class="sequence">
+			<param name="sequence">EGEIS_DIS_APPROVAL_SEQ</param>
+		</generator>
+	</id>
+        
+        <many-to-one name="approvedBy" class="org.egov.lib.rjbac.user.UserImpl" fetch="select">
+	    <column name="APPROVED_BY"  />
+	</many-to-one>
+	<many-to-one name="disciplinaryPunishmentId" class="org.egov.pims.model.DisciplinaryPunishment" fetch="select">
+		    <column name="DISCIPLINARY_PUNISHMENT_ID"  />
+	</many-to-one>
+	
+        <property name="sanctionNo" type="string">
+			            <column name="SANCTION_NO" />
+        </property>
+        
+    </class>
+</hibernate-mapping>

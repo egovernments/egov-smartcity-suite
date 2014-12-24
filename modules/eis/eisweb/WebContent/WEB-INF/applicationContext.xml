@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
+       default-lazy-init="true">
+	   
+      <bean id="eisLeaveService" class="org.egov.pims.empLeave.service.EmpLeaveServiceImpl"></bean>
+
+      <bean id="eisPayrollService" class="org.egov.payroll.services.payslip.PayRollServiceImpl"></bean>
+
+	  <bean id="employeePnsnService" class="org.egov.pims.empPension.service.EmpPensionServiceImpl"></bean>
+	  
+	  <bean id="eisReportService" class="org.egov.pims.reports.services.EisReportService">
+		 <property name="sessionFactory" ref="egovSessionFactory" />
+	   </bean>
+	   
+	  <bean id="empPositionPersistenceService" parent="persistenceService">
+		  <property name="type" value="org.egov.pims.model.EmpPosition"/>
+	  </bean>
+	
+	   <bean id="empPositionSimpleWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService">
+		  <constructor-arg index="0" ref="empPositionPersistenceService"/>	
+	   </bean>
+	
+	  <bean id="empReversionPersistenceService" parent="persistenceService">
+		  <property name="type" value="org.egov.pims.model.Reversion"/>
+	  </bean>
+	  
+	  <bean id="reversionWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService">
+		  <constructor-arg index="0" ref="empReversionPersistenceService"/>	
+	  </bean>
+	
+</beans>

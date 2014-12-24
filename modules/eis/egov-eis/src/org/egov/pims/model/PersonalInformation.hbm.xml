@@ -1,0 +1,284 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 9, 2007 3:21:11 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+ <class name="org.egov.pims.model.PersonalInformation" table="EG_EMPLOYEE">
+  <id column="ID" name="idPersonalInformation" type="int">
+   <generator class="sequence">
+    <param name="sequence">EGPIMS_PERSONAL_INFO_SEQ</param>
+   </generator>
+  </id>
+  <timestamp column="LASTMODIFIED_DATE" generated="never"
+   name="lastmodifieddate" source="vm" unsaved-value="null"/>
+  <many-to-one class="org.egov.pims.model.LanguagesQulifiedMaster"
+   fetch="select" name="langQulMstr">
+   <column name="QULIFIED_ID" precision="32" scale="0"/>
+  </many-to-one>
+  <many-to-one class="org.egov.pims.model.EmployeeStatusMaster"
+   fetch="select" name="employeeTypeMaster">
+   <column name="EMPLOYMENT_STATUS" precision="10" scale="0"/>
+  </many-to-one>
+  <many-to-one class="org.egov.commons.EgwStatus" fetch="select" name="StatusMaster">
+   <column name="STATUS" precision="12" scale="0"/>
+  </many-to-one>
+  <many-to-one class="org.egov.pims.model.ReligionMaster" fetch="select" name="religionMstr">
+   <column name="RELIGION_ID" precision="32" scale="0"/>
+  </many-to-one>
+  <many-to-one class="org.egov.pims.model.LanguagesKnownMaster"
+   fetch="select" name="languagesKnownMstr">
+   <column name="LANGUAGES_KNOWN_ID" precision="32" scale="0"/>
+  </many-to-one>
+  <many-to-one class="org.egov.pims.model.GradeMaster" fetch="select" name="gradeMstr">
+   <column name="GRADE_ID" precision="32" scale="0"/>
+  </many-to-one>
+  <many-to-one class="org.egov.pims.model.RecruimentMaster"
+   fetch="select" name="modeOfRecruimentMstr">
+   <column name="MODE_OF_RECRUIMENT_ID" precision="32" scale="0"/>
+  </many-to-one>
+  <many-to-one class="org.egov.pims.model.CommunityMaster"
+   fetch="select" name="communityMstr">
+   <column name="COMMUNITY_ID" precision="32" scale="0"/>
+  </many-to-one>
+  <many-to-one class="org.egov.pims.model.CategoryMaster" fetch="select" name="categoryMstr">
+   <column name="CATEGORY_ID" precision="32" scale="0"/>
+  </many-to-one>
+  <many-to-one class="org.egov.pims.model.TypeOfRecruimentMaster"
+   fetch="select" name="recruitmentTypeMstr">
+   <column name="RECRUITMENT_TYPE_ID" precision="32" scale="0"/>
+  </many-to-one>
+  <many-to-one class="org.egov.pims.model.TypeOfPostingMaster"
+   fetch="select" name="postingTypeMstr">
+   <column name="POSTING_TYPE_ID" precision="32" scale="0"/>
+  </many-to-one>
+  <many-to-one class="org.egov.pims.model.PayFixedInMaster"
+   fetch="select" name="payFixedInMstr">
+   <column name="PAY_FIXED_IN_ID" precision="32" scale="0"/>
+  </many-to-one>
+  <many-to-one class="org.egov.lib.rjbac.dept.DepartmentImpl"
+   fetch="select" name="egdeptMstr">
+   <column name="ID_DEPT" precision="32" scale="0"/>
+  </many-to-one>
+  <many-to-one cascade="all" class="org.egov.lib.rjbac.user.UserImpl"
+   fetch="select" name="userMaster">
+   <column name="ID_USER" precision="32" scale="0"/>
+  </many-to-one>
+  <property generated="never" lazy="false" name="employeeCode">
+   <column name="CODE"/>
+  </property>
+  <property generated="never" lazy="false" name="paymentType" type="string">
+   <column length="32" name="PAYMENT_TYPE"/>
+  </property>
+  <property generated="never" lazy="false" name="employeeFirstName" type="string">
+   <column length="256" name="EMP_FIRSTNAME"/>
+  </property>
+  <property generated="never" lazy="false" name="employeeMiddleName" type="string">
+   <column length="256" name="EMP_MIDDLENAME"/>
+  </property>
+  <property generated="never" lazy="false" name="panNumber" type="string">
+   <column length="256" name="PAN_NUMBER"/>
+  </property>
+  <property generated="never" lazy="false" name="employeeLastName" type="string">
+   <column length="256" name="EMP_LASTNAME"/>
+  </property>
+  <property generated="never" lazy="false" name="fatherHusbandFirstName" type="string">
+   <column length="256" name="EMPFATHER_FIRSTNAME"/>
+  </property>
+  <property generated="never" lazy="false"
+   name="fatherHusbandMiddleName" type="string">
+   <column length="256" name="EMPFATHER_MIDDLENAME"/>
+  </property>
+  <property generated="never" lazy="false" name="fatherHusbandLastName" type="string">
+   <column length="256" name="EMPFATHER_LASTNAME"/>
+  </property>
+  <property generated="never" lazy="false" name="employeeName" type="string">
+   <column length="256" name="NAME"/>
+  </property>
+  <property generated="never" lazy="false" name="dateOfBirth" type="date">
+   <column length="7" name="DATE_OF_BIRTH"/>
+  </property>
+  <property generated="never" lazy="false" name="retirementDate" type="date">
+   <column length="7" name="RETIREMENT_DATE"/>
+  </property>
+  <property generated="never" lazy="false" name="deathDate" type="date">
+   <column length="7" name="DEATH_DATE"/>
+  </property>
+  <property generated="never" lazy="false" name="dateOfjoin" type="date">
+   <column length="7" name="DEPUTATION_DATE"/>
+  </property>
+  <property generated="never" lazy="false" name="govtOrderNo" type="string">
+   <column length="256" name="GOVT_ORDER_NO"/>
+  </property>
+  <property generated="never" lazy="false" name="motherTonuge" type="string">
+   <column length="256" name="MOTHER_TONUGE"/>
+  </property>
+  <property generated="never" lazy="false" name="gender" type="java.lang.Character">
+   <column length="1" name="GENDER"/>
+  </property>
+  <property generated="never" lazy="false" name="isHandicapped" type="java.lang.Character">
+   <column length="1" name="IS_HANDICAPPED"/>
+  </property>
+  <property generated="never" lazy="false" name="isMedReportAvailable" type="java.lang.Character">
+   <column length="1" name="IS_MED_REPORT_AVAILABLE"/>
+  </property>
+  <property generated="never" lazy="false" name="dateOfFirstAppointment" type="date">
+   <column length="7" name="DATE_OF_FIRST_APPOINTMENT"/>
+  </property>
+  <property generated="never" lazy="false" name="identificationMarks1" type="string">
+   <column length="1024" name="IDENTIFICATION_MARKS1"/>
+  </property>
+  <property generated="never" lazy="false" name="identificationMarks2" type="string">
+   <column length="1024" name="IDENTIFICATION_MARKS2"/>
+  </property>
+  <property generated="never" lazy="false" name="scaleOfPay" type="string">
+   <column length="1024" name="SCALE_OF_PAY"/>
+  </property>
+  <property generated="never" lazy="false" name="basicPay" type="big_decimal">
+   <column name="BASIC_PAY" precision="32" scale="0"/>
+  </property>
+  <property generated="never" lazy="false" name="splPay" type="big_decimal">
+   <column name="SPL_PAY" precision="32" scale="0"/>
+  </property>
+  <property column="ISACTIVE" generated="never" lazy="false"
+   name="isActive" type="integer"/>
+  <many-to-one class="org.egov.pims.model.BloodGroupMaster"
+   fetch="select" name="bloodGroupMstr">
+   <column name="BLOOD_GROUP"/>
+  </many-to-one>
+  <property generated="never" lazy="false" name="ppSgppPay" type="big_decimal">
+   <column name="PP_SGPP_PAY" precision="32" scale="0"/>
+  </property>
+  <property generated="never" lazy="false" name="gpfAcNumber" type="string">
+   <column length="1024" name="GPF_AC_NUMBER"/>
+  </property>
+  <property generated="never" lazy="false" name="retirementAge">
+   <column name="RETIREMENT_AGE"/>
+  </property>
+  <property generated="never" lazy="false" name="maturityDate" type="date">
+   <column name="MATURITY_DATE"/>
+  </property>
+  <property generated="never" lazy="false" name="createdTime" type="date">
+   <column name="CREATEDTIME"/>
+  </property>
+  <property generated="never" lazy="false"
+   name="ifOnDutyArrangmentDutyDep" type="string">
+   <column length="256" name="IF_ON_DUTY_ARRANGMENT_DUTY_DEP"/>
+  </property>
+  <property generated="never" lazy="false" name="location" type="string">
+   <column length="256" name="LOCATION"/>
+  </property>
+  <property generated="never" lazy="false" name="costCenter" type="string">
+   <column length="256" name="COST_CENTER"/>
+  </property>
+  <set cascade="all-delete-orphan" lazy="true"
+   name="egpimsRegularisations" sort="unsorted" table="EGEIS_REGULARISATION">
+   <key column="ID" not-null="true"/>
+   <one-to-many class="org.egov.pims.model.Regularisation"/>
+  </set>
+  <set cascade="all-delete-orphan" lazy="true"
+   name="egpimsImmovablePropDetailses" sort="unsorted" table="EGEIS_IMMOVABLE_PROP_DETAILS">
+   <key column="ID" not-null="true"/>
+   <one-to-many class="org.egov.pims.model.ImmovablePropDetails"/>
+  </set>
+  <set cascade="all-delete-orphan" lazy="true"
+   name="egpimsPersonAddresses" sort="unsorted" table="EGEIS_PERSON_ADDRESS">
+   <key column="ID" not-null="true"/>
+   <one-to-many class="org.egov.pims.model.PersonAddress"/>
+  </set>
+  <set cascade="all-delete-orphan" lazy="true" name="egpimsProbations"
+   sort="unsorted" table="EGEIS_PROBATION">
+   <key column="ID" not-null="true"/>
+   <one-to-many class="org.egov.pims.model.Probation"/>
+  </set>
+  <set cascade="all-delete-orphan" lazy="true"
+   name="egpimsServiceHistory" sort="unsorted" table="EGEIS_SERVICE_HISTORY">
+   <key column="EMP_ID" not-null="true"/>
+   <one-to-many class="org.egov.pims.model.ServiceHistory"/>
+  </set>
+  <set cascade="all-delete-orphan" lazy="true"
+   name="egpimsNomineeMaster" sort="unsorted" table="EGEIS_NOMINEE_MASTER">
+   <key column="EMP_ID" not-null="true"/>
+   <one-to-many class="org.egov.pims.model.EmployeeNomineeMaster"/>
+  </set>
+  <set cascade="all-delete-orphan" lazy="true"
+   name="egpimsTrainingPirticularses" sort="unsorted" table="EGEIS_TRAINING_PIRTICULARS">
+   <key column="ID" not-null="true"/>
+   <one-to-many class="org.egov.pims.model.TrainingPirticulars"/>
+  </set>
+  <set cascade="all-delete-orphan" lazy="true" name="egpimsBankDets"
+   sort="unsorted" table="EGEIS_BANK_DET">
+   <key column="ID" not-null="true"/>
+   <one-to-many class="org.egov.pims.model.BankDet"/>
+  </set>
+  <set cascade="all-delete-orphan" inverse="true"
+   name="egpimsDisciplinaryPunishments" sort="unsorted">
+   <key>
+    <column name="EMP_ID" not-null="true"/>
+   </key>
+   <one-to-many class="org.egov.pims.model.DisciplinaryPunishment"/>
+  </set>
+  <set cascade="all-delete-orphan" lazy="true"
+   name="egpimsMovablePropDetailses" sort="unsorted" table="EGEIS_MOVABLE_PROP_DETAILS">
+   <key column="ID" not-null="true"/>
+   <one-to-many class="org.egov.pims.model.MovablePropDetails"/>
+  </set>
+  <set cascade="all-delete-orphan" lazy="true"
+   name="egpimsLtcPirticularses" sort="unsorted" table="EGEIS_LTC_PIRTICULARS">
+   <key column="ID" not-null="true"/>
+   <one-to-many class="org.egov.pims.model.LtcPirticulars"/>
+  </set>
+  <set cascade="all-delete-orphan" lazy="true" name="egpimsLangKnowns"
+   sort="unsorted" table="EGEIS_LANG_KNOWN">
+   <key column="ID" not-null="true"/>
+   <one-to-many class="org.egov.pims.model.LangKnown"/>
+  </set>
+  <set cascade="all-delete-orphan" lazy="true"
+   name="egpimsNomimationPirticularses" sort="unsorted" table="EGEIS_NOMIMATION_PIRTICULARS">
+   <key column="ID" not-null="true"/>
+   <one-to-many class="org.egov.pims.model.NomimationPirticulars"/>
+  </set>
+  <set cascade="all-delete-orphan" lazy="true" name="egpimsEduDetails"
+   sort="unsorted" table="EGEIS_EDU_DETAILS">
+   <key column="ID" not-null="true"/>
+   <one-to-many class="org.egov.pims.model.EduDetails"/>
+  </set>
+  <set cascade="all-delete-orphan" lazy="true"
+   name="egpimsTecnicalQualification" sort="unsorted" table="EGEIS_TECNICAL_QUALIFICATION">
+   <key column="ID" not-null="true"/>
+   <one-to-many class="org.egov.pims.model.TecnicalQualification"/>
+  </set>
+  <set cascade="all-delete-orphan" lazy="true" name="egpimsDeptTests"
+   sort="unsorted" table="EGEIS_DEPT_TESTS">
+   <key column="ID" not-null="true"/>
+   <one-to-many class="org.egov.pims.model.DeptTests"/>
+  </set>
+  <set cascade="all-delete-orphan" inverse="true"
+   name="egpimsAssignmentPrd" sort="unsorted" table="EG_EMP_ASSIGNMENT_PRD">
+   <key column="ID_EMPLOYEE" not-null="true"/>
+   <one-to-many class="org.egov.pims.model.AssignmentPrd"/>
+  </set>
+  <set inverse="true" name="leaveApplicationSet" sort="unsorted" table="EGEIS_LEAVE_APPLICATION">
+   <key column="EMP_ID" not-null="true"/>
+   <one-to-many class="org.egov.pims.empLeave.model.LeaveApplication"/>
+  </set>
+  <set inverse="true" name="leaveOpeningBalanceSet" sort="unsorted" table="EGEIS_LEAVE_OPENING_BALANCE">
+   <key column="EMP_ID" not-null="true"/>
+   <one-to-many class="org.egov.pims.empLeave.model.LeaveOpeningBalance"/>
+  </set>
+  <many-to-one class="org.egov.lib.rjbac.user.UserImpl" fetch="select" name="createdBy">
+   <column name="CREATED_BY"/>
+  </many-to-one>
+  
+  <many-to-one class="org.egov.pims.model.EmployeeGroupMaster"
+   fetch="select" name="groupCatMstr">
+   <column name="EMPCATMSTR_ID" default="3"/>
+  </many-to-one>
+  
+  
+ </class>
+ <query name="ACTIVE_EMPLOYEES">from org.egov.pims.model.PersonalInformation as emp where emp.StatusMaster.moduletype = 'Employee' and emp.StatusMaster.description='Employed' order by employeeName</query>
+ <query name="ACTIVE_EMPLOYEES_STARTSWITH">from PersonalInformation  where StatusMaster.id =(select id from EgwStatus where moduletype='Employee' and description='Employed')
+				and (upper(employeeName) like ? or upper(code) like ? ) order by employeeName</query>
+ <query name="PERSONALINFO-BYIDS">from PersonalInformation where idPersonalInformation in(:param_0)</query>
+ <query name="PERSONALINFO-EMPCODE-STARTSWITH">from PersonalInformation  where employeeCode like ? || '%'</query>
+</hibernate-mapping>

@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<jboss-deployment-structure>
+	<!-- Make sub deployments isolated by default, so they cannot see each others 
+		classes without a Class-Path entry -->
+	<ear-subdeployments-isolated>true</ear-subdeployments-isolated>
+	<deployment>
+		<dependencies>
+			<module name="org.apache.log4j" export="true" />
+			<module name="org.slf4j" export="true" />
+			<module name="org.javassist" export="true" />
+			<module name="javax.jcr" export="true" />
+			<module name="org.hibernate" export="true" />
+			<module name="org.infinispan" export="true" />
+			<module name="org.apache.xerces" export="true" />
+			<module name="org.jaxen" export="true" />
+			<module name="org.jdom" export="true" />
+			<module name="org.hibernate.validator" export="true" />
+			<module name="org.hibernate.search.orm" export="true" />
+			<module name="org.postgres" export="true" />
+		</dependencies>
+		<exclusions>
+			<module name="org.apache.commons.lang" />
+		</exclusions>
+	</deployment>
+</jboss-deployment-structure>

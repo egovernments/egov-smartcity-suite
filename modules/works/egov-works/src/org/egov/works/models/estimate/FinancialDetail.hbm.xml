@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.works.models.estimate.FinancialDetail"
+		table="EGW_FINANCIALDETAIL">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_FINANCIALDETAIL_SEQ</param>
+			</generator>
+		</id>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+		<many-to-one name="abstractEstimate" column="ABSTRACTESTIMATE_ID" not-null="true" insert="false" update="false"/>
+		<many-to-one name="fund" column="FUND_ID" not-null="true" />
+		<many-to-one name="function" column="FUNCTION_ID" not-null="false" />
+		<many-to-one name="functionary" column="FUNCTIONARY_ID" not-null="false" />
+		<many-to-one name="scheme" column="SCHEME_ID" not-null="false"/>
+		<many-to-one name="subScheme" column="SUBSCHEME_ID" not-null="false" />
+		<many-to-one name="budgetGroup" column="BUDGETGROUP_ID" not-null="false" />
+		<many-to-one name="coa" column="COA_ID" not-null="false" />
+		<list name="financingSources" cascade="all,delete-orphan">
+        	<key column="FINANCIALDETAILID" not-null="false"/>
+        	<list-index column="FINSOURCE_INDEX"/>
+        	<one-to-many class="org.egov.works.models.estimate.FinancingSource"/>
+        </list>
+	</class>
+	<query name="getFinancialDetailByEstimateId">
+		<![CDATA[
+     	from FinancialDetail fd where fd.abstractEstimate.id=?
+    ]]>
+    </query>
+</hibernate-mapping>

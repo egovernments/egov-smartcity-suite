@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+	default-lazy-init="true">
+	
+	<bean id="inboxService" class="org.egov.infstr.workflow.inbox.InboxService">
+    	<property name="statePersistenceService" ref="stateService" />
+    	<property name="workflowTypeService" ref="workflowTypeService" />
+    	<property name="eisService" ref="eisService" />
+    	<property name="workflowTypeServicesMap">
+    		<map>
+    			<entry key="defaultWorkflowTypeService">
+    				<ref bean="defaultWorkflowTypeService" />
+    			</entry>
+				<!-- <entry key="BudgetWorkflowTypeService">
+    				<ref local="budgetWorkflowTypeService" />
+    			</entry>
+    			<entry key="EmpPayrollWorkflowTypeService">
+    				<ref local="payslipWorkflowTypeService" />
+    			</entry>
+    			<entry key="ReceiptHeaderWorkflowTypeService">
+    				<ref local="collectionsWorkflowTypeService" />
+    			</entry>  
+    			<entry key="MonthlyPensionWorkflowTypeService">
+    				<ref local="pensionslipWorkflowTypeService" />
+    			</entry>   -->			
+    		</map>
+    	</property>
+    </bean>
+    
+    <bean id="defaultWorkflowTypeService" class="org.egov.infstr.workflow.inbox.DefaultWorkflowTypeService">
+    	<constructor-arg ref="stateService"/>
+    </bean>
+	 <!-- <bean id="budgetWorkflowTypeService" class="org.egov.egf.workflow.budget.BudgetRenderService">
+    	<constructor-arg index="0" ref="stateService"/>
+    	<constructor-arg index="1" value="org.egov.model.budget.Budget"/>
+    	<property name="genericDao" ref="genericDao"/>
+    	<property name="beanProvider" ref="beanProvider"/>
+    </bean>    
+    <bean id="payslipWorkflowTypeService" class="org.egov.payroll.workflow.payslip.PayslipRenderService">
+    	<constructor-arg index="0" ref="stateService"/>
+    	<constructor-arg index="1" value="org.egov.payroll.model.EmpPayroll"/>
+	</bean>
+    <bean id="collectionsWorkflowTypeService" class="org.egov.erpcollection.workflow.renderer.CollectionsWorkflowRenderService">
+    	<constructor-arg index="0" ref="stateService"/>
+    	<constructor-arg index="1" value="org.egov.erpcollection.models.ReceiptHeader"/>
+    </bean>
+    <bean id="pensionslipWorkflowTypeService" class="org.egov.pension.services.PensionSlipRenderService">
+    	<constructor-arg index="0" ref="stateService"/>
+    	<constructor-arg index="1" value="org.egov.pension.models.MonthlyPension"/>
+    </bean> -->
+</beans>	     
+ 	 

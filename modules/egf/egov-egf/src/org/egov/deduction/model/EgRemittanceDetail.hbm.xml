@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 11, 2007 12:03:46 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.deduction.model.EgRemittanceDetail" table="EG_REMITTANCE_DETAIL">
+        <id name="id" type="integer">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="sequence">
+           	 <param name="sequence">seq_eg_remittance_detail</param>
+            </generator>
+        </id>
+        <many-to-one name="egRemittance" class="org.egov.deduction.model.EgRemittance" fetch="select">
+            <column name="REMITTANCEID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="egRemittanceGldtl" class="org.egov.deduction.model.EgRemittanceGldtl" fetch="select">
+            <column name="REMITTANCEGLDTLID" precision="22" scale="0" not-null="true" />
+        </many-to-one>    
+        <property name="lastmodifieddate" type="date">
+            <column name="LASTMODIFIEDDATE" />
+        </property>
+        <property name="remittedamt" type="big_decimal">
+            <column name="REMITTEDAMT" precision="15" />
+        </property>
+    </class>
+</hibernate-mapping>

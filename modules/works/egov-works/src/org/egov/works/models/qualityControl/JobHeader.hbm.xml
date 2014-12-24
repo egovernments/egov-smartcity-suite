@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.works.models.qualityControl.JobHeader" table="EGW_QC_JOBHEADER">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_QC_JOBHEADER_SEQ</param>
+			</generator>
+		</id>
+		
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" not-null="true" type="timestamp" />
+		<property column="MODIFIED_DATE" name="modifiedDate" type="timestamp" />
+		
+		<property name="jobNumber" type="string">
+            <column name="JOB_NUMBER" length="256" not-null="true" unique="true" /> 
+        </property>
+        
+        <many-to-one name="sampleLetterHeader" class="org.egov.works.models.qualityControl.SampleLetterHeader" column="SAMPLELETTERHEADER_ID" not-null="true" fetch="select"/>
+        
+		<property name="jobDate" type="date">
+			<column name="JOB_DATE" length="7" not-null="true" />
+		</property>
+		
+        <many-to-one name="egwStatus" column="STATUS_ID" not-null="true" />
+        
+        <many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+			<column name="STATE_ID" />
+		</many-to-one>
+        
+        <list name="jobDetails" cascade="all,delete-orphan">
+			<key column="JOBHEADER_ID" not-null="true" />
+			<list-index column="JOBDETAILS_INDEX" />
+			<one-to-many
+				class="org.egov.works.models.qualityControl.JobDetails" />
+		</list>
+     </class>  
+     
+     <query name="getContractorsWithJobNo">
+		<![CDATA[
+     	select distinct jh.sampleLetterHeader.testSheetHeader.workOrder.contractor from JobHeader jh where jh.egwStatus.code!='NEW' order by jh.sampleLetterHeader.testSheetHeader.workOrder.contractor.code 
+    ]]>
+	</query>
+	
+</hibernate-mapping>

@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+      "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+  <title>ManagingPayslips</title>
+  <meta name="generator" content="Amaya, see http://www.w3.org/Amaya/">
+</head>
+
+<body>
+<h2>Managing Employee Payslips</h2>
+
+<p>Employee payslips are processed manually or generated in batches and sent
+for approval. An employee payslip details all the payment components remitted
+to an employee. It includes all the earnings and deductions of an employee for
+a specific time-period.</p>
+
+<p>The Basic, Earnings such as DA, HRA, CCA, travel allowance, medical
+allowance, pension allowance, commission, increment, and Deductions such as
+income tax, professional tax, advance, and Other Deductions such as Municipal
+Union Fund are all considered during payslip generation.</p>
+
+<p>The Payscale Master: </p>
+<ul>
+  <li>Specifies the relevant linked payheads for each employee.</li>
+  <li>Adds Payhead-Earnings to an employee payslip only when specified. </li>
+  <li>Calculates the Payhead-Earning based on the Calculation Type, Percentage
+    values and Attendance.</li>
+</ul>
+
+<p>See table to know how Payhead-Earnings are calculated for each calculation
+type: </p>
+
+<table border="1" style="width: 70%">
+  <caption></caption>
+  <col>
+  <col>
+  <col>
+  <col>
+  <tbody>
+    <tr>
+      <td><strong>Calculation Type</strong></td>
+      <td><strong>Is Attendance Based?</strong></td>
+      <td><strong>Is Recomputed?</strong></td>
+      <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+      <td>Monthly Flat Rate</td>
+      <td>Y</td>
+      <td>Y</td>
+      <td>Earning is pro-rated based on the employee attendance </td>
+    </tr>
+    <tr>
+      <td>Computed Value</td>
+      <td>N</td>
+      <td>Y</td>
+      <td>Earning is recomputed </td>
+    </tr>
+    <tr>
+      <td>Computed Value</td>
+      <td>Y</td>
+      <td>Y</td>
+      <td>Earning is recomputed and then pro-rated based on the employee
+        attendance</td>
+    </tr>
+    <tr>
+      <td>Slab-based</td>
+      <td>N</td>
+      <td>Y</td>
+      <td>Earning is recomputed</td>
+    </tr>
+    <tr>
+      <td>Slab-based</td>
+      <td>Y</td>
+      <td>Y</td>
+      <td>Earning is recomputed and then pro-rated based on the employee
+        attendance</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Based on the Payhead Deduction, the following is done: </p>
+<ul>
+  <li>For Deduction-Bank Loan: The monthly deduction for the bank loan is
+    deducted from the payslip.</li>
+  <li>For Deduction-Advances : The monthly advance deduction amount is deducted
+    from the payslip.</li>
+  <li>For Deduction-Tax and Deduction-Other: When the deduction is mapped to: 
+    <ul>
+      <li>An automatic recovery account, the slab details in eGov Financials
+        provide the deduction amount. <strong></strong> 
+        <p><strong>NOTE</strong><strong>:</strong> An automatic recovery
+        account has a fixed deduction amount or percentage.</p>
+      </li>
+      <li>A manual recovery account or not mapped to any account, the deduction
+        amount is the same as that of the previous month. 
+        <p><strong>NOTE</strong>: For a manual recovery account, the deduction
+        needs to be calculated manually every time. </p>
+      </li>
+    </ul>
+  </li>
+</ul>
+<ul>
+  <li>Increments: Based on the increments defined in the Payscale Master, an
+    increment is added to the Basic, if applicable.</li>
+</ul>
+
+<p>After the payslips are processed, any errors encountered during generation
+of batch payslips will be sent as an unprocessed payslip with the reason for
+failure.</p>
+
+<p>For more information on Payslips, see the following topics:</p>
+<ul>
+  <li><a href="8_payroll_payrolltxn_batchpayslips_intro.html">Generating Batch
+    Payslips</a></li>
+  <li><a href="8_payroll_payrolltxn_unprocessedpayslip_intro.html">Resolving
+    Unprocessed Payslips</a></li>
+  <li><a href="8_payroll_payrolltxn_payscexcptn_create.html">Creating Exception
+    Payslips/////////</a></li>
+  <li><a href="8_payroll_payrolltxn_payscexcptn_view.html">Viewing Exception
+    Payslips//////////////</a></li>
+  <li><a href="ModifyApproveRejectPayslipException.html">Modify/Approve/Reject
+    Payslip Exception///////////////View /Approve/Reject in one page</a></li>
+  <li><a href="8_payroll_payrolltxn_suppayslip.html">Creating a Suppliementary
+    Payslip</a></li>
+  <li><a href="8_payroll_payrolltxn_payslip_intro.html">Viewing an Employee's
+    Old/Current Payslip</a></li>
+  <li><a href="ModifyPayslip.html">Modifying
+    Payslips////////////////////////////////////</a></li>
+  <li><a href="8_payroll_payrolltxn_payslip_approve.html">Approving
+    Payslips/////////////////////////////////</a> </li>
+</ul>
+
+<p><a></a></p>
+</body>
+</html>

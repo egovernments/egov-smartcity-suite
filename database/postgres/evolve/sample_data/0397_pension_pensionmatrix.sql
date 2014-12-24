@@ -1,0 +1,20 @@
+#UP
+
+INSERT INTO EG_WF_MATRIX
+   (ID, OBJECTTYPE, CURRENTSTATE, NEXTSTATE, NEXTACTION,NEXTSTATUS, VALIDACTIONS)
+ VALUES
+   (EG_WF_MATRIX_SEQ.nextVal,'Pension', 'NEW','Initiated', 'Pending Approval', 'Initiated', 'Forward,Reject');
+
+INSERT INTO EG_WF_MATRIX
+   (ID, OBJECTTYPE, CURRENTSTATE, NEXTSTATE, NEXTACTION,NEXTSTATUS, VALIDACTIONS)
+ VALUES
+   (EG_WF_MATRIX_SEQ.nextVal,'Pension', 'Rejected','Initiated', 'Pending Approval', 'Initiated', 'Forward,Reject');
+
+INSERT INTO EG_WF_MATRIX
+   (ID, OBJECTTYPE, CURRENTSTATE,PENDINGACTIONS,NEXTSTATE, NEXTACTION,NEXTSTATUS, VALIDACTIONS)
+ VALUES
+   (EG_WF_MATRIX_SEQ.nextVal, 'Pension', 'Initiated','Pending Approval','Approved', 'END', 'Approved', 'Approve,Reject');
+
+#DOWN
+
+DELETE FROM EG_WF_MATRIX WHERE OBJECTTYPE = 'Pension';

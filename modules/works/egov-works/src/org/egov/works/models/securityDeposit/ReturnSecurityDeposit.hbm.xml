@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.works.models.securityDeposit.ReturnSecurityDeposit"
+		table="EGW_RETURN_SECURITY_DEPOSIT">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_RETURN_SD_SEQ</param>
+			</generator>
+		</id>				
+		<many-to-one name="workOrder" class="org.egov.works.models.workorder.WorkOrder" column="WORKORDER_ID" not-null="true" fetch="select" />
+	
+		<many-to-one name="contractor" class="org.egov.works.models.masters.Contractor" column="CONTRACTOR_ID" not-null="true" fetch="select"/>
+		
+		<!-- added for capturing emd amount  -->
+		<property name="securityDepositAmountdeducted" type="double" precision="2"	scale="20" column="SD_AMOUNT_DEDUCTED" />
+		<property name="returnSecurityDepositAmount" type="double" precision="2"	scale="20" column="RETURN_SD_AMOUNT" not-null="true" />
+		<many-to-one name="glcode" class="org.egov.commons.CChartOfAccounts" column="GLCODEID"  />
+		<property name="remarks" column="REMARKS" type="string" />
+		<property name="defectLiabilityPeriod" type="double" precision="2" scale="10" column="DEFECT_LIABILITY_PERIOD"/>	
+		
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" not-null="true" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />	
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+		<many-to-one name="state" class="org.egov.infstr.models.State"
+			cascade="all">
+			<column name="STATE_ID" />
+		</many-to-one>
+		<many-to-one name="egwStatus" column="STATUS_ID" />
+		<many-to-one name="egBillregister" class="org.egov.model.bills.EgBillregister" column="billId" />
+	</class>
+
+    	
+</hibernate-mapping>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="revisedEstimateList" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="593" leftMargin="1" rightMargin="1" topMargin="0" bottomMargin="0" isSummaryNewPage="true">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="org.egov.infstr.reporting.util.*"/>
+	<import value="org.egov.infstr.utils.*"/>
+	<parameter name="deptName" class="java.lang.String"/>
+	<parameter name="deptAddress" class="java.lang.String"/>
+	<parameter name="aeWorkNameForEstimate" class="java.lang.String"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="logoPath" class="java.lang.String"/>
+	<parameter name="contractorAddress" class="java.lang.String"/>
+	<field name="workOrderEstimates" class="java.util.List"/>
+	<field name="workOrderNumber" class="java.lang.String"/>
+	<field name="tenderNumber" class="java.lang.String"/>
+	<field name="agreementDetails" class="java.lang.String"/>
+	<field name="paymentTerms" class="java.lang.String"/>
+	<field name="siteHandOverDate" class="java.util.Date"/>
+	<field name="workOrderAmount" class="java.lang.Double"/>
+	<field name="workCommencedDate" class="java.util.Date"/>
+	<field name="emdAmountDeposited" class="java.lang.Double"/>
+	<field name="securityDeposit" class="java.lang.Double"/>
+	<field name="labourWelfareFund" class="java.lang.Double"/>
+	<field name="workOrderDate" class="java.util.Date"/>
+	<field name="contractPeriod" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="35" splitType="Prevent">
+			<subreport>
+				<reportElement x="0" y="0" width="595" height="35"/>
+				<subreportParameter name="deptName">
+					<subreportParameterExpression><![CDATA[$P{deptName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="securityDeposit">
+					<subreportParameterExpression><![CDATA[$F{securityDeposit}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="deptAddress">
+					<subreportParameterExpression><![CDATA[$P{deptAddress}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="aeWorkNameForEstimate">
+					<subreportParameterExpression><![CDATA[$P{aeWorkNameForEstimate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="emdAmountDeposited">
+					<subreportParameterExpression><![CDATA[$F{emdAmountDeposited}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="tenderNumber">
+					<subreportParameterExpression><![CDATA[$F{tenderNumber}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="workOrderEstimates">
+					<subreportParameterExpression><![CDATA[$F{workOrderEstimates}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cityName">
+					<subreportParameterExpression><![CDATA[$P{cityName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="workOrderDate">
+					<subreportParameterExpression><![CDATA[$F{workOrderDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="workOrderAmount">
+					<subreportParameterExpression><![CDATA[$F{workOrderAmount}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="agreementDetails">
+					<subreportParameterExpression><![CDATA[$F{agreementDetails}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="contractPeriod">
+					<subreportParameterExpression><![CDATA[$F{contractPeriod}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="revisionNo">
+					<subreportParameterExpression><![CDATA[$V{REPORT_COUNT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="workOrderNumber">
+					<subreportParameterExpression><![CDATA[$F{workOrderNumber}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="labourWelfareFund">
+					<subreportParameterExpression><![CDATA[$F{labourWelfareFund}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="siteHandOverDate">
+					<subreportParameterExpression><![CDATA[$F{siteHandOverDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="paymentTerms">
+					<subreportParameterExpression><![CDATA[$F{paymentTerms}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="logoPath">
+					<subreportParameterExpression><![CDATA[$P{logoPath}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="workCommencedDate">
+					<subreportParameterExpression><![CDATA[$F{workCommencedDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="contractorAddress">
+					<subreportParameterExpression><![CDATA[$P{contractorAddress}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(java.util.Collections.EMPTY_LIST, false)]]></dataSourceExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[ReportUtil.getTemplateAsStream("workOrderForRevisedEstimate.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

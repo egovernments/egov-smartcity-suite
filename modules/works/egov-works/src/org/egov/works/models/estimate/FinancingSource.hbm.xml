@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.works.models.estimate.FinancingSource"
+		table="EGW_FINANCINGSOURCE">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">SEQ_EGW_FINANCING_SOURCE</param>
+			</generator>
+		</id>
+		<property name="lastModifiedDate" column="LASTMODIFIEDDATE" type="timestamp" />
+		<property name="percentage" column="PERCENTAGE" type="double" />
+		<many-to-one name="financialDetail" column="FINANCIALDETAILID"/>
+		<many-to-one name="fundSource" column="FUNDSOURCEID"/>
+		
+	</class>
+</hibernate-mapping>

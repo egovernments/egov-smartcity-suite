@@ -1,0 +1,13 @@
+#UP
+
+/** sample data for festival advance for payhead***/
+
+ INSERT INTO EGPAY_SALARYCODES ( ID, HEAD, CATEGORYID, CREATEDBY, CREATEDDATE, LASTMODIFIEDBY,
+LASTMODIFIEDDATE, DESCRIPTION, IS_TAXABLE, CAL_TYPE, GLCODEID, PCT_BASIS, ORDER_ID, TDS_ID,
+LOCAL_LANG_DESC, INTEREST_GLCODEID, ISATTENDANCEBASED, ISRECOMPUTED,
+ISRECURRING ) VALUES ( 
+EISPAYROLL_SALARYCODES_SEQ.nextval, 'FESTIVALDED', 4, 1,  sysdate, 1,  sysdate
+, 'FESTIVAL ADVANCE', 'N', 'MonthlyFlatRate', (select id from chartofaccounts where glcode='4601004'), NULL, 17, NULL, 'FESTIVAL ADVANCE',(select id from chartofaccounts where glcode='1713000') 
+, 'Y', 'Y', 'Y'); 
+
+#DOWN

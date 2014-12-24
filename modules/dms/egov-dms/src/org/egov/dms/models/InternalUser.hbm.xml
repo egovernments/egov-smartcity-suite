@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping >
+	<class name="org.egov.dms.models.InternalUser" table="EGDMS_INTNL_USER"> 
+		<id name="id" type="long" column="ID">
+	        <generator class="sequence">
+	            <param name="sequence">SEQ_EGDMS_INTNL_USER</param>
+	        </generator>
+	    </id>	    
+	    <many-to-one name="designation" class="org.egov.pims.commons.DesignationMaster" column="DESIG" />
+	    <many-to-one name="department" class="org.egov.lib.rjbac.dept.DepartmentImpl" column="DEPT"/> 	   
+	    <many-to-one name="position" class="org.egov.pims.commons.Position" column="POSITION" /> 	   
+	    <many-to-one name="employeeInfo" class="org.egov.pims.model.PersonalInformation" column="EMPINFO" /> 	   
+	 </class>
+</hibernate-mapping>

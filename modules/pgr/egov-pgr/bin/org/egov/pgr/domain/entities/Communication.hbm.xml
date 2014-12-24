@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.egov.pgr.domain.entities.Communication" table="EGGR_COMMUNICATION" >
+        <id name="id" type="java.lang.Long">
+            <column name="ID"  />
+           <generator class="sequence">
+            	<param name="sequence">SEQ_EGGR_COMMUNICATION</param>
+            </generator>
+        </id>
+        <many-to-one name="fromUser"  class="org.egov.lib.rjbac.user.UserImpl" >
+            <column name="FROMUSERID"  not-null="true" />
+        </many-to-one>
+        <many-to-one name="complaintDetails" class="org.egov.pgr.domain.entities.ComplaintDetails" fetch="select">
+            <column name="COMPLAINTID"  not-null="true" />
+        </many-to-one>
+        <many-to-one name="toUser" class="org.egov.lib.rjbac.user.UserImpl">
+            <column name="TOUSERID" />
+        </many-to-one>
+        <property name="message" type="java.lang.String">
+            <column name="MESSAGE" length="1024" not-null="true" />
+        </property>
+        <property name="commDate" type="java.util.Date">
+            <column name="COMMDATE" length="7" not-null="true" />
+        </property>
+        <property name="communicationType" type="java.lang.Integer">
+            <column name="COMMUNICATIONTYPE"  not-null="true" />
+        </property>
+        <property name="messageLocal" type="java.lang.String">
+            <column name="MESSAGE_LOCAL" length="1024" />
+        </property>
+         <many-to-one name="modifiedBy"  class="org.egov.lib.rjbac.user.UserImpl" >
+            <column name="MODIFIEDBY"  not-null="true" />
+        </many-to-one>       
+    </class>
+</hibernate-mapping>

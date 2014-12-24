@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="erp3deploy" basedir=".">
+    <property name="lib" value="${basedir}/deploy_libs" />
+    <property name="database.dir" value="${basedir}/database" />
+    <property name="database.type" value="oracle" /> <!-- TODO change to postgres when needed -->
+    <property name="temp.location" value="/tmp/erp3configfiles" />
+    <property environment="env" />
+    <path id="class.path">
+        <fileset dir="${lib}" includes="**/*.jar" />
+    </path>
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${lib}/misc/ant-contrib-1.0b3.jar" />
+    <import file="${basedir}/database/${database.type}/evolve.xml" />
+
+    <target name="unjar-config">
+        <delete dir="${temp.location}" failonerror="false" />
+        <mkdir dir="${temp.location}" />
+        <unzip src="${basedir}/lib/egov-config.jar" dest="${temp.location}" />
+        <echo message="You may now edit the config files in the above tmp location. After editing, run the 'jar-config' target to refresh the egov-config.jar." />
+    </target>
+
+    <target name="jar-config">
+        <zip basedir="${temp.location}" destfile="${basedir}/lib/egov-config.jar" />
+        <copy file="${basedir}/lib/egov-config.jar" todir="${env.JBOSS_HOME}/standalone/deployments/egov.ear/lib" overwrite="true" />
+    </target>
+
+</project>

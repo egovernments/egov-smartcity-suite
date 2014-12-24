@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.model.budget.BudgetReAppropriation" table="EGF_BUDGET_REAPPROPRIATION"> 
+		<!-- A squence pk generator -->
+		<id name="id" type="long" unsaved-value="null" >
+			<column name="ID" not-null="true"/>
+			<generator class="sequence">
+				<param name="sequence">SEQ_EGF_REAPPROPRIATION</param>
+			</generator>
+		</id>
+		<property column="MODIFIEDDATE" name="modifiedDate" type="timestamp"/>
+		<property column="CREATEDDATE" name="createdDate"/>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY"/>
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY"/>
+		
+		<property name="additionAmount">
+			<column name="ADDITION_AMOUNT" />
+		</property>	
+		<property name="deductionAmount">
+			<column name="DEDUCTION_AMOUNT" />
+		</property>	
+		<property name="originalAdditionAmount">
+			<column name="ORIGINAL_ADDITION_AMOUNT" />
+		</property>	
+		<property name="originalDeductionAmount">
+			<column name="ORIGINAL_DEDUCTION_AMOUNT" />
+		</property>	
+		<property name="anticipatoryAmount">
+			<column name="ANTICIPATORY_AMOUNT" />
+		</property>	
+		<many-to-one name="reAppropriationMisc" class="org.egov.model.budget.BudgetReAppropriationMisc" column="REAPPROPRIATION_MISC"/>	
+		<many-to-one name="budgetDetail" class="org.egov.model.budget.BudgetDetail" column="BUDGETDETAIL"  />
+		<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+               <column name="STATE_ID"/>
+        </many-to-one>
+	</class>
+</hibernate-mapping>
+						

@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 9, 2007 3:21:11 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.pims.empLeave.model.LeaveOpeningBalance" table="EGEIS_LEAVE_OPENING_BALANCE" >
+        
+        <id
+	name="id"
+	column="ID"
+	type="int">
+	<generator class="sequence">
+		<param name="sequence">LEAVE_OPENING_BALANCE_SEQ</param>
+	</generator>
+	</id>
+	
+	<property name="noOfLeavesAvai" >
+	            <column name="LEAVES_AVAILABLE" />
+        </property>
+        
+        <many-to-one name="typeOfLeaveMstr" column="LEAVE_TYPE" 
+	class="org.egov.pims.empLeave.model.TypeOfLeaveMaster"/>
+	
+	<many-to-one name="financialId" column="FINANCIALYEAR" 
+	class="org.egov.commons.CFinancialYear"/>
+	
+	<many-to-one name="calendarId" column="CALENDARYEAR" 
+	class="org.egov.pims.empLeave.model.CalendarYear"/>
+	
+	<many-to-one name="employeeId" class="org.egov.pims.model.PersonalInformation" fetch="select">
+				    <column name="EMP_ID"   />
+				  </many-to-one>
+
+        
+	
+    </class>
+</hibernate-mapping>

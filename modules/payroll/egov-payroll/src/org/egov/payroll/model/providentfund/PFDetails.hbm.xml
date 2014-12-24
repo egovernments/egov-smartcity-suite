@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 10, 2008 12:54:43 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+	<class name="org.egov.payroll.model.providentfund.PFDetails" table="EGPAY_PFDETAILS">
+		<id name="detailId" type="integer">
+			<column name="ID" precision="10" scale="0"></column>
+			<generator class="native" >
+            	<param name="SEQUENCE">SEQ_PFDETAILS</param>
+            </generator>
+		</id>
+		<!-- <many-to-one name="id" class="org.egov.providentfund.model.PFHeader" fetch="select">
+			<column name="PFHEADERID" precision="10" scale="0" ></column>
+		</many-to-one>  -->
+		<property name="pfHeaderId" type="integer">
+			<column name="PFHEADERID" precision="10" scale="0"></column>
+		</property>
+		<property name="fromDate" type="date">
+			<column name="FROMDATE" length="10"></column>
+		</property>
+		<property name="toDate" type="date">
+			<column name="TODATE" length="10"></column>
+		</property>
+		<property name ="annualRateOfInterest" type="big_decimal">
+			<column name="ANNUALRATEOFINTEREST" precision="5" scale="2"></column>
+		</property>
+	</class>
+</hibernate-mapping>

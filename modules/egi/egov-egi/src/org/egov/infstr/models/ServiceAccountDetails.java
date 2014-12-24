@@ -1,0 +1,105 @@
+/*
+ * @(#)ServiceAccountDetails.java 3.0, 17 Jun, 2013 2:52:04 PM
+ * Copyright 2013 eGovernments Foundation. All rights reserved. 
+ * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+package org.egov.infstr.models;
+
+import java.math.BigDecimal;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CFunction;
+
+public class ServiceAccountDetails {
+
+	private Long id;
+
+	private BigDecimal amount = BigDecimal.ZERO;
+
+	private CChartOfAccounts glCodeId;
+
+	private ServiceDetails serviceDetails;
+
+	private CFunction function;
+
+	private Set<ServiceSubledgerInfo> subledgerDetails = new LinkedHashSet<ServiceSubledgerInfo>(0);
+
+	public void addSubledgerDetails(ServiceSubledgerInfo subledgerInfo) {
+		getSubledgerDetails().add(subledgerInfo);
+	}
+
+	/**
+	 * @return the amount
+	 */
+	public BigDecimal getAmount() {
+		return null != this.amount ? this.amount.setScale(2, BigDecimal.ROUND_HALF_EVEN) : null;
+	}
+
+	/**
+	 * @param amount the amount to set
+	 */
+	public void setAmount(BigDecimal amount) {
+		this.amount = amount;
+	}
+
+	/**
+	 * @return the glCodeId
+	 */
+	public CChartOfAccounts getGlCodeId() {
+		return glCodeId;
+	}
+
+	/**
+	 * @param glCodeId the glCodeId to set
+	 */
+	public void setGlCodeId(CChartOfAccounts glCodeId) {
+		this.glCodeId = glCodeId;
+	}
+
+	/**
+	 * @return the serviceDetails
+	 */
+	public ServiceDetails getServiceDetails() {
+		return serviceDetails;
+	}
+
+	/**
+	 * @param serviceDetails the serviceDetails to set
+	 */
+	public void setServiceDetails(ServiceDetails serviceDetails) {
+		this.serviceDetails = serviceDetails;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Set<ServiceSubledgerInfo> getSubledgerDetails() {
+		return subledgerDetails;
+	}
+
+	public void setSubledgerDetails(Set<ServiceSubledgerInfo> subledgerDetails) {
+		this.subledgerDetails = subledgerDetails;
+	}
+
+	public CFunction getFunction() {
+		return function;
+	}
+
+	public void setFunction(CFunction function) {
+		this.function = function;
+	}
+
+}

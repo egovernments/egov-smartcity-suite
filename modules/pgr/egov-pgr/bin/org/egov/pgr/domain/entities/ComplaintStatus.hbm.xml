@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.egov.pgr.domain.entities.ComplaintStatus" table="EGGR_COMPLAINTSTATUS" >
+        <id name="id" type="java.lang.Long">
+            <column name="COMPLAINTSTATUSID" />
+            <generator class="sequence">
+            	<param name="sequence">SEQ_EGGR_COMPLAINTSTATUS</param>
+            </generator>
+        </id>
+        <property name="name" type="java.lang.String">
+            <column name="STATUSNAME" length="64" not-null="true" />
+        </property>
+       
+    </class>
+    <query name="getStatusByName">
+		<![CDATA[
+         from ComplaintStatus where name=?
+    ]]>
+	</query>
+	<query name="getAllComplaintStatus">
+		<![CDATA[
+         from ComplaintStatus order by name
+    ]]>
+	</query>
+	
+	<query name="getStatusByListName">
+		<![CDATA[
+     	from ComplaintStatus status where status.name in(:param_0)
+    	]]>
+	</query>	
+</hibernate-mapping>

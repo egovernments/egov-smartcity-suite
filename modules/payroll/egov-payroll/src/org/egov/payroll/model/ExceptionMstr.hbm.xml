@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Aug 28, 2007 7:45:39 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.payroll.model.ExceptionMstr" table="EGPAY_EXCEPTION_MSTR" >
+        <id name="id" >
+            <column name="ID" precision="12" scale="0" />
+            <generator class="sequence">
+	    	  <param name="sequence">EISPAYROLL_EXCEPTIONMSTR_SEQ</param>
+	      </generator>
+
+        </id>
+        <property name="type" type="string">
+            <column name="TYPE" length="64" not-null="true" />
+        </property>
+        <property name="reason" type="string">
+            <column name="REASON" length="512" />
+        </property>
+        <set name="exceptions" inverse="true">
+            <key>
+                <column name="ID_EXCEPTIONMSTR" precision="12" scale="0" not-null="true" />
+            </key>
+            <one-to-many class="org.egov.payroll.model.EmpException" />
+        </set>
+    </class>
+</hibernate-mapping>

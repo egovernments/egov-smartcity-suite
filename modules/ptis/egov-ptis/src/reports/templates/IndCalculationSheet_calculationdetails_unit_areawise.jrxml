@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="IndCalculationSheet_calculationdetails_unit_areawise" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="org.egov.infstr.reporting.util.*"/>
+	<import value="org.egov.ptis.nmc.model.*"/>
+	<parameter name="floorNumber" class="java.lang.String"/>
+	<parameter name="monthlyRent" class="java.lang.String"/>
+	<parameter name="monthlyRentPaidByTenant" class="java.math.BigDecimal"/>
+	<parameter name="unitOccupation" class="java.lang.String"/>
+	<parameter name="manualAlv" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[]]>
+	</queryString>
+	<field name="taxableArea" class="java.math.BigDecimal"/>
+	<field name="monthlyBaseRent" class="java.math.BigDecimal"/>
+	<field name="calculatedTax" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="23">
+			<printWhenExpression><![CDATA[$P{manualAlv} == null]]></printWhenExpression>
+			<textField>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="205" y="3" width="62" height="20" isRemoveLineWhenBlank="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{taxableArea}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="289" y="3" width="48" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$P{manualAlv} == null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{monthlyBaseRent}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="360" y="3" width="56" height="20" isRemoveLineWhenBlank="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{calculatedTax}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="270" y="3" width="16" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[x]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="337" y="3" width="16" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[=]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<summary>
+		<band height="43">
+		<printWhenExpression><![CDATA[$P{manualAlv} == null]]></printWhenExpression>
+			<staticText>
+				<reportElement x="174" y="3" width="83" height="19"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Monthly Rent of ]]></text>
+			</staticText>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="258" y="3" width="66" height="19" isRemoveLineWhenBlank="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{floorNumber}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="333" y="3" width="11" height="19"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[= ]]></text>
+			</staticText>
+			<line>
+				<reportElement x="361" y="1" width="55" height="1"/>
+			</line>
+			<textField>
+				<reportElement x="361" y="3" width="56" height="19" isRemoveLineWhenBlank="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{monthlyRent}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="174" y="22" width="242" height="20" isRemoveLineWhenBlank="true"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[($P{monthlyRentPaidByTenant} != null && $P{unitOccupation} == "Tenanted") ? ("    Declared Rent    =    Rs.     " + $P{monthlyRentPaidByTenant}) : ""]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="344" y="2" width="16" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Rupee"/>
+				</textElement>
+				<text><![CDATA[  `]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

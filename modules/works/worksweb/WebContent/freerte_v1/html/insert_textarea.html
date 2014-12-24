@@ -1,0 +1,74 @@
+<script>
+function rteInsertHTML() {
+	html = "<textarea name=\"" + document.getElementById("name").value + "\"";
+	if (document.getElementById("cols").value != "") {
+		html += " cols=\"" + document.getElementById("cols").value + "\"";
+	}
+	if (document.getElementById("rows").value != "") {
+		html += " rows=\"" + document.getElementById("rows").value + "\"";
+	}
+	if (document.getElementById("wrap").value != "") {
+		html += " wrap=\"" + document.getElementById("wrap").value + "\"";
+	}
+	html += ">";
+	if (document.getElementById("value").value != "") {
+		html += document.getElementById("value").value;
+	}
+	html += "</textarea>";
+	window.opener.rteInsertHTML(html);
+	window.close();
+}
+</script>
+<style>
+body, td {
+background-color:#ECE9D8;
+font-family:arial;
+font-size:11px;
+}
+input {
+font-family:arial;
+font-size:11px;
+}
+select {
+font-family:arial;
+font-size:11px;
+}
+</style>
+<fieldset>
+<legend><b>Insert Textarea </b></legend>
+<table width="100%" cellspacing="2" cellpadding="0" border="0">
+<tr>
+<td align="right">Name: </td>
+<td><input type="text" id="name" style="width:150px;"></td>
+</tr>
+<tr>
+<td align="right">Char Width: </td>
+<td><input type="text" id="cols" style="width:30px;"></td>
+</tr>
+<tr>
+  <td align="right">Num Lines: </td>
+  <td><input type="text" id="rows" style="width:30px;">
+  </td>
+</tr>
+<tr>
+  <td align="right">Wrap: </td>
+  <td><select id="wrap">
+    <option selected="selected" value="">Default</option>
+    <option value="off">Off</option>
+    <option value="virtual">Virtual</option>
+    <option value="physical">Physical</option>
+  </select>
+  </td>
+</tr>
+<tr>
+  <td align="right">Value: </td>
+  <td><textarea wrap="virtual" id="value"></textarea>
+  </td>
+</tr>
+<tr>
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<div align="center"><input type="button" value="Insert Textarea" onClick="rteInsertHTML();">
+</div>
+</fieldset>

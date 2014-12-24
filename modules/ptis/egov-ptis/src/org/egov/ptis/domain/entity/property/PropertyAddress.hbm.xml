@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.egov.ptis.domain.entity.property">
+	<joined-subclass name="PropertyAddress" table="EGPT_ADDRESS"
+		extends="org.egov.lib.address.model.Address">
+		<key column="ID_ADDRESS" />
+		<property name="subNumber" column="SUBNUMBER" />
+		<property name="doorNumOld" column="DOORNUMOLD" />
+		<property name="emailAddress" column="EMAILADDRESS" />
+		<property name="mobileNo" column="MOBILENO" />
+		<property name="extraField1" column="EXTRA_FIELD1" />
+		<property name="extraField2" column="EXTRA_FIELD2" />
+		<property name="extraField3" column="EXTRA_FIELD3" />
+		<property name="extraField4" column="EXTRA_FIELD4" />
+	</joined-subclass>
+</hibernate-mapping>
+
+

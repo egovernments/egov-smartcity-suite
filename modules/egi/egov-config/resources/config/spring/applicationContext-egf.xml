@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+	default-lazy-init="true">	
+		
+	<bean id="voucherCreator" class="org.egov.billsaccounting.services.CreateVoucher" />
+	
+	<bean id="egovCommon" class="org.egov.egf.commons.EgovCommon" scope="prototype" >
+		<property name="persistenceService" ref="persistenceService"/>
+		<property name="genericDao" ref="genericDao"/>
+	</bean>
+	
+	<bean id="financialYearDAO" class="org.egov.commons.dao.FinancialYearHibernateDAO">
+       <constructor-arg index="0" value="org.egov.commons.CFinancialYear"/>
+       <constructor-arg index="1" ><null/></constructor-arg>
+    </bean>
+     <bean id="budgetDetailsDAO" class="org.egov.dao.budget.BudgetDetailsHibernateDAO">
+       <property name="persistenceService" ref="persistenceService"/>
+       <property name="genericDao" ref="genericDao"/>
+        <property name="sequenceGenerator" ref="sequenceGenerator"/>
+        <property name="scriptExecutionService" ref="scriptExecutionService"/>
+        <property name="budgetService" ref="budgetService"/>
+    </bean>
+	<bean id="instrumentService" class="org.egov.services.instrument.InstrumentService">
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="instrumentTypeService" ref="instrumentTypeService" />
+		<property name="instrumentVouherService" ref="instrumentVouherService" />
+		<property name="bankreconciliationService" ref="bankreconciliationService" />
+		<property name="instrumentOtherDetailsService" ref="instrumentOtherDetailsService" />
+		<property name="instrumentHeaderService" ref="instrumentHeaderService" />
+	</bean>
+	
+	<bean id="instrumentHeaderService" parent="persistenceService">
+		<property name="type" value="org.egov.model.instrument.InstrumentHeader" />
+	</bean>
+
+	<bean id="instrumentTypeService" parent="persistenceService">
+		<property name="type" value="org.egov.model.instrument.InstrumentType" />
+	</bean>
+	
+		<bean id="instrumentVouherService" class="org.egov.infstr.services.PersistenceService">
+		<property name="sessionFactory" ref="egovSessionFactory" />
+		<property name="type" value="org.egov.model.instrument.InstrumentVoucher" />
+	</bean>
+
+	<bean id="bankreconciliationService" class="org.egov.infstr.services.PersistenceService">
+		<property name="sessionFactory" ref="egovSessionFactory" />
+		<property name="type" value="org.egov.commons.Bankreconciliation" />
+	</bean>
+
+	<bean id="contraService" class="org.egov.services.contra.ContraService"  parent="persistenceService" >
+	 	<property name="type" value="org.egov.model.contra.ContraJournalVoucher" />
+		<property name="persistenceService" ref="persistenceService"/>
+		<property name="contrajournalService" ref="contrajournalService"/>
+		<property name="bankReconService" ref="bankReconService"/>
+		<property name="vdPersitSer" ref="vdPersitSer"/>
+		<property name="instrumentService" ref="instrumentService"/>
+		<property name="eisService" ref="eisService"/>
+		<property name="genericDao" ref="genericDao"/>
+		<property name="eisCommonsService" ref="eisCommonsService"/>
+	</bean>
+	<bean id="contraWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
+    	 	<constructor-arg ref="contraService"/>
+         	<constructor-arg value="org.egov.model.contra.ContraJournalVoucher"/>
+    	</bean>
+	<bean id="contrajournalService" class="org.egov.infstr.services.PersistenceService">
+		<property name="sessionFactory" ref="egovSessionFactory" />
+		<property name="type" value="org.egov.model.contra.ContraJournalVoucher" />
+	</bean>
+	<bean id="vdPersitSer" class="org.egov.infstr.services.PersistenceService">
+		<property name="sessionFactory" ref="egovSessionFactory" />
+		<property name="type" value="org.egov.commons.VoucherDetail" />
+	</bean>
+
+	<bean id="bankReconService" class="org.egov.infstr.services.PersistenceService">
+		<property name="sessionFactory" ref="egovSessionFactory" />
+		<property name="type" value="org.egov.commons.Bankreconciliation" />
+	</bean>
+
+	<bean id="instrumentOtherDetailsService" class="org.egov.infstr.services.PersistenceService">
+		<property name="sessionFactory" ref="egovSessionFactory" />
+		<property name="type"
+			value="org.egov.model.instrument.InstrumentOtherDetails" />
+	</bean>
+
+<!--dependent beans to work pension-->
+
+<bean id="voucherHibDAO" class="org.egov.dao.voucher.VoucherHibernateDAO" parent="persistenceService" >
+		<property name="vdPersitSer" ref="vdPersitSer"/>
+		<property name="genericDao" ref="genericDao"/>
+</bean>
+
+<bean id="billRegisterSer" class="org.egov.infstr.services.PersistenceService">
+		<property name="sessionFactory" ref="egovSessionFactory" />
+		<property name="type" value="org.egov.model.bills.EgBillregister" />
+</bean>
+
+<bean id="voucherService" class="org.egov.services.voucher.VoucherService" parent="persistenceService">
+		<property name="type" value="org.egov.commons.CVoucherHeader" />
+		<property name="eisService" ref="eisService"/>
+		<property name="persistenceService" ref="persistenceService"/>
+		<property name="budgetDetailsDAO" ref="budgetDetailsDAO"/>
+		<property name="genericDao" ref="genericDao"/>
+		<property name="voucherHibDAO" ref="voucherHibDAO"/>
+		<property name="eisCommonsService" ref="eisCommonsService"/>
+		<property name="sequenceGenerator" ref="sequenceGenerator"/>
+		<property name="scriptExecutionService" ref="scriptExecutionService"/>
+		<property name="billRegisterSer" ref="billRegisterSer"/>
+</bean>
+
+<bean id="budgetService" class="org.egov.services.budget.BudgetService" parent="persistenceService" scope="prototype">
+	 <property name="eisService" ref="eisService"/>
+	 <property name="budgetDetailService" ref="budgetDetailService"/>
+	 <property name="budgetDetailWorkflowService" ref="budgetDetailWorkflowService"/>
+	 <property name="type" value="org.egov.model.budget.Budget" />
+</bean>
+
+<bean id="budgetDetailService" class="org.egov.services.budget.BudgetDetailService" parent="persistenceService">
+		 <property name="eisService" ref="eisService"/>
+		 <property name="budgetDetailWorkflowService" ref="budgetDetailWorkflowService"/>
+		 <property name="genericDao" ref="genericDao"/>
+		 <property name="scriptExecutionService" ref="scriptExecutionService"/>
+		 <property name="persistenceService" ref="persistenceService"/>
+</bean>
+
+<bean id="budgetDetailWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
+       <constructor-arg ref="budgetDetailService"/>
+       <constructor-arg value="org.egov.model.budget.BudgetDetail"/>
+</bean>
+<bean id="relationService" class="org.egov.commons.service.RelationService" parent="persistenceService" >
+		<property name="type" value="org.egov.commons.Relation"/>
+	</bean>
+	<bean id="accountEntityService" class="org.egov.masters.services.AccountEntityService" parent="persistenceService" >
+		<property name="type" value="org.egov.masters.model.AccountEntity"/>
+	</bean>
+			 	
+</beans>
+

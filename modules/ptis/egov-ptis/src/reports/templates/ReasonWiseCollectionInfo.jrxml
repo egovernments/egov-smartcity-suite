@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReasonWiseCollectionInfo" language="groovy" pageWidth="515" pageHeight="802" columnWidth="515" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString language="SQL">
+		<![CDATA[]]>
+	</queryString>
+	<field name="generalTax" class="java.math.BigDecimal"/>
+	<field name="waterTax" class="java.math.BigDecimal"/>
+	<field name="sewerageTax" class="java.math.BigDecimal"/>
+	<field name="fireTax" class="java.math.BigDecimal"/>
+	<field name="lightTax" class="java.math.BigDecimal"/>
+	<field name="eduCess" class="java.math.BigDecimal"/>
+	<field name="egsCess" class="java.math.BigDecimal"/>
+	<field name="bigBuildingCess" class="java.math.BigDecimal"/>
+	<field name="miscTax" class="java.math.BigDecimal"/>
+	<field name="taxType" class="java.lang.String"/>
+	<field name="total" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="24" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="23" width="515" height="1"/>
+			</line>
+			<line>
+				<reportElement x="94" y="0" width="1" height="23"/>
+			</line>
+			<line>
+				<reportElement x="146" y="0" width="1" height="23"/>
+			</line>
+			<line>
+				<reportElement x="375" y="0" width="1" height="23"/>
+			</line>
+			<line>
+				<reportElement x="420" y="0" width="1" height="23"/>
+			</line>
+			<line>
+				<reportElement x="196" y="0" width="1" height="23"/>
+			</line>
+			<line>
+				<reportElement x="241" y="0" width="1" height="23"/>
+			</line>
+			<line>
+				<reportElement x="286" y="0" width="1" height="23"/>
+			</line>
+			<line>
+				<reportElement x="331" y="0" width="1" height="23"/>
+			</line>
+			<line>
+				<reportElement x="465" y="0" width="1" height="23"/>
+			</line>
+			<textField pattern="">
+				<reportElement x="46" y="2" width="45" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sewerageTax} != null ? $F{sewerageTax}.toString() : "N/A"]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="95" y="2" width="49" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{waterTax} != null ? $F{waterTax}.toString() : "N/A"]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement x="147" y="2" width="47" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{generalTax} != null ? $F{generalTax}.toString() : "N/A"]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement x="198" y="2" width="41" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{fireTax} != null ? $F{fireTax}.toString() : "N/A"]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="243" y="2" width="41" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{lightTax} != null ? $F{lightTax}.toString() : "N/A"]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="288" y="2" width="41" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{eduCess} != null ? $F{eduCess}.toString() : "N/A"]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="333" y="2" width="40" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{egsCess} != null ? $F{egsCess}.toString() : "N/A"]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="377" y="2" width="41" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{bigBuildingCess} != null ? $F{bigBuildingCess}.toString() : "N/A"]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="422" y="2" width="41" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{miscTax} != null ? $F{miscTax}.toString() : "N/A"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="44" y="0" width="1" height="23"/>
+			</line>
+			<textField pattern="">
+				<reportElement x="2" y="2" width="40" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{taxType}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="466" y="2" width="48" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{total} != null ? $F{total}.toString() : "N/A"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

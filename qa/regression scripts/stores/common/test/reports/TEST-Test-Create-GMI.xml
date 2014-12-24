@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite tests="9" assertions="0" name="Test_Create_GMI" time="0.2" failures="0" errors="9">
+  <testcase assertions="0" name="test_0010_create_GMI_Inter_Store_Transfer" time="0.022">
+    <failure type="NameError" message="uninitialized constant INPUT_EXCEL">
+uninitialized constant INPUT_EXCEL (NameError)
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:443:in `load_missing_constant'
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:80:in `const_missing'
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:92:in `const_missing'
+c:/stores_qa/common/Utils.rb:13:in `get_input_data'
+c:/stores_qa/regression/Transactions/General material issue/test_create_gmi.rb:32:in `test_0010_create_GMI_Inter_Store_Transfer'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `__send__'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+c:/ruby/lib/ruby/1.8/test/unit.rb:278
+suite.rb:1    </failure>
+  </testcase>
+  <testcase assertions="0" name="test_0020_create_GMI_Internal_Consumption" time="0.023">
+    <failure type="NameError" message="uninitialized constant INPUT_EXCEL">
+uninitialized constant INPUT_EXCEL (NameError)
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:443:in `load_missing_constant'
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:80:in `const_missing'
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:92:in `const_missing'
+c:/stores_qa/common/Utils.rb:13:in `get_input_data'
+c:/stores_qa/regression/Transactions/General material issue/test_create_gmi.rb:67:in `test_0020_create_GMI_Internal_Consumption'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `__send__'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+c:/ruby/lib/ruby/1.8/test/unit.rb:278
+suite.rb:1    </failure>
+  </testcase>
+  <testcase assertions="0" name="test_0030_create_GMI_Sale" time="0.021">
+    <failure type="NameError" message="uninitialized constant INPUT_EXCEL">
+uninitialized constant INPUT_EXCEL (NameError)
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:443:in `load_missing_constant'
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:80:in `const_missing'
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:92:in `const_missing'
+c:/stores_qa/common/Utils.rb:13:in `get_input_data'
+c:/stores_qa/regression/Transactions/General material issue/test_create_gmi.rb:97:in `test_0030_create_GMI_Sale'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `__send__'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+c:/ruby/lib/ruby/1.8/test/unit.rb:278
+suite.rb:1    </failure>
+  </testcase>
+  <testcase assertions="0" name="test_0040_create_GMI_Stock_Adjustment" time="0.022">
+    <failure type="NameError" message="uninitialized constant INPUT_EXCEL">
+uninitialized constant INPUT_EXCEL (NameError)
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:443:in `load_missing_constant'
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:80:in `const_missing'
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:92:in `const_missing'
+c:/stores_qa/common/Utils.rb:13:in `get_input_data'
+c:/stores_qa/regression/Transactions/General material issue/test_create_gmi.rb:132:in `test_0040_create_GMI_Stock_Adjustment'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `__send__'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+c:/ruby/lib/ruby/1.8/test/unit.rb:278
+suite.rb:1    </failure>
+  </testcase>
+  <testcase assertions="0" name="test_0050_create_GMI_Written_off" time="0.024">
+    <failure type="NameError" message="uninitialized constant INPUT_EXCEL">
+uninitialized constant INPUT_EXCEL (NameError)
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:443:in `load_missing_constant'
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:80:in `const_missing'
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:92:in `const_missing'
+c:/stores_qa/common/Utils.rb:13:in `get_input_data'
+c:/stores_qa/regression/Transactions/General material issue/test_create_gmi.rb:166:in `test_0050_create_GMI_Written_off'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `__send__'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+c:/ruby/lib/ruby/1.8/test/unit.rb:278
+suite.rb:1    </failure>
+  </testcase>
+  <testcase assertions="0" name="test_0060_create_GMI_wihtout_dept" time="0.021">
+    <failure type="NameError" message="uninitialized constant INPUT_EXCEL">
+uninitialized constant INPUT_EXCEL (NameError)
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:443:in `load_missing_constant'
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:80:in `const_missing'
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:92:in `const_missing'
+c:/stores_qa/common/Utils.rb:13:in `get_input_data'
+c:/stores_qa/regression/Transactions/General material issue/test_create_gmi.rb:203:in `test_0060_create_GMI_wihtout_dept'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `__send__'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+c:/ruby/lib/ruby/1.8/test/unit.rb:278
+suite.rb:1    </failure>
+  </testcase>
+  <testcase assertions="0" name="test_0070_create_GMI_without_purpose" time="0.022">
+    <failure type="NameError" message="uninitialized constant INPUT_EXCEL">
+uninitialized constant INPUT_EXCEL (NameError)
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:443:in `load_missing_constant'
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:80:in `const_missing'
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:92:in `const_missing'
+c:/stores_qa/common/Utils.rb:13:in `get_input_data'
+c:/stores_qa/regression/Transactions/General material issue/test_create_gmi.rb:239:in `test_0070_create_GMI_without_purpose'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `__send__'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+c:/ruby/lib/ruby/1.8/test/unit.rb:278
+suite.rb:1    </failure>
+  </testcase>
+  <testcase assertions="0" name="test_0080_create_GMI_witout_itemno_acc_code" time="0.022">
+    <failure type="NameError" message="uninitialized constant INPUT_EXCEL">
+uninitialized constant INPUT_EXCEL (NameError)
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:443:in `load_missing_constant'
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:80:in `const_missing'
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:92:in `const_missing'
+c:/stores_qa/common/Utils.rb:13:in `get_input_data'
+c:/stores_qa/regression/Transactions/General material issue/test_create_gmi.rb:274:in `test_0080_create_GMI_witout_itemno_acc_code'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `__send__'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+c:/ruby/lib/ruby/1.8/test/unit.rb:278
+suite.rb:1    </failure>
+  </testcase>
+  <testcase assertions="0" name="test_0090_create_GMI_without_Quantity" time="0.022">
+    <failure type="NameError" message="uninitialized constant INPUT_EXCEL">
+uninitialized constant INPUT_EXCEL (NameError)
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:443:in `load_missing_constant'
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:80:in `const_missing'
+c:/ruby/lib/ruby/gems/1.8/gems/activesupport-2.3.2/lib/active_support/dependencies.rb:92:in `const_missing'
+c:/stores_qa/common/Utils.rb:13:in `get_input_data'
+c:/stores_qa/regression/Transactions/General material issue/test_create_gmi.rb:310:in `test_0090_create_GMI_without_Quantity'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `__send__'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+c:/ruby/lib/ruby/1.8/test/unit.rb:278
+suite.rb:1    </failure>
+  </testcase>
+  <system-out>
+    <![CDATA[]]>
+  </system-out>
+  <system-err>
+    <![CDATA[]]>
+  </system-err>
+</testsuite>

@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 6, 2008 11:33:36 AM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping >
+	<class name="org.egov.billsaccounting.model.Supplierbilldetail"
+		table="SUPPLIERBILLDETAIL" >
+		<id name="id" type="integer">
+			<column name="ID" precision="22" scale="0" />
+			<generator class="sequence" >
+           <param name="sequence">SEQ_SUPPLIERBILLDETAIL</param>            </generator>
+		</id>
+		
+		<many-to-one name="voucherheader"
+			class="org.egov.commons.CVoucherHeader" fetch="select">
+			<column name="VOUCHERHEADERID" precision="22" scale="0"
+				not-null="true" />
+		</many-to-one>
+		<many-to-one name="relation" class="org.egov.commons.Relation"
+			fetch="select">
+			<column name="SUPPLIERID" precision="22" scale="0"
+				not-null="true" />
+		</many-to-one>
+		<many-to-one name="egBillregister"
+			class="org.egov.model.bills.EgBillregister" fetch="select">
+			<column name="BILLID" precision="22" scale="0" />
+		</many-to-one>
+		<property name="billdate" type="date">
+			<column name="BILLDATE" length="7" />
+		</property>
+		<property name="billnumber" type="string">
+			<column name="BILLNUMBER" length="50" />
+		</property>
+		<property name="otherrecoveries" type="big_decimal">
+			<column name="OTHERRECOVERIES" precision="15" />
+		</property>
+		<property name="mrnnumber" type="string">
+			<column name="MRNNUMBER" length="10" />
+		</property>
+		<property name="mrndate" type="date">
+			<column name="MRNDATE" length="7" />
+		</property>
+		<property name="billamount" type="big_decimal">
+			<column name="BILLAMOUNT" precision="15" not-null="true" />
+		</property>
+		<property name="passedamount" type="big_decimal">
+			<column name="PASSEDAMOUNT" precision="15" not-null="true" />
+		</property>
+		<property name="approvedby" type="string">
+			<column name="APPROVEDBY" length="25" />
+		</property>
+		<property name="payableaccount" type="big_decimal">
+			<column name="PAYABLEACCOUNT" precision="22" scale="0" />
+		</property>
+		<property name="narration" type="string">
+			<column name="NARRATION" length="250" />
+		</property>
+		<property name="worksdetailid" type="integer">
+			<column name="WORKSDETAILID" precision="22" scale="0"
+				not-null="true" />
+		</property>
+		<property name="tdsamount" type="big_decimal">
+			<column name="TDSAMOUNT" precision="15" />
+		</property>
+		<property name="tdspaidtoit" type="java.lang.Boolean">
+			<column name="TDSPAIDTOIT" precision="1" scale="0" />
+		</property>
+		<property name="paidamount" type="big_decimal">
+			<column name="PAIDAMOUNT" precision="15" />
+		</property>
+		<property name="advadjamt" type="big_decimal">
+			<column name="ADVADJAMT" precision="15" />
+		</property>
+		<property name="isreversed" type="java.lang.Boolean">
+			<column name="ISREVERSED" precision="1" scale="0" />
+		</property>
+		<property name="assetid" type="big_decimal">
+			<column name="ASSETID" precision="22" scale="0" />
+		</property>
+		<property name="capRev" type="big_decimal">
+			<column name="CAP_REV" precision="22" scale="0" />
+		</property>
+		<property name="paybydate" type="date">
+			<column name="PAYBYDATE" length="7" />
+		</property>
+	</class>
+</hibernate-mapping>

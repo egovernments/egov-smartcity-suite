@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 19, 2007 2:57:28 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+	<class name="org.egov.works.models.masters.Contractor"
+		table="EGW_CONTRACTOR">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_CONTRACTOR_SEQ</param>
+			</generator>
+		</id>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY" fetch="select"/>
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" />
+		<property name="modifiedDate" column="MODIFIEDDATE" type="timestamp" />	
+		<property name="code" type="string" >
+			<column name="CODE" length="50" not-null="true" unique="true" />
+		</property>
+		<property name="name" type="string">
+			<column name="NAME" length="100" not-null="true" />
+		</property>
+		<property name="correspondenceAddress" type="string">
+			<column name="CORRESPONDENCE_ADDRESS" length="250" />
+		</property>
+		<property name="paymentAddress" type="string">
+			<column name="PAYMENT_ADDRESS" length="250" />
+		</property>
+		
+		<property name="contactPerson" type="string">
+			<column name="CONTACT_PERSON" length="100" />
+		</property>
+		<property name="email" type="string">
+			<column name="EMAIL" length="120" />
+		</property>
+		<property name="narration" type="string">
+			<column name="NARRATION" length="250" />
+		</property>
+		<property name="panNumber" type="string">
+			<column name="PAN_NUMBER" length="14" />
+		</property>
+		<property name="tinNumber" type="string">
+			<column name="TIN_NUMBER" length="14" />
+		</property>
+		<many-to-one name="bank"
+			class="org.egov.commons.Bank" fetch="select">
+			<column name="BANK_ID" />
+		</many-to-one>
+		<property name="ifscCode" type="string">
+			<column name="IFSC_CODE" length="15" />
+		</property>
+		<property name="bankAccount" type="string">
+			<column name="BANK_ACCOUNT" length="15" />
+		</property>
+		<property name="pwdApprovalCode" type="string">
+			<column name="PWD_APPROVAL_CODE" length="50" />
+		</property>
+		
+		<list name="contractorDetails" cascade="all,delete-orphan">
+	    	<key column="CONTRACTOR_ID"  not-null="true" />
+	    	<list-index column="MY_CONTRACTOR_INDEX"/>
+	    	<one-to-many class="org.egov.works.models.masters.ContractorDetail" />	
+    	</list>	
+	</class>
+    <query name="GET_CONTRACTORS_BY_STATUS">
+    <![CDATA[
+        select distinct cont from Contractor cont inner join cont.contractorDetails as cd where cd.status.description = ? 
+    ]]>
+    </query>
+</hibernate-mapping>

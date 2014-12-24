@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.lib.admbndry.BoundaryTypeImpl" table="EG_BOUNDARY_TYPE">
+		<id name="id" column="ID_BNDRY_TYPE" type="int">
+			<generator class="native">
+				<param name="sequence">SEQ_EG_BNDRY_TYPE</param>
+			</generator>
+		</id>
+		<timestamp column="updatedTime" name="updatedTime" access="property" unsaved-value="null" />
+		<property name="name" column="NAME" type="string" />
+		<property name="bndryTypeLocal" column="BNDRYNAME_LOCAL" type="string" />
+		<property name="hierarchy" column="HIERARCHY" type="short" />
+		<many-to-one name="heirarchyType" class="org.egov.lib.admbndry.HeirarchyTypeImpl" column="ID_HEIRARCHY_TYPE" />
+		<many-to-one name="parent" class="org.egov.lib.admbndry.BoundaryTypeImpl" cascade="delete" column="PARENT" />
+		<set name="childBoundaryTypes" inverse="true" cascade="delete-orphan">
+			<key column="PARENT" />
+			<one-to-many class="org.egov.lib.admbndry.BoundaryTypeImpl" />
+		</set>
+	</class>
+</hibernate-mapping>

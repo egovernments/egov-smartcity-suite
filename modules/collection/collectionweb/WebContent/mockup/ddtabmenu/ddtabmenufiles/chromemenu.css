@@ -1,0 +1,47 @@
+.chromemenu{
+width: 99%;
+font-weight: bold;
+}
+
+.chromemenu:after{ /*Add margin between menu and rest of content in Firefox*/
+content: "."; 
+display: block; 
+height: 0; 
+clear: both; 
+visibility: hidden;
+}
+
+.chromemenu ul{
+border: 1px solid #BBB;
+width: 100%;
+background: url(media/chromebg.gif) center center repeat-x;
+padding: 5px 0;
+margin: 0;
+text-align: left; /*set value to "right" for example to align menu to the left of page*/
+}
+
+.chromemenu ul li{
+display: inline;
+}
+
+.chromemenu ul li a{
+color: #494949;
+padding: 5px 8px;
+margin: 0;
+text-decoration: none;
+border-right: 1px solid #BBB;
+}
+
+.chromemenu ul li a:hover, .chromemenu ul li a.current{
+background: url(media/chromebg2.gif) center center repeat-x;
+}
+
+.tabcontainer{
+clear: left;
+width:95%; /*width of 2nd level sub menus*/
+height:1.5em; /*height of 2nd level sub menus. Set to largest's sub menu's height to avoid jittering.*/
+}
+
+.tabcontent{
+display:none;
+}

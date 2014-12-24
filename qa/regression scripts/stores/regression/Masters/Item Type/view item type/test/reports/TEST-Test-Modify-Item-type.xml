@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite failures="0" tests="1" errors="0" name="Test_Modify_Item_type" time="16.852" assertions="4">
+  <testcase name="test_0020_create_item_type_with_parent_item_typee" time="16.851" assertions="4">
+  </testcase>
+  <system-out>
+    <![CDATA[Unable to locate element, using :name, "j_username"
+]]>
+  </system-out>
+  <system-err>
+    <![CDATA[]]>
+  </system-err>
+</testsuite>

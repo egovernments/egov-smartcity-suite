@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite failures="0" name="Test_View_Indent" errors="0" time="31.921" assertions="6" tests="1">
+  <testcase name="test_0010_view_material_indent_" time="31.92" assertions="6">
+  </testcase>
+  <system-out>
+    <![CDATA[]]>
+  </system-out>
+  <system-err>
+    <![CDATA[]]>
+  </system-err>
+</testsuite>

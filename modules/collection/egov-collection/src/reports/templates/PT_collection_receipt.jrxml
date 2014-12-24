@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PT_collection_receipt" language="groovy" pageWidth="595" pageHeight="800" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" resourceBundle="custom" whenResourceMissingType="Key">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="20"/>
+	<import value="org.egov.infstr.reporting.util.*"/>
+	<import value="org.egov.lib.address.model.*"/>
+	<import value="org.egov.lib.citizen.model.*"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/work/EclipseWorkspace/PTIS/modules/ptis/PTJAVA/src/reports/templates/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EGOV_COLLECTIONS_UTIL" class="org.egov.erpcollection.util.CollectionsUtil" isForPrompting="false"/>
+	<field name="receiptNum" class="java.lang.String">
+		<fieldDescription><![CDATA[Receipt Number]]></fieldDescription>
+	</field>
+	<field name="accountDetails" class="java.util.Collection"/>
+	<field name="billReferenceNum" class="java.lang.String">
+		<fieldDescription><![CDATA[Property Index Number]]></fieldDescription>
+	</field>
+	<field name="receiptDate" class="java.util.Date"/>
+	<field name="payeeName" class="java.lang.String">
+		<fieldDescription><![CDATA[Payee Name]]></fieldDescription>
+	</field>
+	<field name="consumerCode" class="java.lang.String">
+		<fieldDescription><![CDATA[The property id]]></fieldDescription>
+	</field>
+	<field name="payeeAddress" class="java.lang.String">
+		<fieldDescription><![CDATA[The payee address]]></fieldDescription>
+	</field>
+	<field name="totalAmount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Total Amount]]></fieldDescription>
+	</field>
+	<field name="instrumentDetails" class="java.util.Collection"/>
+	<field name="receiptMisc" class="org.egov.erpcollection.models.ReceiptMisc"/>
+	<field name="createdBy" class="org.egov.lib.rjbac.user.User">
+		<fieldDescription><![CDATA[The Operator name]]></fieldDescription>
+	</field>
+	<variable name="BasicPropertyDao" class="java.lang.String"/>
+	<variable name="from" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="to" class="java.lang.String" resetType="None"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="110">
+			<image>
+				<reportElement x="443" y="13" width="60" height="43"/>
+				<imageExpression class="java.io.InputStream"><![CDATA[ReportUtil.getLogoImageAsStream()]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="180" y="23" width="194" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="Kruti Dev 010" size="16" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ukxiwj egkuxjikfydk]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="306" y="68" width="64" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Left" markup="none">
+					<font fontName="Kruti Dev 010" size="16" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[izekf.kr]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="162" y="46" width="233" height="22" forecolor="#000000"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="Kruti Dev 010" size="16" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[dj o dj vkdkj.kh foHkkx ukxiwj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="209" y="68" width="96" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Left" markup="none">
+					<font fontName="Times New Roman" size="13" isBold="true" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[ISO  9001-2008]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement stretchType="RelativeToTallestObject" x="268" y="0" width="96" height="23"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{EGOV_COLLECTIONS_UTIL}.getFinancialYearforDate($F{receiptDate}).getFinYearRange()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="49" y="89" width="479" height="18" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Kruti Dev 010" size="12" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[¼ fg jfln 01-04-2013  iklwu 31-03-2014 ikosrks okijyh tkbZy- R;kiq<s okijY;kl rh [kksVh letkoh ½]]></text>
+			</staticText>
+			<image>
+				<reportElement x="38" y="13" width="65" height="55"/>
+				<imageExpression class="java.io.InputStream"><![CDATA[ReportUtil.getImageAsStream("Nmc_ISO_Cert.png")]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<detail>
+		<band height="128">
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="38" y="3" width="80" height="14" forecolor="#000000"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" markup="none">
+					<font fontName="Kruti Dev 010" size="11" isBold="false" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[jlhn Øekad %]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="366" y="3" width="75" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Kruti Dev 010" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[fnukad %]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement stretchType="RelativeToTallestObject" x="441" y="2" width="111" height="14"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{receiptDate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="122" y="3" width="235" height="14"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{receiptMisc}.getReceiptHeader().getManualreceiptnumber() == null ? $F{receiptNum} : ($F{receiptMisc}.getReceiptHeader().getManualreceiptnumber() + "  " + "(" + $F{receiptNum} + ")")]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="122" y="64" width="430" height="31" isRemoveLineWhenBlank="true"/>
+				<textElement markup="none">
+					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{payeeName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="38" y="34" width="80" height="14" forecolor="#000000"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" markup="none">
+					<font fontName="Kruti Dev 010" size="11" isBold="false" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[?kj Øekad % ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="38" y="64" width="80" height="14" forecolor="#000000"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" markup="none">
+					<font fontName="Kruti Dev 010" size="11" isBold="false" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[?kj ekydkps ukao % ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="38" y="49" width="75" height="14" forecolor="#000000"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" markup="none">
+					<font fontName="Kruti Dev 010" size="11" isBold="false" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[baMsDl Øekad %]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="39" y="112" width="80" height="14" forecolor="#000000"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" markup="none">
+					<font fontName="Kruti Dev 010" size="11" isBold="false" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[rkjh[k iklwu %]]></text>
+			</staticText>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="121" y="49" width="274" height="14"/>
+				<textElement verticalAlignment="Top" markup="styled">
+					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{consumerCode}.replace("(", "<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">   (").replace(")", (")</style>"))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="122" y="34" width="235" height="14"/>
+				<textElement verticalAlignment="Top" markup="none">
+					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{payeeAddress}.substring(0, $F{payeeAddress}.indexOf(','))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="122" y="19" width="235" height="14"/>
+				<textElement verticalAlignment="Top" markup="none">
+					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{billReferenceNum}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="38" y="19" width="80" height="14" forecolor="#000000"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" markup="none">
+					<font fontName="Kruti Dev 010" size="11" isBold="false" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ns;d Øekad % ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="38" y="95" width="80" height="14" forecolor="#000000"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" markup="none">
+					<font fontName="Kruti Dev 010" size="11" isBold="false" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ofgokVnkjkps ukao]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="122" y="95" width="430" height="14"/>
+				<textElement markup="none">
+					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="190" y="112" width="18" height="14" forecolor="#000000"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" markup="none">
+					<font fontName="Kruti Dev 010" size="11" isBold="false" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[rk]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="289" y="112" width="46" height="14" forecolor="#000000"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" markup="none">
+					<font fontName="Kruti Dev 010" size="11" isBold="false" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ikosrks-]]></text>
+			</staticText>
+			<textField evaluationTime="Report">
+				<reportElement x="122" y="112" width="68" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA["01-04-" + $V{from}.substring(0, $V{from}.indexOf('-')).trim()]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="207" y="112" width="64" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA["31-03-" + (Integer.parseInt($V{to}.substring(0, $V{to}.indexOf('-')).trim()) + 1)]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="28">
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="44" y="4" width="488" height="20" isPrintWhenDetailOverflows="true" forecolor="#000000"/>
+				<textElement textAlignment="Left" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[         (If payment is made by cheque this receipt is valid subject to realization of cheque)]]></text>
+			</staticText>
+		</band>
+		<band height="32">
+			<subreport runToBottom="false">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="40" y="5" width="488" height="23" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="EGOV_COLLECTIONS_UTIL">
+					<subreportParameterExpression><![CDATA[$P{EGOV_COLLECTIONS_UTIL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{accountDetails}, false)]]></dataSourceExpression>
+				<returnValue subreportVariable="frmDate" toVariable="from"/>
+				<returnValue subreportVariable="tDate" toVariable="to"/>
+				<subreportExpression class="java.io.InputStream"><![CDATA[ReportUtil.getTemplateAsStream("PT_receipt_accounts.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<summary>
+		<band height="109">
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="420" y="51" width="123" height="14" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font fontName="Kruti Dev 010" size="12" isBold="false" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[olwy dj.kkjkph iw.kZ lgh]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="420" y="66" width="123" height="18" forecolor="#000000"/>
+				<textElement textAlignment="Left" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Full Signature of the Official 	]]></text>
+			</staticText>
+			<subreport>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="40" y="3" width="488" height="20" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="TOTAL_AMOUNT">
+					<subreportParameterExpression><![CDATA[$F{totalAmount}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{instrumentDetails}, false)]]></dataSourceExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[org.egov.infstr.reporting.util.ReportUtil.getTemplateAsStream("PT_collection_receipt_instruments.jasper")]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="38" y="78" width="268" height="15">
+					<printWhenExpression><![CDATA[!("citizenUser".equals($F{createdBy}.getUserName()))]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Generated By: " + ($F{createdBy}.getFirstName() == null ? "" : $F{createdBy}.getFirstName())  + " " + ($F{createdBy}.getLastName() == null ? "" : $F{createdBy}.getLastName())]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="38" y="93" width="514" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Please visit website http://www.nmcnagpur.gov.in]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

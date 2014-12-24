@@ -1,0 +1,2 @@
+<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld"%>
+<s:select name="referenceId" listKey="id" listValue="name" id="referenceId" list="referenceBudgetList"  headerKey="-1"  headerValue="----Select----"  value="%{referenceId}"/>

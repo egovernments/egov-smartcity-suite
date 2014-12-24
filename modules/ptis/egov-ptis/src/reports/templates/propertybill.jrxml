@@ -1,0 +1,1725 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="propertybill" language="groovy" pageWidth="1562" pageHeight="694" orientation="Landscape" columnWidth="1522" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="817"/>
+	<property name="ireport.y" value="48"/>
+	<import value="org.egov.infstr.reporting.util.*"/>
+	<import value="org.egov.egi.infstr.utils.*"/>
+	<import value="org.egov.ptis.domain.entity.property.*"/>
+	<field name="wardNo" class="java.lang.String"/>
+	<field name="houseNo" class="java.lang.String"/>
+	<field name="indexNo" class="java.lang.String"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="arrSewerageTax" class="java.math.BigDecimal"/>
+	<field name="arrFireserviceTax" class="java.math.BigDecimal"/>
+	<field name="arrGeneralTax" class="java.math.BigDecimal"/>
+	<field name="arrWaterTax" class="java.math.BigDecimal"/>
+	<field name="arrLightTax" class="java.math.BigDecimal"/>
+	<field name="arrEdCess" class="java.math.BigDecimal"/>
+	<field name="arrEgCess" class="java.math.BigDecimal"/>
+	<field name="currSewerageTax" class="java.math.BigDecimal"/>
+	<field name="currFireserviceTax" class="java.math.BigDecimal"/>
+	<field name="currGeneralTax" class="java.math.BigDecimal"/>
+	<field name="currWaterTax" class="java.math.BigDecimal"/>
+	<field name="currLightTax" class="java.math.BigDecimal"/>
+	<field name="currEdCess" class="java.math.BigDecimal"/>
+	<field name="currEgCess" class="java.math.BigDecimal"/>
+	<field name="arrBigRes" class="java.math.BigDecimal"/>
+	<field name="arrBuildCess" class="java.math.BigDecimal"/>
+	<field name="arrMisc" class="java.math.BigDecimal"/>
+	<field name="currBigRes" class="java.math.BigDecimal"/>
+	<field name="currBuildCess" class="java.math.BigDecimal"/>
+	<field name="currMisc" class="java.math.BigDecimal"/>
+	<field name="totalAmntInWords" class="java.lang.String"/>
+	<field name="billNo" class="java.lang.String"/>
+	<field name="grandTotal" class="java.lang.String"/>
+	<field name="billDate" class="java.lang.String"/>
+	<field name="billDueDate" class="java.lang.String"/>
+	<field name="lastPayDate" class="java.lang.String"/>
+	<field name="amount" class="java.lang.String"/>
+	<field name="assessmentDate" class="java.lang.String"/>
+	<field name="waterMeterStatus" class="java.lang.String"/>
+	<field name="propertyType" class="java.lang.String"/>
+	<field name="isCentralGovtProp" class="java.lang.Integer"/>
+	<field name="arrearsPeriod" class="java.lang.String"/>
+	<field name="currentPeriod" class="java.lang.String"/>
+	<variable name="ArrearsSum" class="java.math.BigDecimal"/>
+	<variable name="CurrentSum" class="java.lang.String"/>
+	<variable name="SwerageTaxTotal" class="java.lang.String"/>
+	<variable name="WaterTaxTotal" class="java.lang.String"/>
+	<variable name="GeneralTaxTotal" class="java.lang.String"/>
+	<variable name="FireTaxTotal" class="java.lang.String"/>
+	<variable name="LightTaxTotal" class="java.lang.String"/>
+	<variable name="EdCessTaxTotal" class="java.lang.String"/>
+	<variable name="EgCessTaxTotal" class="java.lang.String"/>
+	<variable name="BigResTotal" class="java.lang.String"/>
+	<variable name="BuildCessTotal" class="java.lang.String"/>
+	<variable name="MiscTotal" class="java.lang.String"/>
+	<variable name="GrandTotal" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="63" splitType="Stretch">
+			<rectangle>
+				<reportElement x="478" y="0" width="555" height="63"/>
+			</rectangle>
+			<image>
+				<reportElement x="492" y="6" width="48" height="48"/>
+				<imageExpression class="java.io.InputStream"><![CDATA[ReportUtil.getLogoImageAsStream()]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="1078" y="6" width="48" height="48"/>
+				<imageExpression class="java.io.InputStream"><![CDATA[ReportUtil.getLogoImageAsStream()]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="67" y="6" width="48" height="48"/>
+				<imageExpression class="java.io.InputStream"><![CDATA[ReportUtil.getLogoImageAsStream()]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="478" y="8" width="555" height="31"/>
+				<textElement textAlignment="Center">
+					<font fontName="Kruti Dev 010" size="26" isBold="true" isStrikeThrough="false" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ukxiwj egkuxjikfydk]ukxiwj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1121" y="8" width="336" height="31"/>
+				<textElement textAlignment="Center">
+					<font fontName="Kruti Dev 010" size="26" isBold="true" isStrikeThrough="false" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ukxiwj egkuxjikfydk]ukxiwj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1139" y="41" width="312" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Kruti Dev 010" size="18" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ dk;kZy;hu izr ¼lax.kd foHkkxlkVh½]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="53" y="42" width="392" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Kruti Dev 010" size="18" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ikspikorh]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1064" y="0" width="1" height="63"/>
+			</line>
+			<line>
+				<reportElement x="1456" y="0" width="1" height="63"/>
+			</line>
+			<line>
+				<reportElement x="1064" y="0" width="392" height="1"/>
+			</line>
+			<line>
+				<reportElement x="1064" y="62" width="392" height="1"/>
+			</line>
+			<line>
+				<reportElement x="53" y="0" width="1" height="62"/>
+			</line>
+			<line>
+				<reportElement x="446" y="0" width="1" height="63"/>
+			</line>
+			<line>
+				<reportElement x="54" y="0" width="392" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="131" y="8" width="314" height="31"/>
+				<textElement textAlignment="Center">
+					<font fontName="Kruti Dev 010" size="26" isBold="true" isStrikeThrough="false" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ukxiwj egkuxjikfydk]ukxiwj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="559" y="43" width="366" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ukxiwj egkuxjikfydk vfnfu;e 1948] ps dye 154 ¼1½ vf.k ¼2½ vuqlkj
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="937" y="43" width="86" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[djnkR;kph izr]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="937" y="15" width="86" height="20"/>
+				<textElement>
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[dj olqyhp ns;d]]></text>
+			</staticText>
+			<line>
+				<reportElement x="54" y="62" width="392" height="1"/>
+			</line>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="110" splitType="Stretch">
+			<rectangle>
+				<reportElement x="478" y="0" width="555" height="110"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="619" y="5" width="58" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[?kj Ø-]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="759" y="5" width="54" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" isItalic="false" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[baMsDl Ø-]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="869" y="5" width="63" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ns;d Ø-]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="492" y="40" width="25" height="19"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ukao ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1081" y="5" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[okMZ Øa-]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1191" y="5" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ns;d Ø-]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1353" y="5" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[baMsDl Ø-]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1081" y="40" width="25" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ukao ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="67" y="5" width="49" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[okMZ Øa-  ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="128" y="5" width="54" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ns;d Ø-  ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="254" y="5" width="55" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[baMsDl Ø-  ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="67" y="40" width="25" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ukao   ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="492" y="23" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{wardNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="619" y="23" width="140" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{houseNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="759" y="23" width="73" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{indexNo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="517" y="38" width="242" height="31"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="344" y="5" width="49" height="19"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[?kj Ø-  ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="1081" y="23" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{wardNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1353" y="23" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{indexNo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1106" y="38" width="162" height="31"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="67" y="23" width="49" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{wardNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="254" y="23" width="90" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{indexNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="344" y="23" width="101" height="19"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{houseNo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="92" y="38" width="179" height="31"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="869" y="23" width="134" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{billNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1191" y="23" width="150" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{billNo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="492" y="5" width="67" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[okMZ Øa-]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="129" y="23" width="130" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{billNo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1333" y="68" width="120" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Water Meter Status]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1082" y="68" width="99" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Last Payment Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1181" y="68" width="63" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1245" y="68" width="84" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Assessment Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="322" y="68" width="122" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Water Meter Status]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="67" y="68" width="99" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Last Payment Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="167" y="68" width="66" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="235" y="68" width="87" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Assessment Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="596" y="68" width="94" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="698" y="68" width="100" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Assessment Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="493" y="68" width="99" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Last Payment Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="823" y="68" width="203" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Water Meter Status]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="493" y="89" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{lastPayDate}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="596" y="89" width="94" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="698" y="89" width="114" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{assessmentDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="826" y="89" width="200" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{waterMeterStatus}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="67" y="89" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{lastPayDate}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="167" y="89" width="68" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="235" y="89" width="87" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{assessmentDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="322" y="89" width="124" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{waterMeterStatus}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1084" y="89" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{lastPayDate}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1177" y="89" width="67" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1244" y="89" width="84" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{assessmentDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1329" y="89" width="129" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{waterMeterStatus}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="760" y="40" width="118" height="18"/>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ekyerspk izdkj]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="869" y="40" width="156" height="16"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{propertyType}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="346" y="40" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{propertyType}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1352" y="40" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{propertyType}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1261" y="40" width="118" height="18"/>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ekyerspk izdkj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="267" y="40" width="123" height="18"/>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ekyerspk izdkj]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1065" y="109" width="392" height="1"/>
+			</line>
+			<line>
+				<reportElement x="54" y="109" width="393" height="1"/>
+			</line>
+			<line>
+				<reportElement x="53" y="0" width="1" height="110"/>
+			</line>
+			<line>
+				<reportElement x="446" y="0" width="1" height="110"/>
+			</line>
+			<line>
+				<reportElement x="1064" y="0" width="1" height="109"/>
+			</line>
+			<line>
+				<reportElement x="1456" y="0" width="1" height="109"/>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="40" splitType="Stretch">
+			<rectangle>
+				<reportElement x="478" y="0" width="555" height="40"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="735" y="5" width="97" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[cdk;k dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="835" y="5" width="94" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[pkyw dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="933" y="5" width="100" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[,dw.k dj]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1371" y="0" width="1" height="39"/>
+			</line>
+			<line>
+				<reportElement x="1456" y="0" width="1" height="39"/>
+			</line>
+			<line>
+				<reportElement x="1286" y="0" width="1" height="39"/>
+			</line>
+			<line>
+				<reportElement x="359" y="0" width="1" height="39"/>
+			</line>
+			<line>
+				<reportElement x="446" y="0" width="1" height="39"/>
+			</line>
+			<line>
+				<reportElement x="274" y="0" width="1" height="39"/>
+			</line>
+			<staticText>
+				<reportElement x="54" y="5" width="126" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[iklqu rs i;Zarpk dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="182" y="5" width="93" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[cdk;k dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="275" y="5" width="82" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[pkyw dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="360" y="6" width="83" height="20">
+					<printWhenExpression><![CDATA[$F{isCentralGovtProp} == 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[,dw.k dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1372" y="7" width="85" height="20">
+					<printWhenExpression><![CDATA[$F{isCentralGovtProp} == 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[,dw.k dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1082" y="5" width="100" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[iklqu rs i;Zarpk dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1289" y="5" width="82" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[pkyw dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1202" y="5" width="85" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[cdk;k dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="622" y="5" width="100" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[iklqu rs i;Zarpk dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="492" y="5" width="100" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PERIOD OF CLAIM]]></text>
+			</staticText>
+			<line>
+				<reportElement x="53" y="0" width="1" height="39"/>
+			</line>
+			<line>
+				<reportElement x="180" y="0" width="1" height="39"/>
+			</line>
+			<line>
+				<reportElement x="1064" y="0" width="1" height="39"/>
+			</line>
+			<line>
+				<reportElement x="833" y="0" width="1" height="39"/>
+			</line>
+			<line>
+				<reportElement x="932" y="0" width="1" height="39"/>
+			</line>
+			<line>
+				<reportElement x="733" y="0" width="1" height="39"/>
+			</line>
+			<line>
+				<reportElement x="1201" y="0" width="1" height="39"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="182" y="20" width="91" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrearsPeriod}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="275" y="20" width="83" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currentPeriod}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="737" y="20" width="95" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrearsPeriod}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="835" y="20" width="97" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currentPeriod}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1287" y="20" width="83" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currentPeriod}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1201" y="20" width="85" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrearsPeriod}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="254">
+			<rectangle>
+				<reportElement x="1064" y="0" width="392" height="254"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="478" y="0" width="555" height="254"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="53" y="0" width="394" height="254"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="491" y="89" width="100" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[FIRE TAX]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="491" y="117" width="100" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[LIGHT TAX]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="491" y="144" width="100" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[EDUN. CESS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="491" y="171" width="100" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[E.G.S. CESS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="491" y="197" width="100" height="28"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[BIG RESIDENTIAL BUIDLING CESS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="491" y="229" width="100" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[MISCELLANEOUS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="621" y="117" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[fo|qr dj ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="621" y="171" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[bZ-th-,l-lh]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="621" y="144" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[f”k{k.k dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="621" y="38" width="100" height="18"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ik.kh dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="621" y="197" width="100" height="30"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[eksB;k fuoklh bekjrh
+ojhy dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="621" y="229" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[fdjdksG]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="621" y="63" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[lkekU; dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="621" y="89" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[vfXu”keu dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="621" y="11" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[eyty dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="491" y="9" width="100" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[SEWERAGE TAX]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1371" y="0" width="1" height="254"/>
+			</line>
+			<line>
+				<reportElement x="1286" y="0" width="1" height="254"/>
+			</line>
+			<line>
+				<reportElement x="1201" y="0" width="1" height="254"/>
+			</line>
+			<line>
+				<reportElement x="359" y="0" width="1" height="254"/>
+			</line>
+			<line>
+				<reportElement x="274" y="0" width="1" height="254"/>
+			</line>
+			<line>
+				<reportElement x="180" y="0" width="1" height="254"/>
+			</line>
+			<textField>
+				<reportElement x="733" y="11" width="92" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrSewerageTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="734" y="38" width="92" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrWaterTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="733" y="63" width="92" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrGeneralTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="734" y="89" width="92" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrFireserviceTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="733" y="117" width="92" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrLightTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="733" y="171" width="92" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrEgCess}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="734" y="144" width="92" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrEdCess}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="835" y="11" width="92" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currSewerageTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="835" y="38" width="92" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currWaterTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="835" y="63" width="92" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currGeneralTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="835" y="89" width="92" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currFireserviceTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="835" y="117" width="92" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currLightTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="835" y="144" width="92" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currEdCess}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="836" y="171" width="92" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currEgCess}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="933" y="11" width="92" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrSewerageTax}.add($F{currSewerageTax})).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="933" y="38" width="92" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrWaterTax}.add($F{currWaterTax})).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="933" y="63" width="92" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrGeneralTax}.add($F{currGeneralTax})).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="933" y="89" width="92" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrFireserviceTax}.add($F{currFireserviceTax})).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="933" y="117" width="92" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrLightTax}.add($F{currLightTax})).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="933" y="144" width="92" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrEdCess}.add($F{currEdCess})).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="933" y="171" width="92" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrEgCess}.add( $F{currEgCess})).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1203" y="11" width="78" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrSewerageTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1203" y="38" width="78" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrWaterTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1204" y="63" width="77" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrGeneralTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1203" y="117" width="78" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrLightTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1203" y="144" width="78" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrEdCess}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1203" y="171" width="78" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrEgCess}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1288" y="11" width="76" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currSewerageTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1288" y="38" width="76" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currWaterTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1289" y="63" width="76" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currGeneralTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1289" y="89" width="76" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currFireserviceTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1288" y="117" width="76" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currLightTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1288" y="144" width="76" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currEdCess}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1289" y="171" width="75" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currEgCess}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="279" y="117" width="76" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currLightTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="171" width="75" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currEgCess}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="190" y="38" width="78" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrWaterTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="279" y="144" width="76" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currEdCess}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="279" y="11" width="76" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currSewerageTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="190" y="11" width="78" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrSewerageTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="281" y="89" width="76" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currFireserviceTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="190" y="171" width="78" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrEgCess}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="279" y="38" width="76" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currWaterTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="63" width="76" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currGeneralTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="191" y="63" width="77" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrGeneralTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="190" y="117" width="78" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrLightTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="734" y="201" width="91" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrBigRes}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="735" y="229" width="93" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrMisc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="833" y="201" width="93" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currBigRes}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="833" y="229" width="93" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currMisc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="933" y="201" width="92" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrBigRes}.add($F{currBigRes})).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="933" y="228" width="92" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrMisc}.add( $F{currMisc} )).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1288" y="231" width="75" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currMisc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1203" y="201" width="77" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrBigRes}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1288" y="201" width="75" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currBigRes}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1203" y="231" width="78" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrMisc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="190" y="232" width="78" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrMisc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="202" width="75" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currBigRes}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="232" width="75" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currMisc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="190" y="202" width="77" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrBigRes}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1377" y="201" width="76" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrBigRes}.add($F{currBigRes} )).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1377" y="231" width="76" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrMisc}.add( $F{currMisc} )).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1374" y="144" width="79" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrEdCess}.add( $F{currEdCess} )).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1373" y="89" width="80" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrFireserviceTax}.add( $F{currFireserviceTax} )).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1374" y="38" width="79" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrWaterTax}.add( $F{currWaterTax} )).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1374" y="117" width="79" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrLightTax}.add( $F{currLightTax} )).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1373" y="171" width="80" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrEgCess}.add( $F{currEgCess})).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1374" y="11" width="79" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrSewerageTax}.add($F{currSewerageTax})).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1374" y="63" width="79" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrGeneralTax}.add( $F{currGeneralTax} )).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="190" y="144" width="78" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrEdCess}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="363" y="89" width="80" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrFireserviceTax}.add( $F{currFireserviceTax} )).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="363" y="63" width="79" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrGeneralTax}.add( $F{currGeneralTax} )).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="363" y="11" width="79" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrSewerageTax}.add($F{currSewerageTax})).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="362" y="171" width="80" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrEgCess}.add( $F{currEgCess})).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="363" y="117" width="79" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrLightTax}.add( $F{currLightTax} )).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="363" y="38" width="79" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrWaterTax}.add( $F{currWaterTax} )).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="366" y="202" width="76" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrBigRes}.add($F{currBigRes} )).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="366" y="232" width="76" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrMisc}.add( $F{currMisc} )).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="363" y="144" width="79" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{arrEdCess}.add( $F{currEdCess} )).setScale(2)]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1084" y="38" width="100" height="18"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ik.kh dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1084" y="197" width="100" height="30"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[eksB;k fuoklh bekjrh
+ojhy dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1084" y="89" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[vfXu”keu dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1084" y="11" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[eyty dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1084" y="117" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[fo|qr dj ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1084" y="171" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[bZ-th-,l-lh]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1084" y="63" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[lkekU; dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1084" y="144" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[f”k{k.k dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1084" y="231" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[fdjdksG]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="89" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[vfXu”keu dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="38" width="100" height="18"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ik.kh dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="198" width="100" height="35"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[eksB;k fuoklh bekjrh ojhy dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="117" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[fo|qr dj ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="171" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[bZ-th-,l-lh]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="144" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[f”k{k.k dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="63" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[lkekU; dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="232" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[fdjdksG]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="11" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[eyty dj]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="491" y="38" width="100" height="18"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[WATER TAX]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="491" y="63" width="100" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[GENERAL TAX]]></text>
+			</staticText>
+			<line>
+				<reportElement x="733" y="0" width="1" height="254"/>
+			</line>
+			<line>
+				<reportElement x="833" y="0" width="1" height="254"/>
+			</line>
+			<line>
+				<reportElement x="932" y="0" width="1" height="254"/>
+			</line>
+			<textField>
+				<reportElement x="191" y="89" width="77" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrFireserviceTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1204" y="89" width="77" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{arrFireserviceTax}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="60">
+			<line>
+				<reportElement x="1064" y="0" width="393" height="1"/>
+			</line>
+			<rectangle>
+				<reportElement x="478" y="0" width="555" height="60"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="492" y="4" width="100" height="15"/>
+				<textElement/>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1064" y="0" width="393" height="1"/>
+			</line>
+			<line>
+				<reportElement x="1456" y="0" width="1" height="59"/>
+			</line>
+			<staticText>
+				<reportElement x="1086" y="37" width="76" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ns;d fnukad  %]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1302" y="37" width="75" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[vafre fnukad  %]]></text>
+			</staticText>
+			<line>
+				<reportElement x="53" y="30" width="393" height="1"/>
+			</line>
+			<line>
+				<reportElement x="446" y="0" width="1" height="59"/>
+			</line>
+			<staticText>
+				<reportElement x="71" y="2" width="100" height="20"/>
+				<textElement>
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[,dw.k]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1085" y="3" width="97" height="20"/>
+				<textElement>
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ ,dw.k]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="1288" y="0" width="75" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[((((((((($F{currSewerageTax}.add($F{currFireserviceTax})).add($F{currGeneralTax})).add($F{currWaterTax})).add($F{currLightTax})).add($F{currEdCess})).add($F{currEgCess})).add($F{currBigRes})).add($F{currBuildCess})).add($F{currMisc}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1204" y="1" width="76" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[((((((((($F{arrSewerageTax}.add($F{arrFireserviceTax})).add($F{arrGeneralTax})).add($F{arrWaterTax})).add($F{arrLightTax})).add($F{arrEdCess})).add($F{arrEgCess})).add($F{arrBigRes})).add($F{arrBuildCess})).add($F{arrMisc}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="570" y="33" width="462" height="26"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{totalAmntInWords}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="835" y="2" width="90" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[(((((((((($F{currSewerageTax}.add($F{currFireserviceTax})).add($F{currGeneralTax})).add($F{currWaterTax})).add($F{currLightTax})).add($F{currEdCess})).add($F{currEgCess})).add($F{currBigRes})).add($F{currBuildCess})).add($F{currMisc}))).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="733" y="3" width="91" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[(((((((((($F{arrSewerageTax}.add($F{arrFireserviceTax})).add($F{arrGeneralTax})).add($F{arrWaterTax})).add($F{arrLightTax})).add($F{arrEdCess})).add($F{arrEgCess})).add($F{arrBigRes})).add($F{arrBuildCess})).add($F{arrMisc}))).setScale(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="934" y="2" width="90" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{grandTotal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1375" y="0" width="77" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{grandTotal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="364" y="2" width="79" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{grandTotal}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="71" y="38" width="72" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ns;d fnukad  %]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="1168" y="37" width="100" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{billDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="148" y="38" width="68" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{billDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1382" y="37" width="69" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{billDueDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="622" y="3" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ ,dw.k]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="492" y="32" width="38" height="14"/>
+				<textElement/>
+				<text><![CDATA[RUPEES]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="191" y="3" width="76" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[((((((((($F{arrSewerageTax}.add($F{arrFireserviceTax})).add($F{arrGeneralTax})).add($F{arrWaterTax})).add($F{arrLightTax})).add($F{arrEdCess})).add($F{arrEgCess})).add($F{arrBigRes})).add($F{arrBuildCess})).add($F{arrMisc}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="2" width="75" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[((((((((($F{currSewerageTax}.add($F{currFireserviceTax})).add($F{currGeneralTax})).add($F{currWaterTax})).add($F{currLightTax})).add($F{currEdCess})).add($F{currEgCess})).add($F{currBigRes})).add($F{currBuildCess})).add($F{currMisc}))]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="535" y="31" width="35" height="15"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[:i;k %]]></text>
+			</staticText>
+			<line>
+				<reportElement x="733" y="0" width="1" height="30"/>
+			</line>
+			<line>
+				<reportElement x="833" y="0" width="1" height="30"/>
+			</line>
+			<line>
+				<reportElement x="932" y="0" width="1" height="30"/>
+			</line>
+			<line>
+				<reportElement x="1064" y="0" width="1" height="59"/>
+			</line>
+			<line>
+				<reportElement x="1201" y="0" width="1" height="30"/>
+			</line>
+			<line>
+				<reportElement x="1286" y="0" width="1" height="30"/>
+			</line>
+			<line>
+				<reportElement x="1371" y="0" width="1" height="30"/>
+			</line>
+			<line>
+				<reportElement x="53" y="0" width="1" height="59"/>
+			</line>
+			<line>
+				<reportElement x="274" y="0" width="1" height="30"/>
+			</line>
+			<line>
+				<reportElement x="359" y="0" width="1" height="30"/>
+			</line>
+			<line>
+				<reportElement x="180" y="0" width="1" height="30"/>
+			</line>
+			<line>
+				<reportElement x="53" y="0" width="394" height="1"/>
+			</line>
+			<line>
+				<reportElement x="1064" y="30" width="393" height="1"/>
+			</line>
+			<line>
+				<reportElement x="478" y="30" width="555" height="1"/>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="94">
+			<rectangle>
+				<reportElement x="478" y="0" width="555" height="94"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="823" y="10" width="73" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ns;d fnukad ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="955" y="10" width="69" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[vafre rkjh[k]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="592" y="72" width="221" height="20"/>
+				<textElement/>
+				<text><![CDATA[PI. Visit website: www.nmcnagpur.gov.in]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="815" y="48" width="215" height="44"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[TAX COLLECTOR/TAX SUPERINTENDENT
+NAGPUR MUNCIPAL CORPORATION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1234" y="70" width="221" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[PI. Visit website: www.nmcnagpur.gov.in]]></text>
+			</staticText>
+			<line>
+				<reportElement x="54" y="93" width="393" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="71" y="3" width="72" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[vafre fnukad  %]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="71" y="24" width="100" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[djnkR;kph
+Lok{kjh o rkjh[k]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="823" y="30" width="73" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{billDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="955" y="30" width="69" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{billDueDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="148" y="3" width="69" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{billDueDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="496" y="23" width="316" height="45"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[fVi %& ns;dkr uewn dj.;kr vkysyh jDde ewnrhP;k vkr u
+HkjY;kl izfrekg nksu ¼2%½ 'kkLrh vkdkj.;kr ;sbZy ;kckcrph
+lfoLrj lwpuk ekxhy cktwyk fnysyh vkgs-]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1086" y="45" width="363" height="45"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[fVi %& ns;dkr uewn dj.;kr vkysyh jDde ewnrhP;k vkr u HkjY;kl izfrekg
+nksu ¼2%½ 'kkLrh vkdkj.;kr ;sbZy ;kckcrph lfoLrj lwpuk ekxhy cktwyk
+fnysyh vkgs-]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="71" y="40" width="374" height="48"/>
+				<textElement textAlignment="Left">
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[fVi %& ns;dkr uewn dj.;kr vkysyh jDde ewnrhP;k vkr u HkjY;kl izfrekg
+nksu ¼2%½ 'kkLrh vkdkj.;kr ;sbZy ;kckcrph lfoLrj lwpuk ekxhy cktwyk
+fnysyh vkgs-]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="226" y="72" width="221" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[PI. Visit website: www.nmcnagpur.gov.in]]></text>
+			</staticText>
+			<line>
+				<reportElement x="812" y="0" width="1" height="94"/>
+			</line>
+			<staticText>
+				<reportElement x="1086" y="0" width="118" height="48"/>
+				<textElement>
+					<font fontName="Kruti Dev 010" size="14" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Hkjysyh jDde
+ikorh Øekad
+ikorhpk fnukad lgh]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1064" y="0" width="1" height="93"/>
+			</line>
+			<line>
+				<reportElement x="1456" y="0" width="1" height="94"/>
+			</line>
+			<line>
+				<reportElement x="53" y="0" width="1" height="94"/>
+			</line>
+			<line>
+				<reportElement x="446" y="0" width="1" height="94"/>
+			</line>
+			<line>
+				<reportElement x="1064" y="93" width="392" height="1"/>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

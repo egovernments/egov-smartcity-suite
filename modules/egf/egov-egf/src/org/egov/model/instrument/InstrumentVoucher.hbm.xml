@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- 
+    Mapping file created by Mani
+-->
+<hibernate-mapping>
+    <class name="org.egov.model.instrument.InstrumentVoucher"
+	table="EGF_InstrumentVoucher">
+        <id
+			name="id"
+			column="ID"
+			type="long"
+			unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">seq_egf_InstrumentVoucher</param>
+			</generator>
+		</id>
+		<property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp"/>
+        <many-to-one name="instrumentHeaderId" class="org.egov.model.instrument.InstrumentHeader" fetch="select">
+            <column name="instrumentheaderId" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="voucherHeaderId" class="org.egov.commons.CVoucherHeader" fetch="select">
+            <column name="voucherheaderId" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY"/>
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="LASTMODIFIEDBY"/>
+        <property name="createdDate" type="java.util.Date">
+            <column name="CREATEDDATE"  not-null="true" />
+        </property>
+        </class>
+</hibernate-mapping>

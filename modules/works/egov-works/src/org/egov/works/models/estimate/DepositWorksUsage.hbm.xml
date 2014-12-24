@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.works.models.estimate.DepositWorksUsage" table="EGW_DEPOSITWORKS_USAGE"> 
+		<id name="id" type="long" unsaved-value="null" >
+			<column name="ID" not-null="true"/>
+			<generator class="sequence">
+				<param name="sequence">EGW_DEPOSITWORKS_USAGE_SEQ</param>
+			</generator>
+		</id>
+		<many-to-one name="abstractEstimate" class="org.egov.works.models.estimate.AbstractEstimate" column="ABSTRACTESTIMATE_ID"  unique="true" />
+		<property name="totalDepositAmount">
+			<column name="TOTAL_DEPOSIT_AMOUNT" />
+		</property>
+		<property name="consumedAmount">
+			<column name="CONSUMED_AMT" />
+		</property>	
+		<property name="releasedAmount">
+			<column name="RELEASED_AMT" />
+		</property>
+		<property name="appropriationNumber" >
+			<column name="APPROPRIATION_NUMBER" />
+		</property>
+		<property name="appropriationDate" type="date">
+			<column name="APPROPRIATION_DATE" length="7" />
+		</property>
+		
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />		
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+	</class>
+	<query name="getDepositWorksUsageListForDepositFolio">
+		<![CDATA[
+     	select dwu from DepositWorksUsage dwu inner join dwu.abstractEstimate.financialDetails fd where dwu.abstractEstimate.depositCode.id=? and fd.fund.id=? and fd.coa.id=? and dwu.appropriationDate<=? order by dwu.appropriationDate,dwu.id asc
+    	]]>
+	</query>
+	
+	<query name="getDepositWorksUsageAmount">
+		<![CDATA[
+     	select sum(dwu.consumedAmount-dwu.releasedAmount) from DepositWorksUsage dwu inner join dwu.abstractEstimate.financialDetails fd where dwu.abstractEstimate.depositCode.id=? and 
+     	fd.fund.id=? and fd.coa.id=?
+    	]]>
+	</query>
+</hibernate-mapping>

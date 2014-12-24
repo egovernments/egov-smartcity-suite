@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.infstr.commons.EgLoginLog" table="EG_LOGIN_LOG">
+		<id name="id" type="integer">
+			<column name="ID" precision="22" scale="0" />
+			<generator class="native">
+				<param name="sequence">SEQ_EG_LOGIN_LOG</param>
+			</generator>
+		</id>
+
+		<property name="loginTime" type="timestamp">
+			<column name="LOGINTIME" />
+		</property>
+		<property name="logoutTime" type="timestamp">
+			<column name="LOGOUTTIME" />
+		</property>
+		<many-to-one name="user" class="org.egov.lib.rjbac.user.UserImpl" column="USERID" />
+		<many-to-one name="location" class="org.egov.lib.security.terminal.model.Location" column="LOCATIONID" />
+	</class>
+</hibernate-mapping>

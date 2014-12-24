@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 30, 2007 12:27:26 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.model.bills.EgBillSubType" table="EG_BILL_SUBTYPE" >
+        <id name="id" type="integer">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="native">
+            	<param name="sequence">SEQ_EG_BILL_SUBTYPE</param>
+            </generator>
+        </id>
+        <property name="name" type="string">
+            <column name="NAME" length="120" />
+        </property>
+        <property name="expenditureType" type="string">
+            <column name="EXPENDITURE_TYPE" length="50" />
+        </property>
+    </class>
+     <query name="egf.billsubtype.by.name.exptype">
+<![CDATA[
+from org.egov.model.bills.EgBillSubType as billsubtype where billsubtype.name =? and billsubtype.expenditureType =?
+]]>
+</query>
+</hibernate-mapping>

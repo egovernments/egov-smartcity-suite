@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.commons.CGeneralLedgerDetail" table="GENERALLEDGERDETAIL"> 
+		<id name="id" type="long" unsaved-value="null" >
+			<column name="ID" not-null="true"/>
+			<generator class="native">
+				<param name="sequence">SEQ_GENERALLEDGERDETAIL</param>
+			</generator>
+		</id>	
+		<property name="generalLedgerId">
+			<column name="GENERALLEDGERID"/>
+		</property>	
+		<property name="detailKeyId">
+			<column name="DETAILKEYID"/>
+		</property>	
+		<property name="detailTypeId">
+			<column name="DETAILTYPEID"/>
+		</property>	
+		<property name="amount">
+			<column name="AMOUNT"/>
+		</property>	
+	</class>
+</hibernate-mapping>

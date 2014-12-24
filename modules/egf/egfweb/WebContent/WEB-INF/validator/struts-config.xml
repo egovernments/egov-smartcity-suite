@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN"
+          "http://struts.apache.org/dtds/struts-config_1_2.dtd">
+<struts-config>
+  <!--============================================== Form Bean Definitions  -->
+  <form-beans>
+    <!-- Registration form bean -->
+    <form-bean name="registrationForm" type="org.apache.struts.webapp.validator.RegistrationForm" />
+    <!-- Multi-Part Registration form bean -->
+    <form-bean name="multiRegistrationForm" type="org.apache.struts.webapp.validator.RegistrationForm" />
+    <!-- Type form bean -->
+    <form-bean name="typeForm" type="org.apache.struts.webapp.validator.TypeForm" />
+    <!-- JavaScript Type form bean -->
+    <form-bean name="jsTypeForm" type="org.apache.struts.webapp.validator.TypeForm" />
+    <!-- Locale form bean -->
+    <form-bean name="localeForm" type="org.apache.struts.action.DynaActionForm">
+      <form-property name="language" type="java.lang.String" />
+      <form-property name="country" type="java.lang.String" />
+    </form-bean>
+  </form-beans>
+  <!-- ======================================== Global Forward Definitions  -->
+  <global-forwards>
+    <forward name="home" path="/index.jsp" />
+  </global-forwards>
+  <!-- ========================================= Action Mapping Definitions -->
+  <action-mappings>
+    <action path="/welcome" forward="/index.jsp" />
+    <!-- Registration Action -->
+    <action path="/registration" forward="/registration.jsp" />
+    <action path="/registration-submit" type="org.apache.struts.webapp.validator.RegistrationAction" name="registrationForm" scope="request" validate="true" input="input">
+      <forward name="input" path="/registration.do" />
+      <forward name="success" path="/index.jsp" />
+    </action>
+    <action path="/jsRegistration" forward="/jsRegistration.jsp" />
+    <!-- Multi-Part Registration Action -->
+    <action path="/multiRegistration" forward="/multiRegistration1.jsp" />
+    <action path="/multiRegistration-submit" type="org.apache.struts.webapp.validator.MultiRegistrationAction" name="multiRegistrationForm" scope="request" validate="false">
+      <forward name="success" path="/welcome.do" />
+      <forward name="input1" path="/multiRegistration1.jsp" />
+      <forward name="input2" path="/multiRegistration2.jsp" />
+    </action>
+    <!-- Type Action -->
+    <action path="/type" forward="/type.jsp" />
+    <action path="/type-submit" type="org.apache.struts.webapp.validator.TypeAction" name="typeForm" scope="request" validate="true" input="input">
+      <forward name="input" path="/type.do" />
+      <forward name="success" path="/welcome.do" />
+    </action>
+    <!-- JavaScript Type Action -->
+    <action path="/editJsType" type="org.apache.struts.webapp.validator.EditTypeAction" scope="request" validate="false">
+      <forward name="success" path="/jsType.do" />
+    </action>
+    <action path="/jsType" forward="/jsType.jsp" />
+    <action path="/jsType-submit" type="org.apache.struts.webapp.validator.TypeAction" name="jsTypeForm" scope="request" validate="true" input="input">
+      <forward name="input" path="/editJsType-submit.do?typeForm.reset=false" />
+      <forward name="success" path="/welcome.do" />
+    </action>
+    <!-- Locale Action -->
+    <action path="/locale" type="org.apache.struts.webapp.validator.LocaleAction" name="localeForm" scope="request">
+      <forward name="success" path="/welcome.do" />
+    </action>
+  </action-mappings>
+  <!-- ============================================= Controller Definition  -->
+  <controller inputForward="true" />
+  <!-- ===================================== Message Resources Definitions  -->
+<message-resources parameter="org.apache.struts.webapp.validator.MessageResources" />
+  <!-- ============================================ Plug Ins Configuration  -->
+  <!-- 
+       Add multiple validator resource files by setting the pathnames property 
+       with a comma delimitted list of resource files to load. 
+    -->
+  <plug-in className="org.apache.struts.validator.ValidatorPlugIn">
+    <set-property property="pathnames" value="/WEB-INF/validator-rules.xml,/WEB-INF/validator/validation.xml" />
+    <set-property property="stopOnFirstError" value="true" />
+  </plug-in>
+</struts-config>

@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 30, 2007 12:27:26 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.model.bills.EgBilldetails" table="EG_BILLDETAILS" >
+        <id name="id" type="integer">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="native">
+            <param name="sequence">seq_eg_billdetails</param>
+            </generator>
+        </id>
+        <timestamp
+			column="LASTUPDATEDTIME"
+			name="lastupdatedtime"
+			access="property"
+		unsaved-value="null"/> 
+        
+          <many-to-one name="egBillregister" class="org.egov.model.bills.EgBillregister" fetch="select">
+            <column name="BILLID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+                <property name="functionid" type="big_decimal">
+            <column name="FUNCTIONID" precision="22" scale="0" />
+        </property>
+        <property name="glcodeid" type="big_decimal">
+            <column name="GLCODEID" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="debitamount" type="big_decimal">
+            <column name="DEBITAMOUNT" precision="15" />
+        </property>
+        <property name="creditamount" type="big_decimal">
+            <column name="CREDITAMOUNT" precision="15" />
+        </property>
+        <property name="narration" type="string">
+            <column name="NARRATION" length="250" />
+        </property>
+        
+      <set name="egBillPaydetailes" cascade="save-update,delete,delete-orphan" inverse="true" >
+            <key>
+                <column name="BILLDETAILID" />
+            </key>
+            <one-to-many class="org.egov.model.bills.EgBillPayeedetails" />
+        </set> 
+        
+    </class>
+</hibernate-mapping>

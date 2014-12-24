@@ -1,0 +1,179 @@
+body {
+  font-family: 'Times New Roman';
+  font-size: 12pt;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: none;
+  color: Black;
+  background-color: White;
+  text-transform: none;
+}
+p {
+  margin-top: 0pt;
+  margin-right: 0pt;
+  margin-bottom: 0pt;
+  margin-left: 0pt;
+  text-indent: 0pt;
+  text-align: left;
+  line-height: normal;
+}
+.ts0 {
+  font-family: Verdana;
+  font-size: 8pt;
+}
+.ts1 {
+  font-family: Verdana;
+  font-size: 8pt;
+  font-style: italic;
+}
+.ts2 {
+  font-family: Verdana;
+  font-size: 10pt;
+  font-weight: bold;
+}
+.ts3 {
+  font-size: 4pt;
+}
+.ts4 {
+  font-family: Arial;
+  font-size: 20pt;
+  font-weight: bold;
+}
+.ts5 {
+  font-family: Arial;
+  font-size: 20pt;
+  font-weight: bold;
+  color: Black;
+}
+.ts6 {
+  font-family: Verdana;
+  font-size: 11pt;
+  font-weight: bold;
+}
+.ts7 {
+  font-family: Verdana;
+  font-size: 11pt;
+  font-weight: bold;
+  color: Black;
+}
+.ts8 {
+  font-family: Arial;
+  font-size: 16pt;
+  font-weight: bold;
+}
+.ts9 {
+  font-family: Verdana;
+  font-size: 11pt;
+}
+.ts10 {
+  font-family: Verdana;
+  font-size: 10pt;
+}
+.ts11 {
+  font-family: Verdana;
+  font-size: 16pt;
+  font-weight: bold;
+}
+.ts12 {
+  font-family: Verdana;
+  font-size: 10pt;
+  color: Black;
+}
+.ts13 {
+  font-family: Verdana;
+  font-size: 10pt;
+}
+.ts14 {
+  font-family: 'Book Antiqua';
+  font-weight: bold;
+}
+.ts15 {
+  font-family: 'Book Antiqua';
+  font-weight: bold;
+  color: Black;
+}
+.ts16 {
+  font-family: 'Book Antiqua';
+  color: Black;
+}
+.ts17 {
+  font-family: Verdana;
+  font-size: 11pt;
+  font-weight: bold;
+}
+.ts18 {
+  font-family: Verdana;
+  font-size: 10pt;
+  color: Black;
+}
+.ts19 {
+  font-family: Verdana;
+  font-size: 10pt;
+}
+.ts20 {
+  font-family: Verdana;
+  font-size: 10pt;
+  font-weight: bold;
+  color: Black;
+}
+.ts21 {
+  font-family: Verdana;
+  font-size: 10pt;
+  font-weight: bold;
+  color: Black;
+}
+.ts22 {
+  font-family: Verdana;
+  font-size: 10pt;
+}
+.hs0 {
+  font-family: Verdana;
+  font-size: 8pt;
+  font-style: italic;
+  text-decoration: underline;
+  color: Blue;
+}
+a.hs0:hover {
+  color: Red;
+}
+.hs1 {
+  font-family: Verdana;
+  font-size: 10pt;
+  text-decoration: underline;
+  color: Blue;
+}
+.ps0 {
+  margin-top: 5px;
+}
+.ps1 {
+  text-align: right;
+}
+.ps2 {
+  text-align: center;
+}
+.ps3 {
+  margin-bottom: 1pt;
+  text-align: center;
+}
+.ps4 {
+  margin-bottom: 1pt;
+}
+.ps5 {
+  margin-left: 2mm;
+  text-indent: 2mm;
+}
+.ps6 {
+  margin-left: 11.6416666666667mm;
+  text-indent: -7.40833333333333mm;
+}
+.ps7 {
+  margin-left: 4.7625mm;
+  text-indent: -4.7625mm;
+}
+.ps8 {
+  margin-left: 4.7625mm;
+}
+.ps9 {
+  margin-left: 10.8479166666667mm;
+  text-indent: -6.61458333333333mm;
+}

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.demand.model.DepreciationMaster" table="EGDCB_DEPRECIATIONMASTER">
+	
+		<id
+			name="id"
+			column="ID_DEPRECIATIONMASTER"
+			type="int">
+			<generator class="native">
+				<param name="sequence">SEQ_DEPRECIATIONMASTER</param>
+			</generator>
+		</id>
+		<timestamp
+			column="LASTUPDATEDTIMESTAMP"
+			name="lastUpdatedTimeStamp"
+			access="property"
+			unsaved-value="null"
+		/>
+		
+		<property
+			name="depreciationPct"
+			column="DEPRECIATION_PCT"
+			type="float"/>
+
+		<property
+			name="year"
+			column="YEAR"
+			type="int"/>
+			
+			<property
+			name="IsHistory"
+			column="IS_HISTORY"
+			type="char"
+			
+		/>
+		
+		<property name="depreciationName" column="DEPRECIATION_NAME" type="string"/>
+		<property name="depreciationType" column="DEPRECIATION_TYPE" type="string"/>
+		<property name="fromDate" column="FROM_DATE"/>
+		<property name="toDate" column="TO_DATE"/>
+				
+		<many-to-one name="module" class="org.egov.infstr.commons.Module" column="ID_MODULE"/>
+		<many-to-one name="startInstallment" class="org.egov.commons.Installment" column="ID_INSTALLMENT"/>
+		
+		<many-to-one name="userId" class="org.egov.lib.rjbac.user.UserImpl" column="USERID"/>
+	</class>
+	
+	<query name="DEPRECIATION_BY_YEAR">
+        <![CDATA[select dp from org.egov.demand.model.DepreciationMaster dp where dp.year=?]]></query>
+	
+</hibernate-mapping>

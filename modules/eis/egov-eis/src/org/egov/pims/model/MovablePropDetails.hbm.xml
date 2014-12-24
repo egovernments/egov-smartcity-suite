@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 9, 2007 3:21:11 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.pims.model.MovablePropDetails" table="EGEIS_MOVABLE_PROP_DETAILS" >
+         <id
+	name="movPropertyDetailsId"
+	column="MOV_PROPERTY_DETAILS_ID"
+	type="int">
+	<generator class="sequence">
+		<param name="sequence">EGPIMS_MOVABLE_PROP_SEQ</param>
+	</generator>
+	</id>
+        
+
+        <many-to-one name="howAcquiredMstr" column="HOW_ACQUIRED_ID" 
+	class="org.egov.pims.model.HowAcquiredMaster"/>
+        <property name="propertyDiscription" type="string">
+            <column name="PROPERTY_DISCRIPTION" length="256" />
+        </property>
+        <property name="valAtPurchase" type="big_decimal">
+            <column name="VAL_AT_PURCHASE" precision="32" scale="0" />
+        </property>
+        <property name="permissionObtained" type="java.lang.Character">
+            <column name="PERMISSION_OBTAINED" length="1" />
+        </property>
+        <property name="orderNo" type="string">
+            <column name="ORDER_NO" length="256" />
+        </property>
+        <property name="orderDate" type="date">
+            <column name="ORDER_DATE" length="7" />
+        </property>
+    </class>
+</hibernate-mapping>

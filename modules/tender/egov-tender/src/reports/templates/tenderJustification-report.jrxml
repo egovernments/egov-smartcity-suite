@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="tenderNegotiation-report" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<import value="org.egov.infstr.reporting.util.*"/>
+	<import value="org.egov.infstr.utils.*"/>
+	<parameter name="NameOfTheCity" class="java.lang.String"/>
+	<parameter name="DEPARTMENTNAME" class="java.lang.String"/>
+	<parameter name="RESPONSENO" class="java.lang.String"/>
+	<parameter name="logoPath" class="java.lang.String"/>
+	<parameter name="DATE" class="java.lang.String"/>
+	<parameter name="BIDDER" class="java.lang.String"/>
+	<parameter name="ADDRESS" class="java.lang.String"/>
+	<parameter name="TENDERNO" class="java.lang.String"/>
+	<parameter name="TENDERNOTICENO" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="400" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="157" y="10" width="371" height="25" isPrintWhenDetailOverflows="true" forecolor="#3366FF"/>
+				<textElement textAlignment="Center">
+					<font size="15" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{NameOfTheCity}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Opaque" x="179" y="52" width="324" height="20" forecolor="#3366FF"/>
+				<textElement textAlignment="Center">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["("+$P{DEPARTMENTNAME}+" Department)"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="24" y="87" width="123" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Tender Response No :]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="147" y="87" width="163" height="20"/>
+				<textElement>
+					<font isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{RESPONSENO}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="68" y="10" width="89" height="59"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{logoPath}]]></imageExpression>
+			</image>
+			<line>
+				<reportElement x="0" y="69" width="555" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="71" width="555" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="388" y="87" width="56" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="444" y="87" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{DATE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="24" y="117" width="33" height="20"/>
+				<textElement/>
+				<text><![CDATA[To,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="24" y="136" width="33" height="20"/>
+				<textElement/>
+				<text><![CDATA[M/s.]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="57" y="136" width="366" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{BIDDER}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="57" y="156" width="366" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{ADDRESS}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="24" y="194" width="65" height="20"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Subject :]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="89" y="194" width="439" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Call for Justification "+$P{TENDERNO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="24" y="223" width="65" height="20"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Reference :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="89" y="223" width="121" height="20"/>
+				<textElement/>
+				<text><![CDATA[e-tender/quotation No.]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="210" y="223" width="286" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{TENDERNOTICENO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="24" y="256" width="504" height="68"/>
+				<textElement>
+					<font isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[        With reference to above please give justification for the quoted rates immediately.
+
+        If your communication is not received within a day,It will be presumed that  you are not ready to justify  and further necessary action will be initiated.
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="405" y="361" width="150" height="39"/>
+				<textElement/>
+				<text><![CDATA[Executive Engineer
+      NMC,Nagpur]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="72" width="555" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="73" width="555" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="172" y="35" width="329" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[Tender Justification Notice]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="7" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

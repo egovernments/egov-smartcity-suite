@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.lib.rjbac.user.TerminalImpl" table="EG_TERMINAL">
+		<id name="id" column="ID" type="integer" unsaved-value="null">
+			<generator class="sequence"/>
+		</id>
+		<property name="terminalName" column="TERMINAL_NAME" type="string" />
+		<property name="ipAddress" column="IP_ADDRESS" type="string" />
+		<property name="terminalDesc" column="TERMINAL_DESC" type="string" />
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 9, 2007 3:21:11 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.pims.model.PersonAddress" table="EGEIS_PERSON_ADDRESS" >
+       <id
+       					name="id"
+       					column="ID_PERSON_ADDRESS"
+       					type="int">
+       					<generator class="sequence">
+       						<param name="sequence">EGPIMS_ADD_SEQ</param>
+       					</generator>
+		</id>
+        
+        <many-to-one name="personAddress" column="ID_ADDRESS" class="org.egov.lib.address.model.Address" cascade="all"/>
+        
+         
+
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 9, 2007 3:21:11 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.pims.model.TecnicalQualification" table="EGEIS_TECNICAL_QUALIFICATION" >
+        
+        
+        <id
+	name="tecnicalQulificationId"
+	column="TECNICAL_QULIFICATION_ID"
+	type="int">
+	<generator class="sequence">
+		<param name="sequence">EGPIMS_TEC_QU_SEQ</param>
+	</generator>
+	</id>
+	
+	<many-to-one name="technicalGradesMaster" column="TECK_GRADES_ID" 
+	class="org.egov.pims.model.TechnicalGradesMaster"/>
+	
+	<many-to-one name="SkillMaster" column="SKILLID" 
+		class="org.egov.pims.model.SkillMaster"/>
+	
+	<property name="remarks" type="string">
+			            <column name="REMARKS" length="256"  />
+		        </property>
+	<property name="passedDate" type="date">
+            <column name="PASSED_DATE" length="7" />
+        </property>
+        
+         <property name="docNo" type="long">
+            <column name="DOC_NO" />
+        </property>
+        
+
+    </class>
+</hibernate-mapping>

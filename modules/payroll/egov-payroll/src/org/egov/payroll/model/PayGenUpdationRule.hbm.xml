@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Aug 28, 2007 7:45:39 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.payroll.model.PayGenUpdationRule" table="EGPAY_PAYGENRULESSETUP_MSTR" >
+        <id name="id" >
+            <column name="ID" precision="12" scale="0" />
+           <generator class="sequence">
+	   	  <param name="sequence">EISPAYROLL_PAYGENRULES_SEQ</param>
+           </generator>
+        </id>
+         
+        
+        <timestamp name="lastmodifieddate" column="LASTMODIFIED_DATE" 
+        	access="property" unsaved-value="null" />
+        	
+     <many-to-one name="salaryCodes" class="org.egov.payroll.model.SalaryCodes" fetch="select">
+	    <column name="SALARYCODE_ID" precision="12" scale="0" />
+	</many-to-one>
+	
+	 
+        <property name="percentage" type="big_decimal">
+            <column name="PERCENTAGE" precision="12" scale="2" />
+        </property>
+        <property name="monthlyAmt" type="big_decimal">
+            <column name="MONTHLYFLAT_AMOUNT" precision="12" scale="2" />
+        </property>
+        <property name="month" type="big_decimal" >
+            <column name="MONTH" precision="12" />
+        </property>
+        
+        <many-to-one name="financialyear" class="org.egov.commons.CFinancialYear" fetch="select">
+            <column name="ID_FINANCIALYEAR" precision="12" scale="0" not-null="true" />
+        </many-to-one>
+        <property name="effectivedate" type="date">
+	    	<column name="effective_date" length="7" />
+	    </property>	
+	    
+	    <many-to-one name="empGroupMstrs" class="org.egov.pims.model.EmployeeGroupMaster" fetch="select">
+	    <column name="EMPGROUPMSTR_ID"    />
+	</many-to-one>
+	        
+    </class>
+</hibernate-mapping>

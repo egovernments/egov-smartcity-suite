@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite failures="0" errors="1" name="Test_Approve_GMI" time="21.439" assertions="3" tests="1">
+  <testcase name="test_0010_approve_GMI_reject_GMI" time="21.439" assertions="3">
+    <failure type="NoMethodError" message="undefined method `attach' for Watir::Browser:Module">
+undefined method `attach' for Watir::Browser:Module (NoMethodError)
+c:/stores_qa/regression/Transactions/MMRN/stores_mmrn_methods.rb:147:in `create_mmrn'
+c:/stores_qa/regression/Transactions/General material issue/test_approve_gmi.rb:40:in `test_0010_approve_GMI_reject_GMI'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `__send__'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+c:/ruby/lib/ruby/1.8/test/unit.rb:278
+suite.rb:1    </failure>
+  </testcase>
+  <system-out>
+    <![CDATA[]]>
+  </system-out>
+  <system-err>
+    <![CDATA[]]>
+  </system-err>
+</testsuite>

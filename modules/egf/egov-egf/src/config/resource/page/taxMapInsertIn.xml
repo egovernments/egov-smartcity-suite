@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<pageMap name="taxMapInsertIn" > 
+	<gridMap name="accCodeGrid">
+		<columnMap name="financialYear_id" serverFieldName="1"/>
+		<columnMap name="egf_tax_code_glCodeId" serverFieldName="1"/>		
+		<columnMap name="chartOfAccounts_code" serverFieldName="1"/>		
+		<columnMap name="egfAccMap_isActive" serverFieldName="1"/>
+		<columnMap name="egfAccMap_isOld" serverFieldName="1"/>
+		<columnMap name="finYearId" serverFieldName="1"/>
+	</gridMap>
+	<gridMap name="cess_grid">
+		<columnMap name="grid_cessGlCodeId" serverFieldName="1"/>		
+		<columnMap name="grid_percentage" serverFieldName="1"/>		
+		<columnMap name="grid_rowIndex" serverFieldName="1"/>
+	</gridMap>
+</pageMap>

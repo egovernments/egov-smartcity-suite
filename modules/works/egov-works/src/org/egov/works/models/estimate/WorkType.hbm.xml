@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.works.models.estimate.WorkType" table="EGW_WORKSTYPE">
+		<id name="id" column="ID" type="long" unsaved-value="null">
+			<generator class="sequence">
+				<param name="sequence">seq_egw_workstype</param>
+			</generator>
+		</id>
+		<property name="name" column="NAME" />
+		<property name="code" column="CODE" />
+		<component name="expenditureType" >
+			<property name="value" type="string"  column="EXPENDITURE_TYPE" />
+		</component>
+	</class>
+</hibernate-mapping>

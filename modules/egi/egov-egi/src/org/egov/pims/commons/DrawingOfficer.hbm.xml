@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.pims.commons.DrawingOfficer" table="EG_DRAWINGOFFICER">
+
+		<id name="id" column="ID" type="integer">
+			<generator class="sequence">
+				<param name="sequence">SEQ_DRAWING_OFFICER</param>
+			</generator>
+		</id>
+
+		<property name="name" column="NAME" />
+		<property name="code" column="CODE" />
+
+	</class>
+	<query name="DRAWINGOFFICER_STARTSWITH">from org.egov.pims.commons.DrawingOfficer as do where
+		do.code like ? order by do.code</query>
+
+</hibernate-mapping>

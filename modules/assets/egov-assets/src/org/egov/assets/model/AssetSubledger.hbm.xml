@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.assets.model.AssetSubledger" table="EGASSET_SUBLEDGER">
+        <id name="id" type="java.lang.Long">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="sequence">
+            	<param name="sequence">SEQ_EGASSET_SUBLEDGER</param>
+            </generator>
+        </id>
+         <many-to-one name="assetVd" class="org.egov.assets.model.AssetVoucherDetail" column="VOUCHERDETAILID" />
+         <many-to-one name="detailType" class="org.egov.commons.Accountdetailtype" column="DETAILTYPEID" />
+         <property name="detailKey" type="java.lang.Integer" column="DETAILKEY" />
+         <property name="amount"  type="big_decimal" column="AMOUNT"/>
+      </class>
+</hibernate-mapping>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="comparision Report" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<parameter name="NAMEOFTHECITY" class="java.lang.String"/>
+	<parameter name="RESPONSELIST" class="java.util.List"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="logoPath" class="java.lang.String"/>
+	<parameter name="TENDERNOTICENUMBER" class="java.lang.String"/>
+	<parameter name="TENDERNOTICEDATE" class="java.lang.String"/>
+	<parameter name="DEPARTMENTNAME" class="java.lang.String"/>
+	<parameter name="TENDARABLEGROUPNUMBER" class="java.lang.String"/>
+	<parameter name="TENDERFILENUMBER" class="java.lang.String"/>
+	<parameter name="TENDARABLEGROUPLABEL" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="quantity" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="125" splitType="Stretch">
+			<staticText>
+				<reportElement x="298" y="34" width="230" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="14" isBold="true" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Comparison Report]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="298" y="7" width="244" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="14" isBold="true" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{NAMEOFTHECITY}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="158" y="68" width="123" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{TENDERNOTICENUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="62" y="68" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Tender Notice Number]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="385" y="68" width="137" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{TENDERNOTICEDATE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="285" y="68" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Notice Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="537" y="68" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Department Name	]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="637" y="68" width="165" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{DEPARTMENTNAME}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="162" y="99" width="112" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{TENDARABLEGROUPNUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="385" y="99" width="152" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{TENDERFILENUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="281" y="99" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Tender File Number]]></text>
+			</staticText>
+			<image>
+				<reportElement x="82" y="6" width="127" height="48" isPrintInFirstWholeBand="true"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{logoPath}]]></imageExpression>
+			</image>
+			<line>
+				<reportElement x="0" y="124" width="802" height="1"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Double" lineColor="#0033CC"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="539" y="99" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Date of Generation]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="639" y="99" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="62" y="97" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{TENDARABLEGROUPLABEL}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="38" y="61" width="764" height="1"/>
+			</line>
+			<line>
+				<reportElement x="38" y="119" width="764" height="1"/>
+			</line>
+			<line>
+				<reportElement x="38" y="62" width="1" height="57"/>
+			</line>
+			<line>
+				<reportElement x="801" y="62" width="1" height="57"/>
+			</line>
+			<line>
+				<reportElement x="528" y="63" width="1" height="57"/>
+			</line>
+			<line>
+				<reportElement x="273" y="63" width="1" height="57"/>
+			</line>
+			<line>
+				<reportElement x="39" y="90" width="762" height="1"/>
+			</line>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="2" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch">
+			<elementGroup/>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="31" splitType="Stretch">
+			<subreport isUsingCache="true" runToBottom="false">
+				<reportElement x="162" y="0" width="542" height="31" isPrintInFirstWholeBand="true"/>
+				<subreportParameter name="QUERY"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{RESPONSELIST},false)]]></dataSourceExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[org.egov.infstr.reporting.util.ReportUtil.getTemplateAsStream("responseDetails.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

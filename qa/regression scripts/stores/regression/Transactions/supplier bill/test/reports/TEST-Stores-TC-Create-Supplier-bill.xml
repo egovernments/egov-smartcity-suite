@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite assertions="26" name="Stores_TC_Create_Supplier_bill" time="186.643" failures="0" tests="1" errors="0">
+  <testcase assertions="26" name="test_0050_Create_Supplier_bill_with_bill_date_for_future_dates" time="186.642">
+  </testcase>
+  <system-out>
+    <![CDATA[MMRN is created on : 09/11/2009
+8
+]]>
+  </system-out>
+  <system-err>
+    <![CDATA[]]>
+  </system-err>
+</testsuite>

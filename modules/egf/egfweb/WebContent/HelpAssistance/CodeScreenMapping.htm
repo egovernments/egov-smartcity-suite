@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Code Screen Mapping Help</title>
+</head>
+<LINK REL=StyleSheet HREF="file:///C:/DOCUME~1/MRC/LOCALS~1/Temp/egov.css" TYPE="text/css" />
+<style type="text/css">
+html {
+background-color:#FFF9EF;
+}
+body {
+background-color:#FFF9EF;
+}
+a {
+text-decoration:none;
+}
+table {
+border-top: 1px solid gray;
+border-left: 1px solid gray;
+}
+th {
+background-color:#FFF9EF;
+border-right: 1px solid gray;
+border-bottom: 1px solid gray;
+text-align: center;
+}
+td {
+background-color:white;
+border-bottom: 1px solid gray;
+border-right: 1px solid gray;
+}
+
+#hheader {
+background-color:#EFDFC2;
+text-align: right;
+padding: 10px;
+font-size: 130%;
+font-weight: bold;
+border-bottom: 1px solid gray;
+}
+
+#hnav {
+background-color:#FFF9EF;
+text-align: right;
+padding-right: 10px;
+border-bottom: 1px solid gray;
+}
+
+#hnav a:hover{
+border-bottom: 2px solid #CFC1A8;
+}
+
+#hcontent {
+background-color:white;
+text-align: left;
+padding: 10px;
+}
+
+#hfooter {
+background-color:#FFF9EF;
+text-align: center;
+margin-top: 0px;
+padding-right: 10px;
+padding-left: 10px;
+margin-bottom: 10px;
+border-bottom: 1px solid gray;
+border-top: 1px solid gray;
+
+}
+.hbold0 {
+font-size: 105%;
+font-weight: bold;
+text-transform: uppercase;
+}
+.hbold {
+font-size: 100%;
+font-weight: bold;
+}
+</style>
+
+<body>
+<div id="hheader">
+Code Screen Mapping.... Help
+</div>
+<div id="hnav">
+<a href="mailto:contact@egovernments.org">Contact Us</a>
+</div>
+
+<div id="hcontent">
+<span class="hbold0">
+Code Screen Mapping:&nbsp; </span>
+	
+<p></p>
+
+<!-- Objective Section Stats -->
+<span class="hbold0">
+Objective: </span>
+<p>This screen is used to map account codes to specific screens or fields (services). The account codes that are mapped to a particular screen/field will appear as drop-down lists in those screens or fields, from which the user can select the account code he wants. The Code-Screen mapping set-up has a field “service which lists out a number of screen names or field names. On selection of a service and mapping the relevant account codes to this service through the Code-Screen mapping, the mapped account codes appear as drop-down lists in the screen/field to which they are mapped. 
+<br /><br />
+<!-- Objective Section ENDS -->
+
+<!-- Fields Definition Section ENDS -->
+<span class="hbold0">
+The services which are listed out in the Code-Screen Mapping Set-up and the screens/fields to which they are mapped are:</span><br /><br />
+</p>
+<table width="91%" cellpadding="2px" cellspacing="0px">
+<tr>
+<th width="167">Service</th>
+<th width="463">Mapped To</th>
+<th>Purpose</th>
+</tr>
+<tr>
+<td width="167" height="241">Contractor-Repair Works<p>&nbsp;Contractor-Original Works
+</td>
+<td width="463" height="241">“Type of Work” in the Procurement Order” master displays 
+  a drop-down list of two items, “Repair Works” and “Original Works”. The services “Contractor-Repair Works” 
+  and “Contractor-Original Works” have a one-to-one relationship with these types of work in the Code-Screen mapping. 
+  While creating a procurement master, the type of work is set to either “Repair Works” or “Original Works”.  
+   On the “Contractor’s Bill Create” screen, if a procurement order of type “Repair Works” is selected, all account codes   
+ that are mapped to “Contractor-Repair Works” will appear in the “account code” field in the “Contractors Bill Create’ screen.
+  Similarly, on selection of a procurement order of type “Original works”, all account codes mapped to “Contractor-Original Works”
+   will appear </td>
+<td height="241">To have a filtered list of mapped account codes in the “Account Code” field in the “Enter Contractors Bill”. 
+  This will reduce the possibility of posting of transactions to wrong account codes.</td>
+</tr>
+<tr>
+<td width="167" height="83">Suppliers Journal</td>
+<td width="463" height="83">“Account code” field appearing in “Suppliers’ Bill Create” Screen </td>
+<td height="83">To have a filtered list of mapped account codes in the “Account Code” field in the “Enter Suppliers Bill” Screen.</td>
+</tr>
+<tr>
+<td width="167">Tax Code</td>
+<td width="463">An account code which is mapped to Tax-Code appears in the drop-down list of “account Codes” in the Tax Set-up screen. In the Tax Code master, for a particular tax code, a mapping of financial year, and account code is done.</td>
+<td>In the “Other Taxes Screen, whenever a Financial Year is selected from the drop-down list at the row level field for “Financial Year”, all the mapped account codes are displayed in the drop-down list in the “Account code field.</td>
+</tr>
+<!-- Copy lines from below till the "Copy ENDS here" marker and place it after
+     the END marker and before the </table> tag -->
+<tr>
+<td width="167">Miscellaneous Receipts</td>
+<td width="463">“Account code” field in Miscellaneous Receipts Screen</td>
+<td>To have a filtered list of mapped account codes in the “Account Code” field in the “Miscellaneous     Receipts” Screen.&nbsp;</td>
+</tr>
+<tr>
+<td width="167">Direct Bank Payment</td>
+<td width="463">“Account code” field in Bank Payments Screen</td>
+<td>To have a filtered list of mapped account codes in the “Account Code” field 
+in the “Bank Payments” Screen&nbsp;</td>
+</tr>
+<tr>
+<td width="167">Direct Cash Payment</td>
+<td width="463">“Account code” field in Cash Payments Screen</td>
+<td>To have a filtered list of mapped account codes in the “Account Code” field in the “Bank Receipts” Screen.&nbsp;</td>
+</tr>
+<tr>
+<td width="167">General Journal</td>
+<td width="463">“Account code” field appearing in “Create Journal Proper” screen</td>
+<td>To have a filtered list of mapped account codes in the “Account Code” field in the “Journal Proper” Screen&nbsp;</td>
+</tr>
+<tr>
+<td width="167"><tr>
+<td width="167">Earnings</td>
+<td width="463">The “Earnings” section in the “Salary Bill Create” Screen</td>
+<td>To have a filtered list of account codes pertaining to earnings in the “Earnings” section of the “Salary Bill Create” screen.&nbsp;</td>
+</tr>
+<tr>
+<td width="167">Deductions</td>
+<td width="463">The “Deductions” section in the “Salary Bill Create” Screen </td>
+<td>To have a filtered list of account codes pertaining to salary deductions in the “Deductions” section of the “Salary Bill Create” screen.&nbsp;</td>
+</tr>
+<!-- Copy ENDS here -->
+</table>
+
+<br />
+<!-- Fields Definition Section ENDS -->
+
+<!-- Footer Starts here -->
+<div id="hfooter">
+&copy egovernments Foundation 
+<script type="JavaScript">
+document.write(time());
+</script>
+</div>
+<!-- Footer ENDS here -->
+
+</body>
+</html>

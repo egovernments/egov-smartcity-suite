@@ -1,0 +1,24 @@
+/******creating PF module*************\
+
+select SEQ_MODULEMASTER.nextval from dual
+Insert into eg_module
+   (ID_MODULE, MODULE_NAME, LASTUPDATEDTIMESTAMP, ISENABLED, MODULE_NAMELOCAL, PARENTID, MODULE_DESC)
+ Values
+   (70, 'Provident Fund', TO_DATE('07/04/2008 17:37:44', 'MM/DD/YYYY HH24:MI:SS'), 1, 'Provident fund', 7, 'Provident Fund');
+
+select SEQ_EG_ACTION.nextval from dual
+select SEQ_EG_ACTION.nextval from dual
+
+Insert into eg_action
+   (ID, NAME, UPDATEDTIME, URL, URLORDERID, MODULE_ID, ORDER_NUMBER, DISPLAY_NAME, IS_ENABLED)
+ Values
+   (351, 'PF Report', TO_DATE('07/04/2008 17:45:53', 'MM/DD/YYYY HH24:MI:SS'), '/reports/PFReport.jsp', 2, 70, 2, 'PF Report', 1);
+
+Insert into eg_action
+   (ID, NAME, UPDATEDTIME, URL, QUERYPARAMS, URLORDERID, MODULE_ID, ORDER_NUMBER, DISPLAY_NAME, IS_ENABLED)
+ Values
+   (352, 'PF Setup', TO_DATE('07/04/2008 17:45:53', 'MM/DD/YYYY HH24:MI:SS'), '/providentfund/pfsetup.do', 'submitType=loadData', 1, 70, 1, 'PF Setup', 1);
+
+update EG_MODULE set LASTUPDATEDTIMESTAMP=TO_DATE('07/04/2008 17:45:53', 'MM/DD/YYYY HH24:MI:SS'), MODULE_NAME='Provident Fund', ISENABLED=1, MODULE_NAMELOCAL='Provident fund', BASEURL=?, PARENTID=7, MODULE_DESC='Provident Fund', ORDER_NUM=? where ID_MODULE=70
+and LASTUPDATEDTIMESTAMP=TO_DATE('07/04/2008 17:45:53', 'MM/DD/YYYY HH24:MI:SS')
+

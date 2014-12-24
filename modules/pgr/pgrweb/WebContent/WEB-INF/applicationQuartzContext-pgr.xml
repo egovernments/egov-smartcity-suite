@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+	default-lazy-init="true">
+    
+    <bean name="pgrSchedular" id="pgrSchedular" parent="egovSchedular" lazy-init="false">
+		<property name="schedulerName" value="pgr-scheduler"/>
+		<property name="triggers">
+	    	<list>
+				<ref bean="complaintEscalationCronTrigger" />
+	    	</list>
+		</property>	
+		<property name="applicationContextSchedulerContextKey" value="applicationQuartzContext-pgr" /> 
+   </bean>
+   
+   <bean name="complaintEscalationJobDetail" id="complaintEscalationJobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" lazy-init="false"> 
+		<property name="group" value="PGR_JOB_GROUP"/>
+   		<property name="name" value="PGR_ESCALATION_JOB"/>
+   		<property name="durability" value="true" /> 
+   		<property name="jobClass" value="org.egov.pgr.services.scheduler.jobs.ComplaintEscalationJob"/>
+   		<property name="requestsRecovery" value="true"/>
+		<property name="jobDataAsMap">
+            <map>
+                <entry key="jobBeanName" value="complaintEscalationJob"/>
+				<entry key="userName" value="egovernments"/>
+				<entry key="transactional"  value="true" />
+				<entry key="moduleName" value="pgr"/>
+            </map>
+        </property>   	
+	</bean>
+	
+	<bean id="complaintEscalationJob" class="org.egov.pgr.services.scheduler.jobs.ComplaintEscalationJob" lazy-init="true"> 	
+		<property name="complaintService" ref="complaintService" />   
+		<property name="eisCommonsService" ref="eisCommonsService"/>
+		<property name="escalationService" ref="escalationService"/>
+		<property name="appConfigValuesDAO" ref="appConfigValuesDAO" />   
+		<property name="jmsTemplate" ref="queueJmsTemplate"/>
+    </bean>
+   
+   <bean id="complaintEscalationCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" lazy-init="true">
+        <property name="jobDetail" ref="complaintEscalationJobDetail" />
+		<property name="group" value="PGR_ESCALATION_TRIGGER_GROUP" />
+		<property name="name" value="PGR_ESCALATION_TRIGGER" />		
+        <property name="cronExpression" value="0 01 0 * * ?" />
+    </bean>
+</beans>

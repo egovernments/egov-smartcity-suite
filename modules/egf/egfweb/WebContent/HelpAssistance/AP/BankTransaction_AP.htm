@@ -1,0 +1,232 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Bank Transaction Report Help</title>
+</head>
+<LINK REL=StyleSheet HREF="egov.css" TYPE="text/css" />
+<style type="text/css">
+html {
+background-color:#FFF9EF;
+}
+body {
+background-color:#FFF9EF;
+}
+a {
+text-decoration:none;
+}
+table {
+border-top: 1px solid gray;
+border-left: 1px solid gray;
+}
+th {
+background-color:#FFF9EF;
+border-right: 1px solid gray;
+border-bottom: 1px solid gray;
+text-align: center;
+}
+td {
+background-color:white;
+border-bottom: 1px solid gray;
+border-right: 1px solid gray;
+}
+
+#hheader {
+background-color:#EFDFC2;
+text-align: right;
+padding: 10px;
+font-size: 130%;
+font-weight: bold;
+border-bottom: 1px solid gray;
+}
+
+#hnav {
+background-color:#FFF9EF;
+text-align: right;
+padding-right: 10px;
+border-bottom: 1px solid gray;
+}
+
+#hnav a:hover{
+border-bottom: 2px solid #CFC1A8;
+}
+
+#hcontent {
+background-color:white;
+text-align: left;
+padding: 10px;
+}
+
+#hfooter {
+background-color:#FFF9EF;
+text-align: center;
+margin-top: 0px;
+padding-right: 10px;
+padding-left: 10px;
+margin-bottom: 10px;
+border-bottom: 1px solid gray;
+border-top: 1px solid gray;
+
+}
+.hbold0 {
+font-size: 105%;
+font-weight: bold;
+text-transform: uppercase;
+}
+.hbold {
+font-size: 100%;
+font-weight: bold;
+}
+</style>
+
+<body>
+<div id="hheader">
+eGov Product-Customization-Functionality Help
+</div>
+<div id="hnav">
+<a href="#">Home</a>&nbsp;|&nbsp;
+<a href="http://www.egovernments.org">About Us</a>&nbsp;|&nbsp;
+<a href="mailto:contact@egovernments.org">Contact Us</a>
+</div>
+
+<div id="hcontent">
+<!-- Objective Section Stats -->
+<span class="hbold0">
+Objective: </span> To list out the transaction entries made for the particular bank account.
+<br /><br />
+<!-- Objective Section ENDS -->
+
+<!-- Fields Definition Section ENDS -->
+<span class="hbold0">
+Field Description Table:</span><br /><br />
+<table width="80%" cellpadding="2px" cellspacing="0px">
+<tr>
+<th>FieldName</th>
+<th>FieldType</th>
+<th>FieldDescription</th>
+</tr>
+<tr>
+<td>Bank</td>
+<td>String</td>
+<td>Drop-down: List of Banks where the ULB has an account 
+</td>
+</tr>
+<tr>
+<td>Account number</td>
+<td>Number</td>
+<td>Drop-down: Accounts for the selected Bank </td>
+</tr>
+<tr>
+<td>Starting date</td>
+<td>date</td>
+<td>Starting date of the report</td>
+</tr>
+<tr>
+<td>Ending date</td>
+<td>date</td>
+<td>ending date of the report</td>
+</tr>
+<tr>
+<td>Sl. No.</td>
+<td>Number</td>
+<td>Runnig serial number</td>
+</tr>
+<tr>
+<td>Voucher Number</td>
+<td>alphanumeric</td>
+<td>Voucher number of the transaction entry</td>
+</tr>
+<tr>
+<td>Cheque Number</td>
+<td>alphanumeric</td>
+<td>Cheque number of the transaction</td>
+</tr>
+<tr>
+<td>Type</td>
+<td>String</td>
+<td>Payment or Receipt</td>
+</tr>
+<tr>
+<td>Voucher Date</td>
+<td>Date</td>
+<td>Voucher date of the tranaction</td>
+</tr>
+<tr>
+<td>Cheque Date</td>
+<td>Date</td>
+<td>Cheque date of the transaction</td>
+</tr>
+<tr>
+<td>Payment Amount</td>
+<td>Type</td>
+<td>Payment transaction amount, if the type is Payment</td>
+</tr>
+<tr>
+<td>Receipt Amount</td>
+<td>Type</td>
+<td>Receipt transaction amount, if the type is Receipt</td>
+</tr>
+<tr>
+<td>Payin slip Number</td>
+<td>Alphanumeric</td>
+<td>Payin slip number, if the transaction is Cheque Receipt</td>
+</tr>
+<tr>
+<td>Payin slip date</td>
+<td>Date</td>
+<td>Payin slip date, if the transaction is Cheque Receipt</td>
+</tr>
+</table>
+
+<br />
+<!-- Fields Definition Section ENDS -->
+
+<!-- Expected Results and/or Workflow Section Begins -->
+<span class="hbold0">
+Expected Results and/or Workflow:
+</span><br />
+<br /><br />
+<table width="80%" cellpadding="2px" cellspacing="0px">
+<tr>
+<th>Action</th>
+<th>Expeced Result</th>
+</tr>
+<tr>
+<td>Create a Cheque receipt, and do the payin slip for that entry, and check the report</td>
+<td>Check the amount and payinslip details, based on the entry</td>
+</tr>
+<tr>
+<td>Create a Payment , and check the report again</td>
+<td>Check the expected results</td>
+</tr>
+</table>
+
+<!-- Expected Results and/or Workflow Section ENDS -->
+<br />
+
+<!-- Troubleshooting Section Begins -->
+<span class="hbold0">
+Troubleshooting:
+</span><br />
+<span class="hbold">Question1:</span><br />
+If you take the report, from date and to date range is more<br />
+<span class="hbold">Answer1:</span><br />
+Report will take time to get it<br />
+<span class="hbold">Question2:</span><br />
+If you select type is Both<br />
+<span class="hbold">Answer2:</span><br />
+Report will take time to get it, because report will print both Payment Entries and Receipt Entries<br />
+</div>
+<!-- Troubleshooting Section ENDS -->
+
+<!-- Footer Starts here -->
+<div id="hfooter">
+&copy egovernments Foundation 
+<script type="JavaScript">
+document.write(time());
+</script>
+</div>
+<!-- Footer ENDS here -->
+
+</body>
+</html>

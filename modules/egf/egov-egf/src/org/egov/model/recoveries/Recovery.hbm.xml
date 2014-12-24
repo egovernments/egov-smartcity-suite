@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 19, 2007 2:41:18 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.model.recoveries.Recovery" table="TDS" >
+        <id name="id" type="long">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="native">
+            <param name="sequence">SEQ_tds</param>
+            </generator>
+        </id>
+        <many-to-one name="chartofaccounts" class="org.egov.commons.CChartOfAccounts" fetch="select">
+            <column name="GLCODEID" precision="10" scale="0" />
+        </many-to-one>
+        <many-to-one name="egPartytype" class="org.egov.commons.EgPartytype" fetch="select">
+		    <column name="PARTYTYPEID" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="bank" class="org.egov.commons.Bank" fetch="select">
+		    <column name="BANKID" precision="22" scale="0" />
+        </many-to-one>
+        <property name="type" type="string">
+            <column name="TYPE" length="20" unique="true" />
+        </property>
+        <property name="ispaid" type="java.lang.Boolean">
+            <column name="ISPAID" precision="1" scale="0" />
+        </property>
+        <property name="isactive" type="java.lang.Boolean">
+            <column name="ISACTIVE" precision="1" scale="0" />
+        </property>
+        <property name="lastmodified" type="date">
+            <column name="LASTMODIFIED" length="7" />
+        </property>
+        <property name="created" type="date">
+            <column name="CREATED" length="7" />
+        </property>
+        <property name="modifiedby" type="java.lang.Long">
+            <column name="MODIFIEDBY" precision="10" scale="0" />
+        </property>
+        <property name="rate" type="big_decimal">
+            <column name="RATE" precision="10" />
+        </property>
+        <property name="effectivefrom" type="date">
+            <column name="EFFECTIVEFROM" length="7" />
+        </property>
+        <property name="createdby" type="big_decimal">
+            <column name="CREATEDBY" precision="22" scale="0" not-null="true" />
+        </property>
+         <property name="remitted" type="string">
+            <column name="REMITTED" length="100" />
+        </property>
+        <property name="bsrcode" type="string">
+            <column name="BSRCODE" length="20" />
+        </property>
+        <property name="description" type="string">
+            <column name="DESCRIPTION" length="200" />
+        </property>
+        <property name="caplimit" type="big_decimal">
+            <column name="CAPLIMIT" precision="15" />
+        </property>
+		  <property generated="never" lazy="false" name="isEarning" type="string">
+			<column name="ISEARNING"/>
+		 </property>
+
+        <property name="recoveryName" type="string">
+            <column name="RECOVERYNAME" length="50" />
+        </property>
+        <property name="calculationType" type="string">
+            <column name="CALCULATIONTYPE" length="50" />
+        </property>
+         <property name="section" type="string">
+            <column name="SECTION" length="50" />
+        </property>	
+        <property name="recoveryMode" type="character" not-null="true">
+            <column name="RECOVERY_MODE"  />
+        </property>	 
+    </class>
+</hibernate-mapping>

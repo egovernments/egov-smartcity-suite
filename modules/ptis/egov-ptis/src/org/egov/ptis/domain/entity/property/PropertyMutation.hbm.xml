@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.ptis.domain.entity.property.PropertyMutation"
+		table="EGPT_PROPERTY_MUTATION">
+		<id name="id" column="ID_PROP_MUTATION" type="java.lang.Long">
+			<generator class="sequence">
+				<param name="sequence">SEQ_PROP_MUTATION</param>
+			</generator>
+		</id>
+		<property name="createdDate" type="java.util.Date">
+			<column name="CREATED_DATE" not-null="true" />
+		</property>
+		<property name="modifiedDate" type="java.util.Date">
+			<column name="MODIFIED_DATE" not-null="true" />
+		</property>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl"
+			cascade="all">
+			<column name="CREATED_BY" />
+		</many-to-one>
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl"
+			cascade="all">
+			<column name="MODIFIED_BY" />
+		</many-to-one>
+
+		<many-to-one name="propMutationMstr" column="ID_MUTATION"
+			class="org.egov.ptis.domain.entity.property.PropertyMutationMaster" cascade="all"
+			unique="true" />
+
+		<property name="mutationNo" column="MUTATION_NO" />
+		<property name="mutationDate" column="MUTATION_DATE" />
+		<property name="mutationFee" column="MUTATION_FEE"/>
+		<property name="receiptNum" column="RECEIPT_NUMBER"/>
+		<property name="applicationNo" column="APPLICATION_NO" />
+		<property name="noticeDate" column="NOTICE_DATE" />
+		<many-to-one name="applnStatus" column="ID_APPLN_STATUS"
+			class="org.egov.commons.EgwStatus" cascade="all" unique="true" />
+		<many-to-one name="basicProperty" column="ID_BASIC_PROPERTY"
+			class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" insert="false"
+			update="false" />
+
+		<property name="refPid" column="REF_PID" />
+		<property name="extraField1" column="EXTRA_FIELD1" />
+		<property name="extraField2" column="EXTRA_FIELD2" />
+		<property name="extraField3" column="EXTRA_FIELD3" />
+		<property name="extraField4" column="EXTRA_FIELD4" />
+		<property name="deedNo" column="DEED_NO" />
+		<property name="deedDate" column="DEED_DATE" />
+		<property name="ownerNameOld" column="OLD_OWNER_NAME"/>
+
+		<set name="mutationOwnerSet" cascade="all" table="EGPT_MUTATION_OWNER">
+			<key column="ID_PROP_MUTATION" not-null="true" />
+			<one-to-many class="org.egov.ptis.domain.entity.property.PropertyMutationOwner" />
+		</set>
+
+		<property name="consTransfee" column="CONSFORTRANSFEE" />
+		<property name="isTfPayable" column="IS_TFPAYABLE" />
+		  <property name="documentNumber" type="java.lang.String">
+            <column name="DOCUMENT_NUMBER" length="50" />
+        </property>
+	</class>
+</hibernate-mapping>

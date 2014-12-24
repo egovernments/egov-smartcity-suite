@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.egov.works.models.estimate.ProjectCode" table="EGW_PROJECTCODE" >
+        <id name="id" type="long">
+            <column name="ID"/>
+            <generator class="sequence" >
+            <param name="sequence">EGW_PROJECTCODE_SEQ</param>
+            </generator>
+        </id>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />		
+        <property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+        <set name="estimates" cascade="all,delete-orphan" inverse="true" table = "EGW_ABSTRACTESTIMATE">
+            <key column="PROJECTCODE_ID" />
+            <one-to-many class="org.egov.works.models.estimate.AbstractEstimate" />  
+        </set>
+        
+		<property name="code" type="string">
+            <column name="CODE" length="256" not-null="true"/>
+        </property>
+        
+        <property name="isActive" type="java.lang.Boolean">
+         	<column name="ISACTIVE" precision="1" scale="0" />
+		</property>
+		
+		<property name="description" type="string">
+			<column name="DESCRIPTION" length="1024"/>
+		</property>
+		
+		 <property name="codeName" type="string">
+			<column name="NAME" length="1024"  />
+		</property>
+	</class>
+	
+    <query name="ALL_ACTIVEPROJECTCODES">
+    <![CDATA[
+        select distinct pc from ProjectCode as pc left join pc.estimates as e where e.state.value not in('CANCEL','COMP_CERTIFICATE') order by pc.code
+    ]]>
+    </query>
+    
+    <query name="GET_ACTIVEPROJECTCODE_BY_CODE">
+    <![CDATA[
+        select distinct pc from ProjectCode as pc left join pc.estimates as e where e.state.value not in('CANCEL','COMP_CERTIFICATE') and pc.code = ?
+    ]]>
+    </query>
+    
+</hibernate-mapping>

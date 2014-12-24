@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+	default-lazy-init="true">
+	
+	<!-- SERVICES FROM EGI -->
+	
+	<bean id="egovSessionFactory" class="org.egov.infstr.services.SessionFactory" lazy-init="false">
+	</bean>
+	
+	<bean id="persistenceService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
+		<property name="sessionFactory" ref="egovSessionFactory" />
+	</bean>
+	<bean id="genericHibDao" class="org.egov.infstr.commons.dao.GenericHibernateDaoFactory"
+		scope="prototype" >
+	</bean>
+	
+	<bean id="eisService" class="org.egov.pims.service.EisUtilService" scope="prototype" >
+		<property name="persistenceService"  ref="persistenceService" />
+	</bean>
+	<bean id="eisMgr" class="org.springframework.ejb.access.LocalStatelessSessionProxyFactoryBean"
+	      lazy-init="true">
+	      <property name="jndiName">
+		   <value>EisManagerHome</value>
+	      </property>
+	      <property name="resourceRef">
+		   <value>false</value>
+	      </property>
+	      <property name="businessInterface">
+		   <value>org.egov.pims.service.EisManager</value>
+	      </property>
+	</bean>
+	<bean id="financialYearDAO" class="org.egov.commons.dao.FinancialYearHibernateDAO">
+       <constructor-arg index="0" value="org.egov.commons.CFinancialYear"/>
+       <constructor-arg index="1" ><null/></constructor-arg>
+    </bean>
+    
+	<bean id="scriptService" class="org.egov.infstr.services.ScriptService" parent="persistenceService">
+			<constructor-arg index="0" value="2"/>
+			<constructor-arg index="1" value="5"/>
+			<constructor-arg index="2" value="10"/>
+			<constructor-arg index="3" value="30"/>
+	</bean>
+	
+   
+	<bean id="sequenceGenerator" class="org.egov.infstr.utils.SequenceGenerator" scope="prototype"  autowire-candidate="true">
+		<constructor-arg index="0" ref="egovSessionFactory"/>
+	</bean>
+	
+	<bean id="appConfigValuesDAO" class="org.egov.infstr.config.dao.AppConfigValuesHibernateDAO" scope="prototype"  autowire-candidate="true">
+		<constructor-arg index="0" value="org.egov.infstr.config.AppConfigValues"/>
+		<constructor-arg index="1" ref="egovSessionFactory"/>
+	</bean>
+	
+	<bean id="boundaryTypeDao" class="org.egov.lib.admbndry.BoundaryTypeDAO" scope="prototype" /> 
+	<bean id="heirarchyTypeDao" class="org.egov.lib.admbndry.HeirarchyTypeDAO" scope="prototype" /> 
+	
+	<bean id="userMgr"
+		class="org.springframework.ejb.access.LocalStatelessSessionProxyFactoryBean"
+		lazy-init="true">
+		<property name="jndiName">
+			<value>UserManagerHome</value>
+		</property>
+		<property name="resourceRef">
+			<value>false</value>
+		</property>
+		<property name="businessInterface">
+			<value>org.egov.lib.rjbac.user.ejb.api.UserManager</value>
+		</property>
+	</bean>
+	<bean id="genericTenderService" class="org.egov.tender.services.common.GenericTenderService" >
+		<property name="persistenceService" ref="persistenceService"/>
+		<property name="tenderCommonService" ref="tenderCommonService"/>
+	</bean>
+	<!-- Service for Tender -->
+	
+	<bean id="defaultTenderFileService" class="org.egov.tender.services.common.GenericTenderFileService" >
+		<property name="persistenceService" ref="persistenceService"/>
+	</bean>
+	<bean id="relationService" class="org.egov.commons.service.RelationService" parent="persistenceService">
+		<property name="type" value="org.egov.commons.Relation" />
+	</bean>
+	<bean id="contractorService" class="org.egov.works.services.ContractorService" parent="persistenceService">
+		<property name="type" value="org.egov.works.models.masters.Contractor"/>
+	</bean>
+	<bean id="ownerService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.lib.citizen.model.Owner" />
+    </bean>
+     
+	<bean id="tenderCommonService" class="org.egov.tender.services.common.TenderCommonService" >
+		<property name="persistenceService" ref="persistenceService"/>
+		<property name="scriptService" ref="scriptService"/>
+		<property name="eisService" ref="eisService"/>
+		<property name="ownerService" ref="ownerService"/>
+		<property name="bidderTypeServiceMap">
+    	<map>
+        	<entry>
+            	 <key>
+                	<value>supplierService</value>
+           		 </key>
+            	<ref bean="relationService" />
+       		 </entry>
+       		<entry>
+            	 <key>
+                	<value>contractorService</value>
+           		 </key>
+            	<ref bean="contractorService" />
+       		 </entry>
+        </map>
+  		</property>
+	</bean>  
+	<bean id="tenderNoticeService" class="org.egov.tender.services.tendernotice.TenderNoticeService" parent="persistenceService">
+		<property name="persistenceService" ref="persistenceService"/>
+		<property name="type" value="org.egov.tender.model.TenderNotice" />
+		<property name="eisService" ref="eisService"/>
+		<property name="tenderNoticeWorkflowService" ref="tenderNoticeWorkflowService"/>
+		<property name="tenderCommonService" ref="tenderCommonService"/>
+		<property name="scriptService" ref="scriptService"/>
+		
+		<property name="tenderFileServiceMap">
+    	<map>
+        	<entry>
+            	 <key>
+                	<value>defaultTenderFileService</value>
+           		 </key>
+            	<ref bean="defaultTenderFileService" />
+       		 </entry>
+       		<entry>
+            	 <key>
+                	<value>WorksEstimateTenderFileService</value>
+           		 </key>
+            	<ref bean="worksTenderFileService" />
+       		 </entry>
+       		 <entry>
+            	 <key>
+                	<value>WorksIndentTenderFileService</value>
+           		 </key>
+            	<ref bean="worksTenderFileService" />
+       		 </entry>
+       		
+        </map>
+       </property>
+</bean>	
+	<bean class="org.egov.works.services.impl.TenderFileServiceImpl" id="worksTenderFileService" scope="prototype" >
+		<constructor-arg>
+			<bean parent="persistenceService">
+				<property name="type" value="org.egov.works.models.tender.TenderFile" />
+			</bean>
+		</constructor-arg>	
+		<property name="tenderFileType" value="org.egov.works.models.tender.TenderFile" />
+		<property name="persistenceService" ref="persistenceService"/>	
+	</bean>
+	<bean id="tenderNoticeWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" lazy-init="false" scope="prototype">
+		<constructor-arg ref="persistenceService"/>
+		<constructor-arg value="org.egov.tender.model.TenderNotice"/>
+	</bean>
+	
+	<bean id="tenderResponseWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" lazy-init="false" scope="prototype">
+		<constructor-arg ref="persistenceService"/>
+		<constructor-arg value="org.egov.tender.model.GenericTenderResponse"/>
+	</bean>
+	
+	<bean id="tenderResponseService" class="org.egov.tender.services.tenderresponse.TenderResponseService" parent="persistenceService">
+		<property name="type" value="org.egov.tender.model.GenericTenderResponse" />
+		<property name="eisService" ref="eisService"/>
+		<property name="tenderResponseWorkflowService" ref="tenderResponseWorkflowService"/>
+		<property name="scriptService" ref="scriptService"/>
+		<property name="sequenceGenerator" ref="sequenceGenerator"/>
+		<property name="persistenceService" ref="persistenceService"/>
+		<property name="tenderCommonService" ref="tenderCommonService"/>
+		<property name="tenderServiceMap">
+    	<map>
+        	<entry>
+            	 <key>
+                	<value>defaultTenderResponseService</value>
+           		 </key>
+            	<ref bean="defaultResponseService" />
+       		 </entry>
+       		<entry>
+            	 <key>
+                	<value>WorksEstimateTenderResponseService</value>
+           		 </key>
+            	<ref bean="worksTenderFileService" />
+       		 </entry>
+       		 <entry>
+            	 <key>
+                	<value>WorksIndentTenderResponseService</value>
+           		 </key>
+            	<ref bean="worksTenderFileService" />
+       		 </entry>
+       		
+        </map>
+  		</property>
+	</bean>
+	
+	<bean id="tenderJustificationService" class="org.egov.tender.services.tenderjustification.TenderJustificationService" parent="persistenceService">
+		<property name="type" value="org.egov.tender.model.TenderJustification" />
+	</bean>
+ 	
+ 	<bean id="defaultResponseService" class="org.egov.tender.services.common.DefaultTenderService" >
+ 		<property name="persistenceService" ref="persistenceService"/>
+ 		<property name="scriptService" ref="scriptService"/>
+		<property name="sequenceGenerator" ref="sequenceGenerator"/>
+	</bean>
+	
+	<bean id="genericTenderNoticeService" class="org.egov.tender.services.common.GenericTenderNoticeService" >
+		<property name="persistenceService" ref="persistenceService"/>
+	</bean>
+ 	
+</beans>

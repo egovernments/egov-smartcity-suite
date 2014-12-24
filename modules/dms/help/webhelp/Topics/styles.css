@@ -1,0 +1,130 @@
+body {
+  font-family: 'Times New Roman';
+  font-size: 12pt;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: none;
+  color: Black;
+  background-color: White;
+  text-transform: none;
+}
+p {
+  padding-top: 0pt;
+  padding-right: 0pt;
+  padding-bottom: 0pt;
+  padding-left: 0pt;
+  text-indent: 0pt;
+  text-align: left;
+  line-height: normal;
+  margin: 0px;
+}
+.ts0 {
+  font-family: Verdana;
+  font-weight: bold;
+}
+.ts1 {
+  font-family: Verdana;
+  font-size: 20pt;
+  font-weight: bold;
+  color: Black;
+}
+.ts2 {
+  font-family: Verdana;
+  font-size: 11pt;
+  font-weight: bold;
+  color: Black;
+}
+.ts3 {
+  font-family: Verdana;
+  font-size: 11pt;
+  font-weight: bold;
+}
+.ts4 {
+  font-family: Verdana;
+  font-size: 16pt;
+  color: #010101;
+}
+.ts5 {
+  font-family: arial;
+  font-size: 10pt;
+  color: Black;
+}
+.ts6 {
+  font-family: Verdana;
+  font-size: 11pt;
+  font-weight: bold;
+  color: #010101;
+}
+.ts7 {
+  font-family: Verdana;
+  font-size: 10pt;
+  color: #010101;
+}
+.ts8 {
+  font-family: Verdana;
+  font-size: 16pt;
+}
+.ts9 {
+  font-family: Verdana;
+  font-size: 10pt;
+  color: Black;
+}
+.ts10 {
+  font-family: Verdana;
+  font-size: 10pt;
+  color: Black;
+}
+.ts11 {
+  font-family: Verdana;
+  font-size: 10pt;
+}
+.ts12 {
+  font-family: Verdana;
+  font-size: 10pt;
+  font-weight: bold;
+}
+.ts13 {
+  font-family: Verdana;
+  font-size: 16pt;
+  font-weight: bold;
+}
+.ts14 {
+  font-family: Arial;
+  font-size: 13pt;
+  font-weight: bold;
+}
+.ts15 {
+  font-family: Verdana;
+  font-size: 10pt;
+  font-weight: bold;
+  font-style: italic;
+  color: Black;
+}
+.ts16 {
+  font-family: Verdana;
+  font-size: 10pt;
+  font-weight: bold;
+  color: Black;
+}
+.ps0 {
+  padding-bottom: 1pt;
+  text-align: center;
+}
+.ps1 {
+  text-align: right;
+}
+.ps2 {
+  text-align: justify;
+}
+.ps3 {
+  padding-left: 36pt;
+  text-indent: -18pt;
+  text-align: justify;
+}
+.ps4 {
+  text-align: center;
+}
+.ps5 {
+  padding-left: 1.27cm;
+  text-indent: -0.64cm;
+}

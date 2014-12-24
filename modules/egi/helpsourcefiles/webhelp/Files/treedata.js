@@ -1,0 +1,61 @@
+var tree_data = [
+	['Title', 'Files/9.gif', '', 'Topics/IDH_Topic30.htm', null],
+	['Legal', 'Files/9.gif', '', 'Topics/IDH_Topic40.htm', null],
+	['Chapter 1: eGov Administration', 'Files/1.gif', 'Files/2.gif', '',
+		['Introduction', 'Files/9.gif', '', 'Topics/IDH_Topic60.htm', null],
+		['Logging On to the Administration System', 'Files/9.gif', '', 'Topics/IDH_Topic80.htm', null],
+		['Changing Password', 'Files/9.gif', '', 'Topics/IDH_Topic120.htm', null]
+	],
+	['Chapter 2: Setting Up Jurisdiction', 'Files/1.gif', 'Files/2.gif', '',
+		['Introduction', 'Files/9.gif', '', 'Topics/IDH_Topic340.htm', null],
+		['Creating a Hierarchy Type', 'Files/9.gif', '', 'Topics/IDH_Topic250.htm', null],
+		['Viewing,  Modifying or Deleting a Hierarchy Type', 'Files/9.gif', '', 'Topics/IDH_Topic260.htm', null],
+		['Creating a Boundary Type', 'Files/9.gif', '', 'Topics/IDH_Topic270.htm', null],
+		['Adding a Child Boundary Type', 'Files/9.gif', '', 'Topics/IDH_Topic290.htm', null],
+		['Viewing , Modifying, or Deleting a Boundary Type', 'Files/9.gif', '', 'Topics/IDH_Topic280.htm', null],
+		['Creating a Root Boundary', 'Files/9.gif', '', 'Topics/IDH_Topic420.htm', null],
+		['Adding a Child Boundary to the Root Boundary', 'Files/9.gif', '', 'Topics/IDH_Topic300.htm', null],
+		['Viewing , Modifying, or Deleting a Boundary', 'Files/9.gif', '', 'Topics/IDH_Topic310.htm', null],
+		['Moving or Deleting a Boundary', 'Files/9.gif', '', 'Topics/IDH_Topic330.htm', null]
+	],
+	['Chapter 3: Setting Up Departments', 'Files/1.gif', 'Files/2.gif', '',
+		['Introduction', 'Files/9.gif', '', 'Topics/IDH_Topic350.htm', null],
+		['Creating a Department', 'Files/9.gif', '', 'Topics/IDH_Topic70.htm', null],
+		['Viewing, Modifying, or Deleting a Department', 'Files/9.gif', '', 'Topics/IDH_Topic20.htm', null]
+	],
+	['Chapter 4: Setting Up Modules', 'Files/1.gif', 'Files/2.gif', '',
+		['Introduction', 'Files/9.gif', '', 'Topics/IDH_Topic360.htm', null],
+		['Creating a Module', 'Files/9.gif', '', 'Topics/IDH_Topic50.htm', null],
+		['Setting Up an Action for a Module', 'Files/9.gif', '', 'Topics/IDH_Topic10.htm', null],
+		['Deleting an Action from a Module', 'Files/9.gif', '', 'Topics/IDH_Topic90.htm', null],
+		['Modifying a Module', 'Files/9.gif', '', 'Topics/IDH_Topic100.htm', null],
+		['Modifying an Action', 'Files/9.gif', '', 'Topics/IDH_Topic110.htm', null]
+	],
+	['Chapter 5: Setting Up Users', 'Files/1.gif', 'Files/2.gif', '',
+		['Introduction', 'Files/9.gif', '', 'Topics/IDH_Topic370.htm', null],
+		['Creating a Role', 'Files/9.gif', '', 'Topics/IDH_Topic130.htm', null],
+		['Viewing, Modifying, or Deleting a  Role', 'Files/9.gif', '', 'Topics/IDH_Topic140.htm', null],
+		['Assigning an Action to a Role', 'Files/9.gif', '', 'Topics/IDH_Topic150.htm', null],
+		['Creating a User and Assigning a Role to the User', 'Files/9.gif', '', 'Topics/IDH_Topic160.htm', null],
+		['Finding a User', 'Files/9.gif', '', 'Topics/IDH_Topic170.htm', null],
+		['Assigning a Jurisdiction to a User', 'Files/9.gif', '', 'Topics/IDH_Topic190.htm', null],
+		['Viewing a User Jurisdiction', 'Files/9.gif', '', 'Topics/IDH_Topic180.htm', null],
+		['Modifying User Details and User Role', 'Files/9.gif', '', 'Topics/IDH_Topic400.htm', null]
+	],
+	['Chapter 6: Setting Up Locations and Terminals', 'Files/1.gif', 'Files/2.gif', '',
+		['Introduction', 'Files/9.gif', '', 'Topics/IDH_Topic380.htm', null],
+		['Creating a Location or a Terminal', 'Files/9.gif', '', 'Topics/IDH_Topic200.htm', null],
+		['Viewing,  Modifying or Deleting a Location or a Terminal', 'Files/9.gif', '', 'Topics/IDH_Topic210.htm', null],
+		['Assigning a User to a Location or a Terminal', 'Files/9.gif', '', 'Topics/IDH_Topic220.htm', null]
+	],
+	['Chapter 7: Reports', 'Files/1.gif', 'Files/2.gif', '',
+		['Introduction', 'Files/9.gif', '', 'Topics/IDH_Topic390.htm', null],
+		['Viewing User Counter Map Reports', 'Files/9.gif', '', 'Topics/IDH_Topic230.htm', null]
+	],
+	['Chapter 8: Configuration', 'Files/1.gif', 'Files/2.gif', '',
+		['Introduction', 'Files/9.gif', '', 'Topics/IDH_Topic460.htm', null],
+		['Setting  Master Data Values of a Module', 'Files/9.gif', '', 'Topics/IDH_Topic240.htm', null],
+		['Viewing Master Data Values of a Module', 'Files/9.gif', '', 'Topics/IDH_Topic320.htm', null]
+	],
+	['Chapter 9: Glossary', 'Files/9.gif', '', 'Topics/IDH_Topic440.htm', null]
+];

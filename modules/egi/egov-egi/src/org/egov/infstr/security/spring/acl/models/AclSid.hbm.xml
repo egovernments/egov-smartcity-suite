@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping >
+	<class name="org.egov.infstr.security.spring.acl.models.AclSid" table="ACL_SID"> 
+		<id name="id" type="long" column="ID">
+	        <generator class="sequence">
+	            <param name="sequence">SEQ_ACL_SID</param>
+	        </generator>
+	    </id>
+		
+		<many-to-one name="sidType"  class="org.egov.infstr.security.spring.acl.models.AclSidType" column="SID_TYPE" fetch="select" /> 
+		<many-to-one name="aclObjectIdentity" class="org.egov.infstr.security.spring.acl.models.AclObjectIdentity" column="OBJECT_IDENTITY_ID" />
+		<property name="ownerSid" column="owner_sid"></property>
+		<property name="permission" column="permission"></property>
+	</class>
+</hibernate-mapping>

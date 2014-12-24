@@ -1,0 +1,98 @@
+
+<!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="KEYWORDS" content="">
+<meta http-equiv="DESCRIPTION" content="">
+<!-- Inclusion of the CSS files that contains the styles -->
+<link rel=stylesheet href="../exility/global.css" type="text/css">
+<SCRIPT LANGUAGE="javascript" SRC="../exility/PageValidator.js"></SCRIPT>
+<SCRIPT LANGUAGE="javascript" SRC="../exility/PageManager.js"></SCRIPT>
+<SCRIPT LANGUAGE="javascript" SRC="../exility/ExilityParameters.js"></SCRIPT>
+<SCRIPT LANGUAGE="javascript" SRC="../script/jsCommonMethods.js"></Script>
+<SCRIPT type="text/javascript" src="../script/calendar.js" type="text/javascript" ></SCRIPT>
+<SCRIPT LANGUAGE="javascript">
+
+function TaskOnload()
+{
+
+    var wId= PageManager.DataService.getQueryField('woksDetailId');
+    var type= PageManager.DataService.getQueryField('type');
+    var tblname;
+    if(type==1)
+		tblname='supplierbilldetail';
+	if (type==2)
+		tblname='contractorbilldetail';
+	PageManager.DataService.setQueryField('woksDetailId',tblname);
+	PageManager.DataService.setQueryField('worksdetailid',wId);
+	PageManager.DataService.callDataService('getPaymentDetails');
+	var table=document.getElementById('paymentTable');
+	table.style.display="block";
+}
+
+
+</SCRIPT>
+
+
+
+</head>
+<title> Contractor/Supplier Payment Details </title>
+<body bgcolor="#ffffff" bottommargin="0" topmargin="0" rightmargin="0" leftmargin="0" marginheight="0" marginwidth="0" onLoad=TaskOnload() ><!------------------ Header Begins Begins--------------------->
+<form name="BillDet">
+
+<table width="100%" border=0 cellpadding="3" cellspacing="0">
+		<tr>
+			<td class="rowheader" valign="center" colspan=4><span  id="screenName" class="headerwhite2">Contractor/Supplier Payment Details  </span></td>
+
+		</tr>
+		<tr>
+					<td>&nbsp;
+					</td>
+			</tr>
+</table>
+	<!-- grid starts from here -->
+	<table width="100%"  border="0" cellpadding="0" cellspacing="0" name="searchPODetailGrid" id="searchPODetailGrid" ">
+		<tr class="row1" >
+			<td>
+				<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" name="paymentTable" id="paymentTable" style="DISPLAY:none">
+					<tr class="rowheader">
+						<td width="10%" height="34" class="columnheader"><div align="center" class="columnheader">Bill No.</div></td>
+						<td width="15%" height="34" class="columnheader"><div align="center" class="columnheader">Payment Date</div></td>
+						<td width="10%" class="columnheader"><div align="center" id="gridA">Amount Paid</div></td>
+						<td width="30%" class="columnheader"><div align="center" id="gridH">Bank Name</div></td>
+						<td width="20%" class="columnheader"><div align="center" id="gridB">Cheque No.</div></td>
+						<td width="20%" class="columnheader"><div align="center" id="gridC">Cheque Date</div></td>
+
+				  	</tr>
+				 	<tr class="normaltext">
+						<td><div id="billNo" name="billNo" exilTrimLength="8">&nbsp;</div></td>
+						<td><div id="paymentDate" name="paymentDate" exilTrimLength="25">&nbsp;</div></td>
+						<td><div align="right" id="amountPaid" name="amountPaid" exilTrimLength="25">&nbsp;</div></td>
+						<td><div id="bankName" name="bankName" exilTrimLength="14">&nbsp;</div></td>
+						<td align="right"><div id="chequeNo" name="chequeNo" exilTrimLength="20">&nbsp;</div></td>
+						<td><div id="chequeDate" name="chequeDate" exilTrimLength="14">&nbsp;</div></td>
+
+
+
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+	<table border="0" cellpadding="0" cellspacing="0" align="center">
+			<tr>
+			<td>&nbsp;
+			</td>
+			</tr>
+			<tr width="100%">
+
+				<td align="center"><IMG height=18 src="../images/Button_second_leftside.gif" align="center" width=6></td>
+				<td bgcolor="#ffffff"  nowrap background="../images/Button_second_middle.gif"><A class=buttonsecondary onclick=window.close() href="#" align="center">Close</A></td>
+				<td><IMG height=18 src="../images/Button_second_rightside.gif" width=6 align="center"></td>
+			</tr>
+	</table>
+</form>
+</body>
+</html>
+

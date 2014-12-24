@@ -1,0 +1,118 @@
+<script>
+rteName = window.opener.document.getElementById("iframe_name").value;
+if (window.getSelection)
+{
+	var selected_obj = window.opener.document.getElementById(rteName).contentWindow.window.getSelection().focusNode;
+}
+else if (document.getSelection)
+{
+	var selected_obj = window.opener.document.getElementById(rteName).contentWindow.document.getSelection().focusNode;
+}
+else if (document.selection)
+{
+	var selected_obj = window.opener.document.getElementById(rteName).contentWindow.document.selection.createRange().parentElement();
+}
+function rteInsertHTML() {
+		var current_tag = selected_obj;
+		var previous_tagName = selected_obj.tagName;
+		while(previous_tagName != "HTML"){
+			if (previous_tagName == "TABLE") {
+				current_tag.setAttribute("width",document.getElementById("width").value + '' + document.getElementById("width_type").value);
+				current_tag.setAttribute("border",document.getElementById("border").value);
+				current_tag.setAttribute("cellspacing",document.getElementById("cellspacing").value);
+				current_tag.setAttribute("cellpadding",document.getElementById("cellpadding").value);
+				current_tag.setAttribute("align",document.getElementById("alignment").value);
+				break;
+			}
+				current_tag = current_tag.parentNode;
+				previous_tagName = current_tag.tagName;
+		}
+	window.close();
+}
+</script>
+<style>
+body, td {
+background-color:#ECE9D8;
+font-family:arial;
+font-size:11px;
+}
+input {
+font-family:arial;
+font-size:11px;
+}
+select {
+font-family:arial;
+font-size:11px;
+}
+</style>
+<fieldset>
+<legend><b>Edit Table </b></legend>
+<table width="100%" cellspacing="2" cellpadding="0" border="0">
+<tr>
+  <td align="right">Width: </td>
+  <td><input type="text" id="width" style="width:30px;" />
+    <select id="width_type">
+      <option value="%">%</option>
+      <option value="px">pixels</option>
+            </select></td>
+</tr>
+<tr>
+  <td align="right">Border: </td>
+  <td><input type="text" id="border" style="width:30px;" />  </td>
+</tr>
+<tr>
+  <td align="right">Cellspacing: </td>
+  <td><input type="text" id="cellspacing" style="width:30px;" />  </td>
+</tr>
+<tr>
+  <td align="right">Cellpadding: </td>
+  <td><input type="text" id="cellpadding" style="width:30px;" />  </td>
+</tr>
+<tr>
+  <td align="right">Alignment: </td>
+  <td><select id="alignment">
+    <option value="">Default</option>
+    <option value="left">Left</option>
+    <option value="center">Center</option>
+    <option value="right">Right</option>
+  </select>  </td>
+</tr>
+<tr>
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<div align="center"><input type="button" value="Edit Table" onClick="rteInsertHTML();">
+</div>
+</fieldset>
+<script>
+	var current_tag = selected_obj;
+	var previous_tagName = selected_obj.tagName;
+	while(previous_tagName != "HTML"){
+		if (previous_tagName == "TABLE") {
+			if (current_tag.getAttribute("width") != null) {
+				if (current_tag.width.lastIndexOf('%') != -1) {
+					document.getElementById("width_type").value = "%";
+					document.getElementById("width").value = current_tag.getAttribute("width").replace("%","");
+				} else {
+					document.getElementById("width_type").value = "px"
+					document.getElementById("width").value = current_tag.getAttribute("width");
+				}
+			}
+			if (current_tag.getAttribute("border") != null) {
+				document.getElementById("border").value = current_tag.getAttribute("border");
+			}
+			if (current_tag.getAttribute("cellspacing") != null) {
+				document.getElementById("cellspacing").value = current_tag.getAttribute("cellspacing");
+			}
+			if (current_tag.getAttribute("cellpadding") != null) {
+				document.getElementById("cellpadding").value = current_tag.getAttribute("cellpadding");
+			}
+			if (current_tag.getAttribute("align") != null) {
+				document.getElementById("alignment").value = current_tag.getAttribute("align");
+			}
+			break;
+		}
+		current_tag = current_tag.parentNode;
+		previous_tagName = current_tag.tagName;
+	}
+</script>

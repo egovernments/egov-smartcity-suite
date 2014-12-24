@@ -1,0 +1,701 @@
+body {
+  font-family: 'Times New Roman';
+  font-size: 12pt;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: none;
+  color: Black;
+  background-color: White;
+  text-transform: none;
+}
+p {
+  padding-top: 0pt;
+  padding-right: 0pt;
+  padding-bottom: 0pt;
+  padding-left: 0pt;
+  text-indent: 0pt;
+  text-align: left;
+  line-height: normal;
+  margin: 0px;
+}
+.ts0 {
+  font-family: Verdana;
+  font-size: 16pt;
+  color: #010101;
+}
+.ts1 {
+  font-family: arial;
+  font-size: 10pt;
+  color: Black;
+}
+.ts2 {
+  font-family: Verdana;
+  font-size: 10pt;
+  color: Black;
+}
+.ts3 {
+  font-family: Verdana;
+  font-size: 10pt;
+}
+.ts4 {
+  font-family: Verdana;
+  font-size: 10pt;
+  font-weight: bold;
+  color: Black;
+}
+.ts5 {
+  font-family: Verdana;
+  font-size: 10pt;
+  color: #010101;
+}
+.ts6 {
+  font-family: Verdana;
+  font-size: 11pt;
+  color: #010101;
+}
+.ts7 {
+  font-family: Verdana;
+  font-size: 10pt;
+  font-weight: bold;
+  color: #010101;
+}
+.ts8 {
+  font-family: Verdana;
+  font-size: 10pt;
+}
+.ts9 {
+  font-family: Verdana;
+  font-size: 10pt;
+}
+.ts10 {
+  font-family: symbol;
+  font-size: 11pt;
+  color: #010101;
+}
+.ts11 {
+  font-family: arial;
+  font-size: 11pt;
+  color: #010101;
+}
+.ts12 {
+  font-family: Verdana;
+  font-size: 11pt;
+  color: Black;
+}
+.ts13 {
+  font-family: symbol;
+  font-size: 10pt;
+  color: #010101;
+}
+.ts14 {
+  font-family: arial;
+  font-size: 10pt;
+  color: #010101;
+}
+.ts15 {
+  font-family: Verdana;
+  font-size: 10pt;
+  font-weight: bold;
+}
+.ts16 {
+  font-family: v;
+  font-size: 10pt;
+  color: Black;
+}
+.ts17 {
+  font-size: 10pt;
+}
+.ts18 {
+  font-family: Verdana;
+  font-size: 10pt;
+}
+.ts19 {
+  font-family: Verdana;
+  font-size: 10pt;
+  font-weight: bold;
+  color: Black;
+}
+.ts20 {
+  font-family: Verdana;
+  font-size: 10pt;
+  color: Black;
+}
+.ts21 {
+  font-family: Verdana;
+  font-size: 10pt;
+  font-weight: bold;
+}
+.ts22 {
+  font-family: Verdana;
+  font-size: 10pt;
+  font-style: italic;
+  color: Black;
+}
+.ts23 {
+  font-family: 'Courier New';
+  font-size: 10pt;
+}
+.ts24 {
+  font-family: Verdana;
+  font-size: 10pt;
+  font-weight: bold;
+}
+.ts25 {
+  font-family: arial;
+  font-size: 10pt;
+}
+.ts26 {
+  color: Black;
+}
+.ts27 {
+  font-family: Verdana;
+  font-size: 11pt;
+}
+.ts28 {
+  font-family: Arial;
+  font-size: 10pt;
+  font-weight: bold;
+  color: #010101;
+}
+.ts29 {
+  font-family: arial;
+  font-size: 10pt;
+}
+.ts30 {
+  font-family: Verdana;
+  font-size: 16pt;
+  color: Black;
+}
+.ts31 {
+  font-family: Verdana;
+  font-size: 10pt;
+  font-weight: bold;
+  font-style: italic;
+  color: Black;
+}
+.ts32 {
+  font-family: Verdana;
+  font-size: 10pt;
+  font-weight: bold;
+  font-style: italic;
+  color: #010101;
+}
+.ts33 {
+  font-family: Verdana;
+  font-size: 10pt;
+  font-weight: bold;
+}
+.ts34 {
+  font-family: Verdana;
+  font-size: 16pt;
+}
+.ts35 {
+  font-family: Verdana;
+  font-size: 11pt;
+  font-weight: bold;
+  color: #010101;
+}
+.ts36 {
+  font-family: Verdana;
+  font-size: 11pt;
+  font-weight: bold;
+  color: Black;
+}
+.ts37 {
+  font-family: Verdana;
+  font-size: 10pt;
+  color: Red;
+}
+.ts38 {
+  font-family: Verdana;
+  font-size: 10pt;
+  color: Blue;
+}
+.ts39 {
+  font-family: Verdana;
+  font-size: 10pt;
+  color: Green;
+}
+.ts40 {
+  font-size: 10pt;
+  color: Black;
+}
+.ts41 {
+  font-family: arial;
+  color: #010101;
+}
+
+.ts43 {
+  font-family: Verdana;
+  font-size: 14pt;
+  font-weight: bold;
+}
+.ts44 {
+  font-family: Verdana;
+  font-size: 14pt;
+  font-weight: bold;
+  color: #010101;
+}
+.ts45 {
+  font-family: Arial;
+  font-size: 10pt;
+}
+.ts46 {
+  font-family: arial;
+}
+.ts47 {
+  font-family: Verdana;
+  font-size: 11pt;
+}
+.ts48 {
+  font-family: Verdana;
+  font-weight: bold;
+}
+.ts49 {
+  font-family: Verdana;
+  font-size: 11pt;
+  font-weight: bold;
+}
+.ts50 {
+  font-family: arial;
+  color: Black;
+}
+
+.ts52 {
+  font-family: Arial;
+}
+.ts53 {
+  font-family: Arial;
+  font-weight: bold;
+  color: Black;
+}
+.ts54 {
+  font-family: Verdana;
+  font-size: 10pt;
+  font-style: italic;
+}
+.ts55 {
+  font-family: arial;
+}
+.ts56 {
+  font-family: Verdana;
+  font-size: 16pt;
+  color: Black;
+}
+.ts57 {
+  font-family: Arial;
+  font-size: 16pt;
+  font-weight: bold;
+  color: Black;
+}
+.ts58 {
+  font-family: Arial;
+  font-size: 11pt;
+}
+.ts59 {
+  font-family: Arial;
+  font-size: 11pt;
+  font-weight: bold;
+  color: Black;
+}
+.ts60 {
+  font-family: Arial;
+  font-size: 11pt;
+  text-decoration: underline;
+  color: Blue;
+}
+.ts61 {
+  font-family: Arial;
+  font-size: 11pt;
+}
+.ts62 {
+  font-family: Verdana;
+  font-size: 11pt;
+  font-weight: bold;
+}
+.ts63 {
+  font-family: Verdana;
+}
+.ts64 {
+  font-family: Verdana;
+  font-size: 16pt;
+  font-weight: bold;
+}
+.ts65 {
+  font-family: Verdana;
+  font-size: 10pt;
+  font-weight: bold;
+  font-style: italic;
+}
+.ts66 {
+  font-family: Verdana;
+  font-size: 10pt;
+  font-style: italic;
+  color: Black;
+}
+.hs0 {
+  font-family: arial;
+  font-size: 10pt;
+  text-decoration: underline;
+  color: Blue;
+}
+.hs1 {
+  font-family: Verdana;
+  font-size: 10pt;
+  text-decoration: underline;
+  color: Blue;
+}
+.ps0 {
+  text-align: right;
+}
+.ps1 {
+  padding-left: 30px;
+  text-indent: -30px;
+}
+.ps2 {
+  padding-left: 28px;
+  text-indent: -28px;
+}
+.ps3 {
+  padding-left: 30px;
+}
+.ps4 {
+  padding-left: 42px;
+  text-indent: -42px;
+}
+.ps5 {
+  padding-left: 48px;
+  text-indent: -18px;
+}
+.ps6 {
+  padding-left: 39px;
+  text-indent: -39px;
+}
+.ps7 {
+  padding-left: 49px;
+}
+.ps8 {
+  padding-left: 98px;
+}
+.ps9 {
+  padding-left: 123px;
+  text-indent: -25px;
+}
+.ps10 {
+  padding-left: 49px;
+  text-indent: 1cm;
+}
+.ps11 {
+  padding-left: 93px;
+  text-indent: -44px;
+}
+.ps12 {
+  padding-left: 93px;
+}
+.ps13 {
+  padding-left: 102px;
+  text-indent: -53px;
+}
+.ps14 {
+  padding-left: 111px;
+  text-indent: -62px;
+}
+.ps15 {
+  padding-left: 111px;
+}
+.ps16 {
+  padding-left: 102px;
+  text-indent: 2px;
+}
+.ps17 {
+  padding-left: 25.1354166666667mm;
+  text-indent: -7.67291666666667mm;
+}
+.ps18 {
+  padding-left: 27.5166666666667mm;
+  text-indent: -5.02708333333333mm;
+}
+.ps19 {
+  padding-left: 35.1895833333333mm;
+  text-indent: -12.7mm;
+}
+.ps20 {
+  padding-left: 5.18583333333333cm;
+  text-indent: -0.64cm;
+}
+.ps21 {
+  text-indent: 5.02708333333333cm;
+}
+.ps22 {
+  padding-left: 5.02708333333333cm;
+}
+.ps23 {
+  padding-left: 2.75166666666667cm;
+  text-indent: -2.75166666666667cm;
+}
+.ps24 {
+  padding-left: 102px;
+  text-indent: -18px;
+}
+.ps25 {
+  padding-left: 102px;
+}
+.ps26 {
+  padding-left: 12.9645833333333mm;
+  text-indent: 2mm;
+}
+.ps27 {
+  padding-left: 20.1083333333333mm;
+  text-indent: -5.02708333333333mm;
+}
+.ps28 {
+  padding-left: 2.778125cm;
+  text-indent: -0.502708333333333cm;
+}
+.ps29 {
+  padding-left: 38.89375mm;
+  text-indent: 2mm;
+}
+.ps30 {
+  padding-left: 111px;
+  text-indent: -25px;
+}
+.ps31 {
+  padding-left: 12mm;
+  text-indent: 10mm;
+}
+.ps32 {
+  padding-left: 84px;
+}
+.ps33 {
+  padding-left: 25.9291666666667mm;
+  text-indent: 10mm;
+}
+.ps34 {
+  padding-left: 2mm;
+  text-indent: 2mm;
+}
+.ps35 {
+  padding-left: 26.9875mm;
+  text-indent: -5.02708333333333mm;
+}
+.ps36 {
+  text-align: center;
+}
+.ps37 {
+  padding-left: 75px;
+  text-indent: -26px;
+}
+.ps38 {
+  padding-left: 17.4625mm;
+  text-indent: -7.40833333333333mm;
+}
+.ps39 {
+  padding-left: 20.1083333333333mm;
+  text-indent: 2mm;
+}
+.ps40 {
+  padding-left: 10.0541666666667mm;
+  text-indent: -5.82083333333333mm;
+}
+.ps41 {
+  padding-left: 10.31875mm;
+  text-indent: -6.08541666666667mm;
+}
+.ps42 {
+  padding-top: 6pt;
+}
+.ps43 {
+  padding-left: 21px;
+  text-indent: -21px;
+}
+.ps44 {
+  padding-left: 114px;
+  text-indent: -16px;
+}
+.ps45 {
+  padding-left: 105px;
+  text-indent: -56px;
+}
+.ps46 {
+  padding-left: 20.3729166666667mm;
+  text-indent: -5.29166666666667mm;
+}
+.ps47 {
+  padding-left: 12.7mm;
+}
+.ps48 {
+  padding-left: 48px;
+}
+.ps49 {
+  text-align: justify;
+}
+.ps50 {
+  padding-left: 21px;
+}
+.ps51 {
+  padding-left: 120px;
+  text-indent: -22px;
+}
+.ps52 {
+  padding-left: 12.7mm;
+  text-indent: -8.46666666666667mm;
+}
+.ps53 {
+  padding-left: 10.31875mm;
+}
+.ps54 {
+  padding-left: 7.9375mm;
+  text-indent: -3.70416666666667mm;
+}
+.ps55 {
+  padding-left: 15.08125mm;
+  text-indent: -9.525mm;
+}
+.ps56 {
+  padding-left: 12.9645833333333mm;
+  text-indent: -7.40833333333333mm;
+}
+.ps57 {
+  padding-left: 111px;
+  text-indent: -18px;
+}
+.ps58 {
+  padding-left: 30px;
+  text-indent: -9px;
+}
+.ps59 {
+  padding-left: 7.9375mm;
+}
+.ps60 {
+  padding-left: 8.46666666666667mm;
+  text-indent: -4.23333333333333mm;
+}
+.ps61 {
+  padding-left: 10.8479166666667mm;
+  text-indent: -6.61458333333333mm;
+}
+.ps62 {
+  padding-left: 8.99583333333333mm;
+  text-indent: -4.7625mm;
+}
+.ps63 {
+  padding-left: 25.1354166666667mm;
+  text-indent: -3.175mm;
+}
+.ps64 {
+  padding-top: 1pt;
+  padding-bottom: 1pt;
+}
+.ps65 {
+  padding-bottom: 1pt;
+}
+.ps66 {
+  padding-bottom: 1pt;
+  text-align: center;
+}
+.ps67 {
+  line-height: 150%;
+}
+.ps68 {
+  text-indent: 1cm;
+}
+.ps69 {
+  text-indent: 10mm;
+}
+.ps70 {
+  padding-left: 25.9291666666667mm;
+  text-indent: -3.96875mm;
+}
+.ps71 {
+  padding-left: 11.1125mm;
+  text-indent: -3.96875mm;
+}
+.ps72 {
+  padding-left: 42.75pt;
+}
+.ps73 {
+  padding-left: 2mm;
+  text-indent: 7.9375mm;
+}
+.ps74 {
+  padding-left: 28px;
+}
+.ps75 {
+  padding-left: 27.5166666666667mm;
+  text-indent: -5.55625mm;
+}
+.ps76 {
+  padding-left: 25.1354166666667mm;
+  text-indent: -3.175mm;
+}
+.ps77 {
+  padding-left: 2mm;
+  text-indent: 5mm;
+}
+.ps78 {
+  text-indent: 30px;
+}
+.ps79 {
+  padding-left: 38.89375mm;
+  text-indent: -16.9333333333333mm;
+}
+.ps80 {
+  padding-left: 53.18125mm;
+  text-indent: -31.2208333333333mm;
+}
+.ps81 {
+  padding-left: 88.9mm;
+  text-indent: -66.9395833333333mm;
+}
+.ps82 {
+  padding-left: 69.75pt;
+  text-indent: -47.25pt;
+}
+.ps83 {
+  padding-left: 72.23125mm;
+  text-indent: -50.2708333333333mm;
+}
+.ps84 {
+  padding-left: 24.60625mm;
+  text-indent: -2.64583333333333mm;
+}
+.ps85 {
+  padding-left: 22.5pt;
+}
+.ps86 {
+  padding-left: 1.27cm;
+  text-indent: -0.64cm;
+}
+.ps87 {
+  padding-top: 6pt;
+  padding-left: 2mm;
+  text-indent: 2mm;
+}
+.ps88 {
+  padding-left: 10.31875mm;
+  text-indent: -10.31875mm;
+}
+.ps89 {
+  padding-left: 25.9291666666667mm;
+  text-indent: -10.31875mm;
+}
+.ps90 {
+  padding-left: 12.9645833333333mm;
+  text-indent: 10mm;
+}
+.ps91 {
+  padding-left: 17.9916666666667mm;
+  text-indent: -13.7583333333333mm;
+}
+.ps92 {
+  padding-left: 63pt;
+  text-indent: -63pt;
+}
+.ps93 {
+  padding-left: 63pt;
+}
+.ps94 {
+  padding-top: 5pt;
+  padding-bottom: 5pt;
+}

@@ -1,0 +1,44 @@
+
+Title
+Legal
+Chapter 1: eGov Administration
+      Introduction
+      Logging On to the Application
+      Changing Password
+
+Chapter 2: Managing Master Data
+      Managing Jurisdiction
+                 + Creating a Hierarchy Type
+                 + Viewing or Modifying a Hierarchy Type
+                 + Creating a Boundary Type
+                 + Viewing , Modifying, or Deleting a Boundary Type
+                 + Adding a Child Boundary Type
+                 + Creating a Boundary
+                 + Viewing , Modifying, or Deleting a Boundary
+                 +  Adding a Child Boundary
+                 + Changing a Boundary
+      Creating a Department
+      Viewing, Modifying, or Deleting a Department
+      Creating a Module
+      Setting Up an Action for a Module
+      Deleting an Action from a Module
+      Modifying a Module
+      Modifying an Action
+      Creating a Role
+      Viewing, Modifying, or Deleting a Role
+      Assigning an Action to a Role
+      Creating a User and  Assigning a Role to a User
+              + Assigning a Role to a User
+      Finding a User
+              + Viewing a User Jurisdiction
+              + Assigning a region to the user/Modifying a User Jurisdiction
+      Creating a Location or a Terminal
+      Viewing and Modifying a Location or a Terminal
+      Assigning a User to a Location/Terminal
+
+Chapter 3: Reports
+      Introduction
+      Viewing User Counter Map Reports
+
+Chapter 4: Configuration
+      Viewing or Modifying Master Data Values of a Module

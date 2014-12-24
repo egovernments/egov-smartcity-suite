@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 10, 2008 12:54:43 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.payment.model.Subledgerpaymentheader" table="SUBLEDGERPAYMENTHEADER" >
+        <id name="id" type="integer">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="sequence">
+            <param name="sequence">SEQ_SUBLEDGERPAYMENTHEADER</param>
+            </generator>
+        </id>
+        <many-to-one name="chequedetail" class="org.egov.commons.Chequedetail" fetch="select">
+            <column name="CHEQUEID" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="worksdetail" class="org.egov.billsaccounting.model.Worksdetail" fetch="select">
+            <column name="WORKSDETAILID" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="voucherheader" class="org.egov.commons.CVoucherHeader" fetch="select">
+            <column name="VOUCHERHEADERID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="relationBySupplierid" class="org.egov.commons.Relation" fetch="select">
+            <column name="SUPPLIERID" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="relationByContractorid" class="org.egov.commons.Relation" fetch="select">
+            <column name="CONTRACTORID" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="supplierbilldetail" class="org.egov.billsaccounting.model.Supplierbilldetail" fetch="select">
+            <column name="SUPPLIERBILLID" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="salarybilldetail" class="org.egov.billsaccounting.model.Salarybilldetail" fetch="select">
+            <column name="SALARYBILLID" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="bankaccount" class="org.egov.commons.Bankaccount" fetch="select">
+            <column name="BANKACCOUNTID" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="contractorbilldetail" class="org.egov.billsaccounting.model.Contractorbilldetail" fetch="select">
+            <column name="CONTRACTORBILLID" precision="22" scale="0" />
+        </many-to-one>
+        <property name="type" type="string">
+            <column name="TYPE" length="50" not-null="true" />
+        </property>
+        <property name="typeofpayment" type="string">
+            <column name="TYPEOFPAYMENT" length="15" not-null="true" />
+        </property>  
+        <property name="cashname" type="string">
+            <column name="CASHNAME" length="50" />
+        </property>
+        <property name="paidby" type="big_decimal">
+            <column name="PAIDBY" precision="22" scale="0" />
+        </property>
+        <property name="paidamount" type="big_decimal">
+            <column name="PAIDAMOUNT" precision="15" not-null="true" />
+        </property>
+        <property name="narration" type="string">
+            <column name="NARRATION" length="250" />
+        </property>
+        <property name="isreversed" type="java.lang.Boolean">
+            <column name="ISREVERSED" precision="1" scale="0" />
+        </property>
+        <property name="paidto" type="big_decimal">
+            <column name="PAIDTO" precision="22" scale="0" />
+        </property>
+    </class>
+</hibernate-mapping>

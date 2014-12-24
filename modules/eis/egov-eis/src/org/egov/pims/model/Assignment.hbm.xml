@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Aug 8, 2007 6:26:42 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.pims.model.Assignment" table="EG_EMP_ASSIGNMENT" >
+        <id name="id" type="int">
+            <column name="ID" precision="32" scale="0" />
+           <generator class="sequence">
+	       	<param name="sequence">SEQ_ASS</param>
+    	</generator>
+        </id>
+        
+        
+        <property name="govtOrderNo" type="string">
+            <column name="GOVT_ORDER_NO" length="256" />
+        </property>
+        
+        <many-to-one name="functionary" class="org.egov.commons.Functionary" fetch="select">
+            <column name="ID_FUNCTIONARY" precision="32" scale="0" />
+        </many-to-one>
+        <many-to-one name="fundId" class="org.egov.commons.Fund" fetch="select">
+	    <column name="ID_FUND" precision="32" scale="0" />
+	</many-to-one>
+        <many-to-one name="functionId" class="org.egov.commons.CFunction" fetch="select">
+	    <column name="ID_FUNCTION" precision="32" scale="0" />
+	</many-to-one>
+        
+        <many-to-one name="desigId" class="org.egov.pims.commons.DesignationMaster" fetch="select">
+	    <column name="DESIGNATIONID" precision="32" scale="0" />
+	</many-to-one>
+	
+        <many-to-one name="deptId" class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
+		    <column name="MAIN_DEPT" precision="32" scale="0" />
+	</many-to-one>
+        <property name="pctAllocation" type="string">
+	     <column name="PCT_ALLOCATION"  />
+	</property>
+        <many-to-one name="position" class="org.egov.pims.commons.Position" fetch="select">
+		    <column name="POSITION_ID" precision="32" scale="0" />
+	</many-to-one>
+	
+	<many-to-one name="assignmentPrd" class="org.egov.pims.model.AssignmentPrd" fetch="select">
+		    <column name="ID_EMP_ASSIGN_PRD"  />
+		</many-to-one>
+	<set name="deptSet"  inverse="true"  cascade="all-delete-orphan">
+					<key column="ASSIGNMENT_ID" not-null="true" />
+				<one-to-many class="org.egov.pims.model.EmployeeDepartment"/>	
+	</set>
+	
+	
+	<many-to-one name="gradeId" class="org.egov.pims.model.GradeMaster" fetch="select">
+	    <column name="GRADE_ID" precision="32" scale="0" />
+	</many-to-one>
+	
+		 <property name="isPrimary" type="char">
+	            <column name="IS_Primary" length="1" not-null="true" />
+	     </property>
+        
+    </class>
+</hibernate-mapping>

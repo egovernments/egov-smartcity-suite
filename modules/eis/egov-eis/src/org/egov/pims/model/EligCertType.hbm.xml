@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Aug 8, 2008 9:23:55 AM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.pims.model.EligCertType" table="EGEIS_ELIG_CERT_TYPE" >
+        <id name="id" type="long">
+            <column name="ID" precision="12" scale="0" />
+            <generator class="sequence">
+            	<param name="sequence">EGEIS_ELIG_CERT_TYPE_SEQ</param>
+            </generator>
+        </id>
+        <property name="type" type="string">
+            <column name="TYPE" length="64" />
+        </property>
+        <property name="description" type="string">
+            <column name="DESCRIPTION" length="64" />
+        </property>
+     </class>
+</hibernate-mapping>

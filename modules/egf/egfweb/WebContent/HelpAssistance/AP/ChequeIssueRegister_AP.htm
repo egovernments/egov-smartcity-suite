@@ -1,0 +1,241 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Cheque Issue Register Report Help</title>
+</head>
+<LINK REL=StyleSheet HREF="egov.css" TYPE="text/css" />
+<style type="text/css">
+html {
+background-color:#FFF9EF;
+}
+body {
+background-color:#FFF9EF;
+}
+a {
+text-decoration:none;
+}
+table {
+border-top: 1px solid gray;
+border-left: 1px solid gray;
+}
+th {
+background-color:#FFF9EF;
+border-right: 1px solid gray;
+border-bottom: 1px solid gray;
+text-align: center;
+}
+td {
+background-color:white;
+border-bottom: 1px solid gray;
+border-right: 1px solid gray;
+}
+
+#hheader {
+background-color:#EFDFC2;
+text-align: right;
+padding: 10px;
+font-size: 130%;
+font-weight: bold;
+border-bottom: 1px solid gray;
+}
+
+#hnav {
+background-color:#FFF9EF;
+text-align: right;
+padding-right: 10px;
+border-bottom: 1px solid gray;
+}
+
+#hnav a:hover{
+border-bottom: 2px solid #CFC1A8;
+}
+
+#hcontent {
+background-color:white;
+text-align: left;
+padding: 10px;
+}
+
+#hfooter {
+background-color:#FFF9EF;
+text-align: center;
+margin-top: 0px;
+padding-right: 10px;
+padding-left: 10px;
+margin-bottom: 10px;
+border-bottom: 1px solid gray;
+border-top: 1px solid gray;
+
+}
+.hbold0 {
+font-size: 105%;
+font-weight: bold;
+text-transform: uppercase;
+}
+.hbold {
+font-size: 100%;
+font-weight: bold;
+}
+</style>
+
+<body>
+<div id="hheader">
+eGov Product-Customization-Functionality Help
+</div>
+<div id="hnav">
+<a href="#">Home</a>&nbsp;|&nbsp;
+<a href="http://www.egovernments.org">About Us</a>&nbsp;|&nbsp;
+<a href="mailto:contact@egovernments.org">Contact Us</a>
+</div>
+
+<div id="hcontent">
+<!-- Objective Section Stats -->
+<span class="hbold0">
+Objective: </span> This report will list out the cheque entries in the transactions.
+<br /><br />
+<!-- Objective Section ENDS -->
+
+<!-- Fields Definition Section ENDS -->
+<span class="hbold0">
+Field Description Table:</span><br /><br />
+<table width="80%" cellpadding="2px" cellspacing="0px">
+<tr>
+<th>FieldName</th>
+<th>FieldType</th>
+<th>FieldDescription</th>
+</tr>
+<tr>
+<td>From Date</td>
+<td>Date</td>
+<td>From date of the report</td>
+</tr>
+<tr>
+<td>To Date</td>
+<td>Date</td>
+<td>To date of the report</td>
+</tr>
+<tr>
+<td>Sl.No</td>
+<td>Number</td>
+<td>Runnig serial number</td>
+</tr>
+<tr>
+<td>Date</td>
+<td>Date</td>
+<td>Voucher date</td>
+</tr>
+<tr>
+<td>Bank Payment Voucher Number & Date</td>
+<td>Text</td>
+<td>Bank Payment Voucher Number & Date</td>
+</tr>
+<tr>
+<td>Payment Order Number & Date</td>
+<td>Text</td>
+<td>Bill Number and Date</td>
+</tr>
+<tr>
+<td>Name of the Payee</td>
+<td>Text</td>
+<td>Payee Name</td>
+</tr>
+<tr>
+<td>Nature of Payement</td>
+<td>Text</td>
+<td>Payment Type</td>
+</tr>
+<tr>
+<td>Cheque/ Draft No.</td>
+<td>Number</td>
+<td>Cheque No</td>
+</tr>
+<tr>
+<td>Date of Cheque/Draft</td>
+<td>Date</td>
+<td>Cheque Date</td>
+</tr>
+<tr>
+<td>Amount ( Rs )</td>
+<td>Number</td>
+<td>Payable Amount in the Payment</td>
+</tr>
+<tr>
+<td>Entered By</td>
+<td>Text</td>
+<td>User first name, middle name, last name</td>
+</tr>
+<tr>
+<td>Signature of the first Signatory</td>
+<td>Text</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Signature of the Second Signatory</td>
+<td>Text</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Date of issue of Cheque/Draft</td>
+<td>Date</td>
+<td>Cheque Issue Date</td>
+</tr><tr>
+<td>Signature of the Receipient of Cheque/Draft</td>
+<td>Text</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Date of Clearance</td>
+<td>Date</td>
+<td>Bank Reconcilation Date</td>
+</tr><tr>
+<td>Remarks</td>
+<td>Text</td>
+<td>-</td>
+</tr>
+</table>
+
+<br />
+<!-- Fields Definition Section ENDS -->
+
+<!-- Expected Results and/or Workflow Section Begins -->
+<span class="hbold0">
+Expected Results and/or Workflow:
+</span><br />
+<br /><br />
+<table width="80%" cellpadding="2px" cellspacing="0px">
+<tr>
+<th>Action</th>
+<th>Expeced Result</th>
+</tr>
+<tr>
+<td>Create the Procurement Order, do the bill register, create the bill for that and do the payment</td>
+<td>Check the report, whether the values are coming as per the bill/payment</td>
+</tr>
+</table>
+
+<!-- Expected Results and/or Workflow Section ENDS -->
+<br />
+
+<!-- Troubleshooting Section Begins -->
+<span class="hbold0">
+Troubleshooting:
+</span><br />
+<span class="hbold">Question1:</span><br />
+If you take the report, from date and to date range is more than one year<br />
+<span class="hbold">Answer1:</span><br />
+Report will take time to get it<br />
+</div>
+<!-- Troubleshooting Section ENDS -->
+
+<!-- Footer Starts here -->
+<div id="hfooter">
+&copy egovernments Foundation 
+<script type="JavaScript">
+document.write(time());
+</script>
+</div>
+<!-- Footer ENDS here -->
+
+</body>
+</html>

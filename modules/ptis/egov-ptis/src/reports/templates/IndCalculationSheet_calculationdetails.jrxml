@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="IndCalculationSheet_calculationdetails" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="org.egov.infstr.reporting.util.*"/>
+	<import value="org.egov.ptis.nmc.model.*"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="unitNumber" class="java.lang.String"/>
+	<field name="unitOccupation" class="java.lang.String"/>
+	<field name="unitArea" class="java.math.BigDecimal"/>
+	<field name="floorNumber" class="java.lang.String"/>
+	<field name="baseRentPerSqMtPerMonth" class="java.math.BigDecimal"/>
+	<field name="monthlyRent" class="java.math.BigDecimal"/>
+	<field name="unitUsage" class="java.lang.String"/>
+	<field name="areaTaxCalculationInfos" class="java.util.List"/>
+	<field name="annualRentAfterDeduction" class="java.math.BigDecimal"/>
+	<field name="manualAlv" class="java.lang.String"/>
+	<field name="monthlyRentPaidByTenant" class="java.math.BigDecimal"/>
+	<field name="usageFactorIndex" class="java.lang.String"/>
+	<field name="unitAreaInSqFt" class="java.lang.String"/>
+	<detail>
+		<band height="52" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="373" y="8" width="118" height="14" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top"/>
+				<text><![CDATA[Area       ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="265" y="8" width="108" height="22" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+				</textElement>
+				<text><![CDATA[Type of Occupation]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="190" y="30" width="75" height="20" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{unitNumber}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="190" y="8" width="75" height="22" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Unit]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="265" y="30" width="108" height="20" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{unitOccupation}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="373" y="30" width="57" height="20" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{unitArea}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="70" y="30" width="120" height="20" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{floorNumber}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="70" y="8" width="120" height="22" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Floor Number]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="430" y="30" width="61" height="20"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{unitAreaInSqFt}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="373" y="22" width="57" height="8" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[Sq.Mt.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="430" y="22" width="61" height="8" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[Sq.Ft.]]></text>
+			</staticText>
+		</band>
+		<band height="93">
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="66" y="29" width="74" height="20" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{floorNumber}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="243" y="29" width="42" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Area =]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="285" y="29" width="206" height="20" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{unitArea} == null) ? "" : ($F{unitArea} + " Sq.Mt. (" + $F{unitAreaInSqFt} + " Sq.Ft.)")]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="186" y="29" width="33" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{unitUsage}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="140" y="29" width="46" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Usage -]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="234" y="74" width="36" height="12">
+					<printWhenExpression><![CDATA[$F{manualAlv} == null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sq.Mt]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="291" y="74" width="46" height="12">
+					<printWhenExpression><![CDATA[$F{manualAlv} == null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Rs/Sq.Mt]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="219" y="16" width="15" height="13">
+					<printWhenExpression><![CDATA[$F{manualAlv} == null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[=]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="250" y="2" width="175" height="27" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{manualAlv} == null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{baseRentPerSqMtPerMonth}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="66" y="0" width="148" height="29">
+					<printWhenExpression><![CDATA[$F{manualAlv} == null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom"/>
+				<text><![CDATA[Rent per Sq. Mt. per Month]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="72" y="49" width="382" height="20" isRemoveLineWhenBlank="true"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{manualAlv}.isEmpty() || $F{manualAlv} == null) ? "" : ("* Manual ALV given for this unit is = Rs." + $F{manualAlv})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="234" y="16" width="16" height="13">
+					<printWhenExpression><![CDATA[$F{manualAlv} == null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="Rupee"/>
+				</textElement>
+				<text><![CDATA[`]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="373" y="74" width="22" height="12">
+					<printWhenExpression><![CDATA[$F{manualAlv} == null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Rs.]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="186" y="29" width="33" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{usageFactorIndex}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="22">
+			<subreport runToBottom="false">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="20"/>
+				<subreportParameter name="monthlyRentPaidByTenant">
+					<subreportParameterExpression><![CDATA[$F{monthlyRentPaidByTenant}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="unitOccupation">
+					<subreportParameterExpression><![CDATA[$F{unitOccupation}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="floorNumber">
+					<subreportParameterExpression><![CDATA[$F{floorNumber}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="monthlyRent">
+					<subreportParameterExpression><![CDATA[$F{monthlyRent}.toString()]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="annualRentAfterDeduction">
+					<subreportParameterExpression><![CDATA[$F{annualRentAfterDeduction}.toString()]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="manualAlv">
+					<subreportParameterExpression><![CDATA[$F{manualAlv}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{areaTaxCalculationInfos},false)]]></dataSourceExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[ReportUtil.getTemplateAsStream("IndCalculationSheet_calculationdetails_unit_areawise.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

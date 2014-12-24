@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.infstr.config.AppData" table="EG_APP_DATA">
+		<id name="id" type="integer">
+			<column name="ID" precision="12" scale="0" />
+			<generator class="sequence">
+				<param name="sequence">SEQ_EG_APPDATA</param>
+			</generator>
+		</id>
+		<property name="key" type="string">
+			<column name="KEY" length="250" />
+		</property>
+		<property name="value" type="string">
+			<column name="VALUE" length="250" />
+		</property>
+		<property name="module" type="string">
+			<column name="MODULE" length="50" />
+		</property>
+	</class>
+</hibernate-mapping>

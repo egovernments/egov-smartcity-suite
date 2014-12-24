@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="IndCalSheetForGovtProperties" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.2396694214876032"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="org.egov.infstr.reporting.util.*"/>
+	<import value="org.egov.ptis.nmc.model.*"/>
+	<field name="ward" class="java.lang.String"/>
+	<field name="houseNumber" class="java.lang.String"/>
+	<field name="indexNo" class="java.lang.String"/>
+	<field name="parcelId" class="java.lang.String"/>
+	<field name="propertyType" class="java.lang.String"/>
+	<field name="area" class="java.lang.String"/>
+	<field name="propertyOwnerName" class="java.lang.String"/>
+	<field name="propertyAddress" class="java.lang.String"/>
+	<field name="govtPropTaxInfoList" class="java.util.List"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="75" splitType="Stretch">
+			<staticText>
+				<reportElement x="10" y="25" width="240" height="18"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NAGPUR MUNICIPAL CORPORATION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="432" y="25" width="111" height="18"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[CALCULATION SHEET]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="45" width="168" height="17"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TAX AND ASSESSMENT DEPARTMENT]]></text>
+			</staticText>
+			<image>
+				<reportElement x="287" y="21" width="55" height="37"/>
+				<imageExpression class="java.io.InputStream"><![CDATA[ReportUtil.getLogoImageAsStream()]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="114" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="59" y="5" width="88" height="20" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Ward No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="147" y="5" width="76" height="20" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[House No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="223" y="5" width="82" height="20" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Index No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="305" y="5" width="82" height="20" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Parcel ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="387" y="5" width="126" height="20" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Property Type]]></text>
+			</staticText>
+			<line>
+				<reportElement x="59" y="24" width="454" height="1" forecolor="#646464"/>
+			</line>
+			<line>
+				<reportElement x="223" y="4" width="1" height="40" forecolor="#646464"/>
+			</line>
+			<line>
+				<reportElement x="305" y="4" width="1" height="40" forecolor="#646464"/>
+			</line>
+			<line>
+				<reportElement x="386" y="4" width="1" height="40" forecolor="#646464"/>
+			</line>
+			<line>
+				<reportElement x="513" y="4" width="1" height="100" forecolor="#646464"/>
+			</line>
+			<textField>
+				<reportElement x="60" y="25" width="87" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ward}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="150" y="25" width="71" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{houseNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="224" y="25" width="80" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{indexNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="307" y="25" width="78" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{parcelId}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="387" y="25" width="126" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{propertyType}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="155" y="46" width="352" height="18"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{area}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="155" y="66" width="352" height="18"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{propertyOwnerName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="155" y="85" width="352" height="18"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{propertyAddress}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="59" y="45" width="88" height="20" forecolor="#E2DDDD" backcolor="#CCCCCC"/>
+			</rectangle>
+			<line>
+				<reportElement x="59" y="4" width="454" height="1" forecolor="#646464"/>
+			</line>
+			<staticText>
+				<reportElement x="60" y="44" width="84" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Location]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="59" y="64" width="88" height="20" forecolor="#E2DDDD" backcolor="#CCCCCC"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="59" y="84" width="88" height="20" forecolor="#E2DDDD" backcolor="#CCCCCC"/>
+			</rectangle>
+			<line>
+				<reportElement x="59" y="104" width="454" height="1" forecolor="#646464"/>
+			</line>
+			<line>
+				<reportElement x="59" y="84" width="454" height="1" forecolor="#646464"/>
+			</line>
+			<line>
+				<reportElement x="59" y="4" width="1" height="100" forecolor="#646464"/>
+			</line>
+			<staticText>
+				<reportElement x="60" y="64" width="84" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Owner's Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="60" y="83" width="84" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Occupant Address]]></text>
+			</staticText>
+			<line>
+				<reportElement x="59" y="64" width="454" height="1" forecolor="#646464"/>
+			</line>
+			<line>
+				<reportElement x="59" y="44" width="454" height="1" forecolor="#646464"/>
+			</line>
+			<line>
+				<reportElement x="147" y="4" width="1" height="100" forecolor="#646464"/>
+			</line>
+		</band>
+		<band height="65">
+			<subreport>
+				<reportElement x="71" y="0" width="420" height="50"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{govtPropTaxInfoList},false)]]></dataSourceExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[ReportUtil.getTemplateAsStream("IndCalSheetForGovtProperties_subreport.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="25" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

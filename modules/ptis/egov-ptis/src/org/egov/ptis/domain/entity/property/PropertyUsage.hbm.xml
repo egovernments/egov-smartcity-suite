@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.ptis.domain.entity.property.PropertyUsage" table="EGPT_PROPERTY_USAGE_MASTER">
+		<id name="id" column="ID_USG_MSTR" type="java.lang.Long">
+			<generator class="sequence">
+				<param name="sequence">SEQ_PROPERTY_USAGE_MASTER</param>
+			</generator>
+		</id>
+		<property name="createdDate" type="java.util.Date">
+			<column name="CREATED_DATE" not-null="true" />
+		</property>
+		<property name="modifiedDate" type="java.util.Date">
+			<column name="MODIFIED_DATE" not-null="true" />
+		</property>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl"
+			cascade="all">
+			<column name="CREATED_BY" />
+		</many-to-one>
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl"
+			cascade="all">
+			<column name="MODIFIED_BY" />
+		</many-to-one>
+		<property name="usageName" column="USG_NAME" type="string" />
+
+		<property name="usagePercentage" column="USAGE_FACTOR" type="float" />
+		<property name="usageCode" column="CODE" type="string" />
+		<property name="orderId" column="ORDER_ID" type="integer" />
+		<property name="fromDate" column="FROM_DATE" type="date" />
+		<property name="toDate" column="TO_DATE" type="date" />
+		<property name="isEnabled" column="IS_ENABLED" type="integer" />
+	</class>
+</hibernate-mapping>

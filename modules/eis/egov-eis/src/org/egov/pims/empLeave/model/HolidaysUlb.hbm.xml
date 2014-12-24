@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 9, 2007 3:21:11 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.pims.empLeave.model.HolidaysUlb" table="EGEIS_HOLIDAYS" >
+        
+        <id
+	name="id"
+	column="ID"
+	type="int">
+	<generator class="sequence">
+		<param name="sequence">SEQ_HOLIDAYS_ULB</param>
+	</generator>
+	</id>
+	
+	<property name="holidayDate" >
+	            <column name="HOLIDAY_DATE" />
+        </property>
+        <property name="holidayName" >
+		            <column name="HOLIDAY_NAME" />
+        </property>
+        
+	<property name="month" >
+			            <column name="MONTH" />
+		        </property>
+        
+	<many-to-one name="financialId" column="FIN_YEAR_ID" 
+	class="org.egov.commons.CFinancialYear"/>
+	
+	<many-to-one name="calendarId" column="CAL_YEAR_ID" 
+	class="org.egov.pims.empLeave.model.CalendarYear"/>
+	
+    </class>
+</hibernate-mapping>

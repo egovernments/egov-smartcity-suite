@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.pims.commons.DesignationMaster" table="EG_DESIGNATION">
+		<id name="designationId" column="DESIGNATIONID" type="int">
+			<generator class="native">
+				<param name="sequence">SEQ_DESIGNATION</param>
+			</generator>
+		</id>
+		<property name="deptId" column="DEPTID" type="int" />
+		<property name="designationName" column="DESIGNATION_NAME" type="string" />
+		<property name="designationLocal" column="DESIGNATION_LOCAL" type="string" />
+		<property name="officerLevel" column="OFFICER_LEVEL" type="int" />
+		<property name="designationDescription" column="DESIGNATION_DESCRIPTION" type="string" />
+		<property name="sanctionedPosts" column="SANCTIONED_POSTS" type="int" />
+		<property name="outsourcedPosts" column="OUTSOURCED_POSTS" type="int" />
+		<set name="positionSet" inverse="true" table="EG_POSITION">
+			<key column="DESIG_ID" not-null="true" />
+			<one-to-many class="org.egov.pims.commons.Position" />
+		</set>
+		
+	</class>
+		<query name="getDesignationForListOfDesgNames">
+		<![CDATA[
+			from DesignationMaster where trim(upper(designationName)) in(:param_0)
+    	]]>
+	</query>
+</hibernate-mapping>

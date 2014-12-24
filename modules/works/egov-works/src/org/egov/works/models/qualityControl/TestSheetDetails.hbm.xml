@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.works.models.qualityControl.TestSheetDetails" table="EGW_QC_TESTSHEET_DETAILS">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_QC_TESTSHEET_DETAILS_SEQ</param>
+			</generator>
+		</id>
+		
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
+		<property column="MODIFIED_DATE" name="modifiedDate" type="timestamp" />
+		 
+		 <!-- 
+		 <many-to-one name="materialType" column="MATERIALTYPE_ID" fetch="join" not-null="true"  cascade="all" />
+		  -->
+		  
+		  <many-to-one name="testMaster" column="TESTMASTER_ID"  not-null="true" fetch="join" />
+		
+		 <property name="description" type="java.lang.String">
+			<column name="DESCRIPTION" length="1024" />
+		</property>
+		
+		<property name="uom" type="string">
+            <column name="UOM" length="256" />  
+        </property>
+		 
+		<component name="testCharges">
+			<property name="value" type="double" precision="2"	scale="20" column="TESTCHARGES" not-null="true"/>
+		</component>
+		
+		<property name="documentNumber" type="long">
+			<column name="DOCUMENT_NUMBER" />
+		</property>
+		
+        <many-to-one name="testSheetHeader" class="org.egov.works.models.qualityControl.TestSheetHeader" fetch="select" insert="false" update="false">
+            <column name="TESTSHEETHEADER_ID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        
+        <!-- 
+        <list name="testSheetTestNames" cascade="all,delete-orphan">
+			<key column="TESTSHEETDETAIL_ID" not-null="true" />
+			<list-index column="TSTESTNAMES_INDEX" /> 
+			<one-to-many
+				class="org.egov.works.models.qualityControl.TestSheetTestNames" />
+		</list>
+		 -->
+              
+     </class> 
+</hibernate-mapping>		

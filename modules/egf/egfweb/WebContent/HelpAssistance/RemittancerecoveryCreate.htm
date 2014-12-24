@@ -1,0 +1,293 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Remittance Recovery Create Help</title>
+</head>
+<LINK REL=StyleSheet HREF="file:///C:/DOCUME~1/MRC/LOCALS~1/Temp/egov.css" TYPE="text/css" />
+<style type="text/css">
+html {
+background-color:#FFF9EF;
+}
+body {
+background-color:#FFF9EF;
+}
+a {
+text-decoration:none;
+}
+table {
+border-top: 1px solid gray;
+border-left: 1px solid gray;
+}
+th {
+background-color:#FFF9EF;
+border-right: 1px solid gray;
+border-bottom: 1px solid gray;
+text-align: center;
+}
+td {
+background-color:white;
+border-bottom: 1px solid gray;
+border-right: 1px solid gray;
+}
+
+#hheader {
+background-color:#EFDFC2;
+text-align: right;
+padding: 10px;
+font-size: 130%;
+font-weight: bold;
+border-bottom: 1px solid gray;
+}
+
+#hnav {
+background-color:#FFF9EF;
+text-align: right;
+padding-right: 10px;
+border-bottom: 1px solid gray;
+}
+
+#hnav a:hover{
+border-bottom: 2px solid #CFC1A8;
+}
+
+#hcontent {
+background-color:white;
+text-align: left;
+padding: 10px;
+}
+
+#hfooter {
+background-color:#FFF9EF;
+text-align: center;
+margin-top: 0px;
+padding-right: 10px;
+padding-left: 10px;
+margin-bottom: 10px;
+border-bottom: 1px solid gray;
+border-top: 1px solid gray;
+
+}
+.hbold0 {
+font-size: 105%;
+font-weight: bold;
+text-transform: uppercase;
+}
+.hbold {
+font-size: 100%;
+font-weight: bold;
+}
+</style>
+
+<body>
+<div id="hheader">
+Remittance Recovery Create.. Help
+</div>
+<div id="hnav">
+<a href="mailto:contact@egovernments.org">Contact Us</a>
+</div>
+
+<div id="hcontent">
+<span class="hbold0">Remittance Recovery Create:&nbsp; </span>
+	
+<p></p>
+
+<!-- Objective Section Stats -->
+<span class="hbold0">
+Objective: </span>
+<p class="MsoNormal">The Recoveries can be remitted using - Create Remit Recovery screen. On search, based on the given criteria, the list of invoices will be shown for the selected Recovery for a given month and Fund. 
+The voucher number and the bank details from which the payment is made should be entered to save the remittance. The amount can be amended if required in case where a partial payment is made.
+ 
+</p>
+<p><span class="hbold0">
+Field Description Table:</span></p>
+</p>
+<table width="80%" cellpadding="2px" cellspacing="0px">
+<tr>
+<th>Field Name</th>
+<th>Field Type</th>
+<th width="425">Field Description</th>
+</tr>
+<tr>
+<td>Fund</td>
+<td>Select List</td>
+<td width="425">Select the Fund for which the invoice belong to and remittance has to be made.</td>
+</tr>
+<tr>
+<td>Recovery Name </td>
+<td>Select List</td>
+<td width="425">Select the Recovery type for which the remittance is made. </td>
+</tr>
+<tr>
+<td>Month  </td>
+<td>Select List</td>
+<td width="425">Select the month for remittance. Month for which the invoices were created has to be searched.</td>
+</tr>
+
+<tr>
+<td>Year</td>
+<td>Select List</td>
+<td width="425">Select the year for which the remittance is made.</td>
+</tr>
+</table>
+
+<br />
+<!-- Fields Definition Section ENDS -->
+<!-- Expected Results and/or Workflow Section Begins -->
+<span class="hbold0">
+Expected Results :
+</span><br />
+<br />
+<table width="82%" cellpadding="2px" cellspacing="0px">
+<tr>
+<th>Action</th>
+<th >Expected Result</th>
+</tr>
+<tr>
+<td>Search</td>
+<td>Enter the search criteria as given above and click this button to list the invoices for remittance. 
+The below detailed screen as given will be shown on click. The remittance amount against each invoice will be shown which can be amended if required before creating the remittance.</td>
+</tr>
+
+<tr>
+<td>Cancel</td>
+<td >Cancels the transaction and loads the page afresh.</td>
+</tr>
+
+</table>
+
+<br />
+<p><span class="hbold0">
+Details:</span></p>
+</p>
+<table width="80%" cellpadding="2px" cellspacing="0px">
+<tr>
+<th>Field Name</th>
+<th>Field Type</th>
+<th width="425">Field Description</th>
+</tr>
+<tr>
+<td>Party Details (Name/PAN/Address)</td>
+<td>Display Text</td>
+<td width="425">Name & Details of the Contractor for which the Invoice is made.</td>
+</tr>
+<tr>
+<td>Reference (Doc No /Date) </td>
+<td>Display Text</td>
+<td width="425">The Invoice ref number and date on which the invoice was made.</td>
+</tr>
+<tr>
+<td>Amount Deducted</td>
+<td>Display</td>
+<td width="425">The Amount that was deducted for the selected recovery for each Invoice.</td>
+</tr>
+
+<tr>
+<td>To Remit</td>
+<td>User Entry – editable</td>
+<td width="425">The editable amount of the deductions. The amount can be changed, if it is a partial remittance for a particular invoice.</td>
+</tr>
+<tr>
+<td>Remit To</td>
+<td>Display</td>
+<td width="425">Will be updated from the Recovery master to whom the remittance is made.</td>
+</tr>
+<tr>
+<td>Voucher Number</td>
+<td>User Entry </td>
+<td width="425">Enter 
+the Ref Number for the voucher that will be created for the remittance made.</td>
+</tr>
+<tr>
+<td>Voucher Date</td>
+<td>Date</td>
+<td width="425">Date on which the remittance is prepared.</td>
+</tr>
+<tr>
+<td>Bank</td>
+<td>Select list</td>
+<td width="425">Select the bank from which the remittance is paid.</td>
+</tr>
+<tr>
+<td>Bank Account</td>
+<td>Select list</td>
+<td width="425">The editable amount of the deductions. The amount can be changed, if it is a partial remittance for a particular invoice.</td>
+</tr>
+<tr>
+<td>Cheque No</td>
+<td>User Entry/select from pop up</td>
+<td width="425">Select the CHQ number from the master for the selected bank account number.
+ If the cheque number is set to auto-generated (system setting), then this field will be 
+disabled for user input. 
+The cheque number will be generated by the system on saving the voucher. </td>
+</tr>
+<tr>
+<td>Cheque Date</td>
+<td>Date</td>
+<td width="425">Date for which the Cheque is written.</td>
+</tr>
+
+</table>
+
+<br />
+<p class="MsoNormal">On save, the system will pass a Payment voucher:
+Dr. Recovery Code
+	Cr. Bank
+If the Recovery code is designated as a control code, the sub-ledgers will also be updated.
+
+ 
+</p>
+
+<span class="hbold0">
+Saving the Transaction :
+</span><br />
+<br />
+<table width="82%" cellpadding="2px" cellspacing="0px">
+<tr>
+<th>Action</th>
+<th width="706" >Expected Result</th>
+</tr>
+<tr>
+<td>Save & Close</td>
+<td width="706">Submits the transaction. On successful submit, the system creates the remittance (Payment Voucher) and the screen is closed.</td>
+</tr>
+<tr>
+<td>Save & New</td>
+<td width="706">Submits the transaction. On successful submit, the system creates the the remittance (Payment Voucher) and the same screen is made available for entering a new record</td>
+</tr>
+<tr>
+<td>Save & View</td>
+<td width="706">Click this button to save the entry, create the remittance and view the print preview of the voucher and print it. The following screen shows the print preview of the voucher.</td>
+</tr>
+<tr>
+<td>Show GL Entry</td>
+<td width="706">Shows the entry that will be passed to the GL on submitting the transaction.</td>
+</tr>
+<tr>
+<td>Cancel</td>
+<td width="706" >Cancels the transaction and loads the page afresh.</td>
+</tr>
+<tr>
+<td>Close</td>
+<td width="706">Close the screen</td>
+</tr>
+
+
+</table>
+
+<br />
+
+
+
+
+<!-- Footer Starts here -->
+<div id="hfooter">
+&copy eGovernments Foundation 
+<script type="JavaScript">
+document.write(time());
+</script>
+</div>
+<!-- Footer ENDS here -->
+
+</body>
+</html>

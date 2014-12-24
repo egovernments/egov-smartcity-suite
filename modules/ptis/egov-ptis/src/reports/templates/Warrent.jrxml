@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Warrent" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<parameter name="ownerFatherName" class="java.lang.String"/>
+	<parameter name="taxName" class="java.lang.String"/>
+	<parameter name="totalWarrantFees" class="java.lang.String"/>
+	<parameter name="warrantReturnByDate" class="java.lang.String"/>
+	<parameter name="currentDate" class="java.lang.String"/>
+	<parameter name="totalRecoverAmt" class="java.lang.String"/>
+	<parameter name="adress" class="java.lang.String"/>
+	<parameter name="zoneNum" class="java.lang.String"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="houseNo" class="java.lang.String"/>
+	<field name="area" class="java.lang.String"/>
+	<field name="wardNo" class="java.lang.String"/>
+	<field name="grandTotal" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="802" splitType="Stretch">
+			<staticText>
+				<reportElement x="16" y="228" width="37" height="20"/>
+				<textElement/>
+				<text><![CDATA[son of]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="16" y="202" width="54" height="20"/>
+				<textElement/>
+				<text><![CDATA[Whereas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="243" y="228" width="56" height="20"/>
+				<textElement/>
+				<text><![CDATA[resident of]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="16" y="253" width="179" height="20"/>
+				<textElement/>
+				<text><![CDATA[has made default in payment of Rs]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="269" y="253" width="236" height="20"/>
+				<textElement/>
+				<text><![CDATA[on account of taxes due by him as follows : -]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="43" y="283" width="145" height="20"/>
+				<textElement/>
+				<text><![CDATA[Name of Taxes.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="43" y="303" width="145" height="20"/>
+				<textElement/>
+				<text><![CDATA[Amount of Arrears due for ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="43" y="323" width="145" height="20"/>
+				<textElement/>
+				<text><![CDATA[Add cost of recovery ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="43" y="343" width="145" height="20"/>
+				<textElement/>
+				<text><![CDATA[Total to be recovered ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="373" width="516" height="52"/>
+				<textElement/>
+				<text><![CDATA[           Unless he has proved to your satisfaction  that he has already remitted the arrears to the Corporation Office or pay them to you together with the cost of recovery as given above in cash you are to recover the whole amount due by distress and sale of the moveable property or by attached and sale of moveable property of the said defaulter .
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="425" width="352" height="20"/>
+				<textElement/>
+				<text><![CDATA[           You are further ordered to return this warrant on or before the]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="439" width="538" height="27"/>
+				<textElement/>
+				<text><![CDATA[ with an endorsement certifying the date and manner in which it has been executed or why it has not been executed.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="36" y="468" width="304" height="20"/>
+				<textElement/>
+				<text><![CDATA[Given under my hand an the seal of this office , this day of  ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="382" y="513" width="123" height="38"/>
+				<textElement/>
+				<text><![CDATA[Municipal Commissioner,
+AC / Ward Officer]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="383" y="541" width="63" height="20"/>
+				<textElement/>
+				<text><![CDATA[Zone No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="382" y="556" width="147" height="20"/>
+				<textElement/>
+				<text><![CDATA[City of Nagpur Corporation]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="67" y="199" width="471" height="20"/>
+				<textElement>
+					<font isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="187" y="253" width="87" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{grandTotal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="217" y="283" width="230" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{taxName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="217" y="303" width="230" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{grandTotal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="217" y="323" width="230" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{totalWarrantFees}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="319" y="425" width="236" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{warrantReturnByDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="320" y="468" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{currentDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="217" y="343" width="230" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{totalRecoverAmt}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="13" y="577" width="517" height="28"/>
+				<textElement/>
+				<text><![CDATA[NOTE :- If the defaulter produces a respectable supratdar the attached moveable property need not be taken to the Corporation Office.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="192" y="323" width="21" height="20"/>
+				<textElement/>
+				<text><![CDATA[Rs.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="192" y="343" width="21" height="20"/>
+				<textElement/>
+				<text><![CDATA[Rs.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="192" y="303" width="21" height="20"/>
+				<textElement/>
+				<text><![CDATA[Rs.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="299" y="228" width="239" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{adress}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="426" y="541" width="67" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{zoneNum}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="192" y="13" width="191" height="43"/>
+				<textElement>
+					<font size="36"/>
+				</textElement>
+				<text><![CDATA[WARRANT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="217" y="65" width="135" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Under Section 156 (1)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="123" width="315" height="20"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[The Municipal Commissioner of the City of Nagpur Corporation]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="43" y="122" width="57" height="21"/>
+				<textElement/>
+				<text><![CDATA[From :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="43" y="143" width="56" height="20"/>
+				<textElement/>
+				<text><![CDATA[To :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="99" y="143" width="450" height="31"/>
+				<textElement/>
+				<text><![CDATA[Octroi Superintendent , Name and office of the person charge with the execution of warrant under section under 150 (2)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="58" y="231" width="180" height="20"/>
+				<textElement/>
+				<text><![CDATA[_____________________________________]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="67" y="202" width="471" height="20"/>
+				<textElement/>
+				<text><![CDATA[_______________________________________________________________________________________________]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<summary>
+		<band height="260" splitType="Stretch"/>
+	</summary>
+</jasperReport>

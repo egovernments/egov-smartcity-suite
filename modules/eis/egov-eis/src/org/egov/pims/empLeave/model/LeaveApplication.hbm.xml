@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 9, 2007 3:21:11 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.pims.empLeave.model.LeaveApplication" table="EGEIS_LEAVE_APPLICATION" >
+        
+        <id
+	name="id"
+	column="ID">
+	<generator class="sequence">
+		<param name="sequence">LEAVE_APPLICATION_SEQ</param>
+	</generator>
+	</id>
+	<property name="workingDays" >
+	            <column name="WORKINGDAYS"  />
+        </property>
+       
+		            <many-to-one name="statusId" column="STATUS" 
+	class="org.egov.pims.model.StatusMaster"/>
+       
+        <property name="fromDate" type="date">
+	            <column name="FROM_DATE"  />
+	        </property>
+	        <property name="toDate" type="date">
+	            <column name="TO_DATE"  />
+	        </property>
+	        <many-to-one name="typeOfLeaveMstr" column="LEAVE_TYPE_ID" 
+	class="org.egov.pims.empLeave.model.TypeOfLeaveMaster"/>
+         <property name="reason" type="string">
+	            <column name="REASON" />
+        </property>
+        <property name="applicationNumber" type="string">
+			            <column name="APPLICATION_NUMBER"  />
+        </property>
+        <many-to-one name="desigId" column="DESIG_ID" 
+	class="org.egov.pims.commons.DesignationMaster"/>
+	<property name="noOfLeavesAvai" >
+			            <column name="LEAVES_AVAILABLE" />
+        </property>
+        <many-to-one name="employeeId" class="org.egov.pims.model.PersonalInformation" fetch="select">
+			    <column name="EMP_ID"   />
+			  </many-to-one>
+<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" fetch="select">
+			    <column name="CREATED_BY"   />
+			  </many-to-one>
+			  <many-to-one name="financialY" class="org.egov.commons.CFinancialYear" fetch="select">
+			  			    <column name="FIN_YEAR"   />
+			  </many-to-one>
+			  
+			  <many-to-one name="calYear" class="org.egov.pims.empLeave.model.CalendarYear" fetch="select">
+			  			    <column name="CAL_YEAR"   />
+			  </many-to-one>
+			  
+		  <property name="sanctionNo" type="string">
+			  			            <column name="SANCTION_NO" />
+        </property>
+        
+        <property name="twoHdLeaves" type="java.lang.Character">
+		            <column name="TWO_HALFLEAVES_IN_DAY" length="1"  />
+        </property>
+
+        
+        <property name="isEncashment">
+		            <column name="IS_LEAVE_ENCASHMENT" />
+        </property>
+        
+		 <property name="createdDate" type="date">
+            <column name="CREATEDDATE" length="7" not-null="true" />
+        </property>	
+        
+        <many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+            <column name="STATE_ID"/>
+        </many-to-one>
+        
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+  <ACCOUNTDETAILTYPE ID="2" NAME="test" DESCRIPTION="test" TABLENAME="eg_employee" COLUMNNAME="id" ATTRIBUTENAME="test" NBROFLEVELS="1" ISACTIVE="1" CREATED="2007-03-23 00:08:06.0" LASTMODIFIED="2007-03-23 00:08:06.0" MODIFIEDBY="1"/>
+  </dataset>

@@ -1,0 +1,1 @@
+INSERT INTO EGW_STATUS VALUES (SEQ_EGW_STATUS.nextval,'PaySlip','Cancelled',sysdate);

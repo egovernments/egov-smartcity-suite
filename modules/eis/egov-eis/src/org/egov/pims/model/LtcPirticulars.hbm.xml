@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 9, 2007 3:21:11 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.pims.model.LtcPirticulars" table="EGEIS_LTC_PIRTICULARS" >
+        
+        <id
+	name="ltcDetailsId"
+	column="LTC_DETAILS_ID"
+	type="int">
+	<generator class="sequence">
+		<param name="sequence">EGPIMS_LTC_PIRTICULARS_SEQ</param>
+	</generator>
+	</id>
+        <property name="blockYear" type="string">
+            <column name="BLOCK_YEAR" length="256" />
+        </property>
+        <property name="claimedWayFare" type="string">
+            <column name="CLAIMED_WAY_FARE" length="256" />
+        </property>
+        <property name="orderNo" type="string">
+            <column name="ORDER_NO" length="256" />
+        </property>
+        <property name="orderDate" type="date">
+            <column name="ORDER_DATE" length="7" />
+        </property>
+        <property name="leaveType" type="string">
+            <column name="LEAVE_TYPE" length="256" />
+        </property>
+        
+        
+    </class>
+</hibernate-mapping>

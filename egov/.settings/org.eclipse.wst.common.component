@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="egov">
+        <wb-resource deploy-path="/" source-path="/EarContent" tag="defaultRootSource"/>
+        <dependent-module archiveName="egiweb.war" deploy-path="/" handle="module:/resource/egiweb/egiweb">
+            <dependent-object/>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="egov-config.jar" deploy-path="/lib" handle="module:/resource/egov-config/egov-config">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="egov-egi.jar" deploy-path="/lib" handle="module:/resource/egov-egi/egov-egi">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="json-20090211.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/json-20090211.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="batik-ext-1.7.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/batik-ext-1.7.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="poi-3.9-20121203.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/poi-3.9-20121203.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="logkit-1.0.1.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/logkit-1.0.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jasperreports-javaflow-5.2.0.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/jasperreports-javaflow-5.2.0.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jython.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/jython.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="antisamy-1.4.3.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/antisamy-1.4.3.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="xstream-1.4.2.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/xstream-1.4.2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-modules-jcr-0.9patch.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-modules-jcr-0.9patch.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-javaflow-20060411.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/commons-javaflow-20060411.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="iText-2.1.7.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/iText-2.1.7.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="json-lib-2.4-jdk15.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/json-lib-2.4-jdk15.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-chain-1.2.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/commons-chain-1.2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="batik-css-1.7.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/batik-css-1.7.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="bsh-core-2.0b4.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/bsh-core-2.0b4.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="pgichecksum.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/pgichecksum.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-lang-2.5.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/commons-lang-2.5.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="ezmorph-1.0.6.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/ezmorph-1.0.6.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="sitemesh-2.4.2.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/sitemesh-2.4.2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="aopalliance-1.0.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/aopalliance-1.0.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="groovy-all-2.1.5.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/groovy-all-2.1.5.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="esapi-2.0.1.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/esapi-2.0.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="struts-el-1.2.9.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/struts-el-1.2.9.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jython-engine.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/jython-engine.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="batik-util-1.7.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/batik-util-1.7.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="ChartDirector.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/ChartDirector.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jasperreports-fonts-5.2.0.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/jasperreports-fonts-5.2.0.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="poi-ooxml-3.9-20121203.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/poi-ooxml-3.9-20121203.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="poi-excelant-3.9-20121203.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/poi-excelant-3.9-20121203.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="nekohtml-1.9.12.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/nekohtml-1.9.12.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="poi-scratchpad-3.9-20121203.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/poi-scratchpad-3.9-20121203.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="DynamicJasper-4.0.3.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/DynamicJasper-4.0.3.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jxl.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/jxl.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jasperreports-functions-5.2.0.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/jasperreports-functions-5.2.0.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="cglib-2.2.3.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/cglib-2.2.3.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="xml-apis-1.0.b2.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/xml-apis-1.0.b2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="struts.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/struts.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="poi-ooxml-schemas-3.9-20121203.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/poi-ooxml-schemas-3.9-20121203.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="json-simple-1.1.1.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/json-simple-1.1.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jackrabbit-ocm-2.0.0.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/jackrabbit-ocm-2.0.0.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="mail-1.4.4.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/mail-1.4.4.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="avalon-framework-4.1.3.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/avalon-framework-4.1.3.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="xpp3_min-1.1.4c.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/xpp3_min-1.1.4c.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-collections-3.2.1.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/commons-collections-3.2.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-digester-2.0.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/commons-digester-2.0.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="mappings.jar" deploy-path="/lib/mappings" handle="module:/resource/mappings/mappings">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-messaging-4.1.3.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-messaging-4.1.3.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-context-support-4.1.3.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-context-support-4.1.3.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-aspects-4.1.3.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-aspects-4.1.3.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="aspectjweaver-1.8.4.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/aspectjweaver-1.8.4.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-jms-4.1.3.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-jms-4.1.3.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-tx-4.1.3.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-tx-4.1.3.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-webmvc-4.1.3.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-webmvc-4.1.3.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-webmvc-portlet-4.1.3.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-webmvc-portlet-4.1.3.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-jdbc-4.1.3.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-jdbc-4.1.3.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-aop-4.1.3.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-aop-4.1.3.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-core-4.1.3.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-core-4.1.3.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-beans-4.1.3.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-beans-4.1.3.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-web-4.1.3.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-web-4.1.3.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-websocket-4.1.3.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-websocket-4.1.3.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-orm-4.1.3.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-orm-4.1.3.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-expression-4.1.3.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-expression-4.1.3.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-oxm-4.1.3.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-oxm-4.1.3.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-context-4.1.3.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-context-4.1.3.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-security-remoting-3.2.5.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-security-remoting-3.2.5.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-security-web-3.2.5.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-security-web-3.2.5.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-security-taglibs-3.2.5.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-security-taglibs-3.2.5.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-security-ldap-3.2.5.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-security-ldap-3.2.5.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-security-core-3.2.5.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-security-core-3.2.5.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-security-aspects-3.2.5.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-security-aspects-3.2.5.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-security-acl-3.2.5.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-security-acl-3.2.5.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-security-cas-3.2.5.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-security-cas-3.2.5.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-security-config-3.2.5.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-security-config-3.2.5.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-security-openid-3.2.5.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-security-openid-3.2.5.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-security-crypto-3.2.5.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-security-crypto-3.2.5.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="struts2-convention-plugin-2.3.20.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/struts2-convention-plugin-2.3.20.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-lang3-3.2.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/commons-lang3-3.2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="asm-tree-5.0.2.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/asm-tree-5.0.2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="freemarker-2.3.21.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/freemarker-2.3.21.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="ognl-3.0.8.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/ognl-3.0.8.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="xwork-core-2.3.20.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/xwork-core-2.3.20.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="asm-commons-5.0.2.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/asm-commons-5.0.2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="struts2-json-plugin-2.3.20.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/struts2-json-plugin-2.3.20.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="struts2-jasperreports-plugin-2.3.20.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/struts2-jasperreports-plugin-2.3.20.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="struts2-core-2.3.20.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/struts2-core-2.3.20.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-io-2.4.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/commons-io-2.4.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-fileupload-1.3.1.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/commons-fileupload-1.3.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-logging-1.2.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/commons-logging-1.2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="struts2-jquery-plugin-3.7.1.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/struts2-jquery-plugin-3.7.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="struts2-spring-plugin-2.3.20.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/struts2-spring-plugin-2.3.20.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="struts2-rest-plugin-2.3.20.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/struts2-rest-plugin-2.3.20.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="asm-5.0.2.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/asm-5.0.2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-email-1.3.3.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/commons-email-1.3.3.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-beanutils-1.9.2.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/commons-beanutils-1.9.2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-validator-1.4.0.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/commons-validator-1.4.0.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-digester3-3.2.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/commons-digester3-3.2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-configuration-1.10.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/commons-configuration-1.10.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-codec-1.10.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/commons-codec-1.10.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-collections4-4.0.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/commons-collections4-4.0.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="displaytag-1.2.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/displaytag-1.2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="displaytag-export-poi-1.2.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/displaytag-export-poi-1.2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="ehcache-web-2.0.4.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/ehcache-web-2.0.4.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="ehcache-core-2.4.6.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/ehcache-core-2.4.6.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="joda-time-2.6.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/joda-time-2.6.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="c3p0-0.9.1.1.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/c3p0-0.9.1.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="quartz-jobs-2.2.1.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/quartz-jobs-2.2.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="quartz-2.2.1.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/quartz-2.2.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="logback-classic-1.1.2.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/logback-classic-1.1.2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="logback-core-1.1.2.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/logback-core-1.1.2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spring-struts-3.2.3.RELEASE.jar" deploy-path="/lib" handle="module:/classpath/lib/earlib/spring-struts-3.2.3.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+    </wb-module>
+</project-modules>

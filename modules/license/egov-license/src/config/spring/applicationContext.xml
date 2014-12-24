@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd"
+	default-lazy-init="true">
+
+	
+	<bean class="org.egov.license.utils.LicenseUtils" id="licenseUtils" scope="prototype">
+		<constructor-arg ref="egovSessionFactory" />
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="moduleDAO" ref="moduleDAO"/>
+		<property name="boundaryDAO" ref="boundaryDAO"/>
+		<property name="boundaryTypeDAO" ref="boundaryTypeDAO"/>
+		<property name="heirarchyTypeDAO" ref="heirarchyTypeDAO"/>
+		<!-- <property name="contractorService" ref="contractorService"/> -->
+		<property name="collectionIntegrationService" ref="collectionIntegrationService"/>
+	</bean>
+	
+	<bean id="feeService" class="org.egov.license.domain.service.FeeService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.license.domain.entity.FeeMatrix"  />
+	</bean>
+	
+	<bean id="workflowBean" class="org.egov.license.domain.entity.WorkflowBean" scope="prototype" />
+	
+  	<bean id="transferLicenseWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
+		 <constructor-arg ref="persistenceService" index="0"/>
+	     <constructor-arg value="org.egov.license.domain.entity.transfer.LicenseTransfer" index="1"/>
+	</bean>
+	
+	 <bean id="objectionWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
+	 	<constructor-arg  ref="persistenceService" index="0"/>
+     	<constructor-arg value="org.egov.license.domain.entity.objection.LicenseObjection" index="1"/>
+	</bean>	
+
+	<bean id="baseLicenseService" class="org.egov.license.domain.service.BaseLicenseService" scope="prototype" abstract="true">
+		<property name="sequenceGenerator" ref="sequenceGenerator" />
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="eisCommonsService" ref="eisCommonsService" />
+		<property name="feeService" ref="feeService" />
+		<property name="installmentDao" ref="installmentDao"/>  
+	</bean>
+		
+	<bean id="licenseBillService" class="org.egov.license.domain.service.integration.LicenseBillService" scope="prototype">
+		<property name="billDao" ref="billDao"/>
+		<property name="persistenceService" ref="persistenceService" />	
+	</bean>
+	
+	<bean id="licenseReportService" class="org.egov.license.domain.service.LicenseReportService" scope="prototype">
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="installmentDao" ref="installmentDao"/>
+	</bean>
+	
+	<bean id="contractorLicenseReportService" class="org.egov.license.domain.service.ContractorLicenseReportService"  parent="licenseReportService" scope="prototype">
+	</bean>
+</beans>

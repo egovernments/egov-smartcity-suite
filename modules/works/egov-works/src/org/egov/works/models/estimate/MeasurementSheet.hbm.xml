@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.works.models.estimate.MeasurementSheet" table="EGW_MEASUREMENTSHEET">
+		<id
+			name="id"
+			column="ID"
+			type="long"
+			unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">EGW_MEASUREMENTSHEET_SEQ</param> 
+			</generator>
+		</id>
+		<property name="no"><column name="NO"/></property>
+		<property name="uomLength"><column name="LENGTH"/></property>
+		<property name="width"><column name="WIDTH" /></property>
+		<property name="depthOrHeight"><column name="DEPTH_HEIGHT"/></property>
+		<property name="remarks"><column name="REMARKS"/></property>
+		<property name="identifier"><column name="IDENTIFIER"/></property>
+		<property name="quantity"><column name="QUANTITY"/></property>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select" />
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+       	<many-to-one name="activity"
+			class="org.egov.works.models.estimate.Activity" fetch="select" insert="false" update="false">
+			<column name="ACTIVITY_ID" not-null="true" />
+		</many-to-one>
+	</class>
+</hibernate-mapping>  

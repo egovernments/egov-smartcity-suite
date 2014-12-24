@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="695" pageHeight="810" whenNoDataType="AllSectionsNoDetail" columnWidth="655" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" isFloatColumnFooter="true">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ward" class="java.lang.String"/>
+	<parameter name="amount" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="575">
+			<staticText>
+				<reportElement x="0" y="21" width="655" height="32"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Kruti Dev 010" size="14" isBold="true" isUnderline="true" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[fo"k;kps izk:i]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="444" width="655" height="119" forecolor="#000000"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
+					<font fontName="Kruti Dev 010" size="17" isBold="false" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ fVi%&
+1-lnjhy dkekl rkaf=d eatqjh izkIr vlwu] lq/kkfjr vankti=dkrhy rjrwnhps vf/ku
+jkgwu dke dj.;kr ;sbZy-
+2-foLr`r fVIi.kh uLrhr layXu ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="412" y="379" width="156" height="33"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Kruti Dev 010" size="17" pdfFontName="K010.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[dk;Zdkjh vfHk;ark]]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="112" y="126" width="255" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{ward}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="382" y="156" width="185" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{amount}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="126" width="112" height="30" forecolor="#000000"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
+					<font fontName="Kruti Dev 010" size="14" isBold="false" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[     okWMZ dz-]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="367" y="126" width="288" height="30" forecolor="#000000"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
+					<font fontName="Kruti Dev 010" size="14" isBold="false" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[e/khy nRrk+=;uxj fcMhisB] ;sFks ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="156" width="382" height="30" forecolor="#000000"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
+					<font fontName="Kruti Dev 010" size="14" isBold="false" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[jLR;kps :anhdj.k o Mkacjhdj.kkps dkekLro foHkkxk}kjs :-]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="186" width="654" height="30" forecolor="#000000"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
+					<font fontName="Kruti Dev 010" size="14" isBold="false" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[jk”khps izkdyu r;kj dj.;kr vkys vlwu lnjhy dkekLro iz”kkldh; ekU;rk iznku dj.ks]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="216" width="655" height="30" forecolor="#000000"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
+					<font fontName="Kruti Dev 010" size="14" isBold="false" pdfFontName="K010.TTF" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[o fufonk ekxfo.;kpk iz”u fopkjkr ?ks.ks-]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+	<!-- Generated on 8th dec 09 -->
+<hibernate-mapping>
+	<class name="org.egov.works.models.measurementbook.MBForCancelledBill" table="EGW_CANCELLED_BILL">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_MB_HEAD_CANCEL_BILL_SEQ</param>
+			</generator>
+		</id>
+		<many-to-one name="mbHeader"
+			class="org.egov.works.models.measurementbook.MBHeader" column="MBHEADER_ID"
+			not-null="true" fetch="select" />
+		
+		<many-to-one name="egBillregister" class="org.egov.model.bills.EgBillregister" column="BILLREGISTER_ID" fetch="select" />
+	</class>
+
+	<query name="getMBListForCancelledBill">
+		<![CDATA[
+     	 select mbcb.mbHeader from MBForCancelledBill mbcb
+     	 where mbcb.mbHeader.state.previous.value = 'APPROVED' and 
+     	 mbcb.egBillregister.id = ? and mbcb.egBillregister.billstatus = 'CANCELLED'
+    ]]>
+    </query>
+	
+</hibernate-mapping>
+

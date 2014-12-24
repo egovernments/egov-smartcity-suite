@@ -1,0 +1,52 @@
+<decorators defaultdir="/decorators">
+	<excludes>
+		<pattern>/error/*</pattern>
+		<pattern>/commonyui/egov/genericScreenWithLeaf.jsp</pattern>
+		<pattern>/commonyui/egov/menutree.jsp</pattern>
+	</excludes>
+	<decorator name="default" page="default.jsp">
+		<pattern>/administration/rjbac/module/*</pattern>
+		<pattern>/administration/rjbac/employee/*</pattern>
+		<pattern>/BeforePIMSMasterAction.do</pattern>
+		<pattern>/AfterPIMSAction.do</pattern>
+		<pattern>/BeforeSearchAction.do</pattern>
+		<pattern>/AfterSearchAction.do</pattern>
+		<pattern>/administration/rjbac/action/*</pattern>
+		<pattern>/BndryAdmin/*</pattern>
+		<pattern>/administration/rjbac/user/*</pattern>
+		<pattern>/terminal/*</pattern>
+		<pattern>/administration/rjbac/role/*</pattern>
+		<pattern>/administration/rjbac/department/*</pattern>
+		<pattern>/admin/*</pattern>
+		<pattern>/designation/*</pattern>
+		<pattern>/BeforeCreateBndryType.do</pattern>
+		<pattern>/CreateJurisdiction.do</pattern>
+		<pattern>/BeforeJurisdiction.do</pattern>
+		<pattern>/SetupRole.do</pattern>
+		<pattern>/SearchBoundry.do</pattern>
+		<pattern>/CreateRole.do</pattern>
+		<pattern>/SetupUser.do</pattern>
+		<pattern>/SetupUpdateUser.do</pattern>
+		<pattern>/SubmitUser.do</pattern>
+		<pattern>/SetupHierarchyType.do</pattern>
+		<pattern>/SetupDepartment.do</pattern>
+		<pattern>/Department.do</pattern>
+		<pattern>/CreateHierarchy.do</pattern>
+		<pattern>/CreateCitySetup.do</pattern>
+		<pattern>/BeforeDesignationMasterAction.do</pattern>
+		<pattern>/BeforePositionHeirarchyMasterAction.do</pattern>
+		<pattern>/PositionHeirarchyMasterAction.do</pattern>
+		<pattern>/AfterDesignationMasterAction.do</pattern>
+		<pattern>/SetupBoundry.do</pattern>
+		<pattern>/cancellation/*</pattern>
+		<pattern>/Boundry.do</pattern>
+		<pattern>/reports/*</pattern>
+		<pattern>/config/*</pattern>
+	</decorator>
+	<decorator name="defaultacl" page="defaultAcl.jsp">
+		<pattern>/acl/*</pattern>
+	</decorator>
+	<decorator name="defaultdashboard.jsp" page="defaultdashboard.jsp">
+		<pattern>/dashboard/*</pattern>
+	</decorator>
+</decorators>

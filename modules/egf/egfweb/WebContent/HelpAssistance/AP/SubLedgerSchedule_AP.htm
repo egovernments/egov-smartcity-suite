@@ -1,0 +1,205 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Sub-ledger Schedule Report Help</title>
+</head>
+<LINK REL=StyleSheet HREF="egov.css" TYPE="text/css" />
+<style type="text/css">
+html {
+background-color:#FFF9EF;
+}
+body {
+background-color:#FFF9EF;
+}
+a {
+text-decoration:none;
+}
+table {
+border-top: 1px solid gray;
+border-left: 1px solid gray;
+}
+th {
+background-color:#FFF9EF;
+border-right: 1px solid gray;
+border-bottom: 1px solid gray;
+text-align: center;
+}
+td {
+background-color:white;
+border-bottom: 1px solid gray;
+border-right: 1px solid gray;
+}
+
+#hheader {
+background-color:#EFDFC2;
+text-align: right;
+padding: 10px;
+font-size: 130%;
+font-weight: bold;
+border-bottom: 1px solid gray;
+}
+
+#hnav {
+background-color:#FFF9EF;
+text-align: right;
+padding-right: 10px;
+border-bottom: 1px solid gray;
+}
+
+#hnav a:hover{
+border-bottom: 2px solid #CFC1A8;
+}
+
+#hcontent {
+background-color:white;
+text-align: left;
+padding: 10px;
+}
+
+#hfooter {
+background-color:#FFF9EF;
+text-align: center;
+margin-top: 0px;
+padding-right: 10px;
+padding-left: 10px;
+margin-bottom: 10px;
+border-bottom: 1px solid gray;
+border-top: 1px solid gray;
+
+}
+.hbold0 {
+font-size: 105%;
+font-weight: bold;
+text-transform: uppercase;
+}
+.hbold {
+font-size: 100%;
+font-weight: bold;
+}
+</style>
+
+<body>
+<div id="hheader">
+eGov Product-Customization-Functionality Help
+</div>
+<div id="hnav">
+<a href="#">Home</a>&nbsp;|&nbsp;
+<a href="http://www.egovernments.org">About Us</a>&nbsp;|&nbsp;
+<a href="mailto:contact@egovernments.org">Contact Us</a>
+</div>
+
+<div id="hcontent">
+<!-- Objective Section Stats -->
+<span class="hbold0">
+Objective: </span>This report provides a full schedule for a GL code and its sub-ledger type.
+<br /><br />
+<!-- Objective Section ENDS -->
+
+<!-- Fields Definition Section ENDS -->
+<span class="hbold0">
+Field Description Table:</span><br /><br />
+<table width="80%" cellpadding="2px" cellspacing="0px">
+<tr>
+<th>FieldName</th>
+<th>FieldType</th>
+<th>FieldDescription</th>
+</tr>
+<tr>
+<td>Account Code</td>
+<td>Number, required</td>
+<td>GL code</td>
+</tr>
+<tr>
+<td>Fund</td>
+<td>Text, required</td>
+<td>Drop down: list of funds</td>
+</tr>
+<tr>
+<td>Starting Date</td>
+<td>Date, required</td>
+<td>Starting Date of the report</td>
+</tr>
+<tr>
+<td>End Date</td>
+<td>Date, required</td>
+<td>End Date of the report</td>
+</tr>
+<tr>
+<td>Sub Ledger Type</td>
+<td>Text, required</td>
+<td>Drop down list</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>alphanumeric</td>
+<td>Sub-ledger Code</td>
+</tr>
+<tr>
+<td>Name</td>
+<td>Text</td>
+<td>Sub-ledger Name</td>
+</tr>
+<tr>
+<td>Opening Balance</td>
+<td>Number</td>
+<td>Opening Balance amount for the sub-ledger code</td>
+</tr>
+<tr>
+<td>Debit (Rs.)</td>
+<td>Number</td>
+<td>Debit amount for the sub-ledger code</td>
+</tr>
+<tr>
+<td>Credit (Rs.)</td>
+<td>Number</td>
+<td>Credit amount for the sub-ledger code</td>
+</tr>
+<tr>
+<td>Closing Balance</td>
+<td>Number</td>
+<td>Closing Balance amount for the sub-ledger code</td>
+</tr>
+</table>
+<br />
+<!-- Fields Definition Section ENDS -->
+<!-- Expected Results and/or Workflow Section Begins -->
+<span class="hbold0">
+Expected Results and/or Workflow:
+</span><br />
+The report having facility on clicking the sub-ledger name, the user can able to see the sub-ledger report.
+<br /><br />
+<table width="80%" cellpadding="2px" cellspacing="0px">
+<tr>
+<th>Action</th>
+<th>Expeced Result</th>
+</tr>
+<tr>
+<td>Create a transaction voucher with a subledger code, and chek the report</td>
+<td>This entry will reflect in the report</td>
+</tr>
+</table>
+<!-- Expected Results and/or Workflow Section ENDS -->
+<br />
+<!-- Troubleshooting Section Begins -->
+<span class="hbold0">
+Troubleshooting:
+</span><br />
+<span class="hbold">Question1:</span><br />
+If you take the report, start date and end date range is more<br />
+<span class="hbold">Answer1:</span><br />
+Report will take time to get it<br />
+</div>
+<!-- Troubleshooting Section ENDS -->
+
+<!-- Footer Starts here -->
+<div id="hfooter">
+&copy egovernments Foundation 
+<script type="JavaScript">
+document.write(time());
+</script>
+</div>
+<!-- Footer ENDS here -->
+
+</body>
+</html>

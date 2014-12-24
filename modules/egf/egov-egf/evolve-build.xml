@@ -1,0 +1,15 @@
+<project name="Database evolution" default="evolve">
+	<path id="class.path">
+		<fileset dir="lib" includes="*.jar"/>
+		<fileset dir="${jboss.home}/server/default/lib" includes="*.jar"/>
+		<fileset dir="${jboss.home}/lib/endorsed" includes="*.jar"/>
+		<fileset dir="db" includes="*.jar"/>
+		<path location="${basedir}/db"/>
+		<path location="${basedir}"/>
+	</path>
+	<target name="evolve">
+		<java classpathref="class.path" classname="com.motn.evolve.Evolver" failonerror="true" logerror="true">
+			<arg value="5000"/>
+		</java>
+	</target>
+</project>

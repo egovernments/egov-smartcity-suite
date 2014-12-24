@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>FinancialYear Setup..Help</title>
+</head>
+<LINK REL=StyleSheet HREF="file:///C:/DOCUME~1/MRC/LOCALS~1/Temp/egov.css" TYPE="text/css" />
+<style type="text/css">
+html {
+background-color:#FFF9EF;
+}
+body {
+background-color:#FFF9EF;
+}
+a {
+text-decoration:none;
+}
+table {
+border-top: 1px solid gray;
+border-left: 1px solid gray;
+}
+th {
+background-color:#FFF9EF;
+border-right: 1px solid gray;
+border-bottom: 1px solid gray;
+text-align: center;
+}
+td {
+background-color:white;
+border-bottom: 1px solid gray;
+border-right: 1px solid gray;
+}
+
+#hheader {
+background-color:#EFDFC2;
+text-align: right;
+padding: 10px;
+font-size: 130%;
+font-weight: bold;
+border-bottom: 1px solid gray;
+}
+
+#hnav {
+background-color:#FFF9EF;
+text-align: right;
+padding-right: 10px;
+border-bottom: 1px solid gray;
+}
+
+#hnav a:hover{
+border-bottom: 2px solid #CFC1A8;
+}
+
+#hcontent {
+background-color:white;
+text-align: left;
+padding: 10px;
+}
+
+#hfooter {
+background-color:#FFF9EF;
+text-align: center;
+margin-top: 0px;
+padding-right: 10px;
+padding-left: 10px;
+margin-bottom: 10px;
+border-bottom: 1px solid gray;
+border-top: 1px solid gray;
+
+}
+.hbold0 {
+font-size: 105%;
+font-weight: bold;
+text-transform: uppercase;
+}
+.hbold {
+font-size: 100%;
+font-weight: bold;
+}
+</style>
+
+<body>
+<div id="hheader">
+Financial Year .. Help
+</div>
+<div id="hnav">
+<a href="mailto:contact@egovernments.org">Contact Us</a>
+</div>
+
+<div id="hcontent">
+<span class="hbold0">
+Financial Year :&nbsp; </span>
+	
+<p></p>
+
+<!-- Objective Section Stats -->
+<span class="hbold0">
+Objective: </span> Financial Year is a key master setup that defines the dates for which the vouchers can be posted. 
+ All government bodies in India follow a Financial Year cycle of April 1st to March-31st. 
+<p>The following rules apply in the definition of the Financial Year:
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A financial year can have any number of fiscal periods. Each fiscal period must have a start and end date.
+The start date of the first period and end date of the last period will be the period of the financial year
+Dates cannot overlap across periods – i.e. any given date cannot be in more than on fiscal period.
+A Financial Year must be Active for posting for vouchers to be posted in that financial year.
+ 
+<!-- Objective Section ENDS -->
+
+<!-- Fields Definition Section ENDS -->
+</p>
+<p><span class="hbold0">
+Field Description Table:</span><br /><br />
+</p>
+</p>
+<table width="80%" cellpadding="2px" cellspacing="0px">
+<tr>
+<th>Field Name</th>
+<th>Field Type</th>
+<th width="448">Field Description</th>
+</tr>
+<tr>
+<td>Financial Year</td>
+<td>Alphanumeric</td>
+<td width="448">Mandatory</td>
+</tr>
+<tr>
+<td>Fiscal Period Name</td>
+<td>Alphanumeric</td>
+<td width="448">Mandatory</td>
+</tr>
+<tr>
+<td>Starting Date</td>
+<td>Date</td>
+<td width="448">Defaulted to the next day of the last day of the preceding financial year&nbsp;</td>
+</tr>
+<tr>
+<td>Ending Date</td>
+<td>Date</td>
+<td width="448">&nbsp;</td>
+</tr>
+<tr>
+<td>Active For Posting</td>
+<td>Check Box&nbsp;</td>
+<td width="448">Default to No&nbsp;</td>
+</tr>
+
+
+
+</table>
+
+<br />
+<!-- Fields Definition Section ENDS -->
+
+<!-- Expected Results and/or Workflow Section Begins -->
+<span class="hbold0">
+Expected Results :
+</span><br />
+<br />
+<table width="82%" cellpadding="2px" cellspacing="0px">
+<tr>
+<th>Action</th>
+<th >Expected Result</th>
+</tr>
+<tr>
+<td>Save and New</td>
+<td >Financial Year will be created and new screen opens up for 
+another entry .</td>
+</tr>
+<tr>
+<td>Save and Close</td>
+<td >Financial Year will be created and the screen will get closed .</td>
+</tr>
+
+<tr>
+<td>Cancel</td>
+<td >Refreshes the screen .</td>
+</tr>
+
+<tr>
+<td>Close</td>
+<td >Closes the screen.</td>
+</tr>
+
+</table>
+
+<br />
+
+
+<!-- Footer Starts here -->
+<div id="hfooter">
+&copy eGovernments Foundation 
+<script type="JavaScript">
+document.write(time());
+</script>
+</div>
+<!-- Footer ENDS here -->
+
+</body>
+</html>

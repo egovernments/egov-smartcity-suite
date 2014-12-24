@@ -1,0 +1,181 @@
+<project name="custom-build">
+	
+
+	<target name="egfcompile" if="egf.set">
+		<echo message="Compiling EGF  classes..."/>
+		<javac sourcepath="" destdir="${build.classes}" srcdir="${src.dir}" nowarn="true" debug="true">
+		  <include name="**/*.java"/>
+		  <exclude name="**/ndmc/*.java"/>
+		  <exclude name="**/ndmc*.java"/>
+		  <exclude name="**/*ndmc*.java"/>
+		  <exclude name="**/NDMC/*.java"/>
+		  <exclude name="**/NDMC*.java"/>
+		  <exclude name="**/*NDMC.java"/>
+		  <exclude name="**/*NDMC.java"/>
+		  <exclude name="**/MCD/*.java"/>
+		  <exclude name="**/MCD*.java"/>
+		  <exclude name="**/*MCD.java"/>
+		  <exclude name="**/mcd/*.java"/>
+		  <exclude name="**/mcd*.java"/>
+		  <exclude name="**/*mcd.java"/>
+		  <exclude name="**/brs/NDMC/*.java"/>
+		  <exclude name="**/config/**/*.java"/>
+
+		  <classpath refid="class.path"/>
+    	</javac>
+    	<taskdef name="jrc" 
+					classname="net.sf.jasperreports.ant.JRAntCompileTask"> 
+			<classpath refid="class.path" />
+		</taskdef>
+		<jrc destdir="${build.classes}" >
+			<src path="${src.dir}" />
+			 <classpath refid="class.path"/>
+			<include name="**/*.jrxml"/> 
+		</jrc>
+	</target>
+
+	<target name="payrollcompile" if="payroll.set" >
+		<echo message="Compiling Payroll  classes..."/>
+	    
+	   	<javac sourcepath="" destdir="${build.classes}" srcdir="${src.dir}" nowarn="true" debug="true">
+		 	<classpath refid="class.path"/>
+    	</javac>
+    	<antcall target="compile.jasper" />
+		<taskdef name="jrc" 
+				classname="net.sf.jasperreports.ant.JRAntCompileTask"> 
+			<classpath refid="class.path" />
+		</taskdef>
+		<jrc destdir="${build.classes}" >
+			<src path="${config.dir}" />
+			 <classpath refid="class.path"/>
+			<include name="*.jrxml"/> 
+		</jrc>
+
+	</target>
+	
+	<target name="ptiscompile" if="ptis.set">
+		<copy todir="${build.classes}">
+		<fileset dir="${product.home}/QA/PTIS_COC/">
+		<include name="**/**"/>
+		</fileset>
+		</copy>
+		<javac sourcepath="" destdir="${build.classes}" srcdir="${src.dir}" nowarn="true" debug="true">
+			<classpath refid="class.path"/>
+			<exclude name="**/NDMC/*.java"/>
+	  		<exclude name="**/NDMC/**"/>	
+			<exclude name="**/NDMC*.java"/>
+			<exclude name="**/*NDMC*.java"/>
+	  		<exclude name="**/ndmc/*.java"/>
+	  		<exclude name="**/ndmc/**"/>
+	  		<exclude name="**/ndmc/**"/>
+	  		<exclude name="**/BMP/*.java"/>
+			<exclude name="**/BMP*.java"/>
+			<exclude name="**/*BMP*.java"/>
+	  		<exclude name="**/BMP/**"/>
+	  		<exclude name="**/bmp/**"/>
+	  		<exclude name="**/vmc/*.java"/>
+	  		<exclude name="**/vmc*.java"/>
+	  		<exclude name="**/*vmc*.java"/>
+	  		<exclude name="**/VMC/*.java"/>
+	  		<exclude name="**/VMC*.java"/>
+	  		<exclude name="**/MCD/*.java"/>
+	  		<exclude name="**/MCD*.java"/>
+			<exclude name="**/*MCD*.java"/>
+	  		<exclude name="**/*MCD.java"/>
+			<exclude name="**/*NNPTD*.java"/>
+			<exclude name="**/*CessCalculator.java"/>
+			<exclude name="**/PTDCBBroker.java"/>
+			<exclude name="**/PTDiscountCalculator.java"/>
+			<exclude name="**/PropertyTaxDemand.java"/>
+	  		<exclude name="**/property/client/search/ndmc/*.*"/>
+	  		<exclude name="**/property/client/*.java"/>
+			<exclude name="**/NNPTDiscountCalculator.java"/>
+			<exclude name="**/NNInterestCalculator.java"/>
+			<exclude name="**/MasterDataCaching.java"/>
+			<exclude name="**/DemandCalculation.java"/> 
+			<exclude name="**/DCB/model/DemandCalculationFactory.java"/>
+			<exclude name="**/DCBBroker.java"/>
+			<exclude name="**/*GIS*.java"/> 
+	  		<exclude name="**/test/*.java"/>
+	  		<exclude name="**/brs/*.java"/>
+	  		<exclude name="**/property/client/admin/*.java"/>
+	  		<exclude name="**/property/client/admin/**/*.java"/>
+	  		<exclude name="**/property/client/property/*.java"/>
+	  		<exclude name="org/egov/ptis/gis/**/*.java"/>  		
+			<exclude name="**/NNFloorwiseDemandCalculations.java"/>
+			<exclude name="**/NNPropertyTaxDemand.java"/>
+			<exclude name="**/property/client/payment/bmp/*.java"/>
+			<exclude
+	name="**/property/client/payment/cancilation/*.java"/>
+			<exclude name="**/property/client/payment/nn/*.java"/>
+			<exclude name="**/property/client/payment/*.java"/>
+			<exclude name="**/property/client/payment/reports/*.java"/>
+			<exclude
+	name="**/property/client/payment/reports/DTO/*.java"/>
+	  		<exclude name="**/property/client/search/bmp/*.*"/>
+			<exclude name="**/property/client/search/*.*"/>
+	  		<exclude name="**/search/ndmc/*.*"/>
+	  		<exclude name="**/property/client/search/nn/*.*"/>
+			<exclude name="**/property/client/property/nn/*.*"/>
+			<exclude name="**/ptis/DCB/model/DCB.java"/>
+			<exclude name="**/ptis/DCB/model/NNPenaltyCalculator"/>
+		</javac>
+		
+	</target>
+	
+	<target name="ptismappings" if="ptis.set">
+		<echo message="Packaging hbm files..."/>
+		<jar destfile="${ear}/mappings.jar/${product.name}-mappings.jar" manifest="${build.dir}/MANIFEST.MF" basedir="${src.dir}" 		excludes="**/*.class,**/dbtest.properties,**/*hibernate.cfg.xml,**/*Test.xml,**/ptis/DCB/model/BMPPTDemandCalculations.hbm.xml,**/ptis/DCB/model/Cess.hbm.xml,**/ptis/DCB/model/CessMaster.hbm.xml,**/ptis/DCB/model/CessMasterView.hbm.xml,**/ptis/DCB/model/CessTotalView.hbm.xml,**/ptis/DCB/model/Demand.hbm.xml,**/ptis/DCB/model/NDMCPTDemandCalculations.hbm.xml,**/ptis/DCB/model/NNFloorwiseDemandCalculations.hbm.xml,**/ptis/DCB/model/NNPTDemandCalculations.hbm.xml,**/ptis/DCB/model/PtBillAgent.hbm.xml,**/ptis/DCB/model/PtKhataAgent.hbm.xml"
+		includes="**/*.xml">
+		</jar>
+	</target>
+	
+	
+	<target name="storesjar" if="stores.set">
+		<echo message="Updating stores jar..."/>
+		<jar destfile="${ear}/${product.name}.jar" update="true" duplicate="preserve">
+			<zipfileset dir="${config.dir}">
+				<include name="searchMetadata.json" />
+			</zipfileset>	
+		</jar>	
+	
+		<jar destfile="${ear}/mappings.jar/${product.name}-mappings.jar" update="true">
+			<zipfileset dir="${config.dir}">
+				<include name="hibernatequeries.hbm.xml" />
+			</zipfileset>	
+		</jar>	
+
+	</target>
+	
+	<target name="storeswar" if="stores.set">
+		<echo message="Updating stores war..."/>
+		<war destfile="${ear}/${product.name}.war" update="true" manifest="${build.dir}/MANIFEST.MF" webxml="${web.dir}/WEB-INF/web.xml" excludes=".svn/**/*, **/.svn" duplicate="preserve">						
+			
+			<fileset dir="${egf.war.dir}">
+				<include name="exility/**"/>
+			</fileset>
+		</war>
+	</target>
+	
+	
+	<target name="pgrsar" if="pgr.set">
+		<mkdir dir="${ear}/egov-scheduler.sar" />
+		<copy todir="${ear}/egov-scheduler.sar" >
+				<fileset dir="${src.dir}" includes="META-INF/*service.xml" />
+		</copy>
+		<jar destfile="${ear}/egov-scheduler.sar/egov-scheduler.jar" manifest="${build.dir}/MANIFEST.MF">
+				<zipfileset dir="${build.classes}"  includes="**/server/EscalationGenSchedulableMBean.class,**/server/EscalationGenSchedulerStart.class,**/server/EscalationGenSchedulable.class" />				
+		</jar>	
+	</target>
+	
+	<target name="ptisclientcompile" if="ptisclient.set">
+		<echo message="Compiling PTIS Client classes..." />
+		<echo message="clientSrc.dir--------- ${clientSrc.dir}" />
+		<echo message="web.dir-------- ${web.dir}" />
+		<javac srcdir="${clientSrc.dir}" classpathref="class.path" destdir="${web.dir}/WEB-INF/classes" debug="true" />
+		<copy todir="${web.dir}/WEB-INF/classes">
+			<fileset dir="${clientSrc.dir}" includes="**/*.properties, **/*.jasper" />
+		</copy>
+	</target>
+
+</project>

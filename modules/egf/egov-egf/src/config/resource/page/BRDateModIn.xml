@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<pageMap name="reconcileIn" > 	
+	<gridMap name="gridBankReconciliation" containsNames="true">
+		<columnMap name="bankReconciliation_ID" serverFieldName="id"/>		
+		<columnMap name="clearanceDate" serverFieldName="reconciliationDate"/>				
+	</gridMap>	
+</pageMap>

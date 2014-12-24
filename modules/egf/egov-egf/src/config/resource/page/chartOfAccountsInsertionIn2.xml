@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<pageMap name="chartOfAccountsInsertionIn" > 
+	<gridMap name="accIDandName" containsNames="true">
+		<columnMap name="required" />
+		<columnMap name="accountdetailtype_ID" />
+		<columnMap name="defaultKey" />
+	</gridMap>	
+</pageMap>

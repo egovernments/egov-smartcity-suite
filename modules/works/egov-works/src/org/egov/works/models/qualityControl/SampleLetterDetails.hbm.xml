@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.works.models.qualityControl.SampleLetterDetails" table="EGW_QC_SAMPLELETTER_DETAILS">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_QC_SAMPLELETTERDETAILS_SEQ</param>
+			</generator>
+		</id>
+		
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" not-null="true" type="timestamp" />
+		<property column="MODIFIED_DATE" name="modifiedDate" type="timestamp" />
+
+        <many-to-one name="sampleLetterHeader" class="org.egov.works.models.qualityControl.SampleLetterHeader" fetch="select" insert="false" update="false">
+            <column name="SAMPLELETTERHEADER_ID" not-null="true" />
+        </many-to-one>
+	     <many-to-one name="testSheetDetails" class="org.egov.works.models.qualityControl.TestSheetDetails" column="TESTSHEETDETAILS_ID" not-null="true" fetch="join"/>
+		
+		<property name="sampleQuantity" type="double">
+            <column name="SAMPLE_QUANTITY" />
+        </property> 
+        
+     </class> 
+</hibernate-mapping>		

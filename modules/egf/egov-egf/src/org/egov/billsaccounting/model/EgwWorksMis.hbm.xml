@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Feb 13, 2007 1:14:56 PM by Hibernate Tools 3.1.0.beta5 -->
+<hibernate-mapping >
+    <class name="org.egov.billsaccounting.model.EgwWorksMis" table="EGW_WORKS_MIS" >
+        <id name="id" type="integer">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="sequence">
+	    			<param name="sequence">SEQ_EGW_WORKS_MIS</param>
+		</generator>
+        </id>
+       <timestamp column="LASTMODIFIEDDATE" name="lastmodifieddate" access="property"	unsaved-value="null"/>
+        <many-to-one name="worksdetail" class="org.egov.billsaccounting.model.Worksdetail" fetch="select">
+            <column name="WORKSDETAILID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="relation" class="org.egov.commons.Relation" fetch="select">
+            <column name="THIRDPARY" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="fund" class="org.egov.commons.Fund" fetch="select">
+            <column name="FUNDID" precision="22" scale="0" />
+        </many-to-one>
+        <property name="emdreceived" type="big_decimal">
+            <column name="EMDRECEIVED" precision="10" />
+        </property>
+        <property name="chequeRefno" type="string">
+            <column name="CHEQUE_REFNO" length="20" />
+        </property>
+        <property name="chequeRefnoDate" type="date">
+            <column name="CHEQUE_REFNO_DATE" length="7" />
+        </property>
+        <property name="performanceSecurity" type="big_decimal">
+            <column name="PERFORMANCE_SECURITY" precision="10" />
+        </property>
+        <property name="councilres" type="string">
+            <column name="COUNCILRES" length="30" />
+        </property>
+        <property name="councilresdate" type="date">
+            <column name="COUNCILRESDATE" length="7" />
+        </property>
+        <property name="tenderno" type="string">
+            <column name="TENDERNO" length="50" />
+        </property>
+        <property name="tenderamt" type="big_decimal">
+            <column name="TENDERAMT" precision="15" />
+        </property>
+        <property name="tenderdate" type="date">
+            <column name="TENDERDATE" length="7" />
+        </property>
+        <property name="agreementNo" type="string">
+            <column name="AGREEMENT_NO" length="50" />
+        </property>
+        <property name="estimatedcost" type="big_decimal">
+            <column name="ESTIMATEDCOST" precision="15" />
+        </property>
+        <property name="years" type="integer">
+            <column name="YEARS" precision="22" scale="0" />
+        </property>
+        <property name="months" type="integer">
+            <column name="MONTHS" precision="22" scale="0" />
+        </property>
+        <property name="days" type="integer">
+            <column name="DAYS" precision="22" scale="0" />
+        </property>
+        <property name="estimatepreparedon" type="date">
+            <column name="ESTIMATEPREPAREDON" length="7" />
+        </property>
+        <property name="liabilityuntil" type="date">
+            <column name="LIABILITYUNTIL" length="7" />
+        </property>
+       <many-to-one name="esimatepreparedby" class="org.egov.lib.rjbac.user.UserImpl" >
+            <column name="ESIMATEPREPAREDBY" precision="22" scale="0"  />
+        </many-to-one>
+        <property name="wardid" type="big_decimal">
+            <column name="WARDID" precision="22" scale="0" />
+        </property>
+       
+        <property name="otherdetails" type="string">
+            <column name="OTHERDETAILS" length="500" />
+        </property>
+        
+        <property name="fieldid" type="big_decimal">
+            <column name="FIELDID" precision="22" scale="0" />
+        </property>
+      <!--  <property name="mbadvinterest" type="big_decimal">
+            <column name="MBADVINTEREST" precision="5" />
+        </property> --> 
+        <property name="type" type="string">
+            <column name="TYPE" length="30" />
+        </property>
+        <property name="contractrate" type="big_decimal">
+            <column name="CONTRACTRATE" precision="5" />
+        </property>
+        <property name="mobPerc" type="big_decimal">
+            <column name="MOB_PERC" precision="5" />
+        </property>
+        <property name="rebatetype" type="string">
+            <column name="REBATETYPE" length="30" />
+        </property>
+        <property name="rebate" type="big_decimal">
+            <column name="REBATE" precision="10" />
+        </property>
+        <property name="agreementType" type="string">
+            <column name="AGREEMENT_TYPE" length="30" />
+        </property>
+        <property name="weightage" type="string">
+            <column name="WEIGHTAGE" length="30" />
+        </property>
+        <property name="tenderDetails" type="string">
+            <column name="TENDER_DETAILS" length="300" />
+        </property>
+        <property name="notes" type="string">
+            <column name="NOTES" length="300" />
+        </property>
+        <property name="xvalue" type="big_decimal">
+            <column name="XVALUE" precision="5" />
+        </property>
+        <property name="yvalue" type="big_decimal">
+            <column name="YVALUE" precision="5" />
+        </property>
+        <property name="contractorGrade" type="big_decimal">
+            <column name="CONTRACTOR_GRADE" precision="22" scale="0" />
+        </property>
+        <property name="securityDeposit" type="big_decimal">
+            <column name="SECURITY_DEPOSIT" precision="15" />
+        </property>
+        <property name="schemeId" type="integer">
+            <column name="SCHEMEID" precision="15" />
+        </property>
+        <property name="subSchemeId" type="integer">
+            <column name="SUBSCHEMEID" precision="15" />
+        </property>
+         <property name="isFixedAsset" type="integer">
+            <column name="isFixedAsset" precision="1" />
+        </property>
+    </class>
+</hibernate-mapping>

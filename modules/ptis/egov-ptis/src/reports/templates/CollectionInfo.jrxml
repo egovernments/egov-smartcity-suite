@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CollectionInfo" language="groovy" pageWidth="802" pageHeight="72" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="454"/>
+	<property name="ireport.y" value="0"/>
+	<import value="org.egov.infstr.reporting.util.*"/>
+	<import value="org.egov.ptis.bean.*"/>
+	<field name="indexNo" class="java.lang.String"/>
+	<field name="houseNo" class="java.lang.String"/>
+	<field name="wardNo" class="java.lang.String"/>
+	<field name="payeeName" class="java.lang.String"/>
+	<field name="receiptNo" class="java.lang.String"/>
+	<field name="paymentMode" class="java.lang.String"/>
+	<field name="chequeNo" class="java.lang.String"/>
+	<field name="chequeDate" class="java.util.Date"/>
+	<field name="bankName" class="java.lang.String"/>
+	<field name="collInfoList" class="java.util.List"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="72" splitType="Stretch">
+			<line>
+				<reportElement x="681" y="71" width="119" height="1"/>
+			</line>
+			<line>
+				<reportElement x="1" y="0" width="1" height="71"/>
+			</line>
+			<line>
+				<reportElement x="800" y="0" width="1" height="71"/>
+			</line>
+			<line>
+				<reportElement x="116" y="0" width="1" height="71"/>
+			</line>
+			<line>
+				<reportElement x="164" y="0" width="1" height="71"/>
+			</line>
+			<line>
+				<reportElement x="727" y="0" width="1" height="71"/>
+			</line>
+			<line>
+				<reportElement x="680" y="0" width="1" height="71"/>
+			</line>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="3" y="2" width="59" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{indexNo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="3" y="25" width="59" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{wardNo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="3" y="48" width="58" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{houseNo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="64" y="0" width="52" height="71"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{payeeName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="119" y="25" width="44" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{receiptNo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="684" y="24" width="43" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{paymentMode}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="729" y="1" width="71" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[( $F{chequeNo} != null ? $F{chequeNo} : "N/A" )]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="729" y="13" width="71" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{chequeDate}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="729" y="25" width="70" height="45"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{bankName}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="165" y="0" width="515" height="71"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{collInfoList},false)]]></dataSourceExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[ReportUtil.getTemplateAsStream("ReasonWiseCollectionInfo.jasper")]]></subreportExpression>
+			</subreport>
+			<line>
+				<reportElement x="1" y="71" width="163" height="1"/>
+			</line>
+			<line>
+				<reportElement x="61" y="0" width="1" height="72"/>
+			</line>
+			<line>
+				<reportElement x="1" y="0" width="797" height="1"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

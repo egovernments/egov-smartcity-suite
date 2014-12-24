@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite errors="2" name="Test_Create_MMRN" assertions="0" tests="1" time="29.663" failures="0">
+  <testcase name="test_0010_create_mmrn_for_physical_stocking" assertions="0" time="29.662">
+    <failure type="WIN32OLERuntimeError" message="document...">
+document
+    OLE error code:80004005 in &lt;Unknown&gt;
+      &lt;No Description&gt;
+    HRESULT error code:0x80020009
+      Exception occurred. (WIN32OLERuntimeError)
+c:/ruby/lib/ruby/gems/1.8/gems/watir-1.6.2/lib/watir/ie-class.rb:342:in `method_missing'
+c:/ruby/lib/ruby/gems/1.8/gems/watir-1.6.2/lib/watir/ie-class.rb:342:in `title'
+c:/ruby/lib/ruby/gems/1.8/gems/watir-1.6.2/lib/watir/ie-class.rb:422:in `set_window_state'
+c:/ruby/lib/ruby/gems/1.8/gems/watir-1.6.2/lib/watir/ie-class.rb:398:in `maximize'
+c:/stores_qa/common/Utils.rb:8:in `start_browser'
+c:/stores_qa/regression/Transactions/MMRN/stores_mmrn_methods.rb:31:in `create_item'
+test_create_mmrn.rb:36:in `test_0010_create_mmrn_for_physical_stocking'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `__send__'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:78:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+c:/ruby/lib/ruby/1.8/test/unit.rb:278
+test_create_mmrn.rb:151    </failure>
+    <failure type="NoMethodError" message="undefined method `close' for nil:NilClass">
+undefined method `close' for nil:NilClass (NoMethodError)
+test_create_mmrn.rb:157:in `teardown'
+c:/ruby/lib/ruby/1.8/test/unit/testcase.rb:86:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+c:/ruby/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+c:/ruby/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+c:/ruby/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+c:/ruby/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+c:/ruby/lib/ruby/1.8/test/unit.rb:278
+test_create_mmrn.rb:151    </failure>
+  </testcase>
+  <system-out>
+    <![CDATA[unknown property or method `document'
+    HRESULT error code:0x80010108
+      The object invoked has disconnected from its clients.
+undefined method `close' for nil:NilClass
+]]>
+  </system-out>
+  <system-err>
+    <![CDATA[]]>
+  </system-err>
+</testsuite>

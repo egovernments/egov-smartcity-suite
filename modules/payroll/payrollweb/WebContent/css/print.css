@@ -1,0 +1,66 @@
+@import url('egov.css');
+
+span.pagebanner {
+
+	display:none;
+
+}
+
+html body {
+    margin:0;
+    padding:0;
+    text-align:center;
+    font:small "Trebuchet MS",Verdana,Arial,Sans-serif;
+    color:#333;
+    } 
+  #paymain, #header {
+      background:#fff;
+
+
+    } 
+    
+     #m3, #h3 {
+	border:none;
+        padding:0 0px;
+        float:none;
+        width:700px;
+  }
+  
+    #paym2, #h2 {
+      
+      padding-bottom:7px;
+      float:left;
+      width:90%;
+    } 
+    
+   
+#noprint {
+	display:none;
+}
+
+.labelcell { 
+ font:  11px Verdana, Geneva, Arial, Helvetica, sans-serif; 
+ color: #3670A7; 
+ background-color: transparent; 
+ width: 150px; 
+ }
+
+  .closeButton { 
+   font: 11px Verdana, Geneva, Arial, Helvetica, sans-serif; 
+   background-color: #D7E5F2; 
+   display: none;
+   color: #102132; 
+   margin-left: 12px; 
+   margin-top: 3px; 
+   margin-bottom: 2px; 
+  }
+
+ .printButton{ 
+   font: 11px Verdana, Geneva, Arial, Helvetica, sans-serif; 
+   background-color: #D7E5F2; 
+   display: none;
+   color: #102132; 
+   margin-left: 12px; 
+   margin-top: 3px; 
+   margin-bottom: 2px; 
+  }	
