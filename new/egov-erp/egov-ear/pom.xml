@@ -48,6 +48,9 @@
                             <contextRoot>/pgr</contextRoot>
                         </webModule>
                     </modules>
+
+                    <defaultLibBundleDir>lib</defaultLibBundleDir>
+                    <skinnyWars>true</skinnyWars>
                 </configuration>
             </plugin>
         </plugins>
