@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>egov-pgr</artifactId>
+    <artifactId>egov-pgrweb</artifactId>
     <packaging>war</packaging>
 
     <name>e-governments pgr web</name>

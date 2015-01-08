@@ -10,7 +10,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>egov-egi</artifactId>
+    <artifactId>egov-egiweb</artifactId>
     <name>e-governments egi web</name>
     <packaging>war</packaging>
 

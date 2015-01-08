@@ -14,8 +14,8 @@
 
     <modules>
         <module>egov-ear</module>
-        <module>egov-pgr</module>
-        <module>egov-egi</module>
+        <module>egov-pgrweb</module>
+        <module>egov-egiweb</module>
     </modules>
 
 </project>
