@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping >
+	<class name="org.egov.infstr.security.spring.acl.models.AclSidType" table="ACL_SID_TYPE"> 
+		<id name="id" type="long" column="ID">
+	        <generator class="sequence">
+	            <param name="sequence">SEQ_ACL_SID_TYPE</param>
+	        </generator>
+	    </id>		
+		
+		<property name="type" column="type"></property>
+	</class>
+</hibernate-mapping>

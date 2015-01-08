@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="false">
+	<class name="org.egov.infstr.models.Favourites" table="EG_FAVOURITES">
+		<id name="id" column="ID" type="long" unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">EG_FAVOURITES_SEQ</param>
+			</generator>
+		</id>
+		<property name="userId" column="USER_ID" type="int"/>
+		<property name="actionId" column="ACTION_ID" type="int" />	
+		<property name="favouriteName" column="FAV_NAME" type="string" />	
+		<property name="contextName" column="CTX_NAME" type="string" />
+	</class>	
+</hibernate-mapping>

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.commons.Installment" table="EG_INSTALLMENT_MASTER">
+		<id name="id" column="ID_INSTALLMENT">
+			<generator class="native">
+				<param name="sequence">seq_installment</param>
+			</generator>
+		</id>
+		<timestamp column="LASTUPDATEDTIMESTAMP" name="lastUpdatedTimeStamp" access="property" unsaved-value="null" />
+
+		<property name="installmentNumber" column="INSTALLMENT_NUM" />
+		<property name="installmentType" column="INSTALLMENT_TYPE" />
+		<property name="description" column="DESCRIPTION" />
+		<property name="installmentYear" column="INSTALLMENT_YEAR" />
+		<property name="fromDate" column="START_DATE" />
+		<property name="toDate" column="END_DATE" />
+		<many-to-one name="module" class="org.egov.infstr.commons.Module"
+			column="ID_MODULE" />
+	</class>
+	<query name="INSTALLMENTLISTBY_MODULE_AND_STARTYEAR">
+        <![CDATA[select it from org.egov.commons.Installment it where (it.fromDate>=? or ? between it.fromDate and it.toDate) and it.fromDate<=sysdate and it.module.moduleName=?]]></query>
+</hibernate-mapping>

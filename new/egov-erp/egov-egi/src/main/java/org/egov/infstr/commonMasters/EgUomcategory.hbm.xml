@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.infstr.commonMasters.EgUomcategory" table="EG_UOMCATEGORY">
+		<id name="id" type="integer">
+			<column name="ID" precision="22" scale="0" />
+			<generator class="native">
+				<param name="sequence">seq_eg_uomcategory</param>
+			</generator>
+		</id>
+		<property name="category" type="string">
+			<column name="CATEGORY" length="30" not-null="true" unique="true" />
+		</property>
+		<property name="narration" type="string">
+			<column name="NARRATION" length="250" />
+		</property>
+		<property name="lastmodified" type="date">
+			<column name="LASTMODIFIED" length="7" not-null="true" />
+		</property>
+		<property name="createddate" type="date">
+			<column name="CREATEDDATE" length="7" not-null="true" />
+		</property>
+		<property name="createdby" type="big_decimal">
+			<column name="CREATEDBY" precision="22" scale="0" not-null="true" />
+		</property>
+		<property name="lastmodifiedby" type="big_decimal">
+			<column name="LASTMODIFIEDBY" precision="22" scale="0" />
+		</property>
+		<set name="egUoms" inverse="true">
+			<key>
+				<column name="UOMCATEGORYID" precision="22" scale="0" not-null="true" />
+			</key>
+			<one-to-many class="org.egov.infstr.commonMasters.EgUom" />
+		</set>
+	</class>
+</hibernate-mapping>

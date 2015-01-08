@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.lib.rjbac.jurisdiction.JurisdictionValues" table="EG_USER_JURVALUES">
+		<id name="id" column="ID" type="integer">
+			<generator class="native">
+				<param name="sequence">SEQ_EG_USER_JURVALUES</param>
+			</generator>
+		</id>
+
+		<many-to-one name="userJurLevel" class="org.egov.lib.rjbac.jurisdiction.Jurisdiction" fetch="select" cascade="save-update">
+			<column name="ID_USER_JURLEVEL" />
+		</many-to-one>
+		<many-to-one name="boundary" class="org.egov.lib.admbndry.BoundaryImpl" fetch="select">
+			<column name="ID_BNDRY" />
+		</many-to-one>
+		<property name="fromDate" column="FROMDATE" type="date" />
+		<property name="toDate" column="ToDate" type="date" />
+		<property name="isHistory" column="IS_HISTORY" />
+	</class>
+</hibernate-mapping>

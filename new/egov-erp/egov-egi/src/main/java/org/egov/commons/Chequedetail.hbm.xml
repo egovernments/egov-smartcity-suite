@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="org.egov.commons.Chequedetail" table="CHEQUEDETAIL">
+        <id name="id" type="integer">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="native">
+            <param name="sequence">seq_chequedetail</param>
+            </generator>
+        </id>
+        <many-to-one name="bankbranch" class="org.egov.commons.Bankbranch" fetch="select">
+            <column name="BRANCHID" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="bankaccount" class="org.egov.commons.Bankaccount" fetch="select">
+            <column name="ACCOUNTNUMBERID" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="bank" class="org.egov.commons.Bank" fetch="select">
+            <column name="BANKID" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="voucherheader" class="org.egov.commons.CVoucherHeader" fetch="select">
+            <column name="VOUCHERHEADERID" precision="22" scale="0" />
+        </many-to-one>
+        <property name="chequedate" type="date">
+            <column name="CHEQUEDATE" length="7" not-null="true" />
+        </property>
+        <property name="chequenumber" type="string">
+            <column name="CHEQUENUMBER" length="10" not-null="true" />
+        </property>
+        <property name="receiptdate" type="date">
+            <column name="RECEIPTDATE" length="7" not-null="true" />
+        </property>
+        <property name="amount" type="big_decimal">
+            <column name="AMOUNT" precision="15" not-null="true" />
+        </property>
+        <property name="regionid" type="big_decimal">
+            <column name="REGIONID" precision="22" scale="0" />
+        </property>
+        <property name="isdeposited" type="boolean">
+            <column name="ISDEPOSITED" precision="1" scale="0" not-null="true" />
+        </property>
+        <property name="payinslipnumber" type="string">
+            <column name="PAYINSLIPNUMBER" length="12" />
+        </property>
+        <property name="payinslipdate" type="date">
+            <column name="PAYINSLIPDATE" length="7" />
+        </property>
+        <property name="narration" type="string">
+            <column name="NARRATION" length="50" />
+        </property>
+        <property name="payto" type="string">
+            <column name="PAYTO" length="50" />
+        </property>
+        <property name="paidbyid" type="big_decimal">
+            <column name="PAIDBYID" precision="22" scale="0" />
+        </property>
+        <property name="approvedby" type="string">
+            <column name="APPROVEDBY" length="10" />
+        </property>
+        <property name="created" type="date">
+            <column name="CREATED" length="7" />
+        </property>
+        <property name="modifiedby" type="big_decimal">
+            <column name="MODIFIEDBY" precision="22" scale="0" />
+        </property>
+        <property name="lastmodified" type="date">
+            <column name="LASTMODIFIED" length="7" />
+        </property>
+        <property name="ispaycheque" type="java.lang.Boolean">
+            <column name="ISPAYCHEQUE" precision="1" scale="0" />
+        </property>
+        <property name="isreversed" type="java.lang.Boolean">
+            <column name="ISREVERSED" precision="1" scale="0" />
+        </property>
+        <property name="chequetype" type="java.lang.Character">
+            <column name="CHEQUETYPE" length="1" />
+        </property>       
+        <property name="bankname" type="string">
+            <column name="BANKNAME" length="100" />
+        </property>
+        <property name="type" type="string">
+            <column name="TYPE" length="50" />
+        </property>
+        <property name="chqstatus" type="big_decimal">
+            <column name="CHQSTATUS" precision="22" scale="0" />
+        </property>
+        <property name="detailTypeId">
+            <column name="DETAILTYPEID" />
+        </property>
+        <property name="detailKeyId" >
+            <column name="DETAILKEYID" />
+        </property>
+    </class>
+</hibernate-mapping>

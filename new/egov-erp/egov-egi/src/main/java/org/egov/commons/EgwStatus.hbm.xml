@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.commons.EgwStatus" table="EGW_STATUS">
+		<id name="id" type="integer">
+			<column name="ID" precision="22" scale="0" />
+			<generator class="native">
+				<param name="sequence">SEQ_EGW_STATUS</param>
+			</generator>
+		</id>
+		<timestamp column="LASTMODIFIEDDATE" name="lastmodifieddate" access="property" unsaved-value="null" />
+		<property name="moduletype" type="string">
+			<column name="MODULETYPE" length="10" not-null="true" />
+		</property>
+		<property name="description" type="string">
+			<column name="DESCRIPTION" length="20" />
+		</property>
+		<property name="code">
+			<column name="CODE" />
+		</property>
+		<property name="orderId">
+			<column name="ORDER_ID" />
+		</property>
+	</class>
+</hibernate-mapping>

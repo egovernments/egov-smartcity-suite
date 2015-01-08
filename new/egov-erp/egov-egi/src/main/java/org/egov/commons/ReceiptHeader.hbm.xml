@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="org.egov.commons.ReceiptHeader" table="RECEIPTHEADER">
+        <id name="id" type="integer">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="sequence">
+            <param name="sequence">SEQ_RECEIPTHEADER</param>
+            </generator>
+        </id>
+        
+        <many-to-one name="voucherHeaderId" class="org.egov.commons.CVoucherHeader" fetch="select">
+            <column name="VOUCHERHEADERID" precision="22" scale="0" not-null="true"/>
+        </many-to-one>
+         <property name="type" type="string">
+            <column name="TYPE" length="50" not-null="true"/>
+        </property>        
+        <property name="wardId" type="integer">
+            <column name="WARDID" precision="22" scale="0"/>
+        </property>
+          <many-to-one name="bankId" class="org.egov.commons.Bank" fetch="select">
+            <column name="BANKID" precision="22" scale="0" />
+        </many-to-one>
+         <many-to-one name="bankBranchId" class="org.egov.commons.Bankbranch" fetch="select">
+            <column name="BANKBRANCHID" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="bankAccNoId" class="org.egov.commons.Bankaccount" fetch="select">
+            <column name="BANKACCOUNTNUMBERID" precision="22" scale="0" />
+        </many-to-one>
+         <property name="modeOfCollection" type="string">
+            <column name="MODEOFCOLLECTION" length="15" not-null="true"/>
+        </property>
+        <many-to-one name="chequeId" class="org.egov.commons.Chequedetail" fetch="select">
+            <column name="CHEQUEID" precision="22" scale="0" />
+        </many-to-one>
+         <property name="cashAmount" type="big_decimal">
+            <column name="CASHAMOUNT" precision="15" scale="2" />
+        </property>
+         <property name="narration" type="string">
+            <column name="NARRATION" length="250"  />
+        </property>
+         <property name="revenueSource" type="string">
+            <column name="REVENUESOURCE" length="25"  />
+        </property>
+         <property name="isReversed" type="int">
+            <column name="ISREVERSED" precision="1"   />
+        </property>
+         <property name="cashier" type="string">
+            <column name="CASHIER" length="50"  />
+        </property>
+         <property name="receiptNo" type="string">
+            <column name="RECEIPTNO" length="32"  />
+        </property>
+         <property name="manualReceiptNo" type="string">
+            <column name="MANUALRECEIPTNUMBER" length="10"  />
+        </property>        
+    </class>
+</hibernate-mapping>

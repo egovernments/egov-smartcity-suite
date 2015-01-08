@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.masters.model.BillNumberMaster" table="EGEIS_BILLNUMBER_MASTER">
+		<id name="id" column="ID" type="java.lang.Integer">
+			<generator class="sequence">
+				<param name="sequence">SEQ_EGEIS_BILLNUMBER_MASTER</param>
+			</generator>
+		</id>
+		<property name="billNumber" column="BILLNUMBER" type="java.lang.String" />
+		<many-to-one name="department" class="org.egov.lib.rjbac.dept.DepartmentImpl" column="ID_DEPARTMENT" not-null="true" />
+		<many-to-one name="position" class="org.egov.pims.commons.Position" column="ID_POSITION" not-null="true" />
+	</class>
+	<query name="BILLNUMBER_BY_ID">
+    	<![CDATA[from BillNumberMaster where id = ?]]>
+	</query>
+	<query comment="getting bill number list" name="BILL-NUMBER-LIST">
+		<![CDATA[from BillNumberMaster where lower(billNumber) like ?]]>
+	</query>
+</hibernate-mapping>

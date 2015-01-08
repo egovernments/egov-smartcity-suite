@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="false">
+	<class name="org.egov.infstr.auditing.model.AuditEvent" table="EG_AUDIT_EVENT">
+		<id name="id" column="ID" type="long" unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">EG_AUDIT_EVENT_SEQ</param>
+			</generator>
+		</id>
+		<property name="auditModule" column="MODULE">
+		 	<type name="org.hibernate.type.EnumType">
+         		<param name="enumClass">org.egov.infstr.auditing.model.AuditModule</param>
+        		<param name="type">12</param>
+     		</type>
+		</property>
+		<property name="auditEntity" column="ENTITY">
+		 	<type name="org.hibernate.type.EnumType">
+         		<param name="enumClass">org.egov.infstr.auditing.model.AuditEntity</param>
+        		<param name="type">12</param>
+     		</type>
+		</property>
+		<property name="pkId" column="PKID" type="long"/>
+		<property name="action" column="ACTION" type="string" length="100" />
+		<property name="fqcn" column="FQCN" type="string" length="100" />
+		<property name="bizId" column="BIZID" type="string" length="100" />
+		<property name="userName" column="USERNAME" type="string" length="100" />
+		<property name="details1" column="DETAILS1" type="string" length="4000" />
+		<property name="details2" column="DETAILS2" type="string" length="4000" />
+		<property name="eventDate" column="EVENTDATE" type="timestamp" />
+	</class>
+</hibernate-mapping>

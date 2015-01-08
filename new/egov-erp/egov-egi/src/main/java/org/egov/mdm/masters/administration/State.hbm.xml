@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.mdm.masters.administration.State" table="EG_STATE"
+		dynamic-update="false" dynamic-insert="false" select-before-update="false"
+		optimistic-lock="version">
+		<id name="id" type="java.lang.Integer">
+			<column name="STATEID" />
+			<generator class="native"/>
+		</id>
+		<property name="name" type="java.lang.String" update="true" insert="true" access="property">
+			<column name="STATENAME" />
+		</property>
+		<property name="nameLocal" type="java.lang.String" update="true" insert="true" access="property">
+			<column name="STATENAMELOCAL" />
+		</property>
+		<property name="stateConst" type="java.lang.String" update="true" insert="true" access="property">
+			<column name="STATECONST" />
+		</property>	
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.lib.rrbac.model.Rules" table="EG_RULES" polymorphism="implicit" lazy="false">
+		<id name="id" column="ID" type="integer">
+			<generator class="native">
+				<param name="sequence">SEQ_EG_RULES</param>
+			</generator>
+		</id>
+		<discriminator>
+			<column name="TYPE" />
+		</discriminator>
+		<timestamp column="updatedtime" name="updatedTime" access="property" unsaved-value="null" />
+
+		<property name="name" column="Name" />
+		<property name="defaultValue" column="DEFAULTVALUE" />
+		<property name="active" column="active" />
+		<property name="type" column="type" update="false" insert="false" />
+		<subclass name="org.egov.lib.rrbac.model.FundRule" discriminator-value="FundRule">
+			<property name="included" column="INCLUDED" />
+			<property name="excluded" column="EXCLUDED" />
+			<set name="ieList" cascade="all-delete-orphan" inverse="true">
+				<key column="RULEID" />
+				<one-to-many class="org.egov.lib.rrbac.model.IEList" />
+			</set>
+		</subclass>
+		<subclass name="org.egov.lib.rrbac.model.AccountCodeRule" discriminator-value="AccountCodeRule">
+			<property name="included" column="INCLUDED" />
+			<property name="excluded" column="EXCLUDED" />
+			<set name="ieList" cascade="all-delete-orphan" inverse="true">
+				<key column="RULEID" />
+				<one-to-many class="org.egov.lib.rrbac.model.IEList" />
+			</set>
+		</subclass>
+		<subclass name="org.egov.lib.rrbac.model.AmountRule"
+			discriminator-value="AmountRule">
+			<property name="minRange" column="MINRANGE" />
+			<property name="maxRange" column="MAXRANGE" />
+		</subclass>
+	</class>
+</hibernate-mapping>

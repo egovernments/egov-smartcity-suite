@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.egov.commons.SharedFundSource" table="SHARED_FUNDSOURCE" >
+        <id name="id" type="long">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="native">
+            <param name="sequence">seq_fundsource</param>
+            </generator>
+        </id>
+        <many-to-one name="fundSourceId" class="org.egov.commons.Fundsource" fetch="select">
+            <column name="FUNDSOURCEID" precision="22" scale="0" />
+        </many-to-one>
+		 <many-to-one name="subSchemeId" class="org.egov.commons.SubScheme" fetch="select">
+            <column name="SUBSCHEMEID"  />
+        </many-to-one>
+        <property name="amount" type="big_decimal">
+            <column name="AMOUNT" precision="15" scale="2"  />
+        </property>
+    </class>
+    
+</hibernate-mapping>

@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.pims.commons.Position" table="EG_POSITION">
+
+		<id name="id" column="ID" type="int">
+			<generator class="sequence">
+				<param name="sequence">SEQ_POS</param>
+			</generator>
+		</id>
+		<property name="outsourcedPosts">
+			<column name="OUTSOURCED_POSTS" />
+		</property>
+		<property name="sanctionedPosts">
+			<column name="SANCTIONED_POSTS" />
+		</property>
+		<property name="efferctiveDate">
+			<column name="EFFECTIVE_DATE" />
+		</property>
+		<property name="name">
+			<column name="POSITION_NAME" />
+		</property>
+		
+		<property name="isPostOutsourced">
+			<column name="ISPOST_OUTSOURCED" />
+		</property>
+		
+		<many-to-one name="desigId"
+			class="org.egov.pims.commons.DesignationMaster" fetch="select" cascade="save-update">
+			<column name="DESIG_ID" />
+		</many-to-one>
+		
+		<many-to-one name="deptDesigId"
+			class="org.egov.pims.commons.DeptDesig" fetch="select" cascade="save-update">
+			<column name="ID_DEPTDESIG" />
+		</many-to-one>
+		
+		 <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" fetch="select" >
+       		 <column name="LASTMODIFIEDBY" precision="12" scale="0"  />
+    	</many-to-one>
+    
+  		<property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp"  />
+		
+		<many-to-one name="drawingOfficer" class = "org.egov.pims.commons.DrawingOfficer" column="ID_DRAWING_OFFICER" unique="true"/>
+		<many-to-one name="billNumber" class="org.egov.masters.model.BillNumberMaster" column="ID_BILLNUMBER" />
+
+	</class>
+</hibernate-mapping>

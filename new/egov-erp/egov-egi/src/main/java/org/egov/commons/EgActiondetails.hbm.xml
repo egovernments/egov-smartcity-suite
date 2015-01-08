@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.commons.EgActiondetails" table="EG_ACTIONDETAILS">
+		<id name="id" type="integer">
+			<column name="ID" precision="22" scale="0" />
+			<generator class="native">
+				<param name="sequence">SEQ_EG_ACTIONDETAILS</param>
+			</generator>
+		</id>
+		<timestamp column="LASTMODIFIEDDATE" name="lastmodifieddate" access="property" unsaved-value="null" />
+		<property name="moduletype" type="string">
+			<column name="MODULETYPE" length="30" not-null="true" />
+		</property>
+		<property name="moduleid" column="MODULEID" />
+		<many-to-one name="actionDoneBy" class="org.egov.lib.rjbac.user.UserImpl">
+			<column name="ACTIONDONEBY" precision="22" scale="0" />
+		</many-to-one>
+		<property name="actionDoneOn" type="date">
+			<column name="ACTIONDONEON" length="7" />
+		</property>
+		<property name="comments" type="string">
+			<column name="COMMENTS" length="500" />
+		</property>
+		<property name="createdby" type="integer">
+			<column name="CREATEDBY" precision="22" scale="0" not-null="true" />
+		</property>
+		<property name="actiontype" type="string">
+			<column name="ACTIONTYPE" length="20" />
+		</property>
+	</class>
+</hibernate-mapping>

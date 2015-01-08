@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.commons.CChartOfAccounts" table="CHARTOFACCOUNTS"> 
+		<id name="id" type="long" unsaved-value="null" >
+			<column name="ID" not-null="true"/>
+			<generator class="native">
+				<param name="sequence">seq_chartofaccounts</param>
+			</generator>
+		</id>	
+		<property column="LASTMODIFIED"	name="modifiedDate"/>
+		<property name="glcode" >
+			<column name="GLCODE"/>
+		</property>
+		<property name="majorCode" >
+			<column name="MAJORCODE"/>
+		</property>
+		<property name="name">
+			<column name="NAME"/>
+		</property>	
+		<property name="purposeId">
+			<column name="PURPOSEID"/>
+		</property>	
+		<property name="desc">
+			<column name="DESCRIPTION"/>
+		</property>	
+		<property name="isActiveForPosting">
+			<column name="ISACTIVEFORPOSTING"/>
+		</property>
+		<property name="myClass">
+			<column name="CLASS"/>
+		</property>		
+		<property name="parentId">
+			<column name="PARENTID"/>
+		</property>	
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY"/>
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY"/>
+		<property name="createdDate">
+			<column name="CREATED"/>
+		</property>	
+		<property name="schedule">
+			<column name="SCHEDULEID"/>
+		</property>	
+		<property name="operation">
+			<column name="OPERATION"/>
+		</property>	
+	
+		<property name="type">
+			<column name="TYPE"/>
+		</property>	
+		<property name="classification">
+			<column name="CLASSIFICATION"/>
+		</property>	
+		<property name="functionReqd">
+			<column name="FUNCTIONREQD"/>
+		</property>	 
+		<property name="budgetCheckReq">
+			<column name="BUDGETCHECKREQ"/> 
+		</property>	
+		<set name="chartOfAccountDetails" cascade="all" inverse="true">
+            <key>
+                <column name="GLCODEID"/>
+            </key>
+            <one-to-many class="org.egov.commons.CChartOfAccountDetail" />
+        </set>
+	</class>
+</hibernate-mapping>

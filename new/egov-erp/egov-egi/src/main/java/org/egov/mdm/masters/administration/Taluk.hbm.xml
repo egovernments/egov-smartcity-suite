@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.mdm.masters.administration.Taluk" table="EG_TALUK"
+		dynamic-update="false" dynamic-insert="false" select-before-update="false"
+		optimistic-lock="version">
+		<id name="id" type="java.lang.Integer">
+			<column name="TALUKID" />
+			<generator class="native"/>
+		</id>
+		<property name="name" type="java.lang.String" update="true" insert="true" access="property">
+			<column name="TALUKNAME" />
+		</property>
+		<property name="talukConst" type="java.lang.String" update="true" insert="true" access="property">
+			<column name="TALUKCONST" />
+		</property>
+		<property name="talukNameLocal" type="java.lang.String" update="true" insert="true" access="property">
+			<column name="TALUKNAMELOCAL" />
+		</property>
+		<property name="stateId" type="java.lang.Integer" update="true" insert="true" access="property">
+			<column name="STATEID" />
+		</property>
+		<property name="districtId" type="java.lang.Integer" update="true" insert="true" access="property">
+			<column name="DISTRICTID" />
+		</property>
+	</class>
+</hibernate-mapping>

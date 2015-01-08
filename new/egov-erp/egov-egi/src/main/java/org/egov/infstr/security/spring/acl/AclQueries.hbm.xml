@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<query name="getAclByObjId">
+		from AclObjectIdentity identity where identity.domainObjectId=? and
+		aclObjClass.className=?
+	</query>
+
+	<query name="getAclSidType">
+		from AclSidType where upper(type) like ?
+	</query>
+
+
+	<query name="getMaskForAclEntry">
+<![CDATA[from AclSid where aclObjectIdentity.domainObjectId=?]]>
+	</query>
+
+	<query name="getAclObjClass">
+<![CDATA[from AclObjClass where className like ?]]>
+	</query>
+
+	<query name="getUserById">
+<![CDATA[from UserImpl  where id =?]]>
+	</query>
+	<query name="getRoleById">
+<![CDATA[from RoleImpl  where id =?]]>
+	</query>
+
+	<query name="findUsersByIds">
+<![CDATA[from UserImpl  where id in (:param_0)]]>
+	</query>
+
+	<query name="getAclSidForUser">
+<![CDATA[from AclSid  where upper(sidType.type) like ? and ownerSid 
+ in (select id from UserImpl where userName like ?) 
+ and aclObjectIdentity.domainObjectId=? and permission in(:param_3)]]>
+	</query>
+
+	<query name="getAclSidsForRole">
+<![CDATA[from AclSid  where upper(sidType.type) like ?  and aclObjectIdentity.domainObjectId=? and 
+ownerSid in(select id from RoleImpl where roleName in(:param_2)) and permission in(:param_3)]]>
+	</query>
+
+
+
+	<query name="findUserRolesForGivenUserRoles">
+<![CDATA[from UserRole  where user.id =? and role in (:param_1)]]>
+	</query>
+
+
+	<query name="findRolesByIds">
+<![CDATA[from RoleImpl  where id in (:param_0)]]>
+	</query>
+
+
+	<query name="findGroupsByIds">
+<![CDATA[from NotificationGroup  where id in (:param_0)]]>
+	</query>
+
+
+
+
+	<sql-query name="getMaskForAclEntrySql">
+<![CDATA[select mask from acl_entry entry, acl_object_identity identity
+where entry.acl_object_identity= identity.id
+and identity.object_id_identity=?]]>
+	</sql-query>
+
+	<sql-query name="getAclByObjIdSql">
+ <![CDATA[ select sid.owner_sid, sid.sid_type from acl_object_identity identity , acl_sid sid where identity.id= sid.object_identity_id
+  and identity.object_id_identity = ? and
+  identity.object_id_class=(select id from acl_class where class like ?)]]>
+	</sql-query>
+</hibernate-mapping>

@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.infstr.models.EgChecklists" table="EG_CHECKLISTS">
+		<id name="id" type="long">
+			<column name="ID" precision="22" scale="0" />
+			<generator class="sequence">
+				<param name="sequence">SEQ_EG_CHECKLISTS</param>
+			</generator>
+		</id>
+
+		<many-to-one name="appconfigvalue" class="org.egov.infstr.config.AppConfigValues" fetch="select">
+			<column name="APPCONFIG_VALUES_ID" precision="22" scale="0" not-null="true" />
+		</many-to-one>
+		<property name="checklistvalue" type="string">
+			<column name="CHECKLISTVALUE" length="7" not-null="true" />
+		</property>
+		<property name="objectid" type="long">
+			<column name="OBJECT_ID" length="7" not-null="true" />
+		</property>
+		<property name="lastmodified" type="date">
+			<column name="LASTMODIFIEDDATE" length="7" />
+		</property>
+		<property name="remarks" type="string">
+			<column name="REMARKS" length="1024" />
+		</property>
+	</class>
+	<query name="checklist.by.appconfigid.and.objectid">
+	<![CDATA[
+		from org.egov.infstr.models.EgChecklists as checkList where checkList.objectid =? and checkList.appconfigvalue.key.id in(?)
+	]]>
+	</query>
+
+	<query name="checklist.by.objectid">
+	<![CDATA[
+		from org.egov.infstr.models.EgChecklists as checkList where checkList.objectid =?
+	]]>
+	</query>
+</hibernate-mapping>
