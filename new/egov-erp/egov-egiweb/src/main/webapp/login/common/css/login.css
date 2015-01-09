@@ -1,0 +1,221 @@
+body {
+	margin: 0px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:11px;
+	text-align: center;
+	background-color: #FFFFFF;
+	}
+a:link {
+	color: #003366;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	}
+	
+a:visited {
+	color: #003366;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	}
+	
+a:hover {
+	color: #FFAD01;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	}
+
+a:active {
+	color: #CCCCCC;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	}
+
+div.logoLeft {
+	float: left; 
+	margin-left: 15px; 
+	margin-right: 15px; 
+	margin-top: 5px; 
+}
+
+div.logoRight {
+	float: right; 
+	margin-left: 15px; 
+	margin-right: 15px; 
+	margin-top: 5px; 
+}
+.textAlignLeft {
+	text-align: left;
+}
+.capslock {
+	display:none;
+	color:red;
+	font-weight:bolder;
+	font-size:10px;
+}
+div.mainheading { 
+	padding-top:25px;
+	}
+	
+div.formmainbox {
+	margin-left: 8px;
+	margin-right: 8px;
+	margin-top: 8px;
+	}	
+
+input {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #333333;
+	background-color: #FFFFFF;
+	border: 1px solid #CCCCCC;
+	padding-top: 2px;
+	padding-right: 2px;
+	padding-bottom: 2px;
+	padding-left: 4px;
+	}
+	
+div.buttonbottom {
+	margin-top: 8px;
+	padding: 15px;
+	background-color:#E4E4E4;
+	}
+div.topbar {
+	background-color: #FFAD01;
+	height: 100px;
+	width: 100%;
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 30px;
+	font-weight: normal;
+	color: #333333;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	text-align: center;
+	background-image: url(../image/bg.jpg);
+	background-position: right bottom;
+	background-repeat: no-repeat;
+	}
+div.authorized {
+	margin-top:35px;
+	margin-left:auto;
+	margin-right:auto;
+	width:70%;
+	text-align:center;
+	font-weight:bold;
+	font-size:14px;
+	color:#333;
+}
+div.insidecontent {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #333333;
+	background-color: #F3F3F3;
+	text-align: left;
+	clip: rect(auto,auto,5px,auto);
+	line-height: 18px;
+	margin-bottom: 10px;
+	padding-top: 15px;
+	padding-right: 15px;
+	padding-bottom: 15px;
+	padding-left: 15px;
+	}
+.loginboxnew1 {
+	color: #333333;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: normal;
+	background-image: url(../image/loginbg.jpg);
+	height: 193px;
+	background-position: right center;
+	background-color: #D4EAF5;
+	background-repeat: no-repeat;
+	}
+.buttongeneral {
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color: #FFFFFF;
+	background-color: #666666;
+	text-align: center;
+	padding-right: 8px;
+	padding-left: 8px;
+	border: 1px solid #CCCCCC;
+	}
+div.navibarportal {
+	background-color: #eceded;
+	padding-top: 7px;
+	padding-right: 15px;
+	padding-bottom: 0px;
+	padding-left: 15px;
+	text-align: left;
+	background-image: url(../../../html/common/image/commonnewTop2bg.jpg);
+	background-repeat: repeat-x;
+	vertical-align: middle;
+	height: 26px;
+	}
+.loginheadingnew3 {
+	color: #FFFFFF;
+	font-size: 16px;
+	font-weight: bold;
+	background-color: #416A9C;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	padding-top: 6px;
+	padding-right: 5px;
+	padding-bottom: 6px;
+	padding-left: 15px;
+}
+
+div.loginboxmain {
+	margin-top: 25px;
+	background-color: #93C8E9;
+	width: 75%;
+	margin-bottom: 25px;
+	border-right-width: 3px;
+	border-bottom-width: 3px;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-right-color: #E6E6E6;
+	border-bottom-color: #E6E6E6;
+	padding-top: 20px;
+	padding-right: 25px;
+	padding-bottom: 20px;
+	padding-left: 25px;
+	}
+select {
+	font-family: Arial, Helvetica, sans-serif;
+	color: #333333;
+	font-size: 11px;
+	padding-left: 2px;
+	}
+.rbroundbox2 {
+	background-image: url(../image/nt.gif);
+	background-repeat: repeat;
+	}
+	
+.rbtop2 div { background: url(../image/tl.gif) no-repeat top left; }
+.rbtop2 { background: url(../image/tr.gif) no-repeat top right; }
+.rbbot2 div { background: url(../image/bl.gif) no-repeat bottom left; }
+.rbbot2 { background: url(../image/br.gif) no-repeat bottom right; }
+.rbtop2 div, .rbtop2, .rbbot2 div, .rbbot2 {
+	width: 100%;
+	height: 7px;
+	font-size: 1px;
+	}
+	
+.rbcontent2 {
+	margin-top: 0px;
+	margin-right: 7px;
+	margin-bottom: 0;
+	margin-left: 7px;
+	padding-top: 2px;
+	padding-right: 12px;
+	padding-bottom: 12px;
+	padding-left: 12px;
+	height:370px;
+	}
+	
+.rbroundbox2 {
+	width: 100%;
+	margin-top: 0em;
+	margin-right: auto;
+	margin-bottom: 0em;
+	margin-left: auto;
+	}
+	
