@@ -3,9 +3,16 @@
  */
 package org.egov.infstr.reporting.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infstr.utils.HibernateUtil;
+import org.egov.lib.rjbac.user.UserImpl;
+import org.egov.models.AbstractPersistenceServiceTest;
+import org.hibernate.Session;
+import org.hibernate.jdbc.Work;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,19 +23,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.rjbac.user.UserImpl;
-import org.egov.models.AbstractPersistenceServiceTest;
-import org.hibernate.Session;
-import org.hibernate.jdbc.Work;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * JUnit test cases for the report utility class
  */
+@Ignore
 public class ReportUtilTest extends
 		AbstractPersistenceServiceTest<UserImpl, Long> {
 	private UserImpl user;

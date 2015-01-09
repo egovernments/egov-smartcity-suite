@@ -3,21 +3,21 @@
  */
 package org.egov.infstr.services;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import org.egov.commons.EgiObjectFactory;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.models.Script;
 import org.egov.models.AbstractPersistenceServiceTest;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * Test cases for ScriptService
  */
+@Ignore
 public class ScriptServiceTest extends
 		AbstractPersistenceServiceTest<Script, Long> {
 	private ScriptService scriptService;

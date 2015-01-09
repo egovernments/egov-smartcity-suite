@@ -3,12 +3,6 @@
  */
 package org.egov.infstr.reporting.engine.jasper;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infstr.reporting.engine.ReportOutput;
@@ -17,12 +11,19 @@ import org.egov.infstr.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.models.AbstractPersistenceServiceTest;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+
+import java.util.Arrays;
+
+import static org.junit.Assert.*;
 
 /**
  * JUnit test class for testing JasperReportService
  */
 @SuppressWarnings("unchecked")
+
+@Ignore
 public class JasperReportServiceTest extends AbstractPersistenceServiceTest {
 	private ReportService reportService;
 	private static final String beanReportTemplateName = "testReportJavaBean";

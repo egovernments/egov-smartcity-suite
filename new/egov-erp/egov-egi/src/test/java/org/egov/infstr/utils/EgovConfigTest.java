@@ -1,8 +1,13 @@
 package org.egov.infstr.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import org.apache.commons.configuration.ConversionException;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infstr.config.AppConfig;
+import org.egov.infstr.config.AppConfigValues;
+import org.egov.models.AbstractPersistenceServiceTest;
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -10,14 +15,9 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.NoSuchElementException;
 
-import org.apache.commons.configuration.ConversionException;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.config.AppConfig;
-import org.egov.infstr.config.AppConfigValues;
-import org.egov.models.AbstractPersistenceServiceTest;
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.Assert.*;
 
+@Ignore
 public class EgovConfigTest extends AbstractPersistenceServiceTest {
 	@Test
 	public void egovConfigTest() throws IOException {

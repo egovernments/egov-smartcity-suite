@@ -1,13 +1,13 @@
 package org.egov.infstr.utils;
 
+import org.junit.Test;
+
+import java.math.BigDecimal;
+
 import static org.egov.infstr.utils.MoneyUtils.allocate;
 import static org.egov.infstr.utils.MoneyUtils.roundAndConvertToPaise;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-
-import java.math.BigDecimal;
-
-import org.junit.Test;
 
 public class MoneyUtilsTest {
 	private long[] weights;
@@ -163,9 +163,6 @@ public class MoneyUtilsTest {
 		bd = new BigDecimal("150.135");
 		paise = roundAndConvertToPaise(bd);
 		assertEquals(15014, paise);
-
-		assertEquals(new BigDecimal("5.1"), new BigDecimal("5.9"));
-		// assertTrue(new BigDecimal("5.1").equals( new BigDecimal("5.9")));
 	}
 
 	private void allocatePaiseAndVerify() {
