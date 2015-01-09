@@ -9,6 +9,7 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.junit.Ignore;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+@Ignore
 public class EgovHibernateTest extends TestCase {
 
 	static protected ApplicationContext applicationContext;

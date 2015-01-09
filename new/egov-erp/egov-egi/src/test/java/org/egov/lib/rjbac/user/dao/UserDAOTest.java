@@ -1,21 +1,5 @@
 package org.egov.lib.rjbac.user.dao;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.BoundaryImpl;
@@ -24,20 +8,27 @@ import org.egov.lib.admbndry.BoundaryTypeImpl;
 import org.egov.lib.rjbac.dept.DepartmentImpl;
 import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
 import org.egov.lib.rjbac.jurisdiction.JurisdictionValues;
-import org.egov.lib.rjbac.user.User;
-import org.egov.lib.rjbac.user.UserDetail;
-import org.egov.lib.rjbac.user.UserDetailImpl;
-import org.egov.lib.rjbac.user.UserImpl;
-import org.egov.lib.rjbac.user.UserRole;
+import org.egov.lib.rjbac.user.*;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
+import java.lang.reflect.Field;
+import java.util.*;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+@Ignore
 public class UserDAOTest {
 
 	private UserDAO userDao;

@@ -2,6 +2,7 @@ package org.egov.infstr.client.filter;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import servletunit.HttpServletRequestSimulator;
 import servletunit.HttpServletResponseSimulator;
@@ -9,7 +10,7 @@ import servletunit.ServletConfigSimulator;
 
 import static org.junit.Assert.assertEquals;
 
-//@Ignore
+@Ignore
 public class SetDomainJndiHibFactNamesTest {
 	private SetDomainJndiHibFactNames domainJndiHibFactNames;
 	protected HttpServletRequestSimulator request;

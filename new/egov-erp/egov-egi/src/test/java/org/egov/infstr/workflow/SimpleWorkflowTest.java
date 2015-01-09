@@ -1,22 +1,5 @@
 package org.egov.infstr.workflow;
 
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.reset;
-import static org.easymock.classextension.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import javax.script.ScriptContext;
-
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.models.Script;
 import org.egov.infstr.models.State;
@@ -25,10 +8,22 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
 import org.egov.pims.commons.Position;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
+import javax.script.ScriptContext;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.classextension.EasyMock.*;
+import static org.junit.Assert.*;
+
+@Ignore
 public class SimpleWorkflowTest {
 	PersistenceService<StateAware, Long> persistenceService;
 	SimpleWorkflowService<StateAware> wf;
