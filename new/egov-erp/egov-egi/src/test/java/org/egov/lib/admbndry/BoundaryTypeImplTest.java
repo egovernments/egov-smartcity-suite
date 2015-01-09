@@ -1,13 +1,15 @@
 package org.egov.lib.admbndry;
 
+import org.egov.infstr.junit.EgovHibernateTest;
+import org.junit.Ignore;
+
+import java.util.Date;
+
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 
-import java.util.Date;
-
-import org.egov.infstr.junit.EgovHibernateTest;
-
+@Ignore
 public class BoundaryTypeImplTest extends EgovHibernateTest {
 
 	public void testGetFirstChild() throws Exception {

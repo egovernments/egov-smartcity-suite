@@ -1,15 +1,16 @@
 package org.egov.lib.admbndry.ejb.server;
 
-import java.util.Date;
-import java.util.List;
-
-
 import org.egov.infstr.junit.EgovHibernateTest;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.lib.admbndry.BoundaryImpl;
 import org.egov.lib.admbndry.BoundaryTypeDAO;
 import org.egov.lib.admbndry.HeirarchyTypeDAO;
+import org.junit.Ignore;
 
+import java.util.Date;
+import java.util.List;
+
+@Ignore
 public class BoundaryManagerBeanTest extends EgovHibernateTest {
 	BoundaryServiceImpl boundaryManager;
 

@@ -1,22 +1,19 @@
 package org.egov.commons;
 
-import static org.junit.Assert.assertEquals;
-
-import java.text.ParseException;
-
-import org.egov.infstr.junit.EgovHibernateTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.text.ParseException;
+
+import static org.junit.Assert.assertEquals;
+
 public class InstallmentTest {
-	private final EgovHibernateTest egovHibernateTest = new EgovHibernateTest();
 	private java.text.SimpleDateFormat sdf;
 
 	@Before
 	public void setUp() throws Exception {
 		this.sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
-		this.egovHibernateTest.setUp();
 	}
 
 	@After

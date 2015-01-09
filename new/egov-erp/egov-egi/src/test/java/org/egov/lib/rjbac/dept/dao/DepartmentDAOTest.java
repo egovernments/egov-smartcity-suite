@@ -1,14 +1,5 @@
 package org.egov.lib.rjbac.dept.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.junit.utils.TestUtils;
@@ -19,10 +10,19 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+@Ignore
 public class DepartmentDAOTest {
 
 	private DepartmentDAO departmentDao;

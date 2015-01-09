@@ -1,17 +1,19 @@
 package org.egov.infstr.utils;
 
-import static org.junit.Assert.assertNotNull;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infstr.junit.EgovHibernateTest;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.junit.EgovHibernateTest;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertNotNull;
 
+@Ignore
 public class EgovAjaxQueryUtilTest {
 	private EgovHibernateTest hibernateSupport;
 

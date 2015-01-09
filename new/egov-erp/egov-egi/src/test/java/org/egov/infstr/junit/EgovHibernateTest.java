@@ -1,15 +1,6 @@
 package org.egov.infstr.junit;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.ServletContext;
-import javax.sql.DataSource;
-
 import junit.framework.TestCase;
-
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.junit.utils.JndiObj;
@@ -20,6 +11,14 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import javax.servlet.ServletContext;
+import javax.sql.DataSource;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class EgovHibernateTest extends TestCase {
 

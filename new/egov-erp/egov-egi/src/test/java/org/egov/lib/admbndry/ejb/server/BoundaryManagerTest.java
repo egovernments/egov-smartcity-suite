@@ -1,8 +1,5 @@
 package org.egov.lib.admbndry.ejb.server;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.junit.EgovHibernateTest;
@@ -11,9 +8,13 @@ import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.lib.admbndry.BoundaryType;
 import org.egov.lib.admbndry.HeirarchyTypeDAO;
 import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
+import org.junit.Ignore;
 
-;
+import java.util.HashSet;
+import java.util.Set;
 
+
+@Ignore
 public class BoundaryManagerTest extends EgovHibernateTest {
 
 	public final Logger logger = Logger.getLogger(getClass());

@@ -3,9 +3,6 @@
  */
 package org.egov.commons.dao;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailtype;
 import org.egov.exceptions.EGOVException;
@@ -15,12 +12,17 @@ import org.egov.infstr.services.SessionFactory;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @author msahoo
  * 
  */
+@Ignore
 public class AccountdetailtypeHibernateDAOTest extends EgovHibernateTest {
 	private static final Logger LOGGER = Logger
 			.getLogger(AccountdetailtypeHibernateDAOTest.class);

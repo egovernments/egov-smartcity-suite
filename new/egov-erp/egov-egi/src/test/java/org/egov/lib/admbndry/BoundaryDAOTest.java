@@ -1,9 +1,11 @@
 package org.egov.lib.admbndry;
 
+import org.egov.infstr.junit.EgovHibernateTest;
+import org.junit.Ignore;
+
 import java.util.List;
 
-import org.egov.infstr.junit.EgovHibernateTest;
-
+@Ignore
 public class BoundaryDAOTest extends EgovHibernateTest {
 
 	/*

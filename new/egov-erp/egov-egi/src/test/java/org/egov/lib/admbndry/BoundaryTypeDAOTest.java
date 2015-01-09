@@ -1,11 +1,13 @@
 package org.egov.lib.admbndry;
 
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infstr.junit.EgovHibernateTest;
+import org.junit.Ignore;
+
 import java.util.List;
 import java.util.Map;
 
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.junit.EgovHibernateTest;
-
+@Ignore
 public class BoundaryTypeDAOTest extends EgovHibernateTest {
 
 	public void testGetAllchildBoundaries() throws EGOVRuntimeException {

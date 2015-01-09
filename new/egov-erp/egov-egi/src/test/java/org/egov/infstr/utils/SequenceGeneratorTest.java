@@ -1,17 +1,17 @@
 package org.egov.infstr.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectTypeException;
 import org.egov.infstr.junit.EgovHibernateTest;
 import org.hibernate.criterion.Restrictions;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+
+@Ignore
 public class SequenceGeneratorTest {
 
 	private static final String DEFAULT_TYPE = "ABSTRACTESTIMATE";

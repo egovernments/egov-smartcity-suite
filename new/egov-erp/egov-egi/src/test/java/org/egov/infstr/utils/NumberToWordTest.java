@@ -1,10 +1,12 @@
 package org.egov.infstr.utils;
 
-import java.lang.reflect.Method;
-
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.junit.EgovHibernateTest;
+import org.junit.Ignore;
 
+import java.lang.reflect.Method;
+
+@Ignore
 public class NumberToWordTest extends EgovHibernateTest {
 
 	NumberToWord numberToWord = new NumberToWord();

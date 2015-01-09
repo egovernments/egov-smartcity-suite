@@ -1,15 +1,17 @@
 package org.egov.infstr.commons.dao;
 
-import java.util.List;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.EgiObjectFactory;
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.infstr.junit.EgovHibernateTest;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.rjbac.role.Role;
+import org.junit.Ignore;
 
+import java.util.List;
+import java.util.Set;
+
+@Ignore
 public class ModuleDAOTest extends EgovHibernateTest {
 	public final Logger logger = Logger.getLogger(ModuleDAOTest.class);
 

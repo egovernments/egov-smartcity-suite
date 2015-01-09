@@ -1,35 +1,28 @@
 package org.egov.infstr.client.filter;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.util.Date;
-
-import javax.jcr.RepositoryException;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
 import org.egov.infstr.docmgmt.DocumentManagerService;
 import org.egov.infstr.docmgmt.documents.Notice;
 import org.egov.infstr.junit.EgovHibernateTest;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.XmlWebApplicationContext;
-
 import servletunit.HttpServletRequestSimulator;
 import servletunit.HttpServletResponseSimulator;
 import servletunit.ServletConfigSimulator;
 
+import javax.jcr.RepositoryException;
+import javax.servlet.*;
+import java.io.IOException;
+import java.util.Date;
+
+import static org.mockito.Mockito.*;
+
+@Ignore
 public class NoticeSaveFilterTest extends EgovHibernateTest {
 
 	NoticeSaveFilter filter;

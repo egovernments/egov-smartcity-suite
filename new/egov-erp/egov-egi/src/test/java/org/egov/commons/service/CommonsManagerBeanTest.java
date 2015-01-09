@@ -1,15 +1,17 @@
 package org.egov.commons.service;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Functionary;
 import org.egov.infstr.junit.EgovHibernateTest;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.SessionFactory;
 import org.junit.Before;
+import org.junit.Ignore;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
+@Ignore
 public class CommonsManagerBeanTest extends EgovHibernateTest {
 
 	@Override

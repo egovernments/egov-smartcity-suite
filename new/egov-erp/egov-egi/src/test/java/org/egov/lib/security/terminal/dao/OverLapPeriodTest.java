@@ -1,13 +1,15 @@
 package org.egov.lib.security.terminal.dao;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
 import org.apache.log4j.Logger;
 import org.egov.infstr.junit.EgovHibernateTest;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.security.terminal.model.UserCounterMap;
+import org.junit.Ignore;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+@Ignore
 public class OverLapPeriodTest extends EgovHibernateTest {
 
 	public final Logger logger = Logger.getLogger(getClass());

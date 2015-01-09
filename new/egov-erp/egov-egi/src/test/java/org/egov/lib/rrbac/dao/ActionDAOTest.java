@@ -1,7 +1,9 @@
 package org.egov.lib.rrbac.dao;
 
 import org.egov.infstr.junit.EgovHibernateTest;
+import org.junit.Ignore;
 
+@Ignore
 public class ActionDAOTest extends EgovHibernateTest {
 
 	public void testGetActionByUrlWithContextParam() {

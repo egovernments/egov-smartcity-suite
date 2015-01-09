@@ -23,6 +23,7 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.rjbac.user.User;
 import org.egov.lib.rjbac.user.UserImpl;
 import org.hibernate.HibernateException;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpSession;
 
@@ -30,6 +31,7 @@ import org.springframework.mock.web.MockHttpSession;
  * @author Malathi
  * 
  */
+@Ignore
 public class ChartofAccountsHibernateDAOTest extends EgovHibernateTest {
 
 	private static final Logger LOGGER = Logger

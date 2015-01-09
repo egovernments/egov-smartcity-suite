@@ -1,11 +1,13 @@
 package org.egov.commons;
 
-import java.util.Arrays;
-
 import org.egov.infstr.junit.EgovHibernateTest;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Session;
+import org.junit.Ignore;
 
+import java.util.Arrays;
+
+@Ignore
 public class RelationTest extends EgovHibernateTest {
 	private EgiObjectFactory oFactory;
 	private Session session;

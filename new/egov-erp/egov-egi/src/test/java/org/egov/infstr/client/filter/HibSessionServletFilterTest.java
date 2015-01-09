@@ -1,22 +1,20 @@
 package org.egov.infstr.client.filter;
 
-import java.io.IOException;
+import org.egov.infstr.junit.EgovHibernateTest;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.junit.Ignore;
+import servletunit.HttpServletRequestSimulator;
+import servletunit.ServletConfigSimulator;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import java.io.IOException;
 
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.junit.EgovHibernateTest;
-import org.egov.infstr.utils.HibernateUtil;
-import org.hibernate.FlushMode;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-
-import servletunit.HttpServletRequestSimulator;
-import servletunit.ServletConfigSimulator;
-
+@Ignore
 public class HibSessionServletFilterTest extends EgovHibernateTest {
 
 	HibSessionServletFilter filter;

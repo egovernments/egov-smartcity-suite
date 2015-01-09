@@ -8,7 +8,9 @@ package org.egov.commons;
 import org.egov.infstr.junit.EgovHibernateTest;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Session;
+import org.junit.Ignore;
 
+@Ignore
 public class RelationtypeTest extends EgovHibernateTest {
 
 	private EgiObjectFactory oFactory;

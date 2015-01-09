@@ -1,14 +1,16 @@
 package org.egov.lib.admbndry.ejb.server;
 
-import java.util.Date;
-
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.exceptions.TooManyValuesException;
 import org.egov.infstr.junit.EgovHibernateTest;
 import org.egov.lib.admbndry.HeirarchyTypeDAO;
 import org.egov.lib.admbndry.HeirarchyTypeImpl;
+import org.junit.Ignore;
 
+import java.util.Date;
+
+@Ignore
 public class HeirarchyTypeManagerTest extends EgovHibernateTest {
 
 	public void testGetHierarchyTypeByNameTest() throws NoSuchObjectException,
