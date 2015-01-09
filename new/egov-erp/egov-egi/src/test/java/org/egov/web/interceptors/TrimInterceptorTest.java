@@ -1,19 +1,19 @@
 package org.egov.web.interceptors;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.struts2.StrutsStatics;
-
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.XWorkTestCase;
+import org.apache.struts2.StrutsStatics;
+import org.junit.Ignore;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+@Ignore
 public class TrimInterceptorTest extends XWorkTestCase {
 	TrimInterceptor interceptor;
 	ActionInvocation mockInvocation;

@@ -1,30 +1,26 @@
 package org.egov.web.actions;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.XWorkTestCase;
 import ognl.Ognl;
 import ognl.OgnlException;
-
 import org.egov.infstr.commonMasters.EgUom;
 import org.egov.infstr.commonMasters.EgUomcategory;
 import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.models.AbstractPersistenceServiceTest;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.XWorkTestCase;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.util.*;
 
+@Ignore
 public class BaseFormActionTest extends XWorkTestCase {
 	private BaseFormAction action;
 

@@ -1,15 +1,15 @@
 package org.egov.infstr.client.filter;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import servletunit.HttpServletRequestSimulator;
 import servletunit.HttpServletResponseSimulator;
 import servletunit.ServletConfigSimulator;
 
+import static org.junit.Assert.assertEquals;
+
+//@Ignore
 public class SetDomainJndiHibFactNamesTest {
 	private SetDomainJndiHibFactNames domainJndiHibFactNames;
 	protected HttpServletRequestSimulator request;

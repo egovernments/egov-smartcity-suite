@@ -1,14 +1,5 @@
 package org.egov.infstr.junit;
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.ServletContext;
-import javax.sql.DataSource;
-
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.junit.utils.JndiObj;
@@ -16,12 +7,21 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.junit.Ignore;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.context.support.XmlWebApplicationContext;
-
 import servletunit.struts.MockStrutsTestCase;
 
+import javax.servlet.ServletContext;
+import javax.sql.DataSource;
+import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Map;
+
+@Ignore
 public class EgovStrutsTest extends MockStrutsTestCase {
 	static protected ApplicationContext applicationContext;
 	static protected SessionFactory sessionFactory;
