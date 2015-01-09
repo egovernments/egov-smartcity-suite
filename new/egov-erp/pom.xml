@@ -278,8 +278,26 @@
                 <version>1.3.3</version>
             </dependency>
             <!-- COMMONS END -->
+
+            <!-- TESTING START -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.11</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- TESTNIG END -->
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+
+    </dependencies>
+
 
     <build>
         <plugins>
