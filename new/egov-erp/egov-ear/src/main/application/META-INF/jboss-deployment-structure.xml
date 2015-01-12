@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<jboss-deployment-structure>
+    <!-- Make sub deployments isolated by default, so they cannot see each others classes without a Class-Path entry -->
+    <ear-subdeployments-isolated>TRUE</ear-subdeployments-isolated>
+    <deployment>
+        <dependencies>
+            <module name="org.apache.log4j" export="TRUE"/>
+            <module name="org.slf4j" export="TRUE"/>
+            <module name="org.javassist" export="TRUE"/>
+            <module name="javax.jcr" export="TRUE"/>
+            <module name="org.hibernate" export="TRUE"/>
+            <module name="org.infinispan" export="TRUE"/>
+            <module name="org.apache.xerces" export="TRUE"/>
+            <module name="org.jaxen" export="TRUE"/>
+            <module name="org.jdom" export="TRUE"/>
+            <module name="org.hibernate.validator" export="TRUE"/>
+            <module name="org.hibernate.search.orm" export="TRUE"/>
+            <module name="org.postgres" export="TRUE"/>
+            <!--<module name="deployment.jackrabbit-jca-2.6.2.rar" export="TRUE"/>-->
+        </dependencies>
+    </deployment>
+</jboss-deployment-structure>

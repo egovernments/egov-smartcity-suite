@@ -5,21 +5,6 @@
  */
 package org.egov.infstr.utils;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.persistence.Embeddable;
-import javax.persistence.Entity;
-import javax.persistence.MappedSuperclass;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -27,6 +12,8 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistryBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -35,6 +22,18 @@ import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.core.type.classreading.SimpleMetadataReaderFactory;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
+
+import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.persistence.MappedSuperclass;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Basic Hibernate helper class, handles SessionFactory, Session and Transaction.
@@ -86,12 +85,12 @@ public class HibernateUtil {
 
 	private static void resolveAndConfigureMappingJars(final Configuration configuration) {
 		final String filePath = Thread.currentThread().getContextClassLoader().getResource("hibernate.cfg.xml").getPath();
-		final String mappingJarsLocation = filePath.substring(0, filePath.indexOf("/lib/")) + "/lib/mappings";
+		final String mappingJarsLocation = filePath.substring(0, filePath.indexOf("/lib/")) + "/lib";
 		final File mappingJarsLocationFile = new File(mappingJarsLocation);
 		final String[] jars = mappingJarsLocationFile.list(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
-				return name.endsWith(".jar");
+				return name.startsWith("egov-") && name.endsWith(".jar");
 			}
 		});
 

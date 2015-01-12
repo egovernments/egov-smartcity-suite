@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+	default-lazy-init="true"> 
+	
+		
+	<bean id="employeeService" class="org.egov.pims.service.EmployeeServiceImpl" ></bean>
+	
+	<bean id="eisCommonsService" class="org.egov.pims.commons.service.EisCommonsServiceImpl"></bean>
+	
+	<bean id="searchPositionService" class="org.egov.pims.service.SearchPositionService" scope="prototype"/>
+	
+	<bean id="designationDao" class="org.egov.pims.commons.dao.DesignationMasterDAO" scope="prototype"/>
+	
+	<bean id="personalInfoDao" class="org.egov.pims.dao.PersonalInformationHibernateDAO" scope="prototype"/>
+
+	<bean id="positionService" parent="persistenceService"  class="org.egov.pims.commons.service.PositionService" >
+		<property name="type" value="org.egov.pims.commons.Position" />
+	</bean>	 
+	
+	<bean id="personalInformationService" class="org.egov.pims.service.PersonalInformationService" parent="persistenceService" >
+		<property name="type" value="org.egov.pims.model.PersonalInformation"/>
+		<property name="scriptService" ref="scriptExecutionService"/>
+		<property name="commonsService" ref="commonsService"/>
+	</bean>
+	
+	<bean id="employeeNomineeMasterService" class="org.egov.pims.service.EmployeeNomineeMasterService" parent="persistenceService" >
+		<property name="type" value="org.egov.pims.model.EmployeeNomineeMaster"/>
+	</bean>
+	
+	<bean id="drawingOfficerService" class="org.egov.pims.commons.service.DrawingOfficerService" parent="persistenceService" >
+		<property name="type" value="org.egov.pims.commons.DrawingOfficer"/>
+	</bean>
+		
+</beans>

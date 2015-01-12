@@ -4,11 +4,9 @@
 	<!-- Context Configuration locations for Spring XML files -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>
-		/WEB-INF/applicationSecurityContext.xml
-		/WEB-INF/applicationQuartzContext-egi.xml
-		</param-value>
+		<param-value>classpath*:applicationContext-egiweb.xml</param-value>
 	</context-param>
+<!--
 	<context-param>
 		<param-name>locatorFactorySelector</param-name>
 		<param-value>classpath*:config/spring/erpApplicationContext.xml</param-value>
@@ -17,6 +15,7 @@
 		<param-name>parentContextKey</param-name>
 		<param-value>erpApplicationContext</param-value>
 	</context-param>
+-->
 	<filter>
     	<filter-name>CacheControlFilter</filter-name>
     	<filter-class>org.egov.infstr.client.filter.CacheControlFilter</filter-class>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd"
+	default-lazy-init="true">
+	
+	<bean id="repository" class="org.springframework.jndi.JndiObjectFactoryBean">
+		 <property name="jndiName" value="java:/jcrJCA" />
+		 <property name="resourceRef" value="true" />
+	</bean>
+ 	
+ 	<!-- Custom Node defenition file declaration in each cndFiles value must 
+ 	        correspond to a proper content type value for cndContentTypes 
+ 	<util:list id="cndFiles" list-class="java.util.LinkedList">
+   		<value>classpath*:docmgmtCnd.cnd</value>
+   </util:list>
+   <util:list id="cndContentTypes" list-class="java.util.LinkedList">
+   		<value>text/x-jcr-cnd</value>
+   </util:list>-->
+	<bean id="sessionHolderProviderManager" class="org.springmodules.jcr.support.ServiceSessionHolderProviderManager"/>
+	     
+	<bean id="jcrSessionFactory" class="org.egov.infstr.docmgmt.JackRabbitSessionFactory" destroy-method="destroy">
+		<property name="repository" ref="repository"/>
+		<property name="workspaceName" value="DOCMGMT" />
+		<property name="credentials">
+			<bean class="javax.jcr.SimpleCredentials">
+				<constructor-arg index="0" value="bogus"/>
+				<constructor-arg index="1">
+					<bean factory-bean="password" factory-method="toCharArray"/>
+				</constructor-arg>
+			</bean>
+		</property>
+		<property name="sessionHolderProviderManager" ref="sessionHolderProviderManager"/>
+		<property name="forceNamespacesRegistration" value="false"></property>
+		<property name="keepNewNamespaces" value="true"></property>
+		<property name="skipExistingNamespaces" value="true"></property>		
+		<property name="namespaces">
+			<props>
+				<prop key="ocm">http://jackrabbit.apache.org/ocm</prop>
+             	<!--<prop key="egov">http://www.egovernments.org/egov/1.0</prop>-->
+         	</props>			
+		</property>
+		<!--<property name="contentTypes" ref="cndContentTypes" />-->
+		<!--<property name="nodeDefinitions" ref="cndFiles" />-->
+	</bean>
+	
+	<bean id="password" class="java.lang.String">
+		<constructor-arg index="0" value="pass"/>
+	</bean>
+	
+	<bean id="jcrTemplate" class="org.springmodules.jcr.JcrTemplate">
+		<property name="sessionFactory" ref="jcrSessionFactory"/>
+		<property name="allowCreate" value="false"/>	
+	</bean>
+	
+	<util:list id="ocmList">
+		<value>org.egov.infstr.docmgmt.DocumentObject</value>
+		<value>org.egov.infstr.docmgmt.documents.Notice</value>
+		<value>org.egov.infstr.docmgmt.AssociatedFile</value>
+	</util:list>
+	
+	<bean id="ocmMapper" class="org.apache.jackrabbit.ocm.mapper.impl.annotation.AnnotationMapperImpl">
+	    <constructor-arg index="0" ref="ocmList" />
+ 	</bean>
+ 
+	<bean id="documentManagerService" class="org.egov.infstr.docmgmt.ocm.JackRabbitOcmDocumentManager" scope="prototype" init-method="initOcm" >
+		<property name="ocmMapper" ref="ocmMapper" />
+		<property name="template"  ref="jcrTemplate" />
+		<property name="userPersistenceService" ref="userPersistenceService"/>
+		<property name="scriptExecuter" ref="scriptExecutionService"/>
+		<property name="sequenceNumberGenerator" ref="sequenceNumberGenerator"/>
+		<property name="appConfigValuesDAO" ref="appConfigValuesDAO"/>
+		<property name="failProofIPAdrresses" ref="failProofIPAdrresses"/>
+		<property name="ipSwitchs" ref="ipSwitchs"/>
+	</bean>
+  	<util:list id="failProofIPAdrresses">
+  		<value>ip192:168:1:44</value>
+	</util:list>
+	<util:map id="ipSwitchs">
+		<entry key="ip192:168:1:60" value="ip203:129:203:6"/>
+	</util:map>		
+</beans>

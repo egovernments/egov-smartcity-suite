@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Dependencies: org.apache.log4j export, org.slf4j export, org.javassist export, javax.jcr export, org.hibernate export, org.infinispan export,org.apache.xerces export,org.jaxen export,org.jdom export,org.hibernate.validator export,org.hibernate.search.orm export, org.postgres export
+
