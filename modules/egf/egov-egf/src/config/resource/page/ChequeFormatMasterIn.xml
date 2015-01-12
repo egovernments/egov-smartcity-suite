@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?> 
-<pageMap name="ChequeFormatMasterIn" > 
-	<gridMap name="detailsgrid" containsNames="true" >
-		<columnMap name="fieldx" serverFieldName="1"/>
-		<columnMap name="fieldy" serverFieldName="1"/>
-		<columnMap name="fieldl" serverFieldName="1"/>
-	</gridMap>
-	
-</pageMap>

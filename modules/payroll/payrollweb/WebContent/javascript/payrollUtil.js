@@ -1,1 +1,0 @@
-var EMPCODE_SEP = "~";

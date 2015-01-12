@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?> 
-<pageMap name="SetUpIn" > 
-	<gridMap name="gridFiscalPeriod">
-		<columnMap name="fiscalPeriod_id" serverFieldName="1"/>		
-		<columnMap name="fiscalPeriod_isActive" serverFieldName="2"/>		
-	</gridMap>
-</pageMap>

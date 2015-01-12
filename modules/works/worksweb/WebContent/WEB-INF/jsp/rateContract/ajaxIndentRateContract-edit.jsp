@@ -1,1 +1,0 @@
-<%@ include file="ajaxIndentRateContract-viewBudget.jsp" %> 

@@ -1,1 +1,0 @@
-<%@ include file='certificationTypeMaster-new.jsp'%>

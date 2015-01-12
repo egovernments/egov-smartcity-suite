@@ -1,1 +1,0 @@
-<%@ include file="materialType-new.jsp"%> 

@@ -1,5 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<dataset>
-   <EG_APPCONFIG ID="1" KEY_NAME="tetsKey" DESCRIPTION="testDesc" MODULE="Pension"/>
-   <EG_APPCONFIG_VALUES ID="1" KEY_ID="1" EFFECTIVE_FROM="2008-10-10" VALUE="testSuccess"/>
-</dataset>

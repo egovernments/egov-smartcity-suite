@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?> 
-<pageMap name="cancelVoucherIn" > 	
-	<gridMap name="voucherSearchGrid" containsNames="true">
-		<columnMap name="voucherHeader_id" serverFieldName="1"/>
-		<columnMap name="voucherHeader_isConfirmed" serverFieldName="2"/>
-		<!--<columnMap name="voucherHeader_isRejected" serverFieldName="3"/>-->
-	</gridMap>	
-</pageMap>

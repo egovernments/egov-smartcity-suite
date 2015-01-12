@@ -1,3 +1,0 @@
-Manifest-Version: 1.0
-Dependencies: org.apache.log4j export, org.slf4j export, javax.jcr export
-

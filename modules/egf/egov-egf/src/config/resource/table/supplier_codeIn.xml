@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?> 
-<pageMap name="SQLDefinition2In" > 
-	<fieldMap name="serviceID" serverFieldName="p1"/>	
-	<fieldMap name="junk1" serverFieldName="p2"/>	
-	<fieldMap name="junk2" serverFieldName="p3"/>	
-	
-</pageMap>

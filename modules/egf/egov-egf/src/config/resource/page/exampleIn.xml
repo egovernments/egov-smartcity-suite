@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?> 
-<pageMap name="supplierDataIn" > 
-	<fieldMap name="field1" />		
-	<fieldMap name="field2" serverFieldName="ServerNameForField2"/>		
-	<gridMap name="grid2">
-		<columnMap name="field1InGrid2" serverFieldName="1"/>		
-	</gridMap>
-</pageMap>

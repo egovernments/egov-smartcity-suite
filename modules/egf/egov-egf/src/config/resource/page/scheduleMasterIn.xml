@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?> 
-<pageMap name="scheduleMasterIn" > 
-	<gridMap name="schLineItem">
-		<columnMap name="accnt_Code" serverFieldName="1"/>		
-		<columnMap name="operation" serverFieldName="2"/>		
-	</gridMap>
-</pageMap>

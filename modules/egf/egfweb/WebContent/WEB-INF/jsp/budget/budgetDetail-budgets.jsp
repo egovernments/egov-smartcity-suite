@@ -1,2 +1,0 @@
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld"%>
-<s:select list="budgetList"  listKey="id" listValue="name" name="budget" onchange="getSavedData();" value="model.budget.id" id="budgetDetail_budget" disabled="%{headerDisabled}" headerKey="0" headerValue="--- Select ---"></s:select>

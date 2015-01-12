@@ -1,1 +1,0 @@
-<%@ include file='contractorGrade-new.jsp'%>
