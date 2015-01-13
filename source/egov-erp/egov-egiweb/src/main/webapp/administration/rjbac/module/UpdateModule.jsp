@@ -2,7 +2,6 @@
 <%@page import="org.egov.exceptions.EGOVRuntimeException"%>
 <%@page contentType="text/html" %>
 <%@page import="java.util.*,
-		org.hibernate.LockMode,
 		org.egov.lib.admbndry.*,
 		org.egov.infstr.commons.Module,
  org.egov.infstr.client.administration.rjbac.module.UpdateModuleAction" %>
