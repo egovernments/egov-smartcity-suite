@@ -126,7 +126,7 @@ function closeChildWindows() {
 }
 function prepareApplicationBar(parentId, appName, baseURL) {
 	document.getElementById("BASEURL").value = baseURL.substring(baseURL.lastIndexOf("/") + 1, baseURL.length);
-	var url = "../common/homepage!getAllModules.action?parentId=" + parentId+"&rnd="+Math.random();
+	var url = "../common/homepage-submodules.action?parentId=" + parentId+"&rnd="+Math.random();
 	var callback = {success:function (oResponse) {
 		document.getElementById("accordion3").style.display = "block";
 		document.getElementById("accordion4").style.display = "none";
@@ -164,7 +164,7 @@ function populateSubmodules(event, baseURL) {
 		parentId = event.srcElement.id;
 	}
 	var parentIdn = parentId.split("#")[1];
-	var url = "../common/homepage!getAllModules.action?parentId=" + parentIdn + "&baseURL=" + baseURL+"&rnd="+Math.random();
+	var url = "../common/homepage-submodules.action?parentId=" + parentIdn + "&baseURL=" + baseURL+"&rnd="+Math.random();
 	var callback = {success:function (oResponse) {
 		if (oResponse.responseText == "") {
 			return;
