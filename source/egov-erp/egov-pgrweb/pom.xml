@@ -9,9 +9,37 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <name>e-governments pgr web</name>
     <artifactId>egov-pgrweb</artifactId>
     <packaging>war</packaging>
 
-    <name>e-governments pgr web</name>
+    <dependencies>
+        <!-- SPRING DEPENDENCIES START -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+        </dependency>
+        <!-- SPRING DEPENDENCIES END -->
 
+    </dependencies>
 </project>

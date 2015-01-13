@@ -18,9 +18,9 @@ __Note__: Please check in [downlods repository](http://192.168.1.3/downloads/) f
 * Run the following commands 
 
 ```bash
-mvn clean compile ## Cleans your build directory and compiles your java code
-mvn clean test    ## Cleans, compiles and runs unit, integration tests
-mvn package       ## Cleans, compiles, tests and generates ear artifact alsong with jars and wars approproiately
+mvn -s settings.xml clean compile ## Cleans your build directory and compiles your java code
+mvn -s settings.xml clean test    ## Cleans, compiles and runs unit, integration tests
+mvn -s settings.xml package       ## Cleans, compiles, tests and generates ear artifact alsong with jars and wars approproiately
 ```
 
 ## Deploying

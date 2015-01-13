@@ -10,10 +10,9 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>egov-egiweb</artifactId>
     <name>e-governments egi web</name>
+    <artifactId>egov-egiweb</artifactId>
     <packaging>war</packaging>
-
 
     <dependencies>
         <dependency>
@@ -43,22 +42,5 @@
         <!-- MISC END -->
 
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.5</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
