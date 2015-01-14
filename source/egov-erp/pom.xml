@@ -258,16 +258,6 @@
                         <groupId>org.apache.tika</groupId>
                         <artifactId>tika-core</artifactId>
                     </exclusion>
-<!--
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>jcl-over-slf4j</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
--->
                 </exclusions>
             </dependency>
             <dependency>
@@ -283,12 +273,6 @@
                         <groupId>commons-digester</groupId>
                         <artifactId>commons-digester</artifactId>
                     </exclusion>
-<!--
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
--->
                 </exclusions>
             </dependency>
             <dependency>
@@ -304,12 +288,6 @@
                         <groupId>org.apache.tika</groupId>
                         <artifactId>tika-parsers</artifactId>
                     </exclusion>
-<!--
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>jcl-over-slf4j</artifactId>
-                    </exclusion>
--->
                 </exclusions>
             </dependency>
             <!-- JACKRABBIT END -->
@@ -374,14 +352,6 @@
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
                 <version>2.2.1</version>
-<!--
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                </exclusions>
--->
             </dependency>
             <dependency>
                 <groupId>org.quartz-scheduler</groupId>
@@ -471,12 +441,6 @@
                         <groupId>javax.activation</groupId>
                         <artifactId>activation</artifactId>
                     </exclusion>
-<!--
-                    <exclusion>
-                        <groupId>javax.mail</groupId>
-                        <artifactId>mail</artifactId>
-                    </exclusion>
--->
                 </exclusions>
             </dependency>
             <dependency>
@@ -501,14 +465,6 @@
                 <groupId>net.sf.ehcache</groupId>
                 <artifactId>ehcache-web</artifactId>
                 <version>2.0.4</version>
-<!--
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                </exclusions>
--->
             </dependency>
             <dependency>
                 <groupId>cglib</groupId>
