@@ -1,7 +1,6 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-      http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          version="3.0">
 
     <display-name>e-governments pgr web</display-name>
@@ -33,5 +32,12 @@
         <servlet-name>pgrweb</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
+
+    <jsp-config>
+        <taglib>
+            <taglib-uri>http://tiles.apache.org/tags-tiles</taglib-uri>
+            <taglib-location>/WEB-INF/taglib/tiles-jsp.tld</taglib-location>
+        </taglib>
+    </jsp-config>
 
 </web-app>

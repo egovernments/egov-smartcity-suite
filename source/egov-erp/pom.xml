@@ -194,6 +194,14 @@
                         <groupId>xalan</groupId>
                         <artifactId>xalan</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>commons-beanutils</groupId>
+                        <artifactId>commons-beanutils</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>commons-digester</groupId>
+                        <artifactId>commons-digester</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -249,6 +257,14 @@
                         <groupId>org.apache.tika</groupId>
                         <artifactId>tika-core</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>jcl-over-slf4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -259,6 +275,14 @@
                     <exclusion>
                         <groupId>cglib</groupId>
                         <artifactId>cglib</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>commons-digester</groupId>
+                        <artifactId>commons-digester</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -274,6 +298,10 @@
                     <exclusion>
                         <groupId>org.apache.tika</groupId>
                         <artifactId>tika-parsers</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>jcl-over-slf4j</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -339,6 +367,12 @@
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
                 <version>2.2.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.quartz-scheduler</groupId>
@@ -359,6 +393,32 @@
                 <version>1.2</version>
             </dependency>
             <!-- DISPLAYTAG END -->
+
+            <!-- VIEWS RELATED END -->
+            <dependency>
+                <groupId>org.apache.tiles</groupId>
+                <artifactId>tiles-core</artifactId>
+                <version>3.0.5</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-beanutils</groupId>
+                        <artifactId>commons-beanutils</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tiles</groupId>
+                <artifactId>tiles-jsp</artifactId>
+                <version>3.0.5</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>1.8.0</version>
+            </dependency>
+            <!-- VIEWS RELATED END -->
 
             <!-- REPORTS START -->
             <dependency>
@@ -430,6 +490,12 @@
                 <groupId>net.sf.ehcache</groupId>
                 <artifactId>ehcache-web</artifactId>
                 <version>2.0.4</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>cglib</groupId>
@@ -474,12 +540,61 @@
                 <artifactId>dbunit</artifactId>
                 <version>2.2.3</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <!-- TESTING END -->
+
+            <!-- LOGGING START -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.6</version>
+            </dependency>
+            <!-- LOGGING START -->
+
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
+        <!-- SPRING DEPENDENCIES START -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+        </dependency>
+        <!-- SPRING DEPENDENCIES END -->
+
+        <!-- COMMONS  START -->
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+        </dependency>
+        <!-- COMMONS  END -->
+
         <!-- TESTING START -->
         <dependency>
             <groupId>junit</groupId>
@@ -511,6 +626,14 @@
             <artifactId>dbunit</artifactId>
         </dependency>
         <!-- TESTING END -->
+
+        <!-- LOGGING START -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <!-- LOGGING END -->
+
     </dependencies>
 
 

@@ -12,10 +12,14 @@
     <!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources/ directory -->
     <mvc:resources mapping="/resources/**" location="/resources/"/>
 
-    <!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
-    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix" value="/WEB-INF/views/"/>
-        <property name="suffix" value=".jsp"/>
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.tiles3.TilesViewResolver"/>
+
+    <bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+        <property name="definitions">
+            <list>
+                <value>/WEB-INF/layout/tiles.xml</value>
+            </list>
+        </property>
     </bean>
 
     <!-- Imports user-defined @Controller beans that process client requests -->
