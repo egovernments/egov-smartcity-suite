@@ -564,47 +564,10 @@
             </dependency>
             <!-- TESTING END -->
 
-            <!-- LOGGING START -->
-<!--
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>1.6.4</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jcl-over-slf4j</artifactId>
-                <version>1.6.4</version>
-            </dependency>
-            <dependency>
-                <groupId>xml-apis</groupId>
-                <artifactId>xml-apis</artifactId>
-                <version>1.0.b2</version>
-            </dependency>
--->
-            <!-- LOGGING START -->
-
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
-
-        <!-- LOGGING START -->
-<!--
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>xml-apis</groupId>
-            <artifactId>xml-apis</artifactId>
-        </dependency>
--->
-        <!-- LOGGING END -->
 
         <!-- COMMONS  START -->
         <dependency>
