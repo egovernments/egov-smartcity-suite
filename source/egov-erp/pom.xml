@@ -258,6 +258,7 @@
                         <groupId>org.apache.tika</groupId>
                         <artifactId>tika-core</artifactId>
                     </exclusion>
+<!--
                     <exclusion>
                         <groupId>org.slf4j</groupId>
                         <artifactId>jcl-over-slf4j</artifactId>
@@ -266,6 +267,7 @@
                         <groupId>org.slf4j</groupId>
                         <artifactId>slf4j-api</artifactId>
                     </exclusion>
+-->
                 </exclusions>
             </dependency>
             <dependency>
@@ -281,10 +283,12 @@
                         <groupId>commons-digester</groupId>
                         <artifactId>commons-digester</artifactId>
                     </exclusion>
+<!--
                     <exclusion>
                         <groupId>org.slf4j</groupId>
                         <artifactId>slf4j-api</artifactId>
                     </exclusion>
+-->
                 </exclusions>
             </dependency>
             <dependency>
@@ -300,10 +304,12 @@
                         <groupId>org.apache.tika</groupId>
                         <artifactId>tika-parsers</artifactId>
                     </exclusion>
+<!--
                     <exclusion>
                         <groupId>org.slf4j</groupId>
                         <artifactId>jcl-over-slf4j</artifactId>
                     </exclusion>
+-->
                 </exclusions>
             </dependency>
             <!-- JACKRABBIT END -->
@@ -368,12 +374,14 @@
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
                 <version>2.2.1</version>
+<!--
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
                         <artifactId>slf4j-api</artifactId>
                     </exclusion>
                 </exclusions>
+-->
             </dependency>
             <dependency>
                 <groupId>org.quartz-scheduler</groupId>
@@ -463,10 +471,12 @@
                         <groupId>javax.activation</groupId>
                         <artifactId>activation</artifactId>
                     </exclusion>
-                    <!--<exclusion>-->
-                        <!--<groupId>javax.mail</groupId>-->
-                        <!--<artifactId>mail</artifactId>-->
-                    <!--</exclusion>-->
+<!--
+                    <exclusion>
+                        <groupId>javax.mail</groupId>
+                        <artifactId>mail</artifactId>
+                    </exclusion>
+-->
                 </exclusions>
             </dependency>
             <dependency>
@@ -491,12 +501,14 @@
                 <groupId>net.sf.ehcache</groupId>
                 <artifactId>ehcache-web</artifactId>
                 <version>2.0.4</version>
+<!--
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
                         <artifactId>slf4j-api</artifactId>
                     </exclusion>
                 </exclusions>
+-->
             </dependency>
             <dependency>
                 <groupId>cglib</groupId>
@@ -541,27 +553,66 @@
                 <artifactId>dbunit</artifactId>
                 <version>2.2.3</version>
                 <scope>test</scope>
+<!--
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
                         <artifactId>slf4j-api</artifactId>
                     </exclusion>
                 </exclusions>
+-->
             </dependency>
             <!-- TESTING END -->
 
             <!-- LOGGING START -->
+<!--
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.6</version>
+                <version>1.6.4</version>
             </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>1.6.4</version>
+            </dependency>
+            <dependency>
+                <groupId>xml-apis</groupId>
+                <artifactId>xml-apis</artifactId>
+                <version>1.0.b2</version>
+            </dependency>
+-->
             <!-- LOGGING START -->
 
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
+
+        <!-- LOGGING START -->
+<!--
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+        </dependency>
+-->
+        <!-- LOGGING END -->
+
+        <!-- COMMONS  START -->
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+        </dependency>
+        <!-- COMMONS  END -->
+
         <!-- SPRING DEPENDENCIES START -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -588,13 +639,6 @@
             <artifactId>spring-context-support</artifactId>
         </dependency>
         <!-- SPRING DEPENDENCIES END -->
-
-        <!-- COMMONS  START -->
-        <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
-        </dependency>
-        <!-- COMMONS  END -->
 
         <!-- TESTING START -->
         <dependency>
@@ -628,12 +672,6 @@
         </dependency>
         <!-- TESTING END -->
 
-        <!-- LOGGING START -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <!-- LOGGING END -->
 
     </dependencies>
 
