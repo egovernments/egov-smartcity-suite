@@ -13,11 +13,12 @@
     <name>e-governments erp</name>
 
     <modules>
-        <module>egov-egi</module>
-        <module>egov-pgrweb</module>
-        <module>egov-egiweb</module>
-        <module>egov-ear</module>
         <module>egov-config</module>
+        <module>egov-egi</module>
+        <module>egov-pgr</module>
+        <module>egov-egiweb</module>
+        <module>egov-pgrweb</module>
+        <module>egov-ear</module>
     </modules>
 
     <properties>

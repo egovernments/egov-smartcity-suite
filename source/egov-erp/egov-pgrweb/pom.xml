@@ -14,6 +14,12 @@
     <packaging>war</packaging>
 
     <dependencies>
+        <dependency>
+            <groupId>org.egov</groupId>
+            <artifactId>egov-pgr</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
         <!-- VIEWS RELATED END -->
         <dependency>
             <groupId>org.apache.tiles</groupId>
