@@ -6,7 +6,6 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>classpath*:applicationContext-egiweb.xml</param-value>
 	</context-param>
-<!--
 	<context-param>
 		<param-name>locatorFactorySelector</param-name>
 		<param-value>classpath*:config/spring/erpApplicationContext.xml</param-value>
@@ -15,11 +14,10 @@
 		<param-name>parentContextKey</param-name>
 		<param-value>erpApplicationContext</param-value>
 	</context-param>
--->
 	<filter>
-    	<filter-name>CacheControlFilter</filter-name>
-    	<filter-class>org.egov.infstr.client.filter.CacheControlFilter</filter-class>
-	</filter>	
+		<filter-name>CacheControlFilter</filter-name>
+		<filter-class>org.egov.infstr.client.filter.CacheControlFilter</filter-class>
+	</filter>
 	<filter>
 		<filter-name>CharacterEncodingFilter</filter-name>
 		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -73,14 +71,14 @@
 		<filter-class>com.opensymphony.sitemesh.webapp.SiteMeshFilter</filter-class>
 	</filter>
 	<filter-mapping>
-    	<filter-name>CacheControlFilter</filter-name>
-    	<url-pattern>*.js</url-pattern>
-    	<url-pattern>*.css</url-pattern>
-    	<url-pattern>*.jpg</url-pattern>
-    	<url-pattern>*.png</url-pattern>
-    	<url-pattern>*.gif</url-pattern>
-    	<url-pattern>*.ico</url-pattern>
-    </filter-mapping>
+		<filter-name>CacheControlFilter</filter-name>
+		<url-pattern>*.js</url-pattern>
+		<url-pattern>*.css</url-pattern>
+		<url-pattern>*.jpg</url-pattern>
+		<url-pattern>*.png</url-pattern>
+		<url-pattern>*.gif</url-pattern>
+		<url-pattern>*.ico</url-pattern>
+	</filter-mapping>
 	<filter-mapping>
 		<filter-name>CharacterEncodingFilter</filter-name>
 		<url-pattern>/*</url-pattern>
@@ -151,7 +149,7 @@
 	<listener>
 		<listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
 	</listener>
-	
+
 	<servlet>
 		<servlet-name>action</servlet-name>
 		<servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
@@ -185,10 +183,10 @@
 	<session-config>
 		<cookie-config>
 			<path>/</path>
-        	<http-only>true</http-only>
-        	<secure>false</secure>
-    	</cookie-config>
-    	<tracking-mode>COOKIE</tracking-mode>
+			<http-only>true</http-only>
+			<secure>false</secure>
+		</cookie-config>
+		<tracking-mode>COOKIE</tracking-mode>
 	</session-config>
 	<welcome-file-list>
 		<welcome-file>/egi/common/homepage.action</welcome-file>

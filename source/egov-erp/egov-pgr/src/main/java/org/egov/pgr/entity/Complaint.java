@@ -1,7 +1,7 @@
 package org.egov.pgr.entity;
 
-import org.egov.lib.admbndry.Boundary;
-import org.egov.lib.rjbac.user.User;
+import org.egov.lib.admbndry.BoundaryImpl;
+import org.egov.lib.rjbac.user.UserImpl;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -12,7 +12,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "pgr_complaint",uniqueConstraints=@UniqueConstraint(columnNames = { "complaintID" }))
-public class Complaint extends AbstractAuditable<User, Long> {
+public class Complaint extends AbstractAuditable<UserImpl, Long> {
 
 	//any future Receiving mode addition should be added at the end of this enum 
 	//since we are asking hibernate use its ordinal to be persisted
@@ -39,12 +39,12 @@ public class Complaint extends AbstractAuditable<User, Long> {
 	
 	@ManyToOne
 	@Valid
-	private User assignee;
+	private UserImpl assignee;
 	
 	@ManyToOne(optional=true)
 	@Valid
 	@JoinColumn(nullable=true)
-	private Boundary boundary;
+	private BoundaryImpl boundary;
 	
 	@NotNull(message="{error-not-empty}")
 	@Enumerated(EnumType.STRING)
@@ -91,19 +91,19 @@ public class Complaint extends AbstractAuditable<User, Long> {
 		this.complainant = complainant;
 	}
 
-	public User getAssignee() {
-		return this.assignee;
+	public UserImpl getAssignee() {
+		return assignee;
 	}
 
-	public void setAssignee(final User assignee) {
+	public void setAssignee(UserImpl assignee) {
 		this.assignee = assignee;
 	}
 
-	public Boundary getBoundary() {
+	public BoundaryImpl getBoundary() {
 		return boundary;
 	}
 
-	public void setBoundary(Boundary boundary) {
+	public void setBoundary(BoundaryImpl boundary) {
 		this.boundary = boundary;
 	}
 

@@ -7,8 +7,6 @@
 	   http://www.springframework.org/schema/security
 	   http://www.springframework.org/schema/security/spring-security-3.2.xsd" default-lazy-init="true">
 
-	<import resource="classpath*:config/spring/applicationContext-security.xml" />
-
 	<bean id="securityFilterChain" name="securityFilterChain" class="org.springframework.security.web.FilterChainProxy">
 		<constructor-arg>
 			<list>

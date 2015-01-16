@@ -76,9 +76,11 @@
 		<property name="type" value="org.egov.lib.rjbac.user.UserImpl"/>
 	</bean>
 
-	<bean id="eisService" class="org.egov.pims.service.EisUtilService" scope="prototype">
+<!--
+	<bean id="eisService" class="org.egov.pims.service.EisUtilService" scope="prototype" lazy-init="true">
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>
+-->
 
 	<bean id="genericDao" class="org.egov.infstr.commons.dao.GenericHibernateDaoFactory" scope="prototype" />
 
@@ -157,7 +159,7 @@
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="userService" ref="userService" />
 		<property name="workflowService" ref="workflowService" />
-		<property name="eisService" ref="eisService" />
+		<!--<property name="eisService" ref="eisService" />-->
 	</bean>
 
 	<bean id="moveBoundaryDelegate" class="org.egov.infstr.client.delegate.MoveBoundaryDelegate" scope="prototype">

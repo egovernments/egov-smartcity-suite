@@ -1,6 +1,6 @@
 package org.egov.pgr.entity;
 
-import org.egov.lib.rjbac.dept.Department;
+import org.egov.lib.rjbac.dept.DepartmentImpl;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
@@ -30,7 +30,7 @@ public class ComplaintType extends AbstractPersistable<Long> {
 	
 	@ManyToOne
 	@Valid
-	private Department department;
+	private DepartmentImpl department;
 	
 	@Digits(fraction=2,message="{error-not-valid}",integer=9)
 	private BigDecimal amount;
@@ -49,10 +49,10 @@ public class ComplaintType extends AbstractPersistable<Long> {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public Department getDepartment() {
+	public DepartmentImpl getDepartment() {
 		return department;
 	}
-	public void setDepartment(Department department) {
+	public void setDepartment(DepartmentImpl department) {
 		this.department = department;
 	}
 	public BigDecimal getAmount() {

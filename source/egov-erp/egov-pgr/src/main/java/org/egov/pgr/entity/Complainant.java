@@ -1,6 +1,6 @@
 package org.egov.pgr.entity;
 
-import org.egov.lib.rjbac.user.User;
+import org.egov.lib.rjbac.user.UserImpl;
 import org.egov.pgr.utils.constants.EntityValidationRegex;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
@@ -34,7 +34,7 @@ public class Complainant extends AbstractPersistable<Long> {
 	@ManyToOne
 	@Valid
 	@JoinColumn(nullable=true)
-	private User userDetail;
+	private UserImpl userDetail;
 	
 	public String getName() {
 		return name;
@@ -54,10 +54,10 @@ public class Complainant extends AbstractPersistable<Long> {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public User getUserDetail() {
+	public UserImpl getUserDetail() {
 		return userDetail;
 	}
-	public void setUserDetail(User userDetail) {
+	public void setUserDetail(UserImpl userDetail) {
 		this.userDetail = userDetail;
 	}
 }
