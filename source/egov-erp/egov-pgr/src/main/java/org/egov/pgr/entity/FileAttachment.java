@@ -1,17 +1,15 @@
 package org.egov.pgr.entity;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name="pgr_fileattachment")
 public class FileAttachment extends AbstractPersistable<Long>{
     
-	private static final long serialVersionUID = 1L;
-
     private String filename;
 
     @Type(type="org.hibernate.type.BinaryType") 

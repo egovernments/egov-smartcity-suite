@@ -113,7 +113,7 @@ public class ComplaintServiceImpl implements ComplaintService {
 		final org.springframework.data.domain.Sort.Order order = pageable.getSort().iterator().next();
 		criteria.addOrder(order.isAscending() ? Order.asc(order.getProperty()) : Order.desc(order.getProperty()));
 		final List<Complaint> complaints = criteria.setFirstResult(pageable.getOffset()).setMaxResults(pageable.getPageSize()).list();
-		return new PageImpl<Complaint>(complaints, pageable, totalComplaints);
+		return new PageImpl<>(complaints, pageable, totalComplaints);
 	}
 
 }

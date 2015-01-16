@@ -310,6 +310,12 @@
                 <artifactId>spring-modules-jcr</artifactId>
                 <version>0.8a</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-jpa</artifactId>
+                <version>1.7.1.RELEASE</version>
+            </dependency>
             <!-- SPRING END -->
 
             <!-- SECURITY START -->
@@ -471,6 +477,12 @@
                 <artifactId>cglib</artifactId>
                 <version>3.1</version>
             </dependency>
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>2.6</version>
+            </dependency>
+
             <!-- MISC END -->
 
             <!-- TESTING START -->
@@ -509,14 +521,6 @@
                 <artifactId>dbunit</artifactId>
                 <version>2.2.3</version>
                 <scope>test</scope>
-<!--
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                </exclusions>
--->
             </dependency>
             <!-- TESTING END -->
 

@@ -1,16 +1,5 @@
 package org.egov.pgr.entity;
 
-import java.io.Serializable;
-import java.util.Date;
-
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -19,11 +8,13 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.domain.Auditable;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
+
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class AbstractAuditable<U, PK extends Serializable> extends AbstractPersistable<PK> implements Auditable<U, PK> {
-
-	private static final long serialVersionUID = 141481953116476081L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn

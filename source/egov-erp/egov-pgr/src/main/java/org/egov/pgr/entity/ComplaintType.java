@@ -1,6 +1,10 @@
 package org.egov.pgr.entity;
 
-import java.math.BigDecimal;
+import org.egov.lib.rjbac.dept.Department;
+import org.hibernate.annotations.NaturalId;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -8,18 +12,12 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
 import javax.validation.constraints.Digits;
-
-import org.egov.lib.rjbac.dept.Department;
-import org.hibernate.annotations.NaturalId;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "pgr_complainttype", uniqueConstraints = @UniqueConstraint(columnNames = { "name" }))
 public class ComplaintType extends AbstractPersistable<Long> {
-	private static final long serialVersionUID = 1L;
-	
+
 	@NotBlank(message = "{error-not-empty}")
 	@Length(min = 1, max = 150, message = "{error-min-max-length-exceed}")
 	@SafeHtml(message = "{error-input-unsafe}")

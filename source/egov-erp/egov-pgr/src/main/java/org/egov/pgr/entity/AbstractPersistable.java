@@ -1,13 +1,12 @@
 package org.egov.pgr.entity;
 
-import java.io.Serializable;
+import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.domain.Persistable;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.springframework.data.domain.Persistable;
+import java.io.Serializable;
 
 /**
  * Abstract base class for entities. Allows parameterization of id type, chooses auto-generation and implements
@@ -15,8 +14,6 @@ import org.springframework.data.domain.Persistable;
  */
 @MappedSuperclass
 public abstract class AbstractPersistable<PK extends Serializable> implements Persistable<PK> {
-
-	private static final long serialVersionUID = -5554308939380869754L;
 
 	@Id
 	@GenericGenerator(name="seq_id", strategy="org.egov.pgr.domain.database.IdGenerator")

@@ -1,30 +1,19 @@
 package org.egov.pgr.entity;
 
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.rjbac.user.User;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.Set;
+
 @Entity
 @Table(name = "pgr_complaint",uniqueConstraints=@UniqueConstraint(columnNames = { "complaintID" }))
 public class Complaint extends AbstractAuditable<User, Long> {
-	private static final long serialVersionUID = 1L;
-	
+
 	//any future Receiving mode addition should be added at the end of this enum 
 	//since we are asking hibernate use its ordinal to be persisted
 	public enum ReceivingMode {

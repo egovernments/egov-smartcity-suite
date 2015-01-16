@@ -15,8 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 public class ComplaintTypeServiceImpl implements ComplaintTypeService {
 
+	private ComplaintTypeRepository complaintTypeRepository;
+
 	@Autowired
-	ComplaintTypeRepository complaintTypeRepository;
+	public ComplaintTypeServiceImpl(ComplaintTypeRepository complaintTypeRepository) {
+	}
 
 	@Override
 	public List<ComplaintType> getAllComplaintTypes() {
@@ -37,7 +40,4 @@ public class ComplaintTypeServiceImpl implements ComplaintTypeService {
 	public List<ComplaintType> getAllComplaintTypeByDepartment(Long id) {
 		return complaintTypeRepository.findByDepartmentId(id);
 	}
-	
-	
-	
 }
