@@ -14,6 +14,7 @@ echo "Deploying artifacts to wildfly under folder '$JBOSS_HOME/standalone/deploy
 echo "Deleting any existing deployment artifacts ($DEPLOYABLE_DIR)"
 rm -rf $DEPLOYABLE_DIR
 rm -f $DEPLOYABLE_DIR.*
+sleep 3
 mkdir $DEPLOYABLE_DIR
 echo "Copying artifacts from '<egov-erp dir>/egov-ear/target/egov-ear-1.0-SNAPSHOT' for deployment"
 cp -Rf egov-ear/target/egov-ear-1.0-SNAPSHOT/* $DEPLOYABLE_DIR/
