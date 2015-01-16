@@ -16,7 +16,7 @@ import java.io.Serializable;
 public abstract class AbstractPersistable<PK extends Serializable> implements Persistable<PK> {
 
 	@Id
-	@GenericGenerator(name="seq_id", strategy="org.egov.pgr.domain.database.IdGenerator")
+	@GenericGenerator(name="seq_id", strategy="org.egov.pgr.utils.jpa.SequenceIdGenerator")
 	@GeneratedValue(generator="seq_id")
 	private PK id;
 
