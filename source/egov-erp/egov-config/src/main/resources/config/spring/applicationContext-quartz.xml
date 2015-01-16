@@ -30,7 +30,7 @@
 		
     <bean name="egovSchedular" id="egovSchedular" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" abstract="true" destroy-method="destroy">
      	<property name="overwriteExistingJobs" value="true"/>
-        <property name="autoStartup" value="true" />
+        <property name="autoStartup" value="false" />   
         <property name="exposeSchedulerInRepository" value="true"/>
         <property name="jobFactory" ref="jobFactory"/>
         <property name="taskExecutor" ref="taskExecutor" />

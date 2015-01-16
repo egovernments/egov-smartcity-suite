@@ -13,12 +13,11 @@
     <name>e-governments erp</name>
 
     <modules>
-        <module>egov-config</module>
         <module>egov-egi</module>
-        <module>egov-pgr</module>
-        <module>egov-egiweb</module>
         <module>egov-pgrweb</module>
+        <module>egov-egiweb</module>
         <module>egov-ear</module>
+        <module>egov-config</module>
     </modules>
 
     <properties>
@@ -195,14 +194,6 @@
                         <groupId>xalan</groupId>
                         <artifactId>xalan</artifactId>
                     </exclusion>
-                    <exclusion>
-                        <groupId>commons-beanutils</groupId>
-                        <artifactId>commons-beanutils</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>commons-digester</groupId>
-                        <artifactId>commons-digester</artifactId>
-                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -269,10 +260,6 @@
                         <groupId>cglib</groupId>
                         <artifactId>cglib</artifactId>
                     </exclusion>
-                    <exclusion>
-                        <groupId>commons-digester</groupId>
-                        <artifactId>commons-digester</artifactId>
-                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -309,12 +296,6 @@
                 <groupId>org.springmodules</groupId>
                 <artifactId>spring-modules-jcr</artifactId>
                 <version>0.8a</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-jpa</artifactId>
-                <version>1.7.1.RELEASE</version>
             </dependency>
             <!-- SPRING END -->
 
@@ -371,16 +352,6 @@
                 <groupId>displaytag</groupId>
                 <artifactId>displaytag</artifactId>
                 <version>1.2</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-log4j12</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>jcl104-over-slf4j</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>displaytag</groupId>
@@ -388,32 +359,6 @@
                 <version>1.2</version>
             </dependency>
             <!-- DISPLAYTAG END -->
-
-            <!-- VIEWS RELATED END -->
-            <dependency>
-                <groupId>org.apache.tiles</groupId>
-                <artifactId>tiles-core</artifactId>
-                <version>3.0.5</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-beanutils</groupId>
-                        <artifactId>commons-beanutils</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.tiles</groupId>
-                <artifactId>tiles-jsp</artifactId>
-                <version>3.0.5</version>
-            </dependency>
-
-            <dependency>
-                <groupId>commons-beanutils</groupId>
-                <artifactId>commons-beanutils</artifactId>
-                <version>1.8.0</version>
-            </dependency>
-            <!-- VIEWS RELATED END -->
 
             <!-- REPORTS START -->
             <dependency>
@@ -458,6 +403,10 @@
                         <groupId>javax.activation</groupId>
                         <artifactId>activation</artifactId>
                     </exclusion>
+                    <!--<exclusion>-->
+                        <!--<groupId>javax.mail</groupId>-->
+                        <!--<artifactId>mail</artifactId>-->
+                    <!--</exclusion>-->
                 </exclusions>
             </dependency>
             <dependency>
@@ -493,12 +442,6 @@
                 <artifactId>cglib</artifactId>
                 <version>3.1</version>
             </dependency>
-            <dependency>
-                <groupId>joda-time</groupId>
-                <artifactId>joda-time</artifactId>
-                <version>2.6</version>
-            </dependency>
-
             <!-- MISC END -->
 
             <!-- TESTING START -->
@@ -537,85 +480,12 @@
                 <artifactId>dbunit</artifactId>
                 <version>2.2.3</version>
                 <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-nop</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>log4j</groupId>
-                        <artifactId>log4j</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <!-- TESTING END -->
-
-            <!-- LOGGING START -->
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>1.7.7</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jcl-over-slf4j</artifactId>
-                <version>1.7.7</version>
-            </dependency>
-            <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>1.2.17</version>
-            </dependency>
-            <!-- LOGGING END -->
-
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
-
-        <!-- COMMONS  START -->
-        <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
-        </dependency>
-        <!-- COMMONS  END -->
-
-        <!-- SPRING DEPENDENCIES START -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aop</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aspects</artifactId>
-        </dependency>
-
-        <!-- SPRING DEPENDENCIES END -->
-
         <!-- TESTING START -->
         <dependency>
             <groupId>junit</groupId>
@@ -647,12 +517,6 @@
             <artifactId>dbunit</artifactId>
         </dependency>
         <!-- TESTING END -->
-
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
-
     </dependencies>
 
 

@@ -1,5 +1,4 @@
 <%@page import="org.egov.exceptions.EGOVRuntimeException"%>
-<%@page import="org.hibernate.jdbc.ReturningWork"%>
 <%@ page language="java" import="org.egov.infstr.security.utils.SecurityUtils,java.sql.*,org.egov.infstr.utils.HibernateUtil" %>
 
 	<%
