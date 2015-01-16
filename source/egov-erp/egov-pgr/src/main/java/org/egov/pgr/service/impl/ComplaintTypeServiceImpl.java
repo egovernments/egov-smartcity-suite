@@ -1,7 +1,5 @@
 package org.egov.pgr.service.impl;
 
-import java.util.List;
-
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.repository.ComplaintTypeRepository;
 import org.egov.pgr.service.ComplaintTypeService;
@@ -11,6 +9,8 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly=true)
 public class ComplaintTypeServiceImpl implements ComplaintTypeService {
@@ -19,6 +19,7 @@ public class ComplaintTypeServiceImpl implements ComplaintTypeService {
 
 	@Autowired
 	public ComplaintTypeServiceImpl(ComplaintTypeRepository complaintTypeRepository) {
+		this.complaintTypeRepository = complaintTypeRepository;
 	}
 
 	@Override

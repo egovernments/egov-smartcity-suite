@@ -127,11 +127,7 @@ public class DepartmentImpl implements Department {
 
 		final Department other = (Department) obj;
 
-		if (this.getDeptName().equals(other.getDeptName())) {
-			return true;
-		} else {
-			return false;
-		}
+		return this.getDeptName().equals(other.getDeptName());
 
 	}
 

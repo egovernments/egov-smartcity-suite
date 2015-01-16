@@ -32,5 +32,12 @@
         </dependency>
         <!-- VIEWS RELATED END -->
 
+        <!-- JBOSS START -->
+        <dependency>
+            <groupId>org.jboss.spec.javax.servlet</groupId>
+            <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+        </dependency>
+        <!-- JBOSS END -->
+
     </dependencies>
 </project>
