@@ -14,6 +14,7 @@
 
     <modules>
         <module>egov-config</module>
+     	<module>egov-database</module>
         <module>egov-egi</module>
         <module>egov-pgr</module>
         <module>egov-egiweb</module>
