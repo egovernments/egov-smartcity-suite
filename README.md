@@ -1,3 +1,4 @@
+# eGov ERP System [![Build Status](http://192.168.1.58:8080/job/Phoenix-Master-Build/badge/icon)](http://192.168.1.58:8080/job/Phoenix-Master-Build/)
 ## Repository Structure
 
 * `source` - folder contains all the source code of erp
@@ -29,11 +30,11 @@ Database migration and artifact creation  is part of maven package . To skip mig
 * Uses the database properties from `egov-database/src/main/resources/liquibase.properties` for migration
 * All sql scripts should be named with incremental number prefix and .sql suffix
 * Format `<sequence>_<module>_<description>_<database-statement-type>.sql`
-* Examples   
-1_egi_create-deparment_DDL.sql.   
-2_eis_add-employee-role_DML.sql.   
+* Examples
+1_egi_create-deparment_DDL.sql.
+2_eis_add-employee-role_DML.sql.
 
-For More details refer [liquibase](http://www.liquibase.org/documentation/index.html) 
+For More details refer [liquibase](http://www.liquibase.org/documentation/index.html)
 
 ## Deploying
 
@@ -69,4 +70,3 @@ For More details refer [liquibase](http://www.liquibase.org/documentation/index.
 This is used for JBOSS 7 Deployment
 The Project Code base from http://192.168.1.3/erpbuild/nmc/trunk
 /jboss dir contains files that to be copied to JBoss 7 at build process.
-
