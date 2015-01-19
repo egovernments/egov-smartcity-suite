@@ -5,18 +5,6 @@
  */
 package org.egov.infstr.client.filter;
 
-import java.io.IOException;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.egov.exceptions.AuthorizationException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.utils.HibernateUtil;
@@ -24,7 +12,13 @@ import org.egov.infstr.utils.RequestUtils;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessResourceFailureException;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 
 /**
@@ -34,6 +28,7 @@ import org.springframework.dao.DataAccessResourceFailureException;
  * @version 2.0
  * @since 1.00
  */
+@Deprecated
 public class HibSessionServletFilter implements Filter {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(HibSessionServletFilter.class);

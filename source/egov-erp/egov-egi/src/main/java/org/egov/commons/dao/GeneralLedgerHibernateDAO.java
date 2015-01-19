@@ -25,12 +25,11 @@ import org.hibernate.Session;
 public class GeneralLedgerHibernateDAO extends GenericHibernateDAO implements GeneralLedgerDAO {
 	private static final Logger LOG = LoggerFactory.getLogger(GeneralLedgerHibernateDAO.class);
 
-	public GeneralLedgerHibernateDAO() {
-		super(CGeneralLedger.class, null);
-	}
+	private CommonsDAOFactory commonsDAOFactory;
 
-	public GeneralLedgerHibernateDAO(final Class persistentClass, final Session session) {
+	public GeneralLedgerHibernateDAO(final Class persistentClass, CommonsDAOFactory commonsDAOFactory, final Session session) {
 		super(persistentClass, session);
+		this.commonsDAOFactory = commonsDAOFactory;
 	}
 
 	/**
@@ -38,9 +37,9 @@ public class GeneralLedgerHibernateDAO extends GenericHibernateDAO implements Ge
 	 */
 	@Override
 	public String getActualsPrev(final String accCode, final String functionId, final String budgetingType) throws Exception {
-		final FinancialYearDAO fiscal = CommonsDaoFactory.getDAOFactory().getFinancialYearDAO();
+		final FinancialYearDAO fiscal = commonsDAOFactory.getFinancialYearDAO();
 		final String financialperiodId = fiscal.getPrevYearFiscalId();
-		final FiscalPeriodDAO fiscalperiod = CommonsDaoFactory.getDAOFactory().getFiscalPeriodDAO();
+		final FiscalPeriodDAO fiscalperiod = commonsDAOFactory.getFiscalPeriodDAO();
 		final String fiscalperiodId = fiscalperiod.getFiscalPeriodIds(financialperiodId);
 		String result = "";
 		String hqlQuery = "";
@@ -99,7 +98,7 @@ public class GeneralLedgerHibernateDAO extends GenericHibernateDAO implements Ge
 	 */
 	@Override
 	public String getActualsDecCurr(final String accCode, final String functionId, final String budgetingType) throws Exception {
-		final FinancialYearDAO fiscal = CommonsDaoFactory.getDAOFactory().getFinancialYearDAO();
+		final FinancialYearDAO fiscal = commonsDAOFactory.getFinancialYearDAO();
 		String startdate = fiscal.getCurrYearStartDate();
 		final String temp[] = startdate.split("-");
 		final String temp1[] = temp[2].split(" ");

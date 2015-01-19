@@ -49,10 +49,7 @@ import org.egov.commons.Scheme;
 import org.egov.commons.Status;
 import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
-import org.egov.commons.dao.BankbranchDAO;
-import org.egov.commons.dao.CommonsDaoFactory;
-import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.commons.dao.ObjectTypeDAO;
+import org.egov.commons.dao.*;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.ValidationException;
@@ -67,20 +64,27 @@ import org.egov.lib.citizen.model.Owner;
 import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class CommonsServiceImpl implements CommonsService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CommonsServiceImpl.class);
+	private CommonsDAOFactory commonsDAOFactory;
+
+	@Autowired
+	public CommonsServiceImpl(CommonsDAOFactory commonsDAOFactory) {
+		this.commonsDAOFactory = commonsDAOFactory;
+	}
 
 	@Override
 	public Installment getInstallmentByID(final Integer installmentId) {
-		return (Installment) CommonsDaoFactory.getDAOFactory().getInstallmentDao().findById(installmentId, false);
+		return (Installment) commonsDAOFactory.getInstallmentDao().findById(installmentId, false);
 	}
 
 	@Override
 	public void createInstallment(final Installment installment) {
 		try {
-			CommonsDaoFactory.getDAOFactory().getInstallmentDao().create(installment);
+			commonsDAOFactory.getInstallmentDao().create(installment);
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Exception in creating Installment.", e);
@@ -90,7 +94,7 @@ public class CommonsServiceImpl implements CommonsService {
 	@Override
 	public void deleteInstallment(final Installment installment) {
 		try {
-			CommonsDaoFactory.getDAOFactory().getInstallmentDao().delete(installment);
+			commonsDAOFactory.getInstallmentDao().delete(installment);
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Exception in deleting Installment.", e);
@@ -100,7 +104,7 @@ public class CommonsServiceImpl implements CommonsService {
 	@Override
 	public void updateInstallment(final Installment installment) {
 		try {
-			CommonsDaoFactory.getDAOFactory().getInstallmentDao().update(installment);
+			commonsDAOFactory.getInstallmentDao().update(installment);
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Exception in updating Installment.", e);
@@ -110,7 +114,7 @@ public class CommonsServiceImpl implements CommonsService {
 	@Override
 	public List<Installment> getInsatllmentByModule(final Module module) {
 		try {
-			return CommonsDaoFactory.getDAOFactory().getInstallmentDao().getInsatllmentByModule(module);
+			return commonsDAOFactory.getInstallmentDao().getInsatllmentByModule(module);
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Exception in searching Installment by module.", e);
@@ -120,7 +124,7 @@ public class CommonsServiceImpl implements CommonsService {
 	@Override
 	public List<Installment> getInsatllmentByModule(final Module module, final Date year) {
 		try {
-			return CommonsDaoFactory.getDAOFactory().getInstallmentDao().getInsatllmentByModule(module, year);
+			return commonsDAOFactory.getInstallmentDao().getInsatllmentByModule(module, year);
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Exception in searching Installment by module and year.", e);
@@ -130,7 +134,7 @@ public class CommonsServiceImpl implements CommonsService {
 	@Override
 	public Installment getInsatllmentByModule(final Module module, final Date year, final Integer installmentNumber) {
 		try {
-			return CommonsDaoFactory.getDAOFactory().getInstallmentDao().getInsatllmentByModule(module, year, installmentNumber);
+			return commonsDAOFactory.getInstallmentDao().getInsatllmentByModule(module, year, installmentNumber);
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Exception in searching Installment by module,year and installment number.", e);
@@ -140,7 +144,7 @@ public class CommonsServiceImpl implements CommonsService {
 	@Override
 	public List<Installment> getAllInstallments() {
 		try {
-			return CommonsDaoFactory.getDAOFactory().getInstallmentDao().findAll();
+			return commonsDAOFactory.getInstallmentDao().findAll();
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Exception in getting all installments.", e);
@@ -150,7 +154,7 @@ public class CommonsServiceImpl implements CommonsService {
 	@Override
 	public Installment getInsatllmentByModuleForGivenDate(final Module module, final Date installmentDate) {
 		try {
-			return CommonsDaoFactory.getDAOFactory().getInstallmentDao().getInsatllmentByModuleForGivenDate(module, installmentDate);
+			return commonsDAOFactory.getInstallmentDao().getInsatllmentByModuleForGivenDate(module, installmentDate);
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Exception in searching Installment by module for a given date.", e);
@@ -160,7 +164,7 @@ public class CommonsServiceImpl implements CommonsService {
 	@Override
 	public Installment getInsatllmentByModuleForCurrDate(final Module module) {
 		try {
-			return CommonsDaoFactory.getDAOFactory().getInstallmentDao().getInsatllmentByModuleForGivenDate(module, new Date());
+			return commonsDAOFactory.getInstallmentDao().getInsatllmentByModuleForGivenDate(module, new Date());
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Exception in searching Installment by module for current date.", e);
@@ -171,7 +175,7 @@ public class CommonsServiceImpl implements CommonsService {
 	public String getCurrentInstallmentYear() {
 		try {
 			final Module module = GenericDaoFactory.getDAOFactory().getModuleDao().getModuleByName(EGovConfig.getProperty("MODULE_NAME", "", "PT"));
-			final Installment instCurr = CommonsDaoFactory.getDAOFactory().getInstallmentDao().getInsatllmentByModuleForGivenDate(module, DateUtils.getFinancialYear().getStartOnDate());
+			final Installment instCurr = commonsDAOFactory.getInstallmentDao().getInsatllmentByModuleForGivenDate(module, DateUtils.getFinancialYear().getStartOnDate());
 			final Date insYear = instCurr.getInstallmentYear();
 			return new SimpleDateFormat("yyyy", Locale.ENGLISH).format(insYear);
 		} catch (final Exception e) {
@@ -213,7 +217,7 @@ public class CommonsServiceImpl implements CommonsService {
 	@Override
 	public Owner getOwnerByID(final Integer ownerID) {
 		try {
-			return (Owner) CommonsDaoFactory.getDAOFactory().getOwnerDao().findById(ownerID, false);
+			return (Owner) commonsDAOFactory.getOwnerDao().findById(ownerID, false);
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Exception in searching Owner.", e);
@@ -222,18 +226,18 @@ public class CommonsServiceImpl implements CommonsService {
 
 	@Override
 	public Fund fundById(final Integer fundId) {
-		return CommonsDaoFactory.getDAOFactory().getFundDAO().fundById(fundId);
+		return commonsDAOFactory.getFundDAO().fundById(fundId);
 	}
 
 	@Override
 	public Fundsource fundsourceById(final Integer fundSrcId) {
-		return CommonsDaoFactory.getDAOFactory().getFundsourceDAO().fundsourceById(fundSrcId);
+		return commonsDAOFactory.getFundsourceDAO().fundsourceById(fundSrcId);
 	}
 
 	@Override
 	public EgwStatus getEgwStatusById(final Integer statusId) {
 		try {
-			return (EgwStatus) CommonsDaoFactory.getDAOFactory().getEgwStatusDAO().findById(statusId, false);
+			return (EgwStatus) commonsDAOFactory.getEgwStatusDAO().findById(statusId, false);
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Exception in searching status by status id", e);
@@ -243,7 +247,7 @@ public class CommonsServiceImpl implements CommonsService {
 	@Override
 	public EgwStatus getEgwStatusByCode(final String code) throws EGOVRuntimeException {
 		try {
-			return CommonsDaoFactory.getDAOFactory().getEgwStatusDAO().getEgwStatusByCode(code);
+			return commonsDAOFactory.getEgwStatusDAO().getEgwStatusByCode(code);
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Exception in searching status by status Code", e);
@@ -253,7 +257,7 @@ public class CommonsServiceImpl implements CommonsService {
 	@Override
 	public List<Fund> getAllFunds() {
 		try {
-			return CommonsDaoFactory.getDAOFactory().getFundDAO().findAllActiveFunds();
+			return commonsDAOFactory.getFundDAO().findAllActiveFunds();
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Exception in searching Funds", e);
@@ -263,7 +267,7 @@ public class CommonsServiceImpl implements CommonsService {
 	@Override
 	public List<Fund> getAllActiveIsLeafFunds() {
 		try {
-			return CommonsDaoFactory.getDAOFactory().getFundDAO().findAllActiveIsLeafFunds();
+			return commonsDAOFactory.getFundDAO().findAllActiveIsLeafFunds();
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Exception in searching active and is leaf Funds", e);
@@ -273,7 +277,7 @@ public class CommonsServiceImpl implements CommonsService {
 	@Override
 	public List<Fundsource> getAllFundSource() throws EGOVRuntimeException {
 		try {
-			return CommonsDaoFactory.getDAOFactory().getFundsourceDAO().findAll();
+			return commonsDAOFactory.getFundsourceDAO().findAll();
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Exception in searching Fundsource", e);
@@ -283,7 +287,7 @@ public class CommonsServiceImpl implements CommonsService {
 	@Override
 	public List<EgActiondetails> getEgActiondetailsFilterBy(final String moduleId, final ArrayList<String> actionType, final String moduleType) {
 		try {
-			return CommonsDaoFactory.getDAOFactory().getEgActiondetailsDAO().getEgActiondetailsFilterBy(moduleId, actionType, moduleType);
+			return commonsDAOFactory.getEgActiondetailsDAO().getEgActiondetailsFilterBy(moduleId, actionType, moduleType);
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Exception in searching Actiondetails", e);
@@ -293,7 +297,7 @@ public class CommonsServiceImpl implements CommonsService {
 	@Override
 	public EgActiondetails getEgActiondetailsByWorksdetailId(final String moduleId, final String actionType, final String moduleType) {
 		try {
-			return CommonsDaoFactory.getDAOFactory().getEgActiondetailsDAO().getEgActiondetailsByWorksdetailId(moduleId, actionType, moduleType);
+			return commonsDAOFactory.getEgActiondetailsDAO().getEgActiondetailsByWorksdetailId(moduleId, actionType, moduleType);
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Exception in searching ActiondetailsByWorksdetailId", e);
@@ -303,7 +307,7 @@ public class CommonsServiceImpl implements CommonsService {
 	@Override
 	public void createEgActiondetails(final EgActiondetails egActiondetails) {
 		try {
-			CommonsDaoFactory.getDAOFactory().getEgActiondetailsDAO().create(egActiondetails);
+			commonsDAOFactory.getEgActiondetailsDAO().create(egActiondetails);
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Exception in creating Action Details ", e);
@@ -313,7 +317,7 @@ public class CommonsServiceImpl implements CommonsService {
 	@Override
 	public void updateEgActiondetails(final EgActiondetails egActiondetails) {
 		try {
-			CommonsDaoFactory.getDAOFactory().getEgActiondetailsDAO().update(egActiondetails);
+			commonsDAOFactory.getEgActiondetailsDAO().update(egActiondetails);
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Exception in Updating   Action details", e);
@@ -322,32 +326,32 @@ public class CommonsServiceImpl implements CommonsService {
 
 	@Override
 	public void createEgwSatuschange(final EgwSatuschange egwSatuschange) {
-		CommonsDaoFactory.getDAOFactory().getEgwSatuschangeDAO().create(egwSatuschange);
+		commonsDAOFactory.getEgwSatuschangeDAO().create(egwSatuschange);
 	}
 
 	@Override
 	public Fundsource getFundSourceById(final Integer fundSourceId) {
-		return (Fundsource) CommonsDaoFactory.getDAOFactory().getFundsourceDAO().findById(fundSourceId, false);
+		return (Fundsource) commonsDAOFactory.getFundsourceDAO().findById(fundSourceId, false);
 	}
 
 	@Override
 	public Fund getFundById(final Integer fundId) {
-		return (Fund) CommonsDaoFactory.getDAOFactory().getFundDAO().findById(fundId, false);
+		return (Fund) commonsDAOFactory.getFundDAO().findById(fundId, false);
 	}
 
 	@Override
 	public List<EgUom> findAllUom() {
-		return CommonsDaoFactory.getDAOFactory().getEgUomDAO().findAllUom();
+		return commonsDAOFactory.getEgUomDAO().findAllUom();
 	}
 
 	@Override
 	public Relation getRelationById(final Integer relationId) {
-		return (Relation) CommonsDaoFactory.getDAOFactory().getRelationDAO().findById(relationId, false);
+		return (Relation) commonsDAOFactory.getRelationDAO().findById(relationId, false);
 	}
 
 	@Override
 	public EgUom getUomById(final Integer uomId) {
-		return (EgUom) CommonsDaoFactory.getDAOFactory().getEgUomDAO().findById(uomId, false);
+		return (EgUom) commonsDAOFactory.getEgUomDAO().findById(uomId, false);
 	}
 
 	/**
@@ -357,48 +361,48 @@ public class CommonsServiceImpl implements CommonsService {
 	 */
 	@Override
 	public EgwStatus getStatusByModuleAndCode(final String moduleType, final String description) {
-		return CommonsDaoFactory.getDAOFactory().getEgwStatusDAO().getStatusByModuleAndCode(moduleType, description);
+		return commonsDAOFactory.getEgwStatusDAO().getStatusByModuleAndCode(moduleType, description);
 	}
 
 	@Override
 	public List<EgwStatus> getEgwStatusFilterByStatus(final ArrayList<Integer> statusId) {
-		return CommonsDaoFactory.getDAOFactory().getEgwStatusDAO().getEgwStatusFilterByStatus(statusId);
+		return commonsDAOFactory.getEgwStatusDAO().getEgwStatusFilterByStatus(statusId);
 	}
 
 	@Override
 	public List<EgActiondetails> getEgActiondetailsFilterBy(final ArrayList<String> actionType, final String moduleType) {
-		return CommonsDaoFactory.getDAOFactory().getEgActiondetailsDAO().getEgActiondetailsFilterBy(actionType, moduleType);
+		return commonsDAOFactory.getEgActiondetailsDAO().getEgActiondetailsFilterBy(actionType, moduleType);
 	}
 
 	@Override
 	public List<Status> getStatusByModuleType(final String moduleType) {
-		return CommonsDaoFactory.getDAOFactory().getStatusDAO().getStatusByModuleType(moduleType);
+		return commonsDAOFactory.getStatusDAO().getStatusByModuleType(moduleType);
 	}
 
 	@Override
 	public void createAccountdetailkey(final Accountdetailkey accountdetailkey) {
-		CommonsDaoFactory.getDAOFactory().getAccountdetailkeyDAO().create(accountdetailkey);
+		commonsDAOFactory.getAccountdetailkeyDAO().create(accountdetailkey);
 	}
 
 	@Override
 	public Status findEgInvStatusById(final Integer statusId) {
-		return (Status) CommonsDaoFactory.getDAOFactory().getStatusDAO().findById(statusId, false);
+		return (Status) commonsDAOFactory.getStatusDAO().findById(statusId, false);
 	}
 
 	@Override
 	public EgwStatus findEgwStatusById(final Integer statusId) {
-		return (EgwStatus) CommonsDaoFactory.getDAOFactory().getEgwStatusDAO().findById(statusId, false);
+		return (EgwStatus) commonsDAOFactory.getEgwStatusDAO().findById(statusId, false);
 	}
 
 	@Override
 	public List<CFinancialYear> getAllFinancialYearList() {
-		return CommonsDaoFactory.getDAOFactory().getFinancialYearDAO().findAll();
+		return commonsDAOFactory.getFinancialYearDAO().findAll();
 	}
 
 	@Override
 	public CFinancialYear findFinancialYearById(final Long finYrId) {
 		try {
-			return (CFinancialYear) CommonsDaoFactory.getDAOFactory().getFinancialYearDAO().findById(finYrId, false);
+			return (CFinancialYear) commonsDAOFactory.getFinancialYearDAO().findById(finYrId, false);
 		} catch (final RuntimeException e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException(e.getMessage(), e);
@@ -407,34 +411,34 @@ public class CommonsServiceImpl implements CommonsService {
 
 	@Override
 	public CFunction getCFunctionById(final Long functionId) {
-		return (CFunction) CommonsDaoFactory.getDAOFactory().getFunctionDAO().findById(functionId, false);
+		return (CFunction) commonsDAOFactory.getFunctionDAO().findById(functionId, false);
 	}
 
 	@Override
 	public List<CFunction> getAllFunction() {
-		return CommonsDaoFactory.getDAOFactory().getFunctionDAO().getAllActiveFunctions();
+		return commonsDAOFactory.getFunctionDAO().getAllActiveFunctions();
 	}
 
 	@Override
 	public CChartOfAccounts findGlCodeById(final String glcodeid) {
-		return (CChartOfAccounts) CommonsDaoFactory.getDAOFactory().getChartOfAccountsDAO().findById(glcodeid, false);
+		return (CChartOfAccounts) commonsDAOFactory.getChartOfAccountsDAO().findById(glcodeid, false);
 	}
 
 	@Override
 	public CChartOfAccounts getCChartOfAccountsById(final Long chartOfAccountsId) {
-		return (CChartOfAccounts) CommonsDaoFactory.getDAOFactory().getChartOfAccountsDAO().findById(chartOfAccountsId, false);
+		return (CChartOfAccounts) commonsDAOFactory.getChartOfAccountsDAO().findById(chartOfAccountsId, false);
 	}
 
 	@Override
 	public CFinancialYear getFinancialYearByDate(final Date date) {
-		final FinancialYearDAO finYearDAO = CommonsDaoFactory.getDAOFactory().getFinancialYearDAO();
+		final FinancialYearDAO finYearDAO = commonsDAOFactory.getFinancialYearDAO();
 		return finYearDAO.getFinancialYearByDate(date);
 	}
 
 	@Override
 	public List<CGeneralLedger> getGeneralLedgerList(final Long voucherHeaderId) {
 		try {
-			return CommonsDaoFactory.getDAOFactory().getGeneralLedgerDAO().findCGeneralLedgerByVoucherHeaderId(voucherHeaderId);
+			return commonsDAOFactory.getGeneralLedgerDAO().findCGeneralLedgerByVoucherHeaderId(voucherHeaderId);
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Error occurred while getting GL", e);
@@ -443,27 +447,27 @@ public class CommonsServiceImpl implements CommonsService {
 
 	@Override
 	public CChartOfAccounts getCChartOfAccountsByGlCode(final String glCode) {
-		return CommonsDaoFactory.getDAOFactory().getChartOfAccountsDAO().getCChartOfAccountsByGlCode(glCode);
+		return commonsDAOFactory.getChartOfAccountsDAO().getCChartOfAccountsByGlCode(glCode);
 	}
 
 	@Override
 	public Collection<CFunction> getFunctionList() {
-		return CommonsDaoFactory.getDAOFactory().getFunctionDAO().findAll();
+		return commonsDAOFactory.getFunctionDAO().findAll();
 	}
 
 	@Override
 	public CVoucherHeader findVoucherHeaderById(final Long vouchdrId) {
-		return (CVoucherHeader) CommonsDaoFactory.getDAOFactory().getVoucherHeaderDAO().findById(vouchdrId, false);
+		return (CVoucherHeader) commonsDAOFactory.getVoucherHeaderDAO().findById(vouchdrId, false);
 	}
 
 	@Override
 	public CFunction findFunctionById(final Long functionId) {
-		return (CFunction) CommonsDaoFactory.getDAOFactory().getFunctionDAO().findById(functionId, false);
+		return (CFunction) commonsDAOFactory.getFunctionDAO().findById(functionId, false);
 	}
 
 	@Override
 	public Collection<FinancialYear> getFinancialYearList() {
-		return CommonsDaoFactory.getDAOFactory().getFinancialYearDAO().findAll();
+		return commonsDAOFactory.getFinancialYearDAO().findAll();
 	}
 
 	/**
@@ -483,7 +487,7 @@ public class CommonsServiceImpl implements CommonsService {
 			finYear = result[0].toString();
 			fiscalPeriod = result[1].toString();
 		}
-		EgNumbers egnum = CommonsDaoFactory.getDAOFactory().getEgNumbersHibernateDAO().getEgNumberByFiscalPeriodAndVouchertype(fiscalPeriod, txnType);
+		EgNumbers egnum = commonsDAOFactory.getEgNumbersHibernateDAO().getEgNumberByFiscalPeriodAndVouchertype(fiscalPeriod, txnType);
 		String runningNumber = "";
 		if (egnum == null) {
 			egnum = new EgNumbers();
@@ -492,11 +496,11 @@ public class CommonsServiceImpl implements CommonsService {
 			egnum.setVouchernumber(new BigDecimal(runningNumber));
 			egnum.setVouchertype(txnType);
 			egnum.setFiscialperiodid(new BigDecimal(fiscalPeriod));
-			CommonsDaoFactory.getDAOFactory().getEgNumbersHibernateDAO().create(egnum);
+			commonsDAOFactory.getEgNumbersHibernateDAO().create(egnum);
 		} else {
 			runningNumber = String.valueOf(egnum.getVouchernumber().intValue() + 1);
 			egnum.setVouchernumber(new BigDecimal(runningNumber));
-			CommonsDaoFactory.getDAOFactory().getEgNumbersHibernateDAO().update(egnum);
+			commonsDAOFactory.getEgNumbersHibernateDAO().update(egnum);
 		}
 		return txnType + runningNumber + "/" + vDate.split("/")[1] + "/" + (finYear.substring(2, 4) + finYear.substring((finYear.length() - 2), finYear.length()));
 	}
@@ -508,7 +512,7 @@ public class CommonsServiceImpl implements CommonsService {
 	 */
 	@Override
 	public List<CChartOfAccounts> getActiveAccountsForType(final char type) throws EGOVException {
-		return CommonsDaoFactory.getDAOFactory().getChartOfAccountsDAO().getActiveAccountsForType(type);
+		return commonsDAOFactory.getChartOfAccountsDAO().getActiveAccountsForType(type);
 	}
 
 	/**
@@ -517,7 +521,7 @@ public class CommonsServiceImpl implements CommonsService {
 	 */
 	@Override
 	public List<Functionary> getActiveFunctionaries() {
-		return CommonsDaoFactory.getDAOFactory().getFunctionaryDAO().findAllActiveFunctionary();
+		return commonsDAOFactory.getFunctionaryDAO().findAllActiveFunctionary();
 	}
 
 	/**
@@ -550,93 +554,93 @@ public class CommonsServiceImpl implements CommonsService {
 
 	@Override
 	public CFinancialYear getFinancialYearByFinYearRange(final String finYearRange) {
-		return CommonsDaoFactory.getDAOFactory().getFinancialYearDAO().getFinancialYearByFinYearRange(finYearRange);
+		return commonsDAOFactory.getFinancialYearDAO().getFinancialYearByFinYearRange(finYearRange);
 	}
 
 	@Override
 	public List<CFinancialYear> getAllActiveFinancialYearList() {
-		return CommonsDaoFactory.getDAOFactory().getFinancialYearDAO().getAllActiveFinancialYearList();
+		return commonsDAOFactory.getFinancialYearDAO().getAllActiveFinancialYearList();
 	}
 
 	@Override
 	public List<CFinancialYear> getAllActivePostingFinancialYear() {
-		return CommonsDaoFactory.getDAOFactory().getFinancialYearDAO().getAllActivePostingFinancialYear();
+		return commonsDAOFactory.getFinancialYearDAO().getAllActivePostingFinancialYear();
 	}
 
 	@Override
 	public List<EgwTypeOfWork> getAllTypeOfWork() {
-		return CommonsDaoFactory.getDAOFactory().getEgwTypeOfWorkDAO().getAllTypeOfWork();
+		return commonsDAOFactory.getEgwTypeOfWorkDAO().getAllTypeOfWork();
 	}
 
 	@Override
 	public List<EgwTypeOfWork> getAllParentOrderByCode() {
-		return CommonsDaoFactory.getDAOFactory().getEgwTypeOfWorkDAO().getAllParentOrderByCode();
+		return commonsDAOFactory.getEgwTypeOfWorkDAO().getAllParentOrderByCode();
 	}
 
 	@Override
 	public EgwTypeOfWork getTypeOfWorkById(final Long workTypeId) {
-		return CommonsDaoFactory.getDAOFactory().getEgwTypeOfWorkDAO().getTypeOfWorkById(workTypeId);
+		return commonsDAOFactory.getEgwTypeOfWorkDAO().getTypeOfWorkById(workTypeId);
 	}
 
 	@Override
 	public EgwTypeOfWork findByCode(final String code) {
-		return CommonsDaoFactory.getDAOFactory().getEgwTypeOfWorkDAO().findByCode(code);
+		return commonsDAOFactory.getEgwTypeOfWorkDAO().findByCode(code);
 	}
 
 	@Override
 	public void createEgwTypeOfWork(final EgwTypeOfWork egwTypeOfWork) {
-		CommonsDaoFactory.getDAOFactory().getEgwTypeOfWorkDAO().create(egwTypeOfWork);
+		commonsDAOFactory.getEgwTypeOfWorkDAO().create(egwTypeOfWork);
 	}
 
 	@Override
 	public void updateEgwTypeOfWork(final EgwTypeOfWork egwTypeOfWork) {
-		CommonsDaoFactory.getDAOFactory().getEgwTypeOfWorkDAO().update(egwTypeOfWork);
+		commonsDAOFactory.getEgwTypeOfWorkDAO().update(egwTypeOfWork);
 	}
 
 	@Override
 	public List<EgwTypeOfWork> getTypeOfWorkDetailFilterBy(final String code, final String parentCode, final String description) {
-		return CommonsDaoFactory.getDAOFactory().getEgwTypeOfWorkDAO().getTypeOfWorkDetailFilterBy(code, parentCode, description);
+		return commonsDAOFactory.getEgwTypeOfWorkDAO().getTypeOfWorkDetailFilterBy(code, parentCode, description);
 	}
 
 	@Override
 	public List<EgwTypeOfWork> getTypeOfWorkDetailFilterByParty(final String code, final String parentCode, final String description, final String partyTypeCode) {
-		return CommonsDaoFactory.getDAOFactory().getEgwTypeOfWorkDAO().getTypeOfWorkDetailFilterByParty(code, parentCode, description, partyTypeCode);
+		return commonsDAOFactory.getEgwTypeOfWorkDAO().getTypeOfWorkDetailFilterByParty(code, parentCode, description, partyTypeCode);
 	}
 
 	@Override
 	public List<EgPartytype> getPartyTypeDetailFilterBy(final String code, final String parentCode, final String description) {
-		return CommonsDaoFactory.getDAOFactory().getEgPartytypeDAO().getPartyTypeDetailFilterBy(code, parentCode, description);
+		return commonsDAOFactory.getEgPartytypeDAO().getPartyTypeDetailFilterBy(code, parentCode, description);
 	}
 
 	@Override
 	public String getCurrYearFiscalId() {
-		return CommonsDaoFactory.getDAOFactory().getFinancialYearDAO().getCurrYearFiscalId();
+		return commonsDAOFactory.getFinancialYearDAO().getCurrYearFiscalId();
 	}
 
 	@Override
 	public String getCurrYearStartDate() {
-		return CommonsDaoFactory.getDAOFactory().getFinancialYearDAO().getCurrYearStartDate();
+		return commonsDAOFactory.getFinancialYearDAO().getCurrYearStartDate();
 	}
 
 	@Override
 	public String getPrevYearFiscalId() {
-		return CommonsDaoFactory.getDAOFactory().getFinancialYearDAO().getPrevYearFiscalId();
+		return commonsDAOFactory.getFinancialYearDAO().getPrevYearFiscalId();
 	}
 
 	@Override
 	public List<EgwStatus> getStatusByModule(final String moduleType) {
-		return CommonsDaoFactory.getDAOFactory().getEgwStatusDAO().getStatusByModule(moduleType);
+		return commonsDAOFactory.getEgwStatusDAO().getStatusByModule(moduleType);
 	}
 
 	@Override
 	public EgPartytype getPartytypeById(final Integer partyTypeId) {
-		return (EgPartytype) CommonsDaoFactory.getDAOFactory().getEgPartytypeDAO().findById(partyTypeId, false);
+		return (EgPartytype) commonsDAOFactory.getEgPartytypeDAO().findById(partyTypeId, false);
 	}
 
 	@Override
 	public void createEgPartytype(final EgPartytype egPartytype) {
 		try {
-			CommonsDaoFactory.getDAOFactory().getEgPartytypeDAO().create(egPartytype);
+			commonsDAOFactory.getEgPartytypeDAO().create(egPartytype);
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Exception in creating party type", e);
@@ -645,28 +649,28 @@ public class CommonsServiceImpl implements CommonsService {
 
 	@Override
 	public void updateEgPartytype(final EgPartytype egPartytype) {
-		CommonsDaoFactory.getDAOFactory().getEgPartytypeDAO().update(egPartytype);
+		commonsDAOFactory.getEgPartytypeDAO().update(egPartytype);
 	}
 
 	@Override
 	public List<EgPartytype> findAllPartyTypeChild() {
-		return CommonsDaoFactory.getDAOFactory().getEgPartytypeDAO().findAllPartyTypeChild();
+		return commonsDAOFactory.getEgPartytypeDAO().findAllPartyTypeChild();
 	}
 
 	@Override
 	public List<EgwTypeOfWork> findAllParentPartyType() {
-		return CommonsDaoFactory.getDAOFactory().getEgwTypeOfWorkDAO().findAllParentPartyType();
+		return commonsDAOFactory.getEgwTypeOfWorkDAO().findAllParentPartyType();
 	}
 
 	@Override
 	public List<EgwTypeOfWork> findAllChildPartyType() {
-		return CommonsDaoFactory.getDAOFactory().getEgwTypeOfWorkDAO().findAllChildPartyType();
+		return commonsDAOFactory.getEgwTypeOfWorkDAO().findAllChildPartyType();
 	}
 
 	@Override
 	public List<CVoucherHeader> getVoucherHeadersByStatus(final Integer status) {
 		try {
-			return CommonsDaoFactory.getDAOFactory().getVoucherHeaderDAO().getVoucherHeadersByStatus(status);
+			return commonsDAOFactory.getVoucherHeaderDAO().getVoucherHeadersByStatus(status);
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Error occurred while getting Voucher Header by Status", e);
@@ -676,7 +680,7 @@ public class CommonsServiceImpl implements CommonsService {
 	@Override
 	public List<CVoucherHeader> getVoucherHeadersByStatusAndType(final Integer status, final String type) {
 		try {
-			return CommonsDaoFactory.getDAOFactory().getVoucherHeaderDAO().getVoucherHeadersByStatusAndType(status, type);
+			return commonsDAOFactory.getVoucherHeaderDAO().getVoucherHeadersByStatusAndType(status, type);
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Error occurred while getting Voucher Header by Status and Type", e);
@@ -696,27 +700,27 @@ public class CommonsServiceImpl implements CommonsService {
 
 	@Override
 	public List<Chequedetail> getChequedetailByVoucherheader(final CVoucherHeader voucherHeader) {
-		return CommonsDaoFactory.getDAOFactory().getChequedetailDAO().getChequedetailByVoucherheader(voucherHeader);
+		return commonsDAOFactory.getChequedetailDAO().getChequedetailByVoucherheader(voucherHeader);
 	}
 
 	@Override
 	public Bankaccount getBankaccountById(final Integer id) {
-		return (Bankaccount) CommonsDaoFactory.getDAOFactory().getBankaccountDAO().findById(id, false);
+		return (Bankaccount) commonsDAOFactory.getBankaccountDAO().findById(id, false);
 	}
 
 	@Override
 	public void createEgSurrenderedCheques(final EgSurrenderedCheques egSurrendrdChqs) {
-		CommonsDaoFactory.getDAOFactory().getEgSurrenderedChequesDAO().create(egSurrendrdChqs);
+		commonsDAOFactory.getEgSurrenderedChequesDAO().create(egSurrendrdChqs);
 	}
 
 	@Override
 	public void updateEgSurrenderedCheques(final EgSurrenderedCheques egSurrendrdChqs) {
-		CommonsDaoFactory.getDAOFactory().getEgSurrenderedChequesDAO().update(egSurrendrdChqs);
+		commonsDAOFactory.getEgSurrenderedChequesDAO().update(egSurrendrdChqs);
 	}
 
 	@Override
 	public EgPartytype getPartytypeByCode(final String code) {
-		return CommonsDaoFactory.getDAOFactory().getEgPartytypeDAO().getPartytypeByCode(code);
+		return commonsDAOFactory.getEgPartytypeDAO().getPartytypeByCode(code);
 	}
 
 	@Override
@@ -729,17 +733,17 @@ public class CommonsServiceImpl implements CommonsService {
 
 	@Override
 	public List<Bankbranch> getAllBankBranchs() {
-		return CommonsDaoFactory.getDAOFactory().getBankbranchDAO().getAllBankBranchs();
+		return commonsDAOFactory.getBankbranchDAO().getAllBankBranchs();
 	}
 
 	@Override
 	public List<Bankaccount> getAllBankAccounts() {
-		return CommonsDaoFactory.getDAOFactory().getBankaccountDAO().getAllBankAccounts();
+		return commonsDAOFactory.getBankaccountDAO().getAllBankAccounts();
 	}
 
 	@Override
 	public Bank getBankById(final Integer id) {
-		return (Bank) CommonsDaoFactory.getDAOFactory().getBankDAO().findById(id, false);
+		return (Bank) commonsDAOFactory.getBankDAO().findById(id, false);
 	}
 
 	@Override
@@ -759,13 +763,13 @@ public class CommonsServiceImpl implements CommonsService {
 
 	@Override
 	public ObjectHistory createObjectHistory(final ObjectHistory objhistory) {
-		return (ObjectHistory) CommonsDaoFactory.getDAOFactory().getObjectHistoryDAO().create(objhistory);
+		return (ObjectHistory) commonsDAOFactory.getObjectHistoryDAO().create(objhistory);
 	}
 
 	@Override
 	public String getCBillDeductionAmtByVhId(final Long voucherHeaderId) {
 		try {
-			return CommonsDaoFactory.getDAOFactory().getGeneralLedgerDAO().getCBillDeductionAmtByVhId(voucherHeaderId);
+			return commonsDAOFactory.getGeneralLedgerDAO().getCBillDeductionAmtByVhId(voucherHeaderId);
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Exception in searching CBillDeductionAmtByVhId" + e.getMessage(), e);
@@ -778,17 +782,17 @@ public class CommonsServiceImpl implements CommonsService {
 		if (functionaryId != null) {
 			functionary = this.getFunctionaryById(Integer.parseInt(functionaryId));
 		}
-		return CommonsDaoFactory.getDAOFactory().getChequedetailDAO().getChequedetailFilterBy(vhNo, vhDateFrom, vhDateTo, chqNo, mode, pymntType, dept, functionary);
+		return commonsDAOFactory.getChequedetailDAO().getChequedetailFilterBy(vhNo, vhDateFrom, vhDateTo, chqNo, mode, pymntType, dept, functionary);
 	}
 
 	@Override
 	public Vouchermis getVouchermisByVhId(final Integer vhId) {
-		return CommonsDaoFactory.getDAOFactory().getVouchermisDAO().getVouchermisByVhId(vhId);
+		return commonsDAOFactory.getVouchermisDAO().getVouchermisByVhId(vhId);
 	}
 
 	@Override
 	public CVoucherHeader getVoucherHeadersByCGN(final String cgn) {
-		return CommonsDaoFactory.getDAOFactory().getVoucherHeaderDAO().getVoucherHeadersByCGN(cgn);
+		return commonsDAOFactory.getVoucherHeaderDAO().getVoucherHeadersByCGN(cgn);
 	}
 
 	/**
@@ -798,33 +802,33 @@ public class CommonsServiceImpl implements CommonsService {
 	 */
 	@Override
 	public List<EgwStatus> getStatusListByModuleAndCodeList(final String moduleType, final List codeList) {
-		return CommonsDaoFactory.getDAOFactory().getEgwStatusDAO().getStatusListByModuleAndCodeList(moduleType, codeList);
+		return commonsDAOFactory.getEgwStatusDAO().getStatusListByModuleAndCodeList(moduleType, codeList);
 	}
 
 	@Override
 	public Functionary getFunctionaryById(final Integer id) {
-		return CommonsDaoFactory.getDAOFactory().getFunctionaryDAO().functionaryById(id);
+		return commonsDAOFactory.getFunctionaryDAO().functionaryById(id);
 	}
 
 	@Override
 	public CFunction getFunctionByCode(final String code) {
-		return CommonsDaoFactory.getDAOFactory().getFunctionDAO().getFunctionByCode(code);
+		return commonsDAOFactory.getFunctionDAO().getFunctionByCode(code);
 	}
 
 	@Override
 	public List<CChartOfAccounts> getAccountCodeByPurpose(final Integer purposeId) throws EGOVException {
-		return CommonsDaoFactory.getDAOFactory().getChartOfAccountsDAO().getAccountCodeByPurpose(purposeId);
+		return commonsDAOFactory.getChartOfAccountsDAO().getAccountCodeByPurpose(purposeId);
 	}
 
 	@Override
 	public List<CChartOfAccounts> getDetailedAccountCodeList() throws EGOVException {
-		return CommonsDaoFactory.getDAOFactory().getChartOfAccountsDAO().getDetailedAccountCodeList();
+		return commonsDAOFactory.getChartOfAccountsDAO().getDetailedAccountCodeList();
 	}
 
 	@Override
 	public Accountdetailtype getAccountDetailTypeIdByName(final String glCode, final String name) {
 		try {
-			return CommonsDaoFactory.getDAOFactory().getChartOfAccountsDAO().getAccountDetailTypeIdByName(glCode, name);
+			return commonsDAOFactory.getChartOfAccountsDAO().getAccountDetailTypeIdByName(glCode, name);
 		} catch (final Exception e) {
 			LOG.error(e.getMessage());
 			throw new EGOVRuntimeException("Error occurred while getting Account Detail Type ID by Name", e);
@@ -833,116 +837,116 @@ public class CommonsServiceImpl implements CommonsService {
 
 	@Override
 	public List<Fundsource> getAllActiveIsLeafFundSources() throws EGOVException {
-		return CommonsDaoFactory.getDAOFactory().getFundsourceDAO().findAllActiveIsLeafFundSources();
+		return commonsDAOFactory.getFundsourceDAO().findAllActiveIsLeafFundSources();
 	}
 
 	@Override
 	public Scheme getSchemeById(final Integer id) throws EGOVException {
-		return CommonsDaoFactory.getDAOFactory().getSchemeDAO().getSchemeById(id);
+		return commonsDAOFactory.getSchemeDAO().getSchemeById(id);
 	}
 
 	@Override
 	public SubScheme getSubSchemeById(final Integer id) throws EGOVException {
-		return CommonsDaoFactory.getDAOFactory().getSubSchemeDAO().getSubSchemeById(id);
+		return commonsDAOFactory.getSubSchemeDAO().getSubSchemeById(id);
 	}
 
 	@Override
 	public CFinancialYear getFinancialYearById(final Long id) {
-		return CommonsDaoFactory.getDAOFactory().getFinancialYearDAO().getFinancialYearById(id);
+		return commonsDAOFactory.getFinancialYearDAO().getFinancialYearById(id);
 	}
 
 	@Override
 	public CFunction getFunctionById(final Long Id) {
-		return CommonsDaoFactory.getDAOFactory().getFunctionDAO().getFunctionById(Id);
+		return commonsDAOFactory.getFunctionDAO().getFunctionById(Id);
 	}
 
 	@Override
 	public Integer getDetailtypeforObject(final Object master) throws EGOVException {
-		return CommonsDaoFactory.getDAOFactory().getaccountdetailtypeHibernateDAO().getDetailtypeforObject(master);
+		return commonsDAOFactory.getaccountdetailtypeHibernateDAO().getDetailtypeforObject(master);
 	}
 
 	@Override
 	public List<Accountdetailtype> getDetailTypeListByGlCode(final String glCode) throws EGOVException {
-		return CommonsDaoFactory.getDAOFactory().getChartOfAccountsDAO().getAccountdetailtypeListByGLCode(glCode);
+		return commonsDAOFactory.getChartOfAccountsDAO().getAccountdetailtypeListByGLCode(glCode);
 	}
 
 	@Override
 	public Fund fundByCode(final String fundCode) {
-		return CommonsDaoFactory.getDAOFactory().getFundDAO().fundByCode(fundCode);
+		return commonsDAOFactory.getFundDAO().fundByCode(fundCode);
 	}
 
 	@Override
 	public Scheme schemeByCode(final String code) {
-		return CommonsDaoFactory.getDAOFactory().getSchemeDAO().getSchemeByCode(code);
+		return commonsDAOFactory.getSchemeDAO().getSchemeByCode(code);
 	}
 
 	@Override
 	public Fundsource getFundSourceByCode(final String code) {
-		return CommonsDaoFactory.getDAOFactory().getFundsourceDAO().getFundSourceByCode(code);
+		return commonsDAOFactory.getFundsourceDAO().getFundSourceByCode(code);
 	}
 
 	@Override
 	public SubScheme getSubSchemeByCode(final String code) {
-		return CommonsDaoFactory.getDAOFactory().getSubSchemeDAO().getSubSchemeByCode(code);
+		return commonsDAOFactory.getSubSchemeDAO().getSubSchemeByCode(code);
 	}
 
 	@Override
 	public Bank getBankByCode(final String bankCode) {
-		return CommonsDaoFactory.getDAOFactory().getBankDAO().getBankByCode(bankCode);
+		return commonsDAOFactory.getBankDAO().getBankByCode(bankCode);
 	}
 
 	@Override
 	public Bankaccount getBankAccountByAccBranchBank(final String bankAccNum, final String bankBranchCode, final String bankCode) {
-		return CommonsDaoFactory.getDAOFactory().getBankaccountDAO().getBankAccountByAccBranchBank(bankAccNum, bankBranchCode, bankCode);
+		return commonsDAOFactory.getBankaccountDAO().getBankAccountByAccBranchBank(bankAccNum, bankBranchCode, bankCode);
 	}
 
 	@Override
 	public Functionary getFunctionaryByCode(final BigDecimal code) {
-		return CommonsDaoFactory.getDAOFactory().getFunctionaryDAO().getFunctionaryByCode(code);
+		return commonsDAOFactory.getFunctionaryDAO().getFunctionaryByCode(code);
 	}
 
 	@Override
 	public List<Accountdetailtype> getAccountdetailtypeListByGLCode(final String glCode) throws EGOVException {
-		return CommonsDaoFactory.getDAOFactory().getChartOfAccountsDAO().getAccountdetailtypeListByGLCode(glCode);
+		return commonsDAOFactory.getChartOfAccountsDAO().getAccountdetailtypeListByGLCode(glCode);
 	}
 
 	@Override
 	public List<CChartOfAccounts> getActiveAccountsForTypes(final char[] type) throws ValidationException {
-		return CommonsDaoFactory.getDAOFactory().getChartOfAccountsDAO().getActiveAccountsForTypes(type);
+		return commonsDAOFactory.getChartOfAccountsDAO().getActiveAccountsForTypes(type);
 	}
 
 	@Override
 	public List<CChartOfAccounts> getAccountCodeByListOfPurposeId(final Integer[] purposeId) throws ValidationException {
-		return CommonsDaoFactory.getDAOFactory().getChartOfAccountsDAO().getAccountCodeByListOfPurposeId(purposeId);
+		return commonsDAOFactory.getChartOfAccountsDAO().getAccountCodeByListOfPurposeId(purposeId);
 	}
 
 	@Override
 	public List<CChartOfAccounts> getListOfDetailCode(final String glCode) throws ValidationException {
-		return CommonsDaoFactory.getDAOFactory().getChartOfAccountsDAO().getListOfDetailCode(glCode);
+		return commonsDAOFactory.getChartOfAccountsDAO().getListOfDetailCode(glCode);
 	}
 
 	@Override
 	public List<EgUom> getAllUomsWithinCategoryByUom(final Integer uomId) throws ValidationException {
-		return CommonsDaoFactory.getDAOFactory().getEgUomDAO().getAllUomsWithinCategoryByUom(uomId);
+		return commonsDAOFactory.getEgUomDAO().getAllUomsWithinCategoryByUom(uomId);
 	}
 
 	@Override
 	public BigDecimal getConversionFactorByUom(final Integer uomId) throws ValidationException {
-		return CommonsDaoFactory.getDAOFactory().getEgUomDAO().getConversionFactorByUom(uomId);
+		return commonsDAOFactory.getEgUomDAO().getConversionFactorByUom(uomId);
 	}
 
 	@Override
 	public BigDecimal getConversionFactorByFromUomToUom(final Integer fromuomId, final Integer touomId) throws ValidationException {
-		return CommonsDaoFactory.getDAOFactory().getEgUomDAO().getConversionFactorByFromUomToUom(fromuomId, touomId);
+		return commonsDAOFactory.getEgUomDAO().getConversionFactorByFromUomToUom(fromuomId, touomId);
 	}
 
 	@Override
 	public List<EgPartytype> getSubPartyTypes(final String code) {
-		return CommonsDaoFactory.getDAOFactory().getEgPartytypeDAO().getSubPartyTypesForCode(code);
+		return commonsDAOFactory.getEgPartytypeDAO().getSubPartyTypesForCode(code);
 	}
 
 	@Override
 	public Functionary getFunctionaryByName(final String name) {
-		return CommonsDaoFactory.getDAOFactory().getFunctionaryDAO().getFunctionaryByName(name);
+		return commonsDAOFactory.getFunctionaryDAO().getFunctionaryByName(name);
 	}
 }

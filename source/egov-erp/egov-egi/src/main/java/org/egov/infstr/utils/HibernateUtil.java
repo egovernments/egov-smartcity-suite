@@ -137,6 +137,7 @@ public class HibernateUtil {
 		return false;
 	}
 
+	@Deprecated
 	public static SessionFactory getSessionFactory() {
 		final String jndiName = EGOVThreadLocals.getHibFactName();
 		final SessionFactory sessionFact = hibernateFactory.get(jndiName);

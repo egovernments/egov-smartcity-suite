@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -17,6 +18,7 @@ import org.egov.infstr.reporting.engine.jasper.JasperReportService;
 import org.egov.infstr.reporting.util.ReportUtil;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.jdbc.Work;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Abstract report service providing common eGov reporting functionality. eGov infrastructure uses JasperReports for creating reports {@link JasperReportService}. Any other third party reporting framework can be supported by implementing a class that extends from {@link AbstractReportService} and
@@ -29,6 +31,9 @@ public abstract class AbstractReportService<T> implements ReportService {
 	private LRUCache<String, T> templateCache;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractReportService.class);
+
+	@Autowired
+	private SessionFactory sessionFactory;
 
 	/**
 	 * Creates a report using given report input where the report data source is java beans
@@ -107,7 +112,7 @@ public abstract class AbstractReportService<T> implements ReportService {
 		// Hibernate Session.connection() is deprecated. Hence using the Work
 		// contract for performing discrete JDBC operation.
 		final JdbcReportWork reportWork = new JdbcReportWork(reportInput);
-		HibernateUtil.getCurrentSession().doWork(reportWork);
+		sessionFactory.getCurrentSession().doWork(reportWork);
 		return reportWork.getReportOutput();
 	}
 

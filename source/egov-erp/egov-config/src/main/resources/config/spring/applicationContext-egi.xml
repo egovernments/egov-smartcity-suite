@@ -24,7 +24,11 @@
  
 	<bean id="boundaryTypeService" class="org.egov.lib.admbndry.ejb.server.BoundaryTypeServiceImpl" />
 
-	<bean id="commonsService" class="org.egov.commons.service.CommonsServiceImpl" />
+	<bean id="commonsDAOFactory" class="org.egov.commons.dao.CommonsDAOFactory" />
+
+	<bean id="commonsService" class="org.egov.commons.service.CommonsServiceImpl">
+		<constructor-arg ref="commonsHibernateDaoFactory"/>
+	</bean>
 
 	<bean id="departmentService" class="org.egov.lib.rjbac.dept.ejb.server.DepartmentServiceImpl"/>
 	
