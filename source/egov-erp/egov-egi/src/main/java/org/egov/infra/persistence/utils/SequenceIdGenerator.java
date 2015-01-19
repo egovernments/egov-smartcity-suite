@@ -1,4 +1,4 @@
-package org.egov.pgr.utils.jpa;
+package org.egov.infra.persistence.utils;
 
 import java.io.Serializable;
 import java.sql.PreparedStatement;

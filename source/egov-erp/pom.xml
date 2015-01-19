@@ -616,7 +616,14 @@
         </dependency>
 
         <!-- SPRING DEPENDENCIES END -->
-
+		
+		<!-- MISC STARTS -->
+		<dependency>
+			<groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+		<!-- MISC ENDS -->
+		
         <!-- TESTING START -->
         <dependency>
             <groupId>junit</groupId>
