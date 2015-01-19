@@ -20,8 +20,20 @@ __Note__: Please check in [downlods repository](http://192.168.1.3/downloads/) f
 ```bash
 mvn -s settings.xml clean compile ## Cleans your build directory and compiles your java code
 mvn -s settings.xml clean test    ## Cleans, compiles and runs unit, integration tests
-mvn -s settings.xml package       ## Cleans, compiles, tests and generates ear artifact alsong with jars and wars approproiately
+mvn -s settings.xml package       ## Cleans, compiles,updates database, tests and generates ear artifact along with jars and wars approproiately
 ```
+#### Building Database
+Database migration and artifact creation  is part of maven package . To skip migration use -Dliquibase.should.run=false
+#### Database sql files
+* All sql files should be added under directory `egov-database/src/main/resources/sql`
+* Uses the database properties from `egov-database/src/main/resources/liquibase.properties` for migration
+* All sql scripts should be named with incremental number prefix and .sql suffix
+* Format `<sequence>_<module>_<description>_<database-statement-type>.sql`
+* Examples   
+1_egi_create-deparment_DDL.sql.   
+2_eis_add-employee-role_DML.sql.   
+
+For More details refer [liquibase](http://www.liquibase.org/documentation/index.html) 
 
 ## Deploying
 
@@ -53,6 +65,8 @@ mvn -s settings.xml package       ## Cleans, compiles, tests and generates ear a
 
 ## Notes
 
+
 This is used for JBOSS 7 Deployment
 The Project Code base from http://192.168.1.3/erpbuild/nmc/trunk
 /jboss dir contains files that to be copied to JBoss 7 at build process.
+
