@@ -1,4 +1,5 @@
-# eGov ERP System [![Build Status](http://192.168.1.58:8080/job/Phoenix-Master-Build/badge/icon)](http://192.168.1.58:8080/job/Phoenix-Master-Build/)
+# eGov ERP System
+[![Build Status](http://192.168.1.58:8080/job/Phoenix-Master-Build/badge/icon)](http://192.168.1.58:8080/job/Phoenix-Master-Build/)
 ## Repository Structure
 
 * `source` - folder contains all the source code of erp
