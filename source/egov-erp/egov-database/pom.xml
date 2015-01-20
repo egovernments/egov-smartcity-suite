@@ -40,7 +40,7 @@
 				</dependencies>
 				<executions>
 					<execution>
-						<phase>process-resources</phase>
+						<phase>package</phase>
 						<configuration>
 						<promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
 							<propertyFileWillOverride>true</propertyFileWillOverride>
