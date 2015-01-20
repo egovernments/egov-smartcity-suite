@@ -51,7 +51,7 @@ public class ChartofAccountsHibernateDAOTest extends EgovHibernateTest {
 		EGOVThreadLocals.setUserId("1");
 		this.coa = new ChartOfAccountsHibernateDAO(CChartOfAccounts.class,
 				HibernateUtil.getCurrentSession());
-		comm = new CommonsServiceImpl();
+		comm = null;//new CommonsServiceImpl();
 		this.session = new MockHttpSession();
 		this.objectFactory = new EgiObjectFactory();
 	}
