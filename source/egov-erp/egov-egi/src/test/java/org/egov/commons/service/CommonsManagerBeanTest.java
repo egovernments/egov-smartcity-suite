@@ -21,13 +21,13 @@ public class CommonsManagerBeanTest extends EgovHibernateTest {
 	}
 /*
 	public void testGetFunctionaryByCode() {
-		final Functionary functionary = new CommonsServiceImpl()
+		final Functionary functionary = new CommonsServiceImpl(null)
 				.getFunctionaryByCode(createFunctionary().getCode());
 		assertEquals("-3000", functionary.getCode().toString());
 	}
 
 	public void testGetFunctionaryByCodeforInvalidCode() {
-		final Functionary functionary = new CommonsServiceImpl()
+		final Functionary functionary = new CommonsServiceImpl(null)
 				.getFunctionaryByCode(BigDecimal.valueOf(-1000));
 		assertNull(functionary);
 	}
@@ -48,7 +48,7 @@ public class CommonsManagerBeanTest extends EgovHibernateTest {
 	}
 /*
 	public void testGetFinancialYearByDate() {
-		final CFinancialYear cFinancialYear = new CommonsServiceImpl()
+		final CFinancialYear cFinancialYear = new CommonsServiceImpl(null)
 				.getFinancialYearByDate(new Date());
 		assertNotNull(cFinancialYear);
 	}

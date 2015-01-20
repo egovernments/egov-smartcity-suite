@@ -1,9 +1,5 @@
 package org.egov.commons.dao;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bank;
@@ -26,6 +22,10 @@ import org.hibernate.HibernateException;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpSession;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Malathi
@@ -51,7 +51,7 @@ public class ChartofAccountsHibernateDAOTest extends EgovHibernateTest {
 		EGOVThreadLocals.setUserId("1");
 		this.coa = new ChartOfAccountsHibernateDAO(CChartOfAccounts.class,
 				HibernateUtil.getCurrentSession());
-		comm = null;//new CommonsServiceImpl();
+		comm = new CommonsServiceImpl(null);
 		this.session = new MockHttpSession();
 		this.objectFactory = new EgiObjectFactory();
 	}
