@@ -44,7 +44,7 @@ public class DepartmentDAOTest {
 		final ThreadLocal<Session> sessionThread = new ThreadLocal<Session>();
 		sessionThread.set(this.session);
 		f.set(new HibernateUtil(), sessionThread);
-		this.departmentDao = new DepartmentDAO();
+//		this.departmentDao = new DepartmentDAO();
 		TestUtils.activateInitialContext();
 
 	}
@@ -194,12 +194,5 @@ public class DepartmentDAOTest {
 		} catch (final Exception e) {
 			assertTrue(true);
 		}
-	}
-
-	@Test
-	public void testConstructor() {
-		final DepartmentDAO dept = new DepartmentDAO(Department.class,
-				this.session);
-		assertNotNull(dept);
 	}
 }

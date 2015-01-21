@@ -5,15 +5,6 @@
  */
 package org.egov.infstr.client.adminBoundry;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -25,10 +16,18 @@ import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
 import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
 import org.egov.lib.admbndry.ejb.server.BoundaryTypeServiceImpl;
 import org.egov.lib.admbndry.ejb.server.HeirarchyTypeServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class BeforeBoundryTypeAction extends EgovAction {
 	private static final Logger LOG = LoggerFactory.getLogger(BeforeBoundryTypeAction.class);
-	private BoundaryTypeService boundaryTypeService = new BoundaryTypeServiceImpl();
+	private BoundaryTypeService boundaryTypeService = new BoundaryTypeServiceImpl(null);
 	private HeirarchyTypeService heirarchyTypeService = new HeirarchyTypeServiceImpl();
 	
 	@Override

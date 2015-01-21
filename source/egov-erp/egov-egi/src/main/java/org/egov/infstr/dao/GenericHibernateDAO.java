@@ -5,15 +5,15 @@
  */
 package org.egov.infstr.dao;
 
-import java.io.Serializable;
-import java.util.List;
-
-import org.egov.infstr.utils.HibernateUtil;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.hibernate.Criteria;
 import org.hibernate.LockOptions;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Example;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * Implements the generic CRUD data access operations using Hibernate APIs.
@@ -40,8 +40,10 @@ public class GenericHibernateDAO<T, ID extends Serializable> implements GenericD
 	 * Gets the hibernate session.
 	 * @return the hibernate session
 	 */
-	protected Session getSession() {
-		return session == null ? HibernateUtil.getCurrentSession() : session;
+	protected Session getCurrentSession() {
+		if(session == null)
+			throw new EGOVRuntimeException(String.format("Hibernate session is not set in the DAO [%s]. Use the appropriate constructor.", this.getClass().getName()));
+		return session;
 	}
 
 	/**
@@ -72,9 +74,9 @@ public class GenericHibernateDAO<T, ID extends Serializable> implements GenericD
 	public T findById(ID id, boolean lock) {
 		T entity;
 		if (lock) {
-			entity = (T) getSession().load(getPersistentClass(), id, LockOptions.UPGRADE);
+			entity = (T) getCurrentSession().load(getPersistentClass(), id, LockOptions.UPGRADE);
 		} else {
-			entity = (T) getSession().load(getPersistentClass(), id);
+			entity = (T) getCurrentSession().load(getPersistentClass(), id);
 
 		}
 		return entity;
@@ -87,7 +89,7 @@ public class GenericHibernateDAO<T, ID extends Serializable> implements GenericD
 	 */
 	@SuppressWarnings("unchecked")
 	public List<T> findAll() {
-		return getSession().createCriteria(getPersistentClass()).list();
+		return getCurrentSession().createCriteria(getPersistentClass()).list();
 	}
 
 	/**
@@ -98,7 +100,7 @@ public class GenericHibernateDAO<T, ID extends Serializable> implements GenericD
 	 */
 	@SuppressWarnings("unchecked")
 	public List<T> findByExample(T exampleT) {
-		Criteria crit = getSession().createCriteria(getPersistentClass());
+		Criteria crit = getCurrentSession().createCriteria(getPersistentClass());
 		return crit.add(Example.create(exampleT)).list();
 	}
 
@@ -110,7 +112,7 @@ public class GenericHibernateDAO<T, ID extends Serializable> implements GenericD
 	 */
 	@SuppressWarnings("unchecked")
 	public T create(T entity) {
-		getSession().saveOrUpdate(entity);
+		getCurrentSession().saveOrUpdate(entity);
 		return entity;
 	}
 
@@ -122,7 +124,7 @@ public class GenericHibernateDAO<T, ID extends Serializable> implements GenericD
 	 */
 	@SuppressWarnings("unchecked")
 	public T update(T entity) {
-		getSession().saveOrUpdate(entity);
+		getCurrentSession().saveOrUpdate(entity);
 		return entity;
 	}
 
@@ -132,7 +134,7 @@ public class GenericHibernateDAO<T, ID extends Serializable> implements GenericD
 	 * @see org.egov.infstr.dao.GenericDAO#delete(java.lang.Object)
 	 */
 	public void delete(T entity) {
-		getSession().delete(entity);
+		getCurrentSession().delete(entity);
 	}
 
 	/**
@@ -142,7 +144,7 @@ public class GenericHibernateDAO<T, ID extends Serializable> implements GenericD
 	 */
 	@SuppressWarnings("unchecked")
 	protected List<T> findByCriteria(Criterion... criterion) {
-		Criteria crit = getSession().createCriteria(getPersistentClass());
+		Criteria crit = getCurrentSession().createCriteria(getPersistentClass());
 		for (Criterion c : criterion) {
 			crit.add(c);
 		}

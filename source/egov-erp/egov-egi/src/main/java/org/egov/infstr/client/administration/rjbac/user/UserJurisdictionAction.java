@@ -5,16 +5,6 @@
  */
 package org.egov.infstr.client.administration.rjbac.user;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.Set;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -30,11 +20,20 @@ import org.egov.lib.rjbac.jurisdiction.JurisdictionValues;
 import org.egov.lib.rjbac.user.User;
 import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.egov.lib.rjbac.user.ejb.server.UserServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Date;
+import java.util.Set;
 
 public class UserJurisdictionAction extends DispatchAction {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(UserJurisdictionAction.class);
-	private final UserService userService = new UserServiceImpl();
+	private final UserService userService = new UserServiceImpl(null, null);
 	private final BoundaryService boundaryService = new BoundaryServiceImpl();
 	
 	public ActionForward saveJurisdiction(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {

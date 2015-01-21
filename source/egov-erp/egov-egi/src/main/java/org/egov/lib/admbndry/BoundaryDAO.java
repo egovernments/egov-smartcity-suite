@@ -5,6 +5,16 @@
  */
 package org.egov.lib.admbndry;
 
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infstr.utils.EgovMasterDataCaching;
+import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,27 +24,22 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-
 public class BoundaryDAO {
 	public static final Logger LOGGER = LoggerFactory.getLogger(BoundaryDAO.class);
 	private static final String WARD = "egi-ward";
 	private BoundaryTypeService boundaryTypeService;
 
-	public void setBoundaryTypeService(final BoundaryTypeService boundaryTypeService) {
-		this.boundaryTypeService = boundaryTypeService;
+	private SessionFactory sessionFactory;
+
+	public BoundaryDAO(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
 	}
 
 	private Session getSession() {
-		return HibernateUtil.getCurrentSession();
+		return this.sessionFactory.getCurrentSession();
+	}
+	public void setBoundaryTypeService(final BoundaryTypeService boundaryTypeService) {
+		this.boundaryTypeService = boundaryTypeService;
 	}
 
 	public Boundary createBoundary(final Boundary boundary) {

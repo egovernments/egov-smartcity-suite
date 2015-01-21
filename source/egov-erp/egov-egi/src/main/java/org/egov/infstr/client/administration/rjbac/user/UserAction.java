@@ -38,7 +38,7 @@ import org.egov.lib.rjbac.user.ejb.server.UserServiceImpl;
 public class UserAction extends EgovAction {
 	
 	private final static Logger LOG = LoggerFactory.getLogger(UserAction.class);
-	private final UserService userService = new UserServiceImpl();
+	private final UserService userService = new UserServiceImpl(null, null);
 	private final RoleService roleService = new RoleServiceImpl();
 	/**
 	 * This method is used to forward the control to the jusersidiction page and for creation of

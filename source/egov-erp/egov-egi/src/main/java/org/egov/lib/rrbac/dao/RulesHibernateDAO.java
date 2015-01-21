@@ -21,7 +21,7 @@ public class RulesHibernateDAO extends GenericHibernateDAO implements RulesDAO {
 	}
 	
 	public Rules findRulesByName(String name) {
-		Query qry = getSession().createQuery("from Rules rl where rl.name =:name ");
+		Query qry = getCurrentSession().createQuery("from Rules rl where rl.name =:name ");
 		qry.setString("name", name);
 		return (Rules) qry.uniqueResult();
 		

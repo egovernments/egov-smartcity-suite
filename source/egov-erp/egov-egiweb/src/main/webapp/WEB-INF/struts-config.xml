@@ -462,7 +462,7 @@
 
 		<action path="/terminal/usercountermap" 
 			scope="request" 
-			type="org.egov.lib.security.terminal.client.UserCounterMapAction" 
+			type="org.springframework.web.struts.DelegatingActionProxy"
 			name="UserCounterMapForm"
 			parameter="submitType"
 			validate="false">
@@ -482,7 +482,7 @@
 
 		<action path="/terminal/user" 
 			scope="request" 
-			type="org.egov.lib.security.terminal.client.UserValidateAction" 
+			type="org.springframework.web.struts.DelegatingActionProxy"
 			name="UserValidateForm"
 			parameter="submitType"
 			validate="false">

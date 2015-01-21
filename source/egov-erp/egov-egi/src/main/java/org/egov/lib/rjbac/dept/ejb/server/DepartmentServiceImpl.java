@@ -5,8 +5,6 @@
  */
 package org.egov.lib.rjbac.dept.ejb.server;
 
-import java.util.List;
-
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.dept.dao.DepartmentDAO;
@@ -14,58 +12,69 @@ import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
 import org.egov.lib.rjbac.role.Role;
 import org.egov.lib.rjbac.user.User;
 
+import java.util.List;
+
 public class DepartmentServiceImpl implements DepartmentService {
+
+	private DepartmentDAO departmentDAO;
+
+	@Deprecated
+	public DepartmentServiceImpl() {
+	}
+
+	public DepartmentServiceImpl(DepartmentDAO departmentDAO) {
+		this.departmentDAO = departmentDAO;
+	}
 
 	@Override
 	public void createDepartment(final Department dept) throws DuplicateElementException {
-		new DepartmentDAO().createDepartment(dept);
+		departmentDAO.createDepartment(dept);
 
 	}
 
 	@Override
 	public void updateDepartment(final Department dept) {
-		new DepartmentDAO().updateDepartment(dept);
+		departmentDAO.updateDepartment(dept);
 
 	}
 
 	@Override
 	public Department getDepartment(final Integer deptId) {
-		return new DepartmentDAO().getDepartment(deptId);
+		return departmentDAO.getDepartment(deptId);
 	}
 
 	@Override
 	public Department getDepartment(final String deptName) {
-		return new DepartmentDAO().getDepartment(deptName);
+		return departmentDAO.getDepartment(deptName);
 	}
 
 	@Override
 	public List<Department> getAllDepartments() {
-		return new DepartmentDAO().getAllDepartments();
+		return departmentDAO.getAllDepartments();
 	}
 
 	@Override
 	public void removeDepartment(final Department dept) {
-		new DepartmentDAO().removeDepartment(dept);
-		return;
+		departmentDAO.removeDepartment(dept);
 	}
 
 	@Override
 	public Department getDepartmentById(final Long id) {
-		return new DepartmentDAO().getDepartmentById(id);
+		return departmentDAO.getDepartmentById(id);
 	}
 
 	@Override
 	public Department getDepartmentByCode(final String deptCode) {
-		return new DepartmentDAO().getDepartmentByCode(deptCode);
+		return departmentDAO.getDepartmentByCode(deptCode);
 	}
 
 	@Override
 	public List<User> getAllUsersByDept(final Department dept, final int topBoundaryID) {
-		return new DepartmentDAO().getAllUsersByDept(dept, topBoundaryID);
+		return departmentDAO.getAllUsersByDept(dept, topBoundaryID);
 	}
 
 	@Override
 	public List<User> getAllUsersByDept(final Department dept, final List<Role> roles, final int topBoundaryID) {
-		return new DepartmentDAO().getAllUsersByDept(dept, roles, topBoundaryID);
+		return departmentDAO.getAllUsersByDept(dept, roles, topBoundaryID);
 	}
 }

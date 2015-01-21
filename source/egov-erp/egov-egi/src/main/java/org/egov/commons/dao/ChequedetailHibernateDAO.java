@@ -27,7 +27,7 @@ public class ChequedetailHibernateDAO extends GenericHibernateDAO {
 	}
 
 	public List<Chequedetail> getChequedetailByVoucherheader(final CVoucherHeader voucherHeader) {
-		final Query qry = getSession().createQuery("from Chequedetail cd where cd.voucherheader =:voucherHeader");
+		final Query qry = getCurrentSession().createQuery("from Chequedetail cd where cd.voucherheader =:voucherHeader");
 		qry.setEntity("voucherHeader", voucherHeader);
 		return qry.list();
 	}
@@ -66,7 +66,7 @@ public class ChequedetailHibernateDAO extends GenericHibernateDAO {
 			qryStr.append(" and cd.voucherheader.id in (select vm.voucherheaderid from Vouchermis vm where  vm.functionary=:functionary ) ");
 		}
 		qryStr.append(" order by cd.voucherheader.voucherDate asc");
-		final Query qry = getSession().createQuery(qryStr.toString());
+		final Query qry = getCurrentSession().createQuery(qryStr.toString());
 
 		if (vhDateFrom != null) {
 			qry.setDate("DateFrom", vhDateFrom);

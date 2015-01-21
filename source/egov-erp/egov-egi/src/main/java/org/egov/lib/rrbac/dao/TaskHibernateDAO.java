@@ -22,7 +22,7 @@ public class TaskHibernateDAO extends GenericHibernateDAO implements TaskDAO {
 
 	@Override
 	public Task findTaskByName(final String name) {
-		final Query qry = getSession().createQuery("from Task tsk where tsk.name =:name ");
+		final Query qry = getCurrentSession().createQuery("from Task tsk where tsk.name =:name ");
 		qry.setString("name", name);
 		return (Task) qry.uniqueResult();
 

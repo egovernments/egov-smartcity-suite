@@ -24,7 +24,7 @@ public class EgActiondetailsHibernateDAO extends GenericHibernateDAO {
 	}
 
 	public List<EgActiondetails> getEgActiondetailsFilterBy(final String moduleId, final ArrayList<String> actionType, final String moduleType) {
-		final Query qry = getSession().createQuery("from EgActiondetails ad where ad.moduleid =:moduleId and ad.actiontype in (:actionType) and ad.moduletype=:moduleType order by lastmodifieddate");
+		final Query qry = getCurrentSession().createQuery("from EgActiondetails ad where ad.moduleid =:moduleId and ad.actiontype in (:actionType) and ad.moduletype=:moduleType order by lastmodifieddate");
 		qry.setString("moduleId", moduleId);
 		qry.setParameterList("actionType", actionType);
 		qry.setString("moduleType", moduleType);
@@ -32,7 +32,7 @@ public class EgActiondetailsHibernateDAO extends GenericHibernateDAO {
 	}
 
 	public EgActiondetails getEgActiondetailsByWorksdetailId(final String moduleId, final String actionType, final String moduleType) {
-		final Query qry = getSession().createQuery("from EgActiondetails ad where ad.moduleid =:moduleId and ad.actiontype =:actionType and ad.moduletype=:moduleType order by lastmodifieddate");
+		final Query qry = getCurrentSession().createQuery("from EgActiondetails ad where ad.moduleid =:moduleId and ad.actiontype =:actionType and ad.moduletype=:moduleType order by lastmodifieddate");
 		qry.setString("moduleId", moduleId);
 		qry.setString("actionType", actionType);
 		qry.setString("moduleType", moduleType);
@@ -40,7 +40,7 @@ public class EgActiondetailsHibernateDAO extends GenericHibernateDAO {
 	}
 
 	public List<EgActiondetails> getEgActiondetailsFilterBy(final ArrayList<String> actionType, final String moduleType) {
-		final Query qry = getSession().createQuery("from EgActiondetails ad where ad.actiontype in (:actionType) and ad.moduletype=:moduleType order by lastmodifieddate");
+		final Query qry = getCurrentSession().createQuery("from EgActiondetails ad where ad.actiontype in (:actionType) and ad.moduletype=:moduleType order by lastmodifieddate");
 		qry.setParameterList("actionType", actionType);
 		qry.setString("moduleType", moduleType);
 		return qry.list();

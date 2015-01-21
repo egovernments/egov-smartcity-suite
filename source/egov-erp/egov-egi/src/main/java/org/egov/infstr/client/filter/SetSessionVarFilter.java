@@ -5,12 +5,14 @@
  */
 package org.egov.infstr.client.filter;
 
-import static org.egov.infstr.utils.EgovUtils.getDomainName;
-import static org.egov.infstr.utils.EgovUtils.getPrincipalName;
-
-import java.io.IOException;
-import java.security.Principal;
-import java.util.HashMap;
+import org.egov.lib.admbndry.CityWebsiteImpl;
+import org.egov.lib.rjbac.user.User;
+import org.egov.lib.rjbac.user.ejb.api.UserService;
+import org.hibernate.Query;
+import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -20,15 +22,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.HashMap;
 
-import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.admbndry.CityWebsiteImpl;
-import org.egov.lib.rjbac.user.User;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
-import org.hibernate.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.core.context.SecurityContextHolder;
+import static org.egov.infstr.utils.EgovUtils.getDomainName;
+import static org.egov.infstr.utils.EgovUtils.getPrincipalName;
 
 /*
  This Filter is used to put Session Variables in place which are used by the JSP's for various functions.
@@ -49,11 +48,16 @@ public class SetSessionVarFilter implements Filter {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SetSessionVarFilter.class);
 	private UserService userService;
+	private SessionFactory sessionFactory;
 
 	public void setUserService(final UserService userService) {
 		this.userService = userService;
 	}
-	
+
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
 	@Override
 	public void init(final FilterConfig config) {
 	}
@@ -70,7 +74,7 @@ public class SetSessionVarFilter implements Filter {
 			httpSession.setAttribute("egov.city.url", httpRequest.getParameter("egov.city.url"));
 			httpSession.setAttribute("topBndryObject", httpRequest.getParameter("topBndryObject"));
 		} else if (httpSession.getAttribute("org.egov.topBndryID") == null) {
-			final Query query = HibernateUtil.getCurrentSession().getNamedQuery(CityWebsiteImpl.QUERY_CITY_BY_URL);
+			final Query query = sessionFactory.getCurrentSession().getNamedQuery(CityWebsiteImpl.QUERY_CITY_BY_URL);
 			query.setString("url", getDomainName(httpRequest.getRequestURL().toString()));
 			CityWebsiteImpl city = (CityWebsiteImpl)query.uniqueResult();
 			httpSession.setAttribute("egov.city.url", "http://" + city.getCityBaseURL());

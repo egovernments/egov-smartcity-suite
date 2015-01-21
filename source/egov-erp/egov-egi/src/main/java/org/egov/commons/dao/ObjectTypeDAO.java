@@ -7,16 +7,21 @@ package org.egov.commons.dao;
 
 import org.egov.commons.ObjectType;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
 public class ObjectTypeDAO {
 
-	private Session getSession() {
-		return HibernateUtil.getCurrentSession();
+	private SessionFactory sessionFactory;
+
+	public ObjectTypeDAO(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
 	}
 
+	private Session getSession() {
+		return this.sessionFactory.getCurrentSession();
+	}
 	public void createObjectType(final ObjectType objectType) {
 		try {
 			getSession().save(objectType);

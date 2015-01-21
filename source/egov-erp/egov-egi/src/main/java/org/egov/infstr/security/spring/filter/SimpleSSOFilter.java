@@ -5,11 +5,20 @@
  */
 package org.egov.infstr.security.spring.filter;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import org.egov.infstr.commons.EgLoginLog;
+import org.egov.infstr.security.utils.CryptoHelper;
+import org.egov.infstr.security.utils.SecurityConstants;
+import org.egov.infstr.security.utils.SessionCache;
+import org.egov.lib.rjbac.user.ejb.api.UserService;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -21,20 +30,11 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.egov.infstr.commons.EgLoginLog;
-import org.egov.infstr.security.utils.CryptoHelper;
-import org.egov.infstr.security.utils.SecurityConstants;
-import org.egov.infstr.security.utils.SessionCache;
-import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * The filter automatically logs in the user with the credential found in the encrypted 
@@ -48,6 +48,7 @@ public class SimpleSSOFilter implements Filter, LogoutHandler {
 	private AuthenticationProvider authenticationProvider;
 	private String logoutUrl;
 	private SessionCache sessionCache;
+	private SessionFactory sessionFactory;
 	
 	public void setSessionCache(final SessionCache sessionCache) {
 		this.sessionCache = sessionCache;
@@ -280,15 +281,23 @@ public class SimpleSSOFilter implements Filter, LogoutHandler {
 		if (authentication != null) {
 			final HashMap<String, String> credentials = (HashMap<String, String>) authentication.getCredentials();
 			if (credentials.containsKey(SecurityConstants.LOGIN_LOG_ID)) {
-				final EgLoginLog loginLog =  (EgLoginLog) HibernateUtil.getCurrentSession().load(EgLoginLog.class, Integer.valueOf(credentials.get(SecurityConstants.LOGIN_LOG_ID)));		
+				final EgLoginLog loginLog =  (EgLoginLog) getCurrentSession().load(EgLoginLog.class, Integer.valueOf(credentials.get(SecurityConstants.LOGIN_LOG_ID)));
 				loginLog.setLogoutTime(new Date());
-				HibernateUtil.getCurrentSession().update(loginLog);
+				getCurrentSession().update(loginLog);
 			}
 		}
 	}
-	
+
+	private Session getCurrentSession() {
+		return sessionFactory.getCurrentSession();
+	}
+
 	public void setLogoutUrl(final String logoutUrl) {
 		this.logoutUrl = logoutUrl;
+	}
+
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
 	}
 }
 

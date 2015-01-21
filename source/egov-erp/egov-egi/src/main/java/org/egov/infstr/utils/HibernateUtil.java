@@ -144,6 +144,7 @@ public class HibernateUtil {
 		return sessionFact != null ? sessionFact : createSessionFactory(jndiName);
 	}
 
+	@Deprecated
 	public static Session getCurrentSession() {
 		if (useThreadLocal) {
 			Session s = threadSession.get();

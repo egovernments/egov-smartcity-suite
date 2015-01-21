@@ -5,15 +5,14 @@
  */
 package org.egov.infstr.workflow;
 
-import java.util.List;
-
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.models.Script;
 import org.egov.infstr.models.StateAware;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
-import org.egov.infstr.services.SessionFactory;
+
+import java.util.List;
 
 public class Action extends BaseModel {
 	
@@ -24,7 +23,7 @@ public class Action extends BaseModel {
 	private String description;
 	private String type;
 	private static final ScriptService scriptService = new ScriptService(1, 3, 10, 30);
-	
+
 	private Action() {
 	}
 
@@ -36,19 +35,19 @@ public class Action extends BaseModel {
 
 	public Object execute(StateAware item, PersistenceService service) {
 		Script script = getScript(item, service);
-		scriptService.setSessionFactory(new SessionFactory());
+//		scriptService.setSessionFactory(new SessionFactory());
 		return scriptService.executeScript(script,ScriptService.createContext("action", this, "wfItem", item, "persistenceService", service));
 	}
 
 	public Object execute(StateAware item, PersistenceService service, String comments) {
 		Script script = getScript(item, service);
-		scriptService.setSessionFactory(new SessionFactory());
+//		scriptService.setSessionFactory(new SessionFactory());
 		return scriptService.executeScript(script,ScriptService.createContext("action", this, "wfItem", item, "persistenceService", service, "comments", comments));
 	}
 
 	public Object execute(StateAware item, PersistenceService service, WorkflowService workflowService, String comments) {
 		Script script = getScript(item, service);
-		scriptService.setSessionFactory(new SessionFactory());
+//		scriptService.setSessionFactory(new SessionFactory());
 		return scriptService.executeScript(script,ScriptService.createContext("action", this, "wfItem", item, "persistenceService", service, "workflowService", workflowService, "comments", comments));
 	}
 
@@ -90,5 +89,7 @@ public class Action extends BaseModel {
 	private void setDescription(String description) {
 		this.description = description;
 	}
+
+
 
 }

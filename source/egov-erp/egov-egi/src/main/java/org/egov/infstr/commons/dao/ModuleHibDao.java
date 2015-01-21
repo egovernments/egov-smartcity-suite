@@ -5,19 +5,18 @@
  */
 package org.egov.infstr.commons.dao;
 
+import org.egov.infstr.commons.Module;
+import org.egov.infstr.dao.GenericHibernateDAO;
+import org.egov.lib.rjbac.role.Role;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import org.egov.infstr.commons.Module;
-import org.egov.infstr.dao.GenericHibernateDAO;
-import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.rjbac.role.Role;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
 
 public class ModuleHibDao<T, id extends Serializable> extends GenericHibernateDAO implements ModuleDao {
 
@@ -25,25 +24,16 @@ public class ModuleHibDao<T, id extends Serializable> extends GenericHibernateDA
 		super(persistentClass, session);
 	}
 
-	public ModuleHibDao() {
-		super(Module.class, null);
-	}
-
-	@Override
-	public Session getSession() {
-		return HibernateUtil.getCurrentSession();
-	}
-
 	@Override
 	public Module getModuleByName(final String moduleName) {
-		final Query qry = getSession().createQuery("from Module M where M.moduleName=:moduleName");
+		final Query qry = getCurrentSession().createQuery("from Module M where M.moduleName=:moduleName");
 		qry.setString("moduleName", moduleName);
 		return (Module) qry.uniqueResult();
 	}
 
 	/**
 	 * returns module info based on roleIds
-	 * @param roleIds
+	 * @param roles
 	 * @return moduleInfoMap
 	 */
 	@Override
@@ -65,7 +55,7 @@ public class ModuleHibDao<T, id extends Serializable> extends GenericHibernateDA
 		sql.append("))");
 		sql.append(" AND mod.isenabled=1 AND (mod.parentid is null OR mod.id_module = mod.parentid)");
 		sql.append(" ORDER BY mod.module_name ASC");
-		final SQLQuery query = getSession().createSQLQuery(sql.toString());
+		final SQLQuery query = getCurrentSession().createSQLQuery(sql.toString());
 
 		int i = 0;
 		final Iterator<Role> role = roles.iterator();
@@ -103,7 +93,7 @@ public class ModuleHibDao<T, id extends Serializable> extends GenericHibernateDA
 		sql.append("(select id_role from eg_userrole ur where ur.id_user = ? and ur.is_history='N'))  OR NOT EXISTS (SELECT actionid FROM eg_roleaction_map ra ");
 		sql.append("where actionid = view_ram.action_id)) order by typeflag desc,name asc");
 
-		final SQLQuery query = getSession().createSQLQuery(sql.toString());
+		final SQLQuery query = getCurrentSession().createSQLQuery(sql.toString());
 		query.setInteger(0, parentId);
 		query.setInteger(1, userId);
 		query.setInteger(2, parentId);
@@ -129,7 +119,7 @@ public class ModuleHibDao<T, id extends Serializable> extends GenericHibernateDA
 		sql.append("SELECT distinct view_ram.action_id,fav.fav_name,fav.ctx_name,view_ram.action_url ");
 		sql.append("FROM V_EG_ROLE_ACTION_MODULE_MAP view_ram, EG_FAVOURITES fav WHERE  fav.action_id = view_ram.action_id and fav.user_id = ? ");
 		sql.append("and view_ram.typeflag='A' and view_ram.is_enabled=1 GROUP BY view_ram.action_id,fav.fav_name,fav.ctx_name,view_ram.action_url");
-		final SQLQuery query = getSession().createSQLQuery(sql.toString());
+		final SQLQuery query = getCurrentSession().createSQLQuery(sql.toString());
 		query.setInteger(0, userId);
 		final List<Module> moduleList = new LinkedList<Module>();
 		final Iterator<Object[]> elements = query.list().iterator();

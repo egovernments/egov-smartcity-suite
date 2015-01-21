@@ -27,13 +27,13 @@ public class EgUomHibernateDAO extends GenericHibernateDAO {
 	}
 
 	public List findAllUom() {
-		return getSession().createQuery("from EgUom uom order by uomcategoryid").list();
+		return getCurrentSession().createQuery("from EgUom uom order by uomcategoryid").list();
 
 	}
 
 	public List<EgUom> getAllUomsWithinCategoryByUom(final Integer uomId) throws ValidationException {
 		if (uomId != null && uomId >= 0) {
-			final Query qry = getSession().createQuery("from org.egov.infstr.commonMasters.EgUom as uoms where uoms.egUomcategory.id =(select uom.egUomcategory.id  from org.egov.infstr.commonMasters.EgUom uom where uom.id=:uomID)");
+			final Query qry = getCurrentSession().createQuery("from org.egov.infstr.commonMasters.EgUom as uoms where uoms.egUomcategory.id =(select uom.egUomcategory.id  from org.egov.infstr.commonMasters.EgUom uom where uom.id=:uomID)");
 			qry.setInteger("uomID", uomId);
 			return qry.list();
 		} else {
@@ -44,7 +44,7 @@ public class EgUomHibernateDAO extends GenericHibernateDAO {
 	public BigDecimal getConversionFactorByUom(final Integer uomId) throws ValidationException {
 		if (uomId != null && uomId > 0) {
 
-			final Query qry = getSession().createQuery("select uom.convFactor from org.egov.infstr.commonMasters.EgUom as uom where uom.id=:uomID");
+			final Query qry = getCurrentSession().createQuery("select uom.convFactor from org.egov.infstr.commonMasters.EgUom as uom where uom.id=:uomID");
 			qry.setInteger("uomID", uomId);
 			return (BigDecimal) qry.uniqueResult();
 

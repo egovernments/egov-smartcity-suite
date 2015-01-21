@@ -29,7 +29,7 @@ public class AppDataHibernateDAO extends GenericHibernateDAO implements AppDataD
 	@Override
 	public AppData getValueByModuleAndKey(final String moduleName, final String key) {
 
-		final Query qry = getSession().createQuery("from AppData a where a.module =:moduleName  and a.key=:key");
+		final Query qry = getCurrentSession().createQuery("from AppData a where a.module =:moduleName  and a.key=:key");
 		qry.setString("key", key);
 		qry.setString("moduleName", moduleName);
 		return (AppData) qry.uniqueResult();

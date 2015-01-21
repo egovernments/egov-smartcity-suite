@@ -24,7 +24,7 @@ public class EgAttributevaluesHibDao extends GenericHibernateDAO implements EgAt
 
 	@Override
 	public List<EgAttributevalues> getAttributeValuesForDomainTxn(final String domainName, final String domainTxnId) {
-		final Query qry = getSession().createQuery("from EgAttributevalues attrValues where attrValues.egApplDomain.name =:domainName and attrValues.domaintxnid =:domainTxnId ");
+		final Query qry = getCurrentSession().createQuery("from EgAttributevalues attrValues where attrValues.egApplDomain.name =:domainName and attrValues.domaintxnid =:domainTxnId ");
 		qry.setString("domainName", domainName);
 		qry.setString("domainTxnId", domainTxnId);
 		return qry.list();

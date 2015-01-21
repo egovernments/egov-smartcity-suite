@@ -5,6 +5,7 @@
  */
 package org.egov.infstr.utils.seqgen;
 
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -48,20 +49,24 @@ public class DatabaseSequence {
     private String name;
     private boolean createIfNecessary = false;
     private long startWith = 1;
+    private Session session;
 
     /** 
-     * Private constructor; use the static factory method instead. 
+     * Private constructor; use the static factory method instead.
+     * @param session
      */
-    private DatabaseSequence() {
+    private DatabaseSequence(Session session) {
+        this.session = session;
     }
     
     /**
      * Factory method to be used by clients; providing the name is mandatory.
      *
      * @param name
+     * @param session
      */
-    public static DatabaseSequence named(String name) {
-        DatabaseSequence seq = new DatabaseSequence();
+    public static DatabaseSequence named(String name, Session session) {
+        DatabaseSequence seq = new DatabaseSequence(session);
         seq.name = name;
         return seq;
     }
@@ -91,7 +96,7 @@ public class DatabaseSequence {
         LOG.debug("DatabaseSequence.nextVal(): received request for sequence " + name);
         long nextVal = -1;
         String sql = "select nextval('" + name + "')";
-        Query query = HibernateUtil.getCurrentSession().createSQLQuery(sql);
+        Query query = session.createSQLQuery(sql);
         try {
             nextVal = Long.valueOf(query.uniqueResult().toString()).longValue();
         } catch (JDBCException jdbce) {
@@ -131,7 +136,7 @@ public class DatabaseSequence {
             .append(" nocache start with ")
             .append(startWith)
             .toString();
-        Query query = HibernateUtil.getCurrentSession().createSQLQuery(createSql);
+        Query query = session.createSQLQuery(createSql);
         query.executeUpdate();
         LOG.debug("DatabaseSequence.createAndFail(): created sequence " + name);
         throw new DatabaseSequenceFirstTimeException(
@@ -140,7 +145,7 @@ public class DatabaseSequence {
     
     private void drop() {
         String dropSql = "drop sequence " + name;
-        Query query = HibernateUtil.getCurrentSession().createSQLQuery(dropSql);
+        Query query = session.createSQLQuery(dropSql);
         query.executeUpdate();
         LOG.debug("DatabaseSequence.drop(): dropped sequence " + name);
     }

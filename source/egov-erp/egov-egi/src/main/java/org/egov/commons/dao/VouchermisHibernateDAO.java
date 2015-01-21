@@ -20,7 +20,7 @@ public class VouchermisHibernateDAO extends GenericHibernateDAO {
 	}
 
 	public Vouchermis getVouchermisByVhId(final Integer vhId) {
-		final Query qry = getSession().createQuery("from Vouchermis where voucherheaderid =:vhId");
+		final Query qry = getCurrentSession().createQuery("from Vouchermis where voucherheaderid =:vhId");
 		qry.setInteger("vhId", vhId);
 		return (Vouchermis) qry.uniqueResult();
 	}

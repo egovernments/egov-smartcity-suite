@@ -1,16 +1,9 @@
 package org.egov.models;
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.services.SessionFactory;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -20,20 +13,25 @@ import org.junit.After;
 import org.junit.Before;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+
+import static org.junit.Assert.assertTrue;
+
 public class AbstractPersistenceServiceTest<T, ID extends Serializable> {
-	protected static org.hibernate.SessionFactory factory;
+	protected static org.hibernate.SessionFactory sessionFactory;
 	protected PersistenceService<T, ID> service;
 	protected Class type;
 	protected Session session;
 	protected PersistenceService genericService;
 	protected FullTextSession textSession;
-	protected SessionFactory egovSessionFactory;
 	private static ThreadLocal threadSession = new ThreadLocal();
 
 	public static void setupFactory() {
 		final ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
 				new String[] { "appContextTest.xml" });
-		factory = (org.hibernate.SessionFactory) context
+		sessionFactory = (org.hibernate.SessionFactory) context
 				.getBean("sessionFactory");
 	}
 
@@ -48,10 +46,10 @@ public class AbstractPersistenceServiceTest<T, ID extends Serializable> {
 	@Before
 	public void setup() {
 		try {
-			if (factory == null) {
+			if (sessionFactory == null) {
 				setupFactory();
 			}
-			this.session = factory.openSession();
+			this.session = sessionFactory.openSession();
 			this.session.beginTransaction();
 			this.textSession = Search.getFullTextSession(this.session);
 			this.service = new PersistenceService<T, ID>();
@@ -63,15 +61,9 @@ public class AbstractPersistenceServiceTest<T, ID extends Serializable> {
 				this.service.setType((Class) parameterizedType
 						.getActualTypeArguments()[0]);
 			}
-			this.egovSessionFactory = new SessionFactory() {
-				@Override
-				public org.hibernate.Session getSession() {
-					return AbstractPersistenceServiceTest.this.session;
-				}
-			};
-			this.service.setSessionFactory(this.egovSessionFactory);
+			this.service.setSessionFactory(this.sessionFactory);
 			this.genericService = new PersistenceService();
-			this.genericService.setSessionFactory(this.egovSessionFactory);
+			this.genericService.setSessionFactory(sessionFactory);
 			EGOVThreadLocals.setUserId("1");
 			threadSession.set(this.session);
 			setHibernateUtilField("threadSession", threadSession);

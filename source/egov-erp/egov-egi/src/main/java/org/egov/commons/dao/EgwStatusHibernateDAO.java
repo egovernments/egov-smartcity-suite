@@ -24,7 +24,7 @@ public class EgwStatusHibernateDAO extends GenericHibernateDAO {
 	}
 
 	public List<EgwStatus> getEgwStatusFilterByStatus(final ArrayList<Integer> statusId) {
-		final Query qry = getSession().createQuery("from EgwStatus egs where egs.id in (:statusId)  order by orderId");
+		final Query qry = getCurrentSession().createQuery("from EgwStatus egs where egs.id in (:statusId)  order by orderId");
 		qry.setParameterList("statusId", statusId);
 		return qry.list();
 	}
@@ -35,14 +35,14 @@ public class EgwStatusHibernateDAO extends GenericHibernateDAO {
 	 * @return EgwStatus object for given module type and status code
 	 */
 	public EgwStatus getStatusByModuleAndCode(final String moduleType, final String code) {
-		final Query qry = getSession().createQuery("from EgwStatus S where S.moduletype =:moduleType and S.code =:code");
+		final Query qry = getCurrentSession().createQuery("from EgwStatus S where S.moduletype =:moduleType and S.code =:code");
 		qry.setString("moduleType", moduleType);
 		qry.setString("code", code);
 		return (EgwStatus) qry.uniqueResult();
 	}
 
 	public List<EgwStatus> getStatusByModule(final String moduleType) {
-		final Query qry = getSession().createQuery("from EgwStatus S where S.moduletype =:moduleType  order by orderId");
+		final Query qry = getCurrentSession().createQuery("from EgwStatus S where S.moduletype =:moduleType  order by orderId");
 		qry.setString("moduleType", moduleType);
 		return qry.list();
 	}
@@ -53,14 +53,14 @@ public class EgwStatusHibernateDAO extends GenericHibernateDAO {
 	 * @return List of all EgwStatus objects filtered by given module type and list of status codes
 	 */
 	public List<EgwStatus> getStatusListByModuleAndCodeList(final String moduleType, final List codeList) {
-		final Query qry = getSession().createQuery("from EgwStatus S where S.moduletype =:moduleType and S.code in(:codeList)  order by orderId");
+		final Query qry = getCurrentSession().createQuery("from EgwStatus S where S.moduletype =:moduleType and S.code in(:codeList)  order by orderId");
 		qry.setString("moduleType", moduleType);
 		qry.setParameterList("codeList", codeList);
 		return qry.list();
 	}
 
 	public EgwStatus getEgwStatusByCode(final String code) {
-		final Query qry = getSession().createQuery("from EgwStatus S where S.code =:code ");
+		final Query qry = getCurrentSession().createQuery("from EgwStatus S where S.code =:code ");
 		qry.setString("code", code);
 		return (EgwStatus) qry.uniqueResult();
 	}

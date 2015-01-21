@@ -23,21 +23,21 @@ public class EgwTypeOfWorkHibernateDAO extends GenericHibernateDAO {
 	}
 
 	public List getAllTypeOfWork() {
-		return getSession().createQuery("from EgwTypeOfWork typeOfWork order by upper(code)").list();
+		return getCurrentSession().createQuery("from EgwTypeOfWork typeOfWork order by upper(code)").list();
 	}
 
 	public List getAllTypeOfWorkOrderByDesc() {
-		return getSession().createQuery("from EgwTypeOfWork typeOfWork order by upper(description)").list();
+		return getCurrentSession().createQuery("from EgwTypeOfWork typeOfWork order by upper(description)").list();
 	}
 
 	public EgwTypeOfWork getTypeOfWorkById(final Long id) {
-		final Query qry = getSession().createQuery("from EgwTypeOfWork typeOfWork where typeOfWork.id =:id");
+		final Query qry = getCurrentSession().createQuery("from EgwTypeOfWork typeOfWork where typeOfWork.id =:id");
 		qry.setLong("id", id);
 		return (EgwTypeOfWork) qry.uniqueResult();
 	}
 
 	public EgwTypeOfWork findByCode(final String code) {
-		final Query qry = getSession().createQuery("from EgwTypeOfWork typeOfWork where upper(typeOfWork.code) =:code");
+		final Query qry = getCurrentSession().createQuery("from EgwTypeOfWork typeOfWork where upper(typeOfWork.code) =:code");
 		qry.setString("code", code.toUpperCase().trim());
 		return (EgwTypeOfWork) qry.uniqueResult();
 	}
@@ -60,7 +60,7 @@ public class EgwTypeOfWorkHibernateDAO extends GenericHibernateDAO {
 		if (description != null && !description.equals("")) {
 			qryStr.append(" and (upper(typeOfWork.description) like :description)");
 		}
-		final Query qry = getSession().createQuery(qryStr.toString());
+		final Query qry = getCurrentSession().createQuery(qryStr.toString());
 		if (code != null && !code.equals("")) {
 			qry.setString("code", "%" + code.toUpperCase().trim() + "%");
 		}
@@ -97,7 +97,7 @@ public class EgwTypeOfWorkHibernateDAO extends GenericHibernateDAO {
 		if (partyTypeCode != null && !partyTypeCode.equals("")) {
 			qryStr.append(" and (upper(typeOfWork.egPartytype.code) like :partyTypeCode)");
 		}
-		final Query qry = getSession().createQuery(qryStr.toString());
+		final Query qry = getCurrentSession().createQuery(qryStr.toString());
 		if (code != null && !code.equals("")) {
 			qry.setString("code", "%" + code.toUpperCase().trim() + "%");
 		}
@@ -115,15 +115,15 @@ public class EgwTypeOfWorkHibernateDAO extends GenericHibernateDAO {
 	}
 
 	public List<EgwTypeOfWork> getAllParentOrderByCode() {
-		return getSession().createQuery("from EgwTypeOfWork etw1 where etw1.parentid is null and etw1.id in (select etw2.parentid from EgwTypeOfWork etw2 where etw2.parentid = etw1.id) order by upper(code)").list();
+		return getCurrentSession().createQuery("from EgwTypeOfWork etw1 where etw1.parentid is null and etw1.id in (select etw2.parentid from EgwTypeOfWork etw2 where etw2.parentid = etw1.id) order by upper(code)").list();
 	}
 
 	public List findAllParentPartyType() {
-		return getSession().createQuery("from EgwTypeOfWork tw where tw.parentid is null and tw.egPartytype is not null order by upper(code)").list();
+		return getCurrentSession().createQuery("from EgwTypeOfWork tw where tw.parentid is null and tw.egPartytype is not null order by upper(code)").list();
 	}
 
 	public List findAllChildPartyType() {
-		return getSession().createQuery("from EgwTypeOfWork tw where tw.parentid is not null and tw.egPartytype is not null order by upper(code)").list();
+		return getCurrentSession().createQuery("from EgwTypeOfWork tw where tw.parentid is not null and tw.egPartytype is not null order by upper(code)").list();
 	}
 
 }

@@ -31,7 +31,7 @@ import org.egov.lib.rjbac.user.ejb.server.UserServiceImpl;
 public class SetupUpdateUserAction extends EgovAction {
 
 	private static final Logger logger = LoggerFactory.getLogger(SetupUpdateUserAction.class);
-	private final UserService userService = new UserServiceImpl();
+	private final UserService userService = new UserServiceImpl(null, null);
 	private final RoleService roleService = new RoleServiceImpl();
 
 	/**

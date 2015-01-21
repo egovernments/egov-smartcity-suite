@@ -22,7 +22,7 @@ public class StatusHibernateDAO extends GenericHibernateDAO {
 	}
 
 	public List getStatusByModuleType(final String moduleType) {
-		final Query qry = getSession().createQuery("from Status st where st.moduleType =:moduleType order by id");
+		final Query qry = getCurrentSession().createQuery("from Status st where st.moduleType =:moduleType order by id");
 		qry.setString("moduleType", moduleType);
 		return qry.list();
 

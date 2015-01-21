@@ -7,18 +7,12 @@ package org.egov.commons.dao;
 
 import java.lang.reflect.Field;
 
-import org.egov.commons.Accountdetailtype;
 import org.egov.exceptions.EGOVException;
 import org.egov.infstr.dao.GenericHibernateDAO;
-import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
 public class AccountdetailtypeHibernateDAO extends GenericHibernateDAO {
-
-	public AccountdetailtypeHibernateDAO() {
-		super(Accountdetailtype.class, null);
-	}
 
 	public AccountdetailtypeHibernateDAO(final Class persistentClass, final Session session) {
 		super(persistentClass, session);
@@ -41,7 +35,7 @@ public class AccountdetailtypeHibernateDAO extends GenericHibernateDAO {
 		try {
 			final Field tableNameField = Class.forName(master.getClass().getName()).getDeclaredField("tablename");
 			tableNameField.setAccessible(true);
-			final Query query = HibernateUtil.getCurrentSession().createQuery("select adt.id from Accountdetailtype adt where UPPER(tablename)=:tableName");
+			final Query query = getCurrentSession().createQuery("select adt.id from Accountdetailtype adt where UPPER(tablename)=:tableName");
 			query.setString("tableName", ((String) tableNameField.get(master)).toUpperCase());
 			Integer detailtypeid = null;
 			if (query.uniqueResult() != null) {

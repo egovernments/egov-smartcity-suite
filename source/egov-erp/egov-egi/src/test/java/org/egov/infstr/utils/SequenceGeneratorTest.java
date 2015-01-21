@@ -22,7 +22,7 @@ public class SequenceGeneratorTest {
 	public void setUp() throws Exception {
 		this.hibernateSupport = new EgovHibernateTest();
 		this.hibernateSupport.setUp();
-		this.numberUtil = new SequenceGenerator();
+		this.numberUtil = new SequenceGenerator(null);
 	}
 
 	@After

@@ -5,27 +5,22 @@
  */
 package org.egov.lib.security.terminal.dao;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.dao.GenericHibernateDAO;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.security.terminal.client.ObjComparator;
 import org.egov.lib.security.terminal.model.Location;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class LocationHibernateDAO extends GenericHibernateDAO implements LocationDAO {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LocationHibernateDAO.class);
-
-	public LocationHibernateDAO() {
-		super(Location.class, null);
-	}
 
 	/**
 	 * Instantiates a new location hibernate dao.
@@ -38,7 +33,7 @@ public class LocationHibernateDAO extends GenericHibernateDAO implements Locatio
 
 	@Override
 	public Location getLocationIdByLocationNameAndCounter(final String locationName, final String counterName) {
-		final Query qry = HibernateUtil.getCurrentSession().createQuery("select loc1 from Location loc,Location loc1 where loc.id=loc1.locationId and loc.name = :locationName and loc1.name= :counterName");
+		final Query qry = getCurrentSession().createQuery("select loc1 from Location loc,Location loc1 where loc.id=loc1.locationId and loc.name = :locationName and loc1.name= :counterName");
 		qry.setString("locationName", locationName);
 		qry.setString("counterName", counterName);
 		return (Location) qry.uniqueResult();
@@ -47,7 +42,7 @@ public class LocationHibernateDAO extends GenericHibernateDAO implements Locatio
 	@Override
 	public ArrayList<Location> getCountersByLocation(final int locationId) {
 		try {
-			final Query qry = HibernateUtil.getCurrentSession().createQuery("from Location loc where loc.locationId=:locationId");
+			final Query qry = getCurrentSession().createQuery("from Location loc where loc.locationId=:locationId");
 			qry.setLong("locationId", locationId);
 			final ArrayList<Location> locList = new ArrayList<Location>(qry.list());
 			Collections.sort(locList, new ObjComparator());
@@ -70,7 +65,7 @@ public class LocationHibernateDAO extends GenericHibernateDAO implements Locatio
 	public boolean checkIPAddress(final String ipValue) {
 		boolean b = false;
 		try {
-			final Query qry = HibernateUtil.getCurrentSession().createQuery("from LocationIPMap ip where ip.ipAddress=:ipValue");
+			final Query qry = getCurrentSession().createQuery("from LocationIPMap ip where ip.ipAddress=:ipValue");
 			qry.setString("ipValue", ipValue);
 			if (qry.uniqueResult() != null) {
 				b = true;
@@ -98,7 +93,7 @@ public class LocationHibernateDAO extends GenericHibernateDAO implements Locatio
 	public boolean checkCounter(final String name) {
 		boolean b = false;
 		try {
-			final Query qry = HibernateUtil.getCurrentSession().createQuery("from Location loc where loc.name=:name");
+			final Query qry = getCurrentSession().createQuery("from Location loc where loc.name=:name");
 			qry.setString("name", name);
 			if (qry.uniqueResult() != null) {
 				b = true;

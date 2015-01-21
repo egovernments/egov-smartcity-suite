@@ -32,7 +32,7 @@ final public class BoundaryDelegate {
 	private static final BoundaryDelegate BOUNDARY_DELEGATE = new BoundaryDelegate();
 	private final CityWebsiteService cityWebsiteService = new CityWebsiteServiceImpl();
 	private final BoundaryService boundaryService = new BoundaryServiceImpl();
-	private final BoundaryTypeService boundaryTypeService = new BoundaryTypeServiceImpl();
+	private final BoundaryTypeService boundaryTypeService = new BoundaryTypeServiceImpl(null);
 
 	/**
 	 * make the constructor private because this is a singleton note that session is cached during constuction saving overhead if subsequent service invocations

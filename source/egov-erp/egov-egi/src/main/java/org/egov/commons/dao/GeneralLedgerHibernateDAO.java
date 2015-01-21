@@ -71,7 +71,7 @@ public class GeneralLedgerHibernateDAO extends GenericHibernateDAO implements Ge
 			}
 		}
 		try {
-			final Query query = getSession().createQuery(hqlQuery);
+			final Query query = getCurrentSession().createQuery(hqlQuery);
 			list = (ArrayList) query.list();
 		} catch (final Exception e) {
 			LOG.error("Error occurred while getting Actuals Prev", e);
@@ -150,7 +150,7 @@ public class GeneralLedgerHibernateDAO extends GenericHibernateDAO implements Ge
 			}
 		}
 		try {
-			final Query query = getSession().createQuery(hqlQuery);
+			final Query query = getCurrentSession().createQuery(hqlQuery);
 			list = (ArrayList) query.list();
 		} catch (final Exception e) {
 			LOG.error("Error occurred while getting Actuals upto december", e);
@@ -174,7 +174,7 @@ public class GeneralLedgerHibernateDAO extends GenericHibernateDAO implements Ge
 
 	@Override
 	public List<CGeneralLedger> findCGeneralLedgerByVoucherHeaderId(final Long voucherHeaderId) {
-		final Query qry = getSession().createQuery("from CGeneralLedger gen where gen.voucherHeaderId.id = :voucherHeaderId");
+		final Query qry = getCurrentSession().createQuery("from CGeneralLedger gen where gen.voucherHeaderId.id = :voucherHeaderId");
 		qry.setString("voucherHeaderId", voucherHeaderId.toString());
 		return qry.list();
 	}
@@ -182,7 +182,7 @@ public class GeneralLedgerHibernateDAO extends GenericHibernateDAO implements Ge
 	@Override
 	public String getCBillDeductionAmtByVhId(final Long voucherHeaderId) {
 		final String result = "0";
-		final Query qry = getSession().createQuery("select sum(gl.creditAmount) from CGeneralLedger gl where gl.voucherHeaderId.id = :voucherHeaderId " + "and gl.glcodeId not in(select id from CChartOfAccounts where purposeId=28) ");
+		final Query qry = getCurrentSession().createQuery("select sum(gl.creditAmount) from CGeneralLedger gl where gl.voucherHeaderId.id = :voucherHeaderId " + "and gl.glcodeId not in(select id from CChartOfAccounts where purposeId=28) ");
 		qry.setString("voucherHeaderId", voucherHeaderId.toString());
 		if (qry.uniqueResult() != null) {
 			return qry.uniqueResult().toString();
@@ -244,7 +244,7 @@ public class GeneralLedgerHibernateDAO extends GenericHibernateDAO implements Ge
 			qryStr.append(subSchStr);
 			qryStr.append(dateCond);
 
-			qry = getSession().createQuery(qryStr.toString());
+			qry = getCurrentSession().createQuery(qryStr.toString());
 			if (!(functionId == "" || functionId == null)) {
 				qry.setString("functionId", functionId);
 			}
@@ -279,7 +279,7 @@ public class GeneralLedgerHibernateDAO extends GenericHibernateDAO implements Ge
 		try {
 			for (final Iterator i = glCodeList.iterator(); i.hasNext();) {
 				final String glCode = (String) i.next();
-				qry = getSession().createQuery("from CGeneralLedger gl where gl.glcode =:glCode order by gl.id desc");
+				qry = getCurrentSession().createQuery("from CGeneralLedger gl where gl.glcode =:glCode order by gl.id desc");
 				qry.setString("glCode", glCode);
 				if (qry.list() != null) {
 					final Iterator iterator = qry.iterate();

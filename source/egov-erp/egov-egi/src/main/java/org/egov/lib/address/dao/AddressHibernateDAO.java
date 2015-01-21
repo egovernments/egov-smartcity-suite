@@ -5,28 +5,18 @@
  */
 package org.egov.lib.address.dao;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.dao.GenericHibernateDAO;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.address.model.Address;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AddressHibernateDAO extends GenericHibernateDAO implements AddressDAO {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AddressHibernateDAO.class);
 
-	/**
-	 * @param persistentClass
-	 * @param session
-	 */
-	public AddressHibernateDAO() {
-		super(Address.class, null);
-
-	}
-	
 	/**
 	 * @param persistentClass
 	 * @param session
@@ -38,7 +28,7 @@ public class AddressHibernateDAO extends GenericHibernateDAO implements AddressD
 
 	public Address getAddress(Integer addressID) {
 		try {
-			Query qry = HibernateUtil.getCurrentSession().createQuery("from Address AM where AM.addressID =:addressID ");
+			Query qry = getCurrentSession().createQuery("from Address AM where AM.addressID =:addressID ");
 			qry.setInteger("addressID", addressID);
 			return (Address) qry.uniqueResult();
 		} catch (HibernateException ex) {

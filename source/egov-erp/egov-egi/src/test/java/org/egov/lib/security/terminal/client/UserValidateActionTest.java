@@ -1,26 +1,29 @@
 package org.egov.lib.security.terminal.client;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import junit.framework.TestCase;
-
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.rjbac.user.UserImpl;
+import org.egov.lib.rjbac.user.ejb.api.UserService;
+import org.egov.lib.security.terminal.dao.UserValidateHibernateDAO;
 import org.egov.lib.security.terminal.model.Location;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class UserValidateActionTest extends TestCase {
 
@@ -32,16 +35,21 @@ public class UserValidateActionTest extends TestCase {
 	private Session session;
 	private Query query;
 	private HttpSession httpSession;
+	@Mock
+	private UserValidateHibernateDAO userValidateHibernateDAO;
+	@Mock
+	private UserService userService;
 
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
+		initMocks(this);
 		beforeTestRuns();
 	}
 
 	@Before
 	public void beforeTestRuns() throws Exception {
-		this.userValidateAction = new UserValidateAction();
+		this.userValidateAction = new UserValidateAction(userService, userValidateHibernateDAO);
 		this.query = Mockito.mock(Query.class);
 		this.actionMapping = Mockito.mock(ActionMapping.class);
 		this.userValidateForm = new UserValidateForm();

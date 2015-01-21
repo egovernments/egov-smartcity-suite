@@ -5,22 +5,9 @@
  */
 package org.egov.lib.rjbac.user.dao;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.security.utils.CryptoHelper;
 import org.egov.infstr.utils.EGovConfig;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.BoundaryType;
 import org.egov.lib.rjbac.dept.Department;
@@ -35,17 +22,39 @@ import org.egov.lib.rjbac.user.UserRole;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class UserDAO {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserDAO.class);
+	private SessionFactory sessionFactory;
+
+	@Deprecated
+	public UserDAO() {
+	}
+
+	public UserDAO(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
 
 	/**
 	 * Gets the session.
 	 * @return the session
 	 */
 	private Session getSession() {
-		return HibernateUtil.getCurrentSession();
+		return sessionFactory.getCurrentSession();
 	}
 
 	/**

@@ -29,7 +29,7 @@ public class FinancialYearHibernateDAO extends GenericHibernateDAO implements Fi
 
 	@Override
 	public String getCurrYearFiscalId() {
-		final Query query = getSession().createQuery("select cfinancialyear.id from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= :startDate and cfinancialyear.endingDate >= :endDate ");
+		final Query query = getCurrentSession().createQuery("select cfinancialyear.id from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= :startDate and cfinancialyear.endingDate >= :endDate ");
 		final Date currentDate = new Date();
 		query.setDate("startDate", currentDate);
 		query.setDate("endDate", currentDate);
@@ -39,7 +39,7 @@ public class FinancialYearHibernateDAO extends GenericHibernateDAO implements Fi
 	@Override
 	public String getCurrYearStartDate() {
 		String result = "";
-		final Query query = getSession().createQuery("select cfinancialyear.startingDate from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= :startDate and cfinancialyear.endingDate >= :endDate ");
+		final Query query = getCurrentSession().createQuery("select cfinancialyear.startingDate from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= :startDate and cfinancialyear.endingDate >= :endDate ");
 		final Date currentDate = new Date();
 		query.setDate("startDate", currentDate);
 		query.setDate("endDate", currentDate);
@@ -62,7 +62,7 @@ public class FinancialYearHibernateDAO extends GenericHibernateDAO implements Fi
 		prevYearDate.setTime(new Date());
 		prevYearDate.add(Calendar.YEAR, -1);
 		String result = "";
-		final Query query = getSession().createQuery("select cfinancialyear.id from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= :startDate and cfinancialyear.endingDate >= :endDate ");
+		final Query query = getCurrentSession().createQuery("select cfinancialyear.id from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= :startDate and cfinancialyear.endingDate >= :endDate ");
 		query.setDate("startDate", prevYearDate.getTime());
 		query.setDate("endDate", prevYearDate.getTime());
 		final ArrayList list = (ArrayList) query.list();
@@ -81,24 +81,24 @@ public class FinancialYearHibernateDAO extends GenericHibernateDAO implements Fi
 	@Override
 	public CFinancialYear getFinancialYearByFinYearRange(final String finYearRange) {
 
-		final Query query = getSession().createQuery("from CFinancialYear cfinancialyear where cfinancialyear.finYearRange=:finYearRange");
+		final Query query = getCurrentSession().createQuery("from CFinancialYear cfinancialyear where cfinancialyear.finYearRange=:finYearRange");
 		query.setString("finYearRange", finYearRange);
 		return (CFinancialYear) query.uniqueResult();
 	}
 
 	@Override
 	public List<CFinancialYear> getAllActiveFinancialYearList() {
-		return getSession().createQuery("from CFinancialYear cfinancialyear where isActive=1 order by id desc").list();
+		return getCurrentSession().createQuery("from CFinancialYear cfinancialyear where isActive=1 order by id desc").list();
 	}
 
 	@Override
 	public List<CFinancialYear> getAllActivePostingFinancialYear() {
-		return getSession().createQuery("from CFinancialYear cfinancialyear where isActive=1 and isActiveForPosting=1 order by id desc").list();
+		return getCurrentSession().createQuery("from CFinancialYear cfinancialyear where isActive=1 and isActiveForPosting=1 order by id desc").list();
 	}
 
 	@Override
 	public CFinancialYear getFinancialYearById(final Long id) {
-		final Query query = getSession().createQuery("from CFinancialYear cfinancialyear where id=:id");
+		final Query query = getCurrentSession().createQuery("from CFinancialYear cfinancialyear where id=:id");
 		query.setLong("id", id);
 		return (CFinancialYear) query.uniqueResult();
 	}
@@ -107,7 +107,7 @@ public class FinancialYearHibernateDAO extends GenericHibernateDAO implements Fi
 	public CFinancialYear getFinancialYearByDate(final Date date) {
 
 		CFinancialYear cFinancialYear = null;
-		final Query query = getSession().createQuery(" from CFinancialYear cfinancialyear where cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate  and cfinancialyear.isActiveForPosting=1");
+		final Query query = getCurrentSession().createQuery(" from CFinancialYear cfinancialyear where cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate  and cfinancialyear.isActiveForPosting=1");
 		query.setDate("sDate", date);
 		query.setDate("eDate", date);
 		final ArrayList list = (ArrayList) query.list();
@@ -123,7 +123,7 @@ public class FinancialYearHibernateDAO extends GenericHibernateDAO implements Fi
 	@Override
 	public CFinancialYear getFinYearByDate(final Date date) {
 
-		final Query query = getSession().createQuery(" from CFinancialYear cfinancialyear where cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate");
+		final Query query = getCurrentSession().createQuery(" from CFinancialYear cfinancialyear where cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate");
 		query.setDate("sDate", date);
 		query.setDate("eDate", date);
 		final ArrayList list = (ArrayList) query.list();

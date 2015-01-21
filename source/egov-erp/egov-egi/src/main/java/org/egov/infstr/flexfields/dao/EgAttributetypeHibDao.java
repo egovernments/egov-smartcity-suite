@@ -22,7 +22,7 @@ public class EgAttributetypeHibDao extends GenericHibernateDAO implements EgAttr
 
 	@Override
 	public EgAttributetype getAttributeTypeByDomainNameAndAttrName(final String domainName, final String attributeName) {
-		final Query qry = getSession().createQuery("from EgAttributetype attrType where attrType.egApplDomain.name =:domainName and attrType.attName =:attrName ");
+		final Query qry = getCurrentSession().createQuery("from EgAttributetype attrType where attrType.egApplDomain.name =:domainName and attrType.attName =:attrName ");
 		qry.setString("domainName", domainName);
 		qry.setString("attrName", attributeName);
 		return (EgAttributetype) qry.uniqueResult();

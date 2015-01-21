@@ -18,11 +18,11 @@ public class BoundaryManagerBeanTest extends EgovHibernateTest {
 	public void setUp() throws Exception {
 		super.setUp();
 		this.boundaryManager = new BoundaryServiceImpl();
-		this.boundaryManager.setBoundaryDAO(new BoundaryDAO());
+		this.boundaryManager.setBoundaryDAO(new BoundaryDAO(null));
 		this.boundaryManager
-				.setBoundaryTypeService(new BoundaryTypeServiceImpl());
+				.setBoundaryTypeService(new BoundaryTypeServiceImpl(null));
 		final HeirarchyTypeServiceImpl heirImpl = new HeirarchyTypeServiceImpl();
-		heirImpl.setHeirarchyTypeDAO(new HeirarchyTypeDAO());
+		heirImpl.setHeirarchyTypeDAO(new HeirarchyTypeDAO(sessionFactory));
 		this.boundaryManager.setHeirarchyTypeService(heirImpl);
 	}
 
@@ -43,7 +43,7 @@ public class BoundaryManagerBeanTest extends EgovHibernateTest {
 		final Date date = new Date();
 		boundary.setName("name");
 		boundary.setIsHistory('N');
-		boundary.setBoundaryType(new BoundaryTypeDAO().getBoundaryType(1));
+		boundary.setBoundaryType(new BoundaryTypeDAO(null).getBoundaryType(1));
 		boundary.setFromDate(date);
 		return boundary;
 	}

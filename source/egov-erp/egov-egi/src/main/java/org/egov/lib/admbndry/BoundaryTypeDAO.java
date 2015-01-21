@@ -5,29 +5,34 @@
  */
 package org.egov.lib.admbndry;
 
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.exceptions.NoSuchObjectException;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.exceptions.NoSuchObjectException;
-import org.egov.infstr.utils.HibernateUtil;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-
 public class BoundaryTypeDAO {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BoundaryTypeDAO.class);
 
-	private Session getSession() {
-		return HibernateUtil.getCurrentSession();
+	private SessionFactory sessionFactory;
+
+	public BoundaryTypeDAO(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
 	}
 
+	private Session getSession() {
+		return this.sessionFactory.getCurrentSession();
+	}
 	public void createBoundaryType(final BoundaryType bndryType) {
 		try {
 			getSession().save(bndryType);
@@ -103,7 +108,7 @@ public class BoundaryTypeDAO {
 	public List<Boundary> getParentBoundaryList(final Integer boundaryId) throws NoSuchObjectException {
 		try {
 
-			final BoundaryDAO bndryDAO = new BoundaryDAO();
+			final BoundaryDAO bndryDAO = new BoundaryDAO(sessionFactory);
 			final Boundary bndry = bndryDAO.getBoundary(boundaryId);
 			if (bndry != null) {
 				this.boundaryList.add(bndry);

@@ -17,7 +17,7 @@ public class EntityHibernateDAO extends GenericHibernateDAO implements EntityDAO
 
 	@Override
 	public Entity findEntityByName(final String name) {
-		final Query qry = getSession().createQuery("from Entity ent where ent.name =:name ");
+		final Query qry = getCurrentSession().createQuery("from Entity ent where ent.name =:name ");
 		qry.setString("name", name);
 		return (Entity) qry.uniqueResult();
 

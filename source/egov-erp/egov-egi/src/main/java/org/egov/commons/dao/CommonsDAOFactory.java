@@ -43,20 +43,18 @@ import org.egov.lib.citizen.dao.OwnerDAO;
 import org.egov.lib.citizen.dao.OwnerHibernateDAO;
 import org.egov.lib.citizen.model.Owner;
 import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
+import org.hibernate.SessionFactory;
 
 public class CommonsDAOFactory {
 
-    private LocalSessionFactoryBean localSessionFactoryBean;
+    private SessionFactory sessionFactory;
 
-    @Autowired
-    public CommonsDAOFactory(LocalSessionFactoryBean localSessionFactoryBean) {
-        this.localSessionFactoryBean = localSessionFactoryBean;
+    public CommonsDAOFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     protected Session getCurrentSession() {
-        return localSessionFactoryBean.getObject().getCurrentSession();
+        return sessionFactory.getCurrentSession();
     }
 
     public InstallmentDao getInstallmentDao() {

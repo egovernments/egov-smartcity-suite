@@ -25,20 +25,20 @@ public class FunctionHibernateDAO extends GenericHibernateDAO implements Functio
 
 	@Override
 	public List getAllActiveFunctions() {
-		return getSession().createQuery("from CFunction where isactive = 1 and isnotleaf=0 order by name").list();
+		return getCurrentSession().createQuery("from CFunction where isactive = 1 and isnotleaf=0 order by name").list();
 
 	}
 
 	@Override
 	public CFunction getFunctionByCode(final String functionCode) {
-		final Query qry = getSession().createQuery("from CFunction where code=:code");
+		final Query qry = getCurrentSession().createQuery("from CFunction where code=:code");
 		qry.setString("code", functionCode);
 		return (CFunction) qry.uniqueResult();
 	}
 
 	@Override
 	public CFunction getFunctionById(final Long Id) {
-		final Query qry = getSession().createQuery("from CFunction where id=:id");
+		final Query qry = getCurrentSession().createQuery("from CFunction where id=:id");
 		qry.setLong("id", Id);
 		return (CFunction) qry.uniqueResult();
 	}

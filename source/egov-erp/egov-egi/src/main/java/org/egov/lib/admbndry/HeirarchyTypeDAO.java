@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.egov.exceptions.DuplicateElementException;
@@ -24,9 +25,14 @@ import org.hibernate.Session;
 public class HeirarchyTypeDAO {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(HeirarchyTypeDAO.class);
+	private SessionFactory sessionFactory;
+
+	public HeirarchyTypeDAO(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
 
 	private Session getSession() {
-		return HibernateUtil.getCurrentSession();
+		return sessionFactory.getCurrentSession();
 	}
 
 	/**

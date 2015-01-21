@@ -8,8 +8,6 @@ import org.egov.commons.Accountdetailtype;
 import org.egov.exceptions.EGOVException;
 import org.egov.infstr.junit.EgovHibernateTest;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.services.SessionFactory;
-import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -37,7 +35,7 @@ public class AccountdetailtypeHibernateDAOTest extends EgovHibernateTest {
 	public void setUp() throws Exception {
 		super.setUp();
 		this.detailTypeDao = new AccountdetailtypeHibernateDAO(
-				Accountdetailtype.class, HibernateUtil.getCurrentSession());
+				Accountdetailtype.class, null);
 	}
 
 	@Test
@@ -77,7 +75,7 @@ public class AccountdetailtypeHibernateDAOTest extends EgovHibernateTest {
 			final String attributeName) throws HibernateException {
 		final Accountdetailtype accountdetailtype = new Accountdetailtype();
 		accountdetailtypeService = new PersistenceService<Accountdetailtype, Long>();
-		accountdetailtypeService.setSessionFactory(new SessionFactory());
+//		accountdetailtypeService.setSessionFactory(new SessionFactory());
 		accountdetailtypeService.setType(Accountdetailtype.class);
 		accountdetailtype.setName(name);
 		accountdetailtype.setDescription(desc);

@@ -12,7 +12,7 @@ public class BoundaryTypeDAOTest extends EgovHibernateTest {
 
 	public void testGetAllchildBoundaries() throws EGOVRuntimeException {
 
-		final BoundaryTypeDAO bndryDao = new BoundaryTypeDAO();
+		final BoundaryTypeDAO bndryDao = new BoundaryTypeDAO(null);
 		final List<BoundaryType> bndry = bndryDao
 				.getParentBoundaryTypeByHirarchy(null);
 		assertEquals(0, bndry.size());
@@ -21,7 +21,7 @@ public class BoundaryTypeDAOTest extends EgovHibernateTest {
 	public void testGetSecondLevelBoundaryByPassingHeirarchy()
 			throws EGOVRuntimeException {
 
-		final BoundaryTypeDAO bndryDao = new BoundaryTypeDAO();
+		final BoundaryTypeDAO bndryDao = new BoundaryTypeDAO(null);
 		final Map<String, List<Boundary>> bndry = bndryDao
 				.getSecondLevelBoundaryByPassingHeirarchy(null);
 		assertEquals(0, bndry.size());

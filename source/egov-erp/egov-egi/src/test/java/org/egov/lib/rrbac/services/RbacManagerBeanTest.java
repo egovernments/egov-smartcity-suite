@@ -1,14 +1,7 @@
 package org.egov.lib.rrbac.services;
 
-import static org.junit.Assert.assertTrue;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.services.SessionFactory;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.rrbac.dao.ActionHibernateDAO;
 import org.egov.lib.rrbac.model.Action;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -17,6 +10,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+
+import static org.junit.Assert.assertTrue;
 
 public class RbacManagerBeanTest {
 	private Session session;
@@ -101,15 +99,6 @@ public class RbacManagerBeanTest {
 			rbacManagerBean.getActionListWithRoles();
 		} catch (final Exception e) {
 		}
-		assertTrue(true);
-
-		final SessionFactory sessionFactory = Mockito
-				.mock(SessionFactory.class);
-		Mockito.when(sessionFactory.getSession()).thenReturn(this.session);
-
-		// Untested code test
-		final ActionHibernateDAO actionHibernateDAO = new ActionHibernateDAO();
-		actionHibernateDAO.getSession();
 		assertTrue(true);
 	}
 }

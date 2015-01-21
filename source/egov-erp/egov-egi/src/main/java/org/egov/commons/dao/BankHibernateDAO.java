@@ -21,7 +21,7 @@ public class BankHibernateDAO extends GenericHibernateDAO {
 	}
 
 	public Bank getBankByCode(final String bankCode) {
-		final Query qry = getSession().createQuery("from Bank where code=:bankCode");
+		final Query qry = getCurrentSession().createQuery("from Bank where code=:bankCode");
 		qry.setString("bankCode", bankCode);
 		return (Bank) qry.uniqueResult();
 	}

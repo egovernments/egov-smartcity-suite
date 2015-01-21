@@ -7,6 +7,7 @@ package org.egov.lib.rjbac.user.dao;
 
 import java.util.List;
 
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -18,6 +19,11 @@ import org.hibernate.Query;
 public class TerminalDAO {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(TerminalDAO.class);
+	private SessionFactory sessionFactory;
+
+	public TerminalDAO(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
 
 	/**
 	 * This method called getTerminal()
@@ -27,7 +33,7 @@ public class TerminalDAO {
 	 */
 	public List<Terminal> getTerminal(final String ipAddr) {
 		try {
-			final Query qry = HibernateUtil.getCurrentSession().createQuery("FROM TerminalImpl TI WHERE TI.ipAddress = :ipAddr ");
+			final Query qry = sessionFactory.getCurrentSession().createQuery("FROM TerminalImpl TI WHERE TI.ipAddress = :ipAddr ");
 			qry.setString("ipAddr", ipAddr);
 			return qry.list();
 		} catch (final HibernateException e) {

@@ -22,7 +22,7 @@ public class RuleGroupHibernateDAO extends GenericHibernateDAO implements RuleGr
 
 	@Override
 	public RuleGroup findRuleGroupByName(final String name) {
-		final Query qry = getSession().createQuery("from RuleGroup rg where rg.name =:name ");
+		final Query qry = getCurrentSession().createQuery("from RuleGroup rg where rg.name =:name ");
 		qry.setString("name", name);
 		return (RuleGroup) qry.uniqueResult();
 

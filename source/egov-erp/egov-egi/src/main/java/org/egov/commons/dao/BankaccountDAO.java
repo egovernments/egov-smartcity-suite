@@ -7,13 +7,19 @@ package org.egov.commons.dao;
 
 import org.egov.commons.Bankaccount;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
 public class BankaccountDAO {
 
+	private SessionFactory sessionFactory;
+
+	public BankaccountDAO(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
 	private Session getSession() {
-		 return HibernateUtil.getCurrentSession();
+		return this.sessionFactory.getCurrentSession();
 	}
 
 	public void createBankaccount(final Bankaccount bankaccount) {

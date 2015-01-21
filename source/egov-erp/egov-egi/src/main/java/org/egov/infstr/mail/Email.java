@@ -5,31 +5,31 @@
  */
 package org.egov.infstr.mail;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.mail.ByteArrayDataSource;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.MultiPartEmail;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.commons.dao.GenericDaoFactory;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
+
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Email {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Email.class);
 	private final List<InternetAddress> toList;
 	private final List<InternetAddress> ccList;
 	private final List<InternetAddress> bccList;
+	private final GenericHibernateDaoFactory genericHibernateDaoFactory;
 	private String username;
 	private String password;
 	private final String subject;
@@ -38,7 +38,8 @@ public class Email {
 	private final String name;
 	private final String description;
 
-	private Email(final Builder builder) {
+	private Email(final Builder builder, GenericHibernateDaoFactory genericHibernateDaoFactory) {
+		this.genericHibernateDaoFactory = genericHibernateDaoFactory;
 		this.body = builder.body;
 		this.subject = builder.subject;
 		this.username = builder.username;
@@ -57,7 +58,7 @@ public class Email {
 			LOGGER.debug("Email parameters :" + this.toList + "||" + this.ccList + "||" + this.bccList + "||" + this.subject + "||" + this.body);
 		}
 
-		final AppConfigValuesDAO appConfValDao = GenericDaoFactory.getDAOFactory().getAppConfigValuesDAO();
+		final AppConfigValuesDAO appConfValDao = genericHibernateDaoFactory.getAppConfigValuesDAO();
 
 		final MultiPartEmail email = new MultiPartEmail();
 		ByteArrayDataSource attachment = null;
@@ -144,8 +145,8 @@ public class Email {
 			this.bccLst = new ArrayList<InternetAddress>();
 		}
 
-		public Email build() {
-			return new Email(this);
+		public Email build(GenericHibernateDaoFactory genericHibernateDaoFactory) {
+			return new Email(this, genericHibernateDaoFactory);
 		}
 
 		public Builder subject(final String subject) {

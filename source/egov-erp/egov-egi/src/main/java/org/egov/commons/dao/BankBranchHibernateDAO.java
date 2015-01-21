@@ -22,6 +22,6 @@ public class BankBranchHibernateDAO extends GenericHibernateDAO {
 	}
 
 	public List<Bankbranch> getAllBankBranchs() {
-		return getSession().createQuery("from Bankbranch BB order by BB.bank.name").list();
+		return getCurrentSession().createQuery("from Bankbranch BB order by BB.bank.name").list();
 	}
 }

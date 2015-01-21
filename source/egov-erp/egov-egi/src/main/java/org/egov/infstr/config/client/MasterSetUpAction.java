@@ -1,27 +1,28 @@
 package org.egov.infstr.config.client;
 
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.actions.DispatchAction;
+import org.egov.exceptions.EGOVException;
+import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.infstr.config.AppConfig;
+import org.egov.infstr.config.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.actions.DispatchAction;
-import org.egov.exceptions.EGOVException;
-import org.egov.infstr.commons.dao.GenericDaoFactory;
-import org.egov.infstr.config.AppConfig;
-import org.egov.infstr.config.AppConfigValues;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
-
 public class MasterSetUpAction extends DispatchAction {
+	private GenericHibernateDaoFactory genericHibernateDaoFactory;
+
 	private static final Logger LOG = LoggerFactory.getLogger(MasterSetUpAction.class);
 
 	final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -34,7 +35,7 @@ public class MasterSetUpAction extends DispatchAction {
 
 		try {
 			if (req.getParameter("mode") != null) {
-				final AppConfigValuesDAO appDao = GenericDaoFactory.getDAOFactory().getAppConfigValuesDAO();
+				final AppConfigValuesDAO appDao = genericHibernateDaoFactory.getAppConfigValuesDAO();
 				appKeyList = appDao.getAppConfigKeys(masterDataForm.getModuleName()[0]);
 				req.setAttribute("appDataKey", appKeyList);
 				viewMode = req.getParameter("mode");
@@ -60,7 +61,7 @@ public class MasterSetUpAction extends DispatchAction {
 		if (!("0").equals(appKeyName[0])) {
 			length = appKeyName.length;
 		}
-		final AppConfigValuesDAO appConDao = GenericDaoFactory.getDAOFactory().getAppConfigValuesDAO();
+		final AppConfigValuesDAO appConDao = genericHibernateDaoFactory.getAppConfigValuesDAO();
 		for (int i = 0; i < length; i++) {
 			final List appKeyList = appConDao.getAppConfigKeys(masterDataForm.getModuleName()[0]);
 			for (final Iterator it = appKeyList.iterator(); it.hasNext();) {
@@ -102,7 +103,7 @@ public class MasterSetUpAction extends DispatchAction {
 		final MasterDataForm masterDataForm = (MasterDataForm) form;
 		final String target = "listOfModules";
 		final Set<String> moduleSet = new HashSet<String>();
-		final AppConfigValuesDAO appConDao = GenericDaoFactory.getDAOFactory().getAppConfigValuesDAO();
+		final AppConfigValuesDAO appConDao = genericHibernateDaoFactory.getAppConfigValuesDAO();
 		final List<String> appconfigModuleList = appConDao.getAllAppConfigModule();
 		for (final String module : appconfigModuleList) {
 			moduleSet.add(module);
@@ -111,4 +112,7 @@ public class MasterSetUpAction extends DispatchAction {
 		return mapping.findForward(target);
 	}
 
+	public void setGenericHibernateDaoFactory(GenericHibernateDaoFactory genericHibernateDaoFactory) {
+		this.genericHibernateDaoFactory = genericHibernateDaoFactory;
+	}
 }

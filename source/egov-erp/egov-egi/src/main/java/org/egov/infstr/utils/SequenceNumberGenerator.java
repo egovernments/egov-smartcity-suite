@@ -8,33 +8,28 @@ package org.egov.infstr.utils;
 import org.apache.commons.lang.StringUtils;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectTypeException;
-import org.egov.infstr.services.SessionFactory;
 import org.egov.infstr.utils.seqgen.DatabaseSequence;
 import org.egov.infstr.utils.seqgen.DatabaseSequenceException;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
 /**
- * Fetches a sequence number from a named sequence. THIS CLASS SUPERSEDES THE OLD org.egov.infstr.utils.SequenceGenerator. 
- * The class should be injected as a dependency through Spring to avoid future incompatibilities. 
+ * Fetches a sequence number from a named sequence. THIS CLASS SUPERSEDES THE OLD org.egov.infstr.utils.SequenceGenerator.
+ * The class should be injected as a dependency through Spring to avoid future incompatibilities.
  * Use the bean id "sequenceNumberGenerator". Infra's "globalApplicationContext.xml"
- * defines this bean as "sequenceNumberGenerator". Since the implementation is based on database sequences, 
- * a number once fetched is effectively "used" and will not be available again. 
- * This means that there will almost definitely be gaps in the numbers fetched, since if a transaction fails, 
+ * defines this bean as "sequenceNumberGenerator". Since the implementation is based on database sequences,
+ * a number once fetched is effectively "used" and will not be available again.
+ * This means that there will almost definitely be gaps in the numbers fetched, since if a transaction fails,
  * the number that it fetched will be lost for good.
  */
 public class SequenceNumberGenerator {
 
-	private Session session;
-	private SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
 
-	public SequenceNumberGenerator() {
-		this.session = HibernateUtil.getCurrentSession();
-	}
-
-	public SequenceNumberGenerator(final SessionFactory factory) {
-		this.sessionFactory = factory;
-	}
+    public SequenceNumberGenerator(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
 	/**
 	 * Return the next sequence for the given object type
@@ -44,7 +39,7 @@ public class SequenceNumberGenerator {
 	public Sequence getNextNumber(final String objectType) {
 		try {
 			final String sequenceName = sequenceNameFromObjectType(objectType);
-			final long nextVal = DatabaseSequence.named(sequenceName).nextVal();
+			final long nextVal = DatabaseSequence.named(sequenceName, getSession()).nextVal();
 			return new Sequence(objectType, nextVal, Long.toString(nextVal));
 		} catch (final DatabaseSequenceException dse) {
 			// throwing this to preserve backward compatibility; existing clients might be using
@@ -123,7 +118,7 @@ public class SequenceNumberGenerator {
 	 */
 	public Sequence getNextNumber(final String objectType, final long startValue) {
 		final String sequenceName = sequenceNameFromObjectType(objectType);
-		final long nextVal = DatabaseSequence.named(sequenceName).createIfNecessary().startingWith(startValue).nextVal();
+		final long nextVal = DatabaseSequence.named(sequenceName, getSession()).createIfNecessary().startingWith(startValue).nextVal();
 		return new Sequence(objectType, nextVal, Long.toString(nextVal));
 	}
 
@@ -144,10 +139,7 @@ public class SequenceNumberGenerator {
 	}
 
 	protected Session getSession() {
-		if (this.sessionFactory != null) {
-			return this.sessionFactory.getSession();
-		}
-		return this.session;
+		return sessionFactory.getCurrentSession();
 
 	}
 

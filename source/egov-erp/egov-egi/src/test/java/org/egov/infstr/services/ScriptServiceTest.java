@@ -39,7 +39,7 @@ public class ScriptServiceTest extends
 	@Before
 	public void setUp() {
 		this.scriptService = new ScriptService(1, 2, 3, 5);
-		this.scriptService.setSessionFactory(this.egovSessionFactory);
+		this.scriptService.setSessionFactory(sessionFactory);
 		this.factory = new EgiObjectFactory(this.session);
 	}
 

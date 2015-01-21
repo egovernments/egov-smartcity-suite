@@ -5,6 +5,17 @@
  */
 package org.egov.infstr.events.processing;
 
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
+import org.egov.infstr.events.domain.entity.schema.EmailType;
+import org.egov.infstr.events.domain.entity.schema.Response;
+import org.egov.infstr.events.domain.entity.schema.SMSType;
+import org.egov.infstr.mail.Email;
+import org.egov.infstr.mail.Email.Builder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,19 +26,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.commons.dao.GenericDaoFactory;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
-import org.egov.infstr.events.domain.entity.schema.EmailType;
-import org.egov.infstr.events.domain.entity.schema.Response;
-import org.egov.infstr.events.domain.entity.schema.SMSType;
-import org.egov.infstr.mail.Email;
-import org.egov.infstr.mail.Email.Builder;
-
 public class ResponseHandlerImpl implements ResponseHandler {
 	private static final Logger LOG = LoggerFactory.getLogger(ResponseHandlerImpl.class);
+	private GenericHibernateDaoFactory genericHibernateDaoFactory;
+
+	public ResponseHandlerImpl(GenericHibernateDaoFactory genericHibernateDaoFactory) {
+		this.genericHibernateDaoFactory = genericHibernateDaoFactory;
+	}
 
 	@Override
 	public void respond(final Response r) {
@@ -72,7 +77,7 @@ public class ResponseHandlerImpl implements ResponseHandler {
 				builder.subject(mail.getSubject());
 			}
 
-			final Email email = builder.build();
+			final Email email = builder.build(genericHibernateDaoFactory);
 			email.send();
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("::::Email Sent Successfully::::");
@@ -101,7 +106,7 @@ public class ResponseHandlerImpl implements ResponseHandler {
 	 */
 	private void respondViaSms(final SMSType sms) {
 		if (sms.getPhonenumber() != null && !sms.getPhonenumber().isEmpty()) {
-			final AppConfigValuesDAO appConfValDao = GenericDaoFactory.getDAOFactory().getAppConfigValuesDAO();
+			final AppConfigValuesDAO appConfValDao = genericHibernateDaoFactory.getAppConfigValuesDAO();
 			/*
 			 * Reading Sender Information : Name / PhoneNumber from Appconfig
 			 */
@@ -129,7 +134,7 @@ public class ResponseHandlerImpl implements ResponseHandler {
 
 		try {
 
-			final AppConfigValuesDAO appConfValDao = GenericDaoFactory.getDAOFactory().getAppConfigValuesDAO();
+			final AppConfigValuesDAO appConfValDao = genericHibernateDaoFactory.getAppConfigValuesDAO();
 			/*
 			 * Reading SMS ServiceProvider URL from Appconfig
 			 */

@@ -5,15 +5,22 @@
  */
 package org.egov.lib.admbndry.ejb.server;
 
-import java.util.List;
-
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.lib.admbndry.BoundaryType;
 import org.egov.lib.admbndry.BoundaryTypeDAO;
 import org.egov.lib.admbndry.HeirarchyType;
 import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
+import org.hibernate.SessionFactory;
+
+import java.util.List;
 
 public class BoundaryTypeServiceImpl implements BoundaryTypeService {
+
+	private SessionFactory sessionFactory;
+
+	public BoundaryTypeServiceImpl(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
 
 	public BoundaryType createBoundaryType(final String name, final short heirarchyLevel, final BoundaryType parent, final boolean isLeaf) {
 		return null;
@@ -21,42 +28,42 @@ public class BoundaryTypeServiceImpl implements BoundaryTypeService {
 
 	@Override
 	public void createBoundaryType(final BoundaryType bndryType) {
-		new BoundaryTypeDAO().createBoundaryType(bndryType);
+		new BoundaryTypeDAO(sessionFactory).createBoundaryType(bndryType);
 	}
 
 	@Override
 	public void removeBoundaryType(final BoundaryType bndryType) {
-		new BoundaryTypeDAO().removeBoundaryType(bndryType);
+		new BoundaryTypeDAO(sessionFactory).removeBoundaryType(bndryType);
 	}
 
 	@Override
 	public void updateBoundaryType(final BoundaryType bndryType) {
-		new BoundaryTypeDAO().updateBoundaryType(bndryType);
+		new BoundaryTypeDAO(sessionFactory).updateBoundaryType(bndryType);
 	}
 
 	@Override
 	public BoundaryType getBoundaryType(final short heirarchylevel, final HeirarchyType heirarchyType) {
-		return new BoundaryTypeDAO().getBoundaryType(heirarchylevel, heirarchyType);
+		return new BoundaryTypeDAO(sessionFactory).getBoundaryType(heirarchylevel, heirarchyType);
 	}
 
 	@Override
 	public BoundaryType getTopBoundaryType(final HeirarchyType heirarchyType) {
 		final short topHrchy = 1;
-		return new BoundaryTypeDAO().getBoundaryType(topHrchy, heirarchyType);
+		return new BoundaryTypeDAO(sessionFactory).getBoundaryType(topHrchy, heirarchyType);
 	}
 
 	@Override
 	public BoundaryType getBoundaryType(final Integer id) {
-		return new BoundaryTypeDAO().getBoundaryType(id);
+		return new BoundaryTypeDAO(sessionFactory).getBoundaryType(id);
 	}
 
 	@Override
 	public BoundaryType getBoundaryType(final String bndryTypeName, final HeirarchyType heirarchyType) {
-		return new BoundaryTypeDAO().getBoundaryType(bndryTypeName, heirarchyType);
+		return new BoundaryTypeDAO(sessionFactory).getBoundaryType(bndryTypeName, heirarchyType);
 	}
 
 	@Override
 	public List getParentBoundaryList(final Integer boundaryId) throws NoSuchObjectException {
-		return new BoundaryTypeDAO().getParentBoundaryList(boundaryId);
+		return new BoundaryTypeDAO(sessionFactory).getParentBoundaryList(boundaryId);
 	}
 }

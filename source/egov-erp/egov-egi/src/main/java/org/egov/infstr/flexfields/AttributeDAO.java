@@ -5,6 +5,14 @@
  */
 package org.egov.infstr.flexfields;
 
+import org.egov.exceptions.EGOVRuntimeException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.jdbc.ReturningWork;
+import org.hibernate.jdbc.Work;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,22 +20,24 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.utils.HibernateUtil;
-import org.hibernate.jdbc.ReturningWork;
-import org.hibernate.jdbc.Work;
-
 public class AttributeDAO implements AttributeIF {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AttributeDAO.class);
+	private SessionFactory sessionFactory;
+
+	public AttributeDAO(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
+	private Session getSession() {
+		return this.sessionFactory.getCurrentSession();
+	}
 
 	@Override
 	public void insert(final Attribute obj) throws EGOVRuntimeException {
 
 		try {
-			HibernateUtil.getCurrentSession().doWork(new Work() {
+			getSession().doWork(new Work() {
 
 				@Override
 				public void execute(final Connection conn) throws SQLException {
@@ -50,7 +60,7 @@ public class AttributeDAO implements AttributeIF {
 	@Override
 	public void update(final Attribute obj) throws EGOVRuntimeException {
 		try {
-			HibernateUtil.getCurrentSession().doWork(new Work() {
+			getSession().doWork(new Work() {
 
 				@Override
 				public void execute(final Connection conn) throws SQLException {
@@ -73,7 +83,7 @@ public class AttributeDAO implements AttributeIF {
 	@Override
 	public void delete(final Attribute obj) throws EGOVRuntimeException {
 		try {
-			HibernateUtil.getCurrentSession().doWork(new Work() {
+			getSession().doWork(new Work() {
 
 				@Override
 				public void execute(final Connection conn) throws SQLException {
@@ -93,7 +103,7 @@ public class AttributeDAO implements AttributeIF {
 	@Override
 	public Attribute getAttribute(final int attId) throws EGOVRuntimeException {
 		try {
-			return HibernateUtil.getCurrentSession().doReturningWork(new ReturningWork<Attribute>() {
+			return getSession().doReturningWork(new ReturningWork<Attribute>() {
 				@Override
 				public Attribute execute(final Connection conn) {
 					try {
@@ -110,8 +120,8 @@ public class AttributeDAO implements AttributeIF {
 						}
 						return null;
 					} catch (final SQLException e) {
-						LOG.error("SQL Error occurred while getting Attribute",e);
-						throw new EGOVRuntimeException("SQL Error occurred while getting Attribute",e);
+						LOG.error("SQL Error occurred while getting Attribute", e);
+						throw new EGOVRuntimeException("SQL Error occurred while getting Attribute", e);
 					}
 				}
 			});
@@ -126,7 +136,7 @@ public class AttributeDAO implements AttributeIF {
 	public List<Attribute> getDomainAttributes(final int domainId) throws EGOVRuntimeException {
 		try {
 
-			return HibernateUtil.getCurrentSession().doReturningWork(new ReturningWork<List<Attribute>>() {
+			return getSession().doReturningWork(new ReturningWork<List<Attribute>>() {
 				@Override
 				public List<Attribute> execute(final Connection conn) {
 					try {
@@ -144,8 +154,8 @@ public class AttributeDAO implements AttributeIF {
 						}
 						return list;
 					} catch (final SQLException e) {
-						LOG.error("SQL Error occurred while getting Domain Attribute",e);
-						throw new EGOVRuntimeException("SQL Error occurred while getting Domain Attribute",e);
+						LOG.error("SQL Error occurred while getting Domain Attribute", e);
+						throw new EGOVRuntimeException("SQL Error occurred while getting Domain Attribute", e);
 					}
 				}
 			});
@@ -159,7 +169,7 @@ public class AttributeDAO implements AttributeIF {
 	public List<Attribute> getDomainTxnAttributes(final int domainId, final int domainTxnId) throws EGOVRuntimeException {
 		try {
 
-			return HibernateUtil.getCurrentSession().doReturningWork(new ReturningWork<List<Attribute>>() {
+			return getSession().doReturningWork(new ReturningWork<List<Attribute>>() {
 				@Override
 				public List<Attribute> execute(final Connection conn) {
 					try {
@@ -178,8 +188,8 @@ public class AttributeDAO implements AttributeIF {
 						}
 						return list;
 					} catch (final SQLException e) {
-						LOG.error("SQL Error occurred while getting Domain Txn Attribute",e);
-						throw new EGOVRuntimeException("SQL Error occurred while getting Domain Txn Attribute",e);
+						LOG.error("SQL Error occurred while getting Domain Txn Attribute", e);
+						throw new EGOVRuntimeException("SQL Error occurred while getting Domain Txn Attribute", e);
 					}
 				}
 			});
@@ -193,7 +203,7 @@ public class AttributeDAO implements AttributeIF {
 	public Attribute getAttributeProperties(final int domainId, final int domainTxnId, final int attrTypeId) throws EGOVRuntimeException {
 
 		try {
-			return HibernateUtil.getCurrentSession().doReturningWork(new ReturningWork<Attribute>() {
+			return getSession().doReturningWork(new ReturningWork<Attribute>() {
 				@Override
 				public Attribute execute(final Connection conn) {
 					try {
@@ -212,8 +222,8 @@ public class AttributeDAO implements AttributeIF {
 						}
 						return null;
 					} catch (final SQLException e) {
-						LOG.error("SQL Error occurred while getting Attribute Properties",e);
-						throw new EGOVRuntimeException("SQL Error occurred while getting Attribute Properties",e);
+						LOG.error("SQL Error occurred while getting Attribute Properties", e);
+						throw new EGOVRuntimeException("SQL Error occurred while getting Attribute Properties", e);
 					}
 				}
 			});

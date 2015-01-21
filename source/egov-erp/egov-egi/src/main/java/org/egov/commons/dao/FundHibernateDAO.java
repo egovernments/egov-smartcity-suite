@@ -23,12 +23,12 @@ public class FundHibernateDAO extends GenericHibernateDAO {
 	}
 
 	public List findAllActiveFunds() {
-		return getSession().createQuery("from Fund where isactive = 1 order by name").list();
+		return getCurrentSession().createQuery("from Fund where isactive = 1 order by name").list();
 
 	}
 
 	public Fund fundById(final Integer id) {
-		return (Fund) getSession().get(Fund.class, id.intValue());
+		return (Fund) getCurrentSession().get(Fund.class, id.intValue());
 	}
 
 	/**
@@ -36,11 +36,11 @@ public class FundHibernateDAO extends GenericHibernateDAO {
 	 * @return a <code>List</code> of <code>Fund</code> objects.
 	 */
 	public List findAllActiveIsLeafFunds() {
-		return getSession().createQuery("from Fund where isactive = 1 and isnotleaf=0 order by name").list();
+		return getCurrentSession().createQuery("from Fund where isactive = 1 and isnotleaf=0 order by name").list();
 	}
 
 	public Fund fundByCode(final String fundCode) {
-		final Query qry = getSession().createQuery("FROM Fund f WHERE f.code =:fundCode");
+		final Query qry = getCurrentSession().createQuery("FROM Fund f WHERE f.code =:fundCode");
 		qry.setString("fundCode", fundCode);
 		return (Fund) qry.uniqueResult();
 	}

@@ -5,13 +5,6 @@
  */
 package org.egov.infstr.client.administration.rjbac.user;
 
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -20,11 +13,17 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.lib.rjbac.user.User;
 import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.egov.lib.rjbac.user.ejb.server.UserServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Set;
 
 public class BeforeUserJurisdictionAction extends Action {
 
 	private static final Logger logger = LoggerFactory.getLogger(BeforeUserJurisdictionAction.class);
-	private final UserService userService = new UserServiceImpl();
+	private final UserService userService = new UserServiceImpl(null, null);
 
 	@Override
 	public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest req, final HttpServletResponse res) throws Exception {

@@ -5,19 +5,7 @@
  */
 package org.egov.lib.security.terminal.client;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -34,6 +22,17 @@ import org.egov.lib.security.terminal.dao.UserCounterHibernateDAO;
 import org.egov.lib.security.terminal.model.Location;
 import org.egov.lib.security.terminal.model.LocationIPMap;
 import org.egov.lib.security.terminal.model.UserCounterMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class LocationAction extends DispatchAction {
 
@@ -276,7 +275,7 @@ public class LocationAction extends DispatchAction {
 				}
 			}
 
-			final UserCounterDAO counterObj = new UserCounterHibernateDAO(UserCounterMap.class, HibernateUtil.getCurrentSession());
+				final UserCounterDAO counterObj = new UserCounterHibernateDAO(UserCounterMap.class, HibernateUtil.getCurrentSession());
 
 			for (final Location loc : counterList) {
 				boolean present = false;

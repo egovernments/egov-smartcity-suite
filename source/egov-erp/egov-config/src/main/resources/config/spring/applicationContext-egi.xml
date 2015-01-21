@@ -4,13 +4,17 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
 	default-lazy-init="true">
 
-	<bean id="genericCommonsService" class="org.egov.infstr.commons.service.GenericCommonsServiceImpl" />
+	<bean id="genericCommonsService" class="org.egov.infstr.commons.service.GenericCommonsServiceImpl">
+		<constructor-arg ref="genericDao" />
+	</bean>
 
 	<bean id="rbacService" class="org.egov.lib.rrbac.services.RbacServiceImpl" />
 
 	<bean id="roleService" class="org.egov.lib.rjbac.role.ejb.server.RoleServiceImpl" />
 
-	<bean id="userService" class="org.egov.lib.rjbac.user.ejb.server.UserServiceImpl" />
+	<bean id="userService" class="org.egov.lib.rjbac.user.ejb.server.UserServiceImpl" >
+		<constructor-arg ref="sessionFactory" />
+	</bean>
 
 	<bean id="boundaryService" class="org.egov.lib.admbndry.ejb.server.BoundaryServiceImpl">
 		<property name="boundaryDAO" ref="boundaryDAO" />
@@ -22,34 +26,46 @@
 		<property name="heirarchyTypeDAO" ref="heirarchyTypeDAO"/>
 	</bean>
  
-	<bean id="boundaryTypeService" class="org.egov.lib.admbndry.ejb.server.BoundaryTypeServiceImpl" />
-
-	<bean id="commonsDAOFactory" class="org.egov.commons.dao.CommonsDAOFactory" />
-
-	<bean id="commonsService" class="org.egov.commons.service.CommonsServiceImpl">
-		<constructor-arg ref="commonsHibernateDaoFactory"/>
+	<bean id="boundaryTypeService" class="org.egov.lib.admbndry.ejb.server.BoundaryTypeServiceImpl">
+		<constructor-arg ref="sessionFactory" />
 	</bean>
 
-	<bean id="departmentService" class="org.egov.lib.rjbac.dept.ejb.server.DepartmentServiceImpl"/>
+	<bean id="commonsDAOFactory" class="org.egov.commons.dao.CommonsDAOFactory">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
+
+	<bean id="commonsService" class="org.egov.commons.service.CommonsServiceImpl">
+		<constructor-arg ref="commonsDAOFactory"/>
+		<constructor-arg ref="genericDao"/>
+		<constructor-arg ref="sessionFactory"/>
+	</bean>
+
+	<bean id="departmentService" class="org.egov.lib.rjbac.dept.ejb.server.DepartmentServiceImpl">
+		<constructor-arg ref="departmentDao" />
+	</bean>
 	
 	<bean id="beanProvider" class="org.egov.infstr.beanfactory.ApplicationContextBeanProvider" />
 
 	<bean id="egovSessionFactory" class="org.egov.infstr.services.SessionFactory" />
 
 	<bean id="persistenceService" class="org.egov.infstr.services.PersistenceService">
-		<property name="sessionFactory" ref="egovSessionFactory" />
+		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
 	<bean id="sequenceGenerator" class="org.egov.infstr.utils.SequenceGenerator" scope="prototype" autowire-candidate="true">
-		<constructor-arg index="0" ref="egovSessionFactory" />
+		<constructor-arg index="0" ref="sessionFactory" />
 	</bean>
 	<!-- this is the new bean which all modules should eventually move to. It 
 		uses database sequences. -->
 	<bean id="sequenceNumberGenerator" class="org.egov.infstr.utils.SequenceNumberGenerator" scope="prototype" autowire-candidate="true">
-		<constructor-arg index="0" ref="egovSessionFactory" />
+		<constructor-arg ref="sessionFactory" />
 	</bean>
 
 	<bean id="appConfigValuesDAO" class="org.egov.infstr.config.dao.AppConfigValuesHibernateDAO" />
+
+	<bean id="domainDAO" class="org.egov.infstr.flexfields.DomainDAO">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
 
 	<!-- Bean for report service. constructor arguments: arg0 => Report Template 
 		Cache minimum size arg1 => Report Template Cache maximum size -->
@@ -70,6 +86,7 @@
 		<constructor-arg index="1" value="5" />
 		<constructor-arg index="2" value="10" />
 		<constructor-arg index="3" value="30" />
+		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
 	<bean id="stateService" parent="persistenceService">
@@ -86,7 +103,9 @@
 	</bean>
 -->
 
-	<bean id="genericDao" class="org.egov.infstr.commons.dao.GenericHibernateDaoFactory" scope="prototype" />
+	<bean id="genericDao" class="org.egov.infstr.commons.dao.GenericHibernateDaoFactory" scope="prototype">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
 
 	<bean id="installmentDao" class="org.egov.commons.dao.InstallmentHibDao" scope="prototype" />
 
@@ -115,6 +134,7 @@
 	<bean id="customizedWorkFlowService" class="org.egov.infstr.workflow.CustomizedWorkFlowService">
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="workflowService" ref="workflowService" />
+		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
 	<bean id="authRuleService" parent="persistenceService" autowire-candidate="true">
@@ -131,28 +151,61 @@
 
 	<bean id="SetSessionVarFilter" class="org.egov.infstr.client.filter.SetSessionVarFilter">
 		<property name="userService" ref="userService" />
+		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
-	<bean id="boundaryDAO" class="org.egov.lib.admbndry.BoundaryDAO" scope="prototype" />
+	<bean id="boundaryDAO" class="org.egov.lib.admbndry.BoundaryDAO" scope="prototype">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
 
-	<bean id="boundaryTypeDAO" class="org.egov.lib.admbndry.BoundaryTypeDAO" scope="prototype" />
+	<bean id="boundaryTypeDAO" class="org.egov.lib.admbndry.BoundaryTypeDAO" scope="prototype" >
+		<constructor-arg ref="sessionFactory" />
+	</bean>
 
-	<bean id="heirarchyTypeDAO" class="org.egov.lib.admbndry.HeirarchyTypeDAO" scope="prototype" />
+	<bean id="heirarchyTypeDAO" class="org.egov.lib.admbndry.HeirarchyTypeDAO" scope="prototype">
+		<constructor-arg ref="sessionFactory"/>
+	</bean>
 
-	<bean id="moduleDAO" class="org.egov.infstr.commons.dao.ModuleHibDao" scope="prototype" />
+	<bean id="cityWebsiteDAO" class="org.egov.lib.admbndry.CityWebsiteDAO" scope="prototype" >
+		<constructor-arg ref="sessionFactory" />
+	</bean>
 
-	<bean id="cityWebsiteDAO" class="org.egov.lib.admbndry.CityWebsiteDAO" scope="prototype" />
+	<bean id="userDao" class="org.egov.lib.rjbac.user.dao.UserDAO" scope="prototype" >
+		<constructor-arg ref="sessionFactory" />
+	</bean>
 
-	<bean id="userDao" class="org.egov.lib.rjbac.user.dao.UserDAO" scope="prototype" />
-
-	<bean id="userCounterDao" class="org.egov.lib.security.terminal.dao.UserCounterHibernateDAO" scope="prototype" />
+	<bean id="userCounterDao" class="org.egov.lib.security.terminal.dao.UserCounterHibernateDAO" scope="prototype">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
 
 	<bean id="departmentDao" class="org.egov.lib.rjbac.dept.dao.DepartmentDAO" scope="prototype" />
 
 	<bean id="actionDao" class="org.egov.lib.rrbac.dao.ActionHibernateDAO" scope="prototype" />
 	
-	<bean id="userValidateDao" class="org.egov.lib.security.terminal.dao.UserValidateHibernateDAO"/>
-	
+	<bean id="userValidateDao" class="org.egov.lib.security.terminal.dao.UserValidateHibernateDAO">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
+
+	<bean id="attributeDao" class="org.egov.infstr.flexfields.AttributeDAO">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
+
+	<bean id="bankAccountDao" class="org.egov.commons.dao.BankaccountDAO">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
+
+	<bean id="bankBranchDao" class="org.egov.commons.dao.BankbranchDAO">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
+
+	<bean id="bankDao" class="org.egov.commons.dao.BankDAO">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
+
+	<bean id="attributeTypeDao" class="org.egov.infstr.flexfields.AttributeTypeDAO">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
+
 	<bean id="workflowTypeService" parent="persistenceService">
 		<property name="type" value="org.egov.infstr.models.WorkflowTypes" />
 	</bean>
@@ -177,11 +230,13 @@
 	<bean id="workFlowMatrixService" class="org.egov.infstr.workflow.WorkFlowMatrixService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.infstr.workflow.WorkFlowMatrix"/>
 		<property name="persistenceService" ref="persistenceService" />
+		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
 	<bean id="workFlowAdditionalDetailsService" class="org.egov.infstr.workflow.WorkFlowAdditionalDetailsService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.infstr.workflow.WorkFlowAdditionalRule"/>
 		<property name="persistenceService" ref="persistenceService" />
+		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
 	<bean id="auditEventPersistenceService" parent="persistenceService" >

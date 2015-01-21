@@ -1,15 +1,5 @@
 package org.egov.lib.security.terminal.dao;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.utils.HibernateUtil;
@@ -18,10 +8,20 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.*;
+
+@Ignore
 public class UserCounterHibernateDAOTest {
 
 	private Session session;

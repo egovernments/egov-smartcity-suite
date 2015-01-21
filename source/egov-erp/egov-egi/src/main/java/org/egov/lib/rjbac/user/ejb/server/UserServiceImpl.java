@@ -1,12 +1,6 @@
 package org.egov.lib.rjbac.user.ejb.server;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.admbndry.BoundaryType;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
@@ -19,32 +13,51 @@ import org.egov.lib.rjbac.user.dao.TerminalDAO;
 import org.egov.lib.rjbac.user.dao.UserDAO;
 import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class UserServiceImpl implements UserService {
 
+	private SessionFactory sessionFactory;
+	private UserDAO userDAO;
+
+	private Session getSession() {
+		return sessionFactory.getCurrentSession();
+	}
+
+	public UserServiceImpl(SessionFactory sessionFactory, UserDAO userDAO) {
+		this.sessionFactory = sessionFactory;
+		this.userDAO = userDAO;
+	}
+
 	@Override
 	public void createUser(final User usr) {
-		new UserDAO().createOrUpdateUserWithPwdEncryption(usr);
+		userDAO.createOrUpdateUserWithPwdEncryption(usr);
 	}
 
 	@Override
 	public void updateUser(final User usr) {
-		new UserDAO().createOrUpdateUserWithPwdEncryption(usr);
+		userDAO.createOrUpdateUserWithPwdEncryption(usr);
 	}
 
 	@Override
 	public Set<Role> getValidRoles(final Integer userID, final Date roleDate) {
-		return new UserDAO().getValidRoles(userID, roleDate);
+		return userDAO.getValidRoles(userID, roleDate);
 	}
 
 	@Override
 	public Set<UserRole> getAllRolesForUser(final String userName) {
-		return new UserDAO().getAllRolesForUser(userName);
+		return userDAO.getAllRolesForUser(userName);
 	}
 
 	@Override
 	public User getUserByID(final Integer id) {
-		return new UserDAO().getUserByID(id);
+		return userDAO.getUserByID(id);
 	}
 
 	/**
@@ -55,7 +68,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public List<User> getUserByName(final String userName) {
-		return new UserDAO().getUserByName(userName);
+		return userDAO.getUserByName(userName);
 	}
 
 	/**
@@ -67,7 +80,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getUserByUserName(final String userName) {
-		return new UserDAO().getUserByUserName(userName);
+		return userDAO.getUserByUserName(userName);
 
 	}
 
@@ -78,7 +91,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public List<User> getAllUserByUserNameLike(final String userName) {
-		return new UserDAO().getAllUserByUserNameLike(userName);
+		return userDAO.getAllUserByUserNameLike(userName);
 	}
 
 	/**
@@ -90,7 +103,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDetail getUserDetailByID(final Integer userID) {
-		return new UserDAO().getUserDetailByID(userID);
+		return userDAO.getUserDetailByID(userID);
 	}
 
 	/**
@@ -101,7 +114,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public UserDetail getUserDetByUserName(final String userName) {
-		return new UserDAO().getUserDetByUserName(userName);
+		return userDAO.getUserDetByUserName(userName);
 	}
 
 	/*
@@ -110,7 +123,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public Set<JurisdictionValues> getAllJurisdictionsForUser(final Integer userid) {
-		return new UserDAO().getAllJurisdictionsForUser(userid);
+		return userDAO.getAllJurisdictionsForUser(userid);
 	}
 
 	/*
@@ -119,7 +132,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public Set<JurisdictionValues> getJurisdictionsForUser(final Integer userid, final Date jurDate) {
-		return new UserDAO().getJurisdictionsForUser(userid, jurDate);
+		return userDAO.getJurisdictionsForUser(userid, jurDate);
 	}
 
 	/**
@@ -129,7 +142,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public void removeUser(final Integer usrID) {
-		new UserDAO().removeUser(usrID);
+		userDAO.removeUser(usrID);
 	}
 
 	/**
@@ -139,7 +152,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public void removeUser(final User usr) {
-		new UserDAO().removeUser(usr);
+		userDAO.removeUser(usr);
 	}
 
 	/**
@@ -151,7 +164,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public JurisdictionValues getJurisdictionValueByBndryIdAndUserId(final Integer bndryId, final Integer userId) {
-		return new UserDAO().getJurisdictionValueByBndryIdAndUserId(bndryId, userId);
+		return userDAO.getJurisdictionValueByBndryIdAndUserId(bndryId, userId);
 	}
 
 	/*
@@ -160,7 +173,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public Jurisdiction getJurisdictionByBndryTypeIdAndUserId(final Integer bndryTypeId, final Integer userId) {
-		return new UserDAO().getJurisdictionByBndryTypeIdAndUserId(bndryTypeId, userId);
+		return userDAO.getJurisdictionByBndryTypeIdAndUserId(bndryTypeId, userId);
 	}
 
 	/**
@@ -180,7 +193,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public Map getAllUsersForJurisdictionType(final BoundaryType bt, final Integer topLvlBndryID) {
-		return new UserDAO().getAllUsersForJurisdictionType(bt, topLvlBndryID);
+		return userDAO.getAllUsersForJurisdictionType(bt, topLvlBndryID);
 
 	}
 
@@ -190,7 +203,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public Map getAllUsersForJurisdictionTypeFullResolve(final BoundaryType bt, final Integer topLevelBoundaryID) {
-		return new UserDAO().getAllUsersForJurisdictionTypeFullResolve(bt, topLevelBoundaryID);
+		return userDAO.getAllUsersForJurisdictionTypeFullResolve(bt, topLevelBoundaryID);
 
 	}
 
@@ -200,7 +213,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public Map getAllUsersForJurisdictionFullResolve(final List boundaryTypeList, final Integer topLevelBoundaryID) {
-		return new UserDAO().getAllUsersForJurisdictionFullResolve(boundaryTypeList, topLevelBoundaryID);
+		return userDAO.getAllUsersForJurisdictionFullResolve(boundaryTypeList, topLevelBoundaryID);
 
 	}
 
@@ -210,7 +223,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public List<User> getUsersByDepartment(final Department department) {
-		return new UserDAO().getUsersByDepartment(department);
+		return userDAO.getUsersByDepartment(department);
 	}
 
 	/*
@@ -219,7 +232,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public List findIpAddress(final String ipAddr) {
-		return new TerminalDAO().getTerminal(ipAddr);
+		return new TerminalDAO(sessionFactory).getTerminal(ipAddr);
 	}
 
 	/*
@@ -228,7 +241,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public List<User> getAllUsers() {
-		return new UserDAO().getAllUsers();
+		return userDAO.getAllUsers();
 
 	}
 
@@ -240,7 +253,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	public String getSuperiorUserId(final String userId) throws Exception {
 		try {
-			final Query query = HibernateUtil.getCurrentSession().createQuery("SELECT REPORTSTO FROM EG_USER WHERE ID_USER := userId");
+			final Query query = getSession().createQuery("SELECT REPORTSTO FROM EG_USER WHERE ID_USER := userId");
 			query.setString("userId", userId);
 			return (String) query.uniqueResult();
 		} catch (final Exception ex) {
@@ -256,7 +269,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	public String getInferiorUserId(final String userId) throws Exception {
 		try {
-			final Query query = HibernateUtil.getCurrentSession().createQuery("SELECT ID_USER FROM EG_USER WHERE REPORTSTO := userId");
+			final Query query = getSession().createQuery("SELECT ID_USER FROM EG_USER WHERE REPORTSTO := userId");
 			query.setString("userId", userId);
 			return (String) query.uniqueResult();
 		} catch (final Exception ex) {
@@ -270,6 +283,6 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public List<User> getAllUsersByRole(final List roleList, final int topBoundaryID, final Date roleDate) {
-		return new UserDAO().getAllUsersByRole(roleList, topBoundaryID, roleDate);
+		return userDAO.getAllUsersByRole(roleList, topBoundaryID, roleDate);
 	}
 }

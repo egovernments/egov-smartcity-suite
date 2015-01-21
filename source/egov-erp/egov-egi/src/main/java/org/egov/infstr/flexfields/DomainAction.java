@@ -5,21 +5,26 @@
  */
 package org.egov.infstr.flexfields;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class DomainAction extends DispatchAction {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DomainAction.class);
+	private DomainDAO domainDAO;
+
+	public DomainAction(DomainDAO domainDAO) {
+		this.domainDAO = domainDAO;
+	}
 
 	public ActionForward createDomain(final ActionMapping mapping, final ActionForm form, final HttpServletRequest req, final HttpServletResponse res) throws ServletException {
 		String target = "";
@@ -37,8 +42,7 @@ public class DomainAction extends DispatchAction {
 			obj.setDomainName(domainName);
 			obj.setDomainDesc(domainDesc);
 
-			final DomainIF daoObj = new DomainDAO();
-			daoObj.createDomain(obj);
+			domainDAO.createDomain(obj);
 
 			target = buttonType;
 		} catch (final Exception ex) {
@@ -67,8 +71,7 @@ public class DomainAction extends DispatchAction {
 			obj.setDomainName(domainName);
 			obj.setDomainDesc(domainDesc);
 
-			final DomainIF daoObj = new DomainDAO();
-			daoObj.updateDomain(obj);
+			domainDAO.updateDomain(obj);
 
 			target = buttonType;
 		} catch (final Exception ex) {
@@ -90,8 +93,7 @@ public class DomainAction extends DispatchAction {
 				throw new EGOVRuntimeException("ActionForm value cannot be null");
 			}
 
-			final DomainIF daoObj = new DomainDAO();
-			daoObj.deleteDomain(Integer.parseInt(id));
+			domainDAO.deleteDomain(Integer.parseInt(id));
 
 			target = buttonType;
 		} catch (final Exception ex) {
@@ -113,8 +115,7 @@ public class DomainAction extends DispatchAction {
 				throw new EGOVRuntimeException("ActionForm value cannot be null");
 			}
 
-			final DomainIF daoObj = new DomainDAO();
-			final Domain obj = daoObj.getDomain(Integer.parseInt(id));
+			final Domain obj = domainDAO.getDomain(Integer.parseInt(id));
 
 			domainform.setDomainName(obj.getDomainName());
 			domainform.setDomainDesc(obj.getDomainDesc());

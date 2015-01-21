@@ -5,27 +5,38 @@
  */
 package org.egov.infstr.flexfields;
 
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infstr.utils.EgovMasterDataCaching;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.jdbc.ReturningWork;
+import org.hibernate.jdbc.Work;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
-import org.hibernate.jdbc.ReturningWork;
-import org.hibernate.jdbc.Work;
-
 public class DomainDAO implements DomainIF {
+
+	private SessionFactory sessionFactory;
+
+	public DomainDAO(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
+	private Session getCurrentSession() {
+		return sessionFactory.getCurrentSession();
+	}
 
 	private static final Logger LOG = LoggerFactory.getLogger(DomainDAO.class);
 
 	@Override
 	public void createDomain(final Domain obj) throws EGOVRuntimeException {
 		try {
-			HibernateUtil.getCurrentSession().doWork(new Work() {
+			getCurrentSession().doWork(new Work() {
 
 				@Override
 				public void execute(final Connection conn) throws SQLException {
@@ -47,7 +58,7 @@ public class DomainDAO implements DomainIF {
 	@Override
 	public void updateDomain(final Domain obj) throws EGOVRuntimeException {
 		try {
-			HibernateUtil.getCurrentSession().doWork(new Work() {
+			getCurrentSession().doWork(new Work() {
 
 				@Override
 				public void execute(final Connection conn) throws SQLException {
@@ -70,7 +81,7 @@ public class DomainDAO implements DomainIF {
 	@Override
 	public void deleteDomain(final int id) throws EGOVRuntimeException {
 		try {
-			HibernateUtil.getCurrentSession().doWork(new Work() {
+			getCurrentSession().doWork(new Work() {
 
 				@Override
 				public void execute(final Connection conn) throws SQLException {
@@ -91,7 +102,7 @@ public class DomainDAO implements DomainIF {
 	@Override
 	public Domain getDomain(final int id) throws EGOVRuntimeException {
 		try {
-			return HibernateUtil.getCurrentSession().doReturningWork(new ReturningWork<Domain>() {
+			return getCurrentSession().doReturningWork(new ReturningWork<Domain>() {
 
 				@Override
 				public Domain execute(final Connection conn) throws SQLException {

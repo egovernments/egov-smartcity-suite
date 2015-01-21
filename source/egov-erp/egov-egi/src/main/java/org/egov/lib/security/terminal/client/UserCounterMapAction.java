@@ -5,15 +5,6 @@
  */
 package org.egov.lib.security.terminal.client;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -22,19 +13,35 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.rjbac.user.UserImpl;
 import org.egov.lib.rjbac.user.dao.UserDAO;
 import org.egov.lib.security.terminal.dao.LocationHibernateDAO;
-import org.egov.lib.security.terminal.dao.UserCounterDAO;
 import org.egov.lib.security.terminal.dao.UserCounterHibernateDAO;
 import org.egov.lib.security.terminal.model.Location;
 import org.egov.lib.security.terminal.model.UserCounterMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
+import java.util.List;
 
 public class UserCounterMapAction extends DispatchAction {
 	
 	protected static final Logger LOGGER = LoggerFactory.getLogger(UserCounterMapAction.class);
-	
+
+	private UserCounterHibernateDAO userCounterHibernateDAO;
+	private LocationHibernateDAO locationHibernateDAO;
+	private UserDAO userDAO;
+
+	public UserCounterMapAction(UserCounterHibernateDAO userCounterHibernateDAO, LocationHibernateDAO locationHibernateDAO, UserDAO userDAO) {
+		this.userCounterHibernateDAO = userCounterHibernateDAO;
+		this.locationHibernateDAO = locationHibernateDAO;
+		this.userDAO = userDAO;
+	}
+
 	public ActionForward createUserControlMapping(ActionMapping mapping, ActionForm form, HttpServletRequest req, HttpServletResponse res) throws ServletException {
 		String target = "";
 		try {
@@ -44,7 +51,6 @@ public class UserCounterMapAction extends DispatchAction {
 			String locationId = usercountermapform.getLocationId();
 			String counter[] = usercountermapform.getCounter();
 			String loginType = usercountermapform.getLoginType();
-			UserCounterDAO daoObj = new UserCounterHibernateDAO(UserCounterMap.class, HibernateUtil.getCurrentSession());
 			Integer modifiedBy = (Integer) req.getSession().getAttribute("com.egov.user.LoginUserId");
 			
 			if (loginType.equalsIgnoreCase("Location")) {
@@ -55,10 +61,10 @@ public class UserCounterMapAction extends DispatchAction {
 				if (userId != null) {
 					for (int i = 0; i < userId.length; i++) {
 						if (userId[i] != null && !userId[i].trim().equals("")) {
-							Location locationobj = (Location) new LocationHibernateDAO(Location.class, HibernateUtil.getCurrentSession()).findById(Integer.parseInt(locationId), false);
-							UserImpl userobj = (UserImpl) new UserDAO().getUserByID(Integer.parseInt(userId[i]));
+							Location locationobj = (Location) locationHibernateDAO.findById(Integer.parseInt(locationId), false);
+							UserImpl userobj = (UserImpl) userDAO.getUserByID(Integer.parseInt(userId[i]));
 							if (usercountermapform.getSelCheck()[i].equals("yes") && usercountermapform.getUserCounterId()[i] != null && !usercountermapform.getUserCounterId()[i].equals("")) {
-								UserCounterMap obj = (UserCounterMap) new UserCounterHibernateDAO(UserCounterMap.class, HibernateUtil.getCurrentSession()).findById(Integer.parseInt(usercountermapform.getUserCounterId()[i]), false);
+								UserCounterMap obj = (UserCounterMap) userCounterHibernateDAO.findById(Integer.parseInt(usercountermapform.getUserCounterId()[i]), false);
 								obj.setCounterId(locationobj);
 								obj.setUserId(userobj);
 								String fromDate = usercountermapform.getFromDate()[i];
@@ -71,7 +77,7 @@ public class UserCounterMapAction extends DispatchAction {
 								}
 								obj.setModifiedDate(new Date());
 								obj.setModifiedBy(modifiedBy);
-								daoObj.update(obj);
+								userCounterHibernateDAO.update(obj);
 							} else if (usercountermapform.getSelCheck()[i].equals("no") && (usercountermapform.getUserCounterId()[i] == null || usercountermapform.getUserCounterId()[i].equals(""))) {
 								UserCounterMap obj = new UserCounterMap();
 								obj.setCounterId(locationobj);
@@ -86,7 +92,7 @@ public class UserCounterMapAction extends DispatchAction {
 								}
 								obj.setModifiedDate(new Date());
 								obj.setModifiedBy(modifiedBy);
-								daoObj.create(obj);
+								userCounterHibernateDAO.create(obj);
 							}
 							
 						}
@@ -98,11 +104,11 @@ public class UserCounterMapAction extends DispatchAction {
 					for (int i = 0; i < counter.length; i++) {
 						if (userId[i] != null && counter[i] != null && !userId[i].trim().equals("") && !counter[i].trim().equals("")) {
 							
-							Location locationobj = (Location) new LocationHibernateDAO(Location.class, HibernateUtil.getCurrentSession()).findById(Integer.parseInt(counter[i]), false);
-							UserImpl userobj = (UserImpl) new UserDAO().getUserByID(Integer.parseInt(userId[i]));
+							Location locationobj = (Location) locationHibernateDAO.findById(Integer.parseInt(counter[i]), false);
+							UserImpl userobj = (UserImpl) userDAO.getUserByID(Integer.parseInt(userId[i]));
 							if (usercountermapform.getSelCheck()[i].equals("yes") && usercountermapform.getUserCounterId()[i] != null && !usercountermapform.getUserCounterId()[i].equals("")) {
 								
-								UserCounterMap obj = (UserCounterMap) new UserCounterHibernateDAO(UserCounterMap.class, HibernateUtil.getCurrentSession()).findById(Integer.parseInt(usercountermapform.getUserCounterId()[i]), false);
+								UserCounterMap obj = (UserCounterMap) userCounterHibernateDAO.findById(Integer.parseInt(usercountermapform.getUserCounterId()[i]), false);
 								obj.setCounterId(locationobj);
 								obj.setUserId(userobj);
 								String fromDate = usercountermapform.getFromDate()[i];
@@ -115,7 +121,7 @@ public class UserCounterMapAction extends DispatchAction {
 								}
 								obj.setModifiedDate(new Date());
 								obj.setModifiedBy(modifiedBy);
-								daoObj.update(obj);
+								userCounterHibernateDAO.update(obj);
 							} else if (usercountermapform.getSelCheck()[i].equals("no") && (usercountermapform.getUserCounterId()[i] == null || usercountermapform.getUserCounterId()[i].equals(""))) {
 								
 								UserCounterMap obj = new UserCounterMap();
@@ -131,7 +137,7 @@ public class UserCounterMapAction extends DispatchAction {
 								}
 								obj.setModifiedDate(new Date());
 								obj.setModifiedBy(modifiedBy);
-								daoObj.create(obj);
+								userCounterHibernateDAO.create(obj);
 							}
 							
 						}
@@ -155,15 +161,14 @@ public class UserCounterMapAction extends DispatchAction {
 	public ActionForward getUserCounterForCurrentDate(ActionMapping mapping, ActionForm form, HttpServletRequest req, HttpServletResponse res) throws ServletException {
 		String target = "";
 		try {
-			UserCounterDAO objDao = (UserCounterDAO) new UserCounterHibernateDAO(UserCounterMap.class, HibernateUtil.getCurrentSession());
 			UserCounterMapForm usercountermapform = (UserCounterMapForm) form;
 			String loginType = usercountermapform.getLoginType();
-			Location locationobj = (Location) new LocationHibernateDAO(Location.class, HibernateUtil.getCurrentSession()).findById(Integer.valueOf(usercountermapform.getLocationId()), false);
+			Location locationobj = (Location) locationHibernateDAO.findById(Integer.valueOf(usercountermapform.getLocationId()), false);
 			if (loginType.equalsIgnoreCase("Location")) {
-				List userCounterMapList = objDao.getLocationBasedUserCounterMapForCurrentDate(Integer.valueOf(usercountermapform.getLocationId()));
+				List userCounterMapList = userCounterHibernateDAO.getLocationBasedUserCounterMapForCurrentDate(Integer.valueOf(usercountermapform.getLocationId()));
 				req.setAttribute("userCounterMapList", userCounterMapList);
 			} else if (loginType.equalsIgnoreCase("Terminal")) {
-				List userCounterMapList = objDao.getTerminalBasedUserCounterMapForCurrentDate(Integer.valueOf(usercountermapform.getLocationId()));
+				List userCounterMapList = userCounterHibernateDAO.getTerminalBasedUserCounterMapForCurrentDate(Integer.valueOf(usercountermapform.getLocationId()));
 				req.setAttribute("userCounterMapList", userCounterMapList);
 			}
 			UserDAO userDAO = new UserDAO();
@@ -187,18 +192,17 @@ public class UserCounterMapAction extends DispatchAction {
 	public ActionForward getAllUserCounters(ActionMapping mapping, ActionForm form, HttpServletRequest req, HttpServletResponse res) throws ServletException {
 		String target = "";
 		try {
-			UserCounterDAO objDao = (UserCounterDAO) new UserCounterHibernateDAO(UserCounterMap.class, HibernateUtil.getCurrentSession());
 			UserCounterMapForm usercountermapform = (UserCounterMapForm) form;
 			String loginType = usercountermapform.getLoginType();
 			if (loginType.equalsIgnoreCase("Location")) {
-				List userCounterMapList = objDao.getUserCounterMapForLocationId(Integer.valueOf(usercountermapform.getLocationId()));
+				List userCounterMapList = userCounterHibernateDAO.getUserCounterMapForLocationId(Integer.valueOf(usercountermapform.getLocationId()));
 				req.setAttribute("userCounterMapList", userCounterMapList);
 			} else if (loginType.equalsIgnoreCase("Terminal")) {
-				List userCounterMapList = objDao.getUserCounterMapForTerminalId(Integer.valueOf(usercountermapform.getLocationId()));
+				List userCounterMapList = userCounterHibernateDAO.getUserCounterMapForTerminalId(Integer.valueOf(usercountermapform.getLocationId()));
 				req.setAttribute("userCounterMapList", userCounterMapList);
 			}
 			String buttonType = "showAll";
-			Location locationobj = (Location) new LocationHibernateDAO(Location.class, HibernateUtil.getCurrentSession()).findById(Integer.valueOf(usercountermapform.getLocationId()), false);
+			Location locationobj = (Location) locationHibernateDAO.findById(Integer.valueOf(usercountermapform.getLocationId()), false);
 			UserDAO userDAO = new UserDAO();
 			List userList = userDAO.getAllUserForRoles(EGovConfig.getProperty("INCLUDE_ROLES", "", "IP-BASED-LOGIN"), new java.util.Date());
 			

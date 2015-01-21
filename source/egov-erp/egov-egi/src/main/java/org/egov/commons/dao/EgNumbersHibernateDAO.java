@@ -21,7 +21,7 @@ public class EgNumbersHibernateDAO extends GenericHibernateDAO {
 	}
 
 	public EgNumbers getEgNumberByFiscalPeriodAndVouchertype(final String fiscialperiodid, final String vouchertype) {
-		final Query qry = getSession().createQuery("from EgNumbers egnum where egnum.fiscialperiodid=:fiscialperiodid and vouchertype=:vouchertype");
+		final Query qry = getCurrentSession().createQuery("from EgNumbers egnum where egnum.fiscialperiodid=:fiscialperiodid and vouchertype=:vouchertype");
 		qry.setString("fiscialperiodid", fiscialperiodid);
 		qry.setString("vouchertype", vouchertype);
 		return (EgNumbers) qry.uniqueResult();

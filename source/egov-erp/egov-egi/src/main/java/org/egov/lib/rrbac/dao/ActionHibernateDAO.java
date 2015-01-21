@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.dao.GenericHibernateDAO;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.rrbac.model.Action;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -24,18 +23,9 @@ public class ActionHibernateDAO extends GenericHibernateDAO implements ActionDAO
 		super(persistentClass, session);
 	}
 
-	public ActionHibernateDAO() {
-		super(Action.class, null);
-	}
-
-	@Override
-	public Session getSession() {
-		return HibernateUtil.getCurrentSession();
-	}
-
 	@Override
 	public Action findActionByName(final String name) {
-		final Query qry = this.getSession().createQuery("from org.egov.lib.rrbac.model.Action act where act.name =:name ");
+		final Query qry = getCurrentSession().createQuery("from org.egov.lib.rrbac.model.Action act where act.name =:name ");
 		qry.setString("name", name);
 		return (Action) qry.uniqueResult();
 	}
@@ -44,7 +34,7 @@ public class ActionHibernateDAO extends GenericHibernateDAO implements ActionDAO
 		if (hasContextPath) {
 			query = query + " and upper(contextRoot) like :contextPath";
 		}
-		final Query qry = this.getSession().createQuery(query + "  order by urlOrderId desc");
+		final Query qry = getCurrentSession().createQuery(query + "  order by urlOrderId desc");
 		qry.setString("fullURL", url);
 		if (hasContextPath) {
 			qry.setString("contextPath", contextPath);
@@ -78,7 +68,7 @@ public class ActionHibernateDAO extends GenericHibernateDAO implements ActionDAO
 	@Override
 	public List<Action> getActionWithRoles() {
 		try {
-			return this.getSession().createQuery("from org.egov.lib.rrbac.model.Action act left join fetch act.roles").list();
+			return getCurrentSession().createQuery("from org.egov.lib.rrbac.model.Action act left join fetch act.roles").list();
 		} catch (final Exception e) {
 			throw new EGOVRuntimeException("Error occurred at getActionWithRG. ", e);
 		}
@@ -87,7 +77,7 @@ public class ActionHibernateDAO extends GenericHibernateDAO implements ActionDAO
 	@Override
 	public List<Action> getActionWithRG() {
 		try {
-			return this.getSession().createQuery("from org.egov.lib.rrbac.model.Action act left join fetch act.ruleGroup").list();
+			return getCurrentSession().createQuery("from org.egov.lib.rrbac.model.Action act left join fetch act.ruleGroup").list();
 		} catch (final Exception e) {
 			throw new EGOVRuntimeException("Error occurred at getActionWithRG. ", e);
 		}

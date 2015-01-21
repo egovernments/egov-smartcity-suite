@@ -2,15 +2,20 @@ package org.egov.commons.dao;
 
 import org.egov.commons.Bankbranch;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
 public class BankbranchDAO {
 
-	private Session getSession() {
-		return HibernateUtil.getCurrentSession();
+	private SessionFactory sessionFactory;
+
+	public BankbranchDAO(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
 	}
 
+	private Session getSession() {
+		return this.sessionFactory.getCurrentSession();
+	}
 	public void createBankbranch(final Bankbranch bankbranch) {
 		try {
 			getSession().save(bankbranch);

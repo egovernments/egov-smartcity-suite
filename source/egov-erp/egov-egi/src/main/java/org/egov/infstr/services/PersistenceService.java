@@ -5,21 +5,6 @@
  */
 package org.egov.infstr.services;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Path.Node;
-import javax.validation.Validation;
-import javax.validation.Validator;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
@@ -39,11 +24,25 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.FullTextQuery;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Path.Node;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class PersistenceService<T, ID extends Serializable> implements GenericDAO<T, ID> {
 	private static final Logger LOG = LoggerFactory.getLogger(PersistenceService.class);
 	private static final String DEFAULT_FIELD = "_hibernate_class";
-	protected SessionFactory factory;
+	protected org.hibernate.SessionFactory sessionFactory;
 	protected Class<T> type;
 	private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
@@ -52,8 +51,7 @@ public class PersistenceService<T, ID extends Serializable> implements GenericDA
 	}
 
 	public Session getSession() {
-		final Session session = this.factory.getSession();
-		return session;
+		return this.sessionFactory.getCurrentSession();
 	}
 
 	protected void validate(final T model) {
@@ -175,8 +173,8 @@ public class PersistenceService<T, ID extends Serializable> implements GenericDA
 		return (T) getSession().merge(model);
 	}
 
-	public void setSessionFactory(final SessionFactory factory) {
-		this.factory = factory;
+	public void setSessionFactory(final org.hibernate.SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
 	}
 
 	@Override

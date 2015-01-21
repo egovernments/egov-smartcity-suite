@@ -5,27 +5,43 @@
  */
 package org.egov.infstr.flexfields;
 
+import org.egov.exceptions.EGOVRuntimeException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.jdbc.ReturningWork;
+import org.hibernate.jdbc.Work;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.utils.HibernateUtil;
-import org.hibernate.jdbc.ReturningWork;
-import org.hibernate.jdbc.Work;
-
 public class AttributeTypeDAO implements AttributeTypeIF {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AttributeTypeDAO.class);
 
+	private SessionFactory sessionFactory;
+
+	public AttributeTypeDAO(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
+	private Session getSession() {
+		return this.sessionFactory.getCurrentSession();
+	}
+
+	@Deprecated
+	public AttributeTypeDAO() {
+	}
+
+
 	@Override
 	public void createAttributeType(final AttributeType typeObj) throws EGOVRuntimeException {
 		try {
-			HibernateUtil.getCurrentSession().doWork(new Work() {
+			getSession().doWork(new Work() {
 				@Override
 				public void execute(final Connection conn) throws SQLException {
 					final PreparedStatement stmt = conn.prepareStatement("INSERT INTO EG_ATTRIBUTETYPE (ID,APPL_DOMAINID,ATT_NAME,ATT_DATATYPE,DEFAULT_VALUE,ISREQUIRED,ISLIST)" + "VALUES(SEQ_EG_ATTRIBUTETYPE.nextval,?,?,?,?,?,?) ");
@@ -67,7 +83,7 @@ public class AttributeTypeDAO implements AttributeTypeIF {
 	@Override
 	public void updateAttributeType(final AttributeType typeObj) throws EGOVRuntimeException {
 		try {
-			HibernateUtil.getCurrentSession().doWork(new Work() {
+			getSession().doWork(new Work() {
 				@Override
 				public void execute(final Connection conn) throws SQLException {
 					final PreparedStatement stmt = conn.prepareStatement("UPDATE EG_ATTRIBUTETYPE SET APPL_DOMAINID=?,ATT_NAME=?,ATT_DATATYPE=?,DEFAULT_VALUE=?,ISREQUIRED=?,ISLIST=? WHERE ID=?");
@@ -110,7 +126,7 @@ public class AttributeTypeDAO implements AttributeTypeIF {
 	@Override
 	public void deleteAttributeType(final int id) throws EGOVRuntimeException {
 		try {
-			HibernateUtil.getCurrentSession().doWork(new Work() {
+			getSession().doWork(new Work() {
 				@Override
 				public void execute(final Connection conn) throws SQLException {
 					PreparedStatement stmt = conn.prepareStatement("DELETE FROM EG_ATTRIBUTELIST WHERE ATT_TYPEID=?");
@@ -132,7 +148,7 @@ public class AttributeTypeDAO implements AttributeTypeIF {
 	public AttributeType getAttributeType(final int id) throws EGOVRuntimeException {
 
 		try {
-			return HibernateUtil.getCurrentSession().doReturningWork(new ReturningWork<AttributeType>() {
+			return getSession().doReturningWork(new ReturningWork<AttributeType>() {
 				@Override
 				public AttributeType execute(final Connection conn) {
 					try {

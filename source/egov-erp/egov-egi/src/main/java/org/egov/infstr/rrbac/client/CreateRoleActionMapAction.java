@@ -5,33 +5,40 @@
  */
 package org.egov.infstr.rrbac.client;
 
-import java.util.Iterator;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.rjbac.role.Role;
 import org.egov.lib.rjbac.role.ejb.api.RoleService;
 import org.egov.lib.rjbac.role.ejb.server.RoleServiceImpl;
 import org.egov.lib.rrbac.model.RuleGroup;
 import org.egov.lib.rrbac.services.RbacService;
 import org.egov.lib.rrbac.services.RbacServiceImpl;
+import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Iterator;
+import java.util.Set;
 
 public class CreateRoleActionMapAction extends org.apache.struts.action.Action {
+
+	private SessionFactory sessionFactory;
+
+	public CreateRoleActionMapAction(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
 
 	private static final Logger logger = LoggerFactory.getLogger(CreateRoleActionMapAction.class);
 	private final RbacService rbacService = new RbacServiceImpl();
 	private final RoleService roleService = new RoleServiceImpl();
 
 	@Override
+	@Transactional
 	public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest req, final HttpServletResponse res) throws Exception {
 		String target = "";
 		String alertMessage = null;
@@ -62,7 +69,7 @@ public class CreateRoleActionMapAction extends org.apache.struts.action.Action {
 					}
 				}
 			}
-			HibernateUtil.getCurrentSession().flush();
+			sessionFactory.getCurrentSession().flush();
 			alertMessage = "Executed successfully";
 			req.setAttribute("alertMessage", alertMessage);
 

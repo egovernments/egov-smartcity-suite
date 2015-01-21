@@ -23,7 +23,7 @@ public class BankaccountHibernateDAO extends GenericHibernateDAO {
 	}
 
 	public List<Bankaccount> getAllBankAccounts() {
-		return getSession().createQuery("from Bankaccount BA order by BA.accountnumber").list();
+		return getCurrentSession().createQuery("from Bankaccount BA order by BA.accountnumber").list();
 	}
 
 	/**
@@ -31,7 +31,7 @@ public class BankaccountHibernateDAO extends GenericHibernateDAO {
 	 * @return
 	 */
 	public Bankaccount getBankAccountByAccBranchBank(final String bankAccNum, final String bankBranchCode, final String bankCode) {
-		final Query qry = getSession().createQuery("from Bankaccount bankacc where bankacc.accountnumber=:accNum " + " and bankacc.bankbranch.branchcode=:branchCode and bankacc.bankbranch.bank.code=:bankCode");
+		final Query qry = getCurrentSession().createQuery("from Bankaccount bankacc where bankacc.accountnumber=:accNum " + " and bankacc.bankbranch.branchcode=:branchCode and bankacc.bankbranch.bank.code=:bankCode");
 		qry.setString("accNum", bankAccNum);
 		qry.setString("branchCode", bankBranchCode);
 		qry.setString("bankCode", bankCode);

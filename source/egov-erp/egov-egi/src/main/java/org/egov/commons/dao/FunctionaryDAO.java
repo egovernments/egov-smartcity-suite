@@ -22,10 +22,10 @@ public class FunctionaryDAO extends GenericHibernateDAO {
 	}
 
 	public List<Functionary> findAllActiveFunctionary() {
-		return getSession().createQuery("from Functionary f where isactive=1").list();
+		return getCurrentSession().createQuery("from Functionary f where isactive=1").list();
 	}
 
 	public Functionary functionaryById(final Integer id) {
-		return (Functionary) getSession().get(Functionary.class, id.intValue());
+		return (Functionary) getCurrentSession().get(Functionary.class, id.intValue());
 	}
 }

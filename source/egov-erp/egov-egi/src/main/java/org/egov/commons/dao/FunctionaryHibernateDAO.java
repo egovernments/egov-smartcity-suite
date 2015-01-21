@@ -24,24 +24,24 @@ public class FunctionaryHibernateDAO extends FunctionaryDAO {
 
 	@Override
 	public List findAllActiveFunctionary() {
-		return getSession().createQuery("from Functionary f where isactive=1 order by code").list();
+		return getCurrentSession().createQuery("from Functionary f where isactive=1 order by code").list();
 
 	}
 
 	@Override
 	public Functionary functionaryById(final Integer id) {
 
-		return (Functionary) getSession().get(Functionary.class, id.intValue());
+		return (Functionary) getCurrentSession().get(Functionary.class, id.intValue());
 	}
 
 	public Functionary getFunctionaryByCode(final BigDecimal functionaryCode) {
-		final Query qry = getSession().createQuery("from Functionary where code=:code");
+		final Query qry = getCurrentSession().createQuery("from Functionary where code=:code");
 		qry.setBigDecimal("code", functionaryCode);
 		return (Functionary) qry.uniqueResult();
 	}
 
 	public Functionary getFunctionaryByName(final String name) {
-		final Query qry = getSession().createQuery("from Functionary where name=:name");
+		final Query qry = getCurrentSession().createQuery("from Functionary where name=:name");
 		qry.setString("name", name);
 		return (Functionary) qry.uniqueResult();
 	}

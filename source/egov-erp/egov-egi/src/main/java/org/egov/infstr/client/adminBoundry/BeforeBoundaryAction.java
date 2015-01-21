@@ -5,11 +5,6 @@
  */
 package org.egov.infstr.client.adminBoundry;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -17,6 +12,11 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.client.EgovAction;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.lib.admbndry.BoundaryTypeDAO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class BeforeBoundaryAction extends EgovAction {
     private static final Logger LOG = LoggerFactory.getLogger(BeforeBoundaryAction.class);
@@ -25,8 +25,8 @@ public class BeforeBoundaryAction extends EgovAction {
     public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         try {
             final BoundryForm boundryForm = (BoundryForm) form;
-            req.setAttribute("boundariesList", new BoundaryDAO().getAllBoundariesByBndryTypeId(Integer.valueOf(boundryForm.getName())));
-            req.setAttribute("boundryTypeObj", new BoundaryTypeDAO().getBoundaryType(Integer.valueOf(boundryForm.getName())));
+            req.setAttribute("boundariesList", new BoundaryDAO(null).getAllBoundariesByBndryTypeId(Integer.valueOf(boundryForm.getName())));
+            req.setAttribute("boundryTypeObj", new BoundaryTypeDAO(null).getBoundaryType(Integer.valueOf(boundryForm.getName())));
             saveToken(req);
             return mapping.findForward("success");
         } catch (final Exception ex) {

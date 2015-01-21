@@ -3,17 +3,16 @@
  */
 package org.egov.commons;
 
+import org.egov.infstr.models.Script;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.lib.rjbac.role.Role;
+import org.hibernate.Query;
+import org.hibernate.Session;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.egov.infstr.models.Script;
-import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.services.SessionFactory;
-import org.egov.lib.rjbac.role.Role;
-import org.hibernate.Query;
-import org.hibernate.Session;
 
 /**
  * @author eGov
@@ -92,7 +91,7 @@ public class EgiObjectFactory {
 		PersistenceService<CChartOfAccounts, Long> cChartOfAccountsSer;
 		final CChartOfAccounts account = new CChartOfAccounts();
 		cChartOfAccountsSer = new PersistenceService<CChartOfAccounts, Long>();
-		cChartOfAccountsSer.setSessionFactory((new SessionFactory()));
+//		cChartOfAccountsSer.setSessionFactory((new SessionFactory()));
 		cChartOfAccountsSer.setType(CChartOfAccounts.class);
 		account.setGlcode(glcode);
 		account.setPurposeId(purposeId);

@@ -1,18 +1,14 @@
 package org.egov.infstr.junit;
 
-import org.dbunit.database.DatabaseConfig;
-import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
-import org.dbunit.ext.oracle.OracleDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.junit.utils.JndiObj;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.SessionFactory;
-import org.hibernate.jdbc.ReturningWork;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -21,7 +17,6 @@ import javax.naming.NamingException;
 import java.io.File;
 import java.io.StringReader;
 import java.lang.reflect.Field;
-import java.sql.Connection;
 
 public abstract class EgovHibernateDBUnitTest extends
 		org.dbunit.DatabaseTestCase {
@@ -83,18 +78,19 @@ public abstract class EgovHibernateDBUnitTest extends
 		EGOVThreadLocals.setHibFactName(jnObj.getHibFactName());
 		EGOVThreadLocals.setDomainName("test.com");
 		final String schema = jnObj.getSchema();
-		final IDatabaseConnection conn = HibernateUtil.getCurrentSession()
-				.doReturningWork(new ReturningWork<IDatabaseConnection>() {
-					@Override
-					public IDatabaseConnection execute(final Connection con) {
-							return new DatabaseConnection(con, schema.toUpperCase());
-					}
-				});
-		final DatabaseConfig config = conn.getConfig();
-		config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
-				new OracleDataTypeFactory());
-		final String tableType[] = { "TABLE", "VIEW" };
-		config.setProperty(DatabaseConfig.PROPERTY_TABLE_TYPE, tableType);
+		final IDatabaseConnection conn = null;
+//		= HibernateUtil.getCurrentSession()
+//				.doReturningWork(new ReturningWork<IDatabaseConnection>() {
+//					@Override
+//					public IDatabaseConnection execute(final Connection con) {
+//							return new DatabaseConnection(con, schema.toUpperCase());
+//					}
+//				});
+//		final DatabaseConfig config = conn.getConfig();
+//		config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
+//				new OracleDataTypeFactory());
+//		final String tableType[] = { "TABLE", "VIEW" };
+//		config.setProperty(DatabaseConfig.PROPERTY_TABLE_TYPE, tableType);
 		return conn;
 	}
 

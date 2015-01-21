@@ -15,7 +15,6 @@ import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.junit.EgovHibernateTest;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.SessionFactory;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.rjbac.user.User;
 import org.egov.lib.rjbac.user.UserImpl;
 import org.hibernate.HibernateException;
@@ -49,10 +48,9 @@ public class ChartofAccountsHibernateDAOTest extends EgovHibernateTest {
 	public void setUp() throws Exception {
 		super.setUp();
 		EGOVThreadLocals.setUserId("1");
-		this.coa = new ChartOfAccountsHibernateDAO(CChartOfAccounts.class,
-				HibernateUtil.getCurrentSession());
-		comm = new CommonsServiceImpl(null);
+		this.coa = new ChartOfAccountsHibernateDAO(CChartOfAccounts.class, null);
 		this.session = new MockHttpSession();
+		comm = new CommonsServiceImpl(null, null, null);
 		this.objectFactory = new EgiObjectFactory();
 	}
 
@@ -262,14 +260,14 @@ public class ChartofAccountsHibernateDAOTest extends EgovHibernateTest {
 			final String purposeId) throws HibernateException {
 		final CChartOfAccounts account = new CChartOfAccounts();
 		cChartOfAccountsSer = new PersistenceService<CChartOfAccounts, Long>();
-		cChartOfAccountsSer.setSessionFactory((new SessionFactory()));
+//		cChartOfAccountsSer.setSessionFactory((new SessionFactory()));
 		cChartOfAccountsSer.setType(CChartOfAccounts.class);
 		account.setGlcode(glcode);
 		account.setName("COA Test");
 		account.setIsActiveForPosting(1l);
 		account.setCreatedDate(new Date());
 		final PersistenceService persistenceService = new PersistenceService();
-		persistenceService.setSessionFactory(new SessionFactory());
+//		persistenceService.setSessionFactory(new SessionFactory());
 		persistenceService.setType(UserImpl.class);
 		account.setModifiedBy((User) persistenceService.findAll().get(0));
 		account.setModifiedDate(new Date());
@@ -283,7 +281,7 @@ public class ChartofAccountsHibernateDAOTest extends EgovHibernateTest {
 			final String attributeName) throws HibernateException {
 		final Accountdetailtype accountdetailtype = new Accountdetailtype();
 		accountdetailtypeService = new PersistenceService<Accountdetailtype, Long>();
-		accountdetailtypeService.setSessionFactory(new SessionFactory());
+//		accountdetailtypeService.setSessionFactory(new SessionFactory());
 		accountdetailtypeService.setType(Accountdetailtype.class);
 		accountdetailtype.setName(name);
 		accountdetailtype.setDescription(desc);
@@ -304,7 +302,7 @@ public class ChartofAccountsHibernateDAOTest extends EgovHibernateTest {
 			final Accountdetailtype a) throws HibernateException {
 		final CChartOfAccountDetail cChartOfAccountDetail = new CChartOfAccountDetail();
 		cChartOfAccountDetailService = new PersistenceService<CChartOfAccountDetail, Long>();
-		cChartOfAccountDetailService.setSessionFactory(new SessionFactory());
+//		cChartOfAccountDetailService.setSessionFactory(new SessionFactory());
 		cChartOfAccountDetailService.setType(CChartOfAccountDetail.class);
 		cChartOfAccountDetail.setGlCodeId(c);
 		cChartOfAccountDetail.setDetailTypeId(a);
@@ -471,14 +469,14 @@ public class ChartofAccountsHibernateDAOTest extends EgovHibernateTest {
 	public void testGetBankChartofAccountCodeList() {
 		createBankAccount();
 		final ChartOfAccountsHibernateDAO coa = new ChartOfAccountsHibernateDAO(
-				CChartOfAccounts.class, HibernateUtil.getCurrentSession());
-		HibernateUtil.getCurrentSession().clear();
+				CChartOfAccounts.class, null);
+//		HibernateUtil.getCurrentSession().clear();
 		assertTrue(coa.getBankChartofAccountCodeList() != null);
 	}
 
 	private Bank createBank() {
 		final PersistenceService bankService = new PersistenceService();
-		bankService.setSessionFactory(new SessionFactory());
+//		bankService.setSessionFactory(new SessionFactory());
 		bankService.setType(Bank.class);
 		final Bank bank = new Bank();
 		bank.setCode("TestBank");
@@ -494,7 +492,7 @@ public class ChartofAccountsHibernateDAOTest extends EgovHibernateTest {
 
 	private Bankbranch createBankBranch() {
 		final PersistenceService branchService = new PersistenceService();
-		branchService.setSessionFactory(new SessionFactory());
+//		branchService.setSessionFactory(new SessionFactory());
 		branchService.setType(Bankbranch.class);
 		final Bankbranch branch = new Bankbranch();
 		branch.setBank(createBank());
@@ -511,20 +509,20 @@ public class ChartofAccountsHibernateDAOTest extends EgovHibernateTest {
 
 	private UserImpl getUser() {
 		final PersistenceService persistenceService = new PersistenceService();
-		persistenceService.setSessionFactory(new SessionFactory());
+//		persistenceService.setSessionFactory(new SessionFactory());
 		return ((UserImpl) persistenceService.findAllBy("from UserImpl").get(0));
 	}
 
 	private void createBankAccount() {
 		final PersistenceService bankAccountService = new PersistenceService();
-		bankAccountService.setSessionFactory(new SessionFactory());
+//		bankAccountService.setSessionFactory(new SessionFactory());
 		bankAccountService.setType(Bankaccount.class);
 		final Bankaccount bankaccount = new Bankaccount();
 		bankaccount.setBankbranch(createBankBranch());
 		bankaccount.setAccountnumber("123456789");
 		bankaccount.setAccounttype("test");
 		final PersistenceService persistenceService = new PersistenceService();
-		persistenceService.setSessionFactory(new SessionFactory());
+//		persistenceService.setSessionFactory(new SessionFactory());
 		bankaccount.setChartofaccounts((CChartOfAccounts) persistenceService
 				.findAllBy("from CChartOfAccounts").get(0));
 		bankaccount.setCurrentbalance(BigDecimal.TEN);

@@ -20,7 +20,7 @@ import org.egov.lib.admbndry.ejb.server.BoundaryTypeServiceImpl;
 public class BoundaryTypeDelegate {
 	private static BoundaryTypeDelegate boundaryTypeDelegate = new BoundaryTypeDelegate();
 	private static final Logger logger = LoggerFactory.getLogger(BoundaryTypeDelegate.class);
-	private final BoundaryTypeService boundaryTypeService = new BoundaryTypeServiceImpl();
+	private final BoundaryTypeService boundaryTypeService = new BoundaryTypeServiceImpl(null);
 
 	private BoundaryTypeDelegate() {
 	}

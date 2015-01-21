@@ -25,14 +25,14 @@ public class VoucherHeaderHibernateDAO extends GenericHibernateDAO implements Vo
 
 	@Override
 	public List<CVoucherHeader> getVoucherHeadersByStatus(final Integer status) throws Exception {
-		final Query qry = getSession().createQuery("from CVoucherHeader vh where vh.status=:status");
+		final Query qry = getCurrentSession().createQuery("from CVoucherHeader vh where vh.status=:status");
 		qry.setInteger("status", status);
 		return qry.list();
 	}
 
 	@Override
 	public List<CVoucherHeader> getVoucherHeadersByStatusAndType(final Integer status, final String type) throws Exception {
-		final Query qry = getSession().createQuery("from CVoucherHeader vh where vh.status=:status and vh.type=:type");
+		final Query qry = getCurrentSession().createQuery("from CVoucherHeader vh where vh.status=:status and vh.type=:type");
 		qry.setInteger("status", status);
 		qry.setString("type", type);
 		return qry.list();
@@ -40,7 +40,7 @@ public class VoucherHeaderHibernateDAO extends GenericHibernateDAO implements Vo
 
 	@Override
 	public CVoucherHeader getVoucherHeadersByCGN(final String cgn) {
-		final Query qry = getSession().createQuery(" from CVoucherHeader where cgn =:cgn");
+		final Query qry = getCurrentSession().createQuery(" from CVoucherHeader where cgn =:cgn");
 		qry.setString("cgn", cgn);
 		return (CVoucherHeader) qry.uniqueResult();
 	}

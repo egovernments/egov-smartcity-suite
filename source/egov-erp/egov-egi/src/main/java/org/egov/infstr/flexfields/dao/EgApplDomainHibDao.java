@@ -22,7 +22,7 @@ public class EgApplDomainHibDao extends GenericHibernateDAO implements EgApplDom
 
 	@Override
 	public EgApplDomain getApplDomainForDomainNameAndAttrName(final String domainName, final String attrName) {
-		final Query qry = getSession().createQuery("select attrType.egApplDomain from EgAttributetype attrType where attrType.egApplDomain.name =:domainName and attrType.attName =:attrName ");
+		final Query qry = getCurrentSession().createQuery("select attrType.egApplDomain from EgAttributetype attrType where attrType.egApplDomain.name =:domainName and attrType.attName =:attrName ");
 		qry.setString("domainName", domainName);
 		qry.setString("attrName", attrName);
 		return (EgApplDomain) qry.uniqueResult();

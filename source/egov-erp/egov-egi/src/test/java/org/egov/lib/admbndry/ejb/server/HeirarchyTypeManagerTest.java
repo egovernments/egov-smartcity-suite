@@ -20,7 +20,7 @@ public class HeirarchyTypeManagerTest extends EgovHibernateTest {
 		existing.setUpdatedTime(new Date());
 		existing.setName("EGI_ADMINISTRATOR");
 		final HeirarchyTypeServiceImpl htm = new HeirarchyTypeServiceImpl();
-		htm.setHeirarchyTypeDAO(new HeirarchyTypeDAO());
+		htm.setHeirarchyTypeDAO(new HeirarchyTypeDAO(sessionFactory));
 		htm.create(existing);
 		final HeirarchyTypeImpl ht = (HeirarchyTypeImpl) htm
 				.getHierarchyTypeByName("ADMINISTRATION");

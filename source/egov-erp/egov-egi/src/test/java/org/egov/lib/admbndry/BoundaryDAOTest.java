@@ -23,13 +23,13 @@ public class BoundaryDAOTest extends EgovHibernateTest {
 	}*/
 
 	public void testGetAllchildBoundaries() {
-		final BoundaryDAO bndryDao = new BoundaryDAO();
+		final BoundaryDAO bndryDao = new BoundaryDAO(null);
 		final List<BoundaryImpl> bndry = bndryDao.getAllchildBoundaries(3);
 		assertNotNull(bndry);
 	}
 
 	public void testGetAllchildBoundariesIfValueNull() {
-		final BoundaryDAO bndryDao = new BoundaryDAO();
+		final BoundaryDAO bndryDao = new BoundaryDAO(null);
 		final List<BoundaryImpl> bndry = bndryDao.getAllchildBoundaries(null);
 		assertNull(bndry);
 	}

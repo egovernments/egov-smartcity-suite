@@ -6,7 +6,6 @@ import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.junit.utils.JndiObj;
 import org.egov.infstr.junit.utils.TestUtils;
 import org.egov.infstr.utils.HibernateUtil;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Ignore;
@@ -65,7 +64,7 @@ public class EgovHibernateTest extends TestCase {
 		EGOVThreadLocals.setHibFactName(j.getHibFactName());
 		EGOVThreadLocals.setDomainName("test.com");
 		HibernateUtil.beginTransaction();
-		this.session = HibernateUtil.getCurrentSession();
+//		this.session = HibernateUtil.getCurrentSession();
 		TestUtils.activateInitialContext();
 	}
 
@@ -79,13 +78,14 @@ public class EgovHibernateTest extends TestCase {
 	}
 
 	protected void flush() {
-		HibernateUtil.getCurrentSession().flush();
+//		HibernateUtil.getCurrentSession().flush();
 	}
 
 	protected int count(final Class<?> clazz) {
-		final Query q = HibernateUtil.getCurrentSession().createQuery(
-				"select count(*) from " + clazz.getName() + " clz");
-		return Integer.parseInt(q.list().get(0).toString());
+//		final Query q = HibernateUtil.getCurrentSession().createQuery(
+//				"select count(*) from " + clazz.getName() + " clz");
+//		return Integer.parseInt(q.list().get(0).toString());
+		return -1;
 	}
 
 }

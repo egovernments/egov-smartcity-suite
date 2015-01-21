@@ -4,7 +4,6 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.Functionary;
 import org.egov.infstr.junit.EgovHibernateTest;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.services.SessionFactory;
 import org.junit.Before;
 import org.junit.Ignore;
 
@@ -21,13 +20,13 @@ public class CommonsManagerBeanTest extends EgovHibernateTest {
 	}
 /*
 	public void testGetFunctionaryByCode() {
-		final Functionary functionary = new CommonsServiceImpl(null)
+		final Functionary functionary = new CommonsServiceImpl(null, null, null)
 				.getFunctionaryByCode(createFunctionary().getCode());
 		assertEquals("-3000", functionary.getCode().toString());
 	}
 
 	public void testGetFunctionaryByCodeforInvalidCode() {
-		final Functionary functionary = new CommonsServiceImpl(null)
+		final Functionary functionary = new CommonsServiceImpl(null, null, null)
 				.getFunctionaryByCode(BigDecimal.valueOf(-1000));
 		assertNull(functionary);
 	}
@@ -36,7 +35,7 @@ public class CommonsManagerBeanTest extends EgovHibernateTest {
 	public Functionary createFunctionary() {
 		PersistenceService<Functionary, Long> functionaryService;
 		functionaryService = new PersistenceService<Functionary, Long>();
-		functionaryService.setSessionFactory(new SessionFactory());
+//		functionaryService.setSessionFactory(new SessionFactory());
 		functionaryService.setType(Functionary.class);
 
 		final Functionary functionary = new Functionary();
@@ -48,7 +47,7 @@ public class CommonsManagerBeanTest extends EgovHibernateTest {
 	}
 /*
 	public void testGetFinancialYearByDate() {
-		final CFinancialYear cFinancialYear = new CommonsServiceImpl(null)
+		final CFinancialYear cFinancialYear = new CommonsServiceImpl(null, null, null)
 				.getFinancialYearByDate(new Date());
 		assertNotNull(cFinancialYear);
 	}

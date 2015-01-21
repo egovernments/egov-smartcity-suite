@@ -7,6 +7,9 @@ import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.junit.utils.TestUtils;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.rjbac.user.UserImpl;
+import org.egov.lib.rjbac.user.dao.UserDAO;
+import org.egov.lib.security.terminal.dao.LocationHibernateDAO;
+import org.egov.lib.security.terminal.dao.UserCounterHibernateDAO;
 import org.egov.lib.security.terminal.model.Location;
 import org.egov.lib.security.terminal.model.UserCounterMap;
 import org.hibernate.Query;
@@ -15,7 +18,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,17 +39,24 @@ public class UserCounterMapActionTest extends TestCase {
 	private Session session;
 	private Query query;
 	private HttpSession httpSession;
+	@Mock
+	private UserCounterHibernateDAO userCounterHibernateDAO;
+	@Mock
+	private LocationHibernateDAO locationHibernateDAO;
+	@Mock
+	private UserDAO userDAO;
 
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
+		MockitoAnnotations.initMocks(this);
 		EGOVThreadLocals.setDomainName("domainName");
 		beforeTestRuns();
 	}
 
 	@Before
 	public void beforeTestRuns() throws Exception {
-		this.usercounterAction = new UserCounterMapAction();
+		this.usercounterAction = new UserCounterMapAction(userCounterHibernateDAO, locationHibernateDAO, userDAO);
 		this.query = Mockito.mock(Query.class);
 		this.actionMapping = Mockito.mock(ActionMapping.class);
 		this.usercounterForm = new UserCounterMapForm();

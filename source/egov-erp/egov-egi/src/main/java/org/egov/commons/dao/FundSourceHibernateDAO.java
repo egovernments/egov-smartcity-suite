@@ -22,15 +22,15 @@ public class FundSourceHibernateDAO extends GenericHibernateDAO {
 	}
 
 	public Fundsource fundsourceById(final Integer id) {
-		return (Fundsource) getSession().get(Fundsource.class, id.intValue());
+		return (Fundsource) getCurrentSession().get(Fundsource.class, id.intValue());
 	}
 
 	public List<Fundsource> findAllActiveIsLeafFundSources() {
-		return getSession().createQuery("from org.egov.commons.Fundsource where isactive = 1 and isnotleaf=0 order by name").list();
+		return getCurrentSession().createQuery("from org.egov.commons.Fundsource where isactive = 1 and isnotleaf=0 order by name").list();
 	}
 
 	public Fundsource getFundSourceByCode(final String code) {
-		final Query query = getSession().createQuery("from Fundsource f where f.code=:code");
+		final Query query = getCurrentSession().createQuery("from Fundsource f where f.code=:code");
 		query.setString("code", code);
 		return (Fundsource) query.uniqueResult();
 	}

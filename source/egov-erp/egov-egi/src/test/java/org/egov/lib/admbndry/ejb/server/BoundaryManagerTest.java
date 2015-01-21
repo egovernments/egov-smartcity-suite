@@ -24,11 +24,11 @@ public class BoundaryManagerTest extends EgovHibernateTest {
 	public void setUp() throws Exception {
 		super.setUp();
 		this.boundaryManagerBean = new BoundaryServiceImpl();
-		this.boundaryManagerBean.setBoundaryDAO(new BoundaryDAO());
+		this.boundaryManagerBean.setBoundaryDAO(new BoundaryDAO(null));
 		this.boundaryManagerBean
-				.setBoundaryTypeService(new BoundaryTypeServiceImpl());
+				.setBoundaryTypeService(new BoundaryTypeServiceImpl(null));
 		final HeirarchyTypeServiceImpl heirImpl = new HeirarchyTypeServiceImpl();
-		heirImpl.setHeirarchyTypeDAO(new HeirarchyTypeDAO());
+		heirImpl.setHeirarchyTypeDAO(new HeirarchyTypeDAO(sessionFactory));
 		this.boundaryManagerBean.setHeirarchyTypeService(heirImpl);
 	}
 
@@ -49,7 +49,7 @@ public class BoundaryManagerTest extends EgovHibernateTest {
 	}
 
 	public void testGetCrossHeirarchyChild() {
-		final BoundaryTypeService boundarTypeManagerBean = new BoundaryTypeServiceImpl();
+		final BoundaryTypeService boundarTypeManagerBean = new BoundaryTypeServiceImpl(null);
 		Set childBndryList = new HashSet();
 		final Boundary parentBndry = this.boundaryManagerBean.getBoundary(2);
 		final BoundaryType childBoundaryType = boundarTypeManagerBean

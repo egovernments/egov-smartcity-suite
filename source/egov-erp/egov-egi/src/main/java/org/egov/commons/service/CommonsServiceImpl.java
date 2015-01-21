@@ -5,21 +5,6 @@
  */
 package org.egov.commons.service;
 
-import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bank;
@@ -49,31 +34,56 @@ import org.egov.commons.Scheme;
 import org.egov.commons.Status;
 import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
-import org.egov.commons.dao.*;
+import org.egov.commons.dao.BankbranchDAO;
+import org.egov.commons.dao.CommonsDAOFactory;
+import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.dao.ObjectTypeDAO;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.commonMasters.EgUom;
 import org.egov.infstr.commons.Module;
-import org.egov.infstr.commons.dao.GenericDaoFactory;
+import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.FinancialYear;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.citizen.model.Owner;
 import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class CommonsServiceImpl implements CommonsService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CommonsServiceImpl.class);
 	private CommonsDAOFactory commonsDAOFactory;
+	private GenericHibernateDaoFactory genericHibernateDaoFactory;
+	private SessionFactory sessionFactory;
 
-	@Autowired
-	public CommonsServiceImpl(CommonsDAOFactory commonsDAOFactory) {
+	public CommonsServiceImpl(CommonsDAOFactory commonsDAOFactory, GenericHibernateDaoFactory genericHibernateDaoFactory, SessionFactory sessionFactory) {
 		this.commonsDAOFactory = commonsDAOFactory;
+		this.genericHibernateDaoFactory = genericHibernateDaoFactory;
+		this.sessionFactory = sessionFactory;
+	}
+
+	private Session getSession() {
+		return sessionFactory.getCurrentSession();
 	}
 
 	@Override
@@ -174,7 +184,7 @@ public class CommonsServiceImpl implements CommonsService {
 	@Override
 	public String getCurrentInstallmentYear() {
 		try {
-			final Module module = GenericDaoFactory.getDAOFactory().getModuleDao().getModuleByName(EGovConfig.getProperty("MODULE_NAME", "", "PT"));
+			final Module module = genericHibernateDaoFactory.getModuleDao().getModuleByName(EGovConfig.getProperty("MODULE_NAME", "", "PT"));
 			final Installment instCurr = commonsDAOFactory.getInstallmentDao().getInsatllmentByModuleForGivenDate(module, DateUtils.getFinancialYear().getStartOnDate());
 			final Date insYear = instCurr.getInstallmentYear();
 			return new SimpleDateFormat("yyyy", Locale.ENGLISH).format(insYear);
@@ -191,7 +201,7 @@ public class CommonsServiceImpl implements CommonsService {
 	 */
 	@Override
 	public Map<Integer, Integer> getWidth(final Integer bndryID) {
-		final Query query = HibernateUtil.getCurrentSession().createSQLQuery("select WIDTH from EGGIS_BNDRY_DIM where BNDRYID =:bid");
+		final Query query = getSession().createSQLQuery("select WIDTH from EGGIS_BNDRY_DIM where BNDRYID =:bid");
 		query.setInteger("bid", bndryID);
 		final Object[] widths = (Object[]) query.uniqueResult();
 		final Map<Integer, Integer> retMap = new TreeMap<Integer, Integer>();
@@ -204,7 +214,7 @@ public class CommonsServiceImpl implements CommonsService {
 	// This method returns the Map Height for given boundaryId
 	@Override
 	public Map<Integer, Integer> getHeight(final Integer bndryID) {
-		final Query query = HibernateUtil.getCurrentSession().createSQLQuery("select HEIGHT from EGGIS_BNDRY_DIM where BNDRYID =:bid");
+		final Query query = getSession().createSQLQuery("select HEIGHT from EGGIS_BNDRY_DIM where BNDRYID =:bid");
 		query.setInteger("bid", bndryID);
 		final Object[] heights = (Object[]) query.uniqueResult();
 		final Map<Integer, Integer> retMap = new TreeMap<Integer, Integer>();
@@ -356,7 +366,6 @@ public class CommonsServiceImpl implements CommonsService {
 
 	/**
 	 * @param moduleType Module type
-	 * @param statusCode Status code
 	 * @return EgwStatus object for given module type and status code
 	 */
 	@Override
@@ -476,7 +485,7 @@ public class CommonsServiceImpl implements CommonsService {
 	@Override
 	public String getTxnNumber(final String txnType, final String vDate, final Connection con) throws ParseException, SQLException {
 		final String txndate = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH).format(new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH).parse(vDate));
-		final Query query = HibernateUtil.getCurrentSession().createSQLQuery("select a.FINANCIALYEAR,b.id from FINANCIALYEAR a,fiscalperiod b  where a.id=b.financialyearid AND ? between b.startingdate and b.endingdate");
+		final Query query = getSession().createSQLQuery("select a.FINANCIALYEAR,b.id from FINANCIALYEAR a,fiscalperiod b  where a.id=b.financialyearid AND ? between b.startingdate and b.endingdate");
 		query.setString(0, txndate);
 		final Object[] result = (Object[]) query.uniqueResult();
 		String finYear = "";
@@ -691,7 +700,7 @@ public class CommonsServiceImpl implements CommonsService {
 	public EgUom getUomByUom(final String uom) {
 		EgUom egUom = null;
 		if (uom != null) {
-			final Query qry = HibernateUtil.getCurrentSession().createQuery("from EgUom uom where uom.uom=:uom");
+			final Query qry = getSession().createQuery("from EgUom uom where uom.uom=:uom");
 			qry.setString("uom", uom);
 			egUom = (EgUom) qry.uniqueResult();
 		}
@@ -725,7 +734,7 @@ public class CommonsServiceImpl implements CommonsService {
 
 	@Override
 	public String getAccountdetailtypeAttributename(final Connection connection, final String name) throws SQLException {
-		final Query query = HibernateUtil.getCurrentSession().createSQLQuery("select id,attributename from accountdetailtype where name=?");
+		final Query query = getSession().createSQLQuery("select id,attributename from accountdetailtype where name=?");
 		query.setString(0, name);
 		final Object[] result = (Object[]) query.uniqueResult();
 		return ((result == null) || (result.length == 0)) ? "" : (result[0] + "#" + result[1]);
@@ -748,17 +757,17 @@ public class CommonsServiceImpl implements CommonsService {
 
 	@Override
 	public ObjectType getObjectTypeByType(final String type) {
-		return new ObjectTypeDAO().getObjectType(type);
+		return new ObjectTypeDAO(sessionFactory).getObjectType(type);
 	}
 
 	@Override
 	public ObjectType getObjectTypeById(final Integer type) {
-		return new ObjectTypeDAO().getObjectType(type);
+		return new ObjectTypeDAO(sessionFactory).getObjectType(type);
 	}
 
 	@Override
 	public Bankbranch getBankbranchById(final Integer id) {
-		return new BankbranchDAO().getBankbranchById(id);
+		return new BankbranchDAO(sessionFactory).getBankbranchById(id);
 	}
 
 	@Override

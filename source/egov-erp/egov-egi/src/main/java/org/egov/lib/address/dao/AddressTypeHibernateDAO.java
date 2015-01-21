@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.dao.GenericHibernateDAO;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.address.model.AddressTypeMaster;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -17,13 +16,6 @@ import org.hibernate.Session;
 
 public class AddressTypeHibernateDAO extends GenericHibernateDAO implements AddressTypeDAO {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AddressTypeHibernateDAO.class);
-	
-	/**
-	 * Instantiates a new address type hibernate dao.
-	 */
-	public AddressTypeHibernateDAO() {
-		super(AddressTypeMaster.class,null);
-	}
 	
 	/**
 	 * Instantiates a new address type hibernate dao.
@@ -39,7 +31,7 @@ public class AddressTypeHibernateDAO extends GenericHibernateDAO implements Addr
 	 */
 	public AddressTypeMaster getAddressType(String addTypeName) {
 		try {
-			Query qry = HibernateUtil.getCurrentSession().createQuery("from AddressTypeMaster ATM where ATM.addressTypeName =:addTypeName ");
+			Query qry = getCurrentSession().createQuery("from AddressTypeMaster ATM where ATM.addressTypeName =:addTypeName ");
 			qry.setString("addTypeName", addTypeName);
 			AddressTypeMaster addtypeMaster = (AddressTypeMaster) qry.uniqueResult();
 			return addtypeMaster;

@@ -5,11 +5,6 @@
  */
 package org.egov.lib.security.terminal.dao;
 
-import java.util.Date;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.infstr.utils.EgovMasterDataCaching;
@@ -18,15 +13,29 @@ import org.egov.lib.security.terminal.model.UserCounterMap;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Date;
+import java.util.List;
 
 public class UserCounterHibernateDAO extends GenericHibernateDAO<UserCounterMap, Integer> implements UserCounterDAO {
 
 	private static final Logger LOG = LoggerFactory.getLogger(UserCounterHibernateDAO.class);
+	private SessionFactory sessionFactory;
 
-	public UserCounterHibernateDAO() {
-		super(UserCounterMap.class,null);
+	public UserCounterHibernateDAO(SessionFactory sessionFactory) {
+		super(UserCounterMap.class, null);
+		this.sessionFactory = sessionFactory;
 	}
-			
+
+	@Override
+	protected Session getCurrentSession() {
+		return sessionFactory.getCurrentSession();
+	}
+
+	@Deprecated
 	public UserCounterHibernateDAO(final Class persistentClass, final Session session) {
 		super(persistentClass, session);
 	}
@@ -54,7 +63,7 @@ public class UserCounterHibernateDAO extends GenericHibernateDAO<UserCounterMap,
 	@Override
 	public void deleteCounters(final int counterId) {
 		try {
-			final Query qry = HibernateUtil.getCurrentSession().createQuery("delete from UserCounterMap map where map.counterId=:counterId");
+			final Query qry = getCurrentSession().createQuery("delete from UserCounterMap map where map.counterId=:counterId");
 			qry.setLong("counterId", counterId);
 			qry.executeUpdate();
 			EgovMasterDataCaching.getInstance().removeFromCache("egi-usercountermap");
@@ -68,7 +77,7 @@ public class UserCounterHibernateDAO extends GenericHibernateDAO<UserCounterMap,
 	@Override
 	public List<UserCounterMap> getLocationBasedUserCounterMapForCurrentDate(final Integer locId) {
 		try {
-			final Query qry = HibernateUtil.getCurrentSession().createQuery(" from UserCounterMap map where map.counterId=:locId and ((map.toDate is null ) or  (map.toDate >= :toDate)) ");
+			final Query qry = getCurrentSession().createQuery(" from UserCounterMap map where map.counterId=:locId and ((map.toDate is null ) or  (map.toDate >= :toDate)) ");
 			qry.setDate("toDate", new Date());
 			qry.setInteger("locId", locId);
 			return qry.list();
@@ -83,7 +92,7 @@ public class UserCounterHibernateDAO extends GenericHibernateDAO<UserCounterMap,
 	@Override
 	public List<UserCounterMap> getTerminalBasedUserCounterMapForCurrentDate(final Integer locId) {
 		try {
-			final Query qry = HibernateUtil.getCurrentSession().createQuery("select map from UserCounterMap map,Location loc where  map.counterId=loc.id and loc.locationId=:locId and ((map.toDate is null ) or  (map.toDate >= :toDate)) ");
+			final Query qry = getCurrentSession().createQuery("select map from UserCounterMap map,Location loc where  map.counterId=loc.id and loc.locationId=:locId and ((map.toDate is null ) or  (map.toDate >= :toDate)) ");
 			qry.setDate("toDate", new Date());
 			qry.setInteger("locId", locId);
 			return qry.list();
@@ -98,7 +107,7 @@ public class UserCounterHibernateDAO extends GenericHibernateDAO<UserCounterMap,
 	@Override
 	public List<UserCounterMap> getUserCounterMapForLocationId(final Integer Id) {
 		try {
-			final Query qry = HibernateUtil.getCurrentSession().createQuery(" from UserCounterMap map where  map.counterId.id =:Id ");
+			final Query qry = getCurrentSession().createQuery(" from UserCounterMap map where  map.counterId.id =:Id ");
 			qry.setInteger("Id", Id);
 			return qry.list();
 
@@ -113,7 +122,7 @@ public class UserCounterHibernateDAO extends GenericHibernateDAO<UserCounterMap,
 	@Override
 	public List<UserCounterMap> getUserCounterMapForTerminalId(final Integer Id) {
 		try {
-			final Query qry = HibernateUtil.getCurrentSession().createQuery(" select map from UserCounterMap map,Location loc where  map.counterId=loc.id and loc.locationId=:Id");
+			final Query qry = getCurrentSession().createQuery(" select map from UserCounterMap map,Location loc where  map.counterId=loc.id and loc.locationId=:Id");
 			qry.setInteger("Id", Id);
 			return qry.list();
 
@@ -127,7 +136,7 @@ public class UserCounterHibernateDAO extends GenericHibernateDAO<UserCounterMap,
 	@Override
 	public List<UserCounterMap> getUserCounterMapForUserId(final Integer Id) {
 		try {
-			final Query qry = HibernateUtil.getCurrentSession().createQuery(" from UserCounterMap map where map.userId.id =:Id");
+			final Query qry = getCurrentSession().createQuery(" from UserCounterMap map where map.userId.id =:Id");
 			qry.setInteger("Id", Id);
 			return qry.list();
 

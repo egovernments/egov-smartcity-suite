@@ -8,6 +8,7 @@ package org.egov.infstr.services;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Session;
 
+@Deprecated
 public class SessionFactory {
 
 	public Session getSession() {
