@@ -14,20 +14,20 @@
     </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-        <constructor-arg ref="sessionFactory" />
+        <constructor-arg ref="sessionFactory"/>
     </bean>
 
-    <tx:annotation-driven />
+    <tx:annotation-driven/>
 
+<!--
     <beans profile="test">
         <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
             <property name="driverClassName" value="org.postgresql.Driver"/>
-            <property name="url" value="jdbc:postgresql://localhost:5432/erp_owner"/>
+            <property name="url" value="jdbc:postgresql://localhost:5432/postgres"/>
             <property name="initialSize" value="1"/>
         </bean>
     </beans>
+-->
 
-    <beans profile="production">
-        <jee:jndi-lookup id="dataSource" jndi-name="java:/ezgovDatabasePool" expected-type="javax.sql.DataSource"/>
-    </beans>
+    <jee:jndi-lookup id="dataSource" jndi-name="java:/ezgovDatabasePool" expected-type="javax.sql.DataSource"/>
 </beans>

@@ -1,70 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
-	default-lazy-init="true">
-  
-  <!-- For Move Boundary Action Injection starts-->
-  <bean name="/AdminBoundary/moveBoundary" class="org.egov.infstr.client.adminBoundry.MoveBoundaryAction">
-	   <property name="moveBoundaryDelegate" ref="moveBoundaryDelegate"/>
-  </bean>
-  <!-- For Move Boundary Action Injection ends-->
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-lazy-init="true">
 
-  <bean name="/admin/CreateModule" class="org.egov.infstr.client.administration.rjbac.module.CreateModuleAction"> 
-       <property name="genericCommonService" ref="genericCommonService"/>
-  </bean>
-  
-  <bean name="/admin/BeforeUpdateModule" class="org.egov.infstr.client.administration.rjbac.module.BeforeUpdateModuleAction"> 
-       <property name="genericCommonService" ref="genericCommonService"/>
-  </bean>
- 
-  <bean name="/admin/UpdateModule" class="org.egov.infstr.client.administration.rjbac.module.UpdateModuleAction"> 
-       <property name="genericCommonService" ref="genericCommonService"/>
-  </bean>
-  
-  <bean name="/admin/BeforeCreateOrUpdateAction" class="org.egov.infstr.client.administration.rjbac.action.BeforeCreateOrUpdateAction"> 
-       <property name="genericCommonService" ref="genericCommonService"/>
-  </bean>
- 
-  <bean name="/admin/CreateOrUpdateAction" class="org.egov.infstr.client.administration.rjbac.action.CreateOrUpdateAction"> 
-       <property name="genericCommonService" ref="genericCommonService"/>
-  	   <property name="rbacManager" ref="rbacMgr"/>
-  </bean>
-  
-  <bean name="/admin/BeforeViewRoleModule" class="org.egov.infstr.client.administration.rjbac.action.BeforeViewRoleModule"> 
-       <property name="roleService" ref="roleService"/>
-  </bean>
-  
-  <bean name="/admin/BeforeCreateOrUpdateRoleAction" class="org.egov.infstr.client.administration.rjbac.action.BeforeCreateOrUpdateRoleAction"> 
-       <property name="genericCommonService" ref="genericCommonService"/>
-       <property name="roleService" ref="roleService"/>
-  </bean>
-  
-  <bean name="/admin/CreateOrUpdateRoleAction" class="org.egov.infstr.client.administration.rjbac.action.CreateOrUpdateRoleAction"> 
-       <property name="rbacService" ref="rbacService"/>
-       <property name="roleService" ref="roleService"/>
-  </bean>  
-  
-  <bean name="/admin/chgPassword" class="org.egov.infstr.client.administration.rjbac.user.ChangePasswordAction"> 
-       <property name="userDao" ref="userDao"/>
-  </bean>
+    <!-- For Move Boundary Action Injection starts-->
+    <bean name="/AdminBoundary/moveBoundary" class="org.egov.infstr.client.adminBoundry.MoveBoundaryAction">
+        <property name="moveBoundaryDelegate" ref="moveBoundaryDelegate"/>
+    </bean>
+    <!-- For Move Boundary Action Injection ends-->
 
-  <bean name="/config/MasterSetUpAction" class="org.egov.infstr.config.client.MasterSetUpAction">
-      <property name="genericHibernateDaoFactory" ref="genericDao" />
-  </bean>
-  <bean name="/SetupUser" class="org.egov.infstr.client.administration.rjbac.user.SetupUserAction">
-  	<property name="userDelegate" ref="userDelegate"/>
-  </bean>
+    <bean name="/admin/CreateModule" class="org.egov.infstr.client.administration.rjbac.module.CreateModuleAction">
+        <property name="genericCommonService" ref="genericCommonService"/>
+    </bean>
 
-  <bean name="/terminal/usercountermap" class="org.egov.lib.security.terminal.client.UserCounterMapAction">
-      <constructor-arg ref="userCounterDao" />
-      <constructor-arg ref="locationHibernateDao" />
-      <constructor-arg ref="userDao" />
-  </bean>
+    <bean name="/admin/BeforeUpdateModule"
+          class="org.egov.infstr.client.administration.rjbac.module.BeforeUpdateModuleAction">
+        <property name="genericCommonService" ref="genericCommonService"/>
+    </bean>
 
-  <bean name="/terminal/user" class="org.egov.lib.security.terminal.client.UserValidateAction">
+    <bean name="/admin/UpdateModule" class="org.egov.infstr.client.administration.rjbac.module.UpdateModuleAction">
+        <property name="genericCommonService" ref="genericCommonService"/>
+    </bean>
 
-      <constructor-arg index="0" ref="userService"/>
-      <constructor-arg index="1" ref="userValidateDao"/>
-  </bean>
+    <bean name="/admin/BeforeCreateOrUpdateAction"
+          class="org.egov.infstr.client.administration.rjbac.action.BeforeCreateOrUpdateAction">
+        <property name="genericCommonService" ref="genericCommonService"/>
+    </bean>
+
+    <bean name="/admin/CreateOrUpdateAction"
+          class="org.egov.infstr.client.administration.rjbac.action.CreateOrUpdateAction">
+        <property name="genericCommonService" ref="genericCommonService"/>
+        <property name="rbacManager" ref="rbacMgr"/>
+    </bean>
+
+    <bean name="/admin/BeforeViewRoleModule"
+          class="org.egov.infstr.client.administration.rjbac.action.BeforeViewRoleModule">
+        <property name="roleService" ref="roleService"/>
+    </bean>
+
+    <bean name="/admin/BeforeCreateOrUpdateRoleAction"
+          class="org.egov.infstr.client.administration.rjbac.action.BeforeCreateOrUpdateRoleAction">
+        <property name="genericCommonService" ref="genericCommonService"/>
+        <property name="roleService" ref="roleService"/>
+    </bean>
+
+    <bean name="/admin/CreateOrUpdateRoleAction"
+          class="org.egov.infstr.client.administration.rjbac.action.CreateOrUpdateRoleAction">
+        <property name="rbacService" ref="rbacService"/>
+        <property name="roleService" ref="roleService"/>
+    </bean>
+
+    <bean name="/admin/chgPassword" class="org.egov.infstr.client.administration.rjbac.user.ChangePasswordAction">
+        <property name="userDao" ref="userDao"/>
+    </bean>
+
+    <bean name="/config/MasterSetUpAction" class="org.egov.infstr.config.client.MasterSetUpAction">
+        <property name="genericHibernateDaoFactory" ref="genericDao"/>
+    </bean>
+    <bean name="/SetupUser" class="org.egov.infstr.client.administration.rjbac.user.SetupUserAction">
+        <property name="userDelegate" ref="userDelegate"/>
+    </bean>
+
+    <bean name="/terminal/usercountermap" class="org.egov.lib.security.terminal.client.UserCounterMapAction">
+        <constructor-arg ref="userCounterDao"/>
+        <constructor-arg ref="locationHibernateDao"/>
+        <constructor-arg ref="userDao"/>
+    </bean>
+
+    <bean name="/terminal/user" class="org.egov.lib.security.terminal.client.UserValidateAction">
+        <constructor-arg index="0" ref="userService"/>
+        <constructor-arg index="1" ref="userValidateDao"/>
+    </bean>
+
+    <bean name="/CreateHierarchy" class="org.egov.infstr.client.adminBoundry.HierarchyAction">
+        <constructor-arg ref="heirarchyTypeService" />
+        <constructor-arg ref="egovInfrastructureUtil" />
+    </bean>
+
+    <bean name="/CreateRole" class="org.egov.infstr.client.administration.rjbac.role.RoleAction" >
+        <constructor-arg ref="roleService" />
+        <constructor-arg ref="egovInfrastructureUtil" />
+    </bean>
+
+    <bean name="/SubmitUser" class="org.egov.infstr.client.administration.rjbac.user.UserAction">
+        <constructor-arg ref="userService"/>
+        <constructor-arg ref="roleService"/>
+        <constructor-arg ref="egovInfrastructureUtil" />
+    </bean>
 </beans>

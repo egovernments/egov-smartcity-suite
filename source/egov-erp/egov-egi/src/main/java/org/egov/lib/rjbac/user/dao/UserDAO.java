@@ -5,6 +5,7 @@
  */
 package org.egov.lib.rjbac.user.dao;
 
+import org.egov.EgovSpringContextHolder;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.security.utils.CryptoHelper;
 import org.egov.infstr.utils.EGovConfig;
@@ -43,6 +44,7 @@ public class UserDAO {
 
 	@Deprecated
 	public UserDAO() {
+		this(EgovSpringContextHolder.sessionFactory());
 	}
 
 	public UserDAO(SessionFactory sessionFactory) {

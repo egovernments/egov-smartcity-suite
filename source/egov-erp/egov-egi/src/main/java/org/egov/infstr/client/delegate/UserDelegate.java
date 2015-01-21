@@ -46,6 +46,7 @@ public class UserDelegate {
 	private RoleService roleService;
 	private DepartmentService departmentService;
 	private BoundaryTypeService boundaryTypeService;
+	private EgovInfrastrUtil egovInfrastrUtil;
 
 	private static Logger logger = LoggerFactory.getLogger(UserDelegate.class);
 
@@ -163,7 +164,7 @@ public class UserDelegate {
 
 			logger.info("userid----" + user.getId());
 			this.userService.updateUser(user);
-			new EgovInfrastrUtil().resetCache();
+			egovInfrastrUtil.resetCache();
 			// EgovInfrastrUtil.RESET = true;
 		} catch (final Exception exp) {
 			logger.info("Exception Encountered!!!" + exp.getMessage());
@@ -182,7 +183,7 @@ public class UserDelegate {
 		try {
 			final User user = this.userService.getUserByID(userid);
 			this.userService.removeUser(user);
-			new EgovInfrastrUtil().resetCache();
+			egovInfrastrUtil.resetCache();
 			// EgovInfrastrUtil.RESET = true;
 		} catch (final Exception exp) {
 			logger.info("Exception Encountered!!!" + exp.getMessage());
@@ -250,4 +251,7 @@ public class UserDelegate {
 		this.boundaryTypeService = boundaryTypeService;
 	}
 
+	public void setEgovInfrastrUtil(EgovInfrastrUtil egovInfrastrUtil) {
+		this.egovInfrastrUtil = egovInfrastrUtil;
+	}
 }

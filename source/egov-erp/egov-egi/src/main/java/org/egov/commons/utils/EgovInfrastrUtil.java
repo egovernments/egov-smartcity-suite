@@ -5,22 +5,6 @@
  */
 package org.egov.commons.utils;
 
-import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.egov.commons.Installment;
 import org.egov.commons.service.CommonsService;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -40,6 +24,21 @@ import org.egov.lib.rjbac.role.Role;
 import org.egov.lib.rjbac.role.ejb.api.RoleService;
 import org.egov.lib.rjbac.user.User;
 import org.egov.lib.rjbac.user.dao.UserDAO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 	private static Map resetMap = new HashMap();
@@ -54,6 +53,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 	private DepartmentService departmentService;
 	private RoleService roleService;
 	private CommonsService commonsService;
+	private UserDAO userDAO;
 
 	static String installmentForYr2000 = EGovConfig.getProperty("ID_INSTALLMENT_2000", "", "PT");
 
@@ -84,6 +84,10 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 	private static Map installmentIdAndFromDateMap = new HashMap();
 	private static Map bankAccountMap_WithAccountNo = new HashMap();
 	private static Map bankAccountMap_WithoutAccountNo = new HashMap();
+
+	public void setUserDAO(UserDAO userDAO) {
+		this.userDAO = userDAO;
+	}
 
 	public void setBoundaryTypeService(final BoundaryTypeService boundaryTypeService) {
 		this.boundaryTypeService = boundaryTypeService;
@@ -623,7 +627,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 				// iterate through the top levelboundaries
 				final String roleUsers = role.getRoleName() + ",";
 				// get the users list by Role and toplevelboundary
-				userList = new UserDAO().getAllUserForRoles(roleUsers, new Date());
+				userList = userDAO.getAllUserForRoles(roleUsers, new Date());
 				// if the role is citizen then userList is empty amd it goes to else group
 				if (userList != null && !userList.isEmpty()) {
 					userListitr = userList.iterator();
@@ -638,7 +642,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 				// here is the users list for citizen
 
 				else {
-					userList = new UserDAO().getAllUserForRoles(roleUsers, new Date());
+					userList = userDAO.getAllUserForRoles(roleUsers, new Date());
 					userListitr = userList.iterator();
 					// iterate through the userlist
 					while (userListitr.hasNext()) {
@@ -774,21 +778,9 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 	}
 
 	@Override
+	@Deprecated
 	public String encodingName(String name) {
-		if (name != null) {
-			final byte[] bytes = new byte[name.length()];
-			for (int i = 0; i < name.length(); i++) {
-				bytes[i] = (byte) name.charAt(i);
-			}
-			try {
-				name = new String(bytes, "UTF-8");
-			} catch (final UnsupportedEncodingException e) {
-				throw new EGOVRuntimeException("Exception occured -----> " + e.getMessage());
-			}
-		}
-
-		return name;
-
+		return org.egov.infstr.utils.StringUtils.encodeString(name);
 	}
 
 	private static void removeExcludedRole(final List roleList) {

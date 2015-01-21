@@ -11,6 +11,7 @@ import org.egov.lib.rjbac.role.Role;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -20,8 +21,23 @@ import java.util.Set;
 
 public class ModuleHibDao<T, id extends Serializable> extends GenericHibernateDAO implements ModuleDao {
 
+	private SessionFactory sessionFactory;
+
+	public ModuleHibDao(SessionFactory sessionFactory) {
+		super(Module.class, null);
+		this.sessionFactory = sessionFactory;
+	}
+
 	public ModuleHibDao(final Class<T> persistentClass, final Session session) {
 		super(persistentClass, session);
+	}
+
+	@Override
+	protected Session getCurrentSession() {
+		if(super.getCurrentSession() != null) {
+			return super.getCurrentSession();
+		}
+		return sessionFactory.getCurrentSession();
 	}
 
 	@Override

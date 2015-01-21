@@ -4,6 +4,8 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
 	default-lazy-init="true">
 
+	<bean class="org.egov.EgovSpringContextHolder" lazy-init="false"/>
+
 	<bean id="genericCommonsService" class="org.egov.infstr.commons.service.GenericCommonsServiceImpl">
 		<constructor-arg ref="genericDao" />
 	</bean>
@@ -14,6 +16,7 @@
 
 	<bean id="userService" class="org.egov.lib.rjbac.user.ejb.server.UserServiceImpl" >
 		<constructor-arg ref="sessionFactory" />
+		<constructor-arg ref="userDao" />
 	</bean>
 
 	<bean id="boundaryService" class="org.egov.lib.admbndry.ejb.server.BoundaryServiceImpl">
@@ -61,7 +64,9 @@
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 
-	<bean id="appConfigValuesDAO" class="org.egov.infstr.config.dao.AppConfigValuesHibernateDAO" />
+	<bean id="appConfigValuesDAO" class="org.egov.infstr.config.dao.AppConfigValuesHibernateDAO">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
 
 	<bean id="domainDAO" class="org.egov.infstr.flexfields.DomainDAO">
 		<constructor-arg ref="sessionFactory" />
@@ -170,6 +175,10 @@
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 
+	<bean id="moduleDAO" class="org.egov.infstr.commons.dao.ModuleHibDao">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
+
 	<bean id="userDao" class="org.egov.lib.rjbac.user.dao.UserDAO" scope="prototype" >
 		<constructor-arg ref="sessionFactory" />
 	</bean>
@@ -178,10 +187,14 @@
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 
-	<bean id="departmentDao" class="org.egov.lib.rjbac.dept.dao.DepartmentDAO" scope="prototype" />
+	<bean id="departmentDao" class="org.egov.lib.rjbac.dept.dao.DepartmentDAO" scope="prototype" >
+		<constructor-arg ref="sessionFactory" />
+	</bean>
 
-	<bean id="actionDao" class="org.egov.lib.rrbac.dao.ActionHibernateDAO" scope="prototype" />
-	
+	<bean id="actionDao" class="org.egov.lib.rrbac.dao.ActionHibernateDAO" scope="prototype" >
+		<constructor-arg ref="sessionFactory" />
+	</bean>
+
 	<bean id="userValidateDao" class="org.egov.lib.security.terminal.dao.UserValidateHibernateDAO">
 		<constructor-arg ref="sessionFactory" />
 	</bean>
@@ -254,5 +267,10 @@
 		<property name="departmentService" ref="departmentService"/>
 		<property name="heirarchyTypeService" ref="heirarchyTypeService"/>
 		<property name="roleService" ref="roleService"/>
+		<property name="egovInfrastrUtil" ref="egovInfrastructureUtil"/>
+	</bean>
+
+	<bean id="egovInfrastructureUtil" class="org.egov.commons.utils.EgovInfrastrUtil">
+		<property name="userDAO" ref="userDao" />
 	</bean>
 </beans>

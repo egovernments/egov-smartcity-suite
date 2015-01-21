@@ -5,22 +5,38 @@
  */
 package org.egov.lib.rrbac.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.lib.rrbac.model.Action;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ActionHibernateDAO extends GenericHibernateDAO implements ActionDAO {
 	private static Logger LOGGER = LoggerFactory.getLogger(ActionHibernateDAO.class);
 
+	private SessionFactory sessionFactory;
+
+	public ActionHibernateDAO(SessionFactory sessionFactory) {
+		super(Action.class, null);
+		this.sessionFactory = sessionFactory;
+	}
+
 	public ActionHibernateDAO(final Class persistentClass, final Session session) {
 		super(persistentClass, session);
+	}
+
+	@Override
+	protected Session getCurrentSession() {
+		if(super.getCurrentSession() != null) {
+			return super.getCurrentSession();
+		}
+		return sessionFactory.getCurrentSession();
 	}
 
 	@Override

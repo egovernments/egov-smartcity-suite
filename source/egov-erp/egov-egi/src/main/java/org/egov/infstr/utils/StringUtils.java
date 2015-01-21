@@ -5,13 +5,16 @@
  */
 package org.egov.infstr.utils;
 
+import org.apache.commons.lang.StringEscapeUtils;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.json.simple.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.lang.StringEscapeUtils;
-import org.json.simple.JSONObject;
 
 public class StringUtils extends org.apache.commons.lang.StringUtils {
 
@@ -58,4 +61,13 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 	public static List<String> toList(final String... values) {
 		return Arrays.asList(values);
 	}
+
+	public static String encodeString(String string) {
+		try {
+			return org.apache.commons.lang3.StringUtils.toEncodedString(string.getBytes(), Charset.forName("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			throw new EGOVRuntimeException("Exception occured -----> " + e.getMessage());
+		}
+	}
+
 }

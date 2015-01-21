@@ -5,20 +5,28 @@
  */
 package org.egov.infstr.config.dao;
 
-import java.util.Date;
-import java.util.List;
-
 import org.egov.infstr.config.AppConfig;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.infstr.utils.DateUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+
+import java.util.Date;
+import java.util.List;
 
 public class AppConfigValuesHibernateDAO extends GenericHibernateDAO<AppConfigValues, Integer> implements AppConfigValuesDAO {
 
 	private static final String KEY_COLUMN_NAME = "keyName";
 	private static final String MODULE_COLUMN_NAME = "moduleName";
+
+	private SessionFactory sessionFactory;
+
+	public AppConfigValuesHibernateDAO(SessionFactory sessionFactory) {
+		super(AppConfigValues.class, null);
+		this.sessionFactory = sessionFactory;
+	}
 
 	/**
 	 * Instantiates a new app config values hibernate dao.
@@ -27,6 +35,14 @@ public class AppConfigValuesHibernateDAO extends GenericHibernateDAO<AppConfigVa
 	 */
 	public AppConfigValuesHibernateDAO(final Class<AppConfigValues> persistentClass, final Session session) {
 		super(persistentClass, session);
+	}
+
+	@Override
+	protected Session getCurrentSession() {
+		if(super.getCurrentSession() != null) {
+			return super.getCurrentSession();
+		}
+		return sessionFactory.getCurrentSession();
 	}
 
 	/**

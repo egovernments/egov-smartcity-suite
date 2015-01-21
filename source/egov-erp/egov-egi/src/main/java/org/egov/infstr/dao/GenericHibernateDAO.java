@@ -41,8 +41,6 @@ public class GenericHibernateDAO<T, ID extends Serializable> implements GenericD
 	 * @return the hibernate session
 	 */
 	protected Session getCurrentSession() {
-		if(session == null)
-			throw new EGOVRuntimeException(String.format("Hibernate session is not set in the DAO [%s]. Use the appropriate constructor.", this.getClass().getName()));
 		return session;
 	}
 

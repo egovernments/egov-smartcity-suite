@@ -5,18 +5,6 @@
  */
 package org.egov.infstr.client.administration.rjbac.user;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -27,28 +15,40 @@ import org.egov.infstr.security.utils.CryptoHelper;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.lib.rjbac.role.Role;
 import org.egov.lib.rjbac.role.ejb.api.RoleService;
-import org.egov.lib.rjbac.role.ejb.server.RoleServiceImpl;
 import org.egov.lib.rjbac.user.User;
 import org.egov.lib.rjbac.user.UserImpl;
 import org.egov.lib.rjbac.user.UserRole;
 import org.egov.lib.rjbac.user.UserSignature;
 import org.egov.lib.rjbac.user.ejb.api.UserService;
-import org.egov.lib.rjbac.user.ejb.server.UserServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class UserAction extends EgovAction {
 	
 	private final static Logger LOG = LoggerFactory.getLogger(UserAction.class);
-	private final UserService userService = new UserServiceImpl(null, null);
-	private final RoleService roleService = new RoleServiceImpl();
+	private final UserService userService;
+	private final RoleService roleService;
+	private EgovInfrastrUtil egovInfrastrUtil;
+
+	public UserAction(UserService userService, RoleService roleService, EgovInfrastrUtil egovInfrastrUtil) {
+		this.userService = userService;
+		this.roleService = roleService;
+		this.egovInfrastrUtil = egovInfrastrUtil;
+	}
+
 	/**
 	 * This method is used to forward the control to the jusersidiction page and for creation of
 	 * user If the user is to be given more levels of jurisdictions then the request is sent to the
 	 * same jursidiction page
-	 * @param ActionMapping mapping
-	 * @param ActionForm form
-	 * @param HttpServletRequest req
-	 * @param HttpServletResponse res
-	 * @return ActionForward
 	 */
 	@Override
 	public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest req, final HttpServletResponse res) throws Exception {
@@ -124,7 +124,6 @@ public class UserAction extends EgovAction {
 				session.removeAttribute("jurisdcnList");
 				user.setIsSuspended('N');
 				userService.createUser(user);
-				final EgovInfrastrUtil egovInfrastrUtil = new EgovInfrastrUtil();
 				egovInfrastrUtil.resetCache();
 				
 			} catch (final Exception e) {
@@ -234,7 +233,6 @@ public class UserAction extends EgovAction {
 				session.removeAttribute("jurisdcnList");
 				user.setIsSuspended('N');
 				userService.updateUser(user);
-				final EgovInfrastrUtil egovInfrastrUtil = new EgovInfrastrUtil();
 				egovInfrastrUtil.resetCache();
 			} catch (final Exception e) {
 				LOG.error("Exception occurred in User Update",e);

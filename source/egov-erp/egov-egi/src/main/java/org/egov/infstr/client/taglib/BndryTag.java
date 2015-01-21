@@ -3,18 +3,17 @@
  */
 package org.egov.infstr.client.taglib;
 
+import org.apache.log4j.Logger;
+import org.egov.infstr.utils.StringUtils;
+import org.egov.lib.admbndry.Boundary;
+import org.egov.lib.admbndry.BoundaryType;
+
+import javax.servlet.jsp.tagext.BodyTagSupport;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.servlet.jsp.tagext.BodyTagSupport;
-
-import org.apache.log4j.Logger;
-import org.egov.commons.utils.EgovInfrastrUtil;
-import org.egov.lib.admbndry.Boundary;
-import org.egov.lib.admbndry.BoundaryType;
 
 /**
  * @author Administrator 
@@ -87,7 +86,7 @@ public class BndryTag extends BodyTagSupport {
 			final Boundary bndry = (Boundary) itr.next();
 			final Set children = bndry.getChildren();
 			function.append("if(document.forms[0].adminBndry" + parentBndryID + ".options[document.forms[0].adminBndry" + parentBndryID + ".selectedIndex].text == \""
-					+ new EgovInfrastrUtil().encodingName(bndry.getName().trim()) + "\")\n");
+					+ StringUtils.encodeString(bndry.getName().trim()) + "\")\n");
 			function.append("{\n");
 			function.append("\tdocument.forms[0].adminBndry" + childBndryID + ".options[0] = new Option(\"" + "Choose" + "\",0,true,true);\n");
 			int j = 0;

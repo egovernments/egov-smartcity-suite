@@ -171,7 +171,6 @@ public class UserCounterMapAction extends DispatchAction {
 				List userCounterMapList = userCounterHibernateDAO.getTerminalBasedUserCounterMapForCurrentDate(Integer.valueOf(usercountermapform.getLocationId()));
 				req.setAttribute("userCounterMapList", userCounterMapList);
 			}
-			UserDAO userDAO = new UserDAO();
 			List userList = userDAO.getAllUserForRoles(EGovConfig.getProperty("INCLUDE_ROLES", "", "IP-BASED-LOGIN"), new java.util.Date());
 			
 			req.setAttribute("userList", userList);
@@ -203,7 +202,6 @@ public class UserCounterMapAction extends DispatchAction {
 			}
 			String buttonType = "showAll";
 			Location locationobj = (Location) locationHibernateDAO.findById(Integer.valueOf(usercountermapform.getLocationId()), false);
-			UserDAO userDAO = new UserDAO();
 			List userList = userDAO.getAllUserForRoles(EGovConfig.getProperty("INCLUDE_ROLES", "", "IP-BASED-LOGIN"), new java.util.Date());
 			
 			req.setAttribute("userList", userList);

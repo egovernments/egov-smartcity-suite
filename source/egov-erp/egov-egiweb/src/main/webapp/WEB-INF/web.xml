@@ -14,10 +14,10 @@
 		<param-name>parentContextKey</param-name>
 		<param-value>erpApplicationContext</param-value>
 	</context-param>
-	<context-param>
-		<param-name>spring.profiles.default</param-name>
-		<param-value>production</param-value>
-	</context-param>
+	<!--<context-param>-->
+		<!--<param-name>spring.profiles.default</param-name>-->
+		<!--<param-value>production</param-value>-->
+	<!--</context-param>-->
 	<filter>
 		<filter-name>CacheControlFilter</filter-name>
 		<filter-class>org.egov.infstr.client.filter.CacheControlFilter</filter-class>

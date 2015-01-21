@@ -122,7 +122,7 @@
   	
 		 
   		 <action path="/CreateRole"
-  				    type="org.egov.infstr.client.administration.rjbac.role.RoleAction" 
+  				    type="org.springframework.web.struts.DelegatingActionProxy"
   				    name="roleForm" 
   				    scope="session"
   				    validate="true"
@@ -218,7 +218,7 @@
 		       </action>
 			
 			<action path="/SubmitUser"
-				    type="org.egov.infstr.client.administration.rjbac.user.UserAction" 
+				    type="org.springframework.web.struts.DelegatingActionProxy"
 				    name="userForm" 
 				    scope="session"
 				    validate="true"
@@ -297,7 +297,7 @@
 			
 			
 			 <action path="/CreateHierarchy"
-				    type="org.egov.infstr.client.adminBoundry.HierarchyAction" 
+				    type="org.springframework.web.struts.DelegatingActionProxy"
 				    name="hierarchyForm" 
 				    scope="session"
 				    validate="true"

@@ -5,6 +5,7 @@
  */
 package org.egov.lib.rjbac.dept.ejb.server;
 
+import org.egov.EgovSpringContextHolder;
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.dept.dao.DepartmentDAO;
@@ -20,6 +21,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 	@Deprecated
 	public DepartmentServiceImpl() {
+		this(new DepartmentDAO(EgovSpringContextHolder.sessionFactory()));
 	}
 
 	public DepartmentServiceImpl(DepartmentDAO departmentDAO) {

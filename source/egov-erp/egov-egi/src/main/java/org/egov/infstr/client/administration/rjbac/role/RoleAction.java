@@ -5,12 +5,6 @@
  */
 package org.egov.infstr.client.administration.rjbac.role;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -20,11 +14,23 @@ import org.egov.infstr.client.EgovAction;
 import org.egov.lib.rjbac.role.Role;
 import org.egov.lib.rjbac.role.RoleImpl;
 import org.egov.lib.rjbac.role.ejb.api.RoleService;
-import org.egov.lib.rjbac.role.ejb.server.RoleServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 public class RoleAction extends EgovAction {
 	private static final Logger LOG = LoggerFactory.getLogger(RoleAction.class);
-	private final RoleService roleService = new RoleServiceImpl();
+	private final RoleService roleService;
+	private final EgovInfrastrUtil egovInfrastrUtil;
+
+	public RoleAction(RoleService roleService, EgovInfrastrUtil egovInfrastrUtil) {
+		this.roleService = roleService;
+		this.egovInfrastrUtil = egovInfrastrUtil;
+	}
+
 	/**
 	 * This method is used to get all the top boundaries and set the list in session Calls the setup method in 
 	 * EgovAction class that sets a list of all the departments in the session
@@ -56,7 +62,6 @@ public class RoleAction extends EgovAction {
 				target = "success";
 				roleForm.reset(mapping, req);
 				req.setAttribute("MESSAGE", "Role successfully created");
-				final EgovInfrastrUtil egovInfrastrUtil = new EgovInfrastrUtil();
 				egovInfrastrUtil.resetCache();
 			} catch (final Exception c) {
 				LOG.error("Error occurred while creating Role",c);
@@ -76,7 +81,6 @@ public class RoleAction extends EgovAction {
 				target = "success";
 				roleForm.reset(mapping, req);
 				req.setAttribute("MESSAGE", "Role successfully modified");
-				final EgovInfrastrUtil egovInfrastrUtil = new EgovInfrastrUtil();
 				egovInfrastrUtil.resetCache();
 			} catch (final Exception c) {
 				LOG.error("Error occurred while updating Role",c);
@@ -92,7 +96,6 @@ public class RoleAction extends EgovAction {
 				target = "success";
 				roleForm.reset(mapping, req);
 				req.setAttribute("MESSAGE", "Role successfully deleted");
-				final EgovInfrastrUtil egovInfrastrUtil = new EgovInfrastrUtil();
 				egovInfrastrUtil.resetCache();
 			} catch (final Exception c) {
 				LOG.error("Error occurred while deleting Role", c);

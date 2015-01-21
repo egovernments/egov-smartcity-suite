@@ -5,16 +5,6 @@
  */
 package org.egov.lib.rjbac.user;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.BoundaryFinder;
 import org.egov.lib.admbndry.BoundaryType;
@@ -24,6 +14,14 @@ import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
 import org.egov.lib.rjbac.jurisdiction.JurisdictionValues;
 import org.egov.lib.rjbac.role.Role;
 import org.egov.lib.rjbac.user.dao.UserDAO;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 public class UserImpl implements User {
 
@@ -244,7 +242,7 @@ public class UserImpl implements User {
 	}
 
 	public Set<Role> getValidRolesOnDate(Date onDate) {
-		return new UserDAO().getValidRoles(this.id, onDate);		
+		return new UserDAO().getValidRoles(this.id, onDate);
 	}
 
 	/**
