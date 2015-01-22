@@ -15,6 +15,7 @@ import org.egov.lib.rjbac.jurisdiction.JurisdictionValues;
 import org.egov.lib.rjbac.role.Role;
 import org.egov.lib.rjbac.user.dao.UserDAO;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -23,9 +24,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class UserImpl implements User {
+public class UserImpl implements User, Serializable {
 
-	private Integer id;
+    private static final long serialVersionUID = 2870751695666860068L;
+    
+    private Integer id;
 	private String title;
 	private String salutation;
 	private String firstName;
