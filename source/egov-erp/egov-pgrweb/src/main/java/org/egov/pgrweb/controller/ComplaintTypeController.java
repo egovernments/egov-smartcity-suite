@@ -2,6 +2,7 @@ package org.egov.pgrweb.controller;
 
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
+import org.egov.pgr.entity.ComplaintType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -17,6 +18,11 @@ public class ComplaintTypeController {
     @Autowired
     public ComplaintTypeController(DepartmentService departmentService) {
         this.departmentService = departmentService;
+    }
+
+    @ModelAttribute
+    public ComplaintType createOrRetrievecomplaintType() {
+        return new ComplaintType();
     }
 
     @ModelAttribute("departments")

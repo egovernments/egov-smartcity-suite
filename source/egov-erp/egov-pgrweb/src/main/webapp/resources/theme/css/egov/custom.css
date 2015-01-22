@@ -1,0 +1,201 @@
+/**
+	*
+	* Apply Here your Custom CSS
+	*
+*/
+* { padding: 0; margin: 0; }
+
+html, body
+{
+	height:100%;
+    width: 100%;
+}
+
+.page-container .sidebar-menu .logo-env > div.sidebar-collapse
+{
+	position:absolute;
+	top:30px;
+	right:20px;
+	z-index:100000;
+	
+}
+
+.page-container.sidebar-collapsed .sidebar-menu .logo-env > div.sidebar-collapse
+{
+	position:relative;
+	top:20px;
+	right:40px;
+}
+
+.page-container.sidebar-collapsed .sidebar-menu .logo-env
+{
+	display: block;
+    padding: 0px 20px 20px  20px;
+}
+
+.page-container .sidebar-menu .logo-env
+{
+	padding:0px;
+}
+
+@media (max-width: 767px)
+{
+	.page-container.horizontal-menu .navbar
+	{
+		display:block;
+	}
+}
+
+/*ul width overflowing left side*/
+.page-container.horizontal-menu header.navbar .navbar-nav > li ul li ul.left-ul-overflow {
+	position: absolute;
+	left: -100%;
+	top: -1px;
+}
+
+/*icon to right side*/
+.page-container.horizontal-menu header.navbar .navbar-nav > li .badge {
+	float: right;
+}
+
+.horizontal-page-title
+{
+	color:#fff;display:inline-block;
+}
+
+@media (max-width: 420px)
+{
+	.horizontal-page-title
+	{
+		font-size:17px;line-height:1.7;
+	}
+}
+
+.add-margin
+{
+	margin:3px 0;
+}
+
+.display-hide
+{
+	display:none;
+}
+
+.form-control:focus {
+	border:2px solid #c8cdd7;
+}
+
+.panel-primary > .panel-heading
+{
+	background-color:#ebebeb;
+}
+
+.form-horizontal .control-label
+{
+	color:#000;
+}
+
+tbody tr
+{
+	color:#303641;
+}
+
+table.dataTable tbody tr:hover
+{
+	background:#EAEAEA;
+	cursor:pointer;
+}
+
+.down-file
+{
+	text-decoration: underline;
+}
+
+.add-border
+{
+	border-bottom: 1px solid #ebebeb;
+}
+
+.title-bg
+{
+	background: #E1E3E7;
+	font-weight: bold;
+}
+
+@media (max-width: 990px)
+{
+	.dataTables_wrapper .dataTables_length,
+	.dataTables_wrapper .dataTables_filter {
+		border-top: 1px solid #ebebeb;
+		border-bottom: 1px solid #ebebeb;
+	}
+}
+
+.panel-group.joined > .panel > .panel-heading {
+	background-color: #ebebeb;
+}
+
+.panel-group.joined > .panel > .panel-heading + .panel-collapse {
+	background-color: #fff;
+}
+
+.has-error{
+	border-color: #ffafbd;
+}
+
+@media (max-width: 768px)
+{
+	table.dataTable{
+		display:block;
+	}
+	
+	table.dataTable > thead th{
+		position:absolute;
+		top:-9990px;
+		left:-9990px;
+	}
+	
+	.table-bordered > tbody > tr {
+		border-bottom:1px solid #ebebeb;
+	}
+	
+	.table-bordered > tbody > tr > td{
+		border:none;
+	}
+	
+	table.dataTable > thead, table.dataTable > thead > th, table.dataTable  > tbody  , table.dataTable > tbody > tr , table.dataTable > tbody > tr > td
+	{
+		display: block;
+	}
+	
+	
+}
+
+.dataTables_wrapper .export-data {
+ right: 0px; 
+}
+
+.input-group-addon
+{
+	border:none;
+}
+
+.img-width{
+	width: 260px; height: 180px;
+}
+
+.panel-body.custom-form {
+padding: 15px 0;
+}
+
+.form-horizontal .form-group {
+padding-left:15px;
+padding-right:15px;
+}
+
+.panel-heading.custom_form_panel_heading
+{
+background-color: #ebebeb;
+margin-top:10px;
+margin-bottom: 10px;
+}

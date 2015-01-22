@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta name="description" content="Neon Admin Panel" />
+		<meta name="author" content="" />
+		
+		<title>eGov Urban Portal</title>
+		
+		<link rel="stylesheet" href="../resources/js/jquery-ui/css/no-theme/jquery-ui.css">
+		<link rel="stylesheet" href="../resources/css/font-icons/entypo/css/entypo.css">
+		<link rel="stylesheet" href="../resources/css/bootstrap/bootstrap.css">
+		<link rel="stylesheet" href="../resources/css/neon/neon-core.css">
+		<link rel="stylesheet" href="../resources/css/neon/neon-theme.css">
+		<link rel="stylesheet" href="../resources/css/neon/neon-forms.css">
+		<link rel="stylesheet" href="../resources/css/egov/custom.css">
+		
+		<script src="../resources/js/jquery/jquery.js"></script>
+		<script src="resources/js/complaintype.js"></script>
+		
+		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
+		
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		
+	</head>
+	<body class="page-body" data-url="http://neon.dev">
+		
+		<div class="page-container horizontal-menu">
+			
+			<header class="navbar navbar-fixed-top"><!-- set fixed position by adding class "navbar-fixed-top" -->
+				
+				<div class="navbar-inner">
+					
+					<!-- logo -->
+					<div class="navbar-brand">
+						<a href="index.html">
+							<img src="../resources/images/logo@2x.png"  />
+						</a>
+					</div>
+					
+					<h2 class="horizontal-page-title">Add Complaint Type</h2>
+					
+					<!--main menu-->
+					<!-- notifications and other links -->
+					<ul class="nav navbar-right pull-right">
+						<!-- raw links >
+							<li class="dropdown">
+							<li>
+							<a href="#">Live Site</a>
+							</li>
+							</li>
+							
+							<li class="sep"></li>
+							
+							<li>
+							<a href="extra-login.html">
+							Log Out <i class="entypo-logout right"></i>
+							</a>
+						</li-->
+						
+						
+						
+					</ul>
+					
+				</div>
+				
+			</header>
+			
+			<div class="main-content">
+				
+				<div class="row" id="page-content">
+					<div class="col-md-12">
+						
+						<div class="panel" data-collapsed="0">
+							
+							<div class="panel-body">
+								
+								<form action="javascript:void(0);" id="addcomplaint" method="post" class="form-horizontal form-groups-bordered">
+									
+									<div class="form-group">
+										<label for="field-1" class="col-sm-3 control-label">Complaint Type</label>
+										
+										<div class="col-sm-6 add-margin">
+											<input type="text" class="form-control" id="comp_type_name" placeholder="" name="comp_type_name" >
+										</div>
+										
+									</div>
+									
+									<div class="form-group">
+										<label for="field-1" class="col-sm-3 control-label">Department</label>
+										
+										<div class="col-sm-6 add-margin">
+											<select name="comp_type_dept" id="comp_type_dept" class="form-control">
+												<option value="">Select</option>
+												<option value="1">AED</option>
+												<option value="2">Mayor</option>
+											</select>
+										</div>
+										
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Number of days to resolve</label>
+										
+										<div class="col-sm-6 add-margin">
+											<input type="text" class="form-control" id="comp_type_nod" placeholder="" maxlength="2" name="comp_type_nod" >
+										</div>
+										
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Is location required</label>
+										
+										<div class="col-sm-6">
+											
+											<input type="radio" id="comp_type_loc_yes" name="comp_type_loc" value="yes">
+											<label >Yes</label>
+											
+											<input type="radio" id="comp_type_loc_yno" name="comp_type_loc" value="no" >
+											<label>No</label>    
+										</div>
+										
+									</div>
+									
+									<div class="form-group">
+										<div class="text-center">
+											<button type="submit" class="btn btn-success">Submit</button>
+											<button class="btn btn-default" type="reset">Reset</button>
+										</div>
+									</div>
+									
+								</form>
+								
+							</div>
+							
+						</div>
+						
+					</div>
+				</div>
+				
+				<footer class="main">
+					
+					powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
+					
+				</footer>
+				
+			</div>
+			
+			
+			
+		</div>
+		
+		
+		<!-- Bottom scripts (common) -->
+		<script src="../resources/js/gsap/main-gsap.js"></script>
+		<script src="../resources/js/jquery-ui/js/jquery-ui.js"></script>
+		<script src="../resources/js/bootstrap/bootstrap.js"></script>
+		<script src="../resources/js/neon/joinable.js"></script>
+		<script src="../resources/js/neon/resizeable.js"></script>
+		<script src="../resources/js/neon/neon-api.js"></script>
+		
+		
+		<script src="../resources/js/jquery/jquery.inputmask.bundle.min.js"></script>
+		
+		<!-- JavaScripts initializations and stuff -->
+		<script src="../resources/js/neon/neon-custom.js"></script>
+		<script src="../resources/js/jquery/jquery.validate.min.js"></script>
+		
+	</body>
+</html>

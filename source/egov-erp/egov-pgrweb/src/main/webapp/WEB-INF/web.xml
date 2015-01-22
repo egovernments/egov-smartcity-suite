@@ -23,6 +23,22 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
+    <filter>
+        <filter-name>hibernateSession</filter-name>
+        <filter-class>
+            org.springframework.orm.hibernate4.support.OpenSessionInViewFilter
+        </filter-class>
+        <init-param>
+            <param-name>sessionFactoryBeanName</param-name>
+            <param-value>sessionFactory</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>hibernateSession</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <!-- Processes application requests -->
     <servlet>
         <servlet-name>pgrweb</servlet-name>
