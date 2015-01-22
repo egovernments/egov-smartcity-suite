@@ -53,6 +53,7 @@ import java.util.Map;
  * it has to have a no-argument constructor. You can call <tt>getInterceptor()</tt> if you need to provide settings before using the interceptor.
  * <p>
  */
+@Deprecated
 public class HibernateUtil {
 
 	private static final Logger LOG = LoggerFactory.getLogger(HibernateUtil.class);
