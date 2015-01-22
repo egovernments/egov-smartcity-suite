@@ -1,7 +1,7 @@
 package org.egov.pgrweb.controller;
 
+import org.egov.builder.entities.DepartmentBuilder;
 import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
 import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -37,10 +37,8 @@ public class ComplaintTypeControllerTest extends AbstractContextControllerTest<C
 
     @Test
     public void shouldAddDepartmentsAsModelAttribute() throws Exception {
-        DepartmentImpl department1 = new DepartmentImpl();
-        department1.setDeptName("dep1");
-        DepartmentImpl department2 = new DepartmentImpl();
-        department2.setDeptName("dep2");
+        Department department1 = new DepartmentBuilder().withName("dep1").build();
+        Department department2 = new DepartmentBuilder().withName("dep2").build();
 
         List<Department> departments = Arrays.asList(department1, department2);
         when(departmentService.getAllDepartments()).thenReturn(departments);
