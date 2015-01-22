@@ -6,28 +6,37 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-        <property name="dataSource" ref="dataSource"/>
-        <property name="configLocations" value="classpath*:hibernate.cfg.xml"/>
-        <property name="mappingLocations" value="classpath*:org/egov/**/*.hbm.xml"/>
-        <property name="packagesToScan" value="org.egov"/>
-    </bean>
-
     <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
         <constructor-arg ref="sessionFactory"/>
     </bean>
 
     <tx:annotation-driven/>
 
-<!--
     <beans profile="test">
+        <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+            <property name="dataSource" ref="dataSource"/>
+            <property name="configLocations" value="classpath*:test-hibernate.cfg.xml"/>
+            <property name="mappingLocations" value="classpath*:org/egov/**/*.hbm.xml"/>
+            <property name="packagesToScan" value="org.egov"/>
+        </bean>
+
+
         <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
             <property name="driverClassName" value="org.postgresql.Driver"/>
             <property name="url" value="jdbc:postgresql://localhost:5432/postgres"/>
             <property name="initialSize" value="1"/>
         </bean>
     </beans>
--->
 
-    <jee:jndi-lookup id="dataSource" jndi-name="java:/ezgovDatabasePool" expected-type="javax.sql.DataSource"/>
+    <beans profile="production">
+        <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+            <property name="dataSource" ref="dataSource"/>
+            <property name="configLocations" value="classpath*:hibernate.cfg.xml"/>
+            <property name="mappingLocations" value="classpath*:org/egov/**/*.hbm.xml"/>
+            <property name="packagesToScan" value="org.egov"/>
+        </bean>
+
+
+        <jee:jndi-lookup id="dataSource" jndi-name="java:/ezgovDatabasePool" expected-type="javax.sql.DataSource"/>
+    </beans>
 </beans>
