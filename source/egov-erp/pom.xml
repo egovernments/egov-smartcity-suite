@@ -717,4 +717,9 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>db</id>
+        </profile>
+    </profiles>
 </project>
