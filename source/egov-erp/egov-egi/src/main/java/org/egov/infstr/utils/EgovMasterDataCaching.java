@@ -5,9 +5,18 @@
  */
 package org.egov.infstr.utils;
 
-import static org.egov.infstr.utils.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import org.egov.EgovSpringContextHolder;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.infinispan.manager.EmbeddedCacheManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -16,16 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.hibernate.Query;
-import org.infinispan.manager.EmbeddedCacheManager;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.infstr.utils.StringUtils.EMPTY;
 
 public class EgovMasterDataCaching {
 
@@ -327,13 +328,17 @@ public class EgovMasterDataCaching {
 		List list = null;
 
 		try {
-			final Query qry = HibernateUtil.getCurrentSession().createQuery(query);
+			final Query qry = getCurrentSession().createQuery(query);
 			list = qry.list();
 		} catch (final Exception e) {
 			LOGGER.error("Error occurred in EgovMasterDataCaching queryByHibernate", e);
 			throw new EGOVRuntimeException("Error occurred in EgovMasterDataCaching queryByHibernate", e);
 		}
 		return list;
+	}
+
+	private Session getCurrentSession() {
+		return EgovSpringContextHolder.sessionFactory().getCurrentSession();
 	}
 
 	/**
@@ -347,7 +352,7 @@ public class EgovMasterDataCaching {
 		List resultlist = null;
 		List returnList = null;
 		try {
-			resultlist = HibernateUtil.getCurrentSession().createSQLQuery(query).list();
+			resultlist = getCurrentSession().createSQLQuery(query).list();
 			if (resultlist != null) {
 				returnList = resultSetToArrayList(resultlist);
 			}
