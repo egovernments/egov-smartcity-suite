@@ -10,6 +10,19 @@
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
+    <beans>
+        <bean id="messageSource"
+              class="org.springframework.context.support.ResourceBundleMessageSource">
+            <property name="parentMessageSource" ref="parentMessageSource" />
+            <property name="basenames">
+                <list>
+                    <value>config/messages/labels</value>
+                    <value>config/messages/errors</value>
+                </list>
+            </property>
+        </bean>
+    </beans>
+
     <!--<import resource="classpath*:applicationContext-pgr.xml"/>-->
 
 </beans>

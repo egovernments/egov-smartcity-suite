@@ -17,6 +17,7 @@
     <bean name="erpApplicationContext" class="org.springframework.context.support.ClassPathXmlApplicationContext">
         <constructor-arg>
             <list>
+                <value>config/spring/applicationContext-messages.xml</value>
                 <value>config/spring/applicationContext-hibernate.xml</value>
                 <value>classpath*:config/spring/applicationContext-egi.xml</value>
                 <value>config/spring/applicationContext-security.xml</value>
