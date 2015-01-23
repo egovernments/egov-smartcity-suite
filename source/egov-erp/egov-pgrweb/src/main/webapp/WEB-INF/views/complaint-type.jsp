@@ -37,8 +37,7 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Number of days to resolve</label>
                         <div class="col-sm-6 add-margin">
-                            <input type="text" class="form-control" id="comp_type_nod" placeholder="" maxlength="2"
-                                   name="comp_type_nod">
+                            <form:input path="daysToResolve" type="text" class="form-control" id="comp_type_nod" placeholder="" maxlength="2"/>
                         </div>
                     </div>
 
@@ -46,9 +45,9 @@
                         <label class="col-sm-3 control-label">Is location required</label>
 
                         <div class="col-sm-6">
-                            <input type="radio" id="comp_type_loc_yes" name="comp_type_loc" value="yes">
+                            <form:radiobutton path="locationRequired" id="comp_type_loc_yes" value="yes" />
                             <label>Yes</label>
-                            <input type="radio" id="comp_type_loc_yno" name="comp_type_loc" value="no">
+                            <form:radiobutton path="locationRequired" id="comp_type_loc_yno"  value="no" />
                             <label>No</label>
                         </div>
                     </div>

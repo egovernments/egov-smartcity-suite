@@ -1,8 +1,8 @@
 package org.egov.pgr.service;
 
-import java.util.List;
-
 import org.egov.pgr.entity.ComplaintType;
+
+import java.util.List;
 
 public interface ComplaintTypeService {
 
@@ -10,4 +10,6 @@ public interface ComplaintTypeService {
 	List<ComplaintType> getAllComplaintTypeByNameLike(String nameLike);
 	ComplaintType getComplaintTypeById(Long id);
 	List<ComplaintType> getAllComplaintTypeByDepartment(Long id);
+
+	void createComplaintType(ComplaintType  complaintType);
 }

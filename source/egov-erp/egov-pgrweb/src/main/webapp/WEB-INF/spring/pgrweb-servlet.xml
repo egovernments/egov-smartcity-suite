@@ -8,11 +8,20 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!-- Enables the Spring MVC @Controller programming model -->
-    <mvc:annotation-driven enable-matrix-variables="true"/>
+    <mvc:annotation-driven enable-matrix-variables="true" conversion-service="conversionService"/>
 
     <!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources/ directory -->
     <mvc:resources mapping="/resources/**" location="/resources/"/>
+
+
+    <bean id="conversionService"
+          class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="formatters">
+            <set>
+                <ref bean="departmentFormatter"/>
+            </set>
+        </property>
+    </bean>
 
     <bean id="viewResolver" class="org.springframework.web.servlet.view.tiles3.TilesViewResolver"/>
 
@@ -25,6 +34,6 @@
     </bean>
 
     <!-- Imports user-defined @Controller beans that process client requests -->
-    <context:component-scan base-package="org.egov.pgrweb.controller" />
+    <context:component-scan base-package="org.egov.pgrweb.controller"/>
 
 </beans>

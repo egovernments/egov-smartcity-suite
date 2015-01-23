@@ -32,7 +32,7 @@ public abstract class AbstractPersistable<PK extends Serializable> implements Se
     }
 
     public boolean isNew() {
-	return null == getId();
+	    return null == getId();
     }
 
     @Override

@@ -16,6 +16,11 @@ public class DepartmentBuilder {
         return this;
     }
 
+    public DepartmentBuilder withCode(String code) {
+        department.setDeptCode(code);
+        return this;
+    }
+
     public Department build() {
         return department;
     }

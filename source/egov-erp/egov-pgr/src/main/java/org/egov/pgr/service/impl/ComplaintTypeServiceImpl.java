@@ -41,4 +41,9 @@ public class ComplaintTypeServiceImpl implements ComplaintTypeService {
 	public List<ComplaintType> getAllComplaintTypeByDepartment(Long id) {
 		return complaintTypeRepository.findByDepartmentId(id);
 	}
+
+	@Override
+	public void createComplaintType(ComplaintType complaintType) {
+
+	}
 }

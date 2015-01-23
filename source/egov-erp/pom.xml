@@ -107,6 +107,12 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>javax.el</artifactId>
+                <version>3.0.1-b05</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>javax.mail</groupId>
                 <artifactId>javax.mail-api</artifactId>
                 <version>1.5.1</version>
@@ -499,7 +505,11 @@
                 <artifactId>joda-time</artifactId>
                 <version>2.6</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.jsoup</groupId>
+                <artifactId>jsoup</artifactId>
+                <version>1.7.3</version>
+            </dependency>
             <!-- MISC END -->
 
             <!-- TESTING START -->
