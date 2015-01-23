@@ -1,14 +1,5 @@
 package org.egov.pgr.service.impl;
 
-import static org.egov.pgr.utils.constants.CommonConstants.DASH_DELIM;
-import static org.egov.pgr.utils.constants.CommonConstants.MODULE_NAME;
-
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.lang.RandomStringUtils;
 import org.egov.lib.rjbac.user.User;
 import org.egov.pgr.entity.Complaint;
@@ -24,24 +15,30 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import java.util.Date;
+import java.util.List;
+
+import static org.egov.pgr.utils.constants.CommonConstants.DASH_DELIM;
+import static org.egov.pgr.utils.constants.CommonConstants.MODULE_NAME;
+
 @Service
 @Transactional(readOnly = true)
 public class ComplaintServiceImpl implements ComplaintService {
 
-	@Autowired
+//	@Autowired
 	ComplaintRepository complaintRepository;
 
-	@Autowired
+//	@Autowired
 	private SecurityUtils securityUtils;
 
-	@PersistenceContext
+//	@PersistenceContext
 	private EntityManager entityManager;
 
 	@Override

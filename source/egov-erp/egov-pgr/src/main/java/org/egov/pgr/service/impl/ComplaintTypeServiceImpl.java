@@ -3,9 +3,6 @@ package org.egov.pgr.service.impl;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.repository.ComplaintTypeRepository;
 import org.egov.pgr.service.ComplaintTypeService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,14 +14,18 @@ public class ComplaintTypeServiceImpl implements ComplaintTypeService {
 
 	private ComplaintTypeRepository complaintTypeRepository;
 
-	@Autowired
+	public ComplaintTypeServiceImpl() {
+	}
+
+	//	@Autowired
 	public ComplaintTypeServiceImpl(ComplaintTypeRepository complaintTypeRepository) {
 		this.complaintTypeRepository = complaintTypeRepository;
 	}
 
 	@Override
 	public List<ComplaintType> getAllComplaintTypes() {
-		return complaintTypeRepository.findAll(new Sort(Direction.ASC, "name"));
+		return null;
+//		return complaintTypeRepository.findAll(new Sort(Direction.ASC, "name"));
 	}
 
 	@Override
@@ -34,7 +35,8 @@ public class ComplaintTypeServiceImpl implements ComplaintTypeService {
 
 	@Override
 	public ComplaintType getComplaintTypeById(Long id) {
-		return complaintTypeRepository.findOne(id);
+		return null;
+//		return complaintTypeRepository.findOne(id);
 	}
 
 	@Override

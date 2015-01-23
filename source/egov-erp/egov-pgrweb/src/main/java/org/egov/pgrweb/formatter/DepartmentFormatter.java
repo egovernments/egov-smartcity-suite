@@ -2,6 +2,7 @@ package org.egov.pgrweb.formatter;
 
 import org.egov.lib.rjbac.dept.DepartmentImpl;
 import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.Formatter;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,7 @@ public class DepartmentFormatter implements Formatter<DepartmentImpl> {
 
     private DepartmentService departmentService;
 
+    @Autowired
     public DepartmentFormatter(DepartmentService departmentService) {
         this.departmentService = departmentService;
     }

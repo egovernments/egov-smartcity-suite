@@ -2,10 +2,9 @@ package org.egov.pgr.repository;
 
 import org.egov.pgr.entity.ReceivingCenter;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-@Repository
+//@Repository
 @Transactional(readOnly = true)
 public interface ReceivingCenterRepository extends JpaRepository<ReceivingCenter, Long>{
 

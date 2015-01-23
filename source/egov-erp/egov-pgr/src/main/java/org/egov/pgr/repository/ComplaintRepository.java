@@ -5,9 +5,8 @@ import org.egov.pgr.entity.Complaint;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
+//@Repository
 public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
 
 	Page<Complaint> findByCreatedBy(User createdBy, Pageable pageable);

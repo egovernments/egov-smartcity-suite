@@ -14,7 +14,8 @@
         </div>
 
         <h2 class="horizontal-page-title">
-            <tiles:insertAttribute name="page-title"/>
+            <%--<tiles:insertAttribute name="page-title"/>--%>
+            Add Complaint Type
         </h2>
 
     </div>

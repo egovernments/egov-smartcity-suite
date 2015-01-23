@@ -7,6 +7,7 @@
     <definition name="base_layout"
                 template="/WEB-INF/views/template/index.jsp">
         <put-attribute name="title" value="eGov Urban Portal"/>
+        <put-attribute name="page-title" value=""/>
         <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
         <put-attribute name="body" value=""/>
         <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
