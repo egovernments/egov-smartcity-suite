@@ -53,7 +53,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-3 control-label"><spring:message code="lbl.complaintType.nod"/></label>
+                        <label class="col-sm-3 control-label"><spring:message code="lbl.complaintType.loc"/></label>
 
                         <div class="col-sm-6">
                             <form:radiobutton path="locationRequired" id="comp_type_loc_yes" value="yes"/>

@@ -10,6 +10,6 @@
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
-    <import resource="classpath*:applicationContext-pgr.xml"/>
+    <import resource="classpath*:config/spring/applicationContext-pgr.xml"/>
 
 </beans>

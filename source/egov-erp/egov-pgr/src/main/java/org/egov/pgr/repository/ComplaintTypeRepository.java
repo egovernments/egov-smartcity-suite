@@ -1,13 +1,15 @@
 package org.egov.pgr.repository;
 
 import org.egov.pgr.entity.ComplaintType;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
+@Repository
+public class ComplaintTypeRepository extends HibernateRepository<ComplaintType> {
 
-//@Repository
-public interface ComplaintTypeRepository {
-
-    List<ComplaintType> findByNameContainingIgnoreCaseOrderByNameAsc(String name);
-
-    List<ComplaintType> findByDepartmentId(Long id);
+    @Autowired
+    public ComplaintTypeRepository(SessionFactory sessionFactory) {
+        super(sessionFactory, ComplaintType.class);
+    }
 }
