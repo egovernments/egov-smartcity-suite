@@ -1,6 +1,7 @@
 package org.egov;
 
 import org.egov.infstr.workflow.CustomizedWorkFlowService;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 @ActiveProfiles("test")
 @Transactional(readOnly = true)
 @TransactionConfiguration
+@Ignore
 public class EgiContextTest {
 
     @Autowired
