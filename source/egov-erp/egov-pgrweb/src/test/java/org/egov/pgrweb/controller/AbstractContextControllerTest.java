@@ -2,13 +2,13 @@ package org.egov.pgrweb.controller;
 
 import org.apache.tiles.request.render.StringRenderer;
 import org.junit.Before;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder;
 import org.springframework.web.servlet.view.tiles3.TilesViewResolver;
 
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 public abstract class AbstractContextControllerTest<T> {
-    protected MockMvc mockMvc;
+    protected StandaloneMockMvcBuilder mvcBuilder;
     protected T controller;
 
     @Before
@@ -17,9 +17,9 @@ public abstract class AbstractContextControllerTest<T> {
 
         TilesViewResolver tilesViewResolver = new TilesViewResolver();
         tilesViewResolver.setRenderer(new StringRenderer());
-        this.mockMvc = standaloneSetup(controller)
-                .setViewResolvers(tilesViewResolver)
-                .build();
+
+        mvcBuilder = standaloneSetup(controller)
+                .setViewResolvers(tilesViewResolver);
 
     }
 

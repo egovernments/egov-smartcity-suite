@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -43,12 +44,14 @@ public class ComplaintTypeController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String createComplaintType(@Valid @ModelAttribute ComplaintType complaintType, BindingResult errors) {
+    public String createComplaintType(@Valid @ModelAttribute ComplaintType complaintType, BindingResult errors, RedirectAttributes redirectAttrs) {
         if(errors.hasErrors()) {
             return "complaint-type";
         }
 
         complaintTypeService.createComplaintType(complaintType);
+        redirectAttrs.addFlashAttribute("message", "Successfully created Complaint Type !");
+
         return "redirect:/complaint-type";
     }
 }

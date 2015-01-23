@@ -5251,7 +5251,7 @@ a:hover {
 canvas + .knob {
   visibility: visible;
 }
-.validate-has-error {
+. validate-has-error {
   border-color: #cc2424;
 }
 .validate-has-error:focus {

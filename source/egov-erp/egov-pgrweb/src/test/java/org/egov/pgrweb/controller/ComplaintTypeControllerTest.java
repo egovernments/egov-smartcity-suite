@@ -5,9 +5,13 @@ import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.service.ComplaintTypeService;
+import org.egov.pgrweb.formatter.DepartmentFormatter;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.springframework.format.support.FormattingConversionService;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,14 +19,11 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 
 public class ComplaintTypeControllerTest extends AbstractContextControllerTest<ComplaintTypeController> {
 
@@ -30,12 +31,24 @@ public class ComplaintTypeControllerTest extends AbstractContextControllerTest<C
     private DepartmentService departmentService;
     @Mock
     private ComplaintTypeService complaintTypeService;
+    private MockMvc mockMvc;
 
     @Override
     protected ComplaintTypeController initController() {
         initMocks(this);
 
         return new ComplaintTypeController(departmentService, complaintTypeService);
+    }
+
+    @Before
+    public void before() {
+        FormattingConversionService conversionService = new FormattingConversionService();
+        conversionService.addFormatter(new DepartmentFormatter(departmentService));
+        mvcBuilder.setConversionService(conversionService);
+        mockMvc = mvcBuilder.build();
+
+        Department department = new DepartmentBuilder().withCode("DC").build();
+        when(departmentService.getDepartmentByCode(anyString())).thenReturn(department);
     }
 
     @Test
@@ -64,7 +77,8 @@ public class ComplaintTypeControllerTest extends AbstractContextControllerTest<C
     @Test
     public void shouldCreateNewComplaintType() throws Exception {
         this.mockMvc.perform(post("/complaint-type")
-                .param("name", "new-complaint-type"))
+                .param("name", "new-complaint-type")
+                .param("department", "DC"))
                 .andExpect(model().hasNoErrors())
                 .andExpect(redirectedUrl("/complaint-type"));
 
@@ -81,6 +95,7 @@ public class ComplaintTypeControllerTest extends AbstractContextControllerTest<C
         this.mockMvc.perform(post("/complaint-type"))
                 .andExpect(model().hasErrors())
                 .andExpect(model().attributeHasFieldErrors("complaintType", "name"))
+                .andExpect(model().attributeHasFieldErrors("complaintType", "department"))
                 .andExpect(view().name("complaint-type"));
 
         verify(complaintTypeService, never()).createComplaintType(any(ComplaintType.class));

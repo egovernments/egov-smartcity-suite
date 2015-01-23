@@ -143,6 +143,13 @@ table.dataTable tbody tr:hover
 	border-color: #ffafbd;
 }
 
+.error{
+	border-color: red;
+}
+.error-msg{
+	color:rgb(255, 0, 0);
+}
+
 @media (max-width: 768px)
 {
 	table.dataTable{

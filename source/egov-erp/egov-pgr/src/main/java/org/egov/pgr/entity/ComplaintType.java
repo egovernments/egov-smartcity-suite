@@ -10,31 +10,23 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Digits;
-import java.math.BigDecimal;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "pgr_complainttype", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
 public class ComplaintType extends AbstractPersistable<Long> {
-
     private static final long serialVersionUID = 8904645810221559541L;
 
-    @NotBlank(message = "{error-not-empty}")
-    @Length(min = 1, max = 150, message = "{error-min-max-length-exceed}")
-    @SafeHtml(message = "{error-input-unsafe}")
-//    @NaturalId
+    @NotBlank
+    @Length(max = 150)
+    @SafeHtml
     private String name;
 
-    @Length(max = 200, message = "{error-max-length-exceed}")
-    @SafeHtml(message = "{error-input-unsafe}")
-    private String description;
-
     @ManyToOne
-//    @Valid
+    @Valid
+    @NotNull
     private DepartmentImpl department;
-
-    @Digits(fraction = 2, message = "{error-not-valid}", integer = 9)
-    private BigDecimal amount;
 
     private boolean locationRequired;
 
@@ -48,28 +40,12 @@ public class ComplaintType extends AbstractPersistable<Long> {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(final String description) {
-        this.description = description;
-    }
-
     public DepartmentImpl getDepartment() {
         return department;
     }
 
     public void setDepartment(final DepartmentImpl department) {
         this.department = department;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(final BigDecimal amount) {
-        this.amount = amount;
     }
 
     public boolean isLocationRequired() {

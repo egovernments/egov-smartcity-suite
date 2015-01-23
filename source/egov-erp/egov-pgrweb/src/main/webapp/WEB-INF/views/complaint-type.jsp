@@ -9,53 +9,64 @@
     <div class="col-md-12">
         <div class="panel" data-collapsed="0">
             <div class="panel-body">
-                <form:form action="javascript:void(0);" id="addcomplaint" method="post"
-                      class="form-horizontal form-groups-bordered" modelAttribute="complaintType">
+                <c:if test="${not empty message}">
+                    <div id="message" class="success">${message}</div>
+                </c:if>
+
+                <form:form id="addcomplaint" method="post"
+                           class="form-horizontal form-groups-bordered" modelAttribute="complaintType">
 
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Complaint Type</label>
+                        <label class="col-sm-3 control-label">
+                            <spring:message code="lbl.complaintType"/>
+                        </label>
 
                         <div class="col-sm-6 add-margin">
-                            <input type="text" class="form-control" id="comp_type_name" placeholder=""
-                                   name="comp_type_name">
+                            <form:input path="name" id="comp_type_name" cssClass="form-control" cssErrorClass="form-control error"/>
+                            <form:errors path="name" cssClass="error-msg"/>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Department</label>
+                        <label class="col-sm-3 control-label">
+                            <spring:message code="lbl.department"/>
+                        </label>
 
                         <div class="col-sm-6 add-margin">
                             <form:select path="department"
-                                         id="comp_type_dept" class="form-control">
-                                <form:option value=""> Select </form:option>
+                                         id="comp_type_dept" cssClass="form-control" cssErrorClass="form-control error">
+                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
                                 <form:options items="${departments}" itemValue="deptCode" itemLabel="deptName"/>
                             </form:select>
+                            <form:errors path="department" cssClass="error-msg"/>
                         </div>
 
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Number of days to resolve</label>
+                        <label class="col-sm-3 control-label"><spring:message code="lbl.complaintType.nod"/></label>
+
                         <div class="col-sm-6 add-margin">
-                            <form:input path="daysToResolve" type="text" class="form-control" id="comp_type_nod" placeholder="" maxlength="2"/>
+                            <form:input path="daysToResolve" type="text" class="form-control" id="comp_type_nod"
+                                        placeholder="" maxlength="2"/>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Is location required</label>
+                        <label class="col-sm-3 control-label"><spring:message code="lbl.complaintType.nod"/></label>
 
                         <div class="col-sm-6">
-                            <form:radiobutton path="locationRequired" id="comp_type_loc_yes" value="yes" />
+                            <form:radiobutton path="locationRequired" id="comp_type_loc_yes" value="yes"/>
                             <label>Yes</label>
-                            <form:radiobutton path="locationRequired" id="comp_type_loc_yno"  value="no" />
+                            <form:radiobutton path="locationRequired" id="comp_type_loc_yno" value="no"/>
                             <label>No</label>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <div class="text-center">
-                            <button type="submit" class="btn btn-success">Submit</button>
-                            <button class="btn btn-default" type="reset">Reset</button>
+                            <button type="submit" class="btn btn-success"><spring:message code="lbl.submit"/></button>
+                            <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
                         </div>
                     </div>
                 </form:form>
