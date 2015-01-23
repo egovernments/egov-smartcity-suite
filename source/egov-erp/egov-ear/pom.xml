@@ -91,6 +91,7 @@
                 <artifactId>maven-ear-plugin</artifactId>
                 <version>2.10</version>
                 <configuration>
+                	<version>6</version>
                     <modules>
                         <webModule>
                             <groupId>org.egov</groupId>
