@@ -11,6 +11,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
@@ -18,8 +20,13 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "pgr_complainttype", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
+@NamedQueries({
+        @NamedQuery(name= ComplaintType.QRY_ALL_COMPLAINT_TYPES, query = "from ComplaintType")
+})
 public class ComplaintType extends AbstractPersistable<Long> {
     private static final long serialVersionUID = 8904645810221559541L;
+    
+    public static final String QRY_ALL_COMPLAINT_TYPES = "ALL_COMPLAINT_TYPES";
 
     @NotBlank
     @SafeHtml

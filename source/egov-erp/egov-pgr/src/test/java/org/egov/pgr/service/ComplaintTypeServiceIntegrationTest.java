@@ -63,4 +63,29 @@ public class ComplaintTypeServiceIntegrationTest extends PGRAbstractSpringIntegr
         assertEquals(complaintType.getName(), existingComplaintType.getName());
         assertEquals(complaintType.getDepartment(), existingComplaintType.getDepartment());
     }
+
+
+    @Test
+    public void shouldLoadAllComplaintTypes() {
+        Department department = departmentService.getDepartmentByCode("NB");
+
+        ComplaintType complaintType1 = new ComplaintTypeBuilder().withName("ctype1").withDepartment(department).build();
+        ComplaintType complaintType2 = new ComplaintTypeBuilder().withName("ctype2").withDepartment(department).build();
+        ComplaintType complaintType3 = new ComplaintTypeBuilder().withName("ctype3").withDepartment(department).build();
+
+        complaintTypeService.createComplaintType(complaintType1);
+        complaintTypeService.createComplaintType(complaintType2);
+        complaintTypeService.createComplaintType(complaintType3);
+
+        List<ComplaintType> complaintTypes = complaintTypeService.findAll();
+
+        assertTrue(complaintTypes.size() > 3);
+        assertTrue(collectionContains(complaintTypes, "ctype1"));
+        assertTrue(collectionContains(complaintTypes, "ctype2"));
+        assertTrue(collectionContains(complaintTypes, "ctype3"));
+    }
+
+    private boolean collectionContains(List<ComplaintType> complaintTypes, String name) {
+        return complaintTypes.stream().anyMatch(complaintType -> complaintType.getName().equals(name));
+    }
 }

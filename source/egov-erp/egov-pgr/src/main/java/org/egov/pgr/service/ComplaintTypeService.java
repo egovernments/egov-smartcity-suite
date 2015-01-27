@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class ComplaintTypeService {
@@ -27,5 +29,9 @@ public class ComplaintTypeService {
 
     public void updateComplaintType(ComplaintType complaintType) {
         complaintTypeRepository.save(complaintType);
+    }
+
+    public List<ComplaintType> findAll() {
+        return complaintTypeRepository.query(ComplaintType.QRY_ALL_COMPLAINT_TYPES).list();
     }
 }
