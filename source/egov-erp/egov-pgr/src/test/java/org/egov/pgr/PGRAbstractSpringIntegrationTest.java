@@ -1,4 +1,4 @@
-package org.egov.pgr.service;
+package org.egov.pgr;
 
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ActiveProfiles;

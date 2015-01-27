@@ -22,9 +22,9 @@ public class ComplaintType extends AbstractPersistable<Long> {
     private static final long serialVersionUID = 8904645810221559541L;
 
     @NotBlank
-    @Length(max = 150)
     @SafeHtml
     @Column(name = "name")
+    @Length(max = 150)
     private String name;
 
     @Valid

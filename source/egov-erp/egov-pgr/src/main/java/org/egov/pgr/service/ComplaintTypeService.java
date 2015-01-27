@@ -17,7 +17,15 @@ public class ComplaintTypeService {
         this.complaintTypeRepository = complaintTypeRepository;
     }
 
+    public ComplaintType findBy(Long complaintId) {
+        return complaintTypeRepository.get(complaintId);
+    }
+
     public void createComplaintType(ComplaintType complaintType) {
         complaintTypeRepository.create(complaintType);
+    }
+
+    public void updateComplaintType(ComplaintType complaintType) {
+        complaintTypeRepository.save(complaintType);
     }
 }

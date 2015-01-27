@@ -47,8 +47,9 @@
                         <label class="col-sm-3 control-label"><spring:message code="lbl.complaintType.nod"/></label>
 
                         <div class="col-sm-6 add-margin">
-                            <form:input path="daysToResolve" type="text" class="form-control" id="comp_type_nod"
+                            <form:input path="daysToResolve" type="text" class="form-control" cssErrorClass="form-control error" id="comp_type_nod"
                                         placeholder="" maxlength="2"/>
+                            <form:errors path="daysToResolve" cssClass="error-msg"/>
                         </div>
                     </div>
 
