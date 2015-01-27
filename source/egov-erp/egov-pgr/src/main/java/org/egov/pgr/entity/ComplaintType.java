@@ -4,9 +4,12 @@ import org.egov.infra.persistence.AbstractPersistable;
 import org.egov.lib.rjbac.dept.DepartmentImpl;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.Range;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -19,17 +22,22 @@ public class ComplaintType extends AbstractPersistable<Long> {
     private static final long serialVersionUID = 8904645810221559541L;
 
     @NotBlank
-    @Length(max = 150)
     @SafeHtml
+    @Column(name = "name")
+    @Length(max = 150)
     private String name;
 
-    @ManyToOne
     @Valid
     @NotNull
+    @ManyToOne
+    @JoinColumn(name = "dept_id")
     private DepartmentImpl department;
 
+    @Column(name = "location_required")
     private boolean locationRequired;
 
+    @Column(name = "days_to_resolve")
+    @Range(max = 99)
     private int daysToResolve;
 
     public String getName() {

@@ -1,12 +1,11 @@
 package org.egov.infra.persistence;
 
-import java.io.Serializable;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-
-import org.hibernate.annotations.GenericGenerator;
+import java.io.Serializable;
 
 /**
  * Abstract base class for entities. Allows parameterization of id type, chooses
@@ -24,43 +23,43 @@ public abstract class AbstractPersistable<PK extends Serializable> implements Se
     private PK id;
 
     public PK getId() {
-	return id;
+        return id;
     }
 
     protected void setId(final PK id) {
-	this.id = id;
+        this.id = id;
     }
 
     public boolean isNew() {
-	    return null == getId();
+        return null == getId();
     }
 
     @Override
     public String toString() {
-	return String.format("Entity of type %s with id: %s", this.getClass()
-		.getName(), getId());
+        return String.format("Entity of type %s with id: %s", this.getClass()
+                .getName(), getId());
     }
 
     @Override
     public boolean equals(final Object obj) {
-	if (null == obj)
-	    return false;
+        if (null == obj)
+            return false;
 
-	if (this == obj)
-	    return true;
+        if (this == obj)
+            return true;
 
-	if (!getClass().equals(obj.getClass()))
-	    return false;
+        if (!getClass().equals(obj.getClass()))
+            return false;
 
-	final AbstractPersistable<?> that = (AbstractPersistable<?>) obj;
+        final AbstractPersistable<?> that = (AbstractPersistable<?>) obj;
 
-	return null == this.getId() ? false : this.getId().equals(that.getId());
+        return null == this.getId() ? false : this.getId().equals(that.getId());
     }
 
     @Override
     public int hashCode() {
-	int hashCode = 17;
-	hashCode += null == getId() ? 0 : getId().hashCode() * 31;
-	return hashCode;
+        int hashCode = 17;
+        hashCode += null == getId() ? 0 : getId().hashCode() * 31;
+        return hashCode;
     }
 }

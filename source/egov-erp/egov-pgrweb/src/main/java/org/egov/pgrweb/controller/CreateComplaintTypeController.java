@@ -17,20 +17,15 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/complaint-type")
-public class ComplaintTypeController {
+public class CreateComplaintTypeController {
 
     private DepartmentService departmentService;
     private ComplaintTypeService complaintTypeService;
 
     @Autowired
-    public ComplaintTypeController(DepartmentService departmentService, ComplaintTypeService complaintTypeService) {
+    public CreateComplaintTypeController(DepartmentService departmentService, ComplaintTypeService complaintTypeService) {
         this.departmentService = departmentService;
         this.complaintTypeService = complaintTypeService;
-    }
-
-    @ModelAttribute
-    public ComplaintType createOrRetrieveComplaintType() {
-        return new ComplaintType();
     }
 
     @ModelAttribute("departments")
@@ -38,14 +33,19 @@ public class ComplaintTypeController {
         return departmentService.getAllDepartments();
     }
 
+    @ModelAttribute
+    public ComplaintType complaintTypeModel() {
+        return new ComplaintType();
+    }
+
     @RequestMapping(method = RequestMethod.GET)
-    public String complaintType() {
+    public String complaintTypeForm() {
         return "complaint-type";
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public String createComplaintType(@Valid @ModelAttribute ComplaintType complaintType, BindingResult errors, RedirectAttributes redirectAttrs) {
-        if(errors.hasErrors()) {
+        if (errors.hasErrors()) {
             return "complaint-type";
         }
 

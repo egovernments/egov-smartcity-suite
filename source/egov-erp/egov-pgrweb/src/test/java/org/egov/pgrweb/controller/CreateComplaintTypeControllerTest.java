@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class ComplaintTypeControllerTest extends AbstractContextControllerTest<ComplaintTypeController> {
+public class CreateComplaintTypeControllerTest extends AbstractContextControllerTest<CreateComplaintTypeController> {
 
     @Mock
     private DepartmentService departmentService;
@@ -34,10 +34,10 @@ public class ComplaintTypeControllerTest extends AbstractContextControllerTest<C
     private MockMvc mockMvc;
 
     @Override
-    protected ComplaintTypeController initController() {
+    protected CreateComplaintTypeController initController() {
         initMocks(this);
 
-        return new ComplaintTypeController(departmentService, complaintTypeService);
+        return new CreateComplaintTypeController(departmentService, complaintTypeService);
     }
 
     @Before
