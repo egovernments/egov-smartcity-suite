@@ -720,6 +720,7 @@
                             <addClasspath>true</addClasspath>
                         </manifest>
                     </archive>
+                    <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
                 </configuration>
             </plugin>
 			
