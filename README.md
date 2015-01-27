@@ -80,12 +80,7 @@ Alternatively you could also run `<CHECKOUT_DIR>/source/egov-erp/deploy-local.sh
 
 * Import the cloned git repo using maven Import Existing Project (or use SCM project import).
 * Install Jboss Tools and configure Wildfly Server.
-* When we wrote this, m2e plugin does not have full support for EAR dependency management for deployment. Please follow the below tweaking tips to manage deployment in eclipse.
-
-    1. Right click on ear project and select `Properties -> Deployment Assembly` and add `target/egov-ear-XYZ` folder from EAR project.
-    2. Right click on war project and select `Properties -> Maven -> Java EE Integration`, Select `Enable Project Specific Settings` and deselect all items below it. Repeat the same for all Web Projects.
-    3. Right click on war Project and select `Properties -> Deployment Assembly` and remove maven dependency and all other java project dependencies. Repeat the same for other Web Projects.
-
+* Since jasperreport related jar's are not available in maven central, we have to tell eclipse to find jar's in alternative place for that navigate to `Windows -> Preference -> Maven -> User Settings -> Browse Global Settings` and point settings.xml available under egov-erp/
 * Now add your EAR project into the configured Wildfly server.
 * Start Wildfly in debug mode, this will enable hot deployment.
 
