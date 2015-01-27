@@ -17,7 +17,7 @@
 		<!-- <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>-->
 		<property name="hibernate.transaction.jta.platform">org.hibernate.service.jta.platform.internal.JBossAppServerJtaPlatform</property>
 		<property name="hibernate.transaction.flush_before_completion">true</property>
-		<property name="hibernate.transaction.auto_close_session">true</property>
+		<property name="hibernate.transaction.auto_close_session">false</property>
 		<!-- For Postgres -->
 		<property name="hibernate.jdbc.use_streams_for_binary">false</property>
 		<property name="hibernate.show_sql">true</property>

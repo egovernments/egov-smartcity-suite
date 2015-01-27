@@ -309,7 +309,7 @@ public class EgovUtils {
 			}
 
 		} catch (final Exception e) {
-			HibernateUtil.rollbackTransaction();
+			//HibernateUtil.rollbackTransaction();
 			LOG.error("Exception at EgovUtils : ", e);
 			throw new EGOVRuntimeException("Exception occurred ", e);
 		}

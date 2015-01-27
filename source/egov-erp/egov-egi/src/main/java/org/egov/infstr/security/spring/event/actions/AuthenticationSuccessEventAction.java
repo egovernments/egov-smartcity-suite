@@ -5,7 +5,9 @@
  */
 package org.egov.infstr.security.spring.event.actions;
 
-import com.opensymphony.xwork2.util.location.LocationImpl;
+import java.util.Date;
+import java.util.HashMap;
+
 import org.egov.infstr.commons.EgLoginLog;
 import org.egov.infstr.security.utils.SecurityConstants;
 import org.egov.infstr.utils.StringUtils;
@@ -16,14 +18,17 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashMap;
+import com.opensymphony.xwork2.util.location.LocationImpl;
 
 /**
  * This class will get called when Authentication is successful. 
  * Now this class only Logs the User Login information.
  **/
+@Service
+@Transactional
 public class AuthenticationSuccessEventAction implements ApplicationSecurityEventAction<InteractiveAuthenticationSuccessEvent> {
 	
 	private UserService userService;
@@ -33,7 +38,6 @@ public class AuthenticationSuccessEventAction implements ApplicationSecurityEven
 	private Session getSession() {
 		return sessionFactory.getCurrentSession();
 	}
-
 	@Override
 	public void doAction(final InteractiveAuthenticationSuccessEvent authorizedEvent) {
 			final Authentication authentication = authorizedEvent.getAuthentication();

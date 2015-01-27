@@ -5,6 +5,9 @@
  */
 package org.egov.lib.rrbac.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.lib.rrbac.model.Action;
@@ -13,10 +16,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class ActionHibernateDAO extends GenericHibernateDAO implements ActionDAO {
 	private static Logger LOGGER = LoggerFactory.getLogger(ActionHibernateDAO.class);
 
@@ -28,7 +27,7 @@ public class ActionHibernateDAO extends GenericHibernateDAO implements ActionDAO
 	}
 
 	public ActionHibernateDAO(final Class persistentClass, final Session session) {
-		super(persistentClass, session);
+		super(persistentClass, session);  
 	}
 
 	@Override
@@ -80,7 +79,7 @@ public class ActionHibernateDAO extends GenericHibernateDAO implements ActionDAO
 		LOGGER.info("findActionByURL(contextPath, url) : actionForURL--" + actionForURL);
 		return actionForURL;
 	}
-
+    
 	@Override
 	public List<Action> getActionWithRoles() {
 		try {

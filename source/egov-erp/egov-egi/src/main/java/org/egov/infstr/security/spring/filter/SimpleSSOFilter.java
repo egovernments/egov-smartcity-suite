@@ -19,6 +19,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -30,6 +32,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,6 +45,7 @@ import java.util.Map.Entry;
  * sets a cookie valid for 30 minutes If the current request has a valid cookie, 
  * the application logs the user in automatically.
  */
+@Transactional
 public class SimpleSSOFilter implements Filter, LogoutHandler {
 	private static final String SSO_COOKIE = "egovegov";
 	private UserService userService;
