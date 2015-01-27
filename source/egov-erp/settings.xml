@@ -6,7 +6,7 @@
         <mirror>
             <id>nexus</id>
             <mirrorOf>central</mirrorOf>
-            <url>http://192.168.1.56:8081/nexus/content/groups/public/</url>
+            <url>http://arti.egovernments.org/nexus/content/groups/public/</url>
         </mirror>
     </mirrors>
 
