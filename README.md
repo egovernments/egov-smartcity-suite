@@ -63,6 +63,24 @@ This can be set in `standalone.conf` by suffixing it to `JAVA_OPTS` as shown bel
 JAVA_OPTS="$JAVA_OPTS -Dspring.profiles.active=production"
 ```
 
+##### Application Settings
+
+* Unzip the `<CHECKOUT_DIR>/deployment/modules/egov-settings.zip` in to `<JBOSS_HOME>/modules/system/layers/base/` directory.
+* After the above step you should have the following folders created in your JBOSS module system
+
+```
+<JBOSS_HOME>/modules/system/layers/base/
+
+org
+└── egov
+	└── settings
+		└── main
+	        ├── config
+	        │   └── egov-erp-override.properties
+	        └── module.xml
+```
+
+
 ##### Datasource
 
 * TODO - List out steps to configure JNDI for datasource
