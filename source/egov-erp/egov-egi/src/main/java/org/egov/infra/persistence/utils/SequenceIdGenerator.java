@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class SequenceIdGenerator implements IdentifierGenerator {
 
@@ -20,12 +21,13 @@ public class SequenceIdGenerator implements IdentifierGenerator {
 
         try {
             final String sequenceName = getSequenceName(object);
-//            final Savepoint savepoint = session.connection().setSavepoint();
+            session.connection().setAutoCommit(true);
             try {
                 return getNextSequence(session, sequenceName);
             } catch (final SQLException e) {
-//                session.connection().rollback(savepoint);
                 return createAndGetNextSequence(session, sequenceName);
+            } finally {
+                session.connection().setAutoCommit(false);
             }
         } catch (final Exception e) {
             throw new HibernateException("Error occurred while generating ID", e);
@@ -53,10 +55,15 @@ public class SequenceIdGenerator implements IdentifierGenerator {
     }
 
     private Serializable createAndGetNextSequence(final SessionImplementor session, final String sequenceName) throws SQLException {
-        final PreparedStatement ps = session.connection().prepareStatement("create sequence " + sequenceName);
-        ps.executeUpdate();
-        closeResource(ps, null);
+        Statement statement = session.connection().createStatement();
+        try {
+            statement.execute("create sequence " + sequenceName);
+        } finally {
+            if (statement != null) statement.close();
+        }
+
         return getNextSequence(session, sequenceName);
+
     }
 
     private void closeResource(final PreparedStatement ps, final ResultSet rs) throws SQLException {
