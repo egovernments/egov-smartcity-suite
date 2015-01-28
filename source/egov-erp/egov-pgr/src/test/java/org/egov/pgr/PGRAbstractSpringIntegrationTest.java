@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
+        "classpath*:config/spring/applicationContext-properties.xml",
         "classpath*:config/spring/test-applicationContext-hibernate.xml",
         "classpath*:config/spring/applicationContext-egi.xml",
         "classpath*:config/spring/applicationContext-pgr.xml"
