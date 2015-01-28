@@ -16,7 +16,7 @@
             <module name="org.hibernate.validator" export="TRUE"/>
             <module name="org.hibernate.search.orm" export="TRUE"/>
             <module name="org.postgres" export="TRUE"/>
-            <module name="org.egov.settings" export="TRUE"/>
+            <module name="org.egov.settings" export="TRUE" optional="TRUE"/>
             <!--<module name="deployment.jackrabbit-jca-2.6.2.rar" export="TRUE"/>-->
         </dependencies>
     </deployment>
