@@ -4,10 +4,8 @@
         "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
 <tiles-definitions>
 
-    <definition name="base_layout"
-                template="/WEB-INF/views/template/index.jsp">
+    <definition name="base_layout" template="/WEB-INF/views/template/index.jsp">
         <put-attribute name="title" value="eGov Urban Portal"/>
-        <put-attribute name="page-title" value=""/>
         <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
         <put-attribute name="body" value=""/>
         <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
@@ -19,8 +17,13 @@
     </definition>
 
     <definition name="complaint-type" extends="base_layout">
-        <put-attribute name="page-title" value="Add Complaint Type"/>
+        <put-attribute name="page-title" value="Add Complaint Type" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/complaint-type.jsp"/>
     </definition>
-
+	
+	<definition name="complaint/*" extends="base_layout">
+        <put-attribute name="page-title" value="title.complaint.reg" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/complaint/{1}.jsp"/>
+    </definition>
+    
 </tiles-definitions>
