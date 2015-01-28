@@ -1,11 +1,11 @@
-package org.egov.pgrweb.controller;
+package org.egov.pgr.web.controller;
 
 import org.egov.builder.entities.DepartmentBuilder;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.service.ComplaintTypeService;
-import org.egov.pgrweb.formatter.DepartmentFormatter;
+import org.egov.pgr.web.formatter.DepartmentFormatter;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;

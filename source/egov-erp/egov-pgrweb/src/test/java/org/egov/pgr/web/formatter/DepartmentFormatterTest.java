@@ -1,4 +1,4 @@
-package org.egov.pgrweb.formatter;
+package org.egov.pgr.web.formatter;
 
 import org.egov.builder.entities.DepartmentBuilder;
 import org.egov.lib.rjbac.dept.Department;

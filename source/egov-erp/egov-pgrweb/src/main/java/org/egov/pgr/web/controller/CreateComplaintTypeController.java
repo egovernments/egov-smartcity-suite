@@ -1,4 +1,4 @@
-package org.egov.pgrweb.controller;
+package org.egov.pgr.web.controller;
 
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;

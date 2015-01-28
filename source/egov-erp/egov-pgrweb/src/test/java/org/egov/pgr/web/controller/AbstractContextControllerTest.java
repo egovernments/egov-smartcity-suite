@@ -1,4 +1,4 @@
-package org.egov.pgrweb.controller;
+package org.egov.pgr.web.controller;
 
 import org.apache.tiles.request.render.StringRenderer;
 import org.junit.Before;
