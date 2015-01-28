@@ -10,7 +10,7 @@
 
     <mvc:annotation-driven enable-matrix-variables="true"
                            conversion-service="conversionService"
-                           validator="validator"/>
+                           validator="validator" />
 
     <!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources/ directory -->
     <mvc:resources mapping="/resources/**" location="/resources/"/>
@@ -51,6 +51,6 @@
     </bean>
 
     <!-- Imports user-defined @Controller beans that process client requests -->
-    <context:component-scan base-package="org.egov.pgrweb.controller"/>
+    <context:component-scan base-package="org.egov.pgr.web.controller"/>
 
 </beans>
