@@ -33,7 +33,7 @@ public class ComplaintRegistrationControllerTest extends AbstractContextControll
 	@Test
 	public void assertRegistrationPageViewReturns() throws Exception {
 		this.mockMvc.perform(get("/complaint/register")).
-		andExpect(view().name("registration")).
+		andExpect(view().name("complaint/registration")).
 		andExpect(status().isOk());
 	}
 }
