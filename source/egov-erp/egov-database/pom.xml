@@ -21,6 +21,15 @@
 
 
     <build>
+        <filters>
+            <filter>../egov-config/src/main/resources/config/egov-erp.properties</filter>
+        </filters>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -76,8 +85,8 @@
                                 <configuration>
                                     <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
                                     <propertyFileWillOverride>true</propertyFileWillOverride>
-                                    <changeLogFile>src/main/resources/changelog.xml</changeLogFile>
-                                    <propertyFile>src/main/resources/liquibase.properties</propertyFile>
+                                    <changeLogFile>${project.build.outputDirectory}/changelog.xml</changeLogFile>
+                                    <propertyFile>${project.build.outputDirectory}/liquibase.properties</propertyFile>
                                 </configuration>
                                 <goals>
                                     <goal>update</goal>
