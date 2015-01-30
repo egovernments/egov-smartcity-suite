@@ -21,13 +21,10 @@ public class SequenceIdGenerator implements IdentifierGenerator {
 
         try {
             final String sequenceName = getSequenceName(object);
-            session.connection().setAutoCommit(true);
             try {
                 return getNextSequence(session, sequenceName);
             } catch (final SQLException e) {
                 return createAndGetNextSequence(session, sequenceName);
-            } finally {
-                session.connection().setAutoCommit(false);
             }
         } catch (final Exception e) {
             throw new HibernateException("Error occurred while generating ID", e);

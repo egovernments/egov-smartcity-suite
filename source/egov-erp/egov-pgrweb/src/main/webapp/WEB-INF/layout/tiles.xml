@@ -17,7 +17,7 @@
     </definition>
 
     <definition name="complaint-type" extends="base_layout">
-        <put-attribute name="page-title" value="Add Complaint Type" cascade="true"/>
+        <put-attribute name="page-title" value="title.complaintType" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/complaint-type.jsp"/>
     </definition>
 	

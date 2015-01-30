@@ -10,7 +10,9 @@
             </a>
         </div>
         <h2 class="horizontal-page-title">
-            <c:set var="titleKey"><tiles:getAsString name="page-title"/></c:set>
+            <c:set var="titleKey">
+                <tiles:getAsString name="page-title"/>
+            </c:set>
 			<spring:message code="${titleKey}"/>
         </h2>
     </div>
