@@ -21,6 +21,12 @@
 
 		<dependency>
 			<groupId>org.egov</groupId>
+			<artifactId>egov-search</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.egov</groupId>
 			<artifactId>egov-config</artifactId>
 			<version>1.0-SNAPSHOT</version>
 			<classifier>tests</classifier>
@@ -39,10 +45,10 @@
     		<groupId>org.hibernate</groupId>
     		<artifactId>hibernate-validator</artifactId>
     	</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-search-engine</artifactId>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>org.hibernate</groupId>-->
+			<!--<artifactId>hibernate-search-engine</artifactId>-->
+		<!--</dependency>-->
 		<dependency>
 			<groupId>org.glassfish</groupId>
 			<artifactId>javax.el</artifactId>

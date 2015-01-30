@@ -20,4 +20,8 @@
         <property name="ignoreUnresolvablePlaceholders" value="true"/>
     </bean>
 
+    <bean class="org.egov.config.ApplicationConfig">
+        <constructor-arg ref="egovErpProperties" />
+    </bean>
+
 </beans>

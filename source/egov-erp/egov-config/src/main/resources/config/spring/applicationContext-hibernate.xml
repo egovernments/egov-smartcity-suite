@@ -7,9 +7,10 @@
        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
 	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
-    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-        <constructor-arg ref="sessionFactory"/>
-    </bean>  
+
+    <!--<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">-->
+        <!--<constructor-arg ref="sessionFactory"/>-->
+    <!--</bean>-->
 
     <beans profile="production">
         <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">

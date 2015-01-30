@@ -7,6 +7,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
+import java.util.List;
+
 abstract class HibernateRepository<T extends AbstractPersistable> {
 
     protected SessionFactory sessionFactory;
@@ -44,6 +46,10 @@ abstract class HibernateRepository<T extends AbstractPersistable> {
     public T findByField(String field, String value) {
         Criteria criteria = createCriteria(entityType);
         return (T) criteria.add(Restrictions.eq(field, value)).uniqueResult();
+    }
+
+    public List<T> findAll() {
+        return query(String.format("from %s", entityType.getSimpleName())).list();
     }
 
     public Query query(String queryName){

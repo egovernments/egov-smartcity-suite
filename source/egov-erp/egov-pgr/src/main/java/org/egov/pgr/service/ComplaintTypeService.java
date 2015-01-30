@@ -2,6 +2,9 @@ package org.egov.pgr.service;
 
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.repository.ComplaintTypeRepository;
+import org.egov.search.ResourceType;
+import org.egov.search.index.domain.Document;
+import org.egov.search.index.service.IndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,18 +16,23 @@ import java.util.List;
 public class ComplaintTypeService {
 
     private ComplaintTypeRepository complaintTypeRepository;
+    private IndexService indexService;
 
     @Autowired
     public ComplaintTypeService(ComplaintTypeRepository complaintTypeRepository) {
         this.complaintTypeRepository = complaintTypeRepository;
     }
 
+    @Transactional(readOnly = true)
     public ComplaintType findBy(Long complaintId) {
         return complaintTypeRepository.get(complaintId);
     }
 
     public void createComplaintType(ComplaintType complaintType) {
         complaintTypeRepository.create(complaintType);
+
+        Document complaintTypeDocument = new Document(complaintType.getId().toString(), complaintType.toJson());
+        indexService.index("pgr", ResourceType.COMPLAINT_TYPE, complaintTypeDocument);
     }
 
     public void updateComplaintType(ComplaintType complaintType) {
@@ -32,6 +40,11 @@ public class ComplaintTypeService {
     }
 
     public List<ComplaintType> findAll() {
-        return complaintTypeRepository.query(ComplaintType.QRY_ALL_COMPLAINT_TYPES).list();
+        return complaintTypeRepository.findAll();
+    }
+
+    @Autowired
+    public void setIndexService(IndexService indexService) {
+        this.indexService = indexService;
     }
 }
