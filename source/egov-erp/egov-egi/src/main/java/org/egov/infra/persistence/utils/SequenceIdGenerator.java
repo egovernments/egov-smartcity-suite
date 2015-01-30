@@ -1,15 +1,17 @@
 package org.egov.infra.persistence.utils;
 
-import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.id.IdentifierGenerator;
-
-import javax.persistence.Table;
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.sql.Statement;
+
+import javax.persistence.Table;
+
+import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.id.IdentifierGenerator;
 
 public class SequenceIdGenerator implements IdentifierGenerator {
 
@@ -21,9 +23,11 @@ public class SequenceIdGenerator implements IdentifierGenerator {
 
         try {
             final String sequenceName = getSequenceName(object);
+            final Savepoint savepoint = session.connection().setSavepoint();
             try {
                 return getNextSequence(session, sequenceName);
             } catch (final SQLException e) {
+                session.connection().rollback(savepoint);
                 return createAndGetNextSequence(session, sequenceName);
             }
         } catch (final Exception e) {
