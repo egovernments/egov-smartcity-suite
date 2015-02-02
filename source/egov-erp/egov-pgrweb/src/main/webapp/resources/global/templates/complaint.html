@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta name="description" content="Neon Admin Panel" />
+		<meta name="author" content="" />
+		
+		<title>eGov Urban Portal</title>
+		
+		<link rel="stylesheet" href="../css/bootstrap/bootstrap.css">
+		<link rel="stylesheet" href="../css/font-icons/entypo/css/entypo.css">
+		<link rel="stylesheet" href="../css/egov/custom.css">
+		<script src="../js/jquery/jquery.js"></script>
+		
+		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
+		
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		
+	</head>
+	
+	<body class="page-body">
+		
+		<div class="page-container horizontal-menu">
+			
+			<header class="navbar navbar-fixed-top"><!-- set fixed position by adding class "navbar-fixed-top" -->
+				
+				<div class="navbar-inner">
+					
+					<!-- logo -->
+					<div class="navbar-brand">
+						<a href="index.html">
+							<img src="../images/logo@2x.png" alt="" />
+						</a>
+					</div>
+					
+					
+					<h2 class="horizontal-page-title">Register Your Complaint</h2>
+					
+				</div>
+				
+			</header>
+			
+			<div class="main-content">
+				
+				<div class="row">
+					<div class="col-md-12">
+						
+						<div class="panel panel-primary" data-collapsed="0">
+							
+							<div class="panel-heading">
+								<div class="panel-title">
+									<strong>Contact Information</strong>
+								</div>
+								
+							</div>
+							
+							<div class="panel-body custom-form">
+								
+								<form role="form" id="complaintform" class="form-horizontal form-groups-bordered">
+									
+									<div class="form-group">
+										
+										<label class="col-sm-3 control-label">Complaint Through</label>
+										<div class="col-sm-2 col-xs-12">
+											<input type="radio" id="phone" name="compthr" value="Phone">
+											<label>Phone</label>
+										</div>
+										<div class="col-sm-2 col-xs-12">
+											<input type="radio" id="pform" name="compthr" value="pform">
+											<label>Paper Form</label>
+										</div>
+										<div class="col-sm-2 col-xs-12">
+											<input type="radio" id="internet" name="compthr" value="internet" checked>
+											<label>Internet</label>
+										</div>
+										<div class="col-sm-2 col-xs-12">
+											<input type="radio" id="sms" name="compthr" value="SMS">
+											<label>SMS</label>
+										</div>
+									</div>
+									
+									<div class="form-group display-hide"  id="recenter">
+										<label class="col-sm-3 control-label">Receiving Center</label>
+										
+										<div class="col-sm-6">
+											<select class="form-control" id="rec_centerselect">
+												<option>Complaint Cell</option>
+												<option>Mayor</option>
+												<option>Zone Office</option>
+												<option>Commissioner Office</option>
+												<option>CM Office</option>
+											</select>
+										</div>
+									</div>
+									
+									<div class="form-group display-hide" id="regnoblock">
+										<label for="field-1" class="col-sm-3 control-label">Registration Number</label>
+										
+										<div class="col-sm-6">
+											<input type="text" class="form-control" id="reg_no" placeholder="">
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label for="field-1" class="col-sm-3 control-label">Name</label>
+										
+										<div class="col-sm-6 add-margin">
+											<input type="text" class="form-control" id="f-name" placeholder="Name">
+										</div>
+										
+									</div>
+									
+									<div class="form-group">
+										<label for="field-1" class="col-sm-3 control-label">Contact Number<small><i class="entypo-star error-msg"></i></small></label>
+										
+										<div class="col-sm-2 add-margin">
+											<input type="text" class="form-control" data-inputmask="'mask': '9999999999'" id="mob-no" placeholder="Mobile Number">
+										</div>
+										
+										<div class="col-sm-1">
+											<label for="field-1" class="control-label">Email</label>
+										</div>
+										
+										<div class="col-sm-3">
+											<input type="text" class="form-control" id="email" placeholder="abc@xyz.com">
+										</div>
+										
+									</div>
+									
+									<div class="panel-heading custom_form_panel_heading">
+										<div class="panel-title">
+											<strong>Complaint Information</strong>
+										</div>
+										
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Complaint Type</label>
+										<div class="col-sm-6">
+											 <input id="com_type" type="text" class="form-control" placeholder="" autocomplete="off" />
+											<div class="add-margin error-msg">Entered keyword not exists in suggestion</div>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										
+										<label class="col-sm-3 control-label">Complaint Title</label>
+										<div class="col-sm-6">
+											<input type="text" class="form-control" id="comptitle" placeholder="">
+										</div>
+									</div>
+									
+									<div class="form-group">
+										
+										<label class="col-sm-3 control-label">Details of Complaint <small><i class="entypo-star error-msg"></i></small></label>
+										<div class="col-sm-6">
+											<textarea class="form-control autogrow" id="doc" placeholder="" maxlength="400"></textarea>
+											<div class="text-right"><small id="rcc">Remaining Characters : 400</small></div>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Upload Photograph/Video</label>
+										<div class="col-sm-6" >
+											<div id="file1block"><input type="file" id="file1" class="filechange form-control add-margin inline btn btn-primary" data-label="<i class='glyphicon glyphicon-file'></i> Browse" /></div>
+											<div id="file2block" class="display-hide"><input type="file" id="file2" class="filechange form-control add-margin inline btn btn-primary" data-label="<i class='glyphicon glyphicon-file'></i> Browse" /></div>
+										    <div id="file3block" class="display-hide"><input type="file" id="file3" class="filechange form-control add-margin inline btn btn-primary" data-label="<i class='glyphicon glyphicon-file'></i> Browse" /></div>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Complaint Location</label>
+										<div class="col-sm-6">
+											<div class="input-group">
+												<input id="clocation" type="text" class="form-control low-width" placeholder="" autocomplete="off" />
+												<span class="input-group-addon map-class" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="entypo-globe"></i></span>
+											</div>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Land mark (if any)</label>
+										<div class="col-sm-6">
+											<input type="text" name="" class="form-control" id="lm" placeholder="" />
+										</div>
+									</div>
+									
+									
+									
+									
+								</form>
+							</div>
+							
+							
+							
+							
+						</div>
+						
+					</div>
+				</div>
+				
+				
+				<div class="row">
+					<div class="text-center">
+						<a href="complaintsuccess.html" id="com_submit" class="btn btn-primary">Submit</a>
+						<a href="javascript:void(0);" id="com_cancel" class="btn btn-default">Cancel</a>
+					</div>
+				</div>
+				
+				<footer class="main">
+					
+					powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
+					
+				</footer>
+				
+			</div>
+			
+			
+			
+		</div>
+		
+		<!-- Modal 6 (Long Modal)-->
+		<div class="modal fade" id="modal-6">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					
+					<div class="modal-body">
+						
+						<div class="row">
+							
+							<div class="col-md-12">
+								<div class="panel panel-primary" data-collapsed="0"><!-- to apply shadow add class "panel-shadow" -->
+									<!-- panel head -->
+									<div class="panel-heading">
+										<div class="panel-title">Complaint Location</div>
+										
+									</div>
+									
+									<!-- panel body -->
+									<div class="panel-body no-padding">
+										
+										<script type="text/javascript" src="//maps.google.com/maps/api/js?sensor=false"></script>
+										
+										<div id="normal" class="img-prop"></div>
+										
+									</div>
+									
+								</div>
+							</div>
+							
+						</div>
+						
+						
+					</div>
+					
+					<div class="modal-footer">
+						<button type="button" class="btn btn-info" data-dismiss="modal">Save changes</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		<script src="../js/bootstrap/bootstrap.js"></script>
+		<script src="../js/bootstrap/bootstrap-typeahead.js"></script>
+		<script src="../js/jquery/plugins/exif.js"></script>
+		<script src="../js/jquery/plugins/jquery.inputmask.bundle.min.js"></script>
+		
+		<script src="../../js/app/complaint.js"></script>
+		<script src="../../js/app/fileuploadndmaps.js"></script>
+		
+	</body>
+</html>							
