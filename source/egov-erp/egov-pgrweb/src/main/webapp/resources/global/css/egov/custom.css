@@ -216,4 +216,8 @@ content: '\e873';
 width: 99%;
 }
 
-
+footer.main {
+  margin-top: 15px;
+  padding: 15px;
+  border-top: 1px solid #ebebeb;
+}
