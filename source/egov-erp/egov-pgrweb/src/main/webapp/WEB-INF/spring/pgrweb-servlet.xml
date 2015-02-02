@@ -48,6 +48,8 @@
                 <value>config/messages/errors</value>
             </list>
         </property>
+        <!-- Disabling caching since on development-->
+        <property name="cacheSeconds" value="0"/>
     </bean>
 
     <!-- Imports user-defined @Controller beans that process client requests -->
