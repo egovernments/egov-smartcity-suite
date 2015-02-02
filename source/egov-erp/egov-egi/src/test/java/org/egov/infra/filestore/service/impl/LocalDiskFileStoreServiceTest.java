@@ -66,7 +66,9 @@ public class LocalDiskFileStoreServiceTest {
     @Test
     public final void testUploadInputStream() throws IOException {
 	final File newFile = createTempFileWithContent();
-	final FileStoreMap map = diskFileService.store(new FileInputStream(newFile));
+	final FileInputStream fin = new FileInputStream(newFile);
+	final FileStoreMap map = diskFileService.store(fin);
+        fin.close();
 	deleteTempFiles(newFile, map);
 	assertNotNull(map.getUniqueId());
     }
@@ -95,10 +97,13 @@ public class LocalDiskFileStoreServiceTest {
 	for(int no=0; no <10 ; no++)  {
 	    final File newFile = Files.createTempFile(tempFilePath, "xyz"+no, "txt").toFile();
 	    FileUtils.write(newFile, "Test");
-	    files.add(new FileInputStream(newFile));
+	    FileInputStream fin = new FileInputStream(newFile);
+	    files.add(fin);
 	}
 	final Set<FileStoreMap> maps = diskFileService.storeStreams(files);
-	
+	for (InputStream in :  files) {
+	    in.close();
+	}
 	FileUtils.deleteDirectory(tempFilePath.toFile());
 	for(FileStoreMap map : maps) {
 	    assertNotNull(map.getUniqueId());
