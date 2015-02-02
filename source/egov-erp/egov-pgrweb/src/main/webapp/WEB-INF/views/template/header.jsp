@@ -6,7 +6,7 @@
     <div class="navbar-inner">
         <div class="navbar-brand">
             <a href="<c:url value='/index'/>">
-                <img src="<c:url value='/resources/theme/images/logo@2x.png'/>"/>
+                <img src="<c:url value='/resources/global/images/logo@2x.png'/>"/>
             </a>
         </div>
         <h2 class="horizontal-page-title">

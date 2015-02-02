@@ -41,11 +41,6 @@ jQuery(document).ready(function($)
 		success: function (label, element) {
 			$(element).removeClass('error');
 		},
-		//just to block submit for demo
-		submitHandler: function(form) {
-			alert("valid form");
-			return false;
-		}
 	});
-	
 });
+
