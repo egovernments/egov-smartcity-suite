@@ -31,14 +31,14 @@
 	
 	<bean id="concurrentSessionControlStrategy" class="org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy">
 		<constructor-arg index="0" ref="sessionRegistry" />
-		<property name="exceptionIfMaximumExceeded" value="true" />
-		<property name="maximumSessions" value="1" />
+		<property name="exceptionIfMaximumExceeded" value="false" />
+		<property name="maximumSessions" value="-1" />
 	</bean>
 	
 	<bean id="securityContextPersistenceFilter" class="org.springframework.security.web.context.SecurityContextPersistenceFilter" />
 	
 	<bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
-		<constructor-arg value="/login/securityLogin.jsp" />
+		<constructor-arg value="/index.jsp" />
 		<constructor-arg>
 			<list>
 				<ref bean="simpleSSOFilter" />
@@ -111,7 +111,7 @@
 	</bean>
 	
 	<bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
-		<constructor-arg index="0" value="/login/securityLogin.jsp"/>
+		<constructor-arg index="0" value="/index.jsp"/>
 		<property name="forceHttps" value="false" />
 	</bean>
 	

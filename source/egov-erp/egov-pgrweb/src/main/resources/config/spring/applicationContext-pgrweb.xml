@@ -11,5 +11,5 @@
     </context:component-scan>
 
     <import resource="classpath*:config/spring/applicationContext-pgr.xml"/>
-
+	<import resource="applicationSecurityContext-pgr.xml"/>
 </beans>
