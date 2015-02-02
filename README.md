@@ -96,7 +96,7 @@ Alternatively you could also run `<CHECKOUT_DIR>/source/egov-erp/deploy-local.sh
 
 #### 3. Eclipse Deployment
 
-* Import the cloned git repo using maven Import Existing Project (or use SCM project import).
+* Import the cloned git repo using maven Import Existing Project.
 * Install Jboss Tools and configure Wildfly Server.
 * Since jasperreport related jar's are not available in maven central, we have to tell eclipse to find jar's in alternative place for that navigate to `Windows -> Preference -> Maven -> User Settings -> Browse Global Settings` and point settings.xml available under egov-erp/
 * Now add your EAR project into the configured Wildfly server.
