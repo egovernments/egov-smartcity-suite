@@ -229,13 +229,12 @@ content: '\e873';
 width: 99%;
 }
 
-<<<<<<< Updated upstream
 footer.main {
   margin-top: 15px;
   padding: 15px;
   border-top: 1px solid #ebebeb;
-=======
-												/*left navigation bar*/
+
+/*left navigation bar*/
 
 .page-container .sidebar-menu {
 position: relative;
@@ -355,5 +354,4 @@ padding-left: 40px;
 
 .page-container .sidebar-menu #main-menu li ul > li:last-child {
 border-bottom: 0;
->>>>>>> Stashed changes
 }
