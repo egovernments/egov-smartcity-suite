@@ -15564,13 +15564,6 @@ COMMENT ON COLUMN jobs.max_salary IS 'Maximum salary for a job title';
 
 
 
-CREATE TABLE lbase_department (
-    id integer,
-    name character(10)
-);
-
-
-
 
 CREATE SEQUENCE leave_app_seq
     START WITH 1

@@ -737,7 +737,7 @@
             <properties>
                 <db.username>postgres</db.username>
                 <db.password>kingsql</db.password>
-                <db.url>jdbc:postgresql://192.168.1.58:5432/erp_owner</db.url>
+                <db.url>jdbc:postgresql://localhost:5432/jenkinbuildbd</db.url>
             </properties>
         </profile>
     </profiles>
