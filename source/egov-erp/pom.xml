@@ -20,6 +20,7 @@
         <module>egov-egiweb</module>
         <module>egov-pgrweb</module>
         <module>egov-ear</module>
+        <module>egov-search</module>
     </modules>
 
     <properties>
@@ -58,14 +59,19 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-search-engine</artifactId>
-                <version>4.5.1.Final</version>
+                <version>5.0.0.Final</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-search-orm</artifactId>
-                <version>4.5.1.Final</version>
+                <version>5.0.0.Final</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-queryparser</artifactId>
+                <version>4.10.2</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
@@ -235,6 +241,21 @@
                 <groupId>com.googlecode.json-simple</groupId>
                 <artifactId>json-simple</artifactId>
                 <version>1.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>2.2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-joda</artifactId>
+                <version>2.3.1</version>
             </dependency>
             <!-- JSON END -->
 
@@ -559,6 +580,18 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>com.jayway.jsonpath</groupId>
+                <artifactId>json-path</artifactId>
+                <version>1.2.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.jayway.jsonpath</groupId>
+                <artifactId>json-path-assert</artifactId>
+                <version>1.2.0</version>
+                <scope>test</scope>
+            </dependency>
             <!-- TESTING END -->
 
             <!-- LOGGING START -->
@@ -586,6 +619,14 @@
                 <version>9.3-1102-jdbc41</version>
             </dependency>
             <!-- DATABASE END -->
+
+            <!-- SEARCH START -->
+            <dependency>
+                <groupId>org.elasticsearch</groupId>
+                <artifactId>elasticsearch</artifactId>
+                <version>1.4.2</version>
+            </dependency>
+            <!-- SEARCH END -->
 
         </dependencies>
     </dependencyManagement>
@@ -635,6 +676,10 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jms</artifactId>
         </dependency>
         <!-- SPRING DEPENDENCIES END -->
 		
@@ -688,7 +733,6 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <scope>provided</scope>
         </dependency>
         <!-- DATABASE END -->
     </dependencies>
