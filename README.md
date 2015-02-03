@@ -6,10 +6,11 @@
 
 ## Prerequisites
 
-* Install [maven](http://maven.apache.org/download.cgi)
+* Install [maven v3.2.x](http://maven.apache.org/download.cgi)
 * Install your favorite IDE for java project. Recommended Eclipse or IntelliJ
-* Install [PostgreSQL](http://www.postgresql.org/download/)
-* Install [Jboss Wildfly](http://download.jboss.org/wildfly/8.2.0.Final/wildfly-8.2.0.Final.zip)
+* Install [PostgreSQL v9.x](http://www.postgresql.org/download/)
+* Install [Elastic Search v1.4.2](https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.2.zip)
+* Install [Jboss Wildfly v8.2.x](http://192.168.1.3/downloads/DevTools/phoenix/wildfly-8.2.0.Final-v1.zip)
 
 __Note__: Please check in [downlods repository](http://192.168.1.3/downloads/) for any of the above software installables before downloading from internet.
 
@@ -78,6 +79,22 @@ org
 	        ├── config
 	        │   └── egov-erp-override.properties
 	        └── module.xml
+```
+
+###### Settings to Override in your local environment
+
+* __Database__: URL, username and password
+
+```properties
+db.url=jdbc:postgresql://localhost:5432/postgres  ## Change the database name to whatever you wanna point to
+db.username=erp_owner
+db.password=erp_owner
+```
+
+* __Search Server__: Clustername
+
+```properties
+search.clusterName=elasticsearch-<username> ## Your local elasticsearch clustername, DO NOT use default clustername
 ```
 
 
