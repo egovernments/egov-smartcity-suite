@@ -16,11 +16,11 @@
         <module>egov-config</module>
      	<module>egov-database</module>
         <module>egov-egi</module>
+        <module>egov-search</module>
         <module>egov-pgr</module>
         <module>egov-egiweb</module>
         <module>egov-pgrweb</module>
         <module>egov-ear</module>
-        <module>egov-search</module>
     </modules>
 
     <properties>
@@ -547,6 +547,18 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>org.kubek2k</groupId>
+                <artifactId>springockito</artifactId>
+                <version>1.0.8</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.kubek2k</groupId>
+                <artifactId>springockito-annotations</artifactId>
+                <version>1.0.8</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.easymock</groupId>
                 <artifactId>easymock</artifactId>
                 <version>3.3.1</version>
@@ -699,6 +711,14 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kubek2k</groupId>
+            <artifactId>springockito</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kubek2k</groupId>
+            <artifactId>springockito-annotations</artifactId>
         </dependency>
         <dependency>
             <groupId>org.easymock</groupId>

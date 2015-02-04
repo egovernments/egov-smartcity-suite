@@ -49,7 +49,7 @@ abstract class HibernateRepository<T extends AbstractPersistable> {
     }
 
     public List<T> findAll() {
-        return query(String.format("from %s", entityType.getSimpleName())).list();
+        return getCurrentSession().createQuery(String.format("from %s", entityType.getSimpleName())).list();
     }
 
     public Query query(String queryName){

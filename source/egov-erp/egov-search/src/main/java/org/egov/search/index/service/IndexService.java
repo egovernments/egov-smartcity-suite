@@ -12,11 +12,14 @@ import javax.jms.TextMessage;
 @Service
 public class IndexService {
 
-    @Autowired
     private JmsTemplate jmsTemplate;
+    private Destination indexQueue;
 
     @Autowired
-    private Destination indexQueue;
+    public IndexService(JmsTemplate jmsTemplate, Destination indexQueue) {
+        this.jmsTemplate = jmsTemplate;
+        this.indexQueue = indexQueue;
+    }
 
     public void index(String index, ResourceType resourceType, Document document) {
         jmsTemplate.send(indexQueue, session -> {

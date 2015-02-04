@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:jms="http://www.springframework.org/schema/jms"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+       http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd"
+       default-lazy-init="true">
+
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+
+    <jee:jndi-lookup id="indexQueue" jndi-name="java:/jms/queue/searchindex" expected-type="javax.jms.Destination"
+                     resource-ref="true"/>
+
+    <jms:listener-container connection-factory="cacheConnectionFactory"
+                            destination-type="queue"
+                            transaction-manager="transactionManager"
+                            destination-resolver="jmsDestinationResolver"
+                            container-type="default"
+                            concurrency="1">
+
+        <jms:listener id="indexQueueListenerId" destination="java:/jms/queue/searchindex"
+                      ref="indexQueueListener" method="onMessage"/>
+    </jms:listener-container>
+
+</beans>
+

@@ -5,10 +5,16 @@ import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
 import org.egov.pgr.PGRAbstractSpringIntegrationTest;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ComplaintTypeBuilder;
+import org.egov.search.index.service.IndexService;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.kubek2k.springockito.annotations.ReplaceWithMock;
+import org.kubek2k.springockito.annotations.SpringockitoContextLoader;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -18,6 +24,15 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@ContextConfiguration(
+        loader = SpringockitoContextLoader.class,
+        locations = {
+                "classpath*:config/spring/applicationContext-properties.xml",
+                "classpath*:config/spring/test-applicationContext-hibernate.xml",
+                "classpath*:config/spring/applicationContext-search.xml",
+                "classpath*:config/spring/applicationContext-egi.xml",
+                "classpath*:config/spring/applicationContext-pgr.xml"
+        })
 @Ignore
 public class ComplaintTypeServiceIntegrationTest extends PGRAbstractSpringIntegrationTest {
 
@@ -29,6 +44,15 @@ public class ComplaintTypeServiceIntegrationTest extends PGRAbstractSpringIntegr
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    @ReplaceWithMock
+    private IndexService indexService;
+
+    @Before
+    public void before() {
+        MockitoAnnotations.initMocks(this);
+    }
 
     @Test
     public void shouldCreateComplaintType() throws ClassNotFoundException {
@@ -79,7 +103,6 @@ public class ComplaintTypeServiceIntegrationTest extends PGRAbstractSpringIntegr
 
         List<ComplaintType> complaintTypes = complaintTypeService.findAll();
 
-        assertTrue(complaintTypes.size() > 3);
         assertTrue(collectionContains(complaintTypes, "ctype1"));
         assertTrue(collectionContains(complaintTypes, "ctype2"));
         assertTrue(collectionContains(complaintTypes, "ctype3"));
