@@ -2,6 +2,7 @@ package org.egov.pgr.service;
 
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.repository.ComplaintTypeRepository;
+import org.egov.search.Index;
 import org.egov.search.ResourceType;
 import org.egov.search.index.domain.Document;
 import org.egov.search.index.service.IndexService;
@@ -19,8 +20,9 @@ public class ComplaintTypeService {
     private IndexService indexService;
 
     @Autowired
-    public ComplaintTypeService(ComplaintTypeRepository complaintTypeRepository) {
+    public ComplaintTypeService(ComplaintTypeRepository complaintTypeRepository, IndexService indexService) {
         this.complaintTypeRepository = complaintTypeRepository;
+        this.indexService = indexService;
     }
 
     @Transactional(readOnly = true)
@@ -32,7 +34,7 @@ public class ComplaintTypeService {
         complaintTypeRepository.create(complaintType);
 
         Document complaintTypeDocument = new Document(complaintType.getId().toString(), complaintType.toJson());
-        indexService.index("pgr", ResourceType.COMPLAINT_TYPE, complaintTypeDocument);
+        indexService.index(Index.PGR, ResourceType.COMPLAINT_TYPE, complaintTypeDocument);
     }
 
     public void updateComplaintType(ComplaintType complaintType) {
@@ -43,8 +45,4 @@ public class ComplaintTypeService {
         return complaintTypeRepository.findAll();
     }
 
-    @Autowired
-    public void setIndexService(IndexService indexService) {
-        this.indexService = indexService;
-    }
 }

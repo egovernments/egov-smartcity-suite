@@ -24,6 +24,15 @@
 			<artifactId>egov-search</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-egi</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-config</artifactId>
@@ -52,6 +61,9 @@
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.jboss.spec.javax.jms</groupId>
+			<artifactId>jboss-jms-api_2.0_spec</artifactId>
+		</dependency>
 	</dependencies>
 </project>
