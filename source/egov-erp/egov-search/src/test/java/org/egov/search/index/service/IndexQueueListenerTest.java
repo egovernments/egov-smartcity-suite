@@ -38,13 +38,13 @@ public class IndexQueueListenerTest {
         String indexName = "index-name";
         String indexType = ResourceType.COMPLAINT_TYPE.indexType();
 
-        when(message.getText()).thenReturn(document.getResource());
+        when(message.getText()).thenReturn(document.toJson());
         when(message.getStringProperty("index")).thenReturn(indexName);
         when(message.getStringProperty("type")).thenReturn(indexType);
 
         indexQueueListener.onMessage(message);
 
-        verify(esIndexClient).index(document.getResource(), indexName, indexType);
+        verify(esIndexClient).index("COR123", document.toJson(), indexName, indexType);
     }
 
 }

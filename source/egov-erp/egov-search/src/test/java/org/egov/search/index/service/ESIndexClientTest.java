@@ -40,7 +40,7 @@ public class ESIndexClientTest extends AbstractNodeIntegrationTest {
         attrs.put("location", "Bengaluru");
 
         String type = "employee";
-        boolean documentIndexed = indexClient.index(new JSONObject(attrs).toJSONString(), indexName, type);
+        boolean documentIndexed = indexClient.index("document_id", new JSONObject(attrs).toJSONString(), indexName, type);
         assertTrue(documentIndexed);
 
         refreshIndices(indexName);
@@ -48,5 +48,6 @@ public class ESIndexClientTest extends AbstractNodeIntegrationTest {
         String searchResult = indexClient.search(indexName, type, "developer");
 
         JsonAssert.with(searchResult).assertEquals("$.hits.total", 1);
+        JsonAssert.with(searchResult).assertEquals("$.hits.hits[0]._id", "document_id");
     }
 }

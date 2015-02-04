@@ -1,5 +1,6 @@
 package org.egov.search.index.service;
 
+import org.egov.search.index.domain.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +26,9 @@ public class IndexQueueListener implements MessageListener {
         try {
             String indexName = message.getStringProperty("index");
             String indexType = message.getStringProperty("type");
-            esIndexClient.index(((TextMessage) message).getText(), indexName, indexType);
+            String documentMessage = ((TextMessage) message).getText();
+            Document doc = Document.fromJson(documentMessage);
+            esIndexClient.index(doc.getCorrelationId(), documentMessage, indexName, indexType);
         } catch (JMSException e) {
             throw new RuntimeException(e);
         }

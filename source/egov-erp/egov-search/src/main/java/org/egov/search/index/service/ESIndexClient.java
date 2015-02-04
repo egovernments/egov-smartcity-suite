@@ -23,11 +23,12 @@ class ESIndexClient {
     }
 
 
-    public boolean index(String document, String indexName, String type) {
+    public boolean index(String documentId, String document, String indexName, String type) {
         IndexRequestBuilder indexRequestBuilder = new IndexRequestBuilder(client)
                 .setIndex(indexName)
                 .setType(type)
-                .setSource(document);
+                .setSource(document)
+                .setId(documentId);
 
         IndexResponse indexResponse = client.index(indexRequestBuilder.request()).actionGet();
         return indexResponse.isCreated();
