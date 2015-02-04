@@ -65,6 +65,20 @@
 
     <profiles>
         <profile>
+            <id>dev</id>
+            <activation>
+                <file>
+                    <exists>../egov-config/src/main/resources/config/egov-erp-override.properties</exists>
+                </file>
+            </activation>
+            <build>
+                <filters>
+                    <filter>../egov-config/src/main/resources/config/egov-erp.properties</filter>
+                    <filter>../egov-config/src/main/resources/config/egov-erp-override.properties</filter>
+                </filters>
+            </build>
+        </profile>
+        <profile>
             <id>db</id>
             <build>
                 <plugins>
@@ -81,7 +95,7 @@
                         </dependencies>
                         <executions>
                             <execution>
-                                <phase>package</phase>
+                                <phase>process-resources</phase>
                                 <configuration>
                                     <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
                                     <propertyFileWillOverride>true</propertyFileWillOverride>

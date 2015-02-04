@@ -7,7 +7,6 @@ import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ComplaintTypeBuilder;
 import org.egov.search.index.service.IndexService;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kubek2k.springockito.annotations.ReplaceWithMock;
 import org.kubek2k.springockito.annotations.SpringockitoContextLoader;
@@ -33,7 +32,6 @@ import static org.junit.Assert.assertTrue;
                 "classpath*:config/spring/applicationContext-egi.xml",
                 "classpath*:config/spring/applicationContext-pgr.xml"
         })
-@Ignore
 public class ComplaintTypeServiceIntegrationTest extends PGRAbstractSpringIntegrationTest {
 
     @Autowired
@@ -48,15 +46,16 @@ public class ComplaintTypeServiceIntegrationTest extends PGRAbstractSpringIntegr
     @Autowired
     @ReplaceWithMock
     private IndexService indexService;
+    private Department department;
 
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
+        department = departmentService.getDepartmentByCode("HD");
     }
 
     @Test
     public void shouldCreateComplaintType() throws ClassNotFoundException {
-        Department department = departmentService.getDepartmentByCode("NB");
         ComplaintType complaintType = new ComplaintTypeBuilder()
                 .withName("test-complaint-type1")
                 .withDepartment(department)
@@ -75,8 +74,6 @@ public class ComplaintTypeServiceIntegrationTest extends PGRAbstractSpringIntegr
 
     @Test
     public void shouldFindComplaintTypeById() {
-        Department department = departmentService.getDepartmentByCode("NB");
-
         ComplaintType complaintType = new ComplaintTypeBuilder()
                 .withName("test-complaint-type2")
                 .withDepartment(department)
@@ -91,8 +88,6 @@ public class ComplaintTypeServiceIntegrationTest extends PGRAbstractSpringIntegr
 
     @Test
     public void shouldLoadAllComplaintTypes() {
-        Department department = departmentService.getDepartmentByCode("NB");
-
         ComplaintType complaintType1 = new ComplaintTypeBuilder().withName("ctype1").withDepartment(department).build();
         ComplaintType complaintType2 = new ComplaintTypeBuilder().withName("ctype2").withDepartment(department).build();
         ComplaintType complaintType3 = new ComplaintTypeBuilder().withName("ctype3").withDepartment(department).build();
