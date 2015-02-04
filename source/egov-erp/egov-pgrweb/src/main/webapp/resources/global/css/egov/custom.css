@@ -365,7 +365,7 @@ table .replace-inputs input {
 }
 
 .page-container .sidebar-menu #main-menu li ul > li:last-child {
-border-bottom: 0;
+	border-bottom: 0;
 }
 
 .page-container .sidebar-menu #main-menu li.has-sub > a:before {
@@ -606,7 +606,7 @@ border-bottom: 0;
 .page-container .sidebar-menu .logo-env > div.sidebar-collapse {
 	position: absolute;
 	top: 30px;
-	right: 20px;
+	right: 17px;
 	z-index: 100000;
 }
 
@@ -624,10 +624,45 @@ border-bottom: 0;
 	text-decoration:none;
 }
 
-.page-container .sidebar-menu.collapsed-menu {
+.page-container .sidebar-menu.collapsed-menu, .page-container .sidebar-menu .sidebar-menu-inner.collapsed-menu {
 	width: 65px;
 }
 
-/*.page-container .sidebar-menu .sidebar-user-info.collapse {
-	padding-top: 76px;
-}*/
+.page-container .sidebar-menu  .sidebar-menu-inner .logo-env.collapsed-logo {
+	display: block;
+	padding: 60px 20px 20px 20px;
+}
+
+.page-container .sidebar-menu .sidebar-menu-inner #main-menu > li > a > span.collapsed-span {
+	position: absolute;
+	top: 0;
+	left: 65px;
+	margin-top: -1px;
+	padding: 12px 10px;
+	background: #303641;
+	border-top: 1px solid #454a54;
+	border-bottom: 1px solid #454a54;
+	width: 250px;
+	visibility: hidden;
+	border-radius: 0 3px 3px 0;
+}
+
+.page-container .sidebar-menu .sidebar-menu-inner #main-menu > li > ul.collapsed-ul{
+	visibility: hidden;
+	position: absolute;
+	height: auto;
+	top: auto;
+	left: 65px;
+	width: 250px;
+	border-radius: 0 0 3px 0;
+}
+
+.page-container .sidebar-menu .sidebar-menu-inner #main-menu > li > a span.badge.collapsed-badge {
+position: absolute;
+right: -240px;
+top: 10px;
+display: none;
+}
+
+
+
