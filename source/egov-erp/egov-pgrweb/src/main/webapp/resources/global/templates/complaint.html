@@ -145,7 +145,7 @@
 									<div class="form-group">
 										<label class="col-sm-3 control-label">Complaint Type</label>
 										<div class="col-sm-6">
-											 <input id="com_type" type="text" class="form-control" placeholder="" autocomplete="off" />
+											 <input id="com_type" type="text" class="form-control typeahead" placeholder="" autocomplete="off" />
 											<div class="add-margin error-msg">Entered keyword not exists in suggestion</div>
 										</div>
 									</div>
@@ -180,7 +180,7 @@
 										<label class="col-sm-3 control-label">Complaint Location</label>
 										<div class="col-sm-6">
 											<div class="input-group">
-												<input id="clocation" type="text" class="form-control low-width" placeholder="" autocomplete="off" />
+												<input id="clocation" type="text" class="form-control typeahead low-width" placeholder="" autocomplete="off" />
 												<span class="input-group-addon map-class" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="entypo-globe"></i></span>
 											</div>
 										</div>
@@ -247,7 +247,7 @@
 									<!-- panel body -->
 									<div class="panel-body no-padding">
 										
-										<script type="text/javascript" src="//maps.google.com/maps/api/js?sensor=false"></script>
+										<script type="text/javascript" src="//maps.google.com/maps/api/js?sensor=true"></script>
 										
 										<div id="normal" class="img-prop"></div>
 										
@@ -271,7 +271,8 @@
 		
 		
 		<script src="../js/bootstrap/bootstrap.js"></script>
-		<script src="../js/bootstrap/bootstrap-typeahead.js"></script>
+		<!--script src="../js/bootstrap/bootstrap-typeahead.js"></script-->
+		<script src="../js/bootstrap/typeahead.bundle.js"></script>
 		<script src="../js/jquery/plugins/exif.js"></script>
 		<script src="../js/jquery/plugins/jquery.inputmask.bundle.min.js"></script>
 		

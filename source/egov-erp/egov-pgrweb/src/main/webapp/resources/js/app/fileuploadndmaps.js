@@ -52,18 +52,20 @@ $(document).ready(function(){
 		return formatted;
 	}
 	
-	var map, geocoder;        
+	
+	var map, geocoder, geolocate, marker;        
 	myCenter=new google.maps.LatLng(13.081604, 80.275183);
+	
 	
 	function initialize() {
 		
-		var marker=new google.maps.Marker({
+		marker=new google.maps.Marker({
 			draggable:true,
 			title:"Drag me!",
 			position:myCenter
 		});
 		
-		//console.log("my center"+myCenter);
+		console.log("my center"+myCenter);
 		
 		var mapProp = {
 			center:myCenter,
@@ -73,6 +75,22 @@ $(document).ready(function(){
 		
 		geocoder = new google.maps.Geocoder();
 		map=new google.maps.Map(document.getElementById("normal"),mapProp);
+		console.log("geo lat long before map set"+myCenter);
+		
+		/*navigator.geolocation.getCurrentPosition(function(position) {
+			myCenter = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+			
+			marker=new google.maps.Marker({
+				draggable:true,
+				title:"Drag me!",
+				position:myCenter
+			});
+			
+			map.setCenter(myCenter);
+			marker.setMap(map);
+			console.log("geo lat long inside"+myCenter);
+		});*/
+		
 		marker.setMap(map);
 		
 		google.maps.event.addListener(marker, 'click', function() {
@@ -86,6 +104,7 @@ $(document).ready(function(){
 			var lat, lng, address;
 			geocoder.geocode({ 'latLng': marker.getPosition() }, function (results, status) {
 				if (status == google.maps.GeocoderStatus.OK) {
+					console.log("drag end!!!");
 					lat = marker.getPosition().lat();
 					lng = marker.getPosition().lng();
 					address = results[0].formatted_address;
