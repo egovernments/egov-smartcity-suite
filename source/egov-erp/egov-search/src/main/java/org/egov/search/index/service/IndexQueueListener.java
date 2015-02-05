@@ -14,10 +14,10 @@ import javax.jms.TextMessage;
 @Transactional
 public class IndexQueueListener implements MessageListener {
 
-    private ESIndexClient esIndexClient;
+    private ElasticSearchClient esIndexClient;
 
     @Autowired
-    public IndexQueueListener(ESIndexClient esIndexClient) {
+    public IndexQueueListener(ElasticSearchClient esIndexClient) {
         this.esIndexClient = esIndexClient;
     }
 

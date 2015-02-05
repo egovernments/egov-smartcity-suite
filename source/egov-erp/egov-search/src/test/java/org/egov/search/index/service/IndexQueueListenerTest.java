@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 
 public class IndexQueueListenerTest {
     @Mock
-    private ESIndexClient esIndexClient;
+    private ElasticSearchClient esIndexClient;
     @Mock
     private TextMessage message;
 

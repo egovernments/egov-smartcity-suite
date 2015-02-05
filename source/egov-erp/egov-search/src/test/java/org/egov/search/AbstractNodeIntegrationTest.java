@@ -30,11 +30,13 @@ public abstract class AbstractNodeIntegrationTest {
     private static final TimeValue TIMEOUT = TimeValue.timeValueSeconds(5L);
     private static final ESLogger ES_LOGGER = Loggers.getLogger(AbstractNodeIntegrationTest.class);
     protected static Node node;
+    protected static int PORT = 9209;
 
     @BeforeClass
     public static void beforeAllTests() throws IOException {
         ImmutableSettings.Builder settingsBuilder = ImmutableSettings.settingsBuilder()
                 .put("path.data", "target/es-data")
+                .put("http.port", PORT)
                 .put("cluster.name", "test-cluster-" + NetworkUtils.getLocalAddress());
 
         node = NodeBuilder.nodeBuilder().local(true).settings(settingsBuilder).node();
