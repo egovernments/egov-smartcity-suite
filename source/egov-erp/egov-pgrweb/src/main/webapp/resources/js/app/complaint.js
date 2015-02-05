@@ -7,12 +7,12 @@ jQuery(document).ready(function($)
 		},
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		remote: {
-			url: 'http://google.com',
-			filter: function (complaintype) {
+			url: '/pgr/complaint/complaintsTypes?q=%QUERY',
+			filter: function (data) {
 				// Map the remote source JSON array to a JavaScript object array
-				return $.map(complaintype.results, function (ct) {
+				return $.map(data, function (ct) {
 					return {
-						value: ct.original_title
+						value: ct.name
 					};
 				});
 			}
@@ -23,7 +23,11 @@ jQuery(document).ready(function($)
 	complaintype.initialize();
 	
 	// Instantiate the Typeahead UI
-	$('#com_type').typeahead(null, {
+	$('.typeahead').typeahead({
+		  hint: true,
+		  highlight: true,
+		  minLength: 3
+		}, {
 		displayKey: 'value',
 		source: complaintype.ttAdapter()
 	});
