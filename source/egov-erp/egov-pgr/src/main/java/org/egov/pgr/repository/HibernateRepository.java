@@ -51,7 +51,11 @@ abstract class HibernateRepository<T extends AbstractPersistable> {
     public List<T> findAll() {
         return getCurrentSession().createQuery(String.format("from %s", entityType.getSimpleName())).list();
     }
-
+    
+    public List<T> findAllLike(String fieldName, String value) {
+        return getCurrentSession().createQuery(String.format("from %s where lower(%s) like lower(:value)", entityType.getSimpleName(),fieldName)).setString("value", '%'+value+'%').list();
+    }
+    
     public Query query(String queryName){
         return getCurrentSession().getNamedQuery(queryName);
     }

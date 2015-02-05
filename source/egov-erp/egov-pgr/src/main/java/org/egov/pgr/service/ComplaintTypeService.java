@@ -44,5 +44,8 @@ public class ComplaintTypeService {
     public List<ComplaintType> findAll() {
         return complaintTypeRepository.findAll();
     }
-
+    
+    public List<ComplaintType> findAllByNameLike(String name) {
+        return complaintTypeRepository.findAllLike("name", name);
+    }
 }

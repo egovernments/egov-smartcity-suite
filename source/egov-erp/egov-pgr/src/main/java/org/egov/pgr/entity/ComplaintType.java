@@ -38,7 +38,7 @@ public class ComplaintType extends AbstractPersistable<Long> {
     private boolean locationRequired;
 
     @Column(name = "days_to_resolve")
-    @Range(max = 99)
+    @Range(min=0, max = 99)
     private int daysToResolve;
 
     public String getName() {
