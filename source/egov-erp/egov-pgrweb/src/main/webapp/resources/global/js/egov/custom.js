@@ -13,5 +13,6 @@ jQuery(document).ready(function($)
 			$(this).val( $(this).val().replace(regexp,'') );
 		}
 	});
+	
 });
 
