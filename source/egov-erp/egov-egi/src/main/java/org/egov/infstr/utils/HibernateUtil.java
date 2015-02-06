@@ -5,6 +5,7 @@
  */
 package org.egov.infstr.utils;
 
+import org.egov.EgovSpringContextHolder;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -139,24 +140,8 @@ public class HibernateUtil {
 	}
 
 	@Deprecated
-	public static SessionFactory getSessionFactory() {
-		final String jndiName = EGOVThreadLocals.getHibFactName();
-		final SessionFactory sessionFact = hibernateFactory.get(jndiName);
-		return sessionFact != null ? sessionFact : createSessionFactory(jndiName);
-	}
-
-	@Deprecated
 	public static Session getCurrentSession() {
-		if (useThreadLocal) {
-			Session s = threadSession.get();
-			if (s == null || !s.isOpen()) {
-				s = getSessionFactory().openSession();
-				threadSession.set(s);
-			}
-			return s;
-		} else {
-			return getSessionFactory().getCurrentSession();
-		}
+		return EgovSpringContextHolder.sessionFactory().getCurrentSession();
 	}
 
 	public static void beginTransaction() {

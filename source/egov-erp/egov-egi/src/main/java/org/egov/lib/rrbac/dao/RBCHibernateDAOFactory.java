@@ -5,7 +5,7 @@
  */
 package org.egov.lib.rrbac.dao;
 
-import org.egov.infstr.utils.HibernateUtil;
+import org.egov.EgovSpringContextHolder;
 import org.egov.lib.rrbac.model.Action;
 import org.egov.lib.rrbac.model.Entity;
 import org.egov.lib.rrbac.model.RuleGroup;
@@ -64,7 +64,7 @@ public class RBCHibernateDAOFactory extends RBCDAOFactory {
 		// thread/EJB already has an open Sessio n and an ongoing Transaction,
 		// this is a no-op and only returns a reference to the current Session.
 		// HibernateUtil.beginTransaction();
-		return HibernateUtil.getCurrentSession();
+		return EgovSpringContextHolder.sessionFactory().getCurrentSession();
 	}
 	
 }
