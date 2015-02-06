@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta name="description" content="Neon Admin Panel" />
+		<meta name="author" content="" />
+		
+		<title>eGov Urban Portal</title>
+		<link rel="stylesheet" href="../css/bootstrap/bootstrap.css">
+		<link rel="stylesheet" href="../css/egov/custom.css">
+		<script src="../js/jquery/jquery.js"></script>
+		<script src="../../js/app/complaintrouting.js"></script>
+		
+		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
+		
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		
+	</head>
+	<body class="page-body">
+		
+		<div class="page-container horizontal-menu">
+			
+			<header class="navbar navbar-fixed-top"><!-- set fixed position by adding class "navbar-fixed-top" -->
+				
+				<div class="navbar-inner">
+					
+					<!-- logo -->
+					<div class="navbar-brand">
+						<a href="index.html">
+							<img src="../images/logo@2x.png"  />
+						</a>
+					</div>
+					
+					<h2 class="horizontal-page-title">Add Complaint Router</h2>
+					
+					
+					
+				</div>
+				
+			</header>
+			
+			<div class="main-content">
+				
+				<div class="row" id="page-content">
+					<div class="col-md-12">
+						
+						<div class="panel panel-default" data-collapsed="0">
+							
+							<div class="panel-body">
+								
+								<form action="javascript:void(0);" id="addcomplaint" method="post" class="form-horizontal form-groups-bordered">
+									
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Complaint Type</label>
+										<div class="col-sm-6">
+											<input id="com_type" type="text" class="form-control" placeholder=""/>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Boundary Type</label>
+										<div class="col-sm-6">
+											<input id="com_boun_type" type="text" class="form-control" placeholder=""/>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Boundary</label>
+										<div class="col-sm-6">
+											<input id="com_boundry" type="text" class="form-control" placeholder=""/>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Position</label>
+										<div class="col-sm-6">
+											<input id="com_position" type="text" class="form-control" placeholder=""/>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<div class="text-center">
+											<button type="submit" class="btn btn-primary">Submit</button>
+										</div>
+									</div>
+									
+								</form>
+								
+							</div>
+							
+						</div>
+						
+					</div>
+				</div>
+				
+				<footer class="main">
+					
+					powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
+					
+				</footer>
+				
+			</div>
+			
+			
+			
+		</div>
+		
+		<script src="../js/bootstrap/bootstrap.js"></script>
+		<script src="../js/jquery/plugins/jquery.validate.min.js"></script>
+		
+	</body>
+</html>

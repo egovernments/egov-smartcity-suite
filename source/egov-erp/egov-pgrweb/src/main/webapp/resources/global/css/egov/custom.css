@@ -715,3 +715,26 @@ visibility: hidden;
 	padding-top:10px;
 }
 
+.panel-primary > .panel-heading
+{
+	cursor:pointer;
+	position: relative;
+}
+
+.add-top-border{
+	border-top: 1px solid #ebebeb;
+}
+
+.history-icon
+{
+	position:absolute;
+	top:10px;
+	right:10px;
+	font-size:16px;
+}
+
+footer.main{
+margin: 10px 0 0 0;
+padding: 15px 0 0 0;
+border-top: 1px solid #ebebeb;
+}

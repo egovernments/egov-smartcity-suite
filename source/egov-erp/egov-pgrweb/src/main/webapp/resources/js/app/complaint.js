@@ -61,9 +61,6 @@ jQuery(document).ready(function($)
 	});
 	
 	
-	$('.twitter-typeahead').css('display','block');
-	
-	
 	$(":input").inputmask();
 	
 	$("#f-name").on("input", function(){

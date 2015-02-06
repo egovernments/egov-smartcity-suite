@@ -121,6 +121,8 @@ $(document).ready(function(){
 	
 	$('#modal-6').on('show.bs.modal', function() {
 		//Must wait until the render of the modal appear, thats why we use the resizeMap and NOT resizingMap!! ;-)
+		
+		//complaint registration map
 		resizeMap();
 	});
 	
@@ -128,6 +130,8 @@ $(document).ready(function(){
 	
 	$('#complaint-locate').on('show.bs.modal', function() {
 		//Must wait until the render of the modal appear, thats why we use the resizeMap and NOT resizingMap!! ;-)
+		
+		//complaint view(update) map
 		$('#show_address_in_map').html($('#address_locate').html());
 		$.ajax({
 			type: "POST",

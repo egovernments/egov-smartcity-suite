@@ -25,4 +25,14 @@ jQuery(document).ready(function($)
 		
 	});
 	
+	$('.slide-history-menu').click(function(){
+		$('.history-slide').slideToggle();
+		if($('#toggle-his-icon').hasClass('entypo-down-open'))
+		{
+			$('#toggle-his-icon').removeClass('entypo-down-open').addClass('entypo-up-open');
+		}else{
+			$('#toggle-his-icon').removeClass('entypo-up-open').addClass('entypo-down-open');
+		}
+	});
+	
 });

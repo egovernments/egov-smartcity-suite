@@ -14,5 +14,7 @@ jQuery(document).ready(function($)
 		}
 	});
 	
+	$('.twitter-typeahead').css('display','block');
+	
 });
 
