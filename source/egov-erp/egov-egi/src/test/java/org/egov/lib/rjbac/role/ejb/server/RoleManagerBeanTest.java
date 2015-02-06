@@ -1,12 +1,5 @@
 package org.egov.lib.rjbac.role.ejb.server;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.lang.reflect.Field;
-
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.rjbac.role.Role;
 import org.egov.lib.rjbac.role.ejb.api.RoleService;
@@ -14,9 +7,18 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 
+import java.lang.reflect.Field;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+@Ignore
 public class RoleManagerBeanTest {
 
 	private RoleService roleManager;

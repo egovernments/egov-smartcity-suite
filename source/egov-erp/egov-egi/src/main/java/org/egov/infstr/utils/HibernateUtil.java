@@ -141,6 +141,12 @@ public class HibernateUtil {
 
 	@Deprecated
 	public static Session getCurrentSession() {
+		/**
+		 * Quartz uses this method to create new session from a different datasource, but
+		 * the implementation has been changed to retrieve the session opened by OpenSessionInViewFilter
+		 * which does not work for Quartz since its a background process. Quartz has to be fixed to
+		 * use the new session. - Katta/Srikanth 06/02/2015
+		 */
 		return EgovSpringContextHolder.sessionFactory().getCurrentSession();
 	}
 

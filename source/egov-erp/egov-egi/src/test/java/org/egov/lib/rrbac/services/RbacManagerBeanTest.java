@@ -7,6 +7,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class RbacManagerBeanTest {
 	private Session session;
 	private Query query;

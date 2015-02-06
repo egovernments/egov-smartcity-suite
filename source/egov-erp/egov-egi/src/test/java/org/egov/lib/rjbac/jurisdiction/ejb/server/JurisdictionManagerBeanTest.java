@@ -1,19 +1,21 @@
 package org.egov.lib.rjbac.jurisdiction.ejb.server;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.lang.reflect.Field;
-
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
 import org.egov.lib.rjbac.jurisdiction.JurisdictionValues;
 import org.egov.lib.rjbac.jurisdiction.ejb.api.JurisdictionService;
 import org.hibernate.Session;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
+
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+@Ignore
 public class JurisdictionManagerBeanTest {
 	private JurisdictionService juriManager;
 	private Session session;
