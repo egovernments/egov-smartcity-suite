@@ -21,12 +21,6 @@
 
 		<dependency>
 			<groupId>org.egov</groupId>
-			<artifactId>egov-search</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.egov</groupId>
 			<artifactId>egov-egi</artifactId>
 			<version>1.0-SNAPSHOT</version>
 			<classifier>tests</classifier>
@@ -41,6 +35,10 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.egov.search</groupId>
+			<artifactId>egov-search</artifactId>
+		</dependency>
 		<dependency>
     		<groupId>org.hibernate</groupId>
     		<artifactId>hibernate-entitymanager</artifactId>

@@ -16,7 +16,6 @@
         <module>egov-config</module>
      	<module>egov-database</module>
         <module>egov-egi</module>
-        <module>egov-search</module>
         <module>egov-pgr</module>
         <module>egov-egiweb</module>
         <module>egov-pgrweb</module>
@@ -31,6 +30,13 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.egov.search</groupId>
+                <artifactId>egov-search</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+
+
             <!-- HIBERNATE DEPENDENCIES START -->
             <dependency>
                 <groupId>org.hibernate</groupId>
@@ -643,14 +649,6 @@
                 <scope>provided</scope>
             </dependency>
             <!-- DATABASE END -->
-
-            <!-- SEARCH START -->
-            <dependency>
-                <groupId>org.elasticsearch</groupId>
-                <artifactId>elasticsearch</artifactId>
-                <version>1.4.2</version>
-            </dependency>
-            <!-- SEARCH END -->
 
         </dependencies>
     </dependencyManagement>
