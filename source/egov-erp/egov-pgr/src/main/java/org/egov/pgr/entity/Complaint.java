@@ -34,7 +34,7 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     // enum
     // since we are asking hibernate use its ordinal to be persisted
     public enum ReceivingMode {
-	Online, SMS, Call, Email, Paper;
+	WebSite, SMS, Call, Email, Paper, Mobile;
     }
 
     public enum Status {
