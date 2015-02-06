@@ -4,8 +4,6 @@ import static org.egov.pgr.utils.constants.CommonConstants.DASH_DELIM;
 import static org.egov.pgr.utils.constants.CommonConstants.MODULE_NAME;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.egov.infra.utils.SecurityUtils;
-import org.egov.lib.rjbac.user.UserImpl;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.repository.ComplaintRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,17 +17,14 @@ public class ComplaintService {
     @Autowired
     private ComplaintRepository complaintRepository;
 
-    @Autowired
-    private SecurityUtils securityUtils;
-
-    //	@PersistenceContext
+     //	@PersistenceContext
     //  private EntityManager entityManager;
 
     @Transactional
     public void createComplaint(final Complaint complaint) {
         complaint.setCRN(generateComplaintID());
         // TODO Workflow will decide who is the assignee based on location data
-        complaint.setAssignee((UserImpl)securityUtils.getCurrentUser());
+        complaint.setAssignee(null);
         complaintRepository.create(complaint);
     }
 
