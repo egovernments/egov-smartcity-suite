@@ -20,6 +20,7 @@ import org.egov.infra.filestore.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.lib.admbndry.BoundaryImpl;
 import org.egov.lib.rjbac.user.UserImpl;
+import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -55,7 +56,7 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
 
     @ManyToOne
     @Valid
-    private UserImpl assignee;
+    private Position assignee;
 
     @ManyToOne(optional = true)
     @Valid
@@ -114,11 +115,11 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
 	this.complainant = complainant;
     }
 
-    public UserImpl getAssignee() {
+    public Position getAssignee() {
 	return assignee;
     }
 
-    public void setAssignee(final UserImpl assignee) {
+    public void setAssignee(final Position assignee) {
 	this.assignee = assignee;
     }
 
