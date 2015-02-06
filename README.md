@@ -6,10 +6,10 @@
 
 ## Prerequisites
 
-* Install [maven v3.2.x](http://maven.apache.org/download.cgi)
+* Install [maven >= v3.2.x](http://maven.apache.org/download.cgi)
 * Install your favorite IDE for java project. Recommended Eclipse or IntelliJ
-* Install [PostgreSQL v9.x](http://www.postgresql.org/download/)
-* Install [Elastic Search v1.4.2](https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.2.zip)
+* Install [PostgreSQL >= v9.3 ](http://www.postgresql.org/download/)
+* Install [Elastic Search >= v1.4.2](https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.2.zip)
 * Install [Jboss Wildfly v8.2.x](http://192.168.1.3/downloads/DevTools/phoenix/wildfly-8.2.0.Final-v1.zip)
 
 __Note__: Please check in [downlods repository](http://192.168.1.3/downloads/) for any of the above software installables before downloading from internet.
