@@ -4,7 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.egov.infra.persistence.AbstractPersistable;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 
 @Entity
 @Table(name = "pgr_receiving_center", uniqueConstraints = @UniqueConstraint(columnNames = { "name" }))

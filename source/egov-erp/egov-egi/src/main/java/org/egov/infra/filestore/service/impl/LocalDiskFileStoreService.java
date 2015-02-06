@@ -11,7 +11,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.filestore.FileStoreMap;
+import org.egov.infra.filestore.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +26,9 @@ public class LocalDiskFileStoreService implements FileStoreService {
     }
 
     @Override
-    public FileStoreMap store(final File sourceFile) {
+    public FileStoreMapper store(final File sourceFile) {
 	try {
-	    final FileStoreMap fileMapper = new FileStoreMap(UUID.randomUUID(), sourceFile.getName());
+	    final FileStoreMapper fileMapper = new FileStoreMapper(UUID.randomUUID(), sourceFile.getName());
 	    Files.copy(sourceFile.toPath(), createNewFilePath(fileMapper));
 	    return fileMapper;
 	} catch (final IOException e) {
@@ -37,9 +37,9 @@ public class LocalDiskFileStoreService implements FileStoreService {
     }
 
     @Override
-    public FileStoreMap store(final InputStream sourceFileStream) {
+    public FileStoreMapper store(final InputStream sourceFileStream) {
 	try {
-	    final FileStoreMap fileMapper = new FileStoreMap(UUID.randomUUID(), "noname");
+	    final FileStoreMapper fileMapper = new FileStoreMapper(UUID.randomUUID(), "noname");
 	    Files.copy(sourceFileStream, createNewFilePath(fileMapper));
 	    return fileMapper;
 	} catch (final IOException e) {
@@ -48,35 +48,35 @@ public class LocalDiskFileStoreService implements FileStoreService {
     }
 
     @Override
-    public Set<FileStoreMap> store(final Set<File> files) {
+    public Set<FileStoreMapper> store(final Set<File> files) {
 	return files.stream().map((file) -> store(file)).collect(Collectors.toSet());
     }
 
     @Override
-    public Set<FileStoreMap> storeStreams(final Set<InputStream> fileStreams) {
+    public Set<FileStoreMapper> storeStreams(final Set<InputStream> fileStreams) {
 	return fileStreams.stream().map((fileStream) -> store(fileStream)).collect(Collectors.toSet());
     }
 
     @Override
-    public File fetch(final FileStoreMap fileMapper) {
+    public File fetch(final FileStoreMapper fileMapper) {
 	final Path path = Paths.get(fileStorePath);
 	if (!Files.exists(path))
 	    throw new EGOVRuntimeException("File Store does not exist at Path : "+fileStorePath);
-	return Paths.get(path.toString() + System.getProperty("file.separator")+ fileMapper.getUniqueId().toString()).toFile();
+	return Paths.get(path.toString() + System.getProperty("file.separator")+ fileMapper.getFileStoreId().toString()).toFile();
     }
 
     @Override
-    public Set<File> fetchAll(final Set<FileStoreMap> fileMappers) {
+    public Set<File> fetchAll(final Set<FileStoreMapper> fileMappers) {
 	return fileMappers.stream().map((fileMapper) -> fetch(fileMapper)).collect(Collectors.toSet());
     }
 
-    private Path createNewFilePath(final FileStoreMap fileMapper) throws IOException {
+    private Path createNewFilePath(final FileStoreMapper fileMapper) throws IOException {
 	final Path path = Paths.get(fileStorePath);
 	if (!Files.exists(path)) {
 	    LOG.info("File Store Directory {} not found, creating one", fileStorePath);
 	    Files.createDirectory(path);
 	    LOG.info("Created File Store Directory {}", fileStorePath);
 	}
-	return Paths.get(path.toString() + System.getProperty("file.separator")+ fileMapper.getUniqueId());
+	return Paths.get(path.toString() + System.getProperty("file.separator")+ fileMapper.getFileStoreId());
     }
 }

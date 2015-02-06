@@ -1,51 +1,36 @@
 package org.egov.pgr.service;
 
-import org.apache.commons.lang.RandomStringUtils;
-import org.egov.lib.rjbac.user.User;
-import org.egov.pgr.entity.Complaint;
-import org.egov.pgr.repository.ComplaintRepository;
-import org.egov.pgr.utils.DateUtils;
-import org.egov.pgr.utils.SecurityUtils;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Example;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import java.util.Date;
-import java.util.List;
-
 import static org.egov.pgr.utils.constants.CommonConstants.DASH_DELIM;
 import static org.egov.pgr.utils.constants.CommonConstants.MODULE_NAME;
+
+import org.apache.commons.lang.RandomStringUtils;
+import org.egov.infra.utils.SecurityUtils;
+import org.egov.lib.rjbac.user.UserImpl;
+import org.egov.pgr.entity.Complaint;
+import org.egov.pgr.repository.ComplaintRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class ComplaintService {
 
-    //	@Autowired
-    ComplaintRepository complaintRepository;
+    @Autowired
+    private ComplaintRepository complaintRepository;
 
-    //	@Autowired
+    @Autowired
     private SecurityUtils securityUtils;
 
     //	@PersistenceContext
-    private EntityManager entityManager;
+    //  private EntityManager entityManager;
 
     @Transactional
-    public Complaint createComplaint(final Complaint complaint) {
-        complaint.setComplaintID(generateComplaintID());
+    public void createComplaint(final Complaint complaint) {
+        complaint.setCRN(generateComplaintID());
         // TODO Workflow will decide who is the assignee based on location data
-        complaint.setAssignee(securityUtils.getCurrentUser());
-        return complaintRepository.save(complaint);
+        complaint.setAssignee((UserImpl)securityUtils.getCurrentUser());
+        complaintRepository.create(complaint);
     }
 
 
@@ -53,9 +38,9 @@ public class ComplaintService {
         return MODULE_NAME + DASH_DELIM + RandomStringUtils.randomAlphanumeric(5);
     }
 
-
+/*
     public Page<Complaint> findAllCurrentUserComplaints(final Pageable pageable) {
-        final User user = securityUtils.getCurrentUser();
+        final User user = securityUtils.getCurrentUser().get();
         return complaintRepository.findByCreatedBy(user, pageable);
     }
 
@@ -68,9 +53,9 @@ public class ComplaintService {
     public Complaint getComplaintByComplaintID(final String complaintID) {
         return complaintRepository.findByComplaintID(complaintID);
     }
+*/
 
-
-    public Page<Complaint> getComplaintsLike(final Complaint complaint, final Date fromDate, final Date toDate, long totalComplaints, final Pageable pageable) {
+    /*public Page<Complaint> getComplaintsLike(final Complaint complaint, final Date fromDate, final Date toDate, long totalComplaints, final Pageable pageable) {
         final Session session = entityManager.unwrap(Session.class);
         final Example complaintExample = Example.create(complaint).enableLike(MatchMode.ANYWHERE).ignoreCase().excludeZeroes();
         final Criteria criteria = session.createCriteria(Complaint.class).add(complaintExample);
@@ -110,5 +95,5 @@ public class ComplaintService {
         final List<Complaint> complaints = criteria.setFirstResult(pageable.getOffset()).setMaxResults(pageable.getPageSize()).list();
         return new PageImpl<>(complaints, pageable, totalComplaints);
     }
-
+*/
 }

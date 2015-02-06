@@ -14,7 +14,7 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.filestore.FileStoreMap;
+import org.egov.infra.filestore.FileStoreMapper;
 import org.egov.infra.filestore.service.impl.LocalDiskFileStoreService;
 import org.junit.After;
 import org.junit.Before;
@@ -25,9 +25,9 @@ public class LocalDiskFileStoreServiceTest {
     private  Path storePath = Paths.get(System.getProperty("user.home")+"/testfilestore");
     private LocalDiskFileStoreService diskFileService;
     
-    private void deleteTempFiles(final File newFile, final FileStoreMap map) throws IOException {
+    private void deleteTempFiles(final File newFile, final FileStoreMapper map) throws IOException {
 	Files.deleteIfExists(newFile.toPath());
-	Files.deleteIfExists(Paths.get(storePath.toString(), map.getUniqueId().toString()));
+	Files.deleteIfExists(Paths.get(storePath.toString(), map.getFileStoreId().toString()));
     }
 
     private File createTempFileWithContent() throws IOException {
@@ -52,9 +52,9 @@ public class LocalDiskFileStoreServiceTest {
     @Test
     public final void testUploadFile() throws IOException {
 	final File newFile = createTempFileWithContent();
-	final FileStoreMap map = diskFileService.store(newFile);
+	final FileStoreMapper map = diskFileService.store(newFile);
 	deleteTempFiles(newFile, map);
-	assertNotNull(map.getUniqueId());
+	assertNotNull(map.getFileStoreId());
     }
 
     @Test(expected = EGOVRuntimeException.class)
@@ -67,10 +67,10 @@ public class LocalDiskFileStoreServiceTest {
     public final void testUploadInputStream() throws IOException {
 	final File newFile = createTempFileWithContent();
 	final FileInputStream fin = new FileInputStream(newFile);
-	final FileStoreMap map = diskFileService.store(fin);
+	final FileStoreMapper map = diskFileService.store(fin);
         fin.close();
 	deleteTempFiles(newFile, map);
-	assertNotNull(map.getUniqueId());
+	assertNotNull(map.getFileStoreId());
     }
 
     @Test
@@ -81,13 +81,13 @@ public class LocalDiskFileStoreServiceTest {
 	    FileUtils.write(newFile, "Test");
 	    files.add(newFile);
 	}
-	final Set<FileStoreMap> maps = diskFileService.store(files);
+	final Set<FileStoreMapper> maps = diskFileService.store(files);
 	for(File file : files) {
 	    Files.deleteIfExists(file.toPath());
 	}
-	for(FileStoreMap map : maps) {
-	    assertNotNull(map.getUniqueId());
-	    Files.deleteIfExists(Paths.get(storePath.toString(), map.getUniqueId().toString()));
+	for(FileStoreMapper map : maps) {
+	    assertNotNull(map.getFileStoreId());
+	    Files.deleteIfExists(Paths.get(storePath.toString(), map.getFileStoreId().toString()));
 	}
     }
 
@@ -100,24 +100,24 @@ public class LocalDiskFileStoreServiceTest {
 	    FileInputStream fin = new FileInputStream(newFile);
 	    files.add(fin);
 	}
-	final Set<FileStoreMap> maps = diskFileService.storeStreams(files);
+	final Set<FileStoreMapper> maps = diskFileService.storeStreams(files);
 	for (InputStream in :  files) {
 	    in.close();
 	}
 	FileUtils.deleteDirectory(tempFilePath.toFile());
-	for(FileStoreMap map : maps) {
-	    assertNotNull(map.getUniqueId());
-	    Files.deleteIfExists(Paths.get(storePath.toString(), map.getUniqueId().toString()));
+	for(FileStoreMapper map : maps) {
+	    assertNotNull(map.getFileStoreId());
+	    Files.deleteIfExists(Paths.get(storePath.toString(), map.getFileStoreId().toString()));
 	}
     }
     
     @Test
     public final void testFetch() throws IOException {
 	final File newFile = createTempFileWithContent();
-	final FileStoreMap map = diskFileService.store(newFile);
+	final FileStoreMapper map = diskFileService.store(newFile);
 	final File file = diskFileService.fetch(map);
 	assertNotNull(file);
-	assertTrue(file.getName().equals(map.getUniqueId().toString()));
+	assertTrue(file.getName().equals(map.getFileStoreId().toString()));
 	deleteTempFiles(newFile, map);
     }
 
@@ -129,7 +129,7 @@ public class LocalDiskFileStoreServiceTest {
 	    FileUtils.write(newFile, "Test");
 	    files.add(newFile);
 	}
-	final Set<FileStoreMap> maps = diskFileService.store(files);
+	final Set<FileStoreMapper> maps = diskFileService.store(files);
 	final Set<File> returnfiles = diskFileService.fetchAll(maps);
 	assertNotNull(returnfiles);
 	assertTrue(returnfiles.size()== 10);
@@ -137,8 +137,8 @@ public class LocalDiskFileStoreServiceTest {
 	for(File file : files) {
 	    Files.deleteIfExists(file.toPath());
 	}
-	for(FileStoreMap map : maps) {
-	    Files.deleteIfExists(Paths.get(storePath.toString(), map.getUniqueId().toString()));
+	for(FileStoreMapper map : maps) {
+	    Files.deleteIfExists(Paths.get(storePath.toString(), map.getFileStoreId().toString()));
 	}
     }
 

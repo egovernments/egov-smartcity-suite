@@ -13,16 +13,18 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.AbstractAuditable;
+import org.egov.infra.filestore.FileStoreMapper;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.lib.admbndry.BoundaryImpl;
 import org.egov.lib.rjbac.user.UserImpl;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "pgr_complaint", uniqueConstraints = @UniqueConstraint(columnNames = { "complaintID" }))
+@Table(name = "pgr_complaint", uniqueConstraints = @UniqueConstraint(columnNames = { "crn" }))
 public class Complaint extends AbstractAuditable<UserImpl, Long> {
 
     private static final long serialVersionUID = 4020616083055647372L;
@@ -35,11 +37,11 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     }
 
     public enum Status {
-	REGISTERED, FORWARDED, PROCESSING, COMPLETED, REJECTED, WITHDRAWN, REOPENED, CLOSE
+	REGISTERED, FORWARDED, PROCESSING, COMPLETED, REJECTED, WITHDRAWN, REOPENED, CLOSED
 
     }
 
-    private String complaintID;
+    private String CRN;
 
     @ManyToOne
     @Valid
@@ -58,35 +60,43 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     @ManyToOne(optional = true)
     @Valid
     @JoinColumn(nullable = true)
-    private BoundaryImpl boundary;
+    private BoundaryImpl location;
 
-    @NotNull(message = "{error-not-empty}")
+    @NotNull
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @NotNull(message = "{error-not-empty}")
-    @Length(min = 10, max = 500, message = "{error-min-max-length-exceed}")
-    @SafeHtml(message = "{error-input-unsafe}")
+    @NotNull
+    @Length(min = 10, max = 500)
+    @SafeHtml
     private String details;
 
-    @Length(max = 200, message = "{error-max-length-exceed}")
-    @SafeHtml(message = "{error-input-unsafe}")
-    private String locationDetails;
+    @Max(200)
+    @SafeHtml
+    private String landmarkDetails;
 
     @Enumerated(EnumType.ORDINAL)
-    @NotNull(message = "{error-not-empty}")
+    @NotNull
     private ReceivingMode receivingMode;
 
     @ManyToOne
     private ReceivingCenter receivingCenter;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinColumn(name = "ref_id", referencedColumnName = "complaintID")
-    private Set<FileAttachment> supportFiles;
+    @JoinColumn(name = "ref_id", referencedColumnName = "id")
+    private Set<FileStoreMapper> supportDocs;
 
-    private Float lon;
+    private long lon;
 
-    private Float lat;
+    private long lat;
+    
+    public String getCRN() {
+        return CRN;
+    }
+
+    public void setCRN(String cRN) {
+        CRN = cRN;
+    }
 
     public ComplaintType getComplaintType() {
 	return complaintType;
@@ -112,14 +122,6 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
 	this.assignee = assignee;
     }
 
-    public BoundaryImpl getBoundary() {
-	return boundary;
-    }
-
-    public void setBoundary(final BoundaryImpl boundary) {
-	this.boundary = boundary;
-    }
-
     public Status getStatus() {
 	return status;
     }
@@ -136,29 +138,6 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
 	this.details = details;
     }
 
-    public String getLocationDetails() {
-	return locationDetails;
-    }
-
-    public void setLocationDetails(final String locationDetails) {
-	this.locationDetails = locationDetails;
-    }
-
-    public Set<FileAttachment> getSupportFiles() {
-	return supportFiles;
-    }
-
-    public void setSupportFiles(final Set<FileAttachment> supportFiles) {
-	this.supportFiles = supportFiles;
-    }
-
-    public String getComplaintID() {
-	return complaintID;
-    }
-
-    public void setComplaintID(final String complaintID) {
-	this.complaintID = complaintID;
-    }
 
     public ReceivingMode getReceivingMode() {
 	return receivingMode;
@@ -176,20 +155,44 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
 	this.receivingCenter = receivingCenter;
     }
 
-    public Float getLon() {
-	return lon;
+    public Set<FileStoreMapper> getSupportDocs() {
+        return supportDocs;
     }
 
-    public void setLon(final Float lon) {
-	this.lon = lon;
+    public void setSupportDocs(Set<FileStoreMapper> supportDocs) {
+        this.supportDocs = supportDocs;
     }
 
-    public Float getLat() {
-	return lat;
+    public BoundaryImpl getLocation() {
+        return location;
     }
 
-    public void setLat(final Float lat) {
-	this.lat = lat;
+    public void setLocation(BoundaryImpl location) {
+        this.location = location;
+    }
+
+    public String getLandmarkDetails() {
+        return landmarkDetails;
+    }
+
+    public void setLandmarkDetails(String landmarkDetails) {
+        this.landmarkDetails = landmarkDetails;
+    }
+
+    public long getLon() {
+        return lon;
+    }
+
+    public void setLon(long lon) {
+        this.lon = lon;
+    }
+
+    public long getLat() {
+        return lat;
+    }
+
+    public void setLat(long lat) {
+        this.lat = lat;
     }
 
 }

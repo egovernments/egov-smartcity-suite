@@ -1,4 +1,4 @@
-package org.egov.infra.persistence;
+package org.egov.infra.persistence.entity;
 
 import java.io.Serializable;
 import java.util.Date;

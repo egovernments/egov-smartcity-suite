@@ -1,6 +1,6 @@
 package org.egov.pgr.entity;
 
-import org.egov.infra.persistence.AbstractPersistable;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.lib.rjbac.dept.DepartmentImpl;
 import org.egov.search.util.Serializer;
 import org.hibernate.validator.constraints.Length;
@@ -10,6 +10,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -30,7 +31,7 @@ public class ComplaintType extends AbstractPersistable<Long> {
 
     @Valid
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "dept_id")
     private DepartmentImpl department;
 

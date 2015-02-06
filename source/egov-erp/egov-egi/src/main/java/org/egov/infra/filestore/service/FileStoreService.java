@@ -4,19 +4,19 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Set;
 
-import org.egov.infra.filestore.FileStoreMap;
+import org.egov.infra.filestore.FileStoreMapper;
 
 public interface FileStoreService {
 
-    FileStoreMap store(File file);
+    FileStoreMapper store(File file);
 
-    FileStoreMap store(InputStream fileStream);
+    FileStoreMapper store(InputStream fileStream);
 
-    Set<FileStoreMap> store(Set<File> files);
+    Set<FileStoreMapper> store(Set<File> files);
 
-    Set<FileStoreMap> storeStreams(Set<InputStream> fileStreams);
+    Set<FileStoreMapper> storeStreams(Set<InputStream> fileStreams);
 
-    File fetch(FileStoreMap fileMappers);
+    File fetch(FileStoreMapper fileMappers);
 
-    Set<File> fetchAll(Set<FileStoreMap> fileMappers);
+    Set<File> fetchAll(Set<FileStoreMapper> fileMappers);
 }

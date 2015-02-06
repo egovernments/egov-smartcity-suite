@@ -1,10 +1,12 @@
-package org.egov.infra.persistence;
+package org.egov.infra.persistence.entity;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+
 import java.io.Serializable;
 
 /**
@@ -20,6 +22,7 @@ public abstract class AbstractPersistable<PK extends Serializable> implements Se
     @Id
     @GenericGenerator(name = "seq_id", strategy = "org.egov.infra.persistence.utils.SequenceIdGenerator")
     @GeneratedValue(generator = "seq_id")
+    @DocumentId
     private PK id;
 
     public PK getId() {

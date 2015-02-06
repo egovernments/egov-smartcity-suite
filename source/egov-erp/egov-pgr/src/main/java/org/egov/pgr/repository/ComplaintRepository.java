@@ -1,15 +1,16 @@
 package org.egov.pgr.repository;
 
-import org.egov.lib.rjbac.user.User;
+import org.egov.infra.persistence.service.HibernateRepository;
 import org.egov.pgr.entity.Complaint;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
-//@Repository
-public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
+@Repository
+public class ComplaintRepository extends HibernateRepository <Complaint> {
 
-	Page<Complaint> findByCreatedBy(User createdBy, Pageable pageable);
-	Page<Complaint> findByComplaintID(String complaintID,Pageable pageable);	
-	Complaint findByComplaintID(String complaintID);
+    @Autowired
+    protected ComplaintRepository(SessionFactory sessionFactory) {
+        super(sessionFactory, Complaint.class);
+    }
 }

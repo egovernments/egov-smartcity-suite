@@ -1,15 +1,18 @@
-package org.egov.pgr.repository;
+package org.egov.infra.persistence.service;
 
-import org.egov.infra.persistence.AbstractPersistable;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
+import java.io.Serializable;
 import java.util.List;
 
-abstract class HibernateRepository<T extends AbstractPersistable> {
+@SuppressWarnings("unchecked")
+public abstract class HibernateRepository<T extends AbstractPersistable <? extends Serializable>> {
 
     protected SessionFactory sessionFactory;
     protected Class<T> entityType;
@@ -38,7 +41,11 @@ abstract class HibernateRepository<T extends AbstractPersistable> {
     public T get(Long id) {
         return (T) getCurrentSession().get(entityType, id);
     }
-
+    
+    public T load(Long id) {
+        return (T) getCurrentSession().load(entityType, id);
+    }
+    
     public Criteria createCriteria(Class<T> clazz) {
         return getCurrentSession().createCriteria(clazz);
     }
@@ -53,7 +60,7 @@ abstract class HibernateRepository<T extends AbstractPersistable> {
     }
     
     public List<T> findAllLike(String fieldName, String value) {
-        return getCurrentSession().createQuery(String.format("from %s where lower(%s) like lower(:value)", entityType.getSimpleName(),fieldName)).setString("value", '%'+value+'%').list();
+        return createCriteria(entityType).add(Restrictions.ilike(fieldName, value, MatchMode.ANYWHERE)).list();
     }
     
     public Query query(String queryName){

@@ -1,5 +1,6 @@
 package org.egov.pgr.repository;
 
+import org.egov.infra.persistence.service.HibernateRepository;
 import org.egov.pgr.entity.ComplaintType;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
