@@ -8,13 +8,13 @@ import org.egov.infra.filestore.FileStoreMapper;
 
 public interface FileStoreService {
 
-    FileStoreMapper store(File file, String moduleName);
+    FileStoreMapper store(File file);
 
-    FileStoreMapper store(InputStream fileStream, String moduleName);
+    FileStoreMapper store(InputStream fileStream);
 
-    Set<FileStoreMapper> store(Set<File> files, String moduleName);
+    Set<FileStoreMapper> store(Set<File> files);
 
-    Set<FileStoreMapper> storeStreams(Set<InputStream> fileStreams, String moduleName);
+    Set<FileStoreMapper> storeStreams(Set<InputStream> fileStreams);
 
     File fetch(FileStoreMapper fileMappers);
 
