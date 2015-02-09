@@ -170,9 +170,9 @@
 									<div class="form-group">
 										<label class="col-sm-3 control-label">Upload Photograph/Video</label>
 										<div class="col-sm-6" >
-											<div id="file1block"><input type="file" id="file1" class="filechange form-control add-margin inline btn btn-primary" /></div>
-											<div id="file2block" class="display-hide"><input type="file" id="file2" class="filechange form-control add-margin inline btn btn-primary" /></div>
-										    <div id="file3block" class="display-hide"><input type="file" id="file3" class="filechange form-control add-margin inline btn btn-primary"/></div>
+											<div id="file1block" class="add-margin"><input type="file" id="file1" class="filechange inline btn" style="display:none;"/><a href="#" id="triggerFile1" class="btn btn-secondary">Browse</a><span class="add-padding" id="filename1"></span></div>
+											<div id="file2block" class="add-margin display-hide"><input type="file" id="file2" class="filechange inline btn" style="display:none;"/><a href="#" id="triggerFile2" class="btn btn-secondary">Browse</a><span class="add-padding" id="filename2"></span></div>
+										    <div id="file3block" class="add-margin display-hide"><input type="file" id="file3" class="filechange inline btn" style="display:none;"/><a href="#" id="triggerFile3" class="btn btn-secondary">Browse</a><span class="add-padding" id="filename3"></span></div>
 										</div>
 									</div>
 									
@@ -181,7 +181,7 @@
 										<div class="col-sm-6">
 											<div class="input-group">
 												<input id="clocation" type="text" class="form-control typeahead low-width" placeholder="" autocomplete="off" />
-												<span class="input-group-addon map-class" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="entypo-globe"></i></span>
+												<span class="input-group-addon map-class btn-secondary" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="entypo-globe"></i></span>
 											</div>
 										</div>
 									</div>

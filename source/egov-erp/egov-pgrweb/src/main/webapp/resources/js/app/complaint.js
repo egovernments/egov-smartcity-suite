@@ -86,5 +86,21 @@ jQuery(document).ready(function($)
 		
 	});
 	
+	$('#triggerFile1').on('click', function(e){
+        e.preventDefault();
+        $("#file1").trigger('click');
+    });
+	
+	
+	$('#triggerFile2').on('click', function(e){
+        e.preventDefault();
+        $("#file2").trigger('click');
+    });
+	
+	$('#triggerFile3').on('click', function(e){
+        e.preventDefault();
+        $("#file3").trigger('click');
+    });
+	
 	
 });

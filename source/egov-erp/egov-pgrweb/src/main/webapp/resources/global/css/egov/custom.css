@@ -191,7 +191,7 @@ table.dataTable tbody tr:hover
 }
 
 .panel-heading.custom_form_panel_heading {
-	background-color: #337ab7;
+	background-color: #3599b2;
 	color:#fff;
 	margin-top: 10px;
 	margin-bottom: 10px;
@@ -227,7 +227,7 @@ table .replace-inputs input {
 .dataTables_wrapper table thead tr th.sorting_asc:before, .dataTables_wrapper table thead tr th.sorting_desc:before {
 	display: block;
 	float: right;
-	color: #303641;
+	color: #fff;
 	font-family: 'Entypo';
 	content: '\e876';
 }
@@ -271,7 +271,7 @@ table .replace-inputs input {
 }
 
 .page-container .sidebar-menu #main-menu li#search {
-	background: #262b34;
+	background: #008eb2;
 	border-bottom-color: rgba(69, 74, 84, 0.5);
 	position: relative;
 	height: 48px;
@@ -289,7 +289,7 @@ table .replace-inputs input {
 	padding: 15px 20px;
 	padding-right: 45px;
 	width: 100%;
-	color: #aaabae;
+	color: #fff;
 	z-index: 100;
 }
 
@@ -332,7 +332,7 @@ table .replace-inputs input {
 
 .page-container .sidebar-menu #main-menu li a:hover {
 	color:#fff;
-	background: #2d323d;
+	background: #f5861f;
 }
 
 .page-container .sidebar-menu #main-menu li a .title{
@@ -345,6 +345,7 @@ table .replace-inputs input {
 	font-size: 11px;
 	line-height: 1.3;
 	background-color: #f58720;
+	border: 1px solid #454a54;
 	color: #ffffff;
 }
 
@@ -639,9 +640,10 @@ table .replace-inputs input {
 	left: 65px;
 	margin-top: -1px;
 	padding: 12px 10px;
-	background: #303641;
-	border-top: 1px solid #454a54;
-	border-bottom: 1px solid #454a54;
+	background:#f5861f;
+	border-top: 1px solid #f5861f;
+	border-bottom:1px solid rgba(69, 74, 84, 0.7);
+	color:#fff;
 	width: 250px;
 	visibility: hidden;
 	border-radius: 0 3px 3px 0;
@@ -658,32 +660,32 @@ table .replace-inputs input {
 }
 
 .page-container .sidebar-menu .sidebar-menu-inner #main-menu > li > a span.badge.collapsed-badge {
-position: absolute;
-right: -240px;
-top: 10px;
-display: none;
+	position: absolute;
+	right: -240px;
+	top: 10px;
+	display: none;
 }
 
 .page-container .sidebar-menu #main-menu.sidebar-collapsed > li#search .search-input {
-position: absolute;
-visibility: hidden;
+	position: absolute;
+	visibility: hidden;
 }
 
 .page-container .sidebar-menu #main-menu.sidebar-collapsed > li#search .search-input.focussed {
-  display: block;
-  position: absolute;
-  visibility: visible;
-  top: 0px;
-  left: 65px;
-  background: #262b34;
-  border: 1px solid #454a54;
-  width: 250px;
-  border-radius: 0 3px 3px 0;
-  border-left: 0;
-  padding: 15px 20px;
-  padding-bottom: 16px;
-  border: 0;
-  padding-left: 0;
+	display: block;
+	position: absolute;
+	visibility: visible;
+	top: 0px;
+	left: 65px;
+	background: #008eb2;
+	border: 1px solid #454a54;
+	width: 250px;
+	border-radius: 0 3px 3px 0;
+	border-left: 0;
+	padding: 15px 20px;
+	padding-bottom: 16px;
+	border: 0;
+	padding-left: 0;
 }
 
 .page-container .sidebar-menu.collapsed-menu .sidebar-user-info.collapsed-ui {
@@ -734,7 +736,65 @@ visibility: hidden;
 }
 
 footer.main{
-margin: 10px 0 0 0;
-padding: 15px 0 0 0;
-border-top: 1px solid #ebebeb;
+	margin: 10px 0 0 0;
+	padding: 15px 0 0 0;
+	border-top: 1px solid #ebebeb;
+}
+
+.add-padding
+{
+	padding:0 5px;
+}
+
+.table > thead:first-child > tr:first-child > th
+{
+	background: #3599b2;
+	color: #fff;
+}
+
+.btn-secondary {
+  color: #fff;
+  background-color: #3599b2;
+  border-color: #3599b2;
+}
+ 
+.btn-secondary:hover,
+.btn-secondary:focus,
+.btn-secondary.focus,
+.btn-secondary:active,
+.btn-secondary.active,
+.open > .dropdown-toggle.btn-secondary {
+  color: #fff;
+  background-color: #f5861f;
+  border-color: #f5861f;
+}
+
+.DTTT_container
+{
+	margin:5px 0;
+}
+
+li#search .search-input, ::-webkit-input-placeholder { /* WebKit browsers */
+    color:    #ebebeb;
+}
+li#search .search-input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   color:    #ebebeb;
+   opacity:  1;
+}
+li#search .search-input::-moz-placeholder { /* Mozilla Firefox 19+ */
+   color:    #ebebeb;
+   opacity:  1;
+}
+li#search .search-input:-ms-input-placeholder { /* Internet Explorer 10+ */
+   color:    #ebebeb;
+}
+
+.page-container .sidebar-menu #main-menu li i
+{
+	color:#ebebeb;
+}
+
+.page-container .sidebar-menu .sidebar-menu-inner #main-menu > li > a > span.collapsed-span.change-li-ul-li{
+	background-color: #303641;
+	border-top:1px solid #303641;
 }

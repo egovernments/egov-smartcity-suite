@@ -2,10 +2,11 @@ $(document).ready(function(){
 	
 	var myCenter;
 	
-	$('#file1, #file2').on('change.bs.fileinput',function(e)
+	$('#file1, #file2, #file3').on('change.bs.fileinput',function(e)
 	{
 		if(e.target.files.length>0)
 		{
+			var filename = this.files[0].name;
 			if($(this).attr('id') == 'file1')
 			{
 				EXIF.getData(e.target.files[0], function() {
@@ -27,9 +28,18 @@ $(document).ready(function(){
 					
 					//console.log(EXIF.pretty(this));
 				});
+				$('#filename1').html(filename);
 				$('#file2block').show();
 				}else{
 				$('#file3block').show();
+			}
+			
+			if($(this).attr('id') == 'file2')
+			{
+				$('#filename2').html(filename);
+			}else if($(this).attr('id') == 'file3')
+			{
+				$('#filename3').html(filename);
 			}
 			
 		}
@@ -81,9 +91,9 @@ $(document).ready(function(){
 			myCenter = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 			
 			marker=new google.maps.Marker({
-				draggable:true,
-				title:"Drag me!",
-				position:myCenter
+			draggable:true,
+			title:"Drag me!",
+			position:myCenter
 			});
 			
 			map.setCenter(myCenter);
@@ -111,6 +121,61 @@ $(document).ready(function(){
 					$('#clocation').val(address);
 					$('#lat').val(lat);
 					$('#lon').val(lng);
+					//$('#clocation').typeahead('setQuery', address); 
+				}
+			});
+		});
+		
+		marker=new google.maps.Marker({
+			draggable:true,
+			title:"Drag me!",
+			position:myCenter
+		});
+		
+		console.log("my center"+myCenter);
+		
+		var mapProp = {
+			center:myCenter,
+			zoom: 12,
+			mapTypeId:google.maps.MapTypeId.ROADMAP
+		};
+		
+		geocoder = new google.maps.Geocoder();
+		map=new google.maps.Map(document.getElementById("normal"),mapProp);
+		console.log("geo lat long before map set"+myCenter);
+		
+		/*navigator.geolocation.getCurrentPosition(function(position) {
+			myCenter = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+			
+			marker=new google.maps.Marker({
+			draggable:true,
+			title:"Drag me!",
+			position:myCenter
+			});
+			
+			map.setCenter(myCenter);
+			marker.setMap(map);
+			console.log("geo lat long inside"+myCenter);
+		});*/
+		
+		marker.setMap(map);
+		
+		google.maps.event.addListener(marker, 'click', function() {
+			
+			infowindow.setContent(contentString);
+			infowindow.open(map, marker);
+			
+		});
+		
+		google.maps.event.addListener(marker, "dragend", function (e) {
+			var lat, lng, address;
+			geocoder.geocode({ 'latLng': marker.getPosition() }, function (results, status) {
+				if (status == google.maps.GeocoderStatus.OK) {
+					console.log("drag end!!!");
+					lat = marker.getPosition().lat();
+					lng = marker.getPosition().lng();
+					address = results[0].formatted_address;
+					$('#clocation').val(address);
 					//$('#clocation').typeahead('setQuery', address); 
 				}
 			});
@@ -166,3 +231,4 @@ $(document).ready(function(){
 	
 	
 });
+

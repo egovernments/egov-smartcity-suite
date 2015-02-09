@@ -59,6 +59,7 @@ $(document).ready(function()
 			$(this).children('a').children('span').css('visibility','visible');
 			$(this).children('ul').css({'visibility':'visible', 'display':'block'});
 			$(this).children('ul').children('li').children('a').children('span').css({'visibility':'visible'});
+			$(this).children('a').children('span').removeClass('change-li-ul-li');
 			}else{
 			
 		}
@@ -77,6 +78,16 @@ $(document).ready(function()
 		if($('#main-menu').hasClass('sidebar-collapsed'))
 		{
 			$(this).children('a').children('span').css({'visibility':'visible', 'display':'block'});
+			$(this).parent().parent().children('a').children('span').removeClass('change-li-ul-li');
+			}else{
+		}
+		
+	});
+	
+	$(".page-container .sidebar-menu #main-menu li ul li").hover(function () {
+		if($('#main-menu').hasClass('sidebar-collapsed'))
+		{
+				$(this).parent().parent().children('a').children('span').addClass('change-li-ul-li');
 			}else{
 		}
 		
