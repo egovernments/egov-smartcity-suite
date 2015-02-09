@@ -35,9 +35,9 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.uploadPhotoVid"/></label>
 						<div class="col-sm-6" >
-							<div id="file1block"><input type="file" id="file1" class="filechange form-control add-margin inline btn btn-primary" data-label="<i class='glyphicon glyphicon-file'></i> Browse" /></div>
-							<div id="file2block" class="display-hide"><input type="file" id="file2" class="filechange form-control add-margin inline btn btn-primary" data-label="<i class='glyphicon glyphicon-file'></i> Browse" /></div>
-						    <div id="file3block" class="display-hide"><input type="file" id="file3" class="filechange form-control add-margin inline btn btn-primary" data-label="<i class='glyphicon glyphicon-file'></i> Browse" /></div>
+							<div id="file1block" class="add-margin"><input type="file" id="file1" class="filechange inline btn" style="display:none;"/><a href="#" id="triggerFile1" class="btn btn-secondary">Browse</a><span class="add-padding" id="filename1"></span></div>
+							<div id="file2block" class="add-margin display-hide"><input type="file" id="file2" class="filechange inline btn" style="display:none;"/><a href="#" id="triggerFile2" class="btn btn-secondary">Browse</a><span class="add-padding" id="filename2"></span></div>
+						    <div id="file3block" class="add-margin display-hide"><input type="file" id="file3" class="filechange inline btn" style="display:none;"/><a href="#" id="triggerFile3" class="btn btn-secondary">Browse</a><span class="add-padding" id="filename3"></span></div>
 						</div>
 					</div>
 					
@@ -46,10 +46,10 @@
 						<div class="col-sm-6">
 							<div class="input-group">
 								<input id="location" type="text" class="form-control low-width" placeholder="" autocomplete="off" required="required"/>
-								<span class="input-group-addon map-class" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="entypo-globe"></i></span>
+								<span class="input-group-addon map-class btn-secondary" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="entypo-globe"></i></span>
 								<form:hidden path="location" id="location" value="0"/>
 				   				<form:hidden path="lat" id="lat"/>
-                   				<form:hidden path="lon" id="lon"/>
+                   				<form:hidden path="lng" id="lng"/>
 							</div>
 						</div>
 					</div>
@@ -64,7 +64,7 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
-					<button type="submit" class="btn btn-success"><spring:message code="lbl.submit"/></button>
+					<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
 			        <button type="reset" class="btn btn-default"><spring:message code="lbl.cancel"/></button>
 				</div>
 			</div>
@@ -102,9 +102,9 @@
 		</div>
 	</div>
 </div>
+<script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
 
 <script src="<c:url value='/resources/js/app/complaint.js'/>"></script>
-<script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>

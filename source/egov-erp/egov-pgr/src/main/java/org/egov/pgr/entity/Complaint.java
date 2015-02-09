@@ -34,11 +34,11 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     // enum
     // since we are asking hibernate use its ordinal to be persisted
     public enum ReceivingMode {
-	WebSite, SMS, Call, Email, Paper, Mobile;
+        WebSite, SMS, Call, Email, Paper, Mobile;
     }
 
     public enum Status {
-	REGISTERED, FORWARDED, PROCESSING, COMPLETED, REJECTED, WITHDRAWN, REOPENED, CLOSED
+        REGISTERED, FORWARDED, PROCESSING, COMPLETED, REJECTED, WITHDRAWN, REOPENED, CLOSED
 
     }
 
@@ -87,80 +87,79 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     @JoinColumn(name = "ref_id", referencedColumnName = "id")
     private Set<FileStoreMapper> supportDocs;
 
-    private long lon;
+    private long lng;
 
     private long lat;
-    
+
     public String getCRN() {
         return CRN;
     }
 
-    public void setCRN(String cRN) {
+    public void setCRN(final String cRN) {
         CRN = cRN;
     }
 
     public ComplaintType getComplaintType() {
-	return complaintType;
+        return complaintType;
     }
 
     public void setComplaintType(final ComplaintType complaintType) {
-	this.complaintType = complaintType;
+        this.complaintType = complaintType;
     }
 
     public Complainant getComplainant() {
-	return complainant;
+        return complainant;
     }
 
     public void setComplainant(final Complainant complainant) {
-	this.complainant = complainant;
+        this.complainant = complainant;
     }
 
     public Position getAssignee() {
-	return assignee;
+        return assignee;
     }
 
     public void setAssignee(final Position assignee) {
-	this.assignee = assignee;
+        this.assignee = assignee;
     }
 
     public Status getStatus() {
-	return status;
+        return status;
     }
 
     public void setStatus(final Status status) {
-	this.status = status;
+        this.status = status;
     }
 
     public String getDetails() {
-	return details;
+        return details;
     }
 
     public void setDetails(final String details) {
-	this.details = details;
+        this.details = details;
     }
 
-
     public ReceivingMode getReceivingMode() {
-	return receivingMode;
+        return receivingMode;
     }
 
     public void setReceivingMode(final ReceivingMode receivingMode) {
-	this.receivingMode = receivingMode;
+        this.receivingMode = receivingMode;
     }
 
     public ReceivingCenter getReceivingCenter() {
-	return receivingCenter;
+        return receivingCenter;
     }
 
     public void setReceivingCenter(final ReceivingCenter receivingCenter) {
-	this.receivingCenter = receivingCenter;
+        this.receivingCenter = receivingCenter;
     }
 
     public Set<FileStoreMapper> getSupportDocs() {
         return supportDocs;
     }
 
-    public void setSupportDocs(Set<FileStoreMapper> supportDocs) {
+    public void setSupportDocs(final Set<FileStoreMapper> supportDocs) {
         this.supportDocs = supportDocs;
     }
 
@@ -168,7 +167,7 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
         return location;
     }
 
-    public void setLocation(BoundaryImpl location) {
+    public void setLocation(final BoundaryImpl location) {
         this.location = location;
     }
 
@@ -176,24 +175,24 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
         return landmarkDetails;
     }
 
-    public void setLandmarkDetails(String landmarkDetails) {
+    public void setLandmarkDetails(final String landmarkDetails) {
         this.landmarkDetails = landmarkDetails;
-    }
-
-    public long getLon() {
-        return lon;
-    }
-
-    public void setLon(long lon) {
-        this.lon = lon;
     }
 
     public long getLat() {
         return lat;
     }
 
-    public void setLat(long lat) {
+    public void setLat(final long lat) {
         this.lat = lat;
+    }
+
+    public long getLng() {
+        return lng;
+    }
+
+    public void setLng(final long lng) {
+        this.lng = lng;
     }
 
 }

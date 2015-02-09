@@ -55,7 +55,7 @@ jQuery(document).ready(function($)
 	complaintlocation.initialize();
 	
 	// Instantiate the Typeahead UI
-	$('#clocation').typeahead(null, {
+	$('#location').typeahead(null, {
 		displayKey: 'value',
 		source: complaintlocation.ttAdapter()
 	});
