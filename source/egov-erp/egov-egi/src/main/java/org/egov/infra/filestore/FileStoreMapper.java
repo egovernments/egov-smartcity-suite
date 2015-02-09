@@ -31,13 +31,16 @@ public class FileStoreMapper extends AbstractAuditable<UserImpl, Serializable> {
     @Column(name = "ref_id")
     private String referenceId;
 
+    private String moduleName;
+    
     private FileStoreMapper() {
         // For Hibernate
     }
 
-    public FileStoreMapper(final UUID fileStoreId, final String fileName) {
+    public FileStoreMapper(final UUID fileStoreId, final String fileName, final String moduleName) {
         this.fileStoreId = fileStoreId;
         this.fileName = fileName;
+        this.moduleName = moduleName;
     }
 
     public UUID getFileStoreId() {
@@ -70,5 +73,13 @@ public class FileStoreMapper extends AbstractAuditable<UserImpl, Serializable> {
 
     public void setReferenceId(final String referenceId) {
         this.referenceId = referenceId;
+    }
+
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
     }
 }
