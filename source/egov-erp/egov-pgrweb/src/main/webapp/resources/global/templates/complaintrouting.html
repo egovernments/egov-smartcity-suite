@@ -52,7 +52,7 @@
 				<div class="row" id="page-content">
 					<div class="col-md-12">
 						
-						<div class="panel panel-default" data-collapsed="0">
+						<div class="" data-collapsed="0">
 							
 							<div class="panel-body">
 								
@@ -61,34 +61,39 @@
 									<div class="form-group">
 										<label class="col-sm-3 control-label">Complaint Type</label>
 										<div class="col-sm-6">
-											<input id="com_type" type="text" class="form-control" placeholder=""/>
+											<input id="com_type" type="text" class="form-control typeahead" placeholder=""/>
 										</div>
 									</div>
 									
 									<div class="form-group">
 										<label class="col-sm-3 control-label">Boundary Type</label>
 										<div class="col-sm-6">
-											<input id="com_boun_type" type="text" class="form-control" placeholder=""/>
+											<select name="com_boun_type" id="com_boun_type" class="form-control">
+												<option value="">Select</option>
+												<option value="1">North Zone</option>
+												<option value="2">South Zone</option>
+											</select>
 										</div>
 									</div>
 									
 									<div class="form-group">
 										<label class="col-sm-3 control-label">Boundary</label>
 										<div class="col-sm-6">
-											<input id="com_boundry" type="text" class="form-control" placeholder=""/>
+											<input id="com_boundry" type="text" class="form-control typeahead" placeholder=""/>
 										</div>
 									</div>
 									
 									<div class="form-group">
 										<label class="col-sm-3 control-label">Position</label>
 										<div class="col-sm-6">
-											<input id="com_position" type="text" class="form-control" placeholder=""/>
+											<input id="com_position" type="text" class="form-control typeahead" placeholder=""/>
 										</div>
 									</div>
 									
 									<div class="form-group">
 										<div class="text-center">
 											<button type="submit" class="btn btn-primary">Submit</button>
+											<a href="javascript:void(0);" class="btn btn-default">Cancel</a>
 										</div>
 									</div>
 									
@@ -114,6 +119,8 @@
 		</div>
 		
 		<script src="../js/bootstrap/bootstrap.js"></script>
+		<script src="../js/egov/custom.js"></script>
+		<script src="../js/bootstrap/typeahead.bundle.js"></script>
 		<script src="../js/jquery/plugins/jquery.validate.min.js"></script>
 		
 	</body>

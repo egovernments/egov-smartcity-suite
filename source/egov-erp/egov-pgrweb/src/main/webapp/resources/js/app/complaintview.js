@@ -30,8 +30,10 @@ jQuery(document).ready(function($)
 		if($('#toggle-his-icon').hasClass('entypo-down-open'))
 		{
 			$('#toggle-his-icon').removeClass('entypo-down-open').addClass('entypo-up-open');
+			$('#see-more-link').hide();
 		}else{
 			$('#toggle-his-icon').removeClass('entypo-up-open').addClass('entypo-down-open');
+			$('#see-more-link').show();
 		}
 	});
 	
