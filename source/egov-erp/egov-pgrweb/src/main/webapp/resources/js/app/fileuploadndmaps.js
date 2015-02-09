@@ -109,6 +109,8 @@ $(document).ready(function(){
 					lng = marker.getPosition().lng();
 					address = results[0].formatted_address;
 					$('#clocation').val(address);
+					$('#lat').val(lat);
+					$('#lon').val(lng);
 					//$('#clocation').typeahead('setQuery', address); 
 				}
 			});
