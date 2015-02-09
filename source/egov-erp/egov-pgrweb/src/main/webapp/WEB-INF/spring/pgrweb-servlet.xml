@@ -10,7 +10,16 @@
 
     <mvc:annotation-driven enable-matrix-variables="true"
                            conversion-service="conversionService"
-                           validator="validator" />
+                           validator="validator">
+         <mvc:message-converters>
+            <!-- Use the HibernateAware mapper instead of the default -->
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="objectMapper">
+                    <bean class="org.egov.infra.support.spring.HibernateAwareObjectMapper" />
+                </property>
+            </bean>
+        </mvc:message-converters>                  
+    </mvc:annotation-driven>
 
     <!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources/ directory -->
     <mvc:resources mapping="/resources/**" location="/resources/"/>
@@ -21,6 +30,7 @@
         <property name="formatters">
             <set>
                 <ref bean="departmentFormatter"/>
+                <ref bean="complaintTypeFormatter"/>
             </set>
         </property>
     </bean>
