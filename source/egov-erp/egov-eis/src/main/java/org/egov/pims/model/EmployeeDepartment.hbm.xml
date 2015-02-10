@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Aug 8, 2007 6:26:42 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.pims.model.EmployeeDepartment" table="EG_EMPLOYEE_DEPT" >
+        <id name="id" type="int">
+            <column name="ID" precision="32" scale="0" />
+            <generator class="sequence">
+	    	    	       	<param name="sequence">SEQ_ASS_DEPT</param>
+    	</generator>
+        </id>
+        
+        <many-to-one name="dept" class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
+	    <column name="DEPTID" precision="32" scale="0" />
+	</many-to-one>
+	<many-to-one name="hodept" class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
+		    <column name="HOD" precision="32" scale="0" />
+	</many-to-one>
+        <many-to-one name="assignment" class="org.egov.pims.model.Assignment" fetch="select">
+			    <column name="ASSIGNMENT_ID"  />
+		</many-to-one>
+		
+        
+    </class>
+</hibernate-mapping>

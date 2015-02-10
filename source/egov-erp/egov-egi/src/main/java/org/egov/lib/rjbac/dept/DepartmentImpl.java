@@ -10,54 +10,9 @@ import java.util.Date;
 public class DepartmentImpl implements Department {
 
 	private String deptName;
-	private String deptDetails;
 	private Integer id;
-	private Date updateTime;
 	private String deptCode;
-	private String deptAddress;
-	private String billingLocation;
-
-	/**
-	 * @return Returns the billingLocation.
-	 */
-	public String getBillingLocation() {
-		return billingLocation;
-	}
-
-	/**
-	 * @param billingLocation The billingLocation to set.
-	 */
-	public void setBillingLocation(String billingLocation) {
-		this.billingLocation = billingLocation;
-	}
-
-	/**
-	 * @return Returns the deptAddress.
-	 */
-	public String getDeptAddress() {
-		return deptAddress;
-	}
-
-	/**
-	 * @param deptAddress The deptAddress to set.
-	 */
-	public void setDeptAddress(String deptAddress) {
-		this.deptAddress = deptAddress;
-	}
-
-	/**
-	 * @return Returns the deptDetails.
-	 */
-	public String getDeptDetails() {
-		return deptDetails;
-	}
-
-	/**
-	 * @param deptDetails The deptDetails to set.
-	 */
-	public void setDeptDetails(String deptDetails) {
-		this.deptDetails = deptDetails;
-	}
+	private Date updateTime;
 
 	/**
 	 * @return Returns the deptName.
@@ -88,20 +43,6 @@ public class DepartmentImpl implements Department {
 	}
 
 	/**
-	 * @return Returns the updateTime.
-	 */
-	public Date getUpdateTime() {
-		return updateTime;
-	}
-
-	/**
-	 * @param updateTime The updateTime to set.
-	 */
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
-	}
-
-	/**
 	 * @return Returns the deptCode.
 	 */
 	public String getDeptCode() {
@@ -127,7 +68,11 @@ public class DepartmentImpl implements Department {
 
 		final Department other = (Department) obj;
 
-		return this.getDeptName().equals(other.getDeptName());
+		if (this.getDeptName().equals(other.getDeptName())) {
+			return true;
+		} else {
+			return false;
+		}
 
 	}
 
@@ -138,6 +83,56 @@ public class DepartmentImpl implements Department {
 			hashCode = hashCode + this.getDeptName().hashCode();
 
 		return hashCode;
+	}
+
+	@Override
+	public String getDeptDetails() {
+		// TODO Auto-generated method stub
+		return "deptDetails";
+	}
+
+	@Override
+	public void setDeptDetails(String deptDetails) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @return Returns the updateTime.
+	 */
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	/**
+	 * @param updateTime The updateTime to set.
+	 */
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	@Override
+	public String getBillingLocation() {
+		// TODO Auto-generated method stub
+		return "location";
+	}
+
+	@Override
+	public void setBillingLocation(String billingLocation) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getDeptAddress() {
+		// TODO Auto-generated method stub
+		return "deptAddress";
+	}
+
+	@Override
+	public void setDeptAddress(String deptAddress) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

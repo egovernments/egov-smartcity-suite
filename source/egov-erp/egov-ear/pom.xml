@@ -21,6 +21,13 @@
             <version>${project.parent.version}</version>
             <type>war</type>
         </dependency>
+        
+        <dependency>
+            <groupId>org.egov</groupId>
+            <artifactId>egov-eisweb</artifactId>
+            <version>${project.parent.version}</version>
+            <type>war</type>
+        </dependency>
 
         <dependency>
             <groupId>org.egov</groupId>
@@ -32,19 +39,25 @@
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>egov-egi</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
         
          <dependency>
             <groupId>org.egov</groupId>
             <artifactId>egov-config</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.egov</groupId>
+            <artifactId>egov-eis</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>egov-pgr</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <!--
@@ -97,6 +110,11 @@
                             <groupId>org.egov</groupId>
                             <artifactId>egov-egiweb</artifactId>
                             <contextRoot>/egi</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.egov</groupId>
+                            <artifactId>egov-eisweb</artifactId>
+                            <contextRoot>/eis</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.egov</groupId>

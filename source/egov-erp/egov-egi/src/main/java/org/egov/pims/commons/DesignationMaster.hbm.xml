@@ -8,18 +8,9 @@
 				<param name="sequence">SEQ_DESIGNATION</param>
 			</generator>
 		</id>
-		<property name="deptId" column="DEPTID" type="int" />
 		<property name="designationName" column="DESIGNATION_NAME" type="string" />
-		<property name="designationLocal" column="DESIGNATION_LOCAL" type="string" />
-		<property name="officerLevel" column="OFFICER_LEVEL" type="int" />
 		<property name="designationDescription" column="DESIGNATION_DESCRIPTION" type="string" />
-		<property name="sanctionedPosts" column="SANCTIONED_POSTS" type="int" />
-		<property name="outsourcedPosts" column="OUTSOURCED_POSTS" type="int" />
-		<set name="positionSet" inverse="true" table="EG_POSITION">
-			<key column="DESIG_ID" not-null="true" />
-			<one-to-many class="org.egov.pims.commons.Position" />
-		</set>
-		
+		<many-to-one name="chartOfAccounts" class="org.egov.commons.CChartOfAccounts" column="glcodeid"/>		
 	</class>
 		<query name="getDesignationForListOfDesgNames">
 		<![CDATA[

@@ -12,11 +12,8 @@
 			unsaved-value="null" />
 
 		<property name="deptName" column="DEPT_NAME" type="string" />
-		<property name="deptDetails" column="DEPT_DETAILS" type="string" />
 		<property name="deptCode">
 			<column name="DEPT_CODE" />
 		</property>
-		<property name="deptAddress" column="DEPT_ADDR" type="string" />
-		<property name="billingLocation" column="ISBILLINGLOCATION" />
 	</class>
 </hibernate-mapping>

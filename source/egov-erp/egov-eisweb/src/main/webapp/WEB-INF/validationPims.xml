@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE form-validation PUBLIC
+"-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.0//EN"
+"http://jakarta.apache.org/commons/dtds/validator_1_0.dtd">
+<form-validation>   
+<formset>
+<form name = "pIMSForm" >
+	  <field property= "firstName" depends = "mask">
+	  	<arg0 key ="employeefirstname" resource="false"/>
+	  	<var>
+	  		<var-name>mask</var-name>
+	  		<var-value>^[a-zA-Z0-9]*$</var-value>
+	  	</var>
+	  </field>
+  	<field property= "middleName" depends="mask">
+  		<arg0 key = "middlename" resource="false"/>
+  		<var>
+  			<var-name>mask</var-name>
+  			<var-value>^[a-zA-Z0-9]*$</var-value>
+  		</var>
+  	</field>
+  	<field property = " lastName" depends= "mask">
+  		<arg0 key = "lastname" resource = "false"/>
+  		<var>
+  			<var-name>mask</var-name>
+  			<var-value>^[a-zA-Z0-9]*$</var-value>
+  		</var>
+  
+  	</field>
+  	<field property ="panNumber" depends="maxlength">
+  	<arg0 key="panNumber"  resource="false" />
+		<arg1 name="minlength" key="${var:maxlength}" resource="false"/>
+		<var>
+		<var-name>maxlength</var-name>
+		<var-value>12</var-value>
+	</var>
+	</field>
+  </form>  
+</formset>
+
+
+</form-validation>

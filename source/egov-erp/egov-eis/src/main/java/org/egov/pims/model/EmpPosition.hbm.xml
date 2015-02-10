@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping>
+   <class name="org.egov.pims.model.EmpPosition" table="EGEIS_POST_CREATION" >
+        <id name="id" >
+            <column name="ID" precision="32" scale="0" />
+           <generator class="sequence">
+	       	<param name="sequence">EIS_POST_CREATION_SEQ</param>
+    	</generator>
+        </id>
+        
+        
+        <property name="postName" type="string">
+            <column name="POST_NAME" length="512" not-null="true"/>
+        </property>
+        
+        <property name="qualificationDetails" type="string" >
+            <column name="QUALIFY_DETAILS" length="1024" />
+        </property>
+        
+        <property name="remarks" type="string">
+            <column name="REMARKS" length="1024" />
+        </property>
+        
+    <many-to-one name="desigId" class="org.egov.pims.commons.DesignationMaster" fetch="select">
+	    <column name="DESIG_ID" precision="32" scale="0" not-null="true"/>
+	</many-to-one>
+	
+        <many-to-one name="deptId" class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
+		    <column name="DEPT_ID" precision="32" scale="0" not-null="true" />
+	</many-to-one>
+
+    <many-to-one name="position" class="org.egov.pims.commons.Position" fetch="select" cascade="save-update,persist">
+		    <column name="POSITION_ID" precision="32" scale="0" />
+	</many-to-one>
+	
+	<many-to-one name="status" class="org.egov.commons.EgwStatus" fetch="select">
+	   		 <column name="STATUS" precision="12" scale="0" not-null="true" />
+    </many-to-one>
+	
+	<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+            <column name="STATE_ID"/>
+    </many-to-one>
+    
+  	<property name="createdDate" type="date">
+         <column name="CREATEDDATE" length="7" not-null="true" />
+    </property>
+    
+    <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" fetch="select" not-null="true">
+         <column name="CREATEDBY" precision="12" scale="0"  />
+    </many-to-one>
+    
+    <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" fetch="select" not-null="true">
+        <column name="LASTMODIFIEDBY" precision="12" scale="0"  />
+    </many-to-one>
+    
+    <property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp" not-null="true" />
+	
+    </class>
+
+</hibernate-mapping>

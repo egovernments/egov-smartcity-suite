@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 9, 2007 3:21:11 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.pims.model.ServiceHistory" table="EGEIS_SERVICE_HISTORY" >
+        
+        
+        <id
+	name="idService"
+	column="ID"
+	type="int">
+	<generator class="sequence">
+		<param name="sequence">SEQ_SERVICE_HISTORY</param>
+	</generator>
+</id>
+	
+	
+        <property name="commentDate" type="date">
+            <column name="COMMENT_DATE" length="7" />
+        </property>
+        
+        <property name="comments" type="string">
+            <column name="COMMENTS" length="256" />
+        </property>
+        
+        <property name="reason" type="string">
+            <column name="REASON" length="256" />
+        </property>
+        
+        <property name="orderNo" type="string">
+            <column name="ORDER_No" length="256" />
+        </property>
+        
+         <property name="payScale" type="string">
+            <column name="PAYSCALE" length="256" />
+        </property>
+        
+        <property name="docNo" type="long">
+            <column name="DOC_NO" />
+        </property>
+        
+    </class>
+</hibernate-mapping>
