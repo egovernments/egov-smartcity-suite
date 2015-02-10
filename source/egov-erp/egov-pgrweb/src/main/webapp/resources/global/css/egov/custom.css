@@ -798,3 +798,31 @@ li#search .search-input:-ms-input-placeholder { /* Internet Explorer 10+ */
 	background-color: #303641;
 	border-top:1px solid #303641;
 }
+
+.change-text-align
+{
+	text-align:right;
+}
+
+
+@media (max-width : 767px){
+
+.change-text-align
+{
+	text-align:left;
+}
+
+}
+
+.remove-img
+{
+	position:absolute;
+	top:-11px;
+	left:3px;
+	font-size:16px;
+	cursor:pointer;
+}
+
+.remove-img:hover{
+	color: #f5861f;
+}
