@@ -6,13 +6,14 @@ import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.lib.rjbac.user.UserImpl;
 import org.hibernate.annotations.Type;
 
-@Table(name = "eg_filestoremap")
+@Table(name = "eg_filestoremap", uniqueConstraints = @UniqueConstraint(columnNames = { "fileStoreId" }))
 @Entity
 public class FileStoreMapper extends AbstractAuditable<UserImpl, Serializable> {
     private static final long serialVersionUID = -2997164207274266823L;
@@ -23,12 +24,10 @@ public class FileStoreMapper extends AbstractAuditable<UserImpl, Serializable> {
     private UUID fileStoreId;
 
     @NotNull
-    @Column
     private String fileName;
 
     private String contentType;
 
-    @Column(name = "ref_id")
     private String referenceId;
 
     private String moduleName;

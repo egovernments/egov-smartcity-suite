@@ -84,7 +84,7 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     private ReceivingCenter receivingCenter;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinColumn(name = "ref_id", referencedColumnName = "id")
+    @JoinColumn(name = "referenceid", referencedColumnName = "id")
     private Set<FileStoreMapper> supportDocs;
 
     private double lng;
