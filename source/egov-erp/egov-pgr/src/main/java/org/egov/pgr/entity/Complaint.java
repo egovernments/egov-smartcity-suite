@@ -87,9 +87,9 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     @JoinColumn(name = "ref_id", referencedColumnName = "id")
     private Set<FileStoreMapper> supportDocs;
 
-    private long lng;
+    private double lng;
 
-    private long lat;
+    private double lat;
 
     public String getCRN() {
         return CRN;
@@ -179,19 +179,19 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
         this.landmarkDetails = landmarkDetails;
     }
 
-    public long getLat() {
+    public double getLat() {
         return lat;
     }
 
-    public void setLat(final long lat) {
+    public void setLat(final double lat) {
         this.lat = lat;
     }
 
-    public long getLng() {
+    public double getLng() {
         return lng;
     }
 
-    public void setLng(final long lng) {
+    public void setLng(final double lng) {
         this.lng = lng;
     }
 
