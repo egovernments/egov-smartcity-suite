@@ -36,14 +36,7 @@
 			<column name="ID_DEPTDESIG" />
 		</many-to-one>
 		
-		 <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" fetch="select" >
-       		 <column name="LASTMODIFIEDBY" precision="12" scale="0"  />
-    	</many-to-one>
-    
-  		<property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp"  />
-		
 		<many-to-one name="drawingOfficer" class = "org.egov.pims.commons.DrawingOfficer" column="ID_DRAWING_OFFICER" unique="true"/>
-		<many-to-one name="billNumber" class="org.egov.masters.model.BillNumberMaster" column="ID_BILLNUMBER" />
 
 	</class>
 </hibernate-mapping>

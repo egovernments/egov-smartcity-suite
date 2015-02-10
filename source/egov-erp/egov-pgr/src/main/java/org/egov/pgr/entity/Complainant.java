@@ -36,7 +36,7 @@ public class Complainant extends AbstractPersistable<Long> {
 
     @ManyToOne
     @Valid
-    @JoinColumn(nullable = true)
+    @JoinColumn(name="userDetail",nullable = true)
     private UserImpl userDetail;
 
     public String getName() {

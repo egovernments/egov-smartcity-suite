@@ -3,6 +3,7 @@ package org.egov.pgr.entity;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -50,20 +51,23 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     @ManyToOne
     @Valid
     @NotNull
+    @JoinColumn(name="complaintType", nullable = false)
     private ComplaintType complaintType;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @Valid
     @NotNull
+    @JoinColumn(name="complainant", nullable = false)
     private Complainant complainant;
 
     @ManyToOne
     @Valid
+    @JoinColumn(name="assignee")
     private Position assignee;
 
     @ManyToOne(optional = true)
     @Valid
-    @JoinColumn(nullable = true)
+    @JoinColumn(name="location", nullable = true)
     private BoundaryImpl location;
 
     @NotNull
@@ -84,6 +88,7 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     private ReceivingMode receivingMode;
 
     @ManyToOne
+    @JoinColumn(name="receivingCenter", nullable = false)
     private ReceivingCenter receivingCenter;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)

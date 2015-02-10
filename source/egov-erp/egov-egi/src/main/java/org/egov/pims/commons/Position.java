@@ -7,9 +7,6 @@ package org.egov.pims.commons;
 
 import java.util.Date;
 
-import org.egov.lib.rjbac.user.User;
-import org.egov.masters.model.BillNumberMaster;
-
 public class Position {
 	
 	private Integer id;
@@ -19,11 +16,8 @@ public class Position {
 	private DesignationMaster desigId;
 	private Date efferctiveDate;//remove this
 	private DrawingOfficer drawingOfficer;
-	private BillNumberMaster billNumber;
 	private DeptDesig deptDesigId;
 	private Integer isPostOutsourced;
-	private User modifiedBy;
-	private Date modifiedDate;
 	
 
 	public Integer getId() {
@@ -82,14 +76,6 @@ public class Position {
 		this.drawingOfficer = drawingOfficer;
 	}
 
-	public BillNumberMaster getBillNumber() {
-		return billNumber;
-	}
-
-	public void setBillNumber(BillNumberMaster billNumber) {
-		this.billNumber = billNumber;
-	}
-
 	public DeptDesig getDeptDesigId() {
 		return deptDesigId;
 	}
@@ -106,21 +92,4 @@ public class Position {
 		this.isPostOutsourced = (isPostOutsourced==null?0:isPostOutsourced);
 	}
 
-	public User getModifiedBy() {
-		return modifiedBy;
-	}
-
-	public void setModifiedBy(User modifiedBy) {
-		this.modifiedBy = modifiedBy;
-	}
-
-	public Date getModifiedDate() {
-		return modifiedDate;
-	}
-
-	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
-	}	
-	
-	
 }
