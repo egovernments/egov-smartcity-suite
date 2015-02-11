@@ -16,7 +16,7 @@ public interface FileStoreService {
 
     Set<FileStoreMapper> storeStreams(Set<InputStream> fileStreams, String moduleName);
 
-    File fetch(FileStoreMapper fileMappers);
+    File fetch(FileStoreMapper fileMappers, String moduleName);
 
-    Set<File> fetchAll(Set<FileStoreMapper> fileMappers);
+    Set<File> fetchAll(Set<FileStoreMapper> fileMappers, String moduleName);
 }

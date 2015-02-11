@@ -17,9 +17,6 @@ public class ComplaintService {
     @Autowired
     private ComplaintRepository complaintRepository;
 
-     //	@PersistenceContext
-    //  private EntityManager entityManager;
-
     @Transactional
     public void createComplaint(final Complaint complaint) {
         complaint.setCRN(generateComplaintID());

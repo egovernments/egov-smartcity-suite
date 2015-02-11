@@ -171,10 +171,10 @@ $(document).ready(function(){
 				if (status == google.maps.GeocoderStatus.OK) {
 					lat = marker.getPosition().lat();
 					lng = marker.getPosition().lng();
-					address = results[0].formatted_address;
-					$('#location').val(address);
 					$('#lat').val(lat);
 					$('#lng').val(lng);
+					address = results[0].formatted_address;
+					$('#location').val(address);
 				}
 			});
 		});

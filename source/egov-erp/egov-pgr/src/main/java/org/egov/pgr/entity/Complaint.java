@@ -1,5 +1,6 @@
 package org.egov.pgr.entity;
 
+import java.util.Collections;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -9,10 +10,10 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
@@ -27,7 +28,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "pgr_complaint", uniqueConstraints = @UniqueConstraint(columnNames = { "crn" }))
+@Table(name = "pgr_complaint")
 public class Complaint extends AbstractAuditable<UserImpl, Long> {
 
     private static final long serialVersionUID = 4020616083055647372L;
@@ -46,7 +47,8 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
 
     @NotNull
     @NotEmpty
-    private String CRN;
+    @Column(name="crn",unique=true)
+    private String CRN = "NONE";
 
     @ManyToOne
     @Valid
@@ -58,7 +60,7 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     @Valid
     @NotNull
     @JoinColumn(name="complainant", nullable = false)
-    private Complainant complainant;
+    private Complainant complainant = new Complainant();
 
     @ManyToOne
     @Valid
@@ -72,7 +74,7 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private Status status = Status.REGISTERED;
 
     @NotNull
     @Length(min = 10, max = 500)
@@ -85,15 +87,18 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
 
     @Enumerated(EnumType.ORDINAL)
     @NotNull
-    private ReceivingMode receivingMode;
+    private ReceivingMode receivingMode = ReceivingMode.WebSite;
 
     @ManyToOne
-    @JoinColumn(name="receivingCenter", nullable = false)
+    @JoinColumn(name="receivingCenter", nullable = true)
     private ReceivingCenter receivingCenter;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinColumn(name = "referenceid", referencedColumnName = "id")
-    private Set<FileStoreMapper> supportDocs;
+    @JoinTable(name="pgr_supportdocs",
+            joinColumns = @JoinColumn(name = "filestoreid"),
+            inverseJoinColumns = @JoinColumn(name = "complaintid")
+    )
+    private Set<FileStoreMapper> supportDocs = Collections.EMPTY_SET;
 
     private double lng;
 

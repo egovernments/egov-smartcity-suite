@@ -1,52 +1,40 @@
 package org.egov.infra.filestore;
 
-import java.io.Serializable;
-import java.util.UUID;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.lib.rjbac.user.UserImpl;
-import org.hibernate.annotations.Type;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 
-@Table(name = "eg_filestoremap", uniqueConstraints = @UniqueConstraint(columnNames = { "fileStoreId" }))
+@Table(name = "eg_filestoremap")
 @Entity
-public class FileStoreMapper extends AbstractAuditable<UserImpl, Serializable> {
+public class FileStoreMapper extends AbstractPersistable<Long> {
     private static final long serialVersionUID = -2997164207274266823L;
 
     @NotNull
-    @Type(type = "uuid-binary")
-    @Column(length = 60, unique = true, nullable = false)
-    private UUID fileStoreId;
+    @Column(length = 36, unique = true, nullable = false)
+    private String fileStoreId;
 
     @NotNull
     private String fileName;
 
     private String contentType;
-
-    private String referenceId;
-
-    private String moduleName;
     
-    private FileStoreMapper() {
+    protected FileStoreMapper() {
         // For Hibernate
     }
 
-    public FileStoreMapper(final UUID fileStoreId, final String fileName, final String moduleName) {
+    public FileStoreMapper(final String fileStoreId, final String fileName) {
         this.fileStoreId = fileStoreId;
         this.fileName = fileName;
-        this.moduleName = moduleName;
     }
 
-    public UUID getFileStoreId() {
+    public String getFileStoreId() {
         return fileStoreId;
     }
 
-    public void setFileStoreId(final UUID fileStoreId) {
+    public void setFileStoreId(final String fileStoreId) {
         this.fileStoreId = fileStoreId;
     }
 
@@ -64,21 +52,5 @@ public class FileStoreMapper extends AbstractAuditable<UserImpl, Serializable> {
 
     public void setContentType(final String contentType) {
         this.contentType = contentType;
-    }
-
-    public String getReferenceId() {
-        return referenceId;
-    }
-
-    public void setReferenceId(final String referenceId) {
-        this.referenceId = referenceId;
-    }
-
-    public String getModuleName() {
-        return moduleName;
-    }
-
-    public void setModuleName(String moduleName) {
-        this.moduleName = moduleName;
     }
 }

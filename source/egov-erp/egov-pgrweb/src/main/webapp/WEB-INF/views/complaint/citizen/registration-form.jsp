@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
 <div class="row">
 	<div class="col-md-12">
-		<form:form role="form" action="register" modelAttribute="complaint" id="complaintform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+		<form:form role="form" action="register" modelAttribute="complaint" commandName="complaint" id="complaintform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -35,9 +35,9 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.uploadPhotoVid"/></label>
 						<div class="col-sm-6" >
-							<div id="file1block" class="add-margin"><input type="file" id="file1" class="filechange inline btn" style="display:none;"/><a href="#" id="triggerFile1" class="btn btn-secondary">Browse</a><span class="add-padding" id="filename1"></span></div>
-							<div id="file2block" class="add-margin display-hide"><input type="file" id="file2" class="filechange inline btn" style="display:none;"/><a href="#" id="triggerFile2" class="btn btn-secondary">Browse</a><span class="add-padding" id="filename2"></span></div>
-						    <div id="file3block" class="add-margin display-hide"><input type="file" id="file3" class="filechange inline btn" style="display:none;"/><a href="#" id="triggerFile3" class="btn btn-secondary">Browse</a><span class="add-padding" id="filename3"></span></div>
+							<div id="file1block" class="add-margin"><input name="files" type="file" id="file1" class="filechange inline btn" style="display:none;"/><a href="#" id="triggerFile1" class="btn btn-secondary">Browse</a><span class="add-padding" id="filename1"></span></div>
+							<div id="file2block" class="add-margin display-hide"><input name="files" type="file" id="file2" class="filechange inline btn" style="display:none;"/><a href="#" id="triggerFile2" class="btn btn-secondary">Browse</a><span class="add-padding" id="filename2"></span></div>
+						    <div id="file3block" class="add-margin display-hide"><input name="files" type="file" id="file3" class="filechange inline btn" style="display:none;"/><a href="#" id="triggerFile3" class="btn btn-secondary">Browse</a><span class="add-padding" id="filename3"></span></div>
 						</div>
 					</div>
 					
@@ -45,7 +45,7 @@
 						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintLoc"/><small><i class="entypo-star error-msg"></i></small></label>
 						<div class="col-sm-6">
 							<div class="input-group">
-								<input id="location" type="text" class="form-control low-width" placeholder="" autocomplete="off" required="required"/>
+								<input id="location" type="text" class="form-control low-width" placeholder="" autocomplete="off" />
 								<span class="input-group-addon map-class btn-secondary" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="entypo-globe"></i></span>
 								<form:hidden path="location" id="location" value="0"/>
 				   				<form:hidden path="lat" id="lat"/>

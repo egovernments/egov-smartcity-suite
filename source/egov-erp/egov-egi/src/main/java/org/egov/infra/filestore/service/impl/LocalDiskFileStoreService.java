@@ -34,7 +34,7 @@ public class LocalDiskFileStoreService implements FileStoreService {
     @Override
     public FileStoreMapper store(final File sourceFile, final String moduleName) {
         try {
-            final FileStoreMapper fileMapper = new FileStoreMapper(UUID.randomUUID(), sourceFile.getName(), moduleName);
+            final FileStoreMapper fileMapper = new FileStoreMapper(UUID.randomUUID().toString(), sourceFile.getName());
             Files.copy(sourceFile.toPath(), createNewFilePath(fileMapper, moduleName));
             return fileMapper;
         } catch (final IOException e) {
@@ -45,8 +45,9 @@ public class LocalDiskFileStoreService implements FileStoreService {
     @Override
     public FileStoreMapper store(final InputStream sourceFileStream, final String moduleName) {
         try {
-            final FileStoreMapper fileMapper = new FileStoreMapper(UUID.randomUUID(),"noname", moduleName);
+            final FileStoreMapper fileMapper = new FileStoreMapper(UUID.randomUUID().toString(),"noname");
             Files.copy(sourceFileStream, createNewFilePath(fileMapper, moduleName));
+            sourceFileStream.close();
             return fileMapper;
         } catch (final IOException e) {
             throw new EGOVRuntimeException("Error occurred while storing files at " + fileStorePath, e);
@@ -64,16 +65,16 @@ public class LocalDiskFileStoreService implements FileStoreService {
     }
 
     @Override
-    public File fetch(final FileStoreMapper fileMapper) {
-        final Path path = Paths.get(fileStorePath + File.separator + fileMapper.getModuleName());
+    public File fetch(final FileStoreMapper fileMapper, final String moduleName) {
+        final Path path = Paths.get(fileStorePath + File.separator + moduleName);
         if (!Files.exists(path))
             throw new EGOVRuntimeException("File Store does not exist at Path : " + fileStorePath);
-        return Paths.get(path.toString() + File.separator + fileMapper.getFileStoreId().toString()).toFile();
+        return Paths.get(path.toString() + File.separator + fileMapper.getFileStoreId()).toFile();
     }
 
     @Override
-    public Set<File> fetchAll(final Set<FileStoreMapper> fileMappers) {
-        return fileMappers.stream().map((fileMapper) -> fetch(fileMapper)).collect(Collectors.toSet());
+    public Set<File> fetchAll(final Set<FileStoreMapper> fileMappers, final String moduleName) {
+        return fileMappers.stream().map((fileMapper) -> fetch(fileMapper, moduleName)).collect(Collectors.toSet());
     }
 
     private Path createNewFilePath(final FileStoreMapper fileMapper, final String moduleName) throws IOException {

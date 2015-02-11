@@ -20,6 +20,7 @@ public class GlobalInitBinderHandler {
     public void initBinder(final WebDataBinder binder) {
         binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat(datePattern), true));
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+        binder.setDisallowedFields("id");
     }
 
 }
