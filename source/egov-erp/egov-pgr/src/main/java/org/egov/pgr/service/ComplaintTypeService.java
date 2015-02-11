@@ -4,8 +4,8 @@ import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.repository.ComplaintTypeRepository;
 import org.egov.search.Index;
 import org.egov.search.ResourceType;
-import org.egov.search.index.domain.Document;
-import org.egov.search.index.service.IndexService;
+import org.egov.search.domain.Document;
+import org.egov.search.service.IndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +33,7 @@ public class ComplaintTypeService {
     public void createComplaintType(ComplaintType complaintType) {
         complaintTypeRepository.create(complaintType);
 
-        Document complaintTypeDocument = new Document(complaintType.getId().toString(), complaintType.toJson());
+        Document complaintTypeDocument = new Document(complaintType.getId().toString(), complaintType.toJsonObject());
         indexService.index(Index.PGR, ResourceType.COMPLAINT_TYPE, complaintTypeDocument);
     }
 

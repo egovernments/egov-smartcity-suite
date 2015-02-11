@@ -5,7 +5,7 @@ import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
 import org.egov.pgr.PGRAbstractSpringIntegrationTest;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ComplaintTypeBuilder;
-import org.egov.search.index.service.IndexService;
+import org.egov.search.service.IndexService;
 import org.junit.Before;
 import org.junit.Test;
 import org.kubek2k.springockito.annotations.ReplaceWithMock;

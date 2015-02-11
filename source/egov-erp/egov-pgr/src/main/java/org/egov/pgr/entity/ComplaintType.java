@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
 import org.hibernate.validator.constraints.SafeHtml;
+import org.json.simple.JSONObject;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -74,7 +75,7 @@ public class ComplaintType extends AbstractPersistable<Long> {
         this.daysToResolve = daysToResolve;
     }
 
-    public String toJson() {
-        return Serializer.toJson(this);
+    public JSONObject toJsonObject() {
+        return Serializer.fromJson(Serializer.toJson(this), JSONObject.class);
     }
 }
