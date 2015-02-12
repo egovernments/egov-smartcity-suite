@@ -2,18 +2,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<!-- <meta charset="utf-8"> -->
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-<meta name="viewport"
-	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="description" content="Neon Admin Panel" />
-<meta name="author" content="" />
-
-<title>eGov Urban Portal</title>
 
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap.css'/>">
@@ -30,14 +18,6 @@
 			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
 			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 		<![endif]-->
-
-
-</head>
-<body class="page-body">
-	<div class="page-container horizontal-menu">
-		<form:form role="form" class="form-horizontal form-groups-bordered"
-			modelAttribute="complaint">
-			<div class="main-content">
 				<div class="row">
 					<div class="col-md-12">
 
@@ -242,9 +222,7 @@
 
 					</div>
 				</div>
-			</div>
-		</form:form>
-	</div>
+			
 
 
 	<!-- Modal 6 (Long Modal)-->
@@ -323,10 +301,8 @@
 	<script
 		src="<c:url value='/resources/global/js/bootstrap/bootstrap.js'/>"></script>
 
-	<link rel="stylesheet"
-		href="<c:url value='/resources/global/js/image-gallery/css/blueimp-gallery.min.css'/>">
-	<link rel="stylesheet"
-		href="<c:url value='/resources/global/js/image-gallery/css/blueimp-gallery.min.css'/>">
+	<link rel="stylesheet" 		href="<c:url value='/resources/global/js/image-gallery/css/blueimp-gallery.min.css'/>">
+	<link rel="stylesheet" 		href="<c:url value='/resources/global/js/image-gallery/css/blueimp-gallery.min.css'/>">
 
 	<script
 		src="<c:url value='/resources/global/js/image-gallery/js/jquery.blueimp-gallery.min.js'/>"></script>
@@ -335,7 +311,3 @@
 
 	<script src="<c:url value='/resources/js/app/complaintview.js'/>"></script>
 	<script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
-
-
-</body>
-</html>

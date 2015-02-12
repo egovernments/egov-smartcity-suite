@@ -2,10 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<script src="<c:url value='/resources/global/js/jquery/jquery.js'/>"></script>
-<script src="<c:url value='/resources/js/app/complaintview.js'/>"></script>
-<link rel="stylesheet" 	href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>"/>
-
+<jsp:include page="view-complaint.jsp"></jsp:include>
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
@@ -77,7 +74,7 @@
 			<div class="form-group display-hide show-action-more">
 				<div class="col-md-3 col-xs-6 add-margin">Change Jurisdiction</div>
 				<div class="col-md-3 col-xs-3 add-margin">
-					<form:select path="" data-first-option="false" id=""
+					<form:select path="" data-first-option="false" id="ct-sel-jurisd"
 						cssClass="form-control" cssErrorClass="form-control error">
 						<form:option value="">
 							<spring:message code="lbl.select" />
@@ -108,9 +105,8 @@
 					<a href="javascript:void(0);" id="toggleactions"
 						class="btn btn-primary">More..</a> 
 						
-						<a href="javascript:void(0);"
-						id="btn_submit" class="btn btn-primary"><spring:message code="lbl.submit"/></a> <a
-						href="javascript:void(0);" class="btn btn-default"><spring:message code="lbl.reset"/></a>
+						<a href="javascript:void(0);" id="btn_submit" class="btn btn-primary"><spring:message code="lbl.submit"/></a> 
+						<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
 				</div>
 			</div>
 

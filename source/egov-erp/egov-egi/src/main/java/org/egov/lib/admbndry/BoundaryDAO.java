@@ -552,8 +552,43 @@ public class BoundaryDAO {
 			throw new EGOVRuntimeException("Error occurred in getAllBoundariesByBndryTypeId", e);
 		}
 	}
+
 	
 	public List<Boundary> findByNameLike(String name) {
 	    return getSession().createCriteria(BoundaryImpl.class).add(Restrictions.ilike("bndryNameLocal", name,MatchMode.ANYWHERE)).addOrder(Order.asc("bndryNameLocal")).list();
 	}
+
+	/**
+	 * 
+	 * @param boundaryId
+	 * @return
+	 * @throws Exception
+	 */
+	public List<BoundaryImpl> getChildBoundaries(final Integer boundaryId) throws Exception {
+
+		List<BoundaryImpl> childBoundaries = null;
+
+		try {
+
+			String parentId = null;
+			if (boundaryId == null ) {
+				parentId = "IS NULL";
+			} else {
+				parentId = " = :parentBoundaryId";
+			}
+
+			final Query qry = getSession().createQuery("from BoundaryImpl BI where BI.parent " + parentId + " and BI.isHistory='N' AND ((BI.toDate IS NULL AND BI.fromDate <= :currDate) OR (BI.fromDate <= :currDate AND BI.toDate >= :currDate))");
+			if (boundaryId != null ) {
+				qry.setInteger("parentBoundaryId",boundaryId);
+			}
+			qry.setDate("currDate", new Date());
+			childBoundaries = qry.list();
+
+		} catch (final Exception e) {
+			throw e;
+		}
+		return childBoundaries;
+
+	}
+
 }

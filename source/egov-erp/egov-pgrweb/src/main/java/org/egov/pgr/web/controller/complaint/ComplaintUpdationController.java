@@ -3,6 +3,9 @@ package org.egov.pgr.web.controller.complaint;
 import java.util.Collections;
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.Validator;
+
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
@@ -15,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,10 +31,15 @@ public class ComplaintUpdationController {
 
 	private ComplaintService complaintService;
 	private ComplaintTypeService complaintTypeService;
+	
 	@Autowired
 	private CommonService commonService;
+	
 	@Autowired
 	private ComplaintStatusMappingService complaintStatusMappingService;
+	
+	@Autowired
+	SmartValidator validator;
 
 
 
@@ -76,7 +85,7 @@ public class ComplaintUpdationController {
 				if(complaint.getLocation()!=null)
 				{
 					model.addAttribute("zone", commonService.getZones()); 
-					model.addAttribute("ward", commonService.getWards(complaint.getLocation().getParent()));
+					model.addAttribute("ward", commonService.getWards(complaint.getLocation().getParent().getId()));
 				}
 			}
 		}catch(Exception e)
@@ -89,12 +98,14 @@ public class ComplaintUpdationController {
 	@RequestMapping(method = RequestMethod.POST)
 	public String update(@ModelAttribute Complaint complaint, BindingResult errors, RedirectAttributes redirectAttrs,Model model)
 	{
+		validator.validate(complaint, errors);    
+		
 		if (!errors.hasErrors()) {
 			complaintService.update(complaint);
 			redirectAttrs.addFlashAttribute("message", "Successfully created Complaint Type !");
 		}
 		show(model,complaint.getId());
-		return "redirect:/complaint-update/"+complaint.getId();
+		return "complaint-update";
 	}
 
 

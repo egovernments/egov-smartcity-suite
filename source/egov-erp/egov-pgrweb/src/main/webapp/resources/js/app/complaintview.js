@@ -39,21 +39,31 @@ jQuery(document).ready(function($)
 	});
 	
 	$('#ct-sel-jurisd').change(function(){
-		console.log("came jursidiction");	
+		console.log("came jursidiction"+$('#ct-sel-jurisd').val());
+		$.ajax({
+			url: "/pgr/ajax-getWards/"+$('#ct-sel-jurisd').val(),
+			type: "GET",
+			data: {
+				zone : $('#ct-sel-jurisd').val()
+			},
+			dataType: "json",
+			success: function (response) {
+				console.log("success"+response);
+				$('#location').empty();
+				
+				$('#location').append($("<option value=''>Select</option>"));
+				$.each(response, function(index, value) {
+					
+				     $('#location').append($('<option>').text(value.bndryNameLocal).attr('value', value.id));
+				});
+				
+			}, 
+			error: function (response) {
+				console.log("failed");
+			}
+		});
 	});
 
-	$.ajax({
-		url: "http://example.appspot.com/rest/app",
-		type: "POST",
-		data: JSON.stringify(),
-		dataType: "json",
-		success: function (response) {
-			console.log("success");
-		},
-		error: function (response) {
-			console.log("failed");
-		}
-	});
 	
 	
 });

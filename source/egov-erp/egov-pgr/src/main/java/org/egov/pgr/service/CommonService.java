@@ -45,16 +45,20 @@ public class CommonService {
 		return zones;
 	}
 
-	
-	public List<BoundaryImpl> getWards(Boundary zone)
-	{
 
-		if(zone==null || zone.getId()==null)
+	public List<BoundaryImpl> getWards(Integer zoneId) {
+		
+		if(zoneId==null || zoneId<=0)
 		{
 			throw new EGOVRuntimeException("Zone or Zoneid is not passed");
 		}
 		List<BoundaryImpl> wards=new ArrayList<BoundaryImpl>();
-		wards = boundaryDAO.getAllchildBoundaries(zone.getId());
+		try {
+			wards = boundaryDAO.getChildBoundaries(zoneId);
+		} catch (Exception e) {
+			LOG.error(e.getMessage());
+			
+		}         
 		return wards;
 	}
 	
