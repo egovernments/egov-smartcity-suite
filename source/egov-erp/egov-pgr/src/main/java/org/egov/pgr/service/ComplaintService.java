@@ -30,7 +30,6 @@ public class ComplaintService {
         return MODULE_NAME + DASH_DELIM + RandomStringUtils.randomAlphanumeric(5);
     }
     
-    @Transactional
     public Complaint getComplaintByComplaintID(final Long complaintID) {
         return complaintRepository.get(complaintID);
     }
