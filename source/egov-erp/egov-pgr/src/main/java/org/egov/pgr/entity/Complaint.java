@@ -15,7 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.filestore.FileStoreMapper;
@@ -29,6 +28,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "pgr_complaint")
+@SuppressWarnings("unchecked")
 public class Complaint extends AbstractAuditable<UserImpl, Long> {
 
     private static final long serialVersionUID = 4020616083055647372L;
@@ -81,7 +81,7 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     @SafeHtml
     private String details;
 
-    @Max(200)
+    @Length(max=200)
     @SafeHtml
     private String landmarkDetails;
 

@@ -44,7 +44,7 @@ public class LocalDiskFileStoreServiceTest {
     public void beforeTest() throws IOException {
 	if (!Files.exists(tempFilePath))
 	    Files.createDirectories(tempFilePath);
-	diskFileService = new LocalDiskFileStoreService("testfilestore");
+	diskFileService = new LocalDiskFileStoreService(System.getProperty("user.home")+ File.separator+"testfilestore");
     }
 
     @AfterClass

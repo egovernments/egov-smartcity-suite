@@ -24,11 +24,14 @@ public class LocalDiskFileStoreService implements FileStoreService {
 
     private static final Logger LOG = LoggerFactory.getLogger(LocalDiskFileStoreService.class);
     
-    private final String fileStorePath;
-
+    private String fileStoreBaseDir;
+    
     @Autowired
-    public LocalDiskFileStoreService(@Value("#{egovErpProperties.fileStorePath}")final String fileStorePath) {
-        this.fileStorePath = System.getProperty("user.home")+ File.separator+fileStorePath;
+    public LocalDiskFileStoreService(@Value("#{egovErpProperties.fileStoreBaseDir}")String fileStoreBaseDir) {
+        if (fileStoreBaseDir.isEmpty())
+            this.fileStoreBaseDir = System.getProperty("user.home")+File.separator+"egovfilestore";
+        else 
+            this.fileStoreBaseDir = fileStoreBaseDir;
     }
 
     @Override
@@ -38,7 +41,7 @@ public class LocalDiskFileStoreService implements FileStoreService {
             Files.copy(sourceFile.toPath(), createNewFilePath(fileMapper, moduleName));
             return fileMapper;
         } catch (final IOException e) {
-            throw new EGOVRuntimeException("Error occurred while storing files at " + fileStorePath, e);
+            throw new EGOVRuntimeException(String.format("Error occurred while storing files at %s/%s", fileStoreBaseDir,moduleName), e);
         }
     }
 
@@ -50,7 +53,7 @@ public class LocalDiskFileStoreService implements FileStoreService {
             sourceFileStream.close();
             return fileMapper;
         } catch (final IOException e) {
-            throw new EGOVRuntimeException("Error occurred while storing files at " + fileStorePath, e);
+            throw new EGOVRuntimeException(String.format("Error occurred while storing files at %s/%s", fileStoreBaseDir,moduleName), e);
         }
     }
 
@@ -66,9 +69,9 @@ public class LocalDiskFileStoreService implements FileStoreService {
 
     @Override
     public File fetch(final FileStoreMapper fileMapper, final String moduleName) {
-        final Path path = Paths.get(fileStorePath + File.separator + moduleName);
+        final Path path = Paths.get(fileStoreBaseDir + File.separator + moduleName);
         if (!Files.exists(path))
-            throw new EGOVRuntimeException("File Store does not exist at Path : " + fileStorePath);
+            throw new EGOVRuntimeException(String.format("File Store does not exist at Path : %s/%s",fileStoreBaseDir,moduleName));
         return Paths.get(path.toString() + File.separator + fileMapper.getFileStoreId()).toFile();
     }
 
@@ -78,11 +81,11 @@ public class LocalDiskFileStoreService implements FileStoreService {
     }
 
     private Path createNewFilePath(final FileStoreMapper fileMapper, final String moduleName) throws IOException {
-        final Path fileStoreDir = Paths.get(fileStorePath + File.separator + moduleName);
+        final Path fileStoreDir = Paths.get(fileStoreBaseDir + File.separator + moduleName);
         if (!Files.exists(fileStoreDir)) {
-            LOG.info("File Store Directory {}/{} not found, creating one", fileStorePath, moduleName);
+            LOG.info("File Store Directory {}/{} not found, creating one", fileStoreBaseDir, moduleName);
             Files.createDirectories(fileStoreDir);
-            LOG.info("Created File Store Directory {}/{}", fileStorePath,moduleName);
+            LOG.info("Created File Store Directory {}/{}", fileStoreBaseDir,moduleName);
         }
         return Paths.get(fileStoreDir.toString() + File.separator + fileMapper.getFileStoreId());
     }
