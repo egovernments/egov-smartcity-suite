@@ -146,6 +146,11 @@
 										<label class="col-sm-3 control-label">Complaint Type</label>
 										<div class="col-sm-6">
 											<input id="com_type" type="text" class="form-control typeahead" placeholder="" autocomplete="off" />
+											<button type="button" class="btn btn-secondary btn-xs tag-element freq-ct">Sydney</button>
+											<button type="button" class="btn btn-secondary btn-xs tag-element freq-ct">Melbourne</button>
+											<button type="button" class="btn btn-secondary btn-xs tag-element freq-ct">Australia</button>
+											<button type="button" class="btn btn-secondary btn-xs tag-element freq-ct">Canberra</button>
+											<button type="button" class="btn btn-secondary btn-xs tag-element freq-ct">Adelaide</button>
 											<div class="add-margin error-msg">Entered keyword not exists in suggestion</div>
 										</div>
 									</div>
@@ -170,27 +175,25 @@
 									<div class="form-group">
 										<div class="col-sm-3 col-xs-12 change-text-align">
 											<label class="control-label">Upload Photograph/Video</label><br>
-											<input type="file" id="file1" class="filechange inline btn" style="display:none;"/>
-											<a href="#" id="triggerFile1" class="btn btn-secondary">Browse</a>
-											<input type="file" id="file2" class="filechange inline btn" style="display:none;"/>
-											<a href="#" id="triggerFile2" class="btn btn-secondary display-hide">Browse</a>
-											<input type="file" id="file3" class="filechange inline btn" style="display:none;"/>
-											<a href="#" id="triggerFile3" class="btn btn-secondary display-hide">Browse</a>
+											<a href="#" id="triggerFile" class="btn btn-secondary">Browse</a>
+											<input type="file" id="file1" data-id="1" class="filechange inline btn" style="display:none;"/>
+											<input type="file" id="file2" data-id="2" class="filechange inline btn" style="display:none;"/>
+											<input type="file" id="file3" data-id="3" class="filechange inline btn" style="display:none;"/>
 										</div>
 										<div class="col-sm-6 col-xs-12">
 											<div id="file1block" class="add-margin col-sm-4 col-xs-4">
 												<img id="preview1" src="#" alt="" class="display-hide "/>
-												<div class="remove-img preview-cross1 display-hide"><i class="entypo-cancel-circled"></i></div>
+												<div class="remove-img preview-cross1 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
 												<div class="add-padding" id="filename1"></div>
 											</div>
 											<div id="file2block" class="add-margin display-hide col-sm-4 col-xs-4">
 												<img id="preview2" src="#" alt="" class="display-hide"/>
-												<div class="remove-img preview-cross2 display-hide"><i class="entypo-cancel-circled"></i></div>
+												<div class="remove-img preview-cross2 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
 												<div class="add-padding" id="filename2"></div>
 											</div>
 											<div id="file3block" class="add-margin display-hide col-sm-4 col-xs-4">
 												<img id="preview3" src="#" alt="" class="display-hide"/>
-												<div class="remove-img preview-cross3 display-hide"><i class="entypo-cancel-circled"></i></div>
+												<div class="remove-img preview-cross3 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
 												<div class="add-padding" id="filename3"></div>
 											</div>
 										</div>
@@ -223,83 +226,83 @@
 							
 							
 							
-						
+							
 						</div>
 						
-						</div>
-						</div>
-						
-						
-						<div class="row">
-						<div class="text-center">
+					</div>
+				</div>
+				
+				
+				<div class="row">
+					<div class="text-center">
 						<a href="complaintsuccess.html" id="com_submit" class="btn btn-primary">Submit</a>
 						<a href="javascript:void(0);" id="com_cancel" class="btn btn-default">Cancel</a>
-						</div>
-						</div>
-						
-						<footer class="main">
-						
-						powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
-						
-						</footer>
-						
-						</div>
-						
-						
-						
-						</div>
-						
-						<!-- Modal 6 (Long Modal)-->
-						<div class="modal fade" id="modal-6">
-						<div class="modal-dialog">
-						<div class="modal-content">
-						
-						<div class="modal-body">
-						
-						<div class="row">
-						
-						<div class="col-md-12">
-						<div class="panel panel-primary" data-collapsed="0"><!-- to apply shadow add class "panel-shadow" -->
-						<!-- panel head -->
-						<div class="panel-heading">
-						<div class="panel-title">Complaint Location</div>
-						
-						</div>
-						
-						<!-- panel body -->
-						<div class="panel-body no-padding">
-						
-						<script type="text/javascript" src="//maps.google.com/maps/api/js?sensor=true"></script>
-						
-						<div id="normal" class="img-prop"></div>
-						
-						</div>
-						
-						</div>
-						</div>
-						
-						</div>
-						
-						
-						</div>
-						
-						<div class="modal-footer">
-						<button type="button" class="btn btn-info" data-dismiss="modal">Save changes</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-						</div>
-						</div>
-						</div>
-						</div>
-						
-						
-						<script src="../js/bootstrap/bootstrap.js"></script>
-						<script src="../js/bootstrap/typeahead.bundle.js"></script>
-						<script src="../js/jquery/plugins/exif.js"></script>
-						<script src="../js/jquery/plugins/jquery.inputmask.bundle.min.js"></script>
-						
-						<script src="../../js/app/complaint.js"></script>
-						<script src="../js/egov/custom.js"></script>
-						<script src="../../js/app/fileuploadndmaps.js"></script>
-						
-						</body>
-						</html>																																																								
+					</div>
+				</div>
+				
+				<footer class="main">
+					
+					powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
+					
+				</footer>
+				
+			</div>
+			
+			
+			
+		</div>
+		
+		<!-- Modal 6 (Long Modal)-->
+		<div class="modal fade" id="modal-6">
+		<div class="modal-dialog">
+		<div class="modal-content">
+		
+		<div class="modal-body">
+		
+		<div class="row">
+		
+		<div class="col-md-12">
+		<div class="panel panel-primary" data-collapsed="0"><!-- to apply shadow add class "panel-shadow" -->
+		<!-- panel head -->
+		<div class="panel-heading">
+		<div class="panel-title">Complaint Location</div>
+		
+		</div>
+		
+		<!-- panel body -->
+		<div class="panel-body no-padding">
+		
+		<script type="text/javascript" src="//maps.google.com/maps/api/js?sensor=true"></script>
+		
+		<div id="normal" class="img-prop"></div>
+		
+		</div>
+		
+		</div>
+		</div>
+		
+		</div>
+		
+		
+		</div>
+		
+		<div class="modal-footer">
+		<button type="button" class="btn btn-info" data-dismiss="modal">Save changes</button>
+		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		</div>
+		</div>
+		</div>
+		</div>
+		
+		
+		<script src="../js/bootstrap/bootstrap.js"></script>
+		<script src="../js/bootstrap/typeahead.bundle.js"></script>
+		<script src="../js/jquery/plugins/exif.js"></script>
+		<script src="../js/jquery/plugins/jquery.inputmask.bundle.min.js"></script>
+		
+		<script src="../../js/app/complaint.js"></script>
+		<script src="../js/egov/custom.js"></script>
+		<script src="../../js/app/fileuploadndmaps.js"></script>
+		
+		</body>
+		</html>																																																																																							

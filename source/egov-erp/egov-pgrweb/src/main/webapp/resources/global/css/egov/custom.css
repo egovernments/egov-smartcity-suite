@@ -753,20 +753,20 @@ footer.main{
 }
 
 .btn-secondary {
-  color: #fff;
-  background-color: #3599b2;
-  border-color: #3599b2;
+	color: #fff;
+	background-color: #3599b2;
+	border-color: #3599b2;
 }
- 
+
 .btn-secondary:hover,
 .btn-secondary:focus,
 .btn-secondary.focus,
 .btn-secondary:active,
 .btn-secondary.active,
 .open > .dropdown-toggle.btn-secondary {
-  color: #fff;
-  background-color: #f5861f;
-  border-color: #f5861f;
+	color: #fff;
+	background-color: #f5861f;
+	border-color: #f5861f;
 }
 
 .DTTT_container
@@ -778,15 +778,15 @@ li#search .search-input, ::-webkit-input-placeholder { /* WebKit browsers */
     color:    #ebebeb;
 }
 li#search .search-input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-   color:    #ebebeb;
-   opacity:  1;
+	color:    #ebebeb;
+	opacity:  1;
 }
 li#search .search-input::-moz-placeholder { /* Mozilla Firefox 19+ */
-   color:    #ebebeb;
-   opacity:  1;
+	color:    #ebebeb;
+	opacity:  1;
 }
 li#search .search-input:-ms-input-placeholder { /* Internet Explorer 10+ */
-   color:    #ebebeb;
+	color:    #ebebeb;
 }
 
 .page-container .sidebar-menu #main-menu li i
@@ -806,12 +806,12 @@ li#search .search-input:-ms-input-placeholder { /* Internet Explorer 10+ */
 
 
 @media (max-width : 767px){
-
-.change-text-align
-{
-	text-align:left;
-}
-
+	
+	.change-text-align
+	{
+		text-align:left;
+	}
+	
 }
 
 .remove-img
@@ -825,4 +825,11 @@ li#search .search-input:-ms-input-placeholder { /* Internet Explorer 10+ */
 
 .remove-img:hover{
 	color: #f5861f;
+}
+
+
+.tag-element
+{
+	margin-top: 4px;
+	margin-right: 9px;
 }

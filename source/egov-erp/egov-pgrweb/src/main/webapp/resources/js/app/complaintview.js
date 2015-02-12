@@ -31,10 +31,24 @@ jQuery(document).ready(function($)
 		{
 			$('#toggle-his-icon').removeClass('entypo-down-open').addClass('entypo-up-open');
 			$('#see-more-link').hide();
-		}else{
+			}else{
 			$('#toggle-his-icon').removeClass('entypo-up-open').addClass('entypo-down-open');
 			$('#see-more-link').show();
 		}
 	});
+	
+	$.ajax({
+		url: "http://example.appspot.com/rest/app",
+		type: "POST",
+		data: JSON.stringify(),
+		dataType: "json",
+		success: function (response) {
+			console.log("success");
+		},
+		error: function (response) {
+			console.log("failed");
+		}
+	});
+	
 	
 });
