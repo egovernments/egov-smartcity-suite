@@ -3,17 +3,6 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!--
-        *****************GLOBAL BEAN DEFINITION XML EDITING RULES.*****************
-
-        #ALWAYS TAKE LATEST SVN UPDATE OF THIS XML BEFORE COMMIT YOUR CHANGES.
-        #NEVER ADD YOUR BEAN DEFINITION OVER HERE. THIS IS ONLY A PLACE TO REFER YOUR OTHER BEAN DEFINITION XML
-
-        ***NEVER EVER EDIT WITHOUT INFORMING INFRASTRUCTURE TEAM***
-
-        ***************************************************************************
-    -->
-
     <bean name="erpApplicationContext" class="org.springframework.context.support.ClassPathXmlApplicationContext">
         <constructor-arg>
             <list>

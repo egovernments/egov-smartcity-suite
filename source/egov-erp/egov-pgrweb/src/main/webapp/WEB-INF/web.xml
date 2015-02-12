@@ -11,7 +11,7 @@
     </context-param>
     <context-param>
         <param-name>locatorFactorySelector</param-name>
-        <param-value>classpath*:config/spring/erpApplicationContext.xml</param-value>
+        <param-value>classpath*:config/spring/applicationContext-erp.xml</param-value>
     </context-param>
     <context-param>
         <param-name>parentContextKey</param-name>
