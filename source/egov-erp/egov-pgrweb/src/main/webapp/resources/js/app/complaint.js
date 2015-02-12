@@ -63,12 +63,6 @@ jQuery(document).ready(function($)
 	
 	$(":input").inputmask();
 	
-	$("#f-name").on("input", function(){
-		var regexp = /[^a-zA-Z]/g;
-		if($(this).val().match(regexp)){
-			$(this).val( $(this).val().replace(regexp,'') );
-		}
-	});
 	/*complaint through*/
 	$('input:radio[name="compthr"]').click(function(e) {
 		if($('#pform').is(':checked'))
@@ -81,26 +75,14 @@ jQuery(document).ready(function($)
 	});
 	
 	$('#doc').bind('input propertychange', function() {
-		var remchar = parseInt(400 - ($('#doc').val().length));
+		var remchar = parseInt(500 - ($('#doc').val().length));
 		$('#rcc').html('Remaining Characters : '+remchar);
 		
 	});
 	
-	$('#triggerFile1').on('click', function(e){
-        e.preventDefault();
-        $("#file1").trigger('click');
-    });
-	
-	
-	$('#triggerFile2').on('click', function(e){
-        e.preventDefault();
-        $("#file2").trigger('click');
-    });
-	
-	$('#triggerFile3').on('click', function(e){
-        e.preventDefault();
-        $("#file3").trigger('click');
-    });
-	
+	$('.freq-ct').click(function(){
+		//console.log($(this).html());
+		$('#complaintType').typeahead('val',$(this).html())
+	});
 	
 });
