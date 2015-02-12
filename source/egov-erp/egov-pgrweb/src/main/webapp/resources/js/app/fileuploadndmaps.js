@@ -80,7 +80,7 @@ $(document).ready(function(){
 						url: 'http://maps.googleapis.com/maps/api/geocode/json?latlng='+formatted_lat+','+formatted_long+'&sensor=true',
 						dataType: 'json',
 						success : function(data){
-							$('#clocation').typeahead('val', data.results[0].formatted_address);
+							$('#location').typeahead('val', data.results[0].formatted_address);
 							myCenter=new google.maps.LatLng(formatted_lat, formatted_long);
 							initialize();
 						}
@@ -180,10 +180,9 @@ $(document).ready(function(){
 					lat = marker.getPosition().lat();
 					lng = marker.getPosition().lng();
 					address = results[0].formatted_address;
-					$('#clocation').val(address);
+					$('#location').typeahead('val', address);
 					$('#lat').val(lat);
-					$('#lon').val(lng);
-					$('#clocation').typeahead('val', address); 
+					$('#lng').val(lng);
 				}
 			});
 		});
@@ -236,10 +235,5 @@ $(document).ready(function(){
 		google.maps.event.trigger(map, "resize");
 		map.setCenter(center); 
 	}
-	
-	$('.freq-ct').click(function(){
-		//console.log($(this).html());
-		$('#com_type').typeahead('val',$(this).html())
-	});
 	
 });

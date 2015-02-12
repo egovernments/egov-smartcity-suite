@@ -761,12 +761,16 @@ footer.main{
 .btn-secondary:hover,
 .btn-secondary:focus,
 .btn-secondary.focus,
-.btn-secondary:active,
-.btn-secondary.active,
 .open > .dropdown-toggle.btn-secondary {
 	color: #fff;
 	background-color: #f5861f;
 	border-color: #f5861f;
+}
+
+.btn-secondary:active,
+.btn-secondary.active{
+	color: #fff;
+	background-color: #3599b2;
 }
 
 .DTTT_container
