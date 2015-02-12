@@ -81,8 +81,7 @@ jQuery(document).ready(function($)
 	});
 	
 	$('.freq-ct').click(function(){
-		//console.log($(this).html());
-		$('#complaintType').typeahead('val',$(this).html())
+		$('#complaintType').typeahead('val',$(this).html());
 	});
 	
 });
