@@ -213,4 +213,9 @@ public class BoundaryServiceImpl implements BoundaryService {
 		return this.boundaryDAO.getCrossHeirarchyChildren(parentBoundary, childBoundaryType);
 
 	}
+
+    @Override
+    public List<Boundary> getBoundaryByNameLike(String name) {
+        return this.boundaryDAO.findByNameLike(name);
+    }
 }

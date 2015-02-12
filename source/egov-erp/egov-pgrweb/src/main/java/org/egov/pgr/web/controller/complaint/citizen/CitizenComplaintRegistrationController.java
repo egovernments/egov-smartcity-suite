@@ -5,6 +5,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.web.controller.complaint.GenericComplaintController;
@@ -31,6 +32,11 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
         return "complaint/citizen/registration-form";
     }
 
+    @RequestMapping(value = "anonymous/show-reg-form", method = GET)
+    public String showAnonymousComplaintRegistrationForm(@ModelAttribute final Complaint complaint) {
+        return "complaint/citizen/anonymous-registration-form";
+    }
+    
     @RequestMapping(value = "register", method = POST)
     public String registerComplaint(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder, @RequestParam("files") final MultipartFile[] files) {
         if (resultBinder.hasErrors())
@@ -38,6 +44,23 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
         complaint.setSupportDocs(addToFileStore(files));
         complaintService.createComplaint(complaint);
         return "redirect:show-reg-form";
+    }
+    
+    @RequestMapping(value = "anonymous/register", method = POST)
+    public String registerComplaintAnonymous(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder, @RequestParam("files") final MultipartFile[] files) {
+        if (resultBinder.hasErrors()) {
+            return "complaint/citizen/anonymous/registration-form";
+        } else {
+            if(StringUtils.isAnyBlank(complaint.getComplainant().getEmail(),complaint.getComplainant().getMobile()))
+                resultBinder.rejectValue("complainant.email", "email.or.mobile.ismandatory");
+            
+            if(StringUtils.isBlank(complaint.getComplainant().getName())) 
+                resultBinder.rejectValue("complainant.name", "complainant.name.ismandatory");
+                
+        }
+        complaint.setSupportDocs(addToFileStore(files));
+        complaintService.createComplaint(complaint);
+        return "redirect:anonymous/show-reg-form";
     }
 
 }

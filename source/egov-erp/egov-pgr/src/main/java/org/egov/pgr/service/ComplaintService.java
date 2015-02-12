@@ -1,9 +1,10 @@
 package org.egov.pgr.service;
 
 import static org.egov.pgr.utils.constants.CommonConstants.DASH_DELIM;
-import static org.egov.pgr.utils.constants.CommonConstants.MODULE_NAME;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.egov.infra.utils.SecurityUtils;
+import org.egov.lib.rjbac.user.UserImpl;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.repository.ComplaintRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,13 @@ public class ComplaintService {
     @Autowired
     private ComplaintRepository complaintRepository;
 
+    @Autowired
+    private SecurityUtils securityUtils;
+    
     @Transactional
     public void createComplaint(final Complaint complaint) {
         complaint.setCRN(generateComplaintID());
+        complaint.getComplainant().setUserDetail((UserImpl)securityUtils.getCurrentUser());
         // TODO Workflow will decide who is the assignee based on location data
         complaint.setAssignee(null);
         complaintRepository.create(complaint);
@@ -27,7 +32,7 @@ public class ComplaintService {
 
 
     public String generateComplaintID() {
-        return MODULE_NAME + DASH_DELIM + RandomStringUtils.randomAlphanumeric(5);
+        return "CRN" + DASH_DELIM + RandomStringUtils.randomAlphanumeric(5);
     }
     
     public Complaint getComplaintByComplaintID(final Long complaintID) {

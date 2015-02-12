@@ -110,5 +110,7 @@ public interface BoundaryService {
 	Set<Boundary> getCrossHeirarchyParent(Boundary childBoundary);
 
 	Set<Boundary> getCrossHeirarchyChildren(Boundary parentBoundary, BoundaryType childBoundaryType);
+	
+	List<Boundary> getBoundaryByNameLike(String name);
 
 }

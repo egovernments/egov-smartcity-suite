@@ -12,6 +12,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -543,5 +545,9 @@ public class BoundaryDAO {
 			LOGGER.error("Error occurred in getAllBoundariesByBndryTypeId", e);
 			throw new EGOVRuntimeException("Error occurred in getAllBoundariesByBndryTypeId", e);
 		}
+	}
+	
+	public List<Boundary> findByNameLike(String name) {
+	    return getSession().createCriteria(BoundaryImpl.class).add(Restrictions.ilike("name", name)).addOrder(Order.asc("name")).list();
 	}
 }
