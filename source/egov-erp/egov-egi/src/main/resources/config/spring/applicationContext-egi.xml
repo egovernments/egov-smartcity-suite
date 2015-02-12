@@ -277,4 +277,8 @@
 	<bean id="egovInfrastructureUtil" class="org.egov.commons.utils.EgovInfrastrUtil">
 		<property name="userDAO" ref="userDao" />
 	</bean>
+	<bean id="roleDAO" class="org.egov.lib.rjbac.role.dao.RoleDAO">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	
 </beans>

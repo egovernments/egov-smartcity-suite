@@ -35,9 +35,24 @@ public class ComplaintService {
         return "CRN" + DASH_DELIM + RandomStringUtils.randomAlphanumeric(5);
     }
     
+
     public Complaint getComplaintByComplaintID(final Long complaintID) {
         return complaintRepository.get(complaintID);
     }
+
+    @Transactional
+    public void update(final Complaint complaint) {
+       
+        complaintRepository.save(complaint);
+    }
+
+    
+    public Complaint get(Long id)
+    {
+    	return complaintRepository.get(id);
+    }
+    
+
 
 /*
     public Page<Complaint> findAllCurrentUserComplaints(final Pageable pageable) {

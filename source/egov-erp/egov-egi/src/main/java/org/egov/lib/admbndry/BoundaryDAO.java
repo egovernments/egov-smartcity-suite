@@ -44,6 +44,11 @@ public class BoundaryDAO {
 	public void setBoundaryTypeService(final BoundaryTypeService boundaryTypeService) {
 		this.boundaryTypeService = boundaryTypeService;
 	}
+	
+	public BoundaryImpl load(Integer id)
+	{
+		return (BoundaryImpl)getSession().load(BoundaryImpl.class,id);
+	}
 
 	public Boundary createBoundary(final Boundary boundary) {
 		try {

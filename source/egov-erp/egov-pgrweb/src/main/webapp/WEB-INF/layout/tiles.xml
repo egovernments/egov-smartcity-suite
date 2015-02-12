@@ -20,6 +20,11 @@
         <put-attribute name="page-title" value="title.complaintType" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/complaint-type.jsp"/>
     </definition>
+    
+     <definition name="complaint-update" extends="base_layout">
+        <put-attribute name="page-title" value="title.complaintUpdate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/complaint/complaint-show.jsp"/>
+    </definition>
 	
 	<definition name="complaint/*/*" extends="base_layout">
         <put-attribute name="page-title" value="title.complaint.reg" cascade="true"/>

@@ -5339,6 +5339,7 @@ INSERT INTO eg_location("id", "name", description, locationid, createddate, last
 INSERT INTO eg_location("id", "name", description, locationid, createddate, lastmodifieddate, isactive, islocation) VALUES (5, 'COUNTER_8', 'Counter 8', 1, '2014-12-10 14:13:19', '2014-12-10 14:13:19', 1, 0);
 INSERT INTO eg_location("id", "name", description, locationid, createddate, lastmodifieddate, isactive, islocation) VALUES (6, 'COUNTER_9', 'Counter 9', 1, '2014-12-10 14:13:19', '2014-12-10 14:13:19', 1, 0);
 INSERT INTO eg_location("id", "name", description, locationid, createddate, lastmodifieddate, isactive, islocation) VALUES (7, 'COUNTER_10', 'Counter 10', 1, '2014-12-10 14:13:19', '2014-12-10 14:13:19', 1, 0);
+
 INSERT INTO eg_login_log("id", userid, logintime, logouttime, locationid, ipaddress) VALUES (1, 1, '2014-12-11 19:37:08.66', null, null, null);
 INSERT INTO eg_login_log("id", userid, logintime, logouttime, locationid, ipaddress) VALUES (2, 1, '2014-12-12 12:40:17.727', null, null, null);
 INSERT INTO eg_login_log("id", userid, logintime, logouttime, locationid, ipaddress) VALUES (3, 1, '2014-12-12 13:37:39.043', '2014-12-12 14:01:41.355', null, null);

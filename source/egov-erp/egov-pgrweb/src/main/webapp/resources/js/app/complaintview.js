@@ -19,7 +19,8 @@ jQuery(document).ready(function($)
 			$('#inc_messge').addClass('error');
 		}else
 		{
-			alert("Submitted Successfully");
+			document.forms[0].submit();
+			//alert("Submitted Successfully");
 			$('#inc_messge').removeClass('error');
 		}
 		
@@ -37,6 +38,10 @@ jQuery(document).ready(function($)
 		}
 	});
 	
+	$('#ct-sel-jurisd').change(function(){
+		console.log("came jursidiction");	
+	});
+
 	$.ajax({
 		url: "http://example.appspot.com/rest/app",
 		type: "POST",

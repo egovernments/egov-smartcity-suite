@@ -22,13 +22,6 @@
 			<column name="ID_DEPTDESIG" />
 		</many-to-one>
 		
-		<property name="modifiedDate" column="MODIFIEDDATE" type="timestamp"/>
-     		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY"/>
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY"/>
-		<property name="createdDate">
-			<column name="CREATEDDATE"/>
-		</property>	
-		
 		<!-- <many-to-one name="drawingOfficer" class = "org.egov.pims.commons.DrawingOfficer" column="ID_DRAWING_OFFICER" unique="true"/> -->
 
 	</class>

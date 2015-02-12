@@ -1,9 +1,9 @@
 package org.egov.pgr.service;
 
-import org.egov.config.search.Index;
-import org.egov.config.search.IndexType;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.repository.ComplaintTypeRepository;
+import org.egov.search.Index;
+import org.egov.search.ResourceType;
 import org.egov.search.domain.Document;
 import org.egov.search.service.IndexService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class ComplaintTypeService {
         complaintTypeRepository.create(complaintType);
 
         Document complaintTypeDocument = new Document(complaintType.getId().toString(), complaintType.toJsonObject());
-        indexService.index(Index.PGR.toString(), IndexType.COMPLAINT_TYPE.toString(), complaintTypeDocument);
+        indexService.index(Index.PGR, ResourceType.COMPLAINT_TYPE, complaintTypeDocument);
     }
 
     public void updateComplaintType(ComplaintType complaintType) {

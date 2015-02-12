@@ -8,8 +8,6 @@ package org.egov.lib.rjbac.role.dao;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.utils.HibernateUtil;
@@ -17,10 +15,14 @@ import org.egov.lib.rjbac.role.Role;
 import org.egov.lib.rjbac.role.RoleImpl;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RoleDAO {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(RoleDAO.class);
+	private SessionFactory sessionFactory;
 
 	/**
 	 * Creates the role.
@@ -34,7 +36,7 @@ public class RoleDAO {
 				throw new DuplicateElementException("The Role by " + role.getRoleName() + " already exists.");
 			}
 
-			HibernateUtil.getCurrentSession().save(role);
+			sessionFactory.getCurrentSession().save(role);
 		} catch (final HibernateException e) {
 			LOGGER.error("Exception occurred in createRole", e);
 			throw new EGOVRuntimeException("Exception occurred in createRole", e);
@@ -47,7 +49,7 @@ public class RoleDAO {
 	 */
 	public void updateRole(final Role role) {
 		try {
-			HibernateUtil.getCurrentSession().update(role);
+			sessionFactory.getCurrentSession().update(role);
 		} catch (final HibernateException e) {
 			LOGGER.error("Exception occurred in updateRole", e);
 			throw new EGOVRuntimeException("Exception occurred in updateRole", e);
@@ -62,7 +64,7 @@ public class RoleDAO {
 	 */
 	public Role getRoleByID(final Integer roleID) {
 		try {
-			return (Role) HibernateUtil.getCurrentSession().load(RoleImpl.class, roleID);
+			return (Role) sessionFactory.getCurrentSession().load(RoleImpl.class, roleID);
 		} catch (final HibernateException e) {
 			LOGGER.error("Exception occurred in getRoleByID", e);
 			throw new EGOVRuntimeException("Exception occurred in getRoleByID", e);
@@ -75,7 +77,7 @@ public class RoleDAO {
 	 */
 	public List<Role> getAllRoles() {
 		try {
-			return HibernateUtil.getCurrentSession().createQuery("FROM RoleImpl RI fetch all properties order by ROLE_NAME").list();
+			return sessionFactory.getCurrentSession().createQuery("FROM RoleImpl RI fetch all properties order by ROLE_NAME").list();
 		} catch (final HibernateException e) {
 			LOGGER.error("Exception occurred in getAllRoles", e);
 			throw new EGOVRuntimeException("Exception occurred in getAllRoles", e);
@@ -88,7 +90,7 @@ public class RoleDAO {
 	 */
 	public List<Role> getAllTopLevelRoles() {
 		try {
-			return HibernateUtil.getCurrentSession().createQuery("FROM RoleImpl RI where RI.parent = null").list();
+			return sessionFactory.getCurrentSession().createQuery("FROM RoleImpl RI where RI.parent = null").list();
 		} catch (final HibernateException e) {
 			LOGGER.error("Exception occurred in getAllTopLevelRoles", e);
 			throw new EGOVRuntimeException("Exception occurred in getAllTopLevelRoles", e);
@@ -102,7 +104,7 @@ public class RoleDAO {
 	 */
 	public void removeRole(final Role role) throws NoSuchElementException {
 		try {
-			HibernateUtil.getCurrentSession().delete(role);
+			sessionFactory.getCurrentSession().delete(role);
 		} catch (final HibernateException e) {
 			LOGGER.error("Exception occurred in removeRole", e);
 			throw new EGOVRuntimeException("Exception occurred in removeRole", e);
@@ -117,7 +119,7 @@ public class RoleDAO {
 	 */
 	public Role getRoleByRoleName(final String roleName) {
 		try {
-			final Query qry = HibernateUtil.getCurrentSession().createQuery("FROM RoleImpl RI WHERE RI.roleName=:roleName");
+			final Query qry = sessionFactory.getCurrentSession().createQuery("FROM RoleImpl RI WHERE RI.roleName=:roleName");
 			qry.setString("roleName", roleName);
 			return (Role) qry.uniqueResult();
 		} catch (final HibernateException e) {
@@ -125,6 +127,14 @@ public class RoleDAO {
 			throw new EGOVRuntimeException("Exception occurred in getRoleByRoleName", e);
 		}
 
+	}
+
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
 	}
 
 }

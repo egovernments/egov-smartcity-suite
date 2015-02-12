@@ -1,8 +1,5 @@
 package org.egov.pgr.entity;
 
-import java.util.Collections;
-import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,14 +7,11 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.filestore.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.lib.admbndry.BoundaryImpl;
 import org.egov.lib.rjbac.user.UserImpl;
@@ -40,11 +34,7 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
         WebSite, SMS, Call, Email, Paper, Mobile;
     }
 
-    public enum Status {
-        REGISTERED, FORWARDED, PROCESSING, COMPLETED, REJECTED, WITHDRAWN, REOPENED, CLOSED
-
-    }
-
+ 
     @NotNull
     @NotEmpty
     @Column(name="crn",unique=true)
@@ -60,9 +50,9 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     @Valid
     @NotNull
     @JoinColumn(name="complainant", nullable = false)
-    private Complainant complainant = new Complainant();
+    private Complainant complainant = new Complainant();    
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @Valid
     @JoinColumn(name="assignee")
     private Position assignee;
@@ -72,16 +62,17 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     @JoinColumn(name="location", nullable = true)
     private BoundaryImpl location;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private Status status = Status.REGISTERED;
+    @ManyToOne     @NotNull
+    @JoinColumn(name="status")
+    private ComplaintStatus status ;
 
-    @NotNull
+  
     @Length(min = 10, max = 500)
     @SafeHtml
     private String details;
 
-    @Length(max=200)
+
+    @Length(max = 200)
     @SafeHtml
     private String landmarkDetails;
 
@@ -93,13 +84,13 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     @JoinColumn(name="receivingCenter", nullable = true)
     private ReceivingCenter receivingCenter;
 
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+  /*  @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinTable(name="pgr_supportdocs",
             joinColumns = @JoinColumn(name = "filestoreid"),
             inverseJoinColumns = @JoinColumn(name = "complaintid")
     )
     private Set<FileStoreMapper> supportDocs = Collections.EMPTY_SET;
-
+*/
     private double lng;
 
     private double lat;
@@ -136,15 +127,17 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
         this.assignee = assignee;
     }
 
-    public Status getStatus() {
-        return status;
-    }
+   
 
-    public void setStatus(final Status status) {
-        this.status = status;
-    }
+    public ComplaintStatus getStatus() {
+		return status;
+	}
 
-    public String getDetails() {
+	public void setStatus(ComplaintStatus status) {
+		this.status = status;
+	}
+
+	public String getDetails() {
         return details;
     }
 
@@ -168,14 +161,14 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
         this.receivingCenter = receivingCenter;
     }
 
-    public Set<FileStoreMapper> getSupportDocs() {
+    /*public Set<FileStoreMapper> getSupportDocs() {
         return supportDocs;
     }
 
     public void setSupportDocs(final Set<FileStoreMapper> supportDocs) {
         this.supportDocs = supportDocs;
     }
-
+*/
     public BoundaryImpl getLocation() {
         return location;
     }
