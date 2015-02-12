@@ -19,6 +19,11 @@
 						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintType"/><small><i class="entypo-star error-msg"></i></small></label>
 						<div class="col-sm-6">
 							<form:input path="complaintType" id="complaintType" cssClass="form-control typeahead is_valid_alphabet" cssErrorClass="form-control error" placeholder="" autocomplete="off" required="required"/>
+							<a href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">Construction </a>
+							<a href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">Disputed Bill</a>
+							<a href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">Garbage</a>
+							<a href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">Delayed Service</a>
+							<a href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">Refusal of Service </a>
                             <form:errors path="complaintType" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
@@ -33,11 +38,28 @@
 					</div>
 					
 					<div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.uploadPhotoVid"/></label>
-						<div class="col-sm-6" >
-							<div id="file1block" class="add-margin"><input name="files" type="file" id="file1" class="filechange inline btn" style="display:none;"/><a href="#" id="triggerFile1" class="btn btn-secondary">Browse</a><span class="add-padding" id="filename1"></span></div>
-							<div id="file2block" class="add-margin display-hide"><input name="files" type="file" id="file2" class="filechange inline btn" style="display:none;"/><a href="#" id="triggerFile2" class="btn btn-secondary">Browse</a><span class="add-padding" id="filename2"></span></div>
-						    <div id="file3block" class="add-margin display-hide"><input name="files" type="file" id="file3" class="filechange inline btn" style="display:none;"/><a href="#" id="triggerFile3" class="btn btn-secondary">Browse</a><span class="add-padding" id="filename3"></span></div>
+						<div class="col-sm-3 col-xs-12 change-text-align">
+							<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.uploadPhotoVid"/></a>
+							<input type="file" id="file1" name="files" data-id="1" class="filechange inline btn" style="display:none;"/>
+							<input type="file" id="file2" name="files" data-id="2" class="filechange inline btn" style="display:none;"/>
+							<input type="file" id="file3" name="files" data-id="3" class="filechange inline btn" style="display:none;"/>
+						</div>
+						<div class="col-sm-6 col-xs-12">
+							<div id="file1block" class="add-margin col-sm-4 col-xs-4">
+								<img id="preview1" src="#" alt="" class="display-hide "/>
+								<div class="remove-img preview-cross1 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+								<div class="add-padding" id="filename1"></div>
+							</div>
+							<div id="file2block" class="add-margin display-hide col-sm-4 col-xs-4">
+								<img id="preview2" src="#" alt="" class="display-hide"/>
+								<div class="remove-img preview-cross2 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+								<div class="add-padding" id="filename2"></div>
+							</div>
+							<div id="file3block" class="add-margin display-hide col-sm-4 col-xs-4">
+								<img id="preview3" src="#" alt="" class="display-hide"/>
+								<div class="remove-img preview-cross3 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+								<div class="add-padding" id="filename3"></div>
+							</div>
 						</div>
 					</div>
 					

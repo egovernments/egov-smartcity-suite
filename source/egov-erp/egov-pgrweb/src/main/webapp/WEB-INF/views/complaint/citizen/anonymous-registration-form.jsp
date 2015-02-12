@@ -9,40 +9,32 @@
 	<div class="col-md-12">
 		<form:form role="form" action="register" modelAttribute="complaint" commandName="complaint" id="complaintform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 			<div class="panel panel-primary" data-collapsed="0">
-							
-							<div class="panel-heading">
-								<div class="panel-title">
-									<strong>Contact Information</strong>
-								</div>
-								
-							</div>
-							<div class="panel-body custom-form ">
-								<div class="form-group">
-										<label for="field-1" class="col-sm-3 control-label">Name</label>
-										
-										<div class="col-sm-6 add-margin">
-											<input type="text" class="form-control" id="f-name" placeholder="Name">
-										</div>
-										
-									</div>
-									
-									<div class="form-group">
-										<label for="field-1" class="col-sm-3 control-label">Contact Number<small><i class="entypo-star error-msg"></i></small></label>
-										
-										<div class="col-sm-2 add-margin">
-											<input type="text" class="form-control" data-inputmask="'mask': '9999999999'" id="mob-no" placeholder="Mobile Number">
-										</div>
-										
-										<div class="col-sm-1">
-											<label for="field-1" class="control-label">Email</label>
-										</div>
-										
-										<div class="col-sm-3">
-											<input type="text" class="form-control" id="email" placeholder="abc@xyz.com">
-										</div>
-										
-									</div>
-							</div>
+				<div class="panel-heading">
+					<div class="panel-title">
+						<strong><spring:message code="lbl.contact.info"/></strong>
+					</div>
+				</div>
+				<div class="panel-body custom-form ">
+					<div class="form-group">
+						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.name"/></label>
+						<div class="col-sm-6 add-margin">
+							<form:input  class="form-control" path="name" id="f-name" placeholder="Name"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.contactNo"/><small><i class="entypo-star error-msg"></i></small></label>
+						<div class="col-sm-2 add-margin">
+							<form:input path="mobile" class="form-control" data-inputmask="'mask': '9999999999'" id="mob-no" placeholder="Mobile Number"/>
+						</div>
+						
+						<div class="col-sm-1">
+							<label for="field-1" class="control-label"><spring:message code="lbl.email"/></label>
+						</div>
+						<div class="col-sm-3">
+							<form:input  path="email" class="form-control" id="email" placeholder="abc@xyz.com"/>
+						</div>
+					</div>
+				</div>
 				<div class="panel-heading custom_form_panel_heading">
 					<div class="panel-title">
 						<strong><spring:message code="lbl.hdr.complaintInfo"/></strong>
@@ -53,11 +45,11 @@
 						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintType"/><small><i class="entypo-star error-msg"></i></small></label>
 						<div class="col-sm-6">
 							<form:input path="complaintType" id="complaintType" cssClass="form-control typeahead is_valid_alphabet" cssErrorClass="form-control error" placeholder="" autocomplete="off" required="required"/>
-							<button type="button" class="btn btn-secondary btn-xs tag-element freq-ct">Sydney</button>
-							<button type="button" class="btn btn-secondary btn-xs tag-element freq-ct">Melbourne</button>
-							<button type="button" class="btn btn-secondary btn-xs tag-element freq-ct">Australia</button>
-							<button type="button" class="btn btn-secondary btn-xs tag-element freq-ct">Canberra</button>
-							<button type="button" class="btn btn-secondary btn-xs tag-element freq-ct">Adelaide</button>
+							<a href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">Construction </a>
+							<a href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">Disputed Bill</a>
+							<a href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">Garbage</a>
+							<a href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">Delayed Service</a>
+							<a href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">Refusal of Service </a>
                             <form:errors path="complaintType" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
@@ -72,42 +64,31 @@
 					</div>
 					
 					<div class="form-group">
-										<div class="col-sm-3 col-xs-12 change-text-align">
-											<a href="#" id="triggerFile" class="btn btn-secondary">Upload Photograph/Video</a>
-											<input type="file" id="file1" data-id="1" class="filechange inline btn" style="display:none;"/>
-											<input type="file" id="file2" data-id="2" class="filechange inline btn" style="display:none;"/>
-											<input type="file" id="file3" data-id="3" class="filechange inline btn" style="display:none;"/>
-										</div>
-										<div class="col-sm-6 col-xs-12">
-											<div id="file1block" class="add-margin col-sm-4 col-xs-4">
-												<img id="preview1" src="#" alt="" class="display-hide "/>
-												<div class="remove-img preview-cross1 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
-												<div class="add-padding" id="filename1"></div>
-											</div>
-											<div id="file2block" class="add-margin display-hide col-sm-4 col-xs-4">
-												<img id="preview2" src="#" alt="" class="display-hide"/>
-												<div class="remove-img preview-cross2 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
-												<div class="add-padding" id="filename2"></div>
-											</div>
-											<div id="file3block" class="add-margin display-hide col-sm-4 col-xs-4">
-												<img id="preview3" src="#" alt="" class="display-hide"/>
-												<div class="remove-img preview-cross3 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
-												<div class="add-padding" id="filename3"></div>
-											</div>
-										</div>
-										
-										
-									</div>
-									
-		<%-- 			<div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.uploadPhotoVid"/></label>
-						<div class="col-sm-6" >
-							<div id="file1block" class="add-margin"><input name="files" type="file" id="file1" class="filechange inline btn" style="display:none;"/><a href="#" id="triggerFile1" class="btn btn-secondary">Browse</a><span class="add-padding" id="filename1"></span></div>
-							<div id="file2block" class="add-margin display-hide"><input name="files" type="file" id="file2" class="filechange inline btn" style="display:none;"/><a href="#" id="triggerFile2" class="btn btn-secondary">Browse</a><span class="add-padding" id="filename2"></span></div>
-						    <div id="file3block" class="add-margin display-hide"><input name="files" type="file" id="file3" class="filechange inline btn" style="display:none;"/><a href="#" id="triggerFile3" class="btn btn-secondary">Browse</a><span class="add-padding" id="filename3"></span></div>
+						<div class="col-sm-3 col-xs-12 change-text-align">
+							<a href="#" id="triggerFile" class="btn btn-secondary"><spring:message code="lbl.uploadPhotoVid"/></a>
+							<input type="file" id="file1" name="files" data-id="1" class="filechange inline btn" style="display:none;"/>
+							<input type="file" id="file2" name="files" data-id="2" class="filechange inline btn" style="display:none;"/>
+							<input type="file" id="file3" name="files" data-id="3" class="filechange inline btn" style="display:none;"/>
 						</div>
-					</div> --%>
-					
+						<div class="col-sm-6 col-xs-12">
+							<div id="file1block" class="add-margin col-sm-4 col-xs-4">
+								<img id="preview1" src="#" alt="" class="display-hide "/>
+								<div class="remove-img preview-cross1 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+								<div class="add-padding" id="filename1"></div>
+							</div>
+							<div id="file2block" class="add-margin display-hide col-sm-4 col-xs-4">
+								<img id="preview2" src="#" alt="" class="display-hide"/>
+								<div class="remove-img preview-cross2 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+								<div class="add-padding" id="filename2"></div>
+							</div>
+							<div id="file3block" class="add-margin display-hide col-sm-4 col-xs-4">
+								<img id="preview3" src="#" alt="" class="display-hide"/>
+								<div class="remove-img preview-cross3 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+								<div class="add-padding" id="filename3"></div>
+							</div>
+						</div>
+					</div>
+	
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintLoc"/><small><i class="entypo-star error-msg"></i></small></label>
 						<div class="col-sm-6">
