@@ -39,12 +39,12 @@ jQuery(document).ready(function($)
 		},
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		remote: {
-			url: 'http://google.com',
-			filter: function (complaintlocation) {
+			url: 'locations?locationName=%QUERY',
+			filter: function (data) {
 				// Map the remote source JSON array to a JavaScript object array
-				return $.map(complaintlocation.results, function (cl) {
+				return $.map(data, function (cl) {
 					return {
-						value: cl.original_title
+						value: cl.label
 					};
 				});
 			}
@@ -55,7 +55,11 @@ jQuery(document).ready(function($)
 	complaintlocation.initialize();
 	
 	// Instantiate the Typeahead UI
-	$('#location').typeahead(null, {
+	$('#location').typeahead({
+		  hint: true,
+		  highlight: true,
+		  minLength: 5
+		}, {
 		displayKey: 'value',
 		source: complaintlocation.ttAdapter()
 	});
@@ -84,4 +88,44 @@ jQuery(document).ready(function($)
 		$('#complaintType').typeahead('val',$(this).html());
 	});
 	
+	/**
+	 *Based on the selected complaint type make Location is required or not 
+	 **/
+	$("#complaintType").blur(function(){
+		if (this.value === '') {
+			 $(".optionalmandate").hide();
+			 $("#location").removeAttr('required');
+			 $("#landmarkDetails").removeAttr('required');
+			return;
+		} else {
+			$.ajax({
+				type: "GET",
+				url: "isLocationRequired",
+				cache: true,
+				data:{'complaintTypeName' : this.value}
+			}).done(function(value) {
+				 if(value === true) {
+					 $(".optionalmandate").show();
+					 $("#location").attr('required','required');
+					 $("#landmarkDetails").attr('required','required');
+				 } else {
+					 $(".optionalmandate").hide();
+					 $("#location").removeAttr('required');
+					 $("#landmarkDetails").removeAttr('required');
+					 $("#location").val("");
+					 $("#landmarkDetails").val("");
+				 }
+			});
+		}
+	});	
+	
+	if($("#locationRequired").val() === "false") {
+		 $(".optionalmandate").hide();
+		 $("#location").removeAttr('required');
+		 $("#landmarkDetails").removeAttr('required');
+	} else {
+		 $(".optionalmandate").show();
+		 $("#location").attr('required');
+		 $("#landmarkDetails").attr('required');
+	}
 });

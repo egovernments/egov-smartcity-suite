@@ -280,6 +280,11 @@
 				<artifactId>jackson-datatype-hibernate4</artifactId>
 				<version>2.5.1</version>
 			</dependency>
+			<dependency>
+				<groupId>com.google.code.gson</groupId>
+				<artifactId>gson</artifactId>
+				<version>2.2.4</version>
+			</dependency>
             <!-- JSON END -->
 
             <!-- JACKRABBIT START -->
@@ -727,6 +732,10 @@
 			<groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>
+        <dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+		</dependency>
 		<!-- MISC ENDS -->
 		
         <!-- TESTING START -->

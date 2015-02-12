@@ -31,8 +31,8 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.compDetails"/> <small><i class="entypo-star error-msg"></i></small></label>
 						<div class="col-sm-6">
-							<form:textarea path="details" id="doc" placeholder="" maxlength="400" cssClass="form-control autogrow" required="required"/>
-							<div class="text-right"><small id="rcc"><spring:message code="lbl.remainingChars"/> : 400</small></div>
+							<form:textarea path="details" id="doc" placeholder="" maxlength="500" cssClass="form-control autogrow" required="required"/>
+							<div class="text-right"><small id="rcc"><spring:message code="lbl.remainingChars"/> : 500</small></div>
 							<form:errors path="details" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
@@ -63,23 +63,24 @@
 						</div>
 					</div>
 					
-					<div class="form-group">
+					<div class="form-group optionalmandate">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintLoc"/><small><i class="entypo-star error-msg"></i></small></label>
 						<div class="col-sm-6">
 							<div class="input-group">
-								<input id="location" type="text" class="form-control low-width" placeholder="" autocomplete="off" />
+								<input id="location" type="text" class="form-control low-width" placeholder="" autocomplete="off" required="required"/>
 								<span class="input-group-addon map-class btn-secondary" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="entypo-globe"></i></span>
 								<form:hidden path="location"/>
 				   				<form:hidden path="lat" id="lat"/>
                    				<form:hidden path="lng" id="lng"/>
+                   				<form:hidden path="complaintType.locationRequired" id="locationRequired"/>
 							</div>
 						</div>
 					</div>
 					
-					<div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.landmark"/></label>
+					<div class="form-group optionalmandate">
+						<label class="col-sm-3 control-label"><spring:message code="lbl.landmark"/><small><i class="entypo-star error-msg"></i></small></label>
 						<div class="col-sm-6">
-							<form:textarea path="landmarkDetails" class="form-control" id="landmarkDetails" placeholder="" />
+							<form:textarea path="landmarkDetails" class="form-control" id="landmarkDetails" placeholder="" required="required" maxlength="200"/>
 						</div>
 					</div>
 				</div>

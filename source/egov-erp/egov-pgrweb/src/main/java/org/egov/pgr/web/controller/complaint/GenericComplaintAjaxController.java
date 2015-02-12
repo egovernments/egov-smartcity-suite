@@ -22,31 +22,32 @@ public class GenericComplaintAjaxController extends GenericComplaintController {
         private BoundaryService boundaryService;
 
         
-        @RequestMapping(value="citizen/isLocationRequired",method=GET)
+        @RequestMapping(value={"citizen/isLocationRequired", "citizen/anonymous/isLocationRequired"},method=GET)
         public @ResponseBody boolean isLocationRequired(@RequestParam final String complaintTypeName) {
-                return complaintTypeService.findByName(complaintTypeName).isLocationRequired();
+                final ComplaintType complaintType = complaintTypeService.findByName(complaintTypeName);
+                return complaintType == null ? Boolean.TRUE : complaintType.isLocationRequired();
         } 
    
-        @RequestMapping(value="citizen/complaintTypes",method=GET,produces=MediaType.APPLICATION_JSON_VALUE)
+        @RequestMapping(value={"citizen/complaintTypes", "citizen/anonymous/complaintTypes"},method=GET,produces=MediaType.APPLICATION_JSON_VALUE)
         public @ResponseBody List<ComplaintType> getAllComplaintTypesByNameLike(@RequestParam  final String complaintTypeName) {
                 return complaintTypeService.findAllByNameLike(complaintTypeName);
         }
         
        
-        @RequestMapping(value = "citizen/locations", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+        @RequestMapping(value = {"citizen/locations", "citizen/anonymous/locations"}, method = GET, produces = MediaType.TEXT_PLAIN_VALUE)
         public @ResponseBody String getAllLocationJSON(@RequestParam final String locationName) {
                 final StringBuilder boundaryIdAndName = new StringBuilder("[");
                 for (final Boundary boundary : boundaryService.getBoundaryByNameLike(locationName)) {
                         boundaryIdAndName.append("{\"label\":\"");
                         if (boundary.isRoot()) {
-                                boundaryIdAndName.append(boundary.getName());
+                                boundaryIdAndName.append(boundary.getBndryNameLocal());
                         } else {
                                 Boundary tempBoundary = boundary;
                                 while (!tempBoundary.isRoot()) {
-                                        boundaryIdAndName.append(tempBoundary.getName()).append(", ");
+                                        boundaryIdAndName.append(tempBoundary.getBndryNameLocal()).append(", ");
                                         tempBoundary = tempBoundary.getParent();
                                         if (tempBoundary.isRoot()) {
-                                                boundaryIdAndName.append(tempBoundary.getName());
+                                                boundaryIdAndName.append(tempBoundary.getBndryNameLocal());
                                                 break;
                                         }
                                 }
@@ -54,6 +55,7 @@ public class GenericComplaintAjaxController extends GenericComplaintController {
 
                         boundaryIdAndName.append("\",\"value\":").append(boundary.getId()).append("},");
                 }
+                if(boundaryIdAndName.lastIndexOf(",") != -1)
                 boundaryIdAndName.deleteCharAt(boundaryIdAndName.lastIndexOf(","));
                 boundaryIdAndName.append("]");
                 return boundaryIdAndName.toString();

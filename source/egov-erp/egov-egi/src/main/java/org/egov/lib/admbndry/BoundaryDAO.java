@@ -12,6 +12,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
@@ -548,6 +549,6 @@ public class BoundaryDAO {
 	}
 	
 	public List<Boundary> findByNameLike(String name) {
-	    return getSession().createCriteria(BoundaryImpl.class).add(Restrictions.ilike("name", name)).addOrder(Order.asc("name")).list();
+	    return getSession().createCriteria(BoundaryImpl.class).add(Restrictions.ilike("bndryNameLocal", name,MatchMode.ANYWHERE)).addOrder(Order.asc("bndryNameLocal")).list();
 	}
 }
