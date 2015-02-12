@@ -29,6 +29,9 @@
 
 							</div>
 							<div class="panel-body">
+						<c:if test="${not empty message}">
+						   <div id="message" class="success">${message}</div>
+						 </c:if>
 								<div class="row add-border">
 									<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.ctn"/></div>
 									<div class="col-md-3 col-xs-6 add-margin" id="ct-ctnumber">

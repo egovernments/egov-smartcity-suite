@@ -103,9 +103,25 @@ public class ComplaintUpdationController {
 		if (!errors.hasErrors()) {
 			complaintService.update(complaint);
 			redirectAttrs.addFlashAttribute("message", "Successfully created Complaint Type !");
+		}else
+		{
+			model.addAttribute("zone", Collections.EMPTY_LIST);
+			model.addAttribute("ward", Collections.EMPTY_LIST);
+
+			if (complaint.getComplaintType()!=null && complaint.getComplaintType().isLocationRequired()) 
+			{
+				model.addAttribute("zone", commonService.getZones());
+				if(complaint.getLocation()!=null)
+				{
+					model.addAttribute("zone", commonService.getZones()); 
+					model.addAttribute("ward", commonService.getWards(complaint.getLocation().getParent().getId()));
+				}
+
+			}
+		
 		}
-		show(model,complaint.getId());
-		return "complaint-update";
+		//show(model,complaint.getId());
+		return "redirect:/complaint-update/"+complaint.getId();
 	}
 
 

@@ -29,8 +29,7 @@
 				</div>
 
 
-				<div class="col-md-3 col-xs-6 add-margin">Forwarded Complaint
-					To</div>
+				<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.forward.complaint.to"/></div>
 				<div class="col-md-3 col-xs-6 add-margin">
 					<select name="test" class="form-control" data-first-option="false"
 						id="ct-sel-forward">
@@ -42,7 +41,7 @@
 			</div>
 			<div class="form-group">
 				<div class="col-md-3 add-margin">
-					Include message <small><i class="entypo-star error-msg"></i></small>
+					<spring:message code="lbl.include.message"/>  <small><i class="entypo-star error-msg"></i></small>
 				</div>
 				<div class="col-md-9 add-margin">
 					<textarea class="form-control" id="inc_messge" placeholder=""
@@ -50,13 +49,9 @@
 				</div>
 			</div>
 
-
-
-
 			<div class="form-group display-hide show-action-more">
 				<div class="form-group">
-					<div class="col-md-3 col-xs-6 add-margin">Change Complaint
-						Type</div>
+					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.change.complaint.type" /></div>
 					<div class="col-md-3 col-xs-6 add-margin">
 						<form:select path="complaintType" data-first-option="false"
 							id="complaintType" cssClass="form-control"
@@ -72,7 +67,7 @@
 				</div>
 			</div>
 			<div class="form-group display-hide show-action-more">
-				<div class="col-md-3 col-xs-6 add-margin">Change Jurisdiction</div>
+				<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.change.jurisdiction"/></div>
 				<div class="col-md-3 col-xs-3 add-margin">
 					<form:select path="" data-first-option="false" id="ct-sel-jurisd"
 						cssClass="form-control" cssErrorClass="form-control error">
@@ -99,25 +94,15 @@
 				</div>
 			</div>
 
-
 			<div class="form-group">
 				<div class="text-center">
 					<a href="javascript:void(0);" id="toggleactions"
-						class="btn btn-primary">More..</a> 
+						class="btn btn-primary"><spring:message code="lbl.more"/> ..</a> 
 						
 						<a href="javascript:void(0);" id="btn_submit" class="btn btn-primary"><spring:message code="lbl.submit"/></a> 
 						<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
 				</div>
 			</div>
-
 		</form:form>
 	</div>
 </div>
-
-
-
-
-
-
-
-

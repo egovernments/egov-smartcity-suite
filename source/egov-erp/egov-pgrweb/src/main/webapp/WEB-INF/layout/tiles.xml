@@ -24,7 +24,7 @@
      <definition name="complaint-update" extends="base_layout">
         <put-attribute name="page-title" value="title.complaintUpdate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/complaint/view-complaint.jsp"/>
-        <put-attribute name="body" value="/WEB-INF/views/complaint/complaint-show.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/complaint/complaint-edit.jsp"/>
     </definition>
 	
 	<definition name="complaint/*/*" extends="base_layout">
