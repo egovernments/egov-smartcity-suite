@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+		version="2.0">
+
+	<description>Duplicate Form Submission Prevention Tag</description>
+	<tlib-version>4.0</tlib-version>
+	<short-name>form-token</short-name>
+	<uri>/WEB-INF/taglib/duplicate-form-token.tld</uri>
+
+	<tag>
+		<description>Renders an hidden input field which stores form token.</description>
+		<name>token</name>
+		<tag-class>org.egov.infra.web.spring.support.tags.DuplicateFormSubmission</tag-class>
+		<body-content>JSP</body-content>		
+	</tag>
+</taglib>

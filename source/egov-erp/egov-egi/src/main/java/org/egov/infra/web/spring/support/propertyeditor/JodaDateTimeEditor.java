@@ -1,4 +1,4 @@
-package org.egov.infra.web.spring.support;
+package org.egov.infra.web.spring.support.propertyeditor;
 
 import java.beans.PropertyEditorSupport;
 
