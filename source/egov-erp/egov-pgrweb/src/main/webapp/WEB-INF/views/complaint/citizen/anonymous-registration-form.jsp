@@ -18,20 +18,23 @@
 					<div class="form-group">
 						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.name"/></label>
 						<div class="col-sm-6 add-margin">
-							<form:input  class="form-control" path="name" id="f-name" placeholder="Name"/>
+							<form:input  class="form-control" path="complainant.name" id="f-name" placeholder="Name"/>
+							 <form:errors path="complainant.name" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.contactNo"/><small><i class="entypo-star error-msg"></i></small></label>
+						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.mobileNo"/><small><i class="entypo-star error-msg"></i></small></label>
 						<div class="col-sm-2 add-margin">
-							<form:input path="mobile" class="form-control" data-inputmask="'mask': '9999999999'" id="mob-no" placeholder="Mobile Number"/>
+							<form:input path="complainant.mobile" class="form-control" data-inputmask="'mask': '9999999999'" id="mob-no" placeholder="Mobile Number"/>
+							<form:errors path="complainant.mobile" cssClass="add-margin error-msg"/>
 						</div>
 						
 						<div class="col-sm-1">
 							<label for="field-1" class="control-label"><spring:message code="lbl.email"/></label>
 						</div>
 						<div class="col-sm-3">
-							<form:input  path="email" class="form-control" id="email" placeholder="abc@xyz.com"/>
+							<form:input  path="complainant.email" class="form-control" id="email" placeholder="abc@xyz.com"/>
+							<form:errors path="complainant.email" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
 				</div>

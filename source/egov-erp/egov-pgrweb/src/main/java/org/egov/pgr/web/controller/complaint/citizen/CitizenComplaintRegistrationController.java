@@ -48,19 +48,18 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
     
     @RequestMapping(value = "anonymous/register", method = POST)
     public String registerComplaintAnonymous(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder, @RequestParam("files") final MultipartFile[] files) {
-        if (resultBinder.hasErrors()) {
-            return "complaint/citizen/anonymous/registration-form";
-        } else {
-            if(StringUtils.isAnyBlank(complaint.getComplainant().getEmail(),complaint.getComplainant().getMobile()))
-                resultBinder.rejectValue("complainant.email", "email.or.mobile.ismandatory");
-            
-            if(StringUtils.isBlank(complaint.getComplainant().getName())) 
-                resultBinder.rejectValue("complainant.name", "complainant.name.ismandatory");
-                
-        }
+        if(StringUtils.isAnyBlank(complaint.getComplainant().getEmail(),complaint.getComplainant().getMobile()))
+            resultBinder.rejectValue("complainant.email", "email.or.mobile.ismandatory");
+        
+        if(StringUtils.isBlank(complaint.getComplainant().getName())) 
+            resultBinder.rejectValue("complainant.name", "complainant.name.ismandatory");
+        
+        if (resultBinder.hasErrors()) 
+            return "complaint/citizen/anonymous-registration-form";
+         
         complaint.setSupportDocs(addToFileStore(files));
         complaintService.createComplaint(complaint);
-        return "redirect:anonymous/show-reg-form";
+        return "redirect:show-reg-form";
     }
 
 }
