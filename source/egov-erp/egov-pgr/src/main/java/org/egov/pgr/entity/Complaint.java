@@ -69,7 +69,7 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     private BoundaryImpl location;
 
     @ManyToOne
-    @NotNull(message="")
+    @NotNull()
     @JoinColumn(name="status")
     private ComplaintStatus status ;
 
