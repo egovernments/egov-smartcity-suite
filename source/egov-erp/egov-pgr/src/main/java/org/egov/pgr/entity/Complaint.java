@@ -1,5 +1,8 @@
 package org.egov.pgr.entity;
 
+import java.util.Collections;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,11 +10,14 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.egov.infra.filestore.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.lib.admbndry.BoundaryImpl;
 import org.egov.lib.rjbac.user.UserImpl;
@@ -85,13 +91,12 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     @JoinColumn(name="receivingCenter", nullable = true)
     private ReceivingCenter receivingCenter;
 
-  /*  @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinTable(name="pgr_supportdocs",
             joinColumns = @JoinColumn(name = "filestoreid"),
             inverseJoinColumns = @JoinColumn(name = "complaintid")
     )
     private Set<FileStoreMapper> supportDocs = Collections.EMPTY_SET;
-*/
     private double lng;
 
     private double lat;
@@ -162,14 +167,14 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
         this.receivingCenter = receivingCenter;
     }
 
-    /*public Set<FileStoreMapper> getSupportDocs() {
+    public Set<FileStoreMapper> getSupportDocs() {
         return supportDocs;
     }
 
     public void setSupportDocs(final Set<FileStoreMapper> supportDocs) {
         this.supportDocs = supportDocs;
     }
-*/
+
     public BoundaryImpl getLocation() {
         return location;
     }

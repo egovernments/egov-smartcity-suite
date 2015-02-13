@@ -50,8 +50,13 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
 		
 		when(complaintService.get(id)).thenReturn(complaint);
 	}
+<<<<<<< HEAD
 
 //	@Test
+=======
+   
+	//@Test
+>>>>>>> Mani - PHOENIX-15 adding complaint Updation
 	public void show() throws Exception
 	{
 		id=2L;
