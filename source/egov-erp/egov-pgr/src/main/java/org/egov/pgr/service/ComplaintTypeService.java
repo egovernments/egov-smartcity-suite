@@ -52,4 +52,8 @@ public class ComplaintTypeService {
     public ComplaintType findByName(String name) {
         return complaintTypeRepository.findByField("name", name);
     }
+    
+    public ComplaintType load(Long id) {
+        return complaintTypeRepository.load(id);
+    }
 }
