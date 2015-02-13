@@ -3,6 +3,7 @@ package org.egov.infra.web.spring.support;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -19,6 +20,7 @@ public class GlobalInitBinderHandler {
     @InitBinder
     public void initBinder(final WebDataBinder binder) {
         binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat(datePattern), true));
+        binder.registerCustomEditor(DateTime.class, new JodaDateTimeEditor(datePattern, true));
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
         binder.setDisallowedFields("id");
     }
