@@ -1,10 +1,10 @@
 package org.egov.pgr.service;
 
+import org.egov.config.search.Index;
+import org.egov.config.search.IndexType;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ComplaintTypeBuilder;
 import org.egov.pgr.repository.ComplaintTypeRepository;
-import org.egov.search.Index;
-import org.egov.search.ResourceType;
 import org.egov.search.domain.Document;
 import org.egov.search.service.IndexService;
 import org.junit.Before;
@@ -40,7 +40,7 @@ public class ComplaintTypeServiceTest {
 
         verify(complaintTypeRepository).create(complaintType);
         ArgumentCaptor<Document> argumentCaptor = ArgumentCaptor.forClass(Document.class);
-        verify(indexService).index(eq(Index.PGR), eq(ResourceType.COMPLAINT_TYPE), argumentCaptor.capture());
+        verify(indexService).index(eq(Index.PGR.toString()), eq(IndexType.COMPLAINT_TYPE.toString()), argumentCaptor.capture());
 
         Document actualDocument = argumentCaptor.getValue();
         assertEquals(complaintType.getId().toString(), actualDocument.getCorrelationId());
