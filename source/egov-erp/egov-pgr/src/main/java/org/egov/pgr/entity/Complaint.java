@@ -71,7 +71,7 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     @ManyToOne
     @NotNull()
     @JoinColumn(name="status")
-    private ComplaintStatus status ;
+    private ComplaintStatus status = new ComplaintStatus();
 
   
     @Length(min = 10, max = 500)
