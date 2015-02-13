@@ -21,7 +21,7 @@ public class ViewComplaintController {
 	
 	@RequestMapping(value="/view-complaint",  method = RequestMethod.GET)
 	public String viewComplaints(@RequestParam Long complaintId,Model model) { 
-		Complaint complaint = complaintService.getComplaintByComplaintID(complaintId);
+		Complaint complaint = complaintService.getComplaintById(complaintId);
 		model.addAttribute("complaint",complaint);
 		return "view-complaint";
 	}

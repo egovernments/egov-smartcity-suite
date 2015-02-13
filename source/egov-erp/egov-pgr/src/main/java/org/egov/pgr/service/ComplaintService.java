@@ -36,7 +36,7 @@ public class ComplaintService {
     }
     
 
-    public Complaint getComplaintByComplaintID(final Long complaintID) {
+    public Complaint getComplaintById(final Long complaintID) {
         return complaintRepository.get(complaintID);
     }
 
