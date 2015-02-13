@@ -7,7 +7,7 @@ jQuery(document).ready(function($)
 		},
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		remote: {
-			url: '/pgr/complaint/complaintsTypes?q=%QUERY',
+			url: 'complaintTypes?complaintTypeName=%QUERY',
 			filter: function (data) {
 				// Map the remote source JSON array to a JavaScript object array
 				return $.map(data, function (ct) {
@@ -39,12 +39,12 @@ jQuery(document).ready(function($)
 		},
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		remote: {
-			url: 'http://google.com',
-			filter: function (complaintlocation) {
+			url: 'locations?locationName=%QUERY',
+			filter: function (data) {
 				// Map the remote source JSON array to a JavaScript object array
-				return $.map(complaintlocation.results, function (cl) {
+				return $.map(data, function (cl) {
 					return {
-						value: cl.original_title
+						value: cl.label
 					};
 				});
 			}
@@ -55,7 +55,11 @@ jQuery(document).ready(function($)
 	complaintlocation.initialize();
 	
 	// Instantiate the Typeahead UI
-	$('#clocation').typeahead(null, {
+	$('#location').typeahead({
+		  hint: true,
+		  highlight: true,
+		  minLength: 5
+		}, {
 		displayKey: 'value',
 		source: complaintlocation.ttAdapter()
 	});
@@ -63,12 +67,6 @@ jQuery(document).ready(function($)
 	
 	$(":input").inputmask();
 	
-	$("#f-name").on("input", function(){
-		var regexp = /[^a-zA-Z]/g;
-		if($(this).val().match(regexp)){
-			$(this).val( $(this).val().replace(regexp,'') );
-		}
-	});
 	/*complaint through*/
 	$('input:radio[name="compthr"]').click(function(e) {
 		if($('#pform').is(':checked'))
@@ -81,36 +79,64 @@ jQuery(document).ready(function($)
 	});
 	
 	$('#doc').bind('input propertychange', function() {
-		var remchar = parseInt(400 - ($('#doc').val().length));
+		var remchar = parseInt(500 - ($('#doc').val().length));
 		$('#rcc').html('Remaining Characters : '+remchar);
 		
 	});
 	
-	$('#triggerFile1').on('click', function(e){
-        e.preventDefault();
-        $("#file1").trigger('click');
-    });
+	$('.freq-ct').click(function(){
+		$('#complaintType').typeahead('val',$(this).html());
+	});
 	
+	/**
+	 *Based on the selected complaint type make Location is required or not 
+	 **/
+	$("#complaintType").blur(function(){
+		if (this.value === '') {
+			 $(".optionalmandate").hide();
+			 $("#location").removeAttr('required');
+			 $("#landmarkDetails").removeAttr('required');
+			return;
+		} else {
+			$.ajax({
+				type: "GET",
+				url: "isLocationRequired",
+				cache: true,
+				data:{'complaintTypeName' : this.value}
+			}).done(function(value) {
+				 if(value === true) {
+					 $(".optionalmandate").show();
+					 $("#location").attr('required','required');
+					 $("#landmarkDetails").attr('required','required');
+				 } else {
+					 $(".optionalmandate").hide();
+					 $("#location").removeAttr('required');
+					 $("#landmarkDetails").removeAttr('required');
+					 $("#location").val("");
+					 $("#landmarkDetails").val("");
+				 }
+			});
+		}
+	});	
 	
-	$('#triggerFile2').on('click', function(e){
-        e.preventDefault();
-        $("#file2").trigger('click');
-    });
-	
-	$('#triggerFile3').on('click', function(e){
-        e.preventDefault();
-        $("#file3").trigger('click');
-    });
+	if($("#locationRequired").val() === "false") {
+		 $(".optionalmandate").hide();
+		 $("#location").removeAttr('required');
+		 $("#landmarkDetails").removeAttr('required');
+	} else {
+		 $(".optionalmandate").show();
+		 $("#location").attr('required');
+		 $("#landmarkDetails").attr('required');
+	}
 	
 	$("select#rec_centerselect").prop('selectedIndex', 2);
 	$('#reg_no').val('CT156YT6C89');
 	$('#f-name').val('Manu Srivastava');
 	$('#mob-no').val('8076453213');
 	$('#email').val('manu@egovernments.org');
-	$('#com_type').val('Repairs to the SWD');
+	$('#complaintType').typeahead('val','Garbage');
 	$('#comptitle').val('Waterlogged in our areas');
 	$('#doc').val('Road is waterlogged. kids are floating boats in it. People are washing cars in it. Please fix it soon as the mosquito colonies are going to expload soon!');
-	$('#clocation').val('VP Hall Compound Road, Kannappar Thidal, Poongavanapuram, Chennai, Tamil Nadu 600003, India');
+	$('#location').typeahead('val','VP Hall Compound Road, Kannappar Thidal, Poongavanapuram, Chennai, Tamil Nadu 600003, India');
 	$('#lm').val('Near phoenix mall');
-	
 });

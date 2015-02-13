@@ -2,7 +2,6 @@ html, body {
 	height: 100%;
 	width: 100%;
 }
-
 *
 {
 	border:none;
@@ -836,4 +835,107 @@ li#search .search-input:-ms-input-placeholder { /* Internet Explorer 10+ */
 {
 	margin-top: 4px;
 	margin-right: 9px;
+}
+
+
+
+/******Dinesh*****/
+
+.scrollup, .scrolldown
+{
+	position: absolute;
+	margin: 0;
+	padding: 0;
+	left: 0;
+	top: 60px;
+	margin-top: 1px;
+	background: #f58720;
+	color:white;
+	z-index: 9999;
+	text-align: center;
+	display:none;
+	cursor:default;
+	font-size:16px;
+}
+
+.enable-scroll
+{
+	overflow-y:hidden;
+}
+
+.left-float
+{
+    position: absolute;
+	top: 11px;
+	left: 2px;
+}
+
+/* disable text color applying for radio button and check box */
+label.disable-label, input[type="text"]:disabled  + .input-with-text {
+    color: #ccc;
+}
+
+/* for mandatory * class indicator */
+.mandatory:before
+{
+	content:'*';
+	color:red;
+}
+
+/* textbox with end of text */
+.input-with-text
+{
+	background: white;
+	border: 0;
+}
+
+.text-right-responsive
+{
+	text-align:right;
+}
+
+.btn-margin{
+	margin:5px;
+}
+
+.display-hidden-lg
+{
+	visibility:hidden;
+}
+
+@media (max-width: 991px)
+{
+	.col-sm-top
+	{
+		margin-top:15px;
+	}
+	
+	.display-hidden-lg
+	{
+		display:none;
+	}
+}
+
+@media (max-width: 767px)
+{
+	.col-sm-top
+	{
+		margin-top:0px;
+	}
+	
+	.text-right-responsive
+	{
+		text-align:left;
+	}
+}
+
+/******end of dinesh******/
+
+.table > thead > tr > th:hover{
+	cursor:pointer;
+}
+
+.table-header{
+	line-height: 1.8;
+	font-size: 18px;
 }
