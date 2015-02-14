@@ -1,4 +1,4 @@
-package org.egov.pgr.web.controller;
+package org.egov.pgr.web.controller.masters;
 
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -16,14 +17,14 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Controller
-@RequestMapping("/complaint-type")
-public class CreateComplaintTypeController {
+@RequestMapping("/complaint-type/{complaintTypeId}")
+public class UpdateComplaintTypeController {
 
     private DepartmentService departmentService;
     private ComplaintTypeService complaintTypeService;
 
     @Autowired
-    public CreateComplaintTypeController(DepartmentService departmentService, ComplaintTypeService complaintTypeService) {
+    public UpdateComplaintTypeController(DepartmentService departmentService, ComplaintTypeService complaintTypeService) {
         this.departmentService = departmentService;
         this.complaintTypeService = complaintTypeService;
     }
@@ -34,23 +35,24 @@ public class CreateComplaintTypeController {
     }
 
     @ModelAttribute
-    public ComplaintType complaintTypeModel() {
-        return new ComplaintType();
+    public ComplaintType complaintTypeModel(@PathVariable Long complaintTypeId) {
+        return complaintTypeService.findBy(complaintTypeId);
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String complaintTypeForm() {
+    public String complaintTypeFormForUpdate() {
         return "complaint-type";
     }
 
+
     @RequestMapping(method = RequestMethod.POST)
-    public String createComplaintType(@Valid @ModelAttribute ComplaintType complaintType, BindingResult errors, RedirectAttributes redirectAttrs) {
+    public String updateComplaintType(@Valid @ModelAttribute ComplaintType complaintType, BindingResult errors, RedirectAttributes redirectAttrs) {
         if (errors.hasErrors()) {
             return "complaint-type";
         }
 
-        complaintTypeService.createComplaintType(complaintType);
-        redirectAttrs.addFlashAttribute("message", "Successfully created Complaint Type !");
+        complaintTypeService.updateComplaintType(complaintType);
+        redirectAttrs.addFlashAttribute("message", "Successfully updated Complaint Type !");
 
         return "redirect:/complaint-type";
     }
