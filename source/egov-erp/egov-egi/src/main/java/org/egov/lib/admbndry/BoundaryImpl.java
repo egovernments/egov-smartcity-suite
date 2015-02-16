@@ -5,6 +5,8 @@
  */
 package org.egov.lib.admbndry;
 
+import org.egov.search.domain.Searchable;
+
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashSet;

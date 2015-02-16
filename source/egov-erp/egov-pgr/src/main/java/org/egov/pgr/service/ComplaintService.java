@@ -1,26 +1,36 @@
 package org.egov.pgr.service;
 
-import static org.egov.pgr.utils.constants.CommonConstants.DASH_DELIM;
-
 import org.apache.commons.lang.RandomStringUtils;
+import org.egov.config.search.Index;
+import org.egov.config.search.IndexType;
 import org.egov.infra.utils.SecurityUtils;
 import org.egov.lib.rjbac.user.UserImpl;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.repository.ComplaintRepository;
+import org.egov.search.domain.Document;
+import org.egov.search.service.IndexService;
+import org.egov.search.service.ResourceGenerator;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.egov.pgr.utils.constants.CommonConstants.DASH_DELIM;
+
 @Service
 @Transactional(readOnly = true)
 public class ComplaintService {
+    @Autowired
+    private ComplaintRepository complaintRepository;
 
-    private @Autowired ComplaintRepository complaintRepository;
-    
-    private @Autowired ComplaintStatusService complaintStatusService;
+    @Autowired
+    private ComplaintStatusService complaintStatusService;
 
     @Autowired
     private SecurityUtils securityUtils;
+
+    @Autowired
+    private IndexService indexService;
     
     @Transactional
     public void createComplaint(final Complaint complaint) {
@@ -31,6 +41,14 @@ public class ComplaintService {
         // TODO Workflow will decide who is the assignee based on location data
         complaint.setAssignee(null);
         complaintRepository.create(complaint);
+
+        indexForSearch(complaint);
+    }
+
+    private void indexForSearch(Complaint complaint) {
+        JSONObject complaintResource = new ResourceGenerator<>(Complaint.class, complaint).generate();
+        Document document = new Document(complaint.getId().toString(), complaintResource);
+        indexService.index(Index.PGR.toString(), IndexType.COMPLAINT.toString(), document);
     }
 
 

@@ -1,7 +1,13 @@
 package org.egov.pgr.entity;
 
-import java.util.Collections;
-import java.util.Set;
+import org.egov.infra.filestore.FileStoreMapper;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.lib.admbndry.BoundaryImpl;
+import org.egov.lib.rjbac.user.UserImpl;
+import org.egov.pims.commons.Position;
+import org.egov.search.domain.Searchable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -16,14 +22,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.filestore.FileStoreMapper;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.lib.admbndry.BoundaryImpl;
-import org.egov.lib.rjbac.user.UserImpl;
-import org.egov.pims.commons.Position;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.util.Collections;
+import java.util.Set;
 
 @Entity
 @Table(name = "pgr_complaint")
@@ -42,18 +42,21 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
  
     @NotNull
     @Column(name="crn",unique=true)
+    @Searchable(name = "crn")
     private String CRN = "";
 
     @ManyToOne
     @Valid
     @NotNull
     @JoinColumn(name="complaintType", nullable = false)
+    @Searchable
     private ComplaintType complaintType;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @Valid
     @NotNull
     @JoinColumn(name="complainant", nullable = false)
+    @Searchable(name="citizen", group = Searchable.Group.COMMON)
     private Complainant complainant = new Complainant();    
 
     @ManyToOne(fetch=FetchType.LAZY)
@@ -64,25 +67,30 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     @ManyToOne(optional = true)
     @Valid
     @JoinColumn(name="location", nullable = true)
+//    @Searchable(name = "boundary", group = Searchable.Group.COMMON)
     private BoundaryImpl location;
 
     @ManyToOne
     @NotNull()
     @JoinColumn(name="status")
+    @Searchable(group = Searchable.Group.CLAUSES)
     private ComplaintStatus status = new ComplaintStatus();
 
   
     @Length(min = 10, max = 500)
     @SafeHtml
+    @Searchable
     private String details;
 
 
     @Length(max = 200)
     @SafeHtml
+    @Searchable
     private String landmarkDetails;
 
     @Enumerated(EnumType.ORDINAL)
     @NotNull
+    @Searchable(group = Searchable.Group.CLAUSES)
     private ReceivingMode receivingMode = ReceivingMode.WebSite;
 
     @ManyToOne

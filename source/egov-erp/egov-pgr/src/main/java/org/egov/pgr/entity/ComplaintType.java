@@ -2,6 +2,7 @@ package org.egov.pgr.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.lib.rjbac.dept.DepartmentImpl;
+import org.egov.search.domain.Searchable;
 import org.egov.search.util.Serializer;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
@@ -21,6 +22,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "pgr_complainttype", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
+@Searchable
 public class ComplaintType extends AbstractPersistable<Long> {
     private static final long serialVersionUID = 8904645810221559541L;
     
@@ -28,6 +30,7 @@ public class ComplaintType extends AbstractPersistable<Long> {
     @SafeHtml
     @Length(max = 150)
     @Column(name = "name")
+    @Searchable
     private String name;
 
     @Valid

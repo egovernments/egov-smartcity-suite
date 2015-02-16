@@ -5,12 +5,17 @@
  */
 package org.egov.lib.rjbac.dept;
 
+import org.egov.search.domain.Searchable;
+
 import java.util.Date;
 
+@Searchable
 public class DepartmentImpl implements Department {
 
+	@Searchable(name = "name")
 	private String deptName;
 	private Integer id;
+	@Searchable(name = "code")
 	private String deptCode;
 	private Date updateTime;
 
