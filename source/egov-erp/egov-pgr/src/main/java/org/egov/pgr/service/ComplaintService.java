@@ -24,7 +24,8 @@ public class ComplaintService {
     
     @Transactional
     public void createComplaint(final Complaint complaint) {
-        complaint.setCRN(generateComplaintID());
+        if(complaint.getCRN().isEmpty())
+            complaint.setCRN(generateComplaintID());
         complaint.getComplainant().setUserDetail((UserImpl)securityUtils.getCurrentUser());
         complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
         // TODO Workflow will decide who is the assignee based on location data

@@ -21,18 +21,18 @@ public class GenericComplaintAjaxController extends GenericComplaintController {
     @Autowired
     private BoundaryService boundaryService;
 
-    @RequestMapping(value = { "citizen/isLocationRequired", "citizen/anonymous/isLocationRequired" }, method = GET)
+    @RequestMapping(value = { "citizen/isLocationRequired", "citizen/anonymous/isLocationRequired", "officials/isLocationRequired" }, method = GET)
     public @ResponseBody boolean isLocationRequired(@RequestParam final String complaintTypeName) {
         final ComplaintType complaintType = complaintTypeService.findByName(complaintTypeName);
         return complaintType == null ? Boolean.TRUE : complaintType.isLocationRequired();
     }
 
-    @RequestMapping(value = { "citizen/complaintTypes", "citizen/anonymous/complaintTypes" }, method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = { "citizen/complaintTypes", "citizen/anonymous/complaintTypes", "officials/complaintTypes" }, method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<ComplaintType> getAllComplaintTypesByNameLike(@RequestParam final String complaintTypeName) {
         return complaintTypeService.findAllByNameLike(complaintTypeName);
     }
 
-    @RequestMapping(value = { "citizen/locations", "citizen/anonymous/locations" }, method = GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = { "citizen/locations", "citizen/anonymous/locations", "officials/locations" }, method = GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String getAllLocationJSON(@RequestParam final String locationName) {
         final StringBuilder locationJSONData = new StringBuilder("[");
         //TODO Improve this code
