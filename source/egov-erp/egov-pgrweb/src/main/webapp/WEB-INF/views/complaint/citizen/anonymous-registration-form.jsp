@@ -101,7 +101,7 @@
 								<form:hidden path="location"/>
 				   				<form:hidden path="lat" id="lat"/>
                    				<form:hidden path="lng" id="lng"/>
-                   				<form:hidden path="complaintType.locationRequired" id="locationRequired"/>
+                   				<form:hidden path="complaintType.locationRequired" id="locationRequired" disabled="true"/>
 							</div>
 						</div>
 					</div>
