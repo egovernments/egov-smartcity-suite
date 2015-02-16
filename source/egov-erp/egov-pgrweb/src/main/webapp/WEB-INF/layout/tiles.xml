@@ -18,7 +18,7 @@
 
     <definition name="complaint-type" extends="base_layout">
         <put-attribute name="page-title" value="title.complaintType" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/complaint-type.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/complaint-type.jsp"/>
     </definition>
     
      <definition name="complaint-update" extends="base_layout">
