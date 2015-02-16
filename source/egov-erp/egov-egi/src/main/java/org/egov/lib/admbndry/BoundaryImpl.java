@@ -12,15 +12,19 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+@Searchable
 public class BoundaryImpl implements Boundary {
 
 	private static final long serialVersionUID = 1L;
 	private Date updatedTime;
 	private Integer id;
+	@Searchable(name = "boundaryType")
 	private BoundaryType myBoundaryType;
 	private Boundary parentBndry;
 	private Set children = new HashSet();
+	@Searchable
 	private String name;
+	@Searchable
 	private BigInteger number;
 	private BigInteger parentBoundaryNum;
 	private Integer topLevelBoundaryID;

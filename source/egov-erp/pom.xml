@@ -46,6 +46,12 @@
                 <groupId>org.egov.search</groupId>
                 <artifactId>egov-search</artifactId>
                 <version>1.0-SNAPSHOT</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.jayway.jsonpath</groupId>
+                        <artifactId>json-path</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
 

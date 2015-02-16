@@ -67,7 +67,7 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     @ManyToOne(optional = true)
     @Valid
     @JoinColumn(name="location", nullable = true)
-//    @Searchable(name = "boundary", group = Searchable.Group.COMMON)
+    @Searchable(name = "boundary", group = Searchable.Group.COMMON)
     private BoundaryImpl location;
 
     @ManyToOne

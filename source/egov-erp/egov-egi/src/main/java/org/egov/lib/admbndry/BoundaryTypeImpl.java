@@ -5,9 +5,12 @@
  */
 package org.egov.lib.admbndry;
 
+import org.egov.search.domain.Searchable;
+
 import java.util.Date;
 import java.util.Set;
 
+@Searchable
 public class BoundaryTypeImpl implements BoundaryType {
 
 	private static final long serialVersionUID = 1L;
@@ -15,6 +18,7 @@ public class BoundaryTypeImpl implements BoundaryType {
 	private Integer id;
 	private BoundaryType parentBndryType;
 	private Set childBndryTypes;
+	@Searchable
 	private String name;
 	private String parentName;
 	private String bndryTypeLocal;

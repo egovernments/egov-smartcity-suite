@@ -37,6 +37,7 @@ public class ComplaintType extends AbstractPersistable<Long> {
     @NotNull
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "dept_id")
+    @Searchable
     private DepartmentImpl department;
 
     @Column(name = "location_required")
