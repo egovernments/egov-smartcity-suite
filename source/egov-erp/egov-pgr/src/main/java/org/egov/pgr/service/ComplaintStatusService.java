@@ -21,6 +21,8 @@ public class ComplaintStatusService {
 	  return complaintStatusRepository.load(id);
 	}
 	
-	
+	public ComplaintStatus getByName(final String statusName) {
+	    return complaintStatusRepository.findByField("name", statusName);
+	}
 
 }

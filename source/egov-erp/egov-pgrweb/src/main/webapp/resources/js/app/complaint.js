@@ -44,7 +44,7 @@ jQuery(document).ready(function($)
 				// Map the remote source JSON array to a JavaScript object array
 				return $.map(data, function (cl) {
 					return {
-						value: cl.label
+						value: cl.name
 					};
 				});
 			}
@@ -68,8 +68,9 @@ jQuery(document).ready(function($)
 	$(":input").inputmask();
 	
 	/*complaint through*/
-	$('input:radio[name="compthr"]').click(function(e) {
-		if($('#pform').is(':checked'))
+	$('input:radio[name="receivingMode"]').click(function(e) {
+		$('#receivingCenter').prop('selectedIndex',0);
+		if($('#receivingMode5').is(':checked'))
 		{
 			$('#recenter, #regnoblock').show();
 		}else

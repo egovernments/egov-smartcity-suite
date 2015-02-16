@@ -23,7 +23,6 @@ import org.egov.lib.admbndry.BoundaryImpl;
 import org.egov.lib.rjbac.user.UserImpl;
 import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
@@ -42,9 +41,8 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
 
  
     @NotNull
-    @NotEmpty
     @Column(name="crn",unique=true)
-    private String CRN = "NONE";
+    private String CRN = "";
 
     @ManyToOne
     @Valid

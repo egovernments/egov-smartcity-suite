@@ -15,8 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ComplaintService {
 
-    @Autowired
-    private ComplaintRepository complaintRepository;
+    private @Autowired ComplaintRepository complaintRepository;
+    
+    private @Autowired ComplaintStatusService complaintStatusService;
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -25,6 +26,7 @@ public class ComplaintService {
     public void createComplaint(final Complaint complaint) {
         complaint.setCRN(generateComplaintID());
         complaint.getComplainant().setUserDetail((UserImpl)securityUtils.getCurrentUser());
+        complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
         // TODO Workflow will decide who is the assignee based on location data
         complaint.setAssignee(null);
         complaintRepository.create(complaint);
