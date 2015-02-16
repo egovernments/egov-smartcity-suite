@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 
 <link rel="stylesheet"	href="<c:url value='/resources/global/css/bootstrap/bootstrap.css'/>">
 <link rel="stylesheet"	href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
@@ -44,7 +45,9 @@
 						<c:out value="${complaint.CRN}"></c:out>
 					</div>
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.complaintDate" /></div>
-					<div class="col-md-3 col-xs-6 add-margin" id="ct-date">2014-12-18
+					<div class="col-md-3 col-xs-6 add-margin" id="ct-date">
+					<joda:format value="${complaint.createdDate}" var="complaintDate" pattern="yyyy-MM-dd"/>
+					<c:out value="${complaintDate}"></c:out> 
 					</div>
 				</div>
 				<div class="row add-border">
