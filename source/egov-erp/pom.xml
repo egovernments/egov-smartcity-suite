@@ -810,6 +810,15 @@
 
 
     <build>
+    	<pluginManagement>
+    		<plugins>
+    			<plugin>
+          			<groupId>org.codehaus.mojo</groupId>
+          			<artifactId>sonar-maven-plugin</artifactId>
+          			<version>2.5</version>
+        		</plugin>
+    		</plugins>
+    	</pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -850,7 +859,12 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
-	
+			
+			<plugin>
+       			<groupId>org.codehaus.mojo</groupId>
+        		<artifactId>sonar-maven-plugin</artifactId>
+        		<version>2.5</version>
+        	</plugin>
         </plugins>
     </build>
 
