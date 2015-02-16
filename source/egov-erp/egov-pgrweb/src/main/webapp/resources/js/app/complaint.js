@@ -44,7 +44,8 @@ jQuery(document).ready(function($)
 				// Map the remote source JSON array to a JavaScript object array
 				return $.map(data, function (cl) {
 					return {
-						value: cl.name
+						name: cl.name,
+						value: cl.id
 					};
 				});
 			}
@@ -60,10 +61,11 @@ jQuery(document).ready(function($)
 		  highlight: true,
 		  minLength: 5
 		}, {
-		displayKey: 'value',
+		displayKey: 'name',
 		source: complaintlocation.ttAdapter()
-	});
-	
+	}).on('typeahead:selected', function(event, data){            
+		$("#locationid").val(data.value);    
+    });
 	
 	$(":input").inputmask();
 	
