@@ -33,8 +33,8 @@ public class ComplaintTypeService {
     public void createComplaintType(ComplaintType complaintType) {
         complaintTypeRepository.create(complaintType);
 
-        Document complaintTypeDocument = new Document(complaintType.getId().toString(), complaintType.toJsonObject());
-        indexService.index(Index.PGR.toString(), IndexType.COMPLAINT_TYPE.toString(), complaintTypeDocument);
+        Document complaintTypeDocument = new Document(Index.PGR.toString(), IndexType.COMPLAINT_TYPE.toString(), complaintType.getId().toString(), complaintType.toJsonObject());
+        indexService.index(complaintTypeDocument);
     }
 
     public void updateComplaintType(ComplaintType complaintType) {
@@ -44,15 +44,15 @@ public class ComplaintTypeService {
     public List<ComplaintType> findAll() {
         return complaintTypeRepository.findAll();
     }
-    
+
     public List<ComplaintType> findAllByNameLike(String name) {
         return complaintTypeRepository.findAllLike("name", name);
     }
-    
+
     public ComplaintType findByName(String name) {
         return complaintTypeRepository.findByField("name", name);
     }
-    
+
     public ComplaintType load(Long id) {
         return complaintTypeRepository.load(id);
     }

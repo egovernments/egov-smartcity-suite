@@ -31,12 +31,12 @@ public class ComplaintService {
 
     @Autowired
     private IndexService indexService;
-    
+
     @Transactional
     public void createComplaint(final Complaint complaint) {
-        if(complaint.getCRN().isEmpty())
+        if (complaint.getCRN().isEmpty())
             complaint.setCRN(generateComplaintID());
-        complaint.getComplainant().setUserDetail((UserImpl)securityUtils.getCurrentUser());
+        complaint.getComplainant().setUserDetail((UserImpl) securityUtils.getCurrentUser());
         complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
         // TODO Workflow will decide who is the assignee based on location data
         complaint.setAssignee(null);
@@ -45,35 +45,31 @@ public class ComplaintService {
         indexForSearch(complaint);
     }
 
-    private void indexForSearch(Complaint complaint) {
-        JSONObject complaintResource = new ResourceGenerator<>(Complaint.class, complaint).generate();
-        Document document = new Document(complaint.getId().toString(), complaintResource);
-        indexService.index(Index.PGR.toString(), IndexType.COMPLAINT.toString(), document);
+    @Transactional
+    public void update(final Complaint complaint) {
+        complaintRepository.save(complaint);
+        indexForSearch(complaint);
     }
-
 
     public String generateComplaintID() {
         return "CRN" + DASH_DELIM + RandomStringUtils.randomAlphanumeric(5);
     }
-    
 
     public Complaint getComplaintById(final Long complaintID) {
         return complaintRepository.get(complaintID);
     }
 
-    @Transactional
-    public void update(final Complaint complaint) {
-       
-        complaintRepository.save(complaint);
+    private void indexForSearch(Complaint complaint) {
+        JSONObject complaintResource = new ResourceGenerator<>(Complaint.class, complaint).generate();
+        Document document = new Document(Index.PGR.toString(), IndexType.COMPLAINT.toString(),
+                complaint.getId().toString(), complaintResource);
+        indexService.index(document);
     }
 
-    
-    public Complaint get(Long id)
-    {
-    	return complaintRepository.get(id);
+    public Complaint get(Long id) {
+        return complaintRepository.get(id);
     }
     
-
 
 /*
     public Page<Complaint> findAllCurrentUserComplaints(final Pageable pageable) {

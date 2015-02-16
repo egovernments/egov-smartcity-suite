@@ -13,7 +13,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -40,10 +39,12 @@ public class ComplaintTypeServiceTest {
 
         verify(complaintTypeRepository).create(complaintType);
         ArgumentCaptor<Document> argumentCaptor = ArgumentCaptor.forClass(Document.class);
-        verify(indexService).index(eq(Index.PGR.toString()), eq(IndexType.COMPLAINT_TYPE.toString()), argumentCaptor.capture());
+        verify(indexService).index(argumentCaptor.capture());
 
         Document actualDocument = argumentCaptor.getValue();
         assertEquals(complaintType.getId().toString(), actualDocument.getCorrelationId());
+        assertEquals(Index.PGR.toString(), actualDocument.getIndex());
+        assertEquals(IndexType.COMPLAINT_TYPE.toString(), actualDocument.getType());
     }
 
 }
