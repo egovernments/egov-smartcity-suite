@@ -27,7 +27,6 @@ import java.util.Set;
 
 @Entity
 @Table(name = "pgr_complaint")
-@SuppressWarnings("unchecked")
 public class Complaint extends AbstractAuditable<UserImpl, Long> {
 
     private static final long serialVersionUID = 4020616083055647372L;
@@ -39,7 +38,6 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
         WebSite, SMS, Call, Email, Paper, Mobile;
     }
 
- 
     @NotNull
     @Column(name="crn",unique=true)
     @Searchable(name = "crn")
@@ -59,9 +57,9 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     @Searchable(name="citizen", group = Searchable.Group.COMMON)
     private Complainant complainant = new Complainant();    
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @Valid
-    @JoinColumn(name="assignee")
+    @JoinColumn(name = "assignee")
     private Position assignee;
 
     @ManyToOne(optional = true)
@@ -76,12 +74,10 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     @Searchable(group = Searchable.Group.CLAUSES)
     private ComplaintStatus status = new ComplaintStatus();
 
-  
     @Length(min = 10, max = 500)
     @SafeHtml
     @Searchable
     private String details;
-
 
     @Length(max = 200)
     @SafeHtml
@@ -94,15 +90,13 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     private ReceivingMode receivingMode = ReceivingMode.WebSite;
 
     @ManyToOne
-    @JoinColumn(name="receivingCenter", nullable = true)
+    @JoinColumn(name = "receivingCenter", nullable = true)
     private ReceivingCenter receivingCenter;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name="pgr_supportdocs",
-            joinColumns = @JoinColumn(name = "filestoreid"),
-            inverseJoinColumns = @JoinColumn(name = "complaintid")
-    )
-    private Set<FileStoreMapper> supportDocs = Collections.EMPTY_SET;
+    @JoinTable(name = "pgr_supportdocs", joinColumns = @JoinColumn(name = "filestoreid"), inverseJoinColumns = @JoinColumn(name = "complaintid"))
+    private Set<FileStoreMapper> supportDocs = Collections.emptySet();
+
     private double lng;
 
     private double lat;
@@ -139,17 +133,15 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
         this.assignee = assignee;
     }
 
-   
-
     public ComplaintStatus getStatus() {
-		return status;
-	}
+        return status;
+    }
 
-	public void setStatus(ComplaintStatus status) {
-		this.status = status;
-	}
+    public void setStatus(final ComplaintStatus status) {
+        this.status = status;
+    }
 
-	public String getDetails() {
+    public String getDetails() {
         return details;
     }
 
