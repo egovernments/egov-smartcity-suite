@@ -26,7 +26,7 @@ public abstract class GenericComplaintController {
     @Autowired
     protected ComplaintTypeService complaintTypeService;
 
-    @Autowired
+    @Autowired(required=true)
     protected ComplaintService complaintService;
 
     @Autowired

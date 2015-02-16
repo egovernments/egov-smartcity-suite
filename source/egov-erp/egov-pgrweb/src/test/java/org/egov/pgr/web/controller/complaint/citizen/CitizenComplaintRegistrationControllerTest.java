@@ -40,12 +40,19 @@ public class CitizenComplaintRegistrationControllerTest extends AbstractContextC
     }
 
     @Test
-    public void assertRegistrationPageViewReturns() throws Exception {
+    public void assertCitizenRegistrationPageViewReturns() throws Exception {
         mockMvc.perform(get("/complaint/citizen/show-reg-form"))
                 .andExpect(view().name("complaint/citizen/registration-form"))
                 .andExpect(status().isOk());
     }
 
+    @Test
+    public void assertAnonymousRegistrationPageViewReturns() throws Exception {
+        mockMvc.perform(get("/complaint/citizen/anonymous/show-reg-form"))
+                .andExpect(view().name("complaint/citizen/anonymous-registration-form"))
+                .andExpect(status().isOk());
+    }
+    
     @Override
     protected CitizenComplaintRegistrationController initController() {
         initMocks(this);

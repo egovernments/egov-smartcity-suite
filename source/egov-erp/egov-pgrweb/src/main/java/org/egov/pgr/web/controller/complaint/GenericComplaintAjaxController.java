@@ -18,47 +18,45 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/complaint/")
 public class GenericComplaintAjaxController extends GenericComplaintController {
 
-        @Autowired
-        private BoundaryService boundaryService;
+    @Autowired
+    private BoundaryService boundaryService;
 
-        
-        @RequestMapping(value={"citizen/isLocationRequired", "citizen/anonymous/isLocationRequired"},method=GET)
-        public @ResponseBody boolean isLocationRequired(@RequestParam final String complaintTypeName) {
-                final ComplaintType complaintType = complaintTypeService.findByName(complaintTypeName);
-                return complaintType == null ? Boolean.TRUE : complaintType.isLocationRequired();
-        } 
-   
-        @RequestMapping(value={"citizen/complaintTypes", "citizen/anonymous/complaintTypes"},method=GET,produces=MediaType.APPLICATION_JSON_VALUE)
-        public @ResponseBody List<ComplaintType> getAllComplaintTypesByNameLike(@RequestParam  final String complaintTypeName) {
-                return complaintTypeService.findAllByNameLike(complaintTypeName);
-        }
-        
-       
-        @RequestMapping(value = {"citizen/locations", "citizen/anonymous/locations"}, method = GET, produces = MediaType.TEXT_PLAIN_VALUE)
-        public @ResponseBody String getAllLocationJSON(@RequestParam final String locationName) {
-                final StringBuilder boundaryIdAndName = new StringBuilder("[");
-                for (final Boundary boundary : boundaryService.getBoundaryByNameLike(locationName)) {
-                        boundaryIdAndName.append("{\"label\":\"");
-                        if (boundary.isRoot()) {
-                                boundaryIdAndName.append(boundary.getBndryNameLocal());
-                        } else {
-                                Boundary tempBoundary = boundary;
-                                while (!tempBoundary.isRoot()) {
-                                        boundaryIdAndName.append(tempBoundary.getBndryNameLocal()).append(", ");
-                                        tempBoundary = tempBoundary.getParent();
-                                        if (tempBoundary.isRoot()) {
-                                                boundaryIdAndName.append(tempBoundary.getBndryNameLocal());
-                                                break;
-                                        }
-                                }
-                        }
+    @RequestMapping(value = { "citizen/isLocationRequired", "citizen/anonymous/isLocationRequired" }, method = GET)
+    public @ResponseBody boolean isLocationRequired(@RequestParam final String complaintTypeName) {
+        final ComplaintType complaintType = complaintTypeService.findByName(complaintTypeName);
+        return complaintType == null ? Boolean.TRUE : complaintType.isLocationRequired();
+    }
 
-                        boundaryIdAndName.append("\",\"value\":").append(boundary.getId()).append("},");
+    @RequestMapping(value = { "citizen/complaintTypes", "citizen/anonymous/complaintTypes" }, method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<ComplaintType> getAllComplaintTypesByNameLike(@RequestParam final String complaintTypeName) {
+        return complaintTypeService.findAllByNameLike(complaintTypeName);
+    }
+
+    @RequestMapping(value = { "citizen/locations", "citizen/anonymous/locations" }, method = GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String getAllLocationJSON(@RequestParam final String locationName) {
+        final StringBuilder locationJSONData = new StringBuilder("[");
+        //TODO Improve this code
+        boundaryService.getBoundaryByNameLike(locationName).stream().forEach(location -> {
+            locationJSONData.append("{\"name\":\"");
+            if (location.isRoot())
+                locationJSONData.append(location.getBndryNameLocal());
+            else {
+                Boundary currentLocation = location;
+                while (!currentLocation.isRoot()) {
+                    locationJSONData.append(currentLocation.getBndryNameLocal()).append(", ");
+                    currentLocation = currentLocation.getParent();
+                    if (currentLocation.isRoot()) {
+                        locationJSONData.append(currentLocation.getBndryNameLocal());
+                        break;
+                    }
                 }
-                if(boundaryIdAndName.lastIndexOf(",") != -1)
-                boundaryIdAndName.deleteCharAt(boundaryIdAndName.lastIndexOf(","));
-                boundaryIdAndName.append("]");
-                return boundaryIdAndName.toString();
-        }
+            }
+            locationJSONData.append("\",\"id\":").append(location.getId()).append("},");
+        });
+        if (locationJSONData.lastIndexOf(",") != -1)
+            locationJSONData.deleteCharAt(locationJSONData.lastIndexOf(","));
+        locationJSONData.append("]");
+        return locationJSONData.toString();
+    }
 
 }
