@@ -29,21 +29,22 @@
                                 <form:option value=""> <spring:message code="lbl.select"/> </form:option>
                                 <form:options items="${receivingCenters}" itemValue="id" itemLabel="name"/>
                             </form:select>
+                            <form:errors path="receivingCenter" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
 					
 					<div class="form-group display-hide" id="regnoblock">
 						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.crn"/></label>
-						
 						<div class="col-sm-6">
 							<form:input path="CRN" cssClass="form-control" placeholder=""/>
+							<form:errors path="CRN" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
 					<div class="form-group">
 						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.name"/></label>
 						<div class="col-sm-6 add-margin">
 							<form:input  class="form-control" path="complainant.name" id="f-name" placeholder="Name"/>
-							 <form:errors path="complainant.name" cssClass="add-margin error-msg"/>
+							<form:errors path="complainant.name" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
 					<div class="form-group">
@@ -123,6 +124,7 @@
 								<input id="location" type="text" class="form-control low-width" placeholder="" autocomplete="off" required="required"/>
 								<span class="input-group-addon map-class btn-secondary" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="entypo-globe"></i></span>
 								<form:hidden path="location" id="locationid"/>
+								<form:errors path="location" cssClass="add-margin error-msg"/>
 				   				<form:hidden path="lat" id="lat"/>
                    				<form:hidden path="lng" id="lng"/>
                    				<form:hidden path="complaintType.locationRequired" id="locationRequired" disabled="true"/>
@@ -134,6 +136,7 @@
 						<label class="col-sm-3 control-label"><spring:message code="lbl.landmark"/><small><i class="entypo-star error-msg"></i></small></label>
 						<div class="col-sm-6">
 							<form:textarea path="landmarkDetails" class="form-control" id="landmarkDetails" placeholder="" required="required" maxlength="200"/>
+							<form:errors path="landmarkDetails" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
 				</div>
