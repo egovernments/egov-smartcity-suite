@@ -1,5 +1,6 @@
 $(document).ready(function(){
 	
+	var fileformats = ['jpg', 'jpeg', 'gif', 'png',  '3g2', '3gp', '3gp2', '3gpp', 'avi', 'divx', 'flv', 'mov', 'mp4', 'mpeg4', 'mpg4', 'mpeg', 'mpg', 'm4v', 'wmv' ];
 	var myCenter;
 	
 	var fileinputid = ['file1','file2','file3'];//assigning file id
@@ -59,6 +60,18 @@ $(document).ready(function(){
 	
 	$('#file1, #file2, #file3').on('change.bs.fileinput',function(e)
 	{
+		/*validation for file upload*/
+		myfile= $( this ).val();
+		var ext = myfile.split('.').pop();
+		if($.inArray(ext, fileformats) > -1){
+			//do something    
+		}else{
+			alert(ext+" file format is not allowed");
+			return;
+		}
+		
+		//alert('ext'+ext);
+		
 		if(e.target.files.length>0)
 		{
 			filefilled[$(this).attr('id')]=this.files[0].name;
