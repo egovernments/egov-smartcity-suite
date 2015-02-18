@@ -131,8 +131,14 @@ jQuery(document).ready(function($)
 		 $("#location").attr('required');
 		 $("#landmarkDetails").attr('required');
 	}
-	
+
 	if ($("input[name=receivingMode]:checked").val() === 'PAPER') {
 		$('#recenter, #regnoblock').show();
 	}
+
+	// MASK SCREEN IMPORTANT
+	//$('.loader-class').modal('show', {backdrop: 'static'});
+	//$('.loader-class').modal('hide');
+	
+
 });
