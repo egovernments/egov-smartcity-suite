@@ -19,7 +19,7 @@ public class BoundaryImpl implements Boundary {
 	private Date updatedTime;
 	private Integer id;
 	@Searchable(name = "boundaryType")
-	private BoundaryType myBoundaryType;
+	private BoundaryType boundaryType;
 	private Boundary parentBndry;
 	private Set children = new HashSet();
 	@Searchable
@@ -56,7 +56,7 @@ public class BoundaryImpl implements Boundary {
 	}
 
 	public BoundaryImpl(BoundaryType boundaryType) {
-		myBoundaryType = boundaryType;
+		boundaryType = boundaryType;
 	}
 
 	public void setId(Integer id) {
@@ -129,7 +129,7 @@ public class BoundaryImpl implements Boundary {
 	 * @see org.egov.lib.admbndry.Boundary#getBoundaryType()
 	 */
 	public BoundaryType getBoundaryType() {
-		return myBoundaryType;
+		return boundaryType;
 	}
 
 	/*
@@ -180,7 +180,7 @@ public class BoundaryImpl implements Boundary {
 	 * @see org.egov.lib.admbndry.Boundary#setBoundaryType(org.egov.lib.admbndry. BoundaryType)
 	 */
 	public void setBoundaryType(BoundaryType boundaryType) {
-		myBoundaryType = boundaryType;
+		boundaryType = boundaryType;
 	}
 
 	/*
