@@ -16,5 +16,9 @@ jQuery(document).ready(function($)
 	
 	$('.twitter-typeahead').css('display','block');
 	
+	$(".form-horizontal").submit(function( event ) {
+		$('.loader-class').modal('show', {backdrop: 'static'});
+	});
+	
 });
 
