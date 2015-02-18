@@ -12,13 +12,22 @@ public class ReceivingCenter extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = -1568590266889348235L;
     private String name;
-
+    private boolean isCrnRequired;
+    
     public String getName() {
 	return name;
     }
 
     public void setName(final String name) {
 	this.name = name;
+    }
+
+    public boolean isCrnRequired() {
+        return isCrnRequired;
+    }
+
+    public void setCrnRequired(boolean isCrnRequired) {
+        this.isCrnRequired = isCrnRequired;
     }
 
 }
