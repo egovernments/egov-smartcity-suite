@@ -18,12 +18,12 @@
 
             <div class="panel-body">
 
-                <form role="form" class="form-horizontal form-groups-bordered">
+                <form role="form" class="form-horizontal form-groups-bordered" id="searchComplaintForm">
 
                     <div class="form-group">
 
                         <div class="col-md-6 add-margin">
-                            <input type="text" name="" class="form-control" id="ct-search"
+                            <input type="text" name="searchText" class="form-control" id="ct-search"
                                    placeholder="<spring:message code='lbl.complaint.search.searchText' /> "/>
                         </div>
 
@@ -72,7 +72,7 @@
                     <div class="form-group show-searchcomp-more display-hide">
 
                         <div class="col-md-4 add-margin">
-                            <input type="text" name="" class="form-control" id="ct-ctno"
+                            <input type="text" name="complaintNumber" class="form-control" id="ct-ctno"
                                    placeholder="<spring:message code='lbl.complaint.number'/>"/>
                         </div>
                         <div class="col-md-4 add-margin">
@@ -151,7 +151,7 @@
 
                     <div class="form-group">
                         <div class="text-center">
-                            <a href="javascript:void(0);" class="btn btn-primary"><spring:message code='lbl.search'/></a>
+                            <a href="javascript:void(0);" id="searchComplaints" class="btn btn-primary"><spring:message code='lbl.search'/></a>
                             <a href="javascript:void(0);" class="btn btn-default"
                                onclick="jQuery('#criteria-modal').modal('show', {backdrop: 'static'});"><spring:message code='lbl.search.save'/></a>
                             <a href="javascript:void(0);" class="btn btn-default"
@@ -170,6 +170,15 @@
 
     </div>
 </div>
+
+<div>
+    <strong class="head-font">The search result is</strong>
+    <table class="table table-bordered datatable dt-responsive" id="complaintSearchResults">
+
+    </table>
+
+</div>
+
 <link rel="stylesheet"
       href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css'/>">
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'/>"></script>
@@ -182,4 +191,4 @@
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js'/>"></script>
 
-<script src="<c:url value='/resources/js/app/complaintsearch.js'/>"></script>
+<script src="<c:url value='/resources/js/app/search-complaint.js'/>"></script>
