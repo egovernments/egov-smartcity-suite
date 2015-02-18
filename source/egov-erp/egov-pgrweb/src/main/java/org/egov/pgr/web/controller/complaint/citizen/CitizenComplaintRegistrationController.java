@@ -40,7 +40,7 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
     
     @RequestMapping(value = "anonymous/register", method = POST)
     public String registerComplaintAnonymous(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder, @RequestParam("files") final MultipartFile[] files) {
-        if(StringUtils.isAnyBlank(complaint.getComplainant().getEmail(),complaint.getComplainant().getMobile()))
+        if(StringUtils.isBlank(complaint.getComplainant().getEmail()) && StringUtils.isBlank(complaint.getComplainant().getMobile()))
             resultBinder.rejectValue("complainant.email", "email.or.mobile.ismandatory");
         
         if(StringUtils.isBlank(complaint.getComplainant().getName())) 

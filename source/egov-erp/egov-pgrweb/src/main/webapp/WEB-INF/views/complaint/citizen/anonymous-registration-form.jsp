@@ -16,7 +16,7 @@
 				</div>
 				<div class="panel-body custom-form ">
 					<div class="form-group">
-						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.name"/></label>
+						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.name"/><small><i class="entypo-star error-msg"></i></small></label>
 						<div class="col-sm-6 add-margin">
 							<form:input  class="form-control" path="complainant.name" id="f-name" placeholder="Name"/>
 							 <form:errors path="complainant.name" cssClass="add-margin error-msg"/>
