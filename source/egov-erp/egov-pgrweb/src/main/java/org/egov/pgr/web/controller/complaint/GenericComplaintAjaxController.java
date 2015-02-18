@@ -7,6 +7,7 @@ import java.util.List;
 import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.ejb.api.BoundaryService;
 import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.entity.ReceivingCenter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -31,7 +32,13 @@ public class GenericComplaintAjaxController extends GenericComplaintController {
     public @ResponseBody List<ComplaintType> getAllComplaintTypesByNameLike(@RequestParam final String complaintTypeName) {
         return complaintTypeService.findAllByNameLike(complaintTypeName);
     }
-
+    
+    @RequestMapping(value = "officials/isCrnRequired" , method = GET)
+    public @ResponseBody boolean isCrnRequired(@RequestParam final Long receivingCenterId) {
+        final ReceivingCenter receivingCenter = receivingCenterService.findBy(receivingCenterId);
+        return receivingCenter == null ? Boolean.TRUE : receivingCenter.isCrnRequired();
+    }
+    
     @RequestMapping(value = { "citizen/locations", "citizen/anonymous/locations", "officials/locations" }, method = GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String getAllLocationJSON(@RequestParam final String locationName) {
         final StringBuilder locationJSONData = new StringBuilder("[");

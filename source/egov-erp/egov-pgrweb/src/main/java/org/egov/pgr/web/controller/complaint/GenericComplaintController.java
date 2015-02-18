@@ -10,6 +10,7 @@ import org.egov.infra.filestore.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintTypeService;
+import org.egov.pgr.service.ReceivingCenterService;
 import org.egov.pgr.utils.constants.CommonConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,6 +26,9 @@ public abstract class GenericComplaintController {
 
     @Autowired(required=true)
     protected ComplaintService complaintService;
+    
+    @Autowired
+    protected ReceivingCenterService receivingCenterService;
 
     @Autowired
     @Qualifier("localDiskFileStoreService")

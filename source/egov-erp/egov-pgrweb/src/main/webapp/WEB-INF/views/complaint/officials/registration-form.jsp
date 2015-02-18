@@ -34,9 +34,9 @@
 					</div>
 					
 					<div class="form-group display-hide" id="regnoblock">
-						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.crn"/></label>
+						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.crn"/><small id="crnReq" class="display-hide"><i class="entypo-star error-msg"></i></small></label>
 						<div class="col-sm-6">
-							<form:input path="CRN" cssClass="form-control" placeholder=""/>
+							<form:input path="CRN" id="crn" cssClass="form-control" placeholder=""/>
 							<form:errors path="CRN" cssClass="add-margin error-msg"/>
 						</div>
 					</div>

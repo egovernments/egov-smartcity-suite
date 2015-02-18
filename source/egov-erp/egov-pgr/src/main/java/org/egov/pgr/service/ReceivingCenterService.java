@@ -19,15 +19,15 @@ public class ReceivingCenterService {
         this.receivingCenterRepository = receivingCenterRepository;
     }
 
-    public ReceivingCenter findBy(final Long complaintId) {
-        return receivingCenterRepository.get(complaintId);
+    public ReceivingCenter findBy(final Long receivingCenterId) {
+        return receivingCenterRepository.get(receivingCenterId);
     }
 
     public List<ReceivingCenter> findAll() {
         return receivingCenterRepository.findAll();
     }
 
-    public ReceivingCenter load(final Long id) {
-        return receivingCenterRepository.load(id);
+    public ReceivingCenter load(final Long receivingCenterId) {
+        return receivingCenterRepository.load(receivingCenterId);
     }
 }

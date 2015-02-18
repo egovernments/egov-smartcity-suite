@@ -72,6 +72,8 @@ jQuery(document).ready(function($)
 	/*complaint through*/
 	$('input:radio[name="receivingMode"]').click(function(e) {
 		$('#receivingCenter').prop('selectedIndex',0);
+		 $("#crn").removeAttr('required');
+		 $("#crnReq").hide();
 		if($('#receivingMode5').is(':checked'))
 		{
 			$('#recenter, #regnoblock').show();
@@ -117,6 +119,29 @@ jQuery(document).ready(function($)
 					 $("#landmarkDetails").removeAttr('required');
 					 $("#location").val("");
 					 $("#landmarkDetails").val("");
+				 }
+			});
+		}
+	});	
+	
+	$("#receivingCenter").change(function(){
+		if (this.value === '') {
+			 $("#crn").removeAttr('required');
+			 $("#crnReq").hide();
+			return;
+		} else {
+			$.ajax({
+				type: "GET",
+				url: "isCrnRequired",
+				cache: true,
+				data:{'receivingCenterId' : this.value}
+			}).done(function(value) {
+				 if(value === true) {
+					 $("#crn").attr('required','required');
+					 $("#crnReq").show();
+				 } else {
+					 $("#crn").removeAttr('required');
+					 $("#crnReq").hide();
 				 }
 			});
 		}
