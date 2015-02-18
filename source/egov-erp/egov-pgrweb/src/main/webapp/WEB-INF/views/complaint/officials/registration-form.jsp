@@ -17,8 +17,8 @@
 				<div class="panel-body custom-form ">
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.receivingmode"/></label>
-						<div class="col-sm-2 col-xs-12">
-							<form:radiobuttons path="receivingMode" element="div"/>
+						<div class="col-sm-9 col-xs-12 dynamic-span">
+							<form:radiobuttons path="receivingMode" element="span"/>
 						</div>
 					</div>
 					

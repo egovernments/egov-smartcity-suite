@@ -1,5 +1,6 @@
 package org.egov.pgr.entity;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.filestore.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.lib.admbndry.BoundaryImpl;
@@ -22,6 +23,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
 import java.util.Collections;
 import java.util.Set;
 
@@ -35,7 +37,10 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     // enum
     // since we are asking hibernate use its ordinal to be persisted
     public enum ReceivingMode {
-        WebSite, SMS, Call, Email, Paper, Mobile;
+        WEBSITE, SMS, CALL, EMAIL, PAPER, MOBILE;
+        public String toString() {
+            return StringUtils.capitalize(name());
+        }
     }
 
     @NotNull
@@ -87,7 +92,7 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     @Enumerated(EnumType.ORDINAL)
     @NotNull
     @Searchable(group = Searchable.Group.CLAUSES)
-    private ReceivingMode receivingMode = ReceivingMode.WebSite;
+    private ReceivingMode receivingMode = ReceivingMode.WEBSITE;
 
     @ManyToOne
     @JoinColumn(name = "receivingCenter", nullable = true)

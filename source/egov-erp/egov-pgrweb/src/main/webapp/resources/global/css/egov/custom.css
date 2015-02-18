@@ -939,3 +939,8 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 	line-height: 1.8;
 	font-size: 18px;
 }
+
+.dynamic-span span , .dynamic-span span label{
+	padding:0 5px;
+	margin-top:7px;
+}
