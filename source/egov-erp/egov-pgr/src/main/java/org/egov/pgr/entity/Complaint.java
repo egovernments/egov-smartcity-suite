@@ -74,7 +74,7 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
     private BoundaryImpl location;
 
     @ManyToOne
-    @NotNull()
+    @NotNull
     @JoinColumn(name="status")
     @Searchable(group = Searchable.Group.CLAUSES)
     private ComplaintStatus status = new ComplaintStatus();
