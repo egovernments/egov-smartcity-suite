@@ -36,5 +36,12 @@
         <put-attribute name="page-title" value="title.viewComplaint" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/complaint/view-complaint.jsp"/>
     </definition>
+
+	<definition name="complaint-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.searchComplaints" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/complaint/search-complaint.jsp"/>
+    </definition>
+
+
     
 </tiles-definitions>
