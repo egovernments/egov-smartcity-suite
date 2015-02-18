@@ -1,6 +1,5 @@
 package org.egov.pgr.web.contract;
 
-import org.apache.commons.lang.StringUtils;
 import org.egov.search.domain.Filter;
 import org.egov.search.domain.Filters;
 
@@ -23,11 +22,7 @@ public class ComplaintSearchRequest {
 
     public Filters searchFilters() {
         List<Filter> andFilters = new ArrayList<>();
-
-        if (StringUtils.isNotEmpty(complaintNumber)) {
-            andFilters.add(queryStringFilter("searchable.crn", complaintNumber));
-        }
-
+        andFilters.add(queryStringFilter("searchable.crn", complaintNumber));
         return Filters.withAndFilters(andFilters);
     }
 
