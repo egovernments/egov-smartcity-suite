@@ -27,6 +27,10 @@ public abstract class HibernateRepository<T extends AbstractPersistable <? exten
         getCurrentSession().flush();
     }
 
+    public void evict(T entity) {
+        getCurrentSession().evict(entity);
+    }
+
     public void create(T entity) {
         getCurrentSession().save(entity);
         getCurrentSession().flush();
