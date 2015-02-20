@@ -480,14 +480,198 @@
 			
 			<div class="main-content">
 				
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="row">
+							<div class="col-md-6 col-xs-6 table-header">
+								Complaints
+							</div>
+							<div class="col-md-6 col-xs-6 add-margin text-right">
+								<span class="inline-elem">Search</span>
+								<span class="inline-elem"><input type="text" id="contcomplaintsearch" class="form-control input-sm"></span>
+							</div>
+						</div>
+						<table class="table table-bordered datatable" id="contractor_complaints">
+							<thead>
+								<tr>
+									<th>CRN</th>
+									<th>Days to fix</th>
+									<th>Location</th>
+									<th>Status</th>
+									<th>Photos</th>
+									<th>Comments</th>
+								</tr>
+							</thead>
+							
+							<tbody>
+								
+								<tr onclick="window.open('complaintviewcontractor.html')">
+									<td>Zebra</td>
+									<td>8.7</td>
+									<td>Social and human service</td>
+									<td>No</td>
+									<td>Zebra</td>
+									<td>Zebra</td>
+								</tr>
+								
+								<tr onclick="window.open('complaintviewcontractor.html')">
+									<td>Randy S. Smith</td>
+									<td>8.7</td>
+									<td>Social and human service</td>
+									<td>Yes</td>
+									<td>Zebra</td>
+									<td>Zebra</td>
+								</tr>
+								
+								<tr onclick="window.open('complaintviewcontractor.html')">
+									<td>Randy S. Smith</td>
+									<td>8.7</td>
+									<td>Social and human service</td>
+									<td>No</td>
+									<td>Zebra</td>
+									<td>Zebra</td>
+								</tr>
+								
+							</tbody>
+						</table>
+					</div>
+				</div>
+				
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="row">
+							<div class="col-md-6 col-xs-6 table-header">
+								My Tenders
+							</div>
+							<div class="col-md-6 col-xs-6 add-margin text-right">
+								<span class="inline-elem">Search</span>
+								<span class="inline-elem"><input type="text" id="contendersearch" class="form-control input-sm"></span>
+							</div>
+						</div>
+						<table class="table table-bordered datatable" id="contractor_tenders">
+							<thead>
+								<tr>
+									<th>RFQ's</th>
+									<th>Status</th>
+									<th>Date for results</th>
+									<th>Value</th>
+									<th>Time Frame</th>
+								</tr>
+							</thead>
+							
+							<tbody>
+								
+								<tr>
+									<td>Zebra</td>
+									<td>8.7</td>
+									<td>Social and human service</td>
+									<td>No</td>
+									<td>Zebra</td>
+								</tr>
+								
+								<tr>
+									<td>Randy S. Smith</td>
+									<td>8.7</td>
+									<td>Social and human service</td>
+									<td>Yes</td>
+									<td>Zebra</td>
+								</tr>
+								
+								<tr>
+									<td>Randy S. Smith</td>
+									<td>8.7</td>
+									<td>Social and human service</td>
+									<td>No</td>
+									<td>Zebra</td>
+								</tr>
+								
+							</tbody>
+						</table>
+					</div>
+				</div>
+				
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="row">
+							<div class="col-md-6 col-xs-6 table-header">
+								Work Orders
+							</div>
+							<div class="col-md-6 col-xs-6 add-margin text-right">
+								<span class="inline-elem">Search</span>
+								<span class="inline-elem"><input type="text" id="contwosearch" class="form-control input-sm"></span>
+							</div>
+						</div>
+						<table class="table table-bordered datatable" id="contractor_workorder">
+							<thead>
+								<tr>
+									<th>WO #</th>
+									<th>Start Date</th>
+									<th>End Date</th>
+									<th>Status</th>
+									<th>Value</th>
+									<th>Paid till date</th>
+									<th>Location</th>
+								</tr>
+							</thead>
+							
+							<tbody>
+								
+								<tr>
+									<td>Zebra</td>
+									<td>8.7</td>
+									<td>Social and human service</td>
+									<td>No</td>
+									<td>Zebra</td>
+									<td>No</td>
+									<td>Zebra</td>
+								</tr>
+								
+								<tr>
+									<td>Randy S. Smith</td>
+									<td>8.7</td>
+									<td>Social and human service</td>
+									<td>Yes</td>
+									<td>Zebra</td>
+									<td>No</td>
+									<td>Zebra</td>
+								</tr>
+								
+								<tr>
+									<td>Randy S. Smith</td>
+									<td>8.7</td>
+									<td>Social and human service</td>
+									<td>No</td>
+									<td>Zebra</td>
+									<td>No</td>
+									<td>Zebra</td>
+								</tr>
+								
+							</tbody>
+						</table>
+					</div>
+				</div>
+				
+				
+				<footer class="main">
+					
+					powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
+					
+				</footer>
+				
 			</div>
 			
 		</div>
 		
 		
-		
+		<link rel="stylesheet" href="../js/jquery/plugins/datatables/responsive/css/datatables.responsive.css">
 		<script src="../js/bootstrap/bootstrap.js"></script>
 		<script src="../../js/app/homepage.js"></script>
+		
+		<script src="../js/jquery/plugins/datatables/jquery.dataTables.min.js"></script>
+		<script src="../js/jquery/plugins/datatables/dataTables.bootstrap.js"></script>
+		<script src="../js/jquery/plugins/datatables/responsive/js/datatables.responsive.js"></script>
+		<script src="../../js/app/homepagecontractor.js"></script>
+		
 	</body>
 	
 </html>																																																																										

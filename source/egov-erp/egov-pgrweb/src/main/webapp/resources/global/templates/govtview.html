@@ -46,7 +46,7 @@
 						
 						<li class="profile-info visible-xs"><!-- add class "pull-right" if you want to place this from right -->
 							
-							<a href="#" style="padding:15px 10px;">
+							<a href="javascript:void(0)" style="padding:15px 10px;">
 								<img src="assets/images/thumb-1@2x.png" alt="" class="img-circle" width="30">
 								John..
 							</a>
@@ -464,7 +464,7 @@
 							
 							<!-- open/close menu icon (do not remove if you want to enable menu on mobile devices) -->
 							<div class="horizontal-mobile-menu visible-xs">
-								<a href="#" class="with-animation"><!-- add class "with-animation" to support animation -->
+								<a href="javascript:void(0);" class="with-animation"><!-- add class "with-animation" to support animation -->
 									<i class="entypo-menu"></i>
 								</a>
 							</div>
@@ -479,196 +479,537 @@
 				
 			</header>
 			
-			<div class="main-content">
+			<div class="sidebar-menu">
 				
-				<div class="row">
-					<div class="col-xs-12">
-						<div class="row">
-							<div class="col-md-6 col-xs-6 table-header">
-								My Complaints
-							</div>
-							<div class="col-md-6 col-xs-6 add-margin text-right">
-								<span class="inline-elem">Search</span>
-								<span class="inline-elem"><input type="text" id="mycomplaintsearch" class="form-control input-sm"></span>
-							</div>
-						</div>
-						<table class="table table-bordered datatable" id="citizen_mycomplaints">
-							<thead>
-								<tr>
-									<th>Date</th>
-									<th>CNR</th>
-									<th>Type</th>
-									<th>Location</th>
-									<th>Title</th>
-									<th>Photos</th>
-								</tr>
-							</thead>
-							
-							<tbody>
-								
-								<tr>
-									<td>Zebra</td>
-									<td>8.7</td>
-									<td>Social and human service</td>
-									<td>No</td>
-									<td>Zebra</td>
-									<td>8.7</td>
-								</tr>
-								
-								<tr>
-									<td>Randy S. Smith</td>
-									<td>8.7</td>
-									<td>Social and human service</td>
-									<td>Yes</td>
-									<td>Zebra</td>
-									<td>8.7</td>
-								</tr>
-								
-								<tr>
-									<td>Randy S. Smith</td>
-									<td>8.7</td>
-									<td>Social and human service</td>
-									<td>No</td>
-									<td>Zebra</td>
-									<td>8.7</td>
-								</tr>
-								
-							</tbody>
-						</table>
-					</div>
-				</div>
-				
-				<div class="row">
-					<div class="col-xs-12">
-						<div class="row">
-							<div class="col-md-6 col-xs-6 table-header">
-								Taxes
-							</div>
-							<div class="col-md-6 col-xs-6 add-margin text-right">
-								<span class="inline-elem">Search</span>
-								<span class="inline-elem"><input type="text" id="taxesearch" class="form-control input-sm"></span>
-							</div>
-						</div>
-						<table class="table table-bordered datatable" id="citizen_taxes">
-							<thead>
-								<tr>
-									<th>Property Address</th>
-									<th>No. of Floors</th>
-									<th>Builtup Area</th>
-									<th>Land Area</th>
-									<th>Taxes Paid</th>
-									<th>Due Date</th>
-								</tr>
-							</thead>
-							
-							<tbody>
-								
-								<tr>
-									<td>Zebra</td>
-									<td>8.7</td>
-									<td>Social and human service</td>
-									<td>No</td>
-									<td>Zebra</td>
-									<td>8.7</td>
-								</tr>
-								
-								<tr>
-									<td>Randy S. Smith</td>
-									<td>8.7</td>
-									<td>Social and human service</td>
-									<td>Yes</td>
-									<td>Zebra</td>
-									<td>8.7</td>
-								</tr>
-								
-								<tr>
-									<td>Randy S. Smith</td>
-									<td>8.7</td>
-									<td>Social and human service</td>
-									<td>No</td>
-									<td>Zebra</td>
-									<td>8.7</td>
-								</tr>
-								
-							</tbody>
-						</table>
-					</div>
-				</div>
-				
-				<div class="row">
-					<div class="col-xs-12">
-						<div class="row">
-							<div class="col-md-6 col-xs-6 table-header">
-								Properties
-							</div>
-							<div class="col-md-6 col-xs-6 add-margin text-right">
-								<span class="inline-elem">Search</span>
-								<span class="inline-elem"><input type="text" id="propertysearch" class="form-control input-sm"></span>
-							</div>
-						</div>
-						<table class="table table-bordered datatable" id="citizen_properties">
-							<thead>
-								<tr>
-									<th>Type</th>
-									<th>Address</th>
-									<th>Builtup Area</th>
-									<th>Land Area</th>
-									<th>Constructed Date</th>
-								</tr>
-							</thead>
-							
-							<tbody>
-								
-								<tr>
-									<td>Zebra</td>
-									<td>8.7</td>
-									<td>Social and human service</td>
-									<td>No</td>
-									<td>Zebra</td>
-								</tr>
-								
-								<tr>
-									<td>Randy S. Smith</td>
-									<td>8.7</td>
-									<td>Social and human service</td>
-									<td>Yes</td>
-									<td>Zebra</td>
-								</tr>
-								
-								<tr>
-									<td>Randy S. Smith</td>
-									<td>8.7</td>
-									<td>Social and human service</td>
-									<td>No</td>
-									<td>Zebra</td>
-								</tr>
-								
-							</tbody>
-						</table>
-					</div>
-				</div>
-				
-				<footer class="main">
+				<div class="sidebar-menu-inner">
 					
-					powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
+					<!--header class="logo-env hidden-xs">
+						
+						
+						<div class="sidebar-collapse ">
+						<a href="javascript:void(0);" class="sidebar-collapse-icon" >
+						<i id="change-menu-logo" class="entypo-left-dir"></i>
+						</a>
+						</div>
+						
+						
+					</header-->
 					
-				</footer>
+					<div class="sidebar-user-info hidden-xs" >
+						
+						<div class="sui-normal">
+							
+							<a href="#" class="user-link">
+								<img src="../images/thumb-1.png" alt="" class="img-circle">
+								
+								<span>Welcome,</span>
+								<strong>Admin</strong>
+							</a>
+							
+						</div>
+						
+						<div class="collapse-normal">
+							<a href="javascript:void(0);" class="sidebar-collapse-to-normal">
+								<i class="change-menu-normal entypo-left-dir"></i>
+							</a>
+						</div>
+						
+					</div>
+					
+					<ul id="main-menu" class="main-menu">
+						
+						<li id="search">
+							<form method="get" action="">
+								<input type="text" name="" class="search-input" placeholder="Search something..." />
+								<button type="submit">
+									<i class="entypo-search"></i>
+								</button>
+							</form>
+						</li>
+						
+						<li class="has-sub">
+							<a href="javascript:void(0);">
+								<i class="entypo-leaf"></i>
+								<span class="title">Recent</span>
+							</a>
+							<ul>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">Complaints</span>
+									</a>
+								</li>
+							</ul>
+						</li>
+						
+						<li>
+							<a href="javascript:void(0);">
+								<i class="entypo-list"></i>
+								<span class="title">Worklist</span>
+								<span class="badge badge-secondary">8</span>
+							</a>
+						</li>
+						
+						<li>
+							<a href="javascript:void(0);">
+								<i class="entypo-inbox"></i>
+								<span class="title">Drafts</span>
+							</a>
+						</li>
+						
+						<li>
+							<a href="javascript:void(0);">
+								<i class="entypo-bell"></i>
+								<span class="title">Notifications</span>
+								<span class="badge badge-secondary">8</span>
+							</a>
+						</li>
+						
+						<li class="has-sub">
+							<a href="javascript:void(0);">
+								<i class="entypo-window"></i>
+								<span class="title">Applications</span>
+							</a>
+							<ul>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">AE/JE Diary</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">Asset Management</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">Birth and death</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">Building Plan Approval</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">Bpa Citizen Portal</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">COC MIS</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">Citizen portal</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">Conservancy</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">DMS</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">Dashboard</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">Collections</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">Financials</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">EIS</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">Fleet Management</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">Inventory management</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">LCMS</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">Land & Estate</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">Mobile PGR</span>
+									</a>
+								</li>
+								<li>
+									<a href="complaint.html" class="opencomplaint">
+										<span class="title">PGR</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">Payroll</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">Pension Management</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">Portal</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">Property Tax</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">Service Request</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">Works</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">
+										<span class="title">Portal</span>
+									</a>
+								</li>
+							</ul>
+						</li>
+						
+						<li>
+							<a href="javascript:void(0);">
+								<i class="entypo-doc-text"></i>
+								<span class="title">Feedback</span>
+							</a>
+						</li>
+						
+					</ul>
+				</li>
 				
+				
+			</ul>
+			
+		</div>
+		
+	</div>
+	
+	<div class="main-content">
+		
+		<div class="row">
+			<div class="col-md-6">
+				<div class="panel panel-primary" data-collapsed="0"><!-- to apply shadow add class "panel-shadow" -->
+					<!-- panel head -->
+					<div class="panel-heading">
+						<div class="panel-title">Asset's view</div>
+					</div>
+					
+					<!-- panel body -->
+					<div class="panel-body no-padding">
+						
+						<script type="text/javascript" src="//maps.google.com/maps/api/js?sensor=true"></script>
+						
+						<div id="govtviewmap" style="height: 350px; width: 100%"></div>
+						
+					</div>
+					
+				</div>
+			</div>
+			
+			<div class="col-md-6">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<div class="panel-title">Asset's Details</div>
+					</div>
+					<table class="table table-bordered table-responsive">
+						<tbody>
+							<tr>
+								<td>1</td>
+								<td>Asset Name</td>
+								<td><a href="javascript:void(0);">T.Nagar, Chennai</a></td>
+							</tr>
+							<tr>
+								<td>2</td>
+								<td>Type</td>
+								<td>Road</td>
+							</tr>
+							<tr>
+								<td>3</td>
+								<td>Complaints</td>
+								<td>7</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			
+			<div class="col-md-6">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<div class="panel-title">Last Work Details</div>
+					</div>
+					<table class="table table-bordered table-responsive">
+						<tbody>
+							<tr>
+								<td>1</td>
+								<td>WO #</td>
+								<td>54903</td>
+							</tr>
+							<tr>
+								<td>2</td>
+								<td>Contractor Name</td>
+								<td>Larsen & Toubro</td>
+							</tr>
+							<tr>
+								<td>3</td>
+								<td>WO Value</td>
+								<td>1327890</td>
+							</tr>
+							<tr>
+								<td>4</td>
+								<td>Date of Completion</td>
+								<td>24/01/1992</td>
+							</tr>
+							<tr>
+								<td>5</td>
+								<td>Defect Liability Period</td>
+								<td>1 Year</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</div>
 			
 		</div>
 		
-		<link rel="stylesheet" href="../js/jquery/plugins/datatables/responsive/css/datatables.responsive.css">
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="row">
+					<div class="col-md-6 col-xs-6 table-header">
+						Complaints
+					</div>
+					<div class="col-md-6 col-xs-6  add-margin text-right">
+						<span class="inline-elem">Search</span>
+						<span class="inline-elem"><input type="text" id="govtcomplaintsearch" class="form-control input-sm"></span>
+					</div>
+				</div>
+				<table class="table table-bordered datatable" id="govt_complaints">
+					<thead>
+						<tr>
+							<th>Date</th>
+							<th>CNR</th>
+							<th>Type</th>
+							<th>Location</th>
+							<th>Title</th>
+							<th>Photos</th>
+						</tr>
+					</thead>
+					
+					<tbody>
+						
+						<tr>
+							<td>Zebra</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>No</td>
+							<td>Zebra</td>
+							<td>8.7</td>
+						</tr>
+						<tr>
+							<td>Deer</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>No</td>
+							<td>Deer</td>
+							<td>8.7</td>
+						</tr>
+						<tr>
+							<td>Deer</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>No</td>
+							<td>Deer</td>
+							<td>8.7</td>
+						</tr>
+						<tr>
+							<td>Deer</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>No</td>
+							<td>Deer</td>
+							<td>8.7</td>
+						</tr>
+						<tr>
+							<td>Deer</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>No</td>
+							<td>Deer</td>
+							<td>8.7</td>
+						</tr>
+						<tr>
+							<td>Deer</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>No</td>
+							<td>Deer</td>
+							<td>8.7</td>
+						</tr>
+						<tr>
+							<td>Deer</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>No</td>
+							<td>Deer</td>
+							<td>8.7</td>
+						</tr>
+						<tr>
+							<td>Deer</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>No</td>
+							<td>Deer</td>
+							<td>8.7</td>
+						</tr>
+						<tr>
+							<td>Deer</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>No</td>
+							<td>Deer</td>
+							<td>8.7</td>
+						</tr>
+						<tr>
+							<td>Deer</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>No</td>
+							<td>Deer</td>
+							<td>8.7</td>
+						</tr>
+						<tr>
+							<td>Deer</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>No</td>
+							<td>Deer</td>
+							<td>8.7</td>
+						</tr>
+						<tr>
+							<td>Deer</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>No</td>
+							<td>Deer</td>
+							<td>8.7</td>
+						</tr>
+						<tr>
+							<td>Deer</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>No</td>
+							<td>Deer</td>
+							<td>8.7</td>
+						</tr>
+						
+					</tbody>
+				</table>
+			</div>
+		</div>
 		
-		<script src="../js/bootstrap/bootstrap.js"></script>
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="row">
+					<div class="col-md-6 col-xs-6 table-header">
+						Work Orders
+					</div>
+					<div class="col-md-6 col-xs-6  add-margin text-right">
+						<span class="inline-elem">Search</span>
+						<span class="inline-elem"><input type="text" id="govtworkordersearch" class="form-control input-sm"></span>
+					</div>
+				</div>
+				<table class="table table-bordered datatable" id="govt_workorder">
+					<thead>
+						<tr>
+							<th>Work Order</th>
+							<th>Start Date</th>
+							<th>End Date</th>
+							<th>Value</th>
+							<th>Contractor</th>
+							<th>Phone</th>
+							<th>JE</th>
+						</tr>
+					</thead>
+					
+					<tbody>
+						
+						<tr>
+							<td>Zebra</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>No</td>
+							<td>Zebra</td>
+							<td>8.7</td>
+							<td>8.7</td>
+						</tr>
+						<tr>
+							<td>Deer</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>No</td>
+							<td>Deer</td>
+							<td>8.7</td>
+							<td>8.7</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
 		
-		<script src="../js/jquery/plugins/datatables/jquery.dataTables.min.js"></script>
-		<script src="../js/jquery/plugins/datatables/dataTables.bootstrap.js"></script>
-		<script src="../js/jquery/plugins/datatables/responsive/js/datatables.responsive.js"></script>
+		<footer class="main">
+			
+			powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
+			
+		</footer>
 		
-		<script src="../../js/app/homepage.js"></script>
-		<script src="../../js/app/homepagecitizen.js"></script>
-		
-	</body>
+	</div>
 	
-</html>
+</div>
+
+
+<link rel="stylesheet" href="../js/jquery/plugins/datatables/responsive/css/datatables.responsive.css">
+<script src="../js/bootstrap/bootstrap.js"></script>
+<script src="../js/jquery/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="../js/jquery/plugins/datatables/dataTables.bootstrap.js"></script>
+<script src="../js/jquery/plugins/datatables/responsive/js/datatables.responsive.js"></script>
+<script src="../../js/app/homepage.js"></script>
+<script src="../../js/app/govtview.js"></script>
+</body>
+
+</html>																																																																										

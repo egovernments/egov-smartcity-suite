@@ -750,6 +750,17 @@ footer.main{
 	background: #3599b2;
 	color: #fff;
 }
+.table > thead:first-child > tr:first-child > th:first-child
+{
+	border-left: 1px solid transparent;
+	border-top-left-radius: 5px;
+}
+
+.table > thead:first-child > tr:first-child > th:last-child
+{
+	border-right: 1px solid transparent;
+	border-top-right-radius: 5px;
+}
 
 .btn-secondary {
 	color: #fff;
@@ -946,56 +957,56 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 }
 
 .spinner {
-  margin: 0px auto;
-  width: 50px;
-  height: 30px;
-  text-align: center;
-  font-size: 10px;
+	margin: 0px auto;
+	width: 50px;
+	height: 30px;
+	text-align: center;
+	font-size: 10px;
 }
 
 .spinner > div {
-  background-color: #f5861f;
-  height: 100%;
-  width: 6px;
-  display: inline-block;
-  
-  -webkit-animation: stretchdelay 1.2s infinite ease-in-out;
-  animation: stretchdelay 1.2s infinite ease-in-out;
+	background-color: #f5861f;
+	height: 100%;
+	width: 6px;
+	display: inline-block;
+	
+	-webkit-animation: stretchdelay 1.2s infinite ease-in-out;
+	animation: stretchdelay 1.2s infinite ease-in-out;
 }
 
 .spinner .rect2 {
-  -webkit-animation-delay: -1.1s;
-  animation-delay: -1.1s;
+	-webkit-animation-delay: -1.1s;
+	animation-delay: -1.1s;
 }
 
 .spinner .rect3 {
-  -webkit-animation-delay: -1.0s;
-  animation-delay: -1.0s;
+	-webkit-animation-delay: -1.0s;
+	animation-delay: -1.0s;
 }
 
 .spinner .rect4 {
-  -webkit-animation-delay: -0.9s;
-  animation-delay: -0.9s;
+	-webkit-animation-delay: -0.9s;
+	animation-delay: -0.9s;
 }
 
 .spinner .rect5 {
-  -webkit-animation-delay: -0.8s;
-  animation-delay: -0.8s;
+	-webkit-animation-delay: -0.8s;
+	animation-delay: -0.8s;
 }
 
 @-webkit-keyframes stretchdelay {
-  0%, 40%, 100% { -webkit-transform: scaleY(0.4) }  
-  20% { -webkit-transform: scaleY(1.0) }
+	0%, 40%, 100% { -webkit-transform: scaleY(0.4) }  
+	20% { -webkit-transform: scaleY(1.0) }
 }
 
 @keyframes stretchdelay {
-  0%, 40%, 100% { 
-    transform: scaleY(0.4);
-    -webkit-transform: scaleY(0.4);
-  }  20% { 
-    transform: scaleY(1.0);
-    -webkit-transform: scaleY(1.0);
-  }
+	0%, 40%, 100% { 
+		transform: scaleY(0.4);
+		-webkit-transform: scaleY(0.4);
+		}  20% { 
+		transform: scaleY(1.0);
+		-webkit-transform: scaleY(1.0);
+	}
 }
 
 .spinner-margin
@@ -1006,4 +1017,39 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 .spinner-text
 {
 	color:#fff;
+}
+
+
+.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+background-color: #3599b2;
+border-color: #3599b2;
+}
+
+.pagination > li > a:hover, .pagination > li > span:hover, .pagination > li > a:focus, .pagination > li > span:focus {
+color: #fff;
+background-color: #f5861f;
+border-color: #f5861f;
+}
+
+.page-error-404 {
+color: #303641;
+text-align: center;
+}
+
+.page-error-404 .error-text {
+padding-bottom: 25px;
+font-size: 16px;
+}
+
+.page-error-404 .error-text h2 {
+font-size: 45px;
+}
+
+.page-error-404 .error-text p {
+font-size: 22px;
+}
+
+
+.page-error-404 .error-symbol {
+font-size: 120px;
 }
