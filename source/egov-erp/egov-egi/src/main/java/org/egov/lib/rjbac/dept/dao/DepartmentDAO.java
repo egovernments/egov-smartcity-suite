@@ -5,11 +5,15 @@
  */
 package org.egov.lib.rjbac.dept.dao;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.dao.GenericDAO;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.infstr.utils.EgovMasterDataCaching;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.dept.DepartmentImpl;
 import org.egov.lib.rjbac.role.Role;
@@ -17,26 +21,24 @@ import org.egov.lib.rjbac.user.User;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Iterator;
-import java.util.List;
-
 public class DepartmentDAO extends GenericHibernateDAO implements GenericDAO {
-	public static final Logger LOGGER = LoggerFactory.getLogger(DepartmentDAO.class);
-
-	private SessionFactory sessionFactory;
-
-	public DepartmentDAO(SessionFactory sessionFactory) {
-		super(DepartmentImpl.class, null);
-		this.sessionFactory = sessionFactory;
-	}
+    
+    public DepartmentDAO(Class persistentClass, Session session) {
+        super(persistentClass, session);
+    }
+    
+    public DepartmentDAO() {
+        this(Department.class,null);
+    }
+    
+    public static final Logger LOGGER = LoggerFactory.getLogger(DepartmentDAO.class);
 
 	@Override
 	protected Session getCurrentSession() {
-		return sessionFactory.getCurrentSession();
+		return HibernateUtil.getCurrentSession();
 	}
 
 	public void createDepartment(final Department dept) throws DuplicateElementException {

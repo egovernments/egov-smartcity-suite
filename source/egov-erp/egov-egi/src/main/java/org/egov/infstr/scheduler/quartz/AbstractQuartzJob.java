@@ -45,10 +45,10 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
 			if (this.isTransactional) {
 				for (final String city : cities) {
 					setTractionalSupport(city);
-					HibernateUtil.beginTransaction();
+					//HibernateUtil.beginTransaction();
 					setUserInThreadLocal();
 					executeJob();
-					HibernateUtil.commitTransaction();
+					//HibernateUtil.commitTransaction();
 				} 
 			} else {
 				executeJob();
@@ -57,12 +57,12 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
 		} catch (final Exception ex) {
 			LOGGER.error("Unable to complete execution Scheduler ", ex);
 			if (isTransactional) {
-				HibernateUtil.rollbackTransaction();
+				//HibernateUtil.rollbackTransaction();
 			}
 			throw new JobExecutionException("Unable to execute batch job Scheduler", ex, false);
 		}
 		finally {
-			HibernateUtil.closeSession();
+			//HibernateUtil.closeSession();
 		}
 	}
 

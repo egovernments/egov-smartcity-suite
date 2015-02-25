@@ -52,7 +52,7 @@ public class BoundaryFinder implements BoundaryVisitor {
 
 		} catch (final RuntimeException e) {
 			LOGGER.error("Error occurred in visit", e);
-			HibernateUtil.rollbackTransaction();
+			//HibernateUtil.rollbackTransaction();
 			throw new EGOVRuntimeException("Error occurred in visit", e);
 		}
 	}

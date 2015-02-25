@@ -21,7 +21,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 	@Deprecated
 	public DepartmentServiceImpl() {
-		this(new DepartmentDAO(EgovSpringContextHolder.sessionFactory()));
+		this(new DepartmentDAO());
 	}
 
 	public DepartmentServiceImpl(DepartmentDAO departmentDAO) {

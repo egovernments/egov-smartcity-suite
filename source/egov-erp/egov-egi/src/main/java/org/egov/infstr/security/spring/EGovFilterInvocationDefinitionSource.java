@@ -11,12 +11,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.egov.infstr.security.utils.SecurityConstants;
 import org.egov.lib.rjbac.role.Role;
+import org.egov.lib.rrbac.dao.ActionHibernateDAO;
 import org.egov.lib.rrbac.model.Action;
-import org.egov.lib.rrbac.services.RbacService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
@@ -31,10 +31,12 @@ public class EGovFilterInvocationDefinitionSource implements FilterInvocationSec
 
 	private static final Logger LOG = LoggerFactory.getLogger(EGovFilterInvocationDefinitionSource.class);
 	private List<String> excludePatterns = new ArrayList<String>();
-	private RbacService rbacService;
+	
+	private ActionHibernateDAO actionDao;
+	
 
-	public void setRbacService(final RbacService rbacService) {
-		this.rbacService = rbacService;
+	public void setActionDao(ActionHibernateDAO actionDao) {
+		this.actionDao = actionDao;
 	}
 
 	public void setExcludePatterns(final List<String> excludePatterns) {
@@ -72,10 +74,10 @@ public class EGovFilterInvocationDefinitionSource implements FilterInvocationSec
 		if (url.startsWith(SecurityConstants.LOGIN_URI) || url.startsWith(SecurityConstants.PUBLIC_URI) || this.isPatternExcluded(url)) {
 			return null;
 		} else {
-			Action action = this.rbacService.getActionByURL(contextPath, url);
+			Action action = this.actionDao.findActionByURL(contextPath, url);
 			if (action == null) {
 				LOG.warn("No action mapping exists for url: " + url);
-				action = this.rbacService.getActionByName("DEFAULT");
+				action = this.actionDao.findActionByName("DEFAULT");
 			}
 
 			final Set<Role> actionRoles = action.getRoles();

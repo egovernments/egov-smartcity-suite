@@ -1,34 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd"
+	profile="test">
 
-    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-        <constructor-arg ref="sessionFactory"/>
-    </bean>
+	<tx:annotation-driven proxy-target-class="true"
+		transaction-manager="transactionManager" />
 
-    <tx:annotation-driven proxy-target-class="true"/>
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
 
-    <beans profile="test">
-        <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-            <property name="dataSource" ref="dataSource"/>
-            <property name="configLocations" value="classpath*:test-hibernate.cfg.xml"/>
-            <property name="mappingLocations" value="classpath*:org/egov/**/*.hbm.xml"/>
-            <property name="packagesToScan" value="org.egov"/>
-        </bean>
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="persistenceUnitName" value="egov-test-jpa-unit" />
+		<property name="persistenceXmlLocation" value="classpath:test-persistence.xml"></property>
+		<property name="packagesToScan" value="org.egov" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="generateDdl" value="false" />
+				<property name="database" value="POSTGRESQL" />
+			</bean>
+		</property>
+		<property name="persistenceUnitPostProcessors">
+			<list>
+				<bean
+					class="org.springframework.data.jpa.support.ClasspathScanningPersistenceUnitPostProcessor">
+					<constructor-arg name="basePackage" value="org.egov" />
+					<property name="mappingFileNamePattern" value="**/*hbm.xml" />
+				</bean>
+			</list>
+		</property>
 
+	</bean>
 
-        <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-            <property name="driverClassName" value="${db.driver}"/>
-            <property name="url" value="${db.url}"/>
-            <property name="initialSize" value="1"/>
-            <property name="username" value="${db.username}"/>
-            <property name="password" value="${db.password}"/>
-        </bean>
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${db.driver}" />
+		<property name="url" value="${db.url}" />
+		<property name="initialSize" value="1" />
+		<property name="username" value="${db.username}" />
+		<property name="password" value="${db.password}" />
+	</bean>
 
-        <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-            <constructor-arg ref="dataSource"/>
-        </bean>
-    </beans>
-
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<constructor-arg ref="dataSource" />
+	</bean>
+	<!-- Will be used untill we remove sessionFactory concept -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.jpa.vendor.HibernateJpaSessionFactoryBean">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
 </beans>

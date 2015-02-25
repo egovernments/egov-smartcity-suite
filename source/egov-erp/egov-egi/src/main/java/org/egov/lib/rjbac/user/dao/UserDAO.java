@@ -19,6 +19,7 @@ import org.egov.EgovSpringContextHolder;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.security.utils.CryptoHelper;
 import org.egov.infstr.utils.EGovConfig;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.BoundaryType;
 import org.egov.lib.rjbac.dept.Department;
@@ -43,7 +44,6 @@ public class UserDAO {
 
 	@Deprecated
 	public UserDAO() {
-		this(EgovSpringContextHolder.sessionFactory());
 	}
 
 	public UserDAO(SessionFactory sessionFactory) {
@@ -55,7 +55,7 @@ public class UserDAO {
 	 * @return the session
 	 */
 	private Session getSession() {
-		return sessionFactory.getCurrentSession();
+		return HibernateUtil.getCurrentSession();
 	}
 
 	/**

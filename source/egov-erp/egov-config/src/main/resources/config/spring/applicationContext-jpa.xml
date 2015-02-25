@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd"
+        profile="production" >
+
+	<jee:jndi-lookup id="dataSource" jndi-name="java:/ezgovDatabasePool" expected-type="javax.sql.DataSource"/>
+	
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	
+	<tx:jta-transaction-manager/>
+    
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+      	<property name="jtaDataSource" ref="dataSource" />
+      	<property name="persistenceUnitName" value="egov-jpa-unit" />
+      	<property name="packagesToScan" value="org.egov"/>
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="generateDdl" value="false" />
+				<property name="databasePlatform" value="org.hibernate.dialect.PostgresPlusDialect"/>
+                <property name="database" value="POSTGRESQL" />
+			</bean>
+		</property>
+      	<property name="persistenceUnitPostProcessors">
+        	<list>
+            	<bean class="org.springframework.data.jpa.support.ClasspathScanningPersistenceUnitPostProcessor">
+                	<constructor-arg name="basePackage" value="org.egov" />
+                	<property name="mappingFileNamePattern" value="**/*hbm.xml" />
+            	</bean>
+        	</list>
+    	</property>
+   
+   </bean>
+    <bean id="sessionFactory" class="org.springframework.orm.jpa.vendor.HibernateJpaSessionFactoryBean">
+    	<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+</beans>

@@ -5,18 +5,9 @@
  */
 package org.egov.infstr.utils;
 
-import org.egov.EgovSpringContextHolder;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.infinispan.manager.EmbeddedCacheManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -25,8 +16,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.egov.infstr.utils.StringUtils.EMPTY;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.infinispan.manager.EmbeddedCacheManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EgovMasterDataCaching {
 
@@ -338,7 +338,7 @@ public class EgovMasterDataCaching {
 	}
 
 	private Session getCurrentSession() {
-		return EgovSpringContextHolder.sessionFactory().getCurrentSession();
+		return HibernateUtil.getCurrentSession();
 	}
 
 	/**

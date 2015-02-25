@@ -74,7 +74,7 @@ public class NoticeSaveFilter implements Filter {
 			file.setCreatedDate(now);
 			file.setModifiedDate(now);
 			notice.getAssociatedFiles().add(file);
-			HibernateUtil.beginTransaction();
+			//HibernateUtil.beginTransaction();
 			final WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(this.filterConfig.getServletContext());
 			final DocumentManagerService docManager = (DocumentManagerService) wac.getBean(this.documentServiceBean);
 			try {

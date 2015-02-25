@@ -53,7 +53,7 @@ public class ValidationInterceptor extends AbstractInterceptor {
 			}
 			final ValidationAware validationAwareAction = (ValidationAware) invocation.getAction();
 			if (validationAwareAction.hasErrors()) {
-				HibernateUtil.markForRollback();
+				//HibernateUtil.markForRollback();
 				if (isInvokeAndForward) {
 					return (String) actionMethod.invoke(action);
 				} else {
@@ -63,7 +63,7 @@ public class ValidationInterceptor extends AbstractInterceptor {
 			}
 			return invocation.invoke();
 		} catch (final ValidationException e) {
-			HibernateUtil.markForRollback();
+			//HibernateUtil.markForRollback();
 			if (BaseFormAction.class.isAssignableFrom(invocation.getAction().getClass())) {
 				this.transformValidationErrors(invocation, e);
 				if (isInvokeAndForward) {

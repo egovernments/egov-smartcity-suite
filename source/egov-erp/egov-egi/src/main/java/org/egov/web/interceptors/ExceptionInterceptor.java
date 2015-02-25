@@ -36,7 +36,7 @@ public class ExceptionInterceptor extends ExceptionMappingInterceptor {
 	
 	@Override
 	protected void publishException(ActionInvocation invocation, ExceptionHolder exceptionHolder) {
-		HibernateUtil.markForRollback();
+		//HibernateUtil.markForRollback();
 		super.publishException(invocation, exceptionHolder);
 	}
 	
