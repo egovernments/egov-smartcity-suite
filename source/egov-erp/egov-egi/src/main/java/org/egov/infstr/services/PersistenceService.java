@@ -27,7 +27,6 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.dao.GenericDAO;
 import org.egov.infstr.models.BaseModel;
-import org.egov.web.actions.common.StateTest;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
