@@ -20,9 +20,9 @@
 
 					<form:select path="status" data-first-option="false" id="status"
 						cssClass="form-control" cssErrorClass="form-control error">
-						<form:option value="">
+						<%-- <form:option value="">
 							<spring:message code="lbl.select" />
-						</form:option>
+						</form:option> --%>
 						<form:options items="${status}" itemValue="id" itemLabel="name" />
 					</form:select>
 					<form:errors path="status" cssClass="error-msg" />

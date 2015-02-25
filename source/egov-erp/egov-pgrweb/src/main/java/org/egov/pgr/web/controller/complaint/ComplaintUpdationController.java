@@ -3,10 +3,10 @@ package org.egov.pgr.web.controller.complaint;
 import java.util.Collections;
 import java.util.List;
 
-import javax.validation.Valid;
-import javax.validation.Validator;
-
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.utils.SecurityUtils;
+import org.egov.lib.rjbac.role.Role;
+import org.egov.lib.rjbac.role.dao.RoleDAO;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
@@ -31,6 +31,7 @@ public class ComplaintUpdationController {
 
 	private ComplaintService complaintService;
 	private ComplaintTypeService complaintTypeService;
+	private Complaint complaint = null;
 	
 	@Autowired
 	private CommonService commonService;
@@ -40,6 +41,12 @@ public class ComplaintUpdationController {
 	
 	@Autowired
 	SmartValidator validator;
+	
+	@Autowired
+	private SecurityUtils securityUtils;
+	
+	@Autowired
+	RoleDAO roleDAO;  
 
 
 
@@ -53,7 +60,7 @@ public class ComplaintUpdationController {
 	@ModelAttribute
 	public Complaint getComplaint(@PathVariable Long id)
 	{
-		Complaint complaint= complaintService.get(id);
+		complaint = complaintService.get(id);
 		return complaint;
 	}
 
@@ -64,12 +71,9 @@ public class ComplaintUpdationController {
 
 	@ModelAttribute("status")
 	public List<ComplaintStatus> getStatus() {
-
-		return complaintStatusMappingService.getStatusByRoleAndCurrentStatus(null, null);
+		List<Role> rolesList = roleDAO.getRolesByUser(securityUtils.getCurrentUser().getId());
+		return complaintStatusMappingService.getStatusByRoleAndCurrentStatus(rolesList, complaint.getStatus());
 	}
-
-
-
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String show(Model model,@PathVariable Long id){

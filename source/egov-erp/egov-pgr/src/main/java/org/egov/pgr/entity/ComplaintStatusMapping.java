@@ -14,13 +14,45 @@ import org.egov.lib.rjbac.role.RoleImpl;
 @Entity
 @Table(name="pgr_complaintstatus_mapping")
 public class ComplaintStatusMapping extends AbstractPersistable<Long> {
-
-	public ComplaintStatus getStatus() {
-		return status;
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1671713502661376820L;
+	
+	@NotNull
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="current_status_id")
+	private ComplaintStatus currentStatus;
+	
+	@NotNull
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="show_status_id")
+	private ComplaintStatus showStatus;
+	
+	@NotNull
+	@ManyToOne(fetch=FetchType.LAZY)
+    @Valid
+    @JoinColumn(name="role_id")
+	private RoleImpl role;
+	
+	@NotNull
+	private Integer orderNo;
+	
+	public ComplaintStatus getCurrentStatus() {
+		return currentStatus;
 	}
 
-	public void setStatus(ComplaintStatus status) {
-		this.status = status;
+	public void setCurrentStatus(ComplaintStatus currentStatus) {
+		this.currentStatus = currentStatus;
+	}
+
+	public ComplaintStatus getShowStatus() {
+		return showStatus;
+	}
+
+	public void setShowStatus(ComplaintStatus showStatus) {
+		this.showStatus = showStatus;
 	}
 
 	public RoleImpl getRole() {
@@ -39,24 +71,5 @@ public class ComplaintStatusMapping extends AbstractPersistable<Long> {
 		this.orderNo = orderNo;
 	}
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1671713502661376820L;
-	
-	@NotNull
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="complaintstatus_id")
-	private ComplaintStatus status;
-	
-	@NotNull
-	@ManyToOne(fetch=FetchType.LAZY)
-    @Valid
-    @JoinColumn(name="role_id")
-	private RoleImpl role;
-	
-	@NotNull
-	private Integer orderNo;
-	
 
 }
