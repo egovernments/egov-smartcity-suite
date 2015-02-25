@@ -1,13 +1,13 @@
 package org.egov.infra.persistence.entity;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.search.annotations.DocumentId;
+import java.io.Serializable;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
-import java.io.Serializable;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.search.annotations.DocumentId;
 
 /**
  * Abstract base class for entities. Allows parameterization of id type, chooses
@@ -39,8 +39,7 @@ public abstract class AbstractPersistable<PK extends Serializable> implements Se
 
     @Override
     public String toString() {
-        return String.format("Entity of type %s with id: %s", this.getClass()
-                .getName(), getId());
+        return String.format("Entity of type %s with id: %s", this.getClass().getName(), getId());
     }
 
     @Override

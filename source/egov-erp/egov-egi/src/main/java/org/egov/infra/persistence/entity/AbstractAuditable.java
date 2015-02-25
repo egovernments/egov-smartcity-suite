@@ -18,49 +18,48 @@ public abstract class AbstractAuditable<U, PK extends Serializable> extends Abst
     private static final long serialVersionUID = 8330295040331880486L;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="createdBy")
+    @JoinColumn(name = "createdBy")
     private U createdBy;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="lastModifiedBy")
+    @JoinColumn(name = "lastModifiedBy")
     private U lastModifiedBy;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastModifiedDate;
 
     public U getCreatedBy() {
-	return createdBy;
+        return createdBy;
     }
 
     public void setCreatedBy(final U createdBy) {
-	this.createdBy = createdBy;
+        this.createdBy = createdBy;
     }
 
     public DateTime getCreatedDate() {
-	return null == createdDate ? null : new DateTime(createdDate);
+        return null == createdDate ? null : new DateTime(createdDate);
     }
 
     public void setCreatedDate(final DateTime createdDate) {
-	this.createdDate = null == createdDate ? null : createdDate.toDate();
+        this.createdDate = null == createdDate ? null : createdDate.toDate();
     }
 
     public U getLastModifiedBy() {
-	return lastModifiedBy;
+        return lastModifiedBy;
     }
 
     public void setLastModifiedBy(final U lastModifiedBy) {
-	this.lastModifiedBy = lastModifiedBy;
+        this.lastModifiedBy = lastModifiedBy;
     }
 
     public DateTime getLastModifiedDate() {
-	return null == lastModifiedDate ? null : new DateTime(lastModifiedDate);
+        return null == lastModifiedDate ? null : new DateTime(lastModifiedDate);
     }
 
     public void setLastModifiedDate(final DateTime lastModifiedDate) {
-	this.lastModifiedDate = null == lastModifiedDate ? null
-		: lastModifiedDate.toDate();
+        this.lastModifiedDate = null == lastModifiedDate ? null : lastModifiedDate.toDate();
     }
 }
