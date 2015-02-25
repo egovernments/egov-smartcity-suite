@@ -53,6 +53,8 @@ public class ComplaintUpdationController {
 		this.roleDAO = roleDAO;
 	}
 
+// Dont use this which will query multiple times 
+// Not an issue since hibernate will not load once again but it is confusing developers
 	@ModelAttribute
 	public Complaint getComplaint(@PathVariable Long id) {
 		Complaint complaint = complaintService.get(id);
@@ -61,7 +63,7 @@ public class ComplaintUpdationController {
 
 	@ModelAttribute("complaintType")
 	public List<ComplaintType> complaintTypes() {
-		return complaintTypeService.findAll();
+		return complaintTypeService.findAll(); 
 	}
 
 	@ModelAttribute("status")
