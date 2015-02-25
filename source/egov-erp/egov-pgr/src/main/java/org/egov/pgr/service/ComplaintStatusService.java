@@ -12,8 +12,7 @@ public class ComplaintStatusService {
     
 	@Autowired
 	public ComplaintStatusService(ComplaintStatusRepository complaintStatusRepository) {
-		super();
-		this.complaintStatusRepository = complaintStatusRepository;
+			this.complaintStatusRepository = complaintStatusRepository;
 	}
 	
 	public ComplaintStatus load(Long id)

@@ -26,41 +26,36 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value="/complaint-update/{id}")
+@RequestMapping(value = "/complaint-update/{id}")
 public class ComplaintUpdationController {
 
 	private ComplaintService complaintService;
 	private ComplaintTypeService complaintTypeService;
-	private Complaint complaint = null;
-	
-	@Autowired
 	private CommonService commonService;
-	
-	@Autowired
 	private ComplaintStatusMappingService complaintStatusMappingService;
-	
-	@Autowired
-	SmartValidator validator;
-	
-	@Autowired
+	private SmartValidator validator;
 	private SecurityUtils securityUtils;
-	
-	@Autowired
-	RoleDAO roleDAO;  
-
-
+	private RoleDAO roleDAO;  
 
 	@Autowired
-	public ComplaintUpdationController(ComplaintService complaintService,ComplaintTypeService complaintTypeService) {
+	public ComplaintUpdationController(ComplaintService complaintService,
+			ComplaintTypeService complaintTypeService,
+			CommonService commonService,
+			ComplaintStatusMappingService complaintStatusMappingService,
+			SmartValidator validator, SecurityUtils securityUtils,
+			RoleDAO roleDAO) {
 		this.complaintService = complaintService;
-		this.complaintTypeService=complaintTypeService;
+		this.complaintTypeService = complaintTypeService;
+		this.commonService = commonService;
+		this.complaintStatusMappingService = complaintStatusMappingService;
+		this.validator = validator;
+		this.securityUtils = securityUtils;  
+		this.roleDAO = roleDAO;
 	}
 
-
 	@ModelAttribute
-	public Complaint getComplaint(@PathVariable Long id)
-	{
-		complaint = complaintService.get(id);
+	public Complaint getComplaint(@PathVariable Long id) {
+		Complaint complaint = complaintService.get(id);
 		return complaint;
 	}
 
@@ -70,65 +65,60 @@ public class ComplaintUpdationController {
 	}
 
 	@ModelAttribute("status")
-	public List<ComplaintStatus> getStatus() {
+	public List<ComplaintStatus> getStatus(@PathVariable Long id) {
+		
 		List<Role> rolesList = roleDAO.getRolesByUser(securityUtils.getCurrentUser().getId());
-		return complaintStatusMappingService.getStatusByRoleAndCurrentStatus(rolesList, complaint.getStatus());
-	}
+		
+		return complaintStatusMappingService.getStatusByRoleAndCurrentStatus(rolesList, getComplaint(id).getStatus());
+	} 
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String show(Model model,@PathVariable Long id){
-		try{
-			Complaint complaint =complaintService.get(id); 
-			//set the defaults
+	public String edit(Model model, @PathVariable Long id) {
+		try {
+			Complaint complaint = complaintService.get(id);
+			// set the defaults
 			model.addAttribute("zone", Collections.EMPTY_LIST);
 			model.addAttribute("ward", Collections.EMPTY_LIST);
 
-			if (complaint.getComplaintType().isLocationRequired()) 
-			{
+			if (complaint.getComplaintType().isLocationRequired()) {
 				model.addAttribute("zone", commonService.getZones());
-				if(complaint.getLocation()!=null)
-				{
-					model.addAttribute("zone", commonService.getZones()); 
-					model.addAttribute("ward", commonService.getWards(complaint.getLocation().getParent().getId()));
+				if (complaint.getLocation() != null) {
+					model.addAttribute("ward",commonService.getWards(complaint.getLocation().getParent().getId()));
 				}
-			}
-		}catch(Exception e)
-		{
+			} 
+		} catch (Exception e) {
 			throw new EGOVRuntimeException("Missing mandatory fields in the data");
 		}
 
-		return "complaint-update";
+		return "complaint-edit";
 	}
+
 	@RequestMapping(method = RequestMethod.POST)
-	public String update(@ModelAttribute Complaint complaint, BindingResult errors, RedirectAttributes redirectAttrs,Model model)
-	{
-		validator.validate(complaint, errors);    
-		
+	public String update(@ModelAttribute Complaint complaint,
+			BindingResult errors, RedirectAttributes redirectAttrs, Model model) {
+	//change this validator to custom as no need to do complete validation 
+	// Since the usage of this is screen is very heavy need to consider all performance fixes	
+		validator.validate(complaint, errors);
 		if (!errors.hasErrors()) {
 			complaintService.update(complaint);
-			redirectAttrs.addFlashAttribute("message", "Successfully created Complaint Type !");
-		}else
+			redirectAttrs.addFlashAttribute("message",
+					"Successfully created Complaint Type !");
+		} else 
 		{
 			model.addAttribute("zone", Collections.EMPTY_LIST);
 			model.addAttribute("ward", Collections.EMPTY_LIST);
 
-			if (complaint.getComplaintType()!=null && complaint.getComplaintType().isLocationRequired()) 
+			if (complaint.getComplaintType() != null && complaint.getComplaintType().isLocationRequired())
 			{
 				model.addAttribute("zone", commonService.getZones());
-				if(complaint.getLocation()!=null)
-				{
-					model.addAttribute("zone", commonService.getZones()); 
-					model.addAttribute("ward", commonService.getWards(complaint.getLocation().getParent().getId()));
+				if (complaint.getLocation() != null) {
+					model.addAttribute("ward",commonService.getWards(complaint.getLocation().getParent().getId()));
 				}
 
-			}
-		
+			} 
+
 		}
-		//show(model,complaint.getId());
-		return "redirect:/complaint-update/"+complaint.getId();
+		return "redirect:/complaint-edit/" + complaint.getId();
 	}
-
-
-
 
 }
