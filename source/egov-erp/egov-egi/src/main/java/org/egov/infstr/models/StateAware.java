@@ -33,11 +33,11 @@ public abstract class StateAware extends BaseModel {
         return getId().toString();
     }
 
-    public final State getState() {
+    public State getState() {
         return state;
     }
 
-    protected final void setState(final State state) {
+    protected void setState(final State state) {
         this.state = state;
     }
 
