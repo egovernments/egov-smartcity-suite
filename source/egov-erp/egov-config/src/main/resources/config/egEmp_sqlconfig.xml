@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<!-- Configuration file for Works sql queries -->
+
+<properties>
+
+<sql>
+<egEmp-department>
+	<type>hql</type>
+	<query>from DepartmentImpl order by DEPT_NAME</query>
+</egEmp-department> 
+
+<egEmp-Functionary>
+	<type>hql</type>
+	<query>from Functionary order by upper(name)</query>
+</egEmp-Functionary> 
+
+<egEmp-function>
+	<type>hql</type>
+        <query>from CFunction where isactive = 1 AND isnotleaf=0 order by upper(name)</query> 
+</egEmp-function> 
+
+<egEmp-CFinancialYear>
+	<type>hql</type>
+	<query>from CFinancialYear  </query>
+</egEmp-CFinancialYear> 
+
+<egEmp-Position>
+	<type>hql</type>
+	<query>from Position  </query>
+</egEmp-Position> 
+
+
+<egEmp-ObjectType>
+	<type>hql</type>
+	<query>from ObjectType </query>
+</egEmp-ObjectType> 
+
+<egEmp-BANKBRANCH>
+        <type>hql</type>
+        <query>from Bankbranch</query>
+</egEmp-BANKBRANCH> 
+
+<egEmp-Bank>
+	<type>hql</type>
+	<query>from Bank order by upper(name)</query>
+</egEmp-Bank> 
+
+
+<egEmp-DesignationMaster>
+	<type>hql</type>
+	<query>from DesignationMaster order by designationName</query>
+</egEmp-DesignationMaster> 
+
+<egEmp-fund>
+	<type>hql</type>
+	<query>from Fund where isactive = 1 and isNotLeaf!=1 order by upper(name)</query>
+</egEmp-fund> 
+<egEmp-EmployeeStatusMaster>
+	<type>hql</type>
+	<query>from EmployeeStatusMaster  e</query>
+</egEmp-EmployeeStatusMaster> 
+
+<egEmp-StatusMaster>
+	<type>hql</type>
+	<query>from StatusMaster </query>
+</egEmp-StatusMaster> 
+<egEmp-ReligionMaster>
+	<type>hql</type>
+	<query>from ReligionMaster </query>
+</egEmp-ReligionMaster> 
+<egEmp-LanguagesQulifiedMaster>
+	<type>hql</type>
+	<query>from LanguagesQulifiedMaster where fromDate &lt;= current_date and toDate >= current_date </query>
+</egEmp-LanguagesQulifiedMaster> 
+<egEmp-LanguagesKnownMaster>
+	<type>hql</type>
+	<query>from LanguagesKnownMaster</query>
+</egEmp-LanguagesKnownMaster> 
+<egEmp-TypeOfRecruimentMaster>
+	<type>hql</type>
+	<query>from TypeOfRecruimentMaster where fromDate &lt;= current_date and toDate >= current_date </query>
+</egEmp-TypeOfRecruimentMaster> 
+<egEmp-RecruimentMaster>
+	<type>hql</type>
+	<query>from RecruimentMaster where fromDate &lt;= current_date and toDate >= current_date </query>
+</egEmp-RecruimentMaster>
+
+<egEmp-CommunityMaster>
+	<type>hql</type>
+	<query>from CommunityMaster where fromDate &lt;= current_date and toDate >= current_date </query>
+</egEmp-CommunityMaster> 
+<egEmp-CategoryMaster>
+	<type>hql</type>
+	<query>from CategoryMaster </query>
+</egEmp-CategoryMaster> 
+<egEmp-BloodGroupMaster>
+	<type>hql</type>
+	<query>from BloodGroupMaster </query>
+</egEmp-BloodGroupMaster> 
+<egEmp-GradeMaster>
+	<type>hql</type>
+	<query>from GradeMaster where  fromDate &lt;= current_date and toDate >= current_date  order by orderNo</query>
+</egEmp-GradeMaster> 
+<egEmp-NomineeType>
+	<type>hql</type>
+	<query>from EisRelationType </query>
+</egEmp-NomineeType>
+<egEmp-EgwStatus>
+	<type>hql</type>
+	<query>from EgwStatus where MODULETYPE='Employee'</query>
+</egEmp-EgwStatus>
+
+<egEmp-EmployeeGroupMaster>
+	<type>hql</type>
+	<query>from EmployeeGroupMaster order by orderNumber</query>
+</egEmp-EmployeeGroupMaster>
+</sql>
+</properties> 
