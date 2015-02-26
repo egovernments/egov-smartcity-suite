@@ -11,6 +11,7 @@ import java.util.Locale;
 
 import org.egov.infstr.models.State;
 import org.egov.infstr.models.StateAware;
+import org.egov.infstr.models.StateStatus;
 import org.egov.infstr.models.WorkflowTypes;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
@@ -43,7 +44,7 @@ public class WorkflowAdminService {
 	 * @return the workflow state values
 	 */
 	public List<String> getWorkflowStateValues(final String wfType) {
-		return this.daoService.findAllBy("select state.value from org.egov.infstr.models.State as state where state.type=? and state.value != ? and state.value != ? group by state.value", wfType, State.NEW, State.END);
+		return this.daoService.findAllBy("select state.value from org.egov.infstr.models.State as state where state.type=? and state.status != ? and state.status != ? group by state.value", wfType, StateStatus.STARTED, StateStatus.ENDED);
 	}
 	
 	/**
@@ -67,13 +68,13 @@ public class WorkflowAdminService {
 		List<StateAware> stateAwares = inboxService.getWorkflowItems(wfType, stateId);
 		if (!stateAwares.isEmpty()) {
 			final Position newOwner = this.eisService.getPrimaryPositionForUser(newUserId, new Date());
-			if (stateAwares.get(0).getCurrentState().getOwner().getId().equals(newOwner.getId())) {
+			if (stateAwares.get(0).getCurrentState().getOwnerPosition().getId().equals(newOwner.getId())) {
 				status = "OWNER-SAME";
 			} else {
 				status = "RE-ASSIGNED";
 				for (StateAware stateAware : stateAwares) {
-					this.workflowService.setType(stateAware.getClass());
-					this.workflowService.transition(stateAware, newOwner, status);
+				    stateAware.withOwner(newOwner).withComments(status);
+				    //FIXME persist the stateaware with respective persistence service
 				}				
 			}
 		}

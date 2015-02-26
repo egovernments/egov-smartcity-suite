@@ -28,6 +28,7 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.models.State;
 import org.egov.infstr.models.StateAware;
+import org.egov.infstr.models.StateHistory;
 import org.egov.infstr.models.WorkflowTypes;
 import org.egov.infstr.workflow.inbox.InboxComparator;
 import org.egov.infstr.workflow.inbox.InboxService;
@@ -258,20 +259,19 @@ public class InboxAction extends BaseFormAction {
 	private StringBuilder loadInboxHistoryData(final State states) throws EGOVRuntimeException {
 		final StringBuilder inboxHistoryItem = new StringBuilder("");
 		if (states != null) {
-			final List<State> stateHistory = states.getHistory();
-			Collections.reverse(stateHistory);
+			final List<StateHistory> stateHistories = states.getHistory();
 			inboxHistoryItem.append("[");
-			for (final State state : stateHistory) {
-				final Position position = this.inboxService.getStateUserPosition(state);
-				final User user = this.inboxService.getStateUser(state, position);
-				final WorkflowTypes workflowTypes = this.inboxService.getWorkflowType(state.getType());
-				inboxHistoryItem.append("{Id:'").append(state.getId()).append("',");
-				inboxHistoryItem.append("Date:'").append(getFormattedDate(state.getCreatedDate(), "dd/MM/yyyy hh:mm a")).append("',");
+			for (final StateHistory stateHistory : stateHistories) {
+				final Position position = stateHistory.getOwnerPosition();
+				final User user = this.inboxService.getStateUser(stateHistory.getState(), position);
+				final WorkflowTypes workflowTypes = this.inboxService.getWorkflowType(stateHistory.getState().getType());
+				inboxHistoryItem.append("{Id:'").append(stateHistory.getState().getId()).append("',");
+				inboxHistoryItem.append("Date:'").append(getFormattedDate(stateHistory.getCreatedDate(), "dd/MM/yyyy hh:mm a")).append("',");
 				inboxHistoryItem.append("Sender:'").append(this.inboxService.buildSenderName(position, user)).append("',");
 				inboxHistoryItem.append("Task:'").append(workflowTypes.getDisplayName()).append("',");
-				final String nextAction = this.inboxService.getNextAction(state);
-				inboxHistoryItem.append("Status:'").append(state.getValue()).append(EMPTY.equals(nextAction) ? EMPTY : "~" + nextAction).append("',");
-				inboxHistoryItem.append("Details:'").append(state.getText1() == null ? EMPTY : escapeSpecialChars(state.getText1())).append("',");
+				final String nextAction = this.inboxService.getNextAction(stateHistory.getState());
+				inboxHistoryItem.append("Status:'").append(stateHistory.getValue()).append(EMPTY.equals(nextAction) ? EMPTY : "~" + nextAction).append("',");
+				inboxHistoryItem.append("Details:'").append(stateHistory.getComments() == null ? EMPTY : escapeSpecialChars(stateHistory.getComments())).append("',");
 				inboxHistoryItem.append("Signature:'").append("<img src=\"/egi/common/imageRenderer!getUserSignature.action?id=").append(user.getId())
 						.append("\" height=\"50\" width=\"150\" alt=\"No User Signature\" onerror=\"this.parentNode.removeChild(this);\"/>").append("',");
 				inboxHistoryItem.append("Link:''},");

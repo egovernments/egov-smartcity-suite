@@ -1,123 +1,188 @@
-/*
- * @(#)StateAware.java 3.0, 17 Jun, 2013 2:56:20 PM
- * Copyright 2013 eGovernments Foundation. All rights reserved. 
- * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
 package org.egov.infstr.models;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
+import javax.persistence.MappedSuperclass;
+
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.lib.rjbac.user.User;
 import org.egov.pims.commons.Position;
 
+@MappedSuperclass
 public abstract class StateAware extends BaseModel {
+    private static final long serialVersionUID = 5776408218810221246L;
 
-	private static final long serialVersionUID = 1L;
-	private State state;
-	protected Integer approverPositionId;
+    private State state;
+    private Integer approverPositionId;
 
-	public Integer getApproverPositionId() {
-		return approverPositionId;
-	}
+    /**
+     * Need to overridden by the implementing class to give details about the
+     * State <I>Used by Inbox to fetch the State Detail at runtime</I>
+     *
+     * @return String Detail
+     */
+    public abstract String getStateDetails();
 
-	public void setApproverPositionId(Integer approverPositionId) {
-		this.approverPositionId = approverPositionId;
-	}
+    /**
+     * To set the Group Link, Any State Aware Object which needs Grouping should
+     * override this method
+     **/
+    public String myLinkId() {
+        return getId().toString();
+    }
 
-	/**
-	 * To get the Current State attach to Object
-	 * @return State
-	 */
-	public State getCurrentState() {
-		return state;
-	}
+    public final State getState() {
+        return state;
+    }
 
-	/**
-	 * Used to Change the State by passing a State itself
-	 * @param State nextState
-	 */
-	public void changeState(State nextState) {
-		if (this.state != null) {
-			state.setNext(nextState);
-			nextState.setPrevious(state);
-		}
-		state = nextState;
-	}
+    protected final void setState(final State state) {
+        this.state = state;
+    }
 
-	/**
-	 * Used to change the State by giving the State name and the User Position
-	 * @param String stateName
-	 * @param Position
-	 * @param comments
-	 */
-	public void changeState(String stateName, Position owner, String comments) {
-		State state = new State(getStateType(), stateName, owner, comments);
-		changeState(state);
-	}
+    public Integer getApproverPositionId() {
+        return approverPositionId;
+    }
 
-	/**
-	 * Used to change the State by giving the State name and the User Position
-	 * @param String stateName
-	 * @param String actionPerformed
-	 * @param Position
-	 * @param comments
-	 */
-	public void changeState(String stateName, String nextAction, Position owner, String comments) {
-		State state = new State(getStateType(), stateName, nextAction, owner, comments);
-		changeState(state);
-	}
+    public void setApproverPositionId(final Integer approverPositionId) {
+        this.approverPositionId = approverPositionId;
+    }
 
-	/**
-	 * To get the History State of this Object
-	 * @return List <State> list of States
-	 */
-	public List<State> getHistory() {
-		if (state == null)
-			return Collections.emptyList();
-		return state.getHistory();
-	}
+    public final State getCurrentState() {
+        return state;
+    }
 
-	/**
-	 * A State utility method to get the Type name
-	 * @return String TypeName
-	 */
-	public String getStateType() {
-		return this.getClass().getSimpleName();
-	}
+    public final List<StateHistory> getStateHistory() {
+        return state == null ? Collections.emptyList() : state.getHistory();
+    }
 
-	/**
-	 * To find the Current State is in NEW
-	 * @return boolean isNew
-	 */
-	public boolean isNew() {
-		return this.getCurrentState() != null && this.getCurrentState().isNew();
-	}
+    public final String getStateType() {
+        return this.getClass().getSimpleName();
+    }
 
-	/**
-	 * Need to overridden by the implementing class to give details about the State <I>Used by Inbox to fetch the State Detail</I>
-	 * @return String Detail
-	 */
-	public abstract String getStateDetails();
+    public final boolean stateIsNew() {
+        return hasState() && getCurrentState().isNew();
+    }
 
-	/**
-	 * To get the State
-	 */
-	public State getState() {
-		return state;
-	}
+    public final boolean stateIsEnded() {
+        return hasState() && getCurrentState().isEnded();
+    }
 
-	/**
-	 * Avoid using setState for State Change Could lead to Object State instability To set the State/ Used by Hibernate
-	 */
-	public void setState(State state) {
-		this.state = state;
-	}
+    public final boolean hasState() {
+        return getCurrentState() != null;
+    }
 
-	/**
-	 * To set the Group Link, Any State Aware Object which needs Grouping should override this method
-	 **/
-	public String myLinkId() {
-		return this.getId().toString();
-	}
+    public final StateAware transition() {
+        if (hasState()) {
+            state.addStateHistory(new StateHistory(state));
+            state.setStatus(StateStatus.INPROGRESS);
+            resetState();
+        }
+        return this;
+    }
 
+    public final StateAware transition(final boolean clone) {
+        if (hasState() && clone) {
+            state.addStateHistory(new StateHistory(state));
+            state.setStatus(StateStatus.INPROGRESS);
+        } else
+            transition();
+        return this;
+    }
+
+    public final StateAware start() {
+        if (hasState())
+            throw new EGOVRuntimeException("Workflow already started state.");
+        else {
+            state = new State();
+            state.setType(getStateType());
+            state.setStatus(StateStatus.STARTED);
+            state.setValue(State.DEFAULT_STATE_VALUE_CREATED);
+            state.setComments(State.DEFAULT_STATE_VALUE_CREATED);
+        }
+
+        return this;
+    }
+
+    public final StateAware end() {
+        if (stateIsEnded())
+            throw new EGOVRuntimeException("Workflow already ended state.");
+        else {
+            state.setValue(State.DEFAULT_STATE_VALUE_CLOSED);
+            state.setStatus(StateStatus.ENDED);
+            state.setComments(State.DEFAULT_STATE_VALUE_CLOSED);
+        }
+        return this;
+    }
+
+    public final StateAware reopen(final boolean clone) {
+        if (stateIsEnded()) {
+            final StateHistory stateHistory = new StateHistory(state);
+            stateHistory.setValue(State.STATE_REOPENED);
+            state.setStatus(StateStatus.INPROGRESS);
+            state.addStateHistory(stateHistory);
+            if (!clone)
+                resetState();
+        } else
+            throw new EGOVRuntimeException("Workflow not ended.");
+        return this;
+    }
+
+    public final StateAware withOwner(final User owner) {
+        state.setOwnerUser(owner);
+        return this;
+    }
+
+    public final StateAware withOwner(final Position owner) {
+        state.setOwnerPosition(owner);
+        return this;
+    }
+
+    public final StateAware withStateValue(final String currentStateValue) {
+        state.setValue(currentStateValue);
+        return this;
+    }
+
+    public final StateAware withNextAction(final String nextAction) {
+        state.setNextAction(nextAction);
+        return this;
+    }
+
+    public final StateAware withComments(final String comments) {
+        state.setComments(comments);
+        return this;
+    }
+
+    public final StateAware withExtraInfo(final String extraInfo) {
+        state.setExtraInfo(extraInfo);
+        return this;
+    }
+
+    public final StateAware withDateInfo(final Date dateInfo) {
+        state.setDateInfo(dateInfo);
+        return this;
+    }
+
+    public final StateAware withExtraDateInfo(final Date extraDateInfo) {
+        state.setExtraDateInfo(extraDateInfo);
+        return this;
+    }
+
+    public final StateAware withSenderName(final String senderName) {
+        state.setSenderName(senderName);
+        return this;
+    }
+    
+    private void resetState() {
+        state.setComments("");
+        state.setDateInfo(null);
+        state.setExtraDateInfo(null);
+        state.setExtraInfo("");
+        state.setNextAction("");
+        state.setValue("");
+        state.setSenderName("");
+        state.setOwnerUser(null);
+        state.setOwnerPosition(null);
+    }
 }

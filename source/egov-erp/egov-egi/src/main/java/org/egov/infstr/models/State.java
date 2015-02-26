@@ -1,175 +1,143 @@
-/*
- * @(#)State.java 3.0, 17 Jun, 2013 2:56:03 PM
- * Copyright 2013 eGovernments Foundation. All rights reserved. 
- * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
 package org.egov.infstr.models;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
-
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.lib.rjbac.user.User;
 import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class State extends BaseModel implements Cloneable {
 
-	private static final long serialVersionUID = 1L;
-	public static final String NEW = "NEW";
-	public static final String END = "END";
-	public static final String WORKFLOWTYPES_QRY = "WORKFLOWTYPES";
-	public static final String WORKFLOWTYPES_BY_ID = "WORKFLOWTYPES_BY_ID";
-	@NotEmpty
-	private String type;
-	@NotEmpty
-	private String value;
-	@NotNull
-	private Position owner;
+    private static final long serialVersionUID = -9159043292636575746L;
 
-	private String nextAction;
-	private State previous;
-	private State next;
-	private String text1;
-	private String text2;
-	private Date date1;
-	private Date date2;
+    public static final String DEFAULT_STATE_VALUE_CREATED = "Created";
+    public static final String DEFAULT_STATE_VALUE_CLOSED = "Closed";
+    public static final String STATE_REOPENED = "Reopened";
+    public static final String WORKFLOWTYPES_QRY = "WORKFLOWTYPES";
+    public static final String WORKFLOWTYPES_BY_ID = "WORKFLOWTYPES_BY_ID";
+    private @NotEmpty String type;
+    private @NotEmpty String value;
+    private Position ownerPosition;
+    private User ownerUser;
+    private List<StateHistory> history = Collections.emptyList();
+    private String senderName;
+    private String nextAction;
+    private String comments;
+    private String extraInfo;
+    private Date dateInfo;
+    private Date extraDateInfo;
+    private StateStatus status;
+    
+    protected State() {
+    }
 
-	State() {
-	}
+    public String getType() {
+        return type;
+    }
 
-	public State(String type, String value, Position owner, String comment) {
-		this.type = type;
-		this.value = value;
-		this.owner = owner;
-		this.text1 = comment;
-	}
+    protected void setType(final String type) {
+        this.type = type;
+    }
 
-	public State(String type, String value, String nextAction, Position owner, String comment) {
-		this.type = type;
-		this.value = value;
-		this.owner = owner;
-		this.text1 = comment;
-		this.nextAction = nextAction;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public State getPrevious() {
-		return previous;
-	}
+    protected void setValue(final String value) {
+        this.value = value;
+    }
 
-	public void setPrevious(State previous) {
-		if (previous != null) {
-			verifySelfReference(previous);
-			this.previous = previous;
-			this.previous.next = this;
-		}
-	}
+    public Position getOwnerPosition() {
+        return ownerPosition;
+    }
 
-	public State getNext() {
-		return next;
-	}
+    protected void setOwnerPosition(final Position ownerPosition) {
+        this.ownerPosition = ownerPosition;
+    }
 
-	public void setNext(State next) {
-		if (next != null) {
-			verifySelfReference(next);
-			this.next = next;
-			this.next.previous = this;
-		}
-	}
+    public User getOwnerUser() {
+        return ownerUser;
+    }
 
-	public Position getOwner() {
-		return owner;
-	}
+    protected void setOwnerUser(final User ownerUser) {
+        this.ownerUser = ownerUser;
+    }
 
-	public void setOwner(Position owner) {
-		this.owner = owner;
-	}
+    public List<StateHistory> getHistory() {
+        return history;
+    }
 
-	public String getNextAction() {
-		return nextAction;
-	}
+    protected void setHistory(final List<StateHistory> history) {
+        this.history = history;
+    }
+    
+    protected void addStateHistory(StateHistory history) {
+        this.getHistory().add(history);
+    }
+    
+    public String getSenderName() {
+        return senderName;
+    }
 
-	public void setNextAction(String nextAction) {
-		this.nextAction = nextAction;
-	}
+    protected void setSenderName(final String senderName) {
+        this.senderName = senderName;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getNextAction() {
+        return nextAction;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    protected void setNextAction(final String nextAction) {
+        this.nextAction = nextAction;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getComments() {
+        return comments;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    protected void setComments(final String comments) {
+        this.comments = comments;
+    }
 
-	public String getText1() {
-		return text1;
-	}
+    public String getExtraInfo() {
+        return extraInfo;
+    }
 
-	public void setText1(String text1) {
-		this.text1 = text1;
-	}
+    protected void setExtraInfo(String extraInfo) {
+        this.extraInfo = extraInfo;
+    }
 
-	public String getText2() {
-		return text2;
-	}
+    public Date getDateInfo() {
+        return dateInfo;
+    }
 
-	public void setText2(String text2) {
-		this.text2 = text2;
-	}
+    protected void setDateInfo(Date dateInfo) {
+        this.dateInfo = dateInfo;
+    }
 
-	public Date getDate1() {
-		return date1;
-	}
+    public Date getExtraDateInfo() {
+        return extraDateInfo;
+    }
 
-	public void setDate1(Date date1) {
-		this.date1 = date1;
-	}
+    protected void setExtraDateInfo(Date extraDateInfo) {
+        this.extraDateInfo = extraDateInfo;
+    }
 
-	public Date getDate2() {
-		return date2;
-	}
+    protected StateStatus getStatus() {
+        return status;
+    }
 
-	public void setDate2(Date date2) {
-		this.date2 = date2;
-	}
+    protected void setStatus(StateStatus status) {
+        this.status = status;
+    }
 
-	public List<State> getHistory() {
-		List<State> history = new ArrayList<State>();
-		State state = this;
-		do {
-			history.add(state);
-			state = state.getPrevious();
-		} while (state != null);
-
-		return history;
-	}
-
-	public boolean isNew() {
-		return NEW.equalsIgnoreCase(value);
-	}
-
-	public State clone() {
-		return new State(this.type, this.value, this.nextAction, this.owner, this.text1);
-	}
-
-	public String toString() {
-		return "{ State >> Owner : " + owner.getName() + ", Type : " + type + ", Value : " + value + "}";
-	}
-
-	private void verifySelfReference(State state) {
-		if (this.equals(state)) {
-			throw new EGOVRuntimeException("state.self_reference");
-		}
-	}
-
+    public boolean isNew() {
+        return status.equals(StateStatus.STARTED);
+    }
+    
+    public boolean isEnded() {
+        return status.equals(StateStatus.ENDED);
+    }
 }

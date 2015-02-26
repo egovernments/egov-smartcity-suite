@@ -208,7 +208,7 @@ public class WorkflowAdminAction extends ActionSupport {
 			for (final StateAware stateAware : states) {
 				final State state = stateAware.getCurrentState();
 				final Position sender = this.inboxService.getStateUserPosition(state);
-				final Position owner = state.getOwner();
+				final Position owner = state.getOwnerPosition();
 				final User userSender = this.inboxService.getStateUser(state, sender);
 				final User userOwner = this.inboxService.getStateUser(state, owner);
 				wfItem.append("{Id:'").append(stateAware.myLinkId()).append("#DILIM#").append(workflowTypes.getId()).append("',");

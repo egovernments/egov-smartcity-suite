@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="false">
+	<class name="org.egov.infstr.models.StateHistory" table="EG_WF_STATE_HISTORY" mutable="false" >
+		<id name="id" column="ID" type="long" unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">EG_WF_STATE_HISTORY_SEQ</param>
+			</generator>
+		</id>
+		<many-to-one name="ownerPosition" class="org.egov.pims.commons.Position" column="OWNER_POS" />
+		<many-to-one name="ownerUser" class="org.egov.lib.rjbac.user.UserImpl" column="OWNER_USER" />
+		<property name="senderName" type="string"/>
+		<many-to-one name="state" class="org.egov.infstr.models.State" fetch="select" cascade="none">
+            <column name="state_id" not-null="true"/>
+        </many-to-one>
+		<property name="value" column="VALUE" type="string" />
+		<property name="nextAction" column="NEXT_ACTION" type="string" />
+		<property name="comments" column="COMMENTS" type="string" />
+		<property name="extraInfo" column="EXTRAINFO" type="string" />
+		<property name="dateInfo" column="DATEINFO" type="timestamp" />
+		<property name="extraDateInfo" column="EXTRADATEINFO" type="timestamp" />	
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" not-null="true" fetch="select"/>
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" not-null="true" fetch="select"/>
+	</class>
+</hibernate-mapping>

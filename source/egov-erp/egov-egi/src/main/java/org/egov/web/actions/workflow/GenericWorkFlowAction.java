@@ -94,7 +94,8 @@ public abstract class GenericWorkFlowAction extends SearchFormAction {
 				validActions = this.customizedWorkFlowService.getNextValidActions(getModel().getStateType(), getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), getModel().getCurrentState().getValue(), getPendingActions(), getModel()
 						.getCreatedDate());
 			} else {
-				validActions = this.customizedWorkFlowService.getNextValidActions(getModel().getStateType(), getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), State.NEW, getPendingActions(), getModel().getCreatedDate());
+			  //FIXME This May not work
+				validActions = this.customizedWorkFlowService.getNextValidActions(getModel().getStateType(), getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), State.DEFAULT_STATE_VALUE_CREATED, getPendingActions(), getModel().getCreatedDate());
 			}
 		}
 		return validActions;
@@ -110,7 +111,7 @@ public abstract class GenericWorkFlowAction extends SearchFormAction {
 			if (getModel().getCurrentState() != null) {
 				wfMatrix = this.customizedWorkFlowService.getWfMatrix(getModel().getStateType(), getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), getModel().getCurrentState().getValue(), getPendingActions(), getModel().getCreatedDate());
 			} else {
-				wfMatrix = this.customizedWorkFlowService.getWfMatrix(getModel().getStateType(), getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), State.NEW, getPendingActions(), getModel().getCreatedDate());
+				wfMatrix = this.customizedWorkFlowService.getWfMatrix(getModel().getStateType(), getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), State.DEFAULT_STATE_VALUE_CREATED, getPendingActions(), getModel().getCreatedDate());
 			}
 		}
 		return wfMatrix == null ? "" : wfMatrix.getNextAction();

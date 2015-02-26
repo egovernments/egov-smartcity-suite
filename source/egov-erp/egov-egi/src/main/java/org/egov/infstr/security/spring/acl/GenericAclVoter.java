@@ -19,6 +19,7 @@ import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.models.State;
 import org.egov.infstr.models.StateAware;
+import org.egov.infstr.models.StateHistory;
 import org.egov.infstr.security.spring.acl.models.AclObjectIdentity;
 import org.egov.infstr.security.spring.acl.models.AclSid;
 import org.egov.infstr.security.spring.acl.models.AclSidType;
@@ -197,14 +198,13 @@ public abstract class GenericAclVoter implements AccessDecisionVoter {
 			State thisState = ((StateAware) this.domainObject).getState();
 
 			for (final Position currentUserPosition : posList) {
-				if (thisState.getOwner().getId() == currentUserPosition.getId()) {
+				if (thisState.getOwnerPosition().getId() == currentUserPosition.getId()) {
 					this.permissionGranted = true;
 					return this.permissionGranted;
 				}
 
-				while (thisState.getPrevious() != null) {
-					thisState = thisState.getPrevious();
-					if (thisState.getOwner().getId() == currentUserPosition.getId()) {
+				for (StateHistory history : ((StateAware) this.domainObject).getStateHistory()) {
+					if (history.getOwnerPosition().getId() == currentUserPosition.getId()) {
 						this.permissionGranted = true;
 						return this.permissionGranted;
 					}

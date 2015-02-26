@@ -94,7 +94,8 @@ public abstract class EisCommonWorkflowAction extends GenericWorkFlowAction{
 			getModel().setApproverPositionId(approverPositionId);
 		}	
 		if (null == getModel().getState()) {
-			workflowService().start(getModel(), pos,approverComments);
+			//workflowService().start(getModel(), pos,approverComments);
+		    getModel().transition().start().withOwner(pos).withComments(approverComments);
 		}
 		if (null != workFlowAction && StringUtils.isNotEmpty(workFlowAction) && StringUtils.isNotBlank(workFlowAction)) {
 			String comments = (null == approverComments || "".equals(approverComments.trim())) ? "" : approverComments;
@@ -134,9 +135,9 @@ public abstract class EisCommonWorkflowAction extends GenericWorkFlowAction{
 	
 	private Boolean validateInboxItemForUser(StateAware wfItem, Integer userId) {
 		Boolean validateObjectStatus = Boolean.FALSE;
-		if (null != userId && null!= wfItem.getCurrentState() && !org.egov.infstr.models.State.END.equalsIgnoreCase(wfItem.getCurrentState().getValue())) {
+		if (null != userId && null!= wfItem.getCurrentState() && !org.egov.infstr.models.State.DEFAULT_STATE_VALUE_CLOSED.equalsIgnoreCase(wfItem.getCurrentState().getValue())) {
 			List<Position> positionList = eisService.getPositionsForUser(userId,DateUtils.today());
-			if(positionList.contains(wfItem.getCurrentState().getOwner()))
+			if(positionList.contains(wfItem.getCurrentState().getOwnerPosition()))
 				validateObjectStatus = Boolean.TRUE;
 		}
 		return validateObjectStatus;

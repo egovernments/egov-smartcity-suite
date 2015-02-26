@@ -274,7 +274,9 @@ public class InboxService<T extends StateAware> {
 	 * @return Position
 	 */
 	public Position getStateUserPosition(final State state) {
-		return state.getPrevious() == null ? this.getPrimaryPositionForUser(state.getCreatedBy().getId(), state.getCreatedDate()) : state.getPrevious().getOwner();
+		return state.getHistory() == null ? 
+		       this.getPrimaryPositionForUser(state.getCreatedBy().getId(), state.getCreatedDate()) 
+		           : state.getHistory().get(state.getHistory().size()-1).getOwnerPosition();
 		
 	}
 	
