@@ -107,7 +107,7 @@
 							data-placement="top" title="" data-original-title="Locate on map"
 							onclick="jQuery('#complaint-locate').modal('show', {backdrop: 'static'});"><i
 							class="entypo-globe"></i></span> <span id="address_locate"><c:out
-								value="${complaint.location.bndryNameLocal}"></c:out></span>
+								value="${complaint.location.name}"></c:out></span>
 					</div>
 				</div>
 				<div class="row">

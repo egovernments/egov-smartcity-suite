@@ -95,7 +95,7 @@ public class UserValidateAction extends DispatchAction {
 		} catch (Exception ex) {
 			target = "error";
 			LOGGER.error("Exception occurred in UserValidateAction ", ex);
-			HibernateUtil.rollbackTransaction();
+			//HibernateUtil.rollbackTransaction();
 			throw new EGOVRuntimeException("Exception occurred in UserValidateAction ", ex);
 		}
 		

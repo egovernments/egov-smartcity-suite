@@ -170,7 +170,7 @@ public class UserDelegate {
 			logger.info("Exception Encountered!!!" + exp.getMessage());
 
 			exp.printStackTrace();
-			HibernateUtil.rollbackTransaction();
+			//HibernateUtil.rollbackTransaction();
 			throw new EGOVRuntimeException("Internal Server Error in Updating User:::", exp);
 		}
 	}
@@ -189,7 +189,7 @@ public class UserDelegate {
 			logger.info("Exception Encountered!!!" + exp.getMessage());
 
 			exp.printStackTrace();
-			HibernateUtil.rollbackTransaction();
+			//HibernateUtil.rollbackTransaction();
 			throw new EGOVRuntimeException("Internal Server Error deleting user", exp);
 		}
 	}

@@ -168,7 +168,7 @@
 	</bean>
 	
 	<bean id="egovFilterInvocationDefinitionSource" class="org.egov.infstr.security.spring.EGovFilterInvocationDefinitionSource">
-		<property name="rbacService" ref="rbacService" />
+		<property name="actionDao" ref="actionDao" />
 	</bean>
 	
 	<!-- SSL Switching: to use this, configure it in the securityFilterChain bean -->

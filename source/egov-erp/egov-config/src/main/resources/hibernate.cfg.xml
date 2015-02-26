@@ -11,6 +11,7 @@
 		<property name="hibernate.cache.use_minimal_puts">true</property>
 		<property name="hibernate.cache.region.factory_class">org.hibernate.cache.infinispan.JndiInfinispanRegionFactory</property>
 		<property name="hibernate.cache.infinispan.cachemanager">java:jboss/infinispan/container/hibernate</property>
+		<property name="hibernate.transaction.manager_lookup_class">org.hibernate.transaction.JBossTransactionManagerLookup</property>
 		<property name="hibernate.search.lucene_version">LUCENE_34</property>
 		<!-- For Postgres -->
 		<property name="hibernate.dialect">org.hibernate.dialect.PostgresPlusDialect</property>

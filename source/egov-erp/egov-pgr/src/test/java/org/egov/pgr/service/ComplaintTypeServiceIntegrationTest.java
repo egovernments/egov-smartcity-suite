@@ -1,5 +1,14 @@
 package org.egov.pgr.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+import java.util.Optional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
 import org.egov.pgr.PGRAbstractSpringIntegrationTest;
@@ -14,14 +23,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 @ContextConfiguration(
         loader = SpringockitoContextLoader.class,
@@ -43,6 +44,9 @@ public class ComplaintTypeServiceIntegrationTest extends PGRAbstractSpringIntegr
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @PersistenceContext
+    EntityManager entityManager;
+    
     @Autowired
     @ReplaceWithMock
     private IndexService indexService;
@@ -63,12 +67,12 @@ public class ComplaintTypeServiceIntegrationTest extends PGRAbstractSpringIntegr
 
         complaintTypeService.createComplaintType(complaintType);
 
-        List<Map<String, Object>> results = jdbcTemplate.queryForList("select * from pgr_complainttype");
-        Optional<Map<String, Object>> createdRow = results.stream().filter(row -> row.containsValue(complaintType.getName())).findFirst();
+        List<ComplaintType> results = entityManager.createQuery("SELECT ct FROM ComplaintType ct").getResultList();
+        Optional<ComplaintType> createdRow = results.stream().filter(row -> row.getDepartment().getDeptCode().equals("HD")).findFirst();
         assertTrue(createdRow.isPresent());
 
         int expectedDeptId = department.getId();
-        int actualDeptId = ((BigDecimal) createdRow.get().get("dept_id")).intValue();
+        int actualDeptId = createdRow.get().getDepartment().getId();
         assertEquals(expectedDeptId, actualDeptId);
     }
 

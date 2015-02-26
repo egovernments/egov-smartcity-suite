@@ -9,7 +9,7 @@ import javax.transaction.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
-@TransactionConfiguration
+@TransactionConfiguration(transactionManager = "transactionManager",defaultRollback=true)
 @ActiveProfiles("test")
 public abstract class PGRAbstractSpringIntegrationTest {
 }

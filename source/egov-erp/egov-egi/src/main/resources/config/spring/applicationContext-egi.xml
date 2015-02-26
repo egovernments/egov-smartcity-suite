@@ -7,7 +7,7 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd" default-lazy-init="true">
 
 	<context:component-scan base-package="org.egov.infra"/>
-	
+	<context:component-scan base-package="org.egov.lib"/>
 	<bean class="org.egov.EgovSpringContextHolder" lazy-init="false"/>
 
 	<bean id="genericCommonsService" class="org.egov.infstr.commons.service.GenericCommonsServiceImpl">
@@ -160,7 +160,6 @@
 
 	<bean id="SetSessionVarFilter" class="org.egov.infstr.client.filter.SetSessionVarFilter">
 		<property name="userService" ref="userService" />
-		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
 	<bean id="boundaryDAO" class="org.egov.lib.admbndry.BoundaryDAO" scope="prototype">
@@ -191,12 +190,9 @@
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 
-	<bean id="departmentDao" class="org.egov.lib.rjbac.dept.dao.DepartmentDAO" scope="prototype" >
-		<constructor-arg ref="sessionFactory" />
-	</bean>
+	<bean id="departmentDao" class="org.egov.lib.rjbac.dept.dao.DepartmentDAO" scope="prototype" />
 
-	<bean id="actionDao" class="org.egov.lib.rrbac.dao.ActionHibernateDAO" scope="prototype" >
-		<constructor-arg ref="sessionFactory" />
+	<bean id="actionDao" class="org.egov.lib.rrbac.dao.ActionHibernateDAO" scope="prototype" autowire="default">
 	</bean>
 
 	<bean id="userValidateDao" class="org.egov.lib.security.terminal.dao.UserValidateHibernateDAO">

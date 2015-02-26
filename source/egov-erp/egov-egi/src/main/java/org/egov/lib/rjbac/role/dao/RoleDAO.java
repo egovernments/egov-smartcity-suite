@@ -10,11 +10,11 @@ import java.util.NoSuchElementException;
 
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.rjbac.role.Role;
 import org.egov.lib.rjbac.role.RoleImpl;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,6 +127,21 @@ public class RoleDAO {
 			throw new EGOVRuntimeException("Exception occurred in getRoleByRoleName", e);
 		}
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Role> getRolesByUser(final Integer userId) {
+		try {
+			final SQLQuery qry = sessionFactory.getCurrentSession().createSQLQuery("select * from eg_roles where id_role "
+									+ " in(select id_role from eg_userrole where id_user =:userId)");
+			qry.setInteger("userId", userId);
+			qry.addEntity(RoleImpl.class);
+			return qry.list();
+		} catch (final HibernateException e) {
+			LOGGER.error("Exception occurred in getting roles for user", e);
+			throw new EGOVRuntimeException(
+					"Exception occurred in getting roles for user", e);
+		}
 	}
 
 	public SessionFactory getSessionFactory() {

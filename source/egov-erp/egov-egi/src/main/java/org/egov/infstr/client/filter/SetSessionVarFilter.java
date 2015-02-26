@@ -8,12 +8,14 @@ package org.egov.infstr.client.filter;
 import org.egov.lib.admbndry.CityWebsiteImpl;
 import org.egov.lib.rjbac.user.User;
 import org.egov.lib.rjbac.user.ejb.api.UserService;
-import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -22,6 +24,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.security.Principal;
 import java.util.HashMap;
@@ -48,14 +51,15 @@ public class SetSessionVarFilter implements Filter {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SetSessionVarFilter.class);
 	private UserService userService;
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
+	}
 
 	public void setUserService(final UserService userService) {
 		this.userService = userService;
-	}
-
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
 	}
 
 	@Override
@@ -74,9 +78,9 @@ public class SetSessionVarFilter implements Filter {
 			httpSession.setAttribute("egov.city.url", httpRequest.getParameter("egov.city.url"));
 			httpSession.setAttribute("topBndryObject", httpRequest.getParameter("topBndryObject"));
 		} else if (httpSession.getAttribute("org.egov.topBndryID") == null) {
-			final Query query = sessionFactory.getCurrentSession().getNamedQuery(CityWebsiteImpl.QUERY_CITY_BY_URL);
-			query.setString("url", getDomainName(httpRequest.getRequestURL().toString()));
-			CityWebsiteImpl city = (CityWebsiteImpl)query.uniqueResult();
+			final Query query = entityManager.createNamedQuery(CityWebsiteImpl.QUERY_CITY_BY_URL);
+			query.setParameter("url", getDomainName(httpRequest.getRequestURL().toString()));
+			CityWebsiteImpl city = (CityWebsiteImpl)query.getSingleResult();
 			httpSession.setAttribute("egov.city.url", "http://" + city.getCityBaseURL());
 			httpSession.setAttribute("org.egov.topBndryID", city.getBoundaryId().getId().toString());
 			httpSession.setAttribute("cityurl", city.getCityBaseURL());

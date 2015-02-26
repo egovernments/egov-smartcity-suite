@@ -30,8 +30,8 @@ public class GenericEisHibernateDaoFactory extends GenericEisDaoFactory {
         // Get a Session and begin a database transaction. If the current
         // thread/EJB already has an open Sessio n and an ongoing Transaction,
         // this is a no-op and only returns a reference to the current Session.
-        HibernateUtil.beginTransaction();
-        return HibernateUtil.getCurrentSession();
+        //HibernateUtil.beginTransaction();
+        return null;//HibernateUtil.getCurrentSession();
 	   }
 
 	

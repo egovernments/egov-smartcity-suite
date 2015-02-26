@@ -147,7 +147,7 @@ public class EgovUtils {
 	 * @since 1.2
 	 */
 	public static void rollBackTransaction() {
-		HibernateUtil.rollbackTransaction();
+		//HibernateUtil.rollbackTransaction();
 	}
 
 	/**

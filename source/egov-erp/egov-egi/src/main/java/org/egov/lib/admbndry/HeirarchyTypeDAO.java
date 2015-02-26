@@ -93,7 +93,7 @@ public class HeirarchyTypeDAO {
 			return new LinkedHashSet(getSession().createQuery("from HeirarchyTypeImpl HT order by code asc").list());
 		} catch (final HibernateException e) {
 			LOGGER.error("Error occurred in getAllHeirarchyTypes", e);
-			HibernateUtil.rollbackTransaction();
+			//HibernateUtil.rollbackTransaction();
 			throw new EGOVRuntimeException("Error occurred in getAllHeirarchyTypes", e);
 		}
 	}

@@ -128,8 +128,8 @@ public class DatabaseSequence {
     }
     
     private void createAndFail() {
-        HibernateUtil.rollbackTransaction();
-        HibernateUtil.beginTransaction();
+        //HibernateUtil.rollbackTransaction();
+        //HibernateUtil.beginTransaction();
         String createSql = new StringBuilder()
             .append("create sequence ")
             .append(name)

@@ -1,6 +1,7 @@
 package org.egov;
 
-import org.hibernate.SessionFactory;
+import javax.persistence.EntityManagerFactory;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -25,9 +26,9 @@ public class EgovSpringContextHolder implements BeanFactoryAware {
      * Use spring to inject sessionFactory instead of static method of this class.
      */
     @Deprecated
-    public static SessionFactory sessionFactory() {
+    public static EntityManagerFactory sessionFactory() {
         if (beanFactory != null) {
-            return (SessionFactory) beanFactory.getBean("sessionFactory");
+            return (EntityManagerFactory) beanFactory.getBean("entityManagerFactory");
         }
         return null;
     }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0"
+	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+
+	<!-- We don't need to define much here because the basic setup is done in repository-context.xml" via Spring. -->
+	<persistence-unit name="egov-jpa-unit" transaction-type="JTA">
+		<properties>
+			<property name="hibernate.cache.use_second_level_cache" value="true"/>
+			<property name="hibernate.cache.use_query_cache" value="true"/>
+			<property name="hibernate.cache.use_minimal_puts" value="true"/>
+			<property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.infinispan.JndiInfinispanRegionFactory"/>
+			<property name="hibernate.cache.infinispan.cachemanager" value="java:jboss/infinispan/container/hibernate"/>
+			<property name="hibernate.search.lucene_version" value="LUCENE_34"/>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgresPlusDialect"/>
+			<property name="hibernate.transaction.jta.platform" value="org.hibernate.service.jta.platform.internal.JBossAppServerJtaPlatform"/>
+			<property name="hibernate.transaction.auto_close_session" value="true"/>
+			<property name="hibernate.jdbc.use_streams_for_binary" value="false"/>
+			<property name="hibernate.show_sql" value="true"/>
+		</properties>
+	</persistence-unit>
+
+</persistence>

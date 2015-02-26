@@ -1,24 +1,27 @@
 package org.egov.infra.persistence.service;
 
+import java.io.Serializable;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
-
-import java.io.Serializable;
-import java.util.List;
 
 @SuppressWarnings("unchecked")
 public abstract class HibernateRepository<T extends AbstractPersistable <? extends Serializable>> {
 
-    protected SessionFactory sessionFactory;
+    @PersistenceContext
+    protected EntityManager entityManager;
+    
     protected Class<T> entityType;
 
-    protected HibernateRepository(SessionFactory sessionFactory, Class<T> entityType) {
-        this.sessionFactory = sessionFactory;
+    protected HibernateRepository(Class<T> entityType) {
         this.entityType = entityType;
     }
 
@@ -78,6 +81,6 @@ public abstract class HibernateRepository<T extends AbstractPersistable <? exten
     }
 
     protected Session getCurrentSession() {
-        return sessionFactory.getCurrentSession();
+        return entityManager.unwrap(Session.class);
     }
 }
