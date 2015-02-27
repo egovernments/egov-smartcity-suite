@@ -37,7 +37,7 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
     @RequestMapping(value = "register", method = POST)
     public String registerComplaint(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder, @RequestParam("files") final MultipartFile[] files) {
         if(complaint.getReceivingCenter().isCrnRequired() && complaint.getCRN().isEmpty()) 
-            resultBinder.rejectValue("crn", "crn.mandatory.for.receivingcenter");
+            resultBinder.rejectValue("CRN", "crn.mandatory.for.receivingcenter");
         if (resultBinder.hasErrors())
             return "complaint/officials/registration-form";
         complaint.setSupportDocs(addToFileStore(files));
