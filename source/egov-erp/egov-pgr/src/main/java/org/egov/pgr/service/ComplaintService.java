@@ -1,21 +1,18 @@
 package org.egov.pgr.service;
 
+import static org.egov.pgr.utils.constants.CommonConstants.DASH_DELIM;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
+import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.infra.utils.SecurityUtils;
 import org.egov.lib.rjbac.user.UserImpl;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.repository.ComplaintRepository;
-import org.egov.search.domain.Document;
-import org.egov.search.service.IndexService;
-import org.egov.search.service.ResourceGenerator;
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.egov.pgr.utils.constants.CommonConstants.DASH_DELIM;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,26 +26,22 @@ public class ComplaintService {
     @Autowired
     private SecurityUtils securityUtils;
 
-    @Autowired
-    private IndexService indexService;
-
     @Transactional
-    public void createComplaint(final Complaint complaint) {
+    @Indexing(name=Index.PGR,type=IndexType.COMPLAINT)
+    public Complaint createComplaint(final Complaint complaint) {
         if (complaint.getCRN().isEmpty())
             complaint.setCRN(generateComplaintID());
         complaint.getComplainant().setUserDetail((UserImpl) securityUtils.getCurrentUser());
         complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
         // TODO Workflow will decide who is the assignee based on location data
         complaint.setAssignee(null);
-        complaintRepository.create(complaint);
-
-        indexForSearch(complaint);
+        return complaintRepository.create(complaint);
     }
 
     @Transactional
-    public void update(final Complaint complaint) {
-        complaintRepository.save(complaint);
-        indexForSearch(complaint);
+    @Indexing(name=Index.PGR,type=IndexType.COMPLAINT)
+    public Complaint update(final Complaint complaint) {
+        return complaintRepository.save(complaint);
     }
 
     public String generateComplaintID() {
@@ -57,13 +50,6 @@ public class ComplaintService {
 
     public Complaint getComplaintById(final Long complaintID) {
         return complaintRepository.get(complaintID);
-    }
-
-    private void indexForSearch(Complaint complaint) {
-        JSONObject complaintResource = new ResourceGenerator<>(Complaint.class, complaint).generate();
-        Document document = new Document(Index.PGR.toString(), IndexType.COMPLAINT.toString(),
-                complaint.getId().toString(), complaintResource);
-        indexService.index(document);
     }
 
     public Complaint get(Long id) {

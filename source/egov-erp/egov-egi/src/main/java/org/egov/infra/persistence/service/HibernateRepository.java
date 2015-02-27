@@ -25,18 +25,20 @@ public abstract class HibernateRepository<T extends AbstractPersistable <? exten
         this.entityType = entityType;
     }
 
-    public void save(T entity) {
+    public T save(T entity) {
         getCurrentSession().saveOrUpdate(entity);
         getCurrentSession().flush();
+        return entity;
     }
 
     public void evict(T entity) {
         getCurrentSession().evict(entity);
     }
 
-    public void create(T entity) {
+    public T create(T entity) {
         getCurrentSession().save(entity);
         getCurrentSession().flush();
+        return entity;
     }
 
     public T merge(T entity) {
