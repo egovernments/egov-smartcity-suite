@@ -150,8 +150,8 @@ $(document).ready(function()
 		if($(window).width() > 768)
 		{
 			$('.sidebar-menu').css('display','table-cell');
-			}else{
-			$('.sidebar-menu').css('display','block');
+		}else{
+			//$('.sidebar-menu').css('display','block');
 		}
 		
 	});

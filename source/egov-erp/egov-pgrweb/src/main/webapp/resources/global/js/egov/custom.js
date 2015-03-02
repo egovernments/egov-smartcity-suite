@@ -16,6 +16,13 @@ jQuery(document).ready(function($)
 	
 	$('.twitter-typeahead').css('display','block');
 	
+	$(":input").inputmask();
+	
+    $(".datepicker").datepicker({
+        format: "dd/mm/yyyy"
+	});
+	
+	
 	$(".form-horizontal").submit(function( event ) {
 		$('.loader-class').modal('show', {backdrop: 'static'});
 	});
