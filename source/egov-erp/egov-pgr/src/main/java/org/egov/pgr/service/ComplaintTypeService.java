@@ -1,43 +1,46 @@
 package org.egov.pgr.service;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
+import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.repository.ComplaintTypeRepository;
-import org.egov.search.domain.Document;
-import org.egov.search.service.IndexService;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class ComplaintTypeService {
 
-    private ComplaintTypeRepository complaintTypeRepository;
-    private IndexService indexService;
+    private final ComplaintTypeRepository complaintTypeRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
-    public ComplaintTypeService(ComplaintTypeRepository complaintTypeRepository, IndexService indexService) {
+    public ComplaintTypeService(final ComplaintTypeRepository complaintTypeRepository) {
         this.complaintTypeRepository = complaintTypeRepository;
-        this.indexService = indexService;
     }
 
-    @Transactional(readOnly = true)
-    public ComplaintType findBy(Long complaintId) {
-        return complaintTypeRepository.get(complaintId);
+    public ComplaintType findBy(final Long complaintTypeId) {
+        return complaintTypeRepository.findOne(complaintTypeId);
     }
 
-    public void createComplaintType(ComplaintType complaintType) {
-        complaintTypeRepository.create(complaintType);
-
-        Document complaintTypeDocument = new Document(Index.PGR.toString(), IndexType.COMPLAINT_TYPE.toString(), complaintType.getId().toString(), complaintType.toJsonObject());
-        indexService.index(complaintTypeDocument);
+    @Indexing(name = Index.PGR, type = IndexType.COMPLAINT_TYPE)
+    @Transactional
+    public ComplaintType createComplaintType(final ComplaintType complaintType) {
+        return complaintTypeRepository.save(complaintType);
     }
 
-    public void updateComplaintType(ComplaintType complaintType) {
+    @Transactional
+    public void updateComplaintType(final ComplaintType complaintType) {
         complaintTypeRepository.save(complaintType);
     }
 
@@ -45,15 +48,16 @@ public class ComplaintTypeService {
         return complaintTypeRepository.findAll();
     }
 
-    public List<ComplaintType> findAllByNameLike(String name) {
-        return complaintTypeRepository.findAllLike("name", name);
+    public List<ComplaintType> findAllByNameLike(final String name) {
+        return complaintTypeRepository.findByNameContainingIgnoreCase(name);
     }
 
-    public ComplaintType findByName(String name) {
-        return complaintTypeRepository.findByField("name", name);
+    public ComplaintType findByName(final String name) {
+        return complaintTypeRepository.findByName(name);
     }
 
-    public ComplaintType load(Long id) {
-        return complaintTypeRepository.load(id);
+    public ComplaintType load(final Long id) {
+        // FIXME alternative ?
+        return (ComplaintType) entityManager.unwrap(Session.class).load(ComplaintType.class, id);
     }
 }

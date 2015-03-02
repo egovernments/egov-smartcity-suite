@@ -9,16 +9,17 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.hibernate.SessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.cache.LRUCache;
 import org.egov.infstr.reporting.engine.jasper.JasperReportService;
 import org.egov.infstr.reporting.util.ReportUtil;
-import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract report service providing common eGov reporting functionality. eGov infrastructure uses JasperReports for creating reports {@link JasperReportService}. Any other third party reporting framework can be supported by implementing a class that extends from {@link AbstractReportService} and
@@ -29,12 +30,12 @@ public abstract class AbstractReportService<T> implements ReportService {
 	 * The report template cache. Most frequently used report templates are cached in memory to improve performance of report generation.
 	 */
 	private LRUCache<String, T> templateCache;
-
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractReportService.class);
 
-	@Autowired
-	private SessionFactory sessionFactory;
-
+	@PersistenceContext
+	private EntityManager entityManager;
+	
 	/**
 	 * Creates a report using given report input where the report data source is java beans
 	 * @param reportInput The report input
@@ -112,7 +113,7 @@ public abstract class AbstractReportService<T> implements ReportService {
 		// Hibernate Session.connection() is deprecated. Hence using the Work
 		// contract for performing discrete JDBC operation.
 		final JdbcReportWork reportWork = new JdbcReportWork(reportInput);
-		sessionFactory.getCurrentSession().doWork(reportWork);
+		entityManager.unwrap(Session.class).doWork(reportWork);
 		return reportWork.getReportOutput();
 	}
 

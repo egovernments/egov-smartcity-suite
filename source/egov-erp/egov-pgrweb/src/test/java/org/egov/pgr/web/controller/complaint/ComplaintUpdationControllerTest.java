@@ -116,7 +116,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
 		complaint=new Complaint();
 		complaint.setDetails("Already Registered complaint");
 		id=2L;
-		when(complaintService.get(id)).thenReturn(complaint);
+		when(complaintService.getComplaintById(id)).thenReturn(complaint);
 		
 		complaintType = new ComplaintType();
 		List ctList=new ArrayList<ComplaintType>();
@@ -157,7 +157,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
 		complaintType.setLocationRequired(false);
 		complaint.setComplaintType(complaintType);
 		complaint.setDetails("Already Registered complaint");
-		when(complaintService.get(id)).thenReturn(complaint);
+		when(complaintService.getComplaintById(id)).thenReturn(complaint);
 		
 		MvcResult result = this.mockMvc.perform(get("/complaint-update/2"))
                 .andExpect(view().name("complaint-edit"))
@@ -177,7 +177,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
 		complaint.setComplaintType(complaintType);
 		complaint.setDetails("Already Registered complaint");
 		id=2L;
-		when(complaintService.get(id)).thenReturn(complaint);
+		when(complaintService.getComplaintById(id)).thenReturn(complaint);
 
 		MvcResult result = this.mockMvc.perform(get("/complaint-update/2"))
 				.andExpect(status().isOk())
@@ -205,7 +205,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
 		ward.setParent(zone);
 		complaint.setLocation(ward);
 		id=2L;
-		when(complaintService.get(id)).thenReturn(complaint);
+		when(complaintService.getComplaintById(id)).thenReturn(complaint);
 		List<BoundaryImpl> wards=new ArrayList<BoundaryImpl>();
 		when(commonService.getWards(ward.getId())).thenReturn(wards);  
 
@@ -229,7 +229,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
 		complaint1.setComplaintType(complaintType);
 		complaint1.setDetails("Already Registered complaint");
 		id=2L;
-		when(complaintService.get(id)).thenReturn(complaint1);
+		when(complaintService.getComplaintById(id)).thenReturn(complaint1);
 		when(complaint1.getId()).thenReturn(2L);
 		  this.mockMvc.perform(post("/complaint-update/2")
 	                .param("id", "2")
@@ -251,7 +251,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
 		complaint1.setComplaintType(complaintType);
 		complaint1.setDetails("Already Registered complaint");
 		id=2L;
-		when(complaintService.get(id)).thenReturn(complaint1);
+		when(complaintService.getComplaintById(id)).thenReturn(complaint1);
 		when(complaint1.getId()).thenReturn(2L);
 		when(complaintTypeService.load(id)).thenReturn(complaintType);
 		  this.mockMvc.perform(post("/complaint-update/2")

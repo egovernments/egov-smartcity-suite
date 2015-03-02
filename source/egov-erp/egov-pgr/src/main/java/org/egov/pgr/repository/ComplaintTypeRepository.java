@@ -1,13 +1,14 @@
 package org.egov.pgr.repository;
 
-import org.egov.infra.persistence.service.HibernateRepository;
+import java.util.List;
+
 import org.egov.pgr.entity.ComplaintType;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class ComplaintTypeRepository extends HibernateRepository<ComplaintType> {
-
-    public ComplaintTypeRepository() {
-        super(ComplaintType.class);
-    }
+public interface ComplaintTypeRepository extends JpaRepository<ComplaintType, Long> {
+    
+    ComplaintType findByName(String name);
+    List<ComplaintType> findByNameContainingIgnoreCase(String name);
 }

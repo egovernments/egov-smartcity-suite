@@ -35,7 +35,7 @@ public class GenericComplaintAjaxController extends GenericComplaintController {
     
     @RequestMapping(value = "officials/isCrnRequired" , method = GET)
     public @ResponseBody boolean isCrnRequired(@RequestParam final Long receivingCenterId) {
-        final ReceivingCenter receivingCenter = receivingCenterService.findBy(receivingCenterId);
+        final ReceivingCenter receivingCenter = receivingCenterService.findByRCenterId(receivingCenterId);
         return receivingCenter == null ? Boolean.TRUE : receivingCenter.isCrnRequired();
     }
     

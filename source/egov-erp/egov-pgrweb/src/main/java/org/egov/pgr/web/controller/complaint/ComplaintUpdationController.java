@@ -57,7 +57,7 @@ public class ComplaintUpdationController {
 // Not an issue since hibernate will not load once again but it is confusing developers
 	@ModelAttribute
 	public Complaint getComplaint(@PathVariable Long id) {
-		Complaint complaint = complaintService.get(id);
+		Complaint complaint = complaintService.getComplaintById(id);
 		return complaint;
 	}
 
@@ -77,7 +77,7 @@ public class ComplaintUpdationController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String edit(Model model, @PathVariable Long id) {
 		try {
-			Complaint complaint = complaintService.get(id);
+			Complaint complaint = complaintService.getComplaintById(id);
 			// set the defaults
 			model.addAttribute("zone", Collections.EMPTY_LIST);
 			model.addAttribute("ward", Collections.EMPTY_LIST);
