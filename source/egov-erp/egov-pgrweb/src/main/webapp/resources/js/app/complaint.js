@@ -12,7 +12,8 @@ jQuery(document).ready(function($)
 				// Map the remote source JSON array to a JavaScript object array
 				return $.map(data, function (ct) {
 					return {
-						value: ct.name
+						name: ct.name,
+						value: ct.id
 					};
 				});
 			}
@@ -28,9 +29,11 @@ jQuery(document).ready(function($)
 		  highlight: true,
 		  minLength: 3
 		}, {
-		displayKey: 'value',
+		displayKey: 'name',
 		source: complaintype.ttAdapter()
-	});
+	}).on('typeahead:selected', function(event, data){
+		$("#complaintTypeId").val(data.value);    
+    });
 	
 	// Instantiate the Bloodhound suggestion engine
 	var complaintlocation = new Bloodhound({
@@ -90,13 +93,13 @@ jQuery(document).ready(function($)
 	});
 	
 	$('.freq-ct').click(function(){
-		$('#complaintType').typeahead('val',$(this).html());
+		$('#complaintTypeName').typeahead('val',$(this).html());
 	});
 	
 	/**
 	 *Based on the selected complaint type make Location is required or not 
 	 **/
-	$("#complaintType").blur(function(){
+	$("#complaintTypeName").blur(function(){
 		if (this.value === '') {
 			 $(".optionalmandate").hide();
 			 $("#location").removeAttr('required');

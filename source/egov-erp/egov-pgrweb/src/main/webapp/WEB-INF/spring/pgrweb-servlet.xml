@@ -24,20 +24,38 @@
     <!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources/ directory -->
     <mvc:resources mapping="/resources/**" location="/resources/"/>
 
-
-    <bean id="conversionService"
-          class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+	 <mvc:interceptors>    
+        <bean class="org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor">
+			<property name="entityManagerFactory" ref="entityManagerFactory"/>
+		</bean>
+    </mvc:interceptors>
+    
+	<!-- <bean id="conversionService" class="org.springframework.core.convert.support.DefaultConversionService"/> -->
+	
+	<bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
         <property name="formatters">
             <set>
                 <ref bean="departmentFormatter"/>
-                <ref bean="complaintTypeFormatter"/>
                 <ref bean="boundaryFormatter"/>
-                <ref bean="complaintStatusFormatter"/>
                 <ref bean="boundaryImplFormatter"/>
-                <ref bean="receivingCenterFormatter"/>
             </set>
         </property>
     </bean>
+    
+	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetClass" value="org.springframework.core.convert.support.ConversionServiceFactory"/>
+		<property name="targetMethod" value="registerConverters"/>
+		<property name="arguments">
+			<list>
+				<set>
+					<bean class="org.springframework.data.repository.support.DomainClassConverter">
+						<constructor-arg ref="conversionService"/>
+					</bean>
+				</set>
+				<ref bean="conversionService"/>
+			</list>
+		</property>
+	</bean>
 
     <bean id="viewResolver" class="org.springframework.web.servlet.view.tiles3.TilesViewResolver"/>
 
