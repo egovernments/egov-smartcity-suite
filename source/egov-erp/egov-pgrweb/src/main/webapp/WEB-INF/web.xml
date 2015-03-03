@@ -59,20 +59,7 @@
         <url-pattern>/</url-pattern>
     </servlet-mapping>
 	
-	<session-config>
-		<cookie-config>
-			<path>/</path>
-			<http-only>true</http-only>
-			<secure>false</secure>
-		</cookie-config>
-		<tracking-mode>COOKIE</tracking-mode>
-	</session-config>
-	
-	<welcome-file-list>
-		<welcome-file>/index.jsp</welcome-file>
-	</welcome-file-list>
-    
-    <jsp-config>
+	<jsp-config>
         <taglib>
             <taglib-uri>http://tiles.apache.org/tags-tiles</taglib-uri>
             <taglib-location>/WEB-INF/taglib/tiles-jsp.tld</taglib-location>
@@ -93,6 +80,32 @@
             <taglib-uri>http://www.joda.org/joda/time/tags</taglib-uri>
             <taglib-location>/WEB-INF/taglib/joda.tld</taglib-location>
         </taglib>
+        <jsp-property-group>
+    		<url-pattern>*.jsp</url-pattern>
+    		<page-encoding>UTF-8</page-encoding>
+    	</jsp-property-group> 
     </jsp-config>
-
+    
+    <welcome-file-list>
+ 		<welcome-file>/index.jsp</welcome-file>
+ 	</welcome-file-list>
+ 	
+ 	<error-page>
+ 		<location>/error/500</location>
+ 	</error-page>
+ 	
+ 	<error-page>
+ 		<error-code>404</error-code>
+ 		<location>/error/404</location>
+ 	</error-page>
+ 	
+	<session-config>
+		<cookie-config>
+			<path>/</path>
+			<http-only>true</http-only>
+			<secure>false</secure>
+		</cookie-config>
+		<tracking-mode>COOKIE</tracking-mode>
+	</session-config>
+	
 </web-app>
