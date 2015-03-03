@@ -1,25 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
-	default-lazy-init="true">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd" default-lazy-init="true">
 
-	
+	<context:component-scan base-package="org.egov.pims"/>
+	<context:component-scan base-package="org.egov.pims"/>
 	<bean id="sequenceGenerator" class="org.egov.pims.service.PersonalInformationService">
 		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="commonsService" ref="commonsService"/>
 	</bean>
 	<bean id="eiscommonsService" class="org.egov.pims.commons.service.EisCommonsServiceImpl">
-	   		<property name="sessionFactory" ref="sessionFactory"/>    
 	   		<property name="userService" ref="userService"/>
 	</bean>
 	
-	<bean id="empPositionPersistenceService" parent="persistenceService">
+	<bean id="empPositionPersistenceService" parent="persistenceService" scope="prototype">
 		  <property name="type" value="org.egov.pims.model.EmpPosition"/>
 	  </bean>
 	
 	<bean id="empPositionSimpleWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService">
 	  <constructor-arg index="0" ref="empPositionPersistenceService"/>	
     </bean>
-	
+	<bean id="employeeService" class="org.egov.pims.service.EmployeeServiceImpl">
+	    <property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
 </beans>

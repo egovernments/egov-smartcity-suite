@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsService;
 import org.egov.commons.service.EntityTypeService;
@@ -26,6 +29,7 @@ import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.utils.EisConstants;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -48,6 +52,13 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 	private static final String EMPVIEWEMPSLASTASSPRD="EMPVIEW-EMPS-LASTASSPRD";
 	private CommonsService commonsService;
 	private SequenceGenerator sequenceGenerator;
+	
+	@PersistenceContext
+	private EntityManager entityManager;
+    
+	public Session  getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
 	public SequenceGenerator getSequenceGenerator() {
 		return sequenceGenerator;
 	}
@@ -288,7 +299,7 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 		{
 			detachCriteriaPersonalInfo.add(Restrictions.between("emp.deathDate", fromDate, toDate));
 		}
-		return detachCriteriaPersonalInfo.getExecutableCriteria(HibernateUtil.getCurrentSession());	
+		return detachCriteriaPersonalInfo.getExecutableCriteria(getCurrentSession());	
 	}
 	
 	/**
@@ -312,7 +323,7 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 		
 		List<EmployeeView> employeeList = new ArrayList<EmployeeView>();
 		try {
-			Criteria criteria=HibernateUtil.getCurrentSession().createCriteria(EmployeeView.class);
+			Criteria criteria=getCurrentSession().createCriteria(EmployeeView.class);
 			Date asOnDate;
 			for (Map.Entry<String, Object> entry : criteriaParams.entrySet())
 			{
@@ -368,7 +379,7 @@ public List<EmployeeView> getListOfEmployeeViewBasedOnListOfDesignationAndOtherC
 		
 		List<EmployeeView> employeeList = new ArrayList<EmployeeView>();
 		try {
-			Criteria criteria=HibernateUtil.getCurrentSession().createCriteria(EmployeeView.class);
+			Criteria criteria=getCurrentSession().createCriteria(EmployeeView.class);
 			Date asOnDate;
 			for (Map.Entry<String, Object> entry : criteriaParams.entrySet())
 			{

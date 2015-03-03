@@ -11,6 +11,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailkey;
@@ -70,6 +73,13 @@ public class  EmployeeServiceImpl  implements EmployeeService{
 	private PersonalInformationDAO personalInformationDAO;
 	private AssignmentDAO assignmentDAO;
 	private AppConfigValuesDAO appConfigValuesDAO;
+	
+	@PersistenceContext
+	private EntityManager entityManager;
+    
+	public Session  getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
 
 
 	public PersistenceService getPersistenceService() {
@@ -80,11 +90,6 @@ public class  EmployeeServiceImpl  implements EmployeeService{
 		this.persistenceService = persistenceService;
 	}
 	private final static Logger LOGGER = Logger.getLogger(EmployeeServiceImpl.class);
-	
-	private Session getCurrentSession()
-	{				
-		return sessionFactory.getCurrentSession();
-	}
 	
      @Deprecated
 	public List searchEmployee(Integer departmentId,Integer designationId,String code,String name,String searchAll)throws Exception

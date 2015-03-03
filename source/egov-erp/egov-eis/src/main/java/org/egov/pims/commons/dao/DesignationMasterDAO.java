@@ -5,6 +5,9 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -24,10 +27,17 @@ public class DesignationMasterDAO
     public final static Logger LOGGER = Logger.getLogger(DesignationMasterDAO.class.getClass());
     private Session session;
     
+    @PersistenceContext
+	private EntityManager entityManager;
+    
+	public Session  getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
+    
 
     public DesignationMasterDAO()
     {
-        session = HibernateUtil.getCurrentSession();
+        session = getCurrentSession();
     }
 
     /**
@@ -35,7 +45,7 @@ public class DesignationMasterDAO
      */
     private void openSession()
     {
-        session = HibernateUtil.getCurrentSession();
+        session = getCurrentSession();
     }
 
     public void createDesignationMaster(DesignationMaster designation)
@@ -44,7 +54,7 @@ public class DesignationMasterDAO
         {
             if(!session.isOpen())
             {
-                openSession();
+            	getCurrentSession();
             }
             if(designation==null)
             {
@@ -64,7 +74,7 @@ public class DesignationMasterDAO
         {
             if(!session.isOpen())
             {
-                openSession();
+            	getCurrentSession();
             }
             if(designation==null)
             {
@@ -84,7 +94,7 @@ public class DesignationMasterDAO
         {
             if(!session.isOpen())
             {
-                openSession();
+            	getCurrentSession();
             }
             if(designation==null)
             {
@@ -106,7 +116,7 @@ public class DesignationMasterDAO
         	DesignationMaster desig = null;
             if(!session.isOpen())
             {
-                openSession();
+            	getCurrentSession();
             }
             if(Integer.valueOf(desigID)==null)
             {

@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
@@ -13,11 +16,19 @@ import org.egov.pims.dao.PersonalInformationHibernateDAO;
 import org.egov.pims.model.EmployeeView;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 
 public class SearchPositionService {
 
 	private static final Logger logger = Logger.getLogger(SearchPositionService.class);
 
+	@PersistenceContext
+	private EntityManager entityManager;
+    
+	public Session  getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
+	
 	/**
 	 * 
 	 * @param beginsWith
@@ -81,7 +92,7 @@ public class SearchPositionService {
 				//searchQuery +=" EV.userid = userrole.user and userrole.roleid = :roleId and userrole.from";
 			}
 
-			Query query =HibernateUtil.getCurrentSession().createQuery(searchQuery);
+			Query query =getCurrentSession().createQuery(searchQuery);
 			logger.info("quey >>>"+query.toString());
 			
 			if(userListInJur!=null && !userListInJur.isEmpty())

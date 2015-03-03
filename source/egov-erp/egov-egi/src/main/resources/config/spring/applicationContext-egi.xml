@@ -106,11 +106,11 @@
 		<property name="type" value="org.egov.lib.rjbac.user.UserImpl"/>
 	</bean>
 
-<!--
+
 	<bean id="eisService" class="org.egov.pims.service.EisUtilService" scope="prototype" lazy-init="true">
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>
--->
+
 
 	<bean id="genericDao" class="org.egov.infstr.commons.dao.GenericHibernateDaoFactory" scope="prototype">
 		<constructor-arg ref="sessionFactory" />

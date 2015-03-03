@@ -3,10 +3,12 @@ package org.egov.pims.commons.dao;
 import java.io.Serializable;
 import java.util.Iterator;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.commons.Position;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -20,16 +22,23 @@ public class PositionMasterDAO
 
     public final static Logger LOGGER = Logger.getLogger(PositionMasterDAO.class.getClass());
     private Session session;
+    
+    @PersistenceContext
+	private EntityManager entityManager;
+    
+	public Session  getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
 
 
     public PositionMasterDAO()
     {
-        session = HibernateUtil.getCurrentSession();
+        session = getCurrentSession();
     }
 
     private void openSession()
     {
-        session = HibernateUtil.getCurrentSession();
+        session = getCurrentSession();
     }
 
     public void createPositionMaster(Position position)
@@ -109,7 +118,7 @@ public class PositionMasterDAO
         try
         {
             boolean b = false;
-            Query qry = session.createQuery((new StringBuilder("from ")).append(className).append(" CA where trim(upper(CA.positionName)) = :positionName ").toString());
+            Query qry = session.createQuery((new StringBuilder("from ")).append(className).append(" CA where trim(upper(CA.position)) = :positionName ").toString());
             qry.setString("positionName", positionName);
             Iterator iter = qry.iterate();
             LOGGER.info((new StringBuilder("iter")).append(iter).toString());
@@ -132,7 +141,7 @@ public class PositionMasterDAO
         try
         {
             Integer positionId = 0;
-            Query qry = session.createQuery("from position where trim(upper(positionName)) = :positionName ");
+            Query qry = session.createQuery("from position where trim(upper(name)) = :positionName ");
             qry.setString("positionName", positionName);
             Iterator iter = qry.iterate();
             LOGGER.info((new StringBuilder("iter")).append(iter).toString());

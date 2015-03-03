@@ -22,7 +22,6 @@ import org.egov.lib.rjbac.user.UserRole;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
 import org.egov.pims.dao.PersonalInformationDAO;
-import org.egov.pims.dao.PersonalInformationHibernateDAO;
 import org.egov.pims.model.Assignment;
 import org.egov.pims.model.EmployeeView;
 import org.hibernate.Criteria;
