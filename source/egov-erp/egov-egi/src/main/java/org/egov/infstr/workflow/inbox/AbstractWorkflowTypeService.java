@@ -1,8 +1,3 @@
-/*
- * @(#)DefaultWorkflowTypeService.java 3.0, 17 Jun, 2013 4:43:21 PM
- * Copyright 2013 eGovernments Foundation. All rights reserved.
- * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
 package org.egov.infstr.workflow.inbox;
 
 import static org.egov.infstr.utils.DateUtils.constructDateRange;
@@ -19,25 +14,25 @@ import org.egov.infstr.services.PersistenceService;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
 
-//FIXME need to rework upfront to fit with new changes
-public class DefaultWorkflowTypeService<T extends StateAware> implements WorkflowTypeService<T> {
+public class AbstractWorkflowTypeService<T extends StateAware> implements WorkflowTypeService<T> {
 
-    private Class<?> workflowType;
-    private transient final PersistenceService wfDAOService;
+    private Class<T> stateAwareType;
+    private final PersistenceService<T,Long> stateAwarePersistenceService;
 
-    public DefaultWorkflowTypeService(final PersistenceService daoService) {
-        this.wfDAOService = daoService;
+    public AbstractWorkflowTypeService(final PersistenceService<T,Long> stateAwarePersistenceService) {
+        this.stateAwarePersistenceService = stateAwarePersistenceService;
+        this.stateAwareType = stateAwarePersistenceService.getType();
     }
 
     @Override
     public List<T> getAssignedWorkflowItems(final Integer owner, final Integer userId, final String order) {
-        this.wfDAOService.getSession().setFlushMode(FlushMode.MANUAL);
+        this.stateAwarePersistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         final StringBuilder query = new StringBuilder("FROM ");
-        query.append(this.workflowType.getName())
-                .append(" WF where WF.state.type=:wfType and WF.state.ownerPos =:owner and WF.state.status !=:end and not (WF.state.status =:new and WF.createdBy =:userId) order by WF.state.createdDate DESC");
-        final Query qry = this.wfDAOService.getSession().createQuery(query.toString());
+        query.append(this.stateAwareType.getName())
+                .append(" WF where WF.state.type=:wfType and WF.state.ownerPosition =:owner and WF.state.status !=:end and not (WF.state.status =:new and WF.createdBy =:userId) order by WF.state.createdDate DESC");
+        final Query qry = this.stateAwarePersistenceService.getSession().createQuery(query.toString());
         qry.setInteger(OWNER, owner);
-        qry.setString(WFTYPE, this.workflowType.getSimpleName());
+        qry.setString(WFTYPE, this.stateAwareType.getSimpleName());
         qry.setParameter("end", StateStatus.ENDED);
         qry.setParameter("new", StateStatus.STARTED);
         qry.setInteger("userId", userId);
@@ -47,13 +42,13 @@ public class DefaultWorkflowTypeService<T extends StateAware> implements Workflo
 
     @Override
     public List<T> getDraftWorkflowItems(final Integer owner, final Integer userId, final String order) {
-        this.wfDAOService.getSession().setFlushMode(FlushMode.MANUAL);
+        this.stateAwarePersistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         final StringBuilder query = new StringBuilder("FROM ");
-        query.append(this.workflowType.getName())
-                .append(" WF where WF.state.type=:wfType and WF.state.owner =:owner and WF.createdBy =:userId and WF.state.status =:new");
-        final Query qry = this.wfDAOService.getSession().createQuery(query.toString());
+        query.append(this.stateAwareType.getName())
+                .append(" WF where WF.state.type=:wfType and WF.state.ownerPosition =:owner and WF.createdBy =:userId and WF.state.status =:new");
+        final Query qry = this.stateAwarePersistenceService.getSession().createQuery(query.toString());
         qry.setInteger(OWNER, owner);
-        qry.setString(WFTYPE, this.workflowType.getSimpleName());
+        qry.setString(WFTYPE, this.stateAwareType.getSimpleName());
         qry.setInteger("userId", userId);
         qry.setParameter("new", StateStatus.STARTED);
         qry.setReadOnly(true);
@@ -65,17 +60,17 @@ public class DefaultWorkflowTypeService<T extends StateAware> implements Workflo
             final Date fromDate, final Date toDate) {
         
         //FIXME this wont work with current design need to change
-        this.wfDAOService.getSession().setFlushMode(FlushMode.MANUAL);
+        this.stateAwarePersistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         final StringBuilder query = new StringBuilder("from ");
-        query.append(this.workflowType.getName()).append(" WF where WF.state.type=:wfType and WF.state.owner =:owner ")
+        query.append(this.stateAwareType.getName()).append(" WF where WF.state.type=:wfType and WF.state.owner =:owner ")
                 .append(sender == null || sender == 0 ? "" : "and WF.state.senderName=:sender ")
                 .append(" and WF.state.createdDate ");
         query.append(fromDate == null && toDate == null ? "IS NOT NULL "
                 : " >= :fromDate and WF.state.createdDate <:toDate ");
         query.append("  and WF.state.value !=:end and not (WF.state.value =:newState and WF.createdBy =:userId) order by WF.state.createdDate DESC");
-        final Query qry = this.wfDAOService.getSession().createQuery(query.toString());
+        final Query qry = this.stateAwarePersistenceService.getSession().createQuery(query.toString());
         qry.setInteger(OWNER, owner);
-        qry.setString(WFTYPE, this.workflowType.getSimpleName());
+        qry.setString(WFTYPE, this.stateAwareType.getSimpleName());
         if (sender != null && sender != 0)
             qry.setInteger(SENDER, sender);
         Date[] dates = null;
@@ -101,9 +96,9 @@ public class DefaultWorkflowTypeService<T extends StateAware> implements Workflo
     @Override
     public List<T> getWorkflowItems(final Map<String, Object> criteria) {
         //FIXME won't work with current
-        this.wfDAOService.getSession().setFlushMode(FlushMode.MANUAL);
+        this.stateAwarePersistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         final StringBuilder queryString = new StringBuilder("from ");
-        queryString.append(this.workflowType.getName()).append(
+        queryString.append(this.stateAwareType.getName()).append(
                 " WF where WF.state.type =:wfType and WF.state.status !=:end and WF.state.status !=:new ");
         if (criteria.containsKey(OWNER))
             queryString.append("and WF.state.owner in (:owner) ");
@@ -133,7 +128,7 @@ public class DefaultWorkflowTypeService<T extends StateAware> implements Workflo
         else if (criteria.containsKey(TODATE))
             dates = constructDateRange((Date) criteria.get(TODATE), (Date) criteria.get(TODATE));
         queryString.append("order by WF.state.createdDate DESC");
-        final Query query = this.wfDAOService.getSession().createQuery(queryString.toString());
+        final Query query = this.stateAwarePersistenceService.getSession().createQuery(queryString.toString());
         query.setString(WFTYPE, criteria.get(WFTYPE).toString());
         query.setParameter("end", StateStatus.ENDED);
         query.setParameter("new", StateStatus.STARTED);
@@ -156,7 +151,7 @@ public class DefaultWorkflowTypeService<T extends StateAware> implements Workflo
             else if (criteria.get(SEARCH_OP).toString().equals("between")) {
                 final String[] betweenVal = criteria.get(IDENTIFIER).toString().split("and");
                 try {
-                    if (this.workflowType.getDeclaredField(criteria.get("searchField").toString()).getType() == Date.class) {
+                    if (this.stateAwareType.getDeclaredField(criteria.get("searchField").toString()).getType() == Date.class) {
                         final Date[] dateAry = constructDateRange(betweenVal[0].trim(), betweenVal[1].trim());
                         query.setDate(IDENTIFIER, dateAry[0]);
                         query.setDate("identifier2", dateAry[1]);
@@ -183,18 +178,14 @@ public class DefaultWorkflowTypeService<T extends StateAware> implements Workflo
     @Override
     public List<T> getWorkflowItems(final String myLinkId) {
         final StringBuilder queryStr = new StringBuilder(" FROM ");
-        queryStr.append(this.workflowType.getName()).append(" WHERE id = :id ");
-        final Query query = this.wfDAOService.getSession().createQuery(queryStr.toString());
+        queryStr.append(this.stateAwareType.getName()).append(" WHERE id = :id ");
+        final Query query = this.stateAwarePersistenceService.getSession().createQuery(queryStr.toString());
         query.setLong("id", Long.valueOf(myLinkId));
         return query.list();
     }
 
     public Class<?> getWorkflowType() {
-        return this.workflowType;
-    }
-
-    public void setWorkflowType(final Class<?> type) {
-        this.workflowType = type;
+        return this.stateAwareType;
     }
 
     /**

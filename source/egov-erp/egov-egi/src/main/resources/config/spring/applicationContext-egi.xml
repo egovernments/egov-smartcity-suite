@@ -8,6 +8,8 @@
 
 	<context:component-scan base-package="org.egov.infra"/>
 	<context:component-scan base-package="org.egov.lib"/>
+	<context:component-scan base-package="org.egov.infstr.workflow"/>
+	
 	<bean class="org.egov.EgovSpringContextHolder" lazy-init="false"/>
 
 	<bean id="genericCommonsService" class="org.egov.infstr.commons.service.GenericCommonsServiceImpl">
@@ -98,19 +100,9 @@
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
-	<bean id="stateService" parent="persistenceService">
-		<property name="type" value="org.egov.infstr.models.State" />
-	</bean>
-
 	<bean id="userPersistenceService" parent="persistenceService">
 		<property name="type" value="org.egov.lib.rjbac.user.UserImpl"/>
 	</bean>
-
-
-	<bean id="eisService" class="org.egov.pims.service.EisUtilService" scope="prototype" lazy-init="true">
-		<property name="persistenceService" ref="persistenceService" />
-	</bean>
-
 
 	<bean id="genericDao" class="org.egov.infstr.commons.dao.GenericHibernateDaoFactory" scope="prototype">
 		<constructor-arg ref="sessionFactory" />
@@ -219,10 +211,6 @@
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 
-	<bean id="workflowTypeService" parent="persistenceService">
-		<property name="type" value="org.egov.infstr.models.WorkflowTypes" />
-	</bean>
-
 	<bean id="inboxComparator" class="org.egov.infstr.workflow.inbox.InboxComparator" />
 
 	<bean id="workflowAdmin" class="org.egov.infstr.workflow.admin.WorkflowAdminService">
@@ -277,4 +265,17 @@
 		<property name="sessionFactory" ref="sessionFactory"/>
 	</bean>
 	
+	<!-- NEW WORKFLOW ADDITIONS -->
+	<bean id="statePersistenceService" parent="persistenceService">
+		<property name="type" value="org.egov.infstr.models.State" />
+	</bean>
+	
+	<bean id="workflowTypePersistenceService" parent="persistenceService">
+		<property name="type" value="org.egov.infstr.models.WorkflowTypes" />
+	</bean>
+	
+	<bean id="eisService" class="org.egov.pims.service.EisUtilService" scope="prototype" lazy-init="true">
+		<property name="persistenceService" ref="persistenceService" />
+	</bean>
+		
 </beans>

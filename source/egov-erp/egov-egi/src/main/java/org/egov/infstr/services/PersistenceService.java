@@ -50,7 +50,11 @@ public class PersistenceService<T, ID extends Serializable> implements GenericDA
     public void setType(final Class<T> type) {
         this.type = type;
     }
-
+    
+    public Class<T> getType() {
+        return this.type;
+    }
+    
     public Session getSession() {
         return this.sessionFactory.getCurrentSession();
     }

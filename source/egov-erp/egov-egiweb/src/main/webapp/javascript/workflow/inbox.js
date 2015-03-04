@@ -118,7 +118,7 @@ var wincntr = 0;
 								 elRow = p_myDataTable.getTrEl(elRow);   
 								 var stateId = elRow.firstChild.firstChild.innerHTML.split("#")[0];
 								 if (stateId !== '') {
-									 var sUrl = "../workflow/inbox!populateHistory.action?stateId="+stateId+"&rnd="+Math.random();
+									 var sUrl = "../workflow/inbox-populateHistory.action?stateId="+stateId+"&rnd="+Math.random();
 									 var callback = {
 									 success:function (oResponse) {
 										 var historyData = oResponse.responseText;
@@ -179,9 +179,9 @@ var wincntr = 0;
 			var sUrl = null;
 			var comingfrom = this.from;
 			if (comingfrom  === 'Drafts') {
-				sUrl = "../workflow/inbox!pollDraft.action?rnd="+Math.random();
+				sUrl = "../workflow/inbox-pollDraft.action?rnd="+Math.random();
 			} else if (comingfrom  === 'Inbox'){
-				sUrl = "../workflow/inbox!pollInbox.action?rnd="+Math.random();
+				sUrl = "../workflow/inbox-pollInbox.action?rnd="+Math.random();
 			} else {
 				sUrl = "/dms/dms/fileNotification!loadFileNotificationData.action?rnd="+Math.random();
 			}

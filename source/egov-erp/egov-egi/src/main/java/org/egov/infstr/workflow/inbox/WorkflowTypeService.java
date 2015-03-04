@@ -76,5 +76,4 @@ public interface WorkflowTypeService<T extends StateAware> {
 	 */
 	List<T> getWorkflowItems(String myLinkId);
 	
-		
 }

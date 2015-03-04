@@ -8,7 +8,7 @@ package org.egov.web.actions.workflow;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.egov.infstr.utils.DateUtils.getFormattedDate;
 import static org.egov.infstr.utils.StringUtils.escapeSpecialChars;
-import static org.egov.infstr.workflow.inbox.InboxService.SLASH;
+import static org.egov.infstr.workflow.inbox.InboxService.SLASH_DELIMIT;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -135,7 +135,7 @@ public class WorkflowAdminAction extends ActionSupport {
 		final List<WorkflowTypes> workflowTypes = this.workflowAdmin.getWorkflowTypes(this.query);
 		final StringBuilder docTypes = new StringBuilder(EMPTY);
 		for (final WorkflowTypes workflowType : workflowTypes) {
-			docTypes.append(workflowType.getDisplayName()).append(SLASH).append(workflowType.getType()).append("\n");
+			docTypes.append(workflowType.getDisplayName()).append(SLASH_DELIMIT).append(workflowType.getType()).append("\n");
 		}
 		ServletActionContext.getResponse().getWriter().write(docTypes.toString());
 	}
@@ -148,7 +148,7 @@ public class WorkflowAdminAction extends ActionSupport {
 		final List<User> users = this.workflowAdmin.getAllUserByUserName(this.query);
 		final StringBuilder userAndPos = new StringBuilder(EMPTY);
 		for (final User user : users) {
-			userAndPos.append(user.getUserName()).append(SLASH).append(user.getFirstName()).append(" - ").append(user.getId()).append("\n");
+			userAndPos.append(user.getUserName()).append(SLASH_DELIMIT).append(user.getFirstName()).append(" - ").append(user.getId()).append("\n");
 		}
 		ServletActionContext.getResponse().getWriter().write(userAndPos.toString());
 	}
@@ -213,8 +213,8 @@ public class WorkflowAdminAction extends ActionSupport {
 				final User userOwner = this.inboxService.getStateUser(state, owner);
 				wfItem.append("{Id:'").append(stateAware.myLinkId()).append("#DILIM#").append(workflowTypes.getId()).append("',");
 				wfItem.append("Date:'").append(getFormattedDate(state.getCreatedDate(), "dd/MM/yyyy hh:mm a")).append("',");
-				wfItem.append("Sender:'").append(this.inboxService.buildSenderName(sender, userSender)).append("',");
-				wfItem.append("Owner:'").append(this.inboxService.buildSenderName(owner, userOwner)).append("',");
+				wfItem.append("Sender:'").append(this.inboxService.prettyPrintSenderName(sender, userSender)).append("',");
+				wfItem.append("Owner:'").append(this.inboxService.prettyPrintSenderName(owner, userOwner)).append("',");
 				wfItem.append("Task:'").append(workflowTypes.getDisplayName()).append("',");
 				wfItem.append("Status:'").append(state.getValue()).append("',");
 				wfItem.append("Details:'").append(stateAware.getStateDetails() == null ? EMPTY : escapeSpecialChars(stateAware.getStateDetails())).append("',");

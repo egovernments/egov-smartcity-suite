@@ -37,7 +37,7 @@
 
 	<query name="WORKFLOWTYPES">
 		<![CDATA[
-     	select distinct s.type from org.egov.infstr.models.State as s where s.ownerPosition.id=?  and s.value is not 'Closed' 
+     	select distinct s.type from org.egov.infstr.models.State as s where s.ownerPosition.id=?  and s.status is not 2 
     ]]>
 
 	</query>
