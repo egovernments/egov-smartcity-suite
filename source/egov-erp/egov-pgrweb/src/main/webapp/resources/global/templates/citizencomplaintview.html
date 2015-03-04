@@ -162,20 +162,12 @@
 										<span id="address_locate">KIADB, 28, Hoodi Main Road, KEB Colony, Industrial Area, Hoodi, Bengaluru, Karnataka 560048, India</span>
 									</div>
 								</div>
-								<div class="row add-border">
+								<div class="row">
 									<div class="col-md-3 col-xs-6 add-margin">
 										Landmark 
 									</div>
 									<div class="col-md-9 col-xs-6 add-margin" id="ct-lanmark">
 										N/A
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-3 col-xs-6 add-margin">
-										Assets View 
-									</div>
-									<div class="col-md-9 col-xs-6 add-margin" id="ct-lanmark">
-										<a href="govtview.html" class="open-popup">Click here</a>
 									</div>
 								</div>
 							</div>
@@ -199,19 +191,35 @@
 							<div class="panel-body">
 								
 								<form role="form" class="form-horizontal form-groups-bordered">
+									<div class="form-group">
+										<div class="col-md-3 col-xs-6 add-margin">
+											Change Status
+										</div>
+										<div class="col-md-3 col-xs-6 add-margin reopen-status display-hide">
+											<input type="checkbox" id="reopen" name="" value="Reopen">
+											<label>Reopen</label>
+										</div>
+										<div class="col-md-3 col-xs-6 add-margin close-status display-hide">
+											<input type="checkbox" id="close" name="" value="Close">
+											<label>Close</label>
+										</div>
+									</div>
 									
 									<div class="form-group">
 										<div class="col-md-3 add-margin">
 											Include message <span class="mandatory"></span>
 										</div>
 										<div class="col-md-9 add-margin">
-											<textarea class="form-control" id="resolve_messge" placeholder="" maxlength="400"></textarea>
+											<textarea class="form-control" id="inc_messge" placeholder="" maxlength="400"></textarea>
 										</div>
 									</div>
 									
+									
+									
+									
 									<div class="form-group">
 										<div class="text-center">
-											<a href="javascript:void(0);" id="" class="btn btn-primary">Resolve</a>
+											<a href="javascript:void(0);" id="btn_submit" class="btn btn-primary">Submit</a>
 											<a href="javascript:void(0);" class="btn btn-default">Cancel</a>
 										</div>
 									</div>
@@ -405,6 +413,6 @@
 		
 		<script src="../../js/app/complaintview.js"></script>
 		<script src="../../js/app/fileuploadndmaps.js"></script>
-		<script src="../js/egov/custom.js"></script>
+		<script src="../../js/app/citizencomplaintview.js"></script>
 	</body>
 </html>																														

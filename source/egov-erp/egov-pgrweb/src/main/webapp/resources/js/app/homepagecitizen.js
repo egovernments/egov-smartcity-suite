@@ -3,21 +3,22 @@ var tableContainer2;
 var tableContainer3;
 $(document).ready(function()
 {	
-	$('.cit-pen-req').show();
+	$('.cit-notify').show();
 	
 	$('.citizen').click(function(){
 		
 		$('.citizen-all').hide();
 		
-		if($(this).attr('data-title') == "show-newreq"){
-			$('.cit-new-req').show();
-			}else if($(this).attr('data-title') == "show-notify"){
+		if($(this).attr('data-title') == "show-notify"){
 			$('.cit-notify').show();
+			$('#hp-citizen-title').html('Notifications');
 			}else if($(this).attr('data-title') == "show-penreq"){
 			$('.cit-pen-req').show();
-			}else if($(this).attr('data-title') == "show-newreq2"){
-			$('.cit-new-req2').show();
-			}
+			$('#hp-citizen-title').html('Pending Request');
+			}else if($(this).attr('data-title') == "show-newreq"){
+			$('.cit-new-req').show();
+			$('#hp-citizen-title').html('New Request');
+		}
 	});
 	
 	tableContainer1 = $("#citizen_notification"); 
@@ -94,16 +95,5 @@ $(document).ready(function()
 	};
 	
 	var service1 = new service();
-	
-	/* $('a[target^="_new"]').click(function(e) {
-		// to open in good size for user
-		var width = window.innerWidth /0.66 ; 
-		// define the height in 
-		var height = width * window.innerWidth / window.innerHeight; 
-		// Ratio the hight to the width as the user screen ratio
-		window.open(this.href, 'newwindow', 'width=900, height=700, top=300, left=350');
-		return false;
-		
-	}); */
 	
 });

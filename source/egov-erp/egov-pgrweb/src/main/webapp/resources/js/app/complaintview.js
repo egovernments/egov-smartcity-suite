@@ -1,4 +1,4 @@
-jQuery(document).ready(function($)
+$(document).ready(function()
 {
 	$('#toggleactions').click(function(){
 		if($(this).html()== "More..")
@@ -63,7 +63,4 @@ jQuery(document).ready(function($)
 			}
 		});
 	});
-
-	
-	
 });
