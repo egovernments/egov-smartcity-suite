@@ -11,6 +11,7 @@
 
     <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
 	<jpa:repositories base-package="org.egov.pgr.repository"/>
+	<jpa:auditing/>
     <context:component-scan base-package="org.egov.pgr.service" />
     <context:component-scan base-package="org.egov.pgr.repository" />
     <context:component-scan base-package="org.egov.pgr.utils" />

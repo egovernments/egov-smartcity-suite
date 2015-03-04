@@ -1,4 +1,4 @@
-package org.egov.infra.utils;
+package org.egov.infra.security.utils;
 
 import org.egov.lib.rjbac.user.User;
 import org.egov.lib.rjbac.user.ejb.api.UserService;

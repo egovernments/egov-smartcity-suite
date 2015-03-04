@@ -3,6 +3,7 @@ package org.egov.infra.persistence.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -11,24 +12,34 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.joda.time.DateTime;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 public abstract class AbstractAuditable<U, PK extends Serializable> extends AbstractPersistable<PK> {
 
     private static final long serialVersionUID = 8330295040331880486L;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "createdBy")
+    @CreatedBy
     private U createdBy;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @CreatedDate
     private Date createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lastModifiedBy")
+    @LastModifiedBy
     private U lastModifiedBy;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @LastModifiedDate
     private Date lastModifiedDate;
 
     public U getCreatedBy() {

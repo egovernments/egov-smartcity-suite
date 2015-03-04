@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.List;
 
-import org.egov.infra.utils.SecurityUtils;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.lib.admbndry.BoundaryImpl;
 import org.egov.lib.rjbac.role.Role;

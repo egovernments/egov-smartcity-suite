@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.utils.SecurityUtils;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.lib.rjbac.role.Role;
 import org.egov.lib.rjbac.role.dao.RoleDAO;
 import org.egov.pgr.entity.Complaint;

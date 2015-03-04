@@ -6,7 +6,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.infra.search.elastic.annotation.Indexing;
-import org.egov.infra.utils.SecurityUtils;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.lib.rjbac.user.UserImpl;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.repository.ComplaintRepository;
