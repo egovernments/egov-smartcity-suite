@@ -6,6 +6,9 @@ package org.egov.pims.dao;
 
 import java.io.Serializable;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.model.StatusMaster;
@@ -20,32 +23,18 @@ import org.hibernate.SessionFactory;
  */
 public class StatusMasterDAO implements Serializable
 {
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager entityManager;
+	    
+	public Session  getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
 	
-	public SessionFactory getSessionFactory() {
-		return sessionFactory;
-	}
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
-	public StatusMasterDAO()
-	{
-		session = sessionFactory.getCurrentSession();
-	}
-	private Session session;
-	private void openSession()
-	{
-		session = sessionFactory.getCurrentSession();
-	}
 	public void createStatusMaster(StatusMaster statusMaster)
 	{
 		try
 		{
-			if(! session.isOpen())
-			{
-				openSession();
-			}
-			session.save(statusMaster);
+			getCurrentSession().save(statusMaster);
 			
 
 		}
@@ -61,11 +50,7 @@ public class StatusMasterDAO implements Serializable
 	{
 		try
 		{
-			if(! session.isOpen())
-			{
-				openSession();
-			}
-			session.saveOrUpdate(statusMaster);
+			getCurrentSession().saveOrUpdate(statusMaster);
 		}
 		catch (Exception e)
 		{
@@ -79,12 +64,8 @@ public class StatusMasterDAO implements Serializable
 	{
 		try
 		{
-			if(! session.isOpen())
-			{
-				openSession();
-			}
 
-			session.delete(statusMaster);
+			getCurrentSession().delete(statusMaster);
 			
 
 		}
@@ -100,12 +81,8 @@ public class StatusMasterDAO implements Serializable
 	{
 		try
 		{
-			if(! session.isOpen())
-			{
-				openSession();
-			}
 
-			StatusMaster sm=(StatusMaster)session.get(StatusMaster.class,Integer.valueOf(stID));
+			StatusMaster sm=(StatusMaster)getCurrentSession().get(StatusMaster.class,Integer.valueOf(stID));
 
 			return sm ;
 		}
@@ -122,11 +99,7 @@ public class StatusMasterDAO implements Serializable
 		{
 			try
 			{
-				if(! session.isOpen())
-				{
-					openSession();
-				}
-				Query qry = session.createQuery("from StatusMaster P where P.name =:name ");
+				Query qry = getCurrentSession().createQuery("from StatusMaster P where P.name =:name ");
 				qry.setString("name", name);
 				return (StatusMaster)qry.uniqueResult();
 			}

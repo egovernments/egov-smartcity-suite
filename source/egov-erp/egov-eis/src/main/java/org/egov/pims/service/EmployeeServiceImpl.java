@@ -51,6 +51,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.IntegerType;
+import org.springframework.stereotype.Service;
 
 
 
@@ -60,6 +61,7 @@ import org.hibernate.type.IntegerType;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+@Service
 public class  EmployeeServiceImpl  implements EmployeeService{
 
 	/* (non-Javadoc)

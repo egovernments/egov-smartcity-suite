@@ -14,6 +14,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
@@ -27,7 +30,9 @@ import org.egov.lib.rjbac.user.UserImpl;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.model.PersonalInformation;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.stereotype.Repository;
 
 /**
  * This Class implememets the PersonalInformationDAO for the Hibernate specific
@@ -36,18 +41,28 @@ import org.hibernate.SessionFactory;
  * @author Neetu
  * @version 2.00
  */
+@Repository
 public class PersonalInformationHibernateDAO extends GenericHibernateDAO implements PersonalInformationDAO
 {
     
 	private static final Logger LOGGER = Logger.getLogger(PersonalInformationHibernateDAO.class); 
-	private SessionFactory sessionFacotory;
 	
+	private final static String STR_CURRDATE= "currDate";
+	private BoundaryDAO boundaryDAO;
+	private BoundaryTypeDAO boundaryTypeDAO;
 	
-
+	@PersistenceContext
+	private EntityManager entityManager;
+    
+	@Override
+	public Session  getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
+	
 	public PersonalInformationHibernateDAO() {
+		
 		super(PersonalInformation.class,null);
 	}
-
     /*
      *
 	 * @param persistentClass
@@ -405,8 +420,7 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 		 PersonalInformation tempAssignedEemployee = null;
 		 LOGGER.info("Inside temp assigned emp API-----------");
 		 List<PersonalInformation> listEmployee = null;
-		 Query qry = getCurrentSession().createQuery("select P from PersonalInformation P, Assignment A where " +
-		 						"P.idPersonalInformation=A.employee.idPersonalInformation and " +
+		 Query qry = getCurrentSession().createQuery("select A.employee from Assignment A where " +
 								"A.deptId.id=:deptId and " +
 								"A.desigId.designationId=:desigId and " +
 								"A.functionary.id=:functionaryId and " +
@@ -479,9 +493,7 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 	 public List<PersonalInformation> getAllEmpByGrade(Integer gradeId) throws Exception
 	 {
 		 List<PersonalInformation> listEmployee = null;
-		 Query qry = getCurrentSession().createQuery("select distinct P from PersonalInformation P, Assignment A where " +
-		 						"P.idPersonalInformation=A.employee.idPersonalInformation and " +
-								"A.gradeId.id=:gradeId ");
+		 Query qry = getCurrentSession().createQuery("select distinct A.employee from Assignment A where A.gradeId.id=:gradeId ");
 
 		qry.setInteger("gradeId",gradeId);
 		listEmployee = qry.list();
@@ -499,37 +511,6 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 		 return qry.list();
 	 }
 	 
-	 
-	 private final static String STR_CURRDATE= "currDate";
-	private BoundaryDAO boundaryDAO;
-	private BoundaryTypeDAO boundaryTypeDAO;
-
-
-
-	public SessionFactory getSessionFacotory() {
-		return sessionFacotory;
-	}
-
-	public void setSessionFacotory(SessionFactory sessionFacotory) {
-		this.sessionFacotory = sessionFacotory;
-	}
-
-	public BoundaryDAO getBoundaryDAO() {
-		return boundaryDAO;
-	}
-
-	public void setBoundaryDAO(BoundaryDAO boundaryDAO) {
-		this.boundaryDAO = boundaryDAO;
-	}
-
-	public BoundaryTypeDAO getBoundaryTypeDAO() {
-		return boundaryTypeDAO;
-	}
-
-	public void setBoundaryTypeDAO(BoundaryTypeDAO boundaryTypeDAO) {
-		this.boundaryTypeDAO = boundaryTypeDAO;
-	}
-
 }
 
 

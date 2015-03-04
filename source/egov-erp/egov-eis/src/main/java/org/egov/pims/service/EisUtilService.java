@@ -29,26 +29,27 @@ import org.hibernate.Query;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * 
  * @author DivyaShree
  *
  */
+@Service("eisService")
 public class EisUtilService implements EISServeable
 {
 	private static final Logger LOGGER = Logger.getLogger(EisUtilService.class);
 	private final String EMPVIEWDEPTIDSLOGGEDINUSER="EMPVIEW-DEPTIDS-LOGGEDINUSER";
+	
+	@Autowired
 	private PersistenceService persistenceService;
+	@Autowired
 	private BoundaryDAO boundaryDAO;
+	@Autowired
 	private PersonalInformationDAO personalInformationDAO;
 	
-	
-	
-	public void setBoundaryDAO(BoundaryDAO boundaryDAO) {
-		this.boundaryDAO = boundaryDAO;
-	}
-
 	public PersistenceService getPersistenceService() {
 		return persistenceService;
 	}

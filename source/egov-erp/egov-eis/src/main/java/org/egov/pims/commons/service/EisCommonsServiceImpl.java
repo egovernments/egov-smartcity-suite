@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -22,7 +21,6 @@ import org.egov.lib.rjbac.user.User;
 import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
-import org.egov.pims.commons.dao.DesignationMasterDAO;
 import org.egov.pims.commons.dao.PositionMasterDAO;
 import org.egov.pims.dao.PersonalInformationHibernateDAO;
 import org.egov.pims.model.EmployeeView;
@@ -39,13 +37,19 @@ import org.springframework.stereotype.Service;
  * @version 1.2
  * @since 1.2
  */
-@Service
+@Service("eisCommonsService")
 public class EisCommonsServiceImpl implements EisCommonsService {
 
 
 	private static final Logger logger = Logger.getLogger(EisCommonsServiceImpl.class);
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private PositionMasterDAO positionMasterDAO;
+	
+	@Autowired
+	private PersonalInformationHibernateDAO pimsDao;
     
     @PersistenceContext
 	private EntityManager entityManager;
@@ -54,24 +58,10 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 		return entityManager.unwrap(Session.class);
 	}
 
-	/*public  void addPosition(Position position,DesignationMaster desMaster)
-	{
-		try
-		{
-			desMaster.addPosition(position);
-		}
-		catch(Exception e)
-		{
-			
-			throw new EGOVRuntimeException("Exception in deleting Installment."+e.getMessage(),e);
-		}
-
-	}*/
 	public  void updatePosition(Position position)
 	{
 		try
 		{
-			PositionMasterDAO positionMasterDAO = new PositionMasterDAO();
 			positionMasterDAO.updatePosition(position);
 		}
 		catch(Exception e)
@@ -90,7 +80,6 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 		{
 			if(positionId != null)
 			{
-				PositionMasterDAO positionMasterDAO = new PositionMasterDAO();
 				pos = positionMasterDAO.getPosition(positionId);
 			}
 			return pos;
@@ -102,33 +91,12 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 		}
 
 	}
-   /* public   Integer getNumberOfPosts(Integer designationId)
-    {
-    	//Integer noOfPosts = new Integer(0);
-    	DesignationMasterDAO designationMasterDAO = new DesignationMasterDAO();
-    	DesignationMaster designationMaster =designationMasterDAO.getDesignationMaster(designationId);
-    	//Integer noOfPosts = designationMaster.getSanctionedPosts();
-    	return noOfPosts;
-
-
-    }*/
-   /* public   Integer getNumberOfBalancePosts(Integer designationId)
-    {
-    	
-    	DesignationMasterDAO designationMasterDAO = new DesignationMasterDAO();
-    	DesignationMaster designationMaster =designationMasterDAO.getDesignationMaster(designationId);
-    	//Integer noOfPosts = designationMaster.getSanctionedPosts();
-    	//Integer noOfOutPosts = designationMaster.getOutsourcedPosts();
-    	return noOfPosts-noOfOutPosts;
-
-    }*/
 
     public  Position getPositionByUserId(Integer userId)
     {
 
 		Position userPosition = null;
 		
-		//PersonalInformation personalInformation = new PersonalInformation();
 		Date currentDate = new Date();
 		try
 		{
@@ -162,15 +130,6 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 			}
 			return userPosition;
  
-    }
-
-    public Set getSetOfPosForDesignationId(Integer desigId)
-    {
-    	Set set = null;
-    	DesignationMasterDAO designationMasterDAO = new DesignationMasterDAO();
-    	DesignationMaster designationMaster = designationMasterDAO.getDesignationMaster(desigId);
-    	//set =designationMaster.getPositionSet();
-    	return set;
     }
 
 	public Position getPositionForUserByIdAndDate(Integer userId, Date assignDate)
@@ -213,8 +172,6 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 	{
 		User uerImpl= null;
 		
-		
-		//PersonalInformation personalInformation = new PersonalInformation();
 		try
 		{
 			
@@ -332,26 +289,6 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 		return position;
 	}
 	
-	/*public Department getDepartmentForUser(User user){
-		Department dept = null;
-		if (null != user){
-			PersonalInformation emp = EisManagersUtill.getEisManager().getEmpForUserId(user.getId());
-			if (null != emp){
-				dept = emp.getEgdeptMstr();
-			}
-		}
-		return dept;
-	}*/
-	
-	
-	/*public Integer getDesignationForPosition(Position position){
-		Integer designation = null;
-		if (null != position){
-			designation = position.getDesigId().getDesignationId();
-			return designation;
-		}
-		return designation;
-	}*/
 	public  User getUserForPosition(Integer posId, Date date)
 	{
 		User user = null;
@@ -456,7 +393,7 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 	  * @throws Exception 
 	  */
 	 public PersonalInformation getTempAssignedEmployeeByDeptDesigFunctionaryDate(Integer deptId, Integer desigId, Integer functionaryId, Date onDate) throws Exception{
-		 return new PersonalInformationHibernateDAO().getTempAssignedEmployeeByDeptDesigFunctionaryDate(deptId, desigId, functionaryId, onDate);
+		 return pimsDao.getTempAssignedEmployeeByDeptDesigFunctionaryDate(deptId, desigId, functionaryId, onDate);
 	 }
 	 
 	 private final static String STR_EXCEPTION="Exception:";

@@ -12,16 +12,17 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.pims.commons.Position;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 
 // Referenced classes of package org.egov.infstr.commons.dao:
 //            PositionMaster
 
+@Repository
 public class PositionMasterDAO
     implements Serializable
 {
 
     public final static Logger LOGGER = Logger.getLogger(PositionMasterDAO.class.getClass());
-    private Session session;
     
     @PersistenceContext
 	private EntityManager entityManager;
@@ -31,63 +32,25 @@ public class PositionMasterDAO
 	}
 
 
-    public PositionMasterDAO()
-    {
-        session = getCurrentSession();
-    }
-
-    private void openSession()
-    {
-        session = getCurrentSession();
-    }
-
     public void createPositionMaster(Position position)
     {
-        try
-        {
-            if(!session.isOpen())
-            {
-                openSession();
-            }
-            session.save(position);
-           
-        }
-        catch(Exception e)
-        {
-        	
-            throw new EGOVRuntimeException(e.getMessage(),e);
-        }
+            getCurrentSession().save(position);
     }
 
     public void updatePosition(Position position)
     {
-        try
-        {
-            if(!session.isOpen())
-            {
-                openSession();
-            }
-            session.saveOrUpdate(position);
-        }
-        catch(Exception e)
-        {
-            throw new EGOVRuntimeException(e.getMessage(),e);
-        }
+    	getCurrentSession().saveOrUpdate(position);
     }
 
     public void removePosition(Position position)
     {
         try
         {
-            if(!session.isOpen())
-            {
-                openSession();
-            }
             if(position==null)
             {
             	throw new EGOVException("position.master.null");
             }
-            session.delete(position);
+            getCurrentSession().delete(position);
         }
         catch(Exception e)
         {
@@ -100,11 +63,7 @@ public class PositionMasterDAO
         try
         {
         	Position desig = null;
-            if(!session.isOpen())
-            {
-                openSession();
-            }
-            desig = (Position)session.get(Position.class, Integer.valueOf(posId));
+            desig = (Position)getCurrentSession().get(Position.class, Integer.valueOf(posId));
             return desig;
         }
         catch(Exception e)
@@ -118,7 +77,7 @@ public class PositionMasterDAO
         try
         {
             boolean b = false;
-            Query qry = session.createQuery((new StringBuilder("from ")).append(className).append(" CA where trim(upper(CA.position)) = :positionName ").toString());
+            Query qry = getCurrentSession().createQuery((new StringBuilder("from ")).append(className).append(" CA where trim(upper(CA.position)) = :positionName ").toString());
             qry.setString("positionName", positionName);
             Iterator iter = qry.iterate();
             LOGGER.info((new StringBuilder("iter")).append(iter).toString());
@@ -141,7 +100,7 @@ public class PositionMasterDAO
         try
         {
             Integer positionId = 0;
-            Query qry = session.createQuery("from position where trim(upper(name)) = :positionName ");
+            Query qry = getCurrentSession().createQuery("from position where trim(upper(name)) = :positionName ");
             qry.setString("positionName", positionName);
             Iterator iter = qry.iterate();
             LOGGER.info((new StringBuilder("iter")).append(iter).toString());

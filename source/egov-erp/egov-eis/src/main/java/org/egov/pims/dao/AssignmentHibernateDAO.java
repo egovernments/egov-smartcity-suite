@@ -10,6 +10,9 @@ package org.egov.pims.dao;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.dao.GenericHibernateDAO;
@@ -32,6 +35,14 @@ import org.hibernate.SessionFactory;
 public class AssignmentHibernateDAO extends GenericHibernateDAO implements AssignmentDAO
 {
     private final static Logger LOGGER = Logger.getLogger(AssignmentHibernateDAO.class.getClass());
+    
+    @PersistenceContext
+	private EntityManager entityManager;
+    
+    @Override
+	public Session  getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
     /*
      *
 	 * @param persistentClass

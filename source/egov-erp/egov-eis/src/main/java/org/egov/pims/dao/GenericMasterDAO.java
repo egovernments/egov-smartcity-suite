@@ -6,6 +6,9 @@ package org.egov.pims.dao;
 
 import java.io.Serializable;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.pims.model.GenericMaster;
 import org.hibernate.HibernateException;
@@ -17,35 +20,18 @@ import org.hibernate.SessionFactory;
  */
 public class GenericMasterDAO implements Serializable
 {
-	
-	private SessionFactory sessionFactory;
-	
-	public SessionFactory getSessionFactory() {
-		return sessionFactory;
+	@PersistenceContext
+	private EntityManager entityManager;
+    
+	public Session  getCurrentSession() {
+		return entityManager.unwrap(Session.class);
 	}
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
-	public GenericMasterDAO()
-	{
-		session = sessionFactory.getCurrentSession();
 
-	}
-	private Session session;
-	private void openSession()
-	{
-		session = sessionFactory.getCurrentSession();
-	}
 	public void create(GenericMaster genericMaster) 
 	{
 		try
 		{
-			if(! session.isOpen())
-			{
-				openSession();
-			}
-			session.save(genericMaster);
-			
+			getCurrentSession().save(genericMaster);
 
 		}
 		catch (HibernateException e)
@@ -60,11 +46,7 @@ public class GenericMasterDAO implements Serializable
 	{
 		try
 		{
-			if(! session.isOpen())
-			{
-				openSession();
-			}
-			session.saveOrUpdate(genericMaster);
+			getCurrentSession().saveOrUpdate(genericMaster);
 		}
 		catch (HibernateException e)
 		{
@@ -78,14 +60,7 @@ public class GenericMasterDAO implements Serializable
 	{
 		try
 		{
-			if(! session.isOpen())
-			{
-				openSession();
-			}
-
-			session.delete(genericMaster);
-			
-
+			getCurrentSession().delete(genericMaster);
 		}
 		catch (HibernateException e)
 		{
@@ -100,12 +75,8 @@ public class GenericMasterDAO implements Serializable
 	{
 		try
 		{
-			if(! session.isOpen())
-			{
-				openSession();
-			}
 			String srt = "org.egov.pims.model."+className;
-			GenericMaster imp = (GenericMaster)session.get(Class.forName(srt), Integer.valueOf(Id));
+			GenericMaster imp = (GenericMaster)getCurrentSession().get(Class.forName(srt), Integer.valueOf(Id));
 
 			return imp ;
 		}catch (HibernateException e)

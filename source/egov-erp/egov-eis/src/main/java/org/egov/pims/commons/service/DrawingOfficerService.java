@@ -1,13 +1,11 @@
 package org.egov.pims.commons.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.DrawingOfficer;
-import org.egov.pims.model.PersonalInformation;
 
 public class DrawingOfficerService extends PersistenceService<DrawingOfficer, Long> implements
 		EntityTypeService {
