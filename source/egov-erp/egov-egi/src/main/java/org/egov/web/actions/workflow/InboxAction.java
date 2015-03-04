@@ -1,8 +1,3 @@
-/*
- * @(#)InboxAction.java 3.0, 14 Jun, 2013 1:16:52 PM
- * Copyright 2013 eGovernments Foundation. All rights reserved. 
- * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
 package org.egov.web.actions.workflow;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
@@ -11,7 +6,7 @@ import static org.egov.infstr.utils.StringUtils.escapeSpecialChars;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -20,8 +15,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -31,221 +24,254 @@ import org.egov.infstr.models.State;
 import org.egov.infstr.models.StateAware;
 import org.egov.infstr.models.StateHistory;
 import org.egov.infstr.models.WorkflowTypes;
-import org.egov.infstr.workflow.inbox.InboxComparator;
 import org.egov.infstr.workflow.inbox.InboxService;
 import org.egov.lib.rjbac.user.User;
 import org.egov.pims.commons.Position;
 import org.egov.web.actions.BaseFormAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ParentPackage("egov")
 public class InboxAction extends BaseFormAction {
 
-	private static final long serialVersionUID = 1L;
-	private static final Logger LOG = LoggerFactory.getLogger(InboxAction.class);
-	private transient final Map<Integer, String> senderList = new HashMap<Integer, String>();
-	private transient final Map<String, String> taskList = new HashMap<String, String>();
-	private transient InboxService<StateAware> inboxService; // Delegate to inbox service
-	private transient InboxComparator inboxComparator;
-	private transient StringBuilder inboxData; // To hold inbox data
-	private transient StringBuilder inboxDraft; // To hold inbox draft data
-	private transient StringBuilder inboxHistory; // To hold history data
-	private transient String stateId; // State Id parameter to fetch the State history
-	private transient Integer sender;
-	private transient String task;
-	private transient Date fromDate;
-	private transient Date toDate;
+    private static final long serialVersionUID = 1L;
+    private static final Logger LOG = LoggerFactory.getLogger(InboxAction.class);
+    private transient final Map<Integer, String> senderList = new HashMap<Integer, String>();
+    private transient final Map<String, String> taskList = new HashMap<String, String>();
+    private transient InboxService<StateAware> inboxService; // Delegate to
+                                                             // inbox service
+    private transient StringBuilder inboxData; // To hold inbox data
+    private transient StringBuilder inboxDraft; // To hold inbox draft data
+    private transient StringBuilder inboxHistory; // To hold history data
+    private transient String stateId; // State Id parameter to fetch the State
+                                      // history
+    private transient Integer sender;
+    private transient String task;
+    private transient Date fromDate;
+    private transient Date toDate;
 
-	public void setInboxComparator(final InboxComparator inboxComparator) {
-		this.inboxComparator = inboxComparator;
-	}
+    public void setInboxService(final InboxService<StateAware> inboxService) {
+        this.inboxService = inboxService;
+    }
 
-	public void setInboxService(final InboxService<StateAware> inboxService) {
-		this.inboxService = inboxService;
-	}
+    public void setSender(final Integer sender) {
+        this.sender = sender;
+    }
 
-	public void setSender(final Integer sender) {
-		this.sender = sender;
-	}
+    public void setStateId(final String stateId) {
+        this.stateId = stateId;
+    }
 
-	public void setStateId(final String stateId) {
-		this.stateId = stateId;
-	}
+    public void setTask(final String task) {
+        this.task = task;
+    }
 
-	public void setTask(final String task) {
-		this.task = task;
-	}
+    public void setToDate(final Date toDate) {
+        this.toDate = toDate;
+    }
 
-	public void setToDate(final Date toDate) {
-		this.toDate = toDate;
-	}
+    public void setFromDate(final Date fromDate) {
+        this.fromDate = fromDate;
+    }
 
-	public void setFromDate(final Date fromDate) {
-		this.fromDate = fromDate;
-	}
+    public String getInboxData() {
+        return inboxData == null ? "" : inboxData.toString();
+    }
 
-	public String getInboxData() {
-		return this.inboxData == null ? "" : this.inboxData.toString();
-	}
+    public String getInboxDraft() {
+        return inboxDraft == null ? "" : inboxDraft.toString();
+    }
 
-	public String getInboxDraft() {
-		return this.inboxDraft == null ? "" : this.inboxDraft.toString();
-	}
+    public String getInboxHistory() {
+        return inboxHistory == null ? "" : inboxHistory.toString();
+    }
 
-	public String getInboxHistory() {
-		return this.inboxHistory == null ? "" : this.inboxHistory.toString();
-	}
+    @Override
+    public Object getModel() {
+        return null;
+    }
 
-	@Override
-	public Object getModel() {
-		return null;
-	}
+    @Override
+    public String execute() {
+        return SUCCESS;
+    }
 
-	@Override
-	public String execute() {
-		return SUCCESS;
-	}
+    public String filterInboxData() throws EGOVRuntimeException, IOException {
+        try {
+            final List<Position> positions = inboxService.getPositionForUser(getLoginUserId(), new Date());
+            final List<StateAware> filteredInboxItem = new ArrayList<StateAware>();
+            for (final Position position : positions)
+                filteredInboxItem.addAll(inboxService.getFilteredInboxItems(position.getId(), getLoginUserId(), sender,
+                        task, fromDate, toDate));
+            inboxData = loadInboxData(filteredInboxItem);
+            writeToAjaxResponse(getInboxData());
+        } catch (final Exception e) {
+            LOG.error("Error occurred while getting filtered Inbox Items, Cause : " + e.getMessage(), e);
+            writeToAjaxResponse(ERROR);
+        }
+        return null;
+    }
 
-	public String filterInboxData() throws EGOVRuntimeException, IOException {
-		try {
-			final List<Position> positions = this.inboxService.getPositionForUser(this.getLoginUserId(), new Date());
-			final List<StateAware> filteredInboxItem = new ArrayList<StateAware>();
-			for (final Position position : positions) {
-				filteredInboxItem.addAll(this.inboxService.getFilteredInboxItems(position.getId(), this.getLoginUserId(), this.sender, this.task, this.fromDate, this.toDate));
-			}
-			this.inboxData = this.loadInboxData(filteredInboxItem);
-			this.writeToAjaxResponse(this.getInboxData());
-		} catch (final Exception e) {
-			LOG.error("Error occurred while getting filtered Inbox Items, Cause : " + e.getMessage(), e);
-			this.writeToAjaxResponse(ERROR);
-		}
-		return null;
-	}
+    @Action("/workflow/inbox-pollDraft")
+    public String pollDraft() throws EGOVRuntimeException, IOException {
+        try {
+            final Integer userId = getLoginUserId();
+            final List<Position> positions = inboxService.getPositionForUser(userId, new Date());
+            final List<StateAware> inboxDraftItem = new ArrayList<StateAware>();
+            for (final Position position : positions)
+                inboxDraftItem.addAll(inboxService.getDraftItems(position.getId(), userId, null));
+            inboxDraft = loadInboxData(inboxDraftItem);
+            writeToAjaxResponse(getInboxDraft());
+        } catch (final Exception e) {
+            LOG.error("Error occurred while getting Inbox Draft Items, Cause : " + e.getMessage(), e);
+            writeToAjaxResponse(ERROR);
+        }
+        return null;
+    }
 
-	@Action("/workflow/inbox-pollDraft")
-	public String pollDraft() throws EGOVRuntimeException, IOException {
-		try {
-			final Integer userId = this.getLoginUserId();
-			final List<Position> positions = this.inboxService.getPositionForUser(userId, new Date());
-			final List<StateAware> inboxDraftItem = new ArrayList<StateAware>();
-			for (final Position position : positions) {
-				inboxDraftItem.addAll(this.inboxService.getDraftItems(position.getId(), userId, null));
-			}
-			this.inboxDraft = this.loadInboxData(inboxDraftItem);
-			this.writeToAjaxResponse(this.getInboxDraft());
-		} catch (final Exception e) {
-			LOG.error("Error occurred while getting Inbox Draft Items, Cause : " + e.getMessage(), e);
-			this.writeToAjaxResponse(ERROR);
-		}
-		return null;
-	}
+    @Action("/workflow/inbox-pollInbox")
+    public String pollInbox() throws EGOVRuntimeException, IOException {
+        try {
+            final Integer userId = getLoginUserId();
+            final List<Position> positions = inboxService.getPositionForUser(userId, new Date());
+            final List<StateAware> inboxItem = new ArrayList<StateAware>();
+            for (final Position position : positions)
+                inboxItem.addAll(inboxService.getWorkflowItems(position.getId(), userId, null));
+            inboxData = loadInboxData(inboxItem);
+            writeToAjaxResponse(getInboxData());
+        } catch (final Exception e) {
+            LOG.error("Error occurred while getting Inbox Items, Cause : " + e.getMessage(), e);
+            writeToAjaxResponse(ERROR);
+        }
+        return null;
+    }
 
-	@Action("/workflow/inbox-pollInbox")
-	public String pollInbox() throws EGOVRuntimeException, IOException {
-		try {
-			final Integer userId = this.getLoginUserId();
-			final List<Position> positions = this.inboxService.getPositionForUser(userId, new Date());
-			final List<StateAware> inboxItem = new ArrayList<StateAware>();
-			for (final Position position : positions) {
-				inboxItem.addAll(this.inboxService.getWorkflowItems(position.getId(), userId, null));
-			}
-			this.inboxData = this.loadInboxData(inboxItem);
-			this.writeToAjaxResponse(this.getInboxData());
-		} catch (final Exception e) {
-			LOG.error("Error occurred while getting Inbox Items, Cause : " + e.getMessage(), e);
-			this.writeToAjaxResponse(ERROR);
-		}
-		return null;
-	}
+    @Action("/workflow/inbox-populateHistory")
+    public String populateHistory() throws EGOVRuntimeException, IOException {
+        try {
+            final State state = inboxService.getStateById(Long.parseLong(stateId));
+            inboxHistory = loadInboxHistoryData(state);
+            writeToAjaxResponse(getInboxHistory());
+        } catch (final Exception e) {
+            LOG.error("Error occurred while getting Inbox History Items, Cause : " + e.getMessage(), e);
+            writeToAjaxResponse(ERROR);
+        }
+        return null;
+    }
 
-	@Action("/workflow/inbox-populateHistory")
-	public String populateHistory() throws EGOVRuntimeException, IOException {
-		try {
-			final State state = this.inboxService.getStateById(Long.parseLong(this.stateId));
-			this.inboxHistory = this.loadInboxHistoryData(state);
-			this.writeToAjaxResponse(this.getInboxHistory());
-		} catch (final Exception e) {
-			LOG.error("Error occurred while getting Inbox History Items, Cause : " + e.getMessage(), e);
-			this.writeToAjaxResponse(ERROR);
-		}
-		return null;
-	}
+    public String getUserName() {
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        return (String) request.getSession().getAttribute("com.egov.user.LoginUserName");
+    }
 
-	public String getUserName() {
-		final HttpServletRequest request = ServletActionContext.getRequest();
-		return (String) request.getSession().getAttribute("com.egov.user.LoginUserName");
-	}
+    public Map<String, String> getTaskList() {
+        return taskList;
+    }
 
-	public Map<String, String> getTaskList() {
-		return this.taskList;
-	}
+    public Map<Integer, String> getSenderList() {
+        return senderList;
+    }
 
-	public Map<Integer, String> getSenderList() {
-		return this.senderList;
-	}
+    public String getStateId() {
+        return stateId;
+    }
 
-	public String getStateId() {
-		return this.stateId;
-	}
+    private StringBuilder loadInboxData(final List<StateAware> inboxStates) throws EGOVRuntimeException {
+        final StringBuilder inboxItem = new StringBuilder("");
+        if (inboxStates != null && !inboxStates.isEmpty()) {
+            inboxStates.sort(byCreatedDate());
+            inboxItem.append("[");
+            for (final StateAware stateAware : inboxStates) {
+                final State state = stateAware.getCurrentState();
+                final WorkflowTypes workflowTypes = inboxService.getWorkflowType(stateAware.getStateType());
+                final Position position = inboxService.getStateUserPosition(state);
+                final User user = inboxService.getStateUser(state, position);
+                taskList.put(workflowTypes.getType(), workflowTypes.getDisplayName());
+                senderList.put(position.getId(), position.getName());
+                inboxItem.append("{Id:'")
+                        .append(InboxService.GROUP_Y.equals(workflowTypes.getGroupYN()) ? EMPTY : state.getId())
+                        .append("#").append(workflowTypes.getId()).append("',");
+                inboxItem.append("Date:'").append(getFormattedDate(state.getCreatedDate(), "dd/MM/yyyy hh:mm a"))
+                        .append("',");
+                inboxItem.append("Sender:'").append(inboxService.prettyPrintSenderName(position, user)).append("',");
+                inboxItem.append("Task:'").append(workflowTypes.getDisplayName()).append("',");
+                final String nextAction = inboxService.getNextAction(state);
+                inboxItem.append("Status:'").append(state.getValue())
+                        .append(EMPTY.equals(nextAction) ? EMPTY : " - " + nextAction).append("',");
+                inboxItem
+                        .append("Details:'")
+                        .append(stateAware.getStateDetails() == null ? EMPTY : escapeSpecialChars(stateAware
+                                .getStateDetails())).append("',");
+                inboxItem.append("Link:'").append(workflowTypes.getLink().replace(":ID", stateAware.myLinkId()))
+                        .append("'},");
+            }
+            inboxItem.deleteCharAt(inboxItem.length() - 1);
+            inboxItem.append("]");
+        }
+        return inboxItem;
+    }
 
-	private StringBuilder loadInboxData(final List<StateAware> inboxStates) throws EGOVRuntimeException {
-		final StringBuilder inboxItem = new StringBuilder("");
-		if ((inboxStates != null) && (!inboxStates.isEmpty())) {
-			Collections.sort(inboxStates, this.inboxComparator);
-			inboxItem.append("[");
-			for (final StateAware stateAware : inboxStates) {
-				final State state = stateAware.getCurrentState();
-				final WorkflowTypes workflowTypes = this.inboxService.getWorkflowType(stateAware.getStateType());
-				final Position position = this.inboxService.getStateUserPosition(state);
-				final User user = this.inboxService.getStateUser(state, position);
-				this.taskList.put(workflowTypes.getType(), workflowTypes.getDisplayName());
-				this.senderList.put(position.getId(), position.getName());
-				inboxItem.append("{Id:'").append(InboxService.GROUP_Y.equals(workflowTypes.getGroupYN()) ? EMPTY : state.getId()).append("#").append(workflowTypes.getId()).append("',");
-				inboxItem.append("Date:'").append(getFormattedDate(state.getCreatedDate(), "dd/MM/yyyy hh:mm a")).append("',");
-				inboxItem.append("Sender:'").append(this.inboxService.prettyPrintSenderName(position, user)).append("',");
-				inboxItem.append("Task:'").append(workflowTypes.getDisplayName()).append("',");
-				final String nextAction = this.inboxService.getNextAction(state);
-				inboxItem.append("Status:'").append(state.getValue()).append(EMPTY.equals(nextAction) ? EMPTY : " - " + nextAction).append("',");
-				inboxItem.append("Details:'").append(stateAware.getStateDetails() == null ? EMPTY : escapeSpecialChars(stateAware.getStateDetails())).append("',");
-				inboxItem.append("Link:'").append(workflowTypes.getLink().replace(":ID", stateAware.myLinkId())).append("'},");
-			}
-			inboxItem.deleteCharAt(inboxItem.length() - 1);
-			inboxItem.append("]");
-		}
-		return inboxItem;
-	}
+    private Comparator<? super StateAware> byCreatedDate() {
+        return (state_1, state_2) -> {
+            int returnVal = 1;
+            if (state_1 == null)
+                returnVal = state_2 == null ? 0 : -1;
+            else if (state_2 == null)
+                returnVal = 1;
+            else {
+                final Date first_date = state_1.getState().getCreatedDate();
+                final Date second_date = state_2.getState().getCreatedDate();
+                if (first_date.after(second_date))
+                    returnVal = -1;
+                else if (first_date.equals(second_date))
+                    returnVal = 0;
+            }
+            return returnVal;
+        };
+    }
 
-	private StringBuilder loadInboxHistoryData(final State states) throws EGOVRuntimeException {
-		final StringBuilder inboxHistoryItem = new StringBuilder("");
-		if (states != null) {
-			final List<StateHistory> stateHistories = states.getHistory();
-			inboxHistoryItem.append("[");
-			for (final StateHistory stateHistory : stateHistories) {
-				final Position position = stateHistory.getOwnerPosition();
-				final User user = this.inboxService.getStateUser(stateHistory.getState(), position);
-				final WorkflowTypes workflowTypes = this.inboxService.getWorkflowType(stateHistory.getState().getType());
-				inboxHistoryItem.append("{Id:'").append(stateHistory.getState().getId()).append("',");
-				inboxHistoryItem.append("Date:'").append(getFormattedDate(stateHistory.getCreatedDate(), "dd/MM/yyyy hh:mm a")).append("',");
-				inboxHistoryItem.append("Sender:'").append(this.inboxService.prettyPrintSenderName(position, user)).append("',");
-				inboxHistoryItem.append("Task:'").append(workflowTypes.getDisplayName()).append("',");
-				final String nextAction = this.inboxService.getNextAction(stateHistory.getState());
-				inboxHistoryItem.append("Status:'").append(stateHistory.getValue()).append(EMPTY.equals(nextAction) ? EMPTY : "~" + nextAction).append("',");
-				inboxHistoryItem.append("Details:'").append(stateHistory.getComments() == null ? EMPTY : escapeSpecialChars(stateHistory.getComments())).append("',");
-				inboxHistoryItem.append("Signature:'").append("<img src=\"/egi/common/imageRenderer!getUserSignature.action?id=").append(user != null ? user.getId() : "")
-						.append("\" height=\"50\" width=\"150\" alt=\"No User Signature\" onerror=\"this.parentNode.removeChild(this);\"/>").append("',");
-				inboxHistoryItem.append("Link:''},");
-			}
-			inboxHistoryItem.deleteCharAt(inboxHistoryItem.length() - 1);
-			inboxHistoryItem.append("]");
-		}
-		return inboxHistoryItem;
-	}
+    private StringBuilder loadInboxHistoryData(final State states) throws EGOVRuntimeException {
+        final StringBuilder inboxHistoryItem = new StringBuilder("");
+        if (states != null) {
+            final List<StateHistory> stateHistories = states.getHistory();
+            inboxHistoryItem.append("[");
+            for (final StateHistory stateHistory : stateHistories) {
+                final Position position = stateHistory.getOwnerPosition();
+                final User user = inboxService.getStateUser(stateHistory.getState(), position);
+                final WorkflowTypes workflowTypes = inboxService.getWorkflowType(stateHistory.getState().getType());
+                inboxHistoryItem.append("{Id:'").append(stateHistory.getState().getId()).append("',");
+                inboxHistoryItem.append("Date:'")
+                        .append(getFormattedDate(stateHistory.getCreatedDate(), "dd/MM/yyyy hh:mm a")).append("',");
+                inboxHistoryItem.append("Sender:'").append(inboxService.prettyPrintSenderName(position, user))
+                        .append("',");
+                inboxHistoryItem.append("Task:'").append(workflowTypes.getDisplayName()).append("',");
+                final String nextAction = inboxService.getNextAction(stateHistory.getState());
+                inboxHistoryItem.append("Status:'").append(stateHistory.getValue())
+                        .append(EMPTY.equals(nextAction) ? EMPTY : "~" + nextAction).append("',");
+                inboxHistoryItem
+                        .append("Details:'")
+                        .append(stateHistory.getComments() == null ? EMPTY : escapeSpecialChars(stateHistory
+                                .getComments())).append("',");
+                inboxHistoryItem
+                        .append("Signature:'")
+                        .append("<img src=\"/egi/common/imageRenderer!getUserSignature.action?id=")
+                        .append(user != null ? user.getId() : "")
+                        .append("\" height=\"50\" width=\"150\" alt=\"No User Signature\" onerror=\"this.parentNode.removeChild(this);\"/>")
+                        .append("',");
+                inboxHistoryItem.append("Link:''},");
+            }
+            inboxHistoryItem.deleteCharAt(inboxHistoryItem.length() - 1);
+            inboxHistoryItem.append("]");
+        }
+        return inboxHistoryItem;
+    }
 
-	private Integer getLoginUserId() {
-		return Integer.valueOf(EGOVThreadLocals.getUserId());
-	}
+    private Integer getLoginUserId() {
+        return Integer.valueOf(EGOVThreadLocals.getUserId());
+    }
 
-	private void writeToAjaxResponse(final String response) throws EGOVRuntimeException, IOException {
-		final HttpServletResponse httpResponse = ServletActionContext.getResponse();
-		httpResponse.getWriter().write(response);
-	}
+    private void writeToAjaxResponse(final String response) throws EGOVRuntimeException, IOException {
+        final HttpServletResponse httpResponse = ServletActionContext.getResponse();
+        httpResponse.getWriter().write(response);
+    }
 }

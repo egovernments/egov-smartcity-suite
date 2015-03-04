@@ -215,8 +215,6 @@
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 
-	<bean id="inboxComparator" class="org.egov.infstr.workflow.inbox.InboxComparator" />
-
 	<bean id="workflowAdmin" class="org.egov.infstr.workflow.admin.WorkflowAdminService">
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="userService" ref="userService" />
@@ -281,5 +279,5 @@
 	<bean id="eisService" class="org.egov.pims.service.EisUtilService" scope="prototype" lazy-init="true">
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>
-		
+	
 </beans>

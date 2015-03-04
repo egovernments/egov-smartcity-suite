@@ -62,7 +62,7 @@ public class AbstractWorkflowTypeService<T extends StateAware> implements Workfl
         //FIXME this wont work with current design need to change
         this.stateAwarePersistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         final StringBuilder query = new StringBuilder("from ");
-        query.append(this.stateAwareType.getName()).append(" WF where WF.state.type=:wfType and WF.state.owner =:owner ")
+        query.append(this.stateAwareType.getName()).append(" WF where WF.state.type=:wfType and WF.state.ownerPosition =:owner ")
                 .append(sender == null || sender == 0 ? "" : "and WF.state.senderName=:sender ")
                 .append(" and WF.state.createdDate ");
         query.append(fromDate == null && toDate == null ? "IS NOT NULL "
