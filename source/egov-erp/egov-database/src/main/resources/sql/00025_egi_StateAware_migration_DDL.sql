@@ -1,4 +1,4 @@
-alter table voucherheader add column createddate datetime;
+alter table voucherheader add column createddate timestamp without time zone;
 create sequence SEQ_EGEIS_POST_CREATION;
 
 drop sequence EG_WF_TYPES_SEQ;
