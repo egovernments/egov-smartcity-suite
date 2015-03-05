@@ -1,4 +1,4 @@
-package org.egov.infstr.workflow.inbox;
+package org.egov.infra.workflow.inbox;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 
@@ -41,7 +41,7 @@ public class InboxService<T extends StateAware> {
     private @Autowired ApplicationContext applicationContext;
     private @Autowired PersistenceService<State, Long> statePersistenceService;
     private @Autowired PersistenceService<WorkflowTypes, Long> workflowTypePersistenceService;
-    @Qualifier("persistenceService")
+    @Qualifier("entityQueryService")
     private @Autowired PersistenceService entityQueryService;
     @Qualifier("eisService")
     private @Autowired EISServeable eisService;

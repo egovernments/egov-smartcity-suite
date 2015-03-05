@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.DesignationMaster;
 

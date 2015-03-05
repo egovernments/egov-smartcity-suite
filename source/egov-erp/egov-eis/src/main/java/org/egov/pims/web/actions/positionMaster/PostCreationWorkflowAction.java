@@ -6,7 +6,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsService;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.workflow.SimpleWorkflowService;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.lib.rjbac.dept.DepartmentImpl;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.commons.DesignationMaster;

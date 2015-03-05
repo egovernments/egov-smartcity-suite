@@ -16,7 +16,7 @@
 		  <property name="type" value="org.egov.pims.model.EmpPosition"/>
 	  </bean>
 	
-	<bean id="empPositionSimpleWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService">
+	<bean id="empPositionSimpleWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService">
 	  <constructor-arg index="0" ref="empPositionPersistenceService"/>	
     </bean>
 	<bean id="employeeService" class="org.egov.pims.service.EmployeeServiceImpl">

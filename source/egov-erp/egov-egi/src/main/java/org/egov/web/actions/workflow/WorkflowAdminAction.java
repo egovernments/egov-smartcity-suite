@@ -6,9 +6,9 @@
 package org.egov.web.actions.workflow;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.egov.infra.workflow.inbox.InboxService.SLASH_DELIMIT;
 import static org.egov.infstr.utils.DateUtils.getFormattedDate;
 import static org.egov.infstr.utils.StringUtils.escapeSpecialChars;
-import static org.egov.infstr.workflow.inbox.InboxService.SLASH_DELIMIT;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -28,10 +28,10 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.WorkflowTypes;
+import org.egov.infra.workflow.inbox.InboxService;
 import org.egov.infstr.annotation.Search;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.workflow.admin.WorkflowAdminService;
-import org.egov.infstr.workflow.inbox.InboxService;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.dept.dao.DepartmentDAO;
 import org.egov.lib.rjbac.user.User;

@@ -114,11 +114,6 @@
 
 	<bean id="installmentDao" class="org.egov.commons.dao.InstallmentHibDao" scope="prototype" />
 
-	<bean id="workflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
-		<constructor-arg index="0" ref="persistenceService" />
-		<property name="scriptExecutionService" ref="scriptExecutionService"/>
-	</bean>
-
 	<bean id="errorMailService" class="org.egov.infstr.mail.MailService">
 		<property name="mailMessage" ref="mailMessage" />
 		<property name="mailSender" ref="mailSender" />
@@ -267,17 +262,50 @@
 		<property name="sessionFactory" ref="sessionFactory"/>
 	</bean>
 	
+	<bean id="eisService" class="org.egov.pims.service.EisUtilService" scope="prototype" lazy-init="true">
+		<property name="persistenceService" ref="persistenceService" />
+	</bean>
+	
+	<!-- Use this only for generic hibernate query -->
+	<bean id="entityQueryService" class="org.egov.infstr.services.PersistenceService">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
 	<!-- NEW WORKFLOW ADDITIONS -->
+	
 	<bean id="statePersistenceService" parent="persistenceService">
 		<property name="type" value="org.egov.infra.workflow.entity.State" />
+	</bean>
+	
+	<bean id="stateAwarePersistenceService" parent="persistenceService">
+		<property name="type" value="org.egov.infra.workflow.entity.StateAware" />
+	</bean>
+	
+	<bean id="scriptPersistenceService" parent="persistenceService">
+		<property name="type" value="org.egov.infstr.models.Script" />
+	</bean>
+	
+	<bean id="actionPersistenceService" parent="persistenceService">
+		<property name="type" value="org.egov.infstr.workflow.Action" />
 	</bean>
 	
 	<bean id="workflowTypePersistenceService" parent="persistenceService">
 		<property name="type" value="org.egov.infra.workflow.entity.WorkflowTypes" />
 	</bean>
 	
-	<bean id="eisService" class="org.egov.pims.service.EisUtilService" scope="prototype" lazy-init="true">
-		<property name="persistenceService" ref="persistenceService" />
+	<!-- 
+		This is a generic bean so do not use this to do transition of your own StateAware objects
+		For your own StateAware object transition declare a separate bean definition
+		like 
+		<bean id="myStateAwareWorkflowService" parent="workflowService">
+			<constructor-arg index="0" ref="myStateAwarePersistenceService"/>
+		</bean>
+	-->
+	<bean id="workflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService" scope="prototype">
+		<constructor-arg index="0" ref="stateAwarePersistenceService" />
+		<property name="scriptExecutionService" ref="scriptExecutionService"/>
+		<property name="actionPersistenceService" ref="actionPersistenceService"/>
+		<property name="scriptPersistenceService" ref="scriptPersistenceService"/>
 	</bean>
 	
 </beans>

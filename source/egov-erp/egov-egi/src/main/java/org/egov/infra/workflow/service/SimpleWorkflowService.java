@@ -1,9 +1,4 @@
-/*
- * @(#)SimpleWorkflowService.java 3.0, 17 Jun, 2013 4:33:14 PM
- * Copyright 2013 eGovernments Foundation. All rights reserved.
- * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
-package org.egov.infstr.workflow;
+package org.egov.infra.workflow.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -15,15 +10,24 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.models.Script;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
+import org.egov.infstr.workflow.Action;
+import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
 /**
- * SimpleWorkflowService implements WorkflowService Used for Workflow state
- * transitions, supports script based & manual Workflow state transitions
- */
+ * 
+ *  This is a generic bean so do not use this to do transition of your own StateAware objects<br/>
+ *  For your own StateAware object transition declare a separate bean definition
+ *   like<br/>
+ *   <pre> 
+ *       &lt;bean id="myStateAwareWorkflowService" parent="workflowService"&gt;
+ *               &lt;constructor-arg index="0" ref="myStateAwarePersistenceService"/&gt;
+ *       &lt;/bean&gt;
+ *   </pre>
+ **/
 @SuppressWarnings("unchecked")
 public class SimpleWorkflowService<T extends StateAware> implements WorkflowService<T> {
 

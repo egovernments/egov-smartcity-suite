@@ -1,4 +1,4 @@
-package org.egov.infstr.workflow.inbox;
+package org.egov.infra.workflow.inbox;
 
 import static org.egov.infstr.utils.DateUtils.constructDateRange;
 
@@ -14,6 +14,26 @@ import org.egov.infstr.services.PersistenceService;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
 
+/**
+ * Every module which is having StateAware should initialize this with their own StateAware persistence service<br/>
+ * eg:
+ * <pre>
+ *      &lt;bean id="myStateAwarePersistenceService" parent="persistenceService"&gt;
+                &lt;property name="type" value="org.egov.web.actions.common.MyStateAware" /&gt;
+        &lt;/bean>
+        
+        &lt;bean id="MyStateAwareWorkflowTypeService" class="org.egov.infstr.workflow.inbox.AbstractWorkflowTypeService"&gt;
+                &lt;constructor-arg index="0" ref="myStateAwarePersistenceService"/&gt;
+        &lt;/bean&gt;
+ * </pre>
+ * <br/>
+ * id or name attribute value of the workflowTypeService bean definition should follow a strict naming convention as follows<br/>
+ * <code>
+ * <YourStateAwareClassName>WorkflowTypeService
+ * </code>
+ * This is how, {@link InboxService} will detect the appropriate workflowtype service and render the inbox items.
+ **/
+@SuppressWarnings("all")
 public class AbstractWorkflowTypeService<T extends StateAware> implements WorkflowTypeService<T> {
 
     private Class<T> stateAwareType;

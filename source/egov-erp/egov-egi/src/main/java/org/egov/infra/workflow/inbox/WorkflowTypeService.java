@@ -3,7 +3,7 @@
  * Copyright 2013 eGovernments Foundation. All rights reserved. 
  * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package org.egov.infstr.workflow.inbox;
+package org.egov.infra.workflow.inbox;
 
 import java.util.Date;
 import java.util.List;

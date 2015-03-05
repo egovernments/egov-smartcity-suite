@@ -337,7 +337,7 @@
 		<property name="leaveWfService" ref="leaveWfService" />
 </bean>
 
-<bean id="leaveWfService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
+<bean id="leaveWfService" class="org.egov.infra.workflow.service.SimpleWorkflowService" scope="prototype">
     	 <constructor-arg ref="leaveService"/>
          <constructor-arg value="org.egov.pims.empLeave.model.LeaveApplication"/>
     </bean>
@@ -391,7 +391,7 @@
 		<property name="compOffWfService" ref="compOffWfService" />
 </bean>
 
-<bean id="compOffWfService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
+<bean id="compOffWfService" class="org.egov.infra.workflow.service.SimpleWorkflowService" scope="prototype">
     	 <constructor-arg ref="compOffService"/>
          <constructor-arg value="org.egov.pims.empLeave.model.CompOff"/>
     </bean>
@@ -473,7 +473,7 @@
 		<property name="eisService"><ref bean="eisService"/></property>
 	</bean>
 
-	<bean id="disciplinaryPunishmentWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
+	<bean id="disciplinaryPunishmentWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService" scope="prototype">
     	<constructor-arg ref="disciplinaryPunishmentService"/>
         <constructor-arg value="org.egov.pims.model.DisciplinaryPunishment"/>
     </bean>

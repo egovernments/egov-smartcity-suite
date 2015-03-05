@@ -3,13 +3,15 @@
  * Copyright 2013 eGovernments Foundation. All rights reserved. 
  * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package org.egov.infstr.workflow;
+package org.egov.infra.workflow.service;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infstr.workflow.Action;
+import org.egov.infstr.workflow.WorkFlowMatrix;
 
 /**
  * The Interface WorkflowService.
