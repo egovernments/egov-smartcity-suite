@@ -33,7 +33,11 @@ public class ComplaintService {
             complaint.setCRN(generateComplaintID());
         complaint.getComplainant().setUserDetail((UserImpl) securityUtils.getCurrentUser());
         complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
-        // TODO Workflow will decide who is the assignee based on location data
+        //Sample workflow not for production
+        complaint.transition().start().withSenderName(complaint.getComplainant().getUserDetail().getFirstName())
+        .withComments("complaint registered with crn : "+complaint.getCRN()).withStateValue("Registered");
+        // TODO Workflow will decide who is the assignee based on location data 
+        // add .withOwner(position) to the workflow.
         complaint.setAssignee(null);
         return complaintRepository.save(complaint);
     }

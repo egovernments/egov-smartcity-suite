@@ -1,14 +1,7 @@
 package org.egov.pgr.entity;
 
-import org.apache.commons.lang3.StringUtils;
-import org.egov.infra.filestore.FileStoreMapper;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.lib.admbndry.BoundaryImpl;
-import org.egov.lib.rjbac.user.UserImpl;
-import org.egov.pims.commons.Position;
-import org.egov.search.domain.Searchable;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.util.Collections;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -24,12 +17,18 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import java.util.Collections;
-import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.filestore.FileStoreMapper;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.lib.admbndry.BoundaryImpl;
+import org.egov.pims.commons.Position;
+import org.egov.search.domain.Searchable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "pgr_complaint")
-public class Complaint extends AbstractAuditable<UserImpl, Long> {
+public class Complaint extends StateAware {
 
     private static final long serialVersionUID = 4020616083055647372L;
 
@@ -208,6 +207,12 @@ public class Complaint extends AbstractAuditable<UserImpl, Long> {
 
     public void setLng(final double lng) {
         this.lng = lng;
+    }
+
+    @Override
+    public String getStateDetails() {
+        // TODO Implement something
+        return String.format("CRN : %s", this.getCRN());
     }
 
 }
