@@ -25,10 +25,10 @@ import java.util.Map;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infstr.annotation.Search;
-import org.egov.infstr.models.State;
-import org.egov.infstr.models.StateAware;
-import org.egov.infstr.models.WorkflowTypes;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.workflow.admin.WorkflowAdminService;
 import org.egov.infstr.workflow.inbox.InboxService;
@@ -212,7 +212,7 @@ public class WorkflowAdminAction extends ActionSupport {
 				final User userSender = this.inboxService.getStateUser(state, sender);
 				final User userOwner = this.inboxService.getStateUser(state, owner);
 				wfItem.append("{Id:'").append(stateAware.myLinkId()).append("#DILIM#").append(workflowTypes.getId()).append("',");
-				wfItem.append("Date:'").append(getFormattedDate(state.getCreatedDate(), "dd/MM/yyyy hh:mm a")).append("',");
+				wfItem.append("Date:'").append(getFormattedDate(state.getCreatedDate().toDate(), "dd/MM/yyyy hh:mm a")).append("',");
 				wfItem.append("Sender:'").append(this.inboxService.prettyPrintSenderName(sender, userSender)).append("',");
 				wfItem.append("Owner:'").append(this.inboxService.prettyPrintSenderName(owner, userOwner)).append("',");
 				wfItem.append("Task:'").append(workflowTypes.getDisplayName()).append("',");
@@ -252,7 +252,7 @@ public class WorkflowAdminAction extends ActionSupport {
 	 * @return the workflow state values
 	 */
 	private List<String> getWFItemSearchFields(final String wfType) throws IntrospectionException, ClassNotFoundException {
-		final String wfItemClassName = this.inboxService.getWorkflowType(wfType).getFullyQualifiedName();
+		final String wfItemClassName = this.inboxService.getWorkflowType(wfType).getTypeFQN();
 		final BeanInfo beanInfo = Introspector.getBeanInfo(Thread.currentThread().getContextClassLoader().loadClass(wfItemClassName));
 		final PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
 		final List<String> searchFields = new ArrayList<String>();

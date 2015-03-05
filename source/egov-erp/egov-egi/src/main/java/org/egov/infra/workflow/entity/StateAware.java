@@ -1,22 +1,29 @@
-package org.egov.infstr.models;
+package org.egov.infra.workflow.entity;
 
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.lib.rjbac.user.User;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.workflow.entity.State.StateStatus;
+import org.egov.lib.rjbac.user.UserImpl;
 import org.egov.pims.commons.Position;
 
 @MappedSuperclass
-public abstract class StateAware extends BaseModel {
+public abstract class StateAware extends AbstractAuditable<UserImpl, Long> {
     private static final long serialVersionUID = 5776408218810221246L;
-
+    
+    @ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
+    @JoinColumn(name="STATE_ID")
     private State state;
-    private Integer approverPositionId;
-
+    
     /**
      * Need to overridden by the implementing class to give details about the
      * State <I>Used by Inbox to fetch the State Detail at runtime</I>
@@ -39,14 +46,6 @@ public abstract class StateAware extends BaseModel {
 
     protected void setState(final State state) {
         this.state = state;
-    }
-
-    public Integer getApproverPositionId() {
-        return approverPositionId;
-    }
-
-    public void setApproverPositionId(final Integer approverPositionId) {
-        this.approverPositionId = approverPositionId;
     }
 
     public final State getCurrentState() {
@@ -129,7 +128,7 @@ public abstract class StateAware extends BaseModel {
         return this;
     }
 
-    public final StateAware withOwner(final User owner) {
+    public final StateAware withOwner(final UserImpl owner) {
         state.setOwnerUser(owner);
         return this;
     }

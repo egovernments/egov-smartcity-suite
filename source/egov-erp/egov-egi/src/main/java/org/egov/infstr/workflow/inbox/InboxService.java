@@ -11,9 +11,9 @@ import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
 
-import org.egov.infstr.models.State;
-import org.egov.infstr.models.StateAware;
-import org.egov.infstr.models.WorkflowTypes;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.Action;
@@ -144,13 +144,13 @@ public class InboxService<T extends StateAware> {
     }
 
     public Position getStateUserPosition(final State state) {
-        return state.getHistory() == null ? this.getPrimaryPositionForUser(state.getCreatedBy().getId(),
-                state.getCreatedDate()) : state.getHistory().get(state.getHistory().size() - 1).getOwnerPosition();
+        return state.getHistory().isEmpty() ? this.getPrimaryPositionForUser(state.getCreatedBy().getId(),
+                state.getCreatedDate().toDate()) : state.getHistory().get(state.getHistory().size() - 1).getOwnerPosition();
 
     }
 
     public User getStateUser(final State state, final Position position) {
-        return this.getUserForPosition(position.getId(), state.getCreatedDate());
+        return this.getUserForPosition(position.getId(), state.getCreatedDate().toDate());
     }
 
     public String prettyPrintSenderName(final Position position, final User user) {

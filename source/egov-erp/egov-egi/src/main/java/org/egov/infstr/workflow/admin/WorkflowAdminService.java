@@ -9,10 +9,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import org.egov.infstr.models.State;
-import org.egov.infstr.models.StateAware;
-import org.egov.infstr.models.StateStatus;
-import org.egov.infstr.models.WorkflowTypes;
+import org.egov.infra.workflow.entity.State.StateStatus;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkflowService;

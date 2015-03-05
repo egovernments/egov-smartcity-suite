@@ -5,7 +5,7 @@
  */
 package org.egov.infstr.workflow;
 
-import org.egov.infstr.models.WorkflowTypes;
+import org.egov.infra.workflow.entity.WorkflowTypes;
 
 public class WorkFlowAdditionalRule {
 

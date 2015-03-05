@@ -269,11 +269,11 @@
 	
 	<!-- NEW WORKFLOW ADDITIONS -->
 	<bean id="statePersistenceService" parent="persistenceService">
-		<property name="type" value="org.egov.infstr.models.State" />
+		<property name="type" value="org.egov.infra.workflow.entity.State" />
 	</bean>
 	
 	<bean id="workflowTypePersistenceService" parent="persistenceService">
-		<property name="type" value="org.egov.infstr.models.WorkflowTypes" />
+		<property name="type" value="org.egov.infra.workflow.entity.WorkflowTypes" />
 	</bean>
 	
 	<bean id="eisService" class="org.egov.pims.service.EisUtilService" scope="prototype" lazy-init="true">

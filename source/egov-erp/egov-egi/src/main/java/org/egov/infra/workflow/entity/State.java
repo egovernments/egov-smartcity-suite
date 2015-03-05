@@ -1,14 +1,35 @@
-package org.egov.infstr.models;
+package org.egov.infra.workflow.entity;
 
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.lib.rjbac.user.User;
-import org.egov.pims.commons.Position;
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-public class State extends BaseModel implements Cloneable {
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.lib.rjbac.user.UserImpl;
+import org.egov.pims.commons.Position;
+import org.hibernate.validator.constraints.Length;
+
+@Entity
+@Table(name="EG_WF_STATES")
+@NamedQueries({
+    @NamedQuery(name="WORKFLOWTYPES",query="select distinct s.type from State s where s.ownerPosition.id=?  and s.status is not 2"),
+    @NamedQuery(name="WORKFLOWTYPES_BY_ID",query="select s from State s where s.id=?")
+})
+public class State extends AbstractAuditable<UserImpl, Long> {
 
     private static final long serialVersionUID = -9159043292636575746L;
 
@@ -17,17 +38,38 @@ public class State extends BaseModel implements Cloneable {
     public static final String STATE_REOPENED = "Reopened";
     public static final String WORKFLOWTYPES_QRY = "WORKFLOWTYPES";
     public static final String WORKFLOWTYPES_BY_ID = "WORKFLOWTYPES_BY_ID";
-    private @NotEmpty String type;
-    private @NotEmpty String value;
+    public static enum StateStatus {
+        STARTED,INPROGRESS,ENDED
+    }
+    
+    @NotNull
+    private String type;
+    
+    @NotNull
+    @Length(min=1)
+    private String value;
+    
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="OWNER_POS")
     private Position ownerPosition;
-    private User ownerUser;
+    
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="OWNER_USER")
+    private UserImpl ownerUser;
+    
+    @OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="state")
+    @OrderBy("id")
     private List<StateHistory> history = Collections.emptyList();
+    
     private String senderName;
     private String nextAction;
     private String comments;
     private String extraInfo;
     private Date dateInfo;
     private Date extraDateInfo;
+    
+    @Enumerated(EnumType.ORDINAL)
+    @NotNull
     private StateStatus status;
     
     protected State() {
@@ -57,11 +99,11 @@ public class State extends BaseModel implements Cloneable {
         this.ownerPosition = ownerPosition;
     }
 
-    public User getOwnerUser() {
+    public UserImpl getOwnerUser() {
         return ownerUser;
     }
 
-    protected void setOwnerUser(final User ownerUser) {
+    protected void setOwnerUser(final UserImpl ownerUser) {
         this.ownerUser = ownerUser;
     }
 

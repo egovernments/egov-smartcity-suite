@@ -9,8 +9,8 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.dispatcher.StreamResult;
 import org.egov.commons.service.CommonsService;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.infstr.models.StateAware;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.StringUtils;
@@ -91,7 +91,11 @@ public abstract class EisCommonWorkflowAction extends GenericWorkFlowAction{
 		}
 		if(null!=approverPositionId)
 		{
-			getModel().setApproverPositionId(approverPositionId);
+		    //FIXME new JPA Entity mapping does not support optional field 
+		    //@Basic(optional=true) is also not solving the issue
+		    //So create a class which extend StateAware with  approverPositionId and extend that 
+		    //class those needs approverPositionId
+		    //getModel().setApproverPositionId(approverPositionId);
 		}	
 		if (null == getModel().getState()) {
 			//workflowService().start(getModel(), pos,approverComments);
@@ -135,7 +139,7 @@ public abstract class EisCommonWorkflowAction extends GenericWorkFlowAction{
 	
 	private Boolean validateInboxItemForUser(StateAware wfItem, Integer userId) {
 		Boolean validateObjectStatus = Boolean.FALSE;
-		if (null != userId && null!= wfItem.getCurrentState() && !org.egov.infstr.models.State.DEFAULT_STATE_VALUE_CLOSED.equalsIgnoreCase(wfItem.getCurrentState().getValue())) {
+		if (null != userId && null!= wfItem.getCurrentState() && !org.egov.infra.workflow.entity.State.DEFAULT_STATE_VALUE_CLOSED.equalsIgnoreCase(wfItem.getCurrentState().getValue())) {
 			List<Position> positionList = eisService.getPositionsForUser(userId,DateUtils.today());
 			if(positionList.contains(wfItem.getCurrentState().getOwnerPosition()))
 				validateObjectStatus = Boolean.TRUE;

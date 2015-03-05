@@ -17,7 +17,7 @@ import java.util.StringTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.egov.commons.EgwStatus;
-import org.egov.infstr.models.WorkflowTypes;
+import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.pims.commons.DesignationMaster;

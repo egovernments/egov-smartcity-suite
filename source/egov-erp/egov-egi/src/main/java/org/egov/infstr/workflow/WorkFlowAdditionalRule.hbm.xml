@@ -10,7 +10,7 @@
 			</generator>
 		</id>
 
-		<many-to-one name="objecttypeid" class="org.egov.infstr.models.WorkflowTypes" fetch="select">
+		<many-to-one name="objecttypeid" class="org.egov.infra.workflow.entity.WorkflowTypes" fetch="select">
 			<column name="OBJECTTYPEID" precision="22" scale="0" />
 		</many-to-one>
 		<property name="additionalRule" type="java.lang.String">

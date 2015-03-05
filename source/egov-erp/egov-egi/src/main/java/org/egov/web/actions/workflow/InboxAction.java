@@ -19,11 +19,11 @@ import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.infstr.models.State;
-import org.egov.infstr.models.StateAware;
-import org.egov.infstr.models.StateHistory;
-import org.egov.infstr.models.WorkflowTypes;
 import org.egov.infstr.workflow.inbox.InboxService;
 import org.egov.lib.rjbac.user.User;
 import org.egov.pims.commons.Position;
@@ -38,13 +38,11 @@ public class InboxAction extends BaseFormAction {
     private static final Logger LOG = LoggerFactory.getLogger(InboxAction.class);
     private transient final Map<Integer, String> senderList = new HashMap<Integer, String>();
     private transient final Map<String, String> taskList = new HashMap<String, String>();
-    private transient InboxService<StateAware> inboxService; // Delegate to
-                                                             // inbox service
-    private transient StringBuilder inboxData; // To hold inbox data
-    private transient StringBuilder inboxDraft; // To hold inbox draft data
-    private transient StringBuilder inboxHistory; // To hold history data
-    private transient String stateId; // State Id parameter to fetch the State
-                                      // history
+    private transient InboxService<StateAware> inboxService;
+    private transient StringBuilder inboxData;
+    private transient StringBuilder inboxDraft;
+    private transient StringBuilder inboxHistory;
+    private transient String stateId;
     private transient Integer sender;
     private transient String task;
     private transient Date fromDate;
@@ -191,7 +189,7 @@ public class InboxAction extends BaseFormAction {
                 inboxItem.append("{Id:'")
                         .append(InboxService.GROUP_Y.equals(workflowTypes.getGroupYN()) ? EMPTY : state.getId())
                         .append("#").append(workflowTypes.getId()).append("',");
-                inboxItem.append("Date:'").append(getFormattedDate(state.getCreatedDate(), "dd/MM/yyyy hh:mm a"))
+                inboxItem.append("Date:'").append(getFormattedDate(state.getCreatedDate().toDate(), "dd/MM/yyyy hh:mm a"))
                         .append("',");
                 inboxItem.append("Sender:'").append(inboxService.prettyPrintSenderName(position, user)).append("',");
                 inboxItem.append("Task:'").append(workflowTypes.getDisplayName()).append("',");
@@ -212,15 +210,15 @@ public class InboxAction extends BaseFormAction {
     }
 
     private Comparator<? super StateAware> byCreatedDate() {
-        return (state_1, state_2) -> {
+        return (stateAware_1, stateAware_2) -> {
             int returnVal = 1;
-            if (state_1 == null)
-                returnVal = state_2 == null ? 0 : -1;
-            else if (state_2 == null)
+            if (stateAware_1 == null)
+                returnVal = stateAware_2 == null ? 0 : -1;
+            else if (stateAware_2 == null)
                 returnVal = 1;
             else {
-                final Date first_date = state_1.getState().getCreatedDate();
-                final Date second_date = state_2.getState().getCreatedDate();
+                final Date first_date = stateAware_1.getState().getCreatedDate().toDate();
+                final Date second_date = stateAware_2.getState().getCreatedDate().toDate();
                 if (first_date.after(second_date))
                     returnVal = -1;
                 else if (first_date.equals(second_date))

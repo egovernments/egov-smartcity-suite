@@ -5,6 +5,7 @@
  */
 package org.egov.infstr.security.spring.acl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,14 +13,12 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.infstr.models.BaseModel;
-import org.egov.infstr.models.State;
-import org.egov.infstr.models.StateAware;
-import org.egov.infstr.models.StateHistory;
 import org.egov.infstr.security.spring.acl.models.AclObjectIdentity;
 import org.egov.infstr.security.spring.acl.models.AclSid;
 import org.egov.infstr.security.spring.acl.models.AclSidType;
@@ -32,6 +31,8 @@ import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.acls.model.Permission;
@@ -39,19 +40,20 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+//FIXME This may not work
 public abstract class GenericAclVoter implements AccessDecisionVoter {
 	private static final Logger logger = LoggerFactory.getLogger(GenericAclVoter.class);
 	protected PersistenceService persistenceService;
 	protected String processConfigAttribute;
 	protected Permission[] requirePermission;
-	protected BaseModel domainObject;
+	protected AbstractAuditable domainObject;
 	protected AclObjectIdentity aclObjIdentity;
 	protected boolean permissionGranted = false;
 	private EISServeable eisService;
 	private Collection<? extends GrantedAuthority> authorities;
 	private RbacService rbacManager;
 
-	abstract protected BaseModel getDomainObjectInstance(Object object);
+	abstract protected AbstractAuditable getDomainObjectInstance(Object object);
 
 	protected Boolean isPermitted() {
 		Boolean isGranted = false;
@@ -246,7 +248,7 @@ public abstract class GenericAclVoter implements AccessDecisionVoter {
 
 		// Need to make an access decision on this invocation
 				// Attempt to locate the domain object instance to process
-				final BaseModel domainObject = getDomainObjectInstance(object);
+				final AbstractAuditable domainObject = getDomainObjectInstance(object);
 
 				// set sidtype and sid to member variable
 				setAclIdentity();

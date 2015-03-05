@@ -19,7 +19,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.egov.infstr.models.WorkflowTypes;
+import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.infstr.workflow.WorkFlowMatrixDetails;
 import org.egov.infstr.workflow.WorkFlowMatrixService;

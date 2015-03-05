@@ -10,36 +10,48 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.egov.infstr.annotation.Search;
-import org.egov.infstr.models.StateAware;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infstr.annotation.Search;
+@Entity
+@Table(name="VOUCHERHEADER")
 public class CVoucherHeader extends StateAware {
 	private static final long serialVersionUID = 1L;
 
-	private Long id;
 	private String cgn;
 	private Date cgDate;
 	private String name;
 	private String type;
 	private String description;
+	@NotNull
 	private Date effectiveDate;
 	private String voucherNumber;
 	private Date voucherDate;
 	private Integer departmentId;
+	@ManyToOne
 	private Fund fundId;
 	private Integer fiscalPeriodId;
 	private Integer status;
 	private Long originalvcId;
+	@ManyToOne
 	private Fundsource fundsourceId;
 	private Integer isConfirmed;
 	private Integer functionId;
 	private String refcgNo;
 	private String cgvn;
-	protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 	private Integer moduleId;
+	@OneToMany(cascade=CascadeType.ALL,orphanRemoval = true)
 	private Set<VoucherDetail> voucherDetail = new HashSet<VoucherDetail>(0);
+	@OneToOne(cascade=CascadeType.ALL)
+	@JoinColumn(referencedColumnName="voucherheaderid")
 	private Vouchermis vouchermis;
 
 	/**
@@ -54,20 +66,6 @@ public class CVoucherHeader extends StateAware {
 	 */
 	public void setCgn(String cgn) {
 		this.cgn = cgn;
-	}
-
-	/**
-	 * @return Returns the id.
-	 */
-	public Long getId() {
-		return id;
-	}
-
-	/**
-	 * @param id The id to set.
-	 */
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	/**
@@ -357,7 +355,6 @@ public class CVoucherHeader extends StateAware {
 
 	public void reset() {
 
-		this.id = null;
 		this.cgn = null;
 		this.cgDate = null;
 		this.name = null;

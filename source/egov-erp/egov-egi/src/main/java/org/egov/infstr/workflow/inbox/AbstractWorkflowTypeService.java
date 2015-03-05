@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.models.StateAware;
-import org.egov.infstr.models.StateStatus;
+import org.egov.infra.workflow.entity.State.StateStatus;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;

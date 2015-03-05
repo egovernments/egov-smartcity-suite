@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.infstr.models.StateAware;
+import org.egov.infra.workflow.entity.StateAware;
 
 /**
  * The Interface WorkflowService.

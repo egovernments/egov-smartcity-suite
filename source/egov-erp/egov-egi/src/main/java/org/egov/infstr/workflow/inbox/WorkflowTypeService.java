@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.egov.infstr.models.StateAware;
+import org.egov.infra.workflow.entity.StateAware;
 
 public interface WorkflowTypeService<T extends StateAware> {
 	

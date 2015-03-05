@@ -1,22 +1,64 @@
-package org.egov.infstr.models;
+package org.egov.infra.workflow.entity;
 
 import java.io.Serializable;
 import java.util.Date;
 
-import org.egov.lib.rjbac.user.User;
-import org.egov.pims.commons.Position;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
+import org.egov.lib.rjbac.user.UserImpl;
+import org.egov.pims.commons.Position;
+import org.hibernate.annotations.Immutable;
+
+@Entity
+@Immutable
+@Table(name="eg_wf_state_history")
 public class StateHistory implements Serializable {
     private static final long serialVersionUID = -2286621991905578107L;
+    @Id
+    @SequenceGenerator(name="wf_state_his_seq", sequenceName="eg_wf_state_history_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="wf_state_his_seq")
     private Long id;
-    private User createdBy;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "createdBy")
+    private UserImpl createdBy;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
-    private User modifiedBy;
-    private Date modifiedDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lastModifiedBy")
+    private UserImpl lastModifiedBy;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastModifiedDate;
+    
+    @ManyToOne(fetch=FetchType.LAZY,optional=false)
+    @JoinColumn(name="state_id")
     private State state;
+    
+    @NotNull
     private String value;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="OWNER_POS")
     private Position ownerPosition;
-    private User ownerUser;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="OWNER_USER")
+    private UserImpl ownerUser;
+    
     private String senderName;
     private String nextAction;
     private String comments;
@@ -30,9 +72,9 @@ public class StateHistory implements Serializable {
     public StateHistory(State state) {
         this.state = state;
         this.createdBy = state.getCreatedBy();
-        this.createdDate = state.getCreatedDate();
-        this.modifiedBy = state.getModifiedBy();
-        this.modifiedDate = state.getModifiedDate();
+        this.createdDate = state.getCreatedDate().toDate();
+        this.lastModifiedBy = state.getLastModifiedBy();
+        this.lastModifiedDate = state.getLastModifiedDate().toDate();
         this.value = state.getValue();
         this.ownerPosition = state.getOwnerPosition();
         this.ownerUser = state.getOwnerUser();
@@ -68,11 +110,11 @@ public class StateHistory implements Serializable {
         this.ownerPosition = ownerPosition;
     }
 
-    public User getOwnerUser() {
+    public UserImpl getOwnerUser() {
         return ownerUser;
     }
 
-    public void setOwnerUser(User ownerUser) {
+    public void setOwnerUser(UserImpl ownerUser) {
         this.ownerUser = ownerUser;
     }
 
@@ -133,11 +175,11 @@ public class StateHistory implements Serializable {
         this.id = id;
     }
 
-    public User getCreatedBy() {
+    public UserImpl getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(User createdBy) {
+    public void setCreatedBy(UserImpl createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -149,20 +191,20 @@ public class StateHistory implements Serializable {
         this.createdDate = createdDate;
     }
 
-    public User getModifiedBy() {
-        return modifiedBy;
+    public UserImpl getLastModifiedBy() {
+        return lastModifiedBy;
     }
 
-    public void setModifiedBy(User modifiedBy) {
-        this.modifiedBy = modifiedBy;
+    public void setLastModifiedBy(UserImpl lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
     }
 
-    public Date getModifiedDate() {
-        return modifiedDate;
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
     }
 
-    public void setModifiedDate(Date modifiedDate) {
-        this.modifiedDate = modifiedDate;
+    public void setLastModifiedDate(Date lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 
 }

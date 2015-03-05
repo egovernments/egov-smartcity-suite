@@ -5,7 +5,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsService;
-import org.egov.infstr.models.StateAware;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.workflow.SimpleWorkflowService;
 import org.egov.lib.rjbac.dept.DepartmentImpl;
 import org.egov.pims.commons.DeptDesig;
@@ -143,8 +143,8 @@ public class PostCreationWorkflowAction extends EisCommonWorkflowAction{
 			Position position = new Position();
 			position.setName(empPosition.getPostName());
 			position.setDeptDesigId(deptDesig);
-			position.setModifiedBy(empPosition.getModifiedBy());
-			position.setModifiedDate(empPosition.getModifiedDate());
+			position.setModifiedBy(empPosition.getLastModifiedBy());
+			position.setModifiedDate(empPosition.getLastModifiedDate().toDate());
 			empPosition.setPosition(position);
 			
 	}

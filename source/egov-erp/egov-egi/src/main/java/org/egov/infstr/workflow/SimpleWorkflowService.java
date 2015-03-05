@@ -11,8 +11,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.models.Script;
-import org.egov.infstr.models.StateAware;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
 import org.hibernate.Criteria;
