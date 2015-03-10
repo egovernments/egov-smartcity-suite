@@ -5,8 +5,8 @@
 <%
 	final StringBuilder rsltQ = new StringBuilder();
 	final String username = SecurityUtils.checkSQLInjection(request.getParameter("username"));
-	final String query = "SELECT r.role_name, ucm.counterid, l.LOCATIONID  FROM eg_roles r, eg_user u, eg_userrole ur, eg_usercounter_map ucm, eg_location l "+
-	" WHERE u.id_user = ur.id_user and r.id_role = ur.id_role and ucm.userid = u.id_user and ucm.counterid = l.id and u.user_name = ? ";
+	final String query = "SELECT r.name, ucm.counterid, l.LOCATIONID  FROM eg_role r, eg_user u, eg_userrole ur, eg_usercounter_map ucm, eg_location l "+
+	" WHERE u.id_user = ur.id_user and r.id = ur.id_role and ucm.userid = u.id_user and ucm.counterid = l.id and u.user_name = ? ";
 		
 		if(username != null && !username.trim().equalsIgnoreCase("")) 	{
 			HibernateUtil.getCurrentSession().doWork(new Work() {

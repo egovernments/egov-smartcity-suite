@@ -6,7 +6,7 @@
 	<!-- Context Configuration locations for Spring XML files -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath*:applicationContext-egiweb.xml</param-value>
+		<param-value>classpath*:config/spring/applicationContext-egiweb.xml</param-value>
 	</context-param>
 	<context-param>
 		<param-name>locatorFactorySelector</param-name>
@@ -40,7 +40,7 @@
 		<filter-name>JSPJNDISession</filter-name>
 		<filter-class>org.egov.infstr.client.filter.SetThreadLocals</filter-class>
 	</filter>
-	<filter>
+	<!-- <filter>
 		<filter-name>hibernateSession</filter-name>
 		<filter-class>
 			org.springframework.orm.hibernate4.support.OpenSessionInViewFilter
@@ -49,7 +49,7 @@
 			<param-name>sessionFactoryBeanName</param-name>
 			<param-value>sessionFactory</param-value>
 		</init-param>
-	</filter>
+	</filter> -->
 	<filter>
 		<filter-name>securityFilterChain</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -98,19 +98,19 @@
 		<url-pattern>*.action</url-pattern>
 		<url-pattern>/j_security_check</url-pattern>
 	</filter-mapping>
-	<filter-mapping>
+<!-- 	<filter-mapping>
 		<filter-name>hibernateSession</filter-name>
 		<url-pattern>*.do</url-pattern>
 		<url-pattern>*.jsp</url-pattern>
 		<url-pattern>*.action</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
-	</filter-mapping>
-	<filter-mapping>
+	</filter-mapping> -->
+	<!-- <filter-mapping>
 		<filter-name>hibernateSession</filter-name>
 		<url-pattern>/j_security_check</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
-	</filter-mapping>
+	</filter-mapping> -->
 	<filter-mapping>
 		<filter-name>securityFilterChain</filter-name>
 		<url-pattern>*.do</url-pattern>
@@ -132,7 +132,7 @@
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>struts2Prepare</filter-name>
-		<url-pattern>/*</url-pattern>
+		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>sitemesh</filter-name>
@@ -145,7 +145,7 @@
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>struts2Execute</filter-name>
-		<url-pattern>/*</url-pattern>
+		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -184,6 +184,22 @@
 		<servlet-name>reportViewer</servlet-name>
 		<url-pattern>/reportViewer</url-pattern>
 	</servlet-mapping>
+	 <!-- Processes application requests -->
+    <servlet>
+        <servlet-name>egiweb</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/spring/egiweb-servlet.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>egiweb</servlet-name>
+        <url-pattern>/controller/*</url-pattern>
+    </servlet-mapping>
 	<session-config>
 		<cookie-config>
 			<path>/</path>

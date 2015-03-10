@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:context="http://www.springframework.org/schema/context" 
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:jpa="http://www.springframework.org/schema/data/jpa"
        xsi:schemaLocation="
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
 		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd" default-lazy-init="true">
-
+		
+  <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+  
 	<context:component-scan base-package="org.egov.infra"/>
 	<context:component-scan base-package="org.egov.lib"/>
 	<context:component-scan base-package="org.egov.infstr.workflow"/>
+	
+	
 	<jpa:repositories base-package="org.egov.infra"/>
-	<jpa:auditing auditor-aware-ref="springSecurityAwareAuditor"/>
+	<jpa:auditing/>
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
 	
 	<bean class="org.egov.EgovSpringContextHolder" lazy-init="false"/>
 
@@ -22,7 +31,7 @@
 
 	<bean id="rbacService" class="org.egov.lib.rrbac.services.RbacServiceImpl" />
 
-	<bean id="roleService" class="org.egov.lib.rjbac.role.ejb.server.RoleServiceImpl" />
+	<!-- <bean id="roleService" class="org.egov.lib.rjbac.role.ejb.server.RoleServiceImpl" /> -->
 
 	<bean id="userService" class="org.egov.lib.rjbac.user.ejb.server.UserServiceImpl" >
 		<constructor-arg ref="sessionFactory" />
@@ -251,7 +260,7 @@
 		<property name="boundaryTypeService" ref="boundaryTypeService"/>
 		<property name="departmentService" ref="departmentService"/>
 		<property name="heirarchyTypeService" ref="heirarchyTypeService"/>
-		<property name="roleService" ref="roleService"/>
+		<!-- <property name="roleService" ref="roleService"/> -->
 		<property name="egovInfrastrUtil" ref="egovInfrastructureUtil"/>
 	</bean>
 

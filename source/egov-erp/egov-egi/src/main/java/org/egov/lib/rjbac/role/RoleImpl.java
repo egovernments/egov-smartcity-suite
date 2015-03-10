@@ -16,8 +16,8 @@ public class RoleImpl implements Role, Comparable<Role> {
 	private Integer id;
 	private String roleName;
 	private String roleDesc;
-	private Integer updateUserId;
-	private Date updateTime;
+	private Integer createdby;
+	private Date createddate;
 	private String roleNameLocal;
 	private String roleDescLocal;
 	private Role parent;
@@ -121,34 +121,32 @@ public class RoleImpl implements Role, Comparable<Role> {
 
 	/**
 	 * Gets the update time.
-	 * @return Returns the updateTime.
+	 * @return Returns the createddate.
 	 */
-	public Date getUpdateTime() {
-		return updateTime;
+	public Date getCreateddate() {
+		return createddate;
 	}
-
 	/**
 	 * Sets the update time.
-	 * @param updateTime The updateTime to set.
+	 * @param updateTime The createddate to set.
 	 */
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
+	public void setCreateddate(Date createddate) {
+		this.createddate = createddate;
 	}
 
 	/**
 	 * Gets the update user id.
-	 * @return Returns the updateUserid.
+	 * @return Returns the createdby.
 	 */
-	public Integer getUpdateUserId() {
-		return updateUserId;
+	public Integer getCreatedby() {
+		return createdby;
 	}
-
 	/**
 	 * Sets the update user id.
-	 * @param updateUserid The updateUserid to set.
+	 * @param updateUserid The createdby to set.
 	 */
-	public void setUpdateUserId(Integer updateUserid) {
-		this.updateUserId = updateUserid;
+	public void setCreatedby(Integer createdby) {
+		this.createdby = createdby;
 	}
 
 	/*

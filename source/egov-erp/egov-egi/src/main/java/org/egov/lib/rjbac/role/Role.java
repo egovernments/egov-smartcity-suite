@@ -97,30 +97,30 @@ public interface Role {
 	/**
 	 * Gets the update time.
 	 * 
-	 * @return Returns the updateTime.
+	 * @return Returns the createddate.
 	 */
-	Date getUpdateTime();
+	Date getCreateddate();
 	
 	/**
 	 * Sets the update time.
 	 * 
-	 * @param updateTime The updateTime to set.
+	 * @param updateTime The createddate to set.
 	 */
-	void setUpdateTime(Date updateTime);
+	void setCreateddate(Date createddate);
 	
 	/**
 	 * Gets the update user id.
 	 * 
-	 * @return Returns the updateUserid.
+	 * @return Returns the createdby.
 	 */
-	Integer getUpdateUserId();
+	Integer getCreatedby();
 	
 	/**
 	 * Sets the update user id.
 	 * 
-	 * @param updateUserid The updateUserid to set.
+	 * @param updateUserid The createdby to set.
 	 */
-	void setUpdateUserId(Integer updateUserid);
+	void setCreatedby(Integer createdby);
 	
 	
 	/**

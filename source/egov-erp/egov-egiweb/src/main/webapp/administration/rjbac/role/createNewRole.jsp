@@ -22,7 +22,7 @@
 					document.getElementById('roleName').focus();
 					return false;
 				}
-   				if(!uniqueCheckingBoolean('/egi/commonyui/egov/uniqueCheckAjax.jsp' , 'EG_ROLES', 'ROLE_NAME', 'roleName', 'no', 'no')) {
+   				if(!uniqueCheckingBoolean('/egi/commonyui/egov/uniqueCheckAjax.jsp' , 'EG_ROLE', 'name', 'roleName', 'no', 'no')) {
    					alert("Role Name already exists..!");
    					document.getElementById('roleName').value="";
    					document.getElementById('roleName').focus();

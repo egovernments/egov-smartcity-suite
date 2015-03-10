@@ -132,7 +132,7 @@ public class RoleDAO {
 	@SuppressWarnings("unchecked")
 	public List<Role> getRolesByUser(final Integer userId) {
 		try {
-			final SQLQuery qry = sessionFactory.getCurrentSession().createSQLQuery("select * from eg_roles where id_role "
+			final SQLQuery qry = sessionFactory.getCurrentSession().createSQLQuery("select * from eg_role where id "
 									+ " in(select id_role from eg_userrole where id_user =:userId)");
 			qry.setInteger("userId", userId);
 			qry.addEntity(RoleImpl.class);
