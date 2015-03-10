@@ -120,7 +120,7 @@ public class ComplaintUpdationController {
 			} 
 
 		}
-		return "redirect:/complaint-edit/" + complaint.getId();
+		return "redirect:/complaint-update/" + complaint.getId();
 	}
 
 }

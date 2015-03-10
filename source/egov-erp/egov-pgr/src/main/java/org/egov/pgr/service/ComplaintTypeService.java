@@ -12,6 +12,10 @@ import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.repository.ComplaintTypeRepository;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ComplaintTypeService {
 
     private final ComplaintTypeRepository complaintTypeRepository;
+    private static final int PAGE_SIZE = 10;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -59,5 +64,10 @@ public class ComplaintTypeService {
     public ComplaintType load(final Long id) {
         // FIXME alternative ?
         return (ComplaintType) entityManager.unwrap(Session.class).load(ComplaintType.class, id);
+    }
+    
+    public Page<ComplaintType> getListOfComplaintTypes(Integer pageNumber) {
+    	Pageable pageable = new PageRequest(pageNumber - 1, PAGE_SIZE, Sort.Direction.ASC,"name");
+        return complaintTypeRepository.findAll(pageable);
     }
 }

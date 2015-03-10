@@ -99,7 +99,8 @@
 					<a href="javascript:void(0);" id="toggleactions"
 						class="btn btn-primary"><spring:message code="lbl.more"/> ..</a> 
 						
-						<a href="javascript:void(0);" id="btn_submit" class="btn btn-primary"><spring:message code="lbl.submit"/></a> 
+						<%-- <a href="javascript:void(0);" id="btn_submit" class="btn btn-primary"><spring:message code="lbl.submit"/></a>  --%>
+						<button type="submit" class="btn btn-success"><spring:message code="lbl.submit"/></button>
 						<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
 				</div>
 			</div>
