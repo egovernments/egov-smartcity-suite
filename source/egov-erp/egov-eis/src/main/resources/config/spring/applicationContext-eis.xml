@@ -2,11 +2,23 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd" default-lazy-init="true">
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd 
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd" default-lazy-init="true">
 
+	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
 	<context:component-scan base-package="org.egov.pims"/>
+	<context:component-scan base-package="org.egov.eis"/>
+	<jpa:repositories base-package="org.egov.eis.repository"/>
+	<jpa:repositories base-package="org.egov.pims"/>
+	
+	
 	<bean id="sequenceGenerator" class="org.egov.pims.service.PersonalInformationService">
 		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="commonsService" ref="commonsService"/>
@@ -16,10 +28,8 @@
 		  <property name="type" value="org.egov.pims.model.EmpPosition"/>
 	  </bean>
 	
-	<bean id="empPositionSimpleWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService">
-	  <constructor-arg index="0" ref="empPositionPersistenceService"/>	
-    </bean>
 	<bean id="employeeService" class="org.egov.pims.service.EmployeeServiceImpl">
 	    <property name="sessionFactory" ref="sessionFactory"/>
 	</bean>
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
 </beans>

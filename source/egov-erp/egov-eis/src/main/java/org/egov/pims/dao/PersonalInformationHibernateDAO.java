@@ -31,7 +31,6 @@ import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.model.PersonalInformation;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
 /**
