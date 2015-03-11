@@ -1,0 +1,282 @@
+body
+{
+	background:#f0f0f0;
+	padding-top: 72px;
+}
+
+a:hover, a:focus, a:active {
+    border: 0;
+    outline : 0;
+}
+
+.navbar .container-fluid { 
+	min-height: 72px;
+	padding-right:0;
+	padding-left:0;
+}
+
+.navbar-custom
+{
+	background:#6b4f2c;
+	color:#ebe8e4;
+}
+
+.navbar-header > a
+{
+	height:72px;	
+	padding: 5px 10px;
+	padding-left: 20px;
+}
+
+.navbar-header > a > img, .navbar-header > a > div
+{
+	display:inline-block;
+}
+
+.navbar-header > a > div
+{
+	padding: 14px 0px;
+}
+
+.navbar-header > a > img
+{
+	vertical-align:top;
+	padding-right:5px;
+}
+
+.navbar-header > a  span
+{
+	display:block;
+	font-size:20px;
+	font-weight:bold;
+	line-height:40px;
+	margin-top:-3px;
+}
+
+span.title1
+{
+	color:#f58522;
+}
+
+span.title2
+{
+	
+	color:#fff;
+}
+
+.hr-menu
+{
+	list-style:none;
+	margin:0;
+	padding:0;
+}
+
+.hr-menu li{
+	position:relative;
+	display:inline-block;
+	height:72px;
+	padding:20px 10px;
+}
+
+.hr-menu li a{ 
+	display:block;
+    height:32px;
+	line-height:32px;
+	color:#fff;
+	font-weight:bold;
+	font-size:13px;
+	text-decoration:none;
+}
+
+.hr-menu li.active a, .hr-menu li a:hover
+{
+	color:#f58522;
+}
+
+.custom-badge
+{
+	padding: 5px 10px;
+    font-size: 11px;
+	background-color:#f58522;
+}
+
+.hr-menu li a span.title
+{
+	padding-left:5px;
+}
+
+span.separator
+{
+	color:#a69681;
+}
+
+.hr-menu li.ico-menu a  > i {
+	font-size: 25px;
+	vertical-align:middle;
+	color:#a69681;
+}
+
+.hr-menu li.ico-menu a:hover  > i , .hr-menu li.ico-menu .active a  > i 
+{
+	color:#f58522;
+}
+
+@media (max-width:768px)
+{
+	.pull-right-xs
+	{
+		float:right;
+	}
+	
+	.nav-menu
+	{
+		border-top:1px solid #F58522;
+	}
+	
+	.nav-menu li
+	{
+		height:auto;
+		padding:5px;
+	}
+	
+	body{
+		padding-top: 115px;
+	}
+	
+	.nav-right-menu
+	{
+		position: absolute;
+		right: 0px;
+	}
+}
+
+/* header end */
+
+/* main-content start */
+.main-content
+{
+	padding:20px 15px;
+}
+.search-box {
+    position: relative;
+}
+.search-box input {
+    padding-left:35px; 
+	border-radius:20px;
+}
+.search-box i {
+    position: absolute;
+    padding: 8px 12px;
+	color:#d1d1d1;
+	font-size:18px;
+    pointer-events: none;
+}
+.padding-tb
+{
+	padding:15px 0px;
+}
+.container-msgs
+{
+	margin-top:10px;
+}
+.container-msgs section span.span-date{
+	display:block;
+	padding:10px 5px;
+	color:#a2a4a6;
+	font-style: italic;
+}
+
+.container-msgs section div.msg {
+	margin-top:10px;
+	margin-bottom:10px;
+	overflow:auto;
+}
+
+.msg
+{
+	background:#fff;
+	padding:15px 30px;
+	border:1px solid #d5d9db;
+	border-radius:5px;
+	cursor:pointer;
+}
+
+.msg header h3
+{
+	margin:0;
+	padding:0;
+	font-weight:bold;
+	display:inline-block;
+	word-wrap: break-word;
+}
+.msg header i
+{
+	width:34px;
+	font-size:24px;
+	padding:0 5px;
+	color:#c9c9c9;
+}
+.msg header i.user-msg
+{
+	color:#f58522;	
+}
+.msg header span.msg-status
+{
+	margin:0 15px;
+	padding:5px 15px;
+	background:#c9c9c9;
+	font-size:13px;
+	color:#fff;
+	border-radius:20px;
+	white-space: nowrap;
+}
+.msg header .msg-info
+{
+	padding-top:5px;
+	padding-left:20px;
+	font-style:italic;
+}
+
+.msg a
+{
+	text-decoration:underline;
+	color:#f58522;
+	
+}
+.dot
+{
+	font-size:15px;
+}
+
+.msg-date
+{
+	color:#a7a9ab;
+}
+
+.msg-content > p
+{
+	margin:15px 20px 0px 20px;
+}
+
+@media (max-width:768px)
+{
+	.navbar-header > a span {
+		font-size: 16px;
+	}
+	
+	.msg header h3
+	{
+		font-size:18px;
+	}
+	
+	.xs-margin-top-10
+	{
+		margin-top:10px;
+	}
+	
+	.msg header h3
+	{
+		font-size:20px;
+	}
+	
+}

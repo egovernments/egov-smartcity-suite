@@ -40,14 +40,16 @@ $(document).ready(function()
 			$('#signinform').hide();
 			$('#signupform').show();
 			$('.sign-in').removeClass('sign-active').addClass('sign-notactive');
+			$('.sign-in').removeClass('arrow_box_left');
 			$(this).removeClass('sign-notactive').addClass('sign-active');
-		   // $('.login-toggle').removeClass('arrow_box_left').addClass('arrow_box_right');
+		    $(this).removeClass('arrow_box_left').addClass('arrow_box_right');
 		}else if($(this).attr('data-sign') == "in"){
 			$('#signupform').hide();
 			$('#signinform').show();
 			$('.sign-up').removeClass('sign-active').addClass('sign-notactive');
+			$('.sign-up').removeClass('arrow_box_right');
 			$(this).removeClass('sign-notactive').addClass('sign-active');
-			//$('.login-toggle').removeClass('arrow_box_right').addClass('arrow_box_left');
+			$(this).removeClass('arrow_box_right').addClass('arrow_box_left');
 		}
 	});
 	
