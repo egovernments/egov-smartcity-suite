@@ -36,7 +36,7 @@
 					<!-- logo -->
 					<div class="navbar-brand">
 						<a href="index.html">
-							<img src="../images/logo@2x.png" alt="" />
+							<img src="../images/egov_logo_tr_h.png" alt="" width="180" height="37"/>
 						</a>
 					</div>
 					
@@ -49,27 +49,27 @@
 				<div class="login-content login-content-margin signup-section">
 					<div class="login-header">
 						<a href="signin.html" class="logo">
-							<img src="../images/logo@2x.png" alt="" />
+							<img src="../images/egov_logo_tr_h.png" alt="" width="180" height="37"/>
 						</a>
 					</div>
-					<div class="login-toggle">
-						<div class="row">
-							<div class="col-md-6 col-xs-6 arrow_box sign-up sign" data-sign="up">
-								Sign Up
-							</div>
-							<div class="col-md-6 col-xs-6 sign-in sign" data-sign="in">
+					<div class="login-toggle arrow_box_left">
+						<!-- <div class="row"> -->
+							<div class="col-md-6 col-xs-6 sign-in sign sign-active" data-sign="in">
 								Sign In
 							</div>
-						</div>
+							<div class="col-md-6 col-xs-6 sign-up sign sign-notactive" data-sign="up">
+								Sign Up
+							</div>
+						<!-- </div> -->
 					</div>
 					<div class="login-body">
-						<form method="post" role="form" id="signupform">
+						<form method="post" role="form" id="signupform" class="display-hide">
 							
 							<div class="form-group">
 								
 								<div class="input-group">
 									<div class="input-group-addon">
-										<i class="entypo-user theme-color"></i>
+										<i class="entypo-mobile theme-color"></i>
 									</div>
 									
 									<input type="text" class="form-control" name="mobno" id="mobno" placeholder="Mobile number" autocomplete="off" />
@@ -152,12 +152,12 @@
 							</div>
 							
 						</form>
-						<form method="post" role="form" id="signinform" action="homepagecitizen.html" class="display-hide">
+						<form method="post" role="form" id="signinform" action="homepagecitizen.html">
 							<div class="form-group">
 								
 								<div class="input-group">
 									<div class="input-group-addon">
-										<i class="entypo-user theme-color"></i>
+										<i class="entypo-mobile theme-color"></i>
 									</div>
 									
 									<input type="text" class="form-control" name="mobno" id="mobno" placeholder="Mobile number" autocomplete="off" />
@@ -184,10 +184,7 @@
 							
 							<div class="form-group">
 								<div class="row">
-									<div class="col-md-6 col-xs-6 text-left">
-										<a href="javascript:void(0)">Sign Up</a>
-									</div>
-									<div class="col-md-6 col-xs-6 text-right">
+									<div class="col-md-12 col-xs-12 text-right">
 										<a href="recoverpassword.html">Forgot Password?</a>
 									</div>
 								</div>

@@ -36,7 +36,7 @@
 					<!-- logo -->
 					<div class="navbar-brand">
 						<a href="javascript:void(0);">
-							<img src="../images/logo@2x.png" alt="" />
+							<img src="../images/resize1.png" alt="" />
 						</a>
 					</div>
 					
@@ -50,8 +50,9 @@
 						
 						<li class="profile-info visible-xs"><!-- add class "pull-right" if you want to place this from right -->
 							
-							<a href="#" style="padding:15px 10px;">
-								<img src="../images/thumb-1.png" alt="" class="img-circle" width="30">
+							<a href="javascript:void(0)">
+								<i class="entypo-user img-circle"></i>
+								<!-- <img src="../images/thumb-1.png" alt="" class="img-circle" width="30"> -->
 								Citizen..
 							</a>
 						</li>
@@ -153,7 +154,8 @@
 						<div class="sui-normal">
 							
 							<a href="#" class="user-link">
-								<img src="../images/thumb-1.png" alt="" class="img-circle">
+								<i class="entypo-user img-circle"></i>
+								<!-- <img src="../images/thumb-1.png" alt="" class="img-circle"> -->
 								
 								<span>Welcome,</span>
 								<strong>Citizen</strong>
@@ -180,7 +182,13 @@
 						<li>
 							<a href="javascript:void(0);" data-title="show-newreq" class="citizen">
 								<i class="entypo-suitcase"></i>
-								<span class="title">New Request</span>
+								<span class="title">My Request</span>
+							</a>
+						</li>
+						<li>
+							<a href="javascript:void(0);" data-title="show-newreq1" class="citizen">
+								<i class="entypo-suitcase"></i>
+								<span class="title">My Request 1</span>
 							</a>
 						</li>
 						<li>
@@ -190,21 +198,9 @@
 							</a>
 						</li>
 						<li>
-							<a href="javascript:void(0);" data-title="show-prop" class="citizen">
+							<a href="javascript:void(0);" data-title="show-account" class="citizen">
 								<i class="entypo-flash"></i>
-								<span class="title">My Properties</span>
-							</a>
-						</li>
-						<li>
-							<a href="javascript:void(0);" data-title="show-trade" class="citizen">
-								<i class="entypo-flash"></i>
-								<span class="title">My Trade Licence</span>
-							</a>
-						</li>
-						<li>
-							<a href="javascript:void(0);" data-title="show-tax" class="citizen">
-								<i class="entypo-flash"></i>
-								<span class="title">My Taxes</span>
+								<span class="title">My Account</span>
 							</a>
 						</li>
 					</ul>	
@@ -351,9 +347,10 @@
 										</div>
 										
 									</div>
-									<div class="form-group"">
-									<div class="text-center">
-										<a href="complaint.html" class="btn btn-primary open-popup">Submit</a>
+									<div class="form-group">
+										<div class="text-center">
+											<a href="complaint.html" class="btn btn-primary open-popup">Submit</a>
+										</div>
 									</div>
 								</form>
 							</div>
@@ -362,13 +359,458 @@
 					
 				</div>
 				
+				<div class="citizen-all cit-new-req1 display-hide">
+					<div class="row">
+						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
+							<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="grievance">
+								<i class="entypo-user"></i>
+								<h4>
+									Grievance Redressal
+									<span class="label label-info">2</span>
+								</h4>
+							</a>
+						</div>
+						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards ">
+							<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="property">
+								<i class="entypo-users"></i>
+								<h4>
+									Property Tax
+									<span class="label label-info">4</span>
+								</h4>
+							</a>
+						</div>
+						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards ">
+							<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="bpa">
+								<i class="entypo-mobile"></i>
+								<h4>
+									Building Plan Approval
+									<span class="label label-info">10</span>
+								</h4>
+							</a>
+						</div>
+						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards ">
+							<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="bandeath">
+								<i class="entypo-rss"></i>
+								<h4>
+									Birth and Death
+									<span class="label label-info">5</span>
+								</h4>
+							</a>
+						</div>
+						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
+							<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="tradelic">
+								<i class="entypo-user"></i>
+								<h4>
+									Trade Licence
+									<span class="label label-info">3</span>
+								</h4>
+							</a>
+						</div>
+						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards ">
+							<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="proftax">
+								<i class="entypo-users"></i>
+								<h4>
+									Professional Tax
+									<span class="label label-info">3</span>
+								</h4>
+							</a>
+						</div>
+						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards ">
+							<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="comptax">
+								<i class="entypo-mobile"></i>
+								<h4>
+									Company Tax
+									<span class="label label-info">3</span>
+								</h4>
+							</a>
+						</div>
+						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards ">
+							<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="shops">
+								<i class="entypo-rss"></i>
+								<h4>
+									Shops
+									<span class="label label-info">2</span>
+								</h4>
+							</a>
+						</div>
+						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards ">
+							<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="advert">
+								<i class="entypo-mobile"></i>
+								<h4>
+									Advertisement
+									<span class="label label-info">2</span>
+								</h4>
+							</a>
+						</div>
+						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
+							<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="others">
+								<i class="entypo-rss"></i>
+								<h4>
+									Others
+									<span class="label label-info">2</span>
+								</h4>
+							</a>
+						</div>
+					</div>
+					
+					<div class="row bootcards-list" id="boot-flow">
+						<div class="col-md-12">
+							<div class="panel panel-primary">
+								<div class="panel-heading clearfix">
+									<h2 class="panel-title pull-left service-title">Grievance Redressal</h2>
+								</div>
+								<div class="list-group service-list-group">
+									<!-- <a class="list-group-item" href="javascript:void(0)">
+										<div class="row">
+										<div class="col-sm-10 col-xs-10">
+										<i class="entypo-mobile pull-left"></i>
+										<h4 class="list-group-item-heading">Pay Fees</h4>
+										<p class="list-group-item-text">Online payment for challans</p>
+										</div>
+										<div class="col-sm-2 col-xs-2">
+										<i class="entypo-right-open-mini pull-right"></i>
+										</div>
+										</div>
+									</a> -->
+								</div>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+				
+				<div class="citizen-all cit-my-account display-hide">
+					<div class="row">
+						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
+							<a class="bootcards-summary-item myaccount" href="#boot-flow" style="padding-top:35px;" data-myaccount="property">
+								<i class="entypo-user"></i>
+								<h4>
+									My Properties
+									<span class="label label-info">2</span>
+								</h4>
+							</a>
+						</div>
+						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
+							<a class="bootcards-summary-item myaccount" href="#boot-flow" style="padding-top:35px;" data-myaccount="licence">
+								<i class="entypo-user"></i>
+								<h4>
+									My Licences
+									<span class="label label-info">2</span>
+								</h4>
+							</a>
+						</div>
+						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
+							<a class="bootcards-summary-item myaccount" href="#boot-flow" style="padding-top:35px;" data-myaccount="proftax">
+								<i class="entypo-user"></i>
+								<h4>
+									My Professional Tax
+									<span class="label label-info">2</span>
+								</h4>
+							</a>
+						</div>
+						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
+							<a class="bootcards-summary-item myaccount" href="#boot-flow" style="padding-top:35px;" data-myaccount="shops">
+								<i class="entypo-user"></i>
+								<h4>
+									My Shops
+									<span class="label label-info">2</span>
+								</h4>
+							</a>
+						</div>
+						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
+							<a class="bootcards-summary-item myaccount" href="#boot-flow" style="padding-top:35px;" data-myaccount="hoardings">
+								<i class="entypo-user"></i>
+								<h4>
+									My Hoardings
+									<span class="label label-info">2</span>
+								</h4>
+							</a>
+						</div> 
+					</div>
+					<div class="row bootcards-list hide-myaccount" id="property-show" style="height:700px;">
+						<div class="col-md-12">
+							<div class="panel panel-primary">
+								<div class="panel-heading clearfix">
+									<h2 class="panel-title pull-left service-title">My Properties</h2>
+								</div>
+								<div class="list-group service-list-group-accounts">
+									<a class="list-group-item" href="javascript:void(0)" id="property1-flow">
+										<div class="row">
+											<div class="col-sm-4 col-xs-4">
+												<i class="entypo-doc-text pull-left"></i>
+											<p class="list-group-item-text">Property ID: 1-1-10-1000/A</p>
+											<p class="list-group-item-text">Aslam Mohammed</p>
+											</div>
+											<div class="col-sm-4 col-xs-4">
+												<p class="list-group-item-text">#12/1, 5th Cross, 8th Main, Rainbow Residency, HSR Layout, Chennai - 400002</p>
+												<p class="list-group-item-text">Pending Tax Rs.5000</p>
+											</div>
+											<div class="col-sm-4 col-xs-4 text-right add-margin">
+												<span><i class="entypo-doc en-actions" id="" title="View Property"></i></span>
+												<span><i class="entypo-progress-2 en-actions" id="" title="Pay Tax"></i></span>
+												<span><i class="entypo-publish en-actions" id="" title="Apply for Name Transfer"></i></span>
+												<span><i class="entypo-publish en-actions" id="" title="Apply for Property Modification"></i></span>
+											</div>
+										</div>
+									</a> 
+									<a class="list-group-item" href="javascript:void(0)" id="property1-flow">
+										<div class="row">
+											<div class="col-sm-4 col-xs-4">
+												<i class="entypo-doc-text pull-left"></i>
+												<p class="list-group-item-text">Property ID: 1-1-10-1000/A</p>
+												<p class="list-group-item-text">Azhar Mohammed</p>
+											</div>
+											<div class="col-sm-4 col-xs-4">
+												<p class="list-group-item-text">#12/1, 5th Cross, 8th Main,Indiranagar, Chennai - 400002</p>
+												<p class="list-group-item-text">Pending Tax Rs.5000</p>
+											</div>
+											<div class="col-sm-4 col-xs-4 text-right add-margin">
+												<span><i class="entypo-doc en-actions" id="" title="View Property"></i></span>
+												<span><i class="entypo-progress-2 en-actions" id="" title="Pay Tax"></i></span>
+												<span><i class="entypo-publish en-actions" id="" title="Apply for Name Transfer"></i></span>
+												<span><i class="entypo-publish en-actions" id="" title="Apply for Property Modification"></i></span>
+											</div>
+										</div>
+									</a> 
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row bootcards-list hide-myaccount" id="licence-show" style="height:700px;">
+						<div class="col-md-12">
+							<div class="panel panel-primary">
+								<div class="panel-heading clearfix">
+									<h2 class="panel-title pull-left service-title">My Licences</h2>
+								</div>
+								<div class="list-group service-list-group-accounts">
+									<a class="list-group-item" href="javascript:void(0)" id="property1-flow">
+										<div class="row">
+											<div class="col-sm-4 col-xs-4">
+												<i class="entypo-doc-text pull-left"></i>
+												<p class="list-group-item-text">Licence No: 1-1-10-1000/A</p>
+												<p class="list-group-item-text">Aslam Mohammed</p>
+											</div>
+											<div class="col-sm-4 col-xs-4">
+												<p class="list-group-item-text">#12/1, 5th Cross, 8th Main, Rainbow Residency, HSR Layout, Chennai - 400002</p>
+												
+											</div>
+											<div class="col-sm-4 col-xs-4 text-right add-margin">
+												<span><i class="entypo-doc en-actions" id="" title="View Details"></i></span>
+												<span><i class="entypo-publish en-actions" id="" title="Renew Licence"></i></span>
+											</div>
+										</div>
+									</a> 
+									<a class="list-group-item" href="javascript:void(0)" id="property1-flow">
+										<div class="row">
+											<div class="col-sm-4 col-xs-4">
+												<i class="entypo-doc-text pull-left"></i>
+												<p class="list-group-item-text">Licence No: 1-1-10-1000/A</p>
+												<p class="list-group-item-text">Azhar Mohammed</p>
+											</div>
+											<div class="col-sm-4 col-xs-4">
+												<p class="list-group-item-text">#12/1, 5th Cross, 8th Main,Indiranagar, Chennai - 400002</p>
+											</div>
+											<div class="col-sm-4 col-xs-4 text-right add-margin">
+												<span><i class="entypo-doc en-actions" id="" title="View Details"></i></span>
+												<span><i class="entypo-publish en-actions" id="" title="Renew Licence"></i></span>
+											</div>
+										</div>
+									</a> 
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row bootcards-list hide-myaccount" id="protax-show" style="height:700px;">
+						<div class="col-md-12">
+							<div class="panel panel-primary">
+								<div class="panel-heading clearfix">
+									<h2 class="panel-title pull-left service-title">My Professional Tax</h2>
+								</div>
+								<div class="list-group service-list-group-accounts">
+									<a class="list-group-item" href="javascript:void(0)" id="property1-flow">
+										<div class="row">
+											<div class="col-sm-4 col-xs-4">
+												<i class="entypo-doc-text pull-left"></i>
+												<p class="list-group-item-text">Professional Tax: 1-1-10-1000/A</p>
+												<p class="list-group-item-text">Aslam Mohammed</p>
+											</div>
+											<div class="col-sm-4 col-xs-4">
+												<p class="list-group-item-text">#12/1, 5th Cross, 8th Main, Rainbow Residency, HSR Layout, Chennai - 400002</p>
+												
+											</div>
+											<div class="col-sm-4 col-xs-4 text-right add-margin">
+												<span><i class="entypo-doc en-actions" id="" title="View Details"></i></span>
+												<span><i class="entypo-publish en-actions" id="" title="Pay Professional Tax"></i></span>
+											</div>
+										</div>
+									</a> 
+									<a class="list-group-item" href="javascript:void(0)" id="property1-flow">
+										<div class="row">
+											<div class="col-sm-4 col-xs-4">
+												<i class="entypo-doc-text pull-left"></i>
+												<p class="list-group-item-text">Professional Tax: 1-1-10-1000/A</p>
+												<p class="list-group-item-text">Azhar Mohammed</p>
+											</div>
+											<div class="col-sm-4 col-xs-4">
+												<p class="list-group-item-text">#12/1, 5th Cross, 8th Main,Indiranagar, Chennai - 400002</p>
+												
+											</div>
+											<div class="col-sm-4 col-xs-4 text-right add-margin">
+												<span><i class="entypo-doc en-actions" id="" title="View Details"></i></span>
+												<span><i class="entypo-publish en-actions" id="" title="Pay Professional Tax"></i></span>
+											</div>
+										</div>
+									</a> 
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row bootcards-list hide-myaccount" id="shops-show" style="height:700px;">
+						<div class="col-md-12">
+							<div class="panel panel-primary">
+								<div class="panel-heading clearfix">
+									<h2 class="panel-title pull-left service-title">My Shops</h2>
+								</div>
+								<div class="list-group service-list-group-accounts">
+									<a class="list-group-item" href="javascript:void(0)" id="property1-flow">
+										<div class="row">
+											<div class="col-sm-4 col-xs-4">
+												<i class="entypo-doc-text pull-left"></i>
+												<p class="list-group-item-text">Agreement No: 1-1-10-1000/A</p>
+												<p class="list-group-item-text">Aslam Mohammed</p>
+											</div>
+											<div class="col-sm-4 col-xs-4">
+												<p class="list-group-item-text">#12/1, 5th Cross, 8th Main, Rainbow Residency, HSR Layout, Chennai - 400002</p>
+												<p class="list-group-item-text">Balanance : 6700</p>
+											</div>
+											<div class="col-sm-4 col-xs-4 text-right add-margin">
+												<span><i class="entypo-doc en-actions" id="" title="View Agreement"></i></span>
+												<span><i class="entypo-publish en-actions" id="" title="Pay Rent/Lease"></i></span>
+											</div>
+										</div>
+									</a> 
+									<a class="list-group-item" href="javascript:void(0)" id="property1-flow">
+										<div class="row">
+											<div class="col-sm-4 col-xs-4">
+												<i class="entypo-doc-text pull-left"></i>
+												<p class="list-group-item-text">Agreement No: 1-1-10-1000/A</p>
+												<p class="list-group-item-text">Azhar Mohammed</p>
+											</div>
+											<div class="col-sm-4 col-xs-4">
+												<p class="list-group-item-text">#12/1, 5th Cross, 8th Main,Indiranagar, Chennai - 400002</p>
+												<p class="list-group-item-text">Balanance : 4500</p>
+											</div>
+											<div class="col-sm-4 col-xs-4 text-right add-margin">
+												<span><i class="entypo-doc en-actions" id="" title="View Agreement"></i></span>
+												<span><i class="entypo-publish en-actions" id="" title="Pay Rent/Lease"></i></span>
+											</div>
+										</div>
+									</a> 
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row bootcards-list hide-myaccount" id="hoardings-show" style="height:700px;">
+						<div class="col-md-12">
+							<div class="panel panel-primary">
+								<div class="panel-heading clearfix">
+									<h2 class="panel-title pull-left service-title">My Hoardings</h2>
+								</div>
+								<div class="list-group service-list-group-accounts">
+									<a class="list-group-item" href="javascript:void(0)" id="property1-flow">
+										<div class="row">
+											<div class="col-sm-4 col-xs-4">
+												<i class="entypo-doc-text pull-left"></i>
+												<p class="list-group-item-text">Agreement No: 1-1-10-1000/A</p>
+											</div>
+											<div class="col-sm-4 col-xs-4">
+												<p class="list-group-item-text">#12/1, 5th Cross, 8th Main, Rainbow Residency, HSR Layout, Chennai - 400002</p>
+												<p class="list-group-item-text">Balanance : 4500</p>
+											</div>
+											<div class="col-sm-4 col-xs-4 text-right add-margin">
+												<span><i class="entypo-publish en-actions" id="" title="Pay Rent/Lease"></i></span>
+											</div>
+										</div>
+									</a> 
+									<a class="list-group-item" href="javascript:void(0)" id="property1-flow">
+										<div class="row">
+											<div class="col-sm-4 col-xs-4">
+												<i class="entypo-doc-text pull-left"></i>
+												<p class="list-group-item-text">Agreement No: 1-1-10-1000/A</p>
+											</div>
+											<div class="col-sm-4 col-xs-4">
+												<p class="list-group-item-text">#12/1, 5th Cross, 8th Main,Indiranagar, Chennai - 400002</p>
+												<p class="list-group-item-text">Balanance : 4500</p>
+											</div>
+											<div class="col-sm-4 col-xs-4 text-right add-margin">
+												<span><i class="entypo-publish en-actions" id="" title="Pay Rent/Lease"></i></span>
+											</div>
+										</div>
+									</a> 
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12">
+							<div class="row">
+								<div class="col-md-9 add-margin">
+									<a href="javascript:void(0);" class="btn btn-primary btn-sm" role="button">View Property</a>
+									<a href="javascript:void(0);" class="btn btn-primary btn-sm" role="button">Pay Taxes</a>
+									<a href="javascript:void(0);" class="btn btn-primary btn-sm" role="button">Apply for property modification</a>
+									<a href="javascript:void(0);" class="btn btn-primary btn-sm" role="button">Apply for name transfer</a>
+								</div>
+								<div class="col-md-3 add-margin text-right">
+									<span class="inline-elem">Search</span>
+									<span class="inline-elem"><input type="text" id="prop_samplesearch" class="form-control input-sm"></span>
+								</div>
+							</div>
+							<table class="table table-bordered datatable" id="prop_sample">
+								<thead>
+									<tr>
+										<th>Property ID</th>
+										<th>Owner Name</th>
+										<th>Address</th>
+										<th>Pending Tax Rs.</th>
+									</tr>
+								</thead>
+								
+								<tbody>
+									
+									<tr>
+										<td>2345612</td>
+										<td>Mohammed Aslam</td>
+										<td>58, HSR Garden Layout, Bommanahalli.</td>
+										<td>5000</td>
+									</tr>
+									
+									<tr>
+										<td>34352</td>
+										<td>Dinakaran</td>
+										<td>58, HSR Garden Layout, Bommanahalli.</td>
+										<td>5000</td>
+									</tr>
+									
+									<tr>
+										<td>15353</td>
+										<td>Gopinath</td>
+										<td>58, HSR Garden Layout, Bommanahalli.</td>
+										<td>300</td>
+									</tr>
+									
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				
+				<footer class="main">
+					
+					powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
+					
+				</footer> 
+				
 			</div>
-			
-			<footer class="main">
-				
-				powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
-				
-			</footer>
 			
 		</div>
 		

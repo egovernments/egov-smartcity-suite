@@ -204,7 +204,7 @@ table.dataTable tbody tr:hover
 }
 
 .panel-heading.custom_form_panel_heading {
-	background-color: #3599b2;
+	background-color: #f2851f;
 	color:#fff;
 	margin-top: 10px;
 	margin-bottom: 10px;
@@ -431,9 +431,10 @@ table .replace-inputs input {
 	text-decoration:none;
 }
 
-.page-container .sidebar-menu .sidebar-user-info .user-link img {
+.page-container .sidebar-menu .sidebar-user-info .user-link img, .page-container .sidebar-menu .sidebar-user-info .user-link i {
 	float: left;
 	margin-right: 15px;
+	font-size:26px;
 	border: 4px solid rgba(255, 255, 255, 0.11);
 	display: block;
 	max-width: 100%;
@@ -441,6 +442,7 @@ table .replace-inputs input {
 	width:44px;
 	height:44px;
 }
+
 .img-circle {
 	border-radius: 50%;
 }
@@ -766,7 +768,7 @@ footer.main{
 
 .table > thead:first-child > tr:first-child > th
 {
-	background: #3599b2;
+	background: #f2851f;
 	color: #fff;
 }
 .table > thead:first-child > tr:first-child > th:first-child
@@ -1083,7 +1085,7 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 }
 
 .login-page {
-background: #f2f2f2;
+	background: #f2f2f2;
 }
 
 .login-content {
@@ -1114,12 +1116,13 @@ background: #f2f2f2;
 }
 
 .login-body .form-group .input-group .input-group-addon {
-	background:#373e4a;
-	border:1px solid #373e4a;
+	background:#e6e6e6;
+	border:1px solid #D0D2D7;
+	border-radius: 2px;
 }
 
 .theme-color{
-	color:#fff;
+	color:#f5861f;
 } 
 
 .login-body .form-group .input-group .form-control {
@@ -1180,45 +1183,141 @@ background: #f2f2f2;
 .login-toggle
 {
 	background:#e6e6e6;
-	font-size: 17px;
+	font-size: 16px;
+    overflow: auto;
 	cursor:pointer;
-    padding:15px;
 }
 
-.arrow_box {
+.sign{
+	padding:15px;
+}
+
+.sign-active{
+	background: #f5861f;
+	color: #fff;
+	font-size: 18px;
+}
+
+.sign-notactive{
+	color:brown;
+}
+
+/* .arrow_box_left, .arrow_box_right {
 	position: relative;
 	background: #e6e6e6;
 	border: 4px solid #e6e6e6; 
-	color:#f5861f;
-}
-.arrow_box:after, .arrow_box:before {
+	color:#f5861f; 
+	}
+	
+	.arrow_box_left:after, .arrow_box_left:before{
 	top: 100%;
-	left: 50%;
+	left: 25%;
 	border: solid transparent;
 	content: " ";
 	height: 0;
 	width: 0;
 	position: absolute;
 	pointer-events: none;
-}
-
-.arrow_box:after {
+	}
+	
+	.arrow_box_right:after, .arrow_box_right:before
+	{
+	top: 100%;
+	right: 21%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+	}
+	
+	
+	.arrow_box_left:after, .arrow_box_right:after {
 	border-color: rgba(242, 242, 242, 0);
 	border-top-color: #e6e6e6;
-	border-width: 24px;
-	margin-left: -24px;
-}
-.arrow_box:before {
+	border-width: 10px;
+	margin-left: -10px;
+	}
+	
+	.arrow_box_left:before , .arrow_box_right:before  {
 	border-color: rgba(242, 242, 242, 0);
 	border-top-color:#e6e6e6;
-	border-width: 30px;
-	margin-left: -30px;
-} 
-
+	border-width: 16px;
+	margin-left: -16px;
+	} 
+*/
 .btn-login{
 	padding: 10px 16px;
 }
 
 .arrow-padding-top{
 	padding-top:3px;
+}
+
+.panel-primary {
+	border-color: #f2851f;
+}
+
+.panel-primary > .panel-heading {
+	background-color: #f2851f;
+	border-color: #f2851f;
+}
+
+.bootcards-summary-item {
+	background: #f5f5f5;
+	display: block;
+	border-radius: 4px;
+	padding: 25px 10px;
+	text-align: center;
+	position: relative;
+	height: 160px;
+	text-decoration:none; !important;
+}
+
+.bootcards-summary-item>i {
+	color: #bbb;
+	display: block;
+	text-align: center;
+    font-size: 3em;
+	margin-bottom: 5px;
+}
+.bootcards-summary-item h4 {
+	margin: 0 auto;
+}
+.bootcards-summary-item .badge, .bootcards-summary-item .label {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	background:#f2851f;
+}
+
+.add-margin-cards
+{
+	margin:10px 0
+}
+
+.list-group-item i {
+	opacity: .3;
+	text-align: center;
+	font-size:2em;
+}
+
+.list-group-item-heading {
+	font-size:17px;
+	margin-top: 10px;
+	margin-bottom: 5px;
+}
+
+.list-group-item .row div>.list-group-item-heading:last-child, .list-group-item .row div>.list-group-item-text:last-child {
+	margin-bottom: 5px;
+}
+/* 
+	span i.en-actions
+	{
+	font-size:2em;
+} */
+
+.list-group-item-text {
+	margin-bottom: 5px;
 }
