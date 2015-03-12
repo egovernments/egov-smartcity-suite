@@ -16,6 +16,7 @@
                 <value>classpath*:config/spring/applicationContext-search.xml</value>
                 <value>classpath*:config/spring/applicationContext-security.xml</value>
                 <value>classpath*:config/spring/applicationContext-quartz.xml</value>
+                <value>classpath*:config/spring/applicationContext-*-global-services.xml</value>
             </list>
         </constructor-arg>
     </bean>
