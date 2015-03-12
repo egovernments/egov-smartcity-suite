@@ -68,7 +68,7 @@ public class InboxService<T extends StateAware> {
     public Optional<WorkflowTypeService<T>> getWorkflowTypeService(final String wfType) {
         WorkflowTypeService<T> workflowTypeService = null;
         try {
-            workflowTypeService = (WorkflowTypeService<T>)applicationContext.getBean(wfType);
+            workflowTypeService = (WorkflowTypeService<T>)applicationContext.getBean(wfType.concat(WF_TYPE_SERVICE_SFX));
         } catch (BeansException e) {
             LOG.warn("WorkflowTypeService bean for {} not found, have you defined {}WorkflowTypeService bean ?",wfType,wfType);
         }
