@@ -19,6 +19,9 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.Action;
 import org.egov.lib.rjbac.user.User;
 import org.egov.pims.commons.Position;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -29,7 +32,8 @@ import org.springframework.stereotype.Service;
 @Service
 @Lazy
 public class InboxService<T extends StateAware> {
-
+    private static final Logger LOG = LoggerFactory.getLogger(InboxService.class);
+    
     private static final String WF_TYPE_SERVICE_SFX = "WorkflowTypeService";
     public static final String SERVICE_NOT_FOUND = "workflowtype.service.not.found";
     public static final Character RENDER_Y = Character.valueOf('Y');
@@ -62,7 +66,13 @@ public class InboxService<T extends StateAware> {
     }
 
     public Optional<WorkflowTypeService<T>> getWorkflowTypeService(final String wfType) {
-        return Optional.ofNullable((WorkflowTypeService<T>)applicationContext.getBean(wfType.concat(WF_TYPE_SERVICE_SFX)));
+        WorkflowTypeService<T> workflowTypeService = null;
+        try {
+            workflowTypeService = (WorkflowTypeService<T>)applicationContext.getBean(wfType);
+        } catch (BeansException e) {
+            LOG.warn("WorkflowTypeService bean for {} not found, have you defined {}WorkflowTypeService bean ?",wfType,wfType);
+        }
+        return Optional.ofNullable(workflowTypeService);
     }
 
     public List<T> getDraftItems(final Integer owner, final Integer userId, final String order) {
