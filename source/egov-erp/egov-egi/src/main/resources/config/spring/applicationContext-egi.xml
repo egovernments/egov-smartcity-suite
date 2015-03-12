@@ -12,15 +12,15 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
 		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd" default-lazy-init="true">
 		
-  <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+  	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
   
 	<context:component-scan base-package="org.egov.infra"/>
 	<context:component-scan base-package="org.egov.lib"/>
 	<context:component-scan base-package="org.egov.infstr.workflow"/>
 	
-	
 	<jpa:repositories base-package="org.egov.infra"/>
-	<jpa:auditing/>
+	<jpa:auditing auditor-aware-ref="springSecurityAwareAuditor"/>
+	
 	<aop:aspectj-autoproxy proxy-target-class="true"/>
 	
 	<bean class="org.egov.EgovSpringContextHolder" lazy-init="false"/>
