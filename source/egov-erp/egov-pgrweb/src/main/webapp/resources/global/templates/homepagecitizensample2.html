@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta name="description" content="Neon Admin Panel" />
+		<meta name="author" content="" />
+		
+		<title>eGov Urban Portal</title>
+		
+		<link rel="stylesheet" href="../css/bootstrap/bootstrap.css">
+		<link rel="stylesheet" href="../css/font-icons/entypo/css/entypo.css">
+		<link rel="stylesheet" href="../css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="../css/egov/custom.css">
+		<link rel="stylesheet" href="../css/egov/header-custom.css">
+		
+		<script src="../js/jquery/jquery.js"></script>
+		
+		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
+		
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		
+	</head>
+	<body class="page-body">
+		<header><!-- set fixed position by adding class "navbar-fixed-top" -->
+			
+			<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+				<div class="container-fluid">
+					<div class="navbar-header col-lg-4 col-md-4 col-sm-2 col-xs-12">
+						<a class="navbar-brand" href="javascript:void(0);">
+							<img src="../images/chennai_logo.jpg" height="60">
+							<div>
+								<span class="title2 hidden-sm hidden-sm">Chennai Municipal Corporation</span>
+							</div>
+						</a>
+					</div>
+					<div class="nav-menu col-lg-4 col-md-6 col-sm-7 col-xs-12">
+						<ul class="hr-menu text-center">
+							<li class="active"><a class="menu-item " href="javascript:void(0);" data-show-screen="#inbox-template"><span class="badge custom-badge">03</span> <span class="title">Inbox</span></a></li>
+							<span class="separator">|</span>
+							<li><a class="menu-item" href="javascript:void(0);" data-show-screen="#myaccount">My Account</a></li>
+							<span class="separator">|</span>
+							<li><a class="menu-item" href="javascript:void(0);" data-show-screen="#newreq">New Request</a></li>
+						</ul>
+					</div><!--/.nav-collapse -->
+					
+					<div class="col-lg-4 col-md-2 col-sm-3 col-xs-5 nav-right-menu">
+						<ul class="hr-menu text-right">
+							
+							<li class="ico-menu">
+								<a href="javascript:void(0);">
+									<i class="fa fa-question-circle"></i>
+								</a>
+							</li>
+							
+							<li class="ico-menu">
+								<a href="javascript:void(0);">
+									<i class="fa fa-user"></i>
+								</a>
+							</li>
+							<li class="ico-menu">
+								<a href="www.egovernments.org">
+									<img src="../images/logo@2x.png" title="Powered by eGovernments" height="20px">
+								</a>
+							</li>
+							
+						</ul>
+					</div>
+					
+				</div>
+			</nav>
+			
+		</header>
+		<div class="container-fluid main-content">
+			
+			<div class="citizen-screens" id="inbox-template">
+				<div class="row padding-tb"><!-- padding-tb -->
+					<div class="search-box col-md-9 col-sm-8">
+						<i class="fa fa-search"></i>
+						<input type="text" class="form-control" placeholder="Search">
+					</div>
+					<div class="col-md-3 col-sm-4 text-center xs-margin-top-10">
+						<div class="btn-group btn-input clearfix" id="sortby_drop">
+							<button type="button" class="btn btn-default dropdown-toggle form-control" data-toggle="dropdown">
+								<span data-bind="label">Sort by : <b><i class="fa fa-clock-o"></i> Recent Messages</b></span> <span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="#"><i class="fa fa-clock-o"></i> Recent Messages</a></li>
+								<li><a href="#"><i class="user-msg fa fa-user"></i> User Messages</a></li>
+								<li><a href="#"><i class="fa fa-briefcase"></i> System Notifications</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				
+				<div class="row container-msgs">
+					
+					<section class="col-lg-12">
+						<span class="span-date"> 4 March 2015</span>
+						
+						<div class="msg" data-toggle="collapse" data-target="#msgcontent0" aria-expanded="true">
+							<header>
+								
+								<div class="row">
+									<i class="user-msg fa fa-user col-sm-1 col-xs-2"></i><h3 class="col-sm-11 col-xs-10"> Grievance Redressal: Complaint No. UGH298<span class="msg-status">Redressed</span> </h3> 
+								</div>
+								
+								
+								<div class="msg-info">
+									<a href="javascript:void(0);">UGH298</a> <span class="dot">&bull;</span> <span class="msg-date"> 13 Jan 2015</span>
+								</div>
+							</header>
+							
+							<div id="msgcontent0" class="msg-content collapse in">
+								<p> 
+									Complaint No. UGH298 regarding Dog Menace at BegumPet was marked as redressed by Mr. Amit Kumar. Please help us to improve our quality of service by giving your feedback on the quality of service by clicking <a href="">here</a>. 
+								</p>
+							</div>
+						</div> 
+						
+						
+					</section>
+					
+					<section class="col-lg-12">
+						
+						<span class="span-date"> 3 March 2015</span>
+						
+						<div class="msg" data-toggle="collapse" data-target="#msgcontent1" aria-expanded="true">
+							<header>
+								<div class="row">
+									<i class="fa fa-briefcase col-sm-1 col-xs-2"></i> <h3 class="col-sm-11 col-xs-10"> Property Tax Payment: Property ID 01-01-100 </h3>
+								</div>
+								<div class="msg-info">
+									<a href="javascript:void(0);">JGH1837</a> <span class="dot">&bull;</span> <span class="msg-date"> 4 Mar 2015</span>
+								</div>
+							</header>
+							
+							<div id="msgcontent1" class="msg-content collapse">
+								<p> 
+									Payment of 5,000 is due for Property ID 01-01-100 with the address 34, 2nd cross, Indiranagar, Bangalore - 56. 
+									<a href="javascript:void(0);">Click here</a> to pay the taxes. Please ignore if already paid.
+								</p>
+							</div>
+						</div> 
+						
+						
+						<div class="msg" data-toggle="collapse" data-target="#msgcontent2" aria-expanded="true">
+							<header>
+								
+								<div class="row">
+									<i class="user-msg fa fa-user col-sm-1 col-xs-2"></i> <h3 class="col-sm-11 col-xs-10">Inspection for New Building Construction Permit: Application No. BA14567<span class="msg-status">Pending Inspection</span>  </h3> 
+								</div>
+								<div class="msg-info">
+									<a href="javascript:void(0);">UGH298</a> <span class="dot">&bull;</span> <span class="msg-date"> 13 Jan 2015</span>
+								</div>
+							</header>
+							
+							<div id="msgcontent2" class="msg-content collapse">
+								<p> 
+									Building Plan application No. BA14567 located at No. 14, 5th Main, Indiranagar, Chennai - 400004.
+									Mr. Ram Lele, Asst. Engineer Ward 34 will be visiting your premises for Building inspection on 12/01/2015 at 3:00 PM. Please be there for the inspection. Mr. Lele can be reached at +91 99999 99999
+								</p>
+							</div>
+						</div>
+						
+					</section>
+					
+					
+					<section class="col-lg-12">
+						<span class="span-date"> 2 March 2015</span>
+						
+						<div class="msg" data-toggle="collapse" data-target="#msgcontent3" aria-expanded="true">
+							<header>
+								<div class="row">
+									<i class="fa fa-briefcase col-sm-1 col-xs-2"></i> <h3 class="col-sm-11 col-xs-10"> General Information </h3>
+								</div>
+								<div class="msg-info">
+									<a href="javascript:void(0);">UTK135</a> <span class="dot">&bull;</span> <span class="msg-date"> 2 Mar 2015</span>
+								</div>
+							</header>
+							
+							<div id="msgcontent3" class="msg-content collapse">
+								<p> 
+									Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+									sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+									minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+									commodo consequat.
+								</p>
+							</div>
+						</div> 
+						
+						<div class="msg" data-toggle="collapse" data-target="#msgcontent4" aria-expanded="true">
+							<header>
+								<div class="row">
+									<i class="fa fa-briefcase col-sm-1 col-xs-2"></i> <h3 class="col-sm-11 col-xs-10"> Grievance Recorded </h3>
+								</div>
+								<div class="msg-info">
+									<a href="javascript:void(0);">UTK135</a> <span class="dot">&bull;</span> <span class="msg-date"> 2 Mar 2015</span>
+								</div>
+							</header>
+							
+							<div id="msgcontent4" class="msg-content collapse">
+								<p> 
+									Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+									sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+									minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+									commodo consequat.
+								</p>
+							</div>
+						</div> 
+					</section>
+					
+					
+				</div>
+				
+			</div>
+			
+			<div class="citizen-screens cit-new-req1 display-hide" id="newreq">
+				<div class="row">
+					<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
+						<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="grievance">
+							<i class="entypo-user"></i>
+							<h4>
+								Grievance Redressal
+								<span class="label label-info">2</span>
+							</h4>
+						</a>
+					</div>
+					<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards ">
+						<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="property">
+							<i class="entypo-users"></i>
+							<h4>
+								Property Tax
+								<span class="label label-info">4</span>
+							</h4>
+						</a>
+					</div>
+					<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards ">
+						<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="bpa">
+							<i class="entypo-mobile"></i>
+							<h4>
+								Building Plan Approval
+								<span class="label label-info">10</span>
+							</h4>
+						</a>
+					</div>
+					<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards ">
+						<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="bandeath">
+							<i class="entypo-rss"></i>
+							<h4>
+								Birth and Death
+								<span class="label label-info">5</span>
+							</h4>
+						</a>
+					</div>
+					<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
+						<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="tradelic">
+							<i class="entypo-user"></i>
+							<h4>
+								Trade Licence
+								<span class="label label-info">3</span>
+							</h4>
+						</a>
+					</div>
+					<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards ">
+						<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="proftax">
+							<i class="entypo-users"></i>
+							<h4>
+								Professional Tax
+								<span class="label label-info">3</span>
+							</h4>
+						</a>
+					</div>
+					<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards ">
+						<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="comptax">
+							<i class="entypo-mobile"></i>
+							<h4>
+								Company Tax
+								<span class="label label-info">3</span>
+							</h4>
+						</a>
+					</div>
+					<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards ">
+						<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="shops">
+							<i class="entypo-rss"></i>
+							<h4>
+								Shops
+								<span class="label label-info">2</span>
+							</h4>
+						</a>
+					</div>
+					<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards ">
+						<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="advert">
+							<i class="entypo-mobile"></i>
+							<h4>
+								Advertisement
+								<span class="label label-info">2</span>
+							</h4>
+						</a>
+					</div>
+					<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
+						<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="others">
+							<i class="entypo-rss"></i>
+							<h4>
+								Others
+								<span class="label label-info">2</span>
+							</h4>
+						</a>
+					</div>
+				</div>
+				
+				<div class="row bootcards-list" id="boot-flow">
+					<div class="col-md-12">
+						<div class="panel panel-primary">
+							<div class="panel-heading clearfix">
+								<h2 class="panel-title pull-left service-title">Others</h2>
+							</div>
+							<div class="list-group service-list-group"><a class="list-group-item" href="javascript:void(0)"> <div class="row"> <div class="col-sm-10 col-xs-10"> <i class="entypo-mobile pull-left"></i> <h4 class="list-group-item-heading">Pay Fees</h4> <p class="list-group-item-text">Online payment for challans</p> </div> <div class="col-sm-2 col-xs-2"> <i class="entypo-right-open-mini pull-right"></i> </div> </div> </a> <a class="list-group-item" href="javascript:void(0)"> <div class="row"> <div class="col-sm-10 col-xs-10"> <i class="entypo-mobile pull-left"></i> <h4 class="list-group-item-heading">Apply for road cut</h4> <p class="list-group-item-text">For viewing grievances</p> </div> <div class="col-sm-2 col-xs-2"> <i class="entypo-right-open-mini pull-right"></i> </div> </div> </a></div>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+			
+			<div class="citizen-screens display-hide" id="myaccount">
+				<div class="row">
+					<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
+						<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-myaccount="property">
+							<i class="entypo-user"></i>
+							<h4>
+								My Property
+								<span class="label label-info">2</span>
+							</h4>
+						</a>
+					</div>
+					<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
+						<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-myaccount="licence">
+							<i class="entypo-user"></i>
+							<h4>
+								My Licences
+								<span class="label label-info">2</span>
+							</h4>
+						</a>
+					</div>
+					<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
+						<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-myaccount="proftax">
+							<i class="entypo-user"></i>
+							<h4>
+								My Professional Tax
+								<span class="label label-info">2</span>
+							</h4>
+						</a>
+					</div>
+					<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
+						<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-myaccount="shops">
+							<i class="entypo-user"></i>
+							<h4>
+								My Shops
+								<span class="label label-info">2</span>
+							</h4>
+						</a>
+					</div>
+					<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
+						<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-myaccount="hoardings">
+							<i class="entypo-user"></i>
+							<h4>
+								My Hoardings
+								<span class="label label-info">2</span>
+							</h4>
+						</a>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+		
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	<script src="../js/bootstrap/bootstrap.js"></script>
+	
+	<!-- <script src="../../js/app/homepage.js"></script> -->
+	<script src="../../js/app/homepagecitizen.js"></script>
+	<!-- <script src="../js/egov/custom.js"></script> -->
+	<script>
+		$(".msg a").click(function(e) {
+			//do something
+			e.stopPropagation();
+			var senderElement = e.target;
+			//check if sender is the DIV element
+			window.location = url;
+		});
+		
+		$('.menu-item').click(function(e)
+		{
+			$('.citizen-screens').hide();
+			$('.hr-menu li').removeClass('active');
+			$(this).parent().addClass('active');
+			$($(this).data('show-screen')).show();
+		});
+		
+		$("#sortby_drop li a").click(function(){
+			$("#sortby_drop > .btn > span > b").html($(this).html());
+		});
+	</script>
+</body>
+
+</html>																																																							

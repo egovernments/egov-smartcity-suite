@@ -12,7 +12,9 @@
 		
 		<link rel="stylesheet" href="../css/bootstrap/bootstrap.css">
 		<link rel="stylesheet" href="../css/font-icons/entypo/css/entypo.css">
+		<link rel="stylesheet" href="../css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css">
 		<link rel="stylesheet" href="../css/egov/custom.css">
+		<link rel="stylesheet" href="../css/egov/header-custom.css">
 		<script src="../js/jquery/jquery.js"></script>
 		
 		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -27,782 +29,494 @@
 	</head>
 	<body class="page-body">
 		
-		<div class="page-container horizontal-menu">
+		<div class="page-container">
 			
-			<header class="navbar navbar-fixed-top border-header"><!-- set fixed position by adding class "navbar-fixed-top" -->
+			<header><!-- set fixed position by adding class "navbar-fixed-top" -->
 				
-				<div class="navbar-inner">
-					
-					<!-- logo -->
-					<div class="navbar-brand">
-						<a href="javascript:void(0);">
-							<img src="../images/chennai_logo.jpg" height="60">
-						</a>
-					</div>
-					
-					<div class="navbar-brand">
-						<h2 class="horizontal-page-title homepage" id="hp-citizen-title">Notifications</h2>
-					</div>
-					
-					
-					<!-- notifications and other links -->
-					<ul class="nav navbar-right pull-right">
-						
-						<li class="profile-info visible-xs"><!-- add class "pull-right" if you want to place this from right -->
-							
-							<a href="javascript:void(0)">
-								<i class="entypo-user img-circle"></i>
-								<!-- <img src="../images/thumb-1.png" alt="" class="img-circle" width="30"> -->
-								Citizen..
+				<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+					<div class="container-fluid">
+						<div class="navbar-header col-lg-4 col-md-4 col-sm-2 col-xs-12">
+							<a class="navbar-brand" href="javascript:void(0);">
+								<img src="../images/chennai_logo.jpg" height="60">
+								<div>
+									<span class="title2 hidden-sm hidden-sm">Chennai Municipal Corporation</span>
+								</div>
 							</a>
-						</li>
-						
-						<li class="hidden-xs">
-							<a href="javascript:void(0);">
-								Recent
-							</a>
-							<ul>
-								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Complaints</span>
-									</a>
-								</li>
+						</div>
+						<div class="nav-menu col-lg-4 col-md-6 col-sm-7 col-xs-12">
+							<ul class="hr-menu text-center">
+								<li class="active"><a class="menu-item " href="javascript:void(0);" data-show-screen="#inbox-template"><span class="badge custom-badge">03</span> <span class="title">Inbox</span></a></li>
+								<span class="separator">|</span>
+								<li><a class="menu-item" href="javascript:void(0);" data-show-screen="#myaccount">My Account</a></li>
+								<span class="separator">|</span>
+								<li><a class="menu-item" href="javascript:void(0);" data-show-screen="#newreq">New Request</a></li>
 							</ul>
-						</li>
+						</div><!--/.nav-collapse -->
 						
-						
-						<li class="hidden-xs menu-responsive">
-							<a href="javascript:void(0);">
-								Help
-							</a>
-							<ul>
-								<li>
+						<div class="col-lg-4 col-md-2 col-sm-3 col-xs-5 nav-right-menu">
+							<ul class="hr-menu text-right">
+								
+								<li class="ico-menu">
 									<a href="javascript:void(0);">
-										<span class="title">Properties</span>
+										<i class="fa fa-question-circle"></i>
 									</a>
 								</li>
-								<li>
+								
+								<li class="ico-menu">
 									<a href="javascript:void(0);">
-										<span class="title">Trade Licence</span>
+										<i class="fa fa-user"></i>
 									</a>
 								</li>
-								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Land Use</span>
+								<li class="ico-menu">
+									<a href="www.egovernments.org">
+										<img src="../images/logo@2x.png" title="Powered by eGovernments" height="20px">
 									</a>
 								</li>
-								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Complaints</span>
-									</a>
-								</li>
-								<li>
-									<a href="javascript:void(0);">
-										<span class="title">City Assets</span>
-									</a>
-								</li>
-								<li>
-									<a href="javascript:void(0);">
-										<span class="title">City Office Holders</span>
-									</a>
-								</li>
-								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Feedback about this page</span>
-									</a>
-								</li>
+								
 							</ul>
-						</li>
+						</div>
 						
-						<li class="hidden-xs">
-							<a href="javascript:void(0);">
-								Profile
-							</a>
-						</li>
-						
-						<li class="hidden-xs">
-							<a href="javascript:void(0);">
-								Log Out <i class="entypo-logout right"></i>
-							</a>
-						</li>
-						
-						<!-- mobile only -->
-						<li class="">	
-							
-							<!-- open/close menu icon (do not remove if you want to enable menu on mobile devices) -->
-							<div class="horizontal-mobile-menu visible-xs">
-								<a href="#" class="with-animation"><!-- add class "with-animation" to support animation -->
-									<i class="entypo-menu"></i>
-								</a>
-							</div>
-							
-						</li>
-						
-					</ul>
-					
-				</div>
-				
+					</div>
+				</nav>
 				
 			</header>
 			
-			<div class="sidebar-menu">
+			<div class="main-content login-page">
 				
-				<div class="sidebar-menu-inner">
+				<div class="citizen-screens" id="inbox-template">
 					
-					<div class="sidebar-user-info hidden-xs" >
-						
-						<div class="sui-normal">
-							
-							<a href="#" class="user-link">
-								<i class="entypo-user img-circle"></i>
-								<!-- <img src="../images/thumb-1.png" alt="" class="img-circle"> -->
-								
-								<span>Welcome,</span>
-								<strong>Citizen</strong>
-							</a>
-							
+					<div class="row padding-tb"><!-- padding-tb -->
+						<div class="search-box col-md-9 col-sm-8">
+							<i class="fa fa-search"></i>
+							<input type="text" class="form-control" placeholder="Search">
 						</div>
-						
-						<div class="collapse-normal">
-							<a href="javascript:void(0);" class="sidebar-collapse-to-normal">
-								<i class="change-menu-normal entypo-left-dir"></i>
-							</a>
-						</div>
-						
-					</div>
-					
-					<ul id="main-menu" class="main-menu">
-						<li>
-							<a href="javascript:void(0);" data-title="show-notify" class="citizen">
-								<i class="entypo-bell"></i>
-								<span class="title">Notifications</span>
-								<span class="badge badge-secondary">8</span>
-							</a>
-						</li>
-						<li>
-							<a href="javascript:void(0);" data-title="show-newreq" class="citizen">
-								<i class="entypo-suitcase"></i>
-								<span class="title">My Request</span>
-							</a>
-						</li>
-						<li>
-							<a href="javascript:void(0);" data-title="show-newreq1" class="citizen">
-								<i class="entypo-suitcase"></i>
-								<span class="title">My Request 1</span>
-							</a>
-						</li>
-						<li>
-							<a href="javascript:void(0);" data-title="show-penreq" class="citizen">
-								<i class="entypo-attention"></i>
-								<span class="title">Pending Request</span>
-							</a>
-						</li>
-						<li>
-							<a href="javascript:void(0);" data-title="show-account" class="citizen">
-								<i class="entypo-flash"></i>
-								<span class="title">My Account</span>
-							</a>
-						</li>
-					</ul>	
-					
-				</div>
-				
-			</div>
-			
-			<div class="main-content">
-				
-				<div class="row citizen-all cit-notify display-hide">
-					<div class="col-xs-12">
-						<div class="row">
-							<div class="col-md-12 col-xs-12 add-margin text-right">
-								<span class="inline-elem">Search</span>
-								<span class="inline-elem"><input type="text" id="notifysearch" class="form-control input-sm"></span>
+						<div class="col-md-3 col-sm-4 text-center xs-margin-top-10">
+							<div class="btn-group btn-input clearfix" id="sortby_drop">
+								<button type="button" class="btn btn-default dropdown-toggle form-control" data-toggle="dropdown">
+									<span data-bind="label">Sort by : <b><i class="fa fa-clock-o"></i> Recent Messages</b></span> <span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" role="menu">
+									<li><a href="#"><i class="fa fa-clock-o"></i> Recent Messages</a></li>
+									<li><a href="#"><i class="user-msg fa fa-user"></i> User Messages</a></li>
+									<li><a href="#"><i class="fa fa-database"></i> System Notifications</a></li>
+								</ul>
 							</div>
 						</div>
-						<table class="table table-bordered datatable" id="citizen_notification">
-							<thead>
-								<tr>
-									<th>Sr.no</th>
-									<th>Date</th>
-									<th>Type</th>
-									<th>Message</th>
-								</tr>
-							</thead>
-							
-							<tbody>
-								
-								<tr>
-									<td>1</td>
-									<td>24/01/2015</td>
-									<td>Property Tax Payment</td>
-									<td>Payment of Rs. 5000 is due for Property ID 01-10-01-100 with the address 34, 2nd cross, Indiranagar, Bangalore-56. Click here to pay the taxes. Please ignore if already paid.</td>
-								</tr>
-								
-								<tr>
-									<td>2</td>
-									<td>19/01/2015</td>
-									<td>Grievance</td>
-									<td>Grievance number 145RDF has been redressed by the Corporation.</td>
-								</tr>
-								
-								<tr>
-									<td>2</td>
-									<td>12/01/1992</td>
-									<td>General Information</td>
-									<td>Elections are due for the ward corporators on 15 Feb, 2015. Please ensure that your name is registered in the voter list by clicking here</td>
-								</tr>
-							</tbody>
-						</table>
 					</div>
-				</div>
-				
-				<div class="row citizen-all cit-pen-req display-hide">
-					<div class="col-xs-12">
-						<div class="row">
-							<div class="col-md-12 col-xs-12 add-margin text-right">
-								<span class="inline-elem">Search</span>
-								<span class="inline-elem"><input type="text" id="penreqsearch" class="form-control input-sm"></span>
-							</div>
-						</div>
-						<table class="table table-bordered datatable" id="citizen_penreq">
-							<thead>
-								<tr>
-									<th>Application No.</th>
-									<th>Application Type</th>
-									<th>Application Date</th>
-									<th>Status </th>
-									<th>Details</th>
-								</tr>
-							</thead>
-							
-							<tbody>
-								
-								<tr>
-									<td><a href="citizencomplaintview.html?status=closed" class="open-popup">234RTF</a></td>
-									<td>Grievance</td>
-									<td>15/01/2015</td>
-									<td>Redressed</td>
-									<td>Complaint regarding garbage disposal completed.</td>
-								</tr>
-								
-								<tr>
-									<td><a href="citizencomplaintview.html?status=open" class="open-popup">PT-3456</a></td>
-									<td>Application for New Building Construction</td>
-									<td>10/01/2015</td>
-									<td>Field Inspection Pending</td>
-									<td>Mr. Ram Lele, Asst. Engineer Ward 34 will be visiting your premises for Building inspection on 12/01/2015 at 3:00 PM. Please be there for the inspection. Mr. Lele can be reached at +91 99999 99999</td>
-								</tr>
-								
-							</tbody>
-						</table>
-					</div>
-				</div>
-				
-				<div class="row citizen-all cit-new-req display-hide">
 					
-					
-					<div class="col-md-12">
+					<div class="row container-msgs">
 						
-						<div class="panel panel-primary" data-collapsed="0">
-							<div class="panel-heading">
-								<div class="panel-title">
-									New Request
-								</div>
-							</div>
-							<div class="panel-body">
-								<form role="form" class="form-horizontal form-groups-bordered">
-									<div class="form-group">
-										<div class="col-md-3 add-margin">
-										</div>
-										<div class="col-md-3 add-margin">
-											<label>Service Category</label>
-										</div>
-										<div class="col-md-4 add-margin">
-											<select name="service_category" id="service_category" class="form-control" data-first-option="false">
-												<option value="">Select from below</option>
-												<option value="1">Grievance Redressal</option>
-												<option value="2">Property tax</option>
-												<option value="3">Building plan approval</option>
-												<option value="4">Birth and Death</option>
-												<option value="5">Trade License</option>
-												<option value="6">Professional tax</option>
-												<option value="7">Company tax</option>
-												<option value="8">Shops</option>
-												<option value="9">Advertisement</option>
-												<option value="10">Others</option>
-											</select>
-										</div>
-										
+						<section class="col-lg-12">
+							
+							<div class="msg" data-toggle="collapse" data-target="#msgcontent0" aria-expanded="true">
+								<header>
+									
+									<div class="row">
+										<i class="user-msg fa fa-user col-sm-1 col-xs-2 read-msg"></i><h3 class="col-sm-11 col-xs-10"> Grievance Redressal<span class="msg-status">Redressed</span> </h3> 
 									</div>
-									<div class="form-group">
-										<div class="col-md-3 add-margin">
-										</div>
-										<div class="col-md-3 add-margin">
-											<label>Service</label>
-										</div>
-										<div class="col-md-4 add-margin">
-											<select name="service" id="service" class="form-control" data-first-option="false">
-												<option value="">Select from below</option>
-											</select>
-										</div>
-										
+									
+									
+									<div class="msg-info">
+										<a href="javascript:void(0);">UGH298</a> <span class="dot">&bull;</span> <span class="msg-date"> 13 Jan 2015</span>
 									</div>
-									<div class="form-group">
-										<div class="text-center">
-											<a href="complaint.html" class="btn btn-primary open-popup">Submit</a>
-										</div>
-									</div>
-								</form>
-							</div>
-						</div>
-					</div>
-					
-				</div>
-				
-				<div class="citizen-all cit-new-req1 display-hide">
-					<div class="row">
-						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
-							<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="grievance">
-								<i class="entypo-user"></i>
-								<h4>
-									Grievance Redressal
-									<span class="label label-info">2</span>
-								</h4>
-							</a>
-						</div>
-						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards ">
-							<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="property">
-								<i class="entypo-users"></i>
-								<h4>
-									Property Tax
-									<span class="label label-info">4</span>
-								</h4>
-							</a>
-						</div>
-						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards ">
-							<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="bpa">
-								<i class="entypo-mobile"></i>
-								<h4>
-									Building Plan Approval
-									<span class="label label-info">10</span>
-								</h4>
-							</a>
-						</div>
-						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards ">
-							<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="bandeath">
-								<i class="entypo-rss"></i>
-								<h4>
-									Birth and Death
-									<span class="label label-info">5</span>
-								</h4>
-							</a>
-						</div>
-						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
-							<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="tradelic">
-								<i class="entypo-user"></i>
-								<h4>
-									Trade Licence
-									<span class="label label-info">3</span>
-								</h4>
-							</a>
-						</div>
-						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards ">
-							<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="proftax">
-								<i class="entypo-users"></i>
-								<h4>
-									Professional Tax
-									<span class="label label-info">3</span>
-								</h4>
-							</a>
-						</div>
-						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards ">
-							<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="comptax">
-								<i class="entypo-mobile"></i>
-								<h4>
-									Company Tax
-									<span class="label label-info">3</span>
-								</h4>
-							</a>
-						</div>
-						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards ">
-							<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="shops">
-								<i class="entypo-rss"></i>
-								<h4>
-									Shops
-									<span class="label label-info">2</span>
-								</h4>
-							</a>
-						</div>
-						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards ">
-							<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="advert">
-								<i class="entypo-mobile"></i>
-								<h4>
-									Advertisement
-									<span class="label label-info">2</span>
-								</h4>
-							</a>
-						</div>
-						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
-							<a class="bootcards-summary-item" href="#boot-flow" style="padding-top:35px;" data-newrequest="others">
-								<i class="entypo-rss"></i>
-								<h4>
-									Others
-									<span class="label label-info">2</span>
-								</h4>
-							</a>
-						</div>
-					</div>
-					
-					<div class="row bootcards-list" id="boot-flow">
-						<div class="col-md-12">
-							<div class="panel panel-primary">
-								<div class="panel-heading clearfix">
-									<h2 class="panel-title pull-left service-title">Grievance Redressal</h2>
-								</div>
-								<div class="list-group service-list-group">
-									<!-- <a class="list-group-item" href="javascript:void(0)">
-										<div class="row">
-										<div class="col-sm-10 col-xs-10">
-										<i class="entypo-mobile pull-left"></i>
-										<h4 class="list-group-item-heading">Pay Fees</h4>
-										<p class="list-group-item-text">Online payment for challans</p>
-										</div>
-										<div class="col-sm-2 col-xs-2">
-										<i class="entypo-right-open-mini pull-right"></i>
-										</div>
-										</div>
-									</a> -->
-								</div>
-							</div>
-						</div>
-					</div>
-					
-				</div>
-				
-				<div class="citizen-all cit-my-account display-hide">
-					<div class="row">
-						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
-							<a class="bootcards-summary-item myaccount" href="#boot-flow" style="padding-top:35px;" data-myaccount="property">
-								<i class="entypo-user"></i>
-								<h4>
-									My Properties
-									<span class="label label-info">2</span>
-								</h4>
-							</a>
-						</div>
-						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
-							<a class="bootcards-summary-item myaccount" href="#boot-flow" style="padding-top:35px;" data-myaccount="licence">
-								<i class="entypo-user"></i>
-								<h4>
-									My Licences
-									<span class="label label-info">2</span>
-								</h4>
-							</a>
-						</div>
-						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
-							<a class="bootcards-summary-item myaccount" href="#boot-flow" style="padding-top:35px;" data-myaccount="proftax">
-								<i class="entypo-user"></i>
-								<h4>
-									My Professional Tax
-									<span class="label label-info">2</span>
-								</h4>
-							</a>
-						</div>
-						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
-							<a class="bootcards-summary-item myaccount" href="#boot-flow" style="padding-top:35px;" data-myaccount="shops">
-								<i class="entypo-user"></i>
-								<h4>
-									My Shops
-									<span class="label label-info">2</span>
-								</h4>
-							</a>
-						</div>
-						<div class="col-md-2 col-sm-3 col-xs-6 add-margin-cards">
-							<a class="bootcards-summary-item myaccount" href="#boot-flow" style="padding-top:35px;" data-myaccount="hoardings">
-								<i class="entypo-user"></i>
-								<h4>
-									My Hoardings
-									<span class="label label-info">2</span>
-								</h4>
-							</a>
-						</div> 
-					</div>
-					<div class="row bootcards-list hide-myaccount" id="property-show" style="height:700px;">
-						<div class="col-md-12">
-							<div class="panel panel-primary">
-								<div class="panel-heading clearfix">
-									<h2 class="panel-title pull-left service-title">My Properties</h2>
-								</div>
-								<div class="list-group service-list-group-accounts">
-									<a class="list-group-item" href="javascript:void(0)" id="property1-flow">
-										<div class="row">
-											<div class="col-sm-4 col-xs-4">
-												<i class="entypo-doc-text pull-left"></i>
-											<p class="list-group-item-text">Property ID: 1-1-10-1000/A</p>
-											<p class="list-group-item-text">Aslam Mohammed</p>
-											</div>
-											<div class="col-sm-4 col-xs-4">
-												<p class="list-group-item-text">#12/1, 5th Cross, 8th Main, Rainbow Residency, HSR Layout, Chennai - 400002</p>
-												<p class="list-group-item-text">Pending Tax Rs.5000</p>
-											</div>
-											<div class="col-sm-4 col-xs-4 text-right add-margin">
-												<span><i class="entypo-doc en-actions" id="" title="View Property"></i></span>
-												<span><i class="entypo-progress-2 en-actions" id="" title="Pay Tax"></i></span>
-												<span><i class="entypo-publish en-actions" id="" title="Apply for Name Transfer"></i></span>
-												<span><i class="entypo-publish en-actions" id="" title="Apply for Property Modification"></i></span>
-											</div>
-										</div>
-									</a> 
-									<a class="list-group-item" href="javascript:void(0)" id="property1-flow">
-										<div class="row">
-											<div class="col-sm-4 col-xs-4">
-												<i class="entypo-doc-text pull-left"></i>
-												<p class="list-group-item-text">Property ID: 1-1-10-1000/A</p>
-												<p class="list-group-item-text">Azhar Mohammed</p>
-											</div>
-											<div class="col-sm-4 col-xs-4">
-												<p class="list-group-item-text">#12/1, 5th Cross, 8th Main,Indiranagar, Chennai - 400002</p>
-												<p class="list-group-item-text">Pending Tax Rs.5000</p>
-											</div>
-											<div class="col-sm-4 col-xs-4 text-right add-margin">
-												<span><i class="entypo-doc en-actions" id="" title="View Property"></i></span>
-												<span><i class="entypo-progress-2 en-actions" id="" title="Pay Tax"></i></span>
-												<span><i class="entypo-publish en-actions" id="" title="Apply for Name Transfer"></i></span>
-												<span><i class="entypo-publish en-actions" id="" title="Apply for Property Modification"></i></span>
-											</div>
-										</div>
-									</a> 
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="row bootcards-list hide-myaccount" id="licence-show" style="height:700px;">
-						<div class="col-md-12">
-							<div class="panel panel-primary">
-								<div class="panel-heading clearfix">
-									<h2 class="panel-title pull-left service-title">My Licences</h2>
-								</div>
-								<div class="list-group service-list-group-accounts">
-									<a class="list-group-item" href="javascript:void(0)" id="property1-flow">
-										<div class="row">
-											<div class="col-sm-4 col-xs-4">
-												<i class="entypo-doc-text pull-left"></i>
-												<p class="list-group-item-text">Licence No: 1-1-10-1000/A</p>
-												<p class="list-group-item-text">Aslam Mohammed</p>
-											</div>
-											<div class="col-sm-4 col-xs-4">
-												<p class="list-group-item-text">#12/1, 5th Cross, 8th Main, Rainbow Residency, HSR Layout, Chennai - 400002</p>
-												
-											</div>
-											<div class="col-sm-4 col-xs-4 text-right add-margin">
-												<span><i class="entypo-doc en-actions" id="" title="View Details"></i></span>
-												<span><i class="entypo-publish en-actions" id="" title="Renew Licence"></i></span>
-											</div>
-										</div>
-									</a> 
-									<a class="list-group-item" href="javascript:void(0)" id="property1-flow">
-										<div class="row">
-											<div class="col-sm-4 col-xs-4">
-												<i class="entypo-doc-text pull-left"></i>
-												<p class="list-group-item-text">Licence No: 1-1-10-1000/A</p>
-												<p class="list-group-item-text">Azhar Mohammed</p>
-											</div>
-											<div class="col-sm-4 col-xs-4">
-												<p class="list-group-item-text">#12/1, 5th Cross, 8th Main,Indiranagar, Chennai - 400002</p>
-											</div>
-											<div class="col-sm-4 col-xs-4 text-right add-margin">
-												<span><i class="entypo-doc en-actions" id="" title="View Details"></i></span>
-												<span><i class="entypo-publish en-actions" id="" title="Renew Licence"></i></span>
-											</div>
-										</div>
-									</a> 
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="row bootcards-list hide-myaccount" id="protax-show" style="height:700px;">
-						<div class="col-md-12">
-							<div class="panel panel-primary">
-								<div class="panel-heading clearfix">
-									<h2 class="panel-title pull-left service-title">My Professional Tax</h2>
-								</div>
-								<div class="list-group service-list-group-accounts">
-									<a class="list-group-item" href="javascript:void(0)" id="property1-flow">
-										<div class="row">
-											<div class="col-sm-4 col-xs-4">
-												<i class="entypo-doc-text pull-left"></i>
-												<p class="list-group-item-text">Professional Tax: 1-1-10-1000/A</p>
-												<p class="list-group-item-text">Aslam Mohammed</p>
-											</div>
-											<div class="col-sm-4 col-xs-4">
-												<p class="list-group-item-text">#12/1, 5th Cross, 8th Main, Rainbow Residency, HSR Layout, Chennai - 400002</p>
-												
-											</div>
-											<div class="col-sm-4 col-xs-4 text-right add-margin">
-												<span><i class="entypo-doc en-actions" id="" title="View Details"></i></span>
-												<span><i class="entypo-publish en-actions" id="" title="Pay Professional Tax"></i></span>
-											</div>
-										</div>
-									</a> 
-									<a class="list-group-item" href="javascript:void(0)" id="property1-flow">
-										<div class="row">
-											<div class="col-sm-4 col-xs-4">
-												<i class="entypo-doc-text pull-left"></i>
-												<p class="list-group-item-text">Professional Tax: 1-1-10-1000/A</p>
-												<p class="list-group-item-text">Azhar Mohammed</p>
-											</div>
-											<div class="col-sm-4 col-xs-4">
-												<p class="list-group-item-text">#12/1, 5th Cross, 8th Main,Indiranagar, Chennai - 400002</p>
-												
-											</div>
-											<div class="col-sm-4 col-xs-4 text-right add-margin">
-												<span><i class="entypo-doc en-actions" id="" title="View Details"></i></span>
-												<span><i class="entypo-publish en-actions" id="" title="Pay Professional Tax"></i></span>
-											</div>
-										</div>
-									</a> 
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="row bootcards-list hide-myaccount" id="shops-show" style="height:700px;">
-						<div class="col-md-12">
-							<div class="panel panel-primary">
-								<div class="panel-heading clearfix">
-									<h2 class="panel-title pull-left service-title">My Shops</h2>
-								</div>
-								<div class="list-group service-list-group-accounts">
-									<a class="list-group-item" href="javascript:void(0)" id="property1-flow">
-										<div class="row">
-											<div class="col-sm-4 col-xs-4">
-												<i class="entypo-doc-text pull-left"></i>
-												<p class="list-group-item-text">Agreement No: 1-1-10-1000/A</p>
-												<p class="list-group-item-text">Aslam Mohammed</p>
-											</div>
-											<div class="col-sm-4 col-xs-4">
-												<p class="list-group-item-text">#12/1, 5th Cross, 8th Main, Rainbow Residency, HSR Layout, Chennai - 400002</p>
-												<p class="list-group-item-text">Balanance : 6700</p>
-											</div>
-											<div class="col-sm-4 col-xs-4 text-right add-margin">
-												<span><i class="entypo-doc en-actions" id="" title="View Agreement"></i></span>
-												<span><i class="entypo-publish en-actions" id="" title="Pay Rent/Lease"></i></span>
-											</div>
-										</div>
-									</a> 
-									<a class="list-group-item" href="javascript:void(0)" id="property1-flow">
-										<div class="row">
-											<div class="col-sm-4 col-xs-4">
-												<i class="entypo-doc-text pull-left"></i>
-												<p class="list-group-item-text">Agreement No: 1-1-10-1000/A</p>
-												<p class="list-group-item-text">Azhar Mohammed</p>
-											</div>
-											<div class="col-sm-4 col-xs-4">
-												<p class="list-group-item-text">#12/1, 5th Cross, 8th Main,Indiranagar, Chennai - 400002</p>
-												<p class="list-group-item-text">Balanance : 4500</p>
-											</div>
-											<div class="col-sm-4 col-xs-4 text-right add-margin">
-												<span><i class="entypo-doc en-actions" id="" title="View Agreement"></i></span>
-												<span><i class="entypo-publish en-actions" id="" title="Pay Rent/Lease"></i></span>
-											</div>
-										</div>
-									</a> 
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="row bootcards-list hide-myaccount" id="hoardings-show" style="height:700px;">
-						<div class="col-md-12">
-							<div class="panel panel-primary">
-								<div class="panel-heading clearfix">
-									<h2 class="panel-title pull-left service-title">My Hoardings</h2>
-								</div>
-								<div class="list-group service-list-group-accounts">
-									<a class="list-group-item" href="javascript:void(0)" id="property1-flow">
-										<div class="row">
-											<div class="col-sm-4 col-xs-4">
-												<i class="entypo-doc-text pull-left"></i>
-												<p class="list-group-item-text">Agreement No: 1-1-10-1000/A</p>
-											</div>
-											<div class="col-sm-4 col-xs-4">
-												<p class="list-group-item-text">#12/1, 5th Cross, 8th Main, Rainbow Residency, HSR Layout, Chennai - 400002</p>
-												<p class="list-group-item-text">Balanance : 4500</p>
-											</div>
-											<div class="col-sm-4 col-xs-4 text-right add-margin">
-												<span><i class="entypo-publish en-actions" id="" title="Pay Rent/Lease"></i></span>
-											</div>
-										</div>
-									</a> 
-									<a class="list-group-item" href="javascript:void(0)" id="property1-flow">
-										<div class="row">
-											<div class="col-sm-4 col-xs-4">
-												<i class="entypo-doc-text pull-left"></i>
-												<p class="list-group-item-text">Agreement No: 1-1-10-1000/A</p>
-											</div>
-											<div class="col-sm-4 col-xs-4">
-												<p class="list-group-item-text">#12/1, 5th Cross, 8th Main,Indiranagar, Chennai - 400002</p>
-												<p class="list-group-item-text">Balanance : 4500</p>
-											</div>
-											<div class="col-sm-4 col-xs-4 text-right add-margin">
-												<span><i class="entypo-publish en-actions" id="" title="Pay Rent/Lease"></i></span>
-											</div>
-										</div>
-									</a> 
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-xs-12">
-							<div class="row">
-								<div class="col-md-9 add-margin">
-									<a href="javascript:void(0);" class="btn btn-primary btn-sm" role="button">View Property</a>
-									<a href="javascript:void(0);" class="btn btn-primary btn-sm" role="button">Pay Taxes</a>
-									<a href="javascript:void(0);" class="btn btn-primary btn-sm" role="button">Apply for property modification</a>
-									<a href="javascript:void(0);" class="btn btn-primary btn-sm" role="button">Apply for name transfer</a>
-								</div>
-								<div class="col-md-3 add-margin text-right">
-									<span class="inline-elem">Search</span>
-									<span class="inline-elem"><input type="text" id="prop_samplesearch" class="form-control input-sm"></span>
-								</div>
-							</div>
-							<table class="table table-bordered datatable" id="prop_sample">
-								<thead>
-									<tr>
-										<th>Property ID</th>
-										<th>Owner Name</th>
-										<th>Address</th>
-										<th>Pending Tax Rs.</th>
-									</tr>
-								</thead>
+								</header>
 								
-								<tbody>
+								<div id="msgcontent0" class="msg-content collapse in">
+									<p> 
+										Complaint No. UGH298 regarding Dog Menace at BegumPet was marked as redressed by Mr. Amit Kumar. Please help us to improve our quality of service by giving your feedback on the quality of service by clicking <a href="">here</a>. 
+									</p>
+								</div>
+							</div> 
+							
+							
+						</section>
+						
+						<section class="col-lg-12">
+							
+							<div class="msg" data-toggle="collapse" data-target="#msgcontent1" aria-expanded="true">
+								<header>
+									<div class="row">
+										<i class="fa fa-database col-sm-1 col-xs-2 unread-msg"></i> <h3 class="col-sm-11 col-xs-10"> Property Tax Payment</h3>
+									</div>
+									<div class="msg-info">
+										<a href="javascript:void(0);">JGH1837</a> <span class="dot">&bull;</span> <span class="msg-date"> 4 Mar 2015</span>
+									</div>
+								</header>
+								
+								<div id="msgcontent1" class="msg-content collapse">
+									<p> 
+										Payment of 5,000 is due for Property ID 01-01-100 with the address 34, 2nd cross, Indiranagar, Bangalore - 56. 
+										<a href="javascript:void(0);">Click here</a> to pay the taxes. Please ignore if already paid.
+									</p>
+								</div>
+							</div> 
+							
+							
+							<div class="msg" data-toggle="collapse" data-target="#msgcontent2" aria-expanded="true">
+								<header>
 									
-									<tr>
-										<td>2345612</td>
-										<td>Mohammed Aslam</td>
-										<td>58, HSR Garden Layout, Bommanahalli.</td>
-										<td>5000</td>
-									</tr>
-									
-									<tr>
-										<td>34352</td>
-										<td>Dinakaran</td>
-										<td>58, HSR Garden Layout, Bommanahalli.</td>
-										<td>5000</td>
-									</tr>
-									
-									<tr>
-										<td>15353</td>
-										<td>Gopinath</td>
-										<td>58, HSR Garden Layout, Bommanahalli.</td>
-										<td>300</td>
-									</tr>
-									
-								</tbody>
-							</table>
-						</div>
+									<div class="row">
+										<i class="user-msg fa fa-user col-sm-1 col-xs-2 unread-msg"></i> <h3 class="col-sm-11 col-xs-10">Inspection for New Building Construction Permit<span class="msg-status">Pending Inspection</span>  </h3> 
+									</div>
+									<div class="msg-info">
+										<a href="javascript:void(0);">UGH298</a> <span class="dot">&bull;</span> <span class="msg-date"> 13 Jan 2015</span>
+									</div>
+								</header>
+								
+								<div id="msgcontent2" class="msg-content collapse">
+									<p> 
+										Building Plan application No. BA14567 located at No. 14, 5th Main, Indiranagar, Chennai - 400004.
+										Mr. Ram Lele, Asst. Engineer Ward 34 will be visiting your premises for Building inspection on 12/01/2015 at 3:00 PM. Please be there for the inspection. Mr. Lele can be reached at +91 99999 99999
+									</p>
+								</div>
+							</div>
+							
+						</section>
+						
+						
+						<section class="col-lg-12">
+							
+							<div class="msg" data-toggle="collapse" data-target="#msgcontent3" aria-expanded="true">
+								<header>
+									<div class="row">
+										<i class="fa fa-database col-sm-1 col-xs-2 read-msg"></i> <h3 class="col-sm-11 col-xs-10"> General Information </h3>
+									</div>
+									<div class="msg-info">
+										<a href="javascript:void(0);">UTK135</a> <span class="dot">&bull;</span> <span class="msg-date"> 2 Mar 2015</span>
+									</div>
+								</header>
+								
+								<div id="msgcontent3" class="msg-content collapse">
+									<p> 
+										Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+										sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+										minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+										commodo consequat.
+									</p>
+								</div>
+							</div> 
+							
+							<div class="msg" data-toggle="collapse" data-target="#msgcontent4" aria-expanded="true">
+								<header>
+									<div class="row">
+										<i class="fa fa-database col-sm-1 col-xs-2 unread-msg"></i> <h3 class="col-sm-11 col-xs-10"> Grievance Recorded </h3>
+									</div>
+									<div class="msg-info">
+										<a href="javascript:void(0);">UTK135</a> <span class="dot">&bull;</span> <span class="msg-date"> 2 Mar 2015</span>
+									</div>
+								</header>
+								
+								<div id="msgcontent4" class="msg-content collapse">
+									<p> 
+										Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+										sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+										minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+										commodo consequat.
+									</p>
+								</div>
+							</div> 
+						</section>
+					</div>
+					
+				</div>
+				
+				<div class="citizen-screens display-hide" id="myaccount">
+					aslam
+				</div>
+				
+				<div class="citizen-screens tabs tabs-style-topline cit-new-req1 display-hide" id="newreq">
+					<nav>
+						<ul>
+							<li class="tab-current" data-newreq-section="#section-topline-1">
+								<a href="javascript:void(0);">
+									<div class="text-center"><i class="fa fa-book"></i></div>
+									<span class="hidden-sm hidden-xs">Grievance Redressal</span>
+								</a>
+							</li>
+							<li data-newreq-section="#section-topline-2">
+								<a href="javascript:void(0);">
+									<div class="text-center"><i class="fa fa-rupee"></i></div>
+									<span class="hidden-sm hidden-xs">Property Tax</span>
+								</a>
+							</li>
+							<li data-newreq-section="#section-topline-3">
+								<a href="javascript:void(0);">
+									<div class="text-center"><i class="fa fa-building-o"></i></div>
+									<span class="hidden-sm hidden-xs">Building Plan Approval</span>
+								</a>
+							</li>
+							<li data-newreq-section="#section-topline-4">
+								<a href="javascript:void(0);">
+									<div class="text-center"><i class="fa fa-medkit"></i></div>
+									<span class="hidden-sm hidden-xs">Birth & Death</span>
+								</a>
+							</li>
+							<li data-newreq-section="#section-topline-5">
+								<a href="javascript:void(0);">
+									<div class="text-center"><i class="fa fa-text-width"></i></div>
+									<span class="hidden-sm hidden-xs">Trade Licence</span>
+								</a>
+							</li>
+							<li data-newreq-section="#section-topline-6">
+								<a href="javascript:void(0);">
+									<div class="text-center"><i class="fa fa-rupee"></i></div>
+									<span class="hidden-sm hidden-xs">Professional Tax</span>
+								</a>
+							</li>
+							<li data-newreq-section="#section-topline-7">
+								<a href="javascript:void(0);">
+									<div class="text-center"><i class="fa fa-rupee"></i></div>
+									<span class="hidden-sm hidden-xs">Company Tax</span>
+								</a>
+							</li>
+							<li data-newreq-section="#section-topline-8">
+								<a href="javascript:void(0);">
+									<div class="text-center"><i class="fa fa-money"></i></div>
+									<span class="hidden-sm hidden-xs">Shops</span>
+								</a>
+							</li>
+							<li data-newreq-section="#section-topline-9">
+								<a href="javascript:void(0);">
+									<div class="text-center"><i class="fa fa-adn"></i></div>
+									<span class="hidden-sm hidden-xs">Advertisement</span>
+								</a>
+							</li>
+							<li data-newreq-section="#section-topline-10">
+								<a href="javascript:void(0);">
+									<div class="text-center"><i class="fa fa-hand-o-right"></i></div>
+									<span class="hidden-sm hidden-xs">Others</span>
+								</a>
+							</li>
+						</ul>
+					</nav>
+					<div class="content-wrap">
+						<section id="section-topline-1"  class="content-current">
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-edit col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Register Grievance</h3>
+									</div>
+								</header>
+							</div> 
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">View Grievance</h3>
+									</div>
+								</header>
+							</div> 
+						</section>
+						<section id="section-topline-2">
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-edit col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">File New Assessment</h3>
+									</div>
+								</header>
+							</div> 
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Pay Property Tax</h3>
+									</div>
+								</header>
+							</div>
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-external-link col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Link Property to My Account</h3>
+									</div>
+								</header>
+							</div>
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-search col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Search Property</h3>
+									</div>
+								</header>
+							</div>
+						</section>
+						<section id="section-topline-3">
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-edit col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Application for Additional Construction</h3>
+									</div>
+								</header>
+							</div> 
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Application for Demolition and Reconstruction</h3>
+									</div>
+								</header>
+							</div>
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Application for Demolition Only</h3>
+									</div>
+								</header>
+							</div>
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Application for New Building Permit</h3>
+									</div>
+								</header>
+							</div>
+						</section>
+						<section id="section-topline-4">
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-edit col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Application for Birth/Death Certificate</h3>
+									</div>
+								</header>
+							</div> 
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-search col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Search for Birth/Death records</h3>
+									</div>
+								</header>
+							</div>
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-edit col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Apply for Name Inclusion</h3>
+									</div>
+								</header>
+							</div> 
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Record Correction</h3>
+									</div>
+								</header>
+							</div>
+						</section>
+						<section id="section-topline-5">
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-edit col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Apply For Trade Licence</h3>
+									</div>
+								</header>
+							</div> 
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-rupee col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Renew Licence</h3>
+									</div>
+								</header>
+							</div>
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-external-link col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Link Licence to my Account</h3>
+									</div>
+								</header>
+							</div> 
+						</section>
+						<section id="section-topline-6">
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-edit col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">File New Assessment</h3>
+									</div>
+								</header>
+							</div> 
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-rupee col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Pay Professional Tax</h3>
+									</div>
+								</header>
+							</div>
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-external-link col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Link Profession to my Account</h3>
+									</div>
+								</header>
+							</div> 
+						</section>
+						<section id="section-topline-7">
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-edit col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">File New Assessment</h3>
+									</div>
+								</header>
+							</div> 
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-rupee col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Pay Company Tax</h3>
+									</div>
+								</header>
+							</div>
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-external-link col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Link Company to my Account</h3>
+									</div>
+								</header>
+							</div>
+						</section>
+						<section id="section-topline-8">
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-rupee col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Pay Fees</h3>
+									</div>
+								</header>
+							</div>
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-external-link col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Link Shop to my Account</h3>
+									</div>
+								</header>
+							</div> 
+						</section>
+						<section id="section-topline-9">
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-rupee col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Pay Fees</h3>
+									</div>
+								</header>
+							</div>
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-external-link col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Link Hoarding to my Account</h3>
+									</div>
+								</header>
+							</div> 
+						</section>
+						<section id="section-topline-10">
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-rupee col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Online Payment For Challans</h3>
+									</div>
+								</header>
+							</div>
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-edit col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Apply For Road Cut</h3>
+									</div>
+								</header>
+							</div> 
+						</section>
 					</div>
 				</div>
+				
+				
 				
 				<footer class="main">
 					
@@ -814,13 +528,7 @@
 			
 		</div>
 		
-		<link rel="stylesheet" href="../js/jquery/plugins/datatables/responsive/css/datatables.responsive.css">
-		
 		<script src="../js/bootstrap/bootstrap.js"></script>
-		
-		<script src="../js/jquery/plugins/datatables/jquery.dataTables.min.js"></script>
-		<script src="../js/jquery/plugins/datatables/dataTables.bootstrap.js"></script>
-		<script src="../js/jquery/plugins/datatables/responsive/js/datatables.responsive.js"></script>
 		
 		<script src="../../js/app/homepage.js"></script>
 		<script src="../../js/app/homepagecitizen.js"></script>

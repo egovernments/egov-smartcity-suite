@@ -38,7 +38,7 @@ a:focus{
 }
 
 .page-container.horizontal-menu header.navbar.navbar-fixed-top.border-header {
-	border-bottom:1px solid #f2851f;
+	border-bottom:1px solid #573b1e;
 }
 
 .page-container.horizontal-menu header.navbar {
@@ -81,7 +81,7 @@ a:focus{
 	display: table-cell;
 	vertical-align: top;
 	padding: 20px;
-	/* background: #ffffff; */
+	background: #ffffff;
 	width: 100%;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -286,7 +286,7 @@ table .replace-inputs input {
 }
 
 .page-container .sidebar-menu #main-menu li#search {
-	background: #008eb2;
+	background:#f2851f;
 	border-bottom-color: rgba(69, 74, 84, 0.5);
 	position: relative;
 	height: 48px;
@@ -382,7 +382,7 @@ table .replace-inputs input {
 
 .page-container .sidebar-menu #main-menu li ul li ul li a{
 	padding-left:60px;
-	background: #262b34;
+	background: #6b4f2c;
 }
 
 .page-container .sidebar-menu #main-menu li ul > li:last-child {
@@ -1313,3 +1313,249 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 .list-group-item-text {
 	margin-bottom: 5px;
 }
+
+.main-content.login-page
+{
+	background:#f2f2f2;
+}
+
+/* main-content start */
+.main-content
+{
+	padding:20px 15px;
+}
+.search-box {
+    position: relative;
+}
+.search-box input {
+    padding-left:35px; 
+	border-radius:20px;
+}
+.search-box i {
+    position: absolute;
+    padding: 8px 12px;
+	color:#d1d1d1;
+	font-size:18px;
+    pointer-events: none;
+}
+.padding-tb
+{
+	padding:15px 0px;
+}
+.container-msgs
+{
+	margin-top:10px;
+}
+.container-msgs section span.span-date{
+	display:block;
+	padding:10px 5px;
+	color:#a2a4a6;
+	font-style: italic;
+}
+
+.container-msgs section div.msg, section div.msg {
+	/* margin-top:10px; */
+	margin-bottom:5px;
+	overflow:auto;
+}
+
+.msg
+{
+	background:#fff;
+	padding:15px 30px;
+	border:1px solid #d5d9db;
+	border-radius:5px;
+	cursor:pointer;
+}
+
+.msg header h3
+{
+	margin:0;
+	padding:0;
+	font-weight:bold;
+	display:inline-block;
+	word-wrap: break-word;
+}
+.msg header i
+{
+	width:34px;
+	font-size:24px;
+	padding:0 5px;
+}
+.unread-msg{
+	color:#f58522;
+}
+
+.read-msg{
+	color:#c9c9c9;
+}
+
+.msg header span.msg-status
+{
+	margin:0 15px;
+	padding:5px 15px;
+	background:#c9c9c9;
+	font-size:13px;
+	color:#fff;
+	border-radius:20px;
+	white-space: nowrap;
+}
+.msg header .msg-info
+{
+	padding-top:5px;
+	padding-left:20px;
+	font-style:italic;
+}
+
+.msg a
+{
+	text-decoration:underline;
+	color:#f58522;
+	
+}
+.dot
+{
+	font-size:15px;
+}
+
+.msg-date
+{
+	color:#a7a9ab;
+}
+
+.msg-content > p
+{
+	margin:15px 20px 0px 20px;
+}
+
+@media (max-width:768px)
+{
+	.navbar-header > a span {
+		font-size: 14px;
+	}
+	
+	.msg header h3
+	{
+		font-size:18px;
+	}
+	
+	.xs-margin-top-10
+	{
+		margin-top:10px;
+	}
+	
+	.msg header h3
+	{
+		font-size:20px;
+	}
+	
+}
+
+
+.tabs {
+  position: relative;
+  overflow: hidden;
+  margin: 0 auto;
+  width: 100%;
+  font-weight: 300;
+  font-size: 1.25em;
+}
+
+.tabs nav {
+  text-align: center;
+}
+
+.tabs nav ul {
+  position: relative;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: flex;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.tabs nav ul li {
+  position: relative;
+  z-index: 1;
+  display: block;
+  margin: 0;
+  text-align: center;
+  flex: 1;
+}
+
+.tabs-style-topline nav li {
+  border: 1px solid rgba(40,44,42,0.1);
+}
+
+.tabs-style-topline nav li:not(:last-child) {
+  border-right: none;
+}
+
+.tabs-style-topline nav a {
+  padding: 0.65em 0 0.5em;
+  background: #f2f2f2;
+  color: #6b4f2c;
+  line-height: 1;
+  -webkit-transition: color 0.2s;
+  transition: color 0.2s;
+}
+
+.tabs nav a {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.0;
+}
+
+.tabs nav a:focus, .tabs nav a:hover{
+	text-decoration:none;
+	outline:none;
+}
+
+.tabs-style-topline nav a span {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  font-size: 0.5em;
+}
+
+.tabs nav a span {
+  vertical-align: middle;
+}
+
+.tabs nav a div{
+	padding:5px;
+}
+
+.tabs-style-topline nav li.tab-current {
+  border-top-color: #f58522;
+  border-bottom: none;
+}
+
+.tabs-style-topline nav li.tab-current a {
+  background: none;
+  box-shadow: inset 0 3px 0 #f58522;
+  color: #f58522;
+  font-size:20px;
+}
+
+.content-wrap {
+  position: relative;
+}
+
+.content-wrap section {
+  display: none;
+  padding: 1em;
+  border: 1px solid rgba(40,44,42,0.1);
+  border-top: none;
+}
+
+.content-wrap section.content-current {
+  display: block;
+}
+
