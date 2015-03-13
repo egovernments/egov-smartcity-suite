@@ -19,7 +19,7 @@ import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.filestore.FileStoreMapper;
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;

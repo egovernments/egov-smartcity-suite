@@ -1,4 +1,4 @@
-package org.egov.infra.filestore;
+package org.egov.infra.filestore.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

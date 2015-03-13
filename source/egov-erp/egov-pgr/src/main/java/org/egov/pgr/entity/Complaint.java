@@ -18,7 +18,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.infra.filestore.FileStoreMapper;
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.lib.admbndry.BoundaryImpl;
 import org.egov.pims.commons.Position;

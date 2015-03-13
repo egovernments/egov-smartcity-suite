@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.filestore.FileStoreMapper;
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintTypeService;

@@ -11,7 +11,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.filestore.FileStoreMapper;
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,17 +69,22 @@ public class LocalDiskFileStoreService implements FileStoreService {
 
     @Override
     public File fetch(final FileStoreMapper fileMapper, final String moduleName) {
-        final Path path = Paths.get(fileStoreBaseDir + File.separator + moduleName);
-        if (!Files.exists(path))
-            throw new EGOVRuntimeException(String.format("File Store does not exist at Path : %s/%s",fileStoreBaseDir,moduleName));
-        return Paths.get(path.toString() + File.separator + fileMapper.getFileStoreId()).toFile();
+        return fetch(fileMapper.getFileStoreId(), moduleName);
     }
 
     @Override
     public Set<File> fetchAll(final Set<FileStoreMapper> fileMappers, final String moduleName) {
-        return fileMappers.stream().map((fileMapper) -> fetch(fileMapper, moduleName)).collect(Collectors.toSet());
+        return fileMappers.stream().map((fileMapper) -> fetch(fileMapper.getFileStoreId(), moduleName)).collect(Collectors.toSet());
     }
-
+    
+    @Override
+    public File fetch(final String fileStoreId, final String moduleName) {
+        final Path path = Paths.get(fileStoreBaseDir + File.separator + moduleName);
+        if (!Files.exists(path))
+            throw new EGOVRuntimeException(String.format("File Store does not exist at Path : %s/%s",fileStoreBaseDir,moduleName));
+        return Paths.get(path.toString() + File.separator + fileStoreId).toFile();
+    }
+    
     private Path createNewFilePath(final FileStoreMapper fileMapper, final String moduleName) throws IOException {
         final Path fileStoreDir = Paths.get(fileStoreBaseDir + File.separator + moduleName);
         if (!Files.exists(fileStoreDir)) {
