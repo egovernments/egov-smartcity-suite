@@ -22,10 +22,19 @@ $(document).ready(function()
 	
 	
 	$('.tabs-style-topline nav li').click(function(){
-		$('.tabs-style-topline nav li').removeClass('tab-current');
-		$('.content-wrap section').removeClass('content-current');
-		$(this).addClass('tab-current');
-		$($(this).attr('data-newreq-section')).addClass('content-current');
+		if($(this).attr('data-section') == "newrequest")
+		{
+			$('.tabs-style-topline nav li').removeClass('tab-current-newreq');
+			$('.content-wrap section').removeClass('content-current-newreq');
+			$(this).addClass('tab-current-newreq');
+			$($(this).attr('data-newreq-section')).addClass('content-current-newreq');
+		}else if($(this).attr('data-section') == "myaccount")
+		{
+			$('.tabs-style-topline nav li').removeClass('tab-current-myacc');
+			$('.content-wrap section').removeClass('content-current-myacc');
+			$(this).addClass('tab-current-myacc');
+			$($(this).attr('data-myaccount-section')).addClass('content-current-myacc');
+		}
 	});
 	
 });

@@ -496,9 +496,14 @@ table .replace-inputs input {
 	margin-bottom: 16px;
 }
 
-.page-container.horizontal-menu header.navbar ul.nav > li > a:hover, .page-container.horizontal-menu header.navbar .navbar-right > li ul li a:hover{
+.page-container.horizontal-menu header.navbar ul.nav > li.menu-responsive > a:hover, .page-container.horizontal-menu header.navbar .navbar-right > li ul li a:hover{
 	color:#fff;
 	background-color: #f2851f;
+}
+
+.page-container.horizontal-menu header.navbar ul.nav > li.dropdown > a:hover{
+	color:#fff;
+	background-color: #6b4f2c;
 }
 
 .page-container.horizontal-menu header.navbar ul.nav > li.dropdown > a i {
@@ -1357,6 +1362,7 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 	/* margin-top:10px; */
 	margin-bottom:5px;
 	overflow:auto;
+	position: relative;
 }
 
 .msg
@@ -1379,8 +1385,9 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 .msg header i
 {
 	width:34px;
-	font-size:24px;
-	padding:0 5px;
+	font-size: 18px;
+	padding: 4px 5px;
+	text-align:center;
 }
 .unread-msg{
 	color:#f58522;
@@ -1405,6 +1412,13 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 	padding-top:5px;
 	padding-left:20px;
 	font-style:italic;
+	font-size: 14px;
+}
+
+.msg header .msg-info .msg-date i{
+	font-size: 14px;
+	padding: 0;
+	width: 15px;
 }
 
 .msg a
@@ -1426,6 +1440,7 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 .msg-content > p
 {
 	margin:15px 20px 0px 20px;
+	font-size: 14px;
 }
 
 @media (max-width:768px)
@@ -1453,63 +1468,63 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 
 
 .tabs {
-  position: relative;
-  overflow: hidden;
-  margin: 0 auto;
-  width: 100%;
-  font-weight: 300;
-  font-size: 1.25em;
+	position: relative;
+	overflow: hidden;
+	margin: 0 auto;
+	width: 100%;
+	font-weight: 300;
+	font-size: 1.25em;
 }
 
 .tabs nav {
-  text-align: center;
+	text-align: center;
 }
 
 .tabs nav ul {
-  position: relative;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: -moz-flex;
-  display: -ms-flex;
-  display: flex;
-  margin: 0 auto;
-  padding: 0;
-  list-style: none;
+	position: relative;
+	display: -ms-flexbox;
+	display: -webkit-flex;
+	display: -moz-flex;
+	display: -ms-flex;
+	display: flex;
+	margin: 0 auto;
+	padding: 0;
+	list-style: none;
 }
 
 .tabs nav ul li {
-  position: relative;
-  z-index: 1;
-  display: block;
-  margin: 0;
-  text-align: center;
-  flex: 1;
+	position: relative;
+	z-index: 1;
+	display: block;
+	margin: 0;
+	text-align: center;
+	flex: 1;
 }
 
 .tabs-style-topline nav li {
-  border: 1px solid rgba(40,44,42,0.1);
+	border: 1px solid rgba(40,44,42,0.1);
 }
 
 .tabs-style-topline nav li:not(:last-child) {
-  border-right: none;
+	border-right: none;
 }
 
 .tabs-style-topline nav a {
-  padding: 0.65em 0 0.5em;
-  background: #f2f2f2;
-  color: #6b4f2c;
-  line-height: 1;
-  -webkit-transition: color 0.2s;
-  transition: color 0.2s;
+	padding: 0.65em 0 0.5em;
+	background: #f2f2f2;
+	color: #6b4f2c;
+	line-height: 1;
+	-webkit-transition: color 0.2s;
+	transition: color 0.2s;
 }
 
 .tabs nav a {
-  position: relative;
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  line-height: 1.0;
+	position: relative;
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	line-height: 1.0;
 }
 
 .tabs nav a:focus, .tabs nav a:hover{
@@ -1518,44 +1533,49 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 }
 
 .tabs-style-topline nav a span {
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 700;
-  font-size: 0.5em;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-weight: 700;
+	font-size: 0.5em;
 }
 
 .tabs nav a span {
-  vertical-align: middle;
+	vertical-align: middle;
 }
 
 .tabs nav a div{
 	padding:5px;
 }
 
-.tabs-style-topline nav li.tab-current {
-  border-top-color: #f58522;
-  border-bottom: none;
+.tabs-style-topline nav li.tab-current-newreq, .tabs-style-topline nav li.tab-current-myacc {
+	border-top-color: #f58522;
+	border-bottom: none;
 }
 
-.tabs-style-topline nav li.tab-current a {
-  background: none;
-  box-shadow: inset 0 3px 0 #f58522;
-  color: #f58522;
-  font-size:20px;
+.tabs-style-topline nav li.tab-current-newreq a, .tabs-style-topline nav li.tab-current-myacc a {
+	background: none;
+	box-shadow: inset 0 3px 0 #f58522;
+	color: #f58522;
+	font-size:20px;
 }
 
 .content-wrap {
-  position: relative;
+	position: relative;
 }
 
 .content-wrap section {
-  display: none;
-  padding: 1em;
-  border: 1px solid rgba(40,44,42,0.1);
-  border-top: none;
+	display: none;
+	padding: 1em;
+	border: 1px solid rgba(40,44,42,0.1);
+	border-top: none;
 }
 
-.content-wrap section.content-current {
-  display: block;
+.content-wrap section.content-current-newreq, .content-wrap section.content-current-myacc {
+	display: block;
 }
 
+.myaccount-actions{
+	position:absolute;
+	top:15px;
+	right:15px;
+}
