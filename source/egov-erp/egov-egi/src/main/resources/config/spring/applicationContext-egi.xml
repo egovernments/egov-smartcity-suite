@@ -218,7 +218,6 @@
 	<bean id="workflowAdmin" class="org.egov.infstr.workflow.admin.WorkflowAdminService">
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="userService" ref="userService" />
-		<property name="workflowService" ref="workflowService" />
 		<property name="eisService" ref="eisService" />
 	</bean>
 

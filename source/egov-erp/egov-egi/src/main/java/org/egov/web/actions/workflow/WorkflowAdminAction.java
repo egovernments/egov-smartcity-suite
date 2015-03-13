@@ -6,7 +6,7 @@
 package org.egov.web.actions.workflow;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.egov.infra.workflow.inbox.InboxService.SLASH_DELIMIT;
+import static org.egov.infra.workflow.inbox.InboxRenderServiceDeligate.SLASH_DELIMIT;
 import static org.egov.infstr.utils.DateUtils.getFormattedDate;
 import static org.egov.infstr.utils.StringUtils.escapeSpecialChars;
 
@@ -28,7 +28,7 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.WorkflowTypes;
-import org.egov.infra.workflow.inbox.InboxService;
+import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
 import org.egov.infstr.annotation.Search;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.workflow.admin.WorkflowAdminService;
@@ -54,7 +54,7 @@ public class WorkflowAdminAction extends ActionSupport {
 
 	private transient WorkflowAdminService workflowAdmin;
 
-	private transient InboxService<StateAware> inboxService;
+	private transient InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate;
 
 	private transient DepartmentDAO departmentDao;
 
@@ -207,14 +207,14 @@ public class WorkflowAdminAction extends ActionSupport {
 			wfItem.append("[");
 			for (final StateAware stateAware : states) {
 				final State state = stateAware.getCurrentState();
-				final Position sender = this.inboxService.getStateUserPosition(state);
+				final Position sender = this.inboxRenderServiceDeligate.getStateUserPosition(state);
 				final Position owner = state.getOwnerPosition();
-				final User userSender = this.inboxService.getStateUser(state, sender);
-				final User userOwner = this.inboxService.getStateUser(state, owner);
+				final User userSender = this.inboxRenderServiceDeligate.getStateUser(state, sender);
+				final User userOwner = this.inboxRenderServiceDeligate.getStateUser(state, owner);
 				wfItem.append("{Id:'").append(stateAware.myLinkId()).append("#DILIM#").append(workflowTypes.getId()).append("',");
 				wfItem.append("Date:'").append(getFormattedDate(state.getCreatedDate().toDate(), "dd/MM/yyyy hh:mm a")).append("',");
-				wfItem.append("Sender:'").append(this.inboxService.prettyPrintSenderName(sender, userSender)).append("',");
-				wfItem.append("Owner:'").append(this.inboxService.prettyPrintSenderName(owner, userOwner)).append("',");
+				wfItem.append("Sender:'").append(this.inboxRenderServiceDeligate.prettyPrintSenderName(sender, userSender)).append("',");
+				wfItem.append("Owner:'").append(this.inboxRenderServiceDeligate.prettyPrintSenderName(owner, userOwner)).append("',");
 				wfItem.append("Task:'").append(workflowTypes.getDisplayName()).append("',");
 				wfItem.append("Status:'").append(state.getValue()).append("',");
 				wfItem.append("Details:'").append(stateAware.getStateDetails() == null ? EMPTY : escapeSpecialChars(stateAware.getStateDetails())).append("',");
@@ -237,8 +237,8 @@ public class WorkflowAdminAction extends ActionSupport {
 				ServletActionContext.getResponse().getWriter().write("error");
 				return;
 			}
-			final List<StateAware> wfStates = this.inboxService.getWorkflowItems(this.criteria);
-			final WorkflowTypes workflowTypes = this.inboxService.getWorkflowType(wfType);
+			final List<StateAware> wfStates = this.inboxRenderServiceDeligate.getWorkflowItems(this.criteria);
+			final WorkflowTypes workflowTypes = this.inboxRenderServiceDeligate.getWorkflowType(wfType);
 			ServletActionContext.getResponse().getWriter().write(this.renderWFItems(wfStates, workflowTypes).toString());
 		} catch (final RuntimeException e) {
 			LOG.error("Error occurred in Workflow Admin search", e);
@@ -252,7 +252,7 @@ public class WorkflowAdminAction extends ActionSupport {
 	 * @return the workflow state values
 	 */
 	private List<String> getWFItemSearchFields(final String wfType) throws IntrospectionException, ClassNotFoundException {
-		final String wfItemClassName = this.inboxService.getWorkflowType(wfType).getTypeFQN();
+		final String wfItemClassName = this.inboxRenderServiceDeligate.getWorkflowType(wfType).getTypeFQN();
 		final BeanInfo beanInfo = Introspector.getBeanInfo(Thread.currentThread().getContextClassLoader().loadClass(wfItemClassName));
 		final PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
 		final List<String> searchFields = new ArrayList<String>();
@@ -302,8 +302,8 @@ public class WorkflowAdminAction extends ActionSupport {
 	 * Sets the inbox service.
 	 * @param inboxService the new inbox service
 	 */
-	public void setInboxService(final InboxService<StateAware> inboxService) {
-		this.inboxService = inboxService;
+	public void setInboxRenderServiceDeligate(final InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate) {
+		this.inboxRenderServiceDeligate = inboxRenderServiceDeligate;
 		this.setInboxServiceInWorkflowService();
 	}
 
@@ -311,8 +311,8 @@ public class WorkflowAdminAction extends ActionSupport {
 	 * Sets the inbox service in workflow service.
 	 */
 	public void setInboxServiceInWorkflowService() {
-		if ((this.workflowAdmin != null) && (this.inboxService != null)) {
-			this.workflowAdmin.setInboxService(this.inboxService);
+		if ((this.workflowAdmin != null) && (this.inboxRenderServiceDeligate != null)) {
+			this.workflowAdmin.setInboxRenderServiceDeligate(this.inboxRenderServiceDeligate);
 		}
 	}
 
@@ -329,7 +329,7 @@ public class WorkflowAdminAction extends ActionSupport {
 	 * @param owner the new owner
 	 */
 	public void setOwner(final Integer owner) {
-		this.criteria.put("owner", this.inboxService.getPositionForUser(owner, new Date()));
+		this.criteria.put("owner", this.inboxRenderServiceDeligate.getPositionForUser(owner, new Date()));
 	}
 
 	/**
@@ -345,7 +345,7 @@ public class WorkflowAdminAction extends ActionSupport {
 	 * @param sender the new sender
 	 */
 	public void setSender(final Integer sender) {
-		this.criteria.put("sender", this.inboxService.getPositionForUser(sender, new Date()));
+		this.criteria.put("sender", this.inboxRenderServiceDeligate.getPositionForUser(sender, new Date()));
 	}
 
 	/**

@@ -23,7 +23,8 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.entity.WorkflowTypes;
-import org.egov.infra.workflow.inbox.InboxService;
+import org.egov.infra.workflow.inbox.InboxRenderService;
+import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.lib.rjbac.user.User;
 import org.egov.pims.commons.Position;
@@ -38,7 +39,7 @@ public class InboxAction extends BaseFormAction {
     private static final Logger LOG = LoggerFactory.getLogger(InboxAction.class);
     private transient final Map<Integer, String> senderList = new HashMap<Integer, String>();
     private transient final Map<String, String> taskList = new HashMap<String, String>();
-    private transient InboxService<StateAware> inboxService;
+    private transient InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate;
     private transient StringBuilder inboxData;
     private transient StringBuilder inboxDraft;
     private transient StringBuilder inboxHistory;
@@ -48,8 +49,8 @@ public class InboxAction extends BaseFormAction {
     private transient Date fromDate;
     private transient Date toDate;
 
-    public void setInboxService(final InboxService<StateAware> inboxService) {
-        this.inboxService = inboxService;
+    public void setInboxRenderServiceDeligate(final InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate) {
+        this.inboxRenderServiceDeligate = inboxRenderServiceDeligate;
     }
 
     public void setSender(final Integer sender) {
@@ -96,10 +97,10 @@ public class InboxAction extends BaseFormAction {
 
     public String filterInboxData() throws EGOVRuntimeException, IOException {
         try {
-            final List<Position> positions = inboxService.getPositionForUser(getLoginUserId(), new Date());
+            final List<Position> positions = inboxRenderServiceDeligate.getPositionForUser(getLoginUserId(), new Date());
             final List<StateAware> filteredInboxItem = new ArrayList<StateAware>();
             for (final Position position : positions)
-                filteredInboxItem.addAll(inboxService.getFilteredInboxItems(position.getId(), getLoginUserId(), sender,
+                filteredInboxItem.addAll(inboxRenderServiceDeligate.getFilteredInboxItems(position.getId(), getLoginUserId(), sender,
                         task, fromDate, toDate));
             inboxData = loadInboxData(filteredInboxItem);
             writeToAjaxResponse(getInboxData());
@@ -114,10 +115,10 @@ public class InboxAction extends BaseFormAction {
     public String pollDraft() throws EGOVRuntimeException, IOException {
         try {
             final Integer userId = getLoginUserId();
-            final List<Position> positions = inboxService.getPositionForUser(userId, new Date());
+            final List<Position> positions = inboxRenderServiceDeligate.getPositionForUser(userId, new Date());
             final List<StateAware> inboxDraftItem = new ArrayList<StateAware>();
             for (final Position position : positions)
-                inboxDraftItem.addAll(inboxService.getDraftItems(position.getId(), userId, null));
+                inboxDraftItem.addAll(inboxRenderServiceDeligate.getDraftItems(position.getId(), userId, null));
             inboxDraft = loadInboxData(inboxDraftItem);
             writeToAjaxResponse(getInboxDraft());
         } catch (final Exception e) {
@@ -131,10 +132,10 @@ public class InboxAction extends BaseFormAction {
     public String pollInbox() throws EGOVRuntimeException, IOException {
         try {
             final Integer userId = getLoginUserId();
-            final List<Position> positions = inboxService.getPositionForUser(userId, new Date());
+            final List<Position> positions = inboxRenderServiceDeligate.getPositionForUser(userId, new Date());
             final List<StateAware> inboxItem = new ArrayList<StateAware>();
             for (final Position position : positions)
-                inboxItem.addAll(inboxService.getWorkflowItems(position.getId(), userId, null));
+                inboxItem.addAll(inboxRenderServiceDeligate.getWorkflowItems(position.getId(), userId, null));
             inboxData = loadInboxData(inboxItem);
             writeToAjaxResponse(getInboxData());
         } catch (final Exception e) {
@@ -147,7 +148,7 @@ public class InboxAction extends BaseFormAction {
     @Action("/workflow/inbox-populateHistory")
     public String populateHistory() throws EGOVRuntimeException, IOException {
         try {
-            final State state = inboxService.getStateById(Long.parseLong(stateId));
+            final State state = inboxRenderServiceDeligate.getStateById(Long.parseLong(stateId));
             inboxHistory = loadInboxHistoryData(state);
             writeToAjaxResponse(getInboxHistory());
         } catch (final Exception e) {
@@ -181,19 +182,19 @@ public class InboxAction extends BaseFormAction {
             inboxItem.append("[");
             for (final StateAware stateAware : inboxStates) {
                 final State state = stateAware.getCurrentState();
-                final WorkflowTypes workflowTypes = inboxService.getWorkflowType(stateAware.getStateType());
-                final Position position = inboxService.getStateUserPosition(state);
-                final User user = inboxService.getStateUser(state, position);
+                final WorkflowTypes workflowTypes = inboxRenderServiceDeligate.getWorkflowType(stateAware.getStateType());
+                final Position position = inboxRenderServiceDeligate.getStateUserPosition(state);
+                final User user = inboxRenderServiceDeligate.getStateUser(state, position);
                 taskList.put(workflowTypes.getType(), workflowTypes.getDisplayName());
                 senderList.put(position.getId(), position.getName());
                 inboxItem.append("{Id:'")
-                        .append(InboxService.GROUP_Y.equals(workflowTypes.getGroupYN()) ? EMPTY : state.getId())
+                        .append(InboxRenderService.GROUP_Y.equals(workflowTypes.getGroupYN()) ? EMPTY : state.getId())
                         .append("#").append(workflowTypes.getId()).append("',");
                 inboxItem.append("Date:'").append(getFormattedDate(state.getCreatedDate().toDate(), "dd/MM/yyyy hh:mm a"))
                         .append("',");
-                inboxItem.append("Sender:'").append(inboxService.prettyPrintSenderName(position, user)).append("',");
+                inboxItem.append("Sender:'").append(inboxRenderServiceDeligate.prettyPrintSenderName(position, user)).append("',");
                 inboxItem.append("Task:'").append(workflowTypes.getDisplayName()).append("',");
-                final String nextAction = inboxService.getNextAction(state);
+                final String nextAction = inboxRenderServiceDeligate.getNextAction(state);
                 inboxItem.append("Status:'").append(state.getValue())
                         .append(EMPTY.equals(nextAction) ? EMPTY : " - " + nextAction).append("',");
                 inboxItem
@@ -235,15 +236,15 @@ public class InboxAction extends BaseFormAction {
             inboxHistoryItem.append("[");
             for (final StateHistory stateHistory : stateHistories) {
                 final Position position = stateHistory.getOwnerPosition();
-                final User user = inboxService.getStateUser(stateHistory.getState(), position);
-                final WorkflowTypes workflowTypes = inboxService.getWorkflowType(stateHistory.getState().getType());
+                final User user = inboxRenderServiceDeligate.getStateUser(stateHistory.getState(), position);
+                final WorkflowTypes workflowTypes = inboxRenderServiceDeligate.getWorkflowType(stateHistory.getState().getType());
                 inboxHistoryItem.append("{Id:'").append(stateHistory.getState().getId()).append("',");
                 inboxHistoryItem.append("Date:'")
                         .append(getFormattedDate(stateHistory.getCreatedDate(), "dd/MM/yyyy hh:mm a")).append("',");
-                inboxHistoryItem.append("Sender:'").append(inboxService.prettyPrintSenderName(position, user))
+                inboxHistoryItem.append("Sender:'").append(inboxRenderServiceDeligate.prettyPrintSenderName(position, user))
                         .append("',");
                 inboxHistoryItem.append("Task:'").append(workflowTypes.getDisplayName()).append("',");
-                final String nextAction = inboxService.getNextAction(stateHistory.getState());
+                final String nextAction = inboxRenderServiceDeligate.getNextAction(stateHistory.getState());
                 inboxHistoryItem.append("Status:'").append(stateHistory.getValue())
                         .append(EMPTY.equals(nextAction) ? EMPTY : "~" + nextAction).append("',");
                 inboxHistoryItem

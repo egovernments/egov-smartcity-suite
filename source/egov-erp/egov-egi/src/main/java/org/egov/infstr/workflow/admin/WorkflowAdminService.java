@@ -1,6 +1,6 @@
 /*
  * @(#)WorkflowAdminService.java 3.0, 17 Jun, 2013 4:45:44 PM
- * Copyright 2013 eGovernments Foundation. All rights reserved. 
+ * Copyright 2013 eGovernments Foundation. All rights reserved.
  * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 package org.egov.infstr.workflow.admin;
@@ -12,112 +12,68 @@ import java.util.Locale;
 import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.WorkflowTypes;
-import org.egov.infra.workflow.inbox.InboxService;
-import org.egov.infra.workflow.service.WorkflowService;
+import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.lib.rjbac.user.User;
 import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.egov.pims.commons.Position;
 
+@SuppressWarnings("all")
 public class WorkflowAdminService {
-	
-	private transient PersistenceService daoService;
-	private transient EISServeable eisService;
-	private transient UserService userService;
-	private transient InboxService<StateAware> inboxService; // Delegate to inbox service
-	private transient WorkflowService<StateAware> workflowService;
-	
-	/**
-	 * Gets the all user by user name.
-	 * @param userName the user name
-	 * @return the all user by user name
-	 */
-	public List<User> getAllUserByUserName(final String userName) {
-		return this.userService.getAllUserByUserNameLike(userName);
-	}
-	
-	/**
-	 * Gets the workflow state values.
-	 * @param wfType the wf type
-	 * @return the workflow state values
-	 */
-	public List<String> getWorkflowStateValues(final String wfType) {
-		return this.daoService.findAllBy("select state.value from org.egov.infstr.models.State as state where state.type=? and state.status != ? and state.status != ? group by state.value", wfType, StateStatus.STARTED, StateStatus.ENDED);
-	}
-	
-	/**
-	 * Gets the workflow types.
-	 * @param name the name
-	 * @return the workflow types
-	 */
-	public List<WorkflowTypes> getWorkflowTypes(final String name) {
-		return this.daoService.findAllByNamedQuery(WorkflowTypes.TYPE_LIKE_NAME, name.toLowerCase(Locale.ENGLISH) + "%");
-	}
-	
-	/**
-	 * Reassign wf item.
-	 * @param wfType the wf type
-	 * @param stateId the state id
-	 * @param newUserId the new user id
-	 * @return the string
-	 */
-	public String reassignWFItem(final String wfType, final String stateId, final Integer newUserId) {
-		String status = "ERROR";
-		List<StateAware> stateAwares = inboxService.getWorkflowItems(wfType, stateId);
-		if (!stateAwares.isEmpty()) {
-			final Position newOwner = this.eisService.getPrimaryPositionForUser(newUserId, new Date());
-			if (stateAwares.get(0).getCurrentState().getOwnerPosition().getId().equals(newOwner.getId())) {
-				status = "OWNER-SAME";
-			} else {
-				status = "RE-ASSIGNED";
-				for (StateAware stateAware : stateAwares) {
-				    stateAware.withOwner(newOwner).withComments(status);
-				    //FIXME persist the stateaware with respective persistence service
-				}				
-			}
-		}
-		return status;
-	}
-	
-	
-	/**
-	 * To set EisService.
-	 * @param eisService the new eis service
-	 */
-	public void setEisService(final EISServeable eisService) {
-		this.eisService = eisService;
-	}
-	
-	/**
-	 * Sets the inbox service.
-	 * @param inboxService the new inbox service
-	 */
-	public void setInboxService(final InboxService<StateAware> inboxService) {
-		this.inboxService = inboxService;
-	}
-	
-	/**
-	 * To set StatePersistenceService.
-	 * @param daoService the new persistence service
-	 */
-	public void setPersistenceService(final PersistenceService daoService) {
-		this.daoService = daoService;
-	}
-	
-	/**
-	 * To set User Manager.
-	 * @param userManager the new user manager
-	 */
-	public void setUserService(final UserService userService) {
-		this.userService = userService;
-	}
-	
-	/**
-	 * Sets the workflow service.
-	 * @param workflowService the new workflow service
-	 */
-	public void setWorkflowService(final WorkflowService<StateAware> workflowService) {
-		this.workflowService = workflowService;
-	}
+
+    private transient PersistenceService daoService;
+    private transient EISServeable eisService;
+    private transient UserService userService;
+    private transient InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate;
+    
+    public List<User> getAllUserByUserName(final String userName) {
+        return userService.getAllUserByUserNameLike(userName);
+    }
+
+    public List<String> getWorkflowStateValues(final String wfType) {
+        return daoService
+                .findAllBy(
+                        "select state.value from org.egov.infstr.models.State as state where state.type=? and state.status != ? and state.status != ? group by state.value",
+                        wfType, StateStatus.STARTED, StateStatus.ENDED);
+    }
+
+    public List<WorkflowTypes> getWorkflowTypes(final String name) {
+        return daoService.findAllByNamedQuery(WorkflowTypes.TYPE_LIKE_NAME, name.toLowerCase(Locale.ENGLISH) + "%");
+    }
+
+    public String reassignWFItem(final String wfType, final String stateId, final Integer newUserId) {
+        String status = "ERROR";
+        final List<StateAware> stateAwares = inboxRenderServiceDeligate.getWorkflowItems(wfType, stateId);
+        if (!stateAwares.isEmpty()) {
+            final Position newOwner = eisService.getPrimaryPositionForUser(newUserId, new Date());
+            if (stateAwares.get(0).getCurrentState().getOwnerPosition().getId().equals(newOwner.getId()))
+                status = "OWNER-SAME";
+            else {
+                status = "RE-ASSIGNED";
+                for (final StateAware stateAware : stateAwares)
+                    stateAware.withOwner(newOwner).withComments(status);
+                // FIXME persist the stateaware with respective persistence
+                // service
+            }
+        }
+        return status;
+    }
+
+    public void setEisService(final EISServeable eisService) {
+        this.eisService = eisService;
+    }
+
+    public void setInboxRenderServiceDeligate(final InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate) {
+        this.inboxRenderServiceDeligate = inboxRenderServiceDeligate;
+    }
+    
+    public void setPersistenceService(final PersistenceService daoService) {
+        this.daoService = daoService;
+    }
+
+    public void setUserService(final UserService userService) {
+        this.userService = userService;
+    }
+
 }

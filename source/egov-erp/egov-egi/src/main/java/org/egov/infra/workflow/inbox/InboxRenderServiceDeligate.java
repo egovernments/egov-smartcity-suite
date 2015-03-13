@@ -1,6 +1,7 @@
 package org.egov.infra.workflow.inbox;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.egov.infra.workflow.inbox.InboxRenderService.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,13 +32,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Lazy
-public class InboxService<T extends StateAware> {
-    private static final Logger LOG = LoggerFactory.getLogger(InboxService.class);
+public class InboxRenderServiceDeligate<T extends StateAware> {
+    private static final Logger LOG = LoggerFactory.getLogger(InboxRenderServiceDeligate.class);
     
-    private static final String WF_TYPE_SERVICE_SFX = "WorkflowTypeService";
-    public static final String SERVICE_NOT_FOUND = "workflowtype.service.not.found";
-    public static final Character RENDER_Y = Character.valueOf('Y');
-    public static final Character GROUP_Y = Character.valueOf('Y');
     public static final String UNKNOWN = "Unknown";
     public static final String SLASH_DELIMIT = " / ";
     private static final Map<String, WorkflowTypes> WF_TYPES = new TreeMap<String, WorkflowTypes>();
@@ -65,10 +62,10 @@ public class InboxService<T extends StateAware> {
         return this.entityQueryService.findAllByNamedQuery(State.WORKFLOWTYPES_QRY, posId);
     }
 
-    public Optional<WorkflowTypeService<T>> getWorkflowTypeService(final String wfType) {
-        WorkflowTypeService<T> workflowTypeService = null;
+    public Optional<InboxRenderService<T>> getWorkflowTypeService(final String wfType) {
+        InboxRenderService<T> workflowTypeService = null;
         try {
-            workflowTypeService = (WorkflowTypeService<T>)applicationContext.getBean(wfType.concat(WF_TYPE_SERVICE_SFX));
+            workflowTypeService = (InboxRenderService<T>)applicationContext.getBean(wfType.concat(INBOX_RENDER_SERVICE_SUFFIX));
         } catch (BeansException e) {
             LOG.warn("WorkflowTypeService bean for {} not found, have you defined {}WorkflowTypeService bean ?",wfType,wfType);
         }
@@ -79,7 +76,7 @@ public class InboxService<T extends StateAware> {
         final List<T> draftWfItems = new ArrayList<T>();
         final List<String> wfTypes = this.getAssignedWorkflowTypes(owner);
         for (final String wfType : wfTypes) {
-            final Optional<WorkflowTypeService<T>> wfTypeService = getWorkflowTypeService(wfType);
+            final Optional<InboxRenderService<T>> wfTypeService = getWorkflowTypeService(wfType);
             if (wfTypeService.isPresent())
                 draftWfItems.addAll(wfTypeService.get().getDraftWorkflowItems(owner, userId, order));
         }
@@ -100,7 +97,7 @@ public class InboxService<T extends StateAware> {
             wfTypes.add(wfType.getType());
         }
         for (final String wfType : wfTypes) {
-            final Optional<WorkflowTypeService<T>> wfTypeService = this.getWorkflowTypeService(wfType);
+            final Optional<InboxRenderService<T>> wfTypeService = this.getWorkflowTypeService(wfType);
             if (wfTypeService.isPresent())
                 filteredWFItems.addAll(wfTypeService.get().getFilteredWorkflowItems(owner, userId, sender, fromDate, toDate));
         }
@@ -122,7 +119,7 @@ public class InboxService<T extends StateAware> {
     }
 
     public List<T> getWorkflowItems(final String wfType, final String myLinkId) {
-        final Optional<WorkflowTypeService<T>> wfTypeService = this.getWorkflowTypeService(wfType);
+        final Optional<InboxRenderService<T>> wfTypeService = this.getWorkflowTypeService(wfType);
         List<T> stateAwares = new ArrayList<T>();
         if (wfTypeService.isPresent())
             stateAwares = wfTypeService.get().getWorkflowItems(myLinkId);
@@ -133,7 +130,7 @@ public class InboxService<T extends StateAware> {
         final List<T> assignedWFItems = new ArrayList<T>();
         final List<String> wfTypes = this.getAssignedWorkflowTypes(owner);
         for (final String wfType : wfTypes) {
-            final Optional<WorkflowTypeService<T>> wfTypeService = this.getWorkflowTypeService(wfType);
+            final Optional<InboxRenderService<T>> wfTypeService = this.getWorkflowTypeService(wfType);
             if (wfTypeService.isPresent())
                 assignedWFItems.addAll(wfTypeService.get().getAssignedWorkflowItems(owner, userId, order));
         }

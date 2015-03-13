@@ -22,24 +22,24 @@ import org.hibernate.Query;
                 &lt;property name="type" value="org.egov.web.actions.common.MyStateAware" /&gt;
         &lt;/bean>
         
-        &lt;bean id="MyStateAwareWorkflowTypeService" class="org.egov.infstr.workflow.inbox.AbstractWorkflowTypeService"&gt;
+        &lt;bean id="MyStateAwareInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl"&gt;
                 &lt;constructor-arg index="0" ref="myStateAwarePersistenceService"/&gt;
         &lt;/bean&gt;
  * </pre>
  * <br/>
  * id or name attribute value of the workflowTypeService bean definition should follow a strict naming convention as follows<br/>
  * <code>
- * <YourStateAwareClassName>WorkflowTypeService
+ * <YourStateAwareClassName>InboxRenderService
  * </code>
- * This is how, {@link InboxService} will detect the appropriate workflowtype service and render the inbox items.
+ * This is how, {@link InboxRenderServiceDeligate} will detect the appropriate {@link InboxRenderService} and render the inbox items.
  **/
 @SuppressWarnings("all")
-public class AbstractWorkflowTypeService<T extends StateAware> implements WorkflowTypeService<T> {
+public class DefaultInboxRenderServiceImpl<T extends StateAware> implements InboxRenderService<T> {
 
     private Class<T> stateAwareType;
     private final PersistenceService<T,Long> stateAwarePersistenceService;
 
-    public AbstractWorkflowTypeService(final PersistenceService<T,Long> stateAwarePersistenceService) {
+    public DefaultInboxRenderServiceImpl(final PersistenceService<T,Long> stateAwarePersistenceService) {
         this.stateAwarePersistenceService = stateAwarePersistenceService;
         this.stateAwareType = stateAwarePersistenceService.getType();
     }
