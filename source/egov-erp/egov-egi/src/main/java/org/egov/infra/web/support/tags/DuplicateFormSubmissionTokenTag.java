@@ -1,4 +1,4 @@
-package org.egov.infra.web.spring.support.tags;
+package org.egov.infra.web.support.tags;
 
 import java.io.IOException;
 

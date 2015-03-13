@@ -1,4 +1,4 @@
-package org.egov.infra.web.spring.support.interceptor;
+package org.egov.infra.web.support.interceptor;
 
 import java.util.Set;
 import java.util.UUID;
@@ -12,8 +12,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
-import org.egov.infra.web.spring.support.annotation.DuplicateRequestToken;
-import org.egov.infra.web.spring.support.annotation.ValidateToken;
+import org.egov.infra.web.support.annotation.DuplicateRequestToken;
+import org.egov.infra.web.support.annotation.ValidateToken;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.method.HandlerMethod;

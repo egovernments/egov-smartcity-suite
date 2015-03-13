@@ -1,9 +1,9 @@
-package org.egov.infra.web.spring.support.handler;
+package org.egov.infra.web.support.handler;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.egov.infra.web.spring.support.propertyeditor.JodaDateTimeEditor;
+import org.egov.infra.web.support.propertyeditor.JodaDateTimeEditor;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;

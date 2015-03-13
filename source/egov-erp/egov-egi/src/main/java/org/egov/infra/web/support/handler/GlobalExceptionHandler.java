@@ -1,4 +1,4 @@
-package org.egov.infra.web.spring.support.handler;
+package org.egov.infra.web.support.handler;
 
 import javax.servlet.http.HttpServletRequest;
 

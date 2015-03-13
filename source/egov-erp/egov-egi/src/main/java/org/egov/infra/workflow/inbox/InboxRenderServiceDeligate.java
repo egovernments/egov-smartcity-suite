@@ -67,7 +67,7 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
         try {
             workflowTypeService = (InboxRenderService<T>)applicationContext.getBean(wfType.concat(INBOX_RENDER_SERVICE_SUFFIX));
         } catch (BeansException e) {
-            LOG.warn("WorkflowTypeService bean for {} not found, have you defined {}WorkflowTypeService bean ?",wfType,wfType);
+            LOG.warn("InboxRenderService bean for {} not found, have you defined {}InboxRenderService bean ?",wfType,wfType);
         }
         return Optional.ofNullable(workflowTypeService);
     }

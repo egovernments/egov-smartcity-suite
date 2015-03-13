@@ -1,4 +1,4 @@
-package org.egov.infra.web.spring.support.annotation;
+package org.egov.infra.web.support.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value={ElementType.METHOD})
-public @interface DuplicateRequestToken {
-    
+public @interface ValidateToken {
+
 }
