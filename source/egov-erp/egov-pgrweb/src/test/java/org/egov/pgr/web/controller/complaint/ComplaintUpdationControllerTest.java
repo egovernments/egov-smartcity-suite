@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.lib.admbndry.BoundaryImpl;
+import org.egov.lib.admbndry.ejb.api.BoundaryService;
 import org.egov.lib.rjbac.role.Role;
 import org.egov.lib.rjbac.role.RoleImpl;
 import org.egov.lib.rjbac.role.dao.RoleDAO;
@@ -31,17 +31,14 @@ import org.egov.pgr.service.ComplaintStatusMappingService;
 import org.egov.pgr.service.ComplaintStatusService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.web.controller.AbstractContextControllerTest;
-import org.egov.pgr.web.formatter.BoundaryImplFormatter;
+import org.egov.pgr.web.formatter.BoundaryFormatter;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.support.FormattingConversionService;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.validation.BindingResult;
@@ -54,7 +51,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
 	@Mock
 	private ComplaintService complaintService;
 	@Mock
-	private BoundaryDAO boundaryDAO;
+	private BoundaryService boundaryService;
 	
 	@Mock
 	private CommonService commonService;  
@@ -109,7 +106,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
 	{
 		
 		FormattingConversionService conversionService = new FormattingConversionService();
-		conversionService.addFormatter(new BoundaryImplFormatter(boundaryDAO));
+		conversionService.addFormatter(new BoundaryFormatter(boundaryService));
         mvcBuilder.setConversionService(conversionService);
 		
 		mockMvc=mvcBuilder.build();

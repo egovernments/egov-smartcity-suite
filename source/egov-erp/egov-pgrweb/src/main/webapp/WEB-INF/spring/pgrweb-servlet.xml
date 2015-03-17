@@ -42,7 +42,6 @@
             <set>
                 <ref bean="departmentFormatter"/>
                 <ref bean="boundaryFormatter"/>
-                <ref bean="boundaryImplFormatter"/>
             </set>
         </property>
     </bean>
