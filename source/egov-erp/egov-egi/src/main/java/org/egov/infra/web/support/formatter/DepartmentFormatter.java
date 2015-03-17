@@ -1,4 +1,4 @@
-package org.egov.pgr.web.formatter;
+package org.egov.infra.web.support.formatter;
 
 import org.egov.lib.rjbac.dept.DepartmentImpl;
 import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;

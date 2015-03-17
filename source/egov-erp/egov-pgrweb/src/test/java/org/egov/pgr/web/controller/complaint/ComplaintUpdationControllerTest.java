@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.web.support.formatter.BoundaryFormatter;
 import org.egov.lib.admbndry.BoundaryImpl;
 import org.egov.lib.admbndry.ejb.api.BoundaryService;
 import org.egov.lib.rjbac.role.Role;
@@ -31,7 +32,6 @@ import org.egov.pgr.service.ComplaintStatusMappingService;
 import org.egov.pgr.service.ComplaintStatusService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.web.controller.AbstractContextControllerTest;
-import org.egov.pgr.web.formatter.BoundaryFormatter;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

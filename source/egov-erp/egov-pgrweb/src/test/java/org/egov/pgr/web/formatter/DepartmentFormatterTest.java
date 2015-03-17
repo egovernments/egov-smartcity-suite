@@ -1,6 +1,7 @@
 package org.egov.pgr.web.formatter;
 
 import org.egov.builder.entities.DepartmentBuilder;
+import org.egov.infra.web.support.formatter.DepartmentFormatter;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.dept.DepartmentImpl;
 import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;

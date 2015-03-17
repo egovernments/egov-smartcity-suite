@@ -17,15 +17,14 @@ import org.egov.search.util.Serializer;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
-import org.joda.time.DateTime;
 import org.json.simple.JSONObject;
 
 @Entity
-@Table(name = "pgr_complainttype", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
+@Table(name = "pgr_complainttype", uniqueConstraints = @UniqueConstraint(columnNames = { "name" }))
 @Searchable
 public class ComplaintType extends AbstractPersistable<Long> {
     private static final long serialVersionUID = 8904645810221559541L;
-    
+
     @NotBlank
     @SafeHtml
     @Length(max = 150)
@@ -35,7 +34,7 @@ public class ComplaintType extends AbstractPersistable<Long> {
 
     @Valid
     @NotNull
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dept_id")
     @Searchable
     private DepartmentImpl department;
@@ -66,7 +65,7 @@ public class ComplaintType extends AbstractPersistable<Long> {
         return locationRequired;
     }
 
-    public void setLocationRequired(boolean locationRequired) {
+    public void setLocationRequired(final boolean locationRequired) {
         this.locationRequired = locationRequired;
     }
 
@@ -74,7 +73,7 @@ public class ComplaintType extends AbstractPersistable<Long> {
         return hrsToResolve;
     }
 
-    public void setHrsToResolve(Integer hrsToResolve) {
+    public void setHrsToResolve(final Integer hrsToResolve) {
         this.hrsToResolve = hrsToResolve;
     }
 

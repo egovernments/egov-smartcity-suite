@@ -1,4 +1,4 @@
-package org.egov.pgr.web.formatter;
+package org.egov.infra.web.support.formatter;
 
 import java.text.ParseException;
 import java.util.Locale;
@@ -12,21 +12,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class BoundaryFormatter implements Formatter<BoundaryImpl> {
 
-
-    private BoundaryService boundaryService;
+    private final BoundaryService boundaryService;
 
     @Autowired
-    public BoundaryFormatter(BoundaryService boundaryService) {
+    public BoundaryFormatter(final BoundaryService boundaryService) {
         this.boundaryService = boundaryService;
     }
 
     @Override
-    public BoundaryImpl parse(String boundaryId, Locale locale) throws ParseException {
+    public BoundaryImpl parse(final String boundaryId, final Locale locale) throws ParseException {
         return boundaryId.isEmpty() ? null : (BoundaryImpl) boundaryService.getBoundary(Integer.valueOf(boundaryId));
     }
 
     @Override
-    public String print(BoundaryImpl boundary, Locale locale) {
+    public String print(final BoundaryImpl boundary, final Locale locale) {
         return boundary.getName();
     }
 
