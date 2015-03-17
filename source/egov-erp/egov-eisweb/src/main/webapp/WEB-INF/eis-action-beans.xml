@@ -84,10 +84,10 @@
 		 class="org.egov.pims.client.AfterServiceAction"> 
 		 <property name="employeeService">
 			<ref bean="employeeService"/>
-		 </property>
+		 </property><!-- 
 		 <property name="auditEventService" >
 		     <ref bean="auditEventService" />
-		 </property>
+		 </property> -->
 	 </bean>
 
 	 <bean name="/pims/AfterGradeMasterAction"

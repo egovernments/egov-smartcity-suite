@@ -23,10 +23,6 @@ import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.service.CommonsService;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.auditing.model.AuditEntity;
-import org.egov.infstr.auditing.model.AuditEvent;
-import org.egov.infstr.auditing.model.AuditModule;
-import org.egov.infstr.auditing.service.AuditEventService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EgovMasterDataCaching;
@@ -76,7 +72,7 @@ public class EmployeeMasterAction extends BaseFormAction
 	private RoleService roleMgr;
 	private CommonsService commonsMgr;
 	private transient PersonalInformationService personalInformationService;
-	private transient AuditEventService auditEventService;
+	//private transient AuditEventService auditEventService;
 	private User user ;
 	PersonalInformation employee = new PersonalInformation();
 	private String permanentAddress="";
@@ -194,12 +190,14 @@ public class EmployeeMasterAction extends BaseFormAction
 		persistenceService.getSession().saveOrUpdate(employee);
 		if(mode.equalsIgnoreCase("create"))
 		{
-			doAuditing(AuditEntity.EIS_EMPLOYEE,AuditEvent.CREATED,employee,assignmentList);
+		  //FIXME 
+			//doAuditing(AuditEntity.EIS_EMPLOYEE,AuditEvent.CREATED,employee,assignmentList);
 			createAccountDetailKeyForEmployee(employee);
 		}
 		else
 		{
-			doAuditing(AuditEntity.EIS_EMPLOYEE,AuditEvent.MODIFIED,employee,assignmentList);
+			//FIXME 
+		    //doAuditing(AuditEntity.EIS_EMPLOYEE,AuditEvent.MODIFIED,employee,assignmentList);
 		}
 		addActionMessage(getText("emp.created.updated.successfully"));
 		this.mode="View";
@@ -557,7 +555,8 @@ public class EmployeeMasterAction extends BaseFormAction
 		return !empCriteria.list().isEmpty();
 	}
 	
-	private void doAuditing(AuditEntity auditEntity, String action,PersonalInformation employee,List<Assignment> assign) {
+	/*//FIXME 
+	 * private void doAuditing(AuditEntity auditEntity, String action,PersonalInformation employee,List<Assignment> assign) {
 		final String details1 = new StringBuffer("[ Employee code : ").
 								append(employee.getEmployeeCode()).
 								append(",  Status : ").append(employee.getStatusMaster().getDescription().toString()).
@@ -594,7 +593,7 @@ public class EmployeeMasterAction extends BaseFormAction
 		auditEvent.setDetails2(details2.toString());
 		auditEvent.setPkId(employee.getId().longValue());
 		getAuditEventService().createAuditEvent(auditEvent, PersonalInformation.class);
-	}
+	}*/
 	
 	private void createAccountDetailKeyForEmployee(PersonalInformation employee)
 	{
@@ -728,12 +727,12 @@ public class EmployeeMasterAction extends BaseFormAction
 		this.commonsMgr = commonsMgr;
 	}
 
-	public AuditEventService getAuditEventService() {
+	/*public AuditEventService getAuditEventService() {
 		return auditEventService;
 	}
 
 	public void setAuditEventService(AuditEventService auditEventService) {
 		this.auditEventService = auditEventService;
-	}
+	}*/
 	
 }
