@@ -241,14 +241,6 @@
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
-	<bean id="auditEventPersistenceService" parent="persistenceService" >
-		<property name="type" value="org.egov.infstr.auditing.model.AuditEvent"/>
-	</bean>
-	
-	<bean id="auditEventService" class="org.egov.infstr.auditing.service.AuditEventService">
-		<property name="auditEventPersistenceService" ref="auditEventPersistenceService"/>
-	</bean>
-
 	<bean id="userDelegate" class="org.egov.infstr.client.delegate.UserDelegate">
 		<property name="userService" ref="userService"/>
 		<property name="boundaryService" ref="boundaryService"/>
