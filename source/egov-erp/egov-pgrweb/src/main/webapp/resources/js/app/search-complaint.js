@@ -46,7 +46,7 @@ jQuery(document).ready(function ($) {
     });
 
 
-    /*tableContainer = $("#csearch").dataTable({
+    tableContainer = $("#csearch").dataTable({
      "sPaginationType": "bootstrap",
      "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-6 col-md-3 col-left'i><'col-xs-6 col-md-3 text-right col-left'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-xs-12 col-md-3 col-right'p>>",
      "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
@@ -59,7 +59,7 @@ jQuery(document).ready(function ($) {
 
      tableContainer.columnFilter({
      "sPlaceHolder": "head:after"
-     });*/
+     });
 
     $("#when_date").change(function () {
         populatedate($('#when_date').val());

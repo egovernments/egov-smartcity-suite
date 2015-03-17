@@ -222,13 +222,8 @@ table .replace-inputs input {
 	color: #555555;
 	background-color: #ffffff;
 	background-image: none;
-	border: 1px solid #ebebeb;
+	border: 1px solid #CFCFCF;
 	border-radius: 3px;
-	-webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-	-moz-transition: border-color ease-in-out .15s, -moz-box-shadow ease-in-out .15s;
-	-o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-	-webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-	transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 }
 
 .DTTT_button
@@ -1374,7 +1369,7 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 	cursor:pointer;
 }
 
-.msg header h3
+.msg header h3, .msg header a 
 {
 	margin:0;
 	padding:0;
