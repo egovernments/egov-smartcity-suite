@@ -25,7 +25,7 @@ public class PositionMasterServiceTest extends EISAbstractSpringIntegrationTest{
 	private Position position;
 	
 	private void samplePosition() {
-		position = new PositionBuilder().withName("ACC_ASSISTANT").build();
+		position = new PositionBuilder().withName("TEST_ACC_ASSISTANT").build();
 		positionMasterService.createPosition(position);
 	}
 	
@@ -33,7 +33,7 @@ public class PositionMasterServiceTest extends EISAbstractSpringIntegrationTest{
 	public void createPosition() {
 		samplePosition();
 		
-		assertEquals("ACC_ASSISTANT",position.getName());
+		assertEquals("TEST_ACC_ASSISTANT",position.getName());
 	}
 	
 	@Test
