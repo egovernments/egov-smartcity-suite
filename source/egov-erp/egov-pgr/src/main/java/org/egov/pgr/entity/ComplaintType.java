@@ -1,15 +1,5 @@
 package org.egov.pgr.entity;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
-import org.egov.search.domain.Searchable;
-import org.egov.search.util.Serializer;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.Range;
-import org.hibernate.validator.constraints.SafeHtml;
-import org.json.simple.JSONObject;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,6 +9,16 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.lib.rjbac.dept.DepartmentImpl;
+import org.egov.search.domain.Searchable;
+import org.egov.search.util.Serializer;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
+import org.joda.time.DateTime;
+import org.json.simple.JSONObject;
 
 @Entity
 @Table(name = "pgr_complainttype", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
@@ -43,9 +43,8 @@ public class ComplaintType extends AbstractPersistable<Long> {
     @Column(name = "location_required")
     private boolean locationRequired;
 
-    @Column(name = "days_to_resolve")
-    @Range(min=0, max = 99)
-    private int daysToResolve;
+    @Column(name = "hrs_to_resolve")
+    private Integer hrsToResolve;
 
     public String getName() {
         return name;
@@ -71,12 +70,12 @@ public class ComplaintType extends AbstractPersistable<Long> {
         this.locationRequired = locationRequired;
     }
 
-    public int getDaysToResolve() {
-        return daysToResolve;
+    public Integer getHrsToResolve() {
+        return hrsToResolve;
     }
 
-    public void setDaysToResolve(int daysToResolve) {
-        this.daysToResolve = daysToResolve;
+    public void setHrsToResolve(Integer hrsToResolve) {
+        this.hrsToResolve = hrsToResolve;
     }
 
     public JSONObject toJsonObject() {
