@@ -17,9 +17,11 @@
 	<jpa:repositories base-package="org.egov.pims"/>
 	
 	
-	<bean id="sequenceGenerator" class="org.egov.pims.service.PersonalInformationService">
+	<bean id="personalInformationServiceOld" class="org.egov.pims.service.PersonalInformationService">
 		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="commonsService" ref="commonsService"/>
+		<property name="scriptService" ref="scriptService"/>
+		<property name="sequenceGenerator" ref="sequenceGenerator"/>
 	</bean>
 	
 	<bean id="empPositionPersistenceService" parent="persistenceService" scope="prototype">

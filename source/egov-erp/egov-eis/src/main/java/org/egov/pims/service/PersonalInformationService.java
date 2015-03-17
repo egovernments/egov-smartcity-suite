@@ -21,7 +21,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EGovConfig;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.Sequence;
 import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.pims.model.EmployeeView;

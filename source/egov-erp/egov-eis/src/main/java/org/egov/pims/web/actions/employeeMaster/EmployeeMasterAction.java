@@ -71,7 +71,7 @@ public class EmployeeMasterAction extends BaseFormAction
 	private UserService eisUserMgr;
 	private RoleService roleMgr;
 	private CommonsService commonsMgr;
-	private transient PersonalInformationService personalInformationService;
+	private transient PersonalInformationService personalInformationServiceOld;
 	//private transient AuditEventService auditEventService;
 	private User user ;
 	PersonalInformation employee = new PersonalInformation();
@@ -180,7 +180,7 @@ public class EmployeeMasterAction extends BaseFormAction
 		}
 		if(empCodeAutogen && mode.equalsIgnoreCase("create"))
 		{
-			employee.setEmployeeCode(personalInformationService.generateEmployeeCode(employee));
+			employee.setEmployeeCode(personalInformationServiceOld.generateEmployeeCode(employee));
 		}
 		
 		setEmpPersonalDetails();
@@ -663,12 +663,12 @@ public class EmployeeMasterAction extends BaseFormAction
 	}
 
 	public PersonalInformationService getPersonalInformationService() {
-		return personalInformationService;
+		return personalInformationServiceOld;
 	}
 
 	public void setPersonalInformationService(
 			PersonalInformationService personalInformationService) {
-		this.personalInformationService = personalInformationService;
+		this.personalInformationServiceOld = personalInformationService;
 	}
 
 	public Integer getEmpId() {
