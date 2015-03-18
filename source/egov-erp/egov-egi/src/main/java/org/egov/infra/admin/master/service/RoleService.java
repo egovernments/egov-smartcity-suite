@@ -16,45 +16,46 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class RoleService {
-	
-    private RoleRepository roleRepository;
+
+    private final RoleRepository roleRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
-    
+
     @Autowired
-    public RoleService(RoleRepository roleRepository) {
+    public RoleService(final RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }
-   
+
     @Transactional
-    public void createRole(final Role role) throws DuplicateElementException{
-    	final Role checkRole = getRoleByName(role.getName());
-		if (checkRole != null ) {
-			throw new DuplicateElementException("The Role by ' " + role.getName() + " ' already exists.");
-		}
+    public void createRole(final Role role) throws DuplicateElementException {
+        final Role checkRole = getRoleByName(role.getName());
+        if (checkRole != null)
+            throw new DuplicateElementException("The Role by ' " + role.getName() + " ' already exists.");
         roleRepository.save(role);
     }
-    
+
     @Transactional
     public void update(final Role role) {
-    	roleRepository.save(role);
+        roleRepository.save(role);
     }
 
-	public List<Role> getAllRoles() {
-		return roleRepository.findAll();
-	}
+    public List<Role> getAllRoles() {
+        return roleRepository.findAll();
+    }
 
     public Role getRoleById(final Long roleID) {
         return roleRepository.findOne(roleID);
     }
+
     public Role getRoleByName(final String name) {
-			return roleRepository.findByName(name);
-	}
+        return roleRepository.findByName(name);
+    }
+
     public List<Role> getRolesByNameLike(final String name) {
-			return roleRepository.findByNameContainingIgnoreCase(name);
-	}
-    
+        return roleRepository.findByNameContainingIgnoreCase(name);
+    }
+
     public Role load(final Long id) {
         // FIXME alternative ?
         return (Role) entityManager.unwrap(Session.class).load(Role.class, id);

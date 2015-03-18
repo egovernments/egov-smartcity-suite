@@ -12,71 +12,56 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Entity
 @Table(name = "eg_role")
 public class Role extends AbstractAuditable<UserImpl, Long> {
-	
-	private static final long serialVersionUID = 7034114743461088547L;
-	
-	@NotBlank
+
+    private static final long serialVersionUID = 7034114743461088547L;
+
+    @NotBlank
     @SafeHtml
     @Length(max = 32)
-	private String name;
+    private String name;
 
-	@SafeHtml
+    @SafeHtml
     @Length(max = 150)
-	private String description;
-	
-	
-	
-	@SafeHtml
+    private String description;
+
+    @SafeHtml
     @Length(max = 64)
-	private String localName;
-	
-	@SafeHtml
+    private String localName;
+
+    @SafeHtml
     @Length(max = 150)
-  	private String localDescription;
+    private String localDescription;
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
-	public String getLocalName() {
-		return localName;
-	}
+    public String getLocalName() {
+        return localName;
+    }
 
-	public void setLocalName(String localName) {
-		this.localName = localName;
-	}
+    public void setLocalName(final String localName) {
+        this.localName = localName;
+    }
 
-	public String getLocalDescription() {
-		return localDescription;
-	}
+    public String getLocalDescription() {
+        return localDescription;
+    }
 
-	public void setLocalDescription(String localDescription) {
-		this.localDescription = localDescription;
-	}
-	
-	
-	
-	
-	
-
-
-
-
-	
-
-
-	
+    public void setLocalDescription(final String localDescription) {
+        this.localDescription = localDescription;
+    }
 
 }
