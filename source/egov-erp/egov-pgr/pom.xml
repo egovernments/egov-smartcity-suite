@@ -44,6 +44,14 @@
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
+        
+         <dependency>
+            <groupId>org.egov</groupId>
+            <artifactId>egov-eis</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.egov.search</groupId>
