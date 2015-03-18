@@ -1,25 +1,28 @@
 package org.egov.pgr.entity;
 
+import java.lang.reflect.Field;
+
 import org.egov.builder.entities.DepartmentBuilder;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.dept.DepartmentImpl;
-
-import java.lang.reflect.Field;
 
 public class ComplaintTypeBuilder {
 
     private final ComplaintType complaintType;
 
+    public static int count;
+
     public ComplaintTypeBuilder() {
         complaintType = new ComplaintType();
+        count++;
     }
 
-    public ComplaintTypeBuilder withName(String name) {
+    public ComplaintTypeBuilder withName(final String name) {
         complaintType.setName(name);
         return this;
     }
 
-    public ComplaintTypeBuilder withDepartment(Department department) {
+    public ComplaintTypeBuilder withDepartment(final Department department) {
         complaintType.setDepartment((DepartmentImpl) department);
         return this;
     }
@@ -29,22 +32,30 @@ public class ComplaintTypeBuilder {
     }
 
     public ComplaintTypeBuilder withDefaults() {
-        Department dept = new DepartmentBuilder().withCode("PR").withName("Roads and Canals").build();
-
+        final Department dept = new DepartmentBuilder().withCode("PR").withName("Roads and Canals").build();
         withId(44L);
         withName("Potholes");
         withDepartment(dept);
         return this;
     }
 
-    public ComplaintTypeBuilder withId(long id) {
+    public ComplaintTypeBuilder withDbDefaults() {
+        withName("test-complainttype-" + count);
+        withDepartment(new DepartmentBuilder().withDbDefaults().build());
+        return this;
+    }
+
+    public ComplaintTypeBuilder withId(final long id) {
         try {
-            Field idField  = complaintType.getClass().getSuperclass().getDeclaredField("id");
+            final Field idField = complaintType.getClass().getSuperclass().getDeclaredField("id");
             idField.setAccessible(true);
             idField.set(complaintType, id);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException(e);
         }
         return this;
+    }
+
+    public static class Builder {
     }
 }
