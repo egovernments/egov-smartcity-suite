@@ -1,13 +1,5 @@
 $(document).ready(function()
 {	
-	$(".msg a").click(function(e) {
-		//do something
-		e.stopPropagation();
-		var senderElement = e.target;
-		//check if sender is the DIV element
-		window.location = url;
-	});
-	
 	$('.menu-item').click(function(e)
 	{
 		$('.citizen-screens').hide();
@@ -19,7 +11,6 @@ $(document).ready(function()
 	$("#sortby_drop li a").click(function(){
 		$("#sortby_drop > .btn > span > b").html($(this).html());
 	});
-	
 	
 	$('.tabs-style-topline nav li').click(function(){
 		if($(this).attr('data-section') == "newrequest")

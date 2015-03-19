@@ -139,14 +139,27 @@ span.separator
 		padding:5px;
 	}
 	
-	body{
+	/* body{
 		padding-top: 115px;
-	}
+	} */
 	
 	.nav-right-menu
 	{
 		position: absolute;
 		right: 0px;
+	}
+}
+
+@media (max-width:485px)
+{
+	.nav-right-menu.home
+	{
+		top:20px;
+	}
+	
+	.navbar-header > a  span
+	{
+		font-size:12px;
 	}
 }
 

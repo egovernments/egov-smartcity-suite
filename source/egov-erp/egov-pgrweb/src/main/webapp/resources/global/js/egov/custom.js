@@ -6,7 +6,7 @@ $(document).ready(function()
 		// define the height in 
 		var height = width * window.innerWidth / window.innerHeight; 
 		// Ratio the hight to the width as the user screen ratio
-		window.open(this.href, 'newwindow', 'width=900, height=700, top=300, left=350');
+		window.open(this.href, 'newwindow', 'width=900, height=700, top=300, left=150');
 		return false;
 		
 	});
@@ -17,7 +17,7 @@ $(document).ready(function()
 		// define the height in 
 		var height = width * window.innerWidth / window.innerHeight; 
 		// Ratio the hight to the width as the user screen ratio
-		window.open(this.href, 'newwindow', 'width=900, height=700, top=300, left=350');
+		window.open(this.href, 'newwindow', 'width=900, height=700, top=300, left=150');
 		return false;
 	});
 	
@@ -54,6 +54,5 @@ $(document).ready(function()
 	
 	
 	
-	});
-	
-		
+});
+

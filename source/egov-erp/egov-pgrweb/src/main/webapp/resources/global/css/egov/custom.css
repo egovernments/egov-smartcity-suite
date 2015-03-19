@@ -621,6 +621,11 @@ table .replace-inputs input {
 		display: block;
 	}
 	
+	.main-content.login-page
+	{
+		padding-top: 50px;
+	}
+	
 }
 
 
@@ -1377,6 +1382,11 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 	display:inline-block;
 	word-wrap: break-word;
 }
+.msg header a 
+{
+	color: #333;
+	text-decoration: none;
+}
 .msg header i
 {
 	width:34px;
@@ -1574,9 +1584,43 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 	top:15px;
 	right:15px;
 }
+
 .dynamic-span.capitalize > span > label{
 	text-transform: lowercase;
 }
 .dynamic-span.capitalize > span > label:first-letter{
 	text-transform: uppercase;
+}
+
+@media (max-width: 485px){
+	.myaccount-actions{
+		top:30px;
+	}
+}
+.login-body .form-group .input-group .input-group-addon.style-label {
+	background: #fff;
+	border: none;
+	border-top-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+}
+
+.style-color{
+	color:#6b4f2c;
+	font-size: 20px;
+}
+
+.login-body .form-group .input-group .form-control.style-form {
+	border:0;
+	padding-left: 0;
+	font-size:15px;
+	border-bottom: 1px solid #D0D2D7;
+	outline: none;
+	box-shadow: none;
+	border-top-right-radius: 0px;
+	border-bottom-right-radius: 0px;
+}
+
+
+.login-body .form-group .input-group .form-control.style-form:focus{
+	border-bottom: 2px solid #2196f3;
 }

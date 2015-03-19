@@ -65,7 +65,7 @@ $(document).ready(function(){
 		var ext = myfile.split('.').pop();
 		if($.inArray(ext, fileformats) > -1){
 			//do something    
-		}else{
+			}else{
 			alert(ext+" file format is not allowed");
 			return;
 		}
@@ -158,7 +158,6 @@ $(document).ready(function(){
 	var map, geocoder, geolocate, marker;        
 	myCenter=new google.maps.LatLng(13.081604, 80.275183);
 	
-	
 	function initialize() {
 		
 		marker=new google.maps.Marker({
@@ -169,12 +168,15 @@ $(document).ready(function(){
 		
 		var mapProp = {
 			center:myCenter,
-			zoom: 12,
+			mapTypeControl: true,
+			zoom:7,
 			mapTypeId:google.maps.MapTypeId.ROADMAP
 		};
 		
 		geocoder = new google.maps.Geocoder();
 		map=new google.maps.Map(document.getElementById("normal"),mapProp);
+		
+		var GeoMarker = new GeolocationMarker(map);
 		
 		marker.setMap(map);
 		
@@ -212,30 +214,6 @@ $(document).ready(function(){
 		//complaint registration map
 		resizeMap();
 	});
-	
-	var lat,longe ;
-	
-	$('#complaint-locate').on('show.bs.modal', function() {
-		//Must wait until the render of the modal appear, thats why we use the resizeMap and NOT resizingMap!! ;-)
-		
-		//complaint view(update) map
-		$('#show_address_in_map').html($('#address_locate').html());
-		$.ajax({
-			type: "POST",
-			url: 'https://maps.googleapis.com/maps/api/geocode/json?address='+$('#address_locate').html(),
-			dataType: 'json',
-			success : function(data){
-				//console.log(JSON.stringify(data.results[0].geometry.location));
-				lat = JSON.stringify(data.results[0].geometry.location.lat);
-				longe = JSON.stringify(data.results[0].geometry.location.lng);
-				
-				myCenter=new google.maps.LatLng(lat, longe);
-				initialize();
-			}
-		});
-		resizeMap();
-	});
-	
 	
 	function resizeMap() {
 		if(typeof map =="undefined") return;
