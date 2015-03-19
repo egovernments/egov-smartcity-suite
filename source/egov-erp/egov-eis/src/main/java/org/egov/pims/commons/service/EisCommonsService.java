@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.egov.commons.ObjectType;
-import org.egov.lib.rjbac.user.User;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;

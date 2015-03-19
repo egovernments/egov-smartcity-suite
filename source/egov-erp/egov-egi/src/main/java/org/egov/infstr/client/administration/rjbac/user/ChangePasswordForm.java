@@ -12,9 +12,9 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.validator.ValidatorActionForm;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.security.utils.CryptoHelper;
 import org.egov.infstr.security.utils.ValidatorUtils;
-import org.egov.lib.rjbac.user.User;
 import org.egov.lib.rjbac.user.dao.UserDAO;
 
 public class ChangePasswordForm extends ValidatorActionForm {

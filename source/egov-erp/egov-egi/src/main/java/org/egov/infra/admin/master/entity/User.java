@@ -3,7 +3,7 @@
  * Copyright 2013 eGovernments Foundation. All rights reserved. 
  * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package org.egov.lib.rjbac.user;
+package org.egov.infra.admin.master.entity;
 
 import java.util.Date;
 import java.util.Set;
@@ -12,6 +12,8 @@ import org.egov.lib.admbndry.BoundaryType;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
 import org.egov.lib.rjbac.role.Role;
+import org.egov.lib.rjbac.user.UserRole;
+import org.egov.lib.rjbac.user.UserSignature;
 import org.egov.lib.security.JurisdictionData;
 
 public interface User extends JurisdictionData {

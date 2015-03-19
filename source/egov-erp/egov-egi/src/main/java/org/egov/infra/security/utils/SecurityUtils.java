@@ -1,6 +1,6 @@
 package org.egov.infra.security.utils;
 
-import org.egov.lib.rjbac.user.User;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;

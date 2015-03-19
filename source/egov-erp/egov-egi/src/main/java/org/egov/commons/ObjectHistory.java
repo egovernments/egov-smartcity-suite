@@ -7,7 +7,7 @@ package org.egov.commons;
 
 import java.util.Date;
 
-import org.egov.lib.rjbac.user.User;
+import org.egov.infra.admin.master.entity.User;
 
 public class ObjectHistory {
 

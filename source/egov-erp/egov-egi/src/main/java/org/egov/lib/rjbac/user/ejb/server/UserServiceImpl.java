@@ -1,12 +1,12 @@
 package org.egov.lib.rjbac.user.ejb.server;
 
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.lib.admbndry.BoundaryType;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
 import org.egov.lib.rjbac.jurisdiction.JurisdictionValues;
 import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.user.User;
 import org.egov.lib.rjbac.user.UserDetail;
 import org.egov.lib.rjbac.user.UserRole;
 import org.egov.lib.rjbac.user.dao.TerminalDAO;
@@ -148,7 +148,7 @@ public class UserServiceImpl implements UserService {
 	/**
 	 * Removes the user.
 	 * @param usr the usr
-	 * @see org.egov.lib.rjbac.user.ejb.api.UserService#removeUser(org.egov.lib.rjbac.user.User)
+	 * @see org.egov.lib.rjbac.user.ejb.api.UserService#removeUser(org.egov.infra.admin.master.entity.User)
 	 */
 	@Override
 	public void removeUser(final User usr) {

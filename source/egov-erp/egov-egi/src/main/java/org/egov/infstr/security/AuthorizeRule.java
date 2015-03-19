@@ -5,7 +5,7 @@
  */
 package org.egov.infstr.security;
 
-import org.egov.lib.rjbac.user.User;
+import org.egov.infra.admin.master.entity.User;
 
 /**
  * Any object that needs to use the eGovAuthorize tag needs to implement this interface

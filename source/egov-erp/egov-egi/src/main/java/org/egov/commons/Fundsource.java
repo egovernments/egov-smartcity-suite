@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.egov.lib.rjbac.user.User;
+import org.egov.infra.admin.master.entity.User;
 
 public class Fundsource {
 

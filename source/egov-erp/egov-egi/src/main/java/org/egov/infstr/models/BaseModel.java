@@ -12,9 +12,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.annotation.Introspection;
-import org.egov.lib.rjbac.user.User;
 import org.hibernate.search.annotations.DocumentId;
 
 public class BaseModel implements Serializable {

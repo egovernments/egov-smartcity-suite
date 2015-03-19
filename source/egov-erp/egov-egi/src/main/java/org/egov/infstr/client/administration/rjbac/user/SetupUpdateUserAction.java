@@ -20,11 +20,11 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.client.EgovAction;
 import org.egov.infstr.security.utils.CryptoHelper;
 import org.egov.lib.rjbac.role.ejb.api.RoleService;
 import org.egov.lib.rjbac.role.ejb.server.RoleServiceImpl;
-import org.egov.lib.rjbac.user.User;
 import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.egov.lib.rjbac.user.ejb.server.UserServiceImpl;
 

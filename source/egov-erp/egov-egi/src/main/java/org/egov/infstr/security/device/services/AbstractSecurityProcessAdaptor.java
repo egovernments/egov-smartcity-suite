@@ -8,9 +8,9 @@ package org.egov.infstr.security.device.services;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.security.utils.CryptoHelper;
-import org.egov.lib.rjbac.user.User;
 import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

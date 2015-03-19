@@ -14,9 +14,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.egov.egi.web.controller.AbstractContextControllerTest;
 import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.lib.rjbac.user.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;

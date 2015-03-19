@@ -6,8 +6,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.lib.rjbac.user.User;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.web.controller.AbstractContextControllerTest;

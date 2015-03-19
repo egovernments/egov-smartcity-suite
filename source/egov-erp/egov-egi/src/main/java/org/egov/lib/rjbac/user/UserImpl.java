@@ -5,6 +5,7 @@
  */
 package org.egov.lib.rjbac.user;
 
+import org.egov.infra.admin.master.entity.User;
 import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.BoundaryFinder;
 import org.egov.lib.admbndry.BoundaryType;

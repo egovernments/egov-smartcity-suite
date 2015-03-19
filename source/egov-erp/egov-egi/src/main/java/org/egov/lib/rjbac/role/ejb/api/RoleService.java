@@ -8,8 +8,8 @@ package org.egov.lib.rjbac.role.ejb.api;
 import java.util.List;
 
 import org.egov.exceptions.DuplicateElementException;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.user.User;
 
 public interface RoleService {
 

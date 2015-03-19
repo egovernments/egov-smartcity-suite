@@ -20,11 +20,11 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.client.EgovAction;
 import org.egov.infstr.client.EgovActionForm;
 import org.egov.infstr.client.delegate.UserDelegate;
 import org.egov.infstr.security.utils.CryptoHelper;
-import org.egov.lib.rjbac.user.User;
 
 public class UpdateUserAction extends EgovAction {
 	

@@ -1,5 +1,5 @@
 <%@page import="java.util.*,org.egov.lib.admbndry.*,org.egov.lib.rjbac.dept.*,org.egov.lib.rjbac.role.*"%>
-<%@page import="org.egov.lib.rjbac.user.User"%>
+<%@page import="org.egov.infra.admin.master.entity.User"%>
 <%@page import="org.egov.lib.rjbac.user.UserImpl"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ taglib uri="/deptRole" prefix="deptRole"%>

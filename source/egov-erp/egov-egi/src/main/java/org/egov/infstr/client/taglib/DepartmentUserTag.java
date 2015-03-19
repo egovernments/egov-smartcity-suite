@@ -17,10 +17,10 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import org.apache.log4j.Logger;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
-import org.egov.lib.rjbac.user.User;
 import org.egov.web.utils.ERPWebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 

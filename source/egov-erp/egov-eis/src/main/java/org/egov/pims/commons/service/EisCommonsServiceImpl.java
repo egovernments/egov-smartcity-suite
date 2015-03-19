@@ -16,8 +16,8 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.utils.EGovConfig;
-import org.egov.lib.rjbac.user.User;
 import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;

@@ -15,9 +15,9 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.security.utils.CryptoHelper;
 import org.egov.infstr.security.utils.ValidatorUtils;
-import org.egov.lib.rjbac.user.User;
 import org.egov.lib.rjbac.user.dao.UserDAO;
 
 public class ChangePasswordAction extends Action {

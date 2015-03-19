@@ -10,7 +10,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.lib.rjbac.user.User;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.egov.lib.rjbac.user.ejb.server.UserServiceImpl;
 import org.slf4j.Logger;
@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.Set;
 
 public class BeforeUserJurisdictionAction extends Action {

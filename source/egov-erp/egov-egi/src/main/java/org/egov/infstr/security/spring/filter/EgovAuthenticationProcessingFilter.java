@@ -54,7 +54,7 @@ public class EgovAuthenticationProcessingFilter extends UsernamePasswordAuthenti
 		}
 		if (authResult != null) {
 			final User principal = (User) authResult.getPrincipal();
-			final org.egov.lib.rjbac.user.User usr = this.userService.getUserByUserName(principal.getUsername());
+			final org.egov.infra.admin.master.entity.User usr = this.userService.getUserByUserName(principal.getUsername());
 			request.getSession().setAttribute("com.egov.user.LoginUserId", usr.getId());
 		}
 		super.successfulAuthentication(request, response, filterChain, authResult);

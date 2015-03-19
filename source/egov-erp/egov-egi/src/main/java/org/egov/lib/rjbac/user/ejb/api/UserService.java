@@ -11,12 +11,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.egov.exceptions.DuplicateElementException;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.lib.admbndry.BoundaryType;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
 import org.egov.lib.rjbac.jurisdiction.JurisdictionValues;
 import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.user.User;
 import org.egov.lib.rjbac.user.UserDetail;
 import org.egov.lib.rjbac.user.UserRole;
 import org.egov.lib.security.JurisdictionCheck;

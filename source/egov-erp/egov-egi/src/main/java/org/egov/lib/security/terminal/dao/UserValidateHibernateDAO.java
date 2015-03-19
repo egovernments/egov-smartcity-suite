@@ -5,8 +5,8 @@
  */
 package org.egov.lib.security.terminal.dao;
 
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.security.utils.CryptoHelper;
-import org.egov.lib.rjbac.user.User;
 import org.egov.lib.security.terminal.model.Location;
 import org.egov.lib.security.terminal.model.UserValidate;
 import org.hibernate.Query;

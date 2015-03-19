@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.egov.EgovSpringContextHolder;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.security.utils.CryptoHelper;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.HibernateUtil;
@@ -26,7 +27,6 @@ import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
 import org.egov.lib.rjbac.jurisdiction.JurisdictionValues;
 import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.user.User;
 import org.egov.lib.rjbac.user.UserDetail;
 import org.egov.lib.rjbac.user.UserDetailImpl;
 import org.egov.lib.rjbac.user.UserImpl;

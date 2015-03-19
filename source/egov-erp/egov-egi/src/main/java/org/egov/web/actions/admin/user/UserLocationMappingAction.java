@@ -12,11 +12,11 @@ import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.lib.rjbac.user.User;
 import org.egov.lib.rjbac.user.UserImpl;
 import org.egov.lib.rjbac.user.dao.UserDAO;
 import org.egov.lib.security.terminal.dao.UserCounterDAO;

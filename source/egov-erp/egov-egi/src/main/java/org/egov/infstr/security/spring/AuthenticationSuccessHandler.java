@@ -6,7 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.egov.lib.rjbac.user.User;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;

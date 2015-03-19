@@ -15,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.support.formatter.BoundaryFormatter;
 import org.egov.lib.admbndry.BoundaryImpl;
@@ -22,7 +23,6 @@ import org.egov.lib.admbndry.ejb.api.BoundaryService;
 import org.egov.lib.rjbac.role.Role;
 import org.egov.lib.rjbac.role.RoleImpl;
 import org.egov.lib.rjbac.role.dao.RoleDAO;
-import org.egov.lib.rjbac.user.User;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;

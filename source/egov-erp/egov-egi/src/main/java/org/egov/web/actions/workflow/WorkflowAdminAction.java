@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.WorkflowTypes;
@@ -34,7 +35,6 @@ import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.workflow.admin.WorkflowAdminService;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.dept.dao.DepartmentDAO;
-import org.egov.lib.rjbac.user.User;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
 

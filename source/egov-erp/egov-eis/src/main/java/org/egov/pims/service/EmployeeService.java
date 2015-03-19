@@ -17,7 +17,7 @@ import java.util.Map;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.exceptions.TooManyValuesException;
-import org.egov.lib.rjbac.user.User;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.Assignment;

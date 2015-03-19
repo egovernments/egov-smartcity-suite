@@ -7,7 +7,7 @@ package org.egov.infstr.commons;
 
 import java.util.Date;
 
-import org.egov.lib.rjbac.user.User;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.lib.security.terminal.model.Location;
 
 public class EgLoginLog implements java.io.Serializable {

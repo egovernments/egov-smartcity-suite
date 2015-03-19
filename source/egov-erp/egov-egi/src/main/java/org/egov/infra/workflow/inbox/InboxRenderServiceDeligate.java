@@ -12,13 +12,13 @@ import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
 
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.Action;
-import org.egov.lib.rjbac.user.User;
 import org.egov.pims.commons.Position;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
