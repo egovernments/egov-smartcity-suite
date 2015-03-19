@@ -12,7 +12,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.security.spring.acl.AclConstants;
 import org.egov.infstr.security.spring.acl.models.AclObjClass;
 import org.egov.infstr.security.spring.acl.models.AclObjectIdentity;
@@ -32,7 +32,7 @@ public class AccessPermissionsAction extends BaseFormAction {
 	private static final String USER_SEARCH_RESULTS = "user";
 	private static final String ROLE_SEARCH_RESULTS = "role";
 	private static final String EMP_SEARCH_RESULTS = "employee";
-	private List<UserImpl> userList = new ArrayList<UserImpl>();
+	private List<User> userList = new ArrayList<User>();
 	private List<Integer> userIdList = new ArrayList<Integer>();
 
 	private List<RoleImpl> roleList = new ArrayList<RoleImpl>();
@@ -83,10 +83,10 @@ public class AccessPermissionsAction extends BaseFormAction {
 		return USER_SEARCH_RESULTS;
 	}
 
-	public List<UserImpl> getAllUsers() {
+	public List<User> getAllUsers() {
 
 		if (StringUtils.isNotBlank(this.query)) {
-			this.userList.addAll(this.persistenceService.findAllBy("from UserImpl where upper(userName) like '%' || ? || '%' and isActive=1 ", this.query.toUpperCase()));
+			this.userList.addAll(this.persistenceService.findAllBy("from User where upper(userName) like '%' || ? || '%' and isActive=1 ", this.query.toUpperCase()));
 
 		}
 		return this.userList;
@@ -268,11 +268,11 @@ public class AccessPermissionsAction extends BaseFormAction {
 		this.query = query;
 	}
 
-	public void setUserList(final List<UserImpl> userList) {
+	public void setUserList(final List<User> userList) {
 		this.userList = userList;
 	}
 
-	public List<UserImpl> getUserList() {
+	public List<User> getUserList() {
 		return this.userList;
 	}
 

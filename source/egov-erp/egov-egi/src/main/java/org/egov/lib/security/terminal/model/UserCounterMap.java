@@ -7,14 +7,14 @@ package org.egov.lib.security.terminal.model;
 
 import java.util.Date;
 
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 
 public class UserCounterMap implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private Location counterId;
-	private UserImpl userId;
+	private User userId;
 	private Date fromDate;
 	private Date toDate;
 	private Date modifiedDate;
@@ -36,11 +36,11 @@ public class UserCounterMap implements java.io.Serializable {
 		this.id = id;
 	}
 
-	public UserImpl getUserId() {
+	public User getUserId() {
 		return userId;
 	}
 
-	public void setUserId(UserImpl userId) {
+	public void setUserId(User userId) {
 		this.userId = userId;
 	}
 

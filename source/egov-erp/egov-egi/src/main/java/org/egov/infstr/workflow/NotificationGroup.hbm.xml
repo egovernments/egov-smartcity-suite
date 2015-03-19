@@ -14,8 +14,8 @@
 		<property name="effectiveDate" type="date" column="EFF_DATE" />
 		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
 		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
-		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.UserImpl" 	column="CREATED_BY" not-null="true" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.UserImpl" column="MODIFIED_BY" not-null="true" fetch="select" />
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" 	column="CREATED_BY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" not-null="true" fetch="select" />
 		<set name="members" table="EGDMS_NOTIFICATION_USER" inverse="false" cascade="all-delete-orphan">
 			<key column="GROUP_ID" foreign-key="ID" />
 			<many-to-many class="org.egov.pims.commons.Position" column="POSITION_ID" />

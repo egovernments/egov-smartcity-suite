@@ -55,8 +55,8 @@
 	  </many-to-one>   
 	  
      <property name="modifiedDate" column="MODIFIEDDATE" type="timestamp"/>
-     <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.UserImpl" column="CREATEDBY"/>
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.UserImpl" column="MODIFIEDBY"/>
+     <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"/>
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY"/>
 		<property name="createdDate">
 			<column name="CREATEDDATE"/>
 		</property>	

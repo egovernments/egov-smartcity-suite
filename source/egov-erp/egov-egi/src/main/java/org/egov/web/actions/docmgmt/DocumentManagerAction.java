@@ -36,7 +36,7 @@ import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.dispatcher.multipart.MultiPartRequestWrapper;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.docmgmt.AssociatedFile;
@@ -65,7 +65,7 @@ public class DocumentManagerAction extends BaseFormAction {
 	protected transient String actionCommand;
 	protected static final String SEARCH_ACTION = "search";
 	protected transient DocumentManagerService<DocumentObject> docManagerService;
-	protected transient PersistenceService<UserImpl, Integer> userPersistenceService;
+	protected transient PersistenceService<User, Integer> userPersistenceService;
 
 	/**
 	 * Sets the doc number.
@@ -151,7 +151,7 @@ public class DocumentManagerAction extends BaseFormAction {
 	 * Sets the user service.
 	 * @param userService the user service
 	 */
-	public void setUserPersistenceService(final PersistenceService<UserImpl, Integer> userPersistenceService) {
+	public void setUserPersistenceService(final PersistenceService<User, Integer> userPersistenceService) {
 		this.userPersistenceService = userPersistenceService;
 	}
 

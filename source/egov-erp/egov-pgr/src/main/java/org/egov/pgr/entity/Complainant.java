@@ -1,6 +1,6 @@
 package org.egov.pgr.entity;
 
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.validation.regex.Constants;
 import org.egov.search.domain.Searchable;
@@ -42,7 +42,7 @@ public class Complainant extends AbstractPersistable<Long> {
     @ManyToOne
     @Valid
     @JoinColumn(name="userDetail",nullable = true)
-    private UserImpl userDetail;
+    private User userDetail;
 
     public String getName() {
 	return name;
@@ -68,11 +68,11 @@ public class Complainant extends AbstractPersistable<Long> {
 	this.email = email;
     }
 
-    public UserImpl getUserDetail() {
+    public User getUserDetail() {
 	return userDetail;
     }
 
-    public void setUserDetail(final UserImpl userDetail) {
+    public void setUserDetail(final User userDetail) {
 	this.userDetail = userDetail;
     }
 }

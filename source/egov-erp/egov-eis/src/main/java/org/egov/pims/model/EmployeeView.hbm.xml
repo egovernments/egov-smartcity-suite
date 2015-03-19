@@ -50,7 +50,7 @@
   <many-to-one class="org.egov.commons.CFunction" fetch="select" name="functionId">
    <column name="FUNCTION_ID" precision="32" scale="0"/>
   </many-to-one>
-  <many-to-one cascade="all" class="org.egov.infra.admin.master.entity.UserImpl"
+  <many-to-one cascade="all" class="org.egov.infra.admin.master.entity.User"
    fetch="select" name="userMaster">
    <column name="USER_ID" precision="32" scale="0"/>
   </many-to-one>

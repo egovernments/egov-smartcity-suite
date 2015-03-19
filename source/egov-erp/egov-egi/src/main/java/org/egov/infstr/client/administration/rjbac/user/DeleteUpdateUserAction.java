@@ -20,7 +20,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.client.EgovAction;
 import org.egov.infstr.client.delegate.UserDelegate;
 import org.egov.infstr.security.utils.CryptoHelper;
@@ -52,7 +52,7 @@ public class DeleteUpdateUserAction extends EgovAction {
 		 * Forwards the request to the view page
 		 */
 		if (str.equals("")) {
-			user = new UserImpl();
+			user = new User();
 			final Integer userid = new Integer(req.getParameter("userid"));
 			try {
 				user = this.userDelegate.getUser(userid);
@@ -87,7 +87,7 @@ public class DeleteUpdateUserAction extends EgovAction {
 		}
 		// Forwards the request to the updateUserpage
 		if (str.equals("EDIT")) {
-			user = new UserImpl();
+			user = new User();
 			final Integer userid = new Integer(req.getParameter("userid"));
 			try {
 				user = this.userDelegate.getUser(userid);

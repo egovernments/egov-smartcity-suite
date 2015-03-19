@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.utils.EntityType;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.service.EmployeeService;
 import org.hibernate.Query;
@@ -28,7 +28,7 @@ public class PersonalInformation implements java.io.Serializable,EntityType
 	public final static Logger LOGGER = Logger.getLogger(PersonalInformation.class.getClass());
 	private PersonalInformation employeeId;
 	private EmployeeService employeeService;
-	UserImpl	userMaster =null;
+	User	userMaster =null;
 	private Integer idPersonalInformation;
 
 	private LanguagesQulifiedMaster langQulMstr;
@@ -399,13 +399,13 @@ public BloodGroupMaster getBloodGroupMstr()
 			/**
 			 * @return Returns the userMaster.
 			 */
-			public UserImpl getUserMaster() {
+			public User getUserMaster() {
 				return userMaster;
 			}
 			/**
 			 * @param userMaster The userMaster to set.
 			 */
-			public void setUserMaster(UserImpl userMaster) {
+			public void setUserMaster(User userMaster) {
 				this.userMaster = userMaster;
 			}
 public String getEmployeeFirstName() {

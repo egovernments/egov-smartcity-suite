@@ -37,9 +37,10 @@ org.apache.commons.lang.StringUtils" %>
 <tbody>
 <tr>
   <td colspan="8" height=20 bgcolor=#dddddd align=middle  class="tableheader">
-  <%String userId = request.getParameter("userId");
-  UserImpl userobj = (UserImpl) HibernateUtil.getCurrentSession().get(UserImpl.class, Integer.valueOf(userId));
-	%>
+  <%
+      String userId = request.getParameter("userId");
+    User userobj = (User) HibernateUtil.getCurrentSession().get(User.class, Integer.valueOf(userId));
+  %>
 <p> User Mapping Reports : <%=userobj.getUserName()%></p></td>
   </tr>
 

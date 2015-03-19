@@ -1,424 +1,735 @@
 /*
- * @(#)User.java 3.0, 15 Jun, 2013 11:33:55 PM
+ * @(#)User.java 3.0, 18 Jun, 2013 2:43:41 PM
  * Copyright 2013 eGovernments Foundation. All rights reserved. 
  * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 package org.egov.infra.admin.master.entity;
 
-import java.util.Date;
-import java.util.Set;
-
+import org.egov.lib.admbndry.Boundary;
+import org.egov.lib.admbndry.BoundaryFinder;
 import org.egov.lib.admbndry.BoundaryType;
+import org.egov.lib.admbndry.VisitableBoundary;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
+import org.egov.lib.rjbac.jurisdiction.JurisdictionValues;
 import org.egov.lib.rjbac.role.Role;
 import org.egov.lib.rjbac.user.UserRole;
 import org.egov.lib.rjbac.user.UserSignature;
-import org.egov.lib.security.JurisdictionData;
+import org.egov.lib.rjbac.user.dao.UserDAO;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+public class User implements  Serializable {
+
+    private static final long serialVersionUID = 2870751695666860068L;
+    
+    private Integer id;
+	private String title;
+	private String salutation;
+	private String firstName;
+	private String middleName;
+	private String lastName;
+	private Department department;
+	private Set<org.egov.lib.rjbac.role.Role> roles = new HashSet<org.egov.lib.rjbac.role.Role>();
+	private Set<UserRole> userRoles = new HashSet<UserRole>();
+	private String userName;
+	private String pwd;
+	private String pwdReminder;
+	private Integer isActive;
+	private Date updateTime;
+	private Integer updateUserId;
+	private String extrafield1;
+	private String extrafield2;
+	private String extrafield3;
+	private String extrafield4;
+	private char isSuspended;
+	private String loginTerminal;
+	private Integer topBoundaryID;
+	private Set<Jurisdiction> allJurisdictions = new HashSet<Jurisdiction>();
+	private User parent;
+	private Set reportees;
+	private Date dob;
+	private Date fromDate;
+	private Date toDate;
+	private Date pwdModifiedDate;
+	private UserSignature userSignature;
 
-public interface User extends JurisdictionData {
+	
+	public String toString() {
+		StringBuilder strForm = new StringBuilder();
+		strForm = (id != null) ? strForm.append("Id:").append(id) : strForm.append("");
+		strForm.append("userName: ").append(userName).append("isActive: ").append(isActive);
+		return strForm.toString();
+	}
 
 	/**
-	 * Gets the department.
-	 * @return Returns the department.
+	 * {@inheritDoc}
 	 */
-	Department getDepartment();
+	
+	public Date getFromDate() {
+		return this.fromDate;
+	}
 
 	/**
-	 * Sets the department.
-	 * @param department The department to set.
+	 * {@inheritDoc}
 	 */
-	void setDepartment(Department department);
+	
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
+	}
 
 	/**
-	 * Gets the extra field1.
-	 * @return Returns the extrafield1.
+	 * {@inheritDoc}
 	 */
-	String getExtraField1();
+	
+	public Date getToDate() {
+		return this.toDate;
+	}
 
 	/**
-	 * Sets the extra field1.
-	 * @param extrafield1 The extrafield1 to set.
+	 * {@inheritDoc}
 	 */
-	void setExtraField1(String extrafield1);
+	
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
+	}
 
+	public Date getPwdModifiedDate() {
+		return pwdModifiedDate;
+	}
+
+	public void setPwdModifiedDate(Date pwdModifiedDate) {
+		this.pwdModifiedDate = pwdModifiedDate;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	
+	public String getLoginTerminal() {
+		return this.loginTerminal;
+	}
+
 	/**
-	 * Gets the extra field2.
-	 * @return Returns the extrafield2.
+	 * {@inheritDoc}
 	 */
-	String getExtraField2();
+	
+	public void setLoginTerminal(String loginTerminal) {
+		this.loginTerminal = loginTerminal;
+	}
 
 	/**
-	 * Sets the extra field2.
-	 * @param extrafield2 The extrafield2 to set.
+	 * {@inheritDoc}
 	 */
-	void setExtraField2(String extrafield2);
+	
+	public Department getDepartment() {
+		return this.department;
+	}
 
 	/**
-	 * Gets the extra field3.
-	 * @return Returns the extrafield3.
+	 * {@inheritDoc}
 	 */
-	String getExtraField3();
+	
+	public void setDepartment(Department department) {
+		this.department = department;
+	}
 
 	/**
-	 * Sets the extra field3.
-	 * @param extrafield3 The extrafield3 to set.
+	 * {@inheritDoc}
 	 */
-	void setExtraField3(String extrafield3);
+	
+	public String getExtraField1() {
+		return this.extrafield1;
+	}
 
 	/**
-	 * Gets the extra field4.
-	 * @return Returns the extrafield4.
+	 * {@inheritDoc}
 	 */
-	String getExtraField4();
+	
+	public void setExtraField1(String extrafield1) {
+		this.extrafield1 = extrafield1;
+	}
 
 	/**
-	 * Sets the extra field4.
-	 * @param extrafield4 The extrafield4 to set.
+	 * {@inheritDoc}
 	 */
-	void setExtraField4(String extrafield4);
+	
+	public String getExtraField2() {
+		return this.extrafield2;
+	}
 
 	/**
-	 * Gets the first name.
-	 * @return Returns the first_name.
+	 * {@inheritDoc}
 	 */
-	String getFirstName();
+	
+	public void setExtraField2(String extrafield2) {
+		this.extrafield2 = extrafield2;
+	}
 
 	/**
-	 * Sets the first name.
-	 * @param first_name The first_name to set.
+	 * {@inheritDoc}
 	 */
-	void setFirstName(String first_name);
+	
+	public String getExtraField3() {
+		return this.extrafield3;
+	}
 
 	/**
-	 * Gets the checks if is active.
-	 * @return Returns the isActive.
+	 * {@inheritDoc}
 	 */
-	Integer getIsActive();
+	
+	public void setExtraField3(String extrafield3) {
+		this.extrafield3 = extrafield3;
+	}
 
 	/**
-	 * Sets the checks if is active.
-	 * @param isActive The isActive to set.
+	 * {@inheritDoc}
 	 */
-	void setIsActive(Integer isActive);
+	
+	public String getExtraField4() {
+		return this.extrafield4;
+	}
 
 	/**
-	 * Gets the id.
-	 * @return Returns the id.
+	 * {@inheritDoc}
 	 */
-	Integer getId();
+	
+	public void setExtraField4(String extrafield4) {
+		this.extrafield4 = extrafield4;
+	}
 
 	/**
-	 * Sets the id.
-	 * @param id The id to set.
+	 * {@inheritDoc}
 	 */
-	void setId(Integer id);
+	
+	public Integer getId() {
+		return this.id;
+	}
 
 	/**
-	 * Gets the checks if is suspended.
-	 * @return Returns the is_suspended.
+	 * {@inheritDoc}
 	 */
-	char getIsSuspended();
+	
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 	/**
-	 * Sets the checks if is suspended.
-	 * @param is_suspended The is_suspended to set.
+	 * {@inheritDoc}
 	 */
-	void setIsSuspended(char is_suspended);
+	
+	public String getPwd() {
+		return this.pwd;
+	}
 
 	/**
-	 * Gets the last name.
-	 * @return Returns the last_name.
+	 * {@inheritDoc}
 	 */
-	String getLastName();
+	
+	public void setPwd(String pwd) {
+		this.pwd = pwd;
+	}
 
 	/**
-	 * Sets the last name.
-	 * @param last_name The last_name to set.
+	 * {@inheritDoc}
 	 */
-	void setLastName(String last_name);
+	
+	public Set<Role> getRoles() {
+		final Date currDate = new Date();
+		return this.getValidRolesOnDate(currDate);
+	}
+
+	public Set<Role> getValidRolesOnDate(Date onDate) {
+		return new UserDAO().getValidRoles(this.id, onDate);
+	}
 
 	/**
-	 * Gets the middle name.
-	 * @return Returns the middle_name.
+	 * {@inheritDoc}
 	 */
-	String getMiddleName();
+	
+	public void setRoles(Set roles) {
+		this.roles = roles;
+	}
 
 	/**
-	 * Sets the middle name.
-	 * @param middle_name The middle_name to set.
+	 * {@inheritDoc}
 	 */
-	void setMiddleName(String middle_name);
+	
+	public void addRole(Role role) {
+		this.roles.add(role);
+	}
 
 	/**
-	 * Gets the pwd.
-	 * @return Returns the pwd.
+	 * {@inheritDoc}
 	 */
-	String getPwd();
+	
+	public String getSalutation() {
+		return this.salutation;
+	}
 
 	/**
-	 * Sets the pwd.
-	 * @param pwd The pwd to set.
+	 * {@inheritDoc}
 	 */
-	void setPwd(String pwd);
+	
+	public void setSalutation(String salutation) {
+		this.salutation = salutation;
+	}
 
 	/**
-	 * Gets the pwd reminder.
-	 * @return Returns the pwd_reminder.
+	 * {@inheritDoc}
 	 */
-	String getPwdReminder();
+	
+	public String getTitle() {
+		return this.title;
+	}
 
 	/**
-	 * Sets the pwd reminder.
-	 * @param pwd_reminder The pwd_reminder to set.
+	 * {@inheritDoc}
 	 */
-	void setPwdReminder(String pwd_reminder);
+	
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
 	/**
-	 * Gets the dob.
-	 * @return Returns the dob.
+	 * {@inheritDoc}
 	 */
-	Date getDob();
+	
+	public Date getUpdateTime() {
+		return this.updateTime;
+	}
 
 	/**
-	 * Sets the dob.
-	 * @param dob The dob to set.
+	 * {@inheritDoc}
 	 */
-	void setDob(Date dob);
+	
+	public void setUpdateTime(Date updatetime) {
+		this.updateTime = updatetime;
+	}
 
 	/**
-	 * Gets the roles.
-	 * @return Returns the roles.
+	 * {@inheritDoc}
 	 */
-	Set<Role> getRoles();
+	
+	public Integer getUpdateUserId() {
+		return this.updateUserId;
+	}
 
 	/**
-	 * Gets the user roles.
-	 * @return the user roles
+	 * {@inheritDoc}
 	 */
-	Set<UserRole> getUserRoles();
+	
+	public void setUpdateUserId(Integer updateuserid) {
+		this.updateUserId = updateuserid;
+	}
 
 	/**
-	 * Adds the role.
-	 * @param role the role
+	 * {@inheritDoc}
 	 */
-	void addRole(Role role);
+	
+	public String getFirstName() {
+		return this.firstName;
+	}
 
 	/**
-	 * Removes the role.
-	 * @param role the role
+	 * {@inheritDoc}
 	 */
-	void removeRole(Role role);
+	
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 
 	/**
-	 * Sets the roles.
-	 * @param roles The roles to set.
+	 * {@inheritDoc}
 	 */
-	void setRoles(Set<Role> roles);
+	
+	public char getIsSuspended() {
+		return this.isSuspended;
+	}
 
 	/**
-	 * Sets the user roles.
-	 * @param userRoles the new user roles
+	 * {@inheritDoc}
 	 */
-	void setUserRoles(Set<UserRole> userRoles);
+	
+	public void setIsSuspended(char isSuspended) {
+		this.isSuspended = isSuspended;
+	}
 
 	/**
-	 * Gets the salutation.
-	 * @return Returns the salutation.
+	 * {@inheritDoc}
 	 */
-	String getSalutation();
+	
+	public String getLastName() {
+		return this.lastName;
+	}
 
 	/**
-	 * Sets the salutation.
-	 * @param salutation The salutation to set.
+	 * {@inheritDoc}
 	 */
-	void setSalutation(String salutation);
+	
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 
 	/**
-	 * Gets the title.
-	 * @return Returns the title.
+	 * {@inheritDoc}
 	 */
-	String getTitle();
+	
+	public String getMiddleName() {
+		return this.middleName;
+	}
 
 	/**
-	 * Sets the title.
-	 * @param title The title to set.
+	 * {@inheritDoc}
 	 */
-	void setTitle(String title);
+	
+	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
+	}
 
 	/**
-	 * Gets the update time.
-	 * @return Returns the updatetime.
+	 * {@inheritDoc}
 	 */
-	Date getUpdateTime();
+	
+	public String getPwdReminder() {
+		return this.pwdReminder;
+	}
 
 	/**
-	 * Sets the update time.
-	 * @param updatetime The updatetime to set.
+	 * {@inheritDoc}
 	 */
-	void setUpdateTime(Date updatetime);
+	
+	public Integer getIsActive() {
+		return this.isActive;
+	}
 
 	/**
-	 * Gets the from date.
-	 * @return Returns the fromdate.
+	 * {@inheritDoc}
 	 */
-	Date getFromDate();
+	
+	public void setIsActive(Integer isActive) {
+		this.isActive = isActive;
+	}
 
 	/**
-	 * Sets the from date.
-	 * @param fromDate the new from date
+	 * {@inheritDoc}
 	 */
-	void setFromDate(Date fromDate);
+	
+	public void setPwdReminder(String pwdReminder) {
+		this.pwdReminder = pwdReminder;
+	}
 
 	/**
-	 * Gets the to date.
-	 * @return Returns the todate.
+	 * {@inheritDoc}
 	 */
-	Date getToDate();
+	
+	public String getUserName() {
+		return this.userName;
+	}
 
 	/**
-	 * Sets the to date.
-	 * @param toDate the new to date
+	 * {@inheritDoc}
 	 */
-	void setToDate(Date toDate);
+	
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
 
 	/**
-	 * Gets the last password modified date.
-	 * @return Returns the Pwd Modified Date.
+	 * {@inheritDoc}
 	 */
-	Date getPwdModifiedDate();
+	
+	public Set getAllJurisdictions() {
+		return new UserDAO().getJurisdictionsForUser(this.getId(), new Date());
+	}
 
 	/**
-	 * Sets last password modified date
-	 * @param PwdModifiedDate the date given
+	 * {@inheritDoc}
 	 */
-	void setPwdModifiedDate(Date pwdModifiedDate);
+	
+	public Set getAllJurisdictionsForLevel(BoundaryType bt) {
+		/*
+		 * FIXME Not convincing reason getAllJurisdictions returns Jurisdiction object but here its casting to JurisdictionValues
+		 */
 
+		final Set retSet = new HashSet();
+		if (bt == null) {
+			return retSet;
+		}
+		final Set jurSet = this.getAllJurisdictions();
+		for (Iterator iter = jurSet.iterator(); iter.hasNext();) {
+			final JurisdictionValues element = (JurisdictionValues) iter.next();
+			if (element.getBoundary().getBoundaryType().equals(bt)) {
+				retSet.add(element.getBoundary());
+			}
+		}
+		return retSet;
+	}
+
 	/**
-	 * Gets the update user id.
-	 * @return Returns the updateuserid.
+	 * {@inheritDoc}
 	 */
-	Integer getUpdateUserId();
+	
+	public Set getAllJurisdictionsForLevelFullReslove(BoundaryType bt) {
+		final Set finalBnSet = new HashSet();
+		if (bt == null) {
+			return finalBnSet;
+		}
+		final Set jurSet = this.getAllJurisdictions();
+		final Set bndrySet = new HashSet();
+
+		for (final Iterator iter = jurSet.iterator(); iter.hasNext();) {
+			final Jurisdiction element = (Jurisdiction) iter.next();
+			if (element.getJurisdictionLevel().equals(bt)) {
+				for (final Iterator iterator = element.getJurisdictionValues().iterator(); iterator.hasNext();) {
+					final JurisdictionValues elementVal = (JurisdictionValues) iterator.next();
+					bndrySet.add(elementVal.getBoundary());
+				}
+
+				for (final Iterator iterator = bndrySet.iterator(); iterator.hasNext();) {
+					final Boundary bndry = (Boundary) iterator.next();
+					final VisitableBoundary vBoundary = new VisitableBoundary(bndry);
+					final BoundaryFinder visitor = new BoundaryFinder();
+					visitor.setTargetBoundaryType(null, true);
+					vBoundary.accept(visitor);
+					final Collection children = visitor.getResult();
+					finalBnSet.addAll(children);
+				}
+				finalBnSet.addAll(bndrySet);
+			}
+		}
+		return finalBnSet;
+	}
 
 	/**
-	 * Sets the update user id.
-	 * @param updateuserid The updateuserid to set.
+	 * {@inheritDoc}
 	 */
-	void setUpdateUserId(Integer updateuserid);
+	
+	public Set getAllJurisdictionsFullReslove() {
+		final Set jurSet = this.getAllJurisdictions();
+		final Set finalBnSet = new HashSet();
+		final Set bndrySet = new HashSet();
+		for (final Iterator iter = jurSet.iterator(); iter.hasNext();) {
+			final Jurisdiction element = (Jurisdiction) iter.next();
+			for (final Iterator iterator = element.getJurisdictionValues().iterator(); iterator.hasNext();) {
+				final JurisdictionValues elementVal = (JurisdictionValues) iterator.next();
+				bndrySet.add(elementVal.getBoundary());
+			}
 
+			for (final Iterator iterator = bndrySet.iterator(); iterator.hasNext();) {
+				final Boundary bndry = (Boundary) iterator.next();
+				final VisitableBoundary vBoundary = new VisitableBoundary(bndry);
+				final BoundaryFinder visitor = new BoundaryFinder();
+				visitor.setTargetBoundaryType(null, true);
+				vBoundary.accept(visitor);
+				final Collection children = visitor.getResult();
+				finalBnSet.addAll(children);
+			}
+			finalBnSet.addAll(bndrySet);
+		}
+		return finalBnSet;
+	}
+
 	/**
-	 * Gets the user name.
-	 * @return Returns the user_name.
+	 * {@inheritDoc}
 	 */
-	String getUserName();
+	
+	public void setAllJurisdictions(Set allJurisdictions) {
+		boolean bool = true;
+		for (Iterator iter = allJurisdictions.iterator(); iter.hasNext();) {
+			Jurisdiction element = (Jurisdiction) iter.next();
+			bool = element.validate();
+		}
+		if (bool) {
+			this.allJurisdictions = allJurisdictions;
+		}
+	}
 
 	/**
-	 * Sets the user name.
-	 * @param user_name The user_name to set.
+	 * {@inheritDoc}
 	 */
-	void setUserName(String user_name);
+	
+	public void addJurisdiction(Jurisdiction jur) {
+		boolean bool = jur.validate();
+		if (bool) {
+			jur.setUser(this);
+			this.allJurisdictions.add(jur);
+		}
+	}
 
 	/**
-	 * Sets the login terminal.
-	 * @param user_name the new login terminal
+	 * {@inheritDoc}
 	 */
-	void setLoginTerminal(String user_name);
+	
+	public boolean equals(Object obj) {
 
+		if (obj == null) {
+			return false;
+		}
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof User)) {
+			return false;
+		}
+		User other = (User) obj;
+		if (this.getUserName().equals(other.getUserName())) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	/**
-	 * Gets the login terminal.
-	 * @return String The terminal name from which the user logged in.
+	 * {@inheritDoc}
 	 */
-	String getLoginTerminal();
+	
+	public int hashCode() {
+		int hashCode = 0;
+		hashCode = hashCode + this.getUserName().hashCode();
+		return hashCode;
+	}
 
 	/**
-	 * Gets the all jurisdictions.
-	 * @return the all jurisdictions
+	 * {@inheritDoc}
 	 */
-	Set<Jurisdiction> getAllJurisdictions();
+	
+	public void removeRole(Role role) {
+		if (this.roles.contains(role)) {
+			this.roles.remove(role);
+		}
+	}
 
 	/**
-	 * Gets the all jurisdictions for level.
-	 * @param bt the bt
-	 * @return the all jurisdictions for level
+	 * {@inheritDoc}
 	 */
-	Set<Jurisdiction> getAllJurisdictionsForLevel(BoundaryType bt);
+	
+	public void removeJurisdiction(Jurisdiction jur) {
+		jur.setUser(null);
+		if (this.allJurisdictions.contains(jur)) {
+			this.allJurisdictions.remove(jur);
+		}
+	}
 
 	/**
-	 * Sets the all jurisdictions.
-	 * @param allJurisdictions the new all jurisdictions
+	 * {@inheritDoc}
 	 */
-	void setAllJurisdictions(Set<Jurisdiction> allJurisdictions);
+	
+	public List<? extends Boundary> getJurisdictionData() {
+		/*
+		 * FIXME Not convincing reason finally sending an empty list
+		 */
+		final Set allJurs = this.getAllJurisdictions();
+		final HashSet<? extends Boundary> allBndries = new HashSet<Boundary>();
+		for (Iterator iter = allJurs.iterator(); iter.hasNext();) {
+			final Jurisdiction element = (Jurisdiction) iter.next();
+			allBndries.addAll(element.getJurisdictionValues());
+		}
+		List<? extends Boundary> lst = new ArrayList<Boundary>();
+		return lst;
+	}
 
 	/**
-	 * Adds the jurisdiction.
-	 * @param jur the jur
+	 * {@inheritDoc}
 	 */
-	void addJurisdiction(Jurisdiction jur);
+	
+	public Integer getTopBoundaryID() {
+		return this.topBoundaryID;
+	}
 
 	/**
-	 * Removes the jurisdiction.
-	 * @param jur the jur
+	 * {@inheritDoc}
 	 */
-	void removeJurisdiction(Jurisdiction jur);
+	
+	public void setTopBoundaryID(Integer topBoundaryID) {
+		this.topBoundaryID = topBoundaryID;
+	}
 
 	/**
-	 * Sets the top boundary id.
-	 * @param topBoundaryID the new top boundary id
+	 * {@inheritDoc}
 	 */
-	void setTopBoundaryID(Integer topBoundaryID);
+	
+	public User getParent() {
+		return this.parent;
+	}
 
 	/**
-	 * Gets the top boundary id.
-	 * @return the top boundary id
+	 * {@inheritDoc}
 	 */
-	Integer getTopBoundaryID();
+	
+	public void setParent(User parent) {
+		this.parent = parent;
+	}
 
 	/**
-	 * Gets the all jurisdictions for level full reslove.
-	 * @param bt the bt
-	 * @return the all jurisdictions for level full reslove
+	 * {@inheritDoc}
 	 */
-	Set<Jurisdiction> getAllJurisdictionsForLevelFullReslove(BoundaryType bt);
+	
+	public void setReportees(Set reportees) {
+		this.reportees = reportees;
+	}
 
 	/**
-	 * Gets the parent.
-	 * @return Returns the user to which this user reports to.
+	 * {@inheritDoc}
 	 */
-	User getParent();
+	
+	public Set getReportees() {
+		return this.reportees;
+	}
 
 	/**
-	 * Sets the parent.
-	 * @param reportsTo The reportsTo to set.
+	 * {@inheritDoc}
 	 */
-	void setParent(User reportsTo);
+	
+	public Date getDob() {
+		return this.dob;
+	}
 
 	/**
-	 * Sets the reportees.
-	 * @param reportees the new reportees
+	 * {@inheritDoc}
 	 */
-	void setReportees(Set reportees);
+	
+	public void setDob(Date dob) {
+		this.dob = dob;
+	}
 
 	/**
-	 * Gets the reportees.
-	 * @return the reportees
+	 * {@inheritDoc}
 	 */
-	Set getReportees();
+	
+	public Set<UserRole> getUserRoles() {
+		return this.userRoles;
+	}
 
 	/**
-	 * Gets the all jurisdictions full reslove.
-	 * @return the all jurisdictions full reslove
+	 * {@inheritDoc}
 	 */
-	Set<Jurisdiction> getAllJurisdictionsFullReslove();
+	
+	public void setUserRoles(Set<UserRole> userRoles) {
+		this.userRoles = userRoles;
+	}
 
 	/**
-	 * Gets the user signature byte stream
-	 * @return byte array of signature data
+	 * {@inheritDoc}
 	 */
-	UserSignature getUserSignature();
+	
+	public UserSignature getUserSignature() {
+		return this.userSignature;
+	}
 
 	/**
-	 * Sets the user signature byte stream.
-	 * @param byte array of signature data
+	 * {@inheritDoc}
 	 */
-	void setUserSignature(UserSignature userSignature);
+	
+	public void setUserSignature(UserSignature userSignature) {
+		this.userSignature = userSignature;
+
+	}
 }

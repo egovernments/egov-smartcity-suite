@@ -10,7 +10,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.EgovMasterDataCaching;
@@ -63,7 +63,7 @@ public class UserCounterMapAction extends DispatchAction {
 					for (int i = 0; i < userId.length; i++) {
 						if (userId[i] != null && !userId[i].trim().equals("")) {
 							Location locationobj = (Location) locationHibernateDAO.findById(Integer.parseInt(locationId), false);
-							UserImpl userobj = (UserImpl) userDAO.getUserByID(Integer.parseInt(userId[i]));
+							User userobj = (User) userDAO.getUserByID(Integer.parseInt(userId[i]));
 							if (usercountermapform.getSelCheck()[i].equals("yes") && usercountermapform.getUserCounterId()[i] != null && !usercountermapform.getUserCounterId()[i].equals("")) {
 								UserCounterMap obj = (UserCounterMap) userCounterHibernateDAO.findById(Integer.parseInt(usercountermapform.getUserCounterId()[i]), false);
 								obj.setCounterId(locationobj);
@@ -106,7 +106,7 @@ public class UserCounterMapAction extends DispatchAction {
 						if (userId[i] != null && counter[i] != null && !userId[i].trim().equals("") && !counter[i].trim().equals("")) {
 							
 							Location locationobj = (Location) locationHibernateDAO.findById(Integer.parseInt(counter[i]), false);
-							UserImpl userobj = (UserImpl) userDAO.getUserByID(Integer.parseInt(userId[i]));
+							User userobj = (User) userDAO.getUserByID(Integer.parseInt(userId[i]));
 							if (usercountermapform.getSelCheck()[i].equals("yes") && usercountermapform.getUserCounterId()[i] != null && !usercountermapform.getUserCounterId()[i].equals("")) {
 								
 								UserCounterMap obj = (UserCounterMap) userCounterHibernateDAO.findById(Integer.parseInt(usercountermapform.getUserCounterId()[i]), false);

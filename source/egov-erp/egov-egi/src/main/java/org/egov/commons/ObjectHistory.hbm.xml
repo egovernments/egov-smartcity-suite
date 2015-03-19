@@ -13,7 +13,7 @@
 		<many-to-one name="objectType" class="org.egov.commons.ObjectType" fetch="select">
 			<column name="OBJECT_TYPE_ID" />
 		</many-to-one>
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.UserImpl" fetch="select">
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
 			<column name="MODIFED_BY" />
 		</many-to-one>
 		<property name="objectId">

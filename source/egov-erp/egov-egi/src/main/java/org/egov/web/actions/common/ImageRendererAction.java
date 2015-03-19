@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.security.utils.CryptoHelper;
 import org.egov.web.actions.BaseFormAction;
 
@@ -26,8 +26,8 @@ public class ImageRendererAction extends BaseFormAction {
 	public void getUserSignature() throws IOException {
 		final HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("image/jpeg");
-		this.persistenceService.setType(UserImpl.class);
-		final UserImpl user = (UserImpl) this.persistenceService.findById(this.id.intValue(), false);
+		this.persistenceService.setType(User.class);
+		final User user = (User) this.persistenceService.findById(this.id.intValue(), false);
 		if (user.getUserSignature() != null) {
 			response.getOutputStream().write(CryptoHelper.decrypt(user.getUserSignature().getSignature(), CryptoHelper.decrypt(user.getPwd())));
 		} else {

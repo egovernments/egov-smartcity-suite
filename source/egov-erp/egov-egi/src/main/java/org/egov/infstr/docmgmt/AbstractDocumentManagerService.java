@@ -23,7 +23,7 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
@@ -44,7 +44,7 @@ public abstract class AbstractDocumentManagerService<T extends DocumentObject> e
 	private transient AppConfigValuesDAO appConfValDao;
 	private transient ScriptService scriptExecuter;
 	private transient SequenceNumberGenerator sequenceNumberGenerator;
-	private transient PersistenceService<UserImpl, Integer> userPersistenceService;
+	private transient PersistenceService<User, Integer> userPersistenceService;
 	
 	/**
 	 * Gets the AppConfigValuesDAO.
@@ -98,7 +98,7 @@ public abstract class AbstractDocumentManagerService<T extends DocumentObject> e
 	 * Gets the User Dao Service.
 	 * @return the User Dao Service
 	 */
-	public PersistenceService<UserImpl, Integer> getUserPersistenceService() {
+	public PersistenceService<User, Integer> getUserPersistenceService() {
 		return this.userPersistenceService;
 	}
 	
@@ -106,7 +106,7 @@ public abstract class AbstractDocumentManagerService<T extends DocumentObject> e
 	 * Sets the User Dao Service.
 	 * @param userService the new User Dao Service
 	 */
-	public void setUserPersistenceService(final PersistenceService<UserImpl, Integer> userPersistenceService) {
+	public void setUserPersistenceService(final PersistenceService<User, Integer> userPersistenceService) {
 		this.userPersistenceService = userPersistenceService;
 	}
 	

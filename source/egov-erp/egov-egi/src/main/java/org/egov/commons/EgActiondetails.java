@@ -5,7 +5,7 @@ package org.egov.commons;
 
 import java.util.Date;
 
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 
 public class EgActiondetails implements java.io.Serializable {
 
@@ -17,7 +17,7 @@ public class EgActiondetails implements java.io.Serializable {
 
 	private Integer moduleid;
 
-	private UserImpl actionDoneBy;
+	private User actionDoneBy;
 
 	private Date actionDoneOn;
 
@@ -32,14 +32,14 @@ public class EgActiondetails implements java.io.Serializable {
 	/**
 	 * @return Returns the actionDoneBy.
 	 */
-	public UserImpl getActionDoneBy() {
+	public User getActionDoneBy() {
 		return actionDoneBy;
 	}
 
 	/**
 	 * @param actionDoneBy The actionDoneBy to set.
 	 */
-	public void setActionDoneBy(UserImpl actionDoneBy) {
+	public void setActionDoneBy(User actionDoneBy) {
 		this.actionDoneBy = actionDoneBy;
 	}
 

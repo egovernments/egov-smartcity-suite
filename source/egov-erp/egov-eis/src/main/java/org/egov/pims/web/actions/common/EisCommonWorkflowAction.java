@@ -133,7 +133,7 @@ public abstract class EisCommonWorkflowAction extends GenericWorkFlowAction{
 	* boolean value true else returns false.
 	* 
 	* @param wfObj - StateAware object
-	* @param userid - id of UserImpl
+	* @param userid - id of User
 	* @return Boolean value.
 	**/
 	

@@ -27,7 +27,7 @@
 		<property name="lastmodified" type="date">
 			<column name="LASTMODIFIED" length="7" />
 		</property>
-		<many-to-one name="modifiedby" class="org.egov.infra.admin.master.entity.UserImpl">
+		<many-to-one name="modifiedby" class="org.egov.infra.admin.master.entity.User">
 			<column name="MODIFIEDBY" precision="22" scale="0" />
 		</many-to-one>
 		<property name="created" type="date">

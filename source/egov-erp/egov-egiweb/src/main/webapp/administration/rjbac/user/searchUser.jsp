@@ -1,18 +1,18 @@
 <%@page import="java.util.*,org.egov.lib.admbndry.*,org.egov.lib.rjbac.dept.*,org.egov.lib.rjbac.role.*"%>
 <%@page import="org.egov.infra.admin.master.entity.User"%>
-<%@page import="org.egov.infra.admin.master.entity.UserImpl"%>
+<%@page import="org.egov.infra.admin.master.entity.User"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ taglib uri="/deptRole" prefix="deptRole"%>
 
 
-<% 
-	UserImpl user = null;
-	user =(UserImpl)session.getAttribute("userDetail");
+<%
+    User user = null;
+	user =(User)session.getAttribute("userDetail");
 	ArrayList list= new ArrayList();
 	if(user!=null) {
 		list.add(user);
 	}
-	session.removeAttribute("userDetail"); 
+	session.removeAttribute("userDetail");
 %>
 		
 

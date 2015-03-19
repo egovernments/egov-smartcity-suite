@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<class name="org.egov.infra.admin.master.entity.UserImpl" table="EG_USER">
+	<class name="org.egov.infra.admin.master.entity.User" table="EG_USER">
 		<id name="id" column="ID_USER" type="integer" unsaved-value="null">
 			<generator class="native">
 				<param name="sequence">SEQ_EG_USER</param>
@@ -32,10 +32,10 @@
 		<many-to-one name="userSignature" class="org.egov.lib.rjbac.user.UserSignature" column="USER_SIGN" cascade="all" unique="true" />
 		<many-to-one name="department" class="org.egov.lib.rjbac.dept.DepartmentImpl" column="ID_DEPARTMENT"/>
 		<!-- Many Users can report to the same User. Implements the reporting heirarchy-->
-		<many-to-one name="parent" class="org.egov.infra.admin.master.entity.UserImpl" column="REPORTSTO"/>
+		<many-to-one name="parent" class="org.egov.infra.admin.master.entity.User" column="REPORTSTO"/>
 		<set name="reportees" table="EG_USER" inverse="true">
 			<key column="REPORTSTO"/>
-			<one-to-many class="org.egov.infra.admin.master.entity.UserImpl"/>							
+			<one-to-many class="org.egov.infra.admin.master.entity.User"/>							
 		</set> 
 		<set name="userRoles" table="EG_USERROLE" inverse="true" access="field" cascade="all-delete-orphan">
   	 		<key>

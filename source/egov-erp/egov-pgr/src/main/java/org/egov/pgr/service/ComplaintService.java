@@ -5,7 +5,7 @@ import static org.egov.pgr.utils.constants.CommonConstants.DASH_DELIM;
 import org.apache.commons.lang.RandomStringUtils;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pgr.entity.Complaint;
@@ -31,7 +31,7 @@ public class ComplaintService {
     public Complaint createComplaint(final Complaint complaint) {
         if (complaint.getCRN().isEmpty())
             complaint.setCRN(generateComplaintID());
-        complaint.getComplainant().setUserDetail((UserImpl) securityUtils.getCurrentUser());
+        complaint.getComplainant().setUserDetail((User) securityUtils.getCurrentUser());
         complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
         //Sample workflow not for production
         complaint.transition().start().withSenderName(complaint.getComplainant().getUserDetail().getFirstName())

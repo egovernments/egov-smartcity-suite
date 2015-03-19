@@ -18,7 +18,7 @@ import java.util.Set;
 import org.egov.EgovSpringContextHolder;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.security.utils.CryptoHelper;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.HibernateUtil;
@@ -94,7 +94,7 @@ public class UserDAO {
 	 */
 	public List<User> getUsersByDepartment(final Department department) {
 		try {
-			final Query qry = this.getSession().createQuery("FROM UserImpl UI where UI.department = :department");
+			final Query qry = this.getSession().createQuery("FROM User UI where UI.department = :department");
 			qry.setEntity("department", department);
 			return qry.list();
 		} catch (final HibernateException e) {
@@ -194,7 +194,7 @@ public class UserDAO {
 	 */
 	public User getUserByID(final Integer userID) {
 		try {
-			return (User) this.getSession().get(UserImpl.class, userID);
+			return (User) this.getSession().get(User.class, userID);
 		} catch (final HibernateException e) {
 			LOGGER.error("Exception encountered in getUserByID", e);
 			throw new EGOVRuntimeException("Exception encountered in getUserByID", e);
@@ -207,7 +207,7 @@ public class UserDAO {
 	 * @return List of User matching like the user name
 	 */
 	public List<User> getAllUserByUserNameLike(final String userName) {
-		final Query query = this.getSession().createQuery("FROM UserImpl where lower(userName) like ? order by userName asc");
+		final Query query = this.getSession().createQuery("FROM User where lower(userName) like ? order by userName asc");
 		query.setString(0, userName.toLowerCase() + "%");
 		return query.list();
 	}
@@ -233,7 +233,7 @@ public class UserDAO {
 	 */
 	public User getUserByUserName(final String userName) {
 		try {
-			final Query qry = this.getSession().createQuery("FROM UserImpl UI WHERE UI.userName = :usrName ");
+			final Query qry = this.getSession().createQuery("FROM User UI WHERE UI.userName = :usrName ");
 			qry.setString("usrName", userName);
 			return (User) qry.uniqueResult();
 		} catch (final HibernateException e) {
@@ -249,7 +249,7 @@ public class UserDAO {
 	 */
 	public List<User> getUserByName(final String userName) {
 		try {
-			final Query qry = this.getSession().createQuery("FROM UserImpl UI WHERE UI.firstName like :userName OR UI.middleName like :userName OR UI.lastName like :userName");
+			final Query qry = this.getSession().createQuery("FROM User UI WHERE UI.firstName like :userName OR UI.middleName like :userName OR UI.lastName like :userName");
 			qry.setString("userName", "%" + userName + "%");
 			return qry.list();
 		} catch (final HibernateException e) {
@@ -317,7 +317,7 @@ public class UserDAO {
 			final Query qry = this
 					.getSession()
 					.createQuery(
-							"Select UI.userName FROM UserImpl UI join UI.allJurisdictions as jurs where jurs.jurisdictionLevel = :bndryType  AND ((jurs.jurisdictionValues.toDate IS NULL AND jurs.jurisdictionValues.fromDate <= :currDate) OR (jurs.jurisdictionValues.fromDate <= :currDate AND jurs.jurisdictionValues.toDate >= :currDate))");
+							"Select UI.userName FROM User UI join UI.allJurisdictions as jurs where jurs.jurisdictionLevel = :bndryType  AND ((jurs.jurisdictionValues.toDate IS NULL AND jurs.jurisdictionValues.fromDate <= :currDate) OR (jurs.jurisdictionValues.fromDate <= :currDate AND jurs.jurisdictionValues.toDate >= :currDate))");
 			qry.setEntity("bndryType", bt);
 			qry.setDate("currDate", currDate);
 			final Map retMap = new HashMap();
@@ -378,7 +378,7 @@ public class UserDAO {
 			final Query qry = this
 					.getSession()
 					.createQuery(
-							"Select UI.userName FROM UserImpl UI join UI.allJurisdictions as jurs where jurs.jurisdictionLevel = :bndryType AND ((jurs.jurisdictionValues.toDate IS NULL AND jurs.jurisdictionValues.fromDate <= :currDate) OR (jurs.jurisdictionValues.fromDate <= :currDate AND jurs.jurisdictionValues.toDate >= :currDate))");
+							"Select UI.userName FROM User UI join UI.allJurisdictions as jurs where jurs.jurisdictionLevel = :bndryType AND ((jurs.jurisdictionValues.toDate IS NULL AND jurs.jurisdictionValues.fromDate <= :currDate) OR (jurs.jurisdictionValues.fromDate <= :currDate AND jurs.jurisdictionValues.toDate >= :currDate))");
 			qry.setEntity("bndryType", bt);
 			qry.setDate("currDate", currDate);
 			final Map retMap = new HashMap();
@@ -441,7 +441,7 @@ public class UserDAO {
 			}
 			queryPart.deleteCharAt(queryPart.lastIndexOf(","));
 			final StringBuilder queryStr = new StringBuilder();
-			queryStr.append("Select UI.userName FROM UserImpl UI join UI.allJurisdictions as jurs where jurs.jurisdictionLevel IN ( ");
+			queryStr.append("Select UI.userName FROM User UI join UI.allJurisdictions as jurs where jurs.jurisdictionLevel IN ( ");
 			queryStr.append(queryPart).append(" ) and " + "UI.topBoundaryID =:topBoundaryID AND ( ");
 			queryStr.append("(jurs.jurisdictionValues.toDate IS NULL AND jurs.jurisdictionValues.fromDate <= :currDate) OR (jurs.jurisdictionValues.fromDate <= :currDate AND jurs.jurisdictionValues.toDate >= :currDate))");
 			final Query qry = this.getSession().createQuery(queryStr.toString());
@@ -540,7 +540,7 @@ public class UserDAO {
 			}
 			queryPart.deleteCharAt(queryPart.lastIndexOf(","));
 			final StringBuilder query = new StringBuilder();
-			query.append("select distinct UI FROM UserImpl UI  left join UI.userRoles ur left join ur.role r " + "where r.roleName in (");
+			query.append("select distinct UI FROM User UI  left join UI.userRoles ur left join ur.role r " + "where r.roleName in (");
 			query.append(queryPart).append(")  AND UI.isActive=1 AND ur.isHistory='N' AND ( ");
 			query.append("(ur.toDate IS NULL AND ur.fromDate <= :currDate)  OR (ur.fromDate <= :currDate AND ur.toDate >= :currDate)) AND ( ");
 			query.append("(UI.toDate IS NULL AND UI.fromDate <= :currDate) OR (UI.fromDate <= :currDate AND UI.toDate >= :currDate))");
@@ -562,7 +562,7 @@ public class UserDAO {
 	 */
 	public List<User> getAllUsers() {
 		try {
-			final Query qry = this.getSession().createQuery("FROM UserImpl ");
+			final Query qry = this.getSession().createQuery("FROM User ");
 			return qry.list();
 		} catch (final HibernateException e) {
 			LOGGER.error("Exception encountered in getAllUsers", e);
@@ -576,7 +576,7 @@ public class UserDAO {
 	 */
 	public List<User> getAllPasswords() {
 		try {
-			final Query qry = this.getSession().createQuery("FROM UserImpl UI where UI.pwd is null ");
+			final Query qry = this.getSession().createQuery("FROM User UI where UI.pwd is null ");
 			return qry.list();
 		} catch (final HibernateException e) {
 			LOGGER.error("Exception encountered in getAllPasswords", e);
@@ -596,7 +596,7 @@ public class UserDAO {
 				queryPart.append(" :roleName").append(i).append(",");
 			}
 			queryPart.deleteCharAt(queryPart.lastIndexOf(","));
-			final Query qry = this.getSession().createQuery(new StringBuilder().append("FROM UserImpl UI where UI.roles.roleName  IN (").append(queryPart).append(")").toString());
+			final Query qry = this.getSession().createQuery(new StringBuilder().append("FROM User UI where UI.roles.roleName  IN (").append(queryPart).append(")").toString());
 			for (int i = 0; i < includeRolesArray.length; i++) {
 				qry.setString("roleName" + i, includeRolesArray[i]);
 			}
@@ -620,7 +620,7 @@ public class UserDAO {
 		}
 		try {
 			final StringBuilder queryStr = new StringBuilder();
-			queryStr.append("select distinct UI FROM UserImpl UI left join UI.userRoles ur left join ur.role r where r in (:roleList) AND UI.isActive=1 AND ur.isHistory='N' ");
+			queryStr.append("select distinct UI FROM User UI left join UI.userRoles ur left join ur.role r where r in (:roleList) AND UI.isActive=1 AND ur.isHistory='N' ");
 			queryStr.append(" AND (" + "(ur.toDate IS NULL AND ur.fromDate <= :currDate) OR (ur.fromDate <= :currDate AND ur.toDate >= :currDate)) AND (");
 			queryStr.append("(UI.toDate IS NULL AND UI.fromDate <= :currDate) OR (UI.fromDate <= :currDate AND UI.toDate >= :currDate))");
 			if (topBoundaryID != -1) {

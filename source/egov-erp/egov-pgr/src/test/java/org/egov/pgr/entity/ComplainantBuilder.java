@@ -2,7 +2,7 @@ package org.egov.pgr.entity;
 
 import java.lang.reflect.Field;
 
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 
 public class ComplainantBuilder {
 
@@ -27,7 +27,7 @@ public class ComplainantBuilder {
         return this;
     }
 
-    public ComplainantBuilder withUserDetail(final UserImpl userDetail) {
+    public ComplainantBuilder withUserDetail(final User userDetail) {
         complainant.setUserDetail(userDetail);
         return this;
     }

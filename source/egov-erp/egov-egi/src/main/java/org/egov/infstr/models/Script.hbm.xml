@@ -13,8 +13,8 @@
 		<property name="script" column="SCRIPT" type="string" length="4000" />
 		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
 		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
-		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.UserImpl" column="CREATED_BY"   fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.UserImpl" column="MODIFIED_BY" fetch="select"/>		
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY"   fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>		
 		<component name="period" class="org.egov.commons.Period">
 			<property name="startDate" column="START_DATE" />
 			<property name="endDate" column="END_DATE" />

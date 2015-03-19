@@ -112,7 +112,7 @@ public class DepartmentDAO extends GenericHibernateDAO implements GenericDAO {
 
 	public List<User> getAllUsersByDept(final Department dept, final int topBoundaryID) {
 		try {
-			final Query qry = getCurrentSession().createQuery("FROM UserImpl UI where UI.department =:department and UI.topBoundaryID = :topBoundaryID");
+			final Query qry = getCurrentSession().createQuery("FROM User UI where UI.department =:department and UI.topBoundaryID = :topBoundaryID");
 			qry.setEntity("department", dept);
 			qry.setInteger("topBoundaryID", topBoundaryID);
 			return qry.list();
@@ -139,7 +139,7 @@ public class DepartmentDAO extends GenericHibernateDAO implements GenericDAO {
 			final Iterator<Role> it = roleList.iterator();
 			while (it.hasNext()) {
 				final Role role = it.next();
-				qry = getCurrentSession().createQuery(" FROM UserImpl UI where UI.department =:department and UI.topBoundaryID = :topBoundaryID and :role in elements(UI.roles) ");
+				qry = getCurrentSession().createQuery(" FROM User UI where UI.department =:department and UI.topBoundaryID = :topBoundaryID and :role in elements(UI.roles) ");
 				qry.setEntity("department", dept);
 				qry.setInteger("topBoundaryID", topBoundaryID);
 				qry.setEntity("role", role);

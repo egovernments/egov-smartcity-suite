@@ -20,7 +20,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.reporting.engine.ReportConstants;
 import org.egov.infstr.security.utils.CryptoHelper;
@@ -75,7 +75,7 @@ public final class ReportUtil {
 	public static InputStream getUserSignature(final Integer userId) {
 		final Session session = HibernateUtil.getCurrentSession();
 		InputStream signatureStream = null;
-		final UserImpl user = (UserImpl) session.load(UserImpl.class, userId);
+		final User user = (User) session.load(User.class, userId);
 		if (user != null && user.getUserSignature() != null) {
 			final byte[] value = CryptoHelper.decrypt(user.getUserSignature().getSignature(), CryptoHelper.decrypt(user.getPwd()));
 			signatureStream = new ByteArrayInputStream(value);

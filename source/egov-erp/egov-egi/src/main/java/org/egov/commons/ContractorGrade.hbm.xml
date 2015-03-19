@@ -10,8 +10,8 @@
 				<param name="sequence">EGW_CONTRACTOR_GRADE_SEQ</param>
 			</generator>
 		</id>
-		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.UserImpl" column="CREATEDBY" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.UserImpl" column="MODIFIEDBY" fetch="select" />
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY" fetch="select" />
 		<property name="createdDate" column="CREATEDDATE" type="timestamp" />
 		<property name="modifiedDate" column="MODIFIEDDATE" type="timestamp" />
 		<property name="grade" type="string">

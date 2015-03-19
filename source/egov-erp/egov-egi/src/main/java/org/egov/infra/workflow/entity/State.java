@@ -18,7 +18,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
@@ -29,7 +29,7 @@ import org.hibernate.validator.constraints.Length;
     @NamedQuery(name="WORKFLOWTYPES",query="select distinct s.type from State s where s.ownerPosition.id=?  and s.status is not 2"),
     @NamedQuery(name="WORKFLOWTYPES_BY_ID",query="select s from State s where s.id=?")
 })
-public class State extends AbstractAuditable<UserImpl, Long> {
+public class State extends AbstractAuditable<User, Long> {
 
     private static final long serialVersionUID = -9159043292636575746L;
 
@@ -55,7 +55,7 @@ public class State extends AbstractAuditable<UserImpl, Long> {
     
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="OWNER_USER")
-    private UserImpl ownerUser;
+    private User ownerUser;
     
     @OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="state")
     @OrderBy("id")
@@ -99,11 +99,11 @@ public class State extends AbstractAuditable<UserImpl, Long> {
         this.ownerPosition = ownerPosition;
     }
 
-    public UserImpl getOwnerUser() {
+    public User getOwnerUser() {
         return ownerUser;
     }
 
-    protected void setOwnerUser(final UserImpl ownerUser) {
+    protected void setOwnerUser(final User ownerUser) {
         this.ownerUser = ownerUser;
     }
 

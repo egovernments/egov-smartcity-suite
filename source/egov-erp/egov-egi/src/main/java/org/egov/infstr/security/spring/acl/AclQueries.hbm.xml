@@ -21,19 +21,19 @@
 	</query>
 
 	<query name="getUserById">
-<![CDATA[from UserImpl  where id =?]]>
+<![CDATA[from User  where id =?]]>
 	</query>
 	<query name="getRoleById">
 <![CDATA[from RoleImpl  where id =?]]>
 	</query>
 
 	<query name="findUsersByIds">
-<![CDATA[from UserImpl  where id in (:param_0)]]>
+<![CDATA[from User  where id in (:param_0)]]>
 	</query>
 
 	<query name="getAclSidForUser">
 <![CDATA[from AclSid  where upper(sidType.type) like ? and ownerSid 
- in (select id from UserImpl where userName like ?) 
+ in (select id from User where userName like ?) 
  and aclObjectIdentity.domainObjectId=? and permission in(:param_3)]]>
 	</query>
 

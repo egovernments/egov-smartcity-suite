@@ -16,7 +16,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.pims.commons.Position;
 import org.hibernate.annotations.Immutable;
 
@@ -32,14 +32,14 @@ public class StateHistory implements Serializable {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "createdBy")
-    private UserImpl createdBy;
+    private User createdBy;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lastModifiedBy")
-    private UserImpl lastModifiedBy;
+    private User lastModifiedBy;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastModifiedDate;
@@ -57,7 +57,7 @@ public class StateHistory implements Serializable {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="OWNER_USER")
-    private UserImpl ownerUser;
+    private User ownerUser;
     
     private String senderName;
     private String nextAction;
@@ -110,11 +110,11 @@ public class StateHistory implements Serializable {
         this.ownerPosition = ownerPosition;
     }
 
-    public UserImpl getOwnerUser() {
+    public User getOwnerUser() {
         return ownerUser;
     }
 
-    public void setOwnerUser(UserImpl ownerUser) {
+    public void setOwnerUser(User ownerUser) {
         this.ownerUser = ownerUser;
     }
 
@@ -175,11 +175,11 @@ public class StateHistory implements Serializable {
         this.id = id;
     }
 
-    public UserImpl getCreatedBy() {
+    public User getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(UserImpl createdBy) {
+    public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -191,11 +191,11 @@ public class StateHistory implements Serializable {
         this.createdDate = createdDate;
     }
 
-    public UserImpl getLastModifiedBy() {
+    public User getLastModifiedBy() {
         return lastModifiedBy;
     }
 
-    public void setLastModifiedBy(UserImpl lastModifiedBy) {
+    public void setLastModifiedBy(User lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
     }
 

@@ -16,13 +16,12 @@
 		<title>Update User</title>
 		<html:javascript formName="userForm" />
 		<%
-
-				UserImpl user =(UserImpl)session.getAttribute("userDetail");
-				session.removeAttribute("userDetail");
-				String username= user.getUserName();
-				SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-				Set delUserRoles = new HashSet();
-				session.setAttribute("delUserRoles", delUserRoles);
+		    User user =(User)session.getAttribute("userDetail");
+						session.removeAttribute("userDetail");
+						String username= user.getUserName();
+						SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+						Set delUserRoles = new HashSet();
+						session.setAttribute("delUserRoles", delUserRoles);
 		%>
 		<%
 		 Integer isactive1=(Integer)session.getAttribute("isactive");

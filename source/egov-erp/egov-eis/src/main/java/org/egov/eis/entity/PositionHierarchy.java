@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.commons.ObjectType;
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.Position;
 import org.egov.search.domain.Searchable;
@@ -24,7 +24,7 @@ import org.egov.search.domain.Searchable;
 @Entity
 @Table(name = "egeis_position_hierarchy")
 @Searchable
-public class PositionHierarchy extends AbstractAuditable<UserImpl,Long>{
+public class PositionHierarchy extends AbstractAuditable<User,Long>{
 
     private static final long serialVersionUID = 8666462146278384384L;
     

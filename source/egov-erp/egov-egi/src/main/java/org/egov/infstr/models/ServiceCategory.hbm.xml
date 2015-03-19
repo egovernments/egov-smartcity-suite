@@ -11,10 +11,10 @@
 		<property name="name" column="NAME" type="string" />
 		<property name="code" column="CODE" type="string" />
 		<property name="isActive" column="ISACTIVE" type="java.lang.Boolean"/>
-		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.UserImpl" fetch="select">
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
 			<column name="CREATED_BY" precision="22" scale="0" />
 		</many-to-one>
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.UserImpl" fetch="select">
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
 			<column name="MODIFIED_BY" precision="22" scale="0" />
 		</many-to-one>
 		<property name="createdDate" column="CREATED_DATE"  type="date"/>

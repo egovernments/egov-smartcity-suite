@@ -14,7 +14,7 @@
 		<property name="toDate" column="TODATE" />
 		<property name="modifiedDate" column="MODIFIEDDATE" />
 		<property name="modifiedBy" column="MODIFIEDBY" />
-		<many-to-one name="userId" class="org.egov.infra.admin.master.entity.UserImpl" column="USERID" />
+		<many-to-one name="userId" class="org.egov.infra.admin.master.entity.User" column="USERID" />
 		<many-to-one name="counterId" class="org.egov.lib.security.terminal.model.Location" column="COUNTERID" />	
 	</class>
 </hibernate-mapping>

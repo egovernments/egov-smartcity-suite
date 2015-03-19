@@ -2,7 +2,7 @@ package org.egov.pims.model;
 import java.util.Date;
 
 import org.egov.commons.CFunction;
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 
 // Generated Aug 8, 2007 6:26:41 PM by Hibernate Tools 3.2.0.b9
 
@@ -28,7 +28,7 @@ public class EmployeeView implements java.io.Serializable
 	private org.egov.commons.Functionary functionary;
 	private Date dateOfFirstAppointment;
 	private org.egov.commons.EgwStatus employeeStatus;
-	private UserImpl userMaster;
+	private User userMaster;
 	private EmployeeStatusMaster employeeType;
 	private char isPrimary;
 	private CFunction functionId;
@@ -146,10 +146,10 @@ public class EmployeeView implements java.io.Serializable
 	public void setFunctionary(org.egov.commons.Functionary functionary) {
 		this.functionary = functionary;
 	}
-	public UserImpl getUserMaster() {
+	public User getUserMaster() {
 		return userMaster;
 	}
-	public void setUserMaster(UserImpl userMaster) {
+	public void setUserMaster(User userMaster) {
 		this.userMaster = userMaster;
 	}
 	public Integer getAssignId() {

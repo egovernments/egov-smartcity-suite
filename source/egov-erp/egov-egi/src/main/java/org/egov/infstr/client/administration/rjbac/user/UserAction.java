@@ -11,7 +11,7 @@ import org.apache.struts.action.ActionMapping;
 import org.egov.commons.utils.EgovInfrastrUtil;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.client.EgovAction;
 import org.egov.infstr.security.utils.CryptoHelper;
 import org.egov.infstr.utils.DateUtils;
@@ -59,7 +59,7 @@ public class UserAction extends EgovAction {
 		
 		if (req.getParameter("bool").equals("CREATE")) {
 			try {
-				final User user = new UserImpl();
+				final User user = new User();
 				
 				user.setFirstName(userForm.getFirstName());
 				user.setPwd(userForm.getPwd());

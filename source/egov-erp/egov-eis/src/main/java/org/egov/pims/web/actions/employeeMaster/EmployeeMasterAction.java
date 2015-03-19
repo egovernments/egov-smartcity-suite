@@ -24,7 +24,7 @@ import org.egov.commons.Fund;
 import org.egov.commons.service.CommonsService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EgovMasterDataCaching;
@@ -141,7 +141,7 @@ public class EmployeeMasterAction extends BaseFormAction
 		addRelatedEntity("religionMstr", ReligionMaster.class);
 		addRelatedEntity("langQulMstr", LanguagesQulifiedMaster.class);
 		addRelatedEntity("communityMstr", CommunityMaster.class);
-		addRelatedEntity("userMaster",UserImpl.class);
+		addRelatedEntity("userMaster",User.class);
 		addRelatedEntity("egpimsLangKnowns", LangKnown.class);
 	}
 	
@@ -291,7 +291,7 @@ public class EmployeeMasterAction extends BaseFormAction
 			
 			if(empAssign.getCreatedBy().getId()!=null)
 			{	
-				UserImpl createdBy = (UserImpl)persistenceService.getSession().load(UserImpl.class, empAssign.getCreatedBy().getId());
+				User createdBy = (User)persistenceService.getSession().load(User.class, empAssign.getCreatedBy().getId());
 				empAssign.setCreatedBy( createdBy);
 			}	
 			
@@ -337,9 +337,9 @@ public class EmployeeMasterAction extends BaseFormAction
 			if(mode.equalsIgnoreCase("create"))
 			{	
 				empAssign.setCreatedDate(new Date());
-				empAssign.setCreatedBy((UserImpl) user);
+				empAssign.setCreatedBy((User) user);
 			}	
-			empAssign.setModifiedBy((UserImpl) user);
+			empAssign.setModifiedBy((User) user);
 			empAssign.setModifiedDate(new Date());
 			persistenceService.getSession().saveOrUpdate(empAssign);
 	}
@@ -393,13 +393,13 @@ public class EmployeeMasterAction extends BaseFormAction
 		{
 			try
 			{
-				UserImpl existingUser= (UserImpl) eisUserMgr.getUserByUserName(employee.getUserMaster().getUserName().trim());// to check if the entered user obj is present in db
+				User existingUser= (User) eisUserMgr.getUserByUserName(employee.getUserMaster().getUserName().trim());// to check if the entered user obj is present in db
 				if(existingUser==null)
 				{
 					Role essRole = roleMgr.getRoleByRoleName(EMP_SELF_SERVICE);
 					Set<UserRole> roles = new HashSet<UserRole>();
 					UserRole userrole = new UserRole();
-					UserImpl user = new UserImpl();
+					User user = new User();
 					userrole.setRole(essRole);
 					userrole.setIsHistory('N');
 					userrole.setUser(user);

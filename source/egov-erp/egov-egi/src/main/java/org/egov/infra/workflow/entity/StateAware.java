@@ -11,13 +11,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.pims.commons.Position;
 
 @MappedSuperclass
-public abstract class StateAware extends AbstractAuditable<UserImpl, Long> {
+public abstract class StateAware extends AbstractAuditable<User, Long> {
     private static final long serialVersionUID = 5776408218810221246L;
     
     @ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
@@ -128,7 +128,7 @@ public abstract class StateAware extends AbstractAuditable<UserImpl, Long> {
         return this;
     }
 
-    public final StateAware withOwner(final UserImpl owner) {
+    public final StateAware withOwner(final User owner) {
         state.setOwnerUser(owner);
         return this;
     }

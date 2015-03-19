@@ -13,7 +13,7 @@
 		<many-to-one name="detailTypeId" class="org.egov.commons.Accountdetailtype" column="DETAILTYPEID" unique="true" />
 		<property column="MODIFIEDDATE" name="modifiedDate" type="timestamp"/>
 		<property column="CREATEDDATE" name="createdDate"/>
-		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.UserImpl" column="CREATEDBY"/>
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.UserImpl" column="MODIFIEDBY"/>
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"/>
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY"/>
 	</class>
 </hibernate-mapping>

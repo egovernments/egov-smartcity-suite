@@ -30,7 +30,7 @@ public class UserValidateHibernateDAO implements UserValidateDAO {
 
 	@Override
 	public boolean validateUser(final UserValidate obj) {
-		final Query qry = getCurrentSession().createQuery("from UserImpl user where user.userName = :username and user.pwd = :password");
+		final Query qry = getCurrentSession().createQuery("from User user where user.userName = :username and user.pwd = :password");
 		qry.setString("username", obj.getUsername());
 		qry.setString("password", CryptoHelper.encrypt(obj.getPassword()));
 		return !qry.list().isEmpty();
@@ -39,7 +39,7 @@ public class UserValidateHibernateDAO implements UserValidateDAO {
 	@Override
 	public boolean validateUserLocation(final UserValidate obj) {
 		final StringBuilder queryStr = new StringBuilder();
-		queryStr.append("Select user from Location loc,LocationIPMap locIP,UserImpl user, UserCounterMap map where map.userId = user.id and locIP.ipAddress = :ipaddress and  loc.id=locIP.location.id and ");
+		queryStr.append("Select user from Location loc,LocationIPMap locIP,User user, UserCounterMap map where map.userId = user.id and locIP.ipAddress = :ipaddress and  loc.id=locIP.location.id and ");
 		queryStr.append("map.counterId = loc.id and loc.isActive=1 and user.isActive = 1 and user.userName = :username and user.pwd = :password ");
 		queryStr.append("and loc.id = :locationId And ((map.toDate IS NULL AND map.fromDate <= :currDate) OR (map.fromDate <= :currDate AND map.toDate >= :currDate))");
 		final Query qry = getCurrentSession().createQuery(queryStr.toString());
@@ -54,7 +54,7 @@ public class UserValidateHibernateDAO implements UserValidateDAO {
 	@Override
 	public boolean validateUserTerminal(final UserValidate obj) {
 		final StringBuilder queryStr = new StringBuilder();
-		queryStr.append("select user from Location loc,LocationIPMap locIP, UserImpl user, UserCounterMap map where map.userId = user.id and locIP.ipAddress = :ipaddress and  loc.id=locIP.location.id and ");
+		queryStr.append("select user from Location loc,LocationIPMap locIP, User user, UserCounterMap map where map.userId = user.id and locIP.ipAddress = :ipaddress and  loc.id=locIP.location.id and ");
 		queryStr.append("map.counterId = loc.id and loc.isActive=1 and user.isActive = 1 and user.userName = :username and user.pwd = :password ");
 		queryStr.append("and loc.id = :counterId And ((map.toDate IS NULL AND map.fromDate <= :currDate) OR (map.fromDate <= :currDate AND map.toDate >= :currDate))");
 		final Query qry = getCurrentSession().createQuery(queryStr.toString());
@@ -89,7 +89,7 @@ public class UserValidateHibernateDAO implements UserValidateDAO {
 	@Override
 	public boolean validateActiveUserForPeriod(final String userName) {
 		final Query qry = getCurrentSession().createQuery(
-				"select user from UserImpl user where user.userName = :username and user.isActive = 1 And ((user.toDate IS NULL AND user.fromDate <= :currDate) OR (user.fromDate <= :currDate AND user.toDate >= :currDate))");
+				"select user from User user where user.userName = :username and user.isActive = 1 And ((user.toDate IS NULL AND user.fromDate <= :currDate) OR (user.fromDate <= :currDate AND user.toDate >= :currDate))");
 		qry.setString("username", userName);
 		qry.setDate("currDate", new Date());
 		final User user = (User) qry.uniqueResult();

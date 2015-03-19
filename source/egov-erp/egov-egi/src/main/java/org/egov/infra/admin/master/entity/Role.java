@@ -10,7 +10,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "eg_role")
-public class Role extends AbstractAuditable<UserImpl, Long> {
+public class Role extends AbstractAuditable<User, Long> {
 
     private static final long serialVersionUID = 7034114743461088547L;
 

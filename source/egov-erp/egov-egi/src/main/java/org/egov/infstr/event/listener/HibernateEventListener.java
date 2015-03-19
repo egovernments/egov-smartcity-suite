@@ -2,7 +2,7 @@ package org.egov.infstr.event.listener;
 
 import java.util.Date;
 
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.HibernateException;
@@ -51,12 +51,12 @@ public class HibernateEventListener implements SaveOrUpdateEventListener, PreUpd
 	 * @param session
 	 * @return
 	 */
-	private UserImpl getUserObjectFromWithinEventListener(final EventSource session) {
+	private User getUserObjectFromWithinEventListener(final EventSource session) {
 		// Since we are already in the flush logic of our current session,
 		// get the user object from a different session
 		final SessionFactory factory = session.getFactory();
 		final Session session2 = factory.openSession();
-		final UserImpl usr = (UserImpl) session2.load(UserImpl.class, Integer.valueOf(EGOVThreadLocals.getUserId()));
+		final User usr = (User) session2.load(User.class, Integer.valueOf(EGOVThreadLocals.getUserId()));
 		session2.flush();
 		session2.close();
 		return usr;
@@ -64,7 +64,7 @@ public class HibernateEventListener implements SaveOrUpdateEventListener, PreUpd
 
 	/**
 	 * Sets the modifiedBy and modifiedDate properties on objects that inherit from {@link org.egov.infstr.models.BaseModel}. event.getState() is used to get the list of properties for the object as
-	 * these are the properties that Hibernate generates the UPDATE statement for. A separate session is used to get the UserImpl object to ensure that the object thus obtained is flushed from within
+	 * these are the properties that Hibernate generates the UPDATE statement for. A separate session is used to get the User object to ensure that the object thus obtained is flushed from within
 	 * the event. @ return false to continue the processing
 	 */
 	@Override
@@ -87,7 +87,7 @@ public class HibernateEventListener implements SaveOrUpdateEventListener, PreUpd
 		if (object instanceof BaseModel && !session.getPersistenceContext().reassociateIfUninitializedProxy(object)) {
 			// only update the entity if it has been changed
 			final Date currentDate = new Date();
-			final UserImpl usr = (UserImpl) session.load(UserImpl.class, Integer.valueOf(EGOVThreadLocals.getUserId()));
+			final User usr = (User) session.load(User.class, Integer.valueOf(EGOVThreadLocals.getUserId()));
 
 			final BaseModel entity = (BaseModel) session.getPersistenceContext().unproxyAndReassociate(object);
 			if (entity.getCreatedBy() == null) {

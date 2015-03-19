@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.exceptions.TooManyValuesException;
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.BoundaryDAO;
@@ -472,10 +472,10 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 	
 	 public List getAllActiveUsersByGivenDesg(Integer desgId)
 	 {
-		 List<UserImpl> userList = null; 
+		 List<User> userList = null; 
 			
 			try {					
-						Query qry = getCurrentSession().createQuery("from UserImpl u where u.id in (select ev.userMaster.id from EmployeeView ev where ev.desigId.designationId =:desgId) and u.isActive=1 ");
+						Query qry = getCurrentSession().createQuery("from User u where u.id in (select ev.userMaster.id from EmployeeView ev where ev.desigId.designationId =:desgId) and u.isActive=1 ");
 						qry.setInteger("desgId",desgId);					
 						userList = qry.list();
 						
@@ -504,7 +504,7 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 	  */	 
 	 public  List getListOfUsersNotMappedToEmp()
 	 {
-		 Query qry = getCurrentSession().createQuery("from UserImpl UI where id not in("+
+		 Query qry = getCurrentSession().createQuery("from User UI where id not in("+
 			"select userMaster.id from PersonalInformation  where  userMaster.id is not null) order by UI.userName");
 		 
 		 return qry.list();

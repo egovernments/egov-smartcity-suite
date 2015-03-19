@@ -13,7 +13,7 @@ import java.util.List;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
@@ -135,7 +135,7 @@ public class UserLocationMappingAction extends ActionSupport {
 			final String userName = ServletActionContext.getRequest().getParameter("userName");
 			final Date fromDate = DateUtils.getDate(ServletActionContext.getRequest().getParameter("fromDate"), DateUtils.DFT_DATE_FORMAT);
 			final Date toDate = DateUtils.getDate(ServletActionContext.getRequest().getParameter("toDate"), DateUtils.DFT_DATE_FORMAT);
-			final UserImpl user = (UserImpl) this.userDao.getUserByUserName(userName);
+			final User user = (User) this.userDao.getUserByUserName(userName);
 			if (this.userCounterDao.checkUserCounter(user.getId(), fromDate, toDate)) {
 				ServletActionContext.getResponse().getWriter().write("{'success':false}");
 			} else {
@@ -167,7 +167,7 @@ public class UserLocationMappingAction extends ActionSupport {
 			final UserCounterMap userCounterMap = this.userCounterDao.findById(counterId, false);
 			this.persistenceService.setType(Location.class);
 			userCounterMap.setCounterId((Location) this.persistenceService.findById(locationId, false));
-			userCounterMap.setUserId((UserImpl) this.userDao.getUserByUserName(userName));
+			userCounterMap.setUserId((User) this.userDao.getUserByUserName(userName));
 			userCounterMap.setFromDate(fromDate);
 			userCounterMap.setToDate(toDate);
 			userCounterMap.setModifiedDate(new Date());

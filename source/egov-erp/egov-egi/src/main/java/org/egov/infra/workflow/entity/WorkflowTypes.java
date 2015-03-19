@@ -8,7 +8,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infstr.commons.Module;
 
@@ -19,7 +19,7 @@ import org.egov.infstr.commons.Module;
     @NamedQuery(name="TYPE_FOR_NAME",query="select wt from WorkflowTypes wt where wt.displayName = ?"),
     @NamedQuery(name="TYPE_LIKE_NAME",query="select wt from WorkflowTypes wt where lower(wt.displayName) like ?")
 })
-public class WorkflowTypes extends AbstractAuditable<UserImpl, Long> {
+public class WorkflowTypes extends AbstractAuditable<User, Long> {
 
     private static final long serialVersionUID = 1L;
     public static final String MODULE_FOR_TYPE = "MODULE_FOR_TYPE";

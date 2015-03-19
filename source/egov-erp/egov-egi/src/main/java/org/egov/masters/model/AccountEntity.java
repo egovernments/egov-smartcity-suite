@@ -9,7 +9,7 @@ import java.util.Date;
 
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.utils.EntityType;
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 
 public class AccountEntity implements java.io.Serializable, EntityType {
 
@@ -29,7 +29,7 @@ public class AccountEntity implements java.io.Serializable, EntityType {
 
 	private Date lastmodified;
 
-	private UserImpl modifiedby;
+	private User modifiedby;
 
 	private Date created;
 
@@ -39,7 +39,7 @@ public class AccountEntity implements java.io.Serializable, EntityType {
 		//For hibernate to work
 	}
 
-	public AccountEntity(Accountdetailtype accountdetailtype, String name, String code, String narration, Boolean isactive, Date lastmodified, UserImpl modifiedby, Date created) {
+	public AccountEntity(Accountdetailtype accountdetailtype, String name, String code, String narration, Boolean isactive, Date lastmodified, User modifiedby, Date created) {
 		this.accountdetailtype = accountdetailtype;
 		this.name = name;
 		this.code = code;
@@ -106,11 +106,11 @@ public class AccountEntity implements java.io.Serializable, EntityType {
 		this.lastmodified = lastmodified;
 	}
 
-	public UserImpl getModifiedby() {
+	public User getModifiedby() {
 		return this.modifiedby;
 	}
 
-	public void setModifiedby(UserImpl modifiedby) {
+	public void setModifiedby(User modifiedby) {
 		this.modifiedby = modifiedby;
 	}
 

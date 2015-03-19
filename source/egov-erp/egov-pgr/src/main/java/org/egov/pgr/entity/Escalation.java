@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.search.domain.Searchable;
@@ -27,7 +27,7 @@ import org.json.simple.JSONObject;
 @Entity
 @Table(name = "pgr_escalation")
 @Searchable
-public class Escalation extends AbstractAuditable<UserImpl,Long> {
+public class Escalation extends AbstractAuditable<User,Long> {
 
     private static final long serialVersionUID = -1317277378596990014L;
     
