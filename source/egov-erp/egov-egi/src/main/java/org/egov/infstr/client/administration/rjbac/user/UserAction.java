@@ -64,8 +64,8 @@ public class UserAction extends EgovAction {
 				user.setFirstName(userForm.getFirstName());
 				user.setPassword(userForm.getPassword());
 				//user.setPwdReminder(userForm.getPwdReminder());
-				user.setUserName(userForm.getUserName());
-				user.setPwdModifiedDate(new Date());
+				user.setUsername(userForm.getUserName());
+				user.setPwdExpiryDate(new Date());
 				if (isNotBlank(userForm.getMiddleName())) {
 					user.setMiddleName(userForm.getMiddleName());
 				}
@@ -82,12 +82,12 @@ public class UserAction extends EgovAction {
 				if (isNotBlank(userForm.getDob())) {
 					user.setDob(DateUtils.getDate(userForm.getDob(), DateUtils.DFT_DATE_FORMAT));
 				}
-				if (isNotBlank(userForm.getFromDate())) {
+				/*if (isNotBlank(userForm.getFromDate())) {
 					user.setFromDate(DateUtils.getDate(userForm.getFromDate(), DateUtils.DFT_DATE_FORMAT));
 				}
 				if (isNotBlank(userForm.getToDate())) {
 					user.setToDate(DateUtils.getDate(userForm.getToDate(), DateUtils.DFT_DATE_FORMAT));
-				}
+				}*/
 				
 				if (userForm.getRoleId() != null) {
 					final Set<UserRole> roles = new HashSet<UserRole>();
@@ -123,7 +123,7 @@ public class UserAction extends EgovAction {
 				userForm.reset(mapping, req);
 				session.removeAttribute("user");
 				session.removeAttribute("jurisdcnList");
-				user.setIsSuspended('N');
+				//user.setIsSuspended('N');
 				userService.createUser(user);
 				egovInfrastrUtil.resetCache();
 				
@@ -162,17 +162,17 @@ public class UserAction extends EgovAction {
 				user.setPassword(userForm.getPassword());
 				//user.setPwdReminder(userForm.getPwdReminder());
 				user.setFirstName(userForm.getFirstName());
-				user.setUserName(userForm.getUserName());
+				user.setUsername(userForm.getUserName());
 				
 				if (isNotBlank(userForm.getDob())) {
 					user.setDob(DateUtils.getDate(userForm.getDob(), DateUtils.DFT_DATE_FORMAT));
 				}
-				if (isNotBlank(userForm.getFromDate())) {
+				/*if (isNotBlank(userForm.getFromDate())) {
 					user.setFromDate(DateUtils.getDate(userForm.getFromDate(), DateUtils.DFT_DATE_FORMAT));
 				}
 				if (isNotBlank(userForm.getToDate())) {
 					user.setToDate(DateUtils.getDate(userForm.getToDate(), DateUtils.DFT_DATE_FORMAT));
-				}
+				}*/
 				if (userForm.getIsActive() != null) {
 					user.setIsActive(userForm.getIsActive());
 				}
@@ -232,7 +232,7 @@ public class UserAction extends EgovAction {
 				req.setAttribute("MESSAGE", "User has been Updated Successfully!!");
 				userForm.reset(mapping, req);
 				session.removeAttribute("jurisdcnList");
-				user.setIsSuspended('N');
+				//user.setIsSuspended('N');
 				userService.updateUser(user);
 				egovInfrastrUtil.resetCache();
 			} catch (final Exception e) {

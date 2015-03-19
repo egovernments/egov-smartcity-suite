@@ -43,7 +43,7 @@ if(request.getAttribute("user")!=null)
 				<td   colspan="4" align="middle" width="47%" height="56"><p  class="labelcell">
 				<%if(user!=null)
 				{%>
-				<b><%=user.getUserName()%></b>
+				<b><%=user.getUsername()%></b>
 				<%}
 				else
 				{%>

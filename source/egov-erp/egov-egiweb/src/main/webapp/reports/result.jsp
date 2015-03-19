@@ -42,8 +42,7 @@ org.apache.commons.lang.StringUtils" %>
 
 </table>
 <%
-
-   	 try{
+    try{
 		List userCounterList = (List)request.getAttribute("userCounterList");
    	 	System.out.println("the size of the list >>>>> " +userCounterList.size());
    	 	  	LinkedList links = new LinkedList();
@@ -113,7 +112,7 @@ org.apache.commons.lang.StringUtils" %>
 						}
 						k++;
 					}
-					userName =cataEl.getUserId().getUserName();
+					userName =cataEl.getUserId().getUsername();
 					userId =cataEl.getUserId().getId().toString();
 				map.put("name",name);
 				map.put("ip",ip);
@@ -131,7 +130,7 @@ org.apache.commons.lang.StringUtils" %>
 
 	    }
 	catch(Exception e){}
-  %>
+%>
 
  <display:table name="links" id="eid" cellspacing="0" style="width: 750;"
   export="true" defaultsort="2" pagesize = "15" sort="list"  class="its"  >

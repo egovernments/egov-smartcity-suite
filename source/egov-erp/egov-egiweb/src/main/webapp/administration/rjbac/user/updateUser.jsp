@@ -17,11 +17,11 @@
 		<html:javascript formName="userForm" />
 		<%
 		    User user =(User)session.getAttribute("userDetail");
-						session.removeAttribute("userDetail");
-						String username= user.getUserName();
-						SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-						Set delUserRoles = new HashSet();
-						session.setAttribute("delUserRoles", delUserRoles);
+								session.removeAttribute("userDetail");
+								String username= user.getUsername();
+								SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+								Set delUserRoles = new HashSet();
+								session.setAttribute("delUserRoles", delUserRoles);
 		%>
 		<%
 		 Integer isactive1=(Integer)session.getAttribute("isactive");

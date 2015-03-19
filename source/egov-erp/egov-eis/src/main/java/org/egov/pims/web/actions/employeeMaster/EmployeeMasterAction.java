@@ -385,7 +385,7 @@ public class EmployeeMasterAction extends BaseFormAction
 	
 	private void setEmpUserMaster()
 	{
-		if(employee.getUserMaster().getUserName().trim().isEmpty())
+		if(employee.getUserMaster().getUsername().trim().isEmpty())
 		{
 			employee.setUserMaster(null);
 		}
@@ -393,7 +393,7 @@ public class EmployeeMasterAction extends BaseFormAction
 		{
 			try
 			{
-				User existingUser= (User) eisUserMgr.getUserByUserName(employee.getUserMaster().getUserName().trim());// to check if the entered user obj is present in db
+				User existingUser= (User) eisUserMgr.getUserByUserName(employee.getUserMaster().getUsername().trim());// to check if the entered user obj is present in db
 				if(existingUser==null)
 				{
 					Role essRole = roleMgr.getRoleByRoleName(EMP_SELF_SERVICE);
@@ -408,11 +408,11 @@ public class EmployeeMasterAction extends BaseFormAction
 					roles.add(userrole);
 					//user.setUserRoles(roles);
 					
-					user.setUserName(employee.getUserMaster().getUserName().trim());
+					user.setUsername(employee.getUserMaster().getUsername().trim());
 					//user.setPwdReminder(employee.getEmployeeFirstName()+"_"+employee.getCode());
 					user.setPassword(employee.getEmployeeFirstName()+"_"+employee.getCode());//usermanager.createUser will take plain pwd and encrypt it and set the encrypted value back
-					user.setIsSuspended('N');
-					user.setPwdModifiedDate(new Date());
+					//user.setIsSuspended('N');
+					user.setPwdExpiryDate(new Date());
 					user.setFirstName(employee.getEmployeeFirstName());
 					user.setIsActive(employee.getUserMaster().getIsActive());
 					

@@ -8,19 +8,14 @@
 				<param name="sequence">SEQ_EG_USER</param>
 			</generator>
 		</id>
-		<timestamp 	column="updatetime"	name="updateTime" access="property" unsaved-value="null" />
 		<property name="salutation" column="SALUTATION" type="string"/>
 		<property name="firstName" column="FIRST_NAME" type="string"/>
 		<property name="lastName" column="LAST_NAME" type="string"/>
 		<property name="isActive" column="ISACTIVE" type="integer"/>
 		<property name="middleName" column="MIDDLE_NAME" type="string"/>
-		<property name="userName" column="USER_NAME" type="string"/>
+		<property name="username" column="USER_NAME" type="string"/>
 		<property name="password" column="PWD" type="string"/>
-		<property name="updateUserId" column="UPDATEUSERID" type="integer"/>
-		<property name="isSuspended" column="IS_SUSPENDED" type="char"/>
-		<property name="fromDate" column="FROMDATE" type="date"/>
-		<property name="toDate" column="TODATE" type="date"/>
-		<property name="pwdModifiedDate" column="PWD_UPDATED_DATE" type="date"/>
+		<property name="pwdExpiryDate" column="PWD_UPDATED_DATE" type="date"/>
 		<property name="dob" column="DOB" type="date"/>
 	</class>
 </hibernate-mapping>

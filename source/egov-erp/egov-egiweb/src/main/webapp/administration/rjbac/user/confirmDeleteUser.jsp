@@ -33,7 +33,7 @@
 						%>	
 						<tr>
 							<td class="eGovTblContentSubHd" vAlign="center" align="middle" width="100%" height="30">
-							<p align="center">Are You Sure Want to Delete USER <%= user.getUserName()%></td>
+							<p align="center">Are You Sure Want to Delete USER <%=user.getUsername()%></td>
 						</tr>
 						
 						<tr bgColor="#dddddd">

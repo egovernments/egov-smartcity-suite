@@ -86,7 +86,7 @@
 							<tr>
 								<td class="eGovTblContent" width="40%" height="23" ><bean:message key="userName"/><bean:message key="userName.ll" />
 								<font class="ErrorText">*</font>
-								<td class="eGovTblContent" align="left" width="40%" height="23" >&nbsp;&nbsp;<%=user.getUserName()%>
+								<td class="eGovTblContent" align="left" width="40%" height="23" >&nbsp;&nbsp;<%=user.getUsername()%>
 								</td>
 							</tr>
 							

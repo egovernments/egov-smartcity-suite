@@ -41,7 +41,7 @@ org.apache.commons.lang.StringUtils" %>
       String userId = request.getParameter("userId");
     User userobj = (User) HibernateUtil.getCurrentSession().get(User.class, Integer.valueOf(userId));
   %>
-<p> User Mapping Reports : <%=userobj.getUserName()%></p></td>
+<p> User Mapping Reports : <%=userobj.getUsername()%></p></td>
   </tr>
 
 </table>

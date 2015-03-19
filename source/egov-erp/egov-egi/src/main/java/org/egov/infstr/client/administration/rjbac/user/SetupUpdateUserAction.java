@@ -67,17 +67,17 @@ public class SetupUpdateUserAction extends EgovAction {
 			}
 			userForm.setPassword(CryptoHelper.decrypt(usr.getPassword()));
 			//userForm.setPwdReminder(usr.getPwdReminder());
-			final Date fdate = usr.getFromDate();
-			final Date tdate = usr.getToDate();
+			//final Date fdate = usr.getFromDate();
+			//final Date tdate = usr.getToDate();
 			final Date dob = usr.getDob();
-			final String fromdate = fdate.toString();
+			/*final String fromdate = fdate.toString();
 			final String fromDate = formatter1.format(formatter.parse(fromdate));
 			userForm.setFromDate(fromDate);
 			if (tdate != null) {
 				final String todate = tdate.toString();
 				final String toDate = formatter1.format(formatter.parse(todate));
 				userForm.setToDate(toDate);
-			}
+			}*/
 			if (dob != null) {
 				final String dob1 = dob.toString();
 				final String Dob = formatter1.format(formatter.parse(dob1));

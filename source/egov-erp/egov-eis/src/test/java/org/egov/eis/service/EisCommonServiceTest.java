@@ -32,7 +32,7 @@ public class EisCommonServiceTest extends EISAbstractSpringIntegrationTest{
     @Test
     public void getUserForPosition() {
         User usr = eisCommonService.getUserForPositionId(1, new Date());
-           assertEquals("egovernments",usr.getUserName());
+           assertEquals("egovernments",usr.getUsername());
     }
 
 }

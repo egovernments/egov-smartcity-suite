@@ -59,9 +59,9 @@ public class UserDAO {
 	public void createOrUpdateUserWithPwdEncryption(final User usr) {
 		final String encpassword = CryptoHelper.encrypt(usr.getPassword());
 		usr.setPassword(encpassword);
-		if (usr.getFromDate() == null) {
+		/*if (usr.getFromDate() == null) {
 			usr.setFromDate(new Date());
-		}
+		}*/
 		this.getSession().saveOrUpdate(usr);
 	}
 
@@ -72,7 +72,7 @@ public class UserDAO {
 	 */
 	public Set<UserRole> getAllRolesForUser(final String userName) {
 		try {
-			final Query qry = this.getSession().createQuery("FROM UserRole rol where rol.user.userName=:userName and rol.isHistory='N')");
+			final Query qry = this.getSession().createQuery("FROM UserRole rol where rol.user.username=:userName and rol.isHistory='N')");
 			qry.setString("userName", userName);
 			return new HashSet<UserRole>(qry.list());
 		} catch (final HibernateException e) {
@@ -189,7 +189,7 @@ public class UserDAO {
 	 * @return List of User matching like the user name
 	 */
 	public List<User> getAllUserByUserNameLike(final String userName) {
-		final Query query = this.getSession().createQuery("FROM User where lower(userName) like ? order by userName asc");
+		final Query query = this.getSession().createQuery("FROM User where lower(username) like ? order by username asc");
 		query.setString(0, userName.toLowerCase() + "%");
 		return query.list();
 	}
@@ -201,7 +201,7 @@ public class UserDAO {
 	 */
 	public User getUserByUserName(final String userName) {
 		try {
-			final Query qry = this.getSession().createQuery("FROM User UI WHERE UI.userName = :usrName ");
+			final Query qry = this.getSession().createQuery("FROM User UI WHERE UI.username = :usrName ");
 			qry.setString("usrName", userName);
 			return (User) qry.uniqueResult();
 		} catch (final HibernateException e) {

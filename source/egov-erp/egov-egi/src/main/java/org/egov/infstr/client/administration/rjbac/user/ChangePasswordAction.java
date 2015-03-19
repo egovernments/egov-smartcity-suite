@@ -42,7 +42,7 @@ public class ChangePasswordAction extends Action {
 			}*/
 			user.setPassword(changePasswordForm.getPwd().trim());
 			//user.setPwdReminder(changePasswordForm.getPwdReminder().trim());
-			user.setPwdModifiedDate(new Date());
+			user.setPwdExpiryDate(new Date());
 			this.getUserDao().createOrUpdateUserWithPwdEncryption(user);
 			req.setAttribute("MESSAGE", "Password successfully modified.");				
 			return mapping.findForward("success");

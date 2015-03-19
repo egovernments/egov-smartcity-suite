@@ -41,9 +41,9 @@ public class UserDetailsImpl implements UserDetailsService {
 			grantedAuthorities.add(new SimpleGrantedAuthority(role.getRoleName()));
 
 		}
-		final UserDetails userDetails = new org.springframework.security.core.userdetails.User(usr.getUserName(), usr.getPassword(), usr.getIsActive().equals(1), // enabled
-				usr.getIsSuspended() == 'N', // accountNonExpired
-				usr.getIsSuspended() == 'N', // credentialsNonExpired
+		final UserDetails userDetails = new org.springframework.security.core.userdetails.User(usr.getUsername(), usr.getPassword(), usr.getIsActive().equals(1), // enabled
+		                usr.getIsActive().equals(1), // accountNonExpired
+				usr.getIsActive().equals(1), // credentialsNonExpired
 				usr.getIsActive().equals(1), // accountNonLocked
 				grantedAuthorities);
 

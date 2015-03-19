@@ -12,7 +12,7 @@ public class User extends AbstractAuditable<User, Long> {
 
     private static final long serialVersionUID = 2870751695666860068L;
     
-    private String userName;
+    private String username;
     private String password;
     private String salutation;
     private String firstName;
@@ -21,36 +21,17 @@ public class User extends AbstractAuditable<User, Long> {
     private Set<org.egov.lib.rjbac.role.Role> roles = new HashSet<org.egov.lib.rjbac.role.Role>();
     
     private Integer isActive;
-    private Date updateTime;
-    private Integer updateUserId;
-    private char isSuspended;
     private Date dob;
-    private Date fromDate;
-    private Date toDate;
-    private Date pwdModifiedDate;
+    private Date pwdExpiryDate;
 
-    public Date getFromDate() {
-        return fromDate;
+   
+
+    public Date getPwdExpiryDate() {
+        return pwdExpiryDate;
     }
 
-     public void setFromDate(final Date fromDate) {
-        this.fromDate = fromDate;
-    }
-
-     public Date getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(final Date toDate) {
-        this.toDate = toDate;
-    }
-
-    public Date getPwdModifiedDate() {
-        return pwdModifiedDate;
-    }
-
-    public void setPwdModifiedDate(final Date pwdModifiedDate) {
-        this.pwdModifiedDate = pwdModifiedDate;
+    public void setPwdExpiryDate(final Date pwdExpiryDate) {
+        this.pwdExpiryDate = pwdExpiryDate;
     }
 
      public String getPassword() {
@@ -85,23 +66,7 @@ public class User extends AbstractAuditable<User, Long> {
         this.salutation = salutation;
     }
    
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(final Date updatetime) {
-        updateTime = updatetime;
-    }
-
-    public Integer getUpdateUserId() {
-        return updateUserId;
-    }
-
-    public void setUpdateUserId(final Integer updateuserid) {
-        updateUserId = updateuserid;
-    }
-
-    public String getFirstName() {
+     public String getFirstName() {
         return firstName;
     }
 
@@ -109,16 +74,6 @@ public class User extends AbstractAuditable<User, Long> {
         this.firstName = firstName;
     }
 
-    public char getIsSuspended() {
-        return isSuspended;
-    }
-
-  
-    public void setIsSuspended(final char isSuspended) {
-        this.isSuspended = isSuspended;
-    }
-
-  
     public String getLastName() {
         return lastName;
     }
@@ -143,12 +98,12 @@ public class User extends AbstractAuditable<User, Long> {
         this.isActive = isActive;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(final String userName) {
-        this.userName = userName;
+    public void setUsername(final String username) {
+        this.username = username;
     }
 
     public void removeRole(final Role role) {

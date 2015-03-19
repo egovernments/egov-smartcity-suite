@@ -90,7 +90,7 @@ public class UserLocationMappingAction extends ActionSupport {
 			final StringBuilder jsonString = new StringBuilder();
 			jsonString.append("[");
 			for (final UserCounterMap userCounterMap : userCounterMapList) {
-				jsonString.append("{").append("'id':").append(userCounterMap.getId()).append(",'userName':'").append(userCounterMap.getUserId().getUserName()).append("',");
+				jsonString.append("{").append("'id':").append(userCounterMap.getId()).append(",'userName':'").append(userCounterMap.getUserId().getUsername()).append("',");
 				jsonString.append("'fromDate':'").append(DateUtils.getDefaultFormattedDate(userCounterMap.getFromDate())).append("','toDate':'").append(DateUtils.getDefaultFormattedDate(userCounterMap.getToDate())).append("'},");
 			}
 			jsonString.deleteCharAt(jsonString.length() - 1);
@@ -108,7 +108,7 @@ public class UserLocationMappingAction extends ActionSupport {
 			final StringBuilder jsonString = new StringBuilder();
 			jsonString.append("[");
 			for (final User user : users) {
-				jsonString.append("{").append("'id':'").append(user.getId()).append("','userName':'").append(user.getUserName()).append("'},");
+				jsonString.append("{").append("'id':'").append(user.getId()).append("','userName':'").append(user.getUsername()).append("'},");
 			}
 			jsonString.deleteCharAt(jsonString.length() - 1);
 			jsonString.append("]");

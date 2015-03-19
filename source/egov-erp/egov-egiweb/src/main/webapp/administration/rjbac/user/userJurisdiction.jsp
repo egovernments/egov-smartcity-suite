@@ -336,7 +336,7 @@
 					<td class="labelcell" align="middle" width="47%" height="56"><p  >
 						<%if(user!=null)
 						{%>
-						<b><%=user.getUserName()%></b>
+						<b><%=user.getUsername()%></b>
 						<%}
 						else
 						{%>
