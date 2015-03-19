@@ -25,6 +25,7 @@ import org.egov.pims.commons.Position;
 import org.egov.search.domain.Searchable;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
+import org.joda.time.DateTime;
 
 @Entity
 @Table(name = "pgr_complaint")
@@ -104,6 +105,17 @@ public class Complaint extends StateAware {
     private double lng;
 
     private double lat;
+    
+    @Column(name="escalation_date",nullable = false)
+    private DateTime escalationDate;
+    
+    public DateTime getEscalationDate() {
+        return escalationDate;
+    }
+
+    public void setEscalationDate(DateTime escalationDate) {
+        this.escalationDate = escalationDate;
+    }
 
     public String getCRN() {
         return CRN;

@@ -2,14 +2,26 @@ package org.egov.pgr.service;
 
 import static org.egov.pgr.utils.constants.CommonConstants.DASH_DELIM;
 
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.lib.admbndry.CityWebsiteImpl;
 import org.egov.pgr.entity.Complaint;
+import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.repository.ComplaintRepository;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,6 +68,28 @@ public class ComplaintService {
         return complaintRepository.findOne(complaintID);
     }
 
+    @PersistenceContext
+    private EntityManager entityManager;
+    
+    public Session  getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+    
+    public List<Complaint> getComplaintsEligibleForEscalation(){
+        final CityWebsiteImpl cityWebsite = (CityWebsiteImpl)getCurrentSession().getNamedQuery(CityWebsiteImpl.QUERY_CITY_BY_URL).setString("url", EGOVThreadLocals.getDomainName()).uniqueResult();
+        final Integer topLevelBoundaryId = cityWebsite.getBoundaryId().getBndryId();
+        final Criteria criteria = getCurrentSession().createCriteria(Complaint.class,"complaint").
+                createAlias("complaint.location","boundary").
+                createAlias("complaint.status","complaintStatus");
+              criteria.add(Restrictions.eq("boundary.topLevelBoundaryID", topLevelBoundaryId)).
+              add(Restrictions.eq("complaintStatus.name",ComplaintType.COMPLAINT_STATUS_COMPLETED)).
+              add(Restrictions.eq("complaintStatus.name",ComplaintType.COMPLAINT_STATUS_REJECTED)).
+              add(Restrictions.eq("complaintStatus.name",ComplaintType.COMPLAINT_STATUS_WITHDRAWN)).
+              add(Restrictions.le("complaint.escalationDate", new Date()));
+        
+        return criteria.list();
+    }
+    
     /*
      * public Page<Complaint> findAllCurrentUserComplaints(final Pageable
      * pageable) { final User user = securityUtils.getCurrentUser().get();

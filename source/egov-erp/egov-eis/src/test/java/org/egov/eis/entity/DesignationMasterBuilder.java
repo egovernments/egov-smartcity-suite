@@ -16,8 +16,11 @@ public class DesignationMasterBuilder {
 
 	private final DesignationMaster designationMaster;
 	
+	private static int count=0;
+	
 	public DesignationMasterBuilder(){
 		designationMaster = new DesignationMaster();
+		count++;
 	}
 	
 	public DesignationMaster build(){
@@ -40,13 +43,37 @@ public class DesignationMasterBuilder {
 	}
 	
 	public DesignationMasterBuilder withId(Integer designationId){
-		 try {
-	            Field idField  = designationMaster.getClass().getSuperclass().getDeclaredField("designationId");
-	            idField.setAccessible(true);
-	            idField.set(designationMaster, designationId);
-	        } catch (Exception e) {
-	            throw new RuntimeException(e);
-	        }
+		 designationMaster.setDesignationId(designationId);
 	        return this;
 	    }
+	
+	public DesignationMasterBuilder withDefaults()
+	{
+	    if(null==designationMaster.getDesignationId())
+	    {
+	        withId(count);
+	    }
+	    if(null==designationMaster.getDesignationName())
+	    {
+	        withName("test-designation-"+count);
+	    }
+//	    if(null==designationMaster.getChartOfAccounts())
+//            {
+//                withChartOfAccounts(new CChar);
+//            }
+	    
+	    return this;
+	}
+	
+	
+	public DesignationMasterBuilder withDbDefaults()
+        {
+          
+            if(null==designationMaster.getDesignationName())
+            {
+                withName("test-designation-"+count);
+            }
+            return this;
+        }
+	
 }

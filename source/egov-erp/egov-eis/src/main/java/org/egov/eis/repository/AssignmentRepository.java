@@ -3,6 +3,7 @@
  */
 package org.egov.eis.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.egov.pims.model.Assignment;
@@ -26,5 +27,8 @@ public interface AssignmentRepository extends JpaRepository<Assignment,Long>{
 	 * for an employee as on sysdate*/
 	@Query(" from Assignment A where A.fromDate<=current_date and A.toDate>=current_date and A.employee.idPersonalInformation =:idPersonalInformation order by A.fromDate")
 	public List<Assignment> getAllActiveAssignmentsByEmpId(@Param("idPersonalInformation")Integer idPersonalInformation);
+	
+	@Query(" from Assignment A where A.fromDate<=:givenDate and A.toDate>=:givenDate and A.position.id=:posId order by A.fromDate")
+	public List<Assignment> getAssignmentsForPosition(@Param("posId")Integer posId,@Param("givenDate")Date givenDate);
 
 }

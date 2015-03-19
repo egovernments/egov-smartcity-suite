@@ -3,6 +3,7 @@
  */
 package org.egov.eis.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.egov.eis.repository.AssignmentRepository;
@@ -26,25 +27,29 @@ public class AssignmentService {
         this.assignmentRepository=assignmentRepository;
     }
     
-    public Assignment getAssignmentById(Long Id) {
+    public Assignment getAssignmentById(final Long Id) {
         return assignmentRepository.findOne(Id);
     }
     
-    public List<Assignment> getAllAssignmentsByEmpId(Integer Id) {
+    public List<Assignment> getAllAssignmentsByEmpId(final Integer Id) {
         return assignmentRepository.getAllAssignmentsByEmpId(Id);
     }
     
-    public List<Assignment> getAllActiveEmployeeAssignmentsByEmpId(Integer Id) {
+    public List<Assignment> getAllActiveEmployeeAssignmentsByEmpId(final Integer Id) {
         return assignmentRepository.getAllActiveAssignmentsByEmpId(Id);
     }
     
+    public Assignment getAssignmentsForPositionId(final Integer posId,final Date givenDate) {
+        return assignmentRepository.getAssignmentsForPosition(posId,givenDate).get(0);
+    }
+    
     @Transactional
-    public void createAssignment(Assignment assignment) {
+    public void createAssignment(final Assignment assignment) {
         assignmentRepository.save(assignment);
     }
     
     @Transactional
-    public void updateAssignment(Assignment assignment) {
+    public void updateAssignment(final Assignment assignment) {
         assignmentRepository.save(assignment);
     }
 

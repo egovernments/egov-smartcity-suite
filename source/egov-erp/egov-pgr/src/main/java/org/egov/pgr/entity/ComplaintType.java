@@ -24,6 +24,10 @@ import org.json.simple.JSONObject;
 @Searchable
 public class ComplaintType extends AbstractPersistable<Long> {
     private static final long serialVersionUID = 8904645810221559541L;
+    
+    public static final String COMPLAINT_STATUS_COMPLETED = "COMPLETED";
+    public static final String COMPLAINT_STATUS_REJECTED = "REJECTED";
+    public static final String COMPLAINT_STATUS_WITHDRAWN = "WITHDRAWN";
 
     @NotBlank
     @SafeHtml
@@ -41,9 +45,6 @@ public class ComplaintType extends AbstractPersistable<Long> {
 
     @Column(name = "location_required")
     private boolean locationRequired;
-
-    @Column(name = "hrs_to_resolve")
-    private Integer hrsToResolve;
 
     public String getName() {
         return name;
@@ -67,14 +68,6 @@ public class ComplaintType extends AbstractPersistable<Long> {
 
     public void setLocationRequired(final boolean locationRequired) {
         this.locationRequired = locationRequired;
-    }
-
-    public Integer getHrsToResolve() {
-        return hrsToResolve;
-    }
-
-    public void setHrsToResolve(final Integer hrsToResolve) {
-        this.hrsToResolve = hrsToResolve;
     }
 
     public JSONObject toJsonObject() {
