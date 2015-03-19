@@ -11,9 +11,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.UserImpl;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.workflow.entity.State.StateStatus;
-import org.egov.lib.rjbac.user.UserImpl;
 import org.egov.pims.commons.Position;
 
 @MappedSuperclass

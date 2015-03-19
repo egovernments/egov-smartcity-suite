@@ -23,13 +23,13 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.UserImpl;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.SequenceNumberGenerator;
-import org.egov.lib.rjbac.user.UserImpl;
 import org.springmodules.jcr.support.JcrDaoSupport;
 import org.xml.sax.ContentHandler;
 

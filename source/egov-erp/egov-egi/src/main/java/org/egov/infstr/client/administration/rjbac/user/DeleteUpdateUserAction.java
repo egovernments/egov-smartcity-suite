@@ -20,13 +20,13 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.entity.UserImpl;
 import org.egov.infstr.client.EgovAction;
 import org.egov.infstr.client.delegate.UserDelegate;
 import org.egov.infstr.security.utils.CryptoHelper;
 import org.egov.lib.admbndry.BoundaryType;
 import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
 import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.user.UserImpl;
 
 public class DeleteUpdateUserAction extends EgovAction {
 

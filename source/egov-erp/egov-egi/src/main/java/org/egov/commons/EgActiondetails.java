@@ -5,7 +5,7 @@ package org.egov.commons;
 
 import java.util.Date;
 
-import org.egov.lib.rjbac.user.UserImpl;
+import org.egov.infra.admin.master.entity.UserImpl;
 
 public class EgActiondetails implements java.io.Serializable {
 

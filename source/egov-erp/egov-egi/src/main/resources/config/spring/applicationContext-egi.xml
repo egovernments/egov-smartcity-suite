@@ -110,7 +110,7 @@
 	</bean>
 
 	<bean id="userPersistenceService" parent="persistenceService">
-		<property name="type" value="org.egov.lib.rjbac.user.UserImpl"/>
+		<property name="type" value="org.egov.infra.admin.master.entity.UserImpl"/>
 	</bean>
 
 	<bean id="genericDao" class="org.egov.infstr.commons.dao.GenericHibernateDaoFactory" scope="prototype">

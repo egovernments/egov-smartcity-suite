@@ -16,7 +16,7 @@
 		<property name="logoutTime" type="timestamp">
 			<column name="LOGOUTTIME" />
 		</property>
-		<many-to-one name="user" class="org.egov.lib.rjbac.user.UserImpl" column="USERID" />
+		<many-to-one name="user" class="org.egov.infra.admin.master.entity.UserImpl" column="USERID" />
 		<many-to-one name="location" class="org.egov.lib.security.terminal.model.Location" column="LOCATIONID" />
 	</class>
 </hibernate-mapping>

@@ -16,7 +16,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.egov.lib.rjbac.user.UserImpl;
+import org.egov.infra.admin.master.entity.UserImpl;
 import org.egov.pims.commons.Position;
 import org.hibernate.annotations.Immutable;
 

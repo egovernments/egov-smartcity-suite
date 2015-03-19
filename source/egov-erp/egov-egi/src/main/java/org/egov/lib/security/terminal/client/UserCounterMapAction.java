@@ -10,10 +10,10 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.UserImpl;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.lib.rjbac.user.UserImpl;
 import org.egov.lib.rjbac.user.dao.UserDAO;
 import org.egov.lib.security.terminal.dao.LocationHibernateDAO;
 import org.egov.lib.security.terminal.dao.UserCounterHibernateDAO;
@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.Date;
 import java.util.List;
 

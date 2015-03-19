@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.infra.admin.master.entity.UserImpl;
 import org.egov.infstr.security.utils.CryptoHelper;
-import org.egov.lib.rjbac.user.UserImpl;
 import org.egov.web.actions.BaseFormAction;
 
 @ParentPackage("egov")

@@ -7,7 +7,7 @@ package org.egov.lib.security.terminal.model;
 
 import java.util.Date;
 
-import org.egov.lib.rjbac.user.UserImpl;
+import org.egov.infra.admin.master.entity.UserImpl;
 
 public class UserCounterMap implements java.io.Serializable {
 

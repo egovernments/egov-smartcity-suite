@@ -12,6 +12,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.infra.admin.master.entity.UserImpl;
 import org.egov.infstr.security.spring.acl.AclConstants;
 import org.egov.infstr.security.spring.acl.models.AclObjClass;
 import org.egov.infstr.security.spring.acl.models.AclObjectIdentity;
@@ -20,7 +21,6 @@ import org.egov.infstr.security.spring.acl.models.AclSidType;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.workflow.NotificationGroup;
 import org.egov.lib.rjbac.role.RoleImpl;
-import org.egov.lib.rjbac.user.UserImpl;
 import org.egov.web.actions.BaseFormAction;
 import org.springframework.security.acls.domain.BasePermission;
 

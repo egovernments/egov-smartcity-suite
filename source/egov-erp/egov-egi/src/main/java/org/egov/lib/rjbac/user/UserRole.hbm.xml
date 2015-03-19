@@ -11,7 +11,7 @@
 		<many-to-one name="role" class="org.egov.lib.rjbac.role.RoleImpl" cascade="save-update">
 			<column name="ID_ROLE" />
 		</many-to-one>
-		<many-to-one name="user" class="org.egov.lib.rjbac.user.UserImpl" cascade="save-update">
+		<many-to-one name="user" class="org.egov.infra.admin.master.entity.UserImpl" cascade="save-update">
 			<column name="ID_USER" />
 		</many-to-one>
 		<property name="fromDate" column="FROMDATE" type="date" />

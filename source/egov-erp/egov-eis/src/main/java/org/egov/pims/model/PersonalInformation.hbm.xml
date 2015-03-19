@@ -44,7 +44,7 @@
    fetch="select" name="recruitmentTypeMstr">
    <column name="RECRUITMENT_TYPE_ID" precision="32" scale="0"/>
   </many-to-one>
-  <many-to-one cascade="all" class="org.egov.lib.rjbac.user.UserImpl"
+  <many-to-one cascade="all" class="org.egov.infra.admin.master.entity.UserImpl"
    fetch="select" name="userMaster">
    <column name="ID_USER" precision="32" scale="0"/>
   </many-to-one>
@@ -137,7 +137,7 @@
    <key column="ID_EMPLOYEE" not-null="true"/>
    <one-to-many class="org.egov.pims.model.Assignment"/>
   </set>
-  <many-to-one class="org.egov.lib.rjbac.user.UserImpl" fetch="select" name="createdBy">
+  <many-to-one class="org.egov.infra.admin.master.entity.UserImpl" fetch="select" name="createdBy">
    <column name="CREATED_BY"/>
   </many-to-one>
   

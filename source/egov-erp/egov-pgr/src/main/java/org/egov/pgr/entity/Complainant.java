@@ -1,8 +1,8 @@
 package org.egov.pgr.entity;
 
+import org.egov.infra.admin.master.entity.UserImpl;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.validation.regex.Constants;
-import org.egov.lib.rjbac.user.UserImpl;
 import org.egov.search.domain.Searchable;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;

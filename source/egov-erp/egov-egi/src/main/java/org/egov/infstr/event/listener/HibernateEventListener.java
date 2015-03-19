@@ -2,9 +2,9 @@ package org.egov.infstr.event.listener;
 
 import java.util.Date;
 
+import org.egov.infra.admin.master.entity.UserImpl;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.models.BaseModel;
-import org.egov.lib.rjbac.user.UserImpl;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

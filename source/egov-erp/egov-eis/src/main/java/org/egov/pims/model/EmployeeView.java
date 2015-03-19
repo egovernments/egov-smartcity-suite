@@ -2,7 +2,7 @@ package org.egov.pims.model;
 import java.util.Date;
 
 import org.egov.commons.CFunction;
-import org.egov.lib.rjbac.user.UserImpl;
+import org.egov.infra.admin.master.entity.UserImpl;
 
 // Generated Aug 8, 2007 6:26:41 PM by Hibernate Tools 3.2.0.b9
 

@@ -8,9 +8,9 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import org.egov.infra.admin.master.entity.UserImpl;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infstr.commons.Module;
-import org.egov.lib.rjbac.user.UserImpl;
 
 @Entity
 @Table(name="EG_WF_TYPES")

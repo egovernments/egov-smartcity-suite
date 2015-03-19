@@ -7,6 +7,8 @@ package org.egov.lib.rjbac.user;
 
 import java.util.Date;
 
+import org.egov.infra.admin.master.entity.UserImpl;
+
 public class UserDetailImpl extends UserImpl implements UserDetail {
 	private Integer id;
 	private Integer bankBranchId;

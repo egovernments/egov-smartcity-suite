@@ -10,8 +10,8 @@ import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.utils.EntityType;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.entity.UserImpl;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.rjbac.user.UserImpl;
 import org.egov.pims.service.EmployeeService;
 import org.hibernate.Query;
 

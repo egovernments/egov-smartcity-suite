@@ -9,7 +9,7 @@ import java.util.Date;
 
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.utils.EntityType;
-import org.egov.lib.rjbac.user.UserImpl;
+import org.egov.infra.admin.master.entity.UserImpl;
 
 public class AccountEntity implements java.io.Serializable, EntityType {
 

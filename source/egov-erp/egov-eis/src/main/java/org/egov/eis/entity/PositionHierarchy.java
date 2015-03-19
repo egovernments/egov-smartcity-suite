@@ -12,8 +12,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.commons.ObjectType;
+import org.egov.infra.admin.master.entity.UserImpl;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.lib.rjbac.user.UserImpl;
 import org.egov.pims.commons.Position;
 import org.egov.search.domain.Searchable;
 

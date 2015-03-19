@@ -13,8 +13,8 @@
 		<property name="description" column="DESCRIPTION" type="string" length="1024" not-null="true" />
 		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
 		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select" />
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.UserImpl" column="CREATED_BY" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.UserImpl" column="MODIFIED_BY" fetch="select" />
 	</class>
 	<query name="BY_TYPE">
 		<![CDATA[

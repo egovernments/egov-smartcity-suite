@@ -15,7 +15,7 @@
 			<column name="MODULETYPE" length="30" not-null="true" />
 		</property>
 		<property name="moduleid" column="MODULEID" />
-		<many-to-one name="actionDoneBy" class="org.egov.lib.rjbac.user.UserImpl">
+		<many-to-one name="actionDoneBy" class="org.egov.infra.admin.master.entity.UserImpl">
 			<column name="ACTIONDONEBY" precision="22" scale="0" />
 		</many-to-one>
 		<property name="actionDoneOn" type="date">

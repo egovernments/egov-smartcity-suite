@@ -34,8 +34,8 @@
 		<property name="parentId">
 			<column name="PARENTID"/>
 		</property>	
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY"/>
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY"/>
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.UserImpl" column="CREATEDBY"/>
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.UserImpl" column="MODIFIEDBY"/>
 		<property name="createdDate">
 			<column name="CREATED"/>
 		</property>	

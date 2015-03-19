@@ -4,7 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.lib.rjbac.user.UserImpl;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;

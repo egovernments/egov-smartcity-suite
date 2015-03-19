@@ -2,7 +2,7 @@ package org.egov.pgr.entity;
 
 import java.lang.reflect.Field;
 
-import org.egov.lib.rjbac.user.UserImpl;
+import org.egov.infra.admin.master.entity.UserImpl;
 
 public class ComplainantBuilder {
 
