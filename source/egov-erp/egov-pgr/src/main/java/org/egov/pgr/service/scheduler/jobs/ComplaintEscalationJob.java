@@ -19,7 +19,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
-import org.egov.infstr.events.domain.entity.Event;
+import org.egov.infra.events.entity.Event;
 import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.service.ComplaintService;

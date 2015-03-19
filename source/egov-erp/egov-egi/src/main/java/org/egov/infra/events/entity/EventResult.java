@@ -1,9 +1,4 @@
-/*
- * @(#)EventResult.java 3.0, 17 Jun, 2013 12:02:42 PM
- * Copyright 2013 eGovernments Foundation. All rights reserved. 
- * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
-package org.egov.infstr.events.domain.entity;
+package org.egov.infra.events.entity;
 
 import java.util.Date;
 
@@ -18,7 +13,8 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "eg_event_result")
 public class EventResult {
-
+	
+	//TODO - declare id as persistable
 	private Integer id;
 	private String module;
 	private String eventCode;
@@ -26,9 +22,10 @@ public class EventResult {
 	private String result;
 	private Date timeOfProcessing;
 	private String details;
-
+	
+	//TODO - Move annotations to the member variable instead of setter
 	@SequenceGenerator(name = "Event_Result", sequenceName = "eg_event_result_seq", allocationSize = 1)
-	@GeneratedValue(generator = "Event_Result", strategy=GenerationType.SEQUENCE)
+	@GeneratedValue(generator = "Event_Result", strategy = GenerationType.SEQUENCE)
 	@Id
 	public Integer getId() {
 		return this.id;
@@ -55,7 +52,7 @@ public class EventResult {
 	public void setEventCode(String eventCode) {
 		this.eventCode = eventCode;
 	}
-	
+
 	@Column(name = "date_raised")
 	public Date getDateRaised() {
 		return dateRaised;
@@ -64,7 +61,7 @@ public class EventResult {
 	public void setDateRaised(Date dateRaised) {
 		this.dateRaised = dateRaised;
 	}
-	
+
 	@Column(name = "result")
 	public String getResult() {
 		return this.result;
@@ -104,5 +101,4 @@ public class EventResult {
 		return builder.toString();
 	}
 
-	
 }

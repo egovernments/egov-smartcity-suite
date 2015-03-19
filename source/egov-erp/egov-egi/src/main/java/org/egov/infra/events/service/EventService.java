@@ -1,18 +1,16 @@
-/*
- * @(#)EventService.java 3.0, 17 Jun, 2013 12:01:29 PM
- * Copyright 2013 eGovernments Foundation. All rights reserved. 
- * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
-package org.egov.infstr.events.domain.service;
+package org.egov.infra.events.service;
 
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.events.domain.entity.Event;
+import org.egov.infra.events.entity.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
+@Service
 public class EventService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(EventService.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(EventService.class);
 	private static ThreadLocal<Event> registeredEvent = new ThreadLocal<Event>();
 
 	public static void registerEvent(final Event e) {
@@ -23,7 +21,8 @@ public class EventService {
 			}
 		} catch (final Exception ex) {
 			LOG.error("Exception in registerEvent" + e);
-			throw new EGOVRuntimeException("Exception occurred in EventService register Event>>>", ex);
+			throw new EGOVRuntimeException(
+					"Exception occurred in EventService register Event>>>", ex);
 		}
 	}
 

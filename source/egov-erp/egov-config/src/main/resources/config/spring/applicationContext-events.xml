@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jms="http://www.springframework.org/schema/jms"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/tx 
+     http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd
+     http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd"
+	default-lazy-init="true">
+
+	<!-- ####################################### -->
+	<!-- JMS Spring Beans -->
+	<!-- ####################################### -->
+
+	<tx:jta-transaction-manager id="transactionManager" />
+
+	<bean id="eventQueue" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>java:/jms/queue/event</value> 
+		</property>
+	</bean>
+
+	<!-- JMS Queue Template -->
+	<bean id="queueJmsTemplate" class="org.springframework.jms.core.JmsTemplate" scope="prototype">
+		<property name="connectionFactory" ref="cacheConnectionFactory"/>
+		<property name="defaultDestination" ref="eventQueue"/>
+	</bean>
+		
+	<bean name="queueEventListener" class="org.egov.infra.events.processing.EventListener" scope="prototype" >
+	</bean>		
+
+	<jms:listener-container connection-factory="jmsConnectionFactory" transaction-manager="transactionManager">
+		<jms:listener id="queueListenerContainer" destination="EventQueue" ref="queueEventListener" />
+	</jms:listener-container>
+
+</beans>
+

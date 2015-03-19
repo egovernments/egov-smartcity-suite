@@ -1,20 +1,4 @@
-/*
- * @(#)ResponseHandlerImpl.java 3.0, 17 Jun, 2013 11:59:25 AM
- * Copyright 2013 eGovernments Foundation. All rights reserved. 
- * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
-package org.egov.infstr.events.processing;
-
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
-import org.egov.infstr.events.domain.entity.schema.EmailType;
-import org.egov.infstr.events.domain.entity.schema.Response;
-import org.egov.infstr.events.domain.entity.schema.SMSType;
-import org.egov.infstr.mail.Email;
-import org.egov.infstr.mail.Email.Builder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package org.egov.infra.events.processing;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,11 +10,31 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResponseHandlerImpl implements ResponseHandler {
-	private static final Logger LOG = LoggerFactory.getLogger(ResponseHandlerImpl.class);
-	private GenericHibernateDaoFactory genericHibernateDaoFactory;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.events.entity.schema.EmailType;
+import org.egov.infra.events.entity.schema.Response;
+import org.egov.infra.events.entity.schema.SMSType;
+import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
+import org.egov.infstr.mail.Email;
+import org.egov.infstr.mail.Email.Builder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
-	public ResponseHandlerImpl(GenericHibernateDaoFactory genericHibernateDaoFactory) {
+@Component
+public class ResponseHandlerImpl implements ResponseHandler {
+
+	private static final Logger LOG = LoggerFactory
+			.getLogger(ResponseHandlerImpl.class);
+
+	private GenericHibernateDaoFactory genericHibernateDaoFactory;
+	
+	public ResponseHandlerImpl() {
+	}
+
+	public ResponseHandlerImpl(
+			GenericHibernateDaoFactory genericHibernateDaoFactory) {
 		this.genericHibernateDaoFactory = genericHibernateDaoFactory;
 	}
 
@@ -63,7 +67,8 @@ public class ResponseHandlerImpl implements ResponseHandler {
 	 */
 	private void respondViaEmail(final EmailType mail) {
 		if (mail.getTo() != null && !mail.getTo().isEmpty()) {
-			final Builder builder = new Email.Builder(getAddressList(mail.getTo()), mail.getBody());
+			final Builder builder = new Email.Builder(
+					getAddressList(mail.getTo()), mail.getBody());
 
 			if (mail.getCc() != null && mail.getCc().size() != 0) {
 				builder.addCc(getAddressList(mail.getCc()));
@@ -106,11 +111,14 @@ public class ResponseHandlerImpl implements ResponseHandler {
 	 */
 	private void respondViaSms(final SMSType sms) {
 		if (sms.getPhonenumber() != null && !sms.getPhonenumber().isEmpty()) {
-			final AppConfigValuesDAO appConfValDao = genericHibernateDaoFactory.getAppConfigValuesDAO();
+			final AppConfigValuesDAO appConfValDao = genericHibernateDaoFactory
+					.getAppConfigValuesDAO();
 			/*
 			 * Reading Sender Information : Name / PhoneNumber from Appconfig
 			 */
-			final String sender = appConfValDao.getConfigValuesByModuleAndKey("egi", "smsSender").get(0).getValue();
+			final String sender = appConfValDao
+					.getConfigValuesByModuleAndKey("egi", "smsSender").get(0)
+					.getValue();
 
 			sendSMS(sms.getMessage(), sms.getPhonenumber(), sender);
 			if (LOG.isDebugEnabled()) {
@@ -125,23 +133,40 @@ public class ResponseHandlerImpl implements ResponseHandler {
 	 * @param phoneNumber
 	 * @param sender
 	 */
-	private void sendSMS(final String text, final List<String> phoneNumber, final String sender) {
-		final String errorCodes[] = { "0x200", "0x201", "0x202", "0x203", "0x204", "0x205", "0x206", "0x207", "0x208", "0x209", "0x210", "0x211", "0x212", "0x213" };
-		final String errorMessages[] = { "Invalid Username or Password", "Account Suspended due to some reason", "Invalid Source Address/Sender Id. As per GSM standard the sender ID should be within 11 characters.",
-				"Message Length Exceeded(more than 160 chars) if concat is set to 0", "Message Length Exceeded(more than 459 chars) if concat is set to 1", "DLR URL is not set",
-				"Only the subscribed service type can be accessed so make sure that the service type you are trying to connect with.", "Invalid Source IP. Kindly check if the IP is responding.", "Account Deactivated/Expired.",
-				"Invalid Message Length (less than 160 chars) if concat is set to 1", "Invalid Parameter values", "Invalid Message Length (more than 280 chars)", "Invalid Message Length", "Invalid Destination number" };
+	private void sendSMS(final String text, final List<String> phoneNumber,
+			final String sender) {
+		final String errorCodes[] = { "0x200", "0x201", "0x202", "0x203",
+				"0x204", "0x205", "0x206", "0x207", "0x208", "0x209", "0x210",
+				"0x211", "0x212", "0x213" };
+		final String errorMessages[] = {
+				"Invalid Username or Password",
+				"Account Suspended due to some reason",
+				"Invalid Source Address/Sender Id. As per GSM standard the sender ID should be within 11 characters.",
+				"Message Length Exceeded(more than 160 chars) if concat is set to 0",
+				"Message Length Exceeded(more than 459 chars) if concat is set to 1",
+				"DLR URL is not set",
+				"Only the subscribed service type can be accessed so make sure that the service type you are trying to connect with.",
+				"Invalid Source IP. Kindly check if the IP is responding.",
+				"Account Deactivated/Expired.",
+				"Invalid Message Length (less than 160 chars) if concat is set to 1",
+				"Invalid Parameter values",
+				"Invalid Message Length (more than 280 chars)",
+				"Invalid Message Length", "Invalid Destination number" };
 
 		try {
 
-			final AppConfigValuesDAO appConfValDao = genericHibernateDaoFactory.getAppConfigValuesDAO();
+			final AppConfigValuesDAO appConfValDao = genericHibernateDaoFactory
+					.getAppConfigValuesDAO();
 			/*
 			 * Reading SMS ServiceProvider URL from Appconfig
 			 */
-			final StringBuffer urlStr = new StringBuffer(appConfValDao.getConfigValuesByModuleAndKey("egi", "serviceProviderUrl").get(0).getValue());
+			final StringBuffer urlStr = new StringBuffer(appConfValDao
+					.getConfigValuesByModuleAndKey("egi", "serviceProviderUrl")
+					.get(0).getValue());
 
 			for (int i = 0; i < phoneNumber.size(); i++) {
-				final String[] phoneNo = phoneNumber.get(i).toString().split(",");
+				final String[] phoneNo = phoneNumber.get(i).toString()
+						.split(",");
 				for (final String element : phoneNo) {
 					/*
 					 * Replace second and third # from the url
@@ -157,7 +182,8 @@ public class ResponseHandlerImpl implements ResponseHandler {
 						LOG.debug("before opening conn" + urlStr);
 					}
 					final URL url = new URL(urlStr.toString());
-					final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+					final HttpURLConnection connection = (HttpURLConnection) url
+							.openConnection();
 					if (LOG.isDebugEnabled()) {
 						LOG.debug("after opening conn");
 					}
@@ -165,9 +191,11 @@ public class ResponseHandlerImpl implements ResponseHandler {
 					connection.setDoOutput(true);
 					connection.setDoInput(true);
 					/*
-					 * Get the output stream and write the parameters. Read the response
+					 * Get the output stream and write the parameters. Read the
+					 * response
 					 */
-					final BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+					final BufferedReader in = new BufferedReader(
+							new InputStreamReader(connection.getInputStream()));
 					final String response = in.readLine();
 					in.close();
 					if (LOG.isDebugEnabled()) {
@@ -186,13 +214,15 @@ public class ResponseHandlerImpl implements ResponseHandler {
 			}
 		} catch (final MalformedURLException mue) {
 			LOG.error("HTTPExample: MalformedURLException; " + mue.getMessage());
-			throw new EGOVRuntimeException("Error occured in sending sms!!", mue);
+			throw new EGOVRuntimeException("Error occured in sending sms!!",
+					mue);
 		} catch (final ProtocolException pe) {
 			LOG.error("HTTPExample: ProtocolException; " + pe.getMessage());
 			throw new EGOVRuntimeException("Error occured in sending sms!!", pe);
 		} catch (final IOException ioe) {
 			LOG.error("HTTPExample: IOException; " + ioe.getMessage());
-			throw new EGOVRuntimeException("Error occured in sending sms!!", ioe);
+			throw new EGOVRuntimeException("Error occured in sending sms!!",
+					ioe);
 		}
 	}
 }
