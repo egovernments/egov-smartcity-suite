@@ -72,8 +72,8 @@ public class UpdateUserAction extends EgovAction {
 			jurisdcnList.add(jurisdcnMap);
 			updateForm.populate(usr, EgovActionForm.TO_OBJECT);
 			final String encpassword = CryptoHelper.encrypt(updateForm.getPwd());
-			usr.setPwd(encpassword);
-			usr.setPwdReminder(updateForm.getPwdReminder());
+			usr.setPassword(encpassword);
+			//usr.setPwdReminder(updateForm.getPwdReminder());
 			session.setAttribute("user", usr);
 			session.setAttribute("deptid", updateForm.getDepartmentId());
 			session.setAttribute("roleid", updateForm.getRoleId());

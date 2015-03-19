@@ -57,14 +57,14 @@ public interface EgovInfrastrUtilInteface {
 	/**
 	 * A map of toplevelid vs a list of (userId vs username seperated by a stringtokeniser)
 	 * @nil
-	 */
+	 *//*
 	public Map getallUsersAcrossDeptMap();
 
-	/**
+	*//**
 	 * A map of toplevelid vs a map of (userId vs username)
 	 * @nil
-	 */
-	public Map getallmapUsersAcrossDeptMap();
+	 *//*
+	public Map getallmapUsersAcrossDeptMap();*/
 
 	/**
 	 * A map of userid vs roleid

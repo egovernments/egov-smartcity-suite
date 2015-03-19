@@ -5,10 +5,9 @@
  */
 package org.egov.lib.rjbac.user.dao;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -20,7 +19,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.security.utils.CryptoHelper;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.BoundaryType;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
@@ -59,8 +57,8 @@ public class UserDAO {
 	 * @param usr the usr
 	 */
 	public void createOrUpdateUserWithPwdEncryption(final User usr) {
-		final String encpassword = CryptoHelper.encrypt(usr.getPwd());
-		usr.setPwd(encpassword);
+		final String encpassword = CryptoHelper.encrypt(usr.getPassword());
+		usr.setPassword(encpassword);
 		if (usr.getFromDate() == null) {
 			usr.setFromDate(new Date());
 		}
@@ -267,7 +265,7 @@ public class UserDAO {
 	 * @return the all users for jurisdiction type
 	 */
 	public Map getAllUsersForJurisdictionType(final BoundaryType bt, final Integer topLevelBoundaryID) {
-		try {
+		/*try {
 			final Date currDate = new Date();
 			final Query qry = this
 					.getSession()
@@ -318,7 +316,8 @@ public class UserDAO {
 		} catch (final HibernateException e) {
 			LOGGER.error("Exception encountered in getAllUsersForJurisdictionType", e);
 			throw new EGOVRuntimeException("Exception encountered in getAllUsersForJurisdictionType", e);
-		}
+		}*/
+	        return Collections.emptyMap();
 	}
 
 	/**
@@ -328,7 +327,7 @@ public class UserDAO {
 	 * @return the all users for jurisdiction type full resolve
 	 */
 	public Map getAllUsersForJurisdictionTypeFullResolve(final BoundaryType bt, final Integer topLevelBoundaryID) {
-		try {
+		/*try {
 			final Date currDate = new Date();
 			final Query qry = this
 					.getSession()
@@ -379,7 +378,8 @@ public class UserDAO {
 		} catch (final HibernateException e) {
 			LOGGER.error("Exception encountered in getAllUsersForJurisdictionTypeFullResolve", e);
 			throw new EGOVRuntimeException("Exception encountered in getAllUsersForJurisdictionTypeFullResolve", e);
-		}
+		}*/
+	    return  Collections.emptyMap();
 	}
 
 	/**
@@ -389,7 +389,7 @@ public class UserDAO {
 	 * @return the all users for jurisdiction full resolve
 	 */
 	public Map getAllUsersForJurisdictionFullResolve(final List boundaryTypeList, final Integer topLevelBoundaryID) {
-		try {
+		/*try {
 			final StringBuilder queryPart = new StringBuilder();
 			for (int i = 0; i < boundaryTypeList.size(); i++) {
 				queryPart.append(" :boundaryType").append(i).append(",");
@@ -453,7 +453,8 @@ public class UserDAO {
 		} catch (final HibernateException e) {
 			LOGGER.error("Exception encountered in getAllUsersForJurisdictionFullResolve", e);
 			throw new EGOVRuntimeException("Exception encountered in getAllUsersForJurisdictionFullResolve", e);
-		}
+		}*/
+	        return  Collections.emptyMap();
 	}
 
 	/**

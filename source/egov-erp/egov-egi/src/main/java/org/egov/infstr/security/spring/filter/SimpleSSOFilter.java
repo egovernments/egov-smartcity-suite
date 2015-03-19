@@ -61,7 +61,7 @@ public class SimpleSSOFilter implements Filter, LogoutHandler {
 	}
 
 	private String getPasswordForUser(final String userName) {
-		return CryptoHelper.decrypt(this.userService.getUserByUserName(userName).getPwd());
+		return CryptoHelper.decrypt(this.userService.getUserByUserName(userName).getPassword());
 	}
 
 	private Cookie getSSOCookie(final HttpServletRequest request) {

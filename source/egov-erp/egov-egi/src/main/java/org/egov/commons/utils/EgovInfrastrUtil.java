@@ -123,7 +123,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 		}
 	}
 
-	@Override
+	/*@Override
 	public Map getallUsersAcrossDeptMap() {
 		final String domainName = EGOVThreadLocals.getDomainName();
 		if (userIDlistMap.isEmpty() || !userIDlistMap.containsKey(domainName) || resetMap.get(domainName).equals("Y")) {
@@ -144,7 +144,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 		final Map domainUserIDMap = (Map) userIDMap.get(domainName);
 
 		return domainUserIDMap;
-	}
+	}*/
 
 	@Override
 	public Map getRoleIdMap() {
@@ -500,7 +500,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 		resetMap.put(domainName, "N");
 	}
 
-	private synchronized void updateUserIdListMap() {
+	/*private synchronized void updateUserIdListMap() {
 		final String domainName = EGOVThreadLocals.getDomainName();
 		try {
 			final HeirarchyType htype = this.heirarchyTypeService.getHeirarchyTypeByID(1);
@@ -569,7 +569,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 			throw new EGOVRuntimeException(sqe.getMessage());
 		}
 		resetMap.put(domainName, "N");
-	}
+	}*/
 
 	private synchronized void updateModesListMap() {
 		final String domainName = EGOVThreadLocals.getDomainName();

@@ -75,7 +75,7 @@ public class ChangePasswordForm extends ValidatorActionForm {
 			} else if (StringUtils.isNotBlank(this.getOldPwd())) {
 				final UserDAO userDao = new UserDAO();
 				final User user = userDao.getUserByUserName((String) request.getSession().getAttribute("LAST_USER_NAME_PWD_CHANGE"));
-				final String decryptPwd = CryptoHelper.decrypt(user.getPwd().trim());
+				final String decryptPwd = CryptoHelper.decrypt(user.getPassword().trim());
 				if (!this.getOldPwd().trim().equals(decryptPwd)) {
 					errors.add("message", new ActionMessage("old.pwd.Incorrect"));
 				} else if (this.getPwd().trim().equals(decryptPwd)) {

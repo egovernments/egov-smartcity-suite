@@ -107,7 +107,7 @@ public class UserJurisdictionAction extends DispatchAction {
 					jur.setUpdateTime(new Date());
 					jurval.setIsHistory('N');
 					jur.addJurisdictionValue(jurval);
-					user.addJurisdiction(jur);
+					//user.addJurisdiction(jur);
 				}
 			}
 			final String msg = "The Jurisdiction for the user has been updated Successfully!!";

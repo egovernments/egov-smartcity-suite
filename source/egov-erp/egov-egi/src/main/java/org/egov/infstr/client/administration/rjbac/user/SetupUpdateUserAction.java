@@ -65,8 +65,8 @@ public class SetupUpdateUserAction extends EgovAction {
 			if (usr.getSalutation() != "") {
 				userForm.setSalutation(usr.getSalutation());
 			}
-			userForm.setPwd(CryptoHelper.decrypt(usr.getPwd()));
-			userForm.setPwdReminder(usr.getPwdReminder());
+			userForm.setPassword(CryptoHelper.decrypt(usr.getPassword()));
+			//userForm.setPwdReminder(usr.getPwdReminder());
 			final Date fdate = usr.getFromDate();
 			final Date tdate = usr.getToDate();
 			final Date dob = usr.getDob();

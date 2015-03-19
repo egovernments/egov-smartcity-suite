@@ -22,18 +22,18 @@ public class ImageRendererAction extends BaseFormAction {
 	private static final long serialVersionUID = 1L;
 	private transient Long id;
 
-	@SkipValidation
+	/*@SkipValidation
 	public void getUserSignature() throws IOException {
 		final HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("image/jpeg");
 		this.persistenceService.setType(User.class);
 		final User user = (User) this.persistenceService.findById(this.id.intValue(), false);
 		if (user.getUserSignature() != null) {
-			response.getOutputStream().write(CryptoHelper.decrypt(user.getUserSignature().getSignature(), CryptoHelper.decrypt(user.getPwd())));
+			response.getOutputStream().write(CryptoHelper.decrypt(user.getUserSignature().getSignature(), CryptoHelper.decrypt(user.getPassword())));
 		} else {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
-	}
+	}*/
 
 	public void setId(final Long id) {
 		this.id = id;

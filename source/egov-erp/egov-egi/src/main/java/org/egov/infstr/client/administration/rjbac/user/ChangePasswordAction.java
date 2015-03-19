@@ -36,12 +36,12 @@ public class ChangePasswordAction extends Action {
 		} else {
 			final ChangePasswordForm changePasswordForm = (ChangePasswordForm) form;
 			final User user = this.getUserDao().getUserByUserName((String)req.getSession().getAttribute("LAST_USER_NAME_PWD_CHANGE"));
-			if (user.getUserSignature() != null) {
-				final byte [] currentSignature = CryptoHelper.decrypt(user.getUserSignature().getSignature(),CryptoHelper.decrypt(user.getPwd()));
+			/*if (user.getUserSignature() != null) {
+				final byte [] currentSignature = CryptoHelper.decrypt(user.getUserSignature().getSignature(),CryptoHelper.decrypt(user.getPassword()));
 				user.getUserSignature().setSignature(CryptoHelper.encrypt(currentSignature,changePasswordForm.getPwd().trim()));
-			}
-			user.setPwd(changePasswordForm.getPwd().trim());
-			user.setPwdReminder(changePasswordForm.getPwdReminder().trim());
+			}*/
+			user.setPassword(changePasswordForm.getPwd().trim());
+			//user.setPwdReminder(changePasswordForm.getPwdReminder().trim());
 			user.setPwdModifiedDate(new Date());
 			this.getUserDao().createOrUpdateUserWithPwdEncryption(user);
 			req.setAttribute("MESSAGE", "Password successfully modified.");				

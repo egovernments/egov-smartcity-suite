@@ -44,13 +44,13 @@ public class DeleteUpdateUserAction extends EgovAction {
 	@Override
 	public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest req, final HttpServletResponse res) throws Exception {
 		String target = "";
-		User user = null;
+		/*User user = null;
 		final javax.servlet.http.HttpSession session = req.getSession();
 		final DeleteUserForm deleteEditUserForm = (DeleteUserForm) form;
 		final String str = ((req.getParameter("bool") == null) || req.getParameter("bool").equals("null") ? "" : req.getParameter("bool"));
-		/**
+		*//**
 		 * Forwards the request to the view page
-		 */
+		 *//*
 		if (str.equals("")) {
 			user = new User();
 			final Long userid = Long.valueOf(req.getParameter("userid"));
@@ -97,12 +97,12 @@ public class DeleteUpdateUserAction extends EgovAction {
 				deleteEditUserForm.setLastName(user.getLastName());
 				deleteEditUserForm.setSalutation(user.getSalutation());
 				deleteEditUserForm.setUserName(user.getUserName());
-				final String decryptPass = CryptoHelper.decrypt(user.getPwd());
+				final String decryptPass = CryptoHelper.decrypt(user.getPassword());
 				deleteEditUserForm.setPwd(decryptPass);
-				deleteEditUserForm.setPwdReminder(user.getPwdReminder());
+				//deleteEditUserForm.setPwdReminder(user.getPwdReminder());
 				// topBoundary of the user
-				req.setAttribute("topBndryid", user.getTopBoundaryID());
-				req.setAttribute("editdeptid", user.getDepartment().getId());
+				//req.setAttribute("topBndryid", user.getTopBoundaryID());
+				//req.setAttribute("editdeptid", user.getDepartment().getId());
 				// role of the user
 				final Set userrole = user.getRoles();
 				Role role = null;
@@ -126,7 +126,7 @@ public class DeleteUpdateUserAction extends EgovAction {
 				LOG.error("Error occurred while updating User data", rexp);
 				throw new EGOVRuntimeException("Error occurred while updating User data", rexp);
 			}
-		}
+		}*/
 		return mapping.findForward(target);
 	}
 

@@ -406,11 +406,11 @@ public class EmployeeMasterAction extends BaseFormAction
 					userrole.setFromDate(new Date());
 					userrole.setToDate(employee.getRetirementDate());// egi screen 'Search user' can be used to update the todate, in case retirement date is changed
 					roles.add(userrole);
-					user.setUserRoles(roles);
+					//user.setUserRoles(roles);
 					
 					user.setUserName(employee.getUserMaster().getUserName().trim());
-					user.setPwdReminder(employee.getEmployeeFirstName()+"_"+employee.getCode());
-					user.setPwd(user.getPwdReminder());//usermanager.createUser will take plain pwd and encrypt it and set the encrypted value back
+					//user.setPwdReminder(employee.getEmployeeFirstName()+"_"+employee.getCode());
+					user.setPassword(employee.getEmployeeFirstName()+"_"+employee.getCode());//usermanager.createUser will take plain pwd and encrypt it and set the encrypted value back
 					user.setIsSuspended('N');
 					user.setPwdModifiedDate(new Date());
 					user.setFirstName(employee.getEmployeeFirstName());

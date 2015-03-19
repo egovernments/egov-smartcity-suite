@@ -66,7 +66,7 @@ public class UserDelegate {
 	 */
 
 	public void updateUser(final User user, final int deptid, final int roleid, final List jurlist, final String hierarachyTypeName) {
-		Role role = null;
+		/*Role role = null;
 		Department dept = null;
 		HeirarchyType ht = null;
 		try {
@@ -77,7 +77,7 @@ public class UserDelegate {
 			user.addRole(role);
 			// sets thedepartment of the user
 			dept = this.departmentService.getDepartment(deptid);
-			user.setDepartment(dept);
+			//user.setDepartment(dept);
 			// gets the HeirarchyType object depending on the hierarachyTypeName passed from the client
 			final Set HeirarchyTypesSet = this.heirarchyTypeService.getAllHeirarchyTypes();
 			for (final Iterator hierTypeItr = HeirarchyTypesSet.iterator(); hierTypeItr.hasNext();) {
@@ -172,7 +172,7 @@ public class UserDelegate {
 			exp.printStackTrace();
 			//HibernateUtil.rollbackTransaction();
 			throw new EGOVRuntimeException("Internal Server Error in Updating User:::", exp);
-		}
+		}*/
 	}
 
 	/**

@@ -62,8 +62,8 @@ public class UserAction extends EgovAction {
 				final User user = new User();
 				
 				user.setFirstName(userForm.getFirstName());
-				user.setPwd(userForm.getPwd());
-				user.setPwdReminder(userForm.getPwdReminder());
+				user.setPassword(userForm.getPassword());
+				//user.setPwdReminder(userForm.getPwdReminder());
 				user.setUserName(userForm.getUserName());
 				user.setPwdModifiedDate(new Date());
 				if (isNotBlank(userForm.getMiddleName())) {
@@ -110,16 +110,16 @@ public class UserAction extends EgovAction {
 						}
 					}
 					if (roles.size() != 0) {
-						user.setUserRoles(roles);
+						//user.setUserRoles(roles);
 					}
 				}			
 				target = "success";
 				req.setAttribute("MESSAGE", "User created successfully");
-				if ((userForm.getFile() != null) && (userForm.getFile().getFileSize() > 0) && userForm.getFile().getContentType().indexOf("image") != -1) {
+				/*if ((userForm.getFile() != null) && (userForm.getFile().getFileSize() > 0) && userForm.getFile().getContentType().indexOf("image") != -1) {
 					final UserSignature userSignature = new UserSignature();
-					userSignature.setSignature(CryptoHelper.encrypt(userForm.getFile().getFileData(), userForm.getPwd()));
+					userSignature.setSignature(CryptoHelper.encrypt(userForm.getFile().getFileData(), userForm.getPassword()));
 					user.setUserSignature(userSignature);
-				}
+				}*/
 				userForm.reset(mapping, req);
 				session.removeAttribute("user");
 				session.removeAttribute("jurisdcnList");
@@ -146,21 +146,21 @@ public class UserAction extends EgovAction {
 				if (isNotBlank(userForm.getSalutation())) {
 					user.setSalutation(userForm.getSalutation());
 				}
-				if ((userForm.getFile() != null) && (userForm.getFile().getFileSize() > 0) && userForm.getFile().getContentType().indexOf("image") != -1) {
+				/*if ((userForm.getFile() != null) && (userForm.getFile().getFileSize() > 0) && userForm.getFile().getContentType().indexOf("image") != -1) {
 					UserSignature userSignature = null;
 					if(user.getUserSignature() == null) {
 						userSignature = new UserSignature();
 					} else {
 						userSignature = user.getUserSignature();
 					}
-					userSignature.setSignature(CryptoHelper.encrypt(userForm.getFile().getFileData(), userForm.getPwd()));
+					userSignature.setSignature(CryptoHelper.encrypt(userForm.getFile().getFileData(), userForm.getPassword()));
 					user.setUserSignature(userSignature);
-				} else if ((user.getUserSignature() != null) && (user.getUserSignature().getSignature().length != 0) && (!userForm.getPwd().equals(CryptoHelper.decrypt(user.getPwd())))) {
-					user.getUserSignature().setSignature(CryptoHelper.encrypt(CryptoHelper.decrypt(user.getUserSignature().getSignature(), CryptoHelper.decrypt(user.getPwd())), userForm.getPwd()));
-				}
+				} else if ((user.getUserSignature() != null) && (user.getUserSignature().getSignature().length != 0) && (!userForm.getPassword().equals(CryptoHelper.decrypt(user.getPassword())))) {
+					user.getUserSignature().setSignature(CryptoHelper.encrypt(CryptoHelper.decrypt(user.getUserSignature().getSignature(), CryptoHelper.decrypt(user.getPassword())), userForm.getPassword()));
+				}*/
 				
-				user.setPwd(userForm.getPwd());
-				user.setPwdReminder(userForm.getPwdReminder());
+				user.setPassword(userForm.getPassword());
+				//user.setPwdReminder(userForm.getPwdReminder());
 				user.setFirstName(userForm.getFirstName());
 				user.setUserName(userForm.getUserName());
 				
@@ -201,10 +201,10 @@ public class UserAction extends EgovAction {
 							userrole.setRole(role);
 							userrole.setUser(user);
 							userrole.setIsHistory('N');
-							user.getUserRoles().add(userrole);
+							//user.getUserRoles().add(userrole);
 						} else {
 							if ("yes".equals(userForm.getSelCheck()[i])) { // modifying existing role
-								final UserRole existingUserRole = this.getUserRole(user, currUserRoleId);
+								/*final UserRole existingUserRole = this.getUserRole(user, currUserRoleId);
 								if (!userForm.getFromDate1()[i].equals(userForm.getExisFromDate()[i]) || (!userForm.getToDate1()[i].equals(userForm.getExisToDate()[i]))) {
 									if (isNotBlank(userForm.getFromDate1()[i])) {
 										existingUserRole.setFromDate(DateUtils.getDate(userForm.getFromDate1()[i], DateUtils.DFT_DATE_FORMAT));
@@ -212,7 +212,7 @@ public class UserAction extends EgovAction {
 									if (isNotBlank(userForm.getToDate1()[i])) {
 										existingUserRole.setToDate(DateUtils.getDate(userForm.getToDate1()[i], DateUtils.DFT_DATE_FORMAT));
 									}
-								}
+								}*/
 							}
 						}
 					}
@@ -220,12 +220,12 @@ public class UserAction extends EgovAction {
 				// handle deletions
 				final Set<Integer> delUserRoles = (Set<Integer>) req.getSession().getAttribute("delUserRoles");
 				if (delUserRoles != null) {
-					for (final Integer delUserRoleId : delUserRoles) {
+					/*for (final Integer delUserRoleId : delUserRoles) {
 						if (delUserRoleId != 0) {
 							final UserRole existingUserRole = this.getUserRole(user, delUserRoleId);
-							user.getUserRoles().remove(existingUserRole);
+							//user.getUserRoles().remove(existingUserRole);
 						}
-					}
+					}*/
 				}
 				
 				target = "success";
@@ -245,12 +245,12 @@ public class UserAction extends EgovAction {
 		return mapping.findForward(target);
 	}
 
-	private UserRole getUserRole(final User user, final Integer userRoleId) {
+	/*private UserRole getUserRole(final User user, final Integer userRoleId) {
 		for (final UserRole userRole : user.getUserRoles()) {
 			if ((userRole.getId() != null) && userRole.getId().equals(userRoleId)) {
 				return userRole;
 			}
 		}
 		return null;
-	}
+	}*/
 }

@@ -72,18 +72,18 @@ public final class ReportUtil {
 	 * @param user id
 	 * @return user signature for the given user id
 	 */
-	public static InputStream getUserSignature(final Integer userId) {
+	/*public static InputStream getUserSignature(final Integer userId) {
 		final Session session = HibernateUtil.getCurrentSession();
 		InputStream signatureStream = null;
 		final User user = (User) session.load(User.class, userId);
 		if (user != null && user.getUserSignature() != null) {
-			final byte[] value = CryptoHelper.decrypt(user.getUserSignature().getSignature(), CryptoHelper.decrypt(user.getPwd()));
+			final byte[] value = CryptoHelper.decrypt(user.getUserSignature().getSignature(), CryptoHelper.decrypt(user.getPassword()));
 			signatureStream = new ByteArrayInputStream(value);
 
 		}
 		return signatureStream;
 	}
-
+*/
 	/**
 	 * Returns input stream for given image file. First checks in the custom location (/custom/reports/images/). If not found, tries the product location (/reports/images/)
 	 * @param imageName Name of image to be read

@@ -24,7 +24,7 @@ public class UserForm extends EgovActionForm implements Serializable {
 	private String dob = "";
 	// private String empId = "";
 	private String userName = "";
-	private String pwd = "";
+	private String password = "";
 	private String pwdReminder = "";
 	private String bndryType = "";
 	private String bndryType0 = "";
@@ -258,17 +258,17 @@ public class UserForm extends EgovActionForm implements Serializable {
 	}
 
 	/**
-	 * @return Returns the pwd.
+	 * @return Returns the password.
 	 */
-	public String getPwd() {
-		return this.pwd;
+	public String getPassword() {
+		return this.password;
 	}
 
 	/**
-	 * @param pwd The pwd to set.
+	 * @param password The password to set.
 	 */
-	public void setPwd(final String pwd) {
-		this.pwd = pwd;
+	public void setPassword(final String pwd) {
+		this.password = pwd;
 	}
 
 	/**
@@ -324,7 +324,7 @@ public class UserForm extends EgovActionForm implements Serializable {
 		this.firstName = "";
 		this.lastName = "";
 		this.middleName = "";
-		this.pwd = "";
+		this.password = "";
 		this.pwdReminder = "";
 		this.salutation = "";
 		this.userName = "";

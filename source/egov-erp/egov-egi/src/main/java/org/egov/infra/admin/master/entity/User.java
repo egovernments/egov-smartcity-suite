@@ -1,707 +1,166 @@
 package org.egov.infra.admin.master.entity;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.lib.admbndry.Boundary;
-import org.egov.lib.admbndry.BoundaryFinder;
-import org.egov.lib.admbndry.BoundaryType;
-import org.egov.lib.admbndry.VisitableBoundary;
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
-import org.egov.lib.rjbac.jurisdiction.JurisdictionValues;
 import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.user.UserRole;
-import org.egov.lib.rjbac.user.UserSignature;
 import org.egov.lib.rjbac.user.dao.UserDAO;
 
 public class User extends AbstractAuditable<User, Long> {
 
     private static final long serialVersionUID = 2870751695666860068L;
     
-	private String title;
-	private String salutation;
-	private String firstName;
-	private String middleName;
-	private String lastName;
-	private Department department;
-	private Set<org.egov.lib.rjbac.role.Role> roles = new HashSet<org.egov.lib.rjbac.role.Role>();
-	private Set<UserRole> userRoles = new HashSet<UserRole>();
-	private String userName;
-	private String pwd;
-	private String pwdReminder;
-	private Integer isActive;
-	private Date updateTime;
-	private Integer updateUserId;
-	private String extrafield1;
-	private String extrafield2;
-	private String extrafield3;
-	private String extrafield4;
-	private char isSuspended;
-	private String loginTerminal;
-	private Integer topBoundaryID;
-	private Set<Jurisdiction> allJurisdictions = new HashSet<Jurisdiction>();
-	private User parent;
-	private Set reportees;
-	private Date dob;
-	private Date fromDate;
-	private Date toDate;
-	private Date pwdModifiedDate;
-	private UserSignature userSignature;
-
-	
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public Date getFromDate() {
-		return this.fromDate;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public Date getToDate() {
-		return this.toDate;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
-
-	public Date getPwdModifiedDate() {
-		return pwdModifiedDate;
-	}
-
-	public void setPwdModifiedDate(Date pwdModifiedDate) {
-		this.pwdModifiedDate = pwdModifiedDate;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public String getLoginTerminal() {
-		return this.loginTerminal;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setLoginTerminal(String loginTerminal) {
-		this.loginTerminal = loginTerminal;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public Department getDepartment() {
-		return this.department;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setDepartment(Department department) {
-		this.department = department;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public String getExtraField1() {
-		return this.extrafield1;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setExtraField1(String extrafield1) {
-		this.extrafield1 = extrafield1;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public String getExtraField2() {
-		return this.extrafield2;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setExtraField2(String extrafield2) {
-		this.extrafield2 = extrafield2;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public String getExtraField3() {
-		return this.extrafield3;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setExtraField3(String extrafield3) {
-		this.extrafield3 = extrafield3;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public String getExtraField4() {
-		return this.extrafield4;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setExtraField4(String extrafield4) {
-		this.extrafield4 = extrafield4;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public String getPwd() {
-		return this.pwd;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setPwd(String pwd) {
-		this.pwd = pwd;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public Set<Role> getRoles() {
-		final Date currDate = new Date();
-		return this.getValidRolesOnDate(currDate);
-	}
-
-	public Set<Role> getValidRolesOnDate(Date onDate) {
-		return new UserDAO().getValidRoles(this.getId(), onDate);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setRoles(Set roles) {
-		this.roles = roles;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void addRole(Role role) {
-		this.roles.add(role);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public String getSalutation() {
-		return this.salutation;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setSalutation(String salutation) {
-		this.salutation = salutation;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public String getTitle() {
-		return this.title;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public Date getUpdateTime() {
-		return this.updateTime;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setUpdateTime(Date updatetime) {
-		this.updateTime = updatetime;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public Integer getUpdateUserId() {
-		return this.updateUserId;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setUpdateUserId(Integer updateuserid) {
-		this.updateUserId = updateuserid;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public String getFirstName() {
-		return this.firstName;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public char getIsSuspended() {
-		return this.isSuspended;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setIsSuspended(char isSuspended) {
-		this.isSuspended = isSuspended;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public String getLastName() {
-		return this.lastName;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public String getMiddleName() {
-		return this.middleName;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setMiddleName(String middleName) {
-		this.middleName = middleName;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public String getPwdReminder() {
-		return this.pwdReminder;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public Integer getIsActive() {
-		return this.isActive;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setIsActive(Integer isActive) {
-		this.isActive = isActive;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setPwdReminder(String pwdReminder) {
-		this.pwdReminder = pwdReminder;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public String getUserName() {
-		return this.userName;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public Set getAllJurisdictions() {
-		return null;//new UserDAO().getJurisdictionsForUser(this.getId(), new Date());
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public Set getAllJurisdictionsForLevel(BoundaryType bt) {
-		/*
-		 * FIXME Not convincing reason getAllJurisdictions returns Jurisdiction object but here its casting to JurisdictionValues
-		 */
-
-		final Set retSet = new HashSet();
-		if (bt == null) {
-			return retSet;
-		}
-		final Set jurSet = this.getAllJurisdictions();
-		for (Iterator iter = jurSet.iterator(); iter.hasNext();) {
-			final JurisdictionValues element = (JurisdictionValues) iter.next();
-			if (element.getBoundary().getBoundaryType().equals(bt)) {
-				retSet.add(element.getBoundary());
-			}
-		}
-		return retSet;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public Set getAllJurisdictionsForLevelFullReslove(BoundaryType bt) {
-		final Set finalBnSet = new HashSet();
-		if (bt == null) {
-			return finalBnSet;
-		}
-		final Set jurSet = this.getAllJurisdictions();
-		final Set bndrySet = new HashSet();
-
-		for (final Iterator iter = jurSet.iterator(); iter.hasNext();) {
-			final Jurisdiction element = (Jurisdiction) iter.next();
-			if (element.getJurisdictionLevel().equals(bt)) {
-				for (final Iterator iterator = element.getJurisdictionValues().iterator(); iterator.hasNext();) {
-					final JurisdictionValues elementVal = (JurisdictionValues) iterator.next();
-					bndrySet.add(elementVal.getBoundary());
-				}
-
-				for (final Iterator iterator = bndrySet.iterator(); iterator.hasNext();) {
-					final Boundary bndry = (Boundary) iterator.next();
-					final VisitableBoundary vBoundary = new VisitableBoundary(bndry);
-					final BoundaryFinder visitor = new BoundaryFinder();
-					visitor.setTargetBoundaryType(null, true);
-					vBoundary.accept(visitor);
-					final Collection children = visitor.getResult();
-					finalBnSet.addAll(children);
-				}
-				finalBnSet.addAll(bndrySet);
-			}
-		}
-		return finalBnSet;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public Set getAllJurisdictionsFullReslove() {
-		final Set jurSet = this.getAllJurisdictions();
-		final Set finalBnSet = new HashSet();
-		final Set bndrySet = new HashSet();
-		for (final Iterator iter = jurSet.iterator(); iter.hasNext();) {
-			final Jurisdiction element = (Jurisdiction) iter.next();
-			for (final Iterator iterator = element.getJurisdictionValues().iterator(); iterator.hasNext();) {
-				final JurisdictionValues elementVal = (JurisdictionValues) iterator.next();
-				bndrySet.add(elementVal.getBoundary());
-			}
-
-			for (final Iterator iterator = bndrySet.iterator(); iterator.hasNext();) {
-				final Boundary bndry = (Boundary) iterator.next();
-				final VisitableBoundary vBoundary = new VisitableBoundary(bndry);
-				final BoundaryFinder visitor = new BoundaryFinder();
-				visitor.setTargetBoundaryType(null, true);
-				vBoundary.accept(visitor);
-				final Collection children = visitor.getResult();
-				finalBnSet.addAll(children);
-			}
-			finalBnSet.addAll(bndrySet);
-		}
-		return finalBnSet;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setAllJurisdictions(Set allJurisdictions) {
-		boolean bool = true;
-		for (Iterator iter = allJurisdictions.iterator(); iter.hasNext();) {
-			Jurisdiction element = (Jurisdiction) iter.next();
-			bool = element.validate();
-		}
-		if (bool) {
-			this.allJurisdictions = allJurisdictions;
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void addJurisdiction(Jurisdiction jur) {
-		boolean bool = jur.validate();
-		if (bool) {
-			jur.setUser(this);
-			this.allJurisdictions.add(jur);
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public boolean equals(Object obj) {
-
-		if (obj == null) {
-			return false;
-		}
-		if (this == obj) {
-			return true;
-		}
-		if (!(obj instanceof User)) {
-			return false;
-		}
-		User other = (User) obj;
-		if (this.getUserName().equals(other.getUserName())) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public int hashCode() {
-		int hashCode = 0;
-		hashCode = hashCode + this.getUserName().hashCode();
-		return hashCode;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void removeRole(Role role) {
-		if (this.roles.contains(role)) {
-			this.roles.remove(role);
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void removeJurisdiction(Jurisdiction jur) {
-		jur.setUser(null);
-		if (this.allJurisdictions.contains(jur)) {
-			this.allJurisdictions.remove(jur);
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public List<? extends Boundary> getJurisdictionData() {
-		/*
-		 * FIXME Not convincing reason finally sending an empty list
-		 */
-		final Set allJurs = this.getAllJurisdictions();
-		final HashSet<? extends Boundary> allBndries = new HashSet<Boundary>();
-		for (Iterator iter = allJurs.iterator(); iter.hasNext();) {
-			final Jurisdiction element = (Jurisdiction) iter.next();
-			allBndries.addAll(element.getJurisdictionValues());
-		}
-		List<? extends Boundary> lst = new ArrayList<Boundary>();
-		return lst;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public Integer getTopBoundaryID() {
-		return this.topBoundaryID;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setTopBoundaryID(Integer topBoundaryID) {
-		this.topBoundaryID = topBoundaryID;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public User getParent() {
-		return this.parent;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setParent(User parent) {
-		this.parent = parent;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setReportees(Set reportees) {
-		this.reportees = reportees;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public Set getReportees() {
-		return this.reportees;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public Date getDob() {
-		return this.dob;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setDob(Date dob) {
-		this.dob = dob;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public Set<UserRole> getUserRoles() {
-		return this.userRoles;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setUserRoles(Set<UserRole> userRoles) {
-		this.userRoles = userRoles;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public UserSignature getUserSignature() {
-		return this.userSignature;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setUserSignature(UserSignature userSignature) {
-		this.userSignature = userSignature;
-
-	}
+    private String userName;
+    private String password;
+    private String salutation;
+    private String firstName;
+    private String middleName;
+    private String lastName;
+    private Set<org.egov.lib.rjbac.role.Role> roles = new HashSet<org.egov.lib.rjbac.role.Role>();
+    
+    private Integer isActive;
+    private Date updateTime;
+    private Integer updateUserId;
+    private char isSuspended;
+    private Date dob;
+    private Date fromDate;
+    private Date toDate;
+    private Date pwdModifiedDate;
+
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+     public void setFromDate(final Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+     public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(final Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public Date getPwdModifiedDate() {
+        return pwdModifiedDate;
+    }
+
+    public void setPwdModifiedDate(final Date pwdModifiedDate) {
+        this.pwdModifiedDate = pwdModifiedDate;
+    }
+
+     public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(final String password) {
+        this.password = password;
+    }
+
+    public Set<Role> getRoles() {
+        final Date currDate = new Date();
+        return getValidRolesOnDate(currDate);
+    }
+
+    public Set<Role> getValidRolesOnDate(final Date onDate) {
+        return new UserDAO().getValidRoles(getId(), onDate);
+    }
+
+    public void setRoles(final Set roles) {
+        this.roles = roles;
+    }
+     public void addRole(final Role role) {
+        roles.add(role);
+    }
+
+    public String getSalutation() {
+        return salutation;
+    }
+
+     public void setSalutation(final String salutation) {
+        this.salutation = salutation;
+    }
+   
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(final Date updatetime) {
+        updateTime = updatetime;
+    }
+
+    public Integer getUpdateUserId() {
+        return updateUserId;
+    }
+
+    public void setUpdateUserId(final Integer updateuserid) {
+        updateUserId = updateuserid;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(final String firstName) {
+        this.firstName = firstName;
+    }
+
+    public char getIsSuspended() {
+        return isSuspended;
+    }
+
+  
+    public void setIsSuspended(final char isSuspended) {
+        this.isSuspended = isSuspended;
+    }
+
+  
+    public String getLastName() {
+        return lastName;
+    }
+
+     public void setLastName(final String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(final String middleName) {
+        this.middleName = middleName;
+    }
+
+    public Integer getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(final Integer isActive) {
+        this.isActive = isActive;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(final String userName) {
+        this.userName = userName;
+    }
+
+    public void removeRole(final Role role) {
+        if (roles.contains(role))
+            roles.remove(role);
+    }
+
+    public Date getDob() {
+        return dob;
+    }
+
+    public void setDob(final Date dob) {
+        this.dob = dob;
+    }
 }
