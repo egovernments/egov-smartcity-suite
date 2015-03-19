@@ -384,8 +384,8 @@ public class EgovUtils {
 	 * @return the current user id
 	 * @throws Exception the exception
 	 */
-	public static Integer getCurrentUserId(final HttpServletRequest req) throws Exception {
-		Integer userId = null;
+	public static Long getCurrentUserId(final HttpServletRequest req) throws Exception {
+		Long userId = null;
 		String loginName;
 		// check if the user is logged in
 		if (req.getUserPrincipal() == null) {
@@ -399,7 +399,7 @@ public class EgovUtils {
 			userId = new UserDAO().getUserByUserName(loginName).getId();
 			req.getSession().setAttribute("userid", userId);
 		} else {
-			userId = (Integer) req.getSession().getAttribute("userid");
+			userId = (Long) req.getSession().getAttribute("userid");
 		}
 
 		return userId;

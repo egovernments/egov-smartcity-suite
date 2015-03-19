@@ -95,10 +95,10 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 		}
 	}
 
-	public PersonalInformation getPersonalInformationByUserId(Integer userId) 
+	public PersonalInformation getPersonalInformationByUserId(Long userId) 
 	{
 		Query qry = getCurrentSession().createQuery("from PersonalInformation P where P.userMaster.id =:userId ");
-		qry.setInteger("userId", userId);
+		qry.setLong("userId", userId);
 		return (PersonalInformation)qry.uniqueResult();
 		
 	}

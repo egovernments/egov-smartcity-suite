@@ -82,7 +82,7 @@ public class HomepageAction extends BaseFormAction {
 	private String createJsonString(final List<Module> moduleList) {
 		final StringBuilder jsonString = new StringBuilder();
 		if ((moduleList != null) && !moduleList.isEmpty()) {
-			final List<Module> favourites = this.moduleDAO.getUserFavourites(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			final List<Module> favourites = this.moduleDAO.getUserFavourites(Long.valueOf(EGOVThreadLocals.getUserId()));
 			jsonString.append("[");
 			for (final Module module : moduleList) {
 				jsonString.append("{'ModuleName' : '").append(module.getModuleName()).append("',");
@@ -120,7 +120,7 @@ public class HomepageAction extends BaseFormAction {
 	 */
 	@Action(value="/common/homepage-submodules")
 	public String getAllModules() throws IOException, RuntimeException {
-		final List<Module> moduleList = this.moduleDAO.getApplicationModuleByParentId(this.parentId, Integer.valueOf(EGOVThreadLocals.getUserId()));
+		final List<Module> moduleList = this.moduleDAO.getApplicationModuleByParentId(this.parentId, Long.valueOf(EGOVThreadLocals.getUserId()));
 		this.writeToAjaxResponse(this.createJsonString(moduleList));
 		return null;
 	}
@@ -167,7 +167,7 @@ public class HomepageAction extends BaseFormAction {
 	 * @return the string
 	 */
 	private String populateAllChildModules(final Integer parentId, final List<Module> favourites) {
-		final List<Module> moduleList = this.moduleDAO.getApplicationModuleByParentId(parentId, Integer.valueOf(EGOVThreadLocals.getUserId()));
+		final List<Module> moduleList = this.moduleDAO.getApplicationModuleByParentId(parentId, Long.valueOf(EGOVThreadLocals.getUserId()));
 		final StringBuilder childModules = new StringBuilder();
 		String url = ServletActionContext.getRequest().getRequestURL().toString();
 		url = url.substring(0, url.lastIndexOf("common"));
@@ -192,7 +192,7 @@ public class HomepageAction extends BaseFormAction {
 				throw new EGOVRuntimeException("City does not found");
 			}
 
-			final User user = this.userService.getUserByID(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			final User user = this.userService.getUserByID(Long.valueOf(EGOVThreadLocals.getUserId()));
 			if (user == null) {
 				throw new EGOVRuntimeException("User does not found");
 			}
@@ -234,7 +234,7 @@ public class HomepageAction extends BaseFormAction {
 			if (module.getModuleName().equals("EmployeeSelfService")) {
 				moduleIterator.remove();
 				ServletActionContext.getRequest().setAttribute("selfServiceHeader", module.getModuleDescription());
-				selfServiceList = this.moduleDAO.getApplicationModuleByParentId(module.getId(), Integer.valueOf(EGOVThreadLocals.getUserId()));
+				selfServiceList = this.moduleDAO.getApplicationModuleByParentId(module.getId(), Long.valueOf(EGOVThreadLocals.getUserId()));
 			}
 		}
 		return selfServiceList;

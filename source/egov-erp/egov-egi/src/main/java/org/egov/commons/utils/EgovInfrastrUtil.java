@@ -536,7 +536,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 						final String fromuserName = ""
 								+ (user.getFirstName() == null ? "" : user.getFirstName()) + " " + (user.getMiddleName() == null ? "" : user.getMiddleName()) + " " + (user.getLastName() == null ? ""
 										: user.getLastName());
-						final Integer userID = user.getId();
+						final Long userID = user.getId();
 						final Department department1 = user.getDepartment();
 						roles = user.getRoles();
 						if (roles != null && !roles.isEmpty()) {

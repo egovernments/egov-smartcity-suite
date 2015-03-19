@@ -27,7 +27,7 @@ public interface EISServeable {
      * @param forDate
      * @return List of Position
      **/
-    List <Position> getPositionsForUser (Integer userId, Date forDate);
+    List <Position> getPositionsForUser (Long userId, Date forDate);
    
     /**
      * Used get User for a Position Id for a particular Date.
@@ -43,7 +43,7 @@ public interface EISServeable {
      * @param forDate
      * @return Position
      **/
-    Position getPrimaryPositionForUser (Integer userId, Date forDate);
+    Position getPrimaryPositionForUser (Long userId, Date forDate);
     
     
     /**

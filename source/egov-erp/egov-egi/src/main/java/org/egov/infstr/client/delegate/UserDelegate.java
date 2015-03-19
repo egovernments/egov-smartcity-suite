@@ -179,7 +179,7 @@ public class UserDelegate {
 	 * This method deletes a User in the System.
 	 * @param Integer userid
 	 */
-	public void removeUser(final Integer userid) {
+	public void removeUser(final Long userid) {
 		try {
 			final User user = this.userService.getUserByID(userid);
 			this.userService.removeUser(user);
@@ -216,7 +216,7 @@ public class UserDelegate {
 	 * @param userid
 	 * @return User object
 	 */
-	public User getUser(final Integer userid) {
+	public User getUser(final Long userid) {
 		User user = null;
 		try {
 			user = this.userService.getUserByID(userid);

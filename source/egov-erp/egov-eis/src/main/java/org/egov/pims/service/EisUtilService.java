@@ -58,7 +58,7 @@ public class EisUtilService implements EISServeable
 		this.persistenceService = persistenceService;
 	}
 
-	public List<Position> getPositionsForUser(Integer user, Date date){
+	public List<Position> getPositionsForUser(Long user, Date date){
 
 		
 		List<Position> positionList = new ArrayList<Position>();
@@ -88,7 +88,7 @@ public class EisUtilService implements EISServeable
 
 
 	
-	public Position getPrimaryPositionForUser(Integer userId, Date date) {
+	public Position getPrimaryPositionForUser(Long userId, Date date) {
 		
 			Position position=null;
 		
@@ -540,7 +540,7 @@ public class EisUtilService implements EISServeable
 	public boolean isValidWorkflowUser(Position owner)
 	{
 		boolean validuser=false;
-		List<Position> positions=getPositionsForUser(Integer.valueOf(EGOVThreadLocals.getUserId()), new Date());
+		List<Position> positions=getPositionsForUser(Long.valueOf(EGOVThreadLocals.getUserId()), new Date());
 		if(positions.contains(owner))
 		{
 			validuser= true;

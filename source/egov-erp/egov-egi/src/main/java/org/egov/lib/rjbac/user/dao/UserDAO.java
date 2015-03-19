@@ -15,9 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.egov.EgovSpringContextHolder;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.security.utils.CryptoHelper;
 import org.egov.infstr.utils.EGovConfig;
@@ -28,8 +26,6 @@ import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
 import org.egov.lib.rjbac.jurisdiction.JurisdictionValues;
 import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.user.UserDetail;
-import org.egov.lib.rjbac.user.UserDetailImpl;
 import org.egov.lib.rjbac.user.UserRole;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -109,11 +105,11 @@ public class UserDAO {
 	 * @param userId the user id
 	 * @return the jurisdiction value by bndry id and user id
 	 */
-	public JurisdictionValues getJurisdictionValueByBndryIdAndUserId(final Integer bndryId, final Integer userId) {
+	public JurisdictionValues getJurisdictionValueByBndryIdAndUserId(final Integer bndryId, final Long userId) {
 		try {
 			final Query qry = this.getSession().createQuery("FROM JurisdictionValues jur where jur.userJurLevel.user.id=:userid and jur.boundary.id=:bndryId and jur.isHistory='N'");
 			qry.setInteger("bndryId", bndryId);
-			qry.setInteger("userid", userId);
+			qry.setLong("userid", userId);
 			return (JurisdictionValues) qry.uniqueResult();
 		} catch (final HibernateException e) {
 			LOGGER.error("Exception encountered in getJurisdictionValueByBndryIdAndUserId", e);
@@ -127,11 +123,11 @@ public class UserDAO {
 	 * @param userId the user id
 	 * @return the jurisdiction by bndry type id and user id
 	 */
-	public Jurisdiction getJurisdictionByBndryTypeIdAndUserId(final Integer bndryTypeId, final Integer userId) {
+	public Jurisdiction getJurisdictionByBndryTypeIdAndUserId(final Integer bndryTypeId, final Long userId) {
 		try {
 			final Query qry = this.getSession().createQuery("FROM Jurisdiction jur where jur.user.id=:userid and jur.jurisdictionLevel.id=:bndryTypeId ");
 			qry.setInteger("bndryTypeId", bndryTypeId);
-			qry.setInteger("userid", userId);
+			qry.setLong("userid", userId);
 			return (Jurisdiction) qry.uniqueResult();
 		} catch (final HibernateException e) {
 			LOGGER.error("Exception encountered in getJurisdictionByBndryTypeIdAndUserId", e);
@@ -144,10 +140,10 @@ public class UserDAO {
 	 * @param userid the userid
 	 * @return the all jurisdictions for user
 	 */
-	public Set<JurisdictionValues> getAllJurisdictionsForUser(final Integer userid) {
+	public Set<JurisdictionValues> getAllJurisdictionsForUser(final Long userid) {
 		try {
 			final Query qry = this.getSession().createQuery("FROM JurisdictionValues jur where jur.userJurLevel.user.id=:userid and jur.isHistory='N')");
-			qry.setInteger("userid", userid);
+			qry.setLong("userid", userid);
 			return new HashSet<JurisdictionValues>(qry.list());
 		} catch (final HibernateException e) {
 			LOGGER.error("Exception encountered in getAllJurisdictionsForUser", e);
@@ -161,11 +157,11 @@ public class UserDAO {
 	 * @param jurDate the jur date
 	 * @return the jurisdictions for user
 	 */
-	public Set<JurisdictionValues> getJurisdictionsForUser(final Integer userid, final Date jurDate) {
+	public Set<JurisdictionValues> getJurisdictionsForUser(final Long userid, final Date jurDate) {
 		try {
 			final Query qry = this.getSession().createQuery(
 					"FROM JurisdictionValues jurs  where jurs.userJurLevel.user.id = :userid  and jurs.isHistory='N' AND ((jurs.toDate IS NULL AND jurs.fromDate <= :currDate) OR (jurs.fromDate <= :currDate AND jurs.toDate >= :currDate)) ");
-			qry.setInteger("userid", userid);
+			qry.setLong("userid", userid);
 			qry.setDate("currDate", jurDate);
 			return new HashSet<JurisdictionValues>(qry.list());
 		} catch (final HibernateException e) {
@@ -174,25 +170,13 @@ public class UserDAO {
 		}
 	}
 
-	/**
-	 * Creates the user detail.
-	 * @param usrDet the usr det
-	 */
-	public void createUserDetail(final UserDetail usrDet) {
-		try {
-			this.getSession().save(usrDet);
-		} catch (final HibernateException e) {
-			LOGGER.error("Exception encountered in createUserDetail", e);
-			throw new EGOVRuntimeException("Exception encountered in createUserDetail", e);
-		}
-	}
-
+	
 	/**
 	 * Gets the user by id.
 	 * @param userID the user id
 	 * @return the user by id
 	 */
-	public User getUserByID(final Integer userID) {
+	public User getUserByID(final Long userID) {
 		try {
 			return (User) this.getSession().get(User.class, userID);
 		} catch (final HibernateException e) {
@@ -210,20 +194,6 @@ public class UserDAO {
 		final Query query = this.getSession().createQuery("FROM User where lower(userName) like ? order by userName asc");
 		query.setString(0, userName.toLowerCase() + "%");
 		return query.list();
-	}
-
-	/**
-	 * Gets the user detail by id.
-	 * @param userID the user id
-	 * @return the user detail by id
-	 */
-	public UserDetail getUserDetailByID(final Integer userID) {
-		try {
-			return (UserDetail) this.getSession().get(UserDetailImpl.class, userID);
-		} catch (final HibernateException e) {
-			LOGGER.error("Exception encountered in getUserDetailByID", e);
-			throw new EGOVRuntimeException("Exception encountered in getUserDetailByID", e);
-		}
 	}
 
 	/**
@@ -275,7 +245,7 @@ public class UserDAO {
 	 * Removes the user.
 	 * @param usrID the usr id
 	 */
-	public void removeUser(final Integer usrID) {
+	public void removeUser(final Long usrID) {
 		final User usr = this.getUserByID(usrID);
 		this.removeUser(usr);
 	}
@@ -289,22 +259,7 @@ public class UserDAO {
 		return null;
 	}
 
-	/**
-	 * Gets the user det by user name.
-	 * @param userName the user name
-	 * @return the user det by user name
-	 */
-	public UserDetail getUserDetByUserName(final String userName) {
-		try {
-			final Query qry = this.getSession().createQuery("FROM userDetailImpl UI WHERE UI.userName = :usrName");
-			qry.setString("usrName", userName);
-			return (UserDetail) qry.list().get(0);
-		} catch (final HibernateException e) {
-			LOGGER.error("Exception encountered in getUserDetByUserName", e);
-			throw new EGOVRuntimeException("Exception encountered in getUserDetByUserName", e);
-		}
-	}
-
+	
 	/**
 	 * Gets the all users for jurisdiction type.
 	 * @param bt the bt
@@ -507,10 +462,10 @@ public class UserDAO {
 	 * @param roleDate the role date
 	 * @return the valid roles
 	 */
-	public Set<Role> getValidRoles(final Integer userID, final Date roleDate) {
+	public Set<Role> getValidRoles(final Long userID, final Date roleDate) {
 		try {
 			final Query qry = this.getSession().createQuery("FROM UserRole rol Where rol.user.id=:userID and rol.isHistory='N' AND ((rol.toDate IS NULL AND rol.fromDate <= :currDate) OR (rol.fromDate <= :currDate AND rol.toDate >= :currDate)) ");
-			qry.setInteger("userID", userID);
+			qry.setLong("userID", userID);
 			qry.setDate("currDate", roleDate);
 			final Set<Role> validRoles = new HashSet<Role>();
 			for (final Iterator iter = qry.list().iterator(); iter.hasNext();) {

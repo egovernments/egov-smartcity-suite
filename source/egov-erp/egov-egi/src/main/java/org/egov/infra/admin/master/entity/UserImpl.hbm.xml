@@ -3,7 +3,7 @@
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 	<class name="org.egov.infra.admin.master.entity.User" table="EG_USER">
-		<id name="id" column="ID_USER" type="integer" unsaved-value="null">
+		<id name="id" column="ID_USER" type="long" unsaved-value="null">
 			<generator class="native">
 				<param name="sequence">SEQ_EG_USER</param>
 			</generator>

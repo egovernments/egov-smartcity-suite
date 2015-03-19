@@ -72,7 +72,7 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
         return Optional.ofNullable(workflowTypeService);
     }
 
-    public List<T> getDraftItems(final Integer owner, final Integer userId, final String order) {
+    public List<T> getDraftItems(final Integer owner, final Long userId, final String order) {
         final List<T> draftWfItems = new ArrayList<T>();
         final List<String> wfTypes = this.getAssignedWorkflowTypes(owner);
         for (final String wfType : wfTypes) {
@@ -83,7 +83,7 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
         return draftWfItems;
     }
 
-    public List<T> getFilteredInboxItems(final Integer owner, final Integer userId, final Integer sender,
+    public List<T> getFilteredInboxItems(final Integer owner, final Long userId, final Integer sender,
             final String taskName, final Date fromDate, final Date toDate) {
         final List<T> filteredWFItems = new ArrayList<T>();
         List<String> wfTypes = null;
@@ -126,7 +126,7 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
         return stateAwares;
     }
 
-    public List<T> getWorkflowItems(final Integer owner, final Integer userId, final String order) {
+    public List<T> getWorkflowItems(final Integer owner, final Long userId, final String order) {
         final List<T> assignedWFItems = new ArrayList<T>();
         final List<String> wfTypes = this.getAssignedWorkflowTypes(owner);
         for (final String wfType : wfTypes) {
@@ -170,11 +170,11 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
         return senderName.toString();
     }
 
-    public List<Position> getPositionForUser(final Integer userId, final Date forDate) {
+    public List<Position> getPositionForUser(final Long userId, final Date forDate) {
         return this.eisService.getPositionsForUser(userId, forDate);
     }
 
-    public Position getPrimaryPositionForUser(final Integer userId, final Date forDate) {
+    public Position getPrimaryPositionForUser(final Long userId, final Date forDate) {
         return this.eisService.getPrimaryPositionForUser(userId, forDate);
     }
 

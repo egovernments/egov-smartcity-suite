@@ -160,7 +160,7 @@ public class PositionMasterAction extends BaseFormAction {
 					setPositionAttributes(oldPos, newPos);
 					newPosIterator.remove();
 					oldPos.setModifiedDate(new Date());
-					oldPos.setModifiedBy(EisManagersUtill.getUserService().getUserByID(Integer.valueOf(EGOVThreadLocals.getUserId())));
+					oldPos.setModifiedBy(EisManagersUtill.getUserService().getUserByID(Long.valueOf(EGOVThreadLocals.getUserId())));
 					persistenceService.getSession().saveOrUpdate(oldPos);
 					break;
 				}
@@ -201,7 +201,7 @@ public class PositionMasterAction extends BaseFormAction {
 						position.setDrawingOfficer(drawingofficer);
 					}*/
 					position.setModifiedDate(new Date());
-					position.setModifiedBy(EisManagersUtill.getUserService().getUserByID(Integer.valueOf(EGOVThreadLocals.getUserId())));
+					position.setModifiedBy(EisManagersUtill.getUserService().getUserByID(Long.valueOf(EGOVThreadLocals.getUserId())));
 					persistenceService.getSession().saveOrUpdate(position);
 				}
 			}

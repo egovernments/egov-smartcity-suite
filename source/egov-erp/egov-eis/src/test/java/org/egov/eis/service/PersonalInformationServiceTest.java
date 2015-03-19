@@ -21,7 +21,7 @@ public class PersonalInformationServiceTest extends EISAbstractSpringIntegration
 	
 	@Test
 	public void getEmployeeByUserId() {		
-		PersonalInformation emp = personalInformationService.getEmployeeByUserId(1);		
+		PersonalInformation emp = personalInformationService.getEmployeeByUserId(1l);		
 		
 		assertNotNull(emp);
 	}

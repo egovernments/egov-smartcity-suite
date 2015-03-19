@@ -66,7 +66,7 @@ public class WorkflowAdminAction extends ActionSupport {
 
 	private transient String stateId;
 
-	private transient Integer newOwner;
+	private transient Long newOwner;
 
 	private transient Integer deptId;
 
@@ -320,7 +320,7 @@ public class WorkflowAdminAction extends ActionSupport {
 	 * Sets the new owner.
 	 * @param newOwner the new new owner
 	 */
-	public void setNewOwner(final Integer newOwner) {
+	public void setNewOwner(final Long newOwner) {
 		this.newOwner = newOwner;
 	}
 
@@ -328,7 +328,7 @@ public class WorkflowAdminAction extends ActionSupport {
 	 * Sets the owner.
 	 * @param owner the new owner
 	 */
-	public void setOwner(final Integer owner) {
+	public void setOwner(final Long owner) {
 		this.criteria.put("owner", this.inboxRenderServiceDeligate.getPositionForUser(owner, new Date()));
 	}
 
@@ -344,7 +344,7 @@ public class WorkflowAdminAction extends ActionSupport {
 	 * Sets the sender.
 	 * @param sender the new sender
 	 */
-	public void setSender(final Integer sender) {
+	public void setSender(final Long sender) {
 		this.criteria.put("sender", this.inboxRenderServiceDeligate.getPositionForUser(sender, new Date()));
 	}
 

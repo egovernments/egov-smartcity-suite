@@ -45,7 +45,7 @@ public class DefaultInboxRenderServiceImpl<T extends StateAware> implements Inbo
     }
 
     @Override
-    public List<T> getAssignedWorkflowItems(final Integer owner, final Integer userId, final String order) {
+    public List<T> getAssignedWorkflowItems(final Integer owner, final Long userId, final String order) {
         this.stateAwarePersistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         final StringBuilder query = new StringBuilder("FROM ");
         query.append(this.stateAwareType.getName())
@@ -55,13 +55,13 @@ public class DefaultInboxRenderServiceImpl<T extends StateAware> implements Inbo
         qry.setString(WFTYPE, this.stateAwareType.getSimpleName());
         qry.setParameter("end", StateStatus.ENDED);
         qry.setParameter("new", StateStatus.STARTED);
-        qry.setInteger("userId", userId);
+        qry.setLong("userId", userId);
         qry.setReadOnly(true);
         return qry.list();
     }
 
     @Override
-    public List<T> getDraftWorkflowItems(final Integer owner, final Integer userId, final String order) {
+    public List<T> getDraftWorkflowItems(final Integer owner, final Long userId, final String order) {
         this.stateAwarePersistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         final StringBuilder query = new StringBuilder("FROM ");
         query.append(this.stateAwareType.getName())
@@ -69,14 +69,14 @@ public class DefaultInboxRenderServiceImpl<T extends StateAware> implements Inbo
         final Query qry = this.stateAwarePersistenceService.getSession().createQuery(query.toString());
         qry.setInteger(OWNER, owner);
         qry.setString(WFTYPE, this.stateAwareType.getSimpleName());
-        qry.setInteger("userId", userId);
+        qry.setLong("userId", userId);
         qry.setParameter("new", StateStatus.STARTED);
         qry.setReadOnly(true);
         return qry.list();
     }
 
     @Override
-    public List<T> getFilteredWorkflowItems(final Integer owner, final Integer userId, final Integer sender,
+    public List<T> getFilteredWorkflowItems(final Integer owner, final Long userId, final Integer sender,
             final Date fromDate, final Date toDate) {
         
         //FIXME this wont work with current design need to change
@@ -108,7 +108,7 @@ public class DefaultInboxRenderServiceImpl<T extends StateAware> implements Inbo
         }
         qry.setParameter("end", StateStatus.ENDED);
         qry.setParameter("newState", StateStatus.STARTED);
-        qry.setInteger("userId", userId);
+        qry.setLong("userId", userId);
         qry.setReadOnly(true);
         return qry.list();
     }

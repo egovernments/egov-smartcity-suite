@@ -94,7 +94,7 @@ public class ModuleHibDao<T, id extends Serializable> extends GenericHibernateDA
 	}
 
 	@Override
-	public List<Module> getApplicationModuleByParentId(final Integer parentId, final Integer userId) {
+	public List<Module> getApplicationModuleByParentId(final Integer parentId, final Long userId) {
 
 		final StringBuffer sql = new StringBuffer(1200);
 
@@ -111,9 +111,9 @@ public class ModuleHibDao<T, id extends Serializable> extends GenericHibernateDA
 
 		final SQLQuery query = getCurrentSession().createSQLQuery(sql.toString());
 		query.setInteger(0, parentId);
-		query.setInteger(1, userId);
+		query.setLong(1, userId);
 		query.setInteger(2, parentId);
-		query.setInteger(3, userId);
+		query.setLong(3, userId);
 		final List<Module> moduleList = new LinkedList<Module>();
 		final Iterator<Object[]> elements = query.list().iterator();
 		while (elements.hasNext()) {
@@ -130,13 +130,13 @@ public class ModuleHibDao<T, id extends Serializable> extends GenericHibernateDA
 	}
 
 	@Override
-	public List<Module> getUserFavourites(final Integer userId) {
+	public List<Module> getUserFavourites(final Long userId) {
 		final StringBuffer sql = new StringBuffer();
 		sql.append("SELECT distinct view_ram.action_id,fav.fav_name,fav.ctx_name,view_ram.action_url ");
 		sql.append("FROM V_EG_ROLE_ACTION_MODULE_MAP view_ram, EG_FAVOURITES fav WHERE  fav.action_id = view_ram.action_id and fav.user_id = ? ");
 		sql.append("and view_ram.typeflag='A' and view_ram.is_enabled=1 GROUP BY view_ram.action_id,fav.fav_name,fav.ctx_name,view_ram.action_url");
 		final SQLQuery query = getCurrentSession().createSQLQuery(sql.toString());
-		query.setInteger(0, userId);
+		query.setLong(0, userId);
 		final List<Module> moduleList = new LinkedList<Module>();
 		final Iterator<Object[]> elements = query.list().iterator();
 		while (elements.hasNext()) {

@@ -53,7 +53,7 @@ public class DeleteUpdateUserAction extends EgovAction {
 		 */
 		if (str.equals("")) {
 			user = new User();
-			final Integer userid = new Integer(req.getParameter("userid"));
+			final Long userid = Long.valueOf(req.getParameter("userid"));
 			try {
 				user = this.userDelegate.getUser(userid);
 				session.setAttribute("USER", user);
@@ -81,14 +81,14 @@ public class DeleteUpdateUserAction extends EgovAction {
 		}
 		// Forwards the request to the acknowledgement page after deletion of the User
 		if (str.equals("ConfirmDelete")) {
-			this.userDelegate.removeUser(new Integer(req.getParameter("userid")));
+			this.userDelegate.removeUser(Long.valueOf(req.getParameter("userid")));
 			target = "success";
 			req.setAttribute("MESSAGE", "User Romoved successfully");
 		}
 		// Forwards the request to the updateUserpage
 		if (str.equals("EDIT")) {
 			user = new User();
-			final Integer userid = new Integer(req.getParameter("userid"));
+			final Long userid = Long.valueOf(req.getParameter("userid"));
 			try {
 				user = this.userDelegate.getUser(userid);
 				session.setAttribute("USER", user);

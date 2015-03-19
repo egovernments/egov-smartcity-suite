@@ -33,7 +33,7 @@ public interface InboxRenderService<T extends StateAware> {
 	 * @param order the order
 	 * @return the assigned workflow items
 	 */
-	List<T> getAssignedWorkflowItems(Integer owner, Integer userId, String order);
+	List<T> getAssignedWorkflowItems(Integer owner, Long userId, String order);
 	
 	/**
 	 * Returns a list of workflow items that are created by the given position and the state in
@@ -43,7 +43,7 @@ public interface InboxRenderService<T extends StateAware> {
 	 * @param order the order
 	 * @return the draft workflow items
 	 */
-	List<T> getDraftWorkflowItems(Integer owner, Integer userId, String order);
+	List<T> getDraftWorkflowItems(Integer owner, Long userId, String order);
 	
 	/**
 	 * Gets the filtered workflow items.
@@ -54,7 +54,7 @@ public interface InboxRenderService<T extends StateAware> {
 	 * @param toDate the to date
 	 * @return the filtered workflow items
 	 */
-	List<T> getFilteredWorkflowItems(Integer owner, Integer userId, Integer sender, Date fromDate, Date toDate);
+	List<T> getFilteredWorkflowItems(Integer owner, Long userId, Integer sender, Date fromDate, Date toDate);
 	
 	
 	/**

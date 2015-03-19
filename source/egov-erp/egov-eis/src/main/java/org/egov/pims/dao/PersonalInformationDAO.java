@@ -30,7 +30,7 @@ public interface PersonalInformationDAO extends org.egov.infstr.dao.GenericDAO
 {
 	public PersonalInformation getPersonalInformationByID(Integer ID) ;
 	public Map getAllPIMap();
-	public PersonalInformation getPersonalInformationByUserId(Integer userId);
+	public PersonalInformation getPersonalInformationByUserId(Long userId);
 	public void deleteLangKnownForEmp(PersonalInformation personalInformation);
 	public List getListOfPersonalInformationByEmpIdsList(List empIdsList);
 	public PersonalInformation getEmployee(Integer deptId, Integer designationId, Integer Boundaryid)throws TooManyValuesException, NoSuchObjectException;

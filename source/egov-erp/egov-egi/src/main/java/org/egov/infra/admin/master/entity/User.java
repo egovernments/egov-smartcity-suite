@@ -1,10 +1,14 @@
-/*
- * @(#)User.java 3.0, 18 Jun, 2013 2:43:41 PM
- * Copyright 2013 eGovernments Foundation. All rights reserved. 
- * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
 package org.egov.infra.admin.master.entity;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.BoundaryFinder;
 import org.egov.lib.admbndry.BoundaryType;
@@ -17,20 +21,10 @@ import org.egov.lib.rjbac.user.UserRole;
 import org.egov.lib.rjbac.user.UserSignature;
 import org.egov.lib.rjbac.user.dao.UserDAO;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-public class User implements  Serializable {
+public class User extends AbstractAuditable<User, Long> {
 
     private static final long serialVersionUID = 2870751695666860068L;
     
-    private Integer id;
 	private String title;
 	private String salutation;
 	private String firstName;
@@ -62,12 +56,6 @@ public class User implements  Serializable {
 	private UserSignature userSignature;
 
 	
-	public String toString() {
-		StringBuilder strForm = new StringBuilder();
-		strForm = (id != null) ? strForm.append("Id:").append(id) : strForm.append("");
-		strForm.append("userName: ").append(userName).append("isActive: ").append(isActive);
-		return strForm.toString();
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -209,22 +197,6 @@ public class User implements  Serializable {
 	 * {@inheritDoc}
 	 */
 	
-	public Integer getId() {
-		return this.id;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
 	public String getPwd() {
 		return this.pwd;
 	}
@@ -247,7 +219,7 @@ public class User implements  Serializable {
 	}
 
 	public Set<Role> getValidRolesOnDate(Date onDate) {
-		return new UserDAO().getValidRoles(this.id, onDate);
+		return new UserDAO().getValidRoles(this.getId(), onDate);
 	}
 
 	/**
@@ -447,7 +419,7 @@ public class User implements  Serializable {
 	 */
 	
 	public Set getAllJurisdictions() {
-		return new UserDAO().getJurisdictionsForUser(this.getId(), new Date());
+		return null;//new UserDAO().getJurisdictionsForUser(this.getId(), new Date());
 	}
 
 	/**

@@ -64,7 +64,7 @@ public class RuleInterceptorFilter implements Filter {
 			final List<AuthorizationRule> authRuleList = this.authRuleService.findAllByNamedQuery("authRulesByAction", action);
 			for (final AuthorizationRule authRule : authRuleList) {
 				final Object object = this.getEntity(httpRequest, authRule);
-				final List authResList = this.getRuleAuthentication(this.getCurrentUser(Integer.valueOf(EGOVThreadLocals.getUserId())), authRule, object);
+				final List authResList = this.getRuleAuthentication(this.getCurrentUser(Long.valueOf(EGOVThreadLocals.getUserId())), authRule, object);
 				final boolean authorized = Boolean.valueOf(authResList.get(0).toString());
 				if (!authorized) {
 					// if authorization fails throwing AuthorizationException
@@ -105,7 +105,7 @@ public class RuleInterceptorFilter implements Filter {
 	 * @param useId the use id
 	 * @return the current user
 	 */
-	public User getCurrentUser(final Integer useId) {
+	public User getCurrentUser(final Long useId) {
 		return this.userService.getUserByID(useId);
 	}
 

@@ -130,11 +130,11 @@ public class RoleDAO {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Role> getRolesByUser(final Integer userId) {
+	public List<Role> getRolesByUser(final Long userId) {
 		try {
 			final SQLQuery qry = sessionFactory.getCurrentSession().createSQLQuery("select * from eg_role where id "
 									+ " in(select id_role from eg_userrole where id_user =:userId)");
-			qry.setInteger("userId", userId);
+			qry.setLong("userId", userId);
 			qry.addEntity(RoleImpl.class);
 			return qry.list();
 		} catch (final HibernateException e) {

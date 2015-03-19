@@ -40,7 +40,7 @@ public interface EmployeeService
 	public abstract GenericMaster getGenericMaster(Integer masterId,String masterName);
 
 	public abstract ServiceHistory getServiceId(Integer serviceId)throws Exception;
-	public abstract PersonalInformation getEmpForUserId(Integer userId);
+	public abstract PersonalInformation getEmpForUserId(Long userId);
 
 	public abstract Assignment getAssignmentById(Integer assignmentId);
 	public abstract void updateAssignment(Assignment assignment);

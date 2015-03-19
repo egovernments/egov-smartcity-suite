@@ -121,7 +121,7 @@ public abstract class EisCommonWorkflowAction extends GenericWorkFlowAction{
 		
 		if(null != getModel())
 		{
-			if(!validateInboxItemForUser(getModel(),Integer.valueOf(EGOVThreadLocals.getUserId())))
+			if(!validateInboxItemForUser(getModel(),Long.valueOf(EGOVThreadLocals.getUserId())))
 				return WORKFLOWERROR;
 		}
 		return EDIT;
@@ -137,7 +137,7 @@ public abstract class EisCommonWorkflowAction extends GenericWorkFlowAction{
 	* @return Boolean value.
 	**/
 	
-	private Boolean validateInboxItemForUser(StateAware wfItem, Integer userId) {
+	private Boolean validateInboxItemForUser(StateAware wfItem, Long userId) {
 		Boolean validateObjectStatus = Boolean.FALSE;
 		if (null != userId && null!= wfItem.getCurrentState() && !org.egov.infra.workflow.entity.State.DEFAULT_STATE_VALUE_CLOSED.equalsIgnoreCase(wfItem.getCurrentState().getValue())) {
 			List<Position> positionList = eisService.getPositionsForUser(userId,DateUtils.today());

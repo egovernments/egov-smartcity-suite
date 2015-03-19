@@ -114,7 +114,7 @@ public class InboxAction extends BaseFormAction {
     @Action("/workflow/inbox-pollDraft")
     public String pollDraft() throws EGOVRuntimeException, IOException {
         try {
-            final Integer userId = getLoginUserId();
+            final Long userId = getLoginUserId();
             final List<Position> positions = inboxRenderServiceDeligate.getPositionForUser(userId, new Date());
             final List<StateAware> inboxDraftItem = new ArrayList<StateAware>();
             for (final Position position : positions)
@@ -131,7 +131,7 @@ public class InboxAction extends BaseFormAction {
     @Action("/workflow/inbox-pollInbox")
     public String pollInbox() throws EGOVRuntimeException, IOException {
         try {
-            final Integer userId = getLoginUserId();
+            final Long userId = getLoginUserId();
             final List<Position> positions = inboxRenderServiceDeligate.getPositionForUser(userId, new Date());
             final List<StateAware> inboxItem = new ArrayList<StateAware>();
             for (final Position position : positions)
@@ -265,8 +265,8 @@ public class InboxAction extends BaseFormAction {
         return inboxHistoryItem;
     }
 
-    private Integer getLoginUserId() {
-        return Integer.valueOf(EGOVThreadLocals.getUserId());
+    private Long getLoginUserId() {
+        return Long.valueOf(EGOVThreadLocals.getUserId());
     }
 
     private void writeToAjaxResponse(final String response) throws EGOVRuntimeException, IOException {

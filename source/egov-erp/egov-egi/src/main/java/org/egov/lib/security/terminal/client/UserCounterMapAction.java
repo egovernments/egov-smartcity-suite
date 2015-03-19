@@ -63,7 +63,7 @@ public class UserCounterMapAction extends DispatchAction {
 					for (int i = 0; i < userId.length; i++) {
 						if (userId[i] != null && !userId[i].trim().equals("")) {
 							Location locationobj = (Location) locationHibernateDAO.findById(Integer.parseInt(locationId), false);
-							User userobj = (User) userDAO.getUserByID(Integer.parseInt(userId[i]));
+							User userobj = (User) userDAO.getUserByID(Long.valueOf(userId[i]));
 							if (usercountermapform.getSelCheck()[i].equals("yes") && usercountermapform.getUserCounterId()[i] != null && !usercountermapform.getUserCounterId()[i].equals("")) {
 								UserCounterMap obj = (UserCounterMap) userCounterHibernateDAO.findById(Integer.parseInt(usercountermapform.getUserCounterId()[i]), false);
 								obj.setCounterId(locationobj);
@@ -106,7 +106,7 @@ public class UserCounterMapAction extends DispatchAction {
 						if (userId[i] != null && counter[i] != null && !userId[i].trim().equals("") && !counter[i].trim().equals("")) {
 							
 							Location locationobj = (Location) locationHibernateDAO.findById(Integer.parseInt(counter[i]), false);
-							User userobj = (User) userDAO.getUserByID(Integer.parseInt(userId[i]));
+							User userobj = (User) userDAO.getUserByID(Long.valueOf(userId[i]));
 							if (usercountermapform.getSelCheck()[i].equals("yes") && usercountermapform.getUserCounterId()[i] != null && !usercountermapform.getUserCounterId()[i].equals("")) {
 								
 								UserCounterMap obj = (UserCounterMap) userCounterHibernateDAO.findById(Integer.parseInt(usercountermapform.getUserCounterId()[i]), false);

@@ -17,7 +17,6 @@ import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
 import org.egov.lib.rjbac.jurisdiction.JurisdictionValues;
 import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.user.UserDetail;
 import org.egov.lib.rjbac.user.UserRole;
 import org.egov.lib.security.JurisdictionCheck;
 
@@ -42,7 +41,7 @@ public interface UserService {
 	 * @param roleDate the role date
 	 * @return the valid roles
 	 */
-	Set<Role> getValidRoles(Integer userID, Date roleDate);
+	Set<Role> getValidRoles(Long userID, Date roleDate);
 
 	/**
 	 * Gets the all roles for user.
@@ -56,14 +55,7 @@ public interface UserService {
 	 * @param id the id
 	 * @return User with the given id
 	 */
-	User getUserByID(Integer id);
-
-	/**
-	 * Returns a UserDetail with the given userid.
-	 * @param userID the user id
-	 * @return UserDetail with the given id
-	 */
-	UserDetail getUserDetailByID(Integer userID);
+	User getUserByID(Long id);
 
 	/**
 	 * Returns User with the given username. Each user is uniquely identified by a username in the system. The function returns the exact match of the given username
@@ -93,7 +85,7 @@ public interface UserService {
 	 * @return the all jurisdictions for user
 	 * @return
 	 */
-	Set<JurisdictionValues> getAllJurisdictionsForUser(Integer userid);
+	Set<JurisdictionValues> getAllJurisdictionsForUser(Long userid);
 
 	/**
 	 * This method returns the jurisdiction based as on date and userid.
@@ -102,14 +94,7 @@ public interface UserService {
 	 * @return the jurisdictions for user
 	 * @return
 	 */
-	Set<JurisdictionValues> getJurisdictionsForUser(Integer userid, Date jurDate);
-
-	/**
-	 * Returns the UserDetail with the given username in the first, middle OR the last name.
-	 * @param userName The real name of the user to be searched in the system(First/Middle/Last Name)
-	 * @return List of UserDetails matching the given criteria
-	 */
-	UserDetail getUserDetByUserName(String userName);
+	Set<JurisdictionValues> getJurisdictionsForUser(Long userid, Date jurDate);
 
 	/**
 	 * deletes the user from the system.
@@ -121,14 +106,14 @@ public interface UserService {
 	 * deletes the user from the system.
 	 * @param usrID the usr id
 	 */
-	void removeUser(Integer usrID);
+	void removeUser(Long usrID);
 
 	/**
 	 * Gets the juridiction levels of the user.
 	 * @param userid The userid whose jurisdiction levels are needed
 	 * @return Set of the Jurisdiction Levels of this user
 	 */
-	Set<JurisdictionValues> getUserJurisdictions(Integer userid);
+	Set<JurisdictionValues> getUserJurisdictions(Long userid);
 
 	/**
 	 * Gets the all users for jurisdiction type.
@@ -180,7 +165,7 @@ public interface UserService {
 	 * @param userId the user id
 	 * @return the jurisdiction value by bndry id and user id
 	 */
-	JurisdictionValues getJurisdictionValueByBndryIdAndUserId(Integer bndryId, Integer userId);
+	JurisdictionValues getJurisdictionValueByBndryIdAndUserId(Integer bndryId, Long userId);
 
 	/**
 	 * Gets the jurisdiction by bndry type id and user id.
@@ -188,7 +173,7 @@ public interface UserService {
 	 * @param userId the user id
 	 * @return the jurisdiction by bndry type id and user id
 	 */
-	Jurisdiction getJurisdictionByBndryTypeIdAndUserId(Integer bndryTypeId, Integer userId);
+	Jurisdiction getJurisdictionByBndryTypeIdAndUserId(Integer bndryTypeId, Long userId);
 
 	/**
 	 * Gets the all users by role.

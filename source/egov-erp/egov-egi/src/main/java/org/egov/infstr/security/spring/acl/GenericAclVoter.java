@@ -186,7 +186,7 @@ public abstract class GenericAclVoter implements AccessDecisionVoter {
 	}
 
 	private List<Integer> getPosIdList() {
-		final List<Position> positions = getEisService().getPositionsForUser(Integer.valueOf(EGOVThreadLocals.getUserId()), new Date());
+		final List<Position> positions = getEisService().getPositionsForUser(Long.valueOf(EGOVThreadLocals.getUserId()), new Date());
 		final List<Integer> posIdList = new ArrayList<Integer>();
 		for (final Position position : positions) {
 			posIdList.add(position.getId());
@@ -196,7 +196,7 @@ public abstract class GenericAclVoter implements AccessDecisionVoter {
 
 	public boolean isWFHasAccess() {
 		if (this.domainObject instanceof StateAware) {
-			final List<Position> posList = this.eisService.getPositionsForUser(Integer.valueOf(EGOVThreadLocals.getUserId()), new Date());
+			final List<Position> posList = this.eisService.getPositionsForUser(Long.valueOf(EGOVThreadLocals.getUserId()), new Date());
 			State thisState = ((StateAware) this.domainObject).getState();
 
 			for (final Position currentUserPosition : posList) {

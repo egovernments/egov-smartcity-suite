@@ -187,7 +187,7 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 			{
 				for(Iterator iter = qry.list().iterator();iter.hasNext();)
 				{
-					Integer userId = (Integer)iter.next();
+				    Long userId = (Long)iter.next();
 					uerImpl = userService.getUserByID(userId);
 				}
 			}
@@ -305,10 +305,10 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 			List retList = qry.list();
 			if(retList!=null && !retList.isEmpty())
 			{
-				Integer userId = null;
+			    Long userId = null;
 				for(Iterator iter = retList.iterator();iter.hasNext();)
 				{
-					userId = (Integer)iter.next();
+					userId = (Long)iter.next();
 				}
 				if (userId != null)
 				{

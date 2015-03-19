@@ -33,8 +33,8 @@ public class BeforeUserJurisdictionAction extends Action {
 			String userIdStr = "";
 			if (req.getParameter("userid") != null) {
 				userIdStr = req.getParameter("userid");
-				final User user = this.userService.getUserByID(Integer.valueOf(userIdStr));
-				final Set jurObj1 = this.userService.getAllJurisdictionsForUser(Integer.valueOf(userIdStr));
+				final User user = this.userService.getUserByID(Long.valueOf(userIdStr));
+				final Set jurObj1 = this.userService.getAllJurisdictionsForUser(Long.valueOf(userIdStr));
 				if (jurObj1 != null) {
 					req.setAttribute("jurObj1", jurObj1);
 				}

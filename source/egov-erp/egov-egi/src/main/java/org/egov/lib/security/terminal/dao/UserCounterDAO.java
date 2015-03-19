@@ -19,7 +19,7 @@ public interface UserCounterDAO extends GenericDAO<UserCounterMap, Integer> {
 
 	List<UserCounterMap> getTerminalBasedUserCounterMapForCurrentDate(Integer locId);
 
-	boolean checkUserCounter(Integer userId, Date fromDate, Date toDate);
+	boolean checkUserCounter(Long userId, Date fromDate, Date toDate);
 
 	List<UserCounterMap> getUserCounterMapForLocationId(Integer Id);
 

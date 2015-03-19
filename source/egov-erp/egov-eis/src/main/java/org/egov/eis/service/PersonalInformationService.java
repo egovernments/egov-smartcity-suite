@@ -24,7 +24,7 @@ public class PersonalInformationService {
 		this.repository = repository;
 	}
 	
-	public PersonalInformation getEmployeeByUserId(Integer userId) {
+	public PersonalInformation getEmployeeByUserId(Long userId) {
 		return repository.getPersonalInformationByUserId(userId);
 	}
 	

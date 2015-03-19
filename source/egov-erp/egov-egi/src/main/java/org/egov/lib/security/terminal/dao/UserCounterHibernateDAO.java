@@ -159,7 +159,7 @@ public class UserCounterHibernateDAO extends GenericHibernateDAO<UserCounterMap,
 	 * result : if the given dates doesn't overlaps with the period in the database then it returns true else false.
 	 */
 	@Override
-	public boolean checkUserCounter(final Integer userId, final Date fromDate, final Date toDate) {
+	public boolean checkUserCounter(final Long userId, final Date fromDate, final Date toDate) {
 		boolean b = false;
 		// If there is no user, there is no check required
 		if (userId == null) {
@@ -176,7 +176,7 @@ public class UserCounterHibernateDAO extends GenericHibernateDAO<UserCounterMap,
 
 			}
 			final Query qry = HibernateUtil.getCurrentSession().createQuery(queryStr.toString());
-			qry.setInteger("userId", userId);
+			qry.setLong("userId", userId);
 
 			if (fromDate != null && toDate != null) {
 				qry.setDate("fromDate", new java.sql.Date(fromDate.getTime()));

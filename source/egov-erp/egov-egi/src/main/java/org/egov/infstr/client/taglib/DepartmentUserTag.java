@@ -175,7 +175,7 @@ public class DepartmentUserTag extends BodyTagSupport {
 		{
 			final User user = (User) userItr.next();
 			final String userName = user.getUserName();
-			final Integer userId = user.getId();
+			final Long userId = user.getId();
 			userMap.put(userName, userId);
 		}
 		// logger.info("userMap::"+userMap);

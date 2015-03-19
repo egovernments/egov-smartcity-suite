@@ -45,7 +45,7 @@ public class UserJurisdictionAction extends DispatchAction {
 			if (request.getParameter("userid") != null) {
 				userIdStr = request.getParameter("userid");
 			}
-			final User user = userService.getUserByID(new Integer(userIdStr));
+			final User user = userService.getUserByID(Long.valueOf(userIdStr));
 			final String id[] = userForm.getBndryID();
 			for (int i = 0; i < id.length; i++) {
 				final int bndryId = Integer.parseInt(id[i]);
@@ -132,10 +132,10 @@ public class UserJurisdictionAction extends DispatchAction {
 			String userIdStr = "";
 			if (request.getParameter("userid") != null) {
 				userIdStr = request.getParameter("userid");
-				final User user = userService.getUserByID(new Integer(userIdStr));
+				final User user = userService.getUserByID(Long.valueOf(userIdStr));
 				request.setAttribute("user", user);
 			}
-			final Set jurObj = userService.getAllJurisdictionsForUser(new Integer(userIdStr));
+			final Set jurObj = userService.getAllJurisdictionsForUser(Long.valueOf(userIdStr));
 			if (jurObj != null) {
 				request.setAttribute("jurObj", jurObj);
 			}

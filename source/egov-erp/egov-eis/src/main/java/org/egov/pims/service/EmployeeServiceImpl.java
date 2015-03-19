@@ -1374,7 +1374,7 @@ public class  EmployeeServiceImpl  implements EmployeeService{
 	List rejectedDisiplinaryApplications = new ArrayList();
 	List approvedDisiplinaryApplications = new ArrayList();
 
-	public  PersonalInformation getEmpForUserId(Integer userId)
+	public  PersonalInformation getEmpForUserId(Long userId)
 	{
 		return personalInformationDAO.getPersonalInformationByUserId(userId);
 	}
@@ -2353,7 +2353,7 @@ return list;
 			Query qry = getCurrentSession().createQuery(mainStr);
 			if(user != null )
 			{
-				qry.setInteger("userId", user.getId());
+				qry.setLong("userId", user.getId());
 			}
 			if(date!=null)
 			{

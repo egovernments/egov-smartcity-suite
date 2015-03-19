@@ -164,7 +164,7 @@ public class EmployeeMasterAction extends BaseFormAction
 	@SuppressWarnings("unchecked")
 	public String save()
 	{
-		user = eisUserMgr.getUserByID(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		user = eisUserMgr.getUserByID(Long.valueOf(EGOVThreadLocals.getUserId()));
 		
 		if(mode.equalsIgnoreCase("create"))
 		{

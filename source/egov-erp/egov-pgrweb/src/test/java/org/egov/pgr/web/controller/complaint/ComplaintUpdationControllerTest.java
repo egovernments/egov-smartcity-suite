@@ -128,7 +128,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
 		List<Role> roleList=new ArrayList<Role>();
 		roleList.add(r);
 		
-		when(roleDAO.getRolesByUser(Mockito.anyInt())).
+		when(roleDAO.getRolesByUser(Mockito.anyLong())).
 				thenReturn(roleList);  
 		csList.add(cs);
 		when(complaintStatusMappingService.getStatusByRoleAndCurrentStatus(roleList, cs)).thenReturn(csList);

@@ -17,7 +17,7 @@ public interface ModuleDao extends GenericDAO {
 
 	List<Module> getModuleInfoForRoleIds(Set<Role> roles);
 
-	List<Module> getApplicationModuleByParentId(Integer parentId, Integer userId);
+	List<Module> getApplicationModuleByParentId(Integer parentId, Long userId);
 
-	List<Module> getUserFavourites(Integer userId);
+	List<Module> getUserFavourites(Long userId);
 }

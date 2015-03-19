@@ -16,7 +16,7 @@ import org.egov.infstr.client.EgovActionForm;
 public class UserForm extends EgovActionForm implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private Integer id = null;
+	private Long id = null;
 	private String firstName = "";
 	private String middleName = "";
 	private String lastName = "";
@@ -506,14 +506,14 @@ public class UserForm extends EgovActionForm implements Serializable {
 	/**
 	 * @return Returns the id.
 	 */
-	public Integer getId() {
+	public Long getId() {
 		return this.id;
 	}
 
 	/**
 	 * @param id The id to set.
 	 */
-	public void setId(final Integer id) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 

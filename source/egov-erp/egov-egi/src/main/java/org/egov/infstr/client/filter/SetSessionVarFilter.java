@@ -98,7 +98,7 @@ public class SetSessionVarFilter implements Filter {
 				httpSession.setAttribute("locationId", credentials.get("locationId"));
 				httpSession.setAttribute("counterId", credentials.get("counterId"));
 				final User user = this.userService.getUserByUserName(prinName);
-				Integer userID = null;
+				Long userID = null;
 				if (user != null) {
 					userID = user.getId();
 					httpSession.setAttribute("com.egov.user.LoginUserId", userID);

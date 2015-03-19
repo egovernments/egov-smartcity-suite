@@ -19,6 +19,6 @@ public interface PersonalInformationRepository extends JpaRepository<PersonalInf
 	public PersonalInformation findByIdPersonalInformation(Integer idPersonalInformation);
 	
 	@Query("from PersonalInformation P where P.userMaster.id =:userId")
-	public PersonalInformation getPersonalInformationByUserId(@Param("userId")Integer userId);
+	public PersonalInformation getPersonalInformationByUserId(@Param("userId")Long userId);
 	
 }
