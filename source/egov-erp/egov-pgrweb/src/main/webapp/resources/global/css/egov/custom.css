@@ -912,7 +912,7 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 /* for mandatory * class indicator */
 .mandatory:before
 {
-	content:'*';
+	content:' *';
 	color:red;
 }
 
@@ -1573,4 +1573,10 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 	position:absolute;
 	top:15px;
 	right:15px;
+}
+.dynamic-span.capitalize > span > label{
+	text-transform: lowercase;
+}
+.dynamic-span.capitalize > span > label:first-letter{
+	text-transform: uppercase;
 }

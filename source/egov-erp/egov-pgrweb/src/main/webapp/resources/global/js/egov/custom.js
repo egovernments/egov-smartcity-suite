@@ -37,15 +37,19 @@ $(document).ready(function()
 	
 	$('.twitter-typeahead').css('display','block');
 	
-	$(":input").inputmask();
+	try { $(":input").inputmask(); }catch(e){}
 	
-    $(".datepicker").datepicker({
-        format: "dd/mm/yyyy"
-	});
+	try { 
+		$(".datepicker").datepicker({
+			format: "dd/mm/yyyy"
+		}); 
+		}catch(e){
+			console.warn("No Date Picker");
+		}
 	
 	
 	$(".form-horizontal").submit(function( event ) {
-	$('.loader-class').modal('show', {backdrop: 'static'});
+		$('.loader-class').modal('show', {backdrop: 'static'});
 	});
 	
 	

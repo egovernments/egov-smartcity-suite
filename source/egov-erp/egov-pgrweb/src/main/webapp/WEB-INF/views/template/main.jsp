@@ -15,9 +15,12 @@
 	
 	    <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css'/>">
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/header-custom.css'/>">
 		
 		<script src="<c:url value='/resources/global/js/jquery/jquery.js'/>"></script>
-			
+		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js'/>"></script>
+		<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js'/>"></script>
+		<script src="<c:url value='/resources/global/js/egov/custom.js'/>"></script>	
 	    <!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -28,7 +31,7 @@
 	
 	</head>
     <body class="page-body">
-        <div class="page-container horizontal-menu">
+        <div class="page-container">
             <tiles:insertAttribute name="header"/>
                 <div class="main-content">
                     <tiles:insertAttribute name="body"/>
@@ -57,8 +60,5 @@
 					</div>
 			</div>
 		</div>
-        <script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js'/>"></script>
-		<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js'/>"></script>
-		<script src="<c:url value='/resources/global/js/egov/custom.js'/>"></script>
     </body>
 </html>

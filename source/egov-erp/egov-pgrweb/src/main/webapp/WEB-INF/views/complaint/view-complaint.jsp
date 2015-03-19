@@ -72,7 +72,7 @@
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.expiration" /></div>
 					<div class="col-md-3 col-xs-6 add-margin" id="ct-exp">
 						In
-						<c:out value="${complaint.complaintType.daysToResolve}"></c:out>
+						<c:out value="${complaint.complaintType.hrsToResolve}"></c:out>
 						days
 					</div>
 				</div>

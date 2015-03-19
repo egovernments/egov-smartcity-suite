@@ -25,6 +25,7 @@
   	<mvc:view-controller path="/error/404" view-name="error/404"/>
   	<mvc:view-controller path="/error/401" view-name="error/401"/>
   	<mvc:view-controller path="/error/400" view-name="error/400"/>
+  	<mvc:view-controller path="/reg-success" view-name="reg-success"/>
   	
     <!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources/ directory -->
     <mvc:resources mapping="/resources/**" location="/resources/"/>
@@ -82,6 +83,7 @@
             <list>
                 <value>config/messages/labels</value>
                 <value>config/messages/errors</value>
+                <value>config/messages/message</value>
             </list>
         </property>
         <!-- Disabling caching since on development-->

@@ -16,7 +16,7 @@
 				</div> 
 				<div class="panel-body custom-form">
 					<div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintType"/><small><i class="entypo-star error-msg"></i></small></label>
+						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintType"/><span class="mandatory"></span></label>
 						<div class="col-sm-6">
 							<form:input path="complaintType.name" id="complaintTypeName" cssClass="form-control typeahead is_valid_alphabet" cssErrorClass="form-control error" placeholder="" autocomplete="off" required="required"/>
 							<form:hidden path="complaintType" id="complaintTypeId" value=""/>
@@ -30,7 +30,7 @@
 					</div>
 					
 					<div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.compDetails"/> <small><i class="entypo-star error-msg"></i></small></label>
+						<label class="col-sm-3 control-label"><spring:message code="lbl.compDetails"/> <span class="mandatory"></span></label>
 						<div class="col-sm-6">
 							<form:textarea path="details" id="doc" placeholder="" maxlength="500" cssClass="form-control autogrow" required="required"/>
 							<div class="text-right"><small id="rcc"><spring:message code="lbl.remainingChars"/> : 500</small></div>
@@ -65,7 +65,7 @@
 					</div>
 					
 					<div class="form-group optionalmandate">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintLoc"/><small><i class="entypo-star error-msg"></i></small></label>
+						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintLoc"/><span class="mandatory"></span></label>
 						<div class="col-sm-6">
 							<div class="input-group">
 								<input id="location" type="text" class="form-control low-width" placeholder="" autocomplete="off" required="required"/>
@@ -80,7 +80,7 @@
 					</div>
 					
 					<div class="form-group optionalmandate">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.landmark"/><small><i class="entypo-star error-msg"></i></small></label>
+						<label class="col-sm-3 control-label"><spring:message code="lbl.landmark"/><span class="mandatory"></span></label>
 						<div class="col-sm-6">
 							<form:textarea path="landmarkDetails" class="form-control" id="landmarkDetails" placeholder="" required="required" maxlength="200"/>
 							<form:errors path="landmarkDetails" cssClass="add-margin error-msg"/>
