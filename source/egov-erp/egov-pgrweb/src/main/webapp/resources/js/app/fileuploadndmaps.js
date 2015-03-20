@@ -242,30 +242,7 @@ $(document).ready(function(){
 		});
 	}
 	
-	function set_current_location(){
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(function (position) {
-				
-				var userLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-				//alert(userLatLng);
-				
-				marker = new google.maps.Marker({
-					position: userLatLng,
-					draggable:true,
-					map: map
-				});
-				
-				}, function error(err) {
-				console.log('error: ' + err.message);        
-			});
-			}else{
-			alert("Geolocation is not supported by this browser.");
-		}
-	};
-	
 	google.maps.event.addDomListener(window, 'load', initialize);
-	
-	//google.maps.event.addDomListener(window, 'load', set_current_location);
 	
 	google.maps.event.addDomListener(window, "resize", resizingMap());
 	
