@@ -44,16 +44,6 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-3 control-label"><spring:message code="lbl.complaintType.nod"/></label>
-
-                        <div class="col-sm-6 add-margin">
-                            <form:input path="daysToResolve" type="text" class="form-control is_valid_number" cssErrorClass="form-control error" id="comp_type_nod"
-                                        placeholder="" maxlength="2"/>
-                            <form:errors path="daysToResolve" cssClass="error-msg"/>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
                         <label class="col-sm-3 control-label"><spring:message code="lbl.complaintType.loc"/></label>
 
                         <div class="col-sm-6">

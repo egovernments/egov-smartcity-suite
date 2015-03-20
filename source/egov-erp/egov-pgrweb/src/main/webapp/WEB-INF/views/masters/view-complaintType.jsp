@@ -60,8 +60,6 @@
 					title="Department" />
 				<display:column property="locationRequired" class="panel panel-primary,panel-heading,panel-title"
 					title="Location Required" />
-				<display:column property="daysToResolve" class="panel panel-primary,panel-heading,panel-title"
-					title="Days to Resolve" />
 			</display:table>
 		</div>
 	</form:form>
