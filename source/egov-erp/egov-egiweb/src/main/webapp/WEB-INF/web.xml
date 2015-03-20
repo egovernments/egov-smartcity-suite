@@ -117,6 +117,7 @@
 		<url-pattern>*.jsp</url-pattern>
 		<url-pattern>*.action</url-pattern>
 		<url-pattern>/j_security_check</url-pattern>
+		<url-pattern>/controller/*</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>SetSessionVarFilter</filter-name>
