@@ -38,8 +38,6 @@ $(document).ready(function(){
 	function initialize() {
 		
 		marker=new google.maps.Marker({
-			draggable:true,
-			title:"Drag me!",
 			position:myCenter
 		});
 		
@@ -53,16 +51,7 @@ $(document).ready(function(){
 		geocoder = new google.maps.Geocoder();
 		map=new google.maps.Map(document.getElementById("normal"),mapProp);
 		
-		/* var GeoMarker = new GeolocationMarker(map); */
-		
 		marker.setMap(map);
-		
-		google.maps.event.addListener(marker, 'click', function() {
-			
-			infowindow.setContent(contentString);
-			infowindow.open(map, marker);
-			
-		});
 		
 		google.maps.event.addListener(marker, "dragend", function (e) {
 			var lat, lng, address;

@@ -623,7 +623,7 @@ table .replace-inputs input {
 	
 	.main-content.login-page
 	{
-		padding-top: 50px;
+		padding-top: 70px;
 	}
 	
 }
@@ -1193,7 +1193,7 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 .login-toggle
 {
 	background:#e6e6e6;
-	font-size: 16px;
+	font-size: 17px;
     /* overflow: auto; */
 	cursor:pointer;
 }
@@ -1345,7 +1345,7 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 }
 .padding-tb
 {
-	padding:15px 0px;
+	padding:10px 0px;
 }
 .container-msgs
 {
@@ -1475,7 +1475,7 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 .tabs {
 	position: relative;
 	overflow: hidden;
-	margin: 0 auto;
+	margin: 10px auto;
 	width: 100%;
 	font-weight: 300;
 	font-size: 1.25em;
@@ -1606,21 +1606,25 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 
 .style-color{
 	color:#6b4f2c;
-	font-size: 20px;
+	font-size: 16px;
 }
 
-.login-body .form-group .input-group .form-control.style-form {
+.login-body .form-group .input-group .form-control.style-form, .form-control.style-form {
 	border:0;
 	padding-left: 0;
 	font-size:15px;
 	border-bottom: 1px solid #D0D2D7;
 	outline: none;
 	box-shadow: none;
-	border-top-right-radius: 0px;
-	border-bottom-right-radius: 0px;
+	border-radius: 0px;
 }
 
 
-.login-body .form-group .input-group .form-control.style-form:focus{
+.login-body .form-group .input-group .form-control.style-form:focus, .form-control.style-form:focus{
 	border-bottom: 2px solid #2196f3;
+}
+
+
+.input-group .form-control:not(:first-child):not(:last-child) {
+  border-radius: 4px;
 }

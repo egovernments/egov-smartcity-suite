@@ -152,16 +152,20 @@ span.separator
 
 @media (max-width:485px)
 {
-	.nav-right-menu.home
-	{
-		top:20px;
-	}
 	
 	.navbar-header > a  span
 	{
-		font-size:12px;
+		font-size:15px;
 	}
 }
+
+/* @media (max-width:650px)
+{
+	.navbar-header > a span.title-homepage
+	{
+		display:none;
+	}
+} */
 
 /* header end */
 

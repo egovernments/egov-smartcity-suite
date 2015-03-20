@@ -95,7 +95,7 @@ $(document).ready(function(){
 						success : function(data){
 							$('#location').typeahead('val', data.results[0].formatted_address);
 							myCenter=new google.maps.LatLng(formatted_lat, formatted_long);
-							initialize();
+							setmarkerfromimage();
 						}
 					});
 					//console.log(EXIF.pretty(this));
@@ -155,23 +155,14 @@ $(document).ready(function(){
 	}
 	
 	
-	var map, geocoder, geolocate, marker;        
+	var map, geocoder, geolocate, marker, mapProp;        
 	myCenter=new google.maps.LatLng(13.081604, 80.275183);
 	
 	function initialize() {
 		
-		marker=new google.maps.Marker({
-			draggable:true,
-			title:"Drag me!",
-			position:myCenter
-		});
+		marker=new google.maps.Marker();
 		
-		var mapProp = {
-			center:myCenter,
-			mapTypeControl: true,
-			zoom:7,
-			mapTypeId:google.maps.MapTypeId.ROADMAP
-		};
+		mapprop();
 		
 		geocoder = new google.maps.Geocoder();
 		map=new google.maps.Map(document.getElementById("normal"),mapProp);
@@ -180,13 +171,61 @@ $(document).ready(function(){
 		
 		marker.setMap(map);
 		
-		google.maps.event.addListener(marker, 'click', function() {
-			
-			infowindow.setContent(contentString);
-			infowindow.open(map, marker);
-			
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(function (position) {
+				
+				var userLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+				//alert(userLatLng);
+				
+				marker = new google.maps.Marker({
+					position: userLatLng,
+					draggable:true,
+					map: map
+				});
+				
+				map.setCenter(userLatLng);
+				
+				dragendmarker();
+				
+				}, function error(err) {
+				console.log('error: ' + err.message);        
+			});
+		}
+		
+	};
+	
+	function setmarkerfromimage()
+	{
+		marker.setMap(null);
+
+		marker = new google.maps.Marker({
+			position: myCenter,
+			draggable:true,
+			map: map
 		});
 		
+		mapprop();
+		
+		geocoder = new google.maps.Geocoder();
+		
+		marker.setMap(map);
+		
+		dragendmarker();
+		
+	}
+	
+	function mapprop(){
+	
+		mapProp = {
+			center:myCenter,
+			mapTypeControl: true,
+			zoom:12,
+			mapTypeId:google.maps.MapTypeId.ROADMAP
+		};
+		
+	}
+	
+	function dragendmarker(){
 		google.maps.event.addListener(marker, "dragend", function (e) {
 			var lat, lng, address;
 			geocoder.geocode({ 'latLng': marker.getPosition() }, function (results, status) {
@@ -201,10 +240,32 @@ $(document).ready(function(){
 				}
 			});
 		});
-		
+	}
+	
+	function set_current_location(){
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(function (position) {
+				
+				var userLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+				//alert(userLatLng);
+				
+				marker = new google.maps.Marker({
+					position: userLatLng,
+					draggable:true,
+					map: map
+				});
+				
+				}, function error(err) {
+				console.log('error: ' + err.message);        
+			});
+			}else{
+			alert("Geolocation is not supported by this browser.");
+		}
 	};
 	
 	google.maps.event.addDomListener(window, 'load', initialize);
+	
+	//google.maps.event.addDomListener(window, 'load', set_current_location);
 	
 	google.maps.event.addDomListener(window, "resize", resizingMap());
 	
