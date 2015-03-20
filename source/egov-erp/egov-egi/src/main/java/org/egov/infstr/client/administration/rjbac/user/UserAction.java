@@ -61,24 +61,22 @@ public class UserAction extends EgovAction {
 			try {
 				final User user = new User();
 				
-				user.setFirstName(userForm.getFirstName());
+				user.setName(userForm.getFirstName());
 				user.setPassword(userForm.getPassword());
 				//user.setPwdReminder(userForm.getPwdReminder());
 				user.setUsername(userForm.getUserName());
 				user.setPwdExpiryDate(new Date());
-				if (isNotBlank(userForm.getMiddleName())) {
+				/*if (isNotBlank(userForm.getMiddleName())) {
 					user.setMiddleName(userForm.getMiddleName());
-				}
-				if (isNotBlank(userForm.getLastName())) {
+				}*/
+				/*if (isNotBlank(userForm.getLastName())) {
 					user.setLastName(userForm.getLastName());
-				}
+				}*/
 				if (isNotBlank(userForm.getSalutation())) {
 					user.setSalutation(userForm.getSalutation());
 				}					
 				
-				if (userForm.getIsActive() != null) {
-					user.setIsActive(userForm.getIsActive());
-				}
+					user.setActive(userForm.getIsActive());
 				if (isNotBlank(userForm.getDob())) {
 					user.setDob(DateUtils.getDate(userForm.getDob(), DateUtils.DFT_DATE_FORMAT));
 				}
@@ -137,11 +135,11 @@ public class UserAction extends EgovAction {
 			
 			try {
 				final User user = userService.getUserByUserName(userForm.getUserName());
-				if (isNotBlank(userForm.getMiddleName())) {
+				/*if (isNotBlank(userForm.getMiddleName())) {
 					user.setMiddleName(userForm.getMiddleName());
-				}
+				}*/
 				if (isNotBlank(userForm.getLastName())) {
-					user.setLastName(userForm.getLastName());
+					user.setName(userForm.getLastName());
 				}
 				if (isNotBlank(userForm.getSalutation())) {
 					user.setSalutation(userForm.getSalutation());
@@ -161,7 +159,7 @@ public class UserAction extends EgovAction {
 				
 				user.setPassword(userForm.getPassword());
 				//user.setPwdReminder(userForm.getPwdReminder());
-				user.setFirstName(userForm.getFirstName());
+				user.setName(userForm.getFirstName());
 				user.setUsername(userForm.getUserName());
 				
 				if (isNotBlank(userForm.getDob())) {
@@ -173,9 +171,7 @@ public class UserAction extends EgovAction {
 				if (isNotBlank(userForm.getToDate())) {
 					user.setToDate(DateUtils.getDate(userForm.getToDate(), DateUtils.DFT_DATE_FORMAT));
 				}*/
-				if (userForm.getIsActive() != null) {
-					user.setIsActive(userForm.getIsActive());
-				}
+				user.setActive(userForm.getIsActive());
 				final String userRoleId[] = userForm.getUserRoleId();
 				// if role not present, create a new UserRole
 				// create set of newly updated UserRoles and setUserRoles for User.

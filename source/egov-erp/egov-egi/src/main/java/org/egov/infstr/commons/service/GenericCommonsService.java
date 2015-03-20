@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.commons.Module;
-import org.egov.lib.address.model.AddressTypeMaster;
 
 public interface GenericCommonsService {
 	/**
@@ -63,10 +62,5 @@ public interface GenericCommonsService {
 
 	public List<Module> getAllModules();
 
-	/**
-	 * Returns the Owner Id if found, otherwise throws an exception
-	 * @param string
-	 * @return AddressTypeMaster
-	 */
-	public AddressTypeMaster getAddressType(String addrTypeName);
+	
 }

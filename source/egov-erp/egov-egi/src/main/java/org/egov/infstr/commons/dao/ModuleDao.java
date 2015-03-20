@@ -8,9 +8,9 @@ package org.egov.infstr.commons.dao;
 import java.util.List;
 import java.util.Set;
 
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.dao.GenericDAO;
-import org.egov.lib.rjbac.role.Role;
 
 public interface ModuleDao extends GenericDAO {
 	Module getModuleByName(String moduleName);

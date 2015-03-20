@@ -41,7 +41,7 @@ public class UserForm extends EgovActionForm implements Serializable {
 	private Integer userDetail = null;
 	private String fromDate1[] = null;
 	private String toDate1[] = null;
-	private Integer isActive = null;
+	private boolean isActive;
 	private String modifyRole[] = null;
 	private String selCheck[] = null;
 	private String selRoleID[] = null;
@@ -405,14 +405,14 @@ public class UserForm extends EgovActionForm implements Serializable {
 	/**
 	 * @return Returns the isActive.
 	 */
-	public Integer getIsActive() {
+	public boolean getIsActive() {
 		return this.isActive;
 	}
 
 	/**
 	 * @param isActive The isActive to set.
 	 */
-	public void setIsActive(final Integer isActive) {
+	public void setIsActive(final boolean isActive) {
 		this.isActive = isActive;
 	}
 

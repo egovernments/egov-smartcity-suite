@@ -47,7 +47,6 @@ import org.egov.infstr.ValidationException;
 import org.egov.infstr.commonMasters.EgUom;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.utils.FinancialYear;
-import org.egov.lib.citizen.model.Owner;
 
 public interface CommonsService {
 	/**
@@ -150,14 +149,7 @@ public interface CommonsService {
 	// To get Height of Map
 	public Map<Integer,Integer> getHeight(Integer bndryID);
 
-	/**
-	 * Returns the Owner Id if found, otherwise throws an exception
-	 * @param ownerID
-	 * @return Owner object
-	 * @throws EGOVRuntimeException, if no Owner found by that ID
-	 * @see Owner.java
-	 */
-	public Owner getOwnerByID(Integer ownerID);
+	
 
 	/**
 	 * used in Inventory,Wardworks Returns the Fund if Id found ,otherwise throws an exception

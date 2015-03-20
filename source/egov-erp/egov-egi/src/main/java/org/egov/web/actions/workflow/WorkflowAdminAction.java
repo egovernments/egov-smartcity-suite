@@ -119,7 +119,7 @@ public class WorkflowAdminAction extends ActionSupport {
 		} else {
 			final StringBuilder userStr = new StringBuilder("[");
 			for (final User user : users) {
-				userStr.append("{name : '").append(user.getUsername()).append(" / ").append(user.getFirstName()).append("',id:").append(user.getId()).append("},");
+				userStr.append("{name : '").append(user.getUsername()).append(" / ").append(user.getName()).append("',id:").append(user.getId()).append("},");
 			}
 			userStr.deleteCharAt(userStr.length() - 1);
 			userStr.append("]");
@@ -148,7 +148,7 @@ public class WorkflowAdminAction extends ActionSupport {
 		final List<User> users = this.workflowAdmin.getAllUserByUserName(this.query);
 		final StringBuilder userAndPos = new StringBuilder(EMPTY);
 		for (final User user : users) {
-			userAndPos.append(user.getUsername()).append(SLASH_DELIMIT).append(user.getFirstName()).append(" - ").append(user.getId()).append("\n");
+			userAndPos.append(user.getUsername()).append(SLASH_DELIMIT).append(user.getName()).append(" - ").append(user.getId()).append("\n");
 		}
 		ServletActionContext.getResponse().getWriter().write(userAndPos.toString());
 	}

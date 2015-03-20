@@ -86,7 +86,7 @@ public class UserValidateAction extends DispatchAction {
 				req.getSession().setAttribute("com.egov.user.LoginUserName", username);
 				User user = userService.getUserByUserName(username);
 				req.getSession().setAttribute("com.egov.user.LoginUserId", user.getId());
-				req.getSession().setAttribute("org.egov.user.UserFirstName",user.getFirstName());
+				req.getSession().setAttribute("org.egov.user.UserFirstName",user.getName());
 			} else {
 				target = "failure";
 			}

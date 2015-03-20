@@ -39,9 +39,6 @@ import org.egov.infstr.commonMasters.EgUom;
 import org.egov.infstr.commonMasters.EgUomcategory;
 import org.egov.infstr.commonMasters.dao.EgUomHibernateDAO;
 import org.egov.infstr.commonMasters.dao.EgUomcategoryHibernateDAO;
-import org.egov.lib.citizen.dao.OwnerDAO;
-import org.egov.lib.citizen.dao.OwnerHibernateDAO;
-import org.egov.lib.citizen.model.Owner;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
@@ -60,11 +57,6 @@ public class CommonsDAOFactory {
     public InstallmentDao getInstallmentDao() {
         return new InstallmentHibDao(Installment.class, getCurrentSession());
     }
-
-    public OwnerDAO getOwnerDao() {
-        return new OwnerHibernateDAO(Owner.class, getCurrentSession());
-    }
-
 
     public ObjectHistoryDAO getObjectHistoryDAO() {
         return new ObjectHistoryHibernateDAO(ObjectHistory.class, getCurrentSession());

@@ -165,8 +165,7 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
         senderName
                 .append(position == null ? UNKNOWN : position.getName())
                 .append(SLASH_DELIMIT)
-                .append(user == null ? UNKNOWN : user.getFirstName() + " "
-                        + (user.getLastName() == null ? EMPTY : user.getLastName()));
+                .append(user == null ? UNKNOWN : user.getName());
         return senderName.toString();
     }
 

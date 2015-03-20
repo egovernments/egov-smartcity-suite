@@ -68,7 +68,7 @@ public abstract class AbstractSecurityProcessAdaptor implements SecurityProcessA
 		User user = null;
 		if (userName != null && userPwd != null) {
 			user = this.userService.getUserByUserName(userName);
-			if (user == null || !userPwd.equals(CryptoHelper.decrypt(user.getPassword())) || user.getIsActive().equals(0) ) {
+			if (user == null || !userPwd.equals(CryptoHelper.decrypt(user.getPassword())) || !user.isActive() ) {
 				user = null;
 			} else {
 				EGOVThreadLocals.setUserId(String.valueOf(user.getId()));

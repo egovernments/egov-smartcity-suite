@@ -196,7 +196,7 @@ public class HomepageAction extends BaseFormAction {
 			if (user == null) {
 				throw new EGOVRuntimeException("User does not found");
 			}
-			final String userName = user.getFirstName() == null ? "Anonymous" : user.getFirstName();
+			final String userName = user.getName() == null ? "Anonymous" : user.getName();
 
 			final List<Module> moduleBeanList = this.moduleDAO.getModuleInfoForRoleIds(user.getRoles());
 			final List<Module> selfServiceList = this.getEmployeeSelfService(moduleBeanList);

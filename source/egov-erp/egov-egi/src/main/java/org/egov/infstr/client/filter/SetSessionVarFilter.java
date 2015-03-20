@@ -102,7 +102,7 @@ public class SetSessionVarFilter implements Filter {
 				if (user != null) {
 					userID = user.getId();
 					httpSession.setAttribute("com.egov.user.LoginUserId", userID);
-					httpSession.setAttribute("com.egov.user.LoginUserName",user.getFirstName());
+					httpSession.setAttribute("com.egov.user.LoginUserName",user.getName());
 				}
 			}
 			if (httpSession.getAttribute("com.egov.user.LoginUserId") != null) {

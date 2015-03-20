@@ -8,8 +8,8 @@ package org.egov.infstr.security.spring;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.lib.rjbac.role.Role;
 import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -38,13 +38,13 @@ public class UserDetailsImpl implements UserDetailsService {
 		}
 		final List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
 		for (final Role role : usr.getRoles()) {
-			grantedAuthorities.add(new SimpleGrantedAuthority(role.getRoleName()));
+			grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
 
 		}
-		final UserDetails userDetails = new org.springframework.security.core.userdetails.User(usr.getUsername(), usr.getPassword(), usr.getIsActive().equals(1), // enabled
-		                usr.getIsActive().equals(1), // accountNonExpired
-				usr.getIsActive().equals(1), // credentialsNonExpired
-				usr.getIsActive().equals(1), // accountNonLocked
+		final UserDetails userDetails = new org.springframework.security.core.userdetails.User(usr.getUsername(), usr.getPassword(), usr.isActive(), // enabled
+		                usr.isActive(), // accountNonExpired
+				usr.isActive(), // credentialsNonExpired
+				usr.isActive(), // accountNonLocked
 				grantedAuthorities);
 
 		return userDetails;

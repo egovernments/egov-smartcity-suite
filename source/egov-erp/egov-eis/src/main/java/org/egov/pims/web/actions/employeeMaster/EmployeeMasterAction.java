@@ -413,15 +413,15 @@ public class EmployeeMasterAction extends BaseFormAction
 					user.setPassword(employee.getEmployeeFirstName()+"_"+employee.getCode());//usermanager.createUser will take plain pwd and encrypt it and set the encrypted value back
 					//user.setIsSuspended('N');
 					user.setPwdExpiryDate(new Date());
-					user.setFirstName(employee.getEmployeeFirstName());
-					user.setIsActive(employee.getUserMaster().getIsActive());
+					user.setName(employee.getEmployeeFirstName());
+					user.setActive(employee.getUserMaster().isActive());
 					
 					eisUserMgr.createUser(user);
 					employee.setUserMaster(user);
 				}	
 				else
 				{
-					existingUser.setIsActive(employee.getUserMaster().getIsActive());
+					existingUser.setActive(employee.getUserMaster().isActive());
 					employee.setUserMaster(existingUser);
 				}
 			}

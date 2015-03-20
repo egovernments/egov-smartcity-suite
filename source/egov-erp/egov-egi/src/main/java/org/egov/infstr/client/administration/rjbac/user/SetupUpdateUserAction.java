@@ -55,13 +55,13 @@ public class SetupUpdateUserAction extends EgovAction {
 			final String username = userForm.getUserName();
 			usr = this.userService.getUserByUserName(username);
 			userForm.setId(usr.getId());
-			userForm.setFirstName(usr.getFirstName());
-			if (usr.getMiddleName() != "") {
+			userForm.setFirstName(usr.getName());
+			/*if (usr.getMiddleName() != "") {
 				userForm.setMiddleName(usr.getMiddleName());
 			}
 			if (usr.getLastName() != "") {
 				userForm.setLastName(usr.getLastName());
-			}
+			}*/
 			if (usr.getSalutation() != "") {
 				userForm.setSalutation(usr.getSalutation());
 			}
@@ -83,7 +83,7 @@ public class SetupUpdateUserAction extends EgovAction {
 				final String Dob = formatter1.format(formatter.parse(dob1));
 				userForm.setDob(Dob);
 			}
-			final int isactive = usr.getIsActive();
+			final boolean isactive = usr.isActive();
 			req.getSession().setAttribute("isactive", isactive);
 			final Set roleObj1 = this.userService.getAllRolesForUser(username);
 			if (roleObj1 != null && !roleObj1.isEmpty()) {

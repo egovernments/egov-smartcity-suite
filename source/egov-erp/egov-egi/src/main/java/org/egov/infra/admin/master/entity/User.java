@@ -1,102 +1,102 @@
 package org.egov.infra.admin.master.entity;
 
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.user.dao.UserDAO;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
+import org.egov.infra.admin.master.entity.enums.Gender;
+import org.egov.infra.admin.master.entity.enums.UserType;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.validation.regex.Constants;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.SafeHtml;
+import org.joda.time.DateTime;
+
+@Entity
+@Table(name = "eg_user")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 1)
 public class User extends AbstractAuditable<User, Long> {
 
-    private static final long serialVersionUID = 2870751695666860068L;
+    private static final long serialVersionUID = -2415368058955783970L;
     
+    @NotNull
+    @Column(name="username",unique=true)
     private String username;
-    private String password;
-    private String salutation;
-    private String firstName;
-    private String middleName;
-    private String lastName;
-    private Set<org.egov.lib.rjbac.role.Role> roles = new HashSet<org.egov.lib.rjbac.role.Role>();
     
-    private Integer isActive;
+    @NotNull
+    private String password;
+    
+    private String salutation;
+    
+    @NotNull
+    @SafeHtml
+    private String name;
+    
+    @Enumerated(EnumType.ORDINAL)
+    private Gender gender;
+    
+    @Pattern(regexp = Constants.MOBILE_NUM)
+    @SafeHtml
+    private String mobileNumber;
+    
+    @Email(regexp=Constants.EMAIL)
+    @SafeHtml
+    private String emailId;
+    
+    @SafeHtml
+    private String altContactNumber;
+    
+    @SafeHtml
+    private String pan;
+    
+    @SafeHtml
+    private String aadhaarNumber;
+    
+    @OneToMany(mappedBy="user",cascade=CascadeType.ALL,fetch=FetchType.LAZY)
+    private List<Address> address;
+    
+    private boolean isActive;
+    
+    @OneToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
+    @JoinTable(name = "eg_userrole", 
+            joinColumns = @JoinColumn(name = "user", updatable = false), 
+            inverseJoinColumns = @JoinColumn(name = "role", updatable = false))
+    private Set<Role> roles = Collections.emptySet();
+    
+    @Temporal(TemporalType.DATE)
     private Date dob;
+    
+    @NotNull
     private Date pwdExpiryDate;
-
-   
-
-    public Date getPwdExpiryDate() {
-        return pwdExpiryDate;
-    }
-
-    public void setPwdExpiryDate(final Date pwdExpiryDate) {
-        this.pwdExpiryDate = pwdExpiryDate;
-    }
-
-     public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(final String password) {
-        this.password = password;
-    }
-
-    public Set<Role> getRoles() {
-        final Date currDate = new Date();
-        return getValidRolesOnDate(currDate);
-    }
-
-    public Set<Role> getValidRolesOnDate(final Date onDate) {
-        return new UserDAO().getValidRoles(getId(), onDate);
-    }
-
-    public void setRoles(final Set roles) {
-        this.roles = roles;
-    }
-     public void addRole(final Role role) {
-        roles.add(role);
-    }
-
-    public String getSalutation() {
-        return salutation;
-    }
-
-     public void setSalutation(final String salutation) {
-        this.salutation = salutation;
-    }
-   
-     public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(final String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-     public void setLastName(final String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(final String middleName) {
-        this.middleName = middleName;
-    }
-
-    public Integer getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(final Integer isActive) {
-        this.isActive = isActive;
-    }
+    
+    @NotNull
+    private String locale;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", insertable = false, updatable = false)
+    private UserType type;
 
     public String getUsername() {
         return username;
@@ -106,9 +106,100 @@ public class User extends AbstractAuditable<User, Long> {
         this.username = username;
     }
 
-    public void removeRole(final Role role) {
-        if (roles.contains(role))
-            roles.remove(role);
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(final String password) {
+        this.password = password;
+    }
+
+    public String getSalutation() {
+        return salutation;
+    }
+
+    public void setSalutation(final String salutation) {
+        this.salutation = salutation;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(final Gender gender) {
+        this.gender = gender;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(final String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
+    public String getEmailId() {
+        return emailId;
+    }
+
+    public void setEmailId(final String emailId) {
+        this.emailId = emailId;
+    }
+
+    public String getAltContactNumber() {
+        return altContactNumber;
+    }
+
+    public void setAltContactNumber(final String altContactNumber) {
+        this.altContactNumber = altContactNumber;
+    }
+
+    public String getPan() {
+        return pan;
+    }
+
+    public void setPan(final String pan) {
+        this.pan = pan;
+    }
+
+    public String getAadhaarNumber() {
+        return aadhaarNumber;
+    }
+
+    public void setAadhaarNumber(final String aadhaarNumber) {
+        this.aadhaarNumber = aadhaarNumber;
+    }
+
+    public List<Address> getAddress() {
+        return address;
+    }
+
+    public void setAddress(final List<Address> address) {
+        this.address = address;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(final boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(final Set<Role> roles) {
+        this.roles = roles;
     }
 
     public Date getDob() {
@@ -118,4 +209,25 @@ public class User extends AbstractAuditable<User, Long> {
     public void setDob(final Date dob) {
         this.dob = dob;
     }
+
+    public DateTime getPwdExpiryDate() {
+        return null == pwdExpiryDate ? null : new DateTime(pwdExpiryDate);
+    }
+
+    public void setPwdExpiryDate(final Date pwdExpiryDate) {
+        this.pwdExpiryDate = pwdExpiryDate;
+    }
+
+    public Locale getLocale() {
+        return new Locale(locale);
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
+
+    public UserType getType() {
+        return type;
+    }
+
 }

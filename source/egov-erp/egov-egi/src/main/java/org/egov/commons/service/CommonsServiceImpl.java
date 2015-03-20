@@ -5,6 +5,21 @@
  */
 package org.egov.commons.service;
 
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bank;
@@ -47,27 +62,11 @@ import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.FinancialYear;
-import org.egov.lib.citizen.model.Owner;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class CommonsServiceImpl implements CommonsService {
 
@@ -222,16 +221,6 @@ public class CommonsServiceImpl implements CommonsService {
 			retMap.put(bndryID, Integer.valueOf(heights[0].toString()));
 		}
 		return retMap;
-	}
-
-	@Override
-	public Owner getOwnerByID(final Integer ownerID) {
-		try {
-			return (Owner) commonsDAOFactory.getOwnerDao().findById(ownerID, false);
-		} catch (final Exception e) {
-			LOG.error(e.getMessage());
-			throw new EGOVRuntimeException("Exception in searching Owner.", e);
-		}
 	}
 
 	@Override

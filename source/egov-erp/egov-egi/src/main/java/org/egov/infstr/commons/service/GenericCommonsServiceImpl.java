@@ -5,13 +5,11 @@
  */
 package org.egov.infstr.commons.service;
 
+import java.util.List;
+
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.lib.address.dao.AddressTypeDAO;
-import org.egov.lib.address.model.AddressTypeMaster;
-
-import java.util.List;
 
 public class GenericCommonsServiceImpl implements GenericCommonsService {
 
@@ -76,15 +74,5 @@ public class GenericCommonsServiceImpl implements GenericCommonsService {
 
 	}
 
-	@Override
-	public AddressTypeMaster getAddressType(final String addrTypeName) {
-		try {
-			final AddressTypeDAO addTypDao = genericHibernateDaoFactory.getAddressTypeDao();
-
-			return addTypDao.getAddressType(addrTypeName);
-		} catch (final Exception e) {
-			throw new EGOVRuntimeException("Exception in searching Transaction by voucher number." + e.getMessage(), e);
-		}
-
-	}
+	
 }

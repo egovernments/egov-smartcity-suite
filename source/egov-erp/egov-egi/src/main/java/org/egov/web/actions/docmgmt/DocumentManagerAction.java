@@ -328,9 +328,9 @@ public class DocumentManagerAction extends BaseFormAction {
 		final User modifiedUser = this.userPersistenceService.findById(srcFile.getModifiedBy(), false);
 		final String lineBreak = "<br/>";
 		fileInf.append("<b>File Name : </b>").append(srcFile.getFileName()).append(lineBreak);
-		fileInf.append("<b>Created By : </b>").append(createdUser.getFirstName()).append(" ").append(createdUser.getLastName() == null ? "" : createdUser.getLastName()).append("<br/>");
+		fileInf.append("<b>Created By : </b>").append(createdUser.getName()).append("<br/>");
 		fileInf.append("<b>Created Date : </b>").append(srcFile.getCreatedDate()).append(lineBreak);
-		fileInf.append("<b>Modified By : </b>").append(modifiedUser.getFirstName()).append(" ").append(modifiedUser.getLastName() == null ? "" : modifiedUser.getLastName()).append("<br/>");
+		fileInf.append("<b>Modified By : </b>").append(modifiedUser.getName()).append("<br/>");
 		fileInf.append("<b>Modified Date : </b>").append(srcFile.getModifiedDate()).append(lineBreak).append(lineBreak);
 		fileInf.append("<b>File Remarks : </b>").append(lineBreak).append(srcFile.getRemarks());
 		return fileInf.toString();

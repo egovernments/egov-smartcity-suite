@@ -9,7 +9,7 @@
 		String username = SecurityUtils.checkSQLInjection(request.getParameter("username"));
 		StringBuilder rsltQ = new StringBuilder("{'isLocation':");
 		if (username != null && !username.trim().equals("")) {
-			Query query = HibernateUtil.getCurrentSession().createSQLQuery("SELECT r.name FROM eg_role r, eg_user u, eg_userrole ur WHERE u.id_user = ur.id_user and r.id = ur.id_role and u.isactive=1 and u.is_suspended='N' and u.todate >= current_date and ur.is_history='N' and ur.todate >= current_date and u.user_name = :userName");
+			Query query = HibernateUtil.getCurrentSession().createSQLQuery("SELECT r.name FROM eg_role r, eg_user u, eg_userrole ur WHERE u.id = ur.user and r.id = ur.role and u.isactive=true and u.username = :userName");
 			query.setString("userName", username);
 			List<Object> userRoles = query.list();
 			boolean locationbased = false;
@@ -28,7 +28,7 @@
 				}
 
 				rsltQ.append(locationbased);
-				query = HibernateUtil.getCurrentSession().createSQLQuery("SELECT ucm.counterid, l.LOCATIONID,l.name  FROM eg_user u, eg_usercounter_map ucm, eg_location l WHERE ucm.userid = u.id_user and ucm.counterid = l.id  and u.user_name = :userName");
+				query = HibernateUtil.getCurrentSession().createSQLQuery("SELECT ucm.counterid, l.LOCATIONID,l.name  FROM eg_user u, eg_usercounter_map ucm, eg_location l WHERE ucm.userid = u.id and ucm.counterid = l.id  and u.username = :userName");
 				query.setString("userName", username);
 				List<Object[]> result = query.list();
 				if (result != null && !result.isEmpty()) {

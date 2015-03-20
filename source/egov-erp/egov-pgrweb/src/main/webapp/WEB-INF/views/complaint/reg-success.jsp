@@ -28,7 +28,7 @@
 							${complaint.complainant.name}
 							</c:when>
 							<c:otherwise>
-							${complaint.complainant.userDetail.firstName}
+							${complaint.complainant.userDetail.name}
 							</c:otherwise>
 						</c:choose>
 						
