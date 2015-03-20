@@ -114,6 +114,7 @@
 							<!-- panel body -->
 							<div class="panel-body no-padding">
 								<script type="text/javascript" src="//maps.google.com/maps/api/js?sensor=true"></script>
+								<script type="text/javascript" src="<c:url value='/resources/global/js/geolocation/geolocationmarker-compiled.js'/>"></script>
 								<div id="normal" class="img-prop"></div>
 							</div>
 						</div>
