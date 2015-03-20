@@ -62,6 +62,7 @@ public class Response {
      */
     public void setCallback(final CallBackType value) {
         this.callback = value;
+    }
    
 
     /**
