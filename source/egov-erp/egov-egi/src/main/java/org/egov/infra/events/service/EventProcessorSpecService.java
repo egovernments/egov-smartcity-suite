@@ -8,11 +8,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class EventProcessorSpecService {
 
-	private @Autowired EventProcessorSpecRepository eventProcessorSpecRepository;
+    @Autowired
+    private EventProcessorSpecRepository eventProcessorSpecRepository;
 
-	public EventProcessorSpec getEventProcessingSpecByModAndCode(
-			final String module, final String eventCode) {
-		return eventProcessorSpecRepository.findByModuleAndEventCode(module,
-				eventCode);
-	}
+    public EventProcessorSpec getEventProcessingSpecByModAndCode(final String module, final String eventCode) {
+        return eventProcessorSpecRepository.findByModuleAndEventCode(module, eventCode);
+    }
 }

@@ -15,35 +15,33 @@ import org.springframework.stereotype.Component;
 /**
  * Message driven pojo that receives an Event object from the queue Delegates
  * processing to EventProcessor.
- * 
+ *
  * @author sunil
  */
 
 @Component
 public class EventListener implements MessageListener {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(EventListener.class);
-	protected @Autowired EventProcessor eventProcessor;
+    private static final Logger LOG = LoggerFactory.getLogger(EventListener.class);
 
-	@Override
-	public void onMessage(final Message message) {
-		final ObjectMessage obj = (ObjectMessage) message;
-		Event event = null;
-		try {
-			event = (Event) obj.getObject();
-			this.eventProcessor.process(event);
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Event Received" + event);
-			}
-		} catch (final JMSException e) {
-			//TODO - log the error
-			throw new EGOVRuntimeException(
-					"Exception in EventListener message ::::", e);
-		} catch (final Exception e) {
-			//TODO - log the error
-			throw new EGOVRuntimeException(
-					"Exception Occurred in EventListener" + e);
-		}
-	}
+    @Autowired
+    protected EventProcessor eventProcessor;
+
+    @Override
+    public void onMessage(final Message message) {
+        final ObjectMessage obj = (ObjectMessage) message;
+        Event event = null;
+        try {
+            event = (Event) obj.getObject();
+            eventProcessor.process(event);
+            if (LOG.isDebugEnabled())
+                LOG.debug("Event Received" + event);
+        } catch (final JMSException e) {
+            LOG.error("Exception in EventListener ===> " + e.getMessage());
+            throw new EGOVRuntimeException("Exception in EventListener message ::::", e);
+        } catch (final Exception e) {
+            LOG.error("Exception Occurred in EventListener ===> " + e.getMessage());
+            throw new EGOVRuntimeException("Exception Occurred in EventListener" + e);
+        }
+    }
 }

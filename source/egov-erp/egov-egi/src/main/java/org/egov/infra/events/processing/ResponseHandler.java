@@ -5,5 +5,5 @@ import org.springframework.stereotype.Component;
 
 @Component
 public interface ResponseHandler {
-	public void respond(Response r);
+    public void respond(Response r);
 }

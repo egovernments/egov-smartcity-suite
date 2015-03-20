@@ -2,71 +2,58 @@ package org.egov.infra.events.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.NamedQuery;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.egov.infra.persistence.entity.AbstractPersistable;
 
 @Entity
 @Table(name = "eg_event_processor_spec")
 @NamedQuery(name = "event_specByModuleAndCode", query = "select EP from EventProcessorSpec EP where EP.module=:module and EP.eventCode=:eventCode")
-public class EventProcessorSpec {
+public class EventProcessorSpec extends AbstractPersistable<Long> {
 
-	//TODO - declare id as persistable
-	private Integer id;
-	private String module;
-	private String eventCode;
-	private String responseTemplate;
+    private static final long serialVersionUID = 5661966690272607421L;
 
-	//TODO - Move annotations to the member variable instead of setter
-	@SequenceGenerator(name = "Event_Gen", sequenceName = "eg_event_processor_spec_seq", allocationSize = 1)
-	@GeneratedValue(generator = "Event_Gen", strategy = GenerationType.SEQUENCE)
-	@Id
-	public Integer getId() {
-		return this.id;
-	}
+    @Column(name = "module")
+    private String module;
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    @Column(name = "event_code")
+    private String eventCode;
 
-	@Column(name = "module")
-	public String getModule() {
-		return this.module;
-	}
+    @Column(name = "response_template")
+    private String responseTemplate;
 
-	public void setModule(String module) {
-		this.module = module;
-	}
+    public String getModule() {
+        return module;
+    }
 
-	@Column(name = "event_code")
-	public String getEventCode() {
-		return this.eventCode;
-	}
+    public void setModule(final String module) {
+        this.module = module;
+    }
 
-	public void setEventCode(String eventCode) {
-		this.eventCode = eventCode;
-	}
+    public String getEventCode() {
+        return eventCode;
+    }
 
-	@Column(name = "response_template")
-	public String getResponseTemplate() {
-		return this.responseTemplate;
-	}
+    public void setEventCode(final String eventCode) {
+        this.eventCode = eventCode;
+    }
 
-	public void setResponseTemplate(String responseTemplate) {
-		this.responseTemplate = responseTemplate;
-	}
+    public String getResponseTemplate() {
+        return responseTemplate;
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("EventProcessorSpec [id=").append(id)
-				.append(", module=").append(module).append(", eventCode=")
-				.append(eventCode).append(", responseTemplate=")
-				.append(responseTemplate).append("]");
-		return builder.toString();
-	}
+    public void setResponseTemplate(final String responseTemplate) {
+        this.responseTemplate = responseTemplate;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append("EventProcessorSpec [id=").append(getId()).append(", module=").append(module)
+        .append(", eventCode=").append(eventCode).append(", responseTemplate=").append(responseTemplate)
+        .append("]");
+        return builder.toString();
+    }
 
 }

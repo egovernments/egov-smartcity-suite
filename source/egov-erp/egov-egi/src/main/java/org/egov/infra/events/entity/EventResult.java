@@ -4,101 +4,90 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.egov.infra.persistence.entity.AbstractPersistable;
 
 @Entity
 @Table(name = "eg_event_result")
-public class EventResult {
-	
-	//TODO - declare id as persistable
-	private Integer id;
-	private String module;
-	private String eventCode;
-	private Date dateRaised;
-	private String result;
-	private Date timeOfProcessing;
-	private String details;
-	
-	//TODO - Move annotations to the member variable instead of setter
-	@SequenceGenerator(name = "Event_Result", sequenceName = "eg_event_result_seq", allocationSize = 1)
-	@GeneratedValue(generator = "Event_Result", strategy = GenerationType.SEQUENCE)
-	@Id
-	public Integer getId() {
-		return this.id;
-	}
+public class EventResult extends AbstractPersistable<Long> {
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    private static final long serialVersionUID = 5662966690272607421L;
 
-	@Column(name = "module")
-	public String getModule() {
-		return this.module;
-	}
+    @Column(name = "module")
+    private String module;
 
-	public void setModule(String module) {
-		this.module = module;
-	}
+    @Column(name = "event_code")
+    private String eventCode;
 
-	@Column(name = "event_code")
-	public String getEventCode() {
-		return this.eventCode;
-	}
+    @Column(name = "date_raised")
+    private Date dateRaised;
 
-	public void setEventCode(String eventCode) {
-		this.eventCode = eventCode;
-	}
+    @Column(name = "result")
+    private String result;
 
-	@Column(name = "date_raised")
-	public Date getDateRaised() {
-		return dateRaised;
-	}
+    @Column(name = "timeofprocessing")
+    private Date timeOfProcessing;
 
-	public void setDateRaised(Date dateRaised) {
-		this.dateRaised = dateRaised;
-	}
+    @Column(name = "details")
+    private String details;
 
-	@Column(name = "result")
-	public String getResult() {
-		return this.result;
-	}
+    public String getModule() {
+        return module;
+    }
 
-	public void setResult(String result) {
-		this.result = result;
-	}
+    public void setModule(final String module) {
+        this.module = module;
+    }
 
-	@Column(name = "timeofprocessing")
-	public Date getTimeOfProcessing() {
-		return this.timeOfProcessing;
-	}
+    public String getEventCode() {
+        return eventCode;
+    }
 
-	public void setTimeOfProcessing(Date timeOfProcessing) {
-		this.timeOfProcessing = timeOfProcessing;
-	}
+    public void setEventCode(final String eventCode) {
+        this.eventCode = eventCode;
+    }
 
-	@Column(name = "details")
-	public String getDetails() {
-		return this.details;
-	}
+    public Date getDateRaised() {
+        return dateRaised;
+    }
 
-	public void setDetails(String details) {
-		this.details = details;
-	}
+    public void setDateRaised(final Date dateRaised) {
+        this.dateRaised = dateRaised;
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("EventResult [id=").append(id).append(", module=")
-				.append(module).append(", eventCode=").append(eventCode)
-				.append(", dateRaised=").append(dateRaised).append(", result=")
-				.append(result).append(", timeOfProcessing=")
-				.append(timeOfProcessing).append(", details=").append(details)
-				.append("]");
-		return builder.toString();
-	}
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(final String result) {
+        this.result = result;
+    }
+
+    public Date getTimeOfProcessing() {
+        return timeOfProcessing;
+    }
+
+    public void setTimeOfProcessing(final Date timeOfProcessing) {
+        this.timeOfProcessing = timeOfProcessing;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(final String details) {
+        this.details = details;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append("EventResult [id=").append(getId()).append(", module=").append(module).append(", eventCode=")
+        .append(eventCode).append(", dateRaised=").append(dateRaised).append(", result=").append(result)
+        .append(", timeOfProcessing=").append(timeOfProcessing).append(", details=").append(details)
+        .append("]");
+        return builder.toString();
+    }
 
 }

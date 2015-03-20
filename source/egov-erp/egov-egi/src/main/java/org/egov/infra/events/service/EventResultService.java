@@ -9,10 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class EventResultService {
 
-	protected @Autowired EventResultRepository eventResultRepository;
+    @Autowired
+    protected EventResultRepository eventResultRepository;
 
-	@Transactional
-	public void persistEventResult(final EventResult eventResult) {
-		this.eventResultRepository.save(eventResult);
-	}
+    @Transactional
+    public void persistEventResult(final EventResult eventResult) {
+        eventResultRepository.save(eventResult);
+    }
 }

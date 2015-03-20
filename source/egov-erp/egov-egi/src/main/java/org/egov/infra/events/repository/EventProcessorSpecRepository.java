@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface EventProcessorSpecRepository extends
-		JpaRepository<EventProcessorSpec, Long> {
-	EventProcessorSpec findByModuleAndEventCode(String module, String eventCode);
+public interface EventProcessorSpecRepository extends JpaRepository<EventProcessorSpec, Long> {
+    EventProcessorSpec findByModuleAndEventCode(String module, String eventCode);
 }

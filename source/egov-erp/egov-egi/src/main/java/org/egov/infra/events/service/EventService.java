@@ -9,32 +9,29 @@ import org.springframework.stereotype.Service;
 @Service
 public class EventService {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(EventService.class);
-	private static ThreadLocal<Event> registeredEvent = new ThreadLocal<Event>();
+    private static final Logger LOG = LoggerFactory.getLogger(EventService.class);
+    private static ThreadLocal<Event> registeredEvent = new ThreadLocal<Event>();
 
-	public static void registerEvent(final Event e) {
-		try {
-			registeredEvent.set(e);
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Event Registered:::::::" + e);
-			}
-		} catch (final Exception ex) {
-			LOG.error("Exception in registerEvent" + e);
-			throw new EGOVRuntimeException(
-					"Exception occurred in EventService register Event>>>", ex);
-		}
-	}
+    public static void registerEvent(final Event e) {
+        try {
+            registeredEvent.set(e);
+            if (LOG.isDebugEnabled())
+                LOG.debug("Event Registered:::::::" + e);
+        } catch (final Exception ex) {
+            LOG.error("Exception in registerEvent" + e);
+            throw new EGOVRuntimeException("Exception occurred in EventService register Event>>>", ex);
+        }
+    }
 
-	public static Event getRegisteredEvent() {
-		return registeredEvent.get();
-	}
+    public static Event getRegisteredEvent() {
+        return registeredEvent.get();
+    }
 
-	public static boolean isEventRegistered() {
-		return (registeredEvent.get() != null);
-	}
+    public static boolean isEventRegistered() {
+        return registeredEvent.get() != null;
+    }
 
-	public static void removeRegisteredEvent() {
-		registeredEvent.remove();
-	}
+    public static void removeRegisteredEvent() {
+        registeredEvent.remove();
+    }
 }
