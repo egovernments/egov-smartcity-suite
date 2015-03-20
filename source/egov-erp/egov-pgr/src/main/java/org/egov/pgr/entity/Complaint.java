@@ -1,6 +1,7 @@
 package org.egov.pgr.entity;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -107,14 +108,14 @@ public class Complaint extends StateAware {
     private double lat;
     
     @Column(name="escalation_date",nullable = false)
-    private DateTime escalationDate;
+    private Date escalationDate;
     
     public DateTime getEscalationDate() {
-        return escalationDate;
+        return  null == escalationDate ? null : new DateTime(escalationDate);
     }
 
-    public void setEscalationDate(DateTime escalationDate) {
-        this.escalationDate = escalationDate;
+    public void setEscalationDate(final DateTime escalationDate) {
+        this.escalationDate = null == escalationDate ? null : escalationDate.toDate();
     }
 
     public String getCRN() {

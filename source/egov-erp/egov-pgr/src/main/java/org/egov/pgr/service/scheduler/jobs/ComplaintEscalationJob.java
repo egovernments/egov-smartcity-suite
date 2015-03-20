@@ -13,13 +13,15 @@ import javax.jms.Message;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
 
+import org.egov.commons.ObjectType;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.commons.service.ObjectTypeService;
+import org.egov.infra.events.entity.Event;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
-import org.egov.infra.events.entity.Event;
 import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.service.ComplaintService;
@@ -53,13 +55,17 @@ public class ComplaintEscalationJob extends AbstractQuartzJob {
     @Autowired
     private EisCommonService eisCommonService;
     
+    @Autowired
+    private ObjectTypeService objectTypeService;
+    
     @Override
     public void executeJob() {
         final AppConfigValues appConfigValue = this.appConfigValuesDAO.getConfigValuesByModuleAndKey(CommonConstants.MODULE_NAME, "SENDEMAILFORESCALATION").get(0);
         final Boolean isEmailNotificationSet = "YES".equalsIgnoreCase(appConfigValue.getValue());
         final List<Complaint> escalationComplaints = this.complaintService.getComplaintsEligibleForEscalation();
-        for (final Complaint complaints : escalationComplaints) {
-            final Position superiorPosition = this.eisCommonService.getSuperiorPositionByObjectTypeAndPositionFrom(null,complaints.getAssignee().getId());
+        final ObjectType objectType = this.objectTypeService.getObjectTypeByName(CommonConstants.EG_OBJECT_TYPE_COMPLAINT);
+        for (final Complaint complaint : escalationComplaints) {
+            final Position superiorPosition = this.eisCommonService.getSuperiorPositionByObjectTypeAndPositionFrom(objectType.getId(),complaint.getAssignee().getId());
             final User superiorUser = this.eisCommonService.getUserForPositionId(superiorPosition.getId(), new Date());
         }   
     }

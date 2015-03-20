@@ -22,6 +22,7 @@ import org.egov.pgr.repository.ComplaintRepository;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +52,7 @@ public class ComplaintService {
         // TODO Workflow will decide who is the assignee based on location data 
         // add .withOwner(position) to the workflow.
         complaint.setAssignee(null);
+        complaint.setEscalationDate(new DateTime());
         return complaintRepository.save(complaint);
     }
 
