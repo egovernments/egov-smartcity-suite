@@ -78,7 +78,7 @@ ALTER TABLE eg_address ADD COLUMN pincode VARCHAR(10);
 
 
 ALTER TABLE eg_userrole RENAME COLUMN id_role TO role;
-ALTER TABLE eg_userrole RENAME COLUMN id_user TO user;
+ALTER TABLE eg_userrole RENAME COLUMN id_user TO "user";
 
 ALTER TABLE eg_userrole DROP COLUMN id;
 ALTER TABLE eg_userrole DROP COLUMN fromdate;
