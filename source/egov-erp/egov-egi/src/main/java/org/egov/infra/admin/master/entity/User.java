@@ -30,70 +30,76 @@ import org.egov.infra.admin.master.entity.enums.UserType;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.validation.regex.Constants;
 import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.DateTime;
 
 @Entity
 @Table(name = "eg_user")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 1)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 20)
 public class User extends AbstractAuditable<User, Long> {
 
     private static final long serialVersionUID = -2415368058955783970L;
-    
+
     @NotNull
-    @Column(name="username",unique=true)
+    @Column(name = "username", unique = true)
+    @Length(min = 2, max = 64)
     private String username;
-    
+
     @NotNull
+    @Length(min = 8, max = 64)
     private String password;
-    
+
     private String salutation;
-    
+
     @NotNull
     @SafeHtml
+    @Length(min = 2, max = 100)
     private String name;
-    
+
     @Enumerated(EnumType.ORDINAL)
     private Gender gender;
-    
+
     @Pattern(regexp = Constants.MOBILE_NUM)
     @SafeHtml
+    @Length(max = 15)
     private String mobileNumber;
-    
-    @Email(regexp=Constants.EMAIL)
+
+    @Email(regexp = Constants.EMAIL)
     @SafeHtml
+    @Length(max = 128)
     private String emailId;
-    
+
     @SafeHtml
     private String altContactNumber;
-    
+
     @SafeHtml
+    @Length(max = 10)
     private String pan;
-    
+
     @SafeHtml
+    @Length(max = 20)
     private String aadhaarNumber;
-    
-    @OneToMany(mappedBy="user",cascade=CascadeType.ALL,fetch=FetchType.LAZY)
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Address> address;
-    
+
     private boolean isActive;
-    
-    @OneToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
-    @JoinTable(name = "eg_userrole", 
-            joinColumns = @JoinColumn(name = "user", updatable = false), 
-            inverseJoinColumns = @JoinColumn(name = "role", updatable = false))
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "eg_userrole", joinColumns = @JoinColumn(name = "user", updatable = false), inverseJoinColumns = @JoinColumn(name = "role", updatable = false))
     private Set<Role> roles = Collections.emptySet();
-    
+
     @Temporal(TemporalType.DATE)
     private Date dob;
-    
+
     @NotNull
     private Date pwdExpiryDate;
-    
+
     @NotNull
     private String locale;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "type", insertable = false, updatable = false)
     private UserType type;
@@ -126,7 +132,7 @@ public class User extends AbstractAuditable<User, Long> {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -222,7 +228,7 @@ public class User extends AbstractAuditable<User, Long> {
         return new Locale(locale);
     }
 
-    public void setLocale(String locale) {
+    public void setLocale(final String locale) {
         this.locale = locale;
     }
 
