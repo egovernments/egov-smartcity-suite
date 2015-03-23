@@ -95,6 +95,8 @@ $(document).ready(function(){
 						success : function(data){
 							$('#location').typeahead('val', data.results[0].formatted_address);
 							myCenter=new google.maps.LatLng(formatted_lat, formatted_long);
+							$('#lat').val(formatted_lat);
+							$('#lng').val(formatted_long);
 							setmarkerfromimage();
 						}
 					});
