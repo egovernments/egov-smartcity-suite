@@ -6,7 +6,7 @@ import java.util.Set;
 import org.egov.builder.entities.BoundaryBuilder;
 import org.egov.eis.entity.PositionBuilder;
 import org.egov.lib.admbndry.BoundaryImpl;
-import org.egov.pgr.entity.Complaint.ReceivingMode;
+import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pims.commons.Position;
 
 public class ComplaintBuilder {
@@ -114,7 +114,7 @@ public class ComplaintBuilder {
         withDetails("test-Description");
         withLandmarkDetails("test-LandDetails");
         if (null == complaint.getReceivingMode())
-            withReceivingMode(Complaint.ReceivingMode.WEBSITE);
+            withReceivingMode(ReceivingMode.WEBSITE);
         withReceivingCenter(new ReceivingCenterBuilder().withDefaults().build());
         // withSupportDocs(supportDocs);
         withLng(2222L);
@@ -138,7 +138,7 @@ public class ComplaintBuilder {
         withDetails("test-Description");
         withLandmarkDetails("test-LandDetails");
         if (null == complaint.getReceivingMode())
-            withReceivingMode(Complaint.ReceivingMode.WEBSITE);
+            withReceivingMode(ReceivingMode.WEBSITE);
         withReceivingCenter(new ReceivingCenterBuilder().withDefaults().build());
         // withSupportDocs(supportDocs);
         withLng(2222L);

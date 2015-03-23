@@ -18,10 +18,10 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.lib.admbndry.BoundaryImpl;
+import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pims.commons.Position;
 import org.egov.search.domain.Searchable;
 import org.hibernate.validator.constraints.Length;
@@ -33,16 +33,6 @@ import org.joda.time.DateTime;
 public class Complaint extends StateAware {
 
     private static final long serialVersionUID = 4020616083055647372L;
-
-    // any future Receiving mode addition should be added at the end of this
-    // enum
-    // since we are asking hibernate use its ordinal to be persisted
-    public enum ReceivingMode {
-        WEBSITE, SMS, CALL, EMAIL, PAPER, MOBILE;
-        public String toString() {
-            return StringUtils.capitalize(name());
-        }
-    }
 
     @NotNull
     @Column(name="crn",unique=true)
