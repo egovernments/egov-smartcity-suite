@@ -14,7 +14,6 @@
   
 	<context:component-scan base-package="org.egov.infra"/>
 	<context:component-scan base-package="org.egov.lib"/>
-	<context:component-scan base-package="org.egov.infstr.workflow"/>
 	
 	<jpa:repositories base-package="org.egov.infra"/>
 	<jpa:auditing auditor-aware-ref="springSecurityAwareAuditor"/>

@@ -9,12 +9,8 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
 		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd" default-lazy-init="true">
 
-    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
 	<jpa:repositories base-package="org.egov.pgr.repository"/>
-	<jpa:auditing/>
-    <context:component-scan base-package="org.egov.pgr.service" />
-    <context:component-scan base-package="org.egov.pgr.repository" />
-    <context:component-scan base-package="org.egov.pgr.utils" />
+    <context:component-scan base-package="org.egov.pgr" />
 
 	<aop:aspectj-autoproxy proxy-target-class="true"/>
 </beans>
