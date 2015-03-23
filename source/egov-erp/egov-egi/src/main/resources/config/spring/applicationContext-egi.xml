@@ -18,6 +18,8 @@
 	<jpa:repositories base-package="org.egov.infra"/>
 	<jpa:auditing auditor-aware-ref="springSecurityAwareAuditor"/>
 	
+	<alias name="${fileStoreServiceBeanName}" alias="fileStoreService" />
+	
 	<bean class="org.egov.EgovSpringContextHolder" lazy-init="false"/>
 
 	<bean id="genericCommonsService" class="org.egov.infstr.commons.service.GenericCommonsServiceImpl">
