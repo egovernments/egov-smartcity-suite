@@ -4,18 +4,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 
-<link rel="stylesheet"	href="<c:url value='/resources/global/css/bootstrap/bootstrap.css'/>">
-<link rel="stylesheet"	href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
-<link rel="stylesheet"	href="<c:url value='/resources/global/css/egov/custom.css'/>">
-<script src="<c:url value='/resources/global/js/jquery/jquery.js'/>"></script>
-
-<!--[if lt IE 9]><script src="assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-
-<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-<!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-		<![endif]-->
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
@@ -239,10 +227,9 @@
 	</div>
 </div>
 
-<script	src="<c:url value='/resources/global/js/bootstrap/bootstrap.js'/>"></script>
-<link rel="stylesheet"	href="<c:url value='/resources/global/js/image-gallery/css/blueimp-gallery.min.css'/>">
-<link rel="stylesheet"	href="<c:url value='/resources/global/js/image-gallery/css/blueimp-gallery.min.css'/>">
-<script	src="<c:url value='/resources/global/js/image-gallery/js/jquery.blueimp-gallery.min.js'/>"></script>
-<script	src="<c:url value='/resources/global/js/image-gallery/js/bootstrap-image-gallery.js'/>"></script>
+<link rel="stylesheet"	href="<c:url value='/resources/global/js/image-gallery/css/blueimp-gallery.min.css' context='/egi'/>">
+<link rel="stylesheet"	href="<c:url value='/resources/global/js/image-gallery/css/blueimp-gallery.min.css' context='/egi'/>">
+<script	src="<c:url value='/resources/global/js/image-gallery/js/jquery.blueimp-gallery.min.js' context='/egi'/>"></script>
+<script	src="<c:url value='/resources/global/js/image-gallery/js/bootstrap-image-gallery.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/js/app/complaintview.js'/>"></script>
 <script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
