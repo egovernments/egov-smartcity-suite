@@ -8,11 +8,11 @@ jQuery(document).ready(function ($) {
     });
 
     $('#toggle-searchcomp').click(function () {
-        if ($(this).html() == "More..") {
+        if ($(this).html() == "Advanced..") {
             $(this).html('Less..');
             $('.show-searchcomp-more').show();
         } else {
-            $(this).html('More..');
+            $(this).html('Advanced..');
             $('.show-searchcomp-more').hide();
         }
 

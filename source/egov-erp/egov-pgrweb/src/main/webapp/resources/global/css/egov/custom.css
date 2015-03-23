@@ -669,7 +669,7 @@ table .replace-inputs input {
 	padding: 12px 10px;
 	background:#f5861f;
 	border-top: 1px solid #f5861f;
-	border-bottom:1px solid rgba(69, 74, 84, 0.7);
+	border-bottom:1px solid #573b1e;
 	color:#fff;
 	width: 250px;
 	visibility: hidden;
@@ -837,8 +837,8 @@ li#search .search-input:-ms-input-placeholder { /* Internet Explorer 10+ */
 }
 
 .page-container .sidebar-menu .sidebar-menu-inner #main-menu > li > a > span.collapsed-span.change-li-ul-li{
-	background-color: #303641;
-	border-top:1px solid #303641;
+	background-color: #6b4f2c;
+	border-top:1px solid #6b4f2c;
 }
 
 .change-text-align
