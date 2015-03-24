@@ -1,3 +1,4 @@
+<%@page import="org.egov.infra.admin.master.entity.User"%>
 <%@page contentType="text/html" %>
 <%@page import="org.egov.lib.rjbac.user.*" %>
 
