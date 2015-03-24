@@ -16,8 +16,6 @@ import org.egov.lib.admbndry.BoundaryType;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
 import org.egov.lib.rjbac.jurisdiction.JurisdictionValues;
-import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.user.UserRole;
 import org.egov.lib.security.JurisdictionCheck;
 
 public interface UserService {
@@ -35,21 +33,7 @@ public interface UserService {
 	 */
 	void updateUser(User usr);
 
-	/**
-	 * Gets the valid roles.
-	 * @param userID the user id
-	 * @param roleDate the role date
-	 * @return the valid roles
-	 */
-	Set<Role> getValidRoles(Long userID, Date roleDate);
-
-	/**
-	 * Gets the all roles for user.
-	 * @param userName the user name
-	 * @return the all roles for user
-	 */
-	Set<UserRole> getAllRolesForUser(String userName);
-
+	
 	/**
 	 * Returns a user with the given userid.
 	 * @param id the id

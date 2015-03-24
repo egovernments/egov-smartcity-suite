@@ -7,14 +7,13 @@ package org.egov.lib.rjbac.user.dao;
 
 import java.util.List;
 
-import org.hibernate.SessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.rjbac.user.Terminal;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TerminalDAO {
 	

@@ -18,7 +18,6 @@ import org.egov.infstr.utils.EGovConfig;
 import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.lib.rjbac.dept.DepartmentImpl;
-import org.egov.lib.rjbac.user.UserRole;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
 import org.egov.pims.dao.PersonalInformationDAO;
@@ -519,23 +518,6 @@ public class EisUtilService implements EISServeable
     	return deptlist;
 	}
 	
-	public List<User> getListOfUsersByRole(List<String> roleList){
-		List<User> userList = new ArrayList<User>();		
-		Criteria criteria = persistenceService.getSession().createCriteria(UserRole.class,"userRole")
-			.createAlias("userRole.role", "role")
-	    	.add(Restrictions.in("role.roleName", roleList));
-		
-		criteria.add(Restrictions.disjunction()				
-				.add(Restrictions.and(Restrictions.le("userRole.fromDate", new Date()), Restrictions.ge("userRole.toDate", new Date())))
-				.add(Restrictions.and(Restrictions.le("userRole.fromDate", new Date()), Restrictions.isNull("userRole.toDate"))));				
-    		
-    	ProjectionList projections = Projections.projectionList().add(Projections.property("userRole.user"));
-    	criteria.setProjection(projections);
-    	criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-    	userList = (List<User>)criteria.list();
-		
-		return userList;
-	}
 	
 	public boolean isValidWorkflowUser(Position owner)
 	{

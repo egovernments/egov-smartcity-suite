@@ -85,10 +85,10 @@ public class SetupUpdateUserAction extends EgovAction {
 			}
 			final boolean isactive = usr.isActive();
 			req.getSession().setAttribute("isactive", isactive);
-			final Set roleObj1 = this.userService.getAllRolesForUser(username);
-			if (roleObj1 != null && !roleObj1.isEmpty()) {
+			//final Set roleObj1 = this.userService.getAllRolesForUser(username);
+			/*if (roleObj1 != null && !roleObj1.isEmpty()) {
 				req.setAttribute("roleObj1", roleObj1);
-			}
+			}*/
 			roleList = this.roleService.getAllRoles();
 			target = "success";
 		} catch (final EGOVRuntimeException e) {

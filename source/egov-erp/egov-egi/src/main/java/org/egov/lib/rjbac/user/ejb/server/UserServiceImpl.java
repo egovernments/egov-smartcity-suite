@@ -12,7 +12,6 @@ import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
 import org.egov.lib.rjbac.jurisdiction.JurisdictionValues;
 import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.user.UserRole;
 import org.egov.lib.rjbac.user.dao.TerminalDAO;
 import org.egov.lib.rjbac.user.dao.UserDAO;
 import org.egov.lib.rjbac.user.ejb.api.UserService;
@@ -42,16 +41,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void updateUser(final User usr) {
 		userDAO.createOrUpdateUserWithPwdEncryption(usr);
-	}
-
-	@Override
-	public Set<Role> getValidRoles(final Long userID, final Date roleDate) {
-		return userDAO.getValidRoles(userID, roleDate);
-	}
-
-	@Override
-	public Set<UserRole> getAllRolesForUser(final String userName) {
-		return userDAO.getAllRolesForUser(userName);
 	}
 
 	@Override

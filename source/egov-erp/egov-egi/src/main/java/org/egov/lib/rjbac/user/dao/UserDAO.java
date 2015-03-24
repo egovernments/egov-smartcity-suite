@@ -24,7 +24,6 @@ import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
 import org.egov.lib.rjbac.jurisdiction.JurisdictionValues;
 import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.user.UserRole;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -65,21 +64,7 @@ public class UserDAO {
 		this.getSession().saveOrUpdate(usr);
 	}
 
-	/**
-	 * Gets the all roles for user.
-	 * @param userName the user name
-	 * @return the all roles for user
-	 */
-	public Set<UserRole> getAllRolesForUser(final String userName) {
-		try {
-			final Query qry = this.getSession().createQuery("FROM UserRole rol where rol.user.username=:userName and rol.isHistory='N')");
-			qry.setString("userName", userName);
-			return new HashSet<UserRole>(qry.list());
-		} catch (final HibernateException e) {
-			LOGGER.error("Exception encountered in getAllRolesForUser", e);
-			throw new EGOVRuntimeException("Exception encountered in getAllRolesForUser", e);
-		}
-	}
+	
 
 	/**
 	 * Gets the users by department.
@@ -457,30 +442,7 @@ public class UserDAO {
 	        return  Collections.emptyMap();
 	}
 
-	/**
-	 * Gets the valid roles.
-	 * @param userID the user id
-	 * @param roleDate the role date
-	 * @return the valid roles
-	 */
-	public Set<Role> getValidRoles(final Long userID, final Date roleDate) {
-		try {
-			final Query qry = this.getSession().createQuery("FROM UserRole rol Where rol.user.id=:userID and rol.isHistory='N' AND ((rol.toDate IS NULL AND rol.fromDate <= :currDate) OR (rol.fromDate <= :currDate AND rol.toDate >= :currDate)) ");
-			qry.setLong("userID", userID);
-			qry.setDate("currDate", roleDate);
-			final Set<Role> validRoles = new HashSet<Role>();
-			for (final Iterator iter = qry.list().iterator(); iter.hasNext();) {
-				final UserRole userrole = (UserRole) iter.next();
-				final Role role = userrole.getRole();
-				validRoles.add(role);
-			}
-			return validRoles;
-		} catch (final HibernateException e) {
-			LOGGER.error("Exception encountered in getValidRoles", e);
-			throw new EGOVRuntimeException("Exception encountered in getValidRoles", e);
-		}
-	}
-
+	
 	/**
 	 * This API returns the user objects for specified roles in egov_config.xml as per current date
 	 * @param includeRolesList - list of roles as comma separated from egovconfig

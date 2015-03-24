@@ -5,33 +5,28 @@
  */
 package org.egov.infstr.client.administration.rjbac.user;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
+import java.util.Date;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.commons.utils.EgovInfrastrUtil;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.client.EgovAction;
-import org.egov.infstr.security.utils.CryptoHelper;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.lib.rjbac.role.Role;
 import org.egov.lib.rjbac.role.ejb.api.RoleService;
-import org.egov.lib.rjbac.user.UserRole;
-import org.egov.lib.rjbac.user.UserSignature;
 import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class UserAction extends EgovAction {
 	
@@ -87,7 +82,7 @@ public class UserAction extends EgovAction {
 					user.setToDate(DateUtils.getDate(userForm.getToDate(), DateUtils.DFT_DATE_FORMAT));
 				}*/
 				
-				if (userForm.getRoleId() != null) {
+				/*if (userForm.getRoleId() != null) {
 					final Set<UserRole> roles = new HashSet<UserRole>();
 					final Integer roleid[] = userForm.getRoleId();
 					Role role = null;
@@ -110,7 +105,7 @@ public class UserAction extends EgovAction {
 					if (roles.size() != 0) {
 						//user.setUserRoles(roles);
 					}
-				}			
+				}	*/		
 				target = "success";
 				req.setAttribute("MESSAGE", "User created successfully");
 				/*if ((userForm.getFile() != null) && (userForm.getFile().getFileSize() > 0) && userForm.getFile().getContentType().indexOf("image") != -1) {
@@ -187,7 +182,7 @@ public class UserAction extends EgovAction {
 						final Role role = roleService.getRole(Integer.valueOf(userForm.getSelRoleID()[i]));
 						
 						if (currUserRoleId == 0) {
-							final UserRole userrole = new UserRole();
+							/*final UserRole userrole = new UserRole();
 							if (isNotBlank(userForm.getFromDate1()[i])) {
 								userrole.setFromDate(DateUtils.getDate(userForm.getFromDate1()[i], DateUtils.DFT_DATE_FORMAT));
 							}
@@ -196,7 +191,7 @@ public class UserAction extends EgovAction {
 							}
 							userrole.setRole(role);
 							userrole.setUser(user);
-							userrole.setIsHistory('N');
+							userrole.setIsHistory('N');*/
 							//user.getUserRoles().add(userrole);
 						} else {
 							if ("yes".equals(userForm.getSelCheck()[i])) { // modifying existing role

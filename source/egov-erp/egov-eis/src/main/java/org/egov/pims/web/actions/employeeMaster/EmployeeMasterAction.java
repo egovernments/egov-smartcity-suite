@@ -24,15 +24,12 @@ import org.egov.commons.Fund;
 import org.egov.commons.service.CommonsService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.dept.DepartmentImpl;
 import org.egov.lib.rjbac.role.Role;
 import org.egov.lib.rjbac.role.ejb.api.RoleService;
-import org.egov.lib.rjbac.user.UserRole;
 import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
@@ -397,15 +394,15 @@ public class EmployeeMasterAction extends BaseFormAction
 				if(existingUser==null)
 				{
 					Role essRole = roleMgr.getRoleByRoleName(EMP_SELF_SERVICE);
-					Set<UserRole> roles = new HashSet<UserRole>();
-					UserRole userrole = new UserRole();
-					User user = new User();
+					/*Set<UserRole> roles = new HashSet<UserRole>();
+					UserRole userrole = new UserRole();*/
+					/*User user = new User();
 					userrole.setRole(essRole);
 					userrole.setIsHistory('N');
 					userrole.setUser(user);
 					userrole.setFromDate(new Date());
 					userrole.setToDate(employee.getRetirementDate());// egi screen 'Search user' can be used to update the todate, in case retirement date is changed
-					roles.add(userrole);
+					roles.add(userrole);*/
 					//user.setUserRoles(roles);
 					
 					user.setUsername(employee.getUserMaster().getUsername().trim());
