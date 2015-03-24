@@ -9,8 +9,7 @@
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title">
-					<strong><spring:message code="lbl.hdr.complaintInfo" /> -
-						<c:out value="${complaint.CRN}"></c:out></strong>
+					<strong><c:out value="${complaint.CRN}"></c:out></strong>
 				</div>
 			</div>
 			<div class="panel-body">
@@ -56,42 +55,62 @@
 					<div class="col-md-3 col-xs-6 add-margin" id="ct-priority">
 						Waterlogged road</div>
 				</div>
-				<div class="row add-border">
+				<%-- <div class="row add-border">
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.expiration" /></div>
 					<div class="col-md-3 col-xs-6 add-margin" id="ct-exp">
 						In
 						<c:out value="${complaint.complaintType.hrsToResolve}"></c:out>
 						days
 					</div>
-				</div>
+				</div> --%>
 				<div class="row add-border">
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.compTitle" /></div>
 					<div class="col-md-3 col-xs-6 add-margin" id="ct-title">none</div>
 				</div>
 				<div class="row add-border">
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.compDetails" /></div>
-					<div class="col-md-9 col-xs-6 add-margin" id="ct-details">
+					<div class="col-md-3 col-xs-6 add-margin" id="ct-details">
 						<c:out value="${complaint.details }"></c:out>
 					</div>
 				</div>
 				<div class="row add-border">
-					<div class="col-md-2 col-xs-12 add-margin"><spring:message code="lbl.photovideo" /></div>
-					<div class="col-md-10 col-xs-12 add-margin down-file text-center"
+					<div class="col-md-3 col-xs-6 add-margin">
+						<spring:message code="lbl.photovideo" />
+					</div>
+					<div class="col-md-9 col-xs-12 add-margin down-file text-center"
 						id="links">
-						<a href="../resources/images/burjkhalifa.jpg" data-gallery> <img
-							src="../resources/images/burjkhalifa.jpg"
-							class="img-width add-margin">
-						</a> <a href="../resources/images/b.jpg" data-gallery> <img
-							src="../resources/images/b.jpg" class="img-width add-margin">
-						</a> <a href="../resources/images/c.jpg" data-gallery> <img
-							src="../resources/images/c.jpg" class="img-width add-margin">
-						</a>
+						<c:choose>
+							<c:when test="${!files.isEmpty()}">
+								<c:forEach items="${files}" var="file">
+									<c:choose>
+										<c:when test="${file.key == 'video/mp4'}">
+											<a href="/egi/controller/downloadfile?fileStoreId=${file.value}&moduleName=PGR"
+												data-gallery> <video class="img-width add-margin"controls="controls"
+													src="/egi/controller/downloadfile?fileStoreId=${file.value}&moduleName=PGR">
+													<source	src="/egi/controller/downloadfile?fileStoreId=${file.value}&moduleName=PGR"
+														type="video/mp4" /></video></a>
+										</c:when>
+										<c:otherwise>
+											<a href="/egi/controller/downloadfile?fileStoreId=${file.value}&moduleName=PGR"
+												data-gallery> <img class="img-width add-margin"
+												src="/egi/controller/downloadfile?fileStoreId=${file.value}&moduleName=PGR" /></a>
+										</c:otherwise>
+									</c:choose>
+								</c:forEach>
+							</c:when>
+							<c:otherwise>
+								<div class="col-md-3 col-xs-6 add-margin">No attachments found</div>
+							</c:otherwise>
+						</c:choose>
 					</div>
 				</div>
+
 				<div class="row add-border">
-					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.location" /></div>
+					<div class="col-md-3 col-xs-6 add-margin">
+						<spring:message code="lbl.location" />
+					</div>
 					<div class="col-md-9 col-xs-6 add-margin">
-						<span class="map-tool-class" data-toggle="tooltip"
+						<span class="map-tool-class btn-secondary" data-toggle="tooltip"
 							data-placement="top" title="" data-original-title="Locate on map"
 							onclick="jQuery('#complaint-locate').modal('show', {backdrop: 'static'});"><i
 							class="entypo-globe"></i></span> <span id="address_locate"><c:out
@@ -99,20 +118,25 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.landmark" /></div>
+					<div class="col-md-3 col-xs-6 add-margin">
+						<spring:message code="lbl.landmark" />
+					</div>
 					<div class="col-md-9 col-xs-6 add-margin" id="ct-lanmark">
-						<c:out value="${complaint.landmarkDetails}"></c:out>
+						<c:choose>
+							<c:when test="${complaint.landmarkDetails != null}">
+								<c:out value="${complaint.landmarkDetails}"></c:out>
+							</c:when>
+							<c:otherwise>N/A</c:otherwise>
+						</c:choose>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
-
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel-group">
-
 			<div class="panel panel-primary">
 				<div class="panel-heading slide-history-menu">
 					<div class="panel-title">
@@ -229,7 +253,8 @@
 
 <link rel="stylesheet"	href="<c:url value='/resources/global/js/image-gallery/css/blueimp-gallery.min.css' context='/egi'/>">
 <link rel="stylesheet"	href="<c:url value='/resources/global/js/image-gallery/css/blueimp-gallery.min.css' context='/egi'/>">
+<link rel="stylesheet"	href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
 <script	src="<c:url value='/resources/global/js/image-gallery/js/jquery.blueimp-gallery.min.js' context='/egi'/>"></script>
 <script	src="<c:url value='/resources/global/js/image-gallery/js/bootstrap-image-gallery.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/js/app/complaintview.js'/>"></script>
-<script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
+<script src="<c:url value='/resources/js/app/complaintviewmap.js'/>"></script>

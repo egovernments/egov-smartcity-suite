@@ -167,6 +167,7 @@ table.dataTable tbody tr:hover
 .img-width {
 	width: 260px;
 	height: 180px;
+	vertical-align:top;
 }
 
 .table-cell{
