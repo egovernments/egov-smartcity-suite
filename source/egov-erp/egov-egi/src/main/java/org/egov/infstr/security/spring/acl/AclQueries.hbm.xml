@@ -43,12 +43,6 @@ ownerSid in(select id from RoleImpl where roleName in(:param_2)) and permission 
 	</query>
 
 
-
-	<query name="findUserRolesForGivenUserRoles">
-<![CDATA[from UserRole  where user.id =? and role in (:param_1)]]>
-	</query>
-
-
 	<query name="findRolesByIds">
 <![CDATA[from RoleImpl  where id in (:param_0)]]>
 	</query>

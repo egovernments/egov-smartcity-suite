@@ -283,11 +283,11 @@ public abstract class GenericAclVoter implements AccessDecisionVoter {
 			if (action == null) {
 				throw new EGOVRuntimeException((AclConstants.PERMISSIONACTION + " is not in database"));
 			} else {
-				final List<Object> listUserroles = this.persistenceService.findAllByNamedQuery(AclConstants.GETUSERROLESBYUSERROLE, Integer.valueOf(EGOVThreadLocals.getUserId()), action.getRoles());
+				/*final List<Object> listUserroles = this.persistenceService.findAllByNamedQuery(AclConstants.GETUSERROLESBYUSERROLE, Integer.valueOf(EGOVThreadLocals.getUserId()), action.getRoles());
 
 				if (listUserroles != null && !listUserroles.isEmpty()) {
 					this.permissionGranted = true;
-				}
+				}*/
 			}
 
 		}
