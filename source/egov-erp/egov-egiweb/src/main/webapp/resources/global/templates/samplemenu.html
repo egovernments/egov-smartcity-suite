@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="no-js">
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,9 +12,13 @@
 		
 		<link rel="stylesheet" href="../css/bootstrap/bootstrap.css">
 		<link rel="stylesheet" href="../css/font-icons/entypo/css/entypo.css">
+		<link rel="stylesheet" href="../css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="../css/multi-level-menu/jquery.multilevelpushmenu.css"> 
 		<link rel="stylesheet" href="../css/egov/custom.css">
 		<script src="../js/jquery/jquery.js"></script>
-		
+		<script src="../js/bootstrap/bootstrap.js"></script>
+		<script src="../js/multi-level-menu/jquery.multilevelpushmenu.js"></script>
+		<script src="../../js/app/homepage.js"></script>
 		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -25,10 +29,26 @@
 		
 		
 	</head>
+	<script>
+		$(document).ready(function () {
+			$('#menu').multilevelpushmenu({
+				onItemClick: function () {
+					var e = arguments[0];
+					if ($(e.target).prop('tagName').toLowerCase() == 'input') {
+						$(e.target).focus();
+						$(e.target).val('');
+						$(e.target).unbind('');
+						$(e.target).blur(function(){
+							$(e.target).val('');
+						});
+					}
+				}
+			});
+		});
+	</script>
 	<body class="page-body">
 		
 		<div class="page-container horizontal-menu">
-			
 			<header class="navbar navbar-fixed-top border-header"><!-- set fixed position by adding class "navbar-fixed-top" -->
 				
 				<div class="navbar-inner">
@@ -460,277 +480,129 @@
 							</a>
 						</li>
 						
-						<!-- mobile only -->
-						<li class="">	
-							
-							<!-- open/close menu icon (do not remove if you want to enable menu on mobile devices) -->
-							<div class="horizontal-mobile-menu visible-xs">
-								<a href="javascript:void(0);" class="with-animation"><!-- add class "with-animation" to support animation -->
-									<i class="entypo-menu"></i>
-								</a>
-							</div>
-							
-						</li>
 						
 					</ul>
 					
 				</div>
 				
-				
-				
 			</header>
 			
-			<div class="sidebar-menu">
-				
-				<div class="sidebar-menu-inner">
-					
-					<!--header class="logo-env hidden-xs">
-						
-						
-						<div class="sidebar-collapse ">
-						<a href="javascript:void(0);" class="sidebar-collapse-icon" >
-						<i id="change-menu-logo" class="entypo-left-dir"></i>
-						</a>
-						</div>
-						
-						
-					</header-->
-					
-					<div class="sidebar-user-info hidden-xs" >
-						
-						<div class="sui-normal">
-							
-							<a href="#" class="user-link">
-								<i class="entypo-user img-circle"></i>
-								
-								<span>Welcome,</span>
-								<strong>Admin</strong>
-							</a>
-							
-						</div>
-						
-						<div class="collapse-normal">
-							<a href="javascript:void(0);" class="sidebar-collapse-to-normal">
-								<i class="change-menu-normal entypo-left-dir"></i>
-							</a>
-						</div>
-						
-					</div>
-					
-					<ul id="main-menu" class="main-menu">
-						
-						<li id="search">
-							<form method="get" action="">
-								<input type="text" name="" class="search-input" placeholder="Search something..." />
-								<button type="submit">
-									<i class="entypo-search"></i>
-								</button>
-							</form>
-						</li>
-						
-						<li class="has-sub">
-							<a href="javascript:void(0);">
-								<i class="entypo-leaf"></i>
-								<span class="title">Recent</span>
-							</a>
+			
+			<!--New side bar menu content-->
+			
+			<div id="menu" class="homepage">
+				<nav>
+					<h2><i class="fa fa-reorder"></i>Admin</h2>
+					<ul id="main-menu">
+						<li class="search-li"> <a href="#" class="search-a"><i class="fa fa-search"></i><input type="text" name="test" id="search-input" value="" autocomplete="off" placeholder="Search something..." /></a></li>
+						<li>
+							<a href="#">Recent</a>
+							<h2>Recent</h2>
 							<ul>
 								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Complaints</span>
-									</a>
+									<a href="#">Register Complaints</a>
 								</li>
 							</ul>
 						</li>
-						
 						<li>
-							<a href="javascript:void(0);">
-								<i class="entypo-list"></i>
-								<span class="title">Worklist</span>
-								<span class="badge badge-secondary">8</span>
-							</a>
+							<a href="#">Worklist<!-- <span class="rounded-notify">10</span> --></a>
 						</li>
-						
 						<li>
-							<a href="javascript:void(0);">
-								<i class="entypo-inbox"></i>
-								<span class="title">Drafts</span>
-							</a>
+							<a href="#">Drafts</a>
 						</li>
-						
 						<li>
-							<a href="javascript:void(0);">
-								<i class="entypo-bell"></i>
-								<span class="title">Notifications</span>
-								<span class="badge badge-secondary">8</span>
-							</a>
+							<a href="#">Notifications</a>
 						</li>
-						
-						<li class="has-sub">
-							<a href="javascript:void(0);">
-								<i class="entypo-window"></i>
-								<span class="title">Applications</span>
-							</a>
+						<li>
+							<a href="#">Applications</a>
+							<h2>Applications</h2>
 							<ul>
 								<li>
-									<a href="javascript:void(0);">
-										<span class="title">AE/JE Diary</span>
-									</a>
+									<a href="#">AE/JE Diary</a>
+								<h2>AE/JE Diary</h2>
+								<ul>
+									<li>
+										<a href="#">AE/JE Complaints</a>
+									</li>
+								</ul>
 								</li>
 								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Asset Management</span>
-									</a>
+									<a href="#">Asset Management</a>
 								</li>
 								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Birth and death</span>
-									</a>
+									<a href="#">Birth & Death</a>
 								</li>
 								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Building Plan Approval</span>
-									</a>
+									<a href="#">Building Plan Approval</a>
 								</li>
 								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Bpa Citizen Portal</span>
-									</a>
+									<a href="#">Bpa Citizen Portal</a>
 								</li>
 								<li>
-									<a href="javascript:void(0);">
-										<span class="title">COC MIS</span>
-									</a>
+									<a href="#">COC MIS</a>
 								</li>
 								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Citizen portal</span>
-									</a>
+									<a href="#">Citizen Portal</a>
 								</li>
 								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Conservancy</span>
-									</a>
+									<a href="#">Conservancy</a>
 								</li>
 								<li>
-									<a href="javascript:void(0);">
-										<span class="title">DMS</span>
-									</a>
+									<a href="#">DMS</a>
 								</li>
 								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Dashboard</span>
-									</a>
+									<a href="#">Dashboard</a>
 								</li>
 								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Collections</span>
-									</a>
+									<a href="#">Collections</a>
 								</li>
 								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Financials</span>
-									</a>
+									<a href="#">Financials</a>
 								</li>
 								<li>
-									<a href="javascript:void(0);">
-										<span class="title">EIS</span>
-									</a>
+									<a href="#">EIS</a>
 								</li>
 								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Fleet Management</span>
-									</a>
+									<a href="#">PGR</a>
+									<h2>PGR</h2>
+									<ul>
+										<li>
+											<a href="#">Register Complaint</a>
+										</li>
+										<li>
+											<a href="#">Search Complaints</a>
+										</li>
+										<li>
+											<a href="#">Report</a>
+										</li>
+									</ul>
 								</li>
 								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Inventory management</span>
-									</a>
+									<a href="#">Payroll</a>
 								</li>
 								<li>
-									<a href="javascript:void(0);">
-										<span class="title">LCMS</span>
-									</a>
+									<a href="#">Pension Management</a>
 								</li>
 								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Land & Estate</span>
-									</a>
+									<a href="#">Service Request</a>
 								</li>
-								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Mobile PGR</span>
-									</a>
-								</li>
-								<li>
-									<a href="complaint.html" class="opencomplaint">
-										<span class="title">PGR</span>
-									</a>
-								</li>
-								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Payroll</span>
-									</a>
-								</li>
-								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Pension Management</span>
-									</a>
-								</li>
-								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Portal</span>
-									</a>
-								</li>
-								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Property Tax</span>
-									</a>
-								</li>
-								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Service Request</span>
-									</a>
-								</li>
-								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Works</span>
-									</a>
-								</li>
-								<li>
-									<a href="javascript:void(0);">
-										<span class="title">Portal</span>
-									</a>
-								</li>
-							</ul>
+								</ul>
 						</li>
-						
 						<li>
-							<a href="javascript:void(0);">
-								<i class="entypo-doc-text"></i>
-								<span class="title">Feedback</span>
-							</a>
+							<a href="#">Feedback</a>
 						</li>
-						
 					</ul>
-				</li>
-				
-				
-			</ul>
+				</nav>
+			</div>
+			
+			<div class="inline-main-content">
+				<div class="row">
+					<div class="col-md-12">
+						Aslam Dinesh Azhar
+					</div>
+				</div>
+			</div>
 			
 		</div>
-		
-	</div>
-	
-	<div class="main-content">
-		
-	</div>
-	
-</div>
-
-
-
-<script src="../js/bootstrap/bootstrap.js"></script>
-<script src="../../js/app/homepage.js"></script>
-</body>
-
-</html>																																																																										
+	</body>
+</html>

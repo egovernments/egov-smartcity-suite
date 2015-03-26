@@ -40,7 +40,7 @@ jQuery(document).ready(function($)
 		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 		"autoWidth": false,
 		"oTableTools": {
-			"sSwfPath": "../swf/copy_csv_xls_pdf.swf",
+			"sSwfPath": "../../../../../../egov-egiweb/src/main/webapp/resources/global/swf/copy_csv_xls_pdf.swf",
 			"aButtons": [ "copy", "csv", "xls", "pdf", "print" ]
 		}
 	});
