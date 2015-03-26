@@ -1,10 +1,7 @@
 package org.egov.egi.web.controller.admin.masters;
 
 
-import java.util.List;
-
 import javax.validation.Valid;
-
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.service.RoleService;
@@ -45,7 +42,6 @@ public class CreateRoleController  {
         
         
         try {
-             List<Role> roles = roleService.getRolesByUserId(1l);
         	roleService.createRole(role);
 			redirectAttrs.addFlashAttribute("message", "Successfully created Role !");
 		} catch (DuplicateElementException e) {
