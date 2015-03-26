@@ -38,7 +38,9 @@ public class LocalDiskFileStoreService implements FileStoreService {
     public FileStoreMapper store(final File sourceFile, final String moduleName) {
         try {
             final FileStoreMapper fileMapper = new FileStoreMapper(UUID.randomUUID().toString(), sourceFile.getName());
-            Files.copy(sourceFile.toPath(), createNewFilePath(fileMapper, moduleName));
+            final Path newFilePath = createNewFilePath(fileMapper, moduleName);
+            Files.copy(sourceFile.toPath(), newFilePath);
+            fileMapper.setContentType(Files.probeContentType(newFilePath));
             return fileMapper;
         } catch (final IOException e) {
             throw new EGOVRuntimeException(String.format("Error occurred while storing files at %s/%s", fileStoreBaseDir,moduleName), e);
@@ -49,7 +51,9 @@ public class LocalDiskFileStoreService implements FileStoreService {
     public FileStoreMapper store(final InputStream sourceFileStream, final String moduleName) {
         try {
             final FileStoreMapper fileMapper = new FileStoreMapper(UUID.randomUUID().toString(),"noname");
-            Files.copy(sourceFileStream, createNewFilePath(fileMapper, moduleName));
+            final Path newFilePath = createNewFilePath(fileMapper, moduleName);
+            Files.copy(sourceFileStream, newFilePath);
+            fileMapper.setContentType(Files.probeContentType(newFilePath));
             sourceFileStream.close();
             return fileMapper;
         } catch (final IOException e) {

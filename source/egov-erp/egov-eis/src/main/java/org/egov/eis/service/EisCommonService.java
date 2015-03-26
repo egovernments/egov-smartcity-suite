@@ -8,6 +8,7 @@ import java.util.Date;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.lib.rjbac.user.ejb.api.UserService;
+import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,13 +35,13 @@ public class EisCommonService {
         return positionHierarchyService.getPositionHierarchyByPosAndObjectType(posId,objectId).getToPosition();
     }
     
-    public Position getSuperiorPositionByObjectAndObjectSubTypeAndPositionFrom(final Integer objectId,final Integer posId,final String objectSubType) {
+    public Position getSuperiorPositionByObjectAndObjectSubTypeAndPositionFrom(final Integer objectId,final String objectSubType,final Integer posId) {
         return positionHierarchyService.getPosHirByPosAndObjectTypeAndObjectSubType(posId, objectId, objectSubType).getToPosition();
     }
     
-    public User getUserForPositionId(final Integer posId,final Date givenDate) {
+    public User getUserForPosition(final Integer posId,final Date givenDate) {
         try{
-            return assignmentService.getAssignmentsForPositionId(posId,givenDate).getEmployee().getUserMaster();
+            return assignmentService.getAssignmentForPosition(posId,givenDate).getEmployee().getUserMaster();
         }
         catch(NullPointerException e) {
             throw new EGOVRuntimeException("User Not Found");
@@ -50,4 +51,8 @@ public class EisCommonService {
         }
     }
 
+    public DesignationMaster getEmployeeDesignation(final Integer posId) {
+        return assignmentService.getPrimaryAssignmentForPositon(posId).getDesigId();
+    }
+    
 }

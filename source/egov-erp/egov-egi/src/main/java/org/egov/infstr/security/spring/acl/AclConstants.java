@@ -16,7 +16,6 @@ public static final String GET_GROUPS_BYIDS="findGroupsByIds";
 
 public static final String GET_EMPBYUSERID="getEmpByUserId";
 
-public static final String GETUSERROLESBYUSERROLE="findUserRolesForGivenUserRoles";
 
 public static String GETMASKFORACLENTRY="getMaskForAclEntry";
 public static String GET_ACL_SID_FORUSER="getAclSidForUser";

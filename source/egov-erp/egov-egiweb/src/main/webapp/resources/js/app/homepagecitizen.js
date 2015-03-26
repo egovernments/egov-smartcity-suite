@@ -1,16 +1,31 @@
-var tableContainer;
 $(document).ready(function()
-{
-	tableContainer = $("#citizen_mycomplaints"); 
-	
-	tableContainer.dataTable({
-		"sPaginationType": "bootstrap",
-		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+{	
+	$('.menu-item').click(function(e)
+	{
+		$('.citizen-screens').hide();
+		$('.hr-menu li').removeClass('active');
+		$(this).parent().addClass('active');
+		$($(this).data('show-screen')).show();
 	});
 	
-	$('#mycomplaintsearch').keyup(function(){
-		tableContainer.fnFilter(this.value);
+	$("#sortby_drop li a").click(function(){
+		$("#sortby_drop > .btn > span > b").html($(this).html());
+	});
+	
+	$('.tabs-style-topline nav li').click(function(){
+		if($(this).attr('data-section') == "newrequest")
+		{
+			$('.tabs-style-topline nav li').removeClass('tab-current-newreq');
+			$('.content-wrap section').removeClass('content-current-newreq');
+			$(this).addClass('tab-current-newreq');
+			$($(this).attr('data-newreq-section')).addClass('content-current-newreq');
+		}else if($(this).attr('data-section') == "myaccount")
+		{
+			$('.tabs-style-topline nav li').removeClass('tab-current-myacc');
+			$('.content-wrap section').removeClass('content-current-myacc');
+			$(this).addClass('tab-current-myacc');
+			$($(this).attr('data-myaccount-section')).addClass('content-current-myacc');
+		}
 	});
 	
 });

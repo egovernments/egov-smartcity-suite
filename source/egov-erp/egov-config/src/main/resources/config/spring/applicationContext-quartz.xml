@@ -35,6 +35,7 @@
         <property name="jobFactory" ref="jobFactory"/>
         <property name="taskExecutor" ref="taskExecutor" />
         <property name="waitForJobsToCompleteOnShutdown" value="true"/>
+        <property name="transactionManager" ref="transactionManager"/>
         <property name="schedulerContextAsMap">
         	<map>
 				<entry key="userService" value-ref="userService"/>

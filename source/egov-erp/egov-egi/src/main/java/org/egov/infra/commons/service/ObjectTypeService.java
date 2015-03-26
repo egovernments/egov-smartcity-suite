@@ -5,6 +5,7 @@ package org.egov.infra.commons.service;
 
 import org.egov.commons.ObjectType;
 import org.egov.infra.commons.repository.ObjectTypeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ public class ObjectTypeService {
 
     private ObjectTypeRepository objectTypeRepository;
     
+    @Autowired
     public ObjectTypeService(final ObjectTypeRepository objectTypeRepository) {
         this.objectTypeRepository = objectTypeRepository;
     }

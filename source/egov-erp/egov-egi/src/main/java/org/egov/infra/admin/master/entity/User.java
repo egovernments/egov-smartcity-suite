@@ -83,12 +83,14 @@ public class User extends AbstractAuditable<User, Long> {
     private String aadhaarNumber;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Address> address;
+    private List<Address> address = Collections.emptyList();
 
     private boolean isActive;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "eg_userrole", joinColumns = @JoinColumn(name = "user", updatable = false), inverseJoinColumns = @JoinColumn(name = "role", updatable = false))
+    @JoinTable(name = "eg_userrole", 
+                joinColumns = @JoinColumn(name = "user"), 
+                inverseJoinColumns = @JoinColumn(name = "role"))
     private Set<Role> roles = Collections.emptySet();
 
     @Temporal(TemporalType.DATE)
@@ -192,6 +194,14 @@ public class User extends AbstractAuditable<User, Long> {
         this.address = address;
     }
 
+    public void addAddress(final Address address) {
+        this.getAddress().add(address);
+    }
+    
+    public void removeAddress(final Address address) {
+        this.getAddress().remove(address);
+    }
+    
     public boolean isActive() {
         return isActive;
     }
@@ -207,7 +217,15 @@ public class User extends AbstractAuditable<User, Long> {
     public void setRoles(final Set<Role> roles) {
         this.roles = roles;
     }
-
+    
+    public void addRole(final Role role) {
+        this.getRoles().add(role);
+    }
+    
+    public void removeRole(final Role role) {
+        this.getRoles().remove(role);
+    }
+    
     public Date getDob() {
         return dob;
     }

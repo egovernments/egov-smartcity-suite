@@ -3,8 +3,8 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
 <div class="row">
 	<div class="col-md-12">
 		<form:form role="form" action="register" modelAttribute="complaint" commandName="complaint" id="complaintform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
@@ -168,6 +168,7 @@
 							<!-- panel body -->
 							<div class="panel-body no-padding">
 								<script type="text/javascript" src="//maps.google.com/maps/api/js?sensor=true"></script>
+								<script type="text/javascript" src="<c:url value='/resources/global/js/geolocation/geolocationmarker-compiled.js' context='/egi'/>"></script>
 								<div id="normal" class="img-prop"></div>
 							</div>
 						</div>
@@ -183,8 +184,8 @@
 	</div>
 </div>
 <script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
-<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js'/>"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js'/>"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
+<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 
 <script src="<c:url value='/resources/js/app/complaint.js'/>"></script>

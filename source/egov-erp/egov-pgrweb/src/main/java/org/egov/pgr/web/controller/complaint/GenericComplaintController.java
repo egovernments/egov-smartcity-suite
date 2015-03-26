@@ -31,7 +31,7 @@ public abstract class GenericComplaintController {
     protected ReceivingCenterService receivingCenterService;
 
     @Autowired
-    @Qualifier("localDiskFileStoreService")
+    @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
 
 

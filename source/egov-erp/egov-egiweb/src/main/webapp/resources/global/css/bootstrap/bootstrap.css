@@ -2489,7 +2489,7 @@ label {
   display: inline-block;
   max-width: 100%;
   margin-bottom: 5px;
-  font-weight: bold;
+  /* font-weight: bold; */
 }
 input[type="search"] {
   -webkit-box-sizing: border-box;
@@ -3073,8 +3073,8 @@ fieldset[disabled] .btn-default.active {
 
 .btn-primary {
   color: #fff;
-  background-color: #303641;
-  border-color: #303641;
+  background-color: #6b4f2c;
+  border-color: #6b4f2c;
 }
  
 .btn-primary:hover,
@@ -3084,8 +3084,6 @@ fieldset[disabled] .btn-default.active {
 .btn-primary.active,
 .open > .dropdown-toggle.btn-primary {
   color: #fff;
-  /*background-color: #286090;
-  border-color: #204d74;*/
   background-color: #f5861f;
   border-color: #f5861f;
 }
