@@ -76,6 +76,7 @@ public class ComplaintEscalationJob extends AbstractQuartzJob {
             complaint.setEscalationDate(getExpiryDate(complaint));
             complaint.transition().withOwner(superiorPosition);
             complaintRepository.save(complaint);
+            //CODE REVIEW Email validation is not required here, email is validated in system already
             if (isEmailNotificationSet && this.complaintService.isValidEmail(superiorUser.getEmailId())) {
                 final Map<String, String> params = new HashMap<String, String>();
                 params.put("to_address", superiorUser.getEmailId());

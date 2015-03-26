@@ -24,13 +24,7 @@ import org.json.simple.JSONObject;
 @Searchable
 public class ComplaintType extends AbstractPersistable<Long> {
     private static final long serialVersionUID = 8904645810221559541L;
-    
-    public static final String COMPLAINT_STATUS_COMPLETED = "COMPLETED";
-    public static final String COMPLAINT_STATUS_REJECTED = "REJECTED";
-    public static final String COMPLAINT_STATUS_WITHDRAWN = "WITHDRAWN";
-    public static final String COMPLAINT_STATUS_FORWARDED = "FORWARDED";
-    public static final String COMPLAINT_STATUS_REGISTERED = "REGISTERED";
-
+   
     @NotBlank
     @SafeHtml
     @Length(max = 150)
