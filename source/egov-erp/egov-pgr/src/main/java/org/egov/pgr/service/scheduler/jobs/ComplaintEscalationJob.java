@@ -21,6 +21,7 @@ import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
 import org.egov.pgr.entity.Complaint;
+import org.egov.pgr.repository.ComplaintRepository;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.EscalationService;
 import org.egov.pims.commons.DesignationMaster;
@@ -59,9 +60,12 @@ public class ComplaintEscalationJob extends AbstractQuartzJob {
     @Autowired
     private EscalationService escalationService;
     
+    @Autowired
+    private ComplaintRepository complaintRepository;
+    
     @Override
     public void executeJob() {
-        /* final AppConfigValues appConfigValue = this.appConfigValuesDAO.getConfigValuesByModuleAndKey(CommonConstants.MODULE_NAME, "SENDEMAILFORESCALATION").get(0);
+        /*final AppConfigValues appConfigValue = this.appConfigValuesDAO.getConfigValuesByModuleAndKey(CommonConstants.MODULE_NAME, "SENDEMAILFORESCALATION").get(0);
         final Boolean isEmailNotificationSet = "YES".equalsIgnoreCase(appConfigValue.getValue());
         final ObjectType objectType = this.objectTypeService.getObjectTypeByName(CommonConstants.EG_OBJECT_TYPE_COMPLAINT);
         final List<Complaint> escalationComplaints = this.complaintService.getComplaintsEligibleForEscalation();

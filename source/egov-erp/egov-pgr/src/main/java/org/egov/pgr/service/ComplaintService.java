@@ -89,11 +89,11 @@ public class ComplaintService {
         /*if(null!=topLevelBoundaryId)
              criteria.add(Restrictions.eq("boundary.topLevelBoundaryID", topLevelBoundaryId));*/
         criteria.add(Restrictions.disjunction().
-        add(Restrictions.eq("complaintStatus.name",COMPLETED)). //CODE REVIEW Just check this enum creates problem, in case the use COMPLETED.name()
-              add(Restrictions.eq("complaintStatus.name",REJECTED)).
-              add(Restrictions.eq("complaintStatus.name",WITHDRAWN)).
-              add(Restrictions.eq("complaintStatus.name", FORWARDED)).
-              add(Restrictions.eq("complaintStatus.name", REGISTERED))).
+        add(Restrictions.eq("complaintStatus.name",COMPLETED.name())). 
+              add(Restrictions.eq("complaintStatus.name",REJECTED.name())).
+              add(Restrictions.eq("complaintStatus.name",WITHDRAWN.name())).
+              add(Restrictions.eq("complaintStatus.name", FORWARDED.name())).
+              add(Restrictions.eq("complaintStatus.name", REGISTERED.name()))).
               add(Restrictions.lt("complaint.escalationDate", new DateTime().toDate())).
               setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         
