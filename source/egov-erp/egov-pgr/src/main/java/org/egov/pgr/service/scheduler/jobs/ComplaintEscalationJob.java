@@ -21,7 +21,6 @@ import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
 import org.egov.pgr.entity.Complaint;
-import org.egov.pgr.repository.ComplaintRepository;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.EscalationService;
 import org.egov.pims.commons.DesignationMaster;
@@ -60,9 +59,6 @@ public class ComplaintEscalationJob extends AbstractQuartzJob {
     @Autowired
     private EscalationService escalationService;
     
-    @Autowired 
-    private ComplaintRepository complaintRepository;
-    
     @Override
     public void executeJob() {
         /* final AppConfigValues appConfigValue = this.appConfigValuesDAO.getConfigValuesByModuleAndKey(CommonConstants.MODULE_NAME, "SENDEMAILFORESCALATION").get(0);
@@ -76,8 +72,7 @@ public class ComplaintEscalationJob extends AbstractQuartzJob {
             complaint.setEscalationDate(getExpiryDate(complaint));
             complaint.transition().withOwner(superiorPosition);
             complaintRepository.save(complaint);
-            //CODE REVIEW Email validation is not required here, email is validated in system already
-            if (isEmailNotificationSet && this.complaintService.isValidEmail(superiorUser.getEmailId())) {
+            if (isEmailNotificationSet) {
                 final Map<String, String> params = new HashMap<String, String>();
                 params.put("to_address", superiorUser.getEmailId());
                 params.put("subject", "Complaint Escaltion");
