@@ -28,6 +28,8 @@ public class ComplaintType extends AbstractPersistable<Long> {
     public static final String COMPLAINT_STATUS_COMPLETED = "COMPLETED";
     public static final String COMPLAINT_STATUS_REJECTED = "REJECTED";
     public static final String COMPLAINT_STATUS_WITHDRAWN = "WITHDRAWN";
+    public static final String COMPLAINT_STATUS_FORWARDED = "FORWARDED";
+    public static final String COMPLAINT_STATUS_REGISTERED = "REGISTERED";
 
     @NotBlank
     @SafeHtml

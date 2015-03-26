@@ -10,10 +10,11 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
 		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd" default-lazy-init="true">
 		
-  	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+  	<tx:annotation-driven transaction-manager="transactionManager" />
   
 	<context:component-scan base-package="org.egov.infra"/>
 	<context:component-scan base-package="org.egov.lib"/>
+	<context:component-scan base-package="org.egov.infstr"/>
 	
 	<jpa:repositories base-package="org.egov.infra"/>
 	<jpa:auditing auditor-aware-ref="springSecurityAwareAuditor"/>
@@ -77,10 +78,6 @@
 	<!-- this is the new bean which all modules should eventually move to. It 
 		uses database sequences. -->
 	<bean id="sequenceNumberGenerator" class="org.egov.infstr.utils.SequenceNumberGenerator" scope="prototype" autowire-candidate="true">
-		<constructor-arg ref="sessionFactory" />
-	</bean>
-
-	<bean id="appConfigValuesDAO" class="org.egov.infstr.config.dao.AppConfigValuesHibernateDAO">
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 

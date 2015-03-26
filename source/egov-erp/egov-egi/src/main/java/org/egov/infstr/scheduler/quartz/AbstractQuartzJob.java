@@ -8,16 +8,16 @@ package org.egov.infstr.scheduler.quartz;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.client.filter.SetDomainJndiHibFactNames;
 import org.egov.infstr.scheduler.GenericJob;
 import org.egov.infstr.utils.EGovConfig;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.StatefulJob;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 /**
  * An abstract base class wrapper for {@link QuartzJobBean} and implements 

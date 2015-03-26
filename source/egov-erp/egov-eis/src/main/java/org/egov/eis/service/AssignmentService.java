@@ -39,8 +39,12 @@ public class AssignmentService {
         return assignmentRepository.getAllActiveAssignmentsByEmpId(Id);
     }
     
-    public Assignment getAssignmentsForPositionId(final Integer posId,final Date givenDate) {
+    public Assignment getAssignmentForPosition(final Integer posId,final Date givenDate) {
         return assignmentRepository.getAssignmentsForPosition(posId,givenDate).get(0);
+    }
+    
+    public Assignment getPrimaryAssignmentForPositon(final Integer posId) {
+        return assignmentRepository.getPrimaryAssignmentForPosition(posId);
     }
     
     @Transactional

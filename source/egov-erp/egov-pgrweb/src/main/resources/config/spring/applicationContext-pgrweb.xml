@@ -7,7 +7,9 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <import resource="classpath*:config/spring/applicationContext-search-all.xml" />
+    <import resource="applicationQuartzContext-pgr.xml"/>
     <import resource="classpath*:config/spring/applicationContext-pgr.xml"/>
+    
 	<import resource="applicationSecurityContext-pgr.xml"/>
 	
     <context:component-scan base-package="org.egov.pgr.web">

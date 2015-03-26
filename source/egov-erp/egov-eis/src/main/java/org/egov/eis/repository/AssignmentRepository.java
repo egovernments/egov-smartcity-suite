@@ -30,5 +30,8 @@ public interface AssignmentRepository extends JpaRepository<Assignment,Long>{
 	
 	@Query(" from Assignment A where A.fromDate<=:givenDate and A.toDate>=:givenDate and A.position.id=:posId order by A.fromDate")
 	public List<Assignment> getAssignmentsForPosition(@Param("posId")Integer posId,@Param("givenDate")Date givenDate);
+	
+	@Query(" from Assignment A where A.fromDate<=current_date and A.toDate>=current_date and A.position.id=:posId")
+	public Assignment getPrimaryAssignmentForPosition(@Param("posId")Integer posId);
 
 }
