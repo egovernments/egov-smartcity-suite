@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.egov.lib.rjbac.role.Role;
+import org.egov.infra.admin.master.entity.Role;
 
 public class RuleGroup implements Comparable<RuleGroup> {
 

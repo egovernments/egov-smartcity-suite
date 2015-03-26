@@ -12,20 +12,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infstr.client.EgovAction;
-import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.role.ejb.api.RoleService;
-import org.egov.lib.rjbac.role.ejb.server.RoleServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class SetupRoleAction extends EgovAction {
 	private static final Logger LOG = LoggerFactory.getLogger(SetupRoleAction.class);
-	private RoleService roleService = new RoleServiceImpl();
+	@Autowired
+	private RoleService roleService;
 	/**
 	 * This method is used to get all the top boundries and set the list in session Calls the setup 
 	 * method in EgovAction class that sets a list of all the departments in the session
@@ -46,12 +47,12 @@ public class SetupRoleAction extends EgovAction {
 
 			try {
 				if (roleForm.getRoleId() != null) {
-					final int roleid = roleForm.getRoleId();
-					final Role role = roleService.getRole(roleid);
-					roleForm.setRoleName(role.getRoleName());
-					roleForm.setRoleDesc(role.getRoleDesc());
-					roleForm.setRoleNameLocal(role.getRoleNameLocal());
-					roleForm.setRoleDescLocal(role.getRoleDescLocal());
+					final Long roleid = roleForm.getRoleId().longValue();
+					final Role role = roleService.getRoleById(roleid);
+					roleForm.setRoleName(role.getName());
+					roleForm.setRoleDesc(role.getDescription());
+					roleForm.setRoleNameLocal(role.getLocalName());
+					roleForm.setRoleDescLocal(role.getLocalDescription());
 					target = "viewRole";
 				} else {
 					roleList = roleService.getAllRoles();
@@ -69,13 +70,13 @@ public class SetupRoleAction extends EgovAction {
 			try {
 				final HttpSession session = req.getSession();
 				if (roleForm.getRoleId() != null) {
-					final int roleid = roleForm.getRoleId();
+					final Long roleid = roleForm.getRoleId().longValue();
 					session.setAttribute("roleIdValue", roleid);
-					final Role role = roleService.getRole(roleid);
-					roleForm.setRoleName(role.getRoleName());
-					roleForm.setRoleDesc(role.getRoleDesc());
-					roleForm.setRoleNameLocal(role.getRoleNameLocal());
-					roleForm.setRoleDescLocal(role.getRoleDescLocal());
+					final Role role = roleService.getRoleById(roleid);
+					roleForm.setRoleName(role.getName());
+					roleForm.setRoleDesc(role.getDescription());
+					roleForm.setRoleNameLocal(role.getLocalName());
+					roleForm.setRoleDescLocal(role.getLocalDescription());
 					target = "updateRole";
 				} else {
 					roleList = roleService.getAllRoles();

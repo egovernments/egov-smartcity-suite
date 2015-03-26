@@ -11,25 +11,27 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.role.ejb.api.RoleService;
-import org.egov.lib.rjbac.role.ejb.server.RoleServiceImpl;
 import org.egov.lib.rrbac.model.RuleGroup;
 import org.egov.lib.rrbac.services.RbacService;
 import org.egov.lib.rrbac.services.RbacServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class CreateRuleGroupAction extends org.apache.struts.action.Action {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CreateRuleGroupAction.class);
 	private final RbacService rbacService = new RbacServiceImpl();
-	private final RoleService roleService = new RoleServiceImpl();
+	@Autowired
+	private RoleService roleService;;
+
 
 	@Override
 	public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest req, final HttpServletResponse res) throws Exception {
@@ -39,12 +41,12 @@ public class CreateRuleGroupAction extends org.apache.struts.action.Action {
 		try {
 			final org.apache.struts.action.DynaActionForm mfb = (org.apache.struts.action.DynaActionForm) form;
 
-			final Integer rlID = (Integer) mfb.get("roleId");
+			final Long rlID = (Long) mfb.get("roleId");
 			final Integer acID = (Integer) mfb.get("actionId");
 			final String rgName = (String) mfb.get("ruleGroupName");
 			final Integer ruleGroupId = (Integer) mfb.get("ruleGroupId");
 			final String submitType = req.getParameter("submitType");
-			final Role role = this.roleService.getRole(rlID);
+			final Role role = this.roleService.getRoleById(rlID);
 			org.egov.lib.rrbac.model.Action action = null;
 			if (!(acID == 0)) {
 				action = this.rbacService.getActionById(acID);

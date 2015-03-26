@@ -8,9 +8,9 @@ import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.Tag;
 
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.security.AuthorizeRule;
-import org.egov.lib.rjbac.role.Role;
 import org.egov.lib.rrbac.model.Action;
 import org.egov.lib.rrbac.services.RbacService;
 import org.egov.web.utils.ERPWebApplicationContext;
@@ -140,7 +140,7 @@ public class EgovAuthorizeTag extends BodyTagSupport {
 	private Set retainAll(final Set<String> granted, final Set<Role> required) {
 		final Set<String> requiredRoles = new HashSet<String>();
 		for (final Role role : required) {
-			requiredRoles.add(role.getRoleName());
+			requiredRoles.add(role.getName());
 		}
 		granted.retainAll(requiredRoles);
 

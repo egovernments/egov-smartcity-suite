@@ -5,28 +5,16 @@
  */
 package org.egov.infstr.client.administration.rjbac.user;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.client.EgovAction;
 import org.egov.infstr.client.delegate.UserDelegate;
-import org.egov.infstr.security.utils.CryptoHelper;
-import org.egov.lib.admbndry.BoundaryType;
-import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
-import org.egov.lib.rjbac.role.Role;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DeleteUpdateUserAction extends EgovAction {
 

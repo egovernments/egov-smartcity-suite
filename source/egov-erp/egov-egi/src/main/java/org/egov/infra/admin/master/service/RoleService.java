@@ -39,7 +39,10 @@ public class RoleService {
     public void update(final Role role) {
         roleRepository.save(role);
     }
-
+    @Transactional
+    public void remove(final Role role) {
+        roleRepository.delete(role);
+    }
     public List<Role> getAllRoles() {
         return roleRepository.findAll();
     }
@@ -54,6 +57,9 @@ public class RoleService {
 
     public List<Role> getRolesByNameLike(final String name) {
         return roleRepository.findByNameContainingIgnoreCase(name);
+    }
+    public List<Role> getRolesByUserId(final Long userId) {
+        return roleRepository.findRolesByUserId(userId);
     }
 
     public Role load(final Long id) {

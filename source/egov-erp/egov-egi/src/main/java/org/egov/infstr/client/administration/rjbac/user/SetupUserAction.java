@@ -11,22 +11,21 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infstr.client.EgovAction;
 import org.egov.infstr.client.delegate.UserDelegate;
-import org.egov.lib.rjbac.role.ejb.api.RoleService;
-import org.egov.lib.rjbac.role.ejb.server.RoleServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SetupUserAction extends EgovAction {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(SetupUserAction.class);
 	private UserDelegate userDelegate;
-	private final RoleService roleService = new RoleServiceImpl();
+	private  RoleService roleService ;
 	/**
 	 * This method is used to get all the top boundries and set the list in session Calls the setup
 	 * method in EgovAction class that sets a list of all the departments in the session

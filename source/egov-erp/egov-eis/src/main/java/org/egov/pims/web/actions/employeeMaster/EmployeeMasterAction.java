@@ -23,15 +23,13 @@ import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.service.CommonsService;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.dept.DepartmentImpl;
-import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.role.ejb.api.RoleService;
 import org.egov.lib.rjbac.user.UserRole;
 import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.egov.pims.commons.DesignationMaster;
@@ -396,7 +394,7 @@ public class EmployeeMasterAction extends BaseFormAction
 				User existingUser= (User) eisUserMgr.getUserByUserName(employee.getUserMaster().getUsername().trim());// to check if the entered user obj is present in db
 				if(existingUser==null)
 				{
-					Role essRole = roleMgr.getRoleByRoleName(EMP_SELF_SERVICE);
+					Role essRole = roleMgr.getRoleByName(EMP_SELF_SERVICE);
 					Set<UserRole> roles = new HashSet<UserRole>();
 					UserRole userrole = new UserRole();
 					User user = new User();

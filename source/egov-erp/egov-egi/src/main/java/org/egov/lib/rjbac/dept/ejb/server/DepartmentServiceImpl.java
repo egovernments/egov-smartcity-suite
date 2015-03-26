@@ -5,15 +5,14 @@
  */
 package org.egov.lib.rjbac.dept.ejb.server;
 
-import org.egov.EgovSpringContextHolder;
+import java.util.List;
+
 import org.egov.exceptions.DuplicateElementException;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.dept.dao.DepartmentDAO;
 import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
-import org.egov.lib.rjbac.role.Role;
-
-import java.util.List;
 
 public class DepartmentServiceImpl implements DepartmentService {
 

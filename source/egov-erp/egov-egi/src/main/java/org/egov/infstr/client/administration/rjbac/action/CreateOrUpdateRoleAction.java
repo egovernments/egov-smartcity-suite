@@ -10,17 +10,17 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infstr.client.EgovAction;
-import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.role.ejb.api.RoleService;
 import org.egov.lib.rrbac.model.Action;
 import org.egov.lib.rrbac.services.RbacService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CreateOrUpdateRoleAction extends EgovAction {
 	private static final Logger LOG = LoggerFactory.getLogger(CreateOrUpdateRoleAction.class);
@@ -50,7 +50,7 @@ public class CreateOrUpdateRoleAction extends EgovAction {
 				throw new EGOVRuntimeException("Role Id not found");
 			}
 
-			final Role role = this.roleService.getRole(Integer.valueOf(roleActionform.getRoleId()));
+			final Role role = this.roleService.getRoleById(Long.valueOf(roleActionform.getRoleId()));
 			
 			// Deleting role action mappings for those actions which are unchecked.
 			final Set<Integer> delActionsSet = (Set<Integer>) req.getSession().getAttribute("delActions");

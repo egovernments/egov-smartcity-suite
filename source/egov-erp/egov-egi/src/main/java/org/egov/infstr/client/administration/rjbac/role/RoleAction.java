@@ -5,21 +5,20 @@
  */
 package org.egov.infstr.client.administration.rjbac.role;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.commons.utils.EgovInfrastrUtil;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infstr.client.EgovAction;
-import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.role.RoleImpl;
-import org.egov.lib.rjbac.role.ejb.api.RoleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 public class RoleAction extends EgovAction {
 	private static final Logger LOG = LoggerFactory.getLogger(RoleAction.class);
@@ -51,11 +50,11 @@ public class RoleAction extends EgovAction {
 		String target = "";
 		final HttpSession session = req.getSession();
 		if (req.getParameter("bool").equals("CREATE")) {
-			final Role role = new RoleImpl();
-			role.setRoleName(roleForm.getRoleName());
-			role.setRoleDesc(roleForm.getRoleDesc());
-			role.setRoleNameLocal(roleForm.getRoleNameLocal());
-			role.setRoleDescLocal(roleForm.getRoleDescLocal());
+			final Role role = new Role();
+			role.setName(roleForm.getRoleName());
+			role.setDescription(roleForm.getRoleDesc());
+			role.setLocalName(roleForm.getRoleNameLocal());
+			role.setLocalDescription(roleForm.getRoleDescLocal());
 
 			try {
 				roleService.createRole(role);
@@ -70,14 +69,14 @@ public class RoleAction extends EgovAction {
 			}
 		} else if (req.getParameter("bool").equals("UPDATE")) {
 
-			final Role role  = roleService.getRole((Integer)session.getAttribute("roleIdValue"));
-			role.setRoleName(roleForm.getRoleName());
-			role.setRoleDesc(roleForm.getRoleDesc());
-			role.setRoleNameLocal(roleForm.getRoleNameLocal());
-			role.setRoleDescLocal(roleForm.getRoleDescLocal());
+			final Role role  = roleService.getRoleById((Long)session.getAttribute("roleIdValue"));
+			role.setName(roleForm.getRoleName());
+			role.setDescription(roleForm.getRoleDesc());
+			role.setLocalName(roleForm.getRoleNameLocal());
+			role.setLocalDescription(roleForm.getRoleDescLocal());
 
 			try {
-				roleService.updateRole(role);
+				roleService.update(role);
 				target = "success";
 				roleForm.reset(mapping, req);
 				req.setAttribute("MESSAGE", "Role successfully modified");
@@ -89,10 +88,10 @@ public class RoleAction extends EgovAction {
 			}
 		} else if (req.getParameter("bool").equals("DELETE")) {
 			
-			final Role role  = roleService.getRole((Integer) roleForm.getRoleId());
+			final Role role  = roleService.getRoleById(roleForm.getRoleId().longValue());
 
 			try {
-				roleService.removeRole(role);
+				roleService.remove(role);
 				target = "success";
 				roleForm.reset(mapping, req);
 				req.setAttribute("MESSAGE", "Role successfully deleted");

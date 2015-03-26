@@ -5,28 +5,6 @@
  */
 package org.egov.commons.utils;
 
-import org.egov.commons.Installment;
-import org.egov.commons.service.CommonsService;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.infstr.commons.Module;
-import org.egov.infstr.utils.EGovConfig;
-import org.egov.infstr.utils.ExcludeBndryType;
-import org.egov.lib.admbndry.Boundary;
-import org.egov.lib.admbndry.BoundaryType;
-import org.egov.lib.admbndry.HeirarchyType;
-import org.egov.lib.admbndry.ejb.api.BoundaryService;
-import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
-import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
-import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.role.ejb.api.RoleService;
-import org.egov.lib.rjbac.user.dao.UserDAO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,6 +17,28 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+import org.egov.commons.Installment;
+import org.egov.commons.service.CommonsService;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infstr.commons.Module;
+import org.egov.infstr.utils.EGovConfig;
+import org.egov.infstr.utils.ExcludeBndryType;
+import org.egov.lib.admbndry.Boundary;
+import org.egov.lib.admbndry.BoundaryType;
+import org.egov.lib.admbndry.HeirarchyType;
+import org.egov.lib.admbndry.ejb.api.BoundaryService;
+import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
+import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
+import org.egov.lib.rjbac.dept.Department;
+import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
+import org.egov.lib.rjbac.user.dao.UserDAO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 	private static Map resetMap = new HashMap();
@@ -607,9 +607,9 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 			while (roleListitr.hasNext()) {
 				final Role role = (Role) roleListitr.next();
 				// adding the Roleid and the Rolename to the static RoleIdname
-				tempRoleIdname.put(role.getId(), role.getRoleName());
+				tempRoleIdname.put(role.getId(), role.getName());
 				// adding the Rolename and the Roleid to the static Rolename
-				tempRolename.put(role.getRoleName(), role.getId());
+				tempRolename.put(role.getName(), role.getId());
 
 			}
 			RoleIdname.put(domainName, tempRoleIdname);
@@ -625,7 +625,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 				Iterator userListitr = null;
 				List userList = null;
 				// iterate through the top levelboundaries
-				final String roleUsers = role.getRoleName() + ",";
+				final String roleUsers = role.getName() + ",";
 				// get the users list by Role and toplevelboundary
 				userList = userDAO.getAllUserForRoles(roleUsers, new Date());
 				// if the role is citizen then userList is empty amd it goes to else group
@@ -671,7 +671,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 		final List rolesList = new ArrayList();
 		Role r = null;
 		for (final String role : roles) {
-			r = rmang.getRoleByRoleName(role);
+			r = rmang.getRoleByName(role);
 			if (r != null) {
 				rolesList.add(r);
 			}
@@ -791,7 +791,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 		if (exRoleList.size() != 0) {
 			while (iter.hasNext()) {
 				final Role role = (Role) iter.next();
-				if (exRoleList.contains(role.getRoleName())) {
+				if (exRoleList.contains(role.getName())) {
 					iter.remove();
 				}
 			}

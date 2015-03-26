@@ -147,7 +147,7 @@ where ca.classification=4  and ca.type in('E') and ca.isactiveforposting = 1   o
 </egi-activeFunctions>
 <egi-roles>
 	<type>hql</type>
-	<query>from RoleImpl</query>
+	<query>from Role</query>
 </egi-roles>
 
 <egi-egwTypeOfWork>

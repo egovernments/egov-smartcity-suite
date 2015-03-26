@@ -11,8 +11,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infstr.security.utils.SecurityConstants;
-import org.egov.lib.rjbac.role.Role;
 import org.egov.lib.rrbac.dao.ActionHibernateDAO;
 import org.egov.lib.rrbac.model.Action;
 import org.slf4j.Logger;
@@ -84,7 +84,7 @@ public class EGovFilterInvocationDefinitionSource implements FilterInvocationSec
 			if (actionRoles != null && !actionRoles.isEmpty()) {
 				final List<ConfigAttribute> configAttributes = new ArrayList<ConfigAttribute>();
 				for (final Role role : actionRoles) {
-					configAttributes.add(new SecurityConfig(role.getRoleName()));
+					configAttributes.add(new SecurityConfig(role.getName()));
 				}
 				return configAttributes;
 			}

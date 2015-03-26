@@ -26,7 +26,6 @@
 
 	<bean id="rbacService" class="org.egov.lib.rrbac.services.RbacServiceImpl" />
 
-	<!-- <bean id="roleService" class="org.egov.lib.rjbac.role.ejb.server.RoleServiceImpl" /> -->
 
 	<bean id="userService" class="org.egov.lib.rjbac.user.ejb.server.UserServiceImpl" >
 		<constructor-arg ref="sessionFactory" />
@@ -252,9 +251,6 @@
 
 	<bean id="egovInfrastructureUtil" class="org.egov.commons.utils.EgovInfrastrUtil">
 		<property name="userDAO" ref="userDao" />
-	</bean>
-	<bean id="roleDAO" class="org.egov.lib.rjbac.role.dao.RoleDAO">
-		<property name="sessionFactory" ref="sessionFactory"/>
 	</bean>
 	
 	<bean id="eisService" class="org.egov.pims.service.EisUtilService" scope="prototype" lazy-init="true">

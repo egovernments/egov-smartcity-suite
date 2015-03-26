@@ -11,25 +11,26 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.role.ejb.api.RoleService;
-import org.egov.lib.rjbac.role.ejb.server.RoleServiceImpl;
 import org.egov.lib.rrbac.model.RuleGroup;
 import org.egov.lib.rrbac.services.RbacService;
 import org.egov.lib.rrbac.services.RbacServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class CreateActionRoleMapAction extends org.apache.struts.action.Action {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CreateActionRoleMapAction.class);
 	private final RbacService rbacService = new RbacServiceImpl();
-	private final RoleService roleService = new RoleServiceImpl();
+	@Autowired
+	private RoleService roleService;
 
 	@Override
 	public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest req, final HttpServletResponse res) throws Exception {
@@ -41,18 +42,18 @@ public class CreateActionRoleMapAction extends org.apache.struts.action.Action {
 
 			final Integer acID = (Integer) mfb.get("actionId");
 
-			final Integer[] unMappedRoleId = (Integer[]) mfb.get("unMappedRoleId");
-			final Integer[] mappedRoleId = (Integer[]) mfb.get("mappedRoleId");
+			final Long[] unMappedRoleId = (Long[]) mfb.get("unMappedRoleId");
+			final Long[] mappedRoleId = (Long[]) mfb.get("mappedRoleId");
 
 			final org.egov.lib.rrbac.model.Action action = this.rbacService.getActionById(acID);
-			for (final Integer roleID1 : unMappedRoleId) {
-				final Role role = this.roleService.getRole(roleID1);
+			for (final Long roleID1 : unMappedRoleId) {
+				final Role role = this.roleService.getRoleById(roleID1);
 				action.addRole(role);
 
 			}
 
-			for (final Integer roleID2 : mappedRoleId) {
-				final Role role = this.roleService.getRole(roleID2);
+			for (final Long roleID2 : mappedRoleId) {
+				final Role role = this.roleService.getRoleById(roleID2);
 				action.removeRole(role);
 				final Set rgList = action.getRuleGroup();
 				RuleGroup ruleGroup = null;

@@ -10,30 +10,32 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.role.ejb.api.RoleService;
-import org.egov.lib.rjbac.role.ejb.server.RoleServiceImpl;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.service.RoleService;
+import org.egov.lib.rrbac.model.Action;
 import org.egov.lib.rrbac.model.RuleGroup;
 import org.egov.lib.rrbac.services.RbacService;
 import org.egov.lib.rrbac.services.RbacServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ViewRuleGroupAction extends org.apache.struts.action.Action {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ViewRuleGroupAction.class);
 	private final RbacService rbacService = new RbacServiceImpl();
-	private final RoleService roleService = new RoleServiceImpl();
+	@Autowired
+	private RoleService roleService ;
 
 	@Override
 	public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest req, final HttpServletResponse res) throws Exception {
 		String target = "";
 		Set<RuleGroup> rgList = null;
-		Set<Role> rList = null;
+		Set<Action> rList = null;
 		try {
 			final org.apache.struts.action.DynaActionForm mfb = (org.apache.struts.action.DynaActionForm) form;
 			final String submitType = req.getParameter("submitType");
@@ -49,7 +51,7 @@ public class ViewRuleGroupAction extends org.apache.struts.action.Action {
 			} else if (submitType.equalsIgnoreCase("getActions")) {
 				final Integer rId = (Integer) mfb.get("roleId1");
 				if (!(rId == 0)) {
-					final Role r = this.roleService.getRole(rId);
+					final Role r = this.roleService.getRoleById(rId.longValue());
 					rList = r.getActions();
 				}
 

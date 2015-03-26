@@ -8,8 +8,8 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.lib.rjbac.role.RoleImpl;
 
 @Entity
 @Table(name="pgr_complaintstatus_mapping")
@@ -34,7 +34,7 @@ public class ComplaintStatusMapping extends AbstractPersistable<Long> {
 	@ManyToOne(fetch=FetchType.LAZY)
     @Valid
     @JoinColumn(name="role_id")
-	private RoleImpl role;
+	private Role role;
 	
 	@NotNull
 	private Integer orderNo;
@@ -55,11 +55,11 @@ public class ComplaintStatusMapping extends AbstractPersistable<Long> {
 		this.showStatus = showStatus;
 	}
 
-	public RoleImpl getRole() {
+	public Role getRole() {
 		return role;
 	}
 
-	public void setRole(RoleImpl role) {
+	public void setRole(Role role) {
 		this.role = role;
 	}
 

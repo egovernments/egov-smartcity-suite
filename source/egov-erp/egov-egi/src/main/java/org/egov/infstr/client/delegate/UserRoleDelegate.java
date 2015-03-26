@@ -9,22 +9,23 @@ package org.egov.infstr.client.delegate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.service.RoleService;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
 import org.egov.lib.rjbac.dept.ejb.server.DepartmentServiceImpl;
-import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.role.ejb.api.RoleService;
-import org.egov.lib.rjbac.role.ejb.server.RoleServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class UserRoleDelegate {
 
 	private static UserRoleDelegate userRoleDelegate = new UserRoleDelegate();
 	private static Logger logger = LoggerFactory.getLogger(UserRoleDelegate.class);
-	private final RoleService roleService = new RoleServiceImpl();
+	@Autowired
+	private  RoleService roleService;
 	private final DepartmentService departmentService = new DepartmentServiceImpl();
 
 	private UserRoleDelegate() {
@@ -70,9 +71,9 @@ public class UserRoleDelegate {
 		try {
 			role = getRole(roleid);
 
-			role = this.roleService.getRoleByRoleName(role.getRoleName());
+			role = this.roleService.getRoleByName(role.getName());
 			// role.removeAllReportees();
-			this.roleService.removeRole(role);
+			this.roleService.remove(role);
 		} catch (final Exception e) {
 			logger.info("Exception Encountered!!!" + e.getMessage());
 			throw new EGOVRuntimeException("Internal Server Error in deleting the role", e);
@@ -90,7 +91,7 @@ public class UserRoleDelegate {
 			final Role parent = getRole(parentRoleId);
 			role.setParent(parent);
 
-			this.roleService.updateRole(role);
+			this.roleService.update(role);
 		} catch (final Exception exp) {
 			logger.info("Exception Encountered!!!" + exp.getMessage());
 			throw new EGOVRuntimeException("Internal Server Error in Updating Role", exp);
@@ -122,7 +123,7 @@ public class UserRoleDelegate {
 		Role role = null;
 		try {
 			if (roleId != null && roleId != 0) {
-				role = this.roleService.getRole(roleId);
+				role = this.roleService.getRoleById(roleId.longValue());
 			}
 		} catch (final Exception e) {
 			logger.info("Exception Encountered!!!" + e.getMessage());

@@ -11,8 +11,8 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.egov.exceptions.RBACException;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infstr.commons.Module;
-import org.egov.lib.rjbac.role.Role;
 
 public class Action implements Comparable<Action> {
 

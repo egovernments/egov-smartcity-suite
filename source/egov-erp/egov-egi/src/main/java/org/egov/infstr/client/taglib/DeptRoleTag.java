@@ -14,12 +14,10 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.role.Role;
 
 public class DeptRoleTag extends BodyTagSupport {
 	/**

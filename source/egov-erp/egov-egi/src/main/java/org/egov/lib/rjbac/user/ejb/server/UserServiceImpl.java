@@ -6,12 +6,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.lib.admbndry.BoundaryType;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
 import org.egov.lib.rjbac.jurisdiction.JurisdictionValues;
-import org.egov.lib.rjbac.role.Role;
 import org.egov.lib.rjbac.user.UserRole;
 import org.egov.lib.rjbac.user.dao.TerminalDAO;
 import org.egov.lib.rjbac.user.dao.UserDAO;

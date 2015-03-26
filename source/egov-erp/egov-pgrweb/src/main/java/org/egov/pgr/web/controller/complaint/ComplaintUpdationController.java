@@ -4,9 +4,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.role.dao.RoleDAO;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
@@ -35,7 +35,7 @@ public class ComplaintUpdationController {
 	private ComplaintStatusMappingService complaintStatusMappingService;
 	private SmartValidator validator;
 	private SecurityUtils securityUtils;
-	private RoleDAO roleDAO;  
+	private RoleService roleService;  
 
 	@Autowired
 	public ComplaintUpdationController(ComplaintService complaintService,
@@ -43,14 +43,14 @@ public class ComplaintUpdationController {
 			CommonService commonService,
 			ComplaintStatusMappingService complaintStatusMappingService,
 			SmartValidator validator, SecurityUtils securityUtils,
-			RoleDAO roleDAO) {
+			RoleService roleService) {
 		this.complaintService = complaintService;
 		this.complaintTypeService = complaintTypeService;
 		this.commonService = commonService;
 		this.complaintStatusMappingService = complaintStatusMappingService;
 		this.validator = validator;
 		this.securityUtils = securityUtils;  
-		this.roleDAO = roleDAO;
+		this.roleService = roleService;
 	}
 
 // Dont use this which will query multiple times 
@@ -69,7 +69,7 @@ public class ComplaintUpdationController {
 	@ModelAttribute("status")
 	public List<ComplaintStatus> getStatus(@PathVariable Long id) {
 		
-		List<Role> rolesList = roleDAO.getRolesByUser(securityUtils.getCurrentUser().getId());
+		List<Role> rolesList = roleService.getRolesByUserId(securityUtils.getCurrentUser().getId());
 		
 		return complaintStatusMappingService.getStatusByRoleAndCurrentStatus(rolesList, getComplaint(id).getStatus());
 	} 

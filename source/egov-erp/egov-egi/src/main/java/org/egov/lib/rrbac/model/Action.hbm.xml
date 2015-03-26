@@ -21,7 +21,7 @@
 		</set>
 		<set name="roles" table="EG_ROLEACTION_MAP">
 			<key column="ACTIONID" />
-			<many-to-many class="org.egov.lib.rjbac.role.RoleImpl" column="ROLEID" />
+			<many-to-many class="org.egov.infra.admin.master.entity.Role" column="ROLEID" />
 		</set>
 		<many-to-one name="module" class="org.egov.infstr.commons.Module" column="MODULE_ID" />
 		<property name="orderNumber" column="ORDER_NUMBER" type="integer" />

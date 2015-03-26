@@ -1,6 +1,6 @@
-<%@page import="org.egov.lib.rjbac.role.dao.RoleDAO"%>
+<%-- <%@page import="org.egov.lib.rjbac.role.dao.RoleDAO"%> --%>
 <%@page contentType="text/html" %>
-<%@page import="java.util.*,org.egov.infstr.client.delegate.*,org.egov.lib.rjbac.dept.*,org.egov.lib.rjbac.role.*" %>
+<%@page import="java.util.*,org.egov.infstr.client.delegate.*,org.egov.lib.rjbac.dept.*,org.egov.infra.admin.master.entity.*" %>
 
 <%@ include file="/includes/taglibs.jsp" %>
 <%@ taglib uri="/deptRole" prefix="deptRole" %>
@@ -70,7 +70,7 @@
 							{
 								Role role = (Role)itr.next();
 						%>
-							<html:option value="<%=role.getId().toString()%>"><%=role.getRoleName()%></html:option>
+							<html:option value="<%=role.getId().toString()%>"><%=role.getName()%></html:option>
 						<%
 							}
 						%>

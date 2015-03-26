@@ -6,43 +6,29 @@
 package org.egov.infstr.client.delegate;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.egov.commons.utils.EgovInfrastrUtil;
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.admbndry.Boundary;
-import org.egov.lib.admbndry.BoundaryType;
+import org.egov.infra.admin.master.service.RoleService;
 import org.egov.lib.admbndry.HeirarchyType;
 import org.egov.lib.admbndry.ejb.api.BoundaryService;
 import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
 import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
-import org.egov.lib.admbndry.ejb.server.BoundaryServiceImpl;
-import org.egov.lib.admbndry.ejb.server.BoundaryTypeServiceImpl;
-import org.egov.lib.admbndry.ejb.server.HeirarchyTypeServiceImpl;
-import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
-import org.egov.lib.rjbac.dept.ejb.server.DepartmentServiceImpl;
-import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
-import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.role.ejb.api.RoleService;
-import org.egov.lib.rjbac.role.ejb.server.RoleServiceImpl;
 import org.egov.lib.rjbac.user.ejb.api.UserService;
-import org.egov.lib.rjbac.user.ejb.server.UserServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class UserDelegate {
 	
 	private UserService userService ;
 	private HeirarchyTypeService heirarchyTypeService;
 	private BoundaryService boundaryService;
+	@Autowired
 	private RoleService roleService;
 	private DepartmentService departmentService;
 	private BoundaryTypeService boundaryTypeService;

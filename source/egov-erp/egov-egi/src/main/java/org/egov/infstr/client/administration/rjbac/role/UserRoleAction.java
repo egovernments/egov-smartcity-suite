@@ -8,18 +8,17 @@ package org.egov.infstr.client.administration.rjbac.role;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infstr.client.EgovAction;
 import org.egov.infstr.client.EgovActionForm;
 import org.egov.infstr.client.delegate.UserRoleDelegate;
-import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.role.RoleImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UserRoleAction extends EgovAction {
 
@@ -47,12 +46,12 @@ public class UserRoleAction extends EgovAction {
 		if (str.equals("")) {
 			try {
 
-				role = new RoleImpl();
+				role = new Role();
 				final Integer roleid = new Integer(req.getParameter("roleid"));
 				role = this.userRoleDelegate.getRole(roleid);
 				session.setAttribute("ROLE", role);
-				roleForm.setRoleDesc(role.getRoleDesc());
-				roleForm.setRoleName(role.getRoleName());
+				roleForm.setRoleDesc(role.getDescription());
+				roleForm.setRoleName(role.getName());
 				req.setAttribute("editroleid", (role.getParent() != null) ? role.getParent().getId() : null);
 				target = "toViewRole";
 				roleForm.reset(mapping, req);
@@ -72,7 +71,7 @@ public class UserRoleAction extends EgovAction {
 			}
 		} else if (str.equals("CREATE")) {
 			try {
-				role = new RoleImpl();
+				role = new Role();
 				roleForm.populate(role, EgovActionForm.TO_OBJECT);
 				final String dName = req.getParameter("departmentId");
 				this.userRoleDelegate.getDepartmentbyName(dName);
@@ -137,12 +136,12 @@ public class UserRoleAction extends EgovAction {
 		else if (str.equals("EDIT")) {
 			try {
 
-				role = new RoleImpl();
+				role = new Role();
 				final Integer roleid = new Integer(req.getParameter("roleid"));
 				role = this.userRoleDelegate.getRole(roleid);
 				session.setAttribute("ROLE", role);
-				roleForm.setRoleDesc(role.getRoleDesc());
-				roleForm.setRoleName(role.getRoleName());
+				roleForm.setRoleDesc(role.getDescription());
+				roleForm.setRoleName(role.getName());
 				req.setAttribute("editroleid", (role.getParent() != null) ? role.getParent().getId() : null);
 				target = "toUpdateRole";
 			}

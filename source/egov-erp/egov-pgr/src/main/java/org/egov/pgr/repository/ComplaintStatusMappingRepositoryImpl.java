@@ -5,7 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.lib.rjbac.role.Role;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintStatusMapping;
 import org.hibernate.Criteria;

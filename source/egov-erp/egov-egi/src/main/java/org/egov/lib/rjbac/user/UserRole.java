@@ -7,8 +7,8 @@ package org.egov.lib.rjbac.user;
 
 import java.util.Date;
 
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.lib.rjbac.role.Role;
 
 public class UserRole {
 

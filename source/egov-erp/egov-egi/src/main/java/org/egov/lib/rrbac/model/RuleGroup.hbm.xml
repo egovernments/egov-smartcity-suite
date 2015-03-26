@@ -10,7 +10,7 @@
 		</id>
 		<timestamp column="updatedtime" name="updatedTime" access="property" unsaved-value="null" />
 		<property name="name" column="Name" type="string" />
-		<many-to-one name="roleId" class="org.egov.lib.rjbac.role.RoleImpl" column="ROLEID" unique="true" />
+		<many-to-one name="roleId" class="org.egov.infra.admin.master.entity.Role" column="ROLEID" unique="true" />
 		<set name="rules" table="EG_RGRule_MAP" cascade="all-delete-orphan">
 			<key column="RULEGROUPID" />
 			<many-to-many class="org.egov.lib.rrbac.model.Rules" column="RULEID" />

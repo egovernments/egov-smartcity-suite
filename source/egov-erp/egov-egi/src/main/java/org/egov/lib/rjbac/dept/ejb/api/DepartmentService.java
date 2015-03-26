@@ -8,9 +8,9 @@ package org.egov.lib.rjbac.dept.ejb.api;
 import java.util.List;
 
 import org.egov.exceptions.DuplicateElementException;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.role.Role;
 
 public interface DepartmentService {
 	/**

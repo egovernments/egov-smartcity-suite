@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.dao.GenericDAO;
 import org.egov.infstr.dao.GenericHibernateDAO;
@@ -17,7 +18,6 @@ import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.dept.DepartmentImpl;
-import org.egov.lib.rjbac.role.Role;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;

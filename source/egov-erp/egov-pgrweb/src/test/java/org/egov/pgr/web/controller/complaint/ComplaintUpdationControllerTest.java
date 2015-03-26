@@ -15,14 +15,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.support.formatter.BoundaryFormatter;
 import org.egov.lib.admbndry.BoundaryImpl;
 import org.egov.lib.admbndry.ejb.api.BoundaryService;
-import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.role.RoleImpl;
-import org.egov.lib.rjbac.role.dao.RoleDAO;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
@@ -85,7 +84,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
 	private SecurityUtils securityUtils;
 	
 	@Mock
-	RoleDAO roleDAO;  
+	RoleService roleService;  
 	
 	@Mock
     User user;
@@ -96,7 +95,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
 		initMocks(this);
 		
 		ComplaintUpdationController complaintUpdationController = new ComplaintUpdationController
-				(complaintService,complaintTypeService, commonService, complaintStatusMappingService, smartValidator, securityUtils, roleDAO);
+				(complaintService,complaintTypeService, commonService, complaintStatusMappingService, smartValidator, securityUtils, roleService);
 		//when(complaintUpdationController.getStatus()).thenReturn(value, values);
 		
 		return complaintUpdationController; 
@@ -124,11 +123,11 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
 		ComplaintStatus cs=new ComplaintStatus(); 
 		
 		when(securityUtils.getCurrentUser()).thenReturn(user);
-		RoleImpl r=new RoleImpl();
+		Role r=new Role();
 		List<Role> roleList=new ArrayList<Role>();
 		roleList.add(r);
 		
-		when(roleDAO.getRolesByUser(Mockito.anyLong())).
+		when(roleService.getRolesByUserId(Mockito.anyLong())).
 				thenReturn(roleList);  
 		csList.add(cs);
 		when(complaintStatusMappingService.getStatusByRoleAndCurrentStatus(roleList, cs)).thenReturn(csList);

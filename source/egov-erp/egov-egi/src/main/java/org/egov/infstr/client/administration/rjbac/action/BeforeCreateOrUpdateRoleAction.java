@@ -8,20 +8,22 @@ package org.egov.infstr.client.administration.rjbac.action;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infstr.client.EgovAction;
 import org.egov.infstr.commons.service.GenericCommonsService;
 import org.egov.infstr.utils.StringUtils;
-import org.egov.lib.rjbac.role.ejb.api.RoleService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class BeforeCreateOrUpdateRoleAction extends EgovAction {
 	private static final Logger logger = LoggerFactory.getLogger(BeforeCreateOrUpdateRoleAction.class);
 	private GenericCommonsService genericCommonsService;
+	@Autowired
 	private RoleService roleService;
 
 	public void setGenericCommonsService(final GenericCommonsService genericCommonsService) {
@@ -46,7 +48,7 @@ public class BeforeCreateOrUpdateRoleAction extends EgovAction {
 			}
 			this.saveToken(req);			
 			req.setAttribute("module", this.genericCommonsService.getModuleByID(Integer.valueOf(moduleId)));
-			req.setAttribute("role", this.roleService.getRole(Integer.valueOf(roleId)));
+			req.setAttribute("role", this.roleService.getRoleById(Long.valueOf(roleId)));
 			req.getSession().setAttribute("moduleId", Integer.valueOf(moduleId));
 			target = "success";
 		} catch (final Exception c) {

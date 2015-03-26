@@ -2,8 +2,8 @@ package org.egov.pgr.service;
 
 import java.util.List;
 
-import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.role.dao.RoleDAO;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.service.RoleService;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.repository.ComplaintStatusMappingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class ComplaintStatusMappingService {
     private ComplaintStatusMappingRepository complaintStatusMappingRepository;
 
     @Autowired
-    RoleDAO roleDAO;
+    RoleService roleService;
 
     public List<ComplaintStatus> getStatusByRoleAndCurrentStatus(final List<Role> role, final ComplaintStatus status) {
         return complaintStatusMappingRepository.getStatusByRoleAndCurrentStatus(role, status);

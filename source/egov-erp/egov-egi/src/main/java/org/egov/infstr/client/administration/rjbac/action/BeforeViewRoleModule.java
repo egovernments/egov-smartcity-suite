@@ -11,10 +11,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infstr.client.EgovAction;
-import org.egov.lib.rjbac.role.ejb.api.RoleService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class BeforeViewRoleModule extends EgovAction {
+        @Autowired
 	private RoleService roleService;
 	
 	public void setRoleService(final RoleService roleManager) {

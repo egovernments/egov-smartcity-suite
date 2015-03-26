@@ -24,7 +24,7 @@
 <![CDATA[from User  where id =?]]>
 	</query>
 	<query name="getRoleById">
-<![CDATA[from RoleImpl  where id =?]]>
+<![CDATA[from Role  where id =?]]>
 	</query>
 
 	<query name="findUsersByIds">
@@ -39,7 +39,7 @@
 
 	<query name="getAclSidsForRole">
 <![CDATA[from AclSid  where upper(sidType.type) like ?  and aclObjectIdentity.domainObjectId=? and 
-ownerSid in(select id from RoleImpl where roleName in(:param_2)) and permission in(:param_3)]]>
+ownerSid in(select id from Role where name in(:param_2)) and permission in(:param_3)]]>
 	</query>
 
 
@@ -50,7 +50,7 @@ ownerSid in(select id from RoleImpl where roleName in(:param_2)) and permission 
 
 
 	<query name="findRolesByIds">
-<![CDATA[from RoleImpl  where id in (:param_0)]]>
+<![CDATA[from Role  where id in (:param_0)]]>
 	</query>
 
 

@@ -8,7 +8,7 @@
 				<param name="sequence">SEQ_EG_USERROLE</param>
 			</generator>
 		</id>
-		<many-to-one name="role" class="org.egov.lib.rjbac.role.RoleImpl" cascade="save-update">
+		<many-to-one name="role" class="org.egov.infra.admin.master.entity.Role" cascade="save-update">
 			<column name="ID_ROLE" />
 		</many-to-one>
 		<many-to-one name="user" class="org.egov.infra.admin.master.entity.User" cascade="save-update">

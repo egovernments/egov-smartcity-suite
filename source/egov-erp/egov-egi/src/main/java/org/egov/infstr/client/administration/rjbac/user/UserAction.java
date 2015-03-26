@@ -5,33 +5,30 @@
  */
 package org.egov.infstr.client.administration.rjbac.user;
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.egov.commons.utils.EgovInfrastrUtil;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infstr.client.EgovAction;
-import org.egov.infstr.security.utils.CryptoHelper;
-import org.egov.infstr.utils.DateUtils;
-import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.role.ejb.api.RoleService;
-import org.egov.lib.rjbac.user.UserRole;
-import org.egov.lib.rjbac.user.UserSignature;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.egov.commons.utils.EgovInfrastrUtil;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infstr.client.EgovAction;
+import org.egov.infstr.utils.DateUtils;
+import org.egov.lib.rjbac.user.UserRole;
+import org.egov.lib.rjbac.user.ejb.api.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UserAction extends EgovAction {
 	
@@ -94,7 +91,7 @@ public class UserAction extends EgovAction {
 					for (int i = 0; i < roleid.length; i++) {
 						final UserRole userrole = new UserRole();
 						if (roleid[i] != 0) {
-							role = roleService.getRole(roleid[i]);
+							role = roleService.getRoleById(roleid[i].longValue());
 							userrole.setRole(role);
 							userrole.setIsHistory('N');
 							userrole.setUser(user);
@@ -184,7 +181,7 @@ public class UserAction extends EgovAction {
 					for (int i = 0; i < userRoleId.length; i++) { 
 						
 						final Integer currUserRoleId = Integer.valueOf(userRoleId[i]);
-						final Role role = roleService.getRole(Integer.valueOf(userForm.getSelRoleID()[i]));
+						final Role role = roleService.getRoleById(Long.valueOf(userForm.getSelRoleID()[i]));
 						
 						if (currUserRoleId == 0) {
 							final UserRole userrole = new UserRole();

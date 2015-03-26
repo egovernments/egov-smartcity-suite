@@ -2,7 +2,7 @@ package org.egov.pgr.entity;
 
 import java.lang.reflect.Field;
 
-import org.egov.lib.rjbac.role.RoleImpl;
+import org.egov.infra.admin.master.entity.Role;
 
 public class ComplaintStatusMappingBuilder {
 
@@ -22,7 +22,7 @@ public class ComplaintStatusMappingBuilder {
         return this;
     }
 
-    public ComplaintStatusMappingBuilder withRole(final RoleImpl role) {
+    public ComplaintStatusMappingBuilder withRole(final Role role) {
         complaintStatusMapping.setRole(role);
         return this;
     }

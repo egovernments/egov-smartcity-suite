@@ -12,6 +12,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.security.spring.acl.AclConstants;
 import org.egov.infstr.security.spring.acl.models.AclObjClass;
@@ -20,7 +21,6 @@ import org.egov.infstr.security.spring.acl.models.AclSid;
 import org.egov.infstr.security.spring.acl.models.AclSidType;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.workflow.NotificationGroup;
-import org.egov.lib.rjbac.role.RoleImpl;
 import org.egov.web.actions.BaseFormAction;
 import org.springframework.security.acls.domain.BasePermission;
 
@@ -35,7 +35,7 @@ public class AccessPermissionsAction extends BaseFormAction {
 	private List<User> userList = new ArrayList<User>();
 	private List<Integer> userIdList = new ArrayList<Integer>();
 
-	private List<RoleImpl> roleList = new ArrayList<RoleImpl>();
+	private List<Role> roleList = new ArrayList<Role>();
 	private List<Integer> roleIdList = new ArrayList<Integer>();
 
 	private List<Object> empList = new ArrayList<Object>();
@@ -98,10 +98,10 @@ public class AccessPermissionsAction extends BaseFormAction {
 	}
 
 	@SkipValidation
-	public List<RoleImpl> getAllRoles() {
+	public List<Role> getAllRoles() {
 
 		if (StringUtils.isNotBlank(this.query)) {
-			this.roleList.addAll(this.persistenceService.findAllBy(" from RoleImpl where upper(roleName) like '%' || ? || '%' ", this.query.toUpperCase()));
+			this.roleList.addAll(this.persistenceService.findAllBy(" from Role where upper(name) like '%' || ? || '%' ", this.query.toUpperCase()));
 
 		}
 		return this.roleList;
@@ -284,11 +284,11 @@ public class AccessPermissionsAction extends BaseFormAction {
 		this.userIdList = userIdList;
 	}
 
-	public void setRoleList(final List<RoleImpl> roleList) {
+	public void setRoleList(final List<Role> roleList) {
 		this.roleList = roleList;
 	}
 
-	public List<RoleImpl> getRoleList() {
+	public List<Role> getRoleList() {
 		return this.roleList;
 	}
 

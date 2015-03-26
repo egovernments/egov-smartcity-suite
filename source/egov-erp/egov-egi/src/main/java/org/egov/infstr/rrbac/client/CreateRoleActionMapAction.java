@@ -5,25 +5,26 @@
  */
 package org.egov.infstr.rrbac.client;
 
+import java.util.Iterator;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.lib.rjbac.role.Role;
-import org.egov.lib.rjbac.role.ejb.api.RoleService;
-import org.egov.lib.rjbac.role.ejb.server.RoleServiceImpl;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.service.RoleService;
 import org.egov.lib.rrbac.model.RuleGroup;
 import org.egov.lib.rrbac.services.RbacService;
 import org.egov.lib.rrbac.services.RbacServiceImpl;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Iterator;
-import java.util.Set;
 
 public class CreateRoleActionMapAction extends org.apache.struts.action.Action {
 
@@ -35,7 +36,8 @@ public class CreateRoleActionMapAction extends org.apache.struts.action.Action {
 
 	private static final Logger logger = LoggerFactory.getLogger(CreateRoleActionMapAction.class);
 	private final RbacService rbacService = new RbacServiceImpl();
-	private final RoleService roleService = new RoleServiceImpl();
+	@Autowired
+	private RoleService roleService ;
 
 	@Override
 	@Transactional
@@ -45,11 +47,11 @@ public class CreateRoleActionMapAction extends org.apache.struts.action.Action {
 		try {
 			final org.apache.struts.action.DynaActionForm mfb = (org.apache.struts.action.DynaActionForm) form;
 
-			final Integer rlID = (Integer) mfb.get("roleId");
+			final Long rlID = (Long) mfb.get("roleId");
 
 			final Integer[] unMappedActionId = (Integer[]) mfb.get("unMappedActionId");
 			final Integer[] mappedActionId = (Integer[]) mfb.get("mappedActionId");
-			final Role role = this.roleService.getRole(rlID);
+			final Role role = this.roleService.getRoleById(rlID);
 			for (final Integer actID1 : unMappedActionId) {
 				final org.egov.lib.rrbac.model.Action action = this.rbacService.getActionById(actID1);
 				action.addRole(role);
