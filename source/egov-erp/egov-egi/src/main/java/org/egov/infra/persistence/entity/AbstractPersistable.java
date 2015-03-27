@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.search.annotations.DocumentId;
@@ -25,12 +26,19 @@ public abstract class AbstractPersistable<PK extends Serializable> implements Se
     @DocumentId
     private PK id;
 
+    @Version
+    private Long version;
+    
     public PK getId() {
         return id;
     }
 
     protected void setId(final PK id) {
         this.id = id;
+    }
+
+    public Long getVersion() {
+        return version;
     }
 
     public boolean isNew() {
