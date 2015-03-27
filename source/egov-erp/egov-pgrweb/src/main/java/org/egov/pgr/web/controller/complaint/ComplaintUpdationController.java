@@ -2,11 +2,12 @@ package org.egov.pgr.web.controller.complaint;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Role;
-import org.egov.infra.admin.master.service.RoleService;
-import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
@@ -34,23 +35,21 @@ public class ComplaintUpdationController {
 	private CommonService commonService;
 	private ComplaintStatusMappingService complaintStatusMappingService;
 	private SmartValidator validator;
-	private SecurityUtils securityUtils;
-	private RoleService roleService;  
+	private UserService userService;  
 
 	@Autowired
 	public ComplaintUpdationController(ComplaintService complaintService,
 			ComplaintTypeService complaintTypeService,
 			CommonService commonService,
 			ComplaintStatusMappingService complaintStatusMappingService,
-			SmartValidator validator, SecurityUtils securityUtils,
-			RoleService roleService) {
+			SmartValidator validator, UserService userService
+			) {
 		this.complaintService = complaintService;
 		this.complaintTypeService = complaintTypeService;
 		this.commonService = commonService;
 		this.complaintStatusMappingService = complaintStatusMappingService;
 		this.validator = validator;
-		this.securityUtils = securityUtils;  
-		this.roleService = roleService;
+		this.userService = userService;
 	}
 
 // Dont use this which will query multiple times 
@@ -69,7 +68,7 @@ public class ComplaintUpdationController {
 	@ModelAttribute("status")
 	public List<ComplaintStatus> getStatus(@PathVariable Long id) {
 		
-		List<Role> rolesList = roleService.getRolesByUserId(securityUtils.getCurrentUser().getId());
+		Set<Role> rolesList = userService.getUserByID(Long.valueOf(EGOVThreadLocals.getUserId())).getRoles();
 		
 		return complaintStatusMappingService.getStatusByRoleAndCurrentStatus(rolesList, getComplaint(id).getStatus());
 	} 

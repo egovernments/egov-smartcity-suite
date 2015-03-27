@@ -1,6 +1,7 @@
 package org.egov.pgr.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.service.RoleService;
@@ -19,7 +20,7 @@ public class ComplaintStatusMappingService {
     @Autowired
     RoleService roleService;
 
-    public List<ComplaintStatus> getStatusByRoleAndCurrentStatus(final List<Role> role, final ComplaintStatus status) {
+    public List<ComplaintStatus> getStatusByRoleAndCurrentStatus(final Set<Role> role, final ComplaintStatus status) {
         return complaintStatusMappingRepository.getStatusByRoleAndCurrentStatus(role, status);
     }
 

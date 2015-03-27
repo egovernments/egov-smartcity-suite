@@ -58,9 +58,7 @@ public class RoleService {
     public List<Role> getRolesByNameLike(final String name) {
         return roleRepository.findByNameContainingIgnoreCase(name);
     }
-    public List<Role> getRolesByUserId(final Long userId) {
-        return roleRepository.findRolesByUserId(userId);
-    }
+    
 
     public Role load(final Long id) {
         // FIXME alternative ?

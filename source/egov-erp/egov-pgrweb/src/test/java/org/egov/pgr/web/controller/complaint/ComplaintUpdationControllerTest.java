@@ -13,15 +13,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.support.formatter.BoundaryFormatter;
+import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.lib.admbndry.BoundaryImpl;
 import org.egov.lib.admbndry.ejb.api.BoundaryService;
+import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
@@ -34,8 +37,8 @@ import org.egov.pgr.web.controller.AbstractContextControllerTest;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.test.web.servlet.MockMvc;
@@ -81,10 +84,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
 	BindingResult errors;
 	
 	@Mock
-	private SecurityUtils securityUtils;
-	
-	@Mock
-	RoleService roleService;  
+	UserService userService;  
 	
 	@Mock
     User user;
@@ -95,7 +95,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
 		initMocks(this);
 		
 		ComplaintUpdationController complaintUpdationController = new ComplaintUpdationController
-				(complaintService,complaintTypeService, commonService, complaintStatusMappingService, smartValidator, securityUtils, roleService);
+				(complaintService,complaintTypeService, commonService, complaintStatusMappingService, smartValidator,userService);
 		//when(complaintUpdationController.getStatus()).thenReturn(value, values);
 		
 		return complaintUpdationController; 
@@ -122,13 +122,12 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
 		List<ComplaintStatus> csList=new ArrayList<ComplaintStatus>();
 		ComplaintStatus cs=new ComplaintStatus(); 
 		
-		when(securityUtils.getCurrentUser()).thenReturn(user);
 		Role r=new Role();
-		List<Role> roleList=new ArrayList<Role>();
+		Set<Role> roleList=new HashSet<Role>();
 		roleList.add(r);
-		
-		when(roleService.getRolesByUserId(Mockito.anyLong())).
-				thenReturn(roleList);  
+		EGOVThreadLocals.setUserId("1");
+		when(userService.getUserByID(Matchers.anyLong())).thenReturn(user);
+		when(user.getRoles()).thenReturn(roleList);
 		csList.add(cs);
 		when(complaintStatusMappingService.getStatusByRoleAndCurrentStatus(roleList, cs)).thenReturn(csList);
 	
