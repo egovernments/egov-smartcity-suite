@@ -31,7 +31,7 @@ public class SecureUser implements UserDetails {
     }
 
     public boolean isAccountNonExpired() {
-        return this.user.getPwdExpiryDate().isBeforeNow();
+        return this.user.getPwdExpiryDate().isAfterNow();
     }
 
     public boolean isAccountNonLocked() {
@@ -39,7 +39,7 @@ public class SecureUser implements UserDetails {
     }
 
     public boolean isCredentialsNonExpired() {
-        return this.user.getPwdExpiryDate().isBeforeNow();
+        return this.user.getPwdExpiryDate().isAfterNow();
     }
 
     public boolean isEnabled() {

@@ -378,6 +378,7 @@
                 <artifactId>spring-data-jpa</artifactId>
                 <version>1.7.1.RELEASE</version>
             </dependency>
+            
             <!-- SPRING END -->
 			
 			<!-- SECURITY START -->
@@ -414,7 +415,7 @@
                 <scope>provided</scope>
             </dependency>
             <!-- SECURITY END -->
-
+			
             <!-- QUARTZ START -->
             <dependency>
                 <groupId>org.quartz-scheduler</groupId>
@@ -728,8 +729,22 @@
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
         </dependency>
+        <dependency>
+		  	<groupId>org.springframework.session</groupId>
+      		<artifactId>spring-session-data-redis</artifactId>
+		  	<version>1.0.0.RELEASE</version>
+      		<type>pom</type>
+		</dependency>
         <!-- SPRING DEPENDENCIES END -->
 		
+		<!-- EMBEDDED REDIS SERVER START-->
+		<dependency>
+			<groupId>com.orange.redis-embedded</groupId>
+			<artifactId>embedded-redis</artifactId>
+			<version>0.6</version>
+		</dependency>
+		<!-- EMBEDDED REDIS SERVER END-->
+			
 		<!-- MISC STARTS -->
 		<dependency>
 			<groupId>joda-time</groupId>
