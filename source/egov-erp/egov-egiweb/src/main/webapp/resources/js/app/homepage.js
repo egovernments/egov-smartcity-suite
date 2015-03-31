@@ -150,7 +150,7 @@ $(document).ready(function()
 		if($(window).width() > 768)
 		{
 			$('.sidebar-menu').css('display','table-cell');
-		}else{
+			}else{
 			//$('.sidebar-menu').css('display','block');
 		}
 		
@@ -282,5 +282,7 @@ $(document).ready(function()
 			sidebar_collapsed_menu();
 		}
 	});
+	
+	
 	
 });		

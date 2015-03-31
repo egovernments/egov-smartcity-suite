@@ -36,13 +36,13 @@
 				direction: 'ltr',
 				backText: 'Back',
 				backItemClass: 'backItemClass',
-				backItemIcon: 'fa fa-angle-right',
-				groupIcon: 'fa fa-angle-left',
-				mode: 'overlap',
+				backItemIcon: 'fa fa-angle-left',
+				groupIcon: 'fa fa-angle-right',
+				//mode: 'overlap',
 				overlapWidth: 40,
 				preventItemClick: true,
 				preventGroupItemClick: true,
-				swipe: 'both',
+				swipe: 'desktop',
 				onCollapseMenuStart: function() {},
 				onCollapseMenuEnd: function() {},
 				onExpandMenuStart: function() {},
@@ -301,7 +301,7 @@
 				    .text( instance.settings.backText )
 				    .appendTo( $backItem ),
 				    $backItemIcon = $( "<i />" )
-				    .prop( { "class" : ( ( instance.settings.direction == 'rtl' ) ? "floatLeft " : "floatRight " ) + instance.settings.backItemIcon } )
+				    .prop( { "class" : ( ( instance.settings.direction == 'rtl' ) ? "floatLeft " : "floatLeft " ) + instance.settings.backItemIcon } )
 				    .prependTo( $backItemAnchor );
 				$backItemAnchor.bind( clickEventType , function(e){
 					backItemAnchorClick(e, $levelHolder);
@@ -327,7 +327,7 @@
 			// Create item group DOM element
 			function createItemGroupIcon( $itemAnchor ) {
 				var $itemGroupIcon = $( "<i />" )
-					.attr( { "class" : ( ( instance.settings.direction == 'rtl' ) ? " floatRight iconSpacing_rtl " : " floatLeft iconSpacing_ltr " ) + instance.settings.groupIcon } )
+					.attr( { "class" : ( ( instance.settings.direction == 'rtl' ) ? " floatRight iconSpacing_rtl " : " floatRight iconSpacing_ltr " ) + instance.settings.groupIcon } )
 					.prependTo( $itemAnchor );
 			}
 
