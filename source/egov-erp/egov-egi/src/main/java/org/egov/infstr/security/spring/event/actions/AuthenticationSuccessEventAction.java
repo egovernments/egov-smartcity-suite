@@ -1,64 +1,52 @@
-/*
- * @(#)AuthenticationSuccessEventAction.java 3.0, 12 Jul, 2013 6:07:34 PM
- * Copyright 2013 eGovernments Foundation. All rights reserved. 
- * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
 package org.egov.infstr.security.spring.event.actions;
 
 import java.util.Date;
 import java.util.HashMap;
 
-import org.egov.infra.admin.master.entity.User;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.security.authentication.SecureUser;
 import org.egov.infstr.commons.EgLoginLog;
 import org.egov.infstr.security.utils.SecurityConstants;
-import org.egov.infstr.utils.StringUtils;
 import org.egov.lib.security.terminal.model.Location;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.opensymphony.xwork2.util.location.LocationImpl;
-
 /**
- * This class will get called when Authentication is successful. 
- * Now this class only Logs the User Login information.
+ * This class will get called when Authentication is successful. Now this class
+ * only Logs the User Login information.
  **/
 @Service
 @Transactional
-public class AuthenticationSuccessEventAction implements ApplicationSecurityEventAction<InteractiveAuthenticationSuccessEvent> {
-	
-	private UserService userService;
+public class AuthenticationSuccessEventAction implements
+        ApplicationSecurityEventAction<InteractiveAuthenticationSuccessEvent> {
 
-	private SessionFactory sessionFactory;
+    @Autowired
+    private UserService userService;
 
-	private Session getSession() {
-		return sessionFactory.getCurrentSession();
-	}
-	@Override
-	public void doAction(final InteractiveAuthenticationSuccessEvent authorizedEvent) {
-			final Authentication authentication = authorizedEvent.getAuthentication();
-			final HashMap<String, String> credentials = (HashMap<String, String>)authentication.getCredentials();
-			final EgLoginLog login = new EgLoginLog();
-			login.setLoginTime(new Date(authorizedEvent.getTimestamp()));
-			final User user = this.userService.getUserByUsername(authentication.getName());
-			login.setUser(user);
-			if (StringUtils.isNotBlank(credentials.get(SecurityConstants.COUNTER_FIELD))) {
-				final Location location = (Location) getSession().load(LocationImpl.class, Integer.valueOf(credentials.get(SecurityConstants.COUNTER_FIELD)));
-				login.setLocation(location);
-			}
-			final String loginLogID = String.valueOf(getSession().save(login));
-			((HashMap<String, String>)authentication.getCredentials()).put(SecurityConstants.LOGIN_LOG_ID, loginLogID);
-	}
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
-
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
+    @Override
+    public void doAction(final InteractiveAuthenticationSuccessEvent authorizedEvent) {
+        final Authentication authentication = authorizedEvent.getAuthentication();
+        final HashMap<String, String> credentials = (HashMap<String, String>) authentication.getCredentials();
+        final EgLoginLog login = new EgLoginLog();
+        login.setLoginTime(new Date(authorizedEvent.getTimestamp()));
+        login.setUser(userService.getUserById(((SecureUser) authentication.getPrincipal()).getUserId()));
+        if (org.apache.commons.lang.StringUtils.isNotBlank(credentials.get(SecurityConstants.COUNTER_FIELD))) {
+            final Location location = entityManager.find(Location.class,
+                    Integer.valueOf(credentials.get(SecurityConstants.COUNTER_FIELD)));
+            login.setLocation(location);
+        }
+        entityManager.persist(login);
+        entityManager.flush();
+        final String loginLogID = login.getId().toString();
+        ((HashMap<String, String>) authentication.getCredentials()).put(SecurityConstants.LOGIN_LOG_ID, loginLogID);
+    }
 }

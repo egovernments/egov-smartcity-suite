@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.session.Session;
 import org.springframework.session.web.http.HttpSessionManager;
 import org.springframework.session.web.http.MultiHttpSessionStrategy;
@@ -181,7 +182,7 @@ public final class CookieHttpSessionStrategy implements MultiHttpSessionStrategy
 
     public Map<String,String> getSessionIds(HttpServletRequest request) {
         Cookie session = getCookie(request, cookieName);
-        String sessionCookieValue = session == null ? "" : session.getValue();
+        String sessionCookieValue = session == null ? "" : StringUtils.defaultIfBlank(session.getValue(), "");
         Map<String,String> result = new LinkedHashMap<String,String>();
         StringTokenizer tokens = new StringTokenizer(sessionCookieValue, " ");
         if(tokens.countTokens() == 1) {

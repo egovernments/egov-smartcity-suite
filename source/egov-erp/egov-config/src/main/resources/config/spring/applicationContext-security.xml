@@ -12,10 +12,7 @@
 			<map key-type="org.egov.infstr.security.spring.event.EventType">
 				<entry key="InteractiveAuthenticationSuccessEvent">
 					<list>
-						<bean class="org.egov.infstr.security.spring.event.actions.AuthenticationSuccessEventAction">
-							<property name="userService" ref="userService"/>
-							<property name="sessionFactory" ref="sessionFactory"/>
-						</bean>
+						<bean class="org.egov.infstr.security.spring.event.actions.AuthenticationSuccessEventAction"/>
 					</list>
 				</entry>
 			</map>
