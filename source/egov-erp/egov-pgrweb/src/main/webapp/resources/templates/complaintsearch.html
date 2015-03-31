@@ -231,8 +231,10 @@
 									<div class="form-group"">
 									<div class="text-center">
 										<a href="javascript:void(0);" class="btn btn-primary add-margin">Search Complaints</a>
-										<a href="javascript:void(0);" class="btn btn-default add-margin" onclick="jQuery('#criteria-modal').modal('show', {backdrop: 'static'});">Save search criteria</a>
-										<a href="javascript:void(0);" class="btn btn-default add-margin" onclick="jQuery('#saved-criteria-modal').modal('show', {backdrop: 'static'});">Manage saved searches</a>
+										<button class="btn btn-danger" type="reset">Reset</button>
+										<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">Close</a>
+										<!-- <a href="javascript:void(0);" class="btn btn-default add-margin" onclick="jQuery('#criteria-modal').modal('show', {backdrop: 'static'});">Save search criteria</a>
+										<a href="javascript:void(0);" class="btn btn-default add-margin" onclick="jQuery('#saved-criteria-modal').modal('show', {backdrop: 'static'});">Manage saved searches</a> -->
 									</div>
 								</div>
 								
@@ -680,7 +682,7 @@
 			
 		</div>
 		
-		<!-- Save Search Criteria -->
+		<!-- Save Search Criteria 
 		<div class="modal fade" id="criteria-modal" data-backdrop="static">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -785,10 +787,10 @@
 					</div>
 				</div>
 			</div>
-		</div>
+		</div>-->
 		
 		
-		<!-- Manage Saved Searches -->
+		<!-- Manage Saved Searches >
 		<div class="modal fade" id="saved-criteria-modal" data-backdrop="static">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -895,7 +897,7 @@
 					</div>
 				</div>
 			</div>
-		</div>
+		</div> -->
 		
 		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css">
 		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/bootstrap/bootstrap-datepicker.css">
