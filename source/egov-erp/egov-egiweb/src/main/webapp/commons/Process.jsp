@@ -368,7 +368,7 @@ try {
 	} else if(type.equalsIgnoreCase("checkForUniquePositionName")){//TESTED
 		String positionName = SecurityUtils.checkSQLInjection(request.getParameter("positionName"));
 		String positionId = SecurityUtils.checkSQLInjection(request.getParameter("positionId"));
-		String query="SELECT POSITION_NAME AS \"code\"  FROM EG_POSITION dt WHERE dt.POSITION_NAME=? and dt.id!=? ";
+		String query="SELECT NAME AS \"code\"  FROM EG_POSITION dt WHERE dt.NAME=? and dt.id!=? ";
 		result = dataExist(query,positionName,positionId);
 	} else if(type.equalsIgnoreCase("checkUniqueForBoundaryName")){//TESTED
 		String boundaryId = SecurityUtils.checkSQLInjection(request.getParameter("boundaryId"));

@@ -58,7 +58,7 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
         return WF_TYPES.get(wfType);
     }
 
-    public List<String> getAssignedWorkflowTypes(final Integer posId) {
+    public List<String> getAssignedWorkflowTypes(final Long posId) {
         return this.entityQueryService.findAllByNamedQuery(State.WORKFLOWTYPES_QRY, posId);
     }
 
@@ -72,7 +72,7 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
         return Optional.ofNullable(workflowTypeService);
     }
 
-    public List<T> getDraftItems(final Integer owner, final Long userId, final String order) {
+    public List<T> getDraftItems(final Long owner, final Long userId, final String order) {
         final List<T> draftWfItems = new ArrayList<T>();
         final List<String> wfTypes = this.getAssignedWorkflowTypes(owner);
         for (final String wfType : wfTypes) {
@@ -83,7 +83,7 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
         return draftWfItems;
     }
 
-    public List<T> getFilteredInboxItems(final Integer owner, final Long userId, final Integer sender,
+    public List<T> getFilteredInboxItems(final Long owner, final Long userId, final Long sender,
             final String taskName, final Date fromDate, final Date toDate) {
         final List<T> filteredWFItems = new ArrayList<T>();
         List<String> wfTypes = null;
@@ -126,7 +126,7 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
         return stateAwares;
     }
 
-    public List<T> getWorkflowItems(final Integer owner, final Long userId, final String order) {
+    public List<T> getWorkflowItems(final Long owner, final Long userId, final String order) {
         final List<T> assignedWFItems = new ArrayList<T>();
         final List<String> wfTypes = this.getAssignedWorkflowTypes(owner);
         for (final String wfType : wfTypes) {
@@ -177,7 +177,7 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
         return this.eisService.getPrimaryPositionForUser(userId, forDate);
     }
 
-    public User getUserForPosition(final Integer posId, final Date forDate) {
+    public User getUserForPosition(final Long posId, final Date forDate) {
         return this.eisService.getUserForPosition(posId, forDate);
     }
     

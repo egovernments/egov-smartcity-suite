@@ -35,7 +35,7 @@ public interface EISServeable {
      * @param forDate
      * @return User
      **/
-    User getUserForPosition (Integer positionId, Date forDate);
+    User getUserForPosition (Long positionId, Date forDate);
 
      /**
      * Used get Primary Position for a given User Id for a particular Date.
@@ -80,14 +80,7 @@ public interface EISServeable {
      */
     public List<Position> getUniquePositionList(HashMap<String,String> paramMap,Date date);
     
-    /**
-     * @param givenDate - you can pass any date
-     * @param noOfDays - no of days prior or after.
-     * @param priorOrAfter - "PRIOR" for prior or "AFTER" for after.
-     * @return
-     */
-    public Date getPriorOrAfterWorkingDate(Date givenDate,int noOfDays,DATE_ORDER orderType);
-    
+       
     /**
      * return all distinct Designations to which employees are assigned in the given department for given date. 
      * This list includes primary as well as secondary assignments.

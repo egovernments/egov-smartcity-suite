@@ -5,9 +5,10 @@
  */
 package org.egov.lib.rjbac.dept;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public interface Department {
+public interface Department extends Serializable{
 
 	String getDeptDetails();
 

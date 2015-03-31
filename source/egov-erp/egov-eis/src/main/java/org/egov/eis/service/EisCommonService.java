@@ -31,15 +31,15 @@ public class EisCommonService {
     @Autowired
     private UserService userService;
     
-    public Position getSuperiorPositionByObjectTypeAndPositionFrom(final Integer objectId,final Integer posId) {
+    public Position getSuperiorPositionByObjectTypeAndPositionFrom(final Integer objectId,final Long posId) {
         return positionHierarchyService.getPositionHierarchyByPosAndObjectType(posId,objectId).getToPosition();
     }
     
-    public Position getSuperiorPositionByObjectAndObjectSubTypeAndPositionFrom(final Integer objectId,final String objectSubType,final Integer posId) {
+    public Position getSuperiorPositionByObjectAndObjectSubTypeAndPositionFrom(final Integer objectId,final String objectSubType,final Long posId) {
         return positionHierarchyService.getPosHirByPosAndObjectTypeAndObjectSubType(posId, objectId, objectSubType).getToPosition();
     }
     
-    public User getUserForPosition(final Integer posId,final Date givenDate) {
+    public User getUserForPosition(final Long posId,final Date givenDate) {
         try{
             return assignmentService.getAssignmentForPosition(posId,givenDate).getEmployee().getUserMaster();
         }
@@ -51,7 +51,7 @@ public class EisCommonService {
         }
     }
 
-    public DesignationMaster getEmployeeDesignation(final Integer posId) {
+    public DesignationMaster getEmployeeDesignation(final Long posId) {
         return assignmentService.getPrimaryAssignmentForPositon(posId).getDesigId();
     }
     

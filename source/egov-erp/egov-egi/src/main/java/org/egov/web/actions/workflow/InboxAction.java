@@ -37,14 +37,14 @@ public class InboxAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = LoggerFactory.getLogger(InboxAction.class);
-    private transient final Map<Integer, String> senderList = new HashMap<Integer, String>();
+    private transient final Map<Long, String> senderList = new HashMap<Long, String>();
     private transient final Map<String, String> taskList = new HashMap<String, String>();
     private transient InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate;
     private transient StringBuilder inboxData;
     private transient StringBuilder inboxDraft;
     private transient StringBuilder inboxHistory;
     private transient String stateId;
-    private transient Integer sender;
+    private transient Long sender;
     private transient String task;
     private transient Date fromDate;
     private transient Date toDate;
@@ -53,7 +53,7 @@ public class InboxAction extends BaseFormAction {
         this.inboxRenderServiceDeligate = inboxRenderServiceDeligate;
     }
 
-    public void setSender(final Integer sender) {
+    public void setSender(final Long sender) {
         this.sender = sender;
     }
 
@@ -167,7 +167,7 @@ public class InboxAction extends BaseFormAction {
         return taskList;
     }
 
-    public Map<Integer, String> getSenderList() {
+    public Map<Long, String> getSenderList() {
         return senderList;
     }
 

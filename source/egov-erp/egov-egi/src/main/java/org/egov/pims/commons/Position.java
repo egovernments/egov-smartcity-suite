@@ -1,83 +1,49 @@
 package org.egov.pims.commons;
 
-import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
-public class Position {
-	
-	private Integer id;
-	private User createdBy;
-	private Date createdDate;
-	private User modifiedBy;
-	private Date modifiedDate;
-	private String name;
-	//private DrawingOfficer drawingOfficer;
-	private DeptDesig deptDesigId;
-	private Integer isPostOutsourced;
+@Entity
+@Table(name = "eg_position")
+public class Position extends AbstractAuditable<User, Long> {
+    private static final long serialVersionUID = -7237503685614187960L;
 
-	public String getName() {
-		return name;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public DeptDesig getDeptDesigId() {
-		return deptDesigId;
-	}
+    @Column(name="name",unique=true)
+    private String name;
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="deptDesig")
+    private DeptDesig deptDesig;
+    private boolean isPostOutsourced;
 
-	public void setDeptDesigId(DeptDesig deptDesigId) {
-		this.deptDesigId = deptDesigId;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public Integer getIsPostOutsourced() {
-		return isPostOutsourced;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	public void setIsPostOutsourced(Integer isPostOutsourced) {
-		this.isPostOutsourced = (isPostOutsourced==null?0:isPostOutsourced);
-	}
+    public DeptDesig getDeptDesigId() {
+        return deptDesig;
+    }
 
-	public User getModifiedBy() {
-		return modifiedBy;
-	}
+    public void setDeptDesigId(final DeptDesig deptDesigId) {
+        deptDesig = deptDesigId;
+    }
 
-	public void setModifiedBy(User modifiedBy) {
-		this.modifiedBy = modifiedBy;
-	}
+    public boolean isPostOutsourced() {
+        return isPostOutsourced;
+    }
 
-	public Date getModifiedDate() {
-		return modifiedDate;
-	}
-
-	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
-	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public User getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(User createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}	
+    public void setPostOutsourced(final boolean isPostOutsourced) {
+        this.isPostOutsourced = isPostOutsourced;
+    }
 
 }

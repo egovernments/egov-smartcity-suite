@@ -5,7 +5,6 @@ package org.egov.eis.service;
 
 import org.egov.eis.entity.PositionHierarchy;
 import org.egov.eis.repository.PositionHierarchyRepository;
-import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,11 +39,11 @@ public class PositionHierarchyService {
         positionHierarchyRepository.delete(positionHierarchy);
     }
     
-    public PositionHierarchy getPositionHierarchyByPosAndObjectType(Integer posId,Integer objectId) {
+    public PositionHierarchy getPositionHierarchyByPosAndObjectType(Long posId,Integer objectId) {
         return positionHierarchyRepository.getPositionHierarchyByPosAndObjectType(posId, objectId);
     }
     
-    public PositionHierarchy getPosHirByPosAndObjectTypeAndObjectSubType(Integer posId,Integer objectId,String objectSubType) {
+    public PositionHierarchy getPosHirByPosAndObjectTypeAndObjectSubType(Long posId,Integer objectId,String objectSubType) {
         return positionHierarchyRepository.getPosHirByPosAndObjectTypeAndObjectSubType(posId, objectId, objectSubType);
     }
 

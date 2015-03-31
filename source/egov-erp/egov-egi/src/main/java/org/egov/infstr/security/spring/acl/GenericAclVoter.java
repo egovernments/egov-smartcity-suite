@@ -185,9 +185,9 @@ public abstract class GenericAclVoter implements AccessDecisionVoter {
 		return groupSidList;
 	}
 
-	private List<Integer> getPosIdList() {
+	private List<Long> getPosIdList() {
 		final List<Position> positions = getEisService().getPositionsForUser(Long.valueOf(EGOVThreadLocals.getUserId()), new Date());
-		final List<Integer> posIdList = new ArrayList<Integer>();
+		final List<Long> posIdList = new ArrayList<Long>();
 		for (final Position position : positions) {
 			posIdList.add(position.getId());
 		}

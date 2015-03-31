@@ -6,6 +6,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -19,6 +20,7 @@ public class RepositoryConfiguration {
     private SecurityUtils securityUtils;
     
     @Bean
+    @Profile("production")
     public  AuditorAware<User> springSecurityAwareAuditor() {
         return () -> securityUtils.getCurrentUser();
     }

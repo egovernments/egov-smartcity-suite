@@ -5,6 +5,7 @@ package org.egov.pgr.service.scheduler.jobs;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.jms.JMSException;
@@ -12,19 +13,24 @@ import javax.jms.Message;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
 
+import org.egov.commons.ObjectType;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.commons.service.ObjectTypeService;
 import org.egov.infra.events.entity.Event;
 import org.egov.infra.events.service.EventService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.repository.ComplaintRepository;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.EscalationService;
+import org.egov.pgr.utils.constants.CommonConstants;
 import org.egov.pims.commons.DesignationMaster;
+import org.egov.pims.commons.Position;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +71,7 @@ public class ComplaintEscalationJob extends AbstractQuartzJob {
     
     @Override
     public void executeJob() {
-        /*final AppConfigValues appConfigValue = this.appConfigValuesDAO.getConfigValuesByModuleAndKey(CommonConstants.MODULE_NAME, "SENDEMAILFORESCALATION").get(0);
+        final AppConfigValues appConfigValue = this.appConfigValuesDAO.getConfigValuesByModuleAndKey(CommonConstants.MODULE_NAME, "SENDEMAILFORESCALATION").get(0);
         final Boolean isEmailNotificationSet = "YES".equalsIgnoreCase(appConfigValue.getValue());
         final ObjectType objectType = this.objectTypeService.getObjectTypeByName(CommonConstants.EG_OBJECT_TYPE_COMPLAINT);
         final List<Complaint> escalationComplaints = this.complaintService.getComplaintsEligibleForEscalation();
@@ -84,9 +90,9 @@ public class ComplaintEscalationJob extends AbstractQuartzJob {
                 final Event event = new Event(CommonConstants.MODULE_NAME, "Complaint Escalation", params);
                 EventService.registerEvent(event);
                 sendEmail();
-            }*/
+            }
             System.out.println("Time is "+new Date());
-      // }
+      }
         
     }
     

@@ -133,7 +133,7 @@ public class Complaint extends StateAware {
     }
 
     public Position getAssignee() {
-        return assignee;
+        return this.assignee;
     }
 
     public void setAssignee(final Position assignee) {
@@ -141,7 +141,7 @@ public class Complaint extends StateAware {
     }
 
     public ComplaintStatus getStatus() {
-        return status;
+        return this.status;
     }
 
     public void setStatus(final ComplaintStatus status) {

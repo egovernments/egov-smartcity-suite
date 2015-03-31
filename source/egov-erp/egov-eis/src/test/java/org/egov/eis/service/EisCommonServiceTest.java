@@ -25,14 +25,14 @@ public class EisCommonServiceTest extends EISAbstractSpringIntegrationTest{
     
     @Test
     public void getSuperiorPosByObjectAndPos() {
-        Position pos = eisCommonService.getSuperiorPositionByObjectTypeAndPositionFrom(7, 22);
+        Position pos = eisCommonService.getSuperiorPositionByObjectTypeAndPositionFrom(7, 22l);
         assertNotNull(pos);
         
     }
     
     @Test
     public void getUserForPosition() {
-        User usr = eisCommonService.getUserForPosition(1, new Date());
+        User usr = eisCommonService.getUserForPosition(1l, new Date());
            assertEquals("egovernments",usr.getUsername());
     }
 

@@ -3,8 +3,6 @@
  */
 package org.egov.eis.entity;
 
-import java.lang.reflect.Field;
-
 import org.egov.commons.CChartOfAccounts;
 import org.egov.pims.commons.DesignationMaster;
 

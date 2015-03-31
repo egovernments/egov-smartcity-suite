@@ -143,8 +143,8 @@ public class PostCreationWorkflowAction extends EisCommonWorkflowAction{
 			Position position = new Position();
 			position.setName(empPosition.getPostName());
 			position.setDeptDesigId(deptDesig);
-			position.setModifiedBy(empPosition.getLastModifiedBy());
-			position.setModifiedDate(empPosition.getLastModifiedDate().toDate());
+			//position.setLastModifiedBy(empPosition.getLastModifiedBy());
+			//position.setLastModifiedDate(empPosition.getLastModifiedDate().toDate());
 			empPosition.setPosition(position);
 			
 	}

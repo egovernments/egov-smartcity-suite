@@ -3,6 +3,7 @@ package org.egov.infra.config.session;
 import org.egov.infra.config.redis.EmbeddedRedisServer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
@@ -10,6 +11,7 @@ import redis.clients.jedis.JedisPoolConfig;
 
 @Configuration
 @EnableRedisHttpSession
+@Profile("production")
 public class RedisHttpSessionConfiguration {
     
     @Bean

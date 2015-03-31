@@ -29,7 +29,13 @@ public class PositionBuilder {
 	}
 	
 	public PositionBuilder withId(Integer id){
-		 position.setId(id);
-	        return this;
-	    }
+	    try {
+                final Field idField = position.getClass().getSuperclass().getDeclaredField("id");
+                idField.setAccessible(true);
+                idField.set(position, id);
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+            return this;
+	}
 }

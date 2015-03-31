@@ -531,17 +531,6 @@ public class EisUtilService implements EISServeable
 			
 	}
 
-	@Override
-	public User getUserForPosition(Integer positionId, Date forDate) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Date getPriorOrAfterWorkingDate(Date givenDate, int noOfDays,
-			DATE_ORDER orderType) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 	
 }

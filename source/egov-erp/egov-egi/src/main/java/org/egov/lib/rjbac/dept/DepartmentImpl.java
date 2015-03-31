@@ -12,7 +12,8 @@ import java.util.Date;
 @Searchable
 public class DepartmentImpl implements Department {
 
-	@Searchable(name = "name")
+    private static final long serialVersionUID = -5784480840931873128L;
+    @Searchable(name = "name")
 	private String deptName;
 	private Integer id;
 	@Searchable(name = "code")

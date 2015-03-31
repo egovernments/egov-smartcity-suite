@@ -3,7 +3,8 @@
  */
 package org.egov.eis.service;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
@@ -39,10 +40,10 @@ public class PositionMasterServiceTest extends EISAbstractSpringIntegrationTest{
 	@Test
 	public void updatePosition() {
 		samplePosition();
-		position.setIsPostOutsourced(Integer.valueOf(0));
+		position.setPostOutsourced(false);
 		positionMasterService.updatePosition(position);
 		
-		assertEquals(Integer.valueOf(0),position.getIsPostOutsourced());
+		assertEquals(false,position.isPostOutsourced());
 		
 	}
 	

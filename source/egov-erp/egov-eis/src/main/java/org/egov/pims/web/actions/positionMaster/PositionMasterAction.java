@@ -24,6 +24,7 @@ import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
@@ -159,8 +160,8 @@ public class PositionMasterAction extends BaseFormAction {
 					//: TODO copy the contents from new position to old position 
 					setPositionAttributes(oldPos, newPos);
 					newPosIterator.remove();
-					oldPos.setModifiedDate(new Date());
-					oldPos.setModifiedBy(EisManagersUtill.getUserService().getUserById(Long.valueOf(EGOVThreadLocals.getUserId())));
+					//oldPos.setLastModifiedDate(new DateTime());
+					//oldPos.setLastModifiedBy(EisManagersUtill.getUserService().getUserById(Long.valueOf(EGOVThreadLocals.getUserId())));
 					persistenceService.getSession().saveOrUpdate(oldPos);
 					break;
 				}
@@ -200,8 +201,8 @@ public class PositionMasterAction extends BaseFormAction {
 						DrawingOfficer drawingofficer=getDrawingOfficerService().find("from DrawingOfficer where code =?",  position.getDrawingOfficer().getCode());
 						position.setDrawingOfficer(drawingofficer);
 					}*/
-					position.setModifiedDate(new Date());
-					position.setModifiedBy(EisManagersUtill.getUserService().getUserById(Long.valueOf(EGOVThreadLocals.getUserId())));
+					//position.setLastModifiedDate(new Date());
+					//position.setLastModifiedBy(EisManagersUtill.getUserService().getUserById(Long.valueOf(EGOVThreadLocals.getUserId())));
 					persistenceService.getSession().saveOrUpdate(position);
 				}
 			}
@@ -344,7 +345,7 @@ public class PositionMasterAction extends BaseFormAction {
 	public void setPositionAttributes(Position oldPosition,Position newPosition)
 	{
 		oldPosition.setName(newPosition.getName());
-		oldPosition.setIsPostOutsourced(newPosition.getIsPostOutsourced());
+		oldPosition.setPostOutsourced(newPosition.isPostOutsourced());
 		/*if(null!=newPosition.getBillNumber() && null!=newPosition.getBillNumber().getId())
 		{
 			BillNumberMaster bill=(BillNumberMaster)persistenceService.find("from BillNumberMaster where id=? ",newPosition.getBillNumber().getId());

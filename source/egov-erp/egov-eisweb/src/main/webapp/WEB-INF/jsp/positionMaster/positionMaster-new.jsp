@@ -261,7 +261,7 @@ var totalSanctionedPosts=0;
 	{	
 		if(DataTrim(obj.value)!="")
 		{
-			uniqueChecking('${pageContext.request.contextPath}/commonyui/egov/uniqueCheckAjax.jsp',  'EG_POSITION', 'POSITION_NAME',obj.id, 'no', 'no');
+			uniqueChecking('${pageContext.request.contextPath}/commonyui/egov/uniqueCheckAjax.jsp',  'EG_POSITION', 'NAME',obj.id, 'no', 'no');
 		}
 		
 	}
