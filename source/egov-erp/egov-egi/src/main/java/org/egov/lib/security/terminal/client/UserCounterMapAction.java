@@ -5,16 +5,24 @@
  */
 package org.egov.lib.security.terminal.client;
 
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.repository.UserRepository;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.lib.rjbac.user.dao.UserDAO;
 import org.egov.lib.security.terminal.dao.LocationHibernateDAO;
 import org.egov.lib.security.terminal.dao.UserCounterHibernateDAO;
 import org.egov.lib.security.terminal.model.Location;
@@ -22,25 +30,18 @@ import org.egov.lib.security.terminal.model.UserCounterMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.util.Date;
-import java.util.List;
-
 public class UserCounterMapAction extends DispatchAction {
 	
 	protected static final Logger LOGGER = LoggerFactory.getLogger(UserCounterMapAction.class);
 
 	private UserCounterHibernateDAO userCounterHibernateDAO;
 	private LocationHibernateDAO locationHibernateDAO;
-	private UserDAO userDAO;
+	private UserService userService;
 
-	public UserCounterMapAction(UserCounterHibernateDAO userCounterHibernateDAO, LocationHibernateDAO locationHibernateDAO, UserDAO userDAO) {
+	public UserCounterMapAction(UserCounterHibernateDAO userCounterHibernateDAO, LocationHibernateDAO locationHibernateDAO, UserRepository userRepository) {
 		this.userCounterHibernateDAO = userCounterHibernateDAO;
 		this.locationHibernateDAO = locationHibernateDAO;
-		this.userDAO = userDAO;
+		this.userService = userService;
 	}
 
 	public ActionForward createUserControlMapping(ActionMapping mapping, ActionForm form, HttpServletRequest req, HttpServletResponse res) throws ServletException {
@@ -63,7 +64,7 @@ public class UserCounterMapAction extends DispatchAction {
 					for (int i = 0; i < userId.length; i++) {
 						if (userId[i] != null && !userId[i].trim().equals("")) {
 							Location locationobj = (Location) locationHibernateDAO.findById(Integer.parseInt(locationId), false);
-							User userobj = (User) userDAO.getUserByID(Long.valueOf(userId[i]));
+							User userobj = (User) userService.getUserById(Long.valueOf(userId[i]));
 							if (usercountermapform.getSelCheck()[i].equals("yes") && usercountermapform.getUserCounterId()[i] != null && !usercountermapform.getUserCounterId()[i].equals("")) {
 								UserCounterMap obj = (UserCounterMap) userCounterHibernateDAO.findById(Integer.parseInt(usercountermapform.getUserCounterId()[i]), false);
 								obj.setCounterId(locationobj);
@@ -106,7 +107,7 @@ public class UserCounterMapAction extends DispatchAction {
 						if (userId[i] != null && counter[i] != null && !userId[i].trim().equals("") && !counter[i].trim().equals("")) {
 							
 							Location locationobj = (Location) locationHibernateDAO.findById(Integer.parseInt(counter[i]), false);
-							User userobj = (User) userDAO.getUserByID(Long.valueOf(userId[i]));
+							User userobj = (User) userService.getUserById(Long.valueOf(userId[i]));
 							if (usercountermapform.getSelCheck()[i].equals("yes") && usercountermapform.getUserCounterId()[i] != null && !usercountermapform.getUserCounterId()[i].equals("")) {
 								
 								UserCounterMap obj = (UserCounterMap) userCounterHibernateDAO.findById(Integer.parseInt(usercountermapform.getUserCounterId()[i]), false);
@@ -172,7 +173,7 @@ public class UserCounterMapAction extends DispatchAction {
 				List userCounterMapList = userCounterHibernateDAO.getTerminalBasedUserCounterMapForCurrentDate(Integer.valueOf(usercountermapform.getLocationId()));
 				req.setAttribute("userCounterMapList", userCounterMapList);
 			}
-			List userList = userDAO.getAllUserForRoles(EGovConfig.getProperty("INCLUDE_ROLES", "", "IP-BASED-LOGIN"), new java.util.Date());
+			List userList = Collections.emptyList();//userService.getAllUserForRoles(EGovConfig.getProperty("INCLUDE_ROLES", "", "IP-BASED-LOGIN"), new java.util.Date());
 			
 			req.setAttribute("userList", userList);
 			req.setAttribute("locationParentList", EgovMasterDataCaching.getInstance().get("egi-locationparent"));
@@ -203,7 +204,7 @@ public class UserCounterMapAction extends DispatchAction {
 			}
 			String buttonType = "showAll";
 			Location locationobj = (Location) locationHibernateDAO.findById(Integer.valueOf(usercountermapform.getLocationId()), false);
-			List userList = userDAO.getAllUserForRoles(EGovConfig.getProperty("INCLUDE_ROLES", "", "IP-BASED-LOGIN"), new java.util.Date());
+			List userList = Collections.emptyList();// userService.getAllUserForRoles(EGovConfig.getProperty("INCLUDE_ROLES", "", "IP-BASED-LOGIN"), new java.util.Date());
 			
 			req.setAttribute("userList", userList);
 			req.setAttribute("locationParentList", EgovMasterDataCaching.getInstance().get("egi-locationparent"));

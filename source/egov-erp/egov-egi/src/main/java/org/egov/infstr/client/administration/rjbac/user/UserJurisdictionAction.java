@@ -11,6 +11,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.BoundaryType;
@@ -18,8 +20,6 @@ import org.egov.lib.admbndry.ejb.api.BoundaryService;
 import org.egov.lib.admbndry.ejb.server.BoundaryServiceImpl;
 import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
 import org.egov.lib.rjbac.jurisdiction.JurisdictionValues;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
-import org.egov.lib.rjbac.user.ejb.server.UserServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ import java.util.Set;
 public class UserJurisdictionAction extends DispatchAction {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(UserJurisdictionAction.class);
-	private final UserService userService = new UserServiceImpl(null, null);
+	private final UserService userService = new UserService();
 	private final BoundaryService boundaryService = new BoundaryServiceImpl();
 	
 	public ActionForward saveJurisdiction(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
@@ -45,15 +45,15 @@ public class UserJurisdictionAction extends DispatchAction {
 			if (request.getParameter("userid") != null) {
 				userIdStr = request.getParameter("userid");
 			}
-			final User user = userService.getUserByID(Long.valueOf(userIdStr));
+			final User user = userService.getUserById(Long.valueOf(userIdStr));
 			final String id[] = userForm.getBndryID();
 			for (int i = 0; i < id.length; i++) {
 				final int bndryId = Integer.parseInt(id[i]);
 				final Boundary bndry = boundaryService.getBoundaryById(bndryId);
 				final BoundaryType bndryType = bndry.getBoundaryType();
-				final JurisdictionValues jurValueModifyObj = userService.getJurisdictionValueByBndryIdAndUserId(bndryId, user.getId());
-				final Jurisdiction jurisdiction = userService.getJurisdictionByBndryTypeIdAndUserId(bndryType.getId(), user.getId());
-				if (userForm.getSelCheck()[i].equals("yes") && (jurValueModifyObj != null) && (bndry != null) && bndry.getBoundaryType().getId().equals(bndryType.getId()) && (jurisdiction != null)) {
+				//final JurisdictionValues jurValueModifyObj = userService.getJurisdictionValueByBndryIdAndUserId(bndryId, user.getId());
+				//final Jurisdiction jurisdiction = userService.getJurisdictionByBndryTypeIdAndUserId(bndryType.getId(), user.getId());
+				/*if (userForm.getSelCheck()[i].equals("yes") && (jurValueModifyObj != null) && (bndry != null) && bndry.getBoundaryType().getId().equals(bndryType.getId()) && (jurisdiction != null)) {
 					jurValueModifyObj.setIsHistory('Y');
 					final Jurisdiction jurModifyObj = jurValueModifyObj.getUserJurLevel();
 					jurModifyObj.setJurisdictionLevel(bndryType);
@@ -108,7 +108,7 @@ public class UserJurisdictionAction extends DispatchAction {
 					jurval.setIsHistory('N');
 					jur.addJurisdictionValue(jurval);
 					//user.addJurisdiction(jur);
-				}
+				}*/
 			}
 			final String msg = "The Jurisdiction for the user has been updated Successfully!!";
 			request.setAttribute("MESSAGE", msg);
@@ -132,13 +132,13 @@ public class UserJurisdictionAction extends DispatchAction {
 			String userIdStr = "";
 			if (request.getParameter("userid") != null) {
 				userIdStr = request.getParameter("userid");
-				final User user = userService.getUserByID(Long.valueOf(userIdStr));
-				request.setAttribute("user", user);
+				/*final User user = userService.getUserByID(Long.valueOf(userIdStr));
+				request.setAttribute("user", user);*/
 			}
-			final Set jurObj = userService.getAllJurisdictionsForUser(Long.valueOf(userIdStr));
+			/*final Set jurObj = userService.getAllJurisdictionsForUser(Long.valueOf(userIdStr));
 			if (jurObj != null) {
 				request.setAttribute("jurObj", jurObj);
-			}
+			}*/
 			target = "view";
 		} catch (final EGOVRuntimeException rexp) {
 			target = "failure";

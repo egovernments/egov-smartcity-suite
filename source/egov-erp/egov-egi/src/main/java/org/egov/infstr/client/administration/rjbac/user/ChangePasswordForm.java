@@ -13,9 +13,9 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.validator.ValidatorActionForm;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.repository.UserRepository;
 import org.egov.infstr.security.utils.CryptoHelper;
 import org.egov.infstr.security.utils.ValidatorUtils;
-import org.egov.lib.rjbac.user.dao.UserDAO;
 
 public class ChangePasswordForm extends ValidatorActionForm {
 
@@ -73,14 +73,14 @@ public class ChangePasswordForm extends ValidatorActionForm {
 			if (!ValidatorUtils.isValidPassword(this.getPwd(), true)) {
 				errors.add("message", new ActionMessage("new.pwd.invalid"));
 			} else if (StringUtils.isNotBlank(this.getOldPwd())) {
-				final UserDAO userDao = new UserDAO();
+				/*final UserRepository userDao = new UserRepository();
 				final User user = userDao.getUserByUserName((String) request.getSession().getAttribute("LAST_USER_NAME_PWD_CHANGE"));
 				final String decryptPwd = CryptoHelper.decrypt(user.getPassword().trim());
 				if (!this.getOldPwd().trim().equals(decryptPwd)) {
 					errors.add("message", new ActionMessage("old.pwd.Incorrect"));
 				} else if (this.getPwd().trim().equals(decryptPwd)) {
 					errors.add("message", new ActionMessage("pwd.old.new.same"));
-				}
+				}*/
 			}
 		}
 		return errors;

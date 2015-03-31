@@ -26,11 +26,11 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.dept.DepartmentImpl;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.Assignment;
@@ -161,7 +161,7 @@ public class EmployeeMasterAction extends BaseFormAction
         @SuppressWarnings("unchecked")
         public String save()
         {
-                user = eisUserMgr.getUserByID(Long.valueOf(EGOVThreadLocals.getUserId()));
+                user = eisUserMgr.getUserById(Long.valueOf(EGOVThreadLocals.getUserId()));
                 
                 if(mode.equalsIgnoreCase("create"))
                 {
@@ -390,7 +390,7 @@ public class EmployeeMasterAction extends BaseFormAction
                 {
                         try
                         {
-                                User existingUser= (User) eisUserMgr.getUserByUserName(employee.getUserMaster().getUsername().trim());// to check if the entered user obj is present in db
+                                User existingUser= (User) eisUserMgr.getUserByUsername(employee.getUserMaster().getUsername().trim());// to check if the entered user obj is present in db
                                 if(existingUser==null)
                                 {
                                         Role essRole = roleMgr.getRoleByName(EMP_SELF_SERVICE);
@@ -413,7 +413,7 @@ public class EmployeeMasterAction extends BaseFormAction
                                         user.setName(employee.getEmployeeFirstName());
                                         user.setActive(employee.getUserMaster().isActive());
                                         
-                                        eisUserMgr.createUser(user);
+                                        //eisUserMgr.createUser(user);
                                         employee.setUserMaster(user);
                                 }       
                                 else

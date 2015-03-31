@@ -10,14 +10,10 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
 		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd" default-lazy-init="true">
 		
-  	<tx:annotation-driven transaction-manager="transactionManager" />
-  
 	<context:component-scan base-package="org.egov.infra"/>
 	<context:component-scan base-package="org.egov.lib"/>
 	<context:component-scan base-package="org.egov.infstr"/>
 	
-	<jpa:repositories base-package="org.egov.infra"/>
-	<jpa:auditing auditor-aware-ref="springSecurityAwareAuditor"/>
 	
 	<alias name="${fileStoreServiceBeanName}" alias="fileStoreService" />
 	
@@ -30,11 +26,11 @@
 	<bean id="rbacService" class="org.egov.lib.rrbac.services.RbacServiceImpl" />
 
 
-	<bean id="userService" class="org.egov.lib.rjbac.user.ejb.server.UserServiceImpl" >
+	<!-- <bean id="userService" class="org.egov.infra.admin.master.service.UserService" >
 		<constructor-arg ref="sessionFactory" />
 		<constructor-arg ref="userDao" />
 	</bean>
-
+ -->
 	<bean id="boundaryService" class="org.egov.lib.admbndry.ejb.server.BoundaryServiceImpl">
 		<property name="boundaryDAO" ref="boundaryDAO" />
 		<property name="boundaryTypeService" ref="boundaryTypeService" />
@@ -175,9 +171,9 @@
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 
-	<bean id="userDao" class="org.egov.lib.rjbac.user.dao.UserDAO" scope="prototype" >
+	<!-- <bean id="userDao" class="org.egov.infra.admin.master.repository.UserRepository" scope="prototype" >
 		<constructor-arg ref="sessionFactory" />
-	</bean>
+	</bean> -->
 
 	<bean id="userCounterDao" class="org.egov.lib.security.terminal.dao.UserCounterHibernateDAO" scope="prototype">
 		<constructor-arg ref="sessionFactory" />
@@ -249,7 +245,7 @@
 	</bean>
 
 	<bean id="egovInfrastructureUtil" class="org.egov.commons.utils.EgovInfrastrUtil">
-		<property name="userDAO" ref="userDao" />
+		<property name="userDAO" ref="userRepository" />
 	</bean>
 	
 	<bean id="eisService" class="org.egov.pims.service.EisUtilService" scope="prototype" lazy-init="true">

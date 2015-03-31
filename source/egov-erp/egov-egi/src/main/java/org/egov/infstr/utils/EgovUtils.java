@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.lib.rjbac.user.dao.UserDAO;
+import org.egov.infra.admin.master.repository.UserRepository;
 
 public class EgovUtils {
 
@@ -396,8 +396,8 @@ public class EgovUtils {
 		// else get the userId from the database and store in the session
 		if (req.getSession().getAttribute("userid") == null || req.getUserPrincipal().getName() == null) {
 			loginName = req.getUserPrincipal().getName();
-			userId = new UserDAO().getUserByUserName(loginName).getId();
-			req.getSession().setAttribute("userid", userId);
+			/*userId = new UserRepository().getUserByUserName(loginName).getId();
+			req.getSession().setAttribute("userid", userId);*/
 		} else {
 			userId = (Long) req.getSession().getAttribute("userid");
 		}

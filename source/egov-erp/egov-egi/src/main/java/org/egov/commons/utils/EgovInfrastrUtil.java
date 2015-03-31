@@ -23,6 +23,7 @@ import org.egov.commons.service.CommonsService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.repository.UserRepository;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.Module;
@@ -36,7 +37,6 @@ import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
 import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
 import org.egov.lib.rjbac.dept.Department;
 import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
-import org.egov.lib.rjbac.user.dao.UserDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +53,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 	private DepartmentService departmentService;
 	private RoleService roleService;
 	private CommonsService commonsService;
-	private UserDAO userDAO;
+	private UserRepository userRepository;
 
 	static String installmentForYr2000 = EGovConfig.getProperty("ID_INSTALLMENT_2000", "", "PT");
 
@@ -85,8 +85,8 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 	private static Map bankAccountMap_WithAccountNo = new HashMap();
 	private static Map bankAccountMap_WithoutAccountNo = new HashMap();
 
-	public void setUserDAO(UserDAO userDAO) {
-		this.userDAO = userDAO;
+	public void setUserDAO(UserRepository userRepository) {
+		this.userRepository = userRepository;
 	}
 
 	public void setBoundaryTypeService(final BoundaryTypeService boundaryTypeService) {
@@ -627,7 +627,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 				// iterate through the top levelboundaries
 				final String roleUsers = role.getName() + ",";
 				// get the users list by Role and toplevelboundary
-				userList = userDAO.getAllUserForRoles(roleUsers, new Date());
+				//userList = userRepository.getAllUserForRoles(roleUsers, new Date());
 				// if the role is citizen then userList is empty amd it goes to else group
 				if (userList != null && !userList.isEmpty()) {
 					userListitr = userList.iterator();
@@ -642,7 +642,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 				// here is the users list for citizen
 
 				else {
-					userList = userDAO.getAllUserForRoles(roleUsers, new Date());
+					//userList = userRepository.getAllUserForRoles(roleUsers, new Date());
 					userListitr = userList.iterator();
 					// iterate through the userlist
 					while (userListitr.hasNext()) {

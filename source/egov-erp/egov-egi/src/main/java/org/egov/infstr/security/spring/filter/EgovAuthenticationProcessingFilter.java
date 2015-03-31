@@ -15,9 +15,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.security.authentication.SecureUser;
 import org.egov.infstr.security.utils.SecurityConstants;
 import org.egov.infstr.utils.StringUtils;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
@@ -53,9 +54,8 @@ public class EgovAuthenticationProcessingFilter extends UsernamePasswordAuthenti
 			request.getSession().setAttribute(SecurityConstants.COUNTER_FIELD, counter);
 		}
 		if (authResult != null) {
-			final User principal = (User) authResult.getPrincipal();
-			final org.egov.infra.admin.master.entity.User usr = this.userService.getUserByUserName(principal.getUsername());
-			request.getSession().setAttribute("com.egov.user.LoginUserId", usr.getId());
+			final SecureUser principal = (SecureUser) authResult.getPrincipal();
+			request.getSession().setAttribute("com.egov.user.LoginUserId",principal.getUserId());
 		}
 		super.successfulAuthentication(request, response, filterChain, authResult);
 	}

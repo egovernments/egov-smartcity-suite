@@ -163,8 +163,8 @@
 		<constructor-arg index="0" value="23_*!cdU='612./e;NrI" />
 	</bean>
 	
-	<bean id="userDetailsService" class="org.egov.infstr.security.spring.UserDetailsImpl">
-		<property name="userService" ref="userService" />
+	<bean id="userDetailsService" class="org.egov.infra.config.security.authentication.UserDetailService">
+		<constructor-arg ref="userService"/>
 	</bean>
 	
 	<bean id="egovFilterInvocationDefinitionSource" class="org.egov.infstr.security.spring.EGovFilterInvocationDefinitionSource">

@@ -16,13 +16,12 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infstr.security.utils.CryptoHelper;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.security.utils.ValidatorUtils;
-import org.egov.lib.rjbac.user.dao.UserDAO;
 
 public class ChangePasswordAction extends Action {
 
-	private UserDAO userDao;
+	private UserService userService;
 
 	@Override
 	public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest req, final HttpServletResponse res) throws Exception {
@@ -35,7 +34,7 @@ public class ChangePasswordAction extends Action {
 			return null;
 		} else {
 			final ChangePasswordForm changePasswordForm = (ChangePasswordForm) form;
-			final User user = this.getUserDao().getUserByUserName((String)req.getSession().getAttribute("LAST_USER_NAME_PWD_CHANGE"));
+			final User user = this.getUserDao().getUserByUsername((String)req.getSession().getAttribute("LAST_USER_NAME_PWD_CHANGE"));
 			/*if (user.getUserSignature() != null) {
 				final byte [] currentSignature = CryptoHelper.decrypt(user.getUserSignature().getSignature(),CryptoHelper.decrypt(user.getPassword()));
 				user.getUserSignature().setSignature(CryptoHelper.encrypt(currentSignature,changePasswordForm.getPwd().trim()));
@@ -43,19 +42,19 @@ public class ChangePasswordAction extends Action {
 			user.setPassword(changePasswordForm.getPwd().trim());
 			//user.setPwdReminder(changePasswordForm.getPwdReminder().trim());
 			user.setPwdExpiryDate(new Date());
-			this.getUserDao().createOrUpdateUserWithPwdEncryption(user);
+			//this.getUserDao().createOrUpdateUserWithPwdEncryption(user);
 			req.setAttribute("MESSAGE", "Password successfully modified.");				
 			return mapping.findForward("success");
 		}
 
 	}
 
-	public UserDAO getUserDao() {
-		return this.userDao;
+	public UserService getUserDao() {
+		return this.userService;
 	}
 
-	public void setUserDao(final UserDAO userDao) {
-		this.userDao = userDao;
+	public void setUserService(final UserService userService) {
+		this.userService = userService;
 	}
 
 }

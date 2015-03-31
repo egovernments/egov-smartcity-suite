@@ -9,9 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.security.utils.CryptoHelper;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +67,7 @@ public abstract class AbstractSecurityProcessAdaptor implements SecurityProcessA
 	protected User authenticateLogin(final String userName, final String userPwd) {
 		User user = null;
 		if (userName != null && userPwd != null) {
-			user = this.userService.getUserByUserName(userName);
+			user = this.userService.getUserByUsername(userName);
 			if (user == null || !userPwd.equals(CryptoHelper.decrypt(user.getPassword())) || !user.isActive() ) {
 				user = null;
 			} else {

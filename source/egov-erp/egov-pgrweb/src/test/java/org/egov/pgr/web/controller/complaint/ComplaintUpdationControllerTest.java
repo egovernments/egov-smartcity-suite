@@ -19,12 +19,12 @@ import java.util.Set;
 
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.support.formatter.BoundaryFormatter;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.lib.admbndry.BoundaryImpl;
 import org.egov.lib.admbndry.ejb.api.BoundaryService;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
@@ -126,7 +126,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
 		Set<Role> roleList=new HashSet<Role>();
 		roleList.add(r);
 		EGOVThreadLocals.setUserId("1");
-		when(userService.getUserByID(Matchers.anyLong())).thenReturn(user);
+		when(userService.getUserById(Matchers.anyLong())).thenReturn(user);
 		when(user.getRoles()).thenReturn(roleList);
 		csList.add(cs);
 		when(complaintStatusMappingService.getStatusByRoleAndCurrentStatus(roleList, cs)).thenReturn(csList);

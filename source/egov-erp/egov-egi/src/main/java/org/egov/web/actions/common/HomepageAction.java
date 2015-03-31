@@ -26,6 +26,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.dao.ModuleDao;
@@ -33,7 +34,6 @@ import org.egov.infstr.models.Favourites;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.ejb.api.BoundaryService;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.egov.web.actions.BaseFormAction;
 
 /**
@@ -192,7 +192,7 @@ public class HomepageAction extends BaseFormAction {
 				throw new EGOVRuntimeException("City does not found");
 			}
 
-			final User user = this.userService.getUserByID(Long.valueOf(EGOVThreadLocals.getUserId()));
+			final User user = this.userService.getUserById(Long.valueOf(EGOVThreadLocals.getUserId()));
 			if (user == null) {
 				throw new EGOVRuntimeException("User does not found");
 			}

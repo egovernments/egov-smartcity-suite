@@ -20,10 +20,10 @@ import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.client.EgovAction;
 import org.egov.infstr.security.utils.CryptoHelper;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
-import org.egov.lib.rjbac.user.ejb.server.UserServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class SetupUpdateUserAction extends EgovAction {
 
 	private static final Logger logger = LoggerFactory.getLogger(SetupUpdateUserAction.class);
-	private final UserService userService = new UserServiceImpl(null, null);
+	private final UserService userService = new UserService();
 	@Autowired    
 	private RoleService roleService;
 
@@ -54,7 +54,7 @@ public class SetupUpdateUserAction extends EgovAction {
 		User usr = null;
 		try {
 			final String username = userForm.getUserName();
-			usr = this.userService.getUserByUserName(username);
+			usr = this.userService.getUserByUsername(username);
 			userForm.setId(usr.getId());
 			userForm.setFirstName(usr.getName());
 			/*if (usr.getMiddleName() != "") {

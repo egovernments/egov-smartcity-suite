@@ -7,6 +7,7 @@ package org.egov.web.actions.admin.user;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -14,11 +15,12 @@ import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.repository.UserRepository;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.lib.rjbac.user.dao.UserDAO;
 import org.egov.lib.security.terminal.dao.UserCounterDAO;
 import org.egov.lib.security.terminal.model.Location;
 import org.egov.lib.security.terminal.model.UserCounterMap;
@@ -31,10 +33,10 @@ public class UserLocationMappingAction extends ActionSupport {
 	private static final long serialVersionUID = 1L;
 	private PersistenceService persistenceService;
 	private UserCounterDAO userCounterDao;
-	private UserDAO userDao;
+	private UserService userService;
 
-	public void setUserDao(final UserDAO userDao) {
-		this.userDao = userDao;
+	public void setUserService(final UserService userService) {
+		this.userService = userService;
 	}
 
 	public void setUserCounterDao(final UserCounterDAO userCounterDao) {
@@ -103,7 +105,7 @@ public class UserLocationMappingAction extends ActionSupport {
 
 	public String showUsers() throws Exception {
 		final String userName = ServletActionContext.getRequest().getParameter("query");
-		final List<User> users = this.userDao.getAllUserByUserNameLike(userName);
+		final List<User> users = Collections.emptyList();// this.userRepository.getAllUserByUserNameLike(userName);
 		if (!users.isEmpty()) {
 			final StringBuilder jsonString = new StringBuilder();
 			jsonString.append("[");
@@ -123,7 +125,7 @@ public class UserLocationMappingAction extends ActionSupport {
 		final String userName = ServletActionContext.getRequest().getParameter("userName");
 		final Date fromDate = DateUtils.getDate(ServletActionContext.getRequest().getParameter("fromDate"), "MM/dd/yyyy");
 		final Date toDate = DateUtils.getDate(ServletActionContext.getRequest().getParameter("toDate"), "MM/dd/yyyy");
-		final boolean overLaps = this.userCounterDao.checkUserCounter(this.userDao.getUserByUserName(userName).getId(), fromDate, toDate);
+		final boolean overLaps = this.userCounterDao.checkUserCounter(this.userService.getUserByUsername(userName).getId(), fromDate, toDate);
 		ServletActionContext.getResponse().getWriter().write("{'success':" + overLaps + "}");
 		return null;
 	}
@@ -135,7 +137,7 @@ public class UserLocationMappingAction extends ActionSupport {
 			final String userName = ServletActionContext.getRequest().getParameter("userName");
 			final Date fromDate = DateUtils.getDate(ServletActionContext.getRequest().getParameter("fromDate"), DateUtils.DFT_DATE_FORMAT);
 			final Date toDate = DateUtils.getDate(ServletActionContext.getRequest().getParameter("toDate"), DateUtils.DFT_DATE_FORMAT);
-			final User user = (User) this.userDao.getUserByUserName(userName);
+			final User user = (User) this.userService.getUserByUsername(userName);
 			if (this.userCounterDao.checkUserCounter(user.getId(), fromDate, toDate)) {
 				ServletActionContext.getResponse().getWriter().write("{'success':false}");
 			} else {
@@ -167,7 +169,7 @@ public class UserLocationMappingAction extends ActionSupport {
 			final UserCounterMap userCounterMap = this.userCounterDao.findById(counterId, false);
 			this.persistenceService.setType(Location.class);
 			userCounterMap.setCounterId((Location) this.persistenceService.findById(locationId, false));
-			userCounterMap.setUserId((User) this.userDao.getUserByUserName(userName));
+			userCounterMap.setUserId((User) this.userService.getUserByUsername(userName));
 			userCounterMap.setFromDate(fromDate);
 			userCounterMap.setToDate(toDate);
 			userCounterMap.setModifiedDate(new Date());

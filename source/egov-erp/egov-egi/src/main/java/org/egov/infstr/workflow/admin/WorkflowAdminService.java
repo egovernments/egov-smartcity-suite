@@ -8,15 +8,16 @@ package org.egov.infstr.workflow.admin;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.egov.pims.commons.Position;
 
 @SuppressWarnings("all")
@@ -27,8 +28,8 @@ public class WorkflowAdminService {
     private transient UserService userService;
     private transient InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate;
     
-    public List<User> getAllUserByUserName(final String userName) {
-        return userService.getAllUserByUserNameLike(userName);
+    public Set<User> getAllUserByUserName(final String userName) {
+        return userService.getUsersByUsernameLike(userName);
     }
 
     public List<String> getWorkflowStateValues(final String wfType) {

@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
+import org.egov.infra.admin.master.service.UserService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,7 +32,7 @@ public class UserDetailsImpl implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-		final User usr = this.userService.getUserByUserName(username);
+		final User usr = this.userService.getUserByUsername(username);
 		if (usr == null) {
 			return null;
 		}

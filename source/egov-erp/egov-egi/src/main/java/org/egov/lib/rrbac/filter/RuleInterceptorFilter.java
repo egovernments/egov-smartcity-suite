@@ -22,11 +22,11 @@ import org.slf4j.LoggerFactory;
 import org.egov.exceptions.AuthorizationException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.models.Script;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.egov.lib.rrbac.dao.ActionDAO;
 import org.egov.lib.rrbac.model.Action;
 import org.egov.lib.rrbac.model.AuthorizationRule;
@@ -106,7 +106,7 @@ public class RuleInterceptorFilter implements Filter {
 	 * @return the current user
 	 */
 	public User getCurrentUser(final Long useId) {
-		return this.userService.getUserByID(useId);
+		return this.userService.getUserById(useId);
 	}
 
 	/**

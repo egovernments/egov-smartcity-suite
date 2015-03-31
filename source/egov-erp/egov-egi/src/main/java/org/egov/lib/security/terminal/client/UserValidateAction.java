@@ -11,8 +11,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.egov.lib.security.terminal.dao.UserValidateHibernateDAO;
 import org.egov.lib.security.terminal.model.Location;
 import org.egov.lib.security.terminal.model.UserValidate;
@@ -84,7 +84,7 @@ public class UserValidateAction extends DispatchAction {
 			if (result == true) {
 				target = "success";
 				req.getSession().setAttribute("com.egov.user.LoginUserName", username);
-				User user = userService.getUserByUserName(username);
+				User user = userService.getUserByUsername(username);
 				req.getSession().setAttribute("com.egov.user.LoginUserId", user.getId());
 				req.getSession().setAttribute("org.egov.user.UserFirstName",user.getName());
 			} else {

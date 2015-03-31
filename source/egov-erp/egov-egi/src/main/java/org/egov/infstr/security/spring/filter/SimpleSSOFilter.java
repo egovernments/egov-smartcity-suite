@@ -5,21 +5,11 @@
  */
 package org.egov.infstr.security.spring.filter;
 
-import org.egov.infstr.commons.EgLoginLog;
-import org.egov.infstr.security.utils.CryptoHelper;
-import org.egov.infstr.security.utils.SecurityConstants;
-import org.egov.infstr.security.utils.SessionCache;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
-import org.springframework.transaction.annotation.Transactional;
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -31,11 +21,22 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.security.authentication.SecureUser;
+import org.egov.infstr.commons.EgLoginLog;
+import org.egov.infstr.security.utils.CryptoHelper;
+import org.egov.infstr.security.utils.SecurityConstants;
+import org.egov.infstr.security.utils.SessionCache;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * The filter automatically logs in the user with the credential found in the encrypted 
@@ -61,7 +62,7 @@ public class SimpleSSOFilter implements Filter, LogoutHandler {
 	}
 
 	private String getPasswordForUser(final String userName) {
-		return CryptoHelper.decrypt(this.userService.getUserByUserName(userName).getPassword());
+		return CryptoHelper.decrypt(this.userService.getUserByUsername(userName).getPassword());
 	}
 
 	private Cookie getSSOCookie(final HttpServletRequest request) {
@@ -188,7 +189,7 @@ public class SimpleSSOFilter implements Filter, LogoutHandler {
 	protected SSOPrincipal getSSOPrincipalFromAuthentication() {
 		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		final SSOPrincipal principal = new SSOPrincipal();
-		principal.setUserName(((User) authentication.getPrincipal()).getUsername());
+		principal.setUserName(((SecureUser) authentication.getPrincipal()).getUsername());
 		principal.setTimestamp(System.currentTimeMillis());
 		final HashMap<String, String> creds = (HashMap<String, String>) authentication.getCredentials();
 		for (final Entry<String, String> cred : creds.entrySet()) {

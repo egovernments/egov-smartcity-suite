@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -145,7 +146,7 @@ public class WorkflowAdminAction extends ActionSupport {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public void populateUser() throws IOException {
-		final List<User> users = this.workflowAdmin.getAllUserByUserName(this.query);
+		final Set<User> users = this.workflowAdmin.getAllUserByUserName(this.query);
 		final StringBuilder userAndPos = new StringBuilder(EMPTY);
 		for (final User user : users) {
 			userAndPos.append(user.getUsername()).append(SLASH_DELIMIT).append(user.getName()).append(" - ").append(user.getId()).append("\n");

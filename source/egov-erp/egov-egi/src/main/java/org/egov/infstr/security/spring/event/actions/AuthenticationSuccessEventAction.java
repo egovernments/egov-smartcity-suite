@@ -9,10 +9,10 @@ import java.util.Date;
 import java.util.HashMap;
 
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.commons.EgLoginLog;
 import org.egov.infstr.security.utils.SecurityConstants;
 import org.egov.infstr.utils.StringUtils;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.egov.lib.security.terminal.model.Location;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -44,7 +44,7 @@ public class AuthenticationSuccessEventAction implements ApplicationSecurityEven
 			final HashMap<String, String> credentials = (HashMap<String, String>)authentication.getCredentials();
 			final EgLoginLog login = new EgLoginLog();
 			login.setLoginTime(new Date(authorizedEvent.getTimestamp()));
-			final User user = this.userService.getUserByUserName(authentication.getName());
+			final User user = this.userService.getUserByUsername(authentication.getName());
 			login.setUser(user);
 			if (StringUtils.isNotBlank(credentials.get(SecurityConstants.COUNTER_FIELD))) {
 				final Location location = (Location) getSession().load(LocationImpl.class, Integer.valueOf(credentials.get(SecurityConstants.COUNTER_FIELD)));

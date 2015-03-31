@@ -6,8 +6,8 @@ import java.util.Set;
 
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
@@ -68,7 +68,7 @@ public class ComplaintUpdationController {
 	@ModelAttribute("status")
 	public List<ComplaintStatus> getStatus(@PathVariable Long id) {
 		
-		Set<Role> rolesList = userService.getUserByID(Long.valueOf(EGOVThreadLocals.getUserId())).getRoles();
+		Set<Role> rolesList = userService.getUserById(Long.valueOf(EGOVThreadLocals.getUserId())).getRoles();
 		
 		return complaintStatusMappingService.getStatusByRoleAndCurrentStatus(rolesList, getComplaint(id).getStatus());
 	} 

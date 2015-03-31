@@ -17,8 +17,8 @@ import javax.persistence.PersistenceContext;
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.utils.EGovConfig;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.dao.PositionMasterDAO;
@@ -188,7 +188,7 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 				for(Iterator iter = qry.list().iterator();iter.hasNext();)
 				{
 				    Long userId = (Long)iter.next();
-					uerImpl = userService.getUserByID(userId);
+					uerImpl = userService.getUserById(userId);
 				}
 			}
 		}
@@ -312,7 +312,7 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 				}
 				if (userId != null)
 				{
-					user = userService.getUserByID(userId);
+					user = userService.getUserById(userId);
 				}
 			}
 		}

@@ -7,6 +7,7 @@ package org.egov.lib.admbndry;
 
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.utils.EgovMasterDataCaching;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -39,7 +40,7 @@ public class BoundaryDAO {
 	}
 
 	private Session getSession() {
-		return this.sessionFactory.getCurrentSession();
+		return HibernateUtil.getCurrentSession();
 	}
 	public void setBoundaryTypeService(final BoundaryTypeService boundaryTypeService) {
 		this.boundaryTypeService = boundaryTypeService;

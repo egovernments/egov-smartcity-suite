@@ -14,8 +14,6 @@
 	<!-- JMS Spring Beans -->
 	<!-- ####################################### -->
 
-	<tx:jta-transaction-manager id="transactionManager" />
-
 	<bean id="eventQueue" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
 			<value>java:/jms/queue/event</value> 

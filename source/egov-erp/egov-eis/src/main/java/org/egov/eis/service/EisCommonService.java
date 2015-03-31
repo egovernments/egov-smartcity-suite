@@ -7,7 +7,7 @@ import java.util.Date;
 
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;

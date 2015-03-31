@@ -6,8 +6,8 @@
 package org.egov.infstr.client.filter;
 
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.lib.admbndry.CityWebsiteImpl;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +97,7 @@ public class SetSessionVarFilter implements Filter {
 				final HashMap<String, String> credentials = (HashMap<String, String>) SecurityContextHolder.getContext().getAuthentication().getCredentials();
 				httpSession.setAttribute("locationId", credentials.get("locationId"));
 				httpSession.setAttribute("counterId", credentials.get("counterId"));
-				final User user = this.userService.getUserByUserName(prinName);
+				final User user = this.userService.getUserByUsername(prinName);
 				Long userID = null;
 				if (user != null) {
 					userID = user.getId();

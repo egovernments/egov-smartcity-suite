@@ -1,14 +1,14 @@
 package org.egov.infra.security.utils;
 
 import org.egov.infra.admin.master.entity.User;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.security.authentication.SecureUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class SecurityUtils {
 
     @Autowired
@@ -17,9 +17,9 @@ public class SecurityUtils {
     public User getCurrentUser() {
         if (isCurrentUserAuthenticated()) {
             if (getCurrentAuthentication().getPrincipal() instanceof String)
-                return userService.getUserByUserName("anonymous");
+                return userService.getUserById(1l);//TODO should be replaced with anonymous user
             else 
-                return userService.getUserByUserName(((UserDetails) getCurrentAuthentication().getPrincipal()).getUsername());
+                return userService.getUserById(((SecureUser) getCurrentAuthentication().getPrincipal()).getUserId());
         } else
             return null;
 

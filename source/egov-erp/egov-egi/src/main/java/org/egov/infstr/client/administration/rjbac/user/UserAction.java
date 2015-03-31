@@ -22,9 +22,9 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.client.EgovAction;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,7 +117,7 @@ public class UserAction extends EgovAction {
                                 session.removeAttribute("user");
                                 session.removeAttribute("jurisdcnList");
                                 //user.setIsSuspended('N');
-                                userService.createUser(user);
+                                //userService.createUser(user);
                                 egovInfrastrUtil.resetCache();
                                 
                         } catch (final Exception e) {
@@ -129,7 +129,7 @@ public class UserAction extends EgovAction {
                 } else if (req.getParameter("bool").equals("UPDATE")) {
                         
                         try {
-                                final User user = userService.getUserByUserName(userForm.getUserName());
+                                final User user = userService.getUserByUsername(userForm.getUserName());
                                 /*if (isNotBlank(userForm.getMiddleName())) {
                                         user.setMiddleName(userForm.getMiddleName());
                                 }*/
@@ -224,7 +224,7 @@ public class UserAction extends EgovAction {
                                 userForm.reset(mapping, req);
                                 session.removeAttribute("jurisdcnList");
                                 //user.setIsSuspended('N');
-                                userService.updateUser(user);
+                                //userService.updateUser(user);
                                 egovInfrastrUtil.resetCache();
                         } catch (final Exception e) {
                                 LOG.error("Exception occurred in User Update",e);

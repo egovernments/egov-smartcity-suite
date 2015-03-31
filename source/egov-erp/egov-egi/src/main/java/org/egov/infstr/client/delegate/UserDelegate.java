@@ -13,12 +13,12 @@ import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.lib.admbndry.HeirarchyType;
 import org.egov.lib.admbndry.ejb.api.BoundaryService;
 import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
 import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
 import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -167,8 +167,8 @@ public class UserDelegate {
 	 */
 	public void removeUser(final Long userid) {
 		try {
-			final User user = this.userService.getUserByID(userid);
-			this.userService.removeUser(user);
+			final User user = this.userService.getUserById(userid);
+			//this.userService.removeUser(user);
 			egovInfrastrUtil.resetCache();
 			// EgovInfrastrUtil.RESET = true;
 		} catch (final Exception exp) {
@@ -205,7 +205,7 @@ public class UserDelegate {
 	public User getUser(final Long userid) {
 		User user = null;
 		try {
-			user = this.userService.getUserByID(userid);
+			user = this.userService.getUserById(userid);
 		} catch (final Exception e) {
 			logger.info("Exception Encountered!!!" + e.getMessage());
 			throw new EGOVRuntimeException("Internal Server Error in getting User", e);

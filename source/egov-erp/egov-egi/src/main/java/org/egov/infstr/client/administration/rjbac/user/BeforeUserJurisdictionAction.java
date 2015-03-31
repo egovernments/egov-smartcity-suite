@@ -11,8 +11,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.lib.rjbac.user.ejb.api.UserService;
-import org.egov.lib.rjbac.user.ejb.server.UserServiceImpl;
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.admin.master.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +24,7 @@ import java.util.Set;
 public class BeforeUserJurisdictionAction extends Action {
 
 	private static final Logger logger = LoggerFactory.getLogger(BeforeUserJurisdictionAction.class);
-	private final UserService userService = new UserServiceImpl(null, null);
+	private final UserService userService = new UserService();
 
 	@Override
 	public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest req, final HttpServletResponse res) throws Exception {
@@ -33,12 +33,12 @@ public class BeforeUserJurisdictionAction extends Action {
 			String userIdStr = "";
 			if (req.getParameter("userid") != null) {
 				userIdStr = req.getParameter("userid");
-				final User user = this.userService.getUserByID(Long.valueOf(userIdStr));
-				final Set jurObj1 = this.userService.getAllJurisdictionsForUser(Long.valueOf(userIdStr));
-				if (jurObj1 != null) {
+				//final User user = this.userService.getUserByID(Long.valueOf(userIdStr));
+				//final Set jurObj1 = this.userService.getAllJurisdictionsForUser(Long.valueOf(userIdStr));
+				/*if (jurObj1 != null) {
 					req.setAttribute("jurObj1", jurObj1);
 				}
-				req.setAttribute("user", user);
+				req.setAttribute("user", user);*/
 			}
 			target = "success";
 		} catch (final EGOVRuntimeException rexp) {
