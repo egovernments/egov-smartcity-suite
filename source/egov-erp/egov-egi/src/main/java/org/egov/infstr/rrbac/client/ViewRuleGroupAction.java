@@ -52,7 +52,9 @@ public class ViewRuleGroupAction extends org.apache.struts.action.Action {
 				final Integer rId = (Integer) mfb.get("roleId1");
 				if (!(rId == 0)) {
 					final Role r = this.roleService.getRoleById(rId.longValue());
-					rList = r.getActions();
+					// This is commented while rewriting role master screen
+	                                // code must be corrected while rewriting this screen
+					//rList = r.getActions();
 				}
 
 				req.setAttribute("actionsList", rList);

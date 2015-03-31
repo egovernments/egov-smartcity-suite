@@ -45,7 +45,7 @@ public class UserRoleDelegate {
 	public void createRole(final Role role, final Integer parentRoleId) throws DuplicateElementException {
 		// Set the role of the parent
 		final Role parent = getRole(parentRoleId);
-		role.setParent(parent);
+		//role.setParent(parent);
 
 		createRole(role);
 	}
@@ -89,7 +89,7 @@ public class UserRoleDelegate {
 	public void updateRole(final Role role, final Integer parentRoleId) {
 		try {
 			final Role parent = getRole(parentRoleId);
-			role.setParent(parent);
+			//role.setParent(parent);
 
 			this.roleService.update(role);
 		} catch (final Exception exp) {

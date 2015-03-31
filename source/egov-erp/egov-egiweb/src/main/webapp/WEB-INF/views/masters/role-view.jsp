@@ -28,18 +28,6 @@
 							<c:out value="${role.description}"></c:out>
 						</div>
 					</div>
-					<div class="row add-border">
-						<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.roleNameLocal" /></div>
-						<div class="col-md-9 col-xs-6 add-margin" id="ct-name">
-							<c:out value="${role.localName}"></c:out>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.roleDescLocal" /></div>
-						<div class="col-md-9 col-xs-6 add-margin" id="ct-name">
-							<c:out value="${role.localDescription}"></c:out>
-						</div>
-					</div>
 					
 				</div>
 			</div>

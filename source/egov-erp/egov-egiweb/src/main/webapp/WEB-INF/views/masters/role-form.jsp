@@ -35,24 +35,7 @@
                             <form:errors path="description" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.roleNameLocal"/></label>
-						<div class="col-sm-6">
-							<form:input path="localName" id="localName" type="text" class="form-control low-width" placeholder="" autocomplete="off" />
-                            <form:errors path="localName" cssClass="add-margin error-msg"/>
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.roleDescLocal"/></label>
-						<div class="col-sm-6">
-							<form:input path="localDescription" id="localDescription" type="text" class="form-control low-width" placeholder="" autocomplete="off" />
-                            <form:errors path="localDescription" cssClass="add-margin error-msg"/>
-						</div>
-					</div>
 					
-					<%--  <div class="form-group">
-					<form:hidden path="id" id="id" class="form-control low-width"  value = "id" placeholder="" autocomplete="off"/>
-					</div> --%>
 				</div>
 			</div>
 			<div class="row">

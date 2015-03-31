@@ -51,8 +51,8 @@ public class SetupRoleAction extends EgovAction {
 					final Role role = roleService.getRoleById(roleid);
 					roleForm.setRoleName(role.getName());
 					roleForm.setRoleDesc(role.getDescription());
-					roleForm.setRoleNameLocal(role.getLocalName());
-					roleForm.setRoleDescLocal(role.getLocalDescription());
+					/*roleForm.setRoleNameLocal(role.getLocalName());
+					roleForm.setRoleDescLocal(role.getLocalDescription());*/
 					target = "viewRole";
 				} else {
 					roleList = roleService.getAllRoles();
@@ -75,8 +75,8 @@ public class SetupRoleAction extends EgovAction {
 					final Role role = roleService.getRoleById(roleid);
 					roleForm.setRoleName(role.getName());
 					roleForm.setRoleDesc(role.getDescription());
-					roleForm.setRoleNameLocal(role.getLocalName());
-					roleForm.setRoleDescLocal(role.getLocalDescription());
+					/*roleForm.setRoleNameLocal(role.getLocalName());
+					roleForm.setRoleDescLocal(role.getLocalDescription());*/
 					target = "updateRole";
 				} else {
 					roleList = roleService.getAllRoles();

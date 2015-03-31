@@ -53,8 +53,8 @@ public class RoleAction extends EgovAction {
 			final Role role = new Role();
 			role.setName(roleForm.getRoleName());
 			role.setDescription(roleForm.getRoleDesc());
-			role.setLocalName(roleForm.getRoleNameLocal());
-			role.setLocalDescription(roleForm.getRoleDescLocal());
+			/*role.setLocalName(roleForm.getRoleNameLocal());
+			role.setLocalDescription(roleForm.getRoleDescLocal());*/
 
 			try {
 				roleService.createRole(role);
@@ -72,8 +72,8 @@ public class RoleAction extends EgovAction {
 			final Role role  = roleService.getRoleById((Long)session.getAttribute("roleIdValue"));
 			role.setName(roleForm.getRoleName());
 			role.setDescription(roleForm.getRoleDesc());
-			role.setLocalName(roleForm.getRoleNameLocal());
-			role.setLocalDescription(roleForm.getRoleDescLocal());
+			/*role.setLocalName(roleForm.getRoleNameLocal());
+			role.setLocalDescription(roleForm.getRoleDescLocal());*/
 
 			try {
 				roleService.update(role);

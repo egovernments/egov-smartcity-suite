@@ -48,13 +48,18 @@ public class CreateActionRoleMapAction extends org.apache.struts.action.Action {
 			final org.egov.lib.rrbac.model.Action action = this.rbacService.getActionById(acID);
 			for (final Long roleID1 : unMappedRoleId) {
 				final Role role = this.roleService.getRoleById(roleID1);
-				action.addRole(role);
+				
+				// This is commented while rewriting role master screen
+				// code must be corrected while rewriting this screen
+				//action.addRole(role);
 
 			}
 
 			for (final Long roleID2 : mappedRoleId) {
 				final Role role = this.roleService.getRoleById(roleID2);
-				action.removeRole(role);
+				// This is commented while rewriting role master screen
+                                // code must be corrected while rewriting this screen
+				//action.removeRole(role);
 				final Set rgList = action.getRuleGroup();
 				RuleGroup ruleGroup = null;
 				for (final Iterator itr1 = rgList.iterator(); itr1.hasNext();) {

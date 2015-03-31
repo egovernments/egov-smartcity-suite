@@ -172,25 +172,27 @@ public class Action implements Comparable<Action> {
 	public void setRoles(Set roles) {
 		this.roles = roles;
 	}
-
+	// This is commented while rewriting role master screen
+        // code must be corrected while rewriting this screen
 	/**
 	 * @param role The roles to add
 	 */
-	public void addRole(Role role) {
+	/*public void addRole(Role role) {
 		getRoles().add(role);
 		role.addAction(this);
 	}
-
-	/**
+        // This is commented while rewriting role master screen
+        // code must be corrected while rewriting this screen
+	*//**
 	 * @param role The roles to Remove
-	 */
+	 *//*
 	public void removeRole(Role role) {
 
 		role.removeAction(this);
 		if (getRoles().contains(role))
 			getRoles().remove(role);
 
-	}
+	}*/
 
 	/**
 	 * @return Returns the ruleGroup.

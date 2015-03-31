@@ -60,7 +60,9 @@ public class CreateOrUpdateRoleAction extends EgovAction {
 					if (actionId != null) {
 						final Action action = this.rbacService.getActionById(actionId);
 						if ((action != null) && (role != null)) {
-							action.removeRole(role);
+						 // This is commented while rewriting role master screen
+						// code must be corrected while rewriting this screen
+						//	action.removeRole(role);
 						}
 					}
 				}
@@ -70,7 +72,9 @@ public class CreateOrUpdateRoleAction extends EgovAction {
 			if ((role != null) && (roleActionform.getActionId() != null) && (roleActionform.getActionId().length > 0)) {
 				for (final String actionId : roleActionform.getActionId()) {
 					if (org.apache.commons.lang.StringUtils.isNotBlank(actionId)) {
-						this.rbacService.getActionById(Integer.valueOf(actionId)).addRole(role);
+					 // This is commented while rewriting role master screen
+		                        // code must be corrected while rewriting this screen
+						//this.rbacService.getActionById(Integer.valueOf(actionId)).addRole(role);
 					}
 				}
 			}

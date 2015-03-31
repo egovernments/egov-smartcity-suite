@@ -52,7 +52,9 @@ public class UserRoleAction extends EgovAction {
 				session.setAttribute("ROLE", role);
 				roleForm.setRoleDesc(role.getDescription());
 				roleForm.setRoleName(role.getName());
-				req.setAttribute("editroleid", (role.getParent() != null) ? role.getParent().getId() : null);
+				// This is commented while rewriting role master screen
+                                // code must be corrected while rewriting this screen
+				//req.setAttribute("editroleid", (role.getParent() != null) ? role.getParent().getId() : null);
 				target = "toViewRole";
 				roleForm.reset(mapping, req);
 			} catch (final EGOVRuntimeException e) {
@@ -142,7 +144,9 @@ public class UserRoleAction extends EgovAction {
 				session.setAttribute("ROLE", role);
 				roleForm.setRoleDesc(role.getDescription());
 				roleForm.setRoleName(role.getName());
-				req.setAttribute("editroleid", (role.getParent() != null) ? role.getParent().getId() : null);
+				// This is commented while rewriting role master screen
+                                // code must be corrected while rewriting this screen
+				//req.setAttribute("editroleid", (role.getParent() != null) ? role.getParent().getId() : null);
 				target = "toUpdateRole";
 			}
 
