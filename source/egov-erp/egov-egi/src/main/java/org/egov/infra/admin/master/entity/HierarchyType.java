@@ -1,14 +1,11 @@
 package org.egov.infra.admin.master.entity;
 
-import java.util.Date;
-
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Future;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infstr.models.validator.Unique;
 import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.BoundaryType;
 import org.hibernate.validator.constraints.Length;
@@ -23,8 +20,14 @@ import org.hibernate.validator.constraints.NotBlank;
  */
 
 @Entity
-@Table(name = "eg_hierarchy_type", uniqueConstraints = @UniqueConstraint(columnNames = { "name", "code" }))
-public class HierarchyType extends AbstractPersistable<Long> {
+@Unique(
+        id = "id",
+        tableName = "eg_hierarchy_type", 
+        fields = {"name", "code"}, 
+        columnName = {"name", "code"}
+)
+@Table(name = "eg_hierarchy_type")
+public class HierarchyType extends AbstractAuditable<HierarchyType, Long> {
 
     private static final long serialVersionUID = -7131667806935923935L;
 
@@ -35,9 +38,6 @@ public class HierarchyType extends AbstractPersistable<Long> {
     @NotBlank
     @Length(max = 50)
     private String code;
-
-    @Column(name = "updatedtime")
-    private Date updatedTime;
 
     public String getName() {
         return name;
@@ -55,14 +55,6 @@ public class HierarchyType extends AbstractPersistable<Long> {
         this.code = code;
     }
 
-    public Date getUpdatedTime() {
-        return updatedTime;
-    }
-
-    public void setUpdatedTime(Date updatedTime) {
-        this.updatedTime = updatedTime;
-    }
-    
     @Override
     public String toString() {
         return new StringBuilder().append("HierarchyType [")

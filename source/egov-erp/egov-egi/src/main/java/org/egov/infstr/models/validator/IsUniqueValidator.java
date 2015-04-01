@@ -27,16 +27,19 @@ public class IsUniqueValidator implements ConstraintValidator<Unique, Object> {
 	}
 
 	@Override
-	public boolean isValid(Object arg0, ConstraintValidatorContext arg1) {
+	public boolean isValid(Object arg0, ConstraintValidatorContext constraintValidatorContext) {
 		if (this.unique.fields() == null || this.unique.fields().length == 0) {
 			return true;
 		}
 
-		for (int i = 0; i < this.unique.fields().length; i++) {
-			if (!this.isUnique(arg0, this.unique.fields()[i], this.unique.columnName()[i])) {
-				return false;
-			}
-		}
+                for (int i = 0; i < this.unique.fields().length; i++) {
+                    if (!this.isUnique(arg0, this.unique.fields()[i], this.unique.columnName()[i])) {
+                        constraintValidatorContext
+                                .buildConstraintViolationWithTemplate(this.unique.message())
+                                .addNode(this.unique.fields()[i]).addConstraintViolation();
+                        return false;
+                    }
+                }
 		return true;
 	}
 
