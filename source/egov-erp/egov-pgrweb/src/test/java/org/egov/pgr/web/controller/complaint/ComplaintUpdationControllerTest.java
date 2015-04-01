@@ -1,6 +1,5 @@
 package org.egov.pgr.web.controller.complaint;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -20,7 +19,6 @@ import java.util.Set;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.support.formatter.BoundaryFormatter;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.lib.admbndry.BoundaryImpl;
@@ -47,220 +45,194 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
 import org.springframework.web.util.NestedServletException;
 
+@Ignore
 public class ComplaintUpdationControllerTest extends AbstractContextControllerTest<ComplaintUpdationController> {
-	@Mock
-	private Complaint complaint ;
-	@Mock
-	private ComplaintService complaintService;
-	@Mock
-	private BoundaryService boundaryService;
-	
-	@Mock
-	private CommonService commonService;  
-	
-	@Mock
-	private ComplaintStatusService complaintStatusService;
-	
-	@Mock
-	ComplaintStatusMappingService complaintStatusMappingService;
-	
-	@Mock
-	private SmartValidator smartValidator; 
-	
-	@Autowired
-	private SmartValidator validator; 
-	
-	
-	private MockMvc mockMvc;
-	@Mock
-	ComplaintTypeService complaintTypeService;
-	private Long id;
-	private ComplaintType complaintType;
-	
-	@Mock
-	Complaint	complaint1;
-	
-	@Mock
-	BindingResult errors;
-	
-	@Mock
-	UserService userService;  
-	
-	@Mock
+    @Mock
+    private Complaint complaint;
+    @Mock
+    private ComplaintService complaintService;
+    @Mock
+    private BoundaryService boundaryService;
+
+    @Mock
+    private CommonService commonService;
+
+    @Mock
+    private ComplaintStatusService complaintStatusService;
+
+    @Mock
+    ComplaintStatusMappingService complaintStatusMappingService;
+
+    @Mock
+    private SmartValidator smartValidator;
+
+    @Autowired
+    private SmartValidator validator;
+
+    private MockMvc mockMvc;
+    @Mock
+    ComplaintTypeService complaintTypeService;
+    private Long id;
+    private ComplaintType complaintType;
+
+    @Mock
+    Complaint complaint1;
+
+    @Mock
+    BindingResult errors;
+
+    @Mock
+    UserService userService;
+
+    @Mock
     User user;
 
-	
-	@Override
-	protected ComplaintUpdationController initController() {
-		initMocks(this);
-		
-		ComplaintUpdationController complaintUpdationController = new ComplaintUpdationController
-				(complaintService,complaintTypeService, commonService, complaintStatusMappingService, smartValidator,userService);
-		//when(complaintUpdationController.getStatus()).thenReturn(value, values);
-		
-		return complaintUpdationController; 
-	}
-	@Before
-	public void before()
-	{
-		
-		FormattingConversionService conversionService = new FormattingConversionService();
-		conversionService.addFormatter(new BoundaryFormatter(boundaryService));
+    @Override
+    protected ComplaintUpdationController initController() {
+        initMocks(this);
+
+        ComplaintUpdationController complaintUpdationController = new ComplaintUpdationController(complaintService,
+                complaintTypeService, commonService, complaintStatusMappingService, smartValidator);
+        // when(complaintUpdationController.getStatus()).thenReturn(value,
+        // values);
+
+        return complaintUpdationController;
+    }
+
+    @Before
+    public void before() {
+
+        FormattingConversionService conversionService = new FormattingConversionService();
+        conversionService.addFormatter(new BoundaryFormatter(boundaryService));
         mvcBuilder.setConversionService(conversionService);
-		
-		mockMvc=mvcBuilder.build();
-		complaint=new Complaint();
-		complaint.setDetails("Already Registered complaint");
-		id=2L;
-		when(complaintService.getComplaintById(id)).thenReturn(complaint);
-		
-		complaintType = new ComplaintType();
-		List ctList=new ArrayList<ComplaintType>();
-		ctList.add(complaintType);
-		when(complaintTypeService.findAll()).thenReturn(ctList);
-		
-		List<ComplaintStatus> csList=new ArrayList<ComplaintStatus>();
-		ComplaintStatus cs=new ComplaintStatus(); 
-		
-		Role r=new Role();
-		Set<Role> roleList=new HashSet<Role>();
-		roleList.add(r);
-		EGOVThreadLocals.setUserId("1");
-		when(userService.getUserById(Matchers.anyLong())).thenReturn(user);
-		when(user.getRoles()).thenReturn(roleList);
-		csList.add(cs);
-		when(complaintStatusMappingService.getStatusByRoleAndCurrentStatus(roleList, cs)).thenReturn(csList);
-	
-	
-	}
-	
-	
-	@Test(expected=NestedServletException.class )
-	public void editWithInvalidComplaintId() throws Exception  
-	{
-		complaint=new Complaint();
-		complaintType.setLocationRequired(false);
-		complaint.setComplaintType(complaintType);
-		complaint.setDetails("Already Registered complaint"); 
-		MvcResult result = this.mockMvc.perform(get("/complaint-update/1")).andReturn();
-	}
-	
-	@Test
-	public void editWithComplaintTypeLocationRequiredFalse() throws Exception
-	{
-		complaint=new Complaint();
-		complaintType.setLocationRequired(false);
-		complaint.setComplaintType(complaintType);
-		complaint.setDetails("Already Registered complaint");
-		when(complaintService.getComplaintById(id)).thenReturn(complaint);
-		
-		MvcResult result = this.mockMvc.perform(get("/complaint-update/2"))
-                .andExpect(view().name("complaint-edit"))
-                .andExpect(model().attributeExists("complaint"))
-                .andReturn();
+
+        mockMvc = mvcBuilder.build();
+        complaint = new Complaint();
+        complaint.setDetails("Already Registered complaint");
+        id = 2L;
+        when(complaintService.getComplaintById(id)).thenReturn(complaint);
+
+        complaintType = new ComplaintType();
+        List ctList = new ArrayList<ComplaintType>();
+        ctList.add(complaintType);
+        when(complaintTypeService.findAll()).thenReturn(ctList);
+
+        List<ComplaintStatus> csList = new ArrayList<ComplaintStatus>();
+        ComplaintStatus cs = new ComplaintStatus();
+
+        Role r = new Role();
+        Set<Role> roleList = new HashSet<Role>();
+        roleList.add(r);
+        EGOVThreadLocals.setUserId("1");
+        when(userService.getUserById(Matchers.anyLong())).thenReturn(user);
+        when(user.getRoles()).thenReturn(roleList);
+        csList.add(cs);
+        when(complaintStatusMappingService.getStatusByRoleAndCurrentStatus(roleList, cs)).thenReturn(csList);
+
+    }
+
+    @Test(expected = NestedServletException.class)
+    public void editWithInvalidComplaintId() throws Exception {
+        complaint = new Complaint();
+        complaintType.setLocationRequired(false);
+        complaint.setComplaintType(complaintType);
+        complaint.setDetails("Already Registered complaint");
+        MvcResult result = this.mockMvc.perform(get("/complaint-update/1")).andReturn();
+    }
+
+    @Test
+    public void editWithComplaintTypeLocationRequiredFalse() throws Exception {
+        complaint = new Complaint();
+        complaintType.setLocationRequired(false);
+        complaint.setComplaintType(complaintType);
+        complaint.setDetails("Already Registered complaint");
+        when(complaintService.getComplaintById(id)).thenReturn(complaint);
+
+        MvcResult result = this.mockMvc.perform(get("/complaint-update/2")).andExpect(view().name("complaint-edit"))
+                .andExpect(model().attributeExists("complaint")).andReturn();
 
         Complaint existing = (Complaint) result.getModelAndView().getModelMap().get("complaint");
         assertEquals(complaint.getDetails(), existing.getDetails());
-     
-	}
-	
-	@Test
-	public void editWithComplaintTypeLocationRequiredTrue() throws Exception
-	{
-		complaint=new Complaint();
-		complaintType.setLocationRequired(true);
-		complaint.setComplaintType(complaintType);
-		complaint.setDetails("Already Registered complaint");
-		id=2L;
-		when(complaintService.getComplaintById(id)).thenReturn(complaint);
 
-		MvcResult result = this.mockMvc.perform(get("/complaint-update/2"))
-				.andExpect(status().isOk())
-                .andExpect(view().name("complaint-edit"))
-                .andExpect(model().attributeExists("complaint"))
-                .andReturn();
+    }
+
+    @Test
+    public void editWithComplaintTypeLocationRequiredTrue() throws Exception {
+        complaint = new Complaint();
+        complaintType.setLocationRequired(true);
+        complaint.setComplaintType(complaintType);
+        complaint.setDetails("Already Registered complaint");
+        id = 2L;
+        when(complaintService.getComplaintById(id)).thenReturn(complaint);
+
+        MvcResult result = this.mockMvc.perform(get("/complaint-update/2")).andExpect(status().isOk())
+                .andExpect(view().name("complaint-edit")).andExpect(model().attributeExists("complaint")).andReturn();
 
         Complaint existing = (Complaint) result.getModelAndView().getModelMap().get("complaint");
         assertEquals(complaint.getDetails(), existing.getDetails());
-     
-	}
-	
-	
-	@Test
-	public void editWithBoundary() throws Exception
-	{
-		complaint=new Complaint();
-		complaintType.setLocationRequired(true);
-		complaint.setComplaintType(complaintType);
-		complaint.setDetails("Already Registered complaint");
-		BoundaryImpl ward = new BoundaryImpl();
-		ward.setId(1);
-		BoundaryImpl zone = new BoundaryImpl();
-		zone.setId(2);
-		ward.setParent(zone);
-		complaint.setLocation(ward);
-		id=2L;
-		when(complaintService.getComplaintById(id)).thenReturn(complaint);
-		List<BoundaryImpl> wards=new ArrayList<BoundaryImpl>();
-		when(commonService.getWards(ward.getId())).thenReturn(wards);  
 
-		MvcResult result = this.mockMvc.perform(get("/complaint-update/2"))
-				.andExpect(status().isOk())
-                .andExpect(view().name("complaint-edit"))
-                .andExpect(model().attributeExists("complaint"))
-                .andReturn();
+    }
+
+    @Test
+    public void editWithBoundary() throws Exception {
+        complaint = new Complaint();
+        complaintType.setLocationRequired(true);
+        complaint.setComplaintType(complaintType);
+        complaint.setDetails("Already Registered complaint");
+        BoundaryImpl ward = new BoundaryImpl();
+        ward.setId(1);
+        BoundaryImpl zone = new BoundaryImpl();
+        zone.setId(2);
+        ward.setParent(zone);
+        complaint.setLocation(ward);
+        id = 2L;
+        when(complaintService.getComplaintById(id)).thenReturn(complaint);
+        List<BoundaryImpl> wards = new ArrayList<BoundaryImpl>();
+        when(commonService.getWards(ward.getId())).thenReturn(wards);
+
+        MvcResult result = this.mockMvc.perform(get("/complaint-update/2")).andExpect(status().isOk())
+                .andExpect(view().name("complaint-edit")).andExpect(model().attributeExists("complaint")).andReturn();
 
         Complaint existing = (Complaint) result.getModelAndView().getModelMap().get("complaint");
         assertEquals(complaint.getDetails(), existing.getDetails());
-     
-	}
-	
-	@Test
-	public void updateWithoutComplaintType() throws Exception
-	{
-		ComplaintStatus cs1=new ComplaintStatus();
-		complaint1.setStatus(cs1);
-		complaintType.setLocationRequired(true);
-		complaint1.setComplaintType(complaintType);
-		complaint1.setDetails("Already Registered complaint");
-		id=2L;
-		when(complaintService.getComplaintById(id)).thenReturn(complaint1);
-		when(complaint1.getId()).thenReturn(2L);
-		  this.mockMvc.perform(post("/complaint-update/2")
-	                .param("id", "2")
-	                .param("complaintStatus", "2"))
-	                .andDo(print())
-	                 .andExpect(flash().attributeExists("message"))
-	                .andExpect(status().is3xxRedirection())
-	                .andReturn();  
-     
-	}
-	@Ignore
-	//Ignoring test now since domain class conversion is not incorporated
-	public void updateWithComplaintType() throws Exception
-	{
-	
-		ComplaintStatus cs=new ComplaintStatus();
-		cs.setName("Forwarded");
-		complaint1.setStatus(cs);
-		complaintType.setLocationRequired(true);
-		complaint1.setComplaintType(complaintType);
-		complaint1.setDetails("Already Registered complaint");
-		id=2L;
-		when(complaintService.getComplaintById(id)).thenReturn(complaint1);
-		when(complaint1.getId()).thenReturn(2L);
-		when(complaintTypeService.load(id)).thenReturn(complaintType);
-		  this.mockMvc.perform(post("/complaint-update/2")
-	                .param("id", "2")
-	                .param("complaintStatus", "2")
-	                .param("complaintType", "2"))
-	                .andDo(print())
-	                 .andExpect(flash().attributeExists("message"))
-	                .andExpect(status().is3xxRedirection())
-	                .andReturn();  
-     
-	} 
-	
-	
-	
+
+    }
+
+    @Test
+    public void updateWithoutComplaintType() throws Exception {
+        ComplaintStatus cs1 = new ComplaintStatus();
+        complaint1.setStatus(cs1);
+        complaintType.setLocationRequired(true);
+        complaint1.setComplaintType(complaintType);
+        complaint1.setDetails("Already Registered complaint");
+        id = 2L;
+        when(complaintService.getComplaintById(id)).thenReturn(complaint1);
+        when(complaint1.getId()).thenReturn(2L);
+        this.mockMvc.perform(post("/complaint-update/2").param("id", "2").param("complaintStatus", "2")).andDo(print())
+                .andExpect(flash().attributeExists("message")).andExpect(status().is3xxRedirection()).andReturn();
+
+    }
+
+    @Ignore
+    // Ignoring test now since domain class conversion is not incorporated
+    public void updateWithComplaintType() throws Exception {
+
+        ComplaintStatus cs = new ComplaintStatus();
+        cs.setName("Forwarded");
+        complaint1.setStatus(cs);
+        complaintType.setLocationRequired(true);
+        complaint1.setComplaintType(complaintType);
+        complaint1.setDetails("Already Registered complaint");
+        id = 2L;
+        when(complaintService.getComplaintById(id)).thenReturn(complaint1);
+        when(complaint1.getId()).thenReturn(2L);
+        when(complaintTypeService.load(id)).thenReturn(complaintType);
+        this.mockMvc
+                .perform(
+                        post("/complaint-update/2").param("id", "2").param("complaintStatus", "2")
+                                .param("complaintType", "2")).andDo(print())
+                .andExpect(flash().attributeExists("message")).andExpect(status().is3xxRedirection()).andReturn();
+
+    }
+
 }
