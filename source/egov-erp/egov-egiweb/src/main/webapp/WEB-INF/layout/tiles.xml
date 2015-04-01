@@ -46,15 +46,9 @@
         <put-attribute name="body" value="/WEB-INF/views/masters/hierarchyType-view.jsp"/>
     </definition>
     
-    <definition name="hierarchyType-uform" extends="base_layout">
-        <put-attribute name="page-title" value="title.hierarchyType" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/hierarchyType-uform.jsp"/>
-    </definition>
-    
     <definition name="hierarchyType-updateForm" extends="base_layout">
         <put-attribute name="page-title" value="title.hierarchyType" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/hierarchyType-updateForm.jsp"/>
     </definition>
     
-  
 </tiles-definitions>
