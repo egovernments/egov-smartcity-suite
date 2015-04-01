@@ -40,18 +40,5 @@ public class SearchHierarchyTypeController {
     public String showHierarchyTypes(Model model) {
         return "hierarchyType-list";
     }
-
-    @RequestMapping(method = RequestMethod.POST)
-    public String redirectToUpdateOrViewOnURI(@ModelAttribute HierarchyType hierarchyType, final BindingResult errors,
-            RedirectAttributes redirectAttrs, HttpServletRequest request) {
-
-        String[] uriSplits = request.getRequestURI().split("/");
-        String redirectURI =  uriSplits[uriSplits.length - 1] + "/" + hierarchyType.getName();
-
-        if (errors.hasErrors())
-            return redirectURI;
-
-        return "redirect:" + redirectURI;
-    }
 }
  
