@@ -1,7 +1,8 @@
 html, body {
-	height: 100%;
+	margin:0;
+	padding:0;
 	width: 100%;
-	/* overflow-x:hidden; */
+	height:100%;
 }
 *
 {
@@ -84,6 +85,7 @@ a:focus{
 	padding: 20px;
 	background: #ffffff;
 	width: 100%;
+	min-height: 100%;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
@@ -765,9 +767,12 @@ table .replace-inputs input {
 }
 
 footer.main{
-	margin: 10px 0 0 0;
-	padding: 15px 0 0 0;
+	position:absolute;
+	bottom:0;
+	height:50px;
+	/* width:calc(100% - 40px); 
 	border-top: 1px solid #ebebeb;
+	padding: 15px 0 0 0;*/
 }
 
 .add-padding
@@ -1051,8 +1056,8 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 
 
 .pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
-	background-color: #3599b2;
-	border-color: #3599b2;
+	background-color: #6b4f2c;
+	border-color: #6b4f2c;
 }
 
 .pagination > li > a:hover, .pagination > li > span:hover, .pagination > li > a:focus, .pagination > li > span:focus {
@@ -1196,7 +1201,7 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 {
 	background:#e6e6e6;
 	font-size: 17px;
-    /* overflow: auto; */
+	/* overflow: auto; */
 	cursor:pointer;
 }
 
@@ -1283,7 +1288,7 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 	color: #bbb;
 	display: block;
 	text-align: center;
-    font-size: 3em;
+	font-size: 3em;
 	margin-bottom: 5px;
 }
 .bootcards-summary-item h4 {
@@ -1332,18 +1337,18 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 	padding:20px 15px;
 }
 .search-box {
-    position: relative;
+	position: relative;
 }
 .search-box input {
-    padding-left:35px; 
+	padding-left:35px; 
 	border-radius:20px;
 }
 .search-box i {
-    position: absolute;
-    padding: 8px 12px;
+	position: absolute;
+	padding: 8px 12px;
 	color:#d1d1d1;
 	font-size:18px;
-    pointer-events: none;
+	pointer-events: none;
 }
 .padding-tb
 {
@@ -1728,5 +1733,11 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 
 ul li a span{
 	padding:0 5px;
+}
+
+.login-container, .main-before-footer {
+	min-height: 100%;
+	position: relative;
+	padding-bottom:60px;
 }
 

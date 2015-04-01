@@ -60,26 +60,27 @@
 			</header>
 			
 			<div class="main-content">
-				<div class="row">
-					<div class="col-md-6 add-margin">
-						 <a href="complaintype.html" class="btn btn-primary btn-sm" role="button"><span class="glyphicon glyphicon-plus"></span> New</a>
-						 <a href="complaintype.html" class="btn btn-primary btn-sm" role="button"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
-						 <a href="javascript:void(0);" class="btn btn-primary btn-sm" role="button"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+				<div class="main-before-footer">
+					<div class="row">
+						<div class="col-md-6 add-margin">
+							<a href="complaintype.html" class="btn btn-primary btn-sm" role="button"><span class="glyphicon glyphicon-plus"></span> New</a>
+							<a href="complaintype.html" class="btn btn-primary btn-sm" role="button"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
+							<a href="javascript:void(0);" class="btn btn-primary btn-sm" role="button"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+						</div>
+						<div class="col-md-6 add-margin text-right">
+							<span class="inline-elem">Search</span>
+							<span class="inline-elem"><input type="text" id="searchviewcomp" class="form-control input-sm"></span>
+						</div>
 					</div>
-					<div class="col-md-6 add-margin text-right">
-						<span class="inline-elem">Search</span>
-						<span class="inline-elem"><input type="text" id="searchviewcomp" class="form-control input-sm"></span>
-					</div>
-				</div>
-				<table class="table table-bordered datatable" id="view-complaint-type">
-					<thead>
-						<tr>
-							<th>Complaint Type</th>
-							<th>Department</th>
-							<th>Number of days to resolve</th>
-							<th>Is location required</th>
-						</tr>
-					</thead>
+					<table class="table table-bordered datatable" id="view-complaint-type">
+						<thead>
+							<tr>
+								<th>Complaint Type</th>
+								<th>Department</th>
+								<th>Number of days to resolve</th>
+								<th>Is location required</th>
+							</tr>
+						</thead>
 					
 					<tbody>
 						
@@ -168,25 +169,26 @@
 						</tr>
 					</tbody>
 				</table>
-				
-				<footer class="main">
-					
-					Powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
-					
-				</footer>
-				
 			</div>
 			
-			
+			<footer class="main">
+				
+				Powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
+				
+			</footer>
 			
 		</div>
 		
-		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css">
 		
-		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap.js"></script>
-		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js"></script>
-		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js"></script>
-		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js"></script>
 		
-	</body>
+	</div>
+	
+	<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css">
+	
+	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap.js"></script>
+	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js"></script>
+	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js"></script>
+	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js"></script>
+	
+</body>
 </html>

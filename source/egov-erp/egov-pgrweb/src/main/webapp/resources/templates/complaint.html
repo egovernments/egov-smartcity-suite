@@ -63,190 +63,193 @@
 			
 			<div class="main-content">
 				
-				<div class="row">
-					<div class="col-md-12">
-						
-						<div class="panel panel-primary" data-collapsed="0">
+				<div class="main-before-footer">
+					<div class="row">
+						<div class="col-md-12">
 							
-							<div class="panel-heading">
-								<div class="panel-title">
-									<strong>Contact Information</strong>
+							<div class="panel panel-primary" data-collapsed="0">
+								
+								<div class="panel-heading">
+									<div class="panel-title">
+										<strong>Contact Information</strong>
+									</div>
+									
 								</div>
 								
-							</div>
-							
-							<div class="panel-body custom-form">
+								<div class="panel-body custom-form">
+									
+									<form role="form" id="complaintform" class="form-horizontal form-groups-bordered">
+										
+										<div class="form-group">
+											
+											<label class="col-sm-3 control-label">Complaint Through</label>
+											<div class="col-sm-2 col-xs-12">
+												<input type="radio" id="phone" name="compthr" value="Phone">
+												<label>Phone</label>
+											</div>
+											<div class="col-sm-2 col-xs-12">
+												<input type="radio" id="pform" name="compthr" value="pform">
+												<label>Paper Form</label>
+											</div>
+											<div class="col-sm-2 col-xs-12">
+												<input type="radio" id="internet" name="compthr" value="internet" checked>
+												<label>Internet</label>
+											</div>
+											<div class="col-sm-2 col-xs-12">
+												<input type="radio" id="sms" name="compthr" value="SMS">
+												<label>SMS</label>
+											</div>
+										</div>
+										
+										<div class="form-group display-hide"  id="recenter">
+											<label class="col-sm-3 control-label">Receiving Center</label>
+											
+											<div class="col-sm-6">
+												<select class="form-control" id="rec_centerselect">
+													<option>Complaint Cell</option>
+													<option>Mayor</option>
+													<option>Zone Office</option>
+													<option>Commissioner Office</option>
+													<option>CM Office</option>
+												</select>
+											</div>
+										</div>
+										
+										<div class="form-group display-hide" id="regnoblock">
+											<label for="field-1" class="col-sm-3 control-label">Registration Number</label>
+											
+											<div class="col-sm-6">
+												<input type="text" class="form-control" id="reg_no" placeholder="">
+											</div>
+										</div>
+										
+										<div class="form-group">
+											<label for="field-1" class="col-sm-3 control-label">Name</label>
+											
+											<div class="col-sm-6 add-margin">
+												<input type="text" class="form-control" id="f-name" placeholder="Name">
+											</div>
+											
+										</div>
+										
+										<div class="form-group">
+											<label for="field-1" class="col-sm-3 control-label">Contact Number <span class="mandatory"></span></label>
+											
+											<div class="col-sm-2 add-margin">
+												<input type="text" class="form-control" data-inputmask="'mask': '9999999999'" id="mob-no" placeholder="Mobile Number">
+											</div>
+											
+											<div class="col-sm-1">
+												<label for="field-1" class="control-label">Email</label>
+											</div>
+											
+											<div class="col-sm-3">
+												<input type="text" class="form-control" id="email" placeholder="abc@xyz.com">
+											</div>
+											
+										</div>
+										
+										<div class="panel-heading custom_form_panel_heading">
+											<div class="panel-title">
+												<strong>Complaint Information</strong>
+											</div>
+											
+										</div>
+										
+										<div class="form-group">
+											<label class="col-sm-3 control-label">Complaint Type</label>
+											<div class="col-sm-6">
+												<input id="complaintType" type="text" class="form-control typeahead" placeholder="" autocomplete="off" />
+												<a href="javascript:void(0)" class="btn btn-default btn-xs tag-element freq-ct">Construction</a>
+												<a href="javascript:void(0)" class="btn btn-default btn-xs tag-element freq-ct">Disputed Bill</a>
+												<a href="javascript:void(0)" class="btn btn-default btn-xs tag-element freq-ct">Garbage</a>
+												<a href="javascript:void(0)" class="btn btn-default btn-xs tag-element freq-ct">Delayed Service</a>
+												<a href="javascript:void(0)" class="btn btn-default btn-xs tag-element freq-ct">Refusal of Service </a>
+												<div class="add-margin error-msg">Entered keyword not exists in suggestion</div>
+											</div>
+										</div>
+										
+										<div class="form-group">
+											
+											<label class="col-sm-3 control-label">Complaint Title</label>
+											<div class="col-sm-6">
+												<input type="text" class="form-control" id="comptitle" placeholder="">
+											</div>
+										</div>
+										
+										<div class="form-group">
+											
+											<label class="col-sm-3 control-label">Details of Complaint <span class="mandatory"></span></label>
+											<div class="col-sm-6">
+												<textarea class="form-control autogrow" id="doc" placeholder="" maxlength="400"></textarea>
+												<div class="text-right"><small id="rcc">Remaining Characters : 400</small></div>
+											</div>
+										</div>
+										
+										<div class="form-group">
+											<div class="col-sm-3 col-xs-12 change-text-align">
+												<label class="control-label">Upload Photograph/Video</label><br>
+												<a href="javascript:void(0);" id="triggerFile" class="btn btn-secondary">Browse</a>
+												<input type="file" id="file1" class="filechange inline btn" style="display:none;"/>
+												<input type="file" id="file2" class="filechange inline btn" style="display:none;"/>
+												<input type="file" id="file3" class="filechange inline btn" style="display:none;"/>
+											</div>
+											<div class="col-sm-6 col-xs-12">
+												<div id="file1block" class="add-margin col-sm-4 col-xs-4">
+													<img id="preview1" src="#" alt="" class="display-hide "/>
+													<div class="remove-img preview-cross1 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+													<div class="add-padding" id="filename1"></div>
+												</div>
+												<div id="file2block" class="add-margin display-hide col-sm-4 col-xs-4">
+													<img id="preview2" src="#" alt="" class="display-hide"/>
+													<div class="remove-img preview-cross2 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+													<div class="add-padding" id="filename2"></div>
+												</div>
+												<div id="file3block" class="add-margin display-hide col-sm-4 col-xs-4">
+													<img id="preview3" src="#" alt="" class="display-hide"/>
+													<div class="remove-img preview-cross3 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+													<div class="add-padding" id="filename3"></div>
+												</div>
+											</div>
+											
+											
+										</div>
+										
+										<div class="form-group">
+											<label class="col-sm-3 control-label">Complaint Location</label>
+											<div class="col-sm-6">
+												<div class="input-group">
+													<input id="location" type="text" class="form-control typeahead low-width" placeholder="" autocomplete="off" />
+													<span class="input-group-addon map-class btn-secondary" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="entypo-globe"></i></span>
+												</div>
+											</div>
+										</div>
+										
+										<div class="form-group">
+											<label class="col-sm-3 control-label">Land mark (if any)</label>
+											<div class="col-sm-6">
+												<input type="text" name="" class="form-control" id="lm" placeholder="" />
+											</div>
+										</div>
+										
+										
+									</form>
+								</div>
 								
-								<form role="form" id="complaintform" class="form-horizontal form-groups-bordered">
-									
-									<div class="form-group">
-										
-										<label class="col-sm-3 control-label">Complaint Through</label>
-										<div class="col-sm-2 col-xs-12">
-											<input type="radio" id="phone" name="compthr" value="Phone">
-											<label>Phone</label>
-										</div>
-										<div class="col-sm-2 col-xs-12">
-											<input type="radio" id="pform" name="compthr" value="pform">
-											<label>Paper Form</label>
-										</div>
-										<div class="col-sm-2 col-xs-12">
-											<input type="radio" id="internet" name="compthr" value="internet" checked>
-											<label>Internet</label>
-										</div>
-										<div class="col-sm-2 col-xs-12">
-											<input type="radio" id="sms" name="compthr" value="SMS">
-											<label>SMS</label>
-										</div>
-									</div>
-									
-									<div class="form-group display-hide"  id="recenter">
-										<label class="col-sm-3 control-label">Receiving Center</label>
-										
-										<div class="col-sm-6">
-											<select class="form-control" id="rec_centerselect">
-												<option>Complaint Cell</option>
-												<option>Mayor</option>
-												<option>Zone Office</option>
-												<option>Commissioner Office</option>
-												<option>CM Office</option>
-											</select>
-										</div>
-									</div>
-									
-									<div class="form-group display-hide" id="regnoblock">
-										<label for="field-1" class="col-sm-3 control-label">Registration Number</label>
-										
-										<div class="col-sm-6">
-											<input type="text" class="form-control" id="reg_no" placeholder="">
-										</div>
-									</div>
-									
-									<div class="form-group">
-										<label for="field-1" class="col-sm-3 control-label">Name</label>
-										
-										<div class="col-sm-6 add-margin">
-											<input type="text" class="form-control" id="f-name" placeholder="Name">
-										</div>
-										
-									</div>
-									
-									<div class="form-group">
-										<label for="field-1" class="col-sm-3 control-label">Contact Number <span class="mandatory"></span></label>
-										
-										<div class="col-sm-2 add-margin">
-											<input type="text" class="form-control" data-inputmask="'mask': '9999999999'" id="mob-no" placeholder="Mobile Number">
-										</div>
-										
-										<div class="col-sm-1">
-											<label for="field-1" class="control-label">Email</label>
-										</div>
-										
-										<div class="col-sm-3">
-											<input type="text" class="form-control" id="email" placeholder="abc@xyz.com">
-										</div>
-										
-									</div>
-									
-									<div class="panel-heading custom_form_panel_heading">
-										<div class="panel-title">
-											<strong>Complaint Information</strong>
-										</div>
-										
-									</div>
-									
-									<div class="form-group">
-										<label class="col-sm-3 control-label">Complaint Type</label>
-										<div class="col-sm-6">
-											<input id="complaintType" type="text" class="form-control typeahead" placeholder="" autocomplete="off" />
-											<a href="javascript:void(0)" class="btn btn-default btn-xs tag-element freq-ct">Construction</a>
-											<a href="javascript:void(0)" class="btn btn-default btn-xs tag-element freq-ct">Disputed Bill</a>
-											<a href="javascript:void(0)" class="btn btn-default btn-xs tag-element freq-ct">Garbage</a>
-											<a href="javascript:void(0)" class="btn btn-default btn-xs tag-element freq-ct">Delayed Service</a>
-											<a href="javascript:void(0)" class="btn btn-default btn-xs tag-element freq-ct">Refusal of Service </a>
-											<div class="add-margin error-msg">Entered keyword not exists in suggestion</div>
-										</div>
-									</div>
-									
-									<div class="form-group">
-										
-										<label class="col-sm-3 control-label">Complaint Title</label>
-										<div class="col-sm-6">
-											<input type="text" class="form-control" id="comptitle" placeholder="">
-										</div>
-									</div>
-									
-									<div class="form-group">
-										
-										<label class="col-sm-3 control-label">Details of Complaint <span class="mandatory"></span></label>
-										<div class="col-sm-6">
-											<textarea class="form-control autogrow" id="doc" placeholder="" maxlength="400"></textarea>
-											<div class="text-right"><small id="rcc">Remaining Characters : 400</small></div>
-										</div>
-									</div>
-									
-									<div class="form-group">
-										<div class="col-sm-3 col-xs-12 change-text-align">
-											<label class="control-label">Upload Photograph/Video</label><br>
-											<a href="javascript:void(0);" id="triggerFile" class="btn btn-secondary">Browse</a>
-											<input type="file" id="file1" class="filechange inline btn" style="display:none;"/>
-											<input type="file" id="file2" class="filechange inline btn" style="display:none;"/>
-											<input type="file" id="file3" class="filechange inline btn" style="display:none;"/>
-										</div>
-										<div class="col-sm-6 col-xs-12">
-											<div id="file1block" class="add-margin col-sm-4 col-xs-4">
-												<img id="preview1" src="#" alt="" class="display-hide "/>
-												<div class="remove-img preview-cross1 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
-												<div class="add-padding" id="filename1"></div>
-											</div>
-											<div id="file2block" class="add-margin display-hide col-sm-4 col-xs-4">
-												<img id="preview2" src="#" alt="" class="display-hide"/>
-												<div class="remove-img preview-cross2 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
-												<div class="add-padding" id="filename2"></div>
-											</div>
-											<div id="file3block" class="add-margin display-hide col-sm-4 col-xs-4">
-												<img id="preview3" src="#" alt="" class="display-hide"/>
-												<div class="remove-img preview-cross3 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
-												<div class="add-padding" id="filename3"></div>
-											</div>
-										</div>
-										
-										
-									</div>
-									
-									<div class="form-group">
-										<label class="col-sm-3 control-label">Complaint Location</label>
-										<div class="col-sm-6">
-											<div class="input-group">
-												<input id="location" type="text" class="form-control typeahead low-width" placeholder="" autocomplete="off" />
-												<span class="input-group-addon map-class btn-secondary" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="entypo-globe"></i></span>
-											</div>
-										</div>
-									</div>
-									
-									<div class="form-group">
-										<label class="col-sm-3 control-label">Land mark (if any)</label>
-										<div class="col-sm-6">
-											<input type="text" name="" class="form-control" id="lm" placeholder="" />
-										</div>
-									</div>
-									
-									
-								</form>
+								
 							</div>
-							
 							
 						</div>
-						
 					</div>
-				</div>
-				
-				
-				<div class="row">
-					<div class="text-center">
-						<a href="complaintsuccess.html" id="com_submit" class="btn btn-primary">Register Complaint</a>
-						<a href="javascript:void(0);" id="com_cancel" class="btn btn-default">Cancel</a>
+					
+					
+					<div class="row">
+						<div class="text-center">
+							<a href="complaintsuccess.html" id="com_submit" class="btn btn-primary">Register Complaint</a>
+							<a href="javascript:void(0);" id="com_cancel" class="btn btn-default">Cancel</a>
+						</div>
 					</div>
+					
 				</div>
 				
 				<footer class="main">
