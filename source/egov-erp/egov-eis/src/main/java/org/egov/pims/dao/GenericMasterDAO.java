@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.model.GenericMaster;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -24,7 +25,7 @@ public class GenericMasterDAO implements Serializable
 	private EntityManager entityManager;
     
 	public Session  getCurrentSession() {
-		return entityManager.unwrap(Session.class);
+		return HibernateUtil.getCurrentSession();
 	}
 
 	public void create(GenericMaster genericMaster) 
