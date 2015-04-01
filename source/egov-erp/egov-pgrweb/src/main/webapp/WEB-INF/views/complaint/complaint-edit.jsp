@@ -93,6 +93,46 @@
 					<form:errors path="location" cssClass="error-msg" />
 				</div>
 			</div>
+			
+			<div class="form-group">
+				<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.department"/></div>
+				<div class="col-md-3 col-xs-3 add-margin">
+					<form:select path="" data-first-option="false" id="approvalDepartment"
+						cssClass="form-control" cssErrorClass="form-control error">
+						<form:option value="">
+							<spring:message code="lbl.select" />
+						</form:option>
+						<form:options items="${approvalDepartmentList}" itemValue="id"
+							itemLabel="deptName" />
+					</form:select>
+					<form:errors path="" cssClass="error-msg" />
+				</div>
+
+					<div class="col-md-3 col-xs-3 add-margin">
+					<form:select path="" data-first-option="false"
+						id="approvalDesignation" cssClass="form-control"  
+						cssErrorClass="form-control error">
+						<form:option value="">
+							<spring:message code="lbl.select" />
+						</form:option>
+						<form:options items="${approvalDesignationList}" itemValue="id"
+							itemLabel="name" />
+					</form:select>
+					<form:errors path="" cssClass="error-msg" />
+				</div>
+				<div class="col-md-3 col-xs-3 add-margin">
+					<form:select path="" data-first-option="false"
+						id="approvalPosition" cssClass="form-control"
+						cssErrorClass="form-control error">
+						<form:option value=" ">
+							<spring:message code="lbl.select" />
+						</form:option>
+						<form:options items="${approvalPositionList}" itemValue="id"
+							itemLabel="name" />
+					</form:select>
+					<form:errors path="" cssClass="error-msg" />
+				</div>
+			</div>
 
 			<div class="form-group">
 				<div class="text-center">

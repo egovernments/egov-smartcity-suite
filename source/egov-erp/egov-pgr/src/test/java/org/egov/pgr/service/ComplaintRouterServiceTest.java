@@ -60,6 +60,7 @@ public class ComplaintRouterServiceTest {
 
     private void setupRoutingMaster() {
         complaintRouterService = new ComplaintRouterService(complaintRouterRepository);
+        
         final Department dept = new DepartmentBuilder().withDbDefaults().build();
         complaintType = new ComplaintTypeBuilder().withDepartment(dept).withName("test-ctype").build();
         city = new BoundaryBuilder().withDbDefaults().build();

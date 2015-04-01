@@ -77,10 +77,6 @@ public class ComplaintRouterService {
 		if(null!=complaint.getComplaintType() && null != complaint.getLocation())
 		{
 			complaintRouter = complaintRouterRepository.findByComplaintTypeAndBoundary(complaint.getComplaintType(),complaint.getLocation());
-		}
-		if(null==complaintRouter && null!=complaint.getComplaintType() )
-		{
-			complaintRouter=complaintRouterRepository.findByOnlyComplaintType(complaint.getComplaintType());
 			
 		}
 		if(null==complaintRouter && null !=complaint.getLocation())
@@ -88,17 +84,29 @@ public class ComplaintRouterService {
 			complaintRouter=complaintRouterRepository.findByBoundary(complaint.getLocation());
 		}
 		
+		if(null==complaintRouter && null!=complaint.getComplaintType() )
+		{
+			complaintRouter=complaintRouterRepository.findByOnlyComplaintType(complaint.getComplaintType());
+			
+		}
+		
+		
 		if(complaintRouter==null)
 		{
+			if(LOG.isDebugEnabled()) LOG.debug("finding GO......");
 			complaintRouter=complaintRouterRepository.findGrievanceOfficer();	
+			
 		}
 		
 		if(complaintRouter!=null)
 		{
 			position=complaintRouter.getPosition();
+			
 		}else
 		{
-			LOG.debug("GO is not configured in the router . returning null");
+			//TODO throw exception
+			LOG.error("GO is not configured in the router . returning null");
+			
 		}
 		
 		return position;

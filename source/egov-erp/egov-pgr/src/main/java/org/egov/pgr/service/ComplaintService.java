@@ -21,10 +21,13 @@ import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.lib.admbndry.CityWebsiteImpl;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.repository.ComplaintRepository;
+import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +43,10 @@ public class ComplaintService {
 
     @Autowired
     private SecurityUtils securityUtils;
+    @Autowired
+    private ComplaintRouterService complaintRouterService;
+
+    private static final Logger LOG = LoggerFactory.getLogger(ComplaintService.class);
 
     @Transactional
     @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
@@ -48,12 +55,11 @@ public class ComplaintService {
             complaint.setCRN(generateComplaintID());
         complaint.getComplainant().setUserDetail(securityUtils.getCurrentUser());
         complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
-        //Sample workflow not for production
+        Position assignee = complaintRouterService.getAssignee(complaint);
         complaint.transition().start().withSenderName(complaint.getComplainant().getUserDetail().getName())
-        .withComments("complaint registered with crn : "+complaint.getCRN()).withStateValue("Registered");
-        // TODO Workflow will decide who is the assignee based on location data 
-        // add .withOwner(position) to the workflow.
-        complaint.setAssignee(null);
+                .withComments("complaint registered with crn : " + complaint.getCRN()).withStateValue("Registered")
+                .withOwner(assignee);
+        complaint.setAssignee(assignee);
         complaint.setEscalationDate(new DateTime());
         return complaintRepository.save(complaint);
     }
@@ -74,31 +80,35 @@ public class ComplaintService {
 
     @PersistenceContext
     private EntityManager entityManager;
-    
-    public Session  getCurrentSession() {
+
+    public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
-    
-    public List<Complaint> getComplaintsEligibleForEscalation(){
-        final CityWebsiteImpl cityWebsite = (CityWebsiteImpl)getCurrentSession().getNamedQuery(CityWebsiteImpl.QUERY_CITY_BY_URL).setString("url", EGOVThreadLocals.getDomainName()).uniqueResult();
+
+    public List<Complaint> getComplaintsEligibleForEscalation() {
+        final CityWebsiteImpl cityWebsite = (CityWebsiteImpl) getCurrentSession()
+                .getNamedQuery(CityWebsiteImpl.QUERY_CITY_BY_URL).setString("url", EGOVThreadLocals.getDomainName())
+                .uniqueResult();
         final Integer topLevelBoundaryId = cityWebsite.getBoundaryId().getBndryId();
-        final Criteria criteria = getCurrentSession().createCriteria(Complaint.class,"complaint").
-               // createAlias("complaint.location","boundary").
-                createAlias("complaint.status","complaintStatus");
-        //TODO: BoundaryImpl pojo and hbm are not consistent
-        /*if(null!=topLevelBoundaryId)
-             criteria.add(Restrictions.eq("boundary.topLevelBoundaryID", topLevelBoundaryId));*/
-        criteria.add(Restrictions.disjunction().
-        add(Restrictions.eq("complaintStatus.name",COMPLETED.name())). 
-              add(Restrictions.eq("complaintStatus.name",REJECTED.name())).
-              add(Restrictions.eq("complaintStatus.name",WITHDRAWN.name())).
-              add(Restrictions.eq("complaintStatus.name", FORWARDED.name())).
-              add(Restrictions.eq("complaintStatus.name", REGISTERED.name()))).
-              add(Restrictions.lt("complaint.escalationDate", new DateTime().toDate())).
-              setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        
-        
+        final Criteria criteria = getCurrentSession().createCriteria(Complaint.class, "complaint").
+        // createAlias("complaint.location","boundary").
+                createAlias("complaint.status", "complaintStatus");
+        // TODO: BoundaryImpl pojo and hbm are not consistent
+        /*
+         * if(null!=topLevelBoundaryId)
+         * criteria.add(Restrictions.eq("boundary.topLevelBoundaryID",
+         * topLevelBoundaryId));
+         */
+        criteria.add(
+                Restrictions.disjunction().add(Restrictions.eq("complaintStatus.name", COMPLETED.name()))
+                        .add(Restrictions.eq("complaintStatus.name", REJECTED.name()))
+                        .add(Restrictions.eq("complaintStatus.name", WITHDRAWN.name()))
+                        .add(Restrictions.eq("complaintStatus.name", FORWARDED.name()))
+                        .add(Restrictions.eq("complaintStatus.name", REGISTERED.name())))
+                .add(Restrictions.lt("complaint.escalationDate", new DateTime().toDate()))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
         return criteria.list();
     }
-   
+
 }
