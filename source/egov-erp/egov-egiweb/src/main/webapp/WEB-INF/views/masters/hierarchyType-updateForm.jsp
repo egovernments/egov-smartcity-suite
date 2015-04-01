@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<c:catch var ="catchException">
+
 <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
 <div class="row" id="page-content">
@@ -13,11 +13,6 @@
                     <div id="message" class="success">${message}</div>
                 </c:if>
 		<form:form  method="post" class="form-horizontal form-groups-bordered" modelAttribute="hierarchyType" id="updaterole" >
-			<form:errors path="*" cssClass="add-margin error-msg" />
-			<div id="message" class="success">
-			
-			</div>
-			
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -60,7 +55,3 @@
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
-</c:catch>
-<c:if test = "${catchException!=null}">
-	The error is : ${catchException}<br>
-</c:if>
