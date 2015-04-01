@@ -1,11 +1,6 @@
 package org.egov.pgr.web.controller.complaint;
 
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.service.ComplaintService;
@@ -33,17 +28,8 @@ public class ViewComplaintController {
 
 	@RequestMapping(value = "/view-complaint", method = RequestMethod.GET)
 	public String viewComplaints(@RequestParam Long complaintId, Model model) {
-		Map<String,String> files = new HashMap<String,String>(0);
 		Complaint complaint = complaintService.getComplaintById(complaintId);
-		if (complaint.getSupportDocs() != null && !complaint.getSupportDocs().isEmpty()) {
-			Iterator<FileStoreMapper> fileIterator = complaint.getSupportDocs().iterator();
-			while (fileIterator.hasNext()) {
-				FileStoreMapper fileStoreMapper = fileIterator.next();
-				files.put(fileStoreMapper.getContentType(), fileStoreMapper.getFileStoreId());
-			}
-		}
 		model.addAttribute("complaint", complaint);
-		model.addAttribute("files",files);
 		return "view-complaint";
 	}
 

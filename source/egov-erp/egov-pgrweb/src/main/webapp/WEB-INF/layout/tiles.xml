@@ -53,7 +53,7 @@
 	</definition>
 	
 	<definition name="view-complaintType" extends="base_layout">
-        <put-attribute name="page-title" value="title.complaintType" cascade="true"/>
+        <put-attribute name="page-title" value="title.manageComplaintType" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/view-complaintType.jsp"/>
     </definition>
     

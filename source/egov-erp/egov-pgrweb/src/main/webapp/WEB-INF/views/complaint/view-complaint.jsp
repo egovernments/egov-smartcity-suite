@@ -80,20 +80,22 @@
 					<div class="col-md-9 col-xs-12 add-margin down-file text-center"
 						id="links">
 						<c:choose>
-							<c:when test="${!files.isEmpty()}">
-								<c:forEach items="${files}" var="file">
+							<c:when test="${!complaint.getSupportDocs().isEmpty()}">
+								<c:forEach items="${complaint.getSupportDocs()}" var="file">
 									<c:choose>
-										<c:when test="${file.key == 'video/mp4'}">
-											<a href="/egi/controller/downloadfile?fileStoreId=${file.value}&moduleName=PGR"
-												data-gallery> <video class="img-width add-margin"controls="controls"
-													src="/egi/controller/downloadfile?fileStoreId=${file.value}&moduleName=PGR">
-													<source	src="/egi/controller/downloadfile?fileStoreId=${file.value}&moduleName=PGR"
-														type="video/mp4" /></video></a>
+										<c:when test="${(file.contentType == 'jpg') || (file.contentType == 'jpeg')|| (file.contentType == 'gif')|| 
+										(file.contentType == 'png')}">
+										<a href="/egi/controller/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=PGR"
+												data-gallery> <img class="img-width add-margin"
+												src="/egi/controller/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=PGR" /></a>
+											
 										</c:when>
 										<c:otherwise>
-											<a href="/egi/controller/downloadfile?fileStoreId=${file.value}&moduleName=PGR"
-												data-gallery> <img class="img-width add-margin"
-												src="/egi/controller/downloadfile?fileStoreId=${file.value}&moduleName=PGR" /></a>
+											<a href="/egi/controller/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=PGR"
+												data-gallery> <video class="img-width add-margin"controls="controls"
+													src="/egi/controller/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=PGR">
+													<source	src="/egi/controller/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=PGR"
+														type="video/mp4" /></video></a>
 										</c:otherwise>
 									</c:choose>
 								</c:forEach>
@@ -119,7 +121,7 @@
 				</div>
 				<div class="row">
 					<div class="col-md-3 col-xs-6 add-margin">
-						<spring:message code="lbl.landmark" />
+						<spring:message code="lbl.landmark" /> 
 					</div>
 					<div class="col-md-9 col-xs-6 add-margin" id="ct-lanmark">
 						<c:choose>

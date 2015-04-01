@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class ComplaintTypeService {
 
     private final ComplaintTypeRepository complaintTypeRepository;
-    private static final int PAGE_SIZE = 10;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -66,8 +65,8 @@ public class ComplaintTypeService {
         return (ComplaintType) entityManager.unwrap(Session.class).load(ComplaintType.class, id);
     }
     
-    public Page<ComplaintType> getListOfComplaintTypes(Integer pageNumber) {
-    	Pageable pageable = new PageRequest(pageNumber - 1, PAGE_SIZE, Sort.Direction.ASC,"name");
+    public Page<ComplaintType> getListOfComplaintTypes(Integer pageNumber ,Integer pageSize) {
+    	Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC,"name");
         return complaintTypeRepository.findAll(pageable);
     }
 }
