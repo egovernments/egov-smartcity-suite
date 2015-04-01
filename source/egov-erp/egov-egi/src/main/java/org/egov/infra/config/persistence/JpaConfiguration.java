@@ -70,8 +70,8 @@ public class JpaConfiguration {
 
     private Map<String, Object> additionalProperties() {
         final HashMap<String, Object> properties = new HashMap<>();
-        properties.put("hibernate.validator.apply_to_ddl", "false");
-        properties.put("hibernate.validator.autoregister_listeners", "false");
+        properties.put("hibernate.validator.apply_to_ddl", false);
+        properties.put("hibernate.validator.autoregister_listeners", false);
         properties.put("hibernate.dialect", env.getProperty("hibernate.dialect"));
         properties.put("hibernate.generate_statistics", env.getProperty("hibernate.generate_statistics"));
         properties.put("hibernate.cache.region.factory_class", env.getProperty("hibernate.cache.region.factory_class"));
@@ -83,6 +83,7 @@ public class JpaConfiguration {
         properties.put("hibernate.transaction.jta.platform", env.getProperty("hibernate.transaction.jta.platform"));
         properties.put("hibernate.transaction.auto_close_session", env.getProperty("hibernate.transaction.auto_close_session"));
         properties.put("hibernate.jdbc.use_streams_for_binary", env.getProperty("hibernate.jdbc.use_streams_for_binary"));
+        //properties.put("hibernate.enable_lazy_load_no_trans", true);
         return properties;
     }
 }
