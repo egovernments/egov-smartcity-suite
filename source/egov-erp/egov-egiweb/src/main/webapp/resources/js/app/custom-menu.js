@@ -1,6 +1,7 @@
 $(document).ready(function () {
 	$('#menu').multilevelpushmenu({
 		menuWidth: '250px',
+		mode: 'cover',
 		onItemClick: function () {
 			var e = arguments[0];
 			$('#menu_multilevelpushmenu ul li').removeClass('li-active');

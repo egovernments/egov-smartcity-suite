@@ -26,15 +26,6 @@ $(document).ready(function()
 	}
     );
 	
-	/* ADDING SUB MENU INDICATOR FOR PARENT MENUS */
-	
-	$('.horizontal-menu .nav ul li:has(ul)').each(function(){
-		
-		$(this).children('a:first').append('<i class="entypo-left-open-mini left-float"></i>');
-		
-	});
-	
-	
 	/* MENU OVERFLOW HANDLE FUNCTIONALITY START */
 	
 	/* OVERFLOW MENU ADDING INDICATOR */

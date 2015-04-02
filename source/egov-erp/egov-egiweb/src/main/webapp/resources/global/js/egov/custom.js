@@ -44,8 +44,16 @@ $(document).ready(function()
 			format: "dd/mm/yyyy"
 		}); 
 		}catch(e){
-			console.warn("No Date Picker");
-		}
+		console.warn("No Date Picker");
+	}
+	
+	try { 
+		$('[data-toggle="tooltip"]').tooltip({
+			'placement': 'bottom'
+		});
+		}catch(e){
+		console.warn("No tooltip");
+	}
 	
 	
 	$(".form-horizontal").submit(function( event ) {

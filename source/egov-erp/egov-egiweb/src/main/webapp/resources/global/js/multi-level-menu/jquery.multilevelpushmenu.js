@@ -38,7 +38,7 @@
 				backItemClass: 'backItemClass',
 				backItemIcon: 'fa fa-angle-left',
 				groupIcon: 'fa fa-angle-right',
-				//mode: 'overlap',
+				mode: 'overlap',
 				overlapWidth: 40,
 				preventItemClick: true,
 				preventGroupItemClick: true,
