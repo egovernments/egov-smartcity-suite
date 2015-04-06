@@ -29,6 +29,7 @@
           class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
         <property name="formatters">
             <set>
+            	<ref bean="hierarchyTypeFormatter"/>
              <!--  <ref bean="roleFormatter"/> -->
             </set>
         </property>

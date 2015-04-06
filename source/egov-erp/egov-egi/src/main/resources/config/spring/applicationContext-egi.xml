@@ -33,7 +33,7 @@
  -->
 	<bean id="boundaryService" class="org.egov.lib.admbndry.ejb.server.BoundaryServiceImpl">
 		<property name="boundaryDAO" ref="boundaryDAO" />
-		<property name="boundaryTypeService" ref="boundaryTypeService" />
+	<!-- 	<property name="boundaryTypeService" ref="boundaryTypeService" /> -->
 		<property name="heirarchyTypeService" ref="heirarchyTypeService"/>
 	</bean>
 
@@ -41,9 +41,9 @@
 		<property name="heirarchyTypeDAO" ref="heirarchyTypeDAO"/>
 	</bean>
  
-	<bean id="boundaryTypeService" class="org.egov.lib.admbndry.ejb.server.BoundaryTypeServiceImpl">
+	<!-- <bean id="boundaryTypeService" class="org.egov.lib.admbndry.ejb.server.BoundaryTypeServiceImpl">
 		<constructor-arg ref="sessionFactory" />
-	</bean>
+	</bean> -->
 
 	<bean id="commonsDAOFactory" class="org.egov.commons.dao.CommonsDAOFactory">
 		<constructor-arg ref="sessionFactory" />
@@ -237,7 +237,7 @@
 	<bean id="userDelegate" class="org.egov.infstr.client.delegate.UserDelegate">
 		<property name="userService" ref="userService"/>
 		<property name="boundaryService" ref="boundaryService"/>
-		<property name="boundaryTypeService" ref="boundaryTypeService"/>
+	<!-- 	<property name="boundaryTypeService" ref="boundaryTypeService"/> -->
 		<property name="departmentService" ref="departmentService"/>
 		<property name="heirarchyTypeService" ref="heirarchyTypeService"/>
 		<!-- <property name="roleService" ref="roleService"/> -->

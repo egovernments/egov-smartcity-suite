@@ -51,4 +51,21 @@
         <put-attribute name="body" value="/WEB-INF/views/masters/hierarchyType-updateForm.jsp"/>
     </definition>
     
+    <definition name="boundaryType-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.createBoundaryType" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/boundaryType-form.jsp"/>
+    </definition>
+     <definition name="boundaryType-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.searchBoundaryType" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/boundaryType-search.jsp"/>
+    </definition>
+    <definition name="boundaryType-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.viewBoundaryType" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/boundaryType-view.jsp"/>
+    </definition>
+    <definition name="boundaryType-update" extends="base_layout">
+        <put-attribute name="page-title" value="title.updateBoundaryType" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/boundaryType-update.jsp"/>
+    </definition>
+    
 </tiles-definitions>
