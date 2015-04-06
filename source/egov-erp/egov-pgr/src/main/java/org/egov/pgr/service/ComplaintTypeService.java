@@ -71,37 +71,37 @@ public class ComplaintTypeService {
         // FIXME alternative ?
         return (ComplaintType) entityManager.unwrap(Session.class).load(ComplaintType.class, id);
     }
-    
-    public Page<ComplaintType> getListOfComplaintTypes(Integer pageNumber ,Integer pageSize) {
-    	Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC,"name");
+
+    public Page<ComplaintType> getListOfComplaintTypes(Integer pageNumber, Integer pageSize) {
+        Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "name");
         return complaintTypeRepository.findAll(pageable);
     }
-    
+
     /**
      * List top 5 complaint types filed in last one month
+     * 
      * @return complaint Type list
      */
     public List<ComplaintType> getFrequentlyFiledComplaints() {
-       
-		DateTime previousDate = new DateTime();
-		DateTime currentDate = new DateTime();
-		previousDate = previousDate.minusMonths(1);
-		
-		Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Complaint.class, "complaint");
-		criteria.setProjection(Projections.projectionList()
-				.add(Projections.property("complaint.complaintType"))
-				.add(Projections.count("complaint.complaintType").as("count"))
-				.add(Projections.groupProperty("complaint.complaintType")));
-		criteria.add(Restrictions.between("complaint.createdDate", previousDate.toDate(), currentDate.toDate()));
-		criteria.setMaxResults(5).addOrder(Order.desc("count"));
-		List<Object> resultList = criteria.list();
-		List<ComplaintType> complaintTypeList = new ArrayList<ComplaintType>();
-		
-		for (Object row : resultList) {
-			Object[] columns = (Object[]) row;
-			complaintTypeList.add((ComplaintType)columns[0]);
-		}
-		return complaintTypeList;
-    	
+
+        DateTime previousDate = new DateTime();
+        DateTime currentDate = new DateTime();
+        previousDate = previousDate.minusMonths(1);
+
+        Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Complaint.class, "complaint");
+        criteria.setProjection(Projections.projectionList().add(Projections.property("complaint.complaintType"))
+                .add(Projections.count("complaint.complaintType").as("count"))
+                .add(Projections.groupProperty("complaint.complaintType")));
+        criteria.add(Restrictions.between("complaint.createdDate", previousDate.toDate(), currentDate.toDate()));
+        criteria.setMaxResults(5).addOrder(Order.desc("count"));
+        List<Object> resultList = criteria.list();
+        List<ComplaintType> complaintTypeList = new ArrayList<ComplaintType>();
+
+        for (Object row : resultList) {
+            Object[] columns = (Object[]) row;
+            complaintTypeList.add((ComplaintType) columns[0]);
+        }
+        return complaintTypeList;
+
     }
 }
