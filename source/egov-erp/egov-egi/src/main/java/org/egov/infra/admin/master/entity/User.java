@@ -36,7 +36,7 @@ import org.joda.time.DateTime;
 
 @Entity
 @Table(name = "eg_user")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 20)
 public class User extends AbstractAuditable<User, Long> {
 
