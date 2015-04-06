@@ -70,12 +70,12 @@ a:focus{
 .horizontal-page-title, .horizontal-page-title.homepage{
 	margin:0;
 	color:#fff;
-	font-size:25px;
+	font-size:16px;
 	line-height:2.4;
 }
 
 .horizontal-page-title.homepage{
-	line-height:2.5;
+	line-height:4.0;
 }
 
 .page-container .main-content {
@@ -1752,10 +1752,17 @@ ul li a span{
 	padding-right:5px;
 }
 
-.multilevelpushmenu_wrapper li.position-bottom
+.multilevelpushmenu_wrapper li.position-bottom-level1
+{
+	position:absolute;
+	width:100%;
+	bottom:0;
+}
+
+.multilevelpushmenu_wrapper li.position-bottom-level2
 {
 	position:absolute;
 	width:100%;
 	border-top: 1px solid #573b1e;
-	bottom:0;
+	bottom:37px;
 }

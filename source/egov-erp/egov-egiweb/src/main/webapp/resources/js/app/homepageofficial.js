@@ -20,4 +20,17 @@ $(document).ready(function()
 		tableContainer1.fnFilter(this.value);
 	});
 	
+	/* alert($('#menu').height()) ;
+	$('#menu').height('1000px');
+	$('#menu_multilevelpushmenu').height('1000px');
+	alert($('#menu').height()) ; */
+	
+	/* alert($('#menu').height()) ;
+	alert($('.inline-main-content').height()); */
+	
+	/* if($('#menu').height() < $('.inline-main-content').height())
+	{
+		
+	} */
+	
 });
