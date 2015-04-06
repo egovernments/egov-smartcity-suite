@@ -1,4 +1,4 @@
-package org.egov.egi.web.controller.admin.masters;
+package org.egov.infra.web.controller.admin.masters;
 
 
 import javax.validation.Valid;
