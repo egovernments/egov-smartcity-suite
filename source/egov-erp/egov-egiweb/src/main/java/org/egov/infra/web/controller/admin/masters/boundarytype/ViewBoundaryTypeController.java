@@ -1,4 +1,4 @@
-package org.egov.egi.web.controller.admin.masters;
+package org.egov.infra.web.controller.admin.masters.boundarytype;
 
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.service.BoundaryTypeService;

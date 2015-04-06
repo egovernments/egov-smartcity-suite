@@ -17,7 +17,7 @@ import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.web.controller.admin.masters.UpdateRoleController;
+import org.egov.infra.web.controller.admin.masters.role.UpdateRoleController;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;

@@ -1,4 +1,4 @@
-package org.egov.infra.web.controller.admin.masters;
+package org.egov.infra.web.controller.admin.masters.hierarchytype;
 
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.service.HierarchyTypeService;

@@ -17,55 +17,55 @@
     </definition>
     <definition name="role-form" extends="base_layout">
         <put-attribute name="page-title" value="title.createRole" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/role-form.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/role/role-form.jsp"/>
     </definition>
      <definition name="role-search" extends="base_layout">
         <put-attribute name="page-title" value="title.searchRole" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/role-search.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/role/role-search.jsp"/>
     </definition>
     <definition name="role-view" extends="base_layout">
         <put-attribute name="page-title" value="title.viewRole" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/role-view.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/role/role-view.jsp"/>
     </definition>
     <definition name="role-update" extends="base_layout">
         <put-attribute name="page-title" value="title.updateRole" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/role-update.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/role/role-update.jsp"/>
     </definition>
     <definition name="hierarchyType-form" extends="base_layout">
         <put-attribute name="page-title" value="title.hierarchyType" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/hierarchyType-form.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/hierarchytype/hierarchyType-form.jsp"/>
     </definition>
     
     <definition name="hierarchyType-list" extends="base_layout">
         <put-attribute name="page-title" value="title.hierarchyType" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/hierarchyType-list.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/hierarchytype/hierarchyType-list.jsp"/>
     </definition>
     
     <definition name="hierarchyType-view" extends="base_layout">
         <put-attribute name="page-title" value="title.hierarchyType" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/hierarchyType-view.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/hierarchytype/hierarchyType-view.jsp"/>
     </definition>
     
     <definition name="hierarchyType-updateForm" extends="base_layout">
         <put-attribute name="page-title" value="title.hierarchyType" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/hierarchyType-updateForm.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/hierarchytype/hierarchyType-updateForm.jsp"/>
     </definition>
     
     <definition name="boundaryType-form" extends="base_layout">
         <put-attribute name="page-title" value="title.createBoundaryType" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/boundaryType-form.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/boundarytype/boundaryType-form.jsp"/>
     </definition>
      <definition name="boundaryType-search" extends="base_layout">
         <put-attribute name="page-title" value="title.searchBoundaryType" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/boundaryType-search.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/boundarytype/boundaryType-search.jsp"/>
     </definition>
     <definition name="boundaryType-view" extends="base_layout">
         <put-attribute name="page-title" value="title.viewBoundaryType" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/boundaryType-view.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/boundarytype/boundaryType-view.jsp"/>
     </definition>
     <definition name="boundaryType-update" extends="base_layout">
         <put-attribute name="page-title" value="title.updateBoundaryType" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/boundaryType-update.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/boundarytype/boundaryType-update.jsp"/>
     </definition>
     
 </tiles-definitions>

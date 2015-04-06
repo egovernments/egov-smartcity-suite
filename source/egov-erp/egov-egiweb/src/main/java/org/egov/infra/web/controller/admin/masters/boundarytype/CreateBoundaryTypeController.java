@@ -1,4 +1,4 @@
-package org.egov.egi.web.controller.admin.masters;
+package org.egov.infra.web.controller.admin.masters.boundarytype;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.egov.egi.web.controller.AbstractContextControllerTest;
 import org.egov.infra.admin.master.service.RoleService;
-import org.egov.infra.web.controller.admin.masters.ViewRoleController;
+import org.egov.infra.web.controller.admin.masters.role.ViewRoleController;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
