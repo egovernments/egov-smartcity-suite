@@ -47,14 +47,16 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintType"/><span class="mandatory"></span></label>
 						<div class="col-sm-6">
-							<form:input path="complaintType.name" id="complaintTypeName" cssClass="form-control typeahead is_valid_alphabet" cssErrorClass="form-control error" placeholder="" autocomplete="off" required="required"/>
-							<form:hidden path="complaintType" id="complaintTypeId" value=""/>
-							<form:errors path="complaintType" cssClass="add-margin error-msg"/>
-							<a href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">Construction </a>
-							<a href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">Disputed Bill</a>
-							<a href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">Garbage</a>
-							<a href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">Delayed Service</a>
-							<a href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">Refusal of Service </a>
+							<form:input path="complaintType.name" id="complaintTypeName"
+								cssClass="form-control typeahead is_valid_alphabet"
+								cssErrorClass="form-control error" placeholder=""
+								autocomplete="off" required="required" />
+							<form:hidden path="complaintType" id="complaintTypeId" value="" />
+							<form:errors path="complaintType" cssClass="add-margin error-msg" />
+							<c:forEach items="${complaintTypes}" var="complaintType">
+								<a href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct"><c:out
+										value="${complaintType.name }" /> </a>
+							</c:forEach>
 						</div>
 					</div>
 					

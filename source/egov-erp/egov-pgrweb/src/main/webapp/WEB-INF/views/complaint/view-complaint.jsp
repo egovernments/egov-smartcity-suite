@@ -3,6 +3,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <div class="row">
 	<div class="col-md-12">
@@ -77,7 +78,7 @@
 					<div class="col-md-3 col-xs-6 add-margin">
 						<spring:message code="lbl.photovideo" />
 					</div>
-					<div class="col-md-9 col-xs-12 add-margin down-file text-center"
+					<div class="col-md-9 col-xs-12 add-margin down-file "
 						id="links">
 						<c:choose>
 							<c:when test="${!complaint.getSupportDocs().isEmpty()}">
@@ -148,8 +149,62 @@
 						<i class="entypo-down-open" id="toggle-his-icon"></i>
 					</div>
 				</div>
-
 				<div class="panel-body">
+					<div class="row">
+						<c:choose>
+							<c:when test="${!complaintHistory.isEmpty()}">
+								<c:forEach items="${complaintHistory}" var="history">
+									<div class="col-md-3 col-xs-6 add-margin">
+										<fmt:formatDate value="${history.date}" var="historyDate"
+											pattern="HH:MM a E dd MMM yyyy" />
+										<c:out value="${historyDate}" />
+									</div>
+									<div class="col-md-3 col-xs-6 add-margin">
+										<c:out value="${history.user}" />
+									</div>
+									<div class="col-md-3 col-xs-6 add-margin">
+										<c:out value="${history.department}" />
+									</div>
+									<div class="col-md-3 col-xs-6 add-margin">
+										<c:out value="${history.comments}" />
+									</div>
+								</c:forEach>
+							</c:when>
+							<c:otherwise>
+								<div class="col-md-3 col-xs-6 add-margin">No history
+									details for complaint</div>
+							</c:otherwise>
+						</c:choose>
+					</div>
+				</div>
+
+				<%-- <div class="panel-body">
+					<div class="row">
+						<c:choose>
+							<c:when test="${!complaintHistory.isEmpty()}">
+								<c:forEach items="${complaintHistory}" var="history">
+									<div class="col-md-3 col-xs-6 add-margin">
+									 <fmt:formatDate value="${history.createdDate}" var="historyDate" pattern="HH:MM a E dd MMM yyyy" />
+										<c:out value="${historyDate}" />
+									</div>
+									<div class="col-md-3 col-xs-6 add-margin">
+										<c:out value="${history.createdBy.username}" />
+									</div>
+									<div class="col-md-3 col-xs-6 add-margin">
+										<c:out value="${complaint.state.type}" />
+									</div>
+									<div class="col-md-3 col-xs-6 add-margin">
+										<c:out value="${history.comments}" />
+									</div>
+								</c:forEach>
+							</c:when>
+							<c:otherwise>
+							<div class="col-md-3 col-xs-6 add-margin">No history details</div></c:otherwise>
+						</c:choose>
+					</div>
+				</div> --%>
+
+				<!-- <div class="panel-body">
 					<div class="row">
 						<div class="col-md-3 col-xs-6 add-margin">10:14 AM Monday 22 Nov 2014</div>
 						<div class="col-md-2 col-xs-6 add-margin">Suresh.T.M</div>
@@ -188,7 +243,7 @@
 							status of the complaint. Kindly review it. For Further
 							information, you can contact me.</div>
 					</div>
-				</div>
+				</div> -->
 			</div>
 		</div>
 	</div>
