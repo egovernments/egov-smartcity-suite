@@ -5,8 +5,8 @@
  */
 package org.egov.infstr.security.spring.acl.models;
 
+import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.models.BaseModel;
-import org.egov.infstr.models.validator.Required;
 
 public class AclObjClass extends BaseModel {
 	private static final long serialVersionUID = 1L;

@@ -3,14 +3,15 @@
  * Copyright 2013 eGovernments Foundation. All rights reserved. 
  * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package org.egov.infstr.models.validator;
+package org.egov.infra.persistence.validator;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.egov.infstr.models.validator.constants.ValidatorConstants;
+import org.egov.infra.persistence.validator.annotation.AlphaNumeric;
+import org.egov.infra.validation.regex.Constants;
 
 public class AlphaNumericValidator implements ConstraintValidator<AlphaNumeric, String> {
 
@@ -21,6 +22,6 @@ public class AlphaNumericValidator implements ConstraintValidator<AlphaNumeric, 
 
 	@Override
 	public boolean isValid(final String value, final ConstraintValidatorContext constraintValidatorCtxt) {
-		return isBlank(value) ? true : value.trim().matches(ValidatorConstants.alphaNumericwithSpace);
+		return isBlank(value) ? true : value.trim().matches(Constants.ALPHANUMERIC_WITHSPACE);
 	}
 }

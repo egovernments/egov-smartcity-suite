@@ -16,7 +16,7 @@ import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
-import org.egov.infstr.models.validator.Required;
+import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.lib.rjbac.dept.DepartmentImpl;
 
 public class ServiceDetails extends BaseModel {

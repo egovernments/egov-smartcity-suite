@@ -3,12 +3,13 @@
  * Copyright 2013 eGovernments Foundation. All rights reserved. 
  * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package org.egov.infstr.models.validator;
+package org.egov.infra.persistence.validator;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.egov.infstr.models.validator.constants.ValidatorConstants;
+import org.egov.infra.persistence.validator.annotation.Numeric;
+import org.egov.infra.validation.regex.Constants;
 
 public class NumericValidator implements ConstraintValidator<Numeric, Object> {
 
@@ -28,7 +29,7 @@ public class NumericValidator implements ConstraintValidator<Numeric, Object> {
 				return true;
 			}
 
-			return stringVal.trim().matches(ValidatorConstants.numeric);
+			return stringVal.trim().matches(Constants.NUMERIC);
 		}
 
 	}

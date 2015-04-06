@@ -30,7 +30,7 @@ public class ObjComparator implements Comparator<Location>, Serializable {
 		}
 
 		final char s0 = s.charAt(0);
-		int chunkType = 0; // 0 = alphabetic, 1 = numeric
+		int chunkType = 0; // 0 = alphabetic, 1 = NUMERIC
 
 		if (isIn(s0, this.numbers)) {
 			chunkType = 1;
@@ -93,7 +93,7 @@ public class ObjComparator implements Comparator<Location>, Serializable {
 			final int thisChunkType = isIn(thisChunk.charAt(0), this.numbers) ? 1 : 0;
 			final int thatChunkType = isIn(thatChunk.charAt(0), this.numbers) ? 1 : 0;
 
-			// If both chunks contain numeric characters, sort them numerically
+			// If both chunks contain NUMERIC characters, sort them numerically
 			int result = 0;
 			if ((thisChunkType == 1) && (thatChunkType == 1)) {
 				thisNumericChunk = Integer.parseInt(thisChunk.toString());

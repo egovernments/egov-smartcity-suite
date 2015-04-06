@@ -5,7 +5,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infstr.models.validator.Unique;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.BoundaryType;
 import org.hibernate.validator.constraints.Length;

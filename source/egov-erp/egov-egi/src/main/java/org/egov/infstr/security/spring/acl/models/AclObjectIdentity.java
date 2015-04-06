@@ -10,8 +10,8 @@ import java.util.Set;
 
 import javax.validation.Valid;
 
+import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.models.BaseModel;
-import org.egov.infstr.models.validator.Required;
 
 public class AclObjectIdentity extends BaseModel {
 	private static final long serialVersionUID = 5770066884148808731L;

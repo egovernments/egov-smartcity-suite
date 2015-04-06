@@ -7,8 +7,8 @@ package org.egov.infstr.security.spring.acl.models;
 
 import javax.validation.Valid;
 
+import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.models.BaseModel;
-import org.egov.infstr.models.validator.Required;
 
 public class AclSid extends BaseModel {
 

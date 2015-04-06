@@ -11,12 +11,12 @@ import java.util.List;
 
 import javax.validation.constraints.Min;
 
+import org.egov.infra.persistence.validator.annotation.OptionalPattern;
+import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.infra.validation.regex.Constants;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.models.BaseModel;
-import org.egov.infstr.models.validator.OptionalPattern;
-import org.egov.infstr.models.validator.Required;
-import org.egov.infstr.models.validator.Unique;
-import org.egov.infstr.models.validator.constants.ValidatorConstants;
 import org.hibernate.validator.constraints.Length;
 
 @Unique(fields = { "grade" }, id = "id", tableName = "EGW_CONTRACTOR_GRADE", columnName = { "GRADE" }, message = "contractorGrade.grade.isunique")
@@ -24,7 +24,7 @@ public class ContractorGrade extends BaseModel {
 
 	@Required(message = "contractorGrade.grade.null")
 	@Length(max = 20, message = "contractorGrade.grade.length")
-	@OptionalPattern(regex = ValidatorConstants.alphaNumericwithSpace, message = "contractorGrade.grade.alphaNumeric")
+	@OptionalPattern(regex = Constants.ALPHANUMERIC_WITHSPACE, message = "contractorGrade.grade.alphaNumeric")
 	private String grade;
 
 	@Required(message = "contractorGrade.description.null")
@@ -33,12 +33,12 @@ public class ContractorGrade extends BaseModel {
 
 	@Required(message = "contractorGrade.minAmount.null")
 	@Min(value = 0, message = "contractorGrade.minAmount.valid")
-	@OptionalPattern(regex = ValidatorConstants.numeric, message = "contractorGrade.minAmount.numeric")
+	@OptionalPattern(regex = Constants.NUMERIC, message = "contractorGrade.minAmount.numeric")
 	private BigDecimal minAmount;
 
 	@Required(message = "contractorGrade.maxAmount.null")
 	@Min(value = 0, message = "contractorGrade.maxAmount.valid")
-	@OptionalPattern(regex = ValidatorConstants.numeric, message = "contractorGrade.maxAmount.numeric")
+	@OptionalPattern(regex = Constants.NUMERIC, message = "contractorGrade.maxAmount.numeric")
 	private BigDecimal maxAmount;
 
 	private String maxAmountString;

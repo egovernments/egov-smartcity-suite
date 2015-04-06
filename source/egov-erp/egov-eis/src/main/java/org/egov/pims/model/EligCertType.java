@@ -1,8 +1,8 @@
 package org.egov.pims.model;
 
+import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infstr.models.BaseModel;
-import org.egov.infstr.models.validator.Required;
-import org.egov.infstr.models.validator.Unique;
 import org.hibernate.validator.constraints.Length
 ;
 

@@ -3,10 +3,12 @@
  * Copyright 2013 eGovernments Foundation. All rights reserved. 
  * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package org.egov.infstr.models.validator;
+package org.egov.infra.persistence.validator;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+
+import org.egov.infra.persistence.validator.annotation.Required;
 
 public class RequiredValidator implements ConstraintValidator<Required, Object> {
 

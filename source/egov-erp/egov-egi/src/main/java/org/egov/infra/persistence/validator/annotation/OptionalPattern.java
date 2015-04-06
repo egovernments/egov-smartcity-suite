@@ -3,7 +3,7 @@
  * Copyright 2013 eGovernments Foundation. All rights reserved. 
  * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package org.egov.infstr.models.validator;
+package org.egov.infra.persistence.validator.annotation;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
@@ -15,6 +15,8 @@ import java.lang.annotation.Target;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
+
+import org.egov.infra.persistence.validator.OptionalPatternValidator;
 
 @Documented
 @Target({ METHOD, FIELD })

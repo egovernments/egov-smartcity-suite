@@ -3,7 +3,7 @@
  * Copyright 2013 eGovernments Foundation. All rights reserved. 
  * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package org.egov.infstr.models.validator;
+package org.egov.infra.persistence.validator;
 
 import java.beans.BeanInfo;
 import java.beans.PropertyDescriptor;
@@ -12,6 +12,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;

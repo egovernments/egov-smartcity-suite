@@ -1,9 +1,9 @@
 /*
- * @(#)CheckDateFormat.java 3.0, 17 Jun, 2013 2:43:41 PM
+ * @(#)GreaterThan.java 3.0, 17 Jun, 2013 2:44:00 PM
  * Copyright 2013 eGovernments Foundation. All rights reserved. 
  * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package org.egov.infstr.models.validator;
+package org.egov.infra.persistence.validator.annotation;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
@@ -16,12 +16,17 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
+import org.egov.infra.persistence.validator.GreaterThanValidator;
+
 @Documented
 @Target({ METHOD, FIELD })
 @Retention(RUNTIME)
-@Constraint(validatedBy = DateFormatValidator.class)
-public @interface CheckDateFormat {
-	String message() default "{validator.dateFormat}";
+@Constraint(validatedBy = GreaterThanValidator.class)
+public @interface GreaterThan {
+
+	long value() default 0;
+
+	String message() default "{greater.than}";
 
 	Class<?>[] groups() default {};
 

@@ -1,9 +1,9 @@
 /*
- * @(#)ValidateDate.java 3.0, 17 Jun, 2013 2:44:40 PM
+ * @(#)Required.java 3.0, 17 Jun, 2013 2:44:30 PM
  * Copyright 2013 eGovernments Foundation. All rights reserved. 
  * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package org.egov.infstr.models.validator;
+package org.egov.infra.persistence.validator.annotation;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
@@ -16,16 +16,14 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
+import org.egov.infra.persistence.validator.RequiredValidator;
+
+@Documented
 @Target({ METHOD, FIELD })
 @Retention(RUNTIME)
-@Documented
-@Constraint(validatedBy = DateValidator.class)
-public @interface ValidateDate {
-	boolean allowPast();
-
-	String dateFormat();
-
-	String message() default "{validator.validateDate}";
+@Constraint(validatedBy = RequiredValidator.class)
+public @interface Required {
+	String message() default "{validator.required}";
 
 	Class<?>[] groups() default {};
 

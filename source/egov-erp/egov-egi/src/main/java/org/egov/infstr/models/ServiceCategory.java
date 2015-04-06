@@ -8,8 +8,8 @@ package org.egov.infstr.models;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.egov.infstr.models.validator.Required;
-import org.egov.infstr.models.validator.Unique;
+import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 
 

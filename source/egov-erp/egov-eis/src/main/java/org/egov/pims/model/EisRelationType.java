@@ -1,7 +1,7 @@
 package org.egov.pims.model;
 
-import org.egov.infstr.models.validator.Required;
-import org.egov.infstr.models.validator.Unique;
+import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.validator.annotation.Unique;
 
 // Generated Aug 8, 2008 9:23:49 AM by Hibernate Tools 3.2.0.b9
 

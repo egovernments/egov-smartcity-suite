@@ -1,11 +1,12 @@
 /*
- * @(#)Unique.java 3.0, 17 Jun, 2013 2:44:37 PM
+ * @(#)Numeric.java 3.0, 17 Jun, 2013 2:44:15 PM
  * Copyright 2013 eGovernments Foundation. All rights reserved. 
  * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package org.egov.infstr.models.validator;
+package org.egov.infra.persistence.validator.annotation;
 
-import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
@@ -15,23 +16,17 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-@Target({ TYPE })
-@Retention(RUNTIME)
+import org.egov.infra.persistence.validator.NumericValidator;
+
 @Documented
-@Constraint(validatedBy = IsUniqueValidator.class)
-public @interface Unique {
-	String[] fields() default {};
+@Target({ METHOD, FIELD })
+@Retention(RUNTIME)
+@Constraint(validatedBy = NumericValidator.class)
+public @interface Numeric {
 
-	String id();
-
-	String tableName();
-
-	String[] columnName() default {};
-
-	String message() default "{validator.unique}";
+	String message() default "{validator.required}";
 
 	Class<?>[] groups() default {};
 
 	Class<? extends Payload>[] payload() default {};
-
 }

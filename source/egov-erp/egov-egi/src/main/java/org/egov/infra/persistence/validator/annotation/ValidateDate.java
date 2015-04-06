@@ -1,9 +1,9 @@
 /*
- * @(#)GreaterThan.java 3.0, 17 Jun, 2013 2:44:00 PM
+ * @(#)ValidateDate.java 3.0, 17 Jun, 2013 2:44:40 PM
  * Copyright 2013 eGovernments Foundation. All rights reserved. 
  * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package org.egov.infstr.models.validator;
+package org.egov.infra.persistence.validator.annotation;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
@@ -16,15 +16,18 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-@Documented
+import org.egov.infra.persistence.validator.DateValidator;
+
 @Target({ METHOD, FIELD })
 @Retention(RUNTIME)
-@Constraint(validatedBy = GreaterThanValidator.class)
-public @interface GreaterThan {
+@Documented
+@Constraint(validatedBy = DateValidator.class)
+public @interface ValidateDate {
+	boolean allowPast();
 
-	long value() default 0;
+	String dateFormat();
 
-	String message() default "{greater.than}";
+	String message() default "{validator.validateDate}";
 
 	Class<?>[] groups() default {};
 

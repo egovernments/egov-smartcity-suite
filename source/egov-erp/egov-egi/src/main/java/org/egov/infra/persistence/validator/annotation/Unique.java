@@ -1,9 +1,9 @@
 /*
- * @(#)CompareDates.java 3.0, 17 Jun, 2013 2:43:44 PM
+ * @(#)Unique.java 3.0, 17 Jun, 2013 2:44:37 PM
  * Copyright 2013 eGovernments Foundation. All rights reserved. 
  * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package org.egov.infstr.models.validator;
+package org.egov.infra.persistence.validator.annotation;
 
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -15,20 +15,25 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
+import org.egov.infra.persistence.validator.IsUniqueValidator;
+
 @Target({ TYPE })
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = CompareDatesValidator.class)
-public @interface CompareDates {
-	String fields1();
+@Constraint(validatedBy = IsUniqueValidator.class)
+public @interface Unique {
+	String[] fields() default {};
 
-	String fields2();
+	String id();
 
-	String dateFormat();
+	String tableName();
 
-	String message() default "{validator.compareDates}";
+	String[] columnName() default {};
+
+	String message() default "{validator.unique}";
 
 	Class<?>[] groups() default {};
 
 	Class<? extends Payload>[] payload() default {};
+
 }
