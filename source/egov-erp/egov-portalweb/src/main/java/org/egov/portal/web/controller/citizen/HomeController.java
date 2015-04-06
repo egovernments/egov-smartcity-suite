@@ -12,7 +12,7 @@ public class HomeController {
     @RequestMapping(method = RequestMethod.GET)
     public String LoginForm() {
 
-        return "citizen-inbox";
+        return "citizen-home";
     }
 
 }

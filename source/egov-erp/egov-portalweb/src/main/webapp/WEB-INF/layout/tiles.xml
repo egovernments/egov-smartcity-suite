@@ -13,9 +13,9 @@
 
 	<definition name="error" template="/WEB-INF/views/template/error.jsp"/>
 
-    <definition name="citizen-inbox">
-        <put-attribute name="page-title" value=" " cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/inbox.jsp"/>
+    <definition name="citizen-home" extends="base_layout">
+        <put-attribute name="page-title" value="title.citizenHome" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/citizen-home.jsp"/>
     </definition>
     
     <definition name="error/*" extends="error">

@@ -6,8 +6,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <import resource="classpath*:config/spring/applicationContext-search-all.xml" />
-    <import resource="classpath*:config/spring/applicationContext-portal.xml"/>
+    <!-- <import resource="classpath*:config/spring/applicationContext-portal.xml"/> -->
     
 	<import resource="applicationSecurityContext-portal.xml"/>
 	
