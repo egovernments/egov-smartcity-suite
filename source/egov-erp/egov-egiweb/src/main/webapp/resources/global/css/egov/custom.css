@@ -770,10 +770,19 @@ footer.main{
 	position:absolute;
 	bottom:0;
 	height:50px;
-	/* width:calc(100% - 40px); 
-		border-top: 1px solid #ebebeb;
-	padding: 15px 0 0 0;*/
+	font-style:italic;
+	font-size:13px;
 }
+
+footer.main a{
+	color:#f5861f;
+	font-size:15px;
+}
+
+footer.main a:hover{
+	text-decoration:none;
+}
+
 
 .add-padding
 {
@@ -1641,6 +1650,8 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 /* new menu for homepage*/
 .multilevelpushmenu_wrapper .cursorPointer {
 	color: #fff;
+	position: relative;
+	z-index: 100000;
 }
 
 .multilevelpushmenu_wrapper a {
@@ -1730,11 +1741,7 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 
 .multilevelpushmenu_wrapper .ltr.multilevelpushmenu_inactive
 {
-	background:#fff;
-}
-
-.multilevelpushmenu_wrapper .ltr.multilevelpushmenu_inactive .cursorPointer {
-	color: black;
+	  background: #6b4f2c;
 }
 
 ul li a span{
@@ -1761,8 +1768,8 @@ ul li a span{
 
 .multilevelpushmenu_wrapper li.position-bottom-level2
 {
-	position:absolute;
-	width:100%;
-	border-top: 1px solid #573b1e;
-	bottom:37px;
+position:absolute;
+width:100%;
+border-top: 1px solid #573b1e;
+bottom:37px;
 }
