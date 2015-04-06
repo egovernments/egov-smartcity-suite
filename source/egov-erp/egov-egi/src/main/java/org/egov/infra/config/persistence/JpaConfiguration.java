@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.ValidationMode;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,17 +40,18 @@ public class JpaConfiguration {
 
     @Bean
     public EntityManagerFactory entityManagerFactory() {
-        final LocalContainerEntityManagerFactoryBean entityManager = new LocalContainerEntityManagerFactoryBean();
-        entityManager.setJtaDataSource(dataSource);
-        entityManager.setPersistenceUnitName("EgovPersistenceUnit");
-        entityManager.setPackagesToScan(new String[] { "org.egov.**.entity" });
-        entityManager.setJpaVendorAdapter(jpaVendorAdaper());
-        entityManager.setJpaPropertyMap(additionalProperties());
+        final LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
+        entityManagerFactory.setJtaDataSource(dataSource);
+        entityManagerFactory.setPersistenceUnitName("EgovPersistenceUnit");
+        entityManagerFactory.setPackagesToScan(new String[] { "org.egov.**.entity" });
+        entityManagerFactory.setJpaVendorAdapter(jpaVendorAdaper());
+        entityManagerFactory.setJpaPropertyMap(additionalProperties());
+        entityManagerFactory.setValidationMode(ValidationMode.NONE);
         final ClasspathScanningPersistenceUnitPostProcessor classpathScanningPPU = new ClasspathScanningPersistenceUnitPostProcessor("org.egov");
         classpathScanningPPU.setMappingFileNamePattern("**/*hbm.xml");
-        entityManager.setPersistenceUnitPostProcessors(classpathScanningPPU);
-        entityManager.afterPropertiesSet();
-        return entityManager.getObject();
+        entityManagerFactory.setPersistenceUnitPostProcessors(classpathScanningPPU);
+        entityManagerFactory.afterPropertiesSet();
+        return entityManagerFactory.getObject();
     }
 
     @Bean
