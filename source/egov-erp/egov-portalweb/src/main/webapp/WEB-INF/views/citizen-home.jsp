@@ -10,12 +10,12 @@
 		
 		<title>eGov Urban Portal</title>
 		
-		<link rel="stylesheet" href="../css/bootstrap/bootstrap.css">
-		<link rel="stylesheet" href="../css/font-icons/entypo/css/entypo.css">
-		<link rel="stylesheet" href="../css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css">
-		<link rel="stylesheet" href="../css/egov/custom.css">
-		<link rel="stylesheet" href="../css/egov/header-custom.css">
-		<script src="../js/jquery/jquery.js"></script>
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>">
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/header-custom.css' context='/egi'/>">
+		<script src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
 		
 		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
 		
@@ -74,7 +74,7 @@
 								
 								<li class="ico-menu">
 									<a href="www.egovernments.org">
-										<img src="../images/logo@2x.png" title="Powered by eGovernments" height="20px">
+										<img src="/egi/resources/global/images/logo@2x.png" title="Powered by eGovernments" height="20px">
 									</a>
 								</li>
 								
@@ -830,21 +830,17 @@
 				
 			</div>
 			
-			<footer class="main">
-				
-				Powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
-				
-			</footer> 
+
 			
 		</div>
 		
 	</div>
 	
-	<script src="../js/bootstrap/bootstrap.js"></script>
+	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 	
-	<script src="../../js/app/homepage.js"></script>
-	<script src="../../js/app/homepagecitizen.js"></script>
-	<script src="../js/egov/custom.js"></script>
+	<script src="<c:url value='/resources/js/app/homepage.js' context='/egi'/>"></script>
+	<script src="<c:url value='/resources/js/app/homepagecitizen.js' context='/egi'/>"></script>
+	<script src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>
 </body>
 
 </html>																																																							

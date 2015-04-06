@@ -43,6 +43,7 @@
             <set>
                 <ref bean="departmentFormatter"/>
                 <ref bean="boundaryFormatter"/>
+                <ref bean="complaintTypeFormatter"/>
             </set>
         </property>
     </bean>

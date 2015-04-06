@@ -56,5 +56,9 @@ public class AssignmentService {
     public void updateAssignment(final Assignment assignment) {
         assignmentRepository.save(assignment);
     }
+    
+    public Assignment getPrimaryAssignmentForUser(final Long userId) {
+        return assignmentRepository.getPrimaryAssignmentForUser(userId);
+    }
 
 }
