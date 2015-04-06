@@ -1,8 +1,3 @@
-/*
- * @(#)Unique.java 3.0, 17 Jun, 2013 2:44:37 PM
- * Copyright 2013 eGovernments Foundation. All rights reserved. 
- * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
 package org.egov.infra.persistence.validator.annotation;
 
 import static java.lang.annotation.ElementType.TYPE;
@@ -15,25 +10,25 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-import org.egov.infra.persistence.validator.IsUniqueValidator;
+import org.egov.infra.persistence.validator.UniqueCheckValidator;
 
 @Target({ TYPE })
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = IsUniqueValidator.class)
+@Constraint(validatedBy = UniqueCheckValidator.class)
 public @interface Unique {
-	String[] fields() default {};
+    String[] fields() default {};
 
-	String id();
+    String id();
 
-	String tableName();
+    String tableName();
 
-	String[] columnName() default {};
+    String[] columnName() default {};
 
-	String message() default "{validator.unique}";
+    String message() default "{validator.unique}";
 
-	Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-	Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 
 }

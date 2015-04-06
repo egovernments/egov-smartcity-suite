@@ -1,8 +1,3 @@
-/*
- * @(#)OptionalPattern.java 3.0, 17 Jun, 2013 2:44:23 PM
- * Copyright 2013 eGovernments Foundation. All rights reserved. 
- * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
 package org.egov.infra.persistence.validator.annotation;
 
 import static java.lang.annotation.ElementType.FIELD;
@@ -23,13 +18,13 @@ import org.egov.infra.persistence.validator.OptionalPatternValidator;
 @Retention(RUNTIME)
 @Constraint(validatedBy = OptionalPatternValidator.class)
 public @interface OptionalPattern {
-	String regex();
+    String regex();
 
-	int flags() default 0;
+    int flags() default 0;
 
-	String message() default "{validator.pattern}";
+    String message() default "{validator.pattern}";
 
-	Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-	Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 }

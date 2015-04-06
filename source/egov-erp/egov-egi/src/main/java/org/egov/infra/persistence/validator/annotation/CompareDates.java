@@ -1,8 +1,3 @@
-/*
- * @(#)CompareDates.java 3.0, 17 Jun, 2013 2:43:44 PM
- * Copyright 2013 eGovernments Foundation. All rights reserved. 
- * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
 package org.egov.infra.persistence.validator.annotation;
 
 import static java.lang.annotation.ElementType.TYPE;
@@ -22,15 +17,15 @@ import org.egov.infra.persistence.validator.CompareDatesValidator;
 @Documented
 @Constraint(validatedBy = CompareDatesValidator.class)
 public @interface CompareDates {
-	String fields1();
+    String fromDate();
 
-	String fields2();
+    String toDate();
 
-	String dateFormat();
+    String dateFormat();
 
-	String message() default "{validator.compareDates}";
+    String message() default "{validator.compareDates}";
 
-	Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-	Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 }

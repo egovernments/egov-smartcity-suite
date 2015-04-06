@@ -1,8 +1,3 @@
-/*
- * @(#)ValidateDate.java 3.0, 17 Jun, 2013 2:44:40 PM
- * Copyright 2013 eGovernments Foundation. All rights reserved. 
- * eGovernments PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
 package org.egov.infra.persistence.validator.annotation;
 
 import static java.lang.annotation.ElementType.FIELD;
@@ -23,13 +18,13 @@ import org.egov.infra.persistence.validator.DateValidator;
 @Documented
 @Constraint(validatedBy = DateValidator.class)
 public @interface ValidateDate {
-	boolean allowPast();
+    boolean allowPast();
 
-	String dateFormat();
+    String dateFormat();
 
-	String message() default "{validator.validateDate}";
+    String message() default "{validator.validateDate}";
 
-	Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-	Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 }
