@@ -90,7 +90,7 @@ public class User extends AbstractAuditable<User, Long> {
 
     private boolean isActive;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "eg_userrole", joinColumns = @JoinColumn(name = "user"), inverseJoinColumns = @JoinColumn(name = "role"))
     private Set<Role> roles = Collections.emptySet();
 
