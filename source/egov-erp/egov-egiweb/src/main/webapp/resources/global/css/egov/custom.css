@@ -1139,7 +1139,7 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 	padding-bottom: 5px;
 }
 
-.login-body .form-group .input-group .input-group-addon {
+.form-group .input-group .input-group-addon {
 	background:#6b4f2c;
 	border:1px solid #6b4f2c;
 	border-top-left-radius: 4px;
@@ -1150,7 +1150,7 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 	color:#fff;
 } 
 
-.login-body .form-group .input-group .form-control {
+.form-group .input-group .form-control {
 	border:1px solid #D0D2D7;
 	outline:none;
 	box-shadow:none;
@@ -1613,7 +1613,7 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 		top:30px;
 	}
 }
-.login-body .form-group .input-group .input-group-addon.style-label {
+.form-group .input-group .input-group-addon.style-label {
 	background: #fff;
 	border: none;
 	border-top-left-radius: 0px;
@@ -1625,7 +1625,7 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 	font-size: 16px;
 }
 
-.login-body .form-group .input-group .form-control.style-form, .form-control.style-form {
+.form-group .input-group .form-control.style-form, .form-control.style-form {
 	border:0;
 	padding-left: 0;
 	font-size:15px;
@@ -1636,7 +1636,7 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 }
 
 
-.login-body .form-group .input-group .form-control.style-form:focus, .form-control.style-form:focus{
+.form-group .input-group .form-control.style-form:focus, .form-control.style-form:focus{
 	border-bottom: 2px solid #2196f3;
 }
 
@@ -1651,7 +1651,7 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 .multilevelpushmenu_wrapper .cursorPointer {
 	color: #fff;
 	position: relative;
-	z-index: 100000;
+	z-index: 9999;
 }
 
 .multilevelpushmenu_wrapper a {

@@ -66,7 +66,7 @@
 						<div class="login-header">
 							<a href="signin.html" class="logo">
 								<img src="../images/egov_logo_tr_h.png" alt="" height="37"/>
-								</a>
+							</a>
 						</div>
 						<div class="login-toggle">
 							<div class="row"> 
@@ -203,7 +203,7 @@
 								<div class="form-group">
 									<div class="row">
 										<div class="col-md-12 col-xs-12 text-right">
-											<a href="recoverpassword.html">Forgot Password?</a>
+											<a href="javascript:void(0);"  data-toggle="modal" data-target="#fpassword" data-backdrop="static">Forgot Password?</a>
 										</div>
 									</div>
 								</div>
@@ -279,6 +279,38 @@
 						<p>Corporation of Chennai, cannot authorise the use of copyrighted materials contained in linked websites. Users are advised to request such authorisation from the owner of the linked website. Corporation of Chennai, does not guarantee that linked websites comply with Indian Government Web Guidelines.</p>
 					</div>
 					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="modal fade" id="fpassword" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel">Forgot Password</h4>
+					</div>
+					<div class="modal-body">
+						<form method="post" role="form" id="">
+							
+							<div class="form-group">
+								
+								<div class="input-group">
+									<div class="input-group-addon style-label">
+										<i class="entypo-user style-color"></i>
+									</div>
+									
+									<input type="text" class="form-control style-form" name="email" id="email" placeholder="Email or Mobile number" autocomplete="off" />
+								</div>
+								
+							</div>
+							
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary">Recover</button>
 						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 					</div>
 				</div>
