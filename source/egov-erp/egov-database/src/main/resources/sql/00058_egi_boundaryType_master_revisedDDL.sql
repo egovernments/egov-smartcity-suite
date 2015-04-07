@@ -1,0 +1,12 @@
+ALTER TABLE EG_BOUNDARY_TYPE DROP column bndryname_local;
+
+ALTER TABLE EG_BOUNDARY_TYPE RENAME COLUMN hierarchytype_id TO hierarchytype;
+ALTER TABLE EG_BOUNDARY_TYPE RENAME COLUMN parent_id TO parent;
+
+
+-- ROLLBACK ALTER TABLE EG_BOUNDARY_TYPE ADD COLUMN bndryname_local;
+
+-- ROLLBACK ALTER TABLE EG_BOUNDARY_TYPE RENAME column hierarchytype to hierarchytype_id;
+-- ROLLBACK ALTER TABLE EG_BOUNDARY_TYPE RENAME column parent to parent_id;
+
+
