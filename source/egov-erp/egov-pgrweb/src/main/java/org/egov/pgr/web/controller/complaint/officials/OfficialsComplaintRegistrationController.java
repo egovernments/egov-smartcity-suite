@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/complaint/officials/")
@@ -35,13 +36,14 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
     }
 
     @RequestMapping(value = "register", method = POST)
-    public String registerComplaint(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder, @RequestParam("files") final MultipartFile[] files) {
-        if(complaint.getReceivingCenter().isCrnRequired() && complaint.getCRN().isEmpty()) 
+    public String registerComplaint(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder, final RedirectAttributes redirectAttributes,@RequestParam("files") final MultipartFile[] files) {
+        if(complaint.getReceivingMode().equals("PAPER") && complaint.getReceivingCenter().isCrnRequired() && complaint.getCRN().isEmpty()) 
             resultBinder.rejectValue("CRN", "crn.mandatory.for.receivingcenter");
         if (resultBinder.hasErrors())
             return "complaint/officials/registration-form";
         complaint.setSupportDocs(addToFileStore(files));
         complaintService.createComplaint(complaint);
-        return "redirect:show-reg-form";
+        redirectAttributes.addFlashAttribute("complaint", complaint);
+        return "redirect:/reg-success";
     }
 }

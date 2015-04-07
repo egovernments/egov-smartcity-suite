@@ -25,7 +25,7 @@
 					<div class="form-group display-hide"  id="recenter">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.receivingcenter"/></label>
 						<div class="col-sm-6">
-							<form:select path="receivingCenter" id="receivingCenter" cssClass="form-control" cssErrorClass="form-control error">
+							<form:select path="receivingCenter" id="receivingCenter" cssClass="form-control" cssErrorClass="form-control error" disabled="true">
                                 <form:option value=""> <spring:message code="lbl.select"/> </form:option>
                                 <form:options items="${receivingCenters}" itemValue="id" itemLabel="name"/>
                             </form:select>
@@ -36,7 +36,7 @@
 					<div class="form-group display-hide" id="regnoblock">
 						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.crn"/><small id="crnReq" class="display-hide"><i class="entypo-star error-msg"></i></small></label>
 						<div class="col-sm-6">
-							<form:input path="CRN" id="crn" cssClass="form-control" placeholder=""/>
+							<form:input path="CRN" id="crn" cssClass="form-control" placeholder="" disabled="true"/>
 							<form:errors path="CRN" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
@@ -75,11 +75,10 @@
 							<form:input path="complaintType.name" id="complaintTypeName" cssClass="form-control typeahead is_valid_alphabet" cssErrorClass="form-control error" placeholder="" autocomplete="off" required="required"/>
 							<form:hidden path="complaintType" id="complaintTypeId" value=""/>
 							<form:errors path="complaintType" cssClass="add-margin error-msg"/>
-							<a href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">Construction </a>
-							<a href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">Disputed Bill</a>
-							<a href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">Garbage</a>
-							<a href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">Delayed Service</a>
-							<a href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">Refusal of Service </a>
+							<c:forEach items="${complaintTypes}" var="complaintType">
+								<a onclick="setComplaintTypeId(<c:out value="${complaintType.id}"/>)" href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct"><c:out
+										value="${complaintType.name }" /> </a>
+							</c:forEach>
 						</div>
 					</div>
 					

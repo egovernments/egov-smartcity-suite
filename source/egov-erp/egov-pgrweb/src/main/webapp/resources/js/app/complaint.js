@@ -159,10 +159,15 @@ jQuery(document).ready(function($)
 		 $("#location").attr('required');
 		 $("#landmarkDetails").attr('required');
 	}
-
-	if ($("input[name=receivingMode]:checked").val() === 'PAPER') {
-		$('#recenter, #regnoblock').show();
-	}
+	
+	$('input[type=radio][name=receivingMode]').change(function() {
+		if ($("input[name=receivingMode]:checked").val() == 'PAPER') {
+			$('#recenter, #regnoblock').show();
+			$("#receivingCenter, #crn").removeAttr('disabled');
+		} else {
+			$("#receivingCenter, #crn").attr('disabled', true);
+		}
+	});
 
 	// MASK SCREEN IMPORTANT
 	//$('.loader-class').modal('show', {backdrop: 'static'});
