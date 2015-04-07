@@ -60,9 +60,9 @@ public class ViewComplaintController {
 
                 historyTable.add(map);
             }
-            model.addAttribute("complaintHistory", historyTable);
-            model.addAttribute("complaint", complaint);
         }
+        model.addAttribute("complaintHistory", historyTable);
+        model.addAttribute("complaint", complaint);
         return "view-complaint";
     }
 

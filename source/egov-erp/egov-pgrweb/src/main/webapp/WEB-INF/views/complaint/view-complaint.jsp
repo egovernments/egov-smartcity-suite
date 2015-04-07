@@ -84,12 +84,11 @@
 							<c:when test="${!complaint.getSupportDocs().isEmpty()}">
 								<c:forEach items="${complaint.getSupportDocs()}" var="file">
 									<c:choose>
-										<c:when test="${(file.contentType == 'jpg') || (file.contentType == 'jpeg')|| (file.contentType == 'gif')|| 
+										<c:when test="${(file.contentType == 'image/jpg') || (file.contentType == 'image/jpeg')|| (file.contentType == 'gif')|| 
 										(file.contentType == 'png')}">
 										<a href="/egi/controller/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=PGR"
 												data-gallery> <img class="img-width add-margin"
 												src="/egi/controller/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=PGR" /></a>
-											
 										</c:when>
 										<c:otherwise>
 											<a href="/egi/controller/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=PGR"
@@ -177,73 +176,6 @@
 						</c:choose>
 					</div>
 				</div>
-
-				<%-- <div class="panel-body">
-					<div class="row">
-						<c:choose>
-							<c:when test="${!complaintHistory.isEmpty()}">
-								<c:forEach items="${complaintHistory}" var="history">
-									<div class="col-md-3 col-xs-6 add-margin">
-									 <fmt:formatDate value="${history.createdDate}" var="historyDate" pattern="HH:MM a E dd MMM yyyy" />
-										<c:out value="${historyDate}" />
-									</div>
-									<div class="col-md-3 col-xs-6 add-margin">
-										<c:out value="${history.createdBy.username}" />
-									</div>
-									<div class="col-md-3 col-xs-6 add-margin">
-										<c:out value="${complaint.state.type}" />
-									</div>
-									<div class="col-md-3 col-xs-6 add-margin">
-										<c:out value="${history.comments}" />
-									</div>
-								</c:forEach>
-							</c:when>
-							<c:otherwise>
-							<div class="col-md-3 col-xs-6 add-margin">No history details</div></c:otherwise>
-						</c:choose>
-					</div>
-				</div> --%>
-
-				<!-- <div class="panel-body">
-					<div class="row">
-						<div class="col-md-3 col-xs-6 add-margin">10:14 AM Monday 22 Nov 2014</div>
-						<div class="col-md-2 col-xs-6 add-margin">Suresh.T.M</div>
-						<div class="col-md-2 col-xs-6 add-margin">Horticulture</div>
-						<div class="col-md-5 col-xs-6 add-margin">I have changed the
-							status of the complaint. Kindly review it. For Further
-							information, you can contact me.</div>
-					</div>
-					<div class="row add-top-border">
-						<div class="col-md-3 col-xs-6 add-margin">10:14 AM Monday 22 Nov 2014</div>
-						<div class="col-md-2 col-xs-6 add-margin">Suresh.T.M</div>
-						<div class="col-md-2 col-xs-6 add-margin">Horticulture</div>
-						<div class="col-md-5 col-xs-6 add-margin">I have changed the
-							status of the complaint. Kindly review it. For Further
-							information, you can contact me.</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12 col-xs-12 add-margin">
-							<a href="javascript:void(0);" id="see-more-link"
-								class="slide-history-menu">See more..</a>
-						</div>
-					</div>
-					<div class="row add-top-border history-slide display-hide">
-						<div class="col-md-3 col-xs-6 add-margin">10:14 AM Monday 22 Nov 2014</div>
-						<div class="col-md-2 col-xs-6 add-margin">Suresh.T.M</div>
-						<div class="col-md-2 col-xs-6 add-margin">Horticulture</div>
-						<div class="col-md-5 col-xs-6 add-margin">I have changed the
-							status of the complaint. Kindly review it. For Further
-							information, you can contact me.</div>
-					</div>
-					<div class="row add-top-border history-slide display-hide">
-						<div class="col-md-3 col-xs-6 add-margin">10:14 AM Monday 22 Nov 2014</div>
-						<div class="col-md-2 col-xs-6 add-margin">Suresh.T.M</div>
-						<div class="col-md-2 col-xs-6 add-margin">Horticulture</div>
-						<div class="col-md-5 col-xs-6 add-margin">I have changed the
-							status of the complaint. Kindly review it. For Further
-							information, you can contact me.</div>
-					</div>
-				</div> -->
 			</div>
 		</div>
 	</div>
