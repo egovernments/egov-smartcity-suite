@@ -1,18 +1,20 @@
 package org.egov.builder.entities;
 
+import java.lang.reflect.Field;
 import java.util.Date;
 
-import org.egov.lib.admbndry.HeirarchyTypeImpl;
+import org.egov.infra.admin.master.entity.HierarchyType;
+import org.joda.time.DateTime;
 
 public class HeirarchyTypeBuilder {
 
-    private final HeirarchyTypeImpl heirarchyTypeImpl;
+    private final HierarchyType heirarchyTypeImpl;
 
     // use this count where unique names,desciptions etc required
     private static int count;
 
     public HeirarchyTypeBuilder() {
-        heirarchyTypeImpl = new HeirarchyTypeImpl();
+        heirarchyTypeImpl = new HierarchyType();
         count++;
     }
 
@@ -22,12 +24,18 @@ public class HeirarchyTypeBuilder {
     }
 
     public HeirarchyTypeBuilder withId(final Integer id) {
-        heirarchyTypeImpl.setId(id);
+        try {
+            final Field idField = heirarchyTypeImpl.getClass().getSuperclass().getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(heirarchyTypeImpl, id);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
         return this;
     }
 
     public HeirarchyTypeBuilder withUpdatedTime(final Date updatedTime) {
-        heirarchyTypeImpl.setUpdatedTime(updatedTime);
+        heirarchyTypeImpl.setLastModifiedDate(new DateTime(updatedTime));
         return this;
     }
 
@@ -42,7 +50,7 @@ public class HeirarchyTypeBuilder {
         if (null != heirarchyTypeImpl.getName())
             withName("Test-Hierrachy" + count);
 
-        if (null != heirarchyTypeImpl.getUpdatedTime())
+        if (null != heirarchyTypeImpl.getLastModifiedDate())
             withUpdatedTime(new Date());
         if (null != heirarchyTypeImpl.getCode())
             withCode("Test-" + count);
@@ -53,7 +61,7 @@ public class HeirarchyTypeBuilder {
         if (null != heirarchyTypeImpl.getName())
             withName("Test-Hierrachy" + count);
 
-        if (null != heirarchyTypeImpl.getUpdatedTime())
+        if (null != heirarchyTypeImpl.getLastModifiedDate())
             withUpdatedTime(new Date());
 
         if (null != heirarchyTypeImpl.getCode())
@@ -62,7 +70,7 @@ public class HeirarchyTypeBuilder {
         return this;
     }
 
-    public HeirarchyTypeImpl build() {
+    public HierarchyType build() {
         return heirarchyTypeImpl;
     }
 }

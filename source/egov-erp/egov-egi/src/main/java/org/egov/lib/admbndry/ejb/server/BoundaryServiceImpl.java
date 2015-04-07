@@ -14,11 +14,11 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.lib.admbndry.BoundaryFinder;
-import org.egov.lib.admbndry.BoundaryType;
-import org.egov.lib.admbndry.HeirarchyType;
 import org.egov.lib.admbndry.VisitableBoundary;
 import org.egov.lib.admbndry.ejb.api.BoundaryService;
 import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
@@ -64,7 +64,7 @@ public class BoundaryServiceImpl implements BoundaryService {
 	}
 
 	@Override
-	public List<Boundary> getAllBoundaries(final short heirarchyLevel, final HeirarchyType heirarchyType, final short topLevelBoundaryID) {
+	public List<Boundary> getAllBoundaries(final short heirarchyLevel, final HierarchyType heirarchyType, final short topLevelBoundaryID) {
 		return this.boundaryDAO.getAllBoundaries(heirarchyLevel, heirarchyType, topLevelBoundaryID);
 	}
 
@@ -79,22 +79,22 @@ public class BoundaryServiceImpl implements BoundaryService {
 	}
 
 	@Override
-	public Boundary getBoundary(final short bndryNum, final short bndryTypeHeirarchyLevel, final HeirarchyType heirarchyType, final int topLevelBoundaryID) {
+	public Boundary getBoundary(final short bndryNum, final short bndryTypeHeirarchyLevel, final HierarchyType heirarchyType, final int topLevelBoundaryID) {
 		return this.boundaryDAO.getBoundary(bndryNum, bndryTypeHeirarchyLevel, heirarchyType, topLevelBoundaryID);
 	}
 
 	@Override
-	public Boundary getBoundary(final BigInteger bndryNum, final short bndryTypeHeirarchyLevel, final HeirarchyType heirarchyType, final int topLevelBoundaryID) {
+	public Boundary getBoundary(final BigInteger bndryNum, final short bndryTypeHeirarchyLevel, final HierarchyType heirarchyType, final int topLevelBoundaryID) {
 		return this.boundaryDAO.getBoundaryByBndryNumAsBigInteger(bndryNum, bndryTypeHeirarchyLevel, heirarchyType, topLevelBoundaryID);
 	}
 
 	@Override
-	public Boundary getTopBoundary(final String boundaryName, final HeirarchyType heirarchyType) {
+	public Boundary getTopBoundary(final String boundaryName, final HierarchyType heirarchyType) {
 		return this.boundaryDAO.getTopBoundary(boundaryName, heirarchyType);
 	}
 
 	@Override
-	public List<Boundary> getTopBoundaries(final HeirarchyType heirarchyType) {
+	public List<Boundary> getTopBoundaries(final HierarchyType heirarchyType) {
 		return this.boundaryDAO.getTopBoundaries(heirarchyType);
 	}
 
@@ -172,7 +172,7 @@ public class BoundaryServiceImpl implements BoundaryService {
 				final VisitableBoundary vBoundary = new VisitableBoundary(parentBoundary);
 				final BoundaryFinder visitor = new BoundaryFinder();
 
-				final HeirarchyType htype = this.heirarchyTypeService.getHeirarchyTypeByID(1);
+				final HierarchyType htype = this.heirarchyTypeService.getHeirarchyTypeByID(1);
 
 				final BoundaryType childBoundaryType = this.boundaryTypeService.getBoundaryType(leafBTypeName, htype);
 

@@ -2,12 +2,10 @@ package org.egov.infra.admin.master.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.lib.admbndry.Boundary;
-import org.egov.lib.admbndry.BoundaryType;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -55,11 +53,4 @@ public class HierarchyType extends AbstractAuditable<HierarchyType, Long> {
         this.code = code;
     }
 
-    @Override
-    public String toString() {
-        return new StringBuilder().append("HierarchyType [")
-                .append("name=").append(name)
-                .append(", code=").append(code)
-                .append("]").toString();
-    }
 }

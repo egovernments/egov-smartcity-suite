@@ -5,6 +5,7 @@
  */
 package org.egov.lib.admbndry;
 
+import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.search.domain.Searchable;
 import org.json.simple.JSONObject;
 

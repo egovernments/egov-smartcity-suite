@@ -10,6 +10,8 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.Set;
 
+import org.egov.infra.admin.master.entity.BoundaryType;
+
 public interface Boundary extends Serializable {
 
 	/**

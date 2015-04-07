@@ -17,6 +17,7 @@ import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.exceptions.TooManyValuesException;
+import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -36,9 +37,9 @@ public class HeirarchyTypeDAO {
 	}
 
 	/**
-	 * @see org.egov.lib.admbndry.ejb.api.HeirarchyTypeManager#create(org.egov.lib.admbndry.HeirarchyType)
+	 * @see org.egov.lib.admbndry.ejb.api.HeirarchyTypeManager#create(org.egov.infra.admin.master.entity.HierarchyType)
 	 */
-	public void create(final HeirarchyType heirarchyType) throws DuplicateElementException {
+	public void create(final HierarchyType heirarchyType) throws DuplicateElementException {
 		try {
 			getSession().save(heirarchyType);
 		} catch (final HibernateException e) {
@@ -48,9 +49,9 @@ public class HeirarchyTypeDAO {
 	}
 
 	/**
-	 * @see org.egov.lib.admbndry.ejb.api.HeirarchyTypeManager#update(org.egov.lib.admbndry.HeirarchyType)
+	 * @see org.egov.lib.admbndry.ejb.api.HeirarchyTypeManager#update(org.egov.infra.admin.master.entity.HierarchyType)
 	 */
-	public void update(final HeirarchyType heirarchyType) throws NoSuchElementException {
+	public void update(final HierarchyType heirarchyType) throws NoSuchElementException {
 		try {
 			getSession().saveOrUpdate(heirarchyType);
 		} catch (final HibernateException e) {
@@ -61,9 +62,9 @@ public class HeirarchyTypeDAO {
 	}
 
 	/**
-	 * @see org.egov.lib.admbndry.ejb.api.HeirarchyTypeManager#remove(org.egov.lib.admbndry.HeirarchyType)
+	 * @see org.egov.lib.admbndry.ejb.api.HeirarchyTypeManager#remove(org.egov.infra.admin.master.entity.HierarchyType)
 	 */
-	public void remove(final HeirarchyType heirarchyType) throws NoSuchElementException {
+	public void remove(final HierarchyType heirarchyType) throws NoSuchElementException {
 		try {
 			getSession().delete(heirarchyType);
 		} catch (final HibernateException e) {
@@ -76,9 +77,9 @@ public class HeirarchyTypeDAO {
 	/**
 	 * @see org.egov.lib.admbndry.ejb.api.HeirarchyTypeManager#getHeirarchyTypeByID(int)
 	 */
-	public HeirarchyType getHeirarchyTypeByID(final int heirarchyTypeId) {
+	public HierarchyType getHeirarchyTypeByID(final int heirarchyTypeId) {
 		try {
-			return (HeirarchyType) getSession().load(HeirarchyTypeImpl.class, heirarchyTypeId);
+			return (HierarchyType) getSession().load(HierarchyType.class, heirarchyTypeId);
 		} catch (final HibernateException e) {
 			LOGGER.error("Error occurred in getHeirarchyTypeByID", e);
 			throw new EGOVRuntimeException("Error occurred in getHeirarchyTypeByID", e);
@@ -88,7 +89,7 @@ public class HeirarchyTypeDAO {
 	/**
 	 * @see org.egov.lib.admbndry.ejb.api.HeirarchyTypeManager#getAllHeirarchyTypes()
 	 */
-	public Set<HeirarchyType> getAllHeirarchyTypes() {
+	public Set<HierarchyType> getAllHeirarchyTypes() {
 		try {
 			return new LinkedHashSet(getSession().createQuery("from HeirarchyTypeImpl HT order by code asc").list());
 		} catch (final HibernateException e) {
@@ -98,18 +99,18 @@ public class HeirarchyTypeDAO {
 		}
 	}
 
-	public HeirarchyType getHierarchyTypeByName(final String name) throws NoSuchObjectException, TooManyValuesException {
+	public HierarchyType getHierarchyTypeByName(final String name) throws NoSuchObjectException, TooManyValuesException {
 
 		if (name == null) {
 			throw new EGOVRuntimeException("heirarchyType.name.null");
 		}
 
 		try {
-			HeirarchyType heirarchyType = null;
+			HierarchyType heirarchyType = null;
 			final Query qry = getSession().createQuery("from HeirarchyTypeImpl HT where trim(upper(HT.name)) =:name ");
 			final String ucaseName = name.toUpperCase();
 			qry.setString("name", ucaseName);
-			final List<HeirarchyType> heirarchyTypeList = qry.list();
+			final List<HierarchyType> heirarchyTypeList = qry.list();
 			if (heirarchyTypeList.size() == 0) {
 				throw new NoSuchObjectException("heirarchyType.object.notFound");
 			}

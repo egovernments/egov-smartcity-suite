@@ -4,11 +4,12 @@
 package org.egov.infstr.client.taglib;
 
 import org.apache.log4j.Logger;
+import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infstr.utils.StringUtils;
 import org.egov.lib.admbndry.Boundary;
-import org.egov.lib.admbndry.BoundaryType;
 
 import javax.servlet.jsp.tagext.BodyTagSupport;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;

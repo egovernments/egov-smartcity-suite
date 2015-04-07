@@ -12,9 +12,9 @@ import org.egov.lib.admbndry.Boundary;
 public class RulesDefinition {
 	public boolean jurisCompare(final Boundary userBoundary, final Boundary objectBoundary) {
 		boolean authorized = false;
-		final int userBndryHeir = userBoundary.getBoundaryType().getHeirarchy();
-		final int objBndryHeir = objectBoundary.getBoundaryType().getHeirarchy();
-		if (!userBoundary.getBoundaryType().getHeirarchyType().getCode().equalsIgnoreCase("ADMIN") || !objectBoundary.getBoundaryType().getHeirarchyType().getCode().equalsIgnoreCase("ADMIN")) {
+		final int userBndryHeir = userBoundary.getBoundaryType().getHierarchy();
+		final int objBndryHeir = objectBoundary.getBoundaryType().getHierarchy();
+		if (!userBoundary.getBoundaryType().getHierarchyType().getCode().equalsIgnoreCase("ADMIN") || !objectBoundary.getBoundaryType().getHierarchyType().getCode().equalsIgnoreCase("ADMIN")) {
 			return authorized;
 		}
 		if (userBndryHeir == 1) { // Top boundary type heirarchy

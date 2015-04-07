@@ -30,17 +30,6 @@
 		                            <form:errors path="name" cssClass="add-margin error-msg"/>
 								</div>
 							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message code="lbl.boundaryType.boundaryTypeLocal"/></label>
-								<div class="col-sm-6">
-									<form:input path="bndryNameLocal" id="bndryNameLocal" type="text" class="form-control low-width" placeholder="" autocomplete="off" />
-		                            <form:errors path="bndryNameLocal" cssClass="add-margin error-msg"/>
-								</div>
-							</div>
-							
-							<%--  <div class="form-group">
-							<form:hidden path="id" id="id" class="form-control low-width"  value = "id" placeholder="" autocomplete="off"/>
-							</div> --%>
 						</div>
 			</div>
 			<div class="row">

@@ -12,8 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.lib.admbndry.BoundaryType;
-import org.egov.lib.admbndry.BoundaryTypeImpl;
+import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
 import org.egov.lib.admbndry.ejb.server.BoundaryTypeServiceImpl;
 
@@ -41,20 +40,20 @@ public class BoundaryTypeDelegate {
 
 		final String parentBoundaryTypeName = bType.getParentName();
 
-		short hn = 0;
-		short nhn = ++hn;
-		final BoundaryType chBt = new BoundaryTypeImpl();
+		int hn = 0;
+		int nhn = ++hn;
+		final BoundaryType chBt = new BoundaryType();
 
 		if (parentBoundaryTypeName != null && !parentBoundaryTypeName.trim().equalsIgnoreCase("null")) {
-			parentBoundaryType = this.boundaryTypeService.getBoundaryType(parentBoundaryTypeName, bType.getHeirarchyType());
-			hn = parentBoundaryType.getHeirarchy();
+			parentBoundaryType = this.boundaryTypeService.getBoundaryType(parentBoundaryTypeName, bType.getHierarchyType());
+			hn = parentBoundaryType.getHierarchy();
 			nhn = ++hn;
 
 		}
-		chBt.setHeirarchy(nhn);
-		chBt.setHeirarchyType(bType.getHeirarchyType());
+		//chBt.setHeirarchy(nhn);
+		//chBt.setHeirarchyType(bType.getHeirarchyType());
 		chBt.setName(bType.getName());
-		chBt.setBndryTypeLocal(bType.getBndryTypeLocal());
+		//chBt.setBndryTypeLocal(bType.getBndryTypeLocal());
 
 		if (parentBoundaryType != null) {
 			parentBoundaryType.addChildBoundaryType(chBt);
@@ -77,9 +76,9 @@ public class BoundaryTypeDelegate {
 			BoundaryType tempBType = null;
 			if (bType.getName() != null && bType.getParentName() != null) {
 
-				tempBType = this.boundaryTypeService.getBoundaryType(bType.getParentName(), bType.getHeirarchyType());
+				//tempBType = this.boundaryTypeService.getBoundaryType(bType.getParentName(), bType.getHeirarchyType());
 				tempBType.setName(bType.getName());
-				tempBType.setBndryTypeLocal(bType.getBndryTypeLocal());
+				//tempBType.setBndryTypeLocal(bType.getBndryTypeLocal());
 				this.boundaryTypeService.updateBoundaryType(tempBType);
 			} else {
 				throw new EGOVRuntimeException("Parameters are Invalid");
@@ -111,7 +110,7 @@ public class BoundaryTypeDelegate {
 			if (bType.getName() != null && bType.getParentName() != null) {
 
 				short hn = 0;
-				parentBType = this.boundaryTypeService.getBoundaryType(bType.getParentName(), bType.getHeirarchyType());
+				//parentBType = this.boundaryTypeService.getBoundaryType(bType.getParentName(), bType.getHeirarchyType());
 				if (!parentBType.getChildBoundaryTypes().isEmpty()) {
 					tempBType = (BoundaryType) parentBType.getChildBoundaryTypes().iterator().next();
 				} else {

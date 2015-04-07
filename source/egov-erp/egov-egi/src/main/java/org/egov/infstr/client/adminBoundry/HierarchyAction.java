@@ -10,10 +10,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.commons.utils.EgovInfrastrUtil;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infstr.client.EgovAction;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.lib.admbndry.HeirarchyType;
-import org.egov.lib.admbndry.HeirarchyTypeImpl;
 import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +43,7 @@ public class HierarchyAction extends EgovAction {
 
 		if (req.getParameter("bool").equals("CREATE")) {
 			try {
-				final HeirarchyType hierarchy = new HeirarchyTypeImpl();
+				final HierarchyType hierarchy = new HierarchyType();
 				hierarchy.setName(heirarchyForm.getName());
 				hierarchy.setCode(heirarchyForm.getCode());
 				heirarchyTypeService.create(hierarchy);
@@ -63,7 +62,7 @@ public class HierarchyAction extends EgovAction {
 
 				final int heirarchyTypeId = (Integer) req.getSession().getAttribute("heirarchyTypeId");
 				req.getSession().removeAttribute("heirarchyTypeId");
-				final HeirarchyType hierarchy = heirarchyTypeService.getHeirarchyTypeByID(heirarchyTypeId);
+				final HierarchyType hierarchy = heirarchyTypeService.getHeirarchyTypeByID(heirarchyTypeId);
 				hierarchy.setName(heirarchyForm.getName());
 				hierarchy.setCode(heirarchyForm.getCode());
 				heirarchyTypeService.update(hierarchy);

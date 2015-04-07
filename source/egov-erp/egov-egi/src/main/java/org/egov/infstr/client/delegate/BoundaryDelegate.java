@@ -13,13 +13,13 @@ import java.util.Set;
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infstr.client.adminBoundry.BoundryForm;
 import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.BoundaryImpl;
-import org.egov.lib.admbndry.BoundaryType;
 import org.egov.lib.admbndry.CityWebsite;
 import org.egov.lib.admbndry.CityWebsiteImpl;
-import org.egov.lib.admbndry.HeirarchyType;
 import org.egov.lib.admbndry.ejb.api.BoundaryService;
 import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
 import org.egov.lib.admbndry.ejb.api.CityWebsiteService;
@@ -54,7 +54,7 @@ final public class BoundaryDelegate {
 	 * @exception DuplicateElementException
 	 * @exception EGOVException
 	 */
-	public Boundary createBoundary(final Boundary boundry, final String operation, final HeirarchyType heirarchyType) throws DuplicateElementException, EGOVException {
+	public Boundary createBoundary(final Boundary boundry, final String operation, final HierarchyType heirarchyType) throws DuplicateElementException, EGOVException {
 
 		validateBoundry(boundry);
 		Boundary chB = null;
@@ -144,7 +144,7 @@ final public class BoundaryDelegate {
 	 * @exception EGOVRuntimeException
 	 * @exception EGOVException
 	 */
-	public void deleteBoundary(final Boundary boundry, final HeirarchyType heirarchyType) throws EGOVRuntimeException {
+	public void deleteBoundary(final Boundary boundry, final HierarchyType heirarchyType) throws EGOVRuntimeException {
 
 		validateBoundry(boundry);
 

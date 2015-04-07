@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infstr.commons.Module;
 import org.egov.lib.admbndry.Boundary;
-import org.egov.lib.admbndry.BoundaryType;
 
 public interface EgovInfrastrUtilInteface {
 

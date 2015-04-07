@@ -9,9 +9,9 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Set;
 
+import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.lib.admbndry.Boundary;
-import org.egov.lib.admbndry.BoundaryType;
-import org.egov.lib.admbndry.HeirarchyType;
 
 public interface BoundaryService {
 
@@ -50,7 +50,7 @@ public interface BoundaryService {
 	 * @return Set of Boundaries.
 	 */
 
-	List<Boundary> getAllBoundaries(short heirarchyLevel, HeirarchyType heirarchyType, short topLevelBoundaryID);
+	List<Boundary> getAllBoundaries(short heirarchyLevel, HierarchyType heirarchyType, short topLevelBoundaryID);
 
 	/**
 	 * This method gets a single boundary of the particular boundary type and of the given boundary number and its top level boundary's pk being the given topLevelBoundaryID.
@@ -68,9 +68,9 @@ public interface BoundaryService {
 	 * @return Set of Boundaries.
 	 */
 
-	Boundary getBoundary(short bndryNum, short bndryTypeHeirarchyLevel, HeirarchyType heirarchyType, int topLevelBoundaryID);
+	Boundary getBoundary(short bndryNum, short bndryTypeHeirarchyLevel, HierarchyType heirarchyType, int topLevelBoundaryID);
 
-	Boundary getBoundary(BigInteger bndryNum, short bndryTypeHeirarchyLevel, HeirarchyType heirarchyType, int topLevelBoundaryID);
+	Boundary getBoundary(BigInteger bndryNum, short bndryTypeHeirarchyLevel, HierarchyType heirarchyType, int topLevelBoundaryID);
 
 	/**
 	 * This method gets a single boundary for a given boundary number of the particular boundary type and its parent boundaryId being the parentBoundaryID.
@@ -87,13 +87,13 @@ public interface BoundaryService {
 	 * @return Boundary representing the top level Boundary type.
 	 */
 
-	Boundary getTopBoundary(String boundaryName, HeirarchyType heirarchyType);
+	Boundary getTopBoundary(String boundaryName, HierarchyType heirarchyType);
 
 	/**
 	 * Gets all the top boundaries as a set of boundary objects.
 	 * @return Set
 	 */
-	List<Boundary> getTopBoundaries(HeirarchyType heirarchyType);
+	List<Boundary> getTopBoundaries(HierarchyType heirarchyType);
 
 	String getBoundaryNameForID(Integer id);
 

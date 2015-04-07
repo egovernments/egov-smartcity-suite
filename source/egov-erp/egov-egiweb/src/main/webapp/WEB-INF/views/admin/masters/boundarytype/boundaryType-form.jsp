@@ -31,7 +31,7 @@
 									<form:select path="hierarchyType"
 		                                         id="hierarchyTypes" cssClass="form-control" cssErrorClass="form-control error" required="required">
 		                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
-		                                <form:options items="${hierarchyTypes}" itemValue="name" itemLabel="name"/>
+		                                <form:options items="${hierarchyTypes}" itemValue="id" itemLabel="name"/>
 		                            </form:select>
 					                <form:errors path="hierarchyType" cssClass="add-margin error-msg"/>
 								</div>
@@ -43,17 +43,6 @@
 		                            <form:errors path="name" cssClass="add-margin error-msg"/>
 								</div>
 							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message code="lbl.boundaryType.boundaryTypeLocal"/></label>
-								<div class="col-sm-6">
-									<form:input path="bndryNameLocal" id="bndryNameLocal" type="text" class="form-control low-width" placeholder="" autocomplete="off" />
-		                            <form:errors path="bndryNameLocal" cssClass="add-margin error-msg"/>
-								</div>
-							</div>
-							
-							<%--  <div class="form-group">
-							<form:hidden path="id" id="id" class="form-control low-width"  value = "id" placeholder="" autocomplete="off"/>
-							</div> --%>
 						</div>
 					</div>
 					<div class="row">

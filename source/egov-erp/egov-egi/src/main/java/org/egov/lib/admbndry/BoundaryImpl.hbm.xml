@@ -24,7 +24,7 @@
 			<column name="LAT" scale="10" precision="14" />
 		</property>
 		<many-to-one name="parent" class="org.egov.lib.admbndry.BoundaryImpl" column="PARENT" />
-		<many-to-one name="boundaryType" class="org.egov.lib.admbndry.BoundaryTypeImpl" column="ID_BNDRY_TYPE" />
+		<many-to-one name="boundaryType" class="org.egov.infra.admin.master.entity.BoundaryType" column="ID_BNDRY_TYPE" />
 		<set name="children" order-by="NAME" inverse="true" cascade="all-delete-orphan">
 			<key column="PARENT" />
 			<one-to-many class="org.egov.lib.admbndry.BoundaryImpl" />

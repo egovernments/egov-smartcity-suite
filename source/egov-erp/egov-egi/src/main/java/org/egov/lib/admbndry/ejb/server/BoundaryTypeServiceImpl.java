@@ -6,9 +6,9 @@
 package org.egov.lib.admbndry.ejb.server;
 
 import org.egov.exceptions.NoSuchObjectException;
-import org.egov.lib.admbndry.BoundaryType;
+import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.lib.admbndry.BoundaryTypeDAO;
-import org.egov.lib.admbndry.HeirarchyType;
 import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
 import org.hibernate.SessionFactory;
 
@@ -42,12 +42,12 @@ public class BoundaryTypeServiceImpl implements BoundaryTypeService {
 	}
 
 	@Override
-	public BoundaryType getBoundaryType(final short heirarchylevel, final HeirarchyType heirarchyType) {
+	public BoundaryType getBoundaryType(final short heirarchylevel, final HierarchyType heirarchyType) {
 		return new BoundaryTypeDAO(sessionFactory).getBoundaryType(heirarchylevel, heirarchyType);
 	}
 
 	@Override
-	public BoundaryType getTopBoundaryType(final HeirarchyType heirarchyType) {
+	public BoundaryType getTopBoundaryType(final HierarchyType heirarchyType) {
 		final short topHrchy = 1;
 		return new BoundaryTypeDAO(sessionFactory).getBoundaryType(topHrchy, heirarchyType);
 	}
@@ -58,7 +58,7 @@ public class BoundaryTypeServiceImpl implements BoundaryTypeService {
 	}
 
 	@Override
-	public BoundaryType getBoundaryType(final String bndryTypeName, final HeirarchyType heirarchyType) {
+	public BoundaryType getBoundaryType(final String bndryTypeName, final HierarchyType heirarchyType) {
 		return new BoundaryTypeDAO(sessionFactory).getBoundaryType(bndryTypeName, heirarchyType);
 	}
 

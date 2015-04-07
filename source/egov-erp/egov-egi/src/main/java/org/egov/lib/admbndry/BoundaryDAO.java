@@ -6,6 +6,8 @@
 package org.egov.lib.admbndry;
 
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
@@ -176,7 +178,7 @@ public class BoundaryDAO {
 
 	public List getAllBoundaries(final BoundaryType bndryType, final int topLevelBoundaryID) {
 		try {
-			final short hierarchyLevel = bndryType.getHeirarchy();
+			final int hierarchyLevel = bndryType.getHierarchy();
 
 			final StringBuffer sbf = new StringBuffer(50);
 			sbf.append("AND BI");
@@ -209,7 +211,7 @@ public class BoundaryDAO {
 
 	public List getAllBoundariesHistory(final BoundaryType bndryType, final int topLevelBoundaryID) {
 		try {
-			final short hierarchyLevel = bndryType.getHeirarchy();
+			final int hierarchyLevel = bndryType.getHierarchy();
 
 			final StringBuffer sbf = new StringBuffer(50);
 			sbf.append("AND BI");
@@ -236,10 +238,10 @@ public class BoundaryDAO {
 		}
 	}
 
-	public List getAllBoundariesByBndryTypeId(final Integer bndryTypeId) {
+	public List getAllBoundariesByBndryTypeId(final Long bndryTypeId) {
 		try {
 			final Query qry = getSession().createQuery("from BoundaryImpl BI where BI.boundaryType.id=:bndryTypeId and BI.isHistory='N' order by BI.name");
-			qry.setInteger("bndryTypeId", bndryTypeId);
+			qry.setLong("bndryTypeId", bndryTypeId);
 
 			return qry.list();
 		} catch (final HibernateException e) {
@@ -248,7 +250,7 @@ public class BoundaryDAO {
 		}
 	}
 
-	public List getAllBoundaries(final short heirarchyLevel, final HeirarchyType heirarchyType, final short topLevelBoundaryID) {
+	public List getAllBoundaries(final short heirarchyLevel, final HierarchyType heirarchyType, final short topLevelBoundaryID) {
 		try {
 			final Query qry = getSession().createQuery(
 					"from BoundaryImpl BI where BI.boundaryType.hierarchy = :hierarchy " + "and BI.boundaryType.heirarchyType = :heirarchyType " + " and BI.isHistory='N' AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR "
@@ -285,11 +287,11 @@ public class BoundaryDAO {
 
 	}
 
-	public Boundary getBoundary(final short bndryNum, final short bndryTypeHeirarchyLevel, final HeirarchyType heirarchyType, final int topLevelBoundaryID) {
+	public Boundary getBoundary(final short bndryNum, final short bndryTypeHeirarchyLevel, final HierarchyType heirarchyType, final int topLevelBoundaryID) {
 		return getBoundaryByBndryNumAsBigInteger(new BigInteger(String.valueOf(bndryNum)), bndryTypeHeirarchyLevel, heirarchyType, topLevelBoundaryID);
 	}
 
-	public Boundary getBoundaryByBndryNumAsBigInteger(final BigInteger bndryNum, final short bndryTypeHeirarchyLevel, final HeirarchyType heirarchyType, final int topLevelBoundaryID) {
+	public Boundary getBoundaryByBndryNumAsBigInteger(final BigInteger bndryNum, final short bndryTypeHeirarchyLevel, final HierarchyType heirarchyType, final int topLevelBoundaryID) {
 		try {
 			final Query qry = getSession().createQuery("from BoundaryImpl BI where BI.boundaryNum = :boundaryNum AND " + "BI.boundaryType.hierarchy = :hierarchy and BI.boundaryType.heirarchyType = :heirarchyType " + " and BI.isHistory='N' ");
 			qry.setBigInteger("boundaryNum", bndryNum);
@@ -350,7 +352,7 @@ public class BoundaryDAO {
 		}
 	}
 
-	public Boundary getTopBoundary(final String boundaryName, final HeirarchyType heirarchyType) {
+	public Boundary getTopBoundary(final String boundaryName, final HierarchyType heirarchyType) {
 		try {
 
 			final BoundaryType bt = this.boundaryTypeService.getTopBoundaryType(heirarchyType);
@@ -374,7 +376,7 @@ public class BoundaryDAO {
 		}
 	}
 
-	public List getTopBoundaries(final HeirarchyType heirarchyType) {
+	public List getTopBoundaries(final HierarchyType heirarchyType) {
 		try {
 			final Query qry = getSession().createQuery(
 					"from BoundaryImpl BI where BI.boundaryType.hierarchy = :hierarchy " + "and BI.boundaryType.heirarchyType = :heirarchyType " + " and BI.isHistory='N' AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR "

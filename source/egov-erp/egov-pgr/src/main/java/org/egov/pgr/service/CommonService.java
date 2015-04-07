@@ -8,13 +8,13 @@ import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.exceptions.TooManyValuesException;
+import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.services.EISServeable;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.lib.admbndry.BoundaryImpl;
-import org.egov.lib.admbndry.BoundaryType;
 import org.egov.lib.admbndry.BoundaryTypeDAO;
-import org.egov.lib.admbndry.HeirarchyType;
 import org.egov.lib.admbndry.HeirarchyTypeDAO;
 import org.egov.pims.commons.DesignationMaster;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class CommonService {
     public List<BoundaryImpl> getZones() {
         List<BoundaryImpl> zones = new ArrayList<BoundaryImpl>();
         try {
-            HeirarchyType hierarchyTypeByName = hierHeirarchyTypeDAO.getHierarchyTypeByName("ADMINISTRATION");
+            HierarchyType hierarchyTypeByName = hierHeirarchyTypeDAO.getHierarchyTypeByName("ADMINISTRATION");
             BoundaryType boundaryType = boundaryTypeDAO.getBoundaryType("ZONE", hierarchyTypeByName);
             zones = (List<BoundaryImpl>) boundaryDAO.getAllBoundariesByBndryTypeId(boundaryType.getId());
         } catch (NoSuchObjectException e) {

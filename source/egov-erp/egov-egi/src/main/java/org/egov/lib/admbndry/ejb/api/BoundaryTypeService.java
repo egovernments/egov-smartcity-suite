@@ -8,9 +8,9 @@ package org.egov.lib.admbndry.ejb.api;
 import java.util.List;
 
 import org.egov.exceptions.NoSuchObjectException;
+import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.lib.admbndry.Boundary;
-import org.egov.lib.admbndry.BoundaryType;
-import org.egov.lib.admbndry.HeirarchyType;
 
 public interface BoundaryTypeService {
 
@@ -38,21 +38,21 @@ public interface BoundaryTypeService {
 	 * @param heirarchylevel
 	 * @return BoundaryType
 	 */
-	BoundaryType getBoundaryType(short heirarchylevel, HeirarchyType heirarchyType);
+	BoundaryType getBoundaryType(short heirarchylevel, HierarchyType heirarchyType);
 
 	/**
 	 * This returns the top boundaryType i.e of hierarchy level 1.
 	 * @return BoundaryType
 	 */
 
-	BoundaryType getTopBoundaryType(HeirarchyType heirarchyType);
+	BoundaryType getTopBoundaryType(HierarchyType heirarchyType);
 
 	/**
 	 * This returns the boundaryType of the given boundary type name.
 	 * @param name of the boundary type
 	 * @return BoundaryType
 	 */
-	BoundaryType getBoundaryType(String bndryTypeName, HeirarchyType heirarchyType);
+	BoundaryType getBoundaryType(String bndryTypeName, HierarchyType heirarchyType);
 
 	/**
 	 * @param id

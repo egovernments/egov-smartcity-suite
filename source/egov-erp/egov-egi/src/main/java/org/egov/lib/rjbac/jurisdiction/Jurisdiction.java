@@ -12,8 +12,8 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.lib.admbndry.BoundaryType;
 
 public class Jurisdiction implements Serializable {
 

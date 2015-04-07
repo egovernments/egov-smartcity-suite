@@ -21,6 +21,8 @@ import java.util.TreeSet;
 import org.egov.commons.Installment;
 import org.egov.commons.service.CommonsService;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.UserRepository;
@@ -30,8 +32,6 @@ import org.egov.infstr.commons.Module;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.ExcludeBndryType;
 import org.egov.lib.admbndry.Boundary;
-import org.egov.lib.admbndry.BoundaryType;
-import org.egov.lib.admbndry.HeirarchyType;
 import org.egov.lib.admbndry.ejb.api.BoundaryService;
 import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
 import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
@@ -372,7 +372,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 	private synchronized void updateBoundaryMap() {
 		final String domainName = EGOVThreadLocals.getDomainName();
 		try {
-			final HeirarchyType htype = this.heirarchyTypeService.getHeirarchyTypeByID(1);
+			final HierarchyType htype = this.heirarchyTypeService.getHeirarchyTypeByID(1);
 			final List topLevelBndryList = this.boundaryService.getTopBoundaries(htype);
 			Iterator topLevelBndryIter = topLevelBndryList.iterator();
 			final BoundaryType topLevelBndryType = this.boundaryTypeService.getTopBoundaryType(htype);
@@ -596,7 +596,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 			final HashMap tempRolename = new HashMap();
 			final HashMap tempRoleIdname = new HashMap();
 			final HashMap tempuserRoleMap = new HashMap();
-			final HeirarchyType htype = this.heirarchyTypeService.getHeirarchyTypeByID(1);
+			final HierarchyType htype = this.heirarchyTypeService.getHeirarchyTypeByID(1);
 			final List topLevelBndryList = this.boundaryService.getTopBoundaries(htype);
 			topLevelBndryList.iterator();
 

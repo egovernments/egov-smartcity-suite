@@ -5,6 +5,8 @@
  */
 package org.egov.lib.admbndry;
 
+import org.egov.infra.admin.master.entity.BoundaryType;
+
 public interface Path {
 	/**
 	 * whether path exist on not

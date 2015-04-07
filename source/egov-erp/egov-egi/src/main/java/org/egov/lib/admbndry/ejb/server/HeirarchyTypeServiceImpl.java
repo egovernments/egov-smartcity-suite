@@ -11,7 +11,7 @@ import java.util.Set;
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.exceptions.TooManyValuesException;
-import org.egov.lib.admbndry.HeirarchyType;
+import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.lib.admbndry.HeirarchyTypeDAO;
 import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
 
@@ -24,34 +24,34 @@ public class HeirarchyTypeServiceImpl implements HeirarchyTypeService {
 	}
 
 	@Override
-	public void create(final HeirarchyType heirarchyType) throws DuplicateElementException {
+	public void create(final HierarchyType heirarchyType) throws DuplicateElementException {
 		this.heirarchyTypeDAO.create(heirarchyType);
 
 	}
 
 	@Override
-	public void update(final HeirarchyType heirarchyType) throws NoSuchElementException {
+	public void update(final HierarchyType heirarchyType) throws NoSuchElementException {
 		this.heirarchyTypeDAO.update(heirarchyType);
 
 	}
 
 	@Override
-	public void remove(final HeirarchyType heirarchyType) throws NoSuchElementException {
+	public void remove(final HierarchyType heirarchyType) throws NoSuchElementException {
 		this.heirarchyTypeDAO.remove(heirarchyType);
 	}
 
 	@Override
-	public HeirarchyType getHeirarchyTypeByID(final int heirarchyTypeId) {
+	public HierarchyType getHeirarchyTypeByID(final int heirarchyTypeId) {
 		return this.heirarchyTypeDAO.getHeirarchyTypeByID(heirarchyTypeId);
 	}
 
 	@Override
-	public Set<HeirarchyType> getAllHeirarchyTypes() {
+	public Set<HierarchyType> getAllHeirarchyTypes() {
 		return this.heirarchyTypeDAO.getAllHeirarchyTypes();
 	}
 
 	@Override
-	public HeirarchyType getHierarchyTypeByName(final String name) throws NoSuchObjectException, TooManyValuesException {
+	public HierarchyType getHierarchyTypeByName(final String name) throws NoSuchObjectException, TooManyValuesException {
 		return this.heirarchyTypeDAO.getHierarchyTypeByName(name);
 	}
 }

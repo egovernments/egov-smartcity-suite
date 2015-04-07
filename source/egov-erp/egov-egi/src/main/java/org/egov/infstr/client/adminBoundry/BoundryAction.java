@@ -20,11 +20,11 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infstr.client.EgovAction;
 import org.egov.infstr.client.delegate.BoundaryDelegate;
 import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.BoundaryImpl;
-import org.egov.lib.admbndry.HeirarchyType;
 import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
 import org.egov.lib.admbndry.ejb.server.HeirarchyTypeServiceImpl;
 
@@ -75,7 +75,7 @@ public class BoundryAction extends EgovAction {
                         session.removeAttribute("BndryIdValue");
                     }
 
-                    HeirarchyType heirarchyType = null;
+                    HierarchyType heirarchyType = null;
                     if (session.getAttribute("heirarchyType") != null) {
                         final int heirarchyID = (Integer) session.getAttribute("heirarchyType");
                         heirarchyType = heirarchyTypeService.getHeirarchyTypeByID(heirarchyID);

@@ -6,19 +6,19 @@ import java.util.Set;
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.exceptions.TooManyValuesException;
-import org.egov.lib.admbndry.HeirarchyType;
+import org.egov.infra.admin.master.entity.HierarchyType;
 
 public interface HeirarchyTypeService {
 
-	void create(HeirarchyType heirarchyType) throws DuplicateElementException;
+	void create(HierarchyType heirarchyType) throws DuplicateElementException;
 
-	void update(HeirarchyType heirarchyType) throws NoSuchElementException;
+	void update(HierarchyType heirarchyType) throws NoSuchElementException;
 
-	void remove(HeirarchyType heirarchyType) throws NoSuchElementException;
+	void remove(HierarchyType heirarchyType) throws NoSuchElementException;
 
-	HeirarchyType getHeirarchyTypeByID(int heirarchyTypeId);
+	HierarchyType getHeirarchyTypeByID(int heirarchyTypeId);
 
-	Set<HeirarchyType> getAllHeirarchyTypes();
+	Set<HierarchyType> getAllHeirarchyTypes();
 
-	HeirarchyType getHierarchyTypeByName(String name) throws NoSuchObjectException, TooManyValuesException;
+	HierarchyType getHierarchyTypeByName(String name) throws NoSuchObjectException, TooManyValuesException;
 }

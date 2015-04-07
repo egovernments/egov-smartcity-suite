@@ -7,6 +7,8 @@ package org.egov.lib.admbndry;
 
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
+import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.entity.HierarchyType;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -66,7 +68,7 @@ public class BoundaryTypeDAO {
 		}
 	}
 
-	public BoundaryType getBoundaryType(final short heirarchylevel, final HeirarchyType heirarchyType) {
+	public BoundaryType getBoundaryType(final short heirarchylevel, final HierarchyType heirarchyType) {
 		try {
 			final Query qry = getSession().createQuery("from BoundaryTypeImpl BT left join fetch BT.childBoundaryTypes where BT.hierarchy = :hirchy and BT.heirarchyType = :heirarchyType");
 			qry.setShort("hirchy", heirarchylevel);
@@ -78,7 +80,7 @@ public class BoundaryTypeDAO {
 		}
 	}
 
-	public BoundaryType getBoundaryType(final String bndryTypeName, final HeirarchyType heirarchyType) {
+	public BoundaryType getBoundaryType(final String bndryTypeName, final HierarchyType heirarchyType) {
 		try {
 			final Query qry = getSession().createQuery("from BoundaryTypeImpl BT where upper(NAME) = upper(:name) and BT.heirarchyType = :heirarchyType");
 			qry.setString("name", bndryTypeName);
@@ -129,7 +131,7 @@ public class BoundaryTypeDAO {
 
 	// It will return all the parent boundary Types as list for the input heirarchy type.
 	// Filtered boundary types, if their parent is null.
-	public List<BoundaryType> getParentBoundaryTypeByHirarchy(final HeirarchyType heirarchyType) throws EGOVRuntimeException {
+	public List<BoundaryType> getParentBoundaryTypeByHirarchy(final HierarchyType heirarchyType) throws EGOVRuntimeException {
 		try {
 			List<BoundaryType> boundaryTypeList = new ArrayList<BoundaryType>();
 
@@ -152,7 +154,7 @@ public class BoundaryTypeDAO {
 	 * Second loop getting all the boundaries for individual boundary types. 
 	 * Returns Map which mapped to Boundary Type Name and List of boundaries.
 	 */
-	public Map<String, List<Boundary>> getSecondLevelBoundaryByPassingHeirarchy(final HeirarchyType heirarchyType) throws EGOVRuntimeException {
+	public Map<String, List<Boundary>> getSecondLevelBoundaryByPassingHeirarchy(final HierarchyType heirarchyType) throws EGOVRuntimeException {
 		try {
 			List<Boundary> boundaryList = new ArrayList<Boundary>();
 			final Map<String, List<Boundary>> retSet = new HashMap<String, List<Boundary>>();
@@ -187,7 +189,7 @@ public class BoundaryTypeDAO {
 		}
 	}
 
-	public Map<String, List<Boundary>> getBoundaryMapByPassingHirarchy(final HeirarchyType heirarchyType) throws EGOVRuntimeException {
+	public Map<String, List<Boundary>> getBoundaryMapByPassingHirarchy(final HierarchyType heirarchyType) throws EGOVRuntimeException {
 		try {
 			String bryName = null;
 			final Date currDate = new Date();

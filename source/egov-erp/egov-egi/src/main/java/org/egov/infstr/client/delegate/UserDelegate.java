@@ -11,10 +11,10 @@ import java.util.List;
 import org.egov.commons.utils.EgovInfrastrUtil;
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.lib.admbndry.HeirarchyType;
 import org.egov.lib.admbndry.ejb.api.BoundaryService;
 import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
 import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
@@ -186,7 +186,7 @@ public class UserDelegate {
 	 */
 	public List getTopBondaries() {
 		List topBndryList = new ArrayList();
-		HeirarchyType ht = null;
+		HierarchyType ht = null;
 		try {
 			ht = this.heirarchyTypeService.getHeirarchyTypeByID(1);
 			topBndryList = this.boundaryService.getTopBoundaries(ht);

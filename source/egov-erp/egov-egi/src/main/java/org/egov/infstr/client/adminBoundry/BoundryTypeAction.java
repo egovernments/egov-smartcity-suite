@@ -13,11 +13,10 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infstr.client.EgovAction;
 import org.egov.infstr.client.delegate.BoundaryTypeDelegate;
-import org.egov.lib.admbndry.BoundaryType;
-import org.egov.lib.admbndry.BoundaryTypeImpl;
-import org.egov.lib.admbndry.HeirarchyType;
 import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
 import org.egov.lib.admbndry.ejb.server.HeirarchyTypeServiceImpl;
 
@@ -40,15 +39,15 @@ public class BoundryTypeAction extends EgovAction {
 			String message = "";
 			final javax.servlet.http.HttpSession session = req.getSession();
 			final String operation = req.getParameter("operation");
-			final BoundaryType boundaryType = new BoundaryTypeImpl();
+			final BoundaryType boundaryType = new BoundaryType();
 			final BoundryTypeForm boundryTypeForm = (BoundryTypeForm) form;
 
 			final BoundaryTypeDelegate boundaryTypeDelegate = BoundaryTypeDelegate.getInstance();
-			final HeirarchyType heirarchyType = heirarchyTypeService.getHeirarchyTypeByID(Integer.valueOf(boundryTypeForm.getHeirarchyType().trim()));
-			boundaryType.setHeirarchyType(heirarchyType);
+			final HierarchyType heirarchyType = heirarchyTypeService.getHeirarchyTypeByID(Integer.valueOf(boundryTypeForm.getHeirarchyType().trim()));
+			//boundaryType.setHeirarchyType(heirarchyType);
 			boundaryType.setName(boundryTypeForm.getName());
 			boundaryType.setParentName(boundryTypeForm.getParentName());
-			boundaryType.setBndryTypeLocal(boundryTypeForm.getBndryTypeLocal());
+			//boundaryType.setBndryTypeLocal(boundryTypeForm.getBndryTypeLocal());
 
 			if ("create".equals(operation)) {
 				try {

@@ -17,8 +17,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infstr.client.EgovAction;
-import org.egov.lib.admbndry.HeirarchyType;
 import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
 import org.egov.lib.admbndry.ejb.server.HeirarchyTypeServiceImpl;
 
@@ -47,7 +47,7 @@ public class SetupHierarchyTypeAction extends EgovAction {
 			try {
 				if (hierarchyForm.getHierarchyTypeid() != null) {
 					req.getSession().setAttribute("heirarchyTypeId", (int) hierarchyForm.getHierarchyTypeid());
-					final HeirarchyType hierarchy = this.heirarchyTypeService.getHeirarchyTypeByID(hierarchyForm.getHierarchyTypeid());
+					final HierarchyType hierarchy = this.heirarchyTypeService.getHeirarchyTypeByID(hierarchyForm.getHierarchyTypeid());
 					hierarchyForm.setName(hierarchy.getName());
 					hierarchyForm.setCode(hierarchy.getCode());
 					target = "viewHierarchy";
@@ -65,7 +65,7 @@ public class SetupHierarchyTypeAction extends EgovAction {
 		if ("UPDATE".equals(req.getParameter("bool"))) {
 			try {
 				req.getSession().setAttribute("heirarchyTypeId", (int) hierarchyForm.getHierarchyTypeid());
-				final HeirarchyType hierarchy = this.heirarchyTypeService.getHeirarchyTypeByID(hierarchyForm.getHierarchyTypeid());
+				final HierarchyType hierarchy = this.heirarchyTypeService.getHeirarchyTypeByID(hierarchyForm.getHierarchyTypeid());
 				hierarchyForm.setName(hierarchy.getName());
 				hierarchyForm.setCode(hierarchy.getCode());
 				target = "updateHierarchy";

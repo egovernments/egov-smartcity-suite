@@ -25,8 +25,8 @@ public class BeforeBoundaryAction extends EgovAction {
     public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         try {
             final BoundryForm boundryForm = (BoundryForm) form;
-            req.setAttribute("boundariesList", new BoundaryDAO(null).getAllBoundariesByBndryTypeId(Integer.valueOf(boundryForm.getName())));
-            req.setAttribute("boundryTypeObj", new BoundaryTypeDAO(null).getBoundaryType(Integer.valueOf(boundryForm.getName())));
+            //req.setAttribute("boundariesList", new BoundaryDAO(null).getAllBoundariesByBndryTypeId(Integer.valueOf(boundryForm.getName())));
+            //req.setAttribute("boundryTypeObj", new BoundaryTypeDAO(null).getBoundaryType(Integer.valueOf(boundryForm.getName())));
             saveToken(req);
             return mapping.findForward("success");
         } catch (final Exception ex) {

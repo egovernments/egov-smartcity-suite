@@ -3,9 +3,9 @@ package org.egov.builder.entities;
 import java.math.BigInteger;
 import java.util.Date;
 
+import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.BoundaryImpl;
-import org.egov.lib.admbndry.BoundaryType;
 
 public class BoundaryBuilder {
 

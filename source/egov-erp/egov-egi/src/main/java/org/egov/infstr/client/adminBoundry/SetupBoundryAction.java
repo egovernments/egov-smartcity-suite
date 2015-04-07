@@ -58,7 +58,7 @@ public class SetupBoundryAction extends EgovAction {
 					session.setAttribute("BndryIdValue", boundaryId);
 				}
 
-				session.setAttribute("bndryTypeHeirarchyLevel", (int) bndry.getBoundaryType().getHeirarchy());
+				//session.setAttribute("bndryTypeHeirarchyLevel", (int) bndry.getBoundaryType().getHeirarchy());
 
 				boundryForm.setName(bndry.getName());
 				if (bndry.getBndryNameLocal() != null) {
@@ -99,7 +99,7 @@ public class SetupBoundryAction extends EgovAction {
 					session.setAttribute("BndryIdValue", boundaryId);
 				}
 
-				session.setAttribute("bndryTypeHeirarchyLevel", (int) bndry.getBoundaryType().getHeirarchy());
+				//session.setAttribute("bndryTypeHeirarchyLevel", (int) bndry.getBoundaryType().getHeirarchy());
 
 				session.setAttribute("operation", "delete");
 				session.setAttribute("name", bndry.getName());
