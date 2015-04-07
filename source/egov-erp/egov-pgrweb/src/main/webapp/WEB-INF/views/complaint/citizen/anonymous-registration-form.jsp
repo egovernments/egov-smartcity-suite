@@ -160,6 +160,12 @@
 		</div>
 	</div>
 </div>
+<script>
+	var complaintTypeId= '${complaint.complaintType.id}';
+	if(complaintTypeId !== ''){
+		$("#complaintTypeId").val(complaintTypeId);
+	}
+</script>
 <script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>

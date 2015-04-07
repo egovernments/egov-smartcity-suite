@@ -9,6 +9,7 @@ import javax.validation.Valid;
 
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ReceivingCenter;
+import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pgr.service.ReceivingCenterService;
 import org.egov.pgr.web.controller.complaint.GenericComplaintController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
 
     @RequestMapping(value = "register", method = POST)
     public String registerComplaint(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder, final RedirectAttributes redirectAttributes,@RequestParam("files") final MultipartFile[] files) {
-        if(complaint.getReceivingMode().equals("PAPER") && complaint.getReceivingCenter().isCrnRequired() && complaint.getCRN().isEmpty()) 
+        if(complaint.getReceivingMode().equals(ReceivingMode.PAPER) && complaint.getReceivingCenter().isCrnRequired() && complaint.getCRN().isEmpty()) 
             resultBinder.rejectValue("CRN", "crn.mandatory.for.receivingcenter");
         if (resultBinder.hasErrors())
             return "complaint/officials/registration-form";

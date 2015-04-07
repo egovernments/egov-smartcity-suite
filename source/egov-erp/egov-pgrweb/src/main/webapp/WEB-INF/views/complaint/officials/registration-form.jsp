@@ -73,7 +73,7 @@
 						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintType"/><span class="mandatory"></span></label>
 						<div class="col-sm-6">
 							<form:input path="complaintType.name" id="complaintTypeName" cssClass="form-control typeahead is_valid_alphabet" cssErrorClass="form-control error" placeholder="" autocomplete="off" required="required"/>
-							<form:hidden path="complaintType" id="complaintTypeId" value=""/>
+							<form:hidden path="complaintType" id="complaintTypeId" value="${complaintType.id}"/>
 							<form:errors path="complaintType" cssClass="add-margin error-msg"/>
 							<c:forEach items="${complaintTypes}" var="complaintType">
 								<a onclick="setComplaintTypeId(<c:out value="${complaintType.id}"/>)" href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct"><c:out
@@ -182,6 +182,12 @@
 		</div>
 	</div>
 </div>
+<script>
+	var complaintTypeId= '${complaint.complaintType.id}';
+	if(complaintTypeId !== ''){
+		$("#complaintTypeId").val(complaintTypeId);
+	}
+</script>
 <script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
