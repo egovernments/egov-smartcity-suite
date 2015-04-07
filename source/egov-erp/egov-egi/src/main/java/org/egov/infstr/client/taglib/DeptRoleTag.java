@@ -17,7 +17,7 @@ import java.util.TreeSet;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
-import org.egov.lib.rjbac.dept.Department;
+import org.egov.infra.admin.master.entity.Department;
 
 public class DeptRoleTag extends BodyTagSupport {
 	/**
@@ -86,8 +86,8 @@ public class DeptRoleTag extends BodyTagSupport {
 				final Department department = (Department) deptItr.next();
 				// StringBuffer deptPopulateStr = new StringBuffer();
 				// deptPopulateStr ="<html:select property=\""+"departmentId"+"\""+"styleClass=\""+"controlText"+"\">" +"\n"+"<\\html:select>" ;
-				final Integer deptID = department.getId();
-				final String deptname = department.getDeptName();
+				final Integer deptID = Integer.valueOf(department.getId().intValue());
+				final String deptname = department.getName();
 				deptMap.put(deptname, deptID);
 			}
 			System.out.println("labelsList:::" + this.labelsList);
@@ -125,7 +125,7 @@ public class DeptRoleTag extends BodyTagSupport {
 			for (final Iterator deptItr = deptList.iterator(); deptItr.hasNext();) {
 				final Department department = (Department) deptItr.next();
 
-				deptRoleStr += this.allRolesForDepartment(department.getDeptName(), department.getId().intValue(), this.labelsList);
+				deptRoleStr += this.allRolesForDepartment(department.getName(), department.getId().intValue(), this.labelsList);
 			}
 
 			deptRoleStr += "}";

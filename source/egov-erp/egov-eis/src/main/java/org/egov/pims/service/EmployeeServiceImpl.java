@@ -28,7 +28,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
 import org.egov.pims.dao.AssignmentDAO;
@@ -2583,7 +2583,7 @@ return list;
 	 * Returns the list of departments that the user is assigned to. This could be through primary
 	 * as well as temporary assignments.
 	 * @param userName
-	 * @return List of DepartmentImpl
+	 * @return List of Department
 	 */
 	public  List getListOfDeptBasedOnUserDept(String userName)
 	{
@@ -2593,7 +2593,7 @@ return list;
 			Query qry =null;
 			if(userName!=null)
 			{
-				qry = getCurrentSession().createQuery("from DepartmentImpl where id in (select deptId.id from Assignment where userName=:userName " +
+				qry = getCurrentSession().createQuery("from Department where id in (select deptId.id from Assignment where userName=:userName " +
 						" and fromDate <= sysdate and toDate >= sysdate )");
 			}
 
@@ -2606,7 +2606,7 @@ return list;
 			{
 				for(Iterator iter = qry.list().iterator();iter.hasNext();)
 				{
-					DepartmentImpl deptImpl = (DepartmentImpl)iter.next();
+					Department deptImpl = (Department)iter.next();
 					deptList.add(deptImpl);
 				}
 			}

@@ -8,8 +8,7 @@ package org.egov.commons;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
+import org.egov.infra.admin.master.entity.Department;
 
 public class SubScheme implements java.io.Serializable {
 
@@ -28,7 +27,7 @@ public class SubScheme implements java.io.Serializable {
 	private String isactive = "0";
 
 	private Date lastmodifieddate;
-	private DepartmentImpl department;
+	private Department department;
 	private BigDecimal initialEstimateAmount;
 	private String councilLoanProposalNumber;
 	private String councilAdminSanctionNumber;
@@ -136,11 +135,11 @@ public class SubScheme implements java.io.Serializable {
 		this.lastmodifieddate = lastmodifieddate;
 	}
 
-	public void setDepartment(DepartmentImpl department) {
+	public void setDepartment(Department department) {
 		this.department = department;
 	}
 
-	public DepartmentImpl getDepartment() {
+	public Department getDepartment() {
 		return department;
 	}
 

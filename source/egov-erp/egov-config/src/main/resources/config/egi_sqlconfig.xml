@@ -8,7 +8,7 @@
 
 <egi-department>
 	<type>hql</type>
-	<query>from DepartmentImpl order by DEPT_NAME</query>
+	<query>from Department order by NAME</query>
 </egi-department> 
 
 <egi-DesignationMaster>
@@ -161,7 +161,7 @@ where ca.classification=4  and ca.type in('E') and ca.isactiveforposting = 1   o
 </egi-egwSubTypeOfWork> 
 <egi-dept>
 	<type>sql</type>
-	<query>select id_dept\,dept_name from eg_department order by id_dept desc</query>
+	<query>select id\,name from eg_department order by id desc</query>
 </egi-dept>
 <egi-recovery>
 	<type>hql</type>

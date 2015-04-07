@@ -2,7 +2,6 @@ package org.egov.pims.web.actions.positionMaster;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -10,21 +9,17 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
 import org.egov.masters.model.BillNumberMaster;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.DrawingOfficer;
 import org.egov.pims.commons.Position;
-import org.egov.pims.utils.EisManagersUtill;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
-import org.joda.time.DateTime;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
@@ -176,7 +171,7 @@ public class PositionMasterAction extends BaseFormAction {
 						deptDesig=new DeptDesig();
 						deptDesig.setSanctionedPosts(getSanctionedPosts());
 						deptDesig.setOutsourcedPosts(getOutsourcedPosts());
-						deptDesig.setDeptId( ( (DepartmentImpl)persistenceService.find("from DepartmentImpl where id=?", getDepartmentId()) ));
+						deptDesig.setDeptId( ( (Department)persistenceService.find("from Department where id=?", getDepartmentId()) ));
 						deptDesig.setDesigId( ((DesignationMaster)persistenceService.find("from DesignationMaster where designationId=?", getDesignationId())));
 						position.setDeptDesigId(deptDesig);
 					}
@@ -328,7 +323,7 @@ public class PositionMasterAction extends BaseFormAction {
 	public String getDepartments() {
 
 		if (StringUtils.isNotBlank(query)) {
-			Criteria criteria =persistenceService.getSession().createCriteria(DepartmentImpl.class, "DepartmentImpl");
+			Criteria criteria =persistenceService.getSession().createCriteria(Department.class, "Department");
 			criteria.add(Restrictions.ilike("deptName", query, MatchMode.START));
 			departmentList= criteria.list();
 			

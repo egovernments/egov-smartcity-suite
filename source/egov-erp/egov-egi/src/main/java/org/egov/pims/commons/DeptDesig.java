@@ -6,12 +6,12 @@
 package org.egov.pims.commons;
 
 import org.egov.infstr.models.BaseModel;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
+import org.egov.infra.admin.master.entity.Department;
 
 public class DeptDesig extends BaseModel { 
 	private static final long serialVersionUID = 1L;
 	private DesignationMaster desigId;
-	private DepartmentImpl deptId;
+	private Department deptId;
 	private Integer sanctionedPosts;
 	private Integer outsourcedPosts;
 	
@@ -21,10 +21,10 @@ public class DeptDesig extends BaseModel {
 	public void setDesigId(DesignationMaster desigId) {
 		this.desigId = desigId;
 	}
-	public DepartmentImpl getDeptId() {
+	public Department getDeptId() {
 		return deptId;
 	}
-	public void setDeptId(DepartmentImpl deptId) {
+	public void setDeptId(Department deptId) {
 		this.deptId = deptId;
 	}
 	public Integer getSanctionedPosts() {

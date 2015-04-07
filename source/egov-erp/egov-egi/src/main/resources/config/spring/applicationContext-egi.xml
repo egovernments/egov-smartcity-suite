@@ -55,9 +55,9 @@
 		<constructor-arg ref="sessionFactory"/>
 	</bean>
 
-	<bean id="departmentService" class="org.egov.lib.rjbac.dept.ejb.server.DepartmentServiceImpl">
+	<!-- <bean id="departmentService" class="org.egov.lib.rjbac.dept.ejb.server.DepartmentServiceImpl">
 		<constructor-arg ref="departmentDao" />
-	</bean>
+	</bean> -->
 	
 	<bean id="beanProvider" class="org.egov.infstr.beanfactory.ApplicationContextBeanProvider" />
 
@@ -238,7 +238,7 @@
 		<property name="userService" ref="userService"/>
 		<property name="boundaryService" ref="boundaryService"/>
 	<!-- 	<property name="boundaryTypeService" ref="boundaryTypeService"/> -->
-		<property name="departmentService" ref="departmentService"/>
+		<!-- <property name="departmentService" ref="departmentService"/> -->
 		<property name="heirarchyTypeService" ref="heirarchyTypeService"/>
 		<!-- <property name="roleService" ref="roleService"/> -->
 		<property name="egovInfrastrUtil" ref="egovInfrastructureUtil"/>

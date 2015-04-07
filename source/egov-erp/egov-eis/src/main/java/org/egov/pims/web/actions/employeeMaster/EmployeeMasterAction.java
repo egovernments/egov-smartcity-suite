@@ -23,14 +23,13 @@ import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.service.CommonsService;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.Assignment;
@@ -283,7 +282,7 @@ public class EmployeeMasterAction extends BaseFormAction
                         DesignationMaster designation = (DesignationMaster)persistenceService.getSession().load(DesignationMaster.class, empAssign.getDesigId().getDesignationId());
                         empAssign.setDesigId(designation);
                         
-                        DepartmentImpl department = (DepartmentImpl)persistenceService.getSession().load(DepartmentImpl.class, empAssign.getDeptId().getId());
+                        Department department = (Department)persistenceService.getSession().load(Department.class, empAssign.getDeptId().getId());
                         empAssign.setDeptId(department);
                         
                         if(empAssign.getCreatedBy().getId()!=null)
@@ -318,7 +317,7 @@ public class EmployeeMasterAction extends BaseFormAction
                                         else
                                         {
                                                 hodDept = new EmployeeDepartment();
-                                                Department dept =(DepartmentImpl) persistenceService.getSession().load(DepartmentImpl.class, hodId);
+                                                Department dept =(Department) persistenceService.getSession().load(Department.class, hodId);
                                                 hodDept.setAssignment(empAssign);
                                                 hodDept.setDept(dept);
                                                 hodDept.setHodept(dept);                                        
@@ -576,7 +575,7 @@ public class EmployeeMasterAction extends BaseFormAction
                                 details2.append(" [ ");//for first record
                         
                         details2=details2.append("From Date: ").append(DateUtils.getDefaultFormattedDate(assignment.getFromDate())).append(" ,To Date: ")
-                                        .append(DateUtils.getDefaultFormattedDate(assignment.getToDate())).append(",Dept:").append(assignment.getDeptId().getDeptName())
+                                        .append(DateUtils.getDefaultFormattedDate(assignment.getToDate())).append(",Dept:").append(assignment.getDeptId().getName())
                                         .append(",Designation: ").append(assignment.getDesigId().getDesignationName()).
                                         append(",Position: ").append(assignment.getPosition().getName());
                         details2=details2.append(",Assignment Type: ").append(assignment.getIsPrimary()=='Y'?"Primary":"Temporary");

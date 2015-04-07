@@ -48,7 +48,7 @@ public abstract class GenericWorkFlowAction extends SearchFormAction {
 	@Override
 	public void prepare() {
 		super.prepare();
-		addDropdownData("approverDepartmentList", this.persistenceService.findAllBy("from DepartmentImpl order by deptName"));
+		addDropdownData("approverDepartmentList", this.persistenceService.findAllBy("from Department order by deptName"));
 		addDropdownData("approverList", Collections.EMPTY_LIST);
 		addDropdownData("desgnationList", Collections.EMPTY_LIST);
 	}

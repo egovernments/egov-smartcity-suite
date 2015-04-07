@@ -10,7 +10,7 @@ import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.infstr.models.BaseModel;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
 
@@ -23,7 +23,7 @@ public class Assignment extends BaseModel implements java.io.Serializable
 	private Fund fundId;
 	private CFunction functionId;
 	private DesignationMaster desigId;
-	private DepartmentImpl deptId;
+	private Department deptId;
 	private char isPrimary;
 	//private Integer reports_to; commenting as of now
 	private Date fromDate;
@@ -42,7 +42,7 @@ public class Assignment extends BaseModel implements java.io.Serializable
 	public List<Integer> getHodDeptIds() {
 		for(EmployeeDepartment dep:deptSet)
 		{
-			hodDeptIds.add(dep.getHodept().getId());
+			hodDeptIds.add(Integer.valueOf(dep.getHodept().getId().intValue()));
 		}
 		return hodDeptIds;
 	}
@@ -128,11 +128,11 @@ public class Assignment extends BaseModel implements java.io.Serializable
 		this.position = position;
 	}
 
-	public DepartmentImpl getDeptId() {
+	public Department getDeptId() {
 		return deptId;
 	}
 
-	public void setDeptId(DepartmentImpl deptId) {
+	public void setDeptId(Department deptId) {
 		this.deptId = deptId;
 	}
 

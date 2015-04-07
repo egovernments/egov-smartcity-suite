@@ -7,7 +7,7 @@
 <sql>
 <egEmp-department>
 	<type>hql</type>
-	<query>from DepartmentImpl order by DEPT_NAME</query>
+	<query>from Department order by NAME</query>
 </egEmp-department> 
 
 <egEmp-Functionary>

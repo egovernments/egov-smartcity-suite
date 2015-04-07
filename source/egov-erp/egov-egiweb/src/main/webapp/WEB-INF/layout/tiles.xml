@@ -68,4 +68,9 @@
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/boundarytype/boundaryType-update.jsp"/>
     </definition>
     
+    <definition name="department-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.department.create" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/department/department-form.jsp"/>
+    </definition>
+    
 </tiles-definitions>

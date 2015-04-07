@@ -17,7 +17,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.BoundaryDAO;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
 import org.egov.pims.dao.PersonalInformationDAO;
@@ -489,10 +489,10 @@ public class EisUtilService implements EISServeable
 	 * if ISFILTERBYDEPT is YES then return Department list for the login user,if the user is hod of depts those depts includes in the list
 	 * if ISFILTERBYDEPT is NO then returns all the departments
 	 */
-	public List<DepartmentImpl> getDeptsForUser()     
+	public List<Department> getDeptsForUser()     
 	{
 		String filterByDept=EGovConfig.getAppConfigValue("EIS-PAYROLL", "FILTERBYDEPT", "NO");
-		List<DepartmentImpl> deptlist=null;
+		List<Department> deptlist=null;
     	if(filterByDept!=null && filterByDept.toUpperCase().equals("YES"))  
     	{
     		List<BigDecimal>	deptList= getPersistenceService().findPageByNamedQuery("EMPVIEW-DEPTIDS-LOGGEDINUSER", 0,null,Integer.valueOf(EGOVThreadLocals.getUserId()),Integer.valueOf(EGOVThreadLocals.getUserId())).getList();
@@ -508,12 +508,12 @@ public class EisUtilService implements EISServeable
 	    			deptListInt.add(deptId.intValue());       
 	    			}
 	    		}
-	    		deptlist=getPersistenceService().getSession().createCriteria(DepartmentImpl.class).add(Restrictions.in("id", deptListInt)).list();
+	    		deptlist=getPersistenceService().getSession().createCriteria(Department.class).add(Restrictions.in("id", deptListInt)).list();
     		}
     	}
     	else
     	{
-    		deptlist=getPersistenceService().getSession().createCriteria(DepartmentImpl.class).list();      		
+    		deptlist=getPersistenceService().getSession().createCriteria(Department.class).list();      		
     	}
     	return deptlist;
 	}

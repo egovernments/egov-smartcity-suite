@@ -11,10 +11,10 @@
     	</generator>
         </id>
         
-        <many-to-one name="dept" class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
+        <many-to-one name="dept" class="org.egov.infra.admin.master.entity.Department" fetch="select">
 	    <column name="DEPTID" precision="32" scale="0" />
 	</many-to-one>
-	<many-to-one name="hodept" class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
+	<many-to-one name="hodept" class="org.egov.infra.admin.master.entity.Department" fetch="select">
 		    <column name="HOD" precision="32" scale="0" />
 	</many-to-one>
         <many-to-one name="assignment" class="org.egov.pims.model.Assignment" fetch="select">

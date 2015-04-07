@@ -9,8 +9,8 @@ import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.pgr.PGRAbstractSpringIntegrationTest;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ComplaintTypeBuilder;
@@ -68,11 +68,11 @@ public class ComplaintTypeServiceIntegrationTest extends PGRAbstractSpringIntegr
         complaintTypeService.createComplaintType(complaintType);
 
         List<ComplaintType> results = entityManager.createQuery("SELECT ct FROM ComplaintType ct").getResultList();
-        Optional<ComplaintType> createdRow = results.stream().filter(row -> row.getDepartment().getDeptCode().equals("HD")).findFirst();
+        Optional<ComplaintType> createdRow = results.stream().filter(row -> row.getDepartment().getCode().equals("HD")).findFirst();
         assertTrue(createdRow.isPresent());
 
-        int expectedDeptId = department.getId();
-        int actualDeptId = createdRow.get().getDepartment().getId();
+        int expectedDeptId = department.getId().intValue();
+        int actualDeptId = createdRow.get().getDepartment().getId().intValue();
         assertEquals(expectedDeptId, actualDeptId);
     }
 

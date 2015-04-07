@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.pims.commons.DesignationMaster;
 
 public class SearchEmpDTO implements java.io.Serializable
@@ -144,8 +144,8 @@ public class SearchEmpDTO implements java.io.Serializable
 		Map depMap = new HashMap();
 		for(Iterator iter = list.iterator();iter.hasNext();)
 		{
-			DepartmentImpl department = (DepartmentImpl)iter.next();
-			depMap.put(department.getId(), department.getDeptName());
+			Department department = (Department)iter.next();
+			depMap.put(department.getId(), department.getName());
 		}
 		return depMap;
 	}

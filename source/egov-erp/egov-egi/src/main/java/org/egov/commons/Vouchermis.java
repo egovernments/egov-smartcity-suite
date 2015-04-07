@@ -7,8 +7,8 @@ package org.egov.commons;
 
 import java.util.Date;
 
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.lib.admbndry.BoundaryImpl;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
 
 public class Vouchermis implements java.io.Serializable {
 
@@ -44,7 +44,7 @@ public class Vouchermis implements java.io.Serializable {
 
 	private String currentyear;
 
-	private DepartmentImpl departmentid;
+	private Department departmentid;
 
 	private String deptacchead;
 
@@ -257,11 +257,11 @@ public class Vouchermis implements java.io.Serializable {
 		this.currentyear = currentyear;
 	}
 
-	public DepartmentImpl getDepartmentid() {
+	public Department getDepartmentid() {
 		return this.departmentid;
 	}
 
-	public void setDepartmentid(DepartmentImpl departmentid) {
+	public void setDepartmentid(Department departmentid) {
 		this.departmentid = departmentid;
 	}
 

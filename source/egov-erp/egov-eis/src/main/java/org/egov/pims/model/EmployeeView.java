@@ -24,7 +24,7 @@ public class EmployeeView implements java.io.Serializable
 	private Date toDate;
 	//private org.egov.pims.model.PersonalInformation reportsTo;
 	private org.egov.pims.commons.Position position;
-	private org.egov.lib.rjbac.dept.DepartmentImpl deptId;
+	private org.egov.infra.admin.master.entity.Department deptId;
 	private org.egov.commons.Functionary functionary;
 	private Date dateOfFirstAppointment;
 	private org.egov.commons.EgwStatus employeeStatus;
@@ -158,10 +158,10 @@ public class EmployeeView implements java.io.Serializable
 	public void setAssignId(Integer assignId) {
 		this.assignId = assignId;
 	}
-	public org.egov.lib.rjbac.dept.DepartmentImpl getDeptId() {
+	public org.egov.infra.admin.master.entity.Department getDeptId() {
 		return deptId;
 	}
-	public void setDeptId(org.egov.lib.rjbac.dept.DepartmentImpl deptId) {
+	public void setDeptId(org.egov.infra.admin.master.entity.Department deptId) {
 		this.deptId = deptId;
 	}
 

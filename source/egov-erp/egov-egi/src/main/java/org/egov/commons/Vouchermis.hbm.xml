@@ -50,7 +50,7 @@
         <property name="currentyear" type="string">
             <column name="CURRENTYEAR" length="25" />
         </property>
-        <many-to-one name="departmentid" class="org.egov.lib.rjbac.dept.DepartmentImpl" column="DEPARTMENTID" />
+        <many-to-one name="departmentid" class="org.egov.infra.admin.master.entity.Department" column="DEPARTMENTID" />
         <property name="deptacchead" type="string">
             <column name="DEPTACCHEAD" length="25" />
         </property>

@@ -29,7 +29,7 @@
 	    <column name="DESIGNATIONID" precision="32" scale="0" />
 	</many-to-one>
 	
-        <many-to-one name="deptId" class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
+        <many-to-one name="deptId" class="org.egov.infra.admin.master.entity.Department" fetch="select">
 		    <column name="MAIN_DEPT" precision="32" scale="0" />
 		   </many-to-one> 
         <many-to-one name="position" class="org.egov.pims.commons.Position" fetch="select">

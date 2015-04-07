@@ -1,46 +1,53 @@
 package org.egov.builder.entities;
 
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
+import java.lang.reflect.Field;
+
+import org.egov.infra.admin.master.entity.Department;
 
 public class DepartmentBuilder {
 
-    private final DepartmentImpl department;
+    private final Department department;
 
     private static int count;
 
     public DepartmentBuilder() {
-        department = new DepartmentImpl();
+        department = new Department();
     }
 
     public DepartmentBuilder withName(final String departmentName) {
-        department.setDeptName(departmentName);
+        department.setName(departmentName);
         return this;
     }
 
     public DepartmentBuilder withCode(final String code) {
-        department.setDeptCode(code);
+        department.setCode(code);
         return this;
     }
 
     public DepartmentBuilder withDefaults() {
         withId(count);
-        if (null == department.getDeptName())
+        if (null == department.getName())
             withName("test-department-" + count);
-        if (null == department.getDeptCode())
+        if (null == department.getCode())
             withCode("test-" + count);
         return this;
     }
 
     private DepartmentBuilder withId(final int id) {
-        department.setId(id);
+        try {
+            final Field idField = department.getClass().getSuperclass().getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(department, id);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
         return this;
     }
 
     public DepartmentBuilder withDbDefaults() {
-        if (null == department.getDeptName())
+        if (null == department.getName())
             withName("test-department-" + count);
-        if (null == department.getDeptCode())
+        if (null == department.getCode())
             withCode("test-" + count);
         return this;
     }

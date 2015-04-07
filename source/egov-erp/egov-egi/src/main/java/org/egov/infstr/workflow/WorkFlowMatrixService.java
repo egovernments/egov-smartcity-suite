@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.lib.rjbac.dept.Department;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.pims.commons.DesignationMaster;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -54,7 +54,7 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 
 	public List<Department> getdepartmentList() {
 
-		return this.persistenceService.findAllBy("from DepartmentImpl order by deptName asc");
+		return this.persistenceService.findAllBy("from Department order by deptName asc");
 	}
 
 	public List<WorkflowTypes> getobjectTypeList() {

@@ -10,8 +10,8 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
 import org.egov.search.domain.Searchable;
 import org.egov.search.util.Serializer;
 import org.hibernate.validator.constraints.Length;
@@ -37,7 +37,7 @@ public class ComplaintType extends AbstractPersistable<Long> {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dept_id")
     @Searchable
-    private DepartmentImpl department;
+    private Department department;
 
     @Column(name = "location_required")
     private boolean locationRequired;
@@ -50,11 +50,11 @@ public class ComplaintType extends AbstractPersistable<Long> {
         this.name = name;
     }
 
-    public DepartmentImpl getDepartment() {
+    public Department getDepartment() {
         return department;
     }
 
-    public void setDepartment(final DepartmentImpl department) {
+    public void setDepartment(final Department department) {
         this.department = department;
     }
 

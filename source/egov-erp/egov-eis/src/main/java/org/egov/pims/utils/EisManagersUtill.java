@@ -16,14 +16,10 @@ import java.util.TreeMap;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CommonsService;
-import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.commons.service.GenericCommonsService;
-import org.egov.infstr.commons.service.GenericCommonsServiceImpl;
-import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
-import org.egov.lib.rjbac.dept.ejb.server.DepartmentServiceImpl;
 import org.egov.lib.rrbac.services.RbacService;
 import org.egov.lib.rrbac.services.RbacServiceImpl;
 import org.egov.pims.commons.service.EisCommonsService;
@@ -200,7 +196,7 @@ public class EisManagersUtill {
 	public static DepartmentService getDeptService()
     {
 
-        return new DepartmentServiceImpl();
+        return new DepartmentService();
     }
 
 		public static EmployeeService getEmployeeService()

@@ -39,7 +39,7 @@
 			<key>
 				<column name="ID_SERVICEDETAILS" precision="22" scale="0" />
 			</key>
-			<many-to-many class="org.egov.lib.rjbac.dept.DepartmentImpl" column="ID_DEPARTMENT" />
+			<many-to-many class="org.egov.infra.admin.master.entity.Department" column="ID_DEPARTMENT" />
 		</set>
 		<set name="serviceAccountDtls" inverse="true" cascade="all,delete-orphan">
 			<key>

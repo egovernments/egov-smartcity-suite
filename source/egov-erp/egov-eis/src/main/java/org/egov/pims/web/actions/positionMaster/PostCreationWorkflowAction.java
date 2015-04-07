@@ -7,7 +7,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsService;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
@@ -52,7 +52,7 @@ public class PostCreationWorkflowAction extends EisCommonWorkflowAction{
 	{
 		
 		addRelatedEntity("status", EgwStatus.class);
-		addRelatedEntity("deptId",DepartmentImpl.class);
+		addRelatedEntity("deptId",Department.class);
 	}
 	
 	public void prepare()

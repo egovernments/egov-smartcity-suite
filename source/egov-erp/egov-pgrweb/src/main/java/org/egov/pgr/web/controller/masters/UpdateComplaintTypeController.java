@@ -1,7 +1,7 @@
 package org.egov.pgr.web.controller.masters;
 
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+
 import java.util.List;
 
 @Controller

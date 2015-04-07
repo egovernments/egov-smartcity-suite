@@ -8,9 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import org.egov.builder.entities.DepartmentBuilder;
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
-import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.pgr.entity.Complainant;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintType;
@@ -30,7 +29,7 @@ public class ViewComplaintControllerTest extends AbstractContextControllerTest<V
 	private ComplaintService complaintService;
 	
 	@Mock
-    private DepartmentService departmentService;
+        private DepartmentService departmentService;
 
 	@Before
 	public void before() {
@@ -40,7 +39,7 @@ public class ViewComplaintControllerTest extends AbstractContextControllerTest<V
 
         ComplaintType complaintType = new ComplaintType();
         complaintType.setName("existing");
-        complaintType.setDepartment((DepartmentImpl) department);
+        complaintType.setDepartment(department);
         
         Complainant complainant = new Complainant();
         complainant.setEmail("abc@gmail.com");

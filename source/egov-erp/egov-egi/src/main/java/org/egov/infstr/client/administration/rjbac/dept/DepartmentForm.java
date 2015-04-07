@@ -25,7 +25,7 @@ public class DepartmentForm extends EgovActionForm implements Serializable {
 	/**
 	 * @return Returns the deptCode.
 	 */
-	public String getDeptCode() {
+	public String getCode() {
 		return this.deptCode;
 	}
 
@@ -68,7 +68,7 @@ public class DepartmentForm extends EgovActionForm implements Serializable {
 	/**
 	 * @return Returns the deptName.
 	 */
-	public String getDeptName() {
+	public String getName() {
 		return this.deptName;
 	}
 

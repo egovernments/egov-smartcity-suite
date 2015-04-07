@@ -43,7 +43,7 @@
   <many-to-one class="org.egov.pims.commons.Position" fetch="select" name="position">
    <column name="POS_ID" precision="32" scale="0"/>
   </many-to-one>
-  <many-to-one class="org.egov.lib.rjbac.dept.DepartmentImpl"
+  <many-to-one class="org.egov.infra.admin.master.entity.Department"
    fetch="select" name="deptId">
    <column name="DEPT_ID" precision="32" scale="0"/>
   </many-to-one>

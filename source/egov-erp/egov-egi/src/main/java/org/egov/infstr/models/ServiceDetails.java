@@ -17,7 +17,7 @@ import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
+import org.egov.infra.admin.master.entity.Department;
 
 public class ServiceDetails extends BaseModel {
 
@@ -41,7 +41,7 @@ public class ServiceDetails extends BaseModel {
 	private SubScheme subscheme;
 	private ServiceCategory serviceCategory;
 
-	private Set<DepartmentImpl> serviceDept = new LinkedHashSet<DepartmentImpl>(0);
+	private Set<Department> serviceDept = new LinkedHashSet<Department>(0);
 
 	private Set<ServiceAccountDetails> serviceAccountDtls = new LinkedHashSet<ServiceAccountDetails>(0);
 
@@ -49,7 +49,7 @@ public class ServiceDetails extends BaseModel {
 		getServiceAccountDtls().add(account);
 	}
 
-	public void addServiceDept(DepartmentImpl dept) {
+	public void addServiceDept(Department dept) {
 		getServiceDept().add(dept);
 	}
 
@@ -271,14 +271,14 @@ public class ServiceDetails extends BaseModel {
 	/**
 	 * @return the serviceDept
 	 */
-	public Set<DepartmentImpl> getServiceDept() {
+	public Set<Department> getServiceDept() {
 		return serviceDept;
 	}
 
 	/**
 	 * @param serviceDept the serviceDept to set
 	 */
-	public void setServiceDept(Set<DepartmentImpl> serviceDept) {
+	public void setServiceDept(Set<Department> serviceDept) {
 		this.serviceDept = serviceDept;
 	}
 

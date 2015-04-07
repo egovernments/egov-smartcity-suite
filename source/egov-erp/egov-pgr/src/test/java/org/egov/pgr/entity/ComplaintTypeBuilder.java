@@ -3,8 +3,7 @@ package org.egov.pgr.entity;
 import java.lang.reflect.Field;
 
 import org.egov.builder.entities.DepartmentBuilder;
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
+import org.egov.infra.admin.master.entity.Department;
 
 public class ComplaintTypeBuilder {
 
@@ -23,7 +22,7 @@ public class ComplaintTypeBuilder {
     }
 
     public ComplaintTypeBuilder withDepartment(final Department department) {
-        complaintType.setDepartment((DepartmentImpl) department);
+        complaintType.setDepartment(department);
         return this;
     }
 

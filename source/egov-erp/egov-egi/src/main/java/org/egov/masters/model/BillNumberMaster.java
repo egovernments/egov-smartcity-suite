@@ -5,7 +5,7 @@
  */
 package org.egov.masters.model;
 
-import org.egov.lib.rjbac.dept.DepartmentImpl;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.pims.commons.Position;
 
 /**
@@ -16,7 +16,7 @@ public class BillNumberMaster {
 
 	private Integer id;
 	private String billNumber;
-	private DepartmentImpl department;
+	private Department department;
 	private Position position;
 
 	public Integer getId() {
@@ -35,11 +35,11 @@ public class BillNumberMaster {
 		this.billNumber = billNumber;
 	}
 
-	public DepartmentImpl getDepartment() {
+	public Department getDepartment() {
 		return department;
 	}
 
-	public void setDepartment(DepartmentImpl department) {
+	public void setDepartment(Department department) {
 		this.department = department;
 	}
 
@@ -54,7 +54,7 @@ public class BillNumberMaster {
 	@Override
 	public String toString() {
 		StringBuilder strObject = new StringBuilder(50).append("BillNumberMaster").append("[").append("Id=").append(this.id).append(", BillNumber=").append(this.billNumber).append(", Department=")
-				.append((this.department != null) ? this.department.getDeptName() : "").append(", Position=").append((this.position != null) ? this.position.getName() : "").append("]");
+				.append((this.department != null) ? this.department.getName() : "").append(", Position=").append((this.position != null) ? this.position.getName() : "").append("]");
 		return strObject.toString();
 	}
 }

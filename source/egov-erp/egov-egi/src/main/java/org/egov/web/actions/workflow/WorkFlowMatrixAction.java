@@ -16,17 +16,16 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.infstr.workflow.WorkFlowMatrixDetails;
 import org.egov.infstr.workflow.WorkFlowMatrixService;
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.web.actions.BaseFormAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ParentPackage("egov")
 public class WorkFlowMatrixAction extends BaseFormAction {
@@ -91,9 +90,9 @@ public class WorkFlowMatrixAction extends BaseFormAction {
 
 		LOGGER.info("Prepare Method is called");
 		super.prepare();
-		final Department anyDept = new DepartmentImpl();
-		anyDept.setDeptName(DEFAULT);
-		anyDept.setDeptCode(DEFAULT);
+		final Department anyDept = new Department();
+		anyDept.setName(DEFAULT);
+		anyDept.setCode(DEFAULT);
 		this.departmentList = this.workFlowMatrixService.getdepartmentList();
 		this.departmentList.add(anyDept);
 		this.objectList = this.workFlowMatrixService.getobjectTypeList();

@@ -2,13 +2,12 @@ package org.egov.infstr.client.delegate;
 
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
-import org.egov.lib.rjbac.dept.ejb.server.DepartmentServiceImpl;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 
 public class DepartmentDelegate {
 	private static DepartmentDelegate departmentDelegate = new DepartmentDelegate();
-	private final DepartmentService departmentService = new DepartmentServiceImpl();
+	private final DepartmentService departmentService = new DepartmentService();
 
 	private DepartmentDelegate() {
 	}
@@ -33,8 +32,8 @@ public class DepartmentDelegate {
 	 */
 	public void removeDepartment(final Integer deptid) {
 		try {
-			final Department dept = this.departmentService.getDepartment(deptid);
-			this.departmentService.removeDepartment(dept);
+			final Department dept = this.departmentService.getDepartmentById(Long.valueOf(deptid));
+			this.departmentService.deleteDepartment(dept);
 		} catch (final Exception exp) {
 			throw new EGOVRuntimeException("Internal Server Error deleting a department", exp);
 		}

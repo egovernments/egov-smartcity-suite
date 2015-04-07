@@ -9,7 +9,7 @@
 			</generator>
 		</id>
 		<property name="billNumber" column="BILLNUMBER" type="java.lang.String" />
-		<many-to-one name="department" class="org.egov.lib.rjbac.dept.DepartmentImpl" column="ID_DEPARTMENT" not-null="true" />
+		<many-to-one name="department" class="org.egov.infra.admin.master.entity.Department" column="ID_DEPARTMENT" not-null="true" />
 		<many-to-one name="position" class="org.egov.pims.commons.Position" column="ID_POSITION" not-null="true" />
 	</class>
 	<query name="BILLNUMBER_BY_ID">

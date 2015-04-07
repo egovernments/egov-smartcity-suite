@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.egov.infra.admin.master.entity.User;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
 
@@ -102,7 +102,7 @@ public interface EISServeable {
      public List<User> getUsersByDeptAndDesig(Integer deptId, Integer desigId, Date date);
      /**
  	 * Based on the ISFILTERBYDEPT flag api returns departmentlist 
- 	 * @return List of DepartmentImpl
+ 	 * @return List of Department
  	 */
-     public List<DepartmentImpl> getDeptsForUser();
+     public List<Department> getDeptsForUser();
 }

@@ -8,7 +8,7 @@ import java.util.Date;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +56,7 @@ public class EisCommonService {
         return assignmentService.getPrimaryAssignmentForPositon(posId).getDesigId();
     }
     
-    public DepartmentImpl getDepartmentForUser(final Long userId) {
+    public Department getDepartmentForUser(final Long userId) {
     	return assignmentService.getPrimaryAssignmentForUser(userId).getDeptId();
     }
     

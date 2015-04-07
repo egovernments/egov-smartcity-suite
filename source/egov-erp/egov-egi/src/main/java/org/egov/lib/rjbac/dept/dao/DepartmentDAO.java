@@ -16,8 +16,8 @@ import org.egov.infstr.dao.GenericDAO;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.Department;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -43,10 +43,10 @@ public class DepartmentDAO extends GenericHibernateDAO implements GenericDAO {
 
 	public void createDepartment(final Department dept) throws DuplicateElementException {
 		try {
-			final Department checkDept = getDepartment(dept.getDeptName());
+			final Department checkDept = getDepartment(dept.getName());
 
 			if (checkDept != null) {
-				throw new DuplicateElementException("A department by " + dept.getDeptName() + " already exists.");
+				throw new DuplicateElementException("A department by " + dept.getName() + " already exists.");
 			}
 
 			getCurrentSession().save(dept);
@@ -83,7 +83,7 @@ public class DepartmentDAO extends GenericHibernateDAO implements GenericDAO {
 
 	public Department getDepartment(final Integer deptID) {
 		try {
-			return (Department) getCurrentSession().load(DepartmentImpl.class, deptID);
+			return (Department) getCurrentSession().load(Department.class, deptID);
 		} catch (final HibernateException e) {
 			LOGGER.error("Exception occurred in getDepartment", e);
 			throw new EGOVRuntimeException("Exception occurred in getDepartment", e);
@@ -92,7 +92,7 @@ public class DepartmentDAO extends GenericHibernateDAO implements GenericDAO {
 
 	public Department getDepartment(final String deptName) {
 		try {
-			final Query qry = getCurrentSession().createQuery("FROM DepartmentImpl DI WHERE DI.deptName =:deptname");
+			final Query qry = getCurrentSession().createQuery("FROM Department DI WHERE DI.deptName =:deptname");
 			qry.setString("deptname", deptName);
 			return (Department) qry.uniqueResult();
 		} catch (final HibernateException e) {
@@ -103,7 +103,7 @@ public class DepartmentDAO extends GenericHibernateDAO implements GenericDAO {
 
 	public List<Department> getAllDepartments() {
 		try {
-			return getCurrentSession().createQuery("FROM DepartmentImpl DI").list();
+			return getCurrentSession().createQuery("FROM Department DI").list();
 		} catch (final HibernateException e) {
 			LOGGER.error("Exception occurred in getAllDepartments", e);
 			throw new EGOVRuntimeException("Exception occurred in getAllDepartments", e);
@@ -154,7 +154,7 @@ public class DepartmentDAO extends GenericHibernateDAO implements GenericDAO {
 
 	public Department getDepartmentById(final Long id) {
 		try {
-			final Query qry = getCurrentSession().createQuery("FROM DepartmentImpl DI WHERE DI.id =:id");
+			final Query qry = getCurrentSession().createQuery("FROM Department DI WHERE DI.id =:id");
 			qry.setLong("id", id);
 			return (Department) qry.uniqueResult();
 		} catch (final HibernateException e) {
@@ -165,7 +165,7 @@ public class DepartmentDAO extends GenericHibernateDAO implements GenericDAO {
 
 	public Department getDepartmentByCode(final String deptCode) {
 		try {
-			final Query qry = getCurrentSession().createQuery("FROM DepartmentImpl DI WHERE DI.deptCode =:deptcode");
+			final Query qry = getCurrentSession().createQuery("FROM Department DI WHERE DI.deptCode =:deptcode");
 			qry.setString("deptcode", deptCode);
 			return (Department) qry.uniqueResult();
 		} catch (final HibernateException e) {

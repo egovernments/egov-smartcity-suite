@@ -14,23 +14,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infstr.client.EgovAction;
 import org.egov.infstr.client.delegate.DepartmentDelegate;
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
-import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
-import org.egov.lib.rjbac.dept.ejb.server.DepartmentServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SetupDepartmentAction extends EgovAction {
 	private static final Logger logger = LoggerFactory.getLogger(SetupDepartmentAction.class);
-	private DepartmentService departmentService = new DepartmentServiceImpl();
+	private DepartmentService departmentService = new DepartmentService();
 	/**
 	 * This method creates a new department
 	 * @param ActionMapping mapping
@@ -42,7 +40,7 @@ public class SetupDepartmentAction extends EgovAction {
 	@Override
 	public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest req, final HttpServletResponse res) throws IOException, ServletException, EGOVException, Exception {
 
-		Department department = new DepartmentImpl();
+		Department department = new Department();
 		List deptList = new ArrayList();
 		final DepartmentForm deptform = (DepartmentForm) form;
 		final DepartmentDelegate departmentDelegate = DepartmentDelegate.getInstance();
@@ -52,15 +50,9 @@ public class SetupDepartmentAction extends EgovAction {
 			try {
 				if (!deptform.getDeptid().equals("")) {
 
-					final int deptid = Integer.parseInt(deptform.getDeptid());
-					department = departmentService.getDepartment(deptid);
-					final int billinglocation = Integer.parseInt(department.getBillingLocation());
-					req.getSession().setAttribute("billinglocation", billinglocation);
-					deptform.setDeptName(department.getDeptName());
-					deptform.setDeptCode(department.getDeptCode());
-					deptform.setDeptDetails(department.getDeptDetails());
-					deptform.setDeptAddress(department.getDeptAddress());
-					deptform.setBillingLocation(department.getBillingLocation());
+					department = departmentService.getDepartmentById(Long.valueOf(deptform.getDeptid()));
+					deptform.setDeptName(department.getName());
+					deptform.setDeptCode(department.getCode());
 					target = "viewDept";
 				} else {
 
@@ -86,15 +78,9 @@ public class SetupDepartmentAction extends EgovAction {
 			try {
 				final HttpSession session = req.getSession();
 				if (!deptform.getDeptid().equals("")) {
-					final int deptid = Integer.parseInt(deptform.getDeptid());
-					session.setAttribute("deptid", deptid);
-					department = departmentService.getDepartment(deptid);
-					final int billinglocation = Integer.parseInt(department.getBillingLocation());
-					req.getSession().setAttribute("billinglocation", billinglocation);
-					deptform.setDeptName(department.getDeptName());
-					deptform.setDeptCode(department.getDeptCode());
-					deptform.setDeptDetails(department.getDeptDetails());
-					deptform.setDeptAddress(department.getDeptAddress());
+					department = departmentService.getDepartmentById(Long.valueOf(deptform.getDeptid()));
+					deptform.setDeptName(department.getName());
+					deptform.setDeptCode(department.getCode());
 					target = "updateDept";
 				}
 

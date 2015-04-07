@@ -8,7 +8,7 @@ import java.util.List;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pims.commons.Position;
@@ -35,7 +35,7 @@ public class ViewComplaintController {
     public String viewComplaints(@RequestParam Long complaintId, Model model) {
         Complaint complaint = complaintService.getComplaintById(complaintId);
         List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
-        DepartmentImpl department = null;
+        Department department = null;
         User user = null;
         if (!complaint.getStateHistory().isEmpty() && complaint.getStateHistory() != null) {
             for (StateHistory stateHistory : complaint.getStateHistory()) {
@@ -48,13 +48,13 @@ public class ViewComplaintController {
                     map.put("user", user.getUsername());
                     map.put("department",
                             null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
-                                    .getDepartmentForUser(user.getId()).getDeptName() : "");
+                                    .getDepartmentForUser(user.getId()).getName() : "");
                 } else {
                     if (null != ownerPosition && null != ownerPosition.getDeptDesigId()) {
                         user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
                         map.put("user", null != user.getUsername() ? user.getUsername() : "");
                         map.put("department", null != ownerPosition.getDeptDesigId().getDeptId() ? ownerPosition
-                                .getDeptDesigId().getDeptId().getDeptName() : "");
+                                .getDeptDesigId().getDeptId().getName() : "");
                     }
                 }
 

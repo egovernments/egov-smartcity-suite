@@ -30,7 +30,7 @@
         <property name="lastmodifieddate" type="date">
             <column name="LASTMODIFIEDDATE" length="7" not-null="true" />
         </property>
-        <many-to-one name="department" class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
+        <many-to-one name="department" class="org.egov.infra.admin.master.entity.Department" fetch="select">
             <column name="department"/>
         </many-to-one>
         <property name="initialEstimateAmount">

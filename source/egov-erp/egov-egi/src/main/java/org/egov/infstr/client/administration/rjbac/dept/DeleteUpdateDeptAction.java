@@ -8,18 +8,17 @@ package org.egov.infstr.client.administration.rjbac.dept;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.client.EgovAction;
 import org.egov.infstr.client.delegate.DepartmentDelegate;
 import org.egov.infstr.client.delegate.UserRoleDelegate;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DeleteUpdateDeptAction extends EgovAction {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -46,14 +45,13 @@ public class DeleteUpdateDeptAction extends EgovAction {
 		if (str.equals("")) {
 
 			this.logger.info("execute::In view department ");
-			department = new DepartmentImpl();
+			department = new Department();
 			final String deptid = req.getParameter("deptid");
 			try {
 				department = this.roleDelegate.getDepartment(Integer.parseInt(deptid));
 				session.setAttribute("DEPARTMENT", department);
-				deptForm.setDeptDetails(department.getDeptDetails());
-				deptForm.setDeptName(department.getDeptName());
-				deptForm.setDeptCode(department.getDeptCode());
+				deptForm.setDeptName(department.getName());
+				deptForm.setDeptCode(department.getCode());
 				deptForm.setDeptid(department.getId().toString());
 				target = "toViewDept";
 				deptForm.reset(mapping, req);
@@ -76,7 +74,7 @@ public class DeleteUpdateDeptAction extends EgovAction {
 				this.deptDelegate.removeDepartment(new Integer(req.getParameter("deptid")));
 				EgovMasterDataCaching.getInstance().removeFromCache("egi-department");
 				target = "success";
-				message = "Department " + dept.getDeptName() + " has been Romoved successfully";
+				message = "Department " + dept.getName() + " has been Romoved successfully";
 				req.setAttribute("MESSAGE", message);
 			}
 
@@ -98,14 +96,13 @@ public class DeleteUpdateDeptAction extends EgovAction {
 		 */
 		if (str.equals("EDIT")) {
 			this.logger.info("execute::In Edit ");
-			department = new DepartmentImpl();
+			department = new Department();
 			final String deptid = req.getParameter("deptid");
 			try {
 				department = this.roleDelegate.getDepartment(Integer.parseInt(deptid));
 				session.setAttribute("DEPARTMENT", department);
-				deptForm.setDeptDetails(department.getDeptDetails());
-				deptForm.setDeptName(department.getDeptName());
-				deptForm.setDeptCode(department.getDeptCode());
+				deptForm.setDeptName(department.getName());
+				deptForm.setDeptCode(department.getCode());
 				deptForm.setDeptid(department.getId().toString());
 				EgovMasterDataCaching.getInstance().removeFromCache("egi-department");
 				target = "toUpdateDept";

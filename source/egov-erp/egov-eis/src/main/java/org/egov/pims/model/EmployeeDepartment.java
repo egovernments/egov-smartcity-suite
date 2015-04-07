@@ -3,8 +3,8 @@ package org.egov.pims.model;
 public class EmployeeDepartment implements java.io.Serializable
 {
 	private Integer id;
-	private org.egov.lib.rjbac.dept.Department dept;
-	private org.egov.lib.rjbac.dept.Department hodept;
+	private org.egov.infra.admin.master.entity.Department dept;
+	private org.egov.infra.admin.master.entity.Department hodept;
 	
 	private Assignment assignment;
 	public Assignment getAssignment() {
@@ -13,10 +13,10 @@ public class EmployeeDepartment implements java.io.Serializable
 	public void setAssignment(Assignment assignment) {
 		this.assignment = assignment;
 	}
-	public org.egov.lib.rjbac.dept.Department getDept() {
+	public org.egov.infra.admin.master.entity.Department getDept() {
 		return dept;
 	}
-	public void setDept(org.egov.lib.rjbac.dept.Department dept) {
+	public void setDept(org.egov.infra.admin.master.entity.Department dept) {
 		this.dept = dept;
 	}
 	public Integer getId() {
@@ -26,10 +26,10 @@ public class EmployeeDepartment implements java.io.Serializable
 		this.id = id;
 	}
 	
-	public org.egov.lib.rjbac.dept.Department getHodept() {
+	public org.egov.infra.admin.master.entity.Department getHodept() {
 		return hodept;
 	}
-	public void setHodept(org.egov.lib.rjbac.dept.Department hodept) {
+	public void setHodept(org.egov.infra.admin.master.entity.Department hodept) {
 		this.hodept = hodept;
 	}
 	

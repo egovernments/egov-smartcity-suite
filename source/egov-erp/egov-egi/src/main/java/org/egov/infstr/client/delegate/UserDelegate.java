@@ -13,12 +13,12 @@ import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.lib.admbndry.ejb.api.BoundaryService;
 import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
 import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
-import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +30,7 @@ public class UserDelegate {
 	private BoundaryService boundaryService;
 	@Autowired
 	private RoleService roleService;
+	@Autowired
 	private DepartmentService departmentService;
 	private BoundaryTypeService boundaryTypeService;
 	private EgovInfrastrUtil egovInfrastrUtil;

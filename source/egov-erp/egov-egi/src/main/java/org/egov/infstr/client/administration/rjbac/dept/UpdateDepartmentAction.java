@@ -22,7 +22,7 @@ import org.egov.infstr.client.EgovAction;
 import org.egov.infstr.client.EgovActionForm;
 import org.egov.infstr.client.delegate.DepartmentDelegate;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.lib.rjbac.dept.Department;
+import org.egov.infra.admin.master.entity.Department;
 
 public class UpdateDepartmentAction extends EgovAction {
 	private static final Logger logger = LoggerFactory.getLogger(UpdateDepartmentAction.class);
@@ -51,7 +51,7 @@ public class UpdateDepartmentAction extends EgovAction {
 		}
 		if (req.getParameter("bool").equals("UPDATE")) {
 			department = (Department) session.getAttribute("DEPARTMENT");
-			final String old_deptName = department.getDeptName();
+			final String old_deptName = department.getName();
 
 			deptform.populate(department, EgovActionForm.TO_OBJECT);
 			try {

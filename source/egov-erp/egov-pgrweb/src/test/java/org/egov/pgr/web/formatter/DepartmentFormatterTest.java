@@ -1,10 +1,9 @@
 package org.egov.pgr.web.formatter;
 
 import org.egov.builder.entities.DepartmentBuilder;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.web.support.formatter.DepartmentFormatter;
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
-import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -38,7 +37,7 @@ public class DepartmentFormatterTest {
 
         when(departmentService.getDepartmentByCode(departmentCode)).thenReturn(department);
 
-        DepartmentImpl actualDepartment = departmentFormatter.parse(departmentCode, Locale.ENGLISH);
+        Department actualDepartment = departmentFormatter.parse(departmentCode, Locale.ENGLISH);
 
         assertNotNull(actualDepartment);
         assertEquals(department, actualDepartment);

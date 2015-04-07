@@ -19,18 +19,16 @@ import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infstr.client.EgovAction;
 import org.egov.infstr.client.EgovActionForm;
 import org.egov.infstr.client.delegate.DepartmentDelegate;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
-import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
-import org.egov.lib.rjbac.dept.ejb.server.DepartmentServiceImpl;
 
 public class DepartmentAction extends EgovAction {
 	private static final Logger logger = LoggerFactory.getLogger(DepartmentAction.class);
-	private DepartmentService departmentService = new DepartmentServiceImpl();
+	private DepartmentService departmentService = new DepartmentService();
 	/**
 	 * This method creates a new department
 	 * @param ActionMapping mapping
@@ -55,17 +53,17 @@ public class DepartmentAction extends EgovAction {
 		}
 		if (req.getParameter("bool").equals("CREATE")) {
 			try {
-				department = new DepartmentImpl();
+				department = new Department();
 				deptform.populate(department, EgovActionForm.TO_OBJECT);
 				departmentDelegate.createDepartment(department);
 				EgovMasterDataCaching.getInstance().removeFromCache("egi-department");
 				target = "success";
-				message = "Department " + department.getDeptName() + " has been created successfully";
+				message = "Department " + department.getName() + " has been created successfully";
 				req.setAttribute("MESSAGE", message);
 				deptform.reset(mapping, req);
 			} catch (final DuplicateElementException dupexp) {
 				target = "success";
-				message = "Duplicate Department " + department.getDeptName() + " exists";
+				message = "Duplicate Department " + department.getName() + " exists";
 				req.setAttribute("MESSAGE", message);
 				deptform.reset(mapping, req);
 				throw new EGOVRuntimeException("Exception occured -----> " + dupexp.getMessage());
@@ -85,17 +83,14 @@ public class DepartmentAction extends EgovAction {
 			try {
 
 				final int deptid = (Integer) session.getAttribute("deptid");
-				department = departmentService.getDepartment(deptid);
-				department.setDeptName(deptform.getDeptName());
-				department.setDeptCode(deptform.getDeptCode());
-				department.setDeptDetails(deptform.getDeptDetails());
-				department.setDeptAddress(deptform.getDeptAddress());
-				department.setBillingLocation(deptform.getBillingLocation());
+				department = departmentService.getDepartmentById(Long.valueOf(deptid));
+				department.setName(deptform.getName());
+				department.setCode(deptform.getCode());
 
 				departmentDelegate.updateDepartment(department);
 				EgovMasterDataCaching.getInstance().removeFromCache("egi-department");
 				target = "success";
-				message = "Department " + department.getDeptName() + " has been updated successfully";
+				message = "Department " + department.getName() + " has been updated successfully";
 				req.setAttribute("MESSAGE", message);
 				deptform.reset(mapping, req);
 			} catch (final EGOVRuntimeException e) {

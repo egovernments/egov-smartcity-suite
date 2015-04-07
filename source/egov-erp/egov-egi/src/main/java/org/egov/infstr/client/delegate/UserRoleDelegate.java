@@ -12,10 +12,9 @@ import java.util.List;
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.RoleService;
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
-import org.egov.lib.rjbac.dept.ejb.server.DepartmentServiceImpl;
+import org.egov.infra.admin.master.entity.Department;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,8 @@ public class UserRoleDelegate {
 	private static Logger logger = LoggerFactory.getLogger(UserRoleDelegate.class);
 	@Autowired
 	private  RoleService roleService;
-	private final DepartmentService departmentService = new DepartmentServiceImpl();
+	@Autowired
+	private DepartmentService departmentService;
 
 	private UserRoleDelegate() {
 	}
@@ -106,7 +106,7 @@ public class UserRoleDelegate {
 	public Department getDepartment(final int deptid) {
 		Department dept = null;
 		try {
-			dept = this.departmentService.getDepartment(deptid);
+			dept = this.departmentService.getDepartmentById(Long.valueOf(deptid));
 		} catch (final Exception e) {
 			logger.info("Exception Encountered!!!" + e.getMessage());
 			throw new EGOVRuntimeException("Internal Server Error in getting department", e);
@@ -171,7 +171,7 @@ public class UserRoleDelegate {
 	public Department getDepartmentbyName(final String dname) {
 		Department dept = null;
 		try {
-			dept = this.departmentService.getDepartment(dname);
+			dept = this.departmentService.getDepartmentById(Long.valueOf(dname));
 		} catch (final Exception e) {
 			logger.info("Exception Encountered!!!" + e.getMessage());
 			throw new EGOVRuntimeException("Internal Server Error in getting DepartmentList", e);

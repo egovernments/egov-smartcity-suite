@@ -19,8 +19,8 @@ import javax.servlet.jsp.tagext.BodyTagSupport;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.web.utils.ERPWebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -103,8 +103,8 @@ public class DepartmentUserTag extends BodyTagSupport {
 				final Department department = (Department) deptItr.next();
 				// StringBuffer deptPopulateStr = new StringBuffer();
 				// deptPopulateStr ="<html:select property=\""+"departmentId"+"\""+"styleClass=\""+"controlText"+"\">" +"\n"+"<\\html:select>" ;
-				final Integer deptID = department.getId();
-				final String deptname = department.getDeptName();
+				final Integer deptID = Integer.valueOf(department.getId().intValue());
+				final String deptname = department.getName();
 				deptMap.put(deptname, deptID);
 			}
 			for (final Iterator itr = deptMap.keySet().iterator(); itr.hasNext();)
@@ -159,7 +159,7 @@ public class DepartmentUserTag extends BodyTagSupport {
 	{
 
 		// labelsList =getLabels();
-		final String s1 = "if(document.forms[0]." + this.labelsList.get(2) + ".options[document.forms[0]." + this.labelsList.get(2) + ".selectedIndex].text == \"" + department.getDeptName()
+		final String s1 = "if(document.forms[0]." + this.labelsList.get(2) + ".options[document.forms[0]." + this.labelsList.get(2) + ".selectedIndex].text == \"" + department.getName()
 				+ "\")\n{\n";
 		String s2 = "";
 		int i = 1;
@@ -168,7 +168,8 @@ public class DepartmentUserTag extends BodyTagSupport {
 		final Map userMap = new TreeMap();
 		final ApplicationContextBeanProvider provider = new ApplicationContextBeanProvider();
 		provider.setApplicationContext(WebApplicationContextUtils.getWebApplicationContext(ERPWebApplicationContext.getServletContext()));
-		userList = ((DepartmentService) provider.getBean("departmentService")).getAllUsersByDept(department, new Integer(cityid).intValue());
+		//TODO -- Remove this comment once the below method is added in departmentService
+		//userList = ((DepartmentService) provider.getBean("departmentService")).getAllUsersByDept(department, new Integer(cityid).intValue());
 		s2 += "document.forms[0]." + this.labelsList.get(3) + ".options[0] = new Option(\"Choose\",\"\");";
 
 		for (final Iterator userItr = userList.iterator(); userItr.hasNext();)

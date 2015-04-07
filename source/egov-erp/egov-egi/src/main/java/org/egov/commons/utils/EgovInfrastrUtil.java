@@ -22,10 +22,12 @@ import org.egov.commons.Installment;
 import org.egov.commons.service.CommonsService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.UserRepository;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.Module;
@@ -35,8 +37,6 @@ import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.ejb.api.BoundaryService;
 import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
 import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -486,7 +486,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 			while (deptIter.hasNext()) {
 				final Department department = (Department) deptIter.next();
 				// adding the departmentid and the departmentname to the static deptmap
-				tempdeptmap.put(department.getId(), department.getDeptName());
+				tempdeptmap.put(department.getId(), department.getName());
 
 				// adding the departmentids to static deptlist
 				deptlist.add(department.getId());

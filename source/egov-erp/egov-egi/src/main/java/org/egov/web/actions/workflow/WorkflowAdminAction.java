@@ -34,7 +34,7 @@ import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
 import org.egov.infstr.annotation.Search;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.workflow.admin.WorkflowAdminService;
-import org.egov.lib.rjbac.dept.Department;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.lib.rjbac.dept.dao.DepartmentDAO;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;

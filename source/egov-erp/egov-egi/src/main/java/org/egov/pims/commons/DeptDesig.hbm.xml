@@ -21,7 +21,7 @@
 			<column name="DESIG_ID" />
 		</many-to-one>
 
-		<many-to-one name="deptId" class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select" cascade="save-update">
+		<many-to-one name="deptId" class="org.egov.infra.admin.master.entity.Department" fetch="select" cascade="save-update">
 			<column name="DEPT_ID" />
 		</many-to-one>
 	</class>
