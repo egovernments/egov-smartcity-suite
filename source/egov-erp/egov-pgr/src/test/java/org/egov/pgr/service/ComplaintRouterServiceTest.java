@@ -8,6 +8,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 import org.egov.builder.entities.BoundaryBuilder;
 import org.egov.builder.entities.DepartmentBuilder;
 import org.egov.eis.entity.PositionBuilder;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.BoundaryImpl;
 import org.egov.lib.rjbac.dept.Department;
@@ -60,7 +61,7 @@ public class ComplaintRouterServiceTest {
 
     private void setupRoutingMaster() {
         complaintRouterService = new ComplaintRouterService(complaintRouterRepository);
-        
+
         final Department dept = new DepartmentBuilder().withDbDefaults().build();
         complaintType = new ComplaintTypeBuilder().withDepartment(dept).withName("test-ctype").build();
         city = new BoundaryBuilder().withDbDefaults().build();
@@ -117,7 +118,7 @@ public class ComplaintRouterServiceTest {
 
     }
 
-    @Test
+    @Test(expected = EGOVRuntimeException.class)
     public void testGetAssignee_By_Go_without_Go_Insertion() {
         // this will create a new boundary which is not mapped
         complaintType = new ComplaintTypeBuilder().withDbDefaults().build();
