@@ -92,8 +92,8 @@ jQuery(document).ready(function($)
 		
 	});
 	
-	$('.freq-ct').click(function(){
-		$('#complaintTypeName').typeahead('val',$(this).html());
+	$('.freq-ct').click(function(){ 
+		$('#complaintTypeName').typeahead('val',$(this).html()); 
 	});
 	
 	/**
@@ -170,3 +170,7 @@ jQuery(document).ready(function($)
 	
 
 });
+
+function setComplaintTypeId(obj) {
+	$("#complaintTypeId").val(obj)
+}

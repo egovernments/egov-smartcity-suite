@@ -54,8 +54,8 @@
 							<form:hidden path="complaintType" id="complaintTypeId" value="" />
 							<form:errors path="complaintType" cssClass="add-margin error-msg" />
 							<c:forEach items="${complaintTypes}" var="complaintType">
-								<a href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct"><c:out
-										value="${complaintType.name }" /> </a>
+								<a onclick="setComplaintTypeId(<c:out value="${complaintType.id}"/>)" href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct"><c:out
+										value="${complaintType.name}" /> </a>
 							</c:forEach>
 						</div>
 					</div>
