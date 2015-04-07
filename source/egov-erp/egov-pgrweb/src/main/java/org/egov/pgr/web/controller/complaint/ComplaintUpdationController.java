@@ -4,8 +4,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
 import org.egov.pgr.entity.Complaint;
@@ -19,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -77,15 +82,17 @@ public class ComplaintUpdationController {
     @RequestMapping(method = RequestMethod.GET)
     public String edit(Model model, @RequestParam Long id) {
         try {
+            User currentUser = securityUtils.getCurrentUser();
+            if (currentUser.getType().equals(UserType.CITIZEN)) {
+                Complaint complaint = complaintService.getComplaintById(id);
+                return "complaint-citizen-edit";
+            }
             Complaint complaint = complaintService.getComplaintById(id);
-
             prepareWorkflow(model);
-
             // set the defaults
             model.addAttribute("zone", Collections.EMPTY_LIST);
             model.addAttribute("ward", Collections.EMPTY_LIST);
             // model.addAttribute("zone", commonService.getZones());
-
             if (complaint.getComplaintType().isLocationRequired()) {
                 model.addAttribute("zone", commonService.getZones());
                 if (complaint.getLocation() != null) {
@@ -106,14 +113,26 @@ public class ComplaintUpdationController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String update(@ModelAttribute Complaint complaint, BindingResult errors, RedirectAttributes redirectAttrs,
-            Model model) {
+            Model model, HttpServletRequest request) {
         // change this validator to custom as no need to do complete validation
         // Since the usage of this is screen is very heavy need to consider all
         // performance fixes
-        validator.validate(complaint, errors);
+        // validator.validate(complaint, errors);
+        validateUpdate(complaint, errors, request);
+        Long approvalPosition = 0l;
+        if (null != request.getParameter("approvalPosition") && !request.getParameter("approvalPosition").isEmpty()) {
+            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+
+        }
+        String approvalComent = "";
+        if (null != request.getParameter("approvalComent")) {
+            approvalComent = request.getParameter("approvalComent");
+        }
+
         if (!errors.hasErrors()) {
-            complaintService.update(complaint);
-            redirectAttrs.addFlashAttribute("message", "Successfully created Complaint Type !");
+            complaintService.update(complaint, approvalPosition, approvalComent);
+
+            redirectAttrs.addFlashAttribute("message", "Successfully Update Complaint !");
         } else {
             model.addAttribute("zone", Collections.EMPTY_LIST);
             model.addAttribute("ward", Collections.EMPTY_LIST);
@@ -128,6 +147,19 @@ public class ComplaintUpdationController {
 
         }
         return "redirect:/complaint-update?id=" + complaint.getId();
+    }
+
+    private void validateUpdate(Complaint complaint, BindingResult errors, HttpServletRequest request) {
+        if (null == complaint.getStatus()) {
+            ObjectError error = new ObjectError(complaint.getStatus().getName(), "Complaint Status Cannot be null");
+            errors.addError(error);
+        }
+
+        if (null == request.getParameter("approvalComent") || request.getParameter("approvalComent").isEmpty()) {
+            ObjectError error = new ObjectError("approvalComent", "Complaint coments Cannot be null");
+            errors.addError(error);
+        }
+
     }
 
 }

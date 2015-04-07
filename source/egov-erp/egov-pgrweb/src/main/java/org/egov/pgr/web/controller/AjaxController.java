@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 @Controller
 public class AjaxController {
 
@@ -40,13 +43,15 @@ public class AjaxController {
     }
 
     @RequestMapping(value = "/ajax-approvalPositions", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<User> getPositions(@RequestParam Integer approvalDepartment,
+    public @ResponseBody String getPositions(@RequestParam Integer approvalDepartment,
             @RequestParam Integer approvalDesignation) {
         List<User> users = commonService.getPosistions(approvalDepartment, approvalDesignation);
         // below line should be removed once the commonService.getPosistions
         // apis query joins and returns user
-        users.forEach(user -> user.toString());
-        return users;
-    }
 
+        Gson jsonCreator = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        String json = jsonCreator.toJson(users, List.class);
+        users.forEach(user -> user.toString());
+        return json;
+    }
 }

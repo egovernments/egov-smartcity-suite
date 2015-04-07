@@ -34,6 +34,8 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.DateTime;
 
+import com.google.gson.annotations.Expose;
+
 @Entity
 @Table(name = "eg_user")
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -53,6 +55,7 @@ public class User extends AbstractAuditable<User, Long> {
 
     private String salutation;
 
+    @Expose
     @NotNull
     @SafeHtml
     @Length(min = 2, max = 100)
@@ -88,9 +91,7 @@ public class User extends AbstractAuditable<User, Long> {
     private boolean isActive;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "eg_userrole", 
-                joinColumns = @JoinColumn(name = "user"), 
-                inverseJoinColumns = @JoinColumn(name = "role"))
+    @JoinTable(name = "eg_userrole", joinColumns = @JoinColumn(name = "user"), inverseJoinColumns = @JoinColumn(name = "role"))
     private Set<Role> roles = Collections.emptySet();
 
     @Temporal(TemporalType.DATE)
@@ -197,11 +198,11 @@ public class User extends AbstractAuditable<User, Long> {
     public void addAddress(final Address address) {
         this.getAddress().add(address);
     }
-    
+
     public void removeAddress(final Address address) {
         this.getAddress().remove(address);
     }
-    
+
     public boolean isActive() {
         return isActive;
     }
@@ -217,15 +218,15 @@ public class User extends AbstractAuditable<User, Long> {
     public void setRoles(final Set<Role> roles) {
         this.roles = roles;
     }
-    
+
     public void addRole(final Role role) {
         this.getRoles().add(role);
     }
-    
+
     public void removeRole(final Role role) {
         this.getRoles().remove(role);
     }
-    
+
     public Date getDob() {
         return dob;
     }

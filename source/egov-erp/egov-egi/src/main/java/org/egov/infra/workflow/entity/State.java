@@ -24,11 +24,10 @@ import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
-@Table(name="EG_WF_STATES")
+@Table(name = "EG_WF_STATES")
 @NamedQueries({
-    @NamedQuery(name="WORKFLOWTYPES",query="select distinct s.type from State s where s.ownerPosition.id=?  and s.status is not 2"),
-    @NamedQuery(name="WORKFLOWTYPES_BY_ID",query="select s from State s where s.id=?")
-})
+        @NamedQuery(name = "WORKFLOWTYPES", query = "select distinct s.type from State s where s.ownerPosition.id=?  and s.status is not 2"),
+        @NamedQuery(name = "WORKFLOWTYPES_BY_ID", query = "select s from State s where s.id=?") })
 public class State extends AbstractAuditable<User, Long> {
 
     private static final long serialVersionUID = -9159043292636575746L;
@@ -36,42 +35,45 @@ public class State extends AbstractAuditable<User, Long> {
     public static final String DEFAULT_STATE_VALUE_CREATED = "Created";
     public static final String DEFAULT_STATE_VALUE_CLOSED = "Closed";
     public static final String STATE_REOPENED = "Reopened";
+    public static final String STATE_UPDATED = "Updated";
+    public static final String STATE_FORWARDED = "Forwarded";
     public static final String WORKFLOWTYPES_QRY = "WORKFLOWTYPES";
     public static final String WORKFLOWTYPES_BY_ID = "WORKFLOWTYPES_BY_ID";
+
     public static enum StateStatus {
-        STARTED,INPROGRESS,ENDED
+        STARTED, INPROGRESS, ENDED
     }
-    
+
     @NotNull
     private String type;
-    
+
     @NotNull
-    @Length(min=1)
+    @Length(min = 1)
     private String value;
-    
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="OWNER_POS")
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "OWNER_POS")
     private Position ownerPosition;
-    
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="OWNER_USER")
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "OWNER_USER")
     private User ownerUser;
-    
-    @OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="state")
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "state")
     @OrderBy("id")
     private List<StateHistory> history = Collections.emptyList();
-    
+
     private String senderName;
     private String nextAction;
     private String comments;
     private String extraInfo;
     private Date dateInfo;
     private Date extraDateInfo;
-    
+
     @Enumerated(EnumType.ORDINAL)
     @NotNull
     private StateStatus status;
-    
+
     protected State() {
     }
 
@@ -114,11 +116,11 @@ public class State extends AbstractAuditable<User, Long> {
     protected void setHistory(final List<StateHistory> history) {
         this.history = history;
     }
-    
+
     protected void addStateHistory(StateHistory history) {
         this.getHistory().add(history);
     }
-    
+
     public String getSenderName() {
         return senderName;
     }

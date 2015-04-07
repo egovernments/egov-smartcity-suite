@@ -65,8 +65,7 @@ $(document).ready(function()
 	});
 	
 	$('#approvalDepartment').change(function(){
-		alert("came approvalDepartment");
-		console.log("came approvalDepartment"+$('#approvalDepartment').val());
+		//alert("came approvalDepartment");
 		$.ajax({
 			url: "/pgr/ajax-approvalDesignations",     
 			type: "GET",
@@ -77,8 +76,7 @@ $(document).ready(function()
 			success: function (response) {
 				console.log("success"+response);
 				$('#approvalDesignation').empty();
-				alert("removed ");
-				alert(document.getElementById('approvalDesignation'));
+				//alert(document.getElementById('approvalDesignation'));
 				$('#approvalDesignation').append($("<option value=''>Select</option>"));
 				$.each(response, function(index, value) {
 					$('#approvalDesignation').append($('<option>').text(value.designationName).attr('value', value.designationId));
@@ -92,8 +90,6 @@ $(document).ready(function()
 	});
 	
 	$('#approvalDesignation').change(function(){
-		alert("came approvalDesignation");
-		console.log("came approvalDesignation"+$('#approvalDesignation').val());
 		$.ajax({
 			url: "/pgr/ajax-approvalPositions",     
 			type: "GET",
@@ -105,11 +101,9 @@ $(document).ready(function()
 			success: function (response) {
 				console.log("success"+response);
 				$('#approvalPosition').empty();
-				alert("removed ");
-				alert(document.getElementById('approvalPosition'));
 				$('#approvalPosition').append($("<option value=''>Select</option>"));
 				$.each(response, function(index, value) {
-					$('#approvalPosition').append($('<option>').text(value.name).attr('value', value.id));
+					$('#approvalPosition').append($('<option>').text(value.username).attr('value', value.id));
 				});
 				
 			}, 

@@ -7,6 +7,7 @@ import static org.egov.pgr.entity.enums.ComplaintStatus.REJECTED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.WITHDRAWN;
 import static org.egov.pgr.utils.constants.CommonConstants.DASH_DELIM;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -17,9 +18,12 @@ import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.workflow.entity.State;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infstr.services.EISServeable;
 import org.egov.lib.admbndry.CityWebsiteImpl;
 import org.egov.pgr.entity.Complaint;
+import org.egov.pgr.entity.enums.ComplaintStatus;
 import org.egov.pgr.repository.ComplaintRepository;
 import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
@@ -33,8 +37,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public class ComplaintService {
+
     @Autowired
     private ComplaintRepository complaintRepository;
 
@@ -45,6 +50,9 @@ public class ComplaintService {
     private SecurityUtils securityUtils;
     @Autowired
     private ComplaintRouterService complaintRouterService;
+
+    @Autowired
+    private EISServeable eisService;
 
     private static final Logger LOG = LoggerFactory.getLogger(ComplaintService.class);
 
@@ -58,7 +66,8 @@ public class ComplaintService {
         Position assignee = complaintRouterService.getAssignee(complaint);
         complaint.transition().start().withSenderName(complaint.getComplainant().getUserDetail().getName())
                 .withComments("complaint registered with crn : " + complaint.getCRN()).withStateValue("Registered")
-                .withOwner(assignee);
+                .withOwner(assignee).withDateInfo(new Date());
+        
         complaint.setAssignee(assignee);
         complaint.setEscalationDate(new DateTime());
         return complaintRepository.save(complaint);
@@ -66,7 +75,56 @@ public class ComplaintService {
 
     @Transactional
     @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
-    public Complaint update(final Complaint complaint) {
+    public Complaint update(final Complaint complaint, Long approvalPosition, String approvalComent) {
+        Position owner = null;
+        // Can append any other states to terminate workflow
+        // if the status is change to completed then stop the workflow
+
+        // If position is found then it is forwarding only
+        if (null != approvalPosition && !approvalPosition.equals(Long.valueOf(0))) {
+            owner = eisService.getPrimaryPositionForUser(approvalPosition, new Date());
+            LOG.debug(owner.toString());
+            complaint.setAssignee(owner);
+            if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())) {
+
+                complaint.transition().withOwner(owner).withComments(approvalComent)
+                        .withSenderName(securityUtils.getCurrentUser().getName()).withDateInfo(new Date()).end();
+            } else {
+                complaint.transition().withOwner(owner).withComments(approvalComent)
+                        .withSenderName(securityUtils.getCurrentUser().getName()).withStateValue(State.STATE_FORWARDED)
+                        .withDateInfo(new Date());
+            }
+        } else if (null != securityUtils.getCurrentUser()) {
+            // If positon is not selected then it is updation like change
+            // complaint type ,status or coments updation only.
+            owner = eisService.getPrimaryPositionForUser(securityUtils.getCurrentUser().getId(), new Date());
+            // if owner is found then he is an employee
+            if (null != owner) {
+                LOG.debug(owner.getName());
+                if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())) {
+
+                    complaint.transition().withOwner(owner).withComments(approvalComent)
+                            .withSenderName(securityUtils.getCurrentUser().getName()).withDateInfo(new Date()).end();
+                } else {
+                    complaint.transition().withOwner(owner).withComments(approvalComent)
+                            .withSenderName(securityUtils.getCurrentUser().getName())
+                            .withStateValue(State.STATE_UPDATED).withDateInfo(new Date());
+                }
+
+            } else {
+                // This is updation by Citizen
+                if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString())) {
+                    complaint.transition().withComments(approvalComent).withSenderName("").withDateInfo(new Date())
+                            .end();
+                } else {
+                    complaint.transition().withComments(approvalComent).withSenderName("")
+                            .withStateValue(State.STATE_UPDATED).withDateInfo(new Date());
+                }
+            }
+        }
+
+        // LOG.debug(complaint.getState().getOwnerPosition().getName());
+
         return complaintRepository.save(complaint);
     }
 

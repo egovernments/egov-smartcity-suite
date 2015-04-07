@@ -23,6 +23,8 @@ import org.egov.infra.web.support.formatter.BoundaryFormatter;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.lib.admbndry.BoundaryImpl;
 import org.egov.lib.admbndry.ejb.api.BoundaryService;
+import org.egov.lib.rjbac.dept.Department;
+import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
@@ -44,7 +46,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
 import org.springframework.web.util.NestedServletException;
-
 @Ignore
 public class ComplaintUpdationControllerTest extends AbstractContextControllerTest<ComplaintUpdationController> {
     @Mock
@@ -68,6 +69,9 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
 
     @Autowired
     private SmartValidator validator;
+
+    @Mock
+    private DepartmentService departmentService;
 
     private MockMvc mockMvc;
     @Mock
@@ -109,7 +113,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         mockMvc = mvcBuilder.build();
         complaint = new Complaint();
         complaint.setDetails("Already Registered complaint");
-        id = 2L;
+        // id = 2L;
         when(complaintService.getComplaintById(id)).thenReturn(complaint);
 
         complaintType = new ComplaintType();
@@ -127,6 +131,9 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         when(userService.getUserById(Matchers.anyLong())).thenReturn(user);
         when(user.getRoles()).thenReturn(roleList);
         csList.add(cs);
+        List<Department> departmentList = new ArrayList<Department>();
+        when(departmentService.getAllDepartments()).thenReturn(departmentList);
+
         when(complaintStatusMappingService.getStatusByRoleAndCurrentStatus(roleList, cs)).thenReturn(csList);
 
     }
@@ -137,7 +144,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         complaintType.setLocationRequired(false);
         complaint.setComplaintType(complaintType);
         complaint.setDetails("Already Registered complaint");
-        MvcResult result = this.mockMvc.perform(get("/complaint-update/1")).andReturn();
+        MvcResult result = this.mockMvc.perform(get("/complaint-update?id=1")).andReturn();
     }
 
     @Test
@@ -148,7 +155,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         complaint.setDetails("Already Registered complaint");
         when(complaintService.getComplaintById(id)).thenReturn(complaint);
 
-        MvcResult result = this.mockMvc.perform(get("/complaint-update/2")).andExpect(view().name("complaint-edit"))
+        MvcResult result = this.mockMvc.perform(get("/complaint-update?id=2")).andExpect(view().name("complaint-edit"))
                 .andExpect(model().attributeExists("complaint")).andReturn();
 
         Complaint existing = (Complaint) result.getModelAndView().getModelMap().get("complaint");
@@ -165,7 +172,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         id = 2L;
         when(complaintService.getComplaintById(id)).thenReturn(complaint);
 
-        MvcResult result = this.mockMvc.perform(get("/complaint-update/2")).andExpect(status().isOk())
+        MvcResult result = this.mockMvc.perform(get("/complaint-update?id=2")).andExpect(status().isOk())
                 .andExpect(view().name("complaint-edit")).andExpect(model().attributeExists("complaint")).andReturn();
 
         Complaint existing = (Complaint) result.getModelAndView().getModelMap().get("complaint");
@@ -190,7 +197,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         List<BoundaryImpl> wards = new ArrayList<BoundaryImpl>();
         when(commonService.getWards(ward.getId())).thenReturn(wards);
 
-        MvcResult result = this.mockMvc.perform(get("/complaint-update/2")).andExpect(status().isOk())
+        MvcResult result = this.mockMvc.perform(get("/complaint-update?id=2")).andExpect(status().isOk())
                 .andExpect(view().name("complaint-edit")).andExpect(model().attributeExists("complaint")).andReturn();
 
         Complaint existing = (Complaint) result.getModelAndView().getModelMap().get("complaint");
@@ -208,8 +215,8 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         id = 2L;
         when(complaintService.getComplaintById(id)).thenReturn(complaint1);
         when(complaint1.getId()).thenReturn(2L);
-        this.mockMvc.perform(post("/complaint-update/2").param("id", "2").param("complaintStatus", "2")).andDo(print())
-                .andExpect(flash().attributeExists("message")).andExpect(status().is3xxRedirection()).andReturn();
+        this.mockMvc.perform(post("/complaint-update").param("id", "2").param("complaintStatus", "2")).andDo(print())
+                .andExpect(status().is3xxRedirection()).andReturn();
 
     }
 
@@ -229,9 +236,9 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         when(complaintTypeService.load(id)).thenReturn(complaintType);
         this.mockMvc
                 .perform(
-                        post("/complaint-update/2").param("id", "2").param("complaintStatus", "2")
-                                .param("complaintType", "2")).andDo(print())
-                .andExpect(flash().attributeExists("message")).andExpect(status().is3xxRedirection()).andReturn();
+                        post("/complaint-update").param("id", "2").param("complaintStatus", "2")
+                                .param("complaintType", "2")).andExpect(flash().attributeExists("message"))
+                .andExpect(status().is3xxRedirection()).andReturn();
 
     }
 

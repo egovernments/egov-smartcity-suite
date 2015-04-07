@@ -27,6 +27,12 @@
         <put-attribute name="body" value="/WEB-INF/views/complaint/view-complaint.jsp"/>
         <put-attribute name="body" value="/WEB-INF/views/complaint/complaint-edit.jsp"/>
     </definition>
+    
+     <definition name="complaint-citizen-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.complaintUpdate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/complaint/view-complaint.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/complaint/complaint-citizen-edit.jsp"/>
+    </definition>
 	
 	<definition name="complaint/*/*" extends="base_layout">
         <put-attribute name="page-title" value="title.complaint.reg" cascade="true"/>

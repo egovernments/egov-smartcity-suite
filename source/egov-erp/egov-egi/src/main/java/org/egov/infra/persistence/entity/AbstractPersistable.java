@@ -10,6 +10,8 @@ import javax.persistence.Version;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.search.annotations.DocumentId;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * Abstract base class for entities. Allows parameterization of id type, chooses
  * auto-generation and implements {@link #equals(Object)} and
@@ -20,6 +22,7 @@ public abstract class AbstractPersistable<PK extends Serializable> implements Se
 
     private static final long serialVersionUID = -477198900757851804L;
 
+    @Expose
     @Id
     @GenericGenerator(name = "seq_id", strategy = "org.egov.infra.persistence.utils.SequenceIdGenerator")
     @GeneratedValue(generator = "seq_id")
@@ -28,7 +31,7 @@ public abstract class AbstractPersistable<PK extends Serializable> implements Se
 
     @Version
     private Long version;
-    
+
     public PK getId() {
         return id;
     }
