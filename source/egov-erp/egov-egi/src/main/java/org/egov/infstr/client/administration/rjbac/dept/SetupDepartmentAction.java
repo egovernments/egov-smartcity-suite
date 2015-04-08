@@ -25,10 +25,12 @@ import org.egov.infstr.client.EgovAction;
 import org.egov.infstr.client.delegate.DepartmentDelegate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class SetupDepartmentAction extends EgovAction {
 	private static final Logger logger = LoggerFactory.getLogger(SetupDepartmentAction.class);
-	private DepartmentService departmentService = new DepartmentService();
+	@Autowired
+	private DepartmentService departmentService;
 	/**
 	 * This method creates a new department
 	 * @param ActionMapping mapping

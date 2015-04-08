@@ -16,8 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class DepartmentService {
 
-    @Autowired
     private DepartmentRepository departmentRepository;
+
+    @Autowired
+    public DepartmentService(DepartmentRepository departmentRepository) {
+        this.departmentRepository = departmentRepository;
+    }
 
     @Transactional
     public void createDepartment(Department department) {
@@ -43,7 +47,7 @@ public class DepartmentService {
     public Department getDepartmentByCode(String code) {
         return departmentRepository.findByCode(code);
     }
-    
+
     public void deleteDepartment(Department department) {
         departmentRepository.delete(department);
     }

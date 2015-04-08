@@ -193,11 +193,11 @@ public class EisManagersUtill {
         return new EisCommonsServiceImpl();
     }
 
-	public static DepartmentService getDeptService()
+	/*public static DepartmentService getDeptService()
     {
 
         return new DepartmentService();
-    }
+    }*/
 
 		public static EmployeeService getEmployeeService()
 		{

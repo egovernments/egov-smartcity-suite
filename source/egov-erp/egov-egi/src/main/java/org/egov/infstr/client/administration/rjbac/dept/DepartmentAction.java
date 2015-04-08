@@ -11,8 +11,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -25,10 +23,14 @@ import org.egov.infstr.client.EgovAction;
 import org.egov.infstr.client.EgovActionForm;
 import org.egov.infstr.client.delegate.DepartmentDelegate;
 import org.egov.infstr.utils.EgovMasterDataCaching;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class DepartmentAction extends EgovAction {
 	private static final Logger logger = LoggerFactory.getLogger(DepartmentAction.class);
-	private DepartmentService departmentService = new DepartmentService();
+	@Autowired
+	private DepartmentService departmentService;
 	/**
 	 * This method creates a new department
 	 * @param ActionMapping mapping

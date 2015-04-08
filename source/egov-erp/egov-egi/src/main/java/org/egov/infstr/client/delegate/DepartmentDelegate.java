@@ -4,10 +4,12 @@ import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class DepartmentDelegate {
 	private static DepartmentDelegate departmentDelegate = new DepartmentDelegate();
-	private final DepartmentService departmentService = new DepartmentService();
+	@Autowired
+	private DepartmentService departmentService;
 
 	private DepartmentDelegate() {
 	}
