@@ -130,7 +130,9 @@ public class ComplaintService {
 
 		// LOG.debug(complaint.getState().getOwnerPosition().getName());
 
-		return complaintRepository.save(complaint);
+		Complaint savedComplaint = complaintRepository.save(complaint);
+		pushMessage(savedComplaint);
+		return savedComplaint;
 	}
 
 	public String generateComplaintID() {
