@@ -16,15 +16,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.web.support.formatter.BoundaryFormatter;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.lib.admbndry.BoundaryImpl;
 import org.egov.lib.admbndry.ejb.api.BoundaryService;
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.dept.ejb.api.DepartmentService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
