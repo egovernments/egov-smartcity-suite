@@ -29,7 +29,7 @@
                             <form:select path="name"
                                          id="boundaryTypes" cssClass="form-control" cssErrorClass="form-control error" required="required">
                                 <form:option value=""> <spring:message code="lbl.select"/> </form:option>
-                                <form:options items="${boundaryTypes}" itemValue="id" itemLabel="name"/>
+                                <form:options items="${boundaryTypes}" itemValue="name" itemLabel="name"/>
                             </form:select>
                             <form:errors path="name" cssClass="error-msg"/>
                         </div>

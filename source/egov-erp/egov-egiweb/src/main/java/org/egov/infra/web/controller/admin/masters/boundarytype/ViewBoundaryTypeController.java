@@ -22,8 +22,8 @@ public class ViewBoundaryTypeController {
 	
 	@ModelAttribute
 	public BoundaryType boundaryTypeModel(@PathVariable String name){
-		return boundaryTypeService.getBoundaryTypeByName(name);
-	}
+            return boundaryTypeService.getBoundaryTypeByName(name);
+        }
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String viewBoundaryType(){

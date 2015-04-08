@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value = { "/boundaryType/view", "/boundaryType/update" })
+@RequestMapping(value = { "/boundaryType/view", "/boundaryType/update", "/boundaryType/addChild" })
 public class SearchBoundaryTypeController {
 
 	private BoundaryTypeService boundaryTypeService;
@@ -44,11 +44,11 @@ public class SearchBoundaryTypeController {
 	@RequestMapping(method =RequestMethod.POST)
 	public String search(@ModelAttribute BoundaryType boundaryType,final BindingResult errors, RedirectAttributes redirectAttrs,HttpServletRequest request){
 		
-		if (errors.hasErrors())
-            return "boundaryType-form";
-		
-		String[] uriSplits = request.getRequestURI().split("/");
-        String redirectURI =  uriSplits[uriSplits.length - 1] + "/" + boundaryType.getName();
+    	    if (errors.hasErrors())
+                return "boundaryType-form";
+    		
+    		String[] uriSplits = request.getRequestURI().split("/");
+                String redirectURI =  uriSplits[uriSplits.length - 1] + "/" + boundaryType.getName();
 		return "redirect:"+redirectURI;
 	}
 }

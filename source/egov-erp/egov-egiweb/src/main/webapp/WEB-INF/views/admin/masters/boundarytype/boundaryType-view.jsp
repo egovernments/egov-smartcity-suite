@@ -22,6 +22,14 @@
 							<c:out value="${boundaryType.hierarchyType.name}"></c:out>
 						</div>
 					</div>
+					<c:if test="${not empty boundaryType.parent.name}">
+						<div class="row add-border">
+							<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.parent.boundaryType"/></div>
+							<div class="col-md-9 col-xs-6 add-margin" id="ct-name">
+								<c:out value="${boundaryType.parent.name}"></c:out>
+							</div>
+						</div>
+					</c:if>
 					<div class="row add-border">
 						<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.boundaryType.boundaryType"/></div>
 						<div class="col-md-9 col-xs-6 add-margin" id="ct-name">

@@ -42,29 +42,9 @@ public class BoundaryType extends AbstractAuditable<User, Long> {
     @Transient
     private String parentName;
 
-    public String getParentName() {
-        return parentName;
-    }
-
-    public void setParentName(final String parentName) {
-        this.parentName = parentName;
-    }
-
     @Transient
     private Set childBoundaryTypes;
-
-    public Set getChildBoundaryTypes() {
-        return childBoundaryTypes;
-    }
-
-    public void setChildBoundaryTypes(final Set childBoundaryTypes) {
-        this.childBoundaryTypes = childBoundaryTypes;
-    }
-
-    public void addChildBoundaryType(final BoundaryType boundaryType) {
-        boundaryType.setParent(this);
-        childBoundaryTypes.add(boundaryType);
-    }
+    
 
     public String getName() {
         return name;
@@ -98,4 +78,24 @@ public class BoundaryType extends AbstractAuditable<User, Long> {
         this.hierarchy = hierarchy;
     }
 
+    public String getParentName() {
+        return parentName;
+    }
+
+    public void setParentName(final String parentName) {
+        this.parentName = parentName;
+    }
+    
+    public Set getChildBoundaryTypes() {
+        return childBoundaryTypes;
+    }
+
+    public void setChildBoundaryTypes(final Set childBoundaryTypes) {
+        this.childBoundaryTypes = childBoundaryTypes;
+    }
+
+    public void addChildBoundaryType(final BoundaryType boundaryType) {
+        boundaryType.setParent(this);
+        childBoundaryTypes.add(boundaryType);
+    }
 }

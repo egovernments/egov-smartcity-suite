@@ -25,9 +25,9 @@ private BoundaryTypeService boundaryTypeService;
 	}
 	
 	@ModelAttribute
-	public BoundaryType boundaryTypeModel(@PathVariable String name){
-		return boundaryTypeService.getBoundaryTypeByName(name);
-	}
+        public BoundaryType boundaryTypeModel(@PathVariable String name){
+            return boundaryTypeService.getBoundaryTypeByName(name);
+        }
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String updateBoundaryTypeForm(){
