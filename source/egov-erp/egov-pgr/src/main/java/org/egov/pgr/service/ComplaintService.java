@@ -84,28 +84,6 @@ public class ComplaintService {
 		return savedComplaint;
 	}
 
-	private void pushMessage(Complaint savedComplaint) {
-
-		CitizenInboxBuilder citizenInboxBuilder = new CitizenInboxBuilder();
-		String strQuery = "select md from Module md where md.moduleName=:name";
-		Query hql = getCurrentSession().createQuery(strQuery);
-		hql.setParameter("name", "PGR");
-		citizenInboxBuilder.module((Module) hql.uniqueResult());
-		citizenInboxBuilder.messageType(MessageType.USER_MESSAGE);
-		citizenInboxBuilder.identifier(savedComplaint.getCRN());
-		citizenInboxBuilder.headerMessage("Test Header Message");
-		citizenInboxBuilder.detailedMessage("Test Detailed Message");
-		citizenInboxBuilder.link("pgr/view-complaint?complaintId=" + savedComplaint.getId());
-		citizenInboxBuilder.messageDate(savedComplaint.getCreatedDate().toDate());
-		citizenInboxBuilder.state(savedComplaint.getState());
-		citizenInboxBuilder.assignedToCitizen(securityUtils.getCurrentUser());
-		citizenInboxBuilder.priority(Priority.High);
-		citizenInboxBuilder.status(savedComplaint.getStatus().getName());
-
-		CitizenInbox citizenInbox = citizenInboxBuilder.build();
-		citizenInboxService.pushMessage(citizenInbox);
-	}
-
 	@Transactional
 	@Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
 	public Complaint update(final Complaint complaint, Long approvalPosition, String approvalComent) {
@@ -190,6 +168,28 @@ public class ComplaintService {
 				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		return criteria.list();
+	}
+	
+	private void pushMessage(Complaint savedComplaint) {
+
+		CitizenInboxBuilder citizenInboxBuilder = new CitizenInboxBuilder();
+		String strQuery = "select md from Module md where md.moduleName=:name";
+		Query hql = getCurrentSession().createQuery(strQuery);
+		hql.setParameter("name", "PGR");
+		citizenInboxBuilder.module((Module) hql.uniqueResult());
+		citizenInboxBuilder.messageType(MessageType.USER_MESSAGE);
+		citizenInboxBuilder.identifier(savedComplaint.getCRN());
+		citizenInboxBuilder.headerMessage("Test Header Message");
+		citizenInboxBuilder.detailedMessage("Test Detailed Message");
+		citizenInboxBuilder.link("pgr/view-complaint?complaintId=" + savedComplaint.getId());
+		citizenInboxBuilder.messageDate(savedComplaint.getCreatedDate().toDate());
+		citizenInboxBuilder.state(savedComplaint.getState());
+		citizenInboxBuilder.assignedToCitizen(securityUtils.getCurrentUser());
+		citizenInboxBuilder.priority(Priority.High);
+		citizenInboxBuilder.status(savedComplaint.getStatus().getName());
+
+		CitizenInbox citizenInbox = citizenInboxBuilder.build();
+		citizenInboxService.pushMessage(citizenInbox);
 	}
 
 }
