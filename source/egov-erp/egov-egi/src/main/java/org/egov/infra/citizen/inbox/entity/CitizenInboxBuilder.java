@@ -20,8 +20,14 @@ public class CitizenInboxBuilder {
 
 	private CitizenInbox citizenInbox;
 
-	public CitizenInboxBuilder() {
+	public CitizenInboxBuilder(MessageType messageType,String headerMessage,String detailedMessage,Date messageDate,User assignedToCitizen,Priority priority) {
 		citizenInbox = new CitizenInbox();
+		citizenInbox.setMessageType(messageType);
+		citizenInbox.setHeaderMessage(headerMessage);
+		citizenInbox.setDetailedMessage(detailedMessage);
+		citizenInbox.setMessageDate(messageDate);
+		citizenInbox.setAssignedToCitizen(assignedToCitizen);
+		citizenInbox.setPriority(priority);
 	}
 
 	public CitizenInboxBuilder module(Module module) {
@@ -29,32 +35,8 @@ public class CitizenInboxBuilder {
 		return this;
 	}
 	
-	/**
-	 * Mandatory Information
-	 */
-	public CitizenInboxBuilder messageType(MessageType messageType) {
-		citizenInbox.setMessageType(messageType);
-		return this;
-	}
-
 	public CitizenInboxBuilder identifier(String identifier) {
 		citizenInbox.setIdentifier(identifier);
-		return this;
-	}
-
-	/**
-	 * Mandatory Information
-	 */
-	public CitizenInboxBuilder headerMessage(String headerMessage) {
-		citizenInbox.setHeaderMessage(headerMessage);
-		return this;
-	}
-
-	/**
-	 * Mandatory Information
-	 */
-	public CitizenInboxBuilder detailedMessage(String detailedMessage) {
-		citizenInbox.setDetailedMessage(detailedMessage);
 		return this;
 	}
 
@@ -63,32 +45,8 @@ public class CitizenInboxBuilder {
 		return this;
 	}
 
-	/**
-	 * Mandatory Information
-	 */
-	public CitizenInboxBuilder messageDate(Date messageDate) {
-		citizenInbox.setMessageDate(messageDate);
-		return this;
-	}
-
 	public CitizenInboxBuilder state(State state) {
 		citizenInbox.setState(state);
-		return this;
-	}
-
-	/**
-	 * Mandatory Information
-	 */
-	public CitizenInboxBuilder assignedToCitizen(User assignedToCitizen) {
-		citizenInbox.setAssignedToCitizen(assignedToCitizen);
-		return this;
-	}
-
-	/**
-	 * Mandatory Information
-	 */
-	public CitizenInboxBuilder priority(Priority priority) {
-		citizenInbox.setPriority(priority);
 		return this;
 	}
 

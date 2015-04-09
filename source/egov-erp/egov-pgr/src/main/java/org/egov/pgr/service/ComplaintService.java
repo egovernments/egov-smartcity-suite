@@ -171,23 +171,19 @@ public class ComplaintService {
 
 		return criteria.list();
 	}
-	
+
 	private void pushMessage(Complaint savedComplaint) {
 
-		CitizenInboxBuilder citizenInboxBuilder = new CitizenInboxBuilder();
+		CitizenInboxBuilder citizenInboxBuilder = new CitizenInboxBuilder(MessageType.USER_MESSAGE, "Test Header Message", "Test Detailed Message", savedComplaint.getCreatedDate()
+				.toDate(), securityUtils.getCurrentUser(), Priority.High);
 		String strQuery = "select md from Module md where md.moduleName=:name";
 		Query hql = getCurrentSession().createQuery(strQuery);
 		hql.setParameter("name", "PGR");
+
 		citizenInboxBuilder.module((Module) hql.uniqueResult());
-		citizenInboxBuilder.messageType(MessageType.USER_MESSAGE);
 		citizenInboxBuilder.identifier(savedComplaint.getCRN());
-		citizenInboxBuilder.headerMessage("Test Header Message");
-		citizenInboxBuilder.detailedMessage("Test Detailed Message");
 		citizenInboxBuilder.link("pgr/view-complaint?complaintId=" + savedComplaint.getId());
-		citizenInboxBuilder.messageDate(savedComplaint.getCreatedDate().toDate());
 		citizenInboxBuilder.state(savedComplaint.getState());
-		citizenInboxBuilder.assignedToCitizen(securityUtils.getCurrentUser());
-		citizenInboxBuilder.priority(Priority.High);
 		citizenInboxBuilder.status(savedComplaint.getStatus().getName());
 
 		CitizenInbox citizenInbox = citizenInboxBuilder.build();
