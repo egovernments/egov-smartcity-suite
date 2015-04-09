@@ -110,7 +110,7 @@ a:focus{
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
-	padding-bottom:80px;
+	padding-bottom:70px;
 }
 
 .error, .login-body .form-group .input-group .form-control.error{
@@ -495,7 +495,11 @@ table .replace-inputs input {
 
 .page-container.horizontal-menu header.navbar ul.nav > li {
 	float: left;
+}
+
+.page-container.horizontal-menu header.navbar ul.nav > li.menu-responsive {
 	border-left:1px solid #573b1e;
+	border-right:1px solid #573b1e;
 }
 
 .page-container.horizontal-menu header.navbar ul.nav > li > a {
@@ -790,19 +794,19 @@ table .replace-inputs input {
 
 footer.main{
 	width:100%;
-	height:50px;
+	height:40px;
 	position:absolute;
 	bottom:0;
 	left:0;
 	background: #F5F5F5;
-	line-height:50px;
+	line-height:40px;
 	padding:0 20px;
+	font-size:13px;
 	color: rgb(116, 101, 101);
 }
 
 footer.main a{
 	color:#f5861f;
-	font-size:15px;
 }
 
 footer.main a:hover, footer.main a:focus{
@@ -1700,7 +1704,7 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 }
 
 #menu.homepage{
-	display:table-cell;float:left;
+	position:relative;display:table-cell;float:left;
 }
 
 .inline-main-content{
@@ -1790,14 +1794,14 @@ ul li a span{
 	padding-right:8px;
 }
 
-.multilevelpushmenu_wrapper li.position-bottom-level1
+.multilevelpushmenu_wrapper li#position-bottom-level1
 {
 	position:absolute;
 	width:100%;
 	bottom:0;
 }
 
-.multilevelpushmenu_wrapper li.position-bottom-level2
+.multilevelpushmenu_wrapper li#position-bottom-level2
 {
 	position:absolute;
 	width:100%;
@@ -1836,3 +1840,7 @@ ul li a span{
 	-webkit-box-shadow:0 0 6px gray inset;
 } 
 
+.navbar-right
+{
+	margin:0;
+}

@@ -3,8 +3,6 @@ $(document).ready(function () {
 	var menuheight = ($( window ).height() - 63);
 	var ulheight =(menuheight -93);
 	
-	console.log($(window).height()+"----"+menuheight+"-----"+ulheight);
-	
 	$('#menu').multilevelpushmenu({
 		menuWidth: '250px',
 		mode: 'cover',
