@@ -18,9 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class BoundaryTypeService {
 
-	private final BoundaryTypeRepository boundaryTypeRepository;
+    private final BoundaryTypeRepository boundaryTypeRepository;
 	
-	@Autowired
+    @Autowired
     public BoundaryTypeService(final BoundaryTypeRepository boundaryTypeRepository) {
         this.boundaryTypeRepository = boundaryTypeRepository;
     }
@@ -49,5 +49,13 @@ public class BoundaryTypeService {
     
     public BoundaryType getBoundaryTypeByHierarchyTypeNameAndLevel(String name,Integer hierarchyLevel) {
     	return boundaryTypeRepository.findByHierarchyTypeNameAndLevel(name,hierarchyLevel);
+    }
+    
+    public List<BoundaryType> getAllBoundarTypesByHierarchyTypeId(Long hierarchyTypeId) {
+        return boundaryTypeRepository.findByHierarchyTypeId(hierarchyTypeId);
+    }
+    
+    public BoundaryType getBoundaryTypeByParent(String parentName) {
+        return boundaryTypeRepository.findByParent(parentName);
     }
 }

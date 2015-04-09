@@ -7,6 +7,9 @@
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
 <div class="row">
 	<div class="col-md-12">
+			<c:if test="${not empty errorMessage}">
+                    <div id="message" class="success" style="color: red;">${errorMessage}</div>
+            </c:if>
 		<form:form  id="boundaryTypeUpdateform" mothod ="post" 
 		 class="form-horizontal form-groups-bordered" modelAttribute="boundaryType" >
 			<div class="panel panel-primary" data-collapsed="0">
@@ -41,7 +44,7 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
-					<button type="submit" class="btn btn-primary"><spring:message code="lbl.update"/></button>
+					<button type="submit" class="btn btn-primary"><spring:message code="lbl.addChild"/></button>
 			       <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="lbl.close"/></button>
 				</div>
 			</div>

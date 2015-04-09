@@ -6,7 +6,6 @@ import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,14 +44,22 @@ public class AddChildBoundaryTypeController {
                 return "boundaryType-addChild";
             
             final String parentBoundaryTypeName = boundaryType.getParent().getName();
-            int childHierarchy = 0;
-            int parentHierarchy = boundaryType.getParent().getHierarchy();
-            if(!parentBoundaryTypeName.isEmpty() && parentBoundaryTypeName!=null ){
-                childHierarchy = ++parentHierarchy;
+            //If child already exists for the boundary type, then show message and do not allow to add
+            BoundaryType boundaryType1 = boundaryTypeService.getBoundaryTypeByParent(parentBoundaryTypeName);
+            if(boundaryType1!=null){
+                redirectAttrs.addFlashAttribute("errorMessage", "Child boundary type already exists!");
+                return "redirect:/controller/boundaryType/addChild/"+parentBoundaryTypeName;
             }
-            boundaryType.setHierarchy(childHierarchy);
-            boundaryTypeService.updateBoundaryType(boundaryType);
-            redirectAttrs.addFlashAttribute("message", "Child Boundary Type added successfully!");
-            return "redirect:/controller/boundaryType/addChild/";
+            else{
+                int childHierarchy = 0;
+                int parentHierarchy = boundaryType.getParent().getHierarchy();
+                if(!parentBoundaryTypeName.isEmpty() && parentBoundaryTypeName!=null ){
+                    childHierarchy = ++parentHierarchy;
+                }
+                boundaryType.setHierarchy(childHierarchy);
+                boundaryTypeService.createBoundaryType(boundaryType);
+                redirectAttrs.addFlashAttribute("message", "Child Boundary Type added successfully!");
+                return "redirect:/controller/boundaryType/addChild/";
+            }
     }
 }
