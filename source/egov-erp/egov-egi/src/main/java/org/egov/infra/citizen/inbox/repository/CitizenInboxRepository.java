@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CitizenInboxRepository extends JpaRepository<CitizenInbox, Long> {
 
-	@Query("select count(*) from CitizenInbox ci where ci.assignedToCitizen.id=:citizenUserId order by createdDate desc")
+	@Query("select count(*) from CitizenInbox ci where ci.assignedToCitizen.id=:citizenUserId")
 	Integer findUnreadMessagesCount(@Param("citizenUserId")Long citizenUserId);
 
 	@Query(" from CitizenInbox ci where ci.assignedToCitizen.id=:citizenUserId order by createdDate desc")
