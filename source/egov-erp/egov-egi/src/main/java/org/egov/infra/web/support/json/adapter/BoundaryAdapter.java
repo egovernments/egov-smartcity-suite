@@ -1,4 +1,4 @@
-package org.egov.infra.admin.master.entity.json.adapter;
+package org.egov.infra.web.support.json.adapter;
 
 import java.lang.reflect.Type;
 import java.text.DateFormat;
