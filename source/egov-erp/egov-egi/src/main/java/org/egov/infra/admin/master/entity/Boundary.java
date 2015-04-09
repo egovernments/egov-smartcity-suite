@@ -68,7 +68,7 @@ public class Boundary extends AbstractAuditable<Boundary, Long> {
     
     private Date toDate;
     
-    private Character isHistory;
+    private boolean isHistory;
     private Integer bndryId;
     private String boundaryNameLocal;
     
@@ -216,11 +216,11 @@ public class Boundary extends AbstractAuditable<Boundary, Long> {
         this.toDate = toDate;
     }
 
-    public Character getIsHistory() {
-        return isHistory;
+    public boolean isHistory() {
+        return this.isHistory;
     }
 
-    public void setIsHistory(Character isHistory) {
+    public void setHistory(boolean isHistory) {
         this.isHistory = isHistory;
     }
 

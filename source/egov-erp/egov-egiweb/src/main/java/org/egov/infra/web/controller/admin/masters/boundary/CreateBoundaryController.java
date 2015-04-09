@@ -33,8 +33,7 @@ public class CreateBoundaryController {
     }
     
     @RequestMapping(value = { "/boundary/create", "/boundary/update" }, method = RequestMethod.POST)
-    public String createOrUpdateBoundary(@Valid @ModelAttribute Boundary boundary,
-            @ModelAttribute BoundaryType boundaryType, Model model,
+    public String createOrUpdateBoundary(@Valid @ModelAttribute Boundary boundary, Model model,
             BindingResult errors) {
 
         if (errors.hasErrors()) {
@@ -44,7 +43,7 @@ public class CreateBoundaryController {
         BoundaryType boundaryTypeObj = boundaryTypeService.getBoundaryTypeById(boundary.getBoundaryTypeId());
 
         boundary.setBoundaryType(boundaryTypeObj);
-        boundary.setIsHistory('N');
+        boundary.setHistory(false);
         
         boundaryService.createBoundary(boundary);
         

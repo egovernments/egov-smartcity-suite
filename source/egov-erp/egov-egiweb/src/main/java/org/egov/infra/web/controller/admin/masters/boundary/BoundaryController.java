@@ -67,10 +67,7 @@ public class BoundaryController {
 
     @RequestMapping(value = "/create-boundary/{ids}", method = RequestMethod.GET)
     public String showCreateBoundaryForm(Model model) {
-        Boundary boundary = new Boundary();
-        boundary.setBoundaryTypeId(((BoundaryType)model.asMap().get("boundaryType")).getId());
         model.addAttribute("boundary", new Boundary());
-       // model.addAttribute("cityWebsite", new CityWebsite());
         return "boundary-create";
     }
 

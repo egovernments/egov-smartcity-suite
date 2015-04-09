@@ -61,6 +61,21 @@ public class GenericMasterAjaxController {
         IOUtils.write(jsonResultSet.toString(), response.getWriter());
     }
     
+    @RequestMapping(value = "/check-is-root", method = RequestMethod.GET)
+    public @ResponseBody void isRootBoundary(@RequestParam Long boundaryTypeId, @RequestParam Long hierarchyTypeId,
+            HttpServletResponse response) throws IOException {
+        BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeByIdAndHierarchyType(boundaryTypeId, hierarchyTypeId);
+        
+        boolean result = false;
+        
+        if (boundaryType.getParent().getId() == 0) {
+           result = true;  
+        } 
+        
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        IOUtils.write(String.valueOf(result), response.getWriter());
+    }
+    
     
     // FIXME Can be made generic by the help of annotation which takes fields as inputs [Nayeem]
     private String buildJSONString(List<BoundaryType> boundaryTypes) {
