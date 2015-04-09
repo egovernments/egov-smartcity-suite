@@ -20,7 +20,11 @@ import org.hibernate.validator.constraints.SafeHtml;
 import org.json.simple.JSONObject;
 
 @Entity
-@Table(name = "pgr_complainttype", uniqueConstraints = @UniqueConstraint(columnNames = { "name" }))
+@Table(
+        name = "pgr_complainttype", 
+        uniqueConstraints = 
+            @UniqueConstraint(columnNames = { "name" })
+)
 @Searchable
 public class ComplaintType extends AbstractPersistable<Long> {
     private static final long serialVersionUID = 8904645810221559541L;

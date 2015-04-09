@@ -16,6 +16,7 @@ import javax.persistence.PersistenceContext;
 import org.apache.commons.lang.RandomStringUtils;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
+import org.egov.infra.admin.master.entity.CityWebsite;
 import org.egov.infra.citizen.inbox.entity.CitizenInbox;
 import org.egov.infra.citizen.inbox.entity.CitizenInboxBuilder;
 import org.egov.infra.citizen.inbox.entity.enums.MessageType;
@@ -27,7 +28,6 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.services.EISServeable;
-import org.egov.lib.admbndry.CityWebsiteImpl;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.enums.ComplaintStatus;
 import org.egov.pgr.repository.ComplaintRepository;
@@ -151,9 +151,9 @@ public class ComplaintService {
 	}
 
 	public List<Complaint> getComplaintsEligibleForEscalation() {
-		final CityWebsiteImpl cityWebsite = (CityWebsiteImpl) getCurrentSession().getNamedQuery(CityWebsiteImpl.QUERY_CITY_BY_URL)
+		final CityWebsite cityWebsite = (CityWebsite) getCurrentSession().getNamedQuery(CityWebsite.QUERY_CITY_BY_URL)
 				.setString("url", EGOVThreadLocals.getDomainName()).uniqueResult();
-		final Integer topLevelBoundaryId = cityWebsite.getBoundaryId().getBndryId();
+		final Integer topLevelBoundaryId = cityWebsite.getBoundary().getBndryId();
 		final Criteria criteria = getCurrentSession().createCriteria(Complaint.class, "complaint").
 		// createAlias("complaint.location","boundary").
 				createAlias("complaint.status", "complaintStatus");

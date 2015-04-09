@@ -5,13 +5,12 @@
  */
 package org.egov.infstr.client.filter;
 
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
-import org.egov.lib.admbndry.CityWebsiteImpl;
-import org.hibernate.SessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.core.context.SecurityContextHolder;
+import static org.egov.infstr.utils.EgovUtils.getDomainName;
+import static org.egov.infstr.utils.EgovUtils.getPrincipalName;
+
+import java.io.IOException;
+import java.security.Principal;
+import java.util.HashMap;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -25,12 +24,14 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import java.io.IOException;
-import java.security.Principal;
-import java.util.HashMap;
-
-import static org.egov.infstr.utils.EgovUtils.getDomainName;
-import static org.egov.infstr.utils.EgovUtils.getPrincipalName;
+import org.egov.infra.admin.master.entity.CityWebsite;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.CityWebsiteService;
+import org.egov.infra.admin.master.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /*
  This Filter is used to put Session Variables in place which are used by the JSP's for various functions.
@@ -53,6 +54,9 @@ public class SetSessionVarFilter implements Filter {
 	private UserService userService;
 	@PersistenceContext
 	private EntityManager entityManager;
+	
+	@Autowired
+	private CityWebsiteService cityWebsiteService;
 
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;
@@ -78,11 +82,10 @@ public class SetSessionVarFilter implements Filter {
 			httpSession.setAttribute("egov.city.url", httpRequest.getParameter("egov.city.url"));
 			httpSession.setAttribute("topBndryObject", httpRequest.getParameter("topBndryObject"));
 		} else if (httpSession.getAttribute("org.egov.topBndryID") == null) {
-			final Query query = entityManager.createNamedQuery(CityWebsiteImpl.QUERY_CITY_BY_URL);
-			query.setParameter("url", getDomainName(httpRequest.getRequestURL().toString()));
-			CityWebsiteImpl city = (CityWebsiteImpl)query.getSingleResult();
+			CityWebsite city = cityWebsiteService.getCityWebSiteByURL(getDomainName(httpRequest.getRequestURL().toString()));
+		        //CityWebsite city = cityWebsiteService.getCityWebsiteByCityName("Corporation of Chennai");
 			httpSession.setAttribute("egov.city.url", "http://" + city.getCityBaseURL());
-			httpSession.setAttribute("org.egov.topBndryID", city.getBoundaryId().getId().toString());
+			httpSession.setAttribute("org.egov.topBndryID", city.getBoundary().getId().toString());
 			httpSession.setAttribute("cityurl", city.getCityBaseURL());
 			httpSession.setAttribute("cityname", city.getCityName());
 			httpSession.setAttribute("citylogo", city.getLogo());

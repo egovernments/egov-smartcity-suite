@@ -4,8 +4,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.util.List;
 
-import org.egov.lib.admbndry.Boundary;
-import org.egov.lib.admbndry.ejb.api.BoundaryService;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ReceivingCenter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,14 +46,14 @@ public class GenericComplaintAjaxController extends GenericComplaintController {
         boundaryService.getBoundaryByNameLike(locationName).stream().forEach(location -> {
             locationJSONData.append("{\"name\":\"");
             if (location.isRoot())
-                locationJSONData.append(location.getBndryNameLocal());
+                locationJSONData.append(location.getBoundaryNameLocal());
             else {
                 Boundary currentLocation = location;
                 while (!currentLocation.isRoot()) {
-                    locationJSONData.append(currentLocation.getBndryNameLocal()).append(", ");
+                    locationJSONData.append(currentLocation.getBoundaryNameLocal()).append(", ");
                     currentLocation = currentLocation.getParent();
                     if (currentLocation.isRoot()) {
-                        locationJSONData.append(currentLocation.getBndryNameLocal());
+                        locationJSONData.append(currentLocation.getBoundaryNameLocal());
                         break;
                     }
                 }

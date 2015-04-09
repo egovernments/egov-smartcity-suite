@@ -5,6 +5,12 @@
  */
 package org.egov.infstr.client.administration.rjbac.user;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -13,29 +19,17 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.admin.master.service.UserService;
-import org.egov.infstr.utils.DateUtils;
 import org.egov.lib.admbndry.Boundary;
-import org.egov.lib.admbndry.ejb.api.BoundaryService;
+import org.egov.lib.admbndry.ejb.api.BoundaryServiceOld;
 import org.egov.lib.admbndry.ejb.server.BoundaryServiceImpl;
-import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
-import org.egov.lib.rjbac.jurisdiction.JurisdictionValues;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
-import java.util.Date;
-import java.util.Set;
 
 public class UserJurisdictionAction extends DispatchAction {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(UserJurisdictionAction.class);
 	private final UserService userService = new UserService();
-	private final BoundaryService boundaryService = new BoundaryServiceImpl();
+	private final BoundaryServiceOld boundaryService = new BoundaryServiceImpl();
 	
 	public ActionForward saveJurisdiction(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
 		String target = "";

@@ -45,7 +45,7 @@ public class UpdateHierarchyTypeController {
             return "hierarchyType-updateForm";
         }
 
-        //hierarchyTypeService.updateHierarchyType(hierarchyType);
+        hierarchyTypeService.updateHierarchyType(hierarchyType);
         additionalAttr.addFlashAttribute("message", STR_MSG_UPDATE_SUCCESS);
 
         return "redirect:/controller/hierarchy-type/update/" + hierarchyType.getName();

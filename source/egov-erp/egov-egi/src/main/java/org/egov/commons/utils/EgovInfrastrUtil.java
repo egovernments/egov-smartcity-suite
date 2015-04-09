@@ -34,7 +34,7 @@ import org.egov.infstr.commons.Module;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.ExcludeBndryType;
 import org.egov.lib.admbndry.Boundary;
-import org.egov.lib.admbndry.ejb.api.BoundaryService;
+import org.egov.lib.admbndry.ejb.api.BoundaryServiceOld;
 import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
 import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
 import org.slf4j.Logger;
@@ -48,7 +48,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 	private static final Integer idBetween = new Integer(3);
 	private static final Integer idCurrent = new Integer(4);
 	private BoundaryTypeService boundaryTypeService;
-	private BoundaryService boundaryService;
+	private BoundaryServiceOld boundaryService;
 	private HeirarchyTypeService heirarchyTypeService;
 	private DepartmentService departmentService;
 	private RoleService roleService;
@@ -93,7 +93,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 		this.boundaryTypeService = boundaryTypeService;
 	}
 
-	public void setBoundaryService(final BoundaryService boundaryService) {
+	public void setBoundaryService(final BoundaryServiceOld boundaryService) {
 		this.boundaryService = boundaryService;
 	}
 

@@ -20,11 +20,11 @@ import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.lib.admbndry.BoundaryFinder;
 import org.egov.lib.admbndry.VisitableBoundary;
-import org.egov.lib.admbndry.ejb.api.BoundaryService;
+import org.egov.lib.admbndry.ejb.api.BoundaryServiceOld;
 import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
 import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
 
-public class BoundaryServiceImpl implements BoundaryService {
+public class BoundaryServiceImpl implements BoundaryServiceOld {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BoundaryServiceImpl.class);
 	private BoundaryDAO boundaryDAO;

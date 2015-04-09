@@ -16,7 +16,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.lib.admbndry.ejb.api.BoundaryService;
+import org.egov.lib.admbndry.ejb.api.BoundaryServiceOld;
 import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
 import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class UserDelegate {
 	
 	private UserService userService ;
 	private HeirarchyTypeService heirarchyTypeService;
-	private BoundaryService boundaryService;
+	private BoundaryServiceOld boundaryService;
 	@Autowired
 	private RoleService roleService;
 	@Autowired
@@ -222,7 +222,7 @@ public class UserDelegate {
 		this.heirarchyTypeService = heirarchyTypeService;
 	}
 
-	public void setBoundaryService(BoundaryService boundaryService) {
+	public void setBoundaryService(BoundaryServiceOld boundaryService) {
 		this.boundaryService = boundaryService;
 	}
 

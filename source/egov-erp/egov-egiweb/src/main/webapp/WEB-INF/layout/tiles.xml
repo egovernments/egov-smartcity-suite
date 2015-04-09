@@ -77,4 +77,24 @@
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/department/department-form.jsp"/>
     </definition>
     
+    <definition name="boundary-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.boundary" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/boundary-search.jsp"/>
+    </definition>
+    
+    <definition name="boundary-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.boundary" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/boundary-view.jsp"/>
+    </definition>
+    
+     <definition name="boundary-create" extends="base_layout">
+        <put-attribute name="page-title" value="title.boundary" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/boundary-create.jsp"/>
+    </definition>
+    
+    <definition name="masterAjax-boundaryType" extends="base_layout">
+        <put-attribute name="page-title" value="title.boundary" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/masterAjax-boundaryType.jsp"/>
+    </definition>
+    
 </tiles-definitions>

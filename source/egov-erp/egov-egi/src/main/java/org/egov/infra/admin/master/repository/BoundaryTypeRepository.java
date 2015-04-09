@@ -1,6 +1,5 @@
 package org.egov.infra.admin.master.repository;
 
-
 import java.util.List;
 
 import org.egov.infra.admin.master.entity.BoundaryType;
@@ -22,5 +21,5 @@ public interface BoundaryTypeRepository extends JpaRepository<BoundaryType, Long
 	
 	@Query("select bt from BoundaryType bt where bt.parent.name=:parentName")
         public BoundaryType findByParent(@Param("parentName") String parentName);
-        
+ 
 }

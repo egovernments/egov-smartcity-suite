@@ -19,22 +19,22 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.models.Favourites;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.lib.admbndry.Boundary;
-import org.egov.lib.admbndry.ejb.api.BoundaryService;
 import org.egov.web.actions.BaseFormAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class HomepageAction. ERP Portal Page Rendering
@@ -187,7 +187,7 @@ public class HomepageAction extends BaseFormAction {
 		try {
 			final HttpServletRequest req = ServletActionContext.getRequest();
 			final HttpSession session = req.getSession();
-			final Boundary boundary = this.boundaryService.getBoundary(Integer.valueOf((String) session.getAttribute("org.egov.topBndryID")));
+			final Boundary boundary = this.boundaryService.getBoundaryById(Long.valueOf((String) session.getAttribute("org.egov.topBndryID")));
 			if (boundary == null) {
 				throw new EGOVRuntimeException("City does not found");
 			}

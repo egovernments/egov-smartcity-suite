@@ -24,7 +24,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.web.support.formatter.BoundaryFormatter;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.lib.admbndry.BoundaryImpl;
-import org.egov.lib.admbndry.ejb.api.BoundaryService;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;

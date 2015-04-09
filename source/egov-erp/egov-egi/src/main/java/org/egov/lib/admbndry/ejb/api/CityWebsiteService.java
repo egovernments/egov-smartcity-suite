@@ -8,7 +8,7 @@ package org.egov.lib.admbndry.ejb.api;
 import java.util.List;
 
 import org.egov.exceptions.DuplicateElementException;
-import org.egov.lib.admbndry.CityWebsite;
+import org.egov.infra.admin.master.entity.CityWebsite;
 
 public interface CityWebsiteService {
 
