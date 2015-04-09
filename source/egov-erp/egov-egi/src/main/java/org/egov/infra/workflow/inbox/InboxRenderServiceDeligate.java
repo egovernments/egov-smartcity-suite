@@ -187,8 +187,7 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
     }
 
     public User getStateUser(final State state, final Position position) {
-        //FIXME position.getId()
-        return this.eisService.getUserForPosition(11l, state.getCreatedDate().toDate());
+        return this.eisService.getUserForPosition(position.getId(), state.getCreatedDate().toDate());
     }
 
     public String prettyPrintSenderName(final Position position, final User user) {
