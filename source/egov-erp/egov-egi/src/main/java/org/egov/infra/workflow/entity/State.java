@@ -26,7 +26,7 @@ import org.hibernate.validator.constraints.Length;
 @Entity
 @Table(name = "EG_WF_STATES")
 @NamedQueries({
-        @NamedQuery(name = "WORKFLOWTYPES", query = "select distinct s.type from State s where s.ownerPosition.id=?  and s.status is not 2"),
+        @NamedQuery(name = "WORKFLOWTYPES", query = "select distinct s.type from State s where s.ownerPosition.id in (?0)  and s.status is not 2"),
         @NamedQuery(name = "WORKFLOWTYPES_BY_ID", query = "select s from State s where s.id=?") })
 public class State extends AbstractAuditable<User, Long> {
 

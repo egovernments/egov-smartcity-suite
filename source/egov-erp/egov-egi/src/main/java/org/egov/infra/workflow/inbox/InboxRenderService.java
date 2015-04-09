@@ -30,20 +30,18 @@ public interface InboxRenderService<T extends StateAware> {
 	 * has not ended.
 	 * @param owner the owner
 	 * @param userId the user id
-	 * @param order the order
 	 * @return the assigned workflow items
 	 */
-	List<T> getAssignedWorkflowItems(Long owner, Long userId, String order);
+	List<T> getAssignedWorkflowItems(Long userId, List<Long> owners);
 	
 	/**
 	 * Returns a list of workflow items that are created by the given position and the state in
 	 * 'NEW'.
 	 * @param owner the owner
 	 * @param userId the user id
-	 * @param order the order
 	 * @return the draft workflow items
 	 */
-	List<T> getDraftWorkflowItems(Long owner, Long userId, String order);
+	List<T> getDraftWorkflowItems(Long userId, List<Long> owners);
 	
 	/**
 	 * Gets the filtered workflow items.

@@ -35,9 +35,8 @@
             <tiles:insertAttribute name="header"/>
                 <div class="main-content">
                     <tiles:insertAttribute name="body"/>
-                    <tiles:insertAttribute name="footer"/>
                 </div>
-
+				<tiles:insertAttribute name="footer"/>
         </div>
         <div class="modal fade loader-class" data-backdrop="static">
 			<div class="modal-dialog">

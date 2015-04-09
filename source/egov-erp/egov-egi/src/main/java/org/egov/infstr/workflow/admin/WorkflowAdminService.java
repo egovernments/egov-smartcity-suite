@@ -45,7 +45,7 @@ public class WorkflowAdminService {
 
     public String reassignWFItem(final String wfType, final String stateId, final Long newUserId) {
         String status = "ERROR";
-        final List<StateAware> stateAwares = inboxRenderServiceDeligate.getWorkflowItems(wfType, stateId);
+        final List<StateAware> stateAwares = inboxRenderServiceDeligate.fetchInboxItems(wfType, stateId);
         if (!stateAwares.isEmpty()) {
             final Position newOwner = eisService.getPrimaryPositionForUser(newUserId, new Date());
             if (stateAwares.get(0).getCurrentState().getOwnerPosition().getId().equals(newOwner.getId()))

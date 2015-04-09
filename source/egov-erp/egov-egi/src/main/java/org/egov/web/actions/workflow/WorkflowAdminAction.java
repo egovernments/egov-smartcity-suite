@@ -330,7 +330,7 @@ public class WorkflowAdminAction extends ActionSupport {
 	 * @param owner the new owner
 	 */
 	public void setOwner(final Long owner) {
-		this.criteria.put("owner", this.inboxRenderServiceDeligate.getPositionForUser(owner, new Date()));
+		//this.criteria.put("owner", this.inboxRenderServiceDeligate.getPositionForUser(owner, new Date()));
 	}
 
 	/**
@@ -346,7 +346,7 @@ public class WorkflowAdminAction extends ActionSupport {
 	 * @param sender the new sender
 	 */
 	public void setSender(final Long sender) {
-		this.criteria.put("sender", this.inboxRenderServiceDeligate.getPositionForUser(sender, new Date()));
+		//this.criteria.put("sender", this.inboxRenderServiceDeligate.getPositionForUser(sender, new Date()));
 	}
 
 	/**

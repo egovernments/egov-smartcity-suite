@@ -31,12 +31,9 @@
         <div class="page-container horizontal-menu">
             <tiles:insertAttribute name="header"/>
                 <div class="main-content">
-                	<div class="main-before-footer">
                     <tiles:insertAttribute name="body"/>
-                    </div>
-                    <tiles:insertAttribute name="footer"/>
                 </div>
-
+                <tiles:insertAttribute name="footer"/>
         </div>
         <script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js'/>"></script>

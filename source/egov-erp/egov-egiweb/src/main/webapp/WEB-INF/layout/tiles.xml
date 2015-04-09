@@ -12,9 +12,10 @@
     </definition>
 
 
-    <definition name="index" extends="base_layout">
-        <put-attribute name="body" value="/WEB-INF/views/home.jsp"/>
+    <definition name="home" template="/WEB-INF/views/home.jsp">
+        <put-attribute name="title" value="eGov Urban Portal"/>
     </definition>
+    
     <definition name="role-form" extends="base_layout">
         <put-attribute name="page-title" value="title.createRole" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/role/role-form.jsp"/>

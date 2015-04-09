@@ -39,7 +39,9 @@ import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public class PersistenceService<T, ID extends Serializable> implements GenericDAO<T, ID> {
     private static final Logger LOG = LoggerFactory.getLogger(PersistenceService.class);
     private static final String DEFAULT_FIELD = "_hibernate_class";
@@ -157,7 +159,7 @@ public class PersistenceService<T, ID extends Serializable> implements GenericDA
         int index = 0;
         for (final Object param : params) {
             if (param instanceof Collection)
-                q.setParameterList(String.valueOf("param_" + index), (Collection) param);
+                q.setParameterList(String.valueOf(index), (Collection) param);
             else
                 q.setParameter(index, param);
             index++;

@@ -45,13 +45,13 @@ public class DefaultInboxRenderServiceImpl<T extends StateAware> implements Inbo
     }
 
     @Override
-    public List<T> getAssignedWorkflowItems(final Long owner, final Long userId, final String order) {
+    public List<T> getAssignedWorkflowItems(final Long userId, final List<Long> owners) {
         this.stateAwarePersistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         final StringBuilder query = new StringBuilder("FROM ");
         query.append(this.stateAwareType.getName())
-                .append(" WF where WF.state.type=:wfType and WF.state.ownerPosition.id =:owner and WF.state.status !=:end and not (WF.state.status =:new and WF.createdBy.id =:userId) order by WF.state.createdDate DESC");
+                .append(" WF where WF.state.type=:wfType and WF.state.ownerPosition.id in(:owner) and WF.state.status !=:end and not (WF.state.status =:new and WF.createdBy.id =:userId) order by WF.state.createdDate DESC");
         final Query qry = this.stateAwarePersistenceService.getSession().createQuery(query.toString());
-        qry.setLong(OWNER, owner);
+        qry.setParameterList(OWNER, owners);
         qry.setString(WFTYPE, this.stateAwareType.getSimpleName());
         qry.setParameter("end", StateStatus.ENDED);
         qry.setParameter("new", StateStatus.STARTED);
@@ -61,13 +61,13 @@ public class DefaultInboxRenderServiceImpl<T extends StateAware> implements Inbo
     }
 
     @Override
-    public List<T> getDraftWorkflowItems(final Long owner, final Long userId, final String order) {
+    public List<T> getDraftWorkflowItems(final Long userId, final List<Long> owners)  {
         this.stateAwarePersistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         final StringBuilder query = new StringBuilder("FROM ");
         query.append(this.stateAwareType.getName())
                 .append(" WF where WF.state.type=:wfType and WF.state.ownerPosition.id =:owner and WF.createdBy.id =:userId and WF.state.status =:new");
         final Query qry = this.stateAwarePersistenceService.getSession().createQuery(query.toString());
-        qry.setLong(OWNER, owner);
+        qry.setParameterList(OWNER, owners);
         qry.setString(WFTYPE, this.stateAwareType.getSimpleName());
         qry.setLong("userId", userId);
         qry.setParameter("new", StateStatus.STARTED);
@@ -83,7 +83,7 @@ public class DefaultInboxRenderServiceImpl<T extends StateAware> implements Inbo
         this.stateAwarePersistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         final StringBuilder query = new StringBuilder("from ");
         query.append(this.stateAwareType.getName()).append(" WF where WF.state.type=:wfType and WF.state.ownerPosition =:owner ")
-                .append(sender == null || sender == 0 ? "" : "and WF.state.senderName=:sender ")
+                .append(sender == 0 ? "" : "and WF.state.senderName=:sender ")
                 .append(" and WF.state.createdDate ");
         query.append(fromDate == null && toDate == null ? "IS NOT NULL "
                 : " >= :fromDate and WF.state.createdDate <:toDate ");
@@ -91,7 +91,7 @@ public class DefaultInboxRenderServiceImpl<T extends StateAware> implements Inbo
         final Query qry = this.stateAwarePersistenceService.getSession().createQuery(query.toString());
         qry.setLong(OWNER, owner);
         qry.setString(WFTYPE, this.stateAwareType.getSimpleName());
-        if (sender != null && sender != 0)
+        if (sender != 0)
             qry.setLong(SENDER, sender);
         Date[] dates = null;
         final boolean isFrmDtNtNull = fromDate != null;
