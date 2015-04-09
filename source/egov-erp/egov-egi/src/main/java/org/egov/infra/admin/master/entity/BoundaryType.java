@@ -11,6 +11,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.search.domain.Searchable;
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
@@ -19,11 +20,13 @@ import org.hibernate.validator.constraints.NotBlank;
 
 @Entity
 @Table(name = "EG_BOUNDARY_TYPE")
+@Searchable
 public class BoundaryType extends AbstractAuditable<User, Long> {
 
     private static final long serialVersionUID = 7034114743461088247L;
 
     @NotBlank
+    @Searchable(name="name")
     private String name;
 
     @ManyToOne
