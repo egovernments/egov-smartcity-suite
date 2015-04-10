@@ -1,6 +1,7 @@
 package org.egov.pgr.web.controller.complaint;
 
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
@@ -87,7 +88,11 @@ public class ComplaintUpdationController {
                 Complaint complaint = complaintService.getComplaintById(id);
                 return "complaint-citizen-edit";
             }
+
             Complaint complaint = complaintService.getComplaintById(id);
+            List<Hashtable<String, Object>> historyTable = complaintService.getHistory(complaint);
+            model.addAttribute("complaintHistory", historyTable);
+
             prepareWorkflow(model);
             // set the defaults
             model.addAttribute("zone", Collections.EMPTY_LIST);

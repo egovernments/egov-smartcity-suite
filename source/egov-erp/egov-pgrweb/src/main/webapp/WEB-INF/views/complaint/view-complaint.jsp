@@ -39,7 +39,7 @@
 					</div>
 				</div>
 				<div class="row add-border">
-					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.compalintDepartment" /></div>
+					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.complaintDepartment" /></div>
 					<div class="col-md-3 col-xs-6 add-margin" id="ct-dept">
 						<c:out value="${complaint.complaintType.department.name}"></c:out>
 					</div>
@@ -153,18 +153,18 @@
 						<c:choose>
 							<c:when test="${!complaintHistory.isEmpty()}">
 								<c:forEach items="${complaintHistory}" var="history">
-									<div class="col-md-3 col-xs-6 add-margin">
+									<div class="col-md-3 col-xs-6 add-margin add-border">
 										<fmt:formatDate value="${history.date}" var="historyDate"
 											pattern="HH:MM a E dd MMM yyyy" />
 										<c:out value="${historyDate}" />
 									</div>
-									<div class="col-md-3 col-xs-6 add-margin">
+									<div class="col-md-3 col-xs-6 add-margin add-border">
 										<c:out value="${history.user}" />
 									</div>
-									<div class="col-md-3 col-xs-6 add-margin">
+									<div class="col-md-3 col-xs-6 add-margin add-border">
 										<c:out value="${history.department}" />
 									</div>
-									<div class="col-md-3 col-xs-6 add-margin">
+									<div class="col-md-3 col-xs-6 add-margin add-border">
 										<c:out value="${history.comments}" />
 									</div>
 								</c:forEach>

@@ -86,14 +86,14 @@
 							<spring:message code="lbl.select" />
 						</form:option>
 						<form:options items="${approvalDepartmentList}" itemValue="id"
-							itemLabel="deptName" />
+							itemLabel="name" />     
 					</form:select>
 					<form:errors path="" cssClass="error-msg" />
 				</div>
 				<div class="col-md-3 col-xs-12 add-margin">
 					<form:select path="" data-first-option="false"
 						id="approvalDesignation" cssClass="form-control"
-						cssErrorClass="form-control error">
+						cssErrorClass="form-control error">  
 						<form:option value="">
 							<spring:message code="lbl.select" />
 						</form:option>
