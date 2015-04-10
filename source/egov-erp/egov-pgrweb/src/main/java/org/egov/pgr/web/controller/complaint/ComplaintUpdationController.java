@@ -95,11 +95,11 @@ public class ComplaintUpdationController {
 
             prepareWorkflow(model);
             // set the defaults
-            model.addAttribute("zone", Collections.EMPTY_LIST);
+            // model.addAttribute("zone", Collections.EMPTY_LIST);
             model.addAttribute("ward", Collections.EMPTY_LIST);
-            // model.addAttribute("zone", commonService.getZones());
+            model.addAttribute("zone", commonService.getZones());
             if (complaint.getComplaintType().isLocationRequired()) {
-                model.addAttribute("zone", commonService.getZones());
+                // model.addAttribute("zone", commonService.getZones());
                 if (complaint.getLocation() != null) {
                     model.addAttribute("ward", commonService.getWards(complaint.getLocation().getParent().getId()));
                 }
@@ -137,18 +137,21 @@ public class ComplaintUpdationController {
         if (!errors.hasErrors()) {
             complaintService.update(complaint, approvalPosition, approvalComent);
 
-            redirectAttrs.addFlashAttribute("message", "Successfully Update Complaint !");
+            redirectAttrs.addFlashAttribute("message", "Successfully Updated Complaint !");
         } else {
-            model.addAttribute("zone", Collections.EMPTY_LIST);
+            prepareWorkflow(model);
+            model.addAttribute("zone", commonService.getZones());
             model.addAttribute("ward", Collections.EMPTY_LIST);
 
             if (complaint.getComplaintType() != null && complaint.getComplaintType().isLocationRequired()) {
-                model.addAttribute("zone", commonService.getZones());
+
                 if (complaint.getLocation() != null) {
                     model.addAttribute("ward", commonService.getWards(complaint.getLocation().getParent().getId()));
                 }
 
             }
+
+            return "complaint-edit";
 
         }
         return "redirect:/complaint-update?id=" + complaint.getId();
@@ -156,15 +159,23 @@ public class ComplaintUpdationController {
 
     private void validateUpdate(Complaint complaint, BindingResult errors, HttpServletRequest request) {
         if (null == complaint.getStatus()) {
-            ObjectError error = new ObjectError(complaint.getStatus().getName(), "Complaint Status Cannot be null");
+            ObjectError error = new ObjectError("status", "Complaint Status is required");
             errors.addError(error);
         }
 
-        if (null == request.getParameter("approvalComent") || request.getParameter("approvalComent").isEmpty()) {
-            ObjectError error = new ObjectError("approvalComent", "Complaint coments Cannot be null");
+        if (null == complaint.getComplaintType()) {
+            ObjectError error = new ObjectError("complaintType", "ComplaintType is required");
             errors.addError(error);
         }
+
+        // comenting as only status or complaint type change does not need
+        // coments
+        /*
+         * if (null == request.getParameter("approvalComent") ||
+         * request.getParameter("approvalComent").isEmpty()) { ObjectError error
+         * = new ObjectError("approvalComent",
+         * "Complaint coments Cannot be null"); errors.addError(error); }
+         */
 
     }
-
 }

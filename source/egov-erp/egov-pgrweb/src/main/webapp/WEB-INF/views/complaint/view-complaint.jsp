@@ -149,10 +149,11 @@
 					</div>
 				</div>
 				<div class="panel-body">
-					<div class="row">
+					
 						<c:choose>
 							<c:when test="${!complaintHistory.isEmpty()}">
 								<c:forEach items="${complaintHistory}" var="history">
+								<div class="row">
 									<div class="col-md-3 col-xs-6 add-margin add-border">
 										<fmt:formatDate value="${history.date}" var="historyDate"
 											pattern="HH:MM a E dd MMM yyyy" />
@@ -165,8 +166,9 @@
 										<c:out value="${history.department}" />
 									</div>
 									<div class="col-md-3 col-xs-6 add-margin add-border">
-										<c:out value="${history.comments}" />
+										<c:out value="${history.comments}" />&nbsp;
 									</div>
+								</div>
 								</c:forEach>
 							</c:when>
 							<c:otherwise>
@@ -174,7 +176,7 @@
 									details for complaint</div>
 							</c:otherwise>
 						</c:choose>
-					</div>
+					
 				</div>
 			</div>
 		</div>

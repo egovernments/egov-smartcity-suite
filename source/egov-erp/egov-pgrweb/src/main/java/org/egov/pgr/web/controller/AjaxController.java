@@ -29,8 +29,8 @@ public class AjaxController {
         this.commonService = commonService;
     }
 
-    @RequestMapping(value = "/ajax-getWards/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Boundary> getWardsForZone(@PathVariable Long id) {
+    @RequestMapping(value = "/ajax-getWards", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Boundary> getWardsForZone(@RequestParam Long id) {
         return commonService.getWards(id);
     }
 
@@ -39,7 +39,7 @@ public class AjaxController {
             @ModelAttribute("designations") @RequestParam Integer approvalDepartment) {
         List<DesignationMaster> designations = commonService.getDesignations(approvalDepartment);
         designations.forEach(designation -> designation.toString());
-        return designations;
+        return designations;  
     }
 
     @RequestMapping(value = "/ajax-approvalPositions", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -56,13 +56,7 @@ public class AjaxController {
 
         }
 
-        /*
-         * Gson jsonCreator = new
-         * GsonBuilder().excludeFieldsWithoutExposeAnnotation().create(); String
-         * json = jsonCreator.toJson(users, new TypeToken<Collection<User>>() {
-         * }.getType());
-         */
-        System.out.println(writer);
+       
 
         return users;
     }

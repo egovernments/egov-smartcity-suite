@@ -36,9 +36,6 @@
 					<form:select path="complaintType" data-first-option="false"
 						id="complaintType" cssClass="form-control"
 						cssErrorClass="form-control error">
-						<form:option value="">
-							<spring:message code="lbl.select" />
-						</form:option>
 						<form:options items="${complaintType}" itemValue="id"
 							itemLabel="name" />
 					</form:select>
@@ -57,7 +54,7 @@
 							<spring:message code="lbl.select" />
 						</form:option>
 						<form:options items="${zone}" itemValue="id"
-							itemLabel="bndryNameLocal" />
+							itemLabel="boundaryNameLocal" />
 					</form:select>
 					<form:errors path="" cssClass="error-msg" />
 				</div>
@@ -70,7 +67,7 @@
 							<spring:message code="lbl.select" />
 						</form:option>
 						<form:options items="${ward}" itemValue="id"
-							itemLabel="bndryNameLocal" />
+							itemLabel="boundaryNameLocal" />
 					</form:select>
 					<form:errors path="location" cssClass="error-msg" />
 				</div>
@@ -88,7 +85,7 @@
 						<form:options items="${approvalDepartmentList}" itemValue="id"
 							itemLabel="name" />     
 					</form:select>
-					<form:errors path="" cssClass="error-msg" />
+					
 				</div>
 				<div class="col-md-3 col-xs-12 add-margin">
 					<form:select path="" data-first-option="false"
@@ -100,7 +97,7 @@
 						<form:options items="${approvalDesignationList}" itemValue="id"
 							itemLabel="name" />
 					</form:select>
-					<form:errors path="" cssClass="error-msg" />
+					
 				</div>
 				<div class="col-md-3 col-xs-12 add-margin">
 					<select name="approvalPosition" id="approvalPosition"
@@ -108,7 +105,7 @@
 						<option value=""><spring:message code="lbl.select" /></option>
 
 					</select>
-					<form:errors path="" cssClass="error-msg" />
+					
 				</div>
 			</div>
 			
@@ -131,6 +128,9 @@
 			<button type="reset" class="btn btn-default">
 				<spring:message code="lbl.reset" />
 			</button>
+			<button type="close" class="btn btn-default" onclick="window.close();">
+				Close
+			</button>   
 		</div>
 	</div>
 	</form:form>

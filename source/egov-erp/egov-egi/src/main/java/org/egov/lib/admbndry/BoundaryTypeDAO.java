@@ -5,6 +5,12 @@
  */
 package org.egov.lib.admbndry;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -16,212 +22,227 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+@Repository
 public class BoundaryTypeDAO {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(BoundaryTypeDAO.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BoundaryTypeDAO.class);
 
-	private SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
 
-	public BoundaryTypeDAO(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
+    public BoundaryTypeDAO(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
-	private Session getSession() {
-		return this.sessionFactory.getCurrentSession();
-	}
-	public void createBoundaryType(final BoundaryType bndryType) {
-		try {
-			getSession().save(bndryType);
-		} catch (final HibernateException e) {
-			LOGGER.error("Exception occurred in createBoundaryType", e);
-			throw new EGOVRuntimeException("Exception occurred in createBoundaryType", e);
-		}
-	}
+    private Session getSession() {
+        return this.sessionFactory.getCurrentSession();
+    }
 
-	public void removeBoundaryType(final BoundaryType bndryType) {
-		try {
-			getSession().delete(bndryType);
-		} catch (final HibernateException e) {
-			LOGGER.error("Exception occurred in removeBoundaryType", e);
-			throw new EGOVRuntimeException("Exception occurred in removeBoundaryType", e);
-		} catch (final Exception e) {
-			LOGGER.error("Exception occurred in removeBoundaryType", e);
-			throw new EGOVRuntimeException("Exception occurred in removeBoundaryType", e);
-		}
-	}
+    public void createBoundaryType(final BoundaryType bndryType) {
+        try {
+            getSession().save(bndryType);
+        } catch (final HibernateException e) {
+            LOGGER.error("Exception occurred in createBoundaryType", e);
+            throw new EGOVRuntimeException("Exception occurred in createBoundaryType", e);
+        }
+    }
 
-	public void updateBoundaryType(final BoundaryType bndryType) {
-		try {
-			getSession().saveOrUpdate(bndryType);
-		} catch (final HibernateException e) {
-			LOGGER.error("Exception occurred in updateBoundaryType", e);
-			throw new EGOVRuntimeException("Exception occurred in updateBoundaryType", e);
-		} catch (final Exception se) {
-			LOGGER.error("Exception occurred in updateBoundaryType", se);
-			throw new EGOVRuntimeException("Exception occurred in updateBoundaryType", se);
-		}
-	}
+    public void removeBoundaryType(final BoundaryType bndryType) {
+        try {
+            getSession().delete(bndryType);
+        } catch (final HibernateException e) {
+            LOGGER.error("Exception occurred in removeBoundaryType", e);
+            throw new EGOVRuntimeException("Exception occurred in removeBoundaryType", e);
+        } catch (final Exception e) {
+            LOGGER.error("Exception occurred in removeBoundaryType", e);
+            throw new EGOVRuntimeException("Exception occurred in removeBoundaryType", e);
+        }
+    }
 
-	public BoundaryType getBoundaryType(final short heirarchylevel, final HierarchyType heirarchyType) {
-		try {
-			final Query qry = getSession().createQuery("from BoundaryTypeImpl BT left join fetch BT.childBoundaryTypes where BT.hierarchy = :hirchy and BT.heirarchyType = :heirarchyType");
-			qry.setShort("hirchy", heirarchylevel);
-			qry.setEntity("heirarchyType", heirarchyType);
-			return (BoundaryType) qry.uniqueResult();
-		} catch (final HibernateException e) {
-			LOGGER.error("Exception occurred in getBoundaryType", e);
-			throw new EGOVRuntimeException("Exception occurred in getBoundaryType", e);
-		}
-	}
+    public void updateBoundaryType(final BoundaryType bndryType) {
+        try {
+            getSession().saveOrUpdate(bndryType);
+        } catch (final HibernateException e) {
+            LOGGER.error("Exception occurred in updateBoundaryType", e);
+            throw new EGOVRuntimeException("Exception occurred in updateBoundaryType", e);
+        } catch (final Exception se) {
+            LOGGER.error("Exception occurred in updateBoundaryType", se);
+            throw new EGOVRuntimeException("Exception occurred in updateBoundaryType", se);
+        }
+    }
 
-	public BoundaryType getBoundaryType(final String bndryTypeName, final HierarchyType heirarchyType) {
-		try {
-			final Query qry = getSession().createQuery("from BoundaryTypeImpl BT where upper(NAME) = upper(:name) and BT.heirarchyType = :heirarchyType");
-			qry.setString("name", bndryTypeName);
-			qry.setEntity("heirarchyType", heirarchyType);
-			return (BoundaryType) qry.uniqueResult();
-		} catch (final HibernateException e) {
-			LOGGER.error("Exception occurred in getBoundaryType", e);
-			throw new EGOVRuntimeException("Exception occurred in getBoundaryType", e);
-		}
-	}
+    public BoundaryType getBoundaryType(final short heirarchylevel, final HierarchyType hierarchyType) {
+        try {
+            final Query qry = getSession()
+                    .createQuery(
+                            "from BoundaryType BT left join fetch BT.childBoundaryTypes where BT.hierarchy = :hirchy and BT.HierarchyType = :HierarchyType");
+            qry.setShort("hirchy", heirarchylevel);
+            qry.setEntity("hierarchyType", hierarchyType);
+            return (BoundaryType) qry.uniqueResult();
+        } catch (final HibernateException e) {
+            LOGGER.error("Exception occurred in getBoundaryType", e);
+            throw new EGOVRuntimeException("Exception occurred in getBoundaryType", e);
+        }
+    }
 
-	public BoundaryType getBoundaryType(final Integer id) {
-		try {
-			final Query qry = getSession().createQuery("from BoundaryTypeImpl BT where id=:id");
-			qry.setInteger("id", id);
-			return (BoundaryType) qry.uniqueResult();
-		} catch (final HibernateException e) {
-			LOGGER.error("Exception occurred in getBoundaryType", e);
-			throw new EGOVRuntimeException("Exception occurred in getBoundaryType", e);
-		}
-	}
+    public BoundaryType getBoundaryType(final String bndryTypeName, final HierarchyType hierarchyType) {
+        try {
+            final Query qry = getSession().createQuery(
+                    "from BoundaryType BT where upper(NAME) = upper(:name) and BT.hierarchyType = :hierarchyType");
+            qry.setString("name", bndryTypeName);
+            qry.setEntity("hierarchyType", hierarchyType);
+            return (BoundaryType) qry.uniqueResult();
+        } catch (final HibernateException e) {
+            LOGGER.error("Exception occurred in getBoundaryType", e);
+            throw new EGOVRuntimeException("Exception occurred in getBoundaryType", e);
+        }
+    }
 
-	// It will return all the parent boundary as list for the input boundary id.
-	// BoundaryList declared as global because recursive is used to get the parent boundary.
-	List<Boundary> boundaryList = new ArrayList<Boundary>();
+    public BoundaryType getBoundaryType(final Integer id) {
+        try {
+            final Query qry = getSession().createQuery("from BoundaryType BT where id=:id");
+            qry.setInteger("id", id);
+            return (BoundaryType) qry.uniqueResult();
+        } catch (final HibernateException e) {
+            LOGGER.error("Exception occurred in getBoundaryType", e);
+            throw new EGOVRuntimeException("Exception occurred in getBoundaryType", e);
+        }
+    }
 
-	public List<Boundary> getParentBoundaryList(final Long boundaryId) throws NoSuchObjectException {
-		try {
+    // It will return all the parent boundary as list for the input boundary id.
+    // BoundaryList declared as global because recursive is used to get the
+    // parent boundary.
+    List<Boundary> boundaryList = new ArrayList<Boundary>();
 
-			final BoundaryDAO bndryDAO = new BoundaryDAO(sessionFactory);
-			final Boundary bndry = bndryDAO.getBoundary(boundaryId);
-			if (bndry != null) {
-				this.boundaryList.add(bndry);
-				if (bndry.getParent() != null) {
-					this.boundaryList = getParentBoundaryList(bndry.getParent().getId());
-				}
-			} else {
-				throw new NoSuchObjectException("bndry.Obj.null");
+    public List<Boundary> getParentBoundaryList(final Long boundaryId) throws NoSuchObjectException {
+        try {
 
-			}
+            final BoundaryDAO bndryDAO = new BoundaryDAO(sessionFactory);
+            final Boundary bndry = bndryDAO.getBoundary(boundaryId);
+            if (bndry != null) {
+                this.boundaryList.add(bndry);
+                if (bndry.getParent() != null) {
+                    this.boundaryList = getParentBoundaryList(bndry.getParent().getId());
+                }
+            } else {
+                throw new NoSuchObjectException("bndry.Obj.null");
 
-			return this.boundaryList;
-		} catch (final Exception e) {
-			LOGGER.error("Exception occurred in getParentBoundaryList", e);
-			throw new EGOVRuntimeException("system.error", e);
-		}
-	}
+            }
 
-	// It will return all the parent boundary Types as list for the input heirarchy type.
-	// Filtered boundary types, if their parent is null.
-	public List<BoundaryType> getParentBoundaryTypeByHirarchy(final HierarchyType heirarchyType) throws EGOVRuntimeException {
-		try {
-			List<BoundaryType> boundaryTypeList = new ArrayList<BoundaryType>();
+            return this.boundaryList;
+        } catch (final Exception e) {
+            LOGGER.error("Exception occurred in getParentBoundaryList", e);
+            throw new EGOVRuntimeException("system.error", e);
+        }
+    }
 
-			if (heirarchyType != null) {
-				final Query qry = getSession().createQuery("from BoundaryTypeImpl BT where BT.parent is not null and  BT.heirarchyType = :heirarchyType");
-				qry.setEntity("heirarchyType", heirarchyType);
-				boundaryTypeList = qry.list();
-			}
-			return boundaryTypeList;
+    // It will return all the parent boundary Types as list for the input
+    // heirarchy type.
+    // Filtered boundary types, if their parent is null.
+    public List<BoundaryType> getParentBoundaryTypeByHirarchy(final HierarchyType hierarchyType)
+            throws EGOVRuntimeException {
+        try {
+            List<BoundaryType> boundaryTypeList = new ArrayList<BoundaryType>();
 
-		} catch (final Exception e) {
-			LOGGER.error("Exception occurred in getParentBoundaryTypeByHirarchy", e);
-			throw new EGOVRuntimeException("system.error", e);
-		}
-	}
+            if (hierarchyType != null) {
+                final Query qry = getSession().createQuery(
+                        "from BoundaryType BT where BT.parent is not null and  BT.hierarchyType = :hierarchyType");
+                qry.setEntity("hierarchyType", hierarchyType);
+                boundaryTypeList = qry.list();
+            }
+            return boundaryTypeList;
 
-	/**
-	 * It will return all the parent boundary as map for the input heirarchy type. 
-	 * First Getting Top level Boundary Type in a hierarchy(next to "city"). 
-	 * Second loop getting all the boundaries for individual boundary types. 
-	 * Returns Map which mapped to Boundary Type Name and List of boundaries.
-	 */
-	public Map<String, List<Boundary>> getSecondLevelBoundaryByPassingHeirarchy(final HierarchyType heirarchyType) throws EGOVRuntimeException {
-		try {
-			List<Boundary> boundaryList = new ArrayList<Boundary>();
-			final Map<String, List<Boundary>> retSet = new HashMap<String, List<Boundary>>();
-			String bryName = null;
-			final Date currDate = new Date();
-			// Getting Top level Boundary Type in a hierarchy.
-			if (heirarchyType != null) {
+        } catch (final Exception e) {
+            LOGGER.error("Exception occurred in getParentBoundaryTypeByHirarchy", e);
+            throw new EGOVRuntimeException("system.error", e);
+        }
+    }
 
-				final Query qry = getSession().createQuery("from BoundaryTypeImpl BT where BT.parent.parent is null and  BT.heirarchyType = :heirarchyType");
-				qry.setEntity("heirarchyType", heirarchyType);
-				final BoundaryType boundry = (BoundaryType) qry.uniqueResult();
-				if (boundry != null) {
-					final Query qry1 = getSession().createQuery(
-							"from Boundary BI where " + "BI.boundaryType = :boundaryType " + " and BI.isHistory='N' AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR " + "(BI.fromDate <= :currDate AND BI.toDate >= :currDate)) "
-									+ "order by BI.boundaryNum");
-					qry1.setEntity("boundaryType", boundry);
-					qry1.setDate("currDate", currDate);
-					boundaryList = qry1.list();
-					for (final Boundary boundary : boundaryList) {
-						bryName = boundary.getBoundaryType().getName();
-					}
-					if (bryName != null) {
-						retSet.put(bryName, boundaryList);
-					}
-				}
-			}
-			return retSet;
+    /**
+     * It will return all the parent boundary as map for the input heirarchy
+     * type. First Getting Top level Boundary Type in a hierarchy(next to
+     * "city"). Second loop getting all the boundaries for individual boundary
+     * types. Returns Map which mapped to Boundary Type Name and List of
+     * boundaries.
+     */
+    public Map<String, List<Boundary>> getSecondLevelBoundaryByPassingHeirarchy(final HierarchyType hierarchyType)
+            throws EGOVRuntimeException {
+        try {
+            List<Boundary> boundaryList = new ArrayList<Boundary>();
+            final Map<String, List<Boundary>> retSet = new HashMap<String, List<Boundary>>();
+            String bryName = null;
+            final Date currDate = new Date();
+            // Getting Top level Boundary Type in a hierarchy.
+            if (hierarchyType != null) {
 
-		} catch (final Exception e) {
-			LOGGER.error("Exception occurred in getParentBoundaryTypeByHirarchy", e);
-			throw new EGOVRuntimeException("system.error", e);
-		}
-	}
+                final Query qry = getSession().createQuery(
+                        "from BoundaryType BT where BT.parent.parent is null and  BT.hierarchyType = :hierarchyType");
+                qry.setEntity("hierarchyType", hierarchyType);
+                final BoundaryType boundry = (BoundaryType) qry.uniqueResult();
+                if (boundry != null) {
+                    final Query qry1 = getSession().createQuery(
+                            "from Boundary BI where " + "BI.boundaryType = :boundaryType "
+                                    + " and BI.isHistory='N' AND ("
+                                    + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR "
+                                    + "(BI.fromDate <= :currDate AND BI.toDate >= :currDate)) "
+                                    + "order by BI.boundaryNum");
+                    qry1.setEntity("boundaryType", boundry);
+                    qry1.setDate("currDate", currDate);
+                    boundaryList = qry1.list();
+                    for (final Boundary boundary : boundaryList) {
+                        bryName = boundary.getBoundaryType().getName();
+                    }
+                    if (bryName != null) {
+                        retSet.put(bryName, boundaryList);
+                    }
+                }
+            }
+            return retSet;
 
-	public Map<String, List<Boundary>> getBoundaryMapByPassingHirarchy(final HierarchyType heirarchyType) throws EGOVRuntimeException {
-		try {
-			String bryName = null;
-			final Date currDate = new Date();
-			List<BoundaryType> boundaryTypeList = new ArrayList<BoundaryType>();
-			final Map<String, List<Boundary>> retSet = new HashMap<String, List<Boundary>>();
-			if (heirarchyType != null) {
-				final Query qry = getSession().createQuery("from BoundaryTypeImpl BT where BT.parent is not null and  BT.heirarchyType = :heirarchyType");
-				qry.setEntity("heirarchyType", heirarchyType);
-				boundaryTypeList = qry.list();
+        } catch (final Exception e) {
+            LOGGER.error("Exception occurred in getParentBoundaryTypeByHirarchy", e);
+            throw new EGOVRuntimeException("system.error", e);
+        }
+    }
 
-				for (final BoundaryType boundaryType : boundaryTypeList) {
-					final Query qry1 = getSession().createQuery(
-							"from Boundary BI where " + "BI.boundaryType = :boundaryType " + " and BI.isHistory='N' AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR " + "(BI.fromDate <= :currDate AND BI.toDate >= :currDate)) "
-									+ "order by BI.boundaryNum");
-					qry1.setEntity("boundaryType", boundaryType);
-					qry1.setDate("currDate", currDate);
-					this.boundaryList = qry1.list();
-					for (final Boundary boundary : this.boundaryList) {
-						bryName = boundary.getBoundaryType().getName();
-					}
-					if (bryName != null) {
-						retSet.put(bryName, this.boundaryList);
-					}
-				}
-			}
-			return retSet;
+    public Map<String, List<Boundary>> getBoundaryMapByPassingHirarchy(final HierarchyType hierarchyType)
+            throws EGOVRuntimeException {
+        try {
+            String bryName = null;
+            final Date currDate = new Date();
+            List<BoundaryType> boundaryTypeList = new ArrayList<BoundaryType>();
+            final Map<String, List<Boundary>> retSet = new HashMap<String, List<Boundary>>();
+            if (hierarchyType != null) {
+                final Query qry = getSession().createQuery(
+                        "from BoundaryType BT where BT.parent is not null and  BT.hierarchyType = :hierarchyType");
+                qry.setEntity("hierarchyType", hierarchyType);
+                boundaryTypeList = qry.list();
 
-		} catch (final Exception e) {
-			LOGGER.error("Exception occurred in getParentBoundaryTypeByHirarchy", e);
-			throw new EGOVRuntimeException("system.error", e);
-		}
-	}
+                for (final BoundaryType boundaryType : boundaryTypeList) {
+                    final Query qry1 = getSession().createQuery(
+                            "from Boundary BI where " + "BI.boundaryType = :boundaryType "
+                                    + " and BI.isHistory='N' AND ("
+                                    + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR "
+                                    + "(BI.fromDate <= :currDate AND BI.toDate >= :currDate)) "
+                                    + "order by BI.boundaryNum");
+                    qry1.setEntity("boundaryType", boundaryType);
+                    qry1.setDate("currDate", currDate);
+                    this.boundaryList = qry1.list();
+                    for (final Boundary boundary : this.boundaryList) {
+                        bryName = boundary.getBoundaryType().getName();
+                    }
+                    if (bryName != null) {
+                        retSet.put(bryName, this.boundaryList);
+                    }
+                }
+            }
+            return retSet;
+
+        } catch (final Exception e) {
+            LOGGER.error("Exception occurred in getParentBoundaryTypeByHirarchy", e);
+            throw new EGOVRuntimeException("system.error", e);
+        }
+    }
 
 }

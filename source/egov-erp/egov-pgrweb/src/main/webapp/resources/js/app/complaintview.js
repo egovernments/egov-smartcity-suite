@@ -14,6 +14,11 @@ $(document).ready(function()
 	});
 	
 	$("#btn_submit").click(function(){
+		alert("hello"+$("#btn_submit").name)
+		if($("#btn_submit").name=='Close')
+			{
+			return true;
+			}
 		if($('#inc_messge').val() == '')
 		{
 			$('#inc_messge').addClass('error');
@@ -41,10 +46,10 @@ $(document).ready(function()
 	$('#ct-sel-jurisd').change(function(){
 		console.log("came jursidiction"+$('#ct-sel-jurisd').val());
 		$.ajax({
-			url: "/pgr/ajax-getWards/"+$('#ct-sel-jurisd').val(),
+			url: "/pgr/ajax-getWards",
 			type: "GET",
 			data: {
-				zone : $('#ct-sel-jurisd').val()
+				id : $('#ct-sel-jurisd').val()
 			},
 			dataType: "json",
 			success: function (response) {
@@ -54,7 +59,7 @@ $(document).ready(function()
 				$('#location').append($("<option value=''>Select</option>"));
 				$.each(response, function(index, value) {
 					
-				     $('#location').append($('<option>').text(value.bndryNameLocal).attr('value', value.id));
+				     $('#location').append($('<option>').text(value.boundaryNameLocal).attr('value', value.id));
 				});
 				
 			}, 
