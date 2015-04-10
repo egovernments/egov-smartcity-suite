@@ -174,20 +174,34 @@ public class ComplaintService {
 
 	private void pushMessage(Complaint savedComplaint) {
 
-		CitizenInboxBuilder citizenInboxBuilder = new CitizenInboxBuilder(MessageType.USER_MESSAGE, "Test Header Message", "Test Detailed Message", savedComplaint.getCreatedDate()
-				.toDate(), securityUtils.getCurrentUser(), Priority.High);
+		CitizenInboxBuilder citizenInboxBuilder = new CitizenInboxBuilder(MessageType.USER_MESSAGE, getHeaderMessage(savedComplaint), getDetailedMessage(savedComplaint), savedComplaint
+				.getCreatedDate().toDate(), securityUtils.getCurrentUser(), Priority.High);
 		String strQuery = "select md from Module md where md.moduleName=:name";
 		Query hql = getCurrentSession().createQuery(strQuery);
 		hql.setParameter("name", "PGR");
 
 		citizenInboxBuilder.module((Module) hql.uniqueResult());
 		citizenInboxBuilder.identifier(savedComplaint.getCRN());
-		citizenInboxBuilder.link("pgr/view-complaint?complaintId=" + savedComplaint.getId());
+		citizenInboxBuilder.link("/pgr/view-complaint?complaintId=" + savedComplaint.getId());
 		citizenInboxBuilder.state(savedComplaint.getState());
 		citizenInboxBuilder.status(savedComplaint.getStatus().getName());
 
 		CitizenInbox citizenInbox = citizenInboxBuilder.build();
 		citizenInboxService.pushMessage(citizenInbox);
+	}
+	
+	private String getHeaderMessage(Complaint savedComplaint){
+		StringBuilder headerMessage = new StringBuilder();
+		headerMessage.append("Grievance Redressal");
+		return headerMessage.toString();
+	}
+	private String getDetailedMessage(Complaint savedComplaint) {
+		StringBuilder detailedMessage = new StringBuilder();
+		detailedMessage.append("Complaint No. ").append(savedComplaint.getCRN()).append(" regarding ").
+		append(savedComplaint.getComplaintType().getName()).append(" was marked as ").
+		append(savedComplaint.getStatus().getName()).append(" by ").append(savedComplaint.getState().getSenderName())
+		.append(". Please help us to improve our quality of service by giving your feedback on the quality of service by clicking here.");
+		return detailedMessage.toString();
 	}
 
 }

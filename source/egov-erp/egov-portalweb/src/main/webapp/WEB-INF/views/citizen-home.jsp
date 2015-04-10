@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -37,15 +38,15 @@
 					<div class="container-fluid">
 						<div class="navbar-header col-lg-4 col-md-4 col-sm-2 col-xs-3">
 							<a class="navbar-brand" href="javascript:void(0);">
-								<img src="../images/chennai_logo.jpg" height="60">
+								<img src="${cityLogo}" height="60">
 								<div>
-									<span class="title2 hidden-sm hidden-xs">Chennai Municipal Corporation</span>
+									<span class="title2 hidden-sm hidden-xs">${cityName}</span>
 								</div>
 							</a>
 						</div>
 						<div class="nav-menu col-lg-4 col-md-6 col-sm-7 col-xs-12">
 							<ul class="hr-menu text-center">
-								<li class="active"><a class="menu-item " href="javascript:void(0);" data-show-screen="#inbox-template"> <span class="title">Inbox</span><span class="badge custom-badge">03</span></a></li>
+								<li class="active"><a class="menu-item " href="javascript:void(0);" data-show-screen="#inbox-template"> <span class="title">Inbox</span><span class="badge custom-badge">${unreadMessageCount}</span></a></li>
 								<span class="separator">|</span>
 								<li><a class="menu-item" href="javascript:void(0);" data-show-screen="#myaccount">My Account</a></li>
 								<span class="separator">|</span>
