@@ -1,0 +1,1 @@
+update pgr_complainttype set isactive=true;
