@@ -5,6 +5,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import javax.validation.Valid;
 
 import org.egov.exceptions.DuplicateElementException;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.citizen.entity.Citizen;
 import org.egov.infra.citizen.service.CitizenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -42,6 +42,10 @@ public String activationCitizen(){
             }else if(e.getMessage().equals("Email already exists")){
                 SUCCESS = SUCCESS + "?emailInvalid=true";
             }
+        }catch (EGOVRuntimeException e) {
+            
+            SUCCESS = SUCCESS + "?activationCodeSendingFailed=true";
+            
         }
        
         return SUCCESS;

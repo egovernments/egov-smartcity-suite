@@ -114,6 +114,17 @@
 				    }
 				%>
 				<%
+				    if ("true".equals(request.getParameter("activationCodeSendingFailed"))) {
+				%>
+				<div class="text-center  error-msg">
+					Neither email nor mobile activation send. <input type="hidden"
+						name="activationCodeSendingFailed" id="activationCodeSendingFailed"
+						value="true" />
+				</div>
+				<%
+				    }
+				%>
+				<%
 				    if ("true".equals(request.getParameter("mobInvalid"))) {
 				%>
 				<input type="hidden" name="mobInvalid" id="mobInvalid" value="true" />

@@ -10,6 +10,8 @@ $(document).ready(function()
 	}else if($('#citizenActivation').val() == "true" || $('#citizenActivationFailed').val() == "true"){
 		$('.signup-section').hide();
 		$('.otp-section').show();
+	}else if($('#activationCodeSendingFailed').val() == "true"){
+		hideSigIn();
 	}
 	function hideSigIn()
 	{
