@@ -1,5 +1,7 @@
 package org.egov.infra.security.utils;
 
+import java.util.Optional;
+
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.security.authentication.SecureUser;
@@ -16,25 +18,26 @@ public class SecurityUtils {
 
     public User getCurrentUser() {
         if (isCurrentUserAuthenticated()) {
-            if (getCurrentAuthentication().getPrincipal() instanceof String)
+            if (getCurrentAuthentication().get().getPrincipal() instanceof String)
                 return userService.getUserById(1l);//TODO should be replaced with anonymous user
             else 
-                return userService.getUserById(((SecureUser) getCurrentAuthentication().getPrincipal()).getUserId());
+                return userService.getUserById(((SecureUser) getCurrentAuthentication().get().getPrincipal()).getUserId());
         } else
-            return null;
+            return userService.getUserById(1l);
 
     }
 
     public boolean isCurrentUserAuthenticated() {
-        return getCurrentAuthentication().isAuthenticated();
+    	Optional<Authentication> authentication = getCurrentAuthentication();
+        return authentication.isPresent() ? authentication.get().isAuthenticated() : false;
     }
 
-    public Authentication getCurrentAuthentication() {
-        return SecurityContextHolder.getContext().getAuthentication();
+    public Optional<Authentication> getCurrentAuthentication() {
+        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication());
     }
 
     public boolean hasRole(final String role) {
-        return getCurrentAuthentication()
+        return getCurrentAuthentication().get()
                 .getAuthorities()
                 .parallelStream()
                 .map(grantedAuthority -> grantedAuthority.getAuthority().equals(role))

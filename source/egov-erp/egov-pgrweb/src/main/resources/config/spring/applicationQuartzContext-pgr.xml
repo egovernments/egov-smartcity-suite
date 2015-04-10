@@ -39,6 +39,6 @@
         <property name="jobDetail" ref="complaintEscalationJobDetail" />
 		<property name="group" value="PGR_ESCALATION_TRIGGER_GROUP" />
 		<property name="name" value="PGR_ESCALATION_TRIGGER" />		
-        <property name="cronExpression" value="0 */1 * * * ?" />
+        <property name="cronExpression" value="0 */52 * * * ?" />
     </bean>
 </beans>
