@@ -74,7 +74,7 @@
 								</li>
 								
 								<li class="ico-menu">
-									<a href="www.egovernments.org">
+									<a href="http://www.egovernments.org">
 										<img src="/egi/resources/global/images/logo@2x.png" title="Powered by eGovernments" height="20px">
 									</a>
 								</li>
@@ -536,7 +536,7 @@
 									<span class="hidden-sm hidden-xs">Grievance Redressal</span>
 								</a>
 							</li>
-							<li data-section="newrequest" data-newreq-section="#section-newrequest-2">
+							<!-- li data-section="newrequest" data-newreq-section="#section-newrequest-2">
 								<a href="javascript:void(0);">
 									<div class="text-center"><i class="fa fa-rupee"></i></div>
 									<span class="hidden-sm hidden-xs">Property Tax</span>
@@ -589,7 +589,7 @@
 									<div class="text-center"><i class="fa fa-hand-o-right"></i></div>
 									<span class="hidden-sm hidden-xs">Others</span>
 								</a>
-							</li>
+							</li-->
 						</ul>
 					</nav>
 					<div class="content-wrap">
@@ -598,7 +598,7 @@
 							<div class="msg">
 								<header>
 									<div class="row">
-										<i class="fa fa-edit col-sm-1 col-xs-2 unread-msg"></i><a href="complaint.html" class="open-popup col-sm-11 col-xs-10">Register Grievance</a>
+										<i class="fa fa-edit col-sm-1 col-xs-2 unread-msg"></i><a href="/pgr/complaint/citizen/show-reg-form" class="open-popup col-sm-11 col-xs-10">Register Grievance</a>
 									</div>
 								</header>
 							</div> 

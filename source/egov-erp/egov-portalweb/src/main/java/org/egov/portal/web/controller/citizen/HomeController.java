@@ -33,9 +33,9 @@ public class HomeController {
 
 	private String setupHomePage(final HttpServletRequest request, final HttpSession session, final ModelMap modelData) {
 		final User user = securityUtils.getCurrentUser();
-		modelData.addAttribute("citylogo", "egi/resources/global/images/" + session.getAttribute("citylogo"));
+		modelData.addAttribute("citylogo", "/egi/resources/global/images/" + session.getAttribute("citylogo"));
 		modelData.addAttribute("cityName", session.getAttribute("cityname"));
-		modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
+		modelData.addAttribute("userName", user.getName());
 		modelData.addAttribute("unreadMessageCount", getUnreadMessageCount());
 		modelData.addAttribute("inboxMessages", getAllInboxMessages());
 		modelData.addAttribute("myAccountMessages", getMyAccountMessages());
