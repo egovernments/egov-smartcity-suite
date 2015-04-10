@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value = { "/boundaryType/view", "/boundaryType/update", "/boundaryType/addChild" })
 public class SearchBoundaryTypeController {
 
 	private BoundaryTypeService boundaryTypeService;
@@ -31,24 +30,35 @@ public class SearchBoundaryTypeController {
 		return new BoundaryType();
 	}
 	
-	@ModelAttribute("boundaryTypes")
-	public List<BoundaryType> boundaryTypes(){
-		return boundaryTypeService.getAllBoundaryTypes();
+	@RequestMapping(value = "/boundaryType/view",method = RequestMethod.GET)
+	public String viewSearch(Model model){
+	    model.addAttribute("boundaryTypes", boundaryTypeService.getAllBoundaryTypes());
+	    model.addAttribute("mode", "view");
+	    return "boundaryType-search";
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
-	public String showBoundaryTypes(Model model){
-		return "boundaryType-search";
-	}
+	@RequestMapping(value = "/boundaryType/update",method = RequestMethod.GET)
+        public String updateSearch(Model model){
+	    model.addAttribute("boundaryTypes", boundaryTypeService.getAllBoundaryTypes());
+	    model.addAttribute("mode", "update");
+            return "boundaryType-search";
+        }
 	
-	@RequestMapping(method =RequestMethod.POST)
+	@RequestMapping(value = "/boundaryType/addChild",method = RequestMethod.GET)
+        public String addChildSearch(Model model){
+	    model.addAttribute("boundaryTypes", boundaryTypeService.getAllBoundaryTypes());
+	    model.addAttribute("mode", "addChild");
+            return "boundaryType-search";
+        }
+	
+	@RequestMapping(value = { "/boundaryType/view", "/boundaryType/update", "/boundaryType/addChild" }, method =RequestMethod.POST)
 	public String search(@ModelAttribute BoundaryType boundaryType,final BindingResult errors, RedirectAttributes redirectAttrs,HttpServletRequest request){
 		
     	    if (errors.hasErrors())
                 return "boundaryType-form";
     		
-    		String[] uriSplits = request.getRequestURI().split("/");
-                String redirectURI =  uriSplits[uriSplits.length - 1] + "/" + boundaryType.getName();
-		return "redirect:"+redirectURI;
+    	    String[] uriSplits = request.getRequestURI().split("/");
+            String redirectURI =  uriSplits[uriSplits.length - 1] + "/" + boundaryType.getName();
+	    return "redirect:"+redirectURI;
 	}
 }

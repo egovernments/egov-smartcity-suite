@@ -47,7 +47,7 @@ public class BoundaryTypeService {
         return boundaryTypeRepository.findAll();
     }
     
-    public BoundaryType getBoundaryTypeByHierarchyTypeNameAndLevel(String name,Integer hierarchyLevel) {
+    public BoundaryType getBoundaryTypeByHierarchyTypeNameAndLevel(String name,Long hierarchyLevel) {
     	return boundaryTypeRepository.findByHierarchyTypeNameAndLevel(name,hierarchyLevel);
     }
     

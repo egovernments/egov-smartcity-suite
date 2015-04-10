@@ -46,7 +46,7 @@ public class CreateBoundaryTypeController {
 		final List<HierarchyType> heirarchyList = new ArrayList<HierarchyType>();
 		List<HierarchyType> hierarchyTypeList = hierarchyTypeService.getAllHierarchyTypes();
 		for (final HierarchyType hierarchyType : hierarchyTypeList) {
-			BoundaryType bType = boundaryTypeService.getBoundaryTypeByHierarchyTypeNameAndLevel(hierarchyType.getName(),Integer.valueOf(1));
+			BoundaryType bType = boundaryTypeService.getBoundaryTypeByHierarchyTypeNameAndLevel(hierarchyType.getName(),1l);
 			if(bType == null){
 				heirarchyList.add(hierarchyType);
 			}

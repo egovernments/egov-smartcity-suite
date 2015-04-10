@@ -5,6 +5,10 @@
 
 <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
+<script type="text/javascript">
+        var contextPath = "<%=request.getContextPath() %>";
+</script>
+
 <div class="row" id="page-content">
 	<div class="col-md-12">
 		<div class="panel" data-collapsed="0">
@@ -38,7 +42,12 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
-					<button type="submit" class="btn btn-primary"><spring:message code="lbl.search"/></button>
+					<c:if test="${mode == 'addChild'}">
+						<button type="button" class="btn btn-primary" onclick="checkForChild()"><spring:message code="lbl.search"/></button>
+					</c:if>
+					<c:if test="${mode != 'addChild'}">
+						<button type="submit" class="btn btn-primary" ><spring:message code="lbl.search"/></button>
+					</c:if>
 			        <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="lbl.close"/></button>
 				</div>
 			</div>
@@ -52,4 +61,4 @@
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
-
+<script src="<c:url value='/resources/js/app/boundary.js'/>"></script>
