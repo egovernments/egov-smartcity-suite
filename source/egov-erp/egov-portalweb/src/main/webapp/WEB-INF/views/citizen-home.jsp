@@ -38,9 +38,9 @@
 					<div class="container-fluid">
 						<div class="navbar-header col-lg-4 col-md-4 col-sm-2 col-xs-3">
 							<a class="navbar-brand" href="javascript:void(0);">
-								<img src="${cityLogo}" height="60">
+								<img src="/egi/resources/global/images/chennai_logo.jpg" height="60">
 								<div>
-									<span class="title2 hidden-sm hidden-xs">${cityName}</span>
+									<span class="title2 hidden-sm hidden-xs">Chennai Municipal Corporation</span>
 								</div>
 							</a>
 						</div>
@@ -114,115 +114,35 @@
 						<div class="row container-msgs">
 							
 							<section class="col-lg-12">
-								
+								<c:forEach var="inboxMsg" items="${inboxMessages}">
 								<div class="msg" data-toggle="collapse" data-target="#msgcontent0" aria-expanded="true">
-								<header>
+									<header>
+										
+										<div class="row">
+											<i class="user-msg fa fa-user col-sm-1 col-xs-2 read-msg"></i><h3 class="col-sm-11 col-xs-10">${inboxMsg.module.moduleName}<span class="msg-status">${inboxMsg.status}</span> </h3> 
+										</div>
+										
+										
+										<div class="msg-info">
+											<a href="javascript:void(0);">${inboxMsg.identifier}</a> <span class="dot">&bull;</span> <span class="msg-date">${inboxMsg.messageDate}</span>
+										</div>
+									</header>
 									
-									<div class="row">
-										<i class="user-msg fa fa-user col-sm-1 col-xs-2 read-msg"></i><h3 class="col-sm-11 col-xs-10"> Grievance Redressal<span class="msg-status">Redressed</span> </h3> 
+									<div id="msgcontent0" class="msg-content collapse in">
+										<p> 
+											${inboxMsg.detailedMessage} 
+										</p>
 									</div>
-									
-									
-									<div class="msg-info">
-										<a href="javascript:void(0);">UGH298</a> <span class="dot">&bull;</span> <span class="msg-date"> 13 Jan 2015</span>
-									</div>
-								</header>
-								
-								<div id="msgcontent0" class="msg-content collapse in">
-									<p> 
-										Complaint No. UGH298 regarding Dog Menace at BegumPet was marked as redressed by Mr. Amit Kumar. Please help us to improve our quality of service by giving your feedback on the quality of service by clicking <a href="">here</a>. 
-									</p>
 								</div>
-							</div> 
-							
-							
-						</section>
+								</c:forEach> 
+							</section>
 						
-						<section class="col-lg-12">
-							
-							<div class="msg" data-toggle="collapse" data-target="#msgcontent1" aria-expanded="true">
-								<header>
-									<div class="row">
-										<i class="fa fa-database col-sm-1 col-xs-2 unread-msg"></i> <h3 class="col-sm-11 col-xs-10"> Property Tax Payment</h3>
-									</div>
-									<div class="msg-info">
-										<a href="javascript:void(0);">JGH1837</a> <span class="dot">&bull;</span> <span class="msg-date"> 4 Mar 2015</span>
-									</div>
-								</header>
-								
-								<div id="msgcontent1" class="msg-content collapse">
-									<p> 
-										Payment of 5,000 is due for Property ID 01-01-100 with the address 34, 2nd cross, Indiranagar, Bangalore - 56. 
-										<a href="javascript:void(0);">Click here</a> to pay the taxes. Please ignore if already paid.
-									</p>
-								</div>
-							</div> 
-							
-							
-							<div class="msg" data-toggle="collapse" data-target="#msgcontent2" aria-expanded="true">
-								<header>
-									
-									<div class="row">
-										<i class="user-msg fa fa-user col-sm-1 col-xs-2 unread-msg"></i> <h3 class="col-sm-11 col-xs-10">Inspection for New Building Construction Permit<span class="msg-status">Pending Inspection</span>  </h3> 
-									</div>
-									<div class="msg-info">
-										<a href="javascript:void(0);">UGH298</a> <span class="dot">&bull;</span> <span class="msg-date"> 13 Jan 2015</span>
-									</div>
-								</header>
-								
-								<div id="msgcontent2" class="msg-content collapse">
-									<p> 
-										Building Plan application No. BA14567 located at No. 14, 5th Main, Indiranagar, Chennai - 400004.
-										Mr. Ram Lele, Asst. Engineer Ward 34 will be visiting your premises for Building inspection on 12/01/2015 at 3:00 PM. Please be there for the inspection. Mr. Lele can be reached at +91 99999 99999
-									</p>
-								</div>
-							</div>
-							
-						</section>
+							<section class="col-lg-12">
+							</section>
 						
 						
-						<section class="col-lg-12">
-							
-							<div class="msg" data-toggle="collapse" data-target="#msgcontent3" aria-expanded="true">
-								<header>
-									<div class="row">
-										<i class="fa fa-database col-sm-1 col-xs-2 read-msg"></i> <h3 class="col-sm-11 col-xs-10"> General Information </h3>
-									</div>
-									<div class="msg-info">
-										<a href="javascript:void(0);">UTK135</a> <span class="dot">&bull;</span> <span class="msg-date"> 2 Mar 2015</span>
-									</div>
-								</header>
-								
-								<div id="msgcontent3" class="msg-content collapse">
-									<p> 
-										Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-										sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-										minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-										commodo consequat.
-									</p>
-								</div>
-							</div> 
-							
-							<div class="msg" data-toggle="collapse" data-target="#msgcontent4" aria-expanded="true">
-								<header>
-									<div class="row">
-										<i class="fa fa-database col-sm-1 col-xs-2 unread-msg"></i> <h3 class="col-sm-11 col-xs-10"> Grievance Recorded </h3>
-									</div>
-									<div class="msg-info">
-										<a href="javascript:void(0);">UTK135</a> <span class="dot">&bull;</span> <span class="msg-date"> 2 Mar 2015</span>
-									</div>
-								</header>
-								
-								<div id="msgcontent4" class="msg-content collapse">
-									<p> 
-										Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-										sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-										minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-										commodo consequat.
-									</p>
-								</div>
-							</div> 
-						</section>
+							<section class="col-lg-12">
+							</section>
 					</div>
 					
 				</div>
