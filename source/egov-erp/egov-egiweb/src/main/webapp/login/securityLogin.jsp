@@ -198,7 +198,7 @@
 												class="mandatory set-mandatory"></span>
 												<div id="passwordValid" style="display: none">
 										<div class="text-right add-margin error-msg">Password
-											 should be more then 8 characters</div>
+											 should be more than 8 characters</div>
 									</div>
 										</div>
 									</div>
