@@ -151,8 +151,8 @@ public class ComplaintService {
 	}
 
 	public List<Complaint> getComplaintsEligibleForEscalation() {
-		final CityWebsite cityWebsite = (CityWebsite) getCurrentSession().getNamedQuery(CityWebsite.QUERY_CITY_BY_URL)
-				.setString("url", EGOVThreadLocals.getDomainName()).uniqueResult();
+		final CityWebsite cityWebsite = (CityWebsite) getCurrentSession().getNamedQuery(CityWebsite.QUERY_CITY_BY_URL).setString("url", EGOVThreadLocals.getDomainName())
+				.uniqueResult();
 		final Long topLevelBoundaryId = cityWebsite.getBoundary().getBndryId();
 		final Criteria criteria = getCurrentSession().createCriteria(Complaint.class, "complaint").
 		// createAlias("complaint.location","boundary").
@@ -174,8 +174,8 @@ public class ComplaintService {
 
 	private void pushMessage(Complaint savedComplaint) {
 
-		CitizenInboxBuilder citizenInboxBuilder = new CitizenInboxBuilder(MessageType.USER_MESSAGE, getHeaderMessage(savedComplaint), getDetailedMessage(savedComplaint), savedComplaint
-				.getCreatedDate().toDate(), securityUtils.getCurrentUser(), Priority.High);
+		CitizenInboxBuilder citizenInboxBuilder = new CitizenInboxBuilder(MessageType.USER_MESSAGE, getHeaderMessage(savedComplaint), getDetailedMessage(savedComplaint),
+				savedComplaint.getCreatedDate().toDate(), securityUtils.getCurrentUser(), Priority.High);
 		String strQuery = "select md from Module md where md.moduleName=:name";
 		Query hql = getCurrentSession().createQuery(strQuery);
 		hql.setParameter("name", "PGR");
@@ -189,18 +189,19 @@ public class ComplaintService {
 		CitizenInbox citizenInbox = citizenInboxBuilder.build();
 		citizenInboxService.pushMessage(citizenInbox);
 	}
-	
-	private String getHeaderMessage(Complaint savedComplaint){
+
+	private String getHeaderMessage(Complaint savedComplaint) {
 		StringBuilder headerMessage = new StringBuilder();
 		headerMessage.append("Grievance Redressal");
 		return headerMessage.toString();
 	}
+
 	private String getDetailedMessage(Complaint savedComplaint) {
 		StringBuilder detailedMessage = new StringBuilder();
-		detailedMessage.append("Complaint No. ").append(savedComplaint.getCRN()).append(" regarding ").
-		append(savedComplaint.getComplaintType().getName()).append(" was marked as ").
-		append(savedComplaint.getStatus().getName()).append(" by ").append(savedComplaint.getState().getSenderName())
-		.append(". Please help us to improve our quality of service by giving your feedback on the quality of service by clicking here.");
+		detailedMessage.append("Complaint No. ").append(savedComplaint.getCRN()).append(" regarding ").append(savedComplaint.getComplaintType().getName())
+				.append(" was marked as ").append(savedComplaint.getStatus().getName()).append(" by ")
+				.append(savedComplaint.getState().getSenderName().equals("Unknown") ? "you" : savedComplaint.getState().getSenderName())
+				.append(". Please help us to improve our quality of service by giving your feedback on the quality of service by clicking here.");
 		return detailedMessage.toString();
 	}
 

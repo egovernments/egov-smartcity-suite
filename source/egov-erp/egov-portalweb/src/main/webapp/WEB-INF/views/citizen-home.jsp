@@ -119,7 +119,7 @@
 									<header>
 										
 										<div class="row">
-											<i class="user-msg fa fa-user col-sm-1 col-xs-2 read-msg"></i><h3 class="col-sm-11 col-xs-10">${inboxMsg.module.moduleName}<span class="msg-status">${inboxMsg.status}</span> </h3> 
+											<i class="user-msg fa fa-user col-sm-1 col-xs-2 read-msg"></i><h3 class="col-sm-11 col-xs-10">${inboxMsg.headerMessage}<span class="msg-status">${inboxMsg.status}</span> </h3> 
 										</div>
 										
 										
