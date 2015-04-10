@@ -1039,7 +1039,7 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 }
 
 .spinner > div {
-	background-color: #f5861f;
+	background-color: #fff;
 	height: 100%;
 	width: 6px;
 	display: inline-block;
@@ -1092,7 +1092,6 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 {
 	color:#fff;
 }
-
 
 .pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
 	background-color: #6b4f2c;
