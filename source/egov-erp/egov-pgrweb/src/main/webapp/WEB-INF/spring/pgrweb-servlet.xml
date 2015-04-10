@@ -41,7 +41,6 @@
 	<!-- <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
         <property name="formatters">
             <set>
-                <ref bean="departmentFormatter"/>
                 <ref bean="boundaryFormatter"/>
             </set>
         </property>

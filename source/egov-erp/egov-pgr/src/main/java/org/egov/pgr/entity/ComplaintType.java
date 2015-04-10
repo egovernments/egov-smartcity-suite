@@ -25,6 +25,12 @@ import org.json.simple.JSONObject;
         uniqueConstraints = 
             @UniqueConstraint(columnNames = { "name" })
 )
+/*@Unique(
+id = "id",
+tableName = "pgr_complainttype", 
+fields = {"name", "code"}, 
+columnName = {"name", "code"}
+)*/
 @Searchable
 public class ComplaintType extends AbstractPersistable<Long> {
     private static final long serialVersionUID = 8904645810221559541L;
@@ -36,6 +42,11 @@ public class ComplaintType extends AbstractPersistable<Long> {
     @Searchable
     private String name;
 
+    @NotBlank
+    @Length(max = 20)
+    @Column(name = "code")
+    private String code;
+
     @Valid
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -45,6 +56,9 @@ public class ComplaintType extends AbstractPersistable<Long> {
 
     @Column(name = "location_required")
     private boolean locationRequired;
+    
+    @Column(name = "isActive")
+    private boolean isActive = false;
 
     public String getName() {
         return name;
@@ -68,6 +82,22 @@ public class ComplaintType extends AbstractPersistable<Long> {
 
     public void setLocationRequired(final boolean locationRequired) {
         this.locationRequired = locationRequired;
+    }
+    
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
     }
 
     public JSONObject toJsonObject() {

@@ -41,7 +41,7 @@
 				<div class="row add-border">
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.compalintDepartment" /></div>
 					<div class="col-md-3 col-xs-6 add-margin" id="ct-dept">
-						<c:out value="${complaint.complaintType.department.deptName}"></c:out>
+						<c:out value="${complaint.complaintType.department.name}"></c:out>
 					</div>
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.filedVia" /></div>
 					<div class="col-md-3 col-xs-6 add-margin" id="ct-filedvia">
@@ -84,8 +84,8 @@
 							<c:when test="${!complaint.getSupportDocs().isEmpty()}">
 								<c:forEach items="${complaint.getSupportDocs()}" var="file">
 									<c:choose>
-										<c:when test="${(file.contentType == 'image/jpg') || (file.contentType == 'image/jpeg')|| (file.contentType == 'gif')|| 
-										(file.contentType == 'png')}">
+										<c:when test="${(file.contentType == 'image/jpg') || (file.contentType == 'image/jpeg')|| (file.contentType == 'image/gif')|| 
+										(file.contentType == 'image/png')}">
 										<a href="/egi/controller/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=PGR"
 												data-gallery> <img class="img-width add-margin"
 												src="/egi/controller/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=PGR" /></a>

@@ -18,7 +18,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Controller
-@RequestMapping("/complaint-type/{complaintTypeId}")
+@RequestMapping("/complaint-type/update/{name}")
 public class UpdateComplaintTypeController {
 
     private DepartmentService departmentService;
@@ -36,8 +36,8 @@ public class UpdateComplaintTypeController {
     }
 
     @ModelAttribute
-    public ComplaintType complaintTypeModel(@PathVariable Long complaintTypeId) {
-        return complaintTypeService.findBy(complaintTypeId);
+    public ComplaintType complaintTypeModel(@PathVariable String name) {
+        return complaintTypeService.findByName(name);
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -45,9 +45,9 @@ public class UpdateComplaintTypeController {
         return "complaint-type";
     }
 
-
     @RequestMapping(method = RequestMethod.POST)
-    public String updateComplaintType(@Valid @ModelAttribute ComplaintType complaintType, BindingResult errors, RedirectAttributes redirectAttrs) {
+    public String updateComplaintType(@Valid @ModelAttribute ComplaintType complaintType, BindingResult errors,
+            RedirectAttributes redirectAttrs) {
         if (errors.hasErrors()) {
             return "complaint-type";
         }
@@ -55,6 +55,6 @@ public class UpdateComplaintTypeController {
         complaintTypeService.updateComplaintType(complaintType);
         redirectAttrs.addFlashAttribute("message", "Successfully updated Complaint Type !");
 
-        return "redirect:/complaint-type";
+        return "redirect:/complaint-type/update";
     }
 }

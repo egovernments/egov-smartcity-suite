@@ -29,7 +29,7 @@ $(document).ready(function()
 	});
 	
 	$(".is_valid_alphabet").on("input", function(){
-		var regexp = /[^a-zA-Z]/g;
+		var regexp = /[^a-zA-Z _]/g;
 		if($(this).val().match(regexp)){
 			$(this).val( $(this).val().replace(regexp,'') );
 		}

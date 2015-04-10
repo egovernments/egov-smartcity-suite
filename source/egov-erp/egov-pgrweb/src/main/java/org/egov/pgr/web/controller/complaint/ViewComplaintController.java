@@ -35,9 +35,8 @@ public class ViewComplaintController {
     public String viewComplaints(@RequestParam Long complaintId, Model model) {
         Complaint complaint = complaintService.getComplaintById(complaintId);
         List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
-        Department department = null;
         User user = null;
-        if (!complaint.getStateHistory().isEmpty() && complaint.getStateHistory() != null) {
+        if (!complaint.getStateHistory().isEmpty() &&  null != complaint.getStateHistory()) {
             for (StateHistory stateHistory : complaint.getStateHistory()) {
                 Hashtable<String, Object> map = new Hashtable<String, Object>(0);
                 map.put("date", stateHistory.getCreatedDate());
@@ -57,7 +56,6 @@ public class ViewComplaintController {
                                 .getDeptDesigId().getDeptId().getName() : "");
                     }
                 }
-
                 historyTable.add(map);
             }
         }

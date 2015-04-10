@@ -63,4 +63,9 @@
         <put-attribute name="body" value="/WEB-INF/views/masters/view-complaintType.jsp"/>
     </definition>
     
+	<definition name="complaintType-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.complaintType" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/complaintType-list.jsp"/>
+    </definition>
+    
 </tiles-definitions>

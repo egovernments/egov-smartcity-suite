@@ -13,7 +13,13 @@ jQuery(document).ready(function($)
 			},
             comp_type_loc: {
                 required: true
-			}
+			},
+			 comp_type_code: {
+	                required: true
+				},
+			comp_type_isactive: {
+	                required: true
+				}
 		},
 		messages: {
 			comp_type_name: {
@@ -27,6 +33,12 @@ jQuery(document).ready(function($)
 			},
 			comp_type_loc: {
 				required: "Location is required"
+			},
+			comp_type_code: {
+				required: "Complaint code is required"
+			},
+			comp_type_isactive: {
+				required: "Is active is required"
 			}
 		},
 		errorPlacement: function(error, element) {
@@ -42,5 +54,15 @@ jQuery(document).ready(function($)
 			$(element).removeClass('error');
 		},
 	});
+	
+	
+	  $('input[type="checkbox"]').click(function(){
+	        if($(this).is(":checked")){
+	        	$(this).val(true);
+	        }
+	        else if($(this).is(":not(:checked)")){
+	        	$(this).val(false);
+	        }
+	    });
 });
 
