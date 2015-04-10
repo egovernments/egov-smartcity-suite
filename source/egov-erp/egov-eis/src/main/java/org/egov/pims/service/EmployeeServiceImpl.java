@@ -1882,7 +1882,7 @@ return list;
 	 * @throws TooManyValuesException
 	 * @throws NoSuchObjectException
 	 */
-	public PersonalInformation getEmployee(Integer deptId, Integer designationId, Integer Boundaryid)throws TooManyValuesException, NoSuchObjectException
+	public PersonalInformation getEmployee(Integer deptId, Integer designationId, Long Boundaryid)throws TooManyValuesException, NoSuchObjectException
 	{
 		PersonalInformation personalInformation= null;
 
@@ -1912,7 +1912,7 @@ return list;
 	 * @throws TooManyValuesException
 	 * @throws NoSuchObjectException
 	 */
-	public PersonalInformation getEmployeeByFunctionary(Integer deptId, Integer designationId, Integer Boundaryid,Integer functionaryId)throws TooManyValuesException, NoSuchObjectException
+	public PersonalInformation getEmployeeByFunctionary(Integer deptId, Integer designationId, Long Boundaryid,Integer functionaryId)throws TooManyValuesException, NoSuchObjectException
 	{
 		PersonalInformation personalInformation= null;
 

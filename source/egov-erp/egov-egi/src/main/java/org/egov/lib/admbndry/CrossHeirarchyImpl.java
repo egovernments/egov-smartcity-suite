@@ -5,6 +5,8 @@
  */
 package org.egov.lib.admbndry;
 
+import org.egov.infra.admin.master.entity.Boundary;
+
 public class CrossHeirarchyImpl implements CrossHeirarchy {
 
 	private Integer id;

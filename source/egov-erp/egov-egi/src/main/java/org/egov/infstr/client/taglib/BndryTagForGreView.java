@@ -9,8 +9,8 @@ import java.util.StringTokenizer;
 
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
-import org.egov.lib.admbndry.Boundary;
 
 /**
  * @author deepak TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style - Code Templates

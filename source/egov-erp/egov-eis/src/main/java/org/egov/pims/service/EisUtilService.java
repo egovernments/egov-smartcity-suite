@@ -10,12 +10,12 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
-import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.pims.commons.DesignationMaster;
@@ -159,8 +159,8 @@ public class EisUtilService implements EISServeable
 		Integer status = paramMap.get("status") != null ? Integer.parseInt((String)paramMap.get("status")) : null;
 		Integer empType = paramMap.get("empType") != null ? Integer.parseInt((String)paramMap.get("empType")) : null;
 		String searchAll = (String)paramMap.get("searchAll");
-		Integer boundaryId = paramMap.get("boundaryId")!=null ?Integer.parseInt((String)paramMap.get("boundaryId")) :null;
-		Integer userId = paramMap.get("userId")!=null ?Integer.parseInt((String)paramMap.get("userId")) :null;
+		Long boundaryId = paramMap.get("boundaryId")!=null ?Long.valueOf((String)paramMap.get("boundaryId")) :null;
+		Long userId = paramMap.get("userId")!=null ?Long.valueOf((String)paramMap.get("userId")) :null;
 		List<String> roleList = paramMap.get("roleList")!=null?(List<String>)paramMap.get("roleList") : new ArrayList<String>();
 		List<User> userList = new ArrayList<User>();
 		
@@ -320,7 +320,7 @@ public class EisUtilService implements EISServeable
 			}
 			if(userId != null && userId.intValue()!=0)
 			{
-				qry.setInteger("userId", userId);
+				qry.setLong("userId", userId);
 			}
 			if(!roleList.isEmpty()){
 				qry.setParameterList("roleList",roleList);
@@ -397,12 +397,12 @@ public class EisUtilService implements EISServeable
 	}
 	
 	
-	public List getListOfUsersByBoundaryId(Integer boundaryId) throws NoSuchObjectException
+	public List getListOfUsersByBoundaryId(Long boundaryId) throws NoSuchObjectException
 	{
 		List listOfUserByBoundary=personalInformationDAO.getListOfUsersByBoundaryId(boundaryId);
 		return listOfUserByBoundary;
 	}
-	public List getListOfUsersForGivenBoundaryId(Integer boundaryId) throws NoSuchObjectException
+	public List getListOfUsersForGivenBoundaryId(Long boundaryId) throws NoSuchObjectException
 	{
 		List listOfUserByBoundary=personalInformationDAO.getListOfUsersForGivenBoundaryId(boundaryId);
 		return listOfUserByBoundary;

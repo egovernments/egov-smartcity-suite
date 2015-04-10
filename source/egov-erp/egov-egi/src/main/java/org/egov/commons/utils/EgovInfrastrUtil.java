@@ -21,22 +21,20 @@ import java.util.TreeSet;
 import org.egov.commons.Installment;
 import org.egov.commons.service.CommonsService;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.UserRepository;
+import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.ExcludeBndryType;
-import org.egov.lib.admbndry.Boundary;
-import org.egov.lib.admbndry.ejb.api.BoundaryServiceOld;
-import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
-import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,9 +45,9 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 	private static final Integer idAfter = new Integer(2);
 	private static final Integer idBetween = new Integer(3);
 	private static final Integer idCurrent = new Integer(4);
-	private BoundaryTypeService boundaryTypeService;
-	private BoundaryServiceOld boundaryService;
-	private HeirarchyTypeService heirarchyTypeService;
+	//private BoundaryTypeService boundaryTypeService;
+	//private BoundaryServiceOld boundaryService;
+	//private HeirarchyTypeService heirarchyTypeService;
 	private DepartmentService departmentService;
 	private RoleService roleService;
 	private CommonsService commonsService;
@@ -89,7 +87,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 		this.userRepository = userRepository;
 	}
 
-	public void setBoundaryTypeService(final BoundaryTypeService boundaryTypeService) {
+	/*public void setBoundaryTypeService(final BoundaryTypeService boundaryTypeService) {
 		this.boundaryTypeService = boundaryTypeService;
 	}
 
@@ -99,7 +97,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 
 	public void setHeirarchyTypeService(final HeirarchyTypeService heirarchyTypeService) {
 		this.heirarchyTypeService = heirarchyTypeService;
-	}
+	}*/
 
 	public void setDepartmentService(final DepartmentService departmentService) {
 		this.departmentService = departmentService;
@@ -123,7 +121,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 		}
 	}
 
-	/*@Override
+	/*
 	public Map getallUsersAcrossDeptMap() {
 		final String domainName = EGOVThreadLocals.getDomainName();
 		if (userIDlistMap.isEmpty() || !userIDlistMap.containsKey(domainName) || resetMap.get(domainName).equals("Y")) {
@@ -135,7 +133,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 
 	}
 
-	@Override
+	
 	public Map getallmapUsersAcrossDeptMap() {
 		final String domainName = EGOVThreadLocals.getDomainName();
 		if (userIDMap.isEmpty() || !userIDMap.containsKey(domainName) || resetMap.get(domainName).equals("Y")) {
@@ -146,7 +144,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 		return domainUserIDMap;
 	}*/
 
-	@Override
+	/*
 	public Map getRoleIdMap() {
 		final String domainName = EGOVThreadLocals.getDomainName();
 		if (RoleIdname.isEmpty() || !RoleIdname.containsKey(domainName) || resetMap.get(domainName).equals("Y")) {
@@ -156,7 +154,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 		return domainRoleIdname;
 	}
 
-	@Override
+	
 	public Map getRoleNameMap() {
 		final String domainName = EGOVThreadLocals.getDomainName();
 		if (Rolename.isEmpty() || !Rolename.containsKey(domainName) || resetMap.get(domainName).equals("Y")) {
@@ -166,8 +164,8 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 
 		return domainRolename;
 	}
-
-	@Override
+*/
+	/*
 	public Map getBoundaryMap() {
 		final String domainName = EGOVThreadLocals.getDomainName();
 		if (bndrymap.isEmpty() || !bndrymap.containsKey(domainName) || resetMap.get(domainName).equals("Y")) {
@@ -178,7 +176,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 		return domainBndrymap;
 	}
 
-	@Override
+	
 	public String getBoundaryName(final Integer id) {
 		final String domainName = EGOVThreadLocals.getDomainName();
 
@@ -188,9 +186,9 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 		final Map domainBndrymap = (Map) bndrymap.get(domainName);
 
 		return (String) domainBndrymap.get(id);
-	}
+	}*/
 
-	@Override
+	
 	public Map getDeptMap() {
 		final String domainName = EGOVThreadLocals.getDomainName();
 
@@ -201,7 +199,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 		return map;
 	}
 
-	@Override
+	/*
 	public List getBoundaryList() {
 
 		final String domainName = EGOVThreadLocals.getDomainName();
@@ -211,9 +209,9 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 		}
 		final List bndrylist = (ArrayList) bndrylistMap.get(domainName);
 		return bndrylist;
-	}
+	}*/
 
-	@Override
+	
 	public List getModesList() {
 		final String domainName = EGOVThreadLocals.getDomainName();
 		if (modeslistMap.isEmpty() || !modeslistMap.containsKey(domainName) || resetMap.get(domainName).equals("Y")) {
@@ -223,7 +221,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 		return modelist;
 	}
 
-	@Override
+	
 	public List getDeptList() {
 		final String domainName = EGOVThreadLocals.getDomainName();
 		if (deptlistMap.isEmpty() || !deptlistMap.containsKey(domainName) || resetMap.get(domainName).equals("Y")) {
@@ -233,8 +231,8 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 		return domainDeptlist;
 	}
 
-	@Override
-	public Map getMapOfBoundryTypes() {
+	
+	/*public Map getMapOfBoundryTypes() {
 		final String domainName = EGOVThreadLocals.getDomainName();
 
 		if (map.isEmpty() || !map.containsKey(domainName) || resetMap.get(domainName).equals("Y")) {
@@ -244,7 +242,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 		return domainBndrytype;
 	}
 
-	@Override
+	
 	public Map getuserRoleMap() {
 		final String domainName = EGOVThreadLocals.getDomainName();
 
@@ -255,7 +253,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 		return domainUserRoleMap;
 	}
 
-	@Override
+	
 	public List getBndryTypeBndryList(final Boundary topBoundary, final BoundaryType incluedBType) {
 		final String domainName = EGOVThreadLocals.getDomainName();
 
@@ -265,9 +263,9 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 		}
 		final Map domainBndryTypeBndryMap = (Map) bndryTypeBndryMap.get(domainName);
 		return (List) ((Map) domainBndryTypeBndryMap.get(topBoundary)).get(incluedBType);
-	}
+	}*/
 
-	@Override
+	
 	public String[] getExcludedAccHeadsForModule(final Module module) {
 		String[] excludeAccHeads = null;
 		if (module.getModuleName().equalsIgnoreCase("EG-PT-TAX")) {
@@ -288,7 +286,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 	}
 
 	/* Added by Poornima on 01-03-2006 to get All Installment Years */
-	@Override
+	
 	public Map getAllInstallmentYears() {
 		final String domainName = EGOVThreadLocals.getDomainName();
 		if (installmentIdAndYearsMap.isEmpty() || !installmentIdAndYearsMap.containsKey(domainName) || resetMap.get(domainName).equals("Y")) {
@@ -301,7 +299,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 	/*
 	 * @param Id Returns the From Date of the Assessment Year. added by Sapna
 	 */
-	@Override
+	
 	public Date getFromDateofAssessmentYear(final Integer Id) {
 		final String domainName = EGOVThreadLocals.getDomainName();
 		if (installmentIdAndFromDateMap.isEmpty() || !installmentIdAndFromDateMap.containsKey(domainName) || resetMap.get(domainName).equals("Y")) {
@@ -314,7 +312,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 	/*
 	 * This method returns Installment Year in this format YYYY-YY
 	 */
-	@Override
+	
 	public String getInstallmentYearsStr(final Integer Id) {
 		final String domainName = EGOVThreadLocals.getDomainName();
 		if (installmentIdAndYearsMap.isEmpty() || !installmentIdAndYearsMap.containsKey(domainName) || resetMap.get(domainName).equals("Y")) {
@@ -369,7 +367,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 		resetMap.put(domainName, "N");
 	}
 
-	private synchronized void updateBoundaryMap() {
+	/*private synchronized void updateBoundaryMap() {
 		final String domainName = EGOVThreadLocals.getDomainName();
 		try {
 			final HierarchyType htype = this.heirarchyTypeService.getHeirarchyTypeByID(1);
@@ -393,7 +391,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 				while (boundaryTypeitr.hasNext()) {
 					final BoundaryType boundaryType1 = (BoundaryType) boundaryTypeitr.next();
 					// getting the boundary sets for each boundarytype and the topmostboundary
-					final List getAllBoundariesset = this.boundaryService.getAllBoundaries(boundaryType1, topbndry.getId().intValue());
+					final List getAllBoundariesset = this.boundaryService.getAllBoundaries(boundaryType1, topbndry.getId());
 					final Iterator getAllBoundariessetitr = getAllBoundariesset.iterator();
 					while (getAllBoundariessetitr.hasNext()) {
 						final Boundary boundary = (Boundary) getAllBoundariessetitr.next();
@@ -453,7 +451,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 						bTypeBndryList = new ArrayList();
 						bTBndry.put(btype, bTypeBndryList);
 					}
-					final List bondrySet = this.boundaryService.getAllBoundaries(btype, topLevelBoundary.getId().intValue());
+					final List bondrySet = this.boundaryService.getAllBoundaries(btype, topLevelBoundary.getId());
 					if (bondrySet != null && !bondrySet.isEmpty()) {
 						final Iterator bsetitr = bondrySet.iterator();
 						// List bndryidlist =new ArrayList();
@@ -474,7 +472,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 			throw new EGOVRuntimeException(sqe.getMessage());
 		}
 		resetMap.put(domainName, "N");
-	}
+	}*/
 
 	private synchronized void updateDeptMap() {
 		final String domainName = EGOVThreadLocals.getDomainName();
@@ -589,7 +587,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 		resetMap.put(domainName, "N");
 	}
 
-	private synchronized void updateUserRoleMap() {
+	/*private synchronized void updateUserRoleMap() {
 		final String domainName = EGOVThreadLocals.getDomainName();
 		try {
 
@@ -663,7 +661,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 		}
 
 		resetMap.put(domainName, "N");
-	}
+	}*/
 
 	private List getAllPGRRoles(final RoleService rmang) {
 		final String roleNames = EGovConfig.getProperty("pgr_config.xml", "ROLENAMES", "", "PGR");
@@ -680,7 +678,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 
 	}
 
-	@Override
+	
 	public Map getBoundaryMap(final Set bndrySet) {
 		final HashMap bndrymap = new HashMap();
 		try {
@@ -699,7 +697,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 
 	}
 
-	@Override
+	
 	public List getBoundaryList(final Set bndrySet) {
 
 		final ArrayList bndrylist = new ArrayList();
@@ -740,7 +738,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 	/*
 	 * This method written especially To display the selected dates in reports from which date to which
 	 */
-	@Override
+	
 	public String getReportDate(final String fromDate, final String toDate, final String id) {
 
 		String displayDate = null;
@@ -777,7 +775,7 @@ public class EgovInfrastrUtil implements EgovInfrastrUtilInteface {
 
 	}
 
-	@Override
+	
 	@Deprecated
 	public String encodingName(String name) {
 		return org.egov.infstr.utils.StringUtils.encodeString(name);

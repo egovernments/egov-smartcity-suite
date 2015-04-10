@@ -4,9 +4,9 @@
 package org.egov.infstr.client.taglib;
 
 import org.apache.log4j.Logger;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infstr.utils.StringUtils;
-import org.egov.lib.admbndry.Boundary;
 
 import javax.servlet.jsp.tagext.BodyTagSupport;
 

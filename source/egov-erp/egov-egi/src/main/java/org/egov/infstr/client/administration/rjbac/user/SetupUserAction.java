@@ -23,10 +23,10 @@ import org.slf4j.LoggerFactory;
 
 public class SetupUserAction extends EgovAction {
 	
-	private static final Logger LOG = LoggerFactory.getLogger(SetupUserAction.class);
+	/*private static final Logger LOG = LoggerFactory.getLogger(SetupUserAction.class);
 	private UserDelegate userDelegate;
 	private  RoleService roleService ;
-	/**
+	*//**
 	 * This method is used to get all the top boundries and set the list in session Calls the setup
 	 * method in EgovAction class that sets a list of all the departments in the session
 	 * @param ActionMapping mapping
@@ -34,7 +34,7 @@ public class SetupUserAction extends EgovAction {
 	 * @param HttpServletRequest req
 	 * @param HttpServletResponse res
 	 * @return ActionForward
-	 */
+	 *//*
 	@Override
 	public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest req, final HttpServletResponse res) throws Exception {
 		List topBndryList = new ArrayList();
@@ -62,5 +62,5 @@ public class SetupUserAction extends EgovAction {
 	}
 	public void setUserDelegate(UserDelegate userDelegate) {
 		this.userDelegate = userDelegate;
-	}
+	}*/
 }

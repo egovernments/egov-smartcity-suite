@@ -36,7 +36,7 @@
                             <form:select path="department"
                                          id="comp_type_dept" cssClass="form-control" cssErrorClass="form-control error">
                                 <form:option value=""> <spring:message code="lbl.select"/> </form:option>
-                                <form:options items="${departments}" itemValue="deptCode" itemLabel="deptName"/>
+                                <form:options items="${departments}" itemValue="id" itemLabel="name"/>
                             </form:select>
                             <form:errors path="department" cssClass="error-msg"/>
                         </div>

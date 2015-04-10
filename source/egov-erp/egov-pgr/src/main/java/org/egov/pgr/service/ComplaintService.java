@@ -153,11 +153,11 @@ public class ComplaintService {
 	public List<Complaint> getComplaintsEligibleForEscalation() {
 		final CityWebsite cityWebsite = (CityWebsite) getCurrentSession().getNamedQuery(CityWebsite.QUERY_CITY_BY_URL)
 				.setString("url", EGOVThreadLocals.getDomainName()).uniqueResult();
-		final Integer topLevelBoundaryId = cityWebsite.getBoundary().getBndryId();
+		final Long topLevelBoundaryId = cityWebsite.getBoundary().getBndryId();
 		final Criteria criteria = getCurrentSession().createCriteria(Complaint.class, "complaint").
 		// createAlias("complaint.location","boundary").
 				createAlias("complaint.status", "complaintStatus");
-		// TODO: BoundaryImpl pojo and hbm are not consistent
+		// TODO: Boundary pojo and hbm are not consistent
 		/*
 		 * if(null!=topLevelBoundaryId)
 		 * criteria.add(Restrictions.eq("boundary.topLevelBoundaryID",

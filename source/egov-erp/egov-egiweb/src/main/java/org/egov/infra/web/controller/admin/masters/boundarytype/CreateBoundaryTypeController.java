@@ -60,7 +60,7 @@ public class CreateBoundaryTypeController {
         if (errors.hasErrors())
             return "boundaryType-form";
         
-        boundaryType.setHierarchy(1);
+        boundaryType.setHierarchy(1l);
         boundaryTypeService.createBoundaryType(boundaryType);
         redirectAttrs.addFlashAttribute("message", "Boundary Type created successfully !");
 

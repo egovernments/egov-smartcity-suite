@@ -7,6 +7,7 @@ package org.egov.lib.admbndry;
 
 import java.util.Iterator;
 
+import org.egov.infra.admin.master.entity.Boundary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

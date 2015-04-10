@@ -7,8 +7,8 @@ package org.egov.commons;
 
 import java.util.Date;
 
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.lib.admbndry.BoundaryImpl;
 
 public class Vouchermis implements java.io.Serializable {
 
@@ -20,7 +20,7 @@ public class Vouchermis implements java.io.Serializable {
 
 	private Integer billnumber;
 
-	private BoundaryImpl divisionid;
+	private Boundary divisionid;
 
 	private String schemename;
 
@@ -161,11 +161,11 @@ public class Vouchermis implements java.io.Serializable {
 		this.billnumber = billnumber;
 	}
 
-	public BoundaryImpl getDivisionid() {
+	public Boundary getDivisionid() {
 		return this.divisionid;
 	}
 
-	public void setDivisionid(BoundaryImpl divisionid) {
+	public void setDivisionid(Boundary divisionid) {
 		this.divisionid = divisionid;
 	}
 

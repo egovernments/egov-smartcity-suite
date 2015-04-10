@@ -8,6 +8,7 @@ package org.egov.lib.admbndry;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 
 public class VisitorPath implements Path {

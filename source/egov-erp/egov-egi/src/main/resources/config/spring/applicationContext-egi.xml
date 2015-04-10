@@ -31,15 +31,15 @@
 		<constructor-arg ref="userDao" />
 	</bean>
  -->
-	<bean id="boundaryService" class="org.egov.lib.admbndry.ejb.server.BoundaryServiceImpl">
+	<!-- <bean id="boundaryService" class="org.egov.lib.admbndry.ejb.server.BoundaryServiceImpl">
 		<property name="boundaryDAO" ref="boundaryDAO" />
-	<!-- 	<property name="boundaryTypeService" ref="boundaryTypeService" /> -->
+		<property name="boundaryTypeService" ref="boundaryTypeService" />
 		<property name="heirarchyTypeService" ref="heirarchyTypeService"/>
-	</bean>
+	</bean> -->
 
-	<bean id="heirarchyTypeService" class="org.egov.lib.admbndry.ejb.server.HeirarchyTypeServiceImpl" >
+	<!-- <bean id="heirarchyTypeService" class="org.egov.lib.admbndry.ejb.server.HeirarchyTypeServiceImpl" >
 		<property name="heirarchyTypeDAO" ref="heirarchyTypeDAO"/>
-	</bean>
+	</bean> -->
  
 	<!-- <bean id="boundaryTypeService" class="org.egov.lib.admbndry.ejb.server.BoundaryTypeServiceImpl">
 		<constructor-arg ref="sessionFactory" />

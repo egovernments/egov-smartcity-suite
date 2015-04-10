@@ -32,10 +32,10 @@ public class DepartmentBuilder {
             withCode("test-" + count);
         return this;
     }
-
-    private DepartmentBuilder withId(final int id) {
+    
+    public DepartmentBuilder withId(final int id) {
         try {
-            final Field idField = department.getClass().getSuperclass().getDeclaredField("id");
+            final Field idField = department.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
             idField.setAccessible(true);
             idField.set(department, id);
         } catch (final Exception e) {

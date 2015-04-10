@@ -41,7 +41,7 @@ public class SearchPositionService {
 	 * @return
 	 * @throws NoSuchObjectException 
 	 */
-	public  List<EmployeeView> getPositionBySearchParameters(String beginsWith,Integer desId,Integer deptId,Integer jurdId,Integer roleId,Date userDate,Integer maxResults) throws NoSuchObjectException{
+	public  List<EmployeeView> getPositionBySearchParameters(String beginsWith,Integer desId,Integer deptId,Long jurdId,Integer roleId,Date userDate,Integer maxResults) throws NoSuchObjectException{
 		List<EmployeeView> posList = new ArrayList<EmployeeView>() ;
 		logger.debug("inside getPositionBySearchParameters method ***********"+desId);
 		String searchQuery="";

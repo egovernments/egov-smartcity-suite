@@ -55,7 +55,7 @@ public class BoundaryTypeBuilder {
         return this;
     }
 
-    public BoundaryTypeBuilder withHierarchy(final Integer hierarchy) {
+    public BoundaryTypeBuilder withHierarchy(final Long hierarchy) {
         boundaryTypeImpl.setHierarchy(hierarchy);
         return this;
     }
@@ -85,7 +85,7 @@ public class BoundaryTypeBuilder {
             withName("test-BoundaryType-" + count);
 
         if (0 == boundaryTypeImpl.getHierarchy())
-            withHierarchy(count);
+            withHierarchy(Long.valueOf(count));
         if (null != boundaryTypeImpl.getHierarchyType())
             withHeirarchyType(new HeirarchyTypeBuilder().withDefaults().build());
         return this;
@@ -100,7 +100,7 @@ public class BoundaryTypeBuilder {
 
         
         if (null == boundaryTypeImpl.getHierarchy())
-            withHierarchy(count);
+            withHierarchy(Long.valueOf(count));
 
         if (null == boundaryTypeImpl.getHierarchyType())
             withHeirarchyType(new HeirarchyTypeBuilder().withDbDefaults().build());

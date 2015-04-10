@@ -5,27 +5,10 @@
  */
 package org.egov.infstr.client.delegate;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.egov.commons.utils.EgovInfrastrUtil;
-import org.egov.exceptions.DuplicateElementException;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.entity.HierarchyType;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.admin.master.service.RoleService;
-import org.egov.infra.admin.master.service.UserService;
-import org.egov.lib.admbndry.ejb.api.BoundaryServiceOld;
-import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
-import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class UserDelegate {
 	
-	private UserService userService ;
+	/*private UserService userService ;
 	private HeirarchyTypeService heirarchyTypeService;
 	private BoundaryServiceOld boundaryService;
 	@Autowired
@@ -38,22 +21,22 @@ public class UserDelegate {
 	private static Logger logger = LoggerFactory.getLogger(UserDelegate.class);
 
 
-	/**
+	*//**
 	 * This method creates a User in the System.
 	 * @param User object,int deptid,int roleid,List jurisdictionlist,String hierarachyTypeName
 	 * @exception DuplicateElementException
-	 */
+	 *//*
 	public void createUser(final User user, final int deptid, final int roleid, final List jurlist, final String hierarachyTypeName) throws DuplicateElementException {
 
 	}
 
-	/**
+	*//**
 	 * This method updates a User in the System.
 	 * @param User object,int deptid,int roleid,List jurisdictionlist,String hierarachyTypeName
-	 */
+	 *//*
 
 	public void updateUser(final User user, final int deptid, final int roleid, final List jurlist, final String hierarachyTypeName) {
-		/*Role role = null;
+		Role role = null;
 		Department dept = null;
 		HeirarchyType ht = null;
 		try {
@@ -159,13 +142,13 @@ public class UserDelegate {
 			exp.printStackTrace();
 			//HibernateUtil.rollbackTransaction();
 			throw new EGOVRuntimeException("Internal Server Error in Updating User:::", exp);
-		}*/
+		}
 	}
 
-	/**
+	*//**
 	 * This method deletes a User in the System.
 	 * @param Integer userid
-	 */
+	 *//*
 	public void removeUser(final Long userid) {
 		try {
 			final User user = this.userService.getUserById(userid);
@@ -181,10 +164,10 @@ public class UserDelegate {
 		}
 	}
 
-	/**
+	*//**
 	 * This method gets a list of top boundries existing in the system
 	 * @return List topBndryList
-	 */
+	 *//*
 	public List getTopBondaries() {
 		List topBndryList = new ArrayList();
 		HierarchyType ht = null;
@@ -198,11 +181,11 @@ public class UserDelegate {
 		return topBndryList;
 	}
 
-	/**
+	*//**
 	 * This method gets an user object depending upon the userid
 	 * @param userid
 	 * @return User object
-	 */
+	 *//*
 	public User getUser(final Long userid) {
 		User user = null;
 		try {
@@ -240,5 +223,5 @@ public class UserDelegate {
 
 	public void setEgovInfrastrUtil(EgovInfrastrUtil egovInfrastrUtil) {
 		this.egovInfrastrUtil = egovInfrastrUtil;
-	}
+	}*/
 }

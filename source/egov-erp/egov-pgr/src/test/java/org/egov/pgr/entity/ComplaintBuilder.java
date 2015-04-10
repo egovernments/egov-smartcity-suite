@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.egov.builder.entities.BoundaryBuilder;
 import org.egov.eis.entity.PositionBuilder;
-import org.egov.lib.admbndry.BoundaryImpl;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pims.commons.Position;
 
@@ -40,7 +40,7 @@ public class ComplaintBuilder {
         return this;
     }
 
-    public ComplaintBuilder withLocation(final BoundaryImpl location) {
+    public ComplaintBuilder withLocation(final Boundary location) {
         complaint.setLocation(location);
         return this;
     }
@@ -108,7 +108,7 @@ public class ComplaintBuilder {
         if (null == complaint.getAssignee())
             withAssignee(new PositionBuilder().withName("testPos").build());
         // if(null==complaint.getLocation())
-        // withLocation(new BoundaryImpl);
+        // withLocation(new Boundary);
         if (null == complaint.getStatus())
             withStatus(new ComplaintStatusBuilder().withDefaults().build());
         withDetails("test-Description");

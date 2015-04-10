@@ -12,6 +12,6 @@ public interface JurisdictionData {
 	 * Returns the list of all Boundary objects, the implementor belongs to.
 	 * @return java.util.List
 	 */
-	public List<? extends org.egov.lib.admbndry.Boundary> getJurisdictionData();
+	public List<? extends org.egov.infra.admin.master.entity.Boundary> getJurisdictionData();
 
 }

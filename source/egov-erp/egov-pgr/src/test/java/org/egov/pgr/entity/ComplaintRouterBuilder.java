@@ -2,7 +2,7 @@ package org.egov.pgr.entity;
 
 import java.lang.reflect.Field;
 
-import org.egov.lib.admbndry.BoundaryImpl;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.pims.commons.Position;
 
 public class ComplaintRouterBuilder {
@@ -18,7 +18,7 @@ public class ComplaintRouterBuilder {
         return this;
     }
 
-    public ComplaintRouterBuilder withBoundary(final BoundaryImpl boundary) {
+    public ComplaintRouterBuilder withBoundary(final Boundary boundary) {
         complaintRouter.setBoundary(boundary);
         return this;
     }

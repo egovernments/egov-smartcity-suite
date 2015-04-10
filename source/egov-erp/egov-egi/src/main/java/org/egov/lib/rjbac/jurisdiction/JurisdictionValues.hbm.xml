@@ -12,7 +12,7 @@
 		<many-to-one name="userJurLevel" class="org.egov.lib.rjbac.jurisdiction.Jurisdiction" fetch="select" cascade="save-update">
 			<column name="ID_USER_JURLEVEL" />
 		</many-to-one>
-		<many-to-one name="boundary" class="org.egov.lib.admbndry.BoundaryImpl" fetch="select">
+		<many-to-one name="boundary" class="org.egov.infra.admin.master.entity.Boundary" fetch="select">
 			<column name="ID_BNDRY" />
 		</many-to-one>
 		<property name="fromDate" column="FROMDATE" type="date" />

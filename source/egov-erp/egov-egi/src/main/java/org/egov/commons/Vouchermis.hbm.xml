@@ -16,7 +16,7 @@
         <property name="billnumber" type="integer">
             <column name="BILLNUMBER" precision="22" scale="0" />
         </property>
-        <many-to-one name="divisionid" class="org.egov.lib.admbndry.BoundaryImpl" column="DIVISIONID" />
+        <many-to-one name="divisionid" class="org.egov.infra.admin.master.entity.Boundary" column="DIVISIONID" />
         <property name="schemename" type="string">
             <column name="SCHEMENAME" length="25" />
         </property>

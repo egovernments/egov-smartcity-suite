@@ -82,7 +82,7 @@ public class UpdateUserAction extends EgovAction {
 			}
 			try {
 				final String hierarachyTypeName = (String) session.getAttribute("hrchyTypeName");
-				this.userDelegate.updateUser(usr, updateForm.getDepartmentId(), updateForm.getRoleId(), jurisdcnList, hierarachyTypeName);
+				//this.userDelegate.updateUser(usr, updateForm.getDepartmentId(), updateForm.getRoleId(), jurisdcnList, hierarachyTypeName);
 				target = "success";
 				message = "User has been Updated Successfully!!";
 				req.setAttribute("MESSAGE", message);

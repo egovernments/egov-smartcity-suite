@@ -84,7 +84,7 @@
 						<spring:message code="lbl.complaintLocation"/>
 					</div>
 					<div class="col-md-9 col-xs-6 add-margin" id="ct-location">
-						${complaint.location.bndryNameLocal}
+						${complaint.location.boundaryNameLocal}
 					</div>
 				</div>
 				<div class="row">

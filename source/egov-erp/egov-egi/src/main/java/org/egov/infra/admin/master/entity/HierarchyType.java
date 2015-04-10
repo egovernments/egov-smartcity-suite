@@ -24,7 +24,7 @@ import org.hibernate.validator.constraints.NotBlank;
         columnName = {"name", "code"}
 )
 @Table(name = "eg_hierarchy_type")
-public class HierarchyType extends AbstractAuditable<HierarchyType, Long> {
+public class HierarchyType extends AbstractAuditable<User, Long> {
 
     private static final long serialVersionUID = -7131667806935923935L;
 

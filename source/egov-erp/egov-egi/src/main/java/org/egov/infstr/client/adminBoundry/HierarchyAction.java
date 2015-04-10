@@ -5,6 +5,9 @@
  */
 package org.egov.infstr.client.adminBoundry;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -13,15 +16,11 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infstr.client.EgovAction;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 public class HierarchyAction extends EgovAction {
-	private static final Logger LOG = LoggerFactory.getLogger(HierarchyAction.class);
+	/*private static final Logger LOG = LoggerFactory.getLogger(HierarchyAction.class);
 	private HeirarchyTypeService heirarchyTypeService;
 	private EgovInfrastrUtil egovInfrastrUtil;
 
@@ -30,11 +29,11 @@ public class HierarchyAction extends EgovAction {
         this.egovInfrastrUtil = egovInfrastrUtil;
 	}
 
-	/**
+	*//**
 	 * This method is used to get all the top boundries and set the list in session
 	 * Calls the setup method in EgovAction class that sets a list of
 	 * all the departments in the session
-	 **/
+	 **//*
 	@Override
 	public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest req, final HttpServletResponse res) throws Exception {
 
@@ -91,5 +90,5 @@ public class HierarchyAction extends EgovAction {
 		return mapping.findForward(target);
 
 	}
-
+*/
 }

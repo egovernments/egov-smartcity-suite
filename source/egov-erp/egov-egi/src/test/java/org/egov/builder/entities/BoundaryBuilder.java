@@ -1,174 +1,171 @@
 package org.egov.builder.entities;
 
-import java.math.BigInteger;
+import java.lang.reflect.Field;
 import java.util.Date;
 
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
-import org.egov.lib.admbndry.Boundary;
-import org.egov.lib.admbndry.BoundaryImpl;
+import org.joda.time.DateTime;
 
 public class BoundaryBuilder {
 
-    private final BoundaryImpl boundaryImpl;
+    private final Boundary boundary;
 
     // use this count where unique names,descriptions etc required
     private static int count;
 
     public BoundaryBuilder() {
-        boundaryImpl = new BoundaryImpl();
+        boundary = new Boundary();
         count++;
     }
 
     public BoundaryBuilder withUpdatedTime(final Date updatedTime) {
-        boundaryImpl.setUpdatedTime(updatedTime);
+        boundary.setLastModifiedDate(new DateTime(updatedTime));
         return this;
     }
 
     public BoundaryBuilder withId(final Integer id) {
-        boundaryImpl.setId(id);
+        try {
+            final Field idField = boundary.getClass().getSuperclass().getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(boundary, id);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
         return this;
     }
 
     public BoundaryBuilder withBoundaryType(final BoundaryType boundaryType) {
-        boundaryImpl.setBoundaryType(boundaryType);
+        boundary.setBoundaryType(boundaryType);
         return this;
     }
 
     public BoundaryBuilder withParent(final Boundary parent) {
-        boundaryImpl.setParent(parent);
+        boundary.setParent(parent);
         return this;
     }
 
     public BoundaryBuilder withName(final String name) {
-        boundaryImpl.setName(name);
+        boundary.setName(name);
         return this;
     }
 
-    public BoundaryBuilder withBoundaryNum(final BigInteger boundaryNum) {
-        boundaryImpl.setBoundaryNum(boundaryNum);
+    public BoundaryBuilder withBoundaryNum(final Long boundaryNum) {
+        boundary.setBoundaryNum(boundaryNum);
         return this;
     }
 
-    public BoundaryBuilder withParentBoundaryNum(final BigInteger parentBoundaryNum) {
-        boundaryImpl.setParentBoundaryNum(parentBoundaryNum);
+    public BoundaryBuilder withParentBoundaryNum(final Long parentBoundaryNum) {
+        boundary.setParentBoundaryNum(parentBoundaryNum);
         return this;
     }
 
-    public BoundaryBuilder withTopLevelBoundaryID(final Integer topLevelBoundaryID) {
-        boundaryImpl.setTopLevelBoundaryID(topLevelBoundaryID);
-        return this;
-    }
-
-    public BoundaryBuilder withBndryTypeHeirarchyLevel(final Integer bndryTypeHeirarchyLevel) {
-        boundaryImpl.setBndryTypeHeirarchyLevel(bndryTypeHeirarchyLevel);
-        return this;
-    }
 
     public BoundaryBuilder withFromDate(final Date fromDate) {
-        boundaryImpl.setFromDate(fromDate);
+        boundary.setFromDate(fromDate);
         return this;
     }
 
     public BoundaryBuilder withToDate(final Date toDate) {
-        boundaryImpl.setToDate(toDate);
+        boundary.setToDate(toDate);
         return this;
     }
 
-    public BoundaryBuilder withIsHistory(final Character isHistory) {
-        boundaryImpl.setIsHistory(isHistory);
+    public BoundaryBuilder withIsHistory(final boolean isHistory) {
+        boundary.setHistory(isHistory);
         return this;
     }
 
-    public BoundaryBuilder withBndryId(final Integer bndryId) {
-        boundaryImpl.setBndryId(bndryId);
+    public BoundaryBuilder withBndryId(final Long bndryId) {
+        boundary.setBndryId(bndryId);
         return this;
     }
 
     public BoundaryBuilder withBndryNameLocal(final String bndryNameLocal) {
-        boundaryImpl.setBndryNameLocal(bndryNameLocal);
+        boundary.setBoundaryNameLocal(bndryNameLocal);
         return this;
     }
 
     public BoundaryBuilder withLng(final Float lng) {
-        boundaryImpl.setLng(lng);
+        boundary.setLongitude(lng);
         return this;
     }
 
     public BoundaryBuilder withLat(final Float lat) {
-        boundaryImpl.setLat(lat);
+        boundary.setLatitude(lat);
         return this;
     }
 
     public BoundaryBuilder withMaterializedPath(final String materializedPath) {
-        boundaryImpl.setMaterializedPath(materializedPath);
+        boundary.setMaterializedPath(materializedPath);
         return this;
     }
 
     public BoundaryBuilder withDefaults() {
         withId(count);
-        if (null == boundaryImpl.getUpdatedTime())
+        if (null == boundary.getLastModifiedDate())
             withUpdatedTime(new Date());
 
-        if (null == boundaryImpl.getBoundaryType())
+        if (null == boundary.getBoundaryType())
             withBoundaryType(new BoundaryTypeBuilder().withDefaults().build());
 
-        if (null == boundaryImpl.getName())
+        if (null == boundary.getName())
             withName("test-boundary-" + count);
-        if (null == boundaryImpl.getBoundaryNum())
-            withBoundaryNum(BigInteger.valueOf(Integer.valueOf(count).longValue()));
+        if (null == boundary.getBoundaryNum())
+            withBoundaryNum(Long.valueOf(count));
 
-        if (null == boundaryImpl.getFromDate())
+        if (null == boundary.getFromDate())
             withFromDate(new Date());
-        if (null == boundaryImpl.getToDate())
+        if (null == boundary.getToDate())
             withToDate(new Date());
-        if (null == boundaryImpl.getIsHistory())
-            withIsHistory('N');
-        if (null == boundaryImpl.getBndryId())
-            withBndryId(count);
-        if (null == boundaryImpl.getBndryNameLocal())
+        if (boundary.isHistory())
+            withIsHistory(false);
+        if (null == boundary.getBndryId())
+            withBndryId(Long.valueOf(count));
+        if (null == boundary.getBoundaryNameLocal())
             withBndryNameLocal("test-local");
-        if (null == boundaryImpl.getLng())
+        if (null == boundary.getLongitude())
             withLng(123232f);
-        if (null == boundaryImpl.getLat())
+        if (null == boundary.getLatitude())
             withLat(1423423f);
-        if (null == boundaryImpl.getMaterializedPath())
+        if (null == boundary.getMaterializedPath())
             withMaterializedPath("1");
 
         return this;
     }
 
     public BoundaryBuilder withDbDefaults() {
-        if (null == boundaryImpl.getUpdatedTime())
+        if (null == boundary.getLastModifiedDate())
             withUpdatedTime(new Date());
 
-        if (null == boundaryImpl.getBoundaryType())
+        if (null == boundary.getBoundaryType())
             withBoundaryType(new BoundaryTypeBuilder().withDbDefaults().build());
 
-        if (null == boundaryImpl.getName())
+        if (null == boundary.getName())
             withName("test-boundary-" + count);
-        if (null == boundaryImpl.getBoundaryNum())
-            withBoundaryNum(BigInteger.valueOf(Integer.valueOf(count).longValue()));
+        if (null == boundary.getBoundaryNum())
+            withBoundaryNum(Long.valueOf(count));
 
-        if (null == boundaryImpl.getFromDate())
+        if (null == boundary.getFromDate())
             withFromDate(new Date());
-        if (null == boundaryImpl.getToDate())
+        if (null == boundary.getToDate())
             withToDate(new Date());
-        if (null == boundaryImpl.getIsHistory())
-            withIsHistory('N');
-        if (null == boundaryImpl.getBndryId())
-            withBndryId(count);
-        if (null == boundaryImpl.getBndryNameLocal())
+        if (boundary.isHistory())
+            withIsHistory(false);
+        if (null == boundary.getBndryId())
+            withBndryId(Long.valueOf(count));
+        if (null == boundary.getBoundaryNameLocal())
             withBndryNameLocal("test-local");
-        if (null == boundaryImpl.getLng())
+        if (null == boundary.getLongitude())
             withLng(123232f);
-        if (null == boundaryImpl.getLat())
+        if (null == boundary.getLatitude())
             withLat(1423423f);
-        if (null == boundaryImpl.getMaterializedPath())
+        if (null == boundary.getMaterializedPath())
             withMaterializedPath("1");
         return this;
     }
 
-    public BoundaryImpl build() {
-        return boundaryImpl;
+    public Boundary build() {
+        return boundary;
     }
 }

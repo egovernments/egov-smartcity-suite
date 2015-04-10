@@ -16,12 +16,10 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.lib.admbndry.Boundary;
-import org.egov.lib.admbndry.ejb.api.BoundaryServiceOld;
-import org.egov.lib.admbndry.ejb.server.BoundaryServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +27,6 @@ public class UserJurisdictionAction extends DispatchAction {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(UserJurisdictionAction.class);
 	private final UserService userService = new UserService();
-	private final BoundaryServiceOld boundaryService = new BoundaryServiceImpl();
 	
 	public ActionForward saveJurisdiction(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
 		String target = "";
@@ -42,9 +39,9 @@ public class UserJurisdictionAction extends DispatchAction {
 			final User user = userService.getUserById(Long.valueOf(userIdStr));
 			final String id[] = userForm.getBndryID();
 			for (int i = 0; i < id.length; i++) {
-				final int bndryId = Integer.parseInt(id[i]);
-				final Boundary bndry = boundaryService.getBoundaryById(bndryId);
-				final BoundaryType bndryType = bndry.getBoundaryType();
+				final Long bndryId = Long.valueOf(id[i]);
+				//final Boundary bndry = boundaryService.getBoundaryById(bndryId);
+				//final BoundaryType bndryType = bndry.getBoundaryType();
 				//final JurisdictionValues jurValueModifyObj = userService.getJurisdictionValueByBndryIdAndUserId(bndryId, user.getId());
 				//final Jurisdiction jurisdiction = userService.getJurisdictionByBndryTypeIdAndUserId(bndryType.getId(), user.getId());
 				/*if (userForm.getSelCheck()[i].equals("yes") && (jurValueModifyObj != null) && (bndry != null) && bndry.getBoundaryType().getId().equals(bndryType.getId()) && (jurisdiction != null)) {

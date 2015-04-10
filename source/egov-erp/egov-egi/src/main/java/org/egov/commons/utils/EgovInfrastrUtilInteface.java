@@ -10,51 +10,51 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infstr.commons.Module;
-import org.egov.lib.admbndry.Boundary;
 
 public interface EgovInfrastrUtilInteface {
 
 	/**
 	 * A map of BoundaryID vs boundaryName
-	 */
+	 *//*
 	public Map getBoundaryMap();
 
-	/**
+	*//**
 	 * A map of departmentID vs departmentName
-	 */
+	 *//*
 	public Map getDeptMap();
 
-	/**
+	*//**
 	 * A List of all BoundaryIDs
-	 */
+	 *//*
 	public List getBoundaryList();
 
-	/**
+	*//**
 	 * A List of all departmentIDs
-	 */
+	 *//*
 	public List getDeptList();
 
-	/**
+	*//**
 	 * A map of BoundaryTypeID vs BoundaryTypeName
 	 * @nil
-	 */
+	 *//*
 	public Map getMapOfBoundryTypes();
 
-	/**
+	*//**
 	 * A map of RoleID vs RoleName
 	 * @nil
-	 */
+	 *//*
 	public Map getRoleIdMap();
 
-	/**
+	*//**
 	 * A map of RoleName vs RoleID
 	 * @nil
-	 */
+	 *//*
 	public Map getRoleNameMap();
 
-	/**
+	*//**
 	 * A map of toplevelid vs a list of (userId vs username seperated by a stringtokeniser)
 	 * @nil
 	 *//*
@@ -64,12 +64,12 @@ public interface EgovInfrastrUtilInteface {
 	 * A map of toplevelid vs a map of (userId vs username)
 	 * @nil
 	 *//*
-	public Map getallmapUsersAcrossDeptMap();*/
+	public Map getallmapUsersAcrossDeptMap();
 
-	/**
+	*//**
 	 * A map of userid vs roleid
 	 * @nil
-	 */
+	 *//*
 	public Map getuserRoleMap();
 
 	public Map getBoundaryMap(Set bndrySet);
@@ -78,9 +78,9 @@ public interface EgovInfrastrUtilInteface {
 
 	public List getBndryTypeBndryList(Boundary topBoundary, BoundaryType incluedBType);
 
-	/*
+	
 	 * Returns Map of AccountName Vs AccountCode
-	 */
+	 
 	public String[] getExcludedAccHeadsForModule(Module module);
 
 	public List getModesList();
@@ -95,6 +95,6 @@ public interface EgovInfrastrUtilInteface {
 
 	public String getReportDate(String toDate, String fromDate, String id);
 
-	public String encodingName(String name);
+	public String encodingName(String name);*/
 
 }

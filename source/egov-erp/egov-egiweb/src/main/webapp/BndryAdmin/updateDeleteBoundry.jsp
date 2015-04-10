@@ -2,7 +2,7 @@
                 java.util.List,
                 java.util.Iterator,
                 org.egov.infstr.utils.EGovConfig,
-                org.egov.lib.admbndry.Boundary,
+                org.egov.infra.admin.master.entity.Boundary,
                 org.egov.lib.admbndry.CityWebsite" %>
 <%@ include file="/includes/taglibs.jsp" %>
 <%

@@ -17,9 +17,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.client.EgovAction;
 import org.egov.infstr.client.delegate.MoveBoundaryDelegate;
-import org.egov.lib.admbndry.Boundary;
 
 public class MoveBoundaryAction extends EgovAction {
 	private final static Logger LOG = LoggerFactory.getLogger(MoveBoundaryAction.class);

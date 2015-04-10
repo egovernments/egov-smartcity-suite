@@ -5,10 +5,9 @@
  */
 package org.egov.infstr.client.delegate;
 
-import java.util.Date;
 import java.util.List;
 
-import org.egov.lib.admbndry.Boundary;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.lib.admbndry.BoundaryDAO;
 
 public class MoveBoundaryDelegate {
@@ -43,10 +42,9 @@ public class MoveBoundaryDelegate {
 	 * @throws Exception
 	 **/
 	public Boundary moveBoundary(final String childBoundaryId, final String parentBoundaryId) throws Exception {
-		final Boundary boundary = this.boundaryDAO.getBoundary(Integer.parseInt(childBoundaryId));
-		final Boundary parentBoundary = this.boundaryDAO.getBoundary(Integer.parseInt(parentBoundaryId));
+		final Boundary boundary = this.boundaryDAO.getBoundary(Long.valueOf(childBoundaryId));
+		final Boundary parentBoundary = this.boundaryDAO.getBoundary(Long.valueOf(parentBoundaryId));
 		boundary.setParent(parentBoundary);
-		boundary.setUpdatedTime(new Date());
 		this.boundaryDAO.updateBoundary(boundary);
 		return boundary;
 	}

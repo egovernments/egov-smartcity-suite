@@ -9,9 +9,8 @@ import org.egov.builder.entities.BoundaryBuilder;
 import org.egov.builder.entities.DepartmentBuilder;
 import org.egov.eis.entity.PositionBuilder;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.lib.admbndry.Boundary;
-import org.egov.lib.admbndry.BoundaryImpl;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintBuilder;
 import org.egov.pgr.entity.ComplaintRouter;
@@ -37,7 +36,7 @@ public class ComplaintRouterServiceTest {
 
     private ComplaintType complaintType;
 
-    private BoundaryImpl ward;
+    private Boundary ward;
 
     private Position wardOfficer;
 
@@ -79,13 +78,13 @@ public class ComplaintRouterServiceTest {
         final ComplaintRouter type_position = new ComplaintRouterBuilder().withComplaintType(complaintType)
                 .withPosition(healthInspector).build();
 
-        final ComplaintRouter boundary_position = new ComplaintRouterBuilder().withBoundary((BoundaryImpl) zone)
+        final ComplaintRouter boundary_position = new ComplaintRouterBuilder().withBoundary((Boundary) zone)
                 .withPosition(zonalOfficer).build();
 
         when(complaintRouterRepository.findByComplaintTypeAndBoundary(complaintType, ward)).thenReturn(
                 type_boundary_position);
         when(complaintRouterRepository.findByOnlyComplaintType(complaintType)).thenReturn(type_position);
-        when(complaintRouterRepository.findByBoundary((BoundaryImpl) zone)).thenReturn(boundary_position);
+        when(complaintRouterRepository.findByBoundary((Boundary) zone)).thenReturn(boundary_position);
 
     }
 
@@ -112,7 +111,7 @@ public class ComplaintRouterServiceTest {
         // this will create a new boundary which is not mapped
         complaintType = new ComplaintTypeBuilder().withDbDefaults().build();
 
-        complaint = new ComplaintBuilder().withComplaintType(complaintType).withLocation((BoundaryImpl) zone).build();
+        complaint = new ComplaintBuilder().withComplaintType(complaintType).withLocation((Boundary) zone).build();
         final Position assignee = complaintRouterService.getAssignee(complaint);
         assertEquals(zonalOfficer, assignee);
 
@@ -123,7 +122,7 @@ public class ComplaintRouterServiceTest {
         // this will create a new boundary which is not mapped
         complaintType = new ComplaintTypeBuilder().withDbDefaults().build();
 
-        complaint = new ComplaintBuilder().withComplaintType(complaintType).withLocation((BoundaryImpl) city).build();
+        complaint = new ComplaintBuilder().withComplaintType(complaintType).withLocation((Boundary) city).build();
         final Position assignee = complaintRouterService.getAssignee(complaint);
         assertNull(assignee);
 
@@ -133,11 +132,11 @@ public class ComplaintRouterServiceTest {
     public void testGetAssignee_By_Go_After_Go_Insertion() {
         // this will create a new boundary which is mapped
         complaintType = new ComplaintTypeBuilder().withDbDefaults().build();
-        final ComplaintRouter GoPosition = new ComplaintRouterBuilder().withBoundary((BoundaryImpl) city)
+        final ComplaintRouter GoPosition = new ComplaintRouterBuilder().withBoundary((Boundary) city)
                 .withPosition(grievanceOfficer).build();
         when(complaintRouterRepository.findGrievanceOfficer()).thenReturn(GoPosition);
 
-        complaint = new ComplaintBuilder().withComplaintType(complaintType).withLocation((BoundaryImpl) city).build();
+        complaint = new ComplaintBuilder().withComplaintType(complaintType).withLocation((Boundary) city).build();
         final Position assignee = complaintRouterService.getAssignee(complaint);
         assertEquals(grievanceOfficer, assignee);
 

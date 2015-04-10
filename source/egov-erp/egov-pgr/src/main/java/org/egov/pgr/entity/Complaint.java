@@ -18,9 +18,9 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.lib.admbndry.BoundaryImpl;
 import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pims.commons.Position;
 import org.egov.search.domain.Searchable;
@@ -62,7 +62,7 @@ public class Complaint extends StateAware {
     @Valid
     @JoinColumn(name="location", nullable = true)
     @Searchable(name = "boundary", group = Searchable.Group.COMMON)
-    private BoundaryImpl location;
+    private Boundary location;
 
     @ManyToOne
     @NotNull
@@ -180,11 +180,11 @@ public class Complaint extends StateAware {
         this.supportDocs = supportDocs;
     }
 
-    public BoundaryImpl getLocation() {
+    public Boundary getLocation() {
         return location;
     }
 
-    public void setLocation(final BoundaryImpl location) {
+    public void setLocation(final Boundary location) {
         this.location = location;
     }
 

@@ -8,12 +8,12 @@ import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.exceptions.TooManyValuesException;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.services.EISServeable;
 import org.egov.lib.admbndry.BoundaryDAO;
-import org.egov.lib.admbndry.BoundaryImpl;
 import org.egov.lib.admbndry.BoundaryTypeDAO;
 import org.egov.lib.admbndry.HeirarchyTypeDAO;
 import org.egov.pims.commons.DesignationMaster;
@@ -35,12 +35,12 @@ public class CommonService {
     private EISServeable eisService;
 
     @SuppressWarnings("unchecked")
-    public List<BoundaryImpl> getZones() {
-        List<BoundaryImpl> zones = new ArrayList<BoundaryImpl>();
+    public List<Boundary> getZones() {
+        List<Boundary> zones = new ArrayList<Boundary>();
         try {
             HierarchyType hierarchyTypeByName = hierHeirarchyTypeDAO.getHierarchyTypeByName("ADMINISTRATION");
             BoundaryType boundaryType = boundaryTypeDAO.getBoundaryType("ZONE", hierarchyTypeByName);
-            zones = (List<BoundaryImpl>) boundaryDAO.getAllBoundariesByBndryTypeId(boundaryType.getId());
+            zones = (List<Boundary>) boundaryDAO.getAllBoundariesByBndryTypeId(boundaryType.getId());
         } catch (NoSuchObjectException e) {
             LOG.error(e.getMessage());
         } catch (TooManyValuesException e) {
@@ -49,12 +49,12 @@ public class CommonService {
         return zones;
     }
 
-    public List<BoundaryImpl> getWards(Integer zoneId) {
+    public List<Boundary> getWards(Long zoneId) {
 
         if (zoneId == null || zoneId <= 0) {
             throw new EGOVRuntimeException("Zone or Zoneid is not passed");
         }
-        List<BoundaryImpl> wards = new ArrayList<BoundaryImpl>();
+        List<Boundary> wards = new ArrayList<Boundary>();
         try {
             wards = boundaryDAO.getChildBoundaries(zoneId);
         } catch (Exception e) {

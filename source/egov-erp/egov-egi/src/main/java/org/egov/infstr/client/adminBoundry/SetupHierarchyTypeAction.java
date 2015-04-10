@@ -11,23 +11,21 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infstr.client.EgovAction;
-import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
-import org.egov.lib.admbndry.ejb.server.HeirarchyTypeServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SetupHierarchyTypeAction extends EgovAction {
 
-	private static final Logger LOG = LoggerFactory.getLogger(SetupHierarchyTypeAction.class);
+	/*private static final Logger LOG = LoggerFactory.getLogger(SetupHierarchyTypeAction.class);
 	private final HeirarchyTypeService heirarchyTypeService = new HeirarchyTypeServiceImpl();
 
-	/**
+	*//**
 	 * This method is used to get all the top boundries and set the list in session Calls the setup method 
 	 * in EgovAction class that sets a list of all the departments in the session
 	 * @param ActionMapping mapping
@@ -35,7 +33,7 @@ public class SetupHierarchyTypeAction extends EgovAction {
 	 * @param HttpServletRequest req
 	 * @param HttpServletResponse res
 	 * @return ActionForward
-	 **/
+	 **//*
 	@Override
 	public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest req, final HttpServletResponse res) throws Exception {
 		final HierarchyForm hierarchyForm = (HierarchyForm) form;
@@ -80,5 +78,5 @@ public class SetupHierarchyTypeAction extends EgovAction {
 
 		req.getSession().setAttribute("hierarchySet", hierarchySet);
 		return mapping.findForward(target);
-	}
+	}*/
 }

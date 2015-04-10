@@ -13,13 +13,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import org.egov.builder.entities.DepartmentBuilder;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.web.support.formatter.DepartmentFormatter;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.web.controller.AbstractContextControllerTest;
@@ -27,6 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.springframework.format.Formatter;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -37,6 +39,7 @@ public class UpdateComplaintTypeControllerTest extends AbstractContextController
     private DepartmentService departmentService;
     @Mock
     private ComplaintTypeService complaintTypeService;
+    
     private MockMvc mockMvc;
     private Long complaintTypeId;
 
@@ -48,14 +51,24 @@ public class UpdateComplaintTypeControllerTest extends AbstractContextController
     }
 
     @Before
-    public void before() {
-        FormattingConversionService conversionService = new FormattingConversionService();
-        conversionService.addFormatter(new DepartmentFormatter(departmentService));
-        mvcBuilder.setConversionService(conversionService);
-        mockMvc = mvcBuilder.build();
+    public void before() throws Exception {
+        final Department department = new DepartmentBuilder().withId(1).withCode("DC").build();
+        when(departmentService.getDepartmentById(any(Long.class))).thenReturn(department);
+        FormattingConversionService formatterService = new FormattingConversionService();
+        formatterService.addFormatter(new Formatter<Department>() {
 
-        Department department = new DepartmentBuilder().withCode("DC").build();
-        when(departmentService.getDepartmentByCode(anyString())).thenReturn(department);
+            @Override
+            public String print(Department object, Locale locale) {
+               return null;
+            }
+
+            @Override
+            public Department parse(String text, Locale locale) throws ParseException {
+                return department;
+            }
+        });
+        mvcBuilder.setConversionService(formatterService);
+        mockMvc = mvcBuilder.build();
 
         ComplaintType complaintType = new ComplaintType();
         complaintType.setName("existing");

@@ -5,12 +5,21 @@
  */
 package org.egov.lib.admbndry;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
+import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -20,15 +29,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 public class BoundaryDAO {
 	public static final Logger LOGGER = LoggerFactory.getLogger(BoundaryDAO.class);
@@ -48,9 +48,9 @@ public class BoundaryDAO {
 		this.boundaryTypeService = boundaryTypeService;
 	}
 	
-	public BoundaryImpl load(Integer id)
+	public Boundary load(Long id)
 	{
-		return (BoundaryImpl)getSession().load(BoundaryImpl.class,id);
+		return (Boundary)getSession().load(Boundary.class,id);
 	}
 
 	public Boundary createBoundary(final Boundary boundary) {
@@ -97,10 +97,10 @@ public class BoundaryDAO {
 
 	}
 
-	public Boundary getBoundary(final int bndryID) {
+	public Boundary getBoundary(final Long bndryID) {
 		try {
-			final Query qry = getSession().createQuery("from BoundaryImpl BI where BI.id=:bndryID and BI.isHistory='N' " + " AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR " + "(BI.fromDate <= :currDate AND BI.toDate >= :currDate))");
-			qry.setInteger("bndryID", bndryID);
+			final Query qry = getSession().createQuery("from Boundary BI where BI.id=:bndryID and BI.isHistory='N' " + " AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR " + "(BI.fromDate <= :currDate AND BI.toDate >= :currDate))");
+			qry.setLong("bndryID", bndryID);
 			qry.setDate("currDate", new Date());
 			return (Boundary) qry.uniqueResult();
 		} catch (final HibernateException e) {
@@ -110,10 +110,10 @@ public class BoundaryDAO {
 
 	}
 
-	public Boundary getAllBoundaryById(final int bndryID) {
+	public Boundary getAllBoundaryById(final Long bndryID) {
 		try {
-			final Query qry = getSession().createQuery("from BoundaryImpl BI where BI.id=:bndryID");
-			qry.setInteger("bndryID", bndryID);
+			final Query qry = getSession().createQuery("from Boundary BI where BI.id=:bndryID");
+			qry.setLong("bndryID", bndryID);
 			return (Boundary) qry.uniqueResult();
 		} catch (final HibernateException e) {
 			LOGGER.error("Error occurred in getBoundary", e);
@@ -122,10 +122,10 @@ public class BoundaryDAO {
 
 	}
 
-	public Boundary getBoundaryById(final int bndryID) {
+	public Boundary getBoundaryById(final Long bndryID) {
 		try {
-			final Query qry = getSession().createQuery("from BoundaryImpl BI where BI.id=:bndryID and BI.isHistory='N' ");
-			qry.setInteger("bndryID", bndryID);
+			final Query qry = getSession().createQuery("from Boundary BI where BI.id=:bndryID and BI.isHistory='N' ");
+			qry.setLong("bndryID", bndryID);
 
 			return (Boundary) qry.uniqueResult();
 		} catch (final HibernateException e) {
@@ -135,16 +135,16 @@ public class BoundaryDAO {
 
 	}
 
-	public Boundary getBoundary(final short bndryNum, final BoundaryType bndryType, final int topLevelBoundaryID) {
-		return getBoundaryByBndryNumAsBigInteger(new BigInteger(String.valueOf(bndryNum)), bndryType, topLevelBoundaryID);
+	public Boundary getBoundary(final Long bndryNum, final BoundaryType bndryType, final Long topLevelBoundaryID) {
+		return getBoundaryByBndryNumAsBigInteger(new Long(String.valueOf(bndryNum)), bndryType, topLevelBoundaryID);
 	}
 
-	public Boundary getBoundaryByBndryNumAsBigInteger(final BigInteger bndryNum, final BoundaryType bndryType, final int topLevelBoundaryID) {
+	public Boundary getBoundaryByBndryNumAsBigInteger(final Long bndryNum, final BoundaryType bndryType, final Long topLevelBoundaryID) {
 		try {
 			final Query qry = getSession().createQuery(
-					"from BoundaryImpl BI where BI.boundaryNum = :boundaryNum " + "AND BI.boundaryType = :boundaryType " + "and BI.isHistory='N' " + " AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR "
+					"from Boundary BI where BI.boundaryNum = :boundaryNum " + "AND BI.boundaryType = :boundaryType " + "and BI.isHistory='N' " + " AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR "
 							+ "(BI.fromDate <= :currDate AND BI.toDate >= :currDate))");
-			qry.setBigInteger("boundaryNum", bndryNum);
+			qry.setLong("boundaryNum", bndryNum);
 
 			qry.setEntity("boundaryType", bndryType);
 			qry.setDate("currDate", new Date());
@@ -176,13 +176,13 @@ public class BoundaryDAO {
 
 	}
 
-	public List getAllBoundaries(final BoundaryType bndryType, final int topLevelBoundaryID) {
+	public List getAllBoundaries(final BoundaryType bndryType, final Long topLevelBoundaryID) {
 		try {
-			final int hierarchyLevel = bndryType.getHierarchy();
+			final Long hierarchyLevel = bndryType.getHierarchy();
 
 			final StringBuffer sbf = new StringBuffer(50);
 			sbf.append("AND BI");
-			for (int i = 1; i < hierarchyLevel; i++) {
+			for (Long i = 1l; i < hierarchyLevel; i++) {
 				sbf.append(".parent");
 			}
 
@@ -193,11 +193,11 @@ public class BoundaryDAO {
 			}
 
 			final Query qry = getSession().createQuery(
-					"from BoundaryImpl BI left join fetch BI.children where " + "BI.boundaryType = :boundaryType " + sbf.toString() + " " + " and BI.isHistory='N' AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR "
+					"from Boundary BI left join fetch BI.children where " + "BI.boundaryType = :boundaryType " + sbf.toString() + " " + " and BI.isHistory='N' AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR "
 							+ "(BI.fromDate <= :currDate AND BI.toDate >= :currDate)) " + "order by BI.boundaryNum");
 			// left join fetch BI.children
 			qry.setEntity("boundaryType", bndryType);
-			qry.setInteger("topLevelBoundaryID", topLevelBoundaryID);
+			qry.setLong("topLevelBoundaryID", topLevelBoundaryID);
 			qry.setDate("currDate", new Date());
 			final LinkedHashSet distinctResults = new LinkedHashSet(qry.list());
 			final List retBoundaries = new ArrayList(distinctResults);
@@ -209,13 +209,13 @@ public class BoundaryDAO {
 		}
 	}
 
-	public List getAllBoundariesHistory(final BoundaryType bndryType, final int topLevelBoundaryID) {
+	public List getAllBoundariesHistory(final BoundaryType bndryType, final Long topLevelBoundaryID) {
 		try {
-			final int hierarchyLevel = bndryType.getHierarchy();
+			final Long hierarchyLevel = bndryType.getHierarchy();
 
 			final StringBuffer sbf = new StringBuffer(50);
 			sbf.append("AND BI");
-			for (int i = 1; i < hierarchyLevel; i++) {
+			for (Long i = 1l; i < hierarchyLevel; i++) {
 				sbf.append(".parent");
 			}
 
@@ -225,9 +225,9 @@ public class BoundaryDAO {
 				sbf.append(" = :topLevelBoundaryID ");
 			}
 
-			final Query qry = getSession().createQuery("from BoundaryImpl BI left join fetch BI.children where " + "BI.boundaryType = :boundaryType " + sbf.toString() + " " + " and BI.isHistory='N' order by BI.name");
+			final Query qry = getSession().createQuery("from Boundary BI left join fetch BI.children where " + "BI.boundaryType = :boundaryType " + sbf.toString() + " " + " and BI.isHistory='N' order by BI.name");
 			qry.setEntity("boundaryType", bndryType);
-			qry.setInteger("topLevelBoundaryID", topLevelBoundaryID);
+			qry.setLong("topLevelBoundaryID", topLevelBoundaryID);
 			final LinkedHashSet distinctResults = new LinkedHashSet(qry.list());
 			final List retBoundaries = new ArrayList(distinctResults);
 
@@ -240,7 +240,7 @@ public class BoundaryDAO {
 
 	public List getAllBoundariesByBndryTypeId(final Long bndryTypeId) {
 		try {
-			final Query qry = getSession().createQuery("from BoundaryImpl BI where BI.boundaryType.id=:bndryTypeId and BI.isHistory='N' order by BI.name");
+			final Query qry = getSession().createQuery("from Boundary BI where BI.boundaryType.id=:bndryTypeId and BI.isHistory='N' order by BI.name");
 			qry.setLong("bndryTypeId", bndryTypeId);
 
 			return qry.list();
@@ -250,13 +250,13 @@ public class BoundaryDAO {
 		}
 	}
 
-	public List getAllBoundaries(final short heirarchyLevel, final HierarchyType heirarchyType, final short topLevelBoundaryID) {
+	public List getAllBoundaries(final Long heirarchyLevel, final HierarchyType heirarchyType, final Long topLevelBoundaryID) {
 		try {
 			final Query qry = getSession().createQuery(
-					"from BoundaryImpl BI where BI.boundaryType.hierarchy = :hierarchy " + "and BI.boundaryType.heirarchyType = :heirarchyType " + " and BI.isHistory='N' AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR "
+					"from Boundary BI where BI.boundaryType.hierarchy = :hierarchy " + "and BI.boundaryType.heirarchyType = :heirarchyType " + " and BI.isHistory='N' AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR "
 							+ "(BI.fromDate <= :currDate AND BI.toDate >= :currDate)) " + " order by BI.name");
 
-			qry.setShort("hierarchy", heirarchyLevel);
+			qry.setLong("hierarchy", heirarchyLevel);
 			qry.setEntity("heirarchyType", heirarchyType);
 			qry.setDate("currDate", new Date());
 			final List retBoundaries = new ArrayList();
@@ -264,13 +264,13 @@ public class BoundaryDAO {
 			for (final Iterator iter = qry.iterate(); iter.hasNext();) {
 				bn = (Boundary) iter.next();
 				tempBoundary = bn;
-				if (bn.getParent() == null && bn.getId().equals(Integer.valueOf(topLevelBoundaryID))) {
+				if (bn.getParent() == null && bn.getId().equals(Long.valueOf(topLevelBoundaryID))) {
 					retBoundaries.add(bn);
 				}
 
 				while (bn.getParent() != null) {
 					final Boundary parent = bn.getParent();
-					if (parent.getId().equals(Integer.valueOf(topLevelBoundaryID))) {
+					if (parent.getId().equals(Long.valueOf(topLevelBoundaryID))) {
 						// finalBoundary = tempBoundary;
 						retBoundaries.add(tempBoundary);
 						// break;
@@ -287,16 +287,16 @@ public class BoundaryDAO {
 
 	}
 
-	public Boundary getBoundary(final short bndryNum, final short bndryTypeHeirarchyLevel, final HierarchyType heirarchyType, final int topLevelBoundaryID) {
-		return getBoundaryByBndryNumAsBigInteger(new BigInteger(String.valueOf(bndryNum)), bndryTypeHeirarchyLevel, heirarchyType, topLevelBoundaryID);
+	public Boundary getBoundary(final Long bndryNum, final Long bndryTypeHeirarchyLevel, final HierarchyType heirarchyType, final Long topLevelBoundaryID) {
+		return getBoundaryByBndryNumAsBigInteger(new Long(String.valueOf(bndryNum)), bndryTypeHeirarchyLevel, heirarchyType, topLevelBoundaryID);
 	}
 
-	public Boundary getBoundaryByBndryNumAsBigInteger(final BigInteger bndryNum, final short bndryTypeHeirarchyLevel, final HierarchyType heirarchyType, final int topLevelBoundaryID) {
+	public Boundary getBoundaryByBndryNumAsBigInteger(final Long bndryNum, final Long bndryTypeHeirarchyLevel, final HierarchyType heirarchyType, final Long topLevelBoundaryID) {
 		try {
-			final Query qry = getSession().createQuery("from BoundaryImpl BI where BI.boundaryNum = :boundaryNum AND " + "BI.boundaryType.hierarchy = :hierarchy and BI.boundaryType.heirarchyType = :heirarchyType " + " and BI.isHistory='N' ");
-			qry.setBigInteger("boundaryNum", bndryNum);
+			final Query qry = getSession().createQuery("from Boundary BI where BI.boundaryNum = :boundaryNum AND " + "BI.boundaryType.hierarchy = :hierarchy and BI.boundaryType.heirarchyType = :heirarchyType " + " and BI.isHistory='N' ");
+			qry.setLong("boundaryNum", bndryNum);
 
-			qry.setShort("hierarchy", bndryTypeHeirarchyLevel);
+			qry.setLong("hierarchy", bndryTypeHeirarchyLevel);
 			qry.setEntity("heirarchyType", heirarchyType);
 
 			// Set retBoundaries = new HashSet();
@@ -329,18 +329,18 @@ public class BoundaryDAO {
 
 	}
 
-	public Boundary getBoundary(final short bndryNum, final Integer parentBoundaryID, final BoundaryType boundaryType) {
-		return getBoundaryByBndryNumAsBigInteger(new BigInteger(String.valueOf(bndryNum)), parentBoundaryID, boundaryType);
+	public Boundary getBoundary(final Long bndryNum, final Long parentBoundaryID, final BoundaryType boundaryType) {
+		return getBoundaryByBndryNumAsBigInteger(new Long(String.valueOf(bndryNum)), parentBoundaryID, boundaryType);
 	}
 
-	public Boundary getBoundaryByBndryNumAsBigInteger(final BigInteger bndryNum, final Integer parentBoundaryID, final BoundaryType boundaryType) {
+	public Boundary getBoundaryByBndryNumAsBigInteger(final Long bndryNum, final Long parentBoundaryID, final BoundaryType boundaryType) {
 		try {
 			final Query qry = getSession().createQuery(
-					"from BoundaryImpl BI where BI.boundaryNum = :boundaryNum " + "AND BI.parent = :parent and BI.boundaryType = :bndryType " + " and BI.isHistory='N' AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR "
+					"from Boundary BI where BI.boundaryNum = :boundaryNum " + "AND BI.parent = :parent and BI.boundaryType = :bndryType " + " and BI.isHistory='N' AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR "
 							+ "(BI.fromDate <= :currDate AND BI.toDate >= :currDate))");
-			qry.setBigInteger("boundaryNum", bndryNum);
+			qry.setLong("boundaryNum", bndryNum);
 
-			qry.setInteger("parent", parentBoundaryID);
+			qry.setLong("parent", parentBoundaryID);
 			qry.setEntity("bndryType", boundaryType);
 			qry.setDate("currDate", new Date());
 			final Boundary bn = (Boundary) qry.uniqueResult();
@@ -352,13 +352,13 @@ public class BoundaryDAO {
 		}
 	}
 
-	public Boundary getTopBoundary(final String boundaryName, final HierarchyType heirarchyType) {
+	/*public Boundary getTopBoundary(final String boundaryName, final HierarchyType heirarchyType) {
 		try {
 
 			final BoundaryType bt = this.boundaryTypeService.getTopBoundaryType(heirarchyType);
 
 			final Query qry = getSession().createQuery(
-					"from BoundaryImpl BI where BI.name = :name and " + "BI.boundaryType.heirarchyType = :heirarchyType and BI.boundaryType = :bndryType " + " and BI.isHistory='N' AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR "
+					"from Boundary BI where BI.name = :name and " + "BI.boundaryType.heirarchyType = :heirarchyType and BI.boundaryType = :bndryType " + " and BI.isHistory='N' AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR "
 							+ "(BI.fromDate <= :currDate AND BI.toDate >= :currDate))");
 			qry.setString("name", boundaryName);
 			qry.setEntity("heirarchyType", heirarchyType);
@@ -375,14 +375,13 @@ public class BoundaryDAO {
 			throw new EGOVRuntimeException("Error occurred in getTopBoundary", e);
 		}
 	}
-
+*/
 	public List getTopBoundaries(final HierarchyType heirarchyType) {
 		try {
 			final Query qry = getSession().createQuery(
-					"from BoundaryImpl BI where BI.boundaryType.hierarchy = :hierarchy " + "and BI.boundaryType.heirarchyType = :heirarchyType " + " and BI.isHistory='N' AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR "
+					"from Boundary BI where BI.boundaryType.hierarchy = :hierarchy " + "and BI.boundaryType.heirarchyType = :heirarchyType " + " and BI.isHistory='N' AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR "
 							+ "(BI.fromDate <= :currDate AND BI.toDate >= :currDate))" + " order by BI.name");
-			final short hl = 1;
-			qry.setShort("hierarchy", hl);
+			qry.setLong("hierarchy", 1l);
 			qry.setEntity("heirarchyType", heirarchyType);
 			qry.setDate("currDate", new Date());
 			return qry.list();
@@ -394,12 +393,12 @@ public class BoundaryDAO {
 
 	}
 
-	public String getBoundaryNameForID(final Integer id) {
+	public String getBoundaryNameForID(final Long id) {
 		try {
 			final Query qry = getSession().createQuery(
-					"Select BI.name from BoundaryImpl BI where BI.id = :id " + " and BI.isHistory='N' AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR " + "(BI.fromDate <= :currDate AND BI.toDate >= :currDate))");
+					"Select BI.name from Boundary BI where BI.id = :id " + " and BI.isHistory='N' AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR " + "(BI.fromDate <= :currDate AND BI.toDate >= :currDate))");
 
-			qry.setInteger("id", id);
+			qry.setLong("id", id);
 			qry.setDate("currDate", new Date());
 			return (String) qry.uniqueResult();
 
@@ -443,7 +442,7 @@ public class BoundaryDAO {
 		if (parentBoundary == null || childBoundaryType == null) {
 			throw new EGOVRuntimeException("parentBoundary.childBoundaryType.object.null");
 		} else {
-			final Query qry = getSession().createQuery("select CI.child from CrossHeirarchyImpl CI, BoundaryImpl BI where CI.parent = :parentBoundary and CI.child=BI and BI.boundaryType = :childBoundaryType order by BI.name ");
+			final Query qry = getSession().createQuery("select CI.child from CrossHeirarchyImpl CI, Boundary BI where CI.parent = :parentBoundary and CI.child=BI and BI.boundaryType = :childBoundaryType order by BI.name ");
 			qry.setEntity("parentBoundary", parentBoundary);
 			qry.setEntity("childBoundaryType", childBoundaryType);
 
@@ -476,9 +475,9 @@ public class BoundaryDAO {
 				parentId = " = :parentBoundaryId";
 			}
 
-			final Query qry = getSession().createQuery("from BoundaryImpl BI where BI.parent " + parentId + " and BI.isHistory='N' AND ((BI.toDate IS NULL AND BI.fromDate <= :currDate) OR (BI.fromDate <= :currDate AND BI.toDate >= :currDate))");
+			final Query qry = getSession().createQuery("from Boundary BI where BI.parent " + parentId + " and BI.isHistory='N' AND ((BI.toDate IS NULL AND BI.fromDate <= :currDate) OR (BI.fromDate <= :currDate AND BI.toDate >= :currDate))");
 			if (parentBoundaryId != null && !parentBoundaryId.equals("")) {
-				qry.setInteger("parentBoundaryId", Integer.parseInt(parentBoundaryId));
+				qry.setLong("parentBoundaryId", Long.valueOf(parentBoundaryId));
 			}
 			qry.setDate("currDate", new Date());
 			childBoundaries = qry.list();
@@ -503,10 +502,10 @@ public class BoundaryDAO {
 		try {
 
 			final Query qry = getSession().createQuery(
-					"from BoundaryImpl B1 where B1.parent in (select B2.parent from BoundaryImpl B2 where B2.id in (select B3.parent from BoundaryImpl B3 where B3.id = :childBoundaryId)) "
+					"from Boundary B1 where B1.parent in (select B2.parent from Boundary B2 where B2.id in (select B3.parent from Boundary B3 where B3.id = :childBoundaryId)) "
 							+ " and B1.isHistory='N' AND ((B1.toDate IS NULL AND B1.fromDate <= :currDate) OR (B1.fromDate <= :currDate AND B1.toDate >= :currDate)) order by B1.name");
 
-			qry.setInteger("childBoundaryId", Integer.parseInt(childBoundaryId));
+			qry.setLong("childBoundaryId", Long.valueOf(childBoundaryId));
 			qry.setDate("currDate", new Date());
 			parentBoundaries = qry.list();
 
@@ -524,11 +523,11 @@ public class BoundaryDAO {
 	 * @param hierarchyCode - Code of hierarchyType
 	 * @return
 	 */
-	public Boundary getBoundary(final Integer bndryNum, final String boundaryType, final String hierarchyCode) {
+	public Boundary getBoundary(final Long bndryNum, final String boundaryType, final String hierarchyCode) {
 		final Query qry = getSession().createQuery(
-				"from BoundaryImpl BI where BI.boundaryNum = :boundaryNum" + " and BI.isHistory='N' AND " + " upper(BI.boundaryType.name)= :boundaryType AND " + " upper(BI.boundaryType.heirarchyType.code)= :hierarchyCode AND ("
+				"from Boundary BI where BI.boundaryNum = :boundaryNum" + " and BI.isHistory='N' AND " + " upper(BI.boundaryType.name)= :boundaryType AND " + " upper(BI.boundaryType.heirarchyType.code)= :hierarchyCode AND ("
 						+ "(BI.toDate IS NULL AND BI.fromDate <= :currDate) OR (BI.fromDate <= :currDate AND BI.toDate >= :currDate)) ");
-		qry.setBigInteger("boundaryNum", BigInteger.valueOf(bndryNum));
+		qry.setLong("boundaryNum", bndryNum);
 		qry.setString("boundaryType", boundaryType.toUpperCase());
 		qry.setString("hierarchyCode", hierarchyCode.toUpperCase());
 		qry.setDate("currDate", new Date());
@@ -541,12 +540,12 @@ public class BoundaryDAO {
 	 * @return {@link List<Boundary>}
 	 * @throws Exception
 	 */
-	public List<BoundaryImpl> getAllchildBoundaries(final Integer bndryTypeId) {
+	public List<Boundary> getAllchildBoundaries(final Long bndryTypeId) {
 		try {
-			List<BoundaryImpl> childBoundaries = null;
+			List<Boundary> childBoundaries = null;
 			if (bndryTypeId != null && !bndryTypeId.equals("")) {
-				final Query qry = getSession().createQuery("from BoundaryImpl BI where BI.parent is not null and BI.parent.id=:bndryTypeId and BI.isHistory='N' order by BI.name");
-				qry.setInteger("bndryTypeId", bndryTypeId);
+				final Query qry = getSession().createQuery("from Boundary BI where BI.parent is not null and BI.parent.id=:bndryTypeId and BI.isHistory='N' order by BI.name");
+				qry.setLong("bndryTypeId", bndryTypeId);
 				childBoundaries = qry.list();
 			}
 			return childBoundaries;
@@ -558,7 +557,7 @@ public class BoundaryDAO {
 
 	
 	public List<Boundary> findByNameLike(String name) {
-	    return getSession().createCriteria(BoundaryImpl.class).add(Restrictions.ilike("bndryNameLocal", name,MatchMode.ANYWHERE)).addOrder(Order.asc("bndryNameLocal")).list();
+	    return getSession().createCriteria(Boundary.class).add(Restrictions.ilike("bndryNameLocal", name,MatchMode.ANYWHERE)).addOrder(Order.asc("bndryNameLocal")).list();
 	}
 
 	/**
@@ -567,9 +566,9 @@ public class BoundaryDAO {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<BoundaryImpl> getChildBoundaries(final Integer boundaryId) throws Exception {
+	public List<Boundary> getChildBoundaries(final Long boundaryId) throws Exception {
 
-		List<BoundaryImpl> childBoundaries = null;
+		List<Boundary> childBoundaries = null;
 
 		try {
 
@@ -580,9 +579,9 @@ public class BoundaryDAO {
 				parentId = " = :parentBoundaryId";
 			}
 
-			final Query qry = getSession().createQuery("from BoundaryImpl BI where BI.parent " + parentId + " and BI.isHistory='N' AND ((BI.toDate IS NULL AND BI.fromDate <= :currDate) OR (BI.fromDate <= :currDate AND BI.toDate >= :currDate))");
+			final Query qry = getSession().createQuery("from Boundary BI where BI.parent " + parentId + " and BI.isHistory='N' AND ((BI.toDate IS NULL AND BI.fromDate <= :currDate) OR (BI.fromDate <= :currDate AND BI.toDate >= :currDate))");
 			if (boundaryId != null ) {
-				qry.setInteger("parentBoundaryId",boundaryId);
+				qry.setLong("parentBoundaryId",boundaryId);
 			}
 			qry.setDate("currDate", new Date());
 			childBoundaries = qry.list();

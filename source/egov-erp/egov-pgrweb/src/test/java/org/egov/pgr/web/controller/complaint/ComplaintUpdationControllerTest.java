@@ -11,20 +11,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.web.support.formatter.BoundaryFormatter;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.lib.admbndry.BoundaryImpl;
-import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
@@ -40,7 +40,6 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.support.FormattingConversionService;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.validation.BindingResult;
@@ -105,10 +104,6 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
 
     @Before
     public void before() {
-
-        FormattingConversionService conversionService = new FormattingConversionService();
-        conversionService.addFormatter(new BoundaryFormatter(boundaryService));
-        mvcBuilder.setConversionService(conversionService);
 
         mockMvc = mvcBuilder.build();
         complaint = new Complaint();
@@ -186,15 +181,25 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         complaintType.setLocationRequired(true);
         complaint.setComplaintType(complaintType);
         complaint.setDetails("Already Registered complaint");
-        BoundaryImpl ward = new BoundaryImpl();
-        ward.setId(1);
-        BoundaryImpl zone = new BoundaryImpl();
-        zone.setId(2);
+        Boundary ward = new Boundary();
+        Boundary zone = new Boundary();
+
+        try {
+            Field idField = ward.getClass().getSuperclass().getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(ward, id);
+            idField = zone.getClass().getSuperclass().getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(zone, id);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
         ward.setParent(zone);
+        
         complaint.setLocation(ward);
         id = 2L;
         when(complaintService.getComplaintById(id)).thenReturn(complaint);
-        List<BoundaryImpl> wards = new ArrayList<BoundaryImpl>();
+        List<Boundary> wards = new ArrayList<Boundary>();
         when(commonService.getWards(ward.getId())).thenReturn(wards);
 
         MvcResult result = this.mockMvc.perform(get("/complaint-update?id=2")).andExpect(status().isOk())

@@ -2,8 +2,8 @@ package org.egov.pgr.web.controller;
 
 import java.util.List;
 
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.lib.admbndry.BoundaryImpl;
 import org.egov.pgr.service.CommonService;
 import org.egov.pims.commons.DesignationMaster;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class AjaxController {
     }
 
     @RequestMapping(value = "/ajax-getWards/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<BoundaryImpl> getWardsForZone(@PathVariable Integer id) {
+    public @ResponseBody List<Boundary> getWardsForZone(@PathVariable Long id) {
         return commonService.getWards(id);
     }
 

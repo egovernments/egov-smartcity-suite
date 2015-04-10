@@ -29,16 +29,16 @@
 		</bean>
     </mvc:interceptors>
     
-	<!-- <bean id="conversionService" class="org.springframework.core.convert.support.DefaultConversionService"/> -->
+	<bean id="conversionService" class="org.springframework.core.convert.support.DefaultConversionService"/>
 	
-	<bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+	<!-- <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
         <property name="formatters">
             <set>
                 <ref bean="departmentFormatter"/>
                 <ref bean="boundaryFormatter"/>
             </set>
         </property>
-    </bean>
+    </bean> -->
     
 	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
 		<property name="targetClass" value="org.springframework.core.convert.support.ConversionServiceFactory"/>

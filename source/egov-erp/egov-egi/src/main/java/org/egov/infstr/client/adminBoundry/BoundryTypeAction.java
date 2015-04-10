@@ -6,8 +6,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -17,20 +15,20 @@ import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infstr.client.EgovAction;
 import org.egov.infstr.client.delegate.BoundaryTypeDelegate;
-import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
-import org.egov.lib.admbndry.ejb.server.HeirarchyTypeServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BoundryTypeAction extends EgovAction {
-	private static final Logger LOG = LoggerFactory.getLogger(BoundryTypeAction.class);
+	/*private static final Logger LOG = LoggerFactory.getLogger(BoundryTypeAction.class);
 	private HeirarchyTypeService heirarchyTypeService = new HeirarchyTypeServiceImpl();
-	/**
+	*//**
 	 * This method does Create, Update and Delete BoundryType based on the client's call
 	 * @param ActionMapping mapping
 	 * @param ActionForm form
 	 * @param HttpServletRequest req
 	 * @param HttpServletResponse res
 	 * @return ActionForward
-	 **/
+	 **//*
 
 	@Override
 	public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest req, final HttpServletResponse res) throws IOException, ServletException, EGOVException {
@@ -93,5 +91,5 @@ public class BoundryTypeAction extends EgovAction {
 			throw new EGOVRuntimeException("Request cannot be processed due to an internal server error.");
 		}
 
-	}
+	}*/
 }

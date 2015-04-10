@@ -8,7 +8,7 @@ package org.egov.lib.rjbac.jurisdiction;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.egov.lib.admbndry.Boundary;
+import org.egov.infra.admin.master.entity.Boundary;
 
 public class JurisdictionValues implements Serializable {
 

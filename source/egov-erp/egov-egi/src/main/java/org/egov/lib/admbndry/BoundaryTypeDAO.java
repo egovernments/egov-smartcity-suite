@@ -7,6 +7,7 @@ package org.egov.lib.admbndry;
 
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.hibernate.HibernateException;
@@ -107,7 +108,7 @@ public class BoundaryTypeDAO {
 	// BoundaryList declared as global because recursive is used to get the parent boundary.
 	List<Boundary> boundaryList = new ArrayList<Boundary>();
 
-	public List<Boundary> getParentBoundaryList(final Integer boundaryId) throws NoSuchObjectException {
+	public List<Boundary> getParentBoundaryList(final Long boundaryId) throws NoSuchObjectException {
 		try {
 
 			final BoundaryDAO bndryDAO = new BoundaryDAO(sessionFactory);
@@ -168,7 +169,7 @@ public class BoundaryTypeDAO {
 				final BoundaryType boundry = (BoundaryType) qry.uniqueResult();
 				if (boundry != null) {
 					final Query qry1 = getSession().createQuery(
-							"from BoundaryImpl BI where " + "BI.boundaryType = :boundaryType " + " and BI.isHistory='N' AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR " + "(BI.fromDate <= :currDate AND BI.toDate >= :currDate)) "
+							"from Boundary BI where " + "BI.boundaryType = :boundaryType " + " and BI.isHistory='N' AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR " + "(BI.fromDate <= :currDate AND BI.toDate >= :currDate)) "
 									+ "order by BI.boundaryNum");
 					qry1.setEntity("boundaryType", boundry);
 					qry1.setDate("currDate", currDate);
@@ -202,7 +203,7 @@ public class BoundaryTypeDAO {
 
 				for (final BoundaryType boundaryType : boundaryTypeList) {
 					final Query qry1 = getSession().createQuery(
-							"from BoundaryImpl BI where " + "BI.boundaryType = :boundaryType " + " and BI.isHistory='N' AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR " + "(BI.fromDate <= :currDate AND BI.toDate >= :currDate)) "
+							"from Boundary BI where " + "BI.boundaryType = :boundaryType " + " and BI.isHistory='N' AND (" + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR " + "(BI.fromDate <= :currDate AND BI.toDate >= :currDate)) "
 									+ "order by BI.boundaryNum");
 					qry1.setEntity("boundaryType", boundaryType);
 					qry1.setDate("currDate", currDate);

@@ -5,62 +5,58 @@
 		org.egov.infstr.utils.*,
 		org.egov.lib.admbndry.BoundaryType,
 		org.egov.lib.admbndry.BoundaryTypeImpl,
-		org.egov.lib.admbndry.Boundary,
-		org.egov.lib.admbndry.HeirarchyType,
-		org.egov.lib.admbndry.BoundaryImpl,
-		org.egov.lib.admbndry.ejb.api.*,
-		java.util.*"
+		org.egov.infra.admin.master.entity.Boundary,
+		org.egov.lib.admbndry.HeirarchyType,org.egov.infra.admin.master.entity.Boundary,org.egov.lib.admbndry.ejb.api.*,java.util.*"
  %>
 
  <%
+     String parentBoundaryNum = request.getParameter("ParentBoundaryNum");
+ 		String newBoundaryName = request.getParameter("NewBoundaryName");
+ 		String operation = request.getParameter("operation");
+ 		String targetBoundaryNum = request.getParameter("TargetBoundaryNum");
+ 		String topLevelBoundaryID = request.getParameter("topLevelBoundaryID");
+ 		String bndryTypeHeirarchyLevel = request.getParameter("bndryTypeHeirarchyLevel");
+ 		String newBoundaryNum = request.getParameter("newBoundaryNum");
+ 		String bndryName = request.getParameter("changedBndryName");
+ 		String bndryNum = request.getParameter("changedBndryNum");
 
-		String parentBoundaryNum = request.getParameter("ParentBoundaryNum");
-		String newBoundaryName = request.getParameter("NewBoundaryName");
-		String operation = request.getParameter("operation");
-		String targetBoundaryNum = request.getParameter("TargetBoundaryNum");
-		String topLevelBoundaryID = request.getParameter("topLevelBoundaryID");
-		String bndryTypeHeirarchyLevel = request.getParameter("bndryTypeHeirarchyLevel");
-		String newBoundaryNum = request.getParameter("newBoundaryNum");
-		String bndryName = request.getParameter("changedBndryName");
-		String bndryNum = request.getParameter("changedBndryNum");
 
+ 		HeirarchyType heirarchyType = (HeirarchyType)session.getAttribute("heirarchyType");
 
-		HeirarchyType heirarchyType = (HeirarchyType)session.getAttribute("heirarchyType");
+ 		BoundaryTypeService	btm = new BoundaryTypeServiceImpl();
+ 		BoundaryService	bm = new BoundaryServiceImpl();
+ 		
+ 		if(operation!= null && operation.equals("create") && heirarchyType != null)
+ 		{
+ 			if(parentBoundaryNum != null && newBoundaryName != null)
+ 			{
 
-		BoundaryTypeService	btm = new BoundaryTypeServiceImpl();
-		BoundaryService	bm = new BoundaryServiceImpl();
-		
-		if(operation!= null && operation.equals("create") && heirarchyType != null)
-		{
-			if(parentBoundaryNum != null && newBoundaryName != null)
-			{
+ 				System.out.println("calling getBoundary(String)");
+ 				Boundary pb = null;
 
-				System.out.println("calling getBoundary(String)");
-				Boundary pb = null;
+ 				if(bm != null)
+ 				{
+ 					pb = bm.getBoundary(Short.parseShort(parentBoundaryNum), Short.parseShort(bndryTypeHeirarchyLevel), heirarchyType,  Integer.parseInt(topLevelBoundaryID));
 
-				if(bm != null)
-				{
-					pb = bm.getBoundary(Short.parseShort(parentBoundaryNum), Short.parseShort(bndryTypeHeirarchyLevel), heirarchyType,  Integer.parseInt(topLevelBoundaryID));
+ 					BoundaryType pbt = btm.getBoundaryType(Short.parseShort(bndryTypeHeirarchyLevel), heirarchyType);
+ 					Iterator itr = null;
+ 					if(pbt != null && pbt.getChildBoundaryTypes() != null && ! pbt.getChildBoundaryTypes().isEmpty())
+ 						itr = pbt.getChildBoundaryTypes().iterator();
 
-					BoundaryType pbt = btm.getBoundaryType(Short.parseShort(bndryTypeHeirarchyLevel), heirarchyType);
-					Iterator itr = null;
-					if(pbt != null && pbt.getChildBoundaryTypes() != null && ! pbt.getChildBoundaryTypes().isEmpty())
-						itr = pbt.getChildBoundaryTypes().iterator();
-
-					Boundary chB = null;
-					if(itr != null && itr.hasNext() && pb != null)
-					{
-						System.out.println("hey has child boundary type!!!!!!!!!!");
-						chB = new BoundaryImpl((BoundaryType)pbt.getChildBoundaryTypes().iterator().next());
-					}
-					else if(pb == null && pbt != null)
-					{
-						chB = new BoundaryImpl(pbt);
-					}
-					else
-					{
-						String pbtName = pbt.getName();
-%>
+ 					Boundary chB = null;
+ 					if(itr != null && itr.hasNext() && pb != null)
+ 					{
+ 						System.out.println("hey has child boundary type!!!!!!!!!!");
+ 						chB = new Boundary((BoundaryType)pbt.getChildBoundaryTypes().iterator().next());
+ 					}
+ 					else if(pb == null && pbt != null)
+ 					{
+ 						chB = new Boundary(pbt);
+ 					}
+ 					else
+ 					{
+ 						String pbtName = pbt.getName();
+ %>
 						<jsp:forward page="/BndryAdmin/bndryAdminFrames.jsp">
 							<jsp:param name="message" value="Boundary not added. Please make sure that you have a proper boundary type for the boundary you are adding."/>
 						</jsp:forward>

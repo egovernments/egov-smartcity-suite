@@ -7,6 +7,8 @@ package org.egov.lib.admbndry;
 
 import java.util.List;
 
+import org.egov.infra.admin.master.entity.Boundary;
+
 public interface BoundaryVisitor {
 	/**
 	 * visit & collect the information about boundary

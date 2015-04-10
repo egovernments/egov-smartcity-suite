@@ -40,7 +40,7 @@ public class BoundaryType extends AbstractAuditable<User, Long> {
     @JoinColumn(name = "parent")
     private BoundaryType parent;
 
-    private Integer hierarchy;
+    private Long hierarchy;
 
     @Transient
     private String parentName;
@@ -73,11 +73,11 @@ public class BoundaryType extends AbstractAuditable<User, Long> {
         this.parent = parent;
     }
 
-    public Integer getHierarchy() {
+    public Long getHierarchy() {
         return hierarchy;
     }
 
-    public void setHierarchy(final Integer hierarchy) {
+    public void setHierarchy(final Long hierarchy) {
         this.hierarchy = hierarchy;
     }
 

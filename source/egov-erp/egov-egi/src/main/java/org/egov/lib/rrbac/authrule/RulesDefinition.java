@@ -7,13 +7,13 @@ package org.egov.lib.rrbac.authrule;
 
 import java.util.Set;
 
-import org.egov.lib.admbndry.Boundary;
+import org.egov.infra.admin.master.entity.Boundary;
 
 public class RulesDefinition {
 	public boolean jurisCompare(final Boundary userBoundary, final Boundary objectBoundary) {
 		boolean authorized = false;
-		final int userBndryHeir = userBoundary.getBoundaryType().getHierarchy();
-		final int objBndryHeir = objectBoundary.getBoundaryType().getHierarchy();
+		final Long userBndryHeir = userBoundary.getBoundaryType().getHierarchy();
+		final Long objBndryHeir = objectBoundary.getBoundaryType().getHierarchy();
 		if (!userBoundary.getBoundaryType().getHierarchyType().getCode().equalsIgnoreCase("ADMIN") || !objectBoundary.getBoundaryType().getHierarchyType().getCode().equalsIgnoreCase("ADMIN")) {
 			return authorized;
 		}

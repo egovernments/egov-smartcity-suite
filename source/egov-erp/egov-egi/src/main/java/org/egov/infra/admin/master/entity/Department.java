@@ -6,7 +6,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.search.domain.Searchable;
 import org.hibernate.validator.constraints.Length;
 
@@ -18,7 +17,7 @@ import org.hibernate.validator.constraints.Length;
 //@Unique(id = "id", tableName = "eg_department", columnName = { "name", "code" }, fields = { "name", "code" })
 @Table(name = "eg_department")
 @Searchable
-public class Department extends AbstractAuditable<Department, Long> {
+public class Department extends AbstractAuditable<User, Long> {
     private static final long serialVersionUID = 1L;
 
     @Length(max = 128)

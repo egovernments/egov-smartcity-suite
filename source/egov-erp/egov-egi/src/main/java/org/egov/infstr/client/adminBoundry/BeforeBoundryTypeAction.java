@@ -5,29 +5,10 @@
  */
 package org.egov.infstr.client.adminBoundry;
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.entity.BoundaryType;
-import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infstr.client.EgovAction;
-import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
-import org.egov.lib.admbndry.ejb.api.HeirarchyTypeService;
-import org.egov.lib.admbndry.ejb.server.BoundaryTypeServiceImpl;
-import org.egov.lib.admbndry.ejb.server.HeirarchyTypeServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class BeforeBoundryTypeAction extends EgovAction {
-	private static final Logger LOG = LoggerFactory.getLogger(BeforeBoundryTypeAction.class);
+	/*private static final Logger LOG = LoggerFactory.getLogger(BeforeBoundryTypeAction.class);
 	private BoundaryTypeService boundaryTypeService = new BoundaryTypeServiceImpl(null);
 	private HeirarchyTypeService heirarchyTypeService = new HeirarchyTypeServiceImpl();
 	
@@ -49,5 +30,5 @@ public class BeforeBoundryTypeAction extends EgovAction {
 			throw new EGOVRuntimeException("Error occurred while setting up Boundary Type.");
 		}
 
-	}
+	}*/
 }

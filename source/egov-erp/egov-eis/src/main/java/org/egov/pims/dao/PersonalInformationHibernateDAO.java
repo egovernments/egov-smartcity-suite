@@ -21,9 +21,9 @@ import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.exceptions.TooManyValuesException;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.dao.GenericHibernateDAO;
-import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.lib.admbndry.BoundaryTypeDAO;
 import org.egov.lib.rjbac.jurisdiction.Jurisdiction;
@@ -148,7 +148,7 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 		
 	}
 	
-	public List getListOfUsersByBoundaryId(Integer boundaryId) throws NoSuchObjectException
+	public List getListOfUsersByBoundaryId(Long boundaryId) throws NoSuchObjectException
 	{
 		List userObjList = new ArrayList();
 		List bndryObjList = boundaryTypeDAO.getParentBoundaryList(boundaryId);
@@ -180,7 +180,7 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 	 * @return
 	 * @throws NoSuchObjectException
 	 */
-	public List getListOfUsersForGivenBoundaryId(Integer boundaryId) throws NoSuchObjectException
+	public List getListOfUsersForGivenBoundaryId(Long boundaryId) throws NoSuchObjectException
 	{
 		List userObjList = new ArrayList();
 		List bndryObjList = new ArrayList();	
@@ -222,7 +222,7 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 	 * @throws TooManyValuesException
 	 * @throws NoSuchObjectException
 	 */
-	public PersonalInformation getEmployee(Integer deptId, Integer designationId, Integer boundaryId)throws TooManyValuesException, NoSuchObjectException
+	public PersonalInformation getEmployee(Integer deptId, Integer designationId, Long boundaryId)throws TooManyValuesException, NoSuchObjectException
 	{
 		PersonalInformation personalInformation= null;
 		Query qry1=null;
@@ -315,7 +315,7 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 	 * @throws TooManyValuesException
 	 * @throws NoSuchObjectException
 	 */
-	public PersonalInformation getEmployeeByFunctionary(Integer deptId, Integer designationId, Integer boundaryId,Integer functionaryId)throws TooManyValuesException, NoSuchObjectException
+	public PersonalInformation getEmployeeByFunctionary(Integer deptId, Integer designationId, Long boundaryId,Integer functionaryId)throws TooManyValuesException, NoSuchObjectException
 	{
 		PersonalInformation personalInformation= null;
 		Query qry1=null;

@@ -5,19 +5,9 @@
  */
 package org.egov.infstr.client.delegate;
 
-import java.util.HashSet;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.egov.exceptions.DuplicateElementException;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.entity.BoundaryType;
-import org.egov.lib.admbndry.ejb.api.BoundaryTypeService;
-import org.egov.lib.admbndry.ejb.server.BoundaryTypeServiceImpl;
 
 public class BoundaryTypeDelegate {
-	private static BoundaryTypeDelegate boundaryTypeDelegate = new BoundaryTypeDelegate();
+	/*private static BoundaryTypeDelegate boundaryTypeDelegate = new BoundaryTypeDelegate();
 	private static final Logger logger = LoggerFactory.getLogger(BoundaryTypeDelegate.class);
 	private final BoundaryTypeService boundaryTypeService = new BoundaryTypeServiceImpl(null);
 
@@ -28,26 +18,24 @@ public class BoundaryTypeDelegate {
 		return boundaryTypeDelegate;
 	}
 
-	/**
+	*//**
 	 * This method creates a BoundaryType.
 	 * @param BoundaryType object
 	 * @exception DuplicateElementException
 	 * @exception EGOVException
-	 */
+	 *//*
 	public void createBoundaryType(final BoundaryType bType) throws DuplicateElementException, EGOVException {
 		BoundaryType parentBoundaryType = null;
 		validateBoundryType(bType);
 
 		final String parentBoundaryTypeName = bType.getParentName();
 
-		int hn = 0;
-		int nhn = ++hn;
+		Long hn = 0l;
 		final BoundaryType chBt = new BoundaryType();
 
 		if (parentBoundaryTypeName != null && !parentBoundaryTypeName.trim().equalsIgnoreCase("null")) {
 			parentBoundaryType = this.boundaryTypeService.getBoundaryType(parentBoundaryTypeName, bType.getHierarchyType());
 			hn = parentBoundaryType.getHierarchy();
-			nhn = ++hn;
 
 		}
 		//chBt.setHeirarchy(nhn);
@@ -63,12 +51,12 @@ public class BoundaryTypeDelegate {
 
 	}
 
-	/**
+	*//**
 	 * This method Updates already existing BoundaryType.
 	 * @param BoundaryType object
 	 * @exception EGOVRuntimeException
 	 * @exception EGOVException
-	 */
+	 *//*
 	public void updateBoundaryType(final BoundaryType bType) throws EGOVRuntimeException, EGOVException {
 		validateBoundryType(bType);
 		try {
@@ -96,12 +84,12 @@ public class BoundaryTypeDelegate {
 		}
 	}
 
-	/**
+	*//**
 	 * This method Deletes an already existing BoundaryType. In the deletion process all the child BoundaryTypes are also deleted.
 	 * @param BoundaryType object
 	 * @exception EGOVRuntimeException
 	 * @exception EGOVException
-	 */
+	 *//*
 	public void deleteBoundaryType(final BoundaryType bType) throws EGOVRuntimeException, EGOVException {
 		validateBoundryType(bType);
 		try {
@@ -137,9 +125,9 @@ public class BoundaryTypeDelegate {
 		}
 	}
 
-	/*
+	
 	 * This method validates the Boundry
-	 */
+	 
 	private void validateBoundryType(final BoundaryType boundaryType) throws EGOVRuntimeException {
 		if (boundaryType != null) {
 			if (boundaryType.getName() == null || boundaryType.getName().trim().equals("")) {
@@ -150,5 +138,5 @@ public class BoundaryTypeDelegate {
 		}
 
 	}
-
+*/
 }

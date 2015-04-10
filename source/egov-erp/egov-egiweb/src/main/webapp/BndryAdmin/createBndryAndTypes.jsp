@@ -4,7 +4,7 @@
 <%@ page import="
 		org.egov.infstr.utils.*,
 		org.egov.lib.admbndry.BoundaryType,
-		org.egov.lib.admbndry.Boundary,
+		org.egov.infra.admin.master.entity.Boundary,
 		org.egov.lib.admbndry.HeirarchyType,
 		org.egov.lib.admbndry.ejb.api.*,
 		java.util.*" %>

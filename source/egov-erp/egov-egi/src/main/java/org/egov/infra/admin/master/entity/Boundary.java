@@ -1,6 +1,5 @@
 package org.egov.infra.admin.master.entity;
 
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -38,14 +36,14 @@ import org.springframework.format.annotation.DateTimeFormat;
 )
 @Table(name = "EG_BOUNDARY")
 @Searchable
-public class Boundary extends AbstractAuditable<Boundary, Long> {
+public class Boundary extends AbstractAuditable<User, Long> {
 
     private static final long serialVersionUID = -224771387323975327L;
     
     @Length(max = 512)
     private String name;
     
-    private Integer boundaryNum;
+    private Long boundaryNum;
     
     @Valid
     @ManyToOne
@@ -69,7 +67,7 @@ public class Boundary extends AbstractAuditable<Boundary, Long> {
     private Date toDate;
     
     private boolean isHistory;
-    private Integer bndryId;
+    private Long bndryId;
     private String boundaryNameLocal;
     
     private Float longitude;
@@ -83,7 +81,7 @@ public class Boundary extends AbstractAuditable<Boundary, Long> {
     private JSONObject boundaryJson;
     
     @Transient
-    private BigInteger parentBoundaryNum;
+    private Long parentBoundaryNum;
 
     @Transient
     private Long hierarchyTypeId;
@@ -95,10 +93,6 @@ public class Boundary extends AbstractAuditable<Boundary, Long> {
     @Transient
     private CityWebsite cityWebsite = new CityWebsite();
     
-    public Boundary() {
-        //FOr Hibernate
-    }
-
     public String getBoundaryNameLocal() {
         return boundaryNameLocal;
     }
@@ -136,7 +130,7 @@ public class Boundary extends AbstractAuditable<Boundary, Long> {
         return boundaryType;
     }
 
-    public Integer getBoundaryNum() {
+    public Long getBoundaryNum() {
         return boundaryNum;
     }
 
@@ -166,7 +160,7 @@ public class Boundary extends AbstractAuditable<Boundary, Long> {
         this.boundaryType = boundaryType;
     }
 
-    public void setBoundaryNum(Integer number) {
+    public void setBoundaryNum(Long number) {
 
         this.boundaryNum = number;
     }
@@ -176,11 +170,11 @@ public class Boundary extends AbstractAuditable<Boundary, Long> {
 
     }
 
-    public BigInteger getParentBoundaryNum() {
+    public Long getParentBoundaryNum() {
         return parentBoundaryNum;
     }
 
-    public void setParentBoundaryNum(BigInteger parentBoundaryNum) {
+    public void setParentBoundaryNum(Long parentBoundaryNum) {
         this.parentBoundaryNum = parentBoundaryNum;
     }
 
@@ -224,11 +218,11 @@ public class Boundary extends AbstractAuditable<Boundary, Long> {
         this.isHistory = isHistory;
     }
 
-    public Integer getBndryId() {
+    public Long getBndryId() {
         return bndryId;
     }
 
-    public void setBndryId(Integer bndryId) {
+    public void setBndryId(Long bndryId) {
         this.bndryId = bndryId;
     }
 

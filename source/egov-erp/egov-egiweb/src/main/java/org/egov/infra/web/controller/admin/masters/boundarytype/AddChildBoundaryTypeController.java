@@ -51,8 +51,8 @@ public class AddChildBoundaryTypeController {
                 return "redirect:/controller/boundaryType/addChild/"+parentBoundaryTypeName;
             }
             else{
-                int childHierarchy = 0;
-                int parentHierarchy = boundaryType.getParent().getHierarchy();
+                Long childHierarchy = 0l;
+                Long parentHierarchy = boundaryType.getParent().getHierarchy();
                 if(!parentBoundaryTypeName.isEmpty() && parentBoundaryTypeName!=null ){
                     childHierarchy = ++parentHierarchy;
                 }

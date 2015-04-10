@@ -8,7 +8,7 @@
 				<param name="sequence">SEQ_EG_CROSSHEIRARCHY_LINKAGE</param>
 			</generator>
 		</id>
-		<many-to-one name="parent" class="org.egov.lib.admbndry.BoundaryImpl" column="PARENT" />
-		<many-to-one name="child" class="org.egov.lib.admbndry.BoundaryImpl" column="CHILD" />
+		<many-to-one name="parent" class="org.egov.infra.admin.master.entity.Boundary" column="PARENT" />
+		<many-to-one name="child" class="org.egov.infra.admin.master.entity.Boundary" column="CHILD" />
 	</class>
 </hibernate-mapping>

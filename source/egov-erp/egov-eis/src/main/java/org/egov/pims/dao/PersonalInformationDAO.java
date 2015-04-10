@@ -33,10 +33,10 @@ public interface PersonalInformationDAO extends org.egov.infstr.dao.GenericDAO
 	public PersonalInformation getPersonalInformationByUserId(Long userId);
 	public void deleteLangKnownForEmp(PersonalInformation personalInformation);
 	public List getListOfPersonalInformationByEmpIdsList(List empIdsList);
-	public PersonalInformation getEmployee(Integer deptId, Integer designationId, Integer Boundaryid)throws TooManyValuesException, NoSuchObjectException;
-	public PersonalInformation getEmployeeByFunctionary(Integer deptId, Integer designationId, Integer Boundaryid,Integer functionaryId)throws TooManyValuesException, NoSuchObjectException;
-	public List getListOfUsersByBoundaryId(Integer boundaryId) throws NoSuchObjectException;
-	public List getListOfUsersForGivenBoundaryId(Integer boundaryId) throws NoSuchObjectException;
+	public PersonalInformation getEmployee(Integer deptId, Integer designationId, Long Boundaryid)throws TooManyValuesException, NoSuchObjectException;
+	public PersonalInformation getEmployeeByFunctionary(Integer deptId, Integer designationId, Long Boundaryid,Integer functionaryId)throws TooManyValuesException, NoSuchObjectException;
+	public List getListOfUsersByBoundaryId(Long boundaryId) throws NoSuchObjectException;
+	public List getListOfUsersForGivenBoundaryId(Long boundaryId) throws NoSuchObjectException;
 	/**
 	  * Returning temporary  assigned employee object by pepartment,designation,functionary,date 
 	  * @param deptId
