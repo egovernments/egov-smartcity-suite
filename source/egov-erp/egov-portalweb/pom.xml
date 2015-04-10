@@ -18,8 +18,6 @@
             <groupId>org.egov</groupId>
             <artifactId>egov-egi</artifactId>
             <version>1.0-SNAPSHOT</version>
-            <classifier>tests</classifier>
-            <scope>test</scope>
         </dependency>
 
         <!-- VIEWS RELATED END -->
