@@ -20,4 +20,7 @@ public interface CitizenInboxRepository extends JpaRepository<CitizenInbox, Long
 
 	@Query(" from CitizenInbox ci where ci.messageType=:messageType and ci.assignedToCitizen.id=:citizenUserId order by createdDate desc")
 	List<CitizenInbox> findAllInboxMessageByType(@Param("messageType")MessageType messageType, @Param("citizenUserId")Long citizenUserId);
+	
+	@Query(" from CitizenInbox ci where ci.messageType=:messageType and ci.createdBy.id=:citizenUserId order by createdDate desc")
+	List<CitizenInbox> findMyAccountMessages(@Param("messageType")MessageType messageType, @Param("citizenUserId")Long citizenUserId);
 }

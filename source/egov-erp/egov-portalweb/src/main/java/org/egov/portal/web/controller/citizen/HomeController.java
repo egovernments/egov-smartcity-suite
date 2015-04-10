@@ -38,14 +38,19 @@ public class HomeController {
 		modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
 		modelData.addAttribute("unreadMessageCount", getUnreadMessageCount());
 		modelData.addAttribute("inboxMessages", getAllInboxMessages());
+		modelData.addAttribute("myAccountMessages", getMyAccountMessages());
 		return "citizen-home";
 	}
 
-	public List<CitizenInbox> getAllInboxMessages() {
+	private List<CitizenInbox> getMyAccountMessages() {
+		return citizenInboxService.findMyAccountMessages(securityUtils.getCurrentUser());
+	}
+
+	private List<CitizenInbox> getAllInboxMessages() {
 		return citizenInboxService.findAllInboxMessage(securityUtils.getCurrentUser());
 	}
 
-	public Integer getUnreadMessageCount() {
+	private Integer getUnreadMessageCount() {
 		return citizenInboxService.findUnreadMessagesCount(securityUtils.getCurrentUser());
 	}
 

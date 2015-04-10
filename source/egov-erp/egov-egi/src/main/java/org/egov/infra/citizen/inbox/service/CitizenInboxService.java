@@ -47,6 +47,10 @@ public class CitizenInboxService {
 	public List<CitizenInbox> findAllSystemMessages(User citizenUser) {
 		return citizenInboxRepository.findAllInboxMessageByType(MessageType.SYSTEM_MESSAGE, citizenUser.getId());
 	}
+	
+	public List<CitizenInbox> findMyAccountMessages(User citizenUser){
+		return citizenInboxRepository.findMyAccountMessages(MessageType.USER_MESSAGE, citizenUser.getId());
+	}
 
 	@Transactional
 	public void updateMessage(CitizenInbox citizenInbox) {
