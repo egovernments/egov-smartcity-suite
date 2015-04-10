@@ -36,24 +36,29 @@ $('#buttonUpdate').click(function() {
  */
 function checkForChild(){
 	var name = $("#boundaryTypes").val();
-	
-	$.ajax({
-		type: "GET",
-		url: contextPath + "/controller/addChildBoundaryType/isChildPresent",
-		data:{'parentName' : name },
-		dataType: "json",
-		success: function (response) {
-			if(response == true){
-				alert('Child already exists!');
-				return false;
+	if(name ==''){
+		alert('Please select the Boundary Type !');
+		return false;
+	}
+	else{
+		$.ajax({
+			type: "GET",
+			url: contextPath + "/controller/addChildBoundaryType/isChildPresent",
+			data:{'parentName' : name },
+			dataType: "json",
+			success: function (response) {
+				if(response == true){
+					alert('Child already exists!');
+					return false;
+				}
+				else{
+					$("#boundaryTypeSearch").submit();
+					return true;
+				}
+			}, 
+			error: function (response) {
+				console.log("failed");
 			}
-			else{
-				$("#boundaryTypeSearch").submit();
-				return true;
-			}
-		}, 
-		error: function (response) {
-			console.log("failed");
-		}
-	});
+		});
+	}
 } 
