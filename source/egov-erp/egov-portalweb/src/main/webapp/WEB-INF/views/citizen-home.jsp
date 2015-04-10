@@ -69,12 +69,12 @@
 									</a>
 									<ul class="right-arrow dropdown-menu" role="menu">
 										<li><a href="#"><i class="fa fa-cog"></i> Change Password</a></li>
-										<li><a href="#"><i class="fa fa-sign-out"></i> Sign out</a></li>
+										<li><a href="/egi/logout.do"><i class="fa fa-sign-out"></i> Sign out</a></li>
 									</ul>
 								</li>
 								
 								<li class="ico-menu">
-									<a href="http://www.egovernments.org">
+									<a href="http://www.egovernments.org" target="_blank">
 										<img src="/egi/resources/global/images/logo@2x.png" title="Powered by eGovernments" height="20px">
 									</a>
 								</li>
@@ -136,13 +136,6 @@
 								</div>
 								</c:forEach> 
 							</section>
-						
-							<section class="col-lg-12">
-							</section>
-						
-						
-							<section class="col-lg-12">
-							</section>
 					</div>
 					
 				</div>
@@ -188,7 +181,7 @@
 							<div class="msg" data-toggle="collapse" data-target="#myaccount1content1" aria-expanded="true">
 								<header>
 									<div class="row">
-										<i class="fa fa-book col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Mohammed Aslam</h3>
+										<i class="fa fa-book col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Mohammed Aslam1111</h3>
 									</div>
 									<div class="myaccount-actions">
 										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="View property"></i>
@@ -263,7 +256,7 @@
 							<div class="msg" data-toggle="collapse" data-target="#myaccount2content1" aria-expanded="true">
 								<header>
 									<div class="row">
-										<i class="fa fa-book col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Mohammed Aslam</h3>
+										<i class="fa fa-book col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Mohammed Aslam222</h3>
 									</div>
 									<div class="myaccount-actions">
 										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="View Details"></i>
@@ -310,7 +303,7 @@
 							<div class="msg" data-toggle="collapse" data-target="#myaccount3content1" aria-expanded="true">
 								<header>
 									<div class="row">
-										<i class="fa fa-book col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Mohammed Aslam</h3>
+										<i class="fa fa-book col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Mohammed Aslam333</h3>
 									</div>
 									<div class="myaccount-actions">
 										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="View Details"></i>
@@ -357,7 +350,7 @@
 							<div class="msg" data-toggle="collapse" data-target="#myaccount4content1" aria-expanded="true">
 								<header>
 									<div class="row">
-										<i class="fa fa-book col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Mohammed Aslam</h3>
+										<i class="fa fa-book col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Mohammed Aslam4444</h3>
 									</div>
 									<div class="myaccount-actions">
 										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="View Agreement"></i>
@@ -404,7 +397,7 @@
 							<div class="msg" data-toggle="collapse" data-target="#myaccount5content1" aria-expanded="true">
 								<header>
 									<div class="row">
-										<i class="fa fa-book col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Mohammed Aslam</h3>
+										<i class="fa fa-book col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Mohammed Aslam55555</h3>
 									</div>
 									<div class="myaccount-actions">
 										<i class="fa fa-rupee col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="Pay Rent/Lease"></i> 
@@ -757,11 +750,11 @@
 		
 	</div>
 	
-	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+	<script src="<c:url value='/egi/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 	
-	<script src="<c:url value='/resources/js/app/homepage.js' context='/egi'/>"></script>
-	<script src="<c:url value='/resources/js/app/homepagecitizen.js' context='/egi'/>"></script>
-	<script src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>
+	<script src="<c:url value='/egi/resources/js/app/homepage.js' context='/egi'/>"></script>
+	<script src="<c:url value='/egi/resources/js/app/homepagecitizen.js' context='/egi'/>"></script>
+	<script src="<c:url value='/egi/resources/global/js/egov/custom.js' context='/egi'/>"></script>
 </body>
 
 </html>																																																							

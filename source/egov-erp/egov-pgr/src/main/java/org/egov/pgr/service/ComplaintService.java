@@ -192,7 +192,11 @@ public class ComplaintService {
 
 	private String getHeaderMessage(Complaint savedComplaint) {
 		StringBuilder headerMessage = new StringBuilder();
-		headerMessage.append("Grievance Redressal");
+		if (savedComplaint.getStatus().getName().equals("REGISTERED")) {
+			headerMessage.append("Grievance Recorded");
+		} else {
+			headerMessage.append("Grievance Redressal");
+		}
 		return headerMessage.toString();
 	}
 
