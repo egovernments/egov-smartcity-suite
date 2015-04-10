@@ -58,19 +58,17 @@
 								<i class="entypo-list"></i>
 							</a>
 						</li>
-						
+						<li class="dropdown">
+							
+							<a href="javascript:void(0);" class="tooltip-secondary" data-toggle="tooltip" title="Drafts" >
+								<i class="entypo-pencil"></i>
+							</a>
+							
+						</li>
 						<li class="dropdown">
 							
 							<a href="javascript:void(0);" class="tooltip-secondary" data-toggle="tooltip" title="Notifications" >
 								<i class="entypo-bell"></i>
-							</a>
-							
-						</li>
-						
-						<li class="dropdown">
-							
-							<a href="javascript:void(0);" class="tooltip-secondary" data-toggle="tooltip" title="Drafts" >
-								<i class="entypo-cloud"></i>
 							</a>
 							
 						</li>
@@ -107,12 +105,26 @@
 										<span class="title">Change Password</span>
 									</a>
 								</li>
+								<li>
+									<a href="/egi/logout.do">
+										<i class="fa fa-sign-out"></i>
+										<span class="title">Sign Out</span>
+									</a>
+								</li>
 							</ul>
 						</li>
 						
-						<li class="hidden-xs menu-responsive">
-							<a href="/egi/logout.do">
-								Sign Out <i class="entypo-logout right"></i>
+						<li class="dropdown">
+							
+							<a href="javascript:void(0);" class="tooltip-secondary" data-toggle="tooltip" title="Feedback">
+								<i class="entypo-comment"></i>
+							</a>
+						</li>
+						
+						<li class="dropdown">
+							
+							<a href="javascript:void(0);" class="tooltip-secondary" data-toggle="tooltip" title="Help">
+								<i class="entypo-help"></i>
 							</a>
 						</li>
 						<li class="dropdown visible-xs hidden-sm">
@@ -198,6 +210,29 @@
 					<div class="modal-footer">
 						<button type="button" class="btn btn-primary">Save</button>
 						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Modal 6 (Long Modal) -->
+		<div class="modal fade loader-class" data-backdrop="static">
+			<div class="modal-dialog">
+				<div class="modal-body">
+					<div class="row spinner-margin text-center">
+						
+						<div class="col-md-12 ">
+							<div class="spinner">
+								<div class="rect1"></div>
+								<div class="rect2"></div>
+								<div class="rect3"></div>
+								<div class="rect4"></div>
+								<div class="rect5"></div>
+							</div>
+						</div>
+						<div class="col-md-12 spinner-text">
+							Loading..
+						</div>
+						
 					</div>
 				</div>
 			</div>
