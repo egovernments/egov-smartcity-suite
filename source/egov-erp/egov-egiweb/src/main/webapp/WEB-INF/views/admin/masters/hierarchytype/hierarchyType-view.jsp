@@ -12,7 +12,7 @@
 				 <c:if test="${not empty message}">
                     <div id="message" class="success">${message}</div>
                 </c:if>
-		<form:form  method="post" class="form-horizontal form-groups-bordered" modelAttribute="hierarchyType" id="hierarchyTypeView" >
+		<form:form  method="post" class="form-horizontal form-groups-bordered" modelAttribute="hierarchyType" id="hierarchyTypeViewForm" >
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -24,7 +24,8 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.hierarchyType.name"/></label>
 						<div class="col-sm-6" style="padding-top: 7px">
-							${hierarchyType.name}                          
+							${hierarchyType.name}                     
+							<input id="htName" type="hidden" value="<c:out value="${hierarchyType.name}" />" />     
 						</div>
 					</div>
 					<div class="form-group">
@@ -39,6 +40,12 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
+					<button type="submit" id="buttonCreate" class="btn btn-success">
+                    	<spring:message code="lbl.create"/>
+                    </button>
+                    <button type="submit" id="buttonEdit" class="btn btn-success">
+                    	<spring:message code="lbl.edit"/>
+                    </button>
 			       <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="lbl.close"/></button>
 				</div>
 			</div>
