@@ -1,8 +1,10 @@
 $('#buttonCreate').click(function() {
-	$('#hierarchyTypeViewForm').attr('action', '/egi/hierarchy-type/create');
+	$('#hierarchyTypeViewForm').attr('method', 'get');
+	$('#hierarchyTypeViewForm').attr('action', '/egi/controller/hierarchy-type/create');
 })
 
 $('#buttonEdit').click(function() {
-	var url = '/egi//hierarchy-type/update/'+ $('#htName').val();
+	var url = '/egi/controller/hierarchy-type/update/'+ $('#htName').val();
+	$('#hierarchyTypeViewForm').attr('method', 'get');
 	$('#hierarchyTypeViewForm').attr('action', url);
 })

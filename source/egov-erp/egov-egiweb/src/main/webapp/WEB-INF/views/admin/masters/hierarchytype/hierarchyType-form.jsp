@@ -22,16 +22,20 @@
 				
 				<div class="panel-body custom-form">
 					<div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.hierarchyType.name"/><small><i class="entypo-star error-msg"></i></small></label>
+						<label class="col-sm-3 control-label">
+							<spring:message code="lbl.hierarchyType.name"/><span class="mandatory"></span>
+						</label>
 						<div class="col-sm-6">
 							<form:input path="name" id="name" type="text" class="form-control low-width is_valid_alphabet" placeholder="" autocomplete="off" required="required"/>
                             <form:errors path="name" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.hierarchyType.code"/></label>
+						<label class="col-sm-3 control-label">
+							<spring:message code="lbl.hierarchyType.code"/><span class="mandatory"></span>
+						</label>
 						<div class="col-sm-6">
-							<form:input path="code" id="code" type="text" class="form-control low-width is_valid_alphabet" placeholder="" autocomplete="off"/>
+							<form:input path="code" id="code" type="text" class="form-control low-width is_valid_alphabet" placeholder="" autocomplete="off" required="required"/>
                             <form:errors path="code" cssClass="add-margin error-msg"/>
 						</div>
 					</div>					
@@ -41,6 +45,7 @@
 				<div class="text-center">
 					<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
 			        <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+			        <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="lbl.close"/></button>
 				</div>
 			</div>
 		</form:form>

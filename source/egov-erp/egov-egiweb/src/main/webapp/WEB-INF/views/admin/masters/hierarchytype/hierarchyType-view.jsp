@@ -24,7 +24,7 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.hierarchyType.name"/></label>
 						<div class="col-sm-6" style="padding-top: 7px">
-							${hierarchyType.name}                     
+							<strong> ${hierarchyType.name} </strong>                 
 							<input id="htName" type="hidden" value="<c:out value="${hierarchyType.name}" />" />     
 						</div>
 					</div>
@@ -33,7 +33,7 @@
 							<spring:message code="lbl.hierarchyType.code"/>
 						</label>
 						<div class="col-sm-6" style="padding-top: 7px">
-							${hierarchyType.code}   
+							<strong> ${hierarchyType.code} </strong>   
 						</div>
 					</div>
 				</div>
@@ -58,4 +58,5 @@
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
+<script src="<c:url value='/resources/js/app/hierarchytype.js'/>"></script>
 
