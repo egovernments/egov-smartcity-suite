@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.egov.infra.admin.master.entity.User;
@@ -33,22 +32,22 @@ public class HomeController {
     private ModuleDao moduleDAO;
 
     @RequestMapping(method = RequestMethod.GET)
-    public String showHome(final HttpServletRequest request, final HttpSession session, final ModelMap modelData) {
-        if (securityUtils.getCurrentUser().getType().equals(UserType.EMPLOYEE))
-            return initlizeOfficialHomePage(request, session, modelData);
+    public String showHome(final HttpSession session, final ModelMap modelData) {
+        final User user = securityUtils.getCurrentUser();
+        if (user.getType().equals(UserType.EMPLOYEE))
+            return prepareOfficialHomePage(user, session, modelData);
         else
             return "redirect:/../portal/home";
     }
 
-    private String initlizeOfficialHomePage(final HttpServletRequest request, final HttpSession session, final ModelMap modelData) {
-        final User user = securityUtils.getCurrentUser();
+    private String prepareOfficialHomePage(final User user, final HttpSession session, final ModelMap modelData) {
         final List<Module> modules = moduleDAO.getModuleInfoForRoleIds(user.getRoles());
         final List<Module> selfServices = getEmployeeSelfService(modules, user);
         final List<Module> favourites = moduleDAO.getUserFavourites(user.getId());
-        modelData.addAttribute("menu", createAppMenu(modules, favourites, selfServices, user));
+        modelData.addAttribute("menu", prepareApplicationMenu(modules, favourites, selfServices, user));
         modelData.addAttribute("selfServices", selfServices);
         modelData.addAttribute("favourites", favourites);
-        modelData.addAttribute("cityLogo", request.getContextPath() + "/resources/global/images/" + session.getAttribute("citylogo"));
+        modelData.addAttribute("cityLogo", session.getAttribute("citylogo"));
         modelData.addAttribute("cityName", session.getAttribute("cityname"));
         modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
         return "home";
@@ -67,19 +66,41 @@ public class HomeController {
         return selfServices;
     }
 
-    private String createAppMenu(final List<Module> modules, List<Module> favourites, List<Module> selfServices, final User user) {
+    private String prepareApplicationMenu(final List<Module> modules, List<Module> favourites, List<Module> selfServices, final User user) {
         final Menu menu = new Menu();
         menu.setId("menuID");
         menu.setTitle("Hi, " + user.getName());
         menu.setIcon("fa fa-reorder");
         menu.setItems(new LinkedList<Menu>());
-        final Menu appMenu = createSubmenu("apps", "Applications", "Applications", "#", "fa fa-th floatLeft", menu);
+        createApplicationMenu(modules, user, menu);
+        createSelfServiceMenu(selfServices, menu);
+        createFavouritesMenu(favourites, menu);
+        
+        return "[" + new GsonBuilder().create().toJson(menu) + "]";
+    }
+
+    private void createApplicationMenu(final List<Module> modules, final User user, final Menu menu) {
+        final Menu applicationMenu = createSubmenu("apps", "Applications", "Applications", "#", "fa fa-th floatLeft", menu);
         modules.stream().forEach(
                 module -> {
-                    createAppSubmenuItems(module, user, createSubmenu(String.valueOf(module.getId()), module.getModuleDescription(),
-                            module.getModuleDescription(), "#", "", appMenu));
+                    createSubmenuRoot(module, user, createSubmenu(String.valueOf(module.getId()), module.getModuleDescription(),
+                            module.getModuleDescription(), "#", "", applicationMenu));
                 });
-        
+    }
+
+    private void createFavouritesMenu(List<Module> favourites, final Menu menu) {
+        final Menu favouritesMenu = createSubmenu("favMenu", "Favourites", "Favourites", "#", "fa fa-briefcase floatLeft", menu);
+        favourites.stream().forEach(
+                favourite -> {
+                    final Menu appLinks = new Menu();
+                    appLinks.setName(favourite.getModuleName());
+                    appLinks.setLink("/" +favourite.getBaseUrl());
+                    appLinks.setIcon("fa fa-times-circle");
+                    favouritesMenu.getItems().add(appLinks);
+                });
+    }
+
+    private void createSelfServiceMenu(List<Module> selfServices, final Menu menu) {
         final Menu selfServiceMenu = createSubmenu("ssMenu", "Self Service", "Self Service", "#", "fa fa-ellipsis-h floatLeft", menu);
         selfServices.stream().forEach(
                 selfService -> {
@@ -89,36 +110,21 @@ public class HomeController {
                     selfServiceMenu.getItems().add(appLinks);
                     
                 });
-        final Menu FavouritesMenu = createSubmenu("favMenu", "Favourites", "Favourites", "#", "fa fa-briefcase floatLeft", menu);
-        favourites.stream().forEach(
-                favourite -> {
-                    final Menu appLinks = new Menu();
-                    appLinks.setName(favourite.getModuleName());
-                    appLinks.setLink("/" +favourite.getBaseUrl());
-                    appLinks.setIcon("fa fa-times-circle");
-                    FavouritesMenu.getItems().add(appLinks);
-                });
-        
-        return "[" + new GsonBuilder().create().toJson(menu) + "]";
     }
 
-    private void createAppSubmenuItems(final Module parentModule, final User user, final Menu submenu) {
+    private void createSubmenuRoot(final Module parentModule, final User user, final Menu submenu) {
         final List<Module> submodules = moduleDAO.getApplicationModuleByParentId(parentModule.getId(), user.getId());
-        submodules.stream().forEach(
-                submodule -> {
-                    createAppLinks(String.valueOf(submodule.getId()), submodule.getModuleName(), submodule.getModuleName(), "#", "", user, submenu, submodule);
-                });
+        submodules.stream().forEach(submodule -> createApplicationLink(submodule, user, submenu));
     }
 
-    private void createAppLinks(final String id, final String name, final String title, final String link,
-            final String icon, final User user, final Menu parent, final Module submodule) {
+    private void createApplicationLink(final Module submodule, final User user, final Menu parent) {
         if (submodule.getIsEnabled()) {
-            final Menu appLinks = new Menu();
-            appLinks.setName(name);
-            appLinks.setLink("/" + submodule.getContextRoot() + submodule.getBaseUrl());
-            parent.getItems().add(appLinks);
+            final Menu appLink = new Menu();
+            appLink.setName(submodule.getModuleName());
+            appLink.setLink("/" + submodule.getContextRoot() + submodule.getBaseUrl());
+            parent.getItems().add(appLink);
         } else {
-            createAppSubmenuItems(submodule, user, createSubmenu(String.valueOf(submodule.getId()), submodule.getModuleName(),
+            createSubmenuRoot(submodule, user, createSubmenu(String.valueOf(submodule.getId()), submodule.getModuleName(),
                     submodule.getModuleName(), "#", "", parent));
         }
     }

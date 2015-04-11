@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -40,6 +41,7 @@ import com.google.gson.annotations.Expose;
 @Table(name = "eg_user")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 20)
+@Cacheable
 public class User extends AbstractAuditable<User, Long> {
 
     private static final long serialVersionUID = -2415368058955783970L;

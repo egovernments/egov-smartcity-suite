@@ -41,7 +41,7 @@
 					<!-- logo -->
 					<div class="navbar-brand">
 						<a href="javascript:void(0);">
-							<img src="${cityLogo}" height="60">
+							<img src="<c:url value='/resources/global/images/${cityLogo}'/>" height="60">
 						</a>
 					</div>
 					

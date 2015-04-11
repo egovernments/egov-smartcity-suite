@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.SharedCacheMode;
 import javax.persistence.ValidationMode;
 import javax.sql.DataSource;
 
@@ -47,6 +48,7 @@ public class JpaConfiguration {
         entityManagerFactory.setJpaVendorAdapter(jpaVendorAdaper());
         entityManagerFactory.setJpaPropertyMap(additionalProperties());
         entityManagerFactory.setValidationMode(ValidationMode.NONE);
+        entityManagerFactory.setSharedCacheMode(SharedCacheMode.DISABLE_SELECTIVE);
         final ClasspathScanningPersistenceUnitPostProcessor classpathScanningPPU = new ClasspathScanningPersistenceUnitPostProcessor("org.egov");
         classpathScanningPPU.setMappingFileNamePattern("**/*hbm.xml");
         entityManagerFactory.setPersistenceUnitPostProcessors(classpathScanningPPU);

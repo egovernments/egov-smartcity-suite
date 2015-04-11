@@ -3,6 +3,7 @@ package org.egov.infra.admin.master.entity;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
@@ -17,6 +18,7 @@ import org.egov.infra.persistence.validator.annotation.Unique;
         columnName = { "citybaseurl" }
 )
 @Table(name = "eg_city_website")
+@NamedQuery(name="CITY_BY_URL",query="Select cw FROM CityWebsite cw WHERE cw.cityBaseURL=:url")
 public class CityWebsite extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = -6267923687226233397L;
