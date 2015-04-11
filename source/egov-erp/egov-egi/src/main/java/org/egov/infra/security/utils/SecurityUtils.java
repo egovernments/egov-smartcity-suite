@@ -18,7 +18,7 @@ public class SecurityUtils {
 
     public User getCurrentUser() {
         if (isCurrentUserAuthenticated()) {
-            if (getCurrentAuthentication().get().getPrincipal() instanceof String)
+            if (isCurrentUserAnonymous())
                 return userService.getUserById(1l);//TODO should be replaced with anonymous user
             else 
                 return userService.getUserById(((SecureUser) getCurrentAuthentication().get().getPrincipal()).getUserId());
@@ -31,7 +31,11 @@ public class SecurityUtils {
     	Optional<Authentication> authentication = getCurrentAuthentication();
         return authentication.isPresent() ? authentication.get().isAuthenticated() : false;
     }
-
+    
+    public boolean isCurrentUserAnonymous() {
+        return getCurrentAuthentication().get().getPrincipal() instanceof String;
+    }
+    
     public Optional<Authentication> getCurrentAuthentication() {
         return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication());
     }

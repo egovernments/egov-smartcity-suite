@@ -15,7 +15,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.admin.master.entity.Boundary;
@@ -40,26 +39,22 @@ public class Complaint extends StateAware {
     private String CRN = "";
 
     @ManyToOne
-    @Valid
     @NotNull
     @JoinColumn(name="complaintType", nullable = false)
     @Searchable
     private ComplaintType complaintType;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @Valid
     @NotNull
     @JoinColumn(name="complainant", nullable = false)
     @Searchable(name="citizen", group = Searchable.Group.COMMON)
     private Complainant complainant = new Complainant();    
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Valid
     @JoinColumn(name = "assignee")
     private Position assignee;
 
     @ManyToOne(optional = true)
-    @Valid
     @JoinColumn(name="location", nullable = true)
     @Searchable(name = "boundary", group = Searchable.Group.COMMON)
     private Boundary location;

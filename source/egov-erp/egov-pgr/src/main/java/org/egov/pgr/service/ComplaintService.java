@@ -76,8 +76,14 @@ public class ComplaintService {
     @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
     public Complaint createComplaint(final Complaint complaint) {
         if (complaint.getCRN().isEmpty())
-            complaint.setCRN(generateComplaintID());
-        complaint.getComplainant().setUserDetail(securityUtils.getCurrentUser());
+            complaint.setCRN(generateCRN());
+        final User user = securityUtils.getCurrentUser();
+        complaint.getComplainant().setUserDetail(user);
+        if(!securityUtils.isCurrentUserAnonymous()) {
+            complaint.getComplainant().setEmail(user.getEmailId());
+            complaint.getComplainant().setName(user.getName());
+            complaint.getComplainant().setMobile(user.getMobileNumber());
+        }
         complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
         Position assignee = complaintRouterService.getAssignee(complaint);
         complaint.transition().start().withSenderName(complaint.getComplainant().getUserDetail().getName())
@@ -148,8 +154,8 @@ public class ComplaintService {
         return savedComplaint;
     }
 
-    public String generateComplaintID() {
-        return "CRN" + DASH_DELIM + RandomStringUtils.randomAlphanumeric(5);
+    public String generateCRN() {
+        return RandomStringUtils.randomAlphabetic(3)+DASH_DELIM+RandomStringUtils.randomNumeric(3);
     }
 
     public Complaint getComplaintById(final Long complaintID) {
