@@ -15,10 +15,6 @@ function populateBoundaries(dropdown) {
 	});
 }
 
-function showBoundariesDiv() {
-	$('#boundariesDiv').show();
-}
-
 $('#buttonView').click(function() {
 	$('#boundarySearchForm').attr('action', '/egi/controller/list-boundaries');
 })
@@ -63,6 +59,7 @@ function checkForChild(){
 	}
 } 
 
+<<<<<<< Updated upstream
 $('#boundaryTypeCreateBtn').click(function() {
 	$('#boundaryTypeViewform').attr('method', 'get');
 	$('#boundaryTypeViewform').attr('action', '/egi/controller/create-boundaryType');
@@ -73,3 +70,16 @@ $('#boundaryTypeUpdateBtn').click(function() {
 	$('#boundaryTypeViewform').attr('method', 'get');
 	$('#boundaryTypeViewform').attr('action', url);
 })
+=======
+$('#buttonCreate').click(function() {
+	var pathVars = "/" + $('#btnHierarchyType').val() + "," + $('#btnBoundaryType').val();
+	$('#boundaryViewForm').attr('method', 'get');
+	$('#boundaryViewForm').attr('action', '/egi/controller/create-boundary'+pathVars);
+})
+
+$('#buttonEdit').click(function() {
+	var pathVars = "/" + $('#btnHierarchyType').val() + "," + $('#btnBoundaryType').val() + "," + $('#btnBoundary').val();
+	$('#boundaryViewForm').attr('method', 'get');
+	$('#boundaryViewForm').attr('action', '/egi/controller/update-boundary'+pathVars);
+})
+>>>>>>> Stashed changes

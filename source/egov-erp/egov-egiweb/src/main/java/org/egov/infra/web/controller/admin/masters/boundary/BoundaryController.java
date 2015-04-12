@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -32,16 +33,15 @@ import com.google.gson.GsonBuilder;
 @Controller
 public class BoundaryController {
 
+    private static final String REDIRECT_URL_VIEW = "redirect:/controller/view-boundary/";
+    
     private BoundaryService boundaryService;
     private BoundaryTypeService boundaryTypeService;
-    private CityWebsiteService cityWebsiteService;
 
     @Autowired
-    public BoundaryController(BoundaryService boundaryService, BoundaryTypeService boundaryTypeService,
-            CityWebsiteService cityWebsiteService) {
+    public BoundaryController(BoundaryService boundaryService, BoundaryTypeService boundaryTypeService) {
         this.boundaryService = boundaryService;
         this.boundaryTypeService = boundaryTypeService;
-        this.cityWebsiteService = cityWebsiteService;
     }
 
     @ModelAttribute
@@ -52,6 +52,10 @@ public class BoundaryController {
         if (paramLength > 2 && ids[2] != null) {
             boundaryId = ids[2];
             model.addAttribute("boundary", boundaryService.getBoundaryById(boundaryId));
+        } else {
+            if (model.asMap().get("boundary") == null) {
+                model.addAttribute("boundary", new Boundary());
+            }
         }
 
         Long boundaryTypeId = ids[1];
@@ -67,7 +71,7 @@ public class BoundaryController {
 
     @RequestMapping(value = "/create-boundary/{ids}", method = RequestMethod.GET)
     public String showCreateBoundaryForm(Model model) {
-        model.addAttribute("boundary", new Boundary());
+        model.addAttribute("isUpdate", false);
         return "boundary-create";
     }
 
@@ -75,6 +79,29 @@ public class BoundaryController {
     public String showUpdateBoundaryForm(Model model) {
         model.addAttribute("isUpdate", true);
         return "boundary-create";
+    }
+    
+    @RequestMapping(value = "/update-boundary/{ids}", method = RequestMethod.POST)
+    public String UpdateBoundary(@Valid @ModelAttribute Boundary boundary, Model model,
+            BindingResult errors, RedirectAttributes redirectAttributes) {
+
+        if (errors.hasErrors()) {
+            return "boundary-create";
+        }
+
+        BoundaryType boundaryTypeObj = boundaryTypeService.getBoundaryTypeById(boundary.getBoundaryTypeId());
+
+        boundary.setBoundaryType(boundaryTypeObj);
+        boundary.setHistory(false);
+        
+        boundaryService.updateBoundary(boundary);
+        
+        redirectAttributes.addFlashAttribute("boundary", boundary);
+        redirectAttributes.addFlashAttribute("message", "Boundary successfully updated !");
+        
+        String pathVars = boundaryTypeObj.getHierarchyType().getId() + "," + boundaryTypeObj.getId();
+
+        return REDIRECT_URL_VIEW + pathVars;
     }
 
     @RequestMapping(value = "/list-boundaries", method = RequestMethod.GET)

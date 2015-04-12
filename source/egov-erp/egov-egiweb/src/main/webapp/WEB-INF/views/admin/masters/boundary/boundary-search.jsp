@@ -29,7 +29,7 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label">
 									<spring:message code="lbl.hierarchyType" />
-									<small><i class="entypo-star error-msg"></i></small>
+									<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-6 add-margin">
 		                            <form:select path="name"
@@ -42,8 +42,7 @@
 	                        </div>
 	                        <div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message
-										code="lbl.boundaryType" /><small><i
-										class="entypo-star error-msg"></i></small></label>
+										code="lbl.boundaryType" /><span class="mandatory"></span></label>
 								<div class="col-sm-6 add-margin">
 									<egov:ajaxdropdown id="boundaryTypeAjax" fields="['Text','Value']"
 												dropdownId="boundaryTypeSelect" url="controller/boundaryTypes-by-hierarchyType" />
@@ -78,13 +77,11 @@
                             <button type="submit" id="buttonCreate" class="btn btn-success">
                             	<spring:message code="lbl.create"/>
                             </button>
-                            <button type="submit" id="buttonUpdate" class="btn btn-success">
-                            	<spring:message code="lbl.update"/>
-                            </button>
                             <button type="submit" id="buttonDelee" class="btn btn-success">
                             	<spring:message code="lbl.delete"/>
                             </button>              
                             <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+                            <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
                         </div>
                     </div>
                     
@@ -98,12 +95,5 @@
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.7/yuiloader/yuiloader-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.7/yahoo-dom-event/yahoo-dom-event.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.7/element/element.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.7/connection/connection-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.7/datasource/datasource-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.7/datatable/datatable.js"></script>
-<script src="<c:url value='/javascript/jquery/helper.js'/>"></script>
 
 <script src="<c:url value='/resources/js/app/boundary.js'/>"></script>

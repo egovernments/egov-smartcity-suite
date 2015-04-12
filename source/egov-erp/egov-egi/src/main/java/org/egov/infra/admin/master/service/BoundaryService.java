@@ -24,8 +24,8 @@ public class BoundaryService {
     }
 
     @Transactional
-    public void createBoundary(Boundary boundary) {
-        boundaryRepository.save(boundary);
+    public Boundary createBoundary(Boundary boundary) {
+        return boundaryRepository.save(boundary);
     }
     
     @Transactional
