@@ -60,7 +60,7 @@ public class BoundaryService {
     }
     
     @Transactional
-    public Page<Boundary> getListOfBoundariesAsPage(Integer pageNumber, Integer pageSize, Long boundaryTypeId) {
+    public Page<Boundary> getPageOfBoundaries(Integer pageNumber, Integer pageSize, Long boundaryTypeId) {
         Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "name");
         return boundaryRepository.findPageByBoundaryTypeId(boundaryTypeId, pageable);
     }

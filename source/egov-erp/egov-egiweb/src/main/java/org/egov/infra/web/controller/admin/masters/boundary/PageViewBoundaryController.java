@@ -39,7 +39,7 @@ public class PageViewBoundaryController {
         Long boundaryTypeId = Long.valueOf(request.getParameter("boundaryTypeId"));        
         int pageNumber = pageStart / pageSize + 1;
         
-        Page<Boundary> pageOfBoundaries = boundaryService.getListOfBoundariesAsPage(pageNumber, pageSize, boundaryTypeId);
+        Page<Boundary> pageOfBoundaries = boundaryService.getPageOfBoundaries(pageNumber, pageSize, boundaryTypeId);
         final List<Boundary> boundaryList = pageOfBoundaries.getContent();
         final StringBuilder complaintTypeJSONData = new StringBuilder();
         complaintTypeJSONData.append("{\"draw\": ").append("0");

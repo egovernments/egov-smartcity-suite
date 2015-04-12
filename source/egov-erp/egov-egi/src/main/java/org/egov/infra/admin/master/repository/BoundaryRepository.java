@@ -13,14 +13,14 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
     
-    String QUERY_BOUNDARY_PAGE_BY_BOUNDARYTYPE = "select b from Boundary b where b.boundaryType.id = :boundaryTypeId";
+    String QUERY_BOUNDARY_BY_BOUNDARYTYPE = "select b from Boundary b where b.boundaryType.id = :boundaryTypeId";
     
     Boundary findByName(String name);
     List<Boundary> findByNameContainingIgnoreCase(String name);
     
-    @Query(QUERY_BOUNDARY_PAGE_BY_BOUNDARYTYPE)
+    @Query(QUERY_BOUNDARY_BY_BOUNDARYTYPE)
     List<Boundary> findAllByBoundaryTypeId(@Param("boundaryTypeId") Long boundaryTypeId);
     
-    @Query(QUERY_BOUNDARY_PAGE_BY_BOUNDARYTYPE)
+    @Query(QUERY_BOUNDARY_BY_BOUNDARYTYPE)
     Page<Boundary> findPageByBoundaryTypeId(@Param("boundaryTypeId") Long boundaryTypeId, Pageable page);
 }
