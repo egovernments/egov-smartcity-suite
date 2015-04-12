@@ -12,12 +12,16 @@
 		
 		<title>eGov Urban Portal</title>
 		
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/header-custom.css' context='/egi'/>">
-		<script src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
+		<link rel="stylesheet" href="/egi/resources/global/css/bootstrap/bootstrap.css">
+		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/entypo/css/entypo.css">
+		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="/egi/resources/global/css/egov/custom.css">
+		<link rel="stylesheet" href="/egi/resources/global/css/egov/header-custom.css">
+		<script src="/egi/resources/global/js/jquery/jquery.js"></script>
+		<script src="/egi/resources/global/js/bootstrap/bootstrap.js"></script>
+		<script src="/egi/resources/js/app/homepage.js"></script>
+		<script src="/egi/resources/js/app/homepagecitizen.js"></script>
+		<script src="/egi/resources/global/js/egov/custom.js"></script>	
 		
 		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
 		
@@ -482,11 +486,7 @@
 		
 	</div>
 	
-	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 	
-	<script src="<c:url value='/resources/js/app/homepage.js' context='/egi'/>"></script>
-	<script src="<c:url value='/resources/js/app/homepagecitizen.js' context='/egi'/>"></script>
-	<script src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>
 </body>
 
 </html>																																																							
