@@ -41,6 +41,7 @@ public class CitizenInboxBuilder {
 
 	public CitizenInboxBuilder link(String link) {
 		citizenInbox.setLink(link);
+		citizenInbox.setDetailedMessage(citizenInbox.getDetailedMessage().replace("<a>", "<a href=\""+link+"\" target=\"_blank\">"));
 		return this;
 	}
 
