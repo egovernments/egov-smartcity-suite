@@ -1,13 +1,12 @@
 package org.egov.infra.citizen.inbox.entity;
 
-import java.util.Date;
-
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.citizen.inbox.entity.enums.MessageType;
 import org.egov.infra.citizen.inbox.entity.enums.Priority;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infstr.commons.Module;
+import org.joda.time.DateTime;
 
 /**
  * Builder class for Citizen Inbox
@@ -20,7 +19,7 @@ public class CitizenInboxBuilder {
 
 	private CitizenInbox citizenInbox;
 
-	public CitizenInboxBuilder(MessageType messageType,String headerMessage,String detailedMessage,Date messageDate,User assignedToCitizen,Priority priority) {
+	public CitizenInboxBuilder(MessageType messageType,String headerMessage,String detailedMessage,DateTime messageDate,User assignedToCitizen,Priority priority) {
 		citizenInbox = new CitizenInbox();
 		citizenInbox.setMessageType(messageType);
 		citizenInbox.setHeaderMessage(headerMessage);

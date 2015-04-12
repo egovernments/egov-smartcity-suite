@@ -10,6 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.admin.master.entity.User;
@@ -19,6 +21,7 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infstr.commons.Module;
 import org.hibernate.validator.constraints.Length;
+import org.joda.time.DateTime;
 
 /**
  * CitizenInbox class
@@ -61,6 +64,7 @@ public class CitizenInbox extends AbstractAuditable<User, Long> {
 	@Column(name = "READ")
 	private boolean read;
 
+	@Temporal(TemporalType.TIMESTAMP)
 	@NotNull
 	@Column(name = "MSG_DATE")
 	private Date messageDate;
@@ -139,12 +143,12 @@ public class CitizenInbox extends AbstractAuditable<User, Long> {
 		this.read = read;
 	}
 
-	public Date getMessageDate() {
-		return messageDate;
+	public DateTime getMessageDate() {
+		return new DateTime(messageDate);
 	}
 
-	public void setMessageDate(Date messageDate) {
-		this.messageDate = messageDate;
+	public void setMessageDate(DateTime messageDate) {
+		this.messageDate = messageDate.toDate();
 	}
 
 	public State getState() {
