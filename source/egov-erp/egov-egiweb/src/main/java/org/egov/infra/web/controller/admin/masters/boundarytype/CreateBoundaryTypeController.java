@@ -62,9 +62,10 @@ public class CreateBoundaryTypeController {
         
         boundaryType.setHierarchy(1l);
         boundaryTypeService.createBoundaryType(boundaryType);
+        redirectAttrs.addFlashAttribute("showButtons", "showButtons");
         redirectAttrs.addFlashAttribute("message", "Boundary Type created successfully !");
 
-        return "redirect:create-boundaryType";
+        return "redirect:/controller/boundaryType/view/"+boundaryType.getId();
     }
 	
 }
