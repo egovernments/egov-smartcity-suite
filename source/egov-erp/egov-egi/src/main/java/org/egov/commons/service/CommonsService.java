@@ -786,4 +786,13 @@ public interface CommonsService {
 	public CFinancialYear getFinancialYearByDate(Date date);
 
 	public List<EgPartytype> getSubPartyTypes(String code);
+
+        /**
+	 *  @description - This API Returns Ward Boundary based on Latitutde and Longitude Provided the Shape file with approprate boundary
+                           (Ward) is available in classpath.
+	 * @param latitude
+         * @param longitude
+         * @return Wardid if available else null
+	 */
+        public Long getBndryIdFromShapefile(Double latitude,Double longitude);
 }

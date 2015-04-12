@@ -295,6 +295,62 @@
             <artifactId>cglib</artifactId>
         </dependency>
 
+ <!-- GIS START -->
+
+		<dependency>
+			<groupId>org.opengis</groupId>
+ 			<artifactId>geoapi</artifactId>
+		</dependency>		
+       	        <dependency>
+ 			<groupId>org.geotools</groupId>
+  			<artifactId>gt-main</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+  			<artifactId>gt-api</artifactId>
+ 		</dependency>
+ 		<dependency>
+		        <groupId>org.geotools</groupId>
+		        <artifactId>gt-metadata</artifactId>
+		</dependency>
+		 <dependency>
+		         <groupId>org.geotools</groupId>
+		          <artifactId>gt-referencing</artifactId>
+		 </dependency>
+		 <dependency>
+		        <groupId>org.geotools</groupId>
+		          <artifactId>gt-shapefile</artifactId>
+		 </dependency>
+		 <dependency>
+		         <groupId>org.geotools</groupId>
+		          <artifactId>gt-shapefile-renderer</artifactId>
+		 </dependency>
+		 <dependency>
+		        <groupId>javax.media</groupId>
+                        <artifactId>jai_core</artifactId>
+                        <classifier>alpha</classifier>
+		</dependency>
+		<dependency>
+        		<groupId>net.java.dev.jsr-275</groupId>
+        		<artifactId>jsr-275</artifactId>
+		</dependency>
+		<dependency>
+        		<groupId>com.vividsolutions</groupId>
+        		<artifactId>jts</artifactId>
+		</dependency>
+		<dependency>
+        		<groupId>units</groupId>
+        		<artifactId>units</artifactId>
+		</dependency>
+		<dependency>
+        		<groupId>java3d</groupId>
+        		<artifactId>vecmath</artifactId>
+		</dependency>
+ 		
+		
+ 
+       <!-- GIS END -->  
+        
     </dependencies>
 
     <build>

@@ -6,6 +6,7 @@
 package org.egov.commons.service;
 
 import java.math.BigDecimal;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,7 +20,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
-
+import java.util.HashMap;
+import java.util.Iterator;
+import java.io.File;
+import java.io.IOException;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bank;
@@ -67,6 +71,16 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.geotools.data.DataStore;
+import org.geotools.data.DataStoreFinder;
+import org.geotools.data.FeatureSource;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.opengis.feature.simple.SimpleFeature;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 
 public class CommonsServiceImpl implements CommonsService {
 
@@ -947,4 +961,51 @@ public class CommonsServiceImpl implements CommonsService {
 	public Functionary getFunctionaryByName(final String name) {
 		return commonsDAOFactory.getFunctionaryDAO().getFunctionaryByName(name);
 	}
+        @Override
+        public Long getBndryIdFromShapefile(Double latitude,Double longitude) {
+		try {
+			if(latitude!=null && longitude!=null){
+				URL shapefile =Thread.currentThread().getContextClassLoader().getResource("shapefiles/coc_wards.shp");
+				File file = new File(shapefile.toURI());
+				Map map = new HashMap();
+				map.put( "url", file.toURL() );
+				DataStore dataStore = DataStoreFinder.getDataStore(map);
+				String typeName = dataStore.getTypeNames()[0];
+				FeatureSource source = dataStore.getFeatureSource(typeName);
+				
+				FeatureCollection collection = source.getFeatures();
+				Iterator iterator =  collection.iterator();
+				GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory( null );
+				Coordinate coord = new Coordinate( longitude,latitude);
+				Point point = geometryFactory.createPoint( coord );
+				try {
+					while( iterator.hasNext() ){
+						SimpleFeature  feature = (SimpleFeature) iterator.next();
+						Geometry geom = (Geometry)feature.getDefaultGeometry();
+
+						if(geom.contains(point))
+						{
+							LOG.debug("The selected point lies in (bndryid): -----"+feature.getAttribute("wardid") );
+					 		return  (Long) feature.getAttribute("wardid");
+						}
+					}
+					return null;
+				}
+				finally {
+					collection.close( iterator );
+				}
+
+
+			}else
+				return null;
+			} catch (IOException e) {
+				LOG.error(e.getMessage());
+				throw new EGOVRuntimeException("Error occurred while getting wardid from shapefile", e);
+				}catch(Exception e)
+				{
+					LOG.error(e.getMessage());
+					throw new EGOVRuntimeException("Error occurred while getting wardid from shapefile", e);
+				}
+	}
+	
 }
