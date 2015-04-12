@@ -108,7 +108,7 @@ public class SimpleSSOFilter implements Filter, LogoutHandler {
 		final SSOPrincipal ssoPrincipal = this.getSSOPrincipal(httpRequest);
 		
 
-		if (this.sessionCache != null) {
+		if (this.sessionCache != null && session != null) {
 			if (!this.sessionCache.isSessionValid(session.getId()) && !this.logoutUrl.equals(httpRequest.getRequestURI())) {
 				this.doLogout(httpRequest, httpResponse);
 				return;
