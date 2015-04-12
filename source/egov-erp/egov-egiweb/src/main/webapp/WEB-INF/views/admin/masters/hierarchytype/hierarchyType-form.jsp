@@ -45,7 +45,7 @@
 				<div class="text-center">
 					<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
 			        <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
-			        <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="lbl.close"/></button>
+			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 				</div>
 			</div>
 		</form:form>

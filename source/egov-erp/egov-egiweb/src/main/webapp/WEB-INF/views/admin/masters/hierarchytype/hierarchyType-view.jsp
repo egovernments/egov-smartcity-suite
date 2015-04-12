@@ -46,7 +46,7 @@
                     <button type="submit" id="buttonEdit" class="btn btn-success">
                     	<spring:message code="lbl.edit"/>
                     </button>
-			       <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="lbl.close"/></button>
+			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 				</div>
 			</div>
 		</form:form>
