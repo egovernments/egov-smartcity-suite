@@ -49,10 +49,11 @@ public class CreateComplaintTypeController {
         if (errors.hasErrors()) {
             return "complaint-type";
         }
-
+        
         complaintTypeService.createComplaintType(complaintType);
-        redirectAttrs.addFlashAttribute("message", "Successfully created Complaint Type !");
-
-        return "redirect:/complaint-type";
+        String message = "Successfully created Complaint Type !";
+        redirectAttrs.addFlashAttribute("complaintType", complaintType);
+        redirectAttrs.addAttribute("message", message);
+        return "complaintType-success";
     }
 }

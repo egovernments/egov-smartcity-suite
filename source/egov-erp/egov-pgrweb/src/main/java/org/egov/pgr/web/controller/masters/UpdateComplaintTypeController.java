@@ -52,9 +52,11 @@ public class UpdateComplaintTypeController {
             return "complaint-type";
         }
 
+        String mode = "update";
         complaintTypeService.updateComplaintType(complaintType);
+        redirectAttrs.addFlashAttribute("complaintType", complaintType);
         redirectAttrs.addFlashAttribute("message", "Successfully updated Complaint Type !");
 
-        return "redirect:/complaint-type/update";
+        return "complaintType-success";
     }
 }

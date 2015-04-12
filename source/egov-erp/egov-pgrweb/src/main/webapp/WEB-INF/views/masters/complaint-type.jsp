@@ -6,13 +6,7 @@
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel" data-collapsed="0">
-			<c:if test="${not empty message}">
-				<div id="message" class="success">${message}</div>
-			</c:if>
-
-			<form:form id="addcomplaint" method="post"
-				class="form-horizontal form-groups-bordered"
-				modelAttribute="complaintType">
+			<form:form id="addcomplaint" method="post" class="form-horizontal form-groups-bordered"	modelAttribute="complaintType">
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
 						<div class="panel-title">
@@ -100,12 +94,9 @@
 				</div>
 				<div class="form-group">
 					<div class="text-center">
-						<button type="submit" class="btn btn-success">
-							<spring:message code="lbl.submit" />
-						</button>
-						<button type="reset" class="btn btn-default">
-							<spring:message code="lbl.reset" />
-						</button>
+						<button type="submit" class="btn btn-success"><spring:message code="lbl.submit"/></button>
+						<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+						<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
 					</div>
 				</div>
 			</form:form>

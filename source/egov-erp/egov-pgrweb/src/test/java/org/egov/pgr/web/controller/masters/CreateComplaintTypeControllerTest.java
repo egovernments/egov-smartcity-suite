@@ -3,7 +3,6 @@ package org.egov.pgr.web.controller.masters;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -19,6 +18,8 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+
+import javax.persistence.EntityManager;
 
 import org.egov.builder.entities.DepartmentBuilder;
 import org.egov.infra.admin.master.entity.Department;
@@ -45,6 +46,9 @@ public class CreateComplaintTypeControllerTest extends AbstractContextController
     
     @Autowired
     private ConversionService conversionService;
+    
+    @Autowired
+    private EntityManager entityManager;
     
     
     private MockMvc mockMvc;
@@ -101,10 +105,9 @@ public class CreateComplaintTypeControllerTest extends AbstractContextController
         verify(departmentService).getAllDepartments();
     }
 
-    /*@Test
+   /* @Test
     public void shouldCreateNewComplaintType() throws Exception {
         this.mockMvc.perform(post("/complaint-type")
-                .param("name", "new-complaint-type")
                 .param("department", "1")
                 .param("name", "new-complaint-type").param("code", "test"))
                 .andExpect(model().hasNoErrors())
