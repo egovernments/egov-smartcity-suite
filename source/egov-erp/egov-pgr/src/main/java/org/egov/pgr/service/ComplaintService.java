@@ -20,6 +20,7 @@ import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.entity.enums.UserType;
 import org.egov.infra.citizen.inbox.entity.CitizenInbox;
 import org.egov.infra.citizen.inbox.entity.CitizenInboxBuilder;
 import org.egov.infra.citizen.inbox.entity.enums.MessageType;
@@ -79,7 +80,7 @@ public class ComplaintService {
             complaint.setCRN(generateCRN());
         final User user = securityUtils.getCurrentUser();
         complaint.getComplainant().setUserDetail(user);
-        if(!securityUtils.isCurrentUserAnonymous()) {
+        if(!securityUtils.isCurrentUserAnonymous() && user.getType().equals(UserType.CITIZEN)) {
             complaint.getComplainant().setEmail(user.getEmailId());
             complaint.getComplainant().setName(user.getName());
             complaint.getComplainant().setMobile(user.getMobileNumber());
