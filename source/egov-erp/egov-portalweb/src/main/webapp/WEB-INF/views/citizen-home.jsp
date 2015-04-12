@@ -1,4 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@taglib  uri="http://www.joda.org/joda/time/tags" prefix="joda"%>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -119,12 +120,15 @@
 									<header>
 										
 										<div class="row">
-											<i class="user-msg fa fa-user col-sm-1 col-xs-2 read-msg"></i><h3 class="col-sm-11 col-xs-10">${inboxMsg.headerMessage}<span class="msg-status">${inboxMsg.status}</span> </h3> 
+											<i class="user-msg fa fa-user col-sm-1 col-xs-2 read-msg"></i><h3 class="col-sm-11 col-xs-10">
+											${inboxMsg.headerMessage}<span class="msg-status">${inboxMsg.status}</span> </h3> 
 										</div>
 										
 										
 										<div class="msg-info">
-											<a href="javascript:void(0);">${inboxMsg.identifier}</a> <span class="dot">&bull;</span> <span class="msg-date">${inboxMsg.messageDate}</span>
+											<a href="javascript:void(0);">${inboxMsg.identifier}</a> <span class="dot">&bull;</span> 
+											<joda:format value="${inboxMsg.messageDate}" var="messageDate" pattern="dd-MM-yyyy hh:mm:ss"/>
+						<span class="msg-date">${messageDate}</span>
 										</div>
 									</header>
 									
@@ -146,297 +150,32 @@
 							<li class="tab-current-myacc" data-section="myaccount" data-myaccount-section="#section-myaccount-1">
 								<a href="javascript:void(0);">
 									<div class="text-center"><i class="fa fa-book"></i></div>
-									<span class="hidden-sm hidden-xs">My Property</span>
-								</a>
-							</li>
-							<li data-section="myaccount" data-myaccount-section="#section-myaccount-2">
-								<a href="javascript:void(0);">
-									<div class="text-center"><i class="fa fa-building-o"></i></div>
-									<span class="hidden-sm hidden-xs">My Licences</span>
-								</a>
-							</li>
-							<li data-section="myaccount" data-myaccount-section="#section-myaccount-3">
-								<a href="javascript:void(0);">
-									<div class="text-center"><i class="fa fa-rupee"></i></div>
-									<span class="hidden-sm hidden-xs">My Professional Tax</span>
-								</a>
-							</li>
-							<li data-section="myaccount" data-myaccount-section="#section-myaccount-4">
-								<a href="javascript:void(0);">
-									<div class="text-center"><i class="fa fa-money"></i></div>
-									<span class="hidden-sm hidden-xs">My Shops</span>
-								</a>
-							</li>
-							<li data-section="myaccount" data-myaccount-section="#section-myaccount-5">
-								<a href="javascript:void(0);">
-									<div class="text-center"><i class="fa fa-adn"></i></div>
-									<span class="hidden-sm hidden-xs">My Hoardings</span>
+									<span class="hidden-sm hidden-xs">My Grievances</span>
 								</a>
 							</li>
 						</ul>
 					</nav>
 					<div class="content-wrap">
 						<section id="section-myaccount-1"  class="content-current-myacc">
-							<div class="visible-xs visible-sm">My Property</div>
-							<div class="msg" data-toggle="collapse" data-target="#myaccount1content1" aria-expanded="true">
-								<header>
-									<div class="row">
-										<i class="fa fa-book col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Mohammed Aslam1111</h3>
-									</div>
-									<div class="myaccount-actions">
-										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="View property"></i>
-										<i class="fa fa-rupee col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="Pay taxes"></i> 
-										<i class="fa fa-edit col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="Apply for property modification"></i>
-										<i class="fa fa-edit col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="Apply for name transfer"></i>
-									</div>
-									<div class="msg-info">
-										<a href="javascript:void(0);">UTK135</a> <span class="dot">&bull;</span> <span class="msg-date"> Pending Tax : <i class="fa fa-rupee"></i>5003 </span>
-									</div>
-								</header>
-								<div id="myaccount1content1" class="msg-content collapse in">
-									<p> 
-										Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-										sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-										minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-										commodo consequat.
-									</p>
-								</div>
-							</div> 
-							<div class="msg" data-toggle="collapse" data-target="#myaccount1content2" aria-expanded="true">
-								<header>
-									<div class="row">
-										<i class="fa fa-book col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Dinesh Kumar</h3>
-									</div>
-									<div class="myaccount-actions">
-										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="View property"></i>
-										<i class="fa fa-rupee col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="Pay taxes"></i> 
-										<i class="fa fa-edit col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="Apply for property modification"></i>
-										<i class="fa fa-edit col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="Apply for name transfer"></i>
-									</div>
-									<div class="msg-info">
-										<a href="javascript:void(0);">UTK135</a> <span class="dot">&bull;</span> <span class="msg-date"> Pending Tax : <i class="fa fa-rupee"></i>2365</span>
-									</div>
-								</header>
-								<div id="myaccount1content2" class="msg-content collapse">
-									<p> 
-										Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-										sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-										minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-										commodo consequat.
-									</p>
-								</div>
-							</div>
-							<div class="msg" data-toggle="collapse" data-target="#myaccount1content3" aria-expanded="true">
-								<header>
-									<div class="row">
-										<i class="fa fa-book col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Gopinath</h3>
-									</div>
-									<div class="myaccount-actions">
-										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="View property"></i>
-										<i class="fa fa-rupee col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="Pay taxes"></i> 
-										<i class="fa fa-edit col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="Apply for property modification"></i>
-										<i class="fa fa-edit col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="Apply for name transfer"></i>
-									</div>
-									<div class="msg-info">
-										<a href="javascript:void(0);">UTK135</a> <span class="dot">&bull;</span> <span class="msg-date"> Pending Tax : <i class="fa fa-rupee"></i>0</span>
-									</div>
-								</header>
-								<div id="myaccount1content3" class="msg-content collapse">
-									<p> 
-										Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-										sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-										minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-										commodo consequat.
-									</p>
-								</div>
-							</div>
+							<c:forEach var="myAccountMsg" items="${myAccountMessages}">
+								<div class="visible-xs visible-sm">My Grievance</div>
+								<div class="msg" data-toggle="collapse" data-target="#myaccount1content1" aria-expanded="true">
+									<header>
+										<div class="row">
+											<i class="fa fa-book col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">${myAccountMsg.headerMessage}</h3>
+										</div>
+											<div class="myaccount-actions">
+											<a href="${myAccountMsg.link}" target="_blank"><i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="View Grievance"></i></a>
+										</div>
+										<div class="msg-info">
+											<a href="javascript:void(0);">${myAccountMsg.identifier}</a> <span class="dot">&bull;</span> <span class="msg-date"><joda:format value="${myAccountMsg.messageDate}" var="messageDate" pattern="dd-MM-yyyy hh:mm:ss"/>
+						<span class="msg-date">${messageDate}</span>
+										</div>
+									</header>
+								</div> 
+							</c:forEach>
 						</section>
-						<section id="section-myaccount-2">
-							<div class="visible-xs visible-sm">My Licences</div>
-							<div class="msg" data-toggle="collapse" data-target="#myaccount2content1" aria-expanded="true">
-								<header>
-									<div class="row">
-										<i class="fa fa-book col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Mohammed Aslam222</h3>
-									</div>
-									<div class="myaccount-actions">
-										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="View Details"></i>
-										<i class="fa fa-rupee col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="Renew Licence"></i> 
-									</div>
-									<div class="msg-info">
-										<span class="msg-date"> Licence No : </span><a href="javascript:void(0);">UTK135</a> 
-									</div>
-								</header>
-								<div id="myaccount2content1" class="msg-content collapse in">
-									<p> 
-										Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-										sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-										minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-										commodo consequat.
-									</p>
-								</div>
-							</div> 
-							<div class="msg" data-toggle="collapse" data-target="#myaccount2content2" aria-expanded="true">
-								<header>
-									<div class="row">
-										<i class="fa fa-book col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Dinesh Kumar</h3>
-									</div>
-									<div class="myaccount-actions">
-										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="View Details"></i>
-										<i class="fa fa-rupee col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="Renew Licence"></i>
-									</div>
-									<div class="msg-info">
-										<span class="msg-date"> Licence No : </span><a href="javascript:void(0);">UTK135</a> 
-									</div>
-								</header>
-								<div id="myaccount2content2" class="msg-content collapse">
-									<p> 
-										Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-										sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-										minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-										commodo consequat.
-									</p>
-								</div>
-							</div>
-						</section>
-						<section id="section-myaccount-3">
-							<div class="visible-xs visible-sm">My Professional Tax</div>
-							<div class="msg" data-toggle="collapse" data-target="#myaccount3content1" aria-expanded="true">
-								<header>
-									<div class="row">
-										<i class="fa fa-book col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Mohammed Aslam333</h3>
-									</div>
-									<div class="myaccount-actions">
-										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="View Details"></i>
-										<i class="fa fa-rupee col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="Pay professional tax"></i> 
-									</div>
-									<div class="msg-info">
-										<span class="msg-date"> Professional Tax : </span><a href="javascript:void(0);">UTK135</a> 
-									</div>
-								</header>
-								<div id="myaccount3content1" class="msg-content collapse in">
-									<p> 
-										Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-										sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-										minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-										commodo consequat.
-									</p>
-								</div>
-							</div> 
-							<div class="msg" data-toggle="collapse" data-target="#myaccount3content2" aria-expanded="true">
-								<header>
-									<div class="row">
-										<i class="fa fa-book col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Dinesh Kumar</h3>
-									</div>
-									<div class="myaccount-actions">
-										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="View Details"></i>
-										<i class="fa fa-rupee col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="Pay professional tax"></i>
-									</div>
-									<div class="msg-info">
-										<span class="msg-date"> Professional Tax : </span><a href="javascript:void(0);">UTK135</a> 
-									</div>
-								</header>
-								<div id="myaccount3content2" class="msg-content collapse">
-									<p> 
-										Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-										sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-										minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-										commodo consequat.
-									</p>
-								</div>
-							</div>
-						</section>
-						<section id="section-myaccount-4">
-							<div class="visible-xs visible-sm">My Shops</div>
-							<div class="msg" data-toggle="collapse" data-target="#myaccount4content1" aria-expanded="true">
-								<header>
-									<div class="row">
-										<i class="fa fa-book col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Mohammed Aslam4444</h3>
-									</div>
-									<div class="myaccount-actions">
-										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="View Agreement"></i>
-										<i class="fa fa-rupee col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="Pay Rent/Lease"></i> 
-									</div>
-									<div class="msg-info">
-										<span class="msg-date"> Agreement No : </span><a href="javascript:void(0);">UTK135</a> 
-									</div>
-								</header>
-								<div id="myaccount4content1" class="msg-content collapse in">
-									<p> 
-										Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-										sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-										minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-										commodo consequat.
-									</p>
-								</div>
-							</div> 
-							<div class="msg" data-toggle="collapse" data-target="#myaccount4content2" aria-expanded="true">
-								<header>
-									<div class="row">
-										<i class="fa fa-book col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Dinesh Kumar</h3>
-									</div>
-									<div class="myaccount-actions">
-										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="View Agreement"></i>
-										<i class="fa fa-rupee col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="Pay Rent/Lease"></i>
-									</div>
-									<div class="msg-info">
-										<span class="msg-date"> Agreement No : </span><a href="javascript:void(0);">UTK135</a> 
-									</div>
-								</header>
-								<div id="myaccount4content2" class="msg-content collapse">
-									<p> 
-										Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-										sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-										minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-										commodo consequat.
-									</p>
-								</div>
-							</div>
-						</section>
-						<section id="section-myaccount-5">
-							<div class="visible-xs visible-sm">My Hoardings</div>
-							<div class="msg" data-toggle="collapse" data-target="#myaccount5content1" aria-expanded="true">
-								<header>
-									<div class="row">
-										<i class="fa fa-book col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Mohammed Aslam55555</h3>
-									</div>
-									<div class="myaccount-actions">
-										<i class="fa fa-rupee col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="Pay Rent/Lease"></i> 
-									</div>
-									<div class="msg-info">
-										<span class="msg-date"> Agreement No : </span><a href="javascript:void(0);">UTK135</a> 
-									</div>
-								</header>
-								<div id="myaccount5content1" class="msg-content collapse in">
-									<p> 
-										Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-										sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-										minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-										commodo consequat.
-									</p>
-								</div>
-							</div> 
-							<div class="msg" data-toggle="collapse" data-target="#myaccount5content2" aria-expanded="true">
-								<header>
-									<div class="row">
-										<i class="fa fa-book col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">Dinesh Kumar</h3>
-									</div>
-									<div class="myaccount-actions">
-										<i class="fa fa-rupee col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="Pay Rent/Lease"></i>
-									</div>
-									<div class="msg-info">
-										<span class="msg-date"> Agreement No : </span><a href="javascript:void(0);">UTK135</a> 
-									</div>
-								</header>
-								<div id="myaccount5content2" class="msg-content collapse">
-									<p> 
-										Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-										sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-										minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-										commodo consequat.
-									</p>
-								</div>
-							</div>
-						</section>
+						
 					</div>
 				</div>
 				
@@ -512,13 +251,6 @@
 								<header>
 									<div class="row">
 										<i class="fa fa-edit col-sm-1 col-xs-2 unread-msg"></i><a href="/pgr/complaint/citizen/show-reg-form" class="open-popup col-sm-11 col-xs-10">Register Grievance</a>
-									</div>
-								</header>
-							</div> 
-							<div class="msg">
-								<header>
-									<div class="row">
-										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg"></i><a href="javascript:void(0)" class="col-sm-11 col-xs-10">View Grievance</a>
 									</div>
 								</header>
 							</div> 
@@ -750,11 +482,11 @@
 		
 	</div>
 	
-	<script src="<c:url value='/egi/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 	
-	<script src="<c:url value='/egi/resources/js/app/homepage.js' context='/egi'/>"></script>
-	<script src="<c:url value='/egi/resources/js/app/homepagecitizen.js' context='/egi'/>"></script>
-	<script src="<c:url value='/egi/resources/global/js/egov/custom.js' context='/egi'/>"></script>
+	<script src="<c:url value='/resources/js/app/homepage.js' context='/egi'/>"></script>
+	<script src="<c:url value='/resources/js/app/homepagecitizen.js' context='/egi'/>"></script>
+	<script src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>
 </body>
 
 </html>																																																							
