@@ -23,8 +23,8 @@ public class ViewComplaintController {
     }
 
     @RequestMapping(value = "/view-complaint", method = RequestMethod.GET)
-    public String viewComplaints(@RequestParam Long complaintId, Model model) {
-        Complaint complaint = complaintService.getComplaintById(complaintId);
+    public String viewComplaints(@RequestParam String crnNo, Model model) {
+        Complaint complaint = complaintService.getComplaintByCrnNo(crnNo);
         List<Hashtable<String, Object>> historyTable = complaintService.getHistory(complaint);
         model.addAttribute("complaintHistory", historyTable);
         model.addAttribute("complaint", complaint);

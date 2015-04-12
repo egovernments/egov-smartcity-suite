@@ -23,7 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 public class ViewComplaintControllerTest extends AbstractContextControllerTest<ViewComplaintController> {
 
 	private MockMvc mockMvc;
-	public Long complaintId;
+	public String crnNo;
 
 	@Mock
 	private ComplaintService complaintService;
@@ -48,9 +48,8 @@ public class ViewComplaintControllerTest extends AbstractContextControllerTest<V
         Complaint complaint = new Complaint();
         complaint.setComplaintType(complaintType);
         complaint.setComplainant(complainant);
-        complaint.setCRN("CRN-rmd1");
-        complaintId = 1L;
-        when(complaintService.getComplaintById(complaintId)).thenReturn(complaint);
+        crnNo = "CRN-rmd1";
+        when(complaintService.getComplaintByCrnNo(crnNo)).thenReturn(complaint);
         
 	}
 
@@ -64,7 +63,7 @@ public class ViewComplaintControllerTest extends AbstractContextControllerTest<V
 	@Test
 	public void getViewComplaintResult() throws Exception {
 		this.mockMvc.perform(get("/view-complaint")
-				.param("complaintId",String.valueOf(complaintId)))
+				.param("crnNo",String.valueOf(crnNo)))
 				.andExpect(view().name("view-complaint"))
 				.andExpect(status().isOk());
 

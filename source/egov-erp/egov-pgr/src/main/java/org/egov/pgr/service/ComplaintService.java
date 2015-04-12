@@ -158,10 +158,7 @@ public class ComplaintService {
     public String generateCRN() {
         return RandomStringUtils.randomAlphabetic(3)+DASH_DELIM+RandomStringUtils.randomNumeric(3);
     }
-
-    public Complaint getComplaintById(final Long complaintID) {
-        return complaintRepository.findOne(complaintID);
-    }
+    
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -169,7 +166,17 @@ public class ComplaintService {
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
+    
+    public Complaint getComplaintById(final Long complaintID) {
+        return complaintRepository.findOne(complaintID);
+    }
 
+    public Complaint getComplaintByCrnNo(final String crnNo) {
+        final Criteria criteria = getCurrentSession().createCriteria(Complaint.class, "complaint").add(
+                Restrictions.ilike("complaint.CRN", crnNo));
+        return (Complaint) criteria.uniqueResult();
+    }
+    
     public List<Complaint> getComplaintsEligibleForEscalation() {
         /*
          * comenting as of now this needs to be fixed for escallation. final
@@ -212,7 +219,7 @@ public class ComplaintService {
 
         citizenInboxBuilder.module((Module) hql.uniqueResult());
         citizenInboxBuilder.identifier(savedComplaint.getCRN());
-        citizenInboxBuilder.link("/pgr/view-complaint?complaintId=" + savedComplaint.getId());
+        citizenInboxBuilder.link("/pgr/view-complaint?crnNo=" + savedComplaint.getCRN());
         citizenInboxBuilder.state(savedComplaint.getState());
         citizenInboxBuilder.status(savedComplaint.getStatus().getName());
 
