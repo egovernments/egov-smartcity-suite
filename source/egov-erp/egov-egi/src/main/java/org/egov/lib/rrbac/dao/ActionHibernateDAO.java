@@ -59,6 +59,8 @@ public class ActionHibernateDAO implements ActionDAO {
 		// There are no query params with URL
 		if (url.indexOf("?") == -1) {
 			queryResult = this.getQueryResult("from org.egov.lib.rrbac.model.Action where replace(url,'/../'||contextRoot||'/','/') = :fullURL and queryParams is null", contextPath, url, hasContextPath);
+			if (queryResult.isEmpty()) 
+                            queryResult = this.getQueryResult("from org.egov.lib.rrbac.model.Action where :fullURL like url||'%'", contextPath, url, hasContextPath);
 		} else { // There are query params exists with URL
 			queryResult = this.getQueryResult("from org.egov.lib.rrbac.model.Action where :fullURL = replace(url,'/../'||contextRoot||'/','/')||'?'||queryParams ", contextPath, url, hasContextPath);
 			if (queryResult.isEmpty()) {
