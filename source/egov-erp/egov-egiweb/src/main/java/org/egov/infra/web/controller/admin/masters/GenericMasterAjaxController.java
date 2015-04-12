@@ -31,8 +31,7 @@ public class GenericMasterAjaxController {
     private BoundaryService boundaryService;
 
     @RequestMapping(value = "/boundaryTypes-by-hierarchyType", method = RequestMethod.GET)
-    public @ResponseBody void getBoundaryTypeByHierarchyType(@RequestParam Long hierarchyTypeId,
-            HttpServletResponse response) throws IOException {
+    public @ResponseBody void getBoundaryTypeByHierarchyType(@RequestParam Long hierarchyTypeId, HttpServletResponse response) throws IOException {
         List<BoundaryType> boundaryTypes = boundaryTypeService.getAllBoundarTypesByHierarchyTypeId(hierarchyTypeId);
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -58,12 +57,12 @@ public class GenericMasterAjaxController {
     }
 
     @RequestMapping(value = "/check-is-root", method = RequestMethod.GET)
-    public @ResponseBody void isRootBoundary(@RequestParam Long boundaryTypeId, @RequestParam Long hierarchyTypeId,
-            HttpServletResponse response) throws IOException {
+    public @ResponseBody boolean isRootBoundary(@RequestParam Long boundaryTypeId, @RequestParam Long hierarchyTypeId) {
         BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeByIdAndHierarchyType(boundaryTypeId,
                 hierarchyTypeId);
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        IOUtils.write(String.valueOf(boundaryType.getParent().getId() == 0 ? true : false), response.getWriter());
+        //response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        //IOUtils.write(String.valueOf(boundaryType.getParent().getId() == 0 ? true : false), response.getWriter());
+        return boundaryType.getParent().getId() == 0 ? true : false;
     }
 
     // FIXME Can be made generic by the help of annotation which takes fields as

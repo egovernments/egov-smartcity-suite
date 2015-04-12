@@ -72,14 +72,11 @@
                     <div class="form-group">
                         <div class="text-center">
                             <button type="submit" id="buttonView" class="btn btn-success">
-                            	<spring:message code="lbl.view"/>
+                            	<spring:message code="lbl.viewBoundaries"/>
                             </button>
                             <button type="submit" id="buttonCreate" class="btn btn-success">
                             	<spring:message code="lbl.create"/>
                             </button>
-                            <button type="submit" id="buttonDelee" class="btn btn-success">
-                            	<spring:message code="lbl.delete"/>
-                            </button>              
                             <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
                             <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
                         </div>

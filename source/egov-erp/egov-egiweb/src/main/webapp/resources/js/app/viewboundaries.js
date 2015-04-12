@@ -5,7 +5,12 @@ $(document).ready(function() {
 	        sort:false,
 	        filter:true,
 	        responsive:true,        
-	        ajax: "/egi/controller/list-boundaries",
+	        ajax: {
+	        	url : "/egi/controller/list-boundaries",
+	        	data : {
+	        		boundaryTypeId : $('#btnBoundaryType').val()
+	        	}
+	        },
 	        "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 	        "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
 	        columns : [ {
@@ -21,7 +26,7 @@ $(document).ready(function() {
 				"mData" : "fromDate",
 				"sTitle" : "From Date"
 			}, {
-				"mData" : "toDae",
+				"mData" : "toDate",
 				"sTitle" : "To Date"
 			}],
 	    }); 

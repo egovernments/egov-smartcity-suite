@@ -6,6 +6,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -59,8 +60,8 @@ public class BoundaryService {
     }
     
     @Transactional
-    public Page<Boundary> getListOfBoundariesAsPage(Integer pageNumber, Integer pageSize) {
+    public Page<Boundary> getListOfBoundariesAsPage(Integer pageNumber, Integer pageSize, Long boundaryTypeId) {
         Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "name");
-        return boundaryRepository.findAll(pageable);
+        return boundaryRepository.findPageByBoundaryTypeId(boundaryTypeId, pageable);
     }
 }

@@ -80,22 +80,22 @@
     
     <definition name="boundary-search" extends="base_layout">
         <put-attribute name="page-title" value="title.boundary" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/boundary-search.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/boundary/boundary-search.jsp"/>
     </definition>
     
     <definition name="boundary-view" extends="base_layout">
         <put-attribute name="page-title" value="title.boundary" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/boundary-view.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/boundary/boundary-view.jsp"/>
     </definition>
     
-     <definition name="boundary-create" extends="base_layout">
+    <definition name="boundary-create" extends="base_layout">
         <put-attribute name="page-title" value="title.boundary" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/boundary-create.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/boundary/boundary-create.jsp"/>
     </definition>
     
-    <definition name="masterAjax-boundaryType" extends="base_layout">
+    <definition name="view-boundaries" extends="base_layout">
         <put-attribute name="page-title" value="title.boundary" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/masterAjax-boundaryType.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/boundary/view-boundaries.jsp"/>
     </definition>
-    
+   
 </tiles-definitions>

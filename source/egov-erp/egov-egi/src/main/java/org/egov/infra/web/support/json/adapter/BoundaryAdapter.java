@@ -24,7 +24,7 @@ public class BoundaryAdapter implements JsonSerializer<Boundary> {
         jsonObject.addProperty("fromDate", dateFormatter.format(boundary.getFromDate()));
         
         if (boundary.getToDate() == null) {
-            jsonObject.addProperty("toDate", "");
+            jsonObject.addProperty("toDate", "NA");
         } else {
             jsonObject.addProperty("toDate", dateFormatter.format(boundary.getToDate()));
         }
