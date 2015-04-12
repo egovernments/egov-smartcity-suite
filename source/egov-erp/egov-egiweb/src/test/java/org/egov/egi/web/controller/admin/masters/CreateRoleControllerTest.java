@@ -71,7 +71,7 @@ public class CreateRoleControllerTest extends AbstractContextControllerTest<Crea
         this.mockMvc.perform(post("/create-role")
                 .param("name", "new-role"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(redirectedUrl("create-role"));
+                .andExpect(redirectedUrl("view-role/new-role"));
 
         ArgumentCaptor<Role> argumentCaptor = ArgumentCaptor.forClass(Role.class);
         verify(roleService).createRole(argumentCaptor.capture());

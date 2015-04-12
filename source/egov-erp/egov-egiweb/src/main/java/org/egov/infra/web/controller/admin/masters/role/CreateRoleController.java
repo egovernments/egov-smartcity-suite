@@ -37,6 +37,7 @@ public class CreateRoleController  {
     @RequestMapping(method =RequestMethod.POST)
     public String create(@Valid @ModelAttribute Role role, final BindingResult errors, RedirectAttributes redirectAttrs) {
     	
+        String SUCCESS = "";
         if (errors.hasErrors())
             return "role-form";
         
@@ -44,11 +45,13 @@ public class CreateRoleController  {
         try {
         	roleService.createRole(role);
 			redirectAttrs.addFlashAttribute("message", "Successfully created Role !");
+			SUCCESS = "redirect:view-role/"+role.getName();
 		} catch (DuplicateElementException e) {
 			redirectAttrs.addFlashAttribute("message", e.getMessage());
+			SUCCESS = "redirect:create-role";
 		}
         
-        return "redirect:create-role";
+        return SUCCESS;
     }
     
 }

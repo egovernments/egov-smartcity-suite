@@ -31,5 +31,14 @@ jQuery(document).ready(function($)
 		displayKey: 'value',
 		source: rolename.ttAdapter()
 	});
+	$('#roleNew').click(function() {
+		$('#method').val("New");
+		$('#viewRoleForm').trigger('submit');
+	})
+
+	$('#roleEdit').click(function() {
+		$('#method').val("Edit");
+		$('#viewRoleForm').trigger('submit');
+	})
 	
 });

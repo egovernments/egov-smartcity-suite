@@ -7,7 +7,10 @@
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
 <div class="row">
 	<div class="col-md-12">
-		<form:form  id="roleform" mothod ="post" 
+	 <c:if test="${not empty message}">
+                    <div id="message" class="success">${message}</div>
+     </c:if>
+		<form:form  id="viewRoleForm" mothod ="post"
 		 class="form-horizontal form-groups-bordered" modelAttribute="role" >
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
@@ -20,6 +23,7 @@
 						<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.roleName" /></div>
 						<div class="col-md-9 col-xs-6 add-margin" id="ct-name">
 							<c:out value="${role.name}"></c:out>
+							<input type="hidden" name="method" id="method" value="" />
 						</div>
 					</div>
 					<div class="row add-border">
@@ -33,7 +37,9 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
-			       <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="lbl.close"/></button>
+					<button type="submit" id="roleNew" class="btn btn-primary"><spring:message code="lbl.new"/></button>
+					<button type="submit" id="roleEdit" class="btn btn-primary"><spring:message code="lbl.edit"/></button>
+			        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();"><spring:message code="lbl.close"/></button>
 				</div>
 			</div>
 		</form:form>
@@ -44,4 +50,4 @@
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
-
+<script src="<c:url value='/resources/js/app/role.js'/>"></script>

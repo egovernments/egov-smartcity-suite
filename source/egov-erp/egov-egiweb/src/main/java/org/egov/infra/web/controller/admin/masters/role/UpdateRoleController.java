@@ -44,7 +44,7 @@ public class UpdateRoleController {
         roleService.update(role);
         redirectAttrs.addFlashAttribute("message", "Successfully Updated Role !");
 
-        return "redirect:/controller/update-role";
+        return "redirect:/controller/view-role/"+role.getName();
     }
 
 }

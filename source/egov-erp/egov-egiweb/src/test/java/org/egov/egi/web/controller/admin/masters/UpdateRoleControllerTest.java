@@ -74,7 +74,7 @@ public class UpdateRoleControllerTest extends AbstractContextControllerTest<Upda
         this.mockMvc.perform(post("/update-role/existing")
                 .param("name", "existing-role"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(redirectedUrl("/controller/update-role"));
+                .andExpect(redirectedUrl("/controller/view-role/existing-role"));
 
         ArgumentCaptor<Role> argumentCaptor = ArgumentCaptor.forClass(Role.class);
         verify(roleService).update(argumentCaptor.capture());
