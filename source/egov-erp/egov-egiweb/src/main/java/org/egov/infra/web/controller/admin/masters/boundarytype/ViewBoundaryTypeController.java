@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping(value ="/boundaryType/view/{name}")
+@RequestMapping(value ="/boundaryType/view/{id}")
 public class ViewBoundaryTypeController {
 
 	private BoundaryTypeService boundaryTypeService;
@@ -21,8 +21,8 @@ public class ViewBoundaryTypeController {
 	}
 	
 	@ModelAttribute
-	public BoundaryType boundaryTypeModel(@PathVariable String name){
-            return boundaryTypeService.getBoundaryTypeByName(name);
+        public BoundaryType boundaryTypeModel(@PathVariable Long id){
+            return boundaryTypeService.getBoundaryTypeById(id);
         }
 	
 	@RequestMapping(method = RequestMethod.GET)

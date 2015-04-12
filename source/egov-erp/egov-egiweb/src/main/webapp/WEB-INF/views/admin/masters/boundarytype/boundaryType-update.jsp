@@ -10,7 +10,7 @@
 			<c:if test="${not empty message}">
                     <div id="message" class="success">${message}</div>
             </c:if>
-		<form:form  id="boundaryTypeUpdateform" mothod ="post" 
+		<form:form  id="boundaryTypeUpdateform" method ="post" 
 		 class="form-horizontal form-groups-bordered" modelAttribute="boundaryType" >
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
@@ -47,7 +47,8 @@
 			<div class="row">
 				<div class="text-center">
 					<button type="submit" class="btn btn-primary"><spring:message code="lbl.update"/></button>
-			       <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="lbl.close"/></button>
+					<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+			       <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()" ><spring:message code="lbl.close"/></button>
 				</div>
 			</div>
 		</form:form>

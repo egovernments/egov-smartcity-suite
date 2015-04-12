@@ -102,10 +102,11 @@ public class GenericMasterAjaxController {
      * Used in ajax validation to check if child exists for a boundary type - Add child screen
      */
     @RequestMapping(value = "/addChildBoundaryType/isChildPresent", method = RequestMethod.GET)
-    public @ResponseBody boolean isChildBoundaryTypePresent(@RequestParam final String parentName){
-        final BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeByParent(parentName);
+    public @ResponseBody boolean isChildBoundaryTypePresent(@RequestParam final Long parentId){
+        final BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeByParent(parentId);
         return boundaryType != null ? Boolean.TRUE : Boolean.FALSE;
     }
+    
     
 }
 

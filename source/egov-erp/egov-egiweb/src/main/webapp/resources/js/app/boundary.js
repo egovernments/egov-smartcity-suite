@@ -35,8 +35,8 @@ $('#buttonUpdate').click(function() {
  * Ajax validation to check for child boundary type for a parent  
  */
 function checkForChild(){
-	var name = $("#boundaryTypes").val();
-	if(name ==''){
+	var id = $("#boundaryTypeSelect").val();
+	if(id ==''){
 		alert('Please select the Boundary Type !');
 		return false;
 	}
@@ -44,7 +44,7 @@ function checkForChild(){
 		$.ajax({
 			type: "GET",
 			url: contextPath + "/controller/addChildBoundaryType/isChildPresent",
-			data:{'parentName' : name },
+			data:{'parentId' : id },
 			dataType: "json",
 			success: function (response) {
 				if(response == true){
@@ -62,3 +62,14 @@ function checkForChild(){
 		});
 	}
 } 
+
+$('#boundaryTypeCreateBtn').click(function() {
+	$('#boundaryTypeViewform').attr('method', 'get');
+	$('#boundaryTypeViewform').attr('action', '/egi/controller/create-boundaryType');
+})
+
+$('#boundaryTypeUpdateBtn').click(function() {
+	var url = '/egi/controller/boundaryType/update/'+ $('#boundaryTypeId').val();
+	$('#boundaryTypeViewform').attr('method', 'get');
+	$('#boundaryTypeViewform').attr('action', url);
+})

@@ -55,8 +55,8 @@ public class BoundaryTypeService {
         return boundaryTypeRepository.findByHierarchyTypeId(hierarchyTypeId);
     }
     
-    public BoundaryType getBoundaryTypeByParent(String parentName) {
-        return boundaryTypeRepository.findByParent(parentName);
+    public BoundaryType getBoundaryTypeByParent(Long parentId) {
+        return boundaryTypeRepository.findByParent(parentId);
     }
     
     public BoundaryType getBoundaryTypeByIdAndHierarchyType(Long id, Long hierarchyTypeId) {

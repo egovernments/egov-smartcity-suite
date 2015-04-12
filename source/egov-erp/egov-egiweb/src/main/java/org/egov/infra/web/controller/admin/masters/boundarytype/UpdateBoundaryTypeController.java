@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/boundaryType/update/{name}")
+@RequestMapping("/boundaryType/update/{id}")
 public class UpdateBoundaryTypeController {
 
 private BoundaryTypeService boundaryTypeService;
@@ -25,8 +25,8 @@ private BoundaryTypeService boundaryTypeService;
 	}
 	
 	@ModelAttribute
-        public BoundaryType boundaryTypeModel(@PathVariable String name){
-            return boundaryTypeService.getBoundaryTypeByName(name);
+        public BoundaryType boundaryTypeModel(@PathVariable Long id){
+            return boundaryTypeService.getBoundaryTypeById(id);
         }
 	
 	@RequestMapping(method = RequestMethod.GET)
@@ -41,6 +41,6 @@ private BoundaryTypeService boundaryTypeService;
 		
 		boundaryTypeService.updateBoundaryType(boundaryType);
 		redirectAttrs.addFlashAttribute("message", "Boundary type updated successfully!");
-		return "redirect:/controller/boundaryType/update/"+boundaryType.getName();
+		return "redirect:/controller/boundaryType/view/"+boundaryType.getId();
 	}
 }
