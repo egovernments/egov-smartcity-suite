@@ -6,9 +6,6 @@ import static org.egov.pgr.entity.enums.ComplaintStatus.REGISTERED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.REJECTED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.WITHDRAWN;
 import static org.egov.pgr.utils.constants.CommonConstants.DASH_DELIM;
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
-import static org.apache.commons.lang3.StringUtils.upperCase;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,6 +15,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.eis.service.EisCommonService;
@@ -151,7 +149,7 @@ public class ComplaintService {
 	}
 
 	public String generateCRN() {
-		return upperCase(randomAlphabetic(3)) + DASH_DELIM + randomNumeric(3);
+		return RandomStringUtils.randomAlphabetic(3) + DASH_DELIM + RandomStringUtils.randomNumeric(3);
 	}
 
 	@PersistenceContext
