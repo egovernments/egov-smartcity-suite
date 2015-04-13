@@ -34,7 +34,7 @@
 
 							<div class="col-sm-6 add-margin">
 								<form:input path="code" id="comp_type_code"
-									cssClass="form-control is_valid_alphabet"
+									cssClass="form-control is_valid_alphaNumeric"
 									cssErrorClass="form-control error" />
 								<form:errors path="code" cssClass="error-msg" />
 							</div>
