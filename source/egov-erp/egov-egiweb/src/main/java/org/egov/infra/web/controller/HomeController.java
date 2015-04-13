@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.egov.infra.admin.common.entity.Favourites;
+import org.egov.infra.admin.common.service.FavouritesService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -33,6 +35,9 @@ public class HomeController {
     @Autowired
     private ModuleDao moduleDAO;
 
+    @Autowired
+    private FavouritesService favouritesService;
+
     @RequestMapping(method = RequestMethod.GET)
     public String showHome(final HttpSession session, final ModelMap modelData) {
         final User user = securityUtils.getCurrentUser();
@@ -42,16 +47,30 @@ public class HomeController {
             return "redirect:/../portal/home";
     }
 
-    @RequestMapping(value="/add-favourite",method=RequestMethod.GET) 
-    public @ResponseBody boolean addFavourite(@RequestParam Long actionId) {
-        return true;
+    @RequestMapping(value = "/add-favourite", method = RequestMethod.GET)
+    public @ResponseBody boolean addFavourite(@RequestParam final Integer actionId, @RequestParam final String name, @RequestParam final String contextRoot) {
+        final Long userId = securityUtils.getCurrentUser().getId();
+        final Favourites favourites = favouritesService.getFavouriteByUserIdAndActionId(userId, actionId);
+        if (favourites == null) {
+            final Favourites favourite = new Favourites();
+            favourite.setActionId(actionId);
+            favourite.setUserId(userId);
+            favourite.setName(name);
+            favourite.setContextRoot(contextRoot);
+            favouritesService.createFavourite(favourite);
+        } else
+            return Boolean.FALSE;
+
+        return Boolean.TRUE;
     }
-    
-    @RequestMapping(value="/remove-favourite",method=RequestMethod.GET) 
-    public @ResponseBody boolean removeFavourite(@RequestParam Long actionId) {
-        return true;
+
+    @RequestMapping(value = "/remove-favourite", method = RequestMethod.GET)
+    public @ResponseBody boolean removeFavourite(@RequestParam final Integer actionId) {
+        favouritesService.deleteFavourite(favouritesService.getFavouriteByUserIdAndActionId(securityUtils
+                .getCurrentUser().getId(), actionId));
+        return Boolean.TRUE;
     }
-    
+
     private String prepareOfficialHomePage(final User user, final HttpSession session, final ModelMap modelData) {
         final List<Module> modules = moduleDAO.getModuleInfoForRoleIds(user.getRoles());
         final List<Module> selfServices = getEmployeeSelfService(modules, user);
@@ -78,7 +97,8 @@ public class HomeController {
         return selfServices;
     }
 
-    private String prepareApplicationMenu(final List<Module> modules, List<Module> favourites, List<Module> selfServices, final User user) {
+    private String prepareApplicationMenu(final List<Module> modules, final List<Module> favourites,
+            final List<Module> selfServices, final User user) {
         final Menu menu = new Menu();
         menu.setId("menuID");
         menu.setTitle("Hi, " + user.getName());
@@ -87,42 +107,46 @@ public class HomeController {
         createApplicationMenu(modules, user, menu);
         createSelfServiceMenu(selfServices, menu);
         createFavouritesMenu(favourites, menu);
-        
+
         return "[" + new GsonBuilder().create().toJson(menu) + "]";
     }
 
     private void createApplicationMenu(final List<Module> modules, final User user, final Menu menu) {
-        final Menu applicationMenu = createSubmenu("apps", "Applications", "Applications", "#", "fa fa-th floatLeft", menu);
+        final Menu applicationMenu = createSubmenu("apps", "Applications", "Applications", "#", "fa fa-th floatLeft",
+                menu);
         modules.stream().forEach(
                 module -> {
-                    createSubmenuRoot(module, user, createSubmenu(String.valueOf(module.getId()), module.getModuleDescription(),
-                            module.getModuleDescription(), "#", "", applicationMenu));
+                    createSubmenuRoot(
+                            module,
+                            user,
+                            createSubmenu(String.valueOf(module.getId()), module.getModuleDescription(),
+                                    module.getModuleDescription(), "#", "", applicationMenu));
                 });
     }
 
-    private void createFavouritesMenu(List<Module> favourites, final Menu menu) {
-        final Menu favouritesMenu = createSubmenu("favMenu", "Favourites", "Favourites", "#", "fa fa-briefcase floatLeft", menu);
-        favourites.stream().forEach(
-                favourite -> {
-                    final Menu appLinks = new Menu();
-                    appLinks.setId(favourite.getId().toString());
-                    appLinks.setName(favourite.getModuleName());
-                    appLinks.setLink("/" +favourite.getBaseUrl());
-                    appLinks.setIcon("fa fa-times-circle remove-feedback");
-                    favouritesMenu.getItems().add(appLinks);
-                });
+    private void createFavouritesMenu(final List<Module> favourites, final Menu menu) {
+        final Menu favouritesMenu = createSubmenu("favMenu", "Favourites", "Favourites", "#",
+                "fa fa-briefcase floatLeft", menu);
+        favourites.stream().forEach(favourite -> {
+            final Menu appLinks = new Menu();
+            appLinks.setId(favourite.getId().toString());
+            appLinks.setName(favourite.getModuleName());
+            appLinks.setLink("/" + favourite.getBaseUrl());
+            appLinks.setIcon("fa fa-times-circle remove-feedback");
+            favouritesMenu.getItems().add(appLinks);
+        });
     }
 
-    private void createSelfServiceMenu(List<Module> selfServices, final Menu menu) {
-        final Menu selfServiceMenu = createSubmenu("ssMenu", "Self Service", "Self Service", "#", "fa fa-ellipsis-h floatLeft", menu);
-        selfServices.stream().forEach(
-                selfService -> {
-                    final Menu appLinks = new Menu();
-                    appLinks.setName(selfService.getModuleName());
-                    appLinks.setLink("/" + selfService.getContextRoot() + selfService.getBaseUrl());
-                    selfServiceMenu.getItems().add(appLinks);
-                    
-                });
+    private void createSelfServiceMenu(final List<Module> selfServices, final Menu menu) {
+        final Menu selfServiceMenu = createSubmenu("ssMenu", "Self Service", "Self Service", "#",
+                "fa fa-ellipsis-h floatLeft", menu);
+        selfServices.stream().forEach(selfService -> {
+            final Menu appLinks = new Menu();
+            appLinks.setName(selfService.getModuleName());
+            appLinks.setLink("/" + selfService.getContextRoot() + selfService.getBaseUrl());
+            selfServiceMenu.getItems().add(appLinks);
+
+        });
     }
 
     private void createSubmenuRoot(final Module parentModule, final User user, final Menu submenu) {
@@ -138,10 +162,12 @@ public class HomeController {
             appLink.setName(submodule.getModuleName());
             appLink.setLink("/" + submodule.getContextRoot() + submodule.getBaseUrl());
             parent.getItems().add(appLink);
-        } else {
-            createSubmenuRoot(submodule, user, createSubmenu(String.valueOf(submodule.getId()), submodule.getModuleName(),
-                    submodule.getModuleName(), "#", "", parent));
-        }
+        } else
+            createSubmenuRoot(
+                    submodule,
+                    user,
+                    createSubmenu(String.valueOf(submodule.getId()), submodule.getModuleName(),
+                            submodule.getModuleName(), "#", "", parent));
     }
 
     private Menu createSubmenu(final String id, final String name, final String title, final String link,

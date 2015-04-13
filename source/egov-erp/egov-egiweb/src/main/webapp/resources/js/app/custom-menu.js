@@ -24,18 +24,19 @@ $(document).ready(function () {
 			
 			if($(e.target).hasClass('remove-feedback'))
 			{
-				$.ajax({
-					type: "GET",
-					url: "home/remove-favourite",
-					cache: false,
-					data:{'actionId' : $(e.target).parent().parent().attr('id')}
-				}).done(function(value) {
-					 if(value === true) {
-						 $(e.target).parent().parent().remove();
-					 } else {
-						
-					 }
-				});
+				if (confirm("Do you wish to remove this from Favourite")) {
+					$.ajax({
+						type: "GET",
+						url: "home/remove-favourite",
+						data:{'actionId' : $(e.target).parent().parent().attr('id')}
+					}).done(function(value) {
+						 if(value === true) {
+							 $(e.target).parent().parent().remove();
+						 } else {
+							alert("Could not delete it from Favourite");
+						 }
+					});
+				}
 			}
 			else{
 				var itemHref = $item.find( 'a:first' ).attr( 'href' );
