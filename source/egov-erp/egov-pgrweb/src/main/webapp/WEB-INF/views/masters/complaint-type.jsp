@@ -66,13 +66,11 @@
 							</label>
 
 							<div class="col-sm-1 col-xs-12 add-margin">
-								<form:radiobutton path="locationRequired" id="comp_type_loc_yes"
-									value="yes" />
+								<form:radiobutton path="locationRequired" id="comp_type_loc_yes" value="yes"/>
 								<label>Yes</label>
 							</div>
 							<div class="col-sm-1 col-xs-12 add-margin">
-								<form:radiobutton path="locationRequired" id="comp_type_loc_yno"
-									value="no" />
+								<form:radiobutton path="locationRequired" id="comp_type_loc_yno" value="no"/>
 								<label>No</label>
 							</div>
 						</div>
@@ -83,8 +81,7 @@
 									code="lbl.isactive"></spring:message></label>
 
 							<div class="col-sm-3 col-xs-8 add-margin">
-								<form:checkbox path="isActive" id="comp_type_isactive"
-									value="false" />
+								<form:checkbox path="isActive" id="comp_type_isactive" checked="checked"/>
 								<form:errors path="isActive" cssClass="error-msg" />
 							</div>
 
