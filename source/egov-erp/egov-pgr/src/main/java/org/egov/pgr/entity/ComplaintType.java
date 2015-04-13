@@ -58,7 +58,7 @@ public class ComplaintType extends AbstractPersistable<Long> {
     private boolean locationRequired;
     
     @Column(name = "isActive")
-    private boolean isActive = false;
+    private boolean isActive = true;
 
     public String getName() {
         return name;
