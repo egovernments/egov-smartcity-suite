@@ -9,7 +9,7 @@
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title text-center no-float">
-					<strong>Complaint Type is created successfully</strong>
+					<strong>${message}</strong>
 				</div>
 			</div>
 			<form:form id="complaintTypeViewForm" method="post"
