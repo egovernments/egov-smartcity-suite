@@ -41,6 +41,8 @@ public class BoundaryType extends AbstractAuditable<User, Long> {
     private BoundaryType parent;
 
     private Long hierarchy;
+    
+    private String localName;
 
     @Transient
     private String parentName;
@@ -100,5 +102,13 @@ public class BoundaryType extends AbstractAuditable<User, Long> {
     public void addChildBoundaryType(final BoundaryType boundaryType) {
         boundaryType.setParent(this);
         childBoundaryTypes.add(boundaryType);
+    }
+    
+    public String getLocalName() {
+        return localName;
+    }
+
+    public void setLocalName(String localName) {
+        this.localName = localName;
     }
 }

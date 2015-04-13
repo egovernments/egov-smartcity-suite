@@ -42,6 +42,12 @@
 							<c:out value="${boundaryType.name}"></c:out>
 						</div>
 					</div>
+					<div class="row add-border">
+						<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.boundaryType.boundaryTypeLocal"/></div>
+						<div class="col-md-9 col-xs-6 add-margin" id="ct-name">
+							<c:out value="${boundaryType.localName}"></c:out>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="row">

@@ -43,6 +43,14 @@
 		                            <form:errors path="name" cssClass="add-margin error-msg"/>
 								</div>
 							</div>
+							
+							<div class="form-group">
+								<label class="col-sm-3 control-label"><spring:message code="lbl.boundaryType.boundaryTypeLocal"/></label>
+								<div class="col-sm-6">
+									<form:input path="localName" id="localName" type="text" class="form-control low-width" placeholder="" autocomplete="off" />
+		                            <form:errors path="localName" cssClass="add-margin error-msg"/>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div class="row">
