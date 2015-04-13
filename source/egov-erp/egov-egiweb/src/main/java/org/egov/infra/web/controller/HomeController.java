@@ -18,6 +18,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.GsonBuilder;
 
@@ -40,6 +42,16 @@ public class HomeController {
             return "redirect:/../portal/home";
     }
 
+    @RequestMapping(value="/add-favourite",method=RequestMethod.GET) 
+    public @ResponseBody boolean addFavourite(@RequestParam Long actionId) {
+        return true;
+    }
+    
+    @RequestMapping(value="/remove-favourite",method=RequestMethod.GET) 
+    public @ResponseBody boolean removeFavourite(@RequestParam Long actionId) {
+        return true;
+    }
+    
     private String prepareOfficialHomePage(final User user, final HttpSession session, final ModelMap modelData) {
         final List<Module> modules = moduleDAO.getModuleInfoForRoleIds(user.getRoles());
         final List<Module> selfServices = getEmployeeSelfService(modules, user);
@@ -93,9 +105,10 @@ public class HomeController {
         favourites.stream().forEach(
                 favourite -> {
                     final Menu appLinks = new Menu();
+                    appLinks.setId(favourite.getId().toString());
                     appLinks.setName(favourite.getModuleName());
                     appLinks.setLink("/" +favourite.getBaseUrl());
-                    appLinks.setIcon("fa fa-times-circle");
+                    appLinks.setIcon("fa fa-times-circle remove-feedback");
                     favouritesMenu.getItems().add(appLinks);
                 });
     }
@@ -120,6 +133,8 @@ public class HomeController {
     private void createApplicationLink(final Module submodule, final User user, final Menu parent) {
         if (submodule.getIsEnabled()) {
             final Menu appLink = new Menu();
+            appLink.setId(submodule.getId().toString());
+            appLink.setIcon("fa fa-star floatLeft");
             appLink.setName(submodule.getModuleName());
             appLink.setLink("/" + submodule.getContextRoot() + submodule.getBaseUrl());
             parent.getItems().add(appLink);

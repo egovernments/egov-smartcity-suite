@@ -54,28 +54,26 @@
 					<ul class="nav navbar-right pull-right">
 						
 						<li class="dropdown">
-							
-							<a href="javascript:void(0);" class="tooltip-secondary" data-toggle="tooltip" title="Worklist">
+							<a href="javascript:void(0);" class="tooltip-secondary workspace" data-toggle="tooltip" title="Worklist" data-work="worklist">
 								<i class="entypo-list"></i>
 							</a>
 						</li>
 						<li class="dropdown">
-							
-							<a href="javascript:void(0);" class="tooltip-secondary" data-toggle="tooltip" title="Drafts" >
+							<a href="javascript:void(0);" class="tooltip-secondary workspace" data-toggle="tooltip" title="Drafts" data-work="drafts">
 								<i class="entypo-pencil"></i>
 							</a>
 							
 						</li>
 						<li class="dropdown">
-							
-							<a href="javascript:void(0);" class="tooltip-secondary" data-toggle="tooltip" title="Notifications" >
+							<a href="javascript:void(0);" class="tooltip-secondary workspace" data-toggle="tooltip" title="Notifications" data-work="notifications">
+
 								<i class="entypo-bell"></i>
 							</a>
 							
 						</li>
 						
 						<li class="hidden-xs menu-responsive">
-							<a href="javascript:void(0);">
+							<a href="javascript:void(0);" class="profile-name">
 								<i class="entypo-user img-circle"></i>${userName}
 							</a>
 							<ul>
@@ -101,7 +99,7 @@
 									</ul>
 								</li>
 								<li>
-									<a href="javascript:void(0);">
+									<a href="javascript:void(0);" onclick="jQuery('.change-password').modal('show', {backdrop: 'static'});">
 										<i class="fa fa-key"></i>
 										<span class="title">Change Password</span>
 									</a>
@@ -109,7 +107,7 @@
 								<li>
 									<a href="/egi/logout.do">
 										<i class="fa fa-sign-out"></i>
-										<span class="title">Sign Out</span>
+										<span class="title signout">Sign Out</span>
 									</a>
 								</li>
 							</ul>
@@ -124,12 +122,12 @@
 						
 						<li class="dropdown">
 							
-							<a href="javascript:void(0);" class="tooltip-secondary" data-toggle="tooltip" title="Help">
+							<a href="javascript:void(0);" data-strwindname="help" class="tooltip-secondary open-popup" data-toggle="tooltip" title="Help">
 								<i class="entypo-help"></i>
 							</a>
 						</li>
 						<li class="dropdown visible-xs hidden-sm">
-							<a href="/egi/logout.do" class="tooltip-secondary" data-toggle="tooltip" title="Sign Out">
+							<a href="/egi/logout.do" class="tooltip-secondary signout" data-toggle="tooltip" title="Sign Out">
 								<i class="entypo-logout"></i>
 							</a>
 						</li>
@@ -145,11 +143,11 @@
 				</div>
 				
 				<div class="inline-main-content">
-					<div class="row">
+					<div class="row main-space" id="worklist">
 						<div class="col-xs-12">
 							<div class="row">
 								<div class="col-md-6 col-xs-6 table-header">
-									Inbox
+									Worklist
 								</div>
 								<div class="col-md-6 col-xs-6 add-margin text-right">
 									<span class="inline-elem">Search</span>
@@ -157,17 +155,66 @@
 								</div>
 							</div>
 							<table class="table table-bordered datatable" id="official_inbox">
-					<thead>
-					<tr>
-					<th>Date</th>
-					<th>Sender</th>
-					<th>Task</th>
-					<th>Status</th>
-					<th>Details</th>
-					</tr>
-					</thead>
+								<thead>
+									<tr>
+										<th>Date</th>
+										<th>Sender</th>
+										<th>Task</th>
+										<th>Status</th>
+										<th>Details</th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+					</div>
+					<div class="row main-space display-hide" id="drafts">
+						<div class="col-xs-12">
+							<div class="row">
+								<div class="col-md-6 col-xs-6 table-header">
+									Drafts
+								</div>
+								<div class="col-md-6 col-xs-6 add-margin text-right">
+									<span class="inline-elem">Search</span>
+									<span class="inline-elem"><input type="text" id="draftsearch" class="form-control input-sm"></span>
+								</div>
+							</div>
+							<table class="table table-bordered datatable" id="official_drafts" style="width:100%;">
+								<thead>
+									<tr>
+										<th>Date</th>
+										<th>Sender</th>
+										<th>Task</th>
+										<th>Status</th>
+										<th>Details</th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+					</div>
 					
-					</table>
+					<div class="row main-space display-hide" id="notifications">
+						<div class="col-xs-12">
+							<div class="row">
+								<div class="col-md-6 col-xs-6 table-header">
+									Notifications
+								</div>
+								<div class="col-md-6 col-xs-6 add-margin text-right">
+									
+									<span class="inline-elem">Search</span>
+									<span class="inline-elem"><input type="text" id="notifysearch" class="form-control input-sm"></span>
+								</div>
+							</div>
+							<table class="table table-bordered datatable" id="official_notify" style="width:100%;">
+								<thead>
+									<tr>
+										<th>Date</th>
+										<th>Sender</th>
+										<th>Task</th>
+										<th>Status</th>
+										<th>Details</th>
+									</tr>
+								</thead>
+							</table>
 						</div>
 					</div>
 					
@@ -177,39 +224,51 @@
 			
 		</div>
 		
-		<!-- Manage Saved Searches -->
-		<div class="modal fade add-to-favourites" data-backdrop="static">
+		<!-- change password -->
+		<div class="modal fade change-password" data-backdrop="static">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4 class="modal-title">Favourites</h4>
+						<h4 class="modal-title">Change Password</h4>
 					</div>
 					
 					<div class="modal-body">
 						
-						<div class="row">
-							<div class="col-md-4">
-								
-								<label class="control-label">Favourites Name</label>
-								
+						<form id="password-form" class="form-horizontal form-groups-bordered">
+							<div class="form-group">
+								<div class="col-md-4">
+									<label class="control-label">Old Password</label>
+								</div>
+								<div class="col-md-8 add-margin">
+									<input type="password" class="form-control" id="old-pass">
+								</div>
 							</div>
-							
-							<div class="col-md-8">
-								
-								<div class="form-group">
-									<input type="text" class="form-control" id="fav-name" placeholder="">
-								</div>	
-								
+							<div class="form-group">
+								<div class="col-md-4">
+									<label class="control-label">New Password</label>
+								</div>
+								<div class="col-md-8 add-margin">
+									<input type="password" class="form-control check-password" id="new-pass">
+								</div>
 							</div>
-						</div>
+							<div class="form-group">
+								<div class="col-md-4">
+									<label class="control-label">Re-type Password</label>
+								</div>
+								<div class="col-md-8 add-margin">
+									<input type="password" class="form-control check-password" id="retype-pass"><br>
+									<div class="password-error error-msg display-hide">Password is incorrect</div>
+								</div>
+							</div>
+							</form>
 						
 						
 					</div>
 					
 					<div class="modal-footer">
-						<button type="button" class="btn btn-primary">Save</button>
+						<button type="button" class="btn btn-primary">Change Password</button>
 						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 					</div>
 				</div>

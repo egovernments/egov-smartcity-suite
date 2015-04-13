@@ -218,9 +218,9 @@
 		<property name="boundaryDAO" ref="boundaryDAO" />
 	</bean>
 
-	<bean id="favouriteService" parent="persistenceService" autowire-candidate="true">
+	<!-- <bean id="favouriteService" parent="persistenceService" autowire-candidate="true">
 		<property name="type" value="org.egov.infstr.models.Favourites"/>
-	</bean>
+	</bean> -->
 
 	<bean id="workFlowMatrixService" class="org.egov.infstr.workflow.WorkFlowMatrixService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.infstr.workflow.WorkFlowMatrix"/>

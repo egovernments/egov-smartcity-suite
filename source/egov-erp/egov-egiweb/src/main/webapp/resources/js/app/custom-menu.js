@@ -24,12 +24,23 @@ $(document).ready(function () {
 			
 			if($(e.target).hasClass('remove-feedback'))
 			{
-				alert('Delete clicked!');
+				$.ajax({
+					type: "GET",
+					url: "home/remove-favourite",
+					cache: false,
+					data:{'actionId' : $(e.target).parent().parent().attr('id')}
+				}).done(function(value) {
+					 if(value === true) {
+						 $(e.target).parent().parent().remove();
+					 } else {
+						
+					 }
+				});
 			}
 			else{
-				alert($item.find( 'a:first' ).attr( 'id' ));
 				var itemHref = $item.find( 'a:first' ).attr( 'href' );
-	            window.open(itemHref,'_blank','width=760;height=800');
+				var windowObjectReference = window.open(itemHref, ''+$item.attr('id')+'', 'width=900, height=700, top=300, left=150'); 
+				openedWindows.push(windowObjectReference);
 			}
 		},
 		onGroupItemClick: function () {
