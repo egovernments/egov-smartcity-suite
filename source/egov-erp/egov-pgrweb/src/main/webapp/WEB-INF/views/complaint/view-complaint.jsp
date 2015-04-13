@@ -56,18 +56,6 @@
 					<div class="col-md-3 col-xs-6 add-margin" id="ct-priority">
 						Waterlogged road</div>
 				</div>
-				<%-- <div class="row add-border">
-					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.expiration" /></div>
-					<div class="col-md-3 col-xs-6 add-margin" id="ct-exp">
-						In
-						<c:out value="${complaint.complaintType.hrsToResolve}"></c:out>
-						days
-					</div>
-				</div> --%>
-				<div class="row add-border">
-					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.compTitle" /></div>
-					<div class="col-md-3 col-xs-6 add-margin" id="ct-title">none</div>
-				</div>
 				<div class="row add-border">
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.compDetails" /></div>
 					<div class="col-md-3 col-xs-6 add-margin" id="ct-details">
