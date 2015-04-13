@@ -27,6 +27,7 @@ $(document).ready(function () {
 				alert('Delete clicked!');
 			}
 			else{
+				alert($item.find( 'a:first' ).attr( 'id' ));
 				var itemHref = $item.find( 'a:first' ).attr( 'href' );
 	            window.open(itemHref,'_blank','width=760;height=800');
 			}

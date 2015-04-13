@@ -1,27 +1,78 @@
 $(document).ready(function()
 {	
 	tableContainer1 = $("#official_inbox"); 
-	tableContainer2 = $("#official_drafts"); 
-	tableContainer3 = $("#official_notify"); 
 	
 	tableContainer1.dataTable({
 		"sPaginationType": "bootstrap",
 		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
 		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 		"autoWidth": false,
+		"bDestroy": true,
 		"ajax": "inbox",
 			"columns": [
-            { "data": "date","width": "20%" },
-            { "data": "sender","width": "15%" },
-            { "data": "task","width": "20%" },
-            { "data": "status","width": "20%" },
-            { "data": "details","width": "20%" },
-            { "data": "id","visible": false, "searchable": false },
-            { "data": "link","visible": false, "searchable": false }
+			{ "data": "date","width": "20%" },
+			{ "data": "sender","width": "15%" },
+			{ "data": "task","width": "20%" },
+			{ "data": "status","width": "20%" },
+			{ "data": "details","width": "20%" },
+			{ "data": "id","visible": false, "searchable": false },
+			{ "data": "link","visible": false, "searchable": false }
 		]
 	});
 	
+	$('.workspace').click(function(){
+		$('.main-space').hide();
+		if($(this).attr('data-work') == 'worklist' ){
+				tableContainer1 = $("#official_inbox"); 
+				tableContainer1.dataTable({
+					"sPaginationType": "bootstrap",
+					"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+					"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+					"bDestroy": true,
+					"autoWidth": false,
+					/* "ajax": "inbox",
+						"columns": [
+						{ "data": "date","width": "20%" },
+						{ "data": "sender","width": "15%" },
+						{ "data": "task","width": "20%" },
+						{ "data": "status","width": "20%" },
+						{ "data": "details","width": "20%" },
+						{ "data": "id","visible": false, "searchable": false },
+						{ "data": "link","visible": false, "searchable": false }
+					] */
+				});
+			}else if($(this).attr('data-work') == 'drafts' ){
+				tableContainer1 = $("#official_drafts"); 
+				tableContainer1.dataTable({
+					"sPaginationType": "bootstrap",
+					"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+					"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+					"bDestroy": true,
+					"autoWidth": false
+				});
+			}else if($(this).attr('data-work') == 'notifications' ){
+				tableContainer1 = $("#official_notify");
+				tableContainer1.dataTable({
+					"sPaginationType": "bootstrap",
+					"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+					"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+					"bDestroy": true,
+					"autoWidth": false
+				});
+		}
+		$('#'+$(this).attr('data-work')).show();
+	});
+	
+	
 	$('#inboxsearch').keyup(function(){
+		tableContainer1.fnFilter(this.value);
+	});
+	
+	$('#draftsearch').keyup(function(){
+		tableContainer1.fnFilter(this.value);
+	});
+	
+	$('#notifysearch').keyup(function(){
 		tableContainer1.fnFilter(this.value);
 	});
 	
@@ -29,39 +80,12 @@ $(document).ready(function()
 		window.open(tableContainer1.fnGetData(this,6),'_blank','width=760,height=650');
 	});
 	
-	tableContainer2.dataTable({
-		"sPaginationType": "bootstrap",
-		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-		"autoWidth": false
-	});
-	
-	$('#draftsearch').keyup(function(){
-		tableContainer2.fnFilter(this.value);
-	});
-	
-	tableContainer3.dataTable({
-		"sPaginationType": "bootstrap",
-		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-		"autoWidth": false
-	});
-	
-	$('#notifysearch').keyup(function(){
-		tableContainer3.fnFilter(this.value);
-	});
-	
-	$('.workspace').click(function(){
-		$('.main-space').hide();
-		$('#'+$(this).attr('data-work')).show();
-	});
-	
 	$('.check-password').blur(function(){
 		if(($('#new-pass').val()!="") && ($('#retype-pass').val()!=""))
 		{
 			if ($('#new-pass').val() === $('#retype-pass').val()) {
 				
-			}else{
+				}else{
 				$('.password-error').show();
 				$('#retype-pass').addClass('error');
 			}
