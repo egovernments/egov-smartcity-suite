@@ -12,16 +12,12 @@
 		
 		<title>eGov Urban Portal</title>
 		
-		<link rel="stylesheet" href="/egi/resources/global/css/bootstrap/bootstrap.css">
-		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/entypo/css/entypo.css">
-		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css">
-		<link rel="stylesheet" href="/egi/resources/global/css/egov/custom.css">
-		<link rel="stylesheet" href="/egi/resources/global/css/egov/header-custom.css">
-		<script src="/egi/resources/global/js/jquery/jquery.js"></script>
-		<script src="/egi/resources/global/js/bootstrap/bootstrap.js"></script>
-		<script src="/egi/resources/js/app/homepage.js"></script>
-		<script src="/egi/resources/js/app/homepagecitizen.js"></script>
-		<script src="/egi/resources/global/js/egov/custom.js"></script>	
+		<link rel="stylesheet" href="../egi/resources/global/css/bootstrap/bootstrap.css">
+		<link rel="stylesheet" href="../egi/resources/global/css/font-icons/entypo/css/entypo.css">
+		<link rel="stylesheet" href="../egi/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="../egi/resources/global/css/egov/custom.css">
+		<link rel="stylesheet" href="../egi/resources/global/css/egov/header-custom.css">
+		
 		
 		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
 		
@@ -485,7 +481,11 @@
 		</div>
 		
 	</div>
-	
+	<script src="../egi/resources/global/js/jquery/jquery.js"></script>
+	<!-- script src="../egi/resources/global/js/bootstrap/bootstrap.js"></script -->
+		<script src="../egi/resources/js/app/homepage.js"></script>
+		<script src="../egi/resources/js/app/homepagecitizen.js"></script>
+		<script src="../egi/resources/global/js/egov/custom.js"></script>	
 	
 </body>
 
