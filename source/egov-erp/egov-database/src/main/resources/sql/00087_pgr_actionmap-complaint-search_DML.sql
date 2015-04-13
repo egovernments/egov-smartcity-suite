@@ -2,6 +2,6 @@ INSERT INTO EG_ACTION(ID, NAME, ENTITYID, TASKID, UPDATEDTIME, URL, QUERYPARAMS,
 Values (nextval('SEQ_EG_ACTION'), 'SearchComplaintForm', NULL, NULL, now(), '/complaint/citizen/anonymous/search', NULL, NULL, (SELECT ID_MODULE FROM EG_MODULE WHERE MODULE_DESC = 'Complaint'),
 0, 'Search Complaint', 1, NULL, 'pgr');
 
-INSERT INTO EG_ROLEACTION_MAP (ROLEID, ACTIONID) values ((select id_role from eg_roles where UPPER(role_name) LIKE 'SUPERUSER') ,(select id FROM eg_action  WHERE name = 'SearchComplaintForm'));
+INSERT INTO EG_ROLEACTION_MAP (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPERUSER') ,(select id FROM eg_action  WHERE name = 'SearchComplaintForm'));
 
 
