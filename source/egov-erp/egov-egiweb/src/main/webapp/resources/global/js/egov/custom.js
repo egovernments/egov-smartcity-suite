@@ -35,7 +35,7 @@ $(document).ready(function()
 		}
 	});
 	
-	$(".is_valid_alphaNumWithsplchar").on("input", function(){
+	$(".is_valid_alphaNumeric").on("input", function(){
 		var regexp = /[^a-zA-Z0-9-:/]/g;
 		if($(this).val().match(regexp)){
 			$(this).val( $(this).val().replace(regexp,'') );
