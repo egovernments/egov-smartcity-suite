@@ -116,7 +116,7 @@
 							
 							<section class="col-lg-12">
 								<c:forEach var="inboxMsg" items="${inboxMessages}">
-								<div class="msg" data-toggle="collapse" data-target="#msgcontent0" aria-expanded="true">
+								<div class="msg" data-toggle="collapse" data-target="#${inboxMsg.id}" aria-expanded="true">
 									<header>
 										
 										<div class="row">
@@ -132,7 +132,7 @@
 										</div>
 									</header>
 									
-									<div id="msgcontent0" class="msg-content collapse in">
+									<div id="${inboxMsg.id}" class="msg-content collapse in">
 										<p> 
 											${inboxMsg.detailedMessage} 
 										</p>
@@ -159,7 +159,7 @@
 						<section id="section-myaccount-1"  class="content-current-myacc">
 							<c:forEach var="myAccountMsg" items="${myAccountMessages}">
 								<div class="visible-xs visible-sm">My Grievance</div>
-								<div class="msg" data-toggle="collapse" data-target="#myaccount1content1" aria-expanded="true">
+								<div class="msg" data-toggle="collapse" data-target="#${myAccountMsg.id}" aria-expanded="true">
 									<header>
 										<div class="row">
 											<i class="fa fa-book col-sm-1 col-xs-2 unread-msg"></i><h3 class="col-sm-11 col-xs-10">${myAccountMsg.headerMessage}</h3>
@@ -482,10 +482,10 @@
 		
 	</div>
 	<script src="../egi/resources/global/js/jquery/jquery.js"></script>
-	<!-- script src="../egi/resources/global/js/bootstrap/bootstrap.js"></script -->
-		<script src="../egi/resources/js/app/homepage.js"></script>
-		<script src="../egi/resources/js/app/homepagecitizen.js"></script>
-		<script src="../egi/resources/global/js/egov/custom.js"></script>	
+	<!--script src="../egi/resources/global/js/bootstrap/bootstrap.js"></script-->
+	<script src="../egi/resources/js/app/homepage.js"></script>
+	<script src="../egi/resources/js/app/homepagecitizen.js"></script>
+	<script src="../egi/resources/global/js/egov/custom.js"></script>	
 	
 </body>
 
