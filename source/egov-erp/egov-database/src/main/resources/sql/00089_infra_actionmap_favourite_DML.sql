@@ -1,4 +1,4 @@
-INSERT INTO eg_action("id", "name", entityid, taskid, updatedtime, url, queryparams, urlorderid, module_id, order_number, display_name, 																																																																																																																																																								INSERT INTO eg_action("id", "name", entityid, taskid, updatedtime, url, queryparams, urlorderid, module_id, order_number, display_name, 
+INSERT INTO eg_action("id", "name", entityid, taskid, updatedtime, url, queryparams, urlorderid, module_id, order_number, display_name, 
 is_enabled, action_help_url, context_root) VALUES (nextval('seq_eg_action'), 'RemoveFavourite', null, null, now(), '/controller/home/remove-favourite', null, 
 null,(Select id_module from eg_module where module_name='egi'), null, 'RemoveFavourite', 0, null, 'egi');
 
