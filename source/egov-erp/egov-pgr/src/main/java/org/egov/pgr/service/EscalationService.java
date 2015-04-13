@@ -99,18 +99,18 @@ public class EscalationService {
             if (isEmailNotificationSet) {
                 StringBuffer emailBody = new StringBuffer()
 						.append("Dear ").append(superiorUser.getName()).append(",\n \n     The complaint Number (")
-						.append(complaint.getCRN()).append("with complaint type :")
-						.append(complaint.getComplaintType().getName()).append(" ,location details :")
+						.append(complaint.getCRN()).append(") with complaint type -")
+						.append(complaint.getComplaintType().getName()).append(" \n location details -")
 						.append(complaint.getLocation().getName())
-						.append(", complaint description :").append(complaint.getDetails())
-						.append("and status :").append(complaint.getStatus())
-						.append(") has been escalated to ")
+						.append("\n complaint description -").append(complaint.getDetails())
+						.append("\n status -").append(complaint.getStatus().getName())
+						.append(" has been escalated to ")
 						.append(superiorUser.getName()).append(" on ")
 						.append(complaint.getEscalationDate());
 				StringBuffer emailSubject = new StringBuffer()
 						.append("Complaint Number -")
 						.append(complaint.getCRN()).append(" (")
-						.append(complaint.getStatus()).append(")");
+						.append(complaint.getStatus().getName()).append(")");
 				StringBuffer smsBody = new StringBuffer()
 				.append("Dear ").append(superiorUser.getName()).append(", The complaint Number (")
 				.append(complaint.getCRN())

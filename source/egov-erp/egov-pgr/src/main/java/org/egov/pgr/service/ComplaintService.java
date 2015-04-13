@@ -21,8 +21,10 @@ import javax.persistence.PersistenceContext;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.eis.service.EisCommonService;
+import org.egov.infra.admin.master.entity.CityWebsite;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.entity.enums.UserType;
+import org.egov.infra.admin.master.repository.CityWebsiteRepository;
 import org.egov.infra.citizen.inbox.entity.CitizenInbox;
 import org.egov.infra.citizen.inbox.entity.CitizenInboxBuilder;
 import org.egov.infra.citizen.inbox.entity.enums.MessageType;
@@ -32,6 +34,7 @@ import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.services.EISServeable;
 import org.egov.pgr.entity.Complaint;
@@ -72,7 +75,9 @@ public class ComplaintService {
 
     @Autowired
     private CitizenInboxService citizenInboxService;
-
+    
+    @Autowired
+    private CityWebsiteRepository cityWebsiteRepository;
     private static final Logger LOG = LoggerFactory.getLogger(ComplaintService.class);
 
     @Transactional
@@ -186,24 +191,18 @@ public class ComplaintService {
     }
 
     public List<Complaint> getComplaintsEligibleForEscalation() {
-        /*
-         * comenting as of now this needs to be fixed for escallation. final
-         * CityWebsite cityWebsite = (CityWebsite)
-         * getCurrentSession().getNamedQuery(CityWebsite.QUERY_CITY_BY_URL)
-         * .setString("url", EGOVThreadLocals.getDomainName()).uniqueResult();
-         * final Long topLevelBoundaryId =
-         * cityWebsite.getBoundary().getBndryId();
-         */
+        
+        final CityWebsite cityWebsite = cityWebsiteRepository.findByURL(EGOVThreadLocals.getDomainName());
+          final Long topLevelBoundaryId = cityWebsite.getBoundary().getId();
+         
 
         final Criteria criteria = getCurrentSession().createCriteria(Complaint.class, "complaint").
-        // createAlias("complaint.location","boundary").
+                createAlias("complaint.location","boundary").
                 createAlias("complaint.status", "complaintStatus");
-        // TODO: Boundary pojo and hbm are not consistent
-        /*
-         * if(null!=topLevelBoundaryId)
-         * criteria.add(Restrictions.eq("boundary.topLevelBoundaryID",
-         * topLevelBoundaryId));
-         */
+        
+          if(null!=topLevelBoundaryId)
+              criteria.add(Restrictions.eq("boundary.id", topLevelBoundaryId));
+         
         criteria.add(
                 Restrictions.disjunction().add(Restrictions.eq("complaintStatus.name", COMPLETED.name()))
                         .add(Restrictions.eq("complaintStatus.name", REJECTED.name()))
