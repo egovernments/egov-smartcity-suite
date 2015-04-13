@@ -1843,3 +1843,12 @@ ul li a span{
 {
 	margin:0;
 }
+
+.remove-feedback
+{
+	font-size:18px;
+}
+
+.profile-name{
+	white-space: nowrap;overflow: hidden;width:120px;text-overflow: ellipsis;
+}

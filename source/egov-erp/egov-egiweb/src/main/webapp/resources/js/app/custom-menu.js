@@ -1,5 +1,7 @@
 $(document).ready(function () {
 	
+	var openedWindows = [];
+	
 	var menuheight = ($( window ).height() - 63);
 	var ulheight =(menuheight -93);
 	
@@ -7,7 +9,7 @@ $(document).ready(function () {
 		menuWidth: '250px',
 		mode: 'cover',
 		menu:menuItems,
-		onItemClick: function () {
+		onItemClick: function (event) {
 			var e = arguments[0],$item = arguments[2];
 			$('#menu_multilevelpushmenu ul li').removeClass('li-active');
 			$(e.target).parent().addClass('li-active');
@@ -19,8 +21,15 @@ $(document).ready(function () {
 					$(e.target).val('');
 				});
 			}
-			var itemHref = $item.find( 'a:first' ).attr( 'href' );
-	        window.open(itemHref,'_blank','width=760;height=800');
+			
+			if($(e.target).hasClass('remove-feedback'))
+			{
+				alert('Delete clicked!');
+			}
+			else{
+				var itemHref = $item.find( 'a:first' ).attr( 'href' );
+	            window.open(itemHref,'_blank','width=760;height=800');
+			}
 		},
 		onGroupItemClick: function () {
 			menuheight = ($( window ).height() - 63);
@@ -59,5 +68,34 @@ $(document).ready(function () {
 		$('#menu_multilevelpushmenu').height(''+menuheight+'px');
 		$('#menu, #menu_multilevelpushmenu').css('min-height', ''+menuheight+'px');
 	}
+	
+	$("a.open-popup").click(function(e) {
+		// to open in good size for user
+		var width = window.innerWidth /0.66 ; 
+		// define the height in 
+		var height = width * window.innerWidth / window.innerHeight; 
+		// Ratio the hight to the width as the user screen ratio
+		var windowObjectReference = window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=150'); 
+		openedWindows.push(windowObjectReference);
+		return false;
+	});
+	
+	$(document).on('click', 'a.open-popup', function() {
+		// to open in good size for user
+		var width = window.innerWidth /0.66 ; 
+		// define the height in 
+		var height = width * window.innerWidth / window.innerHeight; 
+		// Ratio the hight to the width as the user screen ratio
+		var windowObjectReference = window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=150'); 
+		openedWindows.push(windowObjectReference);
+		return false;
+	});
+	
+	$('.signout').click(function(){
+		$.each( openedWindows, function( i, val ) {
+			var window = val;
+			window.close();
+		});
+	});
 	
 });
