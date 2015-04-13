@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -36,6 +37,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 )
 @Table(name = "EG_BOUNDARY")
 @Searchable
+@NamedQuery(name = "Boundary.findBoundariesByBoundaryType", query = "select b from Boundary b where b.boundaryType.id = :boundaryTypeId")
 public class Boundary extends AbstractAuditable<User, Long> {
 
     private static final long serialVersionUID = -224771387323975327L;
@@ -68,7 +70,7 @@ public class Boundary extends AbstractAuditable<User, Long> {
     
     private boolean isHistory;
     private Long bndryId;
-    private String boundaryNameLocal;
+    private String localName;
     
     private Float longitude;
     private Float latitude;
@@ -93,12 +95,12 @@ public class Boundary extends AbstractAuditable<User, Long> {
     @Transient
     private CityWebsite cityWebsite = new CityWebsite();
     
-    public String getBoundaryNameLocal() {
-        return boundaryNameLocal;
+    public String getLocalName() {
+        return localName;
     }
 
-    public void setBoundaryNameLocal(String boundaryNameLocal) {
-        this.boundaryNameLocal = boundaryNameLocal;
+    public void setLocalName(String boundaryNameLocal) {
+        this.localName = boundaryNameLocal;
     }
 
     public Boundary getParent() {
@@ -261,7 +263,7 @@ public class Boundary extends AbstractAuditable<User, Long> {
         if (this.getName() != null && !this.getName().equals(other.getName())) {
             return false;
         }
-        if (this.getBoundaryNameLocal() != null && !(this.getBoundaryNameLocal().equals(other.getBoundaryNameLocal()))) {
+        if (this.getLocalName() != null && !(this.getLocalName().equals(other.getLocalName()))) {
             return false;
         }
         if (this.getParent() != null && !this.getParent().equals(other.getParent())) {

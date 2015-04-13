@@ -82,7 +82,7 @@ public class BoundaryBuilder {
     }
 
     public BoundaryBuilder withBndryNameLocal(final String bndryNameLocal) {
-        boundary.setBoundaryNameLocal(bndryNameLocal);
+        boundary.setLocalName(bndryNameLocal);
         return this;
     }
 
@@ -122,7 +122,7 @@ public class BoundaryBuilder {
             withIsHistory(false);
         if (null == boundary.getBndryId())
             withBndryId(Long.valueOf(count));
-        if (null == boundary.getBoundaryNameLocal())
+        if (null == boundary.getLocalName())
             withBndryNameLocal("test-local");
         if (null == boundary.getLongitude())
             withLng(123232f);
@@ -154,7 +154,7 @@ public class BoundaryBuilder {
             withIsHistory(false);
         if (null == boundary.getBndryId())
             withBndryId(Long.valueOf(count));
-        if (null == boundary.getBoundaryNameLocal())
+        if (null == boundary.getLocalName())
             withBndryNameLocal("test-local");
         if (null == boundary.getLongitude())
             withLng(123232f);

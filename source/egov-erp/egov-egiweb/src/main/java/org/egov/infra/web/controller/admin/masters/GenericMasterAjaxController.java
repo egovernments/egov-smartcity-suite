@@ -47,8 +47,8 @@ public class GenericMasterAjaxController {
 
         for (Boundary boundary : boundaries) {
             jsonObject = new JSONObject();
-            jsonObject.put("Text", boundary.getBoundaryNameLocal());
-            jsonObject.put("Value", boundary.getBoundaryNameLocal());
+            jsonObject.put("Text", boundary.getLocalName());
+            jsonObject.put("Value", boundary.getLocalName());
             jsonArray.add(jsonObject);
         }
 

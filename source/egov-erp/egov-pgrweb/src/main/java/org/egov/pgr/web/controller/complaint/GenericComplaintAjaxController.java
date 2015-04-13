@@ -46,14 +46,14 @@ public class GenericComplaintAjaxController extends GenericComplaintController {
         boundaryService.getBoundaryByNameLike(locationName).stream().forEach(location -> {
             locationJSONData.append("{\"name\":\"");
             if (location.isRoot())
-                locationJSONData.append(location.getBoundaryNameLocal());
+                locationJSONData.append(location.getLocalName());
             else {
                 Boundary currentLocation = location;
                 while (!currentLocation.isRoot()) {
-                    locationJSONData.append(currentLocation.getBoundaryNameLocal()).append(", ");
+                    locationJSONData.append(currentLocation.getLocalName()).append(", ");
                     currentLocation = currentLocation.getParent();
                     if (currentLocation.isRoot()) {
-                        locationJSONData.append(currentLocation.getBoundaryNameLocal());
+                        locationJSONData.append(currentLocation.getLocalName());
                         break;
                     }
                 }

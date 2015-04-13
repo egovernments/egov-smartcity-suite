@@ -56,12 +56,12 @@ public class BoundaryService {
     
     @Transactional
     public List<Boundary> getAllBoundariesByBoundaryTypeId(Long boundaryTypeId) {
-        return boundaryRepository.findAllByBoundaryTypeId(boundaryTypeId);
+        return boundaryRepository.findBoundariesByBoundaryType(boundaryTypeId);
     }
     
     @Transactional
     public Page<Boundary> getPageOfBoundaries(Integer pageNumber, Integer pageSize, Long boundaryTypeId) {
         Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "name");
-        return boundaryRepository.findPageByBoundaryTypeId(boundaryTypeId, pageable);
+        return boundaryRepository.findBoundariesByBoundaryType(boundaryTypeId, pageable);
     }
 }

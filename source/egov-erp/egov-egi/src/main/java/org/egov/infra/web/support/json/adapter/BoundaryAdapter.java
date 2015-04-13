@@ -19,7 +19,7 @@ public class BoundaryAdapter implements JsonSerializer<Boundary> {
     public JsonElement serialize(Boundary boundary, Type type, JsonSerializationContext jsc) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("name", boundary.getName());
-        jsonObject.addProperty("boundaryNameLocal", boundary.getBoundaryNameLocal());
+        jsonObject.addProperty("boundaryNameLocal", boundary.getLocalName());
         jsonObject.addProperty("boundaryNum", boundary.getBoundaryNum());
         jsonObject.addProperty("fromDate", dateFormatter.format(boundary.getFromDate()));
         
