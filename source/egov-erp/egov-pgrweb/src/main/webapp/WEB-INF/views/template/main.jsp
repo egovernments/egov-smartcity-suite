@@ -12,7 +12,7 @@
 	    <meta name="author" content="eGovernments Foundation" />
 	
 	    <title><tiles:insertAttribute name="title"/></title>
-	
+		<link rel="icon" href="<c:url value='/resources/global/images/chennai_fav.ico" sizes="32x32' context='/egi'/>">
 	    <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/header-custom.css' context='/egi'/>">

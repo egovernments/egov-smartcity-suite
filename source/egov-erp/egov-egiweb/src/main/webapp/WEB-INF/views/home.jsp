@@ -11,6 +11,7 @@
 		
 		<title>eGov Urban Portal</title>
 		
+		<link rel="icon" href="../resources/global/images/chennai_fav.ico" sizes="32x32">
 		<link rel="stylesheet" href="../resources/global/css/bootstrap/bootstrap.css">
 		<link rel="stylesheet" href="../resources/global/css/font-icons/entypo/css/entypo.css">
 		<link rel="stylesheet" href="../resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css">
