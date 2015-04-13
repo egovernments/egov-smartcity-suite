@@ -253,6 +253,13 @@
 										<i class="fa fa-edit col-sm-1 col-xs-2 unread-msg"></i><a href="/pgr/complaint/citizen/show-reg-form" class="open-popup col-sm-11 col-xs-10">Register Grievance</a>
 									</div>
 								</header>
+							</div>
+							<div class="msg">
+								<header>
+									<div class="row">
+										<i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg"></i><a href="/pgr/complaint/citizen/anonymous/search" class="col-sm-11 col-xs-10">View Grievance</a>
+									</div>
+								</header>
 							</div> 
 						</section>
 						<section id="section-newrequest-2">
