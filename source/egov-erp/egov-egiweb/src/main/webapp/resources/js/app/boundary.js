@@ -77,3 +77,30 @@ $('#buttonEdit').click(function() {
 	$('#boundaryViewForm').attr('action', '/egi/controller/update-boundary'+pathVars);
 })
 
+
+function checkForRootNode() {
+	var hierarchyTypeId = $('#hierarchyTypeSelect').val();
+	var boundaryTypeId = $('#boundaryTypeSelect').val();
+	
+	$.ajax({
+		type: "GET",
+		url: "egi/controller/check-is-root",
+		data: { 
+			'hierarchyTypeId' : hierarchyTypeId,
+			'boundaryTypeId' : boundaryTypeId
+		},
+		dataType: "json",
+		success: function (response) {
+			if(response == false){
+				alert('Sorry! You can\'t create root for the Child Boundary!');
+				return false;
+			}
+			return true;
+		}, 
+		error: function (response) {
+			console.log("failed");
+		}
+	});
+}
+
+

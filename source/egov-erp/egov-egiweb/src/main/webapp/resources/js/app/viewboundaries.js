@@ -18,7 +18,7 @@ $(document).ready(function() {
 				"sTitle" : "Name",
 			}, {
 				"mData" : "boundaryNameLocal",
-				"sTitle" : "Boundary Name Local"
+				"sTitle" : "Local Name"
 			}, {
 				"mData" : "boundaryNum",
 				"sTitle" : "Boundary Number"

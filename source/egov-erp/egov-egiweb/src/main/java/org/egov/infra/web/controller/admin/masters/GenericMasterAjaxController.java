@@ -60,9 +60,7 @@ public class GenericMasterAjaxController {
     public @ResponseBody boolean isRootBoundary(@RequestParam Long boundaryTypeId, @RequestParam Long hierarchyTypeId) {
         BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeByIdAndHierarchyType(boundaryTypeId,
                 hierarchyTypeId);
-        //response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        //IOUtils.write(String.valueOf(boundaryType.getParent().getId() == 0 ? true : false), response.getWriter());
-        return boundaryType.getParent().getId() == 0 ? true : false;
+        return boundaryType.getParent() == null ? false : boundaryType.getParent().getId() == 0 ? true : false;
     }
 
     // FIXME Can be made generic by the help of annotation which takes fields as

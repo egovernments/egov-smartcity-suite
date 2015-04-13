@@ -35,6 +35,13 @@ $(document).ready(function()
 		}
 	});
 	
+	$(".is_valid_alphanumeric").on("input", function(){
+		var regexp = /[^a-zA-Z _0-9]/g;
+		if($(this).val().match(regexp)){
+			$(this).val( $(this).val().replace(regexp,'') );
+		}
+	});
+	
 	$('.twitter-typeahead').css('display','block');
 	
 	try { $(":input").inputmask(); }catch(e){}
