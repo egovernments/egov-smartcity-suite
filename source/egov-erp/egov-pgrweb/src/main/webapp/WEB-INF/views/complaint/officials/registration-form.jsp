@@ -133,9 +133,9 @@
 					</div>
 					
 					<div class="form-group optionalmandate">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.landmark"/><span class="mandatory"></span></label>
+						<label class="col-sm-3 control-label"><spring:message code="lbl.landmark"/></label>
 						<div class="col-sm-6">
-							<form:textarea path="landmarkDetails" class="form-control" id="landmarkDetails" placeholder="" required="required" maxlength="200"/>
+							<form:textarea path="landmarkDetails" class="form-control" id="landmarkDetails" placeholder="" maxlength="200"/>
 							<form:errors path="landmarkDetails" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
