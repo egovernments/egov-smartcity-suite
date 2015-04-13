@@ -62,6 +62,7 @@ jQuery(document).ready(function($) {
 		}
 	});
 
+	$("#comp_type_loc_yes").attr('checked', 'checked');
 	$("#buttonCreate").click(function() {
 		$('#complaintTypeViewForm').attr('method', 'get');
 		$('#complaintTypeViewForm').attr('action', '/pgr/complaint-type');
