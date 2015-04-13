@@ -36,7 +36,7 @@ delete  from eg_action where context_root='pgr' and is_enabled=0  and id not in 
 where (url like '/complaint%' or url like '/view-complaint' or url like '/ajax-%'));
 
 delete from eg_roleaction_map where actionid in ( 
-selecct id  from eg_action where url='/staff/validateComplaintNo.jsp');
+select id  from eg_action where url='/staff/validateComplaintNo.jsp');
 
 delete from eg_action where url='/staff/validateComplaintNo.jsp';
 

@@ -1,5 +1,8 @@
 package org.egov.pgr.service;
 
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
+import static org.apache.commons.lang3.StringUtils.upperCase;
 import static org.egov.pgr.entity.enums.ComplaintStatus.COMPLETED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.FORWARDED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.REGISTERED;
@@ -15,11 +18,11 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.entity.enums.UserType;
 import org.egov.infra.citizen.inbox.entity.CitizenInbox;
 import org.egov.infra.citizen.inbox.entity.CitizenInboxBuilder;
 import org.egov.infra.citizen.inbox.entity.enums.MessageType;
@@ -76,8 +79,14 @@ public class ComplaintService {
     @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
     public Complaint createComplaint(final Complaint complaint) {
         if (complaint.getCRN().isEmpty())
-            complaint.setCRN(generateComplaintID());
-        complaint.getComplainant().setUserDetail(securityUtils.getCurrentUser());
+            complaint.setCRN(generateCRN());
+        final User user = securityUtils.getCurrentUser();
+        complaint.getComplainant().setUserDetail(user);
+        if (!securityUtils.isCurrentUserAnonymous() && user.getType().equals(UserType.CITIZEN)) {
+            complaint.getComplainant().setEmail(user.getEmailId());
+            complaint.getComplainant().setName(user.getName());
+            complaint.getComplainant().setMobile(user.getMobileNumber());
+        }
         complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
         Position assignee = complaintRouterService.getAssignee(complaint);
         complaint.transition().start().withSenderName(complaint.getComplainant().getUserDetail().getName())
@@ -155,8 +164,8 @@ public class ComplaintService {
         return savedComplaint;
     }
 
-    public String generateComplaintID() {
-        return "CRN" + DASH_DELIM + RandomStringUtils.randomAlphanumeric(5);
+    public String generateCRN() {
+        return upperCase(randomAlphabetic(3)) + DASH_DELIM + randomNumeric(3);
     }
 
     public Complaint getComplaintById(final Long complaintID) {
@@ -168,6 +177,12 @@ public class ComplaintService {
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
+    }
+
+    public Complaint getComplaintByCrnNo(final String crnNo) {
+        final Criteria criteria = getCurrentSession().createCriteria(Complaint.class, "complaint").add(
+                Restrictions.ilike("complaint.CRN", crnNo));
+        return (Complaint) criteria.uniqueResult();
     }
 
     public List<Complaint> getComplaintsEligibleForEscalation() {
@@ -204,15 +219,15 @@ public class ComplaintService {
     private void pushMessage(Complaint savedComplaint) {
 
         CitizenInboxBuilder citizenInboxBuilder = new CitizenInboxBuilder(MessageType.USER_MESSAGE,
-                getHeaderMessage(savedComplaint), getDetailedMessage(savedComplaint), savedComplaint.getCreatedDate()
-                        .toDate(), securityUtils.getCurrentUser(), Priority.High);
+                getHeaderMessage(savedComplaint), getDetailedMessage(savedComplaint), savedComplaint.getCreatedDate(),
+                securityUtils.getCurrentUser(), Priority.High);
         String strQuery = "select md from Module md where md.moduleName=:name";
         Query hql = getCurrentSession().createQuery(strQuery);
         hql.setParameter("name", "PGR");
 
         citizenInboxBuilder.module((Module) hql.uniqueResult());
         citizenInboxBuilder.identifier(savedComplaint.getCRN());
-        citizenInboxBuilder.link("/pgr/view-complaint?complaintId=" + savedComplaint.getId());
+        citizenInboxBuilder.link("/pgr/view-complaint?crnNo=" + savedComplaint.getCRN());
         citizenInboxBuilder.state(savedComplaint.getState());
         citizenInboxBuilder.status(savedComplaint.getStatus().getName());
 
@@ -242,7 +257,7 @@ public class ComplaintService {
                 .append(" by ")
                 .append(savedComplaint.getState().getSenderName().equals("Unknown") ? "you" : savedComplaint.getState()
                         .getSenderName())
-                .append(". Please help us to improve our quality of service by giving your feedback on the quality of service by clicking here.");
+                .append(". Please help us to improve our quality of service by giving your feedback on the quality of service by clicking <a>here</a>.");
         return detailedMessage.toString();
     }
 
@@ -277,3 +292,4 @@ public class ComplaintService {
     }
 
 }
+
