@@ -80,11 +80,11 @@ $(document).ready(function()
 	});
 	
 	$('form#signupform').submit(function(){
-		$('#signupform').attr('action', '/portal/register').trigger('submit');
+		$('#signupform').attr('action', '/portal/citizen/register').trigger('submit');
 		return false;
 	});
 	$('form#citizenactivationform').submit(function(){
-		$('#citizenactivationform').attr('action', '/portal/citizen-activation/'+$('#citizenId').val()).trigger('submit');
+		$('#citizenactivationform').attr('action', '/portal/citizen/activation/'+$('#citizenId').val()).trigger('submit');
 		return false;
 	});
 	

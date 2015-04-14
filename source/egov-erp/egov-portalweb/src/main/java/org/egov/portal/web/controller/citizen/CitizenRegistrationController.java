@@ -17,51 +17,53 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
+@RequestMapping(value = "/citizen")
 public class CitizenRegistrationController {
     private CitizenService citizenService;
-    private String mobnumberValid = "false"; 
+    private String mobnumberValid = "false";
+
     @Autowired
-     public CitizenRegistrationController(CitizenService citizenService) {
-            this.citizenService = citizenService;
+    public CitizenRegistrationController(CitizenService citizenService) {
+        this.citizenService = citizenService;
     }
-public String activationCitizen(){
-    return "";
-}
-    @RequestMapping(value = "register", method = POST)
-    public String registerCitizen(@Valid @ModelAttribute Citizen citizen, final BindingResult errors, final RedirectAttributes redirectAttributes) {
-        
+
+    @RequestMapping(value = "/register", method = POST)
+    public String registerCitizen(@Valid @ModelAttribute Citizen citizen, final BindingResult errors,
+            final RedirectAttributes redirectAttributes) {
+
         String SUCCESS = "redirect:/../egi/login/securityLogin.jsp";
         try {
-            citizenService.registerCitizen(citizen);
+            citizenService.create(citizen);
             citizenService.sendActivationMessage(citizen);
-            SUCCESS = SUCCESS + "?citizenActivation=true&citizenId="+citizen.getId();
+            SUCCESS = SUCCESS + "?citizenActivation=true&citizenId=" + citizen.getId();
+
         } catch (DuplicateElementException e) {
-            
-            if(e.getMessage().equals("Mobile Number already exists")){
+
+            if (e.getMessage().equals("Mobile Number already exists")) {
                 SUCCESS = SUCCESS + "?mobInvalid=true";
-            }else if(e.getMessage().equals("Email already exists")){
+            } else if (e.getMessage().equals("Email already exists")) {
                 SUCCESS = SUCCESS + "?emailInvalid=true";
             }
-        }catch (EGOVRuntimeException e) {
-            
+        } catch (EGOVRuntimeException e) {
+
             SUCCESS = SUCCESS + "?activationCodeSendingFailed=true";
-            
+
         }
-       
+
         return SUCCESS;
     }
-    @RequestMapping(value = "citizen-activation/{citizenId}", method = POST)
-    public String citizenActivation(@PathVariable Long citizenId,@ModelAttribute Citizen model) {
-        
+
+    @RequestMapping(value = "/activation/{citizenId}", method = POST)
+    public String citizenActivation(@PathVariable Long citizenId, @ModelAttribute Citizen model) {
         Citizen citizen = citizenService.getCitizenById(citizenId);
-        if(citizen.getActivationCode().equals(model.getActivationCode())){
+        if (citizen.getActivationCode().equals(model.getActivationCode())) {
             citizen.setActive(true);
             citizenService.update(citizen);
             return "redirect:/../egi/login/securityLogin.jsp?citizenActivationSuccess=true";
-        }else{
-            return "redirect:/../egi/login/securityLogin.jsp?citizenActivationFailed=true&citizenId="+citizenId;
+        } else {
+            return "redirect:/../egi/login/securityLogin.jsp?citizenActivationFailed=true&citizenId=" + citizenId;
         }
-        
+
     }
 
     public String getMobnumberValid() {
@@ -73,4 +75,3 @@ public String activationCitizen(){
     }
 
 }
-
