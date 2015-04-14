@@ -47,6 +47,12 @@
             <groupId>org.egov</groupId>
             <artifactId>egov-egi</artifactId>
             <version>${project.parent.version}</version>
+            <exclusions>
+            	<exclusion>
+            		<artifactId>commons-logging</artifactId>
+            		<groupId>commons-logging</groupId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         
          <dependency>
