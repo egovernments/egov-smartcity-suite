@@ -23,42 +23,42 @@ $(document).ready(function()
 	$('.workspace').click(function(){
 		$('.main-space').hide();
 		if($(this).attr('data-work') == 'worklist' ){
-				tableContainer1 = $("#official_inbox"); 
-				tableContainer1.dataTable({
-					"sPaginationType": "bootstrap",
-					"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-					"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-					"bDestroy": true,
-					"autoWidth": false,
-					/* "ajax": "inbox",
-						"columns": [
-						{ "data": "date","width": "20%" },
-						{ "data": "sender","width": "15%" },
-						{ "data": "task","width": "20%" },
-						{ "data": "status","width": "20%" },
-						{ "data": "details","width": "20%" },
-						{ "data": "id","visible": false, "searchable": false },
-						{ "data": "link","visible": false, "searchable": false }
-					] */
-				});
+			tableContainer1 = $("#official_inbox"); 
+			tableContainer1.dataTable({
+				"sPaginationType": "bootstrap",
+				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+				"bDestroy": true,
+				"autoWidth": false,
+				/* "ajax": "inbox",
+					"columns": [
+					{ "data": "date","width": "20%" },
+					{ "data": "sender","width": "15%" },
+					{ "data": "task","width": "20%" },
+					{ "data": "status","width": "20%" },
+					{ "data": "details","width": "20%" },
+					{ "data": "id","visible": false, "searchable": false },
+					{ "data": "link","visible": false, "searchable": false }
+				] */
+			});
 			}else if($(this).attr('data-work') == 'drafts' ){
-				tableContainer1 = $("#official_drafts"); 
-				tableContainer1.dataTable({
-					"sPaginationType": "bootstrap",
-					"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-					"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-					"bDestroy": true,
-					"autoWidth": false
-				});
+			tableContainer1 = $("#official_drafts"); 
+			tableContainer1.dataTable({
+				"sPaginationType": "bootstrap",
+				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+				"bDestroy": true,
+				"autoWidth": false
+			});
 			}else if($(this).attr('data-work') == 'notifications' ){
-				tableContainer1 = $("#official_notify");
-				tableContainer1.dataTable({
-					"sPaginationType": "bootstrap",
-					"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-					"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-					"bDestroy": true,
-					"autoWidth": false
-				});
+			tableContainer1 = $("#official_notify");
+			tableContainer1.dataTable({
+				"sPaginationType": "bootstrap",
+				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+				"bDestroy": true,
+				"autoWidth": false
+			});
 		}
 		$('#'+$(this).attr('data-work')).show();
 	});
@@ -91,6 +91,7 @@ $(document).ready(function()
 			}
 		}
 	});
+	
 	
 	// MASK SCREEN IMPORTANT
 	//$('.loader-class').modal('show', {backdrop: 'static'});

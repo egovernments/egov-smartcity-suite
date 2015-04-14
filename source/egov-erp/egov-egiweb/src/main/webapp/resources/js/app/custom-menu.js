@@ -29,16 +29,18 @@ $(document).ready(function () {
 						type: "GET",
 						url: "home/remove-favourite",
 						data:{'actionId' : $(e.target).parent().parent().attr('id')}
-					}).done(function(value) {
-						 if(value === true) {
-							 $(e.target).parent().parent().remove();
-						 } else {
+						}).done(function(value) {
+						if(value === true) {
+							$(e.target).parent().parent().remove();
+							} else {
 							alert("Could not delete it from Favourite");
-						 }
+						}
 					});
 				}
-			}
-			else{
+				}else if($(e.target).hasClass('add-to-favourites')){
+					$('.favourites').modal('show', {backdrop: 'static'});
+					//$(e.target).addClass('added-as-fav');
+				}else{
 				var itemHref = $item.find( 'a:first' ).attr( 'href' );
 				var windowObjectReference = window.open(itemHref, ''+$item.attr('id')+'', 'width=900, height=700, top=300, left=150'); 
 				openedWindows.push(windowObjectReference);
@@ -76,39 +78,39 @@ $(document).ready(function () {
 	}).trigger('resize');
 	
 	function setmenuheight(){
-		menuheight = ($( window ).height() - 63);
-		$('#menu').height(''+menuheight+'px');
-		$('#menu_multilevelpushmenu').height(''+menuheight+'px');
-		$('#menu, #menu_multilevelpushmenu').css('min-height', ''+menuheight+'px');
+	menuheight = ($( window ).height() - 63);
+	$('#menu').height(''+menuheight+'px');
+	$('#menu_multilevelpushmenu').height(''+menuheight+'px');
+	$('#menu, #menu_multilevelpushmenu').css('min-height', ''+menuheight+'px');
 	}
 	
 	$("a.open-popup").click(function(e) {
-		// to open in good size for user
-		var width = window.innerWidth /0.66 ; 
-		// define the height in 
-		var height = width * window.innerWidth / window.innerHeight; 
-		// Ratio the hight to the width as the user screen ratio
-		var windowObjectReference = window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=150'); 
-		openedWindows.push(windowObjectReference);
-		return false;
+	// to open in good size for user
+	var width = window.innerWidth /0.66 ; 
+	// define the height in 
+	var height = width * window.innerWidth / window.innerHeight; 
+	// Ratio the hight to the width as the user screen ratio
+	var windowObjectReference = window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=150'); 
+	openedWindows.push(windowObjectReference);
+	return false;
 	});
 	
 	$(document).on('click', 'a.open-popup', function() {
-		// to open in good size for user
-		var width = window.innerWidth /0.66 ; 
-		// define the height in 
-		var height = width * window.innerWidth / window.innerHeight; 
-		// Ratio the hight to the width as the user screen ratio
-		var windowObjectReference = window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=150'); 
-		openedWindows.push(windowObjectReference);
-		return false;
+	// to open in good size for user
+	var width = window.innerWidth /0.66 ; 
+	// define the height in 
+	var height = width * window.innerWidth / window.innerHeight; 
+	// Ratio the hight to the width as the user screen ratio
+	var windowObjectReference = window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=150'); 
+	openedWindows.push(windowObjectReference);
+	return false;
 	});
 	
 	$('.signout').click(function(){
-		$.each( openedWindows, function( i, val ) {
-			var window = val;
-			window.close();
-		});
+	$.each( openedWindows, function( i, val ) {
+	var window = val;
+	window.close();
+	});
 	});
 	
-});
+	});	

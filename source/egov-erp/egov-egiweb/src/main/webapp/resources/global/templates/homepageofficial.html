@@ -284,7 +284,7 @@
 										<h2>AE/JE Diary</h2>
 										<ul>
 											<li>
-												<a href="#">AE/JE Complaints</a>
+												<a href="#"><i class="fa fa-star floatLeft add-to-favourites"></i>AE/JE Complaints</a>
 											</li>
 										</ul>
 									</li>
@@ -333,7 +333,7 @@
 												<h2>PGR - Master</h2>
 												<ul>
 													<li>
-														<a href="#"><span><i class="fa fa-star" onclick="jQuery('.add-to-favourites').modal('show', {backdrop: 'static'});"></i></span>Complaint Type</a>
+														<a href="#"><span><i class="fa fa-star add-to-favourites"></i></span>Complaint Type</a>
 													</li>
 												</ul>
 											</li>
@@ -342,10 +342,10 @@
 												<h2>PGR - Transactions</h2>
 												<ul>
 													<li>
-														<a href="#"><span><i class="fa fa-star" onclick="jQuery('.add-to-favourites').modal('show', {backdrop: 'static'});"></i></span>Report New Complaint</a>
+														<a href="#"><span><i class="fa fa-star add-to-favourites"></i></span>Report New Complaint</a>
 													</li>
 													<li>
-														<a href="#"><span><i class="fa fa-star" onclick="jQuery('.add-to-favourites').modal('show', {backdrop: 'static'});"></i></span>Search Complaint</a>
+														<a href="#"><span><i class="fa fa-star add-to-favourites"></i></span>Search Complaint</a>
 													</li>
 												</ul>
 											</li>
@@ -354,13 +354,13 @@
 												<h2>PGR - Report</h2>
 												<ul>
 													<li>
-														<a href="#"><span><i class="fa fa-star"></i></span>Aging Report</a>
+														<a href="#"><span><i class="fa fa-star add-to-favourites"></i></span>Aging Report</a>
 													</li>
 													<li>
-														<a href="#"><span><i class="fa fa-star"></i></span>Department Report</a>
+														<a href="#"><span><i class="fa fa-star add-to-favourites"></i></span>Department Report</a>
 													</li>
 													<li>
-														<a href="#"><span><i class="fa fa-star"></i></span>Complaint Report</a>
+														<a href="#"><span><i class="fa fa-star add-to-favourites"></i></span>Complaint Report</a>
 													</li>
 												</ul>
 											</li>
@@ -645,6 +645,39 @@
 						<button type="button" class="btn btn-primary">Send Feedback</button>
 						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- Manage Saved Searches -->
+		<div class="modal fade favourites" data-backdrop="static">
+			<div class="modal-dialog">
+				<div class="modal-content">
+				
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title">Favourites</h4>
+					</div>
+					
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-md-4">
+								<label class="control-label">Favourites Name</label>
+							</div>
+							<div class="col-md-8">
+								
+								<div class="form-group">
+									<input type="text" class="form-control" id="fav-name" placeholder="">
+								</div>	
+							</div>
+						</div>
+					</div>
+					
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary add-fav">Add Favourites</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					</div>
+					
 				</div>
 			</div>
 		</div>

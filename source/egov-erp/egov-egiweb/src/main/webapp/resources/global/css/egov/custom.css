@@ -1852,3 +1852,7 @@ ul li a span{
 .profile-name{
 	white-space: nowrap;overflow: hidden;width:120px;text-overflow: ellipsis;
 }
+
+.added-as-fav{
+	color:yellow;
+}
