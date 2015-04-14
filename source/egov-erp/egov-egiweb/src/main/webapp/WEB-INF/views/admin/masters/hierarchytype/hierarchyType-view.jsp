@@ -24,7 +24,7 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.hierarchyType.name"/></label>
 						<div class="col-sm-6" style="padding-top: 7px">
-							<strong> ${hierarchyType.name} </strong>                 
+							<strong><c:out value="${hierarchyType.name}" /> </strong>                 
 							<input id="htName" type="hidden" value="<c:out value="${hierarchyType.name}" />" />     
 						</div>
 					</div>
@@ -33,7 +33,15 @@
 							<spring:message code="lbl.hierarchyType.code"/>
 						</label>
 						<div class="col-sm-6" style="padding-top: 7px">
-							<strong> ${hierarchyType.code} </strong>   
+							<strong><c:out value="${hierarchyType.code}" /> </strong>   
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">
+							<spring:message code="lbl.hierarchyType.localName"/>
+						</label>
+						<div class="col-sm-6" style="padding-top: 7px">
+							<strong><c:out value="${hierarchyType.localName}" default="NA"/> </strong>   
 						</div>
 					</div>
 				</div>

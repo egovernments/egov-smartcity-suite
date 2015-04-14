@@ -35,6 +35,9 @@ public class HierarchyType extends AbstractAuditable<User, Long> {
     @NotBlank
     @Length(max = 50)
     private String code;
+    
+    @Length(max = 256)
+    private String localName;
 
     public String getName() {
         return name;
@@ -52,4 +55,11 @@ public class HierarchyType extends AbstractAuditable<User, Long> {
         this.code = code;
     }
 
+    public String getLocalName() {
+        return localName;
+    }
+
+    public void setLocalName(String localName) {
+        this.localName = localName;
+    }
 }

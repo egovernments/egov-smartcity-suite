@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/hierarchy-type/update/{name}")
 public class UpdateHierarchyTypeController {
 
+    private static String REDIRECT_URL_VIEW = "redirect:/controller/hierarchy-type/view/";
     private static final String STR_MSG_UPDATE_SUCCESS = "Successfully updated Hierarchy Type !";
     
     private HierarchyTypeService hierarchyTypeService;
@@ -48,6 +49,6 @@ public class UpdateHierarchyTypeController {
         hierarchyTypeService.updateHierarchyType(hierarchyType);
         additionalAttr.addFlashAttribute("message", STR_MSG_UPDATE_SUCCESS);
 
-        return "redirect:/hierarchy-type/update/" + hierarchyType.getName();
+        return REDIRECT_URL_VIEW + hierarchyType.getName();
     }
 }

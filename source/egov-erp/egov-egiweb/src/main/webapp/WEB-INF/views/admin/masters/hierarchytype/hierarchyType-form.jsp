@@ -26,7 +26,7 @@
 							<spring:message code="lbl.hierarchyType.name"/><span class="mandatory"></span>
 						</label>
 						<div class="col-sm-6">
-							<form:input path="name" id="name" type="text" class="form-control low-width is_valid_alphabet" placeholder="" autocomplete="off" required="required"/>
+							<form:input path="name" id="name" type="text" class="form-control low-width is_valid_alphanumeric" placeholder="" autocomplete="off" required="required"/>
                             <form:errors path="name" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
@@ -38,7 +38,16 @@
 							<form:input path="code" id="code" type="text" class="form-control low-width is_valid_alphabet" placeholder="" autocomplete="off" required="required"/>
                             <form:errors path="code" cssClass="add-margin error-msg"/>
 						</div>
-					</div>					
+					</div>	
+					<div class="form-group">
+						<label class="col-sm-3 control-label">
+							<spring:message code="lbl.hierarchyType.localName"/>
+						</label>
+						<div class="col-sm-6">
+							<form:input path="localName" id="localName" type="text" class="form-control low-width is_valid_alphanumeric" placeholder="" autocomplete="off" required="required"/>
+                            <form:errors path="localName" cssClass="add-margin error-msg"/>
+						</div>
+					</div>						
 				</div>
 			</div>
 			<div class="row">

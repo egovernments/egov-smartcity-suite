@@ -26,7 +26,7 @@
 							<spring:message code="lbl.hierarchyType.name"/><small><i class="entypo-star error-msg"></i></small>
 						</label>
 						<div class="col-sm-6">
-							<form:input path="name" id="name" type="text" class="form-control low-width" placeholder="" autocomplete="off"/>
+							<form:input path="name" id="name" type="text" class="form-control low-width is_valid_alphanumeric" placeholder="" autocomplete="off"/>
                             <form:errors path="name" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
@@ -34,10 +34,19 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.hierarchyType.code"/></label>
 						<div class="col-sm-6">
-							<form:input path="code" id="description" type="text" class="form-control low-width" placeholder="" autocomplete="off"/>
+							<form:input path="code" id="description" type="text" class="form-control low-width is_valid_alphabet" placeholder="" autocomplete="off"/>
                             <form:errors path="code" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">
+							<spring:message code="lbl.hierarchyType.localName"/>
+						</label>
+						<div class="col-sm-6">
+							<form:input path="localName" id="localName" type="text" class="form-control low-width is_valid_alphanumeric" placeholder="" autocomplete="off" required="required"/>
+                            <form:errors path="localName" cssClass="add-margin error-msg"/>
+						</div>
+					</div>	
 				</div>
 			</div>
 			<div class="row">
@@ -56,3 +65,5 @@
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
+
+<script src="<c:url value='/resources/global/js/egov/custom.js'/>"></script>
