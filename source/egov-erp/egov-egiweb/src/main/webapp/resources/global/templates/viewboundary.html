@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta name="description" content="Neon Admin Panel" />
+		<meta name="author" content="" />
+		
+		<title>eGov Urban Portal</title>
+		
+		<link rel="stylesheet" href="../css/bootstrap/bootstrap.css">
+		<link rel="stylesheet" href="../css/font-icons/entypo/css/entypo.css">
+		<link rel="stylesheet" href="../css/egov/custom.css">
+		<link rel="stylesheet" href="../css/egov/header-custom.css">
+		<script src="../js/jquery/jquery.js"></script>
+		
+		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
+		
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		
+	</head>
+	
+	<body class="page-body">
+		
+		<div class="page-container" id="page-container">
+			
+			<header class="navbar navbar-fixed-top"><!-- set fixed position by adding class "navbar-fixed-top" -->
+				
+				<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+					<div class="container-fluid">
+						<div class="navbar-header col-md-10 col-xs-10">
+							<a class="navbar-brand" href="javascript:void(0);">
+								<img src="../images/chennai_logo.jpg" height="60">
+								<div>
+									<span class="title2">List Of Boundaries</span>
+								</div>
+							</a>
+						</div>
+						
+						<div class="nav-right-menu col-md-2 col-xs-2">
+							<ul class="hr-menu text-right">
+								<li class="ico-menu">
+									<a href="javascript:void(0);">
+										<img src="../images/logo@2x.png" title="Powered by eGovernments" height="20px">
+									</a>
+								</li>
+							</ul>
+						</div>
+						
+					</div>
+				</nav>
+				
+			</header>
+			
+			<div class="main-content">
+				
+				<!-- <div class="main-before-footer"> -->
+				<div class="row">
+					<div class="col-md-12">
+						
+						<div class="panel panel-primary" data-collapsed="0">
+							
+							<div class="panel-heading">
+								<div class="panel-title">
+									Boundary Information
+								</div>
+							</div>
+							
+							<div class="panel-body custom-form">
+								
+								<form role="form" id="complaintform" class="form-horizontal form-groups-bordered">
+									
+								    <div class="form-group">
+										<label class="col-sm-3 control-label">Hierarchy Type</label>
+										<div class="col-sm-6">
+											<label class="control-label">hierarchy1</label>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Boundary Type</label>
+										<div class="col-sm-6">
+											<label class="control-label">boundary1</label>
+										</div>
+									</div>
+									
+									
+								</form>
+							</div>
+							
+							
+						</div>
+						
+					</div>
+				</div>
+				
+				
+				
+				<div class="row">
+						<div class="col-md-6 col-xs-6 table-header">Boundaries</div>
+						<div class="col-md-6 col-xs-6 add-margin text-right">
+							<span class="inline-elem">Search</span>
+							<span class="inline-elem"><input type="text" id="searchviewcomp" class="form-control input-sm"></span>
+						</div>
+			    </div>
+				
+				<!--datatables-->
+				<table class="table table-bordered datatable" id="boundary-table">
+					<thead>
+						<tr>
+							<th>Complaint Type</th>
+							<th>Department</th>
+							<th>Number of days to resolve</th>
+							<th>Is location required</th>
+						</tr>
+					</thead>
+					
+					<tbody>
+						
+						<tr>
+							<td>Zebra</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>No</td>
+						</tr>
+						
+						<tr>
+							<td>Randy S. Smith</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>Yes</td>
+						</tr>
+						
+						<tr>
+							<td>Randy S. Smith</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>No</td>
+						</tr>
+						
+						<tr>
+							<td>Randy</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>No</td>
+						</tr>
+						
+						<tr>
+							<td>Randy S. Smith</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>Yes</td>
+						</tr>
+						
+						<tr>
+							<td>Randy S. Smith</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>No</td>
+						</tr>
+						
+						<tr>
+							<td>Randy</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>No</td>
+						</tr>
+						
+						<tr>
+							<td>Randy S. Smith</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>Yes</td>
+						</tr>
+						
+						<tr>
+							<td>Randy S. Smith</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>No</td>
+						</tr>
+						
+						<tr>
+							<td>Randy</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>No</td>
+						</tr>
+						
+						<tr>
+							<td>Randy S. Smith</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>Yes</td>
+						</tr>
+						
+						<tr>
+							<td>Randy S. Smith</td>
+							<td>8.7</td>
+							<td>Social and human service</td>
+							<td>No</td>
+						</tr>
+					</tbody>
+				</table>
+				
+			</div>
+			
+			<footer class="main">
+				
+				Powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
+				
+			</footer>
+			
+		</div>
+		
+	
+		<link rel="stylesheet" href="../js/jquery/plugins/datatables/responsive/css/datatables.responsive.css">
+		<script src="../js/bootstrap/bootstrap.js"></script>
+		<script src="../js/jquery/plugins/datatables/jquery.dataTables.min.js"></script>
+		<script src="../js/jquery/plugins/datatables/dataTables.bootstrap.js"></script>
+		<script src="../JS/jquery/plugins/datatables/responsive/js/datatables.responsive.js"></script>
+		<script src="../../js/app/viewboundary.js"></script>
+		<script src="../js/egov/custom.js"></script>
+		
+	</body>
+</html>
