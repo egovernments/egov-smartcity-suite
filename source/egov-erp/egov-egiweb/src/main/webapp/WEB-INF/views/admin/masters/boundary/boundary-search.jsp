@@ -45,14 +45,14 @@
 										code="lbl.boundaryType" /><span class="mandatory"></span></label>
 								<div class="col-sm-6 add-margin">
 									<egov:ajaxdropdown id="boundaryTypeAjax" fields="['Text','Value']"
-												dropdownId="boundaryTypeSelect" url="controller/boundaryTypes-by-hierarchyType" />
+												dropdownId="boundaryTypeSelect" url="boundaryTypes-by-hierarchyType" />
 		                            <form:select path="name"
 		                                         id="boundaryTypeSelect" cssClass="form-control" cssErrorClass="form-control error" required="required">
 		                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
 		                            </form:select>
 		                            <form:errors path="name" cssClass="error-msg"/>
 		                            <%-- <egov:ajaxdropdown id="boundaryAjax" fields="['Text','Value']"
-												dropdownId="boundaries" url="controller/boundaries-by-boundaryType" afterSuccess="showBoundariesDiv();"/> --%>
+												dropdownId="boundaries" url="boundaries-by-boundaryType" afterSuccess="showBoundariesDiv();"/> --%>
 		                        </div>
 							</div>
 							<%-- <div class="form-group" id="boundariesDiv" style="display: none">

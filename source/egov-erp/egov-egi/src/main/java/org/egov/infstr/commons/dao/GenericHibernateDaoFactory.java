@@ -27,11 +27,6 @@ public class GenericHibernateDaoFactory {
         this.sessionFactory = sessionFactory;
     }
 
-    public ModuleDao getModuleDao() {
-        return new ModuleHibDao(Module.class, getCurrentSession());
-
-    }
-
     public AppConfigValuesDAO getAppConfigValuesDAO() {
         return new AppConfigValuesHibernateDAO(AppConfigValues.class, getCurrentSession());
     }

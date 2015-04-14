@@ -82,7 +82,7 @@
 	
 	<bean id="authenticationSuccessHandler" class="org.egov.infstr.security.spring.AuthenticationSuccessHandler">
 		<property name="alwaysUseDefaultTargetUrl" value="false" />
-		<property name="defaultTargetUrl" value="/controller/home" />
+		<property name="defaultTargetUrl" value="/home" />
 		<property name="userService" ref="userService"/>
 	</bean>
 	

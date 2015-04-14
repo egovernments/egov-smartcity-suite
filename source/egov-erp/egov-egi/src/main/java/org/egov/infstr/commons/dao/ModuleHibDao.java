@@ -5,39 +5,31 @@
  */
 package org.egov.infstr.commons.dao;
 
-import org.egov.infra.admin.master.entity.Role;
-import org.egov.infstr.commons.Module;
-import org.egov.infstr.dao.GenericHibernateDAO;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class ModuleHibDao<T, id extends Serializable> extends GenericHibernateDAO implements ModuleDao {
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
-	private SessionFactory sessionFactory;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infstr.commons.Module;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-	public ModuleHibDao(SessionFactory sessionFactory) {
-		super(Module.class, null);
-		this.sessionFactory = sessionFactory;
-	}
+@Repository("moduleDAO")
+@Transactional(readOnly=true)
+public class ModuleHibDao implements ModuleDao {
 
-	public ModuleHibDao(final Class<T> persistentClass, final Session session) {
-		super(persistentClass, session);
-	}
+        @PersistenceContext
+	private EntityManager entityManager;
 
-	@Override
-	protected Session getCurrentSession() {
-		if(super.getCurrentSession() != null) {
-			return super.getCurrentSession();
-		}
-		return sessionFactory.getCurrentSession();
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
 	}
 
 	@Override

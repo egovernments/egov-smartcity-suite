@@ -43,11 +43,11 @@ public class ViewRoleController {
             return "role-view";
         
         if(request.getParameter("method")!=null && request.getParameter("method").toString().equals("New")){
-            return "redirect:/controller/create-role";
+            return "redirect:/create-role";
                     
         }else{
             
-            return "redirect:/controller/update-role/"+ role.getName();
+            return "redirect:/update-role/"+ role.getName();
         }
         
     }

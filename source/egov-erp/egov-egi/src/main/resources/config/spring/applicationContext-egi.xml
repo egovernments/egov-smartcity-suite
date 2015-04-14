@@ -167,10 +167,6 @@
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 
-	<bean id="moduleDAO" class="org.egov.infstr.commons.dao.ModuleHibDao">
-		<constructor-arg ref="sessionFactory" />
-	</bean>
-
 	<!-- <bean id="userDao" class="org.egov.infra.admin.master.repository.UserRepository" scope="prototype" >
 		<constructor-arg ref="sessionFactory" />
 	</bean> -->

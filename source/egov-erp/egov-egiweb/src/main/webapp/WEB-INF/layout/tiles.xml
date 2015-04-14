@@ -11,11 +11,16 @@
         <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
     </definition>
 
-
+	<definition name="error" template="/WEB-INF/views/template/error.jsp"/>
+	
     <definition name="home" template="/WEB-INF/views/home.jsp">
         <put-attribute name="title" value="eGov Urban Portal"/>
     </definition>
     
+    <definition name="error/*" extends="error">
+		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
+	</definition>
+	
     <definition name="role-form" extends="base_layout">
         <put-attribute name="page-title" value="title.createRole" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/role/role-form.jsp"/>

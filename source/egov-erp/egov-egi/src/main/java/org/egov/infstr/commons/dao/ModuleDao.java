@@ -10,9 +10,8 @@ import java.util.Set;
 
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infstr.commons.Module;
-import org.egov.infstr.dao.GenericDAO;
 
-public interface ModuleDao extends GenericDAO {
+public interface ModuleDao {
 	Module getModuleByName(String moduleName);
 
 	List<Module> getModuleInfoForRoleIds(Set<Role> roles);

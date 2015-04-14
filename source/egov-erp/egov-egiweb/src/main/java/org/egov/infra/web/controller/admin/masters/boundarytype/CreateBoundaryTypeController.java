@@ -65,7 +65,7 @@ public class CreateBoundaryTypeController {
         redirectAttrs.addFlashAttribute("showButtons", "showButtons");
         redirectAttrs.addFlashAttribute("message", "Boundary Type created successfully !");
 
-        return "redirect:/controller/boundaryType/view/"+boundaryType.getId();
+        return "redirect:/boundaryType/view/"+boundaryType.getId();
     }
 	
 }

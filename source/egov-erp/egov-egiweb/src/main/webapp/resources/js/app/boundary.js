@@ -11,15 +11,15 @@ function populateBoundaries(dropdown) {
 }
 
 $('#buttonView').click(function() {
-	$('#boundarySearchForm').attr('action', '/egi/controller/list-boundaries');
+	$('#boundarySearchForm').attr('action', 'list-boundaries');
 })
 
 $('#buttonCreate').click(function() {
-	$('#boundarySearchForm').attr('action', '/egi/controller/create-boundary');
+	$('#boundarySearchForm').attr('action', 'create-boundary');
 })
 
 $('#buttonUpdate').click(function() {
-	$('#boundarySearchForm').attr('action', '/egi/controller/update-boundary');
+	$('#boundarySearchForm').attr('action', 'update-boundary');
 })
 
 /**
@@ -34,7 +34,7 @@ function checkForChild(){
 	else{
 		$.ajax({
 			type: "GET",
-			url: contextPath + "/controller/addChildBoundaryType/isChildPresent",
+			url: "addChildBoundaryType/isChildPresent",
 			data:{'parentId' : id },
 			dataType: "json",
 			success: function (response) {
@@ -56,11 +56,11 @@ function checkForChild(){
 
 $('#boundaryTypeCreateBtn').click(function() {
 	$('#boundaryTypeViewform').attr('method', 'get');
-	$('#boundaryTypeViewform').attr('action', '/egi/controller/create-boundaryType');
+	$('#boundaryTypeViewform').attr('action', 'create-boundaryType');
 })
 
 $('#boundaryTypeUpdateBtn').click(function() {
-	var url = '/egi/controller/boundaryType/update/'+ $('#boundaryTypeId').val();
+	var url = 'boundaryType/update/'+ $('#boundaryTypeId').val();
 	$('#boundaryTypeViewform').attr('method', 'get');
 	$('#boundaryTypeViewform').attr('action', url);
 })
@@ -68,13 +68,13 @@ $('#boundaryTypeUpdateBtn').click(function() {
 $('#buttonCreate').click(function() {
 	var pathVars = "/" + $('#btnHierarchyType').val() + "," + $('#btnBoundaryType').val();
 	$('#boundaryViewForm').attr('method', 'get');
-	$('#boundaryViewForm').attr('action', '/egi/controller/create-boundary'+pathVars);
+	$('#boundaryViewForm').attr('action', 'create-boundary'+pathVars);
 })
 
 $('#buttonEdit').click(function() {
 	var pathVars = "/" + $('#btnHierarchyType').val() + "," + $('#btnBoundaryType').val() + "," + $('#btnBoundary').val();
 	$('#boundaryViewForm').attr('method', 'get');
-	$('#boundaryViewForm').attr('action', '/egi/controller/update-boundary'+pathVars);
+	$('#boundaryViewForm').attr('action', 'update-boundary'+pathVars);
 })
 
 
@@ -84,7 +84,7 @@ function checkForRootNode() {
 	
 	$.ajax({
 		type: "GET",
-		url: "egi/controller/check-is-root",
+		url: "check-is-root",
 		data: { 
 			'hierarchyTypeId' : hierarchyTypeId,
 			'boundaryTypeId' : boundaryTypeId

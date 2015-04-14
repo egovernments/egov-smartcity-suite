@@ -17,7 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/hierarchy-type/create")
 public class CreateHierarchyTypeController {
 
-    private static String REDIRECT_URL_VIEW = "redirect:/controller/hierarchy-type/view/";
+    private static String REDIRECT_URL_VIEW = "redirect:/hierarchy-type/view/";
     
     private HierarchyTypeService hierarchyTypeService;
 

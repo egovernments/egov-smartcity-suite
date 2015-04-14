@@ -48,7 +48,7 @@ public class AddChildBoundaryTypeController {
             BoundaryType boundaryType1 = boundaryTypeService.getBoundaryTypeByParent(parentBoundaryTypeId);
             if(boundaryType1!=null){
                 redirectAttrs.addFlashAttribute("errorMessage", "Child boundary type already exists!");
-                return "redirect:/controller/boundaryType/addChild/"+parentBoundaryTypeId;
+                return "redirect:/boundaryType/addChild/"+parentBoundaryTypeId;
             }
             else{
                 Long childHierarchy = 0l;
@@ -59,7 +59,7 @@ public class AddChildBoundaryTypeController {
                 boundaryType.setHierarchy(childHierarchy);
                 boundaryTypeService.createBoundaryType(boundaryType);
                 redirectAttrs.addFlashAttribute("message", "Child Boundary Type added successfully!");
-                return "redirect:/controller/boundaryType/view/"+boundaryType.getId();
+                return "redirect:/boundaryType/view/"+boundaryType.getId();
             }
     }
 }

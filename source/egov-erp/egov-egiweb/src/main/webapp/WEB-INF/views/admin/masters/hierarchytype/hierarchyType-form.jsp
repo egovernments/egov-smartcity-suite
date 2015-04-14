@@ -12,7 +12,7 @@
 				 <c:if test="${not empty message}">
                     <div id="message" class="success">${message}</div>
                 </c:if>
-		<form:form  method ="post" action="${pageContext.request.contextPath}/controller/hierarchy-type/create" class="form-horizontal form-groups-bordered" modelAttribute="hierarchyType" id="hierarchyTypeForm" >
+		<form:form  method ="post" action="create" class="form-horizontal form-groups-bordered" modelAttribute="hierarchyType" id="hierarchyTypeForm" >
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">

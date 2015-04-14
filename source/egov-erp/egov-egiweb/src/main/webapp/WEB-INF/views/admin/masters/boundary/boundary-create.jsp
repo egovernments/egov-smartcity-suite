@@ -19,7 +19,7 @@
 				<c:set value="" var="actionUrl" />
 			</c:when>
 			<c:otherwise>
-				<c:set value="${pageContext.request.contextPath}/controller/boundary/create" var="actionUrl" />
+				<c:set value="boundary/create" var="actionUrl" />
 			</c:otherwise>
 		</c:choose>
 		<form:form  method="post" action="${actionUrl}" class="form-horizontal form-groups-bordered" commandName="boundary" id="boundaryCreateOrUpdate" >

@@ -197,7 +197,7 @@ public class CommonsServiceImpl implements CommonsService {
 	@Override
 	public String getCurrentInstallmentYear() {
 		try {
-			final Module module = genericHibernateDaoFactory.getModuleDao().getModuleByName(EGovConfig.getProperty("MODULE_NAME", "", "PT"));
+			final Module module = null;//TODO migrate mdouleDao genericHibernateDaoFactory.getModuleDao().getModuleByName(EGovConfig.getProperty("MODULE_NAME", "", "PT"));
 			final Installment instCurr = commonsDAOFactory.getInstallmentDao().getInsatllmentByModuleForGivenDate(module, DateUtils.getFinancialYear().getStartOnDate());
 			final Date insYear = instCurr.getInstallmentYear();
 			return new SimpleDateFormat("yyyy", Locale.ENGLISH).format(insYear);

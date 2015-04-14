@@ -74,15 +74,15 @@
 									<c:choose>
 										<c:when test="${(file.contentType == 'image/jpg') || (file.contentType == 'image/jpeg')|| (file.contentType == 'image/gif')|| 
 										(file.contentType == 'image/png')}">
-										<a href="/egi/controller/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=PGR"
+										<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=PGR"
 												data-gallery> <img class="img-width add-margin"
-												src="/egi/controller/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=PGR" /></a>
+												src="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=PGR" /></a>
 										</c:when>
 										<c:otherwise>
-											<a href="/egi/controller/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=PGR"
+											<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=PGR"
 												data-gallery> <video class="img-width add-margin"controls="controls"
-													src="/egi/controller/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=PGR">
-													<source	src="/egi/controller/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=PGR"
+													src="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=PGR">
+													<source	src="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=PGR"
 														type="video/mp4" /></video></a>
 										</c:otherwise>
 									</c:choose>

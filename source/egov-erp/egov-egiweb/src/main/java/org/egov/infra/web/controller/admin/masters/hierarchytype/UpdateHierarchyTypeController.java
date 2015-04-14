@@ -48,6 +48,6 @@ public class UpdateHierarchyTypeController {
         hierarchyTypeService.updateHierarchyType(hierarchyType);
         additionalAttr.addFlashAttribute("message", STR_MSG_UPDATE_SUCCESS);
 
-        return "redirect:/controller/hierarchy-type/update/" + hierarchyType.getName();
+        return "redirect:/hierarchy-type/update/" + hierarchyType.getName();
     }
 }

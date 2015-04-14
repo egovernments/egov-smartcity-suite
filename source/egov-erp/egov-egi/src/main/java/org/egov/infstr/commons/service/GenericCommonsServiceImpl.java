@@ -21,56 +21,32 @@ public class GenericCommonsServiceImpl implements GenericCommonsService {
 
 	@Override
 	public Module getModuleByID(final Integer id) {
-		try {
-			return (Module) genericHibernateDaoFactory.getModuleDao().findById(id, false);
-		} catch (final Exception e) {
-			throw new EGOVRuntimeException("Exception in searching Module." + e.getMessage(), e);
-		}
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void createModule(final Module module) {
-		try {
-			genericHibernateDaoFactory.getModuleDao().create(module);
-		} catch (final Exception e) {
-			throw new EGOVRuntimeException("Exception in Creating Module." + e.getMessage(), e);
-		}
+	    throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void deleteModule(final Module module) {
-		try {
-			genericHibernateDaoFactory.getModuleDao().delete(module);
-		} catch (final Exception e) {
-			throw new EGOVRuntimeException("Exception in Deleting Module." + e.getMessage(), e);
-		}
+	    throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void updateModule(final Module module) {
-		try {
-			genericHibernateDaoFactory.getModuleDao().update(module);
-		} catch (final Exception e) {
-			throw new EGOVRuntimeException("Exception in Updating Module." + e.getMessage(), e);
-		}
+	    throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Module getModuleByName(final String moduleName) {
-		try {
-			return genericHibernateDaoFactory.getModuleDao().getModuleByName(moduleName);
-		} catch (final Exception e) {
-			throw new EGOVRuntimeException("Exception in searching Module." + e.getMessage(), e);
-		}
+	    throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public List<Module> getAllModules() {
-		try {
-			return genericHibernateDaoFactory.getModuleDao().findAll();
-		} catch (final Exception e) {
-			throw new EGOVRuntimeException("Exception in finding all Modules." + e.getMessage(), e);
-		}
+	    throw new UnsupportedOperationException();
 
 	}
 

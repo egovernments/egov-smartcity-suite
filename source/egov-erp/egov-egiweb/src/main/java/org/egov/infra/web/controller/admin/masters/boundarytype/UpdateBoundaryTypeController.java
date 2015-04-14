@@ -41,6 +41,6 @@ private BoundaryTypeService boundaryTypeService;
 		
 		boundaryTypeService.updateBoundaryType(boundaryType);
 		redirectAttrs.addFlashAttribute("message", "Boundary type updated successfully!");
-		return "redirect:/controller/boundaryType/view/"+boundaryType.getId();
+		return "redirect:/boundaryType/view/"+boundaryType.getId();
 	}
 }

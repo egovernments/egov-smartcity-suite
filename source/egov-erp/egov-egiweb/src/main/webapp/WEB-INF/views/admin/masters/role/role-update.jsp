@@ -12,7 +12,7 @@
 				 <c:if test="${not empty message}">
                     <div id="message" class="success">${message}</div>
                 </c:if>
-		<form:form  mothod ="post" class="form-horizontal form-groups-bordered" modelAttribute="role" id="updaterole" >
+		<form:form  method="post" class="form-horizontal form-groups-bordered" modelAttribute="role" id="updaterole" >
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">

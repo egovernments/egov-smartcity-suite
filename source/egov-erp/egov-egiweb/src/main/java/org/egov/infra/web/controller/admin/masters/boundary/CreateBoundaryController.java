@@ -21,7 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class CreateBoundaryController {
     
-    private static final String REDIRECT_URL_VIEW = "redirect:/controller/view-boundary/";
+    private static final String REDIRECT_URL_VIEW = "redirect:/view-boundary/";
             
     private BoundaryService boundaryService;
     private BoundaryTypeService boundaryTypeService;

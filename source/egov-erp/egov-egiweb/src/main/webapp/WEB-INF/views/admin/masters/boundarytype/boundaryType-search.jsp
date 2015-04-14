@@ -45,7 +45,7 @@
 										class="entypo-star error-msg"></i></small></label>
 								<div class="col-sm-6 add-margin">
 									<egov:ajaxdropdown id="boundaryTypeAjax" fields="['Text','Value']"
-												dropdownId="boundaryTypeSelect" url="controller/boundaryTypes-by-hierarchyType" />
+												dropdownId="boundaryTypeSelect" url="boundaryTypes-by-hierarchyType" />
 		                            <form:select path="name"
 		                                         id="boundaryTypeSelect" cssClass="form-control" cssErrorClass="form-control error" required="required">
 		                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
@@ -77,12 +77,4 @@
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.7/yuiloader/yuiloader-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.7/yahoo-dom-event/yahoo-dom-event.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.7/element/element.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.7/connection/connection-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.7/datasource/datasource-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.7/datatable/datatable.js"></script>
-<script src="<c:url value='/javascript/jquery/helper.js'/>"></script>
-
 <script src="<c:url value='/resources/js/app/boundary.js'/>"></script>
