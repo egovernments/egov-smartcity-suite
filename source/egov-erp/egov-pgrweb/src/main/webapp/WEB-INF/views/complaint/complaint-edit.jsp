@@ -54,7 +54,7 @@
 							<spring:message code="lbl.select" />
 						</form:option>
 						<form:options items="${zone}" itemValue="id"
-							itemLabel="boundaryNameLocal" />
+							itemLabel="localName" />
 					</form:select>
 					<form:errors path="" cssClass="error-msg" />
 				</div>
@@ -67,7 +67,7 @@
 							<spring:message code="lbl.select" />
 						</form:option>
 						<form:options items="${ward}" itemValue="id"
-							itemLabel="boundaryNameLocal" />
+							itemLabel="localName" />
 					</form:select>
 					<form:errors path="location" cssClass="error-msg" />
 				</div>

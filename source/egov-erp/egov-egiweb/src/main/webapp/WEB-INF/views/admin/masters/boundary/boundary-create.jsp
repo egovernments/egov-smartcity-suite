@@ -67,8 +67,8 @@
 							<spring:message code="lbl.boundary.nameLocal"/>
 						</label>
 						<div class="col-sm-6">
-							<form:input path="boundaryNameLocal" id="name" type="text" class="form-control low-width is_valid_alphanumeric" placeholder="" autocomplete="off" />
-                            <form:errors path="boundaryNameLocal" cssClass="add-margin error-msg"/>
+							<form:input path="localName" id="name" type="text" class="form-control low-width is_valid_alphanumeric" placeholder="" autocomplete="off" />
+                            <form:errors path="localName" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
 					<div class="form-group">

@@ -17,7 +17,7 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
-						<strong><spring:message code="lbl.hdr.viewBoundary"/>${boundary.boundaryNameLocal}</strong>
+						<strong><spring:message code="lbl.hdr.viewBoundary"/>${boundary.localName}</strong>
 					</div>
 				</div> 
 				
@@ -52,7 +52,7 @@
 							<spring:message code="lbl.boundary.nameLocal"/>
 						</label>
 						<div class="col-sm-6" style="padding-top: 7px">
-							<strong><c:out value="${boundary.boundaryNameLocal}" default="NA"/></strong>
+							<strong><c:out value="${boundary.localName}" default="NA"/></strong>
 						</div>
 					</div>
 					<div class="form-group">
