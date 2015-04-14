@@ -55,13 +55,111 @@
 							</div>
 							<div class="panel-body custom-form">
 								<form role="form" id="" class="form-horizontal form-groups-bordered">
+									
+									<div class="form-group">
+										<label for="field-1" class="col-sm-3 control-label">Usename</label>
+										<div class="col-sm-6 add-margin">
+											<input type="text" class="form-control" id="" readonly value="mdaslamrahman@gmail.com">
+										</div>
+									</div>
+									
 									<div class="form-group">
 										<label for="field-1" class="col-sm-3 control-label">Name</label>
-										<div class="col-sm-6 add-margin">
-											<input type="text" class="form-control" id="f-name" placeholder="Name" readonly value="Mohammed Aslam">
+										<div class="col-sm-2 col-md-1 add-margin">
+											<select class="form-control" id="salutation">
+												<option>Mr</option>
+												<option>Miss</option>
+												<option>Mrs</option>
+											</select>
+										</div>
+										<div class="col-sm-4 col-md-5 add-margin">
+											<input type="text" class="form-control" id="" placeholder="Name" value="Mohammed Aslam" maxlength="100">
+										</div>
+									</div>
+									
+									<div class="form-group">
+										
+										<label for="field-1" class="col-sm-3 control-label">Gender</label>
+										
+										<div class="col-sm-2 col-xs-12 add-margin">
+											<input type="radio" id="" name="gen" value="male" checked>
+											<label>Male</label>
+										</div>
+										<div class="col-sm-2 col-xs-12 add-margin">
+											<input type="radio" id="" name="gen" value="female">
+											<label>Female</label>
+										</div>
+										<div class="col-sm-2 col-xs-12 add-margin">
+											<input type="radio" id="" name="gen" value="tg">
+											<label>Transgender</label>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label for="field-1" class="col-sm-3 control-label">Mobile</label>
+										
+										<div class="col-sm-2 add-margin">
+											<input type="text" class="form-control" data-inputmask="'mask': '9999999999'" id="" value="7418428088" placeholder="Mobile Number" maxlength="10">
 										</div>
 										
+										<div class="col-sm-1">
+											<label for="field-1" class="control-label">Email</label>
+										</div>
+										
+										<div class="col-sm-3">
+											<input type="text" class="form-control" id="" placeholder="mdaslamrahman@gmail.com" value="mdaslamrahman@gmail.com" maxlength="50">
+										</div>
 									</div>
+									
+									<div class="form-group">
+										<label for="field-1" class="col-sm-3 control-label">Alternate Mobile</label>
+										
+										<div class="col-sm-2 add-margin">
+											<input type="text" class="form-control" id="" placeholder="8903853591" value="8903853591"  data-inputmask="'mask': '9999999999'" maxlength="10">
+										</div>
+										
+										<div class="col-sm-1">
+											<label for="field-1" class="control-label">DOB</label>
+										</div>
+										
+										<div class="col-sm-3 add-margin">
+											<input type="text" class="form-control datepicker" data-inputmask="'mask': 'd/m/y'" id="dob" placeholder="24/01/1992" value="">
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label for="field-1" class="col-sm-3 control-label">PAN</label>
+										
+										<div class="col-sm-2 add-margin">
+											<input type="text" class="form-control" id="" placeholder="BFPPM1381H" value="BFPPM1381H" maxlength="10">
+										</div>
+										
+										<div class="col-sm-1">
+											<label for="field-1" class="control-label">Aadhaar</label>
+										</div>
+										
+										<div class="col-sm-3 add-margin">
+											<input type="text" class="form-control" id="" placeholder="123456789012" value="123456789012" maxlength="12">
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label for="field-1" class="col-sm-3 control-label">Preferred Language</label>
+										<div class="col-sm-6 add-margin">
+											<select class="form-control" id="pre_language">
+												<option>en_IN</option>
+												<option>en_TA</option>
+											</select>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<div class="text-center">
+											<button type="submit" class="btn btn-primary">Save Changes</button>
+											<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">Close</a>
+										</div>
+									</div>
+									
 								</form>
 							</div>
 						</div>
@@ -77,5 +175,10 @@
 	</div>
 	
 </body>
+<link rel="stylesheet" href="../css/bootstrap/bootstrap-datepicker.css">
 <script src="../js/bootstrap/bootstrap.js"></script>
-</html>				
+<script src="../js/jquery/plugins/jquery.inputmask.bundle.min.js"></script>
+<script src="../js/bootstrap/bootstrap-datepicker.js"></script>
+<script src="../js/egov/custom.js"></script>
+<script src="../../js/app/editprofile.js"></script>
+</html>			
