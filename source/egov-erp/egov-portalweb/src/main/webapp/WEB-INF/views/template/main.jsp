@@ -33,10 +33,10 @@
     <body class="page-body">
         <div class="page-container">
             <tiles:insertAttribute name="header"/>
-                <div class="main-content">
+                
                     <tiles:insertAttribute name="body"/>
                     <tiles:insertAttribute name="footer"/>
-                </div>
+                
 
         </div>
         <div class="modal fade loader-class" data-backdrop="static">

@@ -1,37 +1,30 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@taglib  uri="http://www.joda.org/joda/time/tags" prefix="joda"%>
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-		<meta name="description" content="Neon Admin Panel" />
-		<meta name="author" content="" />
-		
-		<title>eGov Urban Portal</title>
+
 		<link rel="icon" href="../egi/resources/global/images/chennai_fav.ico" sizes="32x32">
-		<link rel="stylesheet" href="../egi/resources/global/css/bootstrap/bootstrap.css">
 		<link rel="stylesheet" href="../egi/resources/global/css/font-icons/entypo/css/entypo.css">
 		<link rel="stylesheet" href="../egi/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css">
-		<link rel="stylesheet" href="../egi/resources/global/css/egov/custom.css">
-		<link rel="stylesheet" href="../egi/resources/global/css/egov/header-custom.css">
+		<script type="text/javascript">
+			function onBodyLoad(){
+				var unreadMessageCount = "${unreadMessageCount}";
+				document.getElementById("unreadMessageCount").innerHTML=unreadMessageCount;
+			}
+			function refreshInbox(obj){
+				$.ajax({
+					url: "/portal/citizen/refreshInbox",
+					type : "POST",
+					data: {
+						citizenInboxId : obj
+					},
+					success : function(response) {
+		                document.getElementById("unreadMessageCount").innerHTML=response;
+		            }
+		        });
+			}
+		</script>
+	<body class="page-body" onload="onBodyLoad()">
 		
 		
-		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
-		
-		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-		<!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-		<![endif]-->
-		
-		
-	</head>
-	<body class="page-body">
-		
-		<div class="page-container">
 			
 			<header><!-- set fixed position by adding class "navbar-fixed-top" -->
 				
@@ -41,13 +34,15 @@
 							<a class="navbar-brand" href="javascript:void(0);">
 								<img src="/egi/resources/global/images/chennai_logo.jpg" height="60">
 								<div>
-									<span class="title2 hidden-sm hidden-xs">Chennai Municipal Corporation</span>
+									<span class="title2 hidden-sm hidden-xs">Citizen Dashboard-Chennai Municipal Corporation</span>
 								</div>
 							</a>
 						</div>
 						<div class="nav-menu col-lg-4 col-md-6 col-sm-7 col-xs-12">
 							<ul class="hr-menu text-center">
-								<li class="active"><a class="menu-item " href="javascript:void(0);" data-show-screen="#inbox-template"> <span class="title">Inbox</span><span class="badge custom-badge">${unreadMessageCount}</span></a></li>
+								<li class="active"><a class="menu-item " href="javascript:void(0);" data-show-screen="#inbox-template">
+								 <span class="title">Inbox</span><span id="unreadMessageCount" class="badge custom-badge">
+								 </span></a></li>
 								<span class="separator">|</span>
 								<li><a class="menu-item" href="javascript:void(0);" data-show-screen="#myaccount">My Account</a></li>
 								<span class="separator">|</span>
@@ -116,7 +111,7 @@
 							
 							<section class="col-lg-12">
 								<c:forEach var="inboxMsg" items="${inboxMessages}">
-								<div class="msg" data-toggle="collapse" data-target="#${inboxMsg.id}" aria-expanded="true">
+								<div class="msg" data-toggle="collapse" data-target="#${inboxMsg.id}" aria-expanded="true" onclick="refreshInbox(${inboxMsg.id})">
 									<header>
 										
 										<div class="row">
@@ -188,7 +183,7 @@
 									<span class="hidden-sm hidden-xs">Grievance Redressal</span>
 								</a>
 							</li>
-							<!-- li data-section="newrequest" data-newreq-section="#section-newrequest-2">
+							<li data-section="newrequest" data-newreq-section="#section-newrequest-2">
 								<a href="javascript:void(0);">
 									<div class="text-center"><i class="fa fa-rupee"></i></div>
 									<span class="hidden-sm hidden-xs">Property Tax</span>
@@ -203,7 +198,7 @@
 							<li data-section="newrequest" data-newreq-section="#section-newrequest-4">
 								<a href="javascript:void(0);">
 									<div class="text-center"><i class="fa fa-medkit"></i></div>
-									<span class="hidden-sm hidden-xs">Birth & Death</span>
+									<span class="hidden-sm hidden-xs">Birth &amp; Death</span>
 								</a>
 							</li>
 							<li data-section="newrequest" data-newreq-section="#section-newrequest-5">
@@ -241,7 +236,7 @@
 									<div class="text-center"><i class="fa fa-hand-o-right"></i></div>
 									<span class="hidden-sm hidden-xs">Others</span>
 								</a>
-							</li-->
+							</li>
 						</ul>
 					</nav>
 					<div class="content-wrap">
@@ -353,7 +348,7 @@
 										<i class="fa fa-edit col-sm-1 col-xs-2 unread-msg"></i><a href="javascript:void(0)" class="col-sm-11 col-xs-10">Record Correction</a>
 									</div>
 								</header>
-							</div>
+							</div-->
 						</section>
 						<section id="section-newrequest-5">
 							<div class="visible-xs visible-sm">Trade Licence</div>
@@ -486,14 +481,8 @@
 
 			
 		</div>
-		
-	</div>
-	<script src="../egi/resources/global/js/jquery/jquery.js"></script>
-	<!--script src="../egi/resources/global/js/bootstrap/bootstrap.js"></script-->
-	<script src="../egi/resources/js/app/homepage.js"></script>
-	<script src="../egi/resources/js/app/homepagecitizen.js"></script>
-	<script src="../egi/resources/global/js/egov/custom.js"></script>	
-	
 </body>
+<script src="../egi/resources/js/app/homepage.js"></script>
+<script src="../egi/resources/js/app/homepagecitizen.js"></script>
 
 </html>																																																							
