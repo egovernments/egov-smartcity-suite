@@ -93,7 +93,8 @@ jQuery(document).ready(function($)
 	});
 	
 	$('.freq-ct').click(function(){ 
-		$('#complaintTypeName').typeahead('val',$(this).html()); 
+		$('#complaintTypeName').typeahead('val',$(this).html().trim());
+		$("#complaintTypeName").trigger('blur');
 	});
 	
 	/**
