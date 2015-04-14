@@ -22,8 +22,7 @@ $(document).ready(function () {
 				});
 			}
 			
-			if($(e.target).hasClass('remove-feedback'))
-			{
+			if($(e.target).hasClass('remove-feedback')) {
 				if (confirm("Do you wish to remove this from Favourite")) {
 					$.ajax({
 						type: "GET",
@@ -37,10 +36,11 @@ $(document).ready(function () {
 						}
 					});
 				}
-				}else if($(e.target).hasClass('add-to-favourites')){
-					$('.favourites').modal('show', {backdrop: 'static'});
-					//$(e.target).addClass('added-as-fav');
-				}else{
+			} else if($(e.target).hasClass('add-to-favourites')){
+				$('.favourites').modal('show', {backdrop: 'static'});
+				actionId = $(e.target).parent().parent().attr('id');
+				$(e.target).addClass('added-as-fav');
+			} else{
 				var itemHref = $item.find( 'a:first' ).attr( 'href' );
 				var windowObjectReference = window.open(itemHref, ''+$item.attr('id')+'', 'width=900, height=700, top=300, left=150'); 
 				openedWindows.push(windowObjectReference);
@@ -73,6 +73,18 @@ $(document).ready(function () {
 		}
 	});
 	
+	var actionId='';
+	$('button.add-fav').click(function(){
+		$.ajax({
+			type: "GET",
+			url: "home/add-favourite",
+			data:{'actionId' : actionId,'name':'Test','contextRoot':'egi'}
+		}).done(function(value) {
+			//TODO 
+		});
+	});
+	
+	
 	$(window).on('resize', function () {
 		setmenuheight();
 	}).trigger('resize');
@@ -85,32 +97,32 @@ $(document).ready(function () {
 	}
 	
 	$("a.open-popup").click(function(e) {
-	// to open in good size for user
-	var width = window.innerWidth /0.66 ; 
-	// define the height in 
-	var height = width * window.innerWidth / window.innerHeight; 
-	// Ratio the hight to the width as the user screen ratio
-	var windowObjectReference = window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=150'); 
-	openedWindows.push(windowObjectReference);
-	return false;
+		// to open in good size for user
+		var width = window.innerWidth /0.66 ; 
+		// define the height in 
+		var height = width * window.innerWidth / window.innerHeight; 
+		// Ratio the hight to the width as the user screen ratio
+		var windowObjectReference = window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=150'); 
+		openedWindows.push(windowObjectReference);
+		return false;
 	});
 	
 	$(document).on('click', 'a.open-popup', function() {
-	// to open in good size for user
-	var width = window.innerWidth /0.66 ; 
-	// define the height in 
-	var height = width * window.innerWidth / window.innerHeight; 
-	// Ratio the hight to the width as the user screen ratio
-	var windowObjectReference = window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=150'); 
-	openedWindows.push(windowObjectReference);
-	return false;
+		// to open in good size for user
+		var width = window.innerWidth /0.66 ; 
+		// define the height in 
+		var height = width * window.innerWidth / window.innerHeight; 
+		// Ratio the hight to the width as the user screen ratio
+		var windowObjectReference = window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=150'); 
+		openedWindows.push(windowObjectReference);
+		return false;
 	});
 	
 	$('.signout').click(function(){
-	$.each( openedWindows, function( i, val ) {
-	var window = val;
-	window.close();
-	});
+		$.each( openedWindows, function( i, val ) {
+			var window = val;
+			window.close();
+		});
 	});
 	
 	});	

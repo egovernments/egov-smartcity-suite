@@ -104,21 +104,20 @@ public class HomeController {
         menu.setTitle("Hi, " + user.getName());
         menu.setIcon("fa fa-reorder");
         menu.setItems(new LinkedList<Menu>());
-        createApplicationMenu(modules, user, menu);
+        createApplicationMenu(modules, favourites, user, menu);
         createSelfServiceMenu(selfServices, menu);
         createFavouritesMenu(favourites, menu);
 
         return "[" + new GsonBuilder().create().toJson(menu) + "]";
     }
 
-    private void createApplicationMenu(final List<Module> modules, final User user, final Menu menu) {
+    private void createApplicationMenu(final List<Module> modules, final List<Module> favourites, final User user, final Menu menu) {
         final Menu applicationMenu = createSubmenu("apps", "Applications", "Applications", "#", "fa fa-th floatLeft",
                 menu);
         modules.stream().forEach(
                 module -> {
                     createSubmenuRoot(
-                            module,
-                            user,
+                            module, favourites, user,
                             createSubmenu(String.valueOf(module.getId()), module.getModuleDescription(),
                                     module.getModuleDescription(), "#", "", applicationMenu));
                 });
@@ -149,22 +148,22 @@ public class HomeController {
         });
     }
 
-    private void createSubmenuRoot(final Module parentModule, final User user, final Menu submenu) {
+    private void createSubmenuRoot(final Module parentModule, final List<Module> favourites, final User user, final Menu submenu) {
         final List<Module> submodules = moduleDAO.getApplicationModuleByParentId(parentModule.getId(), user.getId());
-        submodules.stream().forEach(submodule -> createApplicationLink(submodule, user, submenu));
+        submodules.stream().forEach(submodule -> createApplicationLink(submodule, favourites, user, submenu));
     }
 
-    private void createApplicationLink(final Module submodule, final User user, final Menu parent) {
+    private void createApplicationLink(final Module submodule, final List<Module> favourites, final User user, final Menu parent) {
         if (submodule.getIsEnabled()) {
             final Menu appLink = new Menu();
             appLink.setId(submodule.getId().toString());
-            appLink.setIcon("fa fa-star floatLeft");
+            appLink.setIcon("fa fa-star floatLeft "+(favourites.contains(submodule) ? "added-as-fav" : "add-to-favourites"));
             appLink.setName(submodule.getModuleName());
             appLink.setLink("/" + submodule.getContextRoot() + submodule.getBaseUrl());
             parent.getItems().add(appLink);
         } else
             createSubmenuRoot(
-                    submodule,
+                    submodule, favourites, 
                     user,
                     createSubmenu(String.valueOf(submodule.getId()), submodule.getModuleName(),
                             submodule.getModuleName(), "#", "", parent));

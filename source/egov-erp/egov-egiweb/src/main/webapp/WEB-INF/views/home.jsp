@@ -11,17 +11,17 @@
 		
 		<title>eGov Urban Portal</title>
 		
-		<link rel="icon" href="../resources/global/images/chennai_fav.ico" sizes="32x32">
-		<link rel="stylesheet" href="../resources/global/css/bootstrap/bootstrap.css">
-		<link rel="stylesheet" href="../resources/global/css/font-icons/entypo/css/entypo.css">
-		<link rel="stylesheet" href="../resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css">
-		<link rel="stylesheet" href="../resources/global/css/multi-level-menu/jquery.multilevelpushmenu.css"> 
-		<link rel="stylesheet" href="../resources/global/css/egov/custom.css">
-		<link rel="stylesheet" href="../resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css">
-		<script src="../resources/global/js/jquery/jquery.js"></script>
-		<script src="../resources/global/js/bootstrap/bootstrap.js"></script>
-		<script src="../resources/global/js/multi-level-menu/jquery.multilevelpushmenu.js"></script>
-		<script src="../resources/js/app/homepage.js"></script>
+		<link rel="icon" href="<c:url value='/resources/global/images/chennai_fav.ico'/>" sizes="32x32">
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css'/>">
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css'/>">
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/multi-level-menu/jquery.multilevelpushmenu.css'/>"> 
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css'/>">
+		<link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css'/>">
+		<script src="<c:url value='/resources/global/js/jquery/jquery.js'/>"></script>
+		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js'/>"></script>
+		<script src="<c:url value='/resources/global/js/multi-level-menu/jquery.multilevelpushmenu.js'/>"></script>
+		<script src="<c:url value='/resources/js/app/homepage.js'/>"></script>
 		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -78,7 +78,7 @@
 							</a>
 							<ul>
 								<li>
-									<a href="javascript:void(0);">
+									<a href="/profile/edit" class="open-popup">
 										<i class="fa fa-user"></i>
 										<span class="title">Edit Profile</span>
 									</a>
@@ -122,7 +122,7 @@
 						
 						<li class="dropdown">
 							
-							<a href="javascript:void(0);" data-strwindname="help" class="tooltip-secondary open-popup" data-toggle="tooltip" title="Help">
+							<a href="/egi/WEB-INF/views/admin/common/help.html" data-strwindname="help" class="tooltip-secondary open-popup" data-toggle="tooltip" title="Help">
 								<i class="entypo-help"></i>
 							</a>
 						</li>
@@ -274,6 +274,38 @@
 				</div>
 			</div>
 		</div>
+		
+		<div class="modal fade favourites" data-backdrop="static">
+			<div class="modal-dialog">
+				<div class="modal-content">
+				
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title">Favourites</h4>
+					</div>
+					
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-md-4">
+								<label class="control-label">Favourites Name</label>
+							</div>
+							<div class="col-md-8">
+								
+								<div class="form-group">
+									<input type="text" class="form-control" id="fav-name" placeholder="">
+								</div>	
+							</div>
+						</div>
+					</div>
+					
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary add-fav">Add Favourites</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					</div>
+					
+				</div>
+			</div>
+		</div>
 		<!-- Modal 6 (Long Modal) -->
 		<div class="modal fade loader-class" data-backdrop="static">
 			<div class="modal-dialog">
@@ -300,13 +332,13 @@
 		<script>
 		var menuItems = ${menu};
 		</script>
-		<script src="../resources/global/js/bootstrap/bootstrap.js"></script>
-		<script src="../resources/js/app/custom-menu.js"></script>
-		<script src="../resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js"></script>
-		<script src="../resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js"></script>
-		<script src="../resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js"></script>
-		<script src="../resources/js/app/homepageofficial.js"></script>
-		<script src="../resources/global/js/egov/custom.js"></script>
+		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js'/>"></script>
+		<script src="<c:url value='/resources/js/app/custom-menu.js'/>"></script>
+		<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'/>"></script>
+		<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js'/>"></script>
+		<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js'/>"></script>
+		<script src="<c:url value='/resources/js/app/homepageofficial.js'/>"></script>
+		<script src="<c:url value='/resources/global/js/egov/custom.js'/>"></script>
 		
 	</body>
 </html>																						
