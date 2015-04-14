@@ -1,7 +1,7 @@
 $(document).ready(function () {
 	
 	var openedWindows = [];
-	
+	var addfav_li;
 	var menuheight = ($( window ).height() - 63);
 	var ulheight =(menuheight -93);
 	
@@ -22,8 +22,9 @@ $(document).ready(function () {
 				});
 			}
 			
-			if($(e.target).hasClass('remove-feedback')) {
-				if (confirm("Do you wish to remove this from Favourite")) {
+			if($(e.target).hasClass('remove-feedback'))
+			{
+				if (confirm("Do you wish to remove this from Favourite ?")) {
 					$.ajax({
 						type: "GET",
 						url: "home/remove-favourite",
@@ -36,13 +37,19 @@ $(document).ready(function () {
 						}
 					});
 				}
-			} else if($(e.target).hasClass('add-to-favourites')){
+				}else if($(e.target).hasClass('added-as-fav')){
+				if (confirm("Do you wish to remove this from Favourite ?")) {
+					$(e.target).removeClass('added-as-fav');
+				}
+				}else if($(e.target).hasClass('add-to-favourites')){
 				$('.favourites').modal('show', {backdrop: 'static'});
-				actionId = $(e.target).parent().parent().attr('id');
-				$(e.target).addClass('added-as-fav');
-			} else{
+				console.log($item.attr('id')+'------'+$item.find( 'a:first' ).attr( 'href' )+'----'+$(e.target).parent().text());
+				addfav_li = $item.attr('id');
+				$('#fav-name').val($(e.target).parent().text());
+				//$(e.target).addClass('added-as-fav');
+				}else{
 				var itemHref = $item.find( 'a:first' ).attr( 'href' );
-				var windowObjectReference = window.open(itemHref, ''+$item.attr('id')+'', 'width=900, height=700, top=300, left=150'); 
+				var windowObjectReference = window.open(itemHref, ''+$item.attr('id')+'', 'width=900, height=700, top=300, left=150,scrollbars=yes'); 
 				openedWindows.push(windowObjectReference);
 			}
 		},
@@ -74,7 +81,20 @@ $(document).ready(function () {
 	});
 	
 	var actionId='';
-	$('button.add-fav').click(function(){
+	
+	$(window).on('resize', function () {
+		setmenuheight();
+	}).trigger('resize');
+	
+	function setmenuheight(){
+		menuheight = ($( window ).height() - 63);
+		$('#menu').height(''+menuheight+'px');
+		$('#menu_multilevelpushmenu').height(''+menuheight+'px');
+		$('#menu, #menu_multilevelpushmenu').css('min-height', ''+menuheight+'px');
+	}
+	
+	$('.add-fav').click(function(){
+		$('.favourites').modal('hide');
 		$.ajax({
 			type: "GET",
 			url: "home/add-favourite",
@@ -82,19 +102,8 @@ $(document).ready(function () {
 		}).done(function(value) {
 			//TODO 
 		});
+		$('#'+addfav_li+' a i').addClass('added-as-fav');
 	});
-	
-	
-	$(window).on('resize', function () {
-		setmenuheight();
-	}).trigger('resize');
-	
-	function setmenuheight(){
-	menuheight = ($( window ).height() - 63);
-	$('#menu').height(''+menuheight+'px');
-	$('#menu_multilevelpushmenu').height(''+menuheight+'px');
-	$('#menu, #menu_multilevelpushmenu').css('min-height', ''+menuheight+'px');
-	}
 	
 	$("a.open-popup").click(function(e) {
 		// to open in good size for user
@@ -102,7 +111,7 @@ $(document).ready(function () {
 		// define the height in 
 		var height = width * window.innerWidth / window.innerHeight; 
 		// Ratio the hight to the width as the user screen ratio
-		var windowObjectReference = window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=150'); 
+		var windowObjectReference = window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=150,scrollbars=yes'); 
 		openedWindows.push(windowObjectReference);
 		return false;
 	});
@@ -113,7 +122,7 @@ $(document).ready(function () {
 		// define the height in 
 		var height = width * window.innerWidth / window.innerHeight; 
 		// Ratio the hight to the width as the user screen ratio
-		var windowObjectReference = window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=150'); 
+		var windowObjectReference = window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=150,scrollbars=yes'); 
 		openedWindows.push(windowObjectReference);
 		return false;
 	});
@@ -125,4 +134,4 @@ $(document).ready(function () {
 		});
 	});
 	
-	});	
+});	

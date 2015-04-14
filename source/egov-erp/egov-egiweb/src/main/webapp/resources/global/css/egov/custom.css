@@ -106,10 +106,7 @@ a:focus{
 	padding: 20px;
 	background: #ffffff;
 	width: 100%;
-	min-height: 100%;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
+	/* min-height: 100%; */
 	padding-bottom:70px;
 }
 
@@ -1855,4 +1852,8 @@ ul li a span{
 
 .added-as-fav{
 	color:yellow;
+}
+
+.view-content{
+	font-family:semibold;
 }
