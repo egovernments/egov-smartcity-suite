@@ -9,19 +9,23 @@ import static org.egov.pgr.entity.enums.ComplaintStatus.REGISTERED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.REJECTED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.WITHDRAWN;
 import static org.egov.pgr.utils.constants.CommonConstants.DASH_DELIM;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+
+import org.egov.commons.service.CommonsService;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.eis.service.EisCommonService;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.CityWebsite;
+
+import org.egov.infra.admin.master.entity.CityWebsite;
+
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.entity.enums.UserType;
 import org.egov.infra.admin.master.repository.CityWebsiteRepository;
@@ -37,6 +41,7 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.services.EISServeable;
+import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.enums.ComplaintStatus;
 import org.egov.pgr.repository.ComplaintRepository;
@@ -67,17 +72,32 @@ public class ComplaintService {
     @Autowired
     private ComplaintRouterService complaintRouterService;
 
-    @Autowired
-    private EISServeable eisService;
+
+   
 
     @Autowired
     private EisCommonService eisCommonService;
+    @Autowired
+    private EISServeable eisService;
+
 
     @Autowired
     private CitizenInboxService citizenInboxService;
     
     @Autowired
     private CityWebsiteRepository cityWebsiteRepository;
+
+    
+    @Autowired
+	private CommonsService commonsService;
+	
+    @Autowired
+    private BoundaryDAO boundaryDAO;
+
+	
+   
+    
+
     private static final Logger LOG = LoggerFactory.getLogger(ComplaintService.class);
 
     @Transactional
@@ -100,10 +120,22 @@ public class ComplaintService {
 
         complaint.setAssignee(assignee);
         complaint.setEscalationDate(new DateTime());
+        if(complaint.getLocation()==null && complaint.getLat()!=0.0 && complaint.getLng()!=0.0)
+		{
+			Long bndryId=commonsService.getBndryIdFromShapefile(complaint.getLat(),  complaint.getLng());
+			if(bndryId!=null)
+			{
+				Boundary location=boundaryDAO.getAllBoundaryById(bndryId);
+				complaint.setLocation(location);
+			}
+			
+			
+		}
         Complaint savedComplaint = complaintRepository.save(complaint);
         pushMessage(savedComplaint);
         return savedComplaint;
     }
+
 
     @Transactional
     @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)

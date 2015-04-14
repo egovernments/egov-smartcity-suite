@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.io.File;
 import java.io.IOException;
+
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bank;
@@ -76,7 +77,12 @@ import org.geotools.data.DataStoreFinder;
 import org.geotools.data.FeatureSource;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+
+import org.opengis.feature.type.FeatureType;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -961,51 +967,48 @@ public class CommonsServiceImpl implements CommonsService {
 	public Functionary getFunctionaryByName(final String name) {
 		return commonsDAOFactory.getFunctionaryDAO().getFunctionaryByName(name);
 	}
-        @Override
-        public Long getBndryIdFromShapefile(Double latitude,Double longitude) {
-		try {
-			if(latitude!=null && longitude!=null){
-				URL shapefile =Thread.currentThread().getContextClassLoader().getResource("shapefiles/coc_wards.shp");
-				File file = new File(shapefile.toURI());
-				Map map = new HashMap();
-				map.put( "url", file.toURL() );
-				DataStore dataStore = DataStoreFinder.getDataStore(map);
-				String typeName = dataStore.getTypeNames()[0];
-				FeatureSource source = dataStore.getFeatureSource(typeName);
-				
-				FeatureCollection collection = source.getFeatures();
-				Iterator iterator =  collection.iterator();
-				GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory( null );
-				Coordinate coord = new Coordinate( longitude,latitude);
-				Point point = geometryFactory.createPoint( coord );
-				try {
-					while( iterator.hasNext() ){
-						SimpleFeature  feature = (SimpleFeature) iterator.next();
-						Geometry geom = (Geometry)feature.getDefaultGeometry();
+	 @Override
+	    public Long getBndryIdFromShapefile(Double latitude,Double longitude) {
+			try {
+				if(latitude!=null && longitude!=null){
+					URL shapefile =Thread.currentThread().getContextClassLoader().getResource("shapefiles/coc_wards.shp");
+					Map<String,URL> map = new HashMap<String,URL>();
+					map.put( "url", shapefile );
+					DataStore dataStore = DataStoreFinder.getDataStore(map);
+					String typeName = dataStore.getTypeNames()[0];
+					FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(typeName);
+					FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures();
+					Iterator<SimpleFeature> iterator =  collection.iterator();
+					GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory( null );
+					Coordinate coord = new Coordinate( longitude,latitude);
+					Point point = geometryFactory.createPoint( coord );
+					try {
+						while( iterator.hasNext() ){
+							SimpleFeature  feature = (SimpleFeature) iterator.next();
+							Geometry geom = (Geometry)feature.getDefaultGeometry();
 
-						if(geom.contains(point))
-						{
-							LOG.debug("The selected point lies in (bndryid): -----"+feature.getAttribute("wardid") );
-					 		return  (Long) feature.getAttribute("wardid");
+							if(geom.contains(point))
+							{
+								LOG.info("The selected point lies in (bndryid): -----"+feature.getAttribute("wardid") );
+						 		return  (Long) feature.getAttribute("wardid");
+							}
 						}
+						return null;
 					}
+					finally {
+						collection.close( iterator );
+					}
+
+
+				}else
 					return null;
-				}
-				finally {
-					collection.close( iterator );
-				}
-
-
-			}else
-				return null;
-			} catch (IOException e) {
-				LOG.error(e.getMessage());
-				throw new EGOVRuntimeException("Error occurred while getting wardid from shapefile", e);
-				}catch(Exception e)
-				{
+				} catch (IOException e) {
 					LOG.error(e.getMessage());
 					throw new EGOVRuntimeException("Error occurred while getting wardid from shapefile", e);
-				}
-	}
-	
+					}catch(Exception e)
+					{
+						LOG.error(e.getMessage());
+						throw new EGOVRuntimeException("Error occurred while getting wardid from shapefile", e);
+					}
+		}
 }
