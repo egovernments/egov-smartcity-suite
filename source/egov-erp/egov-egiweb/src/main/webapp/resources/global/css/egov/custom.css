@@ -43,7 +43,8 @@ a:focus{
 	position:relative;
 	min-height:100%;
 	width: 100%;
-	display: table;
+	background:#fff;
+	/* display: table; */
 	table-layout: fixed;
 }
 
@@ -101,7 +102,8 @@ a:focus{
 
 .page-container .main-content {
 	position: relative;
-	display: table-cell;
+	/* display: table-cell; */
+	display:block;
 	vertical-align: top;
 	padding: 20px;
 	background: #ffffff;
@@ -1375,8 +1377,7 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 	position: relative;
 }
 .search-box input {
-	padding-left:35px; 
-	border-radius:20px;
+	padding-left:35px;
 }
 .search-box i {
 	position: absolute;
@@ -1695,7 +1696,8 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 }
 
 .table-row{
-	display:table-row;
+	/* display:table-row; */
+	display:block;
 	width:100%;
 }
 
@@ -1856,4 +1858,9 @@ ul li a span{
 
 .view-content{
 	font-family:semibold;
+}
+
+#sortby_drop
+{
+	float:right;
 }

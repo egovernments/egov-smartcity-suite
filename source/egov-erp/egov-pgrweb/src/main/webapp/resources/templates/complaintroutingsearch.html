@@ -61,7 +61,6 @@
 			</header>
 			
 			<div class="main-content">
-				<div class="main-before-footer">
 					<div class="row" id="page-content">
 						<div class="col-md-12">
 							
@@ -82,30 +81,32 @@
 											<label class="col-sm-3 control-label">Boundary Type</label>
 											
 											<div class="col-sm-6 add-margin">
-											<select name="com_boun_type" id="com_boun_type" class="form-control">
-												<option value="">Select</option>
-												<option value="1">North Zone</option>
-												<option value="2">South Zone</option>
-											</select>
+												<select name="com_boun_type" id="com_boun_type" class="form-control">
+													<option value="">Select</option>
+													<option value="1">North Zone</option>
+													<option value="2">South Zone</option>
+												</select>
+											</div>
+											
 										</div>
 										
-									</div>
-									
-									<div class="form-group">
-										<label class="col-sm-3 control-label">Boundary</label>
-										<div class="col-sm-6">
-											<input id="com_boundry" type="text" class="form-control typeahead" placeholder="" autocomplete="off" />
+										<div class="form-group">
+											<label class="col-sm-3 control-label">Boundary</label>
+											<div class="col-sm-6">
+												<input id="com_boundry" type="text" class="form-control typeahead" placeholder="" autocomplete="off" />
+											</div>
 										</div>
-									</div>
-									
-									<div class="form-group">
-										<div class="text-center">
-											<button type="submit" class="btn btn-primary">Search</button>
-											<a href="javascript:void(0);" class="btn btn-default">Close</a>
+										
+										<div class="form-group">
+											<div class="text-center">
+												<button type="submit" class="btn btn-primary">Search</button>
+												<a href="javascript:void(0);" class="btn btn-default">Close</a>
+											</div>
 										</div>
-									</div>
+										
+									</form>
 									
-								</form>
+								</div>
 								
 							</div>
 							
@@ -113,167 +114,164 @@
 						
 					</div>
 					
-				</div>
-				
-				<strong class="head-font">The search result is</strong>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 add-margin">
-						<a href="complaintrouting.html" class="btn btn-primary btn-sm" role="button"><span class="glyphicon glyphicon-plus"></span> New</a>
-						<a href="complaintrouting.html" class="btn btn-primary btn-sm" role="button"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
-						<a href="javascript:void(0);" class="btn btn-primary btn-sm" role="button"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+					<strong class="head-font">The search result is</strong>
+					<div class="row">
+						<div class="col-md-12 col-xs-12 add-margin">
+							<a href="complaintrouting.html" class="btn btn-primary btn-sm" role="button"><span class="glyphicon glyphicon-plus"></span> New</a>
+							<a href="complaintrouting.html" class="btn btn-primary btn-sm" role="button"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
+							<a href="javascript:void(0);" class="btn btn-primary btn-sm" role="button"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+						</div>
 					</div>
-				</div>
-				<table class="table table-bordered datatable dt-responsive" id="com_routing_search">
-					<thead>
-						<tr class="replace-inputs">
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-						</tr>
-						<tr>
-							<th>Complaint Type</th>
-							<th>Boundary Type</th>
-							<th>Boundary</th>
-							<th>Position</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr class="odd gradeX">
-							<td>Trident</td>
-							<td>Internet Explorer 4.0</td>
-							<td>Win 95+</td>
-							<td class="center">4</td>
-						</tr>
-						<tr class="even gradeC">
-							<td>Trident</td>
-							<td>Internet Explorer 5.0</td>
-							<td>Win 95+</td>
-							<td class="center">5</td>
-						</tr>
-						<tr class="odd gradeA">
-							<td>Trident</td>
-							<td>Internet Explorer 5.5</td>
-							<td>Win 95+</td>
-							<td class="center">5.5</td>
-						</tr>
-						<tr class="even gradeA">
-							<td>Trident</td>
-							<td>Internet Explorer 6</td>
-							<td>Win 98+</td>
-							<td class="center">6</td>
-						</tr>
-						<tr class="odd gradeA">
-							<td>Trident</td>
-							<td>Internet Explorer 7</td>
-							<td>Win XP SP2+</td>
-							<td class="center">7</td>
-						</tr>
-						<tr class="even gradeA">
-							<td>Trident</td>
-							<td>AOL browser (AOL desktop)</td>
-							<td>Win XP</td>
-							<td class="center">6</td>
-						</tr>
-						<tr class="gradeA">
-							<td>Gecko</td>
-							<td>Firefox 1.0</td>
-							<td>Win 98+ / OSX.2+</td>
-							<td class="center">1.7</td>
-						</tr>
-						<tr class="gradeA">
-							<td>Gecko</td>
-							<td>Firefox 1.5</td>
-							<td>Win 98+ / OSX.2+</td>
-							<td class="center">1.8</td>
-						</tr>
-						<tr class="gradeA">
-							<td>Gecko</td>
-							<td>Firefox 2.0</td>
-							<td>Win 98+ / OSX.2+</td>
-							<td class="center">1.8</td>
-						</tr>
-						<tr class="gradeA">
-							<td>Gecko</td>
-							<td>Firefox 3.0</td>
-							<td>Win 2k+ / OSX.3+</td>
-							<td class="center">1.9</td>
-						</tr>
-						<tr class="gradeA">
-							<td>Gecko</td>
-							<td>Camino 1.0</td>
-							<td>OSX.2+</td>
-							<td class="center">1.8</td>
-						</tr>
-						<tr class="gradeA">
-							<td>Gecko</td>
-							<td>Camino 1.5</td>
-							<td>OSX.3+</td>
-							<td class="center">1.8</td>
-						</tr>
-						<tr class="gradeA">
-							<td>Gecko</td>
-							<td>Netscape 7.2</td>
-							<td>Win 95+ / Mac OS 8.6-9.2</td>
-							<td class="center">1.7</td>
-						</tr>
-						<tr class="gradeA">
-							<td>Gecko</td>
-							<td>Netscape Browser 8</td>
-							<td>Win 98SE+</td>
-							<td class="center">1.7</td>
-						</tr>
-						<tr class="gradeA">
-							<td>Gecko</td>
-							<td>Netscape Navigator 9</td>
-							<td>Win 98+ / OSX.2+</td>
-							<td class="center">1.8</td>
-						</tr>
-						<tr class="gradeA">
-							<td>Gecko</td>
-							<td>Mozilla 1.0</td>
-							<td>Win 95+ / OSX.1+</td>
-							<td class="center">1</td>
-						</tr>
-						<tr class="gradeA">
-							<td>Gecko</td>
-							<td>Mozilla 1.1</td>
-							<td>Win 95+ / OSX.1+</td>
-							<td class="center">1.1</td>
-						</tr>
-						<tr class="gradeA">
-							<td>Gecko</td>
-							<td>Mozilla 1.2</td>
-							<td>Win 95+ / OSX.1+</td>
-							<td class="center">1.2</td>
-						</tr>
-						<tr class="gradeA">
-							<td>Gecko</td>
-							<td>Mozilla 1.3</td>
-							<td>Win 95+ / OSX.1+</td>
-							<td class="center">1.3</td>
-						</tr>
-					</tbody>
-				</table>
+					<table class="table table-bordered datatable dt-responsive" id="com_routing_search">
+						<thead>
+							<tr class="replace-inputs">
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
+							</tr>
+							<tr>
+								<th>Complaint Type</th>
+								<th>Boundary Type</th>
+								<th>Boundary</th>
+								<th>Position</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="odd gradeX">
+								<td>Trident</td>
+								<td>Internet Explorer 4.0</td>
+								<td>Win 95+</td>
+								<td class="center">4</td>
+							</tr>
+							<tr class="even gradeC">
+								<td>Trident</td>
+								<td>Internet Explorer 5.0</td>
+								<td>Win 95+</td>
+								<td class="center">5</td>
+							</tr>
+							<tr class="odd gradeA">
+								<td>Trident</td>
+								<td>Internet Explorer 5.5</td>
+								<td>Win 95+</td>
+								<td class="center">5.5</td>
+							</tr>
+							<tr class="even gradeA">
+								<td>Trident</td>
+								<td>Internet Explorer 6</td>
+								<td>Win 98+</td>
+								<td class="center">6</td>
+							</tr>
+							<tr class="odd gradeA">
+								<td>Trident</td>
+								<td>Internet Explorer 7</td>
+								<td>Win XP SP2+</td>
+								<td class="center">7</td>
+							</tr>
+							<tr class="even gradeA">
+								<td>Trident</td>
+								<td>AOL browser (AOL desktop)</td>
+								<td>Win XP</td>
+								<td class="center">6</td>
+							</tr>
+							<tr class="gradeA">
+								<td>Gecko</td>
+								<td>Firefox 1.0</td>
+								<td>Win 98+ / OSX.2+</td>
+								<td class="center">1.7</td>
+							</tr>
+							<tr class="gradeA">
+								<td>Gecko</td>
+								<td>Firefox 1.5</td>
+								<td>Win 98+ / OSX.2+</td>
+								<td class="center">1.8</td>
+							</tr>
+							<tr class="gradeA">
+								<td>Gecko</td>
+								<td>Firefox 2.0</td>
+								<td>Win 98+ / OSX.2+</td>
+								<td class="center">1.8</td>
+							</tr>
+							<tr class="gradeA">
+								<td>Gecko</td>
+								<td>Firefox 3.0</td>
+								<td>Win 2k+ / OSX.3+</td>
+								<td class="center">1.9</td>
+							</tr>
+							<tr class="gradeA">
+								<td>Gecko</td>
+								<td>Camino 1.0</td>
+								<td>OSX.2+</td>
+								<td class="center">1.8</td>
+							</tr>
+							<tr class="gradeA">
+								<td>Gecko</td>
+								<td>Camino 1.5</td>
+								<td>OSX.3+</td>
+								<td class="center">1.8</td>
+							</tr>
+							<tr class="gradeA">
+								<td>Gecko</td>
+								<td>Netscape 7.2</td>
+								<td>Win 95+ / Mac OS 8.6-9.2</td>
+								<td class="center">1.7</td>
+							</tr>
+							<tr class="gradeA">
+								<td>Gecko</td>
+								<td>Netscape Browser 8</td>
+								<td>Win 98SE+</td>
+								<td class="center">1.7</td>
+							</tr>
+							<tr class="gradeA">
+								<td>Gecko</td>
+								<td>Netscape Navigator 9</td>
+								<td>Win 98+ / OSX.2+</td>
+								<td class="center">1.8</td>
+							</tr>
+							<tr class="gradeA">
+								<td>Gecko</td>
+								<td>Mozilla 1.0</td>
+								<td>Win 95+ / OSX.1+</td>
+								<td class="center">1</td>
+							</tr>
+							<tr class="gradeA">
+								<td>Gecko</td>
+								<td>Mozilla 1.1</td>
+								<td>Win 95+ / OSX.1+</td>
+								<td class="center">1.1</td>
+							</tr>
+							<tr class="gradeA">
+								<td>Gecko</td>
+								<td>Mozilla 1.2</td>
+								<td>Win 95+ / OSX.1+</td>
+								<td class="center">1.2</td>
+							</tr>
+							<tr class="gradeA">
+								<td>Gecko</td>
+								<td>Mozilla 1.3</td>
+								<td>Win 95+ / OSX.1+</td>
+								<td class="center">1.3</td>
+							</tr>
+						</tbody>
+					</table>
+					
 				
 			</div>
 			
 			<footer class="main">
-				
-				Powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
-				
-			</footer>
+					
+					Powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
+					
+				</footer>
 			
 		</div>
 		
-	</div>
-	
-	<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css">
-	
-	
-	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap.js"></script>
-	
-	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js"></script>
+		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css">
+		
+		
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap.js"></script>
+		
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js"></script>
 	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js"></script>
 	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js"></script>
 	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/datatables/TableTools.min.js"></script>
@@ -285,4 +283,4 @@
 	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/jquery.validate.min.js"></script>
 	
 	</body>
-	</html>	
+	</html>		

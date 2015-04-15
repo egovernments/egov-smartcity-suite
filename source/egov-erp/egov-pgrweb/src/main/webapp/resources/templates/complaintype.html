@@ -60,23 +60,22 @@
 			</header>
 			
 			<div class="main-content">
-				<div class="main-before-footer">
-					<div class="row" id="page-content">
-						<div class="col-md-12">
+				<div class="row" id="page-content">
+					<div class="col-md-12">
+						
+						<div class="panel" data-collapsed="0">
 							
-							<div class="panel" data-collapsed="0">
+							<div class="panel-body">
 								
-								<div class="panel-body">
+								<form action="javascript:void(0);" id="addcomplaint" method="post" class="form-horizontal form-groups-bordered">
 									
-									<form action="javascript:void(0);" id="addcomplaint" method="post" class="form-horizontal form-groups-bordered">
+									<div class="form-group">
+										<label for="field-1" class="col-sm-3 control-label">Complaint Type</label>
 										
-										<div class="form-group">
-											<label for="field-1" class="col-sm-3 control-label">Complaint Type</label>
-											
-											<div class="col-sm-6 add-margin">
-												<input type="text" class="form-control is_valid_alphabet" id="comp_type_name" placeholder="" name="comp_type_name" >
-											</div>
-											
+										<div class="col-sm-6 add-margin">
+											<input type="text" class="form-control is_valid_alphabet" id="comp_type_name" placeholder="" name="comp_type_name" >
+										</div>
+										
 									</div>
 									
 									<div class="form-group">
@@ -122,31 +121,28 @@
 										</div>
 									</div>
 									
-								</form>
+									</form>
+									
+								</div>
 								
 							</div>
 							
 						</div>
-						
 					</div>
+					
 				</div>
+				
+				<footer class="main">
+					
+					Powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
+					
+				</footer>
+				
 			</div>
 			
-			<footer class="main">
-				
-				Powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
-				
-			</footer>
+			<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap.js"></script>
+			<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/jquery.validate.min.js"></script>
+			<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/egov/custom.js"></script>
 			
-		</div>
-		
-		
-		
-	</div>
-	
-	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap.js"></script>
-	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/plugins/jquery.validate.min.js"></script>
-	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/egov/custom.js"></script>
-	
-</body>
-</html>
+		</body>
+	</html>										
