@@ -84,10 +84,10 @@ $(document).ready(function(){
 			if(fileid == 'file1')
 			{
 				EXIF.getData(e.target.files[0], function() {
-					var lat = EXIF.getTag(this, "GPSLatitude"),
-					longt = EXIF.getTag(this, "GPSLongitude");
-					var formatted_lat = format_lat_long(lat.toString());
-					var formatted_long = format_lat_long(longt.toString());
+					var imagelat = EXIF.getTag(this, "GPSLatitude"),
+					imagelongt = EXIF.getTag(this, "GPSLongitude");
+					var formatted_lat = format_lat_long(imagelat.toString());
+					var formatted_long = format_lat_long(imagelongt.toString());
 					$.ajax({
 						type: "POST",
 						url: 'http://maps.googleapis.com/maps/api/geocode/json?latlng='+formatted_lat+','+formatted_long+'&sensor=true',
@@ -157,7 +157,8 @@ $(document).ready(function(){
 	}
 	
 	
-	var map, geocoder, geolocate, marker, mapProp;        
+	var map, geocoder, geolocate, marker, mapProp;    
+    var lat, lng, address;
 	myCenter=new google.maps.LatLng(13.081604, 80.275183);
 	
 	function initialize() {
@@ -177,7 +178,16 @@ $(document).ready(function(){
 			navigator.geolocation.getCurrentPosition(function (position) {
 				
 				var userLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-				//alert(userLatLng);
+				lat = position.coords.latitude;
+				lng = position.coords.longitude;
+				$.ajax({
+						type: "POST",
+						url: 'http://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng+'&sensor=true',
+						dataType: 'json',
+						success : function(data){
+							 address = data.results[0].formatted_address;
+						}
+				});
 				
 				marker = new google.maps.Marker({
 					position: userLatLng,
@@ -229,16 +239,12 @@ $(document).ready(function(){
 	
 	function dragendmarker(){
 		google.maps.event.addListener(marker, "dragend", function (e) {
-			var lat, lng, address;
 			geocoder.geocode({ 'latLng': marker.getPosition() }, function (results, status) {
 				if (status == google.maps.GeocoderStatus.OK) {
 					console.log("drag end!!!");
 					lat = marker.getPosition().lat();
 					lng = marker.getPosition().lng();
 					address = results[0].formatted_address;
-					$('#location').typeahead('val', address);
-					$('#lat').val(lat);
-					$('#lng').val(lng);
 				}
 			});
 		});
@@ -266,5 +272,11 @@ $(document).ready(function(){
 		google.maps.event.trigger(map, "resize");
 		map.setCenter(center); 
 	}
+	
+	$('.btn-save-location').click(function(){
+		$('#location').typeahead('val', address);
+		$('#lat').val(lat);
+		$('#lng').val(lng);
+	});
 	
 });
