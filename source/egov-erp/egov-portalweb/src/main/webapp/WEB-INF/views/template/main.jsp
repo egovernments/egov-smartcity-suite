@@ -12,7 +12,7 @@
 	    <meta name="author" content="eGovernments Foundation" />
 	
 	    <title><tiles:insertAttribute name="title"/></title>
-	
+		<link rel="icon" href="<c:url value='/resources/global/images/chennai_fav.ico" sizes="32x32' context='/egi'/>">
 	    <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/header-custom.css' context='/egi'/>">
@@ -20,7 +20,9 @@
 		<script src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-		<script src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>	
+		<script src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>
+		<script src="<c:url value='/resources/js/app/homepage.js' context='/egi'/>"></script>
+		<script src="<c:url value='/resources/js/app/homepagecitizen.js' context='/egi'/>"></script>
 	    <!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -30,15 +32,15 @@
 		<![endif]-->
 	
 	</head>
-    <body class="page-body">
-        <div class="page-container">
-            <tiles:insertAttribute name="header"/>
-                
+    <body class="page-body" onload="onBodyLoad()">
+    	<div class="page-container login-page">
+    	<tiles:insertAttribute name="header"/>
+                <div class="main-content login-page">
                     <tiles:insertAttribute name="body"/>
-                    <tiles:insertAttribute name="footer"/>
-                
-
+                </div>
+             <tiles:insertAttribute name="footer"/>
         </div>
+        
         <div class="modal fade loader-class" data-backdrop="static">
 			<div class="modal-dialog">
 					<div class="modal-body">

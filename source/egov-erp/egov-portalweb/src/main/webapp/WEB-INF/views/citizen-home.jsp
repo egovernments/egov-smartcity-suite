@@ -11,8 +11,8 @@
 			}
 			function refreshInbox(obj){
 				$.ajax({
-					url: "/portal/citizen/refreshInbox",
-					type : "POST",
+					url: "/portal/home/refreshInbox",
+					type : "GET",
 					data: {
 						citizenInboxId : obj
 					},
@@ -22,71 +22,7 @@
 		        });
 			}
 		</script>
-	<body class="page-body" onload="onBodyLoad()">
-		
-		
-			
-			<header><!-- set fixed position by adding class "navbar-fixed-top" -->
-				
-				<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
-					<div class="container-fluid">
-						<div class="navbar-header col-lg-4 col-md-4 col-sm-2 col-xs-3">
-							<a class="navbar-brand" href="javascript:void(0);">
-								<img src="/egi/resources/global/images/chennai_logo.jpg" height="60">
-								<div>
-									<span class="title2 hidden-sm hidden-xs">Citizen Dashboard-Chennai Municipal Corporation</span>
-								</div>
-							</a>
-						</div>
-						<div class="nav-menu col-lg-4 col-md-6 col-sm-7 col-xs-12">
-							<ul class="hr-menu text-center">
-								<li class="active"><a class="menu-item " href="javascript:void(0);" data-show-screen="#inbox-template">
-								 <span class="title">Inbox</span><span id="unreadMessageCount" class="badge custom-badge">
-								 </span></a></li>
-								<span class="separator">|</span>
-								<li><a class="menu-item" href="javascript:void(0);" data-show-screen="#myaccount">My Account</a></li>
-								<span class="separator">|</span>
-								<li><a class="menu-item" href="javascript:void(0);" data-show-screen="#newreq">New Request</a></li>
-							</ul>
-						</div><!--/.nav-collapse -->
-						
-						<div class="col-lg-4 col-md-2 col-sm-3 col-xs-9 nav-right-menu home">
-							<ul class="hr-menu text-right">
-								
-								<li class="ico-menu">
-									<a href="javascript:void(0);">
-										<i class="fa fa-question-circle"></i>
-									</a>
-								</li>
-								
-								<li class="ico-menu">
-									<a class="dropdown-toggle" href="javascript:void(0);" data-toggle="dropdown">
-										<i class="fa fa-user"></i>
-									</a>
-									<ul class="right-arrow dropdown-menu" role="menu">
-										<li><a href="#"><i class="fa fa-cog"></i> Change Password</a></li>
-										<li><a href="/egi/logout.do"><i class="fa fa-sign-out"></i> Sign out</a></li>
-									</ul>
-								</li>
-								
-								<li class="ico-menu">
-									<a href="http://www.egovernments.org" target="_blank">
-										<img src="/egi/resources/global/images/logo@2x.png" title="Powered by eGovernments" height="20px">
-									</a>
-								</li>
-								
-							</ul>
-						</div>
-						
-					</div>
-				</nav>
-				
-			</header>
-			
-			<div class="main-content login-page">
-				
-				<div class="main-before-footer">
-					<div class="citizen-screens" id="inbox-template">
+		<div class="citizen-screens" id="inbox-template">
 						
 						<div class="row padding-tb"><!-- padding-tb -->
 							<div class="search-box col-md-9 col-sm-8">
@@ -123,7 +59,7 @@
 										<div class="msg-info">
 											<a href="javascript:void(0);">${inboxMsg.identifier}</a> <span class="dot">&bull;</span> 
 											<joda:format value="${inboxMsg.messageDate}" var="messageDate" pattern="dd-MM-yyyy hh:mm:ss"/>
-						<span class="msg-date">${messageDate}</span>
+											<span class="msg-date">${messageDate}</span>
 										</div>
 									</header>
 									
@@ -475,14 +411,6 @@
 						</section>
 					</div>
 				</div>
-				
-			</div>
-			
 
-			
-		</div>
-</body>
-<script src="../egi/resources/js/app/homepage.js"></script>
-<script src="../egi/resources/js/app/homepagecitizen.js"></script>
 
-</html>																																																							
+																																																			

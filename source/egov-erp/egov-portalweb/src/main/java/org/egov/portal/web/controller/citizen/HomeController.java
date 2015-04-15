@@ -14,6 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/home")
@@ -30,6 +32,13 @@ public class HomeController {
 		return setupHomePage(request, session, modelData);
 
 	}
+	
+	@RequestMapping(value = "/refreshInbox", method = RequestMethod.GET)
+    public @ResponseBody Integer refreshInbox(@RequestParam Long citizenInboxId) {
+		CitizenInbox citizenInbox = citizenInboxService.getInboxMessageById(citizenInboxId);
+		citizenInbox.setRead(true);
+		return citizenInboxService.findUnreadMessagesCount(securityUtils.getCurrentUser());
+    }
 
 	private String setupHomePage(final HttpServletRequest request, final HttpSession session, final ModelMap modelData) {
 		final User user = securityUtils.getCurrentUser();
@@ -37,6 +46,9 @@ public class HomeController {
 		modelData.addAttribute("unreadMessageCount", getUnreadMessageCount());
 		modelData.addAttribute("inboxMessages", getAllInboxMessages());
 		modelData.addAttribute("myAccountMessages", getMyAccountMessages());
+		modelData.addAttribute("cityLogo", session.getAttribute("citylogo"));
+        modelData.addAttribute("cityName", session.getAttribute("cityname"));
+        modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
 		return "citizen-home";
 	}
 
