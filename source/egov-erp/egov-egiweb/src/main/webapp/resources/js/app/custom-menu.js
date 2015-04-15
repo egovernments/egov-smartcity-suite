@@ -24,30 +24,36 @@ $(document).ready(function () {
 			
 			if($(e.target).hasClass('remove-feedback'))
 			{
-				if (confirm("Do you wish to remove this from Favourite ?")) {
-					$.ajax({
-						type: "GET",
-						url: "home/remove-favourite",
-						data:{'actionId' : $(e.target).parent().parent().attr('id')}
-						}).done(function(value) {
-						if(value === true) {
-							$(e.target).parent().parent().remove();
-							} else {
-							alert("Could not delete it from Favourite");
-						}
-					});
-				}
-				}else if($(e.target).hasClass('added-as-fav')){
-				if (confirm("Do you wish to remove this from Favourite ?")) {
-					$(e.target).removeClass('added-as-fav');
-				}
-				}else if($(e.target).hasClass('add-to-favourites')){
+				bootbox.confirm("Do you wish to remove this from Favourite ?", function(result) {
+					if(result){
+						$.ajax({
+							type: "GET",
+							url: "home/remove-favourite",
+							data:{'actionId' : $(e.target).parent().parent().attr('id')}
+							}).done(function(value) {
+							if(value === true) {
+								$(e.target).parent().parent().remove();
+								} else {
+								alert("Could not delete it from Favourite");
+							}
+						});
+						}else{
+					}
+				}); 
+			}else if($(e.target).hasClass('added-as-fav')){
+				bootbox.confirm("Do you wish to remove this from Favourite ?", function(result) {
+					if(result){
+						$(e.target).removeClass('added-as-fav');
+						}else{
+					}
+				}); 
+			}else if($(e.target).hasClass('add-to-favourites')){
 				$('.favourites').modal('show', {backdrop: 'static'});
 				console.log($item.attr('id')+'------'+$item.find( 'a:first' ).attr( 'href' )+'----'+$(e.target).parent().text());
 				addfav_li = $item.attr('id');
 				$('#fav-name').val($(e.target).parent().text());
 				//$(e.target).addClass('added-as-fav');
-				}else{
+			}else{
 				var itemHref = $item.find( 'a:first' ).attr( 'href' );
 				var windowObjectReference = window.open(itemHref, ''+$item.attr('id')+'', 'width=900, height=700, top=300, left=150,scrollbars=yes'); 
 				openedWindows.push(windowObjectReference);
@@ -99,7 +105,7 @@ $(document).ready(function () {
 			type: "GET",
 			url: "home/add-favourite",
 			data:{'actionId' : actionId,'name':'Test','contextRoot':'egi'}
-		}).done(function(value) {
+			}).done(function(value) {
 			//TODO 
 		});
 		$('#'+addfav_li+' a i').addClass('added-as-fav');
