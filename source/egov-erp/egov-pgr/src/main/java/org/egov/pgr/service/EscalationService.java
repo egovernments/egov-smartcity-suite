@@ -3,6 +3,7 @@
  */
 package org.egov.pgr.service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -50,10 +51,9 @@ public class EscalationService {
 
     @Autowired
     private ComplaintRepository complaintRepository;
-    
+
     @Autowired
     private GenericHibernateDaoFactory genericHibernateDaoFactory;
-    
 
     @Autowired
     public EscalationService(final EscalationRepository escalationRepository) {
@@ -97,28 +97,26 @@ public class EscalationService {
             complaint.transition().withOwner(superiorPosition);
             complaintRepository.save(complaint);
             if (isEmailNotificationSet) {
-                StringBuffer emailBody = new StringBuffer()
-						.append("Dear ").append(superiorUser.getName()).append(",\n \n     The complaint Number (")
-						.append(complaint.getCRN()).append(") with complaint type -")
-						.append(complaint.getComplaintType().getName()).append(" \n location details -")
-						.append(complaint.getLocation().getName())
-						.append("\n complaint description -").append(complaint.getDetails())
-						.append("\n status -").append(complaint.getStatus().getName())
-						.append(" has been escalated to ")
-						.append(superiorUser.getName()).append(" on ")
-						.append(complaint.getEscalationDate());
-				StringBuffer emailSubject = new StringBuffer()
-						.append("Complaint Number -")
-						.append(complaint.getCRN()).append(" (")
-						.append(complaint.getStatus().getName()).append(")");
-				StringBuffer smsBody = new StringBuffer()
-				.append("Dear ").append(superiorUser.getName()).append(", The complaint Number (")
-				.append(complaint.getCRN())
-				.append(") has been escalated to ")
-				.append(superiorUser.getName()).append(" on ")
-				.append(complaint.getEscalationDate());
-				emailUtils.sendMail(superiorUser.getEmailId(),emailBody.toString(),emailSubject.toString());
-                HTTPSMS.sendSMS(smsBody.toString(), "91" +superiorUser.getMobileNumber());
+                final String formattedEscalationDate = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(complaint
+                        .getEscalationDate().toDate());
+                final StringBuffer emailBody = new StringBuffer().append("Dear ").append(superiorUser.getName())
+                        .append(",\n \n     The complaint Number (").append(complaint.getCRN())
+                        .append(") is escalated.\n").append("\n Complaint Details - \n \n Complaint type - ")
+                        .append(complaint.getComplaintType().getName()).append(" \n Location details - ")
+                        .append(complaint.getLocation().getName()).append("\n Complaint description - ")
+                        .append(complaint.getDetails()).append("\n Complaint status -")
+                        .append(complaint.getStatus().getName()).append("\n Complaint escalated to - ")
+                        .append(superiorUser.getName()).append("\n Escalation Time - ").append(formattedEscalationDate);
+                final StringBuffer emailSubject = new StringBuffer().append("Escalated Complaint Number -")
+                        .append(complaint.getCRN()).append(" (").append(complaint.getStatus().getName()).append(")");
+                final StringBuffer smsBody = new StringBuffer().append("Dear ").append(superiorUser.getName())
+                        .append(", The complaint Number (").append(complaint.getCRN())
+                        .append(") has been escalated to ").append(superiorUser.getName()).append(" on ")
+                        .append(formattedEscalationDate);
+                if (superiorUser != null && superiorUser.getEmailId() != null)
+                    emailUtils.sendMail(superiorUser.getEmailId(), emailBody.toString(), emailSubject.toString());
+                if (superiorUser != null && superiorUser.getMobileNumber() != null)
+                    HTTPSMS.sendSMS(smsBody.toString(), "91" + superiorUser.getMobileNumber());
             }
         }
     }
