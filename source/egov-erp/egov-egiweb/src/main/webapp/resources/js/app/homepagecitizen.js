@@ -15,10 +15,14 @@ $(document).ready(function()
 	$('.tabs-style-topline nav li').click(function(){
 		if($(this).attr('data-section') == "newrequest")
 		{
-			$('.tabs-style-topline nav li').removeClass('tab-current-newreq');
-			$('.content-wrap section').removeClass('content-current-newreq');
-			$(this).addClass('tab-current-newreq');
-			$($(this).attr('data-newreq-section')).addClass('content-current-newreq');
+			if($(this).attr('data-newreq-section') == '#section-newrequest-1')
+			{
+				$('.tabs-style-topline nav li').removeClass('tab-current-newreq');
+				$('.content-wrap section').removeClass('content-current-newreq');
+				$(this).addClass('tab-current-newreq');
+				$($(this).attr('data-newreq-section')).addClass('content-current-newreq');
+			}
+			
 		}else if($(this).attr('data-section') == "myaccount")
 		{
 			$('.tabs-style-topline nav li').removeClass('tab-current-myacc');

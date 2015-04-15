@@ -1579,6 +1579,11 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 	line-height: 1.0;
 }
 
+.tabs nav a.custom-disabled, .tabs nav ul li.custom-disabled {
+	background:#EAE4E4;
+	cursor:not-allowed
+}
+
 .tabs nav a:focus, .tabs nav a:hover{
 	text-decoration:none;
 	outline:none;
