@@ -1453,7 +1453,7 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 	background:#c9c9c9;
 	font-size:13px;
 	color:#fff;
-	border-radius:20px;
+	border-radius:5px;
 	white-space: nowrap;
 	font-weight: normal;
 	font-family: regular;
