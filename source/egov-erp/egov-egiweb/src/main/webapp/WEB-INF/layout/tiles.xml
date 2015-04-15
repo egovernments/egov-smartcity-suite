@@ -106,5 +106,20 @@
         <put-attribute name="page-title" value="title.boundary" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/boundary/view-boundaries.jsp"/>
     </definition>
-   
+    
+    <definition name="department-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.department.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/department/department-search.jsp"/>
+    </definition>
+    
+    <definition name="department-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.department.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/department/department-view.jsp"/>
+    </definition>
+    
+    <definition name="department-updateForm" extends="base_layout">
+        <put-attribute name="page-title" value="title.department.update" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/department/department-updateForm.jsp"/>
+    </definition>
+    
 </tiles-definitions>
