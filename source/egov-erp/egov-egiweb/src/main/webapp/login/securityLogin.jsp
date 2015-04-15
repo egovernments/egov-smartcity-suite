@@ -118,8 +118,8 @@
 				%>
 				<div class="text-center  error-msg">
 					Neither email nor mobile activation send. <input type="hidden"
-						name="activationCodeSendingFailed" id="activationCodeSendingFailed"
-						value="true" />
+						name="activationCodeSendingFailed"
+						id="activationCodeSendingFailed" value="true" />
 				</div>
 				<%
 				    }
@@ -144,6 +144,20 @@
 				%>
 				<input type="hidden" name="citizenActivation" id="citizenActivation"
 					value="true" />
+				<%
+				    }
+				%>
+				<%
+				    if ("true".equals(request.getParameter("passwordSendingSuccess"))) {
+				%>
+				<div class="text-center  error-msg">Your recovered password has been sent to registered mobile and email.</div>
+				<%
+				    }
+				%>
+				<%
+				    if ("true".equals(request.getParameter("passwordSendingFailed"))) {
+				%>
+				<div class="text-center  error-msg">Your password recovery request failed.</div>
 				<%
 				    }
 				%>
@@ -207,10 +221,10 @@
 												name="password" id="password" placeholder="Password"
 												autocomplete="off" required="required" /> <span
 												class="mandatory set-mandatory"></span>
-												<div id="passwordValid" style="display: none">
-										<div class="text-right add-margin error-msg">Password
-											 should be more than 8 characters</div>
-									</div>
+											<div id="passwordValid" style="display: none">
+												<div class="text-right add-margin error-msg">Password
+													should be more than 8 characters</div>
+											</div>
 										</div>
 									</div>
 									<div class="col-md-6 margin-sm-top">
@@ -262,7 +276,8 @@
 										autocomplete="off" />
 
 									<div id="emailValid" style="display: none">
-										<div class="text-right add-margin error-msg">Not a well-formed email address</div>
+										<div class="text-right add-margin error-msg">Not a
+											well-formed email address</div>
 									</div>
 									<div id="emailidValid" style="display: none">
 										<div class="text-right add-margin error-msg">Email
@@ -335,7 +350,9 @@
 							<div class="form-group">
 								<div class="row">
 									<div class="col-md-12 col-xs-12 text-right">
-										<a href="recoverpassword.html">Forgot Password?</a>
+										<a href="javascript:void(0)" data-toggle="modal"
+											data-target="#fpassword" data-backdrop="static">Forgot
+											Password?</a>
 									</div>
 								</div>
 							</div>
@@ -365,9 +382,9 @@
 
 									<input type="password" class="form-control "
 										name="activationCode" id="activationCode"
-										placeholder="Activation Code" autocomplete="off" /> <input
-										id="citizenId" type="hidden" name="citizenId"
-										value="<%=citizenId%>" />
+										placeholder="Activation Code" autocomplete="off"
+										required="required" /> <input id="citizenId" type="hidden"
+										name="citizenId" value="<%=citizenId%>" />
 								</div>
 							</div>
 							<div class="form-group text-right">
@@ -394,7 +411,45 @@
 	</div>
 
 
+	<div class="modal fade" id="fpassword" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">Forgot Password</h4>
+				</div>
+				<div class="modal-body">
+					<form method="post" role="form" id="forgotPasswordForm">
 
+						<div class="form-group">
+
+							<div class="input-group">
+								<div class="input-group-addon style-label">
+									<i class="entypo-user style-color"></i>
+								</div>
+
+								<input type="text" class="form-control style-form" name="emailOrMobileNum"
+									id="emailOrMobileNum" required="required"
+									placeholder="Email or Mobile number" autocomplete="off" />
+							</div>
+							<div id="emailOrMobileNoReq" class="error-msg"  style="display: none">
+							Email or Mobile number is required
+							</div>
+
+						</div>
+				<div class="form-group text-right">
+					<button type="submit" id="recovrbtn" class="btn btn-primary">Recover</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 
 
 	<!-- Modal -->

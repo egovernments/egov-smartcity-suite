@@ -83,6 +83,14 @@ $(document).ready(function()
 		$('#signupform').attr('action', '/portal/citizen/register').trigger('submit');
 		return false;
 	});
+	$('#recovrbtn').click(function(){
+		if($('#emailOrMobileNum').val()===""){
+			$('#emailOrMobileNoReq').show();
+		}else{
+		$('#forgotPasswordForm').attr('action', '/egi/login/send-pwd').trigger('submit');
+		}
+		return false;
+	});
 	$('form#citizenactivationform').submit(function(){
 		$('#citizenactivationform').attr('action', '/portal/citizen/activation/'+$('#citizenId').val()).trigger('submit');
 		return false;
