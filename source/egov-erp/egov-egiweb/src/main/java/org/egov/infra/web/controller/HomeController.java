@@ -6,11 +6,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.egov.infra.admin.common.entity.Favourites;
 import org.egov.infra.admin.common.service.FavouritesService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.entity.enums.UserType;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.support.ui.Menu;
 import org.egov.infstr.commons.Module;
@@ -18,6 +20,8 @@ import org.egov.infstr.commons.dao.ModuleDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,8 +41,11 @@ public class HomeController {
 
     @Autowired
     private FavouritesService favouritesService;
+    
+    @Autowired
+    private UserService userService;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping
     public String showHome(final HttpSession session, final ModelMap modelData) {
         final User user = securityUtils.getCurrentUser();
         if (user.getType().equals(UserType.EMPLOYEE))
@@ -47,7 +54,7 @@ public class HomeController {
             return "redirect:/../portal/home";
     }
 
-    @RequestMapping(value = "/add-favourite", method = RequestMethod.GET)
+    @RequestMapping(value = "add-favourite", method = RequestMethod.GET)
     public @ResponseBody boolean addFavourite(@RequestParam final Integer actionId, @RequestParam final String name, @RequestParam final String contextRoot) {
         final Long userId = securityUtils.getCurrentUser().getId();
         final Favourites favourites = favouritesService.getFavouriteByUserIdAndActionId(userId, actionId);
@@ -64,13 +71,32 @@ public class HomeController {
         return Boolean.TRUE;
     }
 
-    @RequestMapping(value = "/remove-favourite", method = RequestMethod.GET)
+    @RequestMapping(value = "remove-favourite")
     public @ResponseBody boolean removeFavourite(@RequestParam final Integer actionId) {
         favouritesService.deleteFavourite(favouritesService.getFavouriteByUserIdAndActionId(securityUtils
                 .getCurrentUser().getId(), actionId));
         return Boolean.TRUE;
     }
 
+    @ModelAttribute("user")
+    public User user() {
+        return securityUtils.getCurrentUser();
+    }
+    
+    @RequestMapping(value="profile/edit",method=RequestMethod.GET)
+    public String editProfile() {
+        return "profile-edit";
+    }
+    
+    @RequestMapping(value="profile/edit",method=RequestMethod.POST)
+    public String saveProfile(@Valid @ModelAttribute  User user, final BindingResult binder) {
+        if(binder.hasErrors()) {
+            return "profile-edit";
+        }
+        userService.updateUser(user);
+        return "profile-edit";
+    }
+    
     private String prepareOfficialHomePage(final User user, final HttpSession session, final ModelMap modelData) {
         final List<Module> modules = moduleDAO.getModuleInfoForRoleIds(user.getRoles());
         final List<Module> selfServices = getEmployeeSelfService(modules, user);

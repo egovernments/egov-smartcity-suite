@@ -25,7 +25,7 @@
   	<mvc:view-controller path="/error/404" view-name="error/404"/>
   	<mvc:view-controller path="/error/401" view-name="error/401"/>
   	<mvc:view-controller path="/error/400" view-name="error/400"/>
-  	<mvc:view-controller path="profile/edit" view-name="profile-edit"/>
+  	<mvc:view-controller path="/help" view-name="help"/>
   	
     <mvc:resources mapping="/resources/**" location="/resources/"/>
 

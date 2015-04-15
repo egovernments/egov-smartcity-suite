@@ -13,8 +13,17 @@
 
 	<definition name="error" template="/WEB-INF/views/template/error.jsp"/>
 	
-    <definition name="home" template="/WEB-INF/views/home.jsp">
+    <definition name="home" template="/WEB-INF/views/home/home.jsp">
         <put-attribute name="title" value="eGov Urban Portal"/>
+    </definition>
+    
+    <definition name="help" template="/WEB-INF/views/home/help.jsp">
+        <put-attribute name="title" value="eGov Urban Portal Help"/>
+    </definition>
+    
+    <definition name="profile-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.edit.profile" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/home/profile-edit.jsp"/>
     </definition>
     
     <definition name="error/*" extends="error">

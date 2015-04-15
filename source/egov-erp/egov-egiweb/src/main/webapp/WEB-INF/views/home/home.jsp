@@ -78,7 +78,7 @@
 							</a>
 							<ul>
 								<li>
-									<a href="/profile/edit" class="open-popup">
+									<a href="home/profile/edit" class="open-popup">
 										<i class="fa fa-user"></i>
 										<span class="title">Edit Profile</span>
 									</a>
@@ -115,14 +115,14 @@
 						
 						<li class="dropdown">
 							
-							<a href="javascript:void(0);" class="tooltip-secondary" data-toggle="tooltip" title="Feedback">
+							<a href="javascript:void(0);" class="tooltip-secondary" data-toggle="tooltip" title="Feedback" onclick="jQuery('.add-feedback').modal('show', {backdrop: 'static'});">
 								<i class="entypo-comment"></i>
 							</a>
 						</li>
 						
 						<li class="dropdown">
 							
-							<a href="/egi/WEB-INF/views/admin/common/help.html" data-strwindname="help" class="tooltip-secondary open-popup" data-toggle="tooltip" title="Help">
+							<a href="help" data-strwindname="help" class="tooltip-secondary open-popup" data-toggle="tooltip" title="Help">
 								<i class="entypo-help"></i>
 							</a>
 						</li>
@@ -224,6 +224,38 @@
 			
 		</div>
 		
+		<!--feedback -->
+		<div class="modal fade add-feedback" data-backdrop="static">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title">Feedback</h4>
+					</div>
+					
+					<div class="modal-body">
+						<form id="feedback-form" class="form-horizontal form-groups-bordered" action="/">
+							<div class="form-group">
+								<div class="col-md-12 add-margin">
+									<input type="text" class="form-control" id="subject" placeholder="Subject">
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-md-12 add-margin">
+									 <textarea class="form-control" rows="5" id="comment" placeholder="Message"></textarea>
+								</div>
+							</div>
+						</form>
+					</div>
+					
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary">Send Feedback</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					</div>
+				</div>
+			</div>
+		</div>
 		<!-- change password -->
 		<div class="modal fade change-password" data-backdrop="static">
 			<div class="modal-dialog">
