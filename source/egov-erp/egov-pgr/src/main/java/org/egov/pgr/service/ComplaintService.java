@@ -208,10 +208,10 @@ public class ComplaintService {
 
         criteria.add(
                 Restrictions.disjunction().add(Restrictions.eq("complaintStatus.name", COMPLETED.name()))
-                .add(Restrictions.eq("complaintStatus.name", REJECTED.name()))
-                .add(Restrictions.eq("complaintStatus.name", WITHDRAWN.name()))
-                .add(Restrictions.eq("complaintStatus.name", FORWARDED.name()))
-                .add(Restrictions.eq("complaintStatus.name", REGISTERED.name())))
+                        .add(Restrictions.eq("complaintStatus.name", REJECTED.name()))
+                        .add(Restrictions.eq("complaintStatus.name", WITHDRAWN.name()))
+                        .add(Restrictions.eq("complaintStatus.name", FORWARDED.name()))
+                        .add(Restrictions.eq("complaintStatus.name", REGISTERED.name())))
                 .add(Restrictions.lt("complaint.escalationDate", new DateTime().toDate()))
                 .setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
@@ -291,19 +291,22 @@ public class ComplaintService {
 
     public void sendEmailandSms(final Complaint complaint) {
 
-        final String formattedCreatedDate = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(complaint.getCreatedDate().toDate());
+        final String formattedCreatedDate = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(complaint.getCreatedDate()
+                .toDate());
 
         final StringBuffer emailBody = new StringBuffer()
-        .append("Dear ")
-        .append(complaint.getComplainant().getName())
-        .append(",\n \n \tThank you for registering a complaint (")
-        .append(complaint.getCRN())
-        .append("). Your complaint is registered successfully.\n \tPlease use this number for all future references.")
-        .append("\n \n Complaint Details - \n \n Complaint type - ")
-        .append(complaint.getComplaintType().getName()).append(" \n Location details - ")
-        .append(complaint.getLocation().getName()).append("\n Complaint description - ")
-        .append(complaint.getDetails()).append("\n Complaint status -").append(complaint.getStatus().getName())
-        .append("\n Complaint Registration Date - ").append(formattedCreatedDate);
+                .append("Dear ")
+                .append(complaint.getComplainant().getName())
+                .append(",\n \n \tThank you for registering a complaint (")
+                .append(complaint.getCRN())
+                .append("). Your complaint is registered successfully.\n \tPlease use this number for all future references.")
+                .append("\n \n Complaint Details - \n \n Complaint type - ")
+                .append(complaint.getComplaintType().getName());
+        if (complaint.getLocation() != null)
+            emailBody.append(" \n Location details - ").append(complaint.getLocation().getName());
+        emailBody.append("\n Complaint description - ").append(complaint.getDetails()).append("\n Complaint status -")
+                .append(complaint.getStatus().getName()).append("\n Complaint Registration Date - ")
+                .append(formattedCreatedDate);
         final StringBuffer emailSubject = new StringBuffer().append("Registered Complaint -")
                 .append(complaint.getCRN()).append(" successfuly");
         final StringBuffer smsBody = new StringBuffer().append("Dear ").append(complaint.getComplainant().getName())
