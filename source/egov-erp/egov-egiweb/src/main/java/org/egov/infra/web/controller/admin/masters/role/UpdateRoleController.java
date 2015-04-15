@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value = "update-role/{name}")
+@RequestMapping(value = "/role/update/{name}")
 public class UpdateRoleController {
 
     private RoleService roleService;
@@ -38,13 +38,14 @@ public class UpdateRoleController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute Role role, final BindingResult errors, RedirectAttributes redirectAttrs) {
+        
         if (errors.hasErrors())
-            return "update-role/" + role.getName();
+            return "role-update";
 
         roleService.update(role);
         redirectAttrs.addFlashAttribute("message", "Successfully Updated Role !");
 
-        return "redirect:/view-role/"+role.getName();
+        return "redirect:/role/view/"+role.getName();
     }
 
 }

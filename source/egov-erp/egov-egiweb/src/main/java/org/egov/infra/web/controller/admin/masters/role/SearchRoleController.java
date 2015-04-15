@@ -2,7 +2,7 @@ package org.egov.infra.web.controller.admin.masters.role;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.service.RoleService;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/")
+@RequestMapping("/role")
 public class SearchRoleController {
     private RoleService roleService;
 
@@ -35,29 +35,30 @@ public class SearchRoleController {
         return roleService.getAllRoles();
     }
 
-    @RequestMapping(value = "view-role", method = RequestMethod.GET)
+    @RequestMapping(value = "/viewsearch", method = RequestMethod.GET)
     public String viewSearch(Model model) {
 
-        return "role-search";
+        return "role-viewsearch";
 
     }
-
-    @RequestMapping(value = "update-role", method = RequestMethod.GET)
+    @RequestMapping(value = "/updatesearch", method = RequestMethod.GET)
     public String updateSearch(Model model) {
 
-        return "role-search";
+        return "role-updatesearch";
 
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public String search(@ModelAttribute Role role, final BindingResult errors, RedirectAttributes redirectAttrs,
-            HttpServletRequest request) {
+    @RequestMapping(value = "/view", method = RequestMethod.POST)
+    public String viewRole(@Valid @ModelAttribute Role role, final BindingResult errors, RedirectAttributes redirectAttrs) {
 
-        if (errors.hasErrors())
-            return "role-form";
+        return "redirect:/role/view/"+role.getName();
 
-        return "redirect:" + request.getRequestURI().split("/")[request.getRequestURI().split("/").length - 1] + "/"
-                + role.getName();
+    }
+    
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public String updateSearch(@Valid @ModelAttribute Role role, final BindingResult errors, RedirectAttributes redirectAttrs) {
+
+        return "redirect:/role/update/"+role.getName();
     }
 
 }

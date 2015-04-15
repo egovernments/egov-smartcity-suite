@@ -28,10 +28,7 @@ public class RoleService {
     }
 
     @Transactional
-    public void createRole(final Role role) throws DuplicateElementException {
-        final Role checkRole = getRoleByName(role.getName());
-        if (checkRole != null)
-            throw new DuplicateElementException("The Role by ' " + role.getName() + " ' already exists.");
+    public void createRole(final Role role){
         roleRepository.save(role);
     }
 

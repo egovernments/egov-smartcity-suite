@@ -39,7 +39,7 @@ public class ViewRoleControllerTest extends AbstractContextControllerTest<ViewRo
 	@Test
 	public void getViewRoleResult() throws Exception {
 		name = "existing-role";
-		this.mockMvc.perform(get("/view-role/"+name))
+		this.mockMvc.perform(get("/role/view/"+name))
 				.andExpect(view().name("role-view"))
 				.andExpect(status().isOk());
 

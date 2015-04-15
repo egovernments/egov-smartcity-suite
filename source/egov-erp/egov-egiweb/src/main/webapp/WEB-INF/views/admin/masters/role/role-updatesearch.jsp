@@ -12,7 +12,7 @@
 				 <c:if test="${not empty message}">
                     <div id="message" class="success">${message}</div>
                 </c:if>
-		<form:form  mothod ="post" class="form-horizontal form-groups-bordered" modelAttribute="role" id="roleSearch" >
+		<form:form  mothod ="post" class="form-horizontal form-groups-bordered" action ="/egi/role/update" modelAttribute="role" id="roleUpdateSearchForm" >
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -27,28 +27,19 @@
                         </label>
                         <div class="col-sm-6 add-margin">
                             <form:select path="name"
-                                         id="roles" cssClass="form-control" cssErrorClass="form-control error" required="required">
+                                         id="name" cssClass="form-control" cssErrorClass="form-control error" required="required">
                                 <form:option value=""> <spring:message code="lbl.select"/> </form:option>
                                 <form:options items="${roles}" itemValue="name" itemLabel="name"/>
                             </form:select>
                             <form:errors path="name" cssClass="error-msg"/>
                         </div>
                     </div>
-                   <%--  <div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.roleName"/><small><i class="entypo-star error-msg"></i></small></label>
-						<div class="col-sm-6">
-							<form:input path="roleName" id="roleName" cssClass="form-control typeahead is_valid_alphabet" cssErrorClass="form-control error" placeholder="" autocomplete="off" required="required"/>
-                            <form:errors path="roleName" cssClass="add-margin error-msg"/>
-						</div>
-					</div> --%>
 				</div>
 			</div>
 			<div class="row">
 				<div class="text-center">
 					<button type="submit" class="btn btn-primary"><spring:message code="lbl.search"/></button>
-					<%-- <button type="button" class="btn btn-primary" onclick="location.href='/'"><spring:message code="lbl.search"/></button> --%>
-					
-			        <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="lbl.close"/></button>
+			        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();"><spring:message code="lbl.close"/></button>
 				</div>
 			</div>
 				</form:form>

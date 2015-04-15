@@ -4,11 +4,18 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
+@Unique(
+        id = "id",
+        tableName = "eg_role", 
+        fields = {"name"}, 
+        columnName = {"name"}
+)
 @Table(name = "eg_role")
 public class Role extends AbstractAuditable<User, Long> {
 

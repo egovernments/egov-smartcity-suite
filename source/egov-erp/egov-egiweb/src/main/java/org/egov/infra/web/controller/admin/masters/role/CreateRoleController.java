@@ -2,7 +2,7 @@ package org.egov.infra.web.controller.admin.masters.role;
 
 
 import javax.validation.Valid;
-import org.egov.exceptions.DuplicateElementException;
+
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
-@RequestMapping(value ="/create-role")
+@RequestMapping(value ="/role/create")
 public class CreateRoleController  {
 	private RoleService roleService;
 
@@ -42,14 +42,9 @@ public class CreateRoleController  {
             return "role-form";
         
         
-        try {
-        	roleService.createRole(role);
-			redirectAttrs.addFlashAttribute("message", "Successfully created Role !");
-			SUCCESS = "redirect:view-role/"+role.getName();
-		} catch (DuplicateElementException e) {
-			redirectAttrs.addFlashAttribute("message", e.getMessage());
-			SUCCESS = "redirect:create-role";
-		}
+           roleService.createRole(role);
+	   redirectAttrs.addFlashAttribute("message", "Successfully created Role !");
+	   SUCCESS = "redirect:/role/view/"+role.getName();
         
         return SUCCESS;
     }

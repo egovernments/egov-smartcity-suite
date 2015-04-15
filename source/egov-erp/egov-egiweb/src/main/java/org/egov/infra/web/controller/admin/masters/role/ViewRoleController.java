@@ -6,7 +6,6 @@ import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value = "view-role/{name}")
+@RequestMapping(value = "/role/view/{name}")
 public class ViewRoleController {
 
     private RoleService roleService;
@@ -34,22 +33,23 @@ public class ViewRoleController {
     public String viewRole() {
         return "role-view";
     }
-
+    
     @RequestMapping(method = RequestMethod.POST)
     public String search(@ModelAttribute Role role, final BindingResult errors, RedirectAttributes redirectAttrs,
             HttpServletRequest request) {
 
         if (errors.hasErrors())
-            return "role-view";
+            return "/role/view/"+role.getName();
         
         if(request.getParameter("method")!=null && request.getParameter("method").toString().equals("New")){
-            return "redirect:/create-role";
+            return "redirect:/role/create";
                     
         }else{
             
-            return "redirect:/update-role/"+ role.getName();
+            return "redirect:/role/update/"+ role.getName();
         }
         
     }
+    
 
 }

@@ -25,9 +25,13 @@
         <put-attribute name="page-title" value="title.createRole" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/role/role-form.jsp"/>
     </definition>
-     <definition name="role-search" extends="base_layout">
+     <definition name="role-viewsearch" extends="base_layout">
         <put-attribute name="page-title" value="title.searchRole" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/admin/masters/role/role-search.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/role/role-viewsearch.jsp"/>
+    </definition>
+    <definition name="role-updatesearch" extends="base_layout">
+        <put-attribute name="page-title" value="title.searchRole" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/role/role-updatesearch.jsp"/>
     </definition>
     <definition name="role-view" extends="base_layout">
         <put-attribute name="page-title" value="title.viewRole" cascade="true"/>
