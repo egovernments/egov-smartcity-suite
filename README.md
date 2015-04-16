@@ -1,8 +1,8 @@
-# eGov ERP System
-[![Build Status](http://192.168.1.58:8080/job/Phoenix-Master-Build/badge/icon)](http://192.168.1.58:8080/job/Phoenix-Master-Build/)
+# eGov Opensource
+[![Build Status](http://ci.egovernments.org/job/Phoenix-Master-Build/badge/icon)](http://ci.egovernments.org/job/Phoenix-Master-Build/)
 ## Repository Structure
 
-* `source` - folder contains all the source code of erp
+* `egov` - folder contains all the source code of eGov opensource projects
 
 ## Prerequisites
 
@@ -10,13 +10,13 @@
 * Install your favorite IDE for java project. Recommended Eclipse or IntelliJ
 * Install [PostgreSQL >= v9.3 ](http://www.postgresql.org/download/)
 * Install [Elastic Search >= v1.4.2](https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.2.zip)
-* Install [Jboss Wildfly v8.2.x](http://192.168.1.3/downloads/DevTools/phoenix/wildfly-8.2.0.Final-v1.zip)
+* Install [Jboss Wildfly v8.2.x](http://182.74.137.193/downloads/DevTools/phoenix/wildfly-8.2.0.Final-v1.zip)
 
-__Note__: Please check in [downlods repository](http://192.168.1.3/downloads/) for any of the above software installables before downloading from internet.
+__Note__: Please check in [downlods repository](http://182.74.137.193/downloads/) for any of the above software installables before downloading from internet.
 
 ## Building Source
 
-* Change your directory on command prompt to `<CHECKOUT_DIR>/source/egov-erp`
+* Change your directory on command prompt to `<CHECKOUT_DIR>/egov`
 * Run the following commands
 
 ```bash
@@ -36,8 +36,8 @@ To skip migration use -Dliquibase.should.run=false
 
 #### Database sql files
 
-* All sql files should be added under directory `<CHECKOUT_DIR>/source/egov-erp/egov-database/src/main/resources/sql`
-* Uses the database properties from `<CHECKOUT_DIR>/source/egov-erp/egov-database/src/main/resources/liquibase.properties` for migration
+* All sql files should be added under directory `<CHECKOUT_DIR>/egov/egov-database/src/main/resources/sql`
+* Uses the database properties from `<CHECKOUT_DIR>/egov/egov-database/src/main/resources/liquibase.properties` for migration
 * All sql scripts should be named with incremental number prefix and .sql suffix
 * Format `<sequence>_<module>_<description>_<database-statement-type>.sql`
 
@@ -104,12 +104,12 @@ search.clusterName=elasticsearch-<username> ## Your local elasticsearch clustern
 
 #### 2. Manual Standalone Deployment
 
-* Copy the generated exploded ear `<CHECKOUT_DIR>/source/egov-erp/egov-ear/target/egov-ear-1.0-SNAPSHOT` in to your JBoss deployment folder `<JBOSS_HOME>/standalone/deployments`
+* Copy the generated exploded ear `<CHECKOUT_DIR>/egov/egov-ear/target/egov-ear-1.0-SNAPSHOT` in to your JBoss deployment folder `<JBOSS_HOME>/standalone/deployments`
 * Rename the copied folder `egov-ear-1.0-SNAPSHOT` to `egov-ear-1.0-SNAPSHOT.ear`
 * Create or touch a file named `egov-ear-1.0-SNAPSHOT.ear.dodeploy` to make sure JBoss picks it up for auto deployment
 * Monitor the logs and in case of successful deployment, just hit `http://localhost:8080/egi` in your favorite browser
 
-Alternatively you could also run `<CHECKOUT_DIR>/source/egov-erp/deploy-local.sh` which deploys the already built ear in to your wildfly as configured.
+Alternatively you could also run `<CHECKOUT_DIR>/egov/deploy-local.sh` which deploys the already built ear in to your wildfly as configured.
 
 #### 3. Eclipse Deployment
 
