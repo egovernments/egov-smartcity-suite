@@ -34,7 +34,7 @@ function checkForChild(){
 	else{
 		$.ajax({
 			type: "GET",
-			url: "addChildBoundaryType/isChildPresent",
+			url: "ajax/checkchild",
 			data:{'parentId' : id },
 			dataType: "json",
 			success: function (response) {
@@ -55,14 +55,14 @@ function checkForChild(){
 } 
 
 $('#boundaryTypeCreateBtn').click(function() {
-	$('#boundaryTypeViewform').attr('method', 'get');
-	$('#boundaryTypeViewform').attr('action', 'create-boundaryType');
+	$('#boundaryTypeSuccess').attr('method', 'get');
+	$('#boundaryTypeSuccess').attr('action', '/egi/boundarytype/create');
 })
 
 $('#boundaryTypeUpdateBtn').click(function() {
-	var url = 'boundaryType/update/'+ $('#boundaryTypeId').val();
-	$('#boundaryTypeViewform').attr('method', 'get');
-	$('#boundaryTypeViewform').attr('action', url);
+	var url = '/egi/boundarytype/update/'+ $('#boundaryTypeId').val();
+	$('#boundaryTypeSuccess').attr('method', 'get');
+	$('#boundaryTypeSuccess').attr('action', url);
 })
 
 $('#buttonCreate').click(function() {
@@ -103,4 +103,15 @@ function checkForRootNode() {
 	});
 }
 
-
+function validateName(){
+	var childName = $("#name").val();
+	var parentName = $("#parent").val();
+	if(childName == parentName){
+		alert('Child and parent boundary types cannot have the same name!');
+		return false;
+	}
+	else{
+		$("#boundaryTypeAddChildform").submit();
+		return true;
+	}
+} 

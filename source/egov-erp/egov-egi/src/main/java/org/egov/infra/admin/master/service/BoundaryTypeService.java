@@ -47,12 +47,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Service for the BoundaryType
- * 
- * @author Manasa Niranjan
- *
- */
 @Service
 @Transactional(readOnly = true)
 public class BoundaryTypeService {
@@ -100,5 +94,20 @@ public class BoundaryTypeService {
     
     public BoundaryType getBoundaryTypeByIdAndHierarchyType(Long id, Long hierarchyTypeId) {
         return boundaryTypeRepository.findByIdAndHierarchy(id, hierarchyTypeId);
+    }
+    
+    public BoundaryType setHierarchyLevel(BoundaryType boundaryType,String mode){
+        if(mode.equalsIgnoreCase("create"))
+            boundaryType.setHierarchy(1l);
+        else{
+            Long parentBoundaryTypeId = boundaryType.getParent().getId();
+            Long childHierarchy = 0l;
+            Long parentHierarchy = boundaryType.getParent().getHierarchy();
+            if(parentBoundaryTypeId!=null ){
+                childHierarchy = ++parentHierarchy;
+            }
+            boundaryType.setHierarchy(childHierarchy);
+        }
+        return boundaryType;
     }
 }

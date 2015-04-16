@@ -53,10 +53,6 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.search.domain.Searchable;
 import org.hibernate.validator.constraints.NotBlank;
 
-/**
- * @author Manasa Niranjan
- */
-
 @Entity
 @Table(name = "EG_BOUNDARY_TYPE")
 @Searchable

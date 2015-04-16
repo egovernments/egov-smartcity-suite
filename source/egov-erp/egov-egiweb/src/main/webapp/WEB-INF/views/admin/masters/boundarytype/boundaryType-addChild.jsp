@@ -10,7 +10,7 @@
 			<c:if test="${not empty errorMessage}">
                     <div id="message" class="success" style="color: red;">${errorMessage}</div>
             </c:if>
-		<form:form  id="boundaryTypeUpdateform" mothod ="post" 
+		<form:form  id="boundaryTypeAddChildform" mothod ="post" 
 		 class="form-horizontal form-groups-bordered" modelAttribute="boundaryType" >
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
@@ -51,7 +51,7 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
-					<button type="submit" class="btn btn-primary"><spring:message code="lbl.addChild"/></button>
+					<button type="button" class="btn btn-primary" onclick="validateName();"><spring:message code="lbl.addChild"/></button>
 			       <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()" ><spring:message code="lbl.close"/></button>
 				</div>
 			</div>
@@ -63,4 +63,4 @@
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
-
+<script src="<c:url value='/resources/js/app/boundary.js'/>"></script>

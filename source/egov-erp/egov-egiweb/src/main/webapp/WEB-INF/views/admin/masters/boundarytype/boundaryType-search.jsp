@@ -45,7 +45,7 @@
 										class="entypo-star error-msg"></i></small></label>
 								<div class="col-sm-6 add-margin">
 									<egov:ajaxdropdown id="boundaryTypeAjax" fields="['Text','Value']"
-												dropdownId="boundaryTypeSelect" url="boundaryTypes-by-hierarchyType" />
+												dropdownId="boundaryTypeSelect" url="boundarytype/ajax/boundarytypelist-for-hierarchy" />
 		                            <form:select path="name"
 		                                         id="boundaryTypeSelect" cssClass="form-control" cssErrorClass="form-control error" required="required">
 		                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>

@@ -53,7 +53,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/boundaryType/addChild/{id}")
+@RequestMapping("/boundarytype/addchild/{id}")
 public class AddChildBoundaryTypeController {
 
     private BoundaryTypeService boundaryTypeService;
@@ -87,18 +87,19 @@ public class AddChildBoundaryTypeController {
             BoundaryType boundaryType1 = boundaryTypeService.getBoundaryTypeByParent(parentBoundaryTypeId);
             if(boundaryType1!=null){
                 redirectAttrs.addFlashAttribute("errorMessage", "Child boundary type already exists!");
-                return "redirect:/boundaryType/addChild/"+parentBoundaryTypeId;
+                return "redirect:/boundarytype/addchild/"+parentBoundaryTypeId;
             }
             else{
-                Long childHierarchy = 0l;
-                Long parentHierarchy = boundaryType.getParent().getHierarchy();
-                if(parentBoundaryTypeId!=null ){
-                    childHierarchy = ++parentHierarchy;
+                if(boundaryType.getParent().getName().equalsIgnoreCase(boundaryType.getName())){
+                    redirectAttrs.addFlashAttribute("errorMessage", "Child and parent boundary types cannot have the same name!");
+                    return "redirect:/boundarytype/addchild/"+parentBoundaryTypeId;
                 }
-                boundaryType.setHierarchy(childHierarchy);
-                boundaryTypeService.createBoundaryType(boundaryType);
-                redirectAttrs.addFlashAttribute("message", "Child Boundary Type added successfully!");
-                return "redirect:/boundaryType/view/"+boundaryType.getId();
+                else{
+                    boundaryTypeService.setHierarchyLevel(boundaryType, "addChild");
+                    boundaryTypeService.createBoundaryType(boundaryType);
+                    redirectAttrs.addFlashAttribute("message", "Child Boundary Type added successfully!");
+                    return "redirect:/boundarytype/view/"+boundaryType.getId();
+                }
             }
     }
 }

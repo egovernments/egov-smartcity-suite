@@ -90,7 +90,10 @@
         <put-attribute name="page-title" value="title.addChild.BoundaryType" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/boundarytype/boundaryType-addChild.jsp"/>
     </definition>
-    
+    <definition name="boundaryType-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.viewBoundaryType" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/boundarytype/boundaryType-success.jsp"/>
+    </definition>
     <definition name="department-form" extends="base_layout">
         <put-attribute name="page-title" value="title.department.create" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/department/department-form.jsp"/>

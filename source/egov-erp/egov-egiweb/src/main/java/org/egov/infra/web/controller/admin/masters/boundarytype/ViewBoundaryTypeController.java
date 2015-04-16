@@ -49,7 +49,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping(value ="/boundaryType/view/{id}")
+@RequestMapping(value ="/boundarytype/view/{id}")
 public class ViewBoundaryTypeController {
 
 	private BoundaryTypeService boundaryTypeService;

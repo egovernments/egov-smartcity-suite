@@ -72,37 +72,45 @@ public class SearchBoundaryTypeController {
 		return new BoundaryType();
 	}
 	
-	@RequestMapping(value = "/boundaryType/view",method = RequestMethod.GET)
+	@RequestMapping(value = "/boundarytype/view",method = RequestMethod.GET)
 	public String viewSearch(Model model){
 	    model.addAttribute("hierarchyTypes", hierarchyTypeService.getAllHierarchyTypes());
 	    model.addAttribute("mode", "view");
 	    return "boundaryType-search";
 	}
 	
-	@RequestMapping(value = "/boundaryType/update",method = RequestMethod.GET)
+	@RequestMapping(value = "/boundarytype/update",method = RequestMethod.GET)
         public String updateSearch(Model model){
 	    model.addAttribute("hierarchyTypes", hierarchyTypeService.getAllHierarchyTypes());
 	    model.addAttribute("mode", "update");
             return "boundaryType-search";
         }
 	
-	@RequestMapping(value = "/boundaryType/addChild",method = RequestMethod.GET)
+	@RequestMapping(value = "/boundarytype/addchild",method = RequestMethod.GET)
         public String addChildSearch(Model model){
 	    model.addAttribute("hierarchyTypes", hierarchyTypeService.getAllHierarchyTypes());
 	    model.addAttribute("mode", "addChild");
             return "boundaryType-search";
         }
 	
-	@RequestMapping(value = { "/boundaryType/view", "/boundaryType/update", "/boundaryType/addChild" }, method =RequestMethod.POST)
+	@RequestMapping(value = { "/boundarytype/view", "/boundarytype/update", "/boundarytype/addchild" }, method =RequestMethod.POST)
 	public String search(@ModelAttribute BoundaryType boundaryType,final BindingResult errors, RedirectAttributes redirectAttrs,HttpServletRequest request){
 		
     	    if (errors.hasErrors())
                 return "boundaryType-form";
     		
-    	    String[] uriSplits = request.getRequestURI().split("/");
+    	    String requestURI = request.getRequestURI();
+    	    String redirectURI="";
     	    String[] idSplit = boundaryType.getName().split(",");
-    	    Long boundaryId = Long.valueOf(idSplit[idSplit.length - 1]);
-            String redirectURI =  uriSplits[uriSplits.length - 1] + "/" + boundaryId;
-	    return "redirect:"+redirectURI;
+            Long boundaryId = Long.valueOf(idSplit[idSplit.length - 1]);
+            
+    	    if(requestURI.contains("view"))
+    	        redirectURI = "redirect:/boundarytype/view/"+boundaryId;
+    	    else if(requestURI.contains("update"))
+    	        redirectURI = "redirect:/boundarytype/update/"+boundaryId;
+    	    else if(requestURI.contains("addchild"))
+    	        redirectURI = "redirect:/boundarytype/addchild/"+boundaryId;
+       
+    	    return redirectURI;
 	}
 }

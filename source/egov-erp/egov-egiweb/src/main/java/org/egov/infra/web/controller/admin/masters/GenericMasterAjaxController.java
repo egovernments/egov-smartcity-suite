@@ -69,7 +69,7 @@ public class GenericMasterAjaxController {
     @Autowired
     private BoundaryService boundaryService;
 
-    @RequestMapping(value = "/boundaryTypes-by-hierarchyType", method = RequestMethod.GET)
+    @RequestMapping(value = "/boundarytype/ajax/boundarytypelist-for-hierarchy", method = RequestMethod.GET)
     public @ResponseBody void getBoundaryTypeByHierarchyType(@RequestParam Long hierarchyTypeId, HttpServletResponse response) throws IOException {
         List<BoundaryType> boundaryTypes = boundaryTypeService.getAllBoundarTypesByHierarchyTypeId(hierarchyTypeId);
 
@@ -122,7 +122,7 @@ public class GenericMasterAjaxController {
      * Used in ajax validation to check if child exists for a boundary type -
      * Add child screen
      */
-    @RequestMapping(value = "/addChildBoundaryType/isChildPresent", method = RequestMethod.GET)
+    @RequestMapping(value = "/boundarytype/ajax/checkchild", method = RequestMethod.GET)
     public @ResponseBody boolean isChildBoundaryTypePresent(@RequestParam final Long parentId){
         final BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeByParent(parentId);
         return boundaryType != null ? Boolean.TRUE : Boolean.FALSE;

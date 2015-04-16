@@ -8,7 +8,7 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<form:form  id="boundaryTypeViewform" mothod ="post" 
+		<form:form  id="boundaryTypeSuccess" method ="post" 
 		 class="form-horizontal form-groups-bordered" modelAttribute="boundaryType" >
 		 		<c:if test="${not empty message}">
                     <div id="message" class="success">${message}</div>
@@ -24,16 +24,9 @@
 						<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.boundaryType.heirarchyType"/></div>
 						<div class="col-md-9 col-xs-6 add-margin" id="ct-name">
 							<strong><c:out value="${boundaryType.hierarchyType.name}"></c:out></strong>
+							<input id="boundaryTypeId" type="hidden" value="<c:out value="${boundaryType.id}" />" />  
 						</div>
 					</div>
-					<c:if test="${not empty boundaryType.parent.name}">
-						<div class="row add-border">
-							<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.parent.boundaryType"/></div>
-							<div class="col-md-9 col-xs-6 add-margin" id="ct-name">
-								<strong><c:out value="${boundaryType.parent.name}"></c:out></strong>
-							</div>
-						</div>
-					</c:if>
 					<div class="row add-border">
 						<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.boundaryType.boundaryType"/></div>
 						<div class="col-md-9 col-xs-6 add-margin" id="ct-name">
@@ -50,7 +43,13 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
-				      <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()"><spring:message code="lbl.close"/></button>
+							<button type="submit" id="boundaryTypeCreateBtn" class="btn btn-success">
+                            	<spring:message code="lbl.create"/>
+                            </button>
+                            <button type="submit" id="boundaryTypeUpdateBtn" class="btn btn-success">
+                            	<spring:message code="lbl.update"/>
+                            </button>	
+			       <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()"><spring:message code="lbl.close"/></button>
 				</div>
 			</div>
 		</form:form>

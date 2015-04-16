@@ -58,7 +58,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value ="/create-boundaryType")
+@RequestMapping(value ="/boundarytype/create")
 public class CreateBoundaryTypeController {
 
 	private HierarchyTypeService hierarchyTypeService;
@@ -99,12 +99,11 @@ public class CreateBoundaryTypeController {
         if (errors.hasErrors())
             return "boundaryType-form";
         
-        boundaryType.setHierarchy(1l);
+        boundaryTypeService.setHierarchyLevel(boundaryType, "create");
         boundaryTypeService.createBoundaryType(boundaryType);
-        redirectAttrs.addFlashAttribute("showButtons", "showButtons");
         redirectAttrs.addFlashAttribute("message", "Boundary Type created successfully !");
 
-        return "redirect:/boundaryType/view/"+boundaryType.getId();
+        return "boundaryType-success";
     }
 	
 }

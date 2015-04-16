@@ -53,7 +53,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/boundaryType/update/{id}")
+@RequestMapping("/boundarytype/update/{id}")
 public class UpdateBoundaryTypeController {
 
 private BoundaryTypeService boundaryTypeService;
@@ -80,6 +80,6 @@ private BoundaryTypeService boundaryTypeService;
 		
 		boundaryTypeService.updateBoundaryType(boundaryType);
 		redirectAttrs.addFlashAttribute("message", "Boundary type updated successfully!");
-		return "redirect:/boundaryType/view/"+boundaryType.getId();
+		return "redirect:/boundarytype/view/"+boundaryType.getId();
 	}
 }
