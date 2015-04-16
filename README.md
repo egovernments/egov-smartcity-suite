@@ -34,7 +34,7 @@ mvn -s settings.xml package -Pdb  ## Cleans, compiles, tests, migrates database 
 
 To skip migration use -Dliquibase.should.run=false
 
-#### Database sql files
+#### Database SQL files
 
 * All sql files should be added under directory `<CLONED_REPO_DIR>/egov/egov-database/src/main/resources/sql`
 * Uses the database properties from `<CLONED_REPO_DIR>/egov/egov-database/src/main/resources/liquibase.properties` for migration
