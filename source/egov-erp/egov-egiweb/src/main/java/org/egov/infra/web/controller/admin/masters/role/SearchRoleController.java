@@ -76,14 +76,14 @@ public class SearchRoleController {
 
     @RequestMapping(value = "/viewsearch", method = RequestMethod.GET)
     public String viewSearch(Model model) {
-
-        return "role-viewsearch";
+        model.addAttribute("mode", "view");
+        return "role-search";
 
     }
     @RequestMapping(value = "/updatesearch", method = RequestMethod.GET)
     public String updateSearch(Model model) {
-
-        return "role-updatesearch";
+        model.addAttribute("mode", "update");
+        return "role-search";
 
     }
 
