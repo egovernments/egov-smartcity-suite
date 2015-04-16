@@ -52,7 +52,7 @@ For More details refer [liquibase](http://www.liquibase.org/documentation/index.
 
 ## Deploying
 
-#### 1. Configuring JBoss
+#### 1. Configuring JBoss Wildfly
 
 ##### Spring Profiles
 
