@@ -56,7 +56,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 @Controller
-@RequestMapping("/complaint-type/update")
+@RequestMapping("/complainttype/update")
 public class SearchComplaintTypeController {
 
     private ComplaintTypeService complaintTypeService;
@@ -88,9 +88,7 @@ public class SearchComplaintTypeController {
 
         if (errors.hasErrors())
             return "complaint-type";
-
-        return "redirect:" + request.getRequestURI().split("/")[request.getRequestURI().split("/").length - 1] + "/"
-                + complaintType.getName();
+        return "redirect:/complainttype/update/"+ complaintType.getName();
     }
 
 }

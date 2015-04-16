@@ -57,7 +57,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/complaint-type")
+@RequestMapping("/complainttype/create")
 public class CreateComplaintTypeController {
 
     private DepartmentService departmentService;

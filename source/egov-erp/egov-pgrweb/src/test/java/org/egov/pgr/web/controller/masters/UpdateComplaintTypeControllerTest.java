@@ -108,14 +108,14 @@ public class UpdateComplaintTypeControllerTest extends AbstractContextController
         });
         mvcBuilder.setConversionService(formatterService);
         mockMvc = mvcBuilder.build();
-
+        name = "existing";
         ComplaintType complaintType = new ComplaintType();
         complaintType.setDepartment(department);
-        name = "existing";
+        complaintType.setName("existing");
         when(complaintTypeService.findByName(name)).thenReturn(complaintType);
     }
 
-    /*@Test
+    @Test
     public void shouldRetrieveExistingComplaintTypeForUpdate() throws Exception {
         Department department1 = new DepartmentBuilder().withName("dep1").build();
         Department department2 = new DepartmentBuilder().withName("dep2").build();
@@ -123,11 +123,10 @@ public class UpdateComplaintTypeControllerTest extends AbstractContextController
 
         ComplaintType complaintType = new ComplaintType();
         complaintType.setName("existing");
-
+        name = "existing";
         when(departmentService.getAllDepartments()).thenReturn(departments);
 
-        MvcResult result = this.mockMvc.perform(get("/complaint-type/update/"+name).param("name", "existing"))
-               // .andExpect(model().attribute("name",name))
+        MvcResult result = this.mockMvc.perform(get("/complainttype/update/"+name))
                 .andExpect(view().name("complaint-type"))
                 .andExpect(model().attribute("departments", departments))
                 .andExpect(model().attributeExists("complaintType"))
@@ -135,25 +134,25 @@ public class UpdateComplaintTypeControllerTest extends AbstractContextController
 
         ComplaintType existingComplaintType = (ComplaintType) result.getModelAndView().getModelMap().get("complaintType");
         assertEquals(complaintType.getName(), existingComplaintType.getName());
-    }*/
+    }
  
-   /* @Test
+    @Test
     public void shouldUpdateComplaintType() throws Exception {
-        this.mockMvc.perform(post("/complaint-type/update/existing")
+        this.mockMvc.perform(post("/complainttype/update/existing")
                 .param("name", "existing-complaint-type").param("code", "Test"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(redirectedUrl("/complaint-type/update"));
+                .andExpect(view().name("complaintType-success"));
 
         ArgumentCaptor<ComplaintType> argumentCaptor = ArgumentCaptor.forClass(ComplaintType.class);
         verify(complaintTypeService).updateComplaintType(argumentCaptor.capture());
 
         ComplaintType createdComplaintType = argumentCaptor.getValue();
         assertEquals("existing-complaint-type", createdComplaintType.getName());
-    }*/
+    }
 
     @Test
     public void shouldValidateComplaintTypeWhileUpdating() throws Exception {
-        this.mockMvc.perform(post("/complaint-type/update/existing")
+        this.mockMvc.perform(post("/complainttype/update/existing")
                 .param("name","").param("code", "Test"))
                 .andExpect(model().hasErrors())
                 .andExpect(model().attributeHasFieldErrors("complaintType", "name"))

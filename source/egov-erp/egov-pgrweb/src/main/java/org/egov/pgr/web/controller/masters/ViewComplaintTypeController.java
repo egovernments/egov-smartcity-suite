@@ -62,7 +62,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 @Controller
-@RequestMapping("/view-complaintType")
+@RequestMapping("/complainttype")
 public class ViewComplaintTypeController extends MultiActionController {
 
     private ComplaintTypeService complaintTypeService;
@@ -73,7 +73,7 @@ public class ViewComplaintTypeController extends MultiActionController {
         this.complaintTypeService = complaintTypeService;
     }
 
-    @RequestMapping(value = "form", method = RequestMethod.GET)
+    @RequestMapping(value = "view", method = RequestMethod.GET)
     public String complaintTypeViewForm(@ModelAttribute ComplaintType complaintType, Model model) {
         return "view-complaintType";
 
@@ -86,7 +86,7 @@ public class ViewComplaintTypeController extends MultiActionController {
         return json;
     }
 
-    @RequestMapping(value = "result", method = RequestMethod.GET)
+    @RequestMapping(value = "ajax/result", method = RequestMethod.GET)
     public @ResponseBody void springPaginationDataTables(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         int pageStart = Integer.valueOf(request.getParameter("start"));

@@ -47,9 +47,9 @@ import org.egov.pgr.service.ComplaintService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class ViewComplaintController {
@@ -61,8 +61,8 @@ public class ViewComplaintController {
         this.complaintService = complaintService;
     }
 
-    @RequestMapping(value = "/view-complaint", method = RequestMethod.GET)
-    public String viewComplaints(@RequestParam String crnNo, Model model) {
+    @RequestMapping(value = "/complaint/view/{crnNo}", method = RequestMethod.GET)
+    public String viewComplaints(@PathVariable String crnNo, Model model) {
         Complaint complaint = complaintService.getComplaintByCrnNo(crnNo);
         List<Hashtable<String, Object>> historyTable = complaintService.getHistory(complaint);
         model.addAttribute("complaintHistory", historyTable);

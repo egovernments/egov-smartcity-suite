@@ -123,7 +123,7 @@ public class CreateComplaintTypeControllerTest extends AbstractContextController
 
     @Test
     public void shouldResolveComplaintTypeCreationPage() throws Exception {
-        this.mockMvc.perform(get("/complaint-type"))
+        this.mockMvc.perform(get("/complainttype/create"))
                 .andExpect(view().name("complaint-type"))
                 .andExpect(status().isOk());
     }
@@ -136,7 +136,7 @@ public class CreateComplaintTypeControllerTest extends AbstractContextController
         List<Department> departments = Arrays.asList(department1, department2);
         when(departmentService.getAllDepartments()).thenReturn(departments);
 
-        this.mockMvc.perform(get("/complaint-type"))
+        this.mockMvc.perform(get("/complainttype/create"))
                 .andExpect(view().name("complaint-type"))
                 .andExpect(model().attribute("departments", departments))
                 .andExpect(status().isOk());
@@ -144,13 +144,13 @@ public class CreateComplaintTypeControllerTest extends AbstractContextController
         verify(departmentService).getAllDepartments();
     }
 
-   /* @Test
+    @Test
     public void shouldCreateNewComplaintType() throws Exception {
-        this.mockMvc.perform(post("/complaint-type")
+        this.mockMvc.perform(post("/complainttype/create")
                 .param("department", "1")
                 .param("name", "new-complaint-type").param("code", "test"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(redirectedUrl("/complaint-type"));
+                .andExpect(view().name("complaintType-success"));
 
         ArgumentCaptor<ComplaintType> argumentCaptor = ArgumentCaptor.forClass(ComplaintType.class);
         verify(complaintTypeService).createComplaintType(argumentCaptor.capture());
@@ -158,11 +158,11 @@ public class CreateComplaintTypeControllerTest extends AbstractContextController
         ComplaintType createdComplaintType = argumentCaptor.getValue();
         assertTrue(createdComplaintType.isNew());
         assertEquals("new-complaint-type", createdComplaintType.getName());
-    }*/
+    }
 
     @Test
     public void shouldValidateComplaintTypeWhileCreating() throws Exception {
-        this.mockMvc.perform(post("/complaint-type"))
+        this.mockMvc.perform(post("/complainttype/create"))
                 .andExpect(model().hasErrors())
                 .andExpect(model().attributeHasFieldErrors("complaintType", "name"))
                 .andExpect(model().attributeHasFieldErrors("complaintType", "department"))

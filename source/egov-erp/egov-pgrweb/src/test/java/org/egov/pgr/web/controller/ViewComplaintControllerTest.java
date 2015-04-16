@@ -96,13 +96,11 @@ public class ViewComplaintControllerTest extends AbstractContextControllerTest<V
 	protected ViewComplaintController initController() {
 		initMocks(this);
 		return new ViewComplaintController(complaintService);
-
 	}
 
 	@Test
 	public void getViewComplaintResult() throws Exception {
-		this.mockMvc.perform(get("/view-complaint")
-				.param("crnNo",String.valueOf(crnNo)))
+		this.mockMvc.perform(get("/complaint/view/"+crnNo))
 				.andExpect(view().name("view-complaint"))
 				.andExpect(status().isOk());
 

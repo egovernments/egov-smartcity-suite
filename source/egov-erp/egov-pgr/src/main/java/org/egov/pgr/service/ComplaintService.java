@@ -237,7 +237,7 @@ public class ComplaintService {
 
     public Complaint getComplaintByCrnNo(final String crnNo) {
         final Criteria criteria = getCurrentSession().createCriteria(Complaint.class, "complaint").add(
-                Restrictions.ilike("complaint.CRN", crnNo));
+                Restrictions.eq("complaint.CRN", crnNo));
         return (Complaint) criteria.uniqueResult();
     }
 
@@ -268,7 +268,7 @@ public class ComplaintService {
 
         citizenInboxBuilder.module((Module) hql.uniqueResult());
         citizenInboxBuilder.identifier(savedComplaint.getCRN());
-        citizenInboxBuilder.link("/pgr/view-complaint?crnNo=" + savedComplaint.getCRN());
+        citizenInboxBuilder.link("/pgr/complaint/view/" + savedComplaint.getCRN());
         citizenInboxBuilder.state(savedComplaint.getState());
         citizenInboxBuilder.status(savedComplaint.getStatus().getName());
 
