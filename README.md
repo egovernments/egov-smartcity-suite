@@ -1,5 +1,5 @@
 # eGov Opensource
-[![Build Status](http://ci.egovernments.org/job/Phoenix-Master-Build/badge/icon)](http://ci.egovernments.org/job/Phoenix-Master-Build/)
+[![Build Status](http://ci.egovernments.org/job/eGov-Github-Master/badge/icon)](http://ci.egovernments.org/job/eGov-Github-Master/)
 ## Repository Structure
 
 * `egov` - folder contains all the source code of eGov opensource projects
