@@ -65,13 +65,13 @@ public class HierarchyTypeService {
     }
     
     @Transactional
-    public void createHierarchyType(HierarchyType hierarchyType) {
-        hierarchyTypeRepository.save(hierarchyType);
+    public HierarchyType createHierarchyType(HierarchyType hierarchyType) {
+        return hierarchyTypeRepository.save(hierarchyType);
     }
     
     @Transactional
-    public void updateHierarchyType(HierarchyType hierarchyType) {
-        hierarchyTypeRepository.save(hierarchyType);
+    public HierarchyType updateHierarchyType(HierarchyType hierarchyType) {
+        return hierarchyTypeRepository.saveAndFlush(hierarchyType);
     }
     
     public HierarchyType getHierarchyTypeById(Long id) {

@@ -44,6 +44,7 @@ import javax.validation.Valid;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -53,12 +54,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/hierarchy-type/create")
+@RequestMapping("/hierarchytype")
 public class CreateHierarchyTypeController {
 
-    private static String REDIRECT_URL_VIEW = "redirect:/hierarchy-type/view/";
+    private static final String REDIRECT_URL_VIEW = "redirect:/hierarchytype/view/";
+    private static final String REQUEST_MAP_CREATE = "/create";
     
     private HierarchyTypeService hierarchyTypeService;
+    
+    @Autowired
+    private MessageSource messageSource;
 
     @Autowired
     public CreateHierarchyTypeController(HierarchyTypeService hierarchyTypeService) {
@@ -70,12 +75,12 @@ public class CreateHierarchyTypeController {
         return new HierarchyType();
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = REQUEST_MAP_CREATE, method = RequestMethod.GET)
     public String hierarchyTypeForm(Model model) {
         return "hierarchyType-form";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = REQUEST_MAP_CREATE, method = RequestMethod.POST)
     public String createHierarchyType(@ModelAttribute @Valid HierarchyType hierarchyType, BindingResult errors,
             RedirectAttributes additionalAttr) {
 
@@ -84,8 +89,12 @@ public class CreateHierarchyTypeController {
         }
 
         hierarchyTypeService.createHierarchyType(hierarchyType);
-        additionalAttr.addFlashAttribute("message", "Successfully created Hierarchy Type !");
+        additionalAttr.addFlashAttribute("message", getMessage("msg.success.hierarchytype.create"));
         
         return REDIRECT_URL_VIEW + hierarchyType.getName();
+    }
+    
+    private String getMessage(String key) {
+        return messageSource.getMessage(key, null, "", null);
     }
 }

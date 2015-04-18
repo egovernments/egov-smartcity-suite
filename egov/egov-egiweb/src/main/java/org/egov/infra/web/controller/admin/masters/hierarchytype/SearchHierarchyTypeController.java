@@ -55,9 +55,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value = { "/hierarchy-type/view", "hierarchy-type/update" })
+@RequestMapping("/hierarchytype")
 public class SearchHierarchyTypeController {
-
+    
+    private static final String REQUEST_MAP_VIEW = "/view";
+    private static final String REQUEST_MAP_UPDATE = "/update";
+    
     private HierarchyTypeService hierarchyTypeService;
 
     @Autowired
@@ -75,9 +78,8 @@ public class SearchHierarchyTypeController {
         return hierarchyTypeService.getAllHierarchyTypes();
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = { REQUEST_MAP_VIEW, REQUEST_MAP_UPDATE }, method = RequestMethod.GET)
     public String showHierarchyTypes(Model model) {
         return "hierarchyType-list";
     }
 }
- 

@@ -43,7 +43,7 @@
 							<spring:message code="lbl.hierarchyType.localName"/>
 						</label>
 						<div class="col-sm-6">
-							<form:input path="localName" id="localName" type="text" class="form-control low-width is_valid_alphanumeric" placeholder="" autocomplete="off" required="required"/>
+							<form:input path="localName" id="localName" type="text" class="form-control low-width is_valid_alphanumeric" placeholder="" autocomplete="off"/>
                             <form:errors path="localName" cssClass="add-margin error-msg"/>
 						</div>
 					</div>	

@@ -82,6 +82,7 @@
             <list>
                 <value>config/messages/labels</value>
                 <value>config/messages/errors</value>
+		<value>config/messages/message</value>
             </list>
         </property>
         <!-- Disabling caching since on development-->

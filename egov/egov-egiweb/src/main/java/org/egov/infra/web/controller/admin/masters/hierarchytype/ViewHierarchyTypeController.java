@@ -49,9 +49,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping("/hierarchy-type/view/{typeName}")
+@RequestMapping("/hierarchytype")
 public class ViewHierarchyTypeController {
 
+    private static final String REQUEST_MAP_VIEW = "/view/{typeName}";
     private HierarchyTypeService hierarchyTypeService;
     
     @Autowired
@@ -64,7 +65,7 @@ public class ViewHierarchyTypeController {
            return hierarchyTypeService.getHierarchyTypeByName(typeName);
     }
     
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = REQUEST_MAP_VIEW, method = RequestMethod.GET)
     public String hierarchyTypeViewForm() {
         return "hierarchyType-view";
     }
