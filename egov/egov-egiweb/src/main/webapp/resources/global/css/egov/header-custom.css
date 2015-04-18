@@ -42,7 +42,7 @@ a:hover, a:focus, a:active {
 .navbar-header > a > img
 {
 	vertical-align:top;
-	padding-right:5px;
+	border-radius: 5px;
 }
 
 .navbar-header > a  span
@@ -50,7 +50,12 @@ a:hover, a:focus, a:active {
 	font-family: semibold;
 	display:block;
 	font-size:17px;
+	line-height:42px;
 	margin-top:-3px;
+}
+
+.navbar-header > a  span.citizen-title{
+	line-height:1.2;
 }
 
 span.title1
