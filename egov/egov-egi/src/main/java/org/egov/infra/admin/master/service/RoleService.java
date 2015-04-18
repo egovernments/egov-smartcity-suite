@@ -68,12 +68,12 @@ public class RoleService {
 
     @Transactional
     public void createRole(final Role role){
-        roleRepository.save(role);
+        roleRepository.saveAndFlush(role);
     }
 
     @Transactional
     public void update(final Role role) {
-        roleRepository.save(role);
+        roleRepository.saveAndFlush(role);
     }
     @Transactional
     public void remove(final Role role) {
