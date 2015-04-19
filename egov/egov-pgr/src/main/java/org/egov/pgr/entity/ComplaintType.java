@@ -51,6 +51,7 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.search.domain.Searchable;
 import org.egov.search.util.Serializer;
 import org.hibernate.validator.constraints.Length;
@@ -98,6 +99,10 @@ public class ComplaintType extends AbstractPersistable<Long> {
     
     @Column(name = "isActive")
     private boolean isActive = true;
+    
+    @Length(max = 100)
+    @SafeHtml
+    private String description;
 
     public String getName() {
         return name;
@@ -137,6 +142,14 @@ public class ComplaintType extends AbstractPersistable<Long> {
 
     public void setIsActive(boolean isActive) {
         this.isActive = isActive;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public JSONObject toJsonObject() {

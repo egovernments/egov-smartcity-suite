@@ -1,3 +1,4 @@
+
 /**
  * eGov suite of products aim to improve the internal efficiency,transparency, 
    accountability and the service delivery of the government  organizations.
@@ -51,11 +52,13 @@ public class ComplaintTypeAdaptor implements JsonSerializer<ComplaintType> {
     public JsonElement serialize(ComplaintType compaintType, Type type, JsonSerializationContext jsc) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("name", compaintType.getName());
-        jsonObject.addProperty("department", null != compaintType.getDepartment() ? compaintType.getDepartment().getName() : "NA");
+        jsonObject.addProperty("department", null != compaintType.getDepartment() ? compaintType.getDepartment()
+                .getName() : "NA");
         jsonObject.addProperty("locationRequired", compaintType.isLocationRequired());
         jsonObject.addProperty("code", compaintType.getCode());
         jsonObject.addProperty("isActive", compaintType.getIsActive());
-        return jsonObject;      
+        jsonObject.addProperty("description", null != compaintType.getDescription() ? compaintType.getDescription() : "N/A");
+        return jsonObject;
     }
 
 }

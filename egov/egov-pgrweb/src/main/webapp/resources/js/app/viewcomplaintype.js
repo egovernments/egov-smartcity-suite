@@ -28,6 +28,9 @@ $(document)
 										}, {
 											"mData" : "isActive",
 											"sTitle" : "Is Active"
+										},{
+											"mData" : "description",
+											"sTitle" : "Description"
 										} ],
 									});
 
@@ -46,3 +49,4 @@ $(document)
 							});
 
 				});
+

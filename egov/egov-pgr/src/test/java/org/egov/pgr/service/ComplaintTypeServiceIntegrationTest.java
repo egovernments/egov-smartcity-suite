@@ -43,6 +43,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -96,7 +97,7 @@ public class ComplaintTypeServiceIntegrationTest extends PGRAbstractSpringIntegr
         department = departmentService.getDepartmentByCode("HD");
     }
 
-   /* @Test
+    @Test
     public void shouldCreateComplaintType() throws ClassNotFoundException {
         ComplaintType complaintType = new ComplaintTypeBuilder()
                 .withName("test-complaint-type1")
@@ -112,7 +113,7 @@ public class ComplaintTypeServiceIntegrationTest extends PGRAbstractSpringIntegr
         int expectedDeptId = department.getId().intValue();
         int actualDeptId = createdRow.get().getDepartment().getId().intValue();
         assertEquals(expectedDeptId, actualDeptId);
-    }*/
+    }
 
     @Test
     public void shouldFindComplaintTypeById() {
@@ -153,3 +154,4 @@ public class ComplaintTypeServiceIntegrationTest extends PGRAbstractSpringIntegr
         return complaintTypes.stream().anyMatch(complaintType -> complaintType.getName().equals(name));
     }
 }
+

@@ -39,7 +39,7 @@
 								<form:errors path="code" cssClass="error-msg" />
 							</div>
 						</div>
-
+						
 						<div class="form-group">
 							<label class="col-sm-3 control-label"> <spring:message
 									code="lbl.department" />
@@ -86,6 +86,20 @@
 							</div>
 
 						</div>
+						
+						<div class="form-group">
+							<label class="col-sm-3 control-label"> <spring:message
+									code="lbl.complaintTypeDesc" />
+							</label>
+
+							<div class="col-sm-6 add-margin">
+								<form:textarea path="description" id="comp_type_desc"
+									cssClass="form-control is_valid_alphabet"
+									cssErrorClass="form-control error" maxlength="50"/>
+								<%-- <form:errors path="description" cssClass="error-msg" /> --%>
+							</div>
+						</div>
+						
 
 					</div>
 				</div>
@@ -100,3 +114,4 @@
 		</div>
 	</div>
 </div>
+

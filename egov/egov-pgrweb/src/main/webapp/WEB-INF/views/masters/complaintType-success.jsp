@@ -19,7 +19,7 @@
 						<div class="col-md-3 col-xs-6 add-margin">
 							<spring:message code="lbl.complaintTypeName" />
 						</div>
-						<div class="col-md-3 col-xs-6 add-margin" id="ct-name">
+						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-name">
 							<c:out value="${complaintType.name }"></c:out>
 							<input id="compTypeName" type="hidden"
 								value="<c:out value="${complaintType.name }" />" />
@@ -27,7 +27,7 @@
 						<div class="col-md-3 col-xs-6 add-margin">
 							<spring:message code="lbl.complaintTypeCode" />
 						</div>
-						<div class="col-md-3 col-xs-6 add-margin" id="ct-code">
+						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-code">
 							<c:out value="${complaintType.code}"></c:out>
 						</div>
 					</div>
@@ -35,22 +35,35 @@
 						<div class="col-md-3 col-xs-6 add-margin">
 							<spring:message code="lbl.department" />
 						</div>
-						<div class="col-md-3 col-xs-6 add-margin" id="ct-dept">
+						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-dept">
 							<c:out value="${complaintType.department.name}"></c:out>
 						</div>
 
 						<div class="col-md-3 col-xs-6 add-margin">
 							<spring:message code="lbl.complaintType.loc" />
 						</div>
-						<div class="col-md-3 col-xs-6 add-margin" id="ct-loc">
+						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-loc">
 							${complaintType.locationRequired}</div>
 					</div>
 					<div class="row">
 						<div class="col-md-3 col-xs-6 add-margin">
 							<spring:message code="lbl.isactive" />
 						</div>
-						<div class="col-md-3 col-xs-6 add-margin" id="ct-isactive">
+						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-isactive">
 							${complaintType.isActive}</div>
+					</div>
+					
+					<div class="row">
+						<div class="col-md-3 col-xs-6 add-margin">
+							<spring:message code="lbl.complaintTypeDesc" />
+						</div>
+						<div class="col-md-3 col-xs-6 add-margin view-content"
+							id="ct-isactive">
+							<c:choose>
+								<c:when test="${complaintType.description != null}">${complaintType.description}</c:when>
+								<c:otherwise>N/A</c:otherwise>
+							</c:choose>
+						</div>
 					</div>
 
 					<div class="row text-center">
@@ -73,3 +86,4 @@
 		</div>
 	</div>
 </div>
+

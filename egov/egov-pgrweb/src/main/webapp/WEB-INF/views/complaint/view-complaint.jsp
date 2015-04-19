@@ -19,46 +19,48 @@
 				</c:if>
 				<div class="row add-border">
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.name" /></div>
-					<div class="col-md-3 col-xs-6 add-margin" id="ct-name">
+					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-name">
 						<c:out value="${complaint.complainant.name}"></c:out>
 					</div>
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.phoneNumber" /></div>
-					<div class="col-md-3 col-xs-6 add-margin" id="ct-mobno">
+					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
 						<c:out value="${complaint.complainant.mobile}"></c:out>
 					</div>
 				</div>
 				<div class="row add-border">
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.ctn" /></div>
-					<div class="col-md-3 col-xs-6 add-margin" id="ct-ctnumber">
+					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-ctnumber">
 						<c:out value="${complaint.CRN}"></c:out>
 					</div>
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.complaintDate" /></div>
-					<div class="col-md-3 col-xs-6 add-margin" id="ct-date">
+					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-date">
 					<joda:format value="${complaint.createdDate}" var="complaintDate" pattern="yyyy-MM-dd"/>
 					<c:out value="${complaintDate}"></c:out> 
 					</div>
 				</div>
 				<div class="row add-border">
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.complaintDepartment" /></div>
-					<div class="col-md-3 col-xs-6 add-margin" id="ct-dept">
+					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-dept">
 						<c:out value="${complaint.complaintType.department.name}"></c:out>
 					</div>
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.filedVia" /></div>
-					<div class="col-md-3 col-xs-6 add-margin" id="ct-filedvia">
+					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-filedvia">
 						Internet</div>
 				</div>
 				<div class="row add-border">
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.complaintType" /></div>
-					<div class="col-md-3 col-xs-6 add-margin" id="ct-type">
+					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-type">
 						<c:out value="${complaint.complaintType.name}"></c:out>
 					</div>
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.priority" /></div>
 					<div class="col-md-3 col-xs-6 add-margin" id="ct-priority">
 						</div>
+					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-priority">
+						Waterlogged road</div>
 				</div>
 				<div class="row add-border">
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.compDetails" /></div>
-					<div class="col-md-3 col-xs-6 add-margin" id="ct-details">
+					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-details">
 						<c:out value="${complaint.details }"></c:out>
 					</div>
 				</div>
@@ -99,7 +101,7 @@
 					<div class="col-md-3 col-xs-6 add-margin">
 						<spring:message code="lbl.location" />
 					</div>
-					<div class="col-md-9 col-xs-6 add-margin">
+					<div class="col-md-9 col-xs-6 add-margin view-content">
 						<span class="map-tool-class btn-secondary" data-toggle="tooltip"
 							data-placement="top" title="" data-original-title="Locate on map"
 							onclick="jQuery('#complaint-locate').modal('show', {backdrop: 'static'});"><i
@@ -111,7 +113,7 @@
 					<div class="col-md-3 col-xs-6 add-margin">
 						<spring:message code="lbl.landmark" /> 
 					</div>
-					<div class="col-md-9 col-xs-6 add-margin" id="ct-lanmark">
+					<div class="col-md-9 col-xs-6 add-margin view-content" id="ct-lanmark">
 						<c:choose>
 							<c:when test="${complaint.landmarkDetails != null}">
 								<c:out value="${complaint.landmarkDetails}"></c:out>
@@ -243,3 +245,4 @@
 <script	src="<c:url value='/resources/global/js/image-gallery/js/bootstrap-image-gallery.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/js/app/complaintview.js'/>"></script>
 <script src="<c:url value='/resources/js/app/complaintviewmap.js'/>"></script>
+
