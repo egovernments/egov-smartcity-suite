@@ -39,8 +39,6 @@
  */
 package org.egov.infra.web.controller;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -137,8 +135,7 @@ public class HomeController {
     }
 
     private String prepareOfficialHomePage(final User user, final HttpSession session, final ModelMap modelData) {
-        final List<Module> modules = moduleDAO.getModuleInfoForRoleIds(user.getRoles());
-        modelData.addAttribute("menu", prepareApplicationMenu(modules, user));
+        modelData.addAttribute("menu", prepareApplicationMenu(moduleDAO.getModuleInfoForRoleIds(user.getRoles()), user));
         modelData.addAttribute("cityLogo", session.getAttribute("citylogo"));
         modelData.addAttribute("cityName", session.getAttribute("cityname"));
         modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
@@ -146,16 +143,10 @@ public class HomeController {
     }
 
     private List<Module> getEmployeeSelfService(final List<Module> modules, final User user) {
-        final List<Module> selfServices = new ArrayList<Module>();
-        final Iterator<Module> moduleIterator = modules.iterator();
-        while (moduleIterator.hasNext()) {
-            final Module module = moduleIterator.next();
-            if (module.getModuleName().equals("EmployeeSelfService")) {
-                moduleIterator.remove();
-                selfServices.addAll(moduleDAO.getApplicationModuleByParentId(module.getId(), user.getId()));
-            }
-        }
-        return selfServices;
+        return modules.parallelStream().filter(module -> module.getModuleName().equals("EmployeeSelfService"))
+                .findFirst().map(module -> moduleDAO.getApplicationModuleByParentId(module.getId(), user.getId()))
+                .get();
+
     }
 
     private String prepareApplicationMenu(final List<Module> modules, final User user) {
@@ -176,15 +167,17 @@ public class HomeController {
             final Menu menu) {
         final Menu applicationMenu = createSubmenu("apps", "Applications", "Applications", "#", "fa fa-th floatLeft",
                 menu);
-        modules.stream().forEach(
-                module -> {
-                    createSubmenuRoot(
-                            module,
-                            favourites,
-                            user,
-                            createSubmenu(String.valueOf(module.getId()), module.getModuleDescription(),
-                                    module.getModuleDescription(), "#", "", applicationMenu));
-                });
+        modules.stream()
+                .filter(module -> !module.getModuleName().equals("EmployeeSelfService"))
+                .forEach(
+                        module -> {
+                            createSubmenuRoot(
+                                    module,
+                                    favourites,
+                                    user,
+                                    createSubmenu(String.valueOf(module.getId()), module.getModuleDescription(),
+                                            module.getModuleDescription(), "#", "", applicationMenu));
+                        });
     }
 
     private void createFavouritesMenu(final List<Module> favourites, final Menu menu) {
@@ -257,3 +250,4 @@ public class HomeController {
     }
 
 }
+

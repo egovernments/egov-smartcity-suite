@@ -41,8 +41,11 @@ package org.egov.infra.admin.master.repository;
 
 import java.util.Set;
 
+import javax.persistence.QueryHint;
+
 import org.egov.infra.admin.master.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -50,6 +53,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     public Set<User> findByUsernameContainingIgnoreCase(String userName);
 
+    @QueryHints({
+        @QueryHint(name = "org.hibernate.cacheable", value ="true"),
+        @QueryHint(name="org.hibernate.cacheRegion",value="local-query")
+        })
     public User findByUsername(String userName);
     
     public User findByEmailId(String emailId);
