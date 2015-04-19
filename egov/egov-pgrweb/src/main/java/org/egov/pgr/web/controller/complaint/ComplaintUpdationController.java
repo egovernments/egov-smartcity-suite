@@ -174,7 +174,7 @@ public class ComplaintUpdationController {
         }
 
         if (!errors.hasErrors()) {
-            complaintService.update(complaint, approvalPosition, approvalComent);
+            complaint = complaintService.update(complaint, approvalPosition, approvalComent);
 
             redirectAttrs.addFlashAttribute("message", "Successfully Updated Complaint !");
         } else {

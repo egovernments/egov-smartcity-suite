@@ -36,10 +36,10 @@ $(document).ready(function()
 		if($('#toggle-his-icon').hasClass('entypo-down-open'))
 		{
 			$('#toggle-his-icon').removeClass('entypo-down-open').addClass('entypo-up-open');
-			$('#see-more-link').hide();
+			//$('#see-more-link').hide();
 			}else{
 			$('#toggle-his-icon').removeClass('entypo-up-open').addClass('entypo-down-open');
-			$('#see-more-link').show();
+			//$('#see-more-link').show();
 		}
 	});
 	
@@ -59,7 +59,7 @@ $(document).ready(function()
 				$('#location').append($("<option value=''>Select</option>"));
 				$.each(response, function(index, value) {
 					
-				     $('#location').append($('<option>').text(value.boundaryNameLocal).attr('value', value.id));
+				     $('#location').append($('<option>').text(value.name).attr('value', value.id));
 				});
 				
 			}, 
@@ -108,7 +108,7 @@ $(document).ready(function()
 				$('#approvalPosition').empty();
 				$('#approvalPosition').append($("<option value=''>Select</option>"));
 				$.each(response, function(index, value) {
-					$('#approvalPosition').append($('<option>').text(value.username).attr('value', value.id));
+					$('#approvalPosition').append($('<option>').text(value.name).attr('value', value.id));  
 				});
 				
 			}, 

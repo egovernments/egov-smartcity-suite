@@ -143,9 +143,9 @@ public class ComplaintService {
         }
         complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
         final Position assignee = complaintRouterService.getAssignee(complaint);
-        complaint.transition().start().withSenderName(complaint.getComplainant().getUserDetail().getName())
-                .withComments("complaint registered with crn : " + complaint.getCRN()).withStateValue("Registered")
-                .withOwner(assignee).withDateInfo(new Date());
+        complaint.transition(true).start().withSenderName(complaint.getComplainant().getUserDetail().getName())
+                .withComments("complaint registered with crn : " + complaint.getCRN())
+                .withStateValue(complaint.getStatus().getName()).withOwner(assignee).withDateInfo(new Date());
 
         complaint.setAssignee(assignee);
         complaint.setEscalationDate(new DateTime());
@@ -163,59 +163,43 @@ public class ComplaintService {
         return savedComplaint;
     }
 
+    /**
+     * @param complaint
+     * @param approvalPosition
+     * @param approvalComent
+     * @return If the status is changed to completed/withdrawn then
+     *         terminate/end the workflow. Even if the poistion is selected no
+     *         need to consider position as it is end of workflow.else If
+     *         position is found then it is forwarding only. Else it is update
+     *         by official or citizen
+     */
+
     @Transactional
     @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
     public Complaint update(final Complaint complaint, final Long approvalPosition, final String approvalComent) {
-        Position owner = null;
-        // Can append any other states to terminate workflow
-        // if the status is change to completed then stop the workflow
-
-        // If position is found then it is forwarding only
+        //
 
         if (false == complaint.getComplaintType().isLocationRequired())
             complaint.setLocation(null);
 
-        if (null != approvalPosition && !approvalPosition.equals(Long.valueOf(0))) {
-            owner = eisService.getPrimaryPositionForUser(approvalPosition, new Date());
-            LOG.debug(owner.toString());
-            complaint.setAssignee(owner);
-            if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())) {
-                LOG.debug("callling transition........");
-                complaint.transition().withOwner(owner).withComments(approvalComent)
-                        .withSenderName(securityUtils.getCurrentUser().getName()).withDateInfo(new Date()).end();
-            } else {
-                LOG.debug("callling transition........");
-                complaint.transition().withOwner(owner).withComments(approvalComent)
-                        .withSenderName(securityUtils.getCurrentUser().getName()).withStateValue(State.STATE_FORWARDED)
-                        .withDateInfo(new Date());
-            }
-        } else if (null != securityUtils.getCurrentUser()) {
-            // If positon is not selected then it is updation like change
-            // complaint type ,status or coments updation only.
-            owner = eisService.getPrimaryPositionForUser(securityUtils.getCurrentUser().getId(), new Date());
-            // if owner is found then he is an employee
-            if (null != owner) {
-                LOG.debug(owner.getName());
-                if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())) {
-                    LOG.debug("callling transition...........");
-                    complaint.transition().withOwner(owner).withComments(approvalComent)
-                            .withSenderName(securityUtils.getCurrentUser().getName()).withDateInfo(new Date()).end();
-                } else {
-                    LOG.debug("callling transition........");
-                    complaint.transition().withOwner(owner).withComments(approvalComent)
-                            .withSenderName(securityUtils.getCurrentUser().getName())
-                            .withStateValue(State.STATE_UPDATED).withDateInfo(new Date());
-                }
+        final String userName = securityUtils.getCurrentUser().getName();
+        if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())
+                || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString())) {
+            LOG.debug("Terminating Complaint Workflow");
+            complaint.transition(true).withComments(approvalComent).withStateValue(complaint.getStatus().getName())
+                    .withSenderName(userName).withDateInfo(new Date()).end();
 
-            } else // This is updation by Citizen
-            if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString()))
-                complaint.transition().withComments(approvalComent).withSenderName("").withDateInfo(new Date()).end();
-            else
-                complaint.transition().withComments(approvalComent).withSenderName("")
-                        .withStateValue(State.STATE_UPDATED).withDateInfo(new Date());
+        } else if (null != approvalPosition && !approvalPosition.equals(Long.valueOf(0))) {
+            final Position owner = eisService.getPrimaryPositionForUser(approvalPosition, new Date());
+            complaint.setAssignee(owner);
+            complaint.transition(true).withOwner(owner).withComments(approvalComent).withSenderName(userName)
+                    .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
+        } else {
+            complaint.transition(true).withComments(approvalComent).withSenderName(userName)
+                    .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
         }
 
-        final Complaint savedComplaint = complaintRepository.save(complaint);
+        final Complaint savedComplaint = complaintRepository.saveAndFlush(complaint);
         pushMessage(savedComplaint);
         return savedComplaint;
     }
@@ -304,11 +288,13 @@ public class ComplaintService {
     public List<Hashtable<String, Object>> getHistory(final Complaint complaint) {
         User user = null;
         final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
-        if (!complaint.getStateHistory().isEmpty() && complaint.getStateHistory() != null)
+        if (!complaint.getStateHistory().isEmpty() && complaint.getStateHistory() != null) {
             for (final StateHistory stateHistory : complaint.getStateHistory()) {
                 final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
                 map.put("date", stateHistory.getDateInfo());
                 map.put("comments", stateHistory.getComments());
+                map.put("updater", stateHistory.getLastModifiedBy().getName());
+                map.put("status", stateHistory.getValue());
                 final Position ownerPosition = stateHistory.getOwnerPosition();
                 user = stateHistory.getOwnerUser();
                 if (null != user) {
@@ -322,9 +308,29 @@ public class ComplaintService {
                     map.put("department", null != ownerPosition.getDeptDesigId().getDeptId() ? ownerPosition
                             .getDeptDesigId().getDeptId().getName() : "");
                 }
-
                 historyTable.add(map);
             }
+        }
+        State state = complaint.getState();
+        final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
+        map.put("date", state.getDateInfo());
+        map.put("comments", state.getComments());
+        map.put("updater", state.getLastModifiedBy().getName());
+        map.put("status", state.getValue());
+        final Position ownerPosition = state.getOwnerPosition();
+        user = state.getOwnerUser();
+        if (null != user) {
+            map.put("user", user.getUsername());
+            map.put("department", null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
+                    .getDepartmentForUser(user.getId()).getName() : "");
+        } else if (null != ownerPosition && null != ownerPosition.getDeptDesigId()) {
+            user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+            map.put("user", null != user.getUsername() ? user.getUsername() : "");
+            map.put("department", null != ownerPosition.getDeptDesigId().getDeptId() ? ownerPosition.getDeptDesigId()
+                    .getDeptId().getName() : "");
+        }
+        historyTable.add(map);
+
         return historyTable;
     }
 

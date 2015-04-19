@@ -54,7 +54,7 @@
 					</div>
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.priority" /></div>
 					<div class="col-md-3 col-xs-6 add-margin" id="ct-priority">
-						Waterlogged road</div>
+						</div>
 				</div>
 				<div class="row add-border">
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.compDetails" /></div>
@@ -136,24 +136,30 @@
 						<i class="entypo-down-open" id="toggle-his-icon"></i>
 					</div>
 				</div>
-				<div class="panel-body">
+				<div class="panel-body history-slide">
 					
 						<c:choose>
 							<c:when test="${!complaintHistory.isEmpty()}">
 								<c:forEach items="${complaintHistory}" var="history">
-								<div class="row">
-									<div class="col-md-3 col-xs-6 add-margin add-border">
+								<div class="row  add-border">
+									<div class="col-md-2 col-xs-12 add-margin ">
 										<fmt:formatDate value="${history.date}" var="historyDate"
 											pattern="HH:MM a E dd MMM yyyy" />
 										<c:out value="${historyDate}" />
 									</div>
-									<div class="col-md-3 col-xs-6 add-margin add-border">
+									<div class="col-md-2 col-xs-12 add-margin">
+										<c:out value="${history.updater}" />
+									</div>
+									<div class="col-md-2 col-xs-12 add-margin ">
+										<c:out value="${history.status}" />
+									</div>
+									<div class="col-md-2 col-xs-12 add-margin ">
 										<c:out value="${history.user}" />
 									</div>
-									<div class="col-md-3 col-xs-6 add-margin add-border">
+									<div class="col-md-2 col-xs-12 add-margin ">
 										<c:out value="${history.department}" />
 									</div>
-									<div class="col-md-3 col-xs-6 add-margin add-border">
+									<div class="col-md-2 col-xs-12 add-margin ">
 										<c:out value="${history.comments}" />&nbsp;
 									</div>
 								</div>

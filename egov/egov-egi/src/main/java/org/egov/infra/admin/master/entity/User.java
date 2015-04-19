@@ -74,7 +74,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.DateTime;
 
-import com.google.gson.annotations.Expose;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "eg_user")
@@ -96,7 +96,6 @@ public class User extends AbstractAuditable<User, Long> {
 
     private String salutation;
 
-    @Expose
     @NotNull
     @SafeHtml
     @Length(min = 2, max = 100)
@@ -148,6 +147,7 @@ public class User extends AbstractAuditable<User, Long> {
     @Column(name = "type", insertable = false, updatable = false)
     private UserType type;
 
+    @JsonIgnore
     public String getUsername() {
         return username;
     }
@@ -156,6 +156,7 @@ public class User extends AbstractAuditable<User, Long> {
         this.username = username;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
