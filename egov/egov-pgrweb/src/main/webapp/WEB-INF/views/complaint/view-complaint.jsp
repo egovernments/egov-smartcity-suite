@@ -139,8 +139,15 @@
 					</div>
 				</div>
 				<div class="panel-body history-slide">
-					
-						<c:choose>
+					<div class="row view-content header-color hidden-xs">
+						<div class="col-md-2 col-xs-6 add-margin">Date</div>
+						<div class="col-md-2 col-xs-6 add-margin">Updater</div>
+						<div class="col-md-2 col-xs-6 add-margin">Status</div>
+						<div class="col-md-2 col-xs-6 add-margin">Current Owner</div>
+						<div class="col-md-2 col-xs-6 add-margin">Department</div>
+						<div class="col-md-2 col-xs-6 add-margin">Comments</div>
+					</div>
+					<c:choose>
 							<c:when test="${!complaintHistory.isEmpty()}">
 								<c:forEach items="${complaintHistory}" var="history">
 								<div class="row  add-border">
@@ -245,4 +252,3 @@
 <script	src="<c:url value='/resources/global/js/image-gallery/js/bootstrap-image-gallery.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/js/app/complaintview.js'/>"></script>
 <script src="<c:url value='/resources/js/app/complaintviewmap.js'/>"></script>
-
