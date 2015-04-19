@@ -16,6 +16,7 @@
 <meta name="author" content="" />
 
 <title>eGov Urban Portal</title>
+<link rel="icon" href="/egi/resources/global/images/chennai_fav.ico" sizes="32x32">
 <link rel="stylesheet"
 	href="/egi/resources/global/css/bootstrap/bootstrap-datepicker.css">
 <link rel="stylesheet"
@@ -67,7 +68,7 @@
 
 		</header>
 
-		<div class="main-content login-page">
+		<div class="main-content">
 			<div class="login-container ">
 				<%
 				    if ("true".equals(request.getParameter("error"))) {

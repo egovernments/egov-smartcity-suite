@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -80,7 +80,7 @@ public class HomeController {
 
     @Autowired
     private FavouritesService favouritesService;
-    
+
     @Autowired
     private UserService userService;
 
@@ -94,7 +94,8 @@ public class HomeController {
     }
 
     @RequestMapping(value = "add-favourite", method = RequestMethod.GET)
-    public @ResponseBody boolean addFavourite(@RequestParam final Integer actionId, @RequestParam final String name, @RequestParam final String contextRoot) {
+    public @ResponseBody boolean addFavourite(@RequestParam final Integer actionId, @RequestParam final String name,
+            @RequestParam final String contextRoot) {
         final Long userId = securityUtils.getCurrentUser().getId();
         final Favourites favourites = favouritesService.getFavouriteByUserIdAndActionId(userId, actionId);
         if (favourites == null) {
@@ -121,28 +122,23 @@ public class HomeController {
     public User user() {
         return securityUtils.getCurrentUser();
     }
-    
-    @RequestMapping(value="profile/edit",method=RequestMethod.GET)
+
+    @RequestMapping(value = "profile/edit", method = RequestMethod.GET)
     public String editProfile() {
         return "profile-edit";
     }
-    
-    @RequestMapping(value="profile/edit",method=RequestMethod.POST)
-    public String saveProfile(@Valid @ModelAttribute  User user, final BindingResult binder) {
-        if(binder.hasErrors()) {
+
+    @RequestMapping(value = "profile/edit", method = RequestMethod.POST)
+    public String saveProfile(@Valid @ModelAttribute final User user, final BindingResult binder) {
+        if (binder.hasErrors())
             return "profile-edit";
-        }
         userService.updateUser(user);
         return "profile-edit";
     }
-    
+
     private String prepareOfficialHomePage(final User user, final HttpSession session, final ModelMap modelData) {
         final List<Module> modules = moduleDAO.getModuleInfoForRoleIds(user.getRoles());
-        final List<Module> selfServices = getEmployeeSelfService(modules, user);
-        final List<Module> favourites = moduleDAO.getUserFavourites(user.getId());
-        modelData.addAttribute("menu", prepareApplicationMenu(modules, favourites, selfServices, user));
-        modelData.addAttribute("selfServices", selfServices);
-        modelData.addAttribute("favourites", favourites);
+        modelData.addAttribute("menu", prepareApplicationMenu(modules, user));
         modelData.addAttribute("cityLogo", session.getAttribute("citylogo"));
         modelData.addAttribute("cityName", session.getAttribute("cityname"));
         modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
@@ -162,27 +158,30 @@ public class HomeController {
         return selfServices;
     }
 
-    private String prepareApplicationMenu(final List<Module> modules, final List<Module> favourites,
-            final List<Module> selfServices, final User user) {
+    private String prepareApplicationMenu(final List<Module> modules, final User user) {
         final Menu menu = new Menu();
         menu.setId("menuID");
         menu.setTitle("Hi, " + user.getName());
         menu.setIcon("fa fa-reorder");
         menu.setItems(new LinkedList<Menu>());
+        final List<Module> favourites = moduleDAO.getUserFavourites(user.getId());
         createApplicationMenu(modules, favourites, user, menu);
-        createSelfServiceMenu(selfServices, menu);
+        createSelfServiceMenu(getEmployeeSelfService(modules, user), menu);
         createFavouritesMenu(favourites, menu);
 
         return "[" + new GsonBuilder().create().toJson(menu) + "]";
     }
 
-    private void createApplicationMenu(final List<Module> modules, final List<Module> favourites, final User user, final Menu menu) {
+    private void createApplicationMenu(final List<Module> modules, final List<Module> favourites, final User user,
+            final Menu menu) {
         final Menu applicationMenu = createSubmenu("apps", "Applications", "Applications", "#", "fa fa-th floatLeft",
                 menu);
         modules.stream().forEach(
                 module -> {
                     createSubmenuRoot(
-                            module, favourites, user,
+                            module,
+                            favourites,
+                            user,
                             createSubmenu(String.valueOf(module.getId()), module.getModuleDescription(),
                                     module.getModuleDescription(), "#", "", applicationMenu));
                 });
@@ -213,22 +212,26 @@ public class HomeController {
         });
     }
 
-    private void createSubmenuRoot(final Module parentModule, final List<Module> favourites, final User user, final Menu submenu) {
+    private void createSubmenuRoot(final Module parentModule, final List<Module> favourites, final User user,
+            final Menu submenu) {
         final List<Module> submodules = moduleDAO.getApplicationModuleByParentId(parentModule.getId(), user.getId());
         submodules.stream().forEach(submodule -> createApplicationLink(submodule, favourites, user, submenu));
     }
 
-    private void createApplicationLink(final Module submodule, final List<Module> favourites, final User user, final Menu parent) {
+    private void createApplicationLink(final Module submodule, final List<Module> favourites, final User user,
+            final Menu parent) {
         if (submodule.getIsEnabled()) {
             final Menu appLink = new Menu();
             appLink.setId(submodule.getId().toString());
-            appLink.setIcon("fa fa-star floatLeft "+(favourites.contains(submodule) ? "added-as-fav" : "add-to-favourites"));
+            appLink.setIcon("fa fa-star floatLeft "
+                    + (favourites.contains(submodule) ? "added-as-fav" : "add-to-favourites"));
             appLink.setName(submodule.getModuleName());
             appLink.setLink("/" + submodule.getContextRoot() + submodule.getBaseUrl());
             parent.getItems().add(appLink);
         } else
             createSubmenuRoot(
-                    submodule, favourites, 
+                    submodule,
+                    favourites,
                     user,
                     createSubmenu(String.valueOf(submodule.getId()), submodule.getModuleName(),
                             submodule.getModuleName(), "#", "", parent));

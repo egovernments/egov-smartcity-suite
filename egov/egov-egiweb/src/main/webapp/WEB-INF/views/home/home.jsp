@@ -11,6 +11,18 @@
 		
 		<title>eGov Urban Portal</title>
 		
+		<script src="<c:url value='/resources/global/js/jquery/jquery.js'/>"></script>
+		<script src="<c:url value='/resources/global/js/pace/pace.min.js'/>"></script>
+		<script>
+			paceOptions = {
+				ajax: false, // Monitors all ajax requests on the page
+				document: false, // Checks for the existance of specific elements on the page
+				eventLag: false, // Checks the document readyState
+				elements: {
+					selectors: ['.my-page'] // Checks for event loop lag signaling that javascript is being executed
+				}
+			};
+		</script>
 		<link rel="icon" href="<c:url value='/resources/global/images/chennai_fav.ico'/>" sizes="32x32">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
@@ -18,7 +30,9 @@
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/multi-level-menu/jquery.multilevelpushmenu.css'/>"> 
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css'/>">
-		<script src="<c:url value='/resources/global/js/jquery/jquery.js'/>"></script>
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/pace/pace.css'/>">
+		
+		<script src="<c:url value='/resources/global/js/bootstrap/bootbox.min.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/multi-level-menu/jquery.multilevelpushmenu.js'/>"></script>
 		<script src="<c:url value='/resources/js/app/homepage.js'/>"></script>
@@ -84,24 +98,21 @@
 									</a>
 								</li>
 								<li>
-									<a href="javascript:void(0);">
-										<i class="fa fa-ellipsis-h"></i>
-										<span class="title">Self Service</span>
-									</a>
-									<ul class="left-ul-overflow">
-										<c:forEach items="${selfServices}" var="selfService">
-											<li>
-												<a id='ss#${selfService.id}'  name='ss'  href='javascript:void(0);' onclick= "PopupCenter('/${selfService.contextRoot}${selfService.baseUrl}','portalApp${selfService.id}', 850,600)">
-												<span class="title">${selfService.moduleName}</span>
-												</a>
-											</li>
-										</c:forEach>
-									</ul>
-								</li>
-								<li>
 									<a href="javascript:void(0);" onclick="jQuery('.change-password').modal('show', {backdrop: 'static'});">
 										<i class="fa fa-key"></i>
 										<span class="title">Change Password</span>
+									</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);"  onclick="jQuery('.add-feedback').modal('show', {backdrop: 'static'});">
+										<i class="fa fa-comment"></i>
+										<span class="title signout">Feedback</span>
+									</a>
+								</li>
+								<li>
+									<a href="help" data-strwindname="help"  class="open-popup">
+										<i class="fa fa-question"></i>
+										<span class="title signout">Help</span>
 									</a>
 								</li>
 								<li>
@@ -113,22 +124,15 @@
 							</ul>
 						</li>
 						
-						<li class="dropdown">
-							
-							<a href="javascript:void(0);" class="tooltip-secondary" data-toggle="tooltip" title="Feedback" onclick="jQuery('.add-feedback').modal('show', {backdrop: 'static'});">
-								<i class="entypo-comment"></i>
+						<li class="dropdown visible-xs hidden-sm">
+							<a href="/egi/logout.do" class="tooltip-secondary signout" data-toggle="tooltip" title="Sign Out">
+								<i class="entypo-logout"></i>
 							</a>
 						</li>
 						
 						<li class="dropdown">
-							
-							<a href="help" data-strwindname="help" class="tooltip-secondary open-popup" data-toggle="tooltip" title="Help">
-								<i class="entypo-help"></i>
-							</a>
-						</li>
-						<li class="dropdown visible-xs hidden-sm">
-							<a href="/egi/logout.do" class="tooltip-secondary signout" data-toggle="tooltip" title="Sign Out">
-								<i class="entypo-logout"></i>
+							<a href="javascript:void(0);">
+								<img src="<c:url value='/resources/global/images/logo@2x.png'/>" title="Powered by eGovernments" height="25px" style="padding-top:5px">
 							</a>
 						</li>
 					</ul>

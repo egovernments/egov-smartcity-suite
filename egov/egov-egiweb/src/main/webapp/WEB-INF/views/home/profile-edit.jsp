@@ -14,13 +14,6 @@
 				<form:form role="form" action="edit" modelAttribute="user" commandName="user" id="user" cssClass="form-horizontal form-groups-bordered" >
 					
 					<div class="form-group">
-						<label for="field-1" class="col-sm-3 control-label">Username</label>
-						<div class="col-sm-6 add-margin">
-							<form:input path="username" cssClass="form-control" readonly="true"/>
-						</div>
-					</div>
-					
-					<div class="form-group">
 						<label for="field-1" class="col-sm-3 control-label">Full Name</label>
 						<div class="col-sm-2 col-md-1 add-margin">
 							<form:select class="form-control" id="salutation" path="salutation">
