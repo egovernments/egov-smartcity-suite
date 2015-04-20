@@ -122,7 +122,7 @@ public class ModuleHibDao implements ModuleDao {
 	@Override
 	public List<Module> getApplicationModuleByParentId(final Integer parentId, final Long userId) {
 
-		final StringBuffer sql = new StringBuffer(1200);
+		final StringBuffer sql = new StringBuffer();
 
 		sql.append("SELECT DISTINCT view_ram.module_id as id,view_ram.module_name as name,null as url,view_ram.typeflag as typeflag,view_ram.context_root as ctx_root,view_ram.order_number as ordernumber ");
 		sql.append("FROM V_EG_ROLE_ACTION_MODULE_MAP view_ram WHERE  view_ram.parent_id =? and view_ram.typeflag='M' and view_ram.is_enabled=1 ");
