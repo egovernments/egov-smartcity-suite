@@ -39,6 +39,7 @@
  */
 package org.egov.infra.web.controller;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -145,7 +146,7 @@ public class HomeController {
     private List<Module> getEmployeeSelfService(final List<Module> modules, final User user) {
         return modules.parallelStream().filter(module -> module.getModuleName().equals("EmployeeSelfService"))
                 .findFirst().map(module -> moduleDAO.getApplicationModuleByParentId(module.getId(), user.getId()))
-                .get();
+                .orElse(Collections.emptyList());
 
     }
 
