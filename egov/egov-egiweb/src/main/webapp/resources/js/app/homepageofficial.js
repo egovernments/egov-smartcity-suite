@@ -49,7 +49,7 @@ $(document).ready(function()
 					"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 					"bDestroy": true,
 					"autoWidth": false,
-					"ajax": "draft",
+					"ajax": "inbox/draft",
 					"columns": [
 					{ "data": "date","width": "20%" },
 					{ "data": "sender","width": "15%" },

@@ -104,7 +104,7 @@ public class DefaultInboxRenderServiceImpl<T extends StateAware> implements Inbo
         this.stateAwarePersistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         final StringBuilder query = new StringBuilder("FROM ");
         query.append(this.stateAwareType.getName())
-                .append(" WF where WF.state.type=:wfType and WF.state.ownerPosition.id =:owner and WF.createdBy.id =:userId and WF.state.status =:new");
+                .append(" WF where WF.state.type=:wfType and WF.state.ownerPosition.id in (:owner) and WF.createdBy.id =:userId and WF.state.status =:new");
         final Query qry = this.stateAwarePersistenceService.getSession().createQuery(query.toString());
         qry.setParameterList(OWNER, owners);
         qry.setString(WFTYPE, this.stateAwareType.getSimpleName());

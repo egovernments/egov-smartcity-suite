@@ -189,7 +189,7 @@ public class HomeController {
             appLinks.setId(favourite.getId().toString());
             appLinks.setName(favourite.getModuleName());
             appLinks.setLink("/" + favourite.getBaseUrl());
-            appLinks.setIcon("fa fa-times-circle remove-feedback");
+            appLinks.setIcon("fa fa-times-circle remove-favourite");
             favouritesMenu.getItems().add(appLinks);
         });
     }
