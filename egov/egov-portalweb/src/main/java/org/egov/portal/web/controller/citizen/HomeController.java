@@ -45,9 +45,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.citizen.inbox.entity.CitizenInbox;
-import org.egov.infra.citizen.inbox.service.CitizenInboxService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.portal.entity.CitizenInbox;
+import org.egov.portal.service.CitizenInboxService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;

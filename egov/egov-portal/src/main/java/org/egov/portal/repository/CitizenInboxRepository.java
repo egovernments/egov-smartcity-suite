@@ -37,8 +37,29 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.citizen.inbox.entity.enums;
+package org.egov.portal.repository;
 
-public enum Priority {
-    Low, Medium, High
+import java.util.List;
+
+import org.egov.portal.entity.CitizenInbox;
+import org.egov.portal.entity.enums.MessageType;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface CitizenInboxRepository extends JpaRepository<CitizenInbox, Long> {
+
+	@Query("select count(*) from CitizenInbox ci where ci.assignedToCitizen.id=:citizenUserId and ci.read is false")
+	Integer findUnreadMessagesCount(@Param("citizenUserId")Long citizenUserId);
+
+	@Query("select ci from CitizenInbox ci where ci.assignedToCitizen.id=:citizenUserId order by ci.createdDate desc")
+	List<CitizenInbox> findAllInboxMessage(@Param("citizenUserId")Long citizenUserId);
+
+	@Query("select ci from CitizenInbox ci where ci.messageType=:messageType and ci.assignedToCitizen.id=:citizenUserId order by ci.createdDate desc")
+	List<CitizenInbox> findAllInboxMessageByType(@Param("messageType")MessageType messageType, @Param("citizenUserId")Long citizenUserId);
+	
+	@Query("select ci from CitizenInbox ci where ci.messageType=:messageType and ci.createdBy.id=:citizenUserId order by ci.createdDate desc")
+	List<CitizenInbox> findMyAccountMessages(@Param("messageType")MessageType messageType, @Param("citizenUserId")Long citizenUserId);
 }

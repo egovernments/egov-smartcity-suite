@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.citizen.inbox.entity.enums;
+package org.egov.portal.entity.enums;
 
 public enum MessageType {
     USER_MESSAGE, SYSTEM_MESSAGE
