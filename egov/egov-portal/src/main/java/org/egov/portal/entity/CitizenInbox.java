@@ -70,7 +70,7 @@ import org.joda.time.DateTime;
  *
  */
 @Entity
-@Table(name = "eg_citizeninbox")
+@Table(name = "egp_citizeninbox")
 public class CitizenInbox extends AbstractAuditable<User, Long> {
 	private static final long serialVersionUID = 1L;
 
