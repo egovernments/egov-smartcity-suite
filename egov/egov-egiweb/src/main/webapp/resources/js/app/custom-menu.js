@@ -1,41 +1,41 @@
 /*#-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation 
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or 
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this 
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It 
-# 	   is required that all modified versions of this material be marked in 
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program 
-# 	   with regards to rights under trademark law for use of the trade names 
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+	# eGov suite of products aim to improve the internal efficiency,transparency, 
+	#    accountability and the service delivery of the government  organizations.
+	# 
+	#     Copyright (C) <2015>  eGovernments Foundation
+	# 
+	#     The updated version of eGov suite of products as by eGovernments Foundation 
+	#     is available at http://www.egovernments.org
+	# 
+	#     This program is free software: you can redistribute it and/or modify
+	#     it under the terms of the GNU General Public License as published by
+	#     the Free Software Foundation, either version 3 of the License, or
+	#     any later version.
+	# 
+	#     This program is distributed in the hope that it will be useful,
+	#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+	#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	#     GNU General Public License for more details.
+	# 
+	#     You should have received a copy of the GNU General Public License
+	#     along with this program. If not, see http://www.gnu.org/licenses/ or 
+	#     http://www.gnu.org/licenses/gpl.html .
+	# 
+	#     In addition to the terms of the GPL license to be adhered to in using this
+	#     program, the following additional terms are to be complied with:
+	# 
+	# 	1) All versions of this program, verbatim or modified must carry this 
+	# 	   Legal Notice.
+	# 
+	# 	2) Any misrepresentation of the origin of the material is prohibited. It 
+	# 	   is required that all modified versions of this material be marked in 
+	# 	   reasonable ways as different from the original version.
+	# 
+	# 	3) This license does not grant any rights to any user of the program 
+	# 	   with regards to rights under trademark law for use of the trade names 
+	# 	   or trademarks of eGovernments Foundation.
+	# 
+	#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 $(document).ready(function () {
 	
@@ -69,21 +69,21 @@ $(document).ready(function () {
 						$(e.target).parent().parent().remove();
 					}
 				}); 
-			}else if($(e.target).hasClass('added-as-fav')){
+				}else if($(e.target).hasClass('added-as-fav')){
 				bootbox.confirm("Do you wish to remove this from Favourite ?", function(result) {
 					if(result){
 						removeFromFavourites(e);
 						$(e.target).removeClass('added-as-fav');
 					}
 				}); 
-			}else if($(e.target).hasClass('add-to-favourites')){
+				}else if($(e.target).hasClass('add-to-favourites')){
 				$('.favourites').modal('show', {backdrop: 'static'});
 				favouriteName = $(e.target).parent().text();
-				contextRoot = $item.find( 'a:first' ).attr( 'href' ).toString();
-				contextRoot = contextRoot.split("/")[1];
+				favouriteURL = $item.find( 'a:first' ).attr( 'href' ).toString();
+				contextRoot = favouriteURL.split("/")[1];
 				actionId = $item.attr('id');
 				$('#fav-name').val(favouriteName);
-			}else{
+				}else{
 				var itemHref = $item.find( 'a:first' ).attr( 'href' );
 				var windowObjectReference = window.open(itemHref, ''+$item.attr('id')+'', 'width=900, height=700, top=300, left=150,scrollbars=yes'); 
 				openedWindows.push(windowObjectReference);
@@ -118,6 +118,7 @@ $(document).ready(function () {
 	
 	var actionId='';
 	var favouriteName='';
+	var favouriteURL='';
 	var contextRoot='';
 	
 	$(window).on('resize', function () {
@@ -139,7 +140,7 @@ $(document).ready(function () {
 			}).done(function(value) {
 			if(value === true) {
 				bootbox.alert("Removed from Favourite");
-			} else {
+				} else {
 				bootbox.alert("Could not delete it from Favourite");
 			}
 		});
@@ -154,11 +155,21 @@ $(document).ready(function () {
 			}).done(function(value) {
 			if(value) {
 				$('#'+actionId+' a i').addClass('added-as-fav');
-			} else {
+				$('#favMenu ul').append('<li id="'+actionId+'"> <a href="'+favouriteURL+'" class="open-popup"><i class="floatRight fa fa-times-circle remove-favourite"></i>'+favouriteName+'</a> </li>')
+				} else {
 				bootbox.alert("Could not add to Favourite");
 			}
 		});
 		
+	});
+	
+	$(document).on('click', '.remove-favourite',function(e) {
+		bootbox.confirm("Do you wish to remove this from Favourite ?", function(result) {
+			if(result){
+				//$('id-of-li i').removeClass('added-as-fav'); Removing color of the star
+				//$(e.target).parent().remove(); Removing li element
+			}
+		}); 
 	});
 	
 	$("a.open-popup").click(function(e) {
