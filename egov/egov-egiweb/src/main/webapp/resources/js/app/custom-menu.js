@@ -49,6 +49,8 @@ $(document).ready(function () {
 		mode: 'cover',
 		menu:menuItems,
 		onItemClick: function (event) {
+			event.preventDefault();
+			event.stopPropagation();
 			var e = arguments[0],$item = arguments[2];
 			$('#menu_multilevelpushmenu ul li').removeClass('li-active');
 			$(e.target).parent().addClass('li-active');
@@ -61,29 +63,32 @@ $(document).ready(function () {
 				});
 			}
 			
-			if($(e.target).hasClass('remove-favourite'))
-			{
+			if($(e.target).hasClass('remove-favourite')) { //Removing from Favourite Menu
 				bootbox.confirm("Do you wish to remove this from Favourite ?", function(result) {
 					if(result){
-						removeFromFavourites(e);
+						actionId = $(e.target).parent().parent().attr('id').split("-")[1];
+						removeFromFavourites(actionId);
 						$(e.target).parent().parent().remove();
+						$("#"+actionId+' a i').removeClass('added-as-fav');
 					}
 				}); 
-				}else if($(e.target).hasClass('added-as-fav')){
+			} else if($(e.target).hasClass('added-as-fav')){ //Removing from Main Menu while unstaring Favourite
 				bootbox.confirm("Do you wish to remove this from Favourite ?", function(result) {
 					if(result){
-						removeFromFavourites(e);
+						actionId = $(e.target).parent().parent().attr('id');
+						removeFromFavourites(actionId);
 						$(e.target).removeClass('added-as-fav');
+						$('#fav-'+actionId).remove();
 					}
 				}); 
-				}else if($(e.target).hasClass('add-to-favourites')){
+			} else if($(e.target).hasClass('add-to-favourites')){ // Adding from Main Menu by starring
 				$('.favourites').modal('show', {backdrop: 'static'});
 				favouriteName = $(e.target).parent().text();
 				favouriteURL = $item.find( 'a:first' ).attr( 'href' ).toString();
 				contextRoot = favouriteURL.split("/")[1];
 				actionId = $item.attr('id');
 				$('#fav-name').val(favouriteName);
-				}else{
+			} else{
 				var itemHref = $item.find( 'a:first' ).attr( 'href' );
 				var windowObjectReference = window.open(itemHref, ''+$item.attr('id')+'', 'width=900, height=700, top=300, left=150,scrollbars=yes'); 
 				openedWindows.push(windowObjectReference);
@@ -132,17 +137,17 @@ $(document).ready(function () {
 		$('#menu, #menu_multilevelpushmenu').css('min-height', ''+menuheight+'px');
 	}
 	
-	function removeFromFavourites(e) {
+	function removeFromFavourites(actionId) {
 		$.ajax({
 			type: "GET",
 			url: "home/remove-favourite",
-			data:{'actionId' : $(e.target).parent().parent().attr('id')}
+			data:{'actionId' : actionId}
 			}).done(function(value) {
-			if(value === true) {
-				bootbox.alert("Removed from Favourite");
+				if(value === true) {
+					bootbox.alert("Removed from Favourite");
 				} else {
-				bootbox.alert("Could not delete it from Favourite");
-			}
+					bootbox.alert("Could not delete it from Favourite");
+				}
 		});
 	}
 	
@@ -155,7 +160,7 @@ $(document).ready(function () {
 			}).done(function(value) {
 			if(value) {
 				$('#'+actionId+' a i').addClass('added-as-fav');
-				$('#favMenu ul').append('<li id="'+actionId+'"> <a href="'+favouriteURL+'" class="open-popup"><i class="floatRight fa fa-times-circle remove-favourite"></i>'+favouriteName+'</a> </li>')
+				$('#favMenu ul').append('<li id="fav-'+actionId+'"> <a href="'+favouriteURL+'" class="open-popup"><i class="floatRight fa fa-times-circle remove-favourite"></i>'+favouriteName+'</a> </li>')
 				} else {
 				bootbox.alert("Could not add to Favourite");
 			}
@@ -163,11 +168,27 @@ $(document).ready(function () {
 		
 	});
 	
+	//Removing freshly added favourite from Favourite menu
 	$(document).on('click', '.remove-favourite',function(e) {
+		e.stopPropagation();
+		e.preventDefault();
 		bootbox.confirm("Do you wish to remove this from Favourite ?", function(result) {
 			if(result){
-				//$('id-of-li i').removeClass('added-as-fav'); Removing color of the star
-				//$(e.target).parent().remove(); Removing li element
+				var actionId=$(e.target).parent().parent().attr('id').split("-")[1];
+				$.ajax({
+					type: "GET",
+					url: "home/remove-favourite",
+					data:{'actionId' : actionId}
+					}).done(function(value) {
+						if(value === true) {
+							bootbox.alert("Removed from Favourite");
+							$(e.target).parent().parent().remove(); //Removing li element
+							$("#"+actionId+' a i').removeClass('added-as-fav'); //Removing color of the star
+						} else {
+							bootbox.alert("Could not delete it from Favourite");
+						}
+				});
+				
 			}
 		}); 
 	});

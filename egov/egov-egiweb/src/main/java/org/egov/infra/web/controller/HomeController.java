@@ -186,7 +186,7 @@ public class HomeController {
                 "fa fa-briefcase floatLeft", menu);
         favourites.stream().forEach(favourite -> {
             final Menu appLinks = new Menu();
-            appLinks.setId(favourite.getId().toString());
+            appLinks.setId("fav-"+favourite.getId());
             appLinks.setName(favourite.getModuleName());
             appLinks.setLink("/" + favourite.getBaseUrl());
             appLinks.setIcon("fa fa-times-circle remove-favourite");
