@@ -92,31 +92,30 @@ public class HomeController {
             return "redirect:/../portal/home";
     }
 
-    @RequestMapping(value = "add-favourite", method = RequestMethod.GET)
-    public @ResponseBody boolean addFavourite(@RequestParam final Integer actionId, @RequestParam final String name,
-            @RequestParam final String contextRoot) {
-        final Long userId = securityUtils.getCurrentUser().getId();
-        final Favourites favourites = favouritesService.getFavouriteByUserIdAndActionId(userId, actionId);
-        if (favourites == null) {
-            final Favourites favourite = new Favourites();
-            favourite.setActionId(actionId);
-            favourite.setUserId(userId);
-            favourite.setName(name);
-            favourite.setContextRoot(contextRoot);
-            favouritesService.createFavourite(favourite);
-        } else
-            return Boolean.FALSE;
-
-        return Boolean.TRUE;
+    @RequestMapping(value = "favourite/add", method = RequestMethod.POST)
+    public @ResponseBody boolean addFavourite(@ModelAttribute final Favourites favourites) {
+    	favouritesService.addToCurrentUserFavourite(favourites);
+    	return favourites.getId() != null;
     }
 
-    @RequestMapping(value = "remove-favourite")
+    @RequestMapping(value = "favourite/remove")
     public @ResponseBody boolean removeFavourite(@RequestParam final Integer actionId) {
-        favouritesService.deleteFavourite(favouritesService.getFavouriteByUserIdAndActionId(securityUtils
-                .getCurrentUser().getId(), actionId));
-        return Boolean.TRUE;
+        return favouritesService.removeFromCurrentUserFavourite(actionId);
     }
 
+    @RequestMapping(value = "password/update")
+    public @ResponseBody boolean changePassword(@RequestParam final String currentPwd, @RequestParam final String newPwd, 
+    		@RequestParam final String retypeNewPwd) {
+    	//TODO
+    	return false;
+    }
+    
+    @RequestMapping(value = "feedback/sent")
+    public @ResponseBody boolean sendFeedback(@RequestParam final Integer actionId) {
+    	//TODO
+    	return false;
+    }
+    
     @ModelAttribute("user")
     public User user() {
         return securityUtils.getCurrentUser();
@@ -166,7 +165,7 @@ public class HomeController {
 
     private void createApplicationMenu(final List<Module> modules, final List<Module> favourites, final User user,
             final Menu menu) {
-        final Menu applicationMenu = createSubmenu("apps", "Applications", "Applications", "#", "fa fa-th floatLeft",
+        final Menu applicationMenu = createSubmenu("apps", "Applications", "Applications", "javascript:void(0);", "fa fa-th floatLeft",
                 menu);
         modules.stream()
                 .filter(module -> !module.getModuleName().equals("EmployeeSelfService"))
@@ -177,12 +176,12 @@ public class HomeController {
                                     favourites,
                                     user,
                                     createSubmenu(String.valueOf(module.getId()), module.getModuleDescription(),
-                                            module.getModuleDescription(), "#", "", applicationMenu));
+                                            module.getModuleDescription(), "javascript:void(0);", "", applicationMenu));
                         });
     }
 
     private void createFavouritesMenu(final List<Module> favourites, final Menu menu) {
-        final Menu favouritesMenu = createSubmenu("favMenu", "Favourites", "Favourites", "#",
+        final Menu favouritesMenu = createSubmenu("favMenu", "Favourites", "Favourites", "javascript:void(0);",
                 "fa fa-briefcase floatLeft", menu);
         favourites.stream().forEach(favourite -> {
             final Menu appLinks = new Menu();
@@ -195,7 +194,7 @@ public class HomeController {
     }
 
     private void createSelfServiceMenu(final List<Module> selfServices, final Menu menu) {
-        final Menu selfServiceMenu = createSubmenu("ssMenu", "Self Service", "Self Service", "#",
+        final Menu selfServiceMenu = createSubmenu("ssMenu", "Self Service", "Self Service", "javascript:void(0);",
                 "fa fa-ellipsis-h floatLeft", menu);
         selfServices.stream().forEach(selfService -> {
             final Menu appLinks = new Menu();
@@ -228,7 +227,7 @@ public class HomeController {
                     favourites,
                     user,
                     createSubmenu(String.valueOf(submodule.getId()), submodule.getModuleName(),
-                            submodule.getModuleName(), "#", "", parent));
+                            submodule.getModuleName(), "javascript:void(0);", "", parent));
     }
 
     private Menu createSubmenu(final String id, final String name, final String title, final String link,

@@ -41,6 +41,7 @@ package org.egov.infra.admin.common.service;
 
 import org.egov.infra.admin.common.entity.Favourites;
 import org.egov.infra.admin.common.repository.FavouritesRepository;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,18 +52,31 @@ public class FavouritesService {
     
     @Autowired
     private FavouritesRepository favouritesRepository;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
     public Favourites getFavouriteByUserIdAndActionId(Long userId, Integer actionId) {
         return favouritesRepository.findByUserIdAndActionId(userId, actionId);
     }
     
     @Transactional
-    public void deleteFavourite(Favourites favourites) {
-        favouritesRepository.delete(favourites);
+    public boolean removeFromCurrentUserFavourite(Integer actionId) {
+    	final Favourites favourites = getFavouriteByUserIdAndActionId(securityUtils.getCurrentUser().getId(),actionId);
+    	if(favourites == null) {
+    		return Boolean.FALSE;
+    	} 
+    	favouritesRepository.delete(favourites);
+    	return Boolean.TRUE;
     }
     
     @Transactional
-    public Favourites createFavourite(Favourites favourites) {
-        return favouritesRepository.save(favourites);
+    public Favourites addToCurrentUserFavourite(Favourites favourites) {
+    	 final Long userId = securityUtils.getCurrentUser().getId();
+         if (getFavouriteByUserIdAndActionId(userId, favourites.getActionId()) == null) {
+        	 favourites.setUserId(userId);
+        	 favouritesRepository.save(favourites);
+         } 
+        return favourites;
     }
 }

@@ -40,6 +40,43 @@
 
 $(document).ready(function()
 {	
+	$('#feedback-form').on('submit', function(e){
+        e.preventDefault();
+        /*$.ajax({
+                url: 'home/feedback/sent',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                        action: 'json'
+                },
+                success: function(data) {
+                        
+                },
+                error: function() {
+                        
+                }
+        });*/
+        $('.loader-class').modal('hide')
+	});
+
+	$('#password-form').on('submit', function(e){
+	       e.preventDefault();
+	       /*$.ajax({
+	                url: 'home/password/update',
+	                type: 'POST',
+	                dataType: 'json',
+	                data: {
+	                        action: 'json'
+	                },
+	                success: function(data) {
+	                        
+	                },
+	                error: function() {
+	                        
+	                }
+	        });*/
+	        $('.loader-class').modal('hide')
+	});
 	tableContainer1 = $("#official_inbox"); 
 	
 	tableContainer1.dataTable({
@@ -126,8 +163,14 @@ $(document).ready(function()
 		tableContainer1.fnFilter(this.value);
 	});
 	
-	$("#official_inbox tbody").on('click','tr',function(event) {
-		window.open(tableContainer1.fnGetData(this,6),'_blank','width=760,height=650');
+	$("#official_inbox").on('click','tbody tr',function(event) {
+		var windowObjectReference = window.open(tableContainer1.fnGetData(this,6), ''+tableContainer1.fnGetData(this,5)+'', 'width=900, height=700, top=300, left=150,scrollbars=yes'); 
+		openedWindows.push(windowObjectReference);
+	});
+	
+	$("#official_drafts").on('click','tbody tr',function(event) {
+		var windowObjectReference = window.open(tableContainer1.fnGetData(this,6), ''+tableContainer1.fnGetData(this,5)+'', 'width=900, height=700, top=300, left=150,scrollbars=yes'); 
+		openedWindows.push(windowObjectReference);
 	});
 	
 	$('.check-password').blur(function(){

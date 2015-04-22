@@ -37,9 +37,8 @@
 	# 
 	#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
+var openedWindows = [];
 $(document).ready(function () {
-	
-	var openedWindows = [];
 	var addfav_li;
 	var menuheight = ($( window ).height() - 63);
 	var ulheight =(menuheight -93);
@@ -140,7 +139,7 @@ $(document).ready(function () {
 	function removeFromFavourites(actionId) {
 		$.ajax({
 			type: "GET",
-			url: "home/remove-favourite",
+			url: "home/favourite/remove",
 			data:{'actionId' : actionId}
 			}).done(function(value) {
 				if(value === true) {
@@ -153,10 +152,16 @@ $(document).ready(function () {
 	
 	$('.add-fav').click(function(){
 		$('.favourites').modal('hide');
+		var fd = new FormData();    
+		fd.append( 'actionId', actionId);
+		fd.append( 'name', favouriteName);
+		fd.append( 'contextRoot', contextRoot);
 		$.ajax({
-			type: "GET",
-			url: "home/add-favourite",
-			data:{'actionId' : actionId,'name':favouriteName,'contextRoot':contextRoot}
+			type: "POST",
+			url: "home/favourite/add",
+			data:fd,
+			processData: false,
+			contentType: false,
 			}).done(function(value) {
 			if(value) {
 				$('#'+actionId+' a i').addClass('added-as-fav');
@@ -177,7 +182,7 @@ $(document).ready(function () {
 				var actionId=$(e.target).parent().parent().attr('id').split("-")[1];
 				$.ajax({
 					type: "GET",
-					url: "home/remove-favourite",
+					url: "home/favourite/remove",
 					data:{'actionId' : actionId}
 					}).done(function(value) {
 						if(value === true) {

@@ -278,7 +278,7 @@
 					</div>
 					
 					<div class="modal-body">
-						<form id="feedback-form" class="form-horizontal form-groups-bordered" action="/">
+						<form id="feedback-form" class="form-horizontal form-groups-bordered" >
 							<div class="form-group">
 								<div class="col-md-12 add-margin">
 									<input type="text" class="form-control" id="subject" placeholder="Subject">
@@ -289,12 +289,13 @@
 									 <textarea class="form-control" rows="5" id="comment" placeholder="Message"></textarea>
 								</div>
 							</div>
+							<div class="form-group text-right">
+								<div class="col-md-12 add-margin">
+									 <button type="submit" class="btn btn-primary">Send Feedback</button>
+									 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+								</div>
+							</div>
 						</form>
-					</div>
-					
-					<div class="modal-footer">
-						<button type="submit" class="btn btn-primary">Send Feedback</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 					</div>
 				</div>
 			</div>
@@ -337,14 +338,15 @@
 									<div class="password-error error-msg display-hide">Password is incorrect</div>
 								</div>
 							</div>
+							<div class="form-group text-right">
+								<div class="col-md-12 add-margin">
+									<button type="submit" class="btn btn-primary">Change Password</button>
+									<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+								</div>
+							</div>
 							</form>
 						
 						
-					</div>
-					
-					<div class="modal-footer">
-						<button type="button" class="btn btn-primary">Change Password</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 					</div>
 				</div>
 			</div>
@@ -412,8 +414,7 @@
 		<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js'/>"></script>
-		<script src="<c:url value='/resources/js/app/homepageofficial.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/egov/custom.js'/>"></script>
-		
+		<script src="<c:url value='/resources/js/app/homepageofficial.js'/>"></script>
 	</body>
 </html>																						
