@@ -1,21 +1,23 @@
-# eGov Opensource
-[![Build Status](http://ci.egovernments.org/job/eGov-Github-Master/badge/icon)](http://ci.egovernments.org/job/eGov-Github-Master/)
-
-[![Join the chat at https://gitter.im/egovernments/eGov](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/egovernments/eGov?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# eGov Opensource [![Build Status](http://ci.egovernments.org/job/eGov-Github-Master/badge/icon)](http://ci.egovernments.org/job/eGov-Github-Master/) [![Join the chat at https://gitter.im/egovernments/eGov](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/egovernments/eGov?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Repository Structure
 
+### Check out sources
+`git clone git@github.com:egovernments/eGov.git` or `git clone https://github.com/egovernments/eGov.git`
+
 * `egov` - folder contains all the source code of eGov opensource projects
+
 
 ## Prerequisites
 
-* Install [maven >= v3.2.x](http://maven.apache.org/download.cgi)
+* Install [maven >= v3.2.x][Maven]
 * Install your favorite IDE for java project. Recommended Eclipse or IntelliJ
-* Install [PostgreSQL >= v9.3 ](http://www.postgresql.org/download/)
-* Install [Elastic Search >= v1.4.2](https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.2.zip)
-* Install [Jboss Wildfly v8.2.x](http://182.74.137.193/downloads/DevTools/phoenix/wildfly-8.2.0.Final-v1.zip)
+* Install [PostgreSQL >= v9.3 ][PostgreSQL]
+* Install [Elastic Search >= v1.4.2][Elastic Search]
+* Install [Jboss Wildfly v8.2.x][Wildfly Customized]
+* [Git][] and [JDK 8 update 20 or later][JDK8 build]
 
-__Note__: Please check in [downlods repository](http://182.74.137.193/downloads/) for any of the above software installables before downloading from internet.
+__Note__: Please check in [eGov Tools Repository] for any of the above software installables before downloading from internet.
 
 ## Building Source
 
@@ -51,7 +53,7 @@ To skip migration use -Dliquibase.should.run=false
 2_eis_add-employee-role_DML.sql
 ```
 
-For More details refer [liquibase](http://www.liquibase.org/documentation/index.html)
+For More details refer [Liquibase]
 
 ## Deploying
 
@@ -59,7 +61,7 @@ For More details refer [liquibase](http://www.liquibase.org/documentation/index.
 
 ##### Spring Profiles
 
-Application uses [spring environment profiles](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-environment) to manage production and test related bean definitions. To run your application on wildfly make sure the `production` spring profile is enabled by setting a system property `spring.profiles.active=production`
+Application uses [Spring Profiles] to manage production and test related bean definitions. To run your application on wildfly make sure the `production` spring profile is enabled by setting a system property `spring.profiles.active=production`
 
 This can be set in `standalone.conf` by suffixing it to `JAVA_OPTS` as shown below:
 
@@ -125,3 +127,21 @@ Alternatively you could also run `<CLONED_REPO_DIR>/egov/deploy-local.sh` which 
 #### 4. Intellij Deployment
 
 * TODO - Contribute
+
+## Issue Tracking
+Report issues via the [eGov Opensource JIRA][].
+
+## License
+The eGov Suit is released under version 3.0 of the [GPL][].
+
+[Git]: http://help.github.com/set-up-git-redirect
+[JDK8 build]: http://www.oracle.com/technetwork/java/javase/downloads
+[eGov Opensource JIRA]: http://issues.egovernments.org/browse/PHOENIX
+[Wildfly Customized]: http://182.74.137.193/downloads/DevTools/phoenix/wildfly-8.2.0.Final-v1.zip
+[Elastic Search]: https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.2.zip
+[Spring Profiles]: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-environment
+[Liquibase]: http://www.liquibase.org/documentation/index.html
+[eGov Tools Repository]: http://182.74.137.193/downloads/
+[PostgreSQL]: http://www.postgresql.org/download/
+[Maven]: http://maven.apache.org/download.cgi
+[GPL]: http://www.gnu.org/licenses/
