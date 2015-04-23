@@ -123,7 +123,7 @@ public class TrialBalanceAction extends BaseFormAction {
 	{
 		try {
 			heading=generateHeading();
-			cityWebsite = cityWebsiteDAO.getCityWebSiteByURL((String) thisHibernateUtil.getCurrentSession().get("cityurl"));	
+			cityWebsite = cityWebsiteDAO.getCityWebSiteByURL((String) getSession().get("cityurl"));	
 			if(rb.getExportType().equalsIgnoreCase("xls"))
 			{
 				inputStream = reportHelper.exportXls(inputStream, reportHelper.exportTBDateRange(al,cityWebsite.getCityName(),rb,heading,fundList,"xls"));
