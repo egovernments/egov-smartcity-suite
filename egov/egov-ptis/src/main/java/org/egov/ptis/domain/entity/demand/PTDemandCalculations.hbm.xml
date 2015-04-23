@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+   "-//Hibernate/Hibernate Mapping DTD//EN"
+   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.ptis.domain.entity.demand.PTDemandCalculations" table="EGPT_DEMANDCALCULATIONS">
+		<id name="id" column="ID" type="java.lang.Long">
+			<generator class="sequence">
+				<param name="sequence">SEQ_DEMANDCALCULATIONS</param>
+			</generator>
+		</id>
+		<property name="createdDate" type="java.util.Date">
+			<column name="CREATED_DATE" not-null="true" />
+		</property>
+		<property name="modifiedDate" type="java.util.Date">
+			<column name="MODIFIED_DATE" not-null="true" />
+		</property>
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.UserImpl">
+			<column name="CREATED_BY" />
+		</many-to-one>
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.UserImpl">
+			<column name="MODIFIED_BY" />
+		</many-to-one>
+		<property name="propertyTax" column="PROPERTYTAX" />
+		<property name="rateOfTax" column="RATE_OF_TAX" />
+
+		<many-to-one name="ptDemand" class="org.egov.ptis.domain.entity.demand.Ptdemand"
+			column="ID_DEMAND" unique="true" cascade="none" />
+
+		<set name="flrwiseDmdCalculations" cascade="all-delete-orphan"
+			table="EGPT_FLOORDEMANDCALC">
+			<key column="ID_DMDCALC" />
+			<one-to-many class="org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations" />
+		</set>
+
+		<set name="attributeValues" cascade="all-delete-orphan" table="EG_ATTRIBUTEVALUES">
+			<key column="DOMAINTXNID" />
+			<one-to-many class="org.egov.infstr.flexfields.model.EgAttributevalues" />
+		</set>
+
+		<property name="taxInfo" column="TAXINFO" type="binary"/>
+		<property name="alv" column="ALV"/>
+
+	</class>
+</hibernate-mapping>		

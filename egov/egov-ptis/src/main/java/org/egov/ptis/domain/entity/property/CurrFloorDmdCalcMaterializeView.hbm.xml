@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+   "-//Hibernate/Hibernate Mapping DTD//EN"
+   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.ptis.domain.entity.property.CurrFloorDmdCalcMaterializeView"
+		table="EGPT_MV_CURR_FLOOR_DMDCALC" polymorphism="explicit">
+
+		<composite-id>
+			<key-property name="floorId" column="ID_FLOOR_DETAIL"/>
+		</composite-id>
+		<many-to-one name="propMatView" class="org.egov.ptis.domain.entity.property.PropertyMaterlizeView" column="ID_BASIC_PROPERTY"/>
+		<property name="unitNo" column="UNITNO"/>
+		<property name="unitTypeConst" column="UNIT_TYPE_CONST"/>
+		<property name="waterScheme" column="WATERSCHEME"/>
+		<property name="fireTax" column="FIRETAX"/>
+		<property name="lightTax" column="LIGHTTAX"/>
+		<property name="sewerageTax" column="SEWERAGETAX"/>
+		<property name="generalTax" column="GENERALTAX"/>
+		<property name="waterTax" column="WATERTAX"/>
+		<property name="egsTax" column="EGSTAX"/>
+		<property name="bigBldgTax" column="BIGBLDGTAX"/>
+		<property name="eduCessResdTax" column="EDUCESSRESDTAX"/>
+		<property name="eduCessNonResdTax" column="EDUCESSNONRESDTAX"/>
+		<property name="alv" column="ALV"/>
+	</class>
+
+</hibernate-mapping>

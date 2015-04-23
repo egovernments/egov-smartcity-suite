@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+   "-//Hibernate/Hibernate Mapping DTD//EN"
+   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.ptis.domain.entity.property.ConstructionTypeImpl"
+		table="EGPT_CONSTR_TYPE">
+
+		<id name="id" column="ID_CONSTR_TYPE" type="java.lang.Long">
+			<generator class="sequence">
+				<param name="sequence">SEQ_CONSTR_TYPE</param>
+			</generator>
+		</id>
+		<property name="createdDate" type="java.util.Date">
+			<column name="CREATED_DATE" not-null="true" />
+		</property>
+		<property name="modifiedDate" type="java.util.Date">
+			<column name="MODIFIED_DATE" not-null="true" />
+		</property>
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.UserImpl"
+			cascade="all">
+			<column name="CREATED_BY" />
+		</many-to-one>
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.UserImpl"
+			cascade="all">
+			<column name="MODIFIED_BY" />
+		</many-to-one>
+		<property name="name" column="CONSTR_NAME" />
+		<property name="type" column="CONSTR_TYPE" />
+		<property name="code" column="CONSTR_CODE" />
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 15 Mar, 2014 1:33:28 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="org.egov.ptis.domain.entity.property.MigratedPropertyFloor" table="EGPT_MGRTDPROP_FLOORALV">
+         <id name="id" type="java.lang.Long">
+            <column name="ID" />
+            <generator class="sequence">
+				<param name="sequence">SEG_EGPT_MGRTDPROP_FLOORALV</param>
+			</generator>
+        </id>
+        <property name="propertyId" type="java.lang.String">
+            <column name="PROPERTYID" />
+        </property>
+        <property name="floorId" type="java.lang.Long">
+            <column name="ID_FLOOR" />
+        </property>
+        <property name="migratedAlv" type="java.math.BigDecimal">
+            <column name="MIGRATED_ALV" />
+        </property>
+        <property name="calculatedAlv" type="java.math.BigDecimal">
+            <column name="CALCULATED_ALV" />
+        </property>
+    </class>
+</hibernate-mapping>

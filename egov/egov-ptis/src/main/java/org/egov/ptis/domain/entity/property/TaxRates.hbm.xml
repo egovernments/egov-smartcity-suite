@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+   "-//Hibernate/Hibernate Mapping DTD//EN"
+   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="org.egov.ptis.domain.entity.property.TaxRates" table="EGPT_TAXRATES" >
+	<id
+			name="id"
+			column="ID"
+			type="int">
+	</id>
+	
+	<property name="fromDate" column="FROM_DATE" />			
+	
+	<property name="toDate" column="TO_DATE" />			
+	
+	<property name="type" column="TYPE" />			
+	
+	<property name="tax" column="TAX" />
+	
+	<property name="fromAmount" column="FROM_AMOUNT" />			
+	
+	<property name="toAmount" column="TO_AMOUNT" />						
+		
+    </class>
+
+</hibernate-mapping>
+<!-- parsed in 0ms -->
+

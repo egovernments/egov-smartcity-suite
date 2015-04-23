@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+   "-//Hibernate/Hibernate Mapping DTD//EN"
+   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.ptis.domain.entity.property.UnitRentAgreementDetail" table="EGPT_UNIT_RENT_AGRMNT_DETAIL"
+		polymorphism="explicit">
+		
+		<id name="id" column="ID" type="long">
+			<generator class="sequence">
+				<param name="sequence">SEQ_UNIT_RENT_AGREEMENT_DETAIL</param>
+			</generator>
+		</id>
+				
+		<property name="agreementPeriod" column="agreement_period"/>
+		<property name="agreementDate" column="agreement_date" type="date" />
+		<property name="incrementInRent" column="increment_in_rent" />
+		<many-to-one name="floor" fetch="join"
+			class="org.egov.ptis.domain.entity.property.FloorImpl"
+			column="ID_FLOOR_DETAIL" unique="true" cascade="none" />	
+	</class>
+</hibernate-mapping>

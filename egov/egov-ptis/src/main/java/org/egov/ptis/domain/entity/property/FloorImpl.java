@@ -1,0 +1,539 @@
+/*
+ * FloorImpl.java Created on Oct 27, 2005
+ *
+ * Copyright 2005 eGovernments Foundation. All rights reserved.
+ * EGOVERNMENTS PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
+package org.egov.ptis.domain.entity.property;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+import org.egov.commons.Area;
+import org.egov.exceptions.EGOVRuntimeException;
+//TODO -- Uncomment once demand module code is available
+//import org.egov.demand.model.DepreciationMaster;
+import org.egov.infstr.models.BaseModel;
+
+/**
+ * FloorImpl is a implementation of FloorIF interface.
+ *
+ * @author Gayathri Joshi
+ * @version 2.00
+ * @see org.egov.ptis.domain.entity.property.FloorIF
+ * @since 1.00
+ */
+
+public class FloorImpl extends BaseModel implements FloorIF {
+	private ConstructionTypeSet constructionTypeSet = null;
+	private StructureClassification structureClassification = null;
+	private PropertyUsage propertyUsage = null;
+	private PropertyOccupation propertyOccupation = null;
+	//TODO -- Uncomment once demand module code is available
+	//private DepreciationMaster depreciationMaster = null;
+	private Integer floorNo = null;
+	private Area builtUpArea = null;
+	private Area floorArea = null;
+	private String waterMeter = null;
+	private String electricMeter = null;
+	private PropertyTypeMaster unitType;
+	private String unitTypeCategory;
+	private Date lastUpdatedTimeStamp = null;
+	private Date createdTimeStamp = null;
+	private BigDecimal rentPerMonth;
+	private BigDecimal manualAlv;
+	private BigDecimal alv;
+	private String waterRate;
+
+	// This field contains Unit No For NMC Impl
+	private String extraField1;
+	// This field contains Occupier Name For NMC Impl
+	private String extraField2;
+	// This field contains Occupation Date For NMC Impl
+	private String extraField3;
+	// This field contains Width For NMC Impl
+	private String extraField4;
+	// This field contains Length For NMC Impl
+	private String extraField5;
+	// This field contains Intercepting Wall Area For NMC Impl
+	private String extraField6;
+	// This field contains floor Type
+	private String extraField7;
+
+	private String taxExemptedReason;
+	
+	private UnitRentAgreementDetail rentAgreementDetail;
+
+	public FloorImpl(ConstructionTypeSet constructionTypeSet, StructureClassification structureClassification,
+			PropertyUsage propertyUsage, PropertyOccupation propertyOccupation, Integer floorNo,
+			/*DepreciationMaster depreciationMaster,*/ Area builtUpArea, Area floorArea, String waterMeter,
+			String electricMeter, Date lastUpdatedTimeStamp, Date createdTimeStamp, BigDecimal rentPerMonth,
+			String extraField1, String extraField2, String extraField3, String extraField4, String extraField5,
+			String extraField6, String extraField7, BigDecimal manualAlv, PropertyTypeMaster unitType,
+			String unitTypeCategory, String waterRate, BigDecimal alv, String taxExemptedReason, UnitRentAgreementDetail rentAgreementDetail) {
+		super();
+		this.constructionTypeSet = constructionTypeSet;
+		this.structureClassification = structureClassification;
+		this.propertyUsage = propertyUsage;
+		this.propertyOccupation = propertyOccupation;
+		this.floorNo = floorNo;
+		//TODO -- Uncomment once demand module code is available
+		//this.depreciationMaster = depreciationMaster;
+		this.builtUpArea = builtUpArea;
+		this.floorArea = floorArea;
+		this.waterMeter = waterMeter;
+		this.electricMeter = electricMeter;
+
+		this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
+		this.createdTimeStamp = createdTimeStamp;
+		this.rentPerMonth = rentPerMonth;
+		this.extraField1 = extraField1; 
+		this.extraField2 = extraField2;
+		this.extraField3 = extraField3;
+		this.extraField4 = extraField4;
+		this.extraField5 = extraField5;
+		this.extraField6 = extraField6;
+		this.extraField7 = extraField7;
+		this.manualAlv = manualAlv;
+		this.unitType = unitType;
+		this.unitTypeCategory = unitTypeCategory;
+		this.waterRate = waterRate;
+		this.alv = alv;
+		this.taxExemptedReason = taxExemptedReason;
+		this.rentAgreementDetail = rentAgreementDetail;
+	}
+
+	public FloorImpl() {
+
+	}
+
+	public FloorImpl(ConstructionTypeSet constructionTypeSet, StructureClassification structureClassification,
+			PropertyUsage propertyUsage, PropertyOccupation propertyOccupation, Integer floorNo,
+			/*DepreciationMaster depreciationMaster,*/ Area builtUpArea, Area floorArea, String waterMeter,
+			String electricMeter) {
+		this.constructionTypeSet = constructionTypeSet;
+		this.structureClassification = structureClassification;
+		this.propertyUsage = propertyUsage;
+		this.propertyOccupation = propertyOccupation;
+		this.floorNo = floorNo;
+		//TODO -- Uncomment once demand module code is available
+		//this.depreciationMaster = depreciationMaster;
+		this.builtUpArea = builtUpArea;
+		this.floorArea = floorArea;
+		this.waterMeter = waterMeter;
+		this.electricMeter = electricMeter;
+	}
+
+	/**
+	 * @return Returns the builtUpArea.
+	 */
+	@Override
+	public Area getBuiltUpArea() {
+		return builtUpArea;
+	}
+
+	/**
+	 * @param builtUpArea
+	 *            The builtUpArea to set.
+	 */
+	@Override
+	public void setBuiltUpArea(Area builtUpArea) {
+		this.builtUpArea = builtUpArea;
+	}
+
+	/**
+	 * @return Returns the constructionTypeSet.
+	 */
+	@Override
+	public ConstructionTypeSet getConstructionTypeSet() {
+		return constructionTypeSet;
+	}
+
+	/**
+	 * @param constructionTypeSet
+	 *            The constructionTypeSet to set.
+	 */
+	@Override
+	public void setConstructionTypeSet(ConstructionTypeSet constructionTypeSet) {
+		this.constructionTypeSet = constructionTypeSet;
+	}
+
+	/**
+	 * @return Returns the electricMeter.
+	 */
+	@Override
+	public String getElectricMeter() {
+		return electricMeter;
+	}
+
+	/**
+	 * @param electricMeter
+	 *            The electricMeter to set.
+	 */
+	@Override
+	public void setElectricMeter(String electricMeter) {
+		this.electricMeter = electricMeter;
+	}
+
+	@Override
+	public PropertyTypeMaster getUnitType() {
+		return unitType;
+	}
+
+	@Override
+	public void setUnitType(PropertyTypeMaster unitType) {
+		this.unitType = unitType;
+	}
+
+	@Override
+	public String getUnitTypeCategory() {
+		return this.unitTypeCategory;
+	}
+
+	@Override
+	public void setUnitTypeCategory(String unitTypeCategory) {
+		this.unitTypeCategory = unitTypeCategory;
+	}
+
+	/**
+	 * @return Returns the floorArea.
+	 */
+	@Override
+	public Area getFloorArea() {
+		return floorArea;
+	}
+
+	/**
+	 * @param floorArea
+	 *            The floorArea to set.
+	 */
+	@Override
+	public void setFloorArea(Area floorArea) {
+		this.floorArea = floorArea;
+	}
+
+	/**
+	 * @return Returns the floorNo.
+	 */
+	@Override
+	public Integer getFloorNo() {
+		return floorNo;
+	}
+
+	/**
+	 * @param floorNo
+	 *            The floorNo to set.
+	 */
+	@Override
+	public void setFloorNo(Integer floorNo) {
+		this.floorNo = floorNo;
+	}
+
+	/**
+	 * @return Returns the propertyOccupation.
+	 */
+	@Override
+	public PropertyOccupation getPropertyOccupation() {
+		return propertyOccupation;
+	}
+
+	/**
+	 * @param propertyOccupation
+	 *            The propertyOccupation to set.
+	 */
+	@Override
+	public void setPropertyOccupation(PropertyOccupation propertyOccupation) {
+		this.propertyOccupation = propertyOccupation;
+	}
+
+	/**
+	 * @return Returns the propertyUsage.
+	 */
+	@Override
+	public PropertyUsage getPropertyUsage() {
+		return propertyUsage;
+	}
+
+	/**
+	 * @param propertyUsage
+	 *            The propertyUsage to set.
+	 */
+	@Override
+	public void setPropertyUsage(PropertyUsage propertyUsage) {
+		this.propertyUsage = propertyUsage;
+	}
+
+	/**
+	 * @return Returns the structureClassification.
+	 */
+	@Override
+	public StructureClassification getStructureClassification() {
+		return structureClassification;
+	}
+
+	/**
+	 * @param structureClassification
+	 *            The structureClassification to set.
+	 */
+	@Override
+	public void setStructureClassification(StructureClassification structureClassification) {
+		this.structureClassification = structureClassification;
+	}
+
+	/**
+	 * @return Returns the waterMeter.
+	 */
+	@Override
+	public String getWaterMeter() {
+		return waterMeter;
+	}
+
+	/**
+	 * @param waterMeter
+	 *            The waterMeter to set.
+	 */
+	@Override
+	public void setWaterMeter(String waterMeter) {
+		this.waterMeter = waterMeter;
+	}
+
+	/**
+	 * @return Returns the lastUpdatedTimeStamp.
+	 */
+	@Override
+	public Date getLastUpdatedTimeStamp() {
+		return lastUpdatedTimeStamp;
+	}
+
+	/**
+	 * @param lastUpdatedTimeStamp
+	 *            The lastUpdatedTimeStamp to set.
+	 */
+	@Override
+	public void setLastUpdatedTimeStamp(Date lastUpdatedTimeStamp) {
+		this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
+	}
+
+	/**
+	 * @return true if the given Object is equal to FloorImpl this will get
+	 *         invoke when more than one object is adding to
+	 *         collection(ex:Set,Map.)
+	 */
+	@Override
+	public boolean equals(Object that) {
+		if (that == null)
+			return false;
+
+		if (this == that)
+			return true;
+		if (that.getClass() != this.getClass())
+			return false;
+
+		final FloorImpl thatFlrImpl = (FloorImpl) that;
+
+		if (this.getId() != null && thatFlrImpl.getId() != null) {
+			if (getId().equals(thatFlrImpl.getId())) {
+				return true;
+			} else
+				return false;
+		} else
+			return false;
+	}
+
+	/**
+	 * @return Returns the hashCode
+	 */
+	@Override
+	public int hashCode() {
+		int hashCode = 0;
+		if (getId() != null) {
+			hashCode += this.getId().hashCode();
+		}
+		return hashCode;
+	}
+
+	/**
+	 * @return Returns the boolean after validating the current object
+	 */
+	@Override
+	public boolean validateFloor() {
+		if (getFloorNo() == null)
+			throw new EGOVRuntimeException("In FloorImpl Validate : FloorNumber is Not Set, Please Check !!");
+
+		return true;
+	}
+
+	/**
+	 * @return Returns the createdTimeStamp.
+	 */
+	@Override
+	public Date getCreatedTimeStamp() {
+		return createdTimeStamp;
+	}
+
+	/**
+	 * @param createdTimeStamp
+	 *            The createdTimeStamp to set.
+	 */
+	@Override
+	public void setCreatedTimeStamp(Date createdTimeStamp) {
+		this.createdTimeStamp = createdTimeStamp;
+	}
+
+	@Override
+	public BigDecimal getRentPerMonth() {
+		return rentPerMonth;
+	}
+
+	@Override
+	public void setRentPerMonth(BigDecimal rentPerMonth) {
+		this.rentPerMonth = rentPerMonth;
+	}
+
+	@Override
+	public String getExtraField1() {
+		return extraField1;
+	}
+
+	@Override
+	public void setExtraField1(String extraField1) {
+		this.extraField1 = extraField1;
+	}
+
+	@Override
+	public String getExtraField2() {
+		return extraField2;
+	}
+
+	@Override
+	public void setExtraField2(String extraField2) {
+		this.extraField2 = extraField2;
+	}
+
+	@Override
+	public String getExtraField3() {
+		return extraField3;
+	}
+
+	@Override
+	public void setExtraField3(String extraField3) {
+		this.extraField3 = extraField3;
+	}
+
+	@Override
+	public String getExtraField4() {
+		return extraField4;
+	}
+
+	@Override
+	public void setExtraField4(String extraField4) {
+		this.extraField4 = extraField4;
+	}
+
+	@Override
+	public String getExtraField5() {
+		return extraField5;
+	}
+
+	@Override
+	public void setExtraField5(String extraField5) {
+		this.extraField5 = extraField5;
+	}
+
+	@Override
+	public String getExtraField6() {
+		return extraField6;
+	}
+
+	@Override
+	public void setExtraField6(String extraField6) {
+		this.extraField6 = extraField6;
+	}
+
+	@Override
+	public String getExtraField7() {
+		return extraField7;
+	}
+
+	@Override
+	public void setExtraField7(String extraField7) {
+		this.extraField7 = extraField7;
+	}
+
+	//TODO -- Uncomment once demand module code is available
+	/*@Override
+	public DepreciationMaster getDepreciationMaster() {
+		return depreciationMaster;
+	}
+
+	@Override
+	public void setDepreciationMaster(DepreciationMaster depreciationMaster) {
+		this.depreciationMaster = depreciationMaster;
+	}*/
+
+	@Override
+	public BigDecimal getManualAlv() {
+		return manualAlv;
+	}
+
+	@Override
+	public void setManualAlv(BigDecimal manualAlv) {
+		this.manualAlv = manualAlv;
+	}
+
+	@Override
+	public String getWaterRate() {
+		return waterRate;
+	}
+
+	@Override
+	public void setWaterRate(String waterRate) {
+		this.waterRate = waterRate;
+	}
+
+	@Override
+	public BigDecimal getAlv() {
+		return alv;
+	}
+
+	@Override
+	public void setAlv(BigDecimal alv) {
+		this.alv = alv;
+	}
+
+	public String getTaxExemptedReason() {
+		return taxExemptedReason;
+	}
+
+	public void setTaxExemptedReason(String taxExemptedReason) {
+		this.taxExemptedReason = taxExemptedReason;
+	}
+	
+	public UnitRentAgreementDetail getRentAgreementDetail() {
+		return rentAgreementDetail;
+	}
+
+	public void setRentAgreementDetail(UnitRentAgreementDetail rentAgreementDetail) {
+		this.rentAgreementDetail = rentAgreementDetail;
+	}
+
+	@Override
+	public String toString() {
+		return new StringBuilder(256)
+		           .append("FloorImpl [Id: ").append(getId())
+		           .append(", FloorNo=").append(getFloorNo())
+		           .append(", FloorArea=").append(getFloorArea() != null ? getFloorArea().getArea() : "null")
+		           .append(", PropertyUsage=").append(getPropertyUsage())
+		           .append(", StructCl=").append(getStructureClassification())
+				   .append(", Occupancy=").append(getPropertyOccupation())
+				   //TODO -- Uncomment once demand module code is available
+				   //.append(", Depreciation=").append(getDepreciationMaster())
+				   .append(", WaterRate=").append(getWaterRate())
+				   .append(", alv=").append(getAlv())
+				   .append(", taxExemptedReason=").append(taxExemptedReason)
+				   .append(", rentAgreementDetail=").append(rentAgreementDetail)
+				   .append("]").toString();
+
+	}
+}

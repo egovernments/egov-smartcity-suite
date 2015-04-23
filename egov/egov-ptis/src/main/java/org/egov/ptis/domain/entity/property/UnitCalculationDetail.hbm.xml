@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 7 Feb, 2014 5:55:18 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="org.egov.ptis.domain.entity.property.UnitCalculationDetail" table="EGPT_UNITCALC_DETAIL">
+        <id name="id" type="java.lang.Long">
+            <column name="ID" />
+            <generator class="sequence">
+				<param name="sequence">SEQ_EGPT_UNITCALC_DETAIL</param>
+			</generator>
+        </id>
+        <property name="unitNumber" type="java.lang.Integer">
+            <column name="UNIT_NUMBER" />
+        </property>
+        <property name="unitArea" type="java.math.BigDecimal">
+            <column name="UNIT_AREA" />
+        </property>
+        <property name="occupancyDate" type="java.util.Date">
+            <column name="OCCUPANCY_DATE" />
+        </property>
+         <property name="guidanceValue" type="java.math.BigDecimal">
+            <column name="GUIDANCE_VALUE" />
+        </property>        
+        <property name="guidValEffectiveDate" type="java.util.Date">
+            <column name="GUIDANCE_VAL_EFECTIVEDATE" />
+        </property>
+        <property name="installmentFromDate" type="java.util.Date">
+            <column name="INST_FROMDATE" />
+        </property>
+        <property name="unitOccupation" type="java.lang.String">
+            <column name="UNIT_OCCUPATION" />
+        </property>
+        <property name="monthlyRent" type="java.math.BigDecimal">
+            <column name="MONTHLY_RENT" />
+        </property>
+        <property name="monthlyRentTenant" type="java.math.BigDecimal">
+            <column name="MONTHLY_RENT_TENANT" />
+        </property>
+        <property name="alv" type="java.math.BigDecimal">
+            <column name="ALV" />
+        </property>
+        <property name="residentialALV" type="java.math.BigDecimal">
+            <column name="RESD_ALV" />
+        </property>
+        <property name="nonResidentialALV" type="java.math.BigDecimal">
+            <column name="NONRESD_ALV" />
+        </property>
+        <property name="waterTaxALV" type="java.math.BigDecimal">
+            <column name="WATERTAX_ALV" />
+        </property>
+        <property name="bigBuildingTaxALV" type="java.math.BigDecimal">
+            <column name="BIGBLDNG_ALV" />
+        </property>
+        <property name="taxPayable" type="java.math.BigDecimal">
+            <column name="TAX_PAYABLE" />
+        </property>
+        <property name="taxDays" type="java.lang.Integer">
+            <column name="TAXDAYS" />
+        </property>
+        <property name="fromDate" type="java.util.Date">
+            <column name="FROM_DATE" />
+        </property>
+        <property name="generalTax" type="java.math.BigDecimal">
+            <column name="GENERAL_TAX" />
+        </property>
+        <property name="generalTaxFromDate" type="java.util.Date">
+            <column name="GEN_TAX_FROMDATE" />
+        </property>
+        <property name="sewerageTax" type="java.math.BigDecimal">
+            <column name="SEWERAGE_TAX" />
+        </property>
+        <property name="sewerageTaxFromDate" type="java.util.Date">
+            <column name="SEWERAGETAX_FROMDATE" />
+        </property>
+        <property name="fireTax" type="java.math.BigDecimal">
+            <column name="FIRE_TAX" />
+        </property>
+        <property name="fireTaxFromDate" type="java.util.Date">
+            <column name="FIRETAX_FROMDATE" />
+        </property>
+        <property name="lightTax" type="java.math.BigDecimal">
+            <column name="LIGHT_TAX" />
+        </property>
+        <property name="lightTaxFromDate" type="java.util.Date">
+            <column name="LIGHTTAX_FROMDATE" />
+        </property>
+        <property name="waterTax" type="java.math.BigDecimal">
+            <column name="WATER_TAX" />
+        </property>
+        <property name="waterTaxFromDate" type="java.util.Date">
+            <column name="WATERTAX_FROMDATE" />
+        </property>
+        <property name="eduCessResd" type="java.math.BigDecimal">
+            <column name="EDUCESS_RESD" />
+        </property>
+        <property name="eduCessResdFromDate" type="java.util.Date">
+            <column name="EDURESD_FROMDATE" />
+        </property>
+        <property name="eduCessNonResd" type="java.math.BigDecimal">
+            <column name="EDUCESS_NONRESD" />
+        </property>
+        <property name="eduCessNonResdFromDate" type="java.util.Date">
+            <column name="EDUNONRESD_FROMDATE" />
+        </property>
+        <property name="empGrntCess" type="java.math.BigDecimal">
+            <column name="EGC" />
+        </property>
+        <property name="empGrntCessFromDate" type="java.util.Date">
+            <column name="EGC_FROMDATE" />
+        </property>
+        <property name="bigBuildingTax" type="java.math.BigDecimal">
+            <column name="BIGBLDNG_TAX" />
+        </property>
+        <property name="bigBuildingTaxFromDate" type="java.util.Date">
+            <column name="BIGBLDNGTAX_FROMDATE" />
+        </property>
+        
+        <set name="unitAreaCalculationDetails" inverse="true" table="EGPT_UNITAREACALC_DETAIL" cascade="save-update">
+            <key column="ID_UNITTAX"/>
+            <one-to-many class="org.egov.ptis.domain.entity.property.UnitAreaCalculationDetail" />
+        </set>
+        
+        <property name="createdTimeStamp" column="CREATED_TIMESTAMP" type="java.util.Date" />
+        <property name="lastUpdatedTimeStamp" column="LASTUPDATED_TIMESTAMP" type="java.util.Date" />
+        
+        <many-to-one name="property" column="ID_PROPERTY"
+			class="org.egov.ptis.domain.entity.property.PropertyImpl" not-null="true"/>
+        
+        <property name="serviceCharge" type="java.math.BigDecimal">
+            <column name="SERVICE_CHARGE" />
+        </property>
+        
+        <property name="buildingCost" type="java.math.BigDecimal">
+            <column name="BUILDING_COST" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 7 Feb, 2014 5:55:18 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>    
+    <class name="org.egov.ptis.domain.entity.property.UnitAreaCalculationDetail" table="EGPT_UNITAREACALC_DETAIL" >    	
+		<id name="id" type="java.lang.Long">
+            <column name="ID" />
+            <generator class="sequence">
+				<param name="sequence">SEQ_EGPT_UNITAREACALC_DETAIL</param>
+			</generator>
+        </id>
+   		<property name="taxableArea" type="java.math.BigDecimal">
+            <column name="TAXABLE_AREA" />
+        </property>
+        <property name="monthlyBaseRent" type="java.math.BigDecimal">
+            <column name="MONTHLY_BASERENT" />
+        </property>
+        <property name="monthlyRentalValue" type="java.math.BigDecimal">
+            <column name="MRV" />
+        </property>		 
+        <many-to-one name="unitCalculationDetail" column="ID_UNITTAX"
+			class="org.egov.ptis.domain.entity.property.UnitCalculationDetail" not-null="true"/>
+        
+        <property name="floorNumber" type="java.lang.String">
+            <column name="FLOOR_NUMBER" />
+        </property>
+        
+        <property name="unitOccupation" type="java.lang.String">
+            <column name="UNIT_OCCUPATION" />
+        </property>
+        
+        <property name="unitUsage" type="java.lang.String">
+            <column name="UNIT_USAGE" />
+        </property>
+        
+        <property name="baseRentPerSqMtr" type="java.math.BigDecimal">
+            <column name="BASE_RENT_SQRMTR" />
+        </property>
+        
+        <property name="manualALV" type="java.math.BigDecimal">
+            <column name="MANUAL_ALV" />
+        </property>
+        
+        <property name="monthlyRentPaidByTenanted" type="java.math.BigDecimal">
+            <column name="TENANT_RENT" />
+        </property>
+        
+        <property name="unitIdentifier" type="java.lang.String">
+             <column name="UNIT_IDENTIFIER" />
+        </property>
+   </class>   
+</hibernate-mapping>

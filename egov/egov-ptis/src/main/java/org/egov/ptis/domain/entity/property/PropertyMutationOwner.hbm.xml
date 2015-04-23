@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+   "-//Hibernate/Hibernate Mapping DTD//EN"
+   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.ptis.domain.entity.property.PropertyMutationOwner" table="EGPT_MUTATION_OWNER">
+		<id
+			name="mutationOwnerId" column="ID_MUTATION_OWNER" type="int">
+			<generator class="sequence">
+					<param name="sequence">SEQ_MUTATION_OWNERS</param>
+			</generator>
+		</id>
+		<many-to-one name="propertyMutation" class="org.egov.ptis.domain.entity.property.PropertyMutation" column="ID_PROP_MUTATION" insert = "false" update="false"/> 
+		<property name="ownerId" column="OWNERID" />    			
+	</class>
+</hibernate-mapping>

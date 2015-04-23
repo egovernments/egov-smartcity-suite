@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+   "-//Hibernate/Hibernate Mapping DTD//EN"
+   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView"
+		table="EGPT_MV_INST_DEM_COLL" polymorphism="explicit">
+
+		<composite-id>
+			<key-many-to-one name="propMatView" class="org.egov.ptis.domain.entity.property.PropertyMaterlizeView" 
+				column="ID_BASIC_PROPERTY"/>
+			<key-many-to-one name="installment" class="org.egov.commons.Installment" column="ID_INSTALLMENT"/>
+		</composite-id>
+		<property name="generalTax" column="GENERALTAX"/>
+		<property name="egsTax" column="EGSTAX"/>
+		<property name="eduCessResdTax" column="EDUCESSRESDTAX"/>
+		<property name="eduCessNonResdTax" column="EDUCESSNONRESDTAX"/>
+		<property name="waterTax" column="WATERTAX"/>
+		<property name="fireTax" column="FIRETAX"/>
+		<property name="sewerageTax" column="SEWERAGETAX"/>
+		<property name="lightTax" column="LIGHTTAX"/>
+		<property name="bigBldgTax" column="BIGBLDGTAX"/>
+		<property name="chqBouncePenalty" column="CHQBUNCPENALTY"/>
+		<property name="penaltyFine" column="PENALTYFINE"/>
+		<property name="generalTaxColl" column="GENERALTAXCOLL"/>
+		<property name="egsTaxColl" column="EGSTAXCOLL"/>
+		<property name="eduCessResdTaxColl" column="EDUCESSRESDTAXCOLL"/>
+		<property name="eduCessNonResdTaxColl" column="EDUCESSNONRESDTAXCOLL"/>
+		<property name="waterTaxColl" column="WATERTAXCOLL"/>
+		<property name="fireTaxColl" column="FIRETAXCOLL"/>
+		<property name="sewerageTaxColl" column="SEWERAGETAXCOLL"/>
+		<property name="lightTaxColl" column="LIGHTTAXCOLL"/>
+		<property name="bigBldgTaxColl" column="BIGBLDGTAXCOLL"/>
+		<property name="chqBuncPnltyColl" column="CHQBUNCPENALTYCOLL"/>
+		<property name="penaltyFineColl" column="PENALTYFINECOLL"/>
+		<property name="createdDate" column="CREATEDDATE"/>
+	</class>
+
+</hibernate-mapping>

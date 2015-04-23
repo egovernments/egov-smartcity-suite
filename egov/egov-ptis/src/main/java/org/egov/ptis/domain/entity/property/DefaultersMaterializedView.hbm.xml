@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+   "-//Hibernate/Hibernate Mapping DTD//EN"
+   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class
+	name="org.egov.ptis.domain.entity.property.DefaultersMaterializedView"
+	table="EGPT_MV_DEFAULTERS" polymorphism="explicit">
+		<composite-id>
+			<key-property name="basicPropertyId" column="ID_BASIC_PROPERTY" />
+		</composite-id>
+		<property name="fromDate" column="START_DATE" type="java.util.Date" />
+		<property name="toDate" column="END_DATE" type="java.util.Date" />
+	</class>
+</hibernate-mapping>

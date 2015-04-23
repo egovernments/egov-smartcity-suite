@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+   "-//Hibernate/Hibernate Mapping DTD//EN"
+   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="org.egov.ptis.notice.PtNotice" table="EGPT_NOTICE">
+    	<id
+			name="id" 
+			column="ID_NOTICE"
+			type="long">
+			<generator class="sequence">
+				<param name="sequence">SEQ_NOTICE</param>
+			</generator>
+		</id>
+		<property name="moduleId" column="ID_MODULE" />
+		<property name="noticeType" type="string" column="NOTICETYPE" length="32" />
+		<property name="noticeNo" type="string" column="NOTICENO" length="64" />
+		<property name="noticeDate" type="java.util.Date" column="NOTICEDATE" length="7" />
+		<property name="userId" column="ID_USER" />
+		<many-to-one name="basicProperty"
+			class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" column="ID_BASICPROPERTY"
+			insert="false" update="false" />
+		<property name="noticeFile" column="NOTICE_FILE" type="binary"/>
+		<property name="isBlob" column="IS_BLOB" />
+	</class>
+ <query name="getNoticeByNoticeNo"><![CDATA[from PtNotice where noticeNo=?]]></query>
+</hibernate-mapping>

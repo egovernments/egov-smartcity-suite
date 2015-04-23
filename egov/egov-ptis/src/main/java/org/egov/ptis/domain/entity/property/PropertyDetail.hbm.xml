@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+   "-//Hibernate/Hibernate Mapping DTD//EN"
+   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.ptis.domain.entity.property.PropertyDetail"
+		table="EGPT_PROPERTY_DETAIL">
+		<id name="propertyDetailsID" column="ID_PROPERTY_DETAIL"
+			type="integer">
+			<generator class="sequence">
+				<param name="sequence">SEQ_PROP_DETAIL</param>
+			</generator>
+		</id>
+
+		<discriminator column="PROPERTY_TYPE" />
+		<timestamp name="updatedTime" column="UPDT_TIMESTAMP"
+			access="property" unsaved-value="null" />
+
+		<property name="propertyType" column="PROPERTY_TYPE"
+			not-null="true" insert="false" update="false" />
+
+		<many-to-one name="property" fetch="join"
+			class="org.egov.ptis.domain.entity.property.PropertyImpl"
+			column="ID_PROPERTY" unique="true" cascade="none" />
+
+		<many-to-one name="propertyTypeMaster"
+			class="org.egov.ptis.domain.entity.property.PropertyTypeMaster"
+			column="ID_PROPERTYTYPEMASTER" unique="true" />
+
+		<component name="sitalArea" class="org.egov.commons.Area">
+			<property name="area" column="SITAL_AREA" />
+			<property name="length" column="PROPERTY_LENGTH" />
+			<property name="breadth" column="PROPERTY_BREADTH" />
+		</component>			
+
+		<property name="fieldIrregular" column="IS_IRREGULAR" />
+
+		<property name="no_of_floors" column="NUM_FLOORS"
+			type="integer" />
+
+		<property name="completion_year" column="COMPLETION_YEAR"
+			type="date" />
+
+		<property name="effective_date" column="EFFECTIVE_DATE"
+			type="date" />
+		<property name="dateOfCompletion" type="java.util.Date">
+			<column name="DATEOFCOMPLETION" length="10" />
+		</property>
+
+		<many-to-one name="installment"
+			class="org.egov.commons.Installment" column="ID_INSTALLMENT" />
+
+		<many-to-one name="PropertyUsage"
+			class="org.egov.ptis.domain.entity.property.PropertyUsage"
+			column="ID_USG_MSTR" />
+
+		<many-to-one name="propertyMutationMaster"
+			class="org.egov.ptis.domain.entity.property.PropertyMutationMaster"
+			column="ID_MUTATION" unique="true" />
+
+
+		<property name="water_Meter_Num" column="WATER_METER_NUM" />
+
+		<property name="elec_Meter_Num" column="ELEC_METER_NUM" />
+
+		<property name="surveyNumber" column="SURVEY_NUM" />
+
+		<property name="fieldVerified" column="IS_FIELD_VERIFIED"
+			insert="false" />
+
+		<property name="fieldVerificationDate" column="FIELD_VERIF_DATE"
+			update="false" />
+
+		<property name="cornerPlot" column="IS_CORNERPLOT" />
+		<property name="comZone" column="IS_COMZONE" />
+
+		<property name="extra_field1" column="EXTRA_FIELD1" />
+		<property name="extra_field2" column="EXTRA_FIELD2" />
+		<property name="extra_field3" column="EXTRA_FIELD3" />
+		<property name="extra_field4" column="EXTRA_FIELD4" />
+		<property name="extra_field5" column="EXTRA_FIELD5" />
+		<property name="extra_field6" column="EXTRA_FIELD6" />
+		<property name="manualAlv" column="MANUAL_ALV"/>
+		<property name="occupierName" column="OCCUPIER_NAME"/>
+		
+		<set name="floorDetails" order-by="FLOOR_NO"
+			cascade="all" table="EGPT_FLOOR_DETAIL">
+			<key column="ID_PROPERTY_DETAIL" not-null="true" />
+			<one-to-many
+				class="org.egov.ptis.domain.entity.property.FloorImpl" />
+		</set>
+
+		<many-to-one name="propertyOccupation"
+			class="org.egov.ptis.domain.entity.property.PropertyOccupation"
+			column="ID_OCCPN_MSTR" unique="true" />
+			
+		<component name="commBuiltUpArea"
+			class="org.egov.commons.Area">
+			<property name="area" column="COMMN_BUILTUP_AREA" />
+		</component>
+
+		<component name="plinthArea" class="org.egov.commons.Area">
+			<property name="area" column="PLINTH_AREA" />
+		</component>
+		<component name="commVacantLand"
+			class="org.egov.commons.Area">
+			<property name="area" column="COMMN_VCNT_LAND" />
+		</component>
+		<component name="nonResPlotArea" class="org.egov.commons.Area">
+			<property name="area" column="NONRES_PLOTAREA" />
+		</component>
+
+		<subclass
+			name="org.egov.ptis.domain.entity.property.VacantProperty"
+			discriminator-value="VacantProperty">
+			<component name="totalBuiltupArea"
+				class="org.egov.commons.Area">
+				<property name="area" column="TOTAL_BUILTUP_AREA" />
+			</component>
+		</subclass>
+
+		<subclass
+			name="org.egov.ptis.domain.entity.property.BuiltUpProperty"
+			discriminator-value="BuiltUpProperty">
+			<component name="totalBuiltupArea"
+				class="org.egov.commons.Area">
+				<property name="area" column="TOTAL_BUILTUP_AREA" />
+			</component>
+		</subclass>			
+
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.egov.ptis.domain.entity.property">
+	<joined-subclass name="PropertyOwner" table="EGPT_PROPERTY_OWNER"
+		extends="org.egov.lib.citizen.model.Owner">
+		<key column="OWNERID" />
+		<many-to-one name="property" column="ID_PROPERTY"
+			not-null="true" class="org.egov.ptis.domain.entity.property.PropertyImpl" insert="false" update="false" fetch="select" />
+		<many-to-one name="source"
+			class="org.egov.ptis.domain.entity.property.PropertySource" column="ID_SOURCE" />
+		<property name="orderNo" column="ORDERNO" />
+	</joined-subclass>
+</hibernate-mapping>

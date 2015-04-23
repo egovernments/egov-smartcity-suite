@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+   "-//Hibernate/Hibernate Mapping DTD//EN"
+   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.ptis.domain.entity.property.StructureClassification" table="EGPT_STRUC_CL">
+		
+		<id name="id" column="ID_STRUC_CL" type="java.lang.Long">
+			<generator class="sequence">
+				<param name="sequence">SEQ_STRUC_CL</param>
+			</generator>
+		</id>
+		<property name="createdDate" type="java.util.Date">
+			<column name="CREATED_DATE" not-null="true" />
+		</property>
+		<property name="modifiedDate" type="java.util.Date">
+			<column name="MODIFIED_DATE" not-null="true" />
+		</property>
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.UserImpl"
+			cascade="all">
+			<column name="CREATED_BY" />
+		</many-to-one>
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.UserImpl"
+			cascade="all">
+			<column name="MODIFIED_BY" />
+		</many-to-one>
+		
+		<property
+			name="number"
+			column="CONSTR_NUM"
+		/>
+		<property
+			name="typeName"
+			column="CONSTR_TYPE"
+		/>
+		<property
+			name="description"
+			column="CONSTR_DESCR"
+		/>
+		<property
+			name="factor"
+			column="CONSTR_FACTOR"
+		/>
+		<property
+			name="IsHistory"
+			column="IS_HISTORY"
+			type="char"		
+		/>
+		<property
+			name="constrTypeCode"
+			column="CODE"
+			type="string"
+		/>
+		<property
+			name="orderId"
+			column="ORDER_ID"
+			type="integer"
+		/>
+		<property
+			name="fromDate"
+			column="FROM_DATE"
+		/>
+		<property
+			name="toDate"
+			column="TO_DATE"
+		/>
+		<property
+			name="floorNum"
+			column="FLOOR_NUM"		
+		/>
+		<many-to-one name="startInstallment" class="org.egov.commons.Installment" column="ID_INSTALLMENT"/>
+
+	</class>
+</hibernate-mapping>
