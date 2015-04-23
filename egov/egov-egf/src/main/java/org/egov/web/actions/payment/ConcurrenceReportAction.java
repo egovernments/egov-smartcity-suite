@@ -32,8 +32,8 @@ import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 
 @Results(value = {
-		@Result(name="PDF",type=StreamResult.class,value="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=ConcurrenceReport.pdf"}),
-		@Result(name="XLS",type=StreamResult.class,value="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=ConcurrenceReport.xls"})
+		@Result(name="PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=ConcurrenceReport.pdf"}),
+		@Result(name="XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=ConcurrenceReport.xls"})
 		 })
 @ParentPackage("egov")
 public class ConcurrenceReportAction extends BaseFormAction {

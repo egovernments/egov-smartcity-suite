@@ -1,6 +1,5 @@
 package org.egov.web.actions.report;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -13,12 +12,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import net.sf.jasperreports.engine.JasperPrint;
-
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
-import org.apache.struts2.config.Result;
-import org.apache.struts2.config.Results;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.dispatcher.StreamResult;
 import org.egov.commons.Bank;
 import org.egov.commons.Bankaccount;
@@ -30,7 +28,6 @@ import org.egov.model.report.FundFlowBean;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.egov.web.actions.BaseFormAction;
-import org.egov.web.actions.payment.OutstandingPaymentAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
@@ -41,8 +38,8 @@ import org.hibernate.criterion.Restrictions;
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @Results(value={
-		@Result(name="PDF",type=StreamResult.class,value=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/pdf",Constants.CONTENT_DISPOSITION,"no-cache;filename=ManualEntryReport.pdf"}),
-		@Result(name="XLS",type=StreamResult.class,value=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/xls",Constants.CONTENT_DISPOSITION,"no-cache;filename=ManualEntryReport.xls"})
+		@Result(name="PDF",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/pdf",Constants.CONTENT_DISPOSITION,"no-cache;filename=ManualEntryReport.pdf"}),
+		@Result(name="XLS",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/xls",Constants.CONTENT_DISPOSITION,"no-cache;filename=ManualEntryReport.xls"})
 	})
 @SuppressWarnings("serial")
 @ParentPackage("egov")  
@@ -139,17 +136,17 @@ public class FundFlowManualEntryReportAction extends BaseFormAction{
 			manualEntryReportList.add(manualEntry);
 			//}
 		}
-	HibernateUtil.getCurrentSession().put("entryResultReportList", entryReportList);
-	HibernateUtil.getCurrentSession().put("headingStr", heading);
-	HibernateUtil.getCurrentSession().put("total", grandTotal);
-		/HibernateUtil.getCurrentSession().put("manualEntryReportList", manualEntryReportList);
+	getSession().put("entryResultReportList", entryReportList);
+	getSession().put("headingStr", heading);
+	getSession().put("total", grandTotal);
+	getSession().put("manualEntryReportList", manualEntryReportList);
 		if(LOGGER.isInfoEnabled())     LOGGER.info("manualEntryReportList+"+manualEntryReportList.size());
 	}
 	   
 	@SuppressWarnings("unchecked")
 	private void populateData() {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Getting the value from session");
-		entryReportList=(List<FundFlowBean>)HibernateUtil.getCurrentSession().get("entryResultReportList");
+		entryReportList=(List<FundFlowBean>)getSession().get("entryResultReportList");
 		
 		for(FundFlowBean entry:entryReportList)
 		{
@@ -193,8 +190,8 @@ public class FundFlowManualEntryReportAction extends BaseFormAction{
 	}
 	public void setParamMap()
 	{
-		String str= (StringHibernateUtil.getCurrentSession().get("headingStr").toString();
-		BigDecimal amt= (BigDecimalHibernateUtil.getCurrentSession().get("total");
+		String str= (String)getSession().get("headingStr").toString();
+		BigDecimal amt= (BigDecimal)getSession().get("total");
 		String title=getUlbName();
 		paramMap.put("title",getUlbName());
 		paramMap.put("heading",str);

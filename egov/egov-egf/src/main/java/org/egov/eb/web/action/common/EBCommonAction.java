@@ -19,8 +19,8 @@ import org.egov.eb.domain.master.entity.TargetArea;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.BaseFormAction;
 
-/*@Results({ @Result(name = "AJAX_RESULT", type = StreamResult.class, value = "returnStream", params = { "contentType",
-		"text/plain" }) })*/
+@Results({ @Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType",
+		"text/plain" }) })
 public class EBCommonAction extends BaseFormAction {
 
 	private static final Logger LOGGER = Logger.getLogger(EBCommonAction.class);

@@ -32,9 +32,9 @@ import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
 
 @Results(value={
-		@Result(name="functionwiseIE-PDF",type=StreamResult.class,value=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/pdf","contentDisposition","no-cache;filename=FunctionwiseIE.pdf"}),
-		@Result(name="functionwiseIE-XLS",type=StreamResult.class,value=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/xls","contentDisposition","no-cache;filename=FunctionwiseIE.xls"}),
-		@Result(name="functionwiseIE-HTML",type=StreamResult.class,value=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"text/html"})
+		@Result(name="functionwiseIE-PDF",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/pdf","contentDisposition","no-cache;filename=FunctionwiseIE.pdf"}),
+		@Result(name="functionwiseIE-XLS",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/xls","contentDisposition","no-cache;filename=FunctionwiseIE.xls"}),
+		@Result(name="functionwiseIE-HTML",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"text/html"})
 	})
 	
 @ParentPackage("egov")

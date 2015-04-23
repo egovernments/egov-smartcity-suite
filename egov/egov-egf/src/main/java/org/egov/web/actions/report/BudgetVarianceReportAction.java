@@ -53,8 +53,8 @@ import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.FlushMode;
 
 @Results(value={
-		@Result(name="PDF",type=StreamResult.class,value="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=BudgetVarianceReport.pdf"}),
-		@Result(name="XLS",type=StreamResult.class,value="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=BudgetVarianceReport.xls"})
+		@Result(name="PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=BudgetVarianceReport.pdf"}),
+		@Result(name="XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=BudgetVarianceReport.xls"})
 	})
 
 @ParentPackage("egov")

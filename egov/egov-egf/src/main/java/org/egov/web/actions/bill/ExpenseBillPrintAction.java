@@ -1,7 +1,6 @@
 package org.egov.web.actions.bill;
 
 
-import org.apache.struts2.convention.annotation.Action;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -19,12 +18,9 @@ import net.sf.jasperreports.engine.JRException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.config.ParentPackage;
-import org.apache.struts2.config.Result;
-import org.apache.struts2.config.Results;
-import org.apache.struts2.dispatcher.StreamResult;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
@@ -34,15 +30,18 @@ import org.egov.commons.service.CommonsService;
 import org.egov.commons.utils.EntityType;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.egf.commons.EgovCommon;
+import org.egov.exceptions.EGOVException;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
-import org.egov.infstr.models.State;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.NumberToWord;
-import org.egov.infstr.workflow.inbox.InboxService;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
@@ -59,12 +58,12 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 @Results(value={
-	@Result(name="PDF",type=StreamResult.class,value="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=ExpenseJournalVoucherReport.pdf"}),
-	@Result(name="XLS",type=StreamResult.class,value="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=ExpenseJournalVoucherReport.xls"}),
-	@Result(name="HTML",type=StreamResult.class,value="inputStream", params={"inputName","inputStream","contentType","text/html"})
+	@Result(name="PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=ExpenseJournalVoucherReport.pdf"}),
+	@Result(name="XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=ExpenseJournalVoucherReport.xls"}),
+	@Result(name="HTML",type="stream",location="inputStream", params={"inputName","inputStream","contentType","text/html"})
 })
 
-@ParentPackage("egov")
+@org.apache.struts2.convention.annotation.ParentPackage("egov")
 public class ExpenseBillPrintAction extends BaseFormAction{
 	final static private Logger LOGGER=Logger.getLogger(ExpenseBillPrintAction.class);
 	String jasperpath = "/org/egov/web/actions/report/expenseBillReport.jasper";
@@ -127,7 +126,7 @@ public class ExpenseBillPrintAction extends BaseFormAction{
 	List<EgBillPayeedetails> billPayeeDetails = new ArrayList<EgBillPayeedetails>();
 	private static final String ACCDETAILTYPEQUERY=" from Accountdetailtype where id=?";
 	EgBillregister cbill=new EgBillregister();
-	private InboxService inboxService;
+	//private InboxService inboxService;
 
 	public Long getId() {
 		return id;
@@ -232,7 +231,8 @@ public class ExpenseBillPrintAction extends BaseFormAction{
 		}
 		paramMap.put("voucherDescription", getVoucherDescription());
 		if(cbill!=null && cbill.getState()!=null){
-			loadInboxHistoryData(inboxService.getStateById(cbill.getState().getId()),paramMap);
+			//coment for phoenix migration fix once api is ready
+			//loadInboxHistoryData(inboxService.getStateById(cbill.getState().getId()),paramMap);
 		}
 		
 		if(billRegistermis != null){
@@ -254,7 +254,7 @@ public class ExpenseBillPrintAction extends BaseFormAction{
 			paramMap.put("netAmountInWords",amountInWords);
 			paramMap.put("billNumber", billRegistermis.getEgBillregister().getBillnumber());
 			paramMap.put("functionName",getFunctionName());   
-			paramMap.put("departmentName",billRegistermis.getEgDepartment().getDeptName());
+			paramMap.put("departmentName",billRegistermis.getEgDepartment().getName());
 			paramMap.put("fundName",billRegistermis.getFund().getName());
 			BigDecimal billamount = billRegistermis.getEgBillregister().getBillamount();
 			paramMap.put("budgetApprNumber",billRegistermis.getBudgetaryAppnumber());
@@ -338,7 +338,7 @@ public class ExpenseBillPrintAction extends BaseFormAction{
         budgetApprDetailsMap.put("currentBillAmount",currentBillAmount);
         budgetApprDetailsMap.put("AccountCode",coa.getGlcode());
         
-        budgetApprDetailsMap.put("departmentName", cbill.getEgBillregistermis().getEgDepartment().getDeptName());
+        budgetApprDetailsMap.put("departmentName", cbill.getEgBillregistermis().getEgDepartment().getName());
         budgetApprDetailsMap.put("functionName", functionName);
         budgetApprDetailsMap.put("fundName", cbill.getEgBillregistermis().getFund().getName());       
         
@@ -355,7 +355,7 @@ public class ExpenseBillPrintAction extends BaseFormAction{
 	 *  will be called only once per bill
 	 */
 	private void getRequiredDataForBudget(EgBillregister cbill) {
-		String financialYearId = commonsService.getFinancialYearId(sdf.format(cbill.getBilldate()));
+		String financialYearId =null;// commonsService.getFinancialYearId(cbill.getBilldate().getTime());
 		budgetDataMap.put("financialyearid", Long.valueOf(financialYearId));
 		budgetDataMap.put(Constants.DEPTID,cbill.getEgBillregistermis().getEgDepartment().getId());
 		if(cbill.getEgBillregistermis().getFunctionaryid()!=null)
@@ -428,16 +428,16 @@ public class ExpenseBillPrintAction extends BaseFormAction{
 		return voucher == null || voucher.getVoucherDate() == null ?"" : DateUtils.getDefaultFormattedDate(voucher.getVoucherDate());
 	}
 	
-	private void loadInboxHistoryData(State states, Map<String, Object> paramMap) throws EGOVRuntimeException {
+	/*private void loadInboxHistoryData(State states, Map<String, Object> paramMap) throws EGOVRuntimeException {
 		List<String> history = new ArrayList<String>();
 		List<String> workFlowDate = new ArrayList<String>();
 		String approverDesignation = "";
 		String approvalDate = "";
 		String stateValue = "";
     	if (states != null) {
-    	    List<State> stateHistory = states.getHistory();
+    	    List<StateHistory> stateHistory = states.getHistory();
     	    Collections.reverse(stateHistory);
-    	    for (State state : stateHistory) {
+    	    for (StateHistory state : stateHistory) {
     	    	stateValue = state.getValue();
 	    		Position position = getStateUser(state);
 	    		if(!"NEW".equalsIgnoreCase(stateValue)){
@@ -445,12 +445,12 @@ public class ExpenseBillPrintAction extends BaseFormAction{
 	    				history.add(position.getDeptDesigId().getDesigId().getDesignationName());
 	    			else
 	    				history.add("Invalid mapping could not get designation");
-	    			workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(state.getModifiedDate()));
+	    			workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(state.getLastModifiedDate()()));
 	    			
 	    	    	if(stateValue != null && !stateValue.equalsIgnoreCase("") && stateValue.toLowerCase().contains("approved"))
 	    	    	{
 	    	    		approverDesignation = position.getDeptDesigId().getDesigId().getDesignationName() ;
-	    	    		approvalDate = Constants.DDMMYYYYFORMAT2.format(state.getModifiedDate());
+	    	    		approvalDate = Constants.DDMMYYYYFORMAT2.format(state.getLastModifiedDate()());
 	    	    	}
 	    		}
     	    }
@@ -461,19 +461,21 @@ public class ExpenseBillPrintAction extends BaseFormAction{
     		paramMap.put("workFlow_"+i, history.get(i));
     		paramMap.put("workFlowDate_"+i, workFlowDate.get(i));
 		}
-    }
+    }*/
 	
-	private Position getStateUser(State state) {
+	//coment for phoenix migration 
+	
+	/*private Position getStateUser(State state) {
     	if (state.getPrevious() != null)
     	    return state.getPrevious().getOwner();
     	else
     	    return inboxService.getPrimaryPositionForUser(state.getCreatedBy().getId(), state.getCreatedDate());
-    }
+    }*/
 	
 	
-	public void setInboxService(InboxService inboxService) {
+	/*public void setInboxService(InboxService inboxService) {
 		this.inboxService = inboxService;
-	}
+	}*/
 	
 	  
 	private void prepareForPrint()  {

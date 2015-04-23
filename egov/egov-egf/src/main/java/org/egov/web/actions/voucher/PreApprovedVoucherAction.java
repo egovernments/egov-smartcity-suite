@@ -73,7 +73,7 @@ import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 
 //
 @Results( {
-	@Result(name = "editVoucher", type = ServletActionRedirectResult.class, value = "journalVoucherModify", params = {"namespace", "/voucher", "method", "beforeModify" })})
+	@Result(name = "editVoucher", type = "ServletActionRedirectResult.class", location = "journalVoucherModify", params = {"namespace", "/voucher", "method", "beforeModify" })})
 	
 @ParentPackage("egov")
 public class PreApprovedVoucherAction extends BaseFormAction

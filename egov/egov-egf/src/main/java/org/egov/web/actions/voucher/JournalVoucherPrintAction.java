@@ -1,6 +1,5 @@
 package org.egov.web.actions.voucher;
 
-import org.apache.struts2.convention.annotation.Action;
 import static org.egov.infstr.utils.DateUtils.getFormattedDate;
 
 import java.io.IOException;
@@ -19,27 +18,26 @@ import net.sf.jasperreports.engine.JRException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.config.ParentPackage;
-import org.apache.struts2.config.Result;
-import org.apache.struts2.config.Results;
-import org.apache.struts2.dispatcher.StreamResult;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Fund;
 import org.egov.commons.VoucherDetail;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.infstr.models.State;
-import org.egov.infstr.models.WorkflowTypes;
-import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.workflow.Action;
-import org.egov.infstr.workflow.inbox.InboxService;
+import org.egov.exceptions.EGOVException;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.CityWebsite;
-import org.egov.lib.admbndry.CityWebsiteDAO;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.lib.rjbac.user.User;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.WorkflowTypes;
+import org.egov.infstr.utils.DateUtils;
+import org.egov.infstr.utils.HibernateUtil;
+import org.egov.lib.admbndry.CityWebsiteDAO;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.pims.commons.Position;
 import org.egov.services.bills.BillsService;
@@ -49,9 +47,9 @@ import org.egov.utils.ReportHelper;
 import org.egov.web.actions.BaseFormAction;
 
 @Results(value={
-	@Result(name="PDF",type=StreamResult.class,value="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=JournalVoucherReport.pdf"}),
-	@Result(name="XLS",type=StreamResult.class,value="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=JournalVoucherReport.xls"}),
-	@Result(name="HTML",type=StreamResult.class,value="inputStream", params={"inputName","inputStream","contentType","text/html"})
+	@Result(name="PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=JournalVoucherReport.pdf"}),
+	@Result(name="XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=JournalVoucherReport.xls"}),
+	@Result(name="HTML",type="stream",location="inputStream", params={"inputName","inputStream","contentType","text/html"})
 })
 
 @ParentPackage("egov")
@@ -103,7 +101,7 @@ public class JournalVoucherPrintAction extends BaseFormAction{
 		return exportHtml();
 	}
 	
-@Action(value="/voucher/journalVoucherPrint-ajaxPrint")
+	@Action(value="/voucher/journalVoucherPrint-ajaxPrint")
 	public String ajaxPrint(){
 		return exportHtml();
 	}
@@ -257,18 +255,18 @@ public class JournalVoucherPrintAction extends BaseFormAction{
 	}
 	
 	private void loadHistory(Long stateId){
-	    State state = inboxService.getStateById(stateId);
+	    State state = null;// inboxService.getStateById(stateId);
 	    loadInboxHistoryData(state);
 	}
 	
-    private Position getStateUser(State state) {
+  /*  private Position getStateUser(State state) {
     	if (state.getPrevious() != null)
     	    return state.getPrevious().getOwner();
     	else
-    	    return inboxService.getPrimaryPositionForUser(state.getCreatedBy().getId(), state.getCreatedDate());
-        }
+    	    return null;// inboxService.getPrimaryPositionForUser(state.getCreatedBy().getId(), state.getCreatedDate());
+        }*/
 
-    private void loadInboxHistoryData(State states) throws EGOVRuntimeException {
+   /* private void loadInboxHistoryData(State states) throws EGOVRuntimeException {
     	if (states != null) {
     	    List<State> stateHistory = states.getHistory();
     	    Collections.reverse(stateHistory);
@@ -290,7 +288,7 @@ public class JournalVoucherPrintAction extends BaseFormAction{
     	    }
         }
     }
-
+*/
     private String removeSpecialCharacters(String str) {
     	return str.replaceAll("\\s\\s+|\\r\\n", "<br/>").replaceAll("\'", "\\\\'");
     }
@@ -298,7 +296,7 @@ public class JournalVoucherPrintAction extends BaseFormAction{
     	if (state.getNextAction() == null) {
     	    return "";
     	} else {
-    	    Action action = (Action)persistenceService.findByNamedQuery(Action.BY_NAME_AND_TYPE, state.getNextAction(),state.getType());
+    	    org.egov.infstr.workflow.Action action = (org.egov.infstr.workflow.Action)persistenceService.findByNamedQuery(org.egov.infstr.workflow.Action.BY_NAME_AND_TYPE, state.getNextAction(),state.getType());
     	    if (action != null) {
     	    	return " - "+ (action.getDescription() != null ? action.getDescription() : state.getNextAction());
     	    } else {

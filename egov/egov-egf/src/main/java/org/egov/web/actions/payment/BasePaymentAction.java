@@ -3,15 +3,15 @@
  */
 package org.egov.web.actions.payment;
 
-import org.apache.struts2.convention.annotation.Action;
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.Result;
-import org.apache.struts2.config.Results;
-import org.apache.struts2.dispatcher.ServletActionRedirectResult;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
+import org.egov.eis.service.EisCommonService;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.advance.EgAdvanceRequisition;
 import org.egov.model.payment.Paymentheader;
-import org.egov.eis.service.EisCommonService;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.voucher.BaseVoucherAction;
 
@@ -22,11 +22,11 @@ import com.exilant.eGov.src.transactions.VoucherTypeForULB;
  */
 
 @Results( {
-		@Result(name = "billpayment", type = ServletActionRedirectResult.class, value = "payment", params = { "namespace", "/payment", "method", "view" }),
-		@Result(name = "advancepayment", type = ServletActionRedirectResult.class, value = "payment", params = { "namespace", "/payment", "method", "advanceView" }),
-		@Result(name = "directbankpayment", type = ServletActionRedirectResult.class, value = "directBankPayment", params = { "namespace", "/payment","method", "viewInboxItem" }) ,
-		@Result(name = "remitRecovery", type = ServletActionRedirectResult.class, value = "remitRecovery", params = { "namespace", "/deduction","method", "viewInboxItem" }),
-		@Result(name = "contractoradvancepayment", type = ServletActionRedirectResult.class, value = "advancePayment", params = { "namespace", "/payment", "method", "viewInboxItem" })})
+		@Result(name = "billpayment", type = "ServletActionRedirectResult.class", location = "payment", params = { "namespace", "/payment", "method", "view" }),
+		@Result(name = "advancepayment", type = "ServletActionRedirectResult.class", location = "payment", params = { "namespace", "/payment", "method", "advanceView" }),
+		@Result(name = "directbankpayment", type = "ServletActionRedirectResult.class", location = "directBankPayment", params = { "namespace", "/payment","method", "viewInboxItem" }) ,
+		@Result(name = "remitRecovery", type = "ServletActionRedirectResult.class", location = "remitRecovery", params = { "namespace", "/deduction","method", "viewInboxItem" }),
+		@Result(name = "contractoradvancepayment", type = "ServletActionRedirectResult.class", location = "advancePayment", params = { "namespace", "/payment", "method", "viewInboxItem" })})
 		
 public class BasePaymentAction extends BaseVoucherAction {    
 	EisCommonService eisCommonService;
@@ -68,7 +68,7 @@ public class BasePaymentAction extends BaseVoucherAction {
 		{
 			return INVALIDPAGE;
 		}
-	HibernateUtil.getCurrentSession().put("paymentid", paymentid);
+		getSession().put("paymentid", paymentid);
 		if (paymentheader.getVoucherheader().getName().equalsIgnoreCase(FinancialConstants.PAYMENTVOUCHER_NAME_ADVANCE)) {
 			EgAdvanceRequisition arf = (EgAdvanceRequisition)persistenceService.find("from EgAdvanceRequisition where arftype = ? and egAdvanceReqMises.voucherheader = ?",ARF_TYPE,paymentheader.getVoucherheader());
 			if(arf != null)

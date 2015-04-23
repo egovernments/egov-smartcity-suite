@@ -30,9 +30,9 @@ import org.egov.web.actions.masters.loangrant.LoanGrantBaseAction;
 import org.hibernate.SQLQuery;
 
 @Results(value={
-		@Result(name="PDF",type=StreamResult.class,value="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=SchemeUtilization.pdf"}),
-		@Result(name="XLS",type=StreamResult.class,value="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=SchemeUtilization.xls"}),
-		@Result(name="HTML",type=StreamResult.class,value="inputStream",  params={"inputName","inputStream","contentType","text/html","contentDisposition","no-cache;filename=SchemeUtilization.html"})
+		@Result(name="PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=SchemeUtilization.pdf"}),
+		@Result(name="XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=SchemeUtilization.xls"}),
+		@Result(name="HTML",type="stream",location="inputStream",  params={"inputName","inputStream","contentType","text/html","contentDisposition","no-cache;filename=SchemeUtilization.html"})
 		
 })
 

@@ -20,8 +20,8 @@ import org.egov.utils.ReportHelper;
 import org.hibernate.Query;
 
 @Results(value={
-		@Result(name="PDF",type=StreamResult.class,value="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=StateFC.pdf"}),
-		@Result(name="XLS",type=StreamResult.class,value="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=StateFC.xls"})
+		@Result(name="PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=StateFC.pdf"}),
+		@Result(name="XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=StateFC.xls"})
 })
 public class StateFCAction extends BaseRevenueAction {
 	

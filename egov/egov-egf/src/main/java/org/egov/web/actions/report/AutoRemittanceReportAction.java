@@ -61,10 +61,10 @@ import org.hibernate.transform.Transformers;
 
 
 @Results(value={
-		@Result(name="PDF",type=StreamResult.class,value="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=AutoRemittanceReport.pdf"}),
-		@Result(name="XLS",type=StreamResult.class,value="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=AutoRemittanceReport.xls"}),
-		@Result(name="summary-PDF",type=StreamResult.class,value="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=AutoRemittanceCOCLevel.pdf"}),
-		@Result(name="summary-XLS",type=StreamResult.class,value="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=AutoRemittanceReportCOCLevel.xls"})
+		@Result(name="PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=AutoRemittanceReport.pdf"}),
+		@Result(name="XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=AutoRemittanceReport.xls"}),
+		@Result(name="summary-PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=AutoRemittanceCOCLevel.pdf"}),
+		@Result(name="summary-XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=AutoRemittanceReportCOCLevel.xls"})
 	})
      
 @ParentPackage("egov")  

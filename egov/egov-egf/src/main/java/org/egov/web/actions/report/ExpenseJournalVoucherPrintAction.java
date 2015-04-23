@@ -42,9 +42,9 @@ import org.hibernate.FlushMode;
 import org.hibernate.SQLQuery;
 
 @Results(value={
-	@Result(name="PDF",type=StreamResult.class,value="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=ExpenseJournalVoucherReport.pdf"}),
-	@Result(name="XLS",type=StreamResult.class,value="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=ExpenseJournalVoucherReport.xls"}),
-	@Result(name="HTML",type=StreamResult.class,value="inputStream", params={"inputName","inputStream","contentType","text/html"})
+	@Result(name="PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=ExpenseJournalVoucherReport.pdf"}),
+	@Result(name="XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=ExpenseJournalVoucherReport.xls"}),
+	@Result(name="HTML",type="stream",location="inputStream", params={"inputName","inputStream","contentType","text/html"})
 })
 
 @ParentPackage("egov")
