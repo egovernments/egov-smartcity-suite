@@ -90,6 +90,9 @@ public class EscalationService {
 
     @Autowired
     private GenericHibernateDaoFactory genericHibernateDaoFactory;
+    
+    @Autowired
+    private HTTPSMS httpSMS;
 
     @Autowired
     public EscalationService(final EscalationRepository escalationRepository) {
@@ -152,7 +155,7 @@ public class EscalationService {
                 if (superiorUser != null && superiorUser.getEmailId() != null)
                     emailUtils.sendMail(superiorUser.getEmailId(), emailBody.toString(), emailSubject.toString());
                 if (superiorUser != null && superiorUser.getMobileNumber() != null)
-                    HTTPSMS.sendSMS(smsBody.toString(), "91" + superiorUser.getMobileNumber());
+                	httpSMS.sendSMS(smsBody.toString(), "91" + superiorUser.getMobileNumber());
             }
         }
     }

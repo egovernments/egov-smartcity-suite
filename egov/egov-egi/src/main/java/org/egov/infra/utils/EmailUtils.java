@@ -42,10 +42,8 @@ package org.egov.infra.utils;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.config.AppConfigValues;
-import org.egov.infstr.config.dao.AppConfigValuesDAO;
-import org.egov.infstr.utils.EGovConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.mail.SimpleMailMessage;
@@ -67,26 +65,25 @@ public class EmailUtils {
 	private SimpleMailMessage mailMessage;
     
     @Autowired
-    private AppConfigValuesDAO appConfigValuesDAO;
+    @Qualifier("egovErpProperties")
+    private Properties environment;
     
 	public boolean sendMail(final String toEmail, final String mailBody,
 			final String subject) {
 		boolean isSent = false;
 
 		try {
-			this.mailSender.setPort(Integer.valueOf(EGovConfig.getProperty("port", "", MAILSENDER)));
-			this.mailSender.setHost(EGovConfig.getProperty("host", "", MAILSENDER));
-			this.mailSender.setProtocol(EGovConfig.getProperty("protocol", "", MAILSENDER));
+			this.mailSender.setPort(Integer.valueOf(environment.getProperty("mail.port")));
+			this.mailSender.setHost(environment.getProperty("mail.host"));
+			this.mailSender.setProtocol(environment.getProperty("mail.protocol"));
 
-			final AppConfigValues mailUser = appConfigValuesDAO.getConfigValuesByModuleAndKey("egi", "mailSenderUserName").get(0);
-			final AppConfigValues mailPwd = appConfigValuesDAO.getConfigValuesByModuleAndKey("egi", "mailSenderPassword").get(0);
-			this.mailSender.setUsername(mailUser.getValue());
-			this.mailSender.setPassword(mailPwd.getValue());
+			this.mailSender.setUsername(environment.getProperty("mail.sender.username"));
+			this.mailSender.setPassword(environment.getProperty("mail.sender.password"));
 
 			final Properties mailProperties = new Properties();
-			mailProperties.setProperty("mail.smtps.auth", EGovConfig.getProperty("mail_smtps_auth", "", MAILSENDER));
-			mailProperties.setProperty("mail.smtps.starttls.enable", EGovConfig.getProperty("mail_smtps_starttls_enable", "", MAILSENDER));
-			mailProperties.setProperty("mail.smtps.debug", EGovConfig.getProperty("mail_smtps_debug", "", MAILSENDER));
+			mailProperties.setProperty("mail.smtps.auth", environment.getProperty("mail.smtps.auth"));
+			mailProperties.setProperty("mail.smtps.starttls.enable", environment.getProperty("mail.smtps.starttls.enable"));
+			mailProperties.setProperty("mail.smtps.debug", environment.getProperty("mail.smtps.debug"));
 			this.mailSender.setJavaMailProperties(mailProperties);
 			this.mailMessage.setTo(toEmail);
 			this.mailMessage.setSubject(subject);

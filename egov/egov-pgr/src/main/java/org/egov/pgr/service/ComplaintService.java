@@ -128,6 +128,9 @@ public class ComplaintService {
 
     @Autowired
     private EmailUtils emailUtils;
+    
+    @Autowired
+    private HTTPSMS httpSMS;
 
     @Transactional
     @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
@@ -360,7 +363,7 @@ public class ComplaintService {
         if (complaint.getComplainant().getEmail() != null)
             emailUtils.sendMail(complaint.getComplainant().getEmail(), emailBody.toString(), emailSubject.toString());
         if (complaint.getComplainant().getMobile() != null)
-            HTTPSMS.sendSMS(smsBody.toString(), "91" + complaint.getComplainant().getMobile());
+        	httpSMS.sendSMS(smsBody.toString(), "91" + complaint.getComplainant().getMobile());
 
     }
 

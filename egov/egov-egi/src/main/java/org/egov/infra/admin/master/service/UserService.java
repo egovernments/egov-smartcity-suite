@@ -58,6 +58,9 @@ public class UserService {
     private UserRepository userRepository;
     
     @Autowired
+    private HTTPSMS httpSMS;
+    
+    @Autowired
     private EmailUtils emailUtils;
 
     public Set<User> getUsersByUsernameLike(final String userName) {
@@ -96,7 +99,7 @@ public class UserService {
                        , "Password Recovery");
             }
 
-            hasSent = HTTPSMS.sendSMS("Your login credential, User Name : " + user.getUsername() + " and Password : "
+            hasSent = httpSMS.sendSMS("Your login credential, User Name : " + user.getUsername() + " and Password : "
                     + pwd, "91" + user.getMobileNumber())
                     || hasSent;
 

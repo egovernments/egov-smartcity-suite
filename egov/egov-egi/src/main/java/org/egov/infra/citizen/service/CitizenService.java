@@ -61,9 +61,13 @@ public class CitizenService {
 
     @Autowired
     private CitizenRepository citizenRepository;
+    
     @Autowired
     private EmailUtils emailUtils;
 
+    @Autowired
+    private HTTPSMS httpSMS;
+    
     @Transactional
     public void create(Citizen citizen) throws DuplicateElementException {
         if (getCitizenByUserName(citizen.getMobileNumber()) != null)
@@ -109,7 +113,7 @@ public class CitizenService {
                     + citizen.getActivationCode(), "Portal Activation");
         }
 
-        hasSent = HTTPSMS.sendSMS("Your Portal Activation Code is : " + citizen.getActivationCode(),
+        hasSent = httpSMS.sendSMS("Your Portal Activation Code is : " + citizen.getActivationCode(),
                 "91" + citizen.getMobileNumber())
                 || hasSent;
 
