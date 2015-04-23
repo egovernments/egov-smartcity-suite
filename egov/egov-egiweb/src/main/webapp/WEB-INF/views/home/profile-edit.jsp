@@ -70,7 +70,7 @@
 					<div class="form-group">
 						
 						<label for="field-1" class="col-sm-3 control-label">Gender</label>
-						<div class="col-sm-2 col-xs-12 add-margin dynamic-span capitalize">
+						<div class="col-sm-6 col-xs-12 add-margin dynamic-span capitalize">
 							<form:radiobuttons path="gender" element="span"/>
 						</div>
 					</div>
