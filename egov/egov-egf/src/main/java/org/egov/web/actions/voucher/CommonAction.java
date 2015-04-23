@@ -209,10 +209,10 @@ public class CommonAction extends BaseFormAction{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting ajaxLoadSchemes...");
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Fund Id received is : " + fundId);
 		if (null == fundId) {
-			schemeList = getPersistenceService().findAllByInCache(
+			schemeList = getPersistenceService().findAllBy(
 					" from Scheme where fund.id=? and isActive=1 order by name", -1);
 		} else {
-			schemeList = getPersistenceService().findAllByInCache(" from Scheme where fund.id=? and isActive=1 order by name",fundId);
+			schemeList = getPersistenceService().findAllBy(" from Scheme where fund.id=? and isActive=1 order by name",fundId);
 		}
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Scheme List size : " + schemeList.size());
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed ajaxLoadSchemes.");
@@ -245,7 +245,7 @@ public class CommonAction extends BaseFormAction{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting ajaxLoadSubSchemes...");
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Scheme Id received is : "+schemeId);
 		if(null != schemeId && schemeId !=-1){
-			subSchemes = getPersistenceService().findAllByInCache("from SubScheme where scheme.id=? and isActive=1 order by name", schemeId);
+			subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive=1 order by name", schemeId);
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Subscheme List size : "+subSchemes.size());
 		}else{
 			subSchemes = Collections.EMPTY_LIST;
@@ -282,7 +282,7 @@ public class CommonAction extends BaseFormAction{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("CommonAction | ajaxLoadBanks");
 
 		try {
-			List<Object[]> bankBranch = (List<Object[]>)getPersistenceService().findAllByInCache("select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname " +
+			List<Object[]> bankBranch = (List<Object[]>)getPersistenceService().findAllBy("select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname " +
 					" FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount " +
 					" where  bank.isactive=1  and bankBranch.isactive=1 and bankaccount.isactive=1  and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id" +
 					" and bankaccount.fund.id=? order by 2",fundId);
@@ -328,9 +328,9 @@ public class CommonAction extends BaseFormAction{
 					.append(" where  bank.isactive=1  and bankBranch.isactive=1 and bankaccount.isactive=1  and bank.id = bankBranch.bank.id " )
 					.append("and bankBranch.id = bankaccount.bankbranch.id");
 	   if(fundId!=null){
-		   bankBranch=(List<Object[]>)getPersistenceService().findAllByInCache(bankQuery.append(fundChk).toString()+" order by 2",fundId);
+		   bankBranch=(List<Object[]>)getPersistenceService().findAllBy(bankQuery.append(fundChk).toString()+" order by 2",fundId);
 	   }else{                 
-		   bankBranch = (List<Object[]>)getPersistenceService().findAllByInCache(bankQuery.toString()+" order by 2");    
+		   bankBranch = (List<Object[]>)getPersistenceService().findAllBy(bankQuery.toString()+" order by 2");    
 	   } 
 	   		if(LOGGER.isDebugEnabled())     LOGGER.debug("Bank list size is "+ bankBranch.size());
 			bankBranchList = new ArrayList<Map<String, Object>>();
@@ -603,9 +603,9 @@ public class CommonAction extends BaseFormAction{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("CommonAction | ajaxLoadAccountNumbers");
 		try {
 			if(fundId!=null && fundId!=-1 && fundId!=0)
-				accNumList =(List<Bankaccount>) getPersistenceService().findAllByInCache("from Bankaccount ba where ba.bankbranch.id=? and fund.id=? and isactive=1 order by ba.chartofaccounts.glcode",branchId,fundId);
+				accNumList =(List<Bankaccount>) getPersistenceService().findAllBy("from Bankaccount ba where ba.bankbranch.id=? and fund.id=? and isactive=1 order by ba.chartofaccounts.glcode",branchId,fundId);
 			else
-				accNumList =(List<Bankaccount>) getPersistenceService().findAllByInCache("from Bankaccount ba where ba.bankbranch.id=? and isactive=1 order by ba.chartofaccounts.glcode",branchId);
+				accNumList =(List<Bankaccount>) getPersistenceService().findAllBy("from Bankaccount ba where ba.bankbranch.id=? and isactive=1 order by ba.chartofaccounts.glcode",branchId);
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Bank account Number list size =  "+ accNumList.size());
 		} catch (HibernateException e) {
 			LOGGER.error("Exception occured while getting bank account numbers "+e.getMessage(),new HibernateException(e.getMessage()));
@@ -623,7 +623,7 @@ public class CommonAction extends BaseFormAction{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("CommonAction | ajaxLoadDrawingOfficers");
 		try {
 			if(departmentId!=null && departmentId!=-1 && departmentId!=0)
-				drawingList =(List<DrawingOfficer>) getPersistenceService().findAllByInCache("select do from DrawingOfficer do,Department dept,DepartmentDOMapping ddm where ddm.department.id = dept.id and ddm.drawingOfficer.id = do.id and dept.id = ?",departmentId);
+				drawingList =(List<DrawingOfficer>) getPersistenceService().findAllBy("select do from DrawingOfficer do,Department dept,DepartmentDOMapping ddm where ddm.department.id = dept.id and ddm.drawingOfficer.id = do.id and dept.id = ?",departmentId);
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Drawing officers  list size =  "+ drawingList.size());
 		} catch (HibernateException e) {
 			LOGGER.error("Exception occured while getting Drawing officers "+e.getMessage(),new HibernateException(e.getMessage()));
@@ -791,26 +791,26 @@ public class CommonAction extends BaseFormAction{
 					} catch (Exception e) {
 						 throw new EGOVRuntimeException("Appconfig value for EB Voucher propartys is not defined in the system");
 					}
-				accNumList =  (List<Bankaccount>)persistenceService.findAllByInCache(" from Bankaccount where accountnumber=? and isactive=1 order by chartofaccounts.glcode ", bankAccount);
+				accNumList =  (List<Bankaccount>)persistenceService.findAllBy(" from Bankaccount where accountnumber=? and isactive=1 order by chartofaccounts.glcode ", bankAccount);
 			}else{
 			if(typeOfAccount != null && !typeOfAccount.equals("")) {
 				if(typeOfAccount.indexOf(",") !=  -1 ) {
 					String [] strArray = typeOfAccount.split(",");
 					if(fundId!=null && fundId!=-1 && fundId!=0)
-						accNumList =  (List<Bankaccount>)persistenceService.findAllByInCache(" from Bankaccount where fund.id=? and bankbranch.id=? and isactive=1  and type in (?,?) order by chartofaccounts.glcode ", fundId,branchId, (String)strArray[0], (String)strArray[1]);
+						accNumList =  (List<Bankaccount>)persistenceService.findAllBy(" from Bankaccount where fund.id=? and bankbranch.id=? and isactive=1  and type in (?,?) order by chartofaccounts.glcode ", fundId,branchId, (String)strArray[0], (String)strArray[1]);
 					else
-						accNumList =  (List<Bankaccount>)persistenceService.findAllByInCache(" from Bankaccount where  bankbranch.id=? and isactive=1  and type in (?,?) order by chartofaccounts.glcode ", fundId,branchId, (String)strArray[0], (String)strArray[1]);
+						accNumList =  (List<Bankaccount>)persistenceService.findAllBy(" from Bankaccount where  bankbranch.id=? and isactive=1  and type in (?,?) order by chartofaccounts.glcode ", fundId,branchId, (String)strArray[0], (String)strArray[1]);
 				} else {
 					if(fundId!=null && fundId!=-1 && fundId!=0)
-						accNumList =  (List<Bankaccount>)persistenceService.findAllByInCache(" from Bankaccount where fund.id=? and bankbranch.id=? and isactive=1  and type in (?) order by chartofaccounts.glcode ", fundId,branchId, typeOfAccount);
+						accNumList =  (List<Bankaccount>)persistenceService.findAllBy(" from Bankaccount where fund.id=? and bankbranch.id=? and isactive=1  and type in (?) order by chartofaccounts.glcode ", fundId,branchId, typeOfAccount);
 					else
-						accNumList =  (List<Bankaccount>)persistenceService.findAllByInCache(" from Bankaccount where  bankbranch.id=? and isactive=1  and type in (?) order by chartofaccounts.glcode ", fundId,branchId, typeOfAccount);
+						accNumList =  (List<Bankaccount>)persistenceService.findAllBy(" from Bankaccount where  bankbranch.id=? and isactive=1  and type in (?) order by chartofaccounts.glcode ", fundId,branchId, typeOfAccount);
 				}
 			} else {
 				if(fundId!=null && fundId!=-1 && fundId!=0)
-					accNumList =  (List<Bankaccount>)persistenceService.findAllByInCache(" from Bankaccount where fund.id=? and bankbranch.id=? and isactive=1 order by chartofaccounts.glcode",fundId,branchId);
+					accNumList =  (List<Bankaccount>)persistenceService.findAllBy(" from Bankaccount where fund.id=? and bankbranch.id=? and isactive=1 order by chartofaccounts.glcode",fundId,branchId);
 				else
-					accNumList =  (List<Bankaccount>)persistenceService.findAllByInCache(" from Bankaccount where  bankbranch.id=? and isactive=1 order by chartofaccounts.glcode",fundId,branchId);
+					accNumList =  (List<Bankaccount>)persistenceService.findAllBy(" from Bankaccount where  bankbranch.id=? and isactive=1 order by chartofaccounts.glcode",fundId,branchId);
 			}
 		}
 		}catch(Exception e)

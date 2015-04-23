@@ -183,10 +183,10 @@ public class BaseVoucherAction extends BaseFormAction {
 	
 	protected void loadSchemeSubscheme(){
 		if(headerFields.contains("scheme") && null != voucherHeader.getFundId()){
-			addDropdownData("schemeList", null/*getPersistenceService().findAllByInCache(" from Scheme where fund=?", voucherHeader.getFundId())*/);
+			addDropdownData("schemeList", getPersistenceService().findAllBy(findAllBy"from Scheme where fund=?", voucherHeader.getFundId()));
 		}
 		if(headerFields.contains("subscheme") && voucherHeader.getVouchermis()!=null && null !=  voucherHeader.getVouchermis().getSchemeid()){
-			addDropdownData("subschemeList", null/*getPersistenceService().findAllByInCache("from SubScheme where scheme.id=? and isActive=1 order by name", voucherHeader.getVouchermis().getSchemeid().getId())*/);
+			addDropdownData("subschemeList", getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive=1 order by name", voucherHeader.getVouchermis().getSchemeid().getId()));
 		}
 	} 
 	
@@ -497,7 +497,7 @@ protected HashMap<String, Object> createHeaderAndMisDetails() throws ValidationE
 					if(functionId.equalsIgnoreCase("0")){
 						addActionError(getText("journalvoucher.subledger.entrymissing",new String[]{map.get("glcode").toString()}));
 					}else{
-						CFunction function = (CFunction)persistenceService.load(CFunction.class,Long.valueOf(functionId));
+						CFunction function = (CFunction)persistenceService.get(CFunction.class,Long.valueOf(functionId));
 						addActionError(getText("journalvoucher.subledger.entrymissingFunc",new String[]{map.get("glcode").toString(),function.getName()}));
 					}
 					return true;
@@ -530,7 +530,7 @@ protected HashMap<String, Object> createHeaderAndMisDetails() throws ValidationE
 		if(null != contraBean.getBankBranchId() && !contraBean.getBankBranchId().equalsIgnoreCase("-1")){
 			 int index1 = contraBean.getBankBranchId().indexOf("-");
 			 Integer branchId = Integer.valueOf(contraBean.getBankBranchId().substring(index1+1, contraBean.getBankBranchId().length()));
-			 List<Bankaccount> bankAccountList = getPersistenceService().findAllByInCache("from Bankaccount ba where ba.bankbranch.id=? " +
+			 List<Bankaccount> bankAccountList = getPersistenceService().findAllBy("from Bankaccount ba where ba.bankbranch.id=? " +
 			 		"  and isactive=1 order by id",branchId);
 			 addDropdownData("accNumList",bankAccountList );
 			 if(LOGGER.isDebugEnabled())     LOGGER.debug("Account number list size "+bankAccountList.size() );
@@ -554,7 +554,7 @@ public void loadBankBranchForFund(){
 	if(LOGGER.isDebugEnabled())     LOGGER.debug("BaseVoucherAction | loadBankBranchForFund | Start");
 	try {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("FUND ID = "+voucherHeader.getFundId().getId());
-		List<Object[]> bankBranch = (List<Object[]>)getPersistenceService().findAllByInCache("select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname " +
+		List<Object[]> bankBranch = (List<Object[]>)getPersistenceService().findAllBy("select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname " +
 				" FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount " +
 				" where  bank.isactive=1  and bankBranch.isactive=1 and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id" +
 				" and bankaccount.fund.id=?",voucherHeader.getFundId().getId());
