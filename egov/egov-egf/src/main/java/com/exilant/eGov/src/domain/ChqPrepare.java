@@ -13,7 +13,7 @@ import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.NumberToWord;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
@@ -39,7 +39,7 @@ public class ChqPrepare {
 	public ChqPrepare(String bankId, String name, String amount,
 			String chequeDate) throws TaskFailedException { // this.con=con;
 		textBean = new ChqContent();
-		con = EgovDatabaseManager.openConnection();
+		con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		this.bankId = bankId;
 		textBean.setRs(amount);
 		textBean.setDate(chequeDate);

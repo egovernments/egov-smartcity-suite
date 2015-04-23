@@ -8,7 +8,7 @@ package com.exilant.eGov.src.master;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 import com.exilant.eGov.src.domain.SchemeMasterBean;
 import com.exilant.exility.common.AbstractTask;
@@ -40,7 +40,7 @@ public class SchemeMaster extends AbstractTask{
 //			dc.addMessage("exilRPError",e.getMessage());
 			throw new TaskFailedException(e.toString());
 		}finally{
-			EgovDatabaseManager.releaseConnection(conn,null);
+			//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(conn,null);
 		}
 	}
 	

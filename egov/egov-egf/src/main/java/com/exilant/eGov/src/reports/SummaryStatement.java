@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 import com.exilant.exility.common.TaskFailedException;
 
@@ -49,8 +49,8 @@ public class SummaryStatement {
 		Date dt;
 
 		try {
-			con = EgovDatabaseManager.openConnection();
-			con1 = EgovDatabaseManager.openConnection();
+			con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
+			con1 = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 
 		} catch (Exception exception) {
 			LOGGER.error("Could Not Get Connection", exception);

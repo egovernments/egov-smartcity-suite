@@ -12,7 +12,7 @@ import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.EGovConfig;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 import com.exilant.eGov.src.common.EGovernCommon;
 
@@ -43,7 +43,7 @@ public class GISIncomeExpenditure {
 				+ "	a.creditamount > a.debitamount  group by c.name";
 		String repQuery = null;
 		try {
-			connection = EgovDatabaseManager.openConnection();
+			connection = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 
 			if (reportType.equalsIgnoreCase("E")) {
 				repQuery = expenseQuery;
@@ -73,7 +73,7 @@ public class GISIncomeExpenditure {
 		} catch (Exception e) {
 			LOGGER.error("Exp=" + e.getMessage(),e);
 		} finally {
-			EgovDatabaseManager.releaseConnection(connection, pst);
+			//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(connection, pst);
 		}
 		return hmAcccodeMap;
 	}

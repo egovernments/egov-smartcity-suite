@@ -28,7 +28,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EGovConfig;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.eGov.src.transactions.CommonMethodsImpl;
@@ -78,7 +78,7 @@ public class RPReport
 		totalPrevPymnt = new BigDecimal("0.00");
 		try
 		{
-			conn = EgovDatabaseManager.openConnection();
+			conn = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		} 
 		catch (Exception exception)
 		{

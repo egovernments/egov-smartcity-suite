@@ -131,7 +131,7 @@ public class ContraCTBAction extends BaseVoucherAction
 					//contraService.postIntoContraJournal(voucherHeader,contraBean);
 					//contraService.postIntoBankreconciliation(voucherHeader,contraBean);
 					List<InstrumentHeader> instrumentList = instrumentService.addToInstrument(createInstruments(contraBean));
-					/HibernateUtil.getCurrentSession().flush();
+					HibernateUtil.getCurrentSession().flush();
 					Bankaccount bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
 							Integer.valueOf(contraBean.getAccountNumberId()));
 					Map valuesMap = contraService.prepareForUpdateInstrumentDeposit(bankAccount.getChartofaccounts().getGlcode());

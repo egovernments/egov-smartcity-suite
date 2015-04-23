@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 import com.exilant.GLEngine.GeneralLedgerBean;
 import com.exilant.eGov.src.common.EGovernCommon;
@@ -45,7 +45,7 @@ public class JbReport
         LinkedList dataList = new LinkedList();
         try
         {
-            connection = EgovDatabaseManager.openConnection();
+            connection = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
             //if(LOGGER.isDebugEnabled())     LOGGER.debug("connection"+connection);
 
         }

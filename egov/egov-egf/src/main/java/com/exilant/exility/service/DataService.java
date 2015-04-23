@@ -11,7 +11,7 @@ package com.exilant.exility.service;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.ExilServiceInterface;
@@ -35,7 +35,7 @@ public class DataService implements ExilServiceInterface{
 		Connection con = null;
 		try{
 			JobService jobService = JobService.getInstance();
-			con = EgovDatabaseManager.openConnection();
+			con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 			//con.setReadOnly(true);
 			jobService.doService(dc,con);
 
@@ -43,7 +43,7 @@ public class DataService implements ExilServiceInterface{
 			LOGGER.error("Inside doService"+e.getMessage(),e);
 			dc.addMessage("exilDBError", e.toString());
 		}finally{
-			EgovDatabaseManager.releaseConnection(con,null);
+			//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(con,null);
 		}
 
 		/*try{

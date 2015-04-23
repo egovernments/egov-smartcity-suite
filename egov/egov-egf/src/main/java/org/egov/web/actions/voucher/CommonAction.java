@@ -87,7 +87,7 @@ import com.exilant.eGov.src.domain.Bank;
  */
 
 @Results({ 
-	@Result(name = "AJAX_RESULT", type = StreamResult.class, value = "returnStream", params = { "contentType", "text/plain"})
+	@Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain"})
 })
 public class CommonAction extends BaseFormAction{
 

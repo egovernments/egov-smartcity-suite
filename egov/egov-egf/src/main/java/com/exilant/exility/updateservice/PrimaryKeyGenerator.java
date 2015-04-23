@@ -5,7 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 
 public class PrimaryKeyGenerator
@@ -36,7 +36,7 @@ public class PrimaryKeyGenerator
 		String sql = "select SEQ_"+tableName+".nextval from dual";
 		try
 		{
-			con = EgovDatabaseManager.openConnection();
+			con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 			PreparedStatement pst = con.prepareStatement(sql);
 			ResultSet rs = pst.executeQuery();
 			if(rs.next())
@@ -53,7 +53,7 @@ public class PrimaryKeyGenerator
 		}
 		finally
 		{
-			EgovDatabaseManager.releaseConnection(con,null);
+			//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(con,null);
 		}
 
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("PK for "+tableName+" is "+key);

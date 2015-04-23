@@ -1,6 +1,5 @@
 package org.egov.web.actions.brs;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,17 +23,18 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.struts2.config.ParentPackage;
-import org.apache.struts2.config.Result;
-import org.apache.struts2.config.Results;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.dispatcher.StreamResult;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.Bank;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
 import org.egov.commons.Bankreconciliation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
@@ -45,19 +45,19 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
-import org.hibernate.type.*;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.LongType;
 import org.jboss.logging.Logger;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 @ParentPackage("egov")
 @Results(value = {
-		@Result(name = "PDF", type = StreamResult.class, value = "inputStream", params = {"inputName", "inputStream", "contentType", "application/pdf",	"contentDisposition","no-cache;filename=AutoReconcileReport.pdf" }),
-		@Result(name = "XLS", type = StreamResult.class, value = "inputStream", params = {"inputName", "inputStream", "contentType", "application/xls",	"contentDisposition","no-cache;filename=AutoReconcileReport.xls" }) })
+		@Result(name = "PDF", type = "stream", location = "inputStream", params = {"inputName", "inputStream", "contentType", "application/pdf",	"contentDisposition","no-cache;filename=AutoReconcileReport.pdf" }),
+		@Result(name = "XLS", type = "stream", location = "inputStream", params = {"inputName", "inputStream", "contentType", "application/xls",	"contentDisposition","no-cache;filename=AutoReconcileReport.xls" }) })
 
 public class AutoReconciliationAction extends BaseFormAction {
 

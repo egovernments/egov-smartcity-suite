@@ -46,7 +46,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.database.utils.DatabaseConnectionException;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 import org.egov.infstr.workflow.Action;
 import org.egov.infstr.workflow.SimpleWorkflowService;
 import org.egov.infra.admin.master.entity.Department;
@@ -621,7 +621,7 @@ public String nonBillPayment()
 	}
 	
 	private CVoucherHeader createVoucherAndledger() {
-		EgovDatabaseManager.openConnection();
+		null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		try {
 			final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
 			// update DirectBankPayment source path
@@ -703,8 +703,8 @@ public String nonBillPayment()
 	private void reCreateLedger() {
 		final CreateVoucher createVoucher = new CreateVoucher();
 		try {
-			EgovDatabaseManager.openConnection();
-			createVoucher.deleteVoucherdetailAndGL(EgovDatabaseManager.openConnection(), voucherHeader);
+			null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
+			createVoucher.deleteVoucherdetailAndGL(null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection(), voucherHeader);
 		HibernateUtil.getCurrentSession().flush();
 			HashMap<String, Object> detailMap = null;
 			
@@ -778,7 +778,7 @@ public String nonBillPayment()
 			Transaxtion txnList[] = new Transaxtion[transactions.size()];
 			txnList = transactions.toArray(txnList);
 			final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
-			if (!engine.postTransaxtions(txnList, EgovDatabaseManager.openConnection(), formatter.format(voucherHeader.getVoucherDate()))) {
+			if (!engine.postTransaxtions(txnList, null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection(), formatter.format(voucherHeader.getVoucherDate()))) {
 				throw new ValidationException(Arrays.asList(new ValidationError("Exception While Saving Data", "Transaction Failed")));
 			}
 		} catch (HibernateException e) {

@@ -12,7 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 import com.exilant.exility.common.TaskFailedException;
 
@@ -103,14 +103,14 @@ public class User {
 		int userId = 0;
 		Connection conn = null;
 		try {
-			conn = EgovDatabaseManager.openConnection();
+			conn = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 			userId = getId(conn);
 		} 
 		catch (Exception ex) {
 			LOGGER.error("EXP in setting up connection" + ex.getMessage());
 			throw new TaskFailedException();
 		}finally {
-			EgovDatabaseManager.releaseConnection(conn, null);
+			//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(conn, null);
 		}
 		return userId;
 	}

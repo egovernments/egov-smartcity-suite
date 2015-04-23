@@ -3,7 +3,6 @@
  */
 package org.egov.web.actions.contra;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -16,10 +15,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Date;
-import org.apache.struts2.config.ParentPackage;
+
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.Bankaccount;
@@ -30,6 +29,10 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.Vouchermis;
 import org.egov.egf.commons.EgovCommon;
+import org.egov.eis.service.EisCommonService;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
@@ -37,9 +40,6 @@ import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.SessionFactory;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.lib.rjbac.user.User;
 import org.egov.model.contra.ContraBean;
 import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.model.instrument.InstrumentHeader;
@@ -47,7 +47,6 @@ import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.model.payment.Paymentheader;
 import org.egov.model.voucher.VoucherTypeBean;
 import org.egov.pims.model.EmployeeView;
-import org.egov.eis.service.EisCommonService;
 import org.egov.services.cheque.ChequeService;
 import org.egov.services.instrument.InstrumentService;
 import org.egov.services.payment.PaymentService;
@@ -288,7 +287,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 					.setVoucherName(FinancialConstants.CONTRAVOUCHER_NAME_INTERFUND);
 			voucherHeader4.setFundId(toFund);
 			voucherHeader4.setCgvn(voucherHeader2.getCgvn());
-			voucherHeader4.setId(voucherHeader2.getId());
+			//This fix is for Phoenix Migration.voucherHeader4.setId(voucherHeader2.getId());
 			voucherHeader4.setVoucherNumber(voucherHeader2.getVoucherNumber());
 			voucherHeader4.setType(voucherHeader2.getType());
 			voucherHeader4.setVouchermis(voucherHeader2.getVouchermis());
@@ -348,7 +347,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 								.nextChequeNumber(contraBean
 										.getFromBankAccountId(), 1,
 										voucherHeader.getVouchermis()
-												.getDepartmentid().getId()));
+												.getDepartmentid().getId().intValue()));
 					} catch (EGOVRuntimeException e) {
 						throw new ValidationException(
 								Arrays
@@ -416,16 +415,14 @@ public class ContraBTBAction extends BaseVoucherAction {
 			CVoucherHeader voucher, ContraJournalVoucher contraVoucher2) {
 
 		final CreateVoucher createVoucher = new CreateVoucher();
-		EgovDatabaseManager.openConnection();
+		//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		try {
 			Fund toFund = (Fund) persistenceService.find(
 					"from Fund where id=?", contraBean.getToFundId());
 			// validateInterFundAccount(voucherHeader.getFundId(),toFund);
 
-			createVoucher.deleteVoucherdetailAndGL(EgovDatabaseManager
-					.openConnection(), voucherHeader);
-			createVoucher.deleteVoucherdetailAndGL(EgovDatabaseManager
-					.openConnection(), voucherHeader2);
+			createVoucher.deleteVoucherdetailAndGL(null, voucherHeader);
+			createVoucher.deleteVoucherdetailAndGL(null, voucherHeader2);//This fix is for Phoenix Migration.
 
 		HibernateUtil.getCurrentSession().flush();
 			HashMap<String, Object> detailMap = null;
@@ -455,8 +452,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 			Transaxtion txnList[] = new Transaxtion[transactions.size()];
 			txnList = transactions.toArray(txnList);
 			final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
-			if (!engine.postTransaxtions(txnList, EgovDatabaseManager
-					.openConnection(), formatter.format(voucher
+			if (!engine.postTransaxtions(txnList,null/*EgovDatabaseManager.openConnection()*/, formatter.format(voucher
 					.getVoucherDate()))) {
 				throw new ValidationException(
 						Arrays
@@ -487,8 +483,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 		HibernateUtil.getCurrentSession().flush();
 			Transaxtion txnList2[] = new Transaxtion[transactions2.size()];
 			txnList2 = transactions2.toArray(txnList2);
-			if (!engine.postTransaxtions(txnList2, EgovDatabaseManager
-					.openConnection(), formatter.format(voucherHeader2
+			if (!engine.postTransaxtions(txnList2, null/*EgovDatabaseManager.openConnection()*/, formatter.format(voucherHeader2
 					.getVoucherDate()))) {
 				throw new ValidationException(
 						Arrays
@@ -658,7 +653,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 		LoadAjaxedDropDowns();
 		addActionMessage(getText("contra.reverse.transaction.success")
 				+ reversalVoucher.getVoucherNumber());
-		voucherHeader.setId(reversalVoucher.getId());
+		//This fix is for Phoenix Migration.voucherHeader.setId(reversalVoucher.getId());
 		setVhId(reversalVoucher.getId());
 		return REVERSE;
 	}
@@ -888,7 +883,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 		cjv.setInstrumentHeaderId(ih);
 		final PersistenceService<ContraJournalVoucher, Long> contraJVService = new PersistenceService<ContraJournalVoucher, Long>();
 		contraJVService.setType(ContraJournalVoucher.class);
-		contraJVService.setSessionFactory(new SessionFactory());
+		//This fix is for Phoenix Migration.contraJVService.setSessionFactory(new SessionFactory());
 		cjv.setVoucherHeaderId(vh);
 		getHibObjectsFromContraBean();
 		cjv.setFromBankAccountId(contraVoucher.getFromBankAccountId());
@@ -905,7 +900,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 
 	private CVoucherHeader callCreateVoucher(final CVoucherHeader voucher,
 			final ContraJournalVoucher contraVoucher) {
-		EgovDatabaseManager.openConnection();
+		//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		try {
 			final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
 			// update ContraBTB source path
@@ -915,7 +910,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 			if(voucherHeader.getFundId().getCode().equalsIgnoreCase("03")){
 				Department department = (Department) persistenceService.find("from Department where deptCode=?", "Z");
 				headerDetails.remove(VoucherConstant.DEPARTMENTCODE);
-				headerDetails.put(VoucherConstant.DEPARTMENTCODE,department.getDeptCode());
+				headerDetails.put(VoucherConstant.DEPARTMENTCODE,department.getCode());
 			}
 			HashMap<String, Object> detailMap = null;
 			final List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
@@ -973,7 +968,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 	private CVoucherHeader callCreateVoucherForInterFund(
 			final CVoucherHeader voucher,
 			final ContraJournalVoucher contraVoucher) {
-		EgovDatabaseManager.openConnection();
+		//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		try {
 			Fund toFund = (Fund) persistenceService.find("from Fund where id=?", contraBean.getToFundId());
 			Department toDepartment = new Department();
@@ -988,7 +983,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 			if(voucherHeader.getFundId().getCode().equalsIgnoreCase("03")){
 				Department department = (Department) persistenceService.find("from Department where deptCode=?", "Z");
 				headerDetails.remove(VoucherConstant.DEPARTMENTCODE);
-				headerDetails.put(VoucherConstant.DEPARTMENTCODE,department.getDeptCode());
+				headerDetails.put(VoucherConstant.DEPARTMENTCODE,department.getCode());
 			}
 			// update ContraBTB source path
 			headerDetails
@@ -1035,10 +1030,10 @@ public class ContraBTBAction extends BaseVoucherAction {
 			if(toFund.getCode().equalsIgnoreCase("03")){
 				Department department = (Department) persistenceService.find("from Department where deptCode=?", "Z");
 				headerDetails.remove(VoucherConstant.DEPARTMENTCODE);
-				headerDetails.put(VoucherConstant.DEPARTMENTCODE,department.getDeptCode());
+				headerDetails.put(VoucherConstant.DEPARTMENTCODE,department.getCode());
 			}else{
 			headerDetails.remove(VoucherConstant.DEPARTMENTCODE);
-			headerDetails.put(VoucherConstant.DEPARTMENTCODE,toDepartment==null?"":toDepartment.getDeptCode());
+			headerDetails.put(VoucherConstant.DEPARTMENTCODE,toDepartment==null?"":toDepartment.getCode());
 			}
 			headerDetails.remove(VoucherConstant.SCHEMECODE);
 			headerDetails.remove(VoucherConstant.SUBSCHEMECODE);
@@ -1147,7 +1142,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 													voucherHeader
 															.getVouchermis()
 															.getDepartmentid()
-															.getId()));
+															.getId().intValue()));
 						} catch (EGOVRuntimeException e) {
 							LOGGER.error(e.getMessage(), e);
 							throw new ValidationException(
@@ -1295,7 +1290,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 											.getFromBankAccountId().getId()
 											.toString(), 1, voucherHeader
 											.getVouchermis().getDepartmentid()
-											.getId()));
+											.getId().intValue()));
 				} catch (EGOVRuntimeException e) {
 					LOGGER.error(e.getMessage(), e);
 					throw new ValidationException(Arrays
@@ -1371,7 +1366,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 											.getToBankAccountId().getId()
 											.toString(), 1, voucherHeader
 											.getVouchermis().getDepartmentid()
-											.getId()));
+											.getId().intValue()));
 				} catch (EGOVRuntimeException e) {
 					throw new ValidationException(Arrays
 							.asList(new ValidationError(
@@ -1421,14 +1416,13 @@ public class ContraBTBAction extends BaseVoucherAction {
 	private void createLedgerAndPost(final CVoucherHeader voucher,
 			final ContraJournalVoucher contraVoucher) {
 		final CreateVoucher createVoucher = new CreateVoucher();
-		EgovDatabaseManager.openConnection();
+		//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 
 		try {
 			if (voucherHeader2 != null) {
 				createLedgerAndPostForInterfund(voucher, contraVoucher);
 			} else {
-				createVoucher.deleteVoucherdetailAndGL(EgovDatabaseManager
-						.openConnection(), voucher);
+				createVoucher.deleteVoucherdetailAndGL(null/*EgovDatabaseManager.openConnection()*/, voucher);
 			HibernateUtil.getCurrentSession().flush();
 				HashMap<String, Object> detailMap = null;
 				final List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
@@ -1460,8 +1454,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 				txnList = transactions.toArray(txnList);
 				final SimpleDateFormat formatter = new SimpleDateFormat(
 						DD_MMM_YYYY);
-				if (!engine.postTransaxtions(txnList, EgovDatabaseManager
-						.openConnection(), formatter.format(voucher
+				if (!engine.postTransaxtions(txnList,null/* EgovDatabaseManager.openConnection()*/, formatter.format(voucher
 						.getVoucherDate()))) {
 					throw new ValidationException(Arrays
 							.asList(new ValidationError(
@@ -1810,7 +1803,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 	private void validateChqNumber(final String chqNo, final int bankaccId,
 			final CVoucherHeader voucherHeader) {
 		if (!instrumentService.isChequeNumberValid(chqNo, bankaccId,
-				voucherHeader.getVouchermis().getDepartmentid().getId(), null)) {
+				voucherHeader.getVouchermis().getDepartmentid().getId().intValue(), null)) {
 			throw new ValidationException(Arrays.asList(new ValidationError(
 					"Invalid cheque number", "Invalid cheque number")));
 		}
@@ -1881,7 +1874,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 	}
 
 	public Integer getUserDepartment() throws ParseException {
-		return paymentService.getAssignment().getDeptId().getId();
+		return paymentService.getAssignment().getDeptId().getId().intValue();
 	}
 
 	public void setFundFlowService(FundFlowService fundFlowService) {

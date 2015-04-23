@@ -42,8 +42,8 @@ import org.egov.infstr.models.EgChecklists;
 import org.egov.infstr.models.Script;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.NumberToWord;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
 import org.egov.infstr.workflow.Action;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBillSubType;
@@ -250,7 +250,7 @@ public class ContingentBillAction extends BaseBillAction {
 		}
 		else if(parameters.get(ACTION_NAME)[0].contains("reject"))
 		{
-			userId = cbill.getCreatedBy().getId();
+			userId = cbill.getCreatedBy().getId().intValue();
 		}
 		billRegisterWorkflowService.transition(parameters.get(ACTION_NAME)[0]+"|"+userId, cbill,parameters.get("comments")[0]);
 		if(parameters.get(ACTION_NAME)[0].contains("aa_reject"))
@@ -265,11 +265,11 @@ public class ContingentBillAction extends BaseBillAction {
 					addActionMessage(getText("pjv.voucher.final.approval",new String[]{"The File has been approved"}));
 				}
 				else{
-					addActionMessage(getText("pjv.voucher.approved",new String[]{voucherService.getEmployeeNameForPositionId(cbill.getState().getOwner())}));
+					addActionMessage(getText("pjv.voucher.approved",new String[]{voucherService.getEmployeeNameForPositionId(cbill.getState().getOwnerPosition())}));
 				}
 			}
 		else{
-			addActionMessage(getText("pjv.voucher.rejected",new String[]{voucherService.getEmployeeNameForPositionId(cbill.getState().getOwner())}));
+			addActionMessage(getText("pjv.voucher.rejected",new String[]{voucherService.getEmployeeNameForPositionId(cbill.getState().getOwnerPosition())}));
 		}
 		return "messages";
 	}
@@ -322,7 +322,7 @@ public class ContingentBillAction extends BaseBillAction {
 			        
 			cbill =(Cbill) createBill();
 			createCheckList(cbill);
-			billRegisterWorkflowService.start(cbill,getPosition());
+		//This fix is for Phoenix Migration.	billRegisterWorkflowService.start(cbill,getPosition());
 			addActionMessage(getText("cbill.transaction.succesful")+cbill.getBillnumber());
 			billRegisterId=cbill.getId();
 			forwardBill(cbill);
@@ -415,17 +415,17 @@ public class ContingentBillAction extends BaseBillAction {
 		}
 		if(parameters.get(ACTION_NAME)[0].contains("reject"))
 		{
-			userId = cbill.getCreatedBy().getId();
+			userId = cbill.getCreatedBy().getId().intValue();
 		}
 	//	billRegisterWorkflowService.transition(parameters.get(ACTION_NAME)[0]+"|"+userId, cbill,parameters.get("comments")[0]);
-		billRegisterWorkflowService.end(cbill, getPosition(),parameters.get("comments")[0]);
+		//This fix is for Phoenix Migration.billRegisterWorkflowService.end(cbill, getPosition(),parameters.get("comments")[0]);
 		String statusQury="from EgwStatus where upper(moduletype)=upper('"+FinancialConstants.CONTINGENCYBILL_FIN+"') and  upper(description)=upper('"+FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS+"')";
 		EgwStatus egwStatus=(EgwStatus)persistenceService.find(statusQury);
 		cbill.setStatus(egwStatus);
 		cbill.setBillstatus(FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS);
 		persistenceService.setType(Cbill.class);
 		persistenceService.persist(cbill);
-	HibernateUtil.getCurrentSession().flush();
+	    HibernateUtil.getCurrentSession().flush();
 		addActionMessage(getText("cbill.cancellation.succesful"));
 	}
 	private void removeEmptyRows() {
@@ -573,7 +573,7 @@ public class ContingentBillAction extends BaseBillAction {
 		bill.setEgBilldetailes(EgBillSet);
 		EgBillSet.addAll(updateBillDetails(bill));
 		checkBudgetandGenerateNumber(bill);
-		/HibernateUtil.getCurrentSession().refresh(bill);                       
+		HibernateUtil.getCurrentSession().refresh(bill);                       
 		persistenceService.setType(Cbill.class);
 		persistenceService.persist(bill);
 	HibernateUtil.getCurrentSession().flush();
@@ -598,7 +598,7 @@ public class ContingentBillAction extends BaseBillAction {
 		
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("User selected id is : "+userId);
 		billRegisterWorkflowService.transition(parameters.get(ACTION_NAME)[0]+"|"+userId, cbill,parameters.get("comments")[0]);
-		addActionMessage(getText("pjv.voucher.approved",new String[]{voucherService.getEmployeeNameForPositionId(cbill.getState().getOwner())}));
+		addActionMessage(getText("pjv.voucher.approved",new String[]{voucherService.getEmployeeNameForPositionId(cbill.getState().getOwnerPosition())}));
 	}
 	@SkipValidation
 @org.apache.struts2.convention.annotation.Action(value="/bill/contingentBill-beforeView")
@@ -636,9 +636,9 @@ public class ContingentBillAction extends BaseBillAction {
 		//Now, we are loading the primary assignment department as the default in the dropdown(see mingle 2103,2102, 2104)
 		//Hence the primary department is passed here 
 		if(primaryDepartment!=null && primaryDepartment.getId()!=null)
-			map = voucherService.getDesgBYPassingWfItem("cbill.nextUser",cbill, primaryDepartment.getId());
+			map = voucherService.getDesgBYPassingWfItem("cbill.nextUser",cbill, primaryDepartment.getId().intValue());
 		else
-			map = voucherService.getDesgBYPassingWfItem("cbill.nextUser",cbill, voucherHeader.getVouchermis().getDepartmentid().getId());
+			map = voucherService.getDesgBYPassingWfItem("cbill.nextUser",cbill, voucherHeader.getVouchermis().getDepartmentid().getId().intValue());
 		addDropdownData(DESIGNATION_LIST, (List<Map<String, Object>>)map.get(DESIGNATION_LIST)); 
 		addDropdownData(USER_LIST, Collections.EMPTY_LIST);
 		nextLevel = map.get(WFITEMSTATE)!=null?map.get(WFITEMSTATE).toString():null;
@@ -759,7 +759,7 @@ public class ContingentBillAction extends BaseBillAction {
 		{
 			BigDecimal amt = cbill.getPassedamount().setScale(2);
 			String amountInWords=NumberToWord.convertToWord(amt.toString());
-			sanctionedMessge=getText("cbill.getsanctioned.message",new String[] {amountInWords,cbill.getPassedamount().toString(),voucherService.getEmployeeNameForPositionId(cbill.getState().getOwner())});
+			sanctionedMessge=getText("cbill.getsanctioned.message",new String[] {amountInWords,cbill.getPassedamount().toString(),voucherService.getEmployeeNameForPositionId(cbill.getState().getOwnerPosition())});
 		
 		}
 		else{
@@ -807,12 +807,12 @@ public class ContingentBillAction extends BaseBillAction {
 		commonBean.setBudgetReappNo(cbill.getEgBillregistermis().getBudgetaryAppnumber());
 		if(cbill.getStatus().getDescription().equalsIgnoreCase(FinancialConstants.CONTINGENCYBILL_APPROVED_STATUS) && (null != cbill.getState()))
 		{
-			String amountInWords=NumberToWord.AmountInWords(cbill.getPassedamount().toString());
+			String amountInWords=NumberToWord.amountInWords(cbill.getPassedamount().doubleValue());
 				
-			sanctionedMessge=getText("cbill.getsanctioned.message",new String[] {amountInWords,cbill.getPassedamount().toString(),voucherService.getEmployeeNameForPositionId(cbill.getState().getOwner())});
+			sanctionedMessge=getText("cbill.getsanctioned.message",new String[] {amountInWords,cbill.getPassedamount().toString(),voucherService.getEmployeeNameForPositionId(cbill.getState().getOwnerPosition())});
 		}	
 		else{
-			String amountInWords=NumberToWord.AmountInWords(cbill.getPassedamount().toString());
+			String amountInWords=NumberToWord.amountInWords(cbill.getPassedamount().doubleValue());
 			sanctionedMessge=getText("cbill.getsanctioned.message",new String[] {amountInWords,cbill.getPassedamount().toString()});
 			sanctionedMessge=sanctionedMessge.substring(0, sanctionedMessge.length()-15);
 		}
@@ -877,7 +877,7 @@ public class ContingentBillAction extends BaseBillAction {
 	
 	@SuppressWarnings("unchecked")
 	private  Cbill createBill() {
-		EgovDatabaseManager.openConnection();
+		//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		
 		final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
 		// update DirectBankPayment source path
@@ -1273,13 +1273,8 @@ public class ContingentBillAction extends BaseBillAction {
 	 */
 	private String getNextBillNumber(Cbill bill) {
 		String billNumber=null;
-		String financialYearId = commonsService.getFinancialYearId(sdf.format(bill.getBilldate()));  
-		if(financialYearId==null)
-		{
-			throw new ValidationException(Arrays.asList(new ValidationError("no.financial.year","No Financial Year for bill date"+sdf.format(bill.getBilldate()))));
-		}
-		CFinancialYear financialYear= commonsService.getFinancialYearById(Long.valueOf(financialYearId));
-		String year=financialYear.getFinYearRange();
+		CFinancialYear financialYear = commonsService.getFinancialYearByDate(bill.getBilldate());  
+		String year=financialYear!=null?financialYear.getFinYearRange():"";
 		Script billNumberScript=(Script)persistenceService.findAllByNamedQuery(Script.BY_NAME, "egf.bill.number.generator").get(0);
 		ScriptContext scriptContext = ScriptService.createContext("sequenceGenerator",sequenceGenerator,"sItem",bill,"year",year);
 		billNumber =(String) 	scriptExecutionService.executeScript(billNumberScript.getName(), scriptContext);
@@ -1342,7 +1337,7 @@ public boolean isBillNumUnique(String billNumber){
 		}
 	}
 public Integer getPrimaryDepartment() {
-	return primaryDepartment.getId();
+	return primaryDepartment.getId().intValue();
 }
 	
 }

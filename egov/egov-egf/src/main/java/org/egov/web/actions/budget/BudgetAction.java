@@ -1,6 +1,5 @@
 package org.egov.web.actions.budget;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -10,24 +9,24 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
-import org.apache.struts2.config.Result;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.dispatcher.ServletRedirectResult;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.eis.service.EisCommonService;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.infstr.models.State;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.workflow.SimpleWorkflowService;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.pims.commons.Position;
-import org.egov.eis.service.EisCommonService;
 import org.egov.web.actions.BaseFormAction;
 
-import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @Result(name=Action.SUCCESS, type=ServletRedirectResult.class, value = "budget.action")
@@ -94,8 +93,8 @@ public class BudgetAction extends BaseFormAction{
 		}
 		if(budget.getParent()!=null && budget.getParent().getIsPrimaryBudget() == true)
 			budget.setIsPrimaryBudget(true);
-		Position p = eisCommonService.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-		budgetWorkflowService.start(budget,p);
+		Position p = null;//This fix is for Phoenix Migration.eisCommonService.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		//This fix is for Phoenix Migration.budgetWorkflowService.start(budget,p);
 		addActionMessage(getMessage("budget.create")); 
 		target="SUCCESS";
 		return NEW;
@@ -172,7 +171,7 @@ public class BudgetAction extends BaseFormAction{
 			budget.setReferenceBudget(budgetService.findById(Long.valueOf(getReferenceId()), false));
 		if(budget.getState()!=null){
 			State state = (State)persistenceService.find("from org.egov.infstr.models.State where id=?",budget.getState().getId());
-			budget.setState(state);
+			//This fix is for Phoenix Migration.budget.setState(state);
 		}
 	HibernateUtil.getCurrentSession().flush();
 		budgetService.persist(budget);

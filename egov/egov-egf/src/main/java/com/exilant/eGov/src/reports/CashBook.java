@@ -17,7 +17,7 @@ import java.util.LinkedList;
 
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.EGovConfig;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
@@ -50,7 +50,7 @@ public class CashBook {
 		try{
 		try
 		{
-			connection = EgovDatabaseManager.openConnection();			
+			connection = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();			
 		}
 		catch(Exception exception)
 		{

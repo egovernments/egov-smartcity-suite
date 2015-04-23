@@ -18,7 +18,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
 import org.hibernate.Query;
 
 import com.exilant.eGov.src.common.EGovernCommon;
@@ -212,7 +211,7 @@ public class GeneralLedger {
 		PreparedStatement pst = null;
 		ResultSet rs = null;
 		try {
-			connection = EgovDatabaseManager.openConnection();
+			connection = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 
 			// Query1 - to get the sum of credit amount glcode wise
 			String selQuery = "SELECT GL.GLCODE as ACCOUNTCODE,SUM(GLD.AMOUNT) AS CREDITAMOUNT FROM VOUCHERHEADER VH,GENERALLEDGER GL,GENERALLEDGERDETAIL GLD "
@@ -313,7 +312,7 @@ public class GeneralLedger {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
 		String vDate = formatter.format(date);
 		try {
-			connection = EgovDatabaseManager.openConnection();
+			connection = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 
 			// Query1 - to get the sum of credit amount glcode wise
 			String selQuery = " SELECT GL.GLCODE as ACCOUNTCODE, SUM(GLD.AMOUNT) as CREDITAMOUNT FROM VOUCHERHEADER VH,GENERALLEDGER GL,GENERALLEDGERDETAIL GLD "

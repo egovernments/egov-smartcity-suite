@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- 
+    Mapping file created by Elzan
+-->
+<hibernate-mapping>
+    <class name="org.egov.infstr.models.ECSType"
+	table="EGF_ECSTYPE">
+        <id
+			name="id"
+			column="ID"
+			type="long"
+			unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">SEQ_EGF_ECSTYPE</param>
+			</generator>
+		</id>
+		<property name="type" column="type"  type="string"/>
+        <property name="isActive" column="ISACTIVE" type="string"/>  
+           
+        </class>
+        
+        <query name="getallECSTypes">
+    <![CDATA[from org.egov.infstr.models.ECSType]]></query>
+    
+    <query name="getECSTypeById">
+    <![CDATA[from org.egov.infstr.models.ECSType where id = ?]]></query>
+    
+    
+</hibernate-mapping>
+

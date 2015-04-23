@@ -7,7 +7,7 @@ import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.ExilServiceInterface;
@@ -30,7 +30,7 @@ public class UpdateService implements ExilServiceInterface
 		Connection con = null;
 		try{
 			JobService jobService = JobService.getInstance();
-			con = EgovDatabaseManager.openConnection();
+			con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 			//con.setAutoCommit(false);
 			jobService.doService(dc,con);
 			//con.commit();
@@ -48,7 +48,7 @@ public class UpdateService implements ExilServiceInterface
 		} finally {
 			try{
 				//con.close();
-				EgovDatabaseManager.releaseConnection(con,null);
+				//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(con,null);
 			}catch (Exception e){
 				LOGGER.error("EgovDatabaseManager release connection failed "+e.getMessage(),e);
 			}

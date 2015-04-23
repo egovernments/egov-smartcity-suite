@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 import org.egov.utils.FinancialConstants;
 
 import com.exilant.eGov.src.common.EGovernCommon;
@@ -40,7 +40,7 @@ public class RptBillRegisterList {
 		LinkedList dataList = new LinkedList();
 		try
 		{
-			connection = EgovDatabaseManager.openConnection();
+			connection = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		}
 		catch(Exception exception)
 		{

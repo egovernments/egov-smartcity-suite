@@ -8,7 +8,7 @@ import java.text.DecimalFormat;
 import java.util.LinkedList;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 import com.exilant.GLEngine.DayBook;
 import com.exilant.eGov.src.common.EGovernCommon;
@@ -129,7 +129,7 @@ public class DayBookList
 		try
 		{
 
-			conn = EgovDatabaseManager.openConnection();
+			conn = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		}
 		catch(Exception exception)
 		{

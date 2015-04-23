@@ -1,12 +1,12 @@
 package org.egov.web.actions.budget;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.struts2.config.ParentPackage;
-import org.apache.struts2.config.Result;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.dispatcher.ServletRedirectResult;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CChartOfAccounts;
@@ -15,15 +15,14 @@ import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.budget.BudgetGroup;
-import org.egov.web.actions.BaseFormAction;
 import org.egov.utils.BudgetAccountType;
 import org.egov.utils.BudgetingType;
 import org.egov.utils.Constants;
+import org.egov.web.actions.BaseFormAction;
 
-import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
-@Result(name=Action.SUCCESS, type=ServletRedirectResult.class, value = "budgetGroup.action")
+@Result(name="success", type="ServletRedirectResult.class", location = "budgetGroup.action")
 @ParentPackage("egov")
 @Validation
 public class BudgetGroupAction extends BaseFormAction{

@@ -5,7 +5,7 @@ import com.exilant.exility.common.ExilServiceInterface;
 import com.exilant.exility.dataservice.*;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 import java.sql.Connection;
 
@@ -45,7 +45,7 @@ public class ListService implements ExilServiceInterface{
 
 		try
 		{
-			con = EgovDatabaseManager.openConnection();
+			con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 			for (int i=0; i<services.length; i++)
 			{
 			//con.setReadOnly(true);
@@ -59,7 +59,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug(" tasks executed in " + i + " for s
 			//if(LOGGER.isDebugEnabled())     LOGGER.debug("DataBase error in ListService"));
 			dc.addMessage("exilDBError", e.getMessage());
 		}finally{
-			EgovDatabaseManager.releaseConnection(con,null);
+			//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(con,null);
 		}
 
 		/*try

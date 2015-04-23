@@ -22,7 +22,7 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 import com.exilant.GLEngine.GeneralLedgerBean;
 import com.exilant.eGov.src.chartOfAccounts.CodeValidator;
@@ -64,7 +64,7 @@ public class GeneralLedgerReport {
 		if(LOGGER.isInfoEnabled())     LOGGER.info("Indise the loop..........");
 		try
 		{
-			connection = EgovDatabaseManager.openConnection();
+			connection = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 
 		}
 		catch(Exception exception)
@@ -1152,7 +1152,7 @@ public class GeneralLedgerReport {
         ResultSet resultset=null;
          try
          {
-             connection = EgovDatabaseManager.openConnection();
+             connection = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
              String query="select glcode as \"glcode\" ,name as \"name\" from  CHARTOFACCOUNTS where GLCODE=?";
              pst = connection.prepareStatement(query);
              pst.setString(1, glCode);
@@ -1179,7 +1179,7 @@ public class GeneralLedgerReport {
         ResultSet resultset=null;
          try
          {
-             connection = EgovDatabaseManager.openConnection();
+             connection = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
              String query="select name as \"name\" from fund where id=?";
              pst=connection.prepareStatement(query);
              pst.setString(1, fundId);

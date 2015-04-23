@@ -15,7 +15,7 @@ import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 
 public class MonthlyExpRptList {
@@ -166,7 +166,7 @@ public class MonthlyExpRptList {
 
 		try
 		{
-			conn = EgovDatabaseManager.openConnection();
+			conn = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		}
 		catch(Exception exception)
 		{
@@ -553,11 +553,11 @@ public class MonthlyExpRptList {
 				{
 					rs.close();
 					prepStmt.close();
-					EgovDatabaseManager.releaseConnection(conn,null);
+					//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(conn,null);
 				}
 				catch(Exception e)
 				{
-					EgovDatabaseManager.releaseConnection(conn,null);
+					//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(conn,null);
 					if(LOGGER.isDebugEnabled())     LOGGER.debug("Exception in Finally Block"+e);
 				}
 			}

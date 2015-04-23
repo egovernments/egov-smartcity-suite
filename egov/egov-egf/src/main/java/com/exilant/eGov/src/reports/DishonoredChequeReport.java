@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 import org.egov.utils.FinancialConstants;
 
 import com.exilant.eGov.src.common.EGovernCommon;
@@ -49,7 +49,7 @@ public ArrayList getDishonoredChequeDetails(DishonoredChequeBean disChqBean)thro
 {
 			if(LOGGER.isInfoEnabled())     LOGGER.info(" INSIDE getDishonoredChequeDetails()>>>>>>>> ");
 			try{
-				con = EgovDatabaseManager.openConnection();
+				con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 			}catch(Exception exception){
 				LOGGER.error("Could Not Get Connection");
 				throw taskExc;

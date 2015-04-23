@@ -1,6 +1,5 @@
 package org.egov.web.actions.budget;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -11,9 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
-import org.apache.struts2.config.Result;
-import org.apache.struts2.config.Results;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.dispatcher.StreamResult;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
@@ -28,12 +28,12 @@ import org.egov.model.budget.BudgetGroup;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.Constants;
 import org.egov.web.annotation.ValidationErrorPage;
-import org.hibernate.type.*;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.LongType;
 @ParentPackage("egov")
 @Results({ 
-	@Result(name = "AJAX_RESULT", type = StreamResult.class, value = "returnStream", params = { "contentType", "text/plain"})
+	@Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain"})
 })
 
 public class BudgetDetailAction extends BaseBudgetDetailAction{
@@ -303,7 +303,7 @@ public class BudgetDetailAction extends BaseBudgetDetailAction{
 		for (BudgetDetail detail : savedbudgetDetailList) {
 			//budgetDetailWorkflowService.transition(parameters.get(ACTIONNAME)[0]+"|"+userId, detail, detail.getComment());
 			if(new String("forward").equals(parameters.get(ACTIONNAME)[0])){
-				detail.changeState("Forwarded by "+getPosition().getName(), getPositionByUserId(userId), detail.getComment());
+				//This fix is for Phoenix Migration.detail.changeState("Forwarded by "+getPosition().getName(), getPositionByUserId(userId), detail.getComment());
 			}
 		}
 		//forwardBudget(budgetComment, userId); //for RE
@@ -314,10 +314,10 @@ public class BudgetDetailAction extends BaseBudgetDetailAction{
 			if(topBudget.getState().getValue().equals("END"))
 				addActionMessage(getMessage("budgetdetail.approved.end"));
 			else
-				addActionMessage(getMessage("budgetdetail.approved")+budgetService.getEmployeeNameAndDesignationForPosition(topBudget.getState().getOwner()));
+				addActionMessage(getMessage("budgetdetail.approved")+budgetService.getEmployeeNameAndDesignationForPosition(topBudget.getState().getOwnerPosition()));
 		}
 		else
-			addActionMessage(getMessage("budgetdetail.approved")+budgetService.getEmployeeNameAndDesignationForPosition(topBudget.getState().getOwner()));
+			addActionMessage(getMessage("budgetdetail.approved")+budgetService.getEmployeeNameAndDesignationForPosition(topBudget.getState().getOwnerPosition()));
 	}
 
 	private void forwardBudget(String budgetComment, Integer userId) {

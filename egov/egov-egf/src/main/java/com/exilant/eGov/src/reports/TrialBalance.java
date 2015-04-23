@@ -24,7 +24,7 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
@@ -70,7 +70,7 @@ public class TrialBalance
 	{
 		try
 		{
-			con = EgovDatabaseManager.openConnection();
+			con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 
 		}
 		catch(Exception exception) 
@@ -762,7 +762,7 @@ public String getDateTime() throws Exception
     	{
     		try
     		{
-    			con = EgovDatabaseManager.openConnection();
+    			con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
     		}
     		catch(Exception exception)
     		{

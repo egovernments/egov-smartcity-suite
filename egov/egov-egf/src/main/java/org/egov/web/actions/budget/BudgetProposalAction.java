@@ -1,6 +1,5 @@
 package org.egov.web.actions.budget;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -14,21 +13,25 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
-import org.apache.struts2.config.Result;
-import org.apache.struts2.config.Results;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.dispatcher.StreamResult;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.eis.service.EisCommonService;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
-import org.egov.infstr.models.State;
 import org.egov.infstr.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infstr.reporting.engine.ReportOutput;
 import org.egov.infstr.reporting.engine.ReportRequest;
@@ -36,19 +39,14 @@ import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.workflow.Action;
-import org.egov.infstr.workflow.WorkflowService;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.budget.BudgetProposalBean;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
-import org.egov.eis.service.EisCommonService;
 import org.egov.pims.model.Assignment;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.eis.service.EisCommonService;
 import org.egov.pims.service.EisUtilService;
 import org.egov.services.budget.BudgetDetailService;
 import org.egov.services.budget.BudgetService;
@@ -62,11 +60,11 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 /*@Results(value={
-		@Result(name="PDF",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/pdf",Constants.CONTENT_DISPOSITION,"no-cache;filename=BudgetReport.pdf"}),
-		@Result(name="XLS",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/xls",Constants.CONTENT_DISPOSITION,"no-cache;filename=BudgetReport.xls"})
+		@Result(name="PDF",type=StreamResult.class,value=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/pdf",Constants.CONTENT_DISPOSITION,"no-cache;filename=BudgetReport.pdf"}),
+		@Result(name="XLS",type=StreamResult.class,value=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/xls",Constants.CONTENT_DISPOSITION,"no-cache;filename=BudgetReport.xls"})
 	})*/
 @Results({ 
-	@Result(name = "reportview", type = StreamResult.class, value = "inputStream", params = { "contentType", "${contentType}", "contentDisposition", "attachment; filename=${fileName}" })
+	@Result(name = "reportview", type = "stream", location = "inputStream", params = { "contentType", "${contentType}", "contentDisposition", "attachment; filename=${fileName}" })
 	})
 @ParentPackage("egov") 
 public class BudgetProposalAction extends BaseFormAction {
@@ -194,13 +192,13 @@ public class BudgetProposalAction extends BaseFormAction {
 		financialYear = topBudget.getFinancialYear();
 		currentfinYearRange=financialYear.getFinYearRange();
 		   
-		nextFinancialYear=getFinancialYearDAO().getNextFinancialYearByDate(financialYear.getStartingDate());
+		//This fix is for Phoenix Migration.	nextFinancialYear=getFinancialYearDAO().getNextFinancialYearByDate(financialYear.getStartingDate());
 		nextfinYearRange=nextFinancialYear.getFinYearRange();
 		
 		prevFinancialYear = getFinancialYearDAO().getPreviousFinancialYearByDate(financialYear.getStartingDate());
 		previousfinYearRange=prevFinancialYear.getFinYearRange();
 		
-		beforeLastFinancialYear = getFinancialYearDAO().getTwoPreviousYearByDate(financialYear.getStartingDate());
+		//This fix is for Phoenix Migration.	beforeLastFinancialYear = getFinancialYearDAO().getTwoPreviousYearByDate(financialYear.getStartingDate());
 		twopreviousfinYearRange=beforeLastFinancialYear.getFinYearRange();
 		
 		budgetDetailApprove();
@@ -238,13 +236,13 @@ public class BudgetProposalAction extends BaseFormAction {
 		financialYear = topBudget.getFinancialYear();
 		currentfinYearRange=financialYear.getFinYearRange();
 		
-		nextFinancialYear=getFinancialYearDAO().getNextFinancialYearByDate(financialYear.getStartingDate());
+		//This fix is for Phoenix Migration.nextFinancialYear=getFinancialYearDAO().getNextFinancialYearByDate(financialYear.getStartingDate());
 		nextfinYearRange=nextFinancialYear.getFinYearRange();
 		
 		prevFinancialYear = getFinancialYearDAO().getPreviousFinancialYearByDate(financialYear.getStartingDate());
 		previousfinYearRange=prevFinancialYear.getFinYearRange();
 		
-		beforeLastFinancialYear = getFinancialYearDAO().getTwoPreviousYearByDate(financialYear.getStartingDate());
+		//This fix is for Phoenix Migration.beforeLastFinancialYear = getFinancialYearDAO().getTwoPreviousYearByDate(financialYear.getStartingDate());
 		twopreviousfinYearRange=beforeLastFinancialYear.getFinYearRange();
 		
 		budgetApprove();
@@ -281,7 +279,7 @@ public class BudgetProposalAction extends BaseFormAction {
     	deptMap=new HashMap<Integer, Department>();
     	for(Department d:deptList)
 		{
-    		deptMap.put(d.getId(),d);
+    		deptMap.put(d.getId().intValue(),d);
 		}
     	excludelist=genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"exclude_status_forbudget_actual");
     	if(excludelist.isEmpty())
@@ -509,7 +507,7 @@ int i=0;
 		//addToMapStringBigDecimal(resultMajorCodeBENextYrApproved,majorCodeAndBENextYrApprovedMap);
         
         if(deptHeading){
-        	bpBeanList.add(new BudgetProposalBean(budgetDetail.getExecutingDepartment().getDeptName(), this.HEADING));
+        	bpBeanList.add(new BudgetProposalBean(budgetDetail.getExecutingDepartment().getName(), this.HEADING));
         	deptHeading = false;
         }
         if(functionHeading){
@@ -594,7 +592,7 @@ int i=0;
 		List<Object[]> resultMajorCodeBENextYrApproved = budgetDetailService.fetchMajorCodeAndBENextYrApproved(topBudget, budgetDetail, null, pos);
 		addToMapStringBigDecimal(resultMajorCodeBENextYrApproved,majorCodeAndBENextYrApprovedMap);
         
-        bpBeanList.add(new BudgetProposalBean(budgetDetail.getExecutingDepartment().getDeptName(), this.HEADING));
+        bpBeanList.add(new BudgetProposalBean(budgetDetail.getExecutingDepartment().getName(), this.HEADING));
         deptHeading = false;
         bpBeanList.add(new BudgetProposalBean("DEPARTMENTWISE BUDGET SUMMARY", this.HEADING));
         //bpBeanList.add(new BudgetProposalBean("FUNCTIONWISE EXPENSE BUDGET SUMMARY", this.HEADING));
@@ -640,15 +638,15 @@ int i=0;
 		
 		CFinancialYear financialYear = topBudget.getFinancialYear();
         CFinancialYear lastFinancialYearByDate = getFinancialYearDAO().getPreviousFinancialYearByDate(financialYear.getStartingDate());
-        CFinancialYear beforeLastFinancialYearByDate = getFinancialYearDAO().getTwoPreviousYearByDate(financialYear.getStartingDate());
+        CFinancialYear beforeLastFinancialYearByDate = null;//getFinancialYearDAO().getTwoPreviousYearByDate(financialYear.getStartingDate());
 		
-		List<Object[]> resultCurrentActuals = budgetDetailService.fetchActualsForFinYear(financialYear,mandatoryFields,topBudget,null,this.asOndate,budgetDetail.getExecutingDepartment().getId(),budgetDetail.getFunction().getId(), excludelist);
+		List<Object[]> resultCurrentActuals = budgetDetailService.fetchActualsForFinYear(financialYear,mandatoryFields,topBudget,null,this.asOndate,budgetDetail.getExecutingDepartment().getId().intValue(),budgetDetail.getFunction().getId(), excludelist);
 		addToMapStringBigDecimal(resultCurrentActuals,budgetDetailIdsAndAmount);  
 		
-		List<Object[]> resultPreviousActuals = budgetDetailService.fetchActualsForFinYear(lastFinancialYearByDate,mandatoryFields,topBudget,null,null,budgetDetail.getExecutingDepartment().getId(),budgetDetail.getFunction().getId(), excludelist);
+		List<Object[]> resultPreviousActuals = budgetDetailService.fetchActualsForFinYear(lastFinancialYearByDate,mandatoryFields,topBudget,null,null,budgetDetail.getExecutingDepartment().getId().intValue(),budgetDetail.getFunction().getId(), excludelist);
 		addToMapStringBigDecimal(resultPreviousActuals,previousYearBudgetDetailIdsAndAmount);
 		
-		List<Object[]> resultTwoPreviousActuals = budgetDetailService.fetchActualsForFinYear(beforeLastFinancialYearByDate,mandatoryFields,topBudget,null,null,budgetDetail.getExecutingDepartment().getId(),budgetDetail.getFunction().getId(), excludelist);
+		List<Object[]> resultTwoPreviousActuals = budgetDetailService.fetchActualsForFinYear(beforeLastFinancialYearByDate,mandatoryFields,topBudget,null,null,budgetDetail.getExecutingDepartment().getId().intValue(),budgetDetail.getFunction().getId(), excludelist);
 		addToMapStringBigDecimal(resultTwoPreviousActuals,twopreviousYearBudgetDetailIdsAndAmount);
 		
 		List<Object[]> resultUniqueNoBE = budgetDetailService.fetchUniqueNoAndBEAmount(topBudget, budgetDetail, budgetDetail.getFunction(), pos);
@@ -699,7 +697,7 @@ int i=0;
 		bpbean.setFund(fundMap.get(bd.getFund().getId()).getName());
 		bpbean.setFunction(functionMap.get(bd.getFunction().getId()).getName());
 		bpbean.setBudgetGroup(budgetGroupMap.get(bd.getBudgetGroup().getId()).getName());
-		bpbean.setExecutingDepartment(deptMap.get(bd.getExecutingDepartment().getId()).getDeptCode());
+		bpbean.setExecutingDepartment(deptMap.get(bd.getExecutingDepartment().getId()).getCode());
 		bpbean.setPreviousYearActuals(previousYearBudgetDetailIdsAndAmount.get(bd.getUniqueNo())==null?BigDecimal.ZERO.setScale(2).toString():previousYearBudgetDetailIdsAndAmount.get(bd.getUniqueNo()).toString());
 		bpbean.setTwoPreviousYearActuals(twopreviousYearBudgetDetailIdsAndAmount.get(bd.getUniqueNo())==null?BigDecimal.ZERO.setScale(2).toString():twopreviousYearBudgetDetailIdsAndAmount.get(bd.getUniqueNo()).toString());
 		bpbean.setCurrentYearActuals(budgetDetailIdsAndAmount.get(bd.getUniqueNo())==null?BigDecimal.ZERO.setScale(2).toString():budgetDetailIdsAndAmount.get(bd.getUniqueNo()).toString());
@@ -751,7 +749,7 @@ int i=0;
     {
     	if(LOGGER.isInfoEnabled())     LOGGER.info("Starting loadApproverUser.....");
         EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-        Map<String, Object>  map = voucherService.getDesgBYPassingWfItem("BudgetDetail.nextDesg",null,budgetDetail.getExecutingDepartment().getId());
+        Map<String, Object>  map = voucherService.getDesgBYPassingWfItem("BudgetDetail.nextDesg",null,budgetDetail.getExecutingDepartment().getId().intValue());
         addDropdownData("departmentList", masterCache.get("egi-department"));
         addDropdownData("designationList", Collections.EMPTY_LIST);
         addDropdownData("userList", Collections.EMPTY_LIST);    
@@ -785,7 +783,7 @@ int i=0;
         addDropdownData("designationList", (List<DesignationMaster>)map.get("designationList"));
         if(bDefaultDeptId && !dName.equals("")) {
             Department dept = (Department) persistenceService.find("from Department where deptName like '%"+dName+"' ");
-            defaultDept = dept.getId();
+            defaultDept = dept.getId().intValue();
         }
         wfitemstate = map.get("wfitemstate")!=null?map.get("wfitemstate").toString():"";
         if(LOGGER.isInfoEnabled())     LOGGER.info("finished loadApproverUser.....");
@@ -960,7 +958,7 @@ int i=0;
 	        }
 
 	    	topBudget=budgetService.find("from Budget where id=?",topBudget.getId());
-	    	Position positionByUserId = eisCommonService.getPositionByUserId(userId);
+	    	Position positionByUserId = null;//This fix is for Phoenix Migration.eisCommonService.getPositionByUserId(userId);
 	        PersonalInformation empForCurrentUser = budgetDetailService.getEmpForCurrentUser();
 	        String name="";
 			if(empForCurrentUser!=null)
@@ -993,7 +991,7 @@ int i=0;
 	        	   {
 	        		   save(BigDecimal.valueOf(1000));
 	        	   }
-	        	   topBudget.changeState("Forwarded by "+name, positionByUserId, comment);
+	        	 //This fix is for Phoenix Migration.  topBudget.changeState("Forwarded by "+name, positionByUserId, comment);
 	        	   
 	           }
 	           else {
@@ -1001,7 +999,7 @@ int i=0;
 	        	   saveWithForward(positionByUserId,name,hod);
 	        	   if(isNextUserHOD(approverUserId) || hod)
 	        	   {
-	        	     topBudget.changeState("Forwarded by "+name, positionByUserId, comment);
+	        		 //This fix is for Phoenix Migration.	     topBudget.changeState("Forwarded by "+name, positionByUserId, comment);
 	        	   }
 	        	  
 	           }
@@ -1012,7 +1010,7 @@ int i=0;
 	    	else if (actionName.contains("approve"))
 	    	{
 	    		save(BigDecimal.valueOf(1000));
-	    		topBudget.changeState("END",positionByUserId, comment);
+	    		//This fix is for Phoenix Migration. topBudget.changeState("END",positionByUserId, comment);
 	    		addActionMessage("Budget/BudgetDetails Approved Succesfully ");
 	    	}
 	    	 budgetService.persist(topBudget);
@@ -1102,12 +1100,12 @@ int i=0;
 	    		bd.setOriginalAmount(bpBean.getProposedRE());
 	    		if(bpBean.getDocumentNumber()!=null)
 	    			bd.setDocumentNumber(bpBean.getDocumentNumber());
-	    		bd.changeState(stateString, pos, bpBean.getRemarks());
+	    		//This fix is for Phoenix Migration.	bd.changeState(stateString, pos, bpBean.getRemarks());
 	    		budgetDetailService.persist(bd);
 	    		
 	    		nextYearBd=budgetDetailService.find("from BudgetDetail where id=?",bpBean.getNextYrId());
 	    		nextYearBd.setOriginalAmount(bpBean.getProposedBE());
-	    		nextYearBd.changeState(stateString, pos, bpBean.getRemarks());
+	    		//This fix is for Phoenix Migration.	nextYearBd.changeState(stateString, pos, bpBean.getRemarks());
 	    		budgetDetailService.persist(nextYearBd);
 	    		if(LOGGER.isDebugEnabled())     LOGGER.debug("Updated  "+i+"record.....");
 	    		i++;
@@ -1140,8 +1138,8 @@ int i=0;
 	    
 	   private boolean isHOD()
 	    {
-	    	PersonalInformation emp = eisCommonService.getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-			Assignment empAssignment = eisCommonService.getAssignmentByEmpAndDate(new Date(), emp.getIdPersonalInformation());
+	    	PersonalInformation emp = null;//This fix is for Phoenix Migration.eisCommonService.getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			Assignment empAssignment =null;//This fix is for Phoenix Migration. eisCommonService.getAssignmentByEmpAndDate(new Date(), emp.getIdPersonalInformation());
 			if(empAssignment.getDesigId().getDesignationName().equalsIgnoreCase("assistant"))
 			{
 				 asstFMU = true;
@@ -1156,22 +1154,22 @@ int i=0;
 			}
 			}
 				
-			return eisCommonService.getHodById(Integer.valueOf(empAssignment.getId()));
+			return false;//eisCommonService.getHodById(Integer.valueOf(empAssignment.getId().toString()));
 	    }
 	   
 		public Position getPosition()throws EGOVRuntimeException
 		{
 			Position pos;
-			PersonalInformation emp=eisCommonService.getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-			pos=eisCommonService.getPositionforEmp(emp.getIdPersonalInformation());
+			PersonalInformation emp=null;//This fix is for Phoenix Migration.eisCommonService.getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			pos=null;//This fix is for Phoenix Migration.eisCommonService.getPositionforEmp(emp.getIdPersonalInformation());
 			return pos;
 		}
 	   
 	   private boolean isNextUserHOD(Integer approverUserId)
 	    {
-	    	PersonalInformation emp = eisCommonService.getEmpForUserId(approverUserId);
-			Assignment empAssignment = eisCommonService.getAssignmentByEmpAndDate(new Date(), emp.getIdPersonalInformation());
-			return eisCommonService.getHodById(Integer.valueOf(empAssignment.getId()));
+	    	PersonalInformation emp = null;//This fix is for Phoenix Migration.eisCommonService.getEmpForUserId(approverUserId);
+			Assignment empAssignment = null;//This fix is for Phoenix Migration.eisCommonService.getAssignmentByEmpAndDate(new Date(), emp.getIdPersonalInformation());
+			return false;//CommonService.getHodById(Integer.valueOf(empAssignment.getId()));
 	    }
 	   
 	   
@@ -1203,8 +1201,8 @@ int i=0;
 		   }
 	   }
 
-	   public List<Action> getValidActions(){
-	       List<Action> validButtons=null;
+	   public List<org.egov.infstr.workflow.Action> getValidActions(){
+	       List<org.egov.infstr.workflow.Action> validButtons=null;
 	           validButtons=budgetWorkflowService.getValidActions(getTopBudget());
 	       return validButtons;
 
@@ -1325,7 +1323,7 @@ int i=0;
 		{
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("validating owner for user "+EGOVThreadLocals.getUserId());
 			List<Position> positionsForUser=null;
-			positionsForUser = eisService.getPositionsForUser(Integer.valueOf(EGOVThreadLocals.getUserId()), new Date());
+			positionsForUser = eisService.getPositionsForUser(Long.valueOf(EGOVThreadLocals.getUserId()), new Date());
 			State state=null;
 			if(factor.equalsIgnoreCase("thousand"))
 			{
@@ -1335,7 +1333,7 @@ int i=0;
 			{    
 				 state=(State)persistenceService.find("select bd.state from BudgetDetail bd where bd.id=? ",validId );            
 			}
-			if( state!=null && positionsForUser.contains(state.getOwner()))      
+			if( state!=null && positionsForUser.contains(state.getOwnerPosition()))      
 			{  
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("Valid Owner :return true");
 				return true;  

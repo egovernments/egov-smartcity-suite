@@ -50,7 +50,7 @@ import org.egov.infstr.models.Script;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.database.utils.DatabaseConnectionException;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 import org.egov.infstr.workflow.Action;
 import org.egov.infstr.workflow.SimpleWorkflowService;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -609,8 +609,8 @@ private List<HashMap<String, Object>>  addSubledgerGroupBy(final List<HashMap<St
 	
 		final CreateVoucher createVoucher = new CreateVoucher();
 		try {
-			EgovDatabaseManager.openConnection();
-			createVoucher.deleteVoucherdetailAndGL(EgovDatabaseManager.openConnection(), voucherHeader);
+			null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
+			createVoucher.deleteVoucherdetailAndGL(null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection(), voucherHeader);
 		HibernateUtil.getCurrentSession().flush();
 				HashMap<String, Object> detailMap = null;
 				final List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
@@ -637,7 +637,7 @@ private List<HashMap<String, Object>>  addSubledgerGroupBy(final List<HashMap<St
 				Transaxtion txnList[] = new Transaxtion[transactions.size()];
 				txnList = transactions.toArray(txnList);
 				final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
-				if (!engine.postTransaxtions(txnList, EgovDatabaseManager.openConnection(), formatter.format(voucherHeader.getVoucherDate()))) {
+				if (!engine.postTransaxtions(txnList, null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection(), formatter.format(voucherHeader.getVoucherDate()))) {
 					throw new ValidationException(Arrays.asList(new ValidationError("Exception While Saving Data", "Transaction Failed")));
 				}
 				

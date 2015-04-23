@@ -53,7 +53,7 @@ public class ChequeFormatMaster extends AbstractTask
 			}
 		/*	finally
 			{
-				EgovDatabaseManager.releaseConnection(conn,null);
+				//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(conn,null);
 			}*/
 	}
 	

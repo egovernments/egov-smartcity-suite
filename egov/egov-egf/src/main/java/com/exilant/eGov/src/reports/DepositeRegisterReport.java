@@ -13,7 +13,7 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.EGovConfig;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
@@ -70,7 +70,7 @@ public class DepositeRegisterReport
         
         try
         {
-            con = EgovDatabaseManager.openConnection();
+            con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
         }
         catch(Exception exception)
         {

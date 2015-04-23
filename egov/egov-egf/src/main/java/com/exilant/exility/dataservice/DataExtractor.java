@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.ExilityParameters;
@@ -193,9 +193,9 @@ if(LOGGER.isInfoEnabled())     LOGGER.info(sql+"sqllll");
 			Class collectionMemberClass) throws TaskFailedException {
 		//DBHandler handler = DBHandler.getHandler();
 		/*Connection con = handler.getConnection();*/
-		Connection con = EgovDatabaseManager.openConnection();
+		Connection con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		HashMap map = extractIntoMap(sql, con, keyName,  collectionMemberClass);
-		EgovDatabaseManager.releaseConnection(con,null);
+		//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(con,null);
 		//handler.returnConnection(con);
 		return map;
 	}

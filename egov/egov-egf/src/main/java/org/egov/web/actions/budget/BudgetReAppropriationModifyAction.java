@@ -1,36 +1,36 @@
 package org.egov.web.actions.budget;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.struts2.config.ParentPackage;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.eis.service.EisCommonService;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.models.Script;
-import org.egov.infstr.models.State;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.workflow.Action;
-import org.egov.infstr.workflow.WorkflowService;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.budget.BudgetReAppropriation;
 import org.egov.model.budget.BudgetReAppropriationMisc;
 import org.egov.pims.commons.Position;
-import org.egov.eis.service.EisCommonService;
 import org.egov.pims.service.EisUtilService;
 import org.egov.services.budget.BudgetDetailService;
 import org.egov.services.budget.BudgetReAppropriationService;
@@ -39,8 +39,6 @@ import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.BudgetDetailHelper;
 import org.egov.utils.Constants;
 import org.egov.web.actions.BaseFormAction;
-import org.apache.log4j.Logger;
-
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.util.ValueStack;
@@ -335,8 +333,8 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction{
 		}       
 		workFlowItem = misc;
 		setEnablingAmounts(misc);
-		comment = misc.getCurrentState().getText1();
-		setValidActions(miscWorkflowService.getValidActions(misc));
+		comment = misc.getCurrentState().getComments();
+		//This fix is for Phoenix Migration.setValidActions(miscWorkflowService.getValidActions(misc));
 		List<BudgetReAppropriation> nonApprovedReAppropriations = misc.getNonApprovedReAppropriations();
 		for (BudgetReAppropriation row : nonApprovedReAppropriations) {
 			BudgetReAppropriationView budgetReAppropriationView = new BudgetReAppropriationView();
@@ -447,7 +445,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction{
 
 	private void setEnablingAmounts(BudgetReAppropriationMisc misc){
 		Script script = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME, "BudgetDetail.enable.amounts").get(0);
-		String value = (String) script.eval(Script.createContext("wfItem",misc,"persistenceService",budgetService));
+		String value = "";//This fix is for Phoenix Migration.(String) script.eval(Script.createContext("wfItem",misc,"persistenceService",budgetService));
 		if("approved".equalsIgnoreCase(value))
 			enableApprovedAmount = true;
 		else if("original".equalsIgnoreCase(value))
@@ -471,7 +469,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction{
 
 	private BudgetReAppropriationMisc transformAndSetActionMessage(BudgetReAppropriationMisc misc, Integer userId) {
 		misc = budgetReAppropriationService.performActionOnMisc(actionName+"|"+userId,misc,comment);
-		Position owner = misc.getState().getOwner();
+		Position owner = misc.getState().getOwnerPosition();
 		if(actionName.contains("approv")){
 			if("END".equalsIgnoreCase(misc.getCurrentState().getValue())){
 				addActionMessage(getText("budget.reapp.approved.end"));
@@ -548,8 +546,8 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction{
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("validating owner for user "+EGOVThreadLocals.getUserId());
 		List<Position> positionsForUser=null;
-		positionsForUser = eisService.getPositionsForUser(Integer.valueOf(EGOVThreadLocals.getUserId()), new Date());
-		if(positionsForUser.contains(state.getOwner()))      
+		positionsForUser = null;//This fix is for Phoenix Migration.eisService.getPositionsForUser(Integer.valueOf(EGOVThreadLocals.getUserId()), new Date());
+		if(positionsForUser.contains(state.getOwnerPosition()))      
 		{
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Valid Owner :return true");
 			return true;

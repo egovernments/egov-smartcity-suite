@@ -12,7 +12,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
@@ -37,7 +37,7 @@ public class OpeningBalance
 	public ArrayList getOBReport(OpeningBalanceInputBean OPBean) throws TaskFailedException
 	{
 		try{
-			con = EgovDatabaseManager.openConnection();
+			con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 
 		}
 		catch(Exception exception){
@@ -62,7 +62,7 @@ public class OpeningBalance
 		}
 		finally{
 			try{
-				EgovDatabaseManager.releaseConnection(con,null);
+				//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(con,null);
 			}catch(Exception e){
 				LOGGER.error("Error in release connection",e);
 			}

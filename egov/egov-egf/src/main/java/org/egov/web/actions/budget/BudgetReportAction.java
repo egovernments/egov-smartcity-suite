@@ -1,6 +1,5 @@
 package org.egov.web.actions.budget;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -15,22 +14,25 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import net.sf.jasperreports.engine.JRException;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
-import org.apache.struts2.config.Result;
-import org.apache.struts2.config.Results;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.dispatcher.StreamResult;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.eis.service.EisCommonService;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
@@ -38,7 +40,6 @@ import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
@@ -46,7 +47,6 @@ import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.Assignment;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.eis.service.EisCommonService;
 import org.egov.services.budget.BudgetDetailService;
 import org.egov.services.budget.BudgetService;
 import org.egov.utils.Constants;
@@ -54,19 +54,19 @@ import org.egov.utils.ReportHelper;
 import org.egov.web.actions.BaseFormAction;
 
 @Results(value = {
-		@Result(name = "department-PDF", type = StreamResult.class, value = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME, Constants.INPUT_STREAM,
+		@Result(name = "department-PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME, Constants.INPUT_STREAM,
 				Constants.CONTENT_TYPE, "application/pdf", Constants.CONTENT_DISPOSITION, "no-cache;filename=BudgetReport.pdf" }),
-		@Result(name = "department-XLS", type = StreamResult.class, value = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME, Constants.INPUT_STREAM,
+		@Result(name = "department-XLS", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME, Constants.INPUT_STREAM,
 				Constants.CONTENT_TYPE, "application/xls", Constants.CONTENT_DISPOSITION, "no-cache;filename=BudgetReport.xls" }),
-		@Result(name = "department-HTML", type = StreamResult.class, value = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME, Constants.INPUT_STREAM,
+		@Result(name = "department-HTML", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME, Constants.INPUT_STREAM,
 				Constants.CONTENT_TYPE, "text/html" }),
-		@Result(name = "functionwise-PDF", type = StreamResult.class, value = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME, Constants.INPUT_STREAM,
+		@Result(name = "functionwise-PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME, Constants.INPUT_STREAM,
 				Constants.CONTENT_TYPE, "application/pdf", Constants.CONTENT_DISPOSITION, "no-cache;filename=BudgetReport-functionwise.pdf" }),
-		@Result(name = "functionwise-XLS", type = StreamResult.class, value = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME, Constants.INPUT_STREAM,
+		@Result(name = "functionwise-XLS", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME, Constants.INPUT_STREAM,
 				Constants.CONTENT_TYPE, "application/xls", Constants.CONTENT_DISPOSITION, "no-cache;filename=BudgetReport-functionwise.xls" }),
-		@Result(name = "functionwise-HTML", type = StreamResult.class, value = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME, Constants.INPUT_STREAM,
+		@Result(name = "functionwise-HTML", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME, Constants.INPUT_STREAM,
 				Constants.CONTENT_TYPE, "text/html" }),
-		@Result(name = "functionwise-dept-HTML", type = StreamResult.class, value = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME, Constants.INPUT_STREAM,
+		@Result(name = "functionwise-dept-HTML", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME, Constants.INPUT_STREAM,
 			Constants.CONTENT_TYPE, "text/html" }) })
 @ParentPackage("egov")
 public class BudgetReportAction extends BaseFormAction {
@@ -433,7 +433,7 @@ public class BudgetReportAction extends BaseFormAction {
 					totalAmt=BigDecimal.ZERO;
 					totalAppropriationAmt=BigDecimal.ZERO;
 				}
-				budgetReportList.add(new BudgetReportView(EMPTYSTRING,EMPTYSTRING,EMPTYSTRING,detail.getExecutingDepartment().getDeptName(),EMPTYSTRING,null,null,null,"deptrow"));
+				budgetReportList.add(new BudgetReportView(EMPTYSTRING,EMPTYSTRING,EMPTYSTRING,detail.getExecutingDepartment().getName(),EMPTYSTRING,null,null,null,"deptrow"));
 				type="";
 				functionId= null;
 				majorCode="";
@@ -462,7 +462,7 @@ public class BudgetReportAction extends BaseFormAction {
 					totalAppropriationAmt=BigDecimal.ZERO;
 				}
 				budgetReportList.add(new BudgetReportView(EMPTYSTRING,EMPTYSTRING,EMPTYSTRING,"FUNCTION CENTRE-"+detail.getFunction().getName(),EMPTYSTRING,null,null,null,"functionrow"));
-				final List<Object> majorCodeList = getAmountForMajorcodewise(detail.getExecutingDepartment().getId(),detail.getFunction().getId(),glType);  // majorcodewise total
+				final List<Object> majorCodeList = getAmountForMajorcodewise(detail.getExecutingDepartment().getId().intValue(),detail.getFunction().getId(),glType);  // majorcodewise total
 				budgetReportList.addAll(majorCodeList);
 				printed = false;
 				majorCode="";
@@ -481,10 +481,10 @@ public class BudgetReportAction extends BaseFormAction {
 			       
 			// detail
 			if(detail.getExecutingDepartment()!=null && detail.getFunction()!=null && detail.getBudgetGroup().getMajorCode()==null)
-				budgetReportList.add(new BudgetReportView(detail.getExecutingDepartment().getDeptCode(),detail.getFunction().getCode(),glcode,glName,"",detail.getApprovedAmount(),
+				budgetReportList.add(new BudgetReportView(detail.getExecutingDepartment().getCode(),detail.getFunction().getCode(),glcode,glName,"",detail.getApprovedAmount(),
 						reAppropriationAmt,detail.getApprovedAmount().add(reAppropriationAmt),"detailrow"));
 			if(detail.getExecutingDepartment()!=null)
-				deptId = detail.getExecutingDepartment().getId();
+				deptId = detail.getExecutingDepartment().getId().intValue();
 			if(detail.getFunction()!=null)
 				functionId = detail.getFunction().getId();
 			type = glType;
@@ -567,7 +567,7 @@ public class BudgetReportAction extends BaseFormAction {
 					totalAmt=BigDecimal.ZERO;
 					totalAppropriationAmt=BigDecimal.ZERO;
 				}
-				budgetReportList.add(new BudgetReportView(EMPTYSTRING,EMPTYSTRING,EMPTYSTRING,detail.getExecutingDepartment().getDeptName(),EMPTYSTRING,null,null,null,"deptrow"));
+				budgetReportList.add(new BudgetReportView(EMPTYSTRING,EMPTYSTRING,EMPTYSTRING,detail.getExecutingDepartment().getName(),EMPTYSTRING,null,null,null,"deptrow"));
 				type="";
 				functionId= null;
 				majorCode="";
@@ -596,7 +596,7 @@ public class BudgetReportAction extends BaseFormAction {
 					totalAppropriationAmt=BigDecimal.ZERO;
 				}
 				budgetReportList.add(new BudgetReportView(EMPTYSTRING,EMPTYSTRING,EMPTYSTRING,"FUNCTION CENTRE-"+detail.getFunction().getName(),EMPTYSTRING,null,null,null,"functionrow"));
-				final List<Object> majorCodeList = getAmountForMajorcodewise(detail.getExecutingDepartment().getId(),detail.getFunction().getId(),glType);  // majorcodewise total
+				final List<Object> majorCodeList = getAmountForMajorcodewise(detail.getExecutingDepartment().getId().intValue(),detail.getFunction().getId(),glType);  // majorcodewise total
 				budgetReportList.addAll(majorCodeList);
 				printed = false;
 				majorCode="";
@@ -615,10 +615,10 @@ public class BudgetReportAction extends BaseFormAction {
 			       
 			// detail
 			if(detail.getExecutingDepartment()!=null && detail.getFunction()!=null && detail.getBudgetGroup().getMajorCode()==null)
-				budgetReportList.add(new BudgetReportView(detail.getExecutingDepartment().getDeptCode(),detail.getFunction().getCode(),glcode,glName,"",detail.getApprovedAmount(),
+				budgetReportList.add(new BudgetReportView(detail.getExecutingDepartment().getCode(),detail.getFunction().getCode(),glcode,glName,"",detail.getApprovedAmount(),
 						reAppropriationAmt,detail.getApprovedAmount().add(reAppropriationAmt),"detailrow"));
 			if(detail.getExecutingDepartment()!=null)
-				deptId = detail.getExecutingDepartment().getId();
+				deptId = detail.getExecutingDepartment().getId().intValue();
 			if(detail.getFunction()!=null)
 				functionId = detail.getFunction().getId();
 			type = glType;
@@ -645,8 +645,8 @@ public class BudgetReportAction extends BaseFormAction {
 	private Position getPosition() {
 		Position pos;
 		try {
-			PersonalInformation emp=eisCommonService.getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-			pos=eisCommonService.getPositionforEmp(emp.getIdPersonalInformation());
+			PersonalInformation emp=null;//This fix is for Phoenix Migration.eisCommonService.getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			pos= null;//eisCommonService.getPositionforEmp(emp.getIdPersonalInformation());
 			} catch (Exception e) {
 			throw new EGOVRuntimeException("Unable to get Position for the user");
 		}
@@ -1085,8 +1085,8 @@ public class BudgetReportAction extends BaseFormAction {
 		}
 		List<AppConfigValues> list = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"budget_toplevel_approver_designation");
 		String value = list.get(0).getValue();
-		PersonalInformation emp = eisCommonService.getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-		Assignment empAssignment = eisCommonService.getAssignmentByEmpAndDate(new Date(), emp.getIdPersonalInformation());
+		PersonalInformation emp = null;// eisCommonService.getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		Assignment empAssignment = null;// eisCommonService.getAssignmentByEmpAndDate(new Date(), emp.getIdPersonalInformation());
 		DesignationMaster designation = empAssignment.getDesigId();
 		if(designation.getDesignationName().equalsIgnoreCase(value))
 		{
@@ -1292,8 +1292,8 @@ public class BudgetReportAction extends BaseFormAction {
 				}
 				sum = BigDecimal.ZERO;
 				addEmptyRow();
-				budgetReportList.add(new BudgetReportView("", budgetDetail.getExecutingDepartment().getDeptName().toUpperCase(), "", null, null, null));
-				deptId = budgetDetail.getExecutingDepartment().getId();
+				budgetReportList.add(new BudgetReportView("", budgetDetail.getExecutingDepartment().getName().toUpperCase(), "", null, null, null));
+				deptId = budgetDetail.getExecutingDepartment().getId().intValue();
 				glcode = null;
 			}
 			// next glcode within same department
@@ -1337,7 +1337,7 @@ public class BudgetReportAction extends BaseFormAction {
 	private void sortByDepartmentName(List<BudgetDetail> budgetDetails) {
 		Collections.sort(budgetDetails, new Comparator<BudgetDetail>() {
 			public int compare(BudgetDetail o1, BudgetDetail o2) {
-				return o1.getExecutingDepartment().getDeptName().toUpperCase().compareTo(o2.getExecutingDepartment().getDeptName().toUpperCase());
+				return o1.getExecutingDepartment().getName().toUpperCase().compareTo(o2.getExecutingDepartment().getName().toUpperCase());
 			}
 		});
 	}
@@ -1353,7 +1353,7 @@ public class BudgetReportAction extends BaseFormAction {
 	}
 	
 	void fetchBudgetDetails(List<BudgetDetail> budgetDetails, String deptQuery, String finalStatus, String budgetType, String code) {
-		List<BudgetDetail> results = getPersistenceService()HibernateUtil.getCurrentSession().createQuery(
+		List<BudgetDetail> results = HibernateUtil.getCurrentSession().createQuery(
 				" from BudgetDetail bd where bd.budget.financialYear.id=" + budgetReport.getFinancialYear().getId() + deptQuery + " and bd.budget.isbere='"
 						+ budgetType + "' and bd.budget.state in (from org.egov.infstr.models.State where type='Budget'" + " and value='" + finalStatus + "') "
 						+ getQueryForSelectedType(code) + "  order by bd.executingDepartment.deptName,bd.budgetGroup." + code + ".glcode").list();
@@ -1454,7 +1454,7 @@ public class BudgetReportAction extends BaseFormAction {
 					beRecomTotalLocal = BigDecimal.ZERO;
 					totalAppropriationAmt = BigDecimal.ZERO;
 				}
-				budgetReportList.add(new BudgetReportView(EMPTYSTRING, EMPTYSTRING, EMPTYSTRING, detail.getExecutingDepartment().getDeptName(), EMPTYSTRING, null,
+				budgetReportList.add(new BudgetReportView(EMPTYSTRING, EMPTYSTRING, EMPTYSTRING, detail.getExecutingDepartment().getName(), EMPTYSTRING, null,
 						null, null, "deptrow"));
 				type = "";
 				functionId = null;
@@ -1492,7 +1492,7 @@ public class BudgetReportAction extends BaseFormAction {
 				}
 				budgetReportList.add(new BudgetReportView(EMPTYSTRING, EMPTYSTRING, EMPTYSTRING, "FUNCTION CENTRE-" + detail.getFunction().getName(), EMPTYSTRING,
 						null, null, null, "functionrow"));
-				final List<Object> majorCodeList = getAmountForMajorcodewiseForWorkingCopy(detail.getExecutingDepartment().getId(), detail.getFunction()
+				final List<Object> majorCodeList = getAmountForMajorcodewiseForWorkingCopy(detail.getExecutingDepartment().getId().intValue(), detail.getFunction()
 						.getId(), glType); // majorcodewise total
 				budgetReportList.addAll(majorCodeList);
 				printed = false;
@@ -1518,19 +1518,19 @@ public class BudgetReportAction extends BaseFormAction {
 			// detail
 			if (detail.getExecutingDepartment() != null && detail.getFunction() != null && detail.getBudgetGroup().getMajorCode() == null)
 				if (onSaveOrForward && !canViewApprovedAmount) {
-					budgetReportList.add(new BudgetReportView(detail.getExecutingDepartment().getDeptCode(), detail.getFunction().getCode(), glcode, glName,
+					budgetReportList.add(new BudgetReportView(detail.getExecutingDepartment().getCode(), detail.getFunction().getCode(), glcode, glName,
 							EMPTYSTRING, detail.getOriginalAmount(), detail.getApprovedAmount(), beDetail.getOriginalAmount(), beDetail.getApprovedAmount(),
 							"detailrow"));
 				}
 				else {
-					budgetReportList.add(new BudgetReportView(detail.getExecutingDepartment().getDeptCode(), detail.getFunction().getCode(), glcode, glName,
+					budgetReportList.add(new BudgetReportView(detail.getExecutingDepartment().getCode(), detail.getFunction().getCode(), glcode, glName,
 							EMPTYSTRING, detail.getOriginalAmount(), detail.getApprovedAmount(), beDetail.getOriginalAmount(), beDetail.getApprovedAmount(),
 							"detailrow"));
 					
 				}
 			
 			if (detail.getExecutingDepartment() != null)
-				deptId = detail.getExecutingDepartment().getId();
+				deptId = detail.getExecutingDepartment().getId().intValue();
 			if (detail.getFunction() != null)
 				functionId = detail.getFunction().getId();
 			type = glType;
@@ -1645,7 +1645,7 @@ public class BudgetReportAction extends BaseFormAction {
        String glName;
        for(BudgetDetail detail:details)
        {
-    	   key=detail.getFunction().getName()+"-"+detail.getExecutingDepartment().getDeptCode();
+    	   key=detail.getFunction().getName()+"-"+detail.getExecutingDepartment().getCode();
     	   if(function_dept_DetailedBudgetMap.get(key)==null)
     	   {
     		   List <BudgetDetail> fun_dept_dtlList=new ArrayList<BudgetDetail>();
@@ -1664,7 +1664,7 @@ public class BudgetReportAction extends BaseFormAction {
        List<BudgetDetail> beDetails = persistenceService.findAllBy(query.toString());
           for(BudgetDetail beDetail:beDetails)
     	   {
-        	  key=beDetail.getFunction().getName()+"-"+beDetail.getExecutingDepartment().getDeptCode();
+        	  key=beDetail.getFunction().getName()+"-"+beDetail.getExecutingDepartment().getCode();
     		   for(BudgetDetail reDetail: function_dept_DetailedBudgetMap.get(key) )
     		   {
     			 if(reDetail==null)
@@ -1683,7 +1683,7 @@ public class BudgetReportAction extends BaseFormAction {
  		    	   
  		    	   BudgetReportView bv=new BudgetReportView();
  		    	   bv.setNarration(glName);
- 		    	   bv.setDeptCode(beDetail.getExecutingDepartment().getDeptCode());
+ 		    	   bv.setDeptCode(beDetail.getExecutingDepartment().getCode());
  		    	   bv.setGlCode(glcode);
  		    	   bv.setFunctionCode(reDetail.getFunction().getCode());
  		    	   bv.setReProposalAmount(reDetail.getOriginalAmount());
@@ -1718,7 +1718,7 @@ public class BudgetReportAction extends BaseFormAction {
     		    	   
     		    	   BudgetReportView bv=new BudgetReportView();
     		    	   bv.setNarration(glName);
-    		    	   bv.setDeptCode(beDetail.getExecutingDepartment().getDeptCode());
+    		    	   bv.setDeptCode(beDetail.getExecutingDepartment().getCode());
     		    	   bv.setGlCode(glcode);
     		    	   bv.setFunctionCode(reDetail.getFunction().getCode());
     		    	   bv.setReProposalAmount(reDetail.getOriginalAmount());

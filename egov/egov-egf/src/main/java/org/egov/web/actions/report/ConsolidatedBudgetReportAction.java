@@ -39,7 +39,7 @@ import org.egov.web.actions.BaseFormAction;
 		@Result(name="XLS",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/xls",Constants.CONTENT_DISPOSITION,"no-cache;filename=ConsolidatedBudgetReport.xls"})
 	})*/
 @Results({ 
-	@Result(name = "reportview", type = StreamResult.class, value = "inputStream", params = { "contentType", "${contentType}", "contentDisposition", "attachment; filename=${fileName}" })
+	@Result(name = "reportview", type = "stream", location = "inputStream", params = { "contentType", "${contentType}", "contentDisposition", "attachment; filename=${fileName}" })
 	})
 @ParentPackage("egov") 
 public class ConsolidatedBudgetReportAction extends BaseFormAction { 

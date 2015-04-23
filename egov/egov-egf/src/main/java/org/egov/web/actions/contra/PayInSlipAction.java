@@ -3,7 +3,6 @@
  */
 package org.egov.web.actions.contra;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,19 +15,17 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.service.CommonsService;
- 
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.utils.ServiceLocator;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
 import org.egov.model.contra.ContraBean;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.voucher.PayInBean;
@@ -49,7 +46,6 @@ import com.exilant.GLEngine.Transaxtion;
  * This class is used for the Payin Slip(Cheque Deposit).
  */
 public class PayInSlipAction extends BaseVoucherAction {
-	private static final ServiceLocator SERVICELOCATOR = ServiceLocator.getInstance();
 	private static final Logger	LOGGER	= Logger.getLogger(PayInSlipAction.class);
 	private static final long serialVersionUID = 1L;
 	private String selectedInstr;
@@ -289,7 +285,7 @@ public class PayInSlipAction extends BaseVoucherAction {
 	
 
 	private CVoucherHeader callCreateVoucher() {
-		EgovDatabaseManager.openConnection();
+		//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		try {
 			 Bankaccount bankaccount = comm.getBankaccountById(Integer.valueOf(contraBean.getAccountNumberId()));
 			final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
@@ -357,7 +353,7 @@ public class PayInSlipAction extends BaseVoucherAction {
 				Transaxtion txnList[] = new Transaxtion[transactions.size()];
 				txnList = transactions.toArray(txnList);
 				final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-				if (!engine.postTransaxtions(txnList, EgovDatabaseManager.openConnection(), formatter.format(voucherHeader.getVoucherDate()))) {
+				if (!engine.postTransaxtions(txnList,null/*This fix is for Phoenix Migration.EgovDatabaseManager.openConnection()*/, formatter.format(voucherHeader.getVoucherDate()))) {
 					throw new ValidationException(Arrays.asList(new ValidationError("Exception while saving Data", "Transaction failed")));
 				}
 			}catch (ValidationException e) {

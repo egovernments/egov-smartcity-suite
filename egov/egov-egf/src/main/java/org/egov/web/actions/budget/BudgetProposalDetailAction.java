@@ -1,6 +1,5 @@
 package org.egov.web.actions.budget;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -13,9 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
-import org.apache.struts2.config.Result;
-import org.apache.struts2.config.Results;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.dispatcher.StreamResult;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
@@ -30,13 +30,12 @@ import org.egov.model.budget.BudgetGroup;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.Constants;
 import org.egov.web.annotation.ValidationErrorPage;
-import org.hibernate.type.*;
-import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.LongType;
 @ParentPackage("egov")
 @Results({ 
-	@Result(name = "AJAX_RESULT", type = StreamResult.class, value = "returnStream", params = { "contentType", "text/plain"})
+	@Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain"})
 })
 
 public class BudgetProposalDetailAction extends BaseBudgetDetailAction{
@@ -45,7 +44,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction{
 	private static final String ACTIONNAME="actionName";
 	private Budget topBudget;
 	private Map<Long,BigDecimal> beNextYearAmounts = new HashMap<Long,BigDecimal>();
-	private static Logger LOGGER=Logger.getLogger(BudgetDetailAction.class);	
+	private static Logger LOGGER=Logger.getLogger(BudgetProposalDetailAction.class);	
 	String streamResult="";
 	private Long function;
 	private Long budgetGroups;
@@ -240,7 +239,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction{
 		String budgetName=getBudgetDetail().getBudget().getName();
 		
 		//		(String)request.get("name");
-		Integer deptId = getBudgetDetail().getExecutingDepartment().getId();  
+		Integer deptId = getBudgetDetail().getExecutingDepartment().getId().intValue();  
 		//this will load functions from budgetdeails table
 		//String sqlStr="select distinct (f.name)  as name,f.id as id   from function f,egf_budgetdetail bd where  f.id=bd.function and bd.budget="+id +"  order  by f.name";
 	String accountType;
@@ -357,7 +356,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction{
 			BudgetDetail beNextYear = new BudgetDetail();
 			//beNextYear=detail.clone();  
 			if(addNewDetails){
-				beNextYear.changeState("END", getPosition(), "");
+				//This fix is for Phoenix Migration.beNextYear.changeState("END", getPosition(), "");
 			}
 			beNextYear.copyFrom(detail);
 			beNextYear.setBudget(refBudget);
@@ -397,7 +396,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction{
 		
 		for (BudgetDetail detail : savedbudgetDetailList) {
 		    if(new String("forward").equals(parameters.get(ACTIONNAME)[0])){
-				detail.changeState("Forwarded by "+getPosition().getName(), getPositionByUserId(userId) , detail.getComment());
+		    	//This fix is for Phoenix Migration.detail.changeState("Forwarded by "+getPosition().getName(), getPositionByUserId(userId) , detail.getComment());
 			}
 		    	budgetDetailService.persist(detail);
 		}

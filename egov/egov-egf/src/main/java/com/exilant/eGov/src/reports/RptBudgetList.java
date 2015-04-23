@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 import com.exilant.exility.common.TaskFailedException;
 
@@ -45,7 +45,7 @@ public class RptBudgetList {
 			throws TaskFailedException {
 		// GET CONNECTION
 		try {
-			connection = EgovDatabaseManager.openConnection();
+			connection = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		} catch (Exception exception) {
 			LOGGER.error("Inside getRptBudgetList" + exception.getMessage(),
 					exception);
@@ -164,9 +164,9 @@ public class RptBudgetList {
 			throw new TaskFailedException();
 		} finally {
 			try {
-				EgovDatabaseManager.releaseConnection(connection, pstmt);
+				//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(connection, pstmt);
 			} catch (Exception efinally) {
-				EgovDatabaseManager.releaseConnection(connection, pstmt);
+				//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(connection, pstmt);
 				LOGGER
 						.error("Exception in Finally Block " + efinally,
 								efinally);

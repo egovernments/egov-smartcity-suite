@@ -51,8 +51,8 @@ import org.hibernate.FlushMode;
 import org.hibernate.Query;
 
 @Results({ 
-	@Result(name = "reportview", type = StreamResult.class, value = "inputStream", params = { "contentType", "${contentType}", "contentDisposition", "attachment; filename=${fileName}" }),
-	@Result(name = "txtresult", type = StreamResult.class, value = "inStream", params = { "contentType", "${contentType}", "contentDisposition", "attachment; filename=${textFileName}" })
+	@Result(name = "reportview", type = "stream", location = "inputStream", params = { "contentType", "${contentType}", "contentDisposition", "attachment; filename=${fileName}" }),
+	@Result(name = "txtresult", type = "stream", location = "inStream", params = { "contentType", "${contentType}", "contentDisposition", "attachment; filename=${textFileName}" })
 	
 	})
 @ParentPackage("egov")

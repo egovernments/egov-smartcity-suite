@@ -6,7 +6,7 @@ import java.sql.Statement;
 import java.util.LinkedList;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 import com.exilant.exility.dataservice.DatabaseConnectionException;
 public class BillRegisterList
@@ -256,7 +256,7 @@ public class BillRegisterList
 		try
 		{
 
-			conn = EgovDatabaseManager.openConnection();
+			conn = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		}
 		catch(Exception exception)
 		{
@@ -369,11 +369,11 @@ public class BillRegisterList
 			try
 			{
 				conn.close();
-				EgovDatabaseManager.releaseConnection(conn,statement);
+				//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(conn,statement);
 			}
 			catch(Exception e)
 			{
-				EgovDatabaseManager.releaseConnection(conn,statement);
+				//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(conn,statement);
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("Exception in Finally Block"+e);
 			}
 		}

@@ -20,21 +20,21 @@ import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.eis.service.EisCommonService;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.workflow.WorkflowService;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.pims.commons.Position;
-import org.egov.eis.service.EisCommonService;
 import org.egov.services.budget.BudgetDetailService;
 import org.egov.services.budget.BudgetService;
 import org.egov.utils.BudgetDetailConfig;
@@ -42,7 +42,6 @@ import org.egov.utils.BudgetDetailHelper;
 import org.egov.utils.Constants;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
-import org.hibernate.type.*;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.util.ValueStack;
@@ -480,7 +479,7 @@ int i=0;
 		for (BudgetDetail detail : budgetDetailList) {
 			if(detail != null){
 				//update only if it is new budgetdetail Item else it is taken care by budget load
-				detail.changeState("END", getPosition()," ");
+				//This fix is for Phoenix Migration.detail.changeState("END", getPosition()," ");
 				if(detail.getId()==null)
 				{
 				detail.setUniqueNo(detail.getFund().getId() + "-" + detail.getExecutingDepartment().getId() + "-"
@@ -691,9 +690,9 @@ int i=0;
 	private void defaultToCurrentUsersExecutingDepartment() {
 		if(shouldShowHeaderField("executingDepartment") ){
 			User user = getUser();
-			if(user.getDepartment() != null){
-				budgetDetail.setExecutingDepartment(findDepartment(user.getDepartment().getId()));
-			}
+			/*if(user.getDepartment() != null){
+				budgetDetail.setExecutingDepartment(findDepartment(user.get.getId()));
+			}*///This fix is for Phoenix Migration.
 		}
 	}
 	
@@ -720,11 +719,11 @@ int i=0;
 	}
 	
 	protected Position getPosition() {
-		return eisCommonService.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		return null;//This fix is for Phoenix Migration.eisCommonService.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
 	}
 	
 	protected Position getPositionByUserId(Integer userId){
-		return eisCommonService.getPositionByUserId(userId);
+		return null;//This fix is for Phoenix Migration.eisCommonService.getPositionByUserId(userId);
 	}
 	
 	public List<String> getHeaderFields() {

@@ -11,7 +11,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.NumberToWord;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 /**
  * @purpose : To get the outstanding for liability expenses for
@@ -66,7 +66,7 @@ public class OsStmtForLiabilityExpenses {
 				fundCondition = fundCondition + " and v.fundid = ? ";
 			}
 			String whereCondition = "";
-			con = EgovDatabaseManager.openConnection();
+			con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 
 			if (!relationId.equals(""))
 				whereCondition = " and r.id=?";
@@ -376,7 +376,7 @@ public class OsStmtForLiabilityExpenses {
 		} finally {
 			try {
 				pstmt.close();
-				EgovDatabaseManager.releaseConnection(con, null);
+				//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(con, null);
 			} catch (Exception e) {
 				LOGGER.error("Exp in finally...");
 			}

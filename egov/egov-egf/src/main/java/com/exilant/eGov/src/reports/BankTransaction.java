@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
@@ -38,7 +38,7 @@ public class BankTransaction
 		{
 			try
 			{
-				con = EgovDatabaseManager.openConnection(); 
+				con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection(); 
 			}
 			catch(Exception exception)
 			{
@@ -74,7 +74,7 @@ public class BankTransaction
 			}
 			finally{
 						try{
-							EgovDatabaseManager.releaseConnection(con,null);
+							//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(con,null);
 						}catch(Exception e){
 							LOGGER.error(e.getMessage(),e);
 						}
@@ -94,7 +94,7 @@ public class BankTransaction
 				}
 			}catch(Exception ex){
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("Exception ",ex);
-				EgovDatabaseManager.releaseConnection(con,null);
+				//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(con,null);
 				throw new TaskFailedException("Date Should be within the today's date");
 			}
 		}

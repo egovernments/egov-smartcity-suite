@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 import com.exilant.GLEngine.GeneralLedgerBean;
 import com.exilant.eGov.src.chartOfAccounts.CodeValidator;

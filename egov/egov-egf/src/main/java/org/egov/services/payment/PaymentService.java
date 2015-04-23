@@ -45,7 +45,7 @@ import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 import org.egov.model.bills.EgBillSubType;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.Miscbilldetail;
@@ -77,8 +77,7 @@ import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 
 
-public class PaymentService
-//extends PersistenceService<Paymentheader,Long> 
+public class PaymentService extends PersistenceService<Paymentheader,Long> 
 {
 	private static final Logger	LOGGER	= Logger.getLogger(PaymentService.class);
 	public SimpleDateFormat sdf =new SimpleDateFormat("dd-MMM-yyyy",Constants.LOCALE);
@@ -464,7 +463,7 @@ public class PaymentService
 		Paymentheader paymentheader=null;
 		try
 		{
-			final Connection con = EgovDatabaseManager.openConnection();
+			final Connection con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 			miscBillList = new ArrayList<Miscbilldetail>();
 			user = (User)persistenceService.find(" from User where id = ?", Integer.valueOf(EGOVThreadLocals.getUserId()));
 			Bankaccount ba = (Bankaccount) persistenceService.find("from Bankaccount where id=?",payheader.getBankaccount().getId());
@@ -516,10 +515,10 @@ public class PaymentService
 		final ChartOfAccounts engine = ChartOfAccounts.getInstance();
 		Transaxtion txnList[] = new Transaxtion[transactions.size()];
 		txnList = transactions.toArray(txnList);
-		if (!engine.postTransaxtions(txnList, EgovDatabaseManager.openConnection(), sdf.format(existingVH.getVoucherDate()))) {
+		/*if (!engine.postTransaxtions(txnList, null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection(), sdf.format(existingVH.getVoucherDate()))) {
 			throw new ValidationException(Arrays.asList(new ValidationError(EXCEPTION_WHILE_SAVING_DATA, TRANSACTION_FAILED)));
 		}
-		if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed updateVoucher.");
+		if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed updateVoucher.");*/
 		return existingVH;
 	}
 	private void updateVoucherHeader(Map<String,String[]> parameters,CVoucherHeader existingVH,CVoucherHeader voucherHeader,Connection con)throws Exception
@@ -2838,5 +2837,4 @@ public class PaymentService
 	public void setVoucherService(VoucherService voucherService) {
 		this.voucherService = voucherService;
 	}
-	
 }

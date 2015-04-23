@@ -20,7 +20,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.EGovConfig;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 
 import com.exilant.exility.common.TaskFailedException;
 
@@ -49,7 +49,7 @@ public class SchemeUtilizationReport
 		Connection con = null;
 		try
 		{
-			con = EgovDatabaseManager.openConnection();
+			con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 
 			LinkedHashMap data = null;
 			

@@ -36,10 +36,10 @@ import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 
 @Results(value = {
-		@Result(name = "PDF", type = StreamResult.class, value = "inputStream", params = {
+		@Result(name = "PDF", type = "stream", location = "inputStream", params = {
 				"inputName", "inputStream", "contentType", "application/pdf",
 				"contentDisposition", "no-cache;filename=FundFlowReport.pdf" }),
-		@Result(name = "XLS", type = StreamResult.class, value = "inputStream", params = {
+		@Result(name = "XLS", type = "stream", location = "inputStream", params = {
 				"inputName", "inputStream", "contentType", "application/xls",
 				"contentDisposition", "no-cache;filename=FundFlowReport.xls" })
 

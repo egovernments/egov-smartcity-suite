@@ -2,7 +2,7 @@ package com.exilant.exility.service;
 
 import com.exilant.exility.common.*;
 import com.exilant.exility.dataservice.*;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 import org.apache.log4j.Logger;
 import java.sql.Connection;
 
@@ -30,7 +30,7 @@ public class TreeService implements ExilServiceInterface{
 			return;
 		}
 
-		Connection con  = EgovDatabaseManager.openConnection();//Gets the DataBase Connection.
+		Connection con  = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();//Gets the DataBase Connection.
 		SQLTask task = SQLTask.getTask();
 		try
 		{
@@ -46,7 +46,7 @@ public class TreeService implements ExilServiceInterface{
 			LOGGER.error("SQLTask execution failed"+e.getMessage(),e);
 			dc.addMessage("exilServerError",e.getMessage());
 		}finally{
-			EgovDatabaseManager.releaseConnection(con,null);
+			//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(con,null);
 		}
 
 	}

@@ -67,7 +67,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.SessionFactory;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.lib.admbndry.HeirarchyTypeDAO;
 import org.egov.masters.services.MastersService;
@@ -2133,7 +2133,7 @@ public class CreateVoucher {
 			 billregister.setNarration(supplierBillDetails.get("narration").toString());
 		 }
 		 EgwStatus status = null;
-		 Connection conn = (Connection) EgovDatabaseManager.openConnection();
+		 Connection conn = (Connection) null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		 status = comm.findEgwStatusById(Integer.valueOf(cm.getEGWStatusId(conn, "PURCHBILL", "Pending")));
 		 billregister.setStatus(status);
 		 if(null != EGOVThreadLocals.getUserId()){
@@ -2146,7 +2146,7 @@ public class CreateVoucher {
 	 }
 	 public void postInEgbillMis(EgBillregister billregister,HashMap<String, Object> supplierBillDetails ) throws Exception{
 
-		 Connection conn = (Connection) EgovDatabaseManager.openConnection();
+		 Connection conn = (Connection) null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		 EgBillregistermis billMis = new EgBillregistermis();
 		 billMis.setEgBillregister(billregister);
 		 billMis.setFund(((Worksdetail)supplierBillDetails.get("worksdetail")).getFund());

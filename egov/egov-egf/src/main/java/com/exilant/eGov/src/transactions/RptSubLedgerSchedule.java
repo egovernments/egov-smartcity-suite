@@ -22,7 +22,7 @@ import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.SessionFactory;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.exilant.GLEngine.GeneralLedgerBean;
@@ -59,7 +59,7 @@ public class RptSubLedgerSchedule
 	{ 
 	    try
 	    {
-	        connection = EgovDatabaseManager.openConnection();	
+	        connection = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();	
 	    }
 	    catch(Exception exception)
 	    {
@@ -123,7 +123,7 @@ public class RptSubLedgerSchedule
 		}
 	    finally{
 			try{
-				EgovDatabaseManager.releaseConnection(connection,null);
+				//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(connection,null);
 			}catch(Exception e){
 				LOGGER.error("Error while releasing Connection"+e.getMessage());
 				throw new TaskFailedException();

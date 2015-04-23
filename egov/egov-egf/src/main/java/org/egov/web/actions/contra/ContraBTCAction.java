@@ -26,7 +26,7 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.utils.database.utils.EgovDatabaseManager;
+
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.model.contra.ContraBean;
 import org.egov.model.contra.ContraJournalVoucher;
@@ -260,7 +260,7 @@ public class ContraBTCAction extends BaseVoucherAction {
 				&& !instrumentService.isChequeNumberValid(contraBean
 						.getChequeNumber(), Integer.parseInt(contraBean
 						.getAccountNumberId()), voucherHeader.getVouchermis()
-						.getDepartmentid().getId(), null)) {
+						.getDepartmentid().getId().intValue(), null)) {
 			return false;
 		} else if (instrumentHeader != null
 				&& !contraBean.getChequeNumber().equalsIgnoreCase(
@@ -268,7 +268,7 @@ public class ContraBTCAction extends BaseVoucherAction {
 				&& !instrumentService.isChequeNumberValid(contraBean
 						.getChequeNumber(), Integer.parseInt(contraBean
 						.getAccountNumberId()), voucherHeader.getVouchermis()
-						.getDepartmentid().getId(), null)) {
+						.getDepartmentid().getId().intValue(), null)) {
 			return false;
 		}
 		return true;
@@ -601,10 +601,9 @@ public class ContraBTCAction extends BaseVoucherAction {
 
 	void createLedgerAndPost(CVoucherHeader voucher) {
 		CreateVoucher createVoucher = new CreateVoucher();
-		EgovDatabaseManager.openConnection();
+		//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		try {
-			createVoucher.deleteVoucherdetailAndGL(EgovDatabaseManager
-					.openConnection(), voucher);
+			createVoucher.deleteVoucherdetailAndGL(null/*EgovDatabaseManager.openConnection()*/, voucher);
 		HibernateUtil.getCurrentSession().flush();
 			final List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
 			final List<HashMap<String, Object>> subledgerDetails = new ArrayList<HashMap<String, Object>>();
@@ -623,8 +622,7 @@ public class ContraBTCAction extends BaseVoucherAction {
 			Transaxtion txnList[] = new Transaxtion[transactions.size()];
 			txnList = transactions.toArray(txnList);
 			SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-			if (!engine.postTransaxtions(txnList, EgovDatabaseManager
-					.openConnection(), formatter.format(voucherHeader
+			if (!engine.postTransaxtions(txnList, null/*EgovDatabaseManager.openConnection()*/, formatter.format(voucherHeader
 					.getVoucherDate()))) {
 				throw new ValidationException(
 						Arrays

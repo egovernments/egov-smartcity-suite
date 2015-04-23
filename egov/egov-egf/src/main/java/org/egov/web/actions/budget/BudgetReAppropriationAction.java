@@ -1,6 +1,5 @@
 package org.egov.web.actions.budget;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
@@ -20,21 +20,22 @@ import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.dao.budget.BudgetDetailsDAO;
+import org.egov.eis.service.EisCommonService;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.workflow.WorkflowService;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.Department;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.budget.BudgetReAppropriation;
 import org.egov.model.budget.BudgetReAppropriationMisc;
 import org.egov.pims.commons.Position;
-import org.egov.eis.service.EisCommonService;
 import org.egov.services.budget.BudgetDetailService;
 import org.egov.services.budget.BudgetReAppropriationService;
 import org.egov.services.budget.BudgetService;
@@ -243,7 +244,7 @@ public class BudgetReAppropriationAction extends BaseFormAction{
 
 	public String createAndForward() {
 		BudgetReAppropriationMisc misc = save(getUserId());
-		Position owner = misc.getState().getOwner();
+		Position owner = misc.getState().getOwnerPosition();
 		if("END".equalsIgnoreCase(misc.getCurrentState().getValue())){
 			addActionMessage(getText("budget.reapp.approved.end"));
 		}else{
@@ -325,7 +326,7 @@ public class BudgetReAppropriationAction extends BaseFormAction{
 	}
 
 	protected Position getPosition() {
-		return eisCommonService.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		return  null;//eisCommonService.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
 	}
 	
 	public void removeEmptyReAppropriation(List<BudgetReAppropriationView> reAppropriationList) {
@@ -468,7 +469,7 @@ public class BudgetReAppropriationAction extends BaseFormAction{
 		reAppropriation.setAnticipatoryAmount(appropriation.getAnticipatoryAmount());
 		//Since it is a new budget detail, the amount will always be addition amount
 		reAppropriation.setOriginalAdditionAmount(appropriation.getDeltaAmount());
-		reAppropriation = budgetReAppropriationWorkflowService.start(reAppropriation, position);
+		//This fix is for Phoenix Migration.reAppropriation = budgetReAppropriationWorkflowService.start(reAppropriation, position);
 		budgetReAppropriationWorkflowService.transition(actionName, reAppropriation, "");
 	}
 	public boolean createReAppropriation(String actionName,List<BudgetReAppropriationView> budgetReAppropriationList,Position position,CFinancialYear financialYear,String beRe, BudgetReAppropriationMisc misc, String asOnDate) {
@@ -521,7 +522,7 @@ public class BudgetReAppropriationAction extends BaseFormAction{
 		else
 			appropriation.setOriginalDeductionAmount(reAppView.getDeltaAmount());
 		budgetReAppropriationService.validateDeductionAmount(appropriation);
-		appropriation = budgetReAppropriationWorkflowService.start(appropriation, position);
+		//This fix is for Phoenix Migration.appropriation = budgetReAppropriationWorkflowService.start(appropriation, position);
 		budgetReAppropriationWorkflowService.transition(actionName, appropriation, "");
 	}
 	public void transition(String actionName, BudgetReAppropriation detail,String comment) {
