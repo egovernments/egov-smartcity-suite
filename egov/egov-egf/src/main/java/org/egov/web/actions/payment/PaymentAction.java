@@ -1407,7 +1407,7 @@ public class PaymentAction extends BasePaymentAction{
 		//System.out.println("Payment id is"+parameters.get(PAYMENTID));
 		if(parameters.get(PAYMENTID)==null || "".equals(parameters.get(PAYMENTID)))
 		{
-			Object obj =HibernateUtil.getCurrentSession().get(PAYMENTID);
+			Object obj =getSession().get(PAYMENTID);
 			if(obj!=null)
 			{
 				paymentid=(String)obj;	

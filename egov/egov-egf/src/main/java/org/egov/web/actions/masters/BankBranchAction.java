@@ -7,9 +7,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.ServletActionContext;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.Bank;
 import org.egov.commons.Bankbranch;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.StringUtils;
@@ -49,7 +49,7 @@ public class BankBranchAction extends JQueryGridActionSupport {
 	}
 
 	private void addBankBranch() {
-		final Bank bank = (Bank) persistenceService.load(Bank.class, bankId);
+		final Bank bank = (Bank) persistenceService.getSession().load(Bank.class, bankId);
 		final Date currentDate = new Date();
 		final Bankbranch bankBranch = new Bankbranch();
 		bankBranch.setBank(bank);
@@ -59,13 +59,13 @@ public class BankBranchAction extends JQueryGridActionSupport {
 	}
 
 	private void editBankBranch() {
-		final Bankbranch bankBranch = bankBranchPersistenceService.get(Bankbranch.class, id);
+		final Bankbranch bankBranch = (Bankbranch) bankBranchPersistenceService.getSession().get(Bankbranch.class, id);
 		populateBankBranchDetail(bankBranch);
 		bankBranchPersistenceService.update(bankBranch);
 	}
 
 	private void deleteBankBranch() {
-		final Bankbranch bankBranch = bankBranchPersistenceService.load(Bankbranch.class, id);
+		final Bankbranch bankBranch =(Bankbranch) bankBranchPersistenceService.getSession().load(Bankbranch.class, id);
 		bankBranchPersistenceService.delete(bankBranch);
 	}
 
@@ -86,7 +86,7 @@ public class BankBranchAction extends JQueryGridActionSupport {
 		bankBranch.setContactperson(request.getParameter("contactperson"));
 		bankBranch.setNarration(request.getParameter("narration"));
 		if (StringUtils.isNotBlank(request.getParameter("branchMICR")))
-			bankBranch.setBranchMICR(BigDecimal.valueOf(Long.valueOf(request.getParameter("branchMICR"))));
+			bankBranch.setBranchMICR(BigDecimal.valueOf(Long.valueOf(request.getParameter("branchMICR"))).toString());
 	}
 
 	private void listAllBankBranches() {

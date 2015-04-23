@@ -69,7 +69,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
 	}
 
 	private void addBankAccount() {
-		final Bankbranch bankBranch = (Bankbranch) persistenceService.load(Bankbranch.class, bankBranchId);
+		final Bankbranch bankBranch = (Bankbranch) persistenceService.getSession().load(Bankbranch.class, bankBranchId);
 		final Date currentDate = new Date();
 		final Bankaccount bankAccount = new Bankaccount();
 		final HttpServletRequest request = ServletActionContext.getRequest();
@@ -85,7 +85,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
 			e.printStackTrace();
 		}
 		if (coaID != null && coaID.length() > 0){
-			final CChartOfAccounts chartofaccounts = (CChartOfAccounts) persistenceService.load(CChartOfAccounts.class, Long.parseLong(coaID));
+			final CChartOfAccounts chartofaccounts = (CChartOfAccounts) persistenceService.getSession().load(CChartOfAccounts.class, Long.parseLong(coaID));
 			bankAccount.setChartofaccounts(chartofaccounts);
 		}
 		populateBankAccountDetail(bankAccount);
@@ -93,13 +93,13 @@ public class BankAccountAction extends JQueryGridActionSupport {
 	}
 
 	private void editBankAccount() {
-		final Bankaccount bankAccount = bankAccountPersistenceService.get(Bankaccount.class, id);
+		final Bankaccount bankAccount = (Bankaccount)bankAccountPersistenceService.getSession().get(Bankaccount.class, id);
 		populateBankAccountDetail(bankAccount);
 		bankAccountPersistenceService.update(bankAccount);
 	}
 
 	private void deleteBankAccount() {
-		final Bankaccount bankBranch = bankAccountPersistenceService.load(Bankaccount.class, id);
+		final Bankaccount bankBranch = (Bankaccount) bankAccountPersistenceService.getSession().load(Bankaccount.class, id);
 		persistenceService.delete(bankBranch);
 	}
 
@@ -110,7 +110,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
 		bankAccount.setAccountnumber(request.getParameter("accountnumber"));
 		bankAccount.setAccounttype(request.getParameter("accounttype").split("#")[1]);
 		if (StringUtils.isNotBlank(request.getParameter("fundname"))) {
-			final Fund fund = (Fund) persistenceService.load(Fund.class, Integer.valueOf(request.getParameter("fundname")));
+			final Fund fund = (Fund) persistenceService.getSession().load(Fund.class, Integer.valueOf(request.getParameter("fundname")));
 			bankAccount.setFund(fund);
 		}
 		bankAccount.setIsactive(request.getParameter("active").equals("Y"));
@@ -145,8 +145,8 @@ public class BankAccountAction extends JQueryGridActionSupport {
 				sendAJAXResponse("error");
 			}
 		}
-		final JSONArray jsonArray = new JSONArray(jsonObjects);
-		sendAJAXResponse(constructJqGridResponse(jsonArray.toString()));
+		/*final JSONArray jsonArray = new JSONArray(jsonObjects);
+		sendAJAXResponse(constructJqGridResponse(jsonArray.toString()));*/
 	}
 	public String prepareBankAccCode(String accID, String code)
 			throws Exception {
@@ -177,7 +177,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
 	}
 	public String postInChartOfAccounts(String glCode, String parentId,
 			String accNumber) throws Exception {
-		final Bankbranch bankBranch = (Bankbranch) persistenceService.load(Bankbranch.class, bankBranchId);
+		final Bankbranch bankBranch = (Bankbranch) persistenceService.getSession().load(Bankbranch.class, bankBranchId);
 		int majorCodeLength = 0;
 		majorCodeLength = Integer.valueOf(getAppConfigValueFor(Constants.EGF,"coa_majorcode_length"));
 		CChartOfAccounts chart = new CChartOfAccounts();

@@ -87,8 +87,7 @@ public class FundAction extends BaseFormAction{
 			fund.setIsnotleaf(false);
 			fund.setLlevel(parentLevel);
 			fund.setChartofaccountsByPayglcodeid(null);
-			fund.setCreated(new Date());
-			fund.setCreatedby(getLoggedInUser());
+			
 			if (fund.getFund() != null && fund.getFund().getId() != null) {
 				parentFund = (Fund) persistenceService.find("from Fund where id=?", fund.getFund().getId());
 				parentFund.setIsnotleaf(true);
@@ -256,7 +255,7 @@ public class FundAction extends BaseFormAction{
 	
 	@SkipValidation
 	private BigDecimal getLoggedInUser() {
-		Integer uid = (Integer)HibernateUtil.getCurrentSession().get("com.egov.user.LoginUserId");
+		Integer uid = (Integer)getSession().get("com.egov.user.LoginUserId");
 		BigDecimal userId = new BigDecimal(uid.toString());
 		return userId;
 	}

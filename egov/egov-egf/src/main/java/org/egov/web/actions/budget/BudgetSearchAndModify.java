@@ -356,7 +356,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
         Long id = Long.valueOf(parameters.get("id")[0]);
         BudgetDetail detail = budgetDetailService.findById(id, false);
         budgetDetailService.delete(detail);
-        BudgetDetail criteria = (BudgetDetail)HibernateUtil.getCurrentSession().get(Constants.SEARCH_CRITERIA_KEY);
+        BudgetDetail criteria = (BudgetDetail)getSession().get(Constants.SEARCH_CRITERIA_KEY);
         savedbudgetDetailList = budgetDetailService.searchBy(criteria);
         return Constants.MODIFYLIST;
     }

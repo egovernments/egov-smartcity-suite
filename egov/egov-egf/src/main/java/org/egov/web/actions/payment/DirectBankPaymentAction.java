@@ -1065,7 +1065,7 @@ public String nonBillPayment()
 		//System.out.println("Payment id is"+parameters.get(PAYMENTID));
 		if(parameters.get(PAYMENTID)==null )
 		{
-			Object obj =HibernateUtil.getCurrentSession().get(PAYMENTID);
+			Object obj =getSession().get(PAYMENTID);
 			if(obj!=null)
 			{
 				paymentid=(String)obj;	

@@ -269,7 +269,7 @@ public class TargetAreaAction extends BaseFormAction {
 	}
 
 	private User getLoggedInUser() {
-		return null;//This fix is for Phoenix Migration.(User) persistenceService.load(User.class, Integer.valueOf(EGOVThreadLocals.getUserId()));
+		return null;//This fix is for Phoenix Migration.(User) persistenceService.getSession().load(User.class, Integer.valueOf(EGOVThreadLocals.getUserId()));
 	}
 
 	public TargetAreaService getTargetAreaService() {

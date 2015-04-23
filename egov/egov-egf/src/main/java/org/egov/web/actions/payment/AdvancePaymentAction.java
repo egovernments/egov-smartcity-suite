@@ -424,7 +424,7 @@ public class AdvancePaymentAction extends BasePaymentAction{
 	public Paymentheader getPayment() {
 		String paymentid=null;
 		if(parameters.get(PAYMENTID)==null) {
-			Object obj =HibernateUtil.getCurrentSession().get(PAYMENTID);
+			Object obj =getSession().get(PAYMENTID);
 			if(obj!=null) {
 				paymentid=(String)obj;	
 			}

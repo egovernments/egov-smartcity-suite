@@ -311,7 +311,7 @@ public class BudgetSearchAction extends BaseFormAction{
 			Budget	Budget=budgetService.findById(Long.valueOf(parameters.get("budget.id")[0]), false);
 			setTopBudget(Budget);
 		}
-		BudgetDetail criteria = (BudgetDetail)HibernateUtil.getCurrentSession().get(Constants.SEARCH_CRITERIA_KEY);
+		BudgetDetail criteria = (BudgetDetail)HibernateUtil.getCurrentSession().createCriteria(Constants.SEARCH_CRITERIA_KEY);
 		criteria.setBudget(budgetDetail.getBudget());
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Before getting List------------------------------------------------------------------------------------");
 		savedbudgetDetailList = budgetDetailService.searchBy(criteria);
@@ -347,7 +347,7 @@ public class BudgetSearchAction extends BaseFormAction{
 	//for search screen
 @Action(value="/budget/budgetSearch-groupedBudgetDetailList")
 	public String groupedBudgetDetailList(){
-		BudgetDetail criteria = (BudgetDetail)HibernateUtil.getCurrentSession().get(Constants.SEARCH_CRITERIA_KEY);
+		BudgetDetail criteria = (BudgetDetail)HibernateUtil.getCurrentSession().createCriteria(Constants.SEARCH_CRITERIA_KEY);
 		Budget budget = budgetDetail.getBudget();
 		if(budget!=null && budget.getId()!=null){
 			budget = (Budget) persistenceService.find("from Budget where id=?", budget.getId());
@@ -408,7 +408,7 @@ public class BudgetSearchAction extends BaseFormAction{
 			BudgetAmountView view = new BudgetAmountView();
 			budgetAmountView.add(view);
 			if(detail.getState()!=null)
-				detail.setComment(detail.getstate().getExtraInfo1());
+				detail.setComment(detail.getState().getExtraInfo());
 			BigDecimal approvedAmt = detail.getApprovedAmount()==null?BigDecimal.ZERO:divideAndRoundStrToBigDec(detail.getApprovedAmount().toString());
 			if(re) {
 				if(getConsiderReAppropriationAsSeperate())
@@ -464,8 +464,8 @@ public class BudgetSearchAction extends BaseFormAction{
 	{
 		Position pos;
 		try {
-			PersonalInformation emp=eisCommonService.getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-			pos=eisCommonService.getPositionforEmp(emp.getIdPersonalInformation());
+			//PersonalInformation emp=eisCommonService.getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			pos=null;//eisCommonService.getPositionforEmp(emp.getIdPersonalInformation());
 			} catch (Exception e) {
 			throw new EGOVRuntimeException("Unable to get Position for the user");
 		}
