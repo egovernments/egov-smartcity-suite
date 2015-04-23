@@ -383,29 +383,6 @@
 				</div>
 			</div>
 		</div>
-		<!-- Modal 6 (Long Modal) -->
-		<div class="modal fade loader-class" data-backdrop="static">
-			<div class="modal-dialog">
-				<div class="modal-body">
-					<div class="row spinner-margin text-center">
-						
-						<div class="col-md-12 ">
-							<div class="spinner">
-								<div class="rect1"></div>
-								<div class="rect2"></div>
-								<div class="rect3"></div>
-								<div class="rect4"></div>
-								<div class="rect5"></div>
-							</div>
-						</div>
-						<div class="col-md-12 spinner-text">
-							Loading..
-						</div>
-						
-					</div>
-				</div>
-			</div>
-		</div>
 		<script>
 		var menuItems = ${menu};
 		</script>
