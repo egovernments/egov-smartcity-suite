@@ -55,6 +55,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.support.ui.Menu;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.dao.ModuleDao;
+import org.egov.infstr.security.utils.CryptoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -104,14 +105,25 @@ public class HomeController {
     }
 
     @RequestMapping(value = "password/update")
-    public @ResponseBody boolean changePassword(@RequestParam final String currentPwd, @RequestParam final String newPwd, 
+    public @ResponseBody String changePassword(@RequestParam final String currentPwd, @RequestParam final String newPwd, 
     		@RequestParam final String retypeNewPwd) {
-    	//TODO
-    	return false;
+    	final User user = securityUtils.getCurrentUser();
+    	final String currentRawPwd = CryptoHelper.decrypt(user.getPassword());
+    	if (currentRawPwd.equals(currentPwd)) {
+    		if (newPwd.equals(retypeNewPwd)) {
+    			user.setPassword(CryptoHelper.encrypt(newPwd));
+    			//TODO Set next password expiry date
+    			//user.setPwdExpiryDate(new DateTime().toDate());
+    			userService.updateUser(user);
+    			return "SUCCESS";
+    		}
+    		return "NEWPWD_UNMATCH";
+    	} 
+    	return "CURRPWD_UNMATCH";
     }
     
     @RequestMapping(value = "feedback/sent")
-    public @ResponseBody boolean sendFeedback(@RequestParam final Integer actionId) {
+    public @ResponseBody boolean sendFeedback(@RequestParam final String subject, @RequestParam final String message) {
     	//TODO
     	return false;
     }

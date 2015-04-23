@@ -49,24 +49,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.security.authentication.SecureUser;
 import org.egov.infstr.security.utils.SecurityConstants;
 import org.egov.infstr.utils.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 public class EgovAuthenticationProcessingFilter extends UsernamePasswordAuthenticationFilter {
 	
 	private List<String> credentialFields = new ArrayList<String>();
-	private UserService userService;
-
-	public void setUserService(final UserService userService) {
-		this.userService = userService;
-	}
-
+	
 	public void setCredentialFields(final List<String> credentialFields) {
 		this.credentialFields = credentialFields;
 	}

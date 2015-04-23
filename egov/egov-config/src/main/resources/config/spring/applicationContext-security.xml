@@ -109,7 +109,6 @@
 				<value>ipAddress</value>
 			</list>
 		</property>
-		<property name="userService" ref="userService" />
 		<property name="authenticationSuccessHandler" ref="authenticationSuccessHandler" />
 		<property name="authenticationFailureHandler" ref="authenticationFailureHandler" />
 	</bean>

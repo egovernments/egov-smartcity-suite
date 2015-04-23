@@ -40,42 +40,47 @@
 
 $(document).ready(function()
 {	
+	//TODO not yet implemented at backend
 	$('#feedback-form').on('submit', function(e){
         e.preventDefault();
-        /*$.ajax({
+        $.ajax({
                 url: 'home/feedback/sent',
-                type: 'POST',
-                dataType: 'json',
-                data: {
-                        action: 'json'
-                },
+                type: 'GET',
+                data: {'subject':$("#subject").val(),'message':$("#comment").val()},
                 success: function(data) {
-                        
+                	bootbox.alert("Your feedback successfully submitted.");  
                 },
                 error: function() {
                         
                 }
-        });*/
+        });
         $('.loader-class').modal('hide')
 	});
 
 	$('#password-form').on('submit', function(e){
 	       e.preventDefault();
-	       /*$.ajax({
+	       $.ajax({
 	                url: 'home/password/update',
-	                type: 'POST',
-	                dataType: 'json',
-	                data: {
-	                        action: 'json'
-	                },
+	                type: 'GET',
+	                data: {'currentPwd': $("#old-pass").val(), 'newPwd':$("#new-pass").val(),'retypeNewPwd':$("#retype-pass").val()},
 	                success: function(data) {
-	                        
+	                	$('.loader-class').modal('hide');
+	                	var msg = "";
+	                	if (data == "SUCCESS") {
+	                		msg = "Your password has been updated."
+	                	} else if (data == "NEWPWD_UNMATCH") {
+	                		msg = "New password you have entered does not match with retyped password."
+	                	} else if (data == "CURRPWD_UNMATCH") {
+	                		msg = "Old password you have entered is incorrect."
+	                	} 
+	                	bootbox.alert(msg);
 	                },
 	                error: function() {
-	                        
+	                	$('.loader-class').modal('hide'); 
+	                	bootbox.alert("Internal server error occurred, please try after sometime.");
 	                }
-	        });*/
-	        $('.loader-class').modal('hide')
+	        });
+	        
 	});
 	tableContainer1 = $("#official_inbox"); 
 	
