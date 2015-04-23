@@ -268,7 +268,7 @@ public class ChartOfAccountsAction extends BaseFormAction{
 		String accountDetail = "";
 		if(accounts.getChartOfAccountDetails() == null)
 			return;
-		chartOfAccountServiceHibernateUtil.getCurrentSession().flush();
+		chartOfAccountService.getSession().flush();
 		persistenceService.setType(CChartOfAccountDetail.class);
 		try {
 			for (Accountdetailtype row : accountDetailType) {
@@ -332,7 +332,7 @@ public class ChartOfAccountsAction extends BaseFormAction{
 				}
 			}
 		chartOfAccountService.persist(accounts);
-		chartOfAccountServiceHibernateUtil.getCurrentSession().flush();
+		chartOfAccountService.getSession().flush();
 	}
 
 	List<Accountdetailtype> getAccountDetailTypeToBeDeleted(List<Accountdetailtype> accountDetailType,CChartOfAccounts accounts) {

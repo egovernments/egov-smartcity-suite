@@ -231,8 +231,7 @@ public class ExpenseBillPrintAction extends BaseFormAction{
 		}
 		paramMap.put("voucherDescription", getVoucherDescription());
 		if(cbill!=null && cbill.getState()!=null){
-			//coment for phoenix migration fix once api is ready
-			//loadInboxHistoryData(inboxService.getStateById(cbill.getState().getId()),paramMap);
+			loadInboxHistoryData(cbill.getState(),paramMap);
 		}
 		
 		if(billRegistermis != null){
@@ -428,54 +427,27 @@ public class ExpenseBillPrintAction extends BaseFormAction{
 		return voucher == null || voucher.getVoucherDate() == null ?"" : DateUtils.getDefaultFormattedDate(voucher.getVoucherDate());
 	}
 	
-	/*private void loadInboxHistoryData(State states, Map<String, Object> paramMap) throws EGOVRuntimeException {
+
+	void loadInboxHistoryData(State states, Map<String, Object> paramMap) throws EGOVRuntimeException {
 		List<String> history = new ArrayList<String>();
 		List<String> workFlowDate = new ArrayList<String>();
-		String approverDesignation = "";
-		String approvalDate = "";
-		String stateValue = "";
     	if (states != null) {
     	    List<StateHistory> stateHistory = states.getHistory();
-    	    Collections.reverse(stateHistory);
+    	  
     	    for (StateHistory state : stateHistory) {
-    	    	stateValue = state.getValue();
-	    		Position position = getStateUser(state);
-	    		if(!"NEW".equalsIgnoreCase(stateValue)){
-	    			if(null !=position.getDeptDesigId())
-	    				history.add(position.getDeptDesigId().getDesigId().getDesignationName());
-	    			else
-	    				history.add("Invalid mapping could not get designation");
-	    			workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(state.getLastModifiedDate()()));
-	    			
-	    	    	if(stateValue != null && !stateValue.equalsIgnoreCase("") && stateValue.toLowerCase().contains("approved"))
-	    	    	{
-	    	    		approverDesignation = position.getDeptDesigId().getDesigId().getDesignationName() ;
-	    	    		approvalDate = Constants.DDMMYYYYFORMAT2.format(state.getLastModifiedDate()());
-	    	    	}
+	    		
+	    		if(!"NEW".equalsIgnoreCase(state.getValue())){
+	    			history.add(state.getSenderName());
+	    			workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(state.getLastModifiedDate()));
 	    		}
     	    }
         }
-    	paramMap.put("workFlow_approver", approverDesignation);
-    	paramMap.put("workFlow_approval_date", approvalDate);
     	for (int i = 0; i<history.size();i++) {
     		paramMap.put("workFlow_"+i, history.get(i));
     		paramMap.put("workFlowDate_"+i, workFlowDate.get(i));
 		}
-    }*/
+    }
 	
-	//coment for phoenix migration 
-	
-	/*private Position getStateUser(State state) {
-    	if (state.getPrevious() != null)
-    	    return state.getPrevious().getOwner();
-    	else
-    	    return inboxService.getPrimaryPositionForUser(state.getCreatedBy().getId(), state.getCreatedDate());
-    }*/
-	
-	
-	/*public void setInboxService(InboxService inboxService) {
-		this.inboxService = inboxService;
-	}*/
 	
 	  
 	private void prepareForPrint()  {

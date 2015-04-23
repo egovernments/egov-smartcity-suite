@@ -26,6 +26,7 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.NumberToWord;
@@ -71,7 +72,6 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction{
 	Long id;
 	List<Miscbilldetail> miscBillDetailList;
 	Miscbilldetail ob=new Miscbilldetail();
-	InboxService inboxService;
 	static final String ACCDETAILTYPEQUERY=" from Accountdetailtype where id=?";
 	String bankName="";
 	String bankAccountNumber="";
@@ -87,7 +87,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction{
 		paramMap.put("bankAccountNumber", bankAccountNumber);
 		
 		if(paymentHeader!=null && paymentHeader.getState()!=null){
-			loadInboxHistoryData(inboxService.getStateById(paymentHeader.getState().getId()),paramMap);
+			loadInboxHistoryData(paymentHeader.getState(),paramMap);
 		}
 		
 		if(miscBillDetailList != null){
@@ -396,13 +396,13 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction{
 		List<String> history = new ArrayList<String>();
 		List<String> workFlowDate = new ArrayList<String>();
     	if (states != null) {
-    	    List<State> stateHistory = states.getHistory();
-    	    Collections.reverse(stateHistory);
-    	    for (State state : stateHistory) {
-	    		Position position = getStateUser(state);
+    	    List<StateHistory> stateHistory = states.getHistory();
+    	  
+    	    for (StateHistory state : stateHistory) {
+	    		
 	    		if(!"NEW".equalsIgnoreCase(state.getValue())){
-	    			history.add(position.getDesigId().getDesignationName());
-	    			workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(state.getModifiedDate()));
+	    			history.add(state.getSenderName());
+	    			workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(state.getLastModifiedDate()));
 	    		}
     	    }
         }
@@ -412,17 +412,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction{
 		}
     }
 	
-	private Position getStateUser(State state) {
-    	if (state.getPrevious() != null)
-    	    return state.getPrevious().getOwner();
-    	else
-    	    return inboxService.getPrimaryPositionForUser(state.getCreatedBy().getId(), state.getCreatedDate());
-    }
 	
-	
-	public void setInboxService(InboxService inboxService) {
-		this.inboxService = inboxService;
-	}
 
 	String getVoucherDescription() {
 		return voucher == null || voucher.getDescription() == null?"" : voucher.getDescription();

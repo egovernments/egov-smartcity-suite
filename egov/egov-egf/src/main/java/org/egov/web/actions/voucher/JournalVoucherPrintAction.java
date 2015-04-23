@@ -34,6 +34,7 @@ import org.egov.infra.admin.master.entity.CityWebsite;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
@@ -63,7 +64,6 @@ public class JournalVoucherPrintAction extends BaseFormAction{
 	InputStream inputStream;
 	ReportHelper reportHelper;
 	Long id;
-	private InboxService inboxService;
 	List <WorkFlowHistoryItem> inboxHistory = new ArrayList<WorkFlowHistoryItem>();
 	private CityWebsiteDAO cityWebsiteDAO;
 	private BillsService billsManager;
@@ -161,7 +161,7 @@ public class JournalVoucherPrintAction extends BaseFormAction{
 		if(voucher!=null && voucher.getVouchermis()!=null && voucher.getVouchermis().getDepartmentid()!=null){
 			persistenceService.setType(Department.class);
 			Department dept = (Department) persistenceService.findById(voucher.getVouchermis().getDepartmentid().getId(), false);
-			return dept == null ? "" : dept.getDeptName();
+			return dept == null ? "" : dept.getName();
 		}
 		return "";
 	}
@@ -196,7 +196,7 @@ public class JournalVoucherPrintAction extends BaseFormAction{
 		paramMap.put("workFlowHistory", inboxHistory);
 		paramMap.put("workFlowJasper", reportHelper.getClass().getResourceAsStream("/org/egov/web/actions/voucher/workFlowHistoryReport.jasper"));
 		HttpServletRequest request = ServletActionContext.getRequest();
-		HttpSession session = requestHibernateUtil.getCurrentSession();
+		HttpSession session = request.getSession();
 		CityWebsite cityWebsite = cityWebsiteDAO.getCityWebSiteByURL((String) session.getAttribute("cityurl"));
 		String billType = billsManager.getBillTypeforVoucher(voucher);
 		if(null == billType){
@@ -266,37 +266,36 @@ public class JournalVoucherPrintAction extends BaseFormAction{
     	    return null;// inboxService.getPrimaryPositionForUser(state.getCreatedBy().getId(), state.getCreatedDate());
         }*/
 
-   /* private void loadInboxHistoryData(State states) throws EGOVRuntimeException {
+   private void loadInboxHistoryData(State states) throws EGOVRuntimeException {
     	if (states != null) {
-    	    List<State> stateHistory = states.getHistory();
+    	    List<StateHistory> stateHistory = states.getHistory();
     	    Collections.reverse(stateHistory);
-    	    for (State state : stateHistory) {
-	    		Position position = getStateUser(state);
-	    		User user = null;
-	    		if (position != null) {
-	    		    user = inboxService.getUserForPosition(position.getId(), state.getCreatedDate());
-	    		}
-	    		WorkflowTypes workflowTypes = inboxService.getWorkflowType(state.getType());
-	    		String pos = (position == null ? "Unknown" : position.getName()).concat(" / ").concat(user == null ? "Unknown" : user.getUserName());
+    	    for (StateHistory state : stateHistory) {
+	    		
+	    		
+	    		
+	    		//WorkflowTypes workflowTypes = inboxService.getWorkflowType(state.getType());
+	    		String pos = (state.getSenderName()).concat(" / ").concat(state.getSenderName());
 	    		String nextAction = getNextAction(state);
 	    		if(!"NEW".equalsIgnoreCase(state.getValue())){
 	    			WorkFlowHistoryItem inboxHistoryItem = new WorkFlowHistoryItem(getFormattedDate(state.getCreatedDate(), "dd/MM/yyyy hh:mm a"),pos,
-	    					workflowTypes==null?"":workflowTypes.getDisplayName(),state.getValue().concat(nextAction.equals("") ? "" : "~"+nextAction),
-	    							state.getText1() != null ? removeSpecialCharacters(state.getText1()) : "");
+	    					"",state.getValue().concat(nextAction.equals("") ? "" : "~"+nextAction),
+	    							state.getExtraInfo() != null ? removeSpecialCharacters(state.getExtraInfo()) : "");
 		    		inboxHistory.add(inboxHistoryItem);
 	    		}
     	    }
         }
     }
-*/
+
     private String removeSpecialCharacters(String str) {
     	return str.replaceAll("\\s\\s+|\\r\\n", "<br/>").replaceAll("\'", "\\\\'");
     }
-    private String getNextAction(State state) {
+    private String getNextAction(StateHistory state) {
     	if (state.getNextAction() == null) {
     	    return "";
     	} else {
-    	    org.egov.infstr.workflow.Action action = (org.egov.infstr.workflow.Action)persistenceService.findByNamedQuery(org.egov.infstr.workflow.Action.BY_NAME_AND_TYPE, state.getNextAction(),state.getType());
+    	    org.egov.infstr.workflow.Action action = (org.egov.infstr.workflow.Action)
+    	    		persistenceService.findByNamedQuery(org.egov.infstr.workflow.Action.BY_NAME_AND_TYPE, state.getNextAction(),null);
     	    if (action != null) {
     	    	return " - "+ (action.getDescription() != null ? action.getDescription() : state.getNextAction());
     	    } else {
@@ -305,9 +304,7 @@ public class JournalVoucherPrintAction extends BaseFormAction{
     	}
     }
 
-	public void setInboxService(InboxService inboxService) {
-		this.inboxService = inboxService;
-	}
+	
 	public void setBudgetAppropriationService(BudgetAppropriationService budgetAppropriationService) {
 		this.budgetAppropriationService = budgetAppropriationService;
 	}

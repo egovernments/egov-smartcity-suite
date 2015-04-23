@@ -117,7 +117,8 @@ public class BillVoucherAction extends BaseVoucherAction {
 	public List<Action> getValidActions(String purpose) {
 		List<Action> validButtons = new ArrayList<Action>();
 		Script validScript = (Script) getPersistenceService().findAllByNamedQuery(Script.BY_NAME,"pjv.validbuttons").get(0);
-		List<String> list = (List<String>) validScript.eval(Script.createContext("eisCommonServiceBean", eisCommonService,"userId",Integer.valueOf(EGOVThreadLocals.getUserId().trim()),"date",new Date(),"purpose",purpose));
+		//script service 
+		List<String> list = null;/*(List<String>) validScript.eval(Script.createContext("eisCommonServiceBean", eisCommonService,"userId",Integer.valueOf(EGOVThreadLocals.getUserId().trim()),"date",new Date(),"purpose",purpose));*/
 		for(Object s:list) 
 		{
 			if("invalid".equals(s))
