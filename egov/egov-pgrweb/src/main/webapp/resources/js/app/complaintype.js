@@ -100,8 +100,7 @@ jQuery(document).ready(function($) {
 			$(this).val(false);
 		}
 	});
-
-	$("#comp_type_loc_yes").attr('checked', 'checked');
+	
 	$("#buttonCreate").click(function() {
 		$('#complaintTypeViewForm').attr('method', 'get');
 		$('#complaintTypeViewForm').attr('action', '/pgr/complainttype/create');
@@ -112,3 +111,4 @@ jQuery(document).ready(function($) {
 		$('#complaintTypeViewForm').attr('action', action);
 	});
 });
+

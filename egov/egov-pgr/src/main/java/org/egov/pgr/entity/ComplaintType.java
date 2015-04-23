@@ -95,7 +95,7 @@ public class ComplaintType extends AbstractPersistable<Long> {
     private Department department;
 
     @Column(name = "location_required")
-    private boolean locationRequired;
+    private boolean locationRequired = true;
     
     @Column(name = "isActive")
     private boolean isActive = true;

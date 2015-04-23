@@ -82,14 +82,23 @@
 							<spring:message code="lbl.complaintType.loc" />
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-loc">
-							${complaintType.locationRequired}</div>
+							<c:choose>
+								<c:when test="${complaintType.locationRequired == true}">
+						              Yes</c:when>
+								<c:otherwise>No</c:otherwise>
+							</c:choose>
+						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-3 col-xs-6 add-margin">
 							<spring:message code="lbl.isactive" />
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-isactive">
-							${complaintType.isActive}</div>
+							<c:choose>
+								<c:when test="${complaintType.isActive == true}">
+						           Yes</c:when>
+								<c:otherwise>No</c:otherwise>
+							</c:choose></div>
 					</div>
 					
 					<div class="row">

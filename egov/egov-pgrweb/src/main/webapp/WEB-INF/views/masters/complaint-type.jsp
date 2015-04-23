@@ -120,7 +120,7 @@
 									code="lbl.isactive"></spring:message></label>
 
 							<div class="col-sm-3 col-xs-8 add-margin">
-								<form:checkbox path="isActive" id="comp_type_isactive" checked="checked"/>
+								<form:checkbox path="isActive" id="comp_type_isactive" />
 								<form:errors path="isActive" cssClass="error-msg" />
 							</div>
 
