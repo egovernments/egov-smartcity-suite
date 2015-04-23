@@ -48,7 +48,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.support.ui.Inbox;
 import org.egov.infra.workflow.entity.State;
@@ -57,7 +56,6 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infra.workflow.inbox.InboxRenderService;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
-import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -98,12 +96,10 @@ public class InboxController {
         for (final StateAware stateAware : inboxStates) {
             final State state = stateAware.getCurrentState();
             final WorkflowTypes workflowTypes = inboxRenderServiceDeligate.getWorkflowType(stateAware.getStateType());
-            final Position position = inboxRenderServiceDeligate.getStateUserPosition(state);
-            final User user = inboxRenderServiceDeligate.getStateUser(state, position);
             final Inbox inboxItem = new Inbox();
             inboxItem.setId(InboxRenderService.GROUP_Y.equals(workflowTypes.getGroupYN()) ? EMPTY : state.getId() + "#" + workflowTypes.getId());
             inboxItem.setDate(getFormattedDate(state.getCreatedDate().toDate(), "dd/MM/yyyy hh:mm a"));
-            inboxItem.setSender(inboxRenderServiceDeligate.prettyPrintSenderName(position, user));
+            inboxItem.setSender(state.getSenderName());
             inboxItem.setTask(workflowTypes.getDisplayName());
             final String nextAction = inboxRenderServiceDeligate.getNextAction(state);
             inboxItem.setStatus(state.getValue() + (EMPTY.equals(nextAction) ? EMPTY : " - " + nextAction));
@@ -117,20 +113,15 @@ public class InboxController {
     private String createInboxHistoryData(final List<StateHistory> stateHistories) {
         final List<Inbox> inboxHistoryItems = new LinkedList<>();
         for (final StateHistory stateHistory : stateHistories) {
-            final Position position = stateHistory.getOwnerPosition();
-            final User user = inboxRenderServiceDeligate.getStateUser(stateHistory.getState(), position);
-            final WorkflowTypes workflowTypes = inboxRenderServiceDeligate.getWorkflowType(stateHistory.getState()
-                    .getType());
-
+            final WorkflowTypes workflowTypes = inboxRenderServiceDeligate.getWorkflowType(stateHistory.getState().getType());
             final Inbox inboxHistoryItem = new Inbox();
             inboxHistoryItem.setId(stateHistory.getState().getId().toString());
             inboxHistoryItem.setDate(getFormattedDate(stateHistory.getCreatedDate(), "dd/MM/yyyy hh:mm a"));
-            inboxHistoryItem.setSender(inboxRenderServiceDeligate.prettyPrintSenderName(position, user));
+            inboxHistoryItem.setSender(stateHistory.getSenderName());
             inboxHistoryItem.setTask(workflowTypes.getDisplayName());
             final String nextAction = inboxRenderServiceDeligate.getNextAction(stateHistory.getState());
             inboxHistoryItem.setStatus(stateHistory.getValue() + (EMPTY.equals(nextAction) ? EMPTY : "~" + nextAction));
-            inboxHistoryItem.setDetails(stateHistory.getComments() == null ? EMPTY : escapeSpecialChars(stateHistory
-                    .getComments()));
+            inboxHistoryItem.setDetails(stateHistory.getComments() == null ? EMPTY : escapeSpecialChars(stateHistory.getComments()));
             inboxHistoryItem.setLink(EMPTY);
             inboxHistoryItems.add(inboxHistoryItem);
         }

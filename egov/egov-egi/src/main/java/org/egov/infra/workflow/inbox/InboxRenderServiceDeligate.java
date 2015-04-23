@@ -54,7 +54,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -62,7 +61,6 @@ import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.Action;
-import org.egov.pims.commons.Position;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -147,7 +145,6 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
         return draftWfItems;
     }
     
-    
     public WorkflowTypes getWorkflowType(final String wfType) {
         return WF_TYPES.get(wfType);
     }
@@ -166,8 +163,6 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
         }
         return Optional.ofNullable(workflowTypeService);
     }
-
-    
 
     public List<T> getFilteredInboxItems(final Long owner, final Long userId, final Long sender, final String taskName,
             final Date fromDate, final Date toDate) {
@@ -216,24 +211,6 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
                 nextAction = action.getDescription() == null ? state.getNextAction() : action.getDescription();
         }
         return nextAction;
-    }
-
-    public Position getStateUserPosition(final State state) {
-        return state.getHistory().isEmpty() ? this.eisService.getPrimaryPositionForUser(state.getCreatedBy().getId(),
-                state.getCreatedDate().toDate()) : state.getHistory().get(state.getHistory().size() - 1)
-                .getOwnerPosition();
-
-    }
-
-    public User getStateUser(final State state, final Position position) {
-        return this.eisService.getUserForPosition(position.getId(), state.getCreatedDate().toDate());
-    }
-
-    public String prettyPrintSenderName(final Position position, final User user) {
-        final StringBuilder senderName = new StringBuilder();
-        senderName.append(position == null ? UNKNOWN : position.getName()).append(SLASH_DELIMIT)
-        .append(user == null ? UNKNOWN : user.getName());
-        return senderName.toString();
     }
 
 }
