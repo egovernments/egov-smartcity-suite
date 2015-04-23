@@ -408,7 +408,7 @@ public class BudgetSearchAction extends BaseFormAction{
 			BudgetAmountView view = new BudgetAmountView();
 			budgetAmountView.add(view);
 			if(detail.getState()!=null)
-				detail.setComment(detail.getState().getText1());
+				detail.setComment(detail.getstate().getExtraInfo1());
 			BigDecimal approvedAmt = detail.getApprovedAmount()==null?BigDecimal.ZERO:divideAndRoundStrToBigDec(detail.getApprovedAmount().toString());
 			if(re) {
 				if(getConsiderReAppropriationAsSeperate())

@@ -42,6 +42,7 @@ import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfig;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.models.Script;
+import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.masters.model.AccountEntity;
@@ -129,6 +130,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
 	private VoucherHelper voucherHelper;
 	private JournalVoucherModifyAction journalvouchermodify; 
 	private boolean showVoucherDate;
+	private ScriptService scriptService;
 	
 	
 
@@ -430,10 +432,10 @@ public class PreApprovedVoucherAction extends BaseFormAction
 				vhid =billsAccountingService.createPreApprovedVoucherFromBill(Integer.parseInt(parameters.get(BILLID)[0]), voucherNumber, preApprovedVoucher.getVoucherDate());
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("voucher id======="+vhid);
 			voucherHeader = (CVoucherHeader) getPersistenceService().find(VOUCHERQUERY, vhid);
-			voucherHeader.setModifiedDate(new DateTime());
-			voucherWorkflowService.start(voucherHeader, getPosition(), parameters.get("comments")[0]);
+			voucherHeader.setLastModifiedDate(new DateTime());
+			//voucherWorkflowService.start(voucherHeader, getPosition(), parameters.get("comments")[0]);
 			sendForApproval();
-			addActionMessage(getText(egBillregister.getExpendituretype()+".voucher.created",new String[]{voucherHeader.getVoucherNumber(),voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwner())}));
+			addActionMessage(getText(egBillregister.getExpendituretype()+".voucher.created",new String[]{voucherHeader.getVoucherNumber(),voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition())}));
 			
 		}catch(ValidationException e)
 		{
@@ -441,12 +443,12 @@ public class PreApprovedVoucherAction extends BaseFormAction
 			voucher();
 			throw new ValidationException(e.getErrors());
 		}
-		catch(EJBException e)
+		catch(Exception e)
 		{
 
 			if(e.getCause().getClass().equals(ValidationException.class))
 			{
-				ValidationException s =(ValidationException) e.getCausedByException();
+				ValidationException s =(ValidationException) e;
 				throw new ValidationException(s.getErrors());
 			}
 			LOGGER.error(e.getMessage());
@@ -455,18 +457,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
 			loadApproverUser(type);
 			throw new ValidationException(errors);
 		}
-		catch(Exception e)
-		{
-			if(e.getCause().getClass().equals(ValidationException.class))
-			{
-				ValidationException s = (ValidationException)e;
-				throw new ValidationException(s.getErrors());
-			}
-			LOGGER.error(e.getMessage());
-			List<ValidationError> errors=new ArrayList<ValidationError>();
-			errors.add(new ValidationError("exception",e.getCause().getMessage()));
-			throw new ValidationException(errors);
-		}
+		
 		displayVoucherNumber = false;
 		return "billview";
 	}
@@ -487,10 +478,10 @@ public class PreApprovedVoucherAction extends BaseFormAction
 				if("END".equals(voucherHeader.getState().getValue()))
 					addActionMessage(getText("pjv.voucher.final.approval",new String[]{"The File has been approved"}));
 				else
-					addActionMessage(getText("pjv.voucher.approved",new String[]{voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwner())}));
+					addActionMessage(getText("pjv.voucher.approved",new String[]{voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition())}));
 			}
 			else{
-				addActionMessage(getText("pjv.voucher.rejected",new String[]{voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwner())}));
+				addActionMessage(getText("pjv.voucher.rejected",new String[]{voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition())}));
 			}
 		}
 
@@ -562,9 +553,9 @@ public class PreApprovedVoucherAction extends BaseFormAction
 			if("END".equals(voucherHeader.getState().getValue()))
 				addActionMessage(getText("pjv.voucher.final.approval",new String[]{"The File has been approved"}));
 			else
-				addActionMessage(getText("pjv.voucher.approved",new String[]{voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwner())}));
+				addActionMessage(getText("pjv.voucher.approved",new String[]{voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition())}));
 		else
-			addActionMessage(getText("pjv.voucher.rejected",new String[]{voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwner())}));
+			addActionMessage(getText("pjv.voucher.rejected",new String[]{voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition())}));
 		return "message";
 	}
 
@@ -932,15 +923,14 @@ public class PreApprovedVoucherAction extends BaseFormAction
 	{
 		Position pos;
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("getPosition===="+Integer.valueOf(EGOVThreadLocals.getUserId()));
-			pos = eisCommonService.getPositionByUserId(Long.valueOf(EGOVThreadLocals.getUserId()));
+			pos = null;//eisCommonService.getPositionByUserId(Long.valueOf(EGOVThreadLocals.getUserId()));
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("position==="+pos.getId());
 		return pos;
 	}
 
 	public List<Action> getValidActions(String purpose){
 		List<Action> validButtons = new ArrayList<Action>();
-		Script validScript = (Script) getPersistenceService().findAllByNamedQuery(Script.BY_NAME,"pjv.validbuttons").get(0);
-		List<String> list = (List<String>) validScript.eval(Script.createContext("eisCommonServiceBean", eisCommonService,"userId",Integer.valueOf(EGOVThreadLocals.getUserId().trim()),"date",new Date(),"purpose",purpose));
+		List<String> list = (List<String>) scriptService.executeScript("pjv.validbuttons",ScriptService.createContext("eisCommonServiceBean", eisCommonService,"userId",Integer.valueOf(EGOVThreadLocals.getUserId().trim()),"date",new Date(),"purpose",purpose));
 		for(Object s:list)
 		{
 			if("invalid".equals(s))
@@ -991,8 +981,8 @@ public class PreApprovedVoucherAction extends BaseFormAction
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("validating owner for user "+EGOVThreadLocals.getUserId());
 		List<Position> positionsForUser=null;
-		positionsForUser = eisService.getPositionsForUser(Integer.valueOf(EGOVThreadLocals.getUserId()), new Date());
-		if(positionsForUser.contains(state.getOwner()))      
+		positionsForUser = null;//eisService.getPositionsForUser(Integer.valueOf(EGOVThreadLocals.getUserId()), new Date());
+		if(positionsForUser.contains(state.getOwnerPosition()))      
 		{
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Valid Owner :return true");
 			return true;

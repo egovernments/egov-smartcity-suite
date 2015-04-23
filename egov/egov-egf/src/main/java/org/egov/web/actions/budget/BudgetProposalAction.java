@@ -711,8 +711,8 @@ int i=0;
 		bpbean.setProposedBE(bd.getNextYroriginalAmount().setScale(2));
 		bpbean.setApprovedRE(bd.getApprovedAmount().setScale(2));
 		bpbean.setApprovedBE(bd.getNextYrapprovedAmount().setScale(2));
-		if(LOGGER.isInfoEnabled())     LOGGER.info("before bd.getState().getText1()");
-	//	bpbean.setRemarks(bd.getState().getText1());     
+		if(LOGGER.isInfoEnabled())     LOGGER.info("before bd.getstate().getExtraInfo1()");
+	//	bpbean.setRemarks(bd.getstate().getExtraInfo1());     
 		if(LOGGER.isInfoEnabled())     LOGGER.info("Finished populateBudgetProposalBean..... ");    
 	}
 

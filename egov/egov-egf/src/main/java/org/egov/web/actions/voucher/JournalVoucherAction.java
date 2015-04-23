@@ -21,6 +21,7 @@ import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.models.Script;
+import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.voucher.VoucherDetails;
@@ -39,7 +40,6 @@ public class JournalVoucherAction extends BaseVoucherAction
 	private static final long serialVersionUID = 1L;
 	private List<VoucherDetails> billDetailslist;
 	private List<VoucherDetails> subLedgerlist;
-	UserServiceHome umh;   
 	private String target;
 	protected String showMode;
 	private VoucherService voucherService;
@@ -57,6 +57,7 @@ public class JournalVoucherAction extends BaseVoucherAction
 	protected EisCommonService eisCommonService;
 	private CommonsService commonsService;
 	private String worksVoucherRestrictedDate;
+	private ScriptService scriptService;
 	
 	
 	@SuppressWarnings("unchecked")
@@ -155,10 +156,10 @@ public class JournalVoucherAction extends BaseVoucherAction
 						 if(LOGGER.isDebugEnabled())     LOGGER.debug(" Journal Voucher Action | Bill create | voucher name = "+ voucherTypeBean.getVoucherName());
 						 voucherService.createBillForVoucherSubType(billDetailslist, subLedgerlist, voucherHeader, voucherTypeBean,new BigDecimal(totalamount));
 					 }				 
-						 voucherWorkflowService.start(voucherHeader, getPosition(),voucherHeader.getDescription());
+						 //voucherWorkflowService.start(voucherHeader, getPosition(),voucherHeader.getDescription());
 						 sendForApproval();           
 						// addActionMessage( voucherHeader.getVoucherNumber() + getText("voucher.created.successfully"));
-						// addActionMessage(getText("pjv.voucher.approved",new String[]{voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwner())}));
+						// addActionMessage(getText("pjv.voucher.approved",new String[]{voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition())}));
 						 message="Voucher  "+voucherHeader.getVoucherNumber()+" Created Sucessfully" +"\\n"+ getText("pjv.voucher.approved",new String[]{voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition())}); 
 						 target = "success";
 					
@@ -208,7 +209,7 @@ public class JournalVoucherAction extends BaseVoucherAction
 	@SuppressWarnings("unchecked")
 	private void loadApproverUser(String type){
 		String scriptName = "billvoucher.nextDesg";
-		departmentId = voucherService.getCurrentDepartment().getId();
+		departmentId = voucherService.getCurrentDepartment().getId().intValue();
 		EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
 		Map<String, Object>  map = voucherService.getDesgByDeptAndType(type, scriptName);
 		if(null == map.get("wfitemstate")){
@@ -225,11 +226,11 @@ public class JournalVoucherAction extends BaseVoucherAction
 		}
 	}
 	
-	public Position getPosition()throws EGOVRuntimeException
+	public Position getPosition() throws EGOVRuntimeException
 	{
 		Position pos;
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("getPosition===="+Integer.valueOf(EGOVThreadLocals.getUserId()));
-			pos = eisCommonService.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			pos = null;//eisCommonService.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("position==="+pos.getId());
 		return pos;
 	}
@@ -237,7 +238,7 @@ public class JournalVoucherAction extends BaseVoucherAction
 	public List<Action> getValidActions(String purpose){
 		List<Action> validButtons = new ArrayList<Action>();
 		Script validScript = (Script) getPersistenceService().findAllByNamedQuery(Script.BY_NAME,"pjv.validbuttons").get(0);
-		List<String> list = (List<String>) validScript.eval(Script.createContext("eisCommonServiceBean", eisCommonService,"userId",Integer.valueOf(EGOVThreadLocals.getUserId().trim()),"date",new Date(),"purpose",purpose));
+		List<String> list = (List<String>) scriptService.executeScript(validScript,ScriptService.createContext("eisCommonServiceBean", eisCommonService,"userId",Integer.valueOf(EGOVThreadLocals.getUserId().trim()),"date",new Date(),"purpose",purpose));
 		for(Object s:list)
 		{
 			if("invalid".equals(s))
@@ -259,7 +260,7 @@ public class JournalVoucherAction extends BaseVoucherAction
 			 userId = parameters.get("approverUserId")!=null?Integer.valueOf(parameters.get("approverUserId")[0]):
 				 											Integer.valueOf( EGOVThreadLocals.getUserId());
 		}else{
-			userId = voucherHeader.getCreatedBy().getId();
+			userId = voucherHeader.getCreatedBy().getId().intValue();
 		}
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("User selected id is : "+userId);                  
 		voucherWorkflowService.transition(parameters.get(ACTIONNAME)[0]+"|"+userId, voucherHeader,parameters.get("comments")[0]);

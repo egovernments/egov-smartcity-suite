@@ -313,8 +313,7 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
 				ebDtls.setIsHighlight((ebDtls.getVariance().compareTo(EBUtils.EBBILL_VARIANCE_PERCENTAGE1) < 0 || ebDtls
 						.getVariance().compareTo(EBUtils.EBBILL_VARIANCE_PERCENTAGE2) > 0) ? true : false);
 			}
-			//This fix is for Phoenix Migration.
-			//ebDtls.setRemarks(ebDtls.getState().getText2());
+			ebDtls.setRemarks(ebDtls.getState().getExtraInfo());
 		}
 		
 		mode = FinancialConstants.STRUTS_RESULT_PAGE_VIEW;

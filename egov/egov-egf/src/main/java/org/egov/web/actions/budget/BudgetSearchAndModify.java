@@ -22,6 +22,7 @@ import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.models.Script;
+import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.workflow.Action;
@@ -45,8 +46,17 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
     protected WorkflowService<Budget> budgetWorkflowService;
     private boolean    showDetails=false;
 	private boolean isDetailByFunction;
+	private ScriptService scriptService;
 
-    public String modifyList(){
+    public ScriptService getScriptService() {
+		return scriptService;
+	}
+
+	public void setScriptService(ScriptService scriptService) {
+		this.scriptService = scriptService;
+	}
+
+	public String modifyList(){
         if(LOGGER.isInfoEnabled())     LOGGER.info("Starting modifyList...");
         if(parameters.containsKey(Constants.MODE) && ("approve".equals(parameters.get(Constants.MODE)[0]))){
 				setMode(parameters.get(Constants.MODE)[0]);
@@ -115,7 +125,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
   				
   				budgetDetail=(BudgetDetail) persistenceService.find("from BudgetDetail where id=?",Long.valueOf(parameters.get("budgetDetail.id")[0]));
   	            setTopBudget(budgetDetail.getBudget());
-  	            comments = topBudget.getState().getText1();
+  	            comments = topBudget.getState().getExtraInfo();
   	        }
   	       //if u want only selected function centre filter here by owner
   			String query =" from BudgetDetail bd where bd.budget=? and bd.function="+budgetDetail.getFunction().getId()+"  order by bd.function.name,bd.budgetGroup.name"	;
@@ -262,7 +272,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
             {
             	detail.setApprovedAmount(detail.getApprovedAmount().multiply(BigDecimal.valueOf(1000)));
             }
-            String comment = detail.getState()==null?"":detail.getState().getText1();
+            String comment = detail.getState()==null?"":detail.getstate().getExtraInfo1();
           
            detail.changeState("END", positionByUserId, comment);
            budgetDetailService.persist(detail);
@@ -294,7 +304,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
                {
                	detail.setApprovedAmount(detail.getApprovedAmount().multiply(BigDecimal.valueOf(1000)));
                }
-               String comment = detail.getState()==null?"":detail.getState().getText1();
+               String comment = detail.getState()==null?"":detail.getstate().getExtraInfo1();
              
                detail.changeState("Forwarded by "+name, positionByUserId, comment);
                
@@ -359,12 +369,12 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
         {
             topBudget=budgetService.findById(Long.valueOf(parameters.get("budget.id")[0]), false);
            
-            comments = topBudget.getState().getText1();
+            comments = topBudget.getstate().getExtraInfo1();
         }else if(parameters.get("budgetDetail.budget.id")[0]!=null)
         {
         	 topBudget=budgetService.findById(Long.valueOf(parameters.get("budgetDetail.budget.id")[0]), false);
         }
-        comments = topBudget.getState().getText1();
+        comments = topBudget.getstate().getExtraInfo1();
         //budgetDetail=budgetDetailService.find("from BudgetDetail where budget=?",topBudget);
         savedbudgetDetailList =getAllApprovedBudgetDetails(topBudget);
         if(savedbudgetDetailList.size()>0)
@@ -396,7 +406,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
 			budgetAmountView.add(view);
 		   //	if(LOGGER.isInfoEnabled())     LOGGER.info(view);
 			if(detail.getState()!=null)
-				detail.setComment(detail.getState().getText1());
+				detail.setComment(detail.getstate().getExtraInfo1());
 			BigDecimal approvedAmt = detail.getApprovedAmount()==null?BigDecimal.ZERO:detail.getApprovedAmount().setScale(2);
 			if(re) {
 				view.setCurrentYearReApproved(approvedAmt.setScale(2).toString());
@@ -546,8 +556,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
     }
 
     private void setEnablingAmounts(){
-        Script script = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME, "BudgetDetail.enable.amounts").get(0);
-        String value = (String) script.eval(Script.createContext("wfItem",topBudget,"persistenceService",budgetService));
+        String value = (String) scriptService.executeScript( "BudgetDetail.enable.amounts", ScriptService.createContext("wfItem",topBudget,"persistenceService",budgetService));
         if("approved".equalsIgnoreCase(value))
             enableApprovedAmount = true;
         else if("original".equalsIgnoreCase(value))

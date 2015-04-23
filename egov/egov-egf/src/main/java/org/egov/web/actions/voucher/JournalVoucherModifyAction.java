@@ -29,6 +29,7 @@ import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.models.Script;
+import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.bills.EgBillregister;
@@ -83,6 +84,7 @@ public class JournalVoucherModifyAction  extends BaseVoucherAction{
 	private FinancialYearDAO financialYearDAO;
 	
 	private boolean isOneFunctionCenter;
+	private ScriptService scriptService;
 	
 	
 	@SuppressWarnings("unchecked")
@@ -111,14 +113,14 @@ public class JournalVoucherModifyAction  extends BaseVoucherAction{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("JournalVoucherModifyAction | loadvouchers | Start ");
 		if(parameters.get(VHID)==null ||"".equals(parameters.get(VHID)))
 		{
-			Object obj =HibernateUtil.getCurrentSession().get("voucherId");       
+			Object obj =getSession().get("voucherId");       
 			if(obj!=null)
 			{
 				//isRejectedVoucher=true;
 				voucherHeaderId=(String)obj;	
 			}
 			isOneFunctionCenter=voucherHeader.getIsRestrictedtoOneFunctionCenter(); 
-		getSession().put("voucherId", null);  
+			getSession().put("voucherId", null);  
 			//voucherHeader = (CVoucherHeader) getPersistenceService().find(VOUCHERQUERY, Long.valueOf(voucherHeaderId));  
 		}
 		if(voucherHeaderId!=null){
@@ -129,7 +131,7 @@ public class JournalVoucherModifyAction  extends BaseVoucherAction{
 		try{
 		 if(voucherHeader != null && voucherHeader.getState() != null){
 			 if( voucherHeader.getState().getValue().contains("REJECTED")){
-				 positionsForUser = eisService.getPositionsForUser(Integer.valueOf(EGOVThreadLocals.getUserId()), new Date());
+				 positionsForUser = null;// eisService.getPositionsForUser(Integer.valueOf(EGOVThreadLocals.getUserId()), new Date());
 					if(positionsForUser.contains(voucherHeader.getState().getOwnerPosition()))      
 					{
 						if(LOGGER.isDebugEnabled())     LOGGER.debug("Valid Owner :return true");
@@ -377,15 +379,14 @@ public Position getPosition()throws EGOVRuntimeException
 {
 	Position pos;
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("getPosition===="+Integer.valueOf(EGOVThreadLocals.getUserId()));
-		pos = eisCommonService.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		pos = null;// eisCommonService.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("position==="+pos.getId());
 	return pos;
 }
 	@SkipValidation
 	public List<Action> getValidActions(String purpose){
 		List<Action> validButtons = new ArrayList<Action>();
-		Script validScript = (Script) getPersistenceService().findAllByNamedQuery(Script.BY_NAME,"pjv.validbuttons").get(0);
-		List<String> list = (List<String>) validScript.eval(Script.createContext("eisCommonServiceBean", eisCommonService,"userId",Integer.valueOf(EGOVThreadLocals.getUserId().trim()),"date",new Date(),"purpose",purpose));
+		List<String> list = (List<String>) scriptService.executeScript("pjv.validbuttons",ScriptService.createContext("eisCommonServiceBean", eisCommonService,"userId",Integer.valueOf(EGOVThreadLocals.getUserId().trim()),"date",new Date(),"purpose",purpose));
 		for(Object s:list)
 		{
 			if("invalid".equals(s))
@@ -399,7 +400,7 @@ public Position getPosition()throws EGOVRuntimeException
 	@SuppressWarnings("unchecked")
 	private void loadApproverUser(String type){
 		String scriptName = "billvoucher.nextDesg";    
-		departmentId = voucherService.getCurrentDepartment().getId();
+		departmentId = voucherService.getCurrentDepartment().getId().intValue();
 		EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
 		Map<String, Object>  map = voucherService.getDesgByDeptAndType(type, scriptName);
 		if(null == map.get("wfitemstate")){

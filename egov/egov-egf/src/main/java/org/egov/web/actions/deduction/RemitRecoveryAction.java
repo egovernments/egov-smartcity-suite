@@ -501,7 +501,7 @@ private List<HashMap<String, Object>>  addSubledgerGroupBy(final List<HashMap<St
 		}else
 		{
 			addActionMessage(getText("payment.voucher.rejected", new String[] { paymentService
-					.getEmployeeNameForPositionId(paymentheader.getState().getOwner()) }));
+					.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
 		}
 		return MESSAGES;
 	}
