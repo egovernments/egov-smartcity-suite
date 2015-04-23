@@ -251,7 +251,7 @@ public class BillRegisterReportAction   extends SearchFormAction{
 									paidAmount = paidAmount.add(miscbilldetail.getPaidamount()).setScale(2);
 									Paymentheader paymentMode= (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?", miscbilldetail.getPayVoucherHeader());
 									if(!paymentMode.getType().equals(FinancialConstants.MODEOFPAYMENT_RTGS)){
-										Query qryHibernateUtil.getCurrentSession().createQuery("from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
+										Query qry=HibernateUtil.getCurrentSession().createQuery("from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
 												" iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)");
 										qry.setLong("vhId",  miscbilldetail.getPayVoucherHeader().getId());
 										qry.setParameterList("cancelledChequeList", cancelledChequeStatus);
@@ -275,7 +275,7 @@ public class BillRegisterReportAction   extends SearchFormAction{
 										}
 									}
 								}else{
-									Query qryHibernateUtil.getCurrentSession().createQuery("from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
+									Query qry=HibernateUtil.getCurrentSession().createQuery("from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
 											" iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)");
 									qry.setLong("vhId",  miscbilldetail.getPayVoucherHeader().getId());
 									qry.setParameterList("cancelledChequeList", cancelledChequeStatus);
@@ -307,7 +307,7 @@ public class BillRegisterReportAction   extends SearchFormAction{
 									Paymentheader paymentMode= (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?", miscbilldetail.getPayVoucherHeader());
 									if(!paymentMode.getType().equals(FinancialConstants.MODEOFPAYMENT_RTGS)){
 									//List<InstrumentVoucher> instrumentVoucherList=(List<InstrumentVoucher>)persistenceService.findAllBy(" from InstrumentVoucher where voucherHeaderId=?", miscbilldetail.getPayVoucherHeader());
-									Query qryHibernateUtil.getCurrentSession().createQuery("from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
+									Query qry=HibernateUtil.getCurrentSession().createQuery("from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
 											" iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)");
 									qry.setLong("vhId",  miscbilldetail.getPayVoucherHeader().getId());
 									qry.setParameterList("cancelledChequeList", cancelledChequeStatus);
@@ -330,7 +330,7 @@ public class BillRegisterReportAction   extends SearchFormAction{
 										}	
 									}
 								}else{
-									Query qryHibernateUtil.getCurrentSession().createQuery("from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
+									Query qry=HibernateUtil.getCurrentSession().createQuery("from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
 											" iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)");
 									qry.setLong("vhId",  miscbilldetail.getPayVoucherHeader().getId());
 									qry.setParameterList("cancelledChequeList", cancelledChequeStatus);
@@ -411,7 +411,7 @@ public class BillRegisterReportAction   extends SearchFormAction{
 				
 				// if(remittancePaymentItem.get(i).getVoucherheader().getStatus())
 				remmitPaymentVoucherNumber.append(remittancePaymentItem.get(i).getVoucherheader().getVoucherNumber()+"|");
-				Query qryHibernateUtil.getCurrentSession().createQuery("from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
+				Query qry=HibernateUtil.getCurrentSession().createQuery("from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
 						" iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)");
 				qry.setLong("vhId", remittancePaymentItem.get(i).getVoucherheader().getId());
 				qry.setParameterList("cancelledChequeList", cancelledChequeStatus);
