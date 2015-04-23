@@ -184,7 +184,7 @@ public class BudgetReportAction extends BaseFormAction{
 		for (BudgetDetail detail : results) {
 			BudgetReportView view = new BudgetReportView();
 			view.setId(detail.getId());
-			view.setDepartmentCode(detail.getExecutingDepartment().getDeptCode());
+			view.setDepartmentCode(detail.getExecutingDepartment().getCode());
 			view.setFunctionCode(detail.getFunction().getCode());
 			view.setBudgetGroupName(detail.getBudgetGroup().getName());
 			if("BE".equalsIgnoreCase(detail.getBudget().getIsbere())){

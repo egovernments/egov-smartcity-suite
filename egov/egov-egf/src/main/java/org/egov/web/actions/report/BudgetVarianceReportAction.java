@@ -264,8 +264,8 @@ public class BudgetVarianceReportAction extends BaseFormAction{
 			BudgetVarianceEntry budgetVarianceEntry = new BudgetVarianceEntry();
 			budgetVarianceEntry.setBudgetHead(budgetDetail.getBudgetGroup().getName());
 			if(budgetDetail.getExecutingDepartment()!=null){
-				budgetVarianceEntry.setDepartmentCode(budgetDetail.getExecutingDepartment().getDeptCode());
-				budgetVarianceEntry.setDepartmentName(budgetDetail.getExecutingDepartment().getDeptName());
+				budgetVarianceEntry.setDepartmentCode(budgetDetail.getExecutingDepartment().getCode());
+				budgetVarianceEntry.setDepartmentName(budgetDetail.getExecutingDepartment().getName());
 			}
 			if(budgetDetail.getFund()!=null)
 				budgetVarianceEntry.setFundCode(budgetDetail.getFund().getName());
@@ -486,7 +486,7 @@ public class BudgetVarianceReportAction extends BaseFormAction{
 	public String getDepartmentName(){
 		if(budgetDetail.getExecutingDepartment()!=null && budgetDetail.getExecutingDepartment().getId()!=null && budgetDetail.getExecutingDepartment().getId()!=-1){
 			Department department = (Department) persistenceService.find("from Department where id=?",budgetDetail.getExecutingDepartment().getId());
-			return department.getDeptName();
+			return department.getName();
 		}
 		return "";
 	}

@@ -1439,7 +1439,7 @@ public class CreateVoucher {
 				 appConfigSer = new PersistenceService<AppConfig, Integer>();
 				 appConfigSer.setSessionFactory(new SessionFactory());
 				 appConfigSer.setType(AppConfig.class);
-				 AppConfig appConfig= (AppConfig) appConfigSer.findInCache("from AppConfig where key_name =?", "JournalVoucher_ConfirmonCreate");
+				 AppConfig appConfig= (AppConfig) appConfigSer.find("from AppConfig where key_name =?", "JournalVoucher_ConfirmonCreate");
 				 if(null != appConfig && null!= appConfig.getAppDataValues() ){
 					 for (AppConfigValues appConfigVal : appConfig.getAppDataValues()) {
 						 cVoucherHeader.setIsConfirmed(Integer.valueOf(appConfigVal.getValue()));

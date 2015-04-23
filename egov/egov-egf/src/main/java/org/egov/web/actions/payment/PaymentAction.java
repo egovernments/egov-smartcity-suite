@@ -762,9 +762,9 @@ public class PaymentAction extends BasePaymentAction{
 			if("END".equals(paymentheader.getState().getValue()))
 				addActionMessage(getMessage("payment.voucher.final.approval"));
 			else
-				addActionMessage(getMessage("payment.voucher.approved",new String[]{paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwner())}));
+				addActionMessage(getMessage("payment.voucher.approved",new String[]{paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition())}));
 		else
-			addActionMessage(getMessage("payment.voucher.rejected",new String[]{paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwner())}));
+			addActionMessage(getMessage("payment.voucher.rejected",new String[]{paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition())}));
 		if(Constants.ADVANCE_PAYMENT.equalsIgnoreCase(paymentheader.getVoucherheader().getName())){
 			getAdvanceRequisitionDetails();
 			return "advancePaymentView";
@@ -1122,7 +1122,7 @@ public class PaymentAction extends BasePaymentAction{
 					userId = Integer.valueOf(EGOVThreadLocals.getUserId().trim());
 				}
 				paymentWorkflowService.transition(getValidActions().get(0).getName()+"|"+userId, paymentheader, paymentheader.getVoucherheader().getDescription());
-				addActionMessage(getMessage("payment.voucher.approved",new String[]{paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwner())}));
+				addActionMessage(getMessage("payment.voucher.approved",new String[]{paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition())}));
 				loadApproverUser(voucherHeader.getType());
 			}else{
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed updateAdvancePayment.");

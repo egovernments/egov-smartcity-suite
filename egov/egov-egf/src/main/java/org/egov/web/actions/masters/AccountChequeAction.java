@@ -99,7 +99,7 @@ public class AccountChequeAction extends BaseFormAction{
 			chequeDetail = new ChequeDetail();
 			chequeDetail.setFromChqNo(chequeDeptMapping.getAccountCheque().getFromChequeNumber());
 			chequeDetail.setToChqNo(chequeDeptMapping.getAccountCheque().getToChequeNumber());
-			chequeDetail.setDeptName(chequeDeptMapping.getAllotedTo().getDeptName());
+			chequeDetail.setDeptName(chequeDeptMapping.getAllotedTo().getName());
 			chequeDetail.setDeptId(chequeDeptMapping.getAllotedTo().getId());
 			chequeDetail.setReceivedDate(Constants.DDMMYYYYFORMAT2.format(chequeDeptMapping.getAccountCheque().getReceivedDate()));
 			chequeDetail.setSerialNo(chequeDeptMapping.getAccountCheque().getSerialNo());

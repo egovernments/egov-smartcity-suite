@@ -1,20 +1,19 @@
 package org.egov.web.actions.masters;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.CFunction;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 
@@ -222,7 +221,7 @@ public class FunctionAction extends BaseFormAction {
 	
 	@SkipValidation
 	private String getLoggedInUser() {
-		Integer userId = (IntegerHibernateUtil.getCurrentSession().get("com.egov.user.LoginUserId");
+		Integer userId = (Integer)getSession().get("com.egov.user.LoginUserId");
 		return userId.toString();
 	}
 	

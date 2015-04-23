@@ -49,12 +49,13 @@ public class CFunction {
 	private String type;
 	private int level;
 	private Long parentId;
-	private int isActive;
+	private boolean isActive;
 	private Date created;
 	private Date lastModified;
 	private String modifiedBy;
 	private int isNotLeaf;
-
+	private String funcNameActual;
+	private CFunction function;
 	/**
 	 * @return Returns the id.
 	 */
@@ -114,17 +115,15 @@ public class CFunction {
 	/**
 	 * @return Returns the isActive.
 	 */
-	public int getIsActive() {
-		return isActive;
+	public boolean isIsActive() {
+		return this.isActive;
 	}
-
 	/**
 	 * @param isActive The isActive to set.
 	 */
-	public void setIsActive(int isActive) {
+	public void setIsActive(boolean isActive) {
 		this.isActive = isActive;
 	}
-
 	/**
 	 * @return Returns the isNotLeaf.
 	 */
@@ -207,5 +206,24 @@ public class CFunction {
 	 */
 	public void setType(String type) {
 		this.type = type;
+	}
+	public String getFuncNameActual() {
+		return funcNameActual;
+	}
+	
+	public void setFuncNameActual(String funcNameActual) {
+		this.funcNameActual = funcNameActual;
+	}
+	/**
+	 * @return the function
+	 */
+	public CFunction getFunction() {
+		return function;
+	}
+	/**
+	 * @param function the function to set
+	 */
+	public void setFunction(CFunction function) {
+		this.function = function;
 	}
 }

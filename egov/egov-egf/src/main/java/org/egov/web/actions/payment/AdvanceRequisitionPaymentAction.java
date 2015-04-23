@@ -117,7 +117,7 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction{
 			paymentService.persist(paymentheader);
 			createMiscBill(paymentheader,advanceRequisition);
 			advanceRequisition.getEgAdvanceReqMises().setVoucherheader(paymentheader.getVoucherheader());
-			advanceRequisition.changeState("END", advanceRequisition.getCurrentState().getOwner(), "");
+			advanceRequisition.changeState("END", advanceRequisition.getCurrentState().getOwnerPosition(), "");
 			advanceRequisition.getCurrentState().setText1(narration);
 			addActionMessage(getText("payment.transaction.success",new String[]{paymentheader.getVoucherheader().getVoucherNumber()}));
 		}catch(ValidationException e){
@@ -242,7 +242,7 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction{
 			}
 			if(egAdvanceReqMises.getEgDepartment()!=null && egAdvanceReqMises.getEgDepartment().getId()!=null){
 				voucherHeader.getVouchermis().setDepartmentid((Department) persistenceService.find("from Department where id=?",egAdvanceReqMises.getEgDepartment().getId()));
-				headerdetails.put(VoucherConstant.DEPARTMENTCODE, egAdvanceReqMises.getEgDepartment().getDeptCode());
+				headerdetails.put(VoucherConstant.DEPARTMENTCODE, egAdvanceReqMises.getEgDepartment().getCode());
 			}
 			if(egAdvanceReqMises.getFundsource()!=null && egAdvanceReqMises.getFundsource().getId()!=null){
 				voucherHeader.getVouchermis().setFundsource((Fundsource) persistenceService.find("from Fundsource where id=?",egAdvanceReqMises.getFundsource().getId()));

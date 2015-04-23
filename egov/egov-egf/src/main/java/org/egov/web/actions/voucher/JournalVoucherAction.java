@@ -159,7 +159,7 @@ public class JournalVoucherAction extends BaseVoucherAction
 						 sendForApproval();           
 						// addActionMessage( voucherHeader.getVoucherNumber() + getText("voucher.created.successfully"));
 						// addActionMessage(getText("pjv.voucher.approved",new String[]{voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwner())}));
-						 message="Voucher  "+voucherHeader.getVoucherNumber()+" Created Sucessfully" +"\\n"+ getText("pjv.voucher.approved",new String[]{voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwner())}); 
+						 message="Voucher  "+voucherHeader.getVoucherNumber()+" Created Sucessfully" +"\\n"+ getText("pjv.voucher.approved",new String[]{voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition())}); 
 						 target = "success";
 					
 					//billDetailslist.clear();

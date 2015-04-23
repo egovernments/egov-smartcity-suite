@@ -91,8 +91,8 @@ public class BudgetProposalStatusReportAction extends BaseFormAction {
 			BudgetProposalStatus budgetProposalStatus = new BudgetProposalStatus();
 			budgetProposalStatus.setDepartment(dept);
 			BudgetDetail budgetDetail = (BudgetDetail) persistenceService.find("from BudgetDetail where budget.financialYear.id=? and executingDepartment=? and budget.isbere='RE' and budget.state.value<>'END' and budgetGroup.accountType=?", Long.valueOf(this.finYearId), dept, this.fundType+"_"+this.budgetType);
-			if(budgetDetail != null && budgetDetail.getBudget() != null && budgetDetail.getBudget().getState() != null && budgetDetail.getBudget().getState().getOwner() != null){
-				Assignment assignment = (Assignment) persistenceService.find("from Assignment where isPrimary=? and position=?", 'Y', budgetDetail.getBudget().getState().getOwner());
+			if(budgetDetail != null && budgetDetail.getBudget() != null && budgetDetail.getBudget().getState() != null && budgetDetail.getBudget().getState().getOwnerPosition() != null){
+				Assignment assignment = (Assignment) persistenceService.find("from Assignment where isPrimary=? and position=?", 'Y', budgetDetail.getBudget().getState().getOwnerPosition());
 				if(assignment != null){
 					if(eisCommonService.getHodById(assignment.getId()))
 						budgetProposalStatus.setHod(this.heavyCheckMark);

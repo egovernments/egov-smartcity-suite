@@ -574,7 +574,7 @@ public class BankBookReportAction extends BaseFormAction{
 		if(getVouchermis()!=null && getVouchermis().getDepartmentid()!=null && getVouchermis().getDepartmentid().getId()!=null && getVouchermis().getDepartmentid().getId()!=-1){
 			query.append(" and vmis.DEPARTMENTID=").append(getVouchermis().getDepartmentid().getId().toString());
 			Department dept=(Department) persistenceService.find("from Department where id=?", getVouchermis().getDepartmentid().getId());
-			header.append(" in "+dept.getDeptName()+" ");
+			header.append(" in "+dept.getName()+" ");
 		}
 		if(getVouchermis()!=null && getVouchermis().getFunctionary()!=null && getVouchermis().getFunctionary().getId()!=null && getVouchermis().getFunctionary().getId()!=-1){
 			query.append(" and vmis.FUNCTIONARYID=").append(getVouchermis().getFunctionary().getId().toString());

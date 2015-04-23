@@ -398,7 +398,7 @@ public class BudgetAppropriationRegisterReportAction  extends BaseFormAction {
 	private Map<String, Object> getParamMapForReportFile() {
 		Map<String,Object> paramMapForReportFile = new HashMap<String,Object>();
 		paramMapForReportFile.put("bgname", budgetHead);
-		paramMapForReportFile.put("deptName", department.getDeptName());
+		paramMapForReportFile.put("deptName", department.getName());
 		paramMapForReportFile.put("function", function.getName());
 		paramMapForReportFile.put("fund", fund.getName());
 		

@@ -710,7 +710,7 @@ public class DishonorChequeWorkflowAction  extends BaseFormAction {
 		}
 		if(null !=(dishonorChequeView.getOriginalVoucherHeader().getVouchermis().getDepartmentid())) {
 			headerdetails.put(VoucherConstant.DEPARTMENTCODE, 
-					((Department)persistenceService.find("from Department where id=?", dishonorChequeView.getOriginalVoucherHeader().getVouchermis().getDepartmentid().getId())).getDeptCode());
+					((Department)persistenceService.find("from Department where id=?", dishonorChequeView.getOriginalVoucherHeader().getVouchermis().getDepartmentid().getId())).getCode());
 		}
 		if(null !=dishonorChequeView.getOriginalVoucherHeader().getFundId()) {
 			headerdetails.put(VoucherConstant.FUNDCODE, ((Fund)persistenceService.find("from Fund where id=?",dishonorChequeView.getOriginalVoucherHeader().getFundId().getId())).getCode());

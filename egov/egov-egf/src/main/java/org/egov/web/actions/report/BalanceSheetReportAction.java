@@ -154,7 +154,7 @@ public class BalanceSheetReportAction extends BaseFormAction{
 		if(balanceSheet.getDepartment() != null && balanceSheet.getDepartment().getId()!=null &&  balanceSheet.getDepartment().getId()!=0){
 			balanceSheet.setDepartment((Department)getPersistenceService().find("from Department where id=?", balanceSheet.getDepartment().getId()));
 			Department dept=(Department) persistenceService.find("from Department where id=?", balanceSheet.getDepartment().getId());
-			header.append(" in "+ balanceSheet.getDepartment().getDeptName());
+			header.append(" in "+ balanceSheet.getDepartment().getName());
 		}else
 			balanceSheet.setDepartment(null);
 		if(balanceSheet.getField() != null && balanceSheet.getField().getId()!=null  && balanceSheet.getField().getId()!=0){

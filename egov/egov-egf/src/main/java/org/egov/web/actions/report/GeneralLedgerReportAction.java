@@ -107,7 +107,7 @@ public class GeneralLedgerReportAction extends VoucherSearchAction{
 		if(checkNullandEmpty(generalLedgerReport.getDepartmentId()))
 		{
 			Department dept = (Department) persistenceService.find("from Department where id = ?",Integer.parseInt(generalLedgerReport.getDepartmentId()));
-			heading = heading +" under "+dept.getDeptName()+" ";
+			heading = heading +" under "+dept.getName()+" ";
 		}
 		if(checkNullandEmpty(generalLedgerReport.getFunctionCode()))
 		{

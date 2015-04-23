@@ -50,6 +50,7 @@ import org.egov.web.annotation.ValidationErrorPage;
 import org.egov.web.utils.EgovPaginatedList;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 @Results(value={
@@ -83,7 +84,8 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 	private EgovPaginatedList pagedResults;
 	private String countQry;
 	private String modeOfPayment;
-	
+	@Autowired
+	private FinancialYearDAO financialYearDAO;
 	List<String> voucherTypes=VoucherHelper.VOUCHER_TYPES;
 	Map<String,List<String>> voucherNames=VoucherHelper.VOUCHER_TYPE_NAMES;
 
@@ -109,7 +111,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 	}
 	
 	public void finYearDate(){
-		FinancialYearDAO financialYearDAO= CommonsDaoFactory.getDAOFactory().getFinancialYearDAO();
+		
 		String financialYearId= financialYearDAO.getCurrYearFiscalId();
 		if(financialYearId==null || financialYearId.equals("")){
 			fromDate=new Date();
@@ -209,7 +211,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 			e.printStackTrace();
 		}*/
 		//
-		LOGGER.errorHibernateUtil.getCurrentSession().getFlushMode());
+		//LOGGER.errorHibernateUtil.getCurrentSession().getFlushMode());
 		return "search";
 	}
 	
@@ -237,7 +239,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 			voucherMap.put("type", voucherheader.getType());
 			voucherMap.put("name", voucherheader.getName());		
 			voucherMap.put("voucherdate", voucherheader.getVoucherDate());
-			voucherMap.put("deptName", voucherheader.getVouchermis().getDepartmentid().getDeptName());
+			voucherMap.put("deptName", voucherheader.getVouchermis().getDepartmentid().getName());
 			for(VoucherDetail detail:voucherheader.getVoucherDetail())
 			{
 				amt = amt.add(detail.getDebitAmount());
@@ -389,7 +391,7 @@ public Map<String, String> getVoucherNameMap(String type) {
 		for(CVoucherHeader cVchrHdr:list)
 		{
 			VoucherReportView vhcrRptView = new VoucherReportView();
-			vhcrRptView.setDeptName(cVchrHdr.getVouchermis().getDepartmentid().getDeptName());
+			vhcrRptView.setDeptName(cVchrHdr.getVouchermis().getDepartmentid().getName());
 			vhcrRptView.setVoucherNumber(cVchrHdr.getVoucherNumber());
 			vhcrRptView.setVoucherType(cVchrHdr.getType());
 			vhcrRptView.setVoucherName(cVchrHdr.getName());
@@ -461,7 +463,7 @@ public Map<String, String> getVoucherNameMap(String type) {
 			}
 			else
 			{
-				return getUserNameForPosition(voucherState.getOwner().getId());
+				return getUserNameForPosition(voucherState.getOwnerPosition().getId().intValue());
 			}
 		}
 		else if(voucherType.equalsIgnoreCase(FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL))
@@ -476,7 +478,7 @@ public Map<String, String> getVoucherNameMap(String type) {
 				return dash;
 			}else
 			{
-				return getUserNameForPosition(voucherState.getOwner().getId());
+				return getUserNameForPosition(voucherState.getOwnerPosition().getId().intValue());
 			}
 		}
 		else if(voucherType.equalsIgnoreCase(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT))
@@ -495,7 +497,7 @@ public Map<String, String> getVoucherNameMap(String type) {
 			}
 			else
 			{
-				return getUserNameForPosition(voucherState.getOwner().getId());
+				return getUserNameForPosition(voucherState.getOwnerPosition().getId().intValue());
 			}
 		}
 		else if(voucherType.equalsIgnoreCase(FinancialConstants.STANDARD_VOUCHER_TYPE_RECEIPT))
@@ -510,14 +512,14 @@ public Map<String, String> getVoucherNameMap(String type) {
 				{
 					return dash;
 				}else
-					return getUserNameForPosition(voucherState.getOwner().getId());
+					return getUserNameForPosition(voucherState.getOwnerPosition().getId().intValue());
 			}
 			else  if (voucherState.getValue().equals("END"))
 			{
 				return dash;
 			}else
 			{
-				return getUserNameForPosition(receiptVoucher.getState().getOwner().getId());
+				return getUserNameForPosition(receiptVoucher.getState().getOwnerPosition().getId().intValue());
 			}
 		}
 		else
@@ -526,13 +528,13 @@ public Map<String, String> getVoucherNameMap(String type) {
 	private String getUserNameForPosition (Integer posId) {
 		String query = "select 	emp.userMaster  from org.egov.pims.model.EmployeeView emp where emp.position.id = ? ";
 		User user = (User) persistenceService.find(query, posId);
-		return user.getUserName();
+		return user.getUsername();
 	}
 	public void setParamMap()
 	{
 			paramMap.put("fund", voucherHeader.getFundId().getName());
 			if(voucherHeader.getVouchermis()!=null && voucherHeader.getVouchermis().getDepartmentid()!=null )
-				paramMap.put("deptName", voucherHeader.getVouchermis().getDepartmentid().getDeptName());
+				paramMap.put("deptName", voucherHeader.getVouchermis().getDepartmentid().getName());
 			paramMap.put("status", getVoucherStatus(voucherHeader.getStatus()));
 			paramMap.put("toDate",toDate);
 			paramMap.put("fromDate",fromDate);                     

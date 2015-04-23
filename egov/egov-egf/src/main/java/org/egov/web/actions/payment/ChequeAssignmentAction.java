@@ -446,12 +446,12 @@ private void setTNEBMandatoryFields(){
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeSearchForRemittance...");
 		paymentMode=FinancialConstants.MODEOFPAYMENT_CASH;
 		
-		if(HibernateUtil.getCurrentSession().get("recoveryList")==null)
+		if(getSession().get("recoveryList")==null)
 		{
 			List<Recovery> listRecovery = recoveryService.getAllActiveTds();
 		getSession().put("RecoveryList", listRecovery);
 		}
-		addDropdownData("recoveryList" ,(List)HibernateUtil.getCurrentSession().get("recoveryList"));
+		addDropdownData("recoveryList" ,(List)getSession().get("recoveryList"));
 		//overriding department Mandatory Condition only for remittance cheque assignment search
 		deptNonMandatory=true;
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed prepareBeforeSearchForRemittance.");
@@ -563,7 +563,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 			}                                   
 		}          
 	getSession().put("accountNoAndRtgsEntryMapSession", accountNoAndRtgsEntryMap);
-		/getSession().put("voucherIdOwnerNameMap", voucherIDOwnerNameMap);
+		//getSession().put("voucherIdOwnerNameMap", voucherIDOwnerNameMap);
 		//chequeAssignmentList=rtgsChequeAssignmentList;
 		//if(LOGGER.isInfoEnabled())     LOGGER.info("rtgsChequeAssignmentList>>>>>"+rtgsdateMap);         
 		
@@ -819,7 +819,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 			resultMap=prepareMapForRTGS(); 
 			if(!getFieldErrors().isEmpty()){
 				//searchRTGS();
-				accountNoAndRtgsEntryMap=	(Map<Bankaccount, List<ChequeAssignment>>)HibernateUtil.getCurrentSession().get("accountNoAndRtgsEntryMapSession");
+				accountNoAndRtgsEntryMap=	(Map<Bankaccount, List<ChequeAssignment>>)getSession().get("accountNoAndRtgsEntryMapSession");
 				return "searchRtgsResult";             
 			}                        
 			createRtgsAssignment(resultMap);
@@ -1035,11 +1035,11 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 			//paymentService.validatePaymentForRTGSAssignment(SupplierbillList,"Supplier") ;
 		//	paymentService.validatePaymentForRTGSAssignment(ContingentbillList,FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT) ;
 		} catch(ValidationException e){  
-			accountNoAndRtgsEntryMap=(Map<Bankaccount,List<ChequeAssignment>>)HibernateUtil.getCurrentSession().get("accountNoAndRtgsEntryMap");
+			accountNoAndRtgsEntryMap=(Map<Bankaccount,List<ChequeAssignment>>)getSession().get("accountNoAndRtgsEntryMap");
 			addFieldError("rtgs.payment.mandatory.details.missing",e.getErrors().get(0).getMessage());    
 					//getMessage("rtgs.payment.mandatory.details.missing"));
 		} catch (EGOVException e) {
-			accountNoAndRtgsEntryMap=(Map<Bankaccount,List<ChequeAssignment>>)HibernateUtil.getCurrentSession().get("accountNoAndRtgsEntryMap");
+			accountNoAndRtgsEntryMap=(Map<Bankaccount,List<ChequeAssignment>>)getSession().get("accountNoAndRtgsEntryMap");
 			addFieldError("rtgs.payment.mandatory.details.missing",e.getMessage()); 
 		}
 		return resultMap;         
@@ -1459,7 +1459,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 		if(department!=null && department!=-1 )
 		{
 			Department dept=(Department)persistenceService.find("from Department where id=?",department);
-			bank_account_dept=bank_account_dept+"-"+dept.getDeptName();
+			bank_account_dept=bank_account_dept+"-"+dept.getName();
 		}
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed getheader.");
 	}
@@ -1510,7 +1510,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 				"please select department")));
 			}
 			int j=0;
-			instrumentHeaderList=(List<InstrumentHeader>HibernateUtil.getCurrentSession().get("instrumentHeaderList");
+			instrumentHeaderList=(List<InstrumentHeader>)getSession().get("instrumentHeaderList");
 			String[] newSurrender=new String[instrumentHeaderList.size()];
 			for (InstrumentHeader iheader:instrumentHeaderList)
 			{
@@ -1614,8 +1614,8 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 						"please select at least one cheque")));
 			}
 		} catch (ValidationException e) {
-			instrumentVoucherList=(List<InstrumentVoucher>)HibernateUtil.getCurrentSession().get("instrumentVoucherList");
-			instrumentHeaderList=(List<InstrumentHeader>HibernateUtil.getCurrentSession().get("instrumentHeaderList");
+			instrumentVoucherList=(List<InstrumentVoucher>)getSession().get("instrumentVoucherList");
+			instrumentHeaderList=(List<InstrumentHeader>)getSession().get("instrumentHeaderList");
 			getheader();
 			
 			throw e;
@@ -1729,11 +1729,11 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 					{
 					if(reassignSurrenderChq)
 					{
-						if(!instrumentService.isReassigningChequeNumberValid(assignment.getChequeNumber(), bankaccount,voucherHeader.getVouchermis().getDepartmentid().getId(),assignment.getSerialNo()))
+						if(!instrumentService.isReassigningChequeNumberValid(assignment.getChequeNumber(), bankaccount,voucherHeader.getVouchermis().getDepartmentid().getId().intValue(),assignment.getSerialNo()))
 							addFieldError("chequeAssignmentList["+i+"].chequeNumber",getMessage("payment.chequenumber.invalid"));
 					}
 					else{
-						if(!instrumentService.isChequeNumberValid(assignment.getChequeNumber(), bankaccount,voucherHeader.getVouchermis().getDepartmentid().getId(), assignment.getSerialNo()))
+						if(!instrumentService.isChequeNumberValid(assignment.getChequeNumber(), bankaccount,voucherHeader.getVouchermis().getDepartmentid().getId().intValue(), assignment.getSerialNo()))
 							addFieldError("chequeAssignmentList["+i+"].chequeNumber",getMessage("payment.chequenumber.invalid"));
 					}
 					}
@@ -1781,10 +1781,10 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 				}
 				if(reassignSurrenderChq)   
 				{                              
-					if(!instrumentService.isReassigningChequeNumberValid(parameters.get("chequeNo")[0], bankaccount,voucherHeader.getVouchermis().getDepartmentid().getId(),parameters.get("serialNo")[0]))
+					if(!instrumentService.isReassigningChequeNumberValid(parameters.get("chequeNo")[0], bankaccount,voucherHeader.getVouchermis().getDepartmentid().getId().intValue(),parameters.get("serialNo")[0]))
 						addFieldError("chequeAssignmentList["+i+"].chequeNumber",getMessage("payment.chequenumber.invalid"));
 				}else{
-				if(!instrumentService.isChequeNumberValid(parameters.get("chequeNo")[0], bankaccount,voucherHeader.getVouchermis().getDepartmentid().getId(), parameters.get("serialNo")[0]))
+				if(!instrumentService.isChequeNumberValid(parameters.get("chequeNo")[0], bankaccount,voucherHeader.getVouchermis().getDepartmentid().getId().intValue(), parameters.get("serialNo")[0]))
 					addFieldError("chequeN0",getMessage("payment.chequenumber.invalid"));
 				} 
 			}
@@ -1798,7 +1798,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 	{                
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting validateUser...");
 		Script validScript = (Script) getPersistenceService().findAllByNamedQuery(Script.BY_NAME,"Paymentheader.show.bankbalance").get(0);
-		List<String> list = (List<String>) validScript.eval(Script.createContext("persistenceService",paymentService,"purpose",purpose));
+		List<String> list = null;//(List<String>) validScript.eval(Script.createContext("persistenceService",paymentService,"purpose",purpose));
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed validateUser.");
 		if(list.get(0).equals("true"))
 			return true;

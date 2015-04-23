@@ -178,7 +178,7 @@ public class PendingTDSReportAction extends BaseFormAction{
 		paramMap.put("partyName", partyName);
 		if(department.getId()!=null && department.getId()!=-1){
 			department = (Department) persistenceService.find("from Department where id=?",department.getId());
-			paramMap.put("departmentName", department.getDeptName());
+			paramMap.put("departmentName", department.getName());
 		}
 		paramMap.put("recoveryName", recovery.getRecoveryName());
 		return paramMap;

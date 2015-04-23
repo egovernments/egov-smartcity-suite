@@ -109,8 +109,8 @@ public class AutoRemittanceReportAction extends BaseFormAction{
 	   
 	@Override
 	public void prepare() {
-		/HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
-		/HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+		//HibernateUtil.getCurrentSession().setDefaultReadOnly(true);
+		//HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
 		super.prepare();
 		addDropdownData("departmentList", persistenceService.findAllBy("from Department order by deptName"));
 		addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=1 and isnotleaf=0 order by name"));
@@ -319,7 +319,7 @@ public class AutoRemittanceReportAction extends BaseFormAction{
 		{
 			header.append(" Auto remittance payment report for ");
 			department = (Department) persistenceService.find("from Department where id=?",department.getId());
-			header.append(department.getDeptName()+ " department ");
+			header.append(department.getName()+ " department ");
 		}   
 		  
 		

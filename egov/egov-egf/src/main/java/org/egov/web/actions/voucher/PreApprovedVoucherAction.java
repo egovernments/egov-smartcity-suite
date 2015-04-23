@@ -629,7 +629,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
 			else if(name.equals("fundsource") && egBillregister.getEgBillregistermis().getFundsource()!=null)
 				val = egBillregister.getEgBillregistermis().getFundsource().getName();
 			else if(name.equals("department") && egBillregister.getEgBillregistermis().getEgDepartment()!=null)
-				val = egBillregister.getEgBillregistermis().getEgDepartment().getDeptName();
+				val = egBillregister.getEgBillregistermis().getEgDepartment().getName();
 			else if(name.equals("scheme") && egBillregister.getEgBillregistermis().getScheme()!=null)
 				val = egBillregister.getEgBillregistermis().getScheme().getName();
 			else if(name.equals("subscheme") &&  egBillregister.getEgBillregistermis().getSubScheme()!=null)

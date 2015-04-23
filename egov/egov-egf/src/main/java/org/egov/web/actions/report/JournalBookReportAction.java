@@ -101,7 +101,7 @@ public class JournalBookReportAction extends BaseFormAction{
 		Fundsource fundsource = new Fundsource();
 		if(checkNullandEmpty(journalBookReport.getDept_name())){
 			dept = (Department) persistenceService.find("from Department where  id = ?",Integer.parseInt(journalBookReport.getDept_name()));
-			heading = heading + " and Department : " + dept.getDeptName() ;
+			heading = heading + " and Department : " + dept.getName() ;
 		}
 		if(checkNullandEmpty(journalBookReport.getFundSource_id())){
 			fundsource = (Fundsource) persistenceService.find("from Fundsource where  id = ?",Integer.parseInt(journalBookReport.getFundSource_id()));

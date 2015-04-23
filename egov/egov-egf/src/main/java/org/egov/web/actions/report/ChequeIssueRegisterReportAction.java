@@ -260,7 +260,7 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction{
 		paramMap.put("ulbName", ulbName);
 		if(department!=null && department.getId()!=null && department.getId()!=0){
 			Department dept = (Department) persistenceService.find("from Department where id=?",department.getId());
-			paramMap.put("departmentName", dept.getDeptName());
+			paramMap.put("departmentName", dept.getName());
 		}
 		return paramMap;
 	}

@@ -183,7 +183,7 @@ public class BaseVoucherAction extends BaseFormAction {
 	
 	protected void loadSchemeSubscheme(){
 		if(headerFields.contains("scheme") && null != voucherHeader.getFundId()){
-			addDropdownData("schemeList", getPersistenceService().findAllBy(findAllBy"from Scheme where fund=?", voucherHeader.getFundId()));
+			addDropdownData("schemeList", getPersistenceService().findAllBy("from Scheme where fund=?", voucherHeader.getFundId()));
 		}
 		if(headerFields.contains("subscheme") && voucherHeader.getVouchermis()!=null && null !=  voucherHeader.getVouchermis().getSchemeid()){
 			addDropdownData("subschemeList", getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive=1 order by name", voucherHeader.getVouchermis().getSchemeid().getId()));
@@ -429,7 +429,7 @@ protected HashMap<String, Object> createHeaderAndMisDetails() throws ValidationE
 		List<Map<String,Object>> subLegAccMap=  new ArrayList<Map<String,Object>>(); // this list will contain  the details about the account code those are detail codes.
 		List<String> repeatedglCodes = VoucherHelper.getRepeatedGlcodes(billDetailslist);
 		for (VoucherDetails voucherDetails : billDetailslist) {
-			CChartOfAccountDetail  chartOfAccountDetail = (CChartOfAccountDetail) getPersistenceService().findInCache(" from CChartOfAccountDetail" +
+			CChartOfAccountDetail  chartOfAccountDetail = (CChartOfAccountDetail) getPersistenceService().find(" from CChartOfAccountDetail" +
 					" where glCodeId=(select id from CChartOfAccounts where glcode=?)", voucherDetails.getGlcodeDetail());
 			if(null != chartOfAccountDetail){
 				accountDetailMap = new HashMap<String,Object>();

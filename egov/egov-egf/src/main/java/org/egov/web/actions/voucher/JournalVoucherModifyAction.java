@@ -130,7 +130,7 @@ public class JournalVoucherModifyAction  extends BaseVoucherAction{
 		 if(voucherHeader != null && voucherHeader.getState() != null){
 			 if( voucherHeader.getState().getValue().contains("REJECTED")){
 				 positionsForUser = eisService.getPositionsForUser(Integer.valueOf(EGOVThreadLocals.getUserId()), new Date());
-					if(positionsForUser.contains(voucherHeader.getState().getOwner()))      
+					if(positionsForUser.contains(voucherHeader.getState().getOwnerPosition()))      
 					{
 						if(LOGGER.isDebugEnabled())     LOGGER.debug("Valid Owner :return true");
 					}else
@@ -247,7 +247,7 @@ HibernateUtil.getCurrentSession().setFlushMode(FlushMode.AUTO);
 		validateBeforeEdit(voucherHeader);
 		if(null!= parameters.get(ACTIONNAME) && parameters.get(ACTIONNAME)[0].contains("aa_reject")){
 			sendForApproval();
-			addActionMsg(voucherHeader.getState().getValue(), voucherHeader.getState().getOwner());
+			addActionMsg(voucherHeader.getState().getValue(), voucherHeader.getState().getOwnerPosition());
 			return "message";    
 		}
 		if(null != voucherNumManual && StringUtils.isNotEmpty(voucherNumManual)){
@@ -299,7 +299,7 @@ HibernateUtil.getCurrentSession().setFlushMode(FlushMode.AUTO);
 			}    
 		         
 			sendForApproval(); 
-			addActionMsg(voucherHeader.getState().getValue(), voucherHeader.getState().getOwner());
+			addActionMsg(voucherHeader.getState().getValue(), voucherHeader.getState().getOwnerPosition());
 			
 		} catch (ValidationException e) {
 			clearMessages();

@@ -114,7 +114,7 @@ public class SubLedgerReportAction extends BaseFormAction{
 		if(checkNullandEmpty(subLedgerReport.getDepartmentId()))
 		{
 			Department dept = (Department) persistenceService.find("from Department where id = ?",Integer.parseInt(subLedgerReport.getDepartmentId()));
-			heading = heading +" under "+dept.getDeptName()+" ";
+			heading = heading +" under "+dept.getName()+" ";
 		}
 		
 		return heading;

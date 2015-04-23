@@ -985,14 +985,14 @@ public String nonBillPayment()
 			else
 			{
 				addActionMessage(getText("payment.voucher.approved", new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState()
-								.getOwner()) }));
+								.getOwnerPosition()) }));
 			}
 			setAction(parameters.get(ACTIONNAME)[0]);
 			
 		}else
 		{
 			addActionMessage(getText("payment.voucher.rejected", new String[] { paymentService
-					.getEmployeeNameForPositionId(paymentheader.getState().getOwner()) }));
+					.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
 		}
 		return viewInboxItem();
 	}
@@ -1049,7 +1049,7 @@ public String nonBillPayment()
 		addDropdownData("designationList", (List<DesignationMaster>)map.get("designationList")); 
 		
 		if(bDefaultDeptId && !dName.equals("")) {
-			Department dept = (Department) persistenceService.findInCache("from Department where deptName like '%"+dName+"' ");
+			Department dept = (Department) persistenceService.find("from Department where deptName like '%"+dName+"' ");
 			departmentId = dept.getId();
 		}
 		wfitemstate = map.get("wfitemstate")!=null?map.get("wfitemstate").toString():"";

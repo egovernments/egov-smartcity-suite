@@ -254,7 +254,7 @@ public class VoucherSearchAction extends BaseFormAction
 					voucherMap.put("vouchernumber", voucherheader.getVoucherNumber());
 					voucherMap.put("type", voucherheader.getType());
 					voucherMap.put("name", voucherheader.getName());
-					voucherMap.put("deptName",voucherheader.getVouchermis().getDepartmentid().getDeptName());
+					voucherMap.put("deptName",voucherheader.getVouchermis().getDepartmentid().getName());
 					voucherMap.put("voucherdate", voucherheader.getVoucherDate());
 					voucherMap.put("fundname", voucherheader.getFundId().getName());
 					if(voucherheader.getModuleId()==null)
@@ -303,7 +303,7 @@ public class VoucherSearchAction extends BaseFormAction
 				voucherMap.put("vouchernumber", voucherheader.getVoucherNumber());
 				voucherMap.put("type", voucherheader.getType());
 				voucherMap.put("name", voucherheader.getName());
-				voucherMap.put("deptName",voucherheader.getVouchermis().getDepartmentid().getDeptName());
+				voucherMap.put("deptName",voucherheader.getVouchermis().getDepartmentid().getName());
 				voucherMap.put("voucherdate", voucherheader.getVoucherDate());
 				voucherMap.put("fundname", voucherheader.getFundId().getName());
 				if(voucherheader.getModuleId()==null)

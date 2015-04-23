@@ -53,7 +53,7 @@ public class ContractTypeAction extends BaseFormAction{
 	@SkipValidation
 @Action(value="/masters/contractType-newform")
 	public String newform() {
-		typeOfWork.reset();
+		//typeOfWork.reset();
 		return NEW;
 	}
 	
@@ -106,7 +106,7 @@ public class ContractTypeAction extends BaseFormAction{
 			 
 			throw new EGOVRuntimeException("Exception occurred in ContractTypeAction-create ", e);
 		}
-		typeOfWork.reset();
+	//	typeOfWork.reset();
 		return NEW;
 	}
 	
@@ -215,7 +215,7 @@ public class ContractTypeAction extends BaseFormAction{
 	
 	@SkipValidation
 	private Integer getLoggedInUser() {
-		Integer userId = (IntegerHibernateUtil.getCurrentSession().get("com.egov.user.LoginUserId");
+		Integer userId = (Integer)getSession().get("com.egov.user.LoginUserId");
 		return userId;
 	}
 	

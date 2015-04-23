@@ -315,7 +315,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
        }
         if(LOGGER.isInfoEnabled())     LOGGER.info("Processed Budget line items");
         //if budget is not forwarded yet send the budget else ignore
-       if(getTopBudget().getState().getOwner()!=null &&getTopBudget().getState().getOwner().getId()!= positionByUserId.getId())
+       if(getTopBudget().getState().getOwnerPosition()!=null &&getTopBudget().getState().getOwnerPosition().getId()!= positionByUserId.getId())
        {
     	   getTopBudget().changeState("Forwarded by "+name, positionByUserId, comments);
     	   //add logic for BE approval also
@@ -323,7 +323,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
        }
      //add logic for BE approval also
 	   Budget beBudget = budgetService.find("from Budget where referenceBudget=?",getTopBudget());
-	   if(beBudget.getState().getOwner()!=null && beBudget.getState().getOwner().getId()!=positionByUserId.getId())
+	   if(beBudget.getState().getOwnerPosition()!=null && beBudget.getState().getOwnerPosition().getId()!=positionByUserId.getId())
 	   {
 		   beBudget.changeState("Forwarded by "+name, positionByUserId, comments);
 	   }
