@@ -13,7 +13,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
@@ -256,8 +256,8 @@ public class BudgetSearchAction extends BaseFormAction{
 			}
 		}
 		//budgetList=removeReferenceBudgets(budgetList);
-	HibernateUtil.getCurrentSession().put(Constants.SEARCH_CRITERIA_KEY, budgetDetail);
-	HibernateUtil.getCurrentSession().put("financialyearid", financialYear);
+	getSession().put(Constants.SEARCH_CRITERIA_KEY, budgetDetail);
+	getSession().put("financialyearid", financialYear);
 		if(budgetList.isEmpty())
 			message = getText("no.data.found");
 		return Constants.LIST;  
@@ -273,7 +273,7 @@ public class BudgetSearchAction extends BaseFormAction{
 			budgetList.addAll(budgetDetailService.findBudgetTree(budgetDetailService.findApprovedPrimaryParentBudgetForFY(financialYear),budgetDetail));
 		else
 			budgetList.addAll(budgetDetailService.findBudgetTree(budget,budgetDetail));
-	HibernateUtil.getCurrentSession().put(Constants.SEARCH_CRITERIA_KEY, budgetDetail);
+	getSession().put(Constants.SEARCH_CRITERIA_KEY, budgetDetail);
 		return Constants.LIST;  
 	}
 	   

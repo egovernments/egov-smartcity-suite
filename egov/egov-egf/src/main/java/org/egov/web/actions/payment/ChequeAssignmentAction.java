@@ -24,7 +24,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.config.Result;
 import org.apache.struts2.config.Results;
 import org.apache.struts2.dispatcher.StreamResult;
@@ -402,7 +402,7 @@ private void setTNEBMandatoryFields(){
 							}   
 				}                                     
 		}          
-	HibernateUtil.getCurrentSession().put("accountNoAndRtgsEntryMapSession", accountNoAndRemittanceRtgsEntryMap);
+	getSession().put("accountNoAndRtgsEntryMapSession", accountNoAndRemittanceRtgsEntryMap);
 		if( 0 != drawingOfficerId)
 		{
 			DrawingOfficer drawingOfficer = (DrawingOfficer) persistenceService.find("from DrawingOfficer where id =?", drawingOfficerId  );
@@ -449,7 +449,7 @@ private void setTNEBMandatoryFields(){
 		if(HibernateUtil.getCurrentSession().get("recoveryList")==null)
 		{
 			List<Recovery> listRecovery = recoveryService.getAllActiveTds();
-		HibernateUtil.getCurrentSession().put("RecoveryList", listRecovery);
+		getSession().put("RecoveryList", listRecovery);
 		}
 		addDropdownData("recoveryList" ,(List)HibernateUtil.getCurrentSession().get("recoveryList"));
 		//overriding department Mandatory Condition only for remittance cheque assignment search
@@ -562,8 +562,8 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 				
 			}                                   
 		}          
-	HibernateUtil.getCurrentSession().put("accountNoAndRtgsEntryMapSession", accountNoAndRtgsEntryMap);
-		/HibernateUtil.getCurrentSession().put("voucherIdOwnerNameMap", voucherIDOwnerNameMap);
+	getSession().put("accountNoAndRtgsEntryMapSession", accountNoAndRtgsEntryMap);
+		/getSession().put("voucherIdOwnerNameMap", voucherIDOwnerNameMap);
 		//chequeAssignmentList=rtgsChequeAssignmentList;
 		//if(LOGGER.isInfoEnabled())     LOGGER.info("rtgsChequeAssignmentList>>>>>"+rtgsdateMap);         
 		
@@ -628,7 +628,7 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 				
 			}                                   
 		}          
-	HibernateUtil.getCurrentSession().put("accountNoAndRtgsEntryMapSession", accountNoAndRtgsEntryMap);
+	getSession().put("accountNoAndRtgsEntryMapSession", accountNoAndRtgsEntryMap);
 		
 		assignmentType="BillPayment";           
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed searchRTGS.");         
@@ -1297,8 +1297,8 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 			  {
 				  instrumentVoucherList.addAll(ih.getInstrumentVouchers());
 			  }  
-			 HibernateUtil.getCurrentSession().put("instrumentVoucherList",instrumentVoucherList);
-			 HibernateUtil.getCurrentSession().put("instrumentHeaderList", instrumentHeaderList);
+			 getSession().put("instrumentVoucherList",instrumentVoucherList);
+			 getSession().put("instrumentHeaderList", instrumentHeaderList);
 			
 			if(instrumentVoucherList.size()>0)
 			{
@@ -1365,8 +1365,8 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting prepareBeforeRemittanceRt
 			  {
 				  instrumentVoucherList.addAll(ih.getInstrumentVouchers());
 			  }  
-			 HibernateUtil.getCurrentSession().put("instrumentVoucherList",instrumentVoucherList);
-			 HibernateUtil.getCurrentSession().put("instrumentHeaderList", instrumentHeaderList);
+			 getSession().put("instrumentVoucherList",instrumentVoucherList);
+			 getSession().put("instrumentHeaderList", instrumentHeaderList);
 			
 			if(instrumentVoucherList.size()>0)
 			{

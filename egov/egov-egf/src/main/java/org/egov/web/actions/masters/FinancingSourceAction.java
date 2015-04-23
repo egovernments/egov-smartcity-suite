@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.FinancingInstitution;
 import org.egov.commons.Fundsource;

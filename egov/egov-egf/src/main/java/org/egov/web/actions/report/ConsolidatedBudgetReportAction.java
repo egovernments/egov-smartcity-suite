@@ -14,7 +14,7 @@ import java.util.TreeMap;
 import net.sf.jasperreports.engine.JasperPrint;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.config.Result;
 import org.apache.struts2.config.Results;
 import org.apache.struts2.dispatcher.StreamResult;

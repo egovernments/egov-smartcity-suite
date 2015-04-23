@@ -254,7 +254,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
 			 throw new ValidationException(errors);
 		}
 		getHeaderMandateFields(); 
-	HibernateUtil.getCurrentSession().put("voucherId", parameters.get(VHID)[0]);       
+	getSession().put("voucherId", parameters.get(VHID)[0]);       
 		
 		if(voucherHeader.getState()!=null && voucherHeader.getState().getValue().contains("REJECTED"))
 		{        

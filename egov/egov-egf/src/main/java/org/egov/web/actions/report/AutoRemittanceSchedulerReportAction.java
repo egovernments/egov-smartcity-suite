@@ -1,6 +1,5 @@
 package org.egov.web.actions.report;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,9 +13,10 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.service.CommonsService;
+import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.utils.HibernateUtil;
@@ -101,7 +101,7 @@ public class AutoRemittanceSchedulerReportAction extends SearchFormAction{
 	public String searchList() {
 		super.search();
 		populateResult(searchResult.getList());
-	HibernateUtil.getCurrentSession().put("searchResult", searchResult);
+		getSession().put("searchResult", searchResult);
 		return NEW;
 	}
 	
@@ -124,8 +124,7 @@ public class AutoRemittanceSchedulerReportAction extends SearchFormAction{
 			String glcode = (String) row[4];
 			String recCoa = "";
 			if (StringUtils.isNotEmpty(glcode)) {
-				CChartOfAccounts ca = new CommonsService()
-						.getCChartOfAccountsByGlCode(glcode);
+				CChartOfAccounts ca = null;//new CommonsServiceImpl().getCChartOfAccountsByGlCode(glcode);
 				recCoa = ca.getGlcode() + "-" + ca.getName();
 			}
 			reportBean.setRecoveryCoa(recCoa);

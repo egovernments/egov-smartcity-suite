@@ -16,7 +16,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.CVoucherHeader;
@@ -120,7 +120,7 @@ public class JournalVoucherModifyAction  extends BaseVoucherAction{
 				voucherHeaderId=(String)obj;	
 			}
 			isOneFunctionCenter=voucherHeader.getIsRestrictedtoOneFunctionCenter(); 
-		HibernateUtil.getCurrentSession().put("voucherId", null);  
+		getSession().put("voucherId", null);  
 			//voucherHeader = (CVoucherHeader) getPersistenceService().find(VOUCHERQUERY, Long.valueOf(voucherHeaderId));  
 		}
 		if(voucherHeaderId!=null){
