@@ -396,7 +396,7 @@ private List<HashMap<String, Object>>  addSubledgerGroupBy(final List<HashMap<St
 		return paymentheader;
 	}
 	@SkipValidation
-	public List<Action> getValidActions(){
+	public List<org.egov.infstr.workflow.Action> getValidActions(){
 		return paymentWorkflowService.getValidActions(getPayment());
  	}
 	@SuppressWarnings(UNCHECKED)
@@ -414,7 +414,7 @@ private List<HashMap<String, Object>>  addSubledgerGroupBy(final List<HashMap<St
 			atype = atype + "|";  
 		}
 		EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-		departmentId = voucherService.getCurrentDepartment().getId();
+		departmentId = voucherService.getCurrentDepartment().getId().intValue();
 		if(LOGGER.isInfoEnabled())     LOGGER.info("departmentId :"+departmentId);
 		Map<String, Object>  map = new HashMap<String, Object>(); 
 		if(paymentheader!=null && paymentheader.getVoucherheader().getFiscalPeriodId()!=null){
@@ -454,7 +454,7 @@ private List<HashMap<String, Object>>  addSubledgerGroupBy(final List<HashMap<St
 		
 		if(bDefaultDeptId && !"".equals(dName)) {
 			Department dept = (Department) persistenceService.find("from Department where deptName like '%"+dName+"' ");
-			departmentId = dept.getId();
+			departmentId = dept.getId().intValue();
 		}
 		wfitemstate = map.get("wfitemstate")==null?"":map.get("wfitemstate").toString();
 	}
@@ -472,7 +472,7 @@ private List<HashMap<String, Object>>  addSubledgerGroupBy(final List<HashMap<St
 		
 		Integer userId = null;
 		if( parameters.get(ACTIONNAME)[0] != null && parameters.get(ACTIONNAME)[0].contains("reject")){
-			userId = paymentheader.getCreatedBy().getId();
+			userId = paymentheader.getCreatedBy().getId().intValue();
 		}
 		else if(null != parameters.get("approverUserId") &&  Integer.valueOf(parameters.get("approverUserId")[0])==-1  ){
 			userId = Integer.valueOf(EGOVThreadLocals.getUserId().trim());
@@ -494,7 +494,7 @@ private List<HashMap<String, Object>>  addSubledgerGroupBy(final List<HashMap<St
 			else
 			{
 				addActionMessage(getText("payment.voucher.approved", new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState()
-								.getOwner()) }));
+								.getOwnerPosition()) }));
 			}
 			setAction(parameters.get(ACTIONNAME)[0]);
 			
@@ -533,12 +533,12 @@ private List<HashMap<String, Object>>  addSubledgerGroupBy(final List<HashMap<St
 		paymentheader = getPayment();
 		if(paymentheader.getState().getValue()!=null && !paymentheader.getState().getValue().isEmpty()  && paymentheader.getState().getValue().contains("Reject"))
 		{
-		    voucherHeader.setId(paymentheader.getVoucherheader().getId());
+		    //voucherHeader.setId(paymentheader.getVoucherheader().getId());
 		    showCancel=true;
 		    return beforeEdit();
 		}
 		showApprove = true;
-		voucherHeader.setId(paymentheader.getVoucherheader().getId());
+		//voucherHeader.setId(paymentheader.getVoucherheader().getId());
 		prepareForViewModifyReverse();
 		loadApproverUser(voucherHeader.getType());
 		return VIEW;
@@ -548,7 +548,7 @@ private List<HashMap<String, Object>>  addSubledgerGroupBy(final List<HashMap<St
 	 */
 	public String beforeEdit() {
 		showApprove = true;
-		voucherHeader.setId(paymentheader.getVoucherheader().getId());
+		//voucherHeader.setId(paymentheader.getVoucherheader().getId());
 		prepareForViewModifyReverse();
 		loadApproverUser(voucherHeader.getType());
 		return EDIT;

@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Category;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -743,7 +744,7 @@ public class PaymentAction extends BasePaymentAction{
 		
 		Integer userId = null;
 		if( parameters.get(ACTIONNAME)[0] != null && parameters.get(ACTIONNAME)[0].contains("reject")){
-			userId = paymentheader.getCreatedBy().getId();
+			userId = paymentheader.getCreatedBy().getId().intValue();
 		}
 		else if (null != parameters.get("approverUserId") &&  Integer.valueOf(parameters.get("approverUserId")[0])!=-1 ) {
 			userId = Integer.valueOf(parameters.get("approverUserId")[0]);
@@ -779,7 +780,7 @@ public class PaymentAction extends BasePaymentAction{
 	}
 	
 	@SkipValidation
-	public List<Action> getValidActions(){
+	public List<org.egov.infstr.workflow.Action> getValidActions(){
 		
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside getValidActions...");
 		return paymentWorkflowService.getValidActions(getPayment());
@@ -1121,7 +1122,7 @@ public class PaymentAction extends BasePaymentAction{
 				}else {
 					userId = Integer.valueOf(EGOVThreadLocals.getUserId().trim());
 				}
-				paymentWorkflowService.transition(getValidActions().get(0).getName()+"|"+userId, paymentheader, paymentheader.getVoucherheader().getDescription());
+				paymentWorkflowService.transition(( getValidActions().get(0)).getName()+"|"+userId, paymentheader, paymentheader.getVoucherheader().getDescription());
 				addActionMessage(getMessage("payment.voucher.approved",new String[]{paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition())}));
 				loadApproverUser(voucherHeader.getType());
 			}else{
@@ -1324,7 +1325,7 @@ public class PaymentAction extends BasePaymentAction{
 		addDropdownData("designationList", (List<DesignationMaster>)map.get("designationList")); 
 		if(bDefaultDeptId && !dName.equals("")) {
 			Department dept = (Department) persistenceService.find("from Department where deptName like '%"+dName+"' ");
-			defaultDept = dept.getId();
+			defaultDept = dept.getId().intValue();
 		}
 		wfitemstate = map.get("wfitemstate")!=null?map.get("wfitemstate").toString():"";
 		
