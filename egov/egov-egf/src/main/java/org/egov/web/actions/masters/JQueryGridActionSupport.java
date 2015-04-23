@@ -10,6 +10,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.egov.infstr.services.Page;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.actions.masters.JQueryGridActionSupport.MultipleSearchFilter.Rule;
 import org.hibernate.Criteria;

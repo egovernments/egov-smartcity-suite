@@ -22,6 +22,7 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.utils.EgovMasterDataCaching;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.workflow.Action;
 import org.egov.infstr.workflow.SimpleWorkflowService;
 import org.egov.infstr.workflow.WorkflowService;

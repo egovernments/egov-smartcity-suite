@@ -42,7 +42,7 @@ import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.AppConfig;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.contra.ContraBean;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.pims.commons.Position;
@@ -255,7 +255,7 @@ protected HashMap<String, Object> createHeaderAndMisDetails() throws ValidationE
 		
 	} 
 	public CVoucherHeader createVoucherAndledger(List<VoucherDetails> billDetailslist,List<VoucherDetails> subLedgerlist)  {
-		null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
+		//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		try {
 			final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
 			// update DirectBankPayment source path

@@ -3,7 +3,6 @@
  */
 package org.egov.web.actions.voucher;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -24,10 +23,9 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.config.Result;
-import org.apache.struts2.config.Results;
-import org.apache.struts2.dispatcher.StreamResult;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
@@ -45,14 +43,15 @@ import org.egov.commons.SubScheme;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.service.RelationService;
 import org.egov.commons.utils.EntityType;
-import org.egov.eb.domain.master.entity.EBConsumer;
 import org.egov.egf.bills.model.Cbill;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.masters.model.LoanGrantBean;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
-import org.egov.infra.admin.master.entity.User;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.masters.model.AccountEntity;
 import org.egov.model.bills.EgBillSubType;
 import org.egov.model.bills.EgBillregister;
@@ -68,11 +67,12 @@ import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.BaseFormAction;
-import org.hibernate.type.*;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.LongType;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -2434,7 +2434,7 @@ public String ajaxLoadBanksWithAssignedRTGS() {
 		if (null == subSchemeId) {
 			     
 		} else {
-			projectCodeStringList=(List<String>)persistenceService.HibernateUtil.getCurrentSession().createSQLQuery(qry).list();
+			projectCodeStringList=(List<String>)HibernateUtil.getCurrentSession().createSQLQuery(qry).list();
 		}
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Scheme List size : " + projectCodeStringList.size());
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed ajaxLoadUnmappedProjectCodesBy20.");
