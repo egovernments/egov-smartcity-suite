@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping >
+
+	<class name="org.egov.egf.revenue.Grant" table="EGF_GRANT">
+	<id name="id" type="long">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="sequence">
+            <param name="sequence">seq_egf_grant</param>
+            </generator>
+        </id> 
+		<many-to-one name="department" class="org.egov.infra.admin.master.entity.Department" fetch="select" column="DEPTID" /> 
+		<many-to-one name="financialYear" class="org.egov.commons.CFinancialYear" fetch="select" column="FINANCIALYEARID"/>
+	    <property name="period" type="string" column="PERIOD" />
+	    <property name="proceedingsNo" type="string" column="PROCEEDINGSNO" />
+	    <property name="proceedingsDate" type="date" column="PROCEEDINGSDATE" />
+	    <many-to-one name="accrualVoucher" class="org.egov.commons.CVoucherHeader"  fetch="select" column="ACCRUALVOUCHERID" />
+	    <property name="accrualAmount" type="big_decimal" column="ACCRUALAMOUNT" />
+	    <many-to-one name="generalVoucher" class="org.egov.commons.CVoucherHeader"  fetch="select" column="GRANTVOUCHERID" />
+	    <many-to-one name="receiptVoucher" class="org.egov.commons.CVoucherHeader"  fetch="select" column="RECEIPTVOUCHERID" />
+	    <property name="grantAmount" type="big_decimal" column="GRANTAMOUNT" />
+		<many-to-one name="ihID" class="org.egov.model.instrument.InstrumentHeader"  fetch="select" column="INSTRUMENTHEADERID" />
+	    <property name="remarks" type="string" column="REMARKS" />
+	    <property name="grantType" type="string" column="GRANTTYPE" />
+	    <property name="commTaxOfficer" type="string" column="COMMTAXOFFICER" />
+	    <property name="createdDate" type="date" column="CREATEDDATE" />
+	    <property name="modifiedDate" type="date" column="LASTMODIFIEDDATE" />
+	    <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User" column="CREATEDBY" not-null="true"/>
+	    <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" column="LASTMODIFIEDBY"/>
+	    
+	 </class>
+</hibernate-mapping>
+

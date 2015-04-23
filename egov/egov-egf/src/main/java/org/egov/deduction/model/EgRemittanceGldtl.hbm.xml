@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 3, 2007 7:28:42 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.deduction.model.EgRemittanceGldtl" table="EG_REMITTANCE_GLDTL">
+        <id name="id" type="integer">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="sequence">
+            <param name="sequence">seq_eg_remittance_gldtl</param>
+            </generator>
+        </id>
+        <many-to-one name="generalledgerdetail" class="org.egov.deduction.model.Generalledgerdetail" fetch="select">
+            <column name="GLDTLID" precision="22" scale="0" not-null="true" />
+        </many-to-one> 
+        <many-to-one name="recovery" class="org.egov.model.recoveries.Recovery" fetch="select">
+            <column name="TDSID" precision="22" scale="0" />
+        </many-to-one>        
+        <property name="gldtlamt" type="big_decimal">
+            <column name="GLDTLAMT" precision="15" />
+        </property>
+        <property name="lastmodifieddate" type="date">
+            <column name="LASTMODIFIEDDATE" length="7" />
+        </property>
+        <property name="remittedamt" type="big_decimal">
+            <column name="REMITTEDAMT" precision="15" />
+        </property>
+    </class>
+</hibernate-mapping>

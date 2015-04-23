@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.model.report.FundFlowBean" table="egf_fundflow"> 
+		<!-- A squence pk generator -->
+		<id name="id" type="long" unsaved-value="null" >
+			<column name="ID" not-null="true"/>
+			<generator class="sequence">
+				<param name="sequence">SEQ_EGF_FUNDFLOW</param>
+			</generator>
+		</id>
+		 <property name="reportDate" column="REPORTDATE"/>				
+		<property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp"/>		
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User" column="CREATEDBY" not-null="true"/>
+        <property name="createdDate" column="CREATEDDATE"/>
+        <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" column="LASTMODIFIEDBY"/>
+		<property name="bankAccountId" column="BANKACCOUNTID" type="java.math.BigDecimal"/>
+		<property name="openingBalance" column="OPENINGBALANCE" type="java.math.BigDecimal"/>
+		<property name="currentReceipt" column="CURRENTRECEIPT" type="java.math.BigDecimal"/>
+		</class>
+</hibernate-mapping>

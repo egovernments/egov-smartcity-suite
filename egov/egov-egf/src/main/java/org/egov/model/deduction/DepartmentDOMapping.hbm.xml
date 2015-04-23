@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+   "-//Hibernate/Hibernate Mapping DTD//EN"
+   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>  
+	 <class name="org.egov.model.deduction.DepartmentDOMapping" table="EG_DEPT_DO_MAPPING"> 
+		 <id name="id" type="long">
+            <column name="ID" precision="10" scale="0" />
+         </id>
+        <many-to-one name="department" class="org.egov.infra.admin.master.entity.Department" fetch="select">
+            <column name="DEPARTMENT_ID" precision="22" scale="0" />
+        </many-to-one>
+         <many-to-one name="drawingOfficer" class="org.egov.pims.commons.DrawingOfficer" fetch="select">
+           <column name="DRAWINGOFFICER_ID" precision="22" scale="0" />
+         </many-to-one>
+        
+	 </class>
+</hibernate-mapping>  
+       

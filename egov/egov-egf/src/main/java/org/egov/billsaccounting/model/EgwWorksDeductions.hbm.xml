@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Feb 13, 2007 1:14:56 PM by Hibernate Tools 3.1.0.beta5 -->
+<hibernate-mapping >
+    <class name="org.egov.billsaccounting.model.EgwWorksDeductions" table="EGW_WORKS_DEDUCTIONS" >
+        <id name="id" type="integer">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="sequence">
+	    	   	   <param name="sequence">SEQ_EGW_WORKS_DEDUCTIONS</param>
+		</generator>
+        </id>
+         <timestamp
+		column="LASTMODIFIEDDATE"
+		name="lastmodifieddate"
+		access="property"
+	unsaved-value="null"/>
+        <many-to-one name="worksdetail" class="org.egov.billsaccounting.model.Worksdetail" fetch="select">
+            <column name="WORKSDETAILID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="chartofaccounts" class="org.egov.commons.CChartOfAccounts" column="GLCODEID" />
+        <many-to-one name="recovery" class="org.egov.model.recoveries.Recovery" fetch="select">
+            <column name="TDSID" precision="22" scale="0" />
+        </many-to-one>
+        <property name="amount" type="big_decimal">
+            <column name="AMOUNT" precision="22" scale="0" />
+        </property>
+        <property name="perc" >
+            <column name="PERC" precision="5" />
+        </property>
+        <property name="dedtype" type="char">
+            <column name="DEDTYPE" length="1" not-null="true" />
+        </property>
+      </class>
+</hibernate-mapping>

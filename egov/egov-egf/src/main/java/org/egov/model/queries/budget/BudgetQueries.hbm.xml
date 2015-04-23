@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	 <query name="validateFinancialYear">
+   		 <![CDATA[from CFinancialYear f where f.id=? AND ((f.startingDate<=? AND f.endingDate>=?) OR (f.endingDate>=?))]]>
+   	 </query>
+   	 <query name="getReAppropriationAmt">
+   		 <![CDATA[select sum(br.additionAmount)-sum(br.deductionAmount) from BudgetReAppropriation br where  br.state in (from org.egov.infstr.models.State where type='BudgetReAppropriation' and value=?) and br.budgetDetail in (:param_1)]]>
+   	 </query>
+</hibernate-mapping>

@@ -63,4 +63,6 @@ public interface FinancialYearDAO extends GenericDAO {
 	public CFinancialYear getFinancialYearByDate(Date date);
 
 	public CFinancialYear getFinYearByDate(Date date);
+	
+	public CFinancialYear getPreviousFinancialYearByDate(final Date date);
 }

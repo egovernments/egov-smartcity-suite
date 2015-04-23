@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 19 Aug, 2014 5:00:44 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="org.egov.eb.domain.transaction.entity.EbSchedulerLogDetails" table="EGF_EBSCHEDULERLOGDETAILS">
+        <id name="id" type="long">
+			<column name="id"></column>
+			<generator class="native">
+				<param name="sequence">SEQ_EGF_EBSCHEDULERLOGDETAILS</param>
+			</generator>
+		</id>
+        <property name="ConsumerNo" type="java.lang.String">
+            <column name="CONSUMERNO" />
+        </property>
+         <property name="dueDate" type="java.lang.String">
+            <column name="DUEDATE" />
+        </property>
+         <property name="amount" type="java.lang.String">
+            <column name="AMOUNT" />
+        </property>
+        
+        
+        <many-to-one name="ebConsumer" class="org.egov.eb.domain.master.entity.EBConsumer">
+            <column name="consumer" />
+        </many-to-one>
+        
+        <many-to-one name="ebSchedulerLog" class="org.egov.eb.domain.transaction.entity.EbSchedulerLog">
+            <column name="schedulerLogId" />
+        </many-to-one>
+        
+        <property name="message" type="java.lang.String">
+            <column name="message" />
+        </property>
+        <property name="status" type="java.lang.String">
+            <column name="STATUS" />
+        </property>
+    </class>
+</hibernate-mapping>

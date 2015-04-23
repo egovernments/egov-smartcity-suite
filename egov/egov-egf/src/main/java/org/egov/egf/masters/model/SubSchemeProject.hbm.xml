@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.egf.masters.model.SubSchemeProject" table="EGF_SUBSCHEME_PROJECT"> 
+		<!-- A sequence pk generator -->
+		<id name="id" type="long" unsaved-value="null" >
+			<column name="ID" not-null="true"/>
+			<generator class="sequence">
+				<param name="sequence">SEQ_EGF_SUBSCHEME_PROJECT</param>
+			</generator>
+		</id>
+	<!-- this refers to id of egw_projeccode   Since it is from works module we are nt referring directly -->
+      <property name="projectCode" column="projectCodeid" type="long"/>
+	  <many-to-one name="subScheme" class="org.egov.commons.SubScheme" column="subschemeid" />
+      <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User" column="CREATEDBY"/>
+      <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" column="LASTMODIFIEDBY"/>
+      <property name="createdDate" column="CREATEDDATE" type="timestamp"/>
+      <property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp"/>  
+	</class>
+</hibernate-mapping>
+		

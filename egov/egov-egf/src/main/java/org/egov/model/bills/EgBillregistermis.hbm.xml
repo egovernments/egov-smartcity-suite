@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 30, 2007 12:27:26 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.model.bills.EgBillregistermis" table="EG_BILLREGISTERMIS" >
+        <id name="id" type="integer">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="native">
+            <param name="sequence">seq_eg_billregistermis</param>
+            </generator>
+        </id>        
+		<property name="lastupdatedtime" column="LASTUPDATEDTIME" type="timestamp" />        
+        <property name="segmentid" type="big_decimal">
+            <column name="SEGMENTID" precision="22" scale="0" />
+        </property>
+        <property name="paybydate" type="date">
+            <column name="PAYBYDATE" length="7"  />
+        </property>
+        <property name="subsegmentid" type="big_decimal">
+            <column name="SUBSEGMENTID" precision="22" scale="0" />
+        </property>
+        <many-to-one name="fieldid" class="org.egov.infra.admin.master.entity.Boundary" column="FIELDID" />
+        <property name="subfieldid" type="big_decimal">
+            <column name="SUBFIELDID" precision="22" scale="0" />
+        </property>
+        <many-to-one name="functionaryid" class="org.egov.commons.Functionary" fetch="select">
+            <column name="FUNCTIONARYID" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="function" class="org.egov.commons.CFunction" fetch="select">
+            <column name="functionid" precision="22" scale="0" />
+        </many-to-one>   
+        <property name="sanctionedby" type="string">
+            <column name="SANCTIONEDBY" length="30" />
+        </property>
+        <property name="sanctiondate" type="date">
+            <column name="SANCTIONDATE" length="7" />
+        </property>
+        <property name="sanctiondetail" type="string">
+            <column name="SANCTIONDETAIL" length="200" />
+        </property>
+        <property name="narration" type="string">
+            <column name="NARRATION" length="300" />
+        </property>
+        <property name="disbursementtype" type="string">
+            <column name="DISBURSEMENTTYPE" length="30" />
+        </property>
+        <property name="escalation" type="big_decimal">
+            <column name="ESCALATION" precision="22" scale="0" />
+        </property>
+        <property name="advancepayments" type="big_decimal">
+            <column name="ADVANCEPAYMENTS" precision="22" scale="0" />
+        </property>
+        <property name="securedadvances" type="big_decimal">
+            <column name="SECUREDADVANCES" precision="22" scale="0" />
+        </property>
+        <property name="deductamountwitheld" type="big_decimal">
+            <column name="DEDUCTAMOUNTWITHELD" precision="22" scale="0" />
+        </property>        
+        <property name="month" type="big_decimal">
+            <column name="MONTH" precision="22" scale="0" />
+        </property> 
+        <property name="payto" type="string">
+            <column name="PAYTO" length="250" />
+        </property>     
+        <property name="mbRefNo" type="string">
+            <column name="MBREFNO"  />
+        </property>    
+               <property name="sourcePath" type="string">
+            <column name="SOURCEPATH" length="150" />
+        </property>
+        <property name="partyBillNumber" type="string">
+            <column name="PARTYBILLNUMBER" length="50" />
+        </property>        
+        <property name="partyBillDate" type="date">
+            <column name="PARTYBILLDATE" />
+        </property>        
+        <property name="inwardSerialNumber" type="string">
+            <column name="INWARDSERIALNUMBER" length="50" />
+        </property>
+        <property name="budgetaryAppnumber" type="string">
+            <column name="budgetary_appnumber" length="30" />
+        </property>         
+        <many-to-one name="egBillSubType" class="org.egov.model.bills.EgBillSubType" update="true" insert="true" fetch="select">
+	    	<column name="BILLSUBTYPE" precision="22" scale="0" />
+	   </many-to-one>
+        <many-to-one name="egDepartment" class="org.egov.infra.admin.master.entity.Department" update="true" insert="true" fetch="select">
+	    	<column name="DEPARTMENTID" precision="22" scale="0" />
+		</many-to-one>
+		<many-to-one name="financialyear" class="org.egov.commons.CFinancialYear" update="true" insert="true" fetch="select">
+	    	<column name="FINANCIALYEARID" precision="22" scale="0" />
+		</many-to-one>
+		<many-to-one name="fundsource" class="org.egov.commons.Fundsource" update="true" insert="true" fetch="select">
+	    	<column name="FUNDSOURCEID" precision="22" scale="0" />
+		</many-to-one>
+		<many-to-one name="fund" class="org.egov.commons.Fund" update="true" insert="true" fetch="select">
+	  	  <column name="FUNDID" precision="22" scale="0" />
+		</many-to-one>
+		<many-to-one name="egBillregister" class="org.egov.model.bills.EgBillregister" fetch="select" unique="true" cascade="none">
+            <column name="BILLID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="scheme" class="org.egov.commons.Scheme" column="SCHEMEID" />
+        <many-to-one name="subScheme" class="org.egov.commons.SubScheme" column="SUBSCHEMEID"  />
+        <many-to-one name="voucherHeader" class="org.egov.commons.CVoucherHeader">
+            <column name="VOUCHERHEADERID" />
+        </many-to-one>
+        <property name="budgetCheckReq" type="boolean">
+        <column name="budgetcheckreq" />
+        </property>
+    </class>
+</hibernate-mapping>

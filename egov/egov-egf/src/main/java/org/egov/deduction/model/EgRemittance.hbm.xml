@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 3, 2007 7:28:42 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.deduction.model.EgRemittance" table="EG_REMITTANCE">
+        <id name="id" type="integer">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="sequence">
+            <param name="sequence">seq_eg_remittance</param>
+            </generator>
+        </id>
+        <many-to-one name="financialyear" class="org.egov.commons.CFinancialYear" fetch="select">
+            <column name="FYID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="voucherheader" class="org.egov.commons.CVoucherHeader" fetch="select">
+            <column name="PAYMENTVHID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="recovery" class="org.egov.model.recoveries.Recovery" fetch="select">
+            <column name="TDSID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="fund" class="org.egov.commons.Fund" fetch="select">
+            <column name="FUNDID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        <property name="month" type="big_decimal">
+            <column name="MONTH" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="createdby" type="big_decimal">
+            <column name="CREATEDBY" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="createddate" type="date">
+            <column name="CREATEDDATE" length="7" not-null="true" />
+        </property>
+        <property name="lastmodifiedby" type="big_decimal">
+            <column name="LASTMODIFIEDBY" precision="22" scale="0" />
+        </property>       
+        <property name="lastmodifieddate" type="date">
+            <column name="LASTMODIFIEDDATE" />
+        </property>
+        <property name="asOnDate" type="date">
+            <column name="ASONDATE"/>
+        </property>
+        <set name="egRemittanceDetail" cascade="save-update,delete,delete-orphan" inverse="true">
+            <key>
+                <column name="REMITTANCEID" precision="22" scale="0"/>
+            </key>
+            <one-to-many class="org.egov.deduction.model.EgRemittanceDetail" />
+        </set>  
+    </class>
+</hibernate-mapping>

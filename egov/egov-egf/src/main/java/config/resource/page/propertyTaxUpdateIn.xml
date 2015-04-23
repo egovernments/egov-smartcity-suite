@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<pageMap name="propertyTaxUpdateIn" > 
+	<gridMap name="cessTable" containsNames="true">
+		<columnMap name="propertyTaxCess_ID" serverFieldName="1"/>
+		<columnMap name="creditGlCodeId" serverFieldName="1"/>
+		<columnMap name="debitGlCodeId" serverFieldName="1"/>
+		<columnMap name="receivablesGlCodeId" serverFieldName="1"/>
+		<columnMap name="propertyTaxCess_accountHead" serverFieldName="1"/>
+		<columnMap name="propertyTaxCess_percentage" serverFieldName="1"/>						
+	</gridMap>
+</pageMap>

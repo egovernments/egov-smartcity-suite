@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 10, 2008 12:54:43 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.model.payment.Paymentheader" table="PAYMENTHEADER">        
+        <id name="id" type="long">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="sequence">
+            <param name="sequence">SEQ_PAYMENTHEADER</param>
+            </generator>
+        </id>
+        <many-to-one name="voucherheader" class="org.egov.commons.CVoucherHeader" fetch="select">
+            <column name="VOUCHERHEADERID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="bankaccount" class="org.egov.commons.Bankaccount" fetch="select">
+            <column name="BANKACCOUNTNUMBERID" precision="22" scale="0" />
+        </many-to-one>
+        <property name="type" type="string">
+            <column name="TYPE" length="50" not-null="true" />
+        </property>
+         <property name="concurrenceDate" type="date">
+            <column name="concurrenceDate"  />
+        </property>
+        
+        <many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+            <column name="STATE_ID"/>
+        </many-to-one>
+        <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User" column="CREATEDBY"/>
+        <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" column="LASTMODIFIEDBY"/>
+        <property name="paymentAmount">
+			<column name="PAYMENTAMOUNT"/>
+		</property>	
+	   <many-to-one name="drawingOfficer" class="org.egov.pims.commons.DrawingOfficer" fetch="select">
+          <column name="DRAWINGOFFICER_ID" precision="22" scale="0" />
+       </many-to-one>
+    </class>
+</hibernate-mapping>

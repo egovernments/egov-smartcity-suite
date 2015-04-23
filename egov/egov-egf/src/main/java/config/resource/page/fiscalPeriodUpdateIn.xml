@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<pageMap name="fiscalPeriodModIn" > 
+	<gridMap name="fiscalPeriodGrid" containsNames="true">
+		<columnMap name="fiscalPeriod_ID" serverFieldName="1"/>
+		<columnMap name="fiscalPeriod_name" serverFieldName="1"/>
+		<columnMap name="fiscalPeriod_startingDate" serverFieldName="1"/>
+		<columnMap name="fiscalPeriod_endingDate" serverFieldName="1"/>						
+	</gridMap>
+</pageMap>

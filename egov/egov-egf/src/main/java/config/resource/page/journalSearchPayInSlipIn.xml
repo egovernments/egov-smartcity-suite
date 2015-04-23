@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<pageMap name="journalSearchPayInSlipIn" > 
+	<gridMap name="journalSearchPayInSlip"  containsNames="true">
+		<columnMap name="colA" serverFieldName="column5"/>
+		<columnMap name="colB" serverFieldName="chequeNumber"/>	
+		<columnMap name="colC" serverFieldName="chequeDate"/>	
+		<columnMap name="colD" serverFieldName="amount"/>			
+		<columnMap name="colE" serverFieldName="amount"/>	
+		<columnMap name="colF" serverFieldName="amount"/>	
+		<columnMap name="colG" serverFieldName="amount"/>	
+	</gridMap>	
+</pageMap>

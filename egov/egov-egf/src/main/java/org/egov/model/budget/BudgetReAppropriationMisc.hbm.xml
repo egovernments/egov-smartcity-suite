@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.model.budget.BudgetReAppropriationMisc" table="EGF_REAPPROPRIATION_MISC"> 
+		<!-- A squence pk generator -->
+		<id name="id" type="long" unsaved-value="null" >
+			<column name="ID" not-null="true"/>
+			<generator class="sequence">
+				<param name="sequence">SEQ_EGF_REAPPROPRIATION_MISC</param>
+			</generator>
+		</id>
+		<property name="sequenceNumber">
+			<column name="SEQUENCE_NUMBER" />
+		</property>	
+		<property name="reAppropriationDate">
+			<column name="REAPPROPRIATION_DATE" />
+		</property>	
+		<property name="remarks">
+			<column name="REMARKS" />
+		</property>	
+		<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+               <column name="STATE_ID"/>
+        </many-to-one>
+        <set name="budgetReAppropriations" cascade="all">
+            <key>
+                <column name="REAPPROPRIATION_MISC"/>
+            </key>
+            <one-to-many class="org.egov.model.budget.BudgetReAppropriation" />
+        </set>
+        <property column="MODIFIEDDATE" name="modifiedDate" type="timestamp"/>
+		<property column="CREATEDDATE" name="createdDate"/>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User" column="CREATEDBY"/>
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" column="MODIFIEDBY"/>
+	</class>
+</hibernate-mapping>
+						

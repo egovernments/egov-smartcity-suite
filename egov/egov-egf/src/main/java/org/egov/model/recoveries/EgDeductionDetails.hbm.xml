@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 3, 2007 7:28:42 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.model.recoveries.EgDeductionDetails" table="EG_DEDUCTION_DETAILS">
+         <id name="id" type="integer">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="native">
+            <param name="sequence">SEQ_EG_DEDUCTION_DETAILS</param>
+            </generator>
+        </id>
+        <many-to-one name="recovery" class="org.egov.model.recoveries.Recovery" fetch="select">
+            <column name="TDSID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        
+        <many-to-one name="egpartytype" class="org.egov.commons.EgPartytype" fetch="select">
+		     <column name="PARTYTYPEID" precision="22" scale="0"/>
+        </many-to-one>
+        <many-to-one name="workDocType" class="org.egov.commons.EgwTypeOfWork" fetch="select">
+			 <column name="DOCTYPEID" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="workDocSubType" class="org.egov.commons.EgwTypeOfWork" fetch="select">
+			 <column name="DOCSUBTYPEID" precision="22" scale="0"/>
+        </many-to-one>
+        <property name="datefrom" type="date">
+            <column name="DATEFROM" length="7" />
+        </property>
+        <property name="dateto" type="date">
+            <column name="DATETO" length="7" />
+        </property>
+        <property name="lowlimit" type="big_decimal">
+            <column name="LOWLIMIT" precision="15" not-null="true" />
+        </property>
+        <property name="highlimit" type="big_decimal">
+            <column name="HIGHLIMIT" precision="15" />
+        </property>
+        <property name="incometax" type="big_decimal">
+            <column name="INCOMETAX" precision="5" />
+        </property>
+        <property name="surcharge" type="big_decimal">
+            <column name="SURCHARGE" precision="5" />
+        </property>
+        <property name="education" type="big_decimal">
+            <column name="EDUCATION" precision="5" />
+        </property>
+        <property name="lastmodifieddate" type="date">
+            <column name="LASTMODIFIEDDATE" length="7" />
+        </property>
+        <property name="flatAmount" type="big_decimal">
+            <column name="AMOUNT" precision="15" />
+        </property>
+        <property name="cumulativeLowLimit" type="big_decimal">
+            <column name="CUMULATIVELOWLIMIT" precision="15" />
+        </property>
+        <property name="cumulativeHighLimit" type="big_decimal">
+            <column name="CUMULATIVEHIGHLIMIT" precision="15" />
+        </property>
+    </class>
+</hibernate-mapping>

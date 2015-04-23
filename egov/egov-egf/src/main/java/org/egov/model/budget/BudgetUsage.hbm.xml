@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.model.budget.BudgetUsage" table="EGF_BUDGET_USAGE"> 
+		<id name="id" type="long" unsaved-value="null" >
+			<column name="ID" not-null="true"/>
+			<generator class="sequence">
+				<param name="sequence">SEQ_EGF_BUDGET_USAGE</param>
+			</generator>
+		</id>
+		<timestamp
+			column="UPDATEDTIME"
+			name="updatedTime"
+			access="property"
+			unsaved-value="null"/>
+		<property name="financialYearId">
+			<column name="FINANCIALYEARID" />
+		</property>	
+		<property name="moduleId">
+			<column name="MODULEID" />
+		</property>
+		<property name="referenceNumber">
+			<column name="REFERENCENUMBER" />
+		</property>
+		<property name="createdby">
+			<column name="CREATEDBY" />
+		</property>
+		<property name="consumedAmount">
+			<column name="CONSUMEDAMT" />
+		</property>	
+		<property name="releasedAmount">
+			<column name="RELEASEDAMT" />
+		</property>
+		<property name="appropriationnumber" >
+			<column name="appropriationnumber" />
+		</property>
+		<many-to-one name="budgetDetail" class="org.egov.model.budget.BudgetDetail" column="BUDGETDETAILID"  unique="true" />
+	</class>
+</hibernate-mapping>

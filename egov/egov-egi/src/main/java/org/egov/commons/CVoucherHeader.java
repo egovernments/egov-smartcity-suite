@@ -82,6 +82,8 @@ public class CVoucherHeader extends StateAware {
 	private String refcgNo;
 	private String cgvn;
 	private Integer moduleId;
+	private String voucherSubType;
+	private Boolean isRestrictedtoOneFunctionCenter;
 	@OneToMany(cascade=CascadeType.ALL,orphanRemoval = true)
 	private Set<VoucherDetail> voucherDetail = new HashSet<VoucherDetail>(0);
 	@OneToOne(cascade=CascadeType.ALL)
@@ -419,5 +421,17 @@ public class CVoucherHeader extends StateAware {
 		}
 		return amount;
 	}
-
+	public Boolean getIsRestrictedtoOneFunctionCenter() {
+		return isRestrictedtoOneFunctionCenter;
+	}
+	public void setIsRestrictedtoOneFunctionCenter(
+			Boolean isRestrictedtoOneFunctionCenter) {
+		this.isRestrictedtoOneFunctionCenter = isRestrictedtoOneFunctionCenter;
+	}
+	public String getVoucherSubType() {
+		return voucherSubType;
+	}
+	public void setVoucherSubType(String voucherSubType) {
+		this.voucherSubType = voucherSubType;
+	}
 }

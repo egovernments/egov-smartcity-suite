@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 19 Aug, 2014 5:00:44 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+  <class name="org.egov.eb.domain.transaction.entity.EbSchedulerLog" table="EGF_EBSCHEDULERLOG">
+		<id name="id" type="long">
+			<column name="id"></column>
+			<generator class="native">
+				<param name="sequence">SEQ_EGF_EBSCHEDULERLOG</param>
+			</generator>
+		</id>
+		
+		 <property name="oddOrEvenBilling" type="java.lang.String">
+            <column name="oddorevenbilling" />
+        </property>
+        <property name="noOfPendingBills" type="java.lang.Long">
+            <column name="NOOFPENDINGBILLS" />
+        </property>
+        <property name="noOfBillsProcessed" type="java.lang.Long">
+            <column name="NOOFBILLSPROCESSED" />
+        </property>
+         <property name="noOfBillsFailed" type="java.lang.Long">
+            <column name="noOfBillsFailed" />
+        </property>
+        <property name="noOfBillsCreated" type="java.lang.Long">
+            <column name="NOOFBILLSCREATED" />
+        </property>
+        <property name="schedulerStatus" type="java.lang.String">
+            <column name="SCHEDULERSTATUS" />
+        </property>
+        <property name="startTime" type="timestamp">
+            <column name="STARTTIME" />
+        </property>
+        <property name="endTime" type="timestamp">
+            <column name="ENDTIME" />
+        </property>
+        <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User">
+	      <column name="CREATEDBY"></column>
+        </many-to-one>
+
+	    <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User">
+		  <column name="MODIFIEDBY"></column>
+	    </many-to-one>
+
+	    <property column="CREATEDDATE" name="createdDate" type="timestamp" />
+	    <property column="MODIFIEDDATE" name="modifiedDate" type="timestamp" />
+	    
+	     <set name="logDetails" cascade="save-update,delete,delete-orphan" inverse="true">
+            <key>
+                <column name="schedulerLogId" precision="22" scale="0"/>
+            </key>
+            <one-to-many class="org.egov.eb.domain.transaction.entity.EbSchedulerLogDetails" />
+        </set> 
+	    
+    </class>
+</hibernate-mapping>

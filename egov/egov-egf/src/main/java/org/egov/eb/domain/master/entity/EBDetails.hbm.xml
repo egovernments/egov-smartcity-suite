@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping>
+<!--  EBDETAILS should be egf_ebdetails  same as sequence-->
+	<class name="org.egov.eb.domain.master.entity.EBDetails" table="EGF_EBDETAILS">
+		<id name="id" type="long">
+			<column name="id" />
+			<generator class="native">
+				<param name="sequence">SEQ_EGF_EBDETAILS</param>
+			</generator>
+		</id>
+	<!--  remove underscroes from column names  remove not null from hbm-->
+		<property name="billNo" type="string">
+			<column name="BILLNO"></column>
+		</property>
+		<property name="billAmount" type="big_decimal">
+			<column name="BILLAMOUNT" precision="13" scale="2"></column>
+		</property>
+		<property name="month" type="integer">
+			<column name="MONTH"></column>
+		</property>
+		<property name="prevBillAmount" type="big_decimal">
+			<column name="PREVBILLAMOUNT" precision="13" scale="2"></column>
+		</property>
+		<property name="comments" type="string">
+			<column name="COMMENTS"></column>
+		</property>
+		<property name="receiptNo" type="string">
+			<column name="RECEIPTNO"></column>
+		</property>
+		<property name="receiptDate" type="date">
+	        <column name="RECIEPTDATE"></column>
+        </property>
+        <property name="billDate" type="date">
+	        <column name="BILLDATE"></column>
+        </property>
+        <property name="dueDate" type="date">
+	        <column name="DUEDATE"></column>
+        </property>
+        <many-to-one name="ebConsumer" class="org.egov.eb.domain.master.entity.EBConsumer"
+          column="CONSUMERNO" fetch="select"></many-to-one>
+
+		<many-to-one name="egBillregister" class="org.egov.model.bills.EgBillregister"
+			column="BILLID" fetch="select" cascade="save-update" />
+
+		<many-to-one name="status" class="org.egov.commons.EgwStatus"
+			column="STATUS" fetch="select">		    
+		</many-to-one>
+			
+		<many-to-one name="state" class="org.egov.infstr.models.State"
+		   column="STATEID" cascade="save-update"/>
+
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User">
+			<column name="CREATEDBY"></column>
+		</many-to-one>
+
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User">
+			<column name="MODIFIEDBY"></column>
+		</many-to-one>
+
+        <property column="CREATEDDATE" name="createdDate" type="timestamp" />
+        
+		<property column="MODIFIEDDATE" name="modifiedDate" type="timestamp" />
+		
+		<many-to-one name="ward" class="org.egov.infra.admin.master.entity.Boundary"
+			column="WARDID" fetch="select" />
+
+		<many-to-one name="area" class="org.egov.eb.domain.master.entity.TargetArea"
+			column="target_area_id" fetch="select" />
+		
+		<many-to-one name="position" class="org.egov.pims.commons.Position" column="POSITION_ID"
+		  fetch="select" />
+		
+		<property name="region" column="REGION" type="string" />
+		
+		<many-to-one name="financialyear" class="org.egov.commons.CFinancialYear" update="true" insert="true">
+	    	<column name="FINANCIALYEARID" precision="22" scale="0" />
+		</many-to-one>
+		<property name="variance" column="variance" type="java.math.BigDecimal"/>
+	</class>
+</hibernate-mapping>

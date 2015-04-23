@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.egov.model.recoveries.RemittanceSchedulerLog" table="egf_remittance_scheduler">
+        <id
+			name="id" column="ID" type="long" unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">SEQ_EGF_REMITTANCE_SCHEDULER</param>
+			</generator>
+		</id>
+		
+		<property name="schJobName" type="java.lang.String">
+            <column name="sch_job_name"/>
+        </property>
+        <property name="lastRunDate" type="java.util.Date">
+            <column name="lastrundate"  />
+        </property>
+        <property name="createdBy"  column="CREATEDBY" type="java.lang.Integer"/>
+        <property name="createdDate" type="java.util.Date">
+            <column name="CREATEDDATE"  not-null="true" />
+        </property>
+        <property name="schType" type="java.lang.Character">       
+            <column name="sch_type"/>
+        </property>
+        <property name="glcode" column="glcode"/>
+        <property name="remarks" type="java.lang.String">       
+            <column name="remarks"/>
+        </property>
+        <property name="status" type="java.lang.String">
+            <column name="status"/>
+        </property>
+        
+    </class>
+  
+  </hibernate-mapping>

@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.egf.masters.model.LoanGrantDetail" table="EGF_LOANGRANTDETAIL"> 
+		<!-- A sequence pk generator -->
+		<id name="id" type="long" unsaved-value="null" >
+			<column name="ID" not-null="true"/>
+			<generator class="sequence">
+				<param name="sequence">SEQ_EGF_LOANGRANTDETAIL</param>
+			</generator>
+		</id>
+	
+      <many-to-one name="header"  class="org.egov.egf.masters.model.LoanGrantHeader" column="HEADERID"/>
+	  <many-to-one name="fundingAgency" class="org.egov.egf.masters.model.FundingAgency" column="AGENCYID" />
+      <property name="loanAmount" column="LOANAMOUNT" type="big_decimal"/>
+      <property name="grantAmount" column="GRANTAMOUNT" type="big_decimal"/>
+      <property name="percentage" column="percentage" type="double"/>
+      <property name="agencySchemeNo" column="agencySchemeNo" type="string"/>
+      <property name="loanSanctionNo" column="loanSanctionNo" type="string"/>
+      <property name="commOrderNo" column="commOrderNo" type="string"/>
+      <property name="councilResNo" column="councilResNo" type="string"/>
+      <property name="patternType" column="type" type="string"/>
+      <property name="docId" column="docId" type="string"/>
+      <property name="agreementDate" column="agreementDate" type="date"/>
+      <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User" column="CREATEDBY"/>
+      <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" column="LASTMODIFIEDBY"/>
+      <property name="createdDate" column="CREATEDDATE" type="timestamp"/>
+      <property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp"/>
+	</class>
+</hibernate-mapping>
+		

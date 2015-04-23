@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<pageMap name="masterSalaryCodesIn" > 
+
+	<gridMap name="salaryCodesTable"  containsNames="true">
+	
+		<columnMap name="salary_CodeId" serverFieldName="1"/>
+		<columnMap name="salary_accountHead" serverFieldName="2"/>
+		<columnMap name="glCode_Id" serverFieldName="3"/>
+		<columnMap name="salary_Type" serverFieldName="4"/>
+		
+	</gridMap>	
+</pageMap>

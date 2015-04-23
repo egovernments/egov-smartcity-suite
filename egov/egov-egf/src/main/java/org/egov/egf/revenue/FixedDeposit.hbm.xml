@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+	<class name="org.egov.egf.revenue.FixedDeposit" table="EGF_FIXEDDEPOSIT">
+		<id name="id" type="long">
+			<column name="ID" precision="10" scale="0" />
+			<generator class="sequence">
+				<param name="sequence">seq_egf_fixedDeposit</param>
+			</generator>
+		</id>
+		<property name="fileNo" type="string" column="FILENO" />
+		<property name="amount" type="big_decimal" column="AMOUNT" />
+		<property name="date" type="date" column="DEPOSITDATE" />
+		<many-to-one name="bankBranch" class="org.egov.commons.Bankbranch"
+			fetch="select" column="BANKBRANCHID" />
+		<many-to-one name="bankAccount" class="org.egov.commons.Bankaccount"
+			fetch="select" column="BANKACCOUNTID" />
+		<property name="interestRate" type="big_decimal" column="INTERESTRATE" />
+		<property name="period" type="string" column="PERIOD" />
+		<property name="serialNumber" type="string" column="SERIALNUMBER" />
+		<many-to-one name="outFlowVoucher" class="org.egov.commons.CVoucherHeader"
+			fetch="select" column="outFlowGJVId" />
+		<property name="gjvAmount" type="big_decimal" column="GJVAmount" />
+
+		<property name="maturityAmount" type="big_decimal" column="MATURITYAMOUNT" />
+		<property name="maturityDate" type="date" column="MATURITYDATE" />
+		<property name="withdrawalDate" type="date" column="withdrawalDate" />
+		<many-to-one name="inFlowVoucher" class="org.egov.commons.CVoucherHeader"
+			fetch="select" column="inFlowGJVId" />
+		<many-to-one name="challanReceiptVoucher" class="org.egov.commons.CVoucherHeader"
+			fetch="select" column="challanReceiptVhId" />
+		<many-to-one name="instrumentHeader"
+			class="org.egov.model.instrument.InstrumentHeader" fetch="select"
+			column="InstrumentheaderId" />
+		<property name="receiptAmount" type="big_decimal" column="receiptAmount" />
+		<property name="remarks" type="string" column="REMARKS" />
+		<many-to-one name="parentId" class="org.egov.egf.revenue.FixedDeposit"
+			fetch="select" column="PARENTID" />
+		<property name="extend" type="java.lang.Boolean" column="EXTEND"
+			length="1" />
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User"
+			column="CREATEDBY" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User"
+			column="LASTMODIFIEDBY" />
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" />
+		<property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp" />
+
+             
+	</class>
+</hibernate-mapping>
+

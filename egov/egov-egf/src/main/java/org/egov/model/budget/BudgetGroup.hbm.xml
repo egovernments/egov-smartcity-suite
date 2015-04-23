@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.model.budget.BudgetGroup" table="EGF_BUDGETGROUP"> 
+		<!-- A squence pk generator -->
+		<id name="id" type="long" unsaved-value="null" >
+			<column name="ID" not-null="true"/>
+			<generator class="sequence">
+				<param name="sequence">SEQ_EGF_BUDGETGROUP</param>
+			</generator>
+		</id>				
+		<property name="modifiedDate" column="UPDATEDTIMESTAMP" type="timestamp"/>		
+		<property name="name" column="NAME"/>
+		<property name="description" column="DESCRIPTION" />
+		<property name="accountType" column="ACCOUNTTYPE">
+			<type name="org.egov.infstr.models.EnumUserType">       
+				<param name="enumClassName">org.egov.utils.BudgetAccountType</param>     
+			</type>   
+		</property>
+		<property name="budgetingType" column="BUDGETINGTYPE" >
+			<type name="org.egov.infstr.models.EnumUserType">       
+				<param name="enumClassName">org.egov.utils.BudgetingType</param>     
+			</type>   
+		</property>
+		<property name="isActive" column="ISACTIVE" />
+		<many-to-one name="majorCode" class="org.egov.commons.CChartOfAccounts" column="MAJORCODE"  unique="true" />
+		<many-to-one name="minCode" class="org.egov.commons.CChartOfAccounts" column="MINCODE"/>
+		<many-to-one name="maxCode" class="org.egov.commons.CChartOfAccounts" column="MAXCODE"/>
+	</class>
+</hibernate-mapping>

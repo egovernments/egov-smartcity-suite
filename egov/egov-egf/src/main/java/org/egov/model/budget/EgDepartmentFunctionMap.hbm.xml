@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.model.budget.EgDepartmentFunctionMap" table="EG_DEPT_FUNCTIONMAP"> 
+		<!-- A squence pk generator -->
+		<id name="id" type="long" unsaved-value="null" >
+			<column name="ID" not-null="true"/>
+			<generator class="native">
+				<param name="sequence">SEQ_DEPARTMENTFUNCTIONMAP</param>
+			</generator>
+		</id>
+
+		<many-to-one name="department" class="org.egov.infra.admin.master.entity.Department"  cascade="save-update">
+		<column name="DEPARTMENTID" />
+		</many-to-one>
+
+		<many-to-one name="function" class="org.egov.commons.CFunction"  cascade="save-update">
+		<column name="FUNCTIONID" />
+		</many-to-one>
+
+		<property name="createdDate" type="date" column="CREATEDDATE" />
+		<property name="modifiedDate" type="date" column="LASTMODIFIEDDATE" />
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User" column="CREATEDBY" not-null="true"/>
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" column="LASTMODIFIEDBY"/>
+		
+		<property name="budgetAccountType" column="BUDGETACCOUNT_TYPE" />
+		
+		
+		
+	</class>
+	
+	
+</hibernate-mapping>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<pageMap name="supplierJournalIn" > 	
+	<gridMap name="gridSupplierJournal" containsNames="true">
+		<columnMap name="chartOfAccounts_glCode" serverFieldName="glCode"/>		
+		<columnMap name="chartOfAccounts_name" serverFieldName="name"/>		
+		<columnMap name="voucherDetail_debitAmount" serverFieldName="debitAmount"/>
+		<columnMap name="voucherDetail_narration" serverFieldName="narration"/>
+		<columnMap name="cv_fromFunctionCodeId" serverFieldName="1"/>	
+		<columnMap name="function_code" serverFieldName="1"/>
+	</gridMap>	
+	<gridMap name="entities_grid">
+			<columnMap name="grid_detTypeId" serverFieldName="1"/>
+			<columnMap name="grid_detKeyId" serverFieldName="1"/>
+			<columnMap name="grid_detValue" serverFieldName="1"/>
+			<columnMap name="grid_rowIndex" serverFieldName="1"/>
+			<columnMap name="grid_amount" serverFieldName="1"/>
+			<columnMap name="grid_detCode" serverFieldName="1"/>
+	</gridMap>
+	<gridMap name="gridSupplierDeduction"  containsNames="true">
+				<columnMap name="gl_Code" serverFieldName="1"/>	
+				<columnMap name="coa_name" serverFieldName="1"/>		
+				<columnMap name="dedAmount" serverFieldName="1"/>
+				<columnMap name="cv_fromFunctionCodeId1" serverFieldName="1"/>
+				<columnMap name="tdsId" serverFieldName="1"/>
+				<columnMap name="glcodeId" serverFieldName="1"/>
+				<columnMap name="DedchartOfAccounts_glCode" serverFieldName="1"/>
+	</gridMap>	
+
+	<gridMap name="netPayTable" >
+		<columnMap name="cv_fromFunctionCodeIdpay" />
+		<columnMap name="function_codepay" />
+		<columnMap name="chartOfAccounts_glCodenetPay" />
+		<columnMap name="glCodeId_netPay" />
+		<columnMap name="chartOfAccounts_namenetPay" />
+		<columnMap name="netPayAmount" />
+	</gridMap>
+	<gridMap  name="netPayable_grid" containsNames="true">
+		<columnMap name="net_grid_detKeyId" severFieldName="1"/>
+		<columnMap name="net_grid_detTypeId" severFieldName="1"/>
+		<columnMap name="net_grid_detValue" severFieldName="1"/>
+		<columnMap name="net_grid_rowIndex" severFieldName="1"/>
+		<columnMap name="net_grid_amount" severFieldName="1"/>
+		<columnMap name="net_grid_detCode" severFieldName="1"/>
+</gridMap>
+
+</pageMap>

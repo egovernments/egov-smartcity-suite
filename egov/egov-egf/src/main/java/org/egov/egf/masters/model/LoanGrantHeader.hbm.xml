@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.egf.masters.model.LoanGrantHeader" table="EGF_LOANGRANTHEADER"> 
+		<!-- A sequence pk generator -->
+		<id name="id" type="long" unsaved-value="null" >
+			<column name="ID" not-null="true"/>
+			<generator class="sequence">
+				<param name="sequence">SEQ_EGF_LOANGRANTHEADER</param>
+			</generator>
+		</id>
+	
+      <many-to-one name="subScheme"  class="org.egov.commons.SubScheme" column="SUBSCHEMEID"/>
+	  <property name="projectCost" column="PROJECTCOST" type="big_decimal"/>
+      <property name="sanctionedCost" column="SANCTIONEDCOST" type="big_decimal"/>
+      <property name="revisedCost" column="REVISEDCOST" type="big_decimal"/>
+      <property name="councilResNo" column="councilResNo" type="string"/>
+      <property name="govtOrderNo" column="GOVTORDERNO" type="string"/>
+      <property name="amendmentNo" column="AMENDMENTNO" type="string"/>
+      <property name="councilResDate" column="COUNCILRESDATE" type="date"/>
+      <property name="govtOrderDate" column="GOVTORDERDATE" type="date"/>
+      <property name="amendmentDate" column="AMENDMENTDATE" type="date"/>
+      <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User" column="CREATEDBY"/>
+      <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" column="LASTMODIFIEDBY"/>
+      <property name="createdDate" column="CREATEDDATE" type="timestamp"/>
+      <property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp"/>
+      <bag name="detailList" cascade="save-update,delete,delete-orphan" inverse="true">
+            <key>
+                <column name="headerId" />
+            </key>
+            <one-to-many class="org.egov.egf.masters.model.LoanGrantDetail" />
+        </bag>
+	<bag name="receiptList" cascade="save-update,delete,delete-orphan" inverse="true">
+            <key>
+                <column name="headerId" />
+            </key>
+            <one-to-many class="org.egov.egf.masters.model.LoanGrantReceiptDetail" />
+        </bag>
+	</class>
+</hibernate-mapping>
+		

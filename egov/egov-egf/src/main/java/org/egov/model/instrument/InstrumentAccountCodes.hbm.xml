@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- 
+    Mapping file created by Mani
+--><hibernate-mapping>
+    <class name="org.egov.model.instrument.InstrumentAccountCodes"
+	table="EGF_INSTRUMENTACCOUNTCODES">
+        <id
+			name="id"
+			column="ID"
+			type="long"
+			unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">seq_egf_InstrumentAccountCodes</param>
+			</generator>
+		</id>
+		<property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp"/>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User" column="CREATEDBY"/>
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" column="LASTMODIFIEDBY"/>
+        <property name="createdDate" type="java.util.Date">
+            <column name="CREATEDDATE"  not-null="true" />
+        </property>
+ 		<many-to-one name="instrumentType" class="org.egov.model.instrument.InstrumentType" column="TYPEID"/>
+ 		<many-to-one  name="accountCode" class="org.egov.commons.CChartOfAccounts" column="GLCODEID" />
+        </class>
+</hibernate-mapping>

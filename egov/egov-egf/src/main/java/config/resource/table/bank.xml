@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<bank  name="bank"
+			 keyColumnName="id"
+			 keyRequiresQuote="No"
+			 hasSurrogateKey="true"
+			 hasCreatedTimestamp="true"
+			 hasModifiedTimestamp="true"
+			 hasModifiedUser="true"
+			 hasActiveField="true">
+	<columnDefinition 
+			name="code" 
+			dataType="alphaNumeric"
+			isRequired="yes"
+			requiresQuote="true"
+			maxLength="50"
+			/>
+	<columnDefinition 
+			name="name" 
+			dataType="anyChar"
+			isRequired="yes"
+			requiresQuote="true"
+			maxLength="50"
+			/>
+	
+
+	<!-- ******* Commented by sumit ******* -->
+	  <columnDefinition 
+			name="type" 
+			dataType="anyChar"
+			defaultValue=""
+			isRequired="yes"
+			requiresQuote="true"
+			maxLength="50"
+			/> 
+	
+	
+
+		<columnDefinition 
+
+			name="narration" 
+			dataType="anyChar"
+			defaultValue=""
+			isRequired="yes"
+			requiresQuote="true"
+			maxLength="250"
+			/>
+</bank>
+

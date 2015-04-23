@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping >
+	<class name="org.egov.egf.masters.model.FundingAgency" table="EGF_FUNDINGAGENCY"> 
+		<id name="id" type="long" column="ID">
+	        <generator class="sequence">
+	            <param name="sequence">SEQ_EGF_FUNDINGAGENCY</param>
+	        </generator>
+	    </id>	    
+	    <property name="code" type="string" column="CODE" />
+	    <property name="name" type="string" column="NAME" />
+	    <property name="remarks" type="string" column="REMARKS" />
+	    <property name="address" type="string" column="ADDRESS" />
+        <property name="isActive" column="isactive" type="java.lang.Boolean"/>
+	    <property name="createdDate" type="date" column="CREATEDDATE" />
+	    <property name="modifiedDate" type="date" column="LASTMODIFIEDDATE" />
+	    <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User" column="CREATEDBY" not-null="true"/>
+	    <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" column="LASTMODIFIEDBY"/>	   
+	 </class>
+</hibernate-mapping>

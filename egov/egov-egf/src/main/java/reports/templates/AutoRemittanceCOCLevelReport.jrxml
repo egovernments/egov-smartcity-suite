@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AutoRemittanceCOCLevel" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\WorkspaceCOC\\egfjava\\src\\reports\\templates\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="reportRunDate" class="java.lang.String"/>
+	<parameter name="header" class="java.lang.String"/>
+	<parameter name="payVoucherFromDate" class="java.lang.String"/>
+	<parameter name="payVoucherToDate" class="java.lang.String"/>
+	<parameter name="fund" class="java.lang.String"/>
+	<parameter name="drawingOfficer" class="java.lang.String"/>
+	<parameter name="rtgsToDate" class="java.lang.String"/>
+	<parameter name="rtgsFromDate" class="java.lang.String"/>
+	<parameter name="contractorName" class="java.lang.String"/>
+	<parameter name="supplierName" class="java.lang.String"/>
+	<parameter name="bank" class="java.lang.String"/>
+	<parameter name="bankBranch" class="java.lang.String"/>
+	<parameter name="bankAccountNum" class="java.lang.String"/>
+	<parameter name="remittanceCOA" class="java.lang.String"/>
+	<parameter name="rtgsNum" class="java.lang.String"/>
+	<parameter name="detailheader" class="java.lang.String"/>
+	<field name="summarryList" class="java.util.List"/>
+	<field name="coaAbstratct" class="java.util.List"/>
+	<field name="autoremittanceList" class="java.util.List"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="10" splitType="Stretch"/>
+	</title>
+	<columnHeader>
+		<band height="7"/>
+	</columnHeader>
+	<detail>
+		<band height="139" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="40" width="555" height="20" isRemoveLineWhenBlank="true"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{summarryList},false)]]></dataSourceExpression>
+				<subreportExpression class="java.lang.String"><![CDATA["C:/jboss-4.2.3.GA-erp/jboss-4.2.3.GA-erp/jboss-4.2.3.GA-erp/server/default/deploy/egov.ear/egfjava.jar/reports/templates/AutoRemittanceCOCLevel_Summary.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport isUsingCache="true">
+				<reportElement x="0" y="0" width="555" height="20"/>
+				<subreportParameter name="header">
+					<subreportParameterExpression><![CDATA[$P{header}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{coaAbstratct},false)]]></dataSourceExpression>
+				<subreportExpression class="java.lang.String"><![CDATA["C:/jboss-4.2.3.GA-erp/jboss-4.2.3.GA-erp/jboss-4.2.3.GA-erp/server/default/deploy/egov.ear/egfjava.jar/reports/templates/AutoRemittanceCOCLevel_COADetail.jasper"]]></subreportExpression>
+			</subreport>
+			<break>
+				<reportElement x="0" y="71" width="555" height="1"/>
+			</break>
+			<subreport>
+				<reportElement x="0" y="93" width="555" height="41"/>
+				<subreportParameter name="drawingOfficer">
+					<subreportParameterExpression><![CDATA[$P{drawingOfficer}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="supplierName">
+					<subreportParameterExpression><![CDATA[$P{supplierName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="rtgsToDate">
+					<subreportParameterExpression><![CDATA[$P{rtgsToDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="rtgsNum">
+					<subreportParameterExpression><![CDATA[$P{rtgsNum}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="payVoucherToDate">
+					<subreportParameterExpression><![CDATA[$P{payVoucherToDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="detailheader">
+					<subreportParameterExpression><![CDATA[$P{detailheader}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="bankAccountNum">
+					<subreportParameterExpression><![CDATA[$P{bankAccountNum}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="contractorName">
+					<subreportParameterExpression><![CDATA[$P{contractorName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="remittanceCOA">
+					<subreportParameterExpression><![CDATA[$P{remittanceCOA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="rtgsFromDate">
+					<subreportParameterExpression><![CDATA[$P{rtgsFromDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="bank">
+					<subreportParameterExpression><![CDATA[$P{bank}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="fund">
+					<subreportParameterExpression><![CDATA[$P{fund}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="payVoucherFromDate">
+					<subreportParameterExpression><![CDATA[$P{payVoucherFromDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="bankBranch">
+					<subreportParameterExpression><![CDATA[$P{bankBranch}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{autoremittanceList},false)]]></dataSourceExpression>
+				<subreportExpression class="java.lang.String"><![CDATA["C:/jboss-4.2.3.GA-erp/jboss-4.2.3.GA-erp/jboss-4.2.3.GA-erp/server/default/deploy/egov.ear/egfjava.jar/reports/templates/AutoRemittanceCOCLevel_Details.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="14">
+			<staticText>
+				<reportElement x="0" y="0" width="87" height="11"/>
+				<textElement textAlignment="Right">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Report run date:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="87" y="0" width="80" height="11"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{reportRunDate}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 6, 2008 11:33:36 AM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+	<class name="org.egov.billsaccounting.model.OtherBillDetail" table="OTHERBILLDETAIL">
+		<id name="id" type="integer">
+			<column name="ID" precision="22" scale="0" />
+			 <generator class="sequence" >
+           <param name="sequence">SEQ_OTHERBILLDETAIL</param>
+            </generator>
+		</id>
+		<many-to-one name="voucherheaderByPayvhid"
+			class="org.egov.commons.CVoucherHeader" fetch="select">
+			<column name="PAYVHID" precision="22" scale="0" />
+		</many-to-one>
+		<many-to-one name="voucherheaderByVoucherheaderid"
+			class="org.egov.commons.CVoucherHeader" fetch="select">
+			<column name="VOUCHERHEADERID" precision="22" scale="0"
+				not-null="true" />
+		</many-to-one>
+		<many-to-one name="egBillregister"
+			class="org.egov.model.bills.EgBillregister" fetch="select">
+			<column name="BILLID" precision="22" scale="0"
+				not-null="true" />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

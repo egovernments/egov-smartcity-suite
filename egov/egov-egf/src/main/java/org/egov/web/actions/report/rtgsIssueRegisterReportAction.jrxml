@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rtgsIssueRegisterReportAction" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<parameter name="ulbName" class="java.lang.String"/>
+	<parameter name="fundAndBankHeading" class="java.lang.String"/>
+	<parameter name="reportRundate" class="java.lang.String"/>
+	<parameter name="rtgsDisplayList" class="java.util.List"/>
+	<parameter name="dateRange" class="java.lang.String"/>
+	<field name="bank" class="java.lang.String"/>
+	<field name="accountNumber" class="java.lang.String"/>
+	<field name="partyName" class="java.lang.String"/>
+	<field name="rtgsNumber" class="java.lang.String"/>
+	<field name="rtgsDate" class="java.util.Date"/>
+	<field name="paymentNumber" class="java.lang.String"/>
+	<field name="paymentDate" class="java.lang.String"/>
+	<field name="paymentAmount" class="java.math.BigDecimal"/>
+	<field name="status" class="java.lang.String"/>
+	<field name="department" class="java.lang.String"/>
+	<field name="bankBranch" class="java.lang.String"/>
+	<variable name="GrandTotal" class="java.math.BigDecimal" resetType="Group" resetGroup="rtgsRegisterAccountNumberGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{paymentAmount}]]></variableExpression>
+	</variable>
+	<group name="rtgsRegisterAccountNumberGroup">
+		<groupExpression><![CDATA[$F{accountNumber}]]></groupExpression>
+		<groupHeader>
+			<band height="44">
+				<textField>
+					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="0" y="5" width="555" height="19" isPrintWhenDetailOverflows="true" printWhenGroupChanges="rtgsRegisterAccountNumberGroup"/>
+					<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{bank} + " - " + $F{bankBranch} + " - " + $F{accountNumber}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText" stretchType="RelativeToBandHeight" x="296" y="24" width="142" height="20"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[BPV Number And Date]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText" x="0" y="24" width="18" height="20"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Seq No.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText" stretchType="RelativeToBandHeight" x="18" y="24" width="50" height="20"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[RTGS Date]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText" stretchType="RelativeToBandHeight" x="68" y="24" width="59" height="20"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[RTGS Number]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText" stretchType="RelativeToBandHeight" x="127" y="24" width="92" height="20"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Department]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText" stretchType="RelativeToBandHeight" x="219" y="24" width="77" height="20"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Party Name]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText" stretchType="RelativeToBandHeight" x="438" y="24" width="74" height="20"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Amount (Rs.)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText" stretchType="RelativeToBandHeight" x="512" y="24" width="43" height="20"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Status]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="50">
+				<staticText>
+					<reportElement key="staticText" x="295" y="1" width="142" height="20"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[GrandTotal:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement key="textField" x="437" y="1" width="75" height="20"/>
+					<box rightPadding="2">
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{GrandTotal}]]></textFieldExpression>
+				</textField>
+				<frame>
+					<reportElement x="0" y="26" width="555" height="20"/>
+				</frame>
+				<line>
+					<reportElement x="0" y="0" width="555" height="1"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="rtgsRegisterRtgsDateGroup">
+		<groupExpression><![CDATA[$F{rtgsNumber} + $F{rtgsDate}]]></groupExpression>
+	</group>
+	<group name="rtgsRegisterRtgsNumberGroup">
+		<groupExpression><![CDATA[$F{rtgsNumber}]]></groupExpression>
+	</group>
+	<group name="rtgsRegisterDepartmentGroup">
+		<groupExpression><![CDATA[$F{rtgsNumber} + $F{department}]]></groupExpression>
+	</group>
+	<group name="rtgsRegisterPartyNameGroup">
+		<groupExpression><![CDATA[$F{rtgsNumber} + $F{partyName}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="69">
+			<staticText>
+				<reportElement key="staticText" stretchType="RelativeToBandHeight" x="414" y="54" width="75" height="15"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Report Run date:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement key="textField" x="489" y="54" width="65" height="15"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{reportRundate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="0" y="29" width="555" height="23"/>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{fundAndBankHeading}+" "+ $P{dateRange}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="staticText" x="101" y="0" width="355" height="24"/>
+				<textElement textAlignment="Center">
+					<font size="15" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{ulbName}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="296" y="0" width="142" height="21"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{paymentNumber}+" - "+ $F{paymentDate}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField" x="512" y="0" width="43" height="21"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{status}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" x="438" y="0" width="74" height="21"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{paymentAmount}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField" x="0" y="0" width="18" height="21"/>
+				<box rightPadding="0">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{rtgsRegisterAccountNumberGroup_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement key="textField" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="18" y="0" width="49" height="21" isPrintWhenDetailOverflows="true" printWhenGroupChanges="rtgsRegisterRtgsDateGroup">
+					<printWhenExpression><![CDATA[$V{rtgsRegisterRtgsDateGroup_COUNT} == 1]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="1" bottomPadding="1" rightPadding="0">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{rtgsDate}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="127" y="0" width="91" height="21" isPrintWhenDetailOverflows="true" printWhenGroupChanges="rtgsRegisterDepartmentGroup">
+					<printWhenExpression><![CDATA[$V{rtgsRegisterDepartmentGroup_COUNT} == 1]]></printWhenExpression>
+				</reportElement>
+				<box rightPadding="0">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{department}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="219" y="0" width="76" height="21" isPrintWhenDetailOverflows="true" printWhenGroupChanges="rtgsRegisterPartyNameGroup">
+					<printWhenExpression><![CDATA[$V{rtgsRegisterPartyNameGroup_COUNT} == 1]]></printWhenExpression>
+				</reportElement>
+				<box rightPadding="0">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{partyName}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="68" y="0" width="58" height="21" isPrintWhenDetailOverflows="true" printWhenGroupChanges="rtgsRegisterRtgsNumberGroup">
+					<printWhenExpression><![CDATA[$V{rtgsRegisterRtgsNumberGroup_COUNT} == 1]]></printWhenExpression>
+				</reportElement>
+				<box rightPadding="0">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{rtgsNumber}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="295" y="0" width="1" height="21"/>
+			</line>
+			<line>
+				<reportElement x="218" y="0" width="1" height="21"/>
+			</line>
+			<line>
+				<reportElement x="126" y="0" width="1" height="21"/>
+			</line>
+			<line>
+				<reportElement x="67" y="0" width="1" height="21"/>
+			</line>
+		</band>
+	</detail>
+</jasperReport>

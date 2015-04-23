@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.egf.masters.model.SchemeBankaccount" table="EGF_SCHEME_BANKACCOUNT"> 
+		<!-- A sequence pk generator -->
+		<id name="id" type="long" unsaved-value="null" >
+			<column name="ID" not-null="true"/>
+			<generator class="sequence">
+				<param name="sequence">SEQ_EGF_SCHEME_BANKACCOUNT</param>
+			</generator>
+		</id>
+      <many-to-one name="bankAccount" class="org.egov.commons.Bankaccount" column="bankaccountid" />
+	  <many-to-one name="scheme" class="org.egov.commons.Scheme" column="schemeid" />
+	  <many-to-one name="subScheme" class="org.egov.commons.SubScheme" column="subschemeid" />
+	  
+      <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User" column="CREATEDBY"/>
+      <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" column="LASTMODIFIEDBY"/>
+      <property name="createdDate" column="CREATEDDATE" type="timestamp"/>
+      <property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp"/>  
+	</class>
+</hibernate-mapping>
+		

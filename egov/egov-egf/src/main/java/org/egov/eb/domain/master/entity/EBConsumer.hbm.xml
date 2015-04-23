@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping>
+	<class name="org.egov.eb.domain.master.entity.EBConsumer" table="EGF_EBCONSUMER">
+		<id name="id" type="long">
+			<column name="id"></column>
+			<generator class="native">
+				<param name="sequence">SEQ_EGF_EBCONSUMER</param>
+			</generator>
+		</id>
+		
+		<!--  remove all not nulls from here  -->
+		<property name="code" column="CODE" type="string"></property>
+		<property name="name" column="NAME" type="string"></property>
+		<property name="region" column="REGION" type="string"></property>
+		<property name="oddOrEvenBilling" column="ODDOREVENBILLING" type="string"></property>
+		<property name="location" column="LOCATION" type="string"></property>
+		<property name="address" column="ADDRESS" type="string"></property>
+		<property name="isActive" column="ISACTIVE" type="java.lang.Boolean"></property>
+		
+		
+		<many-to-one name="ward" class="org.egov.infra.admin.master.entity.Boundary"
+			column="WARDID" fetch="select">
+		</many-to-one>
+		
+	    <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User">
+	      <column name="CREATEDBY"></column>
+        </many-to-one>
+
+	    <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User">
+		  <column name="MODIFIEDBY"></column>
+	    </many-to-one>
+
+	    <property column="CREATEDDATE" name="createdDate" type="timestamp" />
+	    <property column="MODIFIEDDATE" name="modifiedDate" type="timestamp" />
+	</class>
+</hibernate-mapping>

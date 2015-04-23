@@ -1,0 +1,744 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AutoRemittanceCOCLevel_Details" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<subDataset name="dataset1"/>
+	<parameter name="payVoucherFromDate" class="java.lang.String"/>
+	<parameter name="payVoucherToDate" class="java.lang.String"/>
+	<parameter name="drawingOfficer" class="java.lang.String"/>
+	<parameter name="bank" class="java.lang.String"/>
+	<parameter name="fund" class="java.lang.String"/>
+	<parameter name="rtgsToDate" class="java.lang.String"/>
+	<parameter name="rtgsFromDate" class="java.lang.String"/>
+	<parameter name="contractorName" class="java.lang.String"/>
+	<parameter name="supplierName" class="java.lang.String"/>
+	<parameter name="bankBranch" class="java.lang.String"/>
+	<parameter name="bankAccountNum" class="java.lang.String"/>
+	<parameter name="remittanceCOA" class="java.lang.String"/>
+	<parameter name="rtgsNum" class="java.lang.String"/>
+	<parameter name="detailheader" class="java.lang.String"/>
+	<field name="remittanceCOA" class="java.lang.String"/>
+	<field name="department" class="java.lang.String"/>
+	<field name="drawingOfficer" class="java.lang.String"/>
+	<field name="bankbranchAccount" class="java.lang.String"/>
+	<field name="partyName" class="java.lang.String"/>
+	<field name="panNumber" class="java.lang.String"/>
+	<field name="billNumber" class="java.lang.String"/>
+	<field name="billAmount" class="java.math.BigDecimal"/>
+	<field name="voucherNumber" class="java.lang.String"/>
+	<field name="remittancePaymentNo" class="java.lang.String"/>
+	<field name="remittedAmount" class="java.math.BigDecimal"/>
+	<field name="rtgsNoDate" class="java.lang.String"/>
+	<field name="rtgsAmount" class="java.math.BigDecimal"/>
+	<variable name="grandTotal" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{remittedAmount}]]></variableExpression>
+	</variable>
+	<variable name="subtotal" class="java.math.BigDecimal" resetType="Group" resetGroup="recoverydeptdobankbranchaccountgroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{remittedAmount}]]></variableExpression>
+	</variable>
+	<variable name="departmentTotal" class="java.math.BigDecimal" resetType="Group" resetGroup="departmentdrawingofficergroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{remittedAmount}]]></variableExpression>
+	</variable>
+	<group name="remittancecoagroup">
+		<groupExpression><![CDATA[$F{remittanceCOA}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<textField>
+					<reportElement x="0" y="0" width="538" height="13"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Remittance COA -"+$F{remittanceCOA}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="4"/>
+		</groupFooter>
+	</group>
+	<group name="departmentdrawingofficergroup">
+		<groupExpression><![CDATA[$F{department} + "-" + $F{drawingOfficer}]]></groupExpression>
+		<groupHeader>
+			<band height="21">
+				<textField>
+					<reportElement x="0" y="0" width="538" height="20"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Department/Drawing Officer -" + $F{department}  + $F{drawingOfficer}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="21">
+				<textField>
+					<reportElement x="349" y="0" width="193" height="20"/>
+					<box leftPadding="1" rightPadding="1">
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{departmentTotal}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="288" y="0" width="61" height="20"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Department Total]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="recoverydeptdobankbranchaccountgroup">
+		<groupExpression><![CDATA[$F{remittanceCOA} + "-" +$F{department} + "-" +$F{drawingOfficer} + "-" +$F{bankbranchAccount}]]></groupExpression>
+		<groupHeader>
+			<band height="53">
+				<staticText>
+					<reportElement x="74" y="23" width="56" height="30" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[PAN Number]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="130" y="23" width="56" height="30" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Bill Number/
+Reciept Number]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="186" y="23" width="45" height="30" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Bill Amount]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="231" y="23" width="57" height="30" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Voucher
+Number]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="288" y="23" width="61" height="30" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Remittance
+Payment
+Number]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="349" y="23" width="60" height="30" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Amount
+Remitted(Rs)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="493" y="23" width="49" height="30" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[RTGS
+Amount]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="26" y="23" width="48" height="30" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Party Name]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="409" y="23" width="84" height="30" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[RTGS Number/
+Date]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="0" y="0" width="538" height="20"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Bank Branch  - " +$F{bankbranchAccount}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="23" width="26" height="30"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Sl.No.]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<textField>
+					<reportElement x="349" y="0" width="193" height="20"/>
+					<box leftPadding="1" rightPadding="1">
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{subtotal}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="288" y="0" width="61" height="20"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Sub Total]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="remittancePaymentNo">
+		<groupExpression><![CDATA[$F{remittancePaymentNo}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="105">
+			<staticText>
+				<reportElement x="31" y="25" width="100" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Payment Voucher From Date :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="31" y="35" width="100" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RTGS Assigned From Date:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="31" y="45" width="100" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Remittance COA:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="31" y="55" width="100" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Contractor Name:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="31" y="65" width="100" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RTGS Number:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="31" y="85" width="100" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Bank Account Number:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="233" y="25" width="100" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Payment Voucher To date:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="31" y="75" width="100" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Bank:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="233" y="35" width="100" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RTGS Assigned To Date:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="233" y="55" width="100" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Supplier Name:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="233" y="65" width="100" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fund:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="233" y="45" width="100" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Drawing Officer:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="233" y="75" width="100" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Bank Branch:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="131" y="25" width="83" height="10">
+					<printWhenExpression><![CDATA[($P{payVoucherFromDate} == null ? "" :$P{payVoucherFromDate})]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{payVoucherFromDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="333" y="25" width="100" height="10">
+					<printWhenExpression><![CDATA[($P{payVoucherToDate} == null ? "" : $P{payVoucherToDate})]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{payVoucherToDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="333" y="35" width="100" height="10">
+					<printWhenExpression><![CDATA[($P{rtgsToDate} == null ? "" : $P{rtgsToDate})]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{rtgsToDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="133" y="35" width="81" height="10">
+					<printWhenExpression><![CDATA[($P{rtgsFromDate} == null ? "" : $P{rtgsFromDate})]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{rtgsFromDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="131" y="45" width="84" height="10">
+					<printWhenExpression><![CDATA[($P{remittanceCOA} ==  null ? "" : $P{remittanceCOA})]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{remittanceCOA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="333" y="45" width="100" height="10">
+					<printWhenExpression><![CDATA[($P{drawingOfficer} == null ? "" : $P{drawingOfficer})]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{drawingOfficer}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="333" y="55" width="100" height="10">
+					<printWhenExpression><![CDATA[($P{supplierName} ==  null ? "" : $P{supplierName})]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{supplierName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="333" y="65" width="100" height="10">
+					<printWhenExpression><![CDATA[($P{fund} == null ? "" : $P{fund})]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{fund}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="333" y="75" width="100" height="10">
+					<printWhenExpression><![CDATA[($P{bankBranch} == null ? "" : $P{bankBranch})]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{bankBranch}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="133" y="55" width="81" height="10">
+					<printWhenExpression><![CDATA[($P{contractorName} ==  null ? "" : $P{contractorName})]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{contractorName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="133" y="75" width="81" height="10">
+					<printWhenExpression><![CDATA[($P{bank} == null ? "" :$P{bank})]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{bank}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="133" y="65" width="81" height="10">
+					<printWhenExpression><![CDATA[($P{rtgsNum}  == null ? "" : $P{rtgsNum})]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{rtgsNum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="131" y="86" width="84" height="10">
+					<printWhenExpression><![CDATA[($P{bankAccountNum} == null ? "" : $P{bankAccountNum})]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{bankAccountNum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="5" width="543" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{detailheader}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField>
+				<reportElement x="26" y="0" width="48" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{partyName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="74" y="0" width="56" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{panNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="0" width="56" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{billNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="186" y="0" width="45" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{billAmount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="231" y="0" width="57" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{voucherNumber}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="288" y="0" width="61" height="1" printWhenGroupChanges="remittancePaymentNo">
+					<printWhenExpression><![CDATA[$V{remittancePaymentNo_COUNT} == 1]]></printWhenExpression>
+				</reportElement>
+			</line>
+			<elementGroup>
+				<elementGroup>
+					<textField evaluationTime="Group" evaluationGroup="remittancePaymentNo" isBlankWhenNull="false">
+						<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="288" y="0" width="61" height="20" isPrintWhenDetailOverflows="true" printWhenGroupChanges="remittancePaymentNo">
+							<printWhenExpression><![CDATA[$V{remittancePaymentNo_COUNT}  == 1]]></printWhenExpression>
+						</reportElement>
+						<box>
+							<pen lineWidth="1.0"/>
+							<topPen lineWidth="0.0"/>
+							<leftPen lineWidth="1.0"/>
+							<bottomPen lineWidth="0.0"/>
+							<rightPen lineWidth="1.0"/>
+						</box>
+						<textElement>
+							<font size="6"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{remittancePaymentNo}]]></textFieldExpression>
+					</textField>
+				</elementGroup>
+			</elementGroup>
+			<textField>
+				<reportElement x="349" y="0" width="60" height="20" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{remittedAmount}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="409" y="0" width="84" height="1" printWhenGroupChanges="remittancePaymentNo">
+					<printWhenExpression><![CDATA[$V{remittancePaymentNo_COUNT} == 1]]></printWhenExpression>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="493" y="0" width="1" height="21" printWhenGroupChanges="remittancePaymentNo">
+					<printWhenExpression><![CDATA[$V{remittancePaymentNo_COUNT} > 1]]></printWhenExpression>
+				</reportElement>
+			</line>
+			<elementGroup>
+				<elementGroup>
+					<textField evaluationTime="Group" evaluationGroup="remittancePaymentNo" isBlankWhenNull="false">
+						<reportElement stretchType="RelativeToTallestObject" x="409" y="0" width="84" height="20" isPrintWhenDetailOverflows="true" printWhenGroupChanges="remittancePaymentNo">
+							<printWhenExpression><![CDATA[$V{remittancePaymentNo_COUNT} ==1]]></printWhenExpression>
+						</reportElement>
+						<box>
+							<pen lineWidth="1.0"/>
+							<topPen lineWidth="0.0"/>
+							<leftPen lineWidth="1.0"/>
+							<bottomPen lineWidth="0.0"/>
+							<rightPen lineWidth="1.0"/>
+						</box>
+						<textElement>
+							<font size="6"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{rtgsNoDate}]]></textFieldExpression>
+					</textField>
+				</elementGroup>
+			</elementGroup>
+			<line>
+				<reportElement x="493" y="0" width="48" height="1" printWhenGroupChanges="remittancePaymentNo">
+					<printWhenExpression><![CDATA[$V{remittancePaymentNo_COUNT} == 1]]></printWhenExpression>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="542" y="0" width="1" height="21" printWhenGroupChanges="remittancePaymentNo">
+					<printWhenExpression><![CDATA[$V{remittancePaymentNo_COUNT} > 1]]></printWhenExpression>
+				</reportElement>
+			</line>
+			<elementGroup>
+				<elementGroup>
+					<textField evaluationTime="Group" evaluationGroup="remittancePaymentNo" isBlankWhenNull="false">
+						<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="493" y="0" width="49" height="20" isPrintWhenDetailOverflows="true" printWhenGroupChanges="remittancePaymentNo">
+							<printWhenExpression><![CDATA[$V{remittancePaymentNo_COUNT} == 1]]></printWhenExpression>
+						</reportElement>
+						<box>
+							<pen lineWidth="1.0"/>
+							<topPen lineWidth="0.0"/>
+							<leftPen lineWidth="1.0"/>
+							<bottomPen lineWidth="0.0"/>
+							<rightPen lineWidth="1.0"/>
+						</box>
+						<textElement textAlignment="Right">
+							<font size="6"/>
+						</textElement>
+						<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{rtgsAmount}]]></textFieldExpression>
+					</textField>
+				</elementGroup>
+			</elementGroup>
+			<textField>
+				<reportElement x="0" y="0" width="26" height="20"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{recoverydeptdobankbranchaccountgroup_COUNT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="5" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="3" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="22" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="349" height="20"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Grand Total]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="349" y="0" width="193" height="20"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{grandTotal}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

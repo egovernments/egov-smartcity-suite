@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.model.budget.Budget" table="EGF_BUDGET"> 
+		<!-- A squence pk generator -->
+		<id name="id" type="long" unsaved-value="null" >
+			<column name="ID" not-null="true"/> 
+			<generator class="sequence">
+				<param name="sequence">SEQ_EGF_BUDGET</param>
+			</generator>
+		</id>
+		<property name="modifiedDate" column="UPDATEDTIMESTAMP" type="timestamp"/>
+		<property name="name" column="NAME" length="50"/>
+		<property name="description" column="DESCRIPTION" length="250"/>
+		<property name="isActiveBudget" column="ISACTIVEBUDGET"/>
+		<property name="isPrimaryBudget" column="ISPRIMARYBUDGET"/>
+		<property name="isbere" column="ISBERE"/>
+		<property name="documentNumber" column="DOCUMENT_NUMBER"/>
+		<property name="asOnDate" column="AS_ON_DATE"/>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User" column="CREATEDBY"/>
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" column="LASTMODIFIEDBY"/>
+		<property name="materializedPath" column="materializedPath" type="string"/> 		
+		<many-to-one name="financialYear" class="org.egov.commons.CFinancialYear" column="FINANCIALYEARID" fetch="join"/>
+		<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all" fetch="join">
+            <column name="STATE_ID"/>
+        </many-to-one>
+		<many-to-one name="parent" class="org.egov.model.budget.Budget" column="parent"  fetch="join"/>
+		<many-to-one name="referenceBudget" class="org.egov.model.budget.Budget" column="reference_budget"  />
+	</class>
+</hibernate-mapping>
+		

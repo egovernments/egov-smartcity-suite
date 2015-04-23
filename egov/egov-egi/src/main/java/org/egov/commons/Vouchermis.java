@@ -133,6 +133,7 @@ public class Vouchermis implements java.io.Serializable {
 	private SubScheme subschemeid;
 	private Functionary functionary;
 	private CVoucherHeader voucherheaderid;
+	private CFunction function;
 	private String sourcePath;
 	private String budgetaryAppnumber;
 	private Boolean budgetCheckReq = true;
@@ -527,4 +528,11 @@ public class Vouchermis implements java.io.Serializable {
 		this.budgetaryAppnumber = appnumber;
 	}
 
+	public CFunction getFunction() {
+		return function;
+	}
+
+	public void setFunction(CFunction function) {
+		this.function = function;
+	}
 }

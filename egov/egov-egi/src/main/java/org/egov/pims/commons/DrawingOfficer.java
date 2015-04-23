@@ -39,6 +39,8 @@
  */
 package org.egov.pims.commons;
 
+import org.egov.commons.Bank;
+import org.egov.commons.Bankbranch;
 import org.egov.commons.utils.EntityType;
 
 public class DrawingOfficer implements  java.io.Serializable,EntityType {
@@ -47,6 +49,10 @@ public class DrawingOfficer implements  java.io.Serializable,EntityType {
 	private Integer id ;
 	private String code;
 	private String name;
+	private Bank bank;
+	private Bankbranch bankbranch;
+	String accountNumber;
+	String tan;
 	
 	public Integer getId() {
 		return id;
@@ -100,6 +106,29 @@ public class DrawingOfficer implements  java.io.Serializable,EntityType {
 		return null;
 	}
 	
-	
+	public Bank getBank() {
+		return bank;
+	}
+	public void setBank(Bank bank) {
+		this.bank = bank;
+	}
+	public Bankbranch getBankbranch() {
+		return bankbranch;
+	}
+	public void setBankbranch(Bankbranch bankbranch) {
+		this.bankbranch = bankbranch;
+	}
+	public String getAccountNumber() {
+		return accountNumber;
+	}
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
+	}
+	public String getTan() {
+		return tan;
+	}
+	public void setTan(String tan) {
+		this.tan = tan;
+	}
 
 }

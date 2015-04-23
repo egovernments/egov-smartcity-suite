@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27 Dec, 2013 11:16:00 AM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="org.egov.model.instrument.DishonorCheque" table="EGF_DISHONORCHEQUE">
+         <id name="id">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="sequence" >
+            <param name="sequence">SEQ_EGF_DISHONORCHQ</param>
+            </generator>
+        </id>
+        <many-to-one name="instrumentHeader" class="org.egov.model.instrument.InstrumentHeader" fetch="select">
+         <column name="INSTRUMENTHEADERID"  />
+         </many-to-one>
+         
+          <many-to-one name="originalVoucherHeader" class="org.egov.commons.CVoucherHeader" fetch="select">
+         <column name="ORIGINALVHID"  />
+         </many-to-one>
+         <property generated="never" lazy="false" name="bankreason">
+ 			  <column name="bankreason"/>
+  		</property>
+  		 <property generated="never" lazy="false" name="instrumentDishonorReason">
+ 			  <column name="instrumentDishonorReason"/>
+  		</property>
+         
+         <many-to-one name="status" class="org.egov.commons.EgwStatus" fetch="select">
+         <column name="STATUSID"  />
+         </many-to-one>
+       
+       <many-to-one name="bankchargeGlCodeId" class="org.egov.commons.CChartOfAccounts" fetch="select">
+         <column name="BANKCHARGEGLCODEID"  />
+         </many-to-one>
+         
+         <many-to-one name="bankchargesVoucherHeader" class="org.egov.commons.CVoucherHeader" fetch="select">
+         <column name="BANKCHARGESVHID"  />
+         </many-to-one>
+         
+          <many-to-one name="reversalVoucherHeader" class="org.egov.commons.CVoucherHeader" fetch="select">
+         <column name="REVERSALVHID"  />
+         </many-to-one>
+         
+        <property name="bankChargesAmt" type="java.math.BigDecimal">
+            <column name="BANKCHARGES" />
+        </property>
+        <property name="bankReferenceNumber" type="java.lang.String">
+            <column name="bankReferenceNumber"  length="20"/>
+        </property>
+        <property name="transactionDate" type="java.util.Date">
+            <column name="TRANSACTIONDATE"  />
+        </property>
+            
+          <set name="details"  inverse="true" cascade="all-delete-orphan">
+            <key>
+                <column name="HEADERID" precision="12" scale="0" not-null="true" />
+            </key>
+            <one-to-many class="org.egov.model.instrument.DishonorChequeDetails" />
+        </set>
+        
+         <many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+            <column name="STATEID"/>
+        </many-to-one>
+        
+        <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User" fetch="select">
+            <column name="CREATEDBY"   />
+        </many-to-one>	
+        <property name="createdDate" type="date">
+            <column name="CREATEDDATE" length="7" not-null="true" />
+        </property>
+         <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" fetch="select">
+            <column name="MODIFIEDBY"  />
+        </many-to-one>	
+        <property name="modifiedDate" type="date">
+            <column name="MODIFIEDDATE" length="7" not-null="true" />
+        </property>
+       
+    </class>
+</hibernate-mapping>

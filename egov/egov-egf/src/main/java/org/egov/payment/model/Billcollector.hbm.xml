@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 10, 2008 12:54:43 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.payment.model.Billcollector" table="BILLCOLLECTOR">
+    <id name="id" type="integer">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="sequence">
+            <param name="sequence">SEQ_BILLCOLLECTOR</param>
+            </generator>
+        </id>
+        <property name="code" type="string">
+            <column name="CODE" length="10" not-null="true" unique="true" />
+        </property>
+        <property name="name" type="string">
+            <column name="NAME" length="50" not-null="true" unique="true" />
+        </property>
+        <property name="departmentid" type="big_decimal">
+            <column name="DEPARTMENTID" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="cashinhand" type="big_decimal">
+            <column name="CASHINHAND" precision="22" scale="0" />
+        </property>
+        <property name="chequeinhand" type="big_decimal">
+            <column name="CHEQUEINHAND" precision="22" scale="0" />
+        </property>
+        <property name="type" type="string">
+            <column name="TYPE" length="50" not-null="true" />
+        </property>
+        <property name="zoneid" type="big_decimal">
+            <column name="ZONEID" precision="22" scale="0" />
+        </property>
+        <property name="regionid" type="big_decimal">
+            <column name="REGIONID" precision="22" scale="0" />
+        </property>
+        <property name="narration" type="string">
+            <column name="NARRATION" length="250" />
+        </property>
+        <property name="isactive" type="boolean">
+            <column name="ISACTIVE" precision="1" scale="0" not-null="true" />
+        </property>
+        <property name="lastmodified" type="date">
+            <column name="LASTMODIFIED" length="7" />
+        </property>
+        <property name="created" type="date">
+            <column name="CREATED" length="7" not-null="true" />
+        </property>
+        <property name="modifiedby" type="big_decimal">
+            <column name="MODIFIEDBY" precision="22" scale="0" />
+        </property>
+    </class>
+</hibernate-mapping>

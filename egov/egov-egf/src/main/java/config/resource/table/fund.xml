@@ -1,0 +1,87 @@
+<?xml version="1.0" ?> 
+<Fund name="fund"
+		 keyColumnName="ID"
+		 keyRequiresQuote="No">
+	  <columnDefinition 
+		name="code" 
+		dataType="alphaNumeric"
+		 isRequired="yes"
+		 maxLength="50"
+		 /> 
+	  <columnDefinition
+		 name="name" 
+		 dataType="anyChar"
+		 isRequired="yes"
+		 maxLength="50"
+		 /> 
+	 
+	  <columnDefinition
+		 name="llevel"
+		 dataType="unsignedInt"
+		 defaultValue="0"
+		 isRequired="yes"
+		 maxLength="50"
+		 /> 
+	  <columnDefinition
+		 name="parentId"
+		 dataType="unsignedInt"
+		 maxLength="4"
+		 /> 
+	   <columnDefinition
+		 name="openingDebitBalance"
+		 dataType="unsignedDecimal"
+		 defaultValue="0.0"
+		 isRequired="yes"
+		 maxLength="4"
+		 /> 
+	
+	    <columnDefinition
+		 name="openingCreditBalance"
+		 dataType="unsignedDecimal"
+		 defaultValue="0.0"
+		 isRequired="yes"
+		 maxLength="4"
+		 />
+
+	   <columnDefinition
+		 name="transactionDebitAmount"
+		 dataType="unsignedDecimal"
+		 defaultValue="0.0"
+		 isRequired="yes"
+		 maxLength="4"
+		 />
+
+	<columnDefinition
+		 name="transactionCreditAmount"
+		 dataType="unsignedDecimal"
+		 defaultValue="0.0"
+		 isRequired="yes"
+		 maxLength="4"
+		 />
+	 <columnDefinition
+			 name="isnotleaf"
+			 dataType="unsignedInt"
+			 isRequired="yes"
+			 maxLength="1"
+	 /> 
+	  <columnDefinition
+	  		 name="identifier" 
+	  		 dataType="anyChar"
+	  		 defaultValue="O"
+	  		 isRequired="yes"
+	  		 maxLength="1"
+		 /> 
+	 <columnDefinition
+				 name="purpose_id"
+				 dataType="unsignedInt"
+				 defaultValue="12"
+				 isRequired="yes"
+				 maxLength="2"
+		 /> 
+	 
+	 <columnDefinition
+		 name="payglcodeid"
+		 dataType="unsignedInt"
+		
+	 /> 
+  </Fund>

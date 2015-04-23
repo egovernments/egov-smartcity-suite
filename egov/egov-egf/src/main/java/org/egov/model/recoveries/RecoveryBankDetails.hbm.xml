@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.egov.model.recoveries.RecoveryBankDetails" table="egf_recovery_bankdetails">
+         <id name="id" type="long">
+            <column name="ID" precision="10" scale="0" />
+            <generator class="native">
+            <param name="sequence">SEQ_EGF_RECOVERY_BANKDETAILS</param>
+            </generator>
+        </id>
+        <many-to-one name="tdsId" class="org.egov.model.recoveries.Recovery" fetch="select">
+            <column name="TDS_ID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        
+        <many-to-one name="fundId" class="org.egov.commons.Fund" fetch="select">
+		     <column name="fund_id" precision="22" scale="0"/>
+        </many-to-one>
+        
+        <many-to-one name="bankId" class="org.egov.commons.Bank" fetch="select">
+		     <column name="bank_id" precision="22" scale="0"/>
+        </many-to-one>
+        
+        <many-to-one name="branchId" class="org.egov.commons.Bankbranch" fetch="select">
+		     <column name="branch_id" precision="22" scale="0"/>
+        </many-to-one>
+        
+        <many-to-one name="bankaccountId" class="org.egov.commons.Bankaccount" fetch="select">
+		     <column name="bankaccount_id" precision="22" scale="0"/>
+        </many-to-one>
+   </class>
+</hibernate-mapping>

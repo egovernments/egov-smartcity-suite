@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping>
+<!--  change the sequence name to add EGF -->
+	<class name="org.egov.eb.domain.master.entity.TargetArea" table="EGF_TARGET_AREA">
+		<id name="id" type="long">
+			<column name="id" />
+			<generator class="native">
+				<param name="sequence">SEQ_EGF_TARGET_AREA</param>
+			</generator>
+		</id>
+		<property name="code" column="CODE" type="string"></property>
+		<property name="name" column="NAME" type="string"></property>
+		<property name="isActive" column="ISACTIVE" type="boolean"></property>
+	    
+	    <many-to-one class="org.egov.pims.commons.Position" name="position"
+		  fetch="select">
+		  <column name="POSITIONID"></column>
+	    </many-to-one>
+
+	    	    <set name="targetAreaMappings" cascade="save-update,delete,delete-orphan" inverse="true" >
+		   <key column="TARGETAREAID" />
+		   <one-to-many class="org.egov.eb.domain.master.entity.TargetAreaMappings" />
+	    </set>
+	
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User">
+			<column name="CREATEDBY"></column>
+		</many-to-one>
+
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User">
+			<column name="MODIFIEDBY"></column>
+		</many-to-one>
+
+        <property column="CREATEDDATE" name="createdDate" type="timestamp" />
+		<property column="MODIFIEDDATE" name="modifiedDate" type="timestamp" />
+	</class>
+	
+	<query name="TARGETAREABYID">
+	 <![CDATA[from TargetArea where id = ? ]]>
+	</query>
+	
+</hibernate-mapping>

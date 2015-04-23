@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<pageMap name="JVNonSalaryBillNewIn" > 
+	<gridMap name="JV_GeneralGrid">
+		<columnMap name="chartOfAccounts_codededuction" serverFieldName="1"/>
+		<columnMap name="chartOfAccounts_namededuction" serverFieldName="1"/>
+		<columnMap name="debitamt" serverFieldName="1"/>
+		<columnMap name="billAmount" serverFieldName="1"/>
+		
+		
+		
+	</gridMap>
+	<gridMap name="entities_grid">
+		<columnMap name="grid_detTypeId" serverFieldName="1"/>
+		<columnMap name="grid_detKeyId" serverFieldName="1"/>
+		<columnMap name="grid_detValue" serverFieldName="1"/>
+		<columnMap name="grid_rowIndex" serverFieldName="1"/>
+	</gridMap>	
+	
+</pageMap>

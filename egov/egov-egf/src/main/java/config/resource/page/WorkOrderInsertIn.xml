@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<pageMap name="WorkOrderIn" > 
+	<gridMap name="workorderdetailTable">
+		<columnMap name="slno" serverFieldName="1"/>
+		<columnMap name="activity" serverFieldName="1"/>
+		<columnMap name="est_qty" serverFieldName="1"/>
+		<columnMap name="est_uomCategory" serverFieldName="1"/>
+		<columnMap name="est_uom" serverFieldName="1"/>
+		<columnMap name="est_rate" serverFieldName="1"/>
+		<columnMap name="est_amountDis" serverFieldName="1"/>
+		<columnMap name="tend_rate" serverFieldName="1"/>
+		<columnMap name="tend_AmountDis" serverFieldName="1"/>
+		<columnMap name="activityid" serverFieldName="1"/>
+	
+	
+	</gridMap>
+
+	<!--<gridMap name="editactivitygrid">
+		<columnMap name="editactivity" serverFieldName="1"/>
+		<columnMap name="editest_qty" serverFieldName="1"/>
+		<columnMap name="editest_uomCategory" serverFieldName="1"/>
+		<columnMap name="editest_uom" serverFieldName="1"/>
+		<columnMap name="editest_rate" serverFieldName="1"/>
+		<columnMap name="editest_amountDis" serverFieldName="1"/>
+		<columnMap name="edittend_rate" serverFieldName="1"/>
+		<columnMap name="edittend_AmountDis" serverFieldName="1"/>
+		<columnMap name="editlineno" serverFieldName="1"/>
+		<columnMap name="editactivityid" serverFieldName="1"/>
+	
+	
+	</gridMap>-->
+
+	<gridMap name="StatutoryDedGrid">
+		<columnMap name="workDedStaid" serverFieldName="1"/>
+		<columnMap name="chartOfAccounts_stded" serverFieldName="1"/>
+		<columnMap name="chartOfAccounts_stnameded" serverFieldName="1"/>
+	</gridMap>	
+
+	<gridMap name="othersDedTable">
+		<columnMap name="workDedOthid" serverFieldName="1"/>
+		<columnMap name="chartOfAccounts_othded" serverFieldName="1"/>
+		<columnMap name="chartOfAccounts_othnameded" serverFieldName="1"/>
+	</gridMap>	
+	
+</pageMap>

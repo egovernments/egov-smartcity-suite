@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<pageMap name="propertyTaxOfficeIn" > 
+	<gridMap name="voucherDetailsGrid"  containsNames="true">
+		<columnMap name="period" serverFieldName="column5"/>
+		<columnMap name="totalAmount" serverFieldName="column3"/>		
+		<columnMap name="interest" serverFieldName="column2"/>		
+		<columnMap name="penalty" serverFieldName="column1"/>
+		<columnMap name="rebate" serverFieldName="column4"/>
+		<columnMap name="financialyear_id" serverFieldName="column6"/>
+	</gridMap>	
+</pageMap>

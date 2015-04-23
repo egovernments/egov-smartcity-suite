@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<pageMap name="paymentSearchOut" > 
+	<fieldMap name="voucherDateFrom" serverFieldName="voucherDateFrom"/>
+	<fieldMap name="voucherDateTo" serverFieldName="voucherDateTo"/>
+	<gridMap name="paymentSearchGrid" containsNames="true">
+		<columnMap name="cgNumber" serverFieldName="cgNumber"/>
+		<columnMap name="voucherNumber" serverFieldName="voucherNumber"/>
+		<columnMap name="voucherDate" serverFieldName="voucherDate"/>
+		<columnMap name="paidTo" serverFieldName="paidTo"/>
+		<columnMap name="passedAmount" serverFieldName="passedAmount"/>
+		<columnMap name="billAmount" serverFieldName="billAmount"/>
+		<columnMap name="chequeNumber" serverFieldName="chequeNumber"/>	
+		<columnMap name="status" serverFieldName="status"/>	
+	</gridMap>
+</pageMap>
