@@ -1,7 +1,5 @@
 package org.egov.web.actions.payment;
 
-import org.apache.struts2.convention.annotation.Action;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -17,10 +15,10 @@ import net.sf.jasperreports.engine.JRException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.config.Result;
-import org.apache.struts2.config.Results;
-import org.apache.struts2.dispatcher.StreamResult;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Fund;
 import org.egov.egf.commons.EgovCommon;

@@ -1,7 +1,5 @@
 package org.egov.web.actions.report;
 
-import org.apache.struts2.convention.annotation.Action;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -16,23 +14,23 @@ import java.util.Map;
 import net.sf.jasperreports.engine.JRException;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.config.Result;
-import org.apache.struts2.config.Results;
-import org.apache.struts2.dispatcher.StreamResult;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.services.budget.BudgetService;

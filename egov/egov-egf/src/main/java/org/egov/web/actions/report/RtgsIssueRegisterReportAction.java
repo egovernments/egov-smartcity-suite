@@ -1,40 +1,32 @@
 package org.egov.web.actions.report;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.config.Result;
-import org.apache.struts2.config.Results;
-import org.apache.struts2.dispatcher.StreamResult;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CFinancialYear;
-import org.egov.commons.dao.CommonsDaoFactory;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.utils.NumberToWord;
-import org.egov.model.instrument.InstrumentHeader;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.egov.web.annotation.ValidationErrorPage;

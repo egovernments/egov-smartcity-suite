@@ -1,23 +1,19 @@
 package org.egov.web.actions.masters;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.utils.ServiceLocator;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
-import org.egov.lib.rjbac.user.ejb.api.UserServiceHome;
 import org.egov.services.masters.SubSchemeService;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
@@ -74,7 +70,7 @@ public class SubSchemeAction extends BaseFormAction{
 		validatemandatoryFields();
 		try {
 			subSchemeService.persist(subScheme);
-			subSchemeServiceHibernateUtil.getCurrentSession().flush();
+			subSchemeService.getSession().flush();
 		}catch (ValidationException e) {
 			throw e;
 		}catch (ConstraintViolationException e) {

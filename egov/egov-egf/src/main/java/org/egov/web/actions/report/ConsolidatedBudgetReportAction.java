@@ -1,23 +1,19 @@
 package org.egov.web.actions.report;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import net.sf.jasperreports.engine.JasperPrint;
-
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.config.Result;
-import org.apache.struts2.config.Results;
-import org.apache.struts2.dispatcher.StreamResult;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infstr.reporting.engine.ReportConstants.FileFormat;
@@ -26,11 +22,8 @@ import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.model.budget.Budget;
-import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetProposalBean;
-import org.egov.pims.commons.Position;
 import org.egov.services.budget.BudgetDetailService;
-import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.egov.web.actions.BaseFormAction;
 

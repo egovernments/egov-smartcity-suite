@@ -3,7 +3,6 @@
  */
 package org.egov.web.actions.payment;  
 
-import org.apache.struts2.convention.annotation.Action;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -22,9 +21,8 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.exceptions.EGOVException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.Accountdetailtype;
@@ -37,6 +35,10 @@ import org.egov.commons.Relation;
 import org.egov.commons.Vouchermis;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
+import org.egov.exceptions.EGOVException;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
@@ -45,11 +47,6 @@ import org.egov.infstr.models.Script;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.utils.database.utils.DatabaseConnectionException;
-
-import org.egov.infstr.workflow.Action;
-import org.egov.infstr.workflow.SimpleWorkflowService;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.model.bills.Miscbilldetail;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.payment.Paymentheader;
@@ -63,13 +60,13 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
 import com.exilant.exility.common.TaskFailedException;
+import com.exilant.exility.dataservice.DatabaseConnectionException;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
@@ -621,7 +618,7 @@ public String nonBillPayment()
 	}
 	
 	private CVoucherHeader createVoucherAndledger() {
-		null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
+		//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		try {
 			final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
 			// update DirectBankPayment source path
@@ -703,8 +700,8 @@ public String nonBillPayment()
 	private void reCreateLedger() {
 		final CreateVoucher createVoucher = new CreateVoucher();
 		try {
-			null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
-			createVoucher.deleteVoucherdetailAndGL(null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection(), voucherHeader);
+			//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
+			createVoucher.deleteVoucherdetailAndGL(null/*This fix is for Phoenix Migration.EgovDatabaseManager.openConnection()*/, voucherHeader);
 		HibernateUtil.getCurrentSession().flush();
 			HashMap<String, Object> detailMap = null;
 			
@@ -778,7 +775,7 @@ public String nonBillPayment()
 			Transaxtion txnList[] = new Transaxtion[transactions.size()];
 			txnList = transactions.toArray(txnList);
 			final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
-			if (!engine.postTransaxtions(txnList, null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection(), formatter.format(voucherHeader.getVoucherDate()))) {
+			if (!engine.postTransaxtions(txnList, null/*This fix is for Phoenix Migration.EgovDatabaseManager.openConnection()*/, formatter.format(voucherHeader.getVoucherDate()))) {
 				throw new ValidationException(Arrays.asList(new ValidationError("Exception While Saving Data", "Transaction Failed")));
 			}
 		} catch (HibernateException e) {

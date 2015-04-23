@@ -1,13 +1,9 @@
 package org.egov.web.actions.report;
 
-import org.apache.struts2.convention.annotation.Action;
-
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -19,11 +15,10 @@ import java.util.Map.Entry;
 import net.sf.jasperreports.engine.JasperPrint;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.config.Result;
-import org.apache.struts2.config.Results;
-import org.apache.struts2.dispatcher.StreamResult;
-import org.egov.commons.CChartOfAccounts;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
@@ -34,7 +29,6 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.egov.web.actions.BaseFormAction;
-import org.egov.web.actions.bill.ContingentBillAction.COAcomparator;
 import org.hibernate.Query;
 
 @Results(value={

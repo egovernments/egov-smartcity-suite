@@ -9,9 +9,8 @@ import java.util.Map;
 
 import net.sf.jasperreports.engine.JRException;
 
-import org.apache.struts2.config.Result;
-import org.apache.struts2.config.Results;
-import org.apache.struts2.dispatcher.StreamResult;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.CFinancialYear;
 import org.egov.egf.revenue.Grant;
 import org.egov.infra.admin.master.entity.Department;

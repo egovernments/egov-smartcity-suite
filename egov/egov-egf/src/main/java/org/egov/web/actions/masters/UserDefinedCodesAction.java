@@ -1,23 +1,20 @@
 package org.egov.web.actions.masters;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
-import org.egov.infstr.ValidationError;
-import org.egov.infstr.ValidationException;
-import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.utils.ServiceLocator;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.lib.rjbac.user.ejb.api.UserServiceHome;
+import org.egov.infstr.ValidationError;
+import org.egov.infstr.ValidationException;
 import org.egov.masters.model.AccountEntity;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
@@ -162,21 +159,11 @@ public class UserDefinedCodesAction extends BaseFormAction{
 
 	@SkipValidation
 	private User getLoggedInUser() {
-		Integer userId = (IntegerHibernateUtil.getCurrentSession().get("com.egov.user.LoginUserId");
-		ServiceLocator serviceloc = ServiceLocator.getInstance();
-        UserServiceHome uhome = null;
+		/*Integer userId = (Integer)getSession.get("com.egov.user.LoginUserId");
         UserService userManager = null;
-		try {
-			uhome = (UserServiceHome) serviceloc.getLocalHome("UserServiceHome");
-			userManager = uhome.create();
-		}
-        catch (Exception e) {
-        	LOGGER.error("Exception occurred in UserDefinedCodesAction ", e);
-             
-            throw new EGOVRuntimeException("Exception occurred in UserDefinedCodesAction ", e);
-		}
-		User user = (User) userManager.getUserById(userId);
-		return user;
+		User user = (User) userManager.getUserById(userId.longValue());
+		return user;*/
+		return null;
 	}
 	
 	@SkipValidation

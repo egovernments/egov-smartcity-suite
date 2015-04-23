@@ -1,7 +1,5 @@
 package org.egov.web.actions.revenue;
 
-import org.apache.struts2.convention.annotation.Action;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -15,10 +13,10 @@ import java.util.Map;
 import net.sf.jasperreports.engine.JRException;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.config.Result;
-import org.apache.struts2.config.Results;
-import org.apache.struts2.dispatcher.StreamResult;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
@@ -28,7 +26,6 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.utils.ReportHelper;
 import org.egov.web.actions.BaseFormAction;
-import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Query;
 
 @Results(value = {

@@ -1,6 +1,5 @@
 package org.egov.web.actions.report;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,12 +17,11 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.config.Result;
-import org.apache.struts2.config.Results;
-import org.apache.struts2.dispatcher.StreamResult;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bank;
 import org.egov.commons.Bankaccount;
@@ -34,6 +32,7 @@ import org.egov.commons.utils.EntityType;
 import org.egov.eb.domain.master.entity.EBDetails;
 import org.egov.eb.utils.EBUtils;
 import org.egov.egf.commons.EgovCommon;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infstr.reporting.engine.ReportOutput;
 import org.egov.infstr.reporting.engine.ReportRequest;

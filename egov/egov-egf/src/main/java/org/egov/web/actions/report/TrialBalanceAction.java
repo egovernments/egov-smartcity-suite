@@ -1,9 +1,6 @@
 package org.egov.web.actions.report;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.io.IOException;
-
-import java.util.Date;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -13,9 +10,9 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -23,34 +20,33 @@ import java.util.Map;
 import net.sf.jasperreports.engine.JRException;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.config.Result;
-import org.apache.struts2.config.Results;
-import org.apache.struts2.dispatcher.StreamResult;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.CityWebsite;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infra.admin.master.entity.CityWebsite;
 import org.egov.lib.admbndry.CityWebsiteDAO;
 import org.egov.model.report.ReportBean;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.egov.web.actions.BaseFormAction;
-import org.egov.web.actions.bill.ContingentBillAction.COAcomparator;
 import org.hibernate.FlushMode;
-import org.hibernate.type.*;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.StringType;
 
 import com.exilant.eGov.src.reports.TrialBalanceBean;
 

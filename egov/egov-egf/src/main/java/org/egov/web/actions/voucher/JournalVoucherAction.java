@@ -1,49 +1,37 @@
 package org.egov.web.actions.voucher;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.billsaccounting.services.VoucherConstant;
-import org.egov.commons.CFunction;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.service.CommonsService;
+import org.egov.eis.service.EisCommonService;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.models.Script;
-import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.workflow.Action;
-import org.egov.infstr.workflow.SimpleWorkflowService;
-import org.egov.lib.rjbac.user.ejb.api.UserServiceHome;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.model.voucher.VoucherTypeBean;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
-import org.egov.eis.service.EisCommonService;
-import org.egov.eis.service.EisCommonService;
 import org.egov.services.voucher.VoucherService;
-import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.FlushMode;
-
-import com.exilant.GLEngine.ChartOfAccounts;
-import com.exilant.GLEngine.Transaxtion;
 @ParentPackage("egov")
 public class JournalVoucherAction extends BaseVoucherAction
 {

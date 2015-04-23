@@ -1,7 +1,6 @@
 
 package org.egov.web.actions.masters;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,18 +9,18 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.FinancingInstitution;
 import org.egov.commons.Fundsource;
 import org.egov.commons.SharedFundSource;
 import org.egov.commons.SubScheme;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.lib.rjbac.user.User;
 import org.egov.services.financingsource.FinancingSourceService;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;

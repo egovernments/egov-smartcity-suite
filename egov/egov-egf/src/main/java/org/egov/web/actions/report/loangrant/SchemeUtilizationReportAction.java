@@ -1,7 +1,5 @@
 package org.egov.web.actions.report.loangrant;
 
-import org.apache.struts2.convention.annotation.Action;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -15,9 +13,9 @@ import java.util.Map;
 import net.sf.jasperreports.engine.JRException;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.Result;
-import org.apache.struts2.config.Results;
-import org.apache.struts2.dispatcher.StreamResult;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.masters.model.LoanGrantBean;
