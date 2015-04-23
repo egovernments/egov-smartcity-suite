@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd"
+	default-lazy-init="true">
+
+	<!-- Services from egi -->
+	<bean id="egovSessionFactory" class="org.egov.infstr.services.SessionFactory">
+	</bean>
+	<bean id="persistenceService"
+		class="org.egov.infstr.services.PersistenceService" scope="prototype">
+		<property name="sessionFactory" ref="egovSessionFactory" />
+	</bean>
+	<bean id="scriptService" parent="persistenceService" scope="prototype">
+	  	<property name="type" value="org.egov.infstr.models.Script"></property>
+	</bean>
+	
+     <!-- Services for assets -->
+	 <bean class="org.egov.asset.service.AppService" id="appService" scope="prototype">
+		<property name="genericHibDao" ref="genericDao"/>
+	</bean>
+	<bean class="org.egov.asset.service.CommonAssetsService" id="commonAssetsService" scope="prototype">
+		<property name="genericService" ref="persistenceService" />		
+		<property name="assetCategoryService" ref="assetCategoryService" />
+		<property name="assetService" ref="assetService" />
+		<property name="eisManager" ref="eisManager"/> 
+		<property name="eisService" ref="eisService" />
+	</bean>
+	<bean class="org.egov.asset.model.AssetCategoryNumberGenrator" id="assetCategoryNumberGenrator">
+		<property name="scriptService" ref="scriptService"/>
+		<property name="sequenceGenerator" ref="sequenceGenerator"/>
+	</bean>
+	<bean class="org.egov.asset.service.impl.AssetCategoryServiceImpl" id="assetCategoryService" scope="prototype">
+		<constructor-arg>
+			<bean parent="persistenceService">
+				<property name="type" value="org.egov.asset.model.AssetCategory" />
+			</bean>
+		</constructor-arg>			
+		<property name="genericService" ref="persistenceService" />		
+		<property name="appService" ref="appService" />
+		<property name="assetCategoryNumberGenrator" ref="assetCategoryNumberGenrator"/>
+	</bean>
+	<bean class="org.egov.asset.model.AssetNumberGenrator" id="assetNumberGenrator">
+		<property name="scriptService" ref="scriptService"/>
+		<property name="sequenceGenerator" ref="sequenceGenerator"/>
+	</bean>
+	<bean class="org.egov.asset.service.impl.AssetServiceImpl" id="assetService" scope="prototype">
+		<constructor-arg>
+			<bean parent="persistenceService">
+				<property name="type" value="org.egov.asset.model.Asset" />
+			</bean>
+		</constructor-arg>			
+		<property name="genericService" ref="persistenceService" />		
+		<property name="appService" ref="appService" />
+		<property name="assetNumberGenrator" ref="assetNumberGenrator"/>
+	</bean>
+	<bean class="org.egov.asset.service.impl.AssetActivitiesImpl" id="assetActivitiesService" scope="prototype">
+		<constructor-arg>
+			<bean parent="persistenceService">
+				<property name="type" value="org.egov.asset.model.AssetActivities" />
+			</bean>
+		</constructor-arg>
+		<property name="genericService" ref="persistenceService" />	
+	</bean>
+</beans>

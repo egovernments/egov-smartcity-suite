@@ -1,0 +1,1 @@
+<%@ include file='asset-new.jsp'%>

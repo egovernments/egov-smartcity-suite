@@ -626,5 +626,67 @@ public class BoundaryDAO {
 		return childBoundaries;
 
 	}
+	
+	/**
+         * Alternative for getAllBoundariesByBndryTypeId(Long bndryTypeId)
+         * This API returns all the boundaries with isHistory marked as 'N' as well as 'Y'.   
+         * @param bndryTypeId
+         * @return
+         */
+        public List getAllBoundariesInclgHxByBndryTypeId(Long bndryTypeId) {
+                try {
+                        Query qry = getSession().createQuery("from Boundary BI where BI.boundaryType.id=:bndryTypeId order by BI.id");
+                        qry.setLong("bndryTypeId", bndryTypeId);                     
+                        return (List) qry.list();
+                } catch (HibernateException e) {
+                        LOGGER.error("Error occurred in getHistAndNonHistBndriesByBndryTypeId", e);
+                        throw new EGOVRuntimeException("Error occurred in getHistAndNonHistBndriesByBndryTypeId", e);
+                }
+        }
+        
+        /**
+         * Alternative for getChildBoundaries(Long parentBoundaryId) and return all the boundaries with isHistory marked as 'N' as well as 'Y'.
+         * @param parentBoundaryId
+         * @return
+         * @throws Exception
+         * getChildBoundariesForHxAndNonHxBndry
+         */
+        public List<Boundary> getChildBoundariesInclgHx(Long parentBoundaryId) throws Exception {
+
+                try {
+                        String parentId = null;
+                        if (parentBoundaryId == null)
+                                parentId = "IS NULL";
+                        else
+                                parentId = " = :parentBoundaryId";
+
+                        Query qry = getSession().createQuery("from Boundary BI where BI.parent " + parentId + " AND " +
+                                        "((BI.toDate IS NULL AND BI.fromDate <= :currDate) OR (BI.fromDate <= :currDate AND BI.toDate >= :currDate))");
+                        if (parentBoundaryId != null && !parentBoundaryId.equals(""))
+                                qry.setLong("parentBoundaryId", parentBoundaryId);
+                        qry.setDate("currDate", new Date());
+                        return qry.list();
+                } catch (Exception e) {
+                        LOGGER.error("Error occurred while getting Child Boundaries for Parent Boundary : "+parentBoundaryId,e);
+                        throw new EGOVRuntimeException("Error occurred while getting Child Boundaries",e);
+                }
+
+        }
+
+        /**
+         * Alternative for getBoundaryById(Long bndryID) and return all the boundaries with isHistory marked as 'N' as well as 'Y'.
+         * @param bndryID
+         * @return
+         */
+        public Boundary getBoundaryInclgHxById(Long bndryID) {
+                try {
+                        Query qry = getSession().createQuery("from Boundary BI where BI.id=:bndryID ");
+                        qry.setLong("bndryID", bndryID);                     
+                        return (Boundary) qry.uniqueResult();
+                } catch (HibernateException e) {
+                        LOGGER.error("Error occurred in getBoundaryforHxAndNonHxBndryById", e);
+                        throw new EGOVRuntimeException("Error occurred in getBoundaryforHxAndNonHxBndryById", e);
+                }
+        }
 
 }
