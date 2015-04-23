@@ -17,7 +17,6 @@
      	<module>egov-database</module>
         <module>egov-egi</module>
         <module>egov-eis</module>
-        <module>egov-egf</module>
         <module>egov-portal</module>
         <module>egov-pgr</module>
         <module>egov-eisweb</module>
