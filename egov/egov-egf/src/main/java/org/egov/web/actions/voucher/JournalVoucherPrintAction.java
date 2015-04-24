@@ -38,7 +38,7 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.admbndry.CityWebsiteDAO;
+import org.egov.infra.admin.master.service.CityWebsiteService;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.pims.commons.Position;
 import org.egov.services.bills.BillsService;
@@ -65,7 +65,7 @@ public class JournalVoucherPrintAction extends BaseFormAction{
 	ReportHelper reportHelper;
 	Long id;
 	List <WorkFlowHistoryItem> inboxHistory = new ArrayList<WorkFlowHistoryItem>();
-	private CityWebsiteDAO cityWebsiteDAO;
+	private CityWebsiteService cityWebsiteDAO;
 	private BillsService billsManager;
 	private static final String ACCDETAILTYPEQUERY=" from Accountdetailtype where id=?";
 	private BudgetAppropriationService budgetAppropriationService;
@@ -73,7 +73,7 @@ public class JournalVoucherPrintAction extends BaseFormAction{
 	public void setBillsService(BillsService billsManager) {
 		this.billsManager = billsManager;
 	}
-	public void setCityWebsiteDAO(CityWebsiteDAO cityWebsiteDAO) {
+	public void setCityWebsiteService(CityWebsiteService cityWebsiteDAO) {
 		this.cityWebsiteDAO = cityWebsiteDAO;
 	}
 

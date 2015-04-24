@@ -228,7 +228,7 @@
 		   <value>org.egov.services.bills.BillsService</value>
 	    </property>
 	</bean>
-	<!--<bean id="cityWebsiteDAO" class="org.egov.lib.admbndry.CityWebsiteDAO" scope="prototype" />-->
+	<!--<bean id="cityWebsiteDAO" class="org.egov.lib.admbndry.CityWebsiteService" scope="prototype" />-->
 	<bean id="voucherHelper" class="org.egov.utils.VoucherHelper" scope="prototype">
 		<property name="persistenceService" ref="persistenceService"/>
 		<property name="eisCommonService" ref="eisCommonService"/> 

@@ -24,7 +24,7 @@ import org.egov.infra.admin.master.entity.CityWebsite;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.admbndry.CityWebsiteDAO;
+import org.egov.infra.admin.master.service.CityWebsiteService;
 import org.egov.services.report.FunctionwiseIEService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
@@ -45,7 +45,7 @@ public class FunctionwiseIEAction extends ReportAction
 	private ReportHelper reportHelper;
 	private FunctionwiseIEService functionwiseIEService;
 	private final FunctionwiseIE functionwiseIE = new FunctionwiseIE();
-	private CityWebsiteDAO cityWebsiteDAO;
+	private CityWebsiteService cityWebsiteDAO;
 	private CityWebsite cityWebsite;
 	private GenericHibernateDaoFactory genericDao;	
 	private FinancialYearDAO financialYearDAO;
@@ -69,7 +69,7 @@ public class FunctionwiseIEAction extends ReportAction
 	private EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
 	private static final Logger LOGGER = Logger.getLogger(FunctionwiseIEAction.class);
 	private List<CommonReportBean> ieWithBudgetList;
-	public void setCityWebsiteDAO(final CityWebsiteDAO cityWebsiteDAO) {
+	public void setCityWebsiteService(final CityWebsiteService cityWebsiteDAO) {
 		this.cityWebsiteDAO = cityWebsiteDAO;
 	}
 	

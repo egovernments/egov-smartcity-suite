@@ -35,7 +35,7 @@ import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.admbndry.CityWebsiteDAO;
+import org.egov.infra.admin.master.service.CityWebsiteService;
 import org.egov.model.report.ReportBean;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
@@ -69,7 +69,7 @@ public class TrialBalanceAction extends BaseFormAction {
 	private static final Logger LOGGER = Logger.getLogger(TrialBalanceAction.class);
 	private ReportBean rb=new ReportBean(); 
 	protected InputStream inputStream;
-	private CityWebsiteDAO cityWebsiteDAO;
+	private CityWebsiteService cityWebsiteDAO;
 	private CityWebsite cityWebsite;
 	private String heading="";
 	public String reqFundId[];
@@ -915,7 +915,7 @@ public class TrialBalanceAction extends BaseFormAction {
 	 	public ReportBean getRb() {
 			return rb;
 		}
-		public CityWebsiteDAO getCityWebsiteDAO() {
+		public CityWebsiteService getCityWebsiteService() {
 			return cityWebsiteDAO;
 		}
 		public String getHeading() {
@@ -933,7 +933,7 @@ public class TrialBalanceAction extends BaseFormAction {
 		public void setInputStream(InputStream inputStream) {
 			this.inputStream = inputStream;
 		}
-		public void setCityWebsiteDAO(CityWebsiteDAO cityWebsiteDAO) { 
+		public void setCityWebsiteService(CityWebsiteService cityWebsiteDAO) { 
 			this.cityWebsiteDAO = cityWebsiteDAO;
 		}
 		public void setHeading(String heading) {
