@@ -268,7 +268,7 @@ public class BankBookReportAction extends BaseFormAction{
 		getInstrumentVouchersByInstrumentHeaderIds();
 		Integer deptId=null;
 		if(getVouchermis()!=null && getVouchermis().getDepartmentid()!=null && getVouchermis().getDepartmentid().getId()!=null && getVouchermis().getDepartmentid().getId()!=-1){
-			deptId=getVouchermis().getDepartmentid().getId();
+			deptId=getVouchermis().getDepartmentid().getId().intValue();
 		}
 		BankBookEntry initialOpeningBalance = getInitialAccountBalance(glCode,fundCode,deptId);
 		entries.add(initialOpeningBalance);

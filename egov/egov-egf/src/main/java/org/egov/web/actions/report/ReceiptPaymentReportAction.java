@@ -296,7 +296,7 @@ public class ReceiptPaymentReportAction extends BaseFormAction {
 			//receiptPayment.setFunds(list)
 			header.append(" for "+ receiptPayment.getFund().getName());
 		}else{
-			receiptPayment.setFunds(rpService.getFunds());
+			//receiptPayment.setFunds(rpService.getfundMaster());
 		}
 		if(receiptPayment.getAsOndate()!=null){
 			header.append(" as on "+ DDMMYYYYFORMATS.format(receiptPayment.getAsOndate()));
@@ -763,10 +763,10 @@ public class ReceiptPaymentReportAction extends BaseFormAction {
 	}
 
 	public String getCurrentYearToDate(){
-		return rpService.getFormattedDate(rpService.getCurrentYearToDate(receiptPayment));
+		return "";// rpService.getFormattedDate(rpService.getCurrentYearToDate(receiptPayment));
 	}
 	public String getPreviousYearToDate(){
-		return rpService.getFormattedDate(rpService.getPreviousYearToDate(receiptPayment));
+		return "";// rpService.getFormattedDate(rpService.getPreviousYearToDate(receiptPayment));
 	}
 	
 

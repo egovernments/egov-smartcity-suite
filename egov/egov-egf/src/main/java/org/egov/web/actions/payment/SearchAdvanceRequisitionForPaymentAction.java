@@ -40,7 +40,7 @@ public class SearchAdvanceRequisitionForPaymentAction extends SearchFormAction{
 		super.prepare(); 
 		addDropdownData("departmentList", voucherHelper.getAllAssgnDeptforUser());
 		 if(departmentId == null || departmentId == -1 ){
-			 departmentId = voucherService.getCurrentDepartment().getId();
+			 departmentId = voucherService.getCurrentDepartment().getId().intValue();
 			}
 	}
 	

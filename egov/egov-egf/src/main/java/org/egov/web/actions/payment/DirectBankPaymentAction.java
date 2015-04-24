@@ -967,7 +967,7 @@ public String nonBillPayment()
 		
 		Integer userId = null;
 		if( parameters.get(ACTIONNAME)[0] != null && parameters.get(ACTIONNAME)[0].contains("reject")){
-			userId = paymentheader.getCreatedBy().getId();
+			userId = paymentheader.getCreatedBy().getId().intValue();
 		}
 		else if(null != parameters.get("approverUserId") &&  Integer.valueOf(parameters.get("approverUserId")[0])!=-1  ){
 			userId = Integer.valueOf(parameters.get("approverUserId")[0]);
@@ -1010,7 +1010,7 @@ public String nonBillPayment()
 			atype = atype + "|";  
 		}
 		EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-		departmentId = voucherService.getCurrentDepartment().getId();
+		departmentId = voucherService.getCurrentDepartment().getId().intValue();
 		if(LOGGER.isInfoEnabled())     LOGGER.info("departmentId :"+departmentId);
 		Map<String, Object>  map = new HashMap<String, Object>(); 
 		if(paymentheader!=null && paymentheader.getVoucherheader().getFiscalPeriodId()!=null){
@@ -1050,13 +1050,13 @@ public String nonBillPayment()
 		
 		if(bDefaultDeptId && !dName.equals("")) {
 			Department dept = (Department) persistenceService.find("from Department where deptName like '%"+dName+"' ");
-			departmentId = dept.getId();
+			departmentId = dept.getId().intValue();
 		}
 		wfitemstate = map.get("wfitemstate")!=null?map.get("wfitemstate").toString():"";
 	}
 	
 	@SkipValidation
-	public List<Action> getValidActions() {
+	public List<org.egov.infstr.workflow.Action> getValidActions() {
 		return paymentWorkflowService.getValidActions(getPayment());
 	}
 	

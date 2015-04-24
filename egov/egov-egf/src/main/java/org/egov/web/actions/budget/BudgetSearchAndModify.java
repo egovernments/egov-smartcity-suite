@@ -255,7 +255,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
             userId = Integer.valueOf(EGOVThreadLocals.getUserId().trim());
         }
 
-        Position positionByUserId = eisCommonService.getPositionByUserId(userId);
+        Position positionByUserId =null;// eisCommonService.getPositionByUserId(userId);
         PersonalInformation empForCurrentUser = budgetDetailService.getEmpForCurrentUser();
         String name="";
 		if(empForCurrentUser!=null)
@@ -327,7 +327,8 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
         //if budget is not forwarded yet send the budget else ignore
        if(getTopBudget().getState().getOwnerPosition()!=null &&getTopBudget().getState().getOwnerPosition().getId()!= positionByUserId.getId())
        {
-    	   getTopBudget().changeState("Forwarded by "+name, positionByUserId, comments);
+    	   getTopBudget().transition(true).withStateValue("Forwarded by "+name).withOwner(positionByUserId).withComments(comments);
+    	   
     	   //add logic for BE approval also
     	   //
        }
@@ -335,7 +336,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
 	   Budget beBudget = budgetService.find("from Budget where referenceBudget=?",getTopBudget());
 	   if(beBudget.getState().getOwnerPosition()!=null && beBudget.getState().getOwnerPosition().getId()!=positionByUserId.getId())
 	   {
-		   beBudget.changeState("Forwarded by "+name, positionByUserId, comments);
+		   beBudget.transition(true).withStateValue("Forwarded by "+name).withOwner(positionByUserId).withComments(comments);
 	   }
        
     	   // budgetWorkflowService.transition(parameters.get(ACTIONNAME)[0]+"|"+userId, getTopBudget(),comments);
@@ -369,12 +370,12 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
         {
             topBudget=budgetService.findById(Long.valueOf(parameters.get("budget.id")[0]), false);
            
-            comments = topBudget.getstate().getExtraInfo1();
+            comments = topBudget.getState().getExtraInfo();
         }else if(parameters.get("budgetDetail.budget.id")[0]!=null)
         {
         	 topBudget=budgetService.findById(Long.valueOf(parameters.get("budgetDetail.budget.id")[0]), false);
         }
-        comments = topBudget.getstate().getExtraInfo1();
+        comments = topBudget.getState().getExtraInfo();
         //budgetDetail=budgetDetailService.find("from BudgetDetail where budget=?",topBudget);
         savedbudgetDetailList =getAllApprovedBudgetDetails(topBudget);
         if(savedbudgetDetailList.size()>0)
@@ -406,7 +407,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
 			budgetAmountView.add(view);
 		   //	if(LOGGER.isInfoEnabled())     LOGGER.info(view);
 			if(detail.getState()!=null)
-				detail.setComment(detail.getstate().getExtraInfo1());
+				detail.setComment(detail.getState().getExtraInfo());
 			BigDecimal approvedAmt = detail.getApprovedAmount()==null?BigDecimal.ZERO:detail.getApprovedAmount().setScale(2);
 			if(re) {
 				view.setCurrentYearReApproved(approvedAmt.setScale(2).toString());
@@ -671,7 +672,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
         addDropdownData("designationList", (List<DesignationMaster>)map.get("designationList"));
         if(bDefaultDeptId && !dName.equals("")) {
             Department dept = (Department) persistenceService.find("from Department where deptName like '%"+dName+"' ");
-            defaultDept = dept.getId();
+            defaultDept = dept.getId().intValue();
         }
         wfitemstate = map.get("wfitemstate")!=null?map.get("wfitemstate").toString():"";
     }

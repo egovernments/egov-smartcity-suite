@@ -102,7 +102,7 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction{
 			parameters.put("paymentMode", new String[]{paymentMode});
 			parameters.put("grandTotal", new String[]{advanceRequisition.getAdvanceRequisitionAmount().toPlainString()});
 			paymentheader = paymentService.createPayment(parameters,headerdetails, accountcodedetails, subledgerdetails,bankaccount);
-			paymentWorkflowService.start(paymentheader, paymentService.getPosition(),narration);
+			paymentheader.start().withOwner(paymentService.getPosition()).withComments(narration);
 			Integer userId = null;
 			if (null != parameters.get("approverUserId") &&  Integer.valueOf(parameters.get("approverUserId")[0])!=-1 ) {
 				userId = Integer.valueOf(parameters.get("approverUserId")[0]);
@@ -117,8 +117,7 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction{
 			paymentService.persist(paymentheader);
 			createMiscBill(paymentheader,advanceRequisition);
 			advanceRequisition.getEgAdvanceReqMises().setVoucherheader(paymentheader.getVoucherheader());
-			advanceRequisition.changeState("END", advanceRequisition.getCurrentState().getOwnerPosition(), "");
-			advanceRequisition.getCurrentState().setText1(narration);
+			advanceRequisition.withComments(narration).end();
 			addActionMessage(getText("payment.transaction.success",new String[]{paymentheader.getVoucherheader().getVoucherNumber()}));
 		}catch(ValidationException e){
 			LOGGER.error("ERROR"+e.getMessage(),e);

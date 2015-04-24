@@ -34,13 +34,13 @@ public class AccountEntityService extends PersistenceService<AccountEntity, Inte
 		       return entities;
 			
 		}
-//
-//		@Override
-//		public List getAssetCodesForProjectCode(Integer accountdetailkey)
-//			throws ValidationException {
-//		// TODO Auto-generated method stub
-//		return null;
-//		}
+
+		@Override
+		public List getAssetCodesForProjectCode(Integer accountdetailkey)
+			throws ValidationException {
+		
+		return null;
+		}
 		 public List<EntityType> validateEntityForRTGS(List<Long> idsList) throws ValidationException {
 			 
 			 return null;

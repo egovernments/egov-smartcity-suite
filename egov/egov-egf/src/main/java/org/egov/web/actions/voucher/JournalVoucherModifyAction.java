@@ -197,7 +197,7 @@ public class JournalVoucherModifyAction  extends BaseVoucherAction{
 			 }
 		}
 		else{
-			userId = voucherHeader.getCreatedBy().getId();
+			userId = voucherHeader.getCreatedBy().getId().intValue();
 		}
 
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("User selected id is : "+userId);                  

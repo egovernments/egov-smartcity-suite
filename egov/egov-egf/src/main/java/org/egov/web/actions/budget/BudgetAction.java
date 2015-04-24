@@ -29,7 +29,7 @@ import org.egov.web.actions.BaseFormAction;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
-@Result(name=Action.SUCCESS, type=ServletRedirectResult.class, value = "budget.action")
+@Result(name="success", type="ServletRedirectResult.class", location = "budget.action")
 @ParentPackage("egov")
 @Validation
 public class BudgetAction extends BaseFormAction{

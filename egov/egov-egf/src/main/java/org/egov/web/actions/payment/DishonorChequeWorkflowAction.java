@@ -315,7 +315,7 @@ public class DishonorChequeWorkflowAction  extends BaseFormAction {
 					Integer.valueOf( EGOVThreadLocals.getUserId());
 			 startChequeWorkflow(dishonorChequeView,actionNm,null!= parameters.get("approverComments")?parameters.get("approverComments")[0]:null);
 			 EmployeeView nextUser=(EmployeeView)persistenceService.find("from EmployeeView where position.id=?",dishonorChequeView.getApproverPositionId());
-			 addActionMessage(" Cheque is forwared successfully  "+nextUser.getUserMaster().getUserName());
+			 addActionMessage(" Cheque is forwared successfully  "+nextUser.getUserMaster().getName());
 			 returnValue="viewMessage";
 			
 		}else if(actionNm.equalsIgnoreCase("cancel")){
@@ -338,7 +338,7 @@ public class DishonorChequeWorkflowAction  extends BaseFormAction {
 			Position approvePos = eisService.getPrimaryPositionForUser(approverUser.getId(),new Date());
 			dishonorChequeView.setApproverPositionId(approvePos.getId());
 			startChequeWorkflow(dishonorChequeView,actionNm, null!= parameters.get("approverComments")?parameters.get("approverComments")[0]:null);
-			addActionMessage(getText("Cheque is rejected Sent back to "+approverUser.getUserName()));
+			addActionMessage(getText("Cheque is rejected Sent back to "+approverUser.getName()));
 			returnValue="viewMessage";
 		}
 		
@@ -353,7 +353,7 @@ public class DishonorChequeWorkflowAction  extends BaseFormAction {
 		AppConfigValues appConfigValues = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, appConfigKey).get(0);
 		String gjvForRcpt=appConfigValues.getValue();
 		CVoucherHeader voucherHeader=null;  
-		DishonoredEntriesDelegate delegate = new DishonoredEntriesDelegate();
+		//DishonoredEntriesDelegate delegate = new DishonoredEntriesDelegate();
 		
 		//Create bank charges 
 		if(dishonorChequeView.getBankChargesAmt().compareTo(BigDecimal.ZERO)>0){

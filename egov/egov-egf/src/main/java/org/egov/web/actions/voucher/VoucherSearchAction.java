@@ -47,7 +47,7 @@ import org.hibernate.Query;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
-@Result(name=com.opensymphony.xwork2.Action.SUCCESS, type=ServletRedirectResult.class, value = "voucherSearch.action")
+@Result(name=com.opensymphony.xwork2.Action.SUCCESS, type="ServletRedirectResult.class", location = "voucherSearch.action")
 @ParentPackage("egov")
 @Validation
 public class VoucherSearchAction extends BaseFormAction
@@ -75,6 +75,7 @@ public class VoucherSearchAction extends BaseFormAction
 	private String countQry;
 	List<String> voucherTypes=VoucherHelper.VOUCHER_TYPES;
 	Map<String,List<String>> voucherNames=VoucherHelper.VOUCHER_TYPE_NAMES;
+	private FinancialYearDAO financialYearDAO;
 	
 	@Override
 	public Object getModel() {
@@ -342,7 +343,6 @@ public class VoucherSearchAction extends BaseFormAction
 		return "";
 	}
 	public void finYearDate(){
-		FinancialYearDAO financialYearDAO= CommonsDaoFactory.getDAOFactory().getFinancialYearDAO();
 		String financialYearId= financialYearDAO.getCurrYearFiscalId();
 		if(financialYearId==null || financialYearId.equals("")){
 			fromDate=new Date();
@@ -350,7 +350,11 @@ public class VoucherSearchAction extends BaseFormAction
 		else
 			fromDate=(Date)persistenceService.find("select startingDate  from CFinancialYear where id=?",Long.parseLong(financialYearId));
 	}
-	
+	  
+	public void setFinancialYearDAO(FinancialYearDAO financialYearDAO) {
+		this.financialYearDAO = financialYearDAO;
+	}
+
 	protected void getHeaderFields() 
 	{
 		List<AppConfig> appConfigList = (List<AppConfig>) persistenceService.findAllBy("from AppConfig where key_name = 'DEFAULT_SEARCH_MISATTRRIBUTES'");

@@ -60,6 +60,7 @@ public class RtgsIssueRegisterReportAction  extends ReportAction {
 	List<Object> rtgsReportList = new ArrayList<Object>();
 	Map<String,Object> paramMap = new HashMap<String,Object>();
 	Boolean searchResult = Boolean.FALSE;
+	private FinancialYearDAO financialYearDAO;
 
 	@Override
 	public Object getModel() {
@@ -167,12 +168,15 @@ protected Map<String, Object> getParamMap() {
 
 	public void finYearDate(){
 		if(LOGGER.isDebugEnabled())   LOGGER.debug(" Getting Starting date of financial year ");
-		FinancialYearDAO financialYearDAO= CommonsDaoFactory.getDAOFactory().getFinancialYearDAO();
 		CFinancialYear date=financialYearDAO.getFinancialYearByDate(new Date());
 		HibernateUtil.getCurrentSession().setReadOnly(date, true);
 		fromDate=date.getStartingDate();
 	}
 	
+	public void setFinancialYearDAO(FinancialYearDAO financialYearDAO) {
+		this.financialYearDAO = financialYearDAO;
+	}
+
 	@SuppressWarnings("unchecked")
 	@ValidationErrorPage(NEW)
 	public String search() {

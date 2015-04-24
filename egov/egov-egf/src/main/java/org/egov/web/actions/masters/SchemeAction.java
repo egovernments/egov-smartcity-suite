@@ -1,26 +1,21 @@
 package org.egov.web.actions.masters;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.ServiceLocator;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
-import org.egov.lib.rjbac.user.ejb.api.UserServiceHome;
 import org.egov.services.masters.SchemeService;
 import org.egov.utils.Constants;
 import org.egov.web.actions.BaseFormAction;
@@ -118,8 +113,6 @@ public class SchemeAction extends BaseFormAction{
 		if (scheme.getIsactive() == null) {
 			scheme.setIsactive(false);
 		}
-		scheme.setLastModifiedBy(getLoggedInUser());
-		scheme.setLastModifiedDate(new Date());
 		try {
 			schemeService.persist(scheme);
 		} catch (ValidationException e) {
@@ -148,8 +141,6 @@ public class SchemeAction extends BaseFormAction{
 		if (scheme.getIsactive() == null) {
 			scheme.setIsactive(false);
 		}
-		scheme.setCreatedBy(getLoggedInUser());
-		scheme.setCreatedDate(new Date());
 		try {
 			schemeService.persist(scheme);
 		} catch (ValidationException e) {

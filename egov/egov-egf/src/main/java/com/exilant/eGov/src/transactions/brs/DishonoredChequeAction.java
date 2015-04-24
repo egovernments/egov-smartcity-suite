@@ -523,7 +523,7 @@ public class DishonoredChequeAction extends DispatchAction {
 				//narration- reversal entry for receipt "voucher No"-- with "cheque No" dated :"Cheque date"
 				// Get iod created by user
 				InstrumentOtherDetails iob= (InstrumentOtherDetails)persistenceService.find("from InstrumentOtherDetails where instrumentHeaderId.id=?",instHeader.getId());
-			//	PersonalInformation loggedInEmp=getEisCommonService().getEmpForUserId(iob.getCreatedBy().getId());                  
+				PersonalInformation loggedInEmp=getEisCommonService().getEmpForUserId(iob.getCreatedBy().getId());                  
 				nextUser=iob.getPayinslipId().getCreatedBy();
 				//This fix is for Phoenix Migration.
 				/*dishonorChq.setPayinSlipCreatorUser(nextUser);

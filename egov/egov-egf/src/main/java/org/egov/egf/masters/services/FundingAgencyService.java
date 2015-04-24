@@ -50,5 +50,12 @@ public class FundingAgencyService extends PersistenceService<FundingAgency, Inte
 		 
 		 return null;
 	 }
+
+	@Override
+	public List getAssetCodesForProjectCode(Integer accountdetailkey)
+			throws ValidationException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	  
 }
