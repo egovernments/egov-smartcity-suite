@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+   "-//Hibernate/Hibernate Mapping DTD//EN"
+   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.demand.model.BillReceipt" table="EG_BILLRECEIPT">
+
+		<id name="id" column="ID">
+			<generator class="sequence">
+				<param name="sequence">SEQ_EG_BILLRECEIPT</param>
+			</generator>
+		</id>
+		
+		<many-to-one name="billId" class="org.egov.demand.model.EgBill"	column="BILLID" />
+		<property name="receiptNumber" column="RECEIPT_NUMBER" type="java.lang.String"/>	
+		<property name="receiptDate" column="RECEIPT_DATE" type="java.util.Date"/>
+		<property name="receiptAmt" column="RECEIPT_AMOUNT" type="java.math.BigDecimal"/>
+		<property name="isCancelled"  column="IS_CANCELLED" type="yes_no"/>
+		<property name="collectionStatus" column="COLLECTION_STATUS" type="java.lang.String"/>
+		<property name="createdDate" type="java.util.Date">
+			<column name="CREATETIMESTAMP" not-null="true" />
+		</property>
+		<property name="modifiedDate" type="java.util.Date">
+			<column name="LASTUPDATEDTIMESTAMP" not-null="true" />
+		</property>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl"
+			cascade="all">
+			<column name="CREATEDBY" />
+		</many-to-one>
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl"
+			cascade="all">
+			<column name="LASTMODIFIEDBY" />
+		</many-to-one>
+	</class>
+
+	
+</hibernate-mapping>
