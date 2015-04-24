@@ -69,11 +69,12 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.dao.ModuleDao;
-import org.egov.infstr.flexfields.dao.EgAttributetypeDao;
+//TODO -- Fix me (Commented to Resolve compilation issues)
+/*import org.egov.infstr.flexfields.dao.EgAttributetypeDao;
 import org.egov.infstr.flexfields.dao.EgAttributevaluesDao;
 import org.egov.infstr.flexfields.dao.FlexfieldsDaoFactory;
 import org.egov.infstr.flexfields.model.EgAttributetype;
-import org.egov.infstr.flexfields.model.EgAttributevalues;
+import org.egov.infstr.flexfields.model.EgAttributevalues;*/
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.EisCommonsService;
@@ -1526,7 +1527,8 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 					} catch (ParseException e) {
 						LOGGER.error(e.getMessage(), e);
 					}
-					if (unitTaxCalInfo1 != null
+					//TODO -- Fix me (Commented to Resolve compilation issues)
+					/*if (unitTaxCalInfo1 != null
 							&& !property.getPropertyDetail()
 									.getPropertyTypeMaster().getCode()
 									.equalsIgnoreCase(PROPTYPE_STATE_GOVT)
@@ -1536,14 +1538,15 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 						createAttributeValue(NMCPTISConstants.ALV,
 								floorDmdCalc, unitTaxCalInfo1
 										.getAnnualRentAfterDeduction()
-										.toString());
+										.toString());*/
 				}
 			}
 		}
 		LOGGER.debug("Exiting from createAttributeValues");
 	}
 
-	private EgAttributevalues createAttributeValue(String attributeType,
+	//TODO -- Fix me (Commented to Resolve compilation issues)
+	/*private EgAttributevalues createAttributeValue(String attributeType,
 			FloorwiseDemandCalculations floorDmdCalc, String attrValue) {
 		LOGGER.debug("Entered into createAttributeValue, attributeType: "
 				+ attributeType + ", floorDmdCalc: " + floorDmdCalc
@@ -1564,7 +1567,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		LOGGER.debug("attributeVal: " + attributeVal
 				+ "\nExiting from createAttributeValue");
 		return attributeVal;
-	}
+	}*/
 
 	public Date getLowestDtOfCompFloorWise(List<FloorImpl> floorList) {
 		LOGGER.debug("Entered into getLowestDtOfCompFloorWise, floorList: "

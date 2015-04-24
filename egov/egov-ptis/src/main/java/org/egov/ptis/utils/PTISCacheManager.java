@@ -10,8 +10,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.egov.commons.utils.EgovInfrastrUtil;
-import org.egov.commons.utils.EgovInfrastrUtilInteface;
 import org.egov.demand.dao.DCBDaoFactory;
 import org.egov.demand.dao.DepreciationMasterDao;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -240,7 +238,6 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 		String totalCessId = EGovConfig.getProperty("ptis_egov_config.xml",
 				"TOTAL_CESSID", "", "PT");
 		LOGGER.info("totalCessId" + totalCessId);
-		EgovInfrastrUtilInteface inteface = new EgovInfrastrUtil();
 		propertyCreationReasonsList = new ArrayList();
 		structuralFactorslist = new ArrayList();
 		constructionTypeslist = new ArrayList();

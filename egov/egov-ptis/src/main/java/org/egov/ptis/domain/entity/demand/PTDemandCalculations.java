@@ -9,12 +9,10 @@ package org.egov.ptis.domain.entity.demand;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.egov.demand.model.DemandCalculations;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.flexfields.model.EgAttributevalues;
 import org.egov.infstr.models.BaseModel;
 
 /**
@@ -26,10 +24,7 @@ import org.egov.infstr.models.BaseModel;
  * @see
  * @since 1.00
  */
-public class PTDemandCalculations extends BaseModel /*
-													 * implements
-													 * DemandCalculations
-													 */{
+public class PTDemandCalculations extends BaseModel implements DemandCalculations {
 
 	public DemandCalculations createDemandCalculations() {
 		// TODO Auto-generated method stub
@@ -42,7 +37,8 @@ public class PTDemandCalculations extends BaseModel /*
 	private Date lastUpdatedTimeStamp;
 	private Date createTimeStamp;
 	private Set<FloorwiseDemandCalculations> flrwiseDmdCalculations = new java.util.HashSet<FloorwiseDemandCalculations>();
-	private Set<EgAttributevalues> attributeValues = new HashSet<EgAttributevalues>();
+	//TODO -- Fix me (Commented to Resolve compilation issues)
+	//private Set<EgAttributevalues> attributeValues = new HashSet<EgAttributevalues>();
 	private byte[] taxInfo;
 	private BigDecimal alv;
 
@@ -50,7 +46,7 @@ public class PTDemandCalculations extends BaseModel /*
 			BigDecimal rateOfTax, Date lastUpdatedTimeStamp,
 			Date createTimeStamp,
 			Set<FloorwiseDemandCalculations> flrwiseDmdCalculations,
-			Set<EgAttributevalues> attributeValues, byte[] taxInfo,
+			/*Set<EgAttributevalues> attributeValues,*/ byte[] taxInfo,
 			BigDecimal alv) {
 		super();
 		this.ptDemand = ptDemand;
@@ -59,7 +55,8 @@ public class PTDemandCalculations extends BaseModel /*
 		this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
 		this.createTimeStamp = createTimeStamp;
 		this.flrwiseDmdCalculations = flrwiseDmdCalculations;
-		this.attributeValues = attributeValues;
+		//TODO -- Fix me (Commented to Resolve compilation issues)
+		//this.attributeValues = attributeValues;
 		this.taxInfo = taxInfo;
 		this.alv = alv;
 	}
@@ -197,7 +194,8 @@ public class PTDemandCalculations extends BaseModel /*
 		getFlrwiseDmdCalculations().remove(flwiseDmd);
 	}
 
-	public Set<EgAttributevalues> getAttributeValues() {
+	//TODO -- Fix me (Commented to Resolve compilation issues)
+	/*public Set<EgAttributevalues> getAttributeValues() {
 		return attributeValues;
 	}
 
@@ -211,7 +209,7 @@ public class PTDemandCalculations extends BaseModel /*
 
 	public void removeAttributeValues(EgAttributevalues attributeValues) {
 		getAttributeValues().remove(attributeValues);
-	}
+	}*/
 
 	public byte[] getTaxInfo() {
 		return taxInfo;

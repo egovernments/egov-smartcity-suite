@@ -21,7 +21,6 @@ import org.egov.demand.model.EgBill;
 import org.egov.demand.utils.DemandConstants;
 import org.egov.infra.admin.master.entity.Address;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.infstr.flexfields.model.EgAttributevalues;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
 import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
@@ -91,7 +90,8 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
 			PTDemandCalculations OldPTDmdCal = dmdCalMap.get(ptDmd.getEgInstallmentMaster());
 			ptDmdCal = new PTDemandCalculations(ptDmd, OldPTDmdCal.getPropertyTax(), OldPTDmdCal.getRateOfTax(), null,
 					null, cloneFlrWiseDmdCal(OldPTDmdCal.getFlrwiseDmdCalculations()),
-					cloneEgAttValues(OldPTDmdCal.getAttributeValues()), OldPTDmdCal.getTaxInfo(), OldPTDmdCal.getAlv());
+					//TODO -- Fix me (Commented to Resolve compilation issues)
+					/*cloneEgAttValues(OldPTDmdCal.getAttributeValues()),*/ OldPTDmdCal.getTaxInfo(), OldPTDmdCal.getAlv());
 			ptDmd.setDmdCalculations(ptDmdCal);
 			demandSet.add(ptDmd);
 		}
@@ -104,14 +104,15 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
 		for (FloorwiseDemandCalculations flrCal : flrDmdCal) {
 			flrWiseDmdCal = new FloorwiseDemandCalculations(null, flrCal.getFloor(), flrCal.getPTDemandCalculations(),
 					new Date(), new Date(), flrCal.getCategoryAmt(), flrCal.getOccupancyRebate(),
-					flrCal.getConstructionRebate(), flrCal.getDepreciation(), flrCal.getUsageRebate(),
-					cloneEgAttValues(flrCal.getAttributeValues()));
+					flrCal.getConstructionRebate(), flrCal.getDepreciation(), flrCal.getUsageRebate()/*,
+					cloneEgAttValues(flrCal.getAttributeValues())*/);
 			floorDmdCalSet.add(flrWiseDmdCal);
 		}
 		return floorDmdCalSet;
 	}
 
-	private Set<EgAttributevalues> cloneEgAttValues(Set<EgAttributevalues> attributeValues) {
+	//TODO -- Fix me (Commented to Resolve compilation issues)
+	/*private Set<EgAttributevalues> cloneEgAttValues(Set<EgAttributevalues> attributeValues) {
 		EgAttributevalues egAttvalues;
 		Set<EgAttributevalues> attValuesSet = new HashSet<EgAttributevalues>();
 		for (EgAttributevalues attValue : attributeValues) {
@@ -120,8 +121,8 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
 			attValuesSet.add(egAttvalues);
 		}
 		return attValuesSet;
-	}
-
+	}*/
+	
 	/*
 	 * This method returns Property Mutation as a Set
 	 */

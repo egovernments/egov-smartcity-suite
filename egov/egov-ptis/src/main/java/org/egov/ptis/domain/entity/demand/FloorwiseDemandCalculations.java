@@ -9,11 +9,8 @@ package org.egov.ptis.domain.entity.demand;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.flexfields.model.EgAttributevalues;
 import org.egov.ptis.domain.entity.property.FloorIF;
 
 /**
@@ -47,7 +44,8 @@ public class FloorwiseDemandCalculations {
 	private BigDecimal tax9 = BigDecimal.ZERO;
 	private BigDecimal tax10 = BigDecimal.ZERO;
 	private BigDecimal alv;
-	private Set<EgAttributevalues> attributeValues = new HashSet<EgAttributevalues>();
+	//TODO -- Fix me (Commented to Resolve compilation issues)
+	//private Set<EgAttributevalues> attributeValues = new HashSet<EgAttributevalues>();
 
 	public FloorwiseDemandCalculations() {
 		super();
@@ -55,8 +53,8 @@ public class FloorwiseDemandCalculations {
 
 	public FloorwiseDemandCalculations(Integer id, FloorIF floor, PTDemandCalculations demandCalculations,
 			Date lastUpdatedTimeStamp, Date createTimeStamp, BigDecimal categoryAmt, BigDecimal occupancyRebate,
-			BigDecimal constructionRebate, BigDecimal depreciation, BigDecimal usageRebate,
-			Set<EgAttributevalues> attributeValues) {
+			BigDecimal constructionRebate, BigDecimal depreciation, BigDecimal usageRebate/*,
+			Set<EgAttributevalues> attributeValues*/) {
 		super();
 		this.id = id;
 		this.floor = floor;
@@ -68,7 +66,8 @@ public class FloorwiseDemandCalculations {
 		this.constructionRebate = constructionRebate;
 		this.depreciation = depreciation;
 		this.usageRebate = usageRebate;
-		this.attributeValues = attributeValues;
+		//TODO -- Fix me (Commented to Resolve compilation issues)
+		//this.attributeValues = attributeValues;
 	}
 
 	public FloorwiseDemandCalculations(FloorwiseDemandCalculations thatFloorDmdCalc) {
@@ -242,20 +241,21 @@ public class FloorwiseDemandCalculations {
 		this.usageRebate = usageRebate;
 	}
 
+	//TODO -- Fix me (Commented to Resolve compilation issues)
 	/**
 	 * @return the attributeValues
-	 */
+	 *//*
 	public Set<EgAttributevalues> getAttributeValues() {
 		return attributeValues;
 	}
 
-	/**
+	*//**
 	 * @param attributeValues
 	 *            the attributeValues to set
-	 */
+	 *//*
 	public void setAttributeValues(Set<EgAttributevalues> attributeValues) {
 		this.attributeValues = attributeValues;
-	}
+	}*/
 
 	/**
 	 * @return the tax1
