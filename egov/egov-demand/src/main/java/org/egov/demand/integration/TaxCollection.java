@@ -48,6 +48,10 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.InvalidAccountHeadException;
+import org.egov.collection.integration.models.BillReceiptInfo;
+import org.egov.collection.integration.models.ReceiptAccountInfo;
+import org.egov.collection.integration.models.ReceiptInstrumentInfo;
+import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.CommonsDAOFactory;
 import org.egov.dcb.bean.ReceiptDetail;
@@ -215,7 +219,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
 			billRecpt.setBillId(egBill);
 			billRecpt.setReceiptAmt(totalCollectedAmt);
 			billRecpt.setReceiptNumber(bri.getReceiptNum());
-			billRecpt.setReceiptDate(bri.getReceiptDate());
+			billRecpt.setReceiptDate(bri.getReceiptDate().toDate());
 			billRecpt.setCollectionStatus(bri.getReceiptStatus().getCode());
 			billRecpt.setCreatedBy(bri.getCreatedBy());
 			billRecpt.setModifiedBy(bri.getModifiedBy());
@@ -586,7 +590,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
 	 *            .egov.infstr.collections.integration.models.BillReceiptInfo
 	 *
 	 */
-	//public abstract void updateDemandDetails(BillReceiptInfo bri);
+	public abstract void updateDemandDetails(BillReceiptInfo bri);
 
 	/**
 	 * The module that defines the billing system.

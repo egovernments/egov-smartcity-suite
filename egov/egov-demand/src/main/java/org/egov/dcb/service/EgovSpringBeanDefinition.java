@@ -39,6 +39,7 @@
  */
 package org.egov.dcb.service;
 
+import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

@@ -43,8 +43,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.InvalidAccountHeadException;
+import org.egov.collection.integration.models.BillReceiptInfo;
+import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.demand.dao.DCBDaoFactory;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.dao.EgBillDetailsDao;
@@ -52,6 +53,7 @@ import org.egov.demand.dao.EgBillReceiptDao;
 import org.egov.demand.model.BillReceipt;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgBillDetails;
+import org.egov.exceptions.EGOVRuntimeException;
 /*import org.egov.erpcollection.integration.models.BillReceiptInfo;
 import org.egov.erpcollection.integration.models.ReceiptAccountInfo;*/
 import org.hibernate.ObjectNotFoundException;
@@ -84,7 +86,7 @@ public class BillTaxCollection
 				billRecpt.setBillId(egBill);
 				billRecpt.setReceiptAmt(totalCollectedAmt);
 				billRecpt.setReceiptNumber(bri.getReceiptNum());
-				billRecpt.setReceiptDate(bri.getReceiptDate());
+				billRecpt.setReceiptDate(bri.getReceiptDate().toDate());
 				billRecpt.setCollectionStatus(bri.getReceiptStatus().getCode());
 				billRecpt.setIsCancelled(Boolean.FALSE);
 				billRecpt.setCreatedBy(bri.getCreatedBy());
