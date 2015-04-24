@@ -314,7 +314,7 @@ public class BudgetVarianceReportAction extends BaseFormAction{
 	private void setQueryParams()
 	{
 			if(shouldShowHeaderField(Constants.EXECUTING_DEPARTMENT) && budgetDetail.getExecutingDepartment()!=null && budgetDetail.getExecutingDepartment().getId()!=null && budgetDetail.getExecutingDepartment().getId()!=-1 && budgetDetail.getExecutingDepartment().getId()!=0)
-				queryParamMap.put("deptId",budgetDetail.getExecutingDepartment().getId());
+				queryParamMap.put("deptId",budgetDetail.getExecutingDepartment().getId().intValue());
 			if(shouldShowHeaderField(Constants.FUNCTION) && budgetDetail.getFunction()!=null && budgetDetail.getFunction().getId()!=null && budgetDetail.getFunction().getId()!=-1 && budgetDetail.getFunction().getId()!=0)
 				queryParamMap.put("functionId",Integer.parseInt(budgetDetail.getFunction().getId().toString()));
 			if(shouldShowHeaderField(Constants.FUND) && budgetDetail.getFund()!=null && budgetDetail.getFund().getId()!=null && budgetDetail.getFund().getId()!=-1 && budgetDetail.getFund().getId()!=0)
