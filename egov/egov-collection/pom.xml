@@ -24,6 +24,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.egov</groupId>
+			<artifactId>egov-egf</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.egov</groupId>
 			<artifactId>egov-config</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>

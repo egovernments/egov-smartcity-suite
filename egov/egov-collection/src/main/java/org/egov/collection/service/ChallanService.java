@@ -42,9 +42,9 @@ package org.egov.collection.service;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
+import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.Challan;
 import org.egov.collection.utils.CollectionsUtil;
-import org.egov.collection.web.constants.CollectionConstants;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;

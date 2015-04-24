@@ -37,35 +37,39 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.collection.scheduler;
+package org.egov.collection.xml.converter;
 
-import java.util.List;
+import org.egov.collection.integration.models.ReceiptAccountInfo;
+import org.egov.collection.integration.models.ReceiptAccountInfoImpl;
 
-import org.apache.log4j.Logger;
-import org.egov.collection.constants.CollectionConstants;
-import org.egov.collection.entity.OnlinePayment;
-import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
-import org.egov.infstr.services.PersistenceService;
+import com.thoughtworks.xstream.converters.Converter;
+import com.thoughtworks.xstream.converters.MarshallingContext;
+import com.thoughtworks.xstream.converters.UnmarshallingContext;
+import com.thoughtworks.xstream.io.HierarchicalStreamReader;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-public class OnlinePaymentUnknownStatusTrackerJob  extends AbstractQuartzJob {
-	private static final Logger LOGGER = Logger.getLogger(OnlinePaymentUnknownStatusTrackerJob.class);
-	private static final long serialVersionUID = 1L;
-	
-	protected PersistenceService persistenceService;
+public class ReceiptAccountInfoConverter implements Converter{
 
-	public void setPersistenceService(PersistenceService persistenceService) {
-		this.persistenceService = persistenceService;
-	}
-
-	@SuppressWarnings("unchecked")
 	@Override
-	public void executeJob() {
-		LOGGER.debug("Executing job to track online payments with UNKNOWN transanction statuses");
+	public void marshal(Object value, HierarchicalStreamWriter writer,
+			MarshallingContext context) {
 		
-		final List<OnlinePayment> unknownTransList = persistenceService.findAllByNamedQuery(
-				CollectionConstants.QUERY_ONLINERECEIPTS_BY_STATUSCODE, 
-				CollectionConstants.ONLINEPAYMENT_STATUS_DESC_PENDING);
-		
-		LOGGER.debug("Retrieved online payments with unknown statuses : " + unknownTransList);
+		ReceiptAccountInfo receiptInfo = (ReceiptAccountInfo) value;
+		ConverterUtil.createNode(writer, "glCode", receiptInfo.getGlCode());   
+		ConverterUtil.createNode(writer, "creditAmt", String.valueOf(receiptInfo.getCrAmount()));
+		ConverterUtil.createNode(writer, "debitAmt", String.valueOf(receiptInfo.getDrAmount()));
+		ConverterUtil.createNode(writer, "Function", receiptInfo.getFunction());
 	}
+
+	@Override
+	public Object unmarshal(HierarchicalStreamReader arg0,
+			UnmarshallingContext arg1) {
+		return null;
+	}
+
+	@Override
+	public boolean canConvert(Class clazz) {
+		return clazz.equals(ReceiptAccountInfoImpl.class);
+	}
+	
 }

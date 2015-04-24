@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.egov.collection.web.constants.CollectionConstants;
+import org.egov.collection.constants.CollectionConstants;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.ChartOfAccountsDAO;

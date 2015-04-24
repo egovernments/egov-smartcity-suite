@@ -37,35 +37,25 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.collection.scheduler;
+package org.egov.collection.xml.converter;
 
-import java.util.List;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import org.apache.log4j.Logger;
-import org.egov.collection.constants.CollectionConstants;
-import org.egov.collection.entity.OnlinePayment;
-import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
-import org.egov.infstr.services.PersistenceService;
-
-public class OnlinePaymentUnknownStatusTrackerJob  extends AbstractQuartzJob {
-	private static final Logger LOGGER = Logger.getLogger(OnlinePaymentUnknownStatusTrackerJob.class);
-	private static final long serialVersionUID = 1L;
-	
-	protected PersistenceService persistenceService;
-
-	public void setPersistenceService(PersistenceService persistenceService) {
-		this.persistenceService = persistenceService;
+public final class ConverterUtil {
+	private ConverterUtil(){
+		
 	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void executeJob() {
-		LOGGER.debug("Executing job to track online payments with UNKNOWN transanction statuses");
+	public static void createNode(HierarchicalStreamWriter writer, String nodeName, String nodeValue) {
 		
-		final List<OnlinePayment> unknownTransList = persistenceService.findAllByNamedQuery(
-				CollectionConstants.QUERY_ONLINERECEIPTS_BY_STATUSCODE, 
-				CollectionConstants.ONLINEPAYMENT_STATUS_DESC_PENDING);
+		String newNodeName="";
 		
-		LOGGER.debug("Retrieved online payments with unknown statuses : " + unknownTransList);
+		writer.startNode(nodeName);
+		
+		if(nodeValue!=null){
+			newNodeName=nodeValue;
+		}
+		
+        writer.setValue(newNodeName);
+        writer.endNode();
 	}
 }

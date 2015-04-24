@@ -1,5 +1,5 @@
 	
-package org.egov.erpcollection.integration.pgi;
+package org.egov.collection.integration.pgi;
 
 import static org.junit.Assert.assertEquals;
 
@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import org.egov.EGOVRuntimeException;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -42,9 +42,9 @@ package org.egov.collection.utils;
 import java.util.Date;
 import java.util.List;
 
+import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.Challan;
 import org.egov.collection.entity.ReceiptHeader;
-import org.egov.collection.web.constants.CollectionConstants;
 import org.egov.commons.CFinancialYear;
 import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.SequenceNumberGenerator;

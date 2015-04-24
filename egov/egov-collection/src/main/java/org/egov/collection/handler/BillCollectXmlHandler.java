@@ -37,35 +37,40 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.collection.scheduler;
+package org.egov.collection.handler;
 
-import java.util.List;
+import org.egov.collection.integration.models.BillDetails;
+import org.egov.collection.integration.models.BillInfoImpl;
 
-import org.apache.log4j.Logger;
-import org.egov.collection.constants.CollectionConstants;
-import org.egov.collection.entity.OnlinePayment;
-import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
-import org.egov.infstr.services.PersistenceService;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.basic.BooleanConverter;
+import com.thoughtworks.xstream.converters.basic.DateConverter;
 
-public class OnlinePaymentUnknownStatusTrackerJob  extends AbstractQuartzJob {
-	private static final Logger LOGGER = Logger.getLogger(OnlinePaymentUnknownStatusTrackerJob.class);
-	private static final long serialVersionUID = 1L;
+public class BillCollectXmlHandler {
+	private static final String DATE_FORMAT_DDMMYYY = "dd/MM/yyyy";
 	
-	protected PersistenceService persistenceService;
-
-	public void setPersistenceService(PersistenceService persistenceService) {
-		this.persistenceService = persistenceService;
+	public String toXML (Object obj) {
+		XStream xStream = createXStream();
+		String[] array = {DATE_FORMAT_DDMMYYY};
+		xStream.registerConverter(new DateConverter(DATE_FORMAT_DDMMYYY,array));
+		xStream.registerConverter(BooleanConverter.BINARY);
+		xStream.aliasAttribute(BillDetails.class,"billDate", "billDate");
+		return xStream.toXML(obj);
 	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void executeJob() {
-		LOGGER.debug("Executing job to track online payments with UNKNOWN transanction statuses");
-		
-		final List<OnlinePayment> unknownTransList = persistenceService.findAllByNamedQuery(
-				CollectionConstants.QUERY_ONLINERECEIPTS_BY_STATUSCODE, 
-				CollectionConstants.ONLINEPAYMENT_STATUS_DESC_PENDING);
-		
-		LOGGER.debug("Retrieved online payments with unknown statuses : " + unknownTransList);
+	
+	protected XStream createXStream() {
+        XStream xstream = new XStream();
+        xstream.autodetectAnnotations(true);
+        return xstream;
+    }
+	
+	
+	public Object toObject (String xml) {
+		XStream xStream = createXStream();
+		xStream.alias("bill-collect", BillInfoImpl.class);
+		String[] array = {DATE_FORMAT_DDMMYYY};
+		xStream.registerConverter(new DateConverter(DATE_FORMAT_DDMMYYY,array));
+		xStream.registerConverter(BooleanConverter.BINARY);
+		return (BillInfoImpl)xStream.fromXML(xml);
 	}
 }

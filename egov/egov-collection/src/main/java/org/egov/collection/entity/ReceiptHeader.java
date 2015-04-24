@@ -50,14 +50,15 @@ import java.util.Set;
 
 import javax.validation.constraints.Size;
 
+import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.FinancialsUtil;
-import org.egov.collection.web.constants.CollectionConstants;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.annotation.Search;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.lib.security.terminal.model.Location;
+import org.egov.model.instrument.InstrumentHeader;
 import org.joda.time.DateTime;
 
 /**
@@ -90,8 +91,8 @@ public class ReceiptHeader extends StateAware {
 	private Set<ReceiptDetail> receiptDetails = new LinkedHashSet<ReceiptDetail>(
 			0);
 	private ReceiptMisc receiptMisc;
-	/*private Set<InstrumentHeader> receiptInstrument = new HashSet<InstrumentHeader>(
-			0);*/
+	private Set<InstrumentHeader> receiptInstrument = new HashSet<InstrumentHeader>(
+			0);
 	private Set<ReceiptVoucher> receiptVoucher = new HashSet<ReceiptVoucher>(0);
 	private Location location;
 	private Boolean isReconciled;
@@ -291,7 +292,7 @@ public class ReceiptHeader extends StateAware {
 	 * 
 	 * @return instrument type of instruments associated with the receipt
 	 */
-	/*public String getInstrumentType() {
+	public String getInstrumentType() {
 		return receiptInstrument.iterator().next().getInstrumentType()
 				.getType();
 	}
@@ -300,21 +301,21 @@ public class ReceiptHeader extends StateAware {
 		this.receiptInstrument.add(instrumentMaster);
 	}
 
-	*//**
+	/**
 	 * @return the receiptInstrument
-	 *//*
+	 */
 	public Set<InstrumentHeader> getReceiptInstrument() {
 		return receiptInstrument;
 	}
 
-	*//**
+	/**
 	 * @param receiptInstrument
 	 *            the receiptInstrument to set
-	 *//*
+	 */
 	public void setReceiptInstrument(Set<InstrumentHeader> receiptInstrument) {
 		this.receiptInstrument = receiptInstrument;
 	}
-*/
+
 	/**
 	 * 
 	 * @param type

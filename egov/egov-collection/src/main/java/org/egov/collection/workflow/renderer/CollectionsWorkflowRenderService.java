@@ -41,14 +41,11 @@
 package org.egov.collection.workflow.renderer;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
-import org.egov.collection.web.constants.CollectionConstants;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
 

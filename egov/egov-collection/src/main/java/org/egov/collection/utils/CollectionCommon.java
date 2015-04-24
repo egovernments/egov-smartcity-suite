@@ -50,6 +50,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.AccountPayeeDetail;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptDetailInfo;
@@ -66,7 +67,6 @@ import org.egov.collection.integration.pgi.PaymentGatewayAdaptor;
 import org.egov.collection.integration.pgi.PaymentRequest;
 import org.egov.collection.integration.pgi.PaymentResponse;
 import org.egov.collection.service.ReceiptHeaderService;
-import org.egov.collection.web.constants.CollectionConstants;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;

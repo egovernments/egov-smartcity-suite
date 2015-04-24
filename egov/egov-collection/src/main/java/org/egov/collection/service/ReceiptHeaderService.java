@@ -39,7 +39,6 @@
  */
 package org.egov.collection.service;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,11 +50,10 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.egov.collection.entity.AccountPayeeDetail;
+import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.Challan;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
@@ -66,20 +64,13 @@ import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.collection.utils.CollectionsNumberGenerator;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.collection.utils.FinancialsUtil;
-import org.egov.collection.web.constants.CollectionConstants;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CVoucherHeader;
-import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.services.EISServeable.DATE_ORDER;
 import org.egov.pims.commons.Position;
-import org.hibernate.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 

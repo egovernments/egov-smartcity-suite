@@ -1,9 +1,9 @@
 
-package org.egov.erpcollection.integration.pgi;
+package org.egov.collection.integration.pgi;
 
 import static org.junit.Assert.assertNotNull;
 
-import org.egov.erpcollection.models.CollectionObjectFactory;
+import org.egov.collection.entity.CollectionObjectFactory;
 import org.junit.Test;
 
 /**

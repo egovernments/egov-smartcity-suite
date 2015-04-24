@@ -47,9 +47,9 @@ import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
-import org.egov.collection.web.xml.converter.BillReceiptInfoConverter;
-import org.egov.collection.web.xml.converter.ReceiptAccountInfoConverter;
-import org.egov.collection.web.xml.converter.ReceiptInstrumentInfoConverter;
+import org.egov.collection.xml.converter.BillReceiptInfoConverter;
+import org.egov.collection.xml.converter.ReceiptAccountInfoConverter;
+import org.egov.collection.xml.converter.ReceiptInstrumentInfoConverter;
 import org.egov.exceptions.EGOVRuntimeException;
 
 import com.thoughtworks.xstream.XStream;

@@ -1,19 +1,17 @@
 /**
  * 
  */
-package org.egov.erpcollection.integration.services;
+package org.egov.collection.integration.services;
 
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.egov.erpcollection.integration.models.BillReceiptInfo;
-import org.egov.erpcollection.integration.models.BillReceiptInfoImpl;
-import org.egov.erpcollection.models.CollectionObjectFactory;
-import org.egov.erpcollection.models.ReceiptHeader;
-import org.egov.erpcollection.models.ReceiptPayeeDetails;
-import org.egov.models.AbstractPersistenceServiceTest;
+import org.egov.collection.entity.CollectionObjectFactory;
+import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.integration.models.BillReceiptInfo;
+import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +20,7 @@ import org.junit.Test;
  * JUnit Test class for testing the billing integration service 
  * implementation.
  */
-public class BillingIntegrationServiceStubTest extends AbstractPersistenceServiceTest<ReceiptPayeeDetails, Long> {
+public class BillingIntegrationServiceStubTest  {
 	/**
 	 * The collection integration service
 	 */
@@ -35,7 +33,7 @@ public class BillingIntegrationServiceStubTest extends AbstractPersistenceServic
 
 	@Before  
 	public void setupService() {
-		objectFactory = new CollectionObjectFactory(session);
+		objectFactory = null ;//= new CollectionObjectFactory(session);
 		billingIntgrnServiceStub = new BillingIntegrationServiceStub();
 	}
 	
@@ -73,7 +71,7 @@ public class BillingIntegrationServiceStubTest extends AbstractPersistenceServic
 		billingIntgrnServiceStub.updateReceiptDetails(createBillReceipts());
 	}*/
 	
-	private Set<BillReceiptInfo> createBillReceipts(){
+	/*private Set<BillReceiptInfo> createBillReceipts(){
 		ReceiptPayeeDetails payeeDetails = objectFactory.createReceiptPayeeForBillingSystem();
 		Set<BillReceiptInfo> billReceipts = new HashSet<BillReceiptInfo>();
 		
@@ -93,6 +91,6 @@ public class BillingIntegrationServiceStubTest extends AbstractPersistenceServic
 		}catch(Exception exp){
 			throw new Exception("Could not delete update billing receiptdetails");
 		}	
-	}
+	}*/
 
 }

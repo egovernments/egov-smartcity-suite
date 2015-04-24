@@ -40,17 +40,16 @@
 package org.egov.collection.integration.models;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ChallanInfo;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.entity.ReceiptMisc;
 import org.egov.collection.integration.services.BillingIntegrationService;
-import org.egov.collection.web.constants.CollectionConstants;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.lib.security.terminal.model.Location;
