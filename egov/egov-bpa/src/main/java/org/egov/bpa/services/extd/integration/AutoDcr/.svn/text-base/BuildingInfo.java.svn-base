@@ -1,0 +1,69 @@
+package org.egov.bpa.services.extd.integration.AutoDcr;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "BuildingInfo")
+public class BuildingInfo {
+	private String buildingName;
+	private String buildingHeight;
+	private String marginFrontSide;
+	private String marginRearSide;
+	private String marginSide1;
+	private String marginside2;
+
+	@XmlAttribute(name = "BUILDINGNAME")
+	public String getBuildingName() {
+		return buildingName;
+	}
+
+	public void setBuildingName(String buildingName) {
+		this.buildingName = buildingName;
+	}
+
+	@XmlAttribute(name = "BUILDING_HEIGHT")
+	public String getBuildingHeight() {
+		return buildingHeight;
+	}
+
+	public void setBuildingHeight(String buildingHeight) {
+		this.buildingHeight = buildingHeight;
+	}
+
+	@XmlAttribute(name = "MarginFrontSide")
+	public String getMarginFrontSide() {
+		return marginFrontSide;
+	}
+
+	public void setMarginFrontSide(String marginFrontSide) {
+		this.marginFrontSide = marginFrontSide;
+	}
+
+	@XmlAttribute(name = "MarginRearSide")
+	public String getMarginRearSide() {
+		return marginRearSide;
+	}
+
+	public void setMarginRearSide(String marginRearSide) {
+		this.marginRearSide = marginRearSide;
+	}
+
+	@XmlAttribute(name = "MarginSide1")
+	public String getMarginSide1() {
+		return marginSide1;
+	}
+
+	public void setMarginSide1(String marginSide1) {
+		this.marginSide1 = marginSide1;
+	}
+
+	@XmlAttribute(name = "Marginside2")
+	public String getMarginside2() {
+		return marginside2;
+	}
+
+	public void setMarginside2(String marginside2) {
+		this.marginside2 = marginside2;
+	}
+
+}

@@ -1,0 +1,218 @@
+package org.egov.bpa.services.extd.integration.AutoDcr;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "ProposalInfo")
+public class ProposalInfo {
+	private String fileNumber;
+	private String caseType;
+	private String buildingCategory;
+	private String landUseZone;
+	private String proposlaType;
+	private String inwardDate;
+	private String zone;
+	private String division;
+	private String plotNumber;
+	private String roadName;
+	private String doorNumber;
+	private String surveyNumber;
+	private String revenueVillage;
+	private String blockNumber;
+	private String mobileNumber;
+	private String emailId;
+	private String uniqueId;
+	private String pattaPlotArea;
+	private String documentPlotArea;
+	private String SitePlotArea;
+	private String status;
+
+	@XmlAttribute(name = "Status")
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	@XmlAttribute(name = "SurveyNo")
+	public String getSurveyNumber() {
+		return surveyNumber;
+	}
+
+	public void setSurveyNumber(String surveyNos) {
+		surveyNumber = surveyNos;
+	}
+
+	@XmlAttribute(name = "RevenueVillage")
+	public String getRevenueVillage() {
+		return revenueVillage;
+	}
+
+	public void setRevenueVillage(String revenueVillages) {
+		revenueVillage = revenueVillages;
+	}
+
+	@XmlAttribute(name = "BlockNo")
+	public String getBlockNubmer() {
+		return blockNumber;
+	}
+
+	public void setBlockNumber(String blockNos) {
+		blockNumber = blockNos;
+	}
+
+	@XmlAttribute(name = "BuildingCategory")
+	public String getBuildingCategory() {
+		return buildingCategory;
+	}
+
+	public void setBuildingCategory(String buildingCategorys) {
+		buildingCategory = buildingCategorys;
+	}
+
+	@XmlAttribute(name = "LandUseZone")
+	public String getLandUseZone() {
+		return landUseZone;
+	}
+
+	public void setLandUseZone(String landUseZones) {
+		landUseZone = landUseZones;
+	}
+
+	@XmlAttribute(name = "ProposlaType")
+	public String getProposlaType() {
+		return proposlaType;
+	}
+
+	public void setProposlaType(String proposlaTypes) {
+		proposlaType = proposlaTypes;
+	}
+
+	@XmlAttribute(name = "InwardDate")
+	public String getInwardDate() {
+		return inwardDate;
+	}
+
+	public void setInwardDate(String inwardDates) {
+		inwardDate = inwardDates;
+	}
+
+	@XmlAttribute(name = "Zone")
+	public String getZone() {
+		return zone;
+	}
+
+	public void setZone(String zones) {
+		zone = zones;
+	}
+
+	@XmlAttribute(name = "Division")
+	public String getDivision() {
+		return division;
+	}
+
+	public void setDivision(String divisions) {
+		division = divisions;
+	}
+
+	@XmlAttribute(name = "PlotNO")
+	public String getPlotNumber() {
+		return plotNumber;
+	}
+
+	public void setPlotNumber(String plotNOs) {
+		plotNumber = plotNOs;
+	}
+
+	@XmlAttribute(name = "RoadName")
+	public String getRoadName() {
+		return roadName;
+	}
+
+	public void setRoadName(String roadNames) {
+		roadName = roadNames;
+	}
+
+	@XmlAttribute(name = "DoorNo")
+	public String getDoorNumber() {
+		return doorNumber;
+	}
+
+	public void setDoorNumber(String doorNos) {
+		doorNumber = doorNos;
+	}
+
+	@XmlAttribute(name = "MobileNo")
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
+
+	public void setMobileNumber(String mobileNo) {
+		mobileNumber = mobileNo;
+	}
+
+	@XmlAttribute(name = "EmailId")
+	public String getEmailId() {
+		return emailId;
+	}
+
+	public void setEmailId(String emailIds) {
+		emailId = emailIds;
+	}
+
+	@XmlAttribute(name = "UniqueId")
+	public String getUniqueId() {
+		return uniqueId;
+	}
+
+	public void setUniqueId(String uniqueIds) {
+		uniqueId = uniqueIds;
+	}
+
+	@XmlAttribute(name = "PattaPlotArea")
+	public String getPattaPlotArea() {
+		return pattaPlotArea;
+	}
+
+	public void setPattaPlotArea(String pattaPlotAreas) {
+		pattaPlotArea = pattaPlotAreas;
+	}
+
+	@XmlAttribute(name = "DocumentPlotArea")
+	public String getDocumentPlotArea() {
+		return documentPlotArea;
+	}
+
+	public void setDocumentPlotArea(String documentPlotAreas) {
+		documentPlotArea = documentPlotAreas;
+	}
+
+	@XmlAttribute(name = "SitePlotArea")
+	public String getSitePlotArea() {
+		return SitePlotArea;
+	}
+
+	public void setSitePlotArea(String sitePlotArea) {
+		SitePlotArea = sitePlotArea;
+	}
+
+	@XmlAttribute(name = "FileNO")
+	public String getFileNumber() {
+		return fileNumber;
+	}
+
+	public void setFileNumber(String fileNO) {
+		fileNumber = fileNO;
+	}
+
+	@XmlAttribute(name = "CaseType")
+	public String getCaseType() {
+		return caseType;
+	}
+
+	public void setCaseType(String caseTypes) {
+		caseType = caseTypes;
+	}
+}

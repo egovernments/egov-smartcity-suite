@@ -1,0 +1,20 @@
+package org.egov.bpa.services.extd.integration.AutoDcr;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "GetFileStatus")
+public class GetFileStatus {
+
+	private ProposalInfo proposalInfo;
+
+	@XmlElement(name = "ProposalInfo")
+	public ProposalInfo getProposalInfo() {
+		return proposalInfo;
+	}
+
+	public void setProposalInfo(ProposalInfo proposalInfo) {
+		this.proposalInfo = proposalInfo;
+	}
+
+}

@@ -1,0 +1,20 @@
+package org.egov.bpa.services.extd.integration.AutoDcr;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "BuildingDetails")
+public class BuildingDetails {
+
+	private BuildingInfo buildingInfo;
+
+	@XmlElement(name = "BuildingInfo")
+	public BuildingInfo getBuildingInfo() {
+		return buildingInfo;
+	}
+
+	public void setBuildingInfo(BuildingInfo buildingInfo) {
+		this.buildingInfo = buildingInfo;
+	}
+
+}

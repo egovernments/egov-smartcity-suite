@@ -1,0 +1,64 @@
+package org.egov.bpa.services.extd.integration.AutoDcr;
+
+import java.io.StringReader;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+
+import org.egov.EGOVRuntimeException;
+
+public class AutoDcrXMLConverter {
+	public AutoDcrXMLConverter() {
+
+	}
+
+	public static AutoDcrBpaIntegration unmarshall(final Class<?> type,
+			final String response) {
+		try {
+		/*	
+			InputSource is = new InputSource(inputStream);
+			final SAXParserFactory sax = SAXParserFactory.newInstance();
+			sax.setNamespaceAware(false);
+			final XMLReader reader;
+			try {
+			    reader = sax.newSAXParser().getXMLReader();
+			} catch (SAXException | ParserConfigurationException e) {
+			    throw new RuntimeException(e);
+			}
+			SAXSource source = new SAXSource(reader, is);*/
+		/*	final XMLReader reader;
+			final SAXParserFactory sax = SAXParserFactory.newInstance();
+			sax.setNamespaceAware(false);
+			sax.setValidating(false);
+			try {
+			    reader = sax.newSAXParser().getXMLReader();
+			} catch (Exception e) {
+			    throw new RuntimeException(e);
+			}
+			
+			SAXSource source = new SAXSource(reader, new InputSource(response));
+			final JAXBContext jaxbContext = JAXBContext.newInstance(AutoDcrBpaIntegration.class);
+			Unmarshaller unmarshalObject = jaxbContext.createUnmarshaller();
+			  ValidationEventCollector vec = new ValidationEventCollector();
+			  unmarshalObject.setEventHandler( vec );
+			
+			//unmarshalObject.setValidating(false);
+			@SuppressWarnings("unchecked")
+			JAXBElement<AutoDcrBpaIntegration> doc = (JAXBElement<AutoDcrBpaIntegration>)unmarshalObject.unmarshal(source);
+			return doc.getValue();*/
+			final JAXBContext jaxbContext = JAXBContext.newInstance(AutoDcrBpaIntegration.class);
+			final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+			//unmarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			AutoDcrBpaIntegration a = (AutoDcrBpaIntegration) unmarshaller
+					.unmarshal(new StringReader(response));
+			return a;
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out
+					.println("Error occurred while trying to unmarshall XML{} ");
+			throw new EGOVRuntimeException(
+					"Error occurred while trying to unmarshall XML", e);
+		}
+	}
+
+}

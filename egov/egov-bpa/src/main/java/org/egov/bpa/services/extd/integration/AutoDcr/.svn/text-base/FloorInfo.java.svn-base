@@ -1,0 +1,53 @@
+package org.egov.bpa.services.extd.integration.AutoDcr;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "FLOORInfo")
+public class FloorInfo {
+
+	@XmlAttribute(name = "FLOORNAME")
+	private String floorName;
+	@XmlAttribute(name = "TOTAL_CARPET_AREA")
+	private String totalCarpetArea;
+	@XmlAttribute(name = "TOTAL_BUILTUP_AREA")
+	private String totalBuildupArea;
+	@XmlAttribute(name = "TOTAL_SLAB")
+	private String totalSlab;
+
+	public String getFloorName() {
+		return floorName;
+	}
+
+	public void setFloorName(String floorName) {
+		this.floorName = floorName;
+	}
+
+	public String getTotalCarpetArea() {
+		return totalCarpetArea;
+	}
+
+	public void setTotalCarpetArea(String totalCarpetArea) {
+		this.totalCarpetArea = totalCarpetArea;
+	}
+
+	public String getTotalBuildupArea() {
+		return totalBuildupArea;
+	}
+
+	public void setTotalBuildupArea(String totalBuildupArea) {
+		this.totalBuildupArea = totalBuildupArea;
+	}
+
+	public String getTotalSlab() {
+		return totalSlab;
+	}
+
+	public void setTotalSlab(String totalSlab) {
+		this.totalSlab = totalSlab;
+	}
+
+}

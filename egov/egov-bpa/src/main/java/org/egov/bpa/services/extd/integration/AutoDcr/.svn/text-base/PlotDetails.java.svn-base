@@ -1,0 +1,20 @@
+package org.egov.bpa.services.extd.integration.AutoDcr;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "PlotDetails")
+public class PlotDetails {
+
+	private PlotInfo plotInfo;
+
+	@XmlElement(name = "PlotInfo")
+	public PlotInfo getPlotInfo() {
+		return plotInfo;
+	}
+
+	public void setPlotInfo(PlotInfo plotInfos) {
+		plotInfo = plotInfos;
+	}
+
+}
