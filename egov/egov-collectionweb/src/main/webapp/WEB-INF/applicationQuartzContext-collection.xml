@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+<bean name="collectionSchedular" id="collectionSchedular" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" destroy-method="destroy" lazy-init="false">
+     	<property name="overwriteExistingJobs" value="true"/>
+        <property name="autoStartup" value="true" />
+        <property name="jobFactory" ref="jobFactory"/>
+        <property name="taskExecutor" ref="taskExecutor" />
+        <property name="waitForJobsToCompleteOnShutdown" value="true"/>
+		<property name="schedulerName" value="collection-scheduler"/>
+		<property name="triggers">
+	    	<list>
+				<ref bean="bouncedChqInstrCronTrigger" />
+				<ref bean="onlinePaymentUnknownStatusTrackerCronTrigger"/>				
+	    	</list>
+		</property>	
+		<property name="applicationContextSchedulerContextKey" value="applicationQuartzContext-collection" />   
+        <property name="schedulerContextAsMap">
+        	<map>
+				<entry key="userManager" value-ref="userManager"/>
+				<entry key="cities" value-ref="cities"/>
+			</map>
+        </property>
+        <property name="quartzProperties">
+        	<props>
+        		<!-- Scheduler Properties -->
+        		<prop key="org.quartz.scheduler.instanceId">AUTO</prop>
+            	<prop key="org.quartz.scheduler.instanceName">eGovScheduler-collection</prop>
+            	<prop key="org.quartz.scheduler.wrapJobExecutionInUserTransaction">true</prop>
+        		<prop key="org.quartz.scheduler.skipUpdateCheck">true</prop>
+        		<prop key="org.quartz.scheduler.threadsInheritContextClassLoaderOfInitializer">true</prop>
+        		
+        		<!-- Job Store and Clustering Properties -->
+        		<prop key="org.quartz.jobStore.isClustered">false</prop>
+        		<prop key="org.quartz.jobStore.clusterCheckinInterval">60000</prop>
+        		<prop key="org.quartz.jobStore.acquireTriggersWithinLock">false</prop>
+        		<prop key="org.quartz.jobStore.txIsolationLevelReadCommitted">true</prop>
+        		<prop key="org.quartz.jobStore.misfireThreshold">60000</prop>
+           		<prop key="org.quartz.jobStore.driverDelegateClass">org.quartz.impl.jdbcjobstore.oracle.OracleDelegate</prop>
+        		<prop key="org.quartz.jobStore.useProperties">true</prop>
+        		<prop key="org.quartz.jobStore.dataSource">quartzDS</prop>
+        		<prop key="org.quartz.jobStore.nonManagedTXDataSource">quartzNoTXDS</prop>
+        		<prop key="org.quartz.jobStore.tablePrefix">QRTZ_COLL_</prop>
+        		<prop key="org.quartz.jobStore.class">org.quartz.impl.jdbcjobstore.JobStoreCMT</prop>
+				<prop key="org.quartz.jobStore.dontSetNonManagedTXConnectionAutoCommitFalse">false</prop>        		
+				<prop key="org.quartz.jobStore.dontSetAutoCommitFalse">true</prop>
+        		
+        		<!-- Datasource Properties -->
+        		<prop key="org.quartz.dataSource.quartzDS.jndiURL">java:/ezgovDatabasePool</prop>
+        		<prop key="org.quartz.dataSource.quartzNoTXDS.jndiURL">java:/ezgovDatabasePoolNoTX</prop>
+        		
+        		<!-- Logger Plugin Properties -->       		
+           		<prop key="org.quartz.plugin.jobHistory.class">org.quartz.plugins.history.LoggingJobHistoryPlugin</prop>        		
+        		<prop key="org.quartz.plugin.jobHistory.jobToBeFiredMessage">Job [{1}.{0}] to be fired by trigger [{4}.{3}], re-fire: {7}</prop>
+        		<prop key="org.quartz.plugin.jobHistory.jobSuccessMessage">Job [{1}.{0}] execution complete and reports: {8}</prop>
+        		<prop key="org.quartz.plugin.jobHistory.jobFailedMessage">Job [{1}.{0}] execution failed with exception: {8}</prop>
+        		<prop key="org.quartz.plugin.jobHistory.jobWasVetoedMessage">Job [{1}.{0}] was vetoed. It was to be fired by trigger [{4}.{3}] at: {2, date, dd-MM-yyyy HH:mm:ss.SSS}</prop>
+           		<prop key="org.quartz.plugin.triggerHistory.class">org.quartz.plugins.history.LoggingTriggerHistoryPlugin</prop>
+        		<prop key="org.quartz.plugin.triggerHistory.triggerFiredMessage">Trigger [{1}.{0}] fired job [{6}.{5}] scheduled at: {2, date, dd-MM-yyyy HH:mm:ss.SSS}, next scheduled at: {3, date, dd-MM-yyyy HH:mm:ss.SSS}</prop>
+        		<prop key="org.quartz.plugin.triggerHistory.triggerCompleteMessage">Trigger [{1}.{0}] completed firing job [{6}.{5}] with resulting trigger instruction code: {9}. Next scheduled at: {3, date, dd-MM-yyyy HH:mm:ss.SSS}</prop>
+        		<prop key="org.quartz.plugin.triggerHistory.triggerMisfiredMessage">Trigger [{1}.{0}] misfired job [{6}.{5}]. Should have fired at: {3, date, dd-MM-yyyy HH:mm:ss.SSS}</prop>
+	       		
+	       		<!-- Scheduler Shutdown Hook Plugin Properties-->
+	       		<prop key="org.quartz.plugin.shutdownHook.class">org.quartz.plugins.management.ShutdownHookPlugin</prop>
+        		<prop key="org.quartz.plugin.shutdownHook.cleanShutdown">true</prop>
+        	</props>
+        </property>
+	</bean> 
+   
+   <!-- Add description for updateDishonoredInstrumentsJobScheduler -->
+ 	 
+   <bean name="updateDishonoredInstrumentsJobScheduler" id="updateDishonoredInstrumentsJobScheduler" class="org.springframework.scheduling.quartz.JobDetailBean">
+   		<property name="group" value="COLLECTION_JOB_GROUP"/>
+   		<property name="name" value="Update Dishonored Instruments Job"/>
+   		<property name="jobClass" value="org.egov.erpcollection.scheduler.UpdateDishonoredInstrumentsJob"/>
+   		<property name="requestsRecovery" value="true"/>
+		<property name="jobDataAsMap">
+            <map>
+                <entry key="jobBeanName" value="updateDishonoredInstrumentsJobDelegate"/>
+				<entry key="userName" value="egovernments"/>
+				<entry key="transactional"  value="true" />
+				<entry key="moduleName" value="collection"/>
+            </map>
+        </property>           	
+	</bean>
+	
+	<bean id="updateDishonoredInstrumentsJobDelegate" class="org.egov.erpcollection.scheduler.UpdateDishonoredInstrumentsJob" lazy-init="true" scope="prototype">
+        <property name="persistenceService" ref="persistenceService" />
+        <property name="instrumentService" ref="instrumentService" />
+        <property name="receiptPayeeDetailsService" ref="receiptPayeeDetailsService" />
+        <property name="genericDao" ref="genericDao" />        
+    </bean>
+   
+     <bean id="bouncedChqInstrCronTrigger" name="bouncedChqInstrCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean" >
+        <property name="jobDetail" ref="updateDishonoredInstrumentsJobScheduler" />
+        <property name="group" value="COLLECTION_TRIGGER_GROUP"/>
+		<property name="name" value="Update Dishonored Instruments Trigger"/>
+       	<property name="cronExpression" value="0 0 14,18 * * ?" />
+     </bean>
+     
+     <!-- END updateDishonoredInstrumentsJobScheduler -->
+     
+      
+     <!--Add description for onlinePaymentUnknownStatusTrackerJobScheduler-->
+     
+     <bean name="onlinePaymentUnknownStatusTrackerJobScheduler" id="onlinePaymentUnknownStatusTrackerJobScheduler" class="org.springframework.scheduling.quartz.JobDetailBean">
+     	<property name="group" value="COLLECTION_JOB_GROUP"/>
+     	<property name="name" value="Online Payment Unknown Status Tracker Job"/> 
+     	<property name="jobClass" value="org.egov.erpcollection.scheduler.OnlinePaymentUnknownStatusTrackerJob"/>
+   		<property name="requestsRecovery" value="true"/>
+		<property name="jobDataAsMap">
+            <map>
+                <entry key="jobBeanName" value="onlinePaymentUnknownStatusTrackerJobDelegate"/>
+				<entry key="userName" value="egovernments"/>
+				<entry key="transactional"  value="true" />
+				<entry key="moduleName" value="collection"/>
+            </map>
+        </property>   	
+	</bean>
+	
+    <bean id="onlinePaymentUnknownStatusTrackerJobDelegate" class="org.egov.erpcollection.scheduler.OnlinePaymentUnknownStatusTrackerJob" lazy-init="true" scope="prototype">
+        <property name="persistenceService" ref="persistenceService" />
+    </bean>
+ 	
+ 	<bean id="onlinePaymentUnknownStatusTrackerCronTrigger" name="onlinePaymentUnknownStatusTrackerCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="onlinePaymentUnknownStatusTrackerJobScheduler" />
+        <property name="group" value="COLLECTION_TRIGGER_GROUP"/>
+		<property name="name" value="Online Payment Unknown Status Trigger"/>
+        <property name="cronExpression" value="0 30 17 * * ?" />
+    </bean>
+     <!-- END onlinePaymentUnknownStatusTrackerJobScheduler -->    
+</beans>

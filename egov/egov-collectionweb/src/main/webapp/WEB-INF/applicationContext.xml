@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd"
+	default-lazy-init="true">
+
+	<bean class="org.egov.erpcollection.services.ChallanService" id="challanService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.erpcollection.models.Challan" />
+		<property name="collectionsUtil" ref="collectionsUtil" />
+		<property name="challanWorkflowService" ref="challanWorkflowService" />
+	</bean>
+
+	<bean id="challanWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
+		<constructor-arg ref="persistenceService" />
+		<constructor-arg value="org.egov.erpcollection.models.Challan" />
+	</bean>
+
+	<bean id="serviceDetailsService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.infstr.models.ServiceDetails" />
+	</bean>
+
+	<bean id="serviceCategoryService" parent="persistenceService" scope="prototype">
+        <property name="type" value="org.egov.infstr.models.ServiceCategory" />
+    </bean>
+    
+	<bean id="collStgReceiptService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.erpcollection.models.CollectionStgReceipt" />
+	</bean>
+	
+	<bean id="xmlHandler" class="org.egov.erpcollection.web.handler.BillCollectXmlHandler">
+	</bean>
+
+	<bean id="bankService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.commons.Bank" />
+	</bean>
+	
+	<bean id="BDPGIPaymentGatewayAdaptor" class="org.egov.erpcollection.integration.pgi.BillDeskAdaptor" />
+    
+</beans>

@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 10 Sep, 2009 12:59:28 PM by Hibernate Tools 3.2.0.CR1 -->
+<hibernate-mapping>
+    <class name="org.egov.erpcollection.models.ReceiptMisc" table="EGCL_COLLECTIONMIS">
+        <id name="id" type="long">
+            <column name="ID" precision="22" scale="0" />
+           <generator class="sequence" >
+            <param name="sequence">SEQ_EGCL_COLLECTIONMIS</param>
+            </generator>
+        </id>
+        <many-to-one name="receiptHeader" class="org.egov.erpcollection.models.ReceiptHeader" fetch="select">
+            <column name="ID_COLLECTIONHEADER" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="fund" class="org.egov.commons.Fund" fetch="select">
+			<column name="ID_FUND" not-null="true"/>
+		</many-to-one>
+        <many-to-one name="fundsource" class="org.egov.commons.Fundsource" fetch="select">
+            <column name="ID_FUNDSOURCE" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="boundary" class="org.egov.lib.admbndry.BoundaryImpl" fetch="select">
+            <column name="ID_BOUNDARY" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="department" class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
+            <column name="ID_DEPARTMENT" precision="22" scale="0" not-null="true"/>
+        </many-to-one>
+        
+        <many-to-one name="scheme" class="org.egov.commons.Scheme" fetch="select">
+            <column name="ID_SCHEME" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="subscheme" class="org.egov.commons.SubScheme" fetch="select">
+            <column name="ID_SUBSCHEME" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="idFunctionary" class="org.egov.commons.Functionary" fetch="select">
+            <column name="ID_FUNCTIONARY" precision="22" scale="0" />
+        </many-to-one>
+    </class>
+    
+    <query name="getAllReceiptBoundary">
+    <![CDATA[select distinct boundary from ReceiptMisc ]]></query>
+    
+</hibernate-mapping>
