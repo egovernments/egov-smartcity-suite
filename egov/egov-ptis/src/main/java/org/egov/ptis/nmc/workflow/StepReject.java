@@ -7,9 +7,11 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 
 public class StepReject extends WorkflowActionStep {
 
-	public StepReject() {}
+	public StepReject() {
+	}
 
-	public StepReject(PropertyImpl propertyModel, Integer userId, String comments) {
+	public StepReject(PropertyImpl propertyModel, Integer userId,
+			String comments) {
 		super(propertyModel, userId, comments);
 	}
 
@@ -20,6 +22,8 @@ public class StepReject extends WorkflowActionStep {
 
 	@Override
 	public String getStepValue() {
-		return actionName + propertyTaxUtil.getDesignationName(userId) + "_" + WF_STATE_APPROVAL_PENDING;
+		return actionName
+				+ propertyTaxUtil.getDesignationName(Long.valueOf(userId))
+				+ "_" + WF_STATE_APPROVAL_PENDING;
 	}
 }

@@ -14,8 +14,8 @@ import org.egov.ptis.nmc.constants.NMCPTISConstants;
  */
 public class StepSave extends WorkflowActionStep {
 
-
-	public StepSave() {}
+	public StepSave() {
+	}
 
 	public StepSave(PropertyImpl propertyModel, Integer userId, String comments) {
 		super(propertyModel, userId, comments);
@@ -36,7 +36,9 @@ public class StepSave extends WorkflowActionStep {
 		if (isAllChangesCompleted()) {
 			stepValue = stepValue.append(WF_STATE_NOTICE_GENERATION_PENDING);
 		} else {
-			stepValue = stepValue.append(propertyTaxUtil.getDesignationName(userId)).append("_")
+			stepValue = stepValue
+					.append(propertyTaxUtil.getDesignationName(Long
+							.valueOf(userId))).append("_")
 					.append(NMCPTISConstants.WF_STATE_APPROVAL_PENDING);
 		}
 
@@ -47,15 +49,17 @@ public class StepSave extends WorkflowActionStep {
 	 * @return true if Data Entry is completed false if not
 	 */
 	private boolean isAllChangesCompleted() {
-		return propertyModel.getBasicProperty().getAllChangesCompleted() == null ? true : propertyModel
-				.getBasicProperty().getAllChangesCompleted();
+		return propertyModel.getBasicProperty().getAllChangesCompleted() == null ? true
+				: propertyModel.getBasicProperty().getAllChangesCompleted();
 	}
 
 	/**
-	 * @return true if workflow action is <code> Create </code> or <code> Modify </code>
+	 * @return true if workflow action is <code> Create </code> or
+	 *         <code> Modify </code>
 	 */
 	private boolean isActionCreateOrModify() {
 		return WFLOW_ACTION_NAME_MODIFY.equalsIgnoreCase(actionName)
-				|| NMCPTISConstants.WFLOW_ACTION_NAME_CREATE.equalsIgnoreCase(actionName);
+				|| NMCPTISConstants.WFLOW_ACTION_NAME_CREATE
+						.equalsIgnoreCase(actionName);
 	}
 }

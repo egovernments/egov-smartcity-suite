@@ -526,7 +526,7 @@ public class TaxCalculator {
 		taxCalculationInfo.setPropertyOwnerName(ptisCachMgr.buildOwnerFullName(property.getPropertyOwnerSet()));
 		taxCalculationInfo.setPropertyAddress(ptisCachMgr.buildAddressByImplemetation(property.getBasicProperty()
 				.getAddress()));
-		taxCalculationInfo.setHouseNumber(property.getBasicProperty().getAddress().getHouseNo());
+		taxCalculationInfo.setHouseNumber(property.getBasicProperty().getAddress().getHouseNoBldgApt());
 		taxCalculationInfo.setArea(property.getBasicProperty().getPropertyID().getArea().getName());
 		taxCalculationInfo.setZone(property.getBasicProperty().getPropertyID().getZone().getName());
 		taxCalculationInfo.setWard(property.getBasicProperty().getPropertyID().getWard().getName());

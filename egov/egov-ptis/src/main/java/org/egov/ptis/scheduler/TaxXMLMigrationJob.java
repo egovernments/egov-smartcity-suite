@@ -5,16 +5,18 @@ import static org.egov.ptis.nmc.constants.NMCPTISConstants.APPCONFIG_KEY_WARDSFO
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.commons.dao.GenericDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
+import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.nmc.constants.NMCPTISConstants;
 import org.egov.ptis.nmc.service.TaxXMLToDBCoverterService;
 import org.egov.ptis.nmc.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.quartz.StatefulJob;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class TaxXMLMigrationJob extends AbstractQuartzJob implements StatefulJob {
 
@@ -25,6 +27,8 @@ public class TaxXMLMigrationJob extends AbstractQuartzJob implements StatefulJob
 	private Integer propCount;
 	private Integer modulo;
 	private PropertyTaxNumberGenerator ptNumberGenerator;
+	@Autowired
+	private AppConfigValuesDAO appConfigValuesDao;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -79,8 +83,8 @@ public class TaxXMLMigrationJob extends AbstractQuartzJob implements StatefulJob
 
 		LOGGER.debug("Entered into getWards" );
 
-		List<AppConfigValues> appConfigValues = GenericDaoFactory.getDAOFactory().getAppConfigValuesDAO()
-				.getConfigValuesByModuleAndKey(NMCPTISConstants.PTMODULENAME, APPCONFIG_KEY_WARDSFOR_TAXXMLMIGRTN);
+		List<AppConfigValues> appConfigValues = appConfigValuesDao
+				.getConfigValuesByModuleAndKey(PropertyTaxConstants.PTMODULENAME, APPCONFIG_KEY_WARDSFOR_TAXXMLMIGRTN);
 
 		StringBuilder wardBuilder = new StringBuilder();
 

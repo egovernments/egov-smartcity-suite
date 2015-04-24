@@ -41,8 +41,8 @@ package org.egov.dcb.bean;
 
 import java.util.Map;
 
+import org.egov.collection.integration.models.PaymentInfoCard.CARDTYPE;
 import org.egov.exceptions.EGOVRuntimeException;
-//import org.egov.erpcollection.integration.models.PaymentInfoCard.CARDTYPE;
 
 public class CreditCardPayment extends Payment {
 	public final static String CREDITCARDNO = "creditCardNo";
@@ -60,7 +60,7 @@ public class CreditCardPayment extends Payment {
 	private String transactionNumber;
 	private String expMonth;
 	private String expYear;
-	//public CARDTYPE cardType;
+	public CARDTYPE cardType;
 
 	static CreditCardPayment create(Map<String, String> paymentInfo) {
 		return new CreditCardPayment(paymentInfo);
@@ -94,10 +94,10 @@ public class CreditCardPayment extends Payment {
 	private void setCardTypeIfAvailable(Map<String, String> paymentInfo) {
 		if (paymentInfo.get(CARDTYPE) != null) {
 			if (paymentInfo.get(CARDTYPE).equals(CARDTYPE_MASTER)) {
-				//this.setCardType(cardType.M);
+				this.setCardType(cardType.M);
 
 			} else if (paymentInfo.get(CARDTYPE).equals(CARDTYPE_VISA)) {
-				//this.setCardType(cardType.V);
+				this.setCardType(cardType.V);
 			}
 		}
 	}
@@ -160,12 +160,12 @@ public class CreditCardPayment extends Payment {
 		this.expYear = expYear;
 	}
 
-	/*public CARDTYPE getCardType() {
+	public CARDTYPE getCardType() {
 		return cardType;
 	}
 
 	public void setCardType(CARDTYPE cardType) {
 		this.cardType = cardType;
-	}*/
+	}
 
 }

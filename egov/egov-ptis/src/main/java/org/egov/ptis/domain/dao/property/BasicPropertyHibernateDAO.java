@@ -20,6 +20,8 @@ import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This Class implememets the BasicPropertyDAO for the Hibernate specific
@@ -29,8 +31,12 @@ import org.hibernate.Session;
  * @version 2.00
  */
 
-public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements BasicPropertyDAO {
-	private final static Logger LOGGER = Logger.getLogger(BasicPropertyHibernateDAO.class);
+@Repository(value = "basicPropertyDAO")
+@Transactional(readOnly = true)
+public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements
+		BasicPropertyDAO {
+	private final static Logger LOGGER = Logger
+			.getLogger(BasicPropertyHibernateDAO.class);
 
 	/**
 	 * @param persistentClass
@@ -42,7 +48,9 @@ public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements Ba
 
 	@Override
 	public BasicProperty getBasicPropertyByRegNum(String RegNum) {
-		Query qry = getCurrentSession().createQuery("from BasicPropertyImpl BP where BP.regNum =:RegNum and BP.active='Y' ");
+		Query qry = getCurrentSession()
+				.createQuery(
+						"from BasicPropertyImpl BP where BP.regNum =:RegNum and BP.active='Y' ");
 
 		qry.setString("RegNum", RegNum);
 		// qry.setMaxResults(1);
@@ -60,13 +68,20 @@ public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements Ba
 						+
 						// "left join fetch BP.propertyID pid " +
 						// "left join fetch pid.basicProperty bpid " +
-						"left join fetch pi.ptdcbBroker ptdcb " + "left join fetch pi.propertyOwnerSet prowns  "
-						+ "left join fetch ptdcb.dcb dcb " + "left join fetch dcb.currentDemand currDmd "
-						+ "left join fetch dcb.aggArrearsDemand arrDmd " + "left join fetch arrDmd.dcb "
-						+ "left join fetch currDmd.dcb " + "left join fetch currDmd.cesses "
-						+ "left join fetch currDmd.penalties " + "left join fetch currDmd.exemptions "
-						+ "left join fetch arrDmd.cesses " + "left join fetch arrDmd.penalties "
-						+ "left join fetch arrDmd.exemptions " + "where BP.regNum =:RegNum and BP.active='Y' ");
+						"left join fetch pi.ptdcbBroker ptdcb "
+						+ "left join fetch pi.propertyOwnerSet prowns  "
+						+ "left join fetch ptdcb.dcb dcb "
+						+ "left join fetch dcb.currentDemand currDmd "
+						+ "left join fetch dcb.aggArrearsDemand arrDmd "
+						+ "left join fetch arrDmd.dcb "
+						+ "left join fetch currDmd.dcb "
+						+ "left join fetch currDmd.cesses "
+						+ "left join fetch currDmd.penalties "
+						+ "left join fetch currDmd.exemptions "
+						+ "left join fetch arrDmd.cesses "
+						+ "left join fetch arrDmd.penalties "
+						+ "left join fetch arrDmd.exemptions "
+						+ "where BP.regNum =:RegNum and BP.active='Y' ");
 		qry.setString("RegNum", RegNum);
 		// qry.setMaxResults(1);
 		return (BasicProperty) qry.uniqueResult();
@@ -77,7 +92,9 @@ public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements Ba
 		Query qry = null;
 		BasicProperty basicProperty = null;
 		if (propertyId != null && !propertyId.equals("")) {
-			qry = getCurrentSession().createQuery("from BasicPropertyImpl BP where BP.upicNo =:propertyId and BP.active='Y' ");
+			qry = getCurrentSession()
+					.createQuery(
+							"from BasicPropertyImpl BP where BP.upicNo =:propertyId and BP.active='Y' ");
 			qry.setString("propertyId", propertyId);
 			basicProperty = (BasicProperty) qry.uniqueResult();
 		}
@@ -90,7 +107,8 @@ public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements Ba
 		Query qry = null;
 		BasicProperty basicProperty = null;
 		if (propertyId != null && !propertyId.equals("")) {
-			qry = getCurrentSession().createQuery("from BasicPropertyImpl BP where BP.upicNo =:propertyId");
+			qry = getCurrentSession().createQuery(
+					"from BasicPropertyImpl BP where BP.upicNo =:propertyId");
 			qry.setString("propertyId", propertyId);
 			basicProperty = (BasicProperty) qry.uniqueResult();
 		}
@@ -101,8 +119,9 @@ public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements Ba
 	@Override
 	public BasicProperty getBasicPropertyByPropertyID(PropertyID propertyID) {
 
-		Query qry = getCurrentSession().createQuery(
-				"from BasicPropertyImpl BP where BP.propertyID =:PropertyID and BP.active='Y' ");
+		Query qry = getCurrentSession()
+				.createQuery(
+						"from BasicPropertyImpl BP where BP.propertyID =:PropertyID and BP.active='Y' ");
 		qry.setEntity("PropertyID", propertyID);
 		return (BasicProperty) qry.uniqueResult();
 	}
@@ -119,7 +138,9 @@ public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements Ba
 		Query qry = null;
 		BasicProperty basicProperty = null;
 		if (propertyId != null && !propertyId.equals("")) {
-			qry = getCurrentSession().createQuery("from BasicPropertyImpl BP where BP.upicNo =:propertyId and BP.active='N' ");
+			qry = getCurrentSession()
+					.createQuery(
+							"from BasicPropertyImpl BP where BP.upicNo =:propertyId and BP.active='N' ");
 			qry.setString("propertyId", propertyId);
 			basicProperty = (BasicProperty) qry.uniqueResult();
 		}
@@ -128,8 +149,9 @@ public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements Ba
 
 	@Override
 	public BasicProperty getBasicPropertyByID_PropertyID(String ID_PropertyID) {
-		Query qry = getCurrentSession().createQuery(
-				"from BasicPropertyImpl BP where bp.ID_PropertyID =:ID_PropertyID  and BP.active='Y'");
+		Query qry = getCurrentSession()
+				.createQuery(
+						"from BasicPropertyImpl BP where bp.ID_PropertyID =:ID_PropertyID  and BP.active='Y'");
 		qry.setString("ID_PropertyID", ID_PropertyID);
 		return (BasicProperty) qry.uniqueResult();
 	}
@@ -139,23 +161,26 @@ public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements Ba
 		Integer regNum = null;
 		ResultSet resultSet = null;
 		try {
-			Query query = getCurrentSession().createSQLQuery("SELECT REG_NUM.NEXTVAL from dual");
+			Query query = getCurrentSession().createSQLQuery(
+					"SELECT REG_NUM.NEXTVAL from dual");
 
 			resultSet = (ResultSet) query.list();
 			if (resultSet.next()) {
 				regNum = resultSet.getInt(1);
 			} else {
-				throw new EGOVRuntimeException("Could not generate Reg Num. Result is empty.");
+				throw new EGOVRuntimeException(
+						"Could not generate Reg Num. Result is empty.");
 			}
-			
-		} 
-		catch (SQLException e) {
-			LOGGER.info("Exception in getRegNum()--- BasicPropertyHibernateDAO---" + e.getMessage());
+
+		} catch (SQLException e) {
+			LOGGER.info("Exception in getRegNum()--- BasicPropertyHibernateDAO---"
+					+ e.getMessage());
 			throw new EGOVRuntimeException("Could not generate Reg Num, " + e);
 		} catch (Exception e) {
-			LOGGER.info("Exception in getRegNum()--- BasicPropertyHibernateDAO---" + e);
+			LOGGER.info("Exception in getRegNum()--- BasicPropertyHibernateDAO---"
+					+ e);
 			throw new EGOVRuntimeException("Could not generate Reg Num, " + e);
-		}finally{
+		} finally {
 			try {
 				resultSet.close();
 			} catch (SQLException e) {
@@ -201,15 +226,17 @@ public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements Ba
 	@Override
 	public List getBasicPropertyByOldMunipalNo(String oldMuncipalNo) {
 		// logger.info(">>>>>>>>>>>>>>>>>> oldMuncipalNo"+oldMuncipalNo);
-		Query qry = getCurrentSession().createQuery(
-				"from BasicPropertyImpl BP where BP.oldMuncipalNum =:oldMuncipalNo and BP.active='Y' ");
+		Query qry = getCurrentSession()
+				.createQuery(
+						"from BasicPropertyImpl BP where BP.oldMuncipalNum =:oldMuncipalNo and BP.active='Y' ");
 		qry.setString("oldMuncipalNo", oldMuncipalNo);
 		// qry.setMaxResults(1);
 		return qry.list();
 	}
 
 	@Override
-	public List<BasicPropertyImpl> getChildBasicPropsForParent(BasicProperty basicProperty) {
+	public List<BasicPropertyImpl> getChildBasicPropsForParent(
+			BasicProperty basicProperty) {
 		List<BasicPropertyImpl> basicPropList = new ArrayList<BasicPropertyImpl>();
 		if (basicProperty != null) {
 			Query qry = getCurrentSession()
@@ -222,7 +249,8 @@ public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements Ba
 	}
 
 	@Override
-	public BasicProperty getBasicPropertyByIndexNumAndParcelID(String indexNum, String parcelID) {
+	public BasicProperty getBasicPropertyByIndexNumAndParcelID(String indexNum,
+			String parcelID) {
 		Query qry = null;
 		BasicProperty basicProperty = null;
 		Boolean indexFound = Boolean.FALSE;
@@ -244,7 +272,7 @@ public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements Ba
 		if (parcelFound) {
 			qry.setString("parcelID", parcelID);
 		}
-			basicProperty = (BasicProperty) qry.uniqueResult();
+		basicProperty = (BasicProperty) qry.uniqueResult();
 		return basicProperty;
 	}
 

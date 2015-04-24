@@ -40,13 +40,15 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.Installment;
-import org.egov.commons.dao.CommonsDaoFactory;
+import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgDemandReasonDetails;
-import org.egov.infstr.commons.dao.GenericDaoFactory;
-import org.egov.infstr.services.PersistenceService;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infstr.commons.Module;
+import org.egov.infstr.commons.dao.ModuleDao;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Property;
@@ -60,13 +62,16 @@ import org.egov.ptis.nmc.model.TaxCalculationInfo;
 import org.egov.ptis.nmc.model.TaxDetail;
 import org.egov.ptis.nmc.model.UnitTaxCalculationInfo;
 import org.egov.ptis.nmc.util.PropertyTaxUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 // [CODE REVIEW] put javadoc explaining what this new class is for. Is it only used for migrating the XML? If so, 
 // "PropertyNoticeService" is not the right name to use
 public class PropertyNoticeService {
 
 	private static final String STR_MIGRATED = "Migrated";
-	private static final Logger LOGGER = Logger.getLogger(PropertyNoticeService.class);
+	private static final Logger LOGGER = Logger
+			.getLogger(PropertyNoticeService.class);
 
 	private String indexNumber;
 	private BasicProperty basicProperty;
@@ -75,38 +80,39 @@ public class PropertyNoticeService {
 	private PropertyTaxUtil propertyTaxUtil;
 	private PersistenceService<BasicProperty, Long> basicPropertyService;
 	private Map<Date, String> occupancyAndPropertyType = new TreeMap<Date, String>();
+	@Autowired
+	@Qualifier(value = "moduleDAO")
+	private ModuleDao moduleDao;
+	@Autowired
+	private InstallmentDao installmentDao;
 
 	private static Map<Integer, Map<String, Map<Date, BigDecimal>>> dateAndTotalCalcTaxByTaxForUnit;
 
-	public PropertyNoticeService() {}
+	public PropertyNoticeService() {
+	}
 
-	public PropertyNoticeService(BasicProperty basicProperty, PropertyTaxUtil propertyTaxUtil,
+	public PropertyNoticeService(BasicProperty basicProperty,
+			PropertyTaxUtil propertyTaxUtil,
 			PersistenceService<BasicProperty, Long> basicPropertyService) {
 		this.basicProperty = basicProperty;
 		this.propertyTaxUtil = propertyTaxUtil;
 		this.basicPropertyService = basicPropertyService;
 	}
 
-    // [CODE REVIEW] can this class be defined as a spring bean instead?
-	public static PropertyNoticeService createNoticeService(BasicProperty basicProperty,
-			PropertyTaxUtil propertyTaxUtil, PersistenceService<BasicProperty, Long> basicPropertyService) {
-		return new PropertyNoticeService(basicProperty, propertyTaxUtil, basicPropertyService);
-	}
-
-    // [CODE REVIEW] move getters and setters to the end of the class
-	public BasicProperty getBasicProperty() {
-		return basicProperty;
-	}
-
-	public void setBasicProperty(BasicProperty basicProperty) {
-		this.basicProperty = basicProperty;
+	// [CODE REVIEW] can this class be defined as a spring bean instead?
+	public static PropertyNoticeService createNoticeService(
+			BasicProperty basicProperty, PropertyTaxUtil propertyTaxUtil,
+			PersistenceService<BasicProperty, Long> basicPropertyService) {
+		return new PropertyNoticeService(basicProperty, propertyTaxUtil,
+				basicPropertyService);
 	}
 
 	public Map<Date, TaxCalculationInfo> getTaxCaluculations() {
 		return taxCalculations;
 	}
 
-	public void setTaxCaluculations(Map<Date, TaxCalculationInfo> taxCaluculations) {
+	public void setTaxCaluculations(
+			Map<Date, TaxCalculationInfo> taxCaluculations) {
 		this.taxCalculations = taxCaluculations;
 	}
 
@@ -134,15 +140,17 @@ public class PropertyNoticeService {
 		return propertyTaxUtil;
 	}
 
-	private void preparePropertyTypesByOccupancy(Map<Date, Property> propertyByOccupancy) {
+	private void preparePropertyTypesByOccupancy(
+			Map<Date, Property> propertyByOccupancy) {
 		for (Map.Entry<Date, Property> entry : propertyByOccupancy.entrySet()) {
-			occupancyAndPropertyType.put(entry.getKey(), entry.getValue().getPropertyDetail().getPropertyTypeMaster()
-					.getCode());
+			occupancyAndPropertyType.put(entry.getKey(), entry.getValue()
+					.getPropertyDetail().getPropertyTypeMaster().getCode());
 		}
 	}
 
 	public void migrateTaxXML() {
-		LOGGER.debug("Entered into migrateTaxXML basicProperty.upicNo=" + basicProperty.getUpicNo());
+		LOGGER.debug("Entered into migrateTaxXML basicProperty.upicNo="
+				+ basicProperty.getUpicNo());
 
 		try {
 			Map<Date, Property> propertyByOccupancy = getPropertiesByOccupancy();
@@ -158,13 +166,13 @@ public class PropertyNoticeService {
 
 			persistUnitCalcDetails(unitCalculationDetails);
 		} catch (Exception e) {
-			String errorMsg = "Error in Tax XML migration for " + basicProperty.getUpicNo();
+			String errorMsg = "Error in Tax XML migration for "
+					+ basicProperty.getUpicNo();
 			LOGGER.error(errorMsg, e);
 			throw new EGOVRuntimeException(errorMsg, e);
 		}
 		LOGGER.debug("Exiting from migrateTaxXML");
 	}
-
 
 	private void initCurrentUnitSlabs() {
 		dateAndTotalCalcTaxByTaxForUnit = new TreeMap<Integer, Map<String, Map<Date, BigDecimal>>>();
@@ -179,18 +187,17 @@ public class PropertyNoticeService {
 		Map<Integer, UnitTaxCalculationInfo> nextInstallmentUnitsByUnitNo = new TreeMap<Integer, UnitTaxCalculationInfo>();
 
 		InstallmentUnitTax instPrevCurrUnitTax = null;
-		List<String> emptyList = Collections.<String>emptyList();
+		List<String> emptyList = Collections.<String> emptyList();
 		Boundary propertyArea = null;
 
 		for (Map.Entry<Date, TaxCalculationInfo> taxCalcAndInstallment : taxCalculations
 				.entrySet()) {
 
-			Installment installment = CommonsDaoFactory
-					.getDAOFactory()
-					.getInstallmentDao()
-					.getInsatllmentByModuleForGivenDate(
-							GenericDaoFactory.getDAOFactory().getModuleDao()
-									.getModuleByName(NMCPTISConstants.PTMODULENAME), taxCalcAndInstallment.getKey());
+			Module module = moduleDao
+					.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+			Installment installment = installmentDao
+					.getInsatllmentByModuleForGivenDate(module,
+							taxCalcAndInstallment.getKey());
 			TaxCalculationInfo taxCalcInfo = taxCalcAndInstallment.getValue();
 
 			LOGGER.info("getTheRowsForChange - Installment =" + installment);
@@ -202,8 +209,10 @@ public class PropertyNoticeService {
 			// map
 			nextInstallmentUnitsByUnitNo.clear();
 
-			for (UnitTaxCalculationInfo unitTax : taxCalcInfo.getConsolidatedUnitTaxCalculationInfo()) {
-				nextInstallmentUnitsByUnitNo.put(unitTax.getUnitNumber(), unitTax);
+			for (UnitTaxCalculationInfo unitTax : taxCalcInfo
+					.getConsolidatedUnitTaxCalculationInfo()) {
+				nextInstallmentUnitsByUnitNo.put(unitTax.getUnitNumber(),
+						unitTax);
 			}
 
 			if (basicProperty.getProperty().getAreaBndry() != null) {
@@ -212,10 +221,14 @@ public class PropertyNoticeService {
 				propertyArea = basicProperty.getPropertyID().getArea();
 			}
 
-			// checking for open plot, this will not work with Non Open plot property
+			// checking for open plot, this will not work with Non Open plot
+			// property
 			// as we getting guidance value for per floor basis
-			/*categories = propertyTaxUtil.getBoundaryCategories(null, propertyArea, installment,
-					basicProperty.getProperty().getPropertyDetail());*/
+			/*
+			 * categories = propertyTaxUtil.getBoundaryCategories(null,
+			 * propertyArea, installment,
+			 * basicProperty.getProperty().getPropertyDetail());
+			 */
 
 			// For the first installment, directly saving the
 			// details
@@ -223,11 +236,15 @@ public class PropertyNoticeService {
 			// to compare against
 			if (isStartingInstallment(prevInstallmentUnitsByUnitNo)) {
 
-				for (Map.Entry<Integer, UnitTaxCalculationInfo> entry :  nextInstallmentUnitsByUnitNo.entrySet()) {
-					instPrevCurrUnitTax = InstallmentUnitTax.create(installment, null, entry.getValue());
+				for (Map.Entry<Integer, UnitTaxCalculationInfo> entry : nextInstallmentUnitsByUnitNo
+						.entrySet()) {
+					instPrevCurrUnitTax = InstallmentUnitTax.create(
+							installment, null, entry.getValue());
 
 					unitCalculationDetails.addAll(createUnitCalculationDetail(
-							basicProperty.getProperty(), installment, taxCalcInfo, instPrevCurrUnitTax.getCurrentUnitAsList(), false));
+							basicProperty.getProperty(), installment,
+							taxCalcInfo,
+							instPrevCurrUnitTax.getCurrentUnitAsList(), false));
 
 					setOccupancyDateAsFromDate(unitCalculationDetails);
 
@@ -238,21 +255,31 @@ public class PropertyNoticeService {
 				for (Map.Entry<Integer, UnitTaxCalculationInfo> currentUnitTaxEntry : nextInstallmentUnitsByUnitNo
 						.entrySet()) {
 
-					instPrevCurrUnitTax = InstallmentUnitTax.create(installment, prevInstallmentUnitsByUnitNo
-							.get(currentUnitTaxEntry.getKey()), currentUnitTaxEntry.getValue());
+					instPrevCurrUnitTax = InstallmentUnitTax.create(
+							installment, prevInstallmentUnitsByUnitNo
+									.get(currentUnitTaxEntry.getKey()),
+							currentUnitTaxEntry.getValue());
 
 					if (instPrevCurrUnitTax.isCurrentUnitNewUnit()) {
 
-						unitCalculationDetails.addAll(createUnitCalculationDetail(
-								basicProperty.getProperty(), installment, taxCalcInfo, instPrevCurrUnitTax.getCurrentUnitAsList(), false));
+						unitCalculationDetails
+								.addAll(createUnitCalculationDetail(
+										basicProperty.getProperty(),
+										installment, taxCalcInfo,
+										instPrevCurrUnitTax
+												.getCurrentUnitAsList(), false));
 
 						instPrevCurrUnitTax.getCurrentUnitTaxSlabs(emptyList);
 
 					} else {
 
-						if ((instPrevCurrUnitTax.isSameALV() && instPrevCurrUnitTax.isSameOccupancy()) || !instPrevCurrUnitTax.isSameALV()) {
-							// check the occupancy date, if different occupancy then create a row for this
-							// check any tax slab is effective when alv is same n occupancy is same
+						if ((instPrevCurrUnitTax.isSameALV() && instPrevCurrUnitTax
+								.isSameOccupancy())
+								|| !instPrevCurrUnitTax.isSameALV()) {
+							// check the occupancy date, if different occupancy
+							// then create a row for this
+							// check any tax slab is effective when alv is same
+							// n occupancy is same
 
 							if (!instPrevCurrUnitTax.isSameALV()) {
 
@@ -261,23 +288,38 @@ public class PropertyNoticeService {
 								// isPrevCurrOccupancySame = false
 
 								unitCalculationDetails
-										.addAll(createUnitCalculationDetail(basicProperty.getProperty(),
-												installment, taxCalcInfo, instPrevCurrUnitTax.getCurrentUnitAsList(), false));
-								instPrevCurrUnitTax.getCurrentUnitTaxSlabs(emptyList);
+										.addAll(createUnitCalculationDetail(
+												basicProperty.getProperty(),
+												installment,
+												taxCalcInfo,
+												instPrevCurrUnitTax
+														.getCurrentUnitAsList(),
+												false));
+								instPrevCurrUnitTax
+										.getCurrentUnitTaxSlabs(emptyList);
 							}
 
-							unitCalculationDetails.addAll(getUnitCalDetailsForSlabChange(basicProperty.getProperty(),
-									taxCalcInfo, instPrevCurrUnitTax));
+							unitCalculationDetails
+									.addAll(getUnitCalDetailsForSlabChange(
+											basicProperty.getProperty(),
+											taxCalcInfo, instPrevCurrUnitTax));
 
 						}
 
-						if (instPrevCurrUnitTax.isSameALV() && !instPrevCurrUnitTax.isSameOccupancy()) {
+						if (instPrevCurrUnitTax.isSameALV()
+								&& !instPrevCurrUnitTax.isSameOccupancy()) {
 							// indicates modification
 
-							unitCalculationDetails.addAll(createUnitCalculationDetail(basicProperty.getProperty(),
-									installment, taxCalcInfo, instPrevCurrUnitTax.getCurrentUnitAsList(), false));
+							unitCalculationDetails
+									.addAll(createUnitCalculationDetail(
+											basicProperty.getProperty(),
+											installment, taxCalcInfo,
+											instPrevCurrUnitTax
+													.getCurrentUnitAsList(),
+											false));
 
-							instPrevCurrUnitTax.getCurrentUnitTaxSlabs(emptyList);
+							instPrevCurrUnitTax
+									.getCurrentUnitTaxSlabs(emptyList);
 						}
 					}
 
@@ -290,7 +332,8 @@ public class PropertyNoticeService {
 		return unitCalculationDetails;
 	}
 
-	private void setOccupancyDateAsFromDate(List<UnitCalculationDetail> unitCalculationDetails) {
+	private void setOccupancyDateAsFromDate(
+			List<UnitCalculationDetail> unitCalculationDetails) {
 		LOGGER.debug("Entered into setOccupancyDateAsFromDate");
 
 		for (UnitCalculationDetail unitCalcDetail : unitCalculationDetails) {
@@ -300,11 +343,14 @@ public class PropertyNoticeService {
 		LOGGER.debug("Exiting from setOccupancyDateAsFromDate");
 	}
 
-	public void persistUnitCalcDetails(List<UnitCalculationDetail> unitCalculationDetails) {
+	public void persistUnitCalcDetails(
+			List<UnitCalculationDetail> unitCalculationDetails) {
 		LOGGER.debug("Entered into persistUnitCalcDetails");
 
-		basicProperty.getProperty().addAllUnitCalculationDetails(
-				new LinkedHashSet<UnitCalculationDetail>(unitCalculationDetails));
+		basicProperty.getProperty()
+				.addAllUnitCalculationDetails(
+						new LinkedHashSet<UnitCalculationDetail>(
+								unitCalculationDetails));
 		basicProperty.setIsTaxXMLMigrated('Y');
 		basicPropertyService.update(basicProperty);
 
@@ -315,11 +361,10 @@ public class PropertyNoticeService {
 	 * @param prevInstallmentUnitsByUnitNo
 	 * @return
 	 */
-	private boolean isStartingInstallment(Map<Integer, UnitTaxCalculationInfo> prevInstallmentUnitsByUnitNo) {
+	private boolean isStartingInstallment(
+			Map<Integer, UnitTaxCalculationInfo> prevInstallmentUnitsByUnitNo) {
 		return prevInstallmentUnitsByUnitNo.isEmpty();
 	}
-
-
 
 	private Map<Date, Property> getPropertiesByOccupancy() {
 		LOGGER.debug("Entered into getPropertiesByOccupancy");
@@ -328,16 +373,20 @@ public class PropertyNoticeService {
 		Map<Date, Property> propertyByOccupancyDate = new TreeMap<Date, Property>();
 
 		for (Property property : basicProperty.getPropertySet()) {
-			if (property.getRemarks() == null || !property.getRemarks().startsWith(STR_MIGRATED)) {
-				propertyByCreatedDate.put(property.getCreatedDate(), property);
+			if (property.getRemarks() == null
+					|| !property.getRemarks().startsWith(STR_MIGRATED)) {
+				propertyByCreatedDate.put(property.getCreatedDate().toDate(),
+						property);
 			}
 		}
 
 		Date effectiveDate = null;
 
 		for (Map.Entry<Date, Property> entry : propertyByCreatedDate.entrySet()) {
-			effectiveDate = entry.getValue().getPropertyDetail().getEffective_date() == null ? entry.getValue()
-					.getEffectiveDate() : entry.getValue().getPropertyDetail().getEffective_date();
+			effectiveDate = entry.getValue().getPropertyDetail()
+					.getEffective_date() == null ? entry.getValue()
+					.getEffectiveDate() : entry.getValue().getPropertyDetail()
+					.getEffective_date();
 
 			propertyByOccupancyDate.put(effectiveDate, entry.getValue());
 		}
@@ -352,16 +401,24 @@ public class PropertyNoticeService {
 
 		int beginIndex = 0;
 
-		List<Date> occupancyDates = new ArrayList<Date>(propertyByOccupancyDate.keySet());
+		List<Date> occupancyDates = new ArrayList<Date>(
+				propertyByOccupancyDate.keySet());
 
 		if (occupancyDates.size() > 1) {
-			Property firstProperty = propertyByOccupancyDate.get(occupancyDates.get(0));
-			Property nextProperty = propertyByOccupancyDate.get(occupancyDates.get(1));
+			Property firstProperty = propertyByOccupancyDate.get(occupancyDates
+					.get(0));
+			Property nextProperty = propertyByOccupancyDate.get(occupancyDates
+					.get(1));
 
-			if (firstProperty.getPropertyDetail().getPropertyMutationMaster().getCode()
+			if (firstProperty.getPropertyDetail().getPropertyMutationMaster()
+					.getCode()
 					.equalsIgnoreCase(NMCPTISConstants.MUTATION_CODE_NEW)
-					&& nextProperty.getPropertyDetail().getPropertyMutationMaster().getCode()
-							.equalsIgnoreCase(NMCPTISConstants.MUTATION_CODE_DATA_ENTRY)) {
+					&& nextProperty
+							.getPropertyDetail()
+							.getPropertyMutationMaster()
+							.getCode()
+							.equalsIgnoreCase(
+									NMCPTISConstants.MUTATION_CODE_DATA_ENTRY)) {
 
 				LOGGER.debug("Returning from getBeginIndex with value 1");
 				return 1;
@@ -373,87 +430,115 @@ public class PropertyNoticeService {
 
 	}
 
-	private void prepareInstallmentWiseTaxCalcs(Map<Date, Property> propertyByOccupancyDate) {
-		LOGGER.info("Entered into prepareInstallmentWiseTaxCalcs occupancyDates=" + propertyByOccupancyDate.keySet());
+	private void prepareInstallmentWiseTaxCalcs(
+			Map<Date, Property> propertyByOccupancyDate) {
+		LOGGER.info("Entered into prepareInstallmentWiseTaxCalcs occupancyDates="
+				+ propertyByOccupancyDate.keySet());
 
 		Property prevProperty = null;
 		Property nextProperty = null;
-		List<Date> occupancyDates = new ArrayList<Date>(propertyByOccupancyDate.keySet());
+		List<Date> occupancyDates = new ArrayList<Date>(
+				propertyByOccupancyDate.keySet());
 
 		if (occupancyDates.size() > 1) {
 			int first = getBeginIndex(propertyByOccupancyDate);
 			int next = (first + 1);
 
-			prevProperty = propertyByOccupancyDate.get(occupancyDates.get(first));
-			nextProperty = propertyByOccupancyDate.get(occupancyDates.get(next));
+			prevProperty = propertyByOccupancyDate.get(occupancyDates
+					.get(first));
+			nextProperty = propertyByOccupancyDate
+					.get(occupancyDates.get(next));
 
-			taxCalculations.putAll(propertyTaxUtil.getTaxCalInfoMap(prevProperty.getPtDemandSet(),
-					occupancyDates.get(first)));
+			taxCalculations.putAll(propertyTaxUtil.getTaxCalInfoMap(
+					prevProperty.getPtDemandSet(), occupancyDates.get(first)));
 
 			// Consider the installment tax calcs only effective for the
 			// prevProperty
-			taxCalculations.keySet().removeAll(
-					getInstallmentStartDates(
-							propertyTaxUtil.getInstallmentListByStartDate(getPropertyOccupancyDate(nextProperty)),
-							occupancyDates.get(next)));
+			taxCalculations
+					.keySet()
+					.removeAll(
+							getInstallmentStartDates(
+									propertyTaxUtil
+											.getInstallmentListByStartDate(getPropertyOccupancyDate(nextProperty)),
+									occupancyDates.get(next)));
 
 			List<Date> retainDates = new ArrayList<Date>();
 
 			for (int i = next; i < propertyByOccupancyDate.size() - 1; i++) {
 
-				prevProperty = propertyByOccupancyDate.get(occupancyDates.get(i));
-				nextProperty = propertyByOccupancyDate.get(occupancyDates.get(i + 1));
+				prevProperty = propertyByOccupancyDate.get(occupancyDates
+						.get(i));
+				nextProperty = propertyByOccupancyDate.get(occupancyDates
+						.get(i + 1));
 
-				taxCalculations.putAll(propertyTaxUtil.getTaxCalInfoMap(prevProperty.getPtDemandSet(),
-						occupancyDates.get(i)));
+				taxCalculations.putAll(propertyTaxUtil.getTaxCalInfoMap(
+						prevProperty.getPtDemandSet(), occupancyDates.get(i)));
 
-				retainDates.addAll(new ArrayList<Date>(taxCalculations.keySet()));
+				retainDates
+						.addAll(new ArrayList<Date>(taxCalculations.keySet()));
 
-				retainDates.addAll(getInstallmentStartDates(
-						propertyTaxUtil.getInstallmentListByStartDate(getPropertyOccupancyDate(prevProperty)),
-						occupancyDates.get(i)));
+				retainDates
+						.addAll(getInstallmentStartDates(
+								propertyTaxUtil
+										.getInstallmentListByStartDate(getPropertyOccupancyDate(prevProperty)),
+								occupancyDates.get(i)));
 
 				taxCalculations.keySet().retainAll(retainDates);
 
 				// Consider the installment tax calcs only effective for the
 				// prevProperty
-				taxCalculations.keySet().removeAll(
-						getInstallmentStartDates(
-								propertyTaxUtil.getInstallmentListByStartDate(getPropertyOccupancyDate(nextProperty)),
-								occupancyDates.get(i + 1)));
+				taxCalculations
+						.keySet()
+						.removeAll(
+								getInstallmentStartDates(
+										propertyTaxUtil
+												.getInstallmentListByStartDate(getPropertyOccupancyDate(nextProperty)),
+										occupancyDates.get(i + 1)));
 			}
 		}
-		Date activePropOccupancyDate = occupancyDates.get(occupancyDates.size() - 1);
-		Property activeProperty = propertyByOccupancyDate.get(activePropOccupancyDate);
+		Date activePropOccupancyDate = occupancyDates
+				.get(occupancyDates.size() - 1);
+		Property activeProperty = propertyByOccupancyDate
+				.get(activePropOccupancyDate);
 
-		Map<Date, TaxCalculationInfo> activePropTaxCalcs = propertyTaxUtil.getTaxCalInfoMap(
-				activeProperty.getPtDemandSet(), activePropOccupancyDate);
+		Map<Date, TaxCalculationInfo> activePropTaxCalcs = propertyTaxUtil
+				.getTaxCalInfoMap(activeProperty.getPtDemandSet(),
+						activePropOccupancyDate);
 
-		// Consider the installment tax calcs only effective for the activeProperty
-		activePropTaxCalcs.keySet().retainAll(
-				getInstallmentStartDates(propertyTaxUtil
-						.getInstallmentListByStartDate(getPropertyOccupancyDate(activeProperty)), activePropOccupancyDate));
+		// Consider the installment tax calcs only effective for the
+		// activeProperty
+		activePropTaxCalcs
+				.keySet()
+				.retainAll(
+						getInstallmentStartDates(
+								propertyTaxUtil
+										.getInstallmentListByStartDate(getPropertyOccupancyDate(activeProperty)),
+								activePropOccupancyDate));
 
 		taxCalculations.putAll(activePropTaxCalcs);
 
-		LOGGER.debug("prepareInstallmentWiseTaxCalcs - installments=" + taxCalculations.keySet());
+		LOGGER.debug("prepareInstallmentWiseTaxCalcs - installments="
+				+ taxCalculations.keySet());
 		LOGGER.debug("Exiting from prepareInstallmentWiseTaxCalcs");
 	}
 
-	private List<Date> getInstallmentStartDates(List<Installment> installments, Date occupancyDate) {
-		LOGGER.debug("Entered into getInstallmentStartDates installments=" + installments + ", occupancyDate="
-				+ occupancyDate);
+	private List<Date> getInstallmentStartDates(List<Installment> installments,
+			Date occupancyDate) {
+		LOGGER.debug("Entered into getInstallmentStartDates installments="
+				+ installments + ", occupancyDate=" + occupancyDate);
 		List<Date> installmentStartDates = new ArrayList<Date>();
 
 		for (Installment installment : installments) {
-			if (propertyTaxUtil.between(occupancyDate, installment.getFromDate(), installment.getToDate())) {
+			if (propertyTaxUtil.between(occupancyDate,
+					installment.getFromDate(), installment.getToDate())) {
 				installmentStartDates.add(occupancyDate);
 			} else {
 				installmentStartDates.add(installment.getFromDate());
 			}
 		}
 
-		LOGGER.debug("Exiting from getInstallmentStartDates - installmentStartDates=" + installmentStartDates);
+		LOGGER.debug("Exiting from getInstallmentStartDates - installmentStartDates="
+				+ installmentStartDates);
 		return installmentStartDates;
 	}
 
@@ -462,8 +547,9 @@ public class PropertyNoticeService {
 	 * @return Date the occupancy date
 	 */
 	private Date getPropertyOccupancyDate(Property property) {
-		return property.getPropertyDetail().getEffective_date() == null ? property.getEffectiveDate() : property
-				.getPropertyDetail().getEffective_date();
+		return property.getPropertyDetail().getEffective_date() == null ? property
+				.getEffectiveDate() : property.getPropertyDetail()
+				.getEffective_date();
 	}
 
 	/**
@@ -476,8 +562,9 @@ public class PropertyNoticeService {
 	 * @param previousUnitTax
 	 * @param units
 	 */
-	private List<UnitCalculationDetail> getUnitCalDetailsForSlabChange(Property property,
-			TaxCalculationInfo taxCalcInfo, InstallmentUnitTax instUnitTax) {
+	private List<UnitCalculationDetail> getUnitCalDetailsForSlabChange(
+			Property property, TaxCalculationInfo taxCalcInfo,
+			InstallmentUnitTax instUnitTax) {
 
 		Map<String, Date> slabChangedTaxes = instUnitTax.getSlabChangedTaxes();
 
@@ -488,23 +575,32 @@ public class PropertyNoticeService {
 		} else {
 			LOGGER.debug("slabChangedTaxes -" + slabChangedTaxes);
 
-			List<UnitTaxCalculationInfo> unitsForTaxChange = propertyTaxUtil.prepareUnitTaxesForChangedTaxes(
-					instUnitTax.getInstallment(), instUnitTax.getPrevUnitTax(), instUnitTax.getCurrentUnitTax(),
-					slabChangedTaxes, propertyTaxUtil.isPropertyModified(property));
+			List<UnitTaxCalculationInfo> unitsForTaxChange = propertyTaxUtil
+					.prepareUnitTaxesForChangedTaxes(
+							instUnitTax.getInstallment(),
+							instUnitTax.getPrevUnitTax(),
+							instUnitTax.getCurrentUnitTax(), slabChangedTaxes,
+							PropertyTaxUtil.isPropertyModified(property));
 
-			unitCalculationDetails.addAll(createUnitCalculationDetail(property, instUnitTax.getInstallment(),
-					taxCalcInfo, unitsForTaxChange, true));
+			unitCalculationDetails.addAll(createUnitCalculationDetail(property,
+					instUnitTax.getInstallment(), taxCalcInfo,
+					unitsForTaxChange, true));
 
-			instUnitTax.getCurrentUnitTaxSlabs(new ArrayList<String>(slabChangedTaxes.keySet()));
+			instUnitTax.getCurrentUnitTaxSlabs(new ArrayList<String>(
+					slabChangedTaxes.keySet()));
 		}
 
 		return unitCalculationDetails;
 	}
 
-	private List<UnitCalculationDetail> createUnitCalculationDetail(Property property, Installment installment, TaxCalculationInfo taxCalcInfo, List<UnitTaxCalculationInfo> unitTaxes, Boolean isTaxSlabChange) {
+	private List<UnitCalculationDetail> createUnitCalculationDetail(
+			Property property, Installment installment,
+			TaxCalculationInfo taxCalcInfo,
+			List<UnitTaxCalculationInfo> unitTaxes, Boolean isTaxSlabChange) {
 		LOGGER.debug("Entered into createUnitCalculationDetail");
-		LOGGER.debug("createUnitCalculationDetail - property=" + property + ", installment=" + installment
-				+ ", unitTaxes.size=" + unitTaxes.size() + ", isTaxSlabChange=" + isTaxSlabChange);
+		LOGGER.debug("createUnitCalculationDetail - property=" + property
+				+ ", installment=" + installment + ", unitTaxes.size="
+				+ unitTaxes.size() + ", isTaxSlabChange=" + isTaxSlabChange);
 
 		UnitCalculationDetail unitCalculationDetail = null;
 		List<UnitCalculationDetail> unitCalculationDetails = new ArrayList<UnitCalculationDetail>();
@@ -516,106 +612,146 @@ public class PropertyNoticeService {
 				unitCalculationDetail.setLastUpdatedTimeStamp(new Date());
 				unitCalculationDetail.setUnitNumber(unitTax.getUnitNumber());
 				unitCalculationDetail.setUnitArea(unitTax.getUnitArea());
-				unitCalculationDetail.setOccupancyDate(unitTax.getOccpancyDate());
+				unitCalculationDetail.setOccupancyDate(unitTax
+						.getOccpancyDate());
 
-				unitCalculationDetail.setGuidanceValue(unitTax.getBaseRent() == null ? ZERO : unitTax.getBaseRent());
-				unitCalculationDetail.setGuidValEffectiveDate(unitTax.getBaseRentEffectiveDate() == null ? unitTax
-						.getOccpancyDate() : unitTax.getBaseRentEffectiveDate());
-				unitCalculationDetail.setUnitOccupation(buildUnitOccupation(
-						occupancyAndPropertyType.get(unitTax.getOccpancyDate()), unitTax));
-
-				unitCalculationDetail.setInstallmentFromDate(installment.getFromDate());
 				unitCalculationDetail
-						.setMonthlyRent(unitTax.getMonthlyRent() == null ? ZERO : unitTax.getMonthlyRent());
+						.setGuidanceValue(unitTax.getBaseRent() == null ? ZERO
+								: unitTax.getBaseRent());
+				unitCalculationDetail
+						.setGuidValEffectiveDate(unitTax
+								.getBaseRentEffectiveDate() == null ? unitTax
+								.getOccpancyDate() : unitTax
+								.getBaseRentEffectiveDate());
+				unitCalculationDetail
+						.setUnitOccupation(buildUnitOccupation(
+								occupancyAndPropertyType.get(unitTax
+										.getOccpancyDate()), unitTax));
+
+				unitCalculationDetail.setInstallmentFromDate(installment
+						.getFromDate());
+				unitCalculationDetail
+						.setMonthlyRent(unitTax.getMonthlyRent() == null ? ZERO
+								: unitTax.getMonthlyRent());
 
 				if (isTaxSlabChange) {
-					unitCalculationDetail.setFromDate(new SimpleDateFormat(NMCPTISConstants.DATE_FORMAT_DDMMYYY)
-							.parse(unitTax.getInstDate()));
+					unitCalculationDetail.setFromDate(new SimpleDateFormat(
+							PropertyTaxConstants.DATE_FORMAT_DDMMYYY).parse(unitTax
+							.getInstDate()));
 				}
 
-				setAnnualLettingValues(property, installment, unitCalculationDetail, taxCalcInfo);
-				unitCalculationDetails.addAll(setMiscellaneousTaxDetails(property, installment, unitCalculationDetail,
-						unitTax));
-				setUnitAreaCalculationDetails(property, installment, unitCalculationDetail, unitTax);
+				setAnnualLettingValues(property, installment,
+						unitCalculationDetail, taxCalcInfo);
+				unitCalculationDetails.addAll(setMiscellaneousTaxDetails(
+						property, installment, unitCalculationDetail, unitTax));
+				setUnitAreaCalculationDetails(property, installment,
+						unitCalculationDetail, unitTax);
 			}
 		} catch (ParseException e) {
 			LOGGER.error("Error while parsing unit tax instDate", e);
-			throw new EGOVRuntimeException("Error while parsing unit tax instDate", e);
+			throw new EGOVRuntimeException(
+					"Error while parsing unit tax instDate", e);
 		}
 
-		LOGGER.debug("createUnitCalculationDetail - unitCalculationDetails=" + unitCalculationDetails);
+		LOGGER.debug("createUnitCalculationDetail - unitCalculationDetails="
+				+ unitCalculationDetails);
 		LOGGER.debug("Exiting from createUnitCalculationDetail");
 
 		return unitCalculationDetails;
 	}
 
-	private void setAnnualLettingValues(Property property, Installment installment, UnitCalculationDetail unitCalculationDetail, TaxCalculationInfo taxCalcInfo) {
+	private void setAnnualLettingValues(Property property,
+			Installment installment,
+			UnitCalculationDetail unitCalculationDetail,
+			TaxCalculationInfo taxCalcInfo) {
 		LOGGER.debug("Entered into setAnnualLettingValues");
-		LOGGER.debug("setAnnualLettingValues - property=" + property + ", installment=" + installment
-				+ ", unitCalculationDetail=" + unitCalculationDetail);
+		LOGGER.debug("setAnnualLettingValues - property=" + property
+				+ ", installment=" + installment + ", unitCalculationDetail="
+				+ unitCalculationDetail);
 
 		Map<String, BigDecimal> taxNameAndALV = new TreeMap<String, BigDecimal>();
 
-		List<List<UnitTaxCalculationInfo>> unitTaxes = taxCalcInfo.getUnitTaxCalculationInfos();
+		List<List<UnitTaxCalculationInfo>> unitTaxes = taxCalcInfo
+				.getUnitTaxCalculationInfos();
 
 		for (int k = 0; k < unitTaxes.size(); k++) {
 
 			if (unitTaxes.get(k) instanceof List) {
-				if (unitTaxes.get(k).get(0).getUnitNumber().equals(unitCalculationDetail.getUnitNumber())) {
+				if (unitTaxes.get(k).get(0).getUnitNumber()
+						.equals(unitCalculationDetail.getUnitNumber())) {
 					if (unitTaxes.get(k).size() > 1) {
 						// here size > 1 indicates there are 2 base rents
 						// effective,
 						// in such cases taking the alv calculated using 2nd
 						// base rent,
 						// as the 1st BR is used in prvious case
-						propertyTaxUtil.prepareTaxNameAndALV(taxNameAndALV, unitTaxes.get(k).get(1));
+						propertyTaxUtil.prepareTaxNameAndALV(taxNameAndALV,
+								unitTaxes.get(k).get(1));
 					} else {
-						propertyTaxUtil.prepareTaxNameAndALV(taxNameAndALV, unitTaxes.get(k).get(0));
+						propertyTaxUtil.prepareTaxNameAndALV(taxNameAndALV,
+								unitTaxes.get(k).get(0));
 					}
 				}
 			} else {
-				UnitTaxCalculationInfo unitTax = (UnitTaxCalculationInfo) unitTaxes.get(k);
-				if (unitTax.getUnitNumber().equals(unitCalculationDetail.getUnitNumber())) {
-					propertyTaxUtil.prepareTaxNameAndALV(taxNameAndALV, unitTax);
+				UnitTaxCalculationInfo unitTax = (UnitTaxCalculationInfo) unitTaxes
+						.get(k);
+				if (unitTax.getUnitNumber().equals(
+						unitCalculationDetail.getUnitNumber())) {
+					propertyTaxUtil
+							.prepareTaxNameAndALV(taxNameAndALV, unitTax);
 				}
 			}
 		}
 
-		unitCalculationDetail.setAlv(taxNameAndALV.get(DEMANDRSN_CODE_SEWERAGE_TAX));
+		unitCalculationDetail.setAlv(taxNameAndALV
+				.get(DEMANDRSN_CODE_SEWERAGE_TAX));
 		unitCalculationDetail
-				.setResidentialALV(taxNameAndALV.get(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD) == null ? BigDecimal.ZERO
-						: taxNameAndALV.get(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD));
+				.setResidentialALV(taxNameAndALV
+						.get(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD) == null ? BigDecimal.ZERO
+						: taxNameAndALV
+								.get(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD));
 		unitCalculationDetail
-				.setNonResidentialALV(taxNameAndALV.get(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD) == null ? BigDecimal.ZERO
-						: taxNameAndALV.get(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD));
+				.setNonResidentialALV(taxNameAndALV
+						.get(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD) == null ? BigDecimal.ZERO
+						: taxNameAndALV
+								.get(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD));
 		unitCalculationDetail
-				.setWaterTaxALV(taxNameAndALV.get(DEMANDRSN_CODE_GENERAL_WATER_TAX) == null ? BigDecimal.ZERO
+				.setWaterTaxALV(taxNameAndALV
+						.get(DEMANDRSN_CODE_GENERAL_WATER_TAX) == null ? BigDecimal.ZERO
 						: taxNameAndALV.get(DEMANDRSN_CODE_GENERAL_WATER_TAX));
 		unitCalculationDetail
-				.setBigBuildingTaxALV(taxNameAndALV.get(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX) == null ? BigDecimal.ZERO
-						: taxNameAndALV.get(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX));
+				.setBigBuildingTaxALV(taxNameAndALV
+						.get(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX) == null ? BigDecimal.ZERO
+						: taxNameAndALV
+								.get(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX));
 
-		LOGGER.debug("setAnnualLettingValues - unitCalculationDetail=" + unitCalculationDetail);
+		LOGGER.debug("setAnnualLettingValues - unitCalculationDetail="
+				+ unitCalculationDetail);
 		LOGGER.debug("Exiting from setAnnualLettingValues");
 	}
 
-	private List<UnitCalculationDetail> setMiscellaneousTaxDetails(Property property, Installment installment, UnitCalculationDetail unitCalculationDetail,
+	private List<UnitCalculationDetail> setMiscellaneousTaxDetails(
+			Property property, Installment installment,
+			UnitCalculationDetail unitCalculationDetail,
 			UnitTaxCalculationInfo consolidatedUnitTax) {
 
 		LOGGER.debug("Entered into setMiscellaneousTaxDetails");
-		LOGGER.debug("setMiscellaneousTaxDetails - property=" + property + ", installment=" + installment
-				+ ", unitCalculationDetail=" + unitCalculationDetail);
+		LOGGER.debug("setMiscellaneousTaxDetails - property=" + property
+				+ ", installment=" + installment + ", unitCalculationDetail="
+				+ unitCalculationDetail);
 
 		BigDecimal totalCalculatedTax = BigDecimal.ZERO;
 
-		Integer totalNoOfDays = PropertyTaxUtil.getNumberOfDays(installment.getFromDate(), installment.getToDate())
-				.intValue();
+		Integer totalNoOfDays = PropertyTaxUtil.getNumberOfDays(
+				installment.getFromDate(), installment.getToDate()).intValue();
 
 		List<EgDemandReasonDetails> demandReasonDetails = new ArrayList<EgDemandReasonDetails>();
 
-		String propertyType = property.getPropertyDetail().getPropertyTypeMaster().getCode();
+		String propertyType = property.getPropertyDetail()
+				.getPropertyTypeMaster().getCode();
 		String amenities = property.getPropertyDetail().getExtra_field4();
-		String propertyTypeCategory = property.getPropertyDetail().getExtra_field5();
+		String propertyTypeCategory = property.getPropertyDetail()
+				.getExtra_field5();
 
 		List<UnitCalculationDetail> unitCalculationDetails = new ArrayList<UnitCalculationDetail>();
 		Map<String, TaxDetail> taxDetailAndTaxName = new HashMap<String, TaxDetail>();
@@ -624,7 +760,8 @@ public class PropertyNoticeService {
 
 		Integer noOfDaysForNewTaxSlab = 0;
 
-		for (MiscellaneousTax miscTax : consolidatedUnitTax.getMiscellaneousTaxes()) {
+		for (MiscellaneousTax miscTax : consolidatedUnitTax
+				.getMiscellaneousTaxes()) {
 
 			if (hasNonHistoryTaxDetails(miscTax.getTaxDetails())) {
 
@@ -638,25 +775,35 @@ public class PropertyNoticeService {
 
 				alv = getApplicableALV(unitCalculationDetail, demandReasonCode);
 
-				LOGGER.debug("setMiscellaneousTaxDetails - demandReasonCode=" + demandReasonCode + ", alv = " + alv);
+				LOGGER.debug("setMiscellaneousTaxDetails - demandReasonCode="
+						+ demandReasonCode + ", alv = " + alv);
 
-				demandReasonDetails = propertyTaxUtil.getDemandReasonDetails(demandReasonCode, alv, installment);
-				EgDemandReasonDetails demandReasonDetail = demandReasonDetails.get(demandReasonDetails.size() - 1);
+				demandReasonDetails = propertyTaxUtil.getDemandReasonDetails(
+						demandReasonCode, alv, installment);
+				EgDemandReasonDetails demandReasonDetail = demandReasonDetails
+						.get(demandReasonDetails.size() - 1);
 
-				if (propertyType != null && propertyType.equalsIgnoreCase(PROPTYPE_STATE_GOVT)
-						&& miscTax.getTaxName().equalsIgnoreCase(DEMANDRSN_CODE_GENERAL_TAX)) {
+				if (propertyType != null
+						&& propertyType.equalsIgnoreCase(PROPTYPE_STATE_GOVT)
+						&& miscTax.getTaxName().equalsIgnoreCase(
+								DEMANDRSN_CODE_GENERAL_TAX)) {
 
 					demandRsnDtlPercResult = BigDecimal.ZERO;
 
 					if (demandReasonDetail != null) {
 
 						if (ZERO.equals(demandReasonDetail.getFlatAmount())) {
-							Amount amount = new Amount(demandReasonDetail.getPercentage());
+							Amount amount = new Amount(
+									demandReasonDetail.getPercentage());
 							demandRsnDtlPercResult = amount.percentOf(alv);
-							amount.setValue(new BigDecimal(STATEGOVT_BUILDING_GENERALTAX_ADDITIONALDEDUCTION));
-							calculatedAnnualTax = demandRsnDtlPercResult.subtract(amount.percentOf(demandRsnDtlPercResult));
+							amount.setValue(new BigDecimal(
+									STATEGOVT_BUILDING_GENERALTAX_ADDITIONALDEDUCTION));
+							calculatedAnnualTax = demandRsnDtlPercResult
+									.subtract(amount
+											.percentOf(demandRsnDtlPercResult));
 						} else if (demandReasonDetail.getPercentage() == null) {
-							calculatedAnnualTax = demandReasonDetail.getFlatAmount();
+							calculatedAnnualTax = demandReasonDetail
+									.getFlatAmount();
 						} else {
 							taxPercentage = demandReasonDetail.getPercentage();
 						}
@@ -668,7 +815,8 @@ public class PropertyNoticeService {
 						if (ZERO.equals(demandReasonDetail.getFlatAmount())) {
 							taxPercentage = demandReasonDetail.getPercentage();
 						} else if (demandReasonDetail.getPercentage() == null) {
-							calculatedAnnualTax = demandReasonDetail.getFlatAmount();
+							calculatedAnnualTax = demandReasonDetail
+									.getFlatAmount();
 						} else {
 							taxPercentage = demandReasonDetail.getPercentage();
 						}
@@ -676,32 +824,48 @@ public class PropertyNoticeService {
 				}
 
 				if (propertyTypeCategory != null
-						&& propertyTypeCategory.equalsIgnoreCase(PROPTYPE_CAT_RESD_CUM_NON_RESD)
-						&& (miscTax.getTaxName().equals(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD)
-								|| (miscTax.getTaxName().equals(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD)) || (miscTax
-									.getTaxName().equals(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX)))) {
+						&& propertyTypeCategory
+								.equalsIgnoreCase(PROPTYPE_CAT_RESD_CUM_NON_RESD)
+						&& (miscTax.getTaxName().equals(
+								DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD)
+								|| (miscTax.getTaxName()
+										.equals(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD)) || (miscTax
+									.getTaxName()
+								.equals(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX)))) {
 
-					Amount amount = new Amount(new BigDecimal(RESD_CUM_COMMERCIAL_PROP_ALV_PERCENTAGE));
-					calculatedAnnualTax =  amount.percentOf(alv);
+					Amount amount = new Amount(new BigDecimal(
+							RESD_CUM_COMMERCIAL_PROP_ALV_PERCENTAGE));
+					calculatedAnnualTax = amount.percentOf(alv);
 					amount.setValue(taxPercentage);
 					calculatedAnnualTax = amount.percentOf(calculatedAnnualTax);
 
-				} else if (!taxPercentage.equals(ZERO) && ZERO.equals(calculatedAnnualTax)) {
-					calculatedAnnualTax = new Amount(taxPercentage).percentOf(alv);
+				} else if (!taxPercentage.equals(ZERO)
+						&& ZERO.equals(calculatedAnnualTax)) {
+					calculatedAnnualTax = new Amount(taxPercentage)
+							.percentOf(alv);
 				}
 
-				if (demandReasonDetail != null && demandReasonDetail.getFlatAmount().compareTo(ZERO) > 0) {
+				if (demandReasonDetail != null
+						&& demandReasonDetail.getFlatAmount().compareTo(ZERO) > 0) {
 
 					// FlatAmount must be the maximum amount
-					if (demandReasonDetail.getIsFlatAmntMax().equals(Integer.valueOf(1))
-							&& (calculatedAnnualTax.compareTo(demandReasonDetail.getFlatAmount()) > 0)) {
-						calculatedAnnualTax = demandReasonDetail.getFlatAmount();
+					if (demandReasonDetail.getIsFlatAmntMax().equals(
+							Integer.valueOf(1))
+							&& (calculatedAnnualTax
+									.compareTo(demandReasonDetail
+											.getFlatAmount()) > 0)) {
+						calculatedAnnualTax = demandReasonDetail
+								.getFlatAmount();
 					}
 
 					// FlatAmount must be the minimum amount
-					if (demandReasonDetail.getIsFlatAmntMax().equals(Integer.valueOf(0))
-							&& (calculatedAnnualTax.compareTo(demandReasonDetail.getFlatAmount()) < 0)) {
-						calculatedAnnualTax = demandReasonDetail.getFlatAmount();
+					if (demandReasonDetail.getIsFlatAmntMax().equals(
+							Integer.valueOf(0))
+							&& (calculatedAnnualTax
+									.compareTo(demandReasonDetail
+											.getFlatAmount()) < 0)) {
+						calculatedAnnualTax = demandReasonDetail
+								.getFlatAmount();
 					}
 				}
 
@@ -710,27 +874,35 @@ public class PropertyNoticeService {
 				miscTaxDetail.setTaxValue(demandReasonDetail.getPercentage());
 				miscTaxDetail.setCalculatedTaxValue(calculatedAnnualTax);
 
-				if (propertyType != null && propertyType.equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT)) {
-					calculatedActualTax = calculatedAnnualTax.setScale(0, ROUND_HALF_UP);
-					calculatedAnnualTax = propertyTaxUtil.calcGovtTaxOnAmenities(amenities, calculatedAnnualTax);
+				if (propertyType != null
+						&& propertyType.equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT)) {
+					calculatedActualTax = calculatedAnnualTax.setScale(0,
+							ROUND_HALF_UP);
+					calculatedAnnualTax = propertyTaxUtil
+							.calcGovtTaxOnAmenities(amenities,
+									calculatedAnnualTax);
 					miscTaxDetail.setCalculatedTaxValue(calculatedAnnualTax);
 					miscTaxDetail.setActualTaxValue(calculatedActualTax);
 				}
 
-				calculatedAnnualTax = calculatedAnnualTax.setScale(0, ROUND_HALF_UP);
+				calculatedAnnualTax = calculatedAnnualTax.setScale(0,
+						ROUND_HALF_UP);
 
 				miscTax.setTotalCalculatedTax(calculatedAnnualTax);
-				miscTax.setTotalActualTax(calculatedActualTax.setScale(0, ROUND_HALF_UP));
+				miscTax.setTotalActualTax(calculatedActualTax.setScale(0,
+						ROUND_HALF_UP));
 				miscTax.getTaxDetails().clear();
-
 
 				if (!ZERO.equals(calculatedAnnualTax)) {
 
-					/*if (propertyType != null && propertyType.equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT)) {
-						totalActualTax = totalActualTax.add(actualTaxValue);
-					}
-
-					totalCalculatedTax = totalCalculatedTax.add(calculatedTaxValue);*/
+					/*
+					 * if (propertyType != null &&
+					 * propertyType.equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT)) {
+					 * totalActualTax = totalActualTax.add(actualTaxValue); }
+					 * 
+					 * totalCalculatedTax =
+					 * totalCalculatedTax.add(calculatedTaxValue);
+					 */
 
 					if (demandReasonDetail != null) {
 						TaxDetail taxDetail = new TaxDetail();
@@ -754,16 +926,19 @@ public class PropertyNoticeService {
 
 		unitCalculationDetails.add(unitCalculationDetail);
 
-		LOGGER.debug("unitCalculationDetails= " + unitCalculationDetails + ", Exiting from setMiscellaneousTaxDetails");
+		LOGGER.debug("unitCalculationDetails= " + unitCalculationDetails
+				+ ", Exiting from setMiscellaneousTaxDetails");
 		return unitCalculationDetails;
 	}
 
 	/**
 	 *
 	 * @param taxDetails
-	 * @return true if there is a non history tax details, false if it only has history tax detail
+	 * @return true if there is a non history tax details, false if it only has
+	 *         history tax detail
 	 */
-	private boolean hasNonHistoryTaxDetails(List<MiscellaneousTaxDetail> taxDetails) {
+	private boolean hasNonHistoryTaxDetails(
+			List<MiscellaneousTaxDetail> taxDetails) {
 
 		for (MiscellaneousTaxDetail taxDetail : taxDetails) {
 			if (isNonHistoryTaxDetail(taxDetail)) {
@@ -781,7 +956,8 @@ public class PropertyNoticeService {
 	 */
 	private boolean isNonHistoryTaxDetail(MiscellaneousTaxDetail taxDetail) {
 		return taxDetail.getIsHistory() == null
-				|| taxDetail.getIsHistory().equals(NMCPTISConstants.NON_HISTORY_TAX_DETAIL);
+				|| taxDetail.getIsHistory().equals(
+						NMCPTISConstants.NON_HISTORY_TAX_DETAIL);
 	}
 
 	/**
@@ -789,17 +965,22 @@ public class PropertyNoticeService {
 	 * @param demandReasonCode
 	 * @return ALV
 	 */
-	private BigDecimal getApplicableALV(UnitCalculationDetail unitCalculationDetail, String demandReasonCode) {
+	private BigDecimal getApplicableALV(
+			UnitCalculationDetail unitCalculationDetail, String demandReasonCode) {
 		BigDecimal alv;
 
 		if (demandReasonCode.equalsIgnoreCase(DEMANDRSN_CODE_GENERAL_WATER_TAX)) {
 			alv = unitCalculationDetail.getWaterTaxALV();
-		} else if (demandReasonCode.equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD)) {
+		} else if (demandReasonCode
+				.equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD)) {
 			alv = unitCalculationDetail.getResidentialALV();
-		} else if (demandReasonCode.equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD)
-				|| demandReasonCode.equalsIgnoreCase(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX)) {
+		} else if (demandReasonCode
+				.equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD)
+				|| demandReasonCode
+						.equalsIgnoreCase(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX)) {
 			alv = unitCalculationDetail.getNonResidentialALV();
-		} else if (demandReasonCode.equalsIgnoreCase(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX)) {
+		} else if (demandReasonCode
+				.equalsIgnoreCase(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX)) {
 			alv = unitCalculationDetail.getBigBuildingTaxALV();
 		} else {
 			alv = unitCalculationDetail.getAlv();
@@ -813,11 +994,15 @@ public class PropertyNoticeService {
 	 * @param demandReasonCode
 	 * @return
 	 */
-	private boolean isPropTypeCatResdCumNonResd(String propertyTypeCategory, String demandReasonCode) {
+	private boolean isPropTypeCatResdCumNonResd(String propertyTypeCategory,
+			String demandReasonCode) {
 		return propertyTypeCategory != null
-				&& propertyTypeCategory.equalsIgnoreCase(PROPTYPE_CAT_RESD_CUM_NON_RESD)
-				&& (demandReasonCode.equals(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD)
-						|| (demandReasonCode.equals(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD)) || (demandReasonCode
+				&& propertyTypeCategory
+						.equalsIgnoreCase(PROPTYPE_CAT_RESD_CUM_NON_RESD)
+				&& (demandReasonCode
+						.equals(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD)
+						|| (demandReasonCode
+								.equals(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD)) || (demandReasonCode
 							.equals(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX)));
 	}
 
@@ -838,81 +1023,107 @@ public class PropertyNoticeService {
 		}
 	}
 
-	private void setTaxDetails(UnitCalculationDetail unitCalcDetail, Map<String, TaxDetail> taxDetailAndTaxName) {
+	private void setTaxDetails(UnitCalculationDetail unitCalcDetail,
+			Map<String, TaxDetail> taxDetailAndTaxName) {
 		LOGGER.debug("Entered into setTaxDetails");
-		LOGGER.debug("setTaxDetails - unitCalcDetail=" + unitCalcDetail + ", taxDetailAndTaxName" + taxDetailAndTaxName);
+		LOGGER.debug("setTaxDetails - unitCalcDetail=" + unitCalcDetail
+				+ ", taxDetailAndTaxName" + taxDetailAndTaxName);
 
-		unitCalcDetail.setSewerageTax(taxDetailAndTaxName.get(DEMANDRSN_CODE_SEWERAGE_TAX).getCalculatedTax());
-		unitCalcDetail.setSewerageTaxFromDate(taxDetailAndTaxName.get(DEMANDRSN_CODE_SEWERAGE_TAX).getFromDate());
+		unitCalcDetail.setSewerageTax(taxDetailAndTaxName.get(
+				DEMANDRSN_CODE_SEWERAGE_TAX).getCalculatedTax());
+		unitCalcDetail.setSewerageTaxFromDate(taxDetailAndTaxName.get(
+				DEMANDRSN_CODE_SEWERAGE_TAX).getFromDate());
 
 		if (taxDetailAndTaxName.get(DEMANDRSN_CODE_GENERAL_WATER_TAX) != null) {
-			unitCalcDetail.setWaterTax(taxDetailAndTaxName.get(DEMANDRSN_CODE_GENERAL_WATER_TAX).getCalculatedTax());
-			unitCalcDetail.setWaterTaxFromDate(taxDetailAndTaxName.get(DEMANDRSN_CODE_GENERAL_WATER_TAX).getFromDate());
+			unitCalcDetail.setWaterTax(taxDetailAndTaxName.get(
+					DEMANDRSN_CODE_GENERAL_WATER_TAX).getCalculatedTax());
+			unitCalcDetail.setWaterTaxFromDate(taxDetailAndTaxName.get(
+					DEMANDRSN_CODE_GENERAL_WATER_TAX).getFromDate());
 		}
 
-		unitCalcDetail.setGeneralTax(taxDetailAndTaxName.get(DEMANDRSN_CODE_GENERAL_TAX).getCalculatedTax());
-		unitCalcDetail.setGeneralTaxFromDate(taxDetailAndTaxName.get(DEMANDRSN_CODE_GENERAL_TAX).getFromDate());
+		unitCalcDetail.setGeneralTax(taxDetailAndTaxName.get(
+				DEMANDRSN_CODE_GENERAL_TAX).getCalculatedTax());
+		unitCalcDetail.setGeneralTaxFromDate(taxDetailAndTaxName.get(
+				DEMANDRSN_CODE_GENERAL_TAX).getFromDate());
 
 		if (taxDetailAndTaxName.get(DEMANDRSN_CODE_LIGHTINGTAX) != null) {
-			unitCalcDetail.setLightTax(taxDetailAndTaxName.get(DEMANDRSN_CODE_LIGHTINGTAX).getCalculatedTax());
-			unitCalcDetail.setLightTaxFromDate(taxDetailAndTaxName.get(DEMANDRSN_CODE_LIGHTINGTAX).getFromDate());
+			unitCalcDetail.setLightTax(taxDetailAndTaxName.get(
+					DEMANDRSN_CODE_LIGHTINGTAX).getCalculatedTax());
+			unitCalcDetail.setLightTaxFromDate(taxDetailAndTaxName.get(
+					DEMANDRSN_CODE_LIGHTINGTAX).getFromDate());
 		}
 
 		if (taxDetailAndTaxName.get(DEMANDRSN_CODE_FIRE_SERVICE_TAX) != null) {
-			unitCalcDetail.setFireTax(taxDetailAndTaxName.get(DEMANDRSN_CODE_FIRE_SERVICE_TAX).getCalculatedTax());
-			unitCalcDetail.setLightTaxFromDate(taxDetailAndTaxName.get(DEMANDRSN_CODE_FIRE_SERVICE_TAX).getFromDate());
+			unitCalcDetail.setFireTax(taxDetailAndTaxName.get(
+					DEMANDRSN_CODE_FIRE_SERVICE_TAX).getCalculatedTax());
+			unitCalcDetail.setLightTaxFromDate(taxDetailAndTaxName.get(
+					DEMANDRSN_CODE_FIRE_SERVICE_TAX).getFromDate());
 		}
 
 		if (taxDetailAndTaxName.get(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD) != null) {
-			unitCalcDetail.setEduCessResd(taxDetailAndTaxName.get(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD)
-					.getCalculatedTax());
-			unitCalcDetail.setEduCessResdFromDate(taxDetailAndTaxName.get(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD)
-					.getFromDate());
+			unitCalcDetail.setEduCessResd(taxDetailAndTaxName.get(
+					DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD).getCalculatedTax());
+			unitCalcDetail.setEduCessResdFromDate(taxDetailAndTaxName.get(
+					DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD).getFromDate());
 		}
 
 		if (taxDetailAndTaxName.get(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD) != null) {
-			unitCalcDetail.setEduCessNonResd(taxDetailAndTaxName.get(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD)
-					.getCalculatedTax());
-			unitCalcDetail.setEduCessNonResdFromDate(taxDetailAndTaxName.get(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD)
-					.getFromDate());
+			unitCalcDetail
+					.setEduCessNonResd(taxDetailAndTaxName.get(
+							DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD)
+							.getCalculatedTax());
+			unitCalcDetail.setEduCessNonResdFromDate(taxDetailAndTaxName.get(
+					DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD).getFromDate());
 
-			unitCalcDetail.setEmpGrntCess(taxDetailAndTaxName.get(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX)
-					.getCalculatedTax());
-			unitCalcDetail.setEmpGrntCessFromDate(taxDetailAndTaxName.get(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX)
-					.getFromDate());
+			unitCalcDetail.setEmpGrntCess(taxDetailAndTaxName.get(
+					DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX).getCalculatedTax());
+			unitCalcDetail.setEmpGrntCessFromDate(taxDetailAndTaxName.get(
+					DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX).getFromDate());
 		}
 
 		if (taxDetailAndTaxName.get(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX) != null) {
-			unitCalcDetail.setBigBuildingTax(taxDetailAndTaxName.get(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX)
-					.getCalculatedTax());
-			unitCalcDetail.setBigBuildingTaxFromDate(taxDetailAndTaxName.get(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX)
-					.getFromDate());
+			unitCalcDetail
+					.setBigBuildingTax(taxDetailAndTaxName.get(
+							DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX)
+							.getCalculatedTax());
+			unitCalcDetail.setBigBuildingTaxFromDate(taxDetailAndTaxName.get(
+					DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX).getFromDate());
 		}
 
-		LOGGER.debug("setTaxDetails - unitCalcDetail=" + unitCalcDetail + ", Exiting from setTaxDetails");
+		LOGGER.debug("setTaxDetails - unitCalcDetail=" + unitCalcDetail
+				+ ", Exiting from setTaxDetails");
 	}
 
-	public void setUnitAreaCalculationDetails(Property property, Installment installment,
-			UnitCalculationDetail unitCalculationDetail, UnitTaxCalculationInfo consolidatedUnitTax) {
+	public void setUnitAreaCalculationDetails(Property property,
+			Installment installment,
+			UnitCalculationDetail unitCalculationDetail,
+			UnitTaxCalculationInfo consolidatedUnitTax) {
 		LOGGER.debug("Entered into setUnitAreaCalculationDetails");
-		LOGGER.debug("setUnitAreaCalculationDetails - property=" + property + ", installment=" + installment
-				+ ", unitCalculationDetail=" + unitCalculationDetail);
+		LOGGER.debug("setUnitAreaCalculationDetails - property=" + property
+				+ ", installment=" + installment + ", unitCalculationDetail="
+				+ unitCalculationDetail);
 
-		for (AreaTaxCalculationInfo areaTaxCalc : consolidatedUnitTax.getAreaTaxCalculationInfos()) {
+		for (AreaTaxCalculationInfo areaTaxCalc : consolidatedUnitTax
+				.getAreaTaxCalculationInfos()) {
 			UnitAreaCalculationDetail unitAreaCalcDetail = new UnitAreaCalculationDetail();
 
-			unitAreaCalcDetail.setMonthlyBaseRent(areaTaxCalc.getMonthlyBaseRent() == null ? ZERO : areaTaxCalc
+			unitAreaCalcDetail.setMonthlyBaseRent(areaTaxCalc
+					.getMonthlyBaseRent() == null ? ZERO : areaTaxCalc
 					.getMonthlyBaseRent());
-			unitAreaCalcDetail.setMonthlyRentalValue(areaTaxCalc.getCalculatedTax() == null ? ZERO : areaTaxCalc
+			unitAreaCalcDetail.setMonthlyRentalValue(areaTaxCalc
+					.getCalculatedTax() == null ? ZERO : areaTaxCalc
 					.getCalculatedTax());
-			unitAreaCalcDetail.setTaxableArea(areaTaxCalc.getTaxableArea() == null ? ZERO : areaTaxCalc
-					.getTaxableArea());
+			unitAreaCalcDetail
+					.setTaxableArea(areaTaxCalc.getTaxableArea() == null ? ZERO
+							: areaTaxCalc.getTaxableArea());
 
-			unitCalculationDetail.addUnitAreaCalculationDetail(unitAreaCalcDetail);
+			unitCalculationDetail
+					.addUnitAreaCalculationDetail(unitAreaCalcDetail);
 
 		}
 
-		LOGGER.debug("setUnitAreaCalculationDetails - unitCalculationDetail=" + unitCalculationDetail);
+		LOGGER.debug("setUnitAreaCalculationDetails - unitCalculationDetail="
+				+ unitCalculationDetail);
 		LOGGER.debug("Exiting from setUnitAreaCalculationDetails");
 	}
 
@@ -931,16 +1142,19 @@ public class PropertyNoticeService {
 	 * tenant then its "Prefix-Name of Occupier" (ex. R-Suma).
 	 */
 
-	private String buildUnitOccupation(String propType, UnitTaxCalculationInfo unit) {
+	private String buildUnitOccupation(String propType,
+			UnitTaxCalculationInfo unit) {
 		LOGGER.debug("Entered into buildUnitOccupation, propType=" + propType);
 
 		StringBuilder occupierName = new StringBuilder();
 
 		if (NMCPTISConstants.PROPTYPE_OPEN_PLOT.equals(propType)) {
-			if (OWNER_OCC.equals(unit.getUnitOccupation()) || VACANT_OCC.equals(unit.getUnitOccupation())) {
+			if (OWNER_OCC.equals(unit.getUnitOccupation())
+					|| VACANT_OCC.equals(unit.getUnitOccupation())) {
 				occupierName.append(propType);
 			} else if (TENANT_OCC.equals(unit.getUnitOccupation())) {
-				occupierName.append(OPEN_PLOT_SHORTFORM + "-" + unit.getUnitOccupier());
+				occupierName.append(OPEN_PLOT_SHORTFORM + "-"
+						+ unit.getUnitOccupier());
 			}
 		} else if (NMCPTISConstants.PROPTYPE_RESD.equals(propType)) {
 			occupierName.append(RESD_SHORTFORM);
@@ -959,12 +1173,14 @@ public class PropertyNoticeService {
 				&& !NMCPTISConstants.PROPTYPE_CENTRAL_GOVT.equals(propType)) {
 			if (TENANT_OCC.equals(unit.getUnitOccupation())) {
 				occupierName.append("-" + unit.getUnitOccupier());
-			} else if (OWNER_OCC.equals(unit.getUnitOccupation()) || VACANT_OCC.equals(unit.getUnitOccupation())) {
+			} else if (OWNER_OCC.equals(unit.getUnitOccupation())
+					|| VACANT_OCC.equals(unit.getUnitOccupation())) {
 				occupierName.append("-" + unit.getUnitOccupation());
 			}
 		}
 
-		LOGGER.debug("occupierName=" + occupierName.toString() + "\nExiting from buildUnitOccupation");
+		LOGGER.debug("occupierName=" + occupierName.toString()
+				+ "\nExiting from buildUnitOccupation");
 
 		return occupierName.toString();
 	}
@@ -978,28 +1194,34 @@ public class PropertyNoticeService {
 		public InstallmentUnitTax() {
 		}
 
-		public InstallmentUnitTax(Installment installment, UnitTaxCalculationInfo prevUnitTax,
+		public InstallmentUnitTax(Installment installment,
+				UnitTaxCalculationInfo prevUnitTax,
 				UnitTaxCalculationInfo currentUnitTax) {
 			this.installment = installment;
 			this.prevUnitTax = prevUnitTax;
 			this.currentUnitTax = currentUnitTax;
 		}
 
-		public static InstallmentUnitTax create(Installment installment, UnitTaxCalculationInfo prevUnitTax,
+		public static InstallmentUnitTax create(Installment installment,
+				UnitTaxCalculationInfo prevUnitTax,
 				UnitTaxCalculationInfo currentUnitTax) {
-			return new InstallmentUnitTax(installment, prevUnitTax, currentUnitTax);
+			return new InstallmentUnitTax(installment, prevUnitTax,
+					currentUnitTax);
 		}
 
 		public boolean isCurrentUnitNewUnit() {
-			return prevUnitTax == null ? currentUnitTax == null ? false : true : false;
+			return prevUnitTax == null ? currentUnitTax == null ? false : true
+					: false;
 		}
 
 		public boolean isSameALV() {
-			return prevUnitTax.getAnnualRentAfterDeduction().compareTo(currentUnitTax.getAnnualRentAfterDeduction()) == 0;
+			return prevUnitTax.getAnnualRentAfterDeduction().compareTo(
+					currentUnitTax.getAnnualRentAfterDeduction()) == 0;
 		}
 
 		public boolean isSameOccupancy() {
-			return prevUnitTax.getOccpancyDate().equals(currentUnitTax.getOccpancyDate());
+			return prevUnitTax.getOccpancyDate().equals(
+					currentUnitTax.getOccpancyDate());
 		}
 
 		public boolean isCurrentUnitSlabChanged() {
@@ -1019,82 +1241,103 @@ public class PropertyNoticeService {
 		}
 
 		public List<UnitTaxCalculationInfo> getCurrentUnitAsList() {
-			List<UnitTaxCalculationInfo> units  =  new ArrayList<UnitTaxCalculationInfo>();
+			List<UnitTaxCalculationInfo> units = new ArrayList<UnitTaxCalculationInfo>();
 			units.add(currentUnitTax);
 			return units;
 		}
 
 		public void getCurrentUnitTaxSlabs(List<String> taxNames) {
 			LOGGER.debug("Entered into getCurrentUnitTaxSlabs");
-			LOGGER.debug("getCurrentUnitTaxSlabs - dateAndPercentageByTaxForUnit: " + dateAndTotalCalcTaxByTaxForUnit);
+			LOGGER.debug("getCurrentUnitTaxSlabs - dateAndPercentageByTaxForUnit: "
+					+ dateAndTotalCalcTaxByTaxForUnit);
 			LOGGER.debug("getCurrentUnitTaxSlabs - taxNames: " + taxNames);
 
-			Map<String, Map<Date, BigDecimal>> dateAndPercentageByTax = (dateAndTotalCalcTaxByTaxForUnit.get(currentUnitTax
-					.getUnitNumber()) == null) ? new TreeMap<String, Map<Date, BigDecimal>>()
-					: dateAndTotalCalcTaxByTaxForUnit.get(currentUnitTax.getUnitNumber());
+			Map<String, Map<Date, BigDecimal>> dateAndPercentageByTax = (dateAndTotalCalcTaxByTaxForUnit
+					.get(currentUnitTax.getUnitNumber()) == null) ? new TreeMap<String, Map<Date, BigDecimal>>()
+					: dateAndTotalCalcTaxByTaxForUnit.get(currentUnitTax
+							.getUnitNumber());
 
 			if (taxNames.isEmpty()) {
-				for (MiscellaneousTax mt1 : currentUnitTax.getMiscellaneousTaxes()) {
+				for (MiscellaneousTax mt1 : currentUnitTax
+						.getMiscellaneousTaxes()) {
 					Map<Date, BigDecimal> dateAndPercentage1 = new TreeMap<Date, BigDecimal>();
 					for (MiscellaneousTaxDetail mtd : mt1.getTaxDetails()) {
 						if (isHistory(mtd)) {
-							dateAndPercentage1.put(mtd.getFromDate(), mtd.getCalculatedTaxValue());
-							dateAndPercentageByTax.put(mt1.getTaxName(), dateAndPercentage1);
+							dateAndPercentage1.put(mtd.getFromDate(),
+									mtd.getCalculatedTaxValue());
+							dateAndPercentageByTax.put(mt1.getTaxName(),
+									dateAndPercentage1);
 							break;
 						}
 					}
 				}
 			} else {
-				for (MiscellaneousTax mt2 : currentUnitTax.getMiscellaneousTaxes()) {
+				for (MiscellaneousTax mt2 : currentUnitTax
+						.getMiscellaneousTaxes()) {
 					if (taxNames.contains(mt2.getTaxName())) {
 						Map<Date, BigDecimal> dateAndPercentage2 = new TreeMap<Date, BigDecimal>();
 
-						MiscellaneousTaxDetail mtd = mt2.getTaxDetails().size() > 1 ? mt2.getTaxDetails().get(1) : mt2
-								.getTaxDetails().get(0);
+						MiscellaneousTaxDetail mtd = mt2.getTaxDetails().size() > 1 ? mt2
+								.getTaxDetails().get(1) : mt2.getTaxDetails()
+								.get(0);
 
 						if (isHistory(mtd)) {
-							dateAndPercentage2.put(mtd.getFromDate(), mtd.getCalculatedTaxValue());
-							dateAndPercentageByTax.put(mt2.getTaxName(), dateAndPercentage2);
+							dateAndPercentage2.put(mtd.getFromDate(),
+									mtd.getCalculatedTaxValue());
+							dateAndPercentageByTax.put(mt2.getTaxName(),
+									dateAndPercentage2);
 						}
 					}
 				}
 			}
 
-			dateAndTotalCalcTaxByTaxForUnit.put(currentUnitTax.getUnitNumber(), dateAndPercentageByTax);
+			dateAndTotalCalcTaxByTaxForUnit.put(currentUnitTax.getUnitNumber(),
+					dateAndPercentageByTax);
 
 			LOGGER.debug("Exiting from getCurrentUnitTaxSlabs - dateAndPercentageByTaxForUnit: "
 					+ dateAndTotalCalcTaxByTaxForUnit);
 		}
 
-	    // [CODE REVIEW] why is this public?
+		// [CODE REVIEW] why is this public?
 		public Map<String, Date> getSlabChangedTaxes() {
 			LOGGER.debug("Entered into getSlabChangedTaxes");
-			LOGGER.debug("getSlabChangedTaxes - dateAndPercentageByTaxForUnit: " + dateAndTotalCalcTaxByTaxForUnit);
-			LOGGER.debug("getSlabChangedTaxes - UnitNumber : " + currentUnitTax.getUnitNumber());
+			LOGGER.debug("getSlabChangedTaxes - dateAndPercentageByTaxForUnit: "
+					+ dateAndTotalCalcTaxByTaxForUnit);
+			LOGGER.debug("getSlabChangedTaxes - UnitNumber : "
+					+ currentUnitTax.getUnitNumber());
 
 			Map<String, Map<Date, BigDecimal>> taxAndListOfMapsOfDateAndPercentage = dateAndTotalCalcTaxByTaxForUnit
 					.get(currentUnitTax.getUnitNumber());
 
 			Map<String, Date> taxNames = new HashMap<String, Date>();
 
-			if (taxAndListOfMapsOfDateAndPercentage != null && !taxAndListOfMapsOfDateAndPercentage.isEmpty()) {
-				for (MiscellaneousTax tax : currentUnitTax.getMiscellaneousTaxes()) {
+			if (taxAndListOfMapsOfDateAndPercentage != null
+					&& !taxAndListOfMapsOfDateAndPercentage.isEmpty()) {
+				for (MiscellaneousTax tax : currentUnitTax
+						.getMiscellaneousTaxes()) {
 
-					Map<Date, BigDecimal> taxDateAndPercentages = taxAndListOfMapsOfDateAndPercentage.get(tax.getTaxName());
+					Map<Date, BigDecimal> taxDateAndPercentages = taxAndListOfMapsOfDateAndPercentage
+							.get(tax.getTaxName());
 					Map<Date, MiscellaneousTaxDetail> taxDetailAndEffectiveDate = new TreeMap<Date, MiscellaneousTaxDetail>();
 
 					// Getting the slab effective dates in asc order
 					for (MiscellaneousTaxDetail mtd : tax.getTaxDetails()) {
-						if (mtd.getIsHistory() == null || NON_HISTORY_TAX_DETAIL.equals(mtd.getIsHistory())) {
-							taxDetailAndEffectiveDate.put(mtd.getFromDate(), mtd);
+						if (mtd.getIsHistory() == null
+								|| NON_HISTORY_TAX_DETAIL.equals(mtd
+										.getIsHistory())) {
+							taxDetailAndEffectiveDate.put(mtd.getFromDate(),
+									mtd);
 						}
 					}
 
 					// Getting the latest slab effective date,
-					// as of now in NMC there can be only 2 slabs in a installment period,
-					// have considered this in order to simplify the process else it will become complex
+					// as of now in NMC there can be only 2 slabs in a
+					// installment period,
+					// have considered this in order to simplify the process
+					// else it will become complex
 					MiscellaneousTaxDetail mtd = taxDetailAndEffectiveDate
-							.get(taxDetailAndEffectiveDate.keySet().toArray()[taxDetailAndEffectiveDate.size() - 1]);
+							.get(taxDetailAndEffectiveDate.keySet().toArray()[taxDetailAndEffectiveDate
+									.size() - 1]);
 
 					LOGGER.info("getSlabChangedTaxes - " + mtd);
 
@@ -1107,7 +1350,8 @@ public class PropertyNoticeService {
 					}
 				}
 			}
-			LOGGER.debug("getSlabChangedTaxes - slab changed taxes : " + taxNames);
+			LOGGER.debug("getSlabChangedTaxes - slab changed taxes : "
+					+ taxNames);
 			LOGGER.debug("Exiting from getSlabChangedTaxes");
 			return taxNames;
 		}
@@ -1119,5 +1363,13 @@ public class PropertyNoticeService {
 		private boolean isHistory(MiscellaneousTaxDetail mtd) {
 			return mtd.getIsHistory() == null || mtd.getIsHistory().equals('N');
 		}
+	}
+
+	public BasicProperty getBasicProperty() {
+		return basicProperty;
+	}
+
+	public void setBasicProperty(BasicProperty basicProperty) {
+		this.basicProperty = basicProperty;
 	}
 }

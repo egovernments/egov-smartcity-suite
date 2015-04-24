@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.commons.Installment;
 import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.dcb.bean.DCBReport;
@@ -14,7 +14,7 @@ import org.egov.dcb.service.DCBService;
 import org.egov.dcb.service.DCBServiceImpl;
 import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.EgBill;
-import org.egov.erpcollection.integration.models.BillReceiptInfo;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -47,6 +47,7 @@ public abstract class Property {
 	private int infoFlag;
 
 	protected abstract Billable getBillable();
+
 	public abstract void setBillable(NMCPropertyTaxBillable billable);
 
 	protected abstract EgBill createBill();
@@ -67,7 +68,8 @@ public abstract class Property {
 	 *            populated in the returned property object.
 	 * @return
 	 */
-	public static Property fromPropertyID(String propertyID, String receiptNo, int flag) {
+	public static Property fromPropertyID(String propertyID, String receiptNo,
+			int flag) {
 		LOGGER.info("fromPropertyID : propertyID " + propertyID);
 		Property p = new PropertyImpl();
 		p.propertyID = propertyID;
@@ -82,9 +84,11 @@ public abstract class Property {
 	}
 
 	private void initBasicProperty() {
-		BasicPropertyDAO basicPropertyDAO = PropertyDAOFactory.getDAOFactory().getBasicPropertyDAO();
+		BasicPropertyDAO basicPropertyDAO = PropertyDAOFactory.getDAOFactory()
+				.getBasicPropertyDAO();
 		if (getPropertyID() != null) {
-			basicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(getPropertyID());
+			basicProperty = basicPropertyDAO
+					.getAllBasicPropertyByPropertyID(getPropertyID());
 		}
 	}
 
@@ -127,12 +131,15 @@ public abstract class Property {
 			return;
 		}
 		this.propertyID = basicProperty.getUpicNo();
-		this.citizenName = ptisCacheMgr.buildOwnerFullName(basicProperty.getProperty().getPropertyOwnerSet());
-		if (basicProperty.getPropertyID() != null && basicProperty.getPropertyID().getWard() != null) {
+		this.citizenName = ptisCacheMgr.buildOwnerFullName(basicProperty
+				.getProperty().getPropertyOwnerSet());
+		if (basicProperty.getPropertyID() != null
+				&& basicProperty.getPropertyID().getWard() != null) {
 			this.wardName = basicProperty.getPropertyID().getWard().getName();
 		}
-		if (basicProperty.getAddress() != null && basicProperty.getAddress().getHouseNo() != null) {
-			this.doorNumber = basicProperty.getAddress().getHouseNo();
+		if (basicProperty.getAddress() != null
+				&& basicProperty.getAddress().getHouseNoBldgApt() != null) {
+			this.doorNumber = basicProperty.getAddress().getHouseNoBldgApt();
 		}
 		LOGGER.info("Got basic info...");
 	}
@@ -198,7 +205,8 @@ public abstract class Property {
 		if ((propertyID == null || propertyID.trim().equals(""))) {
 			throw new EGOVRuntimeException("PropertyID was null or empty!");
 		}
-		if (isReceiptInfoRequested() && (receiptNo == null || receiptNo.equals(""))) {
+		if (isReceiptInfoRequested()
+				&& (receiptNo == null || receiptNo.equals(""))) {
 			throw new EGOVRuntimeException("receiptNo was null or empty!");
 		}
 	}

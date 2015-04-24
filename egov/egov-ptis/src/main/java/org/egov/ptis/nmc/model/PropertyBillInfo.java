@@ -195,7 +195,7 @@ public class PropertyBillInfo {
 	}
 
 	public String getHouseNo() {
-		return getBasicProperty().getAddress().getHouseNo();
+		return getBasicProperty().getAddress().getHouseNoBldgApt();
 	}
 
 	public String getIndexNo() {

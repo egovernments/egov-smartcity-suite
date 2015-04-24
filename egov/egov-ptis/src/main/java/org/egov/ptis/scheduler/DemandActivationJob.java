@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import jxl.common.Logger;
-
+import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
@@ -21,10 +20,11 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.nmc.constants.NMCPTISConstants;
 import org.egov.ptis.nmc.util.PropertyTaxUtil;
+import org.joda.time.DateTime;
 import org.quartz.StatefulJob;
 
 /**
@@ -35,10 +35,12 @@ import org.quartz.StatefulJob;
  * @author nayeem
  *
  */
-public class DemandActivationJob extends AbstractQuartzJob implements StatefulJob {
+public class DemandActivationJob extends AbstractQuartzJob implements
+		StatefulJob {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger LOGGER = Logger.getLogger(DemandActivationJob.class);
+	private static final Logger LOGGER = Logger
+			.getLogger(DemandActivationJob.class);
 	private static final String STR_REMARKS_DEMAND_ACTIVATION = "Demand activated by system on 22nd day after notice generation";
 
 	private PersistenceService basicPrpertyService;
@@ -54,66 +56,79 @@ public class DemandActivationJob extends AbstractQuartzJob implements StatefulJo
 
 		List<Ptdemand> properties = getInactiveDemandNotObjectedProperties();
 		BasicProperty basicProperty = null;
-		
+
 		for (Ptdemand demand : properties) {
 			try {
-				
+
 				basicProperty = demand.getEgptProperty().getBasicProperty();
 				adjustAdvancePayment(demand);
 				activateDemand(basicProperty);
-				
+
 			} catch (Exception e) {
-				LOGGER.error("Error while activating the demand for " + basicProperty.getUpicNo(), e);
+				LOGGER.error("Error while activating the demand for "
+						+ basicProperty.getUpicNo(), e);
 			}
 		}
 
-		LOGGER.info("Demand activation for " + properties.size() + " properties is completed in "
-				+ ((System.currentTimeMillis() - currentTimeMillis) / 1000) + " sec(s)");
-
+		LOGGER.info("Demand activation for " + properties.size()
+				+ " properties is completed in "
+				+ ((System.currentTimeMillis() - currentTimeMillis) / 1000)
+				+ " sec(s)");
 
 		LOGGER.debug("Exting from DemandActivationJob.execute");
 	}
-	
+
 	private void adjustAdvancePayment(Ptdemand ptDemand) {
 		LOGGER.debug("Entered into adjustAdvancePayment");
-		
+
 		EgDemandDetails advanceDemandDetail = getAdvanceDemandDetail(ptDemand);
-		
+
 		BigDecimal advanceAmount = advanceDemandDetail.getAmtCollected();
 		BigDecimal balanceAmountToBePaid = BigDecimal.ZERO;
-		boolean thereIsAdvanceCollection = advanceAmount.compareTo(BigDecimal.ZERO) > 0 ? true : false; 
-		
-		List<Installment> installments = propertyTaxUtil.getInstallmentListByStartDate(ptDemand.getEgptProperty()
-				.getPropertyDetail().getEffective_date());
-		
+		boolean thereIsAdvanceCollection = advanceAmount
+				.compareTo(BigDecimal.ZERO) > 0 ? true : false;
+
+		List<Installment> installments = propertyTaxUtil
+				.getInstallmentListByStartDate(ptDemand.getEgptProperty()
+						.getPropertyDetail().getEffective_date());
+
 		Map<Installment, Set<EgDemandDetails>> installmentWiseDemandDetails = propertyService
-				.getEgDemandDetailsSetAsMap(new ArrayList<EgDemandDetails>(ptDemand.getEgDemandDetails()), installments);
-		
+				.getEgDemandDetailsSetAsMap(new ArrayList<EgDemandDetails>(
+						ptDemand.getEgDemandDetails()), installments);
+
 		EgDemandDetails demandDetail = null;
-		
+
 		if (thereIsAdvanceCollection) {
 			for (Installment installment : installments) {
 
 				Map<String, EgDemandDetails> demandDetailsAndReason = propertyTaxUtil
-						.getEgDemandDetailsAndReasonAsMap(installmentWiseDemandDetails.get(installment));
+						.getEgDemandDetailsAndReasonAsMap(installmentWiseDemandDetails
+								.get(installment));
 
 				for (String reason : NMCPTISConstants.DEMAND_RSNS_LIST) {
-					
+
 					demandDetail = demandDetailsAndReason.get(reason);
-					
+
 					if (demandDetail != null
-							&& !demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+							&& !demandDetail.getEgDemandReason()
+									.getEgDemandReasonMaster().getCode()
 									.equalsIgnoreCase(DEMANDRSN_CODE_ADVANCE)) {
 
-						balanceAmountToBePaid = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
+						balanceAmountToBePaid = demandDetail.getAmount()
+								.subtract(demandDetail.getAmtCollected());
 
 						if (advanceAmount.compareTo(BigDecimal.ZERO) > 0
-								&& balanceAmountToBePaid.compareTo(BigDecimal.ZERO) > 0) {
+								&& balanceAmountToBePaid
+										.compareTo(BigDecimal.ZERO) > 0) {
 							if (advanceAmount.compareTo(balanceAmountToBePaid) > 0) {
-								demandDetail.setAmtCollected(demandDetail.getAmtCollected().add(balanceAmountToBePaid));
-								advanceAmount = advanceAmount.subtract(balanceAmountToBePaid);
+								demandDetail.setAmtCollected(demandDetail
+										.getAmtCollected().add(
+												balanceAmountToBePaid));
+								advanceAmount = advanceAmount
+										.subtract(balanceAmountToBePaid);
 							} else {
-								demandDetail.setAmtCollected(demandDetail.getAmtCollected().add(advanceAmount));
+								demandDetail.setAmtCollected(demandDetail
+										.getAmtCollected().add(advanceAmount));
 								advanceAmount = BigDecimal.ZERO;
 							}
 						}
@@ -123,7 +138,7 @@ public class DemandActivationJob extends AbstractQuartzJob implements StatefulJo
 			}
 			advanceDemandDetail.setAmtCollected(advanceAmount);
 		}
-		
+
 		LOGGER.debug("Exiting from adjustAdvancePayment");
 	}
 
@@ -132,14 +147,16 @@ public class DemandActivationJob extends AbstractQuartzJob implements StatefulJo
 	 */
 	private EgDemandDetails getAdvanceDemandDetail(Ptdemand ptDemand) {
 		EgDemandDetails advanceDemandDetail = null;
-		
+
 		for (EgDemandDetails demandDetail : ptDemand.getEgDemandDetails()) {
-			if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(NMCPTISConstants.DEMANDRSN_CODE_ADVANCE)) {
+			if (demandDetail.getEgDemandReason().getEgDemandReasonMaster()
+					.getCode()
+					.equalsIgnoreCase(NMCPTISConstants.DEMANDRSN_CODE_ADVANCE)) {
 				advanceDemandDetail = demandDetail;
 				break;
 			}
 		}
-		
+
 		return advanceDemandDetail;
 	}
 
@@ -148,16 +165,18 @@ public class DemandActivationJob extends AbstractQuartzJob implements StatefulJo
 	 */
 	private void activateDemand(BasicProperty basicProperty) {
 		LOGGER.debug("Entered into activateDemand");
-		
-		Property inactiveProperty = basicProperty.getInactiveProperty();
+
+		PropertyImpl inactiveProperty = basicProperty.getInactiveProperty();
 
 		inactiveProperty.setStatus(PropertyTaxConstants.STATUS_ISACTIVE);
-		inactiveProperty.setRemarks(inactiveProperty.getRemarks() == null ? STR_REMARKS_DEMAND_ACTIVATION
-				: inactiveProperty.getRemarks().concat(", ").concat(STR_REMARKS_DEMAND_ACTIVATION));
-		inactiveProperty.setModifiedDate(new Date());
-		
+		inactiveProperty
+				.setRemarks(inactiveProperty.getRemarks() == null ? STR_REMARKS_DEMAND_ACTIVATION
+						: inactiveProperty.getRemarks().concat(", ")
+								.concat(STR_REMARKS_DEMAND_ACTIVATION));
+		inactiveProperty.setLastModifiedDate(new DateTime());
+
 		basicPrpertyService.update(basicProperty);
-		
+
 		LOGGER.debug("Exiting from activateDemand");
 	}
 
@@ -165,37 +184,44 @@ public class DemandActivationJob extends AbstractQuartzJob implements StatefulJo
 	private List<Ptdemand> getInactiveDemandNotObjectedProperties() {
 		LOGGER.debug("Entered into getQueryString");
 
-		Date date21DaysPast = DateUtils.add(new Date(), Calendar.DAY_OF_MONTH, -21);
+		Date date21DaysPast = DateUtils.add(new Date(), Calendar.DAY_OF_MONTH,
+				-21);
 
-		StringBuilder noticeTypeBuilder = new StringBuilder()
-		.append("'").append(NMCPTISConstants.NOTICE127).append("'").append(",")
-		.append(" '").append(NMCPTISConstants.NOTICE134).append("'");
+		StringBuilder noticeTypeBuilder = new StringBuilder().append("'")
+				.append(NMCPTISConstants.NOTICE127).append("'").append(",")
+				.append(" '").append(NMCPTISConstants.NOTICE134).append("'");
 
-		StringBuilder noticePVR = new StringBuilder().append("'").append(NMCPTISConstants.NOTICE_PRATIVRUTTA).append("'");
-		
+		StringBuilder noticePVR = new StringBuilder().append("'")
+				.append(NMCPTISConstants.NOTICE_PRATIVRUTTA).append("'");
+
 		String stringQuery = "SELECT ptd FROM PtNotice n, PtNotice pvr, Ptdemand ptd "
-								+ "LEFT JOIN FETCH ptd.egptProperty p " 
-								+ "LEFT JOIN FETCH p.basicProperty bp "
-								+ "WHERE n.basicProperty = bp "
-								+ "AND pvr.basicProperty = bp "
-								+ "AND bp.active = true " 
-								+ "AND bp.status.statusCode <> :bpStatus "
-								+ "AND p.status = 'I' "
-								+ "AND ptd.egInstallmentMaster = :currInstallment "
-								+ "AND n.noticeType in ("+ noticeTypeBuilder.toString() +") "
-								+ "AND pvr.noticeType = " + noticePVR
-								+ "AND n.noticeDate > p.createdDate "
-								+ "AND pvr.noticeDate > p.createdDate "
-								+ " AND n.noticeDate < :pastDate "
-								+ "AND pvr.noticeDate < :pastDate ";
+				+ "LEFT JOIN FETCH ptd.egptProperty p "
+				+ "LEFT JOIN FETCH p.basicProperty bp "
+				+ "WHERE n.basicProperty = bp "
+				+ "AND pvr.basicProperty = bp "
+				+ "AND bp.active = true "
+				+ "AND bp.status.statusCode <> :bpStatus "
+				+ "AND p.status = 'I' "
+				+ "AND ptd.egInstallmentMaster = :currInstallment "
+				+ "AND n.noticeType in ("
+				+ noticeTypeBuilder.toString()
+				+ ") "
+				+ "AND pvr.noticeType = "
+				+ noticePVR
+				+ "AND n.noticeDate > p.createdDate "
+				+ "AND pvr.noticeDate > p.createdDate "
+				+ " AND n.noticeDate < :pastDate "
+				+ "AND pvr.noticeDate < :pastDate ";
 
 		LOGGER.debug("getQueryString, query=" + stringQuery);
 
-		List<Ptdemand>  properties = HibernateUtil.getCurrentSession().createQuery(stringQuery)
-								.setString("bpStatus", PropertyTaxConstants.STATUS_OBJECTED_STR)
-								.setParameter("pastDate", date21DaysPast)
-								.setEntity("currInstallment", PropertyTaxUtil.getCurrentInstallment())
-								.list();
+		List<Ptdemand> properties = HibernateUtil
+				.getCurrentSession()
+				.createQuery(stringQuery)
+				.setString("bpStatus", PropertyTaxConstants.STATUS_OBJECTED_STR)
+				.setParameter("pastDate", date21DaysPast)
+				.setEntity("currInstallment",
+						PropertyTaxUtil.getCurrentInstallment()).list();
 
 		LOGGER.debug("Exting from getQueryString");
 		return properties;
@@ -204,11 +230,11 @@ public class DemandActivationJob extends AbstractQuartzJob implements StatefulJo
 	public void setBasicPrpertyService(PersistenceService basicPrpertyService) {
 		this.basicPrpertyService = basicPrpertyService;
 	}
-	
+
 	public void setPropertyService(PropertyService propertyService) {
 		this.propertyService = propertyService;
 	}
-	
+
 	public void setPropertyTaxUtil(PropertyTaxUtil propertyTaxUtil) {
 		this.propertyTaxUtil = propertyTaxUtil;
 	}

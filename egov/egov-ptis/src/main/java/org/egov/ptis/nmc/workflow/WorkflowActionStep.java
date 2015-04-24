@@ -1,7 +1,7 @@
 package org.egov.ptis.nmc.workflow;
 
 import org.egov.pims.commons.Position;
-import org.egov.pims.commons.service.EisCommonsManager;
+import org.egov.pims.commons.service.EisCommonsService;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.nmc.util.PropertyTaxUtil;
@@ -10,7 +10,7 @@ public abstract class WorkflowActionStep {
 
 
 	protected PropertyImpl propertyModel;
-	protected EisCommonsManager eisCommonsManager;
+	protected EisCommonsService eisCommonsService;
 	protected Integer userId;
 	protected PropertyTaxUtil propertyTaxUtil;
 	protected String actionName;
@@ -41,15 +41,16 @@ public abstract class WorkflowActionStep {
 	 * @return
 	 */
 	public Position getPosition()  {
-		return eisCommonsManager.getPositionByUserId(userId);
+		return eisCommonsService.getPositionByUserId(userId);
 	}
 
 	/**
 	 * Changes the state
 	 */
-	public void changeState() {
+	//TODO -- Fix me (Commented to Resolve compilation issues)
+	/*public void changeState() {
 		propertyModel.changeState(getStepValue(), getPosition(), getComments());
-	}
+	}*/
 
 	public Property getPropertyModel() {
 		return propertyModel;
@@ -79,7 +80,8 @@ public abstract class WorkflowActionStep {
 		this.propertyTaxUtil = propertyTaxUtil;
 	}
 
-	public void setEisCommonsManager(EisCommonsManager eisCommonsManager) {
-		this.eisCommonsManager = eisCommonsManager;
+	public void setEisCommonsService(EisCommonsService eisCommonsService) {
+		this.eisCommonsService = eisCommonsService;
 	}
+
 }

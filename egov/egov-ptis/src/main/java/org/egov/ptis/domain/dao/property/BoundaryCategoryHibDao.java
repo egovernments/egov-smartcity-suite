@@ -23,7 +23,8 @@ import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
-
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Hibernate implementation of BoundaryCategoryDao
@@ -31,51 +32,55 @@ import org.hibernate.criterion.Restrictions;
  * @author Manu
  * @version 2.00
  */
-public class BoundaryCategoryHibDao extends GenericHibernateDAO implements BoundaryCategoryDao
-{
+@Repository(value = "boundaryCategoryDAO")
+@Transactional(readOnly = true)
+public class BoundaryCategoryHibDao extends GenericHibernateDAO implements
+		BoundaryCategoryDao {
 
 	/**
 	 * @param persistentClass
 	 * @param session
 	 */
-	public BoundaryCategoryHibDao(Class persistentClass, Session session)
-	{
+	public BoundaryCategoryHibDao(Class persistentClass, Session session) {
 		super(persistentClass, session);
 	}
 
 	public static final String BOUNDARY = "bndry";
+
 	@Override
-	public Category getCategoryForBoundary(Boundary bndry)
-	{
+	public Category getCategoryForBoundary(Boundary bndry) {
 		Category category = null;
 		Query qry = null;
-		if(bndry != null )
-		{
-			qry = getCurrentSession().createQuery("select C from Category C inner join C.catBoundaries BC where BC.bndry = :bndry AND (" +
-					"(BC.toDate IS NULL AND BC.fromDate <= :currDate) " + "OR " +
-			"(BC.fromDate <= :currDate AND BC.toDate >= :currDate)) ");
+		if (bndry != null) {
+			qry = getCurrentSession()
+					.createQuery(
+							"select C from Category C inner join C.catBoundaries BC where BC.bndry = :bndry AND ("
+									+ "(BC.toDate IS NULL AND BC.fromDate <= :currDate) "
+									+ "OR "
+									+ "(BC.fromDate <= :currDate AND BC.toDate >= :currDate)) ");
 			qry.setEntity(BOUNDARY, bndry);
 			qry.setDate("currDate", new Date());
-			if(qry.list().size()==1)
-				category = (Category)qry.uniqueResult();
+			if (qry.list().size() == 1)
+				category = (Category) qry.uniqueResult();
 		}
 		return category;
 	}
 
 	@Override
-	public Category getCategoryForBoundaryAndDate(Boundary bndry,Date date)
-	{
+	public Category getCategoryForBoundaryAndDate(Boundary bndry, Date date) {
 		Category category = null;
 		Query qry = null;
-		if(bndry != null && date!=null)
-		{
-			qry = getCurrentSession().createQuery("select C from Category C inner join C.catBoundaries BC where BC.bndry = :bndry AND (" +
-					"(BC.toDate IS NULL AND BC.fromDate <= :date) " + "OR " +
-			"(BC.fromDate <= :date AND BC.toDate >= :date)) ");
+		if (bndry != null && date != null) {
+			qry = getCurrentSession()
+					.createQuery(
+							"select C from Category C inner join C.catBoundaries BC where BC.bndry = :bndry AND ("
+									+ "(BC.toDate IS NULL AND BC.fromDate <= :date) "
+									+ "OR "
+									+ "(BC.fromDate <= :date AND BC.toDate >= :date)) ");
 			qry.setEntity(BOUNDARY, bndry);
 			qry.setDate("date", date);
-			if(qry.list().size()==1)
-				category = (Category)qry.uniqueResult();
+			if (qry.list().size() == 1)
+				category = (Category) qry.uniqueResult();
 		}
 		return category;
 	}
@@ -84,89 +89,105 @@ public class BoundaryCategoryHibDao extends GenericHibernateDAO implements Bound
 	public BoundaryCategory getBoundaryCategoryByBoundry(Boundary bndry) {
 		BoundaryCategory bndryCategory = null;
 		Query qry = null;
-		if(bndry != null )
-		{
-			qry = getCurrentSession().createQuery("from BoundaryCategory BC where BC.bndry = :bndry AND (" +
-					"(BC.toDate IS NULL AND BC.fromDate <= :currDate) " + "OR " +
-			"(BC.fromDate <= :currDate AND BC.toDate >= :currDate)) ");
+		if (bndry != null) {
+			qry = getCurrentSession()
+					.createQuery(
+							"from BoundaryCategory BC where BC.bndry = :bndry AND ("
+									+ "(BC.toDate IS NULL AND BC.fromDate <= :currDate) "
+									+ "OR "
+									+ "(BC.fromDate <= :currDate AND BC.toDate >= :currDate)) ");
 			qry.setEntity(BOUNDARY, bndry);
 			qry.setDate("currDate", new Date());
 
-			if(qry.list().size()==1)
-				bndryCategory = (BoundaryCategory)qry.uniqueResult();
+			if (qry.list().size() == 1)
+				bndryCategory = (BoundaryCategory) qry.uniqueResult();
 		}
 		return bndryCategory;
 	}
 
 	@Override
-	public BoundaryCategory getBoundaryCategoryByBoundryAndDate(Boundary bndry,Date date) {
+	public BoundaryCategory getBoundaryCategoryByBoundryAndDate(Boundary bndry,
+			Date date) {
 		BoundaryCategory bndryCategory = null;
 		Query qry = null;
-		if(bndry != null && date!=null)
-		{
-			qry = getCurrentSession().createQuery("from BoundaryCategory BC where BC.bndry = :bndry AND (" +
-					"(BC.toDate IS NULL AND BC.fromDate <= :date) " + "OR " +
-			"(BC.fromDate <= :date AND BC.toDate >= :date)) ");
+		if (bndry != null && date != null) {
+			qry = getCurrentSession()
+					.createQuery(
+							"from BoundaryCategory BC where BC.bndry = :bndry AND ("
+									+ "(BC.toDate IS NULL AND BC.fromDate <= :date) "
+									+ "OR "
+									+ "(BC.fromDate <= :date AND BC.toDate >= :date)) ");
 			qry.setEntity(BOUNDARY, bndry);
 			qry.setDate("date", date);
-			if(qry.list().size()==1)
-				bndryCategory = (BoundaryCategory)qry.uniqueResult();
+			if (qry.list().size() == 1)
+				bndryCategory = (BoundaryCategory) qry.uniqueResult();
 		}
 		return bndryCategory;
 	}
 
 	@Override
-	public Category getCategoryByBoundryAndUsage(Boundary bndry,PropertyUsage propertyUsage) {
+	public Category getCategoryByBoundryAndUsage(Boundary bndry,
+			PropertyUsage propertyUsage) {
 		Category category = null;
 		Query qry = null;
-		if(bndry != null && propertyUsage != null)
-		{
-			qry = getCurrentSession().createQuery("select C from Category C inner join C.catBoundaries BC where BC.bndry = :bndry and C.propUsage = :propertyUsage AND (" +
-					"(BC.toDate IS NULL AND BC.fromDate <= :currDate) " + "OR " +
-			"(BC.fromDate <= :currDate AND BC.toDate >= :currDate)) ");
+		if (bndry != null && propertyUsage != null) {
+			qry = getCurrentSession()
+					.createQuery(
+							"select C from Category C inner join C.catBoundaries BC where BC.bndry = :bndry and C.propUsage = :propertyUsage AND ("
+									+ "(BC.toDate IS NULL AND BC.fromDate <= :currDate) "
+									+ "OR "
+									+ "(BC.fromDate <= :currDate AND BC.toDate >= :currDate)) ");
 			qry.setEntity(BOUNDARY, bndry);
 			qry.setEntity("propertyUsage", propertyUsage);
 			qry.setDate("currDate", new Date());
-			if(qry.list().size()==1)
-				category = (Category)qry.uniqueResult();
+			if (qry.list().size() == 1)
+				category = (Category) qry.uniqueResult();
 		}
 		return category;
 	}
 
 	@Override
-	public Category getCategoryByBoundryAndUsageAndDate(Boundary bndry,PropertyUsage propertyUsage,Date date) {
+	public Category getCategoryByBoundryAndUsageAndDate(Boundary bndry,
+			PropertyUsage propertyUsage, Date date) {
 		Category category = null;
 		Query qry = null;
-		if(bndry != null && propertyUsage != null && date!=null)
-		{
-			qry = getCurrentSession().createQuery("select C from Category C inner join C.catBoundaries BC where BC.bndry = :bndry and C.propUsage = :propertyUsage AND (" +
-					"(BC.toDate IS NULL AND BC.fromDate <= :date) " + "OR " +
-			"(BC.fromDate <= :date AND BC.toDate >= :date)) ");
+		if (bndry != null && propertyUsage != null && date != null) {
+			qry = getCurrentSession()
+					.createQuery(
+							"select C from Category C inner join C.catBoundaries BC where BC.bndry = :bndry and C.propUsage = :propertyUsage AND ("
+									+ "(BC.toDate IS NULL AND BC.fromDate <= :date) "
+									+ "OR "
+									+ "(BC.fromDate <= :date AND BC.toDate >= :date)) ");
 			qry.setEntity(BOUNDARY, bndry);
 			qry.setEntity("propertyUsage", propertyUsage);
 			qry.setDate("date", date);
-			if(qry.list().size()==1)
-				category = (Category)qry.uniqueResult();
+			if (qry.list().size() == 1)
+				category = (Category) qry.uniqueResult();
 		}
 		return category;
 	}
 
-	//get BoundaryCategory by boundary and category by passing criterion as parameter
+	// get BoundaryCategory by boundary and category by passing criterion as
+	// parameter
 	@Override
-	public BoundaryCategory getBoundaryCategoryByBoundaryAndCategory(Criterion criterion)
-	{
-		Criteria criteria = getCurrentSession().createCriteria(BoundaryCategory.class);
-		BoundaryCategory boundaryCategory=null;
-		if(criterion!=null)
-		{
-			Criterion dateCondn1 = Restrictions.and(Restrictions.le("fromDate", new Date()),Restrictions.isNull("toDate"));
-			Criterion dateCondn2 = Restrictions.and(Restrictions.le("fromDate", new Date()),Restrictions.ge("toDate", new Date()));
+	public BoundaryCategory getBoundaryCategoryByBoundaryAndCategory(
+			Criterion criterion) {
+		Criteria criteria = getCurrentSession().createCriteria(
+				BoundaryCategory.class);
+		BoundaryCategory boundaryCategory = null;
+		if (criterion != null) {
+			Criterion dateCondn1 = Restrictions.and(
+					Restrictions.le("fromDate", new Date()),
+					Restrictions.isNull("toDate"));
+			Criterion dateCondn2 = Restrictions.and(
+					Restrictions.le("fromDate", new Date()),
+					Restrictions.ge("toDate", new Date()));
 			Criterion dateCondn = Restrictions.or(dateCondn1, dateCondn2);
 
 			criteria.add(criterion);
 			criteria.add(dateCondn);
 			criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-			boundaryCategory=(BoundaryCategory)criteria.uniqueResult();
+			boundaryCategory = (BoundaryCategory) criteria.uniqueResult();
 		}
 		return boundaryCategory;
 	}
@@ -174,18 +195,18 @@ public class BoundaryCategoryHibDao extends GenericHibernateDAO implements Bound
 	@Override
 	public List<Category> getCategoriesByBoundry(Boundary bndry) {
 		List<Category> list = new ArrayList<Category>();
-		/*String query =  "SELECT cat.id_usage, " +
-							"cat.id_struct_cl, " +
-							"cat.category_amnt, " +
-							"cat.category_name, " +
-							"bcat.id_bndry " +
-						"FROM egpt_mstr_category cat, " +
-							"egpt_mstr_bndry_category bcat " +
-						"WHERE cat.id_category = bcat.id_category " +
-							"AND bcat.id_bndry =:bndryId ";	*/
-		
-		Query qry = HibernateUtil.getCurrentSession().createQuery(
-				"select bc.category from BoundaryCategory bc where bc.bndry =:Boundary");
+		/*
+		 * String query = "SELECT cat.id_usage, " + "cat.id_struct_cl, " +
+		 * "cat.category_amnt, " + "cat.category_name, " + "bcat.id_bndry " +
+		 * "FROM egpt_mstr_category cat, " + "egpt_mstr_bndry_category bcat " +
+		 * "WHERE cat.id_category = bcat.id_category " +
+		 * "AND bcat.id_bndry =:bndryId ";
+		 */
+
+		Query qry = HibernateUtil
+				.getCurrentSession()
+				.createQuery(
+						"select bc.category from BoundaryCategory bc where bc.bndry =:Boundary");
 		qry.setEntity("Boundary", bndry);
 		list = qry.list();
 		return list;

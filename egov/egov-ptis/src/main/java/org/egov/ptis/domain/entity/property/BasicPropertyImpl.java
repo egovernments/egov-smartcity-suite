@@ -65,8 +65,8 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 	private String billCrtError;
 	private Character isTaxXMLMigrated = 'N';
 	private boolean isDemandActive = false;
-	private Property activeProperty;
-	private Property inactiveProperty;
+	private PropertyImpl activeProperty;
+	private PropertyImpl inactiveProperty;
 
 	@Override
 	public Set<PropertyDocs> getPropertyDocsSet() {
@@ -630,7 +630,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 	 *
 	 */
 	@Override
-	public Property getActiveProperty() {
+	public PropertyImpl getActiveProperty() {
 		return activeProperty;
 	}
 
@@ -640,15 +640,15 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
 	 * Inactive property is the property whose demand is not active
 	 */
 	@Override
-	public Property getInactiveProperty() {
+	public PropertyImpl getInactiveProperty() {
 		return inactiveProperty;
 	}
 
-	public void setActiveProperty(Property activeProperty) {
+	public void setActiveProperty(PropertyImpl activeProperty) {
 		this.activeProperty = activeProperty;
 	}
 
-	public void setInactiveProperty(Property inactiveProperty) {
+	public void setInactiveProperty(PropertyImpl inactiveProperty) {
 		this.inactiveProperty = inactiveProperty;
 	}
 }

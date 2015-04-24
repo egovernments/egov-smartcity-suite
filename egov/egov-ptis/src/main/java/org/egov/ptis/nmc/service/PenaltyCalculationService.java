@@ -331,8 +331,8 @@ public class PenaltyCalculationService {
 		
 		
 		for (Map.Entry<Date, Property> entry : propertyTaxUtil.getPropertiesForPenlatyCalculation(basicProperty).entrySet()) {
-			propertySystemCreatedDates.add(entry.getValue().getCreatedDate());
-			propertyCreatedAndOccupancyDate.put(entry.getValue().getCreatedDate(), entry.getKey());
+			propertySystemCreatedDates.add(entry.getValue().getCreatedDate().toDate());
+			propertyCreatedAndOccupancyDate.put(entry.getValue().getCreatedDate().toDate(), entry.getKey());
 		}
 		
 		occupancyDates = new ArrayList<Date>(propertyCreatedAndOccupancyDate.values());
@@ -667,7 +667,7 @@ public class PenaltyCalculationService {
 	 * @return true if the installment passed is a rollover installment
 	 */
 	private boolean isRolloverInstallment(Installment installment) {
-		Date systemCreatedDate = basicProperty.getProperty().getCreatedDate();
+		Date systemCreatedDate = basicProperty.getProperty().getCreatedDate().toDate();
 		return propertyTaxUtil.between(new Date(), installment.getFromDate(), installment.getToDate())
 				&& !propertyTaxUtil.between(systemCreatedDate, installment.getFromDate(), installment.getToDate());
 	}

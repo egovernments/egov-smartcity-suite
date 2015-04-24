@@ -190,12 +190,12 @@ public interface BasicProperty {
 
 	public void setIsDemandActive(boolean isDemandActive);
 
-	public Property getActiveProperty();
+	public PropertyImpl getActiveProperty();
 
-	public Property getInactiveProperty();
+	public PropertyImpl getInactiveProperty();
 
-	public void setActiveProperty(Property activeProperty);
+	public void setActiveProperty(PropertyImpl activeProperty);
 
-	public void setInactiveProperty(Property inactiveProperty);
+	public void setInactiveProperty(PropertyImpl inactiveProperty);
 
 }

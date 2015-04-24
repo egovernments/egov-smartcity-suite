@@ -63,7 +63,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
-@Repository(value = "demandGenericDAO")
+@Repository(value = "demandGenericHibDAO")
 public class DemandGenericHibDao implements DemandGenericDao{
 
 	/**

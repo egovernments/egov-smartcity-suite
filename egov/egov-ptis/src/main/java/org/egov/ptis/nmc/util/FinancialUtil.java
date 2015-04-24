@@ -23,17 +23,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Installment;
-import org.egov.commons.dao.CommonsDaoFactory;
 import org.egov.commons.dao.InstallmentDao;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.commons.Module;
-import org.egov.infstr.commons.dao.GenericDaoFactory;
 import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.ptis.nmc.constants.NMCPTISConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * @author subhash
@@ -54,6 +54,12 @@ public class FinancialUtil {
 
 	private static final String URL_FOR_DCB = "/ptis/view/viewDCBProperty!displayPropInfo.action?propertyId=";
 
+	@Autowired
+	@Qualifier(value = "moduleDAO")
+	private ModuleDao moduleDao;
+	@Autowired
+	private InstallmentDao installmentDao;
+
 	/**
 	 * This method creates a Voucher
 	 * 
@@ -68,52 +74,83 @@ public class FinancialUtil {
 	 * @throws IOException
 	 * 
 	 */
-	public void createVoucher(String indexNum, Map<Installment, Map<String, BigDecimal>> amounts, String transaction) {
+	public void createVoucher(String indexNum,
+			Map<Installment, Map<String, BigDecimal>> amounts,
+			String transaction) {
 
-		LOGGER.info("createVoucher: IndexNumber==>" + indexNum + " amounts==>" + amounts + "actionName==>"
-				+ transaction);
+		LOGGER.info("createVoucher: IndexNumber==>" + indexNum + " amounts==>"
+				+ amounts + "actionName==>" + transaction);
 
 		Map<String, Map<String, BigDecimal>> resultMap = prepareDemandForGlcode(amounts);
-		Map<String, BigDecimal> arrearsDemandMap = resultMap.get(ARREARS_DEMAND);
-		Map<String, BigDecimal> currentDemandMap = resultMap.get(CURRENT_DEMAND);
+		Map<String, BigDecimal> arrearsDemandMap = resultMap
+				.get(ARREARS_DEMAND);
+		Map<String, BigDecimal> currentDemandMap = resultMap
+				.get(CURRENT_DEMAND);
 
-		HashMap<String, Object> headerdetails = createHeaderDetails(indexNum, transaction);
+		HashMap<String, Object> headerdetails = createHeaderDetails(indexNum,
+				transaction);
 		List<HashMap<String, Object>> accountDetList = new ArrayList<HashMap<String, Object>>();
 		try {
 
-			for (Map.Entry<String, BigDecimal> arrearsDemand : arrearsDemandMap.entrySet()) {
+			for (Map.Entry<String, BigDecimal> arrearsDemand : arrearsDemandMap
+					.entrySet()) {
 				if (arrearsDemand.getValue().compareTo(BigDecimal.ZERO) == 1) {
-					accountDetList.add(createAccDetailmap(GLCODEMAP_FOR_ARREARTAX.get(arrearsDemand.getKey()),
-							arrearsDemand.getValue().abs(), BigDecimal.ZERO));
-					accountDetList.add(createAccDetailmap(GLCODEMAP_FOR_TAX_PAYABLE.get(arrearsDemand.getKey()),
-							BigDecimal.ZERO, arrearsDemand.getValue().abs()));
+					accountDetList
+							.add(createAccDetailmap(GLCODEMAP_FOR_ARREARTAX
+									.get(arrearsDemand.getKey()), arrearsDemand
+									.getValue().abs(), BigDecimal.ZERO));
+					accountDetList.add(createAccDetailmap(
+							GLCODEMAP_FOR_TAX_PAYABLE.get(arrearsDemand
+									.getKey()), BigDecimal.ZERO, arrearsDemand
+									.getValue().abs()));
 
-				} else if(arrearsDemand.getValue().compareTo(BigDecimal.ZERO) == -1){
-					accountDetList.add(createAccDetailmap(GLCODEMAP_FOR_ARREARTAX.get(arrearsDemand.getKey()),
-							BigDecimal.ZERO, arrearsDemand.getValue().abs()));
-					accountDetList.add(createAccDetailmap(GLCODEMAP_FOR_TAX_PAYABLE.get(arrearsDemand.getKey()),
-							arrearsDemand.getValue().abs(), BigDecimal.ZERO));
+				} else if (arrearsDemand.getValue().compareTo(BigDecimal.ZERO) == -1) {
+					accountDetList
+							.add(createAccDetailmap(GLCODEMAP_FOR_ARREARTAX
+									.get(arrearsDemand.getKey()),
+									BigDecimal.ZERO, arrearsDemand.getValue()
+											.abs()));
+					accountDetList.add(createAccDetailmap(
+							GLCODEMAP_FOR_TAX_PAYABLE.get(arrearsDemand
+									.getKey()), arrearsDemand.getValue().abs(),
+							BigDecimal.ZERO));
 				}
 			}
-			for (Map.Entry<String, BigDecimal> currentDemand : currentDemandMap.entrySet()) {
+			for (Map.Entry<String, BigDecimal> currentDemand : currentDemandMap
+					.entrySet()) {
 				if (currentDemand.getValue().compareTo(BigDecimal.ZERO) == 1) {
-					accountDetList.add(createAccDetailmap(GLCODEMAP_FOR_CURRENTTAX.get(currentDemand.getKey()),
-							currentDemand.getValue().abs(), BigDecimal.ZERO));
-					accountDetList.add(createAccDetailmap(GLCODEMAP_FOR_TAX_PAYABLE.get(currentDemand.getKey()),
-							BigDecimal.ZERO, currentDemand.getValue().abs()));
+					accountDetList
+							.add(createAccDetailmap(GLCODEMAP_FOR_CURRENTTAX
+									.get(currentDemand.getKey()), currentDemand
+									.getValue().abs(), BigDecimal.ZERO));
+					accountDetList.add(createAccDetailmap(
+							GLCODEMAP_FOR_TAX_PAYABLE.get(currentDemand
+									.getKey()), BigDecimal.ZERO, currentDemand
+									.getValue().abs()));
 
-				} else if(currentDemand.getValue().compareTo(BigDecimal.ZERO) == -1) {
-					
-					if (currentDemand.getKey().equalsIgnoreCase(NMCPTISConstants.DEMANDRSN_CODE_ADVANCE)) {
-						accountDetList.add(createAccDetailmap(NMCPTISConstants.GLCODE_FOR_ADVANCE,
-								BigDecimal.ZERO, currentDemand.getValue().abs()));
-						accountDetList.add(createAccDetailmap(NMCPTISConstants.GLCODE_FOR_ADVANCE,
-								currentDemand.getValue().abs(), BigDecimal.ZERO));
+				} else if (currentDemand.getValue().compareTo(BigDecimal.ZERO) == -1) {
+
+					if (currentDemand.getKey().equalsIgnoreCase(
+							NMCPTISConstants.DEMANDRSN_CODE_ADVANCE)) {
+						accountDetList
+								.add(createAccDetailmap(
+										NMCPTISConstants.GLCODE_FOR_ADVANCE,
+										BigDecimal.ZERO, currentDemand
+												.getValue().abs()));
+						accountDetList
+								.add(createAccDetailmap(
+										NMCPTISConstants.GLCODE_FOR_ADVANCE,
+										currentDemand.getValue().abs(),
+										BigDecimal.ZERO));
 					} else {
-						accountDetList.add(createAccDetailmap(GLCODEMAP_FOR_CURRENTTAX.get(currentDemand.getKey()),
-								BigDecimal.ZERO, currentDemand.getValue().abs()));
-						accountDetList.add(createAccDetailmap(GLCODEMAP_FOR_TAX_PAYABLE.get(currentDemand.getKey()),
-								currentDemand.getValue().abs(), BigDecimal.ZERO));
+						accountDetList.add(createAccDetailmap(
+								GLCODEMAP_FOR_CURRENTTAX.get(currentDemand
+										.getKey()), BigDecimal.ZERO,
+								currentDemand.getValue().abs()));
+						accountDetList.add(createAccDetailmap(
+								GLCODEMAP_FOR_TAX_PAYABLE.get(currentDemand
+										.getKey()), currentDemand.getValue()
+										.abs(), BigDecimal.ZERO));
 					}
 
 				}
@@ -121,8 +158,8 @@ public class FinancialUtil {
 			}
 
 			CreateVoucher cv = new CreateVoucher();
-			CVoucherHeader cvh = cv.createVoucher(headerdetails, accountDetList,
-					new ArrayList<HashMap<String, Object>>());
+			CVoucherHeader cvh = cv.createVoucher(headerdetails,
+					accountDetList, new ArrayList<HashMap<String, Object>>());
 			if (cvh == null) {
 				LOGGER.error("Voucher Creation failed. CVoucherHeader is null.");
 				throw new EGOVRuntimeException("Voucher Creation failed.");
@@ -146,12 +183,14 @@ public class FinancialUtil {
 	 *            Credit amount for the account head
 	 * @return Map Map contains account details.
 	 */
-	private HashMap<String, Object> createAccDetailmap(String glcode, BigDecimal debitAmount, BigDecimal creditAmount) {
+	private HashMap<String, Object> createAccDetailmap(String glcode,
+			BigDecimal debitAmount, BigDecimal creditAmount) {
 		HashMap<String, Object> accountdetailmap = new HashMap<String, Object>();
 		accountdetailmap.put(VoucherConstant.GLCODE, glcode);
 		accountdetailmap.put(VoucherConstant.DEBITAMOUNT, debitAmount);
 		accountdetailmap.put(VoucherConstant.CREDITAMOUNT, creditAmount);
-		accountdetailmap.put(VoucherConstant.FUNCTIONCODE, DEFAULT_FUNCTIONARY_CODE);
+		accountdetailmap.put(VoucherConstant.FUNCTIONCODE,
+				DEFAULT_FUNCTIONARY_CODE);
 		return accountdetailmap;
 	}
 
@@ -165,9 +204,11 @@ public class FinancialUtil {
 	 *            etc)
 	 * @return Map Contains voucher header details
 	 */
-	private HashMap<String, Object> createHeaderDetails(String indexNumber, String transaction) {
+	private HashMap<String, Object> createHeaderDetails(String indexNumber,
+			String transaction) {
 		SimpleDateFormat sdf = new SimpleDateFormat("MMM-dd-yyyy HH:mm:ss");
-		String description = "PTIS / " + indexNumber + " / " + transaction + " / " + sdf.format(new Date());
+		String description = "PTIS / " + indexNumber + " / " + transaction
+				+ " / " + sdf.format(new Date());
 		String sourceURL = URL_FOR_DCB + indexNumber;
 
 		HashMap<String, Object> headerdetails = new HashMap<String, Object>();
@@ -197,10 +238,9 @@ public class FinancialUtil {
 	private Map<String, Map<String, BigDecimal>> prepareDemandForGlcode(
 			Map<Installment, Map<String, BigDecimal>> amounts) {
 
-		ModuleDao moduleDao = GenericDaoFactory.getDAOFactory().getModuleDao();
-		InstallmentDao isntalDao = CommonsDaoFactory.getDAOFactory().getInstallmentDao();
 		Module module = moduleDao.getModuleByName(PTMODULENAME);
-		Installment currentInstall = isntalDao.getInsatllmentByModuleForGivenDate(module, new Date());
+		Installment currentInstall = installmentDao
+				.getInsatllmentByModuleForGivenDate(module, new Date());
 
 		Map<String, Map<String, BigDecimal>> demandForGlcode = new HashMap<String, Map<String, BigDecimal>>();
 		Map<String, BigDecimal> arrearsDemand = new HashMap<String, BigDecimal>();
@@ -208,13 +248,15 @@ public class FinancialUtil {
 		BigDecimal taxAmount = BigDecimal.ZERO;
 		BigDecimal amount = BigDecimal.ZERO;
 		String demandReason = "";
-		for (Entry<Installment, Map<String, BigDecimal>> amountsRecord : amounts.entrySet()) {
+		for (Entry<Installment, Map<String, BigDecimal>> amountsRecord : amounts
+				.entrySet()) {
 
 			String instDesc = amountsRecord.getKey().getDescription();
 			Map<String, BigDecimal> demandReasonMap = amountsRecord.getValue();
 
 			if (!instDesc.equalsIgnoreCase(currentInstall.toString())) {
-				for (Map.Entry<String, BigDecimal> demandReasonRecord : demandReasonMap.entrySet()) {
+				for (Map.Entry<String, BigDecimal> demandReasonRecord : demandReasonMap
+						.entrySet()) {
 
 					demandReason = demandReasonRecord.getKey();
 					amount = demandReasonRecord.getValue();
@@ -228,7 +270,8 @@ public class FinancialUtil {
 					}
 				}
 			} else {
-				for (Map.Entry<String, BigDecimal> demandReasonRecord : demandReasonMap.entrySet()) {
+				for (Map.Entry<String, BigDecimal> demandReasonRecord : demandReasonMap
+						.entrySet()) {
 					demandReason = demandReasonRecord.getKey();
 					amount = demandReasonRecord.getValue();
 					taxAmount = BigDecimal.ZERO;
