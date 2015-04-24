@@ -189,7 +189,7 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 		if(!bndryObjList.isEmpty())
 		{
 			Query qry = getCurrentSession().createQuery("select J FROM JurisdictionValues JurVal, Jurisdiction J  where " +
-						"JurVal.boundary in (:bndryObjList) and JurVal.userJurLevel.id=J.id and JurVal.isHistory='N' and J.user.isActive=1 and "+
+						"JurVal.boundary in (:bndryObjList) and JurVal.userJurLevel.id=J.id and JurVal.isHistory='N' and J.user.active=true and "+
 						"(" +
 						"(JurVal.toDate IS NULL and JurVal.fromDate <= :currDate) " +
 						"OR " +
@@ -228,7 +228,7 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 		if(!bndryObjList.isEmpty())
 		{
 			Query qry = getCurrentSession().createQuery("select J FROM JurisdictionValues JurVal, Jurisdiction J  where " +
-						"JurVal.boundary in (:bndryObjList) and JurVal.userJurLevel.id=J.id and JurVal.isHistory='N' and J.user.isActive=1 and "+
+						"JurVal.boundary in (:bndryObjList) and JurVal.userJurLevel.id=J.id and JurVal.isHistory='N' and J.user.active=true and "+
 						"(" +
 						"(JurVal.toDate IS NULL and JurVal.fromDate <= :currDate) " +
 						"OR " +
@@ -508,7 +508,7 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 		 List<User> userList = null; 
 			
 			try {					
-						Query qry = getCurrentSession().createQuery("from User u where u.id in (select ev.userMaster.id from EmployeeView ev where ev.desigId.designationId =:desgId) and u.isActive=1 ");
+						Query qry = getCurrentSession().createQuery("from User u where u.id in (select ev.userMaster.id from EmployeeView ev where ev.desigId.designationId =:desgId) and u.active=true ");
 						qry.setInteger("desgId",desgId);					
 						userList = qry.list();
 						

@@ -64,26 +64,6 @@
 
 	<bean id="rbacService" class="org.egov.lib.rrbac.services.RbacServiceImpl" />
 
-
-	<!-- <bean id="userService" class="org.egov.infra.admin.master.service.UserService" >
-		<constructor-arg ref="sessionFactory" />
-		<constructor-arg ref="userDao" />
-	</bean>
- -->
-	<!-- <bean id="boundaryService" class="org.egov.lib.admbndry.ejb.server.BoundaryServiceImpl">
-		<property name="boundaryDAO" ref="boundaryDAO" />
-		<property name="boundaryTypeService" ref="boundaryTypeService" />
-		<property name="heirarchyTypeService" ref="heirarchyTypeService"/>
-	</bean> -->
-
-	<!-- <bean id="heirarchyTypeService" class="org.egov.lib.admbndry.ejb.server.HeirarchyTypeServiceImpl" >
-		<property name="heirarchyTypeDAO" ref="heirarchyTypeDAO"/>
-	</bean> -->
- 
-	<!-- <bean id="boundaryTypeService" class="org.egov.lib.admbndry.ejb.server.BoundaryTypeServiceImpl">
-		<constructor-arg ref="sessionFactory" />
-	</bean> -->
-
 	<bean id="commonsDAOFactory" class="org.egov.commons.dao.CommonsDAOFactory">
 		<constructor-arg ref="sessionFactory" />
 	</bean>
@@ -94,10 +74,6 @@
 		<constructor-arg ref="sessionFactory"/>
 	</bean>
 
-	<!-- <bean id="departmentService" class="org.egov.lib.rjbac.dept.ejb.server.DepartmentServiceImpl">
-		<constructor-arg ref="departmentDao" />
-	</bean> -->
-	
 	<bean id="beanProvider" class="org.egov.infstr.beanfactory.ApplicationContextBeanProvider" />
 
 	<bean id="egovSessionFactory" class="org.egov.infstr.services.SessionFactory" />
@@ -202,19 +178,10 @@
 		<constructor-arg ref="sessionFactory"/>
 	</bean>
 
-	<bean id="cityWebsiteDAO" class="org.egov.lib.admbndry.CityWebsiteDAO" scope="prototype" >
-		<constructor-arg ref="sessionFactory" />
-	</bean>
-
-	<!-- <bean id="userDao" class="org.egov.infra.admin.master.repository.UserRepository" scope="prototype" >
-		<constructor-arg ref="sessionFactory" />
-	</bean> -->
-
 	<bean id="userCounterDao" class="org.egov.lib.security.terminal.dao.UserCounterHibernateDAO" scope="prototype">
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 
-	<bean id="departmentDao" class="org.egov.lib.rjbac.dept.dao.DepartmentDAO" scope="prototype" />
 
 	<bean id="actionDao" class="org.egov.lib.rrbac.dao.ActionHibernateDAO" scope="prototype" autowire="default">
 	</bean>
@@ -249,14 +216,6 @@
 		<property name="eisService" ref="eisService" />
 	</bean>
 
-	<bean id="moveBoundaryDelegate" class="org.egov.infstr.client.delegate.MoveBoundaryDelegate" scope="prototype">
-		<property name="boundaryDAO" ref="boundaryDAO" />
-	</bean>
-
-	<!-- <bean id="favouriteService" parent="persistenceService" autowire-candidate="true">
-		<property name="type" value="org.egov.infstr.models.Favourites"/>
-	</bean> -->
-
 	<bean id="workFlowMatrixService" class="org.egov.infstr.workflow.WorkFlowMatrixService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.infstr.workflow.WorkFlowMatrix"/>
 		<property name="persistenceService" ref="persistenceService" />
@@ -269,16 +228,6 @@
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
-	<bean id="userDelegate" class="org.egov.infstr.client.delegate.UserDelegate">
-		<property name="userService" ref="userService"/>
-		<property name="boundaryService" ref="boundaryService"/>
-	<!-- 	<property name="boundaryTypeService" ref="boundaryTypeService"/> -->
-		<!-- <property name="departmentService" ref="departmentService"/> -->
-		<property name="heirarchyTypeService" ref="heirarchyTypeService"/>
-		<!-- <property name="roleService" ref="roleService"/> -->
-		<property name="egovInfrastrUtil" ref="egovInfrastructureUtil"/>
-	</bean>
-
 	<bean id="egovInfrastructureUtil" class="org.egov.commons.utils.EgovInfrastrUtil">
 		<property name="userDAO" ref="userRepository" />
 	</bean>

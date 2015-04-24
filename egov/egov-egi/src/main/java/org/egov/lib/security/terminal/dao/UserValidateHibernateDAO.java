@@ -74,7 +74,7 @@ public class UserValidateHibernateDAO implements UserValidateDAO {
 	public boolean validateUserLocation(final UserValidate obj) {
 		final StringBuilder queryStr = new StringBuilder();
 		queryStr.append("Select user from Location loc,LocationIPMap locIP,User user, UserCounterMap map where map.userId = user.id and locIP.ipAddress = :ipaddress and  loc.id=locIP.location.id and ");
-		queryStr.append("map.counterId = loc.id and loc.isActive=1 and user.isActive =true and user.username = :username and user.password = :password ");
+		queryStr.append("map.counterId = loc.id and loc.isActive=1 and user.active =true and user.username = :username and user.password = :password ");
 		queryStr.append("and loc.id = :locationId And ((map.toDate IS NULL AND map.fromDate <= :currDate) OR (map.fromDate <= :currDate AND map.toDate >= :currDate))");
 		final Query qry = getCurrentSession().createQuery(queryStr.toString());
 		qry.setString("username", obj.getUsername());
@@ -89,7 +89,7 @@ public class UserValidateHibernateDAO implements UserValidateDAO {
 	public boolean validateUserTerminal(final UserValidate obj) {
 		final StringBuilder queryStr = new StringBuilder();
 		queryStr.append("select user from Location loc,LocationIPMap locIP, User user, UserCounterMap map where map.userId = user.id and locIP.ipAddress = :ipaddress and  loc.id=locIP.location.id and ");
-		queryStr.append("map.counterId = loc.id and loc.isActive=1 and user.isActive = true and user.username = :username and user.password = :password ");
+		queryStr.append("map.counterId = loc.id and loc.isActive=1 and user.active = true and user.username = :username and user.password = :password ");
 		queryStr.append("and loc.id = :counterId And ((map.toDate IS NULL AND map.fromDate <= :currDate) OR (map.fromDate <= :currDate AND map.toDate >= :currDate))");
 		final Query qry = getCurrentSession().createQuery(queryStr.toString());
 		qry.setString("username", obj.getUsername());
@@ -123,7 +123,7 @@ public class UserValidateHibernateDAO implements UserValidateDAO {
 	@Override
 	public boolean validateActiveUserForPeriod(final String userName) {
 		final Query qry = getCurrentSession().createQuery(
-				"select user from User user where user.username = :username and user.isActive = true");
+				"select user from User user where user.username = :username and user.active = true");
 		qry.setString("username", userName);
 		final User user = (User) qry.uniqueResult();
 		return user != null;

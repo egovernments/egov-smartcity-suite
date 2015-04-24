@@ -128,7 +128,7 @@ public class User extends AbstractAuditable<User, Long> {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Address> address = Collections.emptyList();
 
-    private boolean isActive;
+    private boolean active;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "eg_userrole", joinColumns = @JoinColumn(name = "user"), inverseJoinColumns = @JoinColumn(name = "role"))
@@ -246,11 +246,11 @@ public class User extends AbstractAuditable<User, Long> {
     }
 
     public boolean isActive() {
-        return isActive;
+        return active;
     }
 
-    public void setActive(final boolean isActive) {
-        this.isActive = isActive;
+    public void setActive(final boolean active) {
+        this.active = active;
     }
 
     public Set<Role> getRoles() {

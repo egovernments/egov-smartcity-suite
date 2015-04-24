@@ -468,7 +468,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                     mainStr += " ev.employeeType.id=:employeeType and ";
                 }
                 if (isActive.intValue() != 0) {
-                    mainStr += " ev.userMaster.isActive=:isActive  and ";
+                    mainStr += " ev.userMaster.active=:isActive  and ";
                 }
                 if (userId.intValue() != 0)// to query the employee using
                                            // employee username

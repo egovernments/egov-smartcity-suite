@@ -70,7 +70,7 @@ public class CityWebsite extends AbstractPersistable<Long> {
 
     private String cityName;
     private String cityNameLocal;
-    private boolean isActive;
+    private boolean active;
     private String cityBaseURL;
     private String logo;
 
@@ -99,11 +99,11 @@ public class CityWebsite extends AbstractPersistable<Long> {
     }
 
     public boolean isActive() {
-        return isActive;
+        return active;
     }
 
-    public void setActive(boolean isActive) {
-        this.isActive = isActive;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public String getCityBaseURL() {

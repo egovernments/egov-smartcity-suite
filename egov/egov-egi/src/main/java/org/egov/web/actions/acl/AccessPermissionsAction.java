@@ -120,7 +120,7 @@ public class AccessPermissionsAction extends BaseFormAction {
 	public List<User> getAllUsers() {
 
 		if (StringUtils.isNotBlank(this.query)) {
-			this.userList.addAll(this.persistenceService.findAllBy("from User where upper(userName) like '%' || ? || '%' and isActive=1 ", this.query.toUpperCase()));
+			this.userList.addAll(this.persistenceService.findAllBy("from User where upper(userName) like '%' || ? || '%' and active=1 ", this.query.toUpperCase()));
 
 		}
 		return this.userList;
