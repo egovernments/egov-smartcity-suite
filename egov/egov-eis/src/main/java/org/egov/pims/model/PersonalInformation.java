@@ -656,4 +656,9 @@ public void setEmployeeTypeMaster(EmployeeStatusMaster employeeTypeMaster) {
 		
 		return assignment;
 	}
+	@Override
+	public EgwStatus getEgwStatus() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -43,6 +43,7 @@ import java.util.List;
 
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
+import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.DrawingOfficer;
 
@@ -61,6 +62,27 @@ public class DrawingOfficerService extends PersistenceService<DrawingOfficer, Lo
 	public List<? extends EntityType> getAllActiveEntities(
 			Integer accountDetailTypeId) {
 		return findAll("code");
+	}
+
+	@Override
+	public List getAssetCodesForProjectCode(Integer accountdetailkey)
+			throws ValidationException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<? extends EntityType> validateEntityForRTGS(List<Long> idsList)
+			throws ValidationException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<? extends EntityType> getEntitiesById(List<Long> idsList)
+			throws ValidationException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

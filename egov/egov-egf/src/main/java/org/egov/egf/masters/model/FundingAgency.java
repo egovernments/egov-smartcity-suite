@@ -107,6 +107,11 @@ public class FundingAgency extends BaseModel implements EntityType {
 	public void setIsActive(boolean isActive) {
 		this.isActive = isActive;
 	}
+	@Override
+	public EgwStatus getEgwStatus() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	/*@Override
 	public EgwStatus getEgwStatus() {

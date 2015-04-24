@@ -5,16 +5,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
 import org.egov.eb.domain.master.entity.EBConsumer;
 import org.egov.eb.utils.EBConstants;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.commons.Position;
-import org.hibernate.Query;
 
-public class EBConsumerService {
-//extends PersistenceService<EBConsumer, Long>  implements EntityTypeService {
+public class EBConsumerService implements EntityTypeService{
+//extends PersistenceService<EBConsumer, Long>   {
 
 	private static final String FALSE = "false";
 	private static final boolean TRUE = false;
@@ -212,5 +212,40 @@ public class EBConsumerService {
 		}
 		
 		return detailsByConsumer;
+	}
+
+	@Override
+	public List<? extends EntityType> getAllActiveEntities(
+			Integer accountDetailTypeId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<? extends EntityType> filterActiveEntities(String filterKey,
+			int maxRecords, Integer accountDetailTypeId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List getAssetCodesForProjectCode(Integer accountdetailkey)
+			throws ValidationException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<? extends EntityType> validateEntityForRTGS(List<Long> idsList)
+			throws ValidationException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<? extends EntityType> getEntitiesById(List<Long> idsList)
+			throws ValidationException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

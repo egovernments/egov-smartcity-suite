@@ -42,6 +42,7 @@ package org.egov.commons.service;
 import java.util.List;
 
 import org.egov.commons.utils.EntityType;
+import org.egov.infstr.ValidationException;
 
 public interface EntityTypeService {
 	/**
@@ -65,4 +66,22 @@ public interface EntityTypeService {
 	 * @return List of filtered active entities
 	 */
 	public List<? extends EntityType> filterActiveEntities(String filterKey, int maxRecords, Integer accountDetailTypeId);
+	public List getAssetCodesForProjectCode(Integer accountdetailkey) throws ValidationException;
+
+	/**
+    *
+    * @param idsList
+    * @return
+    * @throws ValidationException
+    * returns only those which are invalid for RTGSPayment
+    */
+   public List<? extends EntityType> validateEntityForRTGS(List<Long> idsList) throws ValidationException;
+   /**
+    *
+    * @param idsList
+    * @return
+    * @throws ValidationException
+    * will return entities for the given ids which are same as accountdetailkeyid
+    */
+   public List<? extends EntityType> getEntitiesById(List<Long> idsList) throws ValidationException;
 }

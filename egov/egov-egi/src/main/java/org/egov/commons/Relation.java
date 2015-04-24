@@ -451,4 +451,10 @@ public class Relation implements java.io.Serializable, EntityType, Bidder {
 		return this.id;
 	}
 
+	@Override
+	public EgwStatus getEgwStatus() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -55,6 +55,7 @@ import org.egov.commons.service.CommonsService;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.Page;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
@@ -459,6 +460,24 @@ public List<EmployeeView> getListOfEmployeeViewBasedOnListOfDesignationAndOtherC
 		}
 		
 		return employeeList;
+	}
+	@Override
+	public List getAssetCodesForProjectCode(Integer accountdetailkey)
+			throws ValidationException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public List<? extends EntityType> validateEntityForRTGS(List<Long> idsList)
+			throws ValidationException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public List<? extends EntityType> getEntitiesById(List<Long> idsList)
+			throws ValidationException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

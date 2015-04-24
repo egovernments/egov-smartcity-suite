@@ -39,6 +39,8 @@
  */
 package org.egov.commons.utils;
 
+import org.egov.commons.EgwStatus;
+
 
 
 /**
@@ -103,5 +105,10 @@ public interface EntityType {
 	 * @return data to be displayed in reports
 	 */
 	public String getEntityDescription();	
-	
+	/**
+     *
+     * @return status of Entity^M
+     */
+    public EgwStatus getEgwStatus();
+
 }

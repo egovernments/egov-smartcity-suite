@@ -41,6 +41,7 @@ package org.egov.pims.commons;
 
 import org.egov.commons.Bank;
 import org.egov.commons.Bankbranch;
+import org.egov.commons.EgwStatus;
 import org.egov.commons.utils.EntityType;
 
 public class DrawingOfficer implements  java.io.Serializable,EntityType {
@@ -129,6 +130,11 @@ public class DrawingOfficer implements  java.io.Serializable,EntityType {
 	}
 	public void setTan(String tan) {
 		this.tan = tan;
+	}
+	@Override
+	public EgwStatus getEgwStatus() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

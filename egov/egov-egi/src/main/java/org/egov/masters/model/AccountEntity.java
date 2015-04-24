@@ -42,6 +42,7 @@ package org.egov.masters.model;
 import java.util.Date;
 
 import org.egov.commons.Accountdetailtype;
+import org.egov.commons.EgwStatus;
 import org.egov.commons.utils.EntityType;
 import org.egov.infra.admin.master.entity.User;
 
@@ -202,6 +203,12 @@ public class AccountEntity implements java.io.Serializable, EntityType {
 
 	public String getEntityDescription() {
 		return this.narration;
+	}
+
+	@Override
+	public EgwStatus getEgwStatus() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

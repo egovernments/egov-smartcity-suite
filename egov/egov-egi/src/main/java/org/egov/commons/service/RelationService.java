@@ -41,6 +41,7 @@ package org.egov.commons.service;
 
 import org.egov.commons.Relation;
 import org.egov.commons.utils.EntityType;
+import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 
 import java.util.ArrayList;
@@ -83,5 +84,26 @@ public class RelationService extends PersistenceService<Relation, Integer> imple
 	@Override
 	public Relation getBidderByCode(final String code) {
 		return find("from Relation where code=?", code);
+	}
+
+	@Override
+	public List getAssetCodesForProjectCode(Integer accountdetailkey)
+			throws ValidationException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<? extends EntityType> validateEntityForRTGS(List<Long> idsList)
+			throws ValidationException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<? extends EntityType> getEntitiesById(List<Long> idsList)
+			throws ValidationException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

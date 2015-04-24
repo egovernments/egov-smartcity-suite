@@ -58,6 +58,7 @@ import org.egov.model.instrument.InstrumentOtherDetails;
 import org.egov.model.recoveries.Recovery;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
+import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.services.instrument.DishonorChequeService;
 import org.egov.services.instrument.InstrumentService;
@@ -523,7 +524,7 @@ public class DishonoredChequeAction extends DispatchAction {
 				//narration- reversal entry for receipt "voucher No"-- with "cheque No" dated :"Cheque date"
 				// Get iod created by user
 				InstrumentOtherDetails iob= (InstrumentOtherDetails)persistenceService.find("from InstrumentOtherDetails where instrumentHeaderId.id=?",instHeader.getId());
-				PersonalInformation loggedInEmp=getEisCommonService().getEmpForUserId(iob.getCreatedBy().getId());                  
+				PersonalInformation loggedInEmp=null;//getEisCommonService().getEmpForUserId(iob.getCreatedBy().getId());                  
 				nextUser=iob.getPayinslipId().getCreatedBy();
 				//This fix is for Phoenix Migration.
 				/*dishonorChq.setPayinSlipCreatorUser(nextUser);
