@@ -1,15 +1,7 @@
 <%@page contentType="text/html"%>
 <%@page pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
-<%@ include file="/includes/taglibs.jsp" %>
-<%@ page import="java.util.*,org.egov.infstr.utils.EgovMasterDataCaching" %>
-<%@page import="java.util.*,
-		org.egov.lib.admbndry.*,
-		org.egov.infstr.commons.Module" %>
-<%@page import="org.egov.pims.service.EisManager,org.egov.pims.utils.EisManagersUtill,
-				org.egov.pims.model.PersonalInformation,org.egov.pims.model.Assignment" %>
 				
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
   "http://www.w3.org/TR/html4/loose.dtd">  

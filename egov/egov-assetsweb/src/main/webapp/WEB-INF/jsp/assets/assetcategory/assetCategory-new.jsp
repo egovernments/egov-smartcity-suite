@@ -1,5 +1,4 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <html>
 	<head>  
 	    <s:if test="%{userMode=='new'}">

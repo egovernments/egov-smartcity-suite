@@ -1,5 +1,4 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 
 <style type="text/css">
 #yui-dt0-bodytable,#yui-dt1-bodytable,#yui-dt2-bodytable {

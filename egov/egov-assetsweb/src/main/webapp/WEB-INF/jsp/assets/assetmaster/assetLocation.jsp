@@ -1,5 +1,4 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 			<tr>
 				<td width="25%" class="greyboxwk"><s:text name="asset.location.zone" /></td>
 				<td width="25%" class="greybox2wk">

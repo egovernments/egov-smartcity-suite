@@ -1,5 +1,4 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 <script>
 
