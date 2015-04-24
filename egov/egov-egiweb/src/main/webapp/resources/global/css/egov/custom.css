@@ -87,6 +87,10 @@ a:focus{
 	table-layout: fixed;
 }
 
+.homepage_logo{
+	border-radius:50%;
+}
+
 /*header*/
 .page-container.horizontal-menu {
 	padding-left: 0;
@@ -120,11 +124,10 @@ a:focus{
 	background-clip: padding-box;
 }
 .page-container.horizontal-menu header.navbar .navbar-brand {
-	padding: 0 20px;
+	padding: 0 12px;
 	padding-right: 0;
 	padding-top:1px;
 	padding-bottom:1px;
-	/* padding-bottom: 13px; */
 }
 .horizontal-page-title, .horizontal-page-title.homepage{
 	margin:0;
@@ -1911,4 +1914,12 @@ ul li a span{
 
 .header-color{
 	color: #f2851f;
+}
+
+.modal-dialog.history{
+  width: 768px; 
+}
+
+.history-size{
+	font-size:20px;
 }

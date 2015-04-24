@@ -73,33 +73,108 @@
 						<table id="exampleTable" class="table table-bordered datatable dataTable no-footer">
 							<thead> 
 								<tr>
-									<th>Race</th>
-									<th>Year</th>
-									<th>Total</th>
+									<th>Date</th>
+									<th>Sender</th>
+									<th>Task</th>
+									<th>Status</th>
+									<th>Details</th>
 									<th></th>
 								</tr>
 							</thead>
-							<tbody></tbody>
+							<tbody>
+								<tr>
+									<td>Aslam</td>
+									<td>2013</td>
+									<td>56</td>
+									<td>56</td>
+									<td>56</td>
+									<td><i class="fa fa-history history-size" class="tooltip-secondary" data-toggle="tooltip" title="History"></i></td>
+								</tr>
+								<tr>
+									<td>DInesh</td>
+									<td>1992</td>
+									<td>41</td>
+									<td>41</td>
+									<td>41</td>
+									<td><i class="fa fa-history history-size" class="tooltip-secondary" data-toggle="tooltip" title="History"></i></td>
+								</tr>
+								<tr>
+									<td>Venkat</td>
+									<td>2000</td>
+									<td>23</td>
+									<td>23</td>
+									<td>23</td>
+									<td><i class="fa fa-history history-size" class="tooltip-secondary" data-toggle="tooltip" title="History"></i></td>
+								</tr>
+							</tbody>
 						</table>
-						
-						<div style="display:none">    
-							<table id="detailsTable" class="datatable dataTable no-footer">
-								<thead> 
-									<tr>
-										<th>Contact Person</th>
-										<th>Name</th>
-										<th>Team</th>
-										<th>Server</th>
-									</tr>
-								</thead>
-								<tbody></tbody>
-							</table>
-						</div>
 					</div>
 				</div> 
 				
 			</div>
 			
+		</div>
+		
+		<div class="modal fade history-inbox">
+			<div class="modal-dialog history">
+				<div class="modal-content">
+					
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title">History</h4>
+					</div>
+					
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-md-12">
+								<table id="nestedTable" class="table table-bordered datatable dataTable no-footer">
+									<thead> 
+										<tr>
+											<th>Date</th>
+											<th>Sender</th>
+											<th>Task</th>
+											<th>Status</th>
+											<th>Details</th>
+											<th>Add. Column</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>Aslam</td>
+											<td>2013</td>
+											<td>56</td>
+											<td>59087</td>
+											<td>59087</td>
+											<td>59087</td>
+										</tr>
+										<tr>
+											<td>DInesh</td>
+											<td>1992</td>
+											<td>41</td>
+											<td>34512</td>
+											<td>34512</td>
+											<td>34512</td>
+										</tr>
+										<tr>
+											<td>Venkat</td>
+											<td>2000</td>
+											<td>23</td>
+											<td>99808</td>
+											<td>99808</td>
+											<td>99808</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					</div>
+					
+				</div>
+			</div>
 		</div>
 		
 		<link rel="stylesheet" href="../js/jquery/plugins/datatables/responsive/css/datatables.responsive.css">

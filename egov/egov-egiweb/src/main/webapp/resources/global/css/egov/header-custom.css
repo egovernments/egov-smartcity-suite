@@ -81,7 +81,7 @@ a:hover, a:focus, a:active {
 .navbar-header > a > img
 {
 	vertical-align:top;
-	border-radius: 5px;
+	border-radius: 50%;
 }
 
 .navbar-header > a  span
