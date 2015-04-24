@@ -84,7 +84,7 @@ $(document).ready(function()
 	        });
 	        
 	});
-	tableContainer1 = $("#official_inbox"); 
+	var tableContainer1 = $("#official_inbox"); 
 	
 	tableContainer1.dataTable({
 		"sPaginationType": "bootstrap",
@@ -93,15 +93,44 @@ $(document).ready(function()
 		"autoWidth": false,
 		"bDestroy": true,
 		"ajax": "inbox",
+		"columns": [
+					{ "data": "date","width": "20%" },
+					{ "data": "sender","width": "15%" },
+					{ "data": "task","width": "20%" },
+					{ "data": "status","width": "20%" },
+					{ "data": "details","width": "20%" },
+					{ "data" : null, "target":-1,"defaultContent": '<i class="fa fa-history history-size" class="tooltip-secondary" data-toggle="tooltip" title="History"></i>'},
+					{ "data": "id","visible": false, "searchable": false },
+					{ "data": "link","visible": false, "searchable": false }
+					
+				]
+	});
+	
+	$("#official_inbox").on('click','tbody tr td i',function(e) {
+		$('.history-inbox').modal('show');
+		historyTableContainer = $("#historyTable"); 
+		historyTableContainer.dataTable({
+			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+			"autoWidth": false,
+			"paging": false,
+			"oLanguage": {
+				"sInfo": ""
+			},
+			"ajax": "inbox/history?stateId="+tableContainer1.fnGetData($(this).parent().parent(),6),
 			"columns": [
-			{ "data": "date","width": "20%" },
-			{ "data": "sender","width": "15%" },
-			{ "data": "task","width": "20%" },
-			{ "data": "status","width": "20%" },
-			{ "data": "details","width": "20%" },
-			{ "data": "id","visible": false, "searchable": false },
-			{ "data": "link","visible": false, "searchable": false }
-		]
+						{ "data": "date","width": "20%" },
+						{ "data": "sender","width": "15%" },
+						{ "data": "task","width": "20%" },
+						{ "data": "status","width": "20%" },
+						{ "data": "details","width": "20%" },
+						{ "data": "id","visible": false, "searchable": false },
+						{ "data": "link","visible": false, "searchable": false }
+						
+					]
+		});
+		
+		e.stopPropagation();
 	});
 	
 	$('.workspace').click(function(){
@@ -171,7 +200,7 @@ $(document).ready(function()
 	});
 	
 	$("#official_inbox").on('click','tbody tr',function(event) {
-		var windowObjectReference = window.open(tableContainer1.fnGetData(this,6), ''+tableContainer1.fnGetData(this,5)+'', 'width=900, height=700, top=300, left=150,scrollbars=yes'); 
+		var windowObjectReference = window.open(tableContainer1.fnGetData(this,7), ''+tableContainer1.fnGetData(this,6)+'', 'width=900, height=700, top=300, left=150,scrollbars=yes'); 
 		openedWindows.push(windowObjectReference);
 	});
 	

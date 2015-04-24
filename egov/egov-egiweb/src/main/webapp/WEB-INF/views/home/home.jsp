@@ -205,6 +205,7 @@
 										<th>Task</th>
 										<th>Status</th>
 										<th>Details</th>
+										<th></th>
 									</tr>
 								</thead>
 							</table>
@@ -377,6 +378,40 @@
 					
 					<div class="modal-footer">
 						<button type="button" class="btn btn-primary add-fav">Add Favourites</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+		<div class="modal fade history-inbox">
+			<div class="modal-dialog history">
+				<div class="modal-content">
+					
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title">History</h4>
+					</div>
+					
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-md-12">
+								<table id="historyTable" class="table table-bordered datatable dataTable no-footer">
+									<thead> 
+										<tr>
+											<th>Date</th>
+											<th>Sender</th>
+											<th>Task</th>
+											<th>Status</th>
+											<th>Comments</th>
+										</tr>
+									</thead>
+								</table>
+							</div>
+						</div>
+					</div>
+					
+					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 					</div>
 					
