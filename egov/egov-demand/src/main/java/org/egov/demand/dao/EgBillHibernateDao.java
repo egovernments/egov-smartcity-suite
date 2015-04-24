@@ -45,7 +45,9 @@ import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 
+@Repository(value = "egBillDAO")
 public class EgBillHibernateDao extends GenericHibernateDAO implements EgBillDao {
 
 	public EgBillHibernateDao(Class persistentClass, Session session) {

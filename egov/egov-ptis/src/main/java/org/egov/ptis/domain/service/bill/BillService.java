@@ -1,26 +1,53 @@
 package org.egov.ptis.domain.service.bill;
 
+import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.MONTH;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
+import static org.egov.ptis.nmc.constants.NMCPTISConstants.NOTICE_TYPE_BILL;
+import static org.egov.ptis.nmc.constants.NMCPTISConstants.REPORT_TEMPLATENAME_BILL_GENERATION;
+import static org.egov.ptis.nmc.constants.NMCPTISConstants.dateFormat;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentDao;
+import org.egov.demand.model.EgBill;
+import org.egov.demand.model.EgDemand;
+import org.egov.demand.model.EgDemandDetails;
+import org.egov.infstr.commons.Module;
+import org.egov.infstr.commons.dao.ModuleDao;
+import org.egov.infstr.reporting.engine.ReportOutput;
+import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.utils.HibernateUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.dao.demand.PtDemandDao;
+import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.nmc.bill.NMCPTBillServiceImpl;
+import org.egov.ptis.nmc.bill.NMCPropertyTaxBillable;
+import org.egov.ptis.nmc.model.PropertyBillInfo;
 import org.egov.ptis.nmc.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.nmc.util.PropertyTaxUtil;
+import org.egov.ptis.service.collection.DemandDetailsComparator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
- * Provides API to Generate a Demand Notice or the Bill giving the break up of the tax amounts
- *
- * @author nayeem
- *
+ * Provides API to Generate a Demand Notice or the Bill giving the break up of
+ * the tax amounts
  */
 public class BillService {
 
@@ -36,41 +63,58 @@ public class BillService {
 	private Map<String, Map<String, BigDecimal>> reasonwiseDues;
 	private String billNo;
 	InputStream billPDF;
+	@Autowired
+	@Qualifier(value = "moduleDAO")
+	private ModuleDao moduleDao;
+	@Autowired
+	private InstallmentDao installmentDao;
 
 	/**
-	 * Generates a Demand Notice or the Bill giving the break up of the tax amounts and the <code>EgBill</code>
+	 * Generates a Demand Notice or the Bill giving the break up of the tax
+	 * amounts and the <code>EgBill</code>
 	 *
 	 * @see EgBill
 	 * @param basicProperty
 	 * @return
 	 */
-	//TODO -- Fix this once demand code is available
-	/*public ReportOutput generateBill(BasicProperty basicProperty, Integer userId) {
-		LOGGER.debug("Entered into generateBill BasicProperty : " + basicProperty);
+	public ReportOutput generateBill(BasicProperty basicProperty, Integer userId) {
+		LOGGER.debug("Entered into generateBill BasicProperty : "
+				+ basicProperty);
 
 		Integer reportId = -1;
 		ReportRequest reportRequest = null;
-		PtDemandDao ptDemandDao = PropertyDAOFactory.getDAOFactory().getPtDemandDao();
-		EgDemand egDemand = ptDemandDao.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
-		InstallmentDao isntalDao = CommonsDaoFactory.getDAOFactory().getInstallmentDao();
-		ModuleDao moduleDao = GenericDaoFactory.getDAOFactory().getModuleDao();
-		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
-		List<EgDemandDetails> dmdDetailsList = new ArrayList<EgDemandDetails>(egDemand.getEgDemandDetails());
+		PtDemandDao ptDemandDao = PropertyDAOFactory.getDAOFactory()
+				.getPtDemandDao();
+		EgDemand egDemand = ptDemandDao
+				.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
+		Module module = moduleDao
+				.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+		List<EgDemandDetails> dmdDetailsList = new ArrayList<EgDemandDetails>(
+				egDemand.getEgDemandDetails());
 		Collections.sort(dmdDetailsList, new DemandDetailsComparator());
 		Calendar calendar = Calendar.getInstance();
-		Date startDate = dmdDetailsList.get(0).getEgDemandReason().getEgInstallmentMaster().getFromDate();
-		Date endDate = dmdDetailsList.get(dmdDetailsList.size() - 1).getEgDemandReason().getEgInstallmentMaster().getFromDate();
+		Date startDate = dmdDetailsList.get(0).getEgDemandReason()
+				.getEgInstallmentMaster().getFromDate();
+		Date endDate = dmdDetailsList.get(dmdDetailsList.size() - 1)
+				.getEgDemandReason().getEgInstallmentMaster().getFromDate();
 
-		Installment currentInstall = isntalDao.getInsatllmentByModuleForGivenDate(module, new Date());
+		Installment currentInstall = installmentDao
+				.getInsatllmentByModuleForGivenDate(module, new Date());
 		String arrearsPeriod = null;
 
-		Date firstSixMonthEndDate = DateUtils.add(DateUtils.add(currentInstall.getFromDate(), MONTH, 6), DAY_OF_MONTH, -1);
+		Date firstSixMonthEndDate = DateUtils.add(
+				DateUtils.add(currentInstall.getFromDate(), MONTH, 6),
+				DAY_OF_MONTH, -1);
 
-		String firstSixMonthsPeriod = dateFormat.format(currentInstall.getFromDate())
-				+ STR_TO + dateFormat.format(firstSixMonthEndDate);
+		String firstSixMonthsPeriod = dateFormat.format(currentInstall
+				.getFromDate())
+				+ STR_TO
+				+ dateFormat.format(firstSixMonthEndDate);
 
-		String secondSixMonthsPeriod = dateFormat.format(DateUtils.add(firstSixMonthEndDate, DAY_OF_MONTH, 1))
-				+ STR_TO + dateFormat.format(currentInstall.getToDate());
+		String secondSixMonthsPeriod = dateFormat.format(DateUtils.add(
+				firstSixMonthEndDate, DAY_OF_MONTH, 1))
+				+ STR_TO
+				+ dateFormat.format(currentInstall.getToDate());
 
 		if (!startDate.equals(currentInstall.getFromDate())) {
 			calendar.setTime(startDate);
@@ -85,8 +129,10 @@ public class BillService {
 		calendar.setTime(currentInstall.getToDate());
 		int currToYear = calendar.get(Calendar.YEAR);
 		String currentPeriod = currFromYear + "-" + currToYear;
-		reasonwiseDues = propertyTaxUtil.getDemandDues(basicProperty.getUpicNo());
-		setBillNo(propertyTaxNumberGenerator.generateManualBillNumber(basicProperty.getPropertyID()));
+		reasonwiseDues = propertyTaxUtil.getDemandDues(basicProperty
+				.getUpicNo());
+		setBillNo(propertyTaxNumberGenerator
+				.generateManualBillNumber(basicProperty.getPropertyID()));
 
 		int noOfBillGenerated = getNumberOfBills(basicProperty);
 
@@ -94,29 +140,33 @@ public class BillService {
 			setBillNo(getBillNo() + "/" + STR_BILL_SHORTCUT + noOfBillGenerated);
 		}
 
-		PropertyBillInfo propertyBillInfo = new PropertyBillInfo(reasonwiseDues, basicProperty, billNo);
+		PropertyBillInfo propertyBillInfo = new PropertyBillInfo(
+				reasonwiseDues, basicProperty, billNo);
 		propertyBillInfo.setArrearsPeriod(arrearsPeriod);
 		propertyBillInfo.setCurrentPeriod(currentPeriod);
 		propertyBillInfo.setFirstSixMonthsPeriod(firstSixMonthsPeriod);
 		propertyBillInfo.setSecondSixMonthsPeriod(secondSixMonthsPeriod);
 
-		reportRequest = new ReportRequest(REPORT_TEMPLATENAME_BILL_GENERATION, propertyBillInfo,
-				new HashMap<String, Object>());
+		reportRequest = new ReportRequest(REPORT_TEMPLATENAME_BILL_GENERATION,
+				propertyBillInfo, new HashMap<String, Object>());
 
-		ReportOutput reportOutput = getReportService().createReport(reportRequest);
+		ReportOutput reportOutput = getReportService().createReport(
+				reportRequest);
 
 		if (reportOutput != null && reportOutput.getReportOutputData() != null) {
-			billPDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
+			billPDF = new ByteArrayInputStream(
+					reportOutput.getReportOutputData());
 		}
 
 		saveEgBill(basicProperty, userId);// saving eg_bill
 
-		noticeService.saveNotice(getBillNo(), NOTICE_TYPE_BILL, basicProperty, billPDF);
+		noticeService.saveNotice(getBillNo(), NOTICE_TYPE_BILL, basicProperty,
+				billPDF);
 
 		LOGGER.debug("generateBill - reportId : " + reportId);
 		LOGGER.debug("Exiting from generateBill");
 		return reportOutput;
-	}*/
+	}
 
 	/**
 	 * Gives the count of generated bills
@@ -125,37 +175,41 @@ public class BillService {
 	 * @return
 	 */
 	private int getNumberOfBills(BasicProperty basicProperty) {
-		Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment();
+		Installment currentInstallment = PropertyTaxUtil
+				.getCurrentInstallment();
 
-		Long count = (Long) HibernateUtil.getCurrentSession().createQuery("SELECT COUNT (*) FROM EgBill " +
-				        "WHERE module = ? " +
-						"AND egBillType.code = ? " +
-						"AND SUBSTRING(consumerId, 1, (LOCATE('(', consumerId)-1)) = ? " +
-						"AND is_Cancelled = 'N' " +
-						"AND issueDate between ? and ? ")
-						.setEntity(0, currentInstallment.getModule())
-						.setString(1, BILLTYPE_MANUAL)
-						.setString(2, basicProperty.getUpicNo())
-						.setDate(3, currentInstallment.getFromDate())
-						.setDate(4, currentInstallment.getToDate()).list().get(0);
+		Long count = (Long) HibernateUtil
+				.getCurrentSession()
+				.createQuery(
+						"SELECT COUNT (*) FROM EgBill "
+								+ "WHERE module = ? "
+								+ "AND egBillType.code = ? "
+								+ "AND SUBSTRING(consumerId, 1, (LOCATE('(', consumerId)-1)) = ? "
+								+ "AND is_Cancelled = 'N' "
+								+ "AND issueDate between ? and ? ")
+				.setEntity(0, currentInstallment.getModule())
+				.setString(1, BILLTYPE_MANUAL)
+				.setString(2, basicProperty.getUpicNo())
+				.setDate(3, currentInstallment.getFromDate())
+				.setDate(4, currentInstallment.getToDate()).list().get(0);
 
 		return count.intValue();
 	}
 
 	private void saveEgBill(BasicProperty basicProperty, Integer userId) {
-		//TODO -- Fix this once demand code is available
-		/*LOGGER.debug("Entered into saveEgBill");
+		LOGGER.debug("Entered into saveEgBill");
 		LOGGER.debug("saveEgBill : BasicProperty: " + basicProperty);
 
 		NMCPropertyTaxBillable nmcPTBill = new NMCPropertyTaxBillable();
 		nmcPTBill.setBasicProperty(basicProperty);
 		nmcPTBill.setUserId(userId.longValue());
 		nmcPTBill.setReferenceNumber(getBillNo());
-		nmcPTBill.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_MANUAL));
+		nmcPTBill.setBillType(propertyTaxUtil
+				.getBillTypeByCode(BILLTYPE_MANUAL));
 		nmcPTBill.setLevyPenalty(Boolean.TRUE);
 		EgBill egBill = nmcPtBillServiceImpl.generateBill(nmcPTBill);
 
-		LOGGER.debug("Exit from saveEgBill, EgBill: " + egBill);*/
+		LOGGER.debug("Exit from saveEgBill, EgBill: " + egBill);
 	}
 
 	public ReportService getReportService() {
@@ -170,7 +224,8 @@ public class BillService {
 		return reasonwiseDues;
 	}
 
-	public void setReasonwiseDues(Map<String, Map<String, BigDecimal>> reasonwiseDues) {
+	public void setReasonwiseDues(
+			Map<String, Map<String, BigDecimal>> reasonwiseDues) {
 		this.reasonwiseDues = reasonwiseDues;
 	}
 
@@ -194,7 +249,8 @@ public class BillService {
 		return propertyTaxNumberGenerator;
 	}
 
-	public void setPropertyTaxNumberGenerator(PropertyTaxNumberGenerator propertyTaxNumberGenerator) {
+	public void setPropertyTaxNumberGenerator(
+			PropertyTaxNumberGenerator propertyTaxNumberGenerator) {
 		this.propertyTaxNumberGenerator = propertyTaxNumberGenerator;
 	}
 
@@ -202,7 +258,8 @@ public class BillService {
 		return nmcPtBillServiceImpl;
 	}
 
-	public void setNmcPtBillServiceImpl(NMCPTBillServiceImpl nmcPtBillServiceImpl) {
+	public void setNmcPtBillServiceImpl(
+			NMCPTBillServiceImpl nmcPtBillServiceImpl) {
 		this.nmcPtBillServiceImpl = nmcPtBillServiceImpl;
 	}
 

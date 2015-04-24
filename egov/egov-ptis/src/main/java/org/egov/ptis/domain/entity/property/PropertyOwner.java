@@ -9,6 +9,7 @@ package org.egov.ptis.domain.entity.property;
 import java.util.Date;
 
 import org.egov.exceptions.EGOVRuntimeException;
+//TODO -- Fix me (Commented to Resolve compilation issues)
 //import org.egov.lib.citizen.model.Owner;
 
 /**
@@ -21,7 +22,7 @@ import org.egov.exceptions.EGOVRuntimeException;
  * @see
  * @since 1.00
  */
-//TODO -- Commented to fix Phoenix Compilation issues
+//TODO -- Fix me (Commented to Resolve compilation issues)
 public class PropertyOwner /*extends Owner*/ {
 
 	private PropertyImpl property;
@@ -31,13 +32,14 @@ public class PropertyOwner /*extends Owner*/ {
 		
 	}
 	
-	public PropertyOwner(Integer citizenID, String ssn, String panNumber, String passportNumber,
+	//TODO -- Fix me (Commented to Resolve compilation issues)
+	/*public PropertyOwner(Integer citizenID, String ssn, String panNumber, String passportNumber,
 			String drivingLicenceNumber, String rationCardNumber, String voterRegistrationNumber, String firstName,
 			String middleName, String lastName, Date birthDate, String homePhone, String officePhone,
 			String mobilePhone, String fax, String emailAddress, String occupation, String jobStatus, String locale,
 			String firstNameLocal, String middleNameLocal, String lastNameLocal, String ownerTitle,
 			String ownerTitleLocal, Integer orderNo, PropertySource propSource) {
-		/*setSsn(ssn);
+		setSsn(ssn);
 		setPanNumber(panNumber);
 		setPassportNumber(passportNumber);
 		setDrivingLicenceNumber(drivingLicenceNumber);
@@ -59,10 +61,10 @@ public class PropertyOwner /*extends Owner*/ {
 		setMiddleNameLocal(middleNameLocal);
 		setLastNameLocal(lastNameLocal);
 		setOwnerTitle(ownerTitle);
-		setOwnertitleLocal(ownerTitleLocal);*/
+		setOwnertitleLocal(ownerTitleLocal);
 		this.orderNo = orderNo;
 		this.source = propSource;
-	}
+	}*/
 
 	public PropertyImpl getProperty() {
 		return property;

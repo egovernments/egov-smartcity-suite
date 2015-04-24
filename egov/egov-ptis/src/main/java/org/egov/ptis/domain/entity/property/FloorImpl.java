@@ -11,9 +11,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import org.egov.commons.Area;
+import org.egov.demand.model.DepreciationMaster;
 import org.egov.exceptions.EGOVRuntimeException;
-//TODO -- Uncomment once demand module code is available
-//import org.egov.demand.model.DepreciationMaster;
 import org.egov.infstr.models.BaseModel;
 
 /**
@@ -30,8 +29,7 @@ public class FloorImpl extends BaseModel implements FloorIF {
 	private StructureClassification structureClassification = null;
 	private PropertyUsage propertyUsage = null;
 	private PropertyOccupation propertyOccupation = null;
-	//TODO -- Uncomment once demand module code is available
-	//private DepreciationMaster depreciationMaster = null;
+	private DepreciationMaster depreciationMaster = null;
 	private Integer floorNo = null;
 	private Area builtUpArea = null;
 	private Area floorArea = null;
@@ -62,24 +60,29 @@ public class FloorImpl extends BaseModel implements FloorIF {
 	private String extraField7;
 
 	private String taxExemptedReason;
-	
+
 	private UnitRentAgreementDetail rentAgreementDetail;
 
-	public FloorImpl(ConstructionTypeSet constructionTypeSet, StructureClassification structureClassification,
-			PropertyUsage propertyUsage, PropertyOccupation propertyOccupation, Integer floorNo,
-			/*DepreciationMaster depreciationMaster,*/ Area builtUpArea, Area floorArea, String waterMeter,
-			String electricMeter, Date lastUpdatedTimeStamp, Date createdTimeStamp, BigDecimal rentPerMonth,
-			String extraField1, String extraField2, String extraField3, String extraField4, String extraField5,
-			String extraField6, String extraField7, BigDecimal manualAlv, PropertyTypeMaster unitType,
-			String unitTypeCategory, String waterRate, BigDecimal alv, String taxExemptedReason, UnitRentAgreementDetail rentAgreementDetail) {
+	public FloorImpl(ConstructionTypeSet constructionTypeSet,
+			StructureClassification structureClassification,
+			PropertyUsage propertyUsage, PropertyOccupation propertyOccupation,
+			Integer floorNo, DepreciationMaster depreciationMaster,
+			Area builtUpArea, Area floorArea, String waterMeter,
+			String electricMeter, Date lastUpdatedTimeStamp,
+			Date createdTimeStamp, BigDecimal rentPerMonth, String extraField1,
+			String extraField2, String extraField3, String extraField4,
+			String extraField5, String extraField6, String extraField7,
+			BigDecimal manualAlv, PropertyTypeMaster unitType,
+			String unitTypeCategory, String waterRate, BigDecimal alv,
+			String taxExemptedReason,
+			UnitRentAgreementDetail rentAgreementDetail) {
 		super();
 		this.constructionTypeSet = constructionTypeSet;
 		this.structureClassification = structureClassification;
 		this.propertyUsage = propertyUsage;
 		this.propertyOccupation = propertyOccupation;
 		this.floorNo = floorNo;
-		//TODO -- Uncomment once demand module code is available
-		//this.depreciationMaster = depreciationMaster;
+		this.depreciationMaster = depreciationMaster;
 		this.builtUpArea = builtUpArea;
 		this.floorArea = floorArea;
 		this.waterMeter = waterMeter;
@@ -88,7 +91,7 @@ public class FloorImpl extends BaseModel implements FloorIF {
 		this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
 		this.createdTimeStamp = createdTimeStamp;
 		this.rentPerMonth = rentPerMonth;
-		this.extraField1 = extraField1; 
+		this.extraField1 = extraField1;
 		this.extraField2 = extraField2;
 		this.extraField3 = extraField3;
 		this.extraField4 = extraField4;
@@ -108,17 +111,18 @@ public class FloorImpl extends BaseModel implements FloorIF {
 
 	}
 
-	public FloorImpl(ConstructionTypeSet constructionTypeSet, StructureClassification structureClassification,
-			PropertyUsage propertyUsage, PropertyOccupation propertyOccupation, Integer floorNo,
-			/*DepreciationMaster depreciationMaster,*/ Area builtUpArea, Area floorArea, String waterMeter,
+	public FloorImpl(ConstructionTypeSet constructionTypeSet,
+			StructureClassification structureClassification,
+			PropertyUsage propertyUsage, PropertyOccupation propertyOccupation,
+			Integer floorNo, DepreciationMaster depreciationMaster,
+			Area builtUpArea, Area floorArea, String waterMeter,
 			String electricMeter) {
 		this.constructionTypeSet = constructionTypeSet;
 		this.structureClassification = structureClassification;
 		this.propertyUsage = propertyUsage;
 		this.propertyOccupation = propertyOccupation;
 		this.floorNo = floorNo;
-		//TODO -- Uncomment once demand module code is available
-		//this.depreciationMaster = depreciationMaster;
+		this.depreciationMaster = depreciationMaster;
 		this.builtUpArea = builtUpArea;
 		this.floorArea = floorArea;
 		this.waterMeter = waterMeter;
@@ -277,7 +281,8 @@ public class FloorImpl extends BaseModel implements FloorIF {
 	 *            The structureClassification to set.
 	 */
 	@Override
-	public void setStructureClassification(StructureClassification structureClassification) {
+	public void setStructureClassification(
+			StructureClassification structureClassification) {
 		this.structureClassification = structureClassification;
 	}
 
@@ -359,7 +364,8 @@ public class FloorImpl extends BaseModel implements FloorIF {
 	@Override
 	public boolean validateFloor() {
 		if (getFloorNo() == null)
-			throw new EGOVRuntimeException("In FloorImpl Validate : FloorNumber is Not Set, Please Check !!");
+			throw new EGOVRuntimeException(
+					"In FloorImpl Validate : FloorNumber is Not Set, Please Check !!");
 
 		return true;
 	}
@@ -461,8 +467,7 @@ public class FloorImpl extends BaseModel implements FloorIF {
 		this.extraField7 = extraField7;
 	}
 
-	//TODO -- Uncomment once demand module code is available
-	/*@Override
+	@Override
 	public DepreciationMaster getDepreciationMaster() {
 		return depreciationMaster;
 	}
@@ -470,7 +475,7 @@ public class FloorImpl extends BaseModel implements FloorIF {
 	@Override
 	public void setDepreciationMaster(DepreciationMaster depreciationMaster) {
 		this.depreciationMaster = depreciationMaster;
-	}*/
+	}
 
 	@Override
 	public BigDecimal getManualAlv() {
@@ -502,38 +507,46 @@ public class FloorImpl extends BaseModel implements FloorIF {
 		this.alv = alv;
 	}
 
+	@Override
 	public String getTaxExemptedReason() {
 		return taxExemptedReason;
 	}
 
+	@Override
 	public void setTaxExemptedReason(String taxExemptedReason) {
 		this.taxExemptedReason = taxExemptedReason;
 	}
-	
+
+	@Override
 	public UnitRentAgreementDetail getRentAgreementDetail() {
 		return rentAgreementDetail;
 	}
 
-	public void setRentAgreementDetail(UnitRentAgreementDetail rentAgreementDetail) {
+	@Override
+	public void setRentAgreementDetail(
+			UnitRentAgreementDetail rentAgreementDetail) {
 		this.rentAgreementDetail = rentAgreementDetail;
 	}
 
 	@Override
 	public String toString() {
 		return new StringBuilder(256)
-		           .append("FloorImpl [Id: ").append(getId())
-		           .append(", FloorNo=").append(getFloorNo())
-		           .append(", FloorArea=").append(getFloorArea() != null ? getFloorArea().getArea() : "null")
-		           .append(", PropertyUsage=").append(getPropertyUsage())
-		           .append(", StructCl=").append(getStructureClassification())
-				   .append(", Occupancy=").append(getPropertyOccupation())
-				   //TODO -- Uncomment once demand module code is available
-				   //.append(", Depreciation=").append(getDepreciationMaster())
-				   .append(", WaterRate=").append(getWaterRate())
-				   .append(", alv=").append(getAlv())
-				   .append(", taxExemptedReason=").append(taxExemptedReason)
-				   .append(", rentAgreementDetail=").append(rentAgreementDetail)
-				   .append("]").toString();
+				.append("FloorImpl [Id: ")
+				.append(getId())
+				.append(", FloorNo=")
+				.append(getFloorNo())
+				.append(", FloorArea=")
+				.append(getFloorArea() != null ? getFloorArea().getArea()
+						: "null").append(", PropertyUsage=")
+				.append(getPropertyUsage()).append(", StructCl=")
+				.append(getStructureClassification()).append(", Occupancy=")
+				.append(getPropertyOccupation()).append(", Depreciation=")
+				.append(getDepreciationMaster()).append(", WaterRate=")
+				.append(getWaterRate()).append(", alv=").append(getAlv())
+				.append(", taxExemptedReason=").append(taxExemptedReason)
+				.append(", rentAgreementDetail=").append(rentAgreementDetail)
+				.append("]").toString();
 
 	}
+
 }

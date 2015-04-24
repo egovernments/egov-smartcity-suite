@@ -39,11 +39,15 @@
  */
 package org.egov.demand.dao;
 
-
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-public class EgDemandHibernateDao  extends GenericHibernateDAO implements EgDemandDao{
+@Repository(value = "demandDAO")
+@Transactional(readOnly = true)
+public class EgDemandHibernateDao extends GenericHibernateDAO implements
+		EgDemandDao {
 
 	public EgDemandHibernateDao(Class persistentClass, Session session) {
 		super(persistentClass, session);

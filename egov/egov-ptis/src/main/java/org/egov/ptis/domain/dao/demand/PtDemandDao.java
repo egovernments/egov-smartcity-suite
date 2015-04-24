@@ -11,11 +11,10 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.dao.GenericDAO;
-import org.egov.infra.admin.master.entity.Boundary;
-//TODO -- Uncomment this once Demand code is available
-//import org.egov.ptis.domain.entity.demand.Ptdemand;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 
@@ -83,8 +82,7 @@ public interface PtDemandDao extends GenericDAO {
 	 * 
 	 * 
 	 */
-	//TODO -- Uncomment this once Demand code is available
-	//public Ptdemand getNonHistoryDemandForProperty(Property property);
+	public Ptdemand getNonHistoryDemandForProperty(Property property);
 
 	/**
 	 * This method called getDmdDetailsByPropertyIdBoundary gets DemandDetails
@@ -149,6 +147,5 @@ public interface PtDemandDao extends GenericDAO {
 	 **/
 	public Map<String, BigDecimal> getDemandCollMap(Property property);
 
-	//TODO -- Uncomment this once Demand code is available
-	//public Ptdemand getNonHistoryCurrDmdForProperty(Property property);
+	public Ptdemand getNonHistoryCurrDmdForProperty(Property property);
 }

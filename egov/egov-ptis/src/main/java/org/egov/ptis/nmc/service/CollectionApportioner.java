@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.egov.erpcollection.models.ReceiptDetail;
+import org.egov.collection.entity.ReceiptDetail;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.EgovUtils;

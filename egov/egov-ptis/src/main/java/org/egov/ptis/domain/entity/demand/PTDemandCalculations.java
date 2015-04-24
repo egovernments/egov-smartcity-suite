@@ -12,9 +12,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.egov.demand.model.DemandCalculations;
 import org.egov.exceptions.EGOVRuntimeException;
-//TODO -- Uncomment this once demand code is available
-//import org.egov.demand.model.DemandCalculations;
 import org.egov.infstr.flexfields.model.EgAttributevalues;
 import org.egov.infstr.models.BaseModel;
 
@@ -27,15 +26,17 @@ import org.egov.infstr.models.BaseModel;
  * @see
  * @since 1.00
  */
-public class PTDemandCalculations extends BaseModel /*implements DemandCalculations*/ {
+public class PTDemandCalculations extends BaseModel /*
+													 * implements
+													 * DemandCalculations
+													 */{
 
-	//TODO -- Uncomment this once demand code is available
-	/*public DemandCalculations createDemandCalculations() {
+	public DemandCalculations createDemandCalculations() {
 		// TODO Auto-generated method stub
 		return null;
-	}*/
+	}
 
-	//private Ptdemand ptDemand;
+	private Ptdemand ptDemand;
 	private BigDecimal propertyTax;
 	private BigDecimal rateOfTax;
 	private Date lastUpdatedTimeStamp;
@@ -44,13 +45,15 @@ public class PTDemandCalculations extends BaseModel /*implements DemandCalculati
 	private Set<EgAttributevalues> attributeValues = new HashSet<EgAttributevalues>();
 	private byte[] taxInfo;
 	private BigDecimal alv;
-	
-	//TODO -- Uncomment this once demand code is available
-	public PTDemandCalculations(/*Ptdemand ptDemand,*/ BigDecimal propertyTax, BigDecimal rateOfTax,
-			Date lastUpdatedTimeStamp, Date createTimeStamp, Set<FloorwiseDemandCalculations> flrwiseDmdCalculations,
-			Set<EgAttributevalues> attributeValues, byte[] taxInfo, BigDecimal alv) {
+
+	public PTDemandCalculations(Ptdemand ptDemand, BigDecimal propertyTax,
+			BigDecimal rateOfTax, Date lastUpdatedTimeStamp,
+			Date createTimeStamp,
+			Set<FloorwiseDemandCalculations> flrwiseDmdCalculations,
+			Set<EgAttributevalues> attributeValues, byte[] taxInfo,
+			BigDecimal alv) {
 		super();
-		//this.ptDemand = ptDemand;
+		this.ptDemand = ptDemand;
 		this.propertyTax = propertyTax;
 		this.rateOfTax = rateOfTax;
 		this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
@@ -60,16 +63,17 @@ public class PTDemandCalculations extends BaseModel /*implements DemandCalculati
 		this.taxInfo = taxInfo;
 		this.alv = alv;
 	}
-	
+
 	public PTDemandCalculations(PTDemandCalculations ptDemandCalc) {
 		this.propertyTax = ptDemandCalc.propertyTax;
 		this.rateOfTax = ptDemandCalc.rateOfTax;
 		this.lastUpdatedTimeStamp = new Date();
-		
+
 		for (FloorwiseDemandCalculations floorDmdCalc : ptDemandCalc.flrwiseDmdCalculations) {
-			this.addFlrwiseDmdCalculations(new FloorwiseDemandCalculations(floorDmdCalc));
-		}			
-		
+			this.addFlrwiseDmdCalculations(new FloorwiseDemandCalculations(
+					floorDmdCalc));
+		}
+
 		this.taxInfo = ptDemandCalc.taxInfo;
 	}
 
@@ -90,18 +94,18 @@ public class PTDemandCalculations extends BaseModel /*implements DemandCalculati
 			return false;
 
 		final PTDemandCalculations thatDemand = (PTDemandCalculations) that;
-		//TODO -- Uncomment this once demand code is available
 		if (this.getId() != null && thatDemand.getId() != null) {
 			if (getId().equals(thatDemand.getId())) {
 				return true;
 			} else
 				return false;
-		} /*else if (this.getPtDemand() != null && thatDemand.getPtDemand() != null) {
+		} else if (this.getPtDemand() != null
+				&& thatDemand.getPtDemand() != null) {
 			if (getPtDemand().equals(thatDemand.getPtDemand())) {
 				return true;
 			} else
 				return false;
-		}*/ else
+		} else
 			return false;
 
 	}
@@ -114,11 +118,9 @@ public class PTDemandCalculations extends BaseModel /*implements DemandCalculati
 		if (getId() != null) {
 			hashCode += this.getId().hashCode();
 		}
-		//TODO -- Uncomment this once demand code is available
-		/*if (getPtDemand() != null) {
+		if (getPtDemand() != null) {
 			hashCode += this.getPtDemand().hashCode();
 		}
-*/
 		return hashCode;
 	}
 
@@ -126,24 +128,23 @@ public class PTDemandCalculations extends BaseModel /*implements DemandCalculati
 	 * @return Returns the boolean after validating the current object
 	 */
 	public boolean validateDmdCalc() {
-		//TODO -- Uncomment this once demand code is available
-		/*if (getPtDemand() == null)
-			throw new EGOVRuntimeException("In PTDemandCalculations Validate : ptDemand is Not Set, Please Check !!");*/
-		if (getFlrwiseDmdCalculations() == null || getFlrwiseDmdCalculations().size() == 0)
+		if (getPtDemand() == null)
+			throw new EGOVRuntimeException(
+					"In PTDemandCalculations Validate : ptDemand is Not Set, Please Check !!");
+		if (getFlrwiseDmdCalculations() == null
+				|| getFlrwiseDmdCalculations().size() == 0)
 			throw new EGOVRuntimeException(
 					"In PTDemandCalculations Validate : FloorwiseDmdCalculations is Not Set, Please Check !!");
 		return true;
 	}
 
-	//TODO -- Uncomment this once demand code is available
-	
-	/*public Ptdemand getPtDemand() {
+	public Ptdemand getPtDemand() {
 		return ptDemand;
 	}
 
 	public void setPtDemand(Ptdemand ptDemand) {
 		this.ptDemand = ptDemand;
-	}*/
+	}
 
 	public BigDecimal getPropertyTax() {
 		return propertyTax;
@@ -181,7 +182,8 @@ public class PTDemandCalculations extends BaseModel /*implements DemandCalculati
 		return flrwiseDmdCalculations;
 	}
 
-	public void setFlrwiseDmdCalculations(Set<FloorwiseDemandCalculations> flrwiseDmdCalculations) {
+	public void setFlrwiseDmdCalculations(
+			Set<FloorwiseDemandCalculations> flrwiseDmdCalculations) {
 		this.flrwiseDmdCalculations = flrwiseDmdCalculations;
 	}
 
@@ -190,7 +192,8 @@ public class PTDemandCalculations extends BaseModel /*implements DemandCalculati
 		flwiseDmd.setPTDemandCalculations(this);
 	}
 
-	public void removeFlrwiseDmdCalculations(FloorwiseDemandCalculations flwiseDmd) {
+	public void removeFlrwiseDmdCalculations(
+			FloorwiseDemandCalculations flwiseDmd) {
 		getFlrwiseDmdCalculations().remove(flwiseDmd);
 	}
 
@@ -226,14 +229,15 @@ public class PTDemandCalculations extends BaseModel /*implements DemandCalculati
 		this.alv = alv;
 	}
 
-	//TODO -- Uncomment this once demand code is available
 	@Override
 	public String toString() {
 		StringBuilder objStr = new StringBuilder();
 
-		objStr.append("Id: ").append(getId()).append("|PtDemamd: ")/*.append(getPtDemand())*/.append("|PropertyTax: ")
-				.append(getPropertyTax()).append("|RateOfTax: ").append(getRateOfTax()).append("|TaxInfo: ").append(
-						getTaxInfo()).append("|Alv: ").append(getAlv());
+		objStr.append("Id: ").append(getId()).append("|PtDemamd: ")
+				.append(getPtDemand()).append("|PropertyTax: ")
+				.append(getPropertyTax()).append("|RateOfTax: ")
+				.append(getRateOfTax()).append("|TaxInfo: ")
+				.append(getTaxInfo()).append("|Alv: ").append(getAlv());
 
 		return objStr.toString();
 	}

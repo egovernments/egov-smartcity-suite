@@ -1,8 +1,7 @@
 package org.egov.ptis.domain.dao.property;
 
-//TODO -- Uncomment this once demand code is available
-/*import org.egov.demand.dao.EgDemandDao;
-import org.egov.demand.dao.EgDemandDetailsDao;*/
+import org.egov.demand.dao.EgDemandDao;
+import org.egov.demand.dao.EgDemandDetailsDao;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 
 /**
@@ -82,8 +81,7 @@ public abstract class PropertyDAOFactory {
 
 	public abstract PropertyIntegrationDAO getPropertyIntegrationDAO();
 
-	//TODO -- Uncomment this once demand code is available
-	/*public abstract EgDemandDao getEgDemandDao();
+	public abstract EgDemandDao getEgDemandDao();
 
-	public abstract EgDemandDetailsDao getEgDemandDetailsDao();*/
+	public abstract EgDemandDetailsDao getEgDemandDetailsDao();
 }

@@ -43,7 +43,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.demand.model.BillReceipt;
@@ -54,6 +53,7 @@ import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.demand.model.EgReasonCategory;
 import org.egov.demand.model.EgdmCollectedReceipt;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Criteria;
@@ -61,7 +61,9 @@ import org.hibernate.Query;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
 
+@Repository(value = "demandGenericDAO")
 public class DemandGenericHibDao implements DemandGenericDao{
 
 	/**

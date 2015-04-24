@@ -11,6 +11,7 @@ import java.util.Date;
 
 import org.egov.commons.Area;
 //import org.egov.demand.model.DepreciationMaster;
+import org.egov.demand.model.DepreciationMaster;
 
 /**
  * <p>
@@ -68,10 +69,9 @@ public interface FloorIF {
 	public void setStructureClassification(
 			StructureClassification structureClassification);
 
-	//TODO -- Uncomment once demand module code is available
-	/*public DepreciationMaster getDepreciationMaster();
+	public DepreciationMaster getDepreciationMaster();
 
-	public void setDepreciationMaster(DepreciationMaster depreciationMaster);*/
+	public void setDepreciationMaster(DepreciationMaster depreciationMaster);
 
 	public String getWaterMeter();
 
@@ -138,8 +138,9 @@ public interface FloorIF {
 	public String getTaxExemptedReason();
 
 	public void setTaxExemptedReason(String taxExemptedReason);
-	
-	public UnitRentAgreementDetail getRentAgreementDetail() ;
 
-	public void setRentAgreementDetail(UnitRentAgreementDetail rentAgreementDetail);
+	public UnitRentAgreementDetail getRentAgreementDetail();
+
+	public void setRentAgreementDetail(
+			UnitRentAgreementDetail rentAgreementDetail);
 }

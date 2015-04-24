@@ -10,13 +10,10 @@ package org.egov.ptis.domain.dao.property;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.Installment;
-//TODO -- Uncomment this once demand code is available
-//import org.egov.demand.model.EgDemand;
+import org.egov.demand.model.EgDemand;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
-//TODO -- Uncomment this once demand code is available
-//import org.egov.lib.citizen.model.Owner;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertySource;
@@ -46,8 +43,8 @@ public interface PropertyDAO extends org.egov.infstr.dao.GenericDAO {
 
 	public List getOnlineDateByWardID(Integer wardId);
 
-	public Property getPropertyForInstallment(BasicProperty basicProp, Installment insatllment,
-			PropertySource src);
+	public Property getPropertyForInstallment(BasicProperty basicProp,
+			Installment insatllment, PropertySource src);
 
 	public List getAllHistories(BasicProperty basicProp, PropertySource src);
 
@@ -55,22 +52,26 @@ public interface PropertyDAO extends org.egov.infstr.dao.GenericDAO {
 
 	public Property getPropertyBySource(String src);
 
-	public List getAllPropertiesForGivenBndryListAndSrc(List bndryList, String src);
+	public List getAllPropertiesForGivenBndryListAndSrc(List bndryList,
+			String src);
 
-	public List getAllPropertiesForGivenBndryListSrcAndInst(List bndryList, String src,
-			Installment inst);
+	public List getAllPropertiesForGivenBndryListSrcAndInst(List bndryList,
+			String src, Installment inst);
 
-	public List getAllNonHistoryPropertiesForSrc(BasicProperty basicProperty, PropertySource src);
+	public List getAllNonHistoryPropertiesForSrc(BasicProperty basicProperty,
+			PropertySource src);
 
-	public Property getPropertyBySrcAndBp(BasicProperty basicProperty, PropertySource src);
+	public Property getPropertyBySrcAndBp(BasicProperty basicProperty,
+			PropertySource src);
 
 	public boolean checkIfPropCountExceeds500(List bndryList);
 
-	public List getBasicPropertyListByDcNo(String dcNo) throws EGOVRuntimeException;
+	public List getBasicPropertyListByDcNo(String dcNo)
+			throws EGOVRuntimeException;
 
 	public List getPtDemandArvProposedList(Property property);
 
-	//TODO -- Uncomment this once demand code is available
+	//TODO -- Fix me (Commented to Resolve compilation issues)
 	//public Owner getOwnerByOwnerId(Integer id);
 
 	public List getPropertyDemand(String propertyId);
@@ -81,82 +82,83 @@ public interface PropertyDAO extends org.egov.infstr.dao.GenericDAO {
 
 	public List getPTDemandArvByNoticeNumber(String noticeNo);
 
-	public List getPropsMrkdForDeactByWard(Boundary boundary) throws PropertyNotFoundException;
+	public List getPropsMrkdForDeactByWard(Boundary boundary)
+			throws PropertyNotFoundException;
 
 	/**
 	 * To get the list of required values as of the Projection,restriction and
 	 * order in which the client passes as parameters.All these values are taken
 	 * from PropertyMaterlizeView table.
 	 * 
-	 *@param org
+	 * @param org
 	 *            .hibernate.criterion.Projection projection
-	 *@param org
+	 * @param org
 	 *            .hibernate.criterion.Criterion criterion
-	 *@param org
+	 * @param org
 	 *            .hibernate.criterion.Order order
 	 * 
-	 *@return Projection list(i.e mentioned in Projection parameter) from
+	 * @return Projection list(i.e mentioned in Projection parameter) from
 	 *         PropertyMaterlizeView table.
 	 * 
 	 */
-	public List getPropMaterlizeViewList(Projection proj, Criterion criterion, Order order);
+	public List getPropMaterlizeViewList(Projection proj, Criterion criterion,
+			Order order);
 
 	/**
 	 * To get the list of required values as of the Projection,restriction and
 	 * order in which the client passes as parameters..
 	 * 
-	 *@param Class
+	 * @param Class
 	 *            projection
-	 *@param org
+	 * @param org
 	 *            .hibernate.criterion.Projection classObj
-	 *@param org
+	 * @param org
 	 *            .hibernate.criterion.Criterion criterion
-	 *@param org
+	 * @param org
 	 *            .hibernate.criterion.Order order
 	 * 
-	 *@return Projection list(i.e mentioned in Projection parameter) .
+	 * @return Projection list(i.e mentioned in Projection parameter) .
 	 * 
 	 */
-	public List getResultsList(Class classObj, Projection projection, Criterion criterion,
-			Order order);
+	public List getResultsList(Class classObj, Projection projection,
+			Criterion criterion, Order order);
 
 	/**
 	 * To get the list of required values
 	 * 
-	 *@param org
+	 * @param org
 	 *            .hibernate.criterion.DetachedCriteria detachedCriteria
 	 * 
-	 *@return Projection list(i.e mentioned in DetachedCriteria).
+	 * @return Projection list(i.e mentioned in DetachedCriteria).
 	 * 
 	 */
 	public List getResultsList(DetachedCriteria detachedCriteria);
 
-	//TODO -- Uncomment this once demand code is available
-	//public List getDmdCollAmtInstWise(EgDemand egDemand);
+	public List getDmdCollAmtInstWise(EgDemand egDemand);
 
 	/**
 	 * Called to get the EgDemandDetails Id From Installment and Egdemand.
 	 * 
 	 * 
-	 *@param org
+	 * @param org
 	 *            .egov.commons.Installment
-	 *@param org
+	 * @param org
 	 *            .egov.demand.model.EgDemand
 	 * 
-	 *@return java.util.List.
+	 * @return java.util.List.
 	 * 
 	 */
 
-	//TODO -- Uncomment this once demand code is available
-	//public List getDmdDetIdFromInstallandEgDemand(Installment installment, EgDemand egDemand);
+	public List getDmdDetIdFromInstallandEgDemand(Installment installment,
+			EgDemand egDemand);
 
 	/**
 	 * Method called to get the EgptProperty Id from the Bill Id.Property is
 	 * linked with EgDemand which internally linked with egBill.
 	 * 
-	 *@param billId
+	 * @param billId
 	 *            - Id of the EgBill Object .
-	 *@return java.math.BigDecimal - returns the EgptProperty Id. If the billId
+	 * @return java.math.BigDecimal - returns the EgptProperty Id. If the billId
 	 *         is null then null is returned.
 	 * 
 	 */
@@ -166,9 +168,9 @@ public interface PropertyDAO extends org.egov.infstr.dao.GenericDAO {
 	 * Method called to get all the Demands(i.,e including the history and non
 	 * history) for a BasicProperty.
 	 * 
-	 *@param basicProperty
+	 * @param basicProperty
 	 *            - BasicProperty Object in which Demands needs are to retrieved
-	 *@return java.util.List - returns the list of Demands for the
+	 * @return java.util.List - returns the list of Demands for the
 	 *         basicProperty. If the basicPrperty is null then null is returned
 	 * 
 	 */
@@ -178,18 +180,18 @@ public interface PropertyDAO extends org.egov.infstr.dao.GenericDAO {
 	 * Method called to get EgDemandDetails Ids based on given
 	 * EgDemand,Installment and Mastercode.
 	 * 
-	 *@param installment
+	 * @param installment
 	 *            - Installment in which DemandDetail belongs.
-	 *@param egDemand
+	 * @param egDemand
 	 *            -EgDemand Object.
-	 *@param demandReasonMasterCode
+	 * @param demandReasonMasterCode
 	 *            - EgDemandReasonMaster code
-	 *@return egDemand - returns the list of Demands for the basicProperty.
+	 * @return egDemand - returns the list of Demands for the basicProperty.
 	 * 
 	 */
-	//TODO -- Uncomment this once demand code is available
-	/*public List getDmdDetIdFromInstallandEgDemand(Installment installment, EgDemand egDemand,
-			String demandReasonMasterCode);*/
+	public List getDmdDetIdFromInstallandEgDemand(Installment installment,
+			EgDemand egDemand, String demandReasonMasterCode);
+
 	/**
 	 * Returns installment wise demand and collection for all the Demand reasons
 	 * 
@@ -199,7 +201,6 @@ public interface PropertyDAO extends org.egov.infstr.dao.GenericDAO {
 	 *         and rebate.
 	 * 
 	 */
-	//TODO -- Uncomment this once demand code is available
-	//public List getDmdCollForAllDmdReasons(EgDemand egDemand);
+	public List getDmdCollForAllDmdReasons(EgDemand egDemand);
 
 }

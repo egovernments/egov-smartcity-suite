@@ -12,6 +12,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.utils.EgovInfrastrUtil;
 import org.egov.commons.utils.EgovInfrastrUtilInteface;
+import org.egov.demand.dao.DCBDaoFactory;
+import org.egov.demand.dao.DepreciationMasterDao;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -278,11 +280,10 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 					.getTaxPercDao();
 			CategoryDao categoryDao = PropertyDAOFactory.getDAOFactory()
 					.getCategoryDao();
-			// TODO -- Commented to fix Phoenix Compilation issues
-			/*
-			 * DepreciationMasterDao deprMstrDao = DCBDaoFactory.getDaoFactory()
-			 * .getDepreciationMasterDao();
-			 */
+
+			DepreciationMasterDao deprMstrDao = DCBDaoFactory.getDaoFactory()
+					.getDepreciationMasterDao();
+
 			allPropertySourcelist = (ArrayList) propSrcDao.findAll();
 			Iterator allPropertySourcelistIter = allPropertySourcelist
 					.iterator();
@@ -347,8 +348,7 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 
 			allAllTaxRatelist = (ArrayList) taxPercDAO.findAll();
 			allCategorieslist = (ArrayList) categoryDao.findAll();
-			// TODO -- Commented to fix Phoenix Compilation issues
-			// allDepreciationRates = (ArrayList) deprMstrDao.findAll();
+			allDepreciationRates = (ArrayList) deprMstrDao.findAll();
 
 		} catch (Exception sqe) {
 			LOGGER.info("Exception in update()-----PTISCacheManager----"

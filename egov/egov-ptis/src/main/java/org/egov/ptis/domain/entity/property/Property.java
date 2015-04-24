@@ -17,6 +17,7 @@ import org.egov.exceptions.InvalidPropertyException;
 import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.joda.time.DateTime;
 
 /**
@@ -103,14 +104,13 @@ public interface Property {
 
 	public Date getEffectiveDate();
 
-	//TODO -- Fix compilation issues once demand module code is available
-	/*public Set<Ptdemand> getPtDemandSet();
+	public Set<Ptdemand> getPtDemandSet();
 
 	public void setPtDemandSet(Set<Ptdemand> ptDemandSet);
 
 	public void addPtDemand(Ptdemand ptDmd);
 
-	public void removePtDemand(Ptdemand ptDmd);*/
+	public void removePtDemand(Ptdemand ptDmd);
 
 	public PropertyDetail getPropertyDetail();
 

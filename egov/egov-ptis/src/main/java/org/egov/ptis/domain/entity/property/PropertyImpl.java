@@ -25,6 +25,7 @@ import org.egov.exceptions.InvalidPropertyException;
 import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.joda.time.DateTime;
 
 /**
@@ -58,8 +59,7 @@ public class PropertyImpl extends StateAware implements Property {
 
 	private Character status = 'N';
 
-	//TODO -- Fix compilation issues once demand module code is available
-	//private Set<Ptdemand> ptDemandSet = new HashSet<Ptdemand>();
+	private Set<Ptdemand> ptDemandSet = new HashSet<Ptdemand>();
 
 	private Character isChecked = 'N';
 
@@ -280,8 +280,7 @@ public class PropertyImpl extends StateAware implements Property {
 		this.owner = owner;
 	}
 
-	//TODO -- Uncomment this once demand module code is available
-	/*@Override
+	@Override
 	public void addPtDemand(Ptdemand ptDmd) {
 		getPtDemandSet().add(ptDmd);
 	}
@@ -289,7 +288,7 @@ public class PropertyImpl extends StateAware implements Property {
 	@Override
 	public void removePtDemand(Ptdemand ptDmd) {
 		getPtDemandSet().remove(ptDmd);
-	}*/
+	}
 
 	@Override
 	public void addPropertyOwners(PropertyOwner owner) {
@@ -345,8 +344,7 @@ public class PropertyImpl extends StateAware implements Property {
 		this.basicProperty = basicProperty;
 	}
 
-	//TODO -- Uncomment this once demand module code is available
-	/*@Override
+	@Override
 	public Set<Ptdemand> getPtDemandSet() {
 		return ptDemandSet;
 	}
@@ -354,7 +352,7 @@ public class PropertyImpl extends StateAware implements Property {
 	@Override
 	public void setPtDemandSet(Set<Ptdemand> ptDemandSet) {
 		this.ptDemandSet = ptDemandSet;
-	}*/
+	}
 
 	@Override
 	public PropertyDetail getPropertyDetail() {
@@ -530,8 +528,7 @@ public class PropertyImpl extends StateAware implements Property {
 		newProp.setPropertyOwnerSet(cloneOwners());
 		newProp.setPropertySource(getPropertySource());
 		newProp.setPropertyTenantSet(cloneTenants());
-		//TODO -- Uncomment this once demand module code is available
-		/*newProp.setPtDemandSet(cloneDemand());*/
+		newProp.setPtDemandSet(cloneDemand());
 		newProp.setRemarks(getRemarks());
 		newProp.setVacant(getVacant());
 		newProp.setIsExemptedFromTax(getIsExemptedFromTax());
@@ -564,10 +561,10 @@ public class PropertyImpl extends StateAware implements Property {
 	 */
 	private Set<PropertyOwner> cloneOwners() {
 		Set<PropertyOwner> newOwnerSet = new HashSet<PropertyOwner>();
-		PropertyOwner newOwner;
+		//TODO -- Fix me (Commented to Resolve compilation issues)
+		/*PropertyOwner newOwner;
 		for (PropertyOwner owner : getPropertyOwnerSet()) {
-			//TODO -- Commented to fix compilation issues
-			/*newOwner = new PropertyOwner(null, owner.getSsn(), owner.getPanNumber(), owner.getPassportNumber(),
+			newOwner = new PropertyOwner(null, owner.getSsn(), owner.getPanNumber(), owner.getPassportNumber(),
 					owner.getDrivingLicenceNumber(), owner.getRationCardNumber(), owner.getVoterRegistrationNumber(),
 					owner.getFirstName(), owner.getMiddleName(), owner.getLastName(), owner.getBirthDate(),
 					owner.getHomePhone(), owner.getOfficePhone(), owner.getMobilePhone(), owner.getFax(),
@@ -575,22 +572,21 @@ public class PropertyImpl extends StateAware implements Property {
 					owner.getFirstNameLocal(), owner.getMiddleNameLocal(), owner.getLastNameLocal(),
 					owner.getOwnerTitle(), owner.getOwnertitleLocal(), owner.getOrderNo(), owner.getSource());
 			newOwner.setAddressSet(cloneAddrSet(newOwner.getAddressSet()));
-			newOwnerSet.add(newOwner);*/
-		}
+			newOwnerSet.add(newOwner);
+		}*/
 		return newOwnerSet;
 	}
 
 	/*
 	 * This method returns Demand details as a Set
 	 */
-	//TODO -- Uncomment this once demand module code is available
-	/*private Set<Ptdemand> cloneDemand() {
+	private Set<Ptdemand> cloneDemand() {
 		Set<Ptdemand> newdemandSet = new HashSet<Ptdemand>();
 		for (Ptdemand demand : getPtDemandSet()) {
 			newdemandSet.add((Ptdemand) demand.clone());
 		}
 		return newdemandSet;
-	}*/
+	}
 
 	/*
 	 * This method returns Tenant details as a Set
@@ -599,7 +595,7 @@ public class PropertyImpl extends StateAware implements Property {
 		Set<Owner> newTenantSet = new HashSet<Owner>();
 		Owner newTenant;
 		for (Owner tenant : getPropertyTenantSet()) {
-			//TODO -- Commented to fix compilation issues
+			//TODO -- Fix me (Commented to Resolve compilation issues)
 			/*newTenant = new Owner(null, tenant.getSsn(), tenant.getPanNumber(), tenant.getPassportNumber(), tenant
 					.getDrivingLicenceNumber(), tenant.getRationCardNumber(), tenant.getVoterRegistrationNumber(),
 					tenant.getFirstName(), tenant.getMiddleName(), tenant.getLastName(), tenant.getBirthDate(), tenant
@@ -685,7 +681,7 @@ public class PropertyImpl extends StateAware implements Property {
 		Set<FloorIF> flrDtlsSet = new HashSet<FloorIF>();
 		for (FloorIF flr : getPropertyDetail().getFloorDetails()) {
 			floor = new FloorImpl(flr.getConstructionTypeSet(), flr.getStructureClassification(),
-					flr.getPropertyUsage(), flr.getPropertyOccupation(), flr.getFloorNo(), /*flr.getDepreciationMaster(),*/
+					flr.getPropertyUsage(), flr.getPropertyOccupation(), flr.getFloorNo(), flr.getDepreciationMaster(),
 					flr.getBuiltUpArea(), flr.getFloorArea(), flr.getWaterMeter(), flr.getElectricMeter(), null, null,
 					flr.getRentPerMonth(), flr.getExtraField1(), flr.getExtraField2(), flr.getExtraField3(),
 					flr.getExtraField4(), flr.getExtraField5(), flr.getExtraField6(), flr.getExtraField7(),

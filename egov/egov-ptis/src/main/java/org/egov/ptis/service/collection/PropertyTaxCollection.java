@@ -1,5 +1,4 @@
-//TODO -- Commented to fix Phoenix Compilation issues
-/*package org.egov.ptis.service.collection;
+package org.egov.ptis.service.collection;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.DMD_STATUS_CHEQUE_BOUNCED;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
@@ -33,7 +32,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.collection.entity.ReceiptDetail;
+import org.egov.collection.integration.models.BillReceiptInfo;
+import org.egov.collection.integration.models.BillReceiptInfoImpl;
+import org.egov.collection.integration.models.ReceiptAccountInfo;
+import org.egov.collection.integration.models.ReceiptInstrumentInfo;
 import org.egov.commons.Installment;
 import org.egov.demand.dao.DCBDaoFactory;
 import org.egov.demand.dao.DemandGenericDao;
@@ -45,13 +48,9 @@ import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
-import org.egov.erpcollection.integration.models.BillReceiptInfo;
-import org.egov.erpcollection.integration.models.BillReceiptInfoImpl;
-import org.egov.erpcollection.integration.models.ReceiptAccountInfo;
-import org.egov.erpcollection.integration.models.ReceiptInstrumentInfo;
-import org.egov.erpcollection.models.ReceiptDetail;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.commons.Module;
-import org.egov.infstr.commons.dao.GenericDaoFactory;
+import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovUtils;
 import org.egov.infstr.utils.HibernateUtil;
@@ -60,22 +59,27 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.nmc.constants.NMCPTISConstants;
 import org.egov.ptis.nmc.service.CollectionApportioner;
 import org.egov.ptis.nmc.util.PropertyTaxUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
-*//**
+/**
  * This class is used to persist Collections .This is used for the integration
  * of Collections and Bills and property tax.
  *
- *//*
+ */
 
 public class PropertyTaxCollection extends TaxCollection {
 
 	private static final Logger LOGGER = Logger.getLogger(PropertyTaxCollection.class);
 	private PersistenceService persistenceService;
 	private BigDecimal totalAmount = BigDecimal.ZERO;
+	@Autowired
+	@Qualifier(value = "moduleDAO")
+	private ModuleDao moduleDao;
 
 	@Override
 	protected Module module() {
-		return GenericDaoFactory.getDAOFactory().getModuleDao().getModuleByName(PTMODULENAME);
+		return moduleDao.getModuleByName(PTMODULENAME);
 	}
 
 	@Override
@@ -102,10 +106,10 @@ public class PropertyTaxCollection extends TaxCollection {
 		LOGGER.debug("updateDemandDetails : Updating Demand Details Finished...");
 	}
 
-	*//**
+	/**
 	 * This method is invoked from Collections end when an event related to
 	 * receipt in bill generation occurs.
-	 *//*
+	 */
 	@Override
 	public void updateReceiptDetails(Set<BillReceiptInfo> billReceipts) {
 		LOGGER.debug("updateReceiptDetails : Updating Receipt Details Started, billReceipts : " + billReceipts);
@@ -116,9 +120,9 @@ public class PropertyTaxCollection extends TaxCollection {
 		LOGGER.debug("updateReceiptDetails : Updating Receipt Details Finished, status : " + status);
 	}
 
-	*//**
+	/**
 	 * Adds the collected amounts in the appropriate buckets.
-	 *//*
+	 */
 	private void updateCollForRcptCreate(EgDemand demand, BillReceiptInfo billRcptInfo) {
 		LOGGER.debug("updateCollForRcptCreate : Updating Collection Started For Demand : " + demand
 				+ " with BillReceiptInfo - " + billRcptInfo);
@@ -131,9 +135,9 @@ public class PropertyTaxCollection extends TaxCollection {
 		LOGGER.debug("updateCollForRcptCreate : Updating Demand For Collection finished...");
 	}
 
-	*//**
+	/**
 	 * Deducts the collected amounts as per the amount of the cancelled receipt.
-	 *//*
+	 */
 	private void updateCollForRcptCancel(EgDemand demand, BillReceiptInfo billRcptInfo) {
 		LOGGER.debug("reconcileCollForRcptCancel : Updating Collection Started For Demand : " + demand
 				+ " with BillReceiptInfo - " + billRcptInfo);
@@ -147,10 +151,10 @@ public class PropertyTaxCollection extends TaxCollection {
 		LOGGER.debug("reconcileCollForRcptCancel : Updating Collection finished For Demand : " + demand);
 	}
 
-	*//**
+	/**
 	 * Deducts the collected amounts as per the amount of the bounced cheque,
 	 * and also imposes a cheque-bounce penalty.
-	 *//*
+	 */
 	private void updateCollForChequeBounce(EgDemand demand, BillReceiptInfo billRcptInfo) {
 		LOGGER.debug("reconcileCollForChequeBounce : Updating Collection Started For Demand : " + demand
 				+ " with BillReceiptInfo - " + billRcptInfo);
@@ -182,13 +186,13 @@ public class PropertyTaxCollection extends TaxCollection {
 		LOGGER.debug("reconcileCollForChequeBounce : Updating Collection finished For Demand : " + demand);
 	}
 
-	*//**
+	/**
 	 * Update the collection to respective account heads paid
 	 *
 	 * @param accountDetails
 	 * @param demand
 	 * @param billRcptInfo
-	 *//*
+	 */
 	@SuppressWarnings("unchecked")
 	private void updateDmdDetForRcptCreate(Set<ReceiptAccountInfo> accountDetails, EgDemand demand,
 			BillReceiptInfo billRcptInfo) {
@@ -299,11 +303,12 @@ public class PropertyTaxCollection extends TaxCollection {
 						demandDetail.addCollectedWithOnePaisaTolerance(rcptAccInfo.getCrAmount());
 					}
 
-					persistCollectedReceipts(demandDetail, billRcptInfo.getReceiptNum(), totalAmount,
+					//TODO -- Fix me (Commented to Resolve compilation issues)
+					/*persistCollectedReceipts(demandDetail, billRcptInfo.getReceiptNum(), totalAmount,
 							billRcptInfo.getReceiptDate(), demandDetail.getAmtCollected());
 					LOGGER.info("Persisted demand and receipt details for tax : " + reason + " installment : "
 							+ instDesc + " with receipt No : " + billRcptInfo.getReceiptNum() + " for Rs. "
-							+ rcptAccInfo.getCrAmount());
+							+ rcptAccInfo.getCrAmount());*/
 				}
 			}
 		}
@@ -318,25 +323,25 @@ public class PropertyTaxCollection extends TaxCollection {
 		LOGGER.debug("Exiting method saveCollectionDetails");
 	}
 
-	*//**
+	/**
 	 * Return true if Arrear or Current General Tax GlCode or Advance GlCode
 	 * 
 	 * @param rcptAccInfo
 	 * @return true if Arrear or Current General Tax GlCode or Advance GlCode
 	 *         else false
-	 *//*
+	 */
 	private boolean isArrearOrCurrentGenTaxGlCode(String glCode) {
 		return glCode.equalsIgnoreCase(GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_GENERAL_TAX))
 				|| glCode.equalsIgnoreCase(GLCODEMAP_FOR_ARREARTAX.get(DEMANDRSN_CODE_GENERAL_TAX));
 	}
 
-	*//**
+	/**
 	 * Reconciles the collection for respective account heads thats been paid
 	 * with given cancel receipt
 	 *
 	 * @param demand
 	 * @param billRcptInfo
-	 *//*
+	 */
 	private void updateDmdDetForRcptCancel(EgDemand demand, BillReceiptInfo billRcptInfo) {
 		LOGGER.debug("Entering method updateDmdDetForRcptCancel");
 		ReceiptAccountInfo rebateRcptAccInfo = null;
@@ -393,12 +398,12 @@ public class PropertyTaxCollection extends TaxCollection {
 		LOGGER.debug("Exiting method updateDmdDetForRcptCancel");
 	}
 
-	*//**
+	/**
 	 * Returns a map of Installment description and ReceiptAccountInfo
 	 * 
 	 * @param billRcptInfo
 	 * @return
-	 *//*
+	 */
 	private Map<String, ReceiptAccountInfo> getRebteReceiptAccountInfosByInstallment(BillReceiptInfo billRcptInfo) {
 		Map<String, ReceiptAccountInfo> rebateReceiptAccInfoByInstallment = new HashMap<String, ReceiptAccountInfo>();
 
@@ -438,11 +443,11 @@ public class PropertyTaxCollection extends TaxCollection {
 		return egDemand;
 	}
 
-	*//**
+	/**
 	 * Checks if we are within a rebate period.
 	 *
 	 * @return
-	 *//*
+	 */
 	public static boolean isRebatePeriodActive() {
 		boolean isActive = false;
 		Date today = new Date();
@@ -462,13 +467,13 @@ public class PropertyTaxCollection extends TaxCollection {
 		return isActive;
 	}
 
-	*//**
+	/**
 	 * Calculates Early Payment Rebate for given Tax Amount
 	 *
 	 * @param rebateApplTaxAmt
 	 *            for which Rebate has to be calculated
 	 * @return rebate amount.
-	 *//*
+	 */
 	public BigDecimal calcEarlyPayRebate(BigDecimal instTaxAmount, BigDecimal rebateApplTaxAmt, BigDecimal collection) {
 		BigDecimal rebate = BigDecimal.ZERO;
 		Date today = new Date();
@@ -520,22 +525,22 @@ public class PropertyTaxCollection extends TaxCollection {
 		return rebate;
 	}
 
-	*//**
+	/**
 	 * Gives the tax amount of Account head for which Rebate applicable
 	 *
 	 * @param List
 	 *            of <code>ReceiptDetail</code>
 	 * @return rebate applicable tax amount.
-	 *//*
+	 */
 	public BigDecimal getRebateApplAmount(List<ReceiptDetail> receiptDetails) {
 		BigDecimal taxAmount = BigDecimal.ZERO;
 		for (ReceiptDetail rd : receiptDetails) {
 			if (rd.getAccounthead().getGlcode().equals(GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_GENERAL_TAX))) {
-				
+				/*
 				 * getting rebate amount from getCramountToBePaid() because
 				 * before receipt created CrAmount is Zero and it will updated
 				 * as part of receipt creation.
-				 
+				 */
 				taxAmount = rd.getCramountToBePaid();
 				break;
 			}
@@ -579,11 +584,11 @@ public class PropertyTaxCollection extends TaxCollection {
 		return retMap;
 	}
 
-	*//**
+	/**
 	 * @param retMap
 	 * @param installment
 	 * @param rd
-	 *//*
+	 */
 	private void prepareTaxMap(Map<String, BigDecimal> retMap, String installment, ReceiptDetail rd, String type) {
 		if (retMap.get(installment + type) == null) {
 			retMap.put(installment + type, rd.getCramountToBePaid());
@@ -592,7 +597,7 @@ public class PropertyTaxCollection extends TaxCollection {
 		}
 	}
 
-	*//**
+	/**
 	 * Method used to calculate the Total Cheque amount from he BillreceiptInfo
 	 * object which is received from Collections Module.
 	 *
@@ -600,7 +605,7 @@ public class PropertyTaxCollection extends TaxCollection {
 	 *
 	 * @return Total Cheque amount
 	 * @exception EGOVRuntimeException
-	 *//*
+	 */
 
 	@Override
 	public BigDecimal getTotalChequeAmt(BillReceiptInfo billRcptInfo) {
@@ -620,17 +625,17 @@ public class PropertyTaxCollection extends TaxCollection {
 		return totalCollAmt;
 	}
 
-	*//**
+	/**
 	 * Gives the Cheque bounce penalty charges for given cheque amount
 	 *
 	 * @param totalChqAmount
 	 * @return {@link BigDecimal}
-	 *//*
+	 */
 	public BigDecimal getChqBouncePenaltyAmt(BigDecimal totalChqAmount) {
 		return CHQ_BOUNCE_PENALTY;
 	}
 
-	*//**
+	/**
 	 * Method used to insert penalty in EgDemandDetail table. Penalty Amount
 	 * will be calculated depending upon the cheque Amount.
 	 *
@@ -639,7 +644,7 @@ public class PropertyTaxCollection extends TaxCollection {
 	 * @param chqBouncePenalty
 	 *
 	 * @return New EgDemandDetails Object
-	 *//*
+	 */
 	public EgDemandDetails insertPenalty(String demandReason, BigDecimal penaltyAmount, Installment inst) {
 		EgDemandDetails demandDetail = null;
 		if (penaltyAmount != null && penaltyAmount.compareTo(BigDecimal.ZERO) > 0) {
@@ -660,7 +665,7 @@ public class PropertyTaxCollection extends TaxCollection {
 		return demandDetail;
 	}
 
-	*//**
+	/**
 	 * Method used to create new EgDemandDetail Object depending upon the
 	 * EgDemandReason , Collected amount and Demand amount(which are
 	 * compulsory),Other wise returns Empty EgDemandDetails Object.
@@ -671,19 +676,19 @@ public class PropertyTaxCollection extends TaxCollection {
 	 *
 	 * @return New EgDemandDetails Object
 	 *
-	 *//*
+	 */
 
 	public EgDemandDetails createDemandDetails(EgDemandReason egDemandReason, BigDecimal amtCollected,
 			BigDecimal dmdAmount) {
 		return EgDemandDetails.fromReasonAndAmounts(dmdAmount, egDemandReason, amtCollected);
 	}
 
-	*//**
+	/**
 	 * Gives the Current EgDemand for billId
 	 *
 	 * @param upicNo
 	 * @return EgDemand
-	 *//*
+	 */
 	@SuppressWarnings("unchecked")
 	public EgDemand getCurrentDemand(Long billId) {
 		LOGGER.debug("Entered into getCurrentDemand");
@@ -702,13 +707,13 @@ public class PropertyTaxCollection extends TaxCollection {
 		return egDemand;
 	}
 
-	*//**
+	/**
 	 * Method used to insert advance collection in EgDemandDetail table.
 	 *
 	 * @see createDemandDetails() -- EgDemand Details are created
 	 *
 	 * @return New EgDemandDetails Object
-	 *//*
+	 */
 	public EgDemandDetails insertAdvanceCollection(String demandReason, BigDecimal advanceCollectionAmount,
 			Installment installment) {
 		EgDemandDetails demandDetail = null;
@@ -744,4 +749,3 @@ public class PropertyTaxCollection extends TaxCollection {
 		this.persistenceService = persistenceService;
 	}
 }
-*/

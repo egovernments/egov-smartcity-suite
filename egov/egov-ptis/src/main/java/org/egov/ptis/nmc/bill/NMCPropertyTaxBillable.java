@@ -1,5 +1,4 @@
-//TODO -- Fix this once demand code is available
-/*package org.egov.ptis.nmc.bill;
+package org.egov.ptis.nmc.bill;
 
 import static org.egov.demand.interfaces.LatePayPenaltyCalculator.LPPenaltyCalcType.SIMPLE;
 import static org.egov.ptis.nmc.constants.NMCPTISConstants.ARR_LP_DATE_BREAKUP;
@@ -25,15 +24,15 @@ import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
-import org.egov.demand.dao.DCBHibernateDaoFactory;
+import org.egov.demand.dao.DCBDaoFactory;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.EgovUtils;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.rjbac.user.dao.UserDAO;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -47,18 +46,20 @@ import org.egov.ptis.nmc.service.Amount;
 import org.egov.ptis.nmc.service.PenaltyCalculationService;
 import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class NMCPropertyTaxBillable extends PropertyTaxBillable {
 
 	private PropertyTaxUtil ptUtils = new PropertyTaxUtil();
-	private static final Logger LOGGER = Logger.getLogger(NMCPropertyTaxBillable.class);
+	private static final Logger LOGGER = Logger
+			.getLogger(NMCPropertyTaxBillable.class);
 	private static final BigDecimal VALUE_HUNDRED = new BigDecimal(100);
 
-	*//**
+	/**
 	 * Boolean value to indicate if apportioning has to be handled by
 	 * Collections or the billing system (PTIS). False indicates that
 	 * apportioning will be taken care of by Collections
-	 *//*
+	 */
 	private Boolean isCallbackForApportion = Boolean.TRUE;
 	private LPPenaltyCalcType penaltyCalcType = SIMPLE;
 	private String referenceNumber;
@@ -70,6 +71,8 @@ public class NMCPropertyTaxBillable extends PropertyTaxBillable {
 	private Boolean isMiscellaneous = Boolean.FALSE;
 	private BigDecimal mutationFee;
 	private Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail = new TreeMap<Installment, EgDemandDetails>();
+	@Autowired
+	private UserService userService;
 
 	@Override
 	public BigDecimal getFunctionaryCode() {
@@ -117,8 +120,10 @@ public class NMCPropertyTaxBillable extends PropertyTaxBillable {
 	}
 
 	@Override
-	public BigDecimal calcPanalty(Date latestCollReceiptDate, Date fromDate, BigDecimal amount) {
-		LOGGER.info("Enter into calcPanalty - fromDate: " + fromDate + ", amount: " + amount);
+	public BigDecimal calcPanalty(Date latestCollReceiptDate, Date fromDate,
+			BigDecimal amount) {
+		LOGGER.info("Enter into calcPanalty - fromDate: " + fromDate
+				+ ", amount: " + amount);
 		BigDecimal penalty = BigDecimal.ZERO;
 		Calendar fromDateCalendar = Calendar.getInstance();
 		fromDateCalendar.setTime(fromDate);
@@ -134,7 +139,8 @@ public class NMCPropertyTaxBillable extends PropertyTaxBillable {
 			latestCollRcptCalendar.setTime(latestCollReceiptDate);
 		}
 
-		DateFormat dateFormat = new SimpleDateFormat(NMCPTISConstants.DATE_FORMAT_DDMMYYY);
+		DateFormat dateFormat = new SimpleDateFormat(
+				PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
 		Date arrearlpDate = null;
 		Date arrearlpDateBreakup = null;
 		Date frmDate = null;
@@ -143,35 +149,43 @@ public class NMCPropertyTaxBillable extends PropertyTaxBillable {
 			arrearlpDateBreakup = dateFormat.parse(ARR_LP_DATE_BREAKUP);
 			frmDate = dateFormat.parse(dateFormat.format(fromDate));
 		} catch (ParseException e) {
-			LOGGER.error("Error while parsing Arrear Late Payment penalty dates", e);
+			LOGGER.error(
+					"Error while parsing Arrear Late Payment penalty dates", e);
 		}
 
 		if (getLPPenaltyCalcType().equals(LPPenaltyCalcType.SIMPLE)) {
 			int noOfMonths = 0;
 			Date penaltyFromDate = null;
-			
-			if (latestCollReceiptDate != null && latestCollReceiptDate.after(frmDate)
+
+			if (latestCollReceiptDate != null
+					&& latestCollReceiptDate.after(frmDate)
 					&& latestCollReceiptDate.after(arrearlpDateBreakup)) {
 
 				latestCollRcptCalendar.add(Calendar.MONTH, 1);
-				arrearsPenaltyApplicableDate.setTime(latestCollRcptCalendar.getTime());
+				arrearsPenaltyApplicableDate.setTime(latestCollRcptCalendar
+						.getTime());
 				penaltyFromDate = arrearsPenaltyApplicableDate.getTime();
-				
-			} else if (frmDate.after(arrearlpDateBreakup) || frmDate.equals(arrearlpDateBreakup)) {
-				arrearsPenaltyApplicableDate.set(Calendar.YEAR, (fromDateCalendar.get(Calendar.YEAR) + 1));
+
+			} else if (frmDate.after(arrearlpDateBreakup)
+					|| frmDate.equals(arrearlpDateBreakup)) {
+				arrearsPenaltyApplicableDate.set(Calendar.YEAR,
+						(fromDateCalendar.get(Calendar.YEAR) + 1));
 				penaltyFromDate = arrearsPenaltyApplicableDate.getTime();
 			} else {
 				penaltyFromDate = arrearlpDate;
 			}
 
 			LOGGER.info("calcPanalty - penaltyFromDate: " + penaltyFromDate);
-			
-			noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(penaltyFromDate, new Date());
-			
-			penalty = amount.multiply(LP_PERCENTAGE_CONSTANT).divide(BigDecimal.valueOf(100))
+
+			noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(penaltyFromDate,
+					new Date());
+
+			penalty = amount.multiply(LP_PERCENTAGE_CONSTANT)
+					.divide(BigDecimal.valueOf(100))
 					.multiply(BigDecimal.valueOf(noOfMonths));
-			
-			LOGGER.info("calcPanalty - noOfMonths: " + noOfMonths + ", penalty: " + penalty);
+
+			LOGGER.info("calcPanalty - noOfMonths: " + noOfMonths
+					+ ", penalty: " + penalty);
 		}
 		return EgovUtils.roundOff(penalty);
 	}
@@ -193,32 +207,41 @@ public class NMCPropertyTaxBillable extends PropertyTaxBillable {
 		}
 
 		if (today.get(Calendar.MONTH) > 2 && today.get(Calendar.MONTH) <= 11) {
-			currentPenaltyApplicableDate.set(Calendar.YEAR, today.get(Calendar.YEAR) + 1);
+			currentPenaltyApplicableDate.set(Calendar.YEAR,
+					today.get(Calendar.YEAR) + 1);
 		} else {
-			currentPenaltyApplicableDate.set(Calendar.YEAR, today.get(Calendar.YEAR));
+			currentPenaltyApplicableDate.set(Calendar.YEAR,
+					today.get(Calendar.YEAR));
 		}
 
 		if (today.getTime().after(currentPenaltyApplicableDate.getTime())
-				|| today.getTime().equals(currentPenaltyApplicableDate.getTime())) {
+				|| today.getTime().equals(
+						currentPenaltyApplicableDate.getTime())) {
 			BigDecimal balanceTax = amount;
 			int noOfMonths = 0;
-			if (latestCollRcptDate != null && latestCollRcptCalendar.get(Calendar.MONTH) >= 0
+			if (latestCollRcptDate != null
+					&& latestCollRcptCalendar.get(Calendar.MONTH) >= 0
 					&& latestCollRcptCalendar.get(Calendar.MONTH) < 3
-					&& today.get(Calendar.YEAR) == latestCollRcptCalendar.get(Calendar.YEAR)) {
-				currentPenaltyApplicableDate.set(Calendar.MONTH, latestCollRcptCalendar.get(Calendar.MONTH) + 1);
-				noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(currentPenaltyApplicableDate.getTime(), new Date());
+					&& today.get(Calendar.YEAR) == latestCollRcptCalendar
+							.get(Calendar.YEAR)) {
+				currentPenaltyApplicableDate.set(Calendar.MONTH,
+						latestCollRcptCalendar.get(Calendar.MONTH) + 1);
+				noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(
+						currentPenaltyApplicableDate.getTime(), new Date());
 			} else {
-				noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(currentPenaltyApplicableDate.getTime(), new Date());
+				noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(
+						currentPenaltyApplicableDate.getTime(), new Date());
 			}
-			penalty = balanceTax.multiply(LP_PERCENTAGE_CONSTANT).divide(VALUE_HUNDRED)
-					.multiply(new BigDecimal(noOfMonths));
+			penalty = balanceTax.multiply(LP_PERCENTAGE_CONSTANT)
+					.divide(VALUE_HUNDRED).multiply(new BigDecimal(noOfMonths));
 		}
 
 		return EgovUtils.roundOff(penalty);
 	}
-	
+
 	@Override
-	public BigDecimal calcLPPenaltyForPeriod(Date fromDate, Date toDate, BigDecimal amount) {
+	public BigDecimal calcLPPenaltyForPeriod(Date fromDate, Date toDate,
+			BigDecimal amount) {
 		return null;
 	}
 
@@ -229,7 +252,8 @@ public class NMCPropertyTaxBillable extends PropertyTaxBillable {
 
 	@Override
 	public BigDecimal getLPPPercentage() {
-		return new BigDecimal(ptUtils.getAppConfigValue("LATE_PAYPENALTY_PERC", PropertyTaxConstants.PTMODULENAME));
+		return new BigDecimal(ptUtils.getAppConfigValue("LATE_PAYPENALTY_PERC",
+				PropertyTaxConstants.PTMODULENAME));
 	}
 
 	@Override
@@ -249,10 +273,11 @@ public class NMCPropertyTaxBillable extends PropertyTaxBillable {
 	@Override
 	public EgBillType getBillType() {
 		if (billType == null) {
-			EgBillDao egBillDao = DCBHibernateDaoFactory.getDaoFactory().getEgBillDao();
-			UserDAO userDao = new UserDAO();
+			EgBillDao egBillDao = DCBDaoFactory.getDaoFactory()
+					.getEgBillDao();
 			if (getUserId() != null && !getUserId().equals("")) {
-				String loginUser = userDao.getUserByID(Integer.valueOf(getUserId().toString())).getUserName();
+				String loginUser = userService.getUserById(getUserId())
+						.getName();
 				if (loginUser.equals(PropertyTaxConstants.CITIZENUSER)) {
 					billType = egBillDao.getBillTypeByCode("ONLINE");
 				} else if (!loginUser.equals(PropertyTaxConstants.CITIZENUSER)) {
@@ -274,11 +299,14 @@ public class NMCPropertyTaxBillable extends PropertyTaxBillable {
 		if (getBasicProperty().getPropertyID() != null) {
 			consumerCode.append("(Zone:");
 			if (getBasicProperty().getPropertyID().getZone() != null) {
-				consumerCode.append(getBasicProperty().getPropertyID().getZone().getBoundaryNum());
+				consumerCode.append(getBasicProperty().getPropertyID()
+						.getZone().getBoundaryNum());
 			}
 			consumerCode.append(" Ward:");
 			if (getBasicProperty().getPropertyID().getWard() != null) {
-				consumerCode.append(getBasicProperty().getPropertyID().getWard().getBoundaryNum()).append(")");
+				consumerCode.append(
+						getBasicProperty().getPropertyID().getWard()
+								.getBoundaryNum()).append(")");
 			}
 		}
 		return consumerCode.toString();
@@ -315,10 +343,11 @@ public class NMCPropertyTaxBillable extends PropertyTaxBillable {
 	public String getPaymentGatewayType() {
 		return pgType;
 	}
-	
-	private Map<Installment, EgDemandDetails> getInstallmentWisePenaltyDemandDetails(Property property, Installment currentInstallment) {
+
+	private Map<Installment, EgDemandDetails> getInstallmentWisePenaltyDemandDetails(
+			Property property, Installment currentInstallment) {
 		Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetails = new TreeMap<Installment, EgDemandDetails>();
-		
+
 		String query = "select ptd from Ptdemand ptd "
 				+ "inner join fetch ptd.egDemandDetails dd "
 				+ "inner join fetch dd.egDemandReason dr "
@@ -330,27 +359,30 @@ public class NMCPropertyTaxBillable extends PropertyTaxBillable {
 				+ "and p = :property "
 				+ "and ptd.egInstallmentMaster = :installment "
 				+ "and drm.code = :penaltyReasonCode";
-		
-		List list = HibernateUtil.getCurrentSession()
-				.createQuery(query)
+
+		List list = HibernateUtil.getCurrentSession().createQuery(query)
 				.setEntity("property", property)
 				.setEntity("installment", currentInstallment)
 				.setString("penaltyReasonCode", DEMANDRSN_CODE_PENALTY_FINES)
 				.list();
-		
+
 		Ptdemand ptDemand = null;
-		
+
 		if (list.isEmpty()) {
 			LOGGER.debug("No penalty demand details..");
 		} else {
 			ptDemand = (Ptdemand) list.get(0);
 			for (EgDemandDetails dmdDet : ptDemand.getEgDemandDetails()) {
-				if (dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)) {
-					installmentWisePenaltyDemandDetails.put(dmdDet.getEgDemandReason().getEgInstallmentMaster(), dmdDet);
+				if (dmdDet.getEgDemandReason().getEgDemandReasonMaster()
+						.getCode()
+						.equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)) {
+					installmentWisePenaltyDemandDetails.put(dmdDet
+							.getEgDemandReason().getEgInstallmentMaster(),
+							dmdDet);
 				}
 			}
 		}
-		
+
 		return installmentWisePenaltyDemandDetails;
 	}
 
@@ -358,7 +390,7 @@ public class NMCPropertyTaxBillable extends PropertyTaxBillable {
 		Map<Installment, BigDecimal> waterTaxForInst = new HashMap<Installment, BigDecimal>();
 		Map<Installment, BigDecimal> waterTaxCollForInst = new HashMap<Installment, BigDecimal>();
 		Map<Installment, PropertyInstTaxBean> propertyInstPenMap = new HashMap<Installment, PropertyInstTaxBean>();
-		DateFormat dateFormat = new SimpleDateFormat(NMCPTISConstants.DATE_FORMAT_DDMMYYY);
+		DateFormat dateFormat = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
 		PropertyTaxCollection propTaxColection = new PropertyTaxCollection();
 		Date waterTaxEffectiveDate = null;
 		EgDemandDetails penaltyDmdDtls = null;
@@ -434,10 +466,10 @@ public class NMCPropertyTaxBillable extends PropertyTaxBillable {
 
 						LOGGER.debug("getCalculatedPenalty - Installment=" + mapEntry.getKey() + ", thereIsBalance="
 								+ thereIsBalance);
-						
+						/*
 						 * penalty will be calculated only when there is +ve tax
 						 * balance
-						 
+						 */
 						if (thereIsBalance) {
 
 							if (!installmentWisePenaltyDemandDetail.isEmpty()) {
@@ -583,7 +615,7 @@ public class NMCPropertyTaxBillable extends PropertyTaxBillable {
 		return propertyInstPenMap;
 	}
 
-	*//**
+	/**
 	 * @param waterTaxForInst
 	 * @param waterTaxCollForInst
 	 * @param propertyInstPenMap
@@ -591,39 +623,51 @@ public class NMCPropertyTaxBillable extends PropertyTaxBillable {
 	 * @param instWiseAmtCollMap
 	 * @param currentInstall
 	 * @param basicProperty
-	 *//*
-	private void calculateAndPreparePenaltyBeans(Map<Installment, BigDecimal> waterTaxForInst,
-			Map<Installment, BigDecimal> waterTaxCollForInst, Map<Installment, PropertyInstTaxBean> propertyInstPenMap,
-			Map<Installment, BigDecimal> instWiseDmdMap, Map<Installment, BigDecimal> instWiseAmtCollMap,
-			Installment currentInstall, BasicProperty basicProperty, Map<String, Date> installmentAndLatestCollDate) throws ValidationException  {
-		
+	 */
+	private void calculateAndPreparePenaltyBeans(
+			Map<Installment, BigDecimal> waterTaxForInst,
+			Map<Installment, BigDecimal> waterTaxCollForInst,
+			Map<Installment, PropertyInstTaxBean> propertyInstPenMap,
+			Map<Installment, BigDecimal> instWiseDmdMap,
+			Map<Installment, BigDecimal> instWiseAmtCollMap,
+			Installment currentInstall, BasicProperty basicProperty,
+			Map<String, Date> installmentAndLatestCollDate)
+			throws ValidationException {
+
 		PropertyInstTaxBean propInstTaxBean;
-		PenaltyCalculationService penaltyCalculationService = new PenaltyCalculationService(basicProperty,
-				instWiseDmdMap, instWiseAmtCollMap, installmentAndLatestCollDate, installmentWisePenaltyDemandDetail);
-		 
-		Map<Installment, BigDecimal> installmentWisePenalty = penaltyCalculationService.getInstallmentWisePenalty();
-		
+		PenaltyCalculationService penaltyCalculationService = new PenaltyCalculationService(
+				basicProperty, instWiseDmdMap, instWiseAmtCollMap,
+				installmentAndLatestCollDate,
+				installmentWisePenaltyDemandDetail);
+
+		Map<Installment, BigDecimal> installmentWisePenalty = penaltyCalculationService
+				.getInstallmentWisePenalty();
+
 		Installment inst = null;
 		EgDemandDetails penaltyDemandDetails = null;
-		
+
 		if (installmentWisePenalty != null && !installmentWisePenalty.isEmpty()) {
-			for (Map.Entry<Installment, BigDecimal> mapEntry : installmentWisePenalty.entrySet()) {
-				
+			for (Map.Entry<Installment, BigDecimal> mapEntry : installmentWisePenalty
+					.entrySet()) {
+
 				inst = mapEntry.getKey();
-				
+
 				if (!installmentWisePenaltyDemandDetail.isEmpty()) {
-					penaltyDemandDetails = installmentWisePenaltyDemandDetail.get(inst);
+					penaltyDemandDetails = installmentWisePenaltyDemandDetail
+							.get(inst);
 				}
-				
-				propInstTaxBean = createInstallmentTaxPenlatyBean(penaltyDemandDetails, inst, instWiseDmdMap.get(inst),
-						instWiseAmtCollMap.get(inst), mapEntry.getValue(), currentInstall);
+
+				propInstTaxBean = createInstallmentTaxPenlatyBean(
+						penaltyDemandDetails, inst, instWiseDmdMap.get(inst),
+						instWiseAmtCollMap.get(inst), mapEntry.getValue(),
+						currentInstall);
 
 				propertyInstPenMap.put(inst, propInstTaxBean);
 			}
 		}
 	}
 
-	*//**
+	/**
 	 * @param propTaxColection
 	 * @param penaltyDmdDtls
 	 * @param installment
@@ -632,70 +676,85 @@ public class NMCPropertyTaxBillable extends PropertyTaxBillable {
 	 * @param actualCollectionAmount
 	 * @param lpAmt
 	 * @param currentInstall
-	 *//*
-	private PropertyInstTaxBean createInstallmentTaxPenlatyBean(EgDemandDetails penaltyDmdDtls,
-			Installment installment, BigDecimal taxAmount, BigDecimal actualCollectionAmount, BigDecimal lpAmt,
-			Installment currentInstall) {
-		
+	 */
+	private PropertyInstTaxBean createInstallmentTaxPenlatyBean(
+			EgDemandDetails penaltyDmdDtls, Installment installment,
+			BigDecimal taxAmount, BigDecimal actualCollectionAmount,
+			BigDecimal lpAmt, Installment currentInstall) {
+
 		PropertyInstTaxBean propInstTaxBean = new PropertyInstTaxBean();
-		
+
 		propInstTaxBean.setInstallment(installment);
 		propInstTaxBean.setInstallmentId(installment.getId());
 		propInstTaxBean.setInstallmentStr(installment.getDescription());
 		propInstTaxBean.setInstTaxAmt(taxAmount);
-		propInstTaxBean.setInstPenaltyAmt(lpAmt.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : lpAmt);
+		propInstTaxBean
+				.setInstPenaltyAmt(lpAmt.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO
+						: lpAmt);
 		propInstTaxBean.setInstCollAmt(actualCollectionAmount);
-		propInstTaxBean.setInstBalanceAmt(taxAmount.subtract(actualCollectionAmount));
+		propInstTaxBean.setInstBalanceAmt(taxAmount
+				.subtract(actualCollectionAmount));
 
 		if (penaltyDmdDtls != null) {
-			propInstTaxBean.setInstPenaltyCollAmt(penaltyDmdDtls.getAmtCollected());
+			propInstTaxBean.setInstPenaltyCollAmt(penaltyDmdDtls
+					.getAmtCollected());
 		}
 
 		if (!installment.equals(currentInstall)) {
 			propInstTaxBean.setInstRebateAmt(new BigDecimal("0"));
 		} else {
-			propInstTaxBean.setInstRebateAmt(new PropertyTaxCollection().calcEarlyPayRebate(
-					taxAmount,
-					getTaxforReason(getBasicProperty().getProperty(),
-							NMCPTISConstants.DEMANDRSN_CODE_GENERAL_TAX), actualCollectionAmount));
+			propInstTaxBean
+					.setInstRebateAmt(new PropertyTaxCollection()
+							.calcEarlyPayRebate(
+									taxAmount,
+									getTaxforReason(
+											getBasicProperty().getProperty(),
+											NMCPTISConstants.DEMANDRSN_CODE_GENERAL_TAX),
+									actualCollectionAmount));
 		}
-		
+
 		return propInstTaxBean;
 	}
 
-	*//**
+	/**
 	 * Returns true if the penalty is partially collected else false
 	 *
 	 * @param penaltyDmdDtls
 	 * @return true if partial collection else false
-	 *//*
+	 */
 	private boolean isPenaltyPartiallyPaid(EgDemandDetails penaltyDmdDtls) {
-		return penaltyDmdDtls.getAmount().compareTo(penaltyDmdDtls.getAmtCollected()) > 0;
+		return penaltyDmdDtls.getAmount().compareTo(
+				penaltyDmdDtls.getAmtCollected()) > 0;
 	}
 
 	private BigDecimal getTaxforReason(Property property, String demandReason) {
 		BigDecimal reasonTax = BigDecimal.ZERO;
 		Installment inst = PropertyTaxUtil.getCurrentInstallment();
-		PtDemandDao ptDemandDao = PropertyDAOFactory.getDAOFactory().getPtDemandDao();
-		EgDemand egDemand = ptDemandDao.getNonHistoryCurrDmdForProperty(property);
+		PtDemandDao ptDemandDao = PropertyDAOFactory.getDAOFactory()
+				.getPtDemandDao();
+		EgDemand egDemand = ptDemandDao
+				.getNonHistoryCurrDmdForProperty(property);
 		for (EgDemandDetails dmdDet : egDemand.getEgDemandDetails()) {
-			if (dmdDet.getEgDemandReason().getEgInstallmentMaster().equals(inst)
-					&& dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(demandReason)) {
+			if (dmdDet.getEgDemandReason().getEgInstallmentMaster()
+					.equals(inst)
+					&& dmdDet.getEgDemandReason().getEgDemandReasonMaster()
+							.getCode().equals(demandReason)) {
 				reasonTax = dmdDet.getAmount();
 				break;
 			}
 		}
 		return reasonTax;
 	}
-	
-	*//**
+
+	/**
 	 * Gives the Rebate applicable for advance payment
 	 * 
 	 * @param currentTax
 	 * @return applicable rebate amount
-	 *//*
+	 */
 	public BigDecimal calculateAdvanceRebate(BigDecimal currentTax) {
-		return currentTax.multiply(NMCPTISConstants.ADVANCE_REBATE_PERCENTAGE).divide(VALUE_HUNDRED);
+		return currentTax.multiply(NMCPTISConstants.ADVANCE_REBATE_PERCENTAGE)
+				.divide(VALUE_HUNDRED);
 	}
 
 	public Boolean isMiscellaneous() {
@@ -713,6 +772,5 @@ public class NMCPropertyTaxBillable extends PropertyTaxBillable {
 	public void setMutationFee(BigDecimal mutationFee) {
 		this.mutationFee = mutationFee;
 	}
-	
+
 }
-*/

@@ -73,7 +73,7 @@ public interface Billable {
 
 	Date getBillLastDueDate();
 
-	Integer getBoundaryNum();
+	Long getBoundaryNum();
 
 	String getBoundaryType();
 

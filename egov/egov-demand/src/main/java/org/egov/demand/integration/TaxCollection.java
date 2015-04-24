@@ -54,7 +54,7 @@ import org.egov.collection.integration.models.ReceiptInstrumentInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.CommonsDAOFactory;
-import org.egov.dcb.bean.ReceiptDetail;
+import org.egov.collection.entity.ReceiptDetail;
 import org.egov.demand.dao.DCBDaoFactory;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.dao.DemandGenericHibDao;
@@ -655,7 +655,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
 		List<EgDemandDetails> dmdDetList = dmdGenericDao.getDmdDetailList(
 				egDemand, instl, module(), getDemandReasonMaster(code));
 		if (!dmdDetList.isEmpty()) {
-			dmdDet = (EgDemandDetails) dmdDetList.get(0);
+			dmdDet = dmdDetList.get(0);
 		}
 		return dmdDet;
 	}
@@ -719,12 +719,12 @@ public abstract class TaxCollection implements BillingIntegrationService {
 		}
 	}
 
-	/*@Override
+	@Override
 	public void apportionPaidAmount(String billReferenceNumber,
 			BigDecimal actualAmountPaid, ArrayList<ReceiptDetail> receiptDetails) {
 		apportionCollection(billReferenceNumber, actualAmountPaid,
 				receiptDetails);
-	}*/
+	}
 
 	/**
 	 * Billing system will implement this method when the billing system send
