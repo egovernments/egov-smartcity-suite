@@ -150,6 +150,7 @@ $(document).ready(function()
 					{ "data": "task","width": "20%" },
 					{ "data": "status","width": "20%" },
 					{ "data": "details","width": "20%" },
+					{ "data" : null, "target":-1,"defaultContent": '<i class="fa fa-history history-size" class="tooltip-secondary" data-toggle="tooltip" title="History"></i>'},
 					{ "data": "id","visible": false, "searchable": false },
 					{ "data": "link","visible": false, "searchable": false }
 				] 
