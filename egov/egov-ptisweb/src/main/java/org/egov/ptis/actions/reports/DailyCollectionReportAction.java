@@ -30,22 +30,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.jackrabbit.core.security.user.UserImpl;
 import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.dao.CommonsDaoFactory;
+import org.egov.collection.entity.ReceiptDetail;
+import org.egov.collection.entity.ReceiptHeader;
 import org.egov.commons.dao.InstallmentDao;
-import org.egov.erpcollection.models.ReceiptDetail;
-import org.egov.erpcollection.models.ReceiptHeader;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.commons.Module;
-import org.egov.infstr.commons.dao.GenericDaoFactory;
 import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.infstr.utils.StringUtils;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.entity.UserImpl;
-import org.egov.lib.rjbac.user.dao.UserDAO;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.ptis.bean.CollectionInfo;
 import org.egov.ptis.bean.ReceiptInfo;
@@ -110,6 +107,8 @@ public class DailyCollectionReportAction extends BaseFormAction {
 	Boolean searchForm = Boolean.TRUE;
 	String currInst = null;
 	private String userId;
+	private ModuleDao moduleDao;
+	private InstallmentDao instalDao;
 
 	@Override
 	public Object getModel() {
@@ -149,10 +148,8 @@ public class DailyCollectionReportAction extends BaseFormAction {
 	public String generateReport() {
 		LOGGER.debug("Eneterd into generateReport method");
 		Long reportStartTime = System.currentTimeMillis();
-		ModuleDao moduleDao = GenericDaoFactory.getDAOFactory().getModuleDao();
-		InstallmentDao instalDao = CommonsDaoFactory.getDAOFactory().getInstallmentDao();
 		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
-		UserDAO userDao = new UserDAO();
+		//UserDAO userDao = new UserDAO();
 		currInst = instalDao.getInsatllmentByModuleForGivenDate(module, new Date()).getDescription();
 		StringBuilder qryString = new StringBuilder("from org.egov.erpcollection.models.ReceiptHeader rh")
 				.append(" left join fetch rh.receiptInstrument rcptInst")
@@ -188,7 +185,8 @@ public class DailyCollectionReportAction extends BaseFormAction {
 				rcptInfo.setIndexNo(indexNo);
 				rcptInfo.setWardNo(rcptHeader.getConsumerCode().substring(
 						rcptHeader.getConsumerCode().lastIndexOf(":") + 1, rcptHeader.getConsumerCode().indexOf(")")));
-				rcptInfo.setHouseNo(rcptHeader.getReceiptPayeeDetails().getPayeeAddress().split(",")[0]);
+				//FIX ME rcptHeader.getReceiptPayeeDetails() is not available in collection
+				//rcptInfo.setHouseNo(rcptHeader.getReceiptPayeeDetails().getPayeeAddress().split(",")[0]);
 				StringBuffer payMode = new StringBuffer();
 				Set<String> paymentModes = new HashSet<String>();
 				StringBuffer instrumentDetails = new StringBuffer();
@@ -255,8 +253,10 @@ public class DailyCollectionReportAction extends BaseFormAction {
 			cashCollInfo.setGrandTotal(arrTotalCollInfo.getTotal().add(currTotalCollInfo.getTotal())
 					.subtract(rebateTotalCollInfo.getTotal()));
 			cashCollInfo.setRcptInfoList(rcptInfoList);
-			User user = userDao.getUserByID(Integer.valueOf(userId));
-			cashCollInfo.setOperator(user.getUserName());
+			//FIX ME
+			//User user = userDao.getUserByID(Integer.valueOf(userId));
+			User user = null;
+			cashCollInfo.setOperator(user.getUsername());
 			LOGGER.debug("Loop took " + (System.currentTimeMillis() - loopStartTime) / 1000 + " sec(s)..!");
 			ReportRequest reportInput = new ReportRequest(REPORT_TEMPLATENAME_DAILY_COLLECTION, cashCollInfo, null);
 			reportInput.setPrintDialogOnOpenReport(true);

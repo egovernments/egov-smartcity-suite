@@ -32,11 +32,10 @@ import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.Installment;
-import org.egov.commons.dao.CommonsDaoFactory;
+import org.egov.commons.dao.CommonsDAOFactory;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.dcb.bean.DCBReport;
@@ -47,6 +46,7 @@ import org.egov.dcb.service.DCBServiceImpl;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.ptis.bean.DemandDetail;
 import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
@@ -132,8 +132,9 @@ public class EditDemandAction extends BaseFormAction {
 	private DCBDisplayInfo dcbDispInfo;
 	private DCBService dcbService;
 	private DCBReport dcbReport;
+	private CommonsDAOFactory commonsDAOFactory;
 	private Map<Installment, Map<String, Boolean>> collectionDetails = new HashMap<Installment, Map<String, Boolean>>();
-	private InstallmentDao installmentDao = CommonsDaoFactory.getDAOFactory().getInstallmentDao();
+	private InstallmentDao installmentDao = commonsDAOFactory.getInstallmentDao();
 	private List<Installment> allInstallments = new ArrayList<Installment>();
 	private Set<Installment> propertyInstallments = new TreeSet<Installment>();
 
@@ -716,7 +717,7 @@ public class EditDemandAction extends BaseFormAction {
 					ptDemand.setCreateTimestamp(new Date());
 					ptDemand.setLastUpdatedTimestamp(new Date());
 					ptDemand.setIsHistory("N");
-					ptDemand.setEgptProperty(basicProperty.getProperty());
+					ptDemand.setEgptProperty((PropertyImpl) basicProperty.getProperty());
 					
 					ptDmdCalc.setPtDemand(ptDemand);
 				
@@ -737,8 +738,8 @@ public class EditDemandAction extends BaseFormAction {
 		for (Map.Entry<Installment, String> inst : addedInstallments.entrySet()) {
 			edits.append(AUDITDATA_STRING_SEP).append(inst.getKey()).append(STRING_KEY_SEP).append(inst.getValue());
 		}
-
-		propertyTaxUtil.generateAuditEvent(EDIT_DEMAND_AUDIT_ACTION, basicProperty, edits.toString(), null);
+        //Auditing is removed
+		//propertyTaxUtil.generateAuditEvent(EDIT_DEMAND_AUDIT_ACTION, basicProperty, edits.toString(), null);
 		LOGGER.info("Exiting from update");
 		return RESULT_ACK;
 	}

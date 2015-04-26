@@ -24,17 +24,16 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.StringUtils;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.BoundaryDAO;
-import org.egov.lib.rjbac.role.Role;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.lib.rjbac.user.dao.UserDAO;
+import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -60,8 +59,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @Validations
 public class SearchPropertyAction extends BaseFormAction {
 	private final Logger LOGGER = Logger.getLogger(getClass());
-	private Integer zoneId;
-	private Integer wardId;
+	private Long zoneId;
+	private Long wardId;
 	private Integer areaId;
 	private Integer areaName;
 	private String indexNum;
@@ -84,8 +83,9 @@ public class SearchPropertyAction extends BaseFormAction {
 	private Date objectionToDate;
 	private Long propertyTypeMasterId;
 	private String markedForDeactive = "N";
-	private Map<Integer, String> ZoneBndryMap;
+	private Map<Long, String> ZoneBndryMap;
 	private boolean isDemandActive;
+	private BoundaryDAO boundaryDAO;
 
 	@Override
 	public Object getModel() {
@@ -136,7 +136,6 @@ public class SearchPropertyAction extends BaseFormAction {
 		LOGGER.debug("Entered into srchByBndry method");
 		LOGGER.debug("srchByBndry : Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", " + "House Num : "
 				+ houseNumBndry + ", " + "Owner Name : " + ownerNameBndry);
-		BoundaryDAO boundaryDAO = new BoundaryDAO();
 		String strZoneNum = boundaryDAO.getBoundary(zoneId).getName();
 		String strWardNum = boundaryDAO.getBoundary(wardId).getName();
 
@@ -153,8 +152,8 @@ public class SearchPropertyAction extends BaseFormAction {
 					queryStr.append("and trim(pmv.ownerName) like :OwnerName");
 				}
 				Query query = getPersistenceService().getSession().createQuery(queryStr.toString());
-				query.setInteger("ZoneID", zoneId);
-				query.setInteger("WardID", wardId);
+				query.setLong("ZoneID", zoneId);
+				query.setLong("WardID", wardId);
 				if (houseNumBndry != null && !houseNumBndry.trim().isEmpty()) {
 					query.setString("HouseNo", houseNumBndry + "%");
 				}
@@ -201,7 +200,6 @@ public class SearchPropertyAction extends BaseFormAction {
 					setSearchResultList(getSearchResults(basicProperty.getUpicNo()));
 					checkIsMarkForDeactive(basicProperty);
 				}
-				BoundaryDAO boundaryDAO = new BoundaryDAO();
 				// Boundary boundary = boundaryDAO.getBoundary(areaId);
 				setSearchUri("../search/searchProperty!srchByArea.action");
 				setSearchCreteria("Search By Owner Name");
@@ -370,12 +368,14 @@ public class SearchPropertyAction extends BaseFormAction {
 	private String getRolesForUserId(Integer userId) {
 		LOGGER.debug("Entered into getRolesForUserId method");
 		LOGGER.debug("User id : " + userId);
-		UserDAO userDao = new UserDAO();
+		//UserDAO userDao = new UserDAO();
 		String roleName;
 		List<String> roleNameList = new ArrayList<String>();
-		User user = userDao.getUserByID(userId);
+		//FIX ME
+		//User user = userDao.getUserByID(userId);
+		User user = null;
 		for (Role role : user.getRoles()) {
-			roleName = role.getRoleName() != null ? role.getRoleName() : "";
+			roleName = role.getName() != null ? role.getName() : "";
 			roleNameList.add(roleName);
 		}
 		LOGGER.debug("Exit from method getRolesForUserId with return value : " + roleNameList.toString().toUpperCase());
@@ -459,19 +459,19 @@ public class SearchPropertyAction extends BaseFormAction {
 		this.searchResultList = searchResultList;
 	}
 
-	public Integer getZoneId() {
+	public Long getZoneId() {
 		return zoneId;
 	}
 
-	public void setZoneId(Integer zoneId) {
+	public void setZoneId(Long zoneId) {
 		this.zoneId = zoneId;
 	}
 
-	public Integer getWardId() {
+	public Long getWardId() {
 		return wardId;
 	}
 
-	public void setWardId(Integer wardId) {
+	public void setWardId(Long wardId) {
 		this.wardId = wardId;
 	}
 
@@ -611,11 +611,11 @@ public class SearchPropertyAction extends BaseFormAction {
 		this.markedForDeactive = markedForDeactive;
 	}
 
-	public Map<Integer, String> getZoneBndryMap() {
+	public Map<Long, String> getZoneBndryMap() {
 		return ZoneBndryMap;
 	}
 
-	public void setZoneBndryMap(Map<Integer, String> zoneBndryMap) {
+	public void setZoneBndryMap(Map<Long, String> zoneBndryMap) {
 		ZoneBndryMap = zoneBndryMap;
 	}
 
@@ -625,6 +625,14 @@ public class SearchPropertyAction extends BaseFormAction {
 
 	public void setIsDemandActive(boolean isDemandActive) {
 		this.isDemandActive = isDemandActive;
+	}
+
+	public BoundaryDAO getBoundaryDAO() {
+		return boundaryDAO;
+	}
+
+	public void setBoundaryDAO(BoundaryDAO boundaryDAO) {
+		this.boundaryDAO = boundaryDAO;
 	}
 
 }

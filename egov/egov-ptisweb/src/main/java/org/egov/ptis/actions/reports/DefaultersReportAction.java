@@ -28,13 +28,13 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infstr.reporting.engine.ReportOutput;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
-import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.bean.DefaultersInfo;
 import org.egov.web.actions.BaseFormAction;
@@ -69,7 +69,7 @@ public class DefaultersReportAction extends BaseFormAction {
 	private Integer zoneId;
 	private Integer wardId;
 	private String partNo;
-	private Map<Integer, String> ZoneBndryMap;
+	private Map<Long, String> ZoneBndryMap;
 	private String amountRange;
 	private Boundary ward;
 	private ByteArrayOutputStream outputBytes;
@@ -272,8 +272,8 @@ public class DefaultersReportAction extends BaseFormAction {
 		amountStyle.setFont(new Font(10, Font._FONT_VERDANA, false));
 		amountStyle.setPaddingRight(5);
 		amountStyle.setTransparency(Transparency.OPAQUE);
-		amountStyle.setBorderRight(Border.THIN());
-		amountStyle.setBorderBottom(Border.THIN());
+		amountStyle.setBorderRight(Border.THIN);
+		amountStyle.setBorderBottom(Border.THIN);
 		return amountStyle;
 	}
 
@@ -284,8 +284,8 @@ public class DefaultersReportAction extends BaseFormAction {
 		textStyle.setFont(new Font(10, Font._FONT_VERDANA, false));
 		textStyle.setPaddingLeft(5);
 		textStyle.setTransparency(Transparency.OPAQUE);
-		textStyle.setBorderRight(Border.THIN());
-		textStyle.setBorderBottom(Border.THIN());
+		textStyle.setBorderRight(Border.THIN);
+		textStyle.setBorderBottom(Border.THIN);
 		textStyle.setVerticalAlign(VerticalAlign.MIDDLE);
 		// textStyle.setStretchWithOverflow(true);
 		return textStyle;
@@ -294,7 +294,7 @@ public class DefaultersReportAction extends BaseFormAction {
 	private Style getTextStyleLeftBorder() {
 		Style textStyle = getTextStyle();
 		textStyle.setName("textStyleLeftBorder");
-		textStyle.setBorderLeft(Border.THIN());
+		textStyle.setBorderLeft(Border.THIN);
 		return textStyle;
 	}
 
@@ -319,7 +319,7 @@ public class DefaultersReportAction extends BaseFormAction {
 	private Style getHeaderStyle() {
 		Style headerStyle = new Style("header");
 		headerStyle.setFont(new Font(12, Font._FONT_ARIAL, true, false, false));
-		headerStyle.setBorder(Border.THIN());
+		headerStyle.setBorder(Border.THIN);
 		headerStyle.setTextColor(Color.BLACK);
 		headerStyle.setHorizontalAlign(HorizontalAlign.CENTER);
 		headerStyle.setVerticalAlign(VerticalAlign.MIDDLE);
@@ -361,11 +361,11 @@ public class DefaultersReportAction extends BaseFormAction {
 		this.wardId = wardId;
 	}
 
-	public Map<Integer, String> getZoneBndryMap() {
+	public Map<Long, String> getZoneBndryMap() {
 		return ZoneBndryMap;
 	}
 
-	public void setZoneBndryMap(Map<Integer, String> zoneBndryMap) {
+	public void setZoneBndryMap(Map<Long, String> zoneBndryMap) {
 		ZoneBndryMap = zoneBndryMap;
 	}
 

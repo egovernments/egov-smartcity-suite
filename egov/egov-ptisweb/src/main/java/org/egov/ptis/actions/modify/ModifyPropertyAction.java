@@ -66,24 +66,23 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
-import org.apache.struts2.config.Result;
-import org.apache.struts2.config.Results;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.dispatcher.ServletActionRedirectResult;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Area;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
+import org.egov.infra.admin.master.entity.Address;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.StringUtils;
-import org.egov.lib.address.model.Address;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.BoundaryDAO;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.lib.rjbac.user.dao.UserDAO;
+import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.actions.workflow.WorkflowAction;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -195,7 +194,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 	private boolean isfloorDetailsRequired;
 	private String areaId;
-	UserDAO userDao = new UserDAO();
+	//UserDAO userDao = new UserDAO();
 	BoundaryDAO boundaryDao;
 	private boolean updateData;
 	private PropertyAddress propertyAddr;
@@ -314,10 +313,10 @@ public class ModifyPropertyAction extends WorkflowAction {
 			if (isNotBlank(propertyImpl.getExtra_field6())) {
 				String[] addFields = propertyImpl.getExtra_field6().split("\\|");
 				propertyAddr = new PropertyAddress();
-				propertyAddr.setStreetAddress1(isBlank(addFields[0]) ? null : addFields[0]);
-				propertyAddr.setHouseNo(isBlank(addFields[1]) ? null : addFields[1]);
+				propertyAddr.setStreetRoadLine(isBlank(addFields[0]) ? null : addFields[0]);
+				propertyAddr.setHouseNoBldgApt(isBlank(addFields[1]) ? null : addFields[1]);
 				propertyAddr.setDoorNumOld(isBlank(addFields[2]) ? null : addFields[2]);
-				propertyAddr.setPinCode(isBlank(addFields[3]) ? null : Integer.parseInt(addFields[3]));
+				propertyAddr.setPinCode(isBlank(addFields[3]) ? null : addFields[3]);
 				propertyAddr.setMobileNo(isBlank(addFields[4]) ? null : addFields[4]);
 				propertyAddr.setEmailAddress(isBlank(addFields[5]) ? null : addFields[5]);
 
@@ -935,7 +934,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		transitionWorkFlow();
 		setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
 		setAckMessage("Property Rejected Successfully and forwarded to initiator : "
-				+ propertyModel.getCreatedBy().getUserName() + " with Index Number : ");
+				+ propertyModel.getCreatedBy().getUsername() + " with Index Number : ");
 		LOGGER.debug("reject: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
 		LOGGER.debug("reject: Property rejection ended");
 
@@ -1806,15 +1805,17 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 	private void prepareAckMsg() {
 		LOGGER.debug("Entered into prepareAckMsg, ModifyRsn: " + modifyRsn);
-		User approverUser = userDao.getUserByID(getWorkflowBean().getApproverUserId());
+		//FIX ME
+		//User approverUser = userDao.getUserByID(getWorkflowBean().getApproverUserId());
+		User approverUser = null;
 
 		if (PROPERTY_MODIFY_REASON_MODIFY.equals(modifyRsn) || PROPERTY_MODIFY_REASON_OBJ.equals(modifyRsn)
 				|| PROPERTY_MODIFY_REASON_DATA_ENTRY.equals(modifyRsn)) {
-			setAckMessage(getText("property.modify.forward.success", new String[] { approverUser.getUserName() }));
+			setAckMessage(getText("property.modify.forward.success", new String[] { approverUser.getUsername() }));
 		} else if (PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)) {
-			setAckMessage(getText("property.bifur.forward.success", new String[] { approverUser.getUserName() }));
+			setAckMessage(getText("property.bifur.forward.success", new String[] { approverUser.getUsername() }));
 		} else if (PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn)) {
-			setAckMessage(getText("property.amalg.forward.success", new String[] { approverUser.getUserName() }));
+			setAckMessage(getText("property.amalg.forward.success", new String[] { approverUser.getUsername() }));
 		}
 
 		LOGGER.debug("AckMessage: " + getAckMessage() + "\nExiting from prepareAckMsg");
@@ -2190,9 +2191,9 @@ public class ModifyPropertyAction extends WorkflowAction {
 		PropertyAddress addr = basicProp.getAddress();
 		addr.setMobileNo(propertyAddr.getMobileNo());
 		addr.setEmailAddress(propertyAddr.getEmailAddress());
-		addr.setHouseNo(propertyAddr.getHouseNo());
+		addr.setHouseNo(propertyAddr.getHouseNoBldgApt());
 		addr.setDoorNumOld(propertyAddr.getDoorNumOld());
-		addr.setStreetAddress1(propertyAddr.getStreetAddress1());
+		addr.setStreetAddress1(propertyAddr.getStreetRoadLine());
 		addr.setPinCode(propertyAddr.getPinCode());
 		addr.setExtraField1(propertyAddr.getExtraField1());
 		addr.setExtraField2(propertyAddr.getExtraField2());

@@ -20,11 +20,11 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
-import org.egov.infstr.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infstr.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.bean.AssesseeInfo;
 import org.egov.ptis.bean.DemandCollInfo;
@@ -48,7 +48,7 @@ public class BakayaFeristReportAction extends ReportFormAction {
 	private Integer zoneId;
 	private Integer wardId;
 	private String partNo;
-	private Map<Integer, String> ZoneBndryMap;
+	private Map<Long, String> ZoneBndryMap;
 
 	@Override
 	public void prepare() {
@@ -313,11 +313,11 @@ public class BakayaFeristReportAction extends ReportFormAction {
 		this.wardId = wardId;
 	}
 
-	public Map<Integer, String> getZoneBndryMap() {
+	public Map<Long, String> getZoneBndryMap() {
 		return ZoneBndryMap;
 	}
 
-	public void setZoneBndryMap(Map<Integer, String> zoneBndryMap) {
+	public void setZoneBndryMap(Map<Long, String> zoneBndryMap) {
 		ZoneBndryMap = zoneBndryMap;
 	}
 

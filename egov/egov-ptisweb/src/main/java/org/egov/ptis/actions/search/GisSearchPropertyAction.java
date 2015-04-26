@@ -25,11 +25,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.BoundaryDAO;
+import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
@@ -52,7 +52,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @Validations
 public class GisSearchPropertyAction extends BaseFormAction {
 	private final Logger LOGGER = Logger.getLogger(getClass());
-	private Integer zoneId;
+	private Long zoneId;
 	private Integer wardId;
 	private Integer areaId;
 	private String mode;
@@ -72,7 +72,8 @@ public class GisSearchPropertyAction extends BaseFormAction {
 	private String searchResultString;
 	private String gisVersion;
 	private String gisCity;
-	private Map<Integer, String> ZoneBndryMap;
+	private Map<Long, String> ZoneBndryMap;
+	private BoundaryDAO boundaryDAO;
 
 	@Override
 	public Object getModel() {
@@ -121,7 +122,6 @@ public class GisSearchPropertyAction extends BaseFormAction {
 		LOGGER.debug("Entered into srchByBndry method");
 		LOGGER.debug("srchByBndry : Zone Id : " + zoneId + ", " + "ward Id: " + wardId + ", " + "House Num : "
 				+ houseNum + ", " + "Owner Name :" + ownerName + ", " + "Session : " + SESSION);
-		BoundaryDAO boundaryDAO = new BoundaryDAO();
 		String strZoneNum = boundaryDAO.getBoundary(zoneId).getName();
 		String strWardNum = "";
 		String target = null;
@@ -144,7 +144,7 @@ public class GisSearchPropertyAction extends BaseFormAction {
 				}
 				Query query = getPersistenceService().getSession().createQuery(queryStr.toString());
 				if (zoneId != null && zoneId != -1) {
-					query.setInteger("ZoneID", zoneId);
+					query.setLong("ZoneID", zoneId);
 				}
 				if (wardId != null && wardId != -1) {
 					query.setInteger("WardID", wardId);
@@ -202,7 +202,6 @@ public class GisSearchPropertyAction extends BaseFormAction {
 
 		LOGGER.debug("Entered into srchByPropType method");
 		LOGGER.debug("Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", " + "Property Type : " + propTypeId);
-		BoundaryDAO boundaryDAO = new BoundaryDAO();
 		String strZoneNum = boundaryDAO.getBoundary(zoneId).getName();
 		String strWardNum = "";
 		String target = null;
@@ -228,7 +227,7 @@ public class GisSearchPropertyAction extends BaseFormAction {
 
 				Query query = getPersistenceService().getSession().createQuery(queryStr.toString());
 				if (zoneId != null && zoneId != -1) {
-					query.setInteger("ZoneID", zoneId);
+					query.setLong("ZoneID", zoneId);
 				}
 				if (wardId != null && wardId != -1) {
 					query.setInteger("WardID", wardId);
@@ -284,7 +283,6 @@ public class GisSearchPropertyAction extends BaseFormAction {
 		LOGGER.debug("Entered into srchByDemand method");
 		LOGGER.debug("Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", " + "Property Type : " + propTypeId
 				+ ", " + "Demand from amt : " + demandFromAmt + ", " + "Demand To amt : " + demandToAmt);
-		BoundaryDAO boundaryDAO = new BoundaryDAO();
 		String strZoneNum = boundaryDAO.getBoundary(zoneId).getName();
 		String strWardNum = "";
 		String target = null;
@@ -314,7 +312,7 @@ public class GisSearchPropertyAction extends BaseFormAction {
 
 				Query query = getPersistenceService().getSession().createQuery(queryStr.toString());
 				if (zoneId != null && zoneId != -1) {
-					query.setInteger("ZoneID", zoneId);
+					query.setLong("ZoneID", zoneId);
 				}
 				if (wardId != null && wardId != -1) {
 					query.setInteger("WardID", wardId);
@@ -374,7 +372,6 @@ public class GisSearchPropertyAction extends BaseFormAction {
 		LOGGER.debug("Entered into srchByDefaulter method");
 		LOGGER.debug("Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", " + "Property Type : " + propTypeId
 				+ ", " + "Defaulter from amt : " + defaulterFromAmt + ", " + "Defaulter To amt : " + defaulterToAmt);
-		BoundaryDAO boundaryDAO = new BoundaryDAO();
 		String strZoneNum = boundaryDAO.getBoundary(zoneId).getName();
 		String strWardNum = "";
 		String target = null;
@@ -404,7 +401,7 @@ public class GisSearchPropertyAction extends BaseFormAction {
 
 				Query query = getPersistenceService().getSession().createQuery(queryStr.toString());
 				if (zoneId != null && zoneId != -1) {
-					query.setInteger("ZoneID", zoneId);
+					query.setLong("ZoneID", zoneId);
 				}
 				if (wardId != null && wardId != -1) {
 					query.setInteger("WardID", wardId);
@@ -680,11 +677,11 @@ public class GisSearchPropertyAction extends BaseFormAction {
 		LOGGER.debug("Exit from validate method");
 	}
 
-	public Integer getZoneId() {
+	public Long getZoneId() {
 		return zoneId;
 	}
 
-	public void setZoneId(Integer zoneId) {
+	public void setZoneId(Long zoneId) {
 		this.zoneId = zoneId;
 	}
 
@@ -832,12 +829,20 @@ public class GisSearchPropertyAction extends BaseFormAction {
 		this.gisCity = gisCity;
 	}
 
-	public Map<Integer, String> getZoneBndryMap() {
+	public Map<Long, String> getZoneBndryMap() {
 		return ZoneBndryMap;
 	}
 
-	public void setZoneBndryMap(Map<Integer, String> zoneBndryMap) {
+	public void setZoneBndryMap(Map<Long, String> zoneBndryMap) {
 		ZoneBndryMap = zoneBndryMap;
 	}
 
+	public BoundaryDAO getBoundaryDAO() {
+		return boundaryDAO;
+	}
+
+	public void setBoundaryDAO(BoundaryDAO boundaryDAO) {
+		this.boundaryDAO = boundaryDAO;
+	}
+	
 }

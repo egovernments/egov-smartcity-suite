@@ -22,25 +22,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.DCBException;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.Installment;
 import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.dcb.bean.DCBReport;
 import org.egov.dcb.bean.Receipt;
 import org.egov.dcb.service.DCBService;
 import org.egov.dcb.service.DCBServiceImpl;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.lib.rjbac.user.dao.UserDAO;
+import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
-import org.egov.ptis.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyArrear;
 import org.egov.ptis.domain.entity.property.PropertyReceipt;
@@ -82,7 +81,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 	public static final String RESULT_ARREAR = "viewArrear";
 	private HttpSession session = null;
 	private HttpServletRequest request;
-	private Integer userId;
+	private Long userId;
 	private Boolean isCitizen;
 	private String encodedConsumerCode;
 	private List<PropertyReceipt> propReceiptList = new ArrayList<PropertyReceipt>();
@@ -211,11 +210,13 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 		DCBUtils dcbUtils = new DCBUtils();
 		session = request.getSession();
 		if (session.getAttribute("com.egov.user.LoginUserId") == null) {
-			UserDAO userDao = new UserDAO();
-			User user = userDao.getUserByUserName(CITIZENUSER);
+			//FIX ME
+			//UserDAO userDao = new UserDAO();
+			//User user = userDao.getUserByUserName(CITIZENUSER);
+			User user = null;
 			userId = user.getId();
 			EGOVThreadLocals.setUserId(userId.toString());
-			session.setAttribute("com.egov.user.LoginUserName", user.getUserName());
+			session.setAttribute("com.egov.user.LoginUserName", user.getUsername());
 			if (user != null) {
 				setCitizen(Boolean.TRUE);
 			}

@@ -33,17 +33,14 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.infstr.models.State;
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.role.Role;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.lib.rjbac.user.dao.UserDAO;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
-import org.egov.pims.commons.service.EisCommonsManager;
-import org.egov.pims.service.EisManager;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.FloorIF;
 import org.egov.ptis.domain.entity.property.FloorImpl;
@@ -57,6 +54,7 @@ import org.egov.ptis.nmc.constants.NMCPTISConstants;
 import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Query;
+import org.egov.ptis.actions.common.AjaxCommonAction;
 
 @ParentPackage("egov")
 public abstract class PropertyTaxBaseAction extends BaseFormAction {
@@ -552,7 +550,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 		//this condition is reqd bcoz, after rejection the validation shouldn't happen for the same houseNo
 		if (!qry.list().isEmpty() && (basicProperty == null 
 				|| (basicProperty != null 
-				&& !basicProperty.getAddress().getHouseNo().equals(houseNo)))) {
+				&& !basicProperty.getAddress().getHouseNoBldgApt().equals(houseNo)))) {
 			addActionError(getText("houseNo.unique"));
 		} 
 	}
@@ -560,15 +558,17 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 	public void setUserInfo() {
 		LOGGER.debug("Entered into setUserInfo");
 
-		UserDAO userDao = new UserDAO();
-		Integer userId = Integer.valueOf(propertyTaxUtil.getLoggedInUser(getSession()).getId());
+		//UserDAO userDao = new UserDAO();
+		Integer userId = Integer.valueOf(propertyTaxUtil.getLoggedInUser(getSession()).getId().intValue());
 		LOGGER.debug("setUserInfo: Logged in userId" + userId);
 		DesignationMaster desgn = propertyTaxUtil.getDesignationForUser(userId);
 		setUserDesgn(desgn.getDesignationName());
-		User user = userDao.getUserByID(userId);
+		//FIX ME
+		//User user = userDao.getUserByID(userId);
+		User user = null;
 		for (Role role : user.getRoles()) {
-			if (role.getRoleName().equalsIgnoreCase(NMCPTISConstants.ASSISTANT_ROLE)) {
-				setUserRole(role.getRoleName());
+			if (role.getName().equalsIgnoreCase(NMCPTISConstants.ASSISTANT_ROLE)) {
+				setUserRole(role.getName());
 				break;
 			}
 		}
@@ -603,17 +603,10 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 		this.workflowBean = workflowBean;
 	}
 
-	public void setEisCommonsManager(EisCommonsManager eisCommonsManager) {
-		this.eisCommonsManager = eisCommonsManager;
-	}
-
 	public void setPropertyTaxUtil(PropertyTaxUtil propertyTaxUtil) {
 		this.propertyTaxUtil = propertyTaxUtil;
 	}
 
-	public void setEisManager(EisManager eisManager) {
-		this.eisManager = eisManager;
-	}
 
 	public String getUserDesgn() {
 		return userDesgn;

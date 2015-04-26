@@ -6,11 +6,10 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import java.util.Date;
-
 import org.egov.exceptions.EGOVRuntimeException;
 //TODO -- Fix me (Commented to Resolve compilation issues)
 //import org.egov.lib.citizen.model.Owner;
+import org.egov.infra.citizen.entity.Citizen;
 
 /**
  * This class defines Property Owners i.e A Property can have multiple Owners at
@@ -23,7 +22,7 @@ import org.egov.exceptions.EGOVRuntimeException;
  * @since 1.00
  */
 //TODO -- Fix me (Commented to Resolve compilation issues)
-public class PropertyOwner /*extends Owner*/ {
+public class PropertyOwner extends Citizen {
 
 	private PropertyImpl property;
 	private PropertySource source;

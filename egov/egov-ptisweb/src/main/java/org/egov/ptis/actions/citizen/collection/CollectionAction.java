@@ -39,12 +39,14 @@ public class CollectionAction extends BaseFormAction {
 	private String collectXML;
 	private String indexNum;
 	private Long userId;
-	private UserDAO userDao;
+	//FIX ME
+	//private UserDAO userDao;
 
 	@SuppressWarnings("unchecked")
 	public void prepare() {
 		LOGGER.debug("Entered into prepare method");
-		User usr = (User) userDao.getUserByName("citizenUser").get(0);
+		//User usr = (User) userDao.getUserByName("citizenUser").get(0);
+		User usr = null;
 		setUserId(usr.getId().longValue());
 		EGOVThreadLocals.setUserId(usr.getId().toString());
 		LOGGER.debug("Exit from prepare method");

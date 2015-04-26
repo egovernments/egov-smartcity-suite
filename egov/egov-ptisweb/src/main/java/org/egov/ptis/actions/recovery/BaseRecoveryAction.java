@@ -16,7 +16,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
-import org.egov.commons.dao.CommonsDaoFactory;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.dao.DCBDaoFactory;
 import org.egov.demand.dao.EgBillDao;
@@ -24,26 +23,23 @@ import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
+import org.egov.eis.service.EisCommonService;
+import org.egov.infra.admin.master.entity.Address;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.workflow.entity.State;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.Module;
-import org.egov.infstr.commons.dao.GenericDaoFactory;
 import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.commons.dao.ModuleHibDao;
 import org.egov.infstr.docmgmt.DocumentManagerService;
 import org.egov.infstr.docmgmt.DocumentObject;
-import org.egov.infstr.models.State;
 import org.egov.infstr.reporting.engine.ReportOutput;
 import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.lib.address.model.Address;
-import org.egov.infra.admin.master.entity.UserImpl;
-import org.egov.lib.rjbac.user.dao.UserDAO;
-import org.egov.lib.rjbac.user.ejb.api.UserManager;
-import org.egov.pims.commons.service.EisCommonsManager;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.actions.view.ViewPropertyAction;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -73,7 +69,7 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 	protected Map<String, Object> viewMap; 
 	protected String ownerName;
 	protected String propertyAddress;
-	protected EisCommonsManager eisCommonsManager;
+	protected EisCommonService eisCommonService;
 	protected ReportService reportService;
 	protected Integer reportId = -1;
     protected ModuleHibDao moduleDAO;
@@ -83,7 +79,8 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 	private DocumentManagerService<DocumentObject> documentManagerService;
 	protected FinancialUtil financialUtil;
 	protected NoticeService noticeService;
-	private  UserManager userMngr;
+	private InstallmentDao instalDao;
+	private ModuleDao moduleDao;
 	@Override
 	public Object getModel() {
 		
@@ -157,8 +154,6 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 	@SuppressWarnings("unchecked")
 	protected EgBill getBil(String consumerId){
 		
-		InstallmentDao instalDao = CommonsDaoFactory.getDAOFactory().getInstallmentDao();
-		ModuleDao moduleDao = GenericDaoFactory.getDAOFactory().getModuleDao();
 		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
 		Installment finYear = instalDao.getInsatllmentByModuleForGivenDate(module, new Date());
 		// get the latest bill 
@@ -272,10 +267,13 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 	 *         FALSE - if  logged in user is not the authenticated to view the inbox item.
 	 */
 	public Boolean authenticateInboxItemRqst(State state){
-		if(null == state || null == state.getOwner())
+		if(null == state || null == state.getOwnerUser())
 			return Boolean.FALSE;
-		UserImpl authorisedUser = (UserImpl)eisCommonsManager.getUserforPosition(state.getOwner());
-		UserImpl loggedInUser =(UserImpl) new UserDAO().getUserByID(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		//FIX ME
+		//User authorisedUser = (User)eisCommonService.getUserforPosition(state.getOwnerUser());
+		//User loggedInUser =(User) new UserDAO().getUserByID(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		User authorisedUser = null;
+		User loggedInUser = null;
 		return authorisedUser.equals(loggedInUser);
 		
 	}
@@ -283,9 +281,7 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 	protected Integer addingReportToSession(ReportOutput reportOutput){
 		 return	ReportViewerUtil.addReportToSession(reportOutput, getSession());
 	}
-	public void setEisCommonsManager(EisCommonsManager eisCommonsManager) {
-		this.eisCommonsManager = eisCommonsManager;
-	}
+
 
 	public Map<String, Object> getViewMap() {
 		return viewMap;
@@ -358,7 +354,4 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 		this.noticeService = noticeService;
 	}
 
-	public void setUserMngr(UserManager userMngr) {
-		this.userMngr = userMngr;
-	}
 }

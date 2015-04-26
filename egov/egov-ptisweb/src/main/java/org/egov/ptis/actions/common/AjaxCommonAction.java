@@ -69,7 +69,6 @@ public class AjaxCommonAction extends BaseFormAction {
 	private String usageFactor;
 	private String structFactor;
 	private Float revisedRate;
-	private EisManager eisManager;
 	private List<Boundary> wardList;
 	private List<Boundary> areaList;
 	private List<PropertyUsage> propUsageList;
@@ -118,7 +117,9 @@ public class AjaxCommonAction extends BaseFormAction {
 	public String populateDesignationsByDept() {
 		LOGGER.debug("Entered into populateUsersByDesignation : departmentId : " + departmentId);
 		if (departmentId != null) {
-			designationMasterList = eisManager.getAllDesignationByDept(departmentId);
+			//FIX ME
+			//designationMasterList = eisManager.getAllDesignationByDept(departmentId);
+			designationMasterList = null;
 		}
 
 		LOGGER.debug("Exiting from populateUsersByDesignation : No of Designation : "
@@ -352,14 +353,6 @@ public class AjaxCommonAction extends BaseFormAction {
 
 	public void setDepartmentId(Integer departmentId) {
 		this.departmentId = departmentId;
-	}
-
-	public EisManager getEisManager() {
-		return eisManager;
-	}
-
-	public void setEisManager(EisManager eisManager) {
-		this.eisManager = eisManager;
 	}
 
 	public List<DesignationMaster> getDesignationMasterList() {

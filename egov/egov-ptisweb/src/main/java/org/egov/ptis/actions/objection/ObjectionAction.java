@@ -11,16 +11,15 @@ import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.EgwStatus;
+import org.egov.infra.admin.master.entity.Address;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.workflow.WorkflowService;
-import org.egov.lib.address.model.Address;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.lib.rjbac.user.dao.UserDAO;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.actions.view.ViewPropertyAction;
@@ -61,7 +60,7 @@ public class ObjectionAction extends PropertyTaxBaseAction{
 	private PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 	private PropertyService propService;
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
-	UserDAO userDao = new UserDAO();
+	//UserDAO userDao = new UserDAO();
 	
 	private boolean isShowAckMessage;
 	

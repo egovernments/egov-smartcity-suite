@@ -18,10 +18,9 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.lib.address.model.Address;
-import org.egov.lib.rjbac.role.Role;
+import org.egov.infra.admin.master.entity.Address;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.lib.rjbac.user.dao.UserDAO;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -114,7 +113,7 @@ public class ViewPropertyAction extends BaseFormAction {
 			Set<PropertyOwner> ownerSet = property.getPropertyOwnerSet();
 			if (ownerSet != null && !ownerSet.isEmpty()) {
 				for (PropertyOwner owner : ownerSet) {
-					Set<Address> addrSet = (Set<Address>) owner.getAddressSet();
+					Set<Address> addrSet = (Set<Address>) owner.getAddress();
 					for (Address address : addrSet) {
 						ownerAddress = ptisCacheMgr.buildAddressByImplemetation(address);
 						break;
@@ -169,12 +168,14 @@ public class ViewPropertyAction extends BaseFormAction {
 	private String getRolesForUserId(Integer userId) {
 		LOGGER.debug("Entered into method getRolesForUserId");
 		LOGGER.debug("User id : " + userId);
-		UserDAO userDao = new UserDAO();
+		//UserDAO userDao = new UserDAO();
 		String roleName;
 		List<String> roleNameList = new ArrayList<String>();
-		User user = userDao.getUserByID(userId);
+		//FIX ME
+		//User user = userDao.getUserByID(userId);
+		User user = null;
 		for (Role role : user.getRoles()) {
-			roleName = role.getRoleName() != null ? role.getRoleName() : "";
+			roleName = role.getName() != null ? role.getName() : "";
 			roleNameList.add(roleName);
 		}
 		LOGGER.debug("Exit from method getRolesForUserId with return value : " + roleNameList.toString().toUpperCase());

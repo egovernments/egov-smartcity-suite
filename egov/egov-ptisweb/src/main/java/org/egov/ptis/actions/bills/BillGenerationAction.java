@@ -40,11 +40,13 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.CommonsDAOFactory;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgBill;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.docmgmt.AssociatedFile;
 import org.egov.infstr.docmgmt.DocumentManagerService;
 import org.egov.infstr.docmgmt.DocumentObject;
@@ -100,6 +102,9 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	private List<ReportInfo> reportInfos = new ArrayList<ReportInfo>();
 	InputStream billPDF;
 	private String wardNum;
+	
+	private ModuleDao moduleDao;
+	private InstallmentDao isntalDao;
 
 	@Override
 	public Object getModel() {
@@ -127,7 +132,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 											"AND egBillType.code = ? " +
 											"AND SUBSTRING(consumerId, 1, (LOCATE('(', consumerId)-1)) = ? " +
 											"AND is_history = 'N'",
-											GenericDaoFactory.getDAOFactory().getModuleDao().getModuleByName(PTMODULENAME),
+											moduleDao.getModuleByName(PTMODULENAME),
 											BILLTYPE_MANUAL, basicProperty.getUpicNo());
 		ReportOutput reportOutput = null;
 
@@ -200,7 +205,6 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	}
 
 	public String billsGenStatus() {
-		InstallmentDao isntalDao = CommonsDaoFactory.getDAOFactory().getInstallmentDao();
 		ReportInfo reportInfo;
 		Integer totalProps = 0;
 		Integer totalBillsGen = 0;
@@ -351,7 +355,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 						"AND egBillType.code = ? " +
 						"AND SUBSTRING(consumerId, 1, (LOCATE('(', consumerId)-1)) = ? " +
 						"AND is_history = 'N'",
-						GenericDaoFactory.getDAOFactory().getModuleDao().getModuleByName(PTMODULENAME),
+						moduleDao.getModuleByName(PTMODULENAME),
 						BILLTYPE_MANUAL, indexNumber);
 		if (egBill == null) {
 			setAckMessage("There is no active Bill exist for index no : " + indexNumber);
@@ -373,8 +377,13 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	private void startWorkFlow() {
 		LOGGER.debug("Entered into startWorkFlow, UserId: " + EGOVThreadLocals.getUserId());
 		LOGGER.debug("startWorkFlow: Workflow is starting for Property: " + property);
-		Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-		propertyWorkflowService.start(property, position, "Property Workflow Started");
+		//Position position = eisCommonsManager.(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		//FIX ME
+		Position position = null;
+		//propertyWorkflowService.start(property, position, "Property Workflow Started");
+		property.transition(true).start()
+				.withSenderName(property.getCreatedBy().getUsername())
+				.withComments("Property Workflow Started").withOwner(position);
 
 		LOGGER.debug("Exiting from startWorkFlow, Workflow started");
 	}
@@ -385,8 +394,14 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	private void endWorkFlow() {
 		LOGGER.debug("Enter method endWorkFlow, UserId: " + EGOVThreadLocals.getUserId());
 		LOGGER.debug("endWorkFlow: Workflow will end for Property: " + property);
-		Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-		propertyWorkflowService.end(property, position, "Property Workflow End");
+		//FIX ME
+		//Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		Position position = null;
+		/*propertyWorkflowService
+				.end(property, position, "Property Workflow End");*/
+		property.transition(true).end()
+				.withSenderName(property.getCreatedBy().getUsername())
+				.withComments("Property Workflow Started").withOwner(position);
 		LOGGER.debug("Exit method endWorkFlow, Workflow ended");
 	}
 
@@ -406,7 +421,9 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		String wflowAction = null;
 		StringBuffer nextStateValue = new StringBuffer();
 		if (workflowBean.getApproverUserId() != null)
-			nextPosition = eisCommonsManager.getPositionByUserId(workflowBean.getApproverUserId());
+			//FIX ME
+			//nextPosition = eisCommonsManager.getPositionByUserId(workflowBean.getApproverUserId());
+			nextPosition = null;
 		String beanActionName[] = workflowBean.getActionName().split(":");
 		String actionName = beanActionName[0];
 		if (beanActionName.length > 1) {
@@ -442,7 +459,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 				if (property.getBasicProperty().getAllChangesCompleted()) {
 					nextStateValue = nextStateValue.append(WF_STATE_NOTICE_GENERATION_PENDING);
 				} else {
-					nextStateValue = nextStateValue.append(nextPosition.getDesigId().getDesignationName()).append("_")
+					nextStateValue = nextStateValue.append(nextPosition.getDeptDesigId().getDeptId().getName()).append("_")
 							.append(WF_STATE_APPROVAL_PENDING);
 				}
 			} else {

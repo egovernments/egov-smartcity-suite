@@ -52,7 +52,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 	private String searchValue;
 	private HttpSession session = null;
 	private HttpServletRequest request;
-	private Integer userId;
+	private Long userId;
 	List<Map<String, String>> searchList = new ArrayList<Map<String, String>>();
 	String target = "failure";
 
@@ -69,11 +69,13 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 	public void prepare() {
 		LOGGER.debug("Entered into prepare method");
 		session = request.getSession();
-		UserDAO userDao = new UserDAO();
-		User user = userDao.getUserByUserName(CITIZENUSER);
+		//UserDAO userDao = new UserDAO();
+		//User user = userDao.getUserByUserName(CITIZENUSER);
+		//FIX ME
+		User user = null;
 		userId = user.getId();
 		EGOVThreadLocals.setUserId(userId.toString());
-		session.setAttribute("com.egov.user.LoginUserName", user.getUserName());
+		session.setAttribute("com.egov.user.LoginUserName", user.getUsername());
 		LOGGER.debug("Exit from prepare method");
 	}
 

@@ -152,8 +152,8 @@ public class CommonServices {
 		return amenitiesrMstr.get(mstrCode);
 	}
 
-	public static Map<Integer, String> getFormattedBndryMap(List<Boundary> zoneList) {
-		Map<Integer, String> zoneMap = new TreeMap<Integer, String>();
+	public static Map<Long, String> getFormattedBndryMap(List<Boundary> zoneList) {
+		Map<Long, String> zoneMap = new TreeMap<Long, String>();
 		for (Boundary boundary : zoneList) {
 			zoneMap.put(boundary.getId(), StringUtils.leftPad(boundary.getBoundaryNum().toString(), 2, "0") + '-'
 					+ boundary.getName());

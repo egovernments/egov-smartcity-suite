@@ -4149,18 +4149,21 @@ public class PropertyTaxUtil {
 
 	// TODO -- Fix me (Commented to Resolve compilation issues)
 	/*
-	 * public void setAuditEventService(AuditEventService auditEventService) {
-	 * this.auditEventService = auditEventService; }
-	 * 
-	 * public void generateAuditEvent(String action, BasicProperty
-	 * basicProperty, String createAuditDetails1, String createAuditDetails2) {
-	 * final AuditEvent auditEvent = new AuditEvent(AuditModule.PROPERTYTAX,
-	 * AuditEntity.PROPERTYTAX_PROPERTY, action, basicProperty.getUpicNo(),
-	 * createAuditDetails1); auditEvent.setPkId(basicProperty.getId());
-	 * auditEvent.setDetails2(createAuditDetails2);
-	 * this.auditEventService.createAuditEvent(auditEvent,
-	 * BasicPropertyImpl.class); }
-	 */
+	public void setAuditEventService(AuditEventService auditEventService) {
+		this.auditEventService = auditEventService;
+	}
+
+	public void generateAuditEvent(String action, BasicProperty basicProperty,
+			String createAuditDetails1, String createAuditDetails2) {
+		final AuditEvent auditEvent = new AuditEvent(AuditModule.PROPERTYTAX,
+				AuditEntity.PROPERTYTAX_PROPERTY, action,
+				basicProperty.getUpicNo(), createAuditDetails1);
+		auditEvent.setPkId(basicProperty.getId());
+		auditEvent.setDetails2(createAuditDetails2);
+		this.auditEventService.createAuditEvent(auditEvent,
+				BasicPropertyImpl.class);
+	}*/
+	 
 
 	/**
 	 * Called to get concatenated string from Address fields

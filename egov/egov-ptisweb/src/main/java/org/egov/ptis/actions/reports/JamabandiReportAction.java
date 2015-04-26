@@ -20,12 +20,12 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
-import org.egov.infstr.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.BoundaryDAO;
+import org.egov.infstr.reporting.engine.ReportRequest.ReportDataSourceType;
+import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.ptis.bean.ReportInfo;
 import org.egov.ptis.bean.UnitWiseInfo;
 import org.egov.ptis.domain.entity.property.CurrFloorDmdCalcMaterializeView;
@@ -42,14 +42,15 @@ import org.hibernate.Query;
 @ParentPackage("egov")
 public class JamabandiReportAction extends ReportFormAction {
 	private final Logger LOGGER = Logger.getLogger(getClass());
-	private Integer zoneId;
-	private Integer wardId;
+	private Long zoneId;
+	private Long wardId;
 	private String partNo;
 	public static final String RESIDENTIAL = "R";
 	public static final String NONRESD = "NR";
 	public static final String OPENPLOT = "OP";
 	public static final String SGOVT = "SGOVT";
 	public static final String CGOVT = "CGOVT";
+	private BoundaryDAO boundaryDAO;
 
 	@SuppressWarnings("unchecked")
 	public void prepare() {
@@ -102,7 +103,6 @@ public class JamabandiReportAction extends ReportFormAction {
 	@SuppressWarnings("unchecked")
 	@ValidationErrorPage(value = INDEX)
 	public String generateJamabandi() {
-		BoundaryDAO boundaryDAO = new BoundaryDAO();
 		ReportInfo reportInfo = new ReportInfo();
 		List<UnitWiseInfo> unitWiseInfoList = new ArrayList<UnitWiseInfo>();
 		Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment();
@@ -413,19 +413,19 @@ public class JamabandiReportAction extends ReportFormAction {
 		return unitwiseInfo;
 	}
 
-	public Integer getZoneId() {
+	public Long getZoneId() {
 		return zoneId;
 	}
 
-	public void setZoneId(Integer zoneId) {
+	public void setZoneId(Long zoneId) {
 		this.zoneId = zoneId;
 	}
 
-	public Integer getWardId() {
+	public Long getWardId() {
 		return wardId;
 	}
 
-	public void setWardId(Integer wardId) {
+	public void setWardId(Long wardId) {
 		this.wardId = wardId;
 	}
 

@@ -48,18 +48,17 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
+import org.egov.infra.admin.master.entity.Address;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.entity.enums.AddressType;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.StringUtils;
-import org.egov.lib.address.model.Address;
-import org.egov.lib.address.model.AddressTypeMaster;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.BoundaryDAO;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.lib.rjbac.user.dao.UserDAO;
+import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.actions.workflow.WorkflowAction;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -821,8 +820,8 @@ public class CreatePropertyAction extends WorkflowAction {
 	private void createOwners() {
 		LOGGER.debug("Entered into createOwners, Property: " + property);
 
-		AddressTypeMaster addrTypeMstr = (AddressTypeMaster) getPersistenceService().find(
-				"from AddressTypeMaster where addressTypeName = ?", OWNER_ADDR_TYPE);
+		AddressType addrTypeMstr = (AddressType) getPersistenceService().find(
+				"from AddressType where addressTypeName = ?", OWNER_ADDR_TYPE);
 
 		LOGGER.debug("createOwners: AddressTypemMaster: " + addrTypeMstr + ", CorrAddress1: " + getCorrAddress1()
 				+ ", CorrAddress2: " + getCorrAddress2() + ", CorrPinCode: " + getCorrPinCode());
@@ -870,10 +869,10 @@ public class CreatePropertyAction extends WorkflowAction {
 		PropertyAddress propAddr = new PropertyAddress();
 		StringBuffer addrStr1 = new StringBuffer();
 		StringBuffer addrStr2 = new StringBuffer();
-		propAddr.setAddTypeMaster((AddressTypeMaster) getPersistenceService().find(
-				"from AddressTypeMaster where addressTypeName = ?", PROP_ADDR_TYPE));
+		propAddr.setAddTypeMaster((AddressType) getPersistenceService().find(
+				"from AddressType where addressTypeName = ?", PROP_ADDR_TYPE));
 		propAddr.setBlock(boundaryDao.getBoundary(getAreaId()).getName());
-		propAddr.setHouseNo(getHouseNumber());
+		propAddr.setHouseNoBldgApt((getHouseNumber());
 		addrStr1.append(getHouseNumber());
 		if (getOldHouseNo() != null && !getOldHouseNo().isEmpty()) {
 			propAddr.setDoorNumOld(getOldHouseNo());

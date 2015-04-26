@@ -7,17 +7,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.lib.rjbac.user.dao.UserDAO;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
 import org.egov.ptis.nmc.service.TaxXMLToDBCoverterService;
 import org.egov.ptis.nmc.util.PropertyTaxNumberGenerator;
 
@@ -43,7 +41,7 @@ public class TaxXMLMigrationAction extends PropertyTaxBaseAction implements Serv
 	private String ackMessage;
 	
 	private HttpServletRequest request;
-	private Integer userId;
+	private Long userId;
 	private Boolean isCitizen;
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 	
@@ -88,10 +86,12 @@ public class TaxXMLMigrationAction extends PropertyTaxBaseAction implements Serv
 		HttpSession session = request.getSession();
 		
 		if (session.getAttribute("com.egov.user.LoginUserId") == null) {
-			User user = new UserDAO().getUserByUserName(CITIZENUSER);
+			//FIX ME
+			//User user = new UserDAO().getUserByUserName(CITIZENUSER);
+			User user = null;
 			userId = user.getId();
 			EGOVThreadLocals.setUserId(userId.toString());
-			session.setAttribute("com.egov.user.LoginUserName", user.getUserName());
+			session.setAttribute("com.egov.user.LoginUserName", user.getUsername());
 		}
 		
 		LOGGER.debug("Exiting from setUserIdToThreadLocals");

@@ -3,14 +3,13 @@ package org.egov.ptis.actions.reports;
 import static java.lang.Boolean.FALSE;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.ptis.bean.ActiveDemandInfo;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;

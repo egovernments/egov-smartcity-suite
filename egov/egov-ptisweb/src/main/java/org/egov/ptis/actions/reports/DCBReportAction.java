@@ -4,17 +4,18 @@ import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.ptis.nmc.constants.NMCPTISConstants.REPORT_TEMPLATENAME_DCBREPORT;
 import static org.egov.ptis.nmc.constants.NMCPTISConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.nmc.constants.NMCPTISConstants.ZONE_BNDRY_TYPE;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Installment;
-import org.egov.infstr.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.BoundaryDAO;
+import org.egov.infstr.reporting.engine.ReportRequest.ReportDataSourceType;
+import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.bean.ReportInfo;
 import org.egov.ptis.nmc.util.PropertyTaxUtil;
@@ -26,16 +27,16 @@ public class DCBReportAction extends ReportFormAction {
 
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	private List<ReportInfo> reportInfoList = new ArrayList<ReportInfo>();
-	private Integer zoneId;
-	private Map<Integer, String> ZoneBndryMap;
+	private Long zoneId;
+	private Map<Long, String> ZoneBndryMap;
 	List<Boundary> zoneList;
+	BoundaryDAO boundaryDAO;
 	
 	private void prepareReportInfo() {
-		BoundaryDAO boundaryDAO = new BoundaryDAO();
 		StringBuffer query = new StringBuffer(1000);
 		StringBuilder billQueryString = new StringBuilder();
 		Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment(); 
-		List<Integer> zoneParamList = new ArrayList<Integer>();
+		List<Long> zoneParamList = new ArrayList<Long>();
 		
 		billQueryString.append("select propMatView.zone.id, propMatView.ward.id, propMatView.partNo, count(*) ")
 				.append("from EgBill bill, PropertyMaterlizeView propMatView, PtNotice notice left join notice.basicProperty bp ")
@@ -85,7 +86,7 @@ public class DCBReportAction extends ReportFormAction {
 		
 		for(Object[] obj : propMatViewList) {
 			ReportInfo repInfo = new ReportInfo();
-			int mvZone, mvWard;
+			long mvZone, mvWard;
 			
 			mvZone = ((Integer)obj[0]).intValue();
 			mvWard = ((Integer)obj[1]).intValue();
@@ -144,7 +145,7 @@ public class DCBReportAction extends ReportFormAction {
 				"from BoundaryImpl BI where BI.boundaryType.name=? and BI.boundaryType.heirarchyType.name=? "
 						+ "and BI.isHistory='N' order by BI.id", ZONE_BNDRY_TYPE, REVENUE_HIERARCHY_TYPE);
 		setZoneBndryMap(CommonServices.getFormattedBndryMap(zoneList));
-		ZoneBndryMap.put(0, "All");
+		ZoneBndryMap.put(0l, "All");
 	}
 	
 	@Override
@@ -157,19 +158,19 @@ public class DCBReportAction extends ReportFormAction {
 		return REPORT_TEMPLATENAME_DCBREPORT;
 	}
 
-	public Integer getZoneId() {
+	public Long getZoneId() {
 		return zoneId;
 	}
 
-	public void setZoneId(Integer zoneId) {
+	public void setZoneId(Long zoneId) {
 		this.zoneId = zoneId;
 	}
 
-	public Map<Integer, String> getZoneBndryMap() {
+	public Map<Long, String> getZoneBndryMap() {
 		return ZoneBndryMap;
 	}
 
-	public void setZoneBndryMap(Map<Integer, String> zoneBndryMap) {
+	public void setZoneBndryMap(Map<Long, String> zoneBndryMap) {
 		ZoneBndryMap = zoneBndryMap;
 	}
 

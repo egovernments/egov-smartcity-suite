@@ -11,9 +11,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.EgovUtils;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.BoundaryDAO;
+import org.egov.infstr.utils.EgovUtils;
+import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
@@ -29,7 +29,7 @@ public class BoundaryWisePropUsgeDelegate {
 	private static final Logger LOGGER = Logger.getLogger(BoundaryWisePropUsgeDelegate.class);
 	//PropertyUsageDAO propUsageDao = PropertyDAOFactory.getDAOFactory().getPropertyUsageDAO();
 	PropertyTypeMasterDAO propTypeMstrDao = PropertyDAOFactory.getDAOFactory().getPropertyTypeMasterDAO();
-	BoundaryDAO boundaryDao = new BoundaryDAO();
+	BoundaryDAO boundaryDao;
 	PropertyDAO propertyDao = PropertyDAOFactory.getDAOFactory().getPropertyDAO();
 
 	/**
@@ -379,7 +379,7 @@ public class BoundaryWisePropUsgeDelegate {
 		return wardList;
 	}
 
-	public String getBndryNameById(int bndryID) {
+	public String getBndryNameById(long bndryID) {
 		LOGGER.debug("Entered into getBndryNameById method");
 		LOGGER.debug("Boundary Id : " + bndryID);
 		String bndName = null;
@@ -543,6 +543,14 @@ public class BoundaryWisePropUsgeDelegate {
 		LOGGER.debug("PropTypeMap : " + (propTypeMap != null ? propTypeMap : ZERO));
 		LOGGER.debug("Exit from initPropTypeMap method");
 		return propTypeMap;
+	}
+
+	public BoundaryDAO getBoundaryDao() {
+		return boundaryDao;
+	}
+
+	public void setBoundaryDao(BoundaryDAO boundaryDao) {
+		this.boundaryDao = boundaryDao;
 	}
 
 }

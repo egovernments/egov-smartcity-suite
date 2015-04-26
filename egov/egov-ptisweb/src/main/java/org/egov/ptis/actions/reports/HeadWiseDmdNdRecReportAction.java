@@ -1,6 +1,5 @@
 package org.egov.ptis.actions.reports;
 
-import static java.math.BigDecimal.ZERO;
 import static java.util.Calendar.YEAR;
 import static org.egov.ptis.nmc.constants.NMCPTISConstants.REPORT_TEMPLATENAME_HEADWISEDMDCOLL;
 
@@ -12,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Installment;
 import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
