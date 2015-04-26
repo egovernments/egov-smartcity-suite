@@ -63,6 +63,11 @@ public class UserService {
     @Autowired
     private EmailUtils emailUtils;
 
+    @Transactional
+    public User updateUser(final User user) {
+        return userRepository.saveAndFlush(user);
+    }
+    
     public Set<User> getUsersByUsernameLike(final String userName) {
         return userRepository.findByUsernameContainingIgnoreCase(userName);
     }
@@ -75,9 +80,6 @@ public class UserService {
         return userRepository.findByUsername(userName);
     }
     
-    public User updateUser(final User user) {
-        return userRepository.saveAndFlush(user);
-    }
     public User getUserByEmailId(final String emailId) {
         return userRepository.findByEmailId(emailId);
     }

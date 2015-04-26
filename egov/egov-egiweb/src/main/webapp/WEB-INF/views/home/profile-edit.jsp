@@ -125,10 +125,11 @@
 					<div class="form-group">
 						<label for="field-1" class="col-sm-3 control-label">Preferred Language</label>
 						<div class="col-sm-6 add-margin">
-							<select class="form-control" id="pre_language">
-								<option value="en_IN">English</option>
-								<option value="hi_IN">Hindi</option>
-							</select>
+							<form:select class="form-control" id="locale" path="locale">
+								<form:option value=""></form:option>
+								<form:option value="en_IN">English</form:option>
+								<form:option value="hi_IN">Hindi</form:option>
+							</form:select>
 						</div>
 					</div>
 					

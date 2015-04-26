@@ -285,10 +285,14 @@ public class User extends AbstractAuditable<User, Long> {
         this.pwdExpiryDate = pwdExpiryDate;
     }
 
-    public Locale getLocale() {
-        return new Locale(locale);
+    public String getLocale() {
+        return locale;
     }
-
+    
+    public Locale locale() {
+    	return new Locale(locale);
+    }
+    
     public void setLocale(final String locale) {
         this.locale = locale;
     }
