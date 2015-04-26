@@ -48,7 +48,7 @@ public class PropertyCalSheetInfo {
 	}
 
 	public String getHouseNumber() {
-		return basicProperty.getAddress().getHouseNo();
+		return basicProperty.getAddress().getHouseNoBldgApt();
 	}
 
 	public String getPropertyType() {

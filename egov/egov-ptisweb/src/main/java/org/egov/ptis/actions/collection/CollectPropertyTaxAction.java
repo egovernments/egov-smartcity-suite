@@ -1,10 +1,6 @@
 package org.egov.ptis.actions.collection;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_AUTO;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 
 import java.math.BigDecimal;
 import java.net.URLEncoder;
@@ -18,8 +14,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
-import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Installment;
 import org.egov.demand.dao.EgDemandDetailsDao;
 import org.egov.demand.model.EgDemandDetails;

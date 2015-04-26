@@ -16,11 +16,10 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.BoundaryImpl;
 import org.egov.ptis.domain.dao.property.BoundaryCategoryDao;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
@@ -142,7 +141,7 @@ public class ChangeStreetRateAction extends BaseFormAction {
 
 		LOGGER.debug("searchForCategories, areaId:" + areaId);
 
-		boundary = (BoundaryImpl) getPersistenceService().find("from BoundaryImpl b where b.id=?", areaId);
+		boundary = (Boundary) getPersistenceService().find("from BoundaryImpl b where b.id=?", areaId);
 		try {
 			BoundaryCategoryDao boundaryCat = PropertyDAOFactory.getDAOFactory().getBoundaryCategoryDao();
 			List<Category> list = boundaryCat.getCategoriesByBoundry(boundary);
@@ -191,7 +190,7 @@ public class ChangeStreetRateAction extends BaseFormAction {
 		LOGGER.debug("saveData : areaId:" + areaId + ", Current Location Factor:" + currLocFactor + ", Current Rate :"
 				+ currentRate + "Revised Location Factor: " + revisedLocFactor + "Revised Rate : " + revisedRate);
 
-		boundary = (BoundaryImpl) getPersistenceService().find("from BoundaryImpl b where b.id=?", areaId);
+		boundary = (Boundary) getPersistenceService().find("from BoundaryImpl b where b.id=?", areaId);
 		Category catOld = (Category) getPersistenceService().find(
 				"from Category c where c.categoryName=? and c.categoryAmount=?", currLocFactor, currentRate);
 		LOGGER.debug("saveData : Category for CurrentLocationFactor: " + currLocFactor + "&" + "CurrentRate : "

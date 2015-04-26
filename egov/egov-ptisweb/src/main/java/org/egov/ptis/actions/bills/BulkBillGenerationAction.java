@@ -10,10 +10,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.config.AppConfig;
 import org.egov.infstr.config.AppConfigValues;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.BoundaryDAO;
+import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.ptis.nmc.constants.NMCPTISConstants;
 import org.egov.web.actions.BaseFormAction;
 
@@ -26,6 +26,7 @@ public class BulkBillGenerationAction extends BaseFormAction {
 	private Integer wardId;
 	private String ackMessage;
 	private String partNo;
+	private BoundaryDAO boundaryDAO;
 	
 	private List<Boundary> wardList = new ArrayList<Boundary>();
 	
@@ -57,7 +58,7 @@ public class BulkBillGenerationAction extends BaseFormAction {
 		LOGGER.debug("generateBills method started for ward number " + wardId);
 		AppConfigValues appConfigValue = null;
 		
-		Integer wardNumber = new BoundaryDAO().getBoundary(wardId).getBoundaryNum().intValue();
+		Integer wardNumber = boundaryDAO.getBoundary(Long.valueOf(wardId)).getBoundaryNum().intValue();
 		String wardNumAndPartNo = wardNumber.toString() + STR_HYPHEN + partNo;
 		
 		appConfigValue = (AppConfigValues) persistenceService.find(

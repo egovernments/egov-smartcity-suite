@@ -42,10 +42,10 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.Installment;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.commons.Module;
-import org.egov.infstr.commons.dao.GenericDaoFactory;
+import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.StringUtils;
@@ -72,6 +72,7 @@ public class PropertyInfo {
 	private final PropertyImpl property;
 	private TaxCalculationInfo taxCalInfo;
 	private String noticeNo;
+	private ModuleDao moduleDao;
 	// Total Tax payable for Current Installment
 	// private BigDecimal totalTax;
 
@@ -116,8 +117,7 @@ public class PropertyInfo {
 
 	private Date getMinEffectiveDate(String demandReasonCode) throws ParseException {
 		Date taxMinEffectiveDate = null;
-		Module ptModule = GenericDaoFactory.getDAOFactory().getModuleDao()
-				.getModuleByName(NMCPTISConstants.PTMODULENAME);
+		Module ptModule = moduleDao.getModuleByName(NMCPTISConstants.PTMODULENAME);
 		List minEffDate = HibernateUtil
 				.getCurrentSession()
 				.createSQLQuery(
@@ -579,7 +579,7 @@ public class PropertyInfo {
 
 			if (STATUS_ISHISTORY.equals(historyProperty.getStatus())
 					&& propertyTaxUtil.between(effectiveDate, installment.getFromDate(), installment.getToDate())) {
-				historyProperties.put(historyProperty.getCreatedDate(), historyProperty);
+				historyProperties.put(historyProperty.getCreatedDate().toDate(), historyProperty);
 			}
 		}
 
@@ -1148,7 +1148,7 @@ public class PropertyInfo {
 		// so date of approval of transfer will be the date this property was
 		// created.
 		if (!property.getBasicProperty().getPropMutationSet().isEmpty())
-			return property.getCreatedDate();
+			return property.getCreatedDate().toDate();
 
 		return null;
 	}

@@ -19,19 +19,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.jackrabbit.core.security.user.UserImpl;
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
-import org.apache.struts2.config.Result;
-import org.apache.struts2.config.Results;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.dispatcher.StreamResult;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.Functionary;
-import org.egov.infstr.utils.HibernateUtil;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.UserImpl;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.model.EmployeeView;
-import org.egov.pims.service.EisManager;
 import org.egov.pims.service.EisUtilService;
 import org.egov.ptis.domain.dao.property.CategoryDao;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
@@ -74,7 +74,7 @@ public class AjaxCommonAction extends BaseFormAction {
 	private List<Boundary> areaList;
 	private List<PropertyUsage> propUsageList;
 	private List<DesignationMaster> designationMasterList = new ArrayList<DesignationMaster>();
-	private List<UserImpl> userList = new ArrayList<UserImpl>();
+	private List<User> userList = new ArrayList<User>();
 	private List<Category> categoryList;
 	private List<StructureClassification> structuralClassifications; 
 	private String returnStream = "";
@@ -378,7 +378,7 @@ public class AjaxCommonAction extends BaseFormAction {
 		this.designationId = designationId;
 	}
 
-	public List<UserImpl> getUserList() {
+	public List<User> getUserList() {
 		return userList;
 	}
 

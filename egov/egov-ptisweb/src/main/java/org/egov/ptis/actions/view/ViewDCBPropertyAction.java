@@ -40,7 +40,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
-import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyArrear;
 import org.egov.ptis.domain.entity.property.PropertyReceipt;

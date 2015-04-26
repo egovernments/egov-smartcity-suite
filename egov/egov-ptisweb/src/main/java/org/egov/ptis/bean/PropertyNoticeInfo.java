@@ -95,7 +95,7 @@ public class PropertyNoticeInfo {
 		// so date of approval of transfer will be the date this property was
 		// created.
 		if (!property.getBasicProperty().getPropMutationSet().isEmpty())
-			return property.getCreatedDate();
+			return property.getCreatedDate().toDate();
 
 		return null;
 	}
@@ -181,7 +181,7 @@ public class PropertyNoticeInfo {
 	}
 
 	public String getHouseNo() {
-		return property.getBasicProperty().getAddress().getHouseNo();
+		return property.getBasicProperty().getAddress().getHouseNoBldgApt();
 	}
 
 	private String getWardNumber() {

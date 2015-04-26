@@ -12,12 +12,11 @@ import java.net.URLEncoder;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Installment;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.lib.rjbac.user.dao.UserDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.nmc.bill.NMCPTBillServiceImpl;
 import org.egov.ptis.nmc.bill.NMCPropertyTaxBillable;
@@ -40,11 +39,11 @@ public class CollectionAction extends BaseFormAction {
 	private String collectXML;
 	private String indexNum;
 	private Long userId;
+	private UserDAO userDao;
 
 	@SuppressWarnings("unchecked")
 	public void prepare() {
 		LOGGER.debug("Entered into prepare method");
-		UserDAO userDao = new UserDAO();
 		User usr = (User) userDao.getUserByName("citizenUser").get(0);
 		setUserId(usr.getId().longValue());
 		EGOVThreadLocals.setUserId(usr.getId().toString());

@@ -11,12 +11,12 @@ import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFOWNER;
 import static org.egov.ptis.nmc.constants.NMCPTISConstants.WF_STATE_NOTICE_GENERATION_PENDING;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
-import org.apache.struts2.config.Result;
-import org.apache.struts2.config.Results;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.infstr.workflow.WorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
