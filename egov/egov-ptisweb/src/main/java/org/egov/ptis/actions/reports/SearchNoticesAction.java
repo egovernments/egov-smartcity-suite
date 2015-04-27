@@ -69,10 +69,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.dispatcher.ServletRedirectResult;
-import org.apache.struts2.dispatcher.StreamResult;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.ValidationError;
@@ -104,10 +100,6 @@ import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
 import com.opensymphony.xwork2.Action;
 
-@Results({
-		@Result(name = Action.SUCCESS, type = StreamResult.class, value = "fileStream", params = { "contentType",
-				"${contentType}", "contentDisposition", "attachment; filename=${fileName}" }),
-		@Result(name = "RENDER_NOTICE", type = ServletRedirectResult.class, value = "/commons/htmlFileRenderer.jsp") })
 @ParentPackage("egov")
 public class SearchNoticesAction extends SearchFormAction {
 	private static final Logger LOGGER = Logger.getLogger(SearchNoticesAction.class);
@@ -397,7 +389,7 @@ public class SearchNoticesAction extends SearchFormAction {
 				if (ownerName != null && !ownerName.equals("")) {
 					boolean isOwnerExist = true;
 					for (PropertyOwner propOwner : prop.getPropertyOwnerSet()) {
-						if (!getOwnerName().equalsIgnoreCase(propOwner.getFirstName())) {
+						if (!getOwnerName().equalsIgnoreCase(propOwner.getName())) {
 							noticeRmvList.add(notice);
 							isOwnerExist = false;
 							break;
@@ -673,7 +665,7 @@ public class SearchNoticesAction extends SearchFormAction {
 		return out;
 	}
 
-	public String getFormattedBndryStr(BoundaryImpl boundary) {
+	public String getFormattedBndryStr(Boundary boundary) {
 		LOGGER.debug("Entered into getFormattedBndryStr method");
 		LOGGER.debug("boundary : " + boundary);
 		StringBuilder formattedStr = new StringBuilder();

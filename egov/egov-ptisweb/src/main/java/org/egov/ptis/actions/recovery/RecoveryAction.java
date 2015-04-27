@@ -61,13 +61,11 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.dispatcher.ServletActionRedirectResult;
 import org.egov.commons.CFinancialYear;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.reporting.engine.ReportOutput;
@@ -95,8 +93,8 @@ import org.hibernate.FlushMode;
  * 
  */
 @ParentPackage("egov")
-@Results( { @Result(name = "invalidUser", type = ServletActionRedirectResult.class, value = "workflow", params = {
-		"namespace", "/workflow", "method", "inboxItemViewErrorUserInvalid" }) })
+/*@Results( { @Result(name = "invalidUser", type = ServletActionRedirectResult.class, value = "workflow", params = {
+		"namespace", "/workflow", "method", "inboxItemViewErrorUserInvalid" }) })*/
 public class RecoveryAction extends BaseRecoveryAction {
 
 	private static final long serialVersionUID = 1L;
@@ -112,8 +110,8 @@ public class RecoveryAction extends BaseRecoveryAction {
 	private static String NOTICE159NEW = "notice159New";
 	private static String NOTICE159VIEW = "notice159View";
 	private static String PRINT = "print";
-	UserDAO userDao = new UserDAO();
-	
+
+	private UserService userService;
 	public RecoveryAction() {
 
 		addRelatedEntity("basicProperty", BasicPropertyImpl.class);
@@ -181,8 +179,9 @@ public class RecoveryAction extends BaseRecoveryAction {
 		IntimationNotice intimationNotice = recovery.getIntimationNotice();
 		intimationNotice.setRecovery(recovery);
 		recoveryService.persist(recovery);
-		Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-		recoveryWorkflowService.start(recovery, position);
+		//Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		Position position = null;
+		recovery.transition(true).start().withOwner(position);
 		updateWfstate("Notice 155");
 		addActionMessage(getText("notice155.success"));
 		LOGGER.debug("RecoveryAction | startRecovery | end" + recovery);
@@ -400,9 +399,12 @@ public class RecoveryAction extends BaseRecoveryAction {
 				getPropStatusByStatusCode(PropertyTaxConstants.RECOVERY_CEASENOTICEISSUED));
 		recovery.setStatus(getEgwStatusForModuleAndCode(PropertyTaxConstants.RECOVERY_MODULE,
 				PropertyTaxConstants.RECOVERY_CEASENOTICEISSUED));
-
-		Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-		recovery.changeState("END", "END", position, workflowBean.getComments());
+        //FIX ME
+		//Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		Position position = null;
+		recovery.transition(true).transition().withNextAction("END")
+				.withStateValue("END").withOwner(position)
+				.withComments(workflowBean.getComments());
 
 		Map<String, Object> paramMap = getNotice159Param(recovery);
 		PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
@@ -442,29 +444,45 @@ public class RecoveryAction extends BaseRecoveryAction {
 		LOGGER.debug("RecoveryAction | updateStateAndStatus | Start");
 		
 		if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
-			Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-			recovery.changeState("Saved : " + value, "Forward/Approve", position, workflowBean.getComments());
+			//FIX ME
+			//Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			Position position = null;
+			recovery.transition(true).transition().withNextAction("Saved : " + value).withOwner(position).withComments(workflowBean.getComments());
 			addActionMessage(getText("file.save"));
 
 		} else if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workflowBean.getActionName())) {
-			Position position = eisCommonsManager.getPositionByUserId(workflowBean.getApproverUserId());
-			User approverUser = userDao.getUserByID(workflowBean.getApproverUserId());
-			recovery.changeState("Forwarded:" + value, "Forward/Approve", position, workflowBean.getComments());
-			addActionMessage(getText("recovery.forward", new String[] { approverUser.getUserName() }));
+			//FIX ME
+			//Position position = eisCommonsManager.getPositionByUserId(workflowBean.getApproverUserId());
+			Position position = null;
+			User approverUser = userService.getUserById(workflowBean.getApproverUserId().longValue());
+			recovery.transition(true).transition().withNextAction("Forwarded : " + value).withStateValue("Forward/Approve").withOwner(position).withComments(workflowBean.getComments());
+			addActionMessage(getText("recovery.forward", new String[] { approverUser.getUsername() }));
 
 		} else if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workflowBean.getActionName())) {
-			Position position = eisCommonsManager.getPositionByUserId(recovery.getCreatedBy().getId());
-			User approverUser = userDao.getUserByID(recovery.getCreatedBy().getId());
-			recovery.changeState("Approved :" + value, getNextState(recovery.getStatus().getCode()), position,
-					workflowBean.getComments());
-			addActionMessage(getText("recovery.approve", new String[] { approverUser.getUserName() }));
+			//Position position = eisCommonsManager.getPositionByUserId(recovery.getCreatedBy().getId());
+			Position position = null;
+			User approverUser = userService.getUserById(recovery.getCreatedBy().getId());
+
+			recovery.transition(true)
+					.transition()
+					.withNextAction("Approved : " + value)
+					.withStateValue(
+							getNextState(recovery.getStatus().getCode()))
+					.withOwner(position)
+					.withComments(workflowBean.getComments());
+			addActionMessage(getText("recovery.approve", new String[] { approverUser.getUsername() }));
 
 		} else {
-			Position position = eisCommonsManager.getPositionByUserId(workflowBean.getApproverUserId());
-			User approverUser = userDao.getUserByID(workflowBean.getApproverUserId());
-			recovery.changeState(value, getNextState(recovery.getStatus().getCode()), position, workflowBean
-					.getComments());
-			addActionMessage(getText("recovery.approve", new String[] { approverUser.getUserName() }));
+			//FIX ME
+			//Position position = eisCommonsManager.getPositionByUserId(workflowBean.getApproverUserId());
+			Position position = null;
+			User approverUser = userService.getUserById(workflowBean.getApproverUserId().longValue());
+			
+			recovery.transition(true).start().withNextAction(value)
+					.withStateValue(recovery.getStatus().getCode())
+					.withOwner(position)
+					.withComments(workflowBean.getComments());
+			addActionMessage(getText("recovery.approve", new String[] { approverUser.getUsername() }));
 
 		}
 
@@ -485,6 +503,14 @@ public class RecoveryAction extends BaseRecoveryAction {
 
 	public void setRecoveryWorkflowService(WorkflowService<Recovery> recoveryWorkflowService) {
 		this.recoveryWorkflowService = recoveryWorkflowService;
+	}
+
+	public UserService getUserService() {
+		return userService;
+	}
+
+	public void setUserService(UserService userService) {
+		this.userService = userService;
 	}
 
 }

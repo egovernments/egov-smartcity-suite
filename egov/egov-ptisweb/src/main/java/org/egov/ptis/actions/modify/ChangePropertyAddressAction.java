@@ -60,6 +60,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
@@ -74,14 +75,13 @@ import org.egov.ptis.domain.entity.property.PropertyDocs;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
-@Validation()
-/*@Results({ @Result(name = "workFlowError", type = ServletActionRedirectResult.class, value = "workflow", params = {
-		"namespace", "/workflow", "method", "workFlowError" }) })*/
+
 public class ChangePropertyAddressAction extends WorkflowAction {
 
 	private BasicProperty basicProperty;
@@ -101,7 +101,12 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	private static final String MSG_REJECT_SUCCESS = " Change Property Rejected Successfully ";
 
 	private String docNumber;
+	
+	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private EisCommonService eisCommonService;
 
 	/* to log errors and debugging information */
 	private final Logger LOGGER = Logger.getLogger(getClass());
@@ -293,7 +298,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 		}
 
 		transitionWorkFlow();
-		User approverUser = userService.(getWorkflowBean().getApproverUserId());
+		User approverUser = userService.getUserById(getWorkflowBean().getApproverUserId().longValue());
 		setAckMessage("Property " + basicProperty.getUpicNo() + " Successfully Forwarded to "
 				+ approverUser.getUsername());
 		/*
@@ -440,7 +445,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 		}
 		
 		workflowAction = propertyTaxUtil.initWorkflowAction(property, workflowBean,
-				Integer.valueOf(EGOVThreadLocals.getUserId()), eisCommonsManager);
+				Integer.valueOf(EGOVThreadLocals.getUserId()),eisCommonService );
 		
 		if (workflowAction.isNoWorkflow()) {
 			startWorkFlow();

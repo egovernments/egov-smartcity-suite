@@ -64,17 +64,7 @@ import org.egov.ptis.nmc.workflow.WorkflowDetails;
 import org.egov.web.utils.ServletActionRedirectResult;
 
 @ParentPackage("egov")
-/*@Results( {
-		@Result(name = "createView", type = ServletActionRedirectResult.class, value = "createProperty", params = {
-				"namespace", "/create", "method", "view", "modelId", "${workFlowPropId}" }),
-		@Result(name = "modifyView", type = ServletActionRedirectResult.class, value = "modifyProperty", params = {
-				"namespace", "/modify", "method", "view", "modelId", "${workFlowPropId}"  }),		
-		@Result(name = "deactivateView", type = ServletActionRedirectResult.class, value = "deactivateProperty", params = {
-				"namespace", "/deactivate", "method", "viewForm", "modelId", "${workFlowPropId}"  }),
-		@Result(name = "transferView", type = ServletActionRedirectResult.class, value = "transferProperty", params = {
-				"namespace", "/transfer", "method", "view", "modelId", "${workFlowPropId}"  }),
-		@Result(name = "changePropAddressView", type = ServletActionRedirectResult.class, value = "changePropertyAddress", params = {
-				"namespace", "/modify", "method", "view", "modelId", "${workFlowPropId}"  }) })*/
+
 public class WorkflowAction extends PropertyTaxBaseAction {
 
 	private final Logger LOGGER = Logger.getLogger(getClass());

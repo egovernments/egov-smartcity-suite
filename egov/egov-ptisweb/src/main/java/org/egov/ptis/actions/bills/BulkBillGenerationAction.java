@@ -55,6 +55,7 @@ import org.egov.infstr.config.AppConfigValues;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.ptis.nmc.constants.NMCPTISConstants;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class BulkBillGenerationAction extends BaseFormAction {
 
@@ -65,6 +66,8 @@ public class BulkBillGenerationAction extends BaseFormAction {
 	private Integer wardId;
 	private String ackMessage;
 	private String partNo;
+	
+	@Autowired
 	private BoundaryDAO boundaryDAO;
 	
 	private List<Boundary> wardList = new ArrayList<Boundary>();

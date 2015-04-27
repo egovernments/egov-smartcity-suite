@@ -54,6 +54,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
@@ -76,6 +77,7 @@ import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.beans.factory.annotation.Autowired;
 /**
  * @author manoranjan
  * 
@@ -99,9 +101,11 @@ public class ObjectionAction extends PropertyTaxBaseAction{
 	private PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 	private PropertyService propService;
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
-	//UserDAO userDao = new UserDAO();
 	
 	private boolean isShowAckMessage;
+	
+	@Autowired
+	private UserService userService;
 	
 	public ObjectionAction() {
 		addRelatedEntity("basicProperty", BasicPropertyImpl.class);
@@ -160,12 +164,16 @@ public class ObjectionAction extends PropertyTaxBaseAction{
 				.find("from EgwStatus where moduletype='PTObejction' and code='CREATED'");
 		objection.setEgwStatus(egwStatus);
 		objectionService.persist(objection);
-		Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-		objectionWorkflowService.start(objection, position);
+		//FIX ME
+		//Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		Position position = null;
+		//objectionWorkflowService.start(objection, position);
+		objection.transition(true).start().withOwner(position);
 		
 		if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
 			updateStateAndStatus(PropertyTaxConstants.OBJECTION_CREATED, WFLOW_ACTION_STEP_FORWARD);
-			objection.getState().setText1(PropertyTaxConstants.OBJECTION_RECORD_SAVED);
+			//FIX ME
+			//objection.getState().setText1(PropertyTaxConstants.OBJECTION_RECORD_SAVED);
 		} else {
 			updateStateAndStatus(PropertyTaxConstants.OBJECTION_CREATED, PropertyTaxConstants.OBJECTION_ADDHEARING_DATE);
 		}
@@ -189,7 +197,8 @@ public class ObjectionAction extends PropertyTaxBaseAction{
 		}
 		if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
 			updateStateAndStatus(PropertyTaxConstants.OBJECTION_CREATED, PropertyTaxConstants.OBJECTION_ADDHEARING_DATE);
-			objection.getState().setText1(PropertyTaxConstants.OBJECTION_HEARINGDATE_SAVED);
+			//FIX ME
+			//objection.getState().setText1(PropertyTaxConstants.OBJECTION_HEARINGDATE_SAVED);
 
 		} else {
 			updateStateAndStatus(PropertyTaxConstants.OBJECTION_HEARING_FIXED,
@@ -282,8 +291,8 @@ public class ObjectionAction extends PropertyTaxBaseAction{
 				propService.initiateModifyWfForObjection(objection.getBasicProperty().getId(),
 						objection.getObjectionNumber(), objection.getRecievedOn(), objection.getCreatedBy(), null, 
 						PROPERTY_MODIFY_REASON_OBJ);
-				User approverUser = userDao.getUserByID(objection.getCreatedBy().getId());
-				addActionMessage(getText("initiate.modify.forward")+ approverUser.getUserName());
+				User approverUser = userService.getUserById(objection.getCreatedBy().getId());
+				addActionMessage(getText("initiate.modify.forward")+ approverUser.getUsername());
 
 			}
 		} else {
@@ -327,7 +336,8 @@ public class ObjectionAction extends PropertyTaxBaseAction{
 		objectionService.update(objection);
 		if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
 			updateStateAndStatus(PropertyTaxConstants.OBJECTION_CREATED, WFLOW_ACTION_STEP_FORWARD);
-			objection.getState().setText1(PropertyTaxConstants.OBJECTION_RECORD_SAVED);
+			//FIX ME
+			//objection.getState().setText1(PropertyTaxConstants.OBJECTION_RECORD_SAVED);
 		} else {
 			updateStateAndStatus(PropertyTaxConstants.OBJECTION_CREATED, PropertyTaxConstants.OBJECTION_ADDHEARING_DATE);
 		}
@@ -339,19 +349,26 @@ public class ObjectionAction extends PropertyTaxBaseAction{
 		LOGGER.debug("ObjectionAction | updateStateAndStatus | Start");
 
 		if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
-			Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-			objection.changeState(status, actionToPerform, position, workflowBean.getComments());
+			//Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			Position position = null;
+			objection.transition(true).start().withNextAction(actionToPerform)
+					.withStateValue(status).withOwner(position)
+					.withComments(workflowBean.getComments());
 			addActionMessage(getText("file.save"));
 
 		} else if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workflowBean.getActionName())) {
-			Position position = eisCommonsManager.getPositionByUserId(workflowBean.getApproverUserId());
+			//FIX ME
+			//Position position = eisCommonsManager.getPositionByUserId(workflowBean.getApproverUserId());
+			Position position = null;
 			EgwStatus egwStatus = (EgwStatus) persistenceService.find("from EgwStatus where moduletype='"
 					+ PropertyTaxConstants.OBJECTION_MODULE + "' and code='" + status + "'");
 			objection.setEgwStatus(egwStatus);
-			objection.changeState(status, actionToPerform, position, workflowBean.getComments());
-			
-			User approverUser = userDao.getUserByID(workflowBean.getApproverUserId());
-			addActionMessage(getText("objection.forward", new String[] { approverUser.getUserName() }));
+			objection.transition(true).start().withNextAction(actionToPerform)
+					.withStateValue(status).withOwner(position)
+					.withComments(workflowBean.getComments());
+
+			User approverUser = userService.getUserById(workflowBean.getApproverUserId().longValue());
+			addActionMessage(getText("objection.forward", new String[] { approverUser.getUsername() }));
 		}
 		LOGGER.debug("ObjectionAction | updateStateAndStatus | End");
 	}

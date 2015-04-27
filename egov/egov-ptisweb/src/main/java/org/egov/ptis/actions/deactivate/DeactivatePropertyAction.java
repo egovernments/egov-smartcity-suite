@@ -68,13 +68,12 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.dispatcher.ServletActionRedirectResult;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
+import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.StringUtils;
@@ -102,8 +101,8 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 @Validation()
-@Results({ @Result(name = "workFlowError", type = ServletActionRedirectResult.class, value = "workflow", params = {
-		"namespace", "/workflow", "method", "workFlowError" }) })
+/*@Results({ @Result(name = "workFlowError", type = ServletActionRedirectResult.class, value = "workflow", params = {
+		"namespace", "/workflow", "method", "workFlowError" }) })*/
 public class DeactivatePropertyAction extends WorkflowAction {
 
 	private BasicProperty basicProp;
@@ -138,6 +137,8 @@ public class DeactivatePropertyAction extends WorkflowAction {
 	PropertyStatusValues propStatusVal = new PropertyStatusValues();
 	PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 	private final Logger LOGGER = Logger.getLogger(getClass());
+	private UserService userService;
+	private EisCommonService eisCommonService;
 
 	public DeactivatePropertyAction() {
 	}
@@ -292,7 +293,6 @@ public class DeactivatePropertyAction extends WorkflowAction {
 		LOGGER.debug("forward: PropertyStatusValues for deactivation: " + propStatusVal);
 		String propDocNum = "";
 		try {
-			UserDAO userDao = new UserDAO();			
 			if (userRole.equalsIgnoreCase(ASSISTANT_ROLE)) {
 
 				this.validate();
@@ -349,8 +349,8 @@ public class DeactivatePropertyAction extends WorkflowAction {
 				LOGGER.debug("Exit from forward method");
 			}
 			transitionWorkFlow();
-			User approverUser = userDao.getUserByID(getWorkflowBean().getApproverUserId());
-			setAckMessage("Property Successfully Forwarded to " + approverUser.getUserName());
+			User approverUser = userService.getUserById(getWorkflowBean().getApproverUserId().longValue());
+			setAckMessage("Property Successfully Forwarded to " + approverUser.getUsername());
 
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
@@ -423,7 +423,7 @@ public class DeactivatePropertyAction extends WorkflowAction {
 			propertyImplService.update(property);
 			basicPrpertyService.update(basicProperty);
 		} else {
-			setAckMessage(MSG_REJECT_SUCCESS + property.getCreatedBy().getUserName());
+			setAckMessage(MSG_REJECT_SUCCESS + property.getCreatedBy().getUsername());
 		}
 		
 		LOGGER.debug("reject: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
@@ -493,7 +493,7 @@ public class DeactivatePropertyAction extends WorkflowAction {
 		}
 		
 		workflowAction = propertyTaxUtil.initWorkflowAction(property, workflowBean,
-				Integer.valueOf(EGOVThreadLocals.getUserId()), eisCommonsManager);
+				Integer.valueOf(EGOVThreadLocals.getUserId()), eisCommonService);
 		
 		if (workflowAction.isNoWorkflow()) {
 			startWorkFlow();
@@ -527,7 +527,7 @@ public class DeactivatePropertyAction extends WorkflowAction {
 				.append(AUDITDATA_STRING_SEP).append("Comments : ")
 				.append(propStatVal.getRemarks() != null ? propStatVal.getRemarks() : "");
 		LOGGER.debug("Audit String : "+auditDetail1.toString());
-		propertyTaxUtil.generateAuditEvent(action, basicProperty, auditDetail1.toString(), auditDetails2);
+		//propertyTaxUtil.generateAuditEvent(action, basicProperty, auditDetail1.toString(), auditDetails2);
 	}
 
 	public String getPropertyId() {
@@ -642,4 +642,20 @@ public class DeactivatePropertyAction extends WorkflowAction {
 		this.docNumber = docNumber;
 	}
 
+	public UserService getUserService() {
+		return userService;
+	}
+
+	public void setUserService(UserService userService) {
+		this.userService = userService;
+	}
+
+	public EisCommonService getEisCommonService() {
+		return eisCommonService;
+	}
+
+	public void setEisCommonService(EisCommonService eisCommonService) {
+		this.eisCommonService = eisCommonService;
+	}
+	
 }

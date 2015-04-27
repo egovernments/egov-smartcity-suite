@@ -78,6 +78,7 @@ import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ViewPropertyAction extends BaseFormAction {
 	private final Logger LOGGER = Logger.getLogger(getClass());
@@ -101,6 +102,8 @@ public class ViewPropertyAction extends BaseFormAction {
 	private boolean isDemandActive;
 	private String demandEffectiveYear;
 	private Integer noOfDaysForInactiveDemand;
+	
+	@Autowired
 	private UserService UserService;
 
 	@Override

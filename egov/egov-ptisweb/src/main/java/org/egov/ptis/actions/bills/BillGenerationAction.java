@@ -111,6 +111,7 @@ import org.egov.ptis.nmc.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.ptis.notice.PtNotice;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 public class BillGenerationAction extends PropertyTaxBaseAction {
@@ -142,7 +143,10 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	InputStream billPDF;
 	private String wardNum;
 	
+	@Autowired
 	private ModuleDao moduleDao;
+	
+	@Autowired
 	private InstallmentDao isntalDao;
 
 	@Override

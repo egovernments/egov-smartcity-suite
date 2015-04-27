@@ -60,6 +60,7 @@ import org.egov.ptis.bean.ReportInfo;
 import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.web.actions.ReportFormAction;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 public class DCBReportAction extends ReportFormAction {
@@ -69,7 +70,9 @@ public class DCBReportAction extends ReportFormAction {
 	private Long zoneId;
 	private Map<Long, String> ZoneBndryMap;
 	List<Boundary> zoneList;
-	BoundaryDAO boundaryDAO;
+	
+	@Autowired
+	private BoundaryDAO boundaryDAO;
 	
 	private void prepareReportInfo() {
 		StringBuffer query = new StringBuffer(1000);

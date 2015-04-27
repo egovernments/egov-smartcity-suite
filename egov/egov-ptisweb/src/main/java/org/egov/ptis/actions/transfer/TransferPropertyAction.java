@@ -89,6 +89,7 @@ import org.egov.ptis.domain.service.transfer.TransferOwnerService;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
@@ -138,7 +139,11 @@ public class TransferPropertyAction extends WorkflowAction {
 	private Integer idMutationMaster;
 	private List<PropertyOwner> propOwnerProxy = new ArrayList<PropertyOwner>();
 	private BillReceiptInfo billReceiptInfo;
+	
+	@Autowired
 	private UserService UserService;
+	
+	@Autowired
 	private EisCommonService eisCommonService;
 
 	@Override

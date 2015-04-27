@@ -54,6 +54,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -63,6 +64,7 @@ import org.egov.ptis.nmc.model.PropertyInstTaxBean;
 import org.egov.ptis.nmc.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
@@ -78,14 +80,14 @@ public class CollectionAction extends BaseFormAction {
 	private String collectXML;
 	private String indexNum;
 	private Long userId;
-	//FIX ME
-	//private UserDAO userDao;
+	
+	@Autowired
+    private UserService userService;
 
 	@SuppressWarnings("unchecked")
 	public void prepare() {
 		LOGGER.debug("Entered into prepare method");
-		//User usr = (User) userDao.getUserByName("citizenUser").get(0);
-		User usr = null;
+		User usr = (User)userService.getUserByUsername("citizenUser");
 		setUserId(usr.getId().longValue());
 		EGOVThreadLocals.setUserId(usr.getId().toString());
 		LOGGER.debug("Exit from prepare method");

@@ -96,6 +96,7 @@ import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 
@@ -147,8 +148,14 @@ public class DailyCollectionReportAction extends BaseFormAction {
 	Boolean searchForm = Boolean.TRUE;
 	String currInst = null;
 	private String userId;
+	
+	@Autowired
 	private ModuleDao moduleDao;
+	
+	@Autowired
 	private InstallmentDao instalDao;
+	
+	@Autowired
 	private UserService userService;
 
 	@Override

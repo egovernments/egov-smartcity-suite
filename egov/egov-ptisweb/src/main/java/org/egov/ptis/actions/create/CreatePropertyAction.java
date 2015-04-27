@@ -90,6 +90,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
+import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
@@ -127,6 +128,7 @@ import org.egov.ptis.nmc.constants.NMCPTISConstants;
 import org.egov.ptis.nmc.util.FinancialUtil;
 import org.egov.ptis.nmc.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.utils.OwnerNameComparator;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
@@ -218,7 +220,12 @@ public class CreatePropertyAction extends WorkflowAction {
 	private List<PropertyOwner> propertyOwnerProxy = new ArrayList<PropertyOwner>();
 	final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	private PropertyImpl newProperty = new PropertyImpl();
+	
+	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private EisCommonService eisCommonService;
 	
 	public CreatePropertyAction() {
 		super();
@@ -872,21 +879,21 @@ public class CreatePropertyAction extends WorkflowAction {
 		for (PropertyOwner owner : property.getPropertyOwnerProxy()) {
 			orderNo++;
 			if (owner != null) {
-				String ownerName = owner.getFirstName();
+				String ownerName = owner.getName();
 				ownerName = propertyTaxUtil.antisamyHackReplace(ownerName);
 				propertyOwner = new PropertyOwner();
-				propertyOwner.setFirstName(ownerName);
+				propertyOwner.setName(ownerName);
 				propertyOwner.setOrderNo(orderNo);
 				Address ownerAddr = new Address();
 				addrStr1 = getCorrAddress1();
 				addrStr2 = getCorrAddress2();
 				addrStr1 = propertyTaxUtil.antisamyHackReplace(addrStr1);
 				addrStr2 = propertyTaxUtil.antisamyHackReplace(addrStr2);
-				ownerAddr.setAddTypeMaster(addrTypeMstr);
-				ownerAddr.setStreetAddress1(addrStr1);
-				ownerAddr.setStreetAddress2(addrStr2);
+				ownerAddr.setType(addrTypeMstr);
+				//ownerAddr.setStreetAddress1(addrStr1);
+				ownerAddr.setStreetRoadLine(addrStr2);
 				if (getCorrPinCode() != null && !getCorrPinCode().isEmpty()) {
-					ownerAddr.setPinCode(Integer.valueOf(getCorrPinCode()));
+					ownerAddr.setPinCode(getCorrPinCode());
 				}
 				LOGGER.debug("createOwners: OwnerAddress: " + ownerAddr);
 				propertyOwner.addAddress(ownerAddr);
@@ -910,7 +917,8 @@ public class CreatePropertyAction extends WorkflowAction {
 		StringBuffer addrStr2 = new StringBuffer();
 		propAddr.setType((AddressType) getPersistenceService().find(
 				"from AddressType where addressTypeName = ?", PROP_ADDR_TYPE));
-		propAddr.setBlock(boundaryDao.getBoundary(getAreaId()).getName());
+		//FIX ME
+		//propAddr.setBlock(boundaryDao.getBoundary(getAreaId()).getName());
 		propAddr.setHouseNoBldgApt(getHouseNumber());
 		addrStr1.append(getHouseNumber());
 		if (getOldHouseNo() != null && !getOldHouseNo().isEmpty()) {
@@ -1003,7 +1011,7 @@ public class CreatePropertyAction extends WorkflowAction {
 			addActionError(getText("mandatory.partNo"));
 		}
 		for (PropertyOwner owner : property.getPropertyOwnerProxy()) {
-			if (owner != null && owner.getFirstName().equals("")) {
+			if (owner != null && owner.getName().equals("")) {
 				addActionError(getText("mandatory.ownerName"));
 			}
 		}
@@ -1090,7 +1098,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		}
 		
 		workflowAction = propertyTaxUtil.initWorkflowAction(property, workflowBean,
-				Integer.valueOf(EGOVThreadLocals.getUserId()), eisCommonsManager);
+				Integer.valueOf(EGOVThreadLocals.getUserId()), eisCommonService);
 		
 		if (workflowAction.isNoWorkflow()) {
 			startWorkFlow();
@@ -1173,13 +1181,11 @@ public class CreatePropertyAction extends WorkflowAction {
 		if (ownerSet != null && !ownerSet.isEmpty()) {
 			List propOwProxy = new ArrayList();	
 			for (PropertyOwner owner : ownerSet) {
-				Set<Address> addrSet = (Set<Address>) owner.getAddressSet();
+				Set<Address> addrSet = (Set<Address>) owner.getAddress();
 				for (Address address : addrSet) {
-					if(address.getStreetAddress1() != null) {
-						setCorrAddress1(address.getStreetAddress1());
-					}
-					if(address.getStreetAddress2() != null) {
-						setCorrAddress2(address.getStreetAddress2());
+					
+					if(address.getStreetRoadLine() != null) {
+						setCorrAddress2(address.getStreetRoadLine());
 					}
 					if(address.getPinCode() != null) {
 						setCorrPinCode(address.getPinCode().toString());

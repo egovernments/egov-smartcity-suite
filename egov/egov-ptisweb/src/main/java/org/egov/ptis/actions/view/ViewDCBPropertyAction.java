@@ -97,7 +97,6 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
-@Validation()
 public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequestAware {
 
 	private static final String HEADWISE_DCB = "headwiseDcb";

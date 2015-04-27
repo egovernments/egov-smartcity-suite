@@ -261,8 +261,10 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 	private void endWorkFlow() {
 		LOGGER.debug("Enter method endWorkFlow, UserId: " + EGOVThreadLocals.getUserId());
 		LOGGER.debug("endWorkFlow: Workflow will end for Property: " + property);
-		Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-		propertyWorkflowService.end(property, position, "Property Workflow End");
+		//FIX ME
+		//Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		Position position = null;
+		property.transition(true).start().withOwner(position).withComments("Property Workflow End");
 		LOGGER.debug("Exit method endWorkFlow, Workflow ended");
 	}
 	

@@ -84,6 +84,7 @@ import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
@@ -112,6 +113,8 @@ public class GisSearchPropertyAction extends BaseFormAction {
 	private String gisVersion;
 	private String gisCity;
 	private Map<Long, String> ZoneBndryMap;
+	
+	@Autowired
 	private BoundaryDAO boundaryDAO;
 
 	@Override
@@ -876,12 +879,5 @@ public class GisSearchPropertyAction extends BaseFormAction {
 		ZoneBndryMap = zoneBndryMap;
 	}
 
-	public BoundaryDAO getBoundaryDAO() {
-		return boundaryDAO;
-	}
-
-	public void setBoundaryDAO(BoundaryDAO boundaryDAO) {
-		this.boundaryDAO = boundaryDAO;
-	}
 	
 }

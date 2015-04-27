@@ -63,13 +63,17 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class BoundaryWisePropUsgeDelegate {
 	private static final Logger LOGGER = Logger.getLogger(BoundaryWisePropUsgeDelegate.class);
 	//PropertyUsageDAO propUsageDao = PropertyDAOFactory.getDAOFactory().getPropertyUsageDAO();
 	PropertyTypeMasterDAO propTypeMstrDao = PropertyDAOFactory.getDAOFactory().getPropertyTypeMasterDAO();
-	BoundaryDAO boundaryDao;
+	
 	PropertyDAO propertyDao = PropertyDAOFactory.getDAOFactory().getPropertyDAO();
+	
+	@Autowired
+	private BoundaryDAO boundaryDao;
 
 	/**
 	 * To get the Map of Zone wise property usage and Demand in the current
@@ -584,12 +588,5 @@ public class BoundaryWisePropUsgeDelegate {
 		return propTypeMap;
 	}
 
-	public BoundaryDAO getBoundaryDao() {
-		return boundaryDao;
-	}
-
-	public void setBoundaryDao(BoundaryDAO boundaryDao) {
-		this.boundaryDao = boundaryDao;
-	}
 
 }

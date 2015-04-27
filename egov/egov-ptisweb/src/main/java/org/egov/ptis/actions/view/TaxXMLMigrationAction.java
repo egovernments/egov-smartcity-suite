@@ -37,6 +37,25 @@
  * 
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
+package org.egov.ptis.actions.view;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.ptis.actions.common.PropertyTaxBaseAction;
+import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.nmc.constants.NMCPTISConstants;
+import org.egov.ptis.nmc.service.TaxXMLToDBCoverterService;
+import org.egov.ptis.nmc.util.PropertyTaxNumberGenerator;
+
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 public class TaxXMLMigrationAction extends PropertyTaxBaseAction implements ServletRequestAware {
@@ -68,13 +87,13 @@ public class TaxXMLMigrationAction extends PropertyTaxBaseAction implements Serv
 		BasicProperty basicProperty = (BasicProperty) basicPrpertyService.find(
 				"from BasicPropertyImpl where upicNo = ? ", indexNumber);
 		
-		if (basicProperty.getIsTaxXMLMigrated().equals(STATUS_YES_XML_MIGRATION)) {
+		if (basicProperty.getIsTaxXMLMigrated().equals(NMCPTISConstants.STATUS_YES_XML_MIGRATION)) {
 			setAckMessage("Tax XML is already migrated for " + indexNumber);
 		} else {
 			TaxXMLToDBCoverterService.createConverter(basicProperty, propertyTaxUtil, basicPrpertyService,
 					propertyTaxNumberGenerator).migrateTaxXML();
 			
-			if (basicProperty.getIsTaxXMLMigrated().equals(STATUS_YES_XML_MIGRATION)) {
+			if (basicProperty.getIsTaxXMLMigrated().equals(NMCPTISConstants.STATUS_YES_XML_MIGRATION)) {
 				setAckMessage(MSG_ACK + indexNumber);
 			} else {
 				throw new EGOVRuntimeException("Error in XML Migration for " + indexNumber);
@@ -95,7 +114,7 @@ public class TaxXMLMigrationAction extends PropertyTaxBaseAction implements Serv
 		HttpSession session = request.getSession();
 		
 		if (session.getAttribute("com.egov.user.LoginUserId") == null) {
-			User user = UserService.getUserByUsername(CITIZENUSER);
+			User user = UserService.getUserByUsername(NMCPTISConstants.CITIZENUSER);
 			userId = user.getId();
 			EGOVThreadLocals.setUserId(userId.toString());
 			session.setAttribute("com.egov.user.LoginUserName", user.getUsername());

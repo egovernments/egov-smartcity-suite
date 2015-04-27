@@ -91,6 +91,7 @@ import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
@@ -125,7 +126,11 @@ public class SearchPropertyAction extends BaseFormAction {
 	private String markedForDeactive = "N";
 	private Map<Long, String> ZoneBndryMap;
 	private boolean isDemandActive;
+	
+	@Autowired
 	private BoundaryDAO boundaryDAO;
+	
+	@Autowired
 	private UserService userService;
 
 	@Override
@@ -663,14 +668,6 @@ public class SearchPropertyAction extends BaseFormAction {
 
 	public void setIsDemandActive(boolean isDemandActive) {
 		this.isDemandActive = isDemandActive;
-	}
-
-	public BoundaryDAO getBoundaryDAO() {
-		return boundaryDAO;
-	}
-
-	public void setBoundaryDAO(BoundaryDAO boundaryDAO) {
-		this.boundaryDAO = boundaryDAO;
 	}
 
 }
