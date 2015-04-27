@@ -47,10 +47,9 @@ public abstract class WorkflowActionStep {
 	/**
 	 * Changes the state
 	 */
-	//TODO -- Fix me (Commented to Resolve compilation issues)
-	/*public void changeState() {
-		propertyModel.changeState(getStepValue(), getPosition(), getComments());
-	}*/
+	public void changeState() {
+		propertyModel.transition(true);
+	}
 
 	public Property getPropertyModel() {
 		return propertyModel;

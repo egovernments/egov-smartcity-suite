@@ -16,6 +16,7 @@ import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.citizen.entity.Citizen;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.infstr.utils.EGovConfig;
 //import org.egov.lib.citizen.model.Owner;
@@ -339,14 +340,14 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 		return qry.list();
 	}
 
-	// TODO -- Fix me (Commented to Resolve compilation issues)
-	/*
-	 * public Owner getOwnerByOwnerId(Integer ownerid) { Owner owner = null;
-	 * Query qry = getCurrentSession().createQuery(
-	 * " FROM Owner ow where ow.citizenID =:id "); qry.setInteger("id",
-	 * ownerid); owner = (Owner) qry.uniqueResult(); return owner; }
-	 */
-
+	public Citizen getOwnerByOwnerId(Long citizenId) {
+		Citizen owner = null;
+		Query qry = getCurrentSession().createQuery(" FROM Citizen citizen where citizen.id =:id ");
+		qry.setLong("id", citizenId);
+		owner = (Citizen) qry.uniqueResult();
+		return owner;
+	}
+	 
 	public List getPropertyDemand(String propertyId) {
 		final String rebate = EGovConfig.getProperty("ptis_egov_config.xml",
 				"ACCOUNT_HEAD_REBATE", "", "PT");

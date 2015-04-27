@@ -14,6 +14,7 @@ import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.citizen.entity.Citizen;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertySource;
@@ -71,8 +72,7 @@ public interface PropertyDAO extends org.egov.infstr.dao.GenericDAO {
 
 	public List getPtDemandArvProposedList(Property property);
 
-	//TODO -- Fix me (Commented to Resolve compilation issues)
-	//public Owner getOwnerByOwnerId(Integer id);
+	public Citizen getOwnerByOwnerId(Long id);
 
 	public List getPropertyDemand(String propertyId);
 
