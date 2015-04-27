@@ -109,7 +109,6 @@
 		<property name="instrumentService" ref="instrumentService"/>
 		<property name="commonsService" ref="commonsService"/>
 		<property name="eisCommonService" ref="eisCommonService"/>
-		<property name="eisCommonService" ref="eisCommonService"/>
 		<property name="billsAccountingService" ref="billsAccountingService"/>
 		<property name="fundFlowService" ref="fundFlowService" />  
 		<property name="voucherService" ref="voucherService" />  
@@ -137,7 +136,6 @@
     </bean>
     <bean id="receiptService" class="org.egov.services.receipt.ReceiptService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.model.receipt.ReceiptVoucher" />
-		<property name="eisCommonService" ref="eisCommonService"/>
 		<property name="genericDao" ref="genericDao"/>
 		<property name="eisCommonService" ref="eisCommonService"/>
 		<property name="eisService" ref="eisService" />
@@ -184,17 +182,7 @@
 		   <value>org.egov.lib.rjbac.user.ejb.api.UserService</value>
 	    </property>
 	</bean> -->
-	<bean id="eisCommonService" class="org.springframework.ejb.access.LocalStatelessSessionProxyFactoryBean" lazy-init="true">
-		<property name="jndiName">
-		   <value>EisCommonServiceHome</value>
-	    </property>
-	    <property name="resourceRef">
-		   <value>false</value>
-	    </property>
-	    <property name="businessInterface">
-		   <value>org.egov.eis.service.EisCommonService</value>
-	    </property>
-	</bean><!--
+	<!--
 	 <bean id="commonsService" class="org.springframework.ejb.access.LocalStatelessSessionProxyFactoryBean" lazy-init="true">
 		<property name="jndiName">
 		   <value>CommonsServiceHome</value>

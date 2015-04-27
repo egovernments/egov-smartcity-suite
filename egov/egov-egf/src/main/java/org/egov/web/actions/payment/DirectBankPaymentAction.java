@@ -45,6 +45,7 @@ import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.models.Script;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.bills.Miscbilldetail;
@@ -109,7 +110,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 	private String typeOfAccount;
 	private List<InstrumentHeader> instrumentHeaderList=new ArrayList<InstrumentHeader>();
 	private BigDecimal balance;
-	
+	private ScriptService scriptService;
 	public BigDecimal getBalance() {
 		return balance;
 	}
@@ -197,7 +198,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 				{
 				if(	voucherHeader.getId()!=null)
 					billVhId=(CVoucherHeader)HibernateUtil.getCurrentSession().load(CVoucherHeader.class,voucherHeader.getId());
-					voucherHeader.setId(null);
+					//phoenix migration voucherHeader.setId(null);
 				}
 				voucherHeader = createVoucherAndledger();
 				paymentheader = paymentService.createPaymentHeader(voucherHeader, Integer.valueOf(commonBean.getAccountNumberId()), commonBean
@@ -207,7 +208,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 				billVhId=(CVoucherHeader)HibernateUtil.getCurrentSession().load(CVoucherHeader.class,commonBean.getDocumentId());
 			}
 				createMiscBillDetail(billVhId);
-				paymentWorkflowService.start(paymentheader, paymentService.getPosition(), "");
+				paymentheader.start().withOwner(paymentService.getPosition());
 				sendForApproval();
 				addActionMessage(getText("directbankpayment.transaction.success") + voucherHeader.getVoucherNumber()) ;
 			}
@@ -613,7 +614,7 @@ public String nonBillPayment()
 		}
 		loadAjaxedDropDowns();
 		addActionMessage(getText("directbankpayment.reverse.transaction.success") + reversalVoucher.getVoucherNumber());
-		voucherHeader.setId(reversalVoucher.getId());
+		//phoenix migration voucherHeader.setId(reversalVoucher.getId());
 		return REVERSE;
 	}
 	
@@ -906,7 +907,7 @@ public String nonBillPayment()
 	@SkipValidation
 	public boolean validateUser(String purpose)  {
 		Script validScript = (Script) getPersistenceService().findAllByNamedQuery(Script.BY_NAME, "Paymentheader.show.bankbalance").get(0);
-		List<String> list = (List<String>) validScript.eval(Script.createContext("persistenceService", paymentService, "purpose", purpose));
+		List<String> list = (List<String>)scriptService.executeScript(validScript,ScriptService.createContext("persistenceService", paymentService, "purpose", purpose));
 		
 		if (list.get(0).equals("true")) {
 			try {
@@ -938,11 +939,11 @@ public String nonBillPayment()
 		}*/
 		if(paymentheader.getState().getValue()!=null && !paymentheader.getState().getValue().isEmpty()  && paymentheader.getState().getValue().contains("Rejected"))
 		{
-		    voucherHeader.setId(paymentheader.getVoucherheader().getId());
+		   // phoenix migration voucherHeader.setId(paymentheader.getVoucherheader().getId());
 			return beforeEdit();
 		}
 		showApprove = true;
-		voucherHeader.setId(paymentheader.getVoucherheader().getId());
+		// phoenix migration voucherHeader.setId(paymentheader.getVoucherheader().getId());
 		prepareForViewModifyReverse();
 		loadApproverUser(voucherHeader.getType());
 		return VIEW;
@@ -1094,7 +1095,7 @@ public String nonBillPayment()
 		paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?", voucherHeader);
 		voucherHeader.setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
 		persistenceService.setType(CVoucherHeader.class);
-		paymentWorkflowService.end(paymentheader, paymentService.getPosition());
+		paymentheader.transition(true).end();
 		persistenceService.persist(voucherHeader);
 		addActionMessage(getText("payment.cancel.success"));  
 		action=parameters.get(ACTIONNAME)[0];
@@ -1221,6 +1222,16 @@ public String nonBillPayment()
 
 	public void setInstrumentHeaderList(List<InstrumentHeader> instrumentHeaderList) {
 		this.instrumentHeaderList = instrumentHeaderList;
+	}
+
+
+	public ScriptService getScriptService() {
+		return scriptService;
+	}
+
+
+	public void setScriptService(ScriptService scriptService) {
+		this.scriptService = scriptService;
 	}
 	
 	

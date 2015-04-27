@@ -190,7 +190,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
             if(b!=null && b.getId()!=null){
                 b = budgetService.find("from Budget where id=?",b.getId());
                 if(b.getCurrentState()!=null)
-                    b.getCurrentState().setText1(comments);
+                  //need to fix phoenix migration b.getCurrentState().setText1(comments);
                 budgetService.persist(b);
             }
             addActionMessage(getMessage("budgetdetail.updated"));
@@ -231,8 +231,8 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
     }
 
     public String setUpDataForList(){
-        if(financialYear == null &&HibernateUtil.getCurrentSession().get(Constants.FINANCIALYEARID)!= null)
-            financialYear = (Long)HibernateUtil.getCurrentSession().get(Constants.FINANCIALYEARID);
+        /*if(financialYear == null &&HibernateUtil.getCurrentSession().get(Constants.FINANCIALYEARID)!= null)
+            financialYear = (Long)HibernateUtil.getCurrentSession().get(Constants.FINANCIALYEARID);*///phoenix migration 
         dropdownData.put("budgetList", budgetDetailService.findBudgetsForFYWithNewState(financialYear==null?getFinancialYear():financialYear));
         return Constants.LIST;
     }
@@ -272,9 +272,9 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
             {
             	detail.setApprovedAmount(detail.getApprovedAmount().multiply(BigDecimal.valueOf(1000)));
             }
-            String comment = detail.getState()==null?"":detail.getstate().getExtraInfo1();
+            String comment = detail.getState()==null?"":detail.getState().getExtraInfo();
           
-           detail.changeState("END", positionByUserId, comment);
+           detail.transition(true).withStateValue("END").withOwner(positionByUserId).withComments(comment);
            budgetDetailService.persist(detail);
            BudgetDetail detailBE = (BudgetDetail)persistenceService.find("from BudgetDetail where id=?", detail.getNextYrId());
            if(consolidatedScreen)
@@ -284,7 +284,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
            
            detailBE.setApprovedAmount(detail.getNextYrapprovedAmount());
            }
-           detailBE.changeState("END", getPosition(), comment);
+           detailBE.transition(true).withStateValue("END").withOwner(getPosition()).withComments(comment);
            budgetDetailService.persist(detailBE);
              
            
@@ -304,10 +304,9 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
                {
                	detail.setApprovedAmount(detail.getApprovedAmount().multiply(BigDecimal.valueOf(1000)));
                }
-               String comment = detail.getState()==null?"":detail.getstate().getExtraInfo1();
+               String comment = detail.getState()==null?"":detail.getState().getExtraInfo();
              
-               detail.changeState("Forwarded by "+name, positionByUserId, comment);
-               
+               detail.transition(true).withStateValue("Forwarded by "+name).withOwner(positionByUserId).withComments(comment);
                budgetDetailService.persist(detail);  
                BudgetDetail detailBE = (BudgetDetail)persistenceService.find("from BudgetDetail where id=?", detail.getNextYrId());
               // detailBE.setOriginalAmount(detail.getOriginalAmount());
@@ -318,7 +317,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
                {
                detailBE.setApprovedAmount(detail.getNextYrapprovedAmount());
                }
-               detailBE.changeState("Forwarded by "+name, positionByUserId, comment);  
+               detailBE.transition(true).withStateValue("Forwarded by "+name).withOwner(positionByUserId).withComments(comment);
                budgetDetailService.persist(detailBE);
               // budgetDetailWorkflowService.transition(parameters.get(ACTIONNAME)[0]+"|"+userId, detail, comment);
        }
@@ -482,7 +481,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
             getBudgetDetailIdsAndAmount().put(row[0].toString(), row[1].toString());
         }
         CFinancialYear lastFinancialYearByDate = getFinancialYearDAO().getPreviousFinancialYearByDate(financialYear.getStartingDate());
-        CFinancialYear beforeLastFinancialYearByDate = getFinancialYearDAO().getTwoPreviousYearByDate(financialYear.getStartingDate());
+        CFinancialYear beforeLastFinancialYearByDate =null;// getFinancialYearDAO().getTwoPreviousYearByDate(financialYear.getStartingDate());
         lastYearTopBudget=budgetService.find(" from Budget where financialYear.id=? and parent is null  and isbere=?",lastFinancialYearByDate.getId(),topBudget.getIsbere());
         beforeLastYearTopBudget=budgetService.find( "from Budget where financialYear.id=? and parent is null  and isbere=?",beforeLastFinancialYearByDate.getId(),topBudget.getIsbere());
 
@@ -640,7 +639,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
     private void loadApproverUser(List<BudgetDetail> budgetDetailList)
     {
         EgovMasterDataCaching masterCache = EgovMasterDataCaching.getInstance();
-        Map<String, Object>  map = voucherService.getDesgBYPassingWfItem("BudgetDetail.nextDesg",null,budgetDetailList.get(0).getExecutingDepartment().getId());
+        Map<String, Object>  map = voucherService.getDesgBYPassingWfItem("BudgetDetail.nextDesg",null,budgetDetailList.get(0).getExecutingDepartment().getId().intValue());
         addDropdownData("departmentList", masterCache.get("egi-department"));
 
         List<Map<String,Object>> desgList  =  (List<Map<String,Object>>) map.get("designationList");

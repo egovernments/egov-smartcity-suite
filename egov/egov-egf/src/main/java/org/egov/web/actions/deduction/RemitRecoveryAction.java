@@ -48,6 +48,7 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.models.Script;
+import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.bills.Miscbilldetail;
@@ -118,7 +119,7 @@ public class RemitRecoveryAction extends BasePaymentAction{
 	private String remittedTo="";
 	private boolean	remit=false;
 	private List<InstrumentHeader> instrumentHeaderList=new ArrayList<InstrumentHeader>();
-	
+	private ScriptService scriptService;
 	public BigDecimal getBalance() {
 		return balance;
 	}
@@ -219,7 +220,7 @@ public class RemitRecoveryAction extends BasePaymentAction{
 			paymentheader = paymentService.createPaymentHeader(voucherHeader, Integer.valueOf(commonBean.getAccountNumberId()), getModeOfPayment(), remittanceBean.getTotalAmount());
 			updateEgRemittanceglDtl(voucherHeader);
 			createMiscBillDetail();
-			paymentWorkflowService.start(paymentheader, paymentService.getPosition(), "");
+			paymentheader.start().withOwner(paymentService.getPosition());
 			sendForApproval();
 			addActionMessage(getText("remittancepayment.transaction.success") + voucherHeader.getVoucherNumber()) ;
 		}catch (ValidationException e) {
@@ -519,7 +520,7 @@ private List<HashMap<String, Object>>  addSubledgerGroupBy(final List<HashMap<St
 		voucherHeader.setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
 		persistenceService.setType(CVoucherHeader.class);
 		persistenceService.persist(voucherHeader);
-		paymentWorkflowService.end(paymentheader, paymentService.getPosition());
+		paymentheader.transition(true).end();
 		addActionMessage(getText("payment.voucher.cancelled"));
 		return MESSAGES;
 	}
@@ -773,7 +774,7 @@ private List<HashMap<String, Object>>  addSubledgerGroupBy(final List<HashMap<St
 	@SkipValidation
 	public boolean validateUser(final String purpose)  {
 		Script validScript = (Script) getPersistenceService().findAllByNamedQuery(Script.BY_NAME, "Paymentheader.show.bankbalance").get(0);
-		List<String> list = (List<String>) validScript.eval(Script.createContext("persistenceService", paymentService, "purpose", purpose));
+		List<String> list = (List<String>) scriptService.executeScript(validScript,ScriptService.createContext("persistenceService", paymentService, "purpose", purpose));
 		if (list.get(0).equals("true")) {
 			try {
 				canCheckBalance=true;
@@ -987,6 +988,16 @@ private void loadBankAccountNumberForFundAndType()
 
 	public void setInstrumentHeaderList(List<InstrumentHeader> instrumentHeaderList) {
 		this.instrumentHeaderList = instrumentHeaderList;
+	}
+
+
+	public ScriptService getScriptService() {
+		return scriptService;
+	}
+
+
+	public void setScriptService(ScriptService scriptService) {
+		this.scriptService = scriptService;
 	}
 
 }

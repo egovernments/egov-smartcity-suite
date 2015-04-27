@@ -51,7 +51,6 @@ public class PartyTypeAction extends BaseFormAction{
 	@SkipValidation
 @Action(value="/masters/partyType-newform")
 	public String newform() {
-		partyType.reset();
 		return NEW;
 	}
 
@@ -90,7 +89,6 @@ public class PartyTypeAction extends BaseFormAction{
              
             throw new EGOVRuntimeException("Exception occurred in PartyTypeAction-create ", e);
 		}
-		partyType.reset();
 		return NEW;
 	}
 	

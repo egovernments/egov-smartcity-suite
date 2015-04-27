@@ -56,7 +56,6 @@ public class SchemeAction extends BaseFormAction{
 	public String newForm() {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("..Inside NewForm method..");
 		this.mode=NEW; 
-		scheme.reset();
 		return NEW;
 	}
 	
@@ -111,7 +110,8 @@ public class SchemeAction extends BaseFormAction{
 	@SuppressWarnings("unchecked")
 	public String edit() {
 		if (scheme.getIsactive() == null) {
-			scheme.setIsactive(false);
+			
+			//phoenix Migration scheme.setIsactive(false);
 		}
 		try {
 			schemeService.persist(scheme);
@@ -139,7 +139,7 @@ public class SchemeAction extends BaseFormAction{
 	public String create() {    
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("............................Creating New Scheme method.......................");
 		if (scheme.getIsactive() == null) {
-			scheme.setIsactive(false);
+			//phoenix Migration scheme.setIsactive(false);
 		}
 		try {
 			schemeService.persist(scheme);

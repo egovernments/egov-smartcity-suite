@@ -31,6 +31,7 @@ import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.models.Script;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
@@ -76,7 +77,7 @@ public class AdvancePaymentAction extends BasePaymentAction{
 	private String description;
 	public boolean	 showApprove = false;
 	private BigDecimal balance;
-	
+	private ScriptService scriptService;
 	@Override
 	public void prepare() {
 		super.prepare();
@@ -259,7 +260,7 @@ public class AdvancePaymentAction extends BasePaymentAction{
 	@SkipValidation
 	public boolean validateUser(String purpose)  {
 		Script validScript = (Script) getPersistenceService().findAllByNamedQuery(Script.BY_NAME, "Paymentheader.show.bankbalance").get(0);
-		List<String> list = (List<String>) validScript.eval(Script.createContext("persistenceService", paymentService, "purpose", purpose));
+		List<String> list = (List<String>) scriptService.executeScript(validScript,ScriptService.createContext("persistenceService", paymentService, "purpose", purpose));
 		
 		if (list.get(0).equals("true")) {
 			try {
@@ -687,6 +688,14 @@ public class AdvancePaymentAction extends BasePaymentAction{
 
 	public void setBalance(BigDecimal balance) {
 		this.balance = balance;
+	}
+
+	public ScriptService getScriptService() {
+		return scriptService;
+	}
+
+	public void setScriptService(ScriptService scriptService) {
+		this.scriptService = scriptService;
 	}
 
 }

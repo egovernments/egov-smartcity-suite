@@ -107,17 +107,18 @@ public class BudgetAppropriationRegisterReportAction  extends BaseFormAction {
 	@SkipValidation
 @Action(value="/report/budgetAppropriationRegisterReport-search")
 	public String search() {
+		CFinancialYear financialYear = new CFinancialYear();
 		if(parameters.get("asOnDate")[0] != null) {
 			strAsOnDate = parameters.get("asOnDate")[0];
 			try {
 				dtAsOnDate = Constants.DDMMYYYYFORMAT2.parse(strAsOnDate);
-				financialYearId = financialYearDAO.getFinancialYearId(getFormattedDate(dtAsOnDate));
+				financialYear	 = financialYearDAO.getFinancialYearByDate(dtAsOnDate);
 			} catch (ParseException e) {
 				if(LOGGER.isInfoEnabled())     LOGGER.info("ParseException the date :"+e.getMessage());
 			}
 		}
 		// Get this to show at header level
-		if(budgetService.hasApprovedBeForYear(Long.parseLong(financialYearId)))
+		if(budgetService.hasApprovedBeForYear(financialYear.getId()))
 		{
 			beAmount = getBudgetBEorREAmt("BE");
 		}

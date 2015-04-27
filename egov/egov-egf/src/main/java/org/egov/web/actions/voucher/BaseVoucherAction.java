@@ -497,7 +497,7 @@ protected HashMap<String, Object> createHeaderAndMisDetails() throws ValidationE
 					if(functionId.equalsIgnoreCase("0")){
 						addActionError(getText("journalvoucher.subledger.entrymissing",new String[]{map.get("glcode").toString()}));
 					}else{
-						CFunction function = (CFunction)persistenceService.get(CFunction.class,Long.valueOf(functionId));
+						CFunction function =null;// (CFunction)persistenceService.get(CFunction.class,Long.valueOf(functionId));
 						addActionError(getText("journalvoucher.subledger.entrymissingFunc",new String[]{map.get("glcode").toString(),function.getName()}));
 					}
 					return true;

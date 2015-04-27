@@ -59,14 +59,14 @@ public class SubSchemeAction extends BaseFormAction{
 		else
 			subScheme.setIsactive(false);
 
-		if (!showMode.equals("") && showMode.equals("view")) {
+		/*if (!showMode.equals("") && showMode.equals("view")) {
 			subScheme.setCreatedDate(new Date());
 			subScheme.setCreatedBy(getLoggedInUser());
 			subScheme.setLastmodifieddate(new Date());
 		} else {
 			subScheme.setLastModifiedBy(getLoggedInUser());
 			subScheme.setLastmodifieddate(new Date());
-		}
+		}*/// Need to fix phoenix migration
 		validatemandatoryFields();
 		try {
 			subSchemeService.persist(subScheme);

@@ -183,7 +183,7 @@ public class DishonorChequeWorkflowAction  extends BaseFormAction {
 	
 	public void populateWorkflowEntities()	  {        
 		approverDepartmentList=  persistenceService.findAllBy("from Department order by deptName");
-		PersonalInformation loggedInEmp=getEisCommonService().getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		PersonalInformation loggedInEmp=null;//Phoenix  getEisCommonService().getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
 		desgnationList=persistenceService.findAllBy("from DesignationMaster where designationName=?","ACCOUNTS OFFICER");
 		addDropdownData("approverDepartmentList",approverDepartmentList);
 		addDropdownData("desgnationList", desgnationList);             
@@ -314,7 +314,7 @@ public class DishonorChequeWorkflowAction  extends BaseFormAction {
 			 userId = parameters.get("approverUserId")!=null?Integer.valueOf(parameters.get("approverUserId")[0]):
 					Integer.valueOf( EGOVThreadLocals.getUserId());
 			 startChequeWorkflow(dishonorChequeView,actionNm,null!= parameters.get("approverComments")?parameters.get("approverComments")[0]:null);
-			 EmployeeView nextUser=(EmployeeView)persistenceService.find("from EmployeeView where position.id=?",dishonorChequeView.getApproverPositionId());
+			 EmployeeView nextUser=(EmployeeView)persistenceService.find("from EmployeeView where position.id=?",null/* phoenix dishonorChequeView.getApproverPositionId()*/);
 			 addActionMessage(" Cheque is forwared successfully  "+nextUser.getUserMaster().getName());
 			 returnValue="viewMessage";
 			
@@ -336,7 +336,7 @@ public class DishonorChequeWorkflowAction  extends BaseFormAction {
 			InstrumentOtherDetails iob= (InstrumentOtherDetails)persistenceService.find("from InstrumentOtherDetails where instrumentHeaderId.id=?",dishonorChequeView.getInstrumentHeader().getId());
 			User approverUser=(User)persistenceService.find("from User where id=?",iob.getPayinslipId().getCreatedBy().getId());
 			Position approvePos = eisService.getPrimaryPositionForUser(approverUser.getId(),new Date());
-			dishonorChequeView.setApproverPositionId(approvePos.getId());
+			//phoenix migration dishonorChequeView.setApproverPositionId(approvePos.getId());
 			startChequeWorkflow(dishonorChequeView,actionNm, null!= parameters.get("approverComments")?parameters.get("approverComments")[0]:null);
 			addActionMessage(getText("Cheque is rejected Sent back to "+approverUser.getName()));
 			returnValue="viewMessage";
@@ -683,8 +683,8 @@ public class DishonorChequeWorkflowAction  extends BaseFormAction {
 		// Get cheque creator details                     
 		
 		if(null == dishonorCheque.getState()){     
-			Position pos = eisService.getPrimaryPositionForUser(dishonorCheque.getApproverPositionId(),new Date());
-			dishonorCheque =  (DishonorCheque)dishonorChequeWorkflowService.start(dishonorCheque, pos, "DishonorCheque Work flow started");
+			Position pos = eisService.getPrimaryPositionForUser(null/*phoenix dishonorCheque.getApproverPositionId()*/,new Date());
+			dishonorCheque.start().withOwner(pos).withComments("DishonorCheque Work flow started");
 			dishonorChequeWorkflowService.transition("forward", dishonorCheque, "Created by SM");
 		}
 

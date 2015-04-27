@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Category;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -38,9 +37,9 @@ import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.AppConfig;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.models.Script;
+import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.advance.EgAdvanceRequisition;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.Miscbilldetail;
@@ -135,7 +134,7 @@ public class PaymentAction extends BasePaymentAction{
 	private String year;
 	private String bank_branch;
 	private String bank_account;	
-	
+	private ScriptService scriptService;
 	private Map<Integer, String> monthMap = new LinkedHashMap<Integer, String> ();
 	private FinancialYearHibernateDAO financialYearDAO;
 	
@@ -703,7 +702,7 @@ public class PaymentAction extends BasePaymentAction{
 			paymentheader = paymentService.createPayment(parameters,billList,billregister);
 			paymentheader.getVoucherheader().getVouchermis().setSourcePath("/EGF/payment/payment!view.action?"+PAYMENTID+"="+paymentheader.getId());
 			getPaymentBills();
-			paymentWorkflowService.start(paymentheader, paymentService.getPosition(),"");
+			paymentheader.start().withOwner(paymentService.getPosition());
 			sendForApproval();
 			addActionMessage(getMessage("payment.transaction.success",new String[]{paymentheader.getVoucherheader().getVoucherNumber()}));
 			loadApproverUser(voucherHeader.getType());
@@ -867,7 +866,7 @@ public class PaymentAction extends BasePaymentAction{
 		if(LOGGER.isInfoEnabled())     LOGGER.info("Calling Validate User "+purpose);
 		if(LOGGER.isInfoEnabled())     LOGGER.info("-------------------------------------------------------------------------------------------------");
 		Script validScript = (Script) getPersistenceService().findAllByNamedQuery(Script.BY_NAME,"Paymentheader.show.bankbalance").get(0);
-		List<String> list = (List<String>) validScript.eval(Script.createContext("persistenceService",paymentService,"purpose",purpose));
+		List<String> list = (List<String>) scriptService.executeScript(validScript,ScriptService.createContext("persistenceService",paymentService,"purpose",purpose));
 		if(list.get(0).equals("true"))
 		{
 			if(purpose.equals("balancecheck"))
@@ -1050,7 +1049,7 @@ public class PaymentAction extends BasePaymentAction{
 		voucherHeader=paymentheader.getVoucherheader();
 		voucherHeader.setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
 		persistenceService.setType(CVoucherHeader.class);
-		paymentWorkflowService.end(paymentheader, paymentService.getPosition());
+		paymentheader.transition(true).end();
 		persistenceService.persist(voucherHeader);
 		addActionMessage(getMessage("payment.cancel.success"));  
 		action=parameters.get(ACTIONNAME)[0];
@@ -1796,6 +1795,14 @@ public class PaymentAction extends BasePaymentAction{
 
 	public void setBank_account(String bank_account) {
 		this.bank_account = bank_account;
+	}
+
+	public ScriptService getScriptService() {
+		return scriptService;
+	}
+
+	public void setScriptService(ScriptService scriptService) {
+		this.scriptService = scriptService;
 	}
 
 	
