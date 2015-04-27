@@ -1,3 +1,42 @@
+/*******************************************************************************
+ * eGov suite of products aim to improve the internal efficiency,transparency, 
+ *    accountability and the service delivery of the government  organizations.
+ * 
+ *     Copyright (C) <2015>  eGovernments Foundation
+ * 
+ *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *     is available at http://www.egovernments.org
+ * 
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ * 
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ * 
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     http://www.gnu.org/licenses/gpl.html .
+ * 
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ * 
+ * 	1) All versions of this program, verbatim or modified must carry this 
+ * 	   Legal Notice.
+ * 
+ * 	2) Any misrepresentation of the origin of the material is prohibited. It 
+ * 	   is required that all modified versions of this material be marked in 
+ * 	   reasonable ways as different from the original version.
+ * 
+ * 	3) This license does not grant any rights to any user of the program 
+ * 	   with regards to rights under trademark law for use of the trade names 
+ * 	   or trademarks of eGovernments Foundation.
+ * 
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ ******************************************************************************/
 package org.egov.ptis.actions.create;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -55,6 +94,7 @@ import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.entity.enums.AddressType;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.StringUtils;
@@ -107,9 +147,9 @@ public class CreatePropertyAction extends WorkflowAction {
 	private PersistenceService<BasicProperty, Long> basicPrpertyService;
 	private PersistenceService<Property, Long> propertyImplService;
 	BoundaryDAO boundaryDao;
-	private Integer zoneId;
-	private Integer wardId;
-	private Integer areaId;
+	private Long zoneId;
+	private Long wardId;
+	private Long areaId;
 	private String mobileNo;
 	private String email;
 	private String houseNumber;
@@ -152,7 +192,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	private String propUsageId;
 	private String propOccId;
 	private String ackMessage;
-	private Map<Integer, String> ZoneBndryMap;
+	private Map<Long, String> ZoneBndryMap;
 	private List<PropertyOwner> propOwnerProxy;
 	private Map<String, String> propTypeCategoryMap;
 	private String propTypeCategoryId;
@@ -174,11 +214,11 @@ public class CreatePropertyAction extends WorkflowAction {
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 
 	private boolean isfloorDetailsRequired;
-	UserDAO userDao = new UserDAO();
 	private PropertyImpl propWF;// would be current property workflow obj
 	private List<PropertyOwner> propertyOwnerProxy = new ArrayList<PropertyOwner>();
 	final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	private PropertyImpl newProperty = new PropertyImpl();
+	private UserService userService;
 	
 	public CreatePropertyAction() {
 		super();
@@ -232,8 +272,8 @@ public class CreatePropertyAction extends WorkflowAction {
 			}
 		}
 		transitionWorkFlow();
-		Integer userId = propertyTaxUtil.getLoggedInUser(getSession()).getId();
-		User user = userDao.getUserByID(userId);			
+		Long userId = propertyTaxUtil.getLoggedInUser(getSession()).getId();
+		User user = userService.getUserById(userId);			
 		
 		// For Data Entry; not creating the Voucher 
 		if (allChangesCompleted) {
@@ -367,10 +407,10 @@ public class CreatePropertyAction extends WorkflowAction {
 			}
 		}*/
 		
-		User approverUser = userDao.getUserByID(getWorkflowBean().getApproverUserId());
-		setAckMessage("New Property forwarded successfully to " + approverUser.getUserName());
+		User approverUser = userService.getUserById(getWorkflowBean().getApproverUserId().longValue());
+		setAckMessage("New Property forwarded successfully to " + approverUser.getUsername());
 		long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
-		LOGGER.info("forward: Property forwarded successfully to " + approverUser.getUserName() + "; Time taken(ms) = "+elapsedTimeMillis);
+		LOGGER.info("forward: Property forwarded successfully to " + approverUser.getUsername() + "; Time taken(ms) = "+elapsedTimeMillis);
 		LOGGER.debug("forward: Property forward ended");
 		return RESULT_ACK;
 	}
@@ -412,7 +452,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		if (WORKFLOW_END.equalsIgnoreCase(property.getState().getValue())) {
 			setAckMessage(MSG_REJECT_SUCCESS);
 		} else {
-			setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to initiator : "+ property.getCreatedBy().getUserName());
+			setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to initiator : "+ property.getCreatedBy().getUsername());
 		}
 		
 		LOGGER.debug("reject: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
@@ -432,10 +472,9 @@ public class CreatePropertyAction extends WorkflowAction {
 	private boolean checkCorrespondingAddress() {
 		LOGGER.debug("Entered into checkCorrespondingAddress, Property: " + property);
 		PropertyOwner owner = property.getPropertyOwnerSet().iterator().next();
-		Address address = (Address) owner.getAddressSet().iterator().next();
+		Address address = (Address) owner.getAddress().iterator().next();
 		LOGGER.debug("checkCorrespondingAddress: Property Address: " + address);
-		if ((address.getStreetAddress1() != null && !address.getStreetAddress1().isEmpty())
-				|| (address.getStreetAddress2() != null && !address.getStreetAddress1().isEmpty())
+		if ((address.getStreetRoadLine() != null && !address.getStreetRoadLine().isEmpty())
 				|| address.getPinCode() != null) {
 			LOGGER.debug("checkCorrespondingAddress: CorrespondingAddress is available, Exiting from checkCorrespondingAddress");
 			return true;
@@ -869,10 +908,10 @@ public class CreatePropertyAction extends WorkflowAction {
 		PropertyAddress propAddr = new PropertyAddress();
 		StringBuffer addrStr1 = new StringBuffer();
 		StringBuffer addrStr2 = new StringBuffer();
-		propAddr.setAddTypeMaster((AddressType) getPersistenceService().find(
+		propAddr.setType((AddressType) getPersistenceService().find(
 				"from AddressType where addressTypeName = ?", PROP_ADDR_TYPE));
 		propAddr.setBlock(boundaryDao.getBoundary(getAreaId()).getName());
-		propAddr.setHouseNoBldgApt((getHouseNumber());
+		propAddr.setHouseNoBldgApt(getHouseNumber());
 		addrStr1.append(getHouseNumber());
 		if (getOldHouseNo() != null && !getOldHouseNo().isEmpty()) {
 			propAddr.setDoorNumOld(getOldHouseNo());
@@ -882,7 +921,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		if (getAddressStr() != null && !getAddressStr().isEmpty()) {
 			String addressStr = getAddressStr();
 			addressStr = propertyTaxUtil.antisamyHackReplace(addressStr);
-			propAddr.setStreetAddress1(addressStr);
+			propAddr.setStreetRoadLine(addressStr);
 			addrStr1.append(", " + addressStr);
 		}
 
@@ -895,7 +934,7 @@ public class CreatePropertyAction extends WorkflowAction {
 			propAddr.setEmailAddress(getEmail());
 		}
 		if (getPinCode() != null && !getPinCode().isEmpty()) {
-			propAddr.setPinCode(Integer.valueOf(getPinCode()));
+			propAddr.setPinCode((getPinCode()));
 		}
 		if (!isChkIsCorrIsDiff()) {
 			setCorrAddress1(addrStr1.toString());
@@ -1101,12 +1140,12 @@ public class CreatePropertyAction extends WorkflowAction {
 		
 		setMutationId(basicProp.getPropertyMutationMaster().getIdMutation());
 		PropertyAddress propAddress = basicProp.getAddress();
-		setHouseNumber(propAddress.getHouseNo());
+		setHouseNumber(propAddress.getHouseNoBldgApt());
 		if(propAddress.getDoorNumOld() != null) {
 			setOldHouseNo(propAddress.getDoorNumOld());
 		}
-		if(propAddress.getStreetAddress1() != null) {
-			setAddressStr(propAddress.getStreetAddress1());
+		if(propAddress.getStreetRoadLine() != null) {
+			setAddressStr(propAddress.getStreetRoadLine());
 		}
 		if(propAddress.getPinCode() != null) {
 			setPinCode(propAddress.getPinCode().toString());
@@ -1270,7 +1309,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				.append(basicProperty.getPropertyID().getArea() != null ? basicProperty.getPropertyID().getArea()
 						.getName() : "");
 		LOGGER.debug("Audit String : "+auditDetail1.toString());
-		propertyTaxUtil.generateAuditEvent(action, basicProperty, auditDetail1.toString(), auditDetails2);
+		//propertyTaxUtil.generateAuditEvent(action, basicProperty, auditDetail1.toString(), auditDetails2);
 	}
 	
 	public PropertyImpl getProperty() {
@@ -1301,27 +1340,27 @@ public class CreatePropertyAction extends WorkflowAction {
 		this.basicPrpertyService = basicPrpertyService;
 	}
 
-	public Integer getZoneId() {
+	public Long getZoneId() {
 		return zoneId;
 	}
 
-	public void setZoneId(Integer zoneId) {
+	public void setZoneId(Long zoneId) {
 		this.zoneId = zoneId;
 	}
 
-	public Integer getWardId() {
+	public Long getWardId() {
 		return wardId;
 	}
 
-	public void setWardId(Integer wardId) {
+	public void setWardId(Long wardId) {
 		this.wardId = wardId;
 	}
 
-	public Integer getAreaId() {
+	public Long getAreaId() {
 		return areaId;
 	}
 
-	public void setAreaId(Integer areaId) {
+	public void setAreaId(Long areaId) {
 		this.areaId = areaId;
 	}
 
@@ -1663,14 +1702,14 @@ public class CreatePropertyAction extends WorkflowAction {
 	}
 
 	public Address getCorrAddress() {
-		return (Address) property.getPropertyOwnerProxy().get(0).getAddressSet().iterator().next();
+		return (Address) property.getPropertyOwnerProxy().get(0).getAddress().iterator().next();
 	}
 
-	public Map<Integer, String> getZoneBndryMap() {
+	public Map<Long, String> getZoneBndryMap() {
 		return ZoneBndryMap;
 	}
 
-	public void setZoneBndryMap(Map<Integer, String> ZoneBndryMap) {
+	public void setZoneBndryMap(Map<Long, String> ZoneBndryMap) {
 		this.ZoneBndryMap = ZoneBndryMap;
 	}
 

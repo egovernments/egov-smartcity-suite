@@ -1,3 +1,42 @@
+/*******************************************************************************
+ * eGov suite of products aim to improve the internal efficiency,transparency, 
+ *    accountability and the service delivery of the government  organizations.
+ * 
+ *     Copyright (C) <2015>  eGovernments Foundation
+ * 
+ *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *     is available at http://www.egovernments.org
+ * 
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ * 
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ * 
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     http://www.gnu.org/licenses/gpl.html .
+ * 
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ * 
+ * 	1) All versions of this program, verbatim or modified must carry this 
+ * 	   Legal Notice.
+ * 
+ * 	2) Any misrepresentation of the origin of the material is prohibited. It 
+ * 	   is required that all modified versions of this material be marked in 
+ * 	   reasonable ways as different from the original version.
+ * 
+ * 	3) This license does not grant any rights to any user of the program 
+ * 	   with regards to rights under trademark law for use of the trade names 
+ * 	   or trademarks of eGovernments Foundation.
+ * 
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ ******************************************************************************/
 package org.egov.ptis.actions.search;
 
 import static java.math.BigDecimal.ZERO;
@@ -30,6 +69,7 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.StringUtils;
@@ -86,6 +126,7 @@ public class SearchPropertyAction extends BaseFormAction {
 	private Map<Long, String> ZoneBndryMap;
 	private boolean isDemandActive;
 	private BoundaryDAO boundaryDAO;
+	private UserService userService;
 
 	@Override
 	public Object getModel() {
@@ -262,7 +303,7 @@ public class SearchPropertyAction extends BaseFormAction {
 		addDropdownData("Area", areaList);
 		addDropdownData("PropTypeMaster",
 				getPersistenceService().findAllByNamedQuery(PropertyTaxConstants.GET_PROPERTY_TYPES));
-		Integer userId = (Integer) session().get(SESSIONLOGINID);
+		Long userId = (Long) session().get(SESSIONLOGINID);
 		if (mode != null && userId != null) {
 			setRoleName(getRolesForUserId(userId));
 		}
@@ -365,15 +406,12 @@ public class SearchPropertyAction extends BaseFormAction {
 		return searchList;
 	}
 
-	private String getRolesForUserId(Integer userId) {
+	private String getRolesForUserId(Long userId) {
 		LOGGER.debug("Entered into getRolesForUserId method");
 		LOGGER.debug("User id : " + userId);
-		//UserDAO userDao = new UserDAO();
 		String roleName;
 		List<String> roleNameList = new ArrayList<String>();
-		//FIX ME
-		//User user = userDao.getUserByID(userId);
-		User user = null;
+		User user = userService.getUserById(userId);
 		for (Role role : user.getRoles()) {
 			roleName = role.getName() != null ? role.getName() : "";
 			roleNameList.add(roleName);

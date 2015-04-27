@@ -1,3 +1,42 @@
+/*******************************************************************************
+ * eGov suite of products aim to improve the internal efficiency,transparency, 
+ *    accountability and the service delivery of the government  organizations.
+ * 
+ *     Copyright (C) <2015>  eGovernments Foundation
+ * 
+ *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *     is available at http://www.egovernments.org
+ * 
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ * 
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ * 
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     http://www.gnu.org/licenses/gpl.html .
+ * 
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ * 
+ * 	1) All versions of this program, verbatim or modified must carry this 
+ * 	   Legal Notice.
+ * 
+ * 	2) Any misrepresentation of the origin of the material is prohibited. It 
+ * 	   is required that all modified versions of this material be marked in 
+ * 	   reasonable ways as different from the original version.
+ * 
+ * 	3) This license does not grant any rights to any user of the program 
+ * 	   with regards to rights under trademark law for use of the trade names 
+ * 	   or trademarks of eGovernments Foundation.
+ * 
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ ******************************************************************************/
 package org.egov.ptis.actions.transfer;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
@@ -25,13 +64,12 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.dispatcher.ServletActionRedirectResult;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.collection.integration.models.BillReceiptInfo;
+import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.actions.workflow.WorkflowAction;
@@ -56,8 +94,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
 @Validations
-@Results({ @Result(name = "workFlowError", type = ServletActionRedirectResult.class, value = "workflow", params = {
-		"namespace", "/workflow", "method", "workFlowError" }) })
+/*@Results({ @Result(name = "workFlowError", type = ServletActionRedirectResult.class, value = "workflow", params = {
+		"namespace", "/workflow", "method", "workFlowError" }) })*/
 public class TransferPropertyAction extends WorkflowAction {
 
 	private static final String ACK = "ack";
@@ -95,12 +133,13 @@ public class TransferPropertyAction extends WorkflowAction {
 	private String nextUser;
 	private PropertyImpl nonHistProperty;
 	private String docNumber;
-	UserDAO userDao = new UserDAO();
 	private String transRsnId;
 	private String ackMessage;
 	private Integer idMutationMaster;
 	private List<PropertyOwner> propOwnerProxy = new ArrayList<PropertyOwner>();
 	private BillReceiptInfo billReceiptInfo;
+	private UserService UserService;
+	private EisCommonService eisCommonService;
 
 	@Override
 	public Object getModel() {
@@ -162,7 +201,7 @@ public class TransferPropertyAction extends WorkflowAction {
 			Set<PropertyOwner> owners = transferOwnerService.getNewPropOwnerAdd(property, chkIsCorrIsDiff,
 					corrAddress1, corrAddress2, corrPinCode, propertyOwnerProxy);
 			for (PropertyOwner owner : property.getPropertyOwnerSet()) {
-				owner.getAddressSet().clear();
+				owner.getAddress().clear();
 			}
 			property.getPropertyOwnerSet().clear();
 			property.getPropertyOwnerSet().addAll(owners);
@@ -253,22 +292,19 @@ public class TransferPropertyAction extends WorkflowAction {
 		setPropertyOwnerProxy(new ArrayList(property.getPropertyOwnerSet()));
 		if (property.getPropertyOwnerSet() != null && !property.getPropertyOwnerSet().isEmpty()) {
 			PropertyOwner owner = property.getPropertyOwnerSet().iterator().next();
-			Set<Address> addrSet = owner.getAddressSet();
+			Set<Address> addrSet = (Set<Address>) owner.getAddress();
 			for (Address addr : addrSet) {
-				if (addr.getStreetAddress1() != null || addr.getStreetAddress2() != null || addr.getPinCode() != null) {
+				if (addr.getStreetRoadLine() != null || addr.getPinCode() != null) {
 					setChkIsCorrIsDiff(true);
-					if (addr.getStreetAddress1() != null) {
-						setCorrAddress1(addr.getStreetAddress1());
-					}
-					if (addr.getStreetAddress2() != null) {
-						setCorrAddress2(addr.getStreetAddress2());
+					if (addr.getStreetRoadLine() != null) {
+						setCorrAddress1(addr.getStreetRoadLine());
 					}
 					if (addr.getPinCode() != null) {
 						setCorrPinCode(addr.getPinCode().toString());
 					}
 				}
 			}
-			setCorrAddress((Address) owner.getAddressSet().iterator().next());
+			setCorrAddress((Address) owner.getAddress().iterator().next());
 		}
 		if (currWfState.endsWith(WF_STATE_NOTICE_GENERATION_PENDING)) {
 			return VIEW;
@@ -285,8 +321,8 @@ public class TransferPropertyAction extends WorkflowAction {
 		LOGGER.debug("forward : Index Number : " + indexNumber);
 
 		BasicPropertyDAO basicPropertyDAO = PropertyDAOFactory.getDAOFactory().getBasicPropertyDAO();
-		Integer userId = propertyTaxUtil.getLoggedInUser(getSession()).getId();
-		User user = userDao.getUserByID(userId);
+		Long userId = propertyTaxUtil.getLoggedInUser(getSession()).getId();
+		User user = UserService.getUserById(userId);
 		String propDocNum = "";
 		if (getModelId() == null || getModelId().equals("")) {
 			this.validate();
@@ -352,14 +388,14 @@ public class TransferPropertyAction extends WorkflowAction {
 			Set<PropertyOwner> owners = transferOwnerService.getNewPropOwnerAdd(property, chkIsCorrIsDiff,
 					corrAddress1, corrAddress2, corrPinCode, propertyOwnerProxy);
 			for (PropertyOwner owner : property.getPropertyOwnerSet()) {
-				owner.getAddressSet().clear();
+				owner.getAddress().clear();
 			}
 			property.getPropertyOwnerSet().clear();
 			property.getPropertyOwnerSet().addAll(owners);
 			basicPrpertyService.update(basicProp);
 		}
 		transitionWorkFlow();
-		setNextUser(userDao.getUserByID(getWorkflowBean().getApproverUserId()).getUserName());
+		setNextUser(UserService.getUserById(getWorkflowBean().getApproverUserId().longValue()).getUsername());
 		if (getModelId() == null || getModelId().equals("")) {
 			target = MISC_RECEIPT;
 		} else {
@@ -393,7 +429,7 @@ public class TransferPropertyAction extends WorkflowAction {
 			propertyImplService.update(property);
 		}
 
-		setNextUser(userDao.getUserByID(property.getCreatedBy().getId()).getUserName());
+		setNextUser(UserService.getUserById(property.getCreatedBy().getId()).getUsername());
 		target = ACK;
 		LOGGER.debug("Exit from forward method");
 		return target;
@@ -540,7 +576,7 @@ public class TransferPropertyAction extends WorkflowAction {
 				}
 			}
 			for (PropertyOwner owner : getPropertyOwnerProxy()) {
-				if (owner.getFirstName().equals("")) {
+				if (owner.getName().equals("")) {
 					addActionError(getText("mandatory.ownerName"));
 				}
 			}
@@ -570,7 +606,7 @@ public class TransferPropertyAction extends WorkflowAction {
 		}
 
 		workflowAction = propertyTaxUtil.initWorkflowAction(property, workflowBean,
-				Integer.valueOf(EGOVThreadLocals.getUserId()), eisCommonsManager);
+				Integer.valueOf(EGOVThreadLocals.getUserId()), eisCommonService);
 
 		if (workflowAction.isNoWorkflow()) {
 			startWorkFlow();
@@ -601,16 +637,14 @@ public class TransferPropertyAction extends WorkflowAction {
 		setOldOwnerName(ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerSet()));
 		setPropAddress(ptisCacheMgr.buildAddressByImplemetation(getBasicProperty().getAddress()));
 		PropertyOwner owner = property.getPropertyOwnerSet().iterator().next();
-		Set<Address> addrSet = owner.getAddressSet();
+		Set<Address> addrSet = (Set<Address>) owner.getAddress();
 		for (Address addr : addrSet) {
-			if (addr.getStreetAddress1() != null || addr.getStreetAddress2() != null || addr.getPinCode() != null) {
+			if (addr.getStreetRoadLine() != null || addr.getPinCode() != null) {
 				setChkIsCorrIsDiff(true);
-				if (addr.getStreetAddress1() != null) {
-					setCorrAddress1(addr.getStreetAddress1());
+				if (addr.getStreetRoadLine() != null) {
+					setCorrAddress1(addr.getStreetRoadLine());
 				}
-				if (addr.getStreetAddress2() != null) {
-					setCorrAddress2(addr.getStreetAddress2());
-				}
+				
 				if (addr.getPinCode() != null) {
 					setCorrPinCode(addr.getPinCode().toString());
 				}
@@ -626,7 +660,7 @@ public class TransferPropertyAction extends WorkflowAction {
 		String ownerName = ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerSet());
 		auditDetail1.append("Owner Name : ").append(ownerName);
 		LOGGER.debug("Audit String : " + auditDetail1.toString());
-		propertyTaxUtil.generateAuditEvent(action, basicProperty, auditDetail1.toString(), auditDetails2);
+		//propertyTaxUtil.generateAuditEvent(action, basicProperty, auditDetail1.toString(), auditDetails2);
 	}
 
 	public String getOldOwnerName() {

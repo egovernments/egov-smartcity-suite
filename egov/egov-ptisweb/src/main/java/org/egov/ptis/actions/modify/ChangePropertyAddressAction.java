@@ -1,3 +1,42 @@
+/*******************************************************************************
+ * eGov suite of products aim to improve the internal efficiency,transparency, 
+ *    accountability and the service delivery of the government  organizations.
+ * 
+ *     Copyright (C) <2015>  eGovernments Foundation
+ * 
+ *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *     is available at http://www.egovernments.org
+ * 
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ * 
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ * 
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     http://www.gnu.org/licenses/gpl.html .
+ * 
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ * 
+ * 	1) All versions of this program, verbatim or modified must carry this 
+ * 	   Legal Notice.
+ * 
+ * 	2) Any misrepresentation of the origin of the material is prohibited. It 
+ * 	   is required that all modified versions of this material be marked in 
+ * 	   reasonable ways as different from the original version.
+ * 
+ * 	3) This license does not grant any rights to any user of the program 
+ * 	   with regards to rights under trademark law for use of the trade names 
+ * 	   or trademarks of eGovernments Foundation.
+ * 
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ ******************************************************************************/
 package org.egov.ptis.actions.modify;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -20,12 +59,10 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.dispatcher.ServletActionRedirectResult;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.StringUtils;
@@ -43,8 +80,8 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 @Validation()
-@Results({ @Result(name = "workFlowError", type = ServletActionRedirectResult.class, value = "workflow", params = {
-		"namespace", "/workflow", "method", "workFlowError" }) })
+/*@Results({ @Result(name = "workFlowError", type = ServletActionRedirectResult.class, value = "workflow", params = {
+		"namespace", "/workflow", "method", "workFlowError" }) })*/
 public class ChangePropertyAddressAction extends WorkflowAction {
 
 	private BasicProperty basicProperty;
@@ -64,6 +101,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	private static final String MSG_REJECT_SUCCESS = " Change Property Rejected Successfully ";
 
 	private String docNumber;
+	private UserService userService;
 
 	/* to log errors and debugging information */
 	private final Logger LOGGER = Logger.getLogger(getClass());
@@ -112,8 +150,8 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 		LOGGER.debug("view: BasicProperty on property: " + basicProperty);
 		String[] addFields = property.getBasicProperty().getExtraField2().split("\\|");
 
-		address.setStreetAddress1(addFields[0]);
-		address.setHouseNo(addFields[1]);
+		address.setStreetRoadLine(addFields[0]);
+		address.setHouseNoBldgApt(addFields[1]);
 
 		if (addFields[2].equals(" ") || addFields[2].isEmpty()) {
 			address.setDoorNumOld("N/A");
@@ -121,7 +159,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 			address.setDoorNumOld(addFields[2]);
 		}
 		if (!addFields[3].equals(" ") && !addFields[3].isEmpty()) {
-			address.setPinCode(Integer.parseInt(addFields[3]));
+			address.setPinCode(addFields[3]);
 		}
 		if (addFields[4].equals(" ") || addFields[4].isEmpty()) {
 			address.setMobileNo("N/A");
@@ -169,9 +207,9 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 
 		LOGGER.debug("Entered into the newForm method, Index Number : " + indexNumber + ", Address : " + address
 				+ "BasicProperty: " + basicProperty);
-		String addrStr1 = address.getStreetAddress1();
+		String addrStr1 = address.getStreetRoadLine();
 		addrStr1 = propertyTaxUtil.antisamyHackReplace(addrStr1);
-		address.setStreetAddress1(addrStr1);
+		address.setStreetRoadLine(addrStr1);
 		basicProperty.setAddress(address);
 
 		/* if (property.getStatus().equals(STATUS_WORKFLOW)) {
@@ -255,9 +293,9 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 		}
 
 		transitionWorkFlow();
-		User approverUser = new UserDAO().getUserByID(getWorkflowBean().getApproverUserId());
+		User approverUser = userService.(getWorkflowBean().getApproverUserId());
 		setAckMessage("Property " + basicProperty.getUpicNo() + " Successfully Forwarded to "
-				+ approverUser.getUserName());
+				+ approverUser.getUsername());
 		/*
 		 * } catch (Exception e) { throw new EGOVRuntimeException("Exception : "
 		 * + e); }
@@ -272,7 +310,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	public String approve() {
 
 		LOGGER.debug("Enetered into approve, BasicProperty: " + basicProperty + ", Address : "
-				+ address.getStreetAddress1() + " HouseNo" + address.getHouseNo() + "DoorNumOld "
+				+ address.getStreetRoadLine() + " HouseNo" + address.getHouseNoBldgApt() + "DoorNumOld "
 				+ address.getDoorNumOld() + " PinCode" + address.getPinCode());
 
 		try {
@@ -320,7 +358,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 			propertyImplService.update(property);
 			basicPrpertyService.update(basicProperty);
 		} else {
-			setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to initiator : "+ property.getCreatedBy().getUserName());
+			setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to initiator : "+ property.getCreatedBy().getUsername());
 		}
 				
 		LOGGER.debug("reject: BasicProperty: " + basicProperty + "AckMessage: " + getAckMessage());
@@ -351,19 +389,19 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	@Override
 	public void validate() {
 
-		LOGGER.debug("Entered into the validate method Address : " + address.getStreetAddress1() + " HouseNo"
-				+ address.getHouseNo() + "DoorNumOld " + address.getDoorNumOld() + " PinCode" + address.getPinCode());
+		LOGGER.debug("Entered into the validate method Address : " + address.getStreetRoadLine() + " HouseNo"
+				+ address.getHouseNoBldgApt() + "DoorNumOld " + address.getDoorNumOld() + " PinCode" + address.getPinCode());
 
 		/* Validates the input data in case the form is submitted */
 
-		if (address.getStreetAddress1() == null || StringUtils.equals(address.getStreetAddress1(), "")
-				|| StringUtils.isEmpty(address.getStreetAddress1())) {
+		if (address.getStreetRoadLine() == null || StringUtils.equals(address.getStreetRoadLine(), "")
+				|| StringUtils.isEmpty(address.getStreetRoadLine())) {
 			addActionError(getText("mandatory.addr"));
 		}
-		if (address.getHouseNo() == null || StringUtils.equals(address.getHouseNo(), "")) {
+		if (address.getHouseNoBldgApt() == null || StringUtils.equals(address.getHouseNoBldgApt(), "")) {
 			addActionError(getText("mandatory.houseNo"));
 		} else {
-			validateHouseNumber(basicProperty.getPropertyID().getWard().getId(), address.getHouseNo(), basicProperty);
+			validateHouseNumber(basicProperty.getPropertyID().getWard().getId(), address.getHouseNoBldgApt(), basicProperty);
 		}
 		if (address.getPinCode() != null) {
 			String pincode = StringUtils.trim(address.getPinCode().toString());
@@ -425,12 +463,12 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 		StringBuilder auditDetail1 = new StringBuilder();
 		auditDetail1
 				.append("Address : ")
-				.append(basicProperty.getAddress().getStreetAddress1() != null ? basicProperty.getAddress()
-						.getStreetAddress1() : "").append(AUDITDATA_STRING_SEP)
+				.append(basicProperty.getAddress().getStreetRoadLine() != null ? basicProperty.getAddress()
+						.getStreetRoadLine() : "").append(AUDITDATA_STRING_SEP)
 				.append("House Number : ")
-				.append(basicProperty.getAddress().getHouseNo() != null ? basicProperty.getAddress().getHouseNo() : "");
+				.append(basicProperty.getAddress().getHouseNoBldgApt() != null ? basicProperty.getAddress().getHouseNoBldgApt() : "");
 		LOGGER.debug("Audit String : "+auditDetail1.toString());
-		propertyTaxUtil.generateAuditEvent(action, basicProperty, auditDetail1.toString(), auditDetails2);
+		//propertyTaxUtil.generateAuditEvent(action, basicProperty, auditDetail1.toString(), auditDetails2);
 	}
 
 	public BasicProperty getBasicProperty() {
@@ -495,6 +533,14 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 
 	public void setDocNumber(String docNumber) {
 		this.docNumber = docNumber;
+	}
+
+	public UserService getUserService() {
+		return userService;
+	}
+
+	public void setUserService(UserService userService) {
+		this.userService = userService;
 	}
 
 }
