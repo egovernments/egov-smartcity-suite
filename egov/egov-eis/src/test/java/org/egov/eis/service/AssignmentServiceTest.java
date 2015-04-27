@@ -59,7 +59,7 @@ public class AssignmentServiceTest extends EISAbstractSpringIntegrationTest {
     
     @Test
     public void getAssignmentById() {
-        Assignment assign = assignmentService.getAssignmentById(Long.valueOf(1));
+        Assignment assign = assignmentService.getAssignmentById(1l);
         
         assertNotNull(assign);
     }
@@ -76,5 +76,12 @@ public class AssignmentServiceTest extends EISAbstractSpringIntegrationTest {
         List<Assignment> assignList = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(1);
         
         assertNotEquals(0,assignList.size());
+    }
+    
+    @Test
+    public void getPrimaryAssignemntForUser() {
+        Assignment assign = assignmentService.getPrimaryAssignmentForUser(1l);
+        
+        assertNotNull(assign);
     }
 }

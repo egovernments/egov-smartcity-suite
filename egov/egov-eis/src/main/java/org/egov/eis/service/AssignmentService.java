@@ -49,6 +49,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
+ * This service class is used to query all employee related assignments
+ * 
  * @author Vaibhav.K
  *
  */
@@ -96,5 +98,12 @@ public class AssignmentService {
     public Assignment getPrimaryAssignmentForUser(final Long userId) {
         return assignmentRepository.getPrimaryAssignmentForUser(userId);
     }
+    
+    public Assignment getPriamryAssignmentForEmployee(final Integer empId) {
+        return assignmentRepository.getPrimaryAssignmentForEmployee(empId);
+    }
 
+    public Assignment getPrimaryAssignmentForEmployeeByToDate(final Integer empId,final Date toDate) {
+        return assignmentRepository.getAssignmentByEmpAndDate(empId,toDate);
+    }
 }
