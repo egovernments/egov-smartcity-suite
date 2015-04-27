@@ -117,7 +117,10 @@ $(document).ready(function()
 			hideSigUp();
 		}
 	});
-	
+	$('#activationCode').focus(function() {
+		$('#activationCode').val("");
+		return false;
+	});
 	$('form#signupform').submit(function(){
 		$('#signupform').attr('action', '/portal/citizen/register').trigger('submit');
 		return false;
