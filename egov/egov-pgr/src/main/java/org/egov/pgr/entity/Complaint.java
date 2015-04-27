@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -65,191 +65,194 @@ import org.egov.search.domain.Searchable;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "pgr_complaint")
 public class Complaint extends StateAware {
 
-    private static final long serialVersionUID = 4020616083055647372L;
+	private static final long serialVersionUID = 4020616083055647372L;
 
-    @NotNull
-    @Column(name="crn",unique=true)
-    @Searchable(name = "crn")
-    private String CRN = "";
+	@NotNull
+	@Column(name = "crn", unique = true)
+	@Searchable(name = "crn")
+	private String CRN = "";
 
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name="complaintType", nullable = false)
-    @Searchable
-    private ComplaintType complaintType;
+	@ManyToOne
+	@NotNull
+	@JoinColumn(name = "complaintType", nullable = false)
+	@Searchable
+	private ComplaintType complaintType;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @NotNull
-    @JoinColumn(name="complainant", nullable = false)
-    @Searchable(name="citizen", group = Searchable.Group.COMMON)
-    private Complainant complainant = new Complainant();    
+	@ManyToOne(cascade = CascadeType.ALL)
+	@NotNull
+	@JoinColumn(name = "complainant", nullable = false)
+	@Searchable(name = "citizen", group = Searchable.Group.COMMON)
+	private Complainant complainant = new Complainant();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "assignee")
-    private Position assignee;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "assignee")
+	private Position assignee;
 
-    @ManyToOne(optional = true)
-    @JoinColumn(name="location", nullable = true)
-    @Searchable(name = "boundary", group = Searchable.Group.COMMON)
-    private Boundary location;
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "location", nullable = true)
+	@Searchable(name = "boundary", group = Searchable.Group.COMMON)
+	private Boundary location;
 
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name="status")
-    @Searchable(group = Searchable.Group.CLAUSES)
-    private ComplaintStatus status = new ComplaintStatus();
+	@ManyToOne
+	@NotNull
+	@JoinColumn(name = "status")
+	@Searchable(group = Searchable.Group.CLAUSES)
+	private ComplaintStatus status = new ComplaintStatus();
 
-    @Length(min = 10, max = 500)
-    @SafeHtml
-    @Searchable
-    private String details;
+	@Length(min = 10, max = 500)
+	@SafeHtml
+	@Searchable
+	private String details;
 
-    @Length(max = 200)
-    @SafeHtml
-    @Searchable
-    private String landmarkDetails;
+	@Length(max = 200)
+	@SafeHtml
+	@Searchable
+	private String landmarkDetails;
 
-    @Enumerated(EnumType.ORDINAL)
-    @NotNull
-    @Searchable(group = Searchable.Group.CLAUSES)
-    private ReceivingMode receivingMode = ReceivingMode.WEBSITE;
+	@Enumerated(EnumType.ORDINAL)
+	@NotNull
+	@Searchable(group = Searchable.Group.CLAUSES)
+	private ReceivingMode receivingMode = ReceivingMode.WEBSITE;
 
-    @ManyToOne
-    @JoinColumn(name = "receivingCenter", nullable = true)
-    private ReceivingCenter receivingCenter;
+	@ManyToOne
+	@JoinColumn(name = "receivingCenter", nullable = true)
+	private ReceivingCenter receivingCenter;
 
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "pgr_supportdocs", joinColumns = @JoinColumn(name = "filestoreid"), inverseJoinColumns = @JoinColumn(name = "complaintid"))
-    private Set<FileStoreMapper> supportDocs = Collections.emptySet();
+	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+	@JoinTable(name = "pgr_supportdocs", joinColumns = @JoinColumn(name = "filestoreid"), inverseJoinColumns = @JoinColumn(name = "complaintid"))
+	private Set<FileStoreMapper> supportDocs = Collections.emptySet();
 
-    private double lng;
+	private double lng;
 
-    private double lat;
-    
-    @Column(name="escalation_date",nullable = false)
-    private Date escalationDate;
-    
-    public DateTime getEscalationDate() {
-        return  null == escalationDate ? null : new DateTime(escalationDate);
-    }
+	private double lat;
 
-    public void setEscalationDate(final DateTime escalationDate) {
-        this.escalationDate = null == escalationDate ? null : escalationDate.toDate();
-    }
+	@Column(name = "escalation_date", nullable = false)
+	private Date escalationDate;
 
-    public String getCRN() {
-        return CRN;
-    }
+	public DateTime getEscalationDate() {
+		return null == escalationDate ? null : new DateTime(escalationDate);
+	}
 
-    public void setCRN(final String cRN) {
-        CRN = cRN;
-    }
+	public void setEscalationDate(final DateTime escalationDate) {
+		this.escalationDate = null == escalationDate ? null : escalationDate.toDate();
+	}
 
-    public ComplaintType getComplaintType() {
-        return complaintType;
-    }
+	public String getCRN() {
+		return CRN;
+	}
 
-    public void setComplaintType(final ComplaintType complaintType) {
-        this.complaintType = complaintType;
-    }
+	public void setCRN(final String cRN) {
+		CRN = cRN;
+	}
 
-    public Complainant getComplainant() {
-        return complainant;
-    }
+	public ComplaintType getComplaintType() {
+		return complaintType;
+	}
 
-    public void setComplainant(final Complainant complainant) {
-        this.complainant = complainant;
-    }
+	public void setComplaintType(final ComplaintType complaintType) {
+		this.complaintType = complaintType;
+	}
 
-    public Position getAssignee() {
-        return this.assignee;
-    }
+	public Complainant getComplainant() {
+		return complainant;
+	}
 
-    public void setAssignee(final Position assignee) {
-        this.assignee = assignee;
-    }
+	public void setComplainant(final Complainant complainant) {
+		this.complainant = complainant;
+	}
 
-    public ComplaintStatus getStatus() {
-        return this.status;
-    }
+	public Position getAssignee() {
+		return assignee;
+	}
 
-    public void setStatus(final ComplaintStatus status) {
-        this.status = status;
-    }
+	public void setAssignee(final Position assignee) {
+		this.assignee = assignee;
+	}
 
-    public String getDetails() {
-        return details;
-    }
+	public ComplaintStatus getStatus() {
+		return status;
+	}
 
-    public void setDetails(final String details) {
-        this.details = details;
-    }
+	public void setStatus(final ComplaintStatus status) {
+		this.status = status;
+	}
 
-    public ReceivingMode getReceivingMode() {
-        return receivingMode;
-    }
+	public String getDetails() {
+		return details;
+	}
 
-    public void setReceivingMode(final ReceivingMode receivingMode) {
-        this.receivingMode = receivingMode;
-    }
+	public void setDetails(final String details) {
+		this.details = details;
+	}
 
-    public ReceivingCenter getReceivingCenter() {
-        return receivingCenter;
-    }
+	public ReceivingMode getReceivingMode() {
+		return receivingMode;
+	}
 
-    public void setReceivingCenter(final ReceivingCenter receivingCenter) {
-        this.receivingCenter = receivingCenter;
-    }
+	public void setReceivingMode(final ReceivingMode receivingMode) {
+		this.receivingMode = receivingMode;
+	}
 
-    public Set<FileStoreMapper> getSupportDocs() {
-        return supportDocs;
-    }
+	public ReceivingCenter getReceivingCenter() {
+		return receivingCenter;
+	}
 
-    public void setSupportDocs(final Set<FileStoreMapper> supportDocs) {
-        this.supportDocs = supportDocs;
-    }
+	public void setReceivingCenter(final ReceivingCenter receivingCenter) {
+		this.receivingCenter = receivingCenter;
+	}
 
-    public Boundary getLocation() {
-        return location;
-    }
+	public Set<FileStoreMapper> getSupportDocs() {
+		return supportDocs;
+	}
 
-    public void setLocation(final Boundary location) {
-        this.location = location;
-    }
+	public void setSupportDocs(final Set<FileStoreMapper> supportDocs) {
+		this.supportDocs = supportDocs;
+	}
 
-    public String getLandmarkDetails() {
-        return landmarkDetails;
-    }
+	public Boundary getLocation() {
+		return location;
+	}
 
-    public void setLandmarkDetails(final String landmarkDetails) {
-        this.landmarkDetails = landmarkDetails;
-    }
+	public void setLocation(final Boundary location) {
+		this.location = location;
+	}
 
-    public double getLat() {
-        return lat;
-    }
+	public String getLandmarkDetails() {
+		return landmarkDetails;
+	}
 
-    public void setLat(final double lat) {
-        this.lat = lat;
-    }
+	public void setLandmarkDetails(final String landmarkDetails) {
+		this.landmarkDetails = landmarkDetails;
+	}
 
-    public double getLng() {
-        return lng;
-    }
+	public double getLat() {
+		return lat;
+	}
 
-    public void setLng(final double lng) {
-        this.lng = lng;
-    }
+	public void setLat(final double lat) {
+		this.lat = lat;
+	}
 
-    @Override
-    public String getStateDetails() {
-        // TODO Implement something
-        return String.format("CRN : %s", this.getCRN());
-    }
+	public double getLng() {
+		return lng;
+	}
+
+	public void setLng(final double lng) {
+		this.lng = lng;
+	}
+
+	@Override
+	public String getStateDetails() {
+		final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy hh:mm a");
+		return String.format("Complaint Number %s for %s filed on %s. Date of resolution %s", getCRN(),
+				getComplaintType().getName(), formatter.print(getCreatedDate()), formatter.print(getEscalationDate()));
+	}
 
 }
