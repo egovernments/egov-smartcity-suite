@@ -170,7 +170,7 @@
 						</li>
 						
 						<li class="dropdown">
-							<a href="javascript:void(0);">
+							<a href="http://www.egovernments.org" data-strwindname = "egovsite" class="open-popup">
 								<img src="<c:url value='/resources/global/images/logo@2x.png'/>" title="Powered by eGovernments" height="25px" style="padding-top:5px">
 							</a>
 						</li>

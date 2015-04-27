@@ -55,7 +55,8 @@
 
 					<div class="nav-right-menu col-md-2 col-xs-2">
 						<ul class="hr-menu text-right">
-							<li class="ico-menu"><a href="javascript:void(0);"> <img
+							<li class="ico-menu">
+							<a href="http://www.egovernments.org" data-strwindname = "egovsite" class="open-popup"><img
 									src="/egi/resources/global/images/logo@2x.png"
 									title="Powered by eGovernments" height="20px">
 							</a></li>

@@ -201,13 +201,17 @@ $(document).ready(function()
 	});
 	
 	$("#official_inbox").on('click','tbody tr',function(event) {
-		var windowObjectReference = window.open(tableContainer1.fnGetData(this,7), ''+tableContainer1.fnGetData(this,6)+'', 'width=900, height=700, top=300, left=150,scrollbars=yes'); 
-		openedWindows.push(windowObjectReference);
+		if (tableContainer1.fnGetData(this,7) != undefined) {
+			var windowObjectReference = window.open(tableContainer1.fnGetData(this,7), ''+tableContainer1.fnGetData(this,6)+'', 'width=900, height=700, top=300, left=150,scrollbars=yes'); 
+			openedWindows.push(windowObjectReference);
+		}
 	});
 	
 	$("#official_drafts").on('click','tbody tr',function(event) {
-		var windowObjectReference = window.open(tableContainer1.fnGetData(this,6), ''+tableContainer1.fnGetData(this,5)+'', 'width=900, height=700, top=300, left=150,scrollbars=yes'); 
-		openedWindows.push(windowObjectReference);
+		if (tableContainer1.fnGetData(this,6) != undefined) {
+			var windowObjectReference = window.open(tableContainer1.fnGetData(this,6), ''+tableContainer1.fnGetData(this,5)+'', 'width=900, height=700, top=300, left=150,scrollbars=yes'); 
+			openedWindows.push(windowObjectReference);
+		}
 	});
 	
 	$('.check-password').blur(function(){
