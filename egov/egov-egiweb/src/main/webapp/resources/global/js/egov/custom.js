@@ -87,6 +87,10 @@ $(document).ready(function()
 		console.warn("No tooltip");
 	}
 	
+	$("a.open-popup").click(function(e) {
+		window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=260,scrollbars=yes'); 
+		return false;
+	});
 	
 	$(".form-horizontal").submit(function( event ) {
 		$('.loader-class').modal('show', {backdrop: 'static'});
