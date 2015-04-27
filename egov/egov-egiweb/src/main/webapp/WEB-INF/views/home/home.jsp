@@ -95,7 +95,7 @@
 					<!-- logo -->
 					<div class="navbar-brand">
 						<a href="javascript:void(0);">
-							<img src="<c:url value='/resources/global/images/${cityLogo}'/>" height="60">
+							<img src="<c:url value='/resources/global/images/${cityLogo}'/>" height="60" class="homepage_logo">
 						</a>
 					</div>
 					
@@ -170,7 +170,7 @@
 						</li>
 						
 						<li class="dropdown">
-							<a href="http://www.egovernments.org" data-strwindname = "egovsite" class="open-popup">
+							<a href="http://www.egovernments.org" target="_blank">
 								<img src="<c:url value='/resources/global/images/logo@2x.png'/>" title="Powered by eGovernments" height="25px" style="padding-top:5px">
 							</a>
 						</li>
