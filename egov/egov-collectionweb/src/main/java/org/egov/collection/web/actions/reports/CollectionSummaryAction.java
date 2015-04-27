@@ -1,19 +1,18 @@
 /**
  * 
  */
-package org.egov.erpcollection.web.actions.reports;
+package org.egov.collection.web.actions.reports;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.struts2.config.ParentPackage;
-import org.egov.erpcollection.util.CollectionsUtil;
-import org.egov.erpcollection.web.constants.CollectionConstants;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.utils.CollectionsUtil;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infstr.reporting.engine.ReportRequest.ReportDataSourceType;
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
 import org.egov.web.actions.ReportFormAction;
 
 /**
@@ -135,7 +134,7 @@ public class CollectionSummaryAction extends ReportFormAction {
 	 */
 	public String criteria() {
 		// Setup drop down data for department list
-		addRelatedEntity("department", DepartmentImpl.class, "deptName");
+		addRelatedEntity("department", Department.class, "deptName");
 		setupDropdownDataExcluding();
 		
 		// Set default values of criteria fields

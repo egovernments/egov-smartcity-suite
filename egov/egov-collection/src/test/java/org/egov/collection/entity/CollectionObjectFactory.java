@@ -1,4 +1,4 @@
-package org.egov.collection.models;
+package org.egov.collection.entity;
 
 import java.math.BigDecimal;
 import java.text.ParseException;

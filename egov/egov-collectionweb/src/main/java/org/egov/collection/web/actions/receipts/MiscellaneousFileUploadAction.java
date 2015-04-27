@@ -1,4 +1,43 @@
-package org.egov.erpcollection.web.actions.receipts;
+/**
+ * eGov suite of products aim to improve the internal efficiency,transparency, 
+   accountability and the service delivery of the government  organizations.
+
+    Copyright (C) <2015>  eGovernments Foundation
+
+    The updated version of eGov suite of products as by eGovernments Foundation 
+    is available at http://www.egovernments.org
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    http://www.gnu.org/licenses/gpl.html .
+
+    In addition to the terms of the GPL license to be adhered to in using this
+    program, the following additional terms are to be complied with:
+
+	1) All versions of this program, verbatim or modified must carry this 
+	   Legal Notice.
+
+	2) Any misrepresentation of the origin of the material is prohibited. It 
+	   is required that all modified versions of this material be marked in 
+	   reasonable ways as different from the original version.
+
+	3) This license does not grant any rights to any user of the program 
+	   with regards to rights under trademark law for use of the trade names 
+	   or trademarks of eGovernments Foundation.
+
+  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+package org.egov.collection.web.actions.receipts;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,24 +61,25 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.ReceiptDetailInfo;
+import org.egov.collection.entity.ReceiptMisc;
+import org.egov.collection.service.ReceiptHeaderService;
+import org.egov.collection.utils.CollectionCommon;
+import org.egov.collection.utils.CollectionsUtil;
+import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Fund;
-import org.egov.commons.service.CommonsManager;
-import org.egov.erpcollection.models.ReceiptDetailInfo;
-import org.egov.erpcollection.models.ReceiptMisc;
-import org.egov.erpcollection.services.ReceiptHeaderService;
-import org.egov.erpcollection.services.ReceiptService;
-import org.egov.erpcollection.util.CollectionCommon;
-import org.egov.erpcollection.util.CollectionsUtil;
-import org.egov.erpcollection.util.FinancialsUtil;
-import org.egov.erpcollection.web.constants.CollectionConstants;
+import org.egov.commons.service.CommonsServiceImpl;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
 import org.egov.model.instrument.InstrumentHeader;
+import org.egov.services.receipt.ReceiptService;
 import org.egov.web.actions.BaseFormAction;
+import org.joda.time.DateTime;
 
 @ParentPackage("egov")  
 public class MiscellaneousFileUploadAction extends BaseFormAction{ 
@@ -75,7 +115,7 @@ public class MiscellaneousFileUploadAction extends BaseFormAction{
     private FinancialsUtil financialsUtil;
     private CollectionsUtil collectionsUtil;
     
-    private CommonsManager commonsManager;
+    private CommonsServiceImpl commonsServiceImpl;
     
     private ReceiptHeaderService receiptHeaderService;
     private ReceiptService receiptPayeeDetailsService;
@@ -99,7 +139,7 @@ public class MiscellaneousFileUploadAction extends BaseFormAction{
 		
 		receiptAction.setCollectionCommon(collectionCommon);
 		receiptAction.setCollectionsUtil(collectionsUtil);
-		receiptAction.setCommonsManager(commonsManager);
+		//receiptAction.setCommonsManager(commonsServiceImpl);
 		receiptAction.setFinancialsUtil(financialsUtil);
 		
 		receiptAction.setReceiptHeaderService(receiptHeaderService);
@@ -118,16 +158,16 @@ public class MiscellaneousFileUploadAction extends BaseFormAction{
 		subLedgerlist= new ArrayList<ReceiptDetailInfo>();
 		receiptAction.setReceiptMisc(createReceiptMisc(input));
 		
-		DepartmentImpl dept = (DepartmentImpl) persistenceService.find(
-				"from DepartmentImpl d where d.deptName=? ",input[1]);
+		Department dept = (Department) persistenceService.find(
+				"from Department d where d.deptName=? ",input[1]);
 		
 		receiptAction.setDeptId(dept.getId().toString());
 		
 		Date dt = new Date();
 		try {
 			dt = sdfInput.parse(input[0]);
-			receiptAction.setManualReceiptDate(dt);
-			receiptAction.setVoucherDate(dt);
+			receiptAction.setManualReceiptDate(new DateTime(dt));
+			receiptAction.setVoucherDate(new DateTime(dt));
 		} catch (ParseException e) {
 			LOGGER.debug("Error occured while parsing receipt date [ " + input[0] + " ] : "+ e.getMessage());
 		}
@@ -148,9 +188,9 @@ public class MiscellaneousFileUploadAction extends BaseFormAction{
 			
 			InstrumentHeader instrHeaderBank = new InstrumentHeader();
 			instrHeaderBank.setInstrumentAmount(new BigDecimal(input[8]));
-			instrHeaderBank.setTransactionDate(receiptAction.getManualReceiptDate());
+			instrHeaderBank.setTransactionDate(receiptAction.getManualReceiptDate().toDate());
 			
-			instrHeaderBank.setTransactionNumber(dept.getDeptCode()+new SimpleDateFormat ("ddMMyy", Locale.getDefault()).format(dt)+"UPL");
+			instrHeaderBank.setTransactionNumber(dept.getCode()+new SimpleDateFormat ("ddMMyy", Locale.getDefault()).format(dt)+"UPL");
 			
 			Bankaccount account = (Bankaccount) persistenceService.find("from Bankaccount where accountnumber=?",input[4]);
 			receiptAction.setBankAccountId(account.getId());
@@ -255,7 +295,7 @@ public class MiscellaneousFileUploadAction extends BaseFormAction{
 				
 				initialiseObjectsInAction(input);
 				
-				HibernateUtil.beginTransaction();
+				//HibernateUtil.beginTransaction();
 				try{
 					receiptAction.save();
 				}
@@ -264,11 +304,11 @@ public class MiscellaneousFileUploadAction extends BaseFormAction{
 					String errMsg = "Error in Receipt Creation : " + ex.getMessage();
 					LOGGER.error(errMsg, ex);
 					errorRowMap.put(Integer.valueOf(input[11]), errMsg);
-					HibernateUtil.rollbackTransaction();
+					//HibernateUtil.rollbackTransaction();
 					continue;
 				}
 				
-				HibernateUtil.commitTransaction();
+				//HibernateUtil.commitTransaction();
 				successNo++;
 				
 				LOGGER.info(" Persisted " + (i+1) + " records ");
@@ -387,8 +427,8 @@ public class MiscellaneousFileUploadAction extends BaseFormAction{
 			valid=false;
 		}	
 		else{
-			DepartmentImpl dept = (DepartmentImpl) persistenceService.find(
-					"from DepartmentImpl d where d.deptName=? ",inputArray[1]);
+			Department dept = (Department) persistenceService.find(
+					"from Department d where d.deptName=? ",inputArray[1]);
 			if(dept==null){
 				if(errorMsgs.equals(CollectionConstants.BLANK)){
 					errorMsgs+="Incorrect value for Department [" + inputArray[1] + "]";
@@ -690,13 +730,6 @@ public class MiscellaneousFileUploadAction extends BaseFormAction{
 	 */
 	public void setCollectionCommon(CollectionCommon collectionCommon) {
 		this.collectionCommon = collectionCommon;
-	}
-	/**
-	 * @param commonsManager
-	 *            the commonsManager to set
-	 */
-	public void setCommonsManager(CommonsManager commonsManager) {
-		this.commonsManager = commonsManager;
 	}
 	/**
 	 * @param receiptHeaderService

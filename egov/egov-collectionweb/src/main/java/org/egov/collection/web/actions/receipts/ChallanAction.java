@@ -1,7 +1,46 @@
-package org.egov.erpcollection.web.actions.receipts;
+/**
+ * eGov suite of products aim to improve the internal efficiency,transparency, 
+   accountability and the service delivery of the government  organizations.
 
-import static org.egov.erpcollection.web.constants.CollectionConstants.RCPT_CANCEL;
-import static org.egov.erpcollection.web.constants.CollectionConstants.RCPT_CREATE;
+    Copyright (C) <2015>  eGovernments Foundation
+
+    The updated version of eGov suite of products as by eGovernments Foundation 
+    is available at http://www.egovernments.org
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    http://www.gnu.org/licenses/gpl.html .
+
+    In addition to the terms of the GPL license to be adhered to in using this
+    program, the following additional terms are to be complied with:
+
+	1) All versions of this program, verbatim or modified must carry this 
+	   Legal Notice.
+
+	2) Any misrepresentation of the origin of the material is prohibited. It 
+	   is required that all modified versions of this material be marked in 
+	   reasonable ways as different from the original version.
+
+	3) This license does not grant any rights to any user of the program 
+	   with regards to rights under trademark law for use of the trade names 
+	   or trademarks of eGovernments Foundation.
+
+  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+package org.egov.collection.web.actions.receipts;
+
+import static org.egov.collection.constants.CollectionConstants.RCPT_CANCEL;
+import static org.egov.collection.constants.CollectionConstants.RCPT_CREATE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -14,8 +53,20 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
-import org.egov.EGOVRuntimeException;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.AccountPayeeDetail;
+import org.egov.collection.entity.Challan;
+import org.egov.collection.entity.ReceiptDetail;
+import org.egov.collection.entity.ReceiptDetailInfo;
+import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.entity.ReceiptMisc;
+import org.egov.collection.entity.ReceiptVoucher;
+import org.egov.collection.service.ChallanService;
+import org.egov.collection.service.ReceiptHeaderService;
+import org.egov.collection.utils.CollectionCommon;
+import org.egov.collection.utils.CollectionsUtil;
+import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccountDetail;
@@ -24,22 +75,11 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Fund;
-import org.egov.commons.service.CommonsManager;
-import org.egov.erpcollection.models.AccountPayeeDetail;
-import org.egov.erpcollection.models.Challan;
-import org.egov.erpcollection.models.ReceiptDetail;
-import org.egov.erpcollection.models.ReceiptDetailInfo;
-import org.egov.erpcollection.models.ReceiptHeader;
-import org.egov.erpcollection.models.ReceiptMisc;
-import org.egov.erpcollection.models.ReceiptPayeeDetails;
-import org.egov.erpcollection.models.ReceiptVoucher;
-import org.egov.erpcollection.services.ChallanService;
-import org.egov.erpcollection.services.ReceiptHeaderService;
-import org.egov.erpcollection.services.ReceiptService;
-import org.egov.erpcollection.util.CollectionCommon;
-import org.egov.erpcollection.util.CollectionsUtil;
-import org.egov.erpcollection.util.FinancialsUtil;
-import org.egov.erpcollection.web.constants.CollectionConstants;
+import org.egov.commons.service.CommonsServiceImpl;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.config.AppConfigValues;
@@ -47,16 +87,14 @@ import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.NumberUtil;
 import org.egov.infstr.workflow.Action;
-import org.egov.infstr.workflow.WorkflowService;
-import org.egov.lib.admbndry.Boundary;
 import org.egov.lib.admbndry.BoundaryDAO;
-import org.egov.lib.rjbac.dept.Department;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Position;
+import org.egov.services.receipt.ReceiptService;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.StaleObjectStateException;
+import org.joda.time.DateTime;
 
 
 @ParentPackage("egov")
@@ -78,10 +116,10 @@ public class ChallanAction extends BaseFormAction {
 	
 	private CollectionsUtil collectionsUtil;
 	private FinancialsUtil financialsUtil;
-	private CommonsManager commonsManager;
+	private CommonsServiceImpl commonsServiceImpl;
 	private BoundaryDAO boundaryDAO;
 	private String deptId;
-	private Integer boundaryId;
+	private Long boundaryId;
 	
 	private Department dept;
 	private Boundary boundary;
@@ -348,7 +386,7 @@ public class ChallanAction extends BaseFormAction {
 				CollectionConstants.MODULE_NAME_RECEIPTHEADER, 
 				CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED));
 		receiptHeader.setCreatedBy(collectionsUtil.getLoggedInUser(getSession()));
-		receiptHeader.setCreatedDate(new Date());
+		receiptHeader.setCreatedDate(new DateTime());
 		
 		if(setInstrument){
 			receiptInstrList=populateInstrumentDetails();
@@ -374,9 +412,9 @@ public class ChallanAction extends BaseFormAction {
 		if(cashOrCardInstrumenttotal!=null && cashOrCardInstrumenttotal.compareTo(BigDecimal.ZERO)!=0){
 			receiptHeader.setTotalAmount(cashOrCardInstrumenttotal);
 		}
-		receiptPayeeDetailsService.setReceiptNumber(receiptHeader);
+		//receiptPayeeDetailsService.setReceiptNumber(receiptHeader);
 		
-		receiptPayeeDetailsService.persist(receiptHeader.getReceiptPayeeDetails());
+		//receiptPayeeDetailsService.persist(receiptHeader.getReceiptPayeeDetails());
 		
 		//Start work flow for all newly created receipts This might internally
 		//create vouchers also based on configuration
@@ -400,8 +438,8 @@ public class ChallanAction extends BaseFormAction {
 		}
 		
 		if (voucherHeaderList != null && receiptInstrList != null) {
-			receiptPayeeDetailsService.updateInstrument(voucherHeaderList,
-					receiptInstrList);
+			/*receiptPayeeDetailsService.updateInstrument(voucherHeaderList,
+					receiptInstrList);*/
 		}
 		
 		
@@ -505,7 +543,7 @@ public class ChallanAction extends BaseFormAction {
 			receiptHeaderService.persist(receiptHeader);
 			
 			receiptHeader=collectionCommon.createPendingReceiptFromCancelledChallanReceipt(receiptHeader);
-			receiptPayeeDetailsService.persist(receiptHeader.getReceiptPayeeDetails());
+			//receiptPayeeDetailsService.persist(receiptHeader.getReceiptPayeeDetails());
 			
 			LOGGER.info(" Created a receipt in PENDING status in lieu of the cancelled receipt ");
 			
@@ -542,7 +580,7 @@ public class ChallanAction extends BaseFormAction {
 				ReceiptHeader newReceipt=collectionCommon.createPendingReceiptFromCancelledChallanReceipt(
 						receiptHeader);
 				
-				receiptPayeeDetailsService.persist(newReceipt.getReceiptPayeeDetails());
+				//receiptPayeeDetailsService.persist(newReceipt.getReceiptPayeeDetails());
 				
 				LOGGER.info(" Created a receipt in PENDING status in lieu of the cancelled receipt ");
 			}
@@ -570,10 +608,10 @@ public class ChallanAction extends BaseFormAction {
 		List<InstrumentHeader> instrumentHeaderList=new ArrayList<InstrumentHeader>();
 		
 		if(CollectionConstants.INSTRUMENTTYPE_CASH.equals(instrumentTypeCashOrCard)){
-			instrHeaderCash.setInstrumentType(
+			/*instrHeaderCash.setInstrumentType(
 					financialsUtil.getInstrumentTypeByType(
 							CollectionConstants.INSTRUMENTTYPE_CASH));
-			
+			*/
 			instrHeaderCash.setIsPayCheque(CollectionConstants.ZERO_INT);
 			
 			//the cash amount is set into the object through binding
@@ -584,9 +622,9 @@ public class ChallanAction extends BaseFormAction {
 			instrumentHeaderList.add(instrHeaderCash);
 		}
 		if(CollectionConstants.INSTRUMENTTYPE_CARD.equals(instrumentTypeCashOrCard)){
-			instrHeaderCard.setInstrumentType(financialsUtil.getInstrumentTypeByType(
+			/*instrHeaderCard.setInstrumentType(financialsUtil.getInstrumentTypeByType(
 							CollectionConstants.INSTRUMENTTYPE_CARD));
-			
+			*/
 			if(instrHeaderCard.getTransactionDate()==null){
 				instrHeaderCard.setTransactionDate(new Date());
 			}
@@ -606,7 +644,7 @@ public class ChallanAction extends BaseFormAction {
 			instrumentHeaderList = populateInstrumentHeaderForChequeDD(instrumentHeaderList, instrumentProxyList);
 		}
 		}
-		instrumentHeaderList=receiptPayeeDetailsService.createInstrument(instrumentHeaderList);
+		//instrumentHeaderList=receiptPayeeDetailsService.createInstrument(instrumentHeaderList);
 		
 		return instrumentHeaderList;
 	  }
@@ -627,12 +665,12 @@ public class ChallanAction extends BaseFormAction {
 		
 		for (InstrumentHeader instrumentHeader : instrumentProxyList) {
 			if (instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)) {
-				instrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_CHEQUE));
+				//instrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_CHEQUE));
 			} else if (instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_DD)) {
-				instrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_DD));
+				//instrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_DD));
 			}
 		        if (instrumentHeader.getBankId() != null) {
-				instrumentHeader.setBankId(commonsManager.getBankById(Integer.valueOf(instrumentHeader.getBankId().getId())));
+				instrumentHeader.setBankId(commonsServiceImpl.getBankById(Integer.valueOf(instrumentHeader.getBankId().getId())));
 			}
 		        chequeInstrumenttotal = chequeInstrumenttotal.add(instrumentHeader.getInstrumentAmount());
 			instrumentHeader.setIsPayCheque(CollectionConstants.ZERO_INT);
@@ -678,9 +716,9 @@ public class ChallanAction extends BaseFormAction {
 		
 		
 		receiptHeader.getReceiptMisc().setFund(
-				commonsManager.fundById(receiptHeader.getReceiptMisc().getFund().getId()));
+				commonsServiceImpl.fundById(receiptHeader.getReceiptMisc().getFund().getId()));
 		
-		DepartmentImpl dept = (DepartmentImpl) getPersistenceService().findByNamedQuery(
+		Department dept = (Department) getPersistenceService().findByNamedQuery(
 				CollectionConstants.QUERY_DEPARTMENT_BY_ID, 
 				Integer.valueOf(this.deptId));
 		receiptHeader.getReceiptMisc().setDepartment(dept);
@@ -700,11 +738,11 @@ public class ChallanAction extends BaseFormAction {
 		BigDecimal totalAmt = BigDecimal.ZERO;
 		
 		for (ReceiptDetailInfo rDetails : billDetailslist) {
-			CChartOfAccounts account = commonsManager.getCChartOfAccountsByGlCode(
+			CChartOfAccounts account = commonsServiceImpl.getCChartOfAccountsByGlCode(
 					rDetails.getGlcodeDetail());
 			CFunction function=null;
 			if(rDetails.getFunctionIdDetail()!=null){
-				function =  commonsManager.getFunctionById(
+				function =  commonsServiceImpl.getFunctionById(
 					rDetails.getFunctionIdDetail());
 			}
 			ReceiptDetail receiptDetail = new ReceiptDetail(
@@ -717,7 +755,7 @@ public class ChallanAction extends BaseFormAction {
 					receiptDetail.getCramount()).subtract(
 							receiptDetail.getDramount());
 
-			CFinancialYear financialYear=commonsManager.getFinancialYearById(rDetails.getFinancialYearId());
+			CFinancialYear financialYear=commonsServiceImpl.getFinancialYearById(rDetails.getFinancialYearId());
 			receiptDetail.setFinancialYear(financialYear);
 
 			if(rDetails.getCreditAmountDetail() == null) {
@@ -757,11 +795,11 @@ public class ChallanAction extends BaseFormAction {
 					receiptHeader.getChallan().getService().getId()));
 		}
 
-		ReceiptPayeeDetails receiptPayee = receiptHeader.getReceiptPayeeDetails();
+		/*ReceiptPayeeDetails receiptPayee = receiptHeader.getReceiptPayeeDetails();
 		receiptPayee.addReceiptHeader(receiptHeader);
 		
 		receiptPayee=receiptPayeeDetailsService.persistChallan(receiptPayee);
-		receiptHeader=receiptPayee.getReceiptHeaders().iterator().next();
+		receiptHeader=receiptPayee.getReceiptHeaders().iterator().next();*/
 		receiptId=receiptHeader.getId();
 		
 		LOGGER.info("Persisted Challan and Created Receipt In Pending State For the Challan");
@@ -1159,10 +1197,6 @@ public class ChallanAction extends BaseFormAction {
 		this.boundaryDAO = boundaryDAO;
 	}
 	
-	public void setCommonsManager(CommonsManager commonsManager) {
-		this.commonsManager = commonsManager;
-	}
-	
 	public CFunction getFunction() {
 		return function;
 	}
@@ -1191,12 +1225,12 @@ public class ChallanAction extends BaseFormAction {
 		this.boundary = boundary;
 	}
 	
-	public Integer getBoundaryId() {
+	public Long getBoundaryId() {
 		return boundaryId;
 	}
 
 
-	public void setBoundaryId(Integer boundaryId) {
+	public void setBoundaryId(Long boundaryId) {
 		this.boundaryId = boundaryId;
 	}
 	

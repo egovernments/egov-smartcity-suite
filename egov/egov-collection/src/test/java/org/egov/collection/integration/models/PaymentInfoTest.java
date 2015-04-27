@@ -1,16 +1,5 @@
 package org.egov.collection.integration.models;
 
-import static org.junit.Assert.assertEquals;
-
-import java.math.BigDecimal;
-import java.util.Date;
-
-import org.egov.commons.Bankaccount;
-import org.egov.erpcollection.integration.models.PaymentInfo.TYPE;
-import org.egov.erpcollection.models.CollectionObjectFactory;
-import org.egov.models.AbstractPersistenceServiceTest;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * The bill receipt information class. Provides details of a bill receipt.

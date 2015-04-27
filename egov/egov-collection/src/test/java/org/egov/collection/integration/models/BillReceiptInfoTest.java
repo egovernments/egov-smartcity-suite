@@ -1,27 +1,5 @@
 package org.egov.collection.integration.models;
 
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Iterator;
-
-import org.easymock.EasyMock;
-import org.egov.EGOVException;
-import org.egov.commons.Accountdetailtype;
-import org.egov.commons.EgwStatus;
-import org.egov.egf.commons.EgovCommon;
-import org.egov.erpcollection.models.CollectionObjectFactory;
-import org.egov.erpcollection.models.ReceiptDetail;
-import org.egov.erpcollection.models.ReceiptHeader;
-import org.egov.erpcollection.models.ReceiptPayeeDetails;
-import org.egov.erpcollection.util.FinancialsUtil;
-import org.egov.erpcollection.web.constants.CollectionConstants;
-import org.egov.model.instrument.InstrumentHeader;
-import org.egov.models.AbstractPersistenceServiceTest;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * The bill receipt information class. Provides details of a bill receipt.

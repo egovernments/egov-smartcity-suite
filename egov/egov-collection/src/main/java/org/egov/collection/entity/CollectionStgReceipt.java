@@ -45,6 +45,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.egov.infstr.models.BaseModel;
+import org.joda.time.DateTime;
 
 /**
  * CollectionStgReceipt entity. @author MyEclipse Persistence Tools
@@ -57,7 +58,7 @@ public class CollectionStgReceipt extends BaseModel {
 	private String module;
 	private Integer wardNo;
 	private String rcptNo;
-	private Date rcptDate;
+	private DateTime rcptDate;
 	private BigDecimal rcptAmount;
 	private Character collType;
 	private Character isCollSysUpdated;
@@ -106,11 +107,11 @@ public class CollectionStgReceipt extends BaseModel {
 		this.rcptNo = rcptNo;
 	}
 
-	public Date getRcptDate() {
+	public DateTime getRcptDate() {
 		return this.rcptDate;
 	}
 
-	public void setRcptDate(Date rcptDate) {
+	public void setRcptDate(DateTime rcptDate) {
 		this.rcptDate = rcptDate;
 	}
 

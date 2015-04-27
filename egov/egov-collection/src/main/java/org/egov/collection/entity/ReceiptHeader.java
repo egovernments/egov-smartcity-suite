@@ -82,7 +82,7 @@ public class ReceiptHeader extends StateAware {
 	private String receiptnumber;
 	private DateTime receiptdate;
 	private String manualreceiptnumber;
-	private Date manualreceiptdate;
+	private DateTime manualreceiptdate;
 	private Boolean isModifiable;
 
 	private ServiceDetails service;
@@ -107,7 +107,7 @@ public class ReceiptHeader extends StateAware {
 	private BigDecimal totalAmount;
 	private BigDecimal minimumAmount;
 	private BigDecimal totalAmountToBeCollected;
-	private Date voucherDate;
+	private DateTime voucherDate;
 	private String voucherNum;
 	private OnlinePayment onlinePayment;
 	private Challan challan;
@@ -202,11 +202,11 @@ public class ReceiptHeader extends StateAware {
 		this.manualreceiptnumber = manualreceiptnumber;
 	}
 
-	public Date getManualreceiptdate() {
+	public DateTime getManualreceiptdate() {
 		return this.manualreceiptdate;
 	}
 
-	public void setManualreceiptdate(Date manualreceiptdate) {
+	public void setManualreceiptdate(DateTime manualreceiptdate) {
 		this.manualreceiptdate = manualreceiptdate;
 	}
 
@@ -570,7 +570,7 @@ public class ReceiptHeader extends StateAware {
 	/**
 	 * @return the voucherDate
 	 */
-	public Date getVoucherDate() {
+	public DateTime getVoucherDate() {
 		return voucherDate;
 	}
 
@@ -578,7 +578,7 @@ public class ReceiptHeader extends StateAware {
 	 * @param voucherDate
 	 *            the voucherDate to set
 	 */
-	public void setVoucherDate(Date voucherDate) {
+	public void setVoucherDate(DateTime voucherDate) {
 		this.voucherDate = voucherDate;
 	}
 

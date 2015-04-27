@@ -1,122 +1,48 @@
 /**
  * 
  */
-package org.egov.erpcollection.integration.services;
+package org.egov.collection.integration.services;
 
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.easymock.EasyMock;
-import org.egov.EGOVRuntimeException;
-import org.egov.commons.Bank;
-import org.egov.commons.Bankaccount;
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFunction;
-import org.egov.commons.CVoucherHeader;
-import org.egov.commons.EgwStatus;
-import org.egov.commons.Fund;
-import org.egov.commons.Fundsource;
-import org.egov.commons.service.CommonsManager;
-import org.egov.egf.commons.EgovCommon;
-import org.egov.erpcollection.integration.models.BillAccountDetails;
-import org.egov.erpcollection.integration.models.BillDetails;
-import org.egov.erpcollection.integration.models.BillInfo;
-import org.egov.erpcollection.integration.models.BillInfoImpl;
-import org.egov.erpcollection.integration.models.BillPayeeDetails;
-import org.egov.erpcollection.integration.models.BillReceiptInfo;
-import org.egov.erpcollection.integration.models.BillReceiptInfoImpl;
-import org.egov.erpcollection.integration.models.PaymentInfo;
-import org.egov.erpcollection.integration.models.PaymentInfo.TYPE;
-import org.egov.erpcollection.integration.models.PaymentInfoBank;
-import org.egov.erpcollection.integration.models.PaymentInfoCard;
-import org.egov.erpcollection.integration.models.PaymentInfoCash;
-import org.egov.erpcollection.integration.models.PaymentInfoChequeDD;
-import org.egov.erpcollection.integration.models.ReceiptAccountInfo;
-import org.egov.erpcollection.integration.models.ReceiptInstrumentInfo;
-import org.egov.erpcollection.models.CollectionObjectFactory;
-import org.egov.erpcollection.models.ReceiptHeader;
-import org.egov.erpcollection.models.ReceiptPayeeDetails;
-import org.egov.erpcollection.models.ReceiptVoucher;
-import org.egov.erpcollection.services.ReceiptHeaderService;
-import org.egov.erpcollection.services.ReceiptService;
-import org.egov.erpcollection.util.CollectionCommon;
-import org.egov.erpcollection.util.CollectionsNumberGenerator;
-import org.egov.erpcollection.util.CollectionsUtil;
-import org.egov.erpcollection.util.FinancialsUtil;
-import org.egov.erpcollection.web.constants.CollectionConstants;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.infstr.models.ServiceDetails;
-import org.egov.infstr.services.ScriptService;
-import org.egov.infstr.utils.SequenceNumberGenerator;
-import org.egov.lib.admbndry.BoundaryDAO;
-import org.egov.lib.admbndry.BoundaryImpl;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
-import org.egov.lib.rjbac.user.User;
-import org.egov.lib.rjbac.user.ejb.api.UserManager;
-import org.egov.model.instrument.InstrumentHeader;
-import org.egov.model.instrument.InstrumentType;
-import org.egov.model.instrument.InstrumentVoucher;
-import org.egov.models.AbstractPersistenceServiceTest;
-import org.egov.pims.commons.service.EisCommonsManager;
-import org.egov.services.instrument.InstrumentService;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * JUnit Test class for testing the collections integration service
  * implementation.
  */
-public class CollectionIntegrationServiceImplTest extends
+public class CollectionIntegrationServiceImplTest { /*extends
 		AbstractPersistenceServiceTest<ReceiptHeader, Long> {
-	/**
+	*//**
 	 * The collection integration service
-	 */
+	 *//*
 	private CollectionIntegrationServiceImpl collectionIntegrationService;
 
-	/**
+	*//**
 	 * The collection object factory
-	 */
+	 *//*
 	private CollectionObjectFactory objectFactory;
 
-	/**
+	*//**
 	 * The receipt headers created for testing
-	 */
+	 *//*
 	private ArrayList<ReceiptHeader> receiptHeaders = new ArrayList<ReceiptHeader>();
 
-	/**
+	*//**
 	 * The function code used
-	 */
+	 *//*
 	private static final String functionName = "COLLECTION-INTEGRATION-FUNC";
 
-	/**
+	*//**
 	 * The chart of accounts
-	 */
+	 *//*
 	private static final String glCode1 = "99", glCode2 = "98", glCode3 = "97";
 
-	/**
+	*//**
 	 * Instrument amount
-	 */
+	 *//*
 	private final Double instrumentAmount = Double.valueOf("1000");
 
-	/**
+	*//**
 	 * Instrument date
-	 */
+	 *//*
 	private final Date instrumentDate = new Date();
 	
 	private CommonsManager commonsManager;
@@ -135,9 +61,9 @@ public class CollectionIntegrationServiceImplTest extends
 	private UserManager userManager;
 	private User user;
 
-	/**
+	*//**
 	 * Test Application context
-	 */
+	 *//*
 	private static ClassPathXmlApplicationContext context;
 
 	@Before
@@ -283,14 +209,14 @@ public class CollectionIntegrationServiceImplTest extends
 		collectionIntegrationService.setReceiptHeaderService(receiptHeaderService);
 	}
 
-	/**
+	*//**
 	 * Compares given receipt info with given receipt header
 	 * 
 	 * @param receiptInfo
 	 *            Receipt info to be compared
 	 * @param receiptHeader
 	 *            Receipt header with which the receipt info is to be compared
-	 */
+	 *//*
 	private void compareReceiptInfoWithReceiptHeader(
 			BillReceiptInfo receiptInfo, ReceiptHeader receiptHeader) {
 		assertNotNull(receiptInfo);
@@ -828,7 +754,7 @@ public class CollectionIntegrationServiceImplTest extends
 		paytInfoList.add(paytInfoChequeDD2);
 		
 		BillReceiptInfoImpl billReceiptInfo = (BillReceiptInfoImpl)collectionIntegrationService.createReceipt(billInfo, paytInfoList);
-		/*ReceiptInstrumentInfo billReceiptInstrInfo1 = billReceiptInfo.getInstrumentDetails().iterator().next();
+		ReceiptInstrumentInfo billReceiptInstrInfo1 = billReceiptInfo.getInstrumentDetails().iterator().next();
 		ReceiptInstrumentInfo billReceiptInstrInfo2 = billReceiptInfo.getInstrumentDetails().iterator().next();
 		
 		ReceiptInstrumentInfo actualBillReceiptInstrInfo1=new ReceiptInstrumentInfoImpl(chqInstrumentHeader);
@@ -843,7 +769,7 @@ public class CollectionIntegrationServiceImplTest extends
 		assertEquals(paytInfoChequeDD1.getPaidBy(), billReceiptInfo.getPaidBy());
 		
 		assertEquals(paytInfoChequeDD1.getInstrumentAmount(), billReceiptInstrInfo2.getInstrumentAmount());
-		assertEquals(paytInfoChequeDD1.getInstrumentType().toString(), billReceiptInstrInfo2.getInstrumentType());*/
+		assertEquals(paytInfoChequeDD1.getInstrumentType().toString(), billReceiptInstrInfo2.getInstrumentType());
 		//assertEquals(paytInfoChequeDD2.getPaidBy(), billReceiptInfo.getPaidBy());
 	}
 	
@@ -919,5 +845,5 @@ public class CollectionIntegrationServiceImplTest extends
 		assertEquals(billInfo.getPaidBy(), billReceiptInfo.getPaidBy());
 		
 		assertEquals(paytInfoBank.getBankId(),expectedAccount.getBankbranch().getBank().getId());
-	}
+	}*/
 }

@@ -1,4 +1,43 @@
-package org.egov.erpcollection.web.actions.receipts;
+/**
+ * eGov suite of products aim to improve the internal efficiency,transparency, 
+   accountability and the service delivery of the government  organizations.
+
+    Copyright (C) <2015>  eGovernments Foundation
+
+    The updated version of eGov suite of products as by eGovernments Foundation 
+    is available at http://www.egovernments.org
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    http://www.gnu.org/licenses/gpl.html .
+
+    In addition to the terms of the GPL license to be adhered to in using this
+    program, the following additional terms are to be complied with:
+
+	1) All versions of this program, verbatim or modified must carry this 
+	   Legal Notice.
+
+	2) Any misrepresentation of the origin of the material is prohibited. It 
+	   is required that all modified versions of this material be marked in 
+	   reasonable ways as different from the original version.
+
+	3) This license does not grant any rights to any user of the program 
+	   with regards to rights under trademark law for use of the trade names 
+	   or trademarks of eGovernments Foundation.
+
+  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+package org.egov.collection.web.actions.receipts;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -8,29 +47,28 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.CollectionStgAccAmount;
+import org.egov.collection.entity.CollectionStgInstrument;
+import org.egov.collection.entity.CollectionStgReceipt;
+import org.egov.collection.entity.ReceiptDetail;
+import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.entity.ReceiptMisc;
+import org.egov.collection.service.ReceiptHeaderService;
+import org.egov.collection.utils.CollectionCommon;
+import org.egov.collection.utils.CollectionsUtil;
+import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.Bank;
 import org.egov.commons.Fund;
-import org.egov.commons.service.CommonsManager;
-import org.egov.erpcollection.models.CollectionStgAccAmount;
-import org.egov.erpcollection.models.CollectionStgInstrument;
-import org.egov.erpcollection.models.CollectionStgReceipt;
-import org.egov.erpcollection.models.ReceiptDetail;
-import org.egov.erpcollection.models.ReceiptHeader;
-import org.egov.erpcollection.models.ReceiptMisc;
-import org.egov.erpcollection.models.ReceiptPayeeDetails;
-import org.egov.erpcollection.services.ReceiptHeaderService;
-import org.egov.erpcollection.services.ReceiptService;
-import org.egov.erpcollection.util.CollectionCommon;
-import org.egov.erpcollection.util.CollectionsUtil;
-import org.egov.erpcollection.util.FinancialsUtil;
-import org.egov.erpcollection.web.constants.CollectionConstants;
+import org.egov.commons.service.CommonsServiceImpl;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.admbndry.BoundaryImpl;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
 import org.egov.model.instrument.InstrumentHeader;
+import org.egov.services.receipt.ReceiptService;
 import org.egov.web.actions.BaseFormAction;
 
 @ParentPackage("egov")  
@@ -43,7 +81,7 @@ public class HistoricDataUploadAction extends BaseFormAction{
 	 * A <code>List</code> of <code>ReceiptPayeeDetails</code> representing the
 	 * model for the action.
 	 */
-	private List<ReceiptPayeeDetails> modelPayeeList = new ArrayList<ReceiptPayeeDetails>();
+	//private List<ReceiptPayeeDetails> modelPayeeList = new ArrayList<ReceiptPayeeDetails>();
 	
 	 
     public void setReceiptPayeeDetailsService(
@@ -57,7 +95,7 @@ public class HistoricDataUploadAction extends BaseFormAction{
     private FinancialsUtil financialsUtil;
     private CollectionsUtil collectionsUtil;
     
-    private CommonsManager commonsManager;
+    private CommonsServiceImpl commonsServiceImpl;
     
     private ReceiptHeaderService receiptHeaderService;
     private ReceiptService receiptPayeeDetailsService;
@@ -75,7 +113,7 @@ public class HistoricDataUploadAction extends BaseFormAction{
 		
 		receiptAction.setCollectionCommon(collectionCommon);
 		receiptAction.setCollectionsUtil(collectionsUtil);
-		receiptAction.setCommonsManager(commonsManager);
+		//receiptAction.setCommonsManager(commonsServiceImpl);
 		receiptAction.setFinancialsUtil(financialsUtil);
 		
 		receiptAction.setReceiptHeaderService(receiptHeaderService);
@@ -84,26 +122,26 @@ public class HistoricDataUploadAction extends BaseFormAction{
 	}
 	
 	private void initialiseObjectsInAction(CollectionStgReceipt collectionStgReceiptObj){
-		modelPayeeList.clear();
+		//modelPayeeList.clear();
 		receiptAction.setPayeename(collectionStgReceiptObj.getPaidBy());
 		receiptAction.setPaidBy(collectionStgReceiptObj.getPaidBy());
 		receiptAction.setManualReceiptDate(collectionStgReceiptObj.getRcptDate());
 		receiptAction.setVoucherDate(collectionStgReceiptObj.getRcptDate());
 		
-		modelPayeeList.add(createReceiptPayee(collectionStgReceiptObj));
+		//modelPayeeList.add(createReceiptPayee(collectionStgReceiptObj));
 		
 		receiptAction.setReceiptDetailList(receiptDetailList);
 		receiptAction.setInstrumentTypeCashOrCard(instrumentTypeCashOrCard);
 	}
 	
-	private ReceiptPayeeDetails createReceiptPayee(CollectionStgReceipt collectionStgReceiptObj) {
+	/*private ReceiptPayeeDetails createReceiptPayee(CollectionStgReceipt collectionStgReceiptObj) {
 		ReceiptPayeeDetails receiptPayee = new ReceiptPayeeDetails();
 		receiptPayee.setPayeename(collectionStgReceiptObj.getPaidBy());
 		receiptPayee.addReceiptHeader(createReceiptHeader(collectionStgReceiptObj,receiptPayee));
 		return receiptPayee;
-	}
+	}*/
     
-	private ReceiptHeader createReceiptHeader(CollectionStgReceipt collectionStgReceiptObj,ReceiptPayeeDetails payeeDetails)
+	private ReceiptHeader createReceiptHeader(CollectionStgReceipt collectionStgReceiptObj)
 	{
 		ReceiptHeader receiptHeader = new ReceiptHeader();
 		receiptHeader.setCollectiontype(collectionStgReceiptObj.getCollType());
@@ -119,7 +157,7 @@ public class HistoricDataUploadAction extends BaseFormAction{
 		receiptHeader.setService((ServiceDetails)persistenceService.findByNamedQuery(
 				CollectionConstants.QUERY_SERVICE_BY_CODE,
 				collectionStgReceiptObj.getModule()));
-		receiptHeader.setReceiptPayeeDetails(payeeDetails);
+		//receiptHeader.setReceiptPayeeDetails(payeeDetails);
 		if(receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_PROPERTYTAX))
 		{
 			receiptHeader.setReferenceDesc(CollectionConstants.PROPERTYTAX_REFERENCEDESCRIPTION+receiptHeader.getConsumerCode());
@@ -181,9 +219,9 @@ public class HistoricDataUploadAction extends BaseFormAction{
 							CollectionConstants.INSTRUMENTTYPE_DD)) {
 				
 			    if (collectionStgInstrument.getCollMode().equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)) {
-    				instrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_CHEQUE));
+    				//instrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_CHEQUE));
     				} else if (collectionStgInstrument.getCollMode().equals(CollectionConstants.INSTRUMENTTYPE_DD)) {
-    				instrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_DD));
+    				//instrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_DD));
     				}
             			instrumentHeader.setInstrumentNumber(collectionStgInstrument.getInstrNo());
             			instrumentHeader.setInstrumentDate(collectionStgInstrument.getInstrDate());
@@ -221,12 +259,12 @@ public class HistoricDataUploadAction extends BaseFormAction{
 				CollectionConstants.SERVICECODE_PROPERTYTAX)) {
 			receiptMisc.setFund((Fund) persistenceService.find(
 					"from Fund  where name=? ", "01-Municipal Fund"));
-			receiptMisc.setDepartment((DepartmentImpl) persistenceService.find(
-					"from DepartmentImpl d where d.deptName=? ", "R-Revenue"));
+			receiptMisc.setDepartment((Department) persistenceService.find(
+					"from Department d where d.deptName=? ", "R-Revenue"));
 			if(bigInt!=null)
 			{	
-				receiptMisc.setBoundary((BoundaryImpl) persistenceService.find(
-						"from BoundaryImpl where boundaryNum=? ", bigInt));
+				receiptMisc.setBoundary((Boundary) persistenceService.find(
+						"from Boundary where boundaryNum=? ", bigInt));
 			}
 		}
 		
@@ -234,13 +272,13 @@ public class HistoricDataUploadAction extends BaseFormAction{
 					CollectionConstants.SERVICECODE_PROFESSIONALTAX)) {
 			receiptMisc.setFund((Fund) persistenceService.find(
 					"from Fund  where name=? ", "01-Municipal Fund"));
-			receiptMisc.setDepartment((DepartmentImpl) persistenceService.find(
-					"from DepartmentImpl d where d.deptName=? ", "R-Revenue"));
+			receiptMisc.setDepartment((Department) persistenceService.find(
+					"from Department d where d.deptName=? ", "R-Revenue"));
 						
 			if(bigInt!=null)
 			{	
-				receiptMisc.setBoundary((BoundaryImpl) persistenceService.find(
-					"from BoundaryImpl where boundaryNum=? ",bigInt));
+				receiptMisc.setBoundary((Boundary) persistenceService.find(
+					"from Boundary where boundaryNum=? ",bigInt));
 			}	
 		}
 		return receiptMisc;
@@ -259,7 +297,7 @@ public class HistoricDataUploadAction extends BaseFormAction{
 			receiptDetailObj.setDescription(egCollectionStgAccAmountsObj.getDescription());
 			receiptDetailObj.setDramount(BigDecimal.ZERO);
 			
-			receiptDetailObj.setAccounthead(commonsManager.getCChartOfAccountsByGlCode(
+			receiptDetailObj.setAccounthead(commonsServiceImpl.getCChartOfAccountsByGlCode(
 					egCollectionStgAccAmountsObj.getGlCode()));
 			
 			
@@ -311,8 +349,8 @@ public class HistoricDataUploadAction extends BaseFormAction{
 		for(CollectionStgReceipt newEgCollectionStgReceiptObj:collectionStgReceiptList)
 		{
 			initialiseObjectsInAction(newEgCollectionStgReceiptObj);
-			receiptAction.setModelPayeeList(modelPayeeList);
-			HibernateUtil.beginTransaction();
+			//receiptAction.setModelPayeeList(modelPayeeList);
+			//HibernateUtil.beginTransaction();
 			try{
 				receiptAction.save();
 				LOGGER.info("Receipt Created for bill no: "
@@ -326,11 +364,11 @@ public class HistoricDataUploadAction extends BaseFormAction{
 				//Some error in Receipt creation. Stop and move to next record
 				String errMsg = "Error in save method of HistoricDataUploadAction!";
 				LOGGER.error(errMsg, ex);
-				HibernateUtil.rollbackTransaction();
+				//HibernateUtil.rollbackTransaction();
 			}
 		}
 		
-		HibernateUtil.commitTransaction();
+		//HibernateUtil.commitTransaction();
 		return SUCCESS;
 	}
 	
@@ -364,13 +402,6 @@ public class HistoricDataUploadAction extends BaseFormAction{
 	 */
 	public void setCollectionCommon(CollectionCommon collectionCommon) {
 		this.collectionCommon = collectionCommon;
-	}
-	/**
-	 * @param commonsManager
-	 *            the commonsManager to set
-	 */
-	public void setCommonsManager(CommonsManager commonsManager) {
-		this.commonsManager = commonsManager;
 	}
 	/**
 	 * @param receiptHeaderService

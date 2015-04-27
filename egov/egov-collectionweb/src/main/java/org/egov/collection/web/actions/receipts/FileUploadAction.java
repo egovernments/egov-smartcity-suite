@@ -1,4 +1,43 @@
-package org.egov.erpcollection.web.actions.receipts;  
+/**
+ * eGov suite of products aim to improve the internal efficiency,transparency, 
+   accountability and the service delivery of the government  organizations.
+
+    Copyright (C) <2015>  eGovernments Foundation
+
+    The updated version of eGov suite of products as by eGovernments Foundation 
+    is available at http://www.egovernments.org
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    http://www.gnu.org/licenses/gpl.html .
+
+    In addition to the terms of the GPL license to be adhered to in using this
+    program, the following additional terms are to be complied with:
+
+	1) All versions of this program, verbatim or modified must carry this 
+	   Legal Notice.
+
+	2) Any misrepresentation of the origin of the material is prohibited. It 
+	   is required that all modified versions of this material be marked in 
+	   reasonable ways as different from the original version.
+
+	3) This license does not grant any rights to any user of the program 
+	   with regards to rights under trademark law for use of the trade names 
+	   or trademarks of eGovernments Foundation.
+
+  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+package org.egov.collection.web.actions.receipts;  
   
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,8 +64,20 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.struts2.config.ParentPackage;
-import org.egov.EGOVException;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.AccountPayeeDetail;
+import org.egov.collection.entity.Challan;
+import org.egov.collection.entity.ReceiptDetail;
+import org.egov.collection.entity.ReceiptDetailInfo;
+import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.entity.ReceiptMisc;
+import org.egov.collection.entity.ReceiptVoucher;
+import org.egov.collection.service.ChallanService;
+import org.egov.collection.service.ReceiptHeaderService;
+import org.egov.collection.utils.CollectionCommon;
+import org.egov.collection.utils.CollectionsUtil;
+import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bank;
@@ -36,33 +87,21 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Fund;
-import org.egov.commons.service.CommonsManager;
+import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
-import org.egov.erpcollection.models.AccountPayeeDetail;
-import org.egov.erpcollection.models.Challan;
-import org.egov.erpcollection.models.ReceiptDetail;
-import org.egov.erpcollection.models.ReceiptDetailInfo;
-import org.egov.erpcollection.models.ReceiptHeader;
-import org.egov.erpcollection.models.ReceiptMisc;
-import org.egov.erpcollection.models.ReceiptPayeeDetails;
-import org.egov.erpcollection.models.ReceiptVoucher;
-import org.egov.erpcollection.services.ChallanService;
-import org.egov.erpcollection.services.ReceiptHeaderService;
-import org.egov.erpcollection.services.ReceiptService;
-import org.egov.erpcollection.util.CollectionCommon;
-import org.egov.erpcollection.util.CollectionsUtil;
-import org.egov.erpcollection.util.FinancialsUtil;
-import org.egov.erpcollection.web.constants.CollectionConstants;
+import org.egov.exceptions.EGOVException;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Position;
+import org.egov.services.receipt.ReceiptService;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.exception.ConstraintViolationException;
+import org.joda.time.DateTime;
   
   
 @ParentPackage("egov")  
@@ -92,7 +131,7 @@ public class FileUploadAction extends BaseFormAction{
     
     private FinancialsUtil financialsUtil;
     
-    private CommonsManager commonsManager;
+    private CommonsServiceImpl commonsServiceImpl;
     
     private ReceiptService receiptPayeeDetailsService;
     
@@ -163,8 +202,8 @@ public class FileUploadAction extends BaseFormAction{
 		this.receiptPayeeDetailsService = receiptPayeeDetailsService;
 	}
 
-	public void setCommonsManager(CommonsManager commonsManager) {
-		this.commonsManager = commonsManager;
+	public void setCommonsManager(CommonsServiceImpl commonsServiceImpl) {
+		this.commonsServiceImpl = commonsServiceImpl;
 	}
 
 	public void setCollectionsUtil(CollectionsUtil collectionsUtil) {
@@ -298,7 +337,7 @@ public class FileUploadAction extends BaseFormAction{
 					}
 				}
 				if(!testMode){
-					HibernateUtil.beginTransaction();
+				//	HibernateUtil.beginTransaction();
 				}
 				try{
 					// if any exception is present so far, do not create the challan.
@@ -321,7 +360,7 @@ public class FileUploadAction extends BaseFormAction{
 					errorRowMap.put(Integer.valueOf(input[21]), "Error in challan creation.");
 					}
 					if(!testMode){
-					HibernateUtil.rollbackTransaction();
+					//HibernateUtil.rollbackTransaction();
 					}
 					continue;
 				}
@@ -333,12 +372,12 @@ public class FileUploadAction extends BaseFormAction{
 					errorRowMap.put(Integer.valueOf(input[21]), "Error in Challan Receipt creation.");
 					LOGGER.debug(e.getMessage());
 					if(!testMode){
-					HibernateUtil.rollbackTransaction();
+					//HibernateUtil.rollbackTransaction();
 					}
 					continue;
 				}
 				if(!testMode){
-				HibernateUtil.commitTransaction();
+				//HibernateUtil.commitTransaction();
 				}
 				setSuccessNo(++successNo);
 				
@@ -495,8 +534,8 @@ public class FileUploadAction extends BaseFormAction{
 			valid=false;
 		}
 		else{
-			DepartmentImpl dept = (DepartmentImpl) persistenceService.find(
-					"from DepartmentImpl d where d.deptName=? ",inputArray[6]);
+			Department dept = (Department) persistenceService.find(
+					"from Department d where d.deptName=? ",inputArray[6]);
 			if(dept==null){
 				errorMsgs+=getErrorMsg(errorMsgs, "Incorrect value for Department", inputArray[6]);
 				LOGGER.debug("Incorrect value for Department[ " + inputArray[6] + "]");
@@ -777,7 +816,7 @@ public class FileUploadAction extends BaseFormAction{
 		BigDecimal totalAmt = BigDecimal.ZERO;
 		
 		for (ReceiptDetailInfo rDetails : billCreditDetailslist) {
-			CChartOfAccounts account = commonsManager.getCChartOfAccountsByGlCode(
+			CChartOfAccounts account = commonsServiceImpl.getCChartOfAccountsByGlCode(
 					rDetails.getGlcodeDetail());
 			CFunction function=(CFunction)persistenceService.find("from CFunction  where code=? ",functionName);
 			ReceiptDetail receiptDetail = new ReceiptDetail(
@@ -790,7 +829,7 @@ public class FileUploadAction extends BaseFormAction{
 					receiptDetail.getCramount()).subtract(
 							receiptDetail.getDramount());
 
-			CFinancialYear financialYear=commonsManager.getFinancialYearById(rDetails.getFinancialYearId());
+			CFinancialYear financialYear=commonsServiceImpl.getFinancialYearById(rDetails.getFinancialYearId());
 			receiptDetail.setFinancialYear(financialYear);
 
 			if(rDetails.getCreditAmountDetail() == null) {
@@ -830,14 +869,14 @@ public class FileUploadAction extends BaseFormAction{
 					receiptHeader.getChallan().getService().getId()));
 		}
         
-		ReceiptPayeeDetails receiptPayee = receiptHeader.getReceiptPayeeDetails();
+	/*	ReceiptPayeeDetails receiptPayee = receiptHeader.getReceiptPayeeDetails();
 		receiptPayee.addReceiptHeader(receiptHeader);
 		
-		receiptPayee=receiptPayeeDetailsService.persistChallan(receiptPayee);
+		receiptPayee=receiptPayeeDetailsService.persistChallan(receiptPayee);*/
 		receiptPayeeDetailsService.getSession().flush();
 		LOGGER.info("Persisted Challan and Created Receipt In Pending State For the Challan");
 		
-		return receiptPayee.getReceiptHeaders().iterator().next();
+		return receiptHeader;
 	}
 	
 	public ReceiptDetail setAccountPayeeDetails(List<ReceiptDetailInfo> subLedgerlist,ReceiptDetail receiptDetail){
@@ -912,10 +951,10 @@ public class FileUploadAction extends BaseFormAction{
 			receiptHeader.setTotalAmount(cashOrCardInstrumenttotal);
 		}
 		
-		receiptPayeeDetailsService.setReceiptNumber(receiptHeader);
+		/*receiptPayeeDetailsService.setReceiptNumber(receiptHeader);
 		
 		receiptPayeeDetailsService.persist(receiptHeader.getReceiptPayeeDetails());
-		
+		*/
 		//Start work flow for all newly created receipts This might internally
 		//create vouchers also based on configuration
 		List<ReceiptHeader> receiptHeaderList = new ArrayList<ReceiptHeader>();
@@ -946,8 +985,8 @@ public class FileUploadAction extends BaseFormAction{
 		}
 		
 		if (voucherHeaderList != null && receiptInstrList != null) {
-			receiptPayeeDetailsService.updateInstrument(voucherHeaderList,
-					receiptInstrList);
+			/*receiptPayeeDetailsService.updateInstrument(voucherHeaderList,
+					receiptInstrList);*/
 		}
 		
 	}
@@ -963,9 +1002,9 @@ public class FileUploadAction extends BaseFormAction{
 		if(CollectionConstants.INSTRUMENTTYPE_CASH.equals(input[15])){
 			InstrumentHeader instrHeaderCash = new InstrumentHeader();
 			
-			instrHeaderCash.setInstrumentType(
+			/*instrHeaderCash.setInstrumentType(
 					financialsUtil.getInstrumentTypeByType(
-							CollectionConstants.INSTRUMENTTYPE_CASH));
+							CollectionConstants.INSTRUMENTTYPE_CASH));*/
 			
 			instrHeaderCash.setIsPayCheque(CollectionConstants.ZERO_INT);
 			instrHeaderCash.setInstrumentAmount(new BigDecimal(input[16]));
@@ -991,7 +1030,7 @@ public class FileUploadAction extends BaseFormAction{
 			}
 		}
 		
-		instrumentHeaderList=receiptPayeeDetailsService.createInstrument(instrumentHeaderList);
+		//instrumentHeaderList=receiptPayeeDetailsService.createInstrument(instrumentHeaderList);
 		
 		return instrumentHeaderList;
 	}
@@ -1002,12 +1041,12 @@ public class FileUploadAction extends BaseFormAction{
 		instrumentHeader.setInstrumentAmount(new BigDecimal(input[16]));
 		
 		if (input[15].equalsIgnoreCase(CollectionConstants.INSTRUMENTTYPE_CHEQUE)){
-			instrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(
-					CollectionConstants.INSTRUMENTTYPE_CHEQUE));
+			/*instrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(
+					CollectionConstants.INSTRUMENTTYPE_CHEQUE));*/
 		}
 		else if (input[15].equalsIgnoreCase(CollectionConstants.INSTRUMENTTYPE_DD)) {
-			instrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(
-					CollectionConstants.INSTRUMENTTYPE_DD));
+			/*instrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(
+					CollectionConstants.INSTRUMENTTYPE_DD));*/
 		}
 		
 		instrumentHeader.setInstrumentNumber(input[17]);
@@ -1111,9 +1150,9 @@ public class FileUploadAction extends BaseFormAction{
 		
 		//To Change challan number from 1 to E/1
 		if(inputArray[6]!=null && !CollectionConstants.BLANK.equals(inputArray[6])){
-			DepartmentImpl dept = (DepartmentImpl) persistenceService.find("from DepartmentImpl d where d.deptName=? ",inputArray[6]);
+			Department dept = (Department) persistenceService.find("from Department d where d.deptName=? ",inputArray[6]);
 			if(dept!=null){
-				String departmentCode=dept.getDeptCode();
+				String departmentCode=dept.getCode();
 				Date date=new Date();
 				try {
 					if(inputArray[1]!=null && !inputArray[1].equals(CollectionConstants.BLANK))
@@ -1204,7 +1243,7 @@ public class FileUploadAction extends BaseFormAction{
 		ReceiptHeader receiptHeader = new ReceiptHeader();
 		receiptHeader.setReferenceDesc(input[4]);
 		receiptHeader.setReceiptMisc(createReceiptMisc(receiptHeader,input));
-		receiptHeader.setReceiptPayeeDetails(createReceiptPayee(input));
+		//receiptHeader.setReceiptPayeeDetails(createReceiptPayee(input));
 		receiptHeader.setManualreceiptnumber(input[13]);
 		Date date=null;
 		try {
@@ -1212,28 +1251,28 @@ public class FileUploadAction extends BaseFormAction{
 		} catch (ParseException e) {
 			LOGGER.debug("Exception in parsing date : " +  input[14] + " - " + e.getMessage());
 		}
-		receiptHeader.setManualreceiptdate(date);
-		receiptHeader.setVoucherDate(date);
+		receiptHeader.setManualreceiptdate(new DateTime(date));
+		receiptHeader.setVoucherDate(new DateTime(date));
 		return receiptHeader;
 	}
 	
 	public ReceiptMisc createReceiptMisc(ReceiptHeader receiptHeader,String[] inputArray) {
 		ReceiptMisc receiptMisc = new ReceiptMisc();
 		Fund fund = (Fund) persistenceService.find("from Fund  where name=? ",inputArray[5]);
-		DepartmentImpl dept = (DepartmentImpl) persistenceService.find(
-				"from DepartmentImpl d where d.deptName=? ",inputArray[6]);
+		Department dept = (Department) persistenceService.find(
+				"from Department d where d.deptName=? ",inputArray[6]);
 		receiptMisc.setDepartment(dept);
 		receiptMisc.setFund(fund);
 		receiptMisc.setReceiptHeader(receiptHeader);
 		return receiptMisc;
 	}
 	
-	public ReceiptPayeeDetails createReceiptPayee(String[] inputArray) {
+	/*public ReceiptPayeeDetails createReceiptPayee(String[] inputArray) {
 		ReceiptPayeeDetails receiptPayee = new ReceiptPayeeDetails();
 		receiptPayee.setPayeeAddress(inputArray[3]);
 		receiptPayee.setPayeename(inputArray[2]);
 		return receiptPayee;
-	}
+	}*/
 	
 	public Challan createChallan(ReceiptHeader header,String[] inputArray) {
 		Challan challan = new Challan();
@@ -1245,11 +1284,11 @@ public class FileUploadAction extends BaseFormAction{
 		} catch (ParseException e) {
 			LOGGER.debug("Exception in parsing challan date : " + inputArray[1] + " - " + e.getMessage());
 		}
-		challan.setChallanDate(date);
+		challan.setChallanDate( new DateTime(date));
 		challan.setChallanNumber(inputArray[0]);
 		challan.setReceiptHeader(header);
-		challan.setModifiedBy(collectionsUtil.getLoggedInUser(getSession()));
-		challan.setModifiedDate(new Date());
+		challan.setLastModifiedBy(collectionsUtil.getLoggedInUser(getSession()));
+		challan.setLastModifiedDate(new DateTime());
 		
 		return challan;
 	}
@@ -1352,8 +1391,8 @@ public class FileUploadAction extends BaseFormAction{
 						List<InstrumentHeader> receiptInstrList = new ArrayList<InstrumentHeader>();
 						receiptInstrList.addAll(receiptHeader.getReceiptInstrument());
 						if (voucherHeaderList != null && !receiptInstrList.isEmpty()) {
-							receiptPayeeDetailsService.updateInstrument(voucherHeaderList,
-									receiptInstrList);
+							/*receiptPayeeDetailsService.updateInstrument(voucherHeaderList,
+									receiptInstrList);*/
 						}
 						
 						

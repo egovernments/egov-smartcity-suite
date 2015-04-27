@@ -50,6 +50,7 @@ import org.egov.collection.integration.models.ReceiptInstrumentInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfoImpl;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.User;
+import org.joda.time.DateTime;
 
 /**
  * The challan information class. Provides details of a challan.
@@ -113,7 +114,7 @@ public class ChallanInfo {
 	/**
 	 * @return the challan date
 	 */
-	public Date getChallanDate() {
+	public DateTime getChallanDate() {
 		if(receiptHeader.getChallan()==null)
 		{	
 			return receipHeaderReferenceObj.getChallan().getChallanDate();

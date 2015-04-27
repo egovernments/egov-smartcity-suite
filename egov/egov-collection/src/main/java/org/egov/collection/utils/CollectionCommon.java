@@ -63,10 +63,13 @@ import org.egov.collection.integration.models.BillInfo;
 import org.egov.collection.integration.models.BillPayeeDetails;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
+import org.egov.collection.integration.models.PaymentInfoChequeDD;
 import org.egov.collection.integration.pgi.PaymentGatewayAdaptor;
 import org.egov.collection.integration.pgi.PaymentRequest;
 import org.egov.collection.integration.pgi.PaymentResponse;
+import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.collection.service.ReceiptHeaderService;
+import org.egov.commons.Bank;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
@@ -83,7 +86,9 @@ import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.infstr.utils.EgovUtils;
 import org.egov.lib.admbndry.BoundaryDAO;
+import org.egov.model.instrument.InstrumentHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class CollectionCommon {
@@ -852,7 +857,7 @@ public class CollectionCommon {
      * 
      * @return
      */
-   /* public InstrumentHeader validateAndConstructChequeDDInstrument(PaymentInfoChequeDD paytInfoChequeDD) {
+   public InstrumentHeader validateAndConstructChequeDDInstrument(PaymentInfoChequeDD paytInfoChequeDD) {
         String invalidChequeDDPaytMsg = "";
         if (paytInfoChequeDD.getInstrumentAmount() == null
                 || paytInfoChequeDD.getInstrumentAmount().compareTo(BigDecimal.ZERO) <= 0) {
@@ -888,8 +893,8 @@ public class CollectionCommon {
 
         instrHeaderChequeDD.setIsPayCheque(CollectionConstants.ZERO_INT);
         instrHeaderChequeDD.setInstrumentAmount(paytInfoChequeDD.getInstrumentAmount());
-        instrHeaderChequeDD.setInstrumentType(financialsUtil.getInstrumentTypeByType(paytInfoChequeDD
-                .getInstrumentType().toString()));
+       /* instrHeaderChequeDD.setInstrumentType(financialsUtil.getInstrumentTypeByType(paytInfoChequeDD
+                .getInstrumentType().toString()));*/
 
         instrHeaderChequeDD.setInstrumentNumber(String.valueOf(paytInfoChequeDD.getInstrumentNumber()));
         instrHeaderChequeDD.setBankBranchName(paytInfoChequeDD.getBranchName());
@@ -908,7 +913,7 @@ public class CollectionCommon {
                 + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
         billingService.apportionPaidAmount(receiptHeader.getReferencenumber(), actualAmountPaid, receiptDetails);
         return receiptDetails;
-    }*/
+    }
 
     /**
      * Validate and construct InstrumentHeader object for Instrument type ATM

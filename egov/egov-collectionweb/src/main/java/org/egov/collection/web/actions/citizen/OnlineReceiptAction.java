@@ -1,4 +1,43 @@
-package org.egov.erpcollection.web.actions.citizen;
+/**
+ * eGov suite of products aim to improve the internal efficiency,transparency, 
+   accountability and the service delivery of the government  organizations.
+
+    Copyright (C) <2015>  eGovernments Foundation
+
+    The updated version of eGov suite of products as by eGovernments Foundation 
+    is available at http://www.egovernments.org
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    http://www.gnu.org/licenses/gpl.html .
+
+    In addition to the terms of the GPL license to be adhered to in using this
+    program, the following additional terms are to be complied with:
+
+	1) All versions of this program, verbatim or modified must carry this 
+	   Legal Notice.
+
+	2) Any misrepresentation of the origin of the material is prohibited. It 
+	   is required that all modified versions of this material be marked in 
+	   reasonable ways as different from the original version.
+
+	3) This license does not grant any rights to any user of the program 
+	   with regards to rights under trademark law for use of the trade names 
+	   or trademarks of eGovernments Foundation.
+
+  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+package org.egov.collection.web.actions.citizen;
 
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
@@ -15,40 +54,36 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.config.ParentPackage;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.dispatcher.StreamResult;
 import org.apache.struts2.interceptor.ServletRequestAware;
-import org.egov.EGOVRuntimeException;
+import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.ReceiptDetail;
+import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.handler.BillCollectXmlHandler;
+import org.egov.collection.integration.models.BillInfoImpl;
+import org.egov.collection.integration.models.BillReceiptInfo;
+import org.egov.collection.integration.models.BillReceiptInfoImpl;
+import org.egov.collection.integration.pgi.PaymentRequest;
+import org.egov.collection.integration.pgi.PaymentResponse;
+import org.egov.collection.service.ReceiptHeaderService;
+import org.egov.collection.utils.CollectionCommon;
+import org.egov.collection.utils.CollectionsUtil;
+import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
-import org.egov.commons.service.CommonsManager;
-import org.egov.erpcollection.integration.models.BillInfoImpl;
-import org.egov.erpcollection.integration.models.BillReceiptInfo;
-import org.egov.erpcollection.integration.models.BillReceiptInfoImpl;
-import org.egov.erpcollection.integration.pgi.PaymentRequest;
-import org.egov.erpcollection.integration.pgi.PaymentResponse;
-import org.egov.erpcollection.models.OnlinePayment;
-import org.egov.erpcollection.models.ReceiptDetail;
-import org.egov.erpcollection.models.ReceiptHeader;
-import org.egov.erpcollection.models.ReceiptPayeeDetails;
-import org.egov.erpcollection.services.ReceiptHeaderService;
-import org.egov.erpcollection.services.ReceiptService;
-import org.egov.erpcollection.util.CollectionCommon;
-import org.egov.erpcollection.util.CollectionsUtil;
-import org.egov.erpcollection.util.FinancialsUtil;
-import org.egov.erpcollection.web.constants.CollectionConstants;
-import org.egov.erpcollection.web.handler.BillCollectXmlHandler;
+import org.egov.commons.service.CommonsServiceImpl;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.models.ServiceDetails;
-import org.egov.lib.rjbac.dept.DepartmentImpl;
-import org.egov.lib.rjbac.user.User;
 import org.egov.model.instrument.InstrumentHeader;
+import org.egov.services.receipt.ReceiptService;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
-
-import com.billdesk.pgidsk.PGIUtil;
 
 @ParentPackage("egov")
 public class OnlineReceiptAction extends BaseFormAction implements ServletRequestAware{
@@ -56,7 +91,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     private static final Logger LOGGER = Logger.getLogger(OnlineReceiptAction.class);
     private static final long serialVersionUID = 1L;
 
-    private List<ReceiptPayeeDetails> modelPayeeList = new ArrayList<ReceiptPayeeDetails>();
+    //private List<ReceiptPayeeDetails> modelPayeeList = new ArrayList<ReceiptPayeeDetails>();
     private CollectionsUtil collectionsUtil;
 
     private ReceiptHeaderService receiptHeaderService;
@@ -65,7 +100,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
     private CollectionCommon collectionCommon;
     private static final String REDIRECT = "redirect";
-    private CommonsManager commonsManager;
+    private CommonsServiceImpl commonsServiceImpl;
     private ReceiptService receiptPayeeDetailsService;
     private BigDecimal onlineInstrumenttotal = BigDecimal.ZERO;
     private List<ReceiptDetail> receiptDetailList = new ArrayList<ReceiptDetail>();
@@ -111,7 +146,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 		 * initialise receipt info,persist receipt, create bill desk payment
 		 * object and redirect to payment screen
 		 */
-		if (callbackForApportioning && !overrideAccountHeads){
+		if (callbackForApportioning && !overrideAccountHeads){/*
 			this.apportionBillAmount();
 			for (ReceiptPayeeDetails payee : modelPayeeList) {
 				for (ReceiptHeader receiptHeader : payee.getReceiptHeaders()) {
@@ -122,7 +157,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 					}
 				}
 			}	
-		}
+		*/}
 		populateAndPersistReceipts();
 		return REDIRECT;
     }
@@ -144,8 +179,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 						+ "10-05-2010 15:39:09|" + getTestAuthStatusCode() + "|SettlementType|" + getTestReceiptId()
 						+ "|AdditionalInfo2|AdditionalInfo3|AdditionalInfo4|"
 						+ "AdditionalInfo5|AdditionalInfo6|AdditionalInfo7|ErrorStatus|ErrorDescription";
-				String checksum = PGIUtil.doDigest(responseMsg, CollectionConstants.UNIQUE_CHECKSUM_KEY);
-				responseMsg += "|" + checksum;
+				/*String checksum = PGIUtil.doDigest(responseMsg, CollectionConstants.UNIQUE_CHECKSUM_KEY);
+				responseMsg += "|" + checksum;*/
 				serviceCode = "BDPGI";
 			}
 			ServiceDetails paymentService = (ServiceDetails) getPersistenceService().findByNamedQuery(
@@ -160,7 +195,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 					// payment gateway then make transaction in pending state.
 					if (CollectionConstants.PGI_AUTHORISATION_CODE_WAITINGFOR_PAY_GATEWAY_RESPONSE.equals(paymentResponse
 							.getAuthStatus())) {
-						EgwStatus paymentStatus = commonsManager.getStatusByModuleAndCode(
+						EgwStatus paymentStatus = commonsServiceImpl.getStatusByModuleAndCode(
 								CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
 								CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
 						onlinePaymentReceiptHeader.getOnlinePayment().setStatus(paymentStatus);
@@ -206,8 +241,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                     + "10-05-2010 15:39:09|" + getTestAuthStatusCode() + "|SettlementType|" + getTestReceiptId()
                     + "|AdditionalInfo2|AdditionalInfo3|AdditionalInfo4|"
                     + "AdditionalInfo5|AdditionalInfo6|AdditionalInfo7|ErrorStatus|ErrorDescription";
-            String checksum = PGIUtil.doDigest(responseMsg, CollectionConstants.UNIQUE_CHECKSUM_KEY);
-            responseMsg += "|" + checksum;
+            /*String checksum = PGIUtil.doDigest(responseMsg, CollectionConstants.UNIQUE_CHECKSUM_KEY);
+            responseMsg += "|" + checksum;*/
             serviceCode = "BDPGI";
         }
 
@@ -226,7 +261,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         
      // if status code is 0002, ie Bill desk waiting for response from payment gateway then make transaction in pending state.
      		if(CollectionConstants.PGI_AUTHORISATION_CODE_WAITINGFOR_PAY_GATEWAY_RESPONSE.equals(paymentResponse.getAuthStatus())){
-     			EgwStatus paymentStatus = commonsManager.getStatusByModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
+     			EgwStatus paymentStatus = commonsServiceImpl.getStatusByModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
      					CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
      			onlinePaymentReceiptHeader.getOnlinePayment().setStatus(paymentStatus);
      			onlinePaymentReceiptHeader.getOnlinePayment().setAuthorisationStatusCode(paymentResponse.getAuthStatus());
@@ -288,7 +323,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED);
         onlinePaymentReceiptHeader.setStatus(receiptStatus);
 
-        EgwStatus paymentStatus = commonsManager.getStatusByModuleAndCode(
+        EgwStatus paymentStatus = commonsServiceImpl.getStatusByModuleAndCode(
                 CollectionConstants.MODULE_NAME_ONLINEPAYMENT, CollectionConstants.ONLINEPAYMENT_STATUS_CODE_FAILURE);
         onlinePaymentReceiptHeader.getOnlinePayment().setStatus(paymentStatus);
 
@@ -357,10 +392,10 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         try {
             HashSet<BillReceiptInfo> billReceipt = new HashSet<BillReceiptInfo>();
             billReceipt.add(new BillReceiptInfoImpl(onlinePaymentReceiptHeader));
-            if (!receiptPayeeDetailsService.updateBillingSystem(onlinePaymentReceiptHeader.getService().getCode(),
+           /* if (!receiptPayeeDetailsService.updateBillingSystem(onlinePaymentReceiptHeader.getService().getCode(),
                     billReceipt)) {
                 updateToSystems = false;
-            }
+            }*/
         } catch (EGOVRuntimeException ex) {
             // Receipt creation is rolled back, and payment continues to be in
             // PENDING state.
@@ -394,8 +429,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
             BigDecimal transactionAmt) {
         InstrumentHeader onlineInstrumentHeader = new InstrumentHeader();
         List<InstrumentHeader> instrumentHeaderList = new ArrayList<InstrumentHeader>();
-        onlineInstrumentHeader.setInstrumentType(financialsUtil
-                .getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_ONLINE));
+       // onlineInstrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_ONLINE));
 
         onlineInstrumentHeader.setTransactionDate(transactionDate);
         onlineInstrumentHeader.setIsPayCheque(CollectionConstants.ZERO_INT);
@@ -404,7 +438,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
         instrumentHeaderList.add(onlineInstrumentHeader);
 
-        instrumentHeaderList = receiptPayeeDetailsService.createInstrument(instrumentHeaderList);
+       // instrumentHeaderList = receiptPayeeDetailsService.createInstrument(instrumentHeaderList);
 
         return instrumentHeaderList;
     }
@@ -428,7 +462,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 .setReceiptInstrument(new HashSet(
                         createOnlineInstrument(transactionDate, transactionId, transactionAmt)));
 
-        receiptPayeeDetailsService.setReceiptNumber(receipt);
+        //receiptPayeeDetailsService.setReceiptNumber(receipt);
 
         receipt.setIsReconciled(Boolean.FALSE);
 
@@ -540,7 +574,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         // payments.
         try {
             if (!billReceipts.isEmpty()) {
-                receiptPayeeDetailsService.updateBillingSystem(receipts[0].getService().getCode(), billReceipts);
+                //receiptPayeeDetailsService.updateBillingSystem(receipts[0].getService().getCode(), billReceipts);
                 
               //Update IS_RECONCILED to true in EGCL_COLLECTIONHEADER
 				for(ReceiptHeader receiptHeader:receipts){
@@ -602,21 +636,21 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 		
 		User user = collectionsUtil.getUserByUserName(CollectionConstants.CITIZEN_USER_NAME);
 		EGOVThreadLocals.setUserId(user.getId().toString());
-		session.setAttribute(CollectionConstants.SESSION_VAR_LOGIN_USER_NAME, user.getUserName());
+		session.setAttribute(CollectionConstants.SESSION_VAR_LOGIN_USER_NAME, user.getUsername());
 		
 		// populates model when request is from the billing system
         if (getCollectXML() != null && !getCollectXML().equals("")) {
         	String decodedCollectXml = java.net.URLDecoder.decode(getCollectXML());
             try {
                 collDetails = (BillInfoImpl) xmlHandler.toObject(decodedCollectXml);
-                modelPayeeList.clear();
+               // modelPayeeList.clear();
 
-                Fund fund = commonsManager.fundByCode(collDetails.getFundCode());
+                Fund fund = commonsServiceImpl.fundByCode(collDetails.getFundCode());
                 if (fund == null) {
                     addActionError(getText("billreceipt.improperbilldata.missingfund"));
                 }
 
-                DepartmentImpl dept = (DepartmentImpl) getPersistenceService().findByNamedQuery(
+                Department dept = (Department) getPersistenceService().findByNamedQuery(
                         CollectionConstants.QUERY_DEPARTMENT_BY_CODE, collDetails.getDepartmentCode());
                 if (dept == null) {
                     addActionError(getText("billreceipt.improperbilldata.missingdepartment"));
@@ -631,14 +665,14 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 setPartPaymentAllowed(collDetails.getPartPaymentAllowed());
                 setCallbackForApportioning(collDetails.getCallbackForApportioning());
 
-                modelPayeeList = collectionCommon.initialiseReceiptModelWithBillInfo(collDetails, fund, dept);
+                /*modelPayeeList = collectionCommon.initialiseReceiptModelWithBillInfo(collDetails, fund, dept);
 
                 for (ReceiptPayeeDetails payeeDetails : modelPayeeList) {
                     for (ReceiptHeader receiptHeader : payeeDetails.getReceiptHeaders()) {
                     	setTotalAmountToBeCollected(receiptHeader.getTotalAmountToBeCollected());
 						this.setReceiptDetailList(new ArrayList<ReceiptDetail>(receiptHeader.getReceiptDetails()));
                     }
-                }
+                }*/
             } catch (Exception e) {
                 LOGGER.error(getText("billreceipt.error.improperbilldata") + e.getMessage());
                 addActionError(getText("billreceipt.error.improperbilldata"));
@@ -652,7 +686,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         ServiceDetails paymentService = (ServiceDetails) getPersistenceService().findByNamedQuery(
                 CollectionConstants.QUERY_SERVICE_BY_ID, paymentServiceId.longValue());
 
-        for (ReceiptPayeeDetails payee : modelPayeeList) {
+       /* for (ReceiptPayeeDetails payee : modelPayeeList) {
             for (ReceiptHeader receiptHeader : payee.getReceiptHeaders()) {
                 Date date = new Date();
 
@@ -669,7 +703,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                     // created on successful online transaction
                     receiptHeader.setIsReconciled(Boolean.TRUE);
                     receiptHeader.setCollectiontype(CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION);
-                    receiptHeader.setStatus(commonsManager.getStatusByModuleAndCode(
+                    receiptHeader.setStatus(commonsServiceImpl.getStatusByModuleAndCode(
                             CollectionConstants.MODULE_NAME_RECEIPTHEADER,
                             CollectionConstants.RECEIPT_STATUS_CODE_PENDING));
 
@@ -703,7 +737,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                     // Add Online Payment Details
                     OnlinePayment onlinePayment = new OnlinePayment();
 
-                    onlinePayment.setStatus(commonsManager.getStatusByModuleAndCode(
+                    onlinePayment.setStatus(commonsServiceImpl.getStatusByModuleAndCode(
                             CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                             CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING));
                     onlinePayment.setReceiptHeader(receiptHeader);
@@ -713,25 +747,25 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 }
             }
         }// end of looping through receipt headers
-
+*/
         /**
          * Persist the receipt payee details which will internally persist all
          * the receipt headers
          */
 
-        receiptPayeeDetailsService.persistPendingReceipts(new HashSet<ReceiptPayeeDetails>(modelPayeeList));
+       // receiptPayeeDetailsService.persistPendingReceipts(new HashSet<ReceiptPayeeDetails>(modelPayeeList));
 
         /**
          * Construct Request Object For Bill Desk Payment Gateway
          * 
          */
 
-        for (ReceiptPayeeDetails payee : modelPayeeList) {
+       /* for (ReceiptPayeeDetails payee : modelPayeeList) {
             for (ReceiptHeader receiptHeader : payee.getReceiptHeaders()) {
                 setPaymentRequest(collectionCommon.createPaymentRequest(paymentService, receiptHeader));
             }
 
-        }
+        }*/
 
     }// end of method
 
@@ -826,11 +860,11 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
      */
     public Integer getTotalNoOfAccounts() {
         Integer totalNoOfAccounts = 0;
-        for (ReceiptPayeeDetails payee : modelPayeeList) {
+        /*for (ReceiptPayeeDetails payee : modelPayeeList) {
             for (ReceiptHeader header : payee.getReceiptHeaders()) {
                 totalNoOfAccounts += header.getReceiptDetails().size();
             }
-        }
+        }*/
         return totalNoOfAccounts;
     }
 
@@ -1028,14 +1062,6 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     }
 
     /**
-     * @param commonsMgr
-     *            the commonsMgr to set
-     */
-    public void setCommonsManager(CommonsManager commonsManager) {
-        this.commonsManager = commonsManager;
-    }
-
-    /**
      * @param collectionCommon
      *            the collectionCommon to set
      */
@@ -1051,23 +1077,9 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         this.receiptHeaderService = receiptHeaderService;
     }
 
-    /**
-     * @return the modelPayeeList
-     */
-    public List<ReceiptPayeeDetails> getModelPayeeList() {
-        return modelPayeeList;
-    }
-
-    /**
-     * @param modelPayeeList
-     *            the modelPayeeList to set
-     */
-    public void setModelPayeeList(List<ReceiptPayeeDetails> modelPayeeList) {
-        this.modelPayeeList = modelPayeeList;
-    }
-
+   
     public Object getModel() {
-        return modelPayeeList;
+        return null;
     }
 
     /**
