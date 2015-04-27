@@ -64,7 +64,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.web.actions.BaseFormAction;
 
-@Results( { @Result(name = AjaxExtnCommonAction.AJAX_RESULT, type = StreamResult.class, value = "returnStream", params = { "contentType","text/plain" }) })
+@Results( { @Result(name = AjaxExtnCommonAction.AJAX_RESULT, type = "stream", location = "returnStream", params = { "contentType","text/plain" }) })
 @ParentPackage("egov")
 public class AjaxExtnCommonAction extends BaseFormAction {
 
@@ -99,11 +99,13 @@ public class AjaxExtnCommonAction extends BaseFormAction {
 	}
 
 	public static final String AJAX_RESULT = "ajaxResult";
-	public Integer getBoundaryId() {
+	
+
+	public Long getBoundaryId() {
 		return boundaryId;
 	}
 
-	public void setBoundaryId(Integer boundaryId) {
+	public void setBoundaryId(Long boundaryId) {
 		this.boundaryId = boundaryId;
 	}
 

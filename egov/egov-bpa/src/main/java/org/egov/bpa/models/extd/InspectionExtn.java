@@ -104,7 +104,15 @@ public class InspectionExtn extends BaseModel {
 	private Docket docket;
 	private BigDecimal dwellingUnit;
 	
- public InspectionExtn(LandBldngZoneingExtn landZoning,LayoutMasterExtn layoutType,BigDecimal lndMinPlotExtent,BigDecimal lndProposedPlotExtent,
+ public User getInspectedBy() {
+		return inspectedBy;
+	}
+
+	public void setInspectedBy(User inspectedBy) {
+		this.inspectedBy = inspectedBy;
+	}
+
+public InspectionExtn(LandBldngZoneingExtn landZoning,LayoutMasterExtn layoutType,BigDecimal lndMinPlotExtent,BigDecimal lndProposedPlotExtent,
 		 BigDecimal lndOsrLandExtent,BigDecimal lndGuideLineValue,LandBuildingTypesExtn landUsage,BigDecimal lndRegularizationArea,
 		 Integer lndPenaltyPeriod,Boolean lndIsRegularisationCharges,LandBuildingTypesExtn buildingType,
 		 BigDecimal bldngBuildUpArea,BigDecimal bldngProposedPlotFrntage,BigDecimal bldngRoadWidth,BigDecimal bldngProposedBldngArea,
@@ -180,13 +188,8 @@ public class InspectionExtn extends BaseModel {
 		this.parent = parent;
 	}
 
-	public UserImpl getInspectedBy() {
-		return inspectedBy;
-	}
+	
 
-	public void setInspectedBy(UserImpl inspectedBy) {
-		this.inspectedBy = inspectedBy;
-	}
 
 	public RegistrationExtn getRegistration() {
 		return registration;

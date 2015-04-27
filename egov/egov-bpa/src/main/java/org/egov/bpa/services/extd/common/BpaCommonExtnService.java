@@ -60,6 +60,7 @@ import org.apache.log4j.Logger;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.InspectionExtn;
 import org.egov.bpa.models.extd.RegistrationExtn;
+import org.egov.bpa.models.extd.RegistrationFeeDetailExtn;
 import org.egov.bpa.models.extd.RegistrationFeeExtn;
 import org.egov.bpa.models.extd.RegnApprovalInformationExtn;
 import org.egov.bpa.models.extd.RegnStatusDetailsExtn;
@@ -75,11 +76,17 @@ import org.egov.bpa.models.extd.masters.ServiceTypeExtn;
 import org.egov.bpa.models.extd.masters.StormWaterDrainExtn;
 import org.egov.bpa.models.extd.masters.VillageNameExtn;
 import org.egov.bpa.services.extd.inspection.InspectionExtnService;
+import org.egov.collection.integration.models.BillReceiptInfo;
+import org.egov.collection.integration.services.CollectionIntegrationServiceImpl;
 import org.egov.commons.Bank;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwSatuschange;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.demand.dao.DemandGenericDao;
+import org.egov.demand.dao.DemandGenericHibDao;
+import org.egov.demand.model.BillReceipt;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PersonalInformationService;
 import org.egov.exceptions.EGOVException;
@@ -169,7 +176,7 @@ public class BpaCommonExtnService extends ActionSupport  {
 	//private EisManager eisManager;//phionix TODO: commenting der is workflowservice
 	/*private WorkflowService <RegistrationExtn> registrationWorkflowExtnService;
 	private WorkflowService <RegistrationFeeExtn>registrationFeeWorkflowExtnService;*/
-	//private CollectionIntegrationServiceImpl collectionIntegrationService;
+	private CollectionIntegrationServiceImpl collectionIntegrationService;
   private EisCommonService eisCommonService;
   private PersonalInformationService personalInformationService;
     private List<Bank> listOfBanks = new ArrayList<Bank>();
@@ -202,7 +209,7 @@ public class BpaCommonExtnService extends ActionSupport  {
 		this.reportService = reportService;
 	}
 
-	public List<Boundary> populateArea(Integer wardId)
+	public List<Boundary> populateArea(Long wardId)
 	{
 		HierarchyType hType = null;
 		List<Boundary> areaList=Collections.EMPTY_LIST;
@@ -551,7 +558,7 @@ public class BpaCommonExtnService extends ActionSupport  {
 		return false;
 	}
 	//phionix TODO:  EgDemandDetails depaends commenting os of now
-	/*public Map<String, List<BpaFeeExtn>> getGroupWiseFeeListByPassingRegistration(RegistrationExtn registrationObj,Long registrationFeeId){
+	public Map<String, List<BpaFeeExtn>> getGroupWiseFeeListByPassingRegistration(RegistrationExtn registrationObj,Long registrationFeeId){
 			 
 		 Map<String,List<BpaFeeExtn>>  registrationFeesesByFeeGroup= new HashMap<String,List<BpaFeeExtn>>();
 		
@@ -620,7 +627,7 @@ public class BpaCommonExtnService extends ActionSupport  {
 		}
 		
 		return registrationFeesesByFeeGroup;
-	}*/
+	}
 
 	private void addFeeListToMap(
 			Map<String, List<BpaFeeExtn>> registrationFeesesByFeeGroup, BpaFeeExtn fees,String feeType) {
@@ -1346,8 +1353,8 @@ public class BpaCommonExtnService extends ActionSupport  {
 			LOGGER.debug("BpaCommonService ||ended checkIfPlanBuildPermitAllowed method");	
 			return flag;
 		}
-		//TODOD Collection
-		/*public Map<String, BillReceiptInfo> getReceiptInfoByRegistrationObject(RegistrationExtn registration) {
+	
+		public Map<String, BillReceiptInfo> getReceiptInfoByRegistrationObject(RegistrationExtn registration) {
 			LOGGER.debug("BpaCommonService ||started getReceiptInfoByRegistrationObject method");	
 			Map<String,BillReceiptInfo> billReceiptInfoMap = new HashMap<String,BillReceiptInfo>();
 					DemandGenericDao demandGenericDao = new DemandGenericHibDao();
@@ -1372,7 +1379,7 @@ public class BpaCommonExtnService extends ActionSupport  {
 					}
 					LOGGER.debug("BpaCommonService ||ended getReceiptInfoByRegistrationObject method");	
 				return billReceiptInfoMap;
-		}*/
+		}
 
 		
 		
@@ -1394,7 +1401,7 @@ public class BpaCommonExtnService extends ActionSupport  {
 			}	
 			return null;
 		}
-		
+		/*
 		public void createNotificationFinalFeeCollected(RegistrationExtn registration,BigDecimal finalFeeCollected) {
 			
 			final HashMap<String, String> fileDetails = new HashMap<String, String>();		
@@ -1441,7 +1448,7 @@ public class BpaCommonExtnService extends ActionSupport  {
 				PersonalInformationService personalInformationService) {
 			this.personalInformationService = personalInformationService;
 		}
-
+*/
 		public HashMap<Integer,String> getStatusIdMap(){
 			HashMap<Integer,String> statusMap=new HashMap<Integer,String>();
 			List<EgwStatus>	 statusList=getAllStatusForBPA();
@@ -1725,8 +1732,8 @@ public class BpaCommonExtnService extends ActionSupport  {
 		
 		return villageNameList;
 	}
-	public List<org.egov.mdm.masters.administration.State> getAllStatesOfIndia() {
-		List <org.egov.mdm.masters.administration.State> bndryStateList = getPersistenceService().findAllBy("from State where stateConst='TN'");
+	public List<org.egov.infra.workflow.entity.State> getAllStatesOfIndia() {
+		List <org.egov.infra.workflow.entity.State> bndryStateList = getPersistenceService().findAllBy("from State where stateConst='TN'");
 		return bndryStateList;
 	}
 
@@ -1739,7 +1746,7 @@ public class BpaCommonExtnService extends ActionSupport  {
 		return persistenceService.findAllBy("from EgwStatus where moduletype=? order by code ",BpaConstants.NEWBPAREGISTRATIONMODULE);
 	}
 
-	public Boundary getBoundaryObjById(Integer adminboundaryid)
+	public Boundary getBoundaryObjById(Long adminboundaryid)
 	{
 		return( Boundary) persistenceService.find("from Boundary where id=?", adminboundaryid);
 	}
@@ -1772,7 +1779,7 @@ public class BpaCommonExtnService extends ActionSupport  {
 			WorkflowService<RegistrationExtn> registrationWorkflowService) {
 		this.registrationWorkflowExtnService = registrationWorkflowService;
 	}
-	
+	*/
 	
 	public CollectionIntegrationServiceImpl getCollectionIntegrationService() {
 		return collectionIntegrationService;
@@ -1784,7 +1791,7 @@ public void setCollectionIntegrationService(
 	this.collectionIntegrationService = collectionIntegrationService;
 }
 
-*/
+
 public PersistenceService<EgwSatuschange, Integer> getStatusChangeService() {
 	return statusChangeService;
 }
@@ -2391,6 +2398,111 @@ return siteInspectionDatesList;
 					return docHistoryList;
 				}
 			}
+		 public  Map<String,Object> generateCmdaLetterToPartyPrint(RegistrationExtn registration,Long cmdaLpid) 
+			{
+				
+				Map<String,Object> reportData = new HashMap<String,Object>();
+				 String fromAddressToLp="";
+				 String address ="";
+				 CMDALetterToPartyExtn lpReply=null;
+				 if(registration!=null){
+				 List<CMDALetterToPartyExtn> lpReplyList = getcmdaLetterToPartyForRegistrationObject(registration);
+				  if(lpReplyList!=null && lpReplyList.size()>0){
+					  lpReply=lpReplyList.get(0);
+				  }
+				 }
+				  else if (cmdaLpid!=null)
+					  {
+						  lpReply=(CMDALetterToPartyExtn) persistenceService. find("from CMDALetterToPartyExtn where id=?  order by id desc",cmdaLpid);	 
+					  }
+				  String EMPTYSTRING = "";
+					if(registration!=null){
+						 address = registration.getBpaOwnerAddress();
+					if(registration!=null && registration.getAdminboundaryid()!=null)
+					{
+					if(registration.getAdminboundaryid().getParent()!=null && registration.getAdminboundaryid().getParent().getParent()!=null)
+					{
+						reportData.put("region",registration.getAdminboundaryid().getParent().getParent().getName());
+					}
+					if(registration.getAdminboundaryid().getParent()!=null)
+						reportData.put("zone", registration.getAdminboundaryid().getParent().getName());
+					else
+						reportData.put("zone", EMPTYSTRING);
+					
+					reportData.put("ward", registration.getAdminboundaryid().getName());
+					
+					}
+					reportData.put("planSubmissionNum", registration.getPlanSubmissionNum());
+					if( registration!=null && registration.getOwner()!=null)
+						reportData.put("applicantName", registration.getOwner().getFirstName());
+					else
+						reportData.put("applicantName", EMPTYSTRING);
+					reportData.put("cmdaDate", registration.getCmdaRefDate()!=null ? registration.getCmdaRefDate():null);
+					
+					reportData.put("cmdaNumber", registration.getCmdaNum()!=null && registration.getCmdaNum()!=""? registration.getCmdaNum():"");
+					
+					}
+					else
+					{
+						 address = lpReply.getRegistration().getBpaOwnerAddress();
+						if(registration!=null && registration.getAdminboundaryid()!=null)
+						{
+						if(lpReply.getRegistration().getAdminboundaryid().getParent()!=null && lpReply.getRegistration().getAdminboundaryid().getParent().getParent()!=null)
+						{
+							reportData.put("region",lpReply.getRegistration().getAdminboundaryid().getParent().getParent().getName());
+						}
+						if(lpReply.getRegistration().getAdminboundaryid().getParent()!=null)
+							reportData.put("zone", lpReply.getRegistration().getAdminboundaryid().getParent().getName());
+						else
+							reportData.put("zone", EMPTYSTRING);
+						
+						reportData.put("ward", lpReply.getRegistration().getAdminboundaryid().getName());
+						
+						}
+						reportData.put("planSubmissionNum", lpReply.getRegistration().getPlanSubmissionNum());
+						if( lpReply.getRegistration()!=null && lpReply.getRegistration().getOwner()!=null)
+							reportData.put("applicantName", lpReply.getRegistration().getOwner().getFirstName());
+						else
+							reportData.put("applicantName", EMPTYSTRING);
+						reportData.put("cmdaDate", lpReply.getRegistration().getCmdaRefDate()!=null ? lpReply.getRegistration().getCmdaRefDate():null);
+						
+						reportData.put("cmdaNumber", lpReply.getRegistration().getCmdaNum()!=null && lpReply.getRegistration().getCmdaNum()!=""? lpReply.getRegistration().getCmdaNum():"");
+						
+					}
+					if(lpReply!=null && lpReply.getRegistration().getAdminboundaryid()!=null && lpReply.getRegistration().getAdminboundaryid().getParent()!=null && lpReply.getRegistration().getAdminboundaryid().getParent().getParent()!=null)
+						
+						if(lpReply.getRegistration().getAdminboundaryid().getParent().getParent().getName().equalsIgnoreCase(BpaConstants.NORTHREGION))
+						{
+							fromAddressToLp=BpaConstants.ASSISTANTADDRESS+ "\n" +BpaConstants.NORTHREGION_ADDRESS;
+						}
+						else if(lpReply.getRegistration().getAdminboundaryid().getParent().getParent().getName().equalsIgnoreCase(BpaConstants.SOUTHREGION))
+						{
+							fromAddressToLp=BpaConstants.ASSISTANTADDRESS + "\n"  + BpaConstants.SOUTHREGION_ADDRESS;
+													
+						}
+						else if(lpReply.getRegistration().getAdminboundaryid().getParent().getParent().getName().equalsIgnoreCase(BpaConstants.CENTRALREGION))
+						{
+							fromAddressToLp=BpaConstants.ASSISTANTADDRESS + "\n" + BpaConstants.CENTRALREGION_ADDRESS;
+						}
+						else
+						{
+							fromAddressToLp=EMPTYSTRING;
+						}
+					reportData.put("fromAddressToLp", fromAddressToLp);
+					
+					reportData.put("address", address);
+					reportData.put("ackNo", lpReply.getAcknowledgementNumber());
+					reportData.put("replyDate", lpReply.getReplyDate());
+					reportData.put("lpDate", lpReply.getLetterToParty().getLetterDate()!=null ?lpReply.getLetterToParty().getLetterDate():null);
+					reportData.put("lpNumber", lpReply.getLetterToPartyNumber());
+					reportData.put("lpReason", lpReply.getLpReason());
+					
+					if(lpReply.getLpReplyRemarks()!=null) {
+						reportData.put("remarks", lpReply.getLpReplyRemarks());
+					}
+				return reportData;
+			}
+		@Override
 		public EisCommonService getEisCommonService() {
 			return eisCommonService;
 		}

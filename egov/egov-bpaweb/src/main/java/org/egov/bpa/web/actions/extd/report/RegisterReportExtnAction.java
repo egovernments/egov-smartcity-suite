@@ -56,6 +56,7 @@ import org.egov.bpa.models.extd.masters.ServiceTypeExtn;
 import org.egov.bpa.services.extd.common.BpaCommonExtnService;
 import org.egov.bpa.utils.ApplicationMode;
 import org.egov.commons.EgwStatus;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.web.actions.BaseFormAction;
@@ -163,7 +164,7 @@ public class RegisterReportExtnAction extends BaseFormAction{
 			qryStr.append(" and reg.planSubmissionDate<= :todate ");
 		}
 		if(getAdminboundaryid()!=null && getAdminboundaryid()!=-1 ){
-		BoundaryImpl boundary=(BoundaryImpl)persistenceService.find("from BoundaryImpl where id=?",getAdminboundaryid());
+		Boundary boundary=(Boundary)persistenceService.find("from BoundaryImpl where id=?",getAdminboundaryid());
 		
 		if(boundary!=null && boundary.getBoundaryType().getName().equals("Ward")){
 			
@@ -181,7 +182,7 @@ public class RegisterReportExtnAction extends BaseFormAction{
 		}
 		}
 		if(getLocboundaryid()!=null && getLocboundaryid()!=-1){
-			BoundaryImpl boundaryLoc=(BoundaryImpl)persistenceService.find("from BoundaryImpl where id=?",getLocboundaryid());
+			Boundary boundaryLoc=(Boundary)persistenceService.find("from BoundaryImpl where id=?",getLocboundaryid());
 			
 			if(boundaryLoc!=null && boundaryLoc.getBoundaryType().getName().equals("Street"))
 			{

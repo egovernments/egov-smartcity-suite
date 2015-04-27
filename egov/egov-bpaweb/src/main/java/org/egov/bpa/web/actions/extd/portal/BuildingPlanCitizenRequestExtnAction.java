@@ -60,7 +60,7 @@ public class BuildingPlanCitizenRequestExtnAction extends BaseFormAction {
 	private String requestID;
 	private String NEW= "new";
 	private String AUTODCR= "autodcr";
-	private PortalIntegrationService portalIntegrationService;
+	//private PortalIntegrationService portalIntegrationService;
 	private Logger LOGGER = Logger.getLogger(BuildingPlanCitizenRequestExtnAction.class);
 	private RegisterBpaExtnService registerBpaExtnService;
 	private AutoDcrExtnService autoDcrExtnService;
@@ -132,15 +132,15 @@ public class BuildingPlanCitizenRequestExtnAction extends BaseFormAction {
 		
 		LOGGER.info("   userid "+Integer.valueOf(EGOVThreadLocals.getUserId()));
 		// Get citizen details, by passing login user id.
-		EPortalUser citizen= null;
+	/*	EPortalUser citizen= null;
 		if(portalIntegrationService!=null){
 			portalIntegrationService.initServicePack();
 			citizen=getPortalIntegrationService().getPortalUserByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-			}
-		
-		if(citizen!=null && citizen.getUserDetail()!=null && citizen.getUserDetail().getMobileNumber()!=null)
-		LOGGER.info("   user mobile  " + citizen.getUserDetail().getMobileNumber());
-		
+			}*/
+		//TODO PHionix
+		/*if(citizen!=null && citizen.getUserDetail()!=null && citizen.getUserDetail().getMobileNumber()!=null)
+		LOGGER.info("   user mobile  " + citizen.getUserDetail().getMobileNumber());*/
+		if(Boolean.TRUE){
 		List<AutoDcrDtlsExtn> initialAutoDcrList= new ArrayList<AutoDcrDtlsExtn>();
 		RegistrationExtn regn=registerBpaExtnService.getRegistrationByPassingServiceReqNumber(requestID);
 	
@@ -156,9 +156,9 @@ public class BuildingPlanCitizenRequestExtnAction extends BaseFormAction {
 			// Mean new record.
 			//for new required.. check autodcr required ?
 		  if(autoDcrCheckRequired){
-				if(citizen!=null && citizen.getUserDetail()!=null && citizen.getUserDetail().getMobileNumber()!=null){
+				/*if(citizen!=null && citizen.getUserDetail()!=null && citizen.getUserDetail().getMobileNumber()!=null){
 						initialAutoDcrList=autoDcrExtnService.getAutoDcrByMobileNumber(Long.valueOf(citizen.getUserDetail().getMobileNumber()));
-						
+				*/		
 						
 					if(initialAutoDcrList.size()==0)
 					{
@@ -186,22 +186,23 @@ public class BuildingPlanCitizenRequestExtnAction extends BaseFormAction {
 						}
 					}else
 					{
-						if(citizen!=null && citizen.getUserDetail()!=null && citizen.getUserDetail().getMobileNumber()==null){
+						/*if(citizen!=null && citizen.getUserDetail()!=null && citizen.getUserDetail().getMobileNumber()==null){
 							addFieldError("user.MobineNumberNotMapped", getMessage("user.MobineNumberNotMapped"));
 							addActionMessage(getMessage("user.MobineNumberNotMapped"));
 						}
 						else{
 							addFieldError("user.autodcr.notexist", getMessage("user.autodcr.notexist"));
 							addActionMessage(getMessage("user.autodcr.notexist"));	
-						}
+						}*///TODO PHionix
 						//Show error message as no autodcr records found. 
 					}
-		    }else
+		    }
+		}else
 		    {
 		    	// redirect to create screen.
 		    }
 						
-		}
+		
 		
 	
 		
@@ -233,13 +234,13 @@ public class BuildingPlanCitizenRequestExtnAction extends BaseFormAction {
 		return null;
 	}
 	
-	public PortalIntegrationService getPortalIntegrationService() {
+	/*public PortalIntegrationService getPortalIntegrationService() {
 		return portalIntegrationService;
 	}
 	public void setPortalIntegrationService(
-			PortalIntegrationService portalIntegrationService) {
+			PortalIntegrationService portalIntegrationService) {//TODO PHionix
 		this.portalIntegrationService = portalIntegrationService;
-	}
+	}*/
 	public RegisterBpaExtnService getRegisterBpaExtnService() {
 		return registerBpaExtnService;
 	}

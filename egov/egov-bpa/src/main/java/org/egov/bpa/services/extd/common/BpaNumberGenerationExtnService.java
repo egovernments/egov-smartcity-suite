@@ -1,42 +1,3 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation 
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this 
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- */
 package org.egov.bpa.services.extd.common;
 
 import java.text.DecimalFormat;
@@ -44,18 +5,19 @@ import java.text.NumberFormat;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.EGOVRuntimeException;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.InspectionExtn;
 import org.egov.bpa.models.extd.RegistrationExtn;
 import org.egov.bpa.models.extd.masters.ServiceTypeExtn;
 import org.egov.bpa.services.extd.inspection.InspectionExtnService;
 import org.egov.commons.CFinancialYear;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.utils.Sequence;
 import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.infstr.utils.seqgen.DatabaseSequenceFirstTimeException;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.pims.empLeave.model.CalendarYear;
+
+//import org.egov.pims.empLeave.model.CalendarYear;
 
 public class BpaNumberGenerationExtnService {
 	private static final Logger LOGGER = Logger.getLogger(BpaNumberGenerationExtnService.class);
@@ -63,6 +25,35 @@ public class BpaNumberGenerationExtnService {
 	private BpaCommonExtnService bpaCommonExtnService;
 	private InspectionExtnService inspectionExtnService;
 	private	NumberFormat ackNumberFormat = new DecimalFormat(BpaConstants.ACKNOWLEDGEMENTNUMBERFORMAT);
+	
+	/*By passing service type get preliminary request number.
+	 * Format: OBPA/Service Type Number/Sequence Number/Calender Year.
+	 */
+	
+	public String generatePreliminaryRequestNumber(ServiceTypeExtn serviceType){
+		Sequence runningNo;		
+		StringBuffer formatedNumber = new StringBuffer(50);
+		LOGGER.debug("generatePreliminaryRequestNumber ");
+			if(null!=serviceType && serviceType.getCode()!=null && !"".equals(serviceType.getCode())){
+				//CalendarYear calyear = bpaCommonExtnService.getCalendarYear();				
+					runningNo = sequenceGenerator.getNextNumber(BpaConstants.OBPA+serviceType.getCode().toUpperCase() +'_'+"",Long.valueOf(1));
+					formatedNumber.append(BpaConstants.OBPA); 
+					formatedNumber.append("/");			
+					formatedNumber.append(serviceType.getCode().toUpperCase()); 
+					formatedNumber.append("/");
+					formatedNumber.append(ackNumberFormat.format(runningNo.getNumber()));
+					formatedNumber.append("/");
+					/*if(calyear!=null && calyear.getCalendarYear()!=null)
+						formatedNumber.append(calyear.getCalendarYear()); *///TODO Phionix
+					
+				LOGGER.debug(" preliminary request number--> "+formatedNumber.toString());	
+				return formatedNumber.toString();
+					
+			}
+			else
+				return null;//throw new EGOVRuntimeException("Service Type is required for generate Autogeneration of Plan Submission Number");
+	
+	}
 	
 	public String generatePlanSubmissionNumber(ServiceTypeExtn serviceType,Boundary zone){
 
@@ -73,8 +64,8 @@ public class BpaNumberGenerationExtnService {
 				
 				if(null!=zone && zone.getName()!=null && !"".equals(zone.getName())){
 					LOGGER.debug("serviceType--> " +serviceType.getDescription() +" zone--> "+zone.getName());
-					CalendarYear calyear = bpaCommonExtnService.getCalendarYear();				
-					runningNo = sequenceGenerator.getNextNumber(BpaConstants.WDC+serviceType.getServiceNumberPrefix().toUpperCase() +'_'+calyear.getCalendarYear(),Long.valueOf(1));
+					// calyear = bpaCommonExtnService.getCalendarYear();	//TODO Phionix			
+					runningNo = sequenceGenerator.getNextNumber(BpaConstants.WDC+serviceType.getServiceNumberPrefix().toUpperCase() +'_'+"",Long.valueOf(1));
 								
 					formatedNumber.append(serviceType.getServiceNumberPrefix().toUpperCase()); 
 					formatedNumber.append("/");
@@ -82,8 +73,8 @@ public class BpaNumberGenerationExtnService {
 					formatedNumber.append("/");
 					formatedNumber.append(ackNumberFormat.format(runningNo.getNumber()));
 					formatedNumber.append("/");
-					if(calyear!=null && calyear.getCalendarYear()!=null)
-						formatedNumber.append(calyear.getCalendarYear()); 
+				/*	if(calyear!=null && calyear.getCalendarYear()!=null)
+						formatedNumber.append(calyear.getCalendarYear()); *///TODO Phionix
 					
 					//formatedNumber.append(finyear.getFinYearRange());
 					LOGGER.debug(" PlanSubmissionNumber--> "+formatedNumber.toString());	
@@ -106,8 +97,9 @@ public class BpaNumberGenerationExtnService {
 				
 				if(null!=zone && zone.getName()!=null && !"".equals(zone.getName())){
 					LOGGER.debug("serviceType--> " +serviceType.getDescription() +" zone--> "+zone.getName());
-					CalendarYear calyear = bpaCommonExtnService.getCalendarYear();				
-					runningNo = sequenceGenerator.getNextNumber(zone.getName()+serviceType.getCode().toUpperCase() +'_'+calyear.getCalendarYear(),Long.valueOf(1));
+					//TODO Phionix
+					//CalendarYear calyear = bpaCommonExtnService.getCalendarYear();				
+					runningNo = sequenceGenerator.getNextNumber(zone.getName()+serviceType.getCode().toUpperCase() +'_'+"",Long.valueOf(1));
 								
 					formatedNumber.append(zone.getName());
 					formatedNumber.append("/");
@@ -115,8 +107,8 @@ public class BpaNumberGenerationExtnService {
 					formatedNumber.append("/");
 					formatedNumber.append(ackNumberFormat.format(runningNo.getNumber()));
 					formatedNumber.append("/");
-					if(calyear!=null && calyear.getCalendarYear()!=null)
-						formatedNumber.append(calyear.getCalendarYear()); 
+					/*if(calyear!=null && calyear.getCalendarYear()!=null)
+						formatedNumber.append(calyear.getCalendarYear()); *///TODO Phionix
 					
 					//formatedNumber.append(finyear.getFinYearRange());
 					LOGGER.debug(" TrackingNumber--> "+formatedNumber.toString());	
@@ -142,7 +134,6 @@ public class BpaNumberGenerationExtnService {
 		try{
 			CFinancialYear finyear = bpaCommonExtnService.getFinancialYear();
 			runningNo = sequenceGenerator.getNextNumber(BpaConstants.BPAMODULENAME+"LR_"+finyear.getFinYearRange(),Long.valueOf(1) );
-			
 			formatedNumber.append(finyear.getFinYearRange());
 			formatedNumber.append("/");
 			formatedNumber.append(runningNo.getNumber());
@@ -157,13 +148,35 @@ public class BpaNumberGenerationExtnService {
 			throw new EGOVRuntimeException("Exception in generateLetterToReplyAckNumber method." +ex);	
 		}
 	}
-	
+	public String generateLetterToReplycmdaAckNumber(){
+		StringBuffer formatedNumber = new StringBuffer(50);
+		Sequence runningNo;		
+		LOGGER.debug("generateLetterToReplyAckNumber For CMDA ");
+		try{
+			CFinancialYear finyear = bpaCommonExtnService.getFinancialYear();
+			runningNo = sequenceGenerator.getNextNumber(BpaConstants.BPAMODULENAME+"LR_"+finyear.getFinYearRange(),Long.valueOf(1) );
+			formatedNumber.append(BpaConstants.CMDALPFORMATSTRING);
+			formatedNumber.append("/");
+			formatedNumber.append(runningNo.getNumber());
+			formatedNumber.append("/");
+			formatedNumber.append(finyear.getFinYearRange());
+			LOGGER.debug("LetterToReplyAckNumber " +formatedNumber.toString());
+			return formatedNumber.toString();
+		}
+		catch(DatabaseSequenceFirstTimeException d){
+			throw new EGOVRuntimeException("DatabaseSequenceFirstTimeException." +d);	
+		}
+		
+		catch(Exception ex){
+			throw new EGOVRuntimeException("Exception in generateLetterToReplyAckNumber method." +ex);	
+		}
+	}
 	/*
 	 * Challan No Format : <financial year>/<zone>/<Sequence no>
 	 * +zone.getName()
 	 */
 	
-	public String generateChallanNumberFormat(BoundaryImpl zone){
+	public String generateChallanNumberFormat(Boundary zone){
 		StringBuffer formatedNumber = new StringBuffer(50);
 		Sequence runningNo;	
 		LOGGER.debug("generateChallanNumberFormat ");
@@ -239,23 +252,23 @@ public class BpaNumberGenerationExtnService {
 			if(null!=zone && null!=registration && null!=registration.getServiceType() && registration.getServiceType().getServiceNumberPrefix()!=null && !"".equals(registration.getServiceType().getServiceNumberPrefix())){
 				LOGGER.debug("serviceType--> " +registration.getServiceType().getDescription() +" zone--> "+zone.getName() +" noOfPlotsFlag-->"+noOfPlotsFlag);
 				
-				CalendarYear calYear = bpaCommonExtnService.getCalendarYear();
+				/*CalendarYear calYear = bpaCommonExtnService.getCalendarYear();*/
 				if(registration.getServiceType().getCode().equals(BpaConstants.NEWBUILDINGONVACANTPLOTCODE) ||
 						registration.getServiceType().getCode().equals(BpaConstants.DEMOLITIONRECONSTRUCTIONCODE) ||
 						registration.getServiceType().getCode().equals(BpaConstants.ADDITIONALCONSTRUCTIONCODE) ){
 					
-					runningNo = sequenceGenerator.getNextNumber(BpaConstants.WDC+"_BA" +'_'+calYear.getCalendarYear(),Long.valueOf(1));									
+					runningNo = sequenceGenerator.getNextNumber(BpaConstants.WDC+"_BA" +'_'+"",Long.valueOf(1));									
 					formatedNumber.append("BA");
 					flag=Boolean.TRUE;
 					
 				}
 				else if(registration.getServiceType().getCode().equals(BpaConstants.CMDACODE)){
-					runningNo = sequenceGenerator.getNextNumber(BpaConstants.WDC+"_CEBA" +'_'+calYear.getCalendarYear(),Long.valueOf(1));						
+					runningNo = sequenceGenerator.getNextNumber(BpaConstants.WDC+"_CEBA" +'_'+"",Long.valueOf(1));						
 					formatedNumber.append("CEBA");
 					flag=Boolean.TRUE;
 				}
 				else if(registration.getServiceType().getCode().equals(BpaConstants.LAYOUTAPPPROVALCODE) && noOfPlotsFlag.equals(Boolean.TRUE)){
-					runningNo = sequenceGenerator.getNextNumber(BpaConstants.WDC+"_LA" +'_'+calYear.getCalendarYear(),Long.valueOf(1));						
+					runningNo = sequenceGenerator.getNextNumber(BpaConstants.WDC+"_LA" +'_'+"",Long.valueOf(1));						
 					formatedNumber.append("LA");
 					flag=Boolean.TRUE;
 				}
@@ -266,13 +279,14 @@ public class BpaNumberGenerationExtnService {
 					formatedNumber.append(ackNumberFormat.format(runningNo.getNumber()));
 					formatedNumber.append("/");
 					//formatedNumber.append(finyear.getFinYearRange());
-					if(calYear!=null && calYear.getCalendarYear()!=null)
-						formatedNumber.append(calYear.getCalendarYear()); 
+					/*if(calYear!=null && calYear.getCalendarYear()!=null)
+						formatedNumber.append(calYear.getCalendarYear()); */
 					LOGGER.debug("OrderNumber "+formatedNumber.toString());
 					return formatedNumber.toString();
 				}
 				else{
-					return registration.getPlanSubmissionNum();
+					//return registration.getPlanSubmissionNum();
+					return registration.getPlanPermitApprovalNum();
 				}
 			}
 		}
@@ -335,6 +349,31 @@ public class BpaNumberGenerationExtnService {
 		}
 	}
 	
+	
+	public String generateCMDALetterToPartyNumber(){
+		StringBuffer formatedNumber = new StringBuffer(50);
+		Sequence runningNo;	
+		LOGGER.debug("generateCMDALetterToPartyNumber ");
+		try{
+			CFinancialYear finyear = bpaCommonExtnService.getFinancialYear();
+			runningNo = sequenceGenerator.getNextNumber(BpaConstants.BPAMODULENAME+"LPCMDA_"+finyear.getFinYearRange(),Long.valueOf(1) );
+			formatedNumber.append(BpaConstants.CMDALPFORMATSTRING);
+			formatedNumber.append("/");
+			formatedNumber.append(finyear.getFinYearRange());
+			formatedNumber.append("/");
+			formatedNumber.append(runningNo.getNumber());
+			
+			LOGGER.debug("CMDALetterToPartyNumber "+formatedNumber.toString());
+			return formatedNumber.toString();
+		}
+		catch(DatabaseSequenceFirstTimeException d){
+			throw new EGOVRuntimeException("DatabaseSequenceFirstTimeException." +d);	
+		}		
+		catch(Exception ex){
+			throw new EGOVRuntimeException("Exception in generateCMDALetterToPartyNumber method." +ex);	
+		}
+	}
+	
 
 	
 	public String generateRejectionOrderNumber(){
@@ -362,7 +401,7 @@ public class BpaNumberGenerationExtnService {
 	}
 	
 	
-	public String generateRevisedFeeChallanNumberFormat(BoundaryImpl zone,Integer revisedFeeNumber){
+	public String generateRevisedFeeChallanNumberFormat(Boundary zone,Integer revisedFeeNumber){
 		
 		
 		StringBuffer formatedNumber = new StringBuffer(50);
@@ -420,4 +459,4 @@ public class BpaNumberGenerationExtnService {
 	}
 	
 	
-}
+}	

@@ -147,7 +147,7 @@ public class BpaReportExtnAction extends BaseFormAction{
 						}
 					}
 				registration.getRejection().setRejectionChecklistSet(checkListDetails);
-				reportParams.put("approvedDate", stateValue.getModifiedDate()!=null?stateValue.getModifiedDate():null);
+				reportParams.put("approvedDate", stateValue.getLastModifiedDate()!=null?stateValue.getLastModifiedDate():null);
 				reportInput=new ReportRequest(BpaConstants.REJECTIONNOTICEEXTN, registration, reportParams);
 			}
 		
@@ -380,11 +380,11 @@ public class BpaReportExtnAction extends BaseFormAction{
 		State stateValue=	registration.getState();
 
 		if(null!=stateValue && null!=stateValue.getValue()){
-			while(!value.equals(stateValue.getValue())){
+			while(!value.equals(stateValue.getValue())){/*
 				if(null!=stateValue.getPrevious() && null!=stateValue.getPrevious().getValue())
 					stateValue=stateValue.getPrevious();	
 				else
-					break;
+					break;*///TODO PHIOnix
 			}
 		}
 		return stateValue;

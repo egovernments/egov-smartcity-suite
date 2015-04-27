@@ -45,7 +45,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.egov.commons.EgwStatus;
-import org.egov.infstr.models.StateAware;
+import org.egov.infra.workflow.entity.StateAware;
 
 public class RegistrationFeeExtn extends StateAware {
 

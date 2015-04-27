@@ -94,12 +94,13 @@ import org.egov.bpa.web.actions.extd.common.BpaExtnRuleBook;
 import org.egov.commons.EgwStatus;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.web.actions.BaseFormAction;
 
 @SuppressWarnings("serial")
 @Results({ 
-	@Result(name = "NOACCESS", type = StreamResult.class, value = "returnStream", params = { "contentType", "text/plain"})
+	@Result(name = "NOACCESS", type = "stream", location = "returnStream", params = { "contentType", "text/plain"})
 	})
 @ParentPackage("egov")
 public class InspectionExtnAction extends BaseFormAction{
@@ -113,7 +114,7 @@ public class InspectionExtnAction extends BaseFormAction{
 	private String mode;
 	private Date verifyDate;
 	private SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy");
-	private UserImpl loginUser;
+	private User		 loginUser;
 	private List<InspectMeasurementDtlsExtn> inspectMeasurementDtls=new ArrayList<InspectMeasurementDtlsExtn>();
 	private List<InspectMeasurementDtlsExtn> constructionMesDtls=new ArrayList<InspectMeasurementDtlsExtn>();
 	private List<InspectionChecklistExtn> chkListDet=new ArrayList<InspectionChecklistExtn>();
@@ -454,24 +455,24 @@ public String printDocketSheet()
 	
 	public Boolean isUserMappedToSurveyorRole() {
 		if(EGOVThreadLocals.getUserId()!=null){
-			UserImpl user = bpaCommonExtnService.getUserbyId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-			for(Role role : user.getRoles())
+			User user = bpaCommonExtnService.getUserbyId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			/*for(Role role : user.getRoles())
 				if(role.getRoleName()!=null && role.getRoleName().equalsIgnoreCase(BpaConstants.PORTALUSERSURVEYORROLE))
-				{
+				{	//Todo Phionix
 					return true;
-				}
+				}*/
 				
 		}
 		return false;
 	}
 	public Boolean isUserMappedToSelectedRole(String userRole) {
 		if(EGOVThreadLocals.getUserId()!=null){
-			UserImpl user = bpaCommonExtnService.getUserbyId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-			for(Role role : user.getRoles())
+			User user = bpaCommonExtnService.getUserbyId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			/*for(Role role : user.getRoles())
 				if(role.getRoleName()!=null && role.getRoleName().equalsIgnoreCase(userRole))
 				{
 					return true;
-				}
+				}*/	//Todo Phionix
 				
 		}
 		return false;
@@ -695,8 +696,8 @@ public String printDocketSheet()
 		}
 		
 		if(inspection!=null && bpaCitizenPortalService!=null && inspection.getRegistration()!=null)
-			bpaCitizenPortalService.updateServiceRequestRegistry(inspection.getRegistration());
-		
+			//bpaCitizenPortalService.updateServiceRequestRegistry(inspection.getRegistration());
+		//Todo Phionix
 		addActionMessage("Inspection Details Saved Successfully");
 		 //bpaCommonExtnService.createStatusChange(inspection.getRegistration(),oldStatus);
 		setMode(BpaConstants.MODEVIEW);
@@ -911,12 +912,12 @@ public String printDocketSheet()
 		showPlotDetails(); 
 		if(inspection==null && getInspectionId()!=null)
 			inspection=inspectionExtnService.getInspectionbyId(getInspectionId());
-		if(inspection!=null){
+		/*if(inspection!=null){//TODO PHIONIX
 			if(inspection.getInspectedBy()!=null && 
 					(inspection.getInspectedBy().getIsPortalUser()!=null 
 						&& inspection.getInspectedBy().getIsPortalUser()==Boolean.TRUE))
 				isSurveyor=true;  
-		}
+		}*/
 		return "measurement";
 	}
 		
@@ -924,12 +925,12 @@ public String showSurveyorMeasurementDetails(){
 	setServiceTypeCode(registrationObj.getServiceType().getCode());
 		List <InspectionExtn>survyrInspList= inspectionExtnService.getSiteInspectionListforRegBySurveyorAndOfficial(registrationObj);
 		for(InspectionExtn insExtn:survyrInspList){
-			for(Role role : insExtn.getInspectedBy().getRoles())
+			/*for(Role role : insExtn.getInspectedBy().getRoles())
 				if(role.getRoleName()!=null && role.getRoleName().equalsIgnoreCase(BpaConstants.PORTALUSERSURVEYORROLE))
 				{
 					setInspectionId(insExtn.getId());
 					break;
-				}
+				}*///TODO PHIONIX
 		}
 		
 		buildPlanDetails();

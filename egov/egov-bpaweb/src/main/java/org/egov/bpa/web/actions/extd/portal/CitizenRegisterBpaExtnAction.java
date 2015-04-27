@@ -91,6 +91,7 @@ import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
@@ -101,11 +102,11 @@ import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Criteria;
 
 
-@SuppressWarnings("serial")
+@SuppressWarnings("ser	ial")
 @Results({ 
-	@Result(name = "NOACCESS", type = StreamResult.class, value = "returnStream", params = { "contentType", "text/plain"}),
-	@Result(name = CitizenRegisterBpaExtnAction.FEE_PAYMENT_PDF, type = StreamResult.class, value = "feePaymentReportPDF", params = { "contentType", "application/pdf"}),
-	@Result(name = CitizenRegisterBpaExtnAction.DOWNLOAD, type = StreamResult.class, value = "fileInputStream",  params = { "contentType","${attachmentType}","contentDisposition", "filename=\"${attachmentName}\"" })
+	@Result(name = "NOACCESS", type = "strem", location = "returnStream", params = { "contentType", "text/plain"}),
+	@Result(name = CitizenRegisterBpaExtnAction.FEE_PAYMENT_PDF, type = "strem", location = "feePaymentReportPDF", params = { "contentType", "application/pdf"}),
+	@Result(name = CitizenRegisterBpaExtnAction.DOWNLOAD, type ="strem", location = "fileInputStream",  params = { "contentType","${attachmentType}","contentDisposition", "filename=\"${attachmentName}\"" })
 
 })
 @ParentPackage("egov")
@@ -124,8 +125,8 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 //	private List<InspectionExtn> postponedInspectionDetails=new ArrayList<InspectionExtn>();	
 	private String registrationHasBeenCancelled = "The Registration has been cancelled";
 	private Boolean autoDcrFlag=Boolean.FALSE;
-	private List<SurveyorDetail> surveyordetailList=new ArrayList<SurveyorDetail>();
-	private Integer adminBoundaryId;
+//	private List<SurveyorDetail> surveyordetailList=new ArrayList<SurveyorDetail>();
+	private Long adminBoundaryId;
 	private Boolean regInspected=Boolean.FALSE;
 	private List<AppConfigValues> appConfigValuesSurveyordocUpload;
 	private Boolean isDocUploadForSurveyorFlag=Boolean.FALSE;
@@ -222,12 +223,12 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 		if(registration.getOwner()==null){
 			addFieldError("registration.owner", getMessage("owner.required"));
 		}else {
-			if(registration.getOwner().getFirstName()==null || "".equals(registration.getOwner().getFirstName())){
+			if(registration.getOwner().getName()==null || "".equals(registration.getOwner().getName())){
 				addFieldError("registration.owner.name", getMessage("owner.name.required"));			
 			}
-			if(registration.getOwner().getFatherName()==null || "".equals(registration.getOwner().getFatherName())){
+			/*if(registration.getOwner().getFatherName()==null || "".equals(registration.getOwner().getFatherName())){
 				addFieldError("registration.owner.fathername", getMessage("owner.fathername.required"));
-		}
+		}*///TODO PHionix
 			if(registration.getId()==null ||registration.getState()==null){
 			if(getMobileNumber()==null || "".equals(getMobileNumber())){
 				addFieldError("registration.owner.mobilePhone", getMessage("owner.mobileNumber.required"));
@@ -474,8 +475,8 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 		}
 		
 		Integer StrToInt=Integer.parseInt(bndryString.toString());
-		surveyordetailList=bpaCommonExtnService.getSurveyorForSelectedZone(StrToInt);
-		addDropdownData("surveyordetailList",surveyordetailList );
+//		surveyordetailList=bpaCommonExtnService.getSurveyorForSelectedZone(StrToInt);
+//		addDropdownData("surveyordetailList",surveyordetailList );
 		
 		return "surveyor";
 	}
@@ -483,7 +484,8 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 	public void prepare() { 
 		super.prepare();
 		addDropdownData("applicationModeList",Arrays.asList(ApplicationMode.GENERAL));
-		addDropdownData("surveyorNameList",bpaCommonExtnService.getAllActiveSurveyorNameList());
+		addDropdownData("surveyorNameList",new ArrayList<>());
+				//bpaCommonExtnService.getAllActiveSurveyorNameList());
 		addDropdownData("surveyNumberList",Arrays.asList(SurveyNumber.values())); 
 		getadminBoundaryForRegistrationBystreetId();
 		if(registration != null && registration.getServiceType() != null && registration.getServiceType().getCode()!=null)
@@ -497,7 +499,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 		Set<Boundary> adminboundry =bpaCommonExtnService.getBoundaryParentObject(registration.getLocboundaryid().getId());
 		for(Boundary bndry:adminboundry)
 		{
-			BoundaryImpl wardObj=bpaCommonExtnService.getBoundaryObjById(bndry.getId());
+			Boundary wardObj=bpaCommonExtnService.getBoundaryObjById((long)bndry.getId());
 			registration.setAdminboundaryid(wardObj);
 		}
 		}
@@ -542,9 +544,9 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 	 * For Service Type 2 fwd Application to AE, Service Type 4,5,8 fwd Application to AEE
 	 * For Service Type 7 randomly fwd to AE / AEE
 	 */
-	public Integer getApproverPositionId(){
+	public Integer getApproverPositionId(){// todo phinx
 		List<EmployeeView> employeeViewList=new ArrayList();
-		List<Integer>  designationId=new ArrayList<Integer>();
+		List<Long>  designationId=new ArrayList<Long>();
 		String designationName=null;
 		String inspLayoutName=null;
 		if(isUserMappedToSurveyorRole() && registration!=null && (workFlowAction!=null && workFlowAction.equalsIgnoreCase(BpaConstants.FWD_AEORAEE)))
@@ -567,11 +569,11 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 				empViewList_AEE=getZonalLevelDesignatedUser(BpaConstants.ASSISTANTEXECUTIVEENGINEERDESIGNATION);
 				if (empViewList_AE != null && empViewList_AE.size() != 0) {
 					 employeeViewList.addAll(empViewList_AE);
-					 designationId.add(empViewList_AE.get(0).getDesigId()!=null?empViewList_AE.get(0).getDesigId().getDesignationId():null);
+					 designationId.add(empViewList_AE.get(0).getDesigId()!=null?(long)empViewList_AE.get(0).getDesigId().getDesignationId():null);
 				}
 				if (empViewList_AEE != null && empViewList_AEE.size() != 0) {
 					 employeeViewList.addAll(empViewList_AEE);
-					 designationId.add(empViewList_AEE.get(0).getDesigId()!=null?empViewList_AEE.get(0).getDesigId().getDesignationId():null);
+					 designationId.add(empViewList_AEE.get(0).getDesigId()!=null?(long)empViewList_AEE.get(0).getDesigId().getDesignationId():null);
 				}
 				return autoSelectApproverPosition(employeeViewList,designationId);
 			 }else if(registration.getServiceType().getCode().equals(BpaConstants.APPLICATIONFORDEMOLITIONCODE)) {
@@ -584,7 +586,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 		}
 		employeeViewList=getZonalLevelDesignatedUser(designationName);
 		if (employeeViewList != null && employeeViewList.size() != 0) {
-			 designationId.add(employeeViewList.get(0).getDesigId()!=null?employeeViewList.get(0).getDesigId().getDesignationId():null);
+			 designationId.add(employeeViewList.get(0).getDesigId()!=null?(long)employeeViewList.get(0).getDesigId().getDesignationId():null);
 		}
 		return autoSelectApproverPosition(employeeViewList,designationId);
 	
@@ -602,14 +604,14 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 			siteAddress.setVillageName(villgeobj);
 			}
 			if(registration.getOwner()!=null){
-			registration.getOwner().setMobilePhone(mobileNumber);
-			registration.getOwner().setEmailAddress(emailId);
+			registration.getOwner().setMobileNumber(mobileNumber);
+			registration.getOwner().setEmailId(emailId);
 			}
-			if(getSurveyorCode()!=null && !"".equals(getSurveyorCode()))
+			/*if(getSurveyorCode()!=null && !"".equals(getSurveyorCode()))
 			{
 				surveyorObj=bpaCommonExtnService.getSurveyour(getSurveyor());
 				registration.setSurveyorName(surveyorObj);
-			}
+			}*/
 				setCheckListForRegistration(); 
 				setDocumentNumberForRegistration(); 	//TODO: CHECH DOCUMENT IS SELECTED IN ANY OF CHECKLIST.		
 			
@@ -619,7 +621,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 				if(approverId!=null){
 						EmployeeView empView=((EmployeeView) persistenceService.find("from EmployeeView where position.id=?",approverId));
 						position=(empView!=null?empView.getPosition():null);
-						registration.setApproverId(approverId);
+						registration.setApproverId((long)approverId);
 				}
 			}
 			
@@ -659,10 +661,10 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 			
 		if( registration!=null && registration.getId()!=null) {	
 		//Check if already service req registry present in the system
-			ServiceRequestRegistry serviceRegistry=	bpaCitizenPortalExtnService.getServiceRequestRegistryByEntityRefNo(registration.getPlanSubmissionNum());
-			if(serviceRegistry==null){
-				bpaCitizenPortalExtnService.createServiceRequestRegistry(registration.getServiceRegistryId(), registration.getRequest_number(),  registration.getPlanSubmissionNum(),registration.getId().toString(), registration.getEgwStatus().getCode(),getRegistrationDetails() );	
-			}
+//			ServiceRequestRegistry serviceRegistry=	bpaCitizenPortalExtnService.getServiceRequestRegistryByEntityRefNo(registration.getPlanSubmissionNum());
+//			if(serviceRegistry==null){
+//				bpaCitizenPortalExtnService.createServiceRequestRegistry(registration.getServiceRegistryId(), registration.getRequest_number(),  registration.getPlanSubmissionNum(),registration.getId().toString(), registration.getEgwStatus().getCode(),getRegistrationDetails() );	
+//			}Todo Phionix
 		}
 		
 			setAdmissionFeeAmountForRegistration();			
@@ -693,10 +695,10 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 				
 				if(getUserRole()!=null && !getUserRole().equals(BpaConstants.PORTALUSERSURVEYORROLE))
 				{
-					if(bpaSurvayorPortalExtnService.getServiceRequestRegistryByEntityRefNo(registration.getPlanSubmissionNum())==null){
+					/*if(bpaSurvayorPortalExtnService.getServiceRequestRegistryByEntityRefNo(registration.getPlanSubmissionNum())==null){
 						registration.setEgwStatus(bpaCommonExtnService.getstatusbyCode(BpaConstants.APPLICATION_FWDED_TO_LS));
 						createSurveyorEntry(registration);
-					}
+					}*///Todo Phionix
 				}
 					if(totalAmount.doubleValue() > 0 && getUserRole()!=null && getUserRole().equals(BpaConstants.PORTALUSERSURVEYORROLE)
 							&& workFlowAction.equalsIgnoreCase("forward"))
@@ -816,7 +818,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 									 docUploadDtlObj.setRegDocumentUpload(docUploadObj);
 									 docUploadObj.addDocumentList(docUploadDtlObj);
 									 docUploadObj.setReferenceId(checklistObj.getId());
-									 docUploadObj.setCreatedBy(usr);
+									// docUploadObj.setCreatedBy(usr);
 									 docUploadObj.setCreatedDate(new Date());
 									 regDocUploadService.persist(docUploadObj);
 									}
@@ -898,7 +900,8 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 				directory.setExecutable(Boolean.TRUE);
 			}
 		}
-	private void createSurveyorEntry(RegistrationExtn registration) {
+		
+/*	private void createSurveyorEntry(RegistrationExtn registration) {
 		Surveyor surveyor=null;
 		
 		if(registration.getSurveyorName()!=null)
@@ -916,12 +919,12 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 			
 			bpaSurvayorPortalExtnService.createServiceRequestRegistry(
 					bpaCitizenPortalExtnService.getPortalIntegrationService().getServiceRegistryById(registration.getServiceRegistryId()), registration,
-					APPLICATION_FWDED_TO_LS, registration.getOwner().getFirstName(), surveyor);
+					APPLICATION_FWDED_TO_LS, registration.getOwner().getName(), surveyor);
 			
 			bpaCitizenPortalExtnService.updateServiceRequestRegistry(registration);
-		}
+//		}//TODO PHIONIX
 	}
-
+*/
 	
 	/*
 	 * get MobileNumber and emailId from Logged In Citizen User Id...
@@ -929,10 +932,10 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 	
 	public void getMobileNumberForLoggedInUserId (){
 		
-	UserImpl user = bpaCommonExtnService.getUserbyId(Integer.parseInt(EGOVThreadLocals.getUserId()));
+	User user = bpaCommonExtnService.getUserbyId(Integer.parseInt(EGOVThreadLocals.getUserId()));
 		if (user != null) {
 			mobileNumber=user.getMobileNumber();
-			emailId=user.getEmail();
+			emailId=user.getEmailId();
 		}
 	
 	}
@@ -943,9 +946,9 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 			if(registration!=null && registration.getOwner()!=null )
 			{
 				registrationDetails.append("Applicant Name : ");
-				registrationDetails.append(((registration.getOwner().getFirstName()==null)?"":""+registration.getOwner().getFirstName()));
-				registrationDetails.append(((registration.getOwner().getMiddleName()==null)?"":" "+registration.getOwner().getMiddleName()));	
-				registrationDetails.append(((registration.getOwner().getLastName()==null)?"":" "+registration.getOwner().getLastName()));
+				registrationDetails.append(((registration.getOwner().getName()==null)?"":""+registration.getOwner().getName()));
+				registrationDetails.append(((registration.getOwner().getName()==null)?"":" "+registration.getOwner().getName()));	
+				//registrationDetails.append(((registration.getOwner().getLastName()==null)?"":" "+registration.getOwner().getLastName()));
 			}
 	return (registrationDetails!=null?registrationDetails.toString():REGISTERED);
 }
@@ -1057,7 +1060,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 				}
 				if(registration.getServiceType() != null && registration.getServiceType().getCode()!=null)
 					regServiceTypeCode=registration.getServiceType().getCode(); 
-				surveyorMobNo=registration.getSurveyorName().getUserDetail().getMobileNumber();
+			//	surveyorMobNo=registration.getSurveyorName().getUserDetail().getMobileNumber();
 		}else
 		{
 			addFieldError("invalid.service.request", getMessage("invalid.service.request"));
@@ -1070,12 +1073,12 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 
 	public Boolean isUserMappedToSurveyorRole() {
 		if(EGOVThreadLocals.getUserId()!=null){
-			UserImpl user = bpaCommonExtnService.getUserbyId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-			for(Role role : user.getRoles())
+			User user = bpaCommonExtnService.getUserbyId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			/*for(Role role : user.getRoles())
 				if(role.getRoleName()!=null && role.getRoleName().equalsIgnoreCase(BpaConstants.PORTALUSERSURVEYORROLE))
 				{
 					return true;
-				}
+				}*///TODO  Phionix
 				
 		}
 		return false;
@@ -1253,9 +1256,9 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 		if(registration.getId()!=null){
 			registration = registerBpaExtnService.getRegistrationById(registration.getId());
 			registration.setEgwStatus(bpaCommonExtnService.getstatusbyCode(BpaConstants.WF_CANCELLED,BpaConstants.NEWBPAREGISTRATIONMODULE));
-			bpaCitizenPortalExtnService.updateServiceRequestRegistry(registration);
+			//bpaCitizenPortalExtnService.updateServiceRequestRegistry(registration);
 			if(isUserMappedToSurveyorRole()){
-			bpaSurvayorPortalExtnService.updateServiceRequestRegistry(registration);
+			//bpaSurvayorPortalExtnService.updateServiceRequestRegistry(registration);///TODO  Phionix
 			//	bpaCommonExtnService.buildEmail(registration,BpaConstants.EMAILONDISCARDRECORDONSURVEYOR,finalAttachmentList);
 			//	bpaCommonExtnService.buildSMS(registration,BpaConstants.SMSONDISCARDRECORDONSURVEYOR);
 			}
@@ -1283,7 +1286,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 		if(type.equalsIgnoreCase(FEE_PAYMENT_PDF)){
 			reportParams.put("planSubmissionNumber", registration.getPlanSubmissionNum());
 			reportParams.put("dateofPlanSubmission", registration.getPlanSubmissionDate());
-			reportParams.put("applicantName", registration.getOwner().getFirstName());
+			reportParams.put("applicantName", registration.getOwner().getName());
 			reportParams.put("applicantAddress", registration.getBpaOwnerAddress());
 			reportParams.put("reportFeeList", reportFeeDetailsList);
 		}
@@ -1314,11 +1317,11 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 
 		return bpaPimsExtnFactory.getExecEngineerDesignationEmployeeInfoList(registration.getAdminboundaryid());
 	}
-	public List<SurveyorDetail> getZonalLevelPortalSurveyorUser() {
+	/*public List<SurveyorDetail> getZonalLevelPortalSurveyorUser() {
 	List<SurveyorDetail> survList=bpaCommonExtnService.getSurveyorForSelectedZone(registration.getAdminboundaryid().getId());
 	return survList;
 		
-	}
+	}*////TODO  Phionix
 	
 	@SkipValidation
 	public String showTermsandConditions(){ 
@@ -1418,20 +1421,24 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 		this.autoDcrFlag = autoDcrFlag;
 	}
 
-	public Integer getAdminBoundaryId() {
-		return adminBoundaryId;
-	}
 
-	public void setAdminBoundaryId(Integer adminBoundaryId) {
-		this.adminBoundaryId = adminBoundaryId;
-	}
-
+/*//TODO PHionix
 	public List<SurveyorDetail> getSurveyordetailList() {
 		return surveyordetailList;
 	}
 
 	public void setSurveyordetailList(List<SurveyorDetail> surveyordetailList) {
 		this.surveyordetailList = surveyordetailList;
+	}*/
+
+
+	public Long getAdminBoundaryId() {
+		return adminBoundaryId;
+	}
+
+
+	public void setAdminBoundaryId(Long adminBoundaryId) {
+		this.adminBoundaryId = adminBoundaryId;
 	}
 
 

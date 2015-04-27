@@ -143,7 +143,7 @@ import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
-import org.egov.mdm.masters.administration.State;
+import org.egov.infra.workflow.entity.State;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.EmployeeView;
 import org.egov.pims.model.PersonalInformation;
@@ -177,7 +177,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 	protected RegisterBpaExtnService registerBpaExtnService;
 	private String mode;
 	protected Long registrationId;
-	protected Integer boundaryStateId;
+	protected Long boundaryStateId;
 	private FeeExtnService feeExtnService;
 	protected BpaAddressExtn applicantrAddress;
 	protected BpaAddressExtn siteAddress;
@@ -233,9 +233,9 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 	private String isPlotAreaEditable;
 	private String additionalMode;//Phionix TODO
 
-/*	protected Map<String,BillReceiptInfo> billReceiptInfoMap = new HashMap<String,BillReceiptInfo>();
+	protected Map<String,BillReceiptInfo> billReceiptInfoMap = new HashMap<String,BillReceiptInfo>();
 	protected List<BillReceiptInfo> billRecptInfoList=new ArrayList<BillReceiptInfo>();
-	*/private List<LpChecklistExtn> lpReplyChkListDet = new ArrayList<LpChecklistExtn>();
+	private List<LpChecklistExtn> lpReplyChkListDet = new ArrayList<LpChecklistExtn>();
 	private List<RegistrationDDDetailsExtn> labourWelfareddList=new ArrayList<RegistrationDDDetailsExtn>();
 	private List<RegistrationDDDetailsExtn> cmdaddList=new ArrayList<RegistrationDDDetailsExtn>();
 	private static final String LETTERTOPARTYFORM ="letterToPartyForm";
@@ -433,7 +433,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 	 * @param designationId
 	 * @return
 	 *///Phionix TODO
-	public Long autoSelectApproverPosition(List<EmployeeView> employeeViewList,List<Long> designationId){
+	public Integer autoSelectApproverPosition(List<EmployeeView> employeeViewList,List<Long> designationId){
 		List<Long> posId=new ArrayList<Long>();
 		if (employeeViewList != null && employeeViewList.size() != 0) {
 			for (EmployeeView emp : employeeViewList) {
@@ -444,7 +444,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 				if(result!=null && !result.isEmpty()){
 					Object[] obj=result.get(0);
 						if(obj.length!=0){
-							return Long.valueOf(obj[0].toString());
+							return Integer.valueOf(obj[0].toString());
 						}
 				}
 			}
@@ -486,7 +486,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 					if (employeeList != null && employeeList.size() != 0) {
 						 designationId.add(employeeList.get(0).getDesigId()!=null?(long)employeeList.get(0).getDesigId().getDesignationId():null);
 					}//Phionix TODO
-					registration.setApproverPositionId(autoSelectApproverPosition(employeeList,designationId));  
+					registration.setApproverPositionId((long)autoSelectApproverPosition(employeeList,designationId));  
 				}
 				
 				if((admissionfeeAmount!=null && admissionfeeAmount >0) && registration.getApproverPositionId()!=null)
@@ -948,17 +948,17 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 				!approverDepartment.equals(-1)){
 			
 			Boolean flag=Boolean.FALSE;
-			
-			PersonalInformation emp = bpaCommonExtnService.getEmpForPosition(registration);
+			//TODO Phionix
+			//PersonalInformation emp = bpaCommonExtnService.getEmpForPosition(registration);
 			
 			List<AppConfigValues> appConfigDesignationList=bpaCommonExtnService.getAppConfigValue(BpaConstants.BPAMODULENAME,BpaConstants.OFFICIALSDESIGLISTFORSMS);
 	
-			List<EmployeeView> empViewList = bpaPimsExtnFactory.getEVforDesignationsListByEmpAndDept(emp, approverDepartment);
-			
+			//List<EmployeeView> empViewList = bpaPimsExtnFactory.getEVforDesignationsListByEmpAndDept(emp, approverDepartment);
+//TODO PHionix
 			/*
 			 * Compare the Appconfig designation list with forwardedto employee designation list.
 			 */
-			if(!appConfigDesignationList.isEmpty() && !empViewList.isEmpty()){
+		/*	if(!appConfigDesignationList.isEmpty() && !empViewList.isEmpty()){
 				for(AppConfigValues appConfigValueObj:appConfigDesignationList){
 					
 					for(EmployeeView ev:empViewList){
@@ -972,7 +972,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 						}
 					}
 				}
-			}
+			}*/
 	
 			if(flag){
 						
@@ -1145,7 +1145,8 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 		for(BpaAddressExtn bpaAddressObj:registration.getBpaAddressSet()){
 			if(null!=bpaAddressObj.getAddressTypeMaster() && BpaConstants.PROPERTY_ADDRESS.equals(bpaAddressObj.getAddressTypeMaster())){//Phionix TODO
 				if(null!=bpaAddressObj.getIndianState() && bpaAddressObj.getIndianState().getId()!=null){
-					 setBoundaryStateId(bpaAddressObj.getIndianState().getId());
+					 setBoundaryStateId(bpaAddressObj.getIndianState().getId()
+							 );
 					}
 				setSiteAddress(bpaAddressObj);
 			}else if(null!=bpaAddressObj.getAddressTypeMaster() && BpaConstants.OWNER_ADDRESS.equals(bpaAddressObj.getAddressTypeMaster())){//Phionix TODO
@@ -1331,13 +1332,13 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 			List <DocumentHistoryExtn>survyrDocumentHistoryList= new ArrayList<DocumentHistoryExtn>(registration.getDocumenthistorySet());
 			if(survyrDocumentHistoryList!=null && !survyrDocumentHistoryList.isEmpty()){
 			for(DocumentHistoryExtn docExtn:survyrDocumentHistoryList){
-				for(Role role : docExtn.getCreatedUser().getRoles()){
+				/*for(Role role : docExtn.getCreatedUser().getRoles()){
 					if(role.getRoleName()!=null && role.getRoleName().equalsIgnoreCase(BpaConstants.PORTALUSERSURVEYORROLE))
 					{
 						setDocumentHistory(docExtn);
 						break;
-					}
-			}
+					}//TODO pHionix
+			}*/
 			}
 			if(survyrDocumentHistoryList!=null && !survyrDocumentHistoryList.isEmpty()){
 				if(getDocumentHistory()!=null){
@@ -1493,7 +1494,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 		}
 		
 		if(registration.getId()==null || (registration.getState()!=null && registration.getState().getValue().equalsIgnoreCase(BpaConstants.WF_NEW_STATE))){
-			Integer userPosition=null;
+			Long userPosition=null;
 			if (registration.getAdminboundaryid() != null) {
 				userPosition=getZonalLevelAssistantForLoggedInUser();
 			}
@@ -1511,12 +1512,12 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 		if(registration.getOwner()==null){
 			addFieldError("registration.owner", getMessage("owner.required"));
 		}else {
-			if(registration.getOwner().getFirstName()==null || "".equals(registration.getOwner().getFirstName())){
+			if(registration.getOwner().getName()==null || "".equals(registration.getOwner().getName())){
 				addFieldError("registration.owner.name", getMessage("owner.name.required"));			
 			}
-			if(registration.getOwner().getFatherName()==null || "".equals(registration.getOwner().getFatherName())){
+			/*if(registration.getOwner().getFatherName()==null || "".equals(registration.getOwner().getFatherName())){
 				addFieldError("registration.owner.fathername", getMessage("owner.fathername.required"));
-		}
+		}*/
 		if(applicantrAddress.getStreetAddress1()==null || "".equals(applicantrAddress.getStreetAddress1())){
 			addFieldError("registration.applicantrAddress.StreetAddress1", getMessage("applicantrAddress.StreetAddress1.required"));
 		}
@@ -2397,7 +2398,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 					RegnOfficialActionsExtnView regnOffcialActionsExtnViewObj=new RegnOfficialActionsExtnView();
 						for(RegnOfficialActionsExtn record : regnOffcialActionsList){
 							OfficialActions officialActionObj=new OfficialActions();
-							officialActionObj.setUserName(record.getCreatedBy().getUserName());
+							officialActionObj.setUserName(record.getCreatedBy().getName());
 							if(viewType.equalsIgnoreCase(BpaConstants.VIEWED_SURVEYOR_INSPECTION)) 
 								officialActionObj.setActionsValue(record.getViewedSurveyorInsp());
 							else if(viewType.equalsIgnoreCase(BpaConstants.VIEWED_AE_AEE_INSPECTION))
@@ -2578,7 +2579,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 			/*
 			 * To validate For this registration site inspection is added by official users..Before Proceeding Create LetterToParty 
 			 */
-			UserImpl LoggedInuser = bpaCommonExtnService.getUserbyId(Integer.parseInt(EGOVThreadLocals.getUserId()));
+			User LoggedInuser = bpaCommonExtnService.getUserbyId(Integer.parseInt(EGOVThreadLocals.getUserId()));
 			String UserRole=bpaCommonExtnService.getUserRolesForLoggedInUser();
 			if(!UserRole.contains(BpaConstants.PORTALUSERSURVEYORROLE) && LoggedInuser!=null)
 			{
@@ -3063,11 +3064,13 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 		this.registrationId = registrationId;
 	}
 
-	public Integer getBoundaryStateId() {
+	
+
+	public Long getBoundaryStateId() {
 		return boundaryStateId;
 	}
 
-	public void setBoundaryStateId(Integer boundaryStateId) {
+	public void setBoundaryStateId(Long boundaryStateId) {
 		this.boundaryStateId = boundaryStateId;
 	}
 
@@ -3505,13 +3508,13 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 		this.appConfigValuesRoleList = appConfigValuesRoleList;
 	}
 
-	public CommonsManager getCommonsManager() {
+	/*public CommonsManager getCommonsManager() {
 		return commonsManager;
 	}
 
 	public void setCommonsManager(CommonsManager commonsManager) {
 		this.commonsManager = commonsManager;
-	}
+	}*/
 
 	public String getRegObjectHistoryRemarks() {
 		return regObjectHistoryRemarks;
@@ -3768,13 +3771,6 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 		this.regnOfficialActionsExtnService = regnOfficialActionsExtnService;
 	}
 
-	public EisManager getEisMgr() {
-		return eisMgr;
-	}
-
-	public void setEisMgr(EisManager eisMgr) {
-		this.eisMgr = eisMgr;
-	}
 	
 	
 	public String getApprovedWorkflowState() {

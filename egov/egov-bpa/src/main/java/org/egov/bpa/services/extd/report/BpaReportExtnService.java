@@ -62,15 +62,15 @@ import org.egov.bpa.models.extd.ReportFeesDetailsExtn;
 import org.egov.bpa.models.extd.masters.BpaFeeExtn;
 import org.egov.bpa.services.extd.common.BpaCommonExtnService;
 import org.egov.bpa.services.extd.common.FeeExtnService;
+import org.egov.collection.integration.models.BillReceiptInfo;
+import org.egov.collection.integration.models.ReceiptAccountInfo;
+import org.egov.collection.integration.models.ReceiptInstrumentInfo;
+import org.egov.collection.integration.services.CollectionIntegrationServiceImpl;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.dao.DemandGenericHibDao;
 import org.egov.demand.model.BillReceipt;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
-import org.egov.erpcollection.integration.models.BillReceiptInfo;
-import org.egov.erpcollection.integration.models.ReceiptAccountInfo;
-import org.egov.erpcollection.integration.models.ReceiptInstrumentInfo;
-import org.egov.erpcollection.integration.services.CollectionIntegrationServiceImpl;
 import org.egov.infstr.reporting.engine.ReportOutput;
 import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
@@ -310,9 +310,9 @@ public class BpaReportExtnService  {
 		}
 			if(instrumentDetailsPrepared)
 				break;
-		}
+		}	
 	}
-	private Map<String, BillReceiptInfo> getReceiptInfoMap(RegistrationExtn registration) {
+	public Map<String, BillReceiptInfo> getReceiptInfoMap(RegistrationExtn registration) {
 		DemandGenericDao demandGenericDao = new DemandGenericHibDao();
 		Set<String> receiptNumbetSet= new HashSet<String>();
 		List<BillReceipt> billReceiptList=demandGenericDao.getBillReceipts((List<EgDemand>) Arrays.asList(registration.getEgDemand()));

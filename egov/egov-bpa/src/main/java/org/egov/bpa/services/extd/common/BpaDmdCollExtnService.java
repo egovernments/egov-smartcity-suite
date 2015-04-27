@@ -1,42 +1,3 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation 
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this 
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- */
 package org.egov.bpa.services.extd.common;
 
 import static org.egov.bpa.constants.BpaConstants.BPAMODULENAME;
@@ -56,19 +17,18 @@ import org.egov.bpa.models.extd.RegistrationExtn;
 import org.egov.bpa.models.extd.masters.BpaFeeDetailExtn;
 import org.egov.bpa.models.extd.masters.BpaFeeExtn;
 import org.egov.commons.Installment;
-import org.egov.commons.dao.CommonsDAOFactory;
-import org.egov.commons.dao.InstallmentDao;
-/*import org.egov.demand.dao.DemandGenericDao;
+//import org.egov.commons.dao.CommonsDaoFactory;
+import org.egov.commons.dao.InstallmentDao;	
+import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.dao.DemandGenericHibDao;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.demand.model.EgReasonCategory;
-import org.egov.infstr.commons.dao.GenericDaoFactory;*/
 import org.egov.infstr.commons.Module;
+//import org.egov.infstr.commons.dao.GenericDaoFactory;
 import org.egov.infstr.commons.dao.ModuleDao;
-import org.egov.infstr.commons.dao.ModuleHibDao;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 
@@ -76,19 +36,11 @@ public class BpaDmdCollExtnService {
 	private FeeExtnService feeExtnService ;
 	private static final Logger LOGGER = Logger.getLogger(BpaDmdCollExtnService.class);
 	
-/*	protected PersistenceService<EgDemandReasonMaster, Long> egDemandReasonMasterService;
+	protected PersistenceService<EgDemandReasonMaster, Long> egDemandReasonMasterService;
 	protected PersistenceService<EgDemandReason,Long> demandReasonService;
-	protected PersistenceService<EgDemand,Long> egDemandService;*/
+	protected PersistenceService<EgDemand,Long> egDemandService;
     //private PersistenceService persistenceService;
-	private ModuleHibDao moduleHibDao;
-	protected CommonsDAOFactory commonsDAOFactory;
 	
-	public CommonsDAOFactory getCommonsDAOFactory() {
-		return commonsDAOFactory;
-	}
-	public void setCommonsDAOFactory(CommonsDAOFactory commonsDAOFactory) {
-		this.commonsDAOFactory = commonsDAOFactory;
-	}
 	/**
 	 * @param serviceTypeId
 	 * @param areasqmt
@@ -96,7 +48,7 @@ public class BpaDmdCollExtnService {
 	 * @return EgDemand
 	 */
 	
-	/*public EgDemand createDemand(Long serviceTypeId, BigDecimal areasqmt, String feeType) {
+	public EgDemand createDemand(Long serviceTypeId, BigDecimal areasqmt, String feeType) {
 		EgDemand demand = null;
 		Set<EgDemandDetails> demandDetailSet = new HashSet<EgDemandDetails>();
 		BigDecimal totaldmdAmt = BigDecimal.ZERO;
@@ -142,7 +94,7 @@ public class BpaDmdCollExtnService {
 		
 		return demand;
 	}
-	//Phionix TODO: Demand
+
 	protected EgDemand buildDemandObject(Set<EgDemandDetails> demandDetailSet,
 			BigDecimal totaldmdAmt, Installment installment) {
 		EgDemand dmd = new EgDemand();
@@ -169,14 +121,14 @@ public class BpaDmdCollExtnService {
 		return dmdDet;
 	}
 	
-	*//** 
+	/** 
 	 * @param serviceTypeId
 	 * @param areasqmt
 	 * @param feeType
 	 * @param demand (existing demand)
 	 * @return EgDemand
 	 * This api used only first time when admission fee collected.
-	 *//*
+	 */
 	public EgDemand updateDemand(Long serviceTypeId, BigDecimal areasqmt, String feeType, EgDemand demand) {
 		//Set<EgDemandDetails> demandDetailSet = new HashSet<EgDemandDetails>();
 		//Set<EgDemandDetails> removeDmdDetSet = new HashSet<EgDemandDetails>();
@@ -267,7 +219,7 @@ public class BpaDmdCollExtnService {
 				}
 			
 			
-			
+			/*
 			try {
 				for (BpaFeeDetail feeDet : bpafeeDet) {
 					
@@ -314,24 +266,28 @@ public class BpaDmdCollExtnService {
 			} catch(Exception e) {
 				throw new EGOVRuntimeException("Exception in createDemand method "+ e);
 			}
-		}else
+		*/}else
 		{
 			LOGGER.info("ERROR: in Update Demand !!!!!!!!!!  Fee details are not available for the selected service type,fee type and area");
 		}
 		
 		return demand;
-	}*/
+	}
 	
 	/**
-	 * @return Installment
+	 * @return Installment..TODO PHIONIX
 	 */
 	public Installment getCurrentInstallment() {
-		InstallmentDao installmentDao = commonsDAOFactory.getInstallmentDao();
-		//ModuleDao moduleDao = GenericDaoFactory.getDAOFactory().getModuleDao();
-		//TODO pHionix
-		Module module = moduleHibDao.getModuleByName(BPAMODULENAME);
+		InstallmentDao installmentDao = null;
+		Installment installment=null;
+				//CommonsDaoFactory.getDAOFactory().getInstallmentDao();
+		ModuleDao moduleDao =null;
+				//GenericDaoFactory.getDAOFactory().getModuleDao();
+		if(moduleDao!=null){
+		Module module = moduleDao.getModuleByName(BPAMODULENAME);
 		
-		Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
+		 installment = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
+		}
 		return installment;
 	}
 	
@@ -340,9 +296,11 @@ public class BpaDmdCollExtnService {
 	 * @return EgDemandReason(If either EgDemandReasonMaster or EgDemandReason does not exist, 
 	 * its generated dynamically and then returned)
 	 */
-	/*public EgDemandReason getEgDemandReason(BpaFeeExtn bpaFee) {
-		ModuleDao moduleDao = GenericDaoFactory.getDAOFactory().getModuleDao();
-		Module module = moduleDao.getModuleByName(BPAMODULENAME);
+	public EgDemandReason getEgDemandReason(BpaFeeExtn bpaFee) {
+		ModuleDao moduleDao =null;
+				//GenericDaoFactory.getDAOFactory().getModuleDao();
+		Module module =null;
+		//moduleDao.getModuleByName(BPAMODULENAME);
 		EgDemandReason egDemandReason = null;
 		EgDemandReasonMaster egDemandReasonMaster = null;
 		DemandGenericDao demandGenericDao = new DemandGenericHibDao();
@@ -371,14 +329,16 @@ public class BpaDmdCollExtnService {
 		return egDemandReason;
 	}
 	
-	*//**
+	/**
 	 * @param bpaFee
 	 * @return EgDemandReasonMaster
-	 *//*
+	 */
 	public EgDemandReasonMaster createEgDemandReasonMaster(BpaFeeExtn bpaFee) {
 		EgDemandReasonMaster egDmdRsnMstr = null;
-		ModuleDao moduleDao = GenericDaoFactory.getDAOFactory().getModuleDao();
-		Module module = moduleDao.getModuleByName(BPAMODULENAME);
+		ModuleDao moduleDao = null;
+				//GenericDaoFactory.getDAOFactory().getModuleDao();
+		Module module = null;
+				//moduleDao.getModuleByName(BPAMODULENAME);
 		DemandGenericDao demandGenericDao = new DemandGenericHibDao();
 		//PersistenceService persistenceService = feeService.getPersistenceService();
 		
@@ -404,14 +364,14 @@ public class BpaDmdCollExtnService {
 			//egDmdRsn.setEgDemandReasonMaster(egDmdRsnMstr);
 			//egDmdRsnMstr.getEgDemandReasons().add(egDmdRsn);
 
-			persistenceService.setType(EgDemandReasonMaster.class);
+			/*persistenceService.setType(EgDemandReasonMaster.class);
 			persistenceService.create(egDmdRsnMstr);
 			
 			persistenceService.setType(EgDemandReason.class);
-			persistenceService.create(egDmdRsn);
+			persistenceService.create(egDmdRsn);*/
 			
 		}
-		if (egDmdRsnMstr!=null && (egDmdRsnMstr.getEgDemandReasons().isEmpty() || egDmdRsnMstr.getEgDemandReasons().size()==0)) {
+		/*if (egDmdRsnMstr!=null && (egDmdRsnMstr.getEgDemandReasons().isEmpty() || egDmdRsnMstr.getEgDemandReasons().size()==0)) {
 			
 			createEgDemandReason(bpaFee,egDmdRsnMstr);
 			EgDemandReason egDmdRsn = createEgDemandReason(bpaFee);
@@ -423,15 +383,15 @@ public class BpaDmdCollExtnService {
 			persistenceService.setType(EgDemandReason.class);
 			persistenceService.create(egDmdRsn);
 		}
-		
+	*/	
 		return egDmdRsnMstr;
 	}
 	
-	*//**
+	/**
 	 * @param bpaFee
 	 * @param egDemandReasonMaster 
 	 * @return EgDemandReason
-	 *//*
+	 */
 	public EgDemandReason createEgDemandReason(BpaFeeExtn bpaFee, EgDemandReasonMaster egDemandReasonMaster) {
 		EgDemandReason egDmdRsn = new EgDemandReason();
 		//PersistenceService persistenceService = feeService.getPersistenceService();
@@ -625,7 +585,7 @@ public class BpaDmdCollExtnService {
 	LOGGER.debug("Exit updateDemandByUsingSanctionFeeList ");
 
 		return registrationObj;
-	}*/
+	}
 
 
 	/*private EgDemand createNewDemand() {

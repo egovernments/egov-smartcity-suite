@@ -57,6 +57,7 @@ import org.egov.bpa.services.extd.lettertoparty.LetterToPartyExtnService;
 import org.egov.bpa.services.extd.register.RegisterBpaExtnService;
 import org.egov.commons.EgwStatus;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
@@ -79,13 +80,13 @@ public class LpReplyCmdaExtnAction extends BaseFormAction{
 	private BpaCommonExtnService bpaCommonExtnService;
 	private String existLpReason;
 	private String existLpRemarks;
-	private UserImpl loginUser;
+	private User loginUser;
 	private Long serviceTypeId;
 	private BpaNumberGenerationExtnService bpaNumberGenerationExtnService;
 	private String mode;
 	private ReportService reportService;
 	private Integer reportId = -1;
-	private EisManager eisManager;
+	//private EisManager eisManager;
 	private String documentNum;
 	private String existLpNum;
 	private String fromAddressToLp;
@@ -285,7 +286,7 @@ public class LpReplyCmdaExtnAction extends BaseFormAction{
 		reportData.put("fromAddressToLp", fromAddressToLp);
 		reportData.put("planSubmissionNum", registration.getPlanSubmissionNum());
 		if( registration!=null && registration.getOwner()!=null)
-			reportData.put("applicantName", registration.getOwner().getFirstName());
+			reportData.put("applicantName", registration.getOwner().getName());
 		else
 			reportData.put("applicantName", EMPTYSTRING);
 		reportData.put("cmdaDate", registration.getCmdaRefDate()!=null ? registration.getCmdaRefDate():null);
@@ -364,14 +365,12 @@ public class LpReplyCmdaExtnAction extends BaseFormAction{
 		this.bpaCommonExtnService = bpaCommonService;
 	}
 
-	public UserImpl getLoginUser() {
+	public User getLoginUser() {
 		return loginUser;
 	}
-
-	public void setLoginUser(UserImpl loginUser) {
+	public void setLoginUser(User loginUser) {
 		this.loginUser = loginUser;
 	}
-
 	public RegistrationExtn getRegistration() {
 		return registration;
 	}
@@ -421,13 +420,13 @@ public class LpReplyCmdaExtnAction extends BaseFormAction{
 		this.reportId = reportId;
 	}
 
-	public EisManager getEisManager() {
+	/*public EisManager getEisManager() {
 		return eisManager;
 	}
 
 	public void setEisManager(EisManager eisManager) {
 		this.eisManager = eisManager;
-	}
+	}*/
 
 	public String getExistLpNum() {
 		return existLpNum;

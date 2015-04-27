@@ -49,7 +49,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.jackrabbit.core.security.user.UserImpl;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -63,17 +62,13 @@ import org.egov.bpa.services.extd.inspection.InspectionExtnService;
 import org.egov.bpa.services.extd.lettertoparty.LetterToPartyExtnService;
 import org.egov.bpa.services.extd.register.RegisterBpaExtnService;
 import org.egov.commons.EgwStatus;
-import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.infstr.mail.Email;
-import org.egov.infstr.mail.Email.Builder;
-import org.egov.infstr.notification.HTTPSMS;
 import org.egov.infstr.reporting.engine.ReportOutput;
 import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
-import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.StringUtils;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
@@ -93,7 +88,7 @@ public class LpReplyExtnAction extends BaseFormAction{
 	private BpaCommonExtnService bpaCommonExtnService;
 	private String existLpReason;
 	private String existLpRemarks;
-	private UserImpl loginUser;
+	private User loginUser;
 	private Long serviceTypeId;
 	private List<LpChecklistExtn> lpChkListDet = new ArrayList<LpChecklistExtn>();
 	private List<LpChecklistExtn> lpChkListnewDet = new ArrayList<LpChecklistExtn>();
@@ -101,7 +96,7 @@ public class LpReplyExtnAction extends BaseFormAction{
 	private String mode;
 	private ReportService reportService;
 	private Integer reportId = -1;
-	private EisManager eisManager;
+	//private EisManager eisManager;
 	private String documentNum;
 	private String existLpNum;
 	private RegisterBpaExtnService registerBpaExtnService;
@@ -247,7 +242,7 @@ public class LpReplyExtnAction extends BaseFormAction{
 		String body="";
 		String subject="";
 		Boolean flag=Boolean.FALSE;
-		Surveyor surveyor=registration.getSurveyorName();
+/*	//	Surveyor surveyor=registration.getSurveyorName();
 		if(null!=allowEmail && allowEmail!="" && allowEmail.equalsIgnoreCase("YES")){
 			if(surveyor!=null && surveyor.getUserDetail()!=null &&  surveyor.getUserDetail().getEmail()!=null &&  StringUtils.isNotEmpty(surveyor.getUserDetail().getEmail())){
 				flag=Boolean.TRUE;
@@ -259,13 +254,13 @@ public class LpReplyExtnAction extends BaseFormAction{
 					sendEmail(registration,body,subject,finalAttachmentList);
 				}
 			}
-		}
+		}*///TODO PHionix
 	}
 	
 	public void sendEmail(RegistrationExtn registration,String body, String emailSubject,List<Map<String, Object>> attachmentList)
 	{
-		try{
-		if(registration!=null && registration.getSurveyorName()!=null &&  registration.getSurveyorName().getUserDetail()!=null &&
+		try{//TODO PHionix
+		/*if(registration!=null && registration.getSurveyorName()!=null &&  registration.getSurveyorName().getUserDetail()!=null &&
 				registration.getSurveyorName().getUserDetail().getEmail()!=null && StringUtils.isNotEmpty(registration.getSurveyorName().getUserDetail().getEmail())){
 			
 			Builder builder = new Builder(registration.getSurveyorName().getUserDetail().getEmail(),body)
@@ -287,7 +282,7 @@ public class LpReplyExtnAction extends BaseFormAction{
 			}
 			Email email = builder.build();	 			
 			email.send();
-		 }
+		 }*/
 		}
 		catch(EGOVRuntimeException egovExp){
 			throw egovExp;
@@ -298,18 +293,18 @@ public class LpReplyExtnAction extends BaseFormAction{
 	public void buildSMS(RegistrationExtn registration,String type) { 
 			String smsMsg = null;
 			Boolean flag=Boolean.FALSE;
-			Surveyor surveyor=registration.getSurveyorName();
+			//Surveyor surveyor=registration.getSurveyorName();
 			String allowSms=bpaCommonExtnService.getAppconfigValueResult(BpaConstants.BPAMODULENAME,"SMS_NOTIFICATION_ALLOWED_BPA",null);
 			if(null!=allowSms && allowSms!="" && allowSms.equalsIgnoreCase("YES")){
-				if(surveyor!=null && surveyor.getUserDetail()!=null &&  surveyor.getUserDetail().getMobileNumber()!=null &&  StringUtils.isNotEmpty(surveyor.getUserDetail().getMobileNumber())){
+				/*if(surveyor!=null && surveyor.getUserDetail()!=null &&  surveyor.getUserDetail().getMobileNumber()!=null &&  StringUtils.isNotEmpty(surveyor.getUserDetail().getMobileNumber())){
 					 if(type.equalsIgnoreCase(BpaConstants.SMSEMAILLP)){
 								flag=Boolean.TRUE; 
 								smsMsg = getText("registration.lettertopartyreply.sms.msg",new String[]{registration.getSurveyorName().getUserDetail().getFirstName(),registration.getPlanSubmissionNum(),DateUtils.getFormattedDate(registration.getPlanSubmissionDate(),"dd/MM/yyyy")});	
 								if(isEmailSent(registration)){
 									smsMsg=smsMsg+ getText("registration.lettertopartyreply.sms.withpdfmsg",new String[]{"Reply(LPR)"});
 								}
-						}
-				}
+						}//TODO PHionix
+				}*/
 			}
 			if(flag){
 				sendSMS(registration,smsMsg);
@@ -319,26 +314,27 @@ public class LpReplyExtnAction extends BaseFormAction{
 	public Boolean isEmailSent(RegistrationExtn registration){
 		String allowEmail=bpaCommonExtnService.getAppconfigValueResult(BpaConstants.BPAMODULENAME,"EMAIL_NOTIFICATION_ALLOWED_BPA",null);
 		if(null!=allowEmail && allowEmail!="" && allowEmail.equalsIgnoreCase("YES")){	
-			if(null!=registration && registration.getSurveyorName() !=null && registration.getSurveyorName().getUserDetail()!=null && 
+			/*if(null!=registration && registration.getSurveyorName() !=null && registration.getSurveyorName().getUserDetail()!=null && 
 					registration.getSurveyorName().getUserDetail().getEmail()!=null && StringUtils.isNotEmpty(registration.getSurveyorName().getUserDetail().getEmail())){
 				
-				return true;
-			}
+				return true;//TODO PHionix
+			}*/
 		}
 		return false;
 	} 
 	
 	public void sendSMS(RegistrationExtn registration,String smsMsg){
 		String mobileNumber=null;
-		mobileNumber=registration.getSurveyorName().getUserDetail().getMobileNumber();	 		
+		//mobileNumber=registration.getSurveyorName().getUserDetail().getMobileNumber();	 		
 		if(null!=mobileNumber && StringUtils.isNotEmpty(mobileNumber)){
 		
-			try{
-			HTTPSMS.sendSMS(null, null,smsMsg,"91"+mobileNumber,BpaConstants.SMS_MOBILE_NUMBER);
+			/*try{
+				//TODO PHionix
+			//HTTPSMS.sendSMS(null, null,smsMsg,"91"+mobileNumber,BpaConstants.SMS_MOBILE_NUMBER);
 			}catch(EGOVException e)  // Bypassing Exception..
 			{
 				LOGGER.debug("Error occured in sending SMS "+mobileNumber);
-			}
+			}*/
 		}
 	}
 	
@@ -479,7 +475,7 @@ public class LpReplyExtnAction extends BaseFormAction{
 		}
 		reportData.put("planSubmissionNum", registration.getPlanSubmissionNum());
 		if( registration!=null && registration.getOwner()!=null)
-			reportData.put("applicantName", registration.getOwner().getFirstName());
+			reportData.put("applicantName", registration.getOwner().getName());//TODO phionix
 		else
 			reportData.put("applicantName", EMPTYSTRING);
 		reportData.put("address", address);
@@ -602,13 +598,7 @@ public class LpReplyExtnAction extends BaseFormAction{
 		this.bpaCommonExtnService = bpaCommonService;
 	}
 
-	public UserImpl getLoginUser() {
-		return loginUser;
-	}
-
-	public void setLoginUser(UserImpl loginUser) {
-		this.loginUser = loginUser;
-	}
+	
 
 	public RegistrationExtn getRegistration() {
 		return registration;
@@ -664,14 +654,14 @@ public class LpReplyExtnAction extends BaseFormAction{
 		this.reportId = reportId;
 	}
 
-	public EisManager getEisManager() {
-		return eisManager;
-	}
+	
 
-	public void setEisManager(EisManager eisManager) {
-		this.eisManager = eisManager;
+	public User getLoginUser() {
+		return loginUser;
 	}
-
+	public void setLoginUser(User loginUser) {
+		this.loginUser = loginUser;
+	}
 	public String getExistLpNum() {
 		return existLpNum;
 	}

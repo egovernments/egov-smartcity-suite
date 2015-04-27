@@ -61,6 +61,7 @@ import org.egov.bpa.services.extd.report.BpaReportExtnService;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Query;
@@ -72,8 +73,8 @@ public class DDDetailsForFeeGroupReportAction extends BaseFormAction{
 
 	 	private Long serviceType;
 		
-		private Integer adminboundaryid;
-		private Integer locboundaryid;
+		private Long adminboundaryid;
+		private Long locboundaryid;
 		private String WARD="Ward";
 		private Date orderissuedFromDate;
 		private String planSubmissionNumber;
@@ -171,7 +172,7 @@ public class DDDetailsForFeeGroupReportAction extends BaseFormAction{
 		    }
 			
 			if (getAdminboundaryid() != null && getAdminboundaryid() != -1) {
-				BoundaryImpl boundary = bpaCommonExtnService.getBoundaryObjById(adminboundaryid);
+				Boundary boundary = bpaCommonExtnService.getBoundaryObjById(adminboundaryid);
 
 				if (boundary != null&& boundary.getBoundaryType().getName().equals(WARD)) {
 
@@ -210,7 +211,7 @@ public class DDDetailsForFeeGroupReportAction extends BaseFormAction{
 			}
 			
 			if (getAdminboundaryid() != null && getAdminboundaryid() != -1) {
-				query.setInteger("adminid", getAdminboundaryid());
+				query.setLong("adminid", getAdminboundaryid());
 			}
 			if ((getOrderissuedFromDate() != null && !"".equals(getOrderissuedFromDate()))||(getOrderissuedToDate() != null && !"".equals(getOrderissuedToDate())) ) {
 				
@@ -241,7 +242,7 @@ public class DDDetailsForFeeGroupReportAction extends BaseFormAction{
 				}
 		  		
 				tempserviceMap.put("Site Address",fedetTempObj.getRegistration().getBpaSiteAddress() );
-				tempserviceMap.put("Applicant Name", fedetTempObj.getRegistration().getOwner().getFirstName());
+				tempserviceMap.put("Applicant Name", fedetTempObj.getRegistration().getOwner().getName());
 				}
 				tempserviceMap.put(fedetTempObj.getBpafeecode(),fedetTempObj.getAmount().toString());
 				FeeDetailmap.put(psnNumber,tempserviceMap);
@@ -334,29 +335,24 @@ public class DDDetailsForFeeGroupReportAction extends BaseFormAction{
 		this.searchMode = searchMode;
 	}
 
-	public Integer getAdminboundaryid() {
+	
+
+
+	public Long getAdminboundaryid() {
 		return adminboundaryid;
 	}
 
-
-
-	public void setAdminboundaryid(Integer adminboundaryid) {
+	public void setAdminboundaryid(Long adminboundaryid) {
 		this.adminboundaryid = adminboundaryid;
 	}
 
-
-
-	public Integer getLocboundaryid() {
+	public Long getLocboundaryid() {
 		return locboundaryid;
 	}
 
-
-
-	public void setLocboundaryid(Integer locboundaryid) {
+	public void setLocboundaryid(Long locboundaryid) {
 		this.locboundaryid = locboundaryid;
 	}
-
-
 
 	public Date getOrderissuedFromDate() {
 		return orderissuedFromDate;

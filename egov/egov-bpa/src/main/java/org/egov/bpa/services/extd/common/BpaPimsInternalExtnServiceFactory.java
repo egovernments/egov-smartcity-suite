@@ -41,6 +41,7 @@ package org.egov.bpa.services.extd.common;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -489,7 +490,57 @@ public class BpaPimsInternalExtnServiceFactory {
 		
 		return null;
 	}
-
+	/* In this API,
+	 * 1. Get all employees with Functionary as "TP"  
+	 * 2. Get all boundary type as "Zone" where heirarchy type as "ADMINISTRATION".
+	 * 3. Check any user mapped with zonal jurisdiction values. by passing boundary type and user id.
+	 * Get randomly the first user who mapped to zone.
+	 */
+	
+	public List<EmployeeView> getEmployeeInfoList(Boundary boundaryImpl, String designationName,String roleList) {
+		List<EmployeeView>  empList=new ArrayList();
+		HashMap paramMap=new HashMap();
+		Long boundaryId=null;
+		//Integer boundaryTypeId=null;
+		if(boundaryImpl!=null){
+		if (boundaryImpl.getBoundaryType() != null) {
+				if (boundaryImpl.getBoundaryType().getName().equalsIgnoreCase("zone")) {
+					boundaryId = boundaryImpl.getId();
+				} else if (boundaryImpl.getBoundaryType().getName().equalsIgnoreCase("ward")
+						&& boundaryImpl.getParent() != null) {
+					boundaryId = boundaryImpl.getParent().getId();
+				}
+			}
+				DesignationMaster designation=	(DesignationMaster) persistenceService.find("from DesignationMaster where designationName=?",designationName);
+				Functionary functionary=	(Functionary) persistenceService.find("from Functionary where name=?",BpaConstants.TOWNPLANNINGFUNCTIONARY);
+				EgwStatus status=(EgwStatus) persistenceService.find("from EgwStatus mod where moduletype=? and code=?",BpaConstants.PIMSMODULETYPE,BpaConstants.PIMSEMPLOYEDCODE);
+				
+				//Get zone as Boundary Type
+				BoundaryType bndryType=getBpaCommonExtnService().getBoundaryTypeByPassingBoundaryTypeAndHierarchy(BpaConstants.BOUNDARYTYPE,BpaConstants.HEIRARCHYTYPE);
+				
+				if(designation!=null){
+					paramMap.put("designationId",Integer.toString(designation.getDesignationId()));	 	
+				}
+				if(functionary!=null)
+				paramMap.put("functionaryId", Integer.toString(functionary.getId()));
+				if(status!=null)
+					paramMap.put("status", Integer.toString(status.getId())); 
+				if(boundaryId != null)  {
+					paramMap.put("boundaryId", Long.toString(boundaryId));
+				}
+				if(roleList!=null){
+					paramMap.put("roleList",Arrays.asList(roleList.split(",")));
+				}
+				//Get all "Assistant" Designation employees with Functionary as "TP" 
+				empList= eisService.getEmployeeInfoList(paramMap);
+				/*if (empList != null && empList.size() != 0) {
+					return empList.get(0).getPosition();
+				}
+				return empList;
+				*/
+		 }
+		return empList;
+	}
 	/*
 	 * API to get list of designation's of the Employee by passing employee and department.
 	 */

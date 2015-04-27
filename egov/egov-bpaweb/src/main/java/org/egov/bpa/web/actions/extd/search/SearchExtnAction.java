@@ -55,6 +55,7 @@ import org.egov.bpa.models.extd.masters.ServiceTypeExtn;
 import org.egov.bpa.services.extd.common.BpaCommonExtnService;
 import org.egov.bpa.utils.ApplicationMode;
 import org.egov.bpa.web.actions.extd.common.BpaExtnRuleBook;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
@@ -79,8 +80,8 @@ public class SearchExtnAction extends SearchFormAction{
 	private Integer rowId;
 	
 	public SearchExtnAction() {
-		addRelatedEntity("adminboundaryid", BoundaryImpl.class);
-		addRelatedEntity("locboundaryid", BoundaryImpl.class);
+		addRelatedEntity("adminboundaryid", Boundary.class);
+		addRelatedEntity("locboundaryid", Boundary.class);
 		addRelatedEntity("serviceType", ServiceTypeExtn.class);
 	}
 
@@ -149,7 +150,7 @@ public class SearchExtnAction extends SearchFormAction{
 							BpaAddressExtn addressObjForProperty=null;
 							for(BpaAddressExtn addressObj:registrationObj.getBpaAddressSet())
 							{
-								if(addressObj!=null && addressObj.getAddressTypeMaster()!=null && addressObj.getAddressTypeMaster().getAddressTypeName().equals(BpaConstants.PROPERTY_ADDRESS))
+								if(addressObj!=null && addressObj.getAddressTypeMaster()!=null && addressObj.getAddressTypeMaster().equals(BpaConstants.PROPERTY_ADDRESS))
 								{
 									 addressObjForProperty=addressObj;
 								}
@@ -286,12 +287,12 @@ public class SearchExtnAction extends SearchFormAction{
 					paramList.add(registration.getLocboundaryid().getId());	
 				}else if(registration.getLocboundaryid().getBoundaryType().getName().equals("Locality")){
 					LOGGER.info("Locality");
-					dynQuery.append("  and (reg.locboundaryid.id in (select id from BoundaryImpl where parent.id=?) OR reg.locboundaryid.id=?)");
+					dynQuery.append("  and (reg.locboundaryid.id in (select id from Boundary where parent.id=?) OR reg.locboundaryid.id=?)");
 					paramList.add(registration.getLocboundaryid().getId());
 					paramList.add(registration.getLocboundaryid().getId());
 				}else if(registration.getLocboundaryid().getBoundaryType().getName().equals("Area")){
 					LOGGER.info("Area");
-					dynQuery.append(" and (reg.locboundaryid.id in (select id from BoundaryImpl where parent.id=? OR parent.id in (select id from BoundaryImpl where parent.id=?) ) OR reg.locboundaryid.id=?) ");
+					dynQuery.append(" and (reg.locboundaryid.id in (select id from Boundary where parent.id=? OR parent.id in (select id from Boundary where parent.id=?) ) OR reg.locboundaryid.id=?) ");
 					paramList.add(registration.getLocboundaryid().getId());	
 					paramList.add(registration.getLocboundaryid().getId());	
 					paramList.add(registration.getLocboundaryid().getId());	
@@ -302,7 +303,7 @@ public class SearchExtnAction extends SearchFormAction{
 					dynQuery.append(" and reg.adminboundaryid.id = ?   ");
 					paramList.add(registration.getAdminboundaryid().getId());
 				}else if(registration.getAdminboundaryid().getBoundaryType().getName().equals("Zone")){
-					dynQuery.append("  and (reg.adminboundaryid.id in (select id from BoundaryImpl where parent.id=?) OR reg.adminboundaryid.id= ? ) ");
+					dynQuery.append("  and (reg.adminboundaryid.id in (select id from Boundary where parent.id=?) OR reg.adminboundaryid.id= ? ) ");
 					paramList.add(registration.getAdminboundaryid().getId());
 					paramList.add(registration.getAdminboundaryid().getId());
 				}
@@ -355,11 +356,11 @@ public class SearchExtnAction extends SearchFormAction{
 			paramList.add("%"+registration.getPropertyid()+"%");
 		}
 		
-		if(registration.getSurveyorName()!=null && StringUtils.isNotBlank(registration.getSurveyorName().getName()))
+		/*if(registration.getSurveyorName()!=null && StringUtils.isNotBlank(registration.getSurveyorName().getName()))
 		{
 			dynQuery.append(" and lower(reg.surveyorName.name) like ?");
 			paramList.add("%"+registration.getSurveyorName().getName().toLowerCase()+"%");
-		}
+		}*/
 		
 		if(StringUtils.isNotBlank(registration.getCmdaNum()))
 		{
@@ -385,22 +386,22 @@ public class SearchExtnAction extends SearchFormAction{
 			dynQuery.append(" and trunc(reg.planSubmissionDate) <= '"+DateUtils.getFormattedDate(applicationToDate,"dd-MMM-yyyy")+"' ");
 		}
 		
-		if(registration.getOwner()!=null && StringUtils.isNotBlank(registration.getOwner().getFirstName()))
+		if(registration.getOwner()!=null && StringUtils.isNotBlank(registration.getOwner().getName()))
 		{
 			dynQuery.append(" and lower(reg.owner.firstName) like ? ");
-			paramList.add("%"+registration.getOwner().getFirstName().toLowerCase()+"%");
+			paramList.add("%"+registration.getOwner().getName().toLowerCase()+"%");
 		}
 		
-		if(registration.getOwner()!=null && StringUtils.isNotBlank(registration.getOwner().getFatherName()))
+		/*if(registration.getOwner()!=null && StringUtils.isNotBlank(registration.getOwner().getFatherName()))
 		{
 			dynQuery.append(" and lower(reg.owner.fatherName) like ? ");
 			paramList.add("%"+registration.getOwner().getFatherName().toLowerCase()+"%");
-		}
+		}*/
 		
-		if(registration.getOwner()!=null && StringUtils.isNotBlank(registration.getOwner().getEmailAddress()))
+		if(registration.getOwner()!=null && StringUtils.isNotBlank(registration.getOwner().getEmailId()))
 		{
 			dynQuery.append(" and lower(reg.owner.emailAddress) like ? "); 
-			paramList.add("%"+registration.getOwner().getEmailAddress().toLowerCase()+"%");
+			paramList.add("%"+registration.getOwner().getEmailId().toLowerCase()+"%");
 		}
 		
 		if(StringUtils.isNotBlank(getPhoneNo())){

@@ -45,6 +45,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.bpa.constants.BpaConstants;
+import org.egov.bpa.models.extd.AutoDcrExtn;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.web.actions.SearchFormAction;
@@ -57,7 +58,7 @@ public class SearchAutoDcrExtnAction extends SearchFormAction
 
 	private String initialSearch="NO";
 	private String searchMode;	
-	private AutoDcr searchAutoDcr=new AutoDcr();
+	private AutoDcrExtn searchAutoDcr=new AutoDcrExtn();
 	private Long id;
 	private String autonum;
 	
@@ -140,11 +141,12 @@ public class SearchAutoDcrExtnAction extends SearchFormAction
 		this.searchMode = searchMode;
 	}
 
-	public AutoDcr getSearchAutoDcr() {
+	
+	public AutoDcrExtn getSearchAutoDcr() {
 		return searchAutoDcr;
 	}
 
-	public void setSearchAutoDcr(AutoDcr searchAutoDcr) {
+	public void setSearchAutoDcr(AutoDcrExtn searchAutoDcr) {
 		this.searchAutoDcr = searchAutoDcr;
 	}
 

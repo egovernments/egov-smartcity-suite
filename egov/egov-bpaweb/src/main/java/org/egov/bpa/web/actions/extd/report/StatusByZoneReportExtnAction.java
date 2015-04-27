@@ -50,8 +50,10 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.RegistrationExtn;
 import org.egov.bpa.models.extd.ZoneReportResultExtn;
+import org.egov.bpa.services.extd.common.BpaCommonExtnService;
 import org.egov.bpa.utils.ApplicationMode;
 import org.egov.commons.EgwStatus;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.web.actions.BaseFormAction;
@@ -80,11 +82,11 @@ public class StatusByZoneReportExtnAction extends BaseFormAction
 	private String zonecode;
 	private String wardcode;
 	private String statecode;
-	private BpaCommonService bpaCommonService;
-	//private BoundaryImpl bndry=new BoundaryImpl();
+	private BpaCommonExtnService bpaCommonExtnService;
+	//private Boundary bndry=new Boundary();
 	private List <EgwStatus> statusList=new ArrayList(0);
-	private List <BoundaryImpl> zoneList=new ArrayList(0);
-	private List <BoundaryImpl> wardList=new ArrayList(0);
+	private List <Boundary> zoneList=new ArrayList(0);
+	private List <Boundary> wardList=new ArrayList(0);
 	private Map<String,TreeMap<String,Long>> appstatusmap= new TreeMap<String,TreeMap<String,Long>>();
 	private List<RegistrationExtn> regList=new ArrayList();
 	StringBuffer qryStr = new StringBuffer();
@@ -106,7 +108,7 @@ public StatusByZoneReportExtnAction(){
 	super.prepare();
 	addDropdownData("serviceTypeList",persistenceService.findAllBy("from ServiceTypeExtn order by code"));
 	addDropdownData("statusList", persistenceService.findAllBy("from EgwStatus where moduletype=? order by code ",BpaConstants.NEWBPAREGISTRATIONMODULE));
-	addDropdownData("adminboundaryList",persistenceService.findAllBy("from BoundaryImpl bndry where bndry.boundaryType.id in(select id from BoundaryTypeImpl where name=?) ",BpaConstants.ZONE_BNDRY_TYPE));
+	addDropdownData("adminboundaryList",persistenceService.findAllBy("from Boundary bndry where bndry.boundaryType.id in(select id from BoundaryTypeImpl where name=?) ",BpaConstants.ZONE_BNDRY_TYPE));
 	 addDropdownData("applicationModeList",Arrays.asList(ApplicationMode.values()));
    }
 	@Override
@@ -127,7 +129,7 @@ public StatusByZoneReportExtnAction(){
 	{
 		 if(getWardcode()!=null && "total".equals(getWardcode())){
 	
-			 qryStr.append( "select reg from RegistrationExtn reg,BoundaryImpl bndry where reg.adminboundaryid=bndry.id  and bndry.parent.id in (select id from BoundaryImpl where name=:zonecode) and reg.egwStatus.code= :statcode ");
+			 qryStr.append( "select reg from RegistrationExtn reg,Boundary bndry where reg.adminboundaryid=bndry.id  and bndry.parent.id in (select id from Boundary where name=:zonecode) and reg.egwStatus.code= :statcode ");
 		 } else	 
 		qryStr.append( " from RegistrationExtn reg where id is not null and reg.adminboundaryid.name= :wardcode and reg.egwStatus.code= :statcode ");
 		getappendquery();
@@ -184,16 +186,16 @@ public StatusByZoneReportExtnAction(){
 		statusList= persistenceService.findAllBy("from EgwStatus where moduletype=? order by code",BpaConstants.NEWBPAREGISTRATIONMODULE);	
 	
 		
-		wardList=persistenceService.findAllBy("from BoundaryImpl where parent.id in (select id from BoundaryImpl where name=? ) ",getZonecode());
+		wardList=persistenceService.findAllBy("from Boundary where parent.id in (select id from Boundary where name=? ) ",getZonecode());
 		 for(EgwStatus status:statusList){
 	        	TreeMap<String, Long> wardmap = getEmptywardWithZeroValue(wardList);
 	        	appstatusmap.put(status.getCode(), wardmap);
 	    		}
 		if(getStatecode()!=null){
-			 qryStr.append("SELECT DISTINCT count(reg.id) as count,bndry.name as wardName, reg.egwStatus.code as statusName from RegistrationExtn reg,BoundaryImpl bndry  where reg.adminboundaryid=bndry.id AND  bndry.boundaryType.id in (select id from BoundaryTypeImpl where name= :name) AND bndry.parent.id in (select id from BoundaryImpl where name=:zonenamecode and reg.egwStatus.code= :status)");
+			 qryStr.append("SELECT DISTINCT count(reg.id) as count,bndry.name as wardName, reg.egwStatus.code as statusName from RegistrationExtn reg,Boundary bndry  where reg.adminboundaryid=bndry.id AND  bndry.boundaryType.id in (select id from BoundaryTypeImpl where name= :name) AND bndry.parent.id in (select id from Boundary where name=:zonenamecode and reg.egwStatus.code= :status)");
 				 
 		 }else 
-		 qryStr.append("SELECT DISTINCT count(reg.id) as count,bndry.name as wardName, reg.egwStatus.code as statusName from RegistrationExtn reg,BoundaryImpl bndry  where reg.adminboundaryid=bndry.id AND  bndry.boundaryType.id in (select id from BoundaryTypeImpl where name= :name) AND bndry.parent.id in (select id from BoundaryImpl where name=:zonenamecode)");
+		 qryStr.append("SELECT DISTINCT count(reg.id) as count,bndry.name as wardName, reg.egwStatus.code as statusName from RegistrationExtn reg,Boundary bndry  where reg.adminboundaryid=bndry.id AND  bndry.boundaryType.id in (select id from BoundaryTypeImpl where name= :name) AND bndry.parent.id in (select id from Boundary where name=:zonenamecode)");
 		    if(getServiceType()!=null && getServiceType()!=-1)
 			    {
 			    	qryStr.append(" and reg.serviceType.id= :serviceid ");
@@ -212,7 +214,7 @@ public StatusByZoneReportExtnAction(){
 				qryStr.append(" and reg.planSubmissionDate<= :todate ");
 			}
 			if(getAdminboundaryid()!=null && getAdminboundaryid()!=-1){
-			BoundaryImpl boundary=(BoundaryImpl)persistenceService.find("from BoundaryImpl where id=?",getAdminboundaryid());
+			Boundary boundary=(Boundary)persistenceService.find("from Boundary where id=?",getAdminboundaryid());
 			
 			if(boundary!=null && boundary.getBoundaryType().getName().equals("Ward")){
 				
@@ -220,7 +222,7 @@ public StatusByZoneReportExtnAction(){
 				}
 			else if(boundary!=null && boundary.getBoundaryType().getName().equals("Zone"))
 			{
-				qryStr.append("and reg.adminboundaryid.id in (select id from BoundaryImpl where parent.id= :adminid )");
+				qryStr.append("and reg.adminboundaryid.id in (select id from Boundary where parent.id= :adminid )");
 			
 			}
 			} 
@@ -306,7 +308,7 @@ public StatusByZoneReportExtnAction(){
 		}
 		
 		if(getAdminboundaryid()!=null && getAdminboundaryid()!=-1){
-		BoundaryImpl boundary=(BoundaryImpl)persistenceService.find("from BoundaryImpl where id=?",getAdminboundaryid());
+		Boundary boundary=(Boundary)persistenceService.find("from Boundary where id=?",getAdminboundaryid());
 		
 		if(boundary!=null && boundary.getBoundaryType().getName().equals("Ward")){
 			
@@ -314,7 +316,7 @@ public StatusByZoneReportExtnAction(){
 			}
 		else if(boundary!=null && boundary.getBoundaryType().getName().equals("Zone"))
 		{
-			qryStr.append("and reg.adminboundaryid.id in (select id from BoundaryImpl where parent.id= :adminid )");
+			qryStr.append("and reg.adminboundaryid.id in (select id from Boundary where parent.id= :adminid )");
 		
 		}
 		}
@@ -335,7 +337,7 @@ public StatusByZoneReportExtnAction(){
 		}
 
 		if(getLocboundaryid()!=null){
-		BoundaryImpl boundaryLoc=(BoundaryImpl)persistenceService.find("from BoundaryImpl where id=?",getLocboundaryid());
+		Boundary boundaryLoc=(Boundary)persistenceService.find("from Boundary where id=?",getLocboundaryid());
 		
 		if(boundaryLoc!=null && boundaryLoc.getBoundaryType().getName().equals("Street"))
 		{
@@ -344,11 +346,11 @@ public StatusByZoneReportExtnAction(){
 
 		else if(boundaryLoc!=null && boundaryLoc.getBoundaryType().getName().equals("Locality") )
 			{
-			qryStr.append("	and (reg.locboundaryid.id in (select id from BoundaryImpl where parent.id= :locid) OR  reg.locboundaryid.id= :locid ) ");
+			qryStr.append("	and (reg.locboundaryid.id in (select id from Boundary where parent.id= :locid) OR  reg.locboundaryid.id= :locid ) ");
 			}
 		else if(boundaryLoc!=null && boundaryLoc.getBoundaryType().getName().equals("Area"))
 		{
-			qryStr.append(" and (reg.locboundaryid.id in (select id from BoundaryImpl where parent.id= :locid OR parent.id in (select id from BoundaryImpl where parent.id= :locid) ) OR reg.locboundaryid.id= :locid) ");
+			qryStr.append(" and (reg.locboundaryid.id in (select id from Boundary where parent.id= :locid OR parent.id in (select id from Boundary where parent.id= :locid) ) OR reg.locboundaryid.id= :locid) ");
 			
 		}
 		}*/		
@@ -363,19 +365,19 @@ public StatusByZoneReportExtnAction(){
 	
         //persistenceService.findAllBy("from EgwStatus where moduletype=? order by orderId",BpaConstants.BPAREGISTRATIONMODULE);	
        if(getAdminboundaryid()!=null && getAdminboundaryid()!=-1){
-    	   zoneList= persistenceService.findAllBy("from BoundaryImpl bndry where bndry.boundaryType.id in(select id from BoundaryTypeImpl where name=?) and bndry.id=? ",BpaConstants.ZONE_BNDRY_TYPE,getAdminboundaryid());  	     
+    	   zoneList= persistenceService.findAllBy("from Boundary bndry where bndry.boundaryType.id in(select id from BoundaryTypeImpl where name=?) and bndry.id=? ",BpaConstants.ZONE_BNDRY_TYPE,getAdminboundaryid());  	     
        }else{
-    	   zoneList= persistenceService.findAllBy("from BoundaryImpl bndry where bndry.boundaryType.id in(select id from BoundaryTypeImpl where name=?) ",BpaConstants.ZONE_BNDRY_TYPE);
+    	   zoneList= persistenceService.findAllBy("from Boundary bndry where bndry.boundaryType.id in(select id from BoundaryTypeImpl where name=?) ",BpaConstants.ZONE_BNDRY_TYPE);
        }
-       // zoneList= persistenceService.findAllBy("from BoundaryImpl bndry where bndry.boundaryType.id=?",2);
+       // zoneList= persistenceService.findAllBy("from Boundary bndry where bndry.boundaryType.id=?",2);
 
        for(EgwStatus status:statusList){
 	    	TreeMap<String, Long> zonemap = getEmptyzoneWithZeroValue(zoneList);
 	    	appstatusmap.put(status.getCode(), zonemap);
        }
    
-       //qryStr.append("SELECT DISTINCT bndry.parent.name AS zoneName, COUNT(reg.id) AS count , reg.egwStatus.code AS statusName FROM Registration reg, BoundaryImpl bndry WHERE  reg.adminboundaryid=bndry.id AND bndry.boundaryType.id IN (2,3) ");
-    	qryStr.append("SELECT DISTINCT bndry.parent.name AS zoneName, COUNT(reg.id) AS count , reg.egwStatus.code AS statusName FROM RegistrationExtn reg, BoundaryImpl bndry WHERE  reg.adminboundaryid=bndry.id AND bndry.boundaryType.id IN (select id from BoundaryTypeImpl where name= :zonename or name= :name) ");
+       //qryStr.append("SELECT DISTINCT bndry.parent.name AS zoneName, COUNT(reg.id) AS count , reg.egwStatus.code AS statusName FROM Registration reg, Boundary bndry WHERE  reg.adminboundaryid=bndry.id AND bndry.boundaryType.id IN (2,3) ");
+    	qryStr.append("SELECT DISTINCT bndry.parent.name AS zoneName, COUNT(reg.id) AS count , reg.egwStatus.code AS statusName FROM RegistrationExtn reg, Boundary bndry WHERE  reg.adminboundaryid=bndry.id AND bndry.boundaryType.id IN (select id from BoundaryTypeImpl where name= :zonename or name= :name) ");
     	getappendquery();
     	qryStr.append(" GROUP BY  bndry.parent.name , reg.egwStatus.code");
     	Query query = HibernateUtil.getCurrentSession().createQuery(qryStr.toString());
@@ -424,20 +426,20 @@ public StatusByZoneReportExtnAction(){
 	}
 	
 	
-	private TreeMap<String, Long> getEmptyzoneWithZeroValue(List<BoundaryImpl> getZoneByZeroList) {
+	private TreeMap<String, Long> getEmptyzoneWithZeroValue(List<Boundary> getZoneByZeroList) {
 		TreeMap<String,Long> zonemap = new TreeMap<String,Long>();
 
-			for(BoundaryImpl service:getZoneByZeroList){
+			for(Boundary service:getZoneByZeroList){
 				zonemap.put(service.getName().toUpperCase(), (long) 0);
 			}
 			zonemap.put("total",0L);
 			return zonemap;
 	}
 	
-	private TreeMap<String, Long> getEmptywardWithZeroValue(List<BoundaryImpl> getWardByZeroList) {
+	private TreeMap<String, Long> getEmptywardWithZeroValue(List<Boundary> getWardByZeroList) {
 		TreeMap<String,Long> wardmap = new TreeMap<String,Long>();
 
-			for(BoundaryImpl service:getWardByZeroList){
+			for(Boundary service:getWardByZeroList){
 				wardmap.put(service.getName().toUpperCase(), (long) 0);
 			}
 			wardmap.put("total",0L);
@@ -446,7 +448,7 @@ public StatusByZoneReportExtnAction(){
 	
 	public  String getUsertName(Integer id)
     {
-		String owner=bpaCommonService.getUsertName(id);
+		String owner=bpaCommonExtnService.getUsertName(id);
 		return owner;
     }
 	
@@ -503,14 +505,7 @@ public StatusByZoneReportExtnAction(){
 	}
 
 
-	public List<BoundaryImpl> getZoneList() {
-		return zoneList;
-	}
-
-
-	public void setZoneList(List<BoundaryImpl> zoneList) {
-		this.zoneList = zoneList;
-	}
+	
 
 
 
@@ -547,15 +542,7 @@ public StatusByZoneReportExtnAction(){
 	}
 
 
-	public List<BoundaryImpl> getWardList() {
-		return wardList;
-	}
-
-
-	public void setWardList(List<BoundaryImpl> wardList) {
-		this.wardList = wardList;
-	}
-
+	
 
 	public Map<String, TreeMap<String, Long>> getAppstatusmap() {
 		return appstatusmap;
@@ -589,16 +576,18 @@ public StatusByZoneReportExtnAction(){
 	}
 
 
-	public BpaCommonService getBpaCommonService() {
-		return bpaCommonService;
-	}
-
-
-	public void setBpaCommonService(BpaCommonService bpaCommonService) {
-		this.bpaCommonService = bpaCommonService;
-	}
-
 	
+	
+
+	public BpaCommonExtnService getBpaCommonExtnService() {
+		return bpaCommonExtnService;
+	}
+
+
+	public void setBpaCommonExtnService(BpaCommonExtnService bpaCommonExtnService) {
+		this.bpaCommonExtnService = bpaCommonExtnService;
+	}
+
 
 	public Integer getAdminboundaryid() {
 		return adminboundaryid;
@@ -650,22 +639,42 @@ public StatusByZoneReportExtnAction(){
 	}
 
 
-	/*public BoundaryImpl getAdminboundaryid() {
+	public List<Boundary> getZoneList() {
+		return zoneList;
+	}
+
+
+	public void setZoneList(List<Boundary> zoneList) {
+		this.zoneList = zoneList;
+	}
+
+
+	public List<Boundary> getWardList() {
+		return wardList;
+	}
+
+
+	public void setWardList(List<Boundary> wardList) {
+		this.wardList = wardList;
+	}
+
+
+	/*public Boundary getAdminboundaryid() {
 		return adminboundaryid;
 	}
 
 
-	public void setAdminboundaryid(BoundaryImpl adminboundaryid) {
+	public void setAdminboundaryid(Boundary adminboundaryid) {
 		this.adminboundaryid = adminboundaryid;
 	}
 
 
-	public BoundaryImpl getLocboundaryid() {
+	public Boundary getLocboundaryid() {
 		return locboundaryid;
 	}
 
 
-	public void setLocboundaryid(BoundaryImpl locboundaryid) {
+	public void setLocboundaryid(Boundary locboundaryid) {
 		this.locboundaryid = locboundaryid;
 	}*/
 

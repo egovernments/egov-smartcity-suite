@@ -44,11 +44,14 @@ import static org.egov.bpa.constants.BpaConstants.PROPERTY_ADDRESS;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -59,6 +62,8 @@ import org.egov.bpa.models.extd.BpaAddressExtn;
 import org.egov.bpa.models.extd.CMDALetterToPartyExtn;
 import org.egov.bpa.models.extd.DocketFloorDetails;
 import org.egov.bpa.models.extd.DocketViolations;
+import org.egov.bpa.models.extd.InspectMeasurementDtlsExtn;
+import org.egov.bpa.models.extd.InspectionDetailsExtn;
 import org.egov.bpa.models.extd.InspectionExtn;
 import org.egov.bpa.models.extd.LetterToPartyExtn;
 import org.egov.bpa.models.extd.LpChecklistExtn;
@@ -68,12 +73,15 @@ import org.egov.bpa.models.extd.RegistrationFeeDetailExtn;
 import org.egov.bpa.models.extd.RegistrationFeeExtn;
 import org.egov.bpa.models.extd.RegnAutoDcrDtlsExtn;
 import org.egov.bpa.models.extd.RegnAutoDcrExtn;
+import org.egov.bpa.models.extd.RegnOfficialActionsExtn;
 import org.egov.bpa.models.extd.RegnStatusDetailsExtn;
 import org.egov.bpa.models.extd.RejectionChecklistExtn;
+import org.egov.bpa.models.extd.ReportFeesDetailsExtn;
 import org.egov.bpa.models.extd.masters.BpaFeeExtn;
 import org.egov.bpa.models.extd.masters.BuildingCategoryExtn;
 import org.egov.bpa.models.extd.masters.CheckListDetailsExtn;
 import org.egov.bpa.models.extd.masters.DocumentHistoryExtn;
+import org.egov.bpa.models.extd.masters.DocumentHistoryExtnDetails;
 import org.egov.bpa.models.extd.masters.ServiceTypeExtn;
 import org.egov.bpa.services.extd.autoDcr.AutoDcrExtnService;
 import org.egov.bpa.services.extd.common.BpaCommonExtnService;
@@ -83,7 +91,10 @@ import org.egov.bpa.services.extd.common.BpaPimsInternalExtnServiceFactory;
 import org.egov.bpa.services.extd.common.FeeExtnService;
 import org.egov.bpa.services.extd.common.RegnStatusDetailExtnService;
 import org.egov.bpa.services.extd.inspection.InspectionExtnService;
+import org.egov.bpa.utils.extd.BpaFeeExtnComparator;
+import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.commons.EgwStatus;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 //import org.egov.infstr.workflow.WorkflowService;
@@ -98,7 +109,7 @@ import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.StringUtils;
-import org.egov.infstr.utils.UtilityMethods;
+/*import org.egov.infstr.utils.UtilityMethods;phionix todo*/
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.commons.DesignationMaster;
@@ -106,6 +117,7 @@ import org.egov.pims.commons.Position;
 /*import org.egov.pims.commons.service.EisCommonsManager;
 import org.egov.pims.service.EisManager;*/
 import org.egov.pims.model.PersonalInformation;
+import org.geotools.resources.Utilities;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Criterion;
@@ -115,6 +127,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+
 
 public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn, Long> {
 
@@ -141,6 +154,7 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 	public void setEisCommonsManager(EisCommonsManager eisCommonsManager) {
 		this.eisCommonsManager = eisCommonsManager;
 	}*/
+	protected PersistenceService<RegnOfficialActionsExtn, Long> regnOfficialActionsExtnService;
 	private RegnStatusDetailExtnService regnStatusDetExtnService;
 	//private EisManager eisMgr;
 	private FeeExtnService feeExtnService;
@@ -184,7 +198,7 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 		
 		
 	}
-	public RegistrationExtn createBpa( RegistrationExtn registration,BpaAddressExtn applicantrAddress,String autoDcr,BpaAddressExtn siteAddress,Integer boundaryStateId,String workFlowAction,String approverComments, Long existingbuildingCategoryId, Long proposedbuildingCategoryId,Boolean callWorkFlow, Position position)
+	public RegistrationExtn createBpa( RegistrationExtn registration,BpaAddressExtn applicantrAddress,String autoDcr,BpaAddressExtn siteAddress,Long boundaryStateId,String workFlowAction,String approverComments, Long existingbuildingCategoryId, Long proposedbuildingCategoryId,Boolean callWorkFlow, Position position)
 	{
 		oldStatus=registration.getEgwStatus();
 		/**
@@ -331,8 +345,8 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
        bpaCommonExtnService.createStatusChange(registration,oldStatus);
 	  
 	   if(registration.getSecurityKey()==null || "".equals(registration.getSecurityKey()))
-		   registration.setSecurityKey(UtilityMethods.getRandomString());
-	  
+		 //  registration.setSecurityKey(Utilities.getRandomString());//From Egi UtilityMethods changed   as to remove compile error
+		   registration.setSecurityKey("");
 	   if(registration.getId()==null)
 		   registration=persist(registration);
 	   else {
@@ -472,9 +486,9 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 	 * @param cityTown
 	 * @param  state
 	 */
-	private BpaAddressExtn createSitetAddress(RegistrationExtn registration,BpaAddressExtn siteAddress,Integer boundaryStateId) {
+	private BpaAddressExtn createSitetAddress(RegistrationExtn registration,BpaAddressExtn siteAddress,Long boundaryStateId) {
 		AddressType addressTypeMaster = getAddressTypeMasterByName(PROPERTY_ADDRESS);
-		org.egov.mdm.masters.administration.State st = (org.egov.mdm.masters.administration.State) getPersistenceService().find(
+		org.egov.infra.workflow.entity.State st = (org.egov.infra.workflow.entity.State) getPersistenceService().find(
 				"from State ATM where ATM.id=?",boundaryStateId);
 		
 		siteAddress.setAddressTypeMaster(addressTypeMaster);
@@ -508,7 +522,122 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 		return findById(registrationId);
 		
 	}
-		
+	@SuppressWarnings("unchecked")
+	public Integer printInspectionForm(RegistrationExtn registration,
+			Map<String, Object> session, String printMode,Boolean enableDocketSheetForView) {
+		Integer reportId = null;
+		if (registration != null) {
+			ReportRequest reportInput = null;
+			Map reportParams = new HashMap<String, Object>();
+
+			List<InspectionExtn> inspectionList = inspectionExtnService
+					.getAllSiteInspectionListforRegistrationObject(registration);
+			InspectionExtn inspObj = null;
+			if (!inspectionList.isEmpty()) {
+				for (InspectionExtn inspectionObj : inspectionList) {
+						if (!printMode.equals("OfficialPrint")) {
+							Boolean surveyorrrole=bpaCommonExtnService.ShowUserROles(inspectionObj.getCreatedBy().getRoles(),BpaConstants.PORTALUSERSURVEYORROLE,"");
+							if( surveyorrrole.equals(true)){
+							inspObj = inspectionObj;
+							reportParams.put("headerForReport",
+									"Surveyor Inspection Details");
+							}
+						} else {
+							Boolean arorArrrole=bpaCommonExtnService.ShowUserROles(inspectionObj.getCreatedBy().getRoles(),BpaConstants.BPAAEROLE,BpaConstants.BPAAEEROLE);
+							if (printMode.equals("OfficialPrint") && arorArrrole.equals(true)) {
+								if(inspObj==null){
+								inspObj = inspectionObj;
+								}
+								reportParams.put("headerForReport",
+										"AE/AEE Inspection Details");
+							}
+						}
+				}
+	
+				if (inspObj != null) {
+					reportParams.put("inspectionObj", inspObj);
+					reportParams.put("inspectionObjDetail",
+							inspObj.getInspectionDetails());
+					List<InspectMeasurementDtlsExtn> inspectionMeasurementList = new ArrayList<InspectMeasurementDtlsExtn>(
+							inspObj.getInspectionDetails()
+									.getInspectMeasurementDtlsSet());
+					for(InspectMeasurementDtlsExtn measureList :inspectionMeasurementList)
+					{
+						if(measureList.getInspectionSource()!=null && measureList.getInspectionSource().getCode().equals(BpaConstants.INSPECTIONSOURCEFORCONSTRUCTIONPLAN))
+						{
+							measureList.setHeader("Construction details as per Plan");
+							reportParams.put("inspectionMeasurmenrObjectperplan",measureList);
+						}
+						else if(measureList.getInspectionSource()!=null && measureList.getInspectionSource().getCode().equals(BpaConstants.INSPECTIONSOURCEFORCONSTRUCTIONSITE)){
+							measureList.setHeader("Construction details as per Site");
+							reportParams.put("inspectionMeasurmenrObjectpersite",measureList);
+						}
+					}
+					
+							
+				} else {
+					reportParams.put("inspectionObj", new InspectionExtn());
+					reportParams.put("inspectionObjDetail",
+							new InspectionDetailsExtn());
+					reportParams.put("inspectionMeasurementList",
+							new ArrayList<InspectMeasurementDtlsExtn>());
+				}
+			} else {
+				reportParams.put("inspectionObj", new InspectionExtn());
+				reportParams.put("inspectionObjDetail",
+						new InspectionDetailsExtn());
+				reportParams.put("inspectionMeasurementList",
+						new ArrayList<InspectMeasurementDtlsExtn>());
+			}
+			reportInput = new ReportRequest(BpaConstants.INSPECTIONDETAILSEXTN,
+					registration, reportParams);
+			if (reportInput != null)
+				reportId = ReportViewerUtil.addReportToSession(
+						reportService.createReport(reportInput), session);
+		}
+		if(enableDocketSheetForView!=null && enableDocketSheetForView.equals(Boolean.TRUE)){
+		if(printMode!="" && printMode!=null && !printMode.equalsIgnoreCase("OfficialPrint")) 
+			createRegnOfficialActions(registration,BpaConstants.VIEWED_SURVEYOR_INSPECTION);
+		else
+			createRegnOfficialActions(registration,BpaConstants.VIEWED_AE_AEE_INSPECTION);
+		}
+		return reportId;
+	}
+	public RegnOfficialActionsExtn getRegnOfficialActionsExtn(RegistrationExtn reg, User user) {
+		return regnOfficialActionsExtnService.find(" from RegnOfficialActionsExtn where createdBy.id=? and registration.id=?", 
+				user.getId(), reg.getId());
+	}
+	public void createRegnOfficialActions(RegistrationExtn registration, String viewType) {
+		//PersonalInformation prsnlInfo=eisMgr.getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		User user=new User();
+		RegnOfficialActionsExtn regnOfficialActionsObj=getRegnOfficialActionsExtn(registration,user);
+		if(regnOfficialActionsObj!=null){
+			//regnOfficialActionsObj.setModifiedBy(prsnlInfo.getUserMaster());
+			regnOfficialActionsObj.setModifiedDate(new Date());
+			regnOfficialActionsExtnService.merge(regnOfficialActionsObj);
+		}else{
+			regnOfficialActionsObj=new RegnOfficialActionsExtn();
+			regnOfficialActionsObj.setRegistration(registration);
+			//regnOfficialActionsObj.setCreatedBy(prsnlInfo.getUserMaster());//TODO Phionix
+			//regnOfficialActionsObj.setModifiedBy(prsnlInfo.getUserMaster());
+			regnOfficialActionsObj.setCreatedDate(new Date());
+			regnOfficialActionsObj.setModifiedDate(new Date());
+			regnOfficialActionsExtnService.persist(regnOfficialActionsObj);
+		}
+		if(viewType.equalsIgnoreCase(BpaConstants.VIEWED_SURVEYOR_INSPECTION)){
+			regnOfficialActionsObj.setViewedSurveyorInsp(true);
+		}else if(viewType.equalsIgnoreCase(BpaConstants.VIEWED_AE_AEE_INSPECTION)){
+			regnOfficialActionsObj.setViewedAE_AEEInsp(true);
+		}else if(viewType.equalsIgnoreCase(BpaConstants.VIEWED_SURVEYOR_DOCDETAILS)){
+			regnOfficialActionsObj.setViewedSurveyorDocDtls(true);
+		}else if(viewType.equalsIgnoreCase(BpaConstants.VIEWED_AE_AEE_DOCDETAILS)){
+			regnOfficialActionsObj.setViewedAE_AEEDocDtls(true);
+		}else if(viewType.equalsIgnoreCase(BpaConstants.VIEWED_AUTODCR_DETAILS)){
+			regnOfficialActionsObj.setViewedAutoDcrDtls(true);
+		}else if(viewType.equalsIgnoreCase(BpaConstants.VIEWED_DOCKETSHEET)){
+			regnOfficialActionsObj.setViewedDocketSheet(true);
+		}
+	}
 	public RegistrationExtn getRegistrationByPassingRequestNumber(String  req_number) {
 
 		if(req_number!=null && !"".equals(req_number) ) {
@@ -1020,7 +1149,7 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 			}
 			return registration;
 		}
-/*		
+		
 		public List<ReportFeesDetailsExtn> getSanctionedReportFeeDtls(RegistrationExtn registration) {
 			List <ReportFeesDetailsExtn> reportFeeList =new LinkedList<ReportFeesDetailsExtn>();
 			if(registration!=null && registration.getEgDemand()!=null&&registration.getEgDemand().getEgDemandDetails()!=null){
@@ -1048,12 +1177,12 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 		
 		public Map<String, BillReceiptInfo> getCollectedReceiptsByRegistrationId(RegistrationExtn registration) {
 			return bpaCommonExtnService.getReceiptInfoByRegistrationObject(registration);
-		}*/
+		}
 		 public List<CMDALetterToPartyExtn> getcmdaLetterToPartyForRegistrationObject(RegistrationExtn registrationObj) {
 				return  (List<CMDALetterToPartyExtn>)persistenceService. findAllBy("from CMDALetterToPartyExtn where registration=?  order by id desc",registrationObj);
 			}
 	public Integer 	printDocketSheet (RegistrationExtn registration,
-			Map<String, Object> session) {
+			Map<String, Object> session,Boolean enableDocketSheetForView) {
 		Integer reportId = null;
 		if (registration != null) {
 			ReportRequest reportInput = null; 
@@ -1062,16 +1191,16 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 			
 			
 			List<InspectionExtn> inspectionList=inspectionExtnService.getSiteInspectionListforRegistrationObject(registration);
-		//	List<ReportFeesDetailsExtn> reportFeeDetailsList=getSanctionedReportFeeDtls(registration);
-			/*
+			List<ReportFeesDetailsExtn> reportFeeDetailsList=getSanctionedReportFeeDtls(registration);
+			
 			RegistrationFeeExtn registrationFeeObj=bpaCommonExtnService.getLatestApprovedRegistrationFee(registration);
 			Map<String,List<BpaFeeExtn>>  registrationFeesesByFeeGroup=bpaCommonExtnService.getGroupWiseFeeListByPassingRegistration(registration,registrationFeeObj!=null? registrationFeeObj.getId():null);
 			
 			if(registrationFeesesByFeeGroup!=null && registrationFeesesByFeeGroup.size()>0){
 					reportParams.put("reportFeeList", registrationFeesesByFeeGroup.get(BpaConstants.COCFEE));
-			}*/
-			//Phionix TODO
-			// reportParams.put("reportFeeList", reportFeeDetailsList);
+			}
+			
+			 reportParams.put("reportFeeList", reportFeeDetailsList);
 			 //BpaConstants.OWNER_ADDRESS
 			 
 			 reportParams.put("doorNumber", " ");
@@ -1227,7 +1356,62 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 		}
 		return reportId;
 	}
-
+	public RegistrationExtn createCMDALetterToParty(CMDALetterToPartyExtn letterToParty,
+			RegistrationExtn registrationObj,String workFlowAction, String approverComments){
+		
+		oldStatus=registrationObj.getEgwStatus();
+		letterToParty.setRegistration(registrationObj);
+		if(letterToParty.getLetterToPartyNumber()==null || letterToParty.getLetterToPartyNumber().equals("")){
+			letterToParty.setLetterToPartyNumber(bpaNumberGenerationExtnService.generateCMDALetterToPartyNumber());
+	   }
+		String UserRole=bpaCommonExtnService.getUserRolesForLoggedInUser();
+		
+		if( registrationObj.getEgwStatus().getCode().equals(BpaConstants.CREATEDCMDALETTERTOPARTY)){
+			letterToParty.getRegistration().setEgwStatus(bpaCommonExtnService.getstatusbyCode(BpaConstants.CMDALETTERTOPARTYSENT));
+		}
+		else 
+		{
+			 if(!(registrationObj.getEgwStatus().getCode().equals(BpaConstants.CMDALETTERTOPARTYSENT)))
+				 letterToParty.getRegistration().setEgwStatus(bpaCommonExtnService.getstatusbyCode(BpaConstants.CREATEDCMDALETTERTOPARTY));
+		}
+		registrationObj.setAdditionalRule(BpaConstants.LETTERTOCMDA);
+		User LoggedInuser = bpaCommonExtnService.getUserbyId(Integer.parseInt(EGOVThreadLocals.getUserId()));
+			if(LoggedInuser!=null)
+			{
+				letterToParty.setCreatedBy(LoggedInuser);
+				letterToParty.setCreatedDate(new Date()); 
+			} 
+			
+	List <LetterToPartyExtn> lToP = getLetterToPartyForRegistrationObject(registrationObj);
+	registrationObj.setLetterToParty(lToP.get(0));
+	
+		
+		registrationObj.getLetterToParty().getCmdaLetterToPartySet().add(letterToParty);
+		letterToParty.setLetterToParty(registrationObj.getLetterToParty());
+		if(null!=registrationObj.getApproverPositionId() && registrationObj.getApproverPositionId()!=-1)
+		   {
+			  approverId= registrationObj.getApproverPositionId();
+		   }
+		if(letterToParty.getId()==null){
+	    	registrationObj=persist(registrationObj);
+	    }
+	    else{
+	    	registrationObj=merge(registrationObj);
+	    }
+	    
+	    registrationObj.setApproverPositionId(approverId);
+		createWorkflow(registrationObj,workFlowAction,approverComments,null);
+		bpaCommonExtnService.createStatusChange(registrationObj,oldStatus);
+		return registrationObj;
+		}
+	public RegistrationExtn getRegistrationByPassingCheckListNumber(Long requestNum) {
+		RegistrationChecklistExtn regnChkObj=null;
+		Criteria registrationChkListObjCriteria =getSession().createCriteria(RegistrationChecklistExtn.class, "registerChkList");
+		registrationChkListObjCriteria.add(Restrictions.eq("id", requestNum));
+		regnChkObj=(RegistrationChecklistExtn) registrationChkListObjCriteria.uniqueResult();
+		return (regnChkObj!=null? regnChkObj.getRegistration():null);
+	}
+	
 	/*
 	 *  Select all bpa registration's where 
 	 *  1. Registered status RECORD
@@ -1267,8 +1451,88 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 		LOGGER.debug("....Inspection query..." + registrations);
 		return registrations.list();
 	}
-
+	public List<RegnOfficialActionsExtn> getOfficialActionsByRegId(Long registrationId) {
+		List<RegnOfficialActionsExtn> regnOfficialActionsList=new ArrayList<RegnOfficialActionsExtn>();
+		regnOfficialActionsList=regnOfficialActionsExtnService.findAllBy(" from RegnOfficialActionsExtn where registration.id=?", registrationId);
+		return regnOfficialActionsList;
+	}
 	
+
+	@SuppressWarnings("unchecked")
+	public Integer printDocumentHistoryForm(RegistrationExtn registration,
+			Map<String, Object> session, String printMode ,Boolean enableDocketSheetForView) {
+		Integer reportId = null;
+		if (registration != null) {
+			ReportRequest reportInput = null;
+			Map reportParams = new HashMap<String, Object>();
+			List<DocumentHistoryExtn> DocHistoryListForPrint = new ArrayList<DocumentHistoryExtn>();
+			DocHistoryListForPrint = bpaCommonExtnService.getAllDocumentHistoryList(registration);
+			if (!DocHistoryListForPrint.isEmpty()) {
+				DocumentHistoryExtn DocHistoryObj = null;
+				//if (printMode != null && ) {
+					for (DocumentHistoryExtn docExtn : DocHistoryListForPrint) {
+						if (!printMode.equals("OfficialPrint")) {
+							Boolean surveyorrrole=bpaCommonExtnService.ShowUserROles(docExtn.getCreatedUser().getRoles(),BpaConstants.PORTALUSERSURVEYORROLE,"");
+							if(surveyorrrole.equals(true)) {
+								DocHistoryObj = docExtn;
+								reportParams.put("headerForReport","Surveyor Document History Sheet");
+								break;
+							}
+						}
+							else {
+								Boolean arorArrrole=bpaCommonExtnService.ShowUserROles(docExtn.getCreatedUser().getRoles(),BpaConstants.BPAAEROLE,BpaConstants.BPAAEEROLE);
+								if (printMode.equals("OfficialPrint") && arorArrrole.equals(true)) {
+									DocHistoryObj = docExtn;
+									reportParams.put("headerForReport",
+											"AE/AEE Document History Sheet");
+								}
+							
+					}
+			
+				}
+				if (DocHistoryObj != null) {
+					List<DocumentHistoryExtnDetails> DocumentHistoryExtndetails = new ArrayList<DocumentHistoryExtnDetails>(DocHistoryObj.getDocumentHistoryDetailSet());
+					if(registration!=null && registration.getServiceType()!=null && registration.getServiceType().getCode()!=null && 
+							(registration.getServiceType().getCode().equals(BpaConstants.NEWBUILDINGONVACANTPLOTCODE)
+							||registration.getServiceType().getCode().equals(BpaConstants.DEMOLITIONRECONSTRUCTIONCODE)
+							||registration.getServiceType().getCode().equals(BpaConstants.ADDITIONALCONSTRUCTIONCODE)
+							||registration.getServiceType().getCode().equals(BpaConstants.SUBDIVISIONOFLANDCODE)
+							||registration.getServiceType().getCode().equals(BpaConstants.LAYOUTAPPPROVALCODE))){
+						reportParams.put("documenthistory", DocHistoryObj);
+					}
+					else
+					{
+						reportParams.put("documenthistory",	new DocumentHistoryExtn());						
+					}
+					reportParams.put("docementaryHistoryList",DocumentHistoryExtndetails);
+					
+				} else {
+					reportParams.put("documenthistory",
+							new DocumentHistoryExtn());
+					reportParams.put("docementaryHistoryList",
+							new ArrayList<DocumentHistoryExtnDetails>());
+				}
+			} else {
+				reportParams.put("documenthistory", new DocumentHistoryExtn());
+				reportParams.put("docementaryHistoryList",
+						new ArrayList<DocumentHistoryExtnDetails>());
+			}
+			
+
+			reportInput = new ReportRequest(BpaConstants.DOCUMENTHISTORYPRINT,
+					registration, reportParams);
+			if (reportInput != null)
+				reportId = ReportViewerUtil.addReportToSession(
+						reportService.createReport(reportInput), session);
+			if(enableDocketSheetForView!=null && enableDocketSheetForView.equals(Boolean.TRUE)){
+			if(printMode!="" && printMode!=null && !printMode.equalsIgnoreCase("OfficialPrint")) 
+				createRegnOfficialActions(registration,BpaConstants.VIEWED_SURVEYOR_DOCDETAILS);
+			else
+				createRegnOfficialActions(registration,BpaConstants.VIEWED_AE_AEE_DOCDETAILS);
+		}
+		}
+		return reportId;
+	}
 	public RegistrationExtn getRegistrationByPassingServiceReqNumber(String requestNum) {
 	
 		Criteria registrationObjCriteria =getSession().createCriteria(RegistrationExtn.class, "register");
@@ -1373,7 +1637,13 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 		public void setRegnStatusDetExtnService(RegnStatusDetailExtnService regnStatusDetService) {
 			this.regnStatusDetExtnService = regnStatusDetService;
 		}
-		
+		public PersistenceService<RegnOfficialActionsExtn, Long> getRegnOfficialActionsExtnService() {
+			return regnOfficialActionsExtnService;
+		}
+		public void setRegnOfficialActionsExtnService(
+				PersistenceService<RegnOfficialActionsExtn, Long> regnOfficialActionsExtnService) {
+			this.regnOfficialActionsExtnService = regnOfficialActionsExtnService;
+		}
 		
 		
 }
