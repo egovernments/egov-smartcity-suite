@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -73,10 +73,10 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * The filter automatically logs in the user with the credential found in the encrypted 
- * cookie named 'egovegov'. The application using which the user first logs in, 
- * sets a cookie valid for 30 minutes If the current request has a valid cookie, 
- * the application logs the user in automatically.
+ * The filter automatically logs in the user with the credential found in the
+ * encrypted cookie named 'egovegov'. The application using which the user first
+ * logs in, sets a cookie valid for 30 minutes If the current request has a
+ * valid cookie, the application logs the user in automatically.
  */
 @Transactional
 public class SimpleSSOFilter implements Filter, LogoutHandler {
@@ -86,7 +86,7 @@ public class SimpleSSOFilter implements Filter, LogoutHandler {
 	private String logoutUrl;
 	private SessionCache sessionCache;
 	private SessionFactory sessionFactory;
-	
+
 	public void setSessionCache(final SessionCache sessionCache) {
 		this.sessionCache = sessionCache;
 	}
@@ -96,28 +96,24 @@ public class SimpleSSOFilter implements Filter, LogoutHandler {
 	}
 
 	private String getPasswordForUser(final String userName) {
-		return CryptoHelper.decrypt(this.userService.getUserByUsername(userName).getPassword());
+		return CryptoHelper.decrypt(userService.getUserByUsername(userName).getPassword());
 	}
 
 	private Cookie getSSOCookie(final HttpServletRequest request) {
 		final Cookie cookies[] = request.getCookies();
-		if (cookies == null || cookies.length < 1) {
+		if (cookies == null || cookies.length < 1)
 			return null;
-		}
 		Cookie ssoCookie = null;
-		for (final Cookie cookie : cookies) {
-			if (cookie.getName().equals(SSO_COOKIE)) {
+		for (final Cookie cookie : cookies)
+			if (cookie.getName().equals(SSO_COOKIE))
 				ssoCookie = cookie;
-			}
-		}
 		return ssoCookie;
 	}
 
 	private void clearCookies(final HttpServletRequest request, final HttpServletResponse response) {
 		final Cookie cookies[] = request.getCookies();
-		if (cookies == null || cookies.length < 1) {
+		if (cookies == null || cookies.length < 1)
 			return;
-		}
 		for (final Cookie cookie : cookies) {
 			cookie.setMaxAge(0);
 			cookie.setPath("/");
@@ -135,55 +131,59 @@ public class SimpleSSOFilter implements Filter, LogoutHandler {
 	 * check if the SSO cookie is available and has not expired
 	 */
 	@Override
-	public void doFilter(final ServletRequest req, final ServletResponse res, final FilterChain chain) throws IOException, ServletException {
+	public void doFilter(final ServletRequest req, final ServletResponse res, final FilterChain chain)
+			throws IOException, ServletException {
 		final HttpServletRequest httpRequest = (HttpServletRequest) req;
 		final HttpServletResponse httpResponse = (HttpServletResponse) res;
 		final HttpSession session = httpRequest.getSession(false);
-		final SSOPrincipal ssoPrincipal = this.getSSOPrincipal(httpRequest);
-		
+		if (session != null) {
+			final SSOPrincipal ssoPrincipal = getSSOPrincipal(httpRequest);
 
-		if (this.sessionCache != null && session != null) {
-			if (!this.sessionCache.isSessionValid(session.getId()) && !this.logoutUrl.equals(httpRequest.getRequestURI())) {
-				this.doLogout(httpRequest, httpResponse);
+			if (sessionCache != null)
+				if (!sessionCache.isSessionValid(session.getId()) && !logoutUrl.equals(httpRequest.getRequestURI())) {
+					doLogout(httpRequest, httpResponse);
+					return;
+				}
+			/*
+			 * If the sessionId in cookie is not same as user's sessionId, this
+			 * is not a valid request. Logout. This will work only if domains
+			 * share the same cookie. In case of Tomcat, the emptySessionPath is
+			 * set to true in server.xml (of web deployer)
+			 */
+			if (ssoPrincipal != null && !session.getId().equals(ssoPrincipal.getSessionId())) {
+				doLogout(httpRequest, httpResponse);
 				return;
-			}			
-		}
-		/*
-		 * If the sessionId in cookie is not same as user's sessionId, this is not a valid request. Logout. 
-		 * This will work only if domains share the same cookie. In case of Tomcat, 
-		 * the emptySessionPath is set to true in server.xml (of web deployer)
-		 */
-		if (session != null && ssoPrincipal != null && (!session.getId().equals(ssoPrincipal.getSessionId()))) {
-			this.doLogout(httpRequest, httpResponse);
-			return;
-		}
+			}
 
-		// If the cookie is expired, logout
-		if (this.ssoSessionExpired(ssoPrincipal)) {
-			this.doLogout(httpRequest, httpResponse);
-			return;
-		}
-		// No principal, but the sso was done some time back. So some other app has logged out the
-		// user.
-		// logout from this app as well.
-		if (ssoPrincipal == null && (session == null || this.isSSOCompletedForThisSession(session))) {
-			this.doLogout(httpRequest, httpResponse);
-			return;
-		}
-		// update the cookie timestamp to current time, the cookie is valid for 30 more minutes
-		if (ssoPrincipal != null) {
-			this.setPrincipalWithCurrentTimestamp(httpRequest, httpResponse, ssoPrincipal);
-		}
-		// cookie is present, but not logged on in this app. So log in
-		if (ssoPrincipal != null && !this.isAuthenticated()) {
-			this.setAuthentication(ssoPrincipal);
-			this.setSSSOCompletedForThisSession(httpRequest);
-		}
-		// no cookie, but user has manually logged in, so set the cookie and mark SSO as completed
-		// for this session
-		if (ssoPrincipal == null && this.isAuthenticated() && !this.isSSOCompletedForThisSession(session)) {
-			this.setPrincipalWithCurrentTimestamp(httpRequest, httpResponse, this.getSSOPrincipalFromAuthentication());
-			this.setSSSOCompletedForThisSession(httpRequest);
+			// If the cookie is expired, logout
+			if (ssoSessionExpired(ssoPrincipal)) {
+				doLogout(httpRequest, httpResponse);
+				return;
+			}
+			// No principal, but the sso was done some time back. So some other
+			// app has logged out the
+			// user.
+			// logout from this app as well.
+			if (ssoPrincipal == null && isSSOCompletedForThisSession(session)) {
+				doLogout(httpRequest, httpResponse);
+				return;
+			}
+			// update the cookie timestamp to current time, the cookie is valid
+			// for 30 more minutes
+			if (ssoPrincipal != null)
+				setPrincipalWithCurrentTimestamp(httpRequest, httpResponse, ssoPrincipal);
+			// cookie is present, but not logged on in this app. So log in
+			if (ssoPrincipal != null && !isAuthenticated()) {
+				setAuthentication(ssoPrincipal);
+				setSSSOCompletedForThisSession(httpRequest);
+			}
+			// no cookie, but user has manually logged in, so set the cookie and
+			// mark SSO as completed
+			// for this session
+			if (ssoPrincipal == null && isAuthenticated() && !isSSOCompletedForThisSession(session)) {
+				setPrincipalWithCurrentTimestamp(httpRequest, httpResponse, getSSOPrincipalFromAuthentication());
+				setSSSOCompletedForThisSession(httpRequest);
+			}
 		}
 		chain.doFilter(req, res);
 	}
@@ -192,15 +192,15 @@ public class SimpleSSOFilter implements Filter, LogoutHandler {
 		httpRequest.getSession(false).setAttribute(SecurityConstants.SSO_COMPLEATED, true);
 	}
 
-	private void setPrincipalWithCurrentTimestamp(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse, final SSOPrincipal principal) {
-		httpResponse.addCookie(this.makeCookie(httpRequest, principal));
+	private void setPrincipalWithCurrentTimestamp(final HttpServletRequest httpRequest,
+			final HttpServletResponse httpResponse, final SSOPrincipal principal) {
+		httpResponse.addCookie(makeCookie(httpRequest, principal));
 	}
 
 	private SSOPrincipal getSSOPrincipal(final HttpServletRequest request) {
-		final Cookie cookie = this.getSSOCookie(request);
-		if (cookie == null) {
+		final Cookie cookie = getSSOCookie(request);
+		if (cookie == null)
 			return null;
-		}
 		return SSOPrincipal.valueOf(cookie.getValue());
 	}
 
@@ -209,7 +209,7 @@ public class SimpleSSOFilter implements Filter, LogoutHandler {
 	}
 
 	private void doLogout(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
-		response.sendRedirect(request.getContextPath() + this.logoutUrl);
+		response.sendRedirect(request.getContextPath() + logoutUrl);
 	}
 
 	private boolean isSSOCompletedForThisSession(final HttpSession session) {
@@ -226,11 +226,9 @@ public class SimpleSSOFilter implements Filter, LogoutHandler {
 		principal.setUserName(((SecureUser) authentication.getPrincipal()).getUsername());
 		principal.setTimestamp(System.currentTimeMillis());
 		final HashMap<String, String> creds = (HashMap<String, String>) authentication.getCredentials();
-		for (final Entry<String, String> cred : creds.entrySet()) {
-			if (!cred.getKey().equals(SecurityConstants.PWD_FIELD)) {
+		for (final Entry<String, String> cred : creds.entrySet())
+			if (!cred.getKey().equals(SecurityConstants.PWD_FIELD))
 				principal.addCredential(cred.getKey(), cred.getValue());
-			}
-		}
 		return principal;
 	}
 
@@ -241,9 +239,8 @@ public class SimpleSSOFilter implements Filter, LogoutHandler {
 			principal.setSessionId(request.getSession(false).getId());
 			value = principal.toString();
 		}
-		if (this.sessionCache != null) {
-			this.sessionCache.addSession(request.getSession(false));
-		}
+		if (sessionCache != null)
+			sessionCache.addSession(request.getSession(false));
 		final Cookie ssoCookie = new Cookie(SSO_COOKIE, value);
 		ssoCookie.setPath("/");
 		ssoCookie.setHttpOnly(true);
@@ -252,7 +249,7 @@ public class SimpleSSOFilter implements Filter, LogoutHandler {
 	}
 
 	public boolean isLocalhostOrIp(final String domain) {
-		return domain.toLowerCase().startsWith("localhost") && domain.indexOf(".") < 0 || this.isIP(domain);
+		return domain.toLowerCase().startsWith("localhost") && domain.indexOf(".") < 0 || isIP(domain);
 	}
 
 	public boolean isIP(final String domain) {
@@ -266,25 +263,26 @@ public class SimpleSSOFilter implements Filter, LogoutHandler {
 
 	public String getDomainWithoutPort(final String domain) {
 		String domainExcludingPort = domain;
-		if (domain.indexOf(':') > -1) {
+		if (domain.indexOf(':') > -1)
 			domainExcludingPort = domain.substring(0, domain.indexOf(':'));
-		}
 		return domainExcludingPort;
 	}
 
 	protected void setAuthentication(final SSOPrincipal principal) {
-		final String password = this.getPasswordForUser(principal.getUserName());
+		final String password = getPasswordForUser(principal.getUserName());
 		final Map<String, String> credentials = principal.getCredentials();
 		credentials.put(SecurityConstants.PWD_FIELD, password);
 		final HashMap<String, String> creds = new HashMap<String, String>();
 		creds.putAll(credentials);
-		final UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(principal.getUserName(), creds);
+		final UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+				principal.getUserName(), creds);
 		Authentication authentication;
 		try {
-			authentication = this.authenticationProvider.authenticate(authToken);
+			authentication = authenticationProvider.authenticate(authToken);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 		} catch (final AuthenticationException e) {
-			// do nothing.Auth has failed. Filters further in the chain will take care of authn and
+			// do nothing.Auth has failed. Filters further in the chain will
+			// take care of authn and
 			// authx
 		}
 	}
@@ -302,23 +300,24 @@ public class SimpleSSOFilter implements Filter, LogoutHandler {
 	}
 
 	@Override
-	public void logout(final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication) {
+	public void logout(final HttpServletRequest request, final HttpServletResponse response,
+			final Authentication authentication) {
 		if (request.getSession(false) != null) {
-			this.updateLoginLog(authentication);
-			if (this.sessionCache != null) {
-				this.sessionCache.invalidateSession(request.getSession(false).getId());
-			}
+			updateLoginLog(authentication);
+			if (sessionCache != null)
+				sessionCache.invalidateSession(request.getSession(false).getId());
 			request.getSession(false).invalidate();
 
 		}
-		this.clearCookies(request, response);
+		clearCookies(request, response);
 	}
 
 	private void updateLoginLog(final Authentication authentication) {
 		if (authentication != null) {
 			final HashMap<String, String> credentials = (HashMap<String, String>) authentication.getCredentials();
 			if (credentials.containsKey(SecurityConstants.LOGIN_LOG_ID)) {
-				final EgLoginLog loginLog =  (EgLoginLog) getCurrentSession().load(EgLoginLog.class, Integer.valueOf(credentials.get(SecurityConstants.LOGIN_LOG_ID)));
+				final EgLoginLog loginLog = (EgLoginLog) getCurrentSession().load(EgLoginLog.class,
+						Integer.valueOf(credentials.get(SecurityConstants.LOGIN_LOG_ID)));
 				loginLog.setLogoutTime(new Date());
 				getCurrentSession().update(loginLog);
 			}
@@ -333,8 +332,7 @@ public class SimpleSSOFilter implements Filter, LogoutHandler {
 		this.logoutUrl = logoutUrl;
 	}
 
-	public void setSessionFactory(SessionFactory sessionFactory) {
+	public void setSessionFactory(final SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
 }
-
