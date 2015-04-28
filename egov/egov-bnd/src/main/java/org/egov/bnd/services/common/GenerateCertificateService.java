@@ -192,15 +192,6 @@ public class GenerateCertificateService {
 
         final HttpServletRequest request = ServletActionContext.getRequest();
 
-        // registrationMapObject.put("NAFORM","This is to certify that a search has been made on the request of Shri/Smt/Kum.<b> "+
-        // nonAvailability.getApplicantName() +" </b>son of "+
-        // nonAvailability.getApplicantRelationName()
-        // +" In the registration record for the year(s)"+nonAvailability.getYearOfEvent().toString()
-        // +
-        // " Relating to (local area)    Nagpur of (Tahsil)  Nagpur  (District)   Nagpur State   Maharashtra    and found  that the event relating to"+nonAvailability.getEventType()
-        // +"of "+
-        // nonAvailability.getCitizenName()+"son of"+nonAvailability.getCitizenRelationName()+"was not registratered. ");
-
         if (nonAvailability != null && nonAvailability.getCitizenName() != null
                 && !"".equals(nonAvailability.getCitizenName()))
             registrationMapObject.put("NAME", nonAvailability.getCitizenName().toUpperCase());

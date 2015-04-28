@@ -157,7 +157,7 @@
 														name="GovNameLoc" /> </span>
 												<br />
 												<span class="nmcbd-form-title"> <s:text
-														name="nagpurMuncipalOfficeHeader" /> </span>
+														name="CityMuncipalOfficeHeader" /> </span>
 												<br />
 												<span class="nmcbd-form-title"> <s:text
 														name="DeptLoc" />/<s:text name="DeptEng" /> <br /> </span>

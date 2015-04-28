@@ -141,7 +141,7 @@ public interface BndConstants {
     public static final String NONAVLREGN_TEMPLATE = "NACertificate";
     public static final String DEATHREGISTRATION_TEMPLATE = "DeathCertificate";
 
-    public static final String CITYIMAGENAME = "nagpur.jpg";
+    public static final String CITYIMAGENAME = "cityimage.jpg";
     public static final String HOSPITALUSER = "HOSPITALUSER";
     public static final String BIRTHVIEWURL = "URL_BIRTH_REPORT";
     public static final String DEATHVIEWURL = "URL_DEATH_REPORT";
