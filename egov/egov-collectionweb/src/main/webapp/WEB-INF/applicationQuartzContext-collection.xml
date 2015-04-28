@@ -74,7 +74,7 @@
    <bean name="updateDishonoredInstrumentsJobScheduler" id="updateDishonoredInstrumentsJobScheduler" class="org.springframework.scheduling.quartz.JobDetailBean">
    		<property name="group" value="COLLECTION_JOB_GROUP"/>
    		<property name="name" value="Update Dishonored Instruments Job"/>
-   		<property name="jobClass" value="org.egov.erpcollection.scheduler.UpdateDishonoredInstrumentsJob"/>
+   		<property name="jobClass" value="org.egov.collection.scheduler.UpdateDishonoredInstrumentsJob"/>
    		<property name="requestsRecovery" value="true"/>
 		<property name="jobDataAsMap">
             <map>
@@ -86,7 +86,7 @@
         </property>           	
 	</bean>
 	
-	<bean id="updateDishonoredInstrumentsJobDelegate" class="org.egov.erpcollection.scheduler.UpdateDishonoredInstrumentsJob" lazy-init="true" scope="prototype">
+	<bean id="updateDishonoredInstrumentsJobDelegate" class="org.egov.collection.scheduler.UpdateDishonoredInstrumentsJob" lazy-init="true" scope="prototype">
         <property name="persistenceService" ref="persistenceService" />
         <property name="instrumentService" ref="instrumentService" />
         <property name="receiptPayeeDetailsService" ref="receiptPayeeDetailsService" />
@@ -108,7 +108,7 @@
      <bean name="onlinePaymentUnknownStatusTrackerJobScheduler" id="onlinePaymentUnknownStatusTrackerJobScheduler" class="org.springframework.scheduling.quartz.JobDetailBean">
      	<property name="group" value="COLLECTION_JOB_GROUP"/>
      	<property name="name" value="Online Payment Unknown Status Tracker Job"/> 
-     	<property name="jobClass" value="org.egov.erpcollection.scheduler.OnlinePaymentUnknownStatusTrackerJob"/>
+     	<property name="jobClass" value="org.egov.collection.scheduler.OnlinePaymentUnknownStatusTrackerJob"/>
    		<property name="requestsRecovery" value="true"/>
 		<property name="jobDataAsMap">
             <map>
@@ -120,7 +120,7 @@
         </property>   	
 	</bean>
 	
-    <bean id="onlinePaymentUnknownStatusTrackerJobDelegate" class="org.egov.erpcollection.scheduler.OnlinePaymentUnknownStatusTrackerJob" lazy-init="true" scope="prototype">
+    <bean id="onlinePaymentUnknownStatusTrackerJobDelegate" class="org.egov.collection.scheduler.OnlinePaymentUnknownStatusTrackerJob" lazy-init="true" scope="prototype">
         <property name="persistenceService" ref="persistenceService" />
     </bean>
  	

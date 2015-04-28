@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CVoucherHeader;
@@ -15,6 +16,10 @@ import org.egov.commons.dao.ChartOfAccountsDAO;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.utils.HibernateUtil;
+import org.egov.model.instrument.InstrumentHeader;
+import org.egov.model.instrument.InstrumentVoucher;
+import org.egov.services.contra.ContraService;
+import org.egov.services.instrument.InstrumentService;
 import org.hibernate.SQLQuery;
 
 /**
@@ -22,9 +27,9 @@ import org.hibernate.SQLQuery;
  * calling any financials APIs from erp collections.
  */
 public class FinancialsUtil {
-	/*private InstrumentService instrumentService;
+	private InstrumentService instrumentService;
 	private ContraService contraService;
-	private CreateVoucher voucherCreator;*/
+	private CreateVoucher voucherCreator;
 	private static final Logger LOGGER = Logger.getLogger(FinancialsUtil.class);
 
 	/**
@@ -130,10 +135,10 @@ public class FinancialsUtil {
 	 * @param paramList
 	 * @return
 	 */
-/*	public List<InstrumentVoucher> updateInstrument(List<Map<String, Object>> paramList) {
+	public List<InstrumentVoucher> updateInstrument(List<Map<String, Object>> paramList) {
 		List<InstrumentVoucher> instrumentVoucherList = instrumentService.updateInstrumentVoucherReference(paramList);
 		return instrumentVoucherList;
-	}*/
+	}
 
 	/**
 	 * Create Instrument Header for list of HashMap of instrument header
@@ -142,10 +147,10 @@ public class FinancialsUtil {
 	 * @param paramList
 	 * @return List of InstrumentHeader
 	 */
-/*	public List<InstrumentHeader> createInstrument(List<Map<String, Object>> paramList) {
+	public List<InstrumentHeader> createInstrument(List<Map<String, Object>> paramList) {
 		List<InstrumentHeader> instrumentHeaderList = instrumentService.addToInstrument(paramList);
 		return instrumentHeaderList;
-	}*/
+	}
 
 	/**
 	 * Update Cheque/DD/Card Instrument Status after creating Bank Remittance
@@ -156,9 +161,9 @@ public class FinancialsUtil {
 	 * @param instrumentHeader
 	 */
 
-	/*public void updateCheque_DD_Card_Deposit(Long payInId, String toBankaccountGlcode, InstrumentHeader instrumentHeader) {
-		contraService.updateCheque_DD_Card_Deposit(payInId, toBankaccountGlcode, instrumentHeader);
-	}*/
+	public void updateCheque_DD_Card_Deposit(Long payInId, String toBankaccountGlcode, InstrumentHeader instrumentHeader) {
+		contraService.updateCheque_DD_Card_Deposit(payInId, toBankaccountGlcode, instrumentHeader, null);
+	}
 
 	/**
 	 * Update Cheque/DD/Card Instrument Status after creating Bank Remittance
@@ -169,10 +174,10 @@ public class FinancialsUtil {
 	 * @param instrumentHeader
 	 */
 
-	/*public void updateCheque_DD_Card_Deposit_Receipt(Long receiptId, String toBankaccountGlcode,
+	public void updateCheque_DD_Card_Deposit_Receipt(Long receiptId, String toBankaccountGlcode,
 			InstrumentHeader instrumentHeader) {
-		contraService.updateCheque_DD_Card_Deposit_Receipt(receiptId, toBankaccountGlcode, instrumentHeader);
-	}*/
+		contraService.updateCheque_DD_Card_Deposit_Receipt(receiptId, toBankaccountGlcode, instrumentHeader,null);
+	}
 
 	/**
 	 * Update Cash Instrument Status after creating Pay in Slip Voucher
@@ -181,10 +186,10 @@ public class FinancialsUtil {
 	 * @param toBankaccountGlcode
 	 * @param instrumentHeader
 	 */
-/*	public void updateCashDeposit(Long payInId, String toBankaccountGlcode, InstrumentHeader instrumentHeader) {
-		contraService.updateCashDeposit(payInId, toBankaccountGlcode, instrumentHeader);
+	public void updateCashDeposit(Long payInId, String toBankaccountGlcode, InstrumentHeader instrumentHeader) {
+		contraService.updateCashDeposit(payInId, toBankaccountGlcode, instrumentHeader,null);
 	}
-*/
+
 
 	/**
 	 * Checks whether given account is a revenue account (cash/cheque in hand)

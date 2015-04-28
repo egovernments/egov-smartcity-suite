@@ -91,9 +91,6 @@ public class BankRemittanceReportAction extends ReportFormAction {
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see org.egov.erpcollection.web.actions.reports.ReportFormAction#criteria()
-	 */
 	@Override
 	public String criteria() {
 		// Setup drop down data for department list
@@ -109,9 +106,6 @@ public class BankRemittanceReportAction extends ReportFormAction {
 		return INDEX;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.egov.erpcollection.web.actions.reports.ReportFormAction#getReportTemplateName()
-	 */
 	@Override
 	protected String getReportTemplateName() {
 		return BANK_REMITTANCE_REPORT_TEMPLATE;

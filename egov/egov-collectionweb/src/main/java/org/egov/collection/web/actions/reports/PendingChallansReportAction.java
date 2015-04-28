@@ -69,12 +69,6 @@ public class PendingChallansReportAction extends ReportFormAction {
 		setDataSourceType(ReportDataSourceType.HQL);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.egov.erpcollection.web.actions.reports.ReportFormAction#criteria()
-	 */
 	@Override
 	public String criteria() {
 		// Setup drop down data for department list
@@ -99,12 +93,6 @@ public class PendingChallansReportAction extends ReportFormAction {
 		return INDEX;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.egov.erpcollection.web.actions.reports.ReportFormAction#
-	 * getReportTemplateName()
-	 */
 	@Override
 	protected String getReportTemplateName() {
 		return CollectionConstants.REPORT_TEMPLATE_PENDING_CHALLANS;

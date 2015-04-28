@@ -97,7 +97,7 @@ public class SearchChallanAction extends BaseFormAction {
 				Challan.class.getSimpleName());
 	}
 	public String search() {
-		StringBuilder queryString=new StringBuilder(" select distinct receipt from org.egov.erpcollection.models.ReceiptHeader receipt");
+		StringBuilder queryString=new StringBuilder(" select distinct receipt from org.egov.collection.entity.ReceiptHeader receipt");
 		StringBuilder criteria = new StringBuilder();
 		StringBuilder joinString = new StringBuilder();
 		StringBuilder whereString = new StringBuilder(" order by receipt.createdDate desc");

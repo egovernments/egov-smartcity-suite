@@ -84,13 +84,13 @@ public class ReceiptNumberSearchAction extends BaseFormAction {
 
 	public Collection<ReceiptHeader> getManualReceiptNumberList() {
 		if(StringUtils.isNotBlank(query))
-			receiptNumberList = receiptHeaderService.findAllBy("from org.egov.erpcollection.models.ReceiptHeader where upper(manualreceiptnumber) like  ? || '%'",query.toUpperCase());
+			receiptNumberList = receiptHeaderService.findAllBy("from org.egov.collection.entity.ReceiptHeader where upper(manualreceiptnumber) like  ? || '%'",query.toUpperCase());
 		return receiptNumberList;
 	}
 	
 	public Collection<ReceiptHeader> getReceiptNumberList() {
 		if(StringUtils.isNotBlank(query))
-			receiptNumberList = receiptHeaderService.findAllBy("from org.egov.erpcollection.models.ReceiptHeader where upper(receiptnumber) like '%' || ? || '%'",query.toUpperCase());
+			receiptNumberList = receiptHeaderService.findAllBy("from org.egov.collection.entity.ReceiptHeader where upper(receiptnumber) like '%' || ? || '%'",query.toUpperCase());
 		return receiptNumberList;
 	}
 

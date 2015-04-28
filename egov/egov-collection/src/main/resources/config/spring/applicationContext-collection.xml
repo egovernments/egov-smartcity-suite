@@ -5,15 +5,15 @@
             http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd"
 	default-lazy-init="true">
 
-	<bean class="org.egov.erpcollection.services.ChallanService" id="challanService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.erpcollection.models.Challan" />
+	<bean class="org.egov.collection.service.ChallanService" id="challanService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.collection.entity.Challan" />
 		<property name="collectionsUtil" ref="collectionsUtil" />
 		<property name="challanWorkflowService" ref="challanWorkflowService" />
 	</bean>
 
 	<bean id="challanWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
 		<constructor-arg ref="persistenceService" />
-		<constructor-arg value="org.egov.erpcollection.models.Challan" />
+		<constructor-arg value="org.egov.collection.entity.Challan" />
 	</bean>
 
 	<bean id="serviceDetailsService" parent="persistenceService" scope="prototype">
@@ -25,16 +25,16 @@
     </bean>
     
 	<bean id="collStgReceiptService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.erpcollection.models.CollectionStgReceipt" />
+		<property name="type" value="org.egov.collection.entity.CollectionStgReceipt" />
 	</bean>
 	
-	<bean id="xmlHandler" class="org.egov.erpcollection.web.handler.BillCollectXmlHandler">
+	<bean id="xmlHandler" class="org.egov.collection.handler.BillCollectXmlHandler">
 	</bean>
 
 	<bean id="bankService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.commons.Bank" />
 	</bean>
 	
-	<bean id="BDPGIPaymentGatewayAdaptor" class="org.egov.erpcollection.integration.pgi.BillDeskAdaptor" />
+	<bean id="BDPGIPaymentGatewayAdaptor" class="org.egov.collection.integration.pgi.BillDeskAdaptor" />
     
 </beans>

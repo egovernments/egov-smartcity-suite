@@ -44,15 +44,18 @@ import java.math.BigDecimal;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.utils.EntityType;
+import org.egov.egf.commons.EgovCommon;
+import org.egov.exceptions.EGOVException;
+import org.egov.exceptions.EGOVRuntimeException;
 
 /**
  * The AccountPayeeDetail information class. Provides details of a AccountPayeeDetail in subledger detail.
  */
 public class AccountPayeeDetailInfo {
-	private final AccountPayeeDetail accountPayeeDetail = null;
+	private AccountPayeeDetail accountPayeeDetail = null;
 	private EntityType entityType;
 	
-	/*public AccountPayeeDetailInfo(AccountPayeeDetail accountPayeeDetail,EgovCommon egovCommon){
+	public AccountPayeeDetailInfo(AccountPayeeDetail accountPayeeDetail,EgovCommon egovCommon){
 		this.accountPayeeDetail = accountPayeeDetail;
 		try {
 			populateEntityType(accountPayeeDetail, egovCommon);
@@ -71,7 +74,7 @@ public class AccountPayeeDetailInfo {
 		entityType = egovCommon.getEntityType(accountPayeeDetail
 				.getAccountDetailType(), accountPayeeDetail
 				.getAccountDetailKey().getDetailkey());
-	}*/
+	}
 	
 	/**
 	 * @return the GL code

@@ -1368,7 +1368,7 @@ public class FileUploadAction extends BaseFormAction{
 		errorReceiptList.clear();
 		
 		List<ReceiptHeader> approvedReceipts=persistenceService.findAllBy(
-				"from org.egov.erpcollection.models.ReceiptHeader where status.code=?", 
+				"from org.egov.collection.entity.ReceiptHeader where status.code=?", 
 				CollectionConstants.RECEIPT_STATUS_CODE_APPROVED);
 		
 		List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>();

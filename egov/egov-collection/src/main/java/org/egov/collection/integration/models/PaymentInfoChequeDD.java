@@ -44,9 +44,6 @@ public class PaymentInfoChequeDD implements PaymentInfo {
 		return branchName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.egov.erpcollection.models.PaymentInfo#getInstrumentAmount()
-	 */
 	@Override
 	public BigDecimal getInstrumentAmount() {
 		return instrumentAmount;
@@ -61,9 +58,6 @@ public class PaymentInfoChequeDD implements PaymentInfo {
 		return instrumentNumber;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.egov.erpcollection.models.PaymentInfo#getInstrumentTypeId()
-	 */
 	@Override
 	public TYPE getInstrumentType() {
 		return instrumentType;

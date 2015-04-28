@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 	<!-- Generated 10 Sep, 2009 12:59:28 PM by Hibernate Tools 3.2.0.CR1 -->
 <hibernate-mapping auto-import="false">
-	<class name="org.egov.erpcollection.models.ReceiptHeader" table="EGCL_COLLECTIONHEADER">
+	<class name="org.egov.collection.entity.ReceiptHeader" table="EGCL_COLLECTIONHEADER">
 		<id name="id" type="long">
 			<column name="ID" precision="22" scale="0" />
 			<generator class="sequence">
@@ -11,17 +11,17 @@
 			</generator>
 		</id>
 		<version name="version" column="VERSION" type="long" />
-		<many-to-one name="receiptHeader" class="org.egov.erpcollection.models.ReceiptHeader" fetch="select">
+		<many-to-one name="receiptHeader" class="org.egov.collection.entity.ReceiptHeader" fetch="select">
             <column name="REFERENCE_CH_ID" precision="22" scale="0" />
         </many-to-one>
         <set name="receiptHeaders" inverse="true">
             <key>
                 <column name="REFERENCE_CH_ID" precision="22" scale="0" />
             </key>
-            <one-to-many class="org.egov.erpcollection.models.ReceiptHeader" />
+            <one-to-many class="org.egov.collection.entity.ReceiptHeader" />
         </set>
 		<many-to-one name="receiptPayeeDetails"
-			class="org.egov.erpcollection.models.ReceiptPayeeDetails" fetch="select">
+			class="org.egov.collection.entity.ReceiptPayeeDetails" fetch="select">
 			<column name="ID_COLLECTIONPAYEEDETAILS" precision="22" scale="0" />
 		</many-to-one>
 		<property name="referencenumber" type="string">
@@ -83,12 +83,12 @@
 			<key>
 				<column name="ID_COLLECTIONHEADER" precision="22" scale="0" />
 			</key>
-			<one-to-many class="org.egov.erpcollection.models.ReceiptDetail" />
+			<one-to-many class="org.egov.collection.entity.ReceiptDetail" />
 		</set>
 		
-		<one-to-one name="receiptMisc" class="org.egov.erpcollection.models.ReceiptMisc" property-ref="receiptHeader" cascade="all" />
-		<one-to-one name="onlinePayment" class="org.egov.erpcollection.models.OnlinePayment" property-ref="receiptHeader" cascade="all" />
-		<one-to-one name="challan" class="org.egov.erpcollection.models.Challan" property-ref="receiptHeader" cascade="all" />
+		<one-to-one name="receiptMisc" class="org.egov.collection.entity.ReceiptMisc" property-ref="receiptHeader" cascade="all" />
+		<one-to-one name="onlinePayment" class="org.egov.collection.entity.OnlinePayment" property-ref="receiptHeader" cascade="all" />
+		<one-to-one name="challan" class="org.egov.collection.entity.Challan" property-ref="receiptHeader" cascade="all" />
 
 		<set name="receiptInstrument" table="EGCL_COLLECTIONINSTRUMENT">
 			<key>
@@ -107,7 +107,7 @@
 			<key>
 				<column name="COLLECTIONHEADERID" precision="22" scale="0" />
 			</key>
-			<one-to-many class="org.egov.erpcollection.models.ReceiptVoucher" />
+			<one-to-many class="org.egov.collection.entity.ReceiptVoucher" />
 		</set>
 		<property name="isReconciled" type="java.lang.Boolean">
 			<column name="IS_RECONCILED" precision="1" scale="0" />
@@ -147,52 +147,52 @@
 			
 	</class>
 	<query name="RECEIPTS_FOR_VOUCHERS">
-	<![CDATA[select receiptHeader from org.egov.erpcollection.models.ReceiptVoucher as rv where rv.voucherheader.id in (:param_0)]]></query>
+	<![CDATA[select receiptHeader from org.egov.collection.entity.ReceiptVoucher as rv where rv.voucherheader.id in (:param_0)]]></query>
 	
 	<query name="RECEIPTS_FOR_BOUNCED_INSTRUMENTS">
-	<![CDATA[select rh from org.egov.erpcollection.models.ReceiptHeader rh join rh.receiptVoucher as rv where rh.status.code<>? and rv.voucherheader.id in (:param_1)]]></query>
+	<![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh join rh.receiptVoucher as rv where rh.status.code<>? and rv.voucherheader.id in (:param_1)]]></query>
 
 	<query name="RECEIPTS_BY_PAYEEDETAILID">
-    <![CDATA[select rh from org.egov.erpcollection.models.ReceiptHeader rh,ReceiptPayeeDetails rp where rh.receiptPayeeDetails.id=rp.id and rp.id=?]]></query>
+    <![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh,ReceiptPayeeDetails rp where rh.receiptPayeeDetails.id=rp.id and rp.id=?]]></query>
     
     <query name="RECEIPTS_BY_RECEIPTNUM">
-    <![CDATA[select rh from org.egov.erpcollection.models.ReceiptHeader rh where rh.receiptnumber=?]]></query>
+    <![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh where rh.receiptnumber=?]]></query>
 
 	<query name="RECEIPTS_BY_RECEIPTNUM_AND_SERVICECODE">
-    <![CDATA[select rh from org.egov.erpcollection.models.ReceiptHeader rh where rh.service.code=? and (rh.receiptnumber=? or rh.manualreceiptnumber=?)]]></query>
+    <![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh where rh.service.code=? and (rh.receiptnumber=? or rh.manualreceiptnumber=?)]]></query>
 
 	<query name="RECEIPTS_BY_REFNUM_AND_SERVICECODE">
-    <![CDATA[select rh from org.egov.erpcollection.models.ReceiptHeader rh where rh.referencenumber=? and rh.service.code=?]]></query>
+    <![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh where rh.referencenumber=? and rh.service.code=?]]></query>
 
 	<query name="RECEIPTS_BY_INSTRUMENTNO_AND_SERVICECODE">
-    <![CDATA[select rh from org.egov.erpcollection.models.ReceiptHeader rh join rh.receiptInstrument as ri where ri.instrumentNumber=?  and rh.service.code=?]]></query>
+    <![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh join rh.receiptInstrument as ri where ri.instrumentNumber=?  and rh.service.code=?]]></query>
     
    	<query name="RECEIPTS_BY_RECONSTATUS">
-    <![CDATA[select receipt from org.egov.erpcollection.models.ReceiptHeader receipt where receipt.isReconciled = ?]]></query>
+    <![CDATA[select receipt from org.egov.collection.entity.ReceiptHeader receipt where receipt.isReconciled = ?]]></query>
         
     <query name="CREATEDBYUSERS_OF_RECEIPTS">
-    <![CDATA[select distinct createdBy from org.egov.erpcollection.models.ReceiptHeader]]></query>
+    <![CDATA[select distinct createdBy from org.egov.collection.entity.ReceiptHeader]]></query>
     
     <query name="RECEIPT_BY_CHALLANID">
-    <![CDATA[select receipt from org.egov.erpcollection.models.ReceiptHeader receipt, org.egov.erpcollection.models.Challan cl WHERE cl.receiptHeader.id = receipt.id and cl.id = ?]]></query>
+    <![CDATA[select receipt from org.egov.collection.entity.ReceiptHeader receipt, org.egov.collection.entity.Challan cl WHERE cl.receiptHeader.id = receipt.id and cl.id = ?]]></query>
     
     <query name="VALIDRECEIPT_BY_CHALLANNO">
-    <![CDATA[select receipt from org.egov.erpcollection.models.ReceiptHeader as receipt left join receipt.challan as challan where challan.challanNumber=? and challan.state.value='END' and challan.state.previous.value='VALIDATED' and challan.challanDate <= current_date and challan.validUpto >= trunc(current_date)]]></query>
+    <![CDATA[select receipt from org.egov.collection.entity.ReceiptHeader as receipt left join receipt.challan as challan where challan.challanNumber=? and challan.state.value='END' and challan.state.previous.value='VALIDATED' and challan.challanDate <= current_date and challan.validUpto >= trunc(current_date)]]></query>
     
     <query name="CHALLANRECEIPT_BY_REFERENCEID">
-    <![CDATA[select receipt2 from org.egov.erpcollection.models.ReceiptHeader as receipt1,org.egov.erpcollection.models.ReceiptHeader as receipt2 left join receipt2.challan as challan where receipt2.receiptHeader.id=receipt1.id and receipt1.id = ?]]></query>
+    <![CDATA[select receipt2 from org.egov.collection.entity.ReceiptHeader as receipt1,org.egov.collection.entity.ReceiptHeader as receipt2 left join receipt2.challan as challan where receipt2.receiptHeader.id=receipt1.id and receipt1.id = ?]]></query>
 
     <query name="QUERY_ONLINE_PENDING_RECEIPTS_BY_CONSUMERCODE_AND_SERVICECODE">
-    <![CDATA[select rh from org.egov.erpcollection.models.ReceiptHeader rh, org.egov.erpcollection.models.OnlinePayment online where rh.id = online.receiptHeader.id and rh.service.code=? and rh.consumerCode=? and online.status.code = ?]]></query>
+    <![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh, org.egov.collection.entity.OnlinePayment online where rh.id = online.receiptHeader.id and rh.service.code=? and rh.consumerCode=? and online.status.code = ?]]></query>
     
     <query name="RECEIPT_BY_SERVICE_RECEIPTNUMBER_CONSUMERCODE">
-    <![CDATA[select rh from org.egov.erpcollection.models.ReceiptHeader rh where rh.service.code=? and (rh.receiptnumber=? or rh.manualreceiptnumber=?) and rh.consumerCode=?]]></query>
+    <![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh where rh.service.code=? and (rh.receiptnumber=? or rh.manualreceiptnumber=?) and rh.consumerCode=?]]></query>
     
     <query name="RECEIPT_BY_RECEIPTID_AND_REFERENCENUMBER">
-    <![CDATA[select rh from org.egov.erpcollection.models.ReceiptHeader rh, org.egov.erpcollection.models.OnlinePayment online where rh.id = online.receiptHeader.id and rh.id=? and rh.referencenumber = ? ]]></query>
+    <![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh, org.egov.collection.entity.OnlinePayment online where rh.id = online.receiptHeader.id and rh.id=? and rh.referencenumber = ? ]]></query>
     
     <query name="RECEIPT_BY_SERVICE_MANUALRECEIPTNO_AND_DATE">
-       <![CDATA[from org.egov.erpcollection.models.ReceiptHeader rh where rh.manualreceiptnumber = ? and rh.service.code = ? and trunc(rh.manualreceiptdate) between trunc(?) and trunc(?) and rh.status.code<>? ]]></query>
+       <![CDATA[from org.egov.collection.entity.ReceiptHeader rh where rh.manualreceiptnumber = ? and rh.service.code = ? and trunc(rh.manualreceiptdate) between trunc(?) and trunc(?) and rh.status.code<>? ]]></query>
     
     
     

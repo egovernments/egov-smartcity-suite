@@ -106,7 +106,7 @@ public class SearchOnlineReceiptAction extends BaseFormAction {
 	}
 	
 	public String search() {
-		StringBuilder queryString=new StringBuilder(" select distinct onlinePayment from org.egov.erpcollection.models.OnlinePayment onlinePayment");
+		StringBuilder queryString=new StringBuilder(" select distinct onlinePayment from org.egov.collection.entity.OnlinePayment onlinePayment");
 		StringBuilder criteria = new StringBuilder();
 		StringBuilder joinString = new StringBuilder();
 		StringBuilder whereString = new StringBuilder();//" order by receipt.createdDate desc");

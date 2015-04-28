@@ -3,14 +3,14 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 16 Dec, 2009 12:59:28 PM by Hibernate Tools 3.2.0.CR1 -->
 <hibernate-mapping>
-    <class name="org.egov.erpcollection.models.AccountPayeeDetail" table="EGCL_ACCOUNTPAYEEDETAILS">
+    <class name="org.egov.collection.entity.AccountPayeeDetail" table="EGCL_ACCOUNTPAYEEDETAILS">
         <id name="id" type="long">
             <column name="ID" precision="22" scale="0" />
            <generator class="sequence" >
             <param name="sequence">SEQ_EGCL_ACCPAYEEDETAILS</param>
             </generator>
         </id>
-        <many-to-one name="receiptDetail" class="org.egov.erpcollection.models.ReceiptDetail" fetch="select">
+        <many-to-one name="receiptDetail" class="oorg.egov.collection.entity.ReceiptDetail" fetch="select">
             <column name="ID_COLLECTIONDETAILS" precision="22" scale="0" not-null="true" />
         </many-to-one>
         <many-to-one name="accountDetailType" class="org.egov.commons.Accountdetailtype" fetch="select">

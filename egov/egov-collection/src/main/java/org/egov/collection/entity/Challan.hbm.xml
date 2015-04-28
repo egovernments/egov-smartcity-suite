@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 	<!-- Generated 10 Sep, 2009 12:59:28 PM by Hibernate Tools 3.2.0.CR1 -->
 <hibernate-mapping auto-import="false">
-	<class name="org.egov.erpcollection.models.Challan" table="EGCL_CHALLANHEADER">
+	<class name="org.egov.collection.entity.Challan" table="EGCL_CHALLANHEADER">
 		<id name="id" type="long">
 			<column name="ID" precision="22" scale="0" />
 			<generator class="sequence">
@@ -11,7 +11,7 @@
 			</generator>
 		</id>
 
-		<many-to-one name="receiptHeader" class="org.egov.erpcollection.models.ReceiptHeader" fetch="select">
+		<many-to-one name="receiptHeader" class="org.egov.collection.entity.ReceiptHeader" fetch="select">
             <column name="RECEIPTID" precision="22" scale="0" />
         </many-to-one>
         

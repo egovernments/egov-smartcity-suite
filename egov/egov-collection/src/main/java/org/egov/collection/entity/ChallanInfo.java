@@ -40,7 +40,6 @@
 package org.egov.collection.entity;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,7 +48,9 @@ import org.egov.collection.integration.models.ReceiptAccountInfoImpl;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfoImpl;
 import org.egov.commons.EgwStatus;
+import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.model.instrument.InstrumentHeader;
 import org.joda.time.DateTime;
 
 /**
@@ -60,7 +61,7 @@ public class ChallanInfo {
 	 * The private receipt header object. This is used by the getters to provide
 	 *challan information
 	 */
-	private final ReceiptHeader receiptHeader = null;
+	private ReceiptHeader receiptHeader = null;
 	private final Set<ReceiptAccountInfo> accountDetails = new HashSet<ReceiptAccountInfo>();
 	private final Set<AccountPayeeDetailInfo> accountPayeeDetails = new HashSet<AccountPayeeDetailInfo>();
 	private final Set<ReceiptInstrumentInfo> instrumentDetails = new HashSet<ReceiptInstrumentInfo>();
@@ -73,7 +74,7 @@ public class ChallanInfo {
 	 * @param receiptHeader
 	 *            the receipt header object
 	 */
-	/*public ChallanInfo(ReceiptHeader receiptHeader,EgovCommon egovCommon,ReceiptHeader receiptHeaderRefObj) {
+	public ChallanInfo(ReceiptHeader receiptHeader,EgovCommon egovCommon,ReceiptHeader receiptHeaderRefObj) {
 		this.receiptHeader = receiptHeader;
 		if(receiptHeaderRefObj!=null && receiptHeaderRefObj.getChallan()!=null)
 		{	
@@ -93,7 +94,7 @@ public class ChallanInfo {
 			instrumentDetails.add(new ReceiptInstrumentInfoImpl(instrumentHeader));
 		}
 		
-	}*/
+	}
 	
 	/**
 	 * @return the challan number

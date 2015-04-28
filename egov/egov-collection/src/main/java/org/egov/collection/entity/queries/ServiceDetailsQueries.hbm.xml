@@ -28,7 +28,7 @@
     <![CDATA[select l from Location l,UserCounterMap ucm,UserImpl uim where uim.id=ucm.userId.id and ucm.counterId.id=l.id and uim.userName=?]]></query>
 
 	<query name="getReceiptHeaderById">
-	<![CDATA[select rh from org.egov.erpcollection.models.ReceiptHeader rh where rh.id=?]]></query>
+	<![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh where rh.id=?]]></query>
 
 	<query name="getDepartmentByCode">
 	<![CDATA[select d from DepartmentImpl d where d.deptCode=?]]></query>

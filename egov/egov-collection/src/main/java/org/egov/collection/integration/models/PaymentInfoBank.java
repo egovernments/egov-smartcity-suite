@@ -66,17 +66,11 @@ public class PaymentInfoBank implements PaymentInfo {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.egov.erpcollection.models.PaymentInfo#getInstrumentAmount()
-	 */
 	@Override
 	public BigDecimal getInstrumentAmount() {
 		return instrumentAmount;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.egov.erpcollection.models.PaymentInfo#getInstrumentType()
-	 */
 	@Override
 	public TYPE getInstrumentType() {
 		return TYPE.bank;

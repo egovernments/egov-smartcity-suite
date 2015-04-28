@@ -39,6 +39,7 @@
  */
 package org.egov.collection.service;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,10 +51,16 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
+import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.AccountPayeeDetail;
 import org.egov.collection.entity.Challan;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
@@ -66,11 +73,17 @@ import org.egov.collection.utils.CollectionsUtil;
 import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CVoucherHeader;
+import org.egov.commons.EgwStatus;
 import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.model.contra.ContraJournalVoucher;
+import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Position;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -80,11 +93,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long> {
 
 	private static final Logger LOGGER = Logger.getLogger(ReceiptHeaderService.class);
+	/*private final ReceiptHeaderRepository receiptHeaderRepository;
+
+	@Autowired
+	public ReceiptHeaderService(final ReceiptHeaderRepository receiptHeaderRepository) {
+		this.receiptHeaderRepository = receiptHeaderRepository;
+	}*/
+	
+/*	@PersistenceContext
+    private EntityManager entityManager;
+
+    public Session getSession() {
+        return entityManager.unwrap(Session.class);
+    }*/
+
 	@Autowired
 	private CollectionsUtil collectionsUtil;
 	private CollectionsNumberGenerator collectionsNumberGenerator;
 	private FinancialsUtil financialsUtil;
-	//private WorkflowService<ContraJournalVoucher> contraWorkflowService;
 	private PersistenceService persistenceService;
 
 	private CommonsServiceImpl commonsServiceImpl;
@@ -106,7 +132,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	 *         and having given status
 	 */
 	public List<ReceiptHeader> findAllByStatusUserCounterService(String statusCode, String userName, Integer counterId, String serviceCode) {
-		StringBuilder query = new StringBuilder("select receipt from org.egov.erpcollection.models.ReceiptHeader receipt where 1=1");
+		StringBuilder query = new StringBuilder("select receipt from org.egov.collection.entity.ReceiptHeader receipt where 1=1");
 
 		boolean allStatuses = (statusCode == null || statusCode.equals(CollectionConstants.ALL));
 		boolean allCounters = (counterId == null || counterId < 0);
@@ -143,7 +169,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
 		query.append(" order by receipt.createdDate desc");
 
-		return findAllBy(query.toString(), arguments);
+		return this.findAllBy(query.toString(), arguments);
 	}
 
 	/**
@@ -196,7 +222,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 			departmentCode = receiptMisc.getDepartment().getCode();
 		}
 
-	/*	for (InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument()) {
+		for (InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument()) {
 			if (instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_CASH)
 					|| instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_BANK)) {
 				headerdetails.put(VoucherConstant.VOUCHERNAME, CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERNAME);
@@ -232,7 +258,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 		headerdetails.put(VoucherConstant.FUNDSOURCECODE, fundsourceCode);
 		headerdetails.put(VoucherConstant.MODULEID, CollectionConstants.COLLECTIONS_EG_MODULES_ID);
 		headerdetails.put(VoucherConstant.SOURCEPATH, CollectionConstants.RECEIPT_VIEW_SOURCEPATH + receiptHeader.getId());
-*/
+
 		Set<ReceiptDetail> receiptDetailSet = new LinkedHashSet<ReceiptDetail>(0);
 
 		/**
@@ -246,7 +272,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 			receiptDetailSet = receiptHeader.getReceiptDetails();
 		}
 
-		for (ReceiptDetail receiptDetail : receiptDetailSet) {/*
+		for (ReceiptDetail receiptDetail : receiptDetailSet) {
 			if (receiptDetail.getCramount().compareTo(BigDecimal.ZERO) != 0 || receiptDetail.getDramount().compareTo(BigDecimal.ZERO) != 0) {
 
 				HashMap<String, Object> accountcodedetailsHashMap = new HashMap<String, Object>();
@@ -277,7 +303,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
 			}
 
-		*/}
+		}
 
 		return financialsUtil.createVoucher(headerdetails, accountCodeList, subledgerList, receiptBulkUpload, isVoucherApproved);
 	}
@@ -299,7 +325,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 		// as the challan has a 'PENDING' receipt object associated with it
 		boolean isParentReceiptInstrumentDeposited = false;
 
-		if (receiptHeader.getReceiptHeader() != null) {/*
+		if (receiptHeader.getReceiptHeader() != null) {
 			for (InstrumentHeader instrumentHeader : receiptHeader.getReceiptHeader().getReceiptInstrument()) {
 
 				if (instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_CASH)) {
@@ -314,7 +340,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 					}
 				}
 			}
-		*/}
+		}
 
 		if (receiptHeader.getReceiptHeader() == null || (receiptHeader.getReceiptHeader() != null && !isParentReceiptInstrumentDeposited)) {
 			String internalRefNo = "";
@@ -363,7 +389,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	 * @param receiptBulkUpload
 	 */
 	public void startWorkflow(Collection<ReceiptHeader> receiptHeaders, Boolean receiptBulkUpload) throws EGOVRuntimeException {
-		SimpleWorkflowService<ReceiptHeader> receiptWorkflowService = new SimpleWorkflowService<ReceiptHeader>(this);
 		Boolean createVoucherForBillingService = Boolean.TRUE;
 		for (ReceiptHeader receiptHeader : receiptHeaders) {
 			createVoucherForBillingService = null == receiptHeader.getService().getVoucherCreation() ? Boolean.FALSE : receiptHeader.getService().getVoucherCreation();
@@ -379,15 +404,14 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
 		if (createVoucherForBillingService) {
 			createVouchers(receiptHeaders, receiptBulkUpload);
-			getSession().flush();
-
 			transition(receiptHeaders, CollectionConstants.WF_ACTION_CREATE_VOUCHER, "Receipt voucher created");
 		}
 
 		if (receiptBulkUpload) {
 			for (ReceiptHeader receiptHeader : receiptHeaders) {
 				// transition the receipt header workflow to Approved state
-				receiptWorkflowService.transition(CollectionConstants.WF_ACTION_APPROVE, receiptHeader, "Approval of Data Migration Receipt Complete");
+				receiptHeader.transition(true).transition().withSenderName(receiptHeader.getCreatedBy().getName()).withComments("Approval of Data Migration Receipt Complete")
+				.withStateValue(CollectionConstants.WF_ACTION_APPROVE).withOwner(collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy())).withDateInfo(new Date());
 				// End the Receipt header workflow
 				receiptHeader.transition(true).end().withSenderName(receiptHeader.getCreatedBy().getName()).withComments("Data Migration Receipt Approved - Workflow ends")
 					.withStateValue(CollectionConstants.WF_STATE_END).withOwner(collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy())).withDateInfo(new Date());
@@ -406,9 +430,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	 *            Comment for the transition
 	 */
 	public void transition(Collection<ReceiptHeader> receiptHeaders, String actionName, String comment) {
-		SimpleWorkflowService<ReceiptHeader> receiptWorkflowService = new SimpleWorkflowService<ReceiptHeader>(this);
 		for (ReceiptHeader receiptHeader : receiptHeaders) {
-			receiptWorkflowService.transition(actionName, receiptHeader, comment);
+			receiptHeader.transition(true).transition().withComments(comment).withStateValue(actionName);
 		}
 	}
 
@@ -421,7 +444,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	public List<HashMap<String, Object>> findAllRemitanceDetails(String boundaryIdList) {
 		List<HashMap<String, Object>> paramList = new ArrayList<HashMap<String, Object>>();
 
-		/*String queryBuilder = "SELECT sum(ih.instrumentamount) as INSTRUMENTMAOUNT,vh.VOUCHERDATE AS VOUCHERDATE,"
+		String queryBuilder = "SELECT sum(ih.instrumentamount) as INSTRUMENTMAOUNT,vh.VOUCHERDATE AS VOUCHERDATE,"
 				+ "sd.SERVICENAME as SERVICENAME,it.TYPE as INSTRUMENTTYPE,fnd.name AS FUNDNAME,dpt.dept_name AS DEPARTMENTNAME,"
 				+ "fnd.code AS FUNDCODE,dpt.dept_code AS DEPARTMENTCODE from EGCL_COLLECTIONHEADER ch,VOUCHERHEADER vh,"
 				+ "EGCL_COLLECTIONVOUCHER cv,EGF_INSTRUMENTHEADER ih,EGCL_COLLECTIONINSTRUMENT ci,EG_SERVICEDETAILS sd,"
@@ -439,21 +462,21 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 		String groupByClause = " group by vh.VOUCHERDATE,sd.SERVICENAME,it.TYPE,fnd.name,dpt.dept_name,fnd.code,dpt.dept_code";
 		String orderBy = " order by VOUCHERDATE";
 
-		*//**
+		/**
 		 * Query to get the collection of the instrument types Cash,Cheque,DD &
 		 * Card for bank remittance
-		 *//*
+		 */
 		StringBuilder queryStringForCashChequeDDCard = new StringBuilder(queryBuilder + ",EG_USER_JURLEVEL ujl,EG_USER_JURVALUES ujv" + whereClauseBeforInstumentType
 				+ "it.TYPE in ('" + CollectionConstants.INSTRUMENTTYPE_CASH + "','" + CollectionConstants.INSTRUMENTTYPE_CHEQUE + "'," + "'"
 				+ CollectionConstants.INSTRUMENTTYPE_DD + "','" + CollectionConstants.INSTRUMENTTYPE_CARD + "') " + whereClause
 				+ "AND ch.CREATED_BY=ujl.ID_USER AND ujl.id_user_jurlevel= ujv.id_user_jurlevel and ujv.id_bndry in (" + boundaryIdList + ")" + groupByClause);
 
-		*//**
+		/**
 		 * If the department of login user is AccountCell .i.e., Department
 		 * Code-'A',then this user will be able to remit online transaction as
 		 * well. All the online receipts created by 'citizen' user will be
 		 * remitted by Account Cell user.
-		 *//*
+		 */
 		User citizenUser = collectionsUtil.getUserByUserName(CollectionConstants.CITIZEN_USER_NAME);
 
 		if (boundaryIdList != null && citizenUser != null) {
@@ -563,7 +586,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 			}
 			if (objHashMap.get(CollectionConstants.BANKREMITTANCE_VOUCHERDATE) != null && objHashMap.get(CollectionConstants.BANKREMITTANCE_SERVICENAME) != null)
 				paramList.add(objHashMap);
-		}*/
+		}
 		return paramList;
 	}
 
@@ -612,7 +635,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
 		String instrumentGlCodeQueryString = "SELECT COA.GLCODE FROM CHARTOFACCOUNTS COA,EGF_INSTRUMENTACCOUNTCODES IAC,EGF_INSTRUMENTTYPE IT "
 				+ "WHERE IT.ID=IAC.TYPEID AND IAC.GLCODEID=COA.ID AND IT.TYPE=";
-		String receiptInstrumentQueryString = "select DISTINCT (instruments) from org.egov.erpcollection.models.ReceiptHeader receipt "
+		String receiptInstrumentQueryString = "select DISTINCT (instruments) from org.egov.collection.entity.ReceiptHeader receipt "
 				+ "join receipt.receiptInstrument as instruments where ";
 		String serviceNameCondition = "receipt.service.serviceName=? ";
 		String receiptDateCondition = "and to_char(receipt.createdDate,'yyyy-MM-dd')=? ";
@@ -621,7 +644,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 		String receiptFundCondition = "and receipt.receiptMisc.fund.code = ? ";
 		String receiptDepartmentCondition = "and receipt.receiptMisc.department.deptCode = ? ";
 
-	/*	String cashInHandQueryString = instrumentGlCodeQueryString + "'" + CollectionConstants.INSTRUMENTTYPE_CASH + "'";
+		String cashInHandQueryString = instrumentGlCodeQueryString + "'" + CollectionConstants.INSTRUMENTTYPE_CASH + "'";
 		String chequeInHandQueryString = instrumentGlCodeQueryString + "'" + CollectionConstants.INSTRUMENTTYPE_CHEQUE + "'";
 		String cardPaymentQueryString = instrumentGlCodeQueryString + "'" + CollectionConstants.INSTRUMENTTYPE_CARD + "'";
 		String onlinePaymentQueryString = instrumentGlCodeQueryString + "'" + CollectionConstants.INSTRUMENTTYPE_ONLINE + "'";
@@ -648,20 +671,20 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 			onlinePaymentGlCode = onlinePaymentAccount.list().get(0).toString();
 		}
 
-		EgwStatus status = commonsManager.getStatusByModuleAndCode(CollectionConstants.MODULE_NAME_INSTRUMENTHEADER, CollectionConstants.INSTRUMENT_NEW_STATUS);
+		EgwStatus status = commonsServiceImpl.getStatusByModuleAndCode(CollectionConstants.MODULE_NAME_INSTRUMENTHEADER, CollectionConstants.INSTRUMENT_NEW_STATUS);
 
 		/**
 		 * Get the AppConfig parameter defined for the Remittance voucher type
-		 * in case of instrument type Cheque,DD & Card
-		 */
+		 * in case of instrument type Cheque,DD & Card*/
+		 
 
 		Boolean voucherTypeForChequeDDCard = false;
 		Boolean useReceiptDateAsContraVoucherDate = false;
 
-	/*	if ((collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD)
+		if ((collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD)
 				.equals(CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))) {
 			voucherTypeForChequeDDCard = true;
-		}*/
+		}
 
 		if ((collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.APPCONFIG_VALUE_USERECEIPTDATEFORCONTRA)
 				.equals(CollectionConstants.YES))) {
@@ -680,7 +703,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 				}
 			}
 
-			if (serviceName != null && serviceName.length() > 0) {/*
+			if (serviceName != null && serviceName.length() > 0) {
 				String serviceGLCodeQueryString = "select coa.glcode from BANKACCOUNT ba,CHARTOFACCOUNTS coa where " + "ba.GLCODEID=coa.ID and ba.ID=" + accountNumberId;
 				ServiceDetails serviceDetails = (ServiceDetails) persistenceService.findByNamedQuery(CollectionConstants.QUERY_SERVICE_BY_NAME, serviceName);
 
@@ -754,8 +777,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 							financialsUtil.updateCashDeposit(voucherHeaderCash.getId(), serviceGlCode, instrumentHeader);
 							ContraJournalVoucher contraJournalVoucher = (ContraJournalVoucher) persistenceService.findByNamedQuery(
 									CollectionConstants.QUERY_GET_CONTRAVOUCHERBYVOUCHERHEADERID, voucherHeaderCash.getId(), instrumentHeader.getId());
-							contraWorkflowService.start(contraJournalVoucher, collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()), "Voucher Created");
-							contraWorkflowService.transition(contraJournalVoucher, collectionsUtil.getPositionById(positionUser), voucherWorkflowMsg);
+							contraJournalVoucher.transition(true).start().withSenderName(contraJournalVoucher.getCreatedBy().getName()).withComments("Voucher Created").withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+							contraJournalVoucher.transition(true).transition().withSenderName(contraJournalVoucher.getCreatedBy().getName()).withComments(voucherWorkflowMsg).withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
 						}
 					}
 
@@ -838,8 +861,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 								financialsUtil.updateCheque_DD_Card_Deposit(voucherHeaderCheque.getId(), serviceGlCode, instrumentHeader);
 								ContraJournalVoucher contraJournalVoucher = (ContraJournalVoucher) persistenceService.findByNamedQuery(
 										CollectionConstants.QUERY_GET_CONTRAVOUCHERBYVOUCHERHEADERID, voucherHeaderCheque.getId(), instrumentHeader.getId());
-								contraWorkflowService.start(contraJournalVoucher, collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
-								contraWorkflowService.transition(contraJournalVoucher, collectionsUtil.getPositionById(positionUser), voucherWorkflowMsg);
+								contraJournalVoucher.transition(true).start().withSenderName(contraJournalVoucher.getCreatedBy().getName()).withComments(CollectionConstants.WF_STATE_NEW).withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+								contraJournalVoucher.transition(true).transition().withSenderName(contraJournalVoucher.getCreatedBy().getName()).withComments(voucherWorkflowMsg).withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
 							}
 						}
 
@@ -920,8 +943,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 								financialsUtil.updateCheque_DD_Card_Deposit(voucherHeaderCard.getId(), serviceGlCode, instrumentHeader);
 								ContraJournalVoucher contraJournalVoucher = (ContraJournalVoucher) persistenceService.findByNamedQuery(
 										CollectionConstants.QUERY_GET_CONTRAVOUCHERBYVOUCHERHEADERID, voucherHeaderCard.getId(), instrumentHeader.getId());
-								contraWorkflowService.start(contraJournalVoucher, collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
-								contraWorkflowService.transition(contraJournalVoucher, collectionsUtil.getPositionById(positionUser), voucherWorkflowMsg);
+								contraJournalVoucher.transition(true).start().withSenderName(contraJournalVoucher.getCreatedBy().getName()).withComments(CollectionConstants.WF_STATE_NEW).withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+								contraJournalVoucher.transition(true).transition().withSenderName(contraJournalVoucher.getCreatedBy().getName()).withComments(voucherWorkflowMsg).withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
 							}
 						}
 					}
@@ -1001,14 +1024,14 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 								financialsUtil.updateCheque_DD_Card_Deposit(voucherHeaderCard.getId(), serviceGlCode, instrumentHeader);
 								ContraJournalVoucher contraJournalVoucher = (ContraJournalVoucher) persistenceService.findByNamedQuery(
 										CollectionConstants.QUERY_GET_CONTRAVOUCHERBYVOUCHERHEADERID, voucherHeaderCard.getId(), instrumentHeader.getId());
-								contraWorkflowService.start(contraJournalVoucher, collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
-								contraWorkflowService.transition(contraJournalVoucher, collectionsUtil.getPositionById(positionUser), voucherWorkflowMsg);
+								contraJournalVoucher.transition(true).start().withSenderName(contraJournalVoucher.getCreatedBy().getName()).withComments(CollectionConstants.WF_STATE_NEW).withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
+								contraJournalVoucher.transition(true).transition().withSenderName(contraJournalVoucher.getCreatedBy().getName()).withComments(voucherWorkflowMsg).withOwner(collectionsUtil.getPositionOfUser(contraJournalVoucher.getCreatedBy()));
 							}
 						}
 					}
 
 				}
-			*/}
+			}
 		}
 		return newContraVoucherList;
 	}
@@ -1091,7 +1114,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	 */
 	public void endReceiptWorkFlowOnCancellation(ReceiptHeader receiptHeaderToBeCancelled) {
 		// End work-flow for the cancelled receipt
-		SimpleWorkflowService<ReceiptHeader> receiptWorkflowService = new SimpleWorkflowService<ReceiptHeader>(this);
 		Position position = collectionsUtil.getPositionOfUser(receiptHeaderToBeCancelled.getCreatedBy());
 		if (position != null) {
 			receiptHeaderToBeCancelled.transition(true).end().withSenderName(receiptHeaderToBeCancelled.getCreatedBy().getName()).withComments("Receipt Cancelled - Workflow ends")
@@ -1264,7 +1286,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 		HashMap<String, Object> reversalVoucherInfo = new HashMap();
 		
 		if(receiptVoucher.getVoucherheader()!=null)
-		{/*	
+		{	
 			reversalVoucherInfo.put(CollectionConstants.FINANCIALS_VOUCHERREVERSAL_ORIGINALVOUCHERID, receiptVoucher
 					.getVoucherheader().getId());
 			reversalVoucherInfo.put(CollectionConstants.FINANCIALS_VOUCHERREVERSAL_DATE, new Date());
@@ -1282,7 +1304,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 				reversalVoucherInfo.put(CollectionConstants.FINANCIALS_VOUCHERREVERSAL_NAME,
 						CollectionConstants.FINANCIAL_PAYMENTVOUCHER_VOUCHERNAME);
 			}
-		*/}	
+		}	
 				
 		reversalVoucherInfoList.add(reversalVoucherInfo);
 
@@ -1301,7 +1323,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 	 * @param receiptPayeeDetails
 	 * @return void
 	 */
-	/*public void updateInstrument(List<CVoucherHeader> voucherHeaderList,
+	public void updateInstrument(List<CVoucherHeader> voucherHeaderList,
 			List<InstrumentHeader> instrumentHeaderList) {
 		List<Map<String, Object>> instrumentVoucherList = new ArrayList();
 		if (voucherHeaderList != null && instrumentHeaderList != null) {
@@ -1367,6 +1389,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 			}
 		}
 		return financialsUtil.createInstrument(instrumentHeaderMapList);
-	}*/
+	}
 
 }

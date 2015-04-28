@@ -342,7 +342,7 @@ public class HistoricDataUploadAction extends BaseFormAction{
 		
 		List<CollectionStgReceipt> collectionStgReceiptList = new ArrayList<CollectionStgReceipt>();
 		
-		collectionStgReceiptList = persistenceService.findAllBy("from org.egov.erpcollection.models.CollectionStgReceipt where " +
+		collectionStgReceiptList = persistenceService.findAllBy("from org.egov.collection.entity.CollectionStgReceipt where " +
 				"isCollSysUpdated=? or isCollSysUpdated is null", "N");
 		
 				

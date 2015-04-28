@@ -3,14 +3,14 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 10 Sep, 2009 12:59:28 PM by Hibernate Tools 3.2.0.CR1 -->
 <hibernate-mapping>
-    <class name="org.egov.erpcollection.models.ReceiptDetail" table="EGCL_COLLECTIONDETAILS">
+    <class name="org.egov.collection.entity.ReceiptDetail" table="EGCL_COLLECTIONDETAILS">
         <id name="id" type="long">
             <column name="ID" precision="22" scale="0" />
            <generator class="sequence" >
             <param name="sequence">SEQ_EGCL_COLLECTIONDETAILS</param>
             </generator>
         </id>
-        <many-to-one name="receiptHeader" class="org.egov.erpcollection.models.ReceiptHeader" fetch="select">
+        <many-to-one name="receiptHeader" class="org.egov.collection.entity.ReceiptHeader" fetch="select">
             <column name="ID_COLLECTIONHEADER" precision="22" scale="0" />
         </many-to-one>
         <many-to-one name="accounthead" class="org.egov.commons.CChartOfAccounts" fetch="select">
@@ -41,7 +41,7 @@
 			<key>
 				<column name="ID_COLLECTIONDETAILS" precision="22" scale="0" />
 			</key>
-			<one-to-many class="org.egov.erpcollection.models.AccountPayeeDetail" />
+			<one-to-many class="org.egov.collection.entity.AccountPayeeDetail" />
 		</set>
 	 <many-to-one name="financialYear" class="org.egov.commons.CFinancialYear" fetch="select">
             <column name="ID_FINANCIALYEAR" precision="22" scale="0" />

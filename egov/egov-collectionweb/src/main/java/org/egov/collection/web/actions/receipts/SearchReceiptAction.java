@@ -182,7 +182,7 @@ public class SearchReceiptAction extends SearchFormAction {
 		ArrayList<Object> params = new ArrayList<Object>();
 		StringBuilder searchQueryString = new StringBuilder("select distinct receipt ");
 		StringBuilder countQueryString = new StringBuilder("select count(distinct receipt) ");
-		StringBuilder fromString = new StringBuilder(" from org.egov.erpcollection.models.ReceiptHeader receipt ");
+		StringBuilder fromString = new StringBuilder(" from org.egov.collection.entity.ReceiptHeader receipt ");
 		final String orderByString = " order by receipt.createdDate desc";		
 
 		// Get only those receipts whose status is NOT PENDING

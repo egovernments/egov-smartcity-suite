@@ -39,6 +39,7 @@
  */
 package org.egov.collection.constants;
 
+import org.egov.services.instrument.InstrumentService;
 import org.egov.utils.FinancialConstants;
 
 
@@ -304,7 +305,7 @@ public final class CollectionConstants {
 	public static final String BANKREMITTANCE_FUNDCODE="FUNDCODE";
 	public static final String BANKREMITTANCE_DEPARTMENTCODE="DEPARTMENTCODE";
 	
-	/*// Key entries in maps
+	// Key entries in maps
 	public static final String MAP_KEY_EGOVCOMMON_CASHINHAND = "cashInHand";
 	public static final String MAP_KEY_EGOVCOMMON_CHEQUEINHAND = "chequeInHand";
 	public static final String MAP_KEY_INSTRSERVICE_INSTRUMENTNUMBER = InstrumentService.INSTRUMENT_NUMBER;
@@ -317,7 +318,7 @@ public final class CollectionConstants {
 	public static final String MAP_KEY_INSTRSERVICE_TRANSACTIONNUMBER = InstrumentService.TRANSACTION_NUMBER;
 	public static final String MAP_KEY_INSTRSERVICE_TRANSACTIONDATE = InstrumentService.TRANSACTION_DATE;
 	public static final String MAP_KEY_INSTRSERVICE_BANKACCOUNTID = InstrumentService.BANKACCOUNTID;
-	*/
+	
 	//Online Payments 
 	public static final String SERVICECODE_PGI_BILLDESK="BDPGI";
 	public static final String SERVICECODE_PROPERTYTAX="PT";
