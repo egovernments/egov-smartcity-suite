@@ -84,4 +84,11 @@ public class AssignmentServiceTest extends EISAbstractSpringIntegrationTest {
         
         assertNotNull(assign);
     }
+    
+    @Test
+    public void isHod() {
+        Boolean assign = assignmentService.isHod(1l);
+        
+        assertTrue(assign);
+    }
 }

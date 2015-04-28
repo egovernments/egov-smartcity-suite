@@ -43,7 +43,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.egov.eis.repository.AssignmentRepository;
+import org.egov.eis.repository.EmployeeDepartmentRepository;
+import org.egov.infra.utils.DateUtils;
 import org.egov.pims.model.Assignment;
+import org.egov.pims.model.EmployeeDepartment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,28 +62,61 @@ import org.springframework.transaction.annotation.Transactional;
 public class AssignmentService {
     
     private final AssignmentRepository assignmentRepository;
+    private final EmployeeDepartmentRepository employeeDepartmentRepository;
     
     @Autowired
-    public AssignmentService(final AssignmentRepository assignmentRepository) {
+    public AssignmentService(final AssignmentRepository assignmentRepository,final EmployeeDepartmentRepository employeeDepartmentRepository) {
         this.assignmentRepository=assignmentRepository;
+        this.employeeDepartmentRepository=employeeDepartmentRepository;
     }
     
+    /**
+     * Gets assignment by id
+     * 
+     * @param Id
+     * @return Assignment object
+     */
     public Assignment getAssignmentById(final Long Id) {
         return assignmentRepository.findOne(Id);
     }
-    
-    public List<Assignment> getAllAssignmentsByEmpId(final Integer Id) {
-        return assignmentRepository.getAllAssignmentsByEmpId(Id);
+    /**
+     * Get all assignments for an employee irrespective assignment dates
+     * 
+     * @param empId
+     * @return List of assignment objects
+     */
+    public List<Assignment> getAllAssignmentsByEmpId(final Integer empId) {
+        return assignmentRepository.getAllAssignmentsByEmpId(empId);
     }
     
-    public List<Assignment> getAllActiveEmployeeAssignmentsByEmpId(final Integer Id) {
-        return assignmentRepository.getAllActiveAssignmentsByEmpId(Id);
+    /**
+     * Get all active assignments for an employee as of today
+     * 
+     * @param empId
+     * @return List of assignment objects
+     */
+    public List<Assignment> getAllActiveEmployeeAssignmentsByEmpId(final Integer empId) {
+        return assignmentRepository.getAllActiveAssignmentsByEmpId(empId);
     }
     
-    public Assignment getAssignmentForPosition(final Long posId,final Date givenDate) {
-        return assignmentRepository.getAssignmentsForPosition(posId,givenDate).get(0);
+    /**
+     * Get all assignments for position and given date as given date which is passed as parameter.
+     * Includes both primary and secondary assignments.
+     * 
+     * @param posId
+     * @param givenDate
+     * @return List of assignment objects
+     */
+    public List<Assignment> getAssignmentsForPosition(final Long posId,final Date givenDate) {
+        return assignmentRepository.getAssignmentsForPosition(posId,givenDate);
     }
     
+    /**
+     * Get employee primary assignment as of today
+     * 
+     * @param posId
+     * @return Assignment object
+     */
     public Assignment getPrimaryAssignmentForPositon(final Long posId) {
         return assignmentRepository.getPrimaryAssignmentForPosition(posId);
     }
@@ -95,15 +131,55 @@ public class AssignmentService {
         assignmentRepository.save(assignment);
     }
     
+    /**
+     * Get employee primary assignment for a given user
+     * 
+     * @param userId
+     * @return Assignment object
+     */
     public Assignment getPrimaryAssignmentForUser(final Long userId) {
         return assignmentRepository.getPrimaryAssignmentForUser(userId);
     }
     
+    /**
+     * Get employee primary assignment by employee id
+     * 
+     * @param empId
+     * @return Assignment object
+     */
     public Assignment getPriamryAssignmentForEmployee(final Integer empId) {
         return assignmentRepository.getPrimaryAssignmentForEmployee(empId);
     }
 
+    /**
+     * Get employee primary assignment for a given date
+     * 
+     * @param empId
+     * @param toDate
+     * @return Assignment object
+     */
     public Assignment getPrimaryAssignmentForEmployeeByToDate(final Integer empId,final Date toDate) {
         return assignmentRepository.getAssignmentByEmpAndDate(empId,toDate);
+    }
+    
+    /**
+     * Get employee primary assignment for given position id
+     * 
+     * @param posId
+     * @return List of assignment objects
+     */
+    public List<Assignment> getAssignmentsForPosition(final Long posId) {
+        return assignmentRepository.getAssignmentsForPosition(posId);
+    }
+    
+    /**
+     * Returns true if the given employee is an HOD
+     * 
+     * @param assignId
+     * @return true if HOD else false 
+     */
+    public Boolean isHod(final Long assignId) {
+        List<EmployeeDepartment> hodList=employeeDepartmentRepository.getAllHodDepartments(assignId);
+        return !hodList.isEmpty();
     }
 }
