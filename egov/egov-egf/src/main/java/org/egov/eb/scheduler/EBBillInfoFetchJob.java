@@ -118,7 +118,7 @@ public class EBBillInfoFetchJob implements Job {
 		
 		String jndiName = EGovConfig.getProperty(URL, "","JNDIURL");
 		
-		if (StringUtils.isNotBlank(jndiName)) {
+	/*	if (StringUtils.isNotBlank(jndiName)) {
 			EGOVThreadLocals.setJndiName(jndiName);
 		}
 		
@@ -126,7 +126,7 @@ public class EBBillInfoFetchJob implements Job {
 		
 		if (StringUtils.isNotBlank(factoryName)) {
 			EGOVThreadLocals.setHibFactName(factoryName);
-		}
+		}*/
 	}
 
 	private String[] getAppContextFiles() {
