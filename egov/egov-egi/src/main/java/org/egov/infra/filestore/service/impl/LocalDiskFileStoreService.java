@@ -50,12 +50,12 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component("localDiskFileStoreService")
@@ -66,11 +66,11 @@ public class LocalDiskFileStoreService implements FileStoreService {
     private String fileStoreBaseDir;
     
     @Autowired
-    public LocalDiskFileStoreService(@Value("#{egovErpProperties.fileStoreBaseDir}")String fileStoreBaseDir) {
-        if (fileStoreBaseDir.isEmpty())
+    public LocalDiskFileStoreService(final ApplicationProperties applicationProperties) {
+        if (applicationProperties.fileStoreBaseDir().isEmpty())
             this.fileStoreBaseDir = System.getProperty("user.home")+File.separator+"egovfilestore";
         else 
-            this.fileStoreBaseDir = fileStoreBaseDir;
+            this.fileStoreBaseDir = applicationProperties.fileStoreBaseDir();
     }
 
     @Override

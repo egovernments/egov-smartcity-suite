@@ -46,14 +46,13 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /**
@@ -64,8 +63,7 @@ public class HTTPSMS {
 	private static final Logger LOGGER = Logger.getLogger(HTTPSMS.class);
 
 	@Autowired
-    @Qualifier("egovErpProperties")
-    private Properties environment;
+    private ApplicationProperties applicationProperties;
 	
 	/** 
 	 * Simpler method to send SMS with given message to the given mobileNumber. 
@@ -90,10 +88,10 @@ public class HTTPSMS {
 				"Account Deactivated/Expired.", "Invalid Message Length (less than 160 chars) if concat is set to 1", "Invalid Parameter values", "Invalid Message Length (more than 280 chars)",
 				"Invalid Message Length", "Invalid Destination number" };
 		try {
-			final StringBuffer urlStr = new StringBuffer(environment.getProperty("sms.provider.url"))
-			.append("?uname=").append(environment.getProperty("sms.sender.username"))
-			.append("&pass=").append(environment.getProperty("sms.sender.password"))
-			.append("&send=").append(environment.getProperty("sms.sender"))
+			final StringBuffer urlStr = new StringBuffer(applicationProperties.smsProviderURL())
+			.append("?uname=").append(applicationProperties.smsSenderUsername())
+			.append("&pass=").append(applicationProperties.smsSenderPassword())
+			.append("&send=").append(applicationProperties.smsSender())
 			.append("&dest=").append(phoneNumber)
 			.append("&msg=").append(text.replaceAll(" ", "%20"));
 			final URL url = new URL(urlStr.toString());

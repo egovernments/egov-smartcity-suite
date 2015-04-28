@@ -42,8 +42,8 @@ package org.egov.infra.utils;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.mail.SimpleMailMessage;
@@ -65,25 +65,24 @@ public class EmailUtils {
 	private SimpleMailMessage mailMessage;
     
     @Autowired
-    @Qualifier("egovErpProperties")
-    private Properties environment;
+    private ApplicationProperties applicationProperties;
     
 	public boolean sendMail(final String toEmail, final String mailBody,
 			final String subject) {
 		boolean isSent = false;
 
 		try {
-			this.mailSender.setPort(Integer.valueOf(environment.getProperty("mail.port")));
-			this.mailSender.setHost(environment.getProperty("mail.host"));
-			this.mailSender.setProtocol(environment.getProperty("mail.protocol"));
+			this.mailSender.setPort(applicationProperties.mailPort());
+			this.mailSender.setHost(applicationProperties.mailHost());
+			this.mailSender.setProtocol(applicationProperties.mailProtocol());
 
-			this.mailSender.setUsername(environment.getProperty("mail.sender.username"));
-			this.mailSender.setPassword(environment.getProperty("mail.sender.password"));
+			this.mailSender.setUsername(applicationProperties.mailSenderUsername());
+			this.mailSender.setPassword(applicationProperties.mailSenderPassword());
 
 			final Properties mailProperties = new Properties();
-			mailProperties.setProperty("mail.smtps.auth", environment.getProperty("mail.smtps.auth"));
-			mailProperties.setProperty("mail.smtps.starttls.enable", environment.getProperty("mail.smtps.starttls.enable"));
-			mailProperties.setProperty("mail.smtps.debug", environment.getProperty("mail.smtps.debug"));
+			mailProperties.setProperty("mail.smtps.auth", applicationProperties.mailSMTPSAuth());
+			mailProperties.setProperty("mail.smtps.starttls.enable", applicationProperties.mailStartTLSEnabled());
+			mailProperties.setProperty("mail.smtps.debug", applicationProperties.mailSMTPSDebug());
 			this.mailSender.setJavaMailProperties(mailProperties);
 			this.mailMessage.setTo(toEmail);
 			this.mailMessage.setSubject(subject);

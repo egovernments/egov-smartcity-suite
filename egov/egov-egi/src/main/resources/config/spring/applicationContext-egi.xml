@@ -54,7 +54,7 @@
 	<context:component-scan base-package="org.egov.infstr"/>
 	
 	
-	<alias name="${fileStoreServiceBeanName}" alias="fileStoreService" />
+	<!-- <alias name="${filestore.servicebean.name}" alias="fileStoreService" /> -->
 	
 	<bean class="org.egov.EgovSpringContextHolder" lazy-init="false"/>
 

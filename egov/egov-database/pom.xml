@@ -22,7 +22,7 @@
 
     <build>
         <filters>
-            <filter>../egov-config/src/main/resources/config/egov-erp.properties</filter>
+            <filter>../egov-egi/src/main/resources/config/egov-erp.properties</filter>
         </filters>
         <resources>
             <resource>
@@ -68,13 +68,13 @@
             <id>dev</id>
             <activation>
                 <file>
-                    <exists>../egov-config/src/main/resources/config/egov-erp-override.properties</exists>
+                    <exists>../egov-egi/src/main/resources/config/egov-erp-override.properties</exists>
                 </file>
             </activation>
             <build>
                 <filters>
-                    <filter>../egov-config/src/main/resources/config/egov-erp.properties</filter>
-                    <filter>../egov-config/src/main/resources/config/egov-erp-override.properties</filter>
+                    <filter>../egov-egi/src/main/resources/config/egov-erp.properties</filter>
+                    <filter>../egov-egi/src/main/resources/config/egov-erp-override.properties</filter>
                 </filters>
             </build>
         </profile>

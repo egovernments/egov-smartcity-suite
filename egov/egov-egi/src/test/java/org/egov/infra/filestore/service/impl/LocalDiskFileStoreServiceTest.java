@@ -58,14 +58,17 @@ import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class LocalDiskFileStoreServiceTest {
     private  static Path tempFilePath = Paths.get(System.getProperty("user.home")+ File.separator+"testtmpr");
     private LocalDiskFileStoreService diskFileService;
+    private ApplicationProperties applicationProperties = Mockito.mock(ApplicationProperties.class);
     
     private void deleteTempFiles(final File newFile, final FileStoreMapper map) throws IOException {
 	Files.deleteIfExists(newFile.toPath());
@@ -83,7 +86,8 @@ public class LocalDiskFileStoreServiceTest {
     public void beforeTest() throws IOException {
 	if (!Files.exists(tempFilePath))
 	    Files.createDirectories(tempFilePath);
-	diskFileService = new LocalDiskFileStoreService(System.getProperty("user.home")+ File.separator+"testfilestore");
+	Mockito.when(applicationProperties.fileStoreBaseDir()).thenReturn(System.getProperty("user.home")+ File.separator+"testfilestore");
+	diskFileService = new LocalDiskFileStoreService(applicationProperties);
     }
 
     @AfterClass
