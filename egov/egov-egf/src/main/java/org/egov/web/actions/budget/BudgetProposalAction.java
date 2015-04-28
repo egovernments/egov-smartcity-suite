@@ -343,7 +343,7 @@ public class BudgetProposalAction extends BaseFormAction {
     	.setBigDecimal("amount", amount)
     	.setLong("detailId", detailId)	
     	.setDate("modifiedate", new java.sql.Date(new Date().getTime()))
-    	.setInteger("modifiedby", Integer.valueOf(EGOVThreadLocals.getUserId()));
+    	.setInteger("modifiedby",EGOVThreadLocals.getUserId().intValue());
     	  	int executeUpdate = updateQuery.executeUpdate();
           if(executeUpdate==1)  
           {
@@ -993,7 +993,7 @@ int i=0;
 	    	if (approverUserId!=null && approverUserId!=-1 ) {
 	            userId = approverUserId;
 	        }else {
-	            userId = Integer.valueOf(EGOVThreadLocals.getUserId().trim());
+	            userId = EGOVThreadLocals.getUserId().intValue();
 	        }
 
 	    	topBudget=budgetService.find("from Budget where id=?",topBudget.getId());

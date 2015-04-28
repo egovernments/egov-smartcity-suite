@@ -294,8 +294,8 @@ public class RemitRecoveryAction extends BasePaymentAction{
 		CFinancialYear financialYearByDate = financialYearDAO.getFinancialYearByDate(vh.getVoucherDate());
 		remit.setFinancialyear(financialYearByDate);
 		remit.setCreateddate(new Date());
-		remit.setCreatedby(BigDecimal.valueOf(Integer.valueOf(EGOVThreadLocals.getUserId())));
-		remit.setLastmodifiedby(BigDecimal.valueOf(Integer.valueOf(EGOVThreadLocals.getUserId())));
+		remit.setCreatedby(BigDecimal.valueOf(EGOVThreadLocals.getUserId()));
+		remit.setLastmodifiedby(BigDecimal.valueOf(EGOVThreadLocals.getUserId()));
 		remit.setLastmodifieddate(new Date());
 		remit.setMonth(BigDecimal.valueOf(new Date().getMonth()));
 		remit.setVoucherheader(vh);
@@ -515,10 +515,10 @@ private List<HashMap<String, Object>>  addSubledgerGroupBy(final List<HashMap<St
 			userId = paymentheader.getCreatedBy().getId().intValue();
 		}
 		else if(null != parameters.get("approverUserId") &&  Integer.valueOf(parameters.get("approverUserId")[0])==-1  ){
-			userId = Integer.valueOf(EGOVThreadLocals.getUserId().trim());
+			userId = EGOVThreadLocals.getUserId().intValue();
 		}
 		else if(null == parameters.get("approverUserId")) {
-				userId = Integer.valueOf(EGOVThreadLocals.getUserId().trim());
+				userId = EGOVThreadLocals.getUserId().intValue();
 		}else {
 			userId = Integer.valueOf(parameters.get("approverUserId")[0]);
 			

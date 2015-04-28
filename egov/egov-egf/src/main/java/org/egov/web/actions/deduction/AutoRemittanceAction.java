@@ -134,7 +134,7 @@ public class AutoRemittanceAction extends BaseFormAction {
 			remittanceScheduler.setSchJobName("Manual");
 			remittanceScheduler.setLastRunDate(new Date());
 			remittanceScheduler.setCreatedDate(new Date());
-			remittanceScheduler.setCreatedBy( Integer.valueOf(EGOVThreadLocals.getUserId()));
+			remittanceScheduler.setCreatedBy(EGOVThreadLocals.getUserId().intValue());
 			remittanceScheduler.setStatus("Started");      
 			scheduledRemittanceService.getRemittanceSchedulerLogService().persist(remittanceScheduler);
 			Long schedularLogId=remittanceScheduler.getId();

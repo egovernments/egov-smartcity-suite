@@ -100,7 +100,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long>{
 
     public boolean canViewApprovedAmount(PersistenceService persistenceService, Budget budget){
         Script script = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME, "budget.report.view.access").get(0);
-        ScriptContext context = ScriptService.createContext("wfItem",budget,"eisCommonServiceBean", eisCommonService,"userId",Integer.valueOf(EGOVThreadLocals.getUserId().trim()));
+        ScriptContext context = ScriptService.createContext("wfItem",budget,"eisCommonServiceBean", eisCommonService,"userId",EGOVThreadLocals.getUserId().intValue());
         Integer result = (Integer)scriptExecutionService.executeScript(script, context);
         if(result == 1)
             return true;
@@ -358,7 +358,7 @@ criteria.createCriteria(Constants.BUDGET).add(Restrictions.eq("materializedPath"
     }
 
     protected User getUser() {
-        return (User) ((PersistenceService)this).find(" from User where id=?",Integer.parseInt(EGOVThreadLocals.getUserId()));
+        return (User) ((PersistenceService)this).find(" from User where id=?",EGOVThreadLocals.getUserId());
     }
 
     public Position getPositionForEmployee(PersonalInformation emp)throws EGOVRuntimeException{

@@ -349,7 +349,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 					budgetUsage.setConsumedAmount(0.0);
 					budgetUsage.setReleasedAmount(amount);
 				}
-				budgetUsage.setCreatedby(Integer.valueOf(EGOVThreadLocals.getUserId()));
+				budgetUsage.setCreatedby(EGOVThreadLocals.getUserId().intValue());
 				BudgetUsageDAO bu=new BudgetUsageHibernateDAO(BudgetUsage.class,HibernateUtil.getCurrentSession());
 				bu.create(budgetUsage);
 				return BigDecimal.ONE;
@@ -431,7 +431,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 					budgetUsage.setConsumedAmount(0.0);
 					budgetUsage.setReleasedAmount(amount);
 				}
-				budgetUsage.setCreatedby(Integer.valueOf(EGOVThreadLocals.getUserId()));
+				budgetUsage.setCreatedby(EGOVThreadLocals.getUserId().intValue());
 				BudgetUsageDAO bu=new BudgetUsageHibernateDAO(BudgetUsage.class,HibernateUtil.getCurrentSession());
 				bu.create(budgetUsage);
 				return BigDecimal.ONE;
@@ -513,7 +513,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 					budgetUsage.setConsumedAmount(0.0);
 					budgetUsage.setReleasedAmount(amount);
 				}
-				budgetUsage.setCreatedby(Integer.valueOf(EGOVThreadLocals.getUserId()));
+				budgetUsage.setCreatedby(EGOVThreadLocals.getUserId().intValue());
 				BudgetUsageDAO bu=new BudgetUsageHibernateDAO(BudgetUsage.class,HibernateUtil.getCurrentSession());
 				bu.create(budgetUsage);
 				return budgetUsage;

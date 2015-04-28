@@ -291,7 +291,7 @@ public class DishonorChequeWorkflowAction  extends BaseFormAction {
 					" iod.instrumentHeaderId=:instrumentHeaderId ";    
 			Query instOtherDetailUpdateQuery=HibernateUtil.getCurrentSession().createQuery(instOtherDetailUpdate.toString());
 			instOtherDetailUpdateQuery.setString("refNo",dishonorChequeView.getBankReferenceNumber());  
-			instOtherDetailUpdateQuery.setLong("modifiedby",Integer.valueOf(EGOVThreadLocals.getUserId()));
+			instOtherDetailUpdateQuery.setLong("modifiedby",EGOVThreadLocals.getUserId().intValue());
 			instOtherDetailUpdateQuery.setDate("modifiedDate",new Date());
 			instOtherDetailUpdateQuery.setDate("InstrumentUpdatedDate",dishonorChequeView.getTransactionDate()); 
 			instOtherDetailUpdateQuery.setLong("instrumentHeaderId",dishonorChequeView.getInstrumentHeader().getId());
@@ -305,7 +305,7 @@ public class DishonorChequeWorkflowAction  extends BaseFormAction {
 		Integer userId = null;             
 		if(actionNm.equalsIgnoreCase(APPROVE)){
 			 userId = parameters.get("approverUserId")!=null?Integer.valueOf(parameters.get("approverUserId")[0]):
-				 											Integer.valueOf( EGOVThreadLocals.getUserId());
+				 											EGOVThreadLocals.getUserId().intValue();
 			 createReversalVoucher();
 			 updateInstrumentDetailsAfterDishonor();
 			 addActionMessage("Cheque Dishonored Succesfully");
@@ -351,7 +351,7 @@ public class DishonorChequeWorkflowAction  extends BaseFormAction {
 		}
 		else if(actionNm.equalsIgnoreCase("forward")){
 			 userId = parameters.get("approverUserId")!=null?Integer.valueOf(parameters.get("approverUserId")[0]):
-					Integer.valueOf( EGOVThreadLocals.getUserId());
+					EGOVThreadLocals.getUserId().intValue();
 			 startChequeWorkflow(dishonorChequeView,actionNm,null!= parameters.get("approverComments")?parameters.get("approverComments")[0]:null);
 			 EmployeeView nextUser=(EmployeeView)persistenceService.find("from EmployeeView where position.id=?",null/* phoenix dishonorChequeView.getApproverPositionId()*/);
 			 addActionMessage(" Cheque is forwared successfully  "+nextUser.getUserMaster().getName());

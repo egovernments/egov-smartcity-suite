@@ -123,8 +123,8 @@ public class JackRabbitOcmDocumentManager<T extends DocumentObject> extends Abst
 	@Override
 	public T addDocumentObject(final T docObject) {
 		try {
-			docObject.setCreatedBy(Integer.valueOf(EGOVThreadLocals.getUserId()));
-			docObject.setModifiedBy(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			docObject.setCreatedBy(EGOVThreadLocals.getUserId().intValue());
+			docObject.setModifiedBy(EGOVThreadLocals.getUserId().intValue());
 			docObject.setDomainName(DocumentObject.escapeSpecialChars(ipSwitchs.containsKey(EGOVThreadLocals.getDomainName()) ? ipSwitchs.get(EGOVThreadLocals.getDomainName()) : EGOVThreadLocals.getDomainName()));
 			final Date currentDate = new Date();
 			docObject.setCreatedDate(currentDate);
@@ -151,7 +151,7 @@ public class JackRabbitOcmDocumentManager<T extends DocumentObject> extends Abst
 	public T updateDocumentObject(final T docObject) {
 		try {
 			this.objContentManager.checkout(docObject.getPath());
-			docObject.setModifiedBy(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			docObject.setModifiedBy(EGOVThreadLocals.getUserId().intValue());
 			docObject.setModifiedDate(new Date());
 			this.checkMandatoryProperty(docObject);
 			this.objContentManager.update(docObject);

@@ -166,7 +166,7 @@ public class SimpleSSOFilter implements Filter, LogoutHandler {
 		// No principal, but the sso was done some time back. So some other app has logged out the
 		// user.
 		// logout from this app as well.
-		if (ssoPrincipal == null && this.isSSOCompletedForThisSession(session)) {
+		if (ssoPrincipal == null && (session == null || this.isSSOCompletedForThisSession(session))) {
 			this.doLogout(httpRequest, httpResponse);
 			return;
 		}

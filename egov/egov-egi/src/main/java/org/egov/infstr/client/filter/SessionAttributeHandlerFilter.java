@@ -114,7 +114,7 @@ public class SessionAttributeHandlerFilter implements Filter {
 			}
 			if (httpSession.getAttribute("userid") != null) {
 				LOGGER.info("Setting User Id to EgovThreadLocal");
-				EGOVThreadLocals.setUserId(String.valueOf(httpSession.getAttribute("userid")));
+				EGOVThreadLocals.setUserId((Long)httpSession.getAttribute("userid"));
 			}
 
 		} else

@@ -281,7 +281,7 @@ public class ContingentBillAction extends BaseBillAction {
 		{
 			   if(nextLevel.equalsIgnoreCase(END))
 			   {
-				   userId =Integer.valueOf( EGOVThreadLocals.getUserId());
+				   userId =EGOVThreadLocals.getUserId().intValue();
 			   }else
 			   {
 				   userId = Integer.valueOf(parameters.get(APPROVER_USER_ID)[0]);
@@ -632,7 +632,7 @@ public class ContingentBillAction extends BaseBillAction {
 			userId = Integer.valueOf(parameters.get(APPROVER_USER_ID)[0]);
 		}else 
 		{
-			userId = Integer.valueOf(EGOVThreadLocals.getUserId().trim());
+			userId = EGOVThreadLocals.getUserId().intValue();
 		}
 		
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("User selected id is : "+userId);

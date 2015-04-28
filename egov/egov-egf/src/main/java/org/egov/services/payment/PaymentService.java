@@ -209,7 +209,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
 			CreateVoucher createVoucher = new CreateVoucher();
 			HashMap<String, Object>  headerdetails = new HashMap<String, Object>();
 			
-			user = (User)persistenceService.find(" from User where id = ?", Integer.valueOf(EGOVThreadLocals.getUserId()));
+			user = (User)persistenceService.find(" from User where id = ?", EGOVThreadLocals.getUserId());
 			if(billList!=null && billList.size()>0 && "salary".equalsIgnoreCase(billList.get(0).getExpType()))
 				headerdetails.put(VoucherConstant.VOUCHERNAME, "Salary Bill Payment");
 			else if(billList!=null && billList.size()>0 && "pension".equalsIgnoreCase(billList.get(0).getExpType()))
@@ -504,7 +504,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
 		{
 			final Connection con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 			miscBillList = new ArrayList<Miscbilldetail>();
-			user = (User)persistenceService.find(" from User where id = ?", Integer.valueOf(EGOVThreadLocals.getUserId()));
+			user = (User)persistenceService.find(" from User where id = ?", EGOVThreadLocals.getUserId());
 			Bankaccount ba = (Bankaccount) persistenceService.find("from Bankaccount where id=?",payheader.getBankaccount().getId());
 			paymentheader = (Paymentheader) persistenceService.find(" from Paymentheader where id=? ",payheader.getId());
 			deleteMiscBill(paymentheader.getVoucherheader().getId(),con);

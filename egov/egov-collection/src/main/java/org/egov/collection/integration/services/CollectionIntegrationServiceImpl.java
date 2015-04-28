@@ -221,7 +221,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
 		receiptHeader.setPaidBy(bill.getPaidBy());
 
-		if (EGOVThreadLocals.getUserId() != null && !EGOVThreadLocals.getUserId().trim().equals("")) {
+		if (EGOVThreadLocals.getUserId() != null) {
 			receiptHeader.setCreatedBy(collectionsUtil.getUserById(EGOVThreadLocals.getUserId()));
 			Location location = collectionsUtil.getLocationByUser(EGOVThreadLocals.getUserId());
 			if (location != null) {
@@ -386,7 +386,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
 		receiptHeader.setPaidBy(bill.getPaidBy());
 
-		if (EGOVThreadLocals.getUserId() != null && !EGOVThreadLocals.getUserId().trim().equals("")) {
+		if (EGOVThreadLocals.getUserId() != null) {
 			receiptHeader.setCreatedBy(collectionsUtil.getUserById(EGOVThreadLocals.getUserId()));
 			Location location = collectionsUtil.getLocationByUser(EGOVThreadLocals.getUserId());
 			if (location != null) {

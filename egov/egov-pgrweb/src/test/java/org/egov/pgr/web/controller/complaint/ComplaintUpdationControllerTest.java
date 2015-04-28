@@ -161,7 +161,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         Role r = new Role();
         Set<Role> roleList = new HashSet<Role>();
         roleList.add(r);
-        EGOVThreadLocals.setUserId("1");
+        EGOVThreadLocals.setUserId(1l);
         when(userService.getUserById(Matchers.anyLong())).thenReturn(user);
         when(user.getRoles()).thenReturn(roleList);
         csList.add(cs);

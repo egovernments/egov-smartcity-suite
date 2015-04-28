@@ -119,6 +119,6 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
 	}
 
 	protected void setUserInThreadLocal() {
-		EGOVThreadLocals.setUserId(String.valueOf(userService.getUserByUsername(this.userName).getId()));
+		EGOVThreadLocals.setUserId(userService.getUserByUsername(this.userName).getId());
 	}
 }

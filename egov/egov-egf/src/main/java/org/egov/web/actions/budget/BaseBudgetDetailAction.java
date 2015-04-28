@@ -754,7 +754,7 @@ int i=0;
 	protected abstract void saveAndStartWorkFlowForRe(BudgetDetail detail,int index, CFinancialYear finYear,Budget refBudget) ;
 	protected abstract void approve();
 	protected User getUser() {
-		return (User) persistenceService.find("from User where id_user=?",Integer.parseInt(EGOVThreadLocals.getUserId()));
+		return (User) persistenceService.find("from User where id_user=?",EGOVThreadLocals.getUserId());
 	}
 	
 	protected Position getPosition() {

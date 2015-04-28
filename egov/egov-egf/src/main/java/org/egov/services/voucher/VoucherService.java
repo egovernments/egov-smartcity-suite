@@ -168,7 +168,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 	{
 		Department d=null;
 		//PersonalInformation pi = eisCommonService.getEmpForUserId(cv.getCreatedBy().getId());
-	   d = (Department)persistenceService.find("select v.deptId from EmployeeView v left join v.userMaster  as user where v.isPrimary='N' and user.id=?",Integer.valueOf(EGOVThreadLocals.getUserId()));
+	   d = (Department)persistenceService.find("select v.deptId from EmployeeView v left join v.userMaster  as user where v.isPrimary='N' and user.id=?",EGOVThreadLocals.getUserId());
 	return d;
 	}
 	
@@ -786,7 +786,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 			 recordStatus.setUpdatedtime(new Date());
 			 recordStatus.setVoucherheader(voucherHeader);
 			 recordStatus.setRecordType(voucherHeader.getType());
-			 recordStatus.setUserid(Integer.parseInt(EGOVThreadLocals.getUserId()));
+			 recordStatus.setUserid(EGOVThreadLocals.getUserId().intValue());
 			 recordStatusSer.persist(recordStatus);
 		} catch (HibernateException he) {
 			LOGGER.error(he.getMessage());

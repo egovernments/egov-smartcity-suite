@@ -73,8 +73,8 @@ public class EBBillInfoFetchJob implements Job {
 			//This fix is for Phoenix Migration.
 			//.HibernateUtil.beginTransaction();*/
 			
-			EGOVThreadLocals.setUserId((String) jobExeContext.getJobDetail().getJobDataMap().get("loggedInUserId"));
-					
+			//EGOVThreadLocals.setUserId((Long) jobExeContext.getJobDetail().getJobDataMap().get("loggedInUserId"));
+			//TODO use new quartz class from egi		
 			executeJob(jobExeContext);
 			
 			 

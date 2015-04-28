@@ -146,7 +146,7 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction{
 			if (null != parameters.get("approverUserId") &&  Integer.valueOf(parameters.get("approverUserId")[0])!=-1 ) {
 				userId = Integer.valueOf(parameters.get("approverUserId")[0]);
 			}else {
-				userId = Integer.valueOf(EGOVThreadLocals.getUserId().trim());
+				userId = EGOVThreadLocals.getUserId().intValue();
 			}
 			if(narration!=null){
 				paymentWorkflowService.transition(getValidActions().get(0).getName()+"|"+userId, paymentheader, narration);

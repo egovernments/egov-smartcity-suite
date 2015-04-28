@@ -39,7 +39,6 @@
  */
 package org.egov.infstr.security.spring.acl;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -184,7 +183,7 @@ public abstract class GenericAclVoter implements AccessDecisionVoter {
 
 	private Boolean isEmpHasAccess() {
 
-		final List<AclSid> empSidList = this.persistenceService.findAllByNamedQuery(AclConstants.GET_ACL_SID_FOREMP, AclConstants.SIDEMP, Integer.valueOf(EGOVThreadLocals.getUserId()), this.aclObjIdentity.getDomainObjectId(), getPermissionList());
+		final List<AclSid> empSidList = this.persistenceService.findAllByNamedQuery(AclConstants.GET_ACL_SID_FOREMP, AclConstants.SIDEMP, EGOVThreadLocals.getUserId(), this.aclObjIdentity.getDomainObjectId(), getPermissionList());
 
 		if (empSidList != null && !empSidList.isEmpty()) {
 			this.permissionGranted = true;

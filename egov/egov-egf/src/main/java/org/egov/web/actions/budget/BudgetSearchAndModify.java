@@ -291,7 +291,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
         else if (null != parameters.get("approverUserId") &&  Integer.valueOf(parameters.get("approverUserId")[0])!=-1 ) {
             userId = Integer.valueOf(parameters.get("approverUserId")[0]);
         }else {
-            userId = Integer.valueOf(EGOVThreadLocals.getUserId().trim());
+            userId = EGOVThreadLocals.getUserId().intValue();
         }
 
         Position positionByUserId =null;// eisCommonService.getPositionByUserId(userId);

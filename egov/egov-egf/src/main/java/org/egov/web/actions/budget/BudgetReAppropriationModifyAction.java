@@ -306,7 +306,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction{
 		savedBudgetReAppropriationList.clear();
 		
 		budgetDetail =budgetReAppropriationService.setRelatedValues(budgetDetail);
-		List<BudgetReAppropriation> results = budgetReAppropriationService.getNonApprovedReAppByUser(Integer.valueOf(EGOVThreadLocals.getUserId().trim()),budgetDetail,financialYear);
+		List<BudgetReAppropriation> results = budgetReAppropriationService.getNonApprovedReAppByUser(EGOVThreadLocals.getUserId(),budgetDetail,financialYear);
 		for (BudgetReAppropriation row : results) {
 			BudgetReAppropriationView budgetReAppropriationView = new BudgetReAppropriationView();
 			budgetReAppropriationView.setBudgetDetail(row.getBudgetDetail());
@@ -533,7 +533,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction{
 		if (null != parameters.get("approverUserId") && Integer.valueOf(parameters.get("approverUserId")[0])!=-1 ) {
 			userId = Integer.valueOf(parameters.get("approverUserId")[0]);
 		}else {
-			userId = Integer.valueOf(EGOVThreadLocals.getUserId().trim());
+			userId = EGOVThreadLocals.getUserId().intValue();
 		}
 		return userId;
 	}

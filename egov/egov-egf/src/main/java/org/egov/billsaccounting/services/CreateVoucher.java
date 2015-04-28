@@ -268,7 +268,7 @@ public class CreateVoucher {
 		CVoucherHeader vh=null;
 		try{
 			this.vStatus=voucherStatus;
-			this.usrId=Integer.parseInt(EGOVThreadLocals.getUserId());
+			this.usrId=EGOVThreadLocals.getUserId().intValue();
 			if(LOGGER.isDebugEnabled())     LOGGER.debug(" ---------------Generating Voucher for Bill-------");
 			EgBillregister egBillregister=null;
 			egBillregister=billsMngr.getBillRegisterById(Integer.valueOf(billId));
@@ -538,7 +538,7 @@ public class CreateVoucher {
 		try
 		{
 			this.vStatus=voucherStatus;
-			this.usrId=Integer.parseInt(EGOVThreadLocals.getUserId());
+			this.usrId=EGOVThreadLocals.getUserId().intValue();
 			if(LOGGER.isDebugEnabled())     LOGGER.debug(" ---------------Generating Voucher-------");
 			EgBillregister egBillregister=null;
 			egBillregister=billsMngr.getBillRegisterById(Integer.valueOf(billId));
@@ -948,7 +948,7 @@ public class CreateVoucher {
 	 public Position getPosition()throws EGOVRuntimeException
 	 {
 		 Position pos;
-		 if(LOGGER.isDebugEnabled())     LOGGER.debug("getPosition===="+Integer.valueOf(EGOVThreadLocals.getUserId()));
+		 if(LOGGER.isDebugEnabled())     LOGGER.debug("getPosition===="+EGOVThreadLocals.getUserId());
 		// pos = eisCommonService.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
 		//This fix is for Phoenix Migration.
 		// if(LOGGER.isDebugEnabled())     LOGGER.debug("position==="+pos.getId());
@@ -1296,7 +1296,7 @@ public class CreateVoucher {
 		 recordStatus.setUpdatedtime(new Date());
 		 recordStatus.setVoucherheader(voucherHeader);
 		 recordStatus.setRecordType(voucherHeader.getType());
-		 recordStatus.setUserid(Integer.parseInt(EGOVThreadLocals.getUserId()));
+		 recordStatus.setUserid(EGOVThreadLocals.getUserId().intValue());
 		 recordStatusSer.persist(recordStatus);
 	 }
 	 /**

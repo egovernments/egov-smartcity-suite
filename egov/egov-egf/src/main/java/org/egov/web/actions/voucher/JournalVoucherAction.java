@@ -268,7 +268,7 @@ public class JournalVoucherAction extends BaseVoucherAction
 	public Position getPosition() throws EGOVRuntimeException
 	{
 		Position pos;
-			if(LOGGER.isDebugEnabled())     LOGGER.debug("getPosition===="+Integer.valueOf(EGOVThreadLocals.getUserId()));
+			if(LOGGER.isDebugEnabled())     LOGGER.debug("getPosition===="+EGOVThreadLocals.getUserId());
 			pos = null;//eisCommonService.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("position==="+pos.getId());
 		return pos;
@@ -277,7 +277,7 @@ public class JournalVoucherAction extends BaseVoucherAction
 	public List<Action> getValidActions(String purpose){
 		List<Action> validButtons = new ArrayList<Action>();
 		Script validScript = (Script) getPersistenceService().findAllByNamedQuery(Script.BY_NAME,"pjv.validbuttons").get(0);
-		List<String> list = (List<String>) scriptService.executeScript(validScript,ScriptService.createContext("eisCommonServiceBean", eisCommonService,"userId",Integer.valueOf(EGOVThreadLocals.getUserId().trim()),"date",new Date(),"purpose",purpose));
+		List<String> list = (List<String>) scriptService.executeScript(validScript,ScriptService.createContext("eisCommonServiceBean", eisCommonService,"userId",EGOVThreadLocals.getUserId().intValue(),"date",new Date(),"purpose",purpose));
 		for(Object s:list)
 		{
 			if("invalid".equals(s))
@@ -297,7 +297,7 @@ public class JournalVoucherAction extends BaseVoucherAction
 		Integer userId = null;
 		if(parameters.get("actionName")[0].contains("approve")){
 			 userId = parameters.get("approverUserId")!=null?Integer.valueOf(parameters.get("approverUserId")[0]):
-				 											Integer.valueOf( EGOVThreadLocals.getUserId());
+				 											EGOVThreadLocals.getUserId().intValue();
 		}else{
 			userId = voucherHeader.getCreatedBy().getId().intValue();
 		}

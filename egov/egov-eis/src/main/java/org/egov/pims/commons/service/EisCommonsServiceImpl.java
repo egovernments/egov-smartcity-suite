@@ -125,7 +125,7 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 
 	}
 
-    public  Position getPositionByUserId(Integer userId)
+    public  Position getPositionByUserId(Long userId)
     {
 
 		Position userPosition = null;
@@ -138,7 +138,7 @@ public class EisCommonsServiceImpl implements EisCommonsService {
 			mainStr = " select POS_ID from EG_EIS_EMPLOYEEINFO ev where ev.USER_ID = :userid and ((ev.to_Date is null and ev.from_Date <= :thisDate ) " +
 					" OR (ev.from_Date <= :thisDate AND ev.to_Date >= :thisDate)) and ev.IS_PRIMARY ='Y'";
 			Query qry = getCurrentSession().createSQLQuery(mainStr).addScalar("POS_ID", IntegerType.INSTANCE);
-			qry.setInteger ("userid", userId);
+			qry.setLong("userid", userId);
 			qry.setDate("thisDate", currentDate);
 			List retList = qry.list();
 			if(retList!=null && !retList.isEmpty())

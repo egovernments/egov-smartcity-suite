@@ -483,7 +483,7 @@ public class EisUtilService implements EISServeable {
         List<Department> deptlist = null;
         if (filterByDept != null && filterByDept.toUpperCase().equals("YES")) {
             List<BigDecimal> deptList = getPersistenceService().findPageByNamedQuery("EMPVIEW-DEPTIDS-LOGGEDINUSER", 0,
-                    null, Integer.valueOf(EGOVThreadLocals.getUserId()), Integer.valueOf(EGOVThreadLocals.getUserId()))
+                    null, EGOVThreadLocals.getUserId().intValue(), EGOVThreadLocals.getUserId().intValue())
                     .getList();
             if (deptList.isEmpty())
                 return Collections.emptyList();

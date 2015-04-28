@@ -533,14 +533,14 @@ private BigDecimal getNumericValue(HSSFCell cell) {
 				updateQuery.setLong("accountId", accountId);
 				
 				updateQuery.setString("instrumentNo", bean.getInstrumentNo());
-				updateQuery.setInteger("userId", Integer.valueOf(EGOVThreadLocals.getUserId().trim()));
+				updateQuery.setInteger("userId", EGOVThreadLocals.getUserId().intValue());
 				
 				updateQuery2.setDate("txDate", bean.getTxDate());
 				updateQuery2.setDate("reconciliationDate", reconciliationDate);
 				updateQuery2.setLong("accountId", accountId);
 				
 				updateQuery2.setString("instrumentNo", bean.getInstrumentNo());
-				updateQuery2.setInteger("userId", Integer.valueOf(EGOVThreadLocals.getUserId().trim()));
+				updateQuery2.setInteger("userId", EGOVThreadLocals.getUserId().intValue());
 				if(bean.getDebit()!=null && bean.getDebit().compareTo(BigDecimal.ZERO)!=0)
 				{
 					updateQuery.setBigDecimal("amount",bean.getDebit());
@@ -669,14 +669,14 @@ private void markForProcessing(String type) {
 				updateQuery.setLong("accountId", accountId);
 				
 				updateQuery.setString("cslNo", bean.getCSLno());
-				updateQuery.setInteger("userId", Integer.valueOf(EGOVThreadLocals.getUserId().trim()));
+				updateQuery.setInteger("userId", EGOVThreadLocals.getUserId().intValue());
 				
 				updateQuery2.setDate("txDate", bean.getTxDate());
 				updateQuery2.setDate("reconciliationDate", reconciliationDate);
 				updateQuery2.setLong("accountId", accountId);
 				
 				updateQuery2.setString("cslNo", bean.getCSLno());
-				updateQuery2.setInteger("userId", Integer.valueOf(EGOVThreadLocals.getUserId().trim()));
+				updateQuery2.setInteger("userId", EGOVThreadLocals.getUserId().intValue());
 				if(bean.getDebit()!=null && bean.getDebit().compareTo(BigDecimal.ZERO)!=0)
 				{
 					updateQuery.setBigDecimal("amount",bean.getDebit());

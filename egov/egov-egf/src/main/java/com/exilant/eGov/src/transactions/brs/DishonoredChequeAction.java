@@ -608,7 +608,7 @@ public class DishonoredChequeAction extends DispatchAction {
 				populateWorkflowEntities(req);
 				getValidActions(dishonorChq,req);
 				getNextAction(dishonorChq,req)	;
-				User logginUser=(User)persistenceService.find("from User where id=?", Integer.parseInt(EGOVThreadLocals.getUserId()));
+				User logginUser=(User)persistenceService.find("from User where id=?", EGOVThreadLocals.getUserId());
 				dishonorChq.setCreatedBy(nextUser);   
 				//This fix is for Phoenix Migration.
 				/*dishonorChq.setCreatedDate(new Date());

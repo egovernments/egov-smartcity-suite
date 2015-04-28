@@ -76,7 +76,7 @@ public class CancelBillAction extends BaseFormAction  {
 	private String expType;
 	private List<BillRegisterBean> billListDisplay= new ArrayList<BillRegisterBean>();
 	private boolean afterSearch=false;
-	Integer loggedInUser = Integer.valueOf(EGOVThreadLocals.getUserId().trim());
+	Integer loggedInUser = EGOVThreadLocals.getUserId().intValue();
 	public final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy",Constants.LOCALE);
 
 	

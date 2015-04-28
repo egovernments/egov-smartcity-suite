@@ -962,7 +962,7 @@ private Map<Integer, String> getDepartments() {
        record.setRemarks(message);
        record.setSchJobName(jobName);
        record.setCreatedDate(new Date());
-       record.setCreatedBy(Integer.valueOf(EGOVThreadLocals.getUserId()));
+       record.setCreatedBy(EGOVThreadLocals.getUserId().intValue());
        remittanceSchedulerLogService.persist(record);
        
  	}
@@ -977,8 +977,8 @@ private Map<Integer, String> getDepartments() {
 		CFinancialYear financialYearByDate = financialYearDAO.getFinancialYearByDate(voucherHeader.getVoucherDate());  
 		remit.setFinancialyear(financialYearByDate);
 		remit.setCreateddate(today);
-		remit.setCreatedby(BigDecimal.valueOf(Integer.valueOf(EGOVThreadLocals.getUserId())));
-		remit.setLastmodifiedby(BigDecimal.valueOf(Integer.valueOf(EGOVThreadLocals.getUserId())));
+		remit.setCreatedby(BigDecimal.valueOf(EGOVThreadLocals.getUserId()));
+		remit.setLastmodifiedby(BigDecimal.valueOf(EGOVThreadLocals.getUserId()));
 		remit.setLastmodifieddate(today);
 		remit.setMonth(BigDecimal.valueOf(today.getMonth()));
 		remit.setVoucherheader(voucherHeader);

@@ -141,7 +141,7 @@ public class EBDetailsService{
 	 * @return list of <code> EBDetails </code>
 	 */
 	@SuppressWarnings("unchecked")
-	public List<EBDetails> getEBDetialsByGroup(String group, String userId) {
+	public List<EBDetails> getEBDetialsByGroup(String group, Long userId) {
 		String[] groupParts = group.split("-");
 		Integer month = Integer.valueOf(groupParts[0]);
 		Integer year = Integer.valueOf(groupParts[1]);

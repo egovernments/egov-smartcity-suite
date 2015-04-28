@@ -787,7 +787,7 @@ public class PaymentAction extends BasePaymentAction{
 		else if (null != parameters.get("approverUserId") &&  Integer.valueOf(parameters.get("approverUserId")[0])!=-1 ) {
 			userId = Integer.valueOf(parameters.get("approverUserId")[0]);
 		}else {
-			userId = Integer.valueOf(EGOVThreadLocals.getUserId().trim());
+			userId = EGOVThreadLocals.getUserId().intValue();
 		}
 		
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Paymentheader=="+paymentheader.getStateType());
@@ -1158,7 +1158,7 @@ public class PaymentAction extends BasePaymentAction{
 				if (null != parameters.get("approverUserId") &&  Integer.valueOf(parameters.get("approverUserId")[0])!=-1 ) {
 					userId = Integer.valueOf(parameters.get("approverUserId")[0]);
 				}else {
-					userId = Integer.valueOf(EGOVThreadLocals.getUserId().trim());
+					userId = EGOVThreadLocals.getUserId().intValue();
 				}
 				paymentWorkflowService.transition(( getValidActions().get(0)).getName()+"|"+userId, paymentheader, paymentheader.getVoucherheader().getDescription());
 				addActionMessage(getMessage("payment.voucher.approved",new String[]{paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition())}));

@@ -228,7 +228,7 @@ public class JournalVoucherModifyAction  extends BaseVoucherAction{
 		Integer userId = null;
 		if(parameters.get("actionName")[0].contains("approve")){
 			 userId = parameters.get("approverUserId")!=null?Integer.valueOf(parameters.get("approverUserId")[0]):
-				 											Integer.valueOf( EGOVThreadLocals.getUserId());
+				 											EGOVThreadLocals.getUserId().intValue();
 		}
 		else if(parameters.get(ACTIONNAME)[0].contains("aa_reject")){
 			 if(! "JVGeneral".equalsIgnoreCase(voucherHeader.getName())){
@@ -417,7 +417,7 @@ private void cancelBill(Long vhId) {
 public Position getPosition()throws EGOVRuntimeException
 {
 	Position pos;
-		if(LOGGER.isDebugEnabled())     LOGGER.debug("getPosition===="+Integer.valueOf(EGOVThreadLocals.getUserId()));
+		if(LOGGER.isDebugEnabled())     LOGGER.debug("getPosition===="+EGOVThreadLocals.getUserId());
 		pos = null;// eisCommonService.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("position==="+pos.getId());
 	return pos;
@@ -425,7 +425,7 @@ public Position getPosition()throws EGOVRuntimeException
 	@SkipValidation
 	public List<Action> getValidActions(String purpose){
 		List<Action> validButtons = new ArrayList<Action>();
-		List<String> list = (List<String>) scriptService.executeScript("pjv.validbuttons",ScriptService.createContext("eisCommonServiceBean", eisCommonService,"userId",Integer.valueOf(EGOVThreadLocals.getUserId().trim()),"date",new Date(),"purpose",purpose));
+		List<String> list = (List<String>) scriptService.executeScript("pjv.validbuttons",ScriptService.createContext("eisCommonServiceBean", eisCommonService,"userId",EGOVThreadLocals.getUserId().intValue(),"date",new Date(),"purpose",purpose));
 		for(Object s:list)
 		{
 			if("invalid".equals(s))

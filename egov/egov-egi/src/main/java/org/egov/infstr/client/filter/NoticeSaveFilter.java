@@ -54,13 +54,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.docmgmt.AssociatedFile;
 import org.egov.infstr.docmgmt.DocumentManagerService;
 import org.egov.infstr.docmgmt.documents.Notice;
-import org.egov.infstr.utils.HibernateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -87,7 +86,7 @@ public class NoticeSaveFilter implements Filter {
 		final String output = responseWrapper.getData();
 
 		if (request.getAttribute(NOTICE_OBJECT) != null) {
-			final Integer userId = Integer.valueOf(EGOVThreadLocals.getUserId());
+			final Integer userId = EGOVThreadLocals.getUserId().intValue();
 			final Date now = new Date();
 			final InputStream inputStream = new ByteArrayInputStream(output.getBytes());
 			final Notice notice = (Notice) request.getAttribute(NOTICE_OBJECT);

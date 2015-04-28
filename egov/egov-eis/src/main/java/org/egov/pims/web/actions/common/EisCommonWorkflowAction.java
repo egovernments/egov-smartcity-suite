@@ -150,7 +150,7 @@ public abstract class EisCommonWorkflowAction extends GenericWorkFlowAction{
 	
 
 	private Position getCurrentUserPosition() {
-		pos = eisCommonsService.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		pos = eisCommonsService.getPositionByUserId(EGOVThreadLocals.getUserId());
 		return pos;
 	}
 
@@ -160,7 +160,7 @@ public abstract class EisCommonWorkflowAction extends GenericWorkFlowAction{
 		
 		if(null != getModel())
 		{
-			if(!validateInboxItemForUser(getModel(),Long.valueOf(EGOVThreadLocals.getUserId())))
+			if(!validateInboxItemForUser(getModel(),EGOVThreadLocals.getUserId()))
 				return WORKFLOWERROR;
 		}
 		return EDIT;

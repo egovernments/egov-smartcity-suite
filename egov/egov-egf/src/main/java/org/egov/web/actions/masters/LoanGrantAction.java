@@ -342,7 +342,7 @@ public class LoanGrantAction extends LoanGrantBaseAction {
 		try{
 				SubScheme subScheme= (SubScheme) persistenceService.find(" from SubScheme where id=?",getSubSchemeId());
 				loanGrantHeader.setSubScheme(subScheme);
-				User user= (User) persistenceService.find("from User where id=?", Integer.parseInt(EGOVThreadLocals.getUserId()));
+				User user= (User) persistenceService.find("from User where id=?", EGOVThreadLocals.getUserId());
 				Date currDate=new Date();
 				loanGrantHeader.setCreatedBy(user);
 				loanGrantHeader.setModifiedBy(user);

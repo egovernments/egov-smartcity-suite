@@ -239,7 +239,7 @@ public class SchemeAction extends BaseFormAction{
 	}
 	
 	private User getLoggedInUser() {
-		 return (User)persistenceService.getSession().load(User.class, Integer.valueOf(EGOVThreadLocals.getUserId()));
+		 return (User)persistenceService.getSession().load(User.class, EGOVThreadLocals.getUserId());
 	}
 	
 	public Scheme getScheme() {

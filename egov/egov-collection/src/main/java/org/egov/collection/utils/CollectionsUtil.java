@@ -658,8 +658,8 @@ public class CollectionsUtil {
 	 *            userId
 	 * @return User object for given userId
 	 */
-	public User getUserById(String userId) {
-		return userService.getUserById(Long.valueOf(userId));
+	public User getUserById(Long userId) {
+		return userService.getUserById(userId);
 	}
 
 	/**
@@ -667,8 +667,8 @@ public class CollectionsUtil {
 	 *            User
 	 * @return Location object for given user
 	 */
-	public Location getLocationByUser(String userId) {
-		User user = userService.getUserById(Long.valueOf(userId));
+	public Location getLocationByUser(Long userId) {
+		User user = userService.getUserById(userId);
 		return (Location) persistenceService.findByNamedQuery(CollectionConstants.QUERY_LOCATION_BY_USER, user.getUsername());
 	}
 

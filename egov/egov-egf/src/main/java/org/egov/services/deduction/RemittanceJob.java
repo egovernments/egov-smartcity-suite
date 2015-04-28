@@ -63,7 +63,7 @@ public class RemittanceJob extends AbstractQuartzJob implements StatefulJob{
  		LOGGER.info("Inside RemittanceJob"); 
 		RemittanceSchedulerLog remittanceScheduler = new RemittanceSchedulerLog();
 		remittanceScheduler = buildRemittanceScheduler(remittanceScheduler);
-		remittanceScheduler.setCreatedBy( Integer.valueOf(EGOVThreadLocals.getUserId()));
+		remittanceScheduler.setCreatedBy(EGOVThreadLocals.getUserId().intValue());
 		scheduledRemittanceService.getRemittanceSchedulerLogService().persist(remittanceScheduler);
 		
 		schedularLogId=remittanceScheduler.getId();
@@ -77,7 +77,7 @@ public class RemittanceJob extends AbstractQuartzJob implements StatefulJob{
 		remittanceScheduler.setSchJobName(getJobName());
 		remittanceScheduler.setLastRunDate(new Date());
 		remittanceScheduler.setCreatedDate(new Date());
-		remittanceScheduler.setCreatedBy( Integer.valueOf(EGOVThreadLocals.getUserId()));
+		remittanceScheduler.setCreatedBy(EGOVThreadLocals.getUserId().intValue());
 		remittanceScheduler.setStatus("Started");      
 		return remittanceScheduler;      
 	}

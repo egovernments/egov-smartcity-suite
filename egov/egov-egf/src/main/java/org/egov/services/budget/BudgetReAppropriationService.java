@@ -364,7 +364,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
 
 	
 	
-	public List<BudgetReAppropriation> getNonApprovedReAppByUser(Integer userId, BudgetDetail budgetDetail, CFinancialYear financialYear){
+	public List<BudgetReAppropriation> getNonApprovedReAppByUser(Long userId, BudgetDetail budgetDetail, CFinancialYear financialYear){
 		StringBuffer query = new StringBuffer();
 		query.append("from BudgetReAppropriation where state.value='NEW' and createdBy.id="+userId+" and budgetDetail.budget.financialYear.id="+financialYear.getId());
 		if(budgetDetail.getExecutingDepartment()!=null && budgetDetail.getExecutingDepartment().getId()!=null && budgetDetail.getExecutingDepartment().getId()!=0)

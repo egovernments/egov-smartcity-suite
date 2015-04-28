@@ -337,7 +337,7 @@ public class BudgetDetailAction extends BaseBudgetDetailAction{
 		else if (null != parameters.get("approverUserId") &&  Integer.valueOf(parameters.get("approverUserId")[0])!=-1 ) 
 			userId = Integer.valueOf(parameters.get("approverUserId")[0]);
 		else 
-			userId = Integer.valueOf(EGOVThreadLocals.getUserId().trim());
+			userId = EGOVThreadLocals.getUserId().intValue();
 		
 		for (BudgetDetail detail : savedbudgetDetailList) {
 			//budgetDetailWorkflowService.transition(parameters.get(ACTIONNAME)[0]+"|"+userId, detail, detail.getComment());

@@ -87,7 +87,7 @@ public class BudgetService extends PersistenceService<Budget,Long>{
 	}
 	
 	public User getUser(){
-		return (User) ((PersistenceService)this).find(" from User where id=?",Integer.parseInt(EGOVThreadLocals.getUserId()));
+		return (User) ((PersistenceService)this).find(" from User where id=?",EGOVThreadLocals.getUserId());
 	}
 	
 	public Position getPositionForEmployee(PersonalInformation emp)throws EGOVRuntimeException

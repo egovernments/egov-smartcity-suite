@@ -132,7 +132,7 @@ public class CancelVoucherAction extends BaseFormAction  {
 	public void prepare()
 	{
 		
-		loggedInUser= Integer.valueOf(EGOVThreadLocals.getUserId().trim());
+		loggedInUser= EGOVThreadLocals.getUserId().intValue();
 		super.prepare();
 		getHeaderFields();
 		loadDropDowns();

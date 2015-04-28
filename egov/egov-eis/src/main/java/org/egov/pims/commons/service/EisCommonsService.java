@@ -41,9 +41,7 @@ package org.egov.pims.commons.service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
-import org.egov.commons.ObjectType;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
@@ -61,7 +59,7 @@ public interface EisCommonsService
 {  
    public abstract void updatePosition(Position position);
    public abstract Position getPositionById(Integer positionId);
-   public abstract Position getPositionByUserId(Integer userId);
+   public abstract Position getPositionByUserId(Long userId);
    public abstract User getUserforPosition(Position pos);
    public abstract Position getPositionForUserByIdAndDate(Integer userId, Date assignDate);
    

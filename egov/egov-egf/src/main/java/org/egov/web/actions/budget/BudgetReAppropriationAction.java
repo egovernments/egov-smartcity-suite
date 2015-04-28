@@ -277,7 +277,7 @@ public class BudgetReAppropriationAction extends BaseFormAction{
 	}
 	
 	public String create() {
-		save(Integer.valueOf(EGOVThreadLocals.getUserId().trim()));
+		save(EGOVThreadLocals.getUserId().intValue());
 		return NEW;
 	}
 
@@ -340,7 +340,7 @@ public class BudgetReAppropriationAction extends BaseFormAction{
 		if (null != parameters.get("approverUserId") &&  Integer.valueOf(parameters.get("approverUserId")[0])!=-1 ) {
 			userId = Integer.valueOf(parameters.get("approverUserId")[0]);
 		}else {
-			userId = Integer.valueOf(EGOVThreadLocals.getUserId().trim());
+			userId = EGOVThreadLocals.getUserId().intValue();
 		}
 		return userId;
 	}

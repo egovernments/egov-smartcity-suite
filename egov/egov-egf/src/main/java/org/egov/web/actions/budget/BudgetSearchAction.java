@@ -511,7 +511,7 @@ public class BudgetSearchAction extends BaseFormAction{
 		return pos;
 	}
 	protected User getUser() {
-		User user = (User) persistenceService.find("from User where id_user=?",Integer.parseInt(EGOVThreadLocals.getUserId()));
+		User user = (User) persistenceService.find("from User where id_user=?",EGOVThreadLocals.getUserId());
 		return user;
 	}
 	

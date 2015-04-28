@@ -497,7 +497,6 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 	public void updateCheque_DD_Card_Deposit(Map instrumentDetailsMap)
 	{
 		//if(LOGGER.isDebugEnabled())     LOGGER.debug(" updateCheque_DD_Card_Deposit | start");
-		Integer userId=Integer.valueOf(EGOVThreadLocals.getUserId());
 		updateInstrumentAndPayinSql(instrumentDetailsMap);
 		addToBankReconcilationSQL(instrumentDetailsMap);
 		addToContraSql(instrumentDetailsMap);
