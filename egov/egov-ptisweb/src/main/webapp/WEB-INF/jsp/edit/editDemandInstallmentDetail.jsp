@@ -73,7 +73,7 @@
 	</td>								
 		<td class="blueborderfortd" style="padding-right: 10px">
 			<div align="right">				
-				<s:if test="%{demandDetailBeanList[#demandInfoStatus.index].reasonMaster == @org.egov.ptis.nmc.constants.NMCPTISConstants@DEMANDRSN_STR_CHQ_BOUNCE_PENALTY && demandDetailBeanList[#demandInfoStatus.index].isNew == true}" >
+				<s:if test="%{demandDetailBeanList[#demandInfoStatus.index].reasonMaster == @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_CHQ_BOUNCE_PENALTY && demandDetailBeanList[#demandInfoStatus.index].isNew == true}" >
 					<s:textfield
 						name="demandDetailBeanList[%{#demandInfoStatus.index}].actualAmount"
 						id="revisedTax" size="10" maxlength="10"
@@ -91,7 +91,7 @@
 		</td>	
 		<td class="blueborderfortd">
 			<div align="center">
-				<s:if test="%{demandDetailBeanList[#demandInfoStatus.index].reasonMaster == @org.egov.ptis.nmc.constants.NMCPTISConstants@DEMANDRSN_STR_CHQ_BOUNCE_PENALTY && demandDetailBeanList[#demandInfoStatus.index].isNew == true}" >
+				<s:if test="%{demandDetailBeanList[#demandInfoStatus.index].reasonMaster == @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_CHQ_BOUNCE_PENALTY && demandDetailBeanList[#demandInfoStatus.index].isNew == true}" >
 					N/A
 				</s:if>
 				<s:else>
@@ -106,7 +106,7 @@
 		</td>		
 		<td class="blueborderfortd" style="padding-right: 10px">
 			<div align="right">						
-				<s:if test="%{demandDetailBeanList[#demandInfoStatus.index].reasonMaster == @org.egov.ptis.nmc.constants.NMCPTISConstants@DEMANDRSN_STR_CHQ_BOUNCE_PENALTY && demandDetailBeanList[#demandInfoStatus.index].isNew == true}" >
+				<s:if test="%{demandDetailBeanList[#demandInfoStatus.index].reasonMaster == @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_CHQ_BOUNCE_PENALTY && demandDetailBeanList[#demandInfoStatus.index].isNew == true}" >
 					<s:textfield
 						name="demandDetailBeanList[%{#demandInfoStatus.index}].actualCollection"
 						id="revisedCollection" size="10" maxlength="10"
@@ -125,7 +125,7 @@
 		<td class="blueborderfortd">
 			
 		<div align="center">
-			<s:if test="%{demandDetailBeanList[#demandInfoStatus.index].reasonMaster == @org.egov.ptis.nmc.constants.NMCPTISConstants@DEMANDRSN_STR_CHQ_BOUNCE_PENALTY && demandDetailBeanList[#demandInfoStatus.index].isNew == true}" >
+			<s:if test="%{demandDetailBeanList[#demandInfoStatus.index].reasonMaster == @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_CHQ_BOUNCE_PENALTY && demandDetailBeanList[#demandInfoStatus.index].isNew == true}" >
 				N/A
 			</s:if>
 			<s:else>

@@ -40,20 +40,20 @@
 package org.egov.ptis.actions.modify;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.AUDITDATA_STRING_SEP;
+import static org.egov.ptis.constants.PropertyTaxConstants.CHANGEADDRESS_AUDIT_ACTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_ADDRESS_CHANGE_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.END_APPROVER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTY_BY_UPICNO_AND_STATUS;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CREATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.ASSISTANT_ROLE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.AUDITDATA_STRING_SEP;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.CHANGEADDRESS_AUDIT_ACTION;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DOCS_ADDRESS_CHANGE_PROPERTY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.END_APPROVER_DESGN;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.QUERY_BASICPROPERTY_BY_UPICNO;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.QUERY_PROPERTY_BY_UPICNO_AND_STATUS;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_NAME_CREATE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFOWNER;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFSTATUS;
 
 import java.util.Map;
 
@@ -68,12 +68,12 @@ import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.StringUtils;
 import org.egov.ptis.actions.workflow.WorkflowAction;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyAddress;
 import org.egov.ptis.domain.entity.property.PropertyDocs;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.springframework.beans.factory.annotation.Autowired;
 

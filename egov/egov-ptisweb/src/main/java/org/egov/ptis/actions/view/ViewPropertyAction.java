@@ -39,12 +39,12 @@
  ******************************************************************************/
 package org.egov.ptis.actions.view;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPERTY_STATUS_MARK_DEACTIVE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -63,6 +63,8 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
@@ -73,8 +75,6 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDocs;
 import org.egov.ptis.domain.entity.property.PropertyOwner;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.egov.web.actions.BaseFormAction;
@@ -151,7 +151,7 @@ public class ViewPropertyAction extends BaseFormAction {
 						(Category) persistenceService.find("from Category c where c.id = ?",
 								Long.valueOf(property.getPropertyDetail().getExtra_field6())));
 			} else {
-				viewMap.put("propertyCategory", NMCPTISConstants.NOTAVAIL);			
+				viewMap.put("propertyCategory", PropertyTaxConstants.NOTAVAIL);			
 			}
 
 			Set<PropertyOwner> ownerSet = property.getPropertyOwnerSet();
@@ -163,7 +163,7 @@ public class ViewPropertyAction extends BaseFormAction {
 						break;
 					}
 				}
-				viewMap.put("ownerAddress", ownerAddress == null ? NMCPTISConstants.NOTAVAIL : ownerAddress);
+				viewMap.put("ownerAddress", ownerAddress == null ? PropertyTaxConstants.NOTAVAIL : ownerAddress);
 			}
 			PtDemandDao ptDemandDao = PropertyDAOFactory.getDAOFactory().getPtDemandDao();
 			Map<String, BigDecimal> demandCollMap = ptDemandDao.getDemandCollMap(property);

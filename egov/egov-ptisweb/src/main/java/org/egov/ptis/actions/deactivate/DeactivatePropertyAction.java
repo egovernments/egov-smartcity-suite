@@ -44,20 +44,20 @@
 
 package org.egov.ptis.actions.deactivate;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.AUDITDATA_STRING_SEP;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEACTIVE_AUDIT_ACTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_DEACTIVATE_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.END_APPROVER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_STATUS_TYPE_DEACT;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTY_BY_UPICNO_AND_STATUS;
+import static org.egov.ptis.constants.PropertyTaxConstants.VOUCH_CREATE_RSN_DEACTIVATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.ASSISTANT_ROLE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.AUDITDATA_STRING_SEP;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEACTIVE_AUDIT_ACTION;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DOCS_DEACTIVATE_PROPERTY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.END_APPROVER_DESGN;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROP_STATUS_TYPE_DEACT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.QUERY_PROPERTY_BY_UPICNO_AND_STATUS;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.VOUCH_CREATE_RSN_DEACTIVATE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFOWNER;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFSTATUS;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -78,6 +78,8 @@ import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.StringUtils;
 import org.egov.ptis.actions.workflow.WorkflowAction;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
@@ -90,8 +92,6 @@ import org.egov.ptis.domain.entity.property.PropertyStatus;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.exceptions.PropertyNotFoundException;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
-import org.egov.ptis.nmc.util.FinancialUtil;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.egov.web.annotation.ValidationErrorPage;
@@ -235,7 +235,7 @@ public class DeactivatePropertyAction extends WorkflowAction {
 			LOGGER.debug("prepare: Property: " + property);
 		}
 		if (indexNumber != null && !"".equals(indexNumber)) {
-			basicProp = basicPrpertyService.findByNamedQuery(NMCPTISConstants.QUERY_BASICPROPERTY_BY_UPICNO,
+			basicProp = basicPrpertyService.findByNamedQuery(PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO,
 					indexNumber);
 			LOGGER.debug("prepare: BasicProperty: " + basicProp);
 		}

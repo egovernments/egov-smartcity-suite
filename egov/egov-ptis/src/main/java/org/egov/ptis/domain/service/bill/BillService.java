@@ -42,9 +42,9 @@ package org.egov.ptis.domain.service.bill;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.NOTICE_TYPE_BILL;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.REPORT_TEMPLATENAME_BILL_GENERATION;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.dateFormat;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_BILL_GENERATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.dateFormat;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -70,16 +70,16 @@ import org.egov.infstr.reporting.engine.ReportOutput;
 import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.utils.HibernateUtil;
+import org.egov.ptis.client.bill.PTBillServiceImpl;
+import org.egov.ptis.client.model.PropertyBillInfo;
+import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.service.notice.NoticeService;
-import org.egov.ptis.nmc.bill.NMCPTBillServiceImpl;
-import org.egov.ptis.nmc.bill.NMCPropertyTaxBillable;
-import org.egov.ptis.nmc.model.PropertyBillInfo;
-import org.egov.ptis.nmc.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.ptis.service.collection.DemandDetailsComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -97,7 +97,7 @@ public class BillService {
 	private ReportService reportService;
 	private NoticeService noticeService;
 	private PropertyTaxUtil propertyTaxUtil;
-	private NMCPTBillServiceImpl nmcPtBillServiceImpl;
+	private PTBillServiceImpl nmcPtBillServiceImpl;
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 	private Map<String, Map<String, BigDecimal>> reasonwiseDues;
 	private String billNo;
@@ -239,7 +239,7 @@ public class BillService {
 		LOGGER.debug("Entered into saveEgBill");
 		LOGGER.debug("saveEgBill : BasicProperty: " + basicProperty);
 
-		NMCPropertyTaxBillable nmcPTBill = new NMCPropertyTaxBillable();
+		PropertyTaxBillable nmcPTBill = new PropertyTaxBillable();
 		nmcPTBill.setBasicProperty(basicProperty);
 		nmcPTBill.setUserId(userId.longValue());
 		nmcPTBill.setReferenceNumber(getBillNo());
@@ -293,12 +293,12 @@ public class BillService {
 		this.propertyTaxNumberGenerator = propertyTaxNumberGenerator;
 	}
 
-	public NMCPTBillServiceImpl getNmcPtBillServiceImpl() {
+	public PTBillServiceImpl getNmcPtBillServiceImpl() {
 		return nmcPtBillServiceImpl;
 	}
 
 	public void setNmcPtBillServiceImpl(
-			NMCPTBillServiceImpl nmcPtBillServiceImpl) {
+			PTBillServiceImpl nmcPtBillServiceImpl) {
 		this.nmcPtBillServiceImpl = nmcPtBillServiceImpl;
 	}
 

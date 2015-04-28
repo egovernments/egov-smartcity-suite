@@ -58,6 +58,11 @@ import org.egov.commons.Installment;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.StringUtils;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.client.model.MiscellaneousTax;
+import org.egov.ptis.client.model.TaxCalculationInfo;
+import org.egov.ptis.client.model.UnitTaxCalculationInfo;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
@@ -65,11 +70,6 @@ import org.egov.ptis.domain.entity.property.FloorIF;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.UnitCalculationDetail;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
-import org.egov.ptis.nmc.model.MiscellaneousTax;
-import org.egov.ptis.nmc.model.TaxCalculationInfo;
-import org.egov.ptis.nmc.model.UnitTaxCalculationInfo;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 
@@ -87,7 +87,7 @@ public class PropertyNoticeInfo {
 	private static final String PROPERTY_AMENITY = "PROPERTY-AMENITY";
 
 	private final Set<PropertyFloorDetailsInfo> propertyFloorDetails = new TreeSet<PropertyFloorDetailsInfo>();
-	private DateFormat dateFormatter = new SimpleDateFormat(NMCPTISConstants.DATE_FORMAT_DDMMYYY);
+	private DateFormat dateFormatter = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
 	private int isCentralGovtProp = 0;
 
 	private PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
@@ -161,7 +161,7 @@ public class PropertyNoticeInfo {
 		int tenants = 0;
 
 		for (FloorIF floor : property.getPropertyDetail().getFloorDetails()) {
-			if (NMCPTISConstants.TENANT.equalsIgnoreCase(floor.getPropertyOccupation().getOccupancyCode())) {
+			if (PropertyTaxConstants.TENANT.equalsIgnoreCase(floor.getPropertyOccupation().getOccupancyCode())) {
 				tenants++;
 			}
 		}
@@ -289,7 +289,7 @@ public class PropertyNoticeInfo {
 	}
 
 	public String getPropertyType() {
-		return NMCPTISConstants.PROPERTYTYPE_CODE_TO_STR.get(property.getPropertyDetail().getPropertyTypeMaster()
+		return PropertyTaxConstants.PROPERTYTYPE_CODE_TO_STR.get(property.getPropertyDetail().getPropertyTypeMaster()
 				.getCode());
 	}
 

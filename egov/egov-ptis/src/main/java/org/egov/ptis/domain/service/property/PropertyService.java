@@ -42,41 +42,41 @@ package org.egov.ptis.domain.service.property;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_FIRE_SERVICE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_WATER_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIGHTINGTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE127;
+import static org.egov.ptis.constants.PropertyTaxConstants.OPEN_PLOT_UNIT_FLOORNUMBER;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_IS_DEFAULT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_ENTRY;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_MODIFY;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_SOURCE;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_FIRE_SERVICE_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_GENERAL_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_GENERAL_WATER_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_LIGHTINGTAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_PENALTY_FINES;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_SEWERAGE_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMAND_RSNS_LIST;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.NOTICE127;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.OPEN_PLOT_UNIT_FLOORNUMBER;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPERTY_IS_DEFAULT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPERTY_MODIFY_REASON_AMALG;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPERTY_MODIFY_REASON_DATA_ENTRY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPERTY_MODIFY_REASON_MODIFY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPERTY_STATUS_MARK_DEACTIVE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_CENTRAL_GOVT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_NON_RESD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_OPEN_PLOT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_RESD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_STATE_GOVT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROP_CREATE_RSN;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROP_CREATE_RSN_BIFUR;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROP_SOURCE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_NAME_MODIFY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WF_STATE_APPROVAL_PENDING;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -107,15 +107,19 @@ import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.dao.ModuleDao;
-//TODO -- Fix me (Commented to Resolve compilation issues)
-/*import org.egov.infstr.flexfields.dao.EgAttributetypeDao;
- import org.egov.infstr.flexfields.dao.EgAttributevaluesDao;
- import org.egov.infstr.flexfields.dao.FlexfieldsDaoFactory;
- import org.egov.infstr.flexfields.model.EgAttributetype;
- import org.egov.infstr.flexfields.model.EgAttributevalues;*/
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.EisCommonsService;
+import org.egov.ptis.client.adapter.TaxXmlToDbConverterAdapter;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.client.model.MiscellaneousTax;
+import org.egov.ptis.client.model.MiscellaneousTaxDetail;
+import org.egov.ptis.client.model.TaxCalculationInfo;
+import org.egov.ptis.client.model.UnitTaxCalculationInfo;
+import org.egov.ptis.client.service.TaxCalculator;
+import org.egov.ptis.client.service.TaxXMLToDBCoverterService;
+import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
 import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
@@ -134,16 +138,6 @@ import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.StructureClassification;
-import org.egov.ptis.nmc.adapter.TaxXmlToDbConverterAdapter;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
-import org.egov.ptis.nmc.model.MiscellaneousTax;
-import org.egov.ptis.nmc.model.MiscellaneousTaxDetail;
-import org.egov.ptis.nmc.model.TaxCalculationInfo;
-import org.egov.ptis.nmc.model.UnitTaxCalculationInfo;
-import org.egov.ptis.nmc.service.TaxCalculator;
-import org.egov.ptis.nmc.service.TaxXMLToDBCoverterService;
-import org.egov.ptis.nmc.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -320,7 +314,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 
 						if (unitType != null
 								&& unitType.getCode().equalsIgnoreCase(
-										NMCPTISConstants.UNITTYPE_OPEN_PLOT)) {
+										PropertyTaxConstants.UNITTYPE_OPEN_PLOT)) {
 							floor.setFloorNo(OPEN_PLOT_UNIT_FLOORNUMBER);
 						}
 
@@ -333,7 +327,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 						totBltUpArea.setArea(totBltUpAreaVal);
 						property.getPropertyDetail().setTotalBuiltupArea(totBltUpArea);
 
-						if (occupancy.getOccupancyCode().equalsIgnoreCase(NMCPTISConstants.TENANT)) {
+						if (occupancy.getOccupancyCode().equalsIgnoreCase(PropertyTaxConstants.TENANT)) {
 							floor.getRentAgreementDetail().setFloor(floor);
 						} else {
 							floor.setRentAgreementDetail(null);
@@ -830,7 +824,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		Map<String, BigDecimal> dmdRsnAmt = new LinkedHashMap<String, BigDecimal>();
 
 		List<String> demandReasonsWithAdvance = new ArrayList<String>(DEMAND_RSNS_LIST);
-		demandReasonsWithAdvance.add(NMCPTISConstants.DEMANDRSN_CODE_ADVANCE);
+		demandReasonsWithAdvance.add(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE);
 
 		for (String rsn : demandReasonsWithAdvance) {
 
@@ -919,7 +913,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 			newDmndDtls.setAmtRebate(ZERO);
 		}
 
-		if (newDmndDtls != null && !rsn.equalsIgnoreCase(NMCPTISConstants.DEMANDRSN_CODE_ADVANCE)) {
+		if (newDmndDtls != null && !rsn.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE)) {
 			// This part of code handles the adjustment of extra collections
 			// when there is decrease in tax during property modification.
 
@@ -1105,8 +1099,8 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 			} else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY)) {
 				egDemandDetailsMap.put(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY, egDmndDtls);
 			} else if (dmndRsnMstr.getCode().equalsIgnoreCase(
-					NMCPTISConstants.DEMANDRSN_CODE_ADVANCE)) {
-				egDemandDetailsMap.put(NMCPTISConstants.DEMANDRSN_CODE_ADVANCE, egDmndDtls);
+					PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE)) {
+				egDemandDetailsMap.put(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE, egDmndDtls);
 			}
 			egDemandDetailsListOfMap.add(egDemandDetailsMap);
 		}
@@ -1281,36 +1275,36 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		floorDmdCalc.setAlv(unitTax.getAnnualRentAfterDeduction());
 		for (MiscellaneousTax miscTax : unitTax.getMiscellaneousTaxes()) {
 			for (MiscellaneousTaxDetail taxDetail : miscTax.getTaxDetails()) {
-				if (NMCPTISConstants.DEMANDRSN_CODE_FIRE_SERVICE_TAX.equals(miscTax.getTaxName())) {
+				if (PropertyTaxConstants.DEMANDRSN_CODE_FIRE_SERVICE_TAX.equals(miscTax.getTaxName())) {
 					floorDmdCalc.setTax1(floorDmdCalc.getTax1().add(
 							taxDetail.getCalculatedTaxValue()));
-				} else if (NMCPTISConstants.DEMANDRSN_CODE_LIGHTINGTAX.equals(miscTax.getTaxName())) {
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_LIGHTINGTAX.equals(miscTax.getTaxName())) {
 					floorDmdCalc.setTax2(floorDmdCalc.getTax2().add(
 							taxDetail.getCalculatedTaxValue()));
-				} else if (NMCPTISConstants.DEMANDRSN_CODE_SEWERAGE_TAX
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX
 						.equals(miscTax.getTaxName())) {
 					floorDmdCalc.setTax3(floorDmdCalc.getTax3().add(
 							taxDetail.getCalculatedTaxValue()));
-				} else if (NMCPTISConstants.DEMANDRSN_CODE_GENERAL_TAX.equals(miscTax.getTaxName())) {
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX.equals(miscTax.getTaxName())) {
 					floorDmdCalc.setTax4(floorDmdCalc.getTax4().add(
 							taxDetail.getCalculatedTaxValue()));
-				} else if (NMCPTISConstants.DEMANDRSN_CODE_GENERAL_WATER_TAX.equals(miscTax
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_WATER_TAX.equals(miscTax
 						.getTaxName())) {
 					floorDmdCalc.setTax5(floorDmdCalc.getTax5().add(
 							taxDetail.getCalculatedTaxValue()));
-				} else if (NMCPTISConstants.DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX.equals(miscTax
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX.equals(miscTax
 						.getTaxName())) {
 					floorDmdCalc.setTax6(floorDmdCalc.getTax6().add(
 							taxDetail.getCalculatedTaxValue()));
-				} else if (NMCPTISConstants.DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX.equals(miscTax
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX.equals(miscTax
 						.getTaxName())) {
 					floorDmdCalc.setTax7(floorDmdCalc.getTax7().add(
 							taxDetail.getCalculatedTaxValue()));
-				} else if (NMCPTISConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD.equals(miscTax
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD.equals(miscTax
 						.getTaxName())) {
 					floorDmdCalc.setTax8(floorDmdCalc.getTax8().add(
 							taxDetail.getCalculatedTaxValue()));
-				} else if (NMCPTISConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD.equals(miscTax
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD.equals(miscTax
 						.getTaxName())) {
 					floorDmdCalc.setTax9(floorDmdCalc.getTax9().add(
 							taxDetail.getCalculatedTaxValue()));
@@ -1397,45 +1391,11 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 					} catch (ParseException e) {
 						LOGGER.error(e.getMessage(), e);
 					}
-					// TODO -- Fix me (Commented to Resolve compilation issues)
-					/*
-					 * if (unitTaxCalInfo1 != null &&
-					 * !property.getPropertyDetail()
-					 * .getPropertyTypeMaster().getCode()
-					 * .equalsIgnoreCase(PROPTYPE_STATE_GOVT) &&
-					 * !property.getPropertyDetail()
-					 * .getPropertyTypeMaster().getCode()
-					 * .equalsIgnoreCase(PROPTYPE_CENTRAL_GOVT))
-					 * createAttributeValue(NMCPTISConstants.ALV, floorDmdCalc,
-					 * unitTaxCalInfo1 .getAnnualRentAfterDeduction()
-					 * .toString());
-					 */
 				}
 			}
 		}
 		LOGGER.debug("Exiting from createAttributeValues");
 	}
-
-	// TODO -- Fix me (Commented to Resolve compilation issues)
-	/*
-	 * private EgAttributevalues createAttributeValue(String attributeType,
-	 * FloorwiseDemandCalculations floorDmdCalc, String attrValue) {
-	 * LOGGER.debug("Entered into createAttributeValue, attributeType: " +
-	 * attributeType + ", floorDmdCalc: " + floorDmdCalc + ", attrValue: " +
-	 * attrValue); EgAttributevalues attributeVal = new EgAttributevalues();
-	 * EgAttributetypeDao egAttrTypeDao = FlexfieldsDaoFactory.getDAOFactory()
-	 * .getEgAttributetypeDao(); EgAttributevaluesDao egAttrValDao =
-	 * FlexfieldsDaoFactory .getDAOFactory().getEgAttributevaluesDao();
-	 * EgAttributetype attrType = egAttrTypeDao
-	 * .getAttributeTypeByDomainNameAndAttrName(floorDmdCalc
-	 * .getClass().getName(), attributeType);
-	 * attributeVal.setEgApplDomain(attrType.getEgApplDomain());
-	 * attributeVal.setEgAttributetype(attrType);
-	 * attributeVal.setDomaintxnid(Long.valueOf(floorDmdCalc.getId()));
-	 * attributeVal.setAttValue(attrValue); egAttrValDao.create(attributeVal);
-	 * LOGGER.debug("attributeVal: " + attributeVal +
-	 * "\nExiting from createAttributeValue"); return attributeVal; }
-	 */
 
 	public Date getLowestDtOfCompFloorWise(List<FloorImpl> floorList) {
 		LOGGER.debug("Entered into getLowestDtOfCompFloorWise, floorList: " + floorList);
@@ -1470,7 +1430,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 				+ parentBasicProperty);
 		List<PropertyStatusValues> activePropStatVal = propPerServ.findAllByNamedQuery(
 				QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE, parentBasicProperty.getUpicNo(), "Y",
-				NMCPTISConstants.PROP_CREATE_RSN);
+				PropertyTaxConstants.PROP_CREATE_RSN);
 		LOGGER.debug("createAmalgPropStatVal: activePropStatVal: " + activePropStatVal);
 		for (PropertyStatusValues propstatval : activePropStatVal) {
 			propstatval.setIsActive("N");
@@ -1479,7 +1439,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		for (String amalgId : amalgPropIds) {
 			if (amalgId != null && !amalgId.equals("")) {
 				BasicProperty amalgBasicProp = (BasicProperty) getPropPerServ().findByNamedQuery(
-						NMCPTISConstants.QUERY_BASICPROPERTY_BY_UPICNO, amalgId);
+						PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO, amalgId);
 				PropertyStatusValues amalgPropStatVal = new PropertyStatusValues();
 				PropertyStatus propertyStatus = (PropertyStatus) getPropPerServ().find(
 						"from PropertyStatus where statusCode=?", PROPERTY_STATUS_MARK_DEACTIVE);
@@ -1584,7 +1544,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		// during final approval for create property and this
 		// api is used to initiate modify workflow before upicno is generated
 		BasicProperty basicProperty = ((BasicProperty) getPropPerServ().findByNamedQuery(
-				NMCPTISConstants.QUERY_BASICPROPERTY_BY_BASICPROPID, basicPropId));
+				PropertyTaxConstants.QUERY_BASICPROPERTY_BY_BASICPROPID, basicPropId));
 
 		basicProperty.setAllChangesCompleted(FALSE);
 
@@ -1761,14 +1721,14 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 				PropertyStatusValues activePropStatVal = (PropertyStatusValues) propPerServ
 						.findByNamedQuery(QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE,
 								basicProperty.getUpicNo(), "Y",
-								NMCPTISConstants.PROPERTY_MODIFY_REASON_MODIFY);
+								PropertyTaxConstants.PROPERTY_MODIFY_REASON_MODIFY);
 				if (activePropStatVal != null) {
 					activePropStatVal.setIsActive("N");
 				}
 				PropertyStatusValues wfPropStatVal = (PropertyStatusValues) propPerServ
 						.findByNamedQuery(QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE,
 								basicProperty.getUpicNo(), "W",
-								NMCPTISConstants.PROPERTY_MODIFY_REASON_MODIFY);
+								PropertyTaxConstants.PROPERTY_MODIFY_REASON_MODIFY);
 				if (wfPropStatVal != null) {
 					wfPropStatVal.setIsActive("Y");
 				}
@@ -1778,14 +1738,14 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 				PropertyStatusValues activePropStatVal = (PropertyStatusValues) propPerServ
 						.findByNamedQuery(QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE,
 								basicProperty.getUpicNo(), "Y",
-								NMCPTISConstants.PROPERTY_MODIFY_REASON_AMALG);
+								PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG);
 				if (activePropStatVal != null) {
 					activePropStatVal.setIsActive("N");
 				}
 				PropertyStatusValues wfPropStatVal = (PropertyStatusValues) propPerServ
 						.findByNamedQuery(QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE,
 								basicProperty.getUpicNo(), "W",
-								NMCPTISConstants.PROPERTY_MODIFY_REASON_AMALG);
+								PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG);
 				if (wfPropStatVal != null) {
 					wfPropStatVal.setIsActive("Y");
 				}
@@ -1795,14 +1755,14 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 				PropertyStatusValues activePropStatVal = (PropertyStatusValues) propPerServ
 						.findByNamedQuery(QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE,
 								basicProperty.getUpicNo(), "Y",
-								NMCPTISConstants.PROPERTY_MODIFY_REASON_BIFURCATE);
+								PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE);
 				if (activePropStatVal != null) {
 					activePropStatVal.setIsActive("N");
 				}
 				PropertyStatusValues wfPropStatVal = (PropertyStatusValues) propPerServ
 						.findByNamedQuery(QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE,
 								basicProperty.getUpicNo(), "W",
-								NMCPTISConstants.PROPERTY_MODIFY_REASON_BIFURCATE);
+								PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE);
 				LOGGER.debug("setWFPropStatValActive: wfPropStatVal: " + wfPropStatVal);
 				if (wfPropStatVal != null) {
 					wfPropStatVal.setIsActive("Y");
@@ -1963,13 +1923,13 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 
 					EgDemandDetails currentDemandDetail = getEgDemandDetailsForReason(
 							newDemandDetailsByInstallment.get(currerntInstallment),
-							NMCPTISConstants.DEMANDRSN_CODE_ADVANCE);
+							PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE);
 
 					if (currentDemandDetail == null) {
 						LOGGER.info("adjustExcessCollectionAmount - Advance demand details is not present, creating.. ");
 
 						currentDemandDetail = new PropertyTaxCollection().insertAdvanceCollection(
-								NMCPTISConstants.DEMANDRSN_CODE_ADVANCE,
+								PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE,
 								excessAmountByDemandReasonForInstallment.getValue().get(
 										demandReason), currerntInstallment);
 						ptDemand.addEgDemandDetails(currentDemandDetail);

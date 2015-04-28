@@ -40,17 +40,16 @@
 package org.egov.ptis.actions.edit;
 
 import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.AUDITDATA_STRING_SEP;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_STR_GENERAL_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMAND_REASON_ORDER_MAP;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMAND_RSNS_LIST;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DMDRSN_CODE_MAP;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.EDIT_DEMAND_AUDIT_ACTION;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.QUERY_BASICPROPERTY_BY_UPICNO;
-import static org.egov.ptis.nmc.util.PropertyTaxUtil.isNotNull;
-import static org.egov.ptis.nmc.util.PropertyTaxUtil.isNull;
-import static org.egov.ptis.nmc.util.PropertyTaxUtil.isZero;
+import static org.egov.ptis.client.util.PropertyTaxUtil.isNotNull;
+import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
+import static org.egov.ptis.client.util.PropertyTaxUtil.isZero;
+import static org.egov.ptis.constants.PropertyTaxConstants.AUDITDATA_STRING_SEP;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_REASON_ORDER_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
+import static org.egov.ptis.constants.PropertyTaxConstants.DMDRSN_CODE_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -87,14 +86,14 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.ptis.bean.DemandDetail;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.property.PropertyService;
-import org.egov.ptis.nmc.bill.NMCPropertyTaxBillable;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
@@ -200,7 +199,7 @@ public class EditDemandAction extends BaseFormAction {
 			}
 		}
 
-		DateFormat dateFormat = new SimpleDateFormat(NMCPTISConstants.DATE_FORMAT_DDMMYYY);
+		DateFormat dateFormat = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
 		try {
 			allInstallments = propertyTaxUtil.getInstallmentListByStartDate(dateFormat.parse("01/04/1963"));
 		} catch (ParseException e) {
@@ -331,7 +330,7 @@ public class EditDemandAction extends BaseFormAction {
 
 			});
 
-			NMCPropertyTaxBillable billable = new NMCPropertyTaxBillable();
+			PropertyTaxBillable billable = new PropertyTaxBillable();
 			billable.setBasicProperty(basicProperty);
 			dcbService = new DCBServiceImpl(billable);
 			prepareDisplayInfo();
@@ -521,7 +520,7 @@ public class EditDemandAction extends BaseFormAction {
 		for (DemandDetail dmdDetail : demandDetailBeanList) {
 			if ((dmdDetail.getIsNew() != null && dmdDetail.getIsNew()) && dmdDetail.getActualAmount() != null) {
 				EgDemandReason egDmdRsn = propertyTaxUtil.getDemandReasonByCodeAndInstallment(
-						NMCPTISConstants.DMDRSN_CODE_MAP.get(dmdDetail.getReasonMaster()), dmdDetail.getInstallment());
+						PropertyTaxConstants.DMDRSN_CODE_MAP.get(dmdDetail.getReasonMaster()), dmdDetail.getInstallment());
 				// PropertyService.createDemandDetails()
 
 				/**
@@ -583,7 +582,7 @@ public class EditDemandAction extends BaseFormAction {
 									.getEgDemandReason()
 									.getEgDemandReasonMaster()
 									.getCode()
-									.equalsIgnoreCase(NMCPTISConstants.DMDRSN_CODE_MAP.get(dmdDetail.getReasonMaster()))) {
+									.equalsIgnoreCase(PropertyTaxConstants.DMDRSN_CODE_MAP.get(dmdDetail.getReasonMaster()))) {
 
 						isUpdateAmount = true;
 						buildAuditLog(installmentTaxEdits, ddFromDB.getEgDemandReason().getEgInstallmentMaster(),
@@ -597,7 +596,7 @@ public class EditDemandAction extends BaseFormAction {
 									.getEgDemandReason()
 									.getEgDemandReasonMaster()
 									.getCode()
-									.equalsIgnoreCase(NMCPTISConstants.DMDRSN_CODE_MAP.get(dmdDetail.getReasonMaster()))) {
+									.equalsIgnoreCase(PropertyTaxConstants.DMDRSN_CODE_MAP.get(dmdDetail.getReasonMaster()))) {
 
 						Installment inst = (Installment) installmentDao.findById(dmdDetail.getInstallment().getId(),
 								false);

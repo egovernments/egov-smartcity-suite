@@ -40,8 +40,8 @@
 package org.egov.ptis.domain.service.transfer;
 
 import static org.egov.dcb.bean.Payment.AMOUNT;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_PRATIVRUTTA;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.NOTICE_PRATIVRUTTA;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -61,6 +61,10 @@ import org.egov.demand.utils.DemandConstants;
 import org.egov.infra.admin.master.entity.Address;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.ptis.client.integration.utils.CollectionHelper;
+import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
 import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
@@ -72,10 +76,6 @@ import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyMutationOwner;
 import org.egov.ptis.domain.entity.property.PropertyOwner;
-import org.egov.ptis.nmc.bill.NMCPropertyTaxBillable;
-import org.egov.ptis.nmc.integration.utils.CollectionHelper;
-import org.egov.ptis.nmc.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 
 public class TransferOwnerService extends PersistenceService<PropertyMutation, Long> {
 	private static final Logger LOGGER = Logger.getLogger(TransferOwnerService.class);
@@ -268,8 +268,8 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
 	 */
 	public BillReceiptInfo generateMiscReceipt(BasicProperty basicProperty, BigDecimal amount) {
 		LOGGER.debug("Inside generateMiscReceipt method, Mutation Amount: " + amount);
-		org.egov.ptis.nmc.integration.impl.PropertyImpl property = new org.egov.ptis.nmc.integration.impl.PropertyImpl();
-		NMCPropertyTaxBillable billable = new NMCPropertyTaxBillable();
+		org.egov.ptis.client.integration.impl.PropertyImpl property = new org.egov.ptis.client.integration.impl.PropertyImpl();
+		PropertyTaxBillable billable = new PropertyTaxBillable();
 		billable.setBasicProperty(basicProperty);
 		billable.setIsMiscellaneous(Boolean.TRUE);
 		billable.setMutationFee(amount);

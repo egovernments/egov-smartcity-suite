@@ -42,9 +42,9 @@
  */
 package org.egov.ptis.actions.objection;
 
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPERTY_MODIFY_REASON_OBJ;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_STEP_FORWARD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_STEP_SAVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_OBJ;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -64,6 +64,9 @@ import org.egov.pims.commons.Position;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.actions.view.ViewPropertyAction;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.objection.Objection;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -71,9 +74,6 @@ import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyService;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
-import org.egov.ptis.nmc.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.egov.web.annotation.ValidationErrorPage;
@@ -134,7 +134,7 @@ public class ObjectionAction extends PropertyTaxBaseAction{
 		
 		BasicProperty basicProperty = PropertyDAOFactory.getDAOFactory().getBasicPropertyDAO().getBasicPropertyByPropertyID(propertyId);
 		
-		if (basicProperty.getIsMigrated().equals(NMCPTISConstants.STATUS_MIGRATED)
+		if (basicProperty.getIsMigrated().equals(PropertyTaxConstants.STATUS_MIGRATED)
 				&& basicProperty.getPropertySet().size() == 1) {
 			isShowAckMessage = true;
 			return STRUTS_RESULT_MESSAGE;

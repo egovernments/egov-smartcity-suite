@@ -40,11 +40,11 @@
 package org.egov.ptis.actions.citizen.search;
 
 import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.CITIZENUSER;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.CITIZENUSER;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

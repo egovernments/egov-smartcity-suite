@@ -411,12 +411,10 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 			throw new EGOVRuntimeException(
 					"Internal Server Error in Searching Property Address is Null!!");
 		}
-		// logger.info("address id"+address.getAddressID());
 		if (basicProperty.getOldMuncipalNum() != null) {
 			addressStr = "(Old No. " + basicProperty.getOldMuncipalNum() + " )";
 		}
 
-		// logger.info("::::::::addressStr "+addressStr);
 		return buildAddressFromAddress(address);
 
 	}

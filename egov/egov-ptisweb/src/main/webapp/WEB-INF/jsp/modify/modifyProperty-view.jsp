@@ -156,7 +156,7 @@
 							</s:else>
 							
 						</tr>
-						<!--s:if test="%{userRole == @org.egov.ptis.nmc.constants.NMCPTISConstants@PTVALIDATOR_ROLE}"-->
+						<!--s:if test="%{userRole == @org.egov.ptis.constants.PropertyTaxConstants@PTVALIDATOR_ROLE}"-->
 						<s:if test="%{isApprPageReq}">
 							<tr>
 								<%@ include file="../workflow/property-workflow.jsp"%>
@@ -191,7 +191,7 @@
 						<div class="buttonbottom" align="center">
 						<tr>
 							<s:if
-								test="%{model.state.value.endsWith(@org.egov.ptis.nmc.constants.NMCPTISConstants@WF_STATE_NOTICE_GENERATION_PENDING)}">
+								test="%{model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_NOTICE_GENERATION_PENDING)}">
 								<s:if test="%{extra_field3!='Yes'}">
 									<input type="button" name="GenerateNotice" id="GenerateNotice"
 										value="Generate Notice" class="button"
@@ -212,14 +212,14 @@
 							</s:if>
 							<s:else>
 								<s:if test="modifyRsn=='AMALG'">
-									<!--s:if test="%{userRole==@org.egov.ptis.nmc.constants.NMCPTISConstants@PTAPPROVER_ROLE}"-->
+									<!--s:if test="%{userRole==@org.egov.ptis.constants.PropertyTaxConstants@PTAPPROVER_ROLE}"-->
 									<td>
 										<s:submit value="Approve" name="Approve"
 											id='Amalgamate:Approve' cssClass="buttonsubmit"
 											method="approve" onclick="setWorkFlowInfo(this);doLoadingMask();" />
 									</td>
 									<!--/s:if-->
-									<!--s:if test="%{userRole==@org.egov.ptis.nmc.constants.NMCPTISConstants@PTVALIDATOR_ROLE}"-->
+									<!--s:if test="%{userRole==@org.egov.ptis.constants.PropertyTaxConstants@PTVALIDATOR_ROLE}"-->
 										<td>
 											<s:submit value="Forward" name="Forward"
 												id='Amalgamate:Forward' cssClass="buttonsubmit"
@@ -233,14 +233,14 @@
 									</td>
 								</s:if>
 								<s:if test="modifyRsn=='BIFURCATE'">
-									<!--s:if test="%{userRole==@org.egov.ptis.nmc.constants.NMCPTISConstants@PTAPPROVER_ROLE}"-->
+									<!--s:if test="%{userRole==@org.egov.ptis.constants.PropertyTaxConstants@PTAPPROVER_ROLE}"-->
 									<td>
 										<s:submit value="Approve" name="Approve"
 											id='Bifurcate:Approve' cssClass="buttonsubmit"
 											method="approve" onclick="setWorkFlowInfo(this);doLoadingMask();" />
 									</td>
 									<!--/s:if-->
-									<!--s:if test="%{userRole==@org.egov.ptis.nmc.constants.NMCPTISConstants@PTVALIDATOR_ROLE}"-->
+									<!--s:if test="%{userRole==@org.egov.ptis.constants.PropertyTaxConstants@PTVALIDATOR_ROLE}"-->
 										<td>
 											<s:submit value="Forward" name="Forward"
 												id='Bifurcate:Forward' cssClass="buttonsubmit"
@@ -254,14 +254,14 @@
 									</td>
 								</s:if>
 								<s:if test="modifyRsn=='MODIFY' || modifyRsn=='OBJ' || modifyRsn=='DATA_ENTRY'">
-									<!--s:if test="%{userRole==@org.egov.ptis.nmc.constants.NMCPTISConstants@PTAPPROVER_ROLE}"-->
+									<!--s:if test="%{userRole==@org.egov.ptis.constants.PropertyTaxConstants@PTAPPROVER_ROLE}"-->
 									<td>
 										<s:submit value="Approve" name="Approve" id='Modify:Approve'
 											cssClass="buttonsubmit" method="approve"
 											onclick="setWorkFlowInfo(this);doLoadingMask();" />
 									</td>
 									<!--/s:if-->
-									<!--s:if test="%{userRole==@org.egov.ptis.nmc.constants.NMCPTISConstants@PTVALIDATOR_ROLE}"-->
+									<!--s:if test="%{userRole==@org.egov.ptis.constants.PropertyTaxConstants@PTVALIDATOR_ROLE}"-->
 										<td>
 											<s:submit value="Forward" name="Forward" id='Modify:Forward'
 												cssClass="buttonsubmit" method="forwardView"

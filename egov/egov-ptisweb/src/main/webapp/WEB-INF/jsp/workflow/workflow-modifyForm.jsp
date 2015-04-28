@@ -46,7 +46,7 @@
 		function loadModifyForm(){
 			var modelId = '<s:property value="%{workFlowPropId}"/>';
 			var modifyRsn = '<s:property value="%{model.propertyDetail.propertyMutationMaster.code}"/>';
-			var objectionCode = '<s:property value="%{@org.egov.ptis.nmc.constants.NMCPTISConstants@MUTATIONRS_OBJECTION_CODE}"/>';
+			var objectionCode = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_OBJECTION_CODE}"/>';
 			var actionURL = '../modify/modifyProperty!modifyForm.action?';
 
 			if (modifyRsn == objectionCode) {

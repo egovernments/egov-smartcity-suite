@@ -39,6 +39,12 @@
  ******************************************************************************/
 package org.egov.ptis.actions.transfer;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_MUTATION_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTCREATOR_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER_AUDIT_ACTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATION_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
@@ -47,12 +53,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DOCS_MUTATION_PROPERTY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PTCREATOR_ROLE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.TRANSFER_AUDIT_ACTION;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFOWNER;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFSTATUS;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WF_STATE_NOTICE_GENERATION_PENDING;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

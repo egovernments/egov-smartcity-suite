@@ -40,28 +40,28 @@
 package org.egov.ptis.bean;
 
 import static java.lang.Boolean.FALSE;
+import static org.egov.ptis.constants.PropertyTaxConstants.CENTRAL_GOVT_SHORTFORM;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_FIRE_SERVICE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIGHTINGTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.MIXED_SHORTFORM;
+import static org.egov.ptis.constants.PropertyTaxConstants.NONRESD_SHORTFORM;
+import static org.egov.ptis.constants.PropertyTaxConstants.NON_HISTORY_TAX_DETAIL;
+import static org.egov.ptis.constants.PropertyTaxConstants.OCCUPIER_OCC;
+import static org.egov.ptis.constants.PropertyTaxConstants.OPEN_PLOT_SHORTFORM;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNER_OCC;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTGOVT_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_MIXED_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NONRESD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPENPLOT_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATEGOVT_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.RESD_SHORTFORM;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATE_GOVT_SHORTFORM;
+import static org.egov.ptis.constants.PropertyTaxConstants.TENANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.TENANT_OCC;
+import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_OCC;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.CENTRAL_GOVT_SHORTFORM;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_FIRE_SERVICE_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_LIGHTINGTAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.MIXED_SHORTFORM;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.NONRESD_SHORTFORM;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.NON_HISTORY_TAX_DETAIL;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.OCCUPIER_OCC;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.OPEN_PLOT_SHORTFORM;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.OWNER_OCC;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_CENTGOVT_STR;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_MIXED_STR;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_NONRESD_STR;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_OPENPLOT_STR;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_RESD_STR;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_STATEGOVT_STR;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.RESD_SHORTFORM;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.STATE_GOVT_SHORTFORM;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.TENANT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.TENANT_OCC;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.VACANT_OCC;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -88,19 +88,19 @@ import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.StringUtils;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.client.model.MiscellaneousTax;
+import org.egov.ptis.client.model.MiscellaneousTaxDetail;
+import org.egov.ptis.client.model.TaxCalculationInfo;
+import org.egov.ptis.client.model.UnitTaxCalculationInfo;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.client.util.UnitTaxInfoComparator;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
-import org.egov.ptis.nmc.model.MiscellaneousTax;
-import org.egov.ptis.nmc.model.MiscellaneousTaxDetail;
-import org.egov.ptis.nmc.model.TaxCalculationInfo;
-import org.egov.ptis.nmc.model.UnitTaxCalculationInfo;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
-import org.egov.ptis.nmc.util.UnitTaxInfoComparator;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 
@@ -122,7 +122,7 @@ public class PropertyInfo {
 	private static final String PROPERTY_AMENITY = "PROPERTY-AMENITY";
 
 	private final Set<PropertyFloorDetailsInfo> propertyFloorDetails = new LinkedHashSet<PropertyFloorDetailsInfo>();
-	private DateFormat dateFormatter = new SimpleDateFormat(NMCPTISConstants.DATE_FORMAT_DDMMYYY);
+	private DateFormat dateFormatter = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
 	private int isCentralGovtProp = 0;
 
 	private PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
@@ -156,7 +156,7 @@ public class PropertyInfo {
 
 	private Date getMinEffectiveDate(String demandReasonCode) throws ParseException {
 		Date taxMinEffectiveDate = null;
-		Module ptModule = moduleDao.getModuleByName(NMCPTISConstants.PTMODULENAME);
+		Module ptModule = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
 		List minEffDate = HibernateUtil
 				.getCurrentSession()
 				.createSQLQuery(
@@ -266,7 +266,7 @@ public class PropertyInfo {
 							for (MiscellaneousTax mt : unit.getMiscellaneousTaxes()) {
 								for (MiscellaneousTaxDetail detail : mt.getTaxDetails()) {
 									if (detail.getIsHistory() != null
-											&& detail.getIsHistory().equals(NMCPTISConstants.HISTORY_TAX_DETAIL)
+											&& detail.getIsHistory().equals(PropertyTaxConstants.HISTORY_TAX_DETAIL)
 											&& propertyTaxUtil.between(detail.getFromDate(), mapEntryByInstallment.getKey().getFromDate(),
 													mapEntryByInstallment.getKey().getToDate())) {
 										

@@ -127,9 +127,9 @@ function resetFloorDetailsForResdAndNonResd(obj) {
 	var tbl = document.getElementById('floorDetails');
 	if (tbl != null && propType == 'Residential & Non-Residential') {
 		var rowo = tbl.rows;
-		var RsdUsg = '<s:property value="@org.egov.ptis.nmc.constants.NMCPTISConstants@USAGES_FOR_RESD"/>';
+		var RsdUsg = '<s:property value="@org.egov.ptis.constants.PropertyTaxConstants@USAGES_FOR_RESD"/>';
 		var RsdUsgArray = RsdUsg.split(", "); 
-		var NonRsdUsg = '<s:property value="@org.egov.ptis.nmc.constants.NMCPTISConstants@USAGES_FOR_NON_RESD"/>';
+		var NonRsdUsg = '<s:property value="@org.egov.ptis.constants.PropertyTaxConstants@USAGES_FOR_NON_RESD"/>';
 		var NonRsdUsgArray = NonRsdUsg.split(", ");
 		var selectedUsage = obj.options[obj.selectedIndex].text;
 		indexval = rowIndex-1;
@@ -219,9 +219,9 @@ function resetFloorDetailsForResdAndNonResdOnload() {
 	var tbl = document.getElementById('floorDetails');
 	if (tbl != null) {
 		var rowo = tbl.rows;
-		var RsdUsg = '<s:property value="@org.egov.ptis.nmc.constants.NMCPTISConstants@USAGES_FOR_RESD"/>';
+		var RsdUsg = '<s:property value="@org.egov.ptis.constants.PropertyTaxConstants@USAGES_FOR_RESD"/>';
 		var RsdUsgArray = RsdUsg.split(", "); 
-		var NonRsdUsg = '<s:property value="@org.egov.ptis.nmc.constants.NMCPTISConstants@USAGES_FOR_NON_RESD"/>';
+		var NonRsdUsg = '<s:property value="@org.egov.ptis.constants.PropertyTaxConstants@USAGES_FOR_NON_RESD"/>';
 		var NonRsdUsgArray = NonRsdUsg.split(", ");
 		for ( var i = 0; i < rowo.length - 1; i++) {
 			indexval = i;

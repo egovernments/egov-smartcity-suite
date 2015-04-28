@@ -46,18 +46,18 @@ import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.client.model.MiscellaneousTax;
+import org.egov.ptis.client.model.MiscellaneousTaxDetail;
+import org.egov.ptis.client.model.TaxCalculationInfo;
+import org.egov.ptis.client.model.UnitTaxCalculationInfo;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
 import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.FloorIF;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
-import org.egov.ptis.nmc.model.MiscellaneousTax;
-import org.egov.ptis.nmc.model.MiscellaneousTaxDetail;
-import org.egov.ptis.nmc.model.TaxCalculationInfo;
-import org.egov.ptis.nmc.model.UnitTaxCalculationInfo;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.quartz.StatefulJob;
 
 public class UpdateTaxJob extends AbstractQuartzJob implements StatefulJob {
@@ -217,23 +217,23 @@ public class UpdateTaxJob extends AbstractQuartzJob implements StatefulJob {
 		floorDmdCalc.setAlv(unitTax.getAnnualRentAfterDeduction());
 		for (MiscellaneousTax miscTax : unitTax.getMiscellaneousTaxes()) {
 			for (MiscellaneousTaxDetail taxDetail : miscTax.getTaxDetails()) {
-				if (NMCPTISConstants.DEMANDRSN_CODE_FIRE_SERVICE_TAX.equals(miscTax.getTaxName())) {
+				if (PropertyTaxConstants.DEMANDRSN_CODE_FIRE_SERVICE_TAX.equals(miscTax.getTaxName())) {
 					floorDmdCalc.setTax1(taxDetail.getCalculatedTaxValue());
-				} else if (NMCPTISConstants.DEMANDRSN_CODE_LIGHTINGTAX.equals(miscTax.getTaxName())) {
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_LIGHTINGTAX.equals(miscTax.getTaxName())) {
 					floorDmdCalc.setTax2(taxDetail.getCalculatedTaxValue());
-				} else if (NMCPTISConstants.DEMANDRSN_CODE_SEWERAGE_TAX.equals(miscTax.getTaxName())) {
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX.equals(miscTax.getTaxName())) {
 					floorDmdCalc.setTax3(taxDetail.getCalculatedTaxValue());
-				} else if (NMCPTISConstants.DEMANDRSN_CODE_GENERAL_TAX.equals(miscTax.getTaxName())) {
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX.equals(miscTax.getTaxName())) {
 					floorDmdCalc.setTax4(taxDetail.getCalculatedTaxValue());
-				} else if (NMCPTISConstants.DEMANDRSN_CODE_GENERAL_WATER_TAX.equals(miscTax.getTaxName())) {
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_WATER_TAX.equals(miscTax.getTaxName())) {
 					floorDmdCalc.setTax5(taxDetail.getCalculatedTaxValue());
-				} else if (NMCPTISConstants.DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX.equals(miscTax.getTaxName())) {
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX.equals(miscTax.getTaxName())) {
 					floorDmdCalc.setTax6(taxDetail.getCalculatedTaxValue());
-				} else if (NMCPTISConstants.DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX.equals(miscTax.getTaxName())) {
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX.equals(miscTax.getTaxName())) {
 					floorDmdCalc.setTax7(taxDetail.getCalculatedTaxValue());
-				} else if (NMCPTISConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD.equals(miscTax.getTaxName())) {
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD.equals(miscTax.getTaxName())) {
 					floorDmdCalc.setTax8(taxDetail.getCalculatedTaxValue());
-				} else if (NMCPTISConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD.equals(miscTax.getTaxName())) {
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD.equals(miscTax.getTaxName())) {
 					floorDmdCalc.setTax9(taxDetail.getCalculatedTaxValue());
 				}
 			}

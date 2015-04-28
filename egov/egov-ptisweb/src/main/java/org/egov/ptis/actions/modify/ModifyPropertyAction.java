@@ -43,6 +43,46 @@ import static java.math.BigDecimal.ROUND_HALF_UP;
 import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.ptis.constants.PropertyTaxConstants.AMALG_AUDIT_ACTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.AREA_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.AUDITDATA_STRING_SEP;
+import static org.egov.ptis.constants.PropertyTaxConstants.BIFUR_AUDIT_ACTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.DATAUPDATE_AUDIT_ACTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
+import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_AMALGAMATE_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_BIFURCATE_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_MODIFY_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.MODIFY_AUDIT_ACTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE127;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE134;
+import static org.egov.ptis.constants.PropertyTaxConstants.PIPE_CHAR;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_COURT_RULE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_ENTRY;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_UPDATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_MODIFY;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_OBJ;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_INACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTCREATOR_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPSTATVALUE_BY_BASICPROPID_CODE_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.RESIDENTIAL_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.VOUCH_CREATE_RSN_DEACTIVATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATION_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.modifyReasons;
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
@@ -50,46 +90,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.AMALG_AUDIT_ACTION;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.AREA_BNDRY_TYPE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.ASSISTANT_ROLE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.AUDITDATA_STRING_SEP;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.BIFUR_AUDIT_ACTION;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DATAUPDATE_AUDIT_ACTION;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMAND_RSNS_LIST;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DOCS_AMALGAMATE_PROPERTY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DOCS_BIFURCATE_PROPERTY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DOCS_MODIFY_PROPERTY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.MODIFY_AUDIT_ACTION;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.NOTICE127;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.NOTICE134;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PIPE_CHAR;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPERTY_MODIFY_REASON_AMALG;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPERTY_MODIFY_REASON_COURT_RULE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPERTY_MODIFY_REASON_DATA_ENTRY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPERTY_MODIFY_REASON_DATA_UPDATE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPERTY_MODIFY_REASON_MODIFY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPERTY_MODIFY_REASON_OBJ;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPERTY_STATUS_INACTIVE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPERTY_STATUS_MARK_DEACTIVE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_CENTRAL_GOVT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_NON_RESD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_OPEN_PLOT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_RESD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_STATE_GOVT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROP_CREATE_RSN;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PTCREATOR_ROLE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.QUERY_BASICPROPERTY_BY_UPICNO;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.QUERY_PROPSTATVALUE_BY_BASICPROPID_CODE_ISACTIVE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.RESIDENTIAL_PROPERTY_TYPE_CATEGORY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.VOUCH_CREATE_RSN_DEACTIVATE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFOWNER;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFSTATUS;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WF_STATE_NOTICE_GENERATION_PENDING;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.modifyReasons;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -123,6 +123,11 @@ import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.actions.workflow.WorkflowAction;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.client.util.FinancialUtil;
+import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.client.workflow.WorkflowDetails;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
@@ -148,11 +153,6 @@ import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.service.property.PropertyService;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
-import org.egov.ptis.nmc.util.FinancialUtil;
-import org.egov.ptis.nmc.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
-import org.egov.ptis.nmc.workflow.WorkflowDetails;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.egov.web.annotation.ValidationErrorPage;
@@ -296,7 +296,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		String wfStatus = wfMap.get(WFSTATUS);
 		if (wfStatus.equalsIgnoreCase("TRUE")
 				&& modifyRsn != null
-				&& (!PROPERTY_MODIFY_REASON_DATA_ENTRY.equals(modifyRsn) && !NMCPTISConstants.PROPERTY_MODIFY_REASON_OBJ
+				&& (!PROPERTY_MODIFY_REASON_DATA_ENTRY.equals(modifyRsn) && !PropertyTaxConstants.PROPERTY_MODIFY_REASON_OBJ
 						.equalsIgnoreCase(modifyRsn))) {
 			getSession().put(WFOWNER, wfMap.get(WFOWNER));
 			target = "workFlowError";
@@ -305,7 +305,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 			setOldProperty((PropertyImpl) getBasicProp().getProperty());
 			if (propWF == null) {
 
-				if (NMCPTISConstants.PROPERTY_MODIFY_REASON_DATA_UPDATE.equals(modifyRsn)) {
+				if (PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_UPDATE.equals(modifyRsn)) {
 					// Using the existing active egpt_property object
 					propertyImpl = oldProperty;
 				} else {
@@ -320,7 +320,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 			} else {
 				propertyImpl = propWF;
 				
-				/*if (NMCPTISConstants.PROPERTY_MODIFY_REASON_OBJ.equalsIgnoreCase(modifyRsn) && !basicProp.getAllChangesCompleted()) {
+				/*if (PropertyTaxConstants.PROPERTY_MODIFY_REASON_OBJ.equalsIgnoreCase(modifyRsn) && !basicProp.getAllChangesCompleted()) {
 					allChangesCompleted = basicProp.getAllChangesCompleted();
 					modifyRsn = PROPERTY_MODIFY_REASON_DATA_ENTRY;
 				} else {
@@ -397,7 +397,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 				List flrDetsProxy = new ArrayList();
 				for (FloorIF floor : propertyModel.getPropertyDetail().getFloorDetails()) {
 					if (floor.getPropertyOccupation() != null
-							&& floor.getPropertyOccupation().getOccupancyCode().equalsIgnoreCase(NMCPTISConstants.TENANT)) {
+							&& floor.getPropertyOccupation().getOccupancyCode().equalsIgnoreCase(PropertyTaxConstants.TENANT)) {
 						isTenantFloorPresent = true;
 					}
 					flrDetsProxy.add(floor);
@@ -428,7 +428,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 				propOccId = propertyModel.getPropertyDetail().getPropertyOccupation().getId().toString();
 			}
 			
-			setDateOfCompletion(new SimpleDateFormat(NMCPTISConstants.DATE_FORMAT_DDMMYYY).format(basicProp
+			setDateOfCompletion(new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY).format(basicProp
 					.getPropCreateDate()));
 			
 			setDocNumber(propertyModel.getDocNumber());
@@ -645,8 +645,8 @@ public class ModifyPropertyAction extends WorkflowAction {
 			objectTheOldProperty(objectionRemarks);
 			
 			propWF.setStatus(PropertyTaxConstants.STATUS_ISACTIVE);
-			propWF.setRemarks(propWF.getRemarks() == null ? NMCPTISConstants.STATUS_OBJECTED_STR : oldProperty
-					.getRemarks().concat(NMCPTISConstants.STATUS_OBJECTED_STR));
+			propWF.setRemarks(propWF.getRemarks() == null ? PropertyTaxConstants.STATUS_OBJECTED_STR : oldProperty
+					.getRemarks().concat(PropertyTaxConstants.STATUS_OBJECTED_STR));
 			
 			propertyModel.setStatus(STATUS_WORKFLOW);
 		
@@ -658,10 +658,10 @@ public class ModifyPropertyAction extends WorkflowAction {
 					//for (Property property : basicProp.getPropertySet()) {
 					String remarks = oldProperty.getRemarks();
 					
-					if (StringUtils.isNotBlank(remarks) &&  remarks.contains(NMCPTISConstants.STATUS_OBJECTED_STR)) {
+					if (StringUtils.isNotBlank(remarks) &&  remarks.contains(PropertyTaxConstants.STATUS_OBJECTED_STR)) {
 						
 						oldProperty.setStatus(PropertyTaxConstants.STATUS_OBJECTED);
-						oldProperty.getRemarks().replaceFirst(NMCPTISConstants.STATUS_OBJECTED_STR, objectionRemarks);
+						oldProperty.getRemarks().replaceFirst(PropertyTaxConstants.STATUS_OBJECTED_STR, objectionRemarks);
 						
 					} else {
 						oldProperty.setStatus(STATUS_ISHISTORY);
@@ -1011,7 +1011,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		auditDetail1.append("Part No : ").append(basicProp.getPartNo()).append(PIPE_CHAR).append(partNo);
 		LOGGER.debug("updateOwner, old part no="+ basicProp.getPartNo() + ", new part no=" + partNo);
 		basicProp.setPartNo(partNo);			
-		//propertyTaxUtil.generateAuditEvent(NMCPTISConstants.EDIT_OWNER_AUDIT_ACTION, basicProp,auditDetail1.toString(), null);
+		//propertyTaxUtil.generateAuditEvent(PropertyTaxConstants.EDIT_OWNER_AUDIT_ACTION, basicProp,auditDetail1.toString(), null);
 		setAckMessage(getText("property.editowner.success"));
 		return RESULT_ACK;
 	}
@@ -1134,7 +1134,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 			} else if (propType.getCode().equalsIgnoreCase(PROPTYPE_NON_RESD)) {
 				setPropTypeCategoryMap(NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY);
 			} else if (propType.getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
-				setPropTypeCategoryMap(NMCPTISConstants.OPEN_PLOT_PROPERTY_TYPE_CATEGORY);
+				setPropTypeCategoryMap(PropertyTaxConstants.OPEN_PLOT_PROPERTY_TYPE_CATEGORY);
 			} else {
 				setPropTypeCategoryMap(Collections.EMPTY_MAP);
 			}
@@ -1788,7 +1788,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 			for (String amalgId : amalgPropIds) {
 				if (amalgId != null && !amalgId.equals("")) {
 					BasicProperty amalgBasicProp = (BasicProperty) getPersistenceService().findByNamedQuery(
-							NMCPTISConstants.QUERY_BASICPROPERTY_BY_UPICNO, amalgId);
+							PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO, amalgId);
 					PropertyStatusValues amalgPropStatVal = new PropertyStatusValues();
 					PropertyStatus propertyStatus = (PropertyStatus) getPersistenceService().find(
 							"from PropertyStatus where statusCode=?", PROPERTY_STATUS_INACTIVE);
@@ -1829,7 +1829,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 			
 			mutationCode = propWF.getPropertyDetail().getPropertyMutationMaster().getCode();
 			
-			if (propstatval.getReferenceNo().startsWith(NMCPTISConstants.OBJECTION_SEQ_STR)) {
+			if (propstatval.getReferenceNo().startsWith(PropertyTaxConstants.OBJECTION_SEQ_STR)) {
 				setObjNum(propstatval.getReferenceNo());
 				setObjDate(sdf.format(propstatval.getReferenceDate()));
 			}
@@ -1994,11 +1994,11 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 			if (propType != null) {
 				if (propType.getCode().equalsIgnoreCase(PROPTYPE_RESD)) {
-					propTypeCategoryMap.putAll(NMCPTISConstants.RESIDENTIAL_PROPERTY_TYPE_CATEGORY);
+					propTypeCategoryMap.putAll(PropertyTaxConstants.RESIDENTIAL_PROPERTY_TYPE_CATEGORY);
 				} else if (propType.getCode().equalsIgnoreCase(PROPTYPE_NON_RESD)) {
-					propTypeCategoryMap.putAll(NMCPTISConstants.NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY);
+					propTypeCategoryMap.putAll(PropertyTaxConstants.NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY);
 				} else if (propType.getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
-					propTypeCategoryMap.putAll(NMCPTISConstants.OPEN_PLOT_PROPERTY_TYPE_CATEGORY);
+					propTypeCategoryMap.putAll(PropertyTaxConstants.OPEN_PLOT_PROPERTY_TYPE_CATEGORY);
 				}
 			}
 			propCat = propTypeCategoryMap.get(property.getPropertyDetail().getExtra_field5());

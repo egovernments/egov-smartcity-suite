@@ -42,12 +42,12 @@
  */
 package org.egov.ptis.actions.recovery;
 
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_COURT_FEE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_NOTICE_FEE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_WARRANT_FEE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_STEP_APPROVE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_STEP_FORWARD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_STEP_SAVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_COURT_FEE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_NOTICE_FEE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_WARRANT_FEE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -74,14 +74,14 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.client.model.PropertyBillInfo;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.recovery.IntimationNotice;
 import org.egov.ptis.domain.entity.recovery.Recovery;
 import org.egov.ptis.domain.entity.recovery.Warrant;
 import org.egov.ptis.domain.entity.recovery.WarrantFee;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
-import org.egov.ptis.nmc.model.PropertyBillInfo;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
@@ -149,11 +149,11 @@ public class RecoveryAction extends BaseRecoveryAction {
 		
 		EgBill bill = getBil(consumerId.toString());
 		
-		if (wfMap.get(NMCPTISConstants.WFSTATUS).equalsIgnoreCase(Boolean.TRUE.toString())
-				&& StringUtils.isNotEmpty(wfMap.get(NMCPTISConstants.WFOWNER))) {
+		if (wfMap.get(PropertyTaxConstants.WFSTATUS).equalsIgnoreCase(Boolean.TRUE.toString())
+				&& StringUtils.isNotEmpty(wfMap.get(PropertyTaxConstants.WFOWNER))) {
 			addActionMessage(getText("property.state.recovery"));
-		} else if (wfMap.get(NMCPTISConstants.WFSTATUS).equalsIgnoreCase(Boolean.TRUE.toString())
-				&& StringUtils.isEmpty(wfMap.get(NMCPTISConstants.WFOWNER))) {
+		} else if (wfMap.get(PropertyTaxConstants.WFSTATUS).equalsIgnoreCase(Boolean.TRUE.toString())
+				&& StringUtils.isEmpty(wfMap.get(PropertyTaxConstants.WFOWNER))) {
 			addActionMessage(getText("property.state.in.recovery"));
 		} else if (null == bill) {
 			addActionMessage(getText("bill.not.generated"));
@@ -219,7 +219,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 	@ValidationErrorPage(value = "view")
 	public String generateNotice155() {
 		LOGGER.debug("RecoveryAction | generateNotice155 | start" + recovery.getIntimationNotice());
-		String noticeNo = propertyTaxNumberGenerator.generateRecoveryNotice(NMCPTISConstants.NOTICE155);
+		String noticeNo = propertyTaxNumberGenerator.generateRecoveryNotice(PropertyTaxConstants.NOTICE155);
 		recovery.setStatus(getEgwStatusForModuleAndCode(PropertyTaxConstants.RECOVERY_MODULE,
 				PropertyTaxConstants.RECOVERY_NOTICE155GENERATED));
 		updateWfstate("Notice 155 Generated");
@@ -239,7 +239,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 		reportId = addingReportToSession(reportOutput);
 		if (reportOutput != null && reportOutput.getReportOutputData() != null) {
 			InputStream Notice155PDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
-			PtNotice ptNotice = noticeService.saveNotice(noticeNo, NMCPTISConstants.NOTICE155,
+			PtNotice ptNotice = noticeService.saveNotice(noticeNo, PropertyTaxConstants.NOTICE155,
 					recovery.getBasicProperty(), Notice155PDF);
 			recovery.getIntimationNotice().setNotice(ptNotice);
 		}
@@ -276,12 +276,12 @@ public class RecoveryAction extends BaseRecoveryAction {
 
 	@ValidationErrorPage(value = "warrantApplicationView")
 	public String generateWarrantApplicaton() {
-		String noticeNo = propertyTaxNumberGenerator.generateRecoveryNotice(NMCPTISConstants.WARRANT_APPLICATION);
+		String noticeNo = propertyTaxNumberGenerator.generateRecoveryNotice(PropertyTaxConstants.WARRANT_APPLICATION);
 		recovery.getBasicProperty().setStatus(getPropStatusByStatusCode(PropertyTaxConstants.RECOVERY_WARRANTAPPROVED));
 		recovery.setStatus(getEgwStatusForModuleAndCode(PropertyTaxConstants.RECOVERY_MODULE,
 				PropertyTaxConstants.RECOVERY_WARRANTAPPROVED));
 
-		updateWfstate(NMCPTISConstants.WARRANT_APPLICATION);
+		updateWfstate(PropertyTaxConstants.WARRANT_APPLICATION);
 		BigDecimal courtFee = BigDecimal.ZERO;
 		BigDecimal noticeFee = BigDecimal.ZERO;
 		BigDecimal warrantFee = BigDecimal.ZERO;
@@ -313,14 +313,14 @@ public class RecoveryAction extends BaseRecoveryAction {
 		PropertyBillInfo propertyBillInfo = new PropertyBillInfo(reasonwiseDues, recovery.getBasicProperty(), null);
 		BigDecimal totalRecoverAmt = (propertyBillInfo.getGrandTotal().add(courtFee.add(warrantFee))).setScale(2);
 		paramMap.put("totalAmt", totalRecoverAmt.toString());
-		ReportRequest reportRequest = new ReportRequest(NMCPTISConstants.WARRANT_APPLICATION, propertyBillInfo,
+		ReportRequest reportRequest = new ReportRequest(PropertyTaxConstants.WARRANT_APPLICATION, propertyBillInfo,
 				paramMap);
 		reportRequest.setPrintDialogOnOpenReport(true);
 		ReportOutput reportOutput = reportService.createReport(reportRequest);
 		reportId = addingReportToSession(reportOutput);
 		if (reportOutput != null && reportOutput.getReportOutputData() != null) {
 			InputStream warrantApplPDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
-			PtNotice ptNotice = noticeService.saveNotice(noticeNo, NMCPTISConstants.WARRANT_APPLICATION,
+			PtNotice ptNotice = noticeService.saveNotice(noticeNo, PropertyTaxConstants.WARRANT_APPLICATION,
 					recovery.getBasicProperty(), warrantApplPDF);
 			recovery.getWarrant().setNotice(ptNotice);
 		}
@@ -343,7 +343,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 
 	public String generateWarrantNotice() {
 		LOGGER.debug("RecoveryAction | generateWarrantNotice | Start" + recovery.getWarrantNotice());
-		String noticeNo = propertyTaxNumberGenerator.generateRecoveryNotice(NMCPTISConstants.NOTICE156);
+		String noticeNo = propertyTaxNumberGenerator.generateRecoveryNotice(PropertyTaxConstants.NOTICE156);
 		recovery.getBasicProperty().setStatus(
 				getPropStatusByStatusCode(PropertyTaxConstants.RECOVERY_WARRANTNOTICEISSUED));
 		recovery.setStatus(getEgwStatusForModuleAndCode(PropertyTaxConstants.RECOVERY_MODULE,
@@ -368,7 +368,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 		reportId = addingReportToSession(reportOutput);
 		if (reportOutput != null && reportOutput.getReportOutputData() != null) {
 			InputStream Notice156PDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
-			PtNotice ptNotice = noticeService.saveNotice(noticeNo, NMCPTISConstants.NOTICE156,
+			PtNotice ptNotice = noticeService.saveNotice(noticeNo, PropertyTaxConstants.NOTICE156,
 					recovery.getBasicProperty(), Notice156PDF);
 			recovery.getWarrantNotice().setNotice(ptNotice);
 		}
@@ -394,7 +394,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 	@ValidationErrorPage(value = "notice159View")
 	public String generateCeaseNotice() {
 		LOGGER.debug("RecoveryAction | generateCeaseNotice | Start" + recovery.getCeaseNotice());
-		String noticeNo = propertyTaxNumberGenerator.generateRecoveryNotice(NMCPTISConstants.NOTICE159);
+		String noticeNo = propertyTaxNumberGenerator.generateRecoveryNotice(PropertyTaxConstants.NOTICE159);
 		recovery.getBasicProperty().setStatus(
 				getPropStatusByStatusCode(PropertyTaxConstants.RECOVERY_CEASENOTICEISSUED));
 		recovery.setStatus(getEgwStatusForModuleAndCode(PropertyTaxConstants.RECOVERY_MODULE,
@@ -427,7 +427,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 		reportId = addingReportToSession(reportOutput);
 		if (reportOutput != null && reportOutput.getReportOutputData() != null) {
 			InputStream Notice159PDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
-			PtNotice ptNotice = noticeService.saveNotice(noticeNo, NMCPTISConstants.NOTICE159,
+			PtNotice ptNotice = noticeService.saveNotice(noticeNo, PropertyTaxConstants.NOTICE159,
 					recovery.getBasicProperty(), Notice159PDF);
 			recovery.getCeaseNotice().setNotice(ptNotice);
 		}

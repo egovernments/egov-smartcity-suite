@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.ptis.bean;
 
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.STYLE_TAG_BEGIN;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.STYLE_TAG_END;
-import static org.egov.ptis.nmc.util.PropertyTaxUtil.isNotNull;
-import static org.egov.ptis.nmc.util.PropertyTaxUtil.isNull;
+import static org.egov.ptis.constants.PropertyTaxConstants.STYLE_TAG_BEGIN;
+import static org.egov.ptis.constants.PropertyTaxConstants.STYLE_TAG_END;
+import static org.egov.ptis.client.util.PropertyTaxUtil.isNotNull;
+import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -55,9 +55,9 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.Installment;
 import org.egov.infstr.reporting.util.ReportUtil;
 import org.egov.infstr.utils.HashCodeUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.UnitCalculationDetail;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 
 /**
  * The property floor details object
@@ -95,7 +95,7 @@ public class PropertyFloorDetailsInfo implements Comparable<PropertyFloorDetails
 	private String totalServChrg = "";
 	private String NOTAVAIL = "N/A";
 	
-	private DateFormat dateFormat = new SimpleDateFormat(NMCPTISConstants.DATE_FORMAT_DDMMYYY);
+	private DateFormat dateFormat = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
 	
 
 	private PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
@@ -152,7 +152,7 @@ public class PropertyFloorDetailsInfo implements Comparable<PropertyFloorDetails
 		//this.installment = installment;
 		BigDecimal totalActualTaxAmt = BigDecimal.ZERO;
 		BigDecimal totalTaxAmt = BigDecimal.ZERO;		
-		DateFormat dateformatter = new SimpleDateFormat(NMCPTISConstants.DATE_FORMAT_DDMMYYY);		
+		DateFormat dateformatter = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);		
 		Date unitTaxDate = null;
 		
 		try {

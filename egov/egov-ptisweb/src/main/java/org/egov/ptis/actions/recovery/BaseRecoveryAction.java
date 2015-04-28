@@ -82,16 +82,16 @@ import org.egov.infstr.utils.DateUtils;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.actions.view.ViewPropertyAction;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.client.util.FinancialUtil;
+import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyStatus;
 import org.egov.ptis.domain.entity.recovery.Recovery;
 import org.egov.ptis.domain.entity.recovery.WarrantFee;
 import org.egov.ptis.domain.service.notice.NoticeService;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
-import org.egov.ptis.nmc.util.FinancialUtil;
-import org.egov.ptis.nmc.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 
@@ -280,7 +280,7 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 		
 		Map<Installment, Map<String, BigDecimal>> amounts = new HashMap<Installment, Map<String,BigDecimal>>();
 		Map<String, BigDecimal> voucherDemandMap = new HashMap<String, BigDecimal>(); // Map for create voucher
-		voucherDemandMap.put(NMCPTISConstants.DEMANDRSN_CODE_RECOVERY_FEE, totalDemandAmt);
+		voucherDemandMap.put(PropertyTaxConstants.DEMANDRSN_CODE_RECOVERY_FEE, totalDemandAmt);
 		amounts.put(currentDemand.getEgInstallmentMaster(), voucherDemandMap);
 		
 		financialUtil.createVoucher(recovery.getBasicProperty().getUpicNo(), amounts, "Recovery Fees");

@@ -40,16 +40,16 @@
 package org.egov.ptis.actions.search;
 
 import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.AREA_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.AREA_BNDRY_TYPE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPERTY_STATUS_MARK_DEACTIVE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WARD_BNDRY_TYPE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.ZONE_BNDRY_TYPE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

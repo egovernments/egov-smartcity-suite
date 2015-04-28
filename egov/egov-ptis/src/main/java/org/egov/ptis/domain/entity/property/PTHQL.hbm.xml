@@ -58,7 +58,7 @@
     <![CDATA[from PropertyImpl p where p.basicProperty.upicNo =? and p.status = 'W']]></query>
      <query name="getLatestBillsForProperty">
     <![CDATA[from EgBill bill where bill.consumerId =? and bill.egBillType.code=? and bill.is_Cancelled='N' order by createTimeStamp desc]]></query>
-    <query name="getPropertySatusForMemo"><!-- tatus code is NMCPTISConstants.PROPERTY_MODIFY_REASON_MODIFY -->
+    <query name="getPropertySatusForMemo"><!-- tatus code is PropertyTaxConstants.PROPERTY_MODIFY_REASON_MODIFY -->
     <![CDATA[from PropertyStatusValues PSV where PSV.basicProperty.upicNo = ? and PSV.isActive = 'Y' and PSV.propertyStatus.statusCode=? and PSV.createdDate >= ?]]></query>
     <query name="getPropStatValByUpicNoAndStatCodeAndISActive">
     <![CDATA[from PropertyStatusValues PSV where PSV.basicProperty.upicNo = ? and PSV.isActive = ? and PSV.propertyStatus.statusCode=?]]></query>

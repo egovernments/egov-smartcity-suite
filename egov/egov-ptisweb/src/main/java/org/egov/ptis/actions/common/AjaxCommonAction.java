@@ -40,12 +40,12 @@
 package org.egov.ptis.actions.common;
 
 import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.AREA_BNDRY_TYPE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DATE_CONSTANT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_NON_RESD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_OPEN_PLOT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_RESD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WARD_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.AREA_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DATE_CONSTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -72,13 +72,13 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.model.EmployeeView;
 import org.egov.pims.service.EisUtilService;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.CategoryDao;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.StructureClassification;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Conjunction;
@@ -243,11 +243,11 @@ public class AjaxCommonAction extends BaseFormAction {
 				"from PropertyTypeMaster ptm where ptm.id=?", propTypeId.longValue());
 		if (propType != null) {
 			if (propType.getCode().equalsIgnoreCase(PROPTYPE_RESD)) {
-				propTypeCategoryMap.putAll(NMCPTISConstants.RESIDENTIAL_PROPERTY_TYPE_CATEGORY);
+				propTypeCategoryMap.putAll(PropertyTaxConstants.RESIDENTIAL_PROPERTY_TYPE_CATEGORY);
 			} else if (propType.getCode().equalsIgnoreCase(PROPTYPE_NON_RESD)) {
-				propTypeCategoryMap.putAll(NMCPTISConstants.NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY);
+				propTypeCategoryMap.putAll(PropertyTaxConstants.NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY);
 			} else if (propType.getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
-				propTypeCategoryMap.putAll(NMCPTISConstants.OPEN_PLOT_PROPERTY_TYPE_CATEGORY);
+				propTypeCategoryMap.putAll(PropertyTaxConstants.OPEN_PLOT_PROPERTY_TYPE_CATEGORY);
 
 			}
 			setPropTypeCategoryMap(propTypeCategoryMap);
@@ -277,7 +277,7 @@ public class AjaxCommonAction extends BaseFormAction {
 		LOGGER.debug("Entered into getStructureClassifications, Date: " + completionOccupationDate);
 		structuralClassifications = new ArrayList<StructureClassification>();
 		try {
-			if (completionOccupationDate.after(new SimpleDateFormat(NMCPTISConstants.DATE_FORMAT_DDMMYYY)
+			if (completionOccupationDate.after(new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY)
 					.parse(DATE_CONSTANT))) {
 				LOGGER.debug("Base Rate - Structural Factors");
 				structuralClassifications.addAll(getPersistenceService().findAllBy(

@@ -39,7 +39,7 @@
  ******************************************************************************/
 package org.egov.ptis.scheduler;
 
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_ADVANCE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -57,12 +57,12 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.property.PropertyService;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.joda.time.DateTime;
 import org.quartz.StatefulJob;
 
@@ -144,7 +144,7 @@ public class DemandActivationJob extends AbstractQuartzJob implements
 						.getEgDemandDetailsAndReasonAsMap(installmentWiseDemandDetails
 								.get(installment));
 
-				for (String reason : NMCPTISConstants.DEMAND_RSNS_LIST) {
+				for (String reason : PropertyTaxConstants.DEMAND_RSNS_LIST) {
 
 					demandDetail = demandDetailsAndReason.get(reason);
 
@@ -190,7 +190,7 @@ public class DemandActivationJob extends AbstractQuartzJob implements
 		for (EgDemandDetails demandDetail : ptDemand.getEgDemandDetails()) {
 			if (demandDetail.getEgDemandReason().getEgDemandReasonMaster()
 					.getCode()
-					.equalsIgnoreCase(NMCPTISConstants.DEMANDRSN_CODE_ADVANCE)) {
+					.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE)) {
 				advanceDemandDetail = demandDetail;
 				break;
 			}
@@ -227,11 +227,11 @@ public class DemandActivationJob extends AbstractQuartzJob implements
 				-21);
 
 		StringBuilder noticeTypeBuilder = new StringBuilder().append("'")
-				.append(NMCPTISConstants.NOTICE127).append("'").append(",")
-				.append(" '").append(NMCPTISConstants.NOTICE134).append("'");
+				.append(PropertyTaxConstants.NOTICE127).append("'").append(",")
+				.append(" '").append(PropertyTaxConstants.NOTICE134).append("'");
 
 		StringBuilder noticePVR = new StringBuilder().append("'")
-				.append(NMCPTISConstants.NOTICE_PRATIVRUTTA).append("'");
+				.append(PropertyTaxConstants.NOTICE_PRATIVRUTTA).append("'");
 
 		String stringQuery = "SELECT ptd FROM PtNotice n, PtNotice pvr, Ptdemand ptd "
 				+ "LEFT JOIN FETCH ptd.egptProperty p "

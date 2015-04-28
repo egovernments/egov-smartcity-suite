@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.ptis.actions.reports;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_DCBREPORT;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.REPORT_TEMPLATENAME_DCBREPORT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.ZONE_BNDRY_TYPE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ import org.egov.infstr.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.bean.ReportInfo;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.web.actions.ReportFormAction;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;

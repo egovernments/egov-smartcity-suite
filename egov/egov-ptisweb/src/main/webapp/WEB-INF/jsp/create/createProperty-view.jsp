@@ -39,7 +39,7 @@
 #-------------------------------------------------------------------------------
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<%@ page import="org.egov.ptis.nmc.constants.NMCPTISConstants"%>
+<%@ page import="org.egov.ptis.constants.PropertyTaxConstants"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -162,7 +162,7 @@
 						<div class="buttonbottom" align="center">
 						<tr>
 							<s:if
-								test="%{model.state.value.endsWith(@org.egov.ptis.nmc.constants.NMCPTISConstants@WF_STATE_NOTICE_GENERATION_PENDING)}">
+								test="%{model.state.value.endsWith(@org.egov.ptis.nmc.constants.PropertyTaxConstants@WF_STATE_NOTICE_GENERATION_PENDING)}">
 								<s:if test="%{extra_field3!='Yes'}">
 									<input type="button" name="GenerateNotice" id="GenerateNotice"
 										value="Generate Notice" class="button"

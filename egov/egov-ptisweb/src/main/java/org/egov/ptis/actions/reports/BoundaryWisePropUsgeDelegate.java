@@ -40,9 +40,9 @@
 package org.egov.ptis.actions.reports;
 
 import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.USAGES_FOR_NON_RESD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.USAGES_FOR_OPENPLOT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.USAGES_FOR_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_NON_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_OPENPLOT;
+import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_RESD;
 
 import java.math.BigDecimal;
 import java.util.List;

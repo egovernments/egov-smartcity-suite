@@ -310,7 +310,7 @@
 		<script type="text/javascript">
 		function enableSaleDtls(obj) {
 			var selectedValue = obj.options[obj.selectedIndex].text;
-			if(selectedValue=='<s:property value="%{@org.egov.ptis.nmc.constants.NMCPTISConstants@MUTATIONRS_SALES_DEED}" />') {
+			if(selectedValue=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SALES_DEED}" />') {
 				document.getElementById("saleDtls").readOnly=false;
 				document.getElementById("saleDtls").className="";
 			}
@@ -319,7 +319,7 @@
 				document.getElementById("saleDtls").className="hiddentext";
 				document.getElementById("saleDtls").readOnly=true;
 			}
-			if(selectedValue=='<s:property value="%{@org.egov.ptis.nmc.constants.NMCPTISConstants@MUTATIONRS_COURT_ORDER}" />') {
+			if(selectedValue=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_COURT_ORDER}" />') {
 				document.getElementById("crtOrderNum").readOnly=false;
 				document.getElementById("crtOrderNum").className="";
 			}
@@ -328,7 +328,7 @@
 				document.getElementById("crtOrderNum").className="hiddentext";
 				document.getElementById("crtOrderNum").readOnly=true;
 			}
-			if(selectedValue=='<s:property value="%{@org.egov.ptis.nmc.constants.NMCPTISConstants@MUTATIONRS_OTHERS}" />') { 
+			if(selectedValue=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_OTHERS}" />') { 
 				document.getElementById("mutationRsnRow").style.display="";
 			}
 			else {

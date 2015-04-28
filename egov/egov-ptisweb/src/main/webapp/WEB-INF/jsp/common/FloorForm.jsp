@@ -127,7 +127,7 @@
 						listKey="key" id="floorType"
 						value="%{propertyDetail.floorDetailsProxy[0].extraField7}"
 						listValue="value"
-						list="@org.egov.ptis.nmc.constants.NMCPTISConstants@FLOOR_TYPES"
+						list="@org.egov.ptis.constants.PropertyTaxConstants@FLOOR_TYPES"
 						cssClass="selectnew" cssStyle="width:70px" />
 				</div>
 	    </td>
@@ -357,7 +357,7 @@
 							listKey="key" id="floorType"
 							value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].extraField7}"
 							listValue="value"
-							list="@org.egov.ptis.nmc.constants.NMCPTISConstants@FLOOR_TYPES"
+							list="@org.egov.ptis.constants.PropertyTaxConstants@FLOOR_TYPES"
 							cssClass="selectnew" cssStyle="width:70px" />
 					</div>
 	    </td>
@@ -659,7 +659,7 @@
 	var rentalUnits = 0;
 		
 	function toggleDisplayOfRentAgreementFields(occupationDropDown) {
-		var tenantOccupation = '<s:property value="%{@org.egov.ptis.nmc.constants.NMCPTISConstants@TENANT_OCC}" />';
+		var tenantOccupation = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@TENANT_OCC}" />';
 		var row = occupationDropDown.parentNode.parentNode.parentNode;
 		var floorTable = document.getElementById('floorDetails');
 		var noOfFloors = floorTable.rows.length - 1;

@@ -61,14 +61,14 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
+import org.egov.ptis.client.bill.PTBillServiceImpl;
+import org.egov.ptis.client.model.PropertyInstTaxBean;
+import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.nmc.bill.NMCPTBillServiceImpl;
-import org.egov.ptis.nmc.bill.NMCPropertyTaxBillable;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
-import org.egov.ptis.nmc.model.PropertyInstTaxBean;
-import org.egov.ptis.nmc.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
@@ -83,7 +83,7 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 	PersistenceService<BasicProperty, Long> basicPrpertyService;
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 	PropertyTaxCollection propertyTaxCollection;
-	NMCPTBillServiceImpl nmcPtBillServiceImpl;
+	PTBillServiceImpl nmcPtBillServiceImpl;
 	PropertyTaxUtil propertyTaxUtil;
 	private String propertyId;
 	BasicProperty basicProperty;
@@ -113,7 +113,7 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 							+ "where bp.upicNo = ? "
 							+ "and (property.status = 'A' or property.status = 'I') "
 							+ "and dmdRsn.egDemandReasonMaster.code = ?", propertyId,
-					NMCPTISConstants.DEMANDRSN_CODE_PENALTY_FINES);
+					PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES);
 
 			for (EgDemandDetails penaltyDmdDtl : penaltyDemandDetails) {
 				installmentAndDemandDetails.put(penaltyDmdDtl.getEgDemandReason().getEgInstallmentMaster(),
@@ -172,11 +172,11 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 	public String save() {
 		LOGGER.info("Entered method generatePropertyTaxBill, Generating bill for index no : " + propertyId);
 		
-		NMCPropertyTaxBillable nmcPTBill = new NMCPropertyTaxBillable();
+		PropertyTaxBillable nmcPTBill = new PropertyTaxBillable();
 		Map<Installment, PropertyInstTaxBean> instTaxBean = new HashMap<Installment, PropertyInstTaxBean>();
 		
 		BasicProperty basicProperty = basicPrpertyService.findByNamedQuery(
-				NMCPTISConstants.QUERY_BASICPROPERTY_BY_UPICNO, propertyId);
+				PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO, propertyId);
 		
 		LOGGER.debug("generatePropertyTaxBill : BasicProperty :" + basicProperty);
 
@@ -249,7 +249,7 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 		
 		String noBillMessage = "Bill is not available penalty calculation for " + propertyId;
 		BasicProperty basicProperty = basicPrpertyService.findByNamedQuery(
-				NMCPTISConstants.QUERY_BASICPROPERTY_BY_UPICNO, propertyId);
+				PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO, propertyId);
 		
 		/*
 		  
@@ -263,7 +263,7 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 			return "taxPaid";
 		}*/
 		
-		NMCPropertyTaxBillable nmcPTBill = new NMCPropertyTaxBillable();
+		PropertyTaxBillable nmcPTBill = new PropertyTaxBillable();
 		LOGGER.debug("generatePropertyTaxBill : BasicProperty :" + basicProperty);
 		nmcPTBill.setLevyPenalty(Boolean.TRUE);
 		nmcPTBill.setBasicProperty(basicProperty);
@@ -317,7 +317,7 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 		this.propertyTaxUtil = propertyTaxUtil;
 	}
 
-	public void setNmcPtBillServiceImpl(NMCPTBillServiceImpl nmcPtBillServiceImpl) {
+	public void setNmcPtBillServiceImpl(PTBillServiceImpl nmcPtBillServiceImpl) {
 		this.nmcPtBillServiceImpl = nmcPtBillServiceImpl;
 	}
 

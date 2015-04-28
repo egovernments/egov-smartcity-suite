@@ -39,7 +39,7 @@
 #-------------------------------------------------------------------------------
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<%@ page import="org.egov.ptis.nmc.constants.NMCPTISConstants" %>
+<%@ page import="org.egov.ptis.constants.PropertyTaxConstants" %>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <html>
 	<head>
@@ -296,7 +296,7 @@
 					</tr>
 				</table>
 			
-		        <!--s:if test="%{userRole==@org.egov.ptis.nmc.constants.NMCPTISConstants@PTVALIDATOR_ROLE}"-->
+		        <!--s:if test="%{userRole==@org.egov.ptis.nmc.constants.PropertyTaxConstants@PTVALIDATOR_ROLE}"-->
 				<s:if test="%{isApprPageReq}">
 			 		<tr>
 			        	<%@ include file="../workflow/property-workflow.jsp" %>  
@@ -325,19 +325,19 @@
 							<s:hidden id="oldOwnerName" name="oldOwnerName"	value="%{oldOwnerName}"></s:hidden>
 							<s:hidden id="propAddress" name="propAddress" value="%{propAddress}"></s:hidden>
 							<tr>
-								<s:if test="%{statvalue.endsWith(@org.egov.ptis.nmc.constants.NMCPTISConstants@WF_STATE_NOTICE_GENERATION_PENDING)}">
+								<s:if test="%{statvalue.endsWith(@org.egov.ptis.nmc.constants.PropertyTaxConstants@WF_STATE_NOTICE_GENERATION_PENDING)}">
 									<s:if test="%{property.extra_field3!='Yes'}">
 										<td><input type="button" name="MutationCertificate" id="MutationCertificate" value="Mutation Certificate"
 										class="button" onclick="return generateMutationCertificate(<s:property value='%{basicProperty.id}'/>)" /></td>
 									</s:if>
 								</s:if>
 								<s:else>
-									<!--s:if test="%{userRole==@org.egov.ptis.nmc.constants.NMCPTISConstants@PTAPPROVER_ROLE}"-->
+									<!--s:if test="%{userRole==@org.egov.ptis.nmc.constants.PropertyTaxConstants@PTAPPROVER_ROLE}"-->
 										<td>
 											<s:submit value="Approve" id="Mutation:Approve" name="Approve" cssClass="buttonsubmit" align="center" method="approve" onclick="setWorkFlowInfo(this);doLoadingMask();"/>
 										</td>
 									<!--/s:if-->
-									<!--s:if test="%{userRole==@org.egov.ptis.nmc.constants.NMCPTISConstants@PTVALIDATOR_ROLE}"-->
+									<!--s:if test="%{userRole==@org.egov.ptis.nmc.constants.PropertyTaxConstants@PTVALIDATOR_ROLE}"-->
 										<td>
 											<s:submit value="Forward" id="Mutation:Forward" name="Forward" cssClass="buttonsubmit"	align="center" method="forward" onclick="setWorkFlowInfo(this);doLoadingMask();"/>
 										</td>

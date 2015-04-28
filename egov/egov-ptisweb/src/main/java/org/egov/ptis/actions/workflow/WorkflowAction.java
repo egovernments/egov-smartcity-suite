@@ -39,15 +39,15 @@
  ******************************************************************************/
 package org.egov.ptis.actions.workflow;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_AMALGAMATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIFURCATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CREATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEACTIVATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATION_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_NAME_AMALGAMATE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_NAME_BIFURCATE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_NAME_CREATE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_NAME_DEACTIVATE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_NAME_MODIFY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_NAME_TRANSFER;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFOWNER;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WF_STATE_NOTICE_GENERATION_PENDING;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -58,9 +58,9 @@ import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.client.workflow.WorkflowDetails;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
-import org.egov.ptis.nmc.workflow.WorkflowDetails;
 import org.egov.web.utils.ServletActionRedirectResult;
 
 @ParentPackage("egov")
@@ -120,7 +120,7 @@ public class WorkflowAction extends PropertyTaxBaseAction {
 			target = "deactivateView";
 		} else if (currState.contains(WFLOW_ACTION_NAME_TRANSFER)) {
 			target = "transferView";
-		} else if (currState.contains(NMCPTISConstants.WFLOW_ACTION_NAME_CHANGEADDRESS)) {
+		} else if (currState.contains(PropertyTaxConstants.WFLOW_ACTION_NAME_CHANGEADDRESS)) {
 			target = "changePropAddressView";
 		}
 		LOGGER.debug("Exit from method viewProperty with return value : " + target);

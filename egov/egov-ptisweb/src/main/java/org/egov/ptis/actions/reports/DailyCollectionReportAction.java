@@ -40,24 +40,24 @@
 package org.egov.ptis.actions.reports;
 
 import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_FIRE_SERVICE_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_GENERAL_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_GENERAL_WATER_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_LIGHTINGTAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_MUNICIPAL_EDUCATIONAL_CESS;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_SEWERAGE_BENEFIT_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_SEWERAGE_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_STREET_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_WATER_BENEFIT_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODEMAP_FOR_ARREARTAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODEMAP_FOR_CURRENTTAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODE_FOR_PENALTY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODE_FOR_TAXREBATE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.REPORT_TEMPLATENAME_DAILY_COLLECTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_FIRE_SERVICE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_WATER_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIGHTINGTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_MUNICIPAL_EDUCATIONAL_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_BENEFIT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_STREET_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_WATER_BENEFIT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_ARREARTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_CURRENTTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_TAXREBATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_DAILY_COLLECTION;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -88,10 +88,10 @@ import org.egov.ptis.bean.CollectionInfo;
 import org.egov.ptis.bean.ReceiptInfo;
 import org.egov.ptis.bean.TaxCollectionInfo;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Criteria;
@@ -168,7 +168,7 @@ public class DailyCollectionReportAction extends BaseFormAction {
 		Query qry = persistenceService.getSession().createQuery(
 				"select distinct UI FROM UserImpl UI left join UI.userRoles ur left join ur.role r "
 						+ "where r.roleName = :roleName AND UI.isActive=1 AND ur.isHistory='N' order by UI.userName");
-		qry.setParameter("roleName", NMCPTISConstants.ROLE_OPERATOR);
+		qry.setParameter("roleName", PropertyTaxConstants.ROLE_OPERATOR);
 		List<UserImpl> userList = qry.list();
 		addDropdownData("userList", userList);
 		LOGGER.debug("Exited from prepare method");

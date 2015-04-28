@@ -342,14 +342,14 @@
 		</td>
 		<td class="greybox">
 			<span class="bold"> 
-				<s:if test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.nmc.constants.NMCPTISConstants@PROPTYPE_RESD)}">
-					<s:property default="N/A" value="%{@org.egov.ptis.nmc.constants.NMCPTISConstants@RESIDENTIAL_PROPERTY_TYPE_CATEGORY[propertyDetail.extra_field5]}" />
+				<s:if test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_RESD)}">
+					<s:property default="N/A" value="%{@org.egov.ptis.constants.PropertyTaxConstants@RESIDENTIAL_PROPERTY_TYPE_CATEGORY[propertyDetail.extra_field5]}" />
 				</s:if>
-				<s:elseif test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.nmc.constants.NMCPTISConstants@PROPTYPE_OPEN_PLOT)}">
-					<s:property default="N/A" value="%{@org.egov.ptis.nmc.constants.NMCPTISConstants@OPEN_PLOT_PROPERTY_TYPE_CATEGORY[propertyDetail.extra_field5]}" />
+				<s:elseif test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_OPEN_PLOT)}">
+					<s:property default="N/A" value="%{@org.egov.ptis.constants.PropertyTaxConstants@OPEN_PLOT_PROPERTY_TYPE_CATEGORY[propertyDetail.extra_field5]}" />
 				</s:elseif>
-				<s:elseif test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.nmc.constants.NMCPTISConstants@PROPTYPE_NON_RESD)}">
-					<s:property default="N/A" value="%{@org.egov.ptis.nmc.constants.NMCPTISConstants@NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY[propertyDetail.extra_field5]}" />
+				<s:elseif test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_NON_RESD)}">
+					<s:property default="N/A" value="%{@org.egov.ptis.constants.PropertyTaxConstants@NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY[propertyDetail.extra_field5]}" />
 				</s:elseif>
 				<s:else>
 					<s:property default="N/A" value="%{propertyDetail.extra_field5}" />
@@ -411,9 +411,9 @@
 		</td>
 	</tr>
 	<s:if
-		test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.nmc.constants.NMCPTISConstants@PROPTYPE_OPEN_PLOT)
-		|| propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.nmc.constants.NMCPTISConstants@PROPTYPE_STATE_GOVT) 
-		|| propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.nmc.constants.NMCPTISConstants@PROPTYPE_CENTRAL_GOVT)}">
+		test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_OPEN_PLOT)
+		|| propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_STATE_GOVT) 
+		|| propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_CENTRAL_GOVT)}">
 		<tr>
 			<td class="greybox2">
 				&nbsp;
@@ -433,7 +433,7 @@
 		</tr>
 	</s:if>
 	<s:if
-		test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.nmc.constants.NMCPTISConstants@PROPTYPE_OPEN_PLOT)}">
+		test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_OPEN_PLOT)}">
 		<tr>
 			<td class="bluebox2">
 				&nbsp;
@@ -513,8 +513,8 @@
 		</tr>
 	</s:if>
 	<s:if
-		test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.nmc.constants.NMCPTISConstants@PROPTYPE_STATE_GOVT) 
-					|| propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.nmc.constants.NMCPTISConstants@PROPTYPE_CENTRAL_GOVT)}">
+		test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_STATE_GOVT) 
+					|| propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_CENTRAL_GOVT)}">
 		<tr>
 			<td class="greybox2">
 				&nbsp;
@@ -536,7 +536,7 @@
 		</tr>
 	</s:if>
 	<s:if
-		test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.nmc.constants.NMCPTISConstants@PROPTYPE_CENTRAL_GOVT)}">
+		test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_CENTRAL_GOVT)}">
 		<tr>
 			<td class="bluebox2" width="5%">
 				&nbsp;
@@ -619,7 +619,7 @@
 		</td>
 	</tr>
 	<s:if
-		test="%{property.propertyDetail.propertyMutationMaster.equalsIgnoreCase(@org.egov.ptis.nmc.constants.NMCPTISConstants@PROPERTY_MODIFY_REASON_OBJ)}">
+		test="%{property.propertyDetail.propertyMutationMaster.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_OBJ)}">
 		<tr>
 			<td class="bluebox2">
 				&nbsp;
@@ -644,7 +644,7 @@
 		</tr>
 	</s:if>
 	<s:if
-		test="%{property.propertyDetail.propertyMutationMaster.equalsIgnoreCase(@org.egov.ptis.nmc.constants.NMCPTISConstants@PROPERTY_MODIFY_REASON_COURT_RULE)}">
+		test="%{property.propertyDetail.propertyMutationMaster.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_COURT_RULE)}">
 		<tr>
 			<td class="bluebox2">
 				&nbsp;
@@ -725,8 +725,8 @@
 	</s:if>
 
 	<s:if
-		test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.nmc.constants.NMCPTISConstants@PROPTYPE_OPEN_PLOT) || ((propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.nmc.constants.NMCPTISConstants@PROPTYPE_STATE_GOVT) 
-		|| propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.nmc.constants.NMCPTISConstants@PROPTYPE_CENTRAL_GOVT)) && propertyDetail.floorDetails.isEmpty())}">
+		test="%{propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_OPEN_PLOT) || ((propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_STATE_GOVT) 
+		|| propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_CENTRAL_GOVT)) && propertyDetail.floorDetails.isEmpty())}">
 		<tr>
 			<td class="bluebox2">&nbsp;</td>
 			<td class="bluebox"><s:text name="OccupationDate" /> :</td>

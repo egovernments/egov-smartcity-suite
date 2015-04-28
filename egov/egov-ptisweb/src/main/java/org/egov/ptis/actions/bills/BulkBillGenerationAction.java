@@ -39,9 +39,9 @@
  ******************************************************************************/
 package org.egov.ptis.actions.bills;
 
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.APPCONFIG_KEY_WARDSFOR_BULKBILL;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WARD_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_KEY_WARDSFOR_BULKBILL;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,7 +53,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.config.AppConfig;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.lib.admbndry.BoundaryDAO;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.web.actions.BaseFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -106,12 +106,12 @@ public class BulkBillGenerationAction extends BaseFormAction {
 		appConfigValue = (AppConfigValues) persistenceService.find(
 				"select appConfVal from AppConfigValues appConfVal left join appConfVal.key appConf "
 						+ "where appConf.module=? and appConf.keyName=? and appConfVal.value=?",
-				NMCPTISConstants.PTMODULENAME, APPCONFIG_KEY_WARDSFOR_BULKBILL, wardNumAndPartNo);
+				PropertyTaxConstants.PTMODULENAME, APPCONFIG_KEY_WARDSFOR_BULKBILL, wardNumAndPartNo);
 		
 		if (appConfigValue == null) {
 			AppConfig appConfig = (AppConfig) persistenceService.find(
 					"select appConf from AppConfig appConf where appConf.module=? and appConf.keyName=?",
-					NMCPTISConstants.PTMODULENAME, APPCONFIG_KEY_WARDSFOR_BULKBILL);
+					PropertyTaxConstants.PTMODULENAME, APPCONFIG_KEY_WARDSFOR_BULKBILL);
 			appConfigValue = new AppConfigValues();
 			appConfigValue.setKey(appConfig);
 			appConfigValue.setValue(wardNumAndPartNo);

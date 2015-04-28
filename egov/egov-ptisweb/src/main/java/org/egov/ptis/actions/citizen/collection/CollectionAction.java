@@ -44,7 +44,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_AUTO;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.QUERY_BASICPROPERTY_BY_UPICNO;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
 
 import java.math.BigDecimal;
 import java.net.URLEncoder;
@@ -57,12 +57,12 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.ptis.client.bill.PTBillServiceImpl;
+import org.egov.ptis.client.model.PropertyInstTaxBean;
+import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.nmc.bill.NMCPTBillServiceImpl;
-import org.egov.ptis.nmc.bill.NMCPropertyTaxBillable;
-import org.egov.ptis.nmc.model.PropertyInstTaxBean;
-import org.egov.ptis.nmc.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.web.actions.BaseFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -75,7 +75,7 @@ public class CollectionAction extends BaseFormAction {
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	PersistenceService<BasicProperty, Long> basicPrpertyService;
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
-	NMCPTBillServiceImpl nmcPtBillServiceImpl;
+	PTBillServiceImpl nmcPtBillServiceImpl;
 	PropertyTaxUtil propertyTaxUtil;
 	private String collectXML;
 	private String indexNum;
@@ -95,7 +95,7 @@ public class CollectionAction extends BaseFormAction {
 
 	public String generatePropertyTaxBill() {
 		LOGGER.debug("Entered method generatePropertyTaxBill, indexNum: " + indexNum);
-		NMCPropertyTaxBillable nmcPTBill = new NMCPropertyTaxBillable();
+		PropertyTaxBillable nmcPTBill = new PropertyTaxBillable();
 		BasicProperty basicProperty = basicPrpertyService.findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO, indexNum);
 		LOGGER.debug("generatePropertyTaxBill : BasicProperty :" + basicProperty);
 		Map<String, BigDecimal> demandCollMap = propertyTaxUtil.getDemandAndCollection(basicProperty.getProperty());
@@ -135,11 +135,11 @@ public class CollectionAction extends BaseFormAction {
 		this.propertyTaxNumberGenerator = propertyTaxNumberGenerator;
 	}
 
-	public NMCPTBillServiceImpl getNmcPtBillServiceImpl() {
+	public PTBillServiceImpl getNmcPtBillServiceImpl() {
 		return nmcPtBillServiceImpl;
 	}
 
-	public void setNmcPtBillServiceImpl(NMCPTBillServiceImpl nmcPtBillServiceImpl) {
+	public void setNmcPtBillServiceImpl(PTBillServiceImpl nmcPtBillServiceImpl) {
 		this.nmcPtBillServiceImpl = nmcPtBillServiceImpl;
 	}
 

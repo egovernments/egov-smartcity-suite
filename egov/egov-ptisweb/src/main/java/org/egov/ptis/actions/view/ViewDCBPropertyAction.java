@@ -42,8 +42,8 @@ package org.egov.ptis.actions.view;
 import static java.math.BigDecimal.ZERO;
 import static org.egov.demand.model.EgdmCollectedReceipt.RCPT_CANCEL_STATUS;
 import static org.egov.ptis.constants.PropertyTaxConstants.CANCELLED_RECEIPT_STATUS;
+import static org.egov.ptis.constants.PropertyTaxConstants.CITIZENUSER;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.CITIZENUSER;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -75,7 +75,11 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.ptis.client.model.PropertyArrearBean;
+import org.egov.ptis.client.util.DCBUtils;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
@@ -84,16 +88,10 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyArrear;
 import org.egov.ptis.domain.entity.property.PropertyReceipt;
 import org.egov.ptis.exceptions.PropertyNotFoundException;
-import org.egov.ptis.nmc.bill.NMCPropertyTaxBillable;
-import org.egov.ptis.nmc.model.PropertyArrearBean;
-import org.egov.ptis.nmc.util.DCBUtils;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
-
-import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
@@ -226,7 +224,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 		} catch (UnsupportedEncodingException e) {
 			LOGGER.error("Error occured in method displayPropInfo while ecoding index no ", e);
 		}
-		NMCPropertyTaxBillable billable = new NMCPropertyTaxBillable();
+		PropertyTaxBillable billable = new PropertyTaxBillable();
 		dcbService = new DCBServiceImpl(billable);
 		billable.setBasicProperty(basicProperty);
 		dcbDispInfo = dcbUtils.prepareDisplayInfo();
@@ -277,7 +275,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 		} catch (UnsupportedEncodingException e) {
 			LOGGER.error("Error occured in method displayHeadwiseDcb while ecoding index no ", e);
 		}
-		NMCPropertyTaxBillable billable = new NMCPropertyTaxBillable();
+		PropertyTaxBillable billable = new PropertyTaxBillable();
 		dcbService = new DCBServiceImpl(billable);
 		billable.setBasicProperty(basicProperty);
 		dcbDispInfo = dcbUtils.prepareDisplayInfoHeadwise();

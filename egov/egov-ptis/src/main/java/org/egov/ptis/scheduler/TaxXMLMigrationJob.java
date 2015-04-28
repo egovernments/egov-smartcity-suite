@@ -39,7 +39,7 @@
  ******************************************************************************/
 package org.egov.ptis.scheduler;
 
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.APPCONFIG_KEY_WARDSFOR_TAXXMLMIGRTN;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_KEY_WARDSFOR_TAXXMLMIGRTN;
 
 import java.util.List;
 
@@ -49,11 +49,11 @@ import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.client.service.TaxXMLToDBCoverterService;
+import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
-import org.egov.ptis.nmc.service.TaxXMLToDBCoverterService;
-import org.egov.ptis.nmc.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.quartz.StatefulJob;
 import org.springframework.beans.factory.annotation.Autowired;
 

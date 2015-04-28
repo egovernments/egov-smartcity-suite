@@ -40,11 +40,11 @@
 package org.egov.ptis.actions.reports;
 
 import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.NOTICE_TYPE_BILL;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PATTERN_BEGINS_WITH_1TO9;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WARD_BNDRY_TYPE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.ZONE_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
+import static org.egov.ptis.constants.PropertyTaxConstants.PATTERN_BEGINS_WITH_1TO9;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

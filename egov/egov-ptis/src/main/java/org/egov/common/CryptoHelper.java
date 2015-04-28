@@ -56,14 +56,13 @@ import org.apache.log4j.Logger;
  * TODO Brief Description of the purpose of the class/interface
  * 
  * @author Neetu
- * @version 1.00 
- * @see	    
- * @see	    
- * @since   1.00
+ * @version 1.00
+ * @see
+ * @see
+ * @since 1.00
  */
 
-public class CryptoHelper
-{
+public class CryptoHelper {
 	// This is the key string. If this is changed,
 	// it will not be possible to decrypt strings
 	// with previous keys. So this should NOT BE CHANGED
@@ -72,19 +71,17 @@ public class CryptoHelper
 	private static final String USERSTR = "-93uscj5q0a";
 	private static final String BLOWFISH = "BlowFish";
 
-	public CryptoHelper()
-	{
+	public CryptoHelper() {
 	}
 
-	public String getEncryptedString(String str)
-	{
-		if(str == null || str.equals("")) {
+	public String getEncryptedString(String str) {
+		if (str == null || str.equals("")) {
 			return null;
-		}
-		else {
+		} else {
 			try {
-				SecretKeySpec keySpec = new SecretKeySpec(new BigInteger(USERSTR, 32).toByteArray(), BLOWFISH);
-				SecretKey thisKey = (SecretKey)keySpec;
+				SecretKeySpec keySpec = new SecretKeySpec(
+						new BigInteger(USERSTR, 32).toByteArray(), BLOWFISH);
+				SecretKey thisKey = keySpec;
 				Cipher thisCipher = Cipher.getInstance(BLOWFISH);
 
 				// Initialize the cipher for encryption
@@ -97,56 +94,54 @@ public class CryptoHelper
 				byte[] ciphertext = thisCipher.doFinal(cleartext);
 
 				return new BigInteger(ciphertext).toString(32);
-			}
-			catch(NoSuchAlgorithmException noAlgoExp) {
-				LOGGER.error("Error Occured in getEncryptedString with NoSuchAlgorithmException== "+noAlgoExp.getMessage());
+			} catch (NoSuchAlgorithmException noAlgoExp) {
+				LOGGER.error("Error Occured in getEncryptedString with NoSuchAlgorithmException== "
+						+ noAlgoExp.getMessage());
 				return null;
-			}
-			catch(NoSuchPaddingException noPadExp) {
-				LOGGER.error("Error Occured in getEncryptedString with NoSuchPaddingException== "+noPadExp.getMessage());
+			} catch (NoSuchPaddingException noPadExp) {
+				LOGGER.error("Error Occured in getEncryptedString with NoSuchPaddingException== "
+						+ noPadExp.getMessage());
 				return null;
-			}
-			catch(BadPaddingException badPadExp) {
-				LOGGER.error("Error Occured in getEncryptedString with BadPaddingException== "+badPadExp.getMessage());
+			} catch (BadPaddingException badPadExp) {
+				LOGGER.error("Error Occured in getEncryptedString with BadPaddingException== "
+						+ badPadExp.getMessage());
 				return null;
-			}
-			catch(IllegalBlockSizeException illBlkExp) {
-				LOGGER.error("Error Occured in getEncryptedString with IllegalBlockSizeException== "+illBlkExp.getMessage());
+			} catch (IllegalBlockSizeException illBlkExp) {
+				LOGGER.error("Error Occured in getEncryptedString with IllegalBlockSizeException== "
+						+ illBlkExp.getMessage());
 				return null;
-			}
-			catch(InvalidKeyException invKeyExp) {
-				LOGGER.error("Error Occured in getEncryptedString with InvalidKeyException== "+invKeyExp.getMessage());
+			} catch (InvalidKeyException invKeyExp) {
+				LOGGER.error("Error Occured in getEncryptedString with InvalidKeyException== "
+						+ invKeyExp.getMessage());
 				return null;
 			}
 		}
 
 	}
 
-	public String getDecryptedString(String str)
-	{
-		if(str == null || str.equals("")) {
+	public String getDecryptedString(String str) {
+		if (str == null || str.equals("")) {
 			return null;
-		}
-		else {
+		} else {
 			try {
-				SecretKeySpec keySpec = new SecretKeySpec(new BigInteger(USERSTR, 32).toByteArray(), BLOWFISH);
-				SecretKey thisKey = (SecretKey)keySpec;
+				SecretKeySpec keySpec = new SecretKeySpec(
+						new BigInteger(USERSTR, 32).toByteArray(), BLOWFISH);
+				SecretKey thisKey = keySpec;
 				Cipher thisCipher = Cipher.getInstance(BLOWFISH);
 
 				// Initialize the cipher for decryption
 				thisCipher.init(Cipher.DECRYPT_MODE, thisKey);
 
-				byte[] encryptedBytes = new BigInteger(str,32).toByteArray();
+				byte[] encryptedBytes = new BigInteger(str, 32).toByteArray();
 				byte[] actualBytes = encryptedBytes;
 
 				// Check if the block size is a multiple of 8
-				if( (encryptedBytes.length % 8 ) != 0) {
+				if ((encryptedBytes.length % 8) != 0) {
 					actualBytes = new byte[encryptedBytes.length + 1];
 
-					if(encryptedBytes[0] < 0) {
+					if (encryptedBytes[0] < 0) {
 						actualBytes[0] = -1;
-					}
-					else {
+					} else {
 						actualBytes[0] = 0;
 					}
 
@@ -155,25 +150,25 @@ public class CryptoHelper
 				// Decrypt the encrypted string
 				byte[] ciphertext = thisCipher.doFinal(actualBytes);
 				return new String(ciphertext);
-			}
-			catch(NoSuchAlgorithmException noAlgoExp) {
-				LOGGER.error("Error Occured in getDecryptedString with NoSuchAlgorithmException== "+noAlgoExp.getMessage());
+			} catch (NoSuchAlgorithmException noAlgoExp) {
+				LOGGER.error("Error Occured in getDecryptedString with NoSuchAlgorithmException== "
+						+ noAlgoExp.getMessage());
 				return null;
-			}
-			catch(NoSuchPaddingException noPadExp) {
-				LOGGER.error("Error Occured in getDecryptedString with NoSuchPaddingException== "+noPadExp.getMessage());
+			} catch (NoSuchPaddingException noPadExp) {
+				LOGGER.error("Error Occured in getDecryptedString with NoSuchPaddingException== "
+						+ noPadExp.getMessage());
 				return null;
-			}
-			catch(BadPaddingException badPadExp) {
-				LOGGER.error("Error Occured in getDecryptedString with BadPaddingException== "+badPadExp.getMessage());
+			} catch (BadPaddingException badPadExp) {
+				LOGGER.error("Error Occured in getDecryptedString with BadPaddingException== "
+						+ badPadExp.getMessage());
 				return null;
-			}
-			catch(IllegalBlockSizeException illBlkExp) {
-				LOGGER.error("Error Occured in getDecryptedString with IllegalBlockSizeException== "+illBlkExp.getMessage());
+			} catch (IllegalBlockSizeException illBlkExp) {
+				LOGGER.error("Error Occured in getDecryptedString with IllegalBlockSizeException== "
+						+ illBlkExp.getMessage());
 				return null;
-			}
-			catch(InvalidKeyException invKeyExp) {
-				LOGGER.error("Error Occured in getDecryptedString with InvalidKeyException== "+invKeyExp.getMessage());
+			} catch (InvalidKeyException invKeyExp) {
+				LOGGER.error("Error Occured in getDecryptedString with InvalidKeyException== "
+						+ invKeyExp.getMessage());
 				return null;
 			}
 		}

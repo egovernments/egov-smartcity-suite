@@ -48,10 +48,10 @@
   <script>
   function refreshInboxByNoticeType(){
   	var noticeType='<s:property value="%{noticeType}"/>';
-  	var prativrutta='<s:property value="%{@org.egov.ptis.nmc.constants.NMCPTISConstants@NOTICE_PRATIVRUTTA}"/>';
-  	var notice127='<s:property value="%{@org.egov.ptis.nmc.constants.NMCPTISConstants@NOTICE127}"/>';
-  	var notice134='<s:property value="%{@org.egov.ptis.nmc.constants.NMCPTISConstants@NOTICE134}"/>';
-  	var mutationCertificate='<s:property value="%{@org.egov.ptis.nmc.constants.NMCPTISConstants@MUTATION_CERTIFICATE}"/>';
+  	var prativrutta='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE_PRATIVRUTTA}"/>';
+  	var notice127='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE127}"/>';
+  	var notice134='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NOTICE134}"/>';
+  	var mutationCertificate='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATION_CERTIFICATE}"/>';
  	if (noticeType == notice127 || noticeType == notice134) {
 		opener.top.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
 	} else if (noticeType == prativrutta) {

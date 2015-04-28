@@ -39,19 +39,19 @@
  ******************************************************************************/
 package org.egov.ptis.actions.common;
 
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.OPEN_PLOT_PROPERTY_TYPE_CATEGORY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_CENTRAL_GOVT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_NON_RESD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_OPEN_PLOT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_RESD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_STATE_GOVT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.RESIDENTIAL_PROPERTY_TYPE_CATEGORY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.UNITTYPE_OPEN_PLOT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.UNITTYPE_RESD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.USAGES_FOR_NON_RESD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.USAGES_FOR_OPENPLOT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.USAGES_FOR_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.OPEN_PLOT_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.RESIDENTIAL_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.UNITTYPE_OPEN_PLOT;
+import static org.egov.ptis.constants.PropertyTaxConstants.UNITTYPE_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_NON_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_OPENPLOT;
+import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_RESD;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,12 +64,12 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
 
 public class CommonServices {
 	public static Map<String, Integer> getWaterMeterRateMstr() {
@@ -83,7 +83,7 @@ public class CommonServices {
 	}
 
 	public static Map<String, String> getWaterMeterMstr() {
-		return NMCPTISConstants.waterRates;
+		return PropertyTaxConstants.waterRates;
 	}
 
 	public static Integer getWaterMeterRate(String mstrCode) {
@@ -179,9 +179,9 @@ public class CommonServices {
 
 	public static Map<String, String> getAmenities() {
 		Map<String, String> amenitiesMap = new HashMap<String, String>();
-		amenitiesMap.put(NMCPTISConstants.AMENITY_TYPE_FULL, NMCPTISConstants.AMENITY_TYPE_FULL);
-		amenitiesMap.put(NMCPTISConstants.AMENITY_TYPE_PARTIAL, NMCPTISConstants.AMENITY_TYPE_PARTIAL);
-		amenitiesMap.put(NMCPTISConstants.AMENITY_TYPE_NIL, NMCPTISConstants.AMENITY_TYPE_NIL);
+		amenitiesMap.put(PropertyTaxConstants.AMENITY_TYPE_FULL, PropertyTaxConstants.AMENITY_TYPE_FULL);
+		amenitiesMap.put(PropertyTaxConstants.AMENITY_TYPE_PARTIAL, PropertyTaxConstants.AMENITY_TYPE_PARTIAL);
+		amenitiesMap.put(PropertyTaxConstants.AMENITY_TYPE_NIL, PropertyTaxConstants.AMENITY_TYPE_NIL);
 
 		return amenitiesMap;
 	}

@@ -39,15 +39,15 @@
  ******************************************************************************/
 package org.egov.ptis.bean;
 
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPERTYTYPE_CODE_TO_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTYPE_CODE_TO_STR;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.ptis.client.model.ConsolidatedUnitTaxCalReport;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyID;
-import org.egov.ptis.nmc.model.ConsolidatedUnitTaxCalReport;
 import org.egov.ptis.utils.PTISCacheManager;
 
 /**

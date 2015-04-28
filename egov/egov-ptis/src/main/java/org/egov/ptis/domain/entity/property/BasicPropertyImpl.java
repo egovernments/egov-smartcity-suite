@@ -39,8 +39,8 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.property;
 
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFOWNER;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFSTATUS;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
 
 import java.util.ArrayList;
 import java.util.Date;

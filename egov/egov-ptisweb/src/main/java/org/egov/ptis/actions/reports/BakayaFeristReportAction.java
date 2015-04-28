@@ -40,13 +40,13 @@
 package org.egov.ptis.actions.reports;
 
 import static java.util.Calendar.YEAR;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PATTERN_BEGINS_WITH_1TO9;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_CENTRAL_GOVT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_STATE_GOVT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.REPORT_TEMPLATENAME_BAKAYAFERIST;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WARD_BNDRY_TYPE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.ZONE_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PATTERN_BEGINS_WITH_1TO9;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_BAKAYAFERIST;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -69,9 +69,9 @@ import org.egov.ptis.bean.AssesseeInfo;
 import org.egov.ptis.bean.DemandCollInfo;
 import org.egov.ptis.bean.ReportInfo;
 import org.egov.ptis.bean.TaxInfo;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.web.actions.ReportFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Criteria;

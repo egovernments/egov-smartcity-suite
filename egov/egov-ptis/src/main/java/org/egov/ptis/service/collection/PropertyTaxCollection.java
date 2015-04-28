@@ -39,28 +39,28 @@
  ******************************************************************************/
 package org.egov.ptis.service.collection;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.CHQ_BOUNCE_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_FIRE_SERVICE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_MUNICIPAL_EDUCATIONAL_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_BENEFIT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_STREET_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_WATER_BENEFIT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_ADVANCE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.FIRST_REBATETAX_PERC;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_ARREARTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_CURRENTTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_ARREARTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_CURRENTTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_ADVANCE;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_TAXREBATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.SECOND_REBATETAX_PERC;
 import static org.egov.ptis.constants.PropertyTaxConstants.DMD_STATUS_CHEQUE_BOUNCED;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.CHQ_BOUNCE_PENALTY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_ADVANCE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_FIRE_SERVICE_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_GENERAL_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_MUNICIPAL_EDUCATIONAL_CESS;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_SEWERAGE_BENEFIT_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_SEWERAGE_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_STREET_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_WATER_BENEFIT_TAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_STR_ADVANCE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.FIRST_REBATETAX_PERC;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODEMAP_FOR_ARREARTAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODEMAP_FOR_CURRENTTAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODES_FOR_ARREARTAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODES_FOR_CURRENTTAX;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODE_FOR_ADVANCE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODE_FOR_TAXREBATE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.SECOND_REBATETAX_PERC;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -94,10 +94,10 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovUtils;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.client.service.CollectionApportioner;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
-import org.egov.ptis.nmc.service.CollectionApportioner;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -242,7 +242,7 @@ public class PropertyTaxCollection extends TaxCollection {
 
 		for (ReceiptAccountInfo rcptAccInfo : accountDetails) {
 			if (rcptAccInfo.getGlCode().equalsIgnoreCase(GLCODE_FOR_TAXREBATE)
-					|| rcptAccInfo.getGlCode().equalsIgnoreCase(NMCPTISConstants.GLCODE_FOR_ADVANCE_REBATE)) {
+					|| rcptAccInfo.getGlCode().equalsIgnoreCase(PropertyTaxConstants.GLCODE_FOR_ADVANCE_REBATE)) {
 				rebateMap.put(rcptAccInfo.getDescription().split("-", 2)[1].trim(), rcptAccInfo.getDrAmount());
 			}
 		}
@@ -307,7 +307,7 @@ public class PropertyTaxCollection extends TaxCollection {
 					}
 
 					if (rcptAccInfo.getGlCode().equalsIgnoreCase(
-							GLCODEMAP_FOR_CURRENTTAX.get(NMCPTISConstants.GLCODE_FOR_PENALTY))) {
+							GLCODEMAP_FOR_CURRENTTAX.get(PropertyTaxConstants.GLCODE_FOR_PENALTY))) {
 
 						demandDetail.addCollected(rcptAccInfo.getCrAmount());
 
@@ -316,7 +316,7 @@ public class PropertyTaxCollection extends TaxCollection {
 						if (demandDetail != null) {
 							demandDetail.setAmtCollected(demandDetail.getAmtCollected().add(rcptAccInfo.getCrAmount()));
 						} else {
-							demandDetail = insertAdvanceCollection(NMCPTISConstants.DEMANDRSN_CODE_ADVANCE,
+							demandDetail = insertAdvanceCollection(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE,
 									rcptAccInfo.getCrAmount(), currentInstallment);
 
 							demand.addEgDemandDetails(demandDetail);
@@ -448,7 +448,7 @@ public class PropertyTaxCollection extends TaxCollection {
 
 		for (ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails()) {
 			if (rcptAccInfo.getGlCode().equalsIgnoreCase(GLCODE_FOR_TAXREBATE)
-					|| rcptAccInfo.getGlCode().equalsIgnoreCase(NMCPTISConstants.GLCODE_FOR_ADVANCE_REBATE)) {
+					|| rcptAccInfo.getGlCode().equalsIgnoreCase(PropertyTaxConstants.GLCODE_FOR_ADVANCE_REBATE)) {
 				rebateReceiptAccInfoByInstallment
 						.put(rcptAccInfo.getDescription().split("-", 2)[1].trim(), rcptAccInfo);
 			}
@@ -616,7 +616,7 @@ public class PropertyTaxCollection extends TaxCollection {
 			}
 			if (GLCODES_FOR_CURRENTTAX.contains(glCode) || GLCODES_FOR_ARREARTAX.contains(glCode)) {
 				prepareTaxMap(retMap, installment, rd, "FULLTAX");
-			} else if (NMCPTISConstants.GLCODE_FOR_ADVANCE.equalsIgnoreCase(glCode)) {
+			} else if (PropertyTaxConstants.GLCODE_FOR_ADVANCE.equalsIgnoreCase(glCode)) {
 				prepareTaxMap(retMap, installment, rd, "ADVANCE");
 			}
 		}

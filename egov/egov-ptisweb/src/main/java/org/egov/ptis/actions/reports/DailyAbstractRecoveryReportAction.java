@@ -39,23 +39,23 @@
  ******************************************************************************/
 package org.egov.ptis.actions.reports;
 
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODE_FOR_GENERAL_TAX_ARREARS;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODE_FOR_GENERAL_TAX_CURRENT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODE_FOR_GENERAL_WATER_TAX_ARREARS;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODE_FOR_GENERAL_WATER_TAX_CURRENT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODE_FOR_SEWERAGE_TAX_ARREARS;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODE_FOR_SEWERAGE_TAX_CURRENT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODE_FOR_FIRE_SERVICE_TAX_ARREARS;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODE_FOR_FIRE_SERVICE_TAX_CURRENT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODE_FOR_LIGHTINGTAX_ARREARS;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODE_FOR_LIGHTINGTAX_CURRENT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODE_FOR_BIG_RESIDENTIAL_BLDG_TAX_ARREARS;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODE_FOR_BIG_RESIDENTIAL_BLDG_TAX_CURRENT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODE_FOR_EDU_CESS_ARREARS;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODE_FOR_EDU_CESS_CURRENT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODE_FOR_EGS_CESS_ARREARS;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.GLCODE_FOR_EGS_CESS_CURRENT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.REPORT_TEMPLATENAME_DAILY_ABSTRACT_RECOVERY_REPORT;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_BIG_RESIDENTIAL_BLDG_TAX_ARREARS;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_BIG_RESIDENTIAL_BLDG_TAX_CURRENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_EDU_CESS_ARREARS;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_EDU_CESS_CURRENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_EGS_CESS_ARREARS;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_EGS_CESS_CURRENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_FIRE_SERVICE_TAX_ARREARS;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_FIRE_SERVICE_TAX_CURRENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_GENERAL_TAX_ARREARS;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_GENERAL_TAX_CURRENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_GENERAL_WATER_TAX_ARREARS;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_GENERAL_WATER_TAX_CURRENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_LIGHTINGTAX_ARREARS;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_LIGHTINGTAX_CURRENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_SEWERAGE_TAX_ARREARS;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_SEWERAGE_TAX_CURRENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_DAILY_ABSTRACT_RECOVERY_REPORT;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

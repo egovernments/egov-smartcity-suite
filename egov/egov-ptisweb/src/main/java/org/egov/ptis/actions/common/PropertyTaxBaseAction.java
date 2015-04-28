@@ -40,22 +40,22 @@
 package org.egov.ptis.actions.common;
 
 import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.OCCUPIER;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_CAT_MOBILE_TOWER;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_CENTRAL_GOVT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_MIXED;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_NON_RESD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_OPEN_PLOT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_RESD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPTYPE_STATE_GOVT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.TENANT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.UNITTYPE_NON_RESD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.UNITTYPE_OPEN_PLOT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.UNITTYPE_RESD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.USAGES_FOR_NON_RESD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.USAGES_FOR_OPENPLOT;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.USAGES_FOR_RESD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_STEP_FORWARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.OCCUPIER;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CAT_MOBILE_TOWER;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_MIXED;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.TENANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.UNITTYPE_NON_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.UNITTYPE_OPEN_PLOT;
+import static org.egov.ptis.constants.PropertyTaxConstants.UNITTYPE_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_NON_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_OPENPLOT;
+import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -80,6 +80,8 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.FloorIF;
 import org.egov.ptis.domain.entity.property.FloorImpl;
@@ -89,8 +91,6 @@ import org.egov.ptis.domain.entity.property.PropertyOccupation;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Query;
 import org.egov.ptis.actions.common.AjaxCommonAction;
@@ -603,7 +603,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 		//User user = userDao.getUserByID(userId);
 		User user = null;
 		for (Role role : user.getRoles()) {
-			if (role.getName().equalsIgnoreCase(NMCPTISConstants.ASSISTANT_ROLE)) {
+			if (role.getName().equalsIgnoreCase(PropertyTaxConstants.ASSISTANT_ROLE)) {
 				setUserRole(role.getName());
 				break;
 			}

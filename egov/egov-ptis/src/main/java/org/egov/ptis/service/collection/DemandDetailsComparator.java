@@ -39,13 +39,13 @@
  ******************************************************************************/
 package org.egov.ptis.service.collection;
 
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
 
 import java.util.Comparator;
 
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
+import org.egov.ptis.constants.PropertyTaxConstants;
 
 /**
  * The Class DemandDetailsComparator. Compares the demand details using the id

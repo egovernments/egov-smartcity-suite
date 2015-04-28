@@ -178,9 +178,9 @@ function getAmalgPropStatus(obj) {
 		var tbl = document.getElementById('floorDetails');
 		if (tbl != null && propType == 'Residential & Non-Residential') {
 			var rowo = tbl.rows;
-			var RsdUsg = '<s:property value="@org.egov.ptis.nmc.constants.NMCPTISConstants@USAGES_FOR_RESD"/>';
+			var RsdUsg = '<s:property value="@org.egov.ptis.constants.PropertyTaxConstants@USAGES_FOR_RESD"/>';
 			var RsdUsgArray = RsdUsg.split(", "); 
-			var NonRsdUsg = '<s:property value="@org.egov.ptis.nmc.constants.NMCPTISConstants@USAGES_FOR_NON_RESD"/>';
+			var NonRsdUsg = '<s:property value="@org.egov.ptis.constants.PropertyTaxConstants@USAGES_FOR_NON_RESD"/>';
 			var NonRsdUsgArray = NonRsdUsg.split(", ");
 			var selectedUsage = obj.options[obj.selectedIndex].text;
 			indexval = rowIndex-1;
@@ -283,9 +283,9 @@ function getAmalgPropStatus(obj) {
 		var tbl = document.getElementById('floorDetails');
 		if (tbl != null) {
 			var rowo = tbl.rows;
-			var RsdUsg = '<s:property value="@org.egov.ptis.nmc.constants.NMCPTISConstants@USAGES_FOR_RESD"/>';
+			var RsdUsg = '<s:property value="@org.egov.ptis.constants.PropertyTaxConstants@USAGES_FOR_RESD"/>';
 			var RsdUsgArray = RsdUsg.split(", "); 
-			var NonRsdUsg = '<s:property value="@org.egov.ptis.nmc.constants.NMCPTISConstants@USAGES_FOR_NON_RESD"/>';
+			var NonRsdUsg = '<s:property value="@org.egov.ptis.constants.PropertyTaxConstants@USAGES_FOR_NON_RESD"/>';
 			var NonRsdUsgArray = NonRsdUsg.split(", ");
 			for ( var i = 0; i < rowo.length - 1; i++) {
 				indexval = i;
@@ -418,8 +418,8 @@ function getAmalgPropStatus(obj) {
 	}
 	
 	function setModificationType() {
-		var dataEntryCode = '<s:property value="%{@org.egov.ptis.nmc.constants.NMCPTISConstants@PROPERTY_MODIFY_REASON_DATA_ENTRY}" />';
-		var modifyRsnCode = '<s:property value="%{@org.egov.ptis.nmc.constants.NMCPTISConstants@PROPERTY_MODIFY_REASON_OBJ}" />';
+		var dataEntryCode = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_DATA_ENTRY}" />';
+		var modifyRsnCode = '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_OBJ}" />';
 		var modifyRsn = '<s:property value="%{modifyRsn}" />';
 		if (modifyRsn == modifyRsnCode) {
 			jQuery('#objModificationType').val(dataEntryCode);	

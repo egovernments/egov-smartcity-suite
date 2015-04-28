@@ -39,7 +39,7 @@
  ******************************************************************************/
 package org.egov.ptis.actions.reports;
 
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.REPORT_TEMPLATENAME_BIGBUILDINGRECOVERY;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_BIGBUILDINGRECOVERY;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -54,8 +54,8 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
 import org.egov.infstr.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.ptis.bean.ReportInfo;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.web.actions.ReportFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Criteria;

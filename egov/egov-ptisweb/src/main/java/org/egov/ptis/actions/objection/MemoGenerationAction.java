@@ -56,11 +56,11 @@ import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.ptis.nmc.model.PropertyBillInfo;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.client.model.PropertyBillInfo;
+import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.objection.Objection;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
-import org.egov.ptis.nmc.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.egov.web.actions.BaseFormAction;
@@ -126,10 +126,10 @@ public class MemoGenerationAction extends BaseFormAction {
 		PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
 		// checking to see the active property's mutation is is objection
 		if (objection.getBasicProperty().getProperty().getPropertyDetail().getPropertyMutationMaster().getCode()
-				.equalsIgnoreCase(NMCPTISConstants.MUTATIONRS_OBJECTION_CODE)) {
+				.equalsIgnoreCase(PropertyTaxConstants.MUTATIONRS_OBJECTION_CODE)) {
 
 			List obj = persistenceService.findAllByNamedQuery(PROPERTYSATUSFORMEMO, objection.getBasicProperty()
-					.getUpicNo(), NMCPTISConstants.PROPERTY_MODIFY_REASON_MODIFY, objection.getDateOfOutcome());
+					.getUpicNo(), PropertyTaxConstants.PROPERTY_MODIFY_REASON_MODIFY, objection.getDateOfOutcome());
 			if (obj != null && !obj.isEmpty()) {
 				reasonwiseDues = propertyTaxUtil.getDemandDues(objection.getBasicProperty().getUpicNo());
 				PropertyBillInfo propertyBillInfo = new PropertyBillInfo(reasonwiseDues, objection.getBasicProperty(),

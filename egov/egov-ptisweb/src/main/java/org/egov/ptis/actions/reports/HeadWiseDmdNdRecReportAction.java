@@ -40,7 +40,7 @@
 package org.egov.ptis.actions.reports;
 
 import static java.util.Calendar.YEAR;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.REPORT_TEMPLATENAME_HEADWISEDMDCOLL;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_HEADWISEDMDCOLL;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -56,8 +56,8 @@ import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.ptis.bean.ReportInfo;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Query;
 

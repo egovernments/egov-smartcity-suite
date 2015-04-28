@@ -45,26 +45,26 @@
 
 package org.egov.ptis.actions.bills;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_OBJ;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_CREATED;
+import static org.egov.ptis.constants.PropertyTaxConstants.STRING_EMPTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_AMALGAMATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIFURCATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CHANGEADDRESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CREATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEACTIVATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_GENERATE_NOTICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATION_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.NOTICE_TYPE_BILL;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.PROPERTY_MODIFY_REASON_OBJ;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.STATUS_BILL_CREATED;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.STRING_EMPTY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_NAME_AMALGAMATE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_NAME_BIFURCATE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_NAME_CHANGEADDRESS;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_NAME_CREATE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_NAME_DEACTIVATE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_NAME_GENERATE_NOTICE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_NAME_MODIFY;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_NAME_TRANSFER;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_STEP_APPROVE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_STEP_FORWARD;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_STEP_NOTICE_GENERATED;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WFLOW_ACTION_STEP_SAVE;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WF_STATE_APPROVAL_PENDING;
-import static org.egov.ptis.nmc.constants.NMCPTISConstants.WF_STATE_NOTICE_GENERATION_PENDING;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -98,6 +98,10 @@ import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.bean.ReportInfo;
+import org.egov.ptis.client.bill.PTBillServiceImpl;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -105,10 +109,6 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.bill.BillService;
 import org.egov.ptis.domain.service.property.PropertyService;
-import org.egov.ptis.nmc.bill.NMCPTBillServiceImpl;
-import org.egov.ptis.nmc.constants.NMCPTISConstants;
-import org.egov.ptis.nmc.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.nmc.util.PropertyTaxUtil;
 import org.egov.ptis.notice.PtNotice;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,7 +127,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	private PersistenceService<Property, Long> propertyImplService;
 	private DocumentManagerService<DocumentObject> documentManagerService;
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
-	private NMCPTBillServiceImpl nmcPtBillServiceImpl;
+	private PTBillServiceImpl nmcPtBillServiceImpl;
 	private WorkflowService<PropertyImpl> propertyWorkflowService;
 	private PropertyService propService;
 	private BillService billService;
@@ -409,7 +409,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 			egBill.setLastUpdatedTimeStamp(new Date());
 			BasicProperty basicProperty = PropertyDAOFactory.getDAOFactory().getBasicPropertyDAO()
 					.getBasicPropertyByPropertyID(indexNumber);
-			basicProperty.setIsBillCreated(NMCPTISConstants.STATUS_BILL_NOTCREATED);
+			basicProperty.setIsBillCreated(PropertyTaxConstants.STATUS_BILL_NOTCREATED);
 			basicProperty.setBillCrtError(STRING_EMPTY);
 			basicPrpertyService.update(basicProperty);
 			setAckMessage("Bill successfully cancelled for index no : " + indexNumber);
@@ -629,11 +629,11 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		this.propertyWorkflowService = propertyWorkflowService;
 	}
 
-	public NMCPTBillServiceImpl getNmcPtBillServiceImpl() {
+	public PTBillServiceImpl getNmcPtBillServiceImpl() {
 		return nmcPtBillServiceImpl;
 	}
 
-	public void setNmcPtBillServiceImpl(NMCPTBillServiceImpl nmcPtBillServiceImpl) {
+	public void setNmcPtBillServiceImpl(PTBillServiceImpl nmcPtBillServiceImpl) {
 		this.nmcPtBillServiceImpl = nmcPtBillServiceImpl;
 	}
 

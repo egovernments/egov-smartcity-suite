@@ -37,7 +37,7 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------
-<%@ page language="java" pageEncoding="UTF-8" import="org.egov.ptis.nmc.constants.*"%>
+<%@ page language="java" pageEncoding="UTF-8" import="org.egov.ptis.client.constants.*"%>
 <%@include file="/includes/taglibs.jsp"%>
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />

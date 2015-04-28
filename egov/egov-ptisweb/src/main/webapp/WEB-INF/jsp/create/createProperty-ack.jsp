@@ -75,7 +75,7 @@
 		</table>
 	</div>
 	<div class="buttonbottom" align="center">
-			<s:if test="%{userDesgn.equalsIgnoreCase(@org.egov.ptis.nmc.constants.NMCPTISConstants@ASSISTANT_DESGN)}">
+			<s:if test="%{userDesgn.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@ASSISTANT_DESGN)}">
 				<td><s:submit value="Create" name="Create" id="Create"  method="newForm" cssClass="buttonsubmit" /></td>
 			</s:if>
 			<s:if test="%{basicProperty.upicNo!=null && !basicProperty.upicNo.isEmpty()}">
