@@ -372,12 +372,12 @@ public final class CollectionConstants {
 	public static final String BILLDESK_RU="RU";
 	public static final String UNIQUE_CHECKSUM_KEY = "9azFh4Ge1ftL";
 	
-	public static final String ONLINE_PAYMENT_BILLDESK_MERCHANTID = "NAGPURMUNC"; 
+	public static final String ONLINE_PAYMENT_BILLDESK_MERCHANTID = "TESTMUNC"; 
 	public static final String PAYMENT_REQUEST_MESSAGE_KEY = "paymentReqMsg";
 	
 	public static final String PIPE_SEPARATOR ="|";
 	public static final String PAYMENT_REQUEST_MSG_NA = "NA";
-	public static final String PAYMENT_REQUEST_SECURITY_ID = "nagpurmunc";
+	public static final String PAYMENT_REQUEST_SECURITY_ID = "testmunc";
 	
 		
 	// Error Messages
