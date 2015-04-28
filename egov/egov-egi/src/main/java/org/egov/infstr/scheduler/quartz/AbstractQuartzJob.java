@@ -44,14 +44,13 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.infstr.client.filter.SetDomainJndiHibFactNames;
 import org.egov.infstr.scheduler.GenericJob;
-import org.egov.infstr.utils.EGovConfig;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.quartz.StatefulJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 /**
  * An abstract base class wrapper for {@link QuartzJobBean} and implements 
@@ -65,9 +64,12 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractQuartzJob.class);
 	private UserService userService;
-	private volatile boolean isTransactional;
-	private volatile String userName;
+	private boolean isTransactional;
+	private String userName;
 	protected List<String> cities;
+	
+	@Autowired
+	private Environment environment;
 	
 	/**
 	 * This method will wrap up the Transaction (if isTransactional set to true) and call the executeJob
@@ -79,10 +81,8 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
 			if (this.isTransactional) {
 				for (final String city : cities) {
 					setTractionalSupport(city);
-					//HibernateUtil.beginTransaction();
 					setUserInThreadLocal();
 					executeJob();
-					//HibernateUtil.commitTransaction();
 				} 
 			} else {
 				executeJob();
@@ -90,13 +90,7 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
 			
 		} catch (final Exception ex) {
 			LOGGER.error("Unable to complete execution Scheduler ", ex);
-			if (isTransactional) {
-				//HibernateUtil.rollbackTransaction();
-			}
 			throw new JobExecutionException("Unable to execute batch job Scheduler", ex, false);
-		}
-		finally {
-			//HibernateUtil.closeSession();
 		}
 	}
 
@@ -121,9 +115,7 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
 	}
 
 	protected void setTractionalSupport(final String city) {
-		final String hibFactName = EGovConfig.getProperty(city, "","HibernateFactory");		
-		final String jndi = EGovConfig.getProperty(city, "", "JNDIURL");
-		SetDomainJndiHibFactNames.setThreadLocals(city, jndi, hibFactName);
+		EGOVThreadLocals.setTenantID(environment.getProperty("tenant."+city));
 	}
 
 	protected void setUserInThreadLocal() {

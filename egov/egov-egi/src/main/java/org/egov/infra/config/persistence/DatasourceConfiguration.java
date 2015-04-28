@@ -50,7 +50,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.jndi.JndiObjectFactoryBean;
 
 @Configuration
-@PropertySource({ "classpath:datasource.properties" })
+@PropertySource({ "classpath:persistence-config.properties" })
 @Profile("production")
 public class DatasourceConfiguration {
     @Autowired
@@ -60,7 +60,7 @@ public class DatasourceConfiguration {
     public JndiObjectFactoryBean dataSource() throws IllegalArgumentException {
         final JndiObjectFactoryBean dataSource = new JndiObjectFactoryBean();
         dataSource.setExpectedType(DataSource.class);
-        dataSource.setJndiName(env.getProperty("jdbc.jndiDataSource"));
+        dataSource.setJndiName(env.getProperty("default.jdbc.jndi.dataSource"));
         return dataSource;
     }
 }

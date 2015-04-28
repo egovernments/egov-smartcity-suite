@@ -62,8 +62,8 @@
     </listener>
 	
 	<filter>
-		<filter-name>JSPJNDISession</filter-name>
-		<filter-class>org.egov.infstr.client.filter.SetThreadLocals</filter-class>
+		<filter-name>threadLocalsHandlerFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
 	
 	<filter>
@@ -82,7 +82,7 @@
 	</filter-mapping>
 	
 	<filter-mapping>
-		<filter-name>JSPJNDISession</filter-name>
+		<filter-name>threadLocalsHandlerFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	

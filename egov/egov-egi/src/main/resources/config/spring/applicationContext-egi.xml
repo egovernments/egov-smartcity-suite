@@ -161,7 +161,9 @@
 	<bean id="SetSessionVarFilter" class="org.egov.infstr.client.filter.SetSessionVarFilter">
 		<property name="userService" ref="userService" />
 	</bean>
-
+	
+	<bean id="threadLocalsHandlerFilter" class="org.egov.infstr.client.filter.ThreadLocalsHandlerFilter"/>
+	
 	<bean id="boundaryDAO" class="org.egov.lib.admbndry.BoundaryDAO" scope="prototype">
 		<constructor-arg ref="sessionFactory" />
 	</bean>

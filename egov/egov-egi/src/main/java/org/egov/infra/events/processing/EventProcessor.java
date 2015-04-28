@@ -58,7 +58,6 @@ import org.egov.infra.events.entity.schema.Response;
 import org.egov.infra.events.service.EventProcessorSpecService;
 import org.egov.infra.events.service.EventResultService;
 import org.egov.infra.events.service.EventService;
-import org.egov.infstr.client.filter.SetDomainJndiHibFactNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -76,9 +75,6 @@ import freemarker.template.TemplateException;
 public class EventProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventService.class);
-    private static String DOMAIN_NAME = "";
-    private static String FACTORY_NAME = "";
-    private static String JNDI_NAME = "";
     private static String RESULT = "";
 
     @Autowired
@@ -101,10 +97,6 @@ public class EventProcessor {
         EventProcessorSpec eventSpec = null;
         try {
             RESULT = "success";
-            DOMAIN_NAME = e.getParams().get("DOMAIN_NAME");
-            JNDI_NAME = e.getParams().get("JNDI_NAME");
-            FACTORY_NAME = e.getParams().get("FACTORY_NAME");
-            SetDomainJndiHibFactNames.setThreadLocals(DOMAIN_NAME, JNDI_NAME, FACTORY_NAME);
             eventSpec = eventProcessSpecService.getEventProcessingSpecByModAndCode(e.getModule(), e.getEventCode());
             if (eventSpec != null)
                 e.setResponseTemplate(eventSpec.getResponseTemplate());

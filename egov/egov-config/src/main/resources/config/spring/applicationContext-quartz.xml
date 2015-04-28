@@ -49,7 +49,7 @@
     <bean id="cities" class="java.util.Arrays" factory-method="asList">
         <constructor-arg index="0">
             <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToStringArray">
-                <constructor-arg type="java.lang.String" value="${cityNames}"/>
+                <constructor-arg type="java.lang.String" value="${tenant.host.names}"/>
             </bean>
         </constructor-arg>
 	</bean>

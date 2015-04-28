@@ -39,6 +39,20 @@
  */
 package org.egov.infra.config.persistence;
 
+import static org.hibernate.cfg.AvailableSettings.AUTOCOMMIT;
+import static org.hibernate.cfg.AvailableSettings.AUTO_CLOSE_SESSION;
+import static org.hibernate.cfg.AvailableSettings.CACHE_REGION_FACTORY;
+import static org.hibernate.cfg.AvailableSettings.DIALECT;
+import static org.hibernate.cfg.AvailableSettings.GENERATE_STATISTICS;
+import static org.hibernate.cfg.AvailableSettings.JTA_PLATFORM;
+import static org.hibernate.cfg.AvailableSettings.MULTI_TENANT;
+import static org.hibernate.cfg.AvailableSettings.MULTI_TENANT_CONNECTION_PROVIDER;
+import static org.hibernate.cfg.AvailableSettings.MULTI_TENANT_IDENTIFIER_RESOLVER;
+import static org.hibernate.cfg.AvailableSettings.USE_MINIMAL_PUTS;
+import static org.hibernate.cfg.AvailableSettings.USE_QUERY_CACHE;
+import static org.hibernate.cfg.AvailableSettings.USE_SECOND_LEVEL_CACHE;
+import static org.hibernate.cfg.AvailableSettings.USE_STREAMS_FOR_BINARY;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,7 +65,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.support.ClasspathScanningPersistenceUnitPostProcessor;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -65,7 +78,6 @@ import org.springframework.transaction.jta.JtaTransactionManager;
 
 @Configuration
 @EnableTransactionManagement(proxyTargetClass=true)
-@PropertySource({ "classpath:jpaconfiguration.properties" })
 @Profile("production")
 public class JpaConfiguration {
     @Autowired
@@ -115,18 +127,32 @@ public class JpaConfiguration {
         final HashMap<String, Object> properties = new HashMap<>();
         properties.put("hibernate.validator.apply_to_ddl", false);
         properties.put("hibernate.validator.autoregister_listeners", false);
-        properties.put("hibernate.dialect", env.getProperty("hibernate.dialect"));
-        properties.put("hibernate.generate_statistics", env.getProperty("hibernate.generate_statistics"));
-        properties.put("hibernate.cache.region.factory_class", env.getProperty("hibernate.cache.region.factory_class"));
-        properties.put("hibernate.cache.use_second_level_cache", env.getProperty("hibernate.cache.use_second_level_cache"));
-        properties.put("hibernate.cache.use_query_cache", env.getProperty("hibernate.cache.use_query_cache"));
-        properties.put("hibernate.cache.use_minimal_puts", env.getProperty("hibernate.cache.use_minimal_puts"));
+        properties.put(DIALECT, env.getProperty(DIALECT));
+        properties.put(GENERATE_STATISTICS, env.getProperty(GENERATE_STATISTICS));
+        properties.put(CACHE_REGION_FACTORY, env.getProperty(CACHE_REGION_FACTORY));
+        properties.put(USE_SECOND_LEVEL_CACHE, env.getProperty(USE_SECOND_LEVEL_CACHE));
+        properties.put(USE_QUERY_CACHE, env.getProperty(USE_QUERY_CACHE));
+        properties.put(USE_MINIMAL_PUTS, env.getProperty(USE_MINIMAL_PUTS));
         properties.put("hibernate.cache.infinispan.cachemanager", env.getProperty("hibernate.cache.infinispan.cachemanager"));
         properties.put("hibernate.search.lucene_version", env.getProperty("hibernate.search.lucene_version"));
-        properties.put("hibernate.transaction.jta.platform", env.getProperty("hibernate.transaction.jta.platform"));
-        properties.put("hibernate.transaction.auto_close_session", env.getProperty("hibernate.transaction.auto_close_session"));
-        properties.put("hibernate.jdbc.use_streams_for_binary", env.getProperty("hibernate.jdbc.use_streams_for_binary"));
+        properties.put(JTA_PLATFORM, env.getProperty(JTA_PLATFORM));
+        properties.put(AUTO_CLOSE_SESSION, env.getProperty(AUTO_CLOSE_SESSION));
+        properties.put(USE_STREAMS_FOR_BINARY, env.getProperty(USE_STREAMS_FOR_BINARY));
+        properties.put(AUTOCOMMIT, false);
         //properties.put("hibernate.enable_lazy_load_no_trans", true);
+        
+        //Multitenancy Configuration
+        if (env.getProperty("multitenancy.enabled",Boolean.class)) {
+        	properties.put(MULTI_TENANT, env.getProperty(MULTI_TENANT));
+        	properties.put("hibernate.database.type", env.getProperty("jpa.database"));
+        	if (env.getProperty(MULTI_TENANT).equals("SCHEMA")) {
+        		properties.put(MULTI_TENANT_CONNECTION_PROVIDER, "org.egov.infra.config.persistence.multitenancy.MultiTenantSchemaConnectionProvider");
+            	properties.put(MULTI_TENANT_IDENTIFIER_RESOLVER, "org.egov.infra.config.persistence.multitenancy.DomainBasedSchemaTenantIdentifierResolver");
+        	} else if (env.getProperty(MULTI_TENANT).equals("DATABASE")) {
+        		properties.put(MULTI_TENANT_CONNECTION_PROVIDER, "org.egov.infra.config.persistence.multitenancy.MultiTenantDatabaseConnectionProvider");
+            	properties.put(MULTI_TENANT_IDENTIFIER_RESOLVER, "org.egov.infra.config.persistence.multitenancy.DomainBasedDatabaseTenantIdentifierResolver");
+        	}
+        }
         return properties;
     }
 }

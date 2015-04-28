@@ -49,10 +49,9 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.exceptions.EGOVRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.repository.UserRepository;
 
 public class EgovUtils {
 
