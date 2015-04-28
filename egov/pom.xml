@@ -20,6 +20,7 @@
         <module>egov-egf</module>
         <module>egov-portal</module>
         <module>egov-pgr</module>
+        <module>egov-collection</module>   
         <module>egov-eisweb</module>
         <module>egov-egiweb</module>
         <module>egov-pgrweb</module>
