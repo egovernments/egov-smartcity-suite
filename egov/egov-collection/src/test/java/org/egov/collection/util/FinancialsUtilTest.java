@@ -32,7 +32,7 @@ import org.junit.Test;
  * JUnit tests for financials utilities
  */
 public class FinancialsUtilTest {
-	private FinancialsUtil financialsUtil;
+	/*private FinancialsUtil financialsUtil;
 	ContraService contraService;
 	CreateVoucher voucherCreator;
 	InstrumentService instrumentService;
@@ -44,16 +44,16 @@ public class FinancialsUtilTest {
 		voucherCreator = createMock(CreateVoucher.class);
 		instrumentService = createMock(InstrumentService.class);
 
-		/*financialsUtil.setVoucherCreator(voucherCreator);
+		financialsUtil.setVoucherCreator(voucherCreator);
 		financialsUtil.setContraService(contraService);
-		financialsUtil.setInstrumentService(instrumentService);*/
+		financialsUtil.setInstrumentService(instrumentService);
 	}
 
-	/*@Test
+	@Test
 	public void testSetGetContraService() {
 		financialsUtil.setContraService(contraService);
 		assertEquals(contraService, financialsUtil.getContraService());
-	}*/
+	}
 
 	@SuppressWarnings("unchecked")
 	@Test
@@ -153,13 +153,13 @@ public class FinancialsUtilTest {
 		expect(instrumentService.addToInstrument(isA(List.class))).andReturn(
 				instrumentsExpected);
 		replay(instrumentService);
-		List<InstrumentHeader> instrumentsActual =null;/*financialsUtil
-				.createInstrument(new ArrayList<Map<String, Object>>());*/
+		List<InstrumentHeader> instrumentsActual =null;financialsUtil
+				.createInstrument(new ArrayList<Map<String, Object>>());
 		verify(instrumentService);
 		assertEquals(instrumentsExpected, instrumentsActual);
 	}
 
-	/*@Test
+	@Test
 	public void testUpdateCheque_DD_Card_Deposit() {
 		contraService.updateCheque_DD_Card_Deposit(isA(Long.class), isA(String.class), isA(InstrumentHeader.class));
 		replay(contraService);
@@ -173,7 +173,7 @@ public class FinancialsUtilTest {
 		replay(contraService);
 		financialsUtil.updateCashDeposit(1L, "testGlCode", createMock(InstrumentHeader.class));
 		verify(contraService);
-	}*/
+	}
 	
 	@SuppressWarnings("unchecked")
 	@Test
@@ -232,5 +232,5 @@ public class FinancialsUtilTest {
 			assertEquals(egovEx.getMessage(),"Valid Appconfig value for ISVOUCHERAPPROVED is not defined");
 		}
 
-	}
+	}*/
 }

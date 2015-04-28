@@ -19,7 +19,7 @@ import org.junit.Test;
 
 public class BillDeskAdaptorTest {
 	
-	BillDeskAdaptor billDeskAdaptor;
+	/*BillDeskAdaptor billDeskAdaptor;
 	
 	@Before
 	public void setupAction(){
@@ -79,6 +79,6 @@ public class BillDeskAdaptorTest {
 		} catch (EGOVRuntimeException e) {
 			assertEquals(e.getMessage(),"AdditionalInfo5-OnlinePaytServiceCode.pgi.AdditionalInfo4-PaytServiceCode.checksum.mismatch");
 		}
-	}
+	}*/
 	
 }
