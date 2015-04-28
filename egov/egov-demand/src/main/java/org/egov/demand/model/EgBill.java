@@ -45,7 +45,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.egov.infstr.commons.Module;
-import org.egov.infstr.flexfields.model.EgAttributevalues;
 
 /**
  * EgBill entity.
@@ -70,7 +69,7 @@ public class EgBill implements java.io.Serializable {
     private Date createTimeStamp;
     private Date lastUpdatedTimeStamp;
     private Set<EgBillDetails> egBillDetails = new HashSet<EgBillDetails>(0);
-    private Set<EgAttributevalues> attributeValues = new HashSet<EgAttributevalues>(0);
+    //private Set<EgAttributevalues> attributeValues = new HashSet<EgAttributevalues>(0);
     private String is_History;
     private String is_Cancelled;
     private String fundCode;
@@ -278,14 +277,6 @@ public class EgBill implements java.io.Serializable {
         this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
     }
 
-    public Set<EgAttributevalues> getAttributeValues() {
-        return attributeValues;
-    }
-
-    public void setAttributeValues(Set<EgAttributevalues> attributeValues) {
-        this.attributeValues = attributeValues;
-    }
-
     public Set<EgBillDetails> getEgBillDetails() {
         return egBillDetails;
     }
@@ -317,14 +308,14 @@ public class EgBill implements java.io.Serializable {
     public void removeEgBillDetails(EgBillDetails egBillDetails) {
         getEgBillDetails().remove(egBillDetails);
     }
-
+/*
     public void addEgAttributeValues(EgAttributevalues egAttributevalues) {
         getAttributeValues().add(egAttributevalues);
     }
 
     public void removeEgAttributeValues(EgAttributevalues egAttributevalues) {
         getAttributeValues().remove(egAttributevalues);
-    }
+    }*/
 
     public String getServiceCode() {
         return serviceCode;
