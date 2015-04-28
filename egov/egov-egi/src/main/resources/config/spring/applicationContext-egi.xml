@@ -158,9 +158,7 @@
 		<property name="authRuleService" ref="authRuleService" />
 	</bean>
 
-	<bean id="SetSessionVarFilter" class="org.egov.infstr.client.filter.SetSessionVarFilter">
-		<property name="userService" ref="userService" />
-	</bean>
+	<bean id="sessionAttributeHandlerFilter" class="org.egov.infstr.client.filter.SessionAttributeHandlerFilter"/>
 	
 	<bean id="threadLocalsHandlerFilter" class="org.egov.infstr.client.filter.ThreadLocalsHandlerFilter"/>
 	
