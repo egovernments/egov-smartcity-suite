@@ -1,103 +1,40 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
-
-<!-- Configuration file common for all eGov Applications -->
-
-<properties>
-
-	<variables> 
-		<variable name="JBOSS_HOME" value="F:/egov/jboss-4.0.2"/>
-		<variable name="JBOSS_DEPLOY" value="F:/egov/jboss-4.0.2/server/default/deploy"/>
-	</variables>
-
-	<ADMBNDRY>
-		<!-- Exclude the following levels--> 
-		<EXCLUDE_LEVEL>CITY </EXCLUDE_LEVEL>
-		<LEVEL>ZONE</LEVEL>
-	</ADMBNDRY>
-
- 	<EGI>
-       		<MODULE_NAME>Administration</MODULE_NAME> 	
-       		
-     	</EGI>
-	<JNDIURL>
-		<localhost>java:/ezgovDatabasePool</localhost>
-		<ip192:168:1:6>java:/ezgovDatabasePool</ip192:168:1:6>
-		<proll>java:/ezgovDatabasePool</proll>
-	</JNDIURL>
-
-	<HibernateFactory>
-		<localhost>java:/hibernate/EGovHibernateFactory</localhost>
-		<ip192:168:1:6>java:/hibernate/EGovHibernateFactory</ip192:168:1:6>
-		<proll>java:/hibernate/EGovHibernateFactory</proll>
-	</HibernateFactory>
-	
-	<!-- List of roles whose users should not be cached by the infrastructure -->
-	<EXCLUDE_ROLES></EXCLUDE_ROLES>
-   	<SelectModule> 
-	     
-	     <headername>Module</headername> 
-	     
-	     <parentquery>SELECT ID_MODULE\, MODULE_NAME\, MODULE_DESC FROM EG_MODULE WHERE PARENTID IS NULL ORDER BY MODULE_NAME</parentquery> 
-	     
-	     <intermediatequery>SELECT ID_MODULE\, MODULE_NAME\, MODULE_DESC FROM EG_MODULE WHERE PARENTID = :parentId ORDER BY MODULE_NAME</intermediatequery> 
-	     
-	     <childquery></childquery> 
-	     
-	   </SelectModule> 
- 
-  <SelectBndry> 
-       
-       <headername>BOUNDARY</headername> 
-       
-       <parentquery>SELECT ID_BNDRY\, NAME\, ID_BNDRY_TYPE FROM EG_BOUNDARY WHERE PARENT IS NULL AND IS_HISTORY = 'N' ORDER BY NAME</parentquery> 
-       
-       <intermediatequery>SELECT ID_BNDRY\, NAME\, ID_BNDRY_TYPE FROM EG_BOUNDARY WHERE PARENT = :parentId AND IS_HISTORY = 'N' ORDER BY NAME</intermediatequery> 
-       
-       <childquery></childquery> 
-       
-   </SelectBndry> 
-   
-   <IP-BASED-LOGIN>
-	<UNIQUEIP>TRUE</UNIQUEIP>
-	<!-- Include the following roles for location based login--> 
-	<INCLUDE_ROLES>Admin\,Operator</INCLUDE_ROLES>
-   </IP-BASED-LOGIN>
-   
-
-<!-- to check for mandatory fields specify the field name as per in Form Bean -->
-  <MandatoryFields>
-  boundaryNum
-  </MandatoryFields>
+<!--
+  eGov suite of products aim to improve the internal efficiency,transparency, 
+     accountability and the service delivery of the government  organizations.
   
+      Copyright (C) <2015>  eGovernments Foundation
   
+      The updated version of eGov suite of products as by eGovernments Foundation 
+      is available at http://www.egovernments.org
   
+      This program is free software: you can redistribute it and/or modify
+      it under the terms of the GNU General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      any later version.
   
-  <INITIAL_LOOKUP>
+      This program is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+      GNU General Public License for more details.
   
-	  <JAVA_NAMING_FACTORY_INITIAL>org/jnp/interfaces/NamingContextFactory</JAVA_NAMING_FACTORY_INITIAL>
-
-	  <JAVA_NAMING_PROVIDER_URL>jnp://localhost:1099 </JAVA_NAMING_PROVIDER_URL>
-
-	  <JAVA_NAMING_FACTORY_URL_PKGS>org/jboss/naming:org/jnp/interfaces</JAVA_NAMING_FACTORY_URL_PKGS>
+      You should have received a copy of the GNU General Public License
+      along with this program. If not, see http://www.gnu.org/licenses/ or 
+      http://www.gnu.org/licenses/gpl.html .
   
-  </INITIAL_LOOKUP>
+      In addition to the terms of the GPL license to be adhered to in using this
+      program, the following additional terms are to be complied with:
   
+  	1) All versions of this program, verbatim or modified must carry this 
+  	   Legal Notice.
   
-   <mailSender>
-  	<host>smtp.gmail.com</host>
-  	<port>465</port>
-  	<protocol>smtps</protocol>
-  	<username></username>
-  	<password></password>
-  	
-  	<mail_smtps_auth>true</mail_smtps_auth>
-  	<mail_smtps_starttls_enable>true</mail_smtps_starttls_enable>
-  	<mail_smtps_debug>true</mail_smtps_debug>
-   </mailSender>
-   
-   <mailMessage>
-	<mailTo></mailTo>
-   	<subject></subject>
-   </mailMessage>
+  	2) Any misrepresentation of the origin of the material is prohibited. It 
+  	   is required that all modified versions of this material be marked in 
+  	   reasonable ways as different from the original version.
   
-</properties>
+  	3) This license does not grant any rights to any user of the program 
+  	   with regards to rights under trademark law for use of the trade names 
+  	   or trademarks of eGovernments Foundation.
+  
+    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+-->
