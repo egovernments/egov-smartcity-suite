@@ -327,7 +327,7 @@ public class BpaConstants {
 	public static final String IS_SUNDAY_HOLIDAY = "IS_SUNDAY_HOLIDAY";
 	public static final String SMS_MOBILE_NUMBER = "919604424242";
 	public static final String SMSAEEONAUTOGENERATIONOFSITEINSPECTIONDATE = "ToAEEonSiteInspectionDateGeneration";
-	public static final String CITYNAME = "CORPORATION OF CHENNAI";
+	public static final String CITYNAME = "CORPORATION OF CITYNAME";
 	public static final String INSPECTIONSTARTDATE_EMAILBODYDETAILS = "Dear {0},\n \n You have registered Building Plan Application with Plan Submission Number {1} . Your Site will be Inspected on date {2} .  \n \n This is a computer generated email and does not need any signature.\n\nThanks,\n\n{3}";
 	public static final String INSPECTIONSTARTDATE_EMAIL_SUBJECT = "Site will be Inspected on date {0} .";
 	public static final String INSPECTIONSTARTDATE_SMS_SUBJECT = "The Site Inspection date Auto generated for ( {0} ) on {1} .";
@@ -367,9 +367,9 @@ public class BpaConstants {
 	public static final String SOUTHREGION = "South Region";
 	public static final String CENTRALREGION = "Central Region";
 	public static final String ASSISTANTADDRESS = "Assistant Engineer/Assistant Executive Engineer, \nTown Planning Approval Section,";
-	public static final String NORTHREGION_ADDRESS = "Regional Office North, \nCorporation of Chennai, \nNo.105,Basin Bridge Road, \nRoyapuram, Chennai - 600079.";
-	public static final String SOUTHREGION_ADDRESS = "Regional Office South, \nCorporation of Chennai, \n115, Dr. Muthulakshmi Salai, \nAdyar, Chennai - 600020.";
-	public static final String CENTRALREGION_ADDRESS = "Regional Office Center, \nCorporation of Chennai, \nNo.36 G, Pulla Avenue, \nShenoy Nagar, Chennai - 600040.";
+	public static final String NORTHREGION_ADDRESS = "Regional Office , \nCorporation - CityName.";
+	public static final String SOUTHREGION_ADDRESS = "Regional Office , \nCorporation - CityName.";
+	public static final String CENTRALREGION_ADDRESS = "Regional Office , \nCorporation - CityName.";
 
 	// For new Bpa registration changes
 	public static final String EXECUTIVEENGINEERDESIGNATION = "EXECUTIVE ENGINEER";
@@ -426,7 +426,7 @@ public class BpaConstants {
 	 public static final String UNAPPROVED_LAYOUT_TYPE="UnApproved Layout";
 	 public static final String STATENAME="TAMILNADU";
 	 public static final String REGISTRATION_OBJECT_TYPE="Registration";
-	 public static final String CITY_NAME="Chennai";
+	 public static final String CITY_NAME="CityName";
 	 public static final String BPA_FILE_UPLOAD_LOCATION="BPA_FILE_UPLOAD_LOCATION";
 	 
 	 
