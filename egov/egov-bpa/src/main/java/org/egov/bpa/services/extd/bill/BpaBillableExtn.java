@@ -57,7 +57,6 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.utils.DemandConstants;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.Module;
-import org.egov.infstr.commons.dao.GenericDaoFactory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 
@@ -76,9 +75,9 @@ public class BpaBillableExtn  extends AbstractBillable  {
 		StringBuffer billPayee = new StringBuffer();
 		if(registration!=null && registration.getOwner()!=null )
 		{
-			billPayee.append(((registration.getOwner().getFirstName()==null)?"":""+registration.getOwner().getFirstName()));
-			billPayee.append(((registration.getOwner().getMiddleName()==null)?"":" "+registration.getOwner().getMiddleName()));	
-			billPayee.append(((registration.getOwner().getLastName()==null)?"":" "+registration.getOwner().getLastName()));
+			billPayee.append(((registration.getOwner().getName()==null)?"":""+registration.getOwner().getName()));
+			billPayee.append(((registration.getOwner().getName()==null)?"":" "+registration.getOwner().getName()));	
+			billPayee.append(((registration.getOwner().getName()==null)?"":" "+registration.getOwner().getName()));
 		}
 		return (billPayee!=null?billPayee.toString():" ");
 	}
@@ -90,14 +89,14 @@ public class BpaBillableExtn  extends AbstractBillable  {
 		{
 			for(BpaAddressExtn bpaAddress: registration.getBpaAddressSet())
 			{
-				if(bpaAddress.getAddressTypeMaster()!=null && bpaAddress.getAddressTypeMaster().getAddressTypeName().equalsIgnoreCase(ADDRESSTYPEASOWNER))
+				if(bpaAddress.getAddressTypeMaster()!=null && bpaAddress.getAddressTypeMaster().equals(ADDRESSTYPEASOWNER))
 				{
 					billingAddress.append(((bpaAddress.getStreetAddress1()==null)?"":""+bpaAddress.getStreetAddress1()));
 					billingAddress.append(((bpaAddress.getStreetAddress2()==null)?" ":","+bpaAddress.getStreetAddress2()));
 					billingAddress.append(bpaAddress.getVillageName()!=null&&bpaAddress.getVillageName().getName()!=null?","+bpaAddress.getVillageName().getName():" ");
 					//billingAddress.append(((bpaAddress.getVillageName().getName()==null)?" ":","+bpaAddress.getVillageName().getName()));
 					billingAddress.append(((bpaAddress.getCityTown()==null)?" ":","+bpaAddress.getCityTown()));
-					billingAddress.append(((bpaAddress.getIndianState()==null)?"":","+bpaAddress.getIndianState().getName()));
+					billingAddress.append(((bpaAddress.getIndianState()==null)?"":","+bpaAddress.getIndianState().getValue()));
 					billingAddress.append(((bpaAddress.getPincode()==null)?"":","+bpaAddress.getPincode()));
 			
 				}
@@ -132,7 +131,7 @@ public class BpaBillableExtn  extends AbstractBillable  {
 	}
 
 	@Override
-	public Integer getBoundaryNum() {
+	public Long getBoundaryNum() {
 		if(registration!=null && registration.getAdminboundaryid()!=null)
 		{
 			if(registration.getAdminboundaryid().getBoundaryType().getName().equals("Zone"))
@@ -188,7 +187,8 @@ public class BpaBillableExtn  extends AbstractBillable  {
 
 	@Override
 	public Module getModule() {
-		 return  GenericDaoFactory.getDAOFactory().getModuleDao().getModuleByName(BpaConstants.BPAMODULENAME);
+		return null;//TODO Phinix
+		// return  GenericDaoFactory.getDAOFactory().getModuleDao().getModuleByName(BpaConstants.BPAMODULENAME);
      }
 
 	@Override
@@ -272,7 +272,7 @@ public class BpaBillableExtn  extends AbstractBillable  {
 				
 	}
 
-	@Override
+/*	@Override
 	public void setCollectionType(String collType) {
 		// TODO Auto-generated method stub
 		//CHECK THIS
@@ -288,12 +288,12 @@ public class BpaBillableExtn  extends AbstractBillable  {
 		// TODO Auto-generated method stub
 		
 	}
-
+//TODO PHIOnix removing all cos no API in AbstractBillable
 	@Override
 	public String getPaymentGatewayType() {
 		// TODO Auto-generated method stub
 		return null;
-	}
+	}*/
 
 	public PersistenceService getPersistenceService() {
 		return persistenceService;

@@ -59,6 +59,10 @@ import org.egov.bpa.services.extd.common.BpaCommonExtnService;
 import org.egov.bpa.services.extd.common.BpaNumberGenerationExtnService;
 import org.egov.bpa.services.extd.common.BpaSurvayorPortalExtnService;
 import org.egov.bpa.services.extd.common.UtilsExtnService;
+import org.egov.collection.integration.models.BillReceiptInfo;
+import org.egov.collection.integration.models.ReceiptAccountInfo;
+import org.egov.collection.integration.services.BillingIntegrationService;
+import org.egov.collection.utils.CollectionCommon;
 import org.egov.commons.EgwStatus;
 import org.egov.demand.dao.DCBDaoFactory;
 import org.egov.demand.dao.EgBillDao;
@@ -66,17 +70,12 @@ import org.egov.demand.integration.TaxCollection;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
-import org.egov.erpcollection.integration.models.BillReceiptInfo;
-import org.egov.erpcollection.integration.models.BillReceiptInfoImpl;
-import org.egov.erpcollection.integration.models.ReceiptAccountInfo;
-import org.egov.erpcollection.integration.services.BillingIntegrationService;
-import org.egov.erpcollection.util.CollectionCommon;
 import org.egov.infstr.commons.Module;
-import org.egov.infstr.commons.dao.GenericDaoFactory;
+/*import org.egov.infstr.commons.dao.GenericDaoFactory;*/
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.workflow.WorkflowService;
+/*import org.egov.infstr.workflow.WorkflowService;*/
 import org.egov.pims.commons.Position;
-import org.egov.portal.surveyor.model.Surveyor;
+/*import org.egov.portal.surveyor.model.Surveyor;*/
 
 @SuppressWarnings("unchecked")
 public class BpaFeeCollectionExtn extends TaxCollection {
@@ -85,7 +84,7 @@ public class BpaFeeCollectionExtn extends TaxCollection {
 	private BpaCommonExtnService bpaCommonService;
 	private BpaNumberGenerationExtnService bpaNumberGenerationService;
 	private CollectionCommon collectionCommon;
-	private WorkflowService <RegistrationExtn> registrationWorkflowExtnService;
+//	private WorkflowService <RegistrationExtn> registrationWorkflowExtnService;
 	private BpaCitizenPortalExtnService bpaCitizenPortalService;
 	private UtilsExtnService utilsExtnService;
 	private BigDecimal receiptTotalAmount = BigDecimal.ZERO;
@@ -97,7 +96,7 @@ public class BpaFeeCollectionExtn extends TaxCollection {
 		receiptTotalAmount = billRcptInfo.getTotalAmount();
 		EgDemand demand = (EgDemand) getDemandFromBillNo(Long.valueOf(billRcptInfo.getBillReferenceNum()));
 		LOGGER.info("updateDemandDetails : collection back update started for Extended BPA : "
-				+ ((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader().getConsumerCode()
+				//+ ((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader().getConsumerCode()
 				+ " and receipt event is " + billRcptInfo.getEvent() + ". Total Receipt amount is."
 				+ receiptTotalAmount + " with receipt no." + billRcptInfo.getReceiptNum());
 		if (billRcptInfo.getEvent().equals(EVENT_INSTRUMENT_BOUNCED)) {
@@ -122,7 +121,7 @@ public class BpaFeeCollectionExtn extends TaxCollection {
 									|| registration.getServiceType().getCode().equals(BpaConstants.DEMOLITIONRECONSTRUCTIONCODE) || 
 									registration.getServiceType().getCode().equals(BpaConstants.ADDITIONALCONSTRUCTIONCODE))){
 					registration.setEgwStatus(bpaCommonService.getstatusbyCode(BpaConstants.APPLICATION_FWDED_TO_LS));
-					createSurveyorEntry(registration);
+					//createSurveyorEntry(registration); TODO Phionix
 					}
 					else
 					{
@@ -131,13 +130,13 @@ public class BpaFeeCollectionExtn extends TaxCollection {
 						if(registration.getState()==null && registration.getApproverPositionId()!=null && registration.getRequest_number()!=null && !"".equals(registration.getRequest_number()))
 						{
 							 Position position=(Position) persistenceService.find("from Position where id=?",registration.getApproverPositionId());
-							 if(position!=null) 
+/*							 if(position!=null) 
 							 {
 						 	 registration = (RegistrationExtn)registrationWorkflowExtnService.start(registration, position, "Bpa Registration created.");
 							 }
-						}
-						bpaCommonService.workFlowTransition(registration, BpaConstants.FORWARDWORKFLOWSTATUS,  BpaConstants.MSG_ADMINISSIONFEECOLLECTED);
-						bpaCitizenPortalService.updateServiceRequestRegistry(registration);
+*/						}//todo phionix
+						//bpaCommonService.workFlowTransition(registration, BpaConstants.FORWARDWORKFLOWSTATUS,  BpaConstants.MSG_ADMINISSIONFEECOLLECTED);
+						//bpaCitizenPortalService.updateServiceRequestRegistry(registration);
 					}
 					buildEmailWithReceiptAsAttachment(billRcptInfo, registration, "save");
 					bpaCommonService.buildSMS(registration, "save");
@@ -156,10 +155,10 @@ public class BpaFeeCollectionExtn extends TaxCollection {
 					EgwStatus oldStatus = registration.getEgwStatus();
 					registration.setEgwStatus(bpaCommonService.getstatusbyCode(BpaConstants.CHALLANAMOUNTCOLLECTED));
 					bpaCommonService.createStatusChange(registration, oldStatus);
-					bpaCommonService.createNotificationFinalFeeCollected(registration, finalFeeCollected);
+		//TODO Phionx DMS relate		//	bpaCommonService.createNotificationFinalFeeCollected(registration, finalFeeCollected);
 					buildEmailWithReceiptAsAttachment(billRcptInfo, registration, "FeePaid");
 					bpaCommonService.buildSMS(registration, "FeePaid");
-					bpaCitizenPortalService.updateServiceRequestRegistry(registration);// Update citizen status 
+					//bpaCitizenPortalService.updateServiceRequestRegistry(registration);// Update citizen status 
 				}
 			}
 
@@ -179,8 +178,8 @@ public class BpaFeeCollectionExtn extends TaxCollection {
 		HashMap<String, Object> attachmentFileNames = new HashMap<String, Object>();
 
 		if (bri != null && bri.getReceiptNum() != null && registration != null && registration.getId() != null)
-			inputStream = collectionCommon.getInputStreamByReciptNumberServiceAndConsumerCode(EXTD_SERVICE_CODE,
-					bri.getReceiptNum(), registration.getId().toString(), true);
+			inputStream =null;/* collectionCommon.getInputStreamByReciptNumberServiceAndConsumerCode(EXTD_SERVICE_CODE,
+					bri.getReceiptNum(), registration.getId().toString(), true);*/
 
 		if (inputStream != null) {
 			attachmentList.put("feePayment", inputStream);
@@ -244,7 +243,7 @@ public class BpaFeeCollectionExtn extends TaxCollection {
 					 * intermediate table.
 					 */
 					persistCollectedReceipts(demandDetail, billReceiptInfo.getReceiptNum(), receiptTotalAmount,
-							billReceiptInfo.getReceiptDate(), recAccInfo.getCrAmount());
+							billReceiptInfo.getReceiptDate().toDate(), recAccInfo.getCrAmount());
 					demand.setAmtCollected(demand.getAmtCollected().add(recAccInfo.getCrAmount()));
 					totalAmountCollected = totalAmountCollected.add(recAccInfo.getCrAmount());
 				}
@@ -267,7 +266,7 @@ public class BpaFeeCollectionExtn extends TaxCollection {
 		return egDemand;
 	}
 
-	private void createSurveyorEntry(RegistrationExtn registration) {
+/*	private void createSurveyorEntry(RegistrationExtn registration) {
 		Surveyor surveyor=null;
 		
 		if(registration.getSurveyorName()!=null)
@@ -282,11 +281,13 @@ public class BpaFeeCollectionExtn extends TaxCollection {
 		bpaSurvayorPortalExtnService.createServiceRequestRegistry(registration, APPLICATION_FWDED_TO_LS, registration
 				.getOwner().getFirstName(), surveyor);
 		bpaCitizenPortalService.updateServiceRequestRegistry(registration);
-	}
+	}*/
 
 	@Override
 	protected Module module() {
-		return GenericDaoFactory.getDAOFactory().getModuleDao().getModuleByName(BPAMODULENAME);
+		return null;
+		//return GenericDaoFactory.getDAOFactory().getModuleDao().getModuleByName(BPAMODULENAME);
+	//TODO Phinix 
 	}
 
 	public void setCollectionCommon(CollectionCommon collectionCommon) {
@@ -317,12 +318,12 @@ public class BpaFeeCollectionExtn extends TaxCollection {
 		this.bpaSurvayorPortalExtnService = bpaSurvayorPortalExtnService;
 	}
 
-	public void setRegistrationWorkflowExtnService(
+	/*public void setRegistrationWorkflowExtnService(
 			WorkflowService<RegistrationExtn> registrationWorkflowExtnService) {
 		this.registrationWorkflowExtnService = registrationWorkflowExtnService;
-	}
+	}*/
+//TODO Phionix
 
-	@Override
 	public void updateRectifiedReceipt(BillReceiptInfo rectifiedReceiptInfo) {
 
 	}

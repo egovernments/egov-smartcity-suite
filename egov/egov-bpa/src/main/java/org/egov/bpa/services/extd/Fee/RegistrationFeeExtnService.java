@@ -60,11 +60,12 @@ import org.egov.commons.EgwSatuschange;
 import org.egov.commons.EgwStatus;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
-import org.egov.infstr.workflow.WorkflowService;
-import org.egov.lib.admbndry.BoundaryImpl;
+/*import org.egov.infstr.workflow.WorkflowService;*/
+
 import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
@@ -73,9 +74,9 @@ import org.hibernate.criterion.Restrictions;
 public class RegistrationFeeExtnService extends PersistenceService<RegistrationFeeExtn, Long>{
 
 private PersistenceService persistenceService;
-private WorkflowService <RegistrationFeeExtn> registrationFeeWorkflowExtnService;
+//private WorkflowService <RegistrationFeeExtn> registrationFeeWorkflowExtnService;
 private BpaPimsInternalExtnServiceFactory bpaPimsExtnFactory;
-private Integer approverId; 
+private Long approverId; 
 private BpaCommonExtnService bpaCommonExtnService;
 private BpaNumberGenerationExtnService bpaNumberGenerationExtnService;
 private Date feeDate=new Date();
@@ -115,7 +116,7 @@ public void setBpaPimsExtnFactory(BpaPimsInternalExtnServiceFactory bpaPimsFacto
 	this.bpaPimsExtnFactory = bpaPimsFactory;
 }
 
-public WorkflowService<RegistrationFeeExtn> getRegistrationFeeWorkflowExtnService() {
+/*public WorkflowService<RegistrationFeeExtn> getRegistrationFeeWorkflowExtnService() {
 	return registrationFeeWorkflowExtnService;
 }
 
@@ -123,7 +124,7 @@ public void setRegistrationFeeWorkflowExtnService(
 		WorkflowService<RegistrationFeeExtn> registrationFeeWorkflowService) {
 	this.registrationFeeWorkflowExtnService = registrationFeeWorkflowService;
 }
-
+*/
 public PersistenceService getPersistenceService() {
 	return persistenceService;
 }
@@ -147,7 +148,7 @@ public RegistrationExtn saveFeesinRegistrationFee(RegistrationExtn registrationO
 		else
 			registrationFee.setFeeDate(feeDate);
 		registrationFee.setEgwStatus(bpaCommonExtnService.getstatusbyCode(BpaConstants.BPAREGISTRATIONFEEMODULESTATUSAPPROVED, BpaConstants.BPAREGISTRATIONFEEMODULE));
-		BoundaryImpl zone=(BoundaryImpl) bpaCommonExtnService.getZoneNameFromAdminboundaryid(registrationObj.getAdminboundaryid());
+		Boundary zone=(Boundary) bpaCommonExtnService.getZoneNameFromAdminboundaryid(registrationObj.getAdminboundaryid());
 		registrationFee.setChallanNumber(bpaNumberGenerationExtnService.generateChallanNumberFormat(zone));
 		registrationFee.setRegistration(registrationObj);
 		registrationFee.setFeeRemarks(registrationObj.getFeeRemarks());
@@ -288,7 +289,7 @@ private RegistrationFeeExtn createWorkflow(RegistrationFeeExtn registrationFee,S
 	{	
 		if(registrationFee.getState()== null){
 			Position pos = bpaPimsExtnFactory.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));			
-			registrationFee = (RegistrationFeeExtn) registrationFeeWorkflowExtnService.start(registrationFee, pos, "Revised Fee created.");
+		//	registrationFee = (RegistrationFeeExtn) registrationFeeWorkflowExtnService.start(registrationFee, pos, "Revised Fee created.");
 		}
 		 
 		if(workFlowAction!=null && !"".equals(workFlowAction) && !BpaConstants.SCRIPT_SAVE.equalsIgnoreCase(workFlowAction)){
@@ -306,20 +307,20 @@ private RegistrationFeeExtn createWorkflow(RegistrationFeeExtn registrationFee,S
 					registrationFee.setPreviousObjectState(wfMatrix.getCurrentState());
 					registrationFee.setPreviousObjectAction(wfMatrix.getPendingActions());
 					
-					for(State state: registrationFee.getHistory())
+					/*for(State state: registrationFee.getHistory())
 					{
 						 if (state.getValue().equalsIgnoreCase(wfMatrix.getCurrentState()))
 						 {
 							 registrationFee.setPreviousStateOwnerId(state.getOwner().getId());
 							 break;
 						 }
-					}
+					}*/
 				}
 			
 			} 
 			LOGGER.debug("starting  workflowtransition  ");
-			bpaCommonExtnService.workFlowTransition(registrationFee,workFlowAction, 
-								comments);
+			/*bpaCommonExtnService.workFlowTransition(registrationFee,workFlowAction, 
+								comments);*/
 					
 		}
 	}catch(ValidationException ex)

@@ -58,6 +58,7 @@ import java.util.Set;
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.Logger;
 import org.egov.bpa.constants.BpaConstants;
+import org.egov.bpa.models.extd.CMDALetterToPartyExtn;
 import org.egov.bpa.models.extd.InspectionExtn;
 import org.egov.bpa.models.extd.RegistrationExtn;
 import org.egov.bpa.models.extd.RegistrationFeeDetailExtn;
@@ -89,7 +90,6 @@ import org.egov.demand.model.BillReceipt;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PersonalInformationService;
-import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 /*import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.dao.DemandGenericHibDao;
@@ -115,7 +115,6 @@ import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.mail.Email;
 import org.egov.infstr.mail.Email.Builder;
-import org.egov.infstr.notification.HTTPSMS;
 import org.egov.infstr.reporting.engine.ReportOutput;
 import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
@@ -1401,6 +1400,9 @@ public class BpaCommonExtnService extends ActionSupport  {
 			}	
 			return null;
 		}
+		 public List<CMDALetterToPartyExtn> getcmdaLetterToPartyForRegistrationObject(RegistrationExtn registrationObj) {
+				return  (List<CMDALetterToPartyExtn>)persistenceService. findAllBy("from CMDALetterToPartyExtn where registration=?  order by id desc",registrationObj);
+			}
 		/*
 		public void createNotificationFinalFeeCollected(RegistrationExtn registration,BigDecimal finalFeeCollected) {
 			
@@ -2434,7 +2436,7 @@ return siteInspectionDatesList;
 					}
 					reportData.put("planSubmissionNum", registration.getPlanSubmissionNum());
 					if( registration!=null && registration.getOwner()!=null)
-						reportData.put("applicantName", registration.getOwner().getFirstName());
+						reportData.put("applicantName", registration.getOwner().getName());
 					else
 						reportData.put("applicantName", EMPTYSTRING);
 					reportData.put("cmdaDate", registration.getCmdaRefDate()!=null ? registration.getCmdaRefDate():null);
@@ -2461,7 +2463,7 @@ return siteInspectionDatesList;
 						}
 						reportData.put("planSubmissionNum", lpReply.getRegistration().getPlanSubmissionNum());
 						if( lpReply.getRegistration()!=null && lpReply.getRegistration().getOwner()!=null)
-							reportData.put("applicantName", lpReply.getRegistration().getOwner().getFirstName());
+							reportData.put("applicantName", lpReply.getRegistration().getOwner().getName());
 						else
 							reportData.put("applicantName", EMPTYSTRING);
 						reportData.put("cmdaDate", lpReply.getRegistration().getCmdaRefDate()!=null ? lpReply.getRegistration().getCmdaRefDate():null);
@@ -2502,14 +2504,14 @@ return siteInspectionDatesList;
 					}
 				return reportData;
 			}
-		@Override
+		/*@Override
 		public EisCommonService getEisCommonService() {
 			return eisCommonService;
 		}
 
 		public void setEisCommonService(EisCommonService eisCommonService) {
 			this.eisCommonService = eisCommonService;
-		}
+		}*/
 
 		public EmployeeServiceImpl getEmployeeServiceImpl() {
 			return employeeServiceImpl;

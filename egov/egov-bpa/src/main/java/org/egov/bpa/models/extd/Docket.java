@@ -43,7 +43,6 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.egov.bpa.models.ApprdBuildingFloorDtls;
 import org.egov.infstr.models.BaseModel;
 
 public class Docket extends BaseModel {

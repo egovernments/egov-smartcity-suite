@@ -46,7 +46,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.EGOVRuntimeException;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.services.extd.common.BpaCommonExtnService;
 import org.egov.commons.Installment;

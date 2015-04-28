@@ -43,18 +43,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.lib.admbndry.BoundaryImpl;
+/*import org.egov.lib.admbndry.BoundaryImpl;
 import org.egov.portal.surveyor.model.Surveyor;
-import org.egov.portal.surveyor.model.SurveyorDetail;
+import org.egov.portal.surveyor.model.SurveyorDetail;*/
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
 public class SurveyorMasterService {
 	private PersistenceService persistenceService;
 
-	@SuppressWarnings("unchecked")
-	public Surveyor save(Surveyor surveyor, List<SurveyorDetail> surveyorList, String mode)
+	//@SuppressWarnings("unchecked")
+	/*public Surveyor save(Surveyor surveyor, List<SurveyorDetail> surveyorList, String mode)
 	{
 		surveyor=buildSurveyorDetails(surveyor,surveyorList);
 	if(surveyor.getId()==null){
@@ -82,8 +83,8 @@ public class SurveyorMasterService {
    	
     	return surveyor;
     	
-	}
-	public boolean checkSurveyorNameAlreadyExist(String name,Long survId)
+	}*/
+	/*public boolean checkSurveyorNameAlreadyExist(String name,Long survId)
 	 {
 			if (name != null && !"".equals(name)) {
 				Criteria SurveyorCodeCriteria = getCriteriaForSurveyorUserObject(survId);
@@ -94,22 +95,22 @@ public class SurveyorMasterService {
 					return true;
 			}
 			return false;
-		}
+		}*/
 	@SuppressWarnings("unchecked")
-	public List<BoundaryImpl> getZoneList()
+	public List<Boundary> getZoneList()
 	{
-		List<BoundaryImpl> zoneList=getPersistenceService().findAllBy("from BoundaryImpl bndry where bndry.boundaryType.name=? and bndry.parent!=1 order by bndry.name", "Zone");
+		List<Boundary> zoneList=getPersistenceService().findAllBy("from BoundaryImpl bndry where bndry.boundaryType.name=? and bndry.parent!=1 order by bndry.name", "Zone");
 		return zoneList;
 	}
 	public boolean checkSurveyorMobileNumberAlreadyExist(String MobileNumber,Long survId)
 	 {
 			if (MobileNumber != null && !"".equals(MobileNumber)) {
-				Criteria surveyourCriteria = getCriteriaForSurveyorUserObject(survId);
+				/*	Criteria surveyourCriteria = getCriteriaForSurveyorUserObject(survId);
 				surveyourCriteria.add(Restrictions.eq("userDetail.mobileNumber", MobileNumber));
 				
 				List<Surveyor> surveyourList = surveyourCriteria.list();
 				if (surveyourList.size() > 0)
-					return true;
+					return true;*/
 			}
 			return false;
 		}
@@ -117,22 +118,22 @@ public class SurveyorMasterService {
 	public boolean checkSurveyorEmailAlreadyExist(String email,Long survId)
 	 {
 			if (email != null && !"".equals(email)) {
-				Criteria surveyourCriteria = getCriteriaForSurveyorUserObject(survId);
+				/*	Criteria surveyourCriteria = getCriteriaForSurveyorUserObject(survId);
 				surveyourCriteria.add(Restrictions.eq("userDetail.email", email));
 				
 				List<Surveyor> surveyourList = surveyourCriteria.list();
 				if (surveyourList.size() > 0)
-					return true;
+					return true;*/
 			}
 			return false;
 		}
 
-	private Criteria getCriteriaForSurveyorUserObject(Long survId) {
+	/*private Criteria getCriteriaForSurveyorUserObject(Long survId) {
 		Criteria surveyourCriteria = persistenceService.getSession()
-				.createCriteria(Surveyor.class, "surveyor")
-				.createAlias("surveyor.userDetail", "userDetail");
+				//.createCriteria(Surveyor.class, "surveyor")
+				//.createAlias("surveyor.userDetail", "userDetail");
 		if (survId != null)
-			surveyourCriteria.add(Restrictions.ne("surveyor.id", survId));
+			//surveyourCriteria.add(Restrictions.ne("surveyor.id", survId));
 		surveyourCriteria.add(Restrictions.eq("isEnabled", true));
 		return surveyourCriteria; 
 	}
@@ -153,7 +154,7 @@ public class SurveyorMasterService {
 		
 		List<Surveyor> surveObjList=persistenceService.findAllBy("from Surveyor order by name");
 		return surveObjList;
-	}
+	}*/
 	public PersistenceService getPersistenceService() {
 		return persistenceService;
 	}

@@ -44,7 +44,7 @@ import java.io.StringReader;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
-import org.egov.EGOVRuntimeException;
+import org.egov.exceptions.EGOVRuntimeException;
 
 public class AutoDcrXMLConverter {
 	public AutoDcrXMLConverter() {

@@ -60,6 +60,7 @@ public class RegistrationFeeExtn extends StateAware {
 	private String challanNumber;
 	private String feeRemarks;
 	private String legacyFee;
+	private Long approverPositionId;
 	private String previousObjectState;
 	private String previousObjectAction;
 	private Integer previousStateOwnerId;
@@ -156,6 +157,14 @@ public class RegistrationFeeExtn extends StateAware {
 
 	public void setRegistration(RegistrationExtn registration) {
 		this.registration = registration;
+	}
+
+	public Long getApproverPositionId() {
+		return approverPositionId;
+	}
+
+	public void setApproverPositionId(Long approverPositionId) {
+		this.approverPositionId = approverPositionId;
 	}
 
 	@Override
