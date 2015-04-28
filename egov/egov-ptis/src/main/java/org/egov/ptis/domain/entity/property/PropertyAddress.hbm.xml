@@ -44,16 +44,16 @@
 
 <hibernate-mapping package="org.egov.ptis.domain.entity.property">
 	<joined-subclass name="PropertyAddress" table="EGPT_ADDRESS"
-		extends="org.egov.lib.address.model.Address">
-		<key column="ID_ADDRESS" />
+		extends="org.egov.infra.admin.master.entity.Address">
+		<key column="ID" />
 		<property name="subNumber" column="SUBNUMBER" />
 		<property name="doorNumOld" column="DOORNUMOLD" />
 		<property name="emailAddress" column="EMAILADDRESS" />
 		<property name="mobileNo" column="MOBILENO" />
-		<property name="extraField1" column="EXTRA_FIELD1" />
-		<property name="extraField2" column="EXTRA_FIELD2" />
-		<property name="extraField3" column="EXTRA_FIELD3" />
-		<property name="extraField4" column="EXTRA_FIELD4" />
+		<property name="extraField1" column="EXTRAFIELD1" />
+		<property name="extraField2" column="EXTRAFIELD2" />
+		<property name="extraField3" column="EXTRAFIELD3" />
+		<property name="extraField4" column="EXTRAFIELD4" />
 	</joined-subclass>
 </hibernate-mapping>
 

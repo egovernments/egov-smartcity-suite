@@ -45,28 +45,28 @@
 <hibernate-mapping>
 	<class name="org.egov.ptis.domain.entity.property.BasicPropertyImpl"
 		table="EGPT_BASIC_PROPERTY" polymorphism="explicit">
-		<id name="id" column="ID_BASIC_PROPERTY" type="java.lang.Long">
+		<id name="id" column="ID" type="java.lang.Long">
 			<generator class="sequence">
 				<param name="sequence">SEQ_BASIC_PROP</param>
 			</generator>
 		</id>
 		<property name="createdDate" type="java.util.Date">
-			<column name="CREATED_DATE" not-null="true" />
+			<column name="CREATEDDATE" not-null="true" />
 		</property>
 		<property name="modifiedDate" type="java.util.Date">
-			<column name="MODIFIED_DATE" not-null="true" />
+			<column name="LASTMODIFIEDDATE" not-null="true" />
 		</property>
-		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.UserImpl"
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User"
 			>
-			<column name="CREATED_BY" />
+			<column name="CREATEDBY" />
 		</many-to-one>
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.UserImpl"
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User"
 			>
-			<column name="MODIFIED_BY" />
+			<column name="MODIFIEDBY" />
 		</many-to-one>
 
 		<property name="upicNo" column="PROPERTYID" />
-		<property name="active" column="IS_ACTIVE" type="yes_no" />
+		<property name="active" column="ISACTIVE" type="yes_no" />
 
 		<many-to-one name="address" column="ADDRESSID"
 			class="org.egov.ptis.domain.entity.property.PropertyAddress" cascade="all"
@@ -76,7 +76,7 @@
 		<many-to-one name="propertyID" column="ID_PROPERTYID"
 			class="org.egov.ptis.domain.entity.property.PropertyID" cascade="all" unique="true" />
 
-		<many-to-one name="boundary" class="org.egov.infra.admin.master.entity.BoundaryImpl"
+		<many-to-one name="boundary" class="org.egov.infra.admin.master.entity.Boundary"
 			column="ID_ADM_BNDRY" />
 			
 		<property name="oldMuncipalNum" column="MUNICIAPL_NO_OLD" />
@@ -172,11 +172,11 @@
 				 />
 		</set>
 
-		<property name="partNo" column="PART_NO" />
+		<property name="partNo" column="PARTNO" />
 		<property name="allChangesCompleted" column="ALL_CHANGES_COMPLETED"/>
 		<property name="isBillCreated" column="IS_BILL_CREATED"/>
 		<property name="billCrtError" column="BILL_CRT_ERROR"/>
-		<property name="isTaxXMLMigrated" column="IS_TAXXML_MIGRATED" type="java.lang.Character"/> 		
+		<property name="isTaxXMLMigrated" column="IS_TAXXML_MIGRATED"/> 		
 	</class>
 
 </hibernate-mapping>
