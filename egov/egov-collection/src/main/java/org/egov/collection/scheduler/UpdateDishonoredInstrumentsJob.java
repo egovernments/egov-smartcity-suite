@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
@@ -58,13 +59,14 @@ import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.collection.service.ReceiptHeaderService;
+import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.EgwStatus;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppData;
 import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.utils.HibernateUtil;
+import org.egov.services.instrument.InstrumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -79,14 +81,23 @@ public class UpdateDishonoredInstrumentsJob extends AbstractQuartzJob
 	@Autowired
 	private ReceiptHeaderService receiptHeaderService;
 
-	/*private InstrumentService instrumentService;
+	private InstrumentService instrumentService;
 	//private List<ReceiptHeader> receiptHeaders = new ArrayList<ReceiptHeader>();
 	private final Set<BillReceiptInfo> billReceipts = new HashSet<BillReceiptInfo>();
 	//private final Set<ReceiptPayeeDetails> receiptPayeeDetails = new HashSet<ReceiptPayeeDetails>();
-	private final CollectionsUtil collectionsUtil = new CollectionsUtil();*/
+	private final CollectionsUtil collectionsUtil = new CollectionsUtil();
 	private boolean testMode = false;
 	
 	public UpdateDishonoredInstrumentsJob() {
+	}
+
+	public void setPersistenceService(PersistenceService persistenceService) {
+		this.persistenceService = persistenceService;
+		collectionsUtil.setPersistenceService(persistenceService);
+	}
+
+	public void setInstrumentService(InstrumentService instrumentService) {
+		this.instrumentService = instrumentService;
 	}
 
 	@Override
@@ -104,9 +115,9 @@ public class UpdateDishonoredInstrumentsJob extends AbstractQuartzJob
 		Date bouncedToDate = new Date();
 		Date bouncedFromDate = null;
 		
-		if(!testMode){
+		/*if(!testMode){
 			HibernateUtil.getCurrentSession().beginTransaction();
-		}
+		}*/
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 			String strDate = sdf.format(bouncedToDate);

@@ -112,7 +112,7 @@
    
    <!-- Add description for updateDishonoredInstrumentsJobScheduler -->
  	 
-   <bean name="updateDishonoredInstrumentsJobScheduler" id="updateDishonoredInstrumentsJobScheduler" class="org.springframework.scheduling.quartz.JobDetailBean">
+   <bean name="updateDishonoredInstrumentsJobScheduler" id="updateDishonoredInstrumentsJobScheduler" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
    		<property name="group" value="COLLECTION_JOB_GROUP"/>
    		<property name="name" value="Update Dishonored Instruments Job"/>
    		<property name="jobClass" value="org.egov.collection.scheduler.UpdateDishonoredInstrumentsJob"/>
@@ -130,11 +130,10 @@
 	<bean id="updateDishonoredInstrumentsJobDelegate" class="org.egov.collection.scheduler.UpdateDishonoredInstrumentsJob" lazy-init="true" scope="prototype">
         <property name="persistenceService" ref="persistenceService" />
         <property name="instrumentService" ref="instrumentService" />
-        <property name="receiptPayeeDetailsService" ref="receiptPayeeDetailsService" />
         <property name="genericDao" ref="genericDao" />        
     </bean>
    
-     <bean id="bouncedChqInstrCronTrigger" name="bouncedChqInstrCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean" >
+     <bean id="bouncedChqInstrCronTrigger" name="bouncedChqInstrCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" >
         <property name="jobDetail" ref="updateDishonoredInstrumentsJobScheduler" />
         <property name="group" value="COLLECTION_TRIGGER_GROUP"/>
 		<property name="name" value="Update Dishonored Instruments Trigger"/>
@@ -146,7 +145,7 @@
       
      <!--Add description for onlinePaymentUnknownStatusTrackerJobScheduler-->
      
-     <bean name="onlinePaymentUnknownStatusTrackerJobScheduler" id="onlinePaymentUnknownStatusTrackerJobScheduler" class="org.springframework.scheduling.quartz.JobDetailBean">
+     <bean name="onlinePaymentUnknownStatusTrackerJobScheduler" id="onlinePaymentUnknownStatusTrackerJobScheduler" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
      	<property name="group" value="COLLECTION_JOB_GROUP"/>
      	<property name="name" value="Online Payment Unknown Status Tracker Job"/> 
      	<property name="jobClass" value="org.egov.collection.scheduler.OnlinePaymentUnknownStatusTrackerJob"/>
@@ -165,7 +164,7 @@
         <property name="persistenceService" ref="persistenceService" />
     </bean>
  	
- 	<bean id="onlinePaymentUnknownStatusTrackerCronTrigger" name="onlinePaymentUnknownStatusTrackerCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+ 	<bean id="onlinePaymentUnknownStatusTrackerCronTrigger" name="onlinePaymentUnknownStatusTrackerCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="onlinePaymentUnknownStatusTrackerJobScheduler" />
         <property name="group" value="COLLECTION_TRIGGER_GROUP"/>
 		<property name="name" value="Online Payment Unknown Status Trigger"/>

@@ -3,7 +3,7 @@
   <description><![CDATA["Struts AJAX tags based on Dojo."]]></description>
   <display-name>"Struts
                         Dojo Tags"</display-name>
-  <tlib-version>2.2.3</tlib-version>
+  <tlib-version>2.3</tlib-version>
   <short-name>sx</short-name>
   <uri>/struts-dojo-tags</uri>
   <tag>
