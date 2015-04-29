@@ -78,10 +78,6 @@ import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
-/**
- * @author pritiranjan
- */
-
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 @Validations(requiredFields = {
@@ -105,9 +101,6 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 )
 public class StillBirthRegistrationAction extends RegistrationAction {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -6855607612064252745L;
     private static final Logger LOGGER = Logger.getLogger(StillBirthRegistrationAction.class);
     private StillBirthRegistration stillBirthRegistration = new StillBirthRegistration();
@@ -287,7 +280,7 @@ public class StillBirthRegistrationAction extends RegistrationAction {
                     BndConstants.LOCK).getId());
             change.setModuleid(stillBirthRegistration.getId().intValue());
             change.setModuletype(BndConstants.STILLBIRTHREGISTRATIONMODULE);
-            change.setCreatedby(Integer.valueOf(EGOVThreadLocals.getUserId()));
+            //change.setCreatedby(EGOVThreadLocals.getUserId());
             // TODO egifix-hibernateutil
             // HibernateUtil.getCurrentSession().persist(change);
             birthRegistrationService.save(stillBirthRegistration, workFlowType);
@@ -304,7 +297,7 @@ public class StillBirthRegistrationAction extends RegistrationAction {
                     BndConstants.APPROVED).getId());
             change.setModuleid(stillBirthRegistration.getId().intValue());
             change.setModuletype(BndConstants.STILLBIRTHREGISTRATIONMODULE);
-            change.setCreatedby(Integer.valueOf(EGOVThreadLocals.getUserId()));
+            //change.setCreatedby(EGOVThreadLocals.getUserId());
             // TODO egifix-hibernateutil
             // HibernateUtil.getCurrentSession().persist(change);
             birthRegistrationService.save(stillBirthRegistration, workFlowType);

@@ -185,7 +185,7 @@ public class BndCommonService {
      */
 
     public Registrar getRegistrarByLoggedInUser() {
-        final Integer userId = Integer.valueOf(EGOVThreadLocals.getUserId());
+        final Long userId = EGOVThreadLocals.getUserId();
         return (Registrar) persistenceService.find(REGISTRARQUERY, userId);
     }
 
@@ -321,7 +321,7 @@ public class BndCommonService {
         return (Module) persistenceService.find(MODULEQUERY, code);
     }
 
-    public User getUserByPassingUserId(final Integer userId) {
+    public User getUserByPassingUserId(final Long userId) {
         return (User) persistenceService.find(GETUSERBYPASSINGIDQUERY, userId);
 
     }
@@ -401,7 +401,7 @@ public class BndCommonService {
     }
 
     public ObjectHistory saveHistory(final Registration registration, final String objectType, final String remarks) {
-        final User user = getUserByPassingUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+        final User user = getUserByPassingUserId(EGOVThreadLocals.getUserId());
         return objectHistoryService.save(objectTypeService.getObjectTypebyType(objectType), registration.getId()
                 .intValue(), remarks, user);
     }
@@ -479,7 +479,7 @@ public class BndCommonService {
 
     public Boolean isCreatedByLoggedInUser(final StateAware wfObj) {
         if (wfObj.getCreatedBy() != null
-                && wfObj.getCreatedBy().getId().equals(Integer.valueOf(EGOVThreadLocals.getUserId())))
+                && wfObj.getCreatedBy().getId().equals(EGOVThreadLocals.getUserId()))
             return Boolean.TRUE;
         return Boolean.FALSE;
     }
@@ -491,7 +491,7 @@ public class BndCommonService {
         return relationCriteria.list();
     }
 
-    public List<Position> getPositionsForUser(final Integer userId, final Date date) {
+    public List<Position> getPositionsForUser(final Long userId, final Date date) {
         return eisService.getPositionsForUser(Long.valueOf(userId), date);
     }
 

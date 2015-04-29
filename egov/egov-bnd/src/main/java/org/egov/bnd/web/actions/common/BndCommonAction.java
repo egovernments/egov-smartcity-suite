@@ -84,9 +84,6 @@ import org.egov.web.annotation.ValidationErrorPage;
         "/common", "method", BndCommonAction.WORKFLOWERROR })
 public class BndCommonAction extends GenericWorkFlowAction {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -5225237259269667373L;
     protected static final String VIEW = "view";
     protected static final String EMPTY = "";
@@ -234,7 +231,7 @@ public class BndCommonAction extends GenericWorkFlowAction {
     @SkipValidation
     public String inbox() {
 
-        if (!validateInboxItemForUser(getModel(), Integer.valueOf(EGOVThreadLocals.getUserId())))
+        if (!validateInboxItemForUser(getModel(), EGOVThreadLocals.getUserId()))
             return WORKFLOWERROR;
         mode = bndCommonService.isCreatedByLoggedInUser(getModel()) ? MODIFY : NOTMODIFY;
         return NEW;
@@ -265,7 +262,7 @@ public class BndCommonAction extends GenericWorkFlowAction {
      * @return boolean value.
      **/
 
-    public Boolean validateInboxItemForUser(final StateAware wfObj, final Integer userId) {
+    public Boolean validateInboxItemForUser(final StateAware wfObj, final Long userId) {
         Boolean validateObjectStatus = Boolean.FALSE;
         if (userId != null && wfObj.getCurrentState() != null && !wfObj.getCurrentState().isEnded()) {
             final List<Position> positionList = bndCommonService.getPositionsForUser(userId, DateUtils.today());

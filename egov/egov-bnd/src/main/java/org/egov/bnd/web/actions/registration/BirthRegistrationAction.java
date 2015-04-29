@@ -457,9 +457,6 @@ public class BirthRegistrationAction extends RegistrationAction {
             birthRegistration.setPlaceType(bndCommonService.getPlaceType(placeTypeTemp));
             birthRegistration.setStatus(bndCommonService.getStatusByModuleAndCode(BndConstants.BIRTHREGISTRATION,
                     BndConstants.LOCK));
-            buildNameChange(
-                    bndCommonService.getStatusByModuleAndCode(BndConstants.BIRTHREGISTRATION, BndConstants.APPROVED),
-                    bndCommonService.getStatusByModuleAndCode(BndConstants.BIRTHREGISTRATION, BndConstants.LOCK));
             birthRegistrationService.save(birthRegistration, workFlowType);
         } else if (getMode().equals(UNLOCK)) {
             birthRegistrationService.buildAdoptionDetial(birthRegistration);
@@ -467,9 +464,6 @@ public class BirthRegistrationAction extends RegistrationAction {
             birthRegistration.setPlaceType(bndCommonService.getPlaceType(placeTypeTemp));
             birthRegistration.setStatus(bndCommonService.getStatusByModuleAndCode(BndConstants.BIRTHREGISTRATION,
                     BndConstants.APPROVED));
-            buildNameChange(
-                    bndCommonService.getStatusByModuleAndCode(BndConstants.BIRTHREGISTRATION, BndConstants.LOCK),
-                    bndCommonService.getStatusByModuleAndCode(BndConstants.BIRTHREGISTRATION, BndConstants.APPROVED));
             birthRegistrationService.save(birthRegistration, workFlowType);
         } else if (getMode().equals(NAMEINCLUSION)) {
             birthRegistrationService.buildAdoptionDetial(birthRegistration);
@@ -487,7 +481,7 @@ public class BirthRegistrationAction extends RegistrationAction {
              * .getCitizen().getLastName());
              */
             birthRegistration.getNameChange().setLastModifiedBy(
-                    bndCommonService.getUserByPassingUserId(Integer.valueOf(EGOVThreadLocals.getUserId())));
+                    bndCommonService.getUserByPassingUserId(EGOVThreadLocals.getUserId()));
             birthRegistration.getNameChange().setLastUpatedTimestamp(new Date());
             // TODO egifix
             /*
@@ -520,16 +514,6 @@ public class BirthRegistrationAction extends RegistrationAction {
         }
         mode = VIEW;
         return NEW;
-    }
-
-    private void buildNameChange(final EgwStatus fromStatus, final EgwStatus toStatus) {
-        final EgwSatuschange change = new EgwSatuschange();
-        change.setFromstatus(fromStatus.getId());
-        change.setTostatus(toStatus.getId());
-        change.setModuleid(birthRegistration.getId().intValue());
-        change.setModuletype(BndConstants.BIRTHREGISTRATIONMODULE);
-        change.setCreatedby(Integer.valueOf(EGOVThreadLocals.getUserId()));
-        birthRegistrationService.saveStatusChange(change);
     }
 
     @Override

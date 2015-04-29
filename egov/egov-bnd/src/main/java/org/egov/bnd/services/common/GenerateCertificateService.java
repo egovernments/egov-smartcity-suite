@@ -263,7 +263,7 @@ public class GenerateCertificateService {
                 && birthRegistration.getIsCertIssued().equals("N"))
             birthRegistration.setIsCertIssued("Y");
 
-        final Long userId = birthRegistration.getCreatedBy() == null ? Integer.valueOf(EGOVThreadLocals.getUserId())
+        final Long userId = birthRegistration.getCreatedBy() == null ? EGOVThreadLocals.getUserId()
                 : birthRegistration.getCreatedBy().getId();
 
         bndCommonService.getRoleNamesByPassingUserId(userId);

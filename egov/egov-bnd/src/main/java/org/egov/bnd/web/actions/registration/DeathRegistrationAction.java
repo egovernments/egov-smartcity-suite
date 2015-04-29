@@ -88,7 +88,6 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 import com.opensymphony.xwork2.validator.annotations.ValidatorType;
 
 @ParentPackage("egov")
-@SuppressWarnings("serial")
 @Validations(
 
         requiredStrings = {
@@ -124,9 +123,6 @@ import com.opensymphony.xwork2.validator.annotations.ValidatorType;
         })
 public class DeathRegistrationAction extends RegistrationAction {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1412469733689024605L;
     private DeathRegistration deathRegistration = new DeathRegistration();
     private Integer nameOfdeceasedFlag;
@@ -178,7 +174,6 @@ public class DeathRegistrationAction extends RegistrationAction {
         setDifferentActionsForRole();
     }
 
-    @SuppressWarnings("unchecked")
     private void buildHospitalDiseaseList() {
         LOGGER.debug("Started buildHospitalDiseaseList method");
         addDropdownData("relationList",
@@ -244,6 +239,7 @@ public class DeathRegistrationAction extends RegistrationAction {
             buildDeathRegistration();
             deathRegistration.setStatus(bndCommonService.getStatusByModuleAndCode(BndConstants.DEATHREGISTRATION,
                     BndConstants.LOCK));
+            // TODO Audit is not required
             final EgwSatuschange change = new EgwSatuschange();
             change.setFromstatus(bndCommonService.getStatusByModuleAndCode(BndConstants.DEATHREGISTRATION,
                     BndConstants.APPROVED).getId());
@@ -251,7 +247,7 @@ public class DeathRegistrationAction extends RegistrationAction {
                     BndConstants.LOCK).getId());
             change.setModuleid(deathRegistration.getId().intValue());
             change.setModuletype(BndConstants.DEATHREGISTRATIONMODULE);
-            change.setCreatedby(Integer.valueOf(EGOVThreadLocals.getUserId()));
+            // change.setCreatedby(EGOVThreadLocals.getUserId());
             // TODO egifix-hibernateutil
             // HibernateUtil.getCurrentSession().persist(change);
             deathRegistrationService.save(deathRegistration, workFlowType, addictionList);
@@ -267,7 +263,7 @@ public class DeathRegistrationAction extends RegistrationAction {
                     BndConstants.APPROVED).getId());
             change.setModuleid(deathRegistration.getId().intValue());
             change.setModuletype(BndConstants.DEATHREGISTRATIONMODULE);
-            change.setCreatedby(Integer.valueOf(EGOVThreadLocals.getUserId()));
+            // change.setCreatedby(EGOVThreadLocals.getUserId());
             // TODO egifix-hibernateutil
             // HibernateUtil.getCurrentSession().persist(change);
             deathRegistrationService.save(deathRegistration, workFlowType, addictionList);
@@ -399,7 +395,6 @@ public class DeathRegistrationAction extends RegistrationAction {
         LOGGER.debug("Completed setDifferentActionsForRole method");
     }
 
-    @SuppressWarnings("unchecked")
     private void buildInfomantDetailsforModify(final DeathRegistration deathRegistration) {
         LOGGER.debug("Started buildInfomantDetailsforModify method");
         // TODO egifix-addresstype
