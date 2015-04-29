@@ -22,10 +22,12 @@
         <module>egov-pgr</module>
         <module>egov-collection</module>   
         <module>egov-demand</module>
+        <module>egov-ptis</module>
         <module>egov-eisweb</module>
         <module>egov-egiweb</module>
         <module>egov-pgrweb</module>
         <module>egov-portalweb</module>
+        <module>egov-ptisweb</module>
         <module>egov-ear</module>
     </modules>
 
