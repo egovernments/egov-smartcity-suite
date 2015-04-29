@@ -204,8 +204,8 @@ public class BpaPimsInternalExtnServiceFactory {
 		return assignment; 
 	}
 	
-	public int getCurrentUserId() {
-		return Integer.parseInt(EGOVThreadLocals.getUserId());
+	public Long getCurrentUserId() {
+		return (EGOVThreadLocals.getUserId());
 	}
 	
 	/**
@@ -213,7 +213,7 @@ public class BpaPimsInternalExtnServiceFactory {
 	 * @param userId
 	 * @return
 	 */
-	public Position getPositionByUserId(Integer userId)
+	public Position getPositionByUserId(Long userId)
 	{
 		if(userId==null)
 			throw new EGOVRuntimeException("User id is null");
@@ -257,7 +257,7 @@ public class BpaPimsInternalExtnServiceFactory {
 	//TODO Pionix changed from Intiger into Long
 	public Long getPrimaryDepartmentforLoggedinUser(){
 		Long deptId=null;
-		Integer userId=Integer.parseInt(EGOVThreadLocals.getUserId());		
+		Long userId=(EGOVThreadLocals.getUserId());		
 		PersonalInformation employee= (PersonalInformation) persistenceService.find("from PersonalInformation where userMaster.id=?",userId);
 		if(employee!=null){
 			List<Assignment> assignmentList=eisService.getPrimartAssignmentForGivenDateRange(employee.getId(), new Date(), null);
@@ -276,7 +276,7 @@ public class BpaPimsInternalExtnServiceFactory {
 	public List<EmployeeView> getEmployeeInfoList() {
 		List<EmployeeView>  empList=new ArrayList();
 		HashMap paramMap=new HashMap();
-		Integer userId=Integer.parseInt(EGOVThreadLocals.getUserId());
+		Long userId=(EGOVThreadLocals.getUserId());
 		
 		//Getting the employee Id from personal information to get primary assignments by passing user id
 		PersonalInformation employee= (PersonalInformation) persistenceService.find("from PersonalInformation where userMaster.id=?",userId);
@@ -313,7 +313,7 @@ public class BpaPimsInternalExtnServiceFactory {
 	public Position getEmployeeInfoList(Boundary boundaryImpl) { 
 		List<EmployeeView>  empList=new ArrayList();
 		Long boundaryId=null;
-		Long userId=Long.parseLong(EGOVThreadLocals.getUserId());
+		Long userId=(EGOVThreadLocals.getUserId());
 		//PHIONIX TODO
 		if (boundaryImpl.getBoundaryType() != null) {
 			if (boundaryImpl.getBoundaryType().getName().equalsIgnoreCase("zone")) {
@@ -333,7 +333,7 @@ public class BpaPimsInternalExtnServiceFactory {
 	/*
 	 * get PrimaryPosition By passing userId 
 	 */
-	public Position getEmployeeInfoListForLPCreator(Integer userId){ 
+	public Position getEmployeeInfoListForLPCreator(Long userId){ 
 		if(userId!=null){
 		Position pos=getPositionByUserId(userId);
 		if(pos!=null)

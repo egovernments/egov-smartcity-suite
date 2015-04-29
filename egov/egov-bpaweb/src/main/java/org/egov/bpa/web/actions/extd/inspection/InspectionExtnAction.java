@@ -245,7 +245,7 @@ public class InspectionExtnAction extends BaseFormAction{
 			}
 			inspection.setRegistration(registrationObj);
 		}
-		loginUser=inspectionExtnService.getUserbyId(Integer.parseInt(EGOVThreadLocals.getUserId()));
+		loginUser=inspectionExtnService.getUserbyId((EGOVThreadLocals.getUserId()));
 		addDropdownData("servicetypeList", bpaCommonExtnService.getAllActiveServiceTypeList());
 		addDropdownData("buildingCategoryList", bpaCommonExtnService.getAllActiveBuildingCategoryList());
 		addDropdownData("constructionStageList", inspectionExtnService.getAllConstructionStages());
@@ -455,7 +455,7 @@ public String printDocketSheet()
 	
 	public Boolean isUserMappedToSurveyorRole() {
 		if(EGOVThreadLocals.getUserId()!=null){
-			User user = bpaCommonExtnService.getUserbyId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			User user = bpaCommonExtnService.getUserbyId((EGOVThreadLocals.getUserId()));
 			/*for(Role role : user.getRoles())
 				if(role.getRoleName()!=null && role.getRoleName().equalsIgnoreCase(BpaConstants.PORTALUSERSURVEYORROLE))
 				{	//Todo Phionix
@@ -467,7 +467,7 @@ public String printDocketSheet()
 	}
 	public Boolean isUserMappedToSelectedRole(String userRole) {
 		if(EGOVThreadLocals.getUserId()!=null){
-			User user = bpaCommonExtnService.getUserbyId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			User user = bpaCommonExtnService.getUserbyId((EGOVThreadLocals.getUserId()));
 			/*for(Role role : user.getRoles())
 				if(role.getRoleName()!=null && role.getRoleName().equalsIgnoreCase(userRole))
 				{
@@ -943,7 +943,7 @@ public String showSurveyorMeasurementDetails(){
 	public String showExistingInspectionMeasurementDetails(){
 		
 		if(EGOVThreadLocals.getUserId()!=null){
-			List<String> roleList = bpaCommonExtnService.getRoleNamesByPassingUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			List<String> roleList = bpaCommonExtnService.getRoleNamesByPassingUserId((EGOVThreadLocals.getUserId()));
 			if(!BpaExtnRuleBook.getInstance().checkViewsforRoles(roleList,BpaConstants.INSPECTIONDETAILS)){
 				returnStream=returnStream.concat(" Inspection Measurement Details");
 				return BpaConstants.NOACCESS;

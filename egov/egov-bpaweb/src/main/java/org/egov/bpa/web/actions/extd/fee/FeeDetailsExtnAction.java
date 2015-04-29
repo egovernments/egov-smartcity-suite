@@ -487,7 +487,7 @@ public class FeeDetailsExtnAction extends GenericWorkFlowAction{
 	public String showFeeDetailsinRegistration(){
 		LOGGER.debug("Start showFeeDetailsinRegistration");
 		if(EGOVThreadLocals.getUserId()!=null){
-			List<String> roleList = bpaCommonExtnService.getRoleNamesByPassingUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			List<String> roleList = bpaCommonExtnService.getRoleNamesByPassingUserId((EGOVThreadLocals.getUserId()));
 			if(!BpaExtnRuleBook.getInstance().checkViewsforRoles(roleList,BpaConstants.FEEDETAILS)){
 				returnStream=returnStream.concat(" Fee Details");
 				return BpaConstants.NOACCESS;

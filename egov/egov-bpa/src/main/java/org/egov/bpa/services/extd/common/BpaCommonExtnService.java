@@ -336,7 +336,7 @@ public class BpaCommonExtnService extends ActionSupport  {
 		//phionix TODO: Intiger id into Long id
 	}
 	
-	public User getUserbyId(Integer userId) {
+	public User getUserbyId(Long userId) {
 		
 		return (User)persistenceService.find("from User where id=?",userId);
  	}
@@ -346,7 +346,7 @@ public class BpaCommonExtnService extends ActionSupport  {
 	 public String getUserRolesForLoggedInUser(){
 		 
 		 String userRole="";
-		 User user = getUserbyId(Integer.parseInt(EGOVThreadLocals.getUserId()));
+		 User user = getUserbyId((EGOVThreadLocals.getUserId()));
 			if (user != null) {
 			/*	for (UserRole role : user.getUserRoles()) {
 					if(role!=null){
@@ -359,7 +359,7 @@ public class BpaCommonExtnService extends ActionSupport  {
 			return userRole;
 			}
 	
-	public List<String> getRoleNamesByPassingUserId(Integer currUserid) {
+	public List<String> getRoleNamesByPassingUserId(Long currUserid) {
 		User user = getUserbyId(currUserid); //(User)persistenceService.find("from User where id=?",currUserid);
 		List<String> roleList = new ArrayList<String>();
 		for(Role role : user.getRoles())
@@ -899,7 +899,7 @@ public class BpaCommonExtnService extends ActionSupport  {
 		 List<DocumentHistoryExtn>  docHistoryList=null;
 			if(registrationId!=null){
 				if( isUserMappedToSurveyorRole()){ 
-					docHistoryList= persistenceService.findAllBy("from DocumentHistoryExtn where registrationId=? and createdUser.id=? order by id desc",registrationId,Integer.valueOf(EGOVThreadLocals.getUserId()));
+					docHistoryList= persistenceService.findAllBy("from DocumentHistoryExtn where registrationId=? and createdUser.id=? order by id desc",registrationId,(EGOVThreadLocals.getUserId()));
 					return docHistoryList;
 				}
 				else{
@@ -981,7 +981,7 @@ public class BpaCommonExtnService extends ActionSupport  {
 		
 	public Boolean isUserMappedToSurveyorRole() {
 		if(EGOVThreadLocals.getUserId()!=null){
-			User user =getUserbyId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			User user =getUserbyId( (EGOVThreadLocals.getUserId()));
 			/*for(Role role : user.getRoles())
 				if(role.getRoleName()!=null && role.getRoleName().equalsIgnoreCase(BpaConstants.PORTALUSERSURVEYORROLE))
 				{
@@ -1137,14 +1137,14 @@ public class BpaCommonExtnService extends ActionSupport  {
 
 		private InspectionExtn checkIfRegistrationIsInspected(RegistrationExtn registration,Boolean flag) {
 			if(isUserMappedToAeOrAeeRole()){
-				return (InspectionExtn) persistenceService.find("from InspectionExtn ins where ins.registration.id=? and isinspected=? and inspectedBy.id=?",registration.getId(),flag,Integer.valueOf(EGOVThreadLocals.getUserId()));
+				return (InspectionExtn) persistenceService.find("from InspectionExtn ins where ins.registration.id=? and isinspected=? and inspectedBy.id=?",registration.getId(),flag, (EGOVThreadLocals.getUserId()));
 			} 
 			return null;
 		}
 		
 		public Boolean isUserMappedToAeOrAeeRole() {
 			if(EGOVThreadLocals.getUserId()!=null){
-				User user = getUserbyId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+				User user = getUserbyId( (EGOVThreadLocals.getUserId()));
 				for(Role role : user.getRoles())
 					if(role.getName()!=null && (role.getName().equalsIgnoreCase(BpaConstants.BPAAEROLE) || 
 							role.getName().equalsIgnoreCase(BpaConstants.BPAAEEROLE)))
@@ -2383,7 +2383,7 @@ return siteInspectionDatesList;
 		 public List<DocumentHistoryExtn> getRegnDocumentHistoryObjectForAEorAEE(RegistrationExtn registrationId){
 			 List<DocumentHistoryExtn>  docHistoryList=null;
 				if(registrationId!=null && isUserMappedToAeOrAeeRole()){ 
-					docHistoryList= persistenceService.findAllBy("from DocumentHistoryExtn where registrationId=? and createdUser.id=? order by id desc",registrationId,Integer.valueOf(EGOVThreadLocals.getUserId()));
+					docHistoryList= persistenceService.findAllBy("from DocumentHistoryExtn where registrationId=? and createdUser.id=? order by id desc",registrationId, (EGOVThreadLocals.getUserId()));
 					return docHistoryList;
 				}
 				

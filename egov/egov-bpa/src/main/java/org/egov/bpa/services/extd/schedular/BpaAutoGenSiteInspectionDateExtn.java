@@ -116,7 +116,7 @@ public class BpaAutoGenSiteInspectionDateExtn  extends AbstractQuartzJob{
 						inspection.setInspectionDate(nextInspectionDate);
 						inspection.setRegistration(regnObject);
 						inspectionList.add(inspection);
-						inspectionExtnService.save(inspection, bpaCommonExtnService.getUserbyId(Integer.parseInt(EGOVThreadLocals.getUserId()))
+						inspectionExtnService.save(inspection, bpaCommonExtnService.getUserbyId((EGOVThreadLocals.getUserId()))
 							, null, Boolean.FALSE, bpaCommonExtnService.getstatusbyCode(BpaConstants.INSPECTIONSCHEDULED));
 					 bpaCommonExtnService.createStatusChange(regnObject,regnObject.getEgwStatus());
 				}

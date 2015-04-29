@@ -368,7 +368,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 		{
 			userRole=BpaConstants.PORTALUSERSURVEYORROLE;
 		}
-		User user = bpaCommonExtnService.getUserbyId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		User user = bpaCommonExtnService.getUserbyId((EGOVThreadLocals.getUserId()));
 		if(workFlowAction==null && user!=null ){//&& user.getIsPortalUser()==Boolean.TRUE))
 			//Phionix TODO
 			loggedInUserActions();
@@ -622,7 +622,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 		
 		docHistory.setRegistrationId(registration);
 	
-		User LoggedInuser = bpaCommonExtnService.getUserbyId(Integer.parseInt(EGOVThreadLocals.getUserId()));
+		User LoggedInuser = bpaCommonExtnService.getUserbyId((EGOVThreadLocals.getUserId()));
 		
 		if(LoggedInuser!=null)
 		{
@@ -1034,8 +1034,8 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 		//FIFO for AE/AEE inbox objects - Objects which are in Registered state
 		// Commented for time being. EE level is removed from workflow
 		/*if(registration.getCurrentState()!=null && registration.getCurrentState().getValue().equalsIgnoreCase(BpaConstants.APPLICATIONREGISTERED)){
-			List<Position> pos = eisService.getPositionsForUser(Integer.valueOf(EGOVThreadLocals.getUserId()), new Date());
-			RegistrationExtn firstInboxItem = (RegistrationExtn) bpaCommonExtnService.getFirstWorkflowItemForType(pos,Integer.valueOf(EGOVThreadLocals.getUserId()),RegistrationExtn.class.getSimpleName(),
+			List<Position> pos = eisService.getPositionsForUser((EGOVThreadLocals.getUserId()), new Date());
+			RegistrationExtn firstInboxItem = (RegistrationExtn) bpaCommonExtnService.getFirstWorkflowItemForType(pos,(EGOVThreadLocals.getUserId()),RegistrationExtn.class.getSimpleName(),
 					BpaConstants.APPLICATIONREGISTERED+","+registration.getServiceType().getId());
 			if (registration.getState() != null && firstInboxItem!=null
 					&& registration.getState().getCreatedDate().after(firstInboxItem.getState().getCreatedDate())) {
@@ -1091,7 +1091,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 			setMode(BpaConstants.MODENOEDIT);
 		}
 		if (EGOVThreadLocals.getUserId() != null) {
-			List<String> roleList = bpaCommonExtnService.getRoleNamesByPassingUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			List<String> roleList = bpaCommonExtnService.getRoleNamesByPassingUserId((EGOVThreadLocals.getUserId()));
 			if(!BpaExtnRuleBook.getInstance().checkViewsforRoles(roleList,"registrationdetails")){
 				 setMode(BpaConstants.MODENOEDIT); 
 			} 					
@@ -1790,7 +1790,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 	public void loggedInUserActions(){
 		List<String> roleList = new ArrayList<String>();
 		if(EGOVThreadLocals.getUserId()!=null){
-			roleList = bpaCommonExtnService.getRoleNamesByPassingUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));				
+			roleList = bpaCommonExtnService.getRoleNamesByPassingUserId((EGOVThreadLocals.getUserId()));				
 			}
 		
 		registration=registerBpaExtnService.getRegistrationById(getRegistrationId()); 
@@ -1798,7 +1798,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 			String ServType = registration.getServiceType().getCode();
 			if(registration.getEgwStatus()!=null && (registration.getEgwStatus().getCode().equals(BpaConstants.CREATEDLETTERTOPARTY) ||
 				registration.getEgwStatus().getCode().equals(BpaConstants.CMDACREATEDLETTERTOPARTY))){
-			//roleList = bpaCommonService.getRoleNamesByPassingUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			//roleList = bpaCommonService.getRoleNamesByPassingUserId((EGOVThreadLocals.getUserId()));
 			showActions=  BpaExtnRuleBook.getInstance().getActionsByRoles(roleList,registration.getEgwStatus());
 		}else if(registration.getEgwStatus()!=null&&registration.getEgwStatus().getCode().equals(BpaConstants.UNDERREJECTION)||getAdditionalMode()!=null&&getAdditionalMode().equals("rejection initiated")){
 			showActions=new ArrayList();
@@ -2271,7 +2271,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 		public String showExistingLetterToPartyDetails(){
 
 			if(EGOVThreadLocals.getUserId()!=null){
-				List<String> roleList = bpaCommonExtnService.getRoleNamesByPassingUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+				List<String> roleList = bpaCommonExtnService.getRoleNamesByPassingUserId((EGOVThreadLocals.getUserId()));
 				if(!BpaExtnRuleBook.getInstance().checkViewsforRoles(roleList,"lettertoparty")){
 					returnStream=returnStream.concat(" Letter To Party Details");
 					return "NOACCESS";
@@ -2290,7 +2290,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 		public String showExistingLetterToPartyCMDADetails(){
 
 			if(EGOVThreadLocals.getUserId()!=null){
-				List<String> roleList = bpaCommonExtnService.getRoleNamesByPassingUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+				List<String> roleList = bpaCommonExtnService.getRoleNamesByPassingUserId((EGOVThreadLocals.getUserId()));
 				if(!BpaRuleBook.getInstance().checkViewsforRoles(roleList,"lettertoparty")){
 					returnStream=returnStream.concat(" Letter To Party Details");
 					return "NOACCESS";
@@ -2555,7 +2555,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 			setMode(BpaConstants.MODEREJECT);
 			setAdditionalRule(BpaConstants.ADDITONALRULEREJECTBPA);
 			registration.setAdditionalRule(BpaConstants.ADDITONALRULEREJECTBPA);
-			List<String> roleList = bpaCommonExtnService.getRoleNamesByPassingUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			List<String> roleList = bpaCommonExtnService.getRoleNamesByPassingUserId((EGOVThreadLocals.getUserId()));
 			if(getRejectionMode()==null||(getRejectionMode()!=null&&!getRejectionMode().equals(BpaConstants.MODEFROMMODIFY))){
 				// Changed from "rejection initiated" to "Forwarded to AE" as part of workflow change for Reject Unconsidered
 				registration.setAdditionalState(BpaConstants.WORKFLOWSTATUSFORWARDEDTOAEORAEE);  
@@ -2579,7 +2579,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction{
 			/*
 			 * To validate For this registration site inspection is added by official users..Before Proceeding Create LetterToParty 
 			 */
-			User LoggedInuser = bpaCommonExtnService.getUserbyId(Integer.parseInt(EGOVThreadLocals.getUserId()));
+			User LoggedInuser = bpaCommonExtnService.getUserbyId((EGOVThreadLocals.getUserId()));
 			String UserRole=bpaCommonExtnService.getUserRolesForLoggedInUser();
 			if(!UserRole.contains(BpaConstants.PORTALUSERSURVEYORROLE) && LoggedInuser!=null)
 			{

@@ -84,14 +84,14 @@ public class InspectionExtnService extends PersistenceService<InspectionExtn, Lo
 	
 	public List<InspectionExtn> getInspectionListforRegistrationObject(RegistrationExtn registrationObj) {
 		if(isUserMappedToAeOrAeeRole())
-			return (List<InspectionExtn>) findAllBy("from InspectionExtn where registration=? and isInspected=? and inspectedBy.id=? order by id desc,inspectionDate desc",registrationObj,Boolean.FALSE,Integer.valueOf(EGOVThreadLocals.getUserId()));
+			return (List<InspectionExtn>) findAllBy("from InspectionExtn where registration=? and isInspected=? and inspectedBy.id=? order by id desc,inspectionDate desc",registrationObj,Boolean.FALSE,(EGOVThreadLocals.getUserId()));
 		else
 			return (List<InspectionExtn>) findAllBy("from InspectionExtn where registration=? and isInspected=? order by id desc,inspectionDate desc",registrationObj,Boolean.FALSE);
 	}
 		
 	public Boolean isUserMappedToAeOrAeeRole() {
 		if(EGOVThreadLocals.getUserId()!=null){
-			User user = getUserbyId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			User user = getUserbyId((EGOVThreadLocals.getUserId()));
 			for(Role role : user.getRoles())
 				if(role.getName()!=null && (role.getName().equalsIgnoreCase(BpaConstants.BPAAEROLE) || 
 						role.getName().equalsIgnoreCase(BpaConstants.BPAAEEROLE)))
@@ -138,7 +138,7 @@ public class InspectionExtnService extends PersistenceService<InspectionExtn, Lo
 		return inspection;
 	}
 
-	public User getUserbyId(Integer userId) {
+	public User getUserbyId(Long userId) {
 		
 		return (User)persistenceService.find("from UserImpl where id=?",userId);
 	}
@@ -211,7 +211,7 @@ public List<CheckListDetailsExtn> getCheckListByServiceAndType(Long serviceTypeI
 	
 	public List<InspectionExtn> getSiteInspectionListforRegistrationObject(RegistrationExtn registrationObj) {
 		if(isUserMappedToAeOrAeeRole())
-			return (List<InspectionExtn>) findAllBy("from InspectionExtn where registration=? and isInspected=? and inspectedBy.id=? order by id desc,inspectionDate desc",registrationObj,Boolean.TRUE,Integer.valueOf(EGOVThreadLocals.getUserId()));
+			return (List<InspectionExtn>) findAllBy("from InspectionExtn where registration=? and isInspected=? and inspectedBy.id=? order by id desc,inspectionDate desc",registrationObj,Boolean.TRUE,(EGOVThreadLocals.getUserId()));
 		else
 			return (List<InspectionExtn>) findAllBy("from InspectionExtn where registration=? and isInspected=? order by id desc,inspectionDate desc",registrationObj,Boolean.TRUE);
 	}

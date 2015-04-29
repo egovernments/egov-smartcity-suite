@@ -758,7 +758,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 				{	
 					String fileLocationName=bpaCommonExtnService.getAppconfigValueResult(BpaConstants.BPAMODULENAME,BpaConstants.BPA_FILE_UPLOAD_LOCATION,null);
 					File mainDir=new File(fileLocationName);
-					 UserImpl usr = (UserImpl) getPersistenceService().getSession().load(UserImpl.class, Integer.valueOf(EGOVThreadLocals.getUserId()));
+					 UserImpl usr = (UserImpl) getPersistenceService().getSession().load(UserImpl.class, (EGOVThreadLocals.getUserId()));
 						
 					for(RegistrationChecklistExtn checklistObj:registration.getRegistrationChecklistSet()){
 						
@@ -932,7 +932,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 	
 	public void getMobileNumberForLoggedInUserId (){
 		
-	User user = bpaCommonExtnService.getUserbyId(Integer.parseInt(EGOVThreadLocals.getUserId()));
+	User user = bpaCommonExtnService.getUserbyId((EGOVThreadLocals.getUserId()));
 		if (user != null) {
 			mobileNumber=user.getMobileNumber();
 			emailId=user.getEmailId();
@@ -1073,7 +1073,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 
 	public Boolean isUserMappedToSurveyorRole() {
 		if(EGOVThreadLocals.getUserId()!=null){
-			User user = bpaCommonExtnService.getUserbyId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			User user = bpaCommonExtnService.getUserbyId((EGOVThreadLocals.getUserId()));
 			/*for(Role role : user.getRoles())
 				if(role.getRoleName()!=null && role.getRoleName().equalsIgnoreCase(BpaConstants.PORTALUSERSURVEYORROLE))
 				{
@@ -1139,7 +1139,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
  		}
  		List<String> roleList = new ArrayList<String>();
 		if(EGOVThreadLocals.getUserId()!=null){
-			roleList = bpaCommonExtnService.getRoleNamesByPassingUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));				
+			roleList = bpaCommonExtnService.getRoleNamesByPassingUserId((EGOVThreadLocals.getUserId()));				
 		}
 		showActions=  BpaExtnRuleBook.getInstance().getActionsByRoles(roleList,registration.getEgwStatus());
 		

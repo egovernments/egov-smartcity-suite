@@ -115,7 +115,7 @@ public class SearchExtnAction extends SearchFormAction{
 
 	private void setActionsByRoles(List<RegistrationExtn>  registrationSearchList) {
 	
-		List<String> roleList = bpaCommonExtnService.getRoleNamesByPassingUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		List<String> roleList = bpaCommonExtnService.getRoleNamesByPassingUserId((EGOVThreadLocals.getUserId()));
 		
 		prepareActionList(registrationSearchList, roleList);
 	}

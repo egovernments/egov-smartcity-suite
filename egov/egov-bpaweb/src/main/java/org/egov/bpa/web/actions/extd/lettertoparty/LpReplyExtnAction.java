@@ -103,7 +103,7 @@ public class LpReplyExtnAction extends BaseFormAction{
 	private Long letterToPartyId;
 	public void prepare() {
 		super.prepare();
-		loginUser=inspectionExtnService.getUserbyId(Integer.parseInt(EGOVThreadLocals.getUserId()));
+		loginUser=inspectionExtnService.getUserbyId((EGOVThreadLocals.getUserId()));
 		
 		if(registration!=null && registration.getRequest_number()!=null) {
 			registration=registerBpaExtnService.getRegistrationByPassingRequestNumber(registration.getRequest_number());

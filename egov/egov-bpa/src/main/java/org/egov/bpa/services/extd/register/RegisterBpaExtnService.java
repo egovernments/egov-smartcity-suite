@@ -726,7 +726,7 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 					//registration = (RegistrationExtn) registrationWorkflowExtnService.start(registration, position, "Bpa Registration created.");
 				}else
 				{
-					Position pos = bpaPimsExtnFactory.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+					Position pos = bpaPimsExtnFactory.getPositionByUserId((EGOVThreadLocals.getUserId()));
 					//LOGGER.info("BPA Registration Service workflow service----->"+ Integer.valueOf(EGOVThreadLocals.getUserId()));
 					//registration = (RegistrationExtn) registrationWorkflowExtnService.start(registration, pos, "Bpa Registration created.");
 					//TODO:Commenting WorkflowService is not using and 1 level workflow they are using
@@ -947,7 +947,7 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 			}
 			}
 			registrationObj.setAdditionalRule(BpaConstants.LETTERTOPARTYDETAILS);
-			User LoggedInuser = bpaCommonExtnService.getUserbyId(Integer.parseInt(EGOVThreadLocals.getUserId()));
+			User LoggedInuser = bpaCommonExtnService.getUserbyId((EGOVThreadLocals.getUserId()));
 				if(LoggedInuser!=null)
 				{
 					letterToParty.setCreatedBy(LoggedInuser);
@@ -1375,7 +1375,7 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 				 letterToParty.getRegistration().setEgwStatus(bpaCommonExtnService.getstatusbyCode(BpaConstants.CREATEDCMDALETTERTOPARTY));
 		}
 		registrationObj.setAdditionalRule(BpaConstants.LETTERTOCMDA);
-		User LoggedInuser = bpaCommonExtnService.getUserbyId(Integer.parseInt(EGOVThreadLocals.getUserId()));
+		User LoggedInuser = bpaCommonExtnService.getUserbyId((EGOVThreadLocals.getUserId()));
 			if(LoggedInuser!=null)
 			{
 				letterToParty.setCreatedBy(LoggedInuser);

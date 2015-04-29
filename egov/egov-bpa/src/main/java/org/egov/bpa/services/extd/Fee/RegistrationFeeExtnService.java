@@ -288,7 +288,7 @@ private RegistrationFeeExtn createWorkflow(RegistrationFeeExtn registrationFee,S
 	try
 	{	
 		if(registrationFee.getState()== null){
-			Position pos = bpaPimsExtnFactory.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));			
+			Position pos = bpaPimsExtnFactory.getPositionByUserId((EGOVThreadLocals.getUserId()));			
 		//	registrationFee = (RegistrationFeeExtn) registrationFeeWorkflowExtnService.start(registrationFee, pos, "Revised Fee created.");
 		}
 		 

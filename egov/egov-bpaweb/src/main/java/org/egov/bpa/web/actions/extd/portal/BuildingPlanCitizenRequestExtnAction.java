@@ -130,7 +130,7 @@ public class BuildingPlanCitizenRequestExtnAction extends BaseFormAction {
 	}
 	public String validateForm(Boolean autoDcrCheckRequired){
 		
-		LOGGER.info("   userid "+Integer.valueOf(EGOVThreadLocals.getUserId()));
+		LOGGER.info("   userid "+(EGOVThreadLocals.getUserId()));
 		// Get citizen details, by passing login user id.
 	/*	EPortalUser citizen= null;
 		if(portalIntegrationService!=null){
