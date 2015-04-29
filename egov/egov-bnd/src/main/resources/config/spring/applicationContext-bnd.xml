@@ -91,16 +91,8 @@
 	    <property name="type" value="org.egov.commons.EgwSatuschange"/>
      </bean>
 
-	<bean id="bndFeeBillable" class="org.egov.bnd.services.bill.BndFeeBillable" scope="prototype">
- 		 <property name="bndCommonService" ref="bndCommonService"/>
- 		 <property name="birthRegistrationService" ref="birthRegistrationService"/>
- 		 <property name="deathRegistrationService" ref="deathRegistrationService"/>
- 		 <property name="nonAvailableRegService" ref="nonAvailableRegService"/>
- 		 
- 	</bean>
-	<bean id="birthRegistrationWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" lazy-init="false" scope="prototype">
+	<bean id="birthRegistrationWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService" lazy-init="false" scope="prototype">
 		<constructor-arg ref="persistenceService"/>
-		<constructor-arg value="org.egov.bnd.model.BirthRegistration"/>
 	</bean>
 	
 	 <bean id="generateCertificateService" class="org.egov.bnd.services.common.GenerateCertificateService" >
@@ -121,17 +113,6 @@
 	    <property name="bndCommonService" ref="bndCommonService"/>
 	 </bean>
 	 
-	 <bean id="feeCollectionService" class="org.egov.bnd.services.bill.FeeCollectionService" parent="persistenceService">
-	    <property name="type" value="org.egov.bnd.model.FeeCollection"/>
-	     <property name="persistenceService" ref="persistenceService"/>
-	     <property name="numberGenerationService" ref="numberGenerationService"/>
-	  </bean>
-	  <bean id="feeCollectionServiceImpl" class="org.egov.bnd.services.bill.FeeCollectionServiceImpl" scope="prototype">
- 		<property name="persistenceService" ref="persistenceService"/>
- 		 <property name="bndCommonService" ref="bndCommonService"/>
- 		 <property name="feeCollectionService" ref="feeCollectionService"/>
-	</bean>
-	
      <bean id="searchService" class="org.egov.bnd.services.search.SearchService" parent="persistenceService" >
 		<property name="type" value="org.egov.bnd.model.Registration" />  
 		<property name="persistenceService" ref="persistenceService"/>
@@ -147,9 +128,8 @@
 	 	  <property name="persistenceService" ref="persistenceService"/>
 	</bean>	
 	
-    <bean id="deathRegistrationWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" lazy-init="false" scope="prototype">
+    <bean id="deathRegistrationWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService" lazy-init="false" scope="prototype">
 		<constructor-arg ref="persistenceService"/>
-		<constructor-arg value="org.egov.bnd.model.DeathRegistration"/>
 	</bean>
 	
     <bean id="deathRegistrationService" class="org.egov.bnd.services.registration.DeathRegistrationService" parent="persistenceService">
