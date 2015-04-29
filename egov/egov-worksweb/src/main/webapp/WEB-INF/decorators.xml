@@ -2,9 +2,6 @@
     <excludes>
         <pattern>/40*.jsp</pattern>       	
         <pattern>/commonyui/egov/genericScreenWithLeaf.jsp</pattern>
-        <pattern>/depositWorks/roadCutApprovalLetter!ajaxPrint*</pattern>
-        <pattern>/depositWorks/roadCut!exportHtml*</pattern>
-        <pattern>/depositWorks/utilizationCertificate!exportHtml*</pattern>
         <pattern>/mobile/upload*</pattern>
         <pattern>/commonyui/egov/menutree.jsp</pattern>
         <pattern>/estimate/abstractEstimate!maps*</pattern>
