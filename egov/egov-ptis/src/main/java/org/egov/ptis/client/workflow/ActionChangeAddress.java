@@ -48,7 +48,7 @@ public class ActionChangeAddress extends WorkflowDetails {
 
 	public ActionChangeAddress() {}
 
-	public  ActionChangeAddress(PropertyImpl propertyModel, WorkflowBean workflowBean, Integer loggedInUserId) {
+	public  ActionChangeAddress(PropertyImpl propertyModel, WorkflowBean workflowBean, Long loggedInUserId) {
 		super(propertyModel, workflowBean, loggedInUserId);
 	}
 

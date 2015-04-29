@@ -49,7 +49,7 @@ public class StepForward extends WorkflowActionStep {
 	public StepForward() {
 	}
 
-	public StepForward(PropertyImpl propertyModel, Integer userId,
+	public StepForward(PropertyImpl propertyModel, Long userId,
 			String comments) {
 		super(propertyModel, userId, comments);
 	}

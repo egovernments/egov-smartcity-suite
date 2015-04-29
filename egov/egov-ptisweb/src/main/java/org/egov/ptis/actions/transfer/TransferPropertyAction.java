@@ -95,8 +95,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
 @Validations
-/*@Results({ @Result(name = "workFlowError", type = ServletActionRedirectResult.class, value = "workflow", params = {
-		"namespace", "/workflow", "method", "workFlowError" }) })*/
+
 public class TransferPropertyAction extends WorkflowAction {
 
 	private static final String ACK = "ack";
@@ -611,7 +610,7 @@ public class TransferPropertyAction extends WorkflowAction {
 		}
 
 		workflowAction = propertyTaxUtil.initWorkflowAction(property, workflowBean,
-				Integer.valueOf(EGOVThreadLocals.getUserId()), eisCommonService);
+				EGOVThreadLocals.getUserId(), eisCommonService);
 
 		if (workflowAction.isNoWorkflow()) {
 			startWorkFlow();

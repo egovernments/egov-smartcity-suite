@@ -122,8 +122,7 @@ public class BulkBillGenerationJob extends AbstractQuartzJob implements
 						.createQuery(
 								"from BasicPropertyImpl bp WHERE bp.upicNo = ?")
 						.setString(0, indexNumber).uniqueResult();
-				billService.generateBill(basicProperty,
-						Integer.valueOf(EGOVThreadLocals.getUserId()));
+				billService.generateBill(basicProperty,EGOVThreadLocals.getUserId().intValue());
 				basicProperty.setIsBillCreated('Y');
 				noOfBillsGenerated++;
 			} catch (Exception e) {

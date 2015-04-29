@@ -100,9 +100,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
-@Validation()
-/*@Results({ @Result(name = "workFlowError", type = ServletActionRedirectResult.class, value = "workflow", params = {
-		"namespace", "/workflow", "method", "workFlowError" }) })*/
+
 public class DeactivatePropertyAction extends WorkflowAction {
 
 	private BasicProperty basicProp;
@@ -493,7 +491,7 @@ public class DeactivatePropertyAction extends WorkflowAction {
 		}
 		
 		workflowAction = propertyTaxUtil.initWorkflowAction(property, workflowBean,
-				Integer.valueOf(EGOVThreadLocals.getUserId()), eisCommonService);
+				EGOVThreadLocals.getUserId(), eisCommonService);
 		
 		if (workflowAction.isNoWorkflow()) {
 			startWorkFlow();

@@ -48,7 +48,7 @@ public class ActionDeactivate extends WorkflowDetails {
 
 	public ActionDeactivate() {}
 
-	public  ActionDeactivate(PropertyImpl propertyModel, WorkflowBean workflowBean, Integer loggedInUserId) {
+	public  ActionDeactivate(PropertyImpl propertyModel, WorkflowBean workflowBean, Long loggedInUserId) {
 		super(propertyModel, workflowBean, loggedInUserId);
 	}
 

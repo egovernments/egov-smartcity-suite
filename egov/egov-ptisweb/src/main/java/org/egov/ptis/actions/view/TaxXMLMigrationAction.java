@@ -116,7 +116,7 @@ public class TaxXMLMigrationAction extends PropertyTaxBaseAction implements Serv
 		if (session.getAttribute("com.egov.user.LoginUserId") == null) {
 			User user = UserService.getUserByUsername(PropertyTaxConstants.CITIZENUSER);
 			userId = user.getId();
-			EGOVThreadLocals.setUserId(userId.toString());
+			EGOVThreadLocals.setUserId(userId);
 			session.setAttribute("com.egov.user.LoginUserName", user.getUsername());
 		}
 		

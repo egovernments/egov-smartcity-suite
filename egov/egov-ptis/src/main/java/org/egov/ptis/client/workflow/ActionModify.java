@@ -48,7 +48,7 @@ public class ActionModify extends WorkflowDetails {
 
 	public ActionModify() {}
 
-	public ActionModify(PropertyImpl propertyModel, WorkflowBean workflowBean, Integer loggedInUserId) {
+	public ActionModify(PropertyImpl propertyModel, WorkflowBean workflowBean, Long loggedInUserId) {
 		super(propertyModel, workflowBean, loggedInUserId);
 	}
 

@@ -89,7 +89,7 @@ public class CollectionAction extends BaseFormAction {
 		LOGGER.debug("Entered into prepare method");
 		User usr = (User)userService.getUserByUsername("citizenUser");
 		setUserId(usr.getId().longValue());
-		EGOVThreadLocals.setUserId(usr.getId().toString());
+		EGOVThreadLocals.setUserId(usr.getId());
 		LOGGER.debug("Exit from prepare method");
 	}
 

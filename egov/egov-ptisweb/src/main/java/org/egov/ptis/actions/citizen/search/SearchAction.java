@@ -113,7 +113,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 		//FIX ME
 		User user = null;
 		userId = user.getId();
-		EGOVThreadLocals.setUserId(userId.toString());
+		EGOVThreadLocals.setUserId(userId);
 		session.setAttribute("com.egov.user.LoginUserName", user.getUsername());
 		LOGGER.debug("Exit from prepare method");
 	}

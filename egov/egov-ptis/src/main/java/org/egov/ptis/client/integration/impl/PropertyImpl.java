@@ -103,7 +103,7 @@ public class PropertyImpl extends Property {
 
 	@Override
 	protected void checkAuthorization() {
-		String userId = EGOVThreadLocals.getUserId();
+		Long userId = EGOVThreadLocals.getUserId();
 		if (userId == null) {
 			throw new EGOVRuntimeException(" User is null.Please check ");
 		}

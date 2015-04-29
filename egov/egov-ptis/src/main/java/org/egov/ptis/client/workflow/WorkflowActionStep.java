@@ -50,14 +50,14 @@ public abstract class WorkflowActionStep {
 
 	protected PropertyImpl propertyModel;
 	protected EisCommonsService eisCommonsService;
-	protected Integer userId;
+	protected Long userId;
 	protected PropertyTaxUtil propertyTaxUtil;
 	protected String actionName;
 	private String comments;
 
 	public WorkflowActionStep() {}
 
-	public WorkflowActionStep(PropertyImpl propertyModel, Integer userId, String comments) {
+	public WorkflowActionStep(PropertyImpl propertyModel, Long userId, String comments) {
 		this.propertyModel = propertyModel;
 		this.userId = userId;
 		this.comments = comments;

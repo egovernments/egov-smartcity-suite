@@ -49,7 +49,7 @@ public class StepReject extends WorkflowActionStep {
 	public StepReject() {
 	}
 
-	public StepReject(PropertyImpl propertyModel, Integer userId,
+	public StepReject(PropertyImpl propertyModel, Long userId,
 			String comments) {
 		super(propertyModel, userId, comments);
 	}

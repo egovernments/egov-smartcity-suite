@@ -1098,7 +1098,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		}
 		
 		workflowAction = propertyTaxUtil.initWorkflowAction(property, workflowBean,
-				Integer.valueOf(EGOVThreadLocals.getUserId()), eisCommonService);
+				EGOVThreadLocals.getUserId(), eisCommonService);
 		
 		if (workflowAction.isNoWorkflow()) {
 			startWorkFlow();

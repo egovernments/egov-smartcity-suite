@@ -2325,7 +2325,7 @@ public class PropertyTaxUtil {
 		return departments;
 	}
 
-	public DesignationMaster getDesignationForUser(Integer userId) {
+	public DesignationMaster getDesignationForUser(Long userId) {
 		Position position = null;
 		DesignationMaster designation = null;
 		if (userId != null && userId.intValue() != 0) {
@@ -3949,7 +3949,7 @@ public class PropertyTaxUtil {
 	}
 
 	public WorkflowDetails initWorkflowAction(PropertyImpl propertyModel,
-			WorkflowBean workflowBean, Integer loggedInUserId, EisCommonService eisCommonService) {
+			WorkflowBean workflowBean, Long loggedInUserId, EisCommonService eisCommonService) {
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Entered into initWorkflowAction");

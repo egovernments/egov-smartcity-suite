@@ -48,7 +48,7 @@ public class ActionBifurcate extends WorkflowDetails {
 
 	public ActionBifurcate() {}
 
-	public  ActionBifurcate(PropertyImpl propertyModel, WorkflowBean workflowBean, Integer loggedInUserId) {
+	public  ActionBifurcate(PropertyImpl propertyModel, WorkflowBean workflowBean, Long loggedInUserId) {
 		super(propertyModel, workflowBean, loggedInUserId);
 	}
 

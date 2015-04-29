@@ -180,7 +180,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		ReportOutput reportOutput = null;
 
 		if (egBill == null) {
-			reportOutput = getBillService().generateBill(basicProperty, Integer.valueOf(EGOVThreadLocals.getUserId()));
+			reportOutput = getBillService().generateBill(basicProperty, EGOVThreadLocals.getUserId().intValue());
 			basicProperty.setIsBillCreated(STATUS_BILL_CREATED);
 			basicProperty.setBillCrtError(STRING_EMPTY);
 		} else {
@@ -523,7 +523,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 					.withOwner(nextPosition)
 					.withComments(workflowBean.getComments());
 		} else if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(wflowAction)) {
-			DesignationMaster nextDesn = propertyTaxUtil.getDesignationForUser(workflowBean.getApproverUserId());
+			DesignationMaster nextDesn = propertyTaxUtil.getDesignationForUser(workflowBean.getApproverUserId().longValue());
 			nextStateValue = nextStateValue.append(nextDesn.getDesignationName()).append("_")
 					.append(WF_STATE_APPROVAL_PENDING);
 			//property.changeState(nextStateValue.toString(), nextPosition, workflowBean.getComments());

@@ -595,7 +595,7 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 		LOGGER.debug("Entered into setUserInfo");
 
 		//UserDAO userDao = new UserDAO();
-		Integer userId = Integer.valueOf(propertyTaxUtil.getLoggedInUser(getSession()).getId().intValue());
+		Long userId = propertyTaxUtil.getLoggedInUser(getSession()).getId();
 		LOGGER.debug("setUserInfo: Logged in userId" + userId);
 		DesignationMaster desgn = propertyTaxUtil.getDesignationForUser(userId);
 		setUserDesgn(desgn.getDesignationName());

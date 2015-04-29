@@ -48,7 +48,7 @@ public class ActionAmalgmate extends WorkflowDetails {
 
 	public ActionAmalgmate() {}
 
-	public ActionAmalgmate(PropertyImpl propertyModel, WorkflowBean workflowBean, Integer loggedInUserId) {
+	public ActionAmalgmate(PropertyImpl propertyModel, WorkflowBean workflowBean, Long loggedInUserId) {
 		super(propertyModel, workflowBean, loggedInUserId);
 	}
 

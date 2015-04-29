@@ -73,13 +73,13 @@ public abstract class WorkflowDetails {
 
 	private PropertyImpl propertyModel;
 	private WorkflowBean workflowBean;
-	private Integer loggedInUserId;
+	private Long loggedInUserId;
 
 	public WorkflowDetails() {
 	}
 
 	public WorkflowDetails(PropertyImpl propertyModel, WorkflowBean workflowBean,
-			Integer loggedInUserId) {
+			Long loggedInUserId) {
 		this.propertyModel = propertyModel;
 		this.workflowBean = workflowBean;
 		this.loggedInUserId = loggedInUserId;
@@ -128,7 +128,7 @@ public abstract class WorkflowDetails {
 
 		LOGGER.debug("setWorkflowActionStep - actionStep=" + actionStep);
 
-		Integer nextStateUserId = getNextStateUserId(propertyModel, workflowBean);
+		Long nextStateUserId = getNextStateUserId(propertyModel, workflowBean);
 
 		if (nextStateUserId == null) {
 			LOGGER.debug("setWorkflowActionStep - nextStateUserId is NULL");
@@ -152,7 +152,7 @@ public abstract class WorkflowDetails {
 		LOGGER.debug("Exiting from setWorkflowActionStep");
 	}
 
-	private Integer getNextStateUserId(PropertyImpl propertyModel, WorkflowBean workflowBean) {
+	private Long getNextStateUserId(PropertyImpl propertyModel, WorkflowBean workflowBean) {
 		LOGGER.debug("Entered into getNextStateUserId, propertyModel=" + propertyModel);
 
 		if (workflowBean == null) {
@@ -171,23 +171,7 @@ public abstract class WorkflowDetails {
 
 		User workflowInitiater = getWorkflowInitiator(propertyModel);
 
-		/*
-		 * Integer createdUserId = propertyModel.getCreatedBy() == null ?
-		 * ((oldProperty == null || (oldProperty .getRemarks() != null &&
-		 * oldProperty.getRemarks().startsWith(STR_MIGRATED))) ? loggedInUserId
-		 * : oldProperty.getCreatedBy().getId()) :
-		 * propertyModel.getCreatedBy().getId();
-		 */
-
-		/*
-		 * Integer createdUserId = propertyModel.getCreatedBy() == null ?
-		 * (oldProperty.getRemarks() != null && oldProperty
-		 * .getRemarks().startsWith(STR_MIGRATED)) ? loggedInUserId :
-		 * oldProperty.getCreatedBy().getId() :
-		 * propertyModel.getCreatedBy().getId();
-		 */
-
-		Integer nextUserId = null;
+		Long nextUserId = null;
 
 		if (WFLOW_ACTION_NAME_TRANSFER.equalsIgnoreCase(action)
 				&& WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(step)) {
@@ -197,7 +181,7 @@ public abstract class WorkflowDetails {
 			nextUserId = (workflowInitiater == null ? loggedInUserId : Integer
 					.valueOf(workflowInitiater.getId().intValue()));
 		} else if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(step)) {
-			nextUserId = isApproverUserIdAvail() ? workflowBean.getApproverUserId() : null;
+			nextUserId = isApproverUserIdAvail() ? workflowBean.getApproverUserId().longValue() : null;
 		} else if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(step)) {
 			nextUserId = loggedInUserId;
 		}

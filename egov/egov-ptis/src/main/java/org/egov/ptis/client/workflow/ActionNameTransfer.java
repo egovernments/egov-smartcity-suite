@@ -48,7 +48,7 @@ public class ActionNameTransfer extends WorkflowDetails {
 
 	public ActionNameTransfer() {}
 
-	public ActionNameTransfer(PropertyImpl propertyModel, WorkflowBean workflowBean, Integer loggedInUserId) {
+	public ActionNameTransfer(PropertyImpl propertyModel, WorkflowBean workflowBean, Long loggedInUserId) {
 		super(propertyModel, workflowBean, loggedInUserId);
 	}
 

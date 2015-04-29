@@ -84,7 +84,7 @@ public class NoticeService {
 		ptNotice.setNoticeDate(new Date());
 		ptNotice.setNoticeNo(noticeNo);
 		ptNotice.setNoticeType(noticeType);
-		ptNotice.setUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		ptNotice.setUserId(EGOVThreadLocals.getUserId().intValue());
 		ptNotice.setBasicProperty(basicProperty);
 		ptNotice.setIsBlob('Y');
 		try {

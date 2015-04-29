@@ -52,7 +52,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
-import org.egov.infstr.client.filter.SetDomainJndiHibFactNames;
 import org.egov.ptis.domain.dao.property.NoticeDAO;
 import org.egov.ptis.notice.PtNotice;
 
@@ -70,7 +69,7 @@ public class SaveDocumentFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
 		NoticeDAO noticeDao = new NoticeDAO();
-		SetDomainJndiHibFactNames.setThreadLocals(request);
+		//SetDomainJndiHibFactNames.setThreadLocals(request);
 		// wrap the original response
 		HttpServletResponse newResponse = new ReplacementHttpServletResponse(
 				(HttpServletResponse) response);

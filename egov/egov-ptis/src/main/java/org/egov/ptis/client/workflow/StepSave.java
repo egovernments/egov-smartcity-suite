@@ -56,7 +56,7 @@ public class StepSave extends WorkflowActionStep {
 	public StepSave() {
 	}
 
-	public StepSave(PropertyImpl propertyModel, Integer userId, String comments) {
+	public StepSave(PropertyImpl propertyModel, Long userId, String comments) {
 		super(propertyModel, userId, comments);
 	}
 

@@ -49,7 +49,7 @@ public class StepApprove extends WorkflowActionStep {
 
 	public StepApprove() {}
 
-	public StepApprove(PropertyImpl propertyModel, Integer userId, String comments) {
+	public StepApprove(PropertyImpl propertyModel, Long userId, String comments) {
 		super(propertyModel, userId, comments);
 	}
 

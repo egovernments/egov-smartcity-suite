@@ -1580,8 +1580,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 
 		newProperty.setStatus(STATUS_WORKFLOW);
 		// Setting the property state to the objection workflow initiator
-		Position owner = eisCommonsService.getPositionByUserId(Integer.valueOf(objWfInitiator
-				.getId().toString()));
+		Position owner = eisCommonsService.getPositionByUserId(objWfInitiator.getId());
 		String desigName = owner.getDeptDesigId().getDesigId().getDesignationName();
 		String value = WFLOW_ACTION_NAME_MODIFY + ":" + desigName + "_" + WF_STATE_APPROVAL_PENDING;
 
@@ -2144,8 +2143,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		PropertyImpl newProperty = (PropertyImpl) oldProperty.createPropertyclone();
 
 		// Setting the property state to the objection workflow initiator
-		Position owner = eisCommonsService.getPositionByUserId(Integer.valueOf(initiater.getId()
-				.toString()));
+		Position owner = eisCommonsService.getPositionByUserId(initiater.getId());
 		String desigName = propertyTaxUtil.getDesignationName(initiater.getId());
 		String value = WFLOW_ACTION_NAME_MODIFY + ":" + desigName + "_" + WF_STATE_APPROVAL_PENDING;
 

@@ -48,7 +48,7 @@ public class ActionCreate  extends WorkflowDetails {
 
 	public ActionCreate() {}
 
-	public ActionCreate(PropertyImpl propertyModel, WorkflowBean workflowBean, Integer loggedInUserId) {
+	public ActionCreate(PropertyImpl propertyModel, WorkflowBean workflowBean, Long loggedInUserId) {
 		super(propertyModel, workflowBean, loggedInUserId);
 	}
 

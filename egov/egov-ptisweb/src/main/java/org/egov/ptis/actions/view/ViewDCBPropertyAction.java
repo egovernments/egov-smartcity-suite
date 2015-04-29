@@ -161,14 +161,14 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 		if (session.getAttribute("com.egov.user.LoginUserId") == null) {
 			User user = userService.getUserByUsername(CITIZENUSER);
 			userId = user.getId();
-			EGOVThreadLocals.setUserId(userId.toString());
+			EGOVThreadLocals.setUserId(userId);
 			session.setAttribute("com.egov.user.LoginUserName", user.getUsername()); 
 			
 			if (user != null) {
 				setCitizen(Boolean.TRUE);
 			}
 
-			EGOVThreadLocals.setUserId("27613");
+			EGOVThreadLocals.setUserId(27613l);
 			session.setAttribute("com.egov.user.LoginUserName", CITIZENUSER);
 			setCitizen(Boolean.TRUE);
 			
@@ -249,7 +249,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 		if (session.getAttribute("com.egov.user.LoginUserId") == null) {
 			User user = userService.getUserByUsername(CITIZENUSER);
 			userId = user.getId();
-			EGOVThreadLocals.setUserId(userId.toString());
+			EGOVThreadLocals.setUserId(userId);
 			session.setAttribute("com.egov.user.LoginUserName", user.getUsername());
 			if (user != null) {
 				setCitizen(Boolean.TRUE);
