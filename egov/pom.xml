@@ -30,6 +30,7 @@
         <module>egov-pgrweb</module>
         <module>egov-portalweb</module>
         <module>egov-ptisweb</module>
+        <module>egov-bndweb</module>
         <module>egov-ear</module>
     </modules>
 
