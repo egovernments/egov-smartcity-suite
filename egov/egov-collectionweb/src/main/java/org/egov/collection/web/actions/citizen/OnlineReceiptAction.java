@@ -635,7 +635,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         session = request.getSession();
 		
 		User user = collectionsUtil.getUserByUserName(CollectionConstants.CITIZEN_USER_NAME);
-		EGOVThreadLocals.setUserId(user.getId().toString());
+		EGOVThreadLocals.setUserId(user.getId());
 		session.setAttribute(CollectionConstants.SESSION_VAR_LOGIN_USER_NAME, user.getUsername());
 		
 		// populates model when request is from the billing system

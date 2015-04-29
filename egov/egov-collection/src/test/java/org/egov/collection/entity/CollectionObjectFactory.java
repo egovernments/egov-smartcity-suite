@@ -1702,7 +1702,7 @@ public class CollectionObjectFactory {
 	public List<Map<String, Object>> createMapForInstrumentVoucher(
 			List<CVoucherHeader> voucherHeaderList,
 			List<InstrumentHeader> instrumentHeaderList) {
-		List<Map<String, Object>> instrumentVoucherList = new ArrayList();
+		List<Map<String, Object>> instrumentVoucherList = new ArrayList<Map<String,Object>>();
 
 		if (voucherHeaderList != null && instrumentHeaderList != null) {
 			for (CVoucherHeader voucherHeader : voucherHeaderList) {
