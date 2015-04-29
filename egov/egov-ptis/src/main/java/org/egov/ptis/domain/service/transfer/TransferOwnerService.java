@@ -59,6 +59,7 @@ import org.egov.dcb.bean.Payment;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.utils.DemandConstants;
 import org.egov.infra.admin.master.entity.Address;
+import org.egov.infra.admin.master.entity.enums.AddressType;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
@@ -206,9 +207,8 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
 	 */
 	public Set<PropertyOwner> getNewPropOwnerAdd(Property clonedProperty, boolean chkIsCorrIsDiff, String corrAddress1,
 			String corrAddress2, String corrPinCode, List<PropertyOwner> propertyOwnerProxy) {
-		//TODO -- Fix me (Commented to Resolve compilation issues)
-		/*AddressTypeMaster addrTypeMstr = (AddressTypeMaster) trnsfOwnerPerService.find(
-				"from AddressTypeMaster where addressTypeName = ?", OWNER_ADDR_TYPE);*/
+		AddressType addrTypeMstr = (AddressType) trnsfOwnerPerService.find(
+				"from AddressTypeMaster where addressTypeName = ?", "OWNER_ADDR_TYPE");
 		Set<PropertyOwner> ownSet = new HashSet<PropertyOwner>();
 		PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
 		Address ownerAddr = null;
@@ -220,9 +220,8 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
 			if (corrAddress2 != null && !corrAddress2.isEmpty()) {
 				corrAddress2 = propertyTaxUtil.antisamyHackReplace(corrAddress2);
 			}
-			//TODO -- Fix me (Commented to Resolve compilation issues)
-			//ownerAddr.setAddTypeMaster(addrTypeMstr);
-			ownerAddr.setStreetRoadLine(corrAddress1);
+			ownerAddr.setType(addrTypeMstr);
+			ownerAddr.setLandmark(corrAddress1);
 			if (StringUtils.isNotEmpty(corrPinCode) || StringUtils.isNotBlank(corrPinCode)) {
 				ownerAddr.setPinCode(corrPinCode);
 			}
@@ -233,13 +232,12 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
 		int orderNo = 1;
 		for (PropertyOwner owner : propertyOwnerProxy) {
 			PropertyOwner newOwner = new PropertyOwner();
-			//TODO -- Fix me (Commented to Resolve compilation issues)
-			/*String ownerName = owner.getFirstName();
+			String ownerName = owner.getName();
 			ownerName = propertyTaxUtil.antisamyHackReplace(ownerName);
-			newOwner.setFirstName(ownerName);
+			newOwner.setName(ownerName);
 			newOwner.setOrderNo(orderNo);
 			newOwner.addAddress(ownerAddr);
-			ownSet.add(newOwner);*/
+			ownSet.add(newOwner);
 			orderNo++;
 		}
 		return ownSet;

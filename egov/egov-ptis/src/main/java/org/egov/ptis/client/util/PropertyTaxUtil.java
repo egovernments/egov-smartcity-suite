@@ -3783,7 +3783,7 @@ public class PropertyTaxUtil {
 		StringBuffer strAddress = new StringBuffer();
 
 		strAddress.append(
-				(isNotBlank(address.getStreetRoadLine())) ? address.getStreetRoadLine() : " ")
+				(isNotBlank(address.getLandmark())) ? address.getLandmark() : " ")
 				.append("|");
 		strAddress.append(
 				(isNotBlank(address.getHouseNoBldgApt())) ? address.getHouseNoBldgApt() : " ")

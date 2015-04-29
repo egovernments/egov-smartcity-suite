@@ -41,19 +41,17 @@ package org.egov.ptis.actions.modify;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.AUDITDATA_STRING_SEP;
-import static org.egov.ptis.constants.PropertyTaxConstants.CHANGEADDRESS_AUDIT_ACTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_ADDRESS_CHANGE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.END_APPROVER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTY_BY_UPICNO_AND_STATUS;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CREATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTY_BY_UPICNO_AND_STATUS;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CREATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
 
 import java.util.Map;
 
@@ -76,8 +74,6 @@ import org.egov.ptis.domain.entity.property.PropertyDocs;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
@@ -155,7 +151,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 		LOGGER.debug("view: BasicProperty on property: " + basicProperty);
 		String[] addFields = property.getBasicProperty().getExtraField2().split("\\|");
 
-		address.setStreetRoadLine(addFields[0]);
+		address.setLandmark(addFields[0]);
 		address.setHouseNoBldgApt(addFields[1]);
 
 		if (addFields[2].equals(" ") || addFields[2].isEmpty()) {
@@ -212,20 +208,11 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 
 		LOGGER.debug("Entered into the newForm method, Index Number : " + indexNumber + ", Address : " + address
 				+ "BasicProperty: " + basicProperty);
-		String addrStr1 = address.getStreetRoadLine();
+		String addrStr1 = address.getLandmark();
 		addrStr1 = propertyTaxUtil.antisamyHackReplace(addrStr1);
-		address.setStreetRoadLine(addrStr1);
+		address.setLandmark(addrStr1);
 		basicProperty.setAddress(address);
 
-		/* if (property.getStatus().equals(STATUS_WORKFLOW)) {
-			PropertyImpl nonHistProperty = (PropertyImpl) getPersistenceService().findByNamedQuery(
-					QUERY_PROPERTY_BY_UPICNO_AND_STATUS, property.getBasicProperty().getUpicNo(), STATUS_ISACTIVE);
-			nonHistProperty.setStatus(STATUS_ISHISTORY);
-			property.setStatus(STATUS_ISACTIVE);
-		}
-
-		transitionWorkFlow();
-		*/
 		// docs upload
 		if (getDocNumber() != null && !getDocNumber().equals("")) {
 			PropertyDocs pd = createPropertyDocs(basicProperty, getDocNumber());
@@ -315,7 +302,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	public String approve() {
 
 		LOGGER.debug("Enetered into approve, BasicProperty: " + basicProperty + ", Address : "
-				+ address.getStreetRoadLine() + " HouseNo" + address.getHouseNoBldgApt() + "DoorNumOld "
+				+ address.getLandmark() + " HouseNo" + address.getHouseNoBldgApt() + "DoorNumOld "
 				+ address.getDoorNumOld() + " PinCode" + address.getPinCode());
 
 		try {
@@ -337,7 +324,6 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 			propertyTaxUtil.makeTheEgBillAsHistory(basicProperty);
 			basicProperty = basicPrpertyService.update(basicProperty);
 
-			changePropertyAuditTrail(basicProperty, CHANGEADDRESS_AUDIT_ACTION, null);
 		} catch (Exception e) {
 			throw new EGOVRuntimeException("Exception : " + e);
 		}
@@ -394,13 +380,13 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	@Override
 	public void validate() {
 
-		LOGGER.debug("Entered into the validate method Address : " + address.getStreetRoadLine() + " HouseNo"
+		LOGGER.debug("Entered into the validate method Address : " + address.getLandmark() + " HouseNo"
 				+ address.getHouseNoBldgApt() + "DoorNumOld " + address.getDoorNumOld() + " PinCode" + address.getPinCode());
 
 		/* Validates the input data in case the form is submitted */
 
-		if (address.getStreetRoadLine() == null || StringUtils.equals(address.getStreetRoadLine(), "")
-				|| StringUtils.isEmpty(address.getStreetRoadLine())) {
+		if (address.getLandmark() == null || StringUtils.equals(address.getLandmark(), "")
+				|| StringUtils.isEmpty(address.getLandmark())) {
 			addActionError(getText("mandatory.addr"));
 		}
 		if (address.getHouseNoBldgApt() == null || StringUtils.equals(address.getHouseNoBldgApt(), "")) {
@@ -462,18 +448,6 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 		propertyImplService.persist(property);
 
 		LOGGER.debug("Exiting method : transitionWorkFlow");		
-	}
-
-	private void changePropertyAuditTrail(BasicProperty basicProperty, String action, String auditDetails2) {
-		StringBuilder auditDetail1 = new StringBuilder();
-		auditDetail1
-				.append("Address : ")
-				.append(basicProperty.getAddress().getStreetRoadLine() != null ? basicProperty.getAddress()
-						.getStreetRoadLine() : "").append(AUDITDATA_STRING_SEP)
-				.append("House Number : ")
-				.append(basicProperty.getAddress().getHouseNoBldgApt() != null ? basicProperty.getAddress().getHouseNoBldgApt() : "");
-		LOGGER.debug("Audit String : "+auditDetail1.toString());
-		//propertyTaxUtil.generateAuditEvent(action, basicProperty, auditDetail1.toString(), auditDetails2);
 	}
 
 	public BasicProperty getBasicProperty() {

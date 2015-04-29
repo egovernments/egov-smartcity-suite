@@ -134,7 +134,6 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
-@Validation()
 public class CreatePropertyAction extends WorkflowAction {
 	private static final String NO = "No";
 	private static final String YES = "Yes";
@@ -481,7 +480,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		PropertyOwner owner = property.getPropertyOwnerSet().iterator().next();
 		Address address = (Address) owner.getAddress().iterator().next();
 		LOGGER.debug("checkCorrespondingAddress: Property Address: " + address);
-		if ((address.getStreetRoadLine() != null && !address.getStreetRoadLine().isEmpty())
+		if (address.getLandmark() != null && !address.getLandmark().isEmpty() || address.getAreaLocalitySector() != null && !address.getAreaLocalitySector().isEmpty()
 				|| address.getPinCode() != null) {
 			LOGGER.debug("checkCorrespondingAddress: CorrespondingAddress is available, Exiting from checkCorrespondingAddress");
 			return true;
@@ -890,15 +889,15 @@ public class CreatePropertyAction extends WorkflowAction {
 				addrStr1 = propertyTaxUtil.antisamyHackReplace(addrStr1);
 				addrStr2 = propertyTaxUtil.antisamyHackReplace(addrStr2);
 				ownerAddr.setType(addrTypeMstr);
-				//ownerAddr.setStreetAddress1(addrStr1);
-				ownerAddr.setStreetRoadLine(addrStr2);
+				ownerAddr.setLandmark(addrStr1);
+				ownerAddr.setAreaLocalitySector(addrStr2);
 				if (getCorrPinCode() != null && !getCorrPinCode().isEmpty()) {
 					ownerAddr.setPinCode(getCorrPinCode());
 				}
 				LOGGER.debug("createOwners: OwnerAddress: " + ownerAddr);
 				propertyOwner.addAddress(ownerAddr);
 				PropertyOwner.add(propertyOwner);
-				//property.addPropertyOwner(owner);
+				property.addPropertyOwners(owner);
 			}
 		}
 		property.setPropertyOwnerSet(PropertyOwner);
@@ -929,7 +928,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		if (getAddressStr() != null && !getAddressStr().isEmpty()) {
 			String addressStr = getAddressStr();
 			addressStr = propertyTaxUtil.antisamyHackReplace(addressStr);
-			propAddr.setStreetRoadLine(addressStr);
+			propAddr.setLandmark(addressStr);
 			addrStr1.append(", " + addressStr);
 		}
 
@@ -1152,8 +1151,11 @@ public class CreatePropertyAction extends WorkflowAction {
 		if(propAddress.getDoorNumOld() != null) {
 			setOldHouseNo(propAddress.getDoorNumOld());
 		}
-		if(propAddress.getStreetRoadLine() != null) {
-			setAddressStr(propAddress.getStreetRoadLine());
+		if(propAddress.getLandmark() != null) {
+			setAddressStr(propAddress.getLandmark());
+		}
+		if(propAddress.getAreaLocalitySector() != null) {
+			setAddressStr(propAddress.getAreaLocalitySector());
 		}
 		if(propAddress.getPinCode() != null) {
 			setPinCode(propAddress.getPinCode().toString());
@@ -1183,9 +1185,11 @@ public class CreatePropertyAction extends WorkflowAction {
 			for (PropertyOwner owner : ownerSet) {
 				Set<Address> addrSet = (Set<Address>) owner.getAddress();
 				for (Address address : addrSet) {
-					
-					if(address.getStreetRoadLine() != null) {
-						setCorrAddress2(address.getStreetRoadLine());
+					if(address.getLandmark() != null) {
+						setCorrAddress2(address.getLandmark());
+					}
+					if(address.getAreaLocalitySector() != null) {
+						setCorrAddress2(address.getAreaLocalitySector());
 					}
 					if(address.getPinCode() != null) {
 						setCorrPinCode(address.getPinCode().toString());

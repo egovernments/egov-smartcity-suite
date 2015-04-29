@@ -298,10 +298,13 @@ public class TransferPropertyAction extends WorkflowAction {
 			PropertyOwner owner = property.getPropertyOwnerSet().iterator().next();
 			Set<Address> addrSet = (Set<Address>) owner.getAddress();
 			for (Address addr : addrSet) {
-				if (addr.getStreetRoadLine() != null || addr.getPinCode() != null) {
+				if (addr.getLandmark() != null || addr.getAreaLocalitySector() != null || addr.getPinCode() != null) {
 					setChkIsCorrIsDiff(true);
-					if (addr.getStreetRoadLine() != null) {
-						setCorrAddress1(addr.getStreetRoadLine());
+					if (addr.getLandmark() != null) {
+						setCorrAddress1(addr.getLandmark());
+					}
+					if (addr.getAreaLocalitySector() != null) {
+						setCorrAddress2(addr.getAreaLocalitySector());
 					}
 					if (addr.getPinCode() != null) {
 						setCorrPinCode(addr.getPinCode().toString());

@@ -43,18 +43,13 @@ import static java.math.BigDecimal.ROUND_HALF_UP;
 import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.egov.ptis.constants.PropertyTaxConstants.AMALG_AUDIT_ACTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.AREA_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.AUDITDATA_STRING_SEP;
-import static org.egov.ptis.constants.PropertyTaxConstants.BIFUR_AUDIT_ACTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DATAUPDATE_AUDIT_ACTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_AMALGAMATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_BIFURCATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_MODIFY_PROPERTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.MODIFY_AUDIT_ACTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE127;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE134;
@@ -114,6 +109,7 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
@@ -228,7 +224,6 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 	private boolean isfloorDetailsRequired;
 	private String areaId;
-	//UserDAO userDao = new UserDAO();
 	BoundaryDAO boundaryDao;
 	private boolean updateData;
 	private PropertyAddress propertyAddr;
@@ -248,6 +243,9 @@ public class ModifyPropertyAction extends WorkflowAction {
 	
 	@Autowired
 	private EisCommonService eisCommonService;
+	
+	@Autowired
+	private UserService userService;
 	
 	public ModifyPropertyAction() {
 		super();
@@ -319,13 +317,6 @@ public class ModifyPropertyAction extends WorkflowAction {
 			} else {
 				propertyImpl = propWF;
 				
-				/*if (PropertyTaxConstants.PROPERTY_MODIFY_REASON_OBJ.equalsIgnoreCase(modifyRsn) && !basicProp.getAllChangesCompleted()) {
-					allChangesCompleted = basicProp.getAllChangesCompleted();
-					modifyRsn = PROPERTY_MODIFY_REASON_DATA_ENTRY;
-				} else {
-					setModifyRsn(propertyImpl.getPropertyDetail().getPropertyMutationMaster().getCode());
-				}*/
-				
 				// setReasonForModify is only for work flow revert changes
 				setReasonForModify(propertyImpl.getPropertyDetail().getPropertyMutationMaster().getCode());
 				if (!modifyRsn.equals(PROPERTY_MODIFY_REASON_BIFURCATE)
@@ -350,7 +341,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 			if (isNotBlank(propertyImpl.getExtra_field6())) {
 				String[] addFields = propertyImpl.getExtra_field6().split("\\|");
 				propertyAddr = new PropertyAddress();
-				propertyAddr.setStreetRoadLine(isBlank(addFields[0]) ? null : addFields[0]);
+				propertyAddr.setLandmark(isBlank(addFields[0]) ? null : addFields[0]);
 				propertyAddr.setHouseNoBldgApt(isBlank(addFields[1]) ? null : addFields[1]);
 				propertyAddr.setDoorNumOld(isBlank(addFields[2]) ? null : addFields[2]);
 				propertyAddr.setPinCode(isBlank(addFields[3]) ? null : addFields[3]);
@@ -544,7 +535,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		if (isNotBlank(propertyModel.getExtra_field6())) {
 			String[] addFields = propertyModel.getExtra_field6().split("\\|");
 			propertyAddr = new PropertyAddress();
-			propertyAddr.setStreetRoadLine(isBlank(addFields[0]) ? null : addFields[0]);
+			propertyAddr.setLandmark(isBlank(addFields[0]) ? null : addFields[0]);
 			propertyAddr.setHouseNoBldgApt(isBlank(addFields[1]) ? null : addFields[1]);
 			propertyAddr.setDoorNumOld(isBlank(addFields[2]) ? null : addFields[2]);
 			propertyAddr.setPinCode(isBlank(addFields[3]) ? null : (addFields[3]));
@@ -726,15 +717,6 @@ public class ModifyPropertyAction extends WorkflowAction {
 				basicProp.getPropCreateDate(), null, null, null, null));
 		
 		basicPrpertyService.update(basicProp);
-		
-		if (PROPERTY_MODIFY_REASON_MODIFY.equals(modifyRsn) || PROPERTY_MODIFY_REASON_OBJ.equals(modifyRsn)
-				|| PROPERTY_MODIFY_REASON_DATA_ENTRY.equals(modifyRsn)) {
-			modifyPropertyAuditTrail(basicProp, propertyModel, MODIFY_AUDIT_ACTION, null);
-		} else if (PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)) {
-			modifyPropertyAuditTrail(basicProp, propertyModel, BIFUR_AUDIT_ACTION, null);
-		} else if (PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn)) {
-			modifyPropertyAuditTrail(basicProp, propertyModel, AMALG_AUDIT_ACTION, null);
-		}
 		
 		if (PROPERTY_MODIFY_REASON_MODIFY.equals(modifyRsn) || PROPERTY_MODIFY_REASON_OBJ.equals(modifyRsn)) {
 			setAckMessage("Property Modified Successfully in System with Index Number : ");
@@ -933,20 +915,6 @@ public class ModifyPropertyAction extends WorkflowAction {
 		propertyModel.setExtra_field6(null);
 		basicPrpertyService.update(basicProp);
 		setBasicProp(basicProp);
-
-		if (PROPERTY_MODIFY_REASON_MODIFY.equals(modifyRsn) || PROPERTY_MODIFY_REASON_OBJ.equals(modifyRsn)
-				|| PROPERTY_MODIFY_REASON_DATA_ENTRY.equals(modifyRsn)) {
-			if (PROPERTY_MODIFY_REASON_MODIFY.equals(modifyRsn)) {
-				modifyPropertyAuditTrail(basicProp, propertyModel, MODIFY_AUDIT_ACTION, null);
-			}
-			setAckMessage("Property Modified Successfully in System with Index Number : ");
-		} else if (PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)) {
-			modifyPropertyAuditTrail(basicProp, propertyModel, BIFUR_AUDIT_ACTION, null);
-			setAckMessage("Property Bifurcated Successfully in System with Index Number : ");
-		} else if (PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn)) {
-			modifyPropertyAuditTrail(basicProp, propertyModel, AMALG_AUDIT_ACTION, null);
-			setAckMessage("Property Amalgamated Successfully in System with Index Number : ");
-		}
 
 		addActionMessage(getText("property.approve.success", new String[] { propertyModel.getBasicProperty()
 				.getUpicNo() }));
@@ -1842,9 +1810,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 	private void prepareAckMsg() {
 		LOGGER.debug("Entered into prepareAckMsg, ModifyRsn: " + modifyRsn);
-		//FIX ME
-		//User approverUser = userDao.getUserByID(getWorkflowBean().getApproverUserId());
-		User approverUser = null;
+		User approverUser = userService.getUserById(getWorkflowBean().getApproverUserId().longValue());
 
 		if (PROPERTY_MODIFY_REASON_MODIFY.equals(modifyRsn) || PROPERTY_MODIFY_REASON_OBJ.equals(modifyRsn)
 				|| PROPERTY_MODIFY_REASON_DATA_ENTRY.equals(modifyRsn)) {
@@ -1982,52 +1948,6 @@ public class ModifyPropertyAction extends WorkflowAction {
 				+ "\nExiting from prepareAreaDropDownData");
 	}
 
-	private void modifyPropertyAuditTrail(BasicProperty basicProperty, Property property, String action,
-			String auditDetails2) {
-		Map<String, String> propTypeCategoryMap = new TreeMap<String, String>();
-		String propCat = "";
-		String locFact = "";
-		StringBuilder auditDetail1 = new StringBuilder();
-		if (property.getPropertyDetail().getExtra_field5() != null) {
-			PropertyTypeMaster propType = property.getPropertyDetail().getPropertyTypeMaster();
-
-			if (propType != null) {
-				if (propType.getCode().equalsIgnoreCase(PROPTYPE_RESD)) {
-					propTypeCategoryMap.putAll(PropertyTaxConstants.RESIDENTIAL_PROPERTY_TYPE_CATEGORY);
-				} else if (propType.getCode().equalsIgnoreCase(PROPTYPE_NON_RESD)) {
-					propTypeCategoryMap.putAll(PropertyTaxConstants.NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY);
-				} else if (propType.getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
-					propTypeCategoryMap.putAll(PropertyTaxConstants.OPEN_PLOT_PROPERTY_TYPE_CATEGORY);
-				}
-			}
-			propCat = propTypeCategoryMap.get(property.getPropertyDetail().getExtra_field5());
-		}
-		if (property.getPropertyDetail().getExtra_field6() != null) {
-			Category category = (Category) persistenceService.find("from Category c where c.id = ?",
-					Long.valueOf(property.getPropertyDetail().getExtra_field6()));
-			locFact = category.getCategoryName();
-		}
-		auditDetail1
-				.append("Property Type : ")
-				.append(property.getPropertyDetail().getPropertyTypeMaster().getType() != null ? property
-						.getPropertyDetail().getPropertyTypeMaster().getType() : "")
-				.append(AUDITDATA_STRING_SEP)
-				.append("Property Category : ")
-				.append(propCat)
-				.append(AUDITDATA_STRING_SEP)
-				.append("Location Factor : ")
-				.append(locFact)
-				.append(AUDITDATA_STRING_SEP)
-				.append("Authorised Property : ")
-				.append(basicProperty.getExtraField1() != null ? basicProperty.getExtraField1() : "")
-				.append(AUDITDATA_STRING_SEP)
-				.append("Reason For Modification : ")
-				.append(property.getPropertyDetail().getPropertyMutationMaster() != null ? property.getPropertyDetail()
-						.getPropertyMutationMaster().getMutationName() : "");
-		LOGGER.debug("Audit String : " + auditDetail1.toString());
-		//propertyTaxUtil.generateAuditEvent(action, basicProperty, auditDetail1.toString(), auditDetails2);
-	}
-
 	public PropertyImpl updatePropertyForMigratedProp(PropertyImpl property, String areaOfPlot, String mutationCode,
 			String propTypeId, String propUsageId, String propOccId, String docnumber, String nonResPlotArea,
 			boolean isfloorDetailsRequired) {
@@ -2047,8 +1967,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 			area.setArea(new Float(nonResPlotArea));
 			property.getPropertyDetail().setNonResPlotArea(area);
 		}
-		// [Nayeem] the fieldVerified value is 'N' for migrated property
-		// Check with Ramki as wat to set for Data Update.
+		
 		property.getPropertyDetail().setFieldVerified('Y');
 		property.getPropertyDetail().setProperty(property);
 		PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) persistenceService.find(
@@ -2197,8 +2116,6 @@ public class ModifyPropertyAction extends WorkflowAction {
 			updateBasicPropForMigratedProp(getDocNumber(), nonHistoryProperty);
 			setAckMessage("Migrated Property updated Successfully in System with Index Number: ");
 
-			modifyPropertyAuditTrail(basicProp, propertyModel, DATAUPDATE_AUDIT_ACTION, null);
-
 			long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
 			LOGGER.info("updateData: Property modified successfully in system with Index Number: "
 					+ basicProp.getUpicNo() + "; Time taken(ms) = " + elapsedTimeMillis);
@@ -2230,7 +2147,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		addr.setEmailAddress(propertyAddr.getEmailAddress());
 		addr.setHouseNoBldgApt(propertyAddr.getHouseNoBldgApt());
 		addr.setDoorNumOld(propertyAddr.getDoorNumOld());
-		addr.setStreetRoadLine(propertyAddr.getStreetRoadLine());
+		addr.setLandmark(propertyAddr.getLandmark());
 		addr.setPinCode(propertyAddr.getPinCode());
 		addr.setExtraField1(propertyAddr.getExtraField1());
 		addr.setExtraField2(propertyAddr.getExtraField2());
