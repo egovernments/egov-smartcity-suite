@@ -1,1 +1,0 @@
-<%@ page contentType="text/json" %><%@ taglib prefix="s" uri="/struts-tags" %><s:iterator var="s" value="areaList" status="status"><s:property value="%{name}" />~<s:property value="%{id}" />$</s:iterator>

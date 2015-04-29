@@ -1,1 +1,0 @@
-<%@ include file="legacyDataEntry-new.jsp"%> 

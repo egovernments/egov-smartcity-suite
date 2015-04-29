@@ -1,1 +1,0 @@
-<%@ include file='searchRateContract-search.jsp'%>

@@ -1,1 +1,0 @@
-<%@ include file='workProgressAbstract-showEstimatesForDrillDown.jsp'%>
