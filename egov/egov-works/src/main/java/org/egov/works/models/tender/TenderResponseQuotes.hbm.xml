@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Sep 08, 2010 10:11:15 AM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+	<class name="org.egov.works.models.tender.TenderResponseQuotes"
+		table="EGW_TENDER_RESPONSE_QUOTES">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_TEND_RESP_QUO_SEQ</param> 
+			</generator>
+		</id>				
+		<many-to-one name="tenderResponseActivity" column="TENDER_RESPONSE_ACTIVITY_ID" not-null="true" insert="false" update="false" fetch="select"/>
+		<many-to-one name="contractor" class="org.egov.works.models.masters.Contractor" column="CONTRACTOR_ID" not-null="true" fetch="select"/>
+		<property name="quotedRate" type="double">
+            <column name="QUOTED_RATE" precision="20" not-null="true" />
+        </property>
+        <property name="quotedQuantity" type="double">
+            <column name="QUOTED_QUANTITY" precision="20" />
+         </property>
+      <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" not-null="true" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />	
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />	
+		</class>
+	
+</hibernate-mapping>

@@ -1,0 +1,382 @@
+<%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator"%>
+<script src="<egov:url path='js/works.js'/>"></script>
+
+<script type="text/javascript">
+
+function setEstimateId(elem){
+	document.techSanctionEstimatesForm.estimateId.value = elem.value;
+}
+
+var estNum="";
+var estimateIden="";
+var execDeptName=""
+var copyCancelEstResults;
+
+function gotoPage(obj)
+{
+	var currRow=getRow(obj);
+	estimateIden = getControlInBranch(currRow,'estimateIden');
+	var estimateStateId = getControlInBranch(currRow,'estimateStateId');
+	var docNumber = getControlInBranch(currRow,'docNumber');
+	execDeptName = getControlInBranch(currRow,'execDeptName');
+	estNum = getControlInBranch(currRow,'estNum');
+	
+	if(dom.get('searchActions')[1]!=null && obj.value==dom.get('searchActions')[1].value)
+	{
+		window.open("${pageContext.request.contextPath}/estimate/abstractEstimate!edit.action?id="+estimateIden.value+
+		"&sourcepage=search",'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	}
+	if(dom.get('searchActions')[2]!=null && obj.value==dom.get("searchActions")[2].value)
+	{
+		document.location.href="${pageContext.request.contextPath}/estimate/abstractEstimatePDF.action?estimateID="+estimateIden.value;
+	}
+	if(dom.get('searchActions')[3]!=null && obj.value==dom.get("searchActions")[3].value)
+	{
+		window.open("${pageContext.request.contextPath}/estimate/abstractEstimate!workflowHistory.action?stateValue="+
+		estimateStateId.value,'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	}
+	if(dom.get('searchActions')[4]!=null && obj.value==dom.get("searchActions")[4].value)
+	{
+		viewDocumentManager(docNumber.value);return false;
+	}
+	if(dom.get('searchActions')[5]!=null && obj.value==dom.get("searchActions")[5].value)
+	{
+		var	depositWorksRCId = getControlInBranch(currRow,'depositWorksRCId').value;
+		if(depositWorksRCId!=""){
+			alert('<s:text name="copy.estimate.depositWorks.RCEstimate.check" />');
+		    return false;
+		}
+		
+		checkEstNumberForCopy(estNum.value);
+	}
+}
+
+function checkEstNumberForCopy(estimateNum){ 
+	makeJSONCall(["isCancelEstCopyExists"],'${pageContext.request.contextPath}/estimate/ajaxEstimate!validateCancelledEstForCopy.action',{estimateNum:estimateNum},copyCancelEstSuccessHandler,copyCancelEstFailureHandler) ;
+}
+
+copyCancelEstSuccessHandler = function(req,res) {
+	copyCancelEstResults=res.results;
+	var loginUserDept = document.getElementById('loginUserDeptName').value;
+	var estimateNo=estNum.value
+	var cancelledEst = estimateNo.slice(-2);
+
+	if(execDeptName.value!=loginUserDept) {
+		alert('<s:text name="estimate.copy.loginuserdept.execdept.different"/>');
+		return false;
+	} 
+	else {
+		var msg1='<s:text name="estimate.copy.confirm"/>';
+		if(!confirm(msg1+": "+estimateNo+" ?")) {
+			return false;
+		}
+		else if(cancelledEst=="/C") {
+			popup('popUpDiv');		
+			window.scrollTo(document.body.parentNode.scrollWidth/2,document.body.parentNode.scrollHeight/2);
+		}
+		else {
+			document.getElementById("copyCancelledEstNum").value="no";
+			window.open("${pageContext.request.contextPath}/estimate/copyEstimate!copyEstimate.action?copyCancelledEstNum="+
+					document.getElementById("copyCancelledEstNum").value+"&estimateId="+estimateIden.value,'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+			return true;
+		}
+	}
+} 
+          
+copyCancelEstFailureHandler = function() {
+	alert('<s:text name="estimate.copy.cancelled.fail"/>');
+	return false;
+}
+
+function createNewEstimate() {
+	document.getElementById("copyCancelledEstNum").value="no";
+	window.open("${pageContext.request.contextPath}/estimate/copyEstimate!copyEstimate.action?copyCancelledEstNum="+
+			document.getElementById("copyCancelledEstNum").value+"&estimateId="+estimateIden.value,'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	toggle('blanket');
+	toggle('popUpDiv');
+}
+
+function copyCancelledEst() {
+	if(copyCancelEstResults[0].isCancelEstCopyExists=='true') {
+		alert('<s:text name="estimate.copy.alredy.copied.estimate"/>');
+		toggle('blanket');
+		toggle('popUpDiv');
+		return false;
+  	}
+	else {
+		document.getElementById("copyCancelledEstNum").value="yes";
+		toggle('blanket');
+		toggle('popUpDiv');
+		window.open("${pageContext.request.contextPath}/estimate/copyEstimate!copyEstimate.action?copyCancelledEstNum="+
+				document.getElementById("copyCancelledEstNum").value+"&estimateId="+estimateIden.value,'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+		return true;
+	}
+}
+
+function closePopUp() {
+	toggle('blanket');
+	toggle('popUpDiv');
+	return false;
+}
+
+function checkWorksPackage(){ 
+	var estimateId = document.techSanctionEstimatesForm.estimateId.value;
+	makeJSONCall(["wpNumber","isVoucherExists","yearEndApprOwner",'woNumber'],'${pageContext.request.contextPath}/estimate/ajaxEstimate!validateEstimateForCancel.action',{estimateId:estimateId},myWorksPackageSuccessHandler,myWorksPackageFailureHandler) ;
+}
+
+myWorksPackageSuccessHandler = function(req,res) {
+	clearMessage('searchEstimate_error');
+	results=res.results;	
+	if(results[0].woNumber != '') {
+		document.getElementById("searchEstimate_error").style.display='';
+	  	document.getElementById("searchEstimate_error").innerHTML='<s:text name="cancelEstimate.rc.wo.created.message.part1"/>'+results[0].woNumber+' <s:text name="cancelEstimate.rc.wo.created.message.part2"/>';
+	  	window.scroll(0,0);
+	  	return false;
+  	}
+	if(results[0].isVoucherExists=='true') {
+		document.getElementById("searchEstimate_error").style.display='';
+	  	document.getElementById("searchEstimate_error").innerHTML='<s:text name="cancelEstimate.vouchers.created.message"/>';
+	  	window.scroll(0,0);
+	  	return false;
+  	}
+	if(results[0].wpNumber!='') {
+		document.getElementById("searchEstimate_error").style.display='';
+	  	document.getElementById("searchEstimate_error").innerHTML='<s:text name="cancelEstimate.WP.created.message.part1"/>'+results[0].wpNumber+', <s:text name="cancelEstimate.WP.created.message.part2"/>';
+	  	window.scroll(0,0);
+	  	return false;
+  	}
+	if(results[0].yearEndApprOwner!='') {
+		document.getElementById("searchEstimate_error").style.display='';
+	  	document.getElementById("searchEstimate_error").innerHTML='<s:text name="cancelEstimate.multiyear.validate.message.part"/>: '+results[0].yearEndApprOwner;
+	  	window.scroll(0,0);
+	  	return false;
+  	}	
+	
+	var cancellationReason = document.techSanctionEstimatesForm.cancellationReason.value;  
+	var cancelRemarks = document.techSanctionEstimatesForm.cancelRemarks.value; 
+	if(cancellationReason==''){
+		dom.get("searchEstimate_error").style.display='';
+		document.getElementById("searchEstimate_error").innerHTML='<s:text name="validate.cancel.cancelReasons"/>'; 
+		window.scroll(0,0);
+		return false;
+	}
+	if(cancellationReason=='OTHER' && cancelRemarks == ''){
+		dom.get("searchEstimate_error").style.display='';
+		document.getElementById("searchEstimate_error").innerHTML='<s:text name="validate.cancel.estimate.remarks"/>';
+		window.scroll(0,0);
+		return false;
+	}	
+    if(validateCancel()) {
+    	doLoadingMask();
+    	document.techSanctionEstimatesForm.action='${pageContext.request.contextPath}/estimate/abstractEstimate!cancelApprovedEstimate.action';
+		document.getElementById('status').disabled=false
+    	document.techSanctionEstimatesForm.submit();
+    }
+} 
+          
+myWorksPackageFailureHandler = function() {
+	dom.get("searchEstimate_error").style.display='';
+	document.getElementById("searchEstimate_error").innerHTML='<s:text name="estimate.check.fail"/>';
+}
+
+function setEstimateIds(elem){
+	var currRow=getRow(elem);
+	document.techSanctionEstimatesForm.estimateId.value = elem.value;
+	dom.get("pcStatus").value=getControlInBranch(currRow,'projectCodeStatus').value;
+	dom.get("pcCode").value=getControlInBranch(currRow,'prjCode').value;
+}
+
+function setEstimateNumber(elem){
+	document.techSanctionEstimatesForm.estimateNumber.value = elem;
+}
+
+
+function cancelAbstractEstimate() {
+	clearMessage('searchEstimate_error');
+	var projectCodeStatus=document.techSanctionEstimatesForm.pcStatus.value;
+	var projectCode=document.techSanctionEstimatesForm.pcCode.value;
+	if(dom.get('estimateId').value=='') {		
+    	dom.get("searchEstimate_error").style.display='';
+		document.getElementById("searchEstimate_error").innerHTML+='<s:text name="estimate.cancel.select.null" /><br>';
+	  	window.scroll(0,0);
+		return false;
+	}
+	else if(projectCodeStatus=='CLOSED') {		
+    	dom.get("searchEstimate_error").style.display='';
+    	document.getElementById("searchEstimate_error").innerHTML='<s:text name="cancelEstimate.projectClosed.message.part1"/>'+projectCode+', <s:text name="cancelEstimate.projectClosed.message.part2"/>';
+	  	window.scroll(0,0);
+		return false;
+	}
+	else {
+		checkWorksPackage();
+	}
+		
+}
+
+function validateCancel() {
+	var msg='<s:text name="estimate.cancel.confirm"/>';
+	var estimateNo=document.techSanctionEstimatesForm.estimateNumber.value;
+	if(!confirm(msg+": "+estimateNo+" ?")) {
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+
+function toggleCancelRemarks(obj) { 
+	if(obj.value=='OTHER') {
+		document.getElementById("cancelRemarksDtls").style.display='';
+	}
+	else {
+		document.getElementById("cancelRemarksDtls").style.display='none';
+		dom.get("cancelRemarks").value='';
+	}	
+}  
+
+</script>
+
+<div id="blanket" style="display:none;"></div>
+<div id="popUpDiv" style="display:none;" >
+	<s:text name="estimate.copy.cancelledEstimate"/>(<a href="#" onclick="copyCancelledEst();">Yes</a>/<a href="#" onclick="createNewEstimate();">No</a>)?
+	<br> <a href="#" onclick="closePopUp();">Close</a>
+</div>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<s:hidden id="copyCancelledEstNum" name="copyCancelledEstNum"/>
+	<tr>
+		<td>
+			&nbsp;
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td colspan="9" class="headingwk" align="left">
+						<div class="arrowiconwk">
+							<img src="${pageContext.request.contextPath}/image/arrow.gif" />
+						</div>
+						<s:if test="%{source=='financialdetail'}">
+							<div class="headerplacer">
+								<s:text name='page.title.financial.detail' />
+							</div>
+						</s:if>
+						<s:elseif test="%{source=='technical sanction'}">
+							<div class="headerplacer">
+								<s:text name='page.title.Technical.Sanction' />
+							</div>
+						</s:elseif>
+						<s:elseif test="%{source=='Financial Sanction'}">
+							<div class="headerplacer">
+								<s:text name='page.title.Financial.Sanction' />
+							</div>
+						</s:elseif>
+						<s:elseif test="%{source=='AdministrativeSanction'}">
+							<div class="headerplacer">
+								<s:text name='page.title.Admin.Sanction' />
+							</div>
+						</s:elseif>
+						<s:elseif test="%{source=='createNegotiation'}">
+							<div class="headerplacer">
+								<s:text name='page.result.search.estimate' />
+							</div>
+						</s:elseif>
+
+						<s:else>
+							<div class="headerplacer">
+								<s:text name='page.title.search.estimates' />
+							</div>
+						</s:else>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+
+<display:table name="searchResult" pagesize="30" uid="currentRow"
+	cellpadding="0" cellspacing="0" requestURI=""
+	style="border:1px;width:100%;empty-cells:show;border-collapse:collapse;">
+
+	<s:if
+		test="%{source=='financialdetail' || source=='createNegotiation'}">
+		<display:column headerClass="pagetableth" class="pagetabletd" style="width:4%;text-align:center">
+			<input name="radio" type="radio" id="radio"
+				value="<s:property value='%{#attr.currentRow.id}'/>"
+				onClick="setEstimateId(this);" />
+		</display:column>
+	</s:if>
+ 	<s:if test="%{source=='cancelEstimate'}">
+        <display:column headerClass="pagetableth" class="pagetabletd" title="Select" style="width:4%;" titleKey="column.title.select">
+			<input name="radio" type="radio" id="radio"
+				value="<s:property value='%{#attr.currentRow.id}'/>"
+				onClick='setEstimateIds(this);setEstimateNumber("<s:property value='%{#attr.currentRow.estimateNumber}'/>");' />
+		</display:column>
+    </s:if>
+	<display:column title="Sl.No" titleKey='estimate.search.slno' headerClass="pagetableth" class="pagetabletd" style="width:4%;text-align:right" >
+		<s:property value="#attr.currentRow_rowNum + (page-1)*pageSize" />
+	</display:column> 
+
+	<display:column headerClass="pagetableth" class="pagetabletd" title="Estimate Number" style="width:10%;text-align:left" property="estimateNumber" />
+	<display:column headerClass="pagetableth" class="pagetabletd" title="Executing Department" titleKey='estimate.search.executingdept' style="width:8%;text-align:left" property='executingDepartment.deptName' />
+	<s:if test="%{source==''}">
+		<display:column headerClass="pagetableth" class="pagetabletd" title="User Department" titleKey='estimate.search.userdept' style="width:8%;text-align:left" property='userDepartment.deptName' />
+	</s:if>	
+	
+	<display:column headerClass="pagetableth" class="pagetabletd" title="Name" titleKey='estimate.search.name' style="width:20%;text-align:left" property='name' />
+
+	<display:column headerClass="pagetableth" class="pagetabletd" title="<a href='javascript:sortBy();'>Status</a>" titleKey='estimate.search.status' style="width:10%;text-align:left">
+		<s:property value="#attr.currentRow.egwStatus.description" />
+	</display:column>
+	
+	<display:column headerClass="pagetableth" class="pagetabletd" title="Type" titleKey='estimate.search.type' style="width:10%;text-align:left" property='type.name' />
+
+	<display:column headerClass="pagetableth" class="pagetabletd" title="Estimate Date" titleKey='estimate.search.estimateDate' style="width:10%;text-align:center" >
+		<s:date name="#attr.currentRow.estimateDate" format="dd/MM/yyyy" />
+	</display:column>	
+	
+	<s:if test="%{status!='ADMIN_SANCTIONED' && status!='CANCELLED'}">
+		<display:column headerClass="pagetableth" class='pagetabletd' title="Owner" titleKey='estimate.search.owner' style="width:10%;text-align:left" property='positionAndUserName' />
+	</s:if>
+	
+	<s:if test="%{source=='cancelEstimate'}">
+		<display:column headerClass="pagetableth" class="pagetabletd" title="Project Code" titleKey='estimate.search.projectcode' style="width:10%;text-align:left" >
+			<s:property value="%{#attr.currentRow.projectCode.code}" />
+			<s:hidden name="prjCode" id="prjCode" value="%{#attr.currentRow.projectCode.code}" />
+			<s:hidden name="projectCodeStatus" id="projectCodeStatus" value="%{#attr.currentRow.projectCode.egwStatus.code}" />
+		</display:column>
+	</s:if>	
+			
+	<display:column headerClass="pagetableth" class="pagetabletd" title="Total" titleKey='estimate.search.total' style="width:10%;text-align:right" property='totalAmount.formattedString' />
+	
+	<display:column title='Action' titleKey="estimate.search.action" headerClass="pagetableth" class="pagetabletd" style="width:16%;text-align:center">
+	<s:hidden name="docNumber" id="docNumber" value="%{#attr.currentRow.documentNumber}" />
+	<s:hidden name="estimateIden" id="estimateIden" value="%{#attr.currentRow.id}" />
+	<s:hidden name="estimateStateId" id="estimateStateId" value="%{#attr.currentRow.state.id}" />
+	<s:hidden name="execDeptName" id="execDeptName" value="%{#attr.currentRow.executingDepartment.deptName}" />
+	<s:hidden name="estNum" id="estNum" value="%{#attr.currentRow.estimateNumber}" />
+	<s:hidden name="depositWorksRCId" id="depositWorksRCId" value="%{#attr.currentRow.applicationRequest.rateContract.id}" />
+	<s:select theme="simple" id="searchActions" name="searchActions"
+			list="estimateActions"
+			headerValue="%{getText('estimate.default.select')}" headerKey="-1"
+			onchange="gotoPage(this);"></s:select>
+	</display:column>
+
+</display:table>
+<s:if test="%{searchResult.fullListSize != 0 && source=='cancelEstimate'}" >
+	<P align="left">
+		<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="mandatory">*</span><s:text name="cancellation.reason" />:</b>
+		<s:select id="cancellationReason" name="cancellationReason" cssClass="selectwk" list="#{'':'---------Select---------','DATA ENTRY MISTAKE':'DATA ENTRY MISTAKE','OTHER':'OTHER'}" onChange="toggleCancelRemarks(this)" />
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<span id="cancelRemarksDtls" style="display:none"><b><span class="mandatory">*</span><s:text name="cancel.remarks" />:</b>&nbsp;&nbsp;
+			<s:textarea id="cancelRemarks" name="cancelRemarks" rows="2" cols="35" />
+		</span> 
+	</P>
+	<P align="center">
+		<input type="button" class="buttonadd"
+			value="Cancel Estimate" id="addButton"
+			name="cancelEstimate" onclick="cancelAbstractEstimate();"
+			align="center" />
+	</P>
+</s:if>

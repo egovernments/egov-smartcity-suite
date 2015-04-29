@@ -1,0 +1,153 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+	<!-- Generated on 8th dec 09 -->
+<hibernate-mapping>
+	<class name="org.egov.works.models.measurementbook.MBDetails" table="EGW_MB_DETAILS">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_MB_DETAILS_SEQ</param>
+			</generator>
+		</id>
+		<many-to-one name="mbHeader"
+			class="org.egov.works.models.measurementbook.MBHeader" column="MBHEADER_ID"
+			not-null="true" fetch="select" insert="false" update="false"/>
+		<many-to-one name="workOrderActivity"
+			class="org.egov.works.models.workorder.WorkOrderActivity" column="WO_ACTIVITY_ID"
+			not-null="true" fetch="select" />
+
+		<property name="quantity" type="double">
+			<column name="QUANTITY" precision="20" not-null="true"/>
+		</property>
+		
+		<property name="remark" type="string">
+			<column name="REMARK" length="400" />
+		</property>
+         
+         <property name="mbdetailsDate" type="date">
+			<column name="MBDETAIL_DATE"/>
+		</property>
+		
+		<property name="OrderNumber" type="string">
+			<column name="ORDER_NUMER"/>
+		</property>
+
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" not-null="true" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true"/>	
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" not-null="true"/>
+	</class>	
+	<query name="prevCumulativeQuantity">
+		<![CDATA[
+     	select sum(mbd.quantity) from MBDetails mbd where (mbd.mbHeader.createdDate 
+     	< (select createdDate from MBHeader where id = ?) or (select count(*) from MBHeader where id = ?) = 0 )
+     	and mbd.mbHeader.egwStatus.code != ? 
+     	group by mbd.workOrderActivity having mbd.workOrderActivity.id = ?  
+    ]]>
+	</query>
+		<query name="prevCumulativeQuantityForCQ">
+		<![CDATA[
+     	select sum(mbd.quantity) from MBDetails mbd where (mbd.mbHeader.createdDate 
+     	< (select createdDate from MBHeader where id = ?) or (select count(*) from MBHeader where id = ?) = 0 )
+     	and mbd.mbHeader.egwStatus.code != ? and (mbd.workOrderActivity.workOrderEstimate.workOrder = ? or mbd.workOrderActivity.workOrderEstimate.workOrder.parent = ?)
+     	group by mbd.workOrderActivity,mbd.workOrderActivity.activity having (mbd.workOrderActivity.id = ? or mbd.workOrderActivity.activity.id = ? ) 
+    ]]>
+	</query>
+	
+	<query name="prevCumulativeQuantityForREs">
+		<![CDATA[
+     	select sum(mbd.quantity) from MBDetails mbd where (mbd.mbHeader.createdDate 
+     	< (select createdDate from MBHeader where id = ?) or (select count(*) from MBHeader where id = ?) = 0 )
+     	and mbd.mbHeader.egwStatus.code != ?  
+     	group by mbd.workOrderActivity.activity.parent having ((mbd.workOrderActivity.activity.parent is not null and mbd.workOrderActivity.activity.parent.id = ?)) 
+    ]]>
+	</query>
+	<query name="totalApprovedMBAmount">
+		<![CDATA[
+     	select sum(mbd.quantity*mbd.workOrderActivity.approvedRate) from MBDetails mbd
+     	 where mbd.mbHeader.egwStatus.code = ? 
+     	and mbd.mbHeader.workOrderEstimate.workOrder.id = ? and mbd.mbHeader.workOrderEstimate.id = ? and trunc(mbd.mbHeader.state.createdDate) <= ? and mbd.mbHeader.egBillregister is null
+    ]]>
+	</query>
+	<query name="totalApprovedMBAmountForCancelledBill">
+		<![CDATA[
+     	select sum(mbd.quantity*mbd.workOrderActivity.approvedRate) from MBDetails mbd
+     	 where mbd.mbHeader.egwStatus.code = ? 
+     	and mbd.mbHeader.workOrderEstimate.workOrder.id = ? and mbd.mbHeader.workOrderEstimate.id = ? and trunc(mbd.mbHeader.state.createdDate) <= ? 
+     	and mbd.mbHeader.egBillregister is not null and mbd.mbHeader.egBillregister.status.code = ?
+    ]]>
+	</query>
+	<query name="getUtlizedAmountForUnArrovedBill">
+		<![CDATA[
+     	select sum(reg.passedamount) from MBHeader mbh join mbh.egBillregister as reg where 
+     	reg.status.code not in (?) and mbh.workOrder.id = ? and trunc(reg.billdate) <= ?
+     	and reg.egBillregistermis.voucherHeader is null
+    ]]>
+	</query>
+	
+	<query name="gettotalApprovedMBs">
+		<![CDATA[
+     	select mbd.workOrderActivity.id,mbd.quantity  from MBDetails mbd
+     	 where mbd.mbHeader.egwStatus.code = ? and mbd.mbHeader.isLegacyMB!=1 
+     	and mbd.mbHeader.workOrderEstimate.workOrder.id = ? and mbd.mbHeader.workOrderEstimate.id = ? and trunc(mbd.mbHeader.state.createdDate) <= ? and mbd.mbHeader.egBillregister is null
+     	group by mbd.workOrderActivity.id,mbd.quantity, mbd.mbHeader.id
+    ]]>
+	</query>
+	<query name="gettotalApprovedMBsForCancelledBill">
+		<![CDATA[
+     	 select mbd.workOrderActivity.id,mbd.quantity from MBDetails mbd
+     	 where mbd.mbHeader.egwStatus.code = ? and mbd.mbHeader.isLegacyMB!=1 
+     	and mbd.mbHeader.workOrderEstimate.workOrder.id = ? and mbd.mbHeader.workOrderEstimate.id = ? and trunc(mbd.mbHeader.state.createdDate) <= ? 
+     	and mbd.mbHeader.egBillregister is not null and mbd.mbHeader.egBillregister.status.code = ? group by mbd.workOrderActivity.id,mbd.quantity, mbd.mbHeader.id
+    ]]>
+	</query>
+	<query name="getMBAmountForBill">
+		<![CDATA[
+     	 select mbd.workOrderActivity.id,mbd.quantity  from MBDetails mbd
+     	 where mbd.mbHeader.egwStatus.code = ?  and mbd.mbHeader.isLegacyMB!=1 
+     	and mbd.mbHeader.egBillregister.id = ? group by mbd.workOrderActivity.id,mbd.quantity, mbd.mbHeader.id
+    ]]>
+	</query>
+	<query name="totalEstimatedQuantity">
+		<![CDATA[
+           select sum(woa.approvedQuantity) from WorkOrderActivity woa where woa.workOrderEstimate.workOrder.egwStatus.code<>'CANCELLED' 
+           and woa.workOrderEstimate.workOrder = ? 
+            group by woa,woa.activity having (id = ? or activity.id = ?)
+   		]]>  
+	</query>
+	<query name="totalEstimatedQuantityForRE"> 
+		<![CDATA[
+	     	select sum(woa.approvedQuantity*nvl(decode(woa.activity.revisionType,'REDUCED_QUANTITY',-1,'ADDITIONAL_QUANTITY',1,'NON_TENDERED_ITEM',1,'LUMP_SUM_ITEM',1),1)) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code = 'APPROVED' 
+	     	and woa.activity.createdDate < ? and woa.workOrderEstimate.workOrder.egwStatus.code<>'CANCELLED' 
+	     	and ((woa.activity.parent is null and woa.workOrderEstimate.workOrder = ?) or (woa.workOrderEstimate.workOrder.parent is not null and woa.workOrderEstimate.workOrder.parent = ?)) 
+	     	group by woa.activity.parent having (woa.activity.parent is not null and woa.activity.parent.id = ? ) 
+    	]]>
+	</query>
+	<query name="totalEstimatedQuantityInRE">
+		<![CDATA[            
+            select sum(woa.approvedQuantity) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code != 'CANCELLED' and 
+            woa.activity.abstractEstimate.id != ? and woa.workOrderEstimate.workOrder.egwStatus.code<>'CANCELLED' and 
+            (woa.workOrderEstimate.workOrder = ? or (woa.activity.parent is null and woa.workOrderEstimate.workOrder.parent is not null and woa.workOrderEstimate.workOrder.parent = ?))
+            group by woa,woa.activity having (id = ? or activity.id = ?)
+   		]]>  
+	</query>
+	<query name="totalEstimatedQuantityForREinRE">
+		<![CDATA[
+     	select sum(woa.approvedQuantity*nvl(decode(woa.activity.revisionType,'REDUCED_QUANTITY',-1,'ADDITIONAL_QUANTITY',1,'NON_TENDERED_ITEM',1,'LUMP_SUM_ITEM',1),1)) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code != 'CANCELLED' 
+     	and woa.activity.abstractEstimate.id != ? and woa.workOrderEstimate.workOrder.egwStatus.code<>'CANCELLED' and (woa.workOrderEstimate.workOrder = ? or 
+     	(woa.workOrderEstimate.workOrder.parent is not null and woa.workOrderEstimate.workOrder.parent = ?))
+     	group by woa.activity.parent having (woa.activity.parent is not null and woa.activity.parent.id = ? ) 
+    ]]> 
+	</query>
+	
+		<query name="totalEstimatedQuantityForPreviousREs">
+		<![CDATA[
+     	select sum(woa.approvedQuantity*nvl(decode(woa.activity.revisionType,'REDUCED_QUANTITY',-1,'ADDITIONAL_QUANTITY',1,'NON_TENDERED_ITEM',1,'LUMP_SUM_ITEM',1),1)) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code != 'CANCELLED' 
+     	and woa.activity.abstractEstimate.createdDate < (select est.createdDate from AbstractEstimate est where est.id = ?) 
+     	and woa.workOrderEstimate.workOrder.egwStatus.code<>'CANCELLED' and (woa.workOrderEstimate.workOrder = ? 
+     	or (woa.workOrderEstimate.workOrder.parent is not null and woa.workOrderEstimate.workOrder.parent = ?))
+     	group by woa.activity.parent having (woa.activity.parent is not null and woa.activity.parent.id = ? ) 
+    ]]> 
+	</query>
+	</hibernate-mapping>

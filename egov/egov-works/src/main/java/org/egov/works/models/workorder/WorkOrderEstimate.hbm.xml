@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated on 8th dec 09 -->
+<hibernate-mapping>		
+		<class name="org.egov.works.models.workorder.WorkOrderEstimate"
+		table="EGW_WORKORDER_ESTIMATE">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">SEQ_WORKORDER_ESTIMATE</param>
+			</generator>
+		</id>
+		<many-to-one name="workOrder" column="WORKORDER_ID" not-null="true" insert="false" update="false" fetch="select"/>
+		<many-to-one name="estimate" class="org.egov.works.models.estimate.AbstractEstimate" column="ESTIMATE_ID" not-null="true" fetch="join"/>
+		<property name="workCompletionDate" column="WORK_COMPLETION_DATE" />	
+		<list name="workOrderActivities" cascade="all,delete-orphan">
+			<key column="WORKORDER_ESTIMATE_ID" not-null="true" />
+			<list-index column="WORKORDER_INDEX" />
+			<one-to-many class="org.egov.works.models.workorder.WorkOrderActivity" />
+		</list>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY" not-null="true" fetch="select"/>
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" />	
+		<property name="modifiedDate" column="MODIFIEDDATE" type="timestamp" />	
+		<set name="mbHeaders" inverse="true" >
+			<key column="WORKORDER_EST_ID" />
+			<one-to-many class="org.egov.works.models.measurementbook.MBHeader"  />
+		</set>
+		<list name="assetValues" cascade="all,delete-orphan">
+			<key column="WORKORDER_ESTIMATE_ID" not-null="true" />
+			<list-index column="ass_index" />
+			<one-to-many
+				class="org.egov.works.models.workorder.AssetsForWorkOrder" />
+		</list>
+		<set name="milestone" inverse="true" >
+			<key column="WORKORDER_EST_ID" />
+			<one-to-many class="org.egov.works.models.milestone.Milestone"  />
+		</set>
+		<set name="contractorAdvanceRequisitions" inverse="true" >
+			<key column="WORKORDERESTIMATE_ID" />
+			<one-to-many class="org.egov.works.models.contractoradvance.ContractorAdvanceRequisition"  />
+		</set>
+	</class>
+	<query name="getWorkOrderEstimateByWorkOrderId">
+		<![CDATA[
+     	   from WorkOrderEstimate woe where woe.workOrder.id = ?
+    ]]>
+	</query>
+	<query name="getWorkOrderEstimateById">
+		<![CDATA[
+     	   from WorkOrderEstimate woe where woe.estimate.id = ?
+    ]]>
+	</query>
+	<query name="getWorkOrderEstimateByEstAndWO">
+		<![CDATA[
+     	   from WorkOrderEstimate woe where woe.estimate.id = ? and woe.workOrder.id = ?
+    ]]>
+	</query>
+</hibernate-mapping>

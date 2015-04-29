@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 19, 2007 2:57:28 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+	<class name="org.egov.works.models.tender.Retender" table="EGW_RETENDER">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">			
+				<param name="sequence">EGW_RETENDER_SEQ</param>
+			</generator>
+		</id>
+		<many-to-one name="worksPackage" class="org.egov.works.models.tender.WorksPackage" insert="false" update="false" fetch="select">
+			<column name="WORKSPACKAGE_ID" not-null="true" />
+		</many-to-one>
+		<list name="retenderHistoryDetails" cascade="none">
+			<key column="RETENDER_ID" />
+			<list-index column="RETENDER_HIS_DTLS_INDEX" />
+			<one-to-many class="org.egov.works.models.tender.RetenderHistory" />
+		</list>
+		<property name="reason" type="string">
+			<column name="REASON" length="1024" not-null="true" /> 
+		</property>
+		<property name="date" type="date">
+			<column name="RETENDER_DATE" length="7" not-null="true" />
+		</property>
+		<property name="iterationNumber" type="int">
+			<column name="ITERATION_NO" not-null="true" />
+		</property>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />		
+    	<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />	
+	</class>
+</hibernate-mapping>

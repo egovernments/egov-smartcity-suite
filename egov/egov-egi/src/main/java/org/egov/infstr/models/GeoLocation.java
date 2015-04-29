@@ -43,6 +43,8 @@ import java.util.Map;
 
 public class GeoLocation {
 
+	public static final String INFO5SEPERATOR="~";
+
 	private GeoLatLong geoLatLong;
 
 	private String info1;
@@ -52,13 +54,41 @@ public class GeoLocation {
 	private String info3;
 
 	private String info4;
-
+	// contains key=values seperated by INFO5SEPERATOR[ tilde(~)]
+	//eg: "Contractor Name=Ramaswamy,Address=123 street,Total Amount=250000" 
+	private String info5;
 	private String urlRedirect;
 
 	private String urlDisplay;
 
 	// Meta data information for the marker option
 	private Map<String, Object> markerOptionData;
+
+	private Boolean useNiceInfoWindow=false;
+    private String styleClass;
+	
+	public String getStyleClass() {
+		return styleClass;
+	}
+	public void setStyleClass(String style) {
+		this.styleClass = style;
+	}
+	public String getInfo5() {
+		return info5;
+	}
+	/**
+	 * use appendToInfor5(String strToAppend) method to avoid errors
+	 * @param info5
+	 */
+	@Deprecated 
+	public void setInfo5(String info5) {
+		this.info5 = info5;
+	}
+
+	
+	public void setUseNiceInfoWindow(Boolean useNiceInfoWindow) {
+		this.useNiceInfoWindow = useNiceInfoWindow;
+	}
 
 	public GeoLatLong getGeoLatLong() {
 		return geoLatLong;
@@ -123,5 +153,22 @@ public class GeoLocation {
 	public void setMarkerOptionData(Map<String, Object> markerOptionData) {
 		this.markerOptionData = markerOptionData;
 	}
+	//use atleast a char on right side of = 
+	public void appendToInfo5(String strToAppend)
+	{
+		if(null==this.info5||this.info5.isEmpty())
+		{
+			this.info5=strToAppend;
+		}else
+		{
+			this.info5=this.info5+INFO5SEPERATOR+strToAppend;
+		}
+	}
+	
+
+	public Boolean getUseNiceInfoWindow() {
+		
+		return useNiceInfoWindow;
+	}	
 
 }

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.works.models.contractorBill.StatutoryDeductionsForBill" table="EGW_STATUTORYDEDUCTIONS_BILL">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_STATUTORYDEDUCTIONS_SEQ</param>
+			</generator>
+		</id>
+	<many-to-one name="subPartyType" class="org.egov.commons.EgPartytype" column="SUBPARTYTYPE_ID" fetch="select" />
+	<many-to-one name="typeOfWork" class="org.egov.commons.EgwTypeOfWork" column="TYPEOFWORK_ID" fetch="select" />
+	<many-to-one name="egBillReg" class="org.egov.model.bills.EgBillregister" column="ID_BILL" insert="false" update="false"/>
+	<many-to-one name="egBillPayeeDtls" class="org.egov.model.bills.EgBillPayeedetails" column="BILLPAYEEDETAILS_ID" fetch="select"/>
+</class>
+</hibernate-mapping>
+		
+		
+	
+		 

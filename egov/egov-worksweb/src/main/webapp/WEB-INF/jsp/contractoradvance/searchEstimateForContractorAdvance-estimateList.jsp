@@ -1,0 +1,102 @@
+ <%@ taglib uri="http://displaytag.sf.net" prefix="display"%> 
+
+<div>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr height="5">
+		<td></td>
+	</tr>
+	<tr>
+		<td>
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td colspan="9" class="headingwk" align="left">
+						<div class="arrowiconwk">
+							<img src="${pageContext.request.contextPath}/image/arrow.gif" />
+						</div>
+
+						<div class="headerplacer">
+							<s:text name='search.result' />
+						</div>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+     <s:if test="%{searchResult.fullListSize != 0 && !hasErrors()}">
+    	<s:text id="select" name="%{getText('label.select')}"></s:text>	
+     	<s:text id="slNo" name="%{getText('label.slno')}"></s:text>		
+		<s:text id="estimatenoanddate" name="%{getText('contractoradvance.estimatenumber_date')}"></s:text>
+		<s:text id="executingdepartment" name="%{getText('contractoradvance.executingdepartment')}"></s:text>
+		<s:text id="tendertype" name="%{getText('contractoradvance.tendertype')}"></s:text>
+		<s:text id="workordernumberanddate" name="%{getText('contractoradvance.workordernumber_date')}"></s:text>
+		<s:text id="contractorcodeandname" name="%{getText('contractoradvance.contractorcode_name')}"></s:text>
+		<s:text id="estimatevalue" name="%{getText('contractoradvance.estimatevalue')}"></s:text>
+		<s:text id="workorderamount" name="%{getText('contractoradvance.workorderamount')}"></s:text>
+		
+ 	     <display:table name="searchResult" pagesize="30" uid="currentRow" cellpadding="0" cellspacing="0" requestURI=""
+			style="border:1px;width:100%;empty-cells:show;border-collapse:collapse;">
+
+			<display:column headerClass="pagetableth" class="pagetabletd" title="${select}" style="width:5%;" >
+				<input name="radio" type="radio" id="radio"
+					value="<s:property value='%{#attr.currentRow.id}'/>" />
+					
+				<s:hidden id="woEstimateId" name="woEstimateId" value="%{#attr.currentRow.id}" />
+					
+			</display:column>
+		
+	        <display:column headerClass="pagetableth"  class="pagetabletd" title="${slNo}" style="width:5%;text-align:left" >
+			     <s:property value="#attr.currentRow_rowNum + (page-1)*pageSize"/>
+			</display:column>
+			<display:column headerClass="pagetableth" class="pagetabletd" title="${estimatenoanddate}" style="width:15%;text-align:left">
+				<a href="#" onclick="viewEstimate('<s:property value='%{#attr.currentRow.estimate.id}'/>')"> 
+					<s:property value="#attr.currentRow.estimate.estimateNumber" /> 
+				</a> / <s:date name="#attr.currentRow.estimate.estimateDate" format="dd/MM/yyyy" />
+			</display:column>
+			<display:column headerClass="pagetableth" class="pagetabletd" title="${executingdepartment}" style="width:15%;text-align:left" >
+				<s:property value="#attr.currentRow.estimate.executingDepartment.deptName" />
+			</display:column>
+			<display:column headerClass="pagetableth" class="pagetabletd" title="${tendertype}" style="width:10%;text-align:left"  >
+				<s:property value="#attr.currentRow.workOrder.tenderType" /> 
+			</display:column>
+			<display:column headerClass="pagetableth" class="pagetabletd" title="${workordernumberanddate}" style="width:20%;text-align:left">
+			<a href="#" onclick="viewWorkOrder('<s:property value='%{#attr.currentRow.workOrder.id}'/>')"> 
+					<s:property value="#attr.currentRow.workOrder.workOrderNumber" /> 
+				</a> / <s:date name="#attr.currentRow.workOrder.workOrderDate" format="dd/MM/yyyy" />
+			</display:column>
+			<display:column headerClass="pagetableth" class="pagetabletd" title="${contractorcodeandname}" style="width:20%;text-align:left">
+				<s:property value="#attr.currentRow.workOrder.contractor.code" /> / <s:property value="#attr.currentRow.workOrder.contractor.name" />
+			</display:column>
+			<display:column headerClass="pagetableth" class="pagetabletd" title="${estimatevalue}" style="width:15%;text-align:right" >
+				<s:text name="contractor.format.number" >
+					<s:param name="estimateAmount" value='%{#attr.currentRow.estimate.totalAmount.value}' />
+				</s:text>
+			</display:column>
+			<display:column headerClass="pagetableth" class="pagetabletd" title="${workorderamount}" style="width:15%;text-align:right"  >
+				<s:text name="contractor.format.number" >
+					<s:param name="woAmount" value='%{#attr.currentRow.workOrder.workOrderAmount}' />
+				</s:text>
+			</display:column>
+	   </display:table> 
+	 </s:if> 
+	 <s:elseif test="%{searchResult.fullListSize == 0 && !hasErrors()}">
+		  <div>
+			<table width="100%" border="0" cellpadding="0" 	cellspacing="0">
+				<tr>
+				   <td align="center">
+					 <font color="red"><s:text name="search.result.no.record" /></font>
+				   </td>
+			    </tr>
+			</table>
+		  </div>
+	</s:elseif>
+</div>
+<script>
+	function viewEstimate(estimateId){
+		window.open("${pageContext.request.contextPath}/estimate/abstractEstimate!edit.action?id="+estimateId+"&sourcepage=search",'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	} 
+
+	function viewWorkOrder(workOrderId){
+		window.open("${pageContext.request.contextPath}/workorder/workOrder!edit.action?id="+workOrderId+"&mode=search",'', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	}       
+</script>

@@ -1,0 +1,24 @@
+<decorators defaultdir="/WEB-INF/jsp/decorators">
+    <excludes>
+        <pattern>/40*.jsp</pattern>       	
+        <pattern>/commonyui/egov/genericScreenWithLeaf.jsp</pattern>
+        <pattern>/depositWorks/roadCutApprovalLetter!ajaxPrint*</pattern>
+        <pattern>/depositWorks/roadCut!exportHtml*</pattern>
+        <pattern>/depositWorks/utilizationCertificate!exportHtml*</pattern>
+        <pattern>/mobile/upload*</pattern>
+        <pattern>/citizen/depositWorksHomePage*</pattern>
+        <pattern>/commonyui/egov/menutree.jsp</pattern>
+        <pattern>/estimate/abstractEstimate!maps*</pattern>
+        <pattern>/*Ajax.action</pattern>
+        <pattern>/*Ajax.do</pattern>
+        <pattern>/*decorate=false*</pattern>
+    </excludes>
+    <decorator name="default" page="default.jsp">
+      <pattern>/*.action</pattern>
+      <pattern>/*.do</pattern>
+    </decorator>
+    <decorator name="depositworks" page="depositWorks-default.jsp">
+      <pattern>/citizen/*.action</pattern>
+      <pattern>/citizen/*.do</pattern> 
+    </decorator>
+</decorators>

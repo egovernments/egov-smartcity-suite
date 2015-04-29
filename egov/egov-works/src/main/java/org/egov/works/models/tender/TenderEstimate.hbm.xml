@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 19, 2007 2:57:28 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+	<class name="org.egov.works.models.tender.TenderEstimate"
+		table="EGW_TENDER_ESTIMATE">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_TENDER_ESTIMATE_SEQ</param>
+			</generator>
+		</id>
+		<many-to-one name="abstractEstimate" class="org.egov.works.models.estimate.AbstractEstimate" column="ABSTRACTESTIMATE_ID" fetch="select"/>	
+		<many-to-one name="worksPackage" class="org.egov.works.models.tender.WorksPackage" column="WORKS_PACKAGE_ID" fetch="select"/>
+		<many-to-one name="tenderHeader" column="TENDER_HEADER_ID" not-null="true" insert="false" update="false" fetch="select"/>
+		<property name="tenderType" type="string">
+			<column name="TENDER_TYPE" length="100" not-null="true" />
+		</property>
+		
+		<set name="tenderResponseSet" inverse="true" >
+			<key column="TENDER_ESTIMATE_ID" />
+			<one-to-many class="org.egov.works.models.tender.TenderResponse"  />
+		</set>
+		
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" not-null="true" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />	
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />	
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping
+PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<class name="org.egov.works.models.estimate.Activity" table="EGW_ACTIVITY">
+		<id
+			name="id"
+			column="ID"
+			type="long"
+			unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">EGW_ACTIVITY_SEQ</param>
+			</generator>
+		</id>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+        <many-to-one name="abstractEstimate" class="org.egov.works.models.estimate.AbstractEstimate" fetch="select" insert="false" update="false">
+            <column name="ABSTRACTESTIMATE_ID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="schedule" class="org.egov.works.models.masters.ScheduleOfRate" fetch="join">
+            <column name="SCHEDULEOFRATE_ID" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="uom" class="org.egov.infstr.commonMasters.EgUom" fetch="select">
+	    	<column name="UOM_ID" />
+		</many-to-one>
+        <many-to-one name="nonSor" class="org.egov.works.models.estimate.NonSor" fetch="join" cascade="all">
+            <column name="NONSOR_ID" precision="22" scale="0" />
+        </many-to-one>
+        <property name="revisionType" column="REVISION_TYPE" >
+            	<type name="org.egov.infstr.models.EnumUserType">       
+				<param name="enumClassName">org.egov.works.models.revisionEstimate.RevisionType</param>     
+			</type>   
+		</property>
+	    <component name="rate">
+			<property name="value" type="double" precision="2" scale="20" not-null="true"/>
+		</component>
+	
+		<property name="quantity" type="double">
+            <column name="QUANTITY" precision="20" not-null="true" />
+        </property>
+        
+        <property name="serviceTaxPerc" type="double">
+            <column name="SERVICETAXPERC" precision="20" />
+        </property>
+        
+        <many-to-one name="parent" column="PARENTID" />
+   
+</class>
+</hibernate-mapping>

@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 19, 2007 2:57:28 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+	<class name="org.egov.works.models.tender.TenderResponse"
+		table="EGW_TENDER_RESPONSE">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_TENDER_RESPONSE_SEQ</param> 
+			</generator>
+		</id>				
+		<many-to-one name="tenderEstimate" column="TENDER_ESTIMATE_ID" not-null="true" fetch="select"/>
+		<property name="rank" type="string">
+			<column name="RANK" length="10" />
+		</property>
+		<property name="type" type="string">
+			<column name="TYPE" length="25" />
+		</property>
+		<property name="percQuotedRate" type="double">
+            <column name="PERC_QUOTED_RATE" precision="20" not-null="true" />
+        </property>
+        <property name="percNegotiatedAmountRate" type="double">
+            <column name="PERC_NEGOTIATED_RATE" precision="20" not-null="true" />
+        </property>
+        <property name="negotiationDate" type="date">
+			<column name="NEGOTIATION_DATE" length="7" />
+		</property>
+		<property name="negotiationNumber" type="string">
+			<column name="NEGOTIATION_NUMBER" length="256" />
+		</property>		
+		<property name="narration" type="string">
+			<column name="NARRATION" length="500" />
+		</property>
+		<!-- on may18 document upload -->
+		<property name="documentNumber" type="long">
+            <column name="DOCUMENT_NUMBER"/>
+        </property>
+        
+        <property name="resolutionNumber" type="string">
+			<column name="RESOLUTION_NUMBER" length="256" />
+		</property>
+		<property name="resolutionDate" type="date">
+			<column name="RESOLUTION_DATE" length="7" />
+		</property>		
+        
+		<list name="tenderResponseActivities" cascade="all,delete-orphan">
+			<key column="TENDER_RESPONSE_ID" not-null="true" />
+			<list-index column="tr_index" />
+			<one-to-many class="org.egov.works.models.tender.TenderResponseActivity" />
+		</list>
+		<list name="tenderResponseContractors" cascade="all,delete-orphan">
+			<key column="TENDER_RESPONSE_ID" not-null="true" />
+			<list-index column="tr_index" />
+			<one-to-many class="org.egov.works.models.tender.TenderResponseContractors" />
+		</list>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" not-null="true" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />	
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />	
+		<many-to-one name="state" class="org.egov.infstr.models.State"
+			cascade="all">
+			<column name="STATE_ID" />
+		</many-to-one>
+		
+		<many-to-one name="egwStatus" column="STATUS_ID" /> 
+		
+		<!-- by prashanth added on jan9 not-null="true" fetch="select" -->
+		<many-to-one name="negotiationPreparedBy"
+			class="org.egov.pims.model.PersonalInformation" column="PREPARED_BY"
+			not-null="true" fetch="select" />
+		<set name="setStatuses" inverse="true" >
+			<key column="OBJECT_ID" />
+			<one-to-many class="org.egov.works.models.tender.SetStatus"  />
+		</set>
+		<property name="tenderNegotiatedValue" type="double">
+            <column name="TENDER_NEGOTIATED_VALUE" precision="40" />
+        </property>
+	</class>
+	<query name="MY_NONCANCELLED_NEGOTIATIONSTATEMENTS">
+		<![CDATA[
+     	from TenderResponse tr where tr.tenderEstimate.abstractEstimate.id = ? and tr.egwStatus.code !='CANCELLED'
+    ]]>	
+    </query>
+     <query name="TenderNumberUniqueCheck">
+     <![CDATA[
+     select tenderResponse from TenderResponse   tenderResponse where tenderResponse.tenderEstimate.tenderHeader.tenderNo=? and tenderResponse.egwStatus.code != 'CANCELLED' order by tenderResponse.tenderEstimate.tenderHeader.id desc
+    ]]>
+    </query>
+    <query name="getApprovedNegotiationContractors">
+		<![CDATA[
+     	select distinct(trc.contractor) from TenderResponseContractors trc where trc.tenderResponse.egwStatus.code ='APPROVED'
+    ]]>	
+    </query>
+    <query name="getTenderFortenderId">
+		<![CDATA[
+     	select tr from TenderResponse tr where tr.tenderEstimate.tenderHeader.tenderNo =? and tr.egwStatus.code != 'CANCELLED'
+    ]]>	
+    </query>
+      
+    <query name="getTenderFortenderIdCanceledWO">
+	<![CDATA[
+		select distinct tr from TenderResponse tr where tr.negotiationNumber = ? and tr.id in (select trc.tenderResponse.id from TenderResponseContractors trc where trc.contractor.id in 
+		(select wo.contractor.id from WorkOrder wo where wo.id = ? and wo.tenderNumber = ? and wo.contractor.id = ? and wo.packageNumber = ? ))
+	]]>	
+    </query>
+    	
+    <sql-query name="TenderNumberUniqueCheckForEdit">
+     <![CDATA[
+     select tenderResponse.id from egw_tender_response  tenderResponse,egw_tender_estimate   tenderestimate,egw_tender_header   tenderheader where tenderResponse.TENDER_ESTIMATE_ID=tenderestimate.id and 
+     tenderestimate.TENDER_HEADER_ID=tenderheader.id and tenderheader.TENDER_NO=? and tenderResponse.id!=? and
+     tenderResponse.status_id not in(select id from egw_status where moduletype='TenderResponse' and code='CANCELLED')
+    ]]>
+    </sql-query>  
+    <query name="getTenderForWorksPackageNum">
+		<![CDATA[
+     	from TenderResponse tr where tr.tenderEstimate.worksPackage.wpNumber = ? and tr.egwStatus.code !='CANCELLED'
+    ]]>	
+    </query>
+    <query name="getApprovedTenderForNegotiationNum">
+		<![CDATA[
+     	from TenderResponse tr where tr.negotiationNumber = ? and tr.egwStatus.code ='APPROVED'
+    ]]>	
+    </query>
+</hibernate-mapping>

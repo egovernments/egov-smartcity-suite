@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping
+PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.works.models.masters.MarketRate" table="EGW_MARKETRATE">
+		<id name="id" column="ID" type="long" unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">EGW_MARKETRATE_SEQ</param>
+			</generator>
+		</id>
+		<property column="MODIFIED_DATE" name="modifiedDate" />
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
+		<component name="marketRate">
+			<property name="value" type="double" precision="2"	scale="20" column="VALUE" />
+		</component>
+		<many-to-one name="schedule" column="SCHEDULEOFRATE_ID" not-null="true" insert="false" update="false" />
+		<component name="validity">
+			<property name="startDate" type="date" />
+			<property name="endDate" type="date" />
+		</component>
+	</class>
+</hibernate-mapping>

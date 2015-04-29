@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 19, 2007 2:57:28 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+	<class name="org.egov.works.models.masters.ContractorGrade"
+		table="EGW_CONTRACTOR_GRADE">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_CONTRACTOR_GRADE_SEQ</param>
+			</generator>
+		</id>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY" fetch="select"/>
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" />		
+		<property name="modifiedDate" column="MODIFIEDDATE" type="timestamp" />	
+		<property name="grade" type="string" >
+			<column name="GRADE" length="20" not-null="true" unique="true" />
+		</property>
+		<property name="description" type="string">
+			<column name="DESCRIPTION" length="100" not-null="true" />
+		</property>
+		<property name="minAmount" type="double">
+            <column name="MIN_AMOUNT" precision="2" scale="20" not-null="true" />
+        </property>
+        <property name="maxAmount" type="double">
+            <column name="MAX_AMOUNT" precision="2" scale="20" not-null="true" />
+        </property>
+		
+	</class>
+	<query name="getContractorGradeMaxAmountList">
+		<![CDATA[
+     	select distinct(maxAmount) from ContractorGrade cg order by cg.maxAmount
+    	]]>
+	</query>
+	<query name="getContractorGradeMinAmountList">
+		<![CDATA[
+     	select distinct(minAmount) from ContractorGrade cg order by cg.minAmount
+    	]]>
+	</query>
+</hibernate-mapping>

@@ -831,5 +831,10 @@ public interface CommonsService {
 
     public Long getBndryIdFromShapefile(Double latitude,Double longitude);
 
+    /**
+     * Returns Financial Year based on date irrespective of active status
+     * @param date
+     */
+    public CFinancialYear getFinYearByDate(Date date);
 
 }

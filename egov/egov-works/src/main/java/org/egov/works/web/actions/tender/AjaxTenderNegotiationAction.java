@@ -1,0 +1,444 @@
+package org.egov.works.web.actions.tender;
+ 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.pims.model.Assignment;
+import org.egov.pims.service.EmployeeService;
+import org.egov.pims.service.PersonalInformationService;
+import org.egov.web.actions.BaseFormAction;
+import org.egov.works.models.estimate.AbstractEstimate;
+import org.egov.works.models.estimate.Activity;
+import org.egov.works.models.estimate.ProjectCode;
+import org.egov.works.models.masters.MarketRate;
+import org.egov.works.models.masters.ScheduleOfRate;
+import org.egov.works.models.tender.EstimateLineItemsForWP;
+import org.egov.works.models.tender.TenderResponse;
+import org.egov.works.models.tender.WorksPackage;
+import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.services.AbstractEstimateService;
+import org.egov.works.services.TenderResponseService;
+import org.egov.works.services.WorkOrderService;
+import org.egov.works.services.WorksPackageService;
+import org.egov.works.services.WorksService;
+import org.springframework.beans.factory.annotation.Autowired;
+ 
+public class AjaxTenderNegotiationAction extends BaseFormAction {
+ 
+    private static final String MARKETVALUE = "marketValue";
+    private AbstractEstimateService abstractEstimateService;       
+    private WorksService worksService;
+    private Long estimateId;
+    private Long packageId;
+    private Date asOnDate;
+    private double marketRateAmount=0;
+    private WorksPackageService workspackageService;
+    private TenderResponse tenderResp=new TenderResponse();
+    //for prepared by
+    private static final String USERS_IN_DEPT = "usersInDept";
+    private static final String DESIGN_FOR_EMP = "designForEmp";
+    private Integer executingDepartment;
+    private Integer empID;
+    @Autowired
+    private EmployeeService employeeService;
+    private List usersInExecutingDepartment;
+    private Assignment assignment;
+    private String tenderNo;
+    private Long checkId;
+    private Long id;
+    private TenderResponseService tenderResponseService;
+    private static final String TENDERNUMBERUNIQUECHECK = "tenderNumberUniqueCheck";
+	private PersonalInformationService personalInformationService;
+	private static final String GET_WORKORDERS_TN = "getWorkOrdersForTN";
+	private List <WorkOrder> workOrderList = new ArrayList<WorkOrder>(); 
+	private WorkOrderService workOrderService;
+	private String tenderNegotiationNo;
+	private String query = "";
+	private List<AbstractEstimate> estimateList = new LinkedList<AbstractEstimate>();
+	private List<ProjectCode> projectCodeList = new LinkedList<ProjectCode>();
+	private List<String> negotiationNumberList = new LinkedList<String>();
+	private List<WorksPackage> wpNumberList = new LinkedList<WorksPackage>();
+	private List<WorksPackage> tenderFileNumberList = new LinkedList<WorksPackage>();	
+ 
+    public String getMarketValue()
+    {
+        if(estimateId!=null)
+            getMarketValueForEstimate(estimateId);
+        if(packageId!=null)
+            getMarketValueForPackage(packageId);
+        return MARKETVALUE;
+    }
+     
+    public double getMarketValueForEstimate(Long estimateId){
+        AbstractEstimate abstractEstimate = abstractEstimateService.findById(estimateId, false);
+        Collection<Activity> sorActivities=abstractEstimate.getSORActivities();
+        Map<String,Integer> exceptionaSorMap = worksService.getExceptionSOR();
+        for(Activity activity : sorActivities){
+            double marketrate=0;
+            double marketrateAmt=0;
+            ScheduleOfRate scheduleOfRate=activity.getSchedule();
+            if(scheduleOfRate.hasValidMarketRateFor(asOnDate)){
+                double result=1;
+                MarketRate marketRate= scheduleOfRate.getMarketRateOn(asOnDate);
+                if(activity.getUom()!=null && StringUtils.isNotBlank(activity.getUom().getUom()) && exceptionaSorMap.containsKey(activity.getUom().getUom()))
+                    result = exceptionaSorMap.get(activity.getUom().getUom());
+                marketrate=marketRate.getMarketRate().getValue()/result;
+            }
+            if(marketrate==0) {
+            	marketrateAmt=activity.getAmount().getValue();
+            }
+            else {
+                marketrateAmt=activity.getQuantity()*marketrate;
+            }
+            marketRateAmount=marketRateAmount+marketrateAmt;
+        }
+        Collection<Activity> nonSorActivities=abstractEstimate.getNonSORActivities();
+        for(Activity activity : nonSorActivities){
+        	marketRateAmount=marketRateAmount+activity.getAmount().getValue();
+        }
+        return marketRateAmount;
+    }
+     
+    public double getMarketValueForPackage(Long packageId){
+        WorksPackage workspackage = workspackageService.findById(packageId, false);
+        for(EstimateLineItemsForWP estlineItem : workspackage.getActivitiesForEstimate()){
+            double marketrate=0;
+            double marketrateAmt=0;
+            Map<String,Integer> exceptionaSorMap = worksService.getExceptionSOR();
+            if(StringUtils.isNotBlank(estlineItem.getCode())){
+                ScheduleOfRate scheduleOfRate=estlineItem.getActivity().getSchedule();
+                if(scheduleOfRate.hasValidMarketRateFor(asOnDate)){
+                    double result=1;
+                    MarketRate marketRate= scheduleOfRate.getMarketRateOn(asOnDate);
+                    if(exceptionaSorMap.containsKey(estlineItem.getUom()))
+                        result = exceptionaSorMap.get(estlineItem.getUom());
+                    marketrate=marketRate.getMarketRate().getValue()/result;
+                }
+                if(marketrate==0) {
+                	marketrateAmt=estlineItem.getAmt();
+                }
+                else {
+                    marketrateAmt=estlineItem.getQuantity()*marketrate;
+                }
+                marketRateAmount=marketRateAmount+marketrateAmt;
+            }
+            else
+            {
+            	 marketRateAmount=marketRateAmount+estlineItem.getActivity().getAmount().getValue();
+            }
+        }
+        return marketRateAmount;
+    }
+
+         
+    public double getMarketRateWithTax(double marketrate,Activity activity)
+    {
+        double marketrateAmt=0;
+        if(marketrate==0) {
+            marketrateAmt=activity.getAmountIncludingTax().getValue();                 
+        }
+        else {
+            marketrateAmt=activity.getQuantity()*marketrate;
+            marketrateAmt+=(activity.getServiceTaxPerc()*marketrateAmt)/100;
+        }
+        return marketrateAmt;
+    }
+    public String tenderNumberUniqueCheck(){
+        return TENDERNUMBERUNIQUECHECK;
+    }
+    //for preparedby
+    public String designationForUser(){
+        try {
+            assignment = employeeService.getLatestAssignmentForEmployee(empID);
+        } catch (Exception e) {
+            throw new EGOVRuntimeException("user.find.error", e);
+        }
+        return DESIGN_FOR_EMP;
+    }
+     
+    public boolean getTendernoCheck() {
+        boolean tenderNoexistsOrNot = false;
+        TenderResponse tenderResponseObj = null;
+        if(id==null){
+        	tenderResponseObj = (TenderResponse) getPersistenceService().findByNamedQuery("TenderNumberUniqueCheck",tenderNo);
+        	if(tenderResponseObj!=null) {
+            	tenderNoexistsOrNot = true;
+            }
+        }
+        else{
+        	 	if(getPersistenceService().findByNamedQuery("TenderNumberUniqueCheckForEdit",tenderNo,id)!=null) {
+        	   		tenderNoexistsOrNot = true;
+        	}
+        }
+       return tenderNoexistsOrNot;
+    }
+     
+    public String usersInExecutingDepartment() {
+        try {
+        	HashMap<String,Object> criteriaParams =new HashMap<String,Object>();
+			criteriaParams.put("departmentId", executingDepartment);
+			criteriaParams.put("isPrimary", "Y");
+			if(executingDepartment==null || executingDepartment==-1)
+				usersInExecutingDepartment=Collections.EMPTY_LIST;
+			else
+				usersInExecutingDepartment=personalInformationService.getListOfEmployeeViewBasedOnCriteria(criteriaParams, -1, -1);
+        } catch (Exception e) {
+            throw new EGOVRuntimeException("user.find.error", e);
+        }
+        return USERS_IN_DEPT;
+    }
+    
+    public String getWODetailsForTN() throws Exception{
+		List<WorkOrder> woList = new ArrayList<WorkOrder>();
+		woList = workOrderService.findAllBy("select distinct wo from WorkOrder wo where wo.egwStatus.code<>'CANCELLED' and wo.negotiationNumber=? ", tenderNegotiationNo);
+		
+		if(woList != null && !woList.isEmpty())
+			workOrderList.addAll(woList);
+		
+		return GET_WORKORDERS_TN; 
+	}
+	
+	 public String searchNegotiationNumber(){
+		String strquery="";
+		ArrayList<Object> params=new ArrayList<Object>();
+		if(!StringUtils.isEmpty(query)) {
+			strquery=" select distinct tr.negotiationNumber from TenderResponse tr where upper(tr.negotiationNumber) like '%'||?||'%' and tr.egwStatus.code <> ? ";
+			params.add(query.toUpperCase()); 
+			params.add("NEW");
+			negotiationNumberList = getPersistenceService().findAllBy(strquery,params.toArray()); 
+		}
+		return "negotiationNumberSearchResults";
+	}
+	 
+	public String searchWorksPackageNumber(){
+		String strquery="";
+		ArrayList<Object> params=new ArrayList<Object>();
+		if(!StringUtils.isEmpty(query)) {
+			strquery="select distinct tr.tenderEstimate.worksPackage from TenderResponse tr where upper(tr.tenderEstimate.worksPackage.wpNumber) like '%'||?||'%' and tr.egwStatus.code <> ? ";
+			params.add(query.toUpperCase()); 
+			params.add("NEW");
+			wpNumberList = getPersistenceService().findAllBy(strquery,params.toArray()); 
+		}
+		return "worksPackageNumberSearchResults";
+	}
+	
+	public String searchTenderFileNumber(){
+		String strquery="";
+		ArrayList<Object> params=new ArrayList<Object>();
+		if(!StringUtils.isEmpty(query)) {
+			strquery="select distinct tr.tenderEstimate.worksPackage from TenderResponse tr where upper(tr.tenderEstimate.worksPackage.tenderFileNumber) like '%'||?||'%' and tr.egwStatus.code <> ? ";
+			params.add(query.toUpperCase()); 
+			params.add("NEW");
+			tenderFileNumberList = getPersistenceService().findAllBy(strquery,params.toArray()); 
+		}
+		return "tenderFileNumberSearchResults";
+	}
+    
+    
+    public String searchProjectCode(){
+		String strquery="";
+		ArrayList<Object> params=new ArrayList<Object>();
+		if(!StringUtils.isEmpty(query)) {
+			strquery="select distinct wpd.estimate.projectCode from WorksPackageDetails wpd where upper(wpd.estimate.projectCode.code) like '%'||?||'%' " +
+			" and wpd.worksPackage.id in (select distinct tr.tenderEstimate.worksPackage.id from TenderResponse tr where tr.egwStatus.code <> ? )";
+			params.add(query.toUpperCase()); 
+			params.add("NEW");
+			projectCodeList = getPersistenceService().findAllBy(strquery,params.toArray()); 
+		}
+		return "projectCodeSearchResults";
+	}
+    
+    public String searchEstimateNumber(){
+		String strquery="";
+		ArrayList<Object> params=new ArrayList<Object>();
+		if(!StringUtils.isEmpty(query)) {
+			strquery="select wpd.estimate from WorksPackageDetails wpd where upper(wpd.estimate.estimateNumber) like '%'||?||'%' " +
+			" and wpd.worksPackage.id in (select distinct tr.tenderEstimate.worksPackage.id from TenderResponse tr where tr.egwStatus.code <> ? )";
+			params.add(query.toUpperCase()); 
+			params.add("NEW");
+			estimateList = getPersistenceService().findAllBy(strquery,params.toArray()); 
+		}
+		return "estimateNoSearchResults";
+	}  
+    
+         
+    public Object getModel() {
+        // TODO Auto-generated method stub
+        return tenderResp;
+    }
+     
+    public String execute(){
+        return SUCCESS;
+    }
+     
+    public void setAbstractEstimateService(
+            AbstractEstimateService abstractEstimateService) {
+        this.abstractEstimateService = abstractEstimateService;
+    }
+ 
+    public void setEstimateId(Long estimateId) {
+        this.estimateId = estimateId;
+    }
+ 
+    public void setAsOnDate(Date asOnDate) {
+        this.asOnDate = asOnDate;
+    }
+ 
+    public double getMarketRateAmount() {
+        return marketRateAmount;
+    }
+ 
+    public void setMarketRateAmount(double marketRateAmount) {
+        this.marketRateAmount = marketRateAmount;
+    }
+     
+    //for prepared by
+    public void setEmployeeService(EmployeeService employeeService) {
+        this.employeeService = employeeService;
+    }
+     
+    public void setEmpID(Integer empID) {
+        this.empID = empID;
+    }
+     
+    public List getUsersInExecutingDepartment() {
+        return usersInExecutingDepartment;
+    }
+     
+    public void setExecutingDepartment(Integer executingDepartment) {
+        this.executingDepartment = executingDepartment;
+    }
+ 
+    public Assignment getAssignment() {
+        return assignment;
+    }
+ 
+    public Long getPackageId() {
+        return packageId;
+    }
+ 
+    public void setPackageId(Long packageId) {
+        this.packageId = packageId;
+    }
+ 
+    public void setWorkspackageService(WorksPackageService workspackageService) {
+        this.workspackageService = workspackageService;
+    }
+ 
+    public String getTenderNo() {
+        return tenderNo;
+    }
+ 
+    public void setTenderNo(String tenderNo) {
+        this.tenderNo = tenderNo;
+    }
+ 
+    public Long getCheckId() {
+        return checkId;
+    }
+ 
+    public void setCheckId(Long checkId) {
+        this.checkId = checkId;
+    }
+     
+    public TenderResponse getTenderResp() {
+        return tenderResp;
+    }
+ 
+    public void setTenderResp(TenderResponse tenderResp) {
+        this.tenderResp = tenderResp;
+    }
+ 
+ 
+    public void setTenderResponseService(TenderResponseService tenderResponseService) {
+        this.tenderResponseService = tenderResponseService;
+    }
+    public Long getId() {
+        return id;
+    }
+ 
+    public void setId(Long id) {
+        this.id = id;
+    }
+ 
+    public void setWorksService(WorksService worksService) {
+        this.worksService = worksService;
+    }
+	public void setPersonalInformationService(
+			PersonalInformationService personalInformationService) {
+		this.personalInformationService = personalInformationService;
+	}
+
+	public List<WorkOrder> getWorkOrderList() {
+		return workOrderList;
+	}
+
+	public void setWorkOrderList(List<WorkOrder> workOrderList) {
+		this.workOrderList = workOrderList;
+	}
+
+	public String getTenderNegotiationNo() {
+		return tenderNegotiationNo;
+	}
+
+	public void setTenderNegotiationNo(String tenderNegotiationNo) {
+		this.tenderNegotiationNo = tenderNegotiationNo;
+	}
+
+	public void setWorkOrderService(WorkOrderService workOrderService) {
+		this.workOrderService = workOrderService;
+	}
+
+	public List<AbstractEstimate> getEstimateList() { 
+		return estimateList;
+	}
+
+	public void setEstimateList(List<AbstractEstimate> estimateList) {
+		this.estimateList = estimateList;
+	}
+
+	public String getQuery() {
+		return query;
+	}
+
+	public void setQuery(String query) {
+		this.query = query;
+	}
+
+	public List<ProjectCode> getProjectCodeList() {
+		return projectCodeList;
+	}
+
+	public void setProjectCodeList(List<ProjectCode> projectCodeList) {
+		this.projectCodeList = projectCodeList;
+	}
+
+	public List<String> getNegotiationNumberList() {
+		return negotiationNumberList;
+	}
+
+	public List<WorksPackage> getWpNumberList() {
+		return wpNumberList;
+	}
+
+	public void setWpNumberList(List<WorksPackage> wpNumberList) {
+		this.wpNumberList = wpNumberList;
+	}
+
+	public List<WorksPackage> getTenderFileNumberList() {
+		return tenderFileNumberList;
+	}
+
+	public void setTenderFileNumberList(List<WorksPackage> tenderFileNumberList) {
+		this.tenderFileNumberList = tenderFileNumberList;
+	}
+      
+} 

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+	<!-- Generated on 20th Jan 15 -->
+<hibernate-mapping>
+	<class name="org.egov.works.models.contractorBill.DepositCOABudgetHead" table="EGW_DEPOSITCOA_BUDGETHEAD">
+		<composite-id>
+            <key-property name="id" column="ID" />
+        </composite-id>
+		<property name="depositCOA" type="string" not-null="true">
+			<column name="DEPOSIT_COA" length="50" />
+		</property>
+		<property name="workDoneBudgetGroup" type="string" not-null="true">
+			<column name="WORKDONE_BUDGET_HEAD" length="50" />
+		</property>
+	</class>  
+</hibernate-mapping>

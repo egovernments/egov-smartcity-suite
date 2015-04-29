@@ -45,6 +45,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -511,6 +512,76 @@ public class EisUtilService implements EISServeable {
         }
         return validuser;
 
+    }
+    
+    /*
+     * Gets all the DO users for the following params
+     *      (non-Javadoc)
+     * @see org.egov.infstr.services.EISServeable#getListOfDrawingOfficers(java.util.List, java.lang.String, java.lang.String)
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public List<HashMap> getListOfDrawingOfficers(List<Integer> desigList,Date assignDate,String codeOrName)
+    {
+            ArrayList results = new ArrayList();
+            if(null==assignDate)
+                    assignDate = new Date();
+            Query query=getQueryForDrawingOfficer(desigList,null,assignDate,codeOrName);
+            List<Object[]> tmpList = (List<Object[]>) query.list();
+            int i=0;
+            for(Object[] objArray:tmpList)
+            {
+                    Map temp = new HashMap();
+                    temp.put("empid", objArray[0]);
+                    temp.put("empname",objArray[1]);
+                    temp.put("empcode", objArray[2]);
+                    temp.put("doid", objArray[3]);
+                    temp.put("doname", objArray[4]);
+                    temp.put("docode", objArray[5]);
+                    results.add(i, temp);
+                    i++;
+            }
+            
+            return results;
+    }
+    
+    private Query getQueryForDrawingOfficer(List<Integer> desigList,Integer doId,Date assignDate,String codeOrName)
+    {
+            StringBuffer qry = new StringBuffer("select distinct eee.id as empid,eee.name as empname,eee.code as empcode," +
+                            " do.id as doid,do.name as doname,do.code as docode from eg_eis_employeeinfo eee" +
+                            " inner join eg_position pos on pos.id = eee.pos_id" +
+                            " inner join eg_drawingofficer do on do.id = pos.id_drawing_officer " +
+                            " where eee.isactive=1 and pos.id_drawing_officer is not null " +
+                            " and :enteredDate between eee.from_date and eee.to_date ");
+            
+            if((null!=desigList && !desigList.isEmpty()) )
+            {
+                    qry.append(" and eee.designationid in (:desList) ");
+            }
+            if(null!=codeOrName && !codeOrName.isEmpty())
+            {
+                    qry.append(" and (lower(do.name) like lower(:enteredString) or lower(do.code) like lower(:enteredString) " +
+                                    "        or lower(eee.name) like lower(:enteredString) or lower(eee.code) like lower(:enteredString)) ");
+            }
+            if(null!=doId)
+            {
+                    qry.append(" and do.id=:doId ");
+            }
+            qry.append(" order by eee.name ");
+            Query query=getPersistenceService().getSession().createSQLQuery(qry.toString());
+            query.setDate("enteredDate", assignDate);
+            if(null!=desigList && !desigList.isEmpty()){
+                    query.setParameterList("desList",desigList);
+            }
+            if(null!=doId)
+            {
+                    query.setInteger("doId", doId);
+            }
+            if(null!=codeOrName && !codeOrName.isEmpty())
+            {
+                    query.setString("enteredString", "%"+codeOrName+"%");
+            }
+            
+            return query;
     }
 
 }

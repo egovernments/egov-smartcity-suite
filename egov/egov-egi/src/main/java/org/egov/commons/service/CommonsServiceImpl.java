@@ -1045,4 +1045,9 @@ public class CommonsServiceImpl implements CommonsService {
 						throw new EGOVRuntimeException("Error occurred while getting wardid from shapefile", e);
 					}
 		}
+	 
+	 public CFinancialYear getFinYearByDate(final Date date) {
+             final FinancialYearDAO finYearDAO = commonsDAOFactory.getFinancialYearDAO();
+             return finYearDAO.getFinYearByDate(date);
+         }
 }

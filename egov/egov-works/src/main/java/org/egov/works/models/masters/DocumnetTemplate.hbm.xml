@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.works.models.masters.DocumnetTemplate"
+		table="EGW_DOCUMENT_TEMPLATE">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_DOCUMENT_TEMPLATE_SEQ</param>
+			</generator>
+		</id>
+		
+		<property name="departmentName" column="DEPARTMENT_NAME" type="string" length="75" />
+		
+        <property name="template" type="text">
+        	<column name="TEMPLATE"></column>
+        </property>
+
+	</class>
+	<query name="getTemplateByDepName">
+		<![CDATA[
+     	from DocumnetTemplate as dt where dt.departmentName = ?
+    ]]>
+	</query>
+</hibernate-mapping>

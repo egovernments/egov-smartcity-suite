@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 19, 2007 2:57:28 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+	<class name="org.egov.works.models.masters.ContractorDetail"
+		table="EGW_CONTRACTOR_DETAIL">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_CONTRACTOR_DETAIL_SEQ</param>
+			</generator>
+		</id>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY" fetch="select"/>
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" />
+		<property name="modifiedDate" column="MODIFIEDDATE" type="timestamp" />	
+		<many-to-one name="contractor" class="org.egov.works.models.masters.Contractor" fetch="select" insert="false" update="false">
+            <column name="CONTRACTOR_ID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+		<many-to-one name="department" class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
+			<column name="DEPARTMENT_ID" />
+		</many-to-one>
+		<property name="registrationNumber" type="string" >
+			<column name="REGISTRATION_NUMBER" length="50" />
+		</property>
+		<many-to-one name="grade" class="org.egov.works.models.masters.ContractorGrade" not-null="false">
+			<column name="CONTRACTOR_GRADE_ID" />
+		</many-to-one>
+		<many-to-one name="status" class="org.egov.commons.EgwStatus" fetch="select">
+			<column name="STATUS_ID"  />
+		</many-to-one>
+		<component name="validity">
+			<property name="startDate" type="date" />
+			<property name="endDate" type="date" />
+		</component>
+	</class>
+</hibernate-mapping>

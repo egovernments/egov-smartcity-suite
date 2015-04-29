@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.egov.works.models.estimate.AbstractEstimateAppropriation" table="EGW_ESTIMATE_APPROPRIATION">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_ESTIMATE_APPROPRIATION_SEQ</param>
+			</generator>
+		</id> 
+			
+		<many-to-one name="abstractEstimate" class="org.egov.works.models.estimate.AbstractEstimate" column="ABSTRACTESTIMATE_ID" not-null="true" fetch="select"/>
+		<many-to-one name="budgetUsage" class="org.egov.model.budget.BudgetUsage" column="BUDGETUSAGE_ID" fetch="select"/>
+		<many-to-one name="depositWorksUsage" class="org.egov.works.models.estimate.DepositWorksUsage" column="DEPOSITWORKSUSAGE_ID" fetch="select"/>
+		<property name="balanceAvailable" column="BALANCEAVAILABLE" type="big_decimal" not-null="true"/>
+	
+	</class>
+
+ 	<query name="getBudgetUsageForEstimateByFinYear">
+		<![CDATA[
+     	from AbstractEstimateAppropriation aep where aep.budgetUsage.id=(select max(budgetUsage.id) from AbstractEstimateAppropriation aep1 where aep1.abstractEstimate.id=? and aep1.budgetUsage.financialYearId=?)
+    	]]>
+	</query>
+
+	<query name="getLatestBudgetUsageForEstimate">
+		<![CDATA[
+     	from AbstractEstimateAppropriation aep where aep.budgetUsage.id=(select max(budgetUsage.id) from AbstractEstimateAppropriation aep where aep.abstractEstimate.id=?)
+    	]]>
+	</query>  
+
+ 	<query name="getBudgetUsageForEstimateReApprByFinYear">
+		<![CDATA[
+     	from AbstractEstimateAppropriation aep where aep.budgetUsage.id=(select max(budgetUsage.id) from AbstractEstimateAppropriation aep1 where aep1.abstractEstimate.id=? and aep1.budgetUsage.financialYearId=? and aep1.budgetUsage.referenceNumber=?)
+    	]]>
+	</query>
+
+	<query name="getLatestBudgetUsageForEstimateReAppr">
+		<![CDATA[
+     	from AbstractEstimateAppropriation aep where aep.budgetUsage.id=(select max(budgetUsage.id) from AbstractEstimateAppropriation aep1 where aep1.abstractEstimate.id=? and aep1.budgetUsage.referenceNumber=?)
+    	]]>
+	</query>  
+	
+	<!--
+
+	<query name="getBudgetUsageForEstimateByFinYear">
+		<![CDATA[
+     	from AbstractEstimateAppropriation aep where aep.abstractEstimate.id=? and aep.financialYearId=?
+    	]]>
+	</query>
+
+	<query name="getLatestBudgetUsageForEstimate">
+		<![CDATA[
+     	from AbstractEstimateAppropriation aep where aep.budgetUsage.id=(select max(budgetUsage.id) from AbstractEstimateAppropriation aep where aep.abstractEstimate.id=?)
+    	]]>
+	</query>
+	
+	-->
+	<query name="getDepositWorksUsageForEstimateByFinYear">
+		<![CDATA[
+     	from AbstractEstimateAppropriation aep where aep.abstractEstimate.id=? and aep.depositWorksUsage.financialYearId=?
+    	]]>
+	</query>
+	
+	<query name="getLatestDepositWorksUsageForEstimate">
+		<![CDATA[
+     	from AbstractEstimateAppropriation aep where aep.depositWorksUsage.id=(select max(depositWorksUsage.id) from AbstractEstimateAppropriation aep where aep.abstractEstimate.id=?)
+    	]]>
+	</query>
+	
+</hibernate-mapping> 

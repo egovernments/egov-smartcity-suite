@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping
+PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+<class name="org.egov.works.models.milestone.TrackMilestone" table="EGW_TRACK_MILESTONE">
+		<id
+			name="id"
+			column="ID"
+			type="long"
+			unsaved-value="null">
+			<generator class="sequence">
+				<param name="sequence">EGW_TRACK_MILESTONE_SEQ</param>
+			</generator>
+		</id>
+		<property name="total" type="java.math.BigDecimal">
+            <column name="TOTAL_PERCENTAGE"  precision="5" scale="0"/>
+        </property>
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+		<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+			<column name="STATE_ID" />
+		</many-to-one>
+		<many-to-one name="milestone" class="org.egov.works.models.milestone.Milestone" column="MILESTONE_ID" not-null="true" fetch="select" />
+		<many-to-one name="egwStatus" class="org.egov.commons.EgwStatus" column="STATUS_ID" not-null="true" fetch="select" />
+
+		<property name="isProjectCompleted" type="boolean">
+			<column name="IS_PROJECT_COMPLETED" />
+		</property>
+		
+		<list name="activities" cascade="all,delete-orphan">
+			<key column="TrackMilestone_ID" not-null="true" />
+			<list-index column="activity_index" />
+			<one-to-many
+				class="org.egov.works.models.milestone.TrackMilestoneActivity" />
+		</list>
+</class>
+
+</hibernate-mapping>

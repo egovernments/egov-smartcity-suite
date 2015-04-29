@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Sep 08, 2010 9:49:28 AM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+	<class name="org.egov.works.models.tender.TenderResponseContractors"
+		table="EGW_TENDER_RESP_CONTRACTORS">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="sequence">
+				<param name="sequence">EGW_TEND_RESP_CON_SEQ</param> 
+			</generator>
+		</id>				
+		<many-to-one name="tenderResponse" column="TENDER_RESPONSE_ID" not-null="true" insert="false" update="false" fetch="select"/>
+		<many-to-one name="contractor" class="org.egov.works.models.masters.Contractor" column="CONTRACTOR_ID" not-null="true" fetch="select"/>
+		
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" not-null="true" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />	
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />	
+		
+	</class>
+
+</hibernate-mapping>

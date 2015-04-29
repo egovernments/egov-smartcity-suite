@@ -1,0 +1,12 @@
+/**********************************************************************
+	Version: FreeRichTextEditor.com Version 1.00.
+	License: http://creativecommons.org/licenses/by/2.5/
+	Description: CSS example File.
+	Author: Copyright (C) 2006  Steven Ewing
+**********************************************************************/
+
+body, p, td
+{
+	font-family: verdana;
+	font-size:12px;
+}

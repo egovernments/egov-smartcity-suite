@@ -68,7 +68,8 @@ public interface GeoLocationConstants {
 	public static final String MARKEROPTION_ICON_YELLOW = "yellow" ;
 	public static final String MARKEROPTION_ICON_BLUE = "blue" ;
 	public static final String MARKEROPTION_ICON_GREEN = "green" ;
-	public static final String MARKEROPTION_ICON_BLACK = "black";
+	public static final String MARKEROPTION_ICON_PURPLE = "purple";
+	public static final String MARKEROPTION_ICON_PINK = "pink";
 	
 	public static final String PGR_GOOGLE_MAP_URL_REDIRECT_PATH = "/pgr/staff/greComplaintHistory.jsp?ComplaintNumber=";
 	

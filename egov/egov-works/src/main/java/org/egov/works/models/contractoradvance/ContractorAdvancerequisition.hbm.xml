@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.egov.works.models.contractoradvance">
+    <joined-subclass name="ContractorAdvanceRequisition" table="EGW_CONTRACTOR_ADVANCE" extends="org.egov.model.advance.EgAdvanceRequisition">
+	 	<key column="ID" />
+        <many-to-one name="workOrderEstimate" class="org.egov.works.models.workorder.WorkOrderEstimate" cascade="all" fetch="select">
+            <column name="WORKORDERESTIMATE_ID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="drawingOfficer" class="org.egov.pims.commons.DrawingOfficer" fetch="select" >
+			<column name="DRAWING_OFFICER" precision="22" scale="0" not-null="true"  />
+		</many-to-one>
+	</joined-subclass>
+	<query name="getAllContractorsInARF">
+		<![CDATA[
+     	select distinct arf.workOrderEstimate.workOrder.contractor from ContractorAdvanceRequisition arf
+    ]]>
+    </query>
+    <query name="getAllDrawingOfficerFromARF">
+		<![CDATA[
+     	select distinct arf.drawingOfficer from ContractorAdvanceRequisition arf
+    ]]>
+	</query>
+</hibernate-mapping>

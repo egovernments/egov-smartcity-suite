@@ -1,0 +1,85 @@
+<script>
+function rteInsertHTML() {
+	html = "<table width=\"" + document.getElementById("width").value + "" + document.getElementById("width_type").value + "\"";
+	html += " border=\"" + document.getElementById("border").value + "\"";
+	html += " cellspacing=\"" + document.getElementById("cellspacing").value + "\"";
+	html += " cellpadding=\"" + document.getElementById("cellpadding").value + "\"";
+	html += " align=\"" + document.getElementById("alignment").value + "\" class=\"rte_tbl\">";
+	for (i=1; i <= document.getElementById("rows").value; i++) {
+		html += "<tr>";
+		for (j=1; j <= document.getElementById("columns").value; j++) {
+			if (document.getElementById("border").value > 0) {
+				html += "<td>&nbsp;</td>";
+			} else {
+				html += "<td>&nbsp;</td>";
+			}
+		}
+		html += "</tr>";
+	}
+	html += "</table>";
+	window.opener.rteInsertHTML(html);
+	window.close();
+}
+</script>
+<style>
+body, td {
+background-color:#ECE9D8;
+font-family:arial;
+font-size:11px;
+}
+input {
+font-family:arial;
+font-size:11px;
+}
+select {
+font-family:arial;
+font-size:11px;
+}
+</style>
+<fieldset>
+<legend><b>Insert Table </b></legend>
+<table width="100%" cellspacing="2" cellpadding="0" border="0">
+<tr>
+<td align="right">Rows: </td>
+<td><input type="text" id="rows" style="width:30px;" value="3"></td>
+</tr>
+<tr>
+  <td align="right">Columns: </td>
+  <td><input type="text" id="columns" style="width:30px;" value="3">  </td>
+</tr>
+<tr>
+  <td align="right">Width: </td>
+  <td><input type="text" id="width" style="width:30px;" value="100" />
+    <select id="width_type">
+      <option value="%" selected="selected">%</option>
+      <option>pixels</option>
+            </select></td>
+</tr>
+<tr>
+  <td align="right">Border: </td>
+  <td><input type="text" id="border" style="width:30px;" value="0" />  </td>
+</tr>
+<tr>
+  <td align="right">Cellspacing: </td>
+  <td><input type="text" id="cellspacing" style="width:30px;" value="0" />  </td>
+</tr>
+<tr>
+  <td align="right">Cellpadding: </td>
+  <td><input type="text" id="cellpadding" style="width:30px;" value="0" />  </td>
+</tr>
+<tr>
+  <td align="right">Alignment: </td>
+  <td><select id="alignment">
+    <option selected="selected" value="">Default</option>
+    <option value="left">Left</option>
+    <option value="center">Center</option>
+    <option value="right">Right</option>
+  </select>  </td>
+</tr>
+<tr>
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<div align="center"><input type="button" value="Insert Table" onClick="rteInsertHTML();">
+</div>
+</fieldset>
