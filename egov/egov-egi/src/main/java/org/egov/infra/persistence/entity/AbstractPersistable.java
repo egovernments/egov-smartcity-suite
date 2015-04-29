@@ -63,7 +63,7 @@ public abstract class AbstractPersistable<PK extends Serializable> implements Se
 
     @Expose
     @Id
-    @GenericGenerator(name = "seq_id", strategy = "org.egov.infra.persistence.utils.SequenceIdGenerator")
+    @GenericGenerator(name = "seq_id", strategy = "org.egov.infra.persistence.utils.PrimaryKeyIDGenerator")
     @GeneratedValue(generator = "seq_id")
     @DocumentId
     private PK id;

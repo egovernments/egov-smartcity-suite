@@ -49,7 +49,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class SequenceIdGenerator implements IdentifierGenerator {
+public class PrimaryKeyIDGenerator implements IdentifierGenerator {
 
     private static final String SEQUENCE_PREFIX = "seq_";
     private static final String NEXT_SEQ_SQL_QUERY = "SELECT nextval (?) as nextval";
