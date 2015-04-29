@@ -43,6 +43,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.egov.collection.integration.models.BillAccountDetails;
+import org.egov.collection.integration.models.BillDetails;
+import org.egov.collection.integration.models.BillInfo.COLLECTIONTYPE;
+import org.egov.collection.integration.models.BillInfoImpl;
+import org.egov.collection.integration.models.BillPayeeDetails;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgBillDetails;
 /*import org.egov.erpcollection.integration.models.BillDetails;
@@ -82,8 +87,6 @@ public class DemandUtils {
 		return xmlData;
 	}
 	
-	//TO DO depends on collection
-	/*
 	public BillInfoImpl prepareBillInfoXml(EgBill bill, String displayMsg) {
 		List<BillPayeeDetails> billPayeeDetList = new ArrayList<BillPayeeDetails>();
 		BillDetails billDetails = null;
@@ -125,6 +128,6 @@ public class DemandUtils {
 			LOGGER.error("Exception in prepareBillInfoXml method", ex);
 		}
 		return billInfoImpl;
-	}*/
+	}
 
 }

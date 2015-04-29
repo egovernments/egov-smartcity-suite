@@ -1653,30 +1653,34 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 	 * @return @PropertyImpl
 	 */
 	public Property createOwnersForNew(Property newProp, Property oldProp) {
-		LOGGER.debug("Entered into createOwnersForNew, newProp: " + newProp + ", OldProp; "
-				+ oldProp);
+		LOGGER.debug("Entered into createOwnersForNew, newProp: " + newProp + ", OldProp; " + oldProp);
+		Address oldOwnAddr = null;
 		for (PropertyOwner owner : oldProp.getPropertyOwnerSet()) {
 			PropertyOwner newOwner = new PropertyOwner();
 			String ownerName = owner.getName();
 			ownerName = propertyTaxUtil.antisamyHackReplace(ownerName);
 			newOwner.setName(ownerName);
 			newOwner.setOrderNo(owner.getOrderNo());
-
-			for (Address address : owner.getAddress()) {
+			for (Object address : owner.getAddress()) {
+				oldOwnAddr = (Address) address;
 				Address ownerAddr = new Address();
-				String street = address.getStreetRoadLine();
-				if (street != null && !street.isEmpty()) {
-					street = propertyTaxUtil.antisamyHackReplace(street);
+				String addrStr1 = oldOwnAddr.getLandmark();
+				String addrStr2 = oldOwnAddr.getAreaLocalitySector();
+				if (addrStr1 != null && !addrStr1.isEmpty()) {
+					addrStr1 = propertyTaxUtil.antisamyHackReplace(addrStr1);
 				}
-				ownerAddr.setType(address.getType());
-				ownerAddr.setStreetRoadLine(street);
-				ownerAddr.setHouseNoBldgApt(address.getHouseNoBldgApt());
-				if (address.getPinCode() != null && !address.getPinCode().isEmpty()) {
-					ownerAddr.setPinCode(address.getPinCode());
+				if (addrStr2 != null && !addrStr2.isEmpty()) {
+					addrStr2 = propertyTaxUtil.antisamyHackReplace(addrStr2);
+				}
+				ownerAddr.setType(oldOwnAddr.getType());
+				ownerAddr.setLandmark(addrStr1);
+				ownerAddr.setAreaLocalitySector(addrStr2);
+				ownerAddr.setHouseNoBldgApt(oldOwnAddr.getHouseNoBldgApt());
+				if (oldOwnAddr.getPinCode() != null && !oldOwnAddr.getPinCode().toString().isEmpty()) {
+					ownerAddr.setPinCode(oldOwnAddr.getPinCode());
 				}
 				newOwner.addAddress(ownerAddr);
 			}
-
 			newProp.addPropertyOwners(newOwner);
 		}
 		LOGGER.debug("Exiting from createOwnersForNew");

@@ -342,12 +342,11 @@ public class PropertyTaxCollection extends TaxCollection {
 						demandDetail.addCollectedWithOnePaisaTolerance(rcptAccInfo.getCrAmount());
 					}
 
-					//TODO -- Fix me (Commented to Resolve compilation issues)
-					/*persistCollectedReceipts(demandDetail, billRcptInfo.getReceiptNum(), totalAmount,
-							billRcptInfo.getReceiptDate(), demandDetail.getAmtCollected());
+					persistCollectedReceipts(demandDetail, billRcptInfo.getReceiptNum(), totalAmount,
+							billRcptInfo.getReceiptDate().toDate(), demandDetail.getAmtCollected());
 					LOGGER.info("Persisted demand and receipt details for tax : " + reason + " installment : "
 							+ instDesc + " with receipt No : " + billRcptInfo.getReceiptNum() + " for Rs. "
-							+ rcptAccInfo.getCrAmount());*/
+							+ rcptAccInfo.getCrAmount());
 				}
 			}
 		}

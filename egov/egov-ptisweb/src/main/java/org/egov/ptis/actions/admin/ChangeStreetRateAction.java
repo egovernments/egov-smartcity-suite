@@ -66,10 +66,7 @@ import org.egov.ptis.domain.entity.property.Category;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 
-import com.opensymphony.xwork2.validator.annotations.Validation;
-
 @ParentPackage("egov")
-@Validation
 public class ChangeStreetRateAction extends BaseFormAction {
 	private Integer zoneId;
 	private Integer wardId;

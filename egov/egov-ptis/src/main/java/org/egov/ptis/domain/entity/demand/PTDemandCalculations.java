@@ -69,8 +69,6 @@ public class PTDemandCalculations extends BaseModel implements DemandCalculation
 	private Date lastUpdatedTimeStamp;
 	private Date createTimeStamp;
 	private Set<FloorwiseDemandCalculations> flrwiseDmdCalculations = new java.util.HashSet<FloorwiseDemandCalculations>();
-	//TODO -- Fix me (Commented to Resolve compilation issues)
-	//private Set<EgAttributevalues> attributeValues = new HashSet<EgAttributevalues>();
 	private byte[] taxInfo;
 	private BigDecimal alv;
 
@@ -78,7 +76,7 @@ public class PTDemandCalculations extends BaseModel implements DemandCalculation
 			BigDecimal rateOfTax, Date lastUpdatedTimeStamp,
 			Date createTimeStamp,
 			Set<FloorwiseDemandCalculations> flrwiseDmdCalculations,
-			/*Set<EgAttributevalues> attributeValues,*/ byte[] taxInfo,
+			byte[] taxInfo,
 			BigDecimal alv) {
 		super();
 		this.ptDemand = ptDemand;
@@ -87,8 +85,6 @@ public class PTDemandCalculations extends BaseModel implements DemandCalculation
 		this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
 		this.createTimeStamp = createTimeStamp;
 		this.flrwiseDmdCalculations = flrwiseDmdCalculations;
-		//TODO -- Fix me (Commented to Resolve compilation issues)
-		//this.attributeValues = attributeValues;
 		this.taxInfo = taxInfo;
 		this.alv = alv;
 	}
@@ -225,23 +221,6 @@ public class PTDemandCalculations extends BaseModel implements DemandCalculation
 			FloorwiseDemandCalculations flwiseDmd) {
 		getFlrwiseDmdCalculations().remove(flwiseDmd);
 	}
-
-	//TODO -- Fix me (Commented to Resolve compilation issues)
-	/*public Set<EgAttributevalues> getAttributeValues() {
-		return attributeValues;
-	}
-
-	public void setAttributeValues(Set<EgAttributevalues> attributeValues) {
-		this.attributeValues = attributeValues;
-	}
-
-	public void addAttributeValues(EgAttributevalues attributeValues) {
-		getAttributeValues().add(attributeValues);
-	}
-
-	public void removeAttributeValues(EgAttributevalues attributeValues) {
-		getAttributeValues().remove(attributeValues);
-	}*/
 
 	public byte[] getTaxInfo() {
 		return taxInfo;

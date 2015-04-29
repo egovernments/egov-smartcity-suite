@@ -130,8 +130,7 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
 			PTDemandCalculations OldPTDmdCal = dmdCalMap.get(ptDmd.getEgInstallmentMaster());
 			ptDmdCal = new PTDemandCalculations(ptDmd, OldPTDmdCal.getPropertyTax(), OldPTDmdCal.getRateOfTax(), null,
 					null, cloneFlrWiseDmdCal(OldPTDmdCal.getFlrwiseDmdCalculations()),
-					//TODO -- Fix me (Commented to Resolve compilation issues)
-					/*cloneEgAttValues(OldPTDmdCal.getAttributeValues()),*/ OldPTDmdCal.getTaxInfo(), OldPTDmdCal.getAlv());
+					 OldPTDmdCal.getTaxInfo(), OldPTDmdCal.getAlv());
 			ptDmd.setDmdCalculations(ptDmdCal);
 			demandSet.add(ptDmd);
 		}
@@ -144,25 +143,12 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
 		for (FloorwiseDemandCalculations flrCal : flrDmdCal) {
 			flrWiseDmdCal = new FloorwiseDemandCalculations(null, flrCal.getFloor(), flrCal.getPTDemandCalculations(),
 					new Date(), new Date(), flrCal.getCategoryAmt(), flrCal.getOccupancyRebate(),
-					flrCal.getConstructionRebate(), flrCal.getDepreciation(), flrCal.getUsageRebate()/*,
-					cloneEgAttValues(flrCal.getAttributeValues())*/);
+					flrCal.getConstructionRebate(), flrCal.getDepreciation(), flrCal.getUsageRebate());
 			floorDmdCalSet.add(flrWiseDmdCal);
 		}
 		return floorDmdCalSet;
 	}
 
-	//TODO -- Fix me (Commented to Resolve compilation issues)
-	/*private Set<EgAttributevalues> cloneEgAttValues(Set<EgAttributevalues> attributeValues) {
-		EgAttributevalues egAttvalues;
-		Set<EgAttributevalues> attValuesSet = new HashSet<EgAttributevalues>();
-		for (EgAttributevalues attValue : attributeValues) {
-			egAttvalues = new EgAttributevalues(null, attValue.getEgAttributetype(), attValue.getEgApplDomain(),
-					attValue.getAttValue(), attValue.getDomaintxnid());
-			attValuesSet.add(egAttvalues);
-		}
-		return attValuesSet;
-	}*/
-	
 	/*
 	 * This method returns Property Mutation as a Set
 	 */
@@ -194,8 +180,7 @@ public class TransferOwnerService extends PersistenceService<PropertyMutation, L
 		Set<PropertyMutationOwner> mutOwnerSet = new HashSet<PropertyMutationOwner>();
 		for (PropertyOwner ownerprop : prop.getPropertyOwnerSet()) {
 			PropertyMutationOwner propMutOwner = new PropertyMutationOwner();
-			//TODO -- Fix me (Commented to Resolve compilation issues)
-			//propMutOwner.setOwnerId(ownerprop.getCitizenID());
+			propMutOwner.setOwnerId(ownerprop.getId().intValue());
 			propMutOwner.setPropertyMutation(propertyMutation);
 			mutOwnerSet.add(propMutOwner);
 		}

@@ -433,22 +433,23 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 		Set<String> ownerNameSet = new HashSet<String>();
 		for (PropertyOwner propOwner : ownerSet) {
 
-			// TODO -- Commented to fix Phoenix Compilation issues
-			/*
-			 * LOGGER.debug("buildOwnerFullName : Owner id " +
-			 * propOwner.getCitizenID()); if (propOwner.getFirstName() != null
-			 * && !propOwner.getFirstName().trim().equals("")) { if
-			 * (!ownerNameSet.contains(propOwner.getFirstName().trim())) { if
-			 * (!ownerFullName.trim().equals("")) { if
-			 * (!ownerFullName.equals("")) { ownerFullName += ", "; } }
-			 * ownerNameSet.add(propOwner.getFirstName().trim()); ownerFullName
-			 * += (propOwner.getFirstName() == null ? "" :
-			 * propOwner.getFirstName()) + (propOwner.getMiddleName() == null ?
-			 * "" : " " + propOwner.getMiddleName()) + (propOwner.getLastName()
-			 * == null ? "" : " " + propOwner.getLastName());
-			 * LOGGER.debug("buildOwnerFullName : ownerFullNameEnglish : " +
-			 * ownerFullName); } }
-			 */
+			LOGGER.debug("buildOwnerFullName : Owner id "+ propOwner.getId());
+			if (propOwner.getName() != null
+					&& !propOwner.getName().trim().equals("")) {
+				if (!ownerNameSet.contains(propOwner.getName().trim())) {
+					if (!ownerFullName.trim().equals("")) {
+						if (!ownerFullName.equals("")) {
+							ownerFullName += ", ";
+						}
+					}
+					ownerNameSet.add(propOwner.getName().trim());
+					ownerFullName = (propOwner.getName() == null ? ""
+							: propOwner.getName());
+					LOGGER.debug("buildOwnerFullName : ownerFullNameEnglish : "
+							+ ownerFullName);
+				}
+			}
+
 		}
 		LOGGER.debug("buildOwnerFullName : ownerFullName" + ownerFullName);
 		return ownerFullName;
@@ -499,11 +500,11 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 					.getHouseNoBldgApt());
 			if (!addressStr.trim().equals("")) {
 				addressStr = addressStr
-						+ (address.getStreetRoadLine() == null ? " " : ", "
-								+ address.getStreetRoadLine());
+						+ (address.getLandmark()== null ? " " : ", "
+								+ address.getLandmark());
 			} else {
-				addressStr = (address.getStreetRoadLine() == null ? " "
-						: address.getStreetRoadLine());
+				addressStr = (address.getLandmark() == null ? " "
+						: address.getLandmark());
 			}
 
 			if (!addressStr.trim().equals("")) {
@@ -570,11 +571,11 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 				}
 				if (!addressStr.trim().equals("")) {
 					addressStr = addressStr
-							+ (address.getStreetRoadLine() == null ? " " : ", "
-									+ address.getStreetRoadLine());
+							+ (address.getLandmark() == null ? " " : ", "
+									+ address.getLandmark());
 				} else {
-					addressStr = (address.getStreetRoadLine() == null ? " "
-							: address.getStreetRoadLine());
+					addressStr = (address.getLandmark() == null ? " "
+							: address.getLandmark());
 				}
 
 				addressStr = addressStr
@@ -607,12 +608,12 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 				}
 				if (!addressStr.trim().equals("")) {
 					addressStr = addressStr
-							+ (StringUtils.isBlank(address.getStreetRoadLine()) ? ""
-									: ", " + address.getStreetRoadLine());
+							+ (StringUtils.isBlank(address.getLandmark()) ? ""
+									: ", " + address.getLandmark());
 				} else {
 					addressStr = (StringUtils.isBlank(address
-							.getStreetRoadLine()) ? "" : address
-							.getStreetRoadLine());
+							.getLandmark()) ? "" : address
+							.getLandmark());
 				}
 
 				if (address.getClass().getName().contains(cs)) {

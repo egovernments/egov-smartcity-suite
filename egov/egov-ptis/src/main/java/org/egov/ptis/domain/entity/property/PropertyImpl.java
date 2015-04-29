@@ -63,6 +63,7 @@ import org.egov.commons.Installment;
 import org.egov.exceptions.InvalidPropertyException;
 import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.enums.Gender;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.joda.time.DateTime;
@@ -600,19 +601,16 @@ public class PropertyImpl extends StateAware implements Property {
 	 */
 	private Set<PropertyOwner> cloneOwners() {
 		Set<PropertyOwner> newOwnerSet = new HashSet<PropertyOwner>();
-		//TODO -- Fix me (Commented to Resolve compilation issues)
-		/*PropertyOwner newOwner;
+		PropertyOwner newOwner;
 		for (PropertyOwner owner : getPropertyOwnerSet()) {
-			newOwner = new PropertyOwner(null, owner.getSsn(), owner.getPanNumber(), owner.getPassportNumber(),
-					owner.getDrivingLicenceNumber(), owner.getRationCardNumber(), owner.getVoterRegistrationNumber(),
-					owner.getFirstName(), owner.getMiddleName(), owner.getLastName(), owner.getBirthDate(),
-					owner.getHomePhone(), owner.getOfficePhone(), owner.getMobilePhone(), owner.getFax(),
-					owner.getEmailAddress(), owner.getOccupation(), owner.getJobStatus(), owner.getLocale(),
-					owner.getFirstNameLocal(), owner.getMiddleNameLocal(), owner.getLastNameLocal(),
-					owner.getOwnerTitle(), owner.getOwnertitleLocal(), owner.getOrderNo(), owner.getSource());
-			newOwner.setAddressSet(cloneAddrSet(newOwner.getAddressSet()));
+			newOwner = new PropertyOwner(owner.getAadhaarNumber(),owner.getActivationCode(),owner.isActive(),owner.getAddress(),
+					owner.getAltContactNumber(),
+					owner.getDob(),owner.getEmailId(),owner.getGender(),owner.getLocale(),owner.getMobileNumber(),owner.getName(),owner.getPan(),
+					owner.getPassword(),owner.getSalutation(),owner.getSource(),owner.getUsername(),
+					owner.getOrderNo(),owner.getProperty());
+			newOwner.setAddress(cloneAddrList(newOwner.getAddress()));
 			newOwnerSet.add(newOwner);
-		}*/
+		}
 		return newOwnerSet;
 	}
 
@@ -652,17 +650,17 @@ public class PropertyImpl extends StateAware implements Property {
 	/*
 	 * This method returns Owner Address details as a Set
 	 */
-	private Set<Address> cloneAddrSet(Set<Address> addressSet) {
-		Set<Address> newAddressSet = new HashSet<Address>();
-		for (Address ownAddress : addressSet) {
+	private List<Address> cloneAddrList(List<Address> addressList) {
+		List<Address> newAddressList = new ArrayList<Address>();
+		for (Address ownAddress : addressList) {
 			Address ownerAddr = new Address();
 			ownerAddr.setType(ownAddress.getType());
-			ownerAddr.setStreetRoadLine(ownAddress.getStreetRoadLine());
+			ownerAddr.setLandmark(ownAddress.getLandmark());
 			ownerAddr.setPinCode(ownAddress.getPinCode());
 			ownerAddr.setHouseNoBldgApt(ownAddress.getHouseNoBldgApt());
-			newAddressSet.add(ownerAddr);
+			newAddressList.add(ownerAddr);
 		}
-		return newAddressSet;
+		return newAddressList;
 	}
 
 	/*
