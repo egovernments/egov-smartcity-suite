@@ -75,9 +75,7 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.Fund;
 import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.instrument.InstrumentHeader;
-import org.egov.services.receipt.ReceiptService;
 import org.egov.web.actions.BaseFormAction;
 import org.joda.time.DateTime;
 
@@ -104,11 +102,6 @@ public class MiscellaneousFileUploadAction extends BaseFormAction{
 	
 	SimpleDateFormat sdfInput =  new SimpleDateFormat ("dd.MM.yy", Locale.getDefault());  
     
-    public void setReceiptPayeeDetailsService(
-			ReceiptService receiptPayeeDetailsService) {
-		this.receiptPayeeDetailsService = receiptPayeeDetailsService;
-	}
-
 	private ReceiptAction receiptAction;
     
     private CollectionCommon collectionCommon;
@@ -118,7 +111,6 @@ public class MiscellaneousFileUploadAction extends BaseFormAction{
     private CommonsServiceImpl commonsServiceImpl;
     
     private ReceiptHeaderService receiptHeaderService;
-    private ReceiptService receiptPayeeDetailsService;
     
     private Map<Integer, String> errorRowMap = new TreeMap<Integer, String>();
     
@@ -143,7 +135,7 @@ public class MiscellaneousFileUploadAction extends BaseFormAction{
 		receiptAction.setFinancialsUtil(financialsUtil);
 		
 		receiptAction.setReceiptHeaderService(receiptHeaderService);
-		receiptAction.setReceiptPayeeDetailsService(receiptPayeeDetailsService);
+		//receiptAction.setReceiptPayeeDetailsService(receiptPayeeDetailsService);
 		receiptAction.setReceiptBulkUpload(Boolean.TRUE);
 	}
 	

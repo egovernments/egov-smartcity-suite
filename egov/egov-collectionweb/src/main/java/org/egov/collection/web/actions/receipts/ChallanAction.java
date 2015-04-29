@@ -608,10 +608,10 @@ public class ChallanAction extends BaseFormAction {
 		List<InstrumentHeader> instrumentHeaderList=new ArrayList<InstrumentHeader>();
 		
 		if(CollectionConstants.INSTRUMENTTYPE_CASH.equals(instrumentTypeCashOrCard)){
-			/*instrHeaderCash.setInstrumentType(
+			instrHeaderCash.setInstrumentType(
 					financialsUtil.getInstrumentTypeByType(
 							CollectionConstants.INSTRUMENTTYPE_CASH));
-			*/
+			
 			instrHeaderCash.setIsPayCheque(CollectionConstants.ZERO_INT);
 			
 			//the cash amount is set into the object through binding
@@ -622,9 +622,9 @@ public class ChallanAction extends BaseFormAction {
 			instrumentHeaderList.add(instrHeaderCash);
 		}
 		if(CollectionConstants.INSTRUMENTTYPE_CARD.equals(instrumentTypeCashOrCard)){
-			/*instrHeaderCard.setInstrumentType(financialsUtil.getInstrumentTypeByType(
+			instrHeaderCard.setInstrumentType(financialsUtil.getInstrumentTypeByType(
 							CollectionConstants.INSTRUMENTTYPE_CARD));
-			*/
+			
 			if(instrHeaderCard.getTransactionDate()==null){
 				instrHeaderCard.setTransactionDate(new Date());
 			}
@@ -644,7 +644,7 @@ public class ChallanAction extends BaseFormAction {
 			instrumentHeaderList = populateInstrumentHeaderForChequeDD(instrumentHeaderList, instrumentProxyList);
 		}
 		}
-		//instrumentHeaderList=receiptPayeeDetailsService.createInstrument(instrumentHeaderList);
+		instrumentHeaderList=receiptHeaderService.createInstrument(instrumentHeaderList);
 		
 		return instrumentHeaderList;
 	  }
@@ -665,9 +665,9 @@ public class ChallanAction extends BaseFormAction {
 		
 		for (InstrumentHeader instrumentHeader : instrumentProxyList) {
 			if (instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)) {
-				//instrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_CHEQUE));
+				instrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_CHEQUE));
 			} else if (instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_DD)) {
-				//instrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_DD));
+				instrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_DD));
 			}
 		        if (instrumentHeader.getBankId() != null) {
 				instrumentHeader.setBankId(commonsServiceImpl.getBankById(Integer.valueOf(instrumentHeader.getBankId().getId())));

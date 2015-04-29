@@ -95,7 +95,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.NumberUtil;
 import org.egov.infstr.utils.StringUtils;
 import org.egov.model.instrument.InstrumentHeader;
-import org.egov.services.receipt.ReceiptService;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.joda.time.DateTime;
@@ -106,7 +105,6 @@ import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 public class ReceiptAction extends BaseFormAction {
 	private static final String ACCOUNT_NUMBER_LIST = "accountNumberList";
 	private static final Logger LOGGER = Logger.getLogger(ReceiptAction.class);
-	private ReceiptService receiptPayeeDetailsService;
 	private BillInfoImpl collDetails = new BillInfoImpl();
 	private static final long serialVersionUID = 1L;
 	private static final String CANCEL = "cancel";
@@ -906,7 +904,7 @@ public class ReceiptAction extends BaseFormAction {
 		/*List<ReceiptPayeeDetails> receiptPayeePersistedList = receiptPayeeDetailsService
 				.persist(new HashSet<ReceiptPayeeDetails>(modelPayeeList));
 */
-		receiptPayeeDetailsService.getSession().flush();
+				receiptHeaderService.getSession().flush();
 
 		LOGGER.info("Persisted receipts");
 
@@ -920,15 +918,16 @@ public class ReceiptAction extends BaseFormAction {
 
 		if (serviceType.equalsIgnoreCase(CollectionConstants.SERVICE_TYPE_BILLING)) {
 			if (!receiptBulkUpload) {
-				/*for (ReceiptPayeeDetails payeeDetails : receiptPayeePersistedList) {
-					collectionCommon.updateBillingSystemWithReceiptInfo(payeeDetails);
-				}*/
+				/*for (ReceiptPayeeDetails payeeDetails : receiptPayeePersistedList) {*/
+					collectionCommon.updateBillingSystemWithReceiptInfo(receiptHeader);
+				//}
 			}
 			LOGGER.info("Updated billing system ");
 		}
 
 		List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>();
 		Set<ReceiptVoucher> receiptVouchers = new HashSet<ReceiptVoucher>();
+		//TODO: Code change for ReceiptPayeeDetails accordingly since this class is deleted 
 		/*for (ReceiptPayeeDetails payeeDetails : receiptPayeePersistedList) {
 			for (ReceiptHeader receiptHeader : payeeDetails.getReceiptHeaders()) {
 				// If vouchers are created during work flow step, add them to
@@ -958,7 +957,7 @@ public class ReceiptAction extends BaseFormAction {
 		}*/
 
 		if (voucherHeaderList != null && receiptInstrList != null) {
-			//receiptPayeeDetailsService.updateInstrument(voucherHeaderList, receiptInstrList);
+			receiptHeaderService.updateInstrument(voucherHeaderList, receiptInstrList);
 		}
 
 	}// end of method
@@ -967,9 +966,9 @@ public class ReceiptAction extends BaseFormAction {
 		List<InstrumentHeader> instrumentHeaderList = new ArrayList<InstrumentHeader>();
 
 		if (CollectionConstants.INSTRUMENTTYPE_CASH.equals(instrumentTypeCashOrCard)) {
-			/*instrHeaderCash.setInstrumentType(financialsUtil
+			instrHeaderCash.setInstrumentType(financialsUtil
 					.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_CASH));
-*/
+
 			instrHeaderCash.setIsPayCheque(CollectionConstants.ZERO_INT);
 			// the cash amount is set into the object through binding
 			// this total is needed for creating debit account head
@@ -979,8 +978,8 @@ public class ReceiptAction extends BaseFormAction {
 			instrumentHeaderList.add(instrHeaderCash);
 		}
 		if (CollectionConstants.INSTRUMENTTYPE_CARD.equals(instrumentTypeCashOrCard)) {
-			/*instrHeaderCard.setInstrumentType(financialsUtil
-					.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_CARD));*/
+			instrHeaderCard.setInstrumentType(financialsUtil
+					.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_CARD));
 			if (instrHeaderCard.getTransactionDate() == null) {
 				instrHeaderCard.setTransactionDate(new Date());
 			}
@@ -994,8 +993,8 @@ public class ReceiptAction extends BaseFormAction {
 		}
 
 		if (CollectionConstants.INSTRUMENTTYPE_BANK.equals(instrumentTypeCashOrCard)) {
-			/*instrHeaderBank.setInstrumentType(financialsUtil
-					.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_BANK));*/
+			instrHeaderBank.setInstrumentType(financialsUtil
+					.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_BANK));
 			if (instrHeaderBank.getTransactionDate() == null) {
 				instrHeaderBank.setTransactionDate(new Date());
 			}
@@ -1024,7 +1023,7 @@ public class ReceiptAction extends BaseFormAction {
 				instrumentHeaderList = populateInstrumentHeaderForChequeDD(instrumentHeaderList, instrumentProxyList);
 			}
 		}
-		//instrumentHeaderList = receiptPayeeDetailsService.createInstrument(instrumentHeaderList);
+		instrumentHeaderList = receiptHeaderService.createInstrument(instrumentHeaderList);
 		return instrumentHeaderList;
 	}
 
@@ -1045,11 +1044,11 @@ public class ReceiptAction extends BaseFormAction {
 
 		for (InstrumentHeader instrumentHeader : instrumentProxyList) {
 			if (instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)) {
-				/*instrumentHeader.setInstrumentType(financialsUtil
-						.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_CHEQUE));*/
+				instrumentHeader.setInstrumentType(financialsUtil
+						.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_CHEQUE));
 			} else if (instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_DD)) {
-				/*instrumentHeader.setInstrumentType(financialsUtil
-						.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_DD));*/
+				instrumentHeader.setInstrumentType(financialsUtil
+						.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_DD));
 			}
 			if (instrumentHeader.getBankId() != null) {
 				instrumentHeader.setBankId(commonsServiceImpl.getBankById(Integer.valueOf(instrumentHeader.getBankId()
@@ -1084,7 +1083,7 @@ public class ReceiptAction extends BaseFormAction {
 		if (receiptHeaderToBeCancelled.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL) {
 			// In case of post remittance cancellation,update billing system for
 			// cancelled receipt
-			//collectionCommon.updateBillingSystemWithReceiptInfo(receiptHeaderToBeCancelled.getReceiptPayeeDetails());
+			collectionCommon.updateBillingSystemWithReceiptInfo(receiptHeaderToBeCancelled);
 			populateReceiptModelWithExistingReceiptInfo(receiptHeaderToBeCancelled);
 			LOGGER.info("Receipt Cancelled with Receipt Number(recreateNewReceiptOnCancellation): "
 					+ receiptHeaderToBeCancelled.getReceiptnumber() + "; Consumer Code: "
@@ -1297,10 +1296,10 @@ public class ReceiptAction extends BaseFormAction {
 
 			}
 			for (ReceiptVoucher receiptVoucher : receiptHeaderToBeCancelled.getReceiptVoucher()) {
-				//receiptPayeeDetailsService.createReversalVoucher(receiptVoucher, instrumentType);
+				receiptHeaderService.createReversalVoucher(receiptVoucher, instrumentType);
 			}
 
-			//receiptPayeeDetailsService.persist(receiptHeaderToBeCancelled.getReceiptPayeeDetails());
+			receiptHeaderService.persist(receiptHeaderToBeCancelled);
 
 			// End work-flow for the cancelled receipt
 			if (receiptHeaderToBeCancelled.getState() != null && !receiptHeaderToBeCancelled.getState().getValue().equals(CollectionConstants.WF_STATE_END)) {
@@ -1309,7 +1308,7 @@ public class ReceiptAction extends BaseFormAction {
 
 			// Update Billing System regarding cancellation of the existing
 			// receipt(when the instrument is not deposited)
-			//collectionCommon.updateBillingSystemWithReceiptInfo(receiptHeaderToBeCancelled.getReceiptPayeeDetails());
+			collectionCommon.updateBillingSystemWithReceiptInfo(receiptHeaderToBeCancelled);
 
 			receiptHeaderValues.clear();
 			receiptHeaderValues.add(receiptHeaderToBeCancelled);
@@ -1324,15 +1323,6 @@ public class ReceiptAction extends BaseFormAction {
 
 	public String amountInWords(BigDecimal amount) {
 		return NumberUtil.amountInWords(amount);
-	}
-
-
-	/**
-	 * @param receiptPayeeDetailsService
-	 *            the receiptPayeeDetailsService to set
-	 */
-	public void setReceiptPayeeDetailsService(ReceiptService receiptPayeeDetailsService) {
-		this.receiptPayeeDetailsService = receiptPayeeDetailsService;
 	}
 
 	/**

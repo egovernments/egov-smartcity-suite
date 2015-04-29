@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.CreateVoucher;
+import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CVoucherHeader;
@@ -17,6 +18,7 @@ import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.instrument.InstrumentHeader;
+import org.egov.model.instrument.InstrumentType;
 import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.services.contra.ContraService;
 import org.egov.services.instrument.InstrumentService;
@@ -31,6 +33,25 @@ public class FinancialsUtil {
 	private ContraService contraService;
 	private CreateVoucher voucherCreator;
 	private static final Logger LOGGER = Logger.getLogger(FinancialsUtil.class);
+
+	/**
+	 * @param instrumentService
+	 *            the Instrument Service to set
+	 */
+	public void setInstrumentService(InstrumentService instrumentService) {
+		this.instrumentService = instrumentService;
+	}
+
+	/**
+	 * Fetches instrument type object for given instrument type as string
+	 * 
+	 * @param type
+	 *            Instrument type as string e.g. cash/cheque
+	 * @return Instrument type object for given instrument type as string
+	 */
+	public InstrumentType getInstrumentTypeByType(String type) {
+		return instrumentService.getInstrumentTypeByType(type);
+	}
 
 	/**
 	 * 
@@ -78,10 +99,10 @@ public class FinancialsUtil {
 			throws EGOVRuntimeException {
 		CVoucherHeader voucherHeaders = null;
 		try {
-			if (headerdetails instanceof HashMap) {/*
+			if (headerdetails instanceof HashMap) {
 				voucherHeaders = voucherCreator.createPreApprovedVoucher((HashMap<String, Object>) headerdetails,
 						accountcodedetails, subledgerdetails);
-			*/}
+			}
 		} catch (EGOVRuntimeException e) {
 			LOGGER.error("Exception while creating voucher!", e);
 			throw e;
@@ -94,13 +115,13 @@ public class FinancialsUtil {
 
 		CVoucherHeader voucherHeaders = null;
 		try {
-			if (headerdetails instanceof HashMap) {/*
+			if (headerdetails instanceof HashMap) {
 
 				// fetch from eg_modules once have master data in place
 				headerdetails.put(VoucherConstant.MODULEID, "10");
 				voucherHeaders = voucherCreator.createVoucher((HashMap<String, Object>) headerdetails,
 						accountcodedetails, subledgerdetails);
-			*/}
+			}
 		} catch (EGOVRuntimeException e) {
 			LOGGER.error("Exception while creating voucher!", e);
 			throw e;
@@ -118,7 +139,7 @@ public class FinancialsUtil {
 	public CVoucherHeader getReversalVoucher(List<HashMap<String, Object>> paramList) {
 		CVoucherHeader voucherHeaders = null;
 		try {
-			voucherHeaders =  null; //= voucherCreator.reverseVoucher(paramList);
+			voucherHeaders = voucherCreator.reverseVoucher(paramList);
 		} catch (EGOVRuntimeException re) {
 			LOGGER.error("Runtime Exception while creating reversal voucher!", re);
 			throw re;
@@ -161,8 +182,8 @@ public class FinancialsUtil {
 	 * @param instrumentHeader
 	 */
 
-	public void updateCheque_DD_Card_Deposit(Long payInId, String toBankaccountGlcode, InstrumentHeader instrumentHeader) {
-		contraService.updateCheque_DD_Card_Deposit(payInId, toBankaccountGlcode, instrumentHeader, null);
+	public void updateCheque_DD_Card_Deposit(Long payInId, String toBankaccountGlcode, InstrumentHeader instrumentHeader,Map<String, Object> instrumentMap) {
+		contraService.updateCheque_DD_Card_Deposit(payInId, toBankaccountGlcode, instrumentHeader,instrumentMap);
 	}
 
 	/**
@@ -175,8 +196,8 @@ public class FinancialsUtil {
 	 */
 
 	public void updateCheque_DD_Card_Deposit_Receipt(Long receiptId, String toBankaccountGlcode,
-			InstrumentHeader instrumentHeader) {
-		contraService.updateCheque_DD_Card_Deposit_Receipt(receiptId, toBankaccountGlcode, instrumentHeader,null);
+			InstrumentHeader instrumentHeader,Map<String, Object> instrumentMap) {
+		contraService.updateCheque_DD_Card_Deposit_Receipt(receiptId, toBankaccountGlcode, instrumentHeader,instrumentMap);
 	}
 
 	/**
@@ -186,10 +207,32 @@ public class FinancialsUtil {
 	 * @param toBankaccountGlcode
 	 * @param instrumentHeader
 	 */
-	public void updateCashDeposit(Long payInId, String toBankaccountGlcode, InstrumentHeader instrumentHeader) {
-		contraService.updateCashDeposit(payInId, toBankaccountGlcode, instrumentHeader,null);
+	public void updateCashDeposit(Long payInId, String toBankaccountGlcode, InstrumentHeader instrumentHeader,Map<String, Object> instrumentMap) {
+		contraService.updateCashDeposit(payInId, toBankaccountGlcode, instrumentHeader,instrumentMap);
 	}
 
+	/**
+	 * @return the contraService
+	 */
+	public ContraService getContraService() {
+		return contraService;
+	}
+
+	/**
+	 * @param contraService
+	 *            the contraService to set
+	 */
+	public void setContraService(ContraService contraService) {
+		this.contraService = contraService;
+	}
+
+	/**
+	 * @param voucherCreator
+	 *            the Voucher Creator to set
+	 */
+	public void setVoucherCreator(CreateVoucher voucherCreator) {
+		this.voucherCreator = voucherCreator;
+	}
 
 	/**
 	 * Checks whether given account is a revenue account (cash/cheque in hand)
@@ -240,4 +283,7 @@ public class FinancialsUtil {
 		return chartOfAccoutsDAO.getBankChartofAccountCodeList();
 	}
 	
+	public Map<String, Object> prepareForUpdateInstrumentDepositSQL() {
+		return contraService.prepareForUpdateInstrumentDepositSQL();
+	}
 }

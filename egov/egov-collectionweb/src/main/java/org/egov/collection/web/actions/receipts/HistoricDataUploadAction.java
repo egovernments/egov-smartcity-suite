@@ -117,7 +117,7 @@ public class HistoricDataUploadAction extends BaseFormAction{
 		receiptAction.setFinancialsUtil(financialsUtil);
 		
 		receiptAction.setReceiptHeaderService(receiptHeaderService);
-		receiptAction.setReceiptPayeeDetailsService(receiptPayeeDetailsService);
+		//receiptAction.setReceiptPayeeDetailsService(receiptPayeeDetailsService);
 		receiptAction.setReceiptBulkUpload(Boolean.TRUE);
 	}
 	

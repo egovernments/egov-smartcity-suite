@@ -63,6 +63,8 @@ import org.egov.collection.integration.models.BillInfo;
 import org.egov.collection.integration.models.BillPayeeDetails;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
+import org.egov.collection.integration.models.PaymentInfoBank;
+import org.egov.collection.integration.models.PaymentInfoCash;
 import org.egov.collection.integration.models.PaymentInfoChequeDD;
 import org.egov.collection.integration.pgi.PaymentGatewayAdaptor;
 import org.egov.collection.integration.pgi.PaymentRequest;
@@ -70,6 +72,7 @@ import org.egov.collection.integration.pgi.PaymentResponse;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.commons.Bank;
+import org.egov.commons.Bankaccount;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
@@ -704,7 +707,7 @@ public class CollectionCommon {
         return CollectionConstants.ZERO_INT;
     }
 
-  /*  public InstrumentHeader validateAndConstructCashInstrument(PaymentInfoCash paytInfoCash) {
+  public InstrumentHeader validateAndConstructCashInstrument(PaymentInfoCash paytInfoCash) {
         if (paytInfoCash.getInstrumentAmount() == null
                 || paytInfoCash.getInstrumentAmount().compareTo(BigDecimal.ZERO) == 0) {
             throw new EGOVRuntimeException("Invalid Cash Instrument Amount[" + paytInfoCash.getInstrumentAmount() + "]");
@@ -716,7 +719,7 @@ public class CollectionCommon {
         instrHeaderCash.setIsPayCheque(CollectionConstants.ZERO_INT);
         instrHeaderCash.setInstrumentAmount(paytInfoCash.getInstrumentAmount());
         return instrHeaderCash;
-    }*/
+    }
 
     /**
      * Checks if the card instrument amount, transaction number, transaction
@@ -799,7 +802,7 @@ public class CollectionCommon {
      * 
      * @return
      */
-/*    public InstrumentHeader validateAndConstructBankInstrument(PaymentInfoBank paytInfoBank) {
+    public InstrumentHeader validateAndConstructBankInstrument(PaymentInfoBank paytInfoBank) {
         String invalidBankPaytMsg = "";
         if (paytInfoBank.getInstrumentAmount() == null
                 || paytInfoBank.getInstrumentAmount().compareTo(BigDecimal.ZERO) <= 0) {
@@ -845,7 +848,7 @@ public class CollectionCommon {
         instrHeaderBank.setIsPayCheque(CollectionConstants.ZERO_INT);
 
         return instrHeaderBank;
-    }*/
+    }
 
     /**
      * Checks if the cheque/DD instrument number, instrument date, are valid. An
@@ -893,8 +896,8 @@ public class CollectionCommon {
 
         instrHeaderChequeDD.setIsPayCheque(CollectionConstants.ZERO_INT);
         instrHeaderChequeDD.setInstrumentAmount(paytInfoChequeDD.getInstrumentAmount());
-       /* instrHeaderChequeDD.setInstrumentType(financialsUtil.getInstrumentTypeByType(paytInfoChequeDD
-                .getInstrumentType().toString()));*/
+        instrHeaderChequeDD.setInstrumentType(financialsUtil.getInstrumentTypeByType(paytInfoChequeDD
+                .getInstrumentType().toString()));
 
         instrHeaderChequeDD.setInstrumentNumber(String.valueOf(paytInfoChequeDD.getInstrumentNumber()));
         instrHeaderChequeDD.setBankBranchName(paytInfoChequeDD.getBranchName());

@@ -43,7 +43,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Nagpur Muncipal Corporation</title>
+<title><s:text name="page.title"/></title>
 <style type="text/css">
 .main{
 border:1px solid #666666;
@@ -126,7 +126,7 @@ padding-left:10px;
 <s:iterator value="%{receipts}">
 <table cellpadding="0" cellspacing="0" border="0" class="main" align="center">
 <tr>
-<td class="mainheading" colspan="6" align="center">Nagpur Muncipal Corporation<br/><div style="font-size:12px;padding:0px 5px 5px 5px;">RECEIPT</div></td>
+<td class="mainheading" colspan="6" align="center"><s:text name="page.title"/><br/><div style="font-size:12px;padding:0px 5px 5px 5px;">RECEIPT</div></td>
 </tr>
 <tr>
 <td class="headingright" colspan="1" width="15%"><s:text name="viewReceipt.receiptno"/></td>

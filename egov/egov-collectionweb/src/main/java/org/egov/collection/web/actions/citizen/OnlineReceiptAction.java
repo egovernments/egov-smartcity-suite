@@ -81,7 +81,6 @@ import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.model.instrument.InstrumentHeader;
-import org.egov.services.receipt.ReceiptService;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 
@@ -101,7 +100,6 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     private CollectionCommon collectionCommon;
     private static final String REDIRECT = "redirect";
     private CommonsServiceImpl commonsServiceImpl;
-    private ReceiptService receiptPayeeDetailsService;
     private BigDecimal onlineInstrumenttotal = BigDecimal.ZERO;
     private List<ReceiptDetail> receiptDetailList = new ArrayList<ReceiptDetail>();
     private BillInfoImpl collDetails = new BillInfoImpl();
@@ -429,7 +427,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
             BigDecimal transactionAmt) {
         InstrumentHeader onlineInstrumentHeader = new InstrumentHeader();
         List<InstrumentHeader> instrumentHeaderList = new ArrayList<InstrumentHeader>();
-       // onlineInstrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_ONLINE));
+        onlineInstrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_ONLINE));
 
         onlineInstrumentHeader.setTransactionDate(transactionDate);
         onlineInstrumentHeader.setIsPayCheque(CollectionConstants.ZERO_INT);
@@ -438,7 +436,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
         instrumentHeaderList.add(onlineInstrumentHeader);
 
-       // instrumentHeaderList = receiptPayeeDetailsService.createInstrument(instrumentHeaderList);
+        instrumentHeaderList = receiptHeaderService.createInstrument(instrumentHeaderList);
 
         return instrumentHeaderList;
     }
@@ -1051,14 +1049,6 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
      */
     public void setReceiptDetailList(List<ReceiptDetail> receiptDetailList) {
         this.receiptDetailList = receiptDetailList;
-    }
-
-    /**
-     * @param receiptPayeeDetailsService
-     *            the receiptPayeeDetailsService to set
-     */
-    public void setReceiptPayeeDetailsService(ReceiptService receiptPayeeDetailsService) {
-        this.receiptPayeeDetailsService = receiptPayeeDetailsService;
     }
 
     /**

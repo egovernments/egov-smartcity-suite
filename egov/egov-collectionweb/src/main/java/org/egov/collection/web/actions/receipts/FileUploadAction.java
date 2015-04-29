@@ -95,7 +95,6 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Position;
 import org.egov.services.receipt.ReceiptService;
@@ -1002,9 +1001,9 @@ public class FileUploadAction extends BaseFormAction{
 		if(CollectionConstants.INSTRUMENTTYPE_CASH.equals(input[15])){
 			InstrumentHeader instrHeaderCash = new InstrumentHeader();
 			
-			/*instrHeaderCash.setInstrumentType(
+			instrHeaderCash.setInstrumentType(
 					financialsUtil.getInstrumentTypeByType(
-							CollectionConstants.INSTRUMENTTYPE_CASH));*/
+							CollectionConstants.INSTRUMENTTYPE_CASH));
 			
 			instrHeaderCash.setIsPayCheque(CollectionConstants.ZERO_INT);
 			instrHeaderCash.setInstrumentAmount(new BigDecimal(input[16]));
@@ -1041,12 +1040,12 @@ public class FileUploadAction extends BaseFormAction{
 		instrumentHeader.setInstrumentAmount(new BigDecimal(input[16]));
 		
 		if (input[15].equalsIgnoreCase(CollectionConstants.INSTRUMENTTYPE_CHEQUE)){
-			/*instrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(
-					CollectionConstants.INSTRUMENTTYPE_CHEQUE));*/
+			instrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(
+					CollectionConstants.INSTRUMENTTYPE_CHEQUE));
 		}
 		else if (input[15].equalsIgnoreCase(CollectionConstants.INSTRUMENTTYPE_DD)) {
-			/*instrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(
-					CollectionConstants.INSTRUMENTTYPE_DD));*/
+			instrumentHeader.setInstrumentType(financialsUtil.getInstrumentTypeByType(
+					CollectionConstants.INSTRUMENTTYPE_DD));
 		}
 		
 		instrumentHeader.setInstrumentNumber(input[17]);
