@@ -39,55 +39,6 @@
  */
 package org.egov.collection.web.actions.receipts;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.replay;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-
-import org.apache.jackrabbit.core.security.user.UserImpl;
-import org.easymock.EasyMock;
-import org.egov.collection.constants.CollectionConstants;
-import org.egov.collection.entity.Challan;
-import org.egov.collection.entity.CollectionObjectFactory;
-import org.egov.collection.entity.ReceiptDetail;
-import org.egov.collection.entity.ReceiptHeader;
-import org.egov.collection.entity.ReceiptVoucher;
-import org.egov.collection.service.ChallanService;
-import org.egov.collection.service.ReceiptHeaderService;
-import org.egov.collection.utils.CollectionCommon;
-import org.egov.collection.utils.CollectionsUtil;
-import org.egov.collection.utils.FinancialsUtil;
-import org.egov.commons.Bankbranch;
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.CFunction;
-import org.egov.commons.CVoucherHeader;
-import org.egov.commons.EgwStatus;
-import org.egov.commons.Fund;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.services.ScriptService;
-import org.egov.model.instrument.InstrumentHeader;
-import org.egov.model.instrument.InstrumentType;
-import org.egov.pims.commons.Position;
-import org.egov.services.instrument.InstrumentService;
-import org.egov.services.receipt.ReceiptService;
-import org.egov.web.actions.BaseFormAction;
-import org.hibernate.Session;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.opensymphony.xwork2.Action;
 
 
 

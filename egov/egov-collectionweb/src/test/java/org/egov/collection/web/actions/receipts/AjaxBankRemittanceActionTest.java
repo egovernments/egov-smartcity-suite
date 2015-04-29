@@ -39,19 +39,6 @@
  */
 package org.egov.collection.web.actions.receipts;
 
-import static org.easymock.EasyMock.createMock;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import org.egov.collection.entity.CollectionObjectFactory;
-import org.egov.commons.Bankaccount;
-import org.egov.infstr.ValidationException;
-import org.egov.infstr.models.ServiceDetails;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
-import org.junit.Before;
-import org.junit.Test;
 
 public class AjaxBankRemittanceActionTest { /*extends AbstractPersistenceServiceTest<ReceiptPayeeDetails,Long>{
 	

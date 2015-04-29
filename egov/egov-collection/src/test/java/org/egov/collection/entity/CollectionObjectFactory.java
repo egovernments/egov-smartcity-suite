@@ -14,14 +14,6 @@ import java.util.Random;
 import javax.jcr.RepositoryException;
 
 import org.egov.collection.constants.CollectionConstants;
-import org.egov.collection.entity.AccountPayeeDetail;
-import org.egov.collection.entity.Challan;
-import org.egov.collection.entity.OnlinePayment;
-import org.egov.collection.entity.ReceiptDetail;
-import org.egov.collection.entity.ReceiptDetailInfo;
-import org.egov.collection.entity.ReceiptHeader;
-import org.egov.collection.entity.ReceiptMisc;
-import org.egov.collection.entity.ReceiptVoucher;
 import org.egov.collection.integration.pgi.DefaultPaymentResponse;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
