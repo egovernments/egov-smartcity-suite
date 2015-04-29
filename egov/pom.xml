@@ -21,6 +21,7 @@
         <module>egov-portal</module>
         <module>egov-pgr</module>
         <module>egov-collection</module>   
+        <module>egov-demand</module>
         <module>egov-eisweb</module>
         <module>egov-egiweb</module>
         <module>egov-pgrweb</module>
