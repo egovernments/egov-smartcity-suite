@@ -1,39 +1,448 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
-	<display-name>egov-egfweb</display-name>
+<!--
+  eGov suite of products aim to improve the internal efficiency,transparency, 
+     accountability and the service delivery of the government  organizations.
+  
+      Copyright (C) <2015>  eGovernments Foundation
+  
+      The updated version of eGov suite of products as by eGovernments Foundation 
+      is available at http://www.egovernments.org
+  
+      This program is free software: you can redistribute it and/or modify
+      it under the terms of the GNU General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      any later version.
+  
+      This program is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+      GNU General Public License for more details.
+  
+      You should have received a copy of the GNU General Public License
+      along with this program. If not, see http://www.gnu.org/licenses/ or 
+      http://www.gnu.org/licenses/gpl.html .
+  
+      In addition to the terms of the GPL license to be adhered to in using this
+      program, the following additional terms are to be complied with:
+  
+  	1) All versions of this program, verbatim or modified must carry this 
+  	   Legal Notice.
+  
+  	2) Any misrepresentation of the origin of the material is prohibited. It 
+  	   is required that all modified versions of this material be marked in 
+  	   reasonable ways as different from the original version.
+  
+  	3) This license does not grant any rights to any user of the program 
+  	   with regards to rights under trademark law for use of the trade names 
+  	   or trademarks of eGovernments Foundation.
+  
+    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+-->
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	id="WebApp_ID" version="2.5">
+
+	<display-name>Struts Base Code</display-name>
+
+	<!-- Filters -->
 	<context-param>
-		<param-name>contextClass</param-name>
+		<param-name>contextConfigLocation</param-name>
 		<param-value>
-			org.springframework.web.context.support.AnnotationConfigWebApplicationContext
-		</param-value>
+            /WEB-INF/security.xml
+            /WEB-INF/serviceBean.xml
+            /WEB-INF/applicationQuartzContext-remittance.xml
+            classpath*:org/serviceconfig-Bean.xml
+        </param-value>
 	</context-param>
+	<context-param>
+		<param-name>locatorFactorySelector</param-name>
+		<param-value>classpath*:org/egov/infstr/beanfactory/erpApplicationContext.xml</param-value>
+	</context-param>
+	<context-param>
+		<param-name>parentContextKey</param-name>
+		<param-value>erpApplicationContext</param-value>
+	</context-param>
+
+	<filter>
+		<filter-name>CacheControlFilter</filter-name>
+		<filter-class>org.egov.infstr.client.filter.CacheControlFilter</filter-class>
+	</filter>
+
+	<filter>
+		<filter-name>CharacterEncodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+
+
+	<filter-mapping>
+		<filter-name>CacheControlFilter</filter-name>
+		<url-pattern>*.js</url-pattern>
+		<url-pattern>*.css</url-pattern>
+		<url-pattern>*.jpg</url-pattern>
+		<url-pattern>*.png</url-pattern>
+		<url-pattern>*.gif</url-pattern>
+		<url-pattern>*.ico</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CharacterEncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>threadLocalsHandlerFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>threadLocalsHandlerFilter</filter-name>
+		<url-pattern>*.do</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>threadLocalsHandlerFilter</filter-name>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>threadLocalsHandlerFilter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>threadLocalsHandlerFilter</filter-name>
+		<url-pattern>*.htm</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>threadLocalsHandlerFilter</filter-name>
+		<url-pattern>/j_security_check</url-pattern>
+	</filter-mapping>
+
+
+
+	<filter>
+		<filter-name>CloseHibernateSession</filter-name>
+		<filter-class>org.egov.infstr.client.filter.HibSessionServletFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>CloseHibernateSession</filter-name>
+		<url-pattern>*.do</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CloseHibernateSession</filter-name>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CloseHibernateSession</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CloseHibernateSession</filter-name>
+		<url-pattern>*.htm</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CloseHibernateSession</filter-name>
+		<url-pattern>/j_security_check</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+
+
+	<filter>
+		<filter-name>securityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>securityFilterChain</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>securityFilterChain</filter-name>
+		<url-pattern>*.do</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>securityFilterChain</filter-name>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>securityFilterChain</filter-name>
+		<url-pattern>/j_security_check</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>securityFilterChain</filter-name>
+		<url-pattern>*.htm</url-pattern>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>ResponseHeaderFilter</filter-name>
+		<filter-class>org.egov.infstr.client.filter.ResponseHeaderFilter</filter-class>
+		<init-param>
+			<param-name>Cache-Control</param-name>
+			<param-value>public,max-age=2592000</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>ResponseHeaderFilter</filter-name>
+		<url-pattern>*.gif</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>ResponseHeaderFilter</filter-name>
+		<url-pattern>*.jpg</url-pattern>
+	</filter-mapping>
+
+	<!-- Enable this filter to prevent from XSS attack -->
+	<filter>
+		<filter-name>XSSFilter</filter-name>
+		<filter-class>org.egov.infstr.security.filter.XSSFilter</filter-class>
+	</filter>
+	<!-- Enable this filter to prevent from XSS attack -->
+	<filter-mapping>
+		<filter-name>XSSFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+
+	<filter>
+		<filter-name>sitemesh</filter-name>
+		<filter-class>com.opensymphony.module.sitemesh.filter.PageFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>sitemesh</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>INCLUDE</dispatcher>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>ResponseOverrideFilter</filter-name>
+		<filter-class>org.displaytag.filter.ResponseOverrideFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>ResponseOverrideFilter</filter-name>
+		<url-pattern>*.do</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>ResponseOverrideFilter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>ResponseOverrideFilter</filter-name>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>SessionVariables</filter-name>
+		<filter-class>org.egov.infstr.client.filter.SetSessionVarFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>SessionVariables</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>SessionVariables</filter-name>
+		<url-pattern>*.do</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>SessionVariables</filter-name>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>SessionVariables</filter-name>
+		<url-pattern>/j_security_check</url-pattern>
+	</filter-mapping>
+
+	<!-- Standard Action Servlet Configuration (with debugging) -->
+
+	<filter>
+		<filter-name>struts2</filter-name>
+		<filter-class>org.apache.struts2.dispatcher.FilterDispatcher</filter-class>
+		<init-param>
+			<param-name>actionPackages</param-name>
+			<param-value>org.egov.web.actions,org.egov.eb.web.action</param-value>
+		</init-param>
+		<init-param>
+			<param-name>struts.codebehind.pathPrefix</param-name>
+			<param-value>/WEB-INF/jsp/</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>struts2</filter-name>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>GZip</filter-name>
+		<filter-class>org.egov.infstr.client.filter.GZIPFilter</filter-class>
+	</filter>
+	<!-- <filter-mapping> <filter-name>GZip</filter-name> <url-pattern>*.jsp</url-pattern> 
+		</filter-mapping> -->
+	<filter-mapping>
+		<filter-name>GZip</filter-name>
+		<url-pattern>*.do</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>GZip</filter-name>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+
+
+	<servlet>
+		<servlet-name>action</servlet-name>
+		<servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+		<init-param>
+			<param-name>config</param-name>
+			<param-value>/WEB-INF/struts-config.xml</param-value>
+		</init-param>
+		<init-param>
+			<param-name>debug</param-name>
+			<param-value>2</param-value>
+		</init-param>
+		<init-param>
+			<param-name>detail</param-name>
+			<param-value>2</param-value>
+		</init-param>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+
+	<!-- Standard Action Servlet Mapping -->
+	<servlet-mapping>
+		<servlet-name>action</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+	<!-- The Usual Welcome File List -->
+
+
+	<listener>
+		<description>SessionAttributeListener</description>
+		<listener-class>org.egov.infstr.client.listener.EgovSessionAttributeListener</listener-class>
+	</listener>
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 
-	<servlet>
-		<servlet-name>SpringDispatcher</servlet-name>
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-		<init-param>
-			<param-name>contextClass</param-name>
-			<param-value>
-				org.springframework.web.context.support.AnnotationConfigWebApplicationContext
-			</param-value>
-		</init-param>
-		<init-param>
-			<param-name>contextConfigLocation</param-name>
-			<param-value>org.egov</param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>SpringDispatcher</servlet-name>
-		<url-pattern>/</url-pattern>
-	</servlet-mapping>
+	<!-- used to track session events (single user session) -->
+	<listener>
+		<listener-class>org.acegisecurity.ui.session.HttpSessionEventPublisher</listener-class>
+	</listener>
+	<welcome-file-list>
+		<welcome-file>eGov.jsp</welcome-file>
+	</welcome-file-list>
+	<error-page>
+		<error-code>401</error-code>
+		<location>/error/unauthorized.jsp</location>
+	</error-page>
 
-	<session-config>
-		<session-timeout>30</session-timeout>
-	</session-config>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/error/notfound.jsp</location>
+	</error-page>
+
+	<error-page>
+		<error-code>403</error-code>
+		<location>/error/accessdenied.jsp</location>
+	</error-page>
+
+	<error-page>
+		<error-code>500</error-code>
+		<location>/error/error.jsp</location>
+	</error-page>
+
+	<!-- Struts Tag Library Descriptors -->
+ <jsp-config>
+	<taglib>
+		<taglib-uri>/tags/struts-bean</taglib-uri>
+		<taglib-location>/WEB-INF/struts-bean.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>/tags/struts-html</taglib-uri>
+		<taglib-location>/WEB-INF/struts-html.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>/tags/struts-logic</taglib-uri>
+		<taglib-location>/WEB-INF/struts-logic.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>/tags/struts-nested</taglib-uri>
+		<taglib-location>/WEB-INF/struts-nested.tld</taglib-location>
+	</taglib>
+
+	<taglib>
+		<taglib-uri>/tags/struts-bean-el</taglib-uri>
+		<taglib-location>/WEB-INF/struts-bean-el.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>/tags/struts-html-el</taglib-uri>
+		<taglib-location>/WEB-INF/struts-html-el.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>/tags/struts-logic-el</taglib-uri>
+		<taglib-location>/WEB-INF/struts-logic-el.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>/order</taglib-uri>
+		<taglib-location>/WEB-INF/order.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>/vlh</taglib-uri>
+		<taglib-location>/WEB-INF/valuelist.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>/deptRole</taglib-uri>
+		<taglib-location>/WEB-INF/deptRole.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>/deptUser</taglib-uri>
+		<taglib-location>/WEB-INF/deptUser.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>/adminBndry</taglib-uri>
+		<taglib-location>/WEB-INF/adminBndry.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>/csajsp</taglib-uri>
+		<taglib-location>/WEB-INF/csajsp-taglib.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>http://displaytag.sf.net</taglib-uri>
+		<taglib-location>/WEB-INF/displaytag.tld</taglib-location>
+	</taglib>
+
+	<taglib>
+		<taglib-uri>http://java.sun.com/jsp/jstl/core</taglib-uri>
+		<taglib-location>/WEB-INF/c.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>http://java.sun.com/jsp/jstl/fmt</taglib-uri>
+		<taglib-location>/WEB-INF/fmt.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>http://java.sun.com/jsp/jstl/sql</taglib-uri>
+		<taglib-location>/WEB-INF/sql.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>http://java.sun.com/jsp/jstl/x</taglib-uri>
+		<taglib-location>/WEB-INF/x.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>http://java.sun.com/jsp/jstl/functions</taglib-uri>
+		<taglib-location>/WEB-INF/fn.tld</taglib-location>
+	</taglib>
+
+	<taglib>
+		<taglib-uri>/egovAuthz</taglib-uri>
+		<taglib-location>/WEB-INF/egov-authz.tld</taglib-location>
+	</taglib>
+	 </jsp-config>
+	<!-- tiles not used here <taglib> <taglib-uri>/tags/struts-tiles</taglib-uri> 
+		<taglib-location>/WEB-INF/struts-tiles.tld</taglib-location> </taglib> -->
 </web-app>
+                       
+                                                  
+         
+                                                                            

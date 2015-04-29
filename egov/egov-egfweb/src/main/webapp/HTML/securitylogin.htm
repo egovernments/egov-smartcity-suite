@@ -1,0 +1,182 @@
+#-------------------------------------------------------------------------------
+# eGov suite of products aim to improve the internal efficiency,transparency, 
+#      accountability and the service delivery of the government  organizations.
+#   
+#       Copyright (C) <2015>  eGovernments Foundation
+#   
+#       The updated version of eGov suite of products as by eGovernments Foundation 
+#       is available at http://www.egovernments.org
+#   
+#       This program is free software: you can redistribute it and/or modify
+#       it under the terms of the GNU General Public License as published by
+#       the Free Software Foundation, either version 3 of the License, or
+#       any later version.
+#   
+#       This program is distributed in the hope that it will be useful,
+#       but WITHOUT ANY WARRANTY; without even the implied warranty of
+#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#       GNU General Public License for more details.
+#   
+#       You should have received a copy of the GNU General Public License
+#       along with this program. If not, see http://www.gnu.org/licenses/ or 
+#       http://www.gnu.org/licenses/gpl.html .
+#   
+#       In addition to the terms of the GPL license to be adhered to in using this
+#       program, the following additional terms are to be complied with:
+#   
+#   	1) All versions of this program, verbatim or modified must carry this 
+#   	   Legal Notice.
+#   
+#   	2) Any misrepresentation of the origin of the material is prohibited. It 
+#   	   is required that all modified versions of this material be marked in 
+#   	   reasonable ways as different from the original version.
+#   
+#   	3) This license does not grant any rights to any user of the program 
+#   	   with regards to rights under trademark law for use of the trade names 
+#   	   or trademarks of eGovernments Foundation.
+#   
+#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+#-------------------------------------------------------------------------------
+<!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="KEYWORDS" content="">
+<meta http-equiv="DESCRIPTION" content="">
+<!-- Inclusion of the CSS files that contains the styles -->
+<link rel=stylesheet href="./css/egov.css" type="text/css">
+	<TITLE>Login Page</TITLE>
+
+
+	<SCRIPT language=JavaScript type=text/javascript>
+
+		function onBodyLoad(){
+			document.getElementById('username').focus();
+		}
+
+	function appendURL()
+	{
+		//alert('1');
+		var loc = window.location;
+	//	alert('2:' + loc);
+		var uname = document.forms[0].j_username.value + '<:1>' + loc;
+	//	alert('3:' + uname);
+		document.forms[0].j_username.value = uname;
+
+
+	}
+		function curserPosition()
+		{
+			document.loginform.username.focus();
+		}
+
+		function validation()
+		{
+
+			if(document.loginform.username.value == "")
+			{
+				alert("Pls Fill in Username");
+				return false;
+			}
+		}
+
+</SCRIPT>
+</HEAD>
+<body onLoad="onBodyLoad()" bgcolor="#FFFFFF">
+<!-- copied from egovHeader -->
+<div style="padding-top:60px">
+<table align='center'  valign="middle" id="table2" >
+	 <tr>
+	 <td>
+
+	  <DIV id=paymain >
+	        <DIV id=paym2>
+	       <DIV id=m3>
+	 <div align="center">
+
+<!--<TABLE height="110" width="80%" align="center" background="images/top1.jpg">
+  <TBODY>
+  <TR>
+    <TD border="0" height="80" valign="baseline">
+    <p align="center"><a href="http://www.egovernments.org"><img border="0" src="images/egovlogo-wht-bgd.gif" align="right" width="10%" height="102"></a>
+    <p>
+	<img border="0" src="images/Karnataka-Govt-Logo.gif"  height="103"></TD></TR></TBODY>
+</TABLE> -->
+
+
+
+<!--<table align="center" cellSpacing="0" borderColorDark="#000000" cellPadding="1" width="80%" class="eGovTblMain"  summary="" border="0">
+  <tbody>
+    <tr>
+      <td width=766>
+        <table cellSpacing=0 borderColorDark=#ffffff width=635  class="eGovTblContent" summary="" borderColorLight=#aaaaaa border=1>
+	      <tbody>
+	        <tr>
+              <td align=middle width=769>
+                <table cellSpacing=0 borderColorDark=#ffffff cellPadding=3 width=742  class="eGovTblContent" summary="" borderColorLight=#aaaaaa border=0>
+		          <tr>
+					<td width="742" height="19"></td>
+					</tr>
+                </table>
+        </table>
+  </table>-->
+ <!-- end copy from egov header -->
+<form method="POST" action="j_security_check" name="loginform" id="formid" onSubmit="appendURL();return validation();">
+<center>
+            <TABLE   width="60%" height=350
+           class="tableStyle" summary="" >
+           <tr><td> &nbsp; </tr>
+              <TR>
+                <TD align="center" class="tableheader" align="center" height=22 width="80%">
+                  Birth and Death Online Application</TD>
+              </TR>
+              <TR valign="middle">
+                <TD height="250" width="70%" align="center">
+
+
+
+                  <TABLE  class="smallTableStyle" cellPadding=3  width="70%"  >
+                    <TBODY>
+
+                    <TR>
+                      <TD width="100%" class="tablesubcaption"  colspan="4"  height="20">Login</TD>
+                    </TR>
+					<tr>
+						<td width="20%">&nbsp;</td>
+						<td class="fieldcell" width="30%" align="right" class="LabelText">User Name</td>
+						<td width="25%" class="LabelText"><input type="text" name="j_username" id ="username" size="20"></td>
+						<td width="30%">&nbsp;</td>
+					</tr>
+					<tr >
+						<td width="20%">&nbsp;</td>
+						<td class="fieldcell" width="30%" class="LabelText" align="right">Password</td>
+						<td width="25%" class="LabelText"><input type="password" name="j_password"  maxLength="16" size="20"></td>
+						<td width="30%">&nbsp;</td>
+					</tr>
+					<tr >
+						<td width="20%">&nbsp;</td>
+						<td width="30%">&nbsp;</td>
+						<td  width="25%" class="LabelText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="submit" name="Login" value="Login">
+						</td>
+						<td width="30%">&nbsp;</td>
+					</tr>
+                </TBODY></TABLE>
+
+
+  </TD></TR></TBODY></TABLE>
+  </center>
+
+   <p>
+
+
+
+
+
+		</form>
+
+</div></div></div></div>
+		</td></tr></table>
+		</div>
+	</body>
+</html>

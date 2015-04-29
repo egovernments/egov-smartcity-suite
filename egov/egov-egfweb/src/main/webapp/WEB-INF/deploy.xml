@@ -1,0 +1,5 @@
+<!-- Copyright (c) 2002 by ObjectLearn. All Rights Reserved. -->
+<!-- DO NOT MODIFY THIS FILE CHANGE THE SERVER FILE INSTEAD -->
+<project name="deployextension"  default="deploy"  basedir=".">
+	<target name="deploy" > </target>
+</project>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN" "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+<taglib>
+	<tlibversion>1.2</tlibversion>
+		<jspversion>1.1</jspversion>
+		<shortname>strutscafeexample</shortname>
+		<info> Supports the Struts Cafe</info>
+
+		<tag>
+			<name>items</name>
+			<tagclass>org.apache.struts.webapp.demo.Items</tagclass>
+			<bodycontent>empty</bodycontent>
+		</tag>
+
+		<tag>
+			<name>toppings</name>
+			<tagclass>org.apache.struts.webapp.demo.Toppings</tagclass>
+			<bodycontent>empty</bodycontent>
+		</tag>
+ </taglib>
+  

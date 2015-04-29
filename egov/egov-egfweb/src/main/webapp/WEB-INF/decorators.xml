@@ -1,0 +1,223 @@
+<decorators defaultdir="/decorators">
+
+	<decorator name="default" page="default.jsp">
+		<pattern>/index.jsp</pattern>
+	</decorator>
+
+	<decorator name="noheadernoinclude" page="noHeaderNoIncl.jsp">
+		<pattern>/HTML/securitylogin.jsp</pattern>
+		<pattern>/HTML/securityloginerror.jsp</pattern>
+	</decorator>
+
+	<decorator name="reports" page="ReportsHeader.jsp">
+		<pattern>/Reports/*.jsp</pattern>
+		<pattern>/Reports/ScheduleSearch.htm</pattern>
+		<pattern>/Reports/PaymentDetails.htm</pattern>
+		<pattern>/Reports/BillDetails.htm</pattern>
+		<pattern>/HTML/ConmfirmVoucher.htm</pattern>
+		<pattern>/HTML/CancelVoucher.htm</pattern>
+		<pattern>/HTML/JournalVoucherSearch.jsp</pattern>
+		<pattern>/HTML/SubLedgerPaymentSearch.jsp</pattern>
+	</decorator>
+
+	<decorator name="multiplepayment" page="onlypayment.jsp">
+		<pattern>/payment/payment.do</pattern>
+	</decorator>
+
+	<decorator name="noHeaderInclude" page="noHeader.jsp">
+		<!-- pattern>/HTML/CessDetails.html</pattern -->
+	</decorator>
+
+	<decorator name="noHeaderIncludedNew" page="noHeaderIncluded-new.jsp">
+		<pattern>/voucher/*searchEntites*</pattern>
+		<pattern>/deduction/recoverySetupMaster.do</pattern>
+	</decorator>
+
+	<decorator name="noHeader" page="TitleandHelp.jsp">
+		<pattern>/payment/PaymentVhSearch.jsp</pattern>
+		<pattern>/payment/paymentAdvice.do</pattern>
+		<pattern>/HTML/Function.htm</pattern>
+		<pattern>/HTML/FunctionAdd.htm</pattern>
+		<pattern>/HTML/CompanyDetail.htm</pattern>
+		<pattern>/HTML/CompanyDetailAdd.htm</pattern>
+		<pattern>/HTML/BankAdd.htm</pattern>
+		<pattern>/HTML/BankBranchAdd.htm</pattern>
+		<pattern>/HTML/BankBranchEnquiry.htm</pattern>
+		<pattern>/HTML/BankBranchEnquiry.htm</pattern>
+		<pattern>/HTML/BankEnquiry.htm</pattern>
+
+		<pattern>/HTML/DetailCodeEnquiry.htm</pattern>
+		<pattern>/HTML/ChartOfAccounts.htm</pattern>
+
+		<pattern>/HTML/VMC/WorksDetailAdd_VMC.jsp</pattern>
+		<pattern>/HTML/ftServicesmap.htm</pattern>
+		<pattern>/HTML/TdsEnq.htm</pattern>
+		<pattern>/HTML/TdsAdd.htm</pattern>
+
+		<pattern>/HTML/SubCodesEnq.htm</pattern>
+		<pattern>/HTML/SubCodesAdd.htm</pattern>
+
+		<pattern>/HTML/FundSource.htm</pattern>
+		<pattern>/HTML/FundSourceAdd.htm</pattern>
+
+		<pattern>/HTML/BillCollector.htm</pattern>
+		<pattern>/HTML/BillCollectorMod.htm</pattern>
+
+
+		<pattern>/HTML/AccountingEntity.htm</pattern>
+
+		<pattern>/HTML/setupCashCheckInHand.htm</pattern>
+		<pattern>/HTML/FinancialYearAdd.htm</pattern>
+		<pattern>/HTML/FinancialYearEnq.htm</pattern>
+
+
+		<pattern>/HTML/OpeningBalance.htm</pattern>
+
+		<pattern>/HTML/SetUp.htm</pattern>
+
+		<pattern>/HTML/Fund.htm</pattern>
+		<pattern>/HTML/FundAdd.htm</pattern>
+
+		<pattern>/brs/BankReconciliation.do?submitType=toLoad</pattern>
+		<pattern>/brs/BankStatementEntries.do</pattern>
+		<pattern>/brs/ReconciliationSummary.do</pattern>
+		<pattern>/brs/DishonoredChequeEntries.do</pattern>
+
+		<pattern>/administration/adminFrames.jsp</pattern>
+		<pattern>/rbac/index.jsp</pattern>
+		<pattern>/ActionRoleMap.do</pattern>
+		<pattern>/RoleActionMap.do</pattern>
+		<pattern>/CreateRuleGroup.do</pattern>
+		<pattern>/RuleGroupMap.do</pattern>
+
+		<pattern>/billsaccounting/worksBill.do</pattern>
+		<pattern>/billsaccounting/supplierBill.do</pattern>
+		<pattern>/billsaccounting/cbill.do</pattern>
+		<pattern>/HTML/VMC/JV_voucherview_VMC.do</pattern>
+		<pattern>/billsaccounting/BillRegisterSearch.jsp</pattern>
+		<pattern>/HTML/AddScheme.jsp</pattern>
+		<pattern>/HTML/schemeSearch.jsp</pattern>
+		<pattern>/HTML/schemeSearch.jsp</pattern>
+		<pattern>/deduction/remitRecovery.do</pattern>
+		<pattern>/deduction/remitRecovery.do</pattern>
+		<pattern>/deduction/remitRecovery.do</pattern>
+		<pattern>/deduction/PartyTypeMaster.do</pattern>
+		<pattern>/deduction/PartyTypeMaster.do</pattern>
+		<pattern>/deduction/PartyTypeMaster.do</pattern>
+		<pattern>/deduction/DocumentTypeMaster.do</pattern>
+		<pattern>/deduction/DocumentTypeMaster.do</pattern>
+		<pattern>/deduction/DocumentTypeMaster.do</pattern>
+		<!--  
+		<pattern>/deduction/recoverySetupMaster.do</pattern>
+		<pattern>/deduction/recoverySetupMaster.do</pattern> 
+		<pattern>/deduction/recoverySetupMaster.do</pattern>
+		-->
+
+		<!-- For NN -->
+		<!-- Transaction -->
+		<!-- receipts -->
+		<pattern>/HTML/PT_Field.htm</pattern>
+		<pattern>/HTML/MiscReceipt.htm</pattern>
+		<pattern>/HTML/ReceiptSearch.htm</pattern>
+
+		<!-- bill accounting -->
+		<pattern>/HTML/ContractorJournal.htm</pattern>
+		<pattern>/HTML/SupplierJournal.htm</pattern>
+		<pattern>/HTML/JV_Salary.htm</pattern>
+
+		<!-- Payments -->
+		<pattern>/HTML/DirectBankPayment.htm</pattern>
+		<pattern>/HTML/DirectCashPayment.htm</pattern>
+		<pattern>/HTML/AdvanceJournal.htm</pattern>
+		<pattern>/HTML/SubLedgerPayment.jsp</pattern>
+		<pattern>/HTML/SubLedgerPayment.htm</pattern>
+		<pattern>/HTML/SubledgerSalaryPayment.htm</pattern>
+
+
+		<!-- Journal proper -->
+		<pattern>/HTML/JV_General.htm</pattern>
+
+		<!-- contra entries -->
+		<pattern>/HTML/JV_Contra_CToB.htm</pattern>
+		<pattern>/HTML/JV_Contra_BToC.htm</pattern>
+		<pattern>/HTML/PayInSlip.htm</pattern>
+		<pattern>/HTML/JV_Contra_BToB.htm</pattern>
+
+		<!-- Masters -->
+		<!-- procurement order -->
+		<pattern>/HTML/WorksDetailAdd.htm</pattern>
+		<pattern>/HTML/WorksDetailEnq.htm</pattern>
+		<pattern>/HTML/POSearch.htm</pattern>
+
+		<!-- Suppliers/contractors order -->
+		<pattern>/HTML/Relation.htm</pattern>
+		<pattern>/HTML/RelationMod.htm</pattern>
+		<!-- tax setup -->
+		<pattern>/HTML/TaxCodeMapEnq.htm</pattern>
+		<pattern>/HTML/TaxCodeMap.htm</pattern>
+
+
+		<pattern>/HTML/ChartOfAccountsEnquiry.htm</pattern>
+		<!--for VMC -->
+		<pattern>/HTML/VMC/AdvanceJournal_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/BillRegister_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/CancelBills_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/CancelVoucher_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/CBillDirectBankPayment_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/CBillDirectCashPayment_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/CBillPaymentSearch_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/ConfirmVoucher_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/ContingencyBill_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/ContingencyJournal_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/ContractorBill_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/ContractorJournal_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/DirectBankPayment_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/DirectCashPayment_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/JournalVoucherSearch_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/JV_Contra_BToB_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/JV_Contra_CToB_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/JV_Contra_BToC_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/JV_General_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/JV_Salary_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/JV_voucherview_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/logout_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/miscReceipt_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/ModifyContraSearch_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/PayInSlip_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/POSearch_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/ReceiptSearch_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/Relation_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/SearchChequeFormat.jsp</pattern>
+		<pattern>/HTML/VMC/SubLedgerPayment_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/SubLedgerPaymentSearch_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/SubledgerSalaryPayment_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/SupplierBill_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/SalaryBill_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/SupplierJournal_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/WorksDetailAdd_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/WorksDetailEnq_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/AccountDetails.jsp</pattern>
+		<pattern>/HTML/VMC/schemeSearch.jsp</pattern>
+		<pattern>/HTML/VMC/MasterSalaryCodes_VMC.jsp</pattern>
+		<pattern>/billsaccounting/*.jsp</pattern>
+		<pattern>/billsaccounting/*.do</pattern>
+		<pattern>/rbac/*</pattern>
+		<pattern>/brs/*</pattern>
+		<pattern>/BeforeCreateAction.do</pattern>
+		<pattern>/HTML/VMC/RelationMod_VMC.jsp</pattern>
+		<pattern>/HTML/VMC/ChequeMaster.jsp</pattern>
+		<pattern>/HTML/VMC/SearchChequeFormat.jsp</pattern>
+		<pattern>/HTML/VMC/coaSearch.jsp</pattern>
+	</decorator>
+
+	<decorator name="budget" page="default-budget.jsp">
+		<pattern>/*.action</pattern>
+	</decorator>
+
+	<excludes>
+		<pattern>/**/*ajax*</pattern>
+		<pattern>/WEB-INF/jsp/master/targetArea-result.jsp</pattern>
+	</excludes>
+</decorators>
+
+

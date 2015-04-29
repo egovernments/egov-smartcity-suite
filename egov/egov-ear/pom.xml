@@ -1,165 +1,177 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <groupId>org.egov</groupId>
-        <artifactId>egov-erp</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<groupId>org.egov</groupId>
+		<artifactId>egov-erp</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
 
-    <artifactId>egov-ear</artifactId>
-    <packaging>ear</packaging>
+	<artifactId>egov-ear</artifactId>
+	<packaging>ear</packaging>
 
-    <name>e-governments erp ear</name>
+	<name>e-governments erp ear</name>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-egiweb</artifactId>
-            <version>${project.parent.version}</version>
-            <type>war</type>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-eisweb</artifactId>
-            <version>${project.parent.version}</version>
-            <type>war</type>
-        </dependency>
+	<dependencies>
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-egiweb</artifactId>
+			<version>${project.parent.version}</version>
+			<type>war</type>
+		</dependency>
 
-        <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-pgrweb</artifactId>
-            <version>${project.parent.version}</version>
-            <type>war</type>
-        </dependency>
-        
-         <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-portalweb</artifactId>
-            <version>${project.parent.version}</version>
-            <type>war</type>
-        </dependency>
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-eisweb</artifactId>
+			<version>${project.parent.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-egfweb</artifactId>
+			<version>${project.parent.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-pgrweb</artifactId>
+			<version>${project.parent.version}</version>
+			<type>war</type>
+		</dependency>
 
-        <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-egi</artifactId>
-            <version>${project.parent.version}</version>
-            <exclusions>
-            	<exclusion>
-            		<artifactId>commons-logging</artifactId>
-            		<groupId>commons-logging</groupId>
-            	</exclusion>
-            </exclusions>
-        </dependency>
-        
-         <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-config</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-eis</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-portal</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-portalweb</artifactId>
+			<version>${project.parent.version}</version>
+			<type>war</type>
+		</dependency>
 
-        <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-pgr</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-egi</artifactId>
+			<version>${project.parent.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
-        <!--
-        Following dependencies are included in ear as these are used only in
-        war modules and we have configured war modules to be archived as skinny wars (no libraries
-        will be packaged in WEB-INF/lib in wars).
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-config</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 
-        Hence we have to explicitly add dependencies of all the war modules which are part of this
-        ear here to get packaged in the ear/lib. Other java module (e.g. egov-egi) dependencies will automatically
-        get packaged transitively, this is required only for war modules exclusive dependencies.
-        -->
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-eis</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-egf</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 
-        <!-- MISC START -->
-        <dependency>
-            <groupId>opensymphony</groupId>
-            <artifactId>sitemesh</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache-web</artifactId>
-        </dependency>
-        <!-- MISC END -->
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-portal</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-pgr</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 
-        <!-- VIEWS RELATED END -->
-        <dependency>
-            <groupId>org.apache.tiles</groupId>
-            <artifactId>tiles-core</artifactId>
-        </dependency>
+		<!-- Following dependencies are included in ear as these are used only 
+			in war modules and we have configured war modules to be archived as skinny 
+			wars (no libraries will be packaged in WEB-INF/lib in wars). Hence we have 
+			to explicitly add dependencies of all the war modules which are part of this 
+			ear here to get packaged in the ear/lib. Other java module (e.g. egov-egi) 
+			dependencies will automatically get packaged transitively, this is required 
+			only for war modules exclusive dependencies. -->
 
-        <dependency>
-            <groupId>org.apache.tiles</groupId>
-            <artifactId>tiles-jsp</artifactId>
-        </dependency>
-        <!-- VIEWS RELATED END -->
+		<!-- MISC START -->
+		<dependency>
+			<groupId>opensymphony</groupId>
+			<artifactId>sitemesh</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache-web</artifactId>
+		</dependency>
+		<!-- MISC END -->
 
 
-    </dependencies>
+		<!-- VIEWS RELATED END -->
+		<dependency>
+			<groupId>org.apache.tiles</groupId>
+			<artifactId>tiles-core</artifactId>
+		</dependency>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-ear-plugin</artifactId>
-                <version>2.10</version>
-                <configuration>
-                	<version>6</version>
-                    <modules>
-                        <webModule>
-                            <groupId>org.egov</groupId>
-                            <artifactId>egov-egiweb</artifactId>
-                            <contextRoot>/egi</contextRoot>
-                        </webModule>
-                        <webModule>
-                            <groupId>org.egov</groupId>
-                            <artifactId>egov-eisweb</artifactId>
-                            <contextRoot>/eis</contextRoot>
-                        </webModule>
-                        <webModule>
-                            <groupId>org.egov</groupId>
-                            <artifactId>egov-pgrweb</artifactId>
-                            <contextRoot>/pgr</contextRoot>
-                        </webModule>
-                        <webModule>
-                            <groupId>org.egov</groupId>
-                            <artifactId>egov-portalweb</artifactId>
-                            <contextRoot>/portal</contextRoot>
-                        </webModule>
-                    </modules>
+		<dependency>
+			<groupId>org.apache.tiles</groupId>
+			<artifactId>tiles-jsp</artifactId>
+		</dependency>
+		<!-- VIEWS RELATED END -->
 
-                    <defaultLibBundleDir>lib</defaultLibBundleDir>
-                    <skinnyWars>true</skinnyWars>
-                </configuration>
-            </plugin>
-            
-            <plugin>
-			    <groupId>org.wildfly.plugins</groupId>
-			    <artifactId>wildfly-maven-plugin</artifactId>
-			    <configuration>
-			        <skip>false</skip>
-			    </configuration>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-ear-plugin</artifactId>
+				<version>2.10</version>
+				<configuration>
+					<version>6</version>
+					<modules>
+						<webModule>
+							<groupId>org.egov</groupId>
+							<artifactId>egov-egiweb</artifactId>
+							<contextRoot>/egi</contextRoot>
+						</webModule>
+						<webModule>
+							<groupId>org.egov</groupId>
+							<artifactId>egov-eisweb</artifactId>
+							<contextRoot>/eis</contextRoot>
+						</webModule>
+						<webModule>
+							<groupId>org.egov</groupId>
+							<artifactId>egov-egfweb</artifactId>
+							<contextRoot>/portal</contextRoot>
+						</webModule>
+						<webModule>
+							<groupId>org.egov</groupId>
+							<artifactId>egov-pgrweb</artifactId>
+							<contextRoot>/pgr</contextRoot>
+						</webModule>
+						<webModule>
+							<groupId>org.egov</groupId>
+							<artifactId>egov-portalweb</artifactId>
+							<contextRoot>/portal</contextRoot>
+						</webModule>
+					</modules>
+
+					<defaultLibBundleDir>lib</defaultLibBundleDir>
+					<skinnyWars>true</skinnyWars>
+				</configuration>
 			</plugin>
-        </plugins>
-    </build>
+
+			<plugin>
+				<groupId>org.wildfly.plugins</groupId>
+				<artifactId>wildfly-maven-plugin</artifactId>
+				<configuration>
+					<skip>false</skip>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

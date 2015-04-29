@@ -1,0 +1,1264 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE taglib
+        PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
+        "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
+
+<taglib>
+  <tlib-version>1.0</tlib-version>
+  <jsp-version>1.2</jsp-version>
+  <short-name>vlh</short-name>
+  <uri>http://valuelist.sourceforge.net/tags-valuelist</uri>
+  <display-name>Value List Handler</display-name>
+  <description>Value List Handler </description>    
+    
+  <tag>
+    <name>root</name>
+    <tag-class>net.mlw.vlh.web.tag.ValueListSpaceTag</tag-class>
+    <body-content>JSP</body-content>
+    <description>
+	  <![CDATA[
+        This tag is required as a root tag for all other vlh tag.
+        <h4>Example</h4>
+		<code>
+	    <li> &lt;vlh:root id="tableOfBooks" value="list" url="?" includeParameters="bookId|#" &gt; </li> 
+		</code>
+    	<p>		
+			It will forward  request param 'bookId' as well. Actions params are excluded automatically for any tableId.
+			<code>ValueListInfo.DO_FOCUS</code> param you cannot forward. It is forbidden.
+		</p>
+		]]>
+    </description>
+    
+    <attribute>
+      <name>value</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+		<description> <![CDATA[
+		<p>The name of the variable containing a ValueList 
+			or a List in the given scope.
+		</p>
+		<li>Instancies of List are automatically wrapped by 
+			DefaultListBackedValueList with the default <code>ValueListInfo</code>. (Thus information about list is always dropped.)	</li>
+			]]> </description>
+    </attribute>
+    
+    <attribute>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+	  <type>java.lang.String</type>
+		<description>
+			<![CDATA[
+			<p>
+			Specify where to find a variable containng ValueList or a 
+			List. Valid options are: <code><b>request</b>|session|application</code>, the default 
+			is request.</p>
+			<p>
+			Warning: When you are using <code>ValueListHandlerHelper</code> you should always use request scope!
+			</p>
+			]]>
+			</description>    
+	</attribute>
+    
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+		<description> <![CDATA[
+		<p>
+		    If more than one table is included in one request then an id can be
+			assigned to a table.  The id is appended to all the parameters.  For example 
+	        if you had a table with an id="(bob)" then the pagging parameter would be
+		    ?paggingColumn=firstName(bob)       
+		</p>
+		<p>
+			When no id is specified, it is used the default id.  See javadoc for the class <code>TableInfo.DEFAULT_ID</code>.
+	    </p>
+		<p>
+	        When you are using handler helper <b><code>ValueListHandlerHelper</code></b> in your mvc controller,
+			the id is used to build information about a list (ValueListInfo) obtained from request
+			(or from the session, when no info was found in the request).
+			Therefore you need to specify <b>unique id</b> in whole application.			
+		</p>		
+		]]> </description>
+    </attribute>
+    
+    <attribute>
+      <name>url</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+      <description>
+		<![CDATA[
+		<p>
+			The base url to post back to. All links generated in table start with this url. Only tag action can overide it.			
+		</p>
+		<h4>Example</h4>
+		<p>		
+		<code>
+		&lt;vlh:root id="MyTable" value="list" <b>url="?"</b> includeParameters=" " &gt;	
+		</code>
+		<ul>
+			<p> Here are starting all links with the prefix "?". Thus result is like this:  </p>
+			<p><code>&lt;a href="<b>?</b>param1=value1&amp;....&amp;paramN=valueN" &gt; </code></p>
+			<p>
+				<code>&lt;vlh:action <b>url="/delete.html?" </b> &gt;</code>	
+				<ul>    Omited other innner parts.
+					<p> Here are starting  all links  with the prefix "/delete.html?". Thus result is like this: </p>
+					<p>
+						<code>
+						&lt;a href="<b>/delete.html?</b>param1=value1&....&paramN=valueN" &gt; 
+						</code>
+					</p>
+				</ul>		
+				<code>&lt;/vlh:action&gt;</code>
+		</ul>		
+     	<code>&lt;/vlh:root&gt;		</code>
+		</p>
+		  
+		]]>
+	   </description>
+    </attribute>
+    
+    <attribute>
+      <name>includeParameters</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+      <description>
+		<![CDATA[
+		<p>
+        A pipe delimited list of parameters to include (forward)
+        when encoding every url in table. 	
+		</p>		
+		<p>
+		 <ul><li><b># </b>- forward only control (like sortColumn, pagingPage, etc.) parameters of others tables in jsp 
+	     <p>Automatically exclude params with the prefix of the
+	            <code>ACTION_TEMP_PARAM_PREFIX</code>. </p>
+	     </li>
+	     <li><b>$ </b>- forward only parameters of others tables in jsp that stats with prefix <code>ACTION_TEMP_PARAM_PREFIX</code>.
+	     </li>
+	     <li><b>partOfParam </b> - forward parameteres that starts with prefix <b>partOfParam</b>.<p>
+	     Automatically are excluded keys start with <ul><code>ACTION_TEMP_PARAM_PREFIX</code>  and with</ul>  <ul><code>DO_FOCUS<code>+id of this table.</ul>
+	     </p> 
+	     </li>  
+	     <li><b>myForwardParameterOne|myForwardParameterTwo </b>-
+	     forward parameter from request if the name is as the same as
+	     <b>myForwardParameterOne</b> or <b>myForwardParameterTwo</b></li>
+	     </ul>
+		</p>
+		<h4>Example</h4>
+		<p>
+			<li> <code>&lt;vlh:root id="tableOfBooks" value="list" url="?" includeParameters="bookId|partOfParam |#" &gt;</code> </li><br>
+			It will forward  request param 'bookId' and all keys start with the prefix 'partOfParam' as well. Actions params are excluded automatically for any tableId.
+		</p><p>
+			<li> <code> &lt;vlh:root id="tableOfBooks" value="list" url="?" <b>includeParameters=" |$"</b> &gt; </code></li><br> 
+			It will forward  all params request, only one param you cannot forward : <code>ValueListInfo.DO_FOCUS</code>.
+		</p>
+		</p>
+		]]>
+      </description>
+    </attribute>
+    
+    <attribute>
+      <name>excludeParameters</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+      <description>
+		<![CDATA[
+        A pipe delimited list of parameters to exclude
+        when encoding urls.
+		Here you <b>cannot use</b> params like #,$ as the same as in includeParameters
+	   ]]>
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>configName</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+      <description>
+		<![CDATA[
+        <p>The name of the configuration bean to use.  This much reference
+        a net.mlw.vlh.web.ValueListConfigBean bean defined in your spring configuration file.</p>
+		<p>		
+		<h4> Example of the configuration bean </h4>	
+<code>		
+&lt;bean id="<b>classicLook</b>" singleton="true" class="net.mlw.vlh.web.ValueListConfigBean"&gt;
+<ul>&lt;property name="displayHelper"&gt;&lt;bean class="net.mlw.vlh.web.util.PassThroughDisplayHelper" /&gt;&lt;/property&gt;<br>
+    &lt;property name="linkEncoder"&gt;&lt;bean class="net.mlw.vlh.web.tag.support.DefaultLinkEncoder" /&gt;&lt;/property&gt; <br>   
+    &lt;property name="messageSource"&gt;<br>
+	<ul>
+      &lt;bean class="org.springframework.context.support.ResourceBundleMessageSource"&gt;
+	  <ul>
+        &lt;property name="basename"&gt;&lt;value&gt;classicLook&lt;/value&gt;&lt;/property&gt;                    
+	  </ul>	
+      &lt;/bean&gt;
+	</ul>
+    &lt;/property&gt;<br>
+    &lt;property name="styleCount"&gt;&lt;value&gt;8&lt;/value&gt;&lt;/property&gt;<br>
+    &lt;property name="stylePrefix"&gt;&lt;value&gt;classicLook&lt;/value&gt;&lt;/property&gt; <br>   
+    &lt;property name="displayProviders"&gt;<br>
+	<ul>
+      &lt;map&gt;
+	  <ul>
+        &lt;entry key="html"&gt;
+		<ul>
+          &lt;bean id="classicLookHtmlDisplayProvider" class="net.mlw.vlh.web.tag.support.HtmlDisplayProvider"&gt;
+		  <ul>
+            &lt;property name="imageHome"&gt;&lt;value&gt;images&lt;/value&gt;&lt;/property&gt;
+		  </ul>
+          &lt;/bean&gt;
+		</ul>
+        &lt;/entry&gt;
+	  </ul> 	
+      &lt;/map&gt;
+	</ul>  
+    &lt;/property&gt;
+</ul>
+&lt;/bean&gt;
+</code>
+		</p>
+		
+		]]>
+      </description>
+    </attribute>
+    
+  </tag>
+
+
+
+  <tag>
+    <name>checkbox</name>
+    <tag-class>net.mlw.vlh.web.tag.DefaultColumnCheckBoxTag</tag-class>
+    <body-content>JSP</body-content>
+    <description></description>
+    
+    <attribute>
+      <name>name</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    
+    <attribute>
+      <name>title</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    
+    <attribute>
+      <name>property</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    
+    <attribute>
+      <name>attributes</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+  	  <description>	 
+	 <![CDATA[
+	 <p>
+		Allow you to specify html tag attributes "inline"-without writing additinal vlh's tags.
+	 </p>
+	 <h4>
+		Example
+	 </h4>
+	 <p>
+		&lt;vlh:column title="lastname"   property="lastname"   sortable="desc" attributes="width='150'"/&gt;
+	 </p>
+	 ]]>
+	 </description>	
+    </attribute>
+  </tag>
+  
+  
+  <tag>
+    <name>filter</name>
+    <tag-class>net.mlw.vlh.web.tag.FilterTag</tag-class>
+    <body-content>JSP</body-content>
+    <description>This tag generates an anchor, including all the parameters.</description>
+    
+    <attribute>
+      <name>url</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>The base of the url.</description>
+    </attribute>
+    
+  </tag>
+  
+  <tag>
+    <name>select</name>
+    <tag-class>net.mlw.vlh.web.tag.DefaultSelectTag</tag-class>
+    <body-content>JSP</body-content>
+    <description></description>
+    
+    <attribute>
+      <name>name</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    
+    <attribute>
+      <name>attributes</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+	  <description>	 
+	 <![CDATA[
+	 <p>
+		Allow you to specify html tag attributes "inline"-without writing additinal vlh's tags.
+	 </p>
+	 <h4>
+		Example
+	 </h4>
+	 <p>
+		&lt;vlh:column title="lastname"   property="lastname"   sortable="desc" attributes="width='150'"/&gt;
+	 </p>
+	 ]]>
+	 </description>	
+    </attribute>
+    
+    <attribute>
+      <name>value</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    
+    <attribute>
+      <name>text</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+    
+  <tag>
+    <name>filters</name>
+    <tag-class>net.mlw.vlh.web.tag.FilterListTag</tag-class>
+    <body-content>JSP</body-content>
+    <description></description>
+    
+    <attribute>
+      <name>key</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    
+    <attribute>
+      <name>format</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    
+  </tag>
+   
+  <tag>
+    <name>row</name>
+    <tag-class>net.mlw.vlh.web.tag.DefaultRowTag</tag-class>
+    <tei-class>net.mlw.vlh.web.tag.DefaultRowTei</tei-class>
+    
+    <body-content>JSP</body-content>
+    <description>
+      This is an iterate tag.  This tage takes the ValueList and iterates the 
+      elements in the ValueList.list property.
+    </description>
+    
+    <attribute>
+      <name>bean</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+	  <type>java.lang.String</type>
+      <description>
+   	<![CDATA[
+      <p>  The name of the pageContext key to place the current iteration on. </p>
+	  <h4>Example</h4>
+	  Considere that we have an class Player with method getId.
+	  <p>
+	  <code>
+	     &lt;vlh:row bean="player"&gt;
+			  <ul>	Using EL language we shows the player id ${player.id}.	  </ul>
+		   &lt;/vlh:row&gt;
+      </code>	
+	  </p>
+	  
+	  ]]>
+      </description>
+    </attribute>
+    
+    <attribute>
+      <name>display</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+	  <type>java.lang.String</type>
+      <description>
+		<![CDATA[
+		<p>
+        Specify the name of an display adapter (defined in configuration  bean) to use, <b>default is html</b>.
+		</p>
+		<h4>Example</h4>
+		<h5>JSP</h5>
+		<code&lt;vlh:row <b>display="html"</b> bean="player"gt;</code>		
+		<h5>Configuration bean</h5>
+		<p>
+<code>		
+&lt;bean id="classicLook" singleton="true" class="net.mlw.vlh.web.ValueListConfigBean"&gt;
+<ul> Ommited content.
+    &lt;property name="displayProviders"&gt;
+	  <ul>
+      &lt;map&gt;
+	  <ul>
+        &lt;entry key="<b>html</b>"&gt;
+		<ul>
+          &lt;bean id="classicLookHtmlDisplayProvider" class="net.mlw.vlh.web.tag.support.HtmlDisplayProvider"&gt;
+		    <ul>
+            &lt;property name="imageHome"&gt;&lt;value&gt;images&lt;/value&gt;&lt;/property&gt;
+			</ul>
+          &lt;/bean&gt;
+		</ul>
+        &lt;/entry&gt;<br>
+        &lt;entry key="<b>csv</b>"&gt;&lt;ref bean="csvDisplayProvider" /&gt;&lt;/entry&gt;<br>
+        &lt;entry key="<b>excel</b>"&gt;&lt;ref bean="excelDisplayProvider" /&gt;&lt;/entry&gt;<br>
+		</ul>
+      &lt;/map&gt;
+	  </ul>	  
+    &lt;/property&gt;
+</ul>	
+&lt;/bean&gt;
+<br>
+&lt;bean id="csvDisplayProvider"   class="net.mlw.vlh.web.tag.support.CsvDisplayProvider"/&gt;<br>
+&lt;bean id="excelDisplayProvider" class="net.mlw.vlh.web.tag.support.ExcelDisplayProvider"/&gt; 
+</code>		</p>
+		]]>
+      </description>
+    </attribute>
+	
+	 <attribute>
+      <name>disableHeader</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+	  <type>boolean</type>
+		<description> <![CDATA[ <p>Disable rendering of header. Default is false. But when 
+			there are not specified column's titles, it will skip rendering 
+			anyway. </p> 
+			<h5>Usage</h5>
+			<li>true</li> Skip zero (header) row  of the table.
+			<li><b>false</b><li> Default setting. Automatic detection of rendering header.
+			(Check if at least one column has a title, if yes, render header row,  if no, skip it.)
+			 ]]></description>
+    </attribute>
+    
+  </tag>
+   
+  <tag>
+    <name>header</name>
+    <tag-class>net.mlw.vlh.web.tag.DefaultHeaderTag</tag-class>
+    
+    <body-content>JSP</body-content>
+    <description>
+		<![CDATA[
+		Render only header. 
+		<h4> Example </h4>
+		<code>
+		&lt;vlh:header&gt;
+		<ul>
+			&lt;vlh:column title="playerid"   property="playerid"   sortable="desc" /&gt;<br>
+		    &lt;vlh:column title="lastname"   property="lastname"   sortable="desc" /&gt;<br>
+		</ul>
+        &lt;/vlh:header&gt;
+		</code>
+		]]>
+		</description>
+    
+  </tag>
+   
+   
+  <tag>
+    <name>inverted-row</name>
+    <tag-class>net.mlw.vlh.web.tag.InvertedRowTag</tag-class>
+    <tei-class>net.mlw.vlh.web.tag.DefaultRowTei</tei-class>
+    
+    <body-content>JSP</body-content>
+    <description></description>
+    
+    <attribute>
+      <name>bean</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    
+    
+    <attribute>
+      <name>title</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+
+  </tag>
+   
+  <tag>
+    <name>column</name>
+    <tag-class>net.mlw.vlh.web.tag.DefaultColumnTag</tag-class>
+    <body-content>JSP</body-content>
+    <description>
+		<![CDATA[
+		<p>Render a column of the iterated row.</p>
+		<h4>Example</h4>
+		<code>
+			&lt;vlh:column title="Id of Player" property="id" sortable="desc" emphasisPattern="1"/&gt; 		
+		</code> 
+		<ul>
+			Render column with the title "Id of Player." and in its rows will be ids, some of them will be highlighted, if they	contains "1".
+		</ul>
+
+			
+
+	    ]]>
+	</description>
+    
+    <attribute>
+      <name>sortable</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+	  <type>java.lang.String</type>
+	  <description>
+		<![CDATA[ 
+			Enable or disable sorting for this column.
+			<li>asc</li> Column will be sorted ascending.
+			<li>desc</li> The column will be sorted descending.
+			When you ommit whole attribute, you disable option to sort this column.
+		<h4>Example</h4>
+		&lt;vlh:column title="playerid"   property="playerid"   sortable="desc" emphasisPattern="100"/&gt;
+			
+		]]>
+      </description>
+    </attribute>
+    
+    <attribute>
+      <name>property</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+	  <type>java.lang.String</type>
+		<description>
+			<![CDATA[
+			The javabean property name used to get property from bean, 
+			which has bean is retrieved in adapter. 
+		   <h4> Usage </h4>
+		   &lt;vlh:column title="Product" property="price" sortable="desc"  /&gt;
+		   <p> Note:To retrieve date from row javabean you can use expresion like "price.inEuro".
+		   For more details see <a href="http://jakarta.apache.org/commons/beanutils/apidocs/org/apache/commons/beanutils/PropertyUtilsBean.html"><code>org.apache.commons.beanutils.PropertyUtils</code></a>.
+		]]> </description>
+    </attribute>
+	 
+	<attribute>
+      <name>groupKey</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+	  <type>java.lang.String</type>
+	  <description>todo</description>
+    </attribute>
+    
+      
+	<attribute>
+      <name>adapterProperty</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+	  <type>java.lang.String</type>
+	  <description>
+		<![CDATA[
+		The adapter property name used to retrieve data and also to generate sql (hql) script for the sorting. 
+		<br> When is it not set or null, it is used the default property as the same as  ordinary javabean property.</br>
+		      
+		<h4> Usage </h4>
+		&lt;vlh:column title="FirstAsString"    property="firstNameAsString" adapterProperty="firstName" sortable="desc"  /&gt;
+	
+	    <h4>Example</h4>
+			We would like to have an class Player, that would return firstname via getFirstName, and firstName + "As String" via getFirstNameAsString.
+		<p>
+			The <code>adapterProperty</code> is used in a adapter to sort, e.g. like this:
+		  <ul>
+			 <code>
+		    FROM Player ORDER BY Player.firstName asc
+			</code>
+		 </ul>
+			But in the &lt;vlh:column, that also generate row, use the <code>property</code> to retrieve data from the row's javabean, in this case it would be like this:
+			<ul><code>Player.getFirstName<b>AsString</b>()</code> </ul>
+	    </p> 
+		<p>
+		Note: When you are using <code>Hibernate20Adapter</code>, see for more details  <a href="http://www.hibernate.org/hib_docs/reference/en/html/queryhql.html">The Hibernate Query Language</a>
+			In this adpter is possible to write adapterProperty like "holidays['national day']", what will result in 
+			query like:
+			<br>
+			<code>From Calendar By Calendar.holidays['national day']</code>
+			]]>
+	  </description>
+    </attribute>
+	
+    
+    <attribute>
+      <name>format</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+	  <type>java.lang.String</type>
+		<description> <![CDATA[
+		<p>
+		IThe ValueList can format instance of <code>number,java.util.date</code> or <code>Calendar<code>,
+		 it using locale from web browser as default or in given locale.
+		</p>
+		<h4>Example</h4>
+		<p>
+			<li>&lt;vlh:column <b>format="#,###,##0.00"  locale="ref to locale instance" </b>  .. &gt;</li> Use your given locale.
+			<li>&lt;vlh:column <b>format="#,###,##0.00" </li> Use browser locale.
+		</p>
+		
+		]]> </description>
+    </attribute>
+
+    <attribute>
+      <name>locale</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+	  <type>java.util.Locale</type>
+		<description>
+			<![CDATA[
+		   Locale used for the formating of the colomn. 
+		   <h4> Usage </h4>
+		   <li>&lt;vlh:column title="Average"  property="averageSalary"  sortable="desc" format="#,###,##0.00"  <b>locale= &lt;%= new Locale("sk")%&gt; </b>/&gt;</li>
+		   Which result in formatin numbers in slovak locale.
+					   
+		]]> </description>
+    </attribute>
+    
+    
+    <attribute>
+      <name>title</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+	  <type>java.lang.String</type>
+	  <description>
+		<![CDATA[
+			The title of the column. 
+				<li>When all column's <b>titles are not specified</b> (null), row tag will skip generating of the header!</li>
+			]]>
+  	  </description>
+    </attribute>
+    
+     <attribute>
+      <name>emphasisPattern</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+      <description>
+		<![CDATA[
+		The pattern to be emphasis displayed in the ordinary column cell.		
+		<h4> Usage </h4>
+		<li>&lt;vlh:column title="playerid" property="id"  sortable="desc" <b>emphasisPattern="30" </b> /&gt; </li>		
+		 1230 will be emphased like this 12<b>30</b>.
+		 ]]>
+	  </description>
+    </attribute>
+    
+    <attribute>
+      <name>titleKey</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+	  <type>java.lang.String</type>
+ 	  <description>
+		<![CDATA[
+		<p>
+			Key used in a message sources specified in the configuration bean.
+		</p>
+		<p>
+		<h4>Example</h4>
+&lt;bean id="classicLook" singleton="true" class="net.mlw.vlh.web.ValueListConfigBean"&gt;
+	Omited content.
+	
+	&lt;property name="messageSource"&gt;
+      &lt;bean class="org.springframework.context.support.ResourceBundleMessageSource"&gt;
+        &lt;property name="basename"&gt;&lt;value&gt;classicLook&lt;/value&gt;&lt;/property&gt;
+        &lt;property name="parentMessageSource"&gt;&lt;ref bean="resourceI18nBundle" /&gt;&lt;/property&gt;                   
+      &lt;/bean&gt;
+    &lt;/property&gt;
+	
+&lt;/bean&gt;
+		</p>
+		]]>
+  	  </description>
+    </attribute>
+    
+    <attribute>
+      <name>sum</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+	  <type>java.lang.String</type>
+  	  <description>	  
+	   <![CDATA[
+	   <p>
+	    Enable summing a column. 
+	   <p>
+	   <h4>Example</h4>
+	   <p>
+	  &lt;vlh:row bean="product"&gt;
+	     &lt;vlh:column title="Product price"   property="price"   sortable="desc" sum="totalPrice" /&gt;
+      &lt;/vlh:row&gt;
+	  </p>
+	  The summed column value (TotalPrice) you can retrieve using :
+	  <ul>
+	  <code>
+        &lt;%=pageContext.getAttribute("TotalPrice")%&gt;
+	  </code>
+	  </ul>
+      
+	  ]]>
+   	  </description>
+    </attribute>
+    
+    <attribute>
+      <name>attributes</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+	  <type>java.lang.String</type>
+	  <description>	 
+	 <![CDATA[
+	 <p>
+		Allow you to specify html tag attributes "inline"-without writing additinal vlh's tags.
+	 </p>
+	 <h4>
+		Example
+	 </h4>
+	 <p>
+		&lt;vlh:column title="lastname"   property="lastname"   sortable="desc" attributes="width='150'"/&gt;
+	 </p>
+	 ]]>
+	 </description>	 
+    </attribute>
+    
+    <attribute>
+      <name>default</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+	  <type>java.lang.String</type>
+		<description> <![CDATA[
+		<p>
+		Specify a string for the property's null token. 
+		When you set this attribute, you overide default null token from the configuration bean.
+		</p>
+		<h4>Example</h4>
+		<p>
+		 &lt;vlh:column title="lastname"   property="lastname"   sortable="desc" attributes="width='150'"/&gt;		 
+		 </p>
+		]]> </description>
+    </attribute>
+    
+  </tag>
+  
+  <tag>
+    <name>dynabean</name>
+    <tag-class>net.mlw.vlh.web.tag.DynaBeanColumnsTag</tag-class>
+    <body-content>JSP</body-content>
+    <description></description>
+    
+    <attribute>
+      <name>sortable</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    
+    <attribute>
+      <name>include</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    
+    <attribute>
+      <name>exclude</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    
+  </tag>
+  
+  
+  <tag>
+    <name>attribute</name>
+    <tag-class>net.mlw.vlh.web.tag.support.AttributeTag</tag-class>
+    <body-content>JSP</body-content>
+    <description>
+		<![CDATA[
+		<p>
+			Append to the nearest parent that implement interface <code>Attributeable</code> html attributes.		
+		</p>
+		<h4>Usage</h4>
+		<code>
+		 &lt;vlh:row bean="player"&gt;
+		 <ul>
+			&lt;vlh:attribute name="onclick"&gt;javascript:toggle(this);&lt;/vlh:attribute&gt;		
+			...
+		</ul>		
+		 &lt;/vlh:row&gt;
+		</code><p>		
+		Result in 
+		<ul> <code>&lt;tr onclick="javascript:toggle(this);"&gt; ... &lt;tr&gt;</code> </ul>
+		</p>
+		]]>
+		
+    </description>
+    
+    <attribute>
+      <name>name</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+	  <type>java.lang.String</type>
+	  <description>The name of html attribute.</description>
+    </attribute>
+    
+    <attribute>
+      <name>value</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+	  <type>java.lang.String</type>
+      <description>The value of html attribute.</description>
+    </attribute>
+    
+  </tag>
+  
+  <tag>
+    <name>paging</name>
+    <tag-class>net.mlw.vlh.web.tag.DefaultPagingTag</tag-class>
+    <body-content>JSP</body-content>
+    <description>
+		<![CDATA[
+		Generate panel for controlling of paging and focusing. For best understanding  see war file with examples.
+		When bodyContent is  empty,it will render pages like with bodyContent &lt;c:out value="${page}"/&gt;.
+		<ol>
+			<li>
+				<code>&lt;vlh:paging showSummary="true" pages="3" &lt;/vlh:paging&gt;</code>
+				<ul>
+					This will generate somethink like this 1 <b>2</b> 3 
+				</ul>		
+			</li>
+			<li>
+				<code>&lt;vlh:paging showSummary="true" pages="3"&gt;&lt;c:out value="${page}"/&gt;&lt;/vlh:paging&gt;</code>
+				<ul>
+					The same usage but with non empty body content using pageContext's variable <b>page</b>.
+					If you are using more than 1 table, the name of the page variable is different. At that case it's like this: page<b>MyTable</b>, where MyTable is  <i>vlh:Root's id</i>.
+				</ul>		
+			</li>
+		</ol>
+		]]>
+    </description>
+    
+    <attribute>
+      <name>pages</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>int</type>
+      <description>
+		<![CDATA[
+		Specify number of pages rendered as quick navigation.
+		<b>Note</b> You must specify somethink in the inner tag's body content, otherwise will not generete quick paging.
+		]]>
+		</description>
+    </attribute>
+    
+    <attribute>
+      <name>showSummary</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+	  <type>java.lang.String</type>
+      <description>
+		<![CDATA[
+    Generate buttons to navigate through pages of data  using i18n (internationalization).	 
+   The following keys are required to be define in message sources.
+   	
+   <p> If you like to, you can add your properties file in your locale and add this lines of code in your language:
+   </p>
+   Summary info:(is on the left)    
+    <ol>
+    <code>
+       <li>paging.text.totalRow={0} Total  </li>
+       <li>paging.text.pageFromTotal= <b>{0}</b> of  {1} page(s) </li>
+    </code>
+    </ol>
+   Paging info: (is on the right)
+   <code>
+    <ol>
+      <li>
+        paging.first(off), paging.first(on)
+      </li>
+      <li>
+        paging.previous(off), paging.previous(on)
+      </li>
+      <li>
+        paging.forward(off), paging.forward(on)
+      </li>
+      <li>
+        paging.last(off), paging.last(on)
+      </li>
+      <li>
+        paging.delim
+      </li>
+   	  <li>
+   		paging.text.totalRow
+   	  </li>
+   	  <li>
+        paging.text.pageFromTotal
+      </li>
+   </ol>
+   </code>
+   Focus info:
+   <code>
+   <ol> 
+      <li>
+  		paging.focus(on), paging.focus(off), paging.focus(disabled),
+         paging.focus(error)
+      </li>
+   </ol>
+   </code>
+		 ]]>
+	 </description>
+    </attribute>
+    
+	<attribute>
+      <name>attributes</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+	  <description>	 
+	 <![CDATA[
+	 <p>
+		Allow you to specify html tag attributes "inline"-without writing additinal vlh's tags.
+	 </p>
+	 <h4>
+		Example
+	 </h4>
+	 <p>
+		&lt;vlh:column title="lastname"   property="lastname"   sortable="desc" attributes="width='150'"/&gt;
+	 </p>
+	 ]]>
+	 </description>	
+    </attribute>
+  </tag>
+  
+  <tag>
+    <name>focusStatus</name>
+    <tag-class>net.mlw.vlh.web.tag.FocusStatusTag</tag-class>
+    <body-content>JSP</body-content>
+    <description>
+	  <![CDATA[
+		Create a table with the focus status, from jsp you can retrieve it as ${focusStatus[nameOfTable]}.
+		<p>
+			When you set <code>ValueListInfo.<b>focusProperty<b></code>, the focus is enabled and the tag will generate status.
+			Otherwise it drop all bodycontent from this tag.
+		</p>
+		
+		  <p> It return <code>ValueListInfo.FOCUS_FOUND, ValueListInfo.FOCUS_TOO_MANY_ITEMS, ValueListInfo.FOCUS_FOUND</code>.</p>
+		  <p> To generate status it use this message source's properties:</p>
+		  <p>
+		  <ul>
+		  <code>
+		     <li>focusStatus.tooManyItems =&lg;li&gt;Too many items&lg;/li&gt;</li>
+		     <li>focusStatus.notFound = &lg;li&gt;The focus value {0} not found&lg;/li&gt;</li>
+		  </code>
+		  </ul>
+		  </p>  
+		 ]]>
+	</description>
+  </tag>
+  
+  <tag>
+    <name>retrieve</name>
+    <tag-class>net.mlw.vlh.web.tag.ValueListRetriever</tag-class>
+    <body-content>JSP</body-content>
+    <description>
+		<![CDATA[
+		<p>
+		Retrieve a ValueList from adapter in a JSP. In MVC style programming you should't do that! 
+		Instead of this use <code>ValueListHandlerHelper</code> in a controller.
+		</p>
+		<h4>Example</h4>
+		 <p>
+		 <code> &lt;vlh:retrieve name="<b>players1</b>" focusProperty ="id" focusValue ="30204" /&gt; </code></p>
+		 <ul>
+		 It retrievies data from the named adapter "players1" and focus on page, where is player with id 30204.
+ 		 </ul>		 		 
+		 <p>
+		  The name of adapter depends on configuration bean, where is a map of adapters like this:
+		  
+		  <ul>
+<code>
+&lt;bean id="valueListHandler" singleton="true" 
+        class="net.mlw.vlh.DefaultValueListHandlerImpl"&gt;
+<ul>
+    &lt;property name="config.adapters"&gt;
+	<ul>
+      &lt;map&gt;
+	  <ul>
+		&lt;entry </b>key="<b>players1</b>"</b>&gt;
+		<ul>
+          &lt;bean class="net.mlw.vlh.adapter.hibernate.Hibernate20Adapter"&gt;
+          <ul>
+            &lt;property name="sessionFactory"&gt;&lt;ref bean="mySessionFactory"/&gt;&lt;/property&gt;
+            &lt;property name="defaultNumberPerPage"&gt;&lt;value&gt;20&lt;/value&gt;&lt;/property&gt;
+            &lt;property name="defaultSortColumn"&gt;&lt;value&gt;lastName&lt;/value&gt;&lt;/property&gt;
+            &lt;property name="defaultSortDirection"&gt;&lt;value&gt;asc&lt;/value&gt;&lt;/property&gt;
+            &lt;property name="hql"&gt;
+			<ul>
+              &lt;value&gt;
+			  <ul>
+                FROM net.mlw.data.Player AS vo
+                /~name: WHERE vo.lastName LIKE {name} ~/
+                /~sortColumn: ORDER BY vo.[sortColumn] [sortDirection]~/
+			  </ul> 	
+              &lt;/value&gt;
+			</ul>
+            &lt;/property&gt;<br>
+            &lt;property name="defaultFocusPropertyObjectAlias"&gt;&lt;value&gt;vo&lt;/value&gt;&lt;/property&gt;<br>
+            &lt;property name="maxRowsForFocus"&gt;&lt;value&gt;160000&lt;/value&gt;&lt;/property&gt; <br>
+			&lt;property name="removeEmptyStrings"&gt;&lt;value&gt;true&lt;/value&gt;&lt;/property&gt;<br>
+		  </ul>
+          &lt;/bean&gt;<br>
+		</ul>
+        &lt;/entry&gt;
+ 	  </ul>
+	  ...
+	  &lt;/map&gt;
+   </ul>
+   &lt;/property&gt;
+</ul>
+&lt;/bean&gt;
+</code>		  
+		  </ul>
+		 </p>
+		
+		 
+		]]>
+	</description>
+    
+    <attribute>
+      <name>name</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+	  <type>java.lang.String</type>
+      <description>The name of adpater to retrieve ValueList data.</description>
+    </attribute>
+    
+     <attribute>
+      <name>focusProperty</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+      <description>The adapter property of the list column to determine focusValue in generated hql. Use this options rather via MVC and ValueListInfo.setFocusProperty().</description>
+    </attribute>
+    
+     <attribute>
+      <name>focusValue</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+      <description>Adapter will scroll to focused value and try to highlight it. If there is too many items, or value is not found or found, it set focus status (ValueListInfo.FOCUS_NOT_FOUND, ValueListInfo.FOCUS_TOO_MANY_ITEMS, ValueListInfo.FOCUS_FOUND ) </description>
+    </attribute>
+    
+  </tag>
+  
+  <tag>
+    <name>controls</name>
+    <tag-class>net.mlw.vlh.web.tag.ControlsTag</tag-class>
+    <body-content>JSP</body-content>
+    <description>Use to add special column for controling of the row.</description>
+  
+    <attribute>
+      <name>title</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+	  <type>java.lang.String</type>
+    </attribute>   
+    <attribute>
+      <name>titleKey</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+	  <type>java.lang.String</type>
+	   <description>
+		<![CDATA[
+		Key used in message sources. See <a href="column.html">column's titleKey</a>
+		]]>
+  	  </description>
+    </attribute>
+  </tag>
+   
+   <tag>
+    <name>action</name>
+    <tag-class>net.mlw.vlh.web.tag.ActionTag</tag-class>
+    <body-content>JSP</body-content>
+    <description>
+        <![CDATA[
+		Use to add listeners for actions. You can use it for an edit or delete row actions in MVC.
+		<h4>Example</h4>
+			<code>
+			 &lt;vlh:root url="baseUrl.do" &gt;
+			<ul>			
+			 &lt;vlh:controls titleKey="Control" &gt;
+			 <ul>
+				<li>
+              	&lt;vlh:action <b>url="edit.jsp?"</b> customParameters="&lt;%=customParams%&gt;"&gt;
+					<p>
+					Add custom hashMap  params to url and use <code>"edit.jsp?"</code> as the base url.
+					<ul>
+						&lt;vlh:addParam name="dynamicId"  property="id" temp="false"/&gt;					
+						<p> Add to parent (action) param.
+						</p>
+					</ul>										
+					This is a link 1.
+					</p>
+              	&lt;/vlh:action&gt;				              	
+				</li>
+				<p>
+				 Render url like <code>..\edit.jsp?&dynamicId="Row-Java-Bean.getId()"&custumParam1=customParamValue1&....&customParamN=customParamValueN </code> </b>
+				 </p>
+				<br>
+              	| 
+				<li>				
+              	&lt;vlh:action customParameters="&lt;%=customParams%&gt;"&gt;
+				<p>
+					Add custom hashMap  params to url and use <code> &lt;vlh:root url="baseUrl.do"</code> as the base url.	
+					<ul>
+		          		&lt;vlh:addParam name="dynamicId"  property="id" temp="false"/&gt;					
+					</ul>	
+					This is a link 2.		
+				</p>
+              	&lt;/vlh:action&gt;
+				</li>  
+				<p>
+					Thus Rendered url is like <code>..\baseUrl.do?&dynamicId="Row-Java-Bean.getId()"&custumParam1=customParamValue1&....&customParamN=customParamValueN </code>
+				</p>
+		     </ul>
+	         &lt;/vlh:controls&gt;
+			</ul>
+			...
+			<br>
+			</code>
+			&lt;/vlh:root&gt;
+			]]>	
+			
+	</description>
+  
+	 <attribute>
+      <name>url</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+      <description>If is not set, use root tag base url.</description>      
+    </attribute>
+   
+    <attribute>
+      <name>customParameters</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.util.HashMap</type>
+      <description>A HasMap of parameters to append in rendered URL for the Action.</description>      
+    </attribute>
+  
+  
+  </tag>
+  
+   
+  <tag>
+    <name>addParam</name>
+    <tag-class>net.mlw.vlh.web.tag.AddParamTag</tag-class>
+    <body-content>JSP</body-content>
+    <description>
+		<![CDATA[
+		Setter of any params to parant tag such as root, or action.
+	       	<h4>Example Action</h4>
+              	&lt;vlh:action url="\delete.do?" customParameters="&lt;%=customParams%&gt;"&gt;
+				<ul>              	
+					This will generate base url <code>..\delete.do?</code>
+					<li>
+              		&lt;vlh:addParam name="id" property="id" temp="true"/&gt;
+					</li>
+					<p>	Add param to url like <code>&ACTid="Row-Java-Bean.getId()" </code>
+					</p>
+					<li>					
+              		&lt;vlh:addParam name="id" property="id" temp="false"/&gt;
+					</li>
+					<p>
+						Add param to url like <code>&id="Row-Java-Bean.getId()"</code>					
+					</p>
+					<li>				
+						&lt;vlh:addParam property="xyz" /&gt; 						
+					</li>
+					<p>
+						Add param to url like <code>&ACTxyz="javabean.getXyz()"</code>
+					</p>
+					<li>
+					&lt;vlh:addParam name="OneStaticParam" value="OneStaticValue" temp="false"/&gt;
+					</li>
+					<p>
+						In every row of the grid will be rendered url with static param <code>&OneStaticParam="OneStaticValue" </code>
+					</p>
+				</ul>				
+				This is a link	
+              	&lt;/vlh:action&gt;
+			<h4>Example Root</h4>
+				&lt;vlh:root url="?" customParameters="&lt;%=customParams%&gt;"&gt;
+				<ul>              	
+					<li>
+              		&lt;vlh:addParam name="method" <b>value</b>="doView" temp="false"/&gt;
+					</li>
+					<p>
+					 Add to the base url a static param. Thus the rendered url look like 
+					 this 
+					 <br><code>..\?method=doView</code>
+					</p>              		
+				</ul>					
+              	&lt;/vlh:root&gt;
+
+			]]>	
+		
+	</description>
+
+    <attribute>
+      <name>name</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+      <description> The name of the parameter used in rendered URL.</description>
+    </attribute>
+
+ 
+    <attribute>
+      <name>property</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+      <description>The dynamic value of the parameter.
+      The name of the dynamic property, which values are used like the attribute value, but dynamicaly retrevied for the each row.</description>
+    </attribute>    
+  
+    
+    <attribute>
+      <name>value</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+      <description>The static value of the parameter.</description>
+    </attribute>
+    
+    <attribute>
+      <name>temp</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>boolean</type>
+      <description>
+		<![CDATA[
+		Add <code>ACTION_TEMP_PARAM</code> prefix to the name of parameter. 
+		>]]></description>
+    </attribute>       
+      
+        
+  </tag>
+  
+</taglib>

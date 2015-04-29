@@ -1,0 +1,69 @@
+<!-- Copyright (c) 2002 by ObjectLearn. All Rights Reserved. -->
+<project name="webmodulebuilder"  default="deploy"  basedir=".">
+
+
+  <!-- set global properties for this build -->
+  <property file="build.properties"/>
+  <property name="dist" value="../../dist" />
+  <property name="web" value="../" />
+  
+   
+  <target name="init">
+    <!-- Create the dist directory structure used by compile
+         and copy the deployment descriptors into it-->
+    <mkdir dir="${dist}"/>
+    <mkdir dir="${dist}/WEB-INF"/>
+    <mkdir dir="${dist}/WEB-INF/classes"/>
+    <mkdir dir="${dist}/WEB-INF/lib"/>
+    <copy todir="${dist}">
+      <fileset dir="${web}">
+        <include name="**/*.*"/>
+        <exclude name="**/jsp_servlet/*.class"/>
+        <exclude name="**/build.xml"/>
+        <exclude name="**/deploy.xml"/>
+        <exclude name="**/build.properties"/>
+        <exclude name="**/servers.xml"/>
+        <exclude name="**/targets.xml"/>
+        <exclude name="**/*.war"/>
+      </fileset>
+    </copy>
+    <copy todir="${dist}/WEB-INF/classes">
+      <fileset dir="${project.dir}/${bin.dir}">
+        <include name="**/*.*"/>
+        <exclude name="**/jsp_servlet/*.class"/>
+      </fileset>
+    </copy>
+    
+  </target>
+
+
+  
+  <target name="deploy" depends="undeploy,init" >
+    <!-- Create the distribution directory -->
+    <delete file="${war}.war" failonerror="false" />
+	<jar jarfile="${war}.war" basedir="${dist}"/>    
+  	<copy file="${war}.war" todir="${deploy.dir}"/>
+    <delete file="${war}.war" failonerror="false" />
+    <delete dir="${dist}" failonerror="false" />
+  </target>
+  
+  <target name="deployTool">
+	  <ant antfile="./deploy.xml" dir="." target="deploy" inheritall="true">
+	  </ant>
+  </target> 
+  
+  
+  
+  
+  
+  <target name="undeploy">
+    <!-- Sometimes you can undeploy with deleting the module file but it is best dealt on an appserver basis
+         at undeployTool target -->
+  </target>
+  <target name="undeployTool">
+	  <ant antfile="./undeploy.xml" dir="." target="undeploy" inheritall="true">
+	  </ant>
+  </target>   
+  
+
+</project>

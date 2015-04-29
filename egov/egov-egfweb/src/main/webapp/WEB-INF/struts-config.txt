@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN"
+          "http://struts.apache.org/dtds/struts-config_1_2.dtd">
+<!--
+  Default configuration file for examples application.
+  Each module also has its own struts-config under: /WEB-INF/$MODULE/
+  @version $Revision: 1.9 $ $Date: 2004/09/07 02:50:06 $
+-->
+<struts-config>
+  <data-sources />
+  
+  <form-beans>
+	
+	<form-bean name="mfb" type="org.egov.rnd.MFormBean"/>
+  </form-beans>
+  <global-exceptions />
+   
+     
+  <action-mappings>
+  
+    <action path="/MonkeysView" 
+     type="org.egov.rnd.MonkeysViewAction" 
+     name="mfb" 
+      scope="session"
+      validate = "false"
+     >
+     <forward name = "success" path = "/rnd/monkeys5.jsp"/> 	   
+     
+      </action>    
+
+    <action path="/CreateMonkeys" 
+    	type="org.egov.rnd.MonkeyBeforeCreateAction" 
+    	name="mfb" 
+    	scope="session"
+    	validate = "false"
+     >
+     <forward name = "success" path = "/rnd/CreateMonkey.jsp"/> 	   
+     
+      </action>    
+      
+    <action path="/SubmitCreateMonkeys" 
+    	type="org.egov.rnd.MonkeyCreateSubmitAction" 
+    	name="mfb" 
+    	scope="session"
+    	validate = "false"
+    	input="/rnd/CreateMonkey.jsp"
+     >
+     <forward name = "success" path = "/rnd/CreateMonkey.jsp"/> 	   
+     
+      </action>    
+    
+     </action-mappings>
+  	
+  <message-resources parameter="ApplicationResources" />
+  
+</struts-config>
