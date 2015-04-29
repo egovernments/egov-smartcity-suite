@@ -41,7 +41,7 @@
 <html>
 <head>
 <title>eGovernance</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 
 <frameset id="mainFrameset" rows="100%,*" cols="250,*" framespacing="0" border="0" frameborder="YES">
