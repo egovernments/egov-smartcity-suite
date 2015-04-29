@@ -127,12 +127,12 @@ public class ModuleHibDao implements ModuleDao {
 		sql.append("SELECT DISTINCT view_ram.module_id as id,view_ram.module_name as name,null as url,view_ram.typeflag as typeflag,view_ram.context_root as ctx_root,view_ram.order_number as ordernumber ");
 		sql.append("FROM V_EG_ROLE_ACTION_MODULE_MAP view_ram WHERE  view_ram.parent_id =? and view_ram.typeflag='M' and view_ram.is_enabled=1 ");
 		sql.append("AND EXISTS (SELECT action.id FROM eg_action action, eg_roleaction_map roleaction where action.module_id = view_ram.module_id ");
-		sql.append("AND action.is_enabled = 1 AND action.id = roleaction.actionid  AND roleaction.roleid IN (SELECT role FROM eg_userrole userrole ");
-		sql.append("WHERE userrole.user = ?) UNION (SELECT module.id_module FROM eg_module module WHERE module.parentid = view_ram.module_id AND module.isenabled=1) ) ");
+		sql.append("AND action.is_enabled = 1 AND action.id = roleaction.actionid  AND roleaction.roleid IN (SELECT roleid FROM eg_userrole userrole ");
+		sql.append("WHERE userrole.userid = ?) UNION (SELECT module.id_module FROM eg_module module WHERE module.parentid = view_ram.module_id AND module.isenabled=1) ) ");
 		sql.append("UNION SELECT distinct view_ram.action_id as id,view_ram.action_name as name,view_ram.action_url as url,view_ram.typeflag as typeflag, ");
 		sql.append("view_ram.context_root as ctx_root,view_ram.order_number as ordernumber FROM V_EG_ROLE_ACTION_MODULE_MAP view_ram where   parent_id = ? and typeflag='A' ");
 		sql.append("AND view_ram.is_enabled=1 and (view_ram.action_id in (select actionid from eg_roleaction_map ra  where ra.roleid in ");
-		sql.append("(select role from eg_userrole ur where ur.user = ?))  OR NOT EXISTS (SELECT actionid FROM eg_roleaction_map ra ");
+		sql.append("(select roleid from eg_userrole ur where ur.userid = ?))  OR NOT EXISTS (SELECT actionid FROM eg_roleaction_map ra ");
 		sql.append("where actionid = view_ram.action_id)) order by typeflag desc,name asc");
 
 		final SQLQuery query = getCurrentSession().createSQLQuery(sql.toString());

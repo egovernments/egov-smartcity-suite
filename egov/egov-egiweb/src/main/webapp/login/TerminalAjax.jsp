@@ -9,7 +9,7 @@
 		String username = SecurityUtils.checkSQLInjection(request.getParameter("username"));
 		StringBuilder rsltQ = new StringBuilder("{'isLocation':");
 		if (username != null && !username.trim().equals("")) {
-			Query query = HibernateUtil.getCurrentSession().createSQLQuery("SELECT r.name FROM eg_role r, eg_user u, eg_userrole ur WHERE u.id = ur.user and r.id = ur.role and u.isactive=true and u.username = :userName");
+			Query query = HibernateUtil.getCurrentSession().createSQLQuery("SELECT r.name FROM eg_role r, eg_user u, eg_userrole ur WHERE u.id = ur.userid and r.id = ur.roleid and u.isactive=true and u.username = :userName");
 			query.setString("userName", username);
 			List<Object> userRoles = query.list();
 			boolean locationbased = false;

@@ -131,7 +131,7 @@ public class User extends AbstractAuditable<User, Long> {
     private boolean active;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "eg_userrole", joinColumns = @JoinColumn(name = "user"), inverseJoinColumns = @JoinColumn(name = "role"))
+    @JoinTable(name = "eg_userrole", joinColumns = @JoinColumn(name = "userid"), inverseJoinColumns = @JoinColumn(name = "roleid"))
     private Set<Role> roles = Collections.emptySet();
 
     @Temporal(TemporalType.DATE)

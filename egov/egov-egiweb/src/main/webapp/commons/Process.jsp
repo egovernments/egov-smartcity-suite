@@ -191,8 +191,8 @@ try {
 		final StringBuilder query = new StringBuilder();
 		query.append("SELECT DISTINCT userimpl0_.user_name|| '`--`' ||userimpl0_.id_user as \"code\" ");
 		query.append("FROM eg_user userimpl0_ LEFT OUTER JOIN eg_userrole userroles1_ ON ");
-		query.append("userimpl0_.id_user = userroles1_.id_user  LEFT OUTER JOIN eg_role roleimpl2_ ON ");
-		query.append("userroles1_.id_role = roleimpl2_.id WHERE (roleimpl2_.name IN (");
+		query.append("userimpl0_.id_user = userroles1_.userid  LEFT OUTER JOIN eg_role roleimpl2_ ON ");
+		query.append("userroles1_.roleid = roleimpl2_.id WHERE (roleimpl2_.name IN (");
 		for(String ary : roleNames) {
 			query.append("?,");
 		}
@@ -234,8 +234,8 @@ try {
 		final StringBuilder query = new StringBuilder();
 		query.append("SELECT DISTINCT userimpl0_.user_name|| '`--`' ||userimpl0_.id_user as \"code\" ");
 		query.append("FROM eg_user userimpl0_ LEFT OUTER JOIN eg_userrole userroles1_ ON ");
-		query.append("userimpl0_.id_user = userroles1_.id_user  LEFT OUTER JOIN eg_role roleimpl2_ ON ");
-		query.append("userroles1_.id_role = roleimpl2_.id WHERE roleimpl2_.name IN (");
+		query.append("userimpl0_.userid = userroles1_.id_user  LEFT OUTER JOIN eg_role roleimpl2_ ON ");
+		query.append("userroles1_.roleid = roleimpl2_.id WHERE roleimpl2_.name IN (");
 		for(String ary : roleNames) {
 			query.append("?,");
 		}
