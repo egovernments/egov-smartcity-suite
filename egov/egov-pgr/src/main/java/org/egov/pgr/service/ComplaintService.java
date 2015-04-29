@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -67,6 +67,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.entity.enums.UserType;
 import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EmailUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -99,272 +100,275 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ComplaintService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ComplaintService.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ComplaintService.class);
 
-    @Autowired
-    private ComplaintRepository complaintRepository;
+	@Autowired
+	private ComplaintRepository complaintRepository;
 
-    @Autowired
-    private ComplaintStatusService complaintStatusService;
+	@Autowired
+	private ComplaintStatusService complaintStatusService;
 
-    @Autowired
-    private SecurityUtils securityUtils;
-    @Autowired
-    private ComplaintRouterService complaintRouterService;
+	@Autowired
+	private SecurityUtils securityUtils;
+	
+	@Autowired
+	private ComplaintRouterService complaintRouterService;
 
-    @Autowired
-    private EisCommonService eisCommonService;
-    @Autowired
-    private EISServeable eisService;
+	@Autowired
+	private EisCommonService eisCommonService;
+	
+	@Autowired
+	private EISServeable eisService;
 
-    @Autowired
-    private CitizenInboxService citizenInboxService;
+	@Autowired
+	private CitizenInboxService citizenInboxService;
 
-    @Autowired
-    private CommonsService commonsService;
+	@Autowired
+	private CommonsService commonsService;
 
-    @Autowired
-    private BoundaryDAO boundaryDAO;
+	@Autowired
+	private BoundaryDAO boundaryDAO;
 
-    @Autowired
-    private EmailUtils emailUtils;
-    
-    @Autowired
-    private HTTPSMS httpSMS;
+	@Autowired
+	private EmailUtils emailUtils;
 
-    @Transactional
-    @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
-    public Complaint createComplaint(final Complaint complaint) {
-        if (complaint.getCRN().isEmpty())
-            complaint.setCRN(generateCRN());
-        final User user = securityUtils.getCurrentUser();
-        complaint.getComplainant().setUserDetail(user);
-        if (!securityUtils.isCurrentUserAnonymous() && user.getType().equals(UserType.CITIZEN)) {
-            complaint.getComplainant().setEmail(user.getEmailId());
-            complaint.getComplainant().setName(user.getName());
-            complaint.getComplainant().setMobile(user.getMobileNumber());
-        }
-        complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
-        final Position assignee = complaintRouterService.getAssignee(complaint);
-        complaint.transition(true).start().withSenderName(complaint.getComplainant().getUserDetail().getName())
-                .withComments("complaint registered with crn : " + complaint.getCRN())
-                .withStateValue(complaint.getStatus().getName()).withOwner(assignee).withDateInfo(new Date());
+	@Autowired
+	private HTTPSMS httpSMS;
 
-        complaint.setAssignee(assignee);
-        complaint.setEscalationDate(new DateTime());
-        if (complaint.getLocation() == null && complaint.getLat() != 0.0 && complaint.getLng() != 0.0) {
-            final Long bndryId = commonsService.getBndryIdFromShapefile(complaint.getLat(), complaint.getLng());
-            if (bndryId != null) {
-                final Boundary location = boundaryDAO.getAllBoundaryById(bndryId);
-                complaint.setLocation(location);
-            }
+	@Autowired
+	private ApplicationNumberGenerator applicationNumberGenerator;
 
-        }
-        final Complaint savedComplaint = complaintRepository.save(complaint);
-        pushMessage(savedComplaint);
-        sendEmailandSms(complaint);
-        return savedComplaint;
-    }
+	@Transactional
+	@Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
+	public Complaint createComplaint(final Complaint complaint) {
+		if (complaint.getCRN().isEmpty())
+			complaint.setCRN(applicationNumberGenerator.generate());
+		final User user = securityUtils.getCurrentUser();
+		complaint.getComplainant().setUserDetail(user);
+		if (!securityUtils.isCurrentUserAnonymous() && user.getType().equals(UserType.CITIZEN)) {
+			complaint.getComplainant().setEmail(user.getEmailId());
+			complaint.getComplainant().setName(user.getName());
+			complaint.getComplainant().setMobile(user.getMobileNumber());
+		}
+		complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
+		final Position assignee = complaintRouterService.getAssignee(complaint);
+		complaint.transition(true).start().withSenderName(complaint.getComplainant().getUserDetail().getName())
+				.withComments("complaint registered with crn : " + complaint.getCRN())
+				.withStateValue(complaint.getStatus().getName()).withOwner(assignee).withDateInfo(new Date());
 
-    /**
-     * @param complaint
-     * @param approvalPosition
-     * @param approvalComent
-     * @return If the status is changed to completed/withdrawn then
-     *         terminate/end the workflow. Even if the poistion is selected no
-     *         need to consider position as it is end of workflow.else If
-     *         position is found then it is forwarding only. Else it is update
-     *         by official or citizen
-     */
+		complaint.setAssignee(assignee);
+		complaint.setEscalationDate(new DateTime());
+		if (complaint.getLocation() == null && complaint.getLat() != 0.0 && complaint.getLng() != 0.0) {
+			final Long bndryId = commonsService.getBndryIdFromShapefile(complaint.getLat(), complaint.getLng());
+			if (bndryId != null) {
+				final Boundary location = boundaryDAO.getAllBoundaryById(bndryId);
+				complaint.setLocation(location);
+			}
 
-    @Transactional
-    @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
-    public Complaint update(final Complaint complaint, final Long approvalPosition, final String approvalComent) {
-        //
+		}
+		final Complaint savedComplaint = complaintRepository.save(complaint);
+		pushMessage(savedComplaint);
+		sendEmailandSms(complaint);
+		return savedComplaint;
+	}
 
-        if (false == complaint.getComplaintType().isLocationRequired())
-            complaint.setLocation(null);
+	/**
+	 * @param complaint
+	 * @param approvalPosition
+	 * @param approvalComent
+	 * @return If the status is changed to completed/withdrawn then
+	 *         terminate/end the workflow. Even if the poistion is selected no
+	 *         need to consider position as it is end of workflow.else If
+	 *         position is found then it is forwarding only. Else it is update
+	 *         by official or citizen
+	 */
 
-        final String userName = securityUtils.getCurrentUser().getName();
-        if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())
-                || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString())) {
-            LOG.debug("Terminating Complaint Workflow");
-            complaint.transition(true).withComments(approvalComent).withStateValue(complaint.getStatus().getName())
-                    .withSenderName(userName).withDateInfo(new Date()).end();
+	@Transactional
+	@Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
+	public Complaint update(final Complaint complaint, final Long approvalPosition, final String approvalComent) {
+		//
 
-        } else if (null != approvalPosition && !approvalPosition.equals(Long.valueOf(0))) {
-            final Position owner = eisService.getPrimaryPositionForUser(approvalPosition, new Date());
-            complaint.setAssignee(owner);
-            complaint.transition(true).withOwner(owner).withComments(approvalComent).withSenderName(userName)
-                    .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
-        } else {
-            complaint.transition(true).withComments(approvalComent).withSenderName(userName)
-                    .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
-        }
+		if (false == complaint.getComplaintType().isLocationRequired())
+			complaint.setLocation(null);
 
-        final Complaint savedComplaint = complaintRepository.saveAndFlush(complaint);
-        pushMessage(savedComplaint);
-        return savedComplaint;
-    }
+		final String userName = securityUtils.getCurrentUser().getName();
+		if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())
+				|| complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString())) {
+			LOG.debug("Terminating Complaint Workflow");
+			complaint.transition(true).withComments(approvalComent).withStateValue(complaint.getStatus().getName())
+					.withSenderName(userName).withDateInfo(new Date()).end();
 
-    public String generateCRN() {
-        return upperCase(randomAlphabetic(3)) + DASH_DELIM + randomNumeric(3);
-    }
+		} else if (null != approvalPosition && !approvalPosition.equals(Long.valueOf(0))) {
+			final Position owner = eisService.getPrimaryPositionForUser(approvalPosition, new Date());
+			complaint.setAssignee(owner);
+			complaint.transition(true).withOwner(owner).withComments(approvalComent).withSenderName(userName)
+					.withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
+		} else
+			complaint.transition(true).withComments(approvalComent).withSenderName(userName)
+					.withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
 
-    public Complaint getComplaintById(final Long complaintID) {
-        return complaintRepository.findOne(complaintID);
-    }
+		final Complaint savedComplaint = complaintRepository.saveAndFlush(complaint);
+		pushMessage(savedComplaint);
+		return savedComplaint;
+	}
 
-    @PersistenceContext
-    private EntityManager entityManager;
+	public String generateCRN() {
+		return upperCase(randomAlphabetic(3)) + DASH_DELIM + randomNumeric(3);
+	}
 
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
+	public Complaint getComplaintById(final Long complaintID) {
+		return complaintRepository.findOne(complaintID);
+	}
 
-    public Complaint getComplaintByCrnNo(final String crnNo) {
-        final Criteria criteria = getCurrentSession().createCriteria(Complaint.class, "complaint").add(
-                Restrictions.eq("complaint.CRN", crnNo));
-        return (Complaint) criteria.uniqueResult();
-    }
+	@PersistenceContext
+	private EntityManager entityManager;
 
-    public List<Complaint> getComplaintsEligibleForEscalation() {
-        final Criteria criteria = getCurrentSession().createCriteria(Complaint.class, "complaint").createAlias(
-                "complaint.status", "complaintStatus");
+	public Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
 
-        criteria.add(
-                Restrictions.disjunction().add(Restrictions.eq("complaintStatus.name", COMPLETED.name()))
-                        .add(Restrictions.eq("complaintStatus.name", REJECTED.name()))
-                        .add(Restrictions.eq("complaintStatus.name", WITHDRAWN.name()))
-                        .add(Restrictions.eq("complaintStatus.name", FORWARDED.name()))
-                        .add(Restrictions.eq("complaintStatus.name", REGISTERED.name())))
-                .add(Restrictions.lt("complaint.escalationDate", new DateTime().toDate()))
-                .setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+	public Complaint getComplaintByCrnNo(final String crnNo) {
+		final Criteria criteria = getCurrentSession().createCriteria(Complaint.class, "complaint").add(
+				Restrictions.eq("complaint.CRN", crnNo));
+		return (Complaint) criteria.uniqueResult();
+	}
 
-        return criteria.list();
-    }
+	public List<Complaint> getComplaintsEligibleForEscalation() {
+		final Criteria criteria = getCurrentSession().createCriteria(Complaint.class, "complaint").createAlias(
+				"complaint.status", "complaintStatus");
 
-    private void pushMessage(final Complaint savedComplaint) {
+		criteria.add(
+				Restrictions.disjunction().add(Restrictions.eq("complaintStatus.name", COMPLETED.name()))
+						.add(Restrictions.eq("complaintStatus.name", REJECTED.name()))
+						.add(Restrictions.eq("complaintStatus.name", WITHDRAWN.name()))
+						.add(Restrictions.eq("complaintStatus.name", FORWARDED.name()))
+						.add(Restrictions.eq("complaintStatus.name", REGISTERED.name())))
+				.add(Restrictions.lt("complaint.escalationDate", new DateTime().toDate()))
+				.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
-        final CitizenInboxBuilder citizenInboxBuilder = new CitizenInboxBuilder(MessageType.USER_MESSAGE,
-                getHeaderMessage(savedComplaint), getDetailedMessage(savedComplaint), savedComplaint.getCreatedDate(),
-                securityUtils.getCurrentUser(), Priority.High);
-        final String strQuery = "select md from Module md where md.moduleName=:name";
-        final Query hql = getCurrentSession().createQuery(strQuery);
-        hql.setParameter("name", "PGR");
+		return criteria.list();
+	}
 
-        citizenInboxBuilder.module((Module) hql.uniqueResult());
-        citizenInboxBuilder.identifier(savedComplaint.getCRN());
-        citizenInboxBuilder.link("/pgr/complaint/view/" + savedComplaint.getCRN());
-        citizenInboxBuilder.state(savedComplaint.getState());
-        citizenInboxBuilder.status(savedComplaint.getStatus().getName());
+	private void pushMessage(final Complaint savedComplaint) {
 
-        final CitizenInbox citizenInbox = citizenInboxBuilder.build();
-        citizenInboxService.pushMessage(citizenInbox);
-    }
+		final CitizenInboxBuilder citizenInboxBuilder = new CitizenInboxBuilder(MessageType.USER_MESSAGE,
+				getHeaderMessage(savedComplaint), getDetailedMessage(savedComplaint), savedComplaint.getCreatedDate(),
+				securityUtils.getCurrentUser(), Priority.High);
+		final String strQuery = "select md from Module md where md.moduleName=:name";
+		final Query hql = getCurrentSession().createQuery(strQuery);
+		hql.setParameter("name", "PGR");
 
-    private String getHeaderMessage(final Complaint savedComplaint) {
-        final StringBuilder headerMessage = new StringBuilder();
-        if (savedComplaint.getStatus().getName().equals("REGISTERED"))
-            headerMessage.append("Grievance Recorded");
-        else
-            headerMessage.append("Grievance Redressal");
-        return headerMessage.toString();
-    }
+		citizenInboxBuilder.module((Module) hql.uniqueResult());
+		citizenInboxBuilder.identifier(savedComplaint.getCRN());
+		citizenInboxBuilder.link("/pgr/complaint/view/" + savedComplaint.getCRN());
+		citizenInboxBuilder.state(savedComplaint.getState());
+		citizenInboxBuilder.status(savedComplaint.getStatus().getName());
 
-    private String getDetailedMessage(final Complaint savedComplaint) {
-        final StringBuilder detailedMessage = new StringBuilder();
-        detailedMessage
-                .append("Complaint No. ")
-                .append(savedComplaint.getCRN())
-                .append(" regarding ")
-                .append(savedComplaint.getComplaintType().getName())
-                .append(" was marked as ")
-                .append(savedComplaint.getStatus().getName())
-                .append(" by ")
-                .append(savedComplaint.getState().getSenderName().equals("Unknown") ? "you" : savedComplaint.getState()
-                        .getSenderName())
-                .append(". Please help us to improve our quality of service by giving your feedback on the quality of service by clicking <a>here</a>.");
-        return detailedMessage.toString();
-    }
+		final CitizenInbox citizenInbox = citizenInboxBuilder.build();
+		citizenInboxService.pushMessage(citizenInbox);
+	}
 
-    public List<Hashtable<String, Object>> getHistory(final Complaint complaint) {
-        User user = null;
-        final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
-        if (!complaint.getStateHistory().isEmpty() && complaint.getStateHistory() != null) {
-            for (final StateHistory stateHistory : complaint.getStateHistory()) {
-                final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
-                map.put("date", stateHistory.getDateInfo());
-                map.put("comments", stateHistory.getComments());
-                map.put("updater", stateHistory.getLastModifiedBy().getName());
-                map.put("status", stateHistory.getValue());
-                final Position ownerPosition = stateHistory.getOwnerPosition();
-                user = stateHistory.getOwnerUser();
-                if (null != user) {
-                    map.put("user", user.getUsername());
-                    map.put("department",
-                            null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
-                                    .getDepartmentForUser(user.getId()).getName() : "");
-                } else if (null != ownerPosition && null != ownerPosition.getDeptDesigId()) {
-                    user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
-                    map.put("user", null != user.getUsername() ? user.getUsername() : "");
-                    map.put("department", null != ownerPosition.getDeptDesigId().getDeptId() ? ownerPosition
-                            .getDeptDesigId().getDeptId().getName() : "");
-                }
-                historyTable.add(map);
-            }
-        }
-        State state = complaint.getState();
-        final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
-        map.put("date", state.getDateInfo());
-        map.put("comments", state.getComments());
-        map.put("updater", state.getLastModifiedBy().getName());
-        map.put("status", state.getValue());
-        final Position ownerPosition = state.getOwnerPosition();
-        user = state.getOwnerUser();
-        if (null != user) {
-            map.put("user", user.getUsername());
-            map.put("department", null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
-                    .getDepartmentForUser(user.getId()).getName() : "");
-        } else if (null != ownerPosition && null != ownerPosition.getDeptDesigId()) {
-            user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
-            map.put("user", null != user.getUsername() ? user.getUsername() : "");
-            map.put("department", null != ownerPosition.getDeptDesigId().getDeptId() ? ownerPosition.getDeptDesigId()
-                    .getDeptId().getName() : "");
-        }
-        historyTable.add(map);
+	private String getHeaderMessage(final Complaint savedComplaint) {
+		final StringBuilder headerMessage = new StringBuilder();
+		if (savedComplaint.getStatus().getName().equals("REGISTERED"))
+			headerMessage.append("Grievance Recorded");
+		else
+			headerMessage.append("Grievance Redressal");
+		return headerMessage.toString();
+	}
 
-        return historyTable;
-    }
+	private String getDetailedMessage(final Complaint savedComplaint) {
+		final StringBuilder detailedMessage = new StringBuilder();
+		detailedMessage
+				.append("Complaint No. ")
+				.append(savedComplaint.getCRN())
+				.append(" regarding ")
+				.append(savedComplaint.getComplaintType().getName())
+				.append(" was marked as ")
+				.append(savedComplaint.getStatus().getName())
+				.append(" by ")
+				.append(savedComplaint.getState().getSenderName().equals("Unknown") ? "you" : savedComplaint.getState()
+						.getSenderName())
+				.append(". Please help us to improve our quality of service by giving your feedback on the quality of service by clicking <a>here</a>.");
+		return detailedMessage.toString();
+	}
 
-    public void sendEmailandSms(final Complaint complaint) {
+	public List<Hashtable<String, Object>> getHistory(final Complaint complaint) {
+		User user = null;
+		final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
+		if (!complaint.getStateHistory().isEmpty() && complaint.getStateHistory() != null)
+			for (final StateHistory stateHistory : complaint.getStateHistory()) {
+				final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
+				map.put("date", stateHistory.getDateInfo());
+				map.put("comments", stateHistory.getComments());
+				map.put("updater", stateHistory.getLastModifiedBy().getName());
+				map.put("status", stateHistory.getValue());
+				final Position ownerPosition = stateHistory.getOwnerPosition();
+				user = stateHistory.getOwnerUser();
+				if (null != user) {
+					map.put("user", user.getUsername());
+					map.put("department",
+							null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
+									.getDepartmentForUser(user.getId()).getName() : "");
+				} else if (null != ownerPosition && null != ownerPosition.getDeptDesigId()) {
+					user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+					map.put("user", null != user.getUsername() ? user.getUsername() : "");
+					map.put("department", null != ownerPosition.getDeptDesigId().getDeptId() ? ownerPosition
+							.getDeptDesigId().getDeptId().getName() : "");
+				}
+				historyTable.add(map);
+			}
+		final State state = complaint.getState();
+		final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
+		map.put("date", state.getDateInfo());
+		map.put("comments", state.getComments());
+		map.put("updater", state.getLastModifiedBy().getName());
+		map.put("status", state.getValue());
+		final Position ownerPosition = state.getOwnerPosition();
+		user = state.getOwnerUser();
+		if (null != user) {
+			map.put("user", user.getUsername());
+			map.put("department", null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
+					.getDepartmentForUser(user.getId()).getName() : "");
+		} else if (null != ownerPosition && null != ownerPosition.getDeptDesigId()) {
+			user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+			map.put("user", null != user.getUsername() ? user.getUsername() : "");
+			map.put("department", null != ownerPosition.getDeptDesigId().getDeptId() ? ownerPosition.getDeptDesigId()
+					.getDeptId().getName() : "");
+		}
+		historyTable.add(map);
 
-        final String formattedCreatedDate = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(complaint.getCreatedDate()
-                .toDate());
+		return historyTable;
+	}
 
-        final StringBuffer emailBody = new StringBuffer()
-                .append("Dear ")
-                .append(complaint.getComplainant().getName())
-                .append(",\n \n \tThank you for registering a complaint (")
-                .append(complaint.getCRN())
-                .append("). Your complaint is registered successfully.\n \tPlease use this number for all future references.")
-                .append("\n \n Complaint Details - \n \n Complaint type - ")
-                .append(complaint.getComplaintType().getName());
-        if (complaint.getLocation() != null)
-            emailBody.append(" \n Location details - ").append(complaint.getLocation().getName());
-        emailBody.append("\n Complaint description - ").append(complaint.getDetails()).append("\n Complaint status -")
-                .append(complaint.getStatus().getName()).append("\n Complaint Registration Date - ")
-                .append(formattedCreatedDate);
-        final StringBuffer emailSubject = new StringBuffer().append("Registered Complaint -")
-                .append(complaint.getCRN()).append(" successfuly");
-        final StringBuffer smsBody = new StringBuffer().append("Dear ").append(complaint.getComplainant().getName())
-                .append(", Thank you for registering a complaint (").append(complaint.getCRN())
-                .append("). Please use this number for all future references.");
-        if (complaint.getComplainant().getEmail() != null)
-            emailUtils.sendMail(complaint.getComplainant().getEmail(), emailBody.toString(), emailSubject.toString());
-        if (complaint.getComplainant().getMobile() != null)
-        	httpSMS.sendSMS(smsBody.toString(), "91" + complaint.getComplainant().getMobile());
+	public void sendEmailandSms(final Complaint complaint) {
 
-    }
+		final String formattedCreatedDate = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(complaint.getCreatedDate()
+				.toDate());
+
+		final StringBuffer emailBody = new StringBuffer()
+				.append("Dear ")
+				.append(complaint.getComplainant().getName())
+				.append(",\n \n \tThank you for registering a complaint (")
+				.append(complaint.getCRN())
+				.append("). Your complaint is registered successfully.\n \tPlease use this number for all future references.")
+				.append("\n \n Complaint Details - \n \n Complaint type - ")
+				.append(complaint.getComplaintType().getName());
+		if (complaint.getLocation() != null)
+			emailBody.append(" \n Location details - ").append(complaint.getLocation().getName());
+		emailBody.append("\n Complaint description - ").append(complaint.getDetails()).append("\n Complaint status -")
+				.append(complaint.getStatus().getName()).append("\n Complaint Registration Date - ")
+				.append(formattedCreatedDate);
+		final StringBuffer emailSubject = new StringBuffer().append("Registered Complaint -")
+				.append(complaint.getCRN()).append(" successfuly");
+		final StringBuffer smsBody = new StringBuffer().append("Dear ").append(complaint.getComplainant().getName())
+				.append(", Thank you for registering a complaint (").append(complaint.getCRN())
+				.append("). Please use this number for all future references.");
+		if (complaint.getComplainant().getEmail() != null)
+			emailUtils.sendMail(complaint.getComplainant().getEmail(), emailBody.toString(), emailSubject.toString());
+		if (complaint.getComplainant().getMobile() != null)
+			httpSMS.sendSMS(smsBody.toString(), "91" + complaint.getComplainant().getMobile());
+
+	}
 
 }
