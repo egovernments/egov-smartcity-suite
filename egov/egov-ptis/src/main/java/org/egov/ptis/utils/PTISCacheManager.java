@@ -589,7 +589,7 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 			}
 		}
 		if (address != null) {
-			if (impName.equals("NAGPUR")) {
+			if (impName.equals("Chennai")) {
 				addressStr = (address.getHouseNoBldgApt() == null ? " "
 						: address.getHouseNoBldgApt());
 				CharSequence cs = "PropertyAddress";

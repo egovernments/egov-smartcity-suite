@@ -259,7 +259,7 @@ public class PropertyNoticeInfo {
 	}
 
 	public String getOwnerAddress() {
-		return ptisCacheMgr.buildAddressByImplemetation(property.getBasicProperty().getAddress()).concat(", Nagpur");
+		return ptisCacheMgr.buildAddressByImplemetation(property.getBasicProperty().getAddress()).concat(", Chennai");
 	}
 
 	public String getCompleteAddress() {

@@ -1309,7 +1309,7 @@ public class PropertyInfo {
 	}
 
 	public String getOwnerAddress() {
-		return taxCalInfo.getPropertyAddress().concat(", Nagpur");
+		return taxCalInfo.getPropertyAddress().concat(", Chennai");
 	}
 
 	public String getCompleteAddress() {

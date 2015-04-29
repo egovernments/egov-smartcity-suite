@@ -37,7 +37,7 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------
-<%@page contentType="text/html; charset=ISO-8859-1" %>
+<%@page contentType="text/html; charset=UTF-8" %>
 <%@include file="/includes/taglibs.jsp" %>
 
 
