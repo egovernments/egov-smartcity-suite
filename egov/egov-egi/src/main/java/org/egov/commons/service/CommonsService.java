@@ -78,7 +78,6 @@ import org.egov.commons.Vouchermis;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commonMasters.EgUom;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.utils.FinancialYear;
 
@@ -279,7 +278,7 @@ public interface CommonsService {
 	 * used in Wardworks Returns all the EgUom
 	 * @return EgUom
 	 */
-	public List<EgUom> findAllUom();
+	/*public List<EgUom> findAllUom();*/
 
 	/**
 	 * used in Wardworks Returns the Relation object if Id found
@@ -293,7 +292,7 @@ public interface CommonsService {
 	 * @param uomId
 	 * @return EgUom
 	 */
-	public EgUom getUomById(Integer uomId);
+	/*public EgUom getUomById(Integer uomId);*/
 
 	/**
 	 * used in Wardworks Returns all the EgwStatus for the list of Ids found
@@ -555,7 +554,7 @@ public interface CommonsService {
 	 * @return
 	 * @throws Exception
 	 */
-	public EgUom getUomByUom(String uom) throws Exception;
+	/*public EgUom getUomByUom(String uom) throws Exception;*/
 
 	/**
 	 * @param voucherHeader
@@ -807,11 +806,11 @@ public interface CommonsService {
 	 */
 	public List<CChartOfAccounts> getListOfDetailCode(String glCode) throws ValidationException;
 
-	public List<EgUom> getAllUomsWithinCategoryByUom(Integer uomId) throws ValidationException;
+	/*public List<EgUom> getAllUomsWithinCategoryByUom(Integer uomId) throws ValidationException;
 
 	public BigDecimal getConversionFactorByUom(Integer uomId) throws ValidationException;
 
-	public BigDecimal getConversionFactorByFromUomToUom(Integer fromuomId, Integer touomId) throws ValidationException;
+	public BigDecimal getConversionFactorByFromUomToUom(Integer fromuomId, Integer touomId) throws ValidationException;*/
 
 	/**
 	 * used in Financials Returns Financial Year based on date

@@ -39,6 +39,7 @@
  */
 package org.egov.commons.service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.Connection;
@@ -50,14 +51,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.io.File;
-import java.io.IOException;
 
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
@@ -95,27 +94,22 @@ import org.egov.commons.dao.ObjectTypeDAO;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commonMasters.EgUom;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.FinancialYear;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.FeatureSource;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.geometry.jts.JTSFactoryFinder;
-import org.opengis.feature.Feature;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-
-import org.opengis.feature.type.FeatureType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -392,20 +386,20 @@ public class CommonsServiceImpl implements CommonsService {
 		return (Fund) commonsDAOFactory.getFundDAO().findById(fundId, false);
 	}
 
-	@Override
+	/*@Override
 	public List<EgUom> findAllUom() {
 		return commonsDAOFactory.getEgUomDAO().findAllUom();
-	}
+	}*/
 
 	@Override
 	public Relation getRelationById(final Integer relationId) {
 		return (Relation) commonsDAOFactory.getRelationDAO().findById(relationId, false);
 	}
 
-	@Override
+	/*@Override
 	public EgUom getUomById(final Integer uomId) {
 		return (EgUom) commonsDAOFactory.getEgUomDAO().findById(uomId, false);
-	}
+	}*/
 
 	/**
 	 * @param moduleType Module type
@@ -739,7 +733,7 @@ public class CommonsServiceImpl implements CommonsService {
 		}
 	}
 
-	@Override
+	/*@Override
 	public EgUom getUomByUom(final String uom) {
 		EgUom egUom = null;
 		if (uom != null) {
@@ -748,7 +742,7 @@ public class CommonsServiceImpl implements CommonsService {
 			egUom = (EgUom) qry.uniqueResult();
 		}
 		return egUom;
-	}
+	}*/
 
 	@Override
 	public List<Chequedetail> getChequedetailByVoucherheader(final CVoucherHeader voucherHeader) {
@@ -977,7 +971,7 @@ public class CommonsServiceImpl implements CommonsService {
 		return commonsDAOFactory.getChartOfAccountsDAO().getListOfDetailCode(glCode);
 	}
 
-	@Override
+	/*@Override
 	public List<EgUom> getAllUomsWithinCategoryByUom(final Integer uomId) throws ValidationException {
 		return commonsDAOFactory.getEgUomDAO().getAllUomsWithinCategoryByUom(uomId);
 	}
@@ -991,7 +985,7 @@ public class CommonsServiceImpl implements CommonsService {
 	public BigDecimal getConversionFactorByFromUomToUom(final Integer fromuomId, final Integer touomId) throws ValidationException {
 		return commonsDAOFactory.getEgUomDAO().getConversionFactorByFromUomToUom(fromuomId, touomId);
 	}
-
+*/
 	@Override
 	public List<EgPartytype> getSubPartyTypes(final String code) {
 		return commonsDAOFactory.getEgPartytypeDAO().getSubPartyTypesForCode(code);
@@ -1050,4 +1044,6 @@ public class CommonsServiceImpl implements CommonsService {
              final FinancialYearDAO finYearDAO = commonsDAOFactory.getFinancialYearDAO();
              return finYearDAO.getFinYearByDate(date);
          }
+
+	
 }

@@ -69,10 +69,6 @@ import org.egov.commons.Scheme;
 import org.egov.commons.Status;
 import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
-import org.egov.infstr.commonMasters.EgUom;
-import org.egov.infstr.commonMasters.EgUomcategory;
-import org.egov.infstr.commonMasters.dao.EgUomHibernateDAO;
-import org.egov.infstr.commonMasters.dao.EgUomcategoryHibernateDAO;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
@@ -177,15 +173,15 @@ public class CommonsDAOFactory {
 	 */
 
 
-    public EgUomHibernateDAO getEgUomDAO() {
+   /* public EgUomHibernateDAO getEgUomDAO() {
         return new EgUomHibernateDAO(EgUom.class, getCurrentSession());
     }
+*/
 
-
-    public EgUomcategoryHibernateDAO getEgUomcategoryDAO() {
+   /* public EgUomcategoryHibernateDAO getEgUomcategoryDAO() {
         return new EgUomcategoryHibernateDAO(EgUomcategory.class, getCurrentSession());
     }
-
+*/
 
     public ChartOfAccountsDAO getChartOfAccountsDAO() {
         return new ChartOfAccountsHibernateDAO(CChartOfAccounts.class, getCurrentSession());

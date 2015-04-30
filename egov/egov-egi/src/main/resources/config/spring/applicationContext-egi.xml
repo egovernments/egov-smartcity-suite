@@ -121,18 +121,6 @@
 
 	<bean id="installmentDao" class="org.egov.commons.dao.InstallmentHibDao" scope="prototype" />
 
-	<bean id="errorMailService" class="org.egov.infstr.mail.MailService">
-		<property name="mailMessage" ref="mailMessage" />
-		<property name="mailSender" ref="mailSender" />
-		<property name="mailType" value="errormail" /><!--Tag name of mail property defined in egov-config.xml -->
-	</bean>
-
-	<bean id="feedbackMailService" class="org.egov.infstr.mail.MailService">
-		<property name="mailMessage" ref="mailMessage" />
-		<property name="mailSender" ref="mailSender" />
-		<property name="mailType" value="feedbackmail" /> <!--Tag name of mail property defined in egov-config.xml -->
-	</bean>
-
 	<bean id="mailMessage" class="org.springframework.mail.SimpleMailMessage" />
 
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl" />
