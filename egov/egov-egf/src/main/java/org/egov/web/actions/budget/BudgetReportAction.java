@@ -315,7 +315,7 @@ public class BudgetReportAction extends BaseFormAction {
 					.findAllBy(
 							" from BudgetDetail bd where "
 									+ sql
-									+ " and bd.budget.isbere='RE' and bd.approvedAmount is not null  and bd.budget.state in (from org.egov.infstr.models.State where type='Budget' and value='"
+									+ " and bd.budget.isbere='RE' and bd.approvedAmount is not null  and bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='"
 									+ finalStatus + "' ) order by bd.executingDepartment,bd.function.name,bd.budgetGroup.minCode.type,bd.budgetGroup.minCode.glcode");
 			isBERE="RE";
 			if (budgetDetailList.isEmpty())
@@ -324,7 +324,7 @@ public class BudgetReportAction extends BaseFormAction {
 						.findAllBy(
 								" from BudgetDetail bd where "
 										+ sql
-										+ " and bd.budget.isbere='BE' and  bd.budget.state in (from org.egov.infstr.models.State where type='Budget' and value='"
+										+ " and bd.budget.isbere='BE' and  bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='"
 										+ finalStatus
 										+ "' ) order by bd.executingDepartment,bd.function.name,bd.budgetGroup.minCode.type,bd.budgetGroup.minCode.glcode");
 			isBERE="BE";
@@ -383,7 +383,7 @@ public class BudgetReportAction extends BaseFormAction {
 					.findAllBy(
 							" from BudgetDetail bd where "
 									+ sql
-									+ " and bd.budget.isbere='RE' and bd.budget.state in (from org.egov.infstr.models.State where type='Budget' and value='"
+									+ " and bd.budget.isbere='RE' and bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='"
 									+ finalStatus
 									+ "' ) order by bd.executingDepartment,bd.function.name,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode");
 			if (budgetDetailList.isEmpty())
@@ -391,7 +391,7 @@ public class BudgetReportAction extends BaseFormAction {
 						.findAllBy(
 								" from BudgetDetail bd where "
 										+ sql
-										+ " and bd.budget.isbere='BE'  and bd.budget.state in (from org.egov.infstr.models.State where type='Budget' and value='"
+										+ " and bd.budget.isbere='BE'  and bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='"
 										+ finalStatus
 										+ "' ) order by bd.executingDepartment,bd.function.name,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode");
 			
@@ -711,7 +711,7 @@ public class BudgetReportAction extends BaseFormAction {
 		List<Object[]> amountList = getPersistenceService().findAllBy(
 				"select substr(bd.budgetGroup.minCode.glcode,0," + majorCodeLength + ") ," + "" + floatingColumn
 						+ ",bd.executingDepartment.id,bd.function.id,bd.budgetGroup.minCode.type,bd.id from BudgetDetail bd where "
-						+ "bd.budget.financialYear=? and bd.budget.state in (from org.egov.infstr.models.State where type='Budget' and value='" + finalStatus
+						+ "bd.budget.financialYear=? and bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='" + finalStatus
 						+ "' ) " + miscQuery + " and bd.budget.isbere='"+isBERE+"' group by substr(bd.budgetGroup.minCode.glcode,0," + majorCodeLength + "),bd.executingDepartment.id,"
 						+ "bd.function.id,bd.budgetGroup.minCode.type,bd.id order by  substr(bd.budgetGroup.minCode.glcode,0," + majorCodeLength
 						+ "),bd.executingDepartment.id,bd.function.id", finyear);
@@ -731,7 +731,7 @@ public class BudgetReportAction extends BaseFormAction {
 								+ majorCodeLength
 								+ ") ,"
 								+ floatingColumn
-								+ ",bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.id from BudgetDetail bd where bd.budget.financialYear=? and bd.budget.state in (from org.egov.infstr.models.State where type='Budget' and value='"
+								+ ",bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.id from BudgetDetail bd where bd.budget.financialYear=? and bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='"
 								+ finalStatus
 								+ "' )  and bd.budget.isbere='"+isBERE+"' group by substr(bd.budgetGroup.majorCode.glcode,0,"
 								+ majorCodeLength
@@ -780,7 +780,7 @@ public class BudgetReportAction extends BaseFormAction {
 								+ majorCodeLength
 								+ ") ,"
 								+ floatingColumn
-								+ ",bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.id from BudgetDetail bd where bd.budget.financialYear=? and bd.budget.state in (from org.egov.infstr.models.State where type='Budget' and value='"
+								+ ",bd.executingDepartment.id,bd.function.id,bd.budgetGroup.majorCode.type,bd.id from BudgetDetail bd where bd.budget.financialYear=? and bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='"
 								+ finalStatus
 								+ "' )  and bd.budget.isbere='"+isBERE+"' group by substr(bd.budgetGroup.majorCode.glcode,0,"
 								+ majorCodeLength
@@ -1071,7 +1071,7 @@ public class BudgetReportAction extends BaseFormAction {
 		String isBeRe = "BE";
 		Budget budget = (Budget) persistenceService
 				.find(
-						"from Budget where financialYear.id=? and parent is null and isPrimaryBudget=1 and isActiveBudget=1 and isBeRe='RE' and state in (from org.egov.infstr.models.State where type='Budget' and value='"
+						"from Budget where financialYear.id=? and parent is null and isPrimaryBudget=1 and isActiveBudget=1 and isBeRe='RE' and state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='"
 								+ finalStatus + "')", budgetReport.getFinancialYear().getId());
 		if (budget != null)
 			isBeRe = "RE";
@@ -1394,7 +1394,7 @@ public class BudgetReportAction extends BaseFormAction {
 	void fetchBudgetDetails(List<BudgetDetail> budgetDetails, String deptQuery, String finalStatus, String budgetType, String code) {
 		List<BudgetDetail> results = HibernateUtil.getCurrentSession().createQuery(
 				" from BudgetDetail bd where bd.budget.financialYear.id=" + budgetReport.getFinancialYear().getId() + deptQuery + " and bd.budget.isbere='"
-						+ budgetType + "' and bd.budget.state in (from org.egov.infstr.models.State where type='Budget'" + " and value='" + finalStatus + "') "
+						+ budgetType + "' and bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget'" + " and value='" + finalStatus + "') "
 						+ getQueryForSelectedType(code) + "  order by bd.executingDepartment.deptName,bd.budgetGroup." + code + ".glcode").list();
 		budgetDetails.addAll(results);
 	}
@@ -1403,7 +1403,7 @@ public class BudgetReportAction extends BaseFormAction {
 		final String status = getFinalStatus();
 		List<Object[]> list = getPersistenceService()
 				.findAllBy(
-						"select sum(br.additionAmount)-sum(br.deductionAmount),br.budgetDetail.id from BudgetReAppropriation br where br.state in (from org.egov.infstr.models.State where type='BudgetReAppropriation' and value='"
+						"select sum(br.additionAmount)-sum(br.deductionAmount),br.budgetDetail.id from BudgetReAppropriation br where br.state in (from org.egov.infra.workflow.entity.State where type='BudgetReAppropriation' and value='"
 								+ status + "' ) and br.status.description!='Cancelled' group by br.budgetDetail.id");
 		if (!list.isEmpty() && list.size() != 0) {
 			for (Object[] obj : list)

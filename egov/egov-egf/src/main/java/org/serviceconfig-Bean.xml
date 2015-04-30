@@ -303,7 +303,7 @@
     	<property name="eisService" ref="eisService" />
     </bean>
     <!-- <bean id="stateService" parent="persistenceService" >
-			<property name="type" value="org.egov.infstr.models.State"/>
+			<property name="type" value="org.egov.infra.workflow.entity.State"/>
 	</bean>-->
 	<!--<bean id="workflowTypeService" parent="persistenceService" >
 			<property name="type" value="org.egov.infstr.models.WorkflowTypes"/>

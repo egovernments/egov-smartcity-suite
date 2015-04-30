@@ -74,7 +74,7 @@
         </many-to-one>
 		<many-to-one name="reAppropriationMisc" class="org.egov.model.budget.BudgetReAppropriationMisc" column="REAPPROPRIATION_MISC"/>	
 		<many-to-one name="budgetDetail" class="org.egov.model.budget.BudgetDetail" column="BUDGETDETAIL"  />
-		<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+		<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all">
                <column name="STATE_ID"/>
         </many-to-one>
 	</class>

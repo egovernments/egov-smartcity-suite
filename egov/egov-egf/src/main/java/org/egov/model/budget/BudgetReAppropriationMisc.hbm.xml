@@ -58,7 +58,7 @@
 		<property name="remarks">
 			<column name="REMARKS" />
 		</property>	
-		<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+		<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all">
                <column name="STATE_ID"/>
         </many-to-one>
         <set name="budgetReAppropriations" cascade="all">

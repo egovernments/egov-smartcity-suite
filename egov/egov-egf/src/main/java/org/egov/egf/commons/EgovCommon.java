@@ -340,7 +340,7 @@ public class EgovCommon {
 					.append(preApprovedStatus)
 					.append(")")
 					.append(
-							" and ph.state in (from org.egov.infstr.models.State where type='Paymentheader' and value in (")
+							" and ph.state in (from org.egov.infra.workflow.entity.State where type='Paymentheader' and value in (")
 					.append(paymentWFStatus).append(") )");
 			list = (List<Object>) getPersistenceService().findAllBy(
 					paymentQuery.toString(), coa);
@@ -676,7 +676,7 @@ public class EgovCommon {
 				// get the payment wf status
 				State s = (State) persistenceService
 						.find(
-								" from org.egov.infstr.models.State where id in (select state.id from Paymentheader where id=?) ",
+								" from org.egov.infra.workflow.entity.State where id in (select state.id from Paymentheader where id=?) ",
 								paymentId);
 				String paymentWFStatus = "";
 				final List<AppConfigValues> paymentStatusList = genericDao
@@ -715,7 +715,7 @@ public class EgovCommon {
 						.append(preApprovedStatus)
 						.append(")")
 						.append(
-								" and ph.state in (from org.egov.infstr.models.State where type='Paymentheader' and value in (")
+								" and ph.state in (from org.egov.infra.workflow.entity.State where type='Paymentheader' and value in (")
 						.append(paymentWFStatus).append(") )");
 				list = (List<Object>) getPersistenceService().findAllBy(
 						paymentQuery.toString(), coa);

@@ -45,6 +45,6 @@
    		 <![CDATA[from CFinancialYear f where f.id=? AND ((f.startingDate<=? AND f.endingDate>=?) OR (f.endingDate>=?))]]>
    	 </query>
    	 <query name="getReAppropriationAmt">
-   		 <![CDATA[select sum(br.additionAmount)-sum(br.deductionAmount) from BudgetReAppropriation br where  br.state in (from org.egov.infstr.models.State where type='BudgetReAppropriation' and value=?) and br.budgetDetail in (:param_1)]]>
+   		 <![CDATA[select sum(br.additionAmount)-sum(br.deductionAmount) from BudgetReAppropriation br where  br.state in (from org.egov.infra.workflow.entity.State where type='BudgetReAppropriation' and value=?) and br.budgetDetail in (:param_1)]]>
    	 </query>
 </hibernate-mapping>

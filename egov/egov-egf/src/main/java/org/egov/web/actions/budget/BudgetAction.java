@@ -209,7 +209,7 @@ public class BudgetAction extends BaseFormAction{
 		if(getReferenceId()!=null && getReferenceId()>0)
 			budget.setReferenceBudget(budgetService.findById(Long.valueOf(getReferenceId()), false));
 		if(budget.getState()!=null){
-			State state = (State)persistenceService.find("from org.egov.infstr.models.State where id=?",budget.getState().getId());
+			State state = (State)persistenceService.find("from org.egov.infra.workflow.entity.State where id=?",budget.getState().getId());
 			//This fix is for Phoenix Migration.budget.setState(state);
 		}
 	HibernateUtil.getCurrentSession().flush();
@@ -220,7 +220,7 @@ public class BudgetAction extends BaseFormAction{
 	}
 	@SkipValidation
 	public String list() {  
-		budgetList= budgetService.findAllBy(" from Budget b where b.financialYear=? and b.state in (from org.egov.infstr.models.State where type='Budget' and value='NEW' ) ", budget.getFinancialYear());
+		budgetList= budgetService.findAllBy(" from Budget b where b.financialYear=? and b.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='NEW' ) ", budget.getFinancialYear());
 		if(budgetList.isEmpty())
 			target="EMPTY";
 		return SEARCH;  
@@ -304,9 +304,9 @@ public class BudgetAction extends BaseFormAction{
 	{
 		List<Budget> parList = null;
 		if(budget==null || budget.getId()==null)
-			parList = (List<Budget>)getPersistenceService().findAllBy("from Budget b where b.isbere='BE' and b.id not in (select budget from BudgetDetail) and b.state in (from org.egov.infstr.models.State where type='Budget' and value='NEW' ) ");
+			parList = (List<Budget>)getPersistenceService().findAllBy("from Budget b where b.isbere='BE' and b.id not in (select budget from BudgetDetail) and b.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='NEW' ) ");
 		else
-			parList = (List<Budget>)getPersistenceService().findAllBy("from Budget b where b.isbere='BE' and b.id not in (select budget from BudgetDetail) and b.state in (from org.egov.infstr.models.State where type='Budget' and value='NEW' ) and b.id!="+budget.getId());
+			parList = (List<Budget>)getPersistenceService().findAllBy("from Budget b where b.isbere='BE' and b.id not in (select budget from BudgetDetail) and b.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='NEW' ) and b.id!="+budget.getId());
 		for(Budget b:parList)
 		{
 			parMap.put(b.getId(),b.getName());
@@ -368,11 +368,11 @@ public class BudgetAction extends BaseFormAction{
 	{
 		if(tempId==null){
 			parentBudgets = getPersistenceService().findAllBy("from Budget b where b.isbere=? and b.id not in " +
-					"(select budget from BudgetDetail) and b.state in (from org.egov.infstr.models.State where " +
+					"(select budget from BudgetDetail) and b.state in (from org.egov.infra.workflow.entity.State where " +
 					"type='Budget' and value='NEW' ) and b.financialYear.id=?",bere,financialYearId);
 		}else{
 			parentBudgets = getPersistenceService().findAllBy("from Budget b where b.isbere=? and b.id not in " +
-					"(select budget from BudgetDetail) and b.state in (from org.egov.infstr.models.State where " +
+					"(select budget from BudgetDetail) and b.state in (from org.egov.infra.workflow.entity.State where " +
 					"type='Budget' and value='NEW' ) and b.financialYear.id=? and b.id!="+tempId,bere,financialYearId);
 		}
 		return PARENTBUDGETS;

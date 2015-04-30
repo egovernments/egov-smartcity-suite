@@ -54,7 +54,7 @@
         <many-to-one name="status" class="org.egov.commons.EgwStatus" fetch="select">
             <column name="statusid" precision="22" scale="0" not-null="true" />
         </many-to-one>
-		<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all" fetch="select">
+		<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all" fetch="select">
 		    <column name="STATE_ID"/>
 		</many-to-one>
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" not-null="true"/>

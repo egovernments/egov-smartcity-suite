@@ -96,7 +96,7 @@
             <one-to-many class="org.egov.model.instrument.DishonorChequeDetails" />
         </set>
         
-         <many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+         <many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all">
             <column name="STATEID"/>
         </many-to-one>
         

@@ -233,7 +233,7 @@ public class BillRegisterSearchAction extends BaseFormAction {
 	private List<Object[]> getOwnersForWorkFlowState(List<Long> stateIds)
 	{
 		List<Object[]> ownerNamesList = new ArrayList<Object[]>();
-		String ownerNamesQueryStr = "select egusr.userName,bill.state.id from User egusr,org.egov.infstr.models.State state, EgBillregister bill,EmployeeView emp " 
+		String ownerNamesQueryStr = "select egusr.userName,bill.state.id from User egusr,org.egov.infra.workflow.entity.State state, EgBillregister bill,EmployeeView emp " 
 						+"where emp.position.id=state.owner.id  and egusr.id=emp.userMaster.id and bill.state.id=state.id and bill.state.id in (:IDS)";
 		int size = stateIds.size();
 		if(size>999)

@@ -124,7 +124,7 @@
          <property name="worksdetailId" type="string">
             <column name="WORKSDETAILID" />
         </property>
-          <many-to-one name="state" class="org.egov.infstr.models.State"  cascade="save-update,persist" fetch="select">
+          <many-to-one name="state" class="org.egov.infra.workflow.entity.State"  cascade="save-update,persist" fetch="select">
 	                <column name="STATE_ID"/>
            </many-to-one>
     </class>

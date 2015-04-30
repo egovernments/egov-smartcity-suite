@@ -61,7 +61,7 @@
 		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY"/>
 		<property name="materializedPath" column="materializedPath" type="string"/> 		
 		<many-to-one name="financialYear" class="org.egov.commons.CFinancialYear" column="FINANCIALYEARID" fetch="join"/>
-		<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all" fetch="join">
+		<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all" fetch="join">
             <column name="STATE_ID"/>
         </many-to-one>
 		<many-to-one name="parent" class="org.egov.model.budget.Budget" column="parent"  fetch="join"/>

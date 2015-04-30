@@ -583,7 +583,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 			throw new ValidationException(EMPTY_STRING,"budget_final_approval_status is not defined in AppConfig");
 
 		budgetFinalStatus = ((AppConfigValues)appconfiglist.get(0)).getValue();
-		return " and bd.budget.state in (from org.egov.infstr.models.State where type='Budget' and value='"+budgetFinalStatus+"' )"+query;
+		return " and bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='"+budgetFinalStatus+"' )"+query;
 	}
 
 	
@@ -660,7 +660,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 			throw new ValidationException(EMPTY_STRING,"budget_final_approval_status is not defined in AppConfig");
 
 		budgetFinalStatus = ((AppConfigValues)appconfiglist.get(0)).getValue();
-		return " and bd.budget.state in (from org.egov.infstr.models.State where type='Budget' and value='"+budgetFinalStatus+"' )"+query;
+		return " and bd.budget.state in (from org.egov.infra.workflow.entity.State where type='Budget' and value='"+budgetFinalStatus+"' )"+query;
 	}
 
 	private Object findById(Class clazz,Serializable id)throws ValidationException {

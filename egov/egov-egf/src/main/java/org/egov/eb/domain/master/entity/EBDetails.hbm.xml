@@ -86,7 +86,7 @@
 			column="STATUS" fetch="select">		    
 		</many-to-one>
 			
-		<many-to-one name="state" class="org.egov.infstr.models.State"
+		<many-to-one name="state" class="org.egov.infra.workflow.entity.State"
 		   column="STATEID" cascade="save-update"/>
 
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User">
