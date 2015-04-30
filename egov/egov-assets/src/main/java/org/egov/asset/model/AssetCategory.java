@@ -55,211 +55,206 @@ import org.egov.infstr.commonMasters.EgUom;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 
-@Unique(fields={"code"},id="id",tableName="EGASSET_ASSET_CATEGORY",columnName={"CODE"},message="assetcat.code.isunique")
+@Unique(fields = { "code" }, id = "id", tableName = "EGASSET_ASSET_CATEGORY", columnName = { "CODE" }, message = "assetcat.code.isunique")
 public class AssetCategory extends BaseModel {
 
-	// Constructors
+    // Constructors
 
-	/** default constructor */
-	public AssetCategory() {
-	}
+    private static final long serialVersionUID = 4664412673598282808L;
 
-	/** minimal constructor */
-	public AssetCategory(AssetType assetType) {
-		this.assetType = assetType;
-	}
-	
-	public AssetCategory(String code, String name, AssetType assetType) {
-		this.code = code;
-		this.name = name;
-		this.assetType = assetType;
-	}
-	
-	@Required(message="assetcat.assetcode.null")
-	private CChartOfAccounts assetCode;
-	
-	private Long maxLife;
-	private CChartOfAccounts accDepCode;
-	
-	@Required(message="assetcat.revcode.null")
-	private CChartOfAccounts revCode;
-	
-	private DepreciationMethod depreciationMethod;
-	
-	private CChartOfAccounts depExpCode;
-	
-	@Required(message="assetcat.code.null")
-	@Length(max=50,message="assetcat.code.length")
-	@OptionalPattern(regex=AssetConstants.alphaNumericwithspecialchar,message="assetcat.code.alphaNumericwithspecialchar")
-	private String code;
-	
-	@Required(message="assetcat.name.null")
-	@Length(max=100,message="assetcat.name.length")
-	@OptionalPattern(regex=AssetConstants.alphaNumericwithspecialchar,message="assetcat.name.alphaNumericwithspecialchar")
-	private String name;
-	
-	private String catAttrTemplate;
-	
-	@Required(message="assetcat.assettype.null")
-	private AssetType assetType;
-	
-	
-	
-	@Required(message="assetcat.uom.null")
-	private EgUom uom;
-	
-	private AssetCategory parent;
-	
-	@Valid
-	private List<DepreciationMetaData> depreciationMetaDatas = new LinkedList<DepreciationMetaData>();
-	
-	private List<Asset> assets = new LinkedList<Asset>();
-	
-	public CChartOfAccounts getAssetCode() {
-		return assetCode;
-	}
+    /** default constructor */
+    public AssetCategory() {
+    }
 
-	public void setAssetCode(CChartOfAccounts assetCode) {
-		this.assetCode = assetCode;
-	}
+    /** minimal constructor */
+    public AssetCategory(final AssetType assetType) {
+        this.assetType = assetType;
+    }
 
-	public Long getMaxLife() {
-		return maxLife;
-	}
+    public AssetCategory(final String code, final String name, final AssetType assetType) {
+        this.code = code;
+        this.name = name;
+        this.assetType = assetType;
+    }
 
-	public void setMaxLife(Long maxLife) {
-		this.maxLife = maxLife;
-	}
+    @Required(message = "assetcat.assetaccountcode.null")
+    private CChartOfAccounts assetAccountCode;
 
-	public CChartOfAccounts getAccDepCode() {
-		return accDepCode;
-	}
+    private Long maxLife;
+    private CChartOfAccounts accDepAccountCode;
 
-	public void setAccDepCode(CChartOfAccounts accDepCode) {
-		this.accDepCode = accDepCode;
-	}
-	
-	public CChartOfAccounts getRevCode() {
-		return revCode;
-	}
+    @Required(message = "assetcat.revaccountcode.null")
+    private CChartOfAccounts revAccountCode;
 
-	public void setRevCode(CChartOfAccounts revCode) {
-		this.revCode = revCode;
-	}
+    private DepreciationMethod depreciationMethod;
 
-	
-	public DepreciationMethod getDepreciationMethod() {
-            return depreciationMethod;
-	}
+    private CChartOfAccounts depExpAccountCode;
 
-        public void setDepreciationMethod(DepreciationMethod depreciationMethod) {
-            this.depreciationMethod = depreciationMethod;
-        }
+    @Required(message = "assetcat.code.null")
+    @Length(max = 50, message = "assetcat.code.length")
+    @OptionalPattern(regex = AssetConstants.alphaNumericwithspecialchar, message = "assetcat.code.alphaNumericwithspecialchar")
+    private String code;
 
-        public CChartOfAccounts getDepExpCode() {
-		return this.depExpCode;
-	}
+    @Required(message = "assetcat.name.null")
+    @Length(max = 100, message = "assetcat.name.length")
+    @OptionalPattern(regex = AssetConstants.alphaNumericwithspecialchar, message = "assetcat.name.alphaNumericwithspecialchar")
+    private String name;
 
-	public void setDepExpCode(CChartOfAccounts depExpCode) {
-		this.depExpCode = depExpCode;
-	}
-	
-	public String getCode() {
-		return code;
-	}
+    private String catAttrTemplate;
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    @Required(message = "assetcat.assettype.null")
+    private AssetType assetType;
 
-	public String getName() {
-		return name;
-	}
+    @Required(message = "assetcat.uom.null")
+    private EgUom uom;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    private AssetCategory parent;
 
-	public String getCatAttrTemplate() {
-		return catAttrTemplate;
-	}
+    @Valid
+    private List<DepreciationMetaData> depreciationMetaDataList = new LinkedList<DepreciationMetaData>();
 
-	public void setCatAttrTemplate(String catAttrTemplate) {
-		this.catAttrTemplate = catAttrTemplate;
-	}
+    private List<Asset> assets = new LinkedList<Asset>();
 
-	public AssetType getAssetType() {
-		return assetType;
-	}
+    public CChartOfAccounts getAssetAccountCode() {
+        return assetAccountCode;
+    }
 
-	public void setAssetType(AssetType assetType) {
-		this.assetType = assetType;
-	}
+    public void setAssetAccountCode(final CChartOfAccounts assetAccountCode) {
+        this.assetAccountCode = assetAccountCode;
+    }
 
-	public EgUom getUom() {
-		return uom;
-	}
+    public Long getMaxLife() {
+        return maxLife;
+    }
 
-	public void setUom(EgUom uom) {
-		this.uom = uom;
-	}
+    public void setMaxLife(final Long maxLife) {
+        this.maxLife = maxLife;
+    }
 
-	public AssetCategory getParent() {
-		return parent;
-	}
+    public CChartOfAccounts getAccDepAccountCode() {
+        return accDepAccountCode;
+    }
 
-	public void setParent(AssetCategory parent) {
-		this.parent = parent;
-	}
+    public void setAccDepAccountCode(final CChartOfAccounts accDepAccountCode) {
+        this.accDepAccountCode = accDepAccountCode;
+    }
 
-	public List<DepreciationMetaData> getDepreciationMetaDatas() {
-		return depreciationMetaDatas;
-	}
+    public CChartOfAccounts getRevAccountCode() {
+        return revAccountCode;
+    }
 
-	public void setDepreciationMetaDatas(
-			List<DepreciationMetaData> depreciationMetaDatas) {
-		this.depreciationMetaDatas = depreciationMetaDatas;
-	}
-	
-	public void addDepreciationMetaData(DepreciationMetaData depreciationMetaData){
-		this.depreciationMetaDatas.add(depreciationMetaData);
-	}
-	
-	public List<Asset> getAssets() {
-		return assets;
-	}
+    public void setRevAccountCode(final CChartOfAccounts revAccountCode) {
+        this.revAccountCode = revAccountCode;
+    }
 
-	public void setAssets(List<Asset> assets) {
-		this.assets = assets;
-	}
-	
-	
-	@Override 
-	public String toString() {
-	    StringBuilder objString = new StringBuilder();
-	    String NEW_LINE = System.getProperty("line.separator");
-	    String NULL_STRING = "null";
+    public DepreciationMethod getDepreciationMethod() {
+        return depreciationMethod;
+    }
 
-	    objString.append(this.getClass().getName() + " Object {" + NEW_LINE);
-	    objString.append(" Id: " + id + NEW_LINE);
-	    objString.append(" Name: " + name + NEW_LINE);
-	    objString.append(" Code: " + code + NEW_LINE);
-	    objString.append(" Asset Type: " 	+ ((assetType==null)?NULL_STRING:assetType.toString()) + NEW_LINE);
-	    objString.append(" Parent: " 		+ ((parent==null)	?NULL_STRING:parent.getId()) + NEW_LINE);
-	    objString.append(" UOM: " 			+ ((uom==null)		?NULL_STRING:uom.getId()) + NEW_LINE);
-	    objString.append("}");
+    public void setDepreciationMethod(final DepreciationMethod depreciationMethod) {
+        this.depreciationMethod = depreciationMethod;
+    }
 
-	    return objString.toString();
-	  }
-	
-	@Override
-	public List<ValidationError> validate()	{
-		List<ValidationError> errorList = new ArrayList<ValidationError>();	
-		if(depreciationMetaDatas!= null && !depreciationMetaDatas.isEmpty()) {			
-			for (DepreciationMetaData depMetaData : depreciationMetaDatas) {				
-				errorList.addAll(depMetaData.validate());
-			}			
-		}
-		return errorList;
-	}	
+    public CChartOfAccounts getDepExpAccountCode() {
+        return depExpAccountCode;
+    }
+
+    public void setDepExpAccountCode(final CChartOfAccounts depExpAccountCode) {
+        this.depExpAccountCode = depExpAccountCode;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(final String code) {
+        this.code = code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String getCatAttrTemplate() {
+        return catAttrTemplate;
+    }
+
+    public void setCatAttrTemplate(final String catAttrTemplate) {
+        this.catAttrTemplate = catAttrTemplate;
+    }
+
+    public AssetType getAssetType() {
+        return assetType;
+    }
+
+    public void setAssetType(final AssetType assetType) {
+        this.assetType = assetType;
+    }
+
+    public EgUom getUom() {
+        return uom;
+    }
+
+    public void setUom(final EgUom uom) {
+        this.uom = uom;
+    }
+
+    public AssetCategory getParent() {
+        return parent;
+    }
+
+    public void setParent(final AssetCategory parent) {
+        this.parent = parent;
+    }
+
+    public List<DepreciationMetaData> getDepreciationMetaDataList() {
+        return depreciationMetaDataList;
+    }
+
+    public void setDepreciationMetaDataList(final List<DepreciationMetaData> depreciationMetaDataList) {
+        this.depreciationMetaDataList = depreciationMetaDataList;
+    }
+
+    public void addDepreciationMetaData(final DepreciationMetaData depreciationMetaData) {
+        depreciationMetaDataList.add(depreciationMetaData);
+    }
+
+    public List<Asset> getAssets() {
+        return assets;
+    }
+
+    public void setAssets(final List<Asset> assets) {
+        this.assets = assets;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder objString = new StringBuilder();
+        final String NEW_LINE = System.getProperty("line.separator");
+        final String NULL_STRING = "null";
+
+        objString.append(this.getClass().getName() + " Object {" + NEW_LINE);
+        objString.append(" Id: " + id + NEW_LINE);
+        objString.append(" Name: " + name + NEW_LINE);
+        objString.append(" Code: " + code + NEW_LINE);
+        objString.append(" Asset Type: " + (assetType == null ? NULL_STRING : assetType.toString()) + NEW_LINE);
+        objString.append(" Parent: " + (parent == null ? NULL_STRING : parent.getId()) + NEW_LINE);
+        objString.append(" UOM: " + (uom == null ? NULL_STRING : uom.getId()) + NEW_LINE);
+        objString.append("}");
+
+        return objString.toString();
+    }
+
+    @Override
+    public List<ValidationError> validate() {
+        final List<ValidationError> errorList = new ArrayList<ValidationError>();
+        if (depreciationMetaDataList != null && !depreciationMetaDataList.isEmpty())
+            for (final DepreciationMetaData depMetaData : depreciationMetaDataList)
+                errorList.addAll(depMetaData.validate());
+        return errorList;
+    }
 }

@@ -43,11 +43,11 @@
 "ResultSet": {
     "Result":[
     	{
-    		"xDepmethord":"<s:property value="%{parentCategory.depMethord.id}" />",
-    		"xAssetCode":"<s:property value="%{parentCategory.assetCode.id}" />",
-    		"xAccDepCode":"<s:property value="%{parentCategory.accDepCode.id}" />",
-    		"xRevCode":"<s:property value="%{parentCategory.revCode.id}" />",
-    		"xDepExpCode":"<s:property value="%{parentCategory.depExpCode.id}" />",
+    		"xDepreciationMethod":"<s:property value="%{parentCategory.depreciationMethod.id}" />",
+    		"xAssetAccountCode":"<s:property value="%{parentCategory.assetAccountCode.id}" />",
+    		"xAccDepAccountCode":"<s:property value="%{parentCategory.accDepAccountCode.id}" />",
+    		"xRevAccountCode":"<s:property value="%{parentCategory.revAccountCode.id}" />",
+    		"xDepExpAccountCode":"<s:property value="%{parentCategory.depExpAccountCode.id}" />",
     		"xUom":"<s:property value="%{parentCategory.uom.id}" />",
     		"xCatAttrTemplate":"<s:property value="%{parentCategory.catAttrTemplate}" />"
     	}

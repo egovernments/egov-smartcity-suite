@@ -39,9 +39,7 @@
  */
 package org.egov.asset.model;
 
+public enum DepreciationMethod {
 
-public enum DepreciationMethod { 
-    
-    StraightLineMethod,
-    WrittenDownValueMethod
+    StraightLineMethod, WrittenDownValueMethod
 }

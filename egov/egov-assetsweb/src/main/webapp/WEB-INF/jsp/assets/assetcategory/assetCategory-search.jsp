@@ -110,10 +110,9 @@ function setupAjaxAssettype(elem){
 								<td width="21%" class="greybox2wk">
 									<s:select headerKey="-1"
 										headerValue="%{getText('list.default.select')}"
-										name="catTypeId" id="assettype"
+										name="assetType" id="assettype"
 										cssClass="selectwk" list="dropdownData.assetTypeList"
-										listKey="id" listValue='name'
-										value="%{catTypeId}"
+										listKey="value" listValue='value' 
 										onChange="setupAjaxAssettype(this);" />
 									<egov:ajaxdropdown id="populateParentcat"
 										fields="['Text','Value']" dropdownId='parentcat'
@@ -210,7 +209,7 @@ function setupAjaxAssettype(elem){
 																&nbsp;
 															</td>
 															<td width="15%">
-																<s:property value="%{assetType.name}" />
+																<s:property value="%{assetType}" />
 																&nbsp;
 															</td>
 															<td width="15%">

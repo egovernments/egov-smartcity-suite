@@ -70,7 +70,7 @@
 		</td>
 	</tr>
 	<table align="center" width="50%" border="0" cellspacing="0" cellpadding="0">
-				<s:iterator id="depIterator" value="depreciationMetaDatas"
+				<s:iterator id="depIterator" value="depreciationMetaDataList"
 					status="row_status">
 					<tr>
 						<td width="20%"">

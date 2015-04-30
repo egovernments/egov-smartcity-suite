@@ -57,236 +57,243 @@ import org.egov.infstr.utils.DateUtils;
 import org.egov.pims.model.PersonalInformation;
 import org.hibernate.validator.constraints.Length;
 
-@Unique(fields={"code"},id="id",tableName="EGASSET_ASSET",columnName={"CODE"},message="asset.code.isunique")
+@Unique(fields = { "code" }, id = "id", tableName = "EGASSET_ASSET", columnName = { "CODE" }, message = "asset.code.isunique")
 public class Asset extends BaseModel {
 
-	// Constructors
+    // Constructors
 
-	/** default constructor */
-	public Asset() {
-	}
+    /**
+     *
+     */
+    private static final long serialVersionUID = 730236511745178022L;
 
-	// Fields
-	@Required(message="asset.code.null")
-	@Length(max=50,message="asset.code.length")
-	@OptionalPattern(regex=AssetConstants.alphaNumericwithspecialchar,message="asset.code.alphaNumericwithspecialchar")
-	private String code;
-	
-	@Required(message="asset.name.null")
-	@Length(max=100,message="asset.name.length")
-	@OptionalPattern(regex=AssetConstants.alphaNumericwithspecialchar,message="asset.name.alphaNumericwithspecialchar")
-	private String name;
-	
-	@Required(message="asset.category.null")
-	private AssetCategory assetCategory;
-	
-	private Boundary area;
-	private Boundary location;
-	
-	private Boundary street;
-	private Boundary ward;
-	private String assetDetails;
-	
-	@Required(message="asset.modeofacqui.null")
-	private String modeOfAcquisition;
-	@Required(message="asset.status.null")
-	private EgwStatus status;
-	private String description;
-	private Department department;
-	// @Required(message="asset.creationdate.null")
-	private Date dateOfCreation;
+    /** default constructor */
+    public Asset() {
+    }
 
-	private String remark;
-	private PersonalInformation preparedBy;
-	private BigDecimal grossValue;
-	private BigDecimal accDepreciation;
-	private BigDecimal length;
-	private BigDecimal width;
-	private BigDecimal totalArea;
-	private String sourcePath;
-	
-	public List<ValidationError> validate() {
-		List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-		if(dateOfCreation!=null && !DateUtils.compareDates(new Date(),dateOfCreation))
-			validationErrors.add(new ValidationError("dateOfCreation", "asset.dateOfCreation.invalid"));
-		
-		return validationErrors;
-	}
-	public Boundary getWard() {
-		return ward;
-	}
-	
-        public Asset(String code) {
-                this.code = code;
-        }
-        
-        /** minimal constructor */
-        public Asset(String code, String name) {
-                this.code = code;
-                this.name = name;
-        }
+    // Fields
+    @Required(message = "asset.code.null")
+    @Length(max = 50, message = "asset.code.length")
+    @OptionalPattern(regex = AssetConstants.alphaNumericwithspecialchar, message = "asset.code.alphaNumericwithspecialchar")
+    private String code;
 
-	public void setWard(Boundary ward) {
-		this.ward = ward;
-	}
+    @Required(message = "asset.name.null")
+    @Length(max = 100, message = "asset.name.length")
+    @OptionalPattern(regex = AssetConstants.alphaNumericwithspecialchar, message = "asset.name.alphaNumericwithspecialchar")
+    private String name;
 
-	public String getCode() {
-		return code;
-	}
+    @Required(message = "asset.category.null")
+    private AssetCategory assetCategory;
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    private Boundary area;
+    private Boundary location;
 
-	public String getName() {
-		return name;
-	}
+    private Boundary street;
+    private Boundary ward;
+    private String assetDetails;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @Required(message = "asset.modeofacqui.null")
+    private String modeOfAcquisition;
+    @Required(message = "asset.status.null")
+    private EgwStatus status;
+    private String description;
+    private Department department;
+    // @Required(message="asset.creationdate.null")
+    private Date dateOfCreation;
 
-	public String getDescription() {
-		return description;
-	}
+    private String remark;
+    private PersonalInformation preparedBy;
+    private BigDecimal grossValue;
+    private BigDecimal accDepreciation;
+    private BigDecimal length;
+    private BigDecimal width;
+    private BigDecimal totalArea;
+    private String sourcePath;
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    @Override
+    public List<ValidationError> validate() {
+        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        if (dateOfCreation != null && !DateUtils.compareDates(new Date(), dateOfCreation))
+            validationErrors.add(new ValidationError("dateOfCreation", "asset.dateOfCreation.invalid"));
 
-	public String getModeOfAcquisition() {
-		return modeOfAcquisition;
-	}
+        return validationErrors;
+    }
 
-	public void setModeOfAcquisition(String modeOfAcquisition) {
-		this.modeOfAcquisition = modeOfAcquisition;
-	}
+    public Boundary getWard() {
+        return ward;
+    }
 
-	public String getAssetDetails() {
-		return assetDetails;
-	}
+    public Asset(final String code) {
+        this.code = code;
+    }
 
-	public void setAssetDetails(String assetDetails) {
-		this.assetDetails = assetDetails;
-	}
+    /** minimal constructor */
+    public Asset(final String code, final String name) {
+        this.code = code;
+        this.name = name;
+    }
 
-	public Department getDepartment() {
-		return department;
-	}
+    public void setWard(final Boundary ward) {
+        this.ward = ward;
+    }
 
-	public void setDepartment(Department department) {
-		this.department = department;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public AssetCategory getAssetCategory() {
-		return assetCategory;
-	}
+    public void setCode(final String code) {
+        this.code = code;
+    }
 
-	public void setAssetCategory(AssetCategory assetCategory) {
-		this.assetCategory = assetCategory;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public Boundary getArea() {
-		return area;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	public void setArea(Boundary area) {
-		this.area = area;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public Boundary getLocation() {
-		return location;
-	}
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
-	public void setLocation(Boundary location) {
-		this.location = location;
-	}
+    public String getModeOfAcquisition() {
+        return modeOfAcquisition;
+    }
 
-	public Boundary getStreet() {
-		return street;
-	}
+    public void setModeOfAcquisition(final String modeOfAcquisition) {
+        this.modeOfAcquisition = modeOfAcquisition;
+    }
 
-	public void setStreet(Boundary street) {
-		this.street = street;
-	}
+    public String getAssetDetails() {
+        return assetDetails;
+    }
 
-	public EgwStatus getStatus() {
-		return status;
-	}
+    public void setAssetDetails(final String assetDetails) {
+        this.assetDetails = assetDetails;
+    }
 
-	public void setStatus(EgwStatus status) {
-		this.status = status;
-	}
+    public Department getDepartment() {
+        return department;
+    }
 
-	public Date getDateOfCreation() {
-		return dateOfCreation;
-	}
+    public void setDepartment(final Department department) {
+        this.department = department;
+    }
 
-	public void setDateOfCreation(Date dateOfCreation) {
-		this.dateOfCreation = dateOfCreation;
-	}
+    public AssetCategory getAssetCategory() {
+        return assetCategory;
+    }
 
-	public String getRemark() {
-		return remark;
-	}
+    public void setAssetCategory(final AssetCategory assetCategory) {
+        this.assetCategory = assetCategory;
+    }
 
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
+    public Boundary getArea() {
+        return area;
+    }
 
-	public PersonalInformation getPreparedBy() {
-		return preparedBy;
-	}
+    public void setArea(final Boundary area) {
+        this.area = area;
+    }
 
-	public void setPreparedBy(PersonalInformation preparedBy) {
-		this.preparedBy = preparedBy;
-	}
+    public Boundary getLocation() {
+        return location;
+    }
 
-	public BigDecimal getGrossValue() {
-		return grossValue;
-	}
+    public void setLocation(final Boundary location) {
+        this.location = location;
+    }
 
-	public void setGrossValue(BigDecimal grossValue) {
-		this.grossValue = grossValue;
-	}
+    public Boundary getStreet() {
+        return street;
+    }
 
-	public BigDecimal getAccDepreciation() {
-		return accDepreciation;
-	}
+    public void setStreet(final Boundary street) {
+        this.street = street;
+    }
 
-	public void setAccDepreciation(BigDecimal accDepreciation) {
-		this.accDepreciation = accDepreciation;
-	}
+    public EgwStatus getStatus() {
+        return status;
+    }
 
-	public BigDecimal getLength() {
-		return length;
-	}
+    public void setStatus(final EgwStatus status) {
+        this.status = status;
+    }
 
-	public BigDecimal getWidth() {
-		return width;
-	}
+    public Date getDateOfCreation() {
+        return dateOfCreation;
+    }
 
-	public BigDecimal getTotalArea() {
-		return totalArea;
-	}
+    public void setDateOfCreation(final Date dateOfCreation) {
+        this.dateOfCreation = dateOfCreation;
+    }
 
-	public void setLength(BigDecimal length) {
-		this.length = length;
-	}
+    public String getRemark() {
+        return remark;
+    }
 
-	public void setWidth(BigDecimal width) {
-		this.width = width;
-	}
+    public void setRemark(final String remark) {
+        this.remark = remark;
+    }
 
-	public void setTotalArea(BigDecimal totalArea) {
-		this.totalArea = totalArea;
-	}
-	
-	public String getSourcePath() {
-		return sourcePath;
-	}
+    public PersonalInformation getPreparedBy() {
+        return preparedBy;
+    }
 
-	public void setSourcePath(String sourcePath) {
-		this.sourcePath = sourcePath;
-	}
+    public void setPreparedBy(final PersonalInformation preparedBy) {
+        this.preparedBy = preparedBy;
+    }
+
+    public BigDecimal getGrossValue() {
+        return grossValue;
+    }
+
+    public void setGrossValue(final BigDecimal grossValue) {
+        this.grossValue = grossValue;
+    }
+
+    public BigDecimal getAccDepreciation() {
+        return accDepreciation;
+    }
+
+    public void setAccDepreciation(final BigDecimal accDepreciation) {
+        this.accDepreciation = accDepreciation;
+    }
+
+    public BigDecimal getLength() {
+        return length;
+    }
+
+    public BigDecimal getWidth() {
+        return width;
+    }
+
+    public BigDecimal getTotalArea() {
+        return totalArea;
+    }
+
+    public void setLength(final BigDecimal length) {
+        this.length = length;
+    }
+
+    public void setWidth(final BigDecimal width) {
+        this.width = width;
+    }
+
+    public void setTotalArea(final BigDecimal totalArea) {
+        this.totalArea = totalArea;
+    }
+
+    public String getSourcePath() {
+        return sourcePath;
+    }
+
+    public void setSourcePath(final String sourcePath) {
+        this.sourcePath = sourcePath;
+    }
 }

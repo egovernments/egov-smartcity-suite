@@ -57,38 +57,37 @@ function goNewForm()
 }
 
 function setupAjaxAssettype(elem){
-    asset_type_id=elem.options[elem.selectedIndex].value;
     resetParentFields();
-	populateparentcat({assetTypeId:asset_type_id});
-	disableDepreciation(asset_type_id);
+	populateparentcat({assetType:elem.value});
+	disableDepreciation(elem.value);
 }
 function disableDepreciation(assettype){
-if(assettype==1){
-document.getElementById('depmethord').disabled=true;
-document.getElementById('accdepcode').disabled=true;
-document.getElementById('depexpcode').disabled=true;
+if(assettype == '<s:property value="@org.egov.asset.model.AssetType@Land" />'){
+document.getElementById('depreciationMethod').disabled=true;
+document.getElementById('accDepAccountCode').disabled=true;
+document.getElementById('depExpAccountCode').disabled=true;
 }else{
-document.getElementById('depmethord').disabled=false;
-document.getElementById('accdepcode').disabled=false;
-document.getElementById('depexpcode').disabled=false;
+document.getElementById('depreciationMethod').disabled=false;
+document.getElementById('accDepAccountCode').disabled=false;
+document.getElementById('depExpAccountCode').disabled=false;
 }
 }
 function setupAjaxParentcat(elem){
 	
     dom.get("category_error").style.display='none';
     parent_cat_id=elem.options[elem.selectedIndex].value;
-    makeJSONCall(["xDepmethord","xAssetCode","xAccDepCode","xRevCode","xDepExpCode",
+    makeJSONCall(["xDepreciationMethod","xAssetAccountCode","xAccDepAccountCode","xRevAccountCode","xDepExpAccountCode",
     	 "xUom","xCatAttrTemplate"],
     	'${pageContext.request.contextPath}/assetcategory/ajaxAssetCategory!populateParentDetails.action',
     	{parentCatId:parent_cat_id},mySuccessHandler,myFailureHandler) ;
 }
 
 function resetParentFields(){
-	document.getElementById('depmethord').value=-1;
-	document.getElementById('assetcode').value=-1;
-	document.getElementById('accdepcode').value=-1;
-	document.getElementById('revcode').value=-1;
-	document.getElementById('depexpcode').value=-1;
+	document.getElementById('depreciationMethod').value='-1';
+	document.getElementById('assetAccountCode').value=-1;
+	document.getElementById('accDepAccountCode').value=-1;
+	document.getElementById('revAccountCode').value=-1;
+	document.getElementById('depExpAccountCode').value=-1;
 	document.getElementById('uom').value=-1;
 	document.getElementById('catTemVal').value='';
 }
@@ -97,30 +96,30 @@ mySuccessHandler = function(req,res){
   results=res.results;
      asset_type_id=document.assetCategoryForm.assettype.value;
     if(asset_type_id!=1){
-  if(results[0].xDepmethord!="")
-	document.getElementById('depmethord').value=results[0].xDepmethord;
+  if(results[0].xDepreciationMethod!="")
+	document.getElementById('depreciationMethod').value=results[0].xDepreciationMethod;
   else
-	document.getElementById('depmethord').value=-1;
+	document.getElementById('depreciationMethod').value='-1';
 	}
-  if(results[0].xAssetCode!="")
-	document.getElementById('assetcode').value=results[0].xAssetCode;
+  if(results[0].xAssetAccountCode!="")
+	document.getElementById('assetAccountCode').value=results[0].xAssetAccountCode;
   else
-	document.getElementById('assetcode').value=-1;
+	document.getElementById('assetAccountCode').value=-1;
 	if(asset_type_id!=1){
-  if(results[0].xAccDepCode!="")
-	document.getElementById('accdepcode').value=results[0].xAccDepCode;
+  if(results[0].xAccDepAccountCode!="")
+	document.getElementById('accDepAccountCode').value=results[0].xAccDepAccountCode;
   else
-	document.getElementById('accdepcode').value=-1;
+	document.getElementById('accDepAccountCode').value=-1;
 	}
-  if(results[0].xRevCode!="")
-	document.getElementById('revcode').value=results[0].xRevCode;
+  if(results[0].xRevAccountCode!="")
+	document.getElementById('revAccountCode').value=results[0].xRevAccountCode;
   else
-	document.getElementById('revcode').value=-1;
+	document.getElementById('revAccountCode').value=-1;
 	if(asset_type_id!=1){
-   if(results[0].xDepExpCode!="")
-	document.getElementById('depexpcode').value=results[0].xDepExpCode;
+   if(results[0].xDepExpAccountCode!="")
+	document.getElementById('depExpAccountCode').value=results[0].xDepExpAccountCode;
   else
-	document.getElementById('depexpcode').value=-1;	
+	document.getElementById('depExpAccountCode').value=-1;	
 	}
   if(results[0].xUom!="")
 	document.getElementById('uom').value=results[0].xUom;
@@ -140,11 +139,11 @@ myFailureHandler= function(){
 
 parentCatDetailsSuccessHandler = function(req,res){
   results=res.results;
-  depmethod.Dropdown.selectedIndex=results.DepMethord;
-  assetcode.Dropdown.selectedIndex=results.AssetCode;
-  accdepcode.Dropdown.selectedIndex=results.AccDepCode;
-  revcode.Dropdown.selectedIndex=results.RevCode;
-  depexpcode.Dropdown.selectedIndex=results.DepExpCode;
+  depreciationMethod.Dropdown.selectedIndex=results.DepreciationMethod;
+  assetAccountCode.Dropdown.selectedIndex=results.AssetAccountCode;
+  accDepAccountCode.Dropdown.selectedIndex=results.AccDepAccountCode;
+  revAccountCode.Dropdown.selectedIndex=results.RevAccountCode;
+  depExpAccountCode.Dropdown.selectedIndex=results.DepExpAccountCode;
 }
 
 </script>
@@ -198,9 +197,9 @@ parentCatDetailsSuccessHandler = function(req,res){
 					<td width="21%" class="greybox2wk" colspan="3">
 						<s:select headerKey="-1" disabled="%{sDisabled}"
 							headerValue="%{getText('list.default.select')}" name="assetType"
-							id="assettype" cssClass="selectwk"
-							list="dropdownData.assetTypeList" listKey="id" listValue='name'
-							value="%{assetType.id}" onChange="setupAjaxAssettype(this);"/>
+							id="assetType" cssClass="selectwk"
+							list="dropdownData.assetTypeList" listKey="value" listValue='value'
+							onChange="setupAjaxAssettype(this);"/>
 						<egov:ajaxdropdown id="populateParentcat" fields="['Text','Value']" 
 							dropdownId='parentcat' url='assetcategory/ajaxAssetCategory!populateParentCategories.action' 
 							selectedValue="%{parent.id}"/>
@@ -224,10 +223,9 @@ parentCatDetailsSuccessHandler = function(req,res){
 					</td>
 					<td width="21%" class="greybox2wk" colspan="3">
 						<s:select headerKey="-1" disabled="%{sDisabled}"
-							headerValue="%{getText('list.default.select')}" name="depMethord"
-							id="depmethord" cssClass="selectwk"
-							list="dropdownData.depMethordList" listKey="id" listValue='name'
-							value="%{depMethord.id}" />
+							headerValue="%{getText('list.default.select')}" name="depreciationMethod"
+							id="depreciationMethod" cssClass="selectwk"
+							list="dropdownData.depreciationMethodList" listKey="value" listValue='value' />
 					</td>
 				</tr>
 				<tr>
@@ -237,10 +235,10 @@ parentCatDetailsSuccessHandler = function(req,res){
 					</td>
 					<td width="21%" class="whitebox2wk" colspan="3">
 						<s:select headerKey="-1" disabled="%{fDisabled}"
-							headerValue="%{getText('list.default.select')}" name="assetCode"
-							id="assetcode" cssClass="selectwk"
-							list="dropdownData.assetCodeList" listKey="id" 
-							listValue='glcode  + " : " + name'	value="%{assetCode.id}" />
+							headerValue="%{getText('list.default.select')}" name="assetAccountCode"
+							id="assetAccountCode" cssClass="selectwk"
+							list="dropdownData.assetAccountCodeList" listKey="id" 
+							listValue='glcode  + " : " + name'	value="%{assetAccountCode.id}" />
 					</td>
 				</tr>
 				<tr>
@@ -249,10 +247,10 @@ parentCatDetailsSuccessHandler = function(req,res){
 					</td>
 					<td width="21%" class="greybox2wk" colspan="3">
 						<s:select headerKey="-1" disabled="%{sDisabled}"
-							headerValue="%{getText('list.default.select')}" name="accDepCode"
-							id="accdepcode" cssClass="selectwk"
-							list="dropdownData.accDepCodeList" listKey="id" 
-							listValue='glcode  + " : " + name'	value="%{accDepCode.id}" />
+							headerValue="%{getText('list.default.select')}" name="accDepAccountCode"
+							id="accDepAccountCode" cssClass="selectwk"
+							list="dropdownData.accDepAccountCodeList" listKey="id" 
+							listValue='glcode  + " : " + name'	value="%{accDepAccountCode.id}" />
 					</td>
 				</tr>
 				<tr>
@@ -262,10 +260,10 @@ parentCatDetailsSuccessHandler = function(req,res){
 					</td>
 					<td width="21%" class="whitebox2wk" colspan="3">
 						<s:select headerKey="-1" disabled="%{fDisabled}"
-							headerValue="%{getText('list.default.select')}" name="revCode"
-							id="revcode" cssClass="selectwk"
-							list="dropdownData.revCodeList" listKey="id" 
-							listValue='glcode  + " : " + name'	value="%{revCode.id}" />
+							headerValue="%{getText('list.default.select')}" name="revAccountCode"
+							id="revAccountCode" cssClass="selectwk"
+							list="dropdownData.revAccountCodeList" listKey="id" 
+							listValue='glcode  + " : " + name'	value="%{revAccountCode.id}" />
 					</td>
 				</tr>
 				
@@ -275,10 +273,10 @@ parentCatDetailsSuccessHandler = function(req,res){
 					</td>
 					<td width="21%" class="greybox2wk" colspan="3">
 						<s:select headerKey="-1" disabled="%{sDisabled}"
-							headerValue="%{getText('list.default.select')}" name="depExpCode"
-							id="depexpcode" cssClass="selectwk"
-							list="dropdownData.depExpCodeList" listKey="id" 
-							listValue='glcode  + " : " + name'	value="%{depExpCode.id}" />
+							headerValue="%{getText('list.default.select')}" name="depExpAccountCode"
+							id="depExpAccountCode" cssClass="selectwk"
+							list="dropdownData.depExpAccountCodeList" listKey="id" 
+							listValue='glcode  + " : " + name'	value="%{depExpAccountCode.id}" />
 					</td>
 				</tr>
 				<tr>

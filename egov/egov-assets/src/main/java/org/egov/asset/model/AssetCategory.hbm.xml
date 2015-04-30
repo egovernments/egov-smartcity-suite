@@ -64,16 +64,16 @@
             <column name="MAXLIFE" precision="32" scale="0" />
         </property>
 
-        <many-to-one name="assetCode" class="org.egov.commons.CChartOfAccounts" fetch="select">
+        <many-to-one name="assetAccountCode" class="org.egov.commons.CChartOfAccounts" fetch="select">
             <column name="asset_accountcode" precision="32" scale="0" not-null="true"/>
         </many-to-one>
-        <many-to-one name="accDepCode" class="org.egov.commons.CChartOfAccounts" fetch="select">
+        <many-to-one name="accDepAccountCode" class="org.egov.commons.CChartOfAccounts" fetch="select">
             <column name="accdep_accountcode" precision="32" scale="0" />
         </many-to-one>
-       <many-to-one name="revCode" class="org.egov.commons.CChartOfAccounts" fetch="select">
+       <many-to-one name="revAccountCode" class="org.egov.commons.CChartOfAccounts" fetch="select">
             <column name="revaluation_accountcode" precision="32" scale="0" not-null="true"/>
         </many-to-one>
-         <many-to-one name="depExpCode" class="org.egov.commons.CChartOfAccounts" fetch="select">
+         <many-to-one name="depExpAccountCode" class="org.egov.commons.CChartOfAccounts" fetch="select">
             <column name="depexp_accountcode" precision="32" scale="0" />
         </many-to-one>
         <property name="depreciationMethod" column="depreciation_method">
@@ -93,7 +93,7 @@
             <column name="UOM_ID" precision="22" scale="0" not-null="true"/>
         </many-to-one>
        
-        <list name="depreciationMetaData" cascade="all,delete-orphan,persist">
+        <list name="depreciationMetaDataList" cascade="all,delete-orphan,persist">
             <key>
                 <column name="assetcategory_id" precision="22" scale="0" not-null="true"/>
             </key>

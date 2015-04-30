@@ -38,8 +38,9 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.asset.service;
+
 import org.egov.asset.model.AssetActivities;
 
-public interface AssetActivitiesService extends BaseService<AssetActivities,Long> {
-	
+public interface AssetActivitiesService extends BaseService<AssetActivities, Long> {
+
 }
