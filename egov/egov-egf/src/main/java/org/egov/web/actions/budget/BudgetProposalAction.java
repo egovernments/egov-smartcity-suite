@@ -1029,7 +1029,7 @@ int i=0;
 	        	   {
 	        		   save(BigDecimal.valueOf(1000));
 	        	   }
-	        	 //This fix is for Phoenix Migration.  topBudget.changeState("Forwarded by "+name, positionByUserId, comment);
+	        	 topBudget.transition(true).withStateValue("Forwarded by "+name).withOwner(positionByUserId).withComments(comment);
 	        	   
 	           }
 	           else {
@@ -1037,7 +1037,7 @@ int i=0;
 	        	   saveWithForward(positionByUserId,name,hod);
 	        	   if(isNextUserHOD(approverUserId) || hod)
 	        	   {
-	        		 //This fix is for Phoenix Migration.	     topBudget.changeState("Forwarded by "+name, positionByUserId, comment);
+	        		topBudget.transition(true).withStateValue("Forwarded by "+name).withOwner(positionByUserId).withComments(comment);
 	        	   }
 	        	  
 	           }
@@ -1048,7 +1048,7 @@ int i=0;
 	    	else if (actionName.contains("approve"))
 	    	{
 	    		save(BigDecimal.valueOf(1000));
-	    		//This fix is for Phoenix Migration. topBudget.changeState("END",positionByUserId, comment);
+	    		topBudget.transition(true).withStateValue("END").withOwner(positionByUserId).withComments(comment);
 	    		addActionMessage("Budget/BudgetDetails Approved Succesfully ");
 	    	}
 	    	 budgetService.persist(topBudget);
@@ -1138,12 +1138,12 @@ int i=0;
 	    		bd.setOriginalAmount(bpBean.getProposedRE());
 	    		if(bpBean.getDocumentNumber()!=null)
 	    			bd.setDocumentNumber(bpBean.getDocumentNumber());
-	    		//This fix is for Phoenix Migration.	bd.changeState(stateString, pos, bpBean.getRemarks());
+	    		bd.transition(true).withStateValue(stateString).withOwner(pos).withComments(bpBean.getRemarks());
 	    		budgetDetailService.persist(bd);
 	    		
 	    		nextYearBd=budgetDetailService.find("from BudgetDetail where id=?",bpBean.getNextYrId());
 	    		nextYearBd.setOriginalAmount(bpBean.getProposedBE());
-	    		//This fix is for Phoenix Migration.	nextYearBd.changeState(stateString, pos, bpBean.getRemarks());
+	    		nextYearBd.transition(true).withStateValue(stateString).withOwner(pos).withComments(bpBean.getRemarks());
 	    		budgetDetailService.persist(nextYearBd);
 	    		if(LOGGER.isDebugEnabled())     LOGGER.debug("Updated  "+i+"record.....");
 	    		i++;

@@ -75,7 +75,7 @@ public class DishonorChequeService extends PersistenceService<DishonorCheque, Lo
 			{ 
 					financialIntegrationService.updateSourceInstrumentVoucher(financialIntegrationService.EVENT_INSTRUMENT_DISHONOR_INITIATED,dishonorCheque.getInstrumentHeader().getId());
 			}
-			//This fix is for Phoenix Migration.dishonorCheque = dishonorChqWorkflowService.start(dishonorCheque, pos, "DishonorCheque Work flow started");
+			dishonorCheque.start().withOwner(pos).withComments("DishonorCheque Work flow started");
 			if(LOGGER.isDebugEnabled())
 			LOGGER.debug("---------"+dishonorCheque);         
 			dishonorChqWorkflowService.transition("forward", dishonorCheque, "Created by SM"); 
@@ -95,7 +95,7 @@ public class DishonorChequeService extends PersistenceService<DishonorCheque, Lo
 		
 		if(null == dishonorCheque.getState()){     
 			Position pos = eisService.getPrimaryPositionForUser(dishonorCheque.getApproverPositionId(),new Date());
-			dishonorCheque =  (DishonorCheque)dishonorChequeWorkflowService.start(dishonorCheque, pos, "DishonorCheque Work flow started");
+			dishonorCheque =  (DishonorCheque)dishonorCheque.start().pos, "DishonorCheque Work flow started");
 			dishonorChequeWorkflowService.transition("forward", dishonorCheque, "Created by SM");
 		}
 

@@ -472,7 +472,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("voucher id======="+vhid);
 			voucherHeader = (CVoucherHeader) getPersistenceService().find(VOUCHERQUERY, vhid);
 			voucherHeader.setLastModifiedDate(new DateTime());
-			//voucherWorkflowService.start(voucherHeader, getPosition(), parameters.get("comments")[0]);
+			voucherHeader.start().withOwner(getPosition()).withComments(parameters.get("comments")[0]);
 			sendForApproval();
 			addActionMessage(getText(egBillregister.getExpendituretype()+".voucher.created",new String[]{voucherHeader.getVoucherNumber(),voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition())}));
 			
@@ -538,11 +538,11 @@ public class PreApprovedVoucherAction extends BaseFormAction
 			if(budgetcheck)
 			{
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("saveAsWorkingCopy==========="+billDetailslist+subLedgerlist);
-			//User create voucher Api
-				//	final Long vhid =billsAccountingService.createPreApprovedVoucherFromBillForPJV(Integer.valueOf(parameters.get(BILLID)[0]),billDetailslist,subLedgerlist);
-			//	if(LOGGER.isDebugEnabled())     LOGGER.debug("voucher id======="+vhid);
-				//voucherHeader = (CVoucherHeader) getPersistenceService().find(VOUCHERQUERY, vhid);
-				//voucherWorkflowService.start(voucherHeader, getPosition());
+			//TO-DO : User create voucher Api
+				final Long vhid =billsAccountingService.createPreApprovedVoucherFromBillForPJV(Integer.valueOf(parameters.get(BILLID)[0]),billDetailslist,subLedgerlist);
+			    if(LOGGER.isDebugEnabled())     LOGGER.debug("voucher id======="+vhid);
+			    voucherHeader = (CVoucherHeader) getPersistenceService().find(VOUCHERQUERY, vhid);
+				voucherHeader.start().withOwner(getPosition());
 				addActionMessage(getText("pjv.voucher.wc.created",new String[]{voucherHeader.getVoucherNumber()}));
 			}
 			else

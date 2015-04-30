@@ -361,7 +361,7 @@ public class ContingentBillAction extends BaseBillAction {
 			        
 			cbill =(Cbill) createBill();
 			createCheckList(cbill);
-		//This fix is for Phoenix Migration.	billRegisterWorkflowService.start(cbill,getPosition());
+			cbill.start().withOwner(getPosition());
 			addActionMessage(getText("cbill.transaction.succesful")+cbill.getBillnumber());
 			billRegisterId=cbill.getId();
 			forwardBill(cbill);
@@ -457,7 +457,7 @@ public class ContingentBillAction extends BaseBillAction {
 			userId = cbill.getCreatedBy().getId().intValue();
 		}
 	//	billRegisterWorkflowService.transition(parameters.get(ACTION_NAME)[0]+"|"+userId, cbill,parameters.get("comments")[0]);
-		//This fix is for Phoenix Migration.billRegisterWorkflowService.end(cbill, getPosition(),parameters.get("comments")[0]);
+		cbill.transition(true).end().withOwner(getPosition()).withComments(parameters.get("comments")[0]);
 		String statusQury="from EgwStatus where upper(moduletype)=upper('"+FinancialConstants.CONTINGENCYBILL_FIN+"') and  upper(description)=upper('"+FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS+"')";
 		EgwStatus egwStatus=(EgwStatus)persistenceService.find(statusQury);
 		cbill.setStatus(egwStatus);

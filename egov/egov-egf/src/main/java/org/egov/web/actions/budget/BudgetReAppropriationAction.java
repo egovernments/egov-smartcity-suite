@@ -508,7 +508,7 @@ public class BudgetReAppropriationAction extends BaseFormAction{
 		reAppropriation.setAnticipatoryAmount(appropriation.getAnticipatoryAmount());
 		//Since it is a new budget detail, the amount will always be addition amount
 		reAppropriation.setOriginalAdditionAmount(appropriation.getDeltaAmount());
-		//This fix is for Phoenix Migration.reAppropriation = budgetReAppropriationWorkflowService.start(reAppropriation, position);
+		reAppropriation.start().withOwner(position);
 		budgetReAppropriationWorkflowService.transition(actionName, reAppropriation, "");
 	}
 	public boolean createReAppropriation(String actionName,List<BudgetReAppropriationView> budgetReAppropriationList,Position position,CFinancialYear financialYear,String beRe, BudgetReAppropriationMisc misc, String asOnDate) {
@@ -561,7 +561,7 @@ public class BudgetReAppropriationAction extends BaseFormAction{
 		else
 			appropriation.setOriginalDeductionAmount(reAppView.getDeltaAmount());
 		budgetReAppropriationService.validateDeductionAmount(appropriation);
-		//This fix is for Phoenix Migration.appropriation = budgetReAppropriationWorkflowService.start(appropriation, position);
+		appropriation.start().withOwner(position);
 		budgetReAppropriationWorkflowService.transition(actionName, appropriation, "");
 	}
 	public void transition(String actionName, BudgetReAppropriation detail,String comment) {

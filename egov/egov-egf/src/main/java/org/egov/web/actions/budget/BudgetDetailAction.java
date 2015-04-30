@@ -342,7 +342,7 @@ public class BudgetDetailAction extends BaseBudgetDetailAction{
 		for (BudgetDetail detail : savedbudgetDetailList) {
 			//budgetDetailWorkflowService.transition(parameters.get(ACTIONNAME)[0]+"|"+userId, detail, detail.getComment());
 			if(new String("forward").equals(parameters.get(ACTIONNAME)[0])){
-				//This fix is for Phoenix Migration.detail.changeState("Forwarded by "+getPosition().getName(), getPositionByUserId(userId), detail.getComment());
+				detail.transition(true).withStateValue("Forwarded by "+getPosition().getName()).withOwner(getPositionByUserId(userId)).withComments(detail.getComment());
 			}
 		}
 		//forwardBudget(budgetComment, userId); //for RE

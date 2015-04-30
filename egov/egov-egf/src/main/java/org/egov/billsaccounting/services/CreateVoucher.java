@@ -763,14 +763,14 @@ public class CreateVoucher {
 				 {
 					 SimpleWorkflowService<CVoucherHeader> voucherWorkflowService =  (SimpleWorkflowService) applicationContext.getBean("voucherWorkflowService");
 					//This fix is for Phoenix Migration.
-					 //voucherWorkflowService.start(voucherheader, getPosition());
+					 voucherheader.start().withOwner(getPosition());
 					// voucherWorkflowService.transition("aa_approve", voucherheader, "Created");    // action name need to pass
 					Position position = eisCommonService.getPositionByUserId(EGOVThreadLocals.getUserId());
 					 
 					 VoucherService vs = (VoucherService)applicationContext.getBean("voucherService");
 					PersistenceService persistenceService = (PersistenceService)applicationContext.getBean("persistenceService");
 					Position nextPosition= getNextPosition(voucherheader,vs,persistenceService,null);
-					// voucherheader.changeState("WORKFLOW INITIATED",nextPosition, "WORKFLOW STARTED");
+					voucherheader.transition(true).withStateValue("WORKFLOW INITIATED").withOwner(nextPosition).withComments("WORKFLOW STARTED");
 				 }
 	  		 }
 			/* this logic is moved to top since both have same workflow
@@ -925,13 +925,12 @@ public class CreateVoucher {
 				ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {
 						 "classpath:org/serviceconfig-Bean.xml","classpath:org/egov/infstr/beanfactory/globalApplicationContext.xml","classpath:org/egov/infstr/beanfactory/applicationContext-egf.xml","classpath:org/egov/infstr/beanfactory/applicationContext-pims.xml" });
 				SimpleWorkflowService<CVoucherHeader> voucherWorkflowService =  (SimpleWorkflowService) applicationContext.getBean("voucherWorkflowService");
-//				if(LOGGER.isDebugEnabled())     LOGGER.debug("completed voucherWorkflowService from application context.......");
-				//voucherWorkflowService.start(voucherHeader, getPosition());
+				if(LOGGER.isDebugEnabled())     LOGGER.debug("completed voucherWorkflowService from application context.......");
+				voucherHeader.start().withOwner(getPosition());
 			 	VoucherService vs = (VoucherService)applicationContext.getBean("voucherService");
 				PersistenceService persistenceService = (PersistenceService)applicationContext.getBean("persistenceService");
 				Position nextPosition= getNextPosition(voucherHeader,vs,persistenceService,null);
-				//voucherHeader.changeState("Forwarded",nextPosition, "Forwarded");
-				//This fix is for Phoenix Migration.
+				voucherHeader.transition(true).withStateValue("Forwarded").withOwner(nextPosition).withComments("Forwarded");
 			 
 		 }catch(Exception e)
 		 {

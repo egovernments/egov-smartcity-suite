@@ -121,7 +121,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
 		BudgetDetail budgetDetail = appropriation.getBudgetDetail();
 		detail.copyFrom(budgetDetail);
 		BudgetDetail savedBudgetDetail = budgetDetailService.createBudgetDetail(detail, position,persistenceService);
-		//This fix is for Phoenix Migration.budgetDetailWorkflowService.end(detail, position);
+		detail.transition(true).end().withOwner(position);
 		return savedBudgetDetail;
 	}
 	
@@ -287,7 +287,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
 		misc.setReAppropriationDate(appropriationMisc.getReAppropriationDate());
 		misc.setRemarks(appropriationMisc.getRemarks());
 		misc.setSequenceNumber(getSequenceNumber(detail));
-		//This fix is for Phoenix Migration.misc = miscWorkflowService.start(misc, position);
+		misc = (BudgetReAppropriationMisc) misc.start().withOwner(position);
 		miscWorkflowService.transition(actionName, misc, misc.getRemarks());
 		return misc;
 	}

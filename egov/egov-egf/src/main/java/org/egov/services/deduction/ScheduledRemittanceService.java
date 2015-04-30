@@ -1101,7 +1101,7 @@ private Map<Integer, String> getDepartments() {
 		miscbillDetail.setPaidto(remitted);
 	HibernateUtil.getCurrentSession().save(miscbillDetail);
 
-	//This fix is for Phoenix Migration.paymentWorkflowService.start(ph,nextOwner );
+		ph.start().withOwner(nextOwner );
 		paymentWorkflowService.transition("uac_ao_approve|"+user.getId(), ph, "created from schedular");
 		
 		return voucherHeader;

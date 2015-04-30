@@ -464,7 +464,7 @@ materializedPath=detail.getBudget().getMaterializedPath();
     }
 
     public void transitionToEnd(BudgetDetail detail, Position position) {
-       // budgetDetailWorkflowService.end(detail, position);
+    	detail.transition(true).end().withOwner(position);
     }
 
     public List<Object[]> fetchActualsForFYDate(String fromDate,String toVoucherDate,List<String> mandatoryFields) {

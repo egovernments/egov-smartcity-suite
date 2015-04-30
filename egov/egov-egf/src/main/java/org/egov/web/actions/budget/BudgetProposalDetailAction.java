@@ -395,7 +395,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction{
 			BudgetDetail beNextYear = new BudgetDetail();
 			//beNextYear=detail.clone();  
 			if(addNewDetails){
-				//This fix is for Phoenix Migration.beNextYear.changeState("END", getPosition(), "");
+				beNextYear.transition(true).withStateValue("END").withOwner(getPosition()).withComments("");
 			}
 			beNextYear.copyFrom(detail);
 			beNextYear.setBudget(refBudget);
@@ -435,7 +435,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction{
 		
 		for (BudgetDetail detail : savedbudgetDetailList) {
 		    if(new String("forward").equals(parameters.get(ACTIONNAME)[0])){
-		    	//This fix is for Phoenix Migration.detail.changeState("Forwarded by "+getPosition().getName(), getPositionByUserId(userId) , detail.getComment());
+		    	detail.transition(true).withStateValue("Forwarded by "+getPosition().getName()).withOwner(getPositionByUserId(userId)).withComments(detail.getComment());
 			}
 		    	budgetDetailService.persist(detail);
 		}

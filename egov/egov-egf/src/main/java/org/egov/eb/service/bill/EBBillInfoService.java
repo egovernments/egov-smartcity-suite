@@ -368,9 +368,8 @@ private Integer getMonth(Date dueDate) {
 }
 
 private EBDetails startWorkflow(EBDetails ebDetails, Position owner) {
-	EBDetails ebDtls = null;/*ebDetailsWorkflowService.start(ebDetails, owner);
-	ebDetails.changeState(new State(ebDetails.getStateType(), CODE_BILLINFO_RECEIVED, owner, ""));*/
-			//This fix is for Phoenix Migration.
+	EBDetails ebDtls = (EBDetails) ebDetails.start().withOwner(owner);
+	ebDetails.transition(true).withStateValue(ebDetails.getStateType()).withNextAction(CODE_BILLINFO_RECEIVED).withOwner(owner).withComments("");
 	return ebDtls;
 }
 

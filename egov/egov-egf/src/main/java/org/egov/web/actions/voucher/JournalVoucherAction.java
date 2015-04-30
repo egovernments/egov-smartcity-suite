@@ -195,7 +195,7 @@ public class JournalVoucherAction extends BaseVoucherAction
 						 if(LOGGER.isDebugEnabled())     LOGGER.debug(" Journal Voucher Action | Bill create | voucher name = "+ voucherTypeBean.getVoucherName());
 						 voucherService.createBillForVoucherSubType(billDetailslist, subLedgerlist, voucherHeader, voucherTypeBean,new BigDecimal(totalamount));
 					 }				 
-						 //voucherWorkflowService.start(voucherHeader, getPosition(),voucherHeader.getDescription());
+						voucherHeader.start().withOwner(getPosition()).withComments(voucherHeader.getDescription());
 						 sendForApproval();           
 						// addActionMessage( voucherHeader.getVoucherNumber() + getText("voucher.created.successfully"));
 						// addActionMessage(getText("pjv.voucher.approved",new String[]{voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition())}));

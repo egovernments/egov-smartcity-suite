@@ -269,7 +269,7 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction{
 				saveNewBudgetDetailItems(true,financialYear,budgetDetail.getBudget());
 			}
 			
-			//budgetDetail.changeState("END", getPosition(),"");
+		//	budgetDetail.transition(true).withStateValue("END").withOwner(getPosition()).withComments("");
 			setAsOnDateOnSelectedBudget();
 			
 			//approve();
@@ -518,7 +518,7 @@ int i=0;
 		for (BudgetDetail detail : budgetDetailList) {
 			if(detail != null){
 				//update only if it is new budgetdetail Item else it is taken care by budget load
-				//This fix is for Phoenix Migration.detail.changeState("END", getPosition()," ");
+				detail.transition(true).withStateValue("END").withOwner(getPosition()).withComments("");
 				if(detail.getId()==null)
 				{
 				detail.setUniqueNo(detail.getFund().getId() + "-" + detail.getExecutingDepartment().getId() + "-"
