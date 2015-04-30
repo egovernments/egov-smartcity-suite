@@ -90,9 +90,7 @@ import com.opensymphony.xwork2.Action;
 @ParentPackage("egov")
 @Result(name = Action.SUCCESS, type = "ServletRedirectResult.class", location = "asset.action")
 public class AssetAction extends SearchFormAction {
-    /**
-     *
-     */
+    
     private static final long serialVersionUID = 4814346089005994541L;
     public static final String SEARCH = "search";
     public static final String SEARCH_PLUGIN = "searchplugin";
@@ -127,8 +125,8 @@ public class AssetAction extends SearchFormAction {
 
     // asset search page
     private Long parentId;
-    private Long catTypeId;
-    private Integer departmentId;
+    private String assetType;
+    private Long departmentId;
     private List<Integer> statusId;
     private List<String> assetStatus;
     // selectedstatusId
@@ -172,7 +170,7 @@ public class AssetAction extends SearchFormAction {
      * Default Constructor
      */
     public AssetAction() {
-        addRelatedEntity("assetType", AssetType.class);
+        //addRelatedEntity("assetType", AssetType.class);
         addRelatedEntity("department", Department.class);
         addRelatedEntity("assetCategory", AssetCategory.class);
         addRelatedEntity("area", Boundary.class);
@@ -197,7 +195,7 @@ public class AssetAction extends SearchFormAction {
         }
         super.prepare();
         setupDropdownDataExcluding("area", "location", "street", "street2", "ward", "zone", "status");
-
+        addDropdownData("assetTypeList", Arrays.asList(AssetType.values()));
         // Fetch HeirarchyType
         HierarchyType hType = null;
         try {
@@ -469,8 +467,8 @@ public class AssetAction extends SearchFormAction {
     public String list() throws Exception {
         setXmlconfigname(xmlconfigname);
         setCategoryname(categoryname);
-        setCatTypeId(catTypeId);
-        if (departmentId == null && locationId == null && catTypeId == null
+        setAssetType(assetType);
+        if (departmentId == null && locationId == null && assetType == null
                 && (code == null || code.trim().equalsIgnoreCase(""))
                 && (description == null || description.trim().equalsIgnoreCase(""))
                 && (statusId == null || statusId.isEmpty()) && zoneId == -1) {
@@ -490,10 +488,6 @@ public class AssetAction extends SearchFormAction {
         final Object parameterObj[] = new Object[params.size()];
         for (int element = 0; element < params.size(); element++)
             parameterObj[element] = params.get(element);
-        // System.out.println("parameterObj----->"+parameterObj);
-        // return new SearchQueryHQL(queryAndParam.get("query").toString(),
-        // "select count(*) " +
-        // queryAndParam.get("query"),(List<Object>)queryAndParam.get("param"));
         return assetService.findAllBy(queryAndParam.get("query").toString(), parameterObj);
     }
 
@@ -720,24 +714,24 @@ public class AssetAction extends SearchFormAction {
     }
 
     /**
-     * @return the catTypeId
+     * @return the assetType
      */
-    public Long getCatTypeId() {
-        return catTypeId;
+    public String getAssetType() {
+        return assetType;
     }
 
     /**
-     * @param catTypeId
-     *            the catTypeId to set
+     * @param assetType
+     *            the assetType to set
      */
-    public void setCatTypeId(final Long catTypeId) {
-        this.catTypeId = catTypeId;
+    public void setAssetType(final String assetType) {
+        this.assetType = assetType;
     }
 
     /**
      * @return the departmentId
      */
-    public Integer getDepartmentId() {
+    public Long getDepartmentId() {
         return departmentId;
     }
 
@@ -745,7 +739,7 @@ public class AssetAction extends SearchFormAction {
      * @param departmentId
      *            the departmentId to set
      */
-    public void setDepartmentId(final Integer departmentId) {
+    public void setDepartmentId(final Long departmentId) {
         this.departmentId = departmentId;
     }
 
@@ -906,10 +900,9 @@ public class AssetAction extends SearchFormAction {
             sql.append("from Asset asset where asset.code is not null ");
         else
             sql.append("from Asset asset where asset.code is not null and asset.status.code<>'CANCELLED' ");
-        if (catTypeId != null && catTypeId != -1) {
-            sql.append(" and asset.assetCategory.assetType.id = ?");
-            // System.out.println("assetcatId---> "+catTypeId);
-            parameters.add(catTypeId);
+        if (assetType != null && !assetType.equalsIgnoreCase("-1")) {
+            sql.append(" and asset.assetCategory.assetType = ?");
+            parameters.add(assetType);
         }
         if (departmentId != null && departmentId != -1) {
             sql.append(" and asset.department.id = ?");

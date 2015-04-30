@@ -41,8 +41,7 @@
 <%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 <script>
 function setupAjaxAssettype(elem){
-    asset_type_id=elem.options[elem.selectedIndex].value;
-   	populateparentcat({assetTypeId:asset_type_id});
+   	populateparentcat({assetType:elem.value});
 }
 
 window.onload = function () {
@@ -118,10 +117,10 @@ window.onload = function () {
 								<td width="21%" class="whitebox2wk">
 									<s:select headerKey=""
 										headerValue="%{getText('list.default.select')}"
-										name="catTypeId" id="assettype"
+										name="assetType" id="assettype"
 										cssClass="selectwk" list="dropdownData.assetTypeList"
-										listKey="id" listValue='name'
-										value="%{catTypeId}"
+										listKey="value" listValue='value'
+										value="%{assetType}"
 										onChange="setupAjaxAssettype(this);" />
 									<egov:ajaxdropdown id="populateParentcat"
 										fields="['Text','Value']" dropdownId='parentcat'
@@ -144,7 +143,7 @@ window.onload = function () {
 								<s:text name="asset.department" />:</td>
 								<td width="21%" class="greybox2wk">
 									<s:select id="dept" name="departmentId" cssClass="selectwk"
-									list="dropdownData.departmentList" listKey="id" listValue="deptName" 
+									list="dropdownData.departmentList" listKey="id" listValue="name" 
 									headerKey="" headerValue="%{getText('list.default.select')}"/>		
 								</td>
 								<td width="15%" class="greyboxwk" id="tdstatlabel">
@@ -273,7 +272,7 @@ window.onload = function () {
 																&nbsp;
 															</td>
 															<td width="15%"">
-																<s:property value="%{department.deptName}" />
+																<s:property value="%{department.name}" />
 																&nbsp;
 															</td>
 															<td width="15%"">

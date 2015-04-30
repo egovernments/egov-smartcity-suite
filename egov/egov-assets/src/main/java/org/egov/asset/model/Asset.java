@@ -101,7 +101,7 @@ public class Asset extends BaseModel {
     // @Required(message="asset.creationdate.null")
     private Date dateOfCreation;
 
-    private String remark;
+    private String remarks;
     private PersonalInformation preparedBy;
     private BigDecimal grossValue;
     private BigDecimal accDepreciation;
@@ -233,12 +233,12 @@ public class Asset extends BaseModel {
         this.dateOfCreation = dateOfCreation;
     }
 
-    public String getRemark() {
-        return remark;
+    public String getRemarks() {
+        return remarks;
     }
 
-    public void setRemark(final String remark) {
-        this.remark = remark;
+    public void setRemarks(final String remarks) {
+        this.remarks = remarks;
     }
 
     public PersonalInformation getPreparedBy() {

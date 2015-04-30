@@ -134,7 +134,7 @@
 			</s:if>
 			<s:if test="%{userMode=='edit'}">
 				document.getElementById('grossvalue').readOnly=true;
-				document.getElementById('accdepreciation').readOnly=true;
+				//document.getElementById('accdepreciation').readOnly=true;
 				<s:if test="%{sourcePath!=null}">
 					document.getElementById('assetcat').disabled=true;
 					document.getElementById('catTypeIdDummy').disabled=true;

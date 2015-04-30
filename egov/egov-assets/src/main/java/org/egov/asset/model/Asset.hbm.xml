@@ -58,18 +58,18 @@
             <column name="NAME" length="256" not-null="true"/>
         </property>
         <many-to-one name="assetCategory" class="org.egov.asset.model.AssetCategory" fetch="select">
-            <column name="CATEGORYID" precision="22" scale="0" not-null="true"/>
+            <column name="ASSETCATEGORY_ID" precision="22" scale="0" not-null="true"/>
         </many-to-one>
-        <many-to-one name="area" class="org.egov.lib.admbndry.BoundaryImpl" fetch="select">
+        <many-to-one name="area" class="org.egov.infra.admin.master.entity.Boundary" fetch="select">
             <column name="AREA_ID" precision="22" scale="0" />
         </many-to-one>
-        <many-to-one name="location" class="org.egov.lib.admbndry.BoundaryImpl" fetch="select">
+        <many-to-one name="location" class="org.egov.infra.admin.master.entity.Boundary" fetch="select">
             <column name="LOCATION_ID" precision="22" scale="0" />
         </many-to-one>
-        <many-to-one name="street" class="org.egov.lib.admbndry.BoundaryImpl" fetch="select">
+        <many-to-one name="street" class="org.egov.infra.admin.master.entity.Boundary" fetch="select">
             <column name="STREET_ID" precision="22" scale="0" />
         </many-to-one>
-         <many-to-one name="ward" class="org.egov.lib.admbndry.BoundaryImpl" fetch="select">
+         <many-to-one name="ward" class="org.egov.infra.admin.master.entity.Boundary" fetch="select">
             <column name="WARD_ID" precision="22" scale="0" />
         </many-to-one>
         <property name="assetDetails" type="java.lang.String">
@@ -87,8 +87,8 @@
          <property name="dateOfCreation" type="java.util.Date">
             <column name="DATE_OF_CREATION" length="7" />
         </property>
-         <property name="remark" type="string">
-			<column name="REMARK" length="1024"/>
+         <property name="remarks" type="string">
+			<column name="REMARKS" length="1024"/>
 		</property>
 		<property name="sourcePath" type="string">
             <column name="SOURCEPATH" length="150" />
@@ -96,9 +96,9 @@
 		<many-to-one name="preparedBy" class="org.egov.pims.model.PersonalInformation">
 			<column name="PREPAREDBY" />
 		</many-to-one>
-		<many-to-one name="department" class="org.egov.lib.rjbac.dept.DepartmentImpl" column="DEPARTMENTID" />
-        <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" not-null="true" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
+		<many-to-one name="department" class="org.egov.infra.admin.master.entity.Department" column="DEPARTMENTID" />
+        <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
 		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true"/>	
 		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp"/>
 		<property name="length">
@@ -115,7 +115,7 @@
    <return-scalar column="id" type="long"/>
     <![CDATA[
      SELECT id
-     FROM eg_assetcategory
+     FROM egasset_asset_category
      CONNECT BY PRIOR id=parentid START WITH id =:assetcatId 
     ]]>
   

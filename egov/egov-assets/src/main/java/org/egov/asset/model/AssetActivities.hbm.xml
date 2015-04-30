@@ -60,8 +60,8 @@
 		</property>
 		<property column="CREATED_DATE" name="createdDate" type="timestamp" not-null="true"/>		
         <property column="MODIFIED_DATE" name="modifiedDate" type="timestamp"/>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" not-null="true"/>
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY"/>
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" not-null="true"/>
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY"/>
 		<property name="description" type="string" column="DESCRIPTION"/>
     </class>
 </hibernate-mapping>

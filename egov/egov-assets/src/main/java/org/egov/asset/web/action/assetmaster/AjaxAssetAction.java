@@ -59,12 +59,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class AjaxAssetAction extends BaseFormAction {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 2501333661006168742L;
     private static final Logger LOGGER = Logger.getLogger(AjaxAssetAction.class);
-    private Long assetTypeId; // Set by Ajax call
+    private String assetType; // Set by Ajax call
     private Long areaId; // Set by Ajax call
     private Long locationId; // Set by Ajax call
     private Long categoryId; // Set by Ajax call
@@ -223,20 +220,20 @@ public class AjaxAssetAction extends BaseFormAction {
     }
 
     public String populateParentCategories() {
-        if (assetTypeId == null || assetTypeId == -1)
+        if (assetType == null || assetType.equalsIgnoreCase("-1"))
             assetCategoryList = getPersistenceService().findAllBy("from AssetCategory");
         else
-            assetCategoryList = getPersistenceService().findAllBy("from AssetCategory where assetType.id=?",
-                    assetTypeId);
+            assetCategoryList = getPersistenceService().findAllBy("from AssetCategory where assetType=?",
+                    assetType);
         return PARENT_CATEGORIES;
     }
 
     public String populateParentAssetCategoryList() {
-        if (assetTypeId == null || assetTypeId == -1)
+        if (assetType == null || assetType.equalsIgnoreCase("-1"))
             assetCategoryList = getPersistenceService().findAllBy("from AssetCategory where parent is null");
         else
             assetCategoryList = getPersistenceService().findAllBy(
-                    "from AssetCategory where parent is null and assetType.id=?", assetTypeId);
+                    "from AssetCategory where parent is null and assetType=?", assetType);
         return PARENT_CATEGORIES;
     }
 
@@ -281,8 +278,8 @@ public class AjaxAssetAction extends BaseFormAction {
         this.categoryId = categoryId;
     }
 
-    public void setAssetTypeId(final Long assetTypeId) {
-        this.assetTypeId = assetTypeId;
+    public void setAssetType(final String assetType) {
+        this.assetType = assetType;
     }
 
     public List<Boundary> getLocationList() {

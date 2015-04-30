@@ -39,6 +39,7 @@
  */
 package org.egov.asset.web.action.assetmaster;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.log4j.Logger;
@@ -53,9 +54,6 @@ import org.egov.infstr.search.SearchQuery;
 import org.egov.web.actions.SearchFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * @author manoranjan
- */
 public abstract class AssetBaseSearchAction extends SearchFormAction {
 
     private static final long serialVersionUID = 1L;
@@ -63,7 +61,7 @@ public abstract class AssetBaseSearchAction extends SearchFormAction {
     protected Asset asset = new Asset();
     protected String xmlconfigname;
     protected String categoryname;
-    protected Long catTypeId;
+    protected String assetType;
     protected Long zoneId;
 
     @Autowired
@@ -71,7 +69,7 @@ public abstract class AssetBaseSearchAction extends SearchFormAction {
     private static final Logger LOGGER = Logger.getLogger(AssetBaseSearchAction.class);
 
     public AssetBaseSearchAction() {
-        addRelatedEntity("assetType", AssetType.class);
+       // addRelatedEntity("assetType", AssetType.class);
         addRelatedEntity("department", Department.class);
         addRelatedEntity("assetCategory", AssetCategory.class);
         addRelatedEntity("area", Boundary.class);
@@ -95,6 +93,7 @@ public abstract class AssetBaseSearchAction extends SearchFormAction {
     public void prepare() {
         super.prepare();
         setupDropdownDataExcluding("area", "location", "street", "ward", "zone", "status");
+        addDropdownData("assetTypeList", Arrays.asList(AssetType.values()));
         addDropdownData("areaList", Collections.EMPTY_LIST);
         addDropdownData("locationList", Collections.EMPTY_LIST);
         addDropdownData("wardList", Collections.EMPTY_LIST);
@@ -110,7 +109,7 @@ public abstract class AssetBaseSearchAction extends SearchFormAction {
         LOGGER.debug("Loading ajax data");
         setXmlconfigname(xmlconfigname);
         setCategoryname(categoryname);
-        setCatTypeId(catTypeId);
+        setAssetType(assetType);
         if (null != zoneId && zoneId != -1)
             addDropdownData("wardList", assetCommonUtil.populateWard(zoneId));
         if (null != asset.getWard() && asset.getWard().getId() != -1) {
@@ -138,8 +137,8 @@ public abstract class AssetBaseSearchAction extends SearchFormAction {
         return categoryname;
     }
 
-    public Long getCatTypeId() {
-        return catTypeId;
+    public String getAssetType() {
+        return assetType;
     }
 
     public Long getZoneId() {
@@ -154,8 +153,8 @@ public abstract class AssetBaseSearchAction extends SearchFormAction {
         this.categoryname = categoryname;
     }
 
-    public void setCatTypeId(final Long catTypeId) {
-        this.catTypeId = catTypeId;
+    public void setAssetType(final String assetType) {
+        this.assetType = assetType;
     }
 
     public void setZoneId(final Long zoneId) {

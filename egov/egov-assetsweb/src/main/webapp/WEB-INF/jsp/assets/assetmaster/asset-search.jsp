@@ -83,7 +83,6 @@ function setupAjaxWards(elem){
 }
 function setupAjaxStreet(elem){
     ward_id=elem.options[elem.selectedIndex].value;
-    //populateassetarea({wardId:ward_id});
     populatestreetId({wardId:ward_id});
 }
 function setupAjaxStreetByLocation(elem){
@@ -121,7 +120,7 @@ function assignValues(obj){
 
 
 function validateInput(){
-	if(document.getElementById('assettype').value==-1 && document.getElementById('parentCategoryId').value==-1 && document.getElementById('subCategoryIds').value=="" &&
+	if(document.getElementById('assettype').value=="-1" && document.getElementById('parentCategoryId').value==-1 && document.getElementById('subCategoryIds').value=="" &&
 			document.getElementById('status').value=="" && document.getElementById('asset_statusId').value=="" && document.getElementById('code').value=="" && 
 			document.getElementById('description').value=="" )
 		{
@@ -228,10 +227,10 @@ function validateInput(){
 															<td width="21%" class="greybox2wk">
 																<s:select headerKey="-1"
 																	headerValue="%{getText('list.default.select')}"
-																	name="catTypeId" id="assettype"
+																	name="assetType" id="assettype"
 																	cssClass="selectwk" list="dropdownData.assetTypeList"
-																	listKey="id" listValue='name'
-																	value="%{catTypeId}"
+																	listKey="value" listValue='value'
+																	value="%{assetType}"
 																 />
 																
 															</td>
@@ -268,7 +267,7 @@ function validateInput(){
 															<td width="19%" class="greybox2wk">
 																<s:select id="status" name="departmentId"
 																	cssClass="selectwk" list="dropdownData.departmentList"
-																	listKey="id" listValue="deptName" headerKey=""
+																	listKey="id" listValue="name" headerKey=""
 																	headerValue="%{getText('list.default.select')}" />
 															</td>
 															<td width="10%" class="greyboxwk">
@@ -431,7 +430,7 @@ function validateInput(){
 																			<display:column headerClass="pagetableth"
 																				class="pagetabletd" title="Department"
 																				style="width:15%;text-align:left"
-																				property="department.deptName" />
+																				property="department.name" />
 
 																			<display:column headerClass="pagetableth"
 																				class="pagetabletd" title="Ward"

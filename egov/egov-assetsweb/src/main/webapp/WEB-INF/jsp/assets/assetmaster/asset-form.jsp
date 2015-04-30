@@ -87,8 +87,8 @@ if(code.match(pattern)){
 if(document.getElementById("status").value!=-1){
        var status=document.getElementById('status').options[document.getElementById('status').selectedIndex].text;
 	   if(status=='Cancelled') {
-		var remark=document.getElementById("remark").value;
-		if(trim(remark)==""){
+		var remarks=document.getElementById("remarks").value;
+		if(trim(remarks)==""){
 			dom.get("asset_error").style.display='';
     		document.getElementById("asset_error").innerHTML='<s:text name="asset.remarks.null" />';
     		return false;
@@ -109,7 +109,7 @@ if(document.getElementById("department").value=='-1'){
   return false;
 }
  
-if(document.getElementById("catTypeIdDummy").value==''){
+if(document.getElementById("catTypeIdDummy").value=='-1'){
   dom.get("asset_error").style.display='';
   document.getElementById("asset_error").innerHTML='Please select asset category type'
   document.getElementById("catTypeIdDummy").focus();
@@ -179,8 +179,8 @@ else{
 }
 
 function validateLocationDetails(){
-    if($('catTypeIdDummy').options[$('catTypeIdDummy').selectedIndex].text == 'ImmovableAsset' || 
-    		$('catTypeIdDummy').options[$('catTypeIdDummy').selectedIndex].text == 'Land'){
+    if($('catTypeIdDummy').options[$('catTypeIdDummy').selectedIndex].text == '<s:property value="@org.egov.asset.model.AssetType@ImmovableAsset" />' || 
+    		$('catTypeIdDummy').options[$('catTypeIdDummy').selectedIndex].text == '<s:property value="@org.egov.asset.model.AssetType@Land" />'){
 		if(document.getElementById("zoneId").value=='-1'){
 		  dom.get("asset_error").style.display='';
 		  document.getElementById("asset_error").innerHTML='Please select Zone'
@@ -233,14 +233,14 @@ function showValueSummary()
 {	
 	if($('status').options[$('status').selectedIndex].text == 'Capitalized'){
 		$('grossvalue').value='0';
-		$('accdepreciation').value='0';
+		//$('accdepreciation').value='0';
 		//$('writtendownvalue').value='0';
 		$('grossval').show();
 		$('accdep').show();
 		//$('wdv').hide();
 	}else{
 		$('grossvalue').value='0';
-		$('accdepreciation').value='0';
+		//$('accdepreciation').value='0';
 		//$('writtendownvalue').value='0';
 		$('grossval').hide();
 		$('accdep').hide();
@@ -268,8 +268,7 @@ myFailureHandler= function(){
 
 function setupAjaxAssettype(elem){
     $('assetdetails').value='';
-    asset_type_id=elem.options[elem.selectedIndex].value;
-    populateassetcat({assetTypeId:asset_type_id});
+    populateassetcat({assetType:elem.value});
 }
 function validateNumbers(elem){
     if(elem.value!='' && (isNaN(elem.value) || getNumber(elem.value)<0)){
@@ -347,7 +346,7 @@ function openVehicleMaster() {
 						<s:select headerKey="-1" disabled="%{sDisabled}"
 							headerValue="%{getText('list.default.select')}" name="department"
 							id="department" cssClass="selectwk"
-							list="dropdownData.departmentList" listKey="id" listValue='deptName'
+							list="dropdownData.departmentList" listKey="id" listValue='name'
 							value="%{department.id}" />
 					</td>
 				</tr>
@@ -357,12 +356,12 @@ function openVehicleMaster() {
 						<s:text name="asset.cat.type" />:
 					</td>
 					<td width="21%" class="greybox2wk" colspan="3">
-						<s:select headerKey="" disabled="%{sDisabled}"
+						<s:select headerKey="-1" disabled="%{sDisabled}"
 							headerValue="%{getText('list.default.select')}"
-							id="catTypeIdDummy"
+							id="catTypeIdDummy" name="assetType"
 							cssClass="selectwk" list="dropdownData.assetTypeList"
-							listKey="id" listValue='name'
-							value="%{assetCategory.assetType.id}"
+							listKey="value" listValue='value'
+							value="%{assetCategory.assetType}"
 							onChange="setupAjaxAssettype(this);" />
 						<egov:ajaxdropdown id="populateAssetcat"
 							fields="['Text','Value']" dropdownId='assetcat'
@@ -587,7 +586,7 @@ function openVehicleMaster() {
 						disabled="%{fDisabled}"	cssClass="selectamountwk" maxlength="30" />
 					</td>
 				</tr>
-				<tr id="accdep">
+				<!-- <tr id="accdep">
 					<td width="11%" class="whiteboxwk">
 						<s:text	name="asset.accumulative.dep" />
 					</td>
@@ -595,14 +594,14 @@ function openVehicleMaster() {
 						<s:textfield name="accDepreciation" value="%{accDepreciation}" id="accdepreciation" 
 						disabled="%{fDisabled}"	cssClass="selectamountwk" maxlength="30" />
 					</td>
-				</tr>
+				</tr> -->
 				<tr>
 					<td width="11%" class="whiteboxwk">
-						<s:text	name="asset.remark" />
+						<s:text	name="asset.remarks" />
 					</td>
 					<td width="21%" class="whitebox2wk" colspan="3">
-						<s:textarea  name="remark" value="%{remark}" rows="5" cols="40"
-							id="remark" disabled="%{fDisabled}" cssClass="selectwk"/>
+						<s:textarea  name="remarks" value="%{remarks}" rows="5" cols="40"
+							id="remarks" disabled="%{fDisabled}" cssClass="selectwk"/>
 					</td>
 				</tr>
 				<tr>
