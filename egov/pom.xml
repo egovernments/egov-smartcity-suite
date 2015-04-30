@@ -45,8 +45,8 @@
 
     <repositories>
         <repository>
-            <id>arti.egovernments.org-snapshots</id>
-            <url>http://arti.egovernments.org/nexus/content/repositories/snapshots/</url>
+            <id>repo.egovernments.org-snapshots</id>
+            <url>http://repo.egovernments.org/nexus/content/repositories/snapshots/</url>
             <snapshots>
                 <updatePolicy>always</updatePolicy>
             </snapshots>
