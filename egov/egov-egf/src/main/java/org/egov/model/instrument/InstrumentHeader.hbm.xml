@@ -61,8 +61,8 @@
         <many-to-one name="bankAccountId" class="org.egov.commons.Bankaccount" fetch="select">
             <column name="BANKACCOUNTID" precision="22" scale="0" />
         </many-to-one>
-        <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User" column="CREATEDBY"/>
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" column="LASTMODIFIEDBY"/>
+        <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"/>
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY"/>
        
 	 <many-to-one name="statusId" class="org.egov.commons.EgwStatus" fetch="select">
             <column name="ID_STATUS" precision="22" scale="0" not-null="true" />

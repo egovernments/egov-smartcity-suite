@@ -57,8 +57,8 @@
 	  <many-to-one name="instrumentHeader" class="org.egov.model.instrument.InstrumentHeader" column="INSTRUMENTHEADERID" />
       <property name="amount" column="AMOUNT" type="big_decimal"/>
       <property name="description" column="DESCRIPTION" type="string"/>
-      <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User" column="CREATEDBY"/>
-      <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" column="LASTMODIFIEDBY"/>
+      <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"/>
+      <many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY"/>
       <property name="createdDate" column="CREATEDDATE" type="timestamp"/>
       <property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp"/>
 	</class>

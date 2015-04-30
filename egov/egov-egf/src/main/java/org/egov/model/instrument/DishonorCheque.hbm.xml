@@ -100,13 +100,13 @@
             <column name="STATEID"/>
         </many-to-one>
         
-        <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User" fetch="select">
+        <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
             <column name="CREATEDBY"   />
         </many-to-one>	
         <property name="createdDate" type="date">
             <column name="CREATEDDATE" length="7" not-null="true" />
         </property>
-         <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" fetch="select">
+         <many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
             <column name="MODIFIEDBY"  />
         </many-to-one>	
         <property name="modifiedDate" type="date">

@@ -62,8 +62,8 @@
       <property name="patternType" column="type" type="string"/>
       <property name="docId" column="docId" type="string"/>
       <property name="agreementDate" column="agreementDate" type="date"/>
-      <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User" column="CREATEDBY"/>
-      <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" column="LASTMODIFIEDBY"/>
+      <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"/>
+      <many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY"/>
       <property name="createdDate" column="CREATEDDATE" type="timestamp"/>
       <property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp"/>
 	</class>

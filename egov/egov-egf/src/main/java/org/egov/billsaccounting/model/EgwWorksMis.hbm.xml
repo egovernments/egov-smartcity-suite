@@ -107,7 +107,7 @@
         <property name="liabilityuntil" type="date">
             <column name="LIABILITYUNTIL" length="7" />
         </property>
-       <many-to-one name="esimatepreparedby" class="org.egov.lib.rjbac.user.User" >
+       <many-to-one name="esimatepreparedby" class="org.egov.infra.admin.master.entity.User" >
             <column name="ESIMATEPREPAREDBY" precision="22" scale="0"  />
         </many-to-one>
         <property name="wardid" type="big_decimal">

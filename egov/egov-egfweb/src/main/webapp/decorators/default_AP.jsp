@@ -46,7 +46,7 @@
 org.egov.infstr.client.administration.rjbac.user.UserForm,
 org.egov.infstr.utils.HibernateUtil,
 org.egov.infstr.utils.ServiceLocator,
-org.egov.lib.rjbac.user.User,
+org.egov.infra.admin.master.entity.User,
 org.egov.lib.rjbac.user.ejb.api.UserManager,
 org.egov.lib.rjbac.user.ejb.api.UserManagerHome;"
 %>

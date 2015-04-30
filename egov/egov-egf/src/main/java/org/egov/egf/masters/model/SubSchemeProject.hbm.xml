@@ -52,8 +52,8 @@
 	<!-- this refers to id of egw_projeccode   Since it is from works module we are nt referring directly -->
       <property name="projectCode" column="projectCodeid" type="long"/>
 	  <many-to-one name="subScheme" class="org.egov.commons.SubScheme" column="subschemeid" />
-      <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User" column="CREATEDBY"/>
-      <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" column="LASTMODIFIEDBY"/>
+      <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"/>
+      <many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY"/>
       <property name="createdDate" column="CREATEDDATE" type="timestamp"/>
       <property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp"/>  
 	</class>

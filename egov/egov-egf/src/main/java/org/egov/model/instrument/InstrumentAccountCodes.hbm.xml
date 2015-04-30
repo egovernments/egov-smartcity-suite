@@ -55,8 +55,8 @@
 			</generator>
 		</id>
 		<property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp"/>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User" column="CREATEDBY"/>
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" column="LASTMODIFIEDBY"/>
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"/>
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY"/>
         <property name="createdDate" type="java.util.Date">
             <column name="CREATEDDATE"  not-null="true" />
         </property>

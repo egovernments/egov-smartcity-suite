@@ -49,10 +49,10 @@
 				<param name="sequence">SEQ_EGF_REAPPROPRIATION</param>
 			</generator>
 		</id>
-		<property column="MODIFIEDDATE" name="modifiedDate" type="timestamp"/>
+		<property column="lastModifiedDate" name="modifiedDate" type="timestamp"/>
 		<property column="CREATEDDATE" name="createdDate"/>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User" column="CREATEDBY"/>
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" column="MODIFIEDBY"/>
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"/>
+		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY"/>
 		
 		<property name="additionAmount">
 			<column name="ADDITION_AMOUNT" />

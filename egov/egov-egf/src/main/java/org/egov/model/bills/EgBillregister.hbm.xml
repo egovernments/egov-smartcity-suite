@@ -49,7 +49,7 @@
             <param name="sequence">seq_eg_billregister</param>
             </generator>
         </id>
-  		<property name="modifiedDate" column="LASTMODIFIEDDATE"/>
+  		<property name="lastModifiedDate" column="LASTMODIFIEDDATE"/>
         <property name="billnumber" type="string">
             <column name="BILLNUMBER" length="50" not-null="true" unique="true" />
         </property>
@@ -80,9 +80,9 @@
         <property name="advanceadjusted" type="big_decimal">
             <column name="ADVANCEADJUSTED" precision="15" />
         </property>
-        <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User" column="CREATEDBY" not-null="true"/>
+        <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" not-null="true"/>
         <property name="createdDate" column="CREATEDDATE"/>
-        <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" column="LASTMODIFIEDBY"/>
+        <many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY"/>
         <property name="zone" type="string">
             <column name="ZONE" length="20" />
         </property>

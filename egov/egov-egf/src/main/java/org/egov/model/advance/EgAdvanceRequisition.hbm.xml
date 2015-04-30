@@ -57,10 +57,10 @@
 		<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all" fetch="select">
 		    <column name="STATE_ID"/>
 		</many-to-one>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User" column="CREATEDBY" not-null="true"/>
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" not-null="true"/>
         <property name="createdDate" column="CREATEDDATE"/>
         
-        <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" column="LASTMODIFIEDBY"/>
+        <many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY"/>
         
         <property name="advanceRequisitionNumber" type="string">
             <column name="ADVANCEREQUISITIONNUMBER" length="100" not-null="true" unique="true" />
@@ -78,7 +78,7 @@
             <column name="ARFTYPE" length="50" not-null="true" />
         </property>
         
-        <property name="modifiedDate" column="LASTMODIFIEDDATE"/>
+        <property name="lastModifiedDate" column="LASTMODIFIEDDATE"/>
          
         <one-to-one name="egAdvanceReqMises"  class="org.egov.model.advance.EgAdvanceRequisitionMis" 
 		property-ref="egAdvanceRequisition" 	cascade="all"  	/>  

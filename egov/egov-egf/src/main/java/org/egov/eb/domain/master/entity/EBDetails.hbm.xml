@@ -89,17 +89,17 @@
 		<many-to-one name="state" class="org.egov.infstr.models.State"
 		   column="STATEID" cascade="save-update"/>
 
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User">
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User">
 			<column name="CREATEDBY"></column>
 		</many-to-one>
 
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User">
+		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User">
 			<column name="MODIFIEDBY"></column>
 		</many-to-one>
 
-        <property column="CREATEDDATE" name="createdDate" type="timestamp" />
+        <property column="CREATEDDATE" name="createdDate" type="date" />
         
-		<property column="MODIFIEDDATE" name="modifiedDate" type="timestamp" />
+		<property column="MODIFIEDDATE" name="lastModifiedDate" type="date" />
 		
 		<many-to-one name="ward" class="org.egov.infra.admin.master.entity.Boundary"
 			column="WARDID" fetch="select" />

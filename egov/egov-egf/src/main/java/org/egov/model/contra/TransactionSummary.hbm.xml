@@ -85,7 +85,7 @@
 		<property name="narration" type="string">
 			<column name="NARRATION" length="300" />
 		</property>
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" column="LASTMODIFIEDBY"/>
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY"/>
 		<property name="modifiedDate" column="LASTMODIFIEDDATE"/>
 		<many-to-one name="departmentid" class="org.egov.infra.admin.master.entity.Department">
 			<column name="DEPARTMENTID"/>

@@ -78,9 +78,9 @@
 			fetch="select" column="PARENTID" />
 		<property name="extend" type="java.lang.Boolean" column="EXTEND"
 			length="1" />
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User"
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User"
 			column="CREATEDBY" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User"
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User"
 			column="LASTMODIFIEDBY" />
 		<property name="createdDate" column="CREATEDDATE" type="timestamp" />
 		<property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp" />

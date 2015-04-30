@@ -49,7 +49,6 @@ import org.egov.infra.workflow.entity.StateAware;
 
 public class EgAdvanceRequisition extends StateAware implements java.io.Serializable{ 
 
-//private Long id;
 private String advanceRequisitionNumber;
 private EgwStatus status;
 private Date advanceRequisitionDate;
@@ -67,14 +66,6 @@ public String getStateDetails() {
 	return this.getAdvanceRequisitionNumber();
 }
 
-/*public Long getId() {
-	return id;
-}
-
-public void setId(Long id) {
-	this.id = id;
-}
-*/
 public String getAdvanceRequisitionNumber() {
 	return advanceRequisitionNumber;
 }

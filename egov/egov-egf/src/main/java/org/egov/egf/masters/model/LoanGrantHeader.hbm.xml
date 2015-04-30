@@ -60,8 +60,8 @@
       <property name="councilResDate" column="COUNCILRESDATE" type="date"/>
       <property name="govtOrderDate" column="GOVTORDERDATE" type="date"/>
       <property name="amendmentDate" column="AMENDMENTDATE" type="date"/>
-      <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User" column="CREATEDBY"/>
-      <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User" column="LASTMODIFIEDBY"/>
+      <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"/>
+      <many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY"/>
       <property name="createdDate" column="CREATEDDATE" type="timestamp"/>
       <property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp"/>
       <bag name="detailList" cascade="save-update,delete,delete-orphan" inverse="true">

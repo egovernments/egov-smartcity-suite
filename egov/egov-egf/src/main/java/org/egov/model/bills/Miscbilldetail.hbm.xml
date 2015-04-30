@@ -73,6 +73,6 @@
         <property name="paidto" type="string">
             <column name="PAIDTO" length="25" not-null="true" />
         </property>
-        <many-to-one name="paidby" class="org.egov.lib.rjbac.user.User" column="PAIDBYID"/>
+        <many-to-one name="paidby" class="org.egov.infra.admin.master.entity.User" column="PAIDBYID"/>
     </class>
 </hibernate-mapping>

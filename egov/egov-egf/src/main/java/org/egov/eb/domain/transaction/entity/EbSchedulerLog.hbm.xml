@@ -74,11 +74,11 @@
         <property name="endTime" type="timestamp">
             <column name="ENDTIME" />
         </property>
-        <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.User">
+        <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User">
 	      <column name="CREATEDBY"></column>
         </many-to-one>
 
-	    <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.User">
+	    <many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User">
 		  <column name="MODIFIEDBY"></column>
 	    </many-to-one>
 
