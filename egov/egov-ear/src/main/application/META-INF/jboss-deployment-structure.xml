@@ -14,6 +14,7 @@
             <module name="org.jaxen" export="TRUE"/>
             <module name="org.jdom" export="TRUE"/>
             <module name="org.hibernate.validator" export="TRUE"/>
+            <module name="org.hibernate.envers" export="TRUE"/>
             <module name="org.hibernate.search.orm" slot="5.0.0" export="TRUE"/>
             <module name="org.postgres" export="TRUE"/>
             <module name="org.egov.settings" export="TRUE" optional="TRUE"/>
