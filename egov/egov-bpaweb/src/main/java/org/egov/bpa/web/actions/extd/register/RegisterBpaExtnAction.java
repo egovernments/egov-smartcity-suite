@@ -60,7 +60,7 @@ import java.util.Set;
 
 import net.sf.jasperreports.engine.JRException;
 
-import org.apache.jackrabbit.core.security.user.UserImpl;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;

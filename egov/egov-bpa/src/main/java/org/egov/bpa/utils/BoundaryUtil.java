@@ -141,7 +141,7 @@ public class BoundaryUtil {
 
 	/*public static String getRolesForLoggedInUser()
 	{
-	 UserImpl user = (UserImpl) userDao.getUserByID(Integer.parseInt(EGOVThreadLocals.getUserId()));
+	 User user = (User) userDao.getUserByID(Integer.parseInt(EGOVThreadLocals.getUserId()));
 		if (user != null) {
 			for (UserRole role : user.getUserRoles()) {
 				userRole = ((role!=null && role.getRole()!=null) ?role.getRole().getRoleName():"");

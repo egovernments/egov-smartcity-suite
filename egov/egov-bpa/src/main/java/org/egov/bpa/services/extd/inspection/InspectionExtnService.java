@@ -140,7 +140,7 @@ public class InspectionExtnService extends PersistenceService<InspectionExtn, Lo
 
 	public User getUserbyId(Long userId) {
 		
-		return (User)persistenceService.find("from UserImpl where id=?",userId);
+		return (User)persistenceService.find("from User where id=?",userId);
 	}
 	
 

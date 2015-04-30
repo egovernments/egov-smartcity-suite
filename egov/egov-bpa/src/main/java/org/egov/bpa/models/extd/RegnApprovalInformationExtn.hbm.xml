@@ -16,7 +16,7 @@
         <many-to-one name="registration" class="org.egov.bpa.models.extd.RegistrationExtn" fetch="select">
             <column name="REGISTRATIONID" precision="22" scale="0" not-null="true" />
         </many-to-one>
-         <many-to-one name="createdBy" class="org.egov.infstr.models.State" fetch="select">
+         <many-to-one name="createdBy" class="org.egov.infra.workflow.entity.State" fetch="select">
             <column name="CREATEDBY" precision="22" scale="0" not-null="true" />
         </many-to-one>
         

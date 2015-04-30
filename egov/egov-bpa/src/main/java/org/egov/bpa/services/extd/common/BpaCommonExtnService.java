@@ -2078,7 +2078,7 @@ return siteInspectionDatesList;
 	public Position getWfStatesByTypeandValue()
 	{
 		Position pos=null;
-		List<org.egov.infra.workflow.entity.State> wfstate=persistenceService.findAllBy("from org.egov.infstr.models.State where type=? and value=? and nextAction=? order by id desc",BpaConstants.NEWREGISTRATION_WFSTATETYPE,BpaConstants.LECREATED_WFSTATETYPE,BpaConstants.LPRAISED_WFNEXTACTION);
+		List<org.egov.infra.workflow.entity.State> wfstate=persistenceService.findAllBy("from org.egov.infra.workflow.entity.State where type=? and value=? and nextAction=? order by id desc",BpaConstants.NEWREGISTRATION_WFSTATETYPE,BpaConstants.LECREATED_WFSTATETYPE,BpaConstants.LPRAISED_WFNEXTACTION);
 		if(wfstate!=null)
 			pos=wfstate.get(0).getOwnerPosition();//pheonix TODO:changing as EGI Changed into GetPrevious.getOwner to GetOnewPosition
 		return pos;
@@ -2089,7 +2089,7 @@ return siteInspectionDatesList;
 	public Position getWfStatesByTypeandValueForApproveRegistration()
 	{
 		Position pos=null;
-		List<org.egov.infra.workflow.entity.State> wfstate=persistenceService.findAllBy("from org.egov.infstr.models.State where type=? and value=? and nextAction=? order by id desc",BpaConstants.NEWREGISTRATION_WFSTATETYPE,BpaConstants.LECREATED_WFSTATETYPE,BpaConstants.LPRAISED_WFNEXTACTION);
+		List<org.egov.infra.workflow.entity.State> wfstate=persistenceService.findAllBy("from org.egov.infra.workflow.entity.State where type=? and value=? and nextAction=? order by id desc",BpaConstants.NEWREGISTRATION_WFSTATETYPE,BpaConstants.LECREATED_WFSTATETYPE,BpaConstants.LPRAISED_WFNEXTACTION);
 		if(wfstate!=null)
 			pos=wfstate.get(0).getOwnerPosition();//.getPrevious().getOwner();
 		//Pheonix TODO: in state table removed some column for Previous and Next so commenting

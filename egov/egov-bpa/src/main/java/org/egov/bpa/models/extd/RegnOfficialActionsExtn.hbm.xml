@@ -42,11 +42,11 @@
         <property name="createdDate" column="CREATEDDATE" type="timestamp" />
 		<property column="MODIFIEDDATE" name="modifiedDate" type="timestamp" />
         
-         <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" fetch="select">
+         <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
             <column name="CREATEDBY" precision="22" scale="0" not-null="true" />
         </many-to-one>
         
-        <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" fetch="select">
+        <many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
             <column name="MODIFIEDBY" precision="22" scale="0" />
         </many-to-one>
     </class>

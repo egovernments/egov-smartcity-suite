@@ -54,12 +54,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.jackrabbit.core.security.user.UserImpl;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.dispatcher.StreamResult;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.ApplicantStatus;
 import org.egov.bpa.models.extd.Docket;
@@ -196,10 +195,10 @@ public class InspectionExtnAction extends BaseFormAction{
 	public InspectionExtnAction()
 	{
 		addRelatedEntity("registration", RegistrationExtn.class);
-		addRelatedEntity("inspectedBy", UserImpl.class);
+		addRelatedEntity("inspectedBy", User.class);
 		addRelatedEntity("inspectionDetails", InspectionDetailsExtn.class);
-		addRelatedEntity("modifiedBy", UserImpl.class);
-		addRelatedEntity("createdBy", UserImpl.class);
+		addRelatedEntity("modifiedBy", User.class);
+		addRelatedEntity("createdBy", User.class);
 		addRelatedEntity("surroundedByNorth", SurroundedBldgDtlsExtn.class);
 		addRelatedEntity("surroundedBySouth", SurroundedBldgDtlsExtn.class);
 		addRelatedEntity("surroundedByEast", SurroundedBldgDtlsExtn.class);
@@ -209,8 +208,8 @@ public class InspectionExtnAction extends BaseFormAction{
 		addRelatedEntity("buildingType",LandBuildingTypesExtn.class);
 		addRelatedEntity("bldngStormWaterDrain",StormWaterDrainExtn.class);
 		addRelatedEntity("docket",Docket.class);
-		addRelatedEntity("docket.createdBy",UserImpl.class);
-		addRelatedEntity("docket.modifiedBy",UserImpl.class);
+		addRelatedEntity("docket.createdBy",User.class);
+		addRelatedEntity("docket.modifiedBy",User.class);
 		addRelatedEntity("checkListDetails",CheckListDetailsExtn.class);
 		
 		

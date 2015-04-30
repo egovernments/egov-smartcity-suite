@@ -60,7 +60,6 @@ import java.util.Set;
 import net.sf.jasperreports.engine.JRException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.jackrabbit.core.security.user.UserImpl;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -758,7 +757,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 				{	
 					String fileLocationName=bpaCommonExtnService.getAppconfigValueResult(BpaConstants.BPAMODULENAME,BpaConstants.BPA_FILE_UPLOAD_LOCATION,null);
 					File mainDir=new File(fileLocationName);
-					 UserImpl usr = (UserImpl) getPersistenceService().getSession().load(UserImpl.class, (EGOVThreadLocals.getUserId()));
+					 User usr = (User) getPersistenceService().getSession().load(User.class, (EGOVThreadLocals.getUserId()));
 						
 					for(RegistrationChecklistExtn checklistObj:registration.getRegistrationChecklistSet()){
 						
