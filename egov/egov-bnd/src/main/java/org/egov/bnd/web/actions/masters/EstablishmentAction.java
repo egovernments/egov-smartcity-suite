@@ -42,7 +42,10 @@ package org.egov.bnd.web.actions.masters;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.bnd.model.Establishment;
 import org.egov.bnd.model.EstablishmentType;
 import org.egov.bnd.model.RegistrationUnit;
@@ -54,8 +57,7 @@ import org.egov.infra.admin.master.entity.Address;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
-@ParentPackage("egov")
-@SuppressWarnings("serial")
+
 @Validations(requiredFields = { @RequiredFieldValidator(fieldName = "name", message = "", key = BndConstants.REQUIRED),
         @RequiredFieldValidator(fieldName = "type", message = "", key = BndConstants.REQUIRED),
         @RequiredFieldValidator(fieldName = "regUnit", message = "", key = BndConstants.REQUIRED),
@@ -67,11 +69,10 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @RequiredFieldValidator(fieldName = "address.pinCode", message = "", key = BndConstants.REQUIRED) }
 
 )
+@Namespace("/masters")
+@ParentPackage("egov")
 public class EstablishmentAction extends BndCommonAction {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -4986288277010359718L;
     Establishment establishment = new Establishment();
     private EstablishmentService establishmentService;
@@ -114,6 +115,7 @@ public class EstablishmentAction extends BndCommonAction {
     }
 
     @Override
+    @Action(value = "/establishment-create", results = { @Result(name = NEW) })
     public String create() {
         buildEstablishment();
         establishmentService.save(establishment);

@@ -39,7 +39,10 @@
  ******************************************************************************/
 package org.egov.bnd.web.actions.masters;
 
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bnd.model.AdoptionInstitute;
 import org.egov.bnd.services.common.BndCommonService;
@@ -50,16 +53,13 @@ import org.egov.bnd.web.actions.common.BndCommonAction;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
-@ParentPackage("egov")
-@SuppressWarnings("serial")
 @Validations(requiredFields = {
         @RequiredFieldValidator(fieldName = "institutionCode", message = "", key = BndConstants.REQUIRED),
         @RequiredFieldValidator(fieldName = "institutionName", message = "", key = BndConstants.REQUIRED) })
+@Namespace("/masters")
+@ParentPackage("egov")
 public class AdoptionInstituteAction extends BndCommonAction {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 9100077427657947811L;
     AdoptionInstitute adoptionInstitute = new AdoptionInstitute();
     private AdoptionInstituteService adoptionInstituteService;
@@ -76,7 +76,6 @@ public class AdoptionInstituteAction extends BndCommonAction {
     }
 
     public AdoptionInstituteAction() {
-        // TODO Auto-generated constructor stub
     }
 
     public AdoptionInstituteService getAdoptionInstituteService() {
@@ -98,24 +97,24 @@ public class AdoptionInstituteAction extends BndCommonAction {
 
     @Override
     public void prepare() {
-        // TODO Auto-generated method stub
         super.prepare();
 
     }
 
     @Override
     public AdoptionInstitute getModel() {
-        // TODO Auto-generated method stub
         return adoptionInstitute;
     }
 
     @Override
     @SkipValidation
+    @Action(value = "/adoptionInstitute-newform", results = { @Result(name = NEW) })
     public String newform() {
         return NEW;
     }
 
     @Override
+    @Action(value = "/adoptionInstitute-create", results = { @Result(name = NEW) })
     public String create() {
         adoptionInstituteService.save(adoptionInstitute);
         mode = VIEW;

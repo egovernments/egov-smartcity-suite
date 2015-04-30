@@ -41,7 +41,10 @@ package org.egov.bnd.web.actions.masters;
 
 import java.util.Collections;
 
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.bnd.model.EstablishmentType;
 import org.egov.bnd.model.RegistrationUnit;
 import org.egov.bnd.services.masters.RegistrationUnitService;
@@ -51,11 +54,12 @@ import org.egov.infra.admin.master.entity.Address;
 /*import org.egov.mdm.masters.administration.District;
  import org.egov.mdm.masters.administration.State;*/
 
+
+
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
-@ParentPackage("egov")
-@SuppressWarnings("serial")
+
 @Validations(requiredFields = {
         @RequiredFieldValidator(fieldName = "regUnitDesc", message = "", key = BndConstants.REQUIRED),
         @RequiredFieldValidator(fieldName = "regUnitConst", message = "", key = BndConstants.REQUIRED),
@@ -67,11 +71,10 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @RequiredFieldValidator(fieldName = "regUnitAddress.pinCode", message = "", key = BndConstants.REQUIRED) }
 
 )
+@Namespace("/masters")
+@ParentPackage("egov")
 public class RegistrationUnitAction extends BndCommonAction {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -1258956866879658003L;
     private final RegistrationUnit registrationUnit = new RegistrationUnit();
     private RegistrationUnitService registrationUnitService;
@@ -123,6 +126,7 @@ public class RegistrationUnitAction extends BndCommonAction {
     }
 
     @Override
+    @Action(value = "/registrationUnit-create", results = { @Result(name = NEW) })
     public String create() {
         buildRegistrationUnit();
         registrationUnitService.save(registrationUnit);

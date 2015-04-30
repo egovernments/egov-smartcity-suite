@@ -44,7 +44,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bnd.model.Establishment;
 import org.egov.bnd.model.Registrar;
@@ -67,12 +70,11 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @RequiredFieldValidator(fieldName = "role", message = "", key = BndConstants.REQUIRED),
         @RequiredFieldValidator(fieldName = "regUnitId", message = "", key = BndConstants.REQUIRED) }
 
-)
+        )
+@Namespace("/masters")
 public class RegistrarAction extends BndCommonAction {
 
-    /**
-     *
-     */
+    private static final String STRUTS_RESULT_EDIT = "edit";
     private static final long serialVersionUID = -3371819952197320353L;
     Registrar registrar = new Registrar();
     private BndCommonService bndCommonService;
@@ -105,7 +107,6 @@ public class RegistrarAction extends BndCommonAction {
 
     @Override
     public StateAware getModel() {
-        // TODO Auto-generated method stub
         return registrar;
     }
 
@@ -144,6 +145,7 @@ public class RegistrarAction extends BndCommonAction {
     }
 
     @Override
+    @Action(value = "/registrar-create", results = { @Result(name = NEW) })
     public String create() {
         buildRegistrar();
         registrarService.save(registrar);
@@ -178,11 +180,13 @@ public class RegistrarAction extends BndCommonAction {
 
     @Override
     @SkipValidation
+    @Action(value = "/registrar-beforeEdit", results = { @Result(name = STRUTS_RESULT_EDIT) })
     public String beforeEdit() {
-        return "edit";
+        return STRUTS_RESULT_EDIT;
     }
 
     @Override
+    @Action(value = "/registrar-edit", results = { @Result(name = STRUTS_RESULT_EDIT) })
     public String edit() {
 
         buildEditRegistrar();
@@ -200,6 +204,6 @@ public class RegistrarAction extends BndCommonAction {
         registrarService.save(existingRegistrar);
 
         mode = VIEW;
-        return "edit";
+        return STRUTS_RESULT_EDIT;
     }
 }
