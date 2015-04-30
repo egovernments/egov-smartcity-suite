@@ -49,6 +49,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.config.AppConfig;
 import org.egov.infstr.config.AppConfigValues;
@@ -78,9 +79,10 @@ public class BulkBillGenerationAction extends BaseFormAction {
 		return null;
 	}
 
+	@Action(value="/bills/bulkBillGeneration-newForm")
 	public String newForm() {
 		wardList = (List<Boundary>) getPersistenceService().findAllBy(
-				"from BoundaryImpl BI where BI.boundaryType.name=? and BI.boundaryType.heirarchyType.name=? "
+				"from Boundary BI where BI.boundaryType.name=? and BI.boundaryType.hierarchyType.name=? "
 						+ "and BI.isHistory='N' order by BI.boundaryNum", WARD_BNDRY_TYPE, REVENUE_HIERARCHY_TYPE);
 		return "new";
 	}
@@ -96,6 +98,7 @@ public class BulkBillGenerationAction extends BaseFormAction {
 		LOGGER.debug("Exiting from prepare");
 	}
 
+	@Action(value="/bills/bulkBillGeneration-generateBills")
 	public String generateBills() {
 		LOGGER.debug("generateBills method started for ward number " + wardId);
 		AppConfigValues appConfigValue = null;

@@ -92,11 +92,11 @@
 			
 		<property name="createTimeStamp" update="false" column="CREATETIMESTAMP"/>
 		<many-to-one name="floor" class="org.egov.ptis.domain.entity.property.FloorImpl" column="ID_FLOORDET" cascade="all" />
-		
+		<!-- 
 		<set name="attributeValues" cascade="all-delete-orphan" table="EG_ATTRIBUTEVALUES" >
 		<key column="DOMAINTXNID"/>
 		<one-to-many class="org.egov.infstr.flexfields.model.EgAttributevalues" />
-		</set>
+		</set> -->
  </class>
 
 </hibernate-mapping>		

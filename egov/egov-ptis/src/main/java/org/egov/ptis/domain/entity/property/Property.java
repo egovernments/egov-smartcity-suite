@@ -46,7 +46,6 @@
 package org.egov.ptis.domain.entity.property;
 
 import java.math.BigDecimal;
-import java.security.acl.Owner;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -56,6 +55,7 @@ import org.egov.exceptions.InvalidPropertyException;
 import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.citizen.entity.Citizen;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.joda.time.DateTime;
 
@@ -82,9 +82,9 @@ public interface Property {
 
 	public void setPropertyOwnerSet(Set<PropertyOwner> propertyOwnerSet);
 
-	public Set<Owner> getPropertyTenantSet();
+	public Set<Citizen> getPropertyTenantSet();
 
-	public void setPropertyTenantSet(Set<Owner> propertyTenantSet);
+	public void setPropertyTenantSet(Set<Citizen> propertyTenantSet);
 
 	public BasicProperty getBasicProperty();
 
@@ -120,9 +120,9 @@ public interface Property {
 
 	public void removePropertyOwners(PropertyOwner owner);
 
-	public void addPropertyTenants(Owner owner);
+	public void addPropertyTenants(Citizen citzen);
 
-	public void removePropertyTenants(Owner owner);
+	public void removePropertyTenants(Citizen citzen);
 
 	public Character getIsDefaultProperty();
 

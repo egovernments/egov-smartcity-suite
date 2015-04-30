@@ -63,7 +63,7 @@ import org.egov.commons.Installment;
 import org.egov.exceptions.InvalidPropertyException;
 import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.enums.Gender;
+import org.egov.infra.citizen.entity.Citizen;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.joda.time.DateTime;
@@ -81,9 +81,9 @@ public class PropertyImpl extends StateAware implements Property {
 
 	private List<PropertyOwner> propertyOwnerProxy = new ArrayList<PropertyOwner>();
 
-	private Set<Owner> propertyTenantSet = new HashSet<Owner>();
+	private Set<Citizen> propertyTenantSet = new HashSet<Citizen>();
 
-	private Owner owner;
+	private Citizen citizen;
 
 	private PropertySource propertySource;
 
@@ -235,12 +235,12 @@ public class PropertyImpl extends StateAware implements Property {
 	}
 
 	@Override
-	public Set<Owner> getPropertyTenantSet() {
+	public Set<Citizen> getPropertyTenantSet() {
 		return propertyTenantSet;
 	}
 
 	@Override
-	public void setPropertyTenantSet(Set<Owner> propertyTenantSet) {
+	public void setPropertyTenantSet(Set<Citizen> propertyTenantSet) {
 		this.propertyTenantSet = propertyTenantSet;
 	}
 
@@ -312,12 +312,13 @@ public class PropertyImpl extends StateAware implements Property {
 		this.vacant = vacant;
 	}
 
-	public Owner getOwner() {
-		return owner;
+
+	public Citizen getCitizen() {
+		return citizen;
 	}
 
-	public void setOwner(Owner owner) {
-		this.owner = owner;
+	public void setCitizen(Citizen citizen) {
+		this.citizen = citizen;
 	}
 
 	@Override
@@ -341,13 +342,13 @@ public class PropertyImpl extends StateAware implements Property {
 	}
 
 	@Override
-	public void addPropertyTenants(Owner owner) {
-		getPropertyTenantSet().add(owner);
+	public void addPropertyTenants(Citizen citizen) {
+		getPropertyTenantSet().add(citizen);
 	}
 
 	@Override
-	public void removePropertyTenants(Owner owner) {
-		getPropertyTenantSet().remove(owner);
+	public void removePropertyTenants(Citizen citizen) {
+		getPropertyTenantSet().remove(citizen);
 	}
 
 	@Override
@@ -567,7 +568,7 @@ public class PropertyImpl extends StateAware implements Property {
 		newProp.setPropertyModifyReason(getPropertyModifyReason());
 		newProp.setPropertyOwnerSet(cloneOwners());
 		newProp.setPropertySource(getPropertySource());
-		newProp.setPropertyTenantSet(cloneTenants());
+		//newProp.setPropertyTenantSet(cloneTenants());
 		newProp.setPtDemandSet(cloneDemand());
 		newProp.setRemarks(getRemarks());
 		newProp.setVacant(getVacant());
@@ -628,12 +629,13 @@ public class PropertyImpl extends StateAware implements Property {
 	/*
 	 * This method returns Tenant details as a Set
 	 */
-	private Set<Owner> cloneTenants() {
+	//FIX ME
+	/*private Set<Owner> cloneTenants() {
 		Set<Owner> newTenantSet = new HashSet<Owner>();
 		Owner newTenant;
 		for (Owner tenant : getPropertyTenantSet()) {
 			//TODO -- Fix me (Commented to Resolve compilation issues)
-			/*newTenant = new Owner(null, tenant.getSsn(), tenant.getPanNumber(), tenant.getPassportNumber(), tenant
+			newTenant = new Owner(null, tenant.getSsn(), tenant.getPanNumber(), tenant.getPassportNumber(), tenant
 					.getDrivingLicenceNumber(), tenant.getRationCardNumber(), tenant.getVoterRegistrationNumber(),
 					tenant.getFirstName(), tenant.getMiddleName(), tenant.getLastName(), tenant.getBirthDate(), tenant
 							.getHomePhone(), tenant.getOfficePhone(), tenant.getMobilePhone(), tenant.getFax(), tenant
@@ -641,11 +643,11 @@ public class PropertyImpl extends StateAware implements Property {
 					tenant.getFirstNameLocal(), tenant.getMiddleNameLocal(), tenant.getLastNameLocal(), tenant
 							.getOwnerTitle(), tenant.getOwnertitleLocal());
 			newTenant.setAddressSet(cloneAddrSet(tenant.getAddressSet()));
-			newTenantSet.add(newTenant);*/
+			newTenantSet.add(newTenant);
 
 		}
 		return newTenantSet;
-	}
+	}*/
 
 	/*
 	 * This method returns Owner Address details as a Set

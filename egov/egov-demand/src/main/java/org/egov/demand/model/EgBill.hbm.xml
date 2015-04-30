@@ -137,11 +137,11 @@
 			not-null="true" /> </key> <one-to-many
 			class="org.egov.demand.model.EgBillExtrafield" /> </set>
 		-->
-
+<!-- 
 		<set name="attributeValues" cascade="none" table="EG_ATTRIBUTEVALUES">
 			<key column="DOMAINTXNID" />
 			<one-to-many class="org.egov.infstr.flexfields.model.EgAttributevalues" />
-		</set>
+		</set> -->
 		<property name="callBackForApportion" type="yes_no">
 			<column name="callback_for_apportion" />
 		</property>

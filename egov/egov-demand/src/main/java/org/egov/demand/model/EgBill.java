@@ -69,7 +69,6 @@ public class EgBill implements java.io.Serializable {
     private Date createTimeStamp;
     private Date lastUpdatedTimeStamp;
     private Set<EgBillDetails> egBillDetails = new HashSet<EgBillDetails>(0);
-    //private Set<EgAttributevalues> attributeValues = new HashSet<EgAttributevalues>(0);
     private String is_History;
     private String is_Cancelled;
     private String fundCode;
@@ -308,14 +307,6 @@ public class EgBill implements java.io.Serializable {
     public void removeEgBillDetails(EgBillDetails egBillDetails) {
         getEgBillDetails().remove(egBillDetails);
     }
-/*
-    public void addEgAttributeValues(EgAttributevalues egAttributevalues) {
-        getAttributeValues().add(egAttributevalues);
-    }
-
-    public void removeEgAttributeValues(EgAttributevalues egAttributevalues) {
-        getAttributeValues().remove(egAttributevalues);
-    }*/
 
     public String getServiceCode() {
         return serviceCode;

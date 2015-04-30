@@ -60,6 +60,7 @@ import java.util.TreeMap;
 
 import org.apache.jackrabbit.core.security.user.UserImpl;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -86,8 +87,6 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 
 @SuppressWarnings("serial")
-/*@Results( { @Result(name = "AJAX_RESULT", type = StreamResult.class, value = "returnStream", params = { "contentType",
-		"text/plain" }) })*/
 @ParentPackage("egov")
 public class AjaxCommonAction extends BaseFormAction {
 
@@ -237,6 +236,7 @@ public class AjaxCommonAction extends BaseFormAction {
 	}
 
 	@SuppressWarnings("unchecked")
+	@Action(value="/common/ajaxCommon-propTypeCategoryByPropType")
 	public String propTypeCategoryByPropType() {
 		LOGGER.debug("Entered into propTypeCategoryByPropType, propTypeId: " + propTypeId);
 		PropertyTypeMaster propType = (PropertyTypeMaster) getPersistenceService().find(

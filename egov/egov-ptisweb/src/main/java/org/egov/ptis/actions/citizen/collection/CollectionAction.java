@@ -51,6 +51,7 @@ import java.net.URLEncoder;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.User;
@@ -93,6 +94,7 @@ public class CollectionAction extends BaseFormAction {
 		LOGGER.debug("Exit from prepare method");
 	}
 
+	@Action(value="/collection/collectionAction-generatePropertyTaxBill")
 	public String generatePropertyTaxBill() {
 		LOGGER.debug("Entered method generatePropertyTaxBill, indexNum: " + indexNum);
 		PropertyTaxBillable nmcPTBill = new PropertyTaxBillable();

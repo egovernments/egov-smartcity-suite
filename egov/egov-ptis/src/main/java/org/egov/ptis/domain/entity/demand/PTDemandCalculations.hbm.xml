@@ -72,11 +72,11 @@
 			<key column="ID_DMDCALC" />
 			<one-to-many class="org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations" />
 		</set>
-
+<!-- 
 		<set name="attributeValues" cascade="all-delete-orphan" table="EG_ATTRIBUTEVALUES">
 			<key column="DOMAINTXNID" />
 			<one-to-many class="org.egov.infstr.flexfields.model.EgAttributevalues" />
-		</set>
+		</set> -->
 
 		<property name="taxInfo" column="TAXINFO" type="binary"/>
 		<property name="alv" column="ALV"/>

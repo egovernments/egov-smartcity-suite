@@ -53,6 +53,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Installment;
 import org.egov.demand.dao.EgDemandDetailsDao;
@@ -169,6 +170,7 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 	}
 	
 	@ValidationErrorPage(value = STRUTS_RESULT_SHOWPENALTY)
+	@Action(value="/collection/collectPropertyTax-save")
 	public String save() {
 		LOGGER.info("Entered method generatePropertyTaxBill, Generating bill for index no : " + propertyId);
 		
@@ -244,24 +246,13 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 	}
 
 	@ValidationErrorPage(value = STRUTS_RESULT_SHOWPENALTY)
+	@Action(value="/collection/collectPropertyTax-showPenalty")
 	public String showPenalty() {
 		LOGGER.info("Entered method showPenalty, propertyId: " + propertyId);
 		
 		String noBillMessage = "Bill is not available penalty calculation for " + propertyId;
 		BasicProperty basicProperty = basicPrpertyService.findByNamedQuery(
 				PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO, propertyId);
-		
-		/*
-		  
-		Map<String, BigDecimal> demandCollMap = propertyTaxUtil.getDemandAndCollection(basicProperty.getProperty());
-
-		BigDecimal currDue = demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR));
-		BigDecimal arrDue = demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR));
-		
-		if ((currDue.compareTo(BigDecimal.ZERO) == 0 || currDue.compareTo(BigDecimal.ZERO) == -1)
-				&& (arrDue.compareTo(BigDecimal.ZERO) == 0 || arrDue.compareTo(BigDecimal.ZERO) == -1)) {
-			return "taxPaid";
-		}*/
 		
 		PropertyTaxBillable nmcPTBill = new PropertyTaxBillable();
 		LOGGER.debug("generatePropertyTaxBill : BasicProperty :" + basicProperty);

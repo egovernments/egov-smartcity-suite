@@ -40,7 +40,6 @@
 package org.egov.ptis.actions.citizen.search;
 
 import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.CITIZENUSER;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
@@ -57,13 +56,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.utils.StringUtils;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
@@ -74,6 +76,7 @@ import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
@@ -94,6 +97,9 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 	private Long userId;
 	List<Map<String, String>> searchList = new ArrayList<Map<String, String>>();
 	String target = "failure";
+	
+	@Autowired
+	private UserService userService;
 
 	@Override
 	public Object getModel() {
@@ -108,10 +114,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 	public void prepare() {
 		LOGGER.debug("Entered into prepare method");
 		session = request.getSession();
-		//UserDAO userDao = new UserDAO();
-		//User user = userDao.getUserByUserName(CITIZENUSER);
-		//FIX ME
-		User user = null;
+		User user = userService.getUserByUsername(PropertyTaxConstants.CITIZENUSER);
 		userId = user.getId();
 		EGOVThreadLocals.setUserId(userId);
 		session.setAttribute("com.egov.user.LoginUserName", user.getUsername());
@@ -119,6 +122,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 	}
 
 	@ValidationErrorPage(value = "new")
+	@Action(value="/search/searchAction-srchByIndex")
 	public String srchByIndex() {
 		LOGGER.info("Entered into srchByIndex  method");
 		LOGGER.info("Index Number : " + indexNum);

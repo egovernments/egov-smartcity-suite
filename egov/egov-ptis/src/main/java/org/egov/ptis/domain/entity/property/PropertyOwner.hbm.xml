@@ -41,7 +41,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="org.egov.ptis.domain.entity.property">
 	<joined-subclass name="PropertyOwner" table="EGPT_PROPERTY_OWNER"
-		extends="org.egov.lib.citizen.model.Owner">
+		extends="org.egov.infra.citizen.entity.Citizen">
 		<key column="OWNERID" />
 		<many-to-one name="property" column="ID_PROPERTY"
 			not-null="true" class="org.egov.ptis.domain.entity.property.PropertyImpl" insert="false" update="false" fetch="select" />

@@ -130,7 +130,7 @@
 
 		<set name="propertyTenantSet" cascade="all-delete-orphan" table="EGPT_PROPERTY_TENANTS">
 			<key column="ID_PROPERTY" not-null="true" />
-			<many-to-many class="org.egov.lib.citizen.model.Owner"
+			<many-to-many class="org.egov.infra.citizen.entity.Citizen"
 				column="CITIZENID" />
 		</set>
 		<property name="isChecked" column="ISCHECKED" />
@@ -145,7 +145,7 @@
 		<many-to-one name="installment" class="org.egov.commons.Installment"
 			column="ID_INSTALLMENT" />
 				
-		<many-to-one name="state" class="org.egov.infstr.models.State" cascade="save-update">
+		<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="save-update">
 			<column name="STATE_ID"/>
 		</many-to-one>
 		

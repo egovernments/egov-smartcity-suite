@@ -77,6 +77,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.CommonsDAOFactory;
@@ -162,6 +163,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	 * 
 	 * @return String
 	 */
+	@Action(value="/bills/billGeneration-generateBill")
 	public String generateBill() {
 
 		LOGGER.debug("Entered into generateBill, Index Number :" + indexNumber);
@@ -247,6 +249,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		return BILL;
 	}
 
+	@Action(value="/bills/billGeneration-billsGenStatus")
 	public String billsGenStatus() {
 		ReportInfo reportInfo;
 		Integer totalProps = 0;
@@ -312,6 +315,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		return STATUS_BILLGEN;
 	}
 	
+	@Action(value="/bills/billGeneration-billGenStatusByPartNo")
 	public String billGenStatusByPartNo() {
 		LOGGER.debug("Entered into billGenStatusByPartNo, wardNum=" + wardNum);
 		
@@ -391,6 +395,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		return STATUS_BILLGEN_BY_PARTNO;
 	}
 
+	@Action(value="/bills/billGeneration-cancelBill")
 	public String cancelBill() {
 		EgBill egBill = (EgBill) persistenceService
 				.find("FROM EgBill " +

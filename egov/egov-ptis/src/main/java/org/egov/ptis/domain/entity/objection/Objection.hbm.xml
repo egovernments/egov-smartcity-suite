@@ -51,7 +51,7 @@
             	<param name="sequence">SEQ_EGPT_OBJECTION</param>
             </generator>
         </id>
-        <many-to-one name="state" class="org.egov.infstr.models.State" cascade="save-update,persist" fetch="select">
+        <many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="save-update,persist" fetch="select">
             <column name="ID_STATE" />
         </many-to-one>
         <many-to-one name="egwStatus" class="org.egov.commons.EgwStatus" fetch="select">

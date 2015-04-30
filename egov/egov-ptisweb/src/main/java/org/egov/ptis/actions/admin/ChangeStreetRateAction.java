@@ -53,8 +53,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.transaction.Transactional;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -154,6 +157,7 @@ public class ChangeStreetRateAction extends BaseFormAction {
 		LOGGER.debug("Exit from prepareAreaDropDownData");
 	}
 
+	@Action(value="/admin/changeStreetRate-searchForm")
 	public String searchForm() {
 		LOGGER.debug("Entered into searchForm");
 		LOGGER.debug("Exit from searchForm");
@@ -161,6 +165,7 @@ public class ChangeStreetRateAction extends BaseFormAction {
 	}
 
 	@ValidationErrorPage(value = "search")
+	@Action(value="/admin/changeStreetRate-search")
 	public String search() {
 		LOGGER.debug("Enered into search");
 		LOGGER.debug("Exit from search");
@@ -169,6 +174,7 @@ public class ChangeStreetRateAction extends BaseFormAction {
 	}
 
 	@SkipValidation
+	@Action(value="/admin/changeStreetRate-showSearchResults")
 	public String showSearchResults() {
 		return searchForCategories();
 	}
@@ -213,6 +219,7 @@ public class ChangeStreetRateAction extends BaseFormAction {
 
 	}
 
+	@Action(value="/admin/changeStreetRate-editPage")
 	public String editPage() {
 		LOGGER.debug("ChangeStreetRateAction!editPage");
 		LOGGER.debug("Exit from editPage");
@@ -221,6 +228,7 @@ public class ChangeStreetRateAction extends BaseFormAction {
 
 	@SuppressWarnings("unchecked")
 	@ValidationErrorPage(value = "edit")
+	@Action(value="/admin/changeStreetRate-saveData")
 	public String saveData() {
 
 		LOGGER.debug("saveData : areaId:" + areaId + ", Current Location Factor:" + currLocFactor + ", Current Rate :"

@@ -45,7 +45,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 		<many-to-one name="module" class="org.egov.infstr.commons.Module" column="ID_MODULE"/>
 		<many-to-one name="startInstallment" class="org.egov.commons.Installment" column="ID_INSTALLMENT"/>
 		
-		<many-to-one name="userId" class="org.egov.lib.rjbac.user.UserImpl" column="USERID"/>
+		<many-to-one name="userId" class="org.egov.infra.admin.master.entity.User" column="USERID"/>
 	</class>
 	
 	<query name="DEPRECIATION_BY_YEAR">
