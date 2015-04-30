@@ -44,7 +44,6 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 
 <hibernate-mapping>
 	<class name="org.egov.infstr.models.ServiceDetails" table="EG_SERVICEDETAILS" >
-		<cache usage="transactional"/>
 		<id name="id" column="ID" type="long" unsaved-value="null">
 			<generator class="native">
 				<param name="sequence">SEQ_EG_SERVICEDETAILS</param>
@@ -74,7 +73,6 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 		</property>
 
 		<set name="bankAccountServiceMap" inverse="true" cascade="all,delete-orphan" >
-			<cache usage="transactional"/>
 			<key>
 				<column name="SERVICEID" precision="22" scale="0" />
 			</key>
@@ -98,7 +96,6 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 			column="ID_SERVICE_CATEGORY" fetch="select" />	
 			
 		<set name="serviceDept" table="EG_SERVICE_DEPT_MAPPING" >
-			<cache usage="transactional"/>
 			<key>
 				<column name="ID_SERVICEDETAILS" precision="22" scale="0" />
 			</key>
