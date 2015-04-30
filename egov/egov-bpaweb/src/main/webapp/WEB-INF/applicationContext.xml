@@ -201,12 +201,12 @@
 	</bean> 
 	
 	 <bean id="bpaFeeExtnService" class="org.egov.bpa.services.extd.masters.BpaFeeExtnService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.bpa.models.extd.masters.BpaFee" />
+		<property name="type" value="org.egov.bpa.models.extd.masters.BpaFeeExtn" />
 		<property name="persistenceService" ref="persistenceService"/>
 	</bean> 
 	
 	<bean id="checkListExtnService" class="org.egov.bpa.services.extd.masters.CheckListExtnSevice" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.bpa.models.extd.masters.Checklist" />
+		<property name="type" value="org.egov.bpa.models.extd.masters.ChecklistExtn" />
 		<property name="persistenceService" ref="persistenceService"/>
 	</bean> 
 	
