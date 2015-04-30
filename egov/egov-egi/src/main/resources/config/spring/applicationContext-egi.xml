@@ -76,8 +76,6 @@
 
 	<bean id="beanProvider" class="org.egov.infstr.beanfactory.ApplicationContextBeanProvider" />
 
-	<bean id="egovSessionFactory" class="org.egov.infstr.services.SessionFactory" />
-
 	<bean id="persistenceService" class="org.egov.infstr.services.PersistenceService">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
