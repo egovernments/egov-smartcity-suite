@@ -148,26 +148,26 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 	}
 	public String getEmployeeNameForPositionId(Position pos)throws EGOVRuntimeException
 	{
-		PersonalInformation pi = null;//This fix is for Phoenix Migration.eisCommonService.getEmployeeforPosition(pos);
-		Assignment assignment = null;//This fix is for Phoenix Migration.eisCommonService.getLatestAssignmentForEmployee(pi.getIdPersonalInformation());
+		PersonalInformation pi = eisCommonService.getPrimaryAssignmentEmployeeForPos(pos.getId());
+		Assignment assignment = eisCommonService.getLatestAssignmentForEmployee(pi.getIdPersonalInformation());
 		return pi.getEmployeeFirstName()+" ("+assignment.getDesigId().getDesignationName()+")";
 	}
 	public Department getCurrentDepartment()
 	{
-		PersonalInformation pi = null;//This fix is for Phoenix Migration.eisCommonService.getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-		Assignment assignment= null;//This fix is for Phoenix Migration.eisCommonService.getAssignmentByEmpAndDate(new Date(), pi.getIdPersonalInformation());
+		PersonalInformation pi = eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
+		Assignment assignment= eisCommonService.getLatestAssignmentForEmployeeByToDate(pi.getIdPersonalInformation(),new Date());
 		return (Department)assignment.getDeptId();
 	}
 	public Department getDepartmentForWfItem(CVoucherHeader cv)
 	{
-		PersonalInformation pi = null;//This fix is for Phoenix Migration.eisCommonService.getEmpForUserId(cv.getCreatedBy().getId());
-		Assignment assignment = null;//This fix is for Phoenix Migration.eisCommonService.getAssignmentByEmpAndDate(new Date(), pi.getIdPersonalInformation());
+		PersonalInformation pi = eisCommonService.getEmployeeByUserId(cv.getCreatedBy().getId());
+		Assignment assignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(pi.getIdPersonalInformation(),new Date());
 		return assignment.getDeptId();
 	}
 	public Department getTempDepartmentForWfItem(CVoucherHeader cv,Position position)
 	{
 		Department d=null;
-		//PersonalInformation pi = eisCommonService.getEmpForUserId(cv.getCreatedBy().getId());
+		PersonalInformation pi = eisCommonService.getEmployeeByUserId(cv.getCreatedBy().getId());
 	   d = (Department)persistenceService.find("select v.deptId from EmployeeView v left join v.userMaster  as user where v.isPrimary='N' and user.id=?",EGOVThreadLocals.getUserId());
 	return d;
 	}
@@ -180,11 +180,11 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     }
 	public PersonalInformation getEmpForCurrentUser()
 	{
-		return null;//This fix is for Phoenix Migration.eisCommonService.getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		return eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
 	}
 	public Position getPositionForWfItem(CVoucherHeader rv)
 	{
-		return null;//This fix is for Phoenix Migration.eisCommonService.getPositionByUserId(rv.getCreatedBy().getId());
+		return eisCommonService.getPositionByUserId(rv.getCreatedBy().getId());
 	}
 	public boolean budgetaryCheck(EgBillregister billregister)throws ValidationException
 	{
@@ -1242,7 +1242,7 @@ public EgBillregister createBillForVoucherSubType(List<VoucherDetails> billDetai
 	}
 	public Position getPositionForEmployee(PersonalInformation emp)throws EGOVRuntimeException
 	{
-		return null;//This fix is for Phoenix Migration. eisCommonService.getPositionforEmp(emp.getIdPersonalInformation());
+		return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getIdPersonalInformation());
 	}
 	public void setSequenceGenerator(SequenceGenerator sequenceGenerator) {
 		this.sequenceGenerator = sequenceGenerator;

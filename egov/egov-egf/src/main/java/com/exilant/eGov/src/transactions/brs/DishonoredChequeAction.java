@@ -89,6 +89,7 @@ import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.instrument.DishonorCheque;
 import org.egov.model.instrument.DishonorChequeDetails;
@@ -97,6 +98,7 @@ import org.egov.model.instrument.InstrumentOtherDetails;
 import org.egov.model.recoveries.Recovery;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
+import org.egov.pims.model.Assignment;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.services.instrument.DishonorChequeService;
@@ -563,7 +565,7 @@ public class DishonoredChequeAction extends DispatchAction {
 				//narration- reversal entry for receipt "voucher No"-- with "cheque No" dated :"Cheque date"
 				// Get iod created by user
 				InstrumentOtherDetails iob= (InstrumentOtherDetails)persistenceService.find("from InstrumentOtherDetails where instrumentHeaderId.id=?",instHeader.getId());
-				PersonalInformation loggedInEmp=null;//getEisCommonService().getEmpForUserId(iob.getCreatedBy().getId());                  
+				PersonalInformation loggedInEmp=eisCommonService.getEmployeeByUserId(iob.getCreatedBy().getId());                  
 				nextUser=iob.getPayinslipId().getCreatedBy();
 				//This fix is for Phoenix Migration.
 				/*dishonorChq.setPayinSlipCreatorUser(nextUser);
@@ -658,11 +660,11 @@ public class DishonoredChequeAction extends DispatchAction {
 	private void populateReceiptCreatorAndForward(HttpServletRequest req, InstrumentHeader instHeader)
 			throws Exception {
 		//This fix is for Phoenix Migration.
-		/*InstrumentOtherDetails iob= (InstrumentOtherDetails)persistenceService.findAllBy("from InstrumentOtherDetails where instrumentHeaderId=?",instHeader.getId());
-		PersonalInformation loggedInEmp=getEisCommonService().getEmpForUserId(iob.getCreatedBy().getId());
+		InstrumentOtherDetails iob= (InstrumentOtherDetails)persistenceService.findAllBy("from InstrumentOtherDetails where instrumentHeaderId=?",instHeader.getId());
+		PersonalInformation loggedInEmp=getEisCommonService().getEmployeeByUserId(iob.getCreatedBy().getId());
 		Assignment asignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(loggedInEmp.getId(), DateUtils.today());
-		//designationList=persistenceService.findAllBy("from DesignationMaster where designationName=?","ACCOUNTS OFFICER");
-*/	}
+		designationList=persistenceService.findAllBy("from DesignationMaster where designationName=?","ACCOUNTS OFFICER");
+		}
 
 	public ActionForward processInbox(ActionMapping mapping,ActionForm form,HttpServletRequest req,HttpServletResponse res)
 			throws IOException,ServletException{
@@ -737,13 +739,12 @@ public class DishonoredChequeAction extends DispatchAction {
 	}
 	private void populateWorkflowEntities(HttpServletRequest req)
 			throws Exception {
-		//This fix is for Phoenix Migration.
-		/*req.setAttribute("departmentList", persistenceService.findAllBy("from Department order by deptName"));
-		PersonalInformation loggedInEmp=getEisCommonService().getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		req.setAttribute("departmentList", persistenceService.findAllBy("from Department order by deptName"));
+		PersonalInformation loggedInEmp=getEisCommonService().getEmployeeByUserId(EGOVThreadLocals.getUserId());
 		Assignment asignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(loggedInEmp.getId(), DateUtils.today());
 		if(asignment.getDesigId().getDesignationName().equalsIgnoreCase("SECTION MANAGER")) {
 			;
-		}*/
+		}
 		{
 			designationList=persistenceService.findAllBy("from DesignationMaster where designationName=?","ACCOUNTS OFFICER");
 		}

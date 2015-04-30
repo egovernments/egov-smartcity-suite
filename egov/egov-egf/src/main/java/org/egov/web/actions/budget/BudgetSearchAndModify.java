@@ -294,7 +294,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
             userId = EGOVThreadLocals.getUserId().intValue();
         }
 
-        Position positionByUserId =null;// eisCommonService.getPositionByUserId(userId);
+        Position positionByUserId =eisCommonService.getPositionByUserId(userId.longValue());
         PersonalInformation empForCurrentUser = budgetDetailService.getEmpForCurrentUser();
         String name="";
 		if(empForCurrentUser!=null)

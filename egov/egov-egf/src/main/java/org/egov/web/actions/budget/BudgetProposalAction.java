@@ -56,7 +56,6 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.dispatcher.StreamResult;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
@@ -997,7 +996,7 @@ int i=0;
 	        }
 
 	    	topBudget=budgetService.find("from Budget where id=?",topBudget.getId());
-	    	Position positionByUserId = null;//This fix is for Phoenix Migration.eisCommonService.getPositionByUserId(userId);
+	    	Position positionByUserId = eisCommonService.getPositionByUserId(userId.longValue());
 	        PersonalInformation empForCurrentUser = budgetDetailService.getEmpForCurrentUser();
 	        String name="";
 			if(empForCurrentUser!=null)
@@ -1177,8 +1176,8 @@ int i=0;
 	    
 	   private boolean isHOD()
 	    {
-	    	PersonalInformation emp = null;//This fix is for Phoenix Migration.eisCommonService.getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-			Assignment empAssignment =null;//This fix is for Phoenix Migration. eisCommonService.getAssignmentByEmpAndDate(new Date(), emp.getIdPersonalInformation());
+	    	PersonalInformation emp = eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
+			Assignment empAssignment =eisCommonService.getLatestAssignmentForEmployeeByToDate(emp.getIdPersonalInformation(),new Date());
 			if(empAssignment.getDesigId().getDesignationName().equalsIgnoreCase("assistant"))
 			{
 				 asstFMU = true;
@@ -1193,22 +1192,22 @@ int i=0;
 			}
 			}
 				
-			return false;//eisCommonService.getHodById(Integer.valueOf(empAssignment.getId().toString()));
+			return eisCommonService.isHod(empAssignment.getId());
 	    }
 	   
 		public Position getPosition()throws EGOVRuntimeException
 		{
 			Position pos;
-			PersonalInformation emp=null;//This fix is for Phoenix Migration.eisCommonService.getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-			pos=null;//This fix is for Phoenix Migration.eisCommonService.getPositionforEmp(emp.getIdPersonalInformation());
+			PersonalInformation emp=eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
+			pos=eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getIdPersonalInformation());
 			return pos;
 		}
 	   
 	   private boolean isNextUserHOD(Integer approverUserId)
 	    {
-	    	PersonalInformation emp = null;//This fix is for Phoenix Migration.eisCommonService.getEmpForUserId(approverUserId);
-			Assignment empAssignment = null;//This fix is for Phoenix Migration.eisCommonService.getAssignmentByEmpAndDate(new Date(), emp.getIdPersonalInformation());
-			return false;//CommonService.getHodById(Integer.valueOf(empAssignment.getId()));
+	    	PersonalInformation emp = eisCommonService.getEmployeeByUserId(approverUserId.longValue());
+			Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(emp.getIdPersonalInformation(),new Date());
+			return eisCommonService.isHod(empAssignment.getId());
 	    }
 	   
 	   

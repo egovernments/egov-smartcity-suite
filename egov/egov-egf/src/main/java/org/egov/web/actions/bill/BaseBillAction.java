@@ -148,7 +148,7 @@ public class BaseBillAction extends BaseVoucherAction {
 	}
 	public Position getPosition()throws EGOVRuntimeException
 	{
-		return  null;//This fix is for Phoenix Migration.eisCommonService.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		return  eisCommonService.getPositionByUserId(EGOVThreadLocals.getUserId());
 	}
 	public CommonBean getCommonBean() {
 		return commonBean;

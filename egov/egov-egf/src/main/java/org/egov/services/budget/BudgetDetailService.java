@@ -362,7 +362,7 @@ criteria.createCriteria(Constants.BUDGET).add(Restrictions.eq("materializedPath"
     }
 
     public Position getPositionForEmployee(PersonalInformation emp)throws EGOVRuntimeException{
-        return null;//eisCommonService.getPositionforEmp(emp.getIdPersonalInformation());
+        return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getIdPersonalInformation());
     }
 
     public void setEisCommonService(EisCommonService eisCommonService) {
@@ -396,8 +396,7 @@ criteria.createCriteria(Constants.BUDGET).add(Restrictions.eq("materializedPath"
         Department dept=null;
         Date currDate=new Date();
         try {
-            Assignment empAssignment = null;/*//eisCommonService.getAssignmentByEmpAndDate(
-                    currDate, emp.getIdPersonalInformation());*/
+            Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate( emp.getIdPersonalInformation(),currDate);
             dept=empAssignment.getDeptId();
             return (Department)dept;
         }catch(NullPointerException ne)
@@ -1459,7 +1458,7 @@ if(mandatoryFields.contains(Constants.EXECUTING_DEPARTMENT)){
     }
     public PersonalInformation getEmpForCurrentUser()
     {
-        return null;//eisCommonService.getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+        return eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
     }
     public void setBudgetDetailWorkflowService(WorkflowService<BudgetDetail> budgetDetailWorkflowService) {
         this.budgetDetailWorkflowService = budgetDetailWorkflowService;
@@ -1476,8 +1475,8 @@ if(mandatoryFields.contains(Constants.EXECUTING_DEPARTMENT)){
     }
     public boolean toBeConsolidated()
     {
-        PersonalInformation emp = null;//eisCommonService.getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-        Assignment empAssignment = null;//eisCommonService.getAssignmentByEmpAndDate(new Date(), emp.getIdPersonalInformation());
+        PersonalInformation emp = eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
+        Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(emp.getIdPersonalInformation(),new Date());
         Functionary empfunctionary=empAssignment.getFunctionary();
         DesignationMaster designation = empAssignment.getDesigId();
         Boolean consolidateBudget=Boolean.FALSE;

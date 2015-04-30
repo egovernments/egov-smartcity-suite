@@ -684,8 +684,8 @@ public class BudgetReportAction extends BaseFormAction {
 	private Position getPosition() {
 		Position pos;
 		try {
-			PersonalInformation emp=null;//This fix is for Phoenix Migration.eisCommonService.getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-			pos= null;//eisCommonService.getPositionforEmp(emp.getIdPersonalInformation());
+			PersonalInformation emp=eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
+			pos= eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getIdPersonalInformation());
 			} catch (Exception e) {
 			throw new EGOVRuntimeException("Unable to get Position for the user");
 		}
@@ -1124,8 +1124,8 @@ public class BudgetReportAction extends BaseFormAction {
 		}
 		List<AppConfigValues> list = genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey(Constants.EGF,"budget_toplevel_approver_designation");
 		String value = list.get(0).getValue();
-		PersonalInformation emp = null;// eisCommonService.getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-		Assignment empAssignment = null;// eisCommonService.getAssignmentByEmpAndDate(new Date(), emp.getIdPersonalInformation());
+		PersonalInformation emp = eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
+		Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(emp.getIdPersonalInformation(),new Date());
 		DesignationMaster designation = empAssignment.getDesigId();
 		if(designation.getDesignationName().equalsIgnoreCase(value))
 		{

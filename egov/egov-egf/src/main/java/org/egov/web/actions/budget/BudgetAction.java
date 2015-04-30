@@ -132,8 +132,8 @@ public class BudgetAction extends BaseFormAction{
 		}
 		if(budget.getParent()!=null && budget.getParent().getIsPrimaryBudget() == true)
 			budget.setIsPrimaryBudget(true);
-		Position p = null;//This fix is for Phoenix Migration.eisCommonService.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-		//This fix is for Phoenix Migration.budgetWorkflowService.start(budget,p);
+		Position p = eisCommonService.getPositionByUserId(EGOVThreadLocals.getUserId());
+		budget.start().withOwner(p);
 		addActionMessage(getMessage("budget.create")); 
 		target="SUCCESS";
 		return NEW;

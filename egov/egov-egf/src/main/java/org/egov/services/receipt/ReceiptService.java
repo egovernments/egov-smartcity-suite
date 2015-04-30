@@ -65,7 +65,7 @@ public class ReceiptService extends PersistenceService<ReceiptVoucher, Long>{
 	private  PersistenceService persistenceService;
 	public Position getPositionForEmployee(PersonalInformation emp)throws EGOVRuntimeException
 	{
-		return null;//This fix is for Phoenix Migration.eisCommonService.getPositionforEmp(emp.getIdPersonalInformation());
+		return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getIdPersonalInformation());
 	}
 	public void setEisCommonService(EisCommonService eisCommonService) {
 		this.eisCommonService = eisCommonService;
@@ -88,19 +88,19 @@ public class ReceiptService extends PersistenceService<ReceiptVoucher, Long>{
 	}
 	public String getDesginationName()
 	{
-		 PersonalInformation pi = null;//This fix is for Phoenix Migration.eisCommonService.getEmpForUserId(Integer.parseInt(EGOVThreadLocals.getUserId()));
-		 Assignment assignment =null;//This fix is for Phoenix Migration. eisCommonService.getAssignmentByEmpAndDate(new Date(), pi.getIdPersonalInformation());
+		 PersonalInformation pi = eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
+		 Assignment assignment =eisCommonService.getLatestAssignmentForEmployeeByToDate(pi.getIdPersonalInformation(),new Date());
 		 return assignment.getDesigId().getDesignationName();
 	}
 	public Department getDepartmentForWfItem(ReceiptVoucher rv)
 	{
-		PersonalInformation pi = null;//This fix is for Phoenix Migration.eisCommonService.getEmpForUserId(rv.getCreatedBy().getId());
-		Assignment assignment = null;//This fix is for Phoenix Migration.eisCommonService.getAssignmentByEmpAndDate(new Date(), pi.getIdPersonalInformation());
+		PersonalInformation pi = eisCommonService.getEmployeeByUserId(rv.getCreatedBy().getId());
+		Assignment assignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(pi.getIdPersonalInformation(),new Date());
 		return assignment.getDeptId();
 	}
 	public Position getPositionForWfItem(ReceiptVoucher rv)
 	{
-		return null;//This fix is for Phoenix Migration.eisCommonService.getPositionByUserId(rv.getCreatedBy().getId());
+		return eisCommonService.getPositionByUserId(rv.getCreatedBy().getId());
 	}
 	public Boundary getBoundaryForUser(ReceiptVoucher rv)
 	{

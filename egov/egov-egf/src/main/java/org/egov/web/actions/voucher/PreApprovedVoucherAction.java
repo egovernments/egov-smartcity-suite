@@ -962,7 +962,7 @@ public class PreApprovedVoucherAction extends BaseFormAction
 	{
 		Position pos;
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("getPosition===="+EGOVThreadLocals.getUserId());
-			pos = null;//eisCommonService.getPositionByUserId(Long.valueOf(EGOVThreadLocals.getUserId()));
+			pos =eisCommonService.getPositionByUserId(EGOVThreadLocals.getUserId());
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("position==="+pos.getId());
 		return pos;
 	}

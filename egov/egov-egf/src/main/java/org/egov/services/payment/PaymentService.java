@@ -2797,7 +2797,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
 	public Position getPosition()throws EGOVRuntimeException
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside getPosition...");
-		return  null;//This fix is for Phoenix Migration.eisCommonService.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		return  eisCommonService.getPositionByUserId(EGOVThreadLocals.getUserId());
 	}
 	public String getFunctionaryAndDesignation()
 	{
@@ -2808,24 +2808,24 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
 	public Assignment getAssignment()
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside getAssignment...");
-		PersonalInformation pi = null;//This fix is for Phoenix Migration.eisCommonService.getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-		return null;//This fix is for Phoenix Migration. eisCommonService.getAssignmentByEmpAndDate(new Date(), pi.getIdPersonalInformation());
+		PersonalInformation pi = eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
+		return eisCommonService.getLatestAssignmentForEmployeeByToDate( pi.getIdPersonalInformation(),new Date());
 	}
 	public Position getPositionForEmployee(PersonalInformation emp)throws EGOVRuntimeException
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside getPositionForEmployee...");
-		return null;//This fix is for Phoenix Migration.eisCommonService.getPositionforEmp(emp.getIdPersonalInformation());
+		return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getIdPersonalInformation());
 	}
 	public PersonalInformation getEmpForCurrentUser()
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside getEmpForCurrentUser...");
-		return null;//This fix is for Phoenix Migration.eisCommonService.getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		return eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
 	}
 	public String getEmployeeNameForPositionId(Position pos)throws EGOVRuntimeException
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside getEmployeeNameForPositionId...");
-		PersonalInformation pi = null;//This fix is for Phoenix Migration.eisCommonService.getEmployeeforPosition(pos);
-		Assignment assignment = null;//This fix is for Phoenix Migration.eisCommonService.getAssignmentByEmpAndDate(new Date(), pi.getIdPersonalInformation());
+		PersonalInformation pi = eisCommonService.getPrimaryAssignmentEmployeeForPos(pos.getId());
+		Assignment assignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(pi.getIdPersonalInformation(),new Date());
 		return pi.getEmployeeFirstName()+" ("+assignment.getFunctionary().getName()+"-"+assignment.getDesigId().getDesignationName()+")";
 	}
 	public void finalApproval(Long voucherid)

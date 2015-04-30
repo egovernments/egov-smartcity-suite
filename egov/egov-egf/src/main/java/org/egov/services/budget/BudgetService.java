@@ -92,7 +92,7 @@ public class BudgetService extends PersistenceService<Budget,Long>{
 	
 	public Position getPositionForEmployee(PersonalInformation emp)throws EGOVRuntimeException
 	{   
-		return null;//This fix is for Phoenix Migration. eisCommonService.getPositionforEmp(emp.getIdPersonalInformation());
+		return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getIdPersonalInformation());
 	}
 	
 	/**
@@ -134,8 +134,7 @@ public class BudgetService extends PersistenceService<Budget,Long>{
 		Department dept=null;
 		Date currDate=new Date();
 		try {
-			Assignment empAssignment = null;/*eisCommonService.getAssignmentByEmpAndDate(
-					currDate, emp.getIdPersonalInformation());*///This fix is for Phoenix Migration.
+			Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(emp.getIdPersonalInformation(),currDate);
 			dept=empAssignment.getDeptId();
 			return (Department)dept;
 		}catch(NullPointerException ne)
@@ -318,13 +317,13 @@ public class BudgetService extends PersistenceService<Budget,Long>{
 	}
 	
 	public String getEmployeeNameAndDesignationForPosition(Position pos)throws EGOVRuntimeException{
-		PersonalInformation pi = null;//This fix is for Phoenix Migration.eisCommonService.getEmployeeforPosition(pos);
-		Assignment assignment = null;//This fix is for Phoenix Migration.eisCommonService.getLatestAssignmentForEmployee(pi.getIdPersonalInformation());
+		PersonalInformation pi =eisCommonService.getPrimaryAssignmentEmployeeForPos(pos.getId());
+		Assignment assignment = eisCommonService.getLatestAssignmentForEmployee(pi.getIdPersonalInformation());
 		return pi.getEmployeeFirstName()+" ("+assignment.getDesigId().getDesignationName()+")";
 	}
 	
 	public PersonalInformation getEmpForCurrentUser(){
-		return null;//This fix is for Phoenix Migration.eisCommonService.getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		return eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
 	}
 
 	public Budget getReferenceBudgetFor(Budget budget) {

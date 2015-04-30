@@ -365,7 +365,7 @@ public class BudgetReAppropriationAction extends BaseFormAction{
 	}
 
 	protected Position getPosition() {
-		return  null;//eisCommonService.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		return  eisCommonService.getPositionByUserId(EGOVThreadLocals.getUserId());
 	}
 	
 	public void removeEmptyReAppropriation(List<BudgetReAppropriationView> reAppropriationList) {

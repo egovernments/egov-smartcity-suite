@@ -791,7 +791,7 @@ HibernateUtil.getCurrentSession().save(rsPaymentLog);
  */
 private void loadNextOwner() {
 	user = (User)remittancePersistenceService.getPersistenceService().find("from User where userName='ASSTBUDGET'");
-	//This fix is for Phoenix Migration.nextOwner = eisCommonService.getPositionByUserId(user.getId());
+	nextOwner = eisCommonService.getPositionByUserId(user.getId());
 
 	
 }

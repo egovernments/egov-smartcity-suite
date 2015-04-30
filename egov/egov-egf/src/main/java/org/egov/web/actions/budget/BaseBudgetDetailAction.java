@@ -758,11 +758,11 @@ int i=0;
 	}
 	
 	protected Position getPosition() {
-		return null;//This fix is for Phoenix Migration.eisCommonService.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		return eisCommonService.getPositionByUserId(EGOVThreadLocals.getUserId());
 	}
 	
 	protected Position getPositionByUserId(Integer userId){
-		return null;//This fix is for Phoenix Migration.eisCommonService.getPositionByUserId(userId);
+		return eisCommonService.getPositionByUserId(userId.longValue());
 	}
 	
 	public List<String> getHeaderFields() {

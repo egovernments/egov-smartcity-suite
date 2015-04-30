@@ -133,8 +133,7 @@ public class BudgetProposalStatusReportAction extends BaseFormAction {
 			if(budgetDetail != null && budgetDetail.getBudget() != null && budgetDetail.getBudget().getState() != null && budgetDetail.getBudget().getState().getOwnerPosition() != null){
 				Assignment assignment = (Assignment) persistenceService.find("from Assignment where isPrimary=? and position=?", 'Y', budgetDetail.getBudget().getState().getOwnerPosition());
 				if(assignment != null){
-					//phoenix migration 
-					if(true/*eisCommonService.getHodById(assignment.getId())*/)
+					if(eisCommonService.isHod(assignment.getId()))
 						budgetProposalStatus.setHod(this.heavyCheckMark);
 					else if(assignment.getDesigId().getDesignationName().equals(this.asstBudDesg) && assignment.getFunctionary().getName().equals(this.asstBudFunc))
 						budgetProposalStatus.setAsstBud(this.heavyCheckMark);
@@ -169,9 +168,8 @@ public class BudgetProposalStatusReportAction extends BaseFormAction {
 						budgetProposalStatus.setAsstAdmin(this.heavyCheckMark);
 					else if(assignment.getDesigId().getDesignationName().equals(this.smAdminDesg) && assignment.getFunctionary().getName().equals(this.smAdminFunc))
 						budgetProposalStatus.setSmAdmin(this.heavyCheckMark);
-					//phoenix migration coment
-					//else if(eisCommonService.getHodById(Integer.valueOf(assignment.getId().intValue())))
-						//budgetProposalStatus.setHod(this.heavyCheckMark);
+					else if(eisCommonService.isHod(assignment.getId()))
+						budgetProposalStatus.setHod(this.heavyCheckMark);
 				}
 			}
 			budgetProposalStatusFuncList.add(budgetProposalStatus);

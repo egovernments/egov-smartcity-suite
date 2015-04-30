@@ -120,7 +120,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 	}
 	public Position getPositionForWfItem(ContraJournalVoucher rv)
 	{
-		return null;//This fix is for Phoenix Migration. eisCommonService.getPositionByUserId(rv.getCreatedBy().getId().intValue());
+		return eisCommonService.getPositionByUserId(rv.getCreatedBy().getId());
 	}
 	public Department getDepartmentForUser(User user) 
 	{
@@ -400,15 +400,15 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 	}
 	public String getDesginationName()
 	{
-		 PersonalInformation pi = null;//This fix is for Phoenix Migration. eisCommonService.getEmpForUserId(Integer.parseInt(EGOVThreadLocals.getUserId()));
-		 Assignment assignment = null;//This fix is for Phoenix Migration.eisCommonService.getAssignmentByEmpAndDate(new Date(), pi.getIdPersonalInformation());
+		 PersonalInformation pi =eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
+		 Assignment assignment =eisCommonService.getLatestAssignmentForEmployeeByToDate( pi.getIdPersonalInformation(),new Date());
 		 return assignment.getDesigId().getDesignationName();
 	}
 	
 	public Department getDepartmentForWfItem(ContraJournalVoucher cjv)
 	{
-		PersonalInformation pi =null;//This fix is for Phoenix Migration. eisCommonService.getEmpForUserId(cjv.getCreatedBy().getId());
-		Assignment assignment = null;//This fix is for Phoenix Migration.eisCommonService.getAssignmentByEmpAndDate(new Date(), pi.getIdPersonalInformation());
+		PersonalInformation pi =eisCommonService.getEmployeeByUserId(cjv.getCreatedBy().getId());
+		Assignment assignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(pi.getIdPersonalInformation(),new Date());
 		return assignment.getDeptId();
 	}
 	public Boundary getBoundaryForUser(ContraJournalVoucher rv)
@@ -417,7 +417,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 	}
 	public Position getPositionForEmployee(PersonalInformation emp)throws EGOVRuntimeException
 	{
-		return null;//This fix is for Phoenix Migration.eisCommonService.getPositionforEmp(emp.getIdPersonalInformation());
+		return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getIdPersonalInformation());
 	}
 	private void addToBankRecon(CVoucherHeader payIn,InstrumentHeader instrumentHeader,EgwStatus instrumentReconciledStatus) {
 		instrumentService.addToBankReconcilationWithLoop(payIn, instrumentHeader,instrumentReconciledStatus);

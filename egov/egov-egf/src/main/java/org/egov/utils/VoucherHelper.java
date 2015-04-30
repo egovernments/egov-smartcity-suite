@@ -331,7 +331,7 @@ public class VoucherHelper {
 
 	public  List<Department> getAllAssgnDeptforUser(){
 		// load the  primary and secondary assignment departments of the logged in user 
-		PersonalInformation employee = null;//This fix is for Phoenix Migration.eisCommonService.getEmpForUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		PersonalInformation employee = eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
 		HashMap<String,String> paramMap = new HashMap<String, String>();
 		paramMap.put("code", employee.getCode());
 		List<EmployeeView> listEmployeeView = eisUtilService.getEmployeeInfoList(paramMap);

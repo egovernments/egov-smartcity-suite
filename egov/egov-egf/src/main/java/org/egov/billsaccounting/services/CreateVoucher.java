@@ -103,10 +103,8 @@ import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfig;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.services.SessionFactory;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.HibernateUtil;
-
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.lib.admbndry.HeirarchyTypeDAO;
 import org.egov.masters.services.MastersService;
@@ -767,7 +765,7 @@ public class CreateVoucher {
 					//This fix is for Phoenix Migration.
 					 //voucherWorkflowService.start(voucherheader, getPosition());
 					// voucherWorkflowService.transition("aa_approve", voucherheader, "Created");    // action name need to pass
-					// Position position = eisCommonService.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+					Position position = eisCommonService.getPositionByUserId(EGOVThreadLocals.getUserId());
 					 
 					 VoucherService vs = (VoucherService)applicationContext.getBean("voucherService");
 					PersistenceService persistenceService = (PersistenceService)applicationContext.getBean("persistenceService");
@@ -891,17 +889,16 @@ public class CreateVoucher {
 				 if(LOGGER.isDebugEnabled())     LOGGER.debug("fetching voucherWorkflowService from application context.......");
 				 ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] {
 						 "classpath:org/serviceconfig-Bean.xml","classpath:org/egov/infstr/beanfactory/globalApplicationContext.xml","classpath:org/egov/infstr/beanfactory/applicationContext-egf.xml","classpath:org/egov/infstr/beanfactory/applicationContext-pims.xml" });
-				//This fix is for Phoenix Migration.
-				 /*SimpleWorkflowService<CVoucherHeader> voucherWorkflowService =  (SimpleWorkflowService) applicationContext.getBean("voucherWorkflowService");
-//				 if(LOGGER.isDebugEnabled())     LOGGER.debug("completed voucherWorkflowService from application context.......");
-				 voucherWorkflowService.start(cjv.getVoucherHeaderId(), getPosition());
+				 SimpleWorkflowService<CVoucherHeader> voucherWorkflowService =  (SimpleWorkflowService) applicationContext.getBean("voucherWorkflowService");
+				 if(LOGGER.isDebugEnabled())     LOGGER.debug("completed voucherWorkflowService from application context.......");
+				 cjv.getVoucherHeaderId().start().withOwner(getPosition());
 				// voucherWorkflowService.transition("am_approve", cjv.getVoucherHeaderId(), "Created");    // action name need to pass
-				 Position position = eisCommonService.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-				 cjv.changeState("WORKFLOW INITIATED",position, "WORKFLOW STARTED");
+				 Position position = eisCommonService.getPositionByUserId(EGOVThreadLocals.getUserId());
+				 cjv.transition(true).withStateValue("WORKFLOW INITIATED").withOwner(position).withComments("WORKFLOW STARTED");
 				 VoucherService vs = (VoucherService)applicationContext.getBean("voucherService");
 					PersistenceService persistenceService = (PersistenceService)applicationContext.getBean("persistenceService");
 					Position nextPosition= getNextPosition(cjv.getVoucherHeaderId(),vs,persistenceService,null);
-					cjv.changeState("WORKFLOW INITIATED",nextPosition, "WORKFLOW STARTED");*/
+					cjv.transition(true).withStateValue("WORKFLOW INITIATED").withOwner(nextPosition).withComments("WORKFLOW STARTED");
 			 }
 		 }catch(Exception e)
 		 {
@@ -949,9 +946,8 @@ public class CreateVoucher {
 	 {
 		 Position pos;
 		 if(LOGGER.isDebugEnabled())     LOGGER.debug("getPosition===="+EGOVThreadLocals.getUserId());
-		// pos = eisCommonService.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
-		//This fix is for Phoenix Migration.
-		// if(LOGGER.isDebugEnabled())     LOGGER.debug("position==="+pos.getId());
+		pos = eisCommonService.getPositionByUserId(EGOVThreadLocals.getUserId());
+		if(LOGGER.isDebugEnabled())     LOGGER.debug("position==="+pos.getId());
 		return null;//pos;
 	}
 	 /**

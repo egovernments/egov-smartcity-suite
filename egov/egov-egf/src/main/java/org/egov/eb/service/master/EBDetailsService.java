@@ -148,7 +148,7 @@ public class EBDetailsService{
 		String targetArea = groupParts[2];
 		String region = groupParts[3];
 		
-		//Position position = new EisCommonService().getPositionByUserId(Integer.valueOf(userId));
+		Position position = new EisCommonService().getPositionByUserId(userId);
 		
 		List<EBDetails> ebDetails =HibernateUtil.getCurrentSession()
 				.createQuery(
