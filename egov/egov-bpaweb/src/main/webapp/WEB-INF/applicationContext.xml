@@ -264,9 +264,9 @@
 		<property name="type" value="org.egov.bpa.models.extd.RegnAutoDcrExtn"/>
 		<property name="persistenceService" ref="persistenceService"/>
 	</bean> 
-	<bean id="surveyorMasterService" class="org.egov.bpa.services.extd.masters.SurveyorMasterService"  scope="prototype">
+	<!-- <bean id="surveyorMasterService" class="org.egov.bpa.services.extd.masters.SurveyorMasterService"  scope="prototype">
 		<property name="persistenceService" ref="persistenceService"/>
-	</bean> 
+	</bean> --> 
  <bean id="regnStatusDetExtnService" class="org.egov.bpa.services.extd.common.RegnStatusDetailExtnService" parent="persistenceService" scope="prototype">
 	    <property name="type" value="org.egov.bpa.models.extd.RegnStatusDetailsExtn"/>
 	    <property name="persistenceService" ref="persistenceService"/>
