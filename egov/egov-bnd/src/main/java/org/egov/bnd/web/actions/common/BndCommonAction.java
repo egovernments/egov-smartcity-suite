@@ -78,7 +78,6 @@ import org.egov.web.annotation.ValidationErrorPage;
  * @author pritiranjan
  */
 
-@SuppressWarnings("serial")
 @ParentPackage("egov")
 @Result(name = BndCommonAction.WORKFLOWERROR, location = "bndCommon", type = "redirectAction", params = { "namespace",
         "/common", "method", BndCommonAction.WORKFLOWERROR })
