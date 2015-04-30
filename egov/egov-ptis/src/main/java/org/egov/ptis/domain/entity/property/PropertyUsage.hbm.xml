@@ -44,7 +44,7 @@
 
 <hibernate-mapping>
 	<class name="org.egov.ptis.domain.entity.property.PropertyUsage" table="EGPT_PROPERTY_USAGE_MASTER">
-		<id name="id" column="ID_USG_MSTR" type="java.lang.Long">
+		<id name="id" column="ID" type="java.lang.Long">
 			<generator class="sequence">
 				<param name="sequence">SEQ_PROPERTY_USAGE_MASTER</param>
 			</generator>

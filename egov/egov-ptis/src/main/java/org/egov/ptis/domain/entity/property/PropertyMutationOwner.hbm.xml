@@ -45,9 +45,9 @@
 <hibernate-mapping>
 	<class name="org.egov.ptis.domain.entity.property.PropertyMutationOwner" table="EGPT_MUTATION_OWNER">
 		<id
-			name="mutationOwnerId" column="ID_MUTATION_OWNER" type="int">
+			name="mutationOwnerId" column="ID" type="int">
 			<generator class="sequence">
-					<param name="sequence">SEQ_MUTATION_OWNERS</param>
+					<param name="sequence">SEQ_EGPT_MUTATION_OWNER</param>
 			</generator>
 		</id>
 		<many-to-one name="propertyMutation" class="org.egov.ptis.domain.entity.property.PropertyMutation" column="ID_PROP_MUTATION" insert = "false" update="false"/> 

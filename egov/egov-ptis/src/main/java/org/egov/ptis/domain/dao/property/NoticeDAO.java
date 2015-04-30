@@ -63,8 +63,8 @@ public class NoticeDAO {
 			Query query = HibernateUtil
 					.getCurrentSession()
 					.createSQLQuery(
-							"insert into EGPT_NOTICE (ID_NOTICE,ID_MODULE,NOTICETYPE,NOTICENO,NOTICEDATE,ID_USER) "
-									+ "values (SEQ_NOTICE_ID.nextval,?,?,?,sysdate,?")
+							"insert into EGPT_NOTICE (ID,ID_MODULE,NOTICETYPE,NOTICENO,NOTICEDATE,ID_USER) "
+									+ "values (SEQ_EGPT_NOTICE.nextval,?,?,?,sysdate,?")
 					.setParameter(0, notice.getModuleId())
 					.setParameter(1, notice.getNoticeType())
 					.setParameter(2, notice.getNoticeNo())

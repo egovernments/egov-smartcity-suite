@@ -44,9 +44,9 @@
 
 <hibernate-mapping>
 	<class name="org.egov.ptis.domain.entity.property.Category" table="EGPT_MSTR_CATEGORY">
-		<id name="id" column="ID_CATEGORY" type="java.lang.Long">
+		<id name="id" column="ID" type="java.lang.Long">
 			<generator class="sequence">
-				<param name="sequence">SEQ_CATEGORY</param>
+				<param name="sequence">SEQ_EGPT_MSTR_CATEGORY</param>
 			</generator>
 		</id>
 		<property name="createdDate" type="java.util.Date">

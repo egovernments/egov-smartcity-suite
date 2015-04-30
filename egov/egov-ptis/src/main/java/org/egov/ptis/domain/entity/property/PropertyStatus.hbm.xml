@@ -45,9 +45,9 @@
 <hibernate-mapping>
 	<class name="org.egov.ptis.domain.entity.property.PropertyStatus" table="EGPT_STATUS">
 		<id
-			name="ID" column="ID_STATUS" type="int">
+			name="ID" column="ID" type="int">
 			<generator class="sequence">
-					<param name="sequence">SEQ_STATUS</param>
+					<param name="sequence">SEQ_EGPT_STATUS</param>
 			</generator>
 		</id>
 		<timestamp

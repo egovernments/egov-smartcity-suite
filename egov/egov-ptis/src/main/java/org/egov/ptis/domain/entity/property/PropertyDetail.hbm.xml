@@ -45,10 +45,10 @@
 <hibernate-mapping>
 	<class name="org.egov.ptis.domain.entity.property.PropertyDetail"
 		table="EGPT_PROPERTY_DETAIL">
-		<id name="propertyDetailsID" column="ID_PROPERTY_DETAIL"
+		<id name="propertyDetailsID" column="ID"
 			type="integer">
 			<generator class="sequence">
-				<param name="sequence">SEQ_PROP_DETAIL</param>
+				<param name="sequence">SEQ_EGPT_PROPERTY_DETAIL</param>
 			</generator>
 		</id>
 
@@ -61,7 +61,7 @@
 
 		<many-to-one name="property" fetch="join"
 			class="org.egov.ptis.domain.entity.property.PropertyImpl"
-			column="ID_PROPERTY" unique="true" cascade="none" />
+			column="ID" unique="true" cascade="none" />
 
 		<many-to-one name="propertyTypeMaster"
 			class="org.egov.ptis.domain.entity.property.PropertyTypeMaster"

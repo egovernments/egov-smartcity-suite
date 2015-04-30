@@ -45,9 +45,9 @@
 <hibernate-mapping>
 	<class name="org.egov.ptis.domain.entity.property.BoundaryCategory"
 		table="EGPT_MSTR_BNDRY_CATEGORY">
-		<id name="id" column="ID_BNDRY_CATEGORY" type="java.lang.Long">
+		<id name="id" column="ID" type="java.lang.Long">
 			<generator class="sequence">
-				<param name="sequence">SEQ_BNDRY_CATEGORY</param>
+				<param name="sequence">SEQ_EGPT_MSTR_BNDRY_CATEGORY</param>
 			</generator>
 		</id>
 		<property name="createdDate" type="java.util.Date">
@@ -68,7 +68,7 @@
 		<many-to-one name="bndry" column="ID_BNDRY"
 			class="org.egov.infra.admin.master.entity.BoundaryImpl" not-null="true" />
 
-		<many-to-one name="category" column="ID_CATEGORY"
+		<many-to-one name="category" column="ID"
 			class="org.egov.ptis.domain.entity.property.Category" not-null="true" />
 
 		<property name="fromDate" column="FROM_DATE" />

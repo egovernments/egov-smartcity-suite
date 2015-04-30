@@ -47,7 +47,7 @@
 
 		<id name="id" column="ID" type="java.lang.Long">
 			<generator class="sequence">
-				<param name="sequence">SEQ_PROPERTYID</param>
+				<param name="sequence">SEQ_EGPT_PROPERTYID</param>
 			</generator>
 		</id>
 		<property name="createdDate" type="java.util.Date">
@@ -56,28 +56,24 @@
 		<property name="modifiedDate" type="java.util.Date">
 			<column name="MODIFIED_DATE" not-null="true" />
 		</property>
-		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.UserImpl"
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User"
 			cascade="all">
 			<column name="CREATED_BY" />
 		</many-to-one>
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.UserImpl"
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User"
 			cascade="all">
 			<column name="MODIFIED_BY" />
 		</many-to-one>
 
-		<many-to-one name="zone" class="org.egov.infra.admin.master.entity.BoundaryImpl"
+		<many-to-one name="zone" class="org.egov.infra.admin.master.entity.Boundary"
 			column="ZONE_NUM" />
-		<many-to-one name="ward" class="org.egov.infra.admin.master.entity.BoundaryImpl"
+		<many-to-one name="ward" class="org.egov.infra.admin.master.entity.Boundary"
 			column="WARD_ADM_ID" />
-		<property name="colonyId" column="COLONY_NUM" />
-
-		<property name="doorNum" column="DOOR_NUM" />
-		<property name="assUnit" column="ASSMT_UNIT" />
-		<many-to-one name="area" class="org.egov.infra.admin.master.entity.BoundaryImpl"
+		<many-to-one name="area" class="org.egov.infra.admin.master.entity.Boundary"
 			column="ADM1" />
-		<many-to-one name="locality" class="org.egov.infra.admin.master.entity.BoundaryImpl"
+		<many-to-one name="locality" class="org.egov.infra.admin.master.entity.Boundary"
 			column="ADM2" />
-		<many-to-one name="street" class="org.egov.infra.admin.master.entity.BoundaryImpl"
+		<many-to-one name="street" class="org.egov.infra.admin.master.entity.Boundary"
 			column="ADM3" />
 		<property name="northBoundary" column="NORTH_BOUNDED" />
 		<property name="southBoundary" column="SOUTH_BOUNDED" />
@@ -87,15 +83,15 @@
 		<one-to-one name="basicProperty" lazy="proxy" outer-join="true"
 			class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" property-ref="propertyID"
 			cascade="none" />
-		<many-to-one name="frontBndryStreet" class="org.egov.infra.admin.master.entity.BoundaryImpl"
+		<many-to-one name="frontBndryStreet" class="org.egov.infra.admin.master.entity.Boundary"
 			column="FRONT_BNDRY_STREET" />
-		<many-to-one name="backBndryStreet" class="org.egov.infra.admin.master.entity.BoundaryImpl"
+		<many-to-one name="backBndryStreet" class="org.egov.infra.admin.master.entity.Boundary"
 			column="BACK_BNDRY_STREET" />
-		<many-to-one name="leftBndryStreet" class="org.egov.infra.admin.master.entity.BoundaryImpl"
+		<many-to-one name="leftBndryStreet" class="org.egov.infra.admin.master.entity.Boundary"
 			column="LEFT_BNDRY_STREET" />
-		<many-to-one name="rightBndryStreet" class="org.egov.infra.admin.master.entity.BoundaryImpl"
+		<many-to-one name="rightBndryStreet" class="org.egov.infra.admin.master.entity.Boundary"
 			column="RIGHT_BNDRY_STREET" />
-		<many-to-one name="bndryStreetForDmdCalc" class="org.egov.infra.admin.master.entity.BoundaryImpl"
+		<many-to-one name="bndryStreetForDmdCalc" class="org.egov.infra.admin.master.entity.Boundary"
 			column="BNDRY_STREET_DMDCALC" />
 	</class>
 

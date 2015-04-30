@@ -47,7 +47,7 @@
 		<id
 			name="id" column="ID_FLOOR_DETAIL" type="java.lang.Long">
 			<generator class="sequence">
-					<param name="sequence">SEQ_FLOOR_DETAIL</param>
+					<param name="sequence">SEQ_EGPT_FLOOR_DETAIL</param>
 			</generator>
 		</id>
 		<timestamp

@@ -45,9 +45,9 @@
 <hibernate-mapping>
 	<class name="org.egov.ptis.domain.entity.property.PropertySource" table="EGPT_SRC_OF_INFO">
 		<id
-			name="ID" column="ID_SOURCE" type="int">
+			name="ID" column="ID" type="int">
 			<generator class="sequence">
-					<param name="sequence">SEQ_SRC_OF_INFO</param>
+					<param name="sequence">SEQ_EGPT_SRC_OF_INFO</param>
 			</generator>
 		</id>
 		<timestamp
