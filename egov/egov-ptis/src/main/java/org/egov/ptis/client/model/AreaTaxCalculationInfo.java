@@ -41,8 +41,6 @@ package org.egov.ptis.client.model;
 
 import java.math.BigDecimal;
 
-import org.egov.infstr.utils.HashCodeUtil;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -78,7 +76,11 @@ public class AreaTaxCalculationInfo {
         this.calculatedTax = calculatedTax;
     }
 
-    @Override
+    /*
+     * FIXME PHOENIX use HashCodeBuilder from apache commons 
+     * override equals method as well with EqualsBuilder
+     * 
+     * @Override
     public int hashCode() {
 
         int seedValue = HashCodeUtil.SEED;
@@ -88,6 +90,6 @@ public class AreaTaxCalculationInfo {
         seedValue = HashCodeUtil.hash(seedValue, this.calculatedTax);
 
         return seedValue;
-    }
+    }*/
 
 }

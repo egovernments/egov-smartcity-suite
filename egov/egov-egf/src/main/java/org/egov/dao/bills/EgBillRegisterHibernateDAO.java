@@ -50,7 +50,6 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.services.SessionFactory;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.bills.EgBillregister;
 import org.hibernate.Query;

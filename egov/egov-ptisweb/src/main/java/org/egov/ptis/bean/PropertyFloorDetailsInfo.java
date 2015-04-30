@@ -39,10 +39,9 @@
  ******************************************************************************/
 package org.egov.ptis.bean;
 
+import static org.egov.ptis.client.util.PropertyTaxUtil.isNotNull;
 import static org.egov.ptis.constants.PropertyTaxConstants.STYLE_TAG_BEGIN;
 import static org.egov.ptis.constants.PropertyTaxConstants.STYLE_TAG_END;
-import static org.egov.ptis.client.util.PropertyTaxUtil.isNotNull;
-import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -51,12 +50,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.Installment;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.reporting.util.ReportUtil;
-import org.egov.infstr.utils.HashCodeUtil;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.UnitCalculationDetail;
 
 /**
@@ -564,8 +562,11 @@ public class PropertyFloorDetailsInfo implements Comparable<PropertyFloorDetails
 	public BigDecimal getEmpGrnteTaxValue() {
 		return empGrnteTax;
 	}
-	
-	@Override
+	/*
+     * FIXME PHOENIX use HashCodeBuilder from apache commons 
+     * override equals method as well with EqualsBuilder
+     * 
+     * @Override
 	public boolean equals(Object object) {
 		
 		if (object == null) {
@@ -621,7 +622,7 @@ public class PropertyFloorDetailsInfo implements Comparable<PropertyFloorDetails
         return seedValue;
 
     }
-
+*/
 	
 	@Override
 	public String toString() {

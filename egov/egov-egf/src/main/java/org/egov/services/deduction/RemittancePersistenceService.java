@@ -41,7 +41,6 @@ package org.egov.services.deduction;
 
 import org.egov.deduction.model.EgRemittance;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.services.SessionFactory;
 
 public class RemittancePersistenceService  extends PersistenceService<EgRemittance, Long>{
    private PersistenceService persistenceService;

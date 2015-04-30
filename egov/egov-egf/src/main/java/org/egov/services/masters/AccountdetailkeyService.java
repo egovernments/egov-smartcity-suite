@@ -39,11 +39,8 @@
  ******************************************************************************/
 package org.egov.services.masters;
 
-import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.services.SessionFactory;
 import org.egov.commons.Accountdetailkey;
-import org.egov.deduction.model.EgRemittance;
-import org.egov.eb.domain.master.entity.EBConsumer;
+import org.egov.infstr.services.PersistenceService;
 
 public class AccountdetailkeyService extends PersistenceService<Accountdetailkey, Integer> {
 	 private PersistenceService persistenceService;

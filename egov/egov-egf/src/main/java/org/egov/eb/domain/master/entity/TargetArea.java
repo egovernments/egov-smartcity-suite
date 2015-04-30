@@ -43,7 +43,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.egov.infstr.models.BaseModel;
-import org.egov.infstr.utils.HashCodeUtil;
 import org.egov.pims.commons.Position;
 
 public class TargetArea extends BaseModel{
@@ -94,7 +93,11 @@ public class TargetArea extends BaseModel{
 		this.targetAreaMappings = targetAreaMappings;
 	}
 
-	@Override
+	/*
+     * FIXME PHOENIX use HashCodeBuilder from apache commons 
+     * override equals method as well with EqualsBuilder
+     * 
+     * @Override
 	public int hashCode() {
 		int seedValue = HashCodeUtil.SEED;
 
@@ -141,8 +144,9 @@ public class TargetArea extends BaseModel{
 			return false;
 		
 		return true;
-	}
+	}*/
 	
+	//FIXME PHOENIX remove entity ref from toString
 	@Override
 	public String toString() {
 		return new StringBuilder().append("TargetArea [")

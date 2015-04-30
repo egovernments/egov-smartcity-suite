@@ -77,7 +77,6 @@ import org.egov.infstr.ValidationException;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.services.SessionFactory;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.contra.ContraBean;
 import org.egov.model.contra.ContraJournalVoucher;

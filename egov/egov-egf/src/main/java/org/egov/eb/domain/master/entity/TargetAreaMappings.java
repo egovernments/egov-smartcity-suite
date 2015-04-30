@@ -39,12 +39,13 @@
  ******************************************************************************/
 package org.egov.eb.domain.master.entity;
 
-import org.egov.infstr.models.BaseModel;
-import org.egov.infstr.utils.HashCodeUtil;
 import org.egov.infra.admin.master.entity.Boundary;
-//TODO Should Extend baseModel remove isactive field
+import org.egov.infstr.models.BaseModel;
+
 public class TargetAreaMappings extends BaseModel{
 
+	private static final long serialVersionUID = 1043262499593268559L;
+	
 	private Boundary boundary;
 	private TargetArea area;
 
@@ -65,7 +66,11 @@ public class TargetAreaMappings extends BaseModel{
 		this.area = area;
 	}
 	
-	@Override
+	/*
+     * FIXME PHOENIX use HashCodeBuilder from apache commons 
+     * override equals method as well with EqualsBuilder
+     * 
+     * @Override
 	public int hashCode() {
 		int seedValue = HashCodeUtil.SEED;
 
@@ -101,8 +106,9 @@ public class TargetAreaMappings extends BaseModel{
 			return false;
 		
 		return true;
-	}
+	}*/
 
+	//FIXME PHOENIX remove boundary area reference from toString
 	public String toString() {
 		return new StringBuilder()
 			.append("TargetAreaMappings [")

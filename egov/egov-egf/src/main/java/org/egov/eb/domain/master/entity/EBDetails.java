@@ -47,9 +47,8 @@ import javax.persistence.Transient;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.eb.utils.EBUtils;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.utils.HashCodeUtil;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.model.bills.EgBillregister;
 import org.egov.pims.commons.Position;
 
@@ -193,6 +192,10 @@ public class EBDetails extends StateAware {
 		return String.valueOf(this.getId());
 	}
 	
+	/*
+     * FIXME PHOENIX use HashCodeBuilder from apache commons for hashcode generation 
+     * and equals method as well with EqualsBuilder
+     * 
 	@Override
 	public int hashCode() {
 		
@@ -301,7 +304,9 @@ public class EBDetails extends StateAware {
 		
 		return true;
 	}
-
+*/
+	
+	//FIXME PHOENIX remove entity's from toString
 	@Override
 	public String toString() {
 		return new StringBuilder(250).append("EBDEtails [")

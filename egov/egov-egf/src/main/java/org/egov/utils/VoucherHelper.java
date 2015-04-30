@@ -53,25 +53,24 @@ import javax.script.ScriptContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.CFiscalPeriod;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.FiscalPeriodDAO;
 import org.egov.commons.dao.FiscalPeriodHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
+import org.egov.eis.service.EisCommonService;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
-import org.egov.infstr.services.SessionFactory;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.seqgen.DatabaseSequence;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.pims.model.EmployeeView;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.eis.service.EisCommonService;
 import org.egov.pims.service.EisUtilService;
 
 import com.exilant.eGov.src.common.EGovernCommon;
@@ -247,7 +246,6 @@ public class VoucherHelper {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("voucherType | in getGeneratedVoucherNumber :"+voucherType);
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("voucherDate | in getGeneratedVoucherNumber :"+voucherDate);
 		PersistenceService persistenceService = new PersistenceService();
-		SessionFactory sessionFactory = new SessionFactory();
 		//persistenceService.setSessionFactory(sessionFactory);
 		EGovernCommon cm = new EGovernCommon();
 		//initializing now later needs to be injected

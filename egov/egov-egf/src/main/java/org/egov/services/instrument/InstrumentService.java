@@ -54,7 +54,6 @@ import org.egov.commons.EgwStatus;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.models.ECSType;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.services.SessionFactory;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.cheque.AccountCheques;
 import org.egov.model.contra.ContraJournalVoucher;

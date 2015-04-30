@@ -62,7 +62,6 @@ import org.egov.commons.service.CommonsService;
 import org.egov.dao.recoveries.EgDeductionDetailsHibernateDAO;
 import org.egov.dao.recoveries.RecoveryDAOFactory;
 import org.egov.dao.recoveries.TdsHibernateDAO;
-import org.egov.infstr.services.SessionFactory;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.recoveries.EgDeductionDetails;
 import org.egov.model.recoveries.Recovery;
