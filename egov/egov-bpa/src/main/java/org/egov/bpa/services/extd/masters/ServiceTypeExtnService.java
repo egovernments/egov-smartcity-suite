@@ -69,7 +69,7 @@ public class ServiceTypeExtnService extends PersistenceService<ServiceTypeExtn, 
 	public ServiceTypeExtn getservicetypeById(Long serviceTypeId)
 	{
 		 /* ServiceType serviceType=new ServiceType();  
-		  serviceType= (ServiceType) persistenceService.find("from ServiceType where id=?", serviceTypeId);
+		  serviceType= (ServiceType) persistenceService.find("from ServiceTypeExtn where id=?", serviceTypeId);
 		  System.out.println("serviceType " +serviceType.getCode());*/
 		  
 		  if(serviceTypeId==null)
