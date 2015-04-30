@@ -84,7 +84,7 @@ public class SearchReceiptActionTest { /*extends AbstractPersistenceServiceTest<
 		action.setUserId(userId);
 		action.search();
 		List<ReceiptHeader> actualSearchResults = genericService.findAllBy(
-				"from org.egov.erpcollection.models.ReceiptHeader receipt where receipt.createdBy.id = ?", userId);
+				"from org.egov.collection.entity.ReceiptHeader receipt where receipt.createdBy.id = ?", userId);
 		assertTrue(actualSearchResults.containsAll(action.getSearchResult().getList()));
 		assertEquals(action.getTarget(),"searchresult");
 	}

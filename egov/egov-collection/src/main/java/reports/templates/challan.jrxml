@@ -72,7 +72,7 @@
 	<field name="totalAmount" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[Total Amount]]></fieldDescription>
 	</field>
-	<field name="receiptMisc" class="org.egov.erpcollection.models.ReceiptMisc"/>
+	<field name="receiptMisc" class="org.egov.collection.entity.ReceiptMisc"/>
 	<field name="challanStatus" class="java.lang.String"/>
 	<field name="functionName" class="java.lang.String"/>
 	<field name="accountPayeeDetails" class="java.util.Collection"/>

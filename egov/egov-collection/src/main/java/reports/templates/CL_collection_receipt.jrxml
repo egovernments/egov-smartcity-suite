@@ -76,7 +76,7 @@
 		<fieldDescription><![CDATA[Total Amount]]></fieldDescription>
 	</field>
 	<field name="instrumentDetails" class="java.util.Collection"/>
-	<field name="receiptMisc" class="org.egov.erpcollection.models.ReceiptMisc"/>
+	<field name="receiptMisc" class="org.egov.collection.entity.ReceiptMisc"/>
 	<field name="collectionType" class="java.lang.String"/>
 	<variable name="amountReceived" class="java.math.BigDecimal">
 		<initialValueExpression><![CDATA[new java.math.BigDecimal(0)]]></initialValueExpression>

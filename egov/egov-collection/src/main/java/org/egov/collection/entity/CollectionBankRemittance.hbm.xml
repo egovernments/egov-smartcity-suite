@@ -38,26 +38,45 @@
   
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<!DOCTYPE hibernate-mapping
-PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-
-<hibernate-mapping>
-	<class name="org.egov.infstr.models.ServiceSubledgerInfo" table="EG_SERVICE_SUBLEDGERINFO" >
-		
-		<id name="id" column="ID" type="long" unsaved-value="null">
-			<generator class="native">
-				<param name="sequence">SEQ_EG_SERVICE_SUBLEDGERINFO</param>
+	<!-- Generated 10 Sep, 2009 12:59:28 PM by Hibernate Tools 3.2.0.CR1 -->
+<hibernate-mapping auto-import="false">
+	<class name="org.egov.collection.entity.CollectionBankRemittance" table="EGCL_BANK_REMITTANCE">
+		<id name="id" type="long">
+			<column name="ID" precision="22" scale="0" />
+			<generator class="sequence">
+				<param name="sequence">SEQ_EGCL_BANK_REMITTANCE</param>
 			</generator>
 		</id>
+
+		<many-to-one name="depositedInBank" class="org.egov.commons.Bank" fetch="select">
+            <column name="ID_depositedInBank" precision="22" scale="0" />
+        </many-to-one>
 		
-  		<many-to-one name="detailType" class="org.egov.commons.Accountdetailtype" fetch="select">
-            <column name="ID_ACCOUNTDETAILTYPE" not-null="true" />
-        </many-to-one>    
-        
-        <property name="detailKeyId" column="ID_ACCOUNTDETAILKEY" type="integer" />
-        <property name="amount" column="AMOUNT" type="java.math.BigDecimal" precision="15" scale="2"/>
-		<many-to-one name="serviceAccountDetail" class="org.egov.infstr.models.ServiceAccountDetails" 
-					column="ID_SERVICEACCOUNTDETAIL" fetch="select" not-null="true"/>
+		<many-to-one name="service" class="org.egov.infstr.models.ServiceDetails" fetch="select">
+			<column name="ID_SERVICE" precision="22" scale="0" />
+		</many-to-one>
+		
+		<many-to-one name="bankAccounttoRemit" class="org.egov.commons.Bankaccount" fetch="select">
+            <column name="ID_BankAccounttoRemit" precision="22" scale="0" />
+        </many-to-one>
+		
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl"
+			fetch="select">
+			<column name="CREATED_BY" precision="22" scale="0" />
+		</many-to-one>
+		
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl"
+			fetch="select">
+			<column name="MODIFIED_BY" precision="22" scale="0" />
+		</many-to-one>
+		
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
 	</class>
+
+	    <query name="COLLECTION_BANKACCOUNT_BY_SERVICE_AND_BANK">
+    <![CDATA[select cb.bankAccounttoRemit from org.egov.collection.entity.CollectionBankRemittance cb where cb.depositedInBank.code=? and cb.service.id=?]]></query>
+    
 </hibernate-mapping>

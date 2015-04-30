@@ -41,6 +41,7 @@ package org.egov.collection.entity;
 
 // Generated 10 Sep, 2009 12:59:27 PM by Hibernate Tools 3.2.0.CR1
 
+import org.egov.commons.Bank;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
@@ -65,22 +66,24 @@ public class ReceiptMisc implements java.io.Serializable {
 	private Scheme scheme;
 	private SubScheme subscheme;
 	private Functionary idFunctionary;
-
+	private Bank depositedInBank;
+	
 	public ReceiptMisc() {
 	}
 
-	public ReceiptMisc(Boundary boundary, Fund fund, Functionary functionary,
-			Fundsource fundSource, Department department, ReceiptHeader receiptHeader,
-			Scheme scheme,SubScheme subscheme) {
-		this.boundary = boundary;
-		this.fund = fund;
-		this.idFunctionary = functionary;
-		this.fundsource = fundSource;
-		this.department = department;
-		this.receiptHeader = receiptHeader;
-		this.scheme=scheme;
-		this.subscheme=subscheme;
-	}
+	public ReceiptMisc(Boundary boundary, Fund fund, Functionary functionary, Fundsource fundSource,
+            Department department, ReceiptHeader receiptHeader, Scheme scheme, SubScheme subscheme,
+            Bank depositedInBank) {
+        this.boundary = boundary;
+        this.fund = fund;
+        this.idFunctionary = functionary;
+        this.fundsource = fundSource;
+        this.department = department;
+        this.receiptHeader = receiptHeader;
+        this.scheme = scheme;
+        this.subscheme = subscheme;
+        this.depositedInBank = depositedInBank;
+    }
 
 	public Long getId() {
 		return this.id;
@@ -124,7 +127,6 @@ public class ReceiptMisc implements java.io.Serializable {
 		this.boundary = boundary;
 	}
 	
-	//@Required(message="billingsystem.dept.null")
 	public Department getDepartment() {
 		return this.department;
 	}
@@ -161,6 +163,14 @@ public class ReceiptMisc implements java.io.Serializable {
 	 */
 	public void setIdFunctionary(Functionary idFunctionary) {
 		this.idFunctionary = idFunctionary;
+	}
+	
+	public Bank getDepositedInBank() {
+		return depositedInBank;
+	}
+
+	public void setDepositedInBank(Bank depositedInBank) {
+		this.depositedInBank = depositedInBank;
 	}
 	
 }

@@ -459,7 +459,7 @@ public class ReceiptAction extends BaseFormAction {
 				CollectionConstants.QUERY_DEPARTMENT_BY_ID, Integer.valueOf(this.deptId));
 
 		ReceiptMisc receiptMisc = new ReceiptMisc(null, fund, functionary, fundSource, dept, receiptHeader, scheme,
-				subscheme);
+				subscheme, null);
 		receiptHeader.setReceiptMisc(receiptMisc);
 
 		totalAmountToBeCollected = BigDecimal.valueOf(0);
@@ -1126,7 +1126,7 @@ public class ReceiptAction extends BaseFormAction {
 		ReceiptMisc receiptMisc = new ReceiptMisc(oldReceiptHeader.getReceiptMisc().getBoundary(), oldReceiptHeader
 				.getReceiptMisc().getFund(), oldReceiptHeader.getReceiptMisc().getIdFunctionary(), oldReceiptHeader
 				.getReceiptMisc().getFundsource(), oldReceiptHeader.getReceiptMisc().getDepartment(), receiptHeader,
-				oldReceiptHeader.getReceiptMisc().getScheme(), oldReceiptHeader.getReceiptMisc().getSubscheme());
+				oldReceiptHeader.getReceiptMisc().getScheme(), oldReceiptHeader.getReceiptMisc().getSubscheme(),null);
 		receiptHeader.setReceiptMisc(receiptMisc);
 		
 		for (ReceiptDetail oldDetail : oldReceiptHeader.getReceiptDetails()) {

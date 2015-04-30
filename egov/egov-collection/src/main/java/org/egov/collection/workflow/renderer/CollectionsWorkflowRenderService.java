@@ -133,7 +133,7 @@ public class CollectionsWorkflowRenderService { // extends DefaultWorkflowTypeSe
 		String params[] = arg0.split(CollectionConstants.SEPARATOR_HYPHEN, -1);
 		
 		StringBuilder query = new StringBuilder(
-		"select receipt from org.egov.erpcollection.models.ReceiptHeader receipt where 1=1 and receipt.status.code = ? " +
+		"select receipt from org.egov.collection.entity.ReceiptHeader receipt where 1=1 and receipt.status.code = ? " +
 		"and receipt.createdBy.userName = ? and receipt.location.id = ? and receipt.service.code = ? order by receipt.createdDate desc");
 		
 		Object arguments[] = new Object[4];

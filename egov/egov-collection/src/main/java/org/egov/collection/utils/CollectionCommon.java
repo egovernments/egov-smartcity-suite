@@ -334,7 +334,7 @@ public class CollectionCommon {
                 Fundsource fundSource = commonsServiceImpl.getFundSourceByCode(collDetails.getFundSourceCode());
 
                 ReceiptMisc receiptMisc = new ReceiptMisc(boundary, fund, functionary, fundSource, dept, receiptHeader,
-                        null, null);
+                        null, null,null);
                 receiptHeader.setReceiptMisc(receiptMisc);
 
                 BigDecimal totalAmountToBeCollected = BigDecimal.valueOf(0);
@@ -607,7 +607,7 @@ public class CollectionCommon {
 
         ReceiptMisc receiptMisc = new ReceiptMisc(oldReceiptHeader.getReceiptMisc().getBoundary(), oldReceiptHeader
                 .getReceiptMisc().getFund(), null, null, oldReceiptHeader.getReceiptMisc().getDepartment(),
-                newReceiptHeader, null, null);
+                newReceiptHeader, null, null,null);
         newReceiptHeader.setReceiptMisc(receiptMisc);
 
         List<CChartOfAccounts> bankCOAList =  FinancialsUtil.getBankChartofAccountCodeList();

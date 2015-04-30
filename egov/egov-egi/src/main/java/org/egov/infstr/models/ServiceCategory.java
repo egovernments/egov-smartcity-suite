@@ -46,22 +46,27 @@ import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 
-
+/**
+ * @author manoranjan
+ *
+ */
 @Unique(fields = { "code" }, id = "id", tableName = "EG_SERVICECATEGORY", columnName = { "CODE" }, message = "masters.serviceCategoryCode.isunique")
+
 public class ServiceCategory extends BaseModel {
+	
 
 	private static final long serialVersionUID = 1L;
 
 	@Required(message = "serviceCategoryName.null.validation")
 	@Length(max = 256, message = "masters.serviceCategory.nameLength")
 	private String name;
-
+	
 	@Required(message = "serviceCategoryCode.null.validation")
 	@Length(max = 256, message = "masters.serviceCategory.codeLength")
 	private String code;
-
+	
 	private Boolean isActive;
-
+	
 	private Set<ServiceDetails> services = new LinkedHashSet<ServiceDetails>(0);
 
 	/**
@@ -103,13 +108,12 @@ public class ServiceCategory extends BaseModel {
 	 * @param isActive the isActive to set
 	 */
 	public void setIsActive(Boolean isActive) {
-		if (null == isActive) {
-			this.isActive = Boolean.FALSE;
-		} else {
-			this.isActive = isActive;
+		if(null == isActive){
+            this.isActive = Boolean.FALSE;
+		}else{
+            this.isActive = isActive;
 		}
 	}
-
 	public Set<ServiceDetails> getServices() {
 		return services;
 	}

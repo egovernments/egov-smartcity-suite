@@ -88,7 +88,7 @@
 	</parameter>
 	<queryString language="hql">
 		<![CDATA[SELECT ch FROM
-	org.egov.erpcollection.models.Challan ch
+	org.egov.collection.entity.Challan ch
 WHERE
 	ch.receiptHeader.receiptnumber is null
 	AND ch.status.code != 'CANCELLED'
@@ -106,7 +106,7 @@ ORDER BY
 	<field name="challanNumber" class="java.lang.String">
 		<fieldDescription><![CDATA[Challan Number]]></fieldDescription>
 	</field>
-	<field name="receiptHeader" class="org.egov.erpcollection.models.ReceiptHeader"/>
+	<field name="receiptHeader" class="org.egov.collection.entity.ReceiptHeader"/>
 	<field name="challanDate" class="java.util.Date">
 		<fieldDescription><![CDATA[Challan Date]]></fieldDescription>
 	</field>

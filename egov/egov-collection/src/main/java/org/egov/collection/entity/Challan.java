@@ -89,6 +89,8 @@ public class Challan extends StateAware {
 	
 	private CVoucherHeader voucherHeader;
 	
+	private String oldChallanNumber;
+	
 	public Challan(){
 	}
 	
@@ -164,18 +166,18 @@ public class Challan extends StateAware {
 	public void setVoucherHeader(CVoucherHeader voucherHeader) {
 		this.voucherHeader = voucherHeader;
 	}
+	
+	public String getOldChallanNumber() {
+		return oldChallanNumber;
+	}
+
+	public void setOldChallanNumber(String oldChallanNumber) {
+		this.oldChallanNumber = oldChallanNumber;
+	}
 
 	@Override
 	public String getStateDetails() {
 		return "Challan - " + challanNumber;
 	}
-	
-	/* public String toString(){
-		String str="Challan[ challanNo : " + this.challanNumber + ", validUpto : " + 
-		this.validUpto + " , challanDate : " + this.challanDate + ", createdDate : " + this.createdDate + ",createdBy : " + this.createdBy 
-		//+ "receiptHeader : " + this.receiptHeader 
-		+ "]";
-		return str;
-	} */
 	
 }

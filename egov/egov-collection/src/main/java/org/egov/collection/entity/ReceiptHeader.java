@@ -40,11 +40,13 @@
 package org.egov.collection.entity;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.ServiceLoader;
 import java.util.Set;
 
@@ -113,6 +115,8 @@ public class ReceiptHeader extends StateAware {
 	private Challan challan;
 	private String payeeName;
 	private String payeeAddress;
+	private String workflowUserName = "NA";
+	private String instrumentsAsString;
 	
 	public ReceiptHeader() {
 	}
@@ -332,52 +336,6 @@ public class ReceiptHeader extends StateAware {
 		}
 		return instrumentList;
 	}*/
-
-	/**
-	 * @return the list of instruments along with their details (number, date)
-	 *         in the form of a string. Format: <Instrument Type> [- <Instrument
-	 *         Number> - [<Instrument Date>]] - <Instrument Amount>
-	 */
-	public String getInstrumentsAsString() {
-		StringBuilder instrumentDetailsBuilder = new StringBuilder();
-		
-		/*for (InstrumentHeader instrument : receiptInstrument) {
-			if (instrumentDetailsBuilder.length() > 0) {
-				instrumentDetailsBuilder.append(", ");
-			}
-
-			String instrumentType = instrument.getInstrumentType().getType();
-			instrumentDetailsBuilder.append(instrumentType);
-			if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_DD)
-					|| instrumentType
-							.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE) ||
-							instrumentType
-							.equals(CollectionConstants.INSTRUMENTTYPE_CARD)) {
-				// For DD/Cheque/Card, add instrument number
-				instrumentDetailsBuilder.append(" # "
-						+ instrument.getInstrumentNumber());
-			}
-			if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_BANK) || 
-					instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_ONLINE)){
-				// For bank , add transaction number (challan number)
-				instrumentDetailsBuilder.append(" # "
-						+ instrument.getTransactionNumber());
-			}
-			if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_DD)
-					|| instrumentType
-							.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)) {
-				// For DD/Cheque, add instrument date as well
-				instrumentDetailsBuilder.append(" - "
-						+ new SimpleDateFormat("dd/MM/yyyy", Locale
-								.getDefault()).format(instrument
-								.getInstrumentDate()));
-			}
-			
-			instrumentDetailsBuilder.append(" - "
-					+ instrument.getInstrumentAmount());
-		}*/
-		return instrumentDetailsBuilder.toString();
-	}
 
 	/**
 	 * @return the receiptVoucher
@@ -734,5 +692,59 @@ public class ReceiptHeader extends StateAware {
 	public void setReceiptdate(DateTime receiptdate) {
 		this.receiptdate = receiptdate;
 	}
+	
+	/**
+	 * @param workflowUserName
+	 *            the workflowUserName to set
+	 */
+	public void setWorkflowUserName(String workflowUserName) {
+		this.workflowUserName = workflowUserName;
+	}
+
+	/**
+	 * @return the workflowUserName
+	 */
+	public String getWorkflowUserName() {
+		return workflowUserName;
+	}
+	
+	public String getInstrumentsAsString() {
+		return instrumentsAsString;
+	}
+
+	public void setInstrumentsAsString(String instrumentsAsString) {
+		this.instrumentsAsString = instrumentsAsString;
+	}
+	
+	public String getInstrumentDetailAsString() {
+		StringBuilder instrumentDetailsBuilder = new StringBuilder();
+
+		for (InstrumentHeader instrument : receiptInstrument) {
+			if (instrumentDetailsBuilder.length() > 0) {
+				instrumentDetailsBuilder.append(", ");
+			}
+
+			String instrumentType = instrument.getInstrumentType().getType();
+			instrumentDetailsBuilder.append(instrumentType);
+			
+			if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_DD) || instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)
+					|| instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CARD)) {
+				// For DD/Cheque/Card, add instrument number
+				instrumentDetailsBuilder.append(" # " + instrument.getInstrumentNumber());
+			}
+			if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_BANK) || instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_ONLINE)) {
+				// For bank , add transaction number (challan number)
+				instrumentDetailsBuilder.append(" # " + instrument.getTransactionNumber());
+			}
+			if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_DD) || instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)) {
+				// For DD/Cheque, add instrument date as well
+				instrumentDetailsBuilder.append(" - " + new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(instrument.getInstrumentDate()));
+			}
+
+			instrumentDetailsBuilder.append(" - " + instrument.getInstrumentAmount());
+		}
+		return instrumentDetailsBuilder.toString();
+	}
+
 
 }

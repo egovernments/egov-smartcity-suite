@@ -37,6 +37,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.config.AppData;
+import org.egov.infstr.models.BankAccountServiceMap;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.Number;
@@ -88,19 +89,33 @@ public class CollectionObjectFactory {
 		return ran.nextInt(max);
 	}
 
-	public ServiceDetails createUnsavedServiceDetails() throws NumberFormatException, RepositoryException {
+	public ServiceDetails createUnsavedServiceDetails() {
 		ServiceDetails service = new ServiceDetails();
 		String serviceName = "!testSrvc#" + getRandomNumber(9999);
 		service.setServiceName(serviceName);
 		service.setServiceUrl("testServiceURL");
 		service.setServiceType("B");
 		service.setCode("testCode");
-		service.addBankAccount(createBankAccount("$" + serviceName + "%"));
-		//service.add
+		service.setVoucherCreation(Boolean.TRUE);
+		service.setIsVoucherApproved(Boolean.TRUE);
+		service.addBankAccountServiceMap(createBankAccountServiceMap(service));
 		return service;
 	}
 
-	public Bankaccount createBankAccount(String glCode) throws NumberFormatException, RepositoryException {
+	public BankAccountServiceMap createBankAccountServiceMap(ServiceDetails serviceDetails)
+	{
+		BankAccountServiceMap bankServ=new BankAccountServiceMap();
+		bankServ.setServiceDetails(serviceDetails);
+		bankServ.setBankAccountId(createBankAccount("$" + serviceDetails.getCode() + "%"));
+		bankServ.setDeptId(createDept("testDeptName", "testDeptCode"));
+		bankServ.setModifiedBy(createUser("egovernments"));
+		bankServ.setModifiedDate(new Date());
+		bankServ.setCreatedBy(createUser("egovernments"));
+		bankServ.setCreatedDate(new Date());
+		return  (bankServ);
+	}
+	
+	public Bankaccount createBankAccount(String glCode) {
 		Bankaccount bankaccount = new Bankaccount();
 		bankaccount.setAccountnumber("123456789");
 		bankaccount.setAccounttype("NATIONALISED BANKS");
@@ -111,7 +126,8 @@ public class CollectionObjectFactory {
 		bankaccount.setBankbranch(createBankBranch());
 		bankaccount.setCreated(new Date());
 		bankaccount.setLastmodified(new Date());
-		bankaccount.setModifiedby(BigDecimal.valueOf(createUser("egovernments").getId()));
+		bankaccount.setModifiedby(BigDecimal.valueOf(createUser("egovernments")
+				.getId()));
 		session.saveOrUpdate(bankaccount);
 		return bankaccount;
 	}
@@ -151,13 +167,13 @@ public class CollectionObjectFactory {
 		return service;
 	}
 
-	public ServiceDetails createServiceDetails(String code) throws NumberFormatException, RepositoryException {
+	public ServiceDetails createServiceDetails(String code) {
 		ServiceDetails service = new ServiceDetails();
 		service.setServiceName("testServiceName");
 		service.setServiceUrl("testServiceURL");
 		service.setServiceType("B");
 		service.setCode(code);
-		service.addBankAccount(createBankAccount("282828288"));
+		service.addBankAccountServiceMap(createBankAccountServiceMap(service));
 		session.saveOrUpdate(service);
 		return service;
 	}
@@ -1803,17 +1819,18 @@ public class CollectionObjectFactory {
         return new Sequence(number.getObjectType(), number.getNumber(),number.getFormattedNumber());
 	}
 	
-	public ServiceDetails createUnsavedChallanServiceDetails() throws NumberFormatException, RepositoryException {
+	public ServiceDetails createUnsavedChallanServiceDetails() {
 		ServiceDetails service = new ServiceDetails();
+		BankAccountServiceMap tempB=new BankAccountServiceMap();
 		String serviceName = "@testChallanSrvc$" + getRandomNumber(9999);
 		service.setServiceName(serviceName);
 		service.setServiceUrl("testServiceURL");
 		service.setServiceType("S");
 		service.setCode("testCode");
-		service.addBankAccount(createBankAccount("%" + serviceName + "&"));
-		service.addAccount(createCOA("010"));
+		service.addBankAccountServiceMap(createBankAccountServiceMap(service));
 		return service;
 	}
+	
 	public ReceiptMisc createReceiptMisForChallan() throws NumberFormatException, RepositoryException {
 		ReceiptMisc receiptMisc = new ReceiptMisc();
 		Fund fund = createFund("001");
@@ -1919,8 +1936,6 @@ public class CollectionObjectFactory {
 		service.setServiceUrl("testServiceURL");
 		service.setServiceType("S");
 		service.setCode("testCode");
-		service.addBankAccount(createBankAccount("%" + serviceName + "&"));
-		service.addAccount(createCOA("0101"));
 		session.saveOrUpdate(service);
 		return service;
 	}

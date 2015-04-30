@@ -70,7 +70,7 @@
 		<fieldDescription><![CDATA[Total Amount]]></fieldDescription>
 	</field>
 	<field name="instrumentDetails" class="java.util.Collection"/>
-	<field name="receiptMisc" class="org.egov.erpcollection.models.ReceiptMisc"/>
+	<field name="receiptMisc" class="org.egov.collection.entity.ReceiptMisc"/>
 	<field name="createdBy" class="org.egov.lib.rjbac.user.User">
 		<fieldDescription><![CDATA[The Operator name]]></fieldDescription>
 	</field>

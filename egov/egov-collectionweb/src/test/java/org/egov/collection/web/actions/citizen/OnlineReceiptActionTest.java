@@ -797,11 +797,11 @@ public class OnlineReceiptActionTest  { /*extends AbstractPersistenceServiceTest
 		assertEquals("reconresult", action.reconcileOnlinePayment());
 		
 		ReceiptHeader actualReceipt1 = (ReceiptHeader) genericService.find(
-				"from org.egov.erpcollection.models.ReceiptHeader where id=?",action.getSelectedReceipts()[0]);
+				"from org.egov.collection.entity.ReceiptHeader where id=?",action.getSelectedReceipts()[0]);
 		ReceiptHeader actualReceipt2 = (ReceiptHeader) genericService.find(
-				"from org.egov.erpcollection.models.ReceiptHeader where id=?",action.getSelectedReceipts()[1]);
+				"from org.egov.collection.entity.ReceiptHeader where id=?",action.getSelectedReceipts()[1]);
 		ReceiptHeader actualReceipt3 = (ReceiptHeader) genericService.find(
-				"from org.egov.erpcollection.models.ReceiptHeader where id=?",action.getSelectedReceipts()[2]);
+				"from org.egov.collection.entity.ReceiptHeader where id=?",action.getSelectedReceipts()[2]);
 		
 		assertEquals(actualReceipt1.getStatus().getCode(),CollectionConstants.RECEIPT_STATUS_CODE_APPROVED);
 		assertEquals(actualReceipt2.getStatus().getCode(),CollectionConstants.RECEIPT_STATUS_CODE_FAILED);

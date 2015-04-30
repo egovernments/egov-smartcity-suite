@@ -57,7 +57,7 @@
 	<field name="receiptNum" class="java.lang.String"/>
 	<field name="receiptDate" class="java.util.Date"/>
 	<field name="paidBy" class="java.lang.String"/>
-	<field name="challan" class="org.egov.erpcollection.models.ChallanInfo"/>
+	<field name="challan" class="org.egov.collection.entity.ChallanInfo"/>
 	<field name="createdBy" class="org.egov.lib.rjbac.user.UserImpl">
 		<fieldDescription><![CDATA[Created By]]></fieldDescription>
 	</field>

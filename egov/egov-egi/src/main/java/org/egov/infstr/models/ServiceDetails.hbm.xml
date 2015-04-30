@@ -1,13 +1,65 @@
-<?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  eGov suite of products aim to improve the internal efficiency,transparency, 
+     accountability and the service delivery of the government  organizations.
+  
+      Copyright (C) <2015>  eGovernments Foundation
+  
+      The updated version of eGov suite of products as by eGovernments Foundation 
+      is available at http://www.egovernments.org
+  
+      This program is free software: you can redistribute it and/or modify
+      it under the terms of the GNU General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      any later version.
+  
+      This program is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+      GNU General Public License for more details.
+  
+      You should have received a copy of the GNU General Public License
+      along with this program. If not, see http://www.gnu.org/licenses/ or 
+      http://www.gnu.org/licenses/gpl.html .
+  
+      In addition to the terms of the GPL license to be adhered to in using this
+      program, the following additional terms are to be complied with:
+  
+  	1) All versions of this program, verbatim or modified must carry this 
+  	   Legal Notice.
+  
+  	2) Any misrepresentation of the origin of the material is prohibited. It 
+  	   is required that all modified versions of this material be marked in 
+  	   reasonable ways as different from the original version.
+  
+  	3) This license does not grant any rights to any user of the program 
+  	   with regards to rights under trademark law for use of the trade names 
+  	   or trademarks of eGovernments Foundation.
+  
+    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+-->
+<!DOCTYPE hibernate-mapping
+PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
 <hibernate-mapping>
-	<class name="org.egov.infstr.models.ServiceDetails" table="EG_SERVICEDETAILS">
+	<class name="org.egov.infstr.models.ServiceDetails" table="EG_SERVICEDETAILS" >
+		<cache usage="transactional"/>
 		<id name="id" column="ID" type="long" unsaved-value="null">
 			<generator class="native">
 				<param name="sequence">SEQ_EG_SERVICEDETAILS</param>
 			</generator>
 		</id>
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User"
+			fetch="select">
+			<column name="CREATED_BY" precision="22" scale="0" />
+		</many-to-one>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User"
+			fetch="select">
+			<column name="MODIFIED_BY" precision="22" scale="0" />
+		</many-to-one>
 		<property name="serviceName" column="SERVICENAME" type="string" />
 		<property name="serviceUrl" column="SERVICEURL" type="string" />
 		<property name="isEnabled" column="ISENABLED" type="java.lang.Boolean" />
@@ -16,31 +68,44 @@
 		<property name="code" column="CODE" type="string" />
 		<property name="voucherCreation" column="VOUCHER_CREATION" type="java.lang.Boolean" />
 		<property name="isVoucherApproved" column="ISVOUCHERAPPROVED" type="java.lang.Boolean" />
-		<set name="serviceBankAccount" table="EG_BANKACCOUNTSERVICEMAPPING">
+		<property name="orderNumber" column="ORDERNUMBER" type="java.lang.Integer" />
+		<property name="voucherCutOffDate" type="date">
+			<column name="VOUCHERCUTOFFDATE" length="7" />
+		</property>
+
+		<set name="bankAccountServiceMap" inverse="true" cascade="all,delete-orphan" >
+			<cache usage="transactional"/>
 			<key>
 				<column name="SERVICEID" precision="22" scale="0" />
 			</key>
-			<many-to-many class="org.egov.commons.Bankaccount"
-				column="BANKACCOUNTID" />
+			<one-to-many class="org.egov.infstr.models.BankAccountServiceMap" />
 		</set>
-		<set name="serviceAccount" table="EG_ACCOUNTSERVICEMAPPING">
-			<key>
-				<column name="SERVICEID" precision="22" scale="0" />
-			</key>
-			<many-to-many class="org.egov.commons.CChartOfAccounts" column="ACCOUNTSID" />
-		</set>
-		<many-to-one name="fund" class="org.egov.commons.Fund" column="FUNDID" fetch="select" />
-		<many-to-one name="fundSource" class="org.egov.commons.Fundsource" column="FUNDSOURCEID" fetch="select" />
-		<many-to-one name="functionary" class="org.egov.commons.Functionary" column="FUNCTIONARYID" fetch="select" />
-		<many-to-one name="scheme" class="org.egov.commons.Scheme" column="SCHEMEID" fetch="select" />
-		<many-to-one name="subscheme" class="org.egov.commons.SubScheme" column="SUBSCHEMEID" fetch="select" />
-		<many-to-one name="serviceCategory" class="org.egov.infstr.models.ServiceCategory" column="ID_SERVICE_CATEGORY" fetch="select" />
-		<set name="serviceDept" table="EG_SERVICE_DEPT_MAPPING">
+
+		<many-to-one name="fund" class="org.egov.commons.Fund"
+			column="FUNDID" fetch="select" />
+		<many-to-one name="fundSource" class="org.egov.commons.Fundsource"
+			column="FUNDSOURCEID" fetch="select" />
+
+		<many-to-one name="functionary" class="org.egov.commons.Functionary"
+			column="FUNCTIONARYID" fetch="select" />
+		<many-to-one name="scheme" class="org.egov.commons.Scheme"
+			column="SCHEMEID" fetch="select" />
+		<many-to-one name="subscheme" class="org.egov.commons.SubScheme"
+			column="SUBSCHEMEID" fetch="select" />
+	
+			
+		<many-to-one name="serviceCategory" class="org.egov.infstr.models.ServiceCategory"
+			column="ID_SERVICE_CATEGORY" fetch="select" />	
+			
+		<set name="serviceDept" table="EG_SERVICE_DEPT_MAPPING" >
+			<cache usage="transactional"/>
 			<key>
 				<column name="ID_SERVICEDETAILS" precision="22" scale="0" />
 			</key>
-			<many-to-many class="org.egov.infra.admin.master.entity.Department" column="ID_DEPARTMENT" />
+			<many-to-many class="org.egov.infra.admin.master.entity.Department"
+				column="ID_DEPARTMENT" />
 		</set>
+	
 		<set name="serviceAccountDtls" inverse="true" cascade="all,delete-orphan">
 			<key>
 				<column name="ID_SERVICEDETAILS" precision="22" scale="0" />
@@ -48,10 +113,11 @@
 			<one-to-many class="org.egov.infstr.models.ServiceAccountDetails" />
 		</set>
 	</class>
-	<query name="SERVICE_BY_CATEGORY_FOR_TYPE">
+	
+		<query name="SERVICE_BY_CATEGORY_FOR_TYPE">
 		<![CDATA[
      	from org.egov.infstr.models.ServiceDetails where  serviceCategory.id=? and serviceType=? and isEnabled=?
     ]]>
 	</query>
+	
 </hibernate-mapping>
-

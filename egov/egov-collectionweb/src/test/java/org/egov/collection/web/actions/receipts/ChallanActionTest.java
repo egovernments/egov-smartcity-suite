@@ -1002,7 +1002,7 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		assertEquals(action.saveOrupdate(), CollectionConstants.REPORT);
 		
 		ReceiptHeader cancelledReceipt = (ReceiptHeader) genericService.find(
-				"from org.egov.erpcollection.models.ReceiptHeader where id=?",
+				"from org.egov.collection.entity.ReceiptHeader where id=?",
 				action.getReceiptHeader().getReceiptHeader().getId());
 		
 		assertEquals(CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED, cancelledReceipt.getStatus().getCode());
@@ -1503,7 +1503,7 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		assertEquals(action.getReceiptHeader().getStatus().getCode(),CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED);
 		
 		ReceiptHeader newreceiptHeader = (ReceiptHeader) genericService.find(
-				"from org.egov.erpcollection.models.ReceiptHeader receipt where receipt.receiptHeader.id=?",
+				"from org.egov.collection.entity.ReceiptHeader receipt where receipt.receiptHeader.id=?",
 				action.getReceiptHeader().getId());
 		
 		

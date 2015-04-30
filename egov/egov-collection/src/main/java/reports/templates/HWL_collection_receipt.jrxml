@@ -80,7 +80,7 @@
 	</field>
 	<field name="instrumentDetails" class="java.util.Collection"/>
 	<field name="collectionType" class="java.lang.String"/>
-	<field name="receiptMisc" class="org.egov.erpcollection.models.ReceiptMisc"/>
+	<field name="receiptMisc" class="org.egov.collection.entity.ReceiptMisc"/>
 	<variable name="amountReceived" class="java.math.BigDecimal">
 		<initialValueExpression><![CDATA[new java.math.BigDecimal(0)]]></initialValueExpression>
 	</variable>

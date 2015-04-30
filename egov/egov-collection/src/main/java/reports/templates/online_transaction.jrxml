@@ -94,7 +94,7 @@
 	</parameter>
 	<queryString language="hql">
 		<![CDATA[SELECT rh FROM 
-	org.egov.erpcollection.models.ReceiptHeader rh
+	org.egov.collection.entity.ReceiptHeader rh
 	WHERE rh.collectiontype = 'O'
 	AND rh.createdDate >= $P{EGOV_FROM_DATE}
 	and rh.createdDate <= $P{EGOV_TO_DATE}
@@ -121,7 +121,7 @@
 		<fieldDescription><![CDATA[Billing System]]></fieldDescription>
 	</field>
 	<field name="status" class="org.egov.commons.EgwStatus"/>
-	<field name="onlinePayment" class="org.egov.erpcollection.models.OnlinePayment"/>
+	<field name="onlinePayment" class="org.egov.collection.entity.OnlinePayment"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
