@@ -42,17 +42,16 @@
  * @author Iliyaraja S
  */
 package com.exilant.eGov.src.reports;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
-
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.FinancialConstants;
 
 import com.exilant.eGov.src.common.EGovernCommon;
@@ -60,9 +59,7 @@ import com.exilant.exility.common.TaskFailedException;
 
 public class DishonoredChequeReport
 {
-	Connection con;
-	ResultSet rs;
-	Statement statement;
+	List<Object[]> rs;
 	TaskFailedException taskExc;
 	String chqFromDate="", chqToDate="";
 	String chequeNo="";
@@ -87,12 +84,6 @@ public class DishonoredChequeReport
 public ArrayList getDishonoredChequeDetails(DishonoredChequeBean disChqBean)throws TaskFailedException,Exception
 {
 			if(LOGGER.isInfoEnabled())     LOGGER.info(" INSIDE getDishonoredChequeDetails()>>>>>>>> ");
-			try{
-				con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
-			}catch(Exception exception){
-				LOGGER.error("Could Not Get Connection");
-				throw taskExc;
-			}
 			try{
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("Chq From date---->"+disChqBean.getStartDate());
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("Chq To date------>"+disChqBean.getEndDate());
@@ -161,20 +152,18 @@ public ArrayList getDishonoredChequeDetails(DishonoredChequeBean disChqBean)thro
 
 					String query = new StringBuffer().append(basicquery1).append(wherequery1).append(orderbyquery).toString();
   					if(LOGGER.isDebugEnabled())     LOGGER.debug("  getDishonoredChequeDetails Query is  "+query);
-					statement = con.createStatement();
-					rs=statement.executeQuery(query);
+					rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 					if(LOGGER.isDebugEnabled())     LOGGER.debug("After Execute Query----getDishonoredChequeDetails");
 					int i=1;
-					while (rs.next())
-					{
+					for(Object[] element : rs){
 					 boolean bkChgAvailable=false;
 					 String voucherHeaderId="",payinSlipVHeaderId="",cgnum="",voucherNumber="",voucherType="";
 					 String fundId="",chequeNumber="",chequeDate="",amount="",bankName="",accIdParam="";
 					 String	recChequeDate="",payeeName="" ,insMode="",bankReferenceNo="",status="";
 					 HashMap data = new HashMap();
 
-					 if(rs.getString("voucherHeaderId")!= null)
-						 voucherHeaderId=rs.getString("voucherHeaderId");
+					 if(element[0].toString()!= null)
+						 voucherHeaderId=element[0].toString();
 					 else
 						 voucherHeaderId="&nbsp;";
 
@@ -193,69 +182,69 @@ public ArrayList getDishonoredChequeDetails(DishonoredChequeBean disChqBean)thro
 						//data.put("bankRefNumber","&nbsp;" );
 						data.put("bankChargeAmt", "&nbsp;");
 					 }
-					 if(rs.getString("payinVHeaderId")!= null)
-						 payinSlipVHeaderId=rs.getString("payinVHeaderId");
+					 if(element[1].toString()!= null)
+						 payinSlipVHeaderId=element[1].toString();
 					 else
 						 payinSlipVHeaderId="&nbsp;";
 					
-					 if(rs.getString("dishonorBankRefNo")!= null)
-						 bankReferenceNo=rs.getString("dishonorBankRefNo");
+					 if(element[18].toString()!= null)
+						 bankReferenceNo=element[18].toString();
 					 else
 						 bankReferenceNo="&nbsp;";
 
-					 if(rs.getString("cgnumber")!= null)
-						 cgnum=rs.getString("cgnumber");
+					 if(element[2].toString()!= null)
+						 cgnum=element[2].toString();
 					 else
 						 cgnum="&nbsp;";
 
-					 if(rs.getString("voucherNumber")!= null)
-						 voucherNumber=rs.getString("voucherNumber");
+					 if(element[3].toString()!= null)
+						 voucherNumber=element[3].toString();
 					 else
 						 voucherNumber="&nbsp;";
 
-					 if(rs.getString("type")!= null)
-						 voucherType=rs.getString("type");
+					 if(element[4].toString()!= null)
+						 voucherType=element[4].toString();
 					 else
 						 voucherType="&nbsp;";
 
-					 if(rs.getString("fundId")!= null)
-						 fundId=rs.getString("fundId");
+					 if(element[5].toString()!= null)
+						 fundId=element[5].toString();
 					 else
 						 fundId="&nbsp;";
-					 if(rs.getString("chequeNumber")!= null)
-						 chequeNumber=rs.getString("chequeNumber");
+					 if(element[7].toString()!= null)
+						 chequeNumber=element[7].toString();
 					 else
 						 chequeNumber="&nbsp;";
-					 if(rs.getString("chequeDate")!= null)
+					 if(element[8].toString()!= null)
 					 {
-					    dt = format.parse(rs.getString("chequeDate"));
+					    dt = format.parse(element[8].toString());
 						chequeDate = formatter.format(dt);
 				 	 }
 					 else
 						 chequeDate="&nbsp;";
-					 if(rs.getString("amount")!= null)
-						 amount=rs.getString("amount");
+					 if(element[9].toString()!= null)
+						 amount=element[9].toString();
 					 else
 						 amount="&nbsp;";
-					 if(rs.getString("bank")!= null)
-						 bankName=rs.getString("bank");
+					 if(element[10].toString()!= null)
+						 bankName=element[10].toString();
 					 else
 						 bankName="&nbsp;";
-					 if(rs.getString("accIdParam")!= null)
-						 accIdParam=rs.getString("accIdParam");
+					 if(element[12].toString()!= null)
+						 accIdParam=element[12].toString();
 					 else
 						 accIdParam="&nbsp;";
-					 if(rs.getString("recChequeDate")!= null){
-						 dt = format.parse(rs.getString("recChequeDate"));
+					 if(element[17].toString()!= null){
+						 dt = format.parse(element[17].toString());
 						 recChequeDate = formatter.format(dt);
 				 	 }else
 						 recChequeDate="&nbsp;";
-					 if(rs.getString("payTo")!= null)
-						 payeeName=rs.getString("payTo");
+					 if(element[13].toString()!= null)
+						 payeeName=element[13].toString();
 					 else
 						 payeeName="&nbsp;";
-					 if(rs.getString("status")!= null)
-						 status=rs.getString("status");
+					 if(element[19].toString()!= null)
+						 status=element[19].toString();
 					 else                  
 						 status="&nbsp;";
 					// insMode
@@ -285,11 +274,6 @@ public ArrayList getDishonoredChequeDetails(DishonoredChequeBean disChqBean)thro
 				catch(SQLException sqlE){
 					LOGGER.error("Exception in main "+sqlE);
 					throw taskExc;
-				}
-				finally
-				{
-					statement.close();
-					rs.close();
 				}
 				return arList;
 	}//main method for getting Dishonored cheque details
@@ -330,30 +314,27 @@ public ArrayList getDishonoredChequeDetails(DishonoredChequeBean disChqBean)thro
 
 				if(LOGGER.isInfoEnabled())     LOGGER.info("  getBankEntryDetails Query is  "+query);
 
-				statement = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
-			 	rs = statement.executeQuery(query);
+			 	rs = HibernateUtil.getCurrentSession().createSQLQuery(query).list();
 
 			 	if(LOGGER.isInfoEnabled())     LOGGER.info("After Execute Query----getBankEntryDetails");
 
 			 	 int resSize = 0, i = 0;
-				 if (rs.last())
-				 resSize = rs.getRow();
+				
+				 resSize = rs.size();
 
 				 originalVcId = new String[resSize];
 				 bankRefNo = new String[resSize];
 				 bankCharge = new String[resSize];
 
-				rs.beforeFirst();
 
-			 	while(rs.next())
-			 	{
- 					originalVcId[i] = rs.getString("oldVhId");
- 					bankRefNo[i] = rs.getString("bankRefNumber");
-					bankCharge[i] = cf.numberToString(rs.getString("bankChargeAmt")).toString();
+				 for(Object[] element : rs){
+ 					originalVcId[i] = element[5].toString();
+ 					bankRefNo[i] = element[6].toString();
+					bankCharge[i] = cf.numberToString(element[8].toString()).toString();
 					i += 1;
 			 	}
 			 }
-			catch(SQLException sqlE){
+			catch(Exception sqlE){
 				LOGGER.error("Exception in main "+sqlE);
 				throw taskExc;
 			}

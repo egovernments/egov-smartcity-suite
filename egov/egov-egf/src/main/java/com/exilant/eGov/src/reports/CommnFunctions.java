@@ -47,14 +47,16 @@ package com.exilant.eGov.src.reports;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
 
 import com.exilant.exility.common.TaskFailedException;
 
@@ -68,8 +70,8 @@ public class CommnFunctions
 {
     private static final Logger LOGGER=Logger.getLogger(CommnFunctions.class);
     private Connection con;
-    private ResultSet resultset;
-    PreparedStatement pstmt=null;
+    private List<Object[]> resultset;
+    Query pstmt=null;
     private static TaskFailedException taskExc;
     /**/
     public String reqFundId[];
@@ -99,21 +101,18 @@ public class CommnFunctions
         { 
             String  query = " select id,name from fund where isactive=1 and isnotleaf!=1 "+fundCondition+" order by id";
             if(LOGGER.isInfoEnabled())     LOGGER.info("getFundList: "+query);
-            pstmt=con.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+            pstmt=HibernateUtil.getCurrentSession().createSQLQuery(query);
             if(!fundId.equalsIgnoreCase(""))
             	pstmt.setString(1, fundId);
-            resultset = pstmt.executeQuery();
+            resultset = pstmt.list();
             int resSize=0,i=0;
-            if(resultset.last())
-            resSize=resultset.getRow();
+            resSize=resultset.size();
             reqFundId=new String[resSize];
             reqFundName=new String[resSize];
             if(LOGGER.isInfoEnabled())     LOGGER.info("resSize  "+resSize);
-            resultset.beforeFirst();
-            while(resultset.next())
-            {
-                reqFundId[i]=resultset.getString(1);
-                reqFundName[i]=resultset.getString(2);
+            for(Object[] element : resultset){
+                reqFundId[i]=element[0].toString();
+                reqFundName[i]=element[1].toString();
                 i+=1;
 
             }
@@ -158,7 +157,7 @@ public class CommnFunctions
         {
         	int j = 1;
             getFundList(conn,fundId,startDate, endDate);
-            pstmt = con.prepareStatement(query);
+            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
             pstmt.setString(j++, type2);
             pstmt.setString(j++, type1);
             pstmt.setString(j++, type2);
@@ -166,14 +165,13 @@ public class CommnFunctions
             pstmt.setString(j++, endDate);
             if(!fundId.equalsIgnoreCase(""))
             	pstmt.setString(j++, fundId);
-            resultset = pstmt.executeQuery();
+            resultset = pstmt.list();
             Double opeBal = null;
             HashMap openingBalsubList = null;
-            while(resultset.next())
-            {
-                glcode=resultset.getString("glcode");
-                fuId=resultset.getString("fundid");
-                opeBal=resultset.getDouble("amount");
+            for(Object[] element : resultset){
+                glcode=element[0].toString();
+                fuId=element[1].toString();
+                opeBal=Double.parseDouble(element[2].toString());
                if(!openingBal.containsKey(glcode))
                 {
                     openingBalsubList=new HashMap();
@@ -231,19 +229,19 @@ public class CommnFunctions
         try 
         {
         	int j=1;
-        	pstmt=con.prepareStatement(query1, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        	pstmt=HibernateUtil.getCurrentSession().createSQLQuery(query1);
         	pstmt.setString(j++, type1);
         	pstmt.setString(j++, startDate);
         	pstmt.setString(j++, endDate);
         	if(fundid!=null && !fundid.equals(""))
         		pstmt.setString(j++, fundid);
-        	resultset=pstmt.executeQuery();
-            while(resultset.next())
-            {
-                String accntCode=resultset.getString("glCode");
+        	resultset=pstmt.list();
+        	Object[] firstElement = (resultset != null && resultset.size() > 0)?resultset.get(1):null;
+        	for(Object[] element : resultset){
+                String accntCode=element[0].toString();
               //  String accntCode2=accntCode;
-                String fund=resultset.getString("fundId");
-                String amt=resultset.getString("amount");
+                String fund=element[1].toString();
+                String amt=element[2].toString();
                 HashMap txnBalance=new HashMap();
                 /** Storing fund and amount pairs of same GLCode into HashMap **/
                 if(!txnBalancehasmap.containsKey(accntCode))//accntCode2.equalsIgnoreCase(accntCode))//Loops until GlCode changes
@@ -262,16 +260,14 @@ public class CommnFunctions
                 {
                     ((HashMap)txnBalancehasmap.get(accntCode)).put(fund,amt);
                 }     
-                if(!resultset.previous())
+                if(firstElement.equals(element))
                     break;
                 /** Storing GLCode and (fund-amount paired HashMap) pairs into HashMap **/
                 txnBalancehasmap.put(accntCode,txnBalance);
             }
-            resultset.close();
-            pstmt.close();
             
         }
-        catch(SQLException se)
+        catch(Exception se)
         {
             LOGGER.error("Error in getschedulewiseOB"+se.getMessage(), se);
             throw taskExc; 
@@ -309,7 +305,7 @@ public class CommnFunctions
         try
         {
         	int j=1;
-            pstmt = con.prepareStatement(query);
+            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
             if(type1==null || type1.trim().equals("")){
                 pstmt.setString(j++, type1);
                 pstmt.setString(j++, type2);            	
@@ -318,14 +314,13 @@ public class CommnFunctions
             pstmt.setString(j++, endDate);
             if(!fundId.equalsIgnoreCase(""))
             	pstmt.setString(j++, fundId);
-            resultset = pstmt.executeQuery();
+            resultset = pstmt.list();
             Double opeBal = null;
             HashMap creditBalsubList = null;
-            while(resultset.next())
-            {
-                glcode=resultset.getString("glcode");
-                fuId=resultset.getString("fundid");
-                opeBal=resultset.getDouble("amount");
+            for(Object[] element : resultset){
+                glcode=element[0].toString();
+                fuId=element[1].toString();
+                opeBal=Double.parseDouble(element[2].toString());
                 if(!txnCreditBalance.containsKey(glcode))
                 {
                     creditBalsubList=new HashMap();
@@ -381,21 +376,20 @@ public class CommnFunctions
        try
        {
     	   int j=1;
-           pstmt = con.prepareStatement(query);
+           pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
            pstmt.setString(j++, type1);
            pstmt.setString(j++, type2);
            pstmt.setString(j++, startDate);
            pstmt.setString(j++, endDate);
            if(!fundId.equalsIgnoreCase(""))
         	   pstmt.setString(j++, fundId);
-           resultset = pstmt.executeQuery();
+           resultset = pstmt.list();
            Double opeBal = null;
            HashMap debitBalsubList = null;
-           while(resultset.next())
-           {
-               glcode=resultset.getString("glcode");
-               fuId=resultset.getString("fundid");
-               opeBal=resultset.getDouble("amount");
+           for(Object[] element : resultset){
+               glcode=element[0].toString();
+               fuId=element[1].toString();
+               opeBal=Double.parseDouble(element[2].toString());
                if(!txnDebitBalance.containsKey(glcode))
                {
                    debitBalsubList=new HashMap();
@@ -464,13 +458,15 @@ public class CommnFunctions
        String query="SELECT TO_CHAR(startingdate,'DD/MM/YYYY') FROM FINANCIALYEAR WHERE id= ?";
        try
        {
-           pstmt=con.prepareStatement(query);
-           pstmt.setInt(1, finYearId);
-           resultset=pstmt.executeQuery();
-           if(resultset.next())
-               startDate=resultset.getString(1);
+           pstmt=HibernateUtil.getCurrentSession().createSQLQuery(query);
+           pstmt.setInteger(1, finYearId);
+           resultset=pstmt.list();
+           for(Object[] element : resultset){
+        	   startDate=element[0].toString();
+           }
+               
        }
-       catch(SQLException sql)
+       catch(Exception sql)
        {
     	   LOGGER.error("Exp in getStartDate :"+sql.getMessage(), sql);
     	   throw taskExc;    	   
@@ -489,13 +485,14 @@ public class CommnFunctions
        String query="SELECT TO_CHAR(endingdate,'DD/MM/YYYY') FROM FINANCIALYEAR WHERE id= ?";
        try
        {
-           pstmt=con.prepareStatement(query);
-           pstmt.setInt(1, finYearId);
-           resultset=pstmt.executeQuery();
-           if(resultset.next())
-               endDate=resultset.getString(1);
+           pstmt=HibernateUtil.getCurrentSession().createSQLQuery(query);
+           pstmt.setInteger(1, finYearId);
+           resultset=pstmt.list();
+           for(Object[] element : resultset){
+        	   endDate=element[0].toString();
+           }
        }
-       catch(SQLException sql)
+       catch(Exception sql)
        {
     	   LOGGER.error("error inside getEndDate"+sql.getMessage(), sql);
     	   throw taskExc;    	   
@@ -540,14 +537,14 @@ public class CommnFunctions
 		String query = "SELECT id FROM financialYear " +
 		"WHERE startingDate<=? AND endingDate>=?";
 		//for accross the financial year
-		pstmt=connection.prepareStatement(query);
+		pstmt=HibernateUtil.getCurrentSession().createSQLQuery(query);
 		pstmt.setString(1, sDate);
 		pstmt.setString(2, sDate);
-		resultset=pstmt.executeQuery();
-		if(resultset.next()) fyId = resultset.getString("id");
-		resultset .close();
-		pstmt.close();
-	}catch(SQLException ex){
+		resultset=pstmt.list();
+		  for(Object[] element : resultset){
+			  fyId=element[0].toString();
+          }
+	}catch(Exception ex){
 		fyId="";
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Error GeneralLedger->getFYID(): " + ex.toString());
 		throw taskExc;    	   

@@ -51,6 +51,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -343,32 +344,7 @@ public class EGovernCommon extends AbstractTask{
 	}
 	public String getCurrentDateTime(Connection connection)throws TaskFailedException
 	{
-		PreparedStatement pst=null;
-		ResultSet resultset=null;
-		String currentDate=null;
-		try
-		{
-			String query = "SELECT to_char(sysdate, 'DD/MM/YYYY HH24:MI:SS') as \"currentDate\" FROM dual";
-			pst = connection.prepareStatement(query);
-			resultset = pst.executeQuery();
-			resultset.next();
-			currentDate = resultset.getString("currentDate");
-			resultset.close();
-			pst.close();
-		}
-		catch(Exception sqlex)
-		{
-			LOGGER.error("EGovernCommon->getCurrentDate " + sqlex.getMessage());
-			throw taskExc;
-		}finally{
-			try{
-				resultset.close();
-				pst.close();
-			}catch(Exception e){
-				LOGGER.error("in getCurrentDateTime...");
-			}
-		}
-		return currentDate;
+		return new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
 	}
 /**
  * This is to get the balance of bank account. Not used now.

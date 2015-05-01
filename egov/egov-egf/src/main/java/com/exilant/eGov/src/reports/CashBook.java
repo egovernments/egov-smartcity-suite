@@ -420,7 +420,7 @@ public class CashBook {
 						else
 							purposeid=element[3].toString();
 						VhidPrevious=vhId;
-						if(element == resultset1.get(resultset1.size() - 1))//Phoenix need to test .....
+						if(element.equals(resultset1.get(resultset1.size() - 1)))
 						{
 							GeneralLedgerReportBean glbean=new GeneralLedgerReportBean("&nbsp;");
 							
