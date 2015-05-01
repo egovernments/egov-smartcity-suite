@@ -176,6 +176,12 @@
 		<property name="consumerCode" type="string">
 			<column name="CONSUMERCODE" length="256" />
 		</property>
+		<property name="payeeName" type="string">
+			<column name="payeename" length="256" />
+		</property>
+		<property name="payeeAddress" type="string">
+			<column name="payeeaddress" length="1024" />
+		</property>
 			
 	</class>
 	<query name="RECEIPTS_FOR_VOUCHERS">
