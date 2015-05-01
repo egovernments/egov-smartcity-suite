@@ -45,7 +45,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.UserRepository;
 import org.egov.infra.utils.EmailUtils;
 import org.egov.infstr.notification.HTTPSMS;
-import org.egov.infstr.security.utils.CryptoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,7 +82,8 @@ public class UserService {
     public User getUserByEmailId(final String emailId) {
         return userRepository.findByEmailId(emailId);
     }
-
+    
+    //TODO This is to be changed like eg:facebook forget password
     public boolean sentPasswordRecovery(String emailOrMobNum) {
         User user;
         boolean hasSent = false;
@@ -93,7 +93,7 @@ public class UserService {
             user = getUserByUsername(emailOrMobNum);
         }
         if (user != null) {
-            final String pwd = CryptoHelper.decrypt(user.getPassword());
+            final String pwd = "nopassword";//CryptoHelper.decrypt(user.getPassword());
             if (user.getEmailId() != null && !user.getEmailId().isEmpty()) {
                 hasSent = emailUtils.sendMail(user.getEmailId(), new StringBuilder(
                         "Hello,\r\n Your login credential is given below \r\n User Name : ")

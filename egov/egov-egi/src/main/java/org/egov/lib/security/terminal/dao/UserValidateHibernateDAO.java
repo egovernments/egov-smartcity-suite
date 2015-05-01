@@ -39,19 +39,23 @@
  */
 package org.egov.lib.security.terminal.dao;
 
+import java.util.Date;
+
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infstr.security.utils.CryptoHelper;
 import org.egov.lib.security.terminal.model.Location;
 import org.egov.lib.security.terminal.model.UserValidate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-
-import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class UserValidateHibernateDAO implements UserValidateDAO {
 
 	private SessionFactory sessionFactory;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	public UserValidateHibernateDAO(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
@@ -66,8 +70,8 @@ public class UserValidateHibernateDAO implements UserValidateDAO {
 	public boolean validateUser(final UserValidate obj) {
 		final Query qry = getCurrentSession().createQuery("from User user where user.username = :username and user.password = :password");
 		qry.setString("username", obj.getUsername());
-		qry.setString("password", CryptoHelper.encrypt(obj.getPassword()));
-		return !qry.list().isEmpty();
+		User user = (User)qry.uniqueResult();
+		return user == null ? false :passwordEncoder.matches(obj.getPassword(), user.getPassword());
 	}
 
 	@Override
@@ -78,7 +82,7 @@ public class UserValidateHibernateDAO implements UserValidateDAO {
 		queryStr.append("and loc.id = :locationId And ((map.toDate IS NULL AND map.fromDate <= :currDate) OR (map.fromDate <= :currDate AND map.toDate >= :currDate))");
 		final Query qry = getCurrentSession().createQuery(queryStr.toString());
 		qry.setString("username", obj.getUsername());
-		qry.setString("password", CryptoHelper.encrypt(obj.getPassword()));
+		qry.setString("password", passwordEncoder.encode(obj.getPassword()));
 		qry.setString("ipaddress", obj.getIpAddress());
 		qry.setDate("currDate", new Date());
 		qry.setInteger("locationId", obj.getLocationId());
@@ -93,7 +97,7 @@ public class UserValidateHibernateDAO implements UserValidateDAO {
 		queryStr.append("and loc.id = :counterId And ((map.toDate IS NULL AND map.fromDate <= :currDate) OR (map.fromDate <= :currDate AND map.toDate >= :currDate))");
 		final Query qry = getCurrentSession().createQuery(queryStr.toString());
 		qry.setString("username", obj.getUsername());
-		qry.setString("password", CryptoHelper.encrypt(obj.getPassword()));
+		qry.setString("password", passwordEncoder.encode(obj.getPassword()));
 		qry.setString("ipaddress", obj.getIpAddress());
 		qry.setDate("currDate", new Date());
 		qry.setInteger("counterId", obj.getCounterId());

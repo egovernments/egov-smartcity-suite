@@ -45,9 +45,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.infstr.security.utils.CryptoHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * The Class AbstractSecurityProcessAdaptor.
@@ -61,6 +62,8 @@ public abstract class AbstractSecurityProcessAdaptor implements SecurityProcessA
 	protected UserService userService;
 	protected String contentType;
 	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	/**
 	 * Sets the response content type.
 	 * @param contentType the new content type
@@ -102,7 +105,7 @@ public abstract class AbstractSecurityProcessAdaptor implements SecurityProcessA
 		User user = null;
 		if (userName != null && userPwd != null) {
 			user = this.userService.getUserByUsername(userName);
-			if (user == null || !userPwd.equals(CryptoHelper.decrypt(user.getPassword())) || !user.isActive() ) {
+			if (user == null || !passwordEncoder.matches(userPwd, user.getPassword()) || !user.isActive() ) {
 				user = null;
 			} else {
 				EGOVThreadLocals.setUserId(user.getId());

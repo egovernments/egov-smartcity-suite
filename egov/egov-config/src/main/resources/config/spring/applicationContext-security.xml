@@ -87,7 +87,6 @@
 	<bean id="sessionCache" class="org.egov.infstr.security.utils.SessionCache" />
 	 
 	<bean id="simpleSSOFilter" class="org.egov.infstr.security.spring.filter.SimpleSSOFilter">
-		<property name="userService" ref="userService" />
 		<property name="authenticationProvider" ref="daoAuthenticationProvider" />
 		<property name="logoutUrl" value="/logout.do" />
 		<property name="sessionTimeout" value="30" />

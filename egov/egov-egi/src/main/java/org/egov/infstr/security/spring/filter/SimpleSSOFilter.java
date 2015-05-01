@@ -56,19 +56,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.security.authentication.SecureUser;
 import org.egov.infstr.commons.EgLoginLog;
-import org.egov.infstr.security.utils.CryptoHelper;
 import org.egov.infstr.security.utils.SecurityConstants;
 import org.egov.infstr.security.utils.SessionCache;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,11 +81,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class SimpleSSOFilter implements Filter, LogoutHandler {
 	private static final String SSO_COOKIE = "egovegov";
-	private UserService userService;
 	private AuthenticationProvider authenticationProvider;
 	private String logoutUrl;
 	private SessionCache sessionCache;
 	private SessionFactory sessionFactory;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	public void setSessionCache(final SessionCache sessionCache) {
 		this.sessionCache = sessionCache;
@@ -93,10 +95,6 @@ public class SimpleSSOFilter implements Filter, LogoutHandler {
 
 	public void setSessionTimeout(final Integer timeoutInMinutes) {
 		SSOPrincipal.setSessionTimeout(timeoutInMinutes);
-	}
-
-	private String getPasswordForUser(final String userName) {
-		return CryptoHelper.decrypt(userService.getUserByUsername(userName).getPassword());
 	}
 
 	private Cookie getSSOCookie(final HttpServletRequest request) {
@@ -223,6 +221,7 @@ public class SimpleSSOFilter implements Filter, LogoutHandler {
 	protected SSOPrincipal getSSOPrincipalFromAuthentication() {
 		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		final SSOPrincipal principal = new SSOPrincipal();
+		principal.setPasswordEncoder(passwordEncoder);
 		principal.setUserName(((SecureUser) authentication.getPrincipal()).getUsername());
 		principal.setTimestamp(System.currentTimeMillis());
 		final HashMap<String, String> creds = (HashMap<String, String>) authentication.getCredentials();
@@ -269,9 +268,8 @@ public class SimpleSSOFilter implements Filter, LogoutHandler {
 	}
 
 	protected void setAuthentication(final SSOPrincipal principal) {
-		final String password = getPasswordForUser(principal.getUserName());
 		final Map<String, String> credentials = principal.getCredentials();
-		credentials.put(SecurityConstants.PWD_FIELD, password);
+		credentials.put(SecurityConstants.PWD_FIELD, credentials.get("j_password"));
 		final HashMap<String, String> creds = new HashMap<String, String>();
 		creds.putAll(credentials);
 		final UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
@@ -293,10 +291,6 @@ public class SimpleSSOFilter implements Filter, LogoutHandler {
 
 	public void setAuthenticationProvider(final AuthenticationProvider authenticationProvider) {
 		this.authenticationProvider = authenticationProvider;
-	}
-
-	public void setUserService(final UserService userService) {
-		this.userService = userService;
 	}
 
 	@Override

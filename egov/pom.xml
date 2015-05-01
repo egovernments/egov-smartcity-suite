@@ -122,12 +122,7 @@
                 <version>1.1.0.Final</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency>
- 				<groupId>org.hibernate</groupId>
- 				<artifactId>hibernate-envers</artifactId>
- 				<version>${hibernate-version}</version>
-                <scope>provided</scope>
-			</dependency>
+           
             <!-- HIBERNATE DEPENDENCIES END -->
 
             <!-- SERVLET SPEC JBOSS DEPENDENCIES START -->

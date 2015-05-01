@@ -50,8 +50,8 @@ import org.egov.infra.citizen.entity.Citizen;
 import org.egov.infra.citizen.repository.CitizenRepository;
 import org.egov.infra.utils.EmailUtils;
 import org.egov.infstr.notification.HTTPSMS;
-import org.egov.infstr.security.utils.CryptoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,6 +68,9 @@ public class CitizenService {
     @Autowired
     private HTTPSMS httpSMS;
     
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
     @Transactional
     public void create(Citizen citizen) throws DuplicateElementException {
         if (getCitizenByUserName(citizen.getMobileNumber()) != null)
@@ -81,7 +84,7 @@ public class CitizenService {
         pwdExpiryDate.add(Calendar.YEAR, 100);
         citizen.setPwdExpiryDate(pwdExpiryDate.getTime());
         citizen.setUsername(citizen.getMobileNumber());
-        citizen.setPassword(CryptoHelper.encrypt(citizen.getPassword()));
+        citizen.setPassword(passwordEncoder.encode(citizen.getPassword()));
         citizen.setActivationCode(RandomStringUtils.random(5, Boolean.TRUE, Boolean.TRUE));
         citizenRepository.save(citizen);
     }

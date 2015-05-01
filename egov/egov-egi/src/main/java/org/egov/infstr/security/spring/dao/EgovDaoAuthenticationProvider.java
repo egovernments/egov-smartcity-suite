@@ -41,19 +41,20 @@ package org.egov.infstr.security.spring.dao;
 
 import java.util.HashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.egov.infstr.security.utils.CryptoHelper;
 import org.egov.infstr.security.utils.SecurityConstants;
 import org.egov.infstr.utils.StringUtils;
 import org.egov.lib.security.terminal.dao.UserValidateDAO;
 import org.egov.lib.security.terminal.model.Location;
 import org.egov.lib.security.terminal.model.UserValidate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /*
  * This class performs the authentication for the user. If location based login is set up, 
@@ -64,6 +65,9 @@ public class EgovDaoAuthenticationProvider extends DaoAuthenticationProvider {
 
 	private static final Logger LOG = LoggerFactory.getLogger(EgovDaoAuthenticationProvider.class);
 	private UserValidateDAO userValidateDao;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	public void setUserValidateDao(UserValidateDAO userValidateDao) {
 		this.userValidateDao = userValidateDao;
@@ -76,7 +80,7 @@ public class EgovDaoAuthenticationProvider extends DaoAuthenticationProvider {
 			throw new BadCredentialsException(this.messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
 		}
 		final String presentedPassword = authenticationCredentials.get(SecurityConstants.PWD_FIELD);
-		if (!CryptoHelper.encrypt(presentedPassword).equals(userDetails.getPassword())) {
+		if (!passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
 			throw new BadCredentialsException(this.messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
 		}
 		

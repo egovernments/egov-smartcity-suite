@@ -55,8 +55,8 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.support.ui.Menu;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.dao.ModuleDao;
-import org.egov.infstr.security.utils.CryptoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -83,6 +83,9 @@ public class HomeController {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @RequestMapping
     public String showHome(final HttpSession session, final ModelMap modelData) {
@@ -108,10 +111,9 @@ public class HomeController {
     public @ResponseBody String changePassword(@RequestParam final String currentPwd, @RequestParam final String newPwd, 
     		@RequestParam final String retypeNewPwd) {
     	final User user = securityUtils.getCurrentUser();
-    	final String currentRawPwd = CryptoHelper.decrypt(user.getPassword());
-    	if (currentRawPwd.equals(currentPwd)) {
+    	if (passwordEncoder.matches(currentPwd, user.getPassword())) {
     		if (newPwd.equals(retypeNewPwd)) {
-    			user.setPassword(CryptoHelper.encrypt(newPwd));
+    			user.setPassword(passwordEncoder.encode(newPwd));
     			//TODO Set next password expiry date
     			//user.setPwdExpiryDate(new DateTime().toDate());
     			userService.updateUser(user);
