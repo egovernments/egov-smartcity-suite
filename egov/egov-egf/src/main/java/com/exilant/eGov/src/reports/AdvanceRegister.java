@@ -94,15 +94,6 @@ public class AdvanceRegister
 	public ArrayList getAdvanceRegisterReport(AdvanceRegisterBean arBean)throws TaskFailedException
 	{
 		if(LOGGER.isInfoEnabled())     LOGGER.info("Inside getAdvanceRegisterReport()");
-		try
-		{
-			con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
-		}
-		catch(Exception exception)
-		{
-			LOGGER.error("Could Not Get Connection");
-			throw taskExc;
-		}
 
 		if(!arBean.getEndDate().equals(""))
 			isCurDate(con,arBean.getEndDate());

@@ -49,9 +49,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.apache.log4j.Logger;
-
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
 
 import com.exilant.exility.common.TaskFailedException;
 
@@ -122,36 +124,22 @@ public class User {
 		return role;
 	}
 
-	public int getId(Connection con) throws TaskFailedException {
+	public int getId() throws TaskFailedException {
 		String query = "select id_user from EG_USER where user_name=? ";
 		int userId = 0;
 		try {
-			PreparedStatement ps = con.prepareStatement(query);
+			Query ps = HibernateUtil.getCurrentSession().createSQLQuery(query);
 			ps.setString(1, this.userName);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next())
-				userId = rs.getInt("id_user");
-		} catch (SQLException ex) {
+			List<Object[]> rs = ps.list();
+			for(Object[] element : rs){
+				userId = Integer.parseInt(element[0].toString());
+			}
+		} catch (Exception ex) {
 			LOGGER.error("EXP in getId" + ex.getMessage());
 			throw new TaskFailedException();
 		}
 		return userId;
 	}
 
-	public int getId() throws TaskFailedException {
-		int userId = 0;
-		Connection conn = null;
-		try {
-			conn = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
-			userId = getId(conn);
-		} 
-		catch (Exception ex) {
-			LOGGER.error("EXP in setting up connection" + ex.getMessage());
-			throw new TaskFailedException();
-		}finally {
-			//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(conn, null);
-		}
-		return userId;
-	}
 
 }

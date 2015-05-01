@@ -75,14 +75,6 @@ public class BankTransaction
 	
 	public ArrayList getbankTranReport(BankTransactionReportBean btBean)throws TaskFailedException
 		{
-			try
-			{
-				con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection(); 
-			}
-			catch(Exception exception)
-			{
-				LOGGER.error("Could Not Get Connection",exception);
-			}
 			isCurDate(con,btBean.getEndDate());
 			try
 			{

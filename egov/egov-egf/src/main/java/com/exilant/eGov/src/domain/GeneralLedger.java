@@ -52,6 +52,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -246,27 +247,25 @@ public class GeneralLedger {
 		HashMap<String, BigDecimal> hmFinal = new HashMap<String, BigDecimal>();
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
 		String vDate = formatter.format(date);
-		Connection connection = null;
-		PreparedStatement pst = null;
-		ResultSet rs = null;
+		Query pst = null;
+		List<Object[]> rs = null;
 		try {
-			connection = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 
 			// Query1 - to get the sum of credit amount glcode wise
 			String selQuery = "SELECT GL.GLCODE as ACCOUNTCODE,SUM(GLD.AMOUNT) AS CREDITAMOUNT FROM VOUCHERHEADER VH,GENERALLEDGER GL,GENERALLEDGERDETAIL GLD "
 					+ " WHERE VH.FUNDID NOT IN (?) AND GLD.DETAILTYPEID= ? AND DETAILKEYID= ? AND VH.STATUS= ? AND GL.CREDITAMOUNT>0 "
 					+ " AND VH.ID=GL.VOUCHERHEADERID AND GL.ID=GLD.GENERALLEDGERID AND VH.VOUCHERDATE<= ? GROUP BY GL.GLCODE";
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("query (CreditAmount)--> " + selQuery);
-			pst = connection.prepareStatement(selQuery);
-			pst.setInt(1, FUND);
-			pst.setInt(2, ACCOUNTDETAILTYPE);
-			pst.setInt(3, ACCOUNTDETAILKEY);
-			pst.setInt(4, status);
+			pst = HibernateUtil.getCurrentSession().createSQLQuery(selQuery);
+			pst.setInteger(1, FUND);
+			pst.setInteger(2, ACCOUNTDETAILTYPE);
+			pst.setInteger(3, ACCOUNTDETAILKEY);
+			pst.setInteger(4, status);
 			pst.setString(5, vDate);
-			rs = pst.executeQuery();
-			while (rs.next())
-				hmA.put(rs.getString("ACCOUNTCODE"), rs
-						.getBigDecimal("CREDITAMOUNT"));
+			rs = pst.list();
+			for(Object[] element : rs){
+				hmA.put(element[0].toString(), new BigDecimal(element[1].toString()));
+			}
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("map size -------> " + hmA.size());
 
 			// Query2 - to get the sum of debit amount glcode wise
@@ -274,17 +273,16 @@ public class GeneralLedger {
 					+ " WHERE VH.FUNDID NOT IN (?)	AND GLD.DETAILTYPEID= ? AND DETAILKEYID= ? AND VH.STATUS= ? AND GL.DEBITAMOUNT>0 AND  "
 					+ " VH.ID=GL.VOUCHERHEADERID AND GL.ID=GLD.GENERALLEDGERID AND VH.VOUCHERDATE<= ? GROUP BY GL.GLCODE";
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("query (DebitAmount)--> " + selQuery);
-			pst = connection.prepareStatement(selQuery);
-			pst.setInt(1, FUND);
-			pst.setInt(2, ACCOUNTDETAILTYPE);
-			pst.setInt(3, ACCOUNTDETAILKEY);
-			pst.setInt(4, status);
+			pst = HibernateUtil.getCurrentSession().createSQLQuery(selQuery);
+			pst.setInteger(1, FUND);
+			pst.setInteger(2, ACCOUNTDETAILTYPE);
+			pst.setInteger(3, ACCOUNTDETAILKEY);
+			pst.setInteger(4, status);
 			pst.setString(5, vDate);
-			rs = pst.executeQuery();
-			while (rs.next())
-				hmB
-						.put(rs.getString("GLCODE"), rs
-								.getBigDecimal("DEBITAMOUNT"));
+			rs = pst.list();
+			for(Object[] elementB : rs){
+				hmB.put(elementB[0].toString(), new BigDecimal(elementB[1].toString()));
+			}
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("map size -------> " + hmB.size());
 
 			if (hmA.size() == 0)
@@ -320,8 +318,6 @@ public class GeneralLedger {
 							+ e);
 			throw taskExc;
 		} finally {
-			rs.close();
-			pst.close();
 		}
 		return hmFinal;
 	}
@@ -345,29 +341,27 @@ public class GeneralLedger {
 		HashMap<String, BigDecimal> hmA = new HashMap<String, BigDecimal>();
 		HashMap<String, BigDecimal> hmB = new HashMap<String, BigDecimal>();
 		HashMap<String, BigDecimal> hmFinal = new HashMap<String, BigDecimal>();
-		Connection connection = null;
-		PreparedStatement pst = null;
-		ResultSet rs = null;
+		Query pst = null;
+		List<Object[]> rs = null;
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
 		String vDate = formatter.format(date);
 		try {
-			connection = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 
 			// Query1 - to get the sum of credit amount glcode wise
 			String selQuery = " SELECT GL.GLCODE as ACCOUNTCODE, SUM(GLD.AMOUNT) as CREDITAMOUNT FROM VOUCHERHEADER VH,GENERALLEDGER GL,GENERALLEDGERDETAIL GLD "
 					+ " WHERE VH.FUNDID= ?	AND GLD.DETAILTYPEID= ? AND DETAILKEYID= ? AND VH.STATUS= ? AND GL.CREDITAMOUNT>0 "
 					+ " AND VH.ID=GL.VOUCHERHEADERID AND GL.ID=GLD.GENERALLEDGERID AND VH.VOUCHERDATE<= ? GROUP BY GL.GLCODE";
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("query (CreditAmount)--> " + selQuery);
-			pst = connection.prepareStatement(selQuery);
-			pst.setInt(1, FUND);
-			pst.setInt(2, ACCOUNTDETAILTYPE);
-			pst.setInt(3, ACCOUNTDETAILKEY);
-			pst.setInt(4, status);
+			pst = HibernateUtil.getCurrentSession().createSQLQuery(selQuery);
+			pst.setInteger(1, FUND);
+			pst.setInteger(2, ACCOUNTDETAILTYPE);
+			pst.setInteger(3, ACCOUNTDETAILKEY);
+			pst.setInteger(4, status);
 			pst.setString(5, vDate);
-			rs = pst.executeQuery();
-			while (rs.next())
-				hmA.put(rs.getString("ACCOUNTCODE"), rs
-						.getBigDecimal("CREDITAMOUNT"));
+			rs = pst.list();
+			for(Object[] element : rs){
+				hmA.put(element[0].toString(), new BigDecimal(element[1].toString()));
+			}
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("map size -------> " + hmA.size());
 
 			// Query2 - to get the sum of debit amount glcode wise
@@ -375,17 +369,16 @@ public class GeneralLedger {
 					+ "WHERE VH.FUNDID= ? AND GLD.DETAILTYPEID= ? AND DETAILKEYID= ? AND VH.STATUS= ? AND GL.DEBITAMOUNT>0 AND "
 					+ "VH.ID=GL.VOUCHERHEADERID AND GL.ID=GLD.GENERALLEDGERID AND VH.VOUCHERDATE<= ? GROUP BY GL.GLCODE";
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("query (DebitAmount)--> " + selQuery);
-			pst = connection.prepareStatement(selQuery);
-			pst.setInt(1, FUND);
-			pst.setInt(2, ACCOUNTDETAILTYPE);
-			pst.setInt(3, ACCOUNTDETAILKEY);
-			pst.setInt(4, status);
+			pst = HibernateUtil.getCurrentSession().createSQLQuery(selQuery);
+			pst.setInteger(1, FUND);
+			pst.setInteger(2, ACCOUNTDETAILTYPE);
+			pst.setInteger(3, ACCOUNTDETAILKEY);
+			pst.setInteger(4, status);
 			pst.setString(5, vDate);
-			rs = pst.executeQuery();
-			while (rs.next())
-				hmB
-						.put(rs.getString("GLCODE"), rs
-								.getBigDecimal("DEBITAMOUNT"));
+			rs = pst.list();
+			for(Object[] element : rs){
+				hmB.put(element[0].toString(), new BigDecimal(element[1].toString()));
+			}
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("map size -------> " + hmB.size());
 
 			if (hmA.size() == 0)
@@ -416,8 +409,6 @@ public class GeneralLedger {
 			LOGGER.error("Exception in getRecoveryForSubLedger():" + e);
 			throw taskExc;
 		} finally {
-			rs.close();
-			pst.close();
 		}
 		return hmFinal;
 	}

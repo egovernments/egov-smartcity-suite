@@ -45,7 +45,6 @@ package com.exilant.eGov.src.reports;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -53,10 +52,12 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.EGovConfig;
-
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
@@ -68,9 +69,9 @@ class OpBalance{
 public class CashBook {
 	Connection connection=null;
 
-	PreparedStatement pstmt = null;
-	ResultSet resultset=null;
-	ResultSet resultset1=null;
+	Query pstmt = null;
+	List<Object[]> resultset=null;
+	List<Object[]> resultset1=null;
 	TaskFailedException taskExc;
 	String startDate, endDate, effTime,rType="gl";
 	NumberFormat numberformatter=new DecimalFormat("##############0.00") ;
@@ -104,10 +105,10 @@ public class CashBook {
 		String cashPId=EGovConfig.getProperty("egf_config.xml","PURPOSEID","","CashInHand");
 		
 		String boundryId=reportBean.getBoundary();
-		String ulbname=getUlbDetails(connection);
+		String ulbname=getUlbDetails();
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("ulbname:"+ulbname+"boundryId "+boundryId);
 		reportBean.setUlbName(ulbname);
-		String glcodes[]=getGlcode(connection,boundryId);
+		String glcodes[]=getGlcode(boundryId);
 		glCode1 = glcodes[0];
 		glCode2 = glcodes[1];
 
@@ -203,14 +204,14 @@ public class CashBook {
 
 			try
 			{
-				pstmt=connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				pstmt=HibernateUtil.getCurrentSession().createSQLQuery(query);
 			}
 			catch(Exception e)
 			{
 				LOGGER.error("Exception in creating statement:",e);
 				throw taskExc;	
 			}
-			resultset1 = pstmt.executeQuery();
+			resultset1 = pstmt.list();
 			String accCode="", vcNum="", vcDate="";
 			StringBuffer detail = new StringBuffer();
 			StringBuffer amount = new StringBuffer();
@@ -248,18 +249,17 @@ public class CashBook {
 				dataList.add(glbeanOpBal);
 								
 				int count2skip1stRow=0;
-				while(resultset1.next())
-				{
+				for(Object[] element : resultset1){
 					//if(LOGGER.isInfoEnabled())     LOGGER.info(" inside resultset");
 					try{
 						
-						code= resultset1.getString("code");
-						isconfirmed= resultset1.getString("isconfirmed");
+						code= element[0].toString();
+						isconfirmed= element[20].toString();
 						//9 is the dummy value used in the query
 						// To display X in Y are unconfirmed
 						if(isconfirmed!=null && !isconfirmed.equalsIgnoreCase("")&& !isconfirmed.equalsIgnoreCase("9"))
 						{
-							String vn1=resultset1.getString("vouchernumber");
+							String vn1=element[11].toString();
 						 if(!vn1.equalsIgnoreCase(vn2))
 						 {
 							 vn2=vn1;
@@ -271,7 +271,7 @@ public class CashBook {
 						 }
 						}
 						
-						vhId = resultset1.getInt("vhid");
+						vhId = Integer.parseInt(element[8].toString());
 						if(LOGGER.isInfoEnabled())     LOGGER.info("check1>>vhId:"+vhId+" VhidPrevious:"+VhidPrevious+" code:"+code+" accCode:"+accCode);
 						
 						if(vhId!=VhidPrevious)
@@ -320,7 +320,7 @@ public class CashBook {
 							reportBean.setIsConfirmedCount(Integer.toString(isConfirmedCount));
 							if(count2skip1stRow!=0) dataList.add(glbean);//skip to insert blank row at the top
 							count2skip1stRow++;
-							currVhDate= resultset1.getString("voucherdate");
+							currVhDate= element[10].toString();
 							if(LOGGER.isInfoEnabled())     LOGGER.info("vcDate:"+vcDate+" currVhDate:"+currVhDate);
 							if(!vcDate.equalsIgnoreCase(currVhDate) && !vcDate.equalsIgnoreCase("")  )
 							{
@@ -356,23 +356,23 @@ public class CashBook {
 							accCodebuffer.delete(0,accCodebuffer.length());
 						}
 												
-						accCode = resultset1.getString("glcode");
+						accCode = element[12].toString();
 						if(LOGGER.isInfoEnabled())     LOGGER.info("check2>>vhId:"+vhId+" VhidPrevious:"+VhidPrevious+" code:"+code+" accCode:"+accCode);
 						if(vhId==VhidPrevious && !code.equalsIgnoreCase(accCode))
 						{
 							if(LOGGER.isInfoEnabled())     LOGGER.info("inside vhId==VhidPrevious ");
-							vhType=resultset1.getString("vhType");
+							vhType=element[1].toString();
 						//	vhName=resultset1.getString("vhname");
 							String bLine="<Br>";
 							currentDebit=new BigDecimal("0.00"); 
 							currentCredit=new BigDecimal("0.00");
-							cgn=resultset1.getString("CGN");
-							vcDate = resultset1.getString("voucherdate");
-							vcNum = resultset1.getString("vouchernumber");
-							funcCode=resultset1.getString("function");
+							cgn=element[2].toString();
+							vcDate = element[10].toString();
+							vcNum = element[11].toString();
+							funcCode=element[7].toString();
 							//bgtCode=resultset1.getString("BGCODE");
-							srcOfFinance=resultset1.getString("fundsource");
-							String name[]=resultset1.getString("name").split(" ");
+							srcOfFinance=element[6].toString();
+							String name[]=element[13].toString().split(" ");
 							int wordLength=0;
 							String formatedName="";
 							//String formatedAccCode="";
@@ -387,8 +387,8 @@ public class CashBook {
 							}		
 							detail = detail.append(" " + formatedName + "<br>");
 							accCodebuffer=accCodebuffer.append(" "+accCode+bLine);
-							currentDebit=resultset1.getBigDecimal("debitamount");
-							currentCredit=resultset1.getBigDecimal("creditamount");	
+							currentDebit=new BigDecimal(element[17].toString());
+							currentCredit=new BigDecimal(element[18].toString());	
 							if(LOGGER.isInfoEnabled())     LOGGER.info("currentCredit:"+currentCredit+" currentDebit:"+currentDebit+" chequedebitTotal:"+chequedebitTotal+"chequecreditTotal:"+chequecreditTotal);
 							if(LOGGER.isInfoEnabled())     LOGGER.info(" BEFORE>>>>cashdebitTotal:"+cashdebitTotal+"cashcreditTotal:"+cashcreditTotal);
 							if(currentDebit.doubleValue()>0)
@@ -413,14 +413,14 @@ public class CashBook {
 							}
 							if(LOGGER.isInfoEnabled())     LOGGER.info("after adding currentCredit:"+currentCredit+" currentDebit:"+currentDebit+" chequedebitTotal:"+chequedebitTotal+"chequecreditTotal:"+chequecreditTotal);
 							if(LOGGER.isInfoEnabled())     LOGGER.info(" AFTER>>>>cashdebitTotal:"+cashdebitTotal+"cashcreditTotal:"+cashcreditTotal);
-							cgn=resultset1.getString("CGN");
+							cgn=element[2].toString();
 							//if(LOGGER.isInfoEnabled())     LOGGER.info("cgn: "+cgn);
 												
 						}
 						else
-							purposeid=resultset1.getString("purposeid");
+							purposeid=element[3].toString();
 						VhidPrevious=vhId;
-						if(resultset1.isLast())
+						if(element == resultset1.get(resultset1.size() - 1))//Phoenix need to test .....
 						{
 							GeneralLedgerReportBean glbean=new GeneralLedgerReportBean("&nbsp;");
 							
@@ -463,7 +463,7 @@ public class CashBook {
 							reportBean.setTotalCount(Integer.toString(totalCount));
 							reportBean.setIsConfirmedCount(Integer.toString(isConfirmedCount));
 							dataList.add(glbean);
-							currVhDate= resultset1.getString("voucherdate");
+							currVhDate= element[10].toString();
 							{
 								GeneralLedgerReportBean glbeanCb=new GeneralLedgerReportBean("&nbsp;");
 								glbeanCb.setPmtParticulars("<B>Closing: By balance c/d</B>");
@@ -544,7 +544,7 @@ public class CashBook {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("***********: OPBAL for glcode -->" +glCode+ " is-->: " + queryYearOpBal);
 
 		int j=1;
-		pstmt=connection.prepareStatement(queryYearOpBal);
+		pstmt=HibernateUtil.getCurrentSession().createSQLQuery(queryYearOpBal);
 		if(!fundId.equalsIgnoreCase(""))
 			pstmt.setString(j++, fundId);
 		if(!fundSourceId.equalsIgnoreCase(""))
@@ -553,12 +553,11 @@ public class CashBook {
 		pstmt.setString(j++, glCode);
 
 		resultset = null;
-		resultset = pstmt.executeQuery();
-		if(resultset.next()){
-			opDebit = resultset.getDouble("openingDebitBalance");
-			opCredit = resultset.getDouble("openingCreditBalance");
+		resultset = pstmt.list();
+		for(Object[] element : resultset){
+			opDebit = Double.parseDouble(element[0].toString());
+			opCredit =Double.parseDouble(element[1].toString());
 		}
-		pstmt.close();
 
 		/** opening balance till the date from the start of the Year **/
 		if(rType.equalsIgnoreCase("gl"))
@@ -579,7 +578,7 @@ public class CashBook {
 			if(LOGGER.isInfoEnabled())     LOGGER.info("***********: tilldate OPBAL for glcode -->" +glCode+ " is-->: " + queryTillDateOpBal);
 
 			int i=1;
-			pstmt=connection.prepareStatement(queryTillDateOpBal);
+			pstmt=HibernateUtil.getCurrentSession().createSQLQuery(queryTillDateOpBal);
 			pstmt.setString(i++, glCode);
 			if(!fundId.equalsIgnoreCase(""))
 				pstmt.setString(i++, fundId);
@@ -588,12 +587,11 @@ public class CashBook {
 			pstmt.setString(i++, startDate);
 			pstmt.setString(i++, tillDate);
 			resultset = null;
-			resultset = pstmt.executeQuery();
-			if(resultset.next()){
-				opDebit = opDebit + resultset.getDouble("debitAmount");
-				opCredit = opCredit + resultset.getDouble("creditAmount");
+			resultset = pstmt.list();
+			for(Object[] element : resultset){
+				opDebit = opDebit + Double.parseDouble(element[0].toString());
+				opCredit = opCredit +Double.parseDouble(element[1].toString());
 			}
-			pstmt.close();
 		}
 		OpBalance opBal = new OpBalance();
 		opBal.dr = opDebit;
@@ -604,8 +602,8 @@ public class CashBook {
 	}
 
 	private void setDates(String startDate, String endDate ) throws TaskFailedException{
-		ResultSet rs = null;
-		ResultSet rs1 = null;
+		List<Object[]> rs = null;
+		List<Object[]> rs1 = null;
 		String formstartDate="";
 		String formendDate="";
 		SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy");
@@ -615,15 +613,18 @@ public class CashBook {
    		{
 			
 			String query = "select id as \"id\",isclosed as \"isclosed\" from financialYear where startingDate <=? AND endingDate >= ?";
-			pstmt=connection.prepareStatement(query);
+			pstmt=HibernateUtil.getCurrentSession().createSQLQuery(query);
 			pstmt.setString(1, startDate);
 			pstmt.setString(2, endDate);
-			rs = pstmt.executeQuery();
+			rs = pstmt.list();
 			
-			if(!rs.next())
+			if(rs == null || rs.size() == 0)
 				throw new TaskFailedException();
 			else
-				{isclosed=rs.getString("isclosed");
+				{
+				for(Object[] element : rs){
+					isclosed = element[0].toString();
+				}
 				if(isclosed.equals("1")) throw new TaskFailedException();
 				}
 		}
@@ -639,8 +640,6 @@ public class CashBook {
 		finally
 		{
 			try{
-				rs.close();
-				pstmt.close();
 			}
 			catch(Exception e)
 			{
@@ -662,21 +661,20 @@ public class CashBook {
 				
 				String query = "SELECT TO_CHAR(startingDate, 'dd-Mon-yyyy') AS \"startingDate\" " +
 								"FROM financialYear WHERE startingDate <= SYSDATE AND endingDate >= SYSDATE";
-				pstmt=connection.prepareStatement(query);
-				rs = pstmt.executeQuery();
-			
-				if(rs.next()) startDate = rs.getString("startingDate");
+				pstmt=HibernateUtil.getCurrentSession().createSQLQuery(query);
+				rs = pstmt.list();
+				for(Object[] element : rs){
+					startDate = element[0].toString();
+				}
 
-				rs.close();
 				String query1 = "SELECT TO_CHAR(sysdate, 'dd-Mon-yyyy') AS \"endingDate\" FROM dual";
-				pstmt = connection.prepareStatement(query1);
-				rs1 = pstmt.executeQuery();
-			
-				if(rs1.next()) endDate = rs1.getString("endingDate");
-				rs1.close();
-				pstmt.close();
+				pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query1);
+				rs1 = pstmt.list();
+				for(Object[] element : rs1){
+					endDate = element[0].toString();
+				}
 			}
-			catch(SQLException  ex)
+			catch(Exception  ex)
 			{//dc.addMessage("eGovFailure","setDates");
 				LOGGER.error("In side setDates"+ex.getMessage(),ex);
 			throw new TaskFailedException();}
@@ -686,15 +684,15 @@ public class CashBook {
 			try{
 			
 				String query = "SELECT TO_CHAR(startingDate, 'dd-Mon-yyyy') AS \"startingDate\" FROM financialYear WHERE startingDate <= ? AND endingDate >= ?";
-				pstmt = connection.prepareStatement(query);
+				pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
 				pstmt.setString(1, endDate);
 				pstmt.setString(2, endDate);
-				rs = pstmt.executeQuery();
-				if(rs.next()) startDate = rs.getString("startingDate");
-				rs.close();
-				pstmt.close();
+				rs = pstmt.list();
+				for(Object[] element : rs){
+					startDate = element[0].toString();
 				}
-				catch(SQLException  ex)
+				}
+				catch(Exception  ex)
 				{
 					LOGGER.error("Inside setDates"+ex.getMessage(),ex);
 					throw taskExc;
@@ -706,12 +704,10 @@ public class CashBook {
 			try{
 				String query = "SELECT TO_CHAR(endingDate, 'dd-Mon-yyyy') AS \"endingDate\" " +
 				"FROM financialYear WHERE startingDate <= ? AND endingDate >= ?";
-				pstmt = connection.prepareStatement(query);
+				pstmt =HibernateUtil.getCurrentSession().createSQLQuery(query);
 				pstmt.setString(1, startDate);
 				pstmt.setString(2, startDate);
-				rs = pstmt.executeQuery();
-				rs.close();
-				pstmt.close();
+				rs = pstmt.list();
 				pstmt = null;
 			}
 			catch(Exception  ex)
@@ -727,12 +723,11 @@ public class CashBook {
 
 		try{
 			String query = "select name from companydetail";
-			pstmt = connection.prepareStatement(query);
-			ResultSet rset = pstmt.executeQuery();
-			rset.next();
-			ulbName = rset.getString(1);
-			rset.close();
-			pstmt.close();
+			pstmt =  HibernateUtil.getCurrentSession().createSQLQuery(query);
+			List<Object[]> rset = pstmt.list();
+			for(Object[] element : rset){
+				ulbName = element[0].toString();
+			}
 		}catch(Exception sqlex){
 			LOGGER.error("Inside getULBName"+sqlex.getMessage(),sqlex);
 			return null;
@@ -745,13 +740,12 @@ public class CashBook {
 		String minCode = "";
 		try{
 			String query = "select glcode from chartofaccounts where glcode like ?|| '%' and classification = 4 order by glcode asc";
-			pstmt = connection.prepareStatement(query);
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
 			pstmt.setString(1, minGlCode);
-			ResultSet rset = pstmt.executeQuery();
-			rset.next();
-			minCode = rset.getString(1);
-			rset.close();
-			pstmt.close();
+			List<Object[]> rset = pstmt.list();
+			for(Object[] element : rset){
+				minCode = element[0].toString();
+			}
 		}catch(Exception sqlex){
 			LOGGER.error("Exception while getting minGlCode"+sqlex.getMessage(),sqlex);
 			throw taskExc;
@@ -763,13 +757,12 @@ public class CashBook {
 		String maxCode = "";
 		try{
 			String query ="  select glcode from chartofaccounts where glcode like ?|| '%' and classification = 4 order by glcode desc";
-			pstmt = connection.prepareStatement(query);
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
 			pstmt.setString(1, maxGlCode);
-			ResultSet rset = pstmt.executeQuery();
-			rset.next();
-			maxCode = rset.getString(1);
-			rset.close();
-			pstmt.close();
+			List<Object[]> rset = pstmt.list();
+			for(Object[] element : rset){
+				maxCode = element[0].toString();
+			}
 		}catch(Exception sqlex){
 			LOGGER.error("Exception while getting maxGlCode"+sqlex.getMessage(),sqlex);
 			throw taskExc;
@@ -780,32 +773,24 @@ public class CashBook {
 	{
 		String cgn="";
 		pstmt=null;
-		ResultSet rsCgn=null;
+		List<Object[]> rsCgn=null;
 		if(!id.equals(""))
 		{
 			try
 			{
 				String queryCgn = "select CGN from VOUCHERHEADER where id=?";
-				pstmt = connection.prepareStatement(queryCgn);
+				pstmt = HibernateUtil.getCurrentSession().createSQLQuery(queryCgn);
 				pstmt.setString(1, id);
-				rsCgn = pstmt.executeQuery();
-			    rsCgn.next();
-			    cgn = rsCgn.getString("CGN");
+				rsCgn = pstmt.list();
+				for(Object[] element : rsCgn){
+					cgn = element[0].toString();
+				}
 
 			}
 			catch(Exception sqlex)
 			{
 				LOGGER.error("cgnCatch#"+sqlex.getMessage(),sqlex);
 				throw taskExc;
-			}
-			finally
-			{
-				try
-				{
-					rsCgn.close();
-					pstmt.close();
-				}
-				catch(Exception e){LOGGER.error("Exp in finally"+e.getMessage(),e);}
 			}
 		}
 
@@ -832,42 +817,47 @@ public class CashBook {
 			}
 
 		}
-	 private String[] getGlcode(Connection con,String bId)throws TaskFailedException{
+	 private String[] getGlcode(String bId)throws TaskFailedException{
 	 	String glcode[]=new String[2];
-	 	ResultSet rs=null;
+	 	List<Object[]> rs=null;
 	 	
 	 	try{
 	 		
 	 		String query="select glcode as \"glcode\" from chartofaccounts where id in (select cashinhand from codemapping where eg_boundaryid=?)";
 	 		if(LOGGER.isInfoEnabled())     LOGGER.info(query);
-	 		pstmt = connection.prepareStatement(query);
+	 		pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
 	 		pstmt.setString(1,bId);
-	 		rs=pstmt.executeQuery();
-	 		if(rs.next())glcode[0]=rs.getString("glcode");
+	 		rs=pstmt.list();
+	 		for(Object[] element : rs){
+	 			glcode[0]=element[0].toString();
+	 		}
 	 		String str="select glcode from chartofaccounts where id in (select chequeinHand from codemapping where eg_boundaryid=?)";
-	 		pstmt = connection.prepareStatement(str);
+	 		pstmt = HibernateUtil.getCurrentSession().createSQLQuery(str);
 	 		pstmt.setString(1,bId);
-	 		rs=pstmt.executeQuery();
-	 		if(rs.next())glcode[1]=rs.getString("glcode");
-	 		pstmt.close();
-	 	}catch(SQLException e){
+	 		rs=pstmt.list();
+	 		for(Object[] element : rs){
+	 			glcode[1]=element[0].toString();
+	 		}
+	 	}catch(Exception e){
 	 		LOGGER.error("Inside getGlcode",e);
 	 		throw taskExc;}	 	
 	 	return glcode;
 	 }
-	 private String getUlbDetails(Connection con)throws TaskFailedException{
+	 private String getUlbDetails()throws TaskFailedException{
 	 	
-	 	ResultSet rs=null;
+		 List<Object[]> rs=null;
 	 	String ulbName="";
-	 	PreparedStatement pstmt = null;
+	 	Query pstmt = null;
 	 	try{
 	 		
 	 		String query="select name as \"name\" from companydetail";
-	 		pstmt = connection.prepareStatement(query);
+	 		pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
 	 		if(LOGGER.isInfoEnabled())     LOGGER.info(query);
-	 		rs=pstmt.executeQuery();
-	 		if(rs.next())ulbName=rs.getString("name");
-	 	}catch(SQLException e){
+	 		rs=pstmt.list();
+	 		for(Object[] element : rs){
+	 			ulbName=element[0].toString();
+	 		}
+	 	}catch(Exception e){
 	 		LOGGER.error("Inside getUlbDetails",e);
 	 		throw taskExc;}	 	
 	 	return ulbName;

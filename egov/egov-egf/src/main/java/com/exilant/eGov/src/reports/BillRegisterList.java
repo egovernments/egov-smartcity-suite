@@ -39,15 +39,11 @@
  ******************************************************************************/
 package com.exilant.eGov.src.reports;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
-
-
-import com.exilant.exility.dataservice.DatabaseConnectionException;
+import org.egov.infstr.utils.HibernateUtil;
 public class BillRegisterList
 {
 	private static final Logger LOGGER = Logger.getLogger(BillRegisterList.class);
@@ -277,9 +273,7 @@ public class BillRegisterList
 	}
 	public LinkedList getBillRegisterList(BillRegisterReportBean reportBean)
 	{
-		Statement statement=null;
-		ResultSet rs =null;
-		Connection conn;
+		List<Object[]> rs =null;
 		String dateStart="";
 		String dateEnd="";
 		double crTotal = 0;
@@ -292,21 +286,6 @@ public class BillRegisterList
 	    LinkedList links = new LinkedList();
 	//    java.util.Map m=new java.util.TreeMap();
 		//if(LOGGER.isDebugEnabled())     LOGGER.debug("1***");
-		try
-		{
-
-			conn = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
-		}
-		catch(Exception exception)
-		{
-			throw new DatabaseConnectionException(ERRCONN, exception);
-		}
-		try	{ 
-			statement=conn.createStatement();
-		}
-		catch(Exception e){
-			if(LOGGER.isDebugEnabled())     LOGGER.debug("Exception in creating statement:"+statement);
-		}
 	//	//if(LOGGER.isDebugEnabled())     LOGGER.debug("2***");
 		/*try
 		{
@@ -329,7 +308,7 @@ public class BillRegisterList
 		//if(LOGGER.isDebugEnabled())     LOGGER.debug("queryString :"+queryString);
 		try
 		{
-			rs=statement.executeQuery(queryString);
+			rs=HibernateUtil.getCurrentSession().createSQLQuery(queryString).list();
 		}
 		catch(Exception e)
 		{
@@ -338,19 +317,18 @@ public class BillRegisterList
 	//	if(LOGGER.isDebugEnabled())     LOGGER.debug("6***");
 		try
 		{
-			while(rs.next())
-			{
+			for(Object[] element : rs){
 				BillRegister billRegister = new BillRegister();
-				billRegister.setPo(rs.getString("PO"));
-				billRegister.setBillAmount(rs.getString("BILLAMOUNT"));
-				billRegister.setBillApprovalStatus(rs.getString("BILLAPPROVALSTATUS"));
-				billRegister.setBillDate(rs.getString("BILLDATE"));
-				billRegister.setBillNumber(rs.getString("BILLNUMBER"));
-				billRegister.setPaidAmount(rs.getString("PAIDAMOUNT"));
-				billRegister.setPassedAmount(rs.getString("PASSEDAMOUNT"));
-				billRegister.setPaymentDate(rs.getString("PAYREQDATE"));
-				billRegister.setVoucherDate(rs.getString("VOUCHERDATE"));
-				billRegister.setVoucherNumbaer(rs.getString("VOUCHERNUMBER"));
+				billRegister.setPo(element[0].toString());
+				billRegister.setBillAmount(element[3].toString());
+				billRegister.setBillApprovalStatus(element[4].toString());
+				billRegister.setBillDate(element[1].toString());
+				billRegister.setBillNumber(element[2].toString());
+				billRegister.setPaidAmount(element[7].toString());
+				billRegister.setPassedAmount(element[6].toString());
+				billRegister.setPaymentDate(element[5].toString());
+				billRegister.setVoucherDate(element[9].toString());
+				billRegister.setVoucherNumbaer(element[8].toString());
 				links.add(billRegister);
 
 		        //m.put(rs.getString("BILLNUMBER"),billRegister);
@@ -367,17 +345,17 @@ public class BillRegisterList
 				BillRegister.setTotalBillAmount(""+totalBillAmount);
 				BillRegister.setTotalBill(""+totalBill);
 				BillRegister.setTotalPassed(""+totalPassed);*/
-				totalBillAmount += rs.getDouble("BILLAMOUNT");
+				totalBillAmount += Double.parseDouble(element[3].toString());
 				totalBill += 1;
-				if(rs.getString("BILLAPPROVALSTATUS").equals("PASSED"))
+				if(element[4].toString().equals("PASSED"))
 				{
 					totalPassed=totalPassed+1;
 				}
-				if(rs.getString("BILLAPPROVALSTATUS").equals("PENDING"))
+				if(element[4].toString().equals("PENDING"))
 				{
 					totalPending=totalPending+1;
 				}
-				if(rs.getString("BILLAPPROVALSTATUS").equals("REJECTED"))
+				if(element[4].toString().equals("REJECTED"))
 				{
 					totalRejected=totalRejected+1;
 				}
@@ -405,16 +383,6 @@ public class BillRegisterList
 
 		finally
 		{
-			try
-			{
-				conn.close();
-				//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(conn,statement);
-			}
-			catch(Exception e)
-			{
-				//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(conn,statement);
-				if(LOGGER.isDebugEnabled())     LOGGER.debug("Exception in Finally Block"+e);
-			}
 		}
 		//links=new LinkedList(m.values());
 		return links;

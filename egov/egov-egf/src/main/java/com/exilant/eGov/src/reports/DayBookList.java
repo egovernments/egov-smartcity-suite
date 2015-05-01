@@ -40,14 +40,14 @@
 package com.exilant.eGov.src.reports;
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
-
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
 
 import com.exilant.GLEngine.DayBook;
 import com.exilant.eGov.src.common.EGovernCommon;
@@ -60,7 +60,7 @@ public class DayBookList
 	private double cAmount=0.0;
 	private static TaskFailedException taskexp;
 	protected static final Logger LOGGER = Logger.getLogger(DayBookList.class);
-	private PreparedStatement pstmt=null;
+	private Query pstmt=null;
 	public DayBookList(){}
 
 	/**
@@ -157,7 +157,7 @@ public class DayBookList
 		}
 	public LinkedList getDayBookList(DayBookReportBean reportBean)throws TaskFailedException
 	{
-		ResultSet rs =null;
+		List<Object[]> rs =null;
 		Connection conn=null;
 		String dateStart="";
 		String dateEnd="";
@@ -165,16 +165,6 @@ public class DayBookList
 		double crTotal = 0;
 	    double dbTotal = 0;
 		LinkedList links = new LinkedList();
-		try
-		{
-
-			conn = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
-		}
-		catch(Exception exception)
-		{
-			LOGGER.error(exception.getMessage(),exception);
-			throw new DatabaseConnectionException(errConnOpenString, exception);
-		}
         
 		Integer fundId=Integer.parseInt(reportBean.getFundId());
          if(LOGGER.isDebugEnabled())     LOGGER.debug("fundid: "+fundId);
@@ -191,12 +181,12 @@ public class DayBookList
         " and vh.fundid = ? ORDER BY vdate,vouchernumber";
         if(LOGGER.isDebugEnabled())     LOGGER.debug("queryString :"+queryString);
 		
-        pstmt=conn.prepareStatement(queryString);
+        pstmt=HibernateUtil.getCurrentSession().createSQLQuery(queryString);
        
         pstmt.setString(1,dateStart);
         pstmt.setString(2,dateEnd);
         pstmt.setLong(3,fundId);
-       	rs=pstmt.executeQuery();
+       	rs=pstmt.list();
 		}
 		else{
 		String queryString =	"SELECT voucherdate as vdate, TO_CHAR(voucherdate, 'dd-Mon-yyyy')  AS "+" voucherdate"+", vouchernumber , gd.glcode AS " +" glcode"+ ",  ca.name AS "+ "particulars" + ",vh.name ||' - '|| vh.TYPE AS " + "type" +", decode(vh.description,null,' ',vh.description) AS "+ "narration" +", " +
@@ -205,13 +195,13 @@ public class DayBookList
         "ORDER BY vdate,vouchernumber";
         if(LOGGER.isDebugEnabled())     LOGGER.debug("queryString :"+queryString);
 		
-        pstmt=conn.prepareStatement(queryString);
+        pstmt=HibernateUtil.getCurrentSession().createSQLQuery(queryString);
         pstmt.setString(1, dateStart);
         pstmt.setString(2, dateEnd);
-        rs=pstmt.executeQuery();
+        rs=pstmt.list();
 		}
 		}
-		catch(SQLException e)
+		catch(Exception e)
 		{
 			 LOGGER.error("Eror:" + e.getMessage(),e);
 			 throw taskexp;
@@ -222,18 +212,17 @@ public class DayBookList
 			String vn2="";
 				//added by raja
 				String tempVD="",tempVN="",tempTY="",tempN="",tempST="",tempGL="", tempPS="",tempDA="",tempCA="";
-				while(rs.next())
-			{
+				for(Object[] element : rs){
 				DayBook dBook = new DayBook();
-				tempVD = rs.getString("voucherdate");
-				tempVN = rs.getString("vouchernumber");
-				tempTY = rs.getString("type");
-				tempN = rs.getString("narration");
-				tempST = rs.getString("status");
-				tempGL= rs.getString("glcode");
-				tempPS= rs.getString("particulars");
-				tempDA=rs.getString("debitamount");
-				tempCA=rs.getString("creditamount");
+				tempVD = element[1].toString();
+				tempVN = element[2].toString();
+				tempTY = element[5].toString();
+				tempN = element[6].toString();
+				tempST = element[7].toString();
+				tempGL= element[3].toString();
+				tempPS= element[4].toString();
+				tempDA=element[8].toString();
+				tempCA=element[9].toString();
 				
 				dBook.setStatus(tempST);			
 if(tempVD.equals(" "))
@@ -273,14 +262,14 @@ if(tempDA.equals("0"))
 			dBook.setCreditamount(""+numberToString(new BigDecimal(Double.parseDouble(tempCA)).setScale(2, BigDecimal.ROUND_HALF_UP).toString()));
 		}
         if(LOGGER.isDebugEnabled())     LOGGER.debug("AFTER The tempDA value is:"+ tempDA+"tempCA : "+tempCA);
-	 			dbTotal += rs.getDouble("debitamount");
-		 		crTotal += rs.getDouble("creditamount");
-				dBook.setCgn(rs.getString("CGN"));
-				dBook.setVhId(rs.getString("vhId"));
-				isconfirmed= rs.getString("isconfirmed")==null?"":rs.getString("isconfirmed");
+	 			dbTotal += Double.parseDouble(element[8].toString());
+		 		crTotal += Double.parseDouble(element[9].toString());
+				dBook.setCgn(element[10].toString());
+				dBook.setVhId(element[12].toString());
+				isconfirmed= element[11].toString()==null?"":element[11].toString();
 				if(!isconfirmed.equalsIgnoreCase(""))
 				{
-					String vn1=rs.getString("vouchernumber");
+					String vn1=element[2].toString();
 				 if(!vn1.equalsIgnoreCase(vn2))
 				 {
 					 vn2=vn1;
