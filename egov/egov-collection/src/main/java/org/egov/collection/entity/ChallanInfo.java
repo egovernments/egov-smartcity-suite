@@ -206,7 +206,7 @@ public class ChallanInfo {
 	 * @return The service name for this receipt
 	 */
 	public String getServiceName() {
-		return receiptHeader.getService().getServiceName();
+		return receiptHeader.getService().getName();
 	}
 	
 	/**
@@ -257,12 +257,12 @@ public class ChallanInfo {
 		if(receiptHeader.getChallan()==null)
 		{	
 			return receipHeaderReferenceObj.getChallan().getService()==null?
-					null:receipHeaderReferenceObj.getChallan().getService().getServiceName();
+					null:receipHeaderReferenceObj.getChallan().getService().getName();
 		}
 		else
 		{	
 			return receiptHeader.getChallan().getService()==null?
-					null:receiptHeader.getChallan().getService().getServiceName();
+					null:receiptHeader.getChallan().getService().getName();
 		}
 			
 	}

@@ -50,13 +50,13 @@
             </generator>
         </id>
         <many-to-one name="receiptDetail" class="org.egov.collection.entity.ReceiptDetail" fetch="select">
-            <column name="ID_COLLECTIONDETAILS" precision="22" scale="0" not-null="true" />
+            <column name="collectiondetails" precision="22" scale="0" not-null="true" />
         </many-to-one>
         <many-to-one name="accountDetailType" class="org.egov.commons.Accountdetailtype" fetch="select">
-            <column name="ID_ACCOUNTDETAILSTYPE" precision="22" scale="0" not-null="true" />
+            <column name="accountdetailstype" precision="22" scale="0" not-null="true" />
         </many-to-one>
         <many-to-one name="accountDetailKey" class="org.egov.commons.Accountdetailkey" fetch="select">
-            <column name="ID_ACCOUNTDETAILSKEY" precision="22" scale="0" not-null="true" />
+            <column name="accountdetailskey" precision="22" scale="0" not-null="true" />
         </many-to-one>
         
         <property name="amount" type="big_decimal">

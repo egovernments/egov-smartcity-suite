@@ -277,7 +277,7 @@ public class ReceiptAction extends BaseFormAction {
 				ServiceDetails service = (ServiceDetails) getPersistenceService().findByNamedQuery(
 						CollectionConstants.QUERY_SERVICE_BY_CODE, collDetails.getServiceCode());
 
-				setServiceName(service.getServiceName());
+				setServiceName(service.getName());
 				setCollectionModesNotAllowed(collDetails.getCollectionModesNotAllowed());
 				setOverrideAccountHeads(collDetails.getOverrideAccountHeadsAllowed());
 				setCallbackForApportioning(collDetails.getCallbackForApportioning());
@@ -478,7 +478,7 @@ public class ReceiptAction extends BaseFormAction {
 				}
 				ReceiptDetail receiptDetail = new ReceiptDetail(account, function,
 						voucherDetails.getCreditAmountDetail(), voucherDetails.getDebitAmountDetail(), BigDecimal.ZERO,
-						Long.valueOf(m), null, Long.valueOf(1), receiptHeader);
+						Long.valueOf(m), null, true, receiptHeader);
 
 				if (voucherDetails.getCreditAmountDetail() == null) {
 					receiptDetail.setCramount(BigDecimal.ZERO);
@@ -514,7 +514,7 @@ public class ReceiptAction extends BaseFormAction {
 					}
 					ReceiptDetail receiptDetail = new ReceiptDetail(account, function,
 							voucherDetails.getCreditAmountDetail(), voucherDetails.getDebitAmountDetail(),
-							BigDecimal.ZERO, Long.valueOf(m), null, Long.valueOf(1), receiptHeader);
+							BigDecimal.ZERO, Long.valueOf(m), null, true, receiptHeader);
 
 					if (voucherDetails.getDebitAmountDetail() == null) {
 						receiptDetail.setDramount(BigDecimal.ZERO);
@@ -714,12 +714,12 @@ public class ReceiptAction extends BaseFormAction {
 		}
 		// this.paidBy = payeename;
 		if (null != service && null != service.getId() && service.getId() != -1) {
-			setServiceName(serviceDetailsService.findById(service.getId(), false).getServiceName());
+			setServiceName(serviceDetailsService.findById(service.getId(), false).getName());
 
 		} else {
 			ServiceDetails service = (ServiceDetails) getPersistenceService().findByNamedQuery(
 					CollectionConstants.QUERY_SERVICE_BY_CODE, CollectionConstants.SERVICE_CODE_COLLECTIONS);
-			setServiceName(service.getServiceName());
+			setServiceName(service.getName());
 		}
 
 		Department dept = collectionsUtil.getDepartmentOfLoggedInUser(getSession());
@@ -1121,7 +1121,7 @@ public class ReceiptAction extends BaseFormAction {
 			setCollectionModesNotAllowed(Arrays.asList(oldReceiptHeader.getCollModesNotAllwd().split(",")));
 		setOverrideAccountHeads(oldReceiptHeader.getOverrideAccountHeads());
 		setPartPaymentAllowed(oldReceiptHeader.getPartPaymentAllowed());
-		setServiceName(oldReceiptHeader.getService().getServiceName());
+		setServiceName(oldReceiptHeader.getService().getName());
 
 		ReceiptMisc receiptMisc = new ReceiptMisc(oldReceiptHeader.getReceiptMisc().getBoundary(), oldReceiptHeader
 				.getReceiptMisc().getFund(), oldReceiptHeader.getReceiptMisc().getIdFunctionary(), oldReceiptHeader
@@ -1148,7 +1148,7 @@ public class ReceiptAction extends BaseFormAction {
 					}
 				}
 
-				if (oldDetail.getIsActualDemand() == 1) {
+				if (oldDetail.getIsActualDemand()) {
 					totalAmountToBeCollected = totalAmountToBeCollected.add(oldDetail.getCramountToBePaid())
 							.subtract(oldDetail.getDramount())
 							.setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP);
@@ -1272,7 +1272,7 @@ public class ReceiptAction extends BaseFormAction {
 
 			populateReceiptModelWithExistingReceiptInfo(receiptHeaderToBeCancelled);
 			setFundName(receiptHeaderToBeCancelled.getReceiptMisc().getFund().getName());
-			setServiceName(receiptHeaderToBeCancelled.getService().getServiceName());
+			setServiceName(receiptHeaderToBeCancelled.getService().getName());
 			populateBankBranchList(true);
 
 			// set collection modes allowed rule through script

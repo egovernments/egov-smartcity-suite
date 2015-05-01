@@ -51,13 +51,13 @@
 		</id>
 
 		<many-to-one name="receiptHeader" class="org.egov.collection.entity.ReceiptHeader" fetch="select">
-            <column name="RECEIPTID" precision="22" scale="0" />
+            <column name="collectionheader" precision="22" scale="0" />
         </many-to-one>
         
         			
 		<many-to-one name="service" class="org.egov.infstr.models.ServiceDetails"
 			fetch="select">
-			<column name="SERVICEID" precision="22" scale="0" not-null="true" />
+			<column name="servicedetails" precision="22" scale="0" not-null="true" />
 		</many-to-one>
 		
 		<property name="transactionNumber" type="string">
@@ -75,7 +75,7 @@
 		
 		<many-to-one name="status" class="org.egov.commons.EgwStatus"
 			fetch="select">
-			<column name="STATUSID" precision="22" scale="0" not-null="true" />
+			<column name="status" precision="22" scale="0" not-null="true" />
 		</many-to-one>
 		
 		<property name="authorisationStatusCode" type="string">
@@ -89,20 +89,20 @@
 		
 		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl"
 			fetch="select">
-			<column name="CREATED_BY" precision="22" scale="0" />
+			<column name="CREATEDBY" precision="22" scale="0" />
 		</many-to-one>
 		
 		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl"
 			fetch="select">
-			<column name="MODIFIED_BY" precision="22" scale="0" />
+			<column name="LASTMODIFIEDBY" precision="22" scale="0" />
 		</many-to-one>
 		
-		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
-		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" />
+		<property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp" />
 		
 	</class>
 	
 	<query name="ONLINERECEIPTS_BY_STATUSCODE">
-    <![CDATA[select receipt from org.egov.collection.entity.OnlinePayment as receipt where receipt.status.code = ?]]></query> 
+    <![CDATA[select receipt from org.egov.collection.entity.OnlinePayment receipt where receipt.status.code = ?]]></query> 
 	    
 </hibernate-mapping>

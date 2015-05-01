@@ -415,7 +415,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         if (updateToSystems) {
         	onlinePaymentReceiptHeader.setIsReconciled(true);
 			receiptHeaderService.persist(onlinePaymentReceiptHeader);
-            LOGGER.debug("Updated billing system : " + onlinePaymentReceiptHeader.getService().getServiceName());
+            LOGGER.debug("Updated billing system : " + onlinePaymentReceiptHeader.getService().getName());
         } else {
             LOGGER.debug("Rolling back receipt creation transaction as update to billing system/financials failed.");
         }
@@ -657,7 +657,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                 ServiceDetails service = (ServiceDetails) getPersistenceService().findByNamedQuery(
                         CollectionConstants.QUERY_SERVICE_BY_CODE, collDetails.getServiceCode());
 
-                setServiceName(service.getServiceName());
+                setServiceName(service.getName());
                 setCollectionModesNotAllowed(collDetails.getCollectionModesNotAllowed());
                 setOverrideAccountHeads(collDetails.getOverrideAccountHeadsAllowed());
                 setPartPaymentAllowed(collDetails.getPartPaymentAllowed());

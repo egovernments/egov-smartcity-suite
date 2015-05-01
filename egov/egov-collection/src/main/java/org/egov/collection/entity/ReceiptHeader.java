@@ -488,7 +488,7 @@ public class ReceiptHeader extends StateAware {
 	 */
 	@Override
 	public String getStateDetails() {
-		return service.getServiceName() + CollectionConstants.SEPARATOR_HYPHEN
+		return service.getName() + CollectionConstants.SEPARATOR_HYPHEN
 				+ this.getCreatedBy().getUsername()
 				+ (location == null ? "" : CollectionConstants.SEPARATOR_HYPHEN + location.getName());
 	}

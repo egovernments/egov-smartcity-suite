@@ -51,7 +51,7 @@
 		</id>
 
 		<many-to-one name="receiptHeader" class="org.egov.collection.entity.ReceiptHeader" fetch="select">
-            <column name="RECEIPTID" precision="22" scale="0" />
+            <column name="collectionheader" precision="22" scale="0" />
         </many-to-one>
         
         <property name="challanNumber" type="string">
@@ -67,37 +67,37 @@
 		<property name="challanDate" column="CHALLANDATE" type="java.util.Date" not-null="true"/>
 		
 		<many-to-one name="status" class="org.egov.commons.EgwStatus" fetch="select">
-			<column name="STATUSID" precision="22" scale="0" not-null="true" />
+			<column name="status" precision="22" scale="0" not-null="true" />
 		</many-to-one>
 		
-		<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
-			<column name="WFSTATEID" />
+		<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all">
+			<column name="state" />
 		</many-to-one>
 		
 		<many-to-one name="service" class="org.egov.infstr.models.ServiceDetails"
 			fetch="select">
-			<column name="SERVICE_ID" precision="22" scale="0" />
+			<column name="servicedetails" precision="22" scale="0" />
 		</many-to-one>
 		
 		<many-to-one name="voucherHeader" class="org.egov.commons.CVoucherHeader" fetch="select">
-			<column name="VOUCHERHEADERID" />
+			<column name="voucherheader" />
 		</many-to-one>
 		
 		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl"
 			fetch="select">
-			<column name="CREATED_BY" precision="22" scale="0" />
+			<column name="CREATEDBY" precision="22" scale="0" />
 		</many-to-one>
 		
 		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl"
 			fetch="select">
-			<column name="MODIFIED_BY" precision="22" scale="0" />
+			<column name="LASTMODIFIEDBY" precision="22" scale="0" />
 		</many-to-one>
 		
-		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
-		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" />
+		<property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp" />
 		
 		<property name="oldChallanNumber" type="string">
-			<column name="OLD_CHALLANNUMBER" length="25" />
+			<column name="oldchallannumber" length="25" />
 		</property>
 	</class>
 	

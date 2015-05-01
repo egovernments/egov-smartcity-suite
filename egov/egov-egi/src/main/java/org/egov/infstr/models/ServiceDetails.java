@@ -57,7 +57,7 @@ public class ServiceDetails extends BaseModel {
 	 * Serial version uid
 	 */
 	private static final long serialVersionUID = 1L;
-	private String serviceName;
+	private String name;
 	private String serviceUrl;
 	private Boolean isEnabled;
 	private String callBackurl;
@@ -95,16 +95,16 @@ public class ServiceDetails extends BaseModel {
 	 * @return the serviceName
 	 */
 	@Required(message = "service.name.null")
-	public String getServiceName() {
-		return serviceName;
+	public String getName() {
+		return name;
 	}
 
 	/**
 	 * @param serviceName
 	 *            the serviceName to set
 	 */
-	public void setServiceName(String serviceName) {
-		this.serviceName = serviceName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**

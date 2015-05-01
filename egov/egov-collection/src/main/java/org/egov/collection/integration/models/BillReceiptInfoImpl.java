@@ -239,7 +239,7 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 	 * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getServiceName()
 	 */
 	public String getServiceName() {
-		return receiptHeader.getService().getServiceName();
+		return receiptHeader.getService().getName();
 	}
 
 	/* (non-Javadoc)

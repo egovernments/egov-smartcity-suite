@@ -63,9 +63,9 @@ public class BillAccountDetails implements Comparable<BillAccountDetails>{
 	private final String functionCode;
 	
 	@XStreamAsAttribute
-	private final Integer isActualDemand;
+	private final Boolean isActualDemand;
 	
-	public BillAccountDetails(String glCode,Integer order,BigDecimal crAmount,BigDecimal drAmount, String functionCode, String description,Integer isActualDemand){
+	public BillAccountDetails(String glCode,Integer order,BigDecimal crAmount,BigDecimal drAmount, String functionCode, String description,Boolean isActualDemand){
 		this.glCode=glCode;
 		this.order=order;
 		this.crAmount=crAmount;
@@ -108,7 +108,7 @@ public class BillAccountDetails implements Comparable<BillAccountDetails>{
 		return description;
 	}
 	
-	public Integer getIsActualDemand(){
+	public Boolean getIsActualDemand(){
 		return isActualDemand;
 	}
 	

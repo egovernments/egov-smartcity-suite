@@ -43,10 +43,10 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="org.egov.infstr.models.ServiceDetails" table="EG_SERVICEDETAILS" >
+	<class name="org.egov.infstr.models.ServiceDetails" table="egcl_servicedetails" >
 		<id name="id" column="ID" type="long" unsaved-value="null">
 			<generator class="native">
-				<param name="sequence">SEQ_EG_SERVICEDETAILS</param>
+				<param name="sequence">seq_egcl_servicedetails</param>
 			</generator>
 		</id>
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User"
@@ -59,7 +59,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 			fetch="select">
 			<column name="MODIFIED_BY" precision="22" scale="0" />
 		</many-to-one>
-		<property name="serviceName" column="SERVICENAME" type="string" />
+		<property name="name" column="SERVICENAME" type="string" />
 		<property name="serviceUrl" column="SERVICEURL" type="string" />
 		<property name="isEnabled" column="ISENABLED" type="java.lang.Boolean" />
 		<property name="callBackurl" column="CALLBACKURL" type="string" />
@@ -80,41 +80,39 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 		</set>
 
 		<many-to-one name="fund" class="org.egov.commons.Fund"
-			column="FUNDID" fetch="select" />
+			column="fund" fetch="select" />
 		<many-to-one name="fundSource" class="org.egov.commons.Fundsource"
-			column="FUNDSOURCEID" fetch="select" />
+			column="fundsource" fetch="select" />
 
 		<many-to-one name="functionary" class="org.egov.commons.Functionary"
-			column="FUNCTIONARYID" fetch="select" />
+			column="functionary" fetch="select" />
 		<many-to-one name="scheme" class="org.egov.commons.Scheme"
-			column="SCHEMEID" fetch="select" />
+			column="scheme" fetch="select" />
 		<many-to-one name="subscheme" class="org.egov.commons.SubScheme"
-			column="SUBSCHEMEID" fetch="select" />
+			column="subscheme" fetch="select" />
 	
 			
 		<many-to-one name="serviceCategory" class="org.egov.infstr.models.ServiceCategory"
-			column="ID_SERVICE_CATEGORY" fetch="select" />	
+			column="servicecategory" fetch="select" />	
 			
-		<set name="serviceDept" table="EG_SERVICE_DEPT_MAPPING" >
+		<set name="serviceDept" table="egcl_service_dept_mapping" >
 			<key>
-				<column name="ID_SERVICEDETAILS" precision="22" scale="0" />
+				<column name="servicedetails" precision="22" scale="0" />
 			</key>
 			<many-to-many class="org.egov.infra.admin.master.entity.Department"
-				column="ID_DEPARTMENT" />
+				column="department" />
 		</set>
 	
 		<set name="serviceAccountDtls" inverse="true" cascade="all,delete-orphan">
 			<key>
-				<column name="ID_SERVICEDETAILS" precision="22" scale="0" />
+				<column name="servicedetails" precision="22" scale="0" />
 			</key>
 			<one-to-many class="org.egov.infstr.models.ServiceAccountDetails" />
 		</set>
 	</class>
 	
 		<query name="SERVICE_BY_CATEGORY_FOR_TYPE">
-		<![CDATA[
-     	from org.egov.infstr.models.ServiceDetails where  serviceCategory.id=? and serviceType=? and isEnabled=?
-    ]]>
+		<![CDATA[select sd from org.egov.infstr.models.ServiceDetails sd where sd.serviceCategory.id=? and sd.serviceType=? and sd.isEnabled=?]]>
 	</query>
 	
 </hibernate-mapping>

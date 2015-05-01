@@ -52,10 +52,10 @@
 			</generator>
         </id>
         <many-to-one name="voucherheader" class="org.egov.commons.CVoucherHeader" fetch="select">
-            <column name="VOUCHERHEADERID" precision="22" scale="0" />
+            <column name="voucherheader" precision="22" scale="0" />
         </many-to-one>
         <many-to-one name="receiptHeader" class="org.egov.collection.entity.ReceiptHeader" fetch="select">
-            <column name="COLLECTIONHEADERID" precision="22" scale="0" />
+            <column name="collectionheader" precision="22" scale="0" />
         </many-to-one>
     </class>
 </hibernate-mapping>

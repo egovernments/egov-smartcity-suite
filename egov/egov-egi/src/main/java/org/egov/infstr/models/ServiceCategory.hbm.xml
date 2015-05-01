@@ -43,10 +43,10 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="org.egov.infstr.models.ServiceCategory" table="EG_SERVICECATEGORY" >
+	<class name="org.egov.infstr.models.ServiceCategory" table="egcl_servicecategory" >
 		<id name="id" column="ID" type="long" unsaved-value="null">
 			<generator class="native">
-				<param name="sequence">SEQ_EG_SERVICECATEGORY</param>
+				<param name="sequence">seq_egcl_servicecategory</param>
 			</generator>
 		</id>
 		<property name="name" column="NAME" type="string" />
@@ -64,7 +64,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 		
 		<set name="services" inverse="true" cascade="all,delete-orphan" >
 			<key>
-				<column name="ID_SERVICE_CATEGORY" precision="22" scale="0" />
+				<column name="servicecategory" precision="22" scale="0" />
 			</key>
 			<one-to-many class="org.egov.infstr.models.ServiceDetails" />
 		</set>
@@ -74,8 +74,6 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	
 
 	<query name="SERVICE_CATEGORY_ALL">
-		<![CDATA[
-     	from org.egov.infstr.models.ServiceCategory where isActive=1 order by name   
-    ]]>
+		<![CDATA[select sc from org.egov.infstr.models.ServiceCategory sc where sc.isActive=1 order by sc.name]]>
 	</query>
 </hibernate-mapping>

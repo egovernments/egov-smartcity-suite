@@ -77,7 +77,7 @@ public class ReceiptDetail implements java.io.Serializable {
 	/**
 	 * A <code>Long</code> representing the glcode is part of actual demand or not
 	 */
-	private Long isActualDemand;
+	private Boolean isActualDemand;
 	
 	private Set<AccountPayeeDetail> accountPayeeDetails = new HashSet<AccountPayeeDetail>(0);
 	
@@ -87,7 +87,7 @@ public class ReceiptDetail implements java.io.Serializable {
 	}
 
 	public ReceiptDetail(CChartOfAccounts account, CFunction function, BigDecimal cramountToBePaid, 
-			BigDecimal drAmount, BigDecimal crAmount,Long order, String description, Long isActualDemand,ReceiptHeader receiptHeader) {
+			BigDecimal drAmount, BigDecimal crAmount,Long order, String description, Boolean isActualDemand,ReceiptHeader receiptHeader) {
 		this.accounthead = account;
 		this.function = function;
 		this.cramountToBePaid = cramountToBePaid;
@@ -224,14 +224,14 @@ public class ReceiptDetail implements java.io.Serializable {
 	/**
 	 * @return the isActualDemand
 	 */
-	public Long getIsActualDemand() {
+	public Boolean getIsActualDemand() {
 		return isActualDemand;
 	}
 
 	/**
 	 * @param isActualDemand the isActualDemand to set
 	 */
-	public void setIsActualDemand(Long isActualDemand) {
+	public void setIsActualDemand(Boolean isActualDemand) {
 		this.isActualDemand = isActualDemand;
 	}
 }

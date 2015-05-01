@@ -51,29 +51,29 @@
 		</id>
 
 		<many-to-one name="depositedInBank" class="org.egov.commons.Bank" fetch="select">
-            <column name="ID_depositedInBank" precision="22" scale="0" />
+            <column name="depositedinbank" precision="22" scale="0" />
         </many-to-one>
 		
 		<many-to-one name="service" class="org.egov.infstr.models.ServiceDetails" fetch="select">
-			<column name="ID_SERVICE" precision="22" scale="0" />
+			<column name="servicedetails" precision="22" scale="0" />
 		</many-to-one>
 		
 		<many-to-one name="bankAccounttoRemit" class="org.egov.commons.Bankaccount" fetch="select">
-            <column name="ID_BankAccounttoRemit" precision="22" scale="0" />
+            <column name="bankaccounttoremit" precision="22" scale="0" />
         </many-to-one>
 		
 		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl"
 			fetch="select">
-			<column name="CREATED_BY" precision="22" scale="0" />
+			<column name="CREATEDBY" precision="22" scale="0" />
 		</many-to-one>
 		
 		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl"
 			fetch="select">
-			<column name="MODIFIED_BY" precision="22" scale="0" />
+			<column name="LASTMODIFIEDBY" precision="22" scale="0" />
 		</many-to-one>
 		
-		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
-		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" />
+		<property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp" />
 	</class>
 
 	    <query name="COLLECTION_BANKACCOUNT_BY_SERVICE_AND_BANK">

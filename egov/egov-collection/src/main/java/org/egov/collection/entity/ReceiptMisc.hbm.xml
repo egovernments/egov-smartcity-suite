@@ -50,32 +50,32 @@
             </generator>
         </id>
         <many-to-one name="receiptHeader" class="org.egov.collection.entity.ReceiptHeader" fetch="select">
-            <column name="ID_COLLECTIONHEADER" precision="22" scale="0" />
+            <column name="collectionheader" precision="22" scale="0" />
         </many-to-one>
         <many-to-one name="fund" class="org.egov.commons.Fund" fetch="select">
-			<column name="ID_FUND" not-null="true"/>
+			<column name="fund" not-null="true"/>
 		</many-to-one>
         <many-to-one name="fundsource" class="org.egov.commons.Fundsource" fetch="select">
-            <column name="ID_FUNDSOURCE" precision="22" scale="0" />
+            <column name="fundsource" precision="22" scale="0" />
         </many-to-one>
         <many-to-one name="boundary" class="org.egov.lib.admbndry.BoundaryImpl" fetch="select">
-            <column name="ID_BOUNDARY" precision="22" scale="0" />
+            <column name="boundary" precision="22" scale="0" />
         </many-to-one>
         <many-to-one name="department" class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
-            <column name="ID_DEPARTMENT" precision="22" scale="0" not-null="true"/>
+            <column name="department" precision="22" scale="0" not-null="true"/>
         </many-to-one>
         
         <many-to-one name="scheme" class="org.egov.commons.Scheme" fetch="select">
-            <column name="ID_SCHEME" precision="22" scale="0" />
+            <column name="scheme" precision="22" scale="0" />
         </many-to-one>
         <many-to-one name="subscheme" class="org.egov.commons.SubScheme" fetch="select">
-            <column name="ID_SUBSCHEME" precision="22" scale="0" />
+            <column name="subscheme" precision="22" scale="0" />
         </many-to-one>
         <many-to-one name="idFunctionary" class="org.egov.commons.Functionary" fetch="select">
-            <column name="ID_FUNCTIONARY" precision="22" scale="0" />
+            <column name="functionary" precision="22" scale="0" />
         </many-to-one>
         <many-to-one name="depositedInBank" class="org.egov.commons.Bank" fetch="select">
-            <column name="ID_DEPOSITEDINBANK" precision="22" scale="0" />
+            <column name="depositedinbank" precision="22" scale="0" />
         </many-to-one>
     </class>
     

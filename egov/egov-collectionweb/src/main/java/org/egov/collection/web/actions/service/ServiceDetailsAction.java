@@ -233,7 +233,7 @@ public class ServiceDetailsAction extends BaseFormAction {
 				serviceDetails.setIsVoucherApproved(isVoucherApproved);
 			}
 			serviceDetailsService.persist(serviceDetails);
-			addActionMessage(getText("service.create.success.msg",new String[]{getModel().getCode(),getModel().getServiceName()}));
+			addActionMessage(getText("service.create.success.msg",new String[]{getModel().getCode(),getModel().getName()}));
 		}
 		if(subledgerDetails.isEmpty()){
 			subledgerDetails.add(new ServiceSubledgerInfo());

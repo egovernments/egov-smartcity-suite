@@ -92,7 +92,7 @@ public class CollectionObjectFactory {
 	public ServiceDetails createUnsavedServiceDetails() {
 		ServiceDetails service = new ServiceDetails();
 		String serviceName = "!testSrvc#" + getRandomNumber(9999);
-		service.setServiceName(serviceName);
+		service.setName(serviceName);
 		service.setServiceUrl("testServiceURL");
 		service.setServiceType("B");
 		service.setCode("testCode");
@@ -169,7 +169,7 @@ public class CollectionObjectFactory {
 
 	public ServiceDetails createServiceDetails(String code) {
 		ServiceDetails service = new ServiceDetails();
-		service.setServiceName("testServiceName");
+		service.setName("testServiceName");
 		service.setServiceUrl("testServiceURL");
 		service.setServiceType("B");
 		service.setCode(code);
@@ -226,7 +226,7 @@ public class CollectionObjectFactory {
 		receiptHeader.setReceiptMisc(createUnSavedReceiptMisc(receiptHeader));
 		receiptHeader.addReceiptDetail(createUnsavedReceiptDetail(createCOA("1100201"),
 				BigDecimal.valueOf(100.00), BigDecimal.ZERO, createFunction("Test Function"), 1L,
-				"testGLCodeDescription", receiptHeader,1L));
+				"testGLCodeDescription", receiptHeader,true));
 
 		return receiptHeader;
 	}
@@ -451,7 +451,7 @@ public class CollectionObjectFactory {
 		receiptHeader.setReceiptMisc(createUnSavedReceiptMisc(receiptHeader));
 		receiptHeader.addReceiptDetail(createUnsavedReceiptDetail(createCOA("1100201"),
 				BigDecimal.valueOf(100.00), BigDecimal.ZERO, createFunction("Test Function"), 1L,
-				"testGLCodeDescription", receiptHeader,1L));
+				"testGLCodeDescription", receiptHeader,true));
 		return receiptHeader;
 	}
 	
@@ -472,7 +472,7 @@ public class CollectionObjectFactory {
 		receiptHeader.setReceiptMisc(createUnSavedReceiptMisc(receiptHeader));
 		receiptHeader.addReceiptDetail(createUnsavedReceiptDetail(createCOA("1100201"),
 				BigDecimal.valueOf(100.00), BigDecimal.ZERO, createFunction("Test Function"), 1L,
-				"testGLCodeDescription", receiptHeader,1L));
+				"testGLCodeDescription", receiptHeader,true));
 		return receiptHeader;
 	}
 
@@ -933,7 +933,7 @@ public class CollectionObjectFactory {
 	 */
 	public ReceiptDetail createUnsavedReceiptDetail(CChartOfAccounts coa,
 			BigDecimal crAmt, BigDecimal drAmt, CFunction function,
-			long orderNum, String description, ReceiptHeader receiptHeader,long isActualDemand) {
+			long orderNum, String description, ReceiptHeader receiptHeader,Boolean isActualDemand) {
 		ReceiptDetail receiptDetail = new ReceiptDetail();
 		receiptDetail.setAccounthead(coa);
 		receiptDetail.setCramount(crAmt);
@@ -968,7 +968,7 @@ public class CollectionObjectFactory {
 			BigDecimal crAmt, BigDecimal drAmt, CFunction function,
 			long orderNum, String description, ReceiptHeader receiptHeader) {
 		ReceiptDetail receiptDetail = createUnsavedReceiptDetail(coa, crAmt,
-				drAmt, function, orderNum, description, receiptHeader,1L);
+				drAmt, function, orderNum, description, receiptHeader,true);
 		session.saveOrUpdate(receiptDetail);
 		return receiptDetail;
 	}
@@ -1823,7 +1823,7 @@ public class CollectionObjectFactory {
 		ServiceDetails service = new ServiceDetails();
 		BankAccountServiceMap tempB=new BankAccountServiceMap();
 		String serviceName = "@testChallanSrvc$" + getRandomNumber(9999);
-		service.setServiceName(serviceName);
+		service.setName(serviceName);
 		service.setServiceUrl("testServiceURL");
 		service.setServiceType("S");
 		service.setCode("testCode");
@@ -1921,7 +1921,7 @@ public class CollectionObjectFactory {
 		ReceiptDetail receiptDetail = createUnsavedReceiptDetail(createCOA("1100201"), BigDecimal
 				.valueOf(100.00), BigDecimal.valueOf(100.00),
 				createFunction("Test Function"), 1L, "testGLDescription",
-				createReceiptHeader("11111"),1L);
+				createReceiptHeader("11111"),true);
 		receiptDetail.setFinancialYear(getFinancialYearForDate(new Date()));
 		session.saveOrUpdate(receiptDetail);
 		receiptDetail.addAccountPayeeDetail(createAccountPayeeDetail(createAccountdetailtype("test"),
@@ -1932,7 +1932,7 @@ public class CollectionObjectFactory {
 	public ServiceDetails createChallanServiceDetails() throws NumberFormatException, RepositoryException {
 		ServiceDetails service = new ServiceDetails();
 		String serviceName = "@testChallanSrvc$" + getRandomNumber(9999);
-		service.setServiceName(serviceName);
+		service.setName(serviceName);
 		service.setServiceUrl("testServiceURL");
 		service.setServiceType("S");
 		service.setCode("testCode");

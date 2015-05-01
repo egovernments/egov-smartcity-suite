@@ -344,13 +344,12 @@ public class CollectionCommon {
                 for (BillAccountDetails billAccount : billDetail.getAccounts()) {
                     CChartOfAccounts account = null ;//= common.getCChartOfAccountsByGlCode(billAccount.getGlCode());
                     CFunction function = commonsServiceImpl.getFunctionByCode(billAccount.getFunctionCode());
-                    if (billAccount.getIsActualDemand() == 1) {
+                    if (billAccount.getIsActualDemand()) {
 						totalAmountToBeCollected = totalAmountToBeCollected.add(billAccount.getCrAmount()).subtract(billAccount.getDrAmount());
 					}
                     ReceiptDetail receiptDetail = new ReceiptDetail(account, function, billAccount.getCrAmount()
                             .subtract(billAccount.getDrAmount()), billAccount.getDrAmount(), billAccount.getCrAmount(),
-                            Long.valueOf(billAccount.getOrder()), billAccount.getDescription(), Long
-                                    .valueOf(billAccount.getIsActualDemand()), receiptHeader);
+                            Long.valueOf(billAccount.getOrder()), billAccount.getDescription(), billAccount.getIsActualDemand(), receiptHeader);
                     receiptHeader.addReceiptDetail(receiptDetail);
                 }
                 receiptHeader.setTotalAmountToBeCollected(totalAmountToBeCollected);

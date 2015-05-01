@@ -43,21 +43,21 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="org.egov.infstr.models.ServiceSubledgerInfo" table="EG_SERVICE_SUBLEDGERINFO" >
+	<class name="org.egov.infstr.models.ServiceSubledgerInfo" table="egcl_service_subledgerinfo" >
 		
 		<id name="id" column="ID" type="long" unsaved-value="null">
 			<generator class="native">
-				<param name="sequence">SEQ_EG_SERVICE_SUBLEDGERINFO</param>
+				<param name="sequence">seq_egcl_service_subledgerinfo</param>
 			</generator>
 		</id>
 		
   		<many-to-one name="detailType" class="org.egov.commons.Accountdetailtype" fetch="select">
-            <column name="ID_ACCOUNTDETAILTYPE" not-null="true" />
+            <column name="accountdetailtype" not-null="true" />
         </many-to-one>    
         
-        <property name="detailKeyId" column="ID_ACCOUNTDETAILKEY" type="integer" />
+        <property name="detailKeyId" column="accountdetailkey" type="integer" />
         <property name="amount" column="AMOUNT" type="java.math.BigDecimal" precision="15" scale="2"/>
 		<many-to-one name="serviceAccountDetail" class="org.egov.infstr.models.ServiceAccountDetails" 
-					column="ID_SERVICEACCOUNTDETAIL" fetch="select" not-null="true"/>
+					column="serviceaccountdetail" fetch="select" not-null="true"/>
 	</class>
 </hibernate-mapping>

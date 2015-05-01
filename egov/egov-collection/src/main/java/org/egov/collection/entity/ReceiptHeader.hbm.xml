@@ -59,10 +59,6 @@
             </key>
             <one-to-many class="org.egov.collection.entity.ReceiptHeader" />
         </set>
-		<many-to-one name="receiptPayeeDetails"
-			class="org.egov.collection.entity.ReceiptPayeeDetails" fetch="select">
-			<column name="ID_COLLECTIONPAYEEDETAILS" precision="22" scale="0" />
-		</many-to-one>
 		<property name="referencenumber" type="string">
 			<column name="REFERENCENUMBER" length="50" />
 		</property>
@@ -78,8 +74,8 @@
 		<property name="receiptnumber" type="string">
 			<column name="RECEIPTNUMBER" length="50" />
 		</property>
-		<property name="fieldcollectorname" type="string">
-			<column name="FIELDCOLLECTORNAME" length="100" />
+		<property name="receiptdate" type="date">
+			<column name="RECEIPTDATE" length="50" />
 		</property>
 		<property name="manualreceiptnumber" type="string">
 			<column name="MANUALRECEIPTNUMBER" length="50" />
@@ -88,39 +84,36 @@
 			<column name="MANUALRECEIPTDATE" length="7" />
 		</property>
 		<property name="isModifiable" type="java.lang.Boolean">
-			<column name="IS_MODIFIABLE" precision="1" scale="0" />
+			<column name="ismodifiable" precision="1" scale="0" />
 		</property>
 		<many-to-one name="service" class="org.egov.infstr.models.ServiceDetails"
 			fetch="select">
-			<column name="ID_SERVICE" precision="22" scale="0" not-null="true" />
+			<column name="servicedetails" precision="22" scale="0" not-null="true" />
 		</many-to-one>
 		<property name="collectiontype" type="java.lang.Character">
 			<column name="COLLECTIONTYPE" length="1" />
 		</property>
-		<property name="ip" type="string">
-			<column name="IP" length="20" />
-		</property>
 		<property name="reasonForCancellation" type="string">
 			<column name="REASONFORCANCELLATION" length="50" />
 		</property>
-		<many-to-one name="state" class="org.egov.infstr.models.State"
+		<many-to-one name="state" class="org.egov.infra.workflow.entity.State"
 			cascade="all">
-			<column name="STATE_ID" />
+			<column name="state" />
 		</many-to-one>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl"
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User"
 			fetch="select">
-			<column name="CREATED_BY" precision="22" scale="0" />
+			<column name="CREATEDBY" precision="22" scale="0" />
 		</many-to-one>
-		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
-		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl"
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" />
+		<property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User"
 			fetch="select">
-			<column name="MODIFIED_BY" precision="22" scale="0" />
+			<column name="LASTMODIFIEDBY" precision="22" scale="0" />
 		</many-to-one>
 
 		<set name="receiptDetails" inverse="true" cascade="all,delete-orphan" order-by="ordernumber">
 			<key>
-				<column name="ID_COLLECTIONHEADER" precision="22" scale="0" />
+				<column name="collectionheader" precision="22" scale="0" />
 			</key>
 			<one-to-many class="org.egov.collection.entity.ReceiptDetail" />
 		</set>
@@ -131,29 +124,29 @@
 
 		<set name="receiptInstrument" table="EGCL_COLLECTIONINSTRUMENT">
 			<key>
-				<column name="COLLECTIONHEADERID" precision="22" scale="0" />
+				<column name="collectionheader" precision="22" scale="0" />
 			</key>
 			<many-to-many class="org.egov.model.instrument.InstrumentHeader"
-				column="INSTRUMENTMASTERID" />
+				column="instrumentheader" />
 		</set>
 
 		<many-to-one name="location"
 			class="org.egov.lib.security.terminal.model.Location" fetch="select">
-			<column name="ID_LOCATION" precision="22" scale="0" />
+			<column name="location" precision="22" scale="0" />
 		</many-to-one>
 
 		<set name="receiptVoucher" inverse="true" cascade="all,delete-orphan">
 			<key>
-				<column name="COLLECTIONHEADERID" precision="22" scale="0" />
+				<column name="collectionheader" precision="22" scale="0" />
 			</key>
 			<one-to-many class="org.egov.collection.entity.ReceiptVoucher" />
 		</set>
 		<property name="isReconciled" type="java.lang.Boolean">
-			<column name="IS_RECONCILED" precision="1" scale="0" />
+			<column name="isreconciled" precision="1" scale="0" />
 		</property>
 		<many-to-one name="status" class="org.egov.commons.EgwStatus"
 			fetch="select">
-			<column name="ID_STATUS" precision="22" scale="0" not-null="true" />
+			<column name="status" precision="22" scale="0" not-null="true" />
 		</many-to-one>
 		<property name="paidBy" type="string">
 			<column name="PAIDBY" length="100" />
@@ -186,7 +179,7 @@
 			
 	</class>
 	<query name="RECEIPTS_FOR_VOUCHERS">
-	<![CDATA[select receiptHeader from org.egov.collection.entity.ReceiptVoucher as rv where rv.voucherheader.id in (:param_0)]]></query>
+	<![CDATA[select receiptHeader from org.egov.collection.entity.ReceiptVoucher rv where rv.voucherheader.id in (:param_0)]]></query>
 	
 	<query name="RECEIPTS_FOR_BOUNCED_INSTRUMENTS">
 	<![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh join rh.receiptVoucher as rv where rh.status.code<>? and rv.voucherheader.id in (:param_1)]]></query>
@@ -231,7 +224,7 @@
     <![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh, org.egov.collection.entity.OnlinePayment online where rh.id = online.receiptHeader.id and rh.id=? and rh.referencenumber = ? ]]></query>
     
     <query name="RECEIPT_BY_SERVICE_MANUALRECEIPTNO_AND_DATE">
-       <![CDATA[from org.egov.collection.entity.ReceiptHeader rh where rh.manualreceiptnumber = ? and rh.service.code = ? and trunc(rh.manualreceiptdate) between trunc(?) and trunc(?) and rh.status.code<>? ]]></query>
+    <![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh where rh.manualreceiptnumber = ? and rh.service.code = ? and trunc(rh.manualreceiptdate) between trunc(?) and trunc(?) and rh.status.code<>? ]]></query>
     
     
     
