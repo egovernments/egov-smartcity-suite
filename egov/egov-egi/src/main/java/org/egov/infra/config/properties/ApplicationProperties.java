@@ -46,7 +46,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 
 @Configuration
-@PropertySource(value={"classpath:config/egov-erp.properties",
+@PropertySource(value={"classpath:config/application-config.properties",
 			"classpath:config/egov-erp-override.properties",
 			"classpath:config/egov-erp-${user.name}.properties"},
 			ignoreResourceNotFound=true)
@@ -114,5 +114,13 @@ public class ApplicationProperties {
 	
 	public String smsSender() {
 		return environment.getProperty("sms.sender");
+	}
+	
+	public String [] commonMessageFiles() {
+		return environment.getProperty("common.properties.files").split(",");
+	}
+	
+	public boolean devMode() {
+		return environment.getProperty("dev.mode",Boolean.class);
 	}
 }

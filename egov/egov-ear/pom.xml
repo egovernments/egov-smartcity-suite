@@ -89,11 +89,11 @@
 			<artifactId>egov-eis</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-egf</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency>
+		</dependency> -->
 		<!-- <dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-collection</artifactId>

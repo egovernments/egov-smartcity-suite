@@ -22,7 +22,7 @@
 
     <build>
         <filters>
-            <filter>../egov-egi/src/main/resources/config/egov-erp.properties</filter>
+            <filter>../egov-egi/src/main/resources/config/application-config.properties</filter>
         </filters>
         <resources>
             <resource>
@@ -73,7 +73,7 @@
             </activation>
             <build>
                 <filters>
-                    <filter>../egov-egi/src/main/resources/config/egov-erp.properties</filter>
+                    <filter>../egov-egi/src/main/resources/config/application-config.properties</filter>
                     <filter>../egov-egi/src/main/resources/config/egov-erp-override.properties</filter>
                 </filters>
             </build>
