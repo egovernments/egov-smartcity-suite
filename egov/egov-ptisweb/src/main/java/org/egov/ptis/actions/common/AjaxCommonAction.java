@@ -58,9 +58,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.jackrabbit.core.security.user.UserImpl;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -85,9 +85,14 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
+@Results({ @Result(name = "AJAX_RESULT", type = "Stream", location = "returnStream", params = {
+		"contentType", "text/plain" }) })
+@Transactional(readOnly = true)
+@Namespace("/common")
 public class AjaxCommonAction extends BaseFormAction {
 
 	private static final String AJAX_RESULT = "AJAX_RESULT";
@@ -236,7 +241,7 @@ public class AjaxCommonAction extends BaseFormAction {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Action(value="/common/ajaxCommon-propTypeCategoryByPropType")
+	@Action(value="/ajaxCommon-propTypeCategoryByPropType",results = { @Result(name = PROP_TYPE_CATEGORY) })
 	public String propTypeCategoryByPropType() {
 		LOGGER.debug("Entered into propTypeCategoryByPropType, propTypeId: " + propTypeId);
 		PropertyTypeMaster propType = (PropertyTypeMaster) getPersistenceService().find(

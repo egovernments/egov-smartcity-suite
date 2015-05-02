@@ -21,14 +21,14 @@
 		<property name="createdDate" type="java.util.Date">
 			<column name="CREATETIMESTAMP" not-null="true" />
 		</property>
-		<property name="modifiedDate" type="java.util.Date">
+		<property name="lastmodifiedDate" type="java.util.Date">
 			<column name="LASTUPDATEDTIMESTAMP" not-null="true" />
 		</property>
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User"
 			cascade="all">
 			<column name="CREATEDBY" />
 		</many-to-one>
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User"
+		<many-to-one name="lastmodifiedBy" class="org.egov.infra.admin.master.entity.User"
 			cascade="all">
 			<column name="LASTMODIFIEDBY" />
 		</many-to-one>

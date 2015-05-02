@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.egov.collection.handler.BillCollectXmlHandler;
 import org.egov.collection.integration.models.BillAccountDetails;
 import org.egov.collection.integration.models.BillDetails;
 import org.egov.collection.integration.models.BillInfo.COLLECTIONTYPE;
@@ -50,11 +51,6 @@ import org.egov.collection.integration.models.BillInfoImpl;
 import org.egov.collection.integration.models.BillPayeeDetails;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgBillDetails;
-/*import org.egov.erpcollection.integration.models.BillDetails;
-import org.egov.erpcollection.integration.models.BillInfoImpl;
-import org.egov.erpcollection.integration.models.BillPayeeDetails;
-import org.egov.erpcollection.integration.models.BillInfo.COLLECTIONTYPE;
-import org.egov.erpcollection.web.handler.BillCollectXmlHandler;*/
 
 public class DemandUtils {
 
@@ -73,7 +69,7 @@ public class DemandUtils {
  
 	public String generateBillXML(EgBill bill, String displayMsg) {
 		String xmlData = "";
-		//BillCollectXmlHandler handler = new BillCollectXmlHandler();
+		BillCollectXmlHandler handler = new BillCollectXmlHandler();
 		try {
 			if(bill!=null && displayMsg!=null)
 			{
@@ -115,11 +111,12 @@ public class DemandUtils {
 				billInfoImpl.setPayees(billPayeeDetList);
 				billInfoImpl.setCallbackForApportioning(bill.getCallBackForApportion());
 
+				//FIX ME
 				for (EgBillDetails egBillDet : bill.getEgBillDetails()) {
 					billAccDetails = new BillAccountDetails(egBillDet.getGlcode(), egBillDet
 							.getOrderNo(), egBillDet.getCrAmount(), egBillDet.getDrAmount(),
-							egBillDet.getFunctionCode(), egBillDet.getDescription(), 
-							egBillDet.getAdditionalFlag());
+							egBillDet.getFunctionCode(), egBillDet.getDescription(),null
+							/*egBillDet.getAdditionalFlag()*/);
 					billDetails.addBillAccountDetails(billAccDetails);
 				}
 				billPayeeDet.addBillDetails(billDetails);

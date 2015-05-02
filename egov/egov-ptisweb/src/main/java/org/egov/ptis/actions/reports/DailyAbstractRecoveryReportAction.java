@@ -64,18 +64,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.ptis.bean.RecoveryInfo;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
  * @author subhash
  * 
- */
+ */ 
+@Transactional(readOnly = true)
 public class DailyAbstractRecoveryReportAction extends BaseFormAction {
 
 	private static final String REPORT = "report";
@@ -88,6 +92,7 @@ public class DailyAbstractRecoveryReportAction extends BaseFormAction {
 		return null;
 	}
 
+	@Action(value = "/reports/dailyAbstractRecoveryReport.action", results = { @Result(name = REPORT) })
 	public String execute() {
 		List<RecoveryInfo> resultList = new ArrayList<RecoveryInfo>();
 		StringBuffer qryString = new StringBuffer("select CREATED_DATE, ")

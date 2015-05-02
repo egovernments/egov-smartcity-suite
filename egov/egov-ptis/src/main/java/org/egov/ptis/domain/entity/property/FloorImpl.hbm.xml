@@ -124,10 +124,10 @@
 		EXTRA_FIELD1 varchar
 		
 		-->
-		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.UserImpl">
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User">
 			<column name="CREATED_BY" />
 		</many-to-one>
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.UserImpl">
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User">
 			<column name="MODIFIED_BY" />
 		</many-to-one>
 		<property name="waterRate" column="WATER_RATE" />

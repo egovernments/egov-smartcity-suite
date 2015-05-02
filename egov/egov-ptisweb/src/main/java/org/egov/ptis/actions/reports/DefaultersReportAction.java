@@ -67,7 +67,10 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -80,6 +83,7 @@ import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
+import org.springframework.transaction.annotation.Transactional;
 
 import ar.com.fdvs.dj.core.DynamicJasperHelper;
 import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
@@ -97,6 +101,8 @@ import ar.com.fdvs.dj.domain.constants.VerticalAlign;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
+@Transactional(readOnly = true)
+@Namespace("/reports")
 public class DefaultersReportAction extends BaseFormAction {
 
 	private static final String RESULT_NEW = "new";
@@ -201,11 +207,13 @@ public class DefaultersReportAction extends BaseFormAction {
 	}
 
 	@SkipValidation
+	@Action(value = "/defaultersReport.action", results = { @Result(name = RESULT_NEW) })
 	public String newForm() {
 		return RESULT_NEW;
 	}
 
 	@ValidationErrorPage(value = "new")
+	@Action(value = "/defaultersReport-generateReport", results = { @Result(name = RESULT_RESULT) })
 	public String generateReport() {
 		LOGGER.debug("Entered into generateReport");
 		Long startTime = System.currentTimeMillis();

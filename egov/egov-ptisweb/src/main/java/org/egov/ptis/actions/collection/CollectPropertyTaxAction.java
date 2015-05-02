@@ -55,6 +55,7 @@ import java.util.TreeMap;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.commons.Installment;
 import org.egov.demand.dao.EgDemandDetailsDao;
 import org.egov.demand.model.EgDemandDetails;
@@ -73,11 +74,13 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
 public class CollectPropertyTaxAction extends BaseFormAction {
 	
 	private static final String STRUTS_RESULT_SHOWPENALTY = "showPenalty";
+	private static final String VIEW = "view";
 	private static final Logger LOGGER = Logger.getLogger(CollectPropertyTaxAction.class);
 	
 	
@@ -170,7 +173,7 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 	}
 	
 	@ValidationErrorPage(value = STRUTS_RESULT_SHOWPENALTY)
-	@Action(value="/collection/collectPropertyTax-save")
+	@Action(value = "/collectPropertyTax-save", results = { @Result(name = VIEW) })
 	public String save() {
 		LOGGER.info("Entered method generatePropertyTaxBill, Generating bill for index no : " + propertyId);
 		
@@ -225,6 +228,7 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 	}
 		
 	@SuppressWarnings("unchecked")
+	@Transactional
 	private void setPenaltyToExistingPenalty(Map<Installment, PropertyInstTaxBean> installmentTaxBeanMap) {
 		EgDemandDetails penaltyDmdDtls = null;
 		EgDemandDetailsDao demandDetailsDao = PropertyDAOFactory.getDAOFactory().getEgDemandDetailsDao();
@@ -246,7 +250,7 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 	}
 
 	@ValidationErrorPage(value = STRUTS_RESULT_SHOWPENALTY)
-	@Action(value="/collection/collectPropertyTax-showPenalty")
+	@Action(value = "/collectPropertyTax-showPenalty", results = { @Result(name = STRUTS_RESULT_SHOWPENALTY) })
 	public String showPenalty() {
 		LOGGER.info("Entered method showPenalty, propertyId: " + propertyId);
 		

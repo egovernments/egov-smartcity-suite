@@ -40,7 +40,9 @@
 package org.egov.demand.dao;
 
 import org.egov.infstr.dao.GenericDAO;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public interface EgDemandDetailsDao extends GenericDAO{
 
 }

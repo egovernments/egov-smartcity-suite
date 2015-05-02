@@ -56,7 +56,11 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -74,10 +78,14 @@ import org.egov.ptis.domain.entity.property.PropertyDocs;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
-
+@Results({ @Result(name = "workFlowError", type = "Stream", location = "workflow", params = {
+	"namespace", "/workflow", "method", "workFlowError" }) })
+@Transactional(readOnly = true)
+@Namespace("/modify")
 public class ChangePropertyAddressAction extends WorkflowAction {
 
 	private BasicProperty basicProperty;
@@ -121,6 +129,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	 */
 
 	@SkipValidation
+	@Action(value = "/changePropertyAddress-newForm", results = { @Result(name = NEW) })
 	public String newForm() {
 		LOGGER.debug("Entered into the newForm method, Index Number " + indexNumber + ", BasicProperty: "
 				+ basicProperty);
@@ -143,6 +152,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	}
 
 	@SkipValidation
+	@Action(value = "/changePropertyAddress-view", results = { @Result(name = VIEW) })
 	public String view() {
 
 		LOGGER.debug("Entered into view method, ModelId: " + getModelId() + ", Address: " + address);
@@ -204,6 +214,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	 */
 
 	@ValidationErrorPage(value = "new")
+	@Action(value = "/changePropertyAddress-save", results = { @Result(name = ACK) })
 	public String save() {
 
 		LOGGER.debug("Entered into the newForm method, Index Number : " + indexNumber + ", Address : " + address
@@ -229,6 +240,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	}
 
 	@SkipValidation
+	@Action(value = "/changePropertyAddress-save", results = { @Result(name = FORWARD_ACK) })
 	public String forward() {
 
 		LOGGER.debug("Entered into forward, BasicProperty: " + basicProperty + ", Address: " + address);
@@ -299,6 +311,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	}
 
 	@SkipValidation
+	@Action(value = "/changePropertyAddress-approve", results = { @Result(name = ACK) })
 	public String approve() {
 
 		LOGGER.debug("Enetered into approve, BasicProperty: " + basicProperty + ", Address : "
@@ -334,6 +347,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	}
 
 	@SkipValidation
+	@Action(value = "/changePropertyAddress-reject", results = { @Result(name = FORWARD_ACK) })
 	public String reject() {
 		LOGGER.debug("reject: Change Property rejection started");
 		LOGGER.debug("reject: Property: " + property);

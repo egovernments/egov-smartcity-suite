@@ -63,7 +63,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -92,14 +95,18 @@ import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 @Validations
+@Namespace("/search")
+@Transactional(readOnly = true)
 public class SearchPropertyAction extends BaseFormAction {
 	private final Logger LOGGER = Logger.getLogger(getClass());
+	public static final String TARGET = "result";
 	private Long zoneId;
 	private Long wardId;
 	private Integer areaId;
@@ -118,7 +125,7 @@ public class SearchPropertyAction extends BaseFormAction {
 	private String searchValue;
 	List<Map<String, String>> searchList = new ArrayList<Map<String, String>>();
 	private String roleName;
-	String target = "failure";
+	//String target = "failure";
 	private String objectionNumber;
 	private Date objectionFromDate;
 	private Date objectionToDate;
@@ -139,11 +146,13 @@ public class SearchPropertyAction extends BaseFormAction {
 	}
 
 	@SkipValidation
+	@Action(value = "/searchProperty-searchForm", results = { @Result(name = NEW) })
 	public String searchForm() {
-		return "new";
+		return NEW;
 	}
 
 	@ValidationErrorPage(value = "new")
+	@Action(value = "/searchProperty-srchByIndex", results = { @Result(name = TARGET) })
 	public String srchByIndex() {
 		LOGGER.debug("Entered into srchByIndex  method");
 		LOGGER.debug("Index Number : " + indexNum + ", " + " parcelId :" + gisId);
@@ -164,7 +173,7 @@ public class SearchPropertyAction extends BaseFormAction {
 			}
 			setSearchUri("../search/searchProperty!srchByIndexForm.action");
 			setSearchCreteria("Search By Index number");
-			target = "result";
+			//target = "result";
 		} catch (IndexOutOfBoundsException iob) {
 			String msg = "Rollover is not done for " + indexNum;
 			throw new ValidationException(Arrays.asList(new ValidationError(msg , msg)));
@@ -173,11 +182,12 @@ public class SearchPropertyAction extends BaseFormAction {
 			throw new EGOVRuntimeException("Exception : " + e);
 		} 
 		LOGGER.debug("Exit from srchByIndex method ");
-		return target;
+		return TARGET;
 	}
 
 	@SuppressWarnings("unchecked")
 	@ValidationErrorPage(value = "new")
+	@Action(value = "/searchProperty-srchByBndry", results = { @Result(name = "target") })
 	public String srchByBndry() {
 		LOGGER.debug("Entered into srchByBndry method");
 		LOGGER.debug("srchByBndry : Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", " + "House Num : "
@@ -216,18 +226,19 @@ public class SearchPropertyAction extends BaseFormAction {
 				setSearchCreteria("Search By Zone, Ward, Plot No/House No");
 				setSearchValue("Zone Num: " + strZoneNum + ", Ward Num: " + strWardNum + ", Plot No/House No: "
 						+ houseNumBndry);
-				target = "result";
+				//target = "result";
 			} catch (Exception e) {
 				LOGGER.error("Exception in Search Property By Bndry ", e);
 				throw new EGOVRuntimeException("Exception : " + e);
 			}
 		}
 		LOGGER.debug("Exit from srchByBndry method");
-		return target;
+		return TARGET;
 	}
 
 	@SuppressWarnings("unchecked")
 	@ValidationErrorPage(value = "new")
+	@Action(value = "/searchProperty-srchByArea", results = { @Result(name = TARGET) })
 	public String srchByArea() {
 
 		LOGGER.debug("Entered into srchByArea  method");
@@ -250,7 +261,7 @@ public class SearchPropertyAction extends BaseFormAction {
 				setSearchUri("../search/searchProperty!srchByArea.action");
 				setSearchCreteria("Search By Owner Name");
 				setSearchValue("Owner Name : " + ownerName);
-				target = "result";
+				//target = "result";
 			} catch (PropertyNotFoundException e) {
 				LOGGER.error("Exception in Search Property By Area ", e);
 				throw new EGOVRuntimeException("Exception : " + e);
@@ -260,7 +271,7 @@ public class SearchPropertyAction extends BaseFormAction {
 			}
 		}
 		LOGGER.debug("Exit from srchByArea  method");
-		return target;
+		return TARGET;
 	}
 
 	@ValidationErrorPage("new")

@@ -61,19 +61,19 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.CFinancialYear;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.reporting.engine.ReportOutput;
 import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.commons.Position;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.client.model.PropertyBillInfo;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -87,14 +87,16 @@ import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.FlushMode;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author manoranjan
  * 
  */
 @ParentPackage("egov")
-/*@Results( { @Result(name = "invalidUser", type = ServletActionRedirectResult.class, value = "workflow", params = {
-		"namespace", "/workflow", "method", "inboxItemViewErrorUserInvalid" }) })*/
+@Results( { @Result(name = "invalidUser", type = "Stream", location = "workflow", params = {
+		"namespace", "/workflow", "method", "inboxItemViewErrorUserInvalid" }) })
+@Transactional(readOnly = true)
 public class RecoveryAction extends BaseRecoveryAction {
 
 	private static final long serialVersionUID = 1L;

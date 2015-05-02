@@ -56,6 +56,7 @@ import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
+import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
@@ -64,10 +65,12 @@ import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class BoundaryWisePropUsgeDelegate {
 	private static final Logger LOGGER = Logger.getLogger(BoundaryWisePropUsgeDelegate.class);
-	//PropertyUsageDAO propUsageDao = PropertyDAOFactory.getDAOFactory().getPropertyUsageDAO();
+	PropertyUsageDAO propUsageDao = PropertyDAOFactory.getDAOFactory().getPropertyUsageDAO();
 	PropertyTypeMasterDAO propTypeMstrDao = PropertyDAOFactory.getDAOFactory().getPropertyTypeMasterDAO();
 	
 	PropertyDAO propertyDao = PropertyDAOFactory.getDAOFactory().getPropertyDAO();

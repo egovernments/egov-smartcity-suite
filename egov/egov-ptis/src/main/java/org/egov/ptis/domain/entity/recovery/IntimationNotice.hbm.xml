@@ -63,11 +63,11 @@
         </property>
         <property name="createdDate" column="CREATED_DATE" type="timestamp" />
         <property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
-        <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.UserImpl"
+        <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User"
             fetch="select">
             <column name="CREATED_BY" precision="22" scale="0" />
         </many-to-one>
-        <many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.UserImpl"
+        <many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User"
             fetch="select">
             <column name="MODIFIED_BY" precision="22" scale="0" />
         </many-to-one>

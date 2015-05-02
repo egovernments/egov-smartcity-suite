@@ -197,11 +197,12 @@ public class CollectionHelper {
 
 		for (EgBillDetails billDet : bill.getEgBillDetails()) {
 			for (ReceiptDetail rd : receiptDetails) {
+				//FIX ME
 				if ((billDet.getGlcode().equals(rd.getAccounthead().getGlcode()))
 						&& (billDet.getDescription().equals(rd.getDescription()))) {
 					BillAccountDetails billAccDetails = new BillAccountDetails(billDet.getGlcode(),
 							billDet.getOrderNo(), rd.getCramount(), rd.getDramount(), billDet.getFunctionCode(),
-							billDet.getDescription(), billDet.getAdditionalFlag());
+							billDet.getDescription(),null /*billDet.getAdditionalFlag()*/);
 					billInfoImpl.getPayees().get(0).getBillDetails().get(0).addBillAccountDetails(billAccDetails);
 					break;
 				}

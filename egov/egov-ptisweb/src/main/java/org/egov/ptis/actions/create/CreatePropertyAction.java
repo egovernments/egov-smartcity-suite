@@ -87,7 +87,10 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
 import org.egov.eis.service.EisCommonService;
@@ -129,11 +132,13 @@ import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.utils.OwnerNameComparator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
+@Namespace("/create")
 public class CreatePropertyAction extends WorkflowAction {
 	private static final String NO = "No";
 	private static final String YES = "Yes";
@@ -243,10 +248,13 @@ public class CreatePropertyAction extends WorkflowAction {
 	}
 
 	@SkipValidation
+	@Action(value = "/createProperty-newForm", results = { @Result(name = RESULT_NEW) })
 	public String newForm() {
 		return RESULT_NEW;
 	}
 
+	@Transactional
+	@Action(value = "/createProperty-create", results = { @Result(name = RESULT_ACK) })
 	public String create() {
 		LOGGER.debug("create: Property creation started, Property: " + property + ", zoneId: " + zoneId + ", wardId: "
 				+ wardId + ", areaId: " + areaId + ", areaOfPlot: " + areaOfPlot + ", dateOfCompletion: "
@@ -300,17 +308,10 @@ public class CreatePropertyAction extends WorkflowAction {
 	}
 
 	@SkipValidation
+	@Action(value = "/createProperty-view", results = { @Result(name = RESULT_ACK) })
 	public String view() {
 		LOGGER.debug("Entered into view, BasicProperty: " + basicProp + ", Property: " + property + ", userDesgn: "
 				+ userDesgn);
-		
-		//This is reqd when the workflow object is returned to initiator(creator's) inbox after rejection
-		/*if(ASSISTANT_ROLE.equals(userRole) 
-				&& !propWF.getState().getValue().endsWith(WF_STATE_NOTICE_GENERATION_PENDING)) {
-			setProperty(newProperty);
-			setPropertyWfData();
-			//return NEW;
-		} */
 		
 		String currWfState = property.getState().getValue();
 		
@@ -350,6 +351,8 @@ public class CreatePropertyAction extends WorkflowAction {
 	}
 
 	@SkipValidation
+	@Transactional
+	@Action(value = "/createProperty-forward", results = { @Result(name = RESULT_VIEW) })
 	public String forward() {
 		LOGGER.debug("forward: Property forward started " + property);
 		long startTimeMillis = System.currentTimeMillis();		
@@ -422,6 +425,8 @@ public class CreatePropertyAction extends WorkflowAction {
 	}
 
 	@SkipValidation
+	@Transactional
+	@Action(value = "/createProperty-approve", results = { @Result(name = RESULT_ACK) })
 	public String approve() {
 		LOGGER.debug("approve: Property approval started");
 		LOGGER.debug("approve: Property: " + property);
@@ -451,6 +456,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	}
 	
 	@SkipValidation
+	@Action(value = "/createProperty-reject", results = { @Result(name = RESULT_ACK) })
 	public String reject() {
 		LOGGER.debug("reject: Property rejection started");		
 		transitionWorkFlow();
@@ -1084,9 +1090,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		LOGGER.debug("Exiting from validate");
 	}
 
-	/**
-	 * 
-	 */
+	@Transactional
 	private void transitionWorkFlow() {
 		LOGGER.debug("Entered method : transitionWorkFlow"); 
 		

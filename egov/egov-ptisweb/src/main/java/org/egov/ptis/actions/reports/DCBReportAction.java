@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.ptis.actions.reports;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_DCBREPORT;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -50,7 +50,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.reporting.engine.ReportRequest.ReportDataSourceType;
@@ -63,9 +66,11 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
+@Namespace("/reports")
 public class DCBReportAction extends ReportFormAction {
 
 	private final Logger LOGGER = Logger.getLogger(getClass());
+	public static final String SEARCH = "search";
 	private List<ReportInfo> reportInfoList = new ArrayList<ReportInfo>();
 	private Long zoneId;
 	private Map<Long, String> ZoneBndryMap;
@@ -172,13 +177,15 @@ public class DCBReportAction extends ReportFormAction {
 		super.report();
 	}
 
+	@Action(value = "/dCBReport-search", results = { @Result(name = SEARCH) })
 	public String search() {
-		return "search";
+		return SEARCH;
 	}
 
+	@Action(value = "/dCBReport-searchForm", results = { @Result(name = REPORT) })
 	public String searchForm() {
 		prepareReportInfo();
-		return "report";
+		return REPORT;
 	}
 	
 	@Override

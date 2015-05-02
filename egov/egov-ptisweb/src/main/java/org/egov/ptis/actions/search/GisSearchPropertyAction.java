@@ -64,7 +64,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -85,11 +88,14 @@ import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
 @Validations
+@Namespace("/search")
+@Transactional(readOnly = true)
 public class GisSearchPropertyAction extends BaseFormAction {
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	private Long zoneId;
@@ -138,6 +144,7 @@ public class GisSearchPropertyAction extends BaseFormAction {
 	}
 
 	@SkipValidation
+	@Action(value = "/gisSearchProperty-gisSearchForm", results = { @Result(name = NEW) })
 	public String gisSearchForm() {
 		LOGGER.debug("Entered into gisSearchForm method");
 		String target = null;

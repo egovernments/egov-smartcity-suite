@@ -55,10 +55,10 @@
 		<property name="modifiedDate" type="java.util.Date">
 			<column name="MODIFIED_DATE" not-null="true" />
 		</property>
-		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.UserImpl">
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User">
 			<column name="CREATED_BY" />
 		</many-to-one>
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.UserImpl">
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User">
 			<column name="MODIFIED_BY" />
 		</many-to-one>
 		<property name="propertyTax" column="PROPERTYTAX" />

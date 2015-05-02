@@ -71,6 +71,9 @@ import java.util.Set;
 
 import org.apache.jackrabbit.core.security.user.UserImpl;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
@@ -87,7 +90,6 @@ import org.egov.model.instrument.InstrumentHeader;
 import org.egov.ptis.bean.CollectionInfo;
 import org.egov.ptis.bean.ReceiptInfo;
 import org.egov.ptis.bean.TaxCollectionInfo;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
@@ -97,13 +99,15 @@ import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
  * @author subhash
  * 
  */
-
+@Namespace("/reports")
+@Transactional(readOnly = true)
 public class DailyCollectionReportAction extends BaseFormAction {
 
 	private static final Logger LOGGER = Logger.getLogger(DailyCollectionReportAction.class);
@@ -175,6 +179,7 @@ public class DailyCollectionReportAction extends BaseFormAction {
 	}
 
 	@SkipValidation
+	@Action(value = "/dialyCollectionReport-newForm", results = { @Result(name = NEW) })
 	public String newForm() {
 		return NEW;
 	}
@@ -193,6 +198,7 @@ public class DailyCollectionReportAction extends BaseFormAction {
 
 	@SuppressWarnings("unchecked")
 	@ValidationErrorPage("new")
+	@Action(value = "/dialyCollectionReport-generateReport", results = { @Result(name = NEW) })
 	public String generateReport() {
 		LOGGER.debug("Eneterd into generateReport method");
 		Long reportStartTime = System.currentTimeMillis();

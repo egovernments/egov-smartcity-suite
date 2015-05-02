@@ -50,14 +50,14 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEACTIVE_AUDIT_ACTION
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_DEACTIVATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.END_APPROVER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_STATUS_TYPE_DEACT;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTY_BY_UPICNO_AND_STATUS;
-import static org.egov.ptis.constants.PropertyTaxConstants.VOUCH_CREATE_RSN_DEACTIVATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTY_BY_UPICNO_AND_STATUS;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.VOUCH_CREATE_RSN_DEACTIVATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -67,7 +67,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
 import org.egov.eis.service.EisCommonService;
@@ -78,8 +82,8 @@ import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.StringUtils;
 import org.egov.ptis.actions.workflow.WorkflowAction;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.client.util.FinancialUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
@@ -95,12 +99,13 @@ import org.egov.ptis.exceptions.PropertyNotFoundException;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.egov.web.annotation.ValidationErrorPage;
-
-import com.opensymphony.xwork2.validator.annotations.Validation;
+import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
-
+@Results({ @Result(name = "workFlowError", type = "Stream", location = "workflow", params = {
+	"namespace", "/workflow", "method", "workFlowError" }) })
+@Namespace("/deactivate")
 public class DeactivatePropertyAction extends WorkflowAction {
 
 	private BasicProperty basicProp;
@@ -157,6 +162,7 @@ public class DeactivatePropertyAction extends WorkflowAction {
 	 */
 
 	@SkipValidation
+	@Action(value = "/deActivateProperty-newForm", results = { @Result(name = NEW) })
 	public String newForm() {
 
 		LOGGER.debug("Entered into the newForm method, Index Number " + indexNumber);
@@ -186,6 +192,7 @@ public class DeactivatePropertyAction extends WorkflowAction {
 	}
 
 	@SkipValidation
+	@Action(value = "/deActivateProperty-viewForm", results = { @Result(name = FORWARD_ACK) })
 	public String viewForm() {
 		LOGGER.debug("Entered into viewForm");
 
@@ -209,10 +216,6 @@ public class DeactivatePropertyAction extends WorkflowAction {
 		setDocNumber(property.getDocNumber());
 		LOGGER.debug("Exit from viewForm");
 
-		/*if (PTCREATOR_ROLE.equals(userRole)) {
-			setReason(propStatusVal.getExtraField2());
-			return NEW;
-		}*/
 		return RESULT_VIEW;
 	}
 
@@ -250,6 +253,8 @@ public class DeactivatePropertyAction extends WorkflowAction {
 	}
 
 	@ValidationErrorPage(value = "new")
+	@Transactional
+	@Action(value = "/deActivateProperty-save", results = { @Result(name = ACK) })
 	public String save() {
 		LOGGER.debug("Entered into the save method");
 		LOGGER.debug("save: BasicProperty: " + basicProp);
@@ -285,6 +290,8 @@ public class DeactivatePropertyAction extends WorkflowAction {
 	}
 
 	@SkipValidation
+	@Transactional
+	@Action(value = "/deActivateProperty-forward", results = { @Result(name = ACK) })
 	public String forward() {
 		LOGGER.debug("Entered into forward method");
 		LOGGER.debug("forward: BasicProperty: " + basicProp);
@@ -359,6 +366,7 @@ public class DeactivatePropertyAction extends WorkflowAction {
 	}
 
 	@SkipValidation
+	@Action(value = "/deActivateProperty-approve", results = { @Result(name = ACK) })
 	public String approve() {
 		LOGGER.debug("Entered into approve");
 		LOGGER.debug("approve: BasicProperty: " + basicProp);
@@ -389,8 +397,6 @@ public class DeactivatePropertyAction extends WorkflowAction {
 			}
 			basicProp = basicPrpertyService.update(basicProp);
 
-			deactivatePropertyAuditTrail(basicProp, propStatusVal, DEACTIVE_AUDIT_ACTION, null);
-
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new EGOVRuntimeException("Exception : " + e);
@@ -400,6 +406,8 @@ public class DeactivatePropertyAction extends WorkflowAction {
 	}
 
 	@SkipValidation
+	@Transactional
+	@Action(value = "/deActivateProperty-reject", results = { @Result(name = FORWARD_ACK) })
 	public String reject() {
 		LOGGER.debug("reject: Property rejection started");
 		property = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
@@ -480,6 +488,7 @@ public class DeactivatePropertyAction extends WorkflowAction {
 	}
 
 
+	@Transactional
 	private void transitionWorkFlow() {
 		
 		LOGGER.debug("Entered method : transitionWorkFlow"); 
@@ -508,24 +517,6 @@ public class DeactivatePropertyAction extends WorkflowAction {
 		propertyImplService.persist(property);
 
 		LOGGER.debug("Exiting method : transitionWorkFlow");	
-	}
-
-	private void deactivatePropertyAuditTrail(BasicProperty basicProperty, PropertyStatusValues propStatVal,
-			String action, String auditDetails2) {
-		PropertyMutationMasterDAO propertyMutationMasterDAO = PropertyDAOFactory.getDAOFactory()
-				.getPropertyMutationMstrDAO();
-		String deactivateRsn = "";
-		StringBuilder auditDetail1 = new StringBuilder();
-		if (propStatVal.getExtraField2() != null) {
-			deactivateRsn = propertyMutationMasterDAO.getPropertyMutationMasterByCode(propStatVal.getExtraField2())
-					.getMutationName();
-		}
-		auditDetail1.append("Reason For Deactivation : ")
-				.append(deactivateRsn)
-				.append(AUDITDATA_STRING_SEP).append("Comments : ")
-				.append(propStatVal.getRemarks() != null ? propStatVal.getRemarks() : "");
-		LOGGER.debug("Audit String : "+auditDetail1.toString());
-		//propertyTaxUtil.generateAuditEvent(action, basicProperty, auditDetail1.toString(), auditDetails2);
 	}
 
 	public String getPropertyId() {

@@ -56,6 +56,7 @@ import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
@@ -65,7 +66,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
  *
  */
 @ParentPackage("egov")
-@Validation
+@Transactional(readOnly = true)
 public class ActiveDemandReportAction extends BaseFormAction {
 
 	private static final String WARD = "Ward";

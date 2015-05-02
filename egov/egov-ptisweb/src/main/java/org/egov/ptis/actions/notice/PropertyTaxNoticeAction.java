@@ -67,7 +67,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.reporting.engine.ReportOutput;
@@ -89,8 +92,11 @@ import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
+import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
+@Transactional(readOnly = true)
+@Namespace("/notice")
 public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 	private static final Logger LOGGER = Logger.getLogger(PropertyTaxNoticeAction.class);
 	public static final String NOTICE = "notice";
@@ -117,6 +123,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 		return null;
 	}
 
+	@Action(value = "/propertyTaxNotice-generateNotice", results = { @Result(name = NOTICE) })
 	public String generateNotice() {
 		LOGGER.debug("Entered into generateNotice method");
 		LOGGER.info("Index Number : " + indexNumber+" Notice Type : " + noticeType

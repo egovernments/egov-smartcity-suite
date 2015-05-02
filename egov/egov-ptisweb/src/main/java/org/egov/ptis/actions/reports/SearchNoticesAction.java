@@ -68,7 +68,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.ValidationError;
@@ -92,19 +96,28 @@ import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.egov.web.actions.SearchFormAction;
 import org.egov.web.utils.EgovPaginatedList;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfImportedPage;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
-import com.opensymphony.xwork2.Action;
 
 @ParentPackage("egov")
+@Results({
+		@Result(name = "success", type = "Stream", location = "fileStream", params = {
+				"contentType", "${contentType}", "contentDisposition",
+				"attachment; filename=${fileName}" }),
+		@Result(name = "RENDER_NOTICE", type = "Stream", location = "/commons/htmlFileRenderer.jsp") })
+@Transactional(readOnly=true)
+@Namespace("/reports")
 public class SearchNoticesAction extends SearchFormAction {
 	private static final Logger LOGGER = Logger.getLogger(SearchNoticesAction.class);
 	private static final long serialVersionUID = 1L;
 	
+	private static final String SUCCESS = "success";
+	private static final String ERROR = "error";
 	private static final String FROM_CLAUSE = " from PtNotice notice left join notice.basicProperty bp";
 	private static final String BILL_FROM_CLAUSE = " from EgBill bill, PtNotice notice left join notice.basicProperty bp";
 
@@ -143,6 +156,7 @@ public class SearchNoticesAction extends SearchFormAction {
 	}
 
 	@SkipValidation
+	@Action(value = "/searchNotice-index", results = { @Result(name = INDEX) })
 	public String index() {
 		return INDEX;
 	}
@@ -180,7 +194,7 @@ public class SearchNoticesAction extends SearchFormAction {
 		LOGGER.debug("Number of notices : " + (noticeList != null ? noticeList.size() : ZERO));
 		if (null == noticeList || noticeList.size() <= 0) {
 			addActionError(getText("notice.file.merge.unavailable"));
-			return Action.ERROR;
+			return ERROR;
 		}
 
 		List<InputStream> pdfs = new ArrayList<InputStream>();
@@ -231,7 +245,7 @@ public class SearchNoticesAction extends SearchFormAction {
 			ZipOutputStream zipOutputStream;
 			if (null == noticeList || noticeList.size() <= 0) {
 				addActionError(getText("notice.file.zip.unavailable"));
-				return Action.ERROR;
+				return ERROR;
 			} else {
 				zipOutputStream = new ZipOutputStream(response.getOutputStream());
 				response.setHeader("Content-disposition", "attachment;filename=" + "notice_" + noticeType + ".zip");
@@ -279,14 +293,14 @@ public class SearchNoticesAction extends SearchFormAction {
 				noticeNumber);
 		if (ptNotice == null) {
 			addActionError(getText("DocMngr.file.unavailable"));
-			return Action.ERROR;
+			return ERROR;
 		}
 		InputStream myInputStream = new ByteArrayInputStream(ptNotice.getNoticeFile());
 		fileStream = myInputStream;
 		fileName = ptNotice.getNoticeNo()+".pdf";
 		contentType = "application/pdf";
 		contentLength = Long.valueOf(ptNotice.getNoticeFile().length);
-		return Action.SUCCESS;
+		return SUCCESS;
 	}
 
 	public String reset() {

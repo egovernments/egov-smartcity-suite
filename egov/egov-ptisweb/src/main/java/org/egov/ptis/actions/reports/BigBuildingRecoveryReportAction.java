@@ -59,8 +59,10 @@ import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.web.actions.ReportFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Criteria;
+import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
+@Transactional(readOnly = true)
 public class BigBuildingRecoveryReportAction extends ReportFormAction {
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	private Date fromDate;

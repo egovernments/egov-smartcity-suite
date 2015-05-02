@@ -100,7 +100,12 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.dispatcher.ServletActionRedirectResult;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Area;
 import org.egov.commons.Installment;
@@ -153,14 +158,19 @@ import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
-
+@Results({ @Result(name = "workFlowError", type = "Stream", location = "workflow", params = {
+	"namespace", "/workflow", "method", "workFlowError" }) })
+@Transactional(readOnly = true)
+@Namespace("/modify")
 public class ModifyPropertyAction extends WorkflowAction {
 	private static final String NO = "No";
 	private static final String YES = "Yes";
 	private static final String RESULT_ACK = "ack";
 	private static final String RESULT_ERROR = "error";
+	private static final String VIEW = "view";
 	private Logger LOGGER = Logger.getLogger(getClass());
 	private PersistenceService<BasicProperty, Long> basicPrpertyService;
 	private PersistenceService<Property, Long> propertyImplService;
@@ -271,6 +281,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 	}
 
 	@SkipValidation
+	@Action(value = "/modifyProperty-modifyForm", results = { @Result(name = NEW) })
 	public String modifyForm() {
 		LOGGER.debug("Entered into modifyForm, \nIndexNumber: " + indexNumber + ", BasicProperty: " + basicProp
 				+ ", OldProperty: " + oldProperty + ", PropertyModel: " + propertyModel);
@@ -430,6 +441,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 	}
 
 	@SkipValidation
+	@Action(value = "/modifyProperty-view", results = { @Result(name = VIEW) })
 	public String view() {
 		LOGGER.debug("Entered into view, BasicProperty: " + basicProp + ", ModelId: " + getModelId());
 
@@ -566,10 +578,11 @@ public class ModifyPropertyAction extends WorkflowAction {
 				Long.valueOf(propertyModel.getPropertyDetail().getExtra_field6())));
 		LOGGER.debug("view: ModifyReason: " + getModifyRsn());
 		LOGGER.debug("Exiting from view");
-		return "view";
+		return VIEW;
 	}
 
 	@ValidationErrorPage(value = "new")
+	@Action(value = "/modifyProperty-save", results = { @Result(name = RESULT_ACK) })
 	public String save() {
 		LOGGER.debug("save: Property modification started, ModelId: " + getModelId());
 		long startTimeMillis = System.currentTimeMillis();

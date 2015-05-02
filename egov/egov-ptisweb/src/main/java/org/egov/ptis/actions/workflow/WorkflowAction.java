@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.ptis.actions.workflow;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_AMALGAMATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIFURCATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CREATE;
@@ -47,9 +48,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MOD
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATION_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -58,13 +60,25 @@ import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.client.workflow.WorkflowDetails;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
-import org.egov.web.utils.ServletActionRedirectResult;
+import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
-
+@Results( {
+	@Result(name = "createView", type = "Stream", location = "createProperty", params = {
+			"namespace", "/create", "method", "view", "modelId", "${workFlowPropId}" }),
+	@Result(name = "modifyView", type = "Stream", location = "modifyProperty", params = {
+			"namespace", "/modify", "method", "view", "modelId", "${workFlowPropId}"  }),		
+	@Result(name = "deactivateView", type = "Stream", location = "deactivateProperty", params = {
+			"namespace", "/deactivate", "method", "viewForm", "modelId", "${workFlowPropId}"  }),
+	@Result(name = "transferView", type = "Stream", location = "transferProperty", params = {
+			"namespace", "/transfer", "method", "view", "modelId", "${workFlowPropId}"  }),
+	@Result(name = "changePropAddressView", type = "Stream", location = "changePropertyAddress", params = {
+			"namespace", "/modify", "method", "view", "modelId", "${workFlowPropId}"  }) })
+@Transactional(readOnly=true)
+//@Namespace("/workflow")
 public class WorkflowAction extends PropertyTaxBaseAction {
 
 	private final Logger LOGGER = Logger.getLogger(getClass());
@@ -98,6 +112,7 @@ public class WorkflowAction extends PropertyTaxBaseAction {
 	}
 
 	@SkipValidation
+	//@Action(value = "/workFLow-viewProperty", results = { @Result(name = "target") })
 	public String viewProperty() {
 		LOGGER.debug("Entered into method viewProperty");
 		LOGGER.debug("viewProperty : Property : " + propertyModel);

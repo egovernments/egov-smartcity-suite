@@ -94,11 +94,9 @@ import org.egov.ptis.domain.entity.recovery.WarrantFee;
 import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * @author manoranjan
- *
- */
+@Transactional(readOnly = true)
 public class BaseRecoveryAction extends PropertyTaxBaseAction {
 
 	private static final long serialVersionUID = 1L;

@@ -66,6 +66,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.Installment;
 import org.egov.infstr.reporting.engine.ReportRequest;
@@ -90,7 +91,9 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.UnitAreaCalculationDetail;
 import org.egov.ptis.domain.entity.property.UnitCalculationDetail;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class PropertyIndividualCalSheetAction extends BaseFormAction {
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	private final BigDecimal TOTAL_MONTHS = new BigDecimal("12");

@@ -39,20 +39,20 @@
  ******************************************************************************/
 package org.egov.ptis.actions.transfer;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_MUTATION_PROPERTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTCREATOR_ROLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER_AUDIT_ACTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATION_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_MUTATION_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTCREATOR_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER_AUDIT_ACTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATION_PENDING;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -63,7 +63,11 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.eis.service.EisCommonService;
@@ -90,12 +94,16 @@ import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
 @Validations
-
+@Results({ @Result(name = "workFlowError", type = "Stream", location = "workflow", params = {
+	"namespace", "/workflow", "method", "workFlowError" }) })
+@Transactional(readOnly = true)
+@Namespace("/transfer")
 public class TransferPropertyAction extends WorkflowAction {
 
 	private static final String ACK = "ack";
@@ -151,6 +159,7 @@ public class TransferPropertyAction extends WorkflowAction {
 	}
 
 	@SkipValidation
+	@Action(value = "/transferProperty-transferForm", results = { @Result(name = "target") })
 	public String transferForm() {
 		LOGGER.debug("Entered into transferForm method");
 		LOGGER.debug("transferForm : Index Number : " + indexNumber);
@@ -179,6 +188,7 @@ public class TransferPropertyAction extends WorkflowAction {
 
 	@ValidationErrorPage(value = "new")
 	@SkipValidation
+	@Action(value = "/transferProperty-approve", results = { @Result(name = "target") })
 	public String approve() {
 		String target = "failure";
 		LOGGER.debug("Entered into approve method");

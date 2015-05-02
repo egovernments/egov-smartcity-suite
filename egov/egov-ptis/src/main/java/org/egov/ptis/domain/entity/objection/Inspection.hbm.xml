@@ -60,8 +60,8 @@
         <property name="documentNumber" type="java.lang.String">
             <column name="DOCUMENT_NUMBER" length="50" />
         </property>
-        <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.UserImpl" column="CREATED_BY"/>
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.UserImpl" column="MODIFIED_BY"/>
+        <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY"/>
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY"/>
         <property name="createdDate" type="java.util.Date">
             <column name="CREATED_DATE" />
         </property>

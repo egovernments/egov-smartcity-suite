@@ -56,19 +56,19 @@
 		<property name="modifiedDate" type="java.util.Date">
 			<column name="MODIFIED_DATE" not-null="true" />
 		</property>
-		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.UserImpl"
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User"
 			cascade="all">
 			<column name="CREATED_BY" />
 		</many-to-one>
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.UserImpl"
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User"
 			cascade="all">
 			<column name="MODIFIED_BY" />
 		</many-to-one>
 
 		<many-to-one name="bndry" column="ID_BNDRY"
-			class="org.egov.infra.admin.master.entity.BoundaryImpl" not-null="true" />
+			class="org.egov.infra.admin.master.entity.Boundary" not-null="true" />
 
-		<many-to-one name="category" column="ID"
+		<many-to-one name="category" column="category"
 			class="org.egov.ptis.domain.entity.property.Category" not-null="true" />
 
 		<property name="fromDate" column="FROM_DATE" />

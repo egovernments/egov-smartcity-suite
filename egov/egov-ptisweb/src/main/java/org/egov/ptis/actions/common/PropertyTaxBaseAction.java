@@ -77,11 +77,10 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.State;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.FloorIF;
 import org.egov.ptis.domain.entity.property.FloorImpl;
@@ -93,9 +92,10 @@ import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Query;
-import org.egov.ptis.actions.common.AjaxCommonAction;
+import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
+@Transactional(readOnly=true)
 public abstract class PropertyTaxBaseAction extends BaseFormAction {
 	private static Logger LOGGER = Logger.getLogger(PropertyTaxBaseAction.class);
 	private static final long serialVersionUID = 1L;

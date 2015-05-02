@@ -70,7 +70,10 @@ import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.CommonsDAOFactory;
@@ -97,6 +100,7 @@ import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * <p>
@@ -124,6 +128,8 @@ import org.egov.web.annotation.ValidationErrorPage;
  */
 @SuppressWarnings("serial")
 @ParentPackage("egov")
+@Transactional(readOnly = true)
+@Namespace("/edit")
 public class EditDemandAction extends BaseFormAction {
 
 	private static final Logger LOGGER = Logger.getLogger(EditDemandAction.class);
@@ -301,6 +307,7 @@ public class EditDemandAction extends BaseFormAction {
 
 	@SuppressWarnings("unchecked")
 	@SkipValidation
+	@Action(value = "/editDemand-newEditForm", results = { @Result(name = RESULT_NEW) })
 	public String newEditForm() {
 		LOGGER.debug("Entered into newEditForm");
 		String resultPage = "";
@@ -461,6 +468,7 @@ public class EditDemandAction extends BaseFormAction {
 
 	@SuppressWarnings("unchecked")
 	@ValidationErrorPage(value = RESULT_NEW)
+	@Action(value = "/editDemand.action", results = { @Result(name = RESULT_ACK) })
 	public String update() {
 		LOGGER.info("Entered into update, basicProperty=" + basicProperty);
 
