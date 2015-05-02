@@ -70,12 +70,12 @@
         <one-to-one name="ceaseNotice" lazy="proxy" class="org.egov.ptis.domain.entity.recovery.CeaseNotice" property-ref="recovery" cascade="all" />
             
         <property name="createdDate" column="CREATED_DATE" type="timestamp" />
-        <property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+        <property name="lastModifiedDate" column="MODIFIED_DATE" type="timestamp" />
         <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User"
             fetch="select">
             <column name="CREATED_BY" precision="22" scale="0" />
         </many-to-one>
-        <many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User"
+        <many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User"
             fetch="select">
             <column name="MODIFIED_BY" precision="22" scale="0" />
         </many-to-one>

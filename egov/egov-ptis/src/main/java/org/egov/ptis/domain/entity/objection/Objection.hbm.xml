@@ -79,11 +79,11 @@
             <column name="DOCUMENT_NUMBER_OUTCOME" length="50" />
         </property>
       	 <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY"/>
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY"/>
+		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY"/>
         <property name="createdDate" type="java.util.Date">
             <column name="CREATED_DATE"  not-null="true" />
         </property>
-        <property name="modifiedDate" type="java.util.Date">
+        <property name="lastModifiedDate" type="java.util.Date">
             <column name="MODIFIED_DATE" not-null="true" />
         </property>
          <property name="remarks" type="java.lang.String">

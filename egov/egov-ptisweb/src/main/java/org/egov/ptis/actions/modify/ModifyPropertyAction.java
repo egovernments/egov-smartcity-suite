@@ -1317,7 +1317,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 						dmdRsnAmt
 								.put(newDmndDtls.getEgDemandReason().getEgDemandReasonMaster().getCode(), extraCollAmt);
 						newDmndDtls.setAmtCollected(newDmndDtls.getAmtCollected().subtract(extraCollAmt));
-						newDmndDtls.setLastUpdatedTimeStamp(new Date());
+						newDmndDtls.setModifiedDate(new Date());
 					}
 				}
 			}

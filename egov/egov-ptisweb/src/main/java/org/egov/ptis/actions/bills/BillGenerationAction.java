@@ -411,7 +411,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		} else {
 			egBill.setIs_History("Y");
 			egBill.setIs_Cancelled("Y");
-			egBill.setLastUpdatedTimeStamp(new Date());
+			egBill.setModifiedDate(new Date());
 			BasicProperty basicProperty = PropertyDAOFactory.getDAOFactory().getBasicPropertyDAO()
 					.getBasicPropertyByPropertyID(indexNumber);
 			basicProperty.setIsBillCreated(PropertyTaxConstants.STATUS_BILL_NOTCREATED);

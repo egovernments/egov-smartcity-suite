@@ -232,7 +232,7 @@ public class CollectionHelper {
 				bill.getPartPaymentAllowed(), bill.getOverrideAccountHeadsAllowed(), collModesList, collType);
 		billPayeeDet = new BillPayeeDetails(bill.getCitizenName(), bill.getCitizenAddress());
 
-		BillDetails billDetails = new BillDetails(bill.getId().toString(), bill.getCreateTimeStamp(),
+		BillDetails billDetails = new BillDetails(bill.getId().toString(), bill.getCreateDate(),
 				bill.getConsumerId(), bill.getBoundaryNum().toString(), bill.getBoundaryType(), bill.getDescription(),
 				amountPaid, // the actual amount paid, which might include
 							// advances

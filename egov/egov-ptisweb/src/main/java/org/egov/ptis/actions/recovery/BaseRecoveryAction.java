@@ -265,8 +265,8 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 			demandDetail.setAmtCollected(BigDecimal.ZERO);
 			demandDetail.setAmtRebate(BigDecimal.ZERO);
 			demandDetail.setEgDemandReason(warrantFee.getDemandReason());
-			demandDetail.setCreateTimestamp(new Date());
-			demandDetail.setLastUpdatedTimeStamp(new Date());
+			demandDetail.setCreateDate(new Date());
+			demandDetail.setModifiedDate(new Date());
 			demandDetails.add(demandDetail);
 		}
 		currentDemand.setBaseDemand(totalDemandAmt);

@@ -632,7 +632,7 @@ public class EditDemandAction extends BaseFormAction {
 					}
 
 					if (isUpdateAmount || isUpdateCollection) {
-						ddFromDB.setLastUpdatedTimeStamp(new Date());
+						ddFromDB.setModifiedDate(new Date());
 						getPersistenceService().setType(EgDemandDetails.class);
 						getPersistenceService().update(ddFromDB);
 						break;
@@ -662,7 +662,7 @@ public class EditDemandAction extends BaseFormAction {
 						dmdRsnAmt
 								.put(newDmndDtls.getEgDemandReason().getEgDemandReasonMaster().getCode(), extraCollAmt);
 						newDmndDtls.setAmtCollected(newDmndDtls.getAmtCollected().subtract(extraCollAmt));
-						newDmndDtls.setLastUpdatedTimeStamp(new Date());
+						newDmndDtls.setModifiedDate(new Date());
 						getPersistenceService().setType(EgDemandDetails.class);
 						getPersistenceService().update(newDmndDtls);
 					}
@@ -760,8 +760,8 @@ public class EditDemandAction extends BaseFormAction {
 					ptDemand.setEgInstallmentMaster(entry.getKey());
 					ptDemand.setEgDemandDetails(new HashSet<EgDemandDetails>(entry.getValue()));
 					ptDemand.setBaseDemand(baseDemands.get(entry.getKey()));
-					ptDemand.setCreateTimestamp(new Date());
-					ptDemand.setLastUpdatedTimestamp(new Date());
+					ptDemand.setCreateDate(new Date());
+					ptDemand.setModifiedDate(new Date());
 					ptDemand.setIsHistory("N");
 					ptDemand.setEgptProperty((PropertyImpl) basicProperty.getProperty());
 					

@@ -125,10 +125,10 @@ public abstract class BillServiceInterface {
 		bill.setServiceCode(billObj.getServiceCode());
 		bill.setIs_Cancelled("N");
 		bill.setIs_History("N");
-		bill.setLastUpdatedTimeStamp(new Date());
+		bill.setModifiedDate(new Date());
 		bill.setTotalAmount(billObj.getTotalAmount());
 		bill.setUserId(billObj.getUserId());
-		bill.setCreateTimeStamp(new Date());
+		bill.setCreateDate(new Date());
 		EgDemand currentDemand = billObj.getCurrentDemand();
         bill.setEgDemand(currentDemand);
 		bill.setDescription(billObj.getDescription());

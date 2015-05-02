@@ -119,8 +119,8 @@ public class PTBillServiceImpl extends BillServiceInterface {
 			Installment currInstallment = PropertyTaxUtil.getCurrentInstallment();
 			billdetail = new EgBillDetails();
 			billdetail.setOrderNo(1);
-			billdetail.setCreateTimeStamp(new Date());
-			billdetail.setLastUpdatedTimestamp(new Date());
+			billdetail.setCreateDate(new Date());
+			billdetail.setModifiedDate(new Date());
 			billdetail.setCrAmount(nmcBillable.getMutationFee());
 			billdetail.setDrAmount(BigDecimal.ZERO);
 			billdetail.setGlcode(GLCODE_FOR_MUTATION_FEE);
@@ -364,8 +364,8 @@ public class PTBillServiceImpl extends BillServiceInterface {
 
 		EgBillDetails billdetail = new EgBillDetails();
 		billdetail.setOrderNo(billDetailBean.getOrderNo());
-		billdetail.setCreateTimeStamp(new Date());
-		billdetail.setLastUpdatedTimestamp(new Date());
+		billdetail.setCreateDate(new Date());
+		billdetail.setModifiedDate(new Date());
 
 		if (billDetailBean.isRebate()) {
 			billdetail.setDrAmount(billDetailBean.getAmount());

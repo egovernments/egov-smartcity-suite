@@ -443,7 +443,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 			PTDemandCalculations ptDmdCalc = new PTDemandCalculations();
 			ptDemand = new Ptdemand();
 			ptDemand.setBaseDemand(taxCalcInfo.getTotalTaxPayable());
-			ptDemand.setCreateTimestamp(new Date());
+			ptDemand.setCreateDate(new Date());
 			ptDemand.setEgInstallmentMaster(installment);
 			ptDemand.setEgDemandDetails(dmdDetailSet);
 			ptDemand.setIsHistory("N");
@@ -1197,8 +1197,8 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		demandDetail.setAmtCollected(BigDecimal.ZERO);
 		demandDetail.setAmtRebate(BigDecimal.ZERO);
 		demandDetail.setEgDemandReason(dmdRsn);
-		demandDetail.setCreateTimestamp(new Date());
-		demandDetail.setLastUpdatedTimeStamp(new Date());
+		demandDetail.setCreateDate(new Date());
+		demandDetail.setModifiedDate(new Date());
 		LOGGER.debug("demandDetail: " + demandDetail + "\nExiting from createDemandDetails");
 		return demandDetail;
 	}
@@ -1212,8 +1212,8 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		demandDetail.setAmtCollected(amountCollected != null ? amountCollected : BigDecimal.ZERO);
 		demandDetail.setAmtRebate(BigDecimal.ZERO);
 		demandDetail.setEgDemandReason(dmdRsn);
-		demandDetail.setCreateTimestamp(new Date());
-		demandDetail.setLastUpdatedTimeStamp(new Date());
+		demandDetail.setCreateDate(new Date());
+		demandDetail.setModifiedDate(new Date());
 		LOGGER.debug("demandDetail: " + demandDetail + "\nExiting from createDemandDetails");
 		return demandDetail;
 	}
@@ -1943,7 +1943,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 						currentDemandDetail.setAmtCollected(currentDemandDetail.getAmtCollected()
 								.add(excessAmountByDemandReasonForInstallment.getValue().get(
 										demandReason)));
-						currentDemandDetail.setLastUpdatedTimeStamp(new Date());
+						currentDemandDetail.setModifiedDate(new Date());
 
 					}
 				}
@@ -1991,12 +1991,12 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 						if (excessCollection.compareTo(balanceDemand) <= 0) {
 							newDemandDetail.setAmtCollected(newDemandDetail.getAmtCollected().add(
 									excessCollection));
-							newDemandDetail.setLastUpdatedTimeStamp(new Date());
+							newDemandDetail.setModifiedDate(new Date());
 							excessCollection = BigDecimal.ZERO;
 						} else {
 							newDemandDetail.setAmtCollected(newDemandDetail.getAmtCollected().add(
 									balanceDemand));
-							newDemandDetail.setLastUpdatedTimeStamp(new Date());
+							newDemandDetail.setModifiedDate(new Date());
 							BigDecimal remainingExcessCollection = excessCollection
 									.subtract(balanceDemand);
 
@@ -2066,7 +2066,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 
 									currentDemandDetail.setAmtCollected(currentDemandDetail
 											.getAmtCollected().add(remainingExcessCollection));
-									currentDemandDetail.setLastUpdatedTimeStamp(new Date());
+									currentDemandDetail.setModifiedDate(new Date());
 									remainingExcessCollection = BigDecimal.ZERO;
 									excessCollection = BigDecimal.ZERO;
 
@@ -2118,12 +2118,12 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 						if (remainingExcessCollection.compareTo(balance) <= 0) {
 							nextNewDemandDetail.setAmtCollected(nextNewDemandDetail
 									.getAmtCollected().add(remainingExcessCollection));
-							nextNewDemandDetail.setLastUpdatedTimeStamp(new Date());
+							nextNewDemandDetail.setModifiedDate(new Date());
 							remainingExcessCollection = BigDecimal.ZERO;
 						} else {
 							nextNewDemandDetail.setAmtCollected(nextNewDemandDetail
 									.getAmtCollected().add(balance));
-							nextNewDemandDetail.setLastUpdatedTimeStamp(new Date());
+							nextNewDemandDetail.setModifiedDate(new Date());
 							remainingExcessCollection = remainingExcessCollection.subtract(balance);
 						}
 					}

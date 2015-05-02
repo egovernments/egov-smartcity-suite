@@ -3759,7 +3759,7 @@ public class PropertyTaxUtil {
 				basicProperty.getUpicNo());
 		if (egBill != null) {
 			egBill.setIs_History("Y");
-			egBill.setLastUpdatedTimeStamp(new Date());
+			egBill.setModifiedDate(new Date());
 			persistenceService.setType(EgBill.class);
 			persistenceService.update(egBill);
 		}

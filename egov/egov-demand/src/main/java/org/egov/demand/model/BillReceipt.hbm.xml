@@ -28,7 +28,7 @@
 			cascade="all">
 			<column name="CREATEDBY" />
 		</many-to-one>
-		<many-to-one name="lastmodifiedBy" class="org.egov.infra.admin.master.entity.User"
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User"
 			cascade="all">
 			<column name="LASTMODIFIEDBY" />
 		</many-to-one>
