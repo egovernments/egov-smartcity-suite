@@ -46,7 +46,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bnd.client.utils.BndRuleBook;
 import org.egov.bnd.model.AdoptionDetails;
@@ -88,8 +91,7 @@ import com.opensymphony.xwork2.validator.annotations.ValidatorType;
  * @author pritiranjan
  */
 
-@ParentPackage("egov")
-@SuppressWarnings("serial")
+
 @Validations(requiredFields = {
         @RequiredFieldValidator(fieldName = "registrationDate", message = "", key = BndConstants.REQUIRED),
         @RequiredFieldValidator(fieldName = "dateOfEvent", message = "", key = BndConstants.REQUIRED),
@@ -117,6 +119,8 @@ import com.opensymphony.xwork2.validator.annotations.ValidatorType;
         @RequiredStringValidator(fieldName = "parentAddress.district", message = "", key = BndConstants.REQUIRED) }, emails = {
         @EmailValidator(fieldName = "mother.emailAddress", key = BndConstants.INVALID, message = "", type = ValidatorType.FIELD),
         @EmailValidator(fieldName = "father.emailAddress", key = BndConstants.INVALID, message = "", type = ValidatorType.FIELD) })
+@Namespace("/registration")
+@ParentPackage("egov")
 public class BirthRegistrationAction extends RegistrationAction {
 
     private static final long serialVersionUID = 849449050374228871L;
@@ -206,6 +210,7 @@ public class BirthRegistrationAction extends RegistrationAction {
 
     @Override
     @SkipValidation
+    @Action(value = "/birthRegistration-newform", results = { @Result(name = NEW) })
     public String newform() {
         LOGGER.info("New Birth Registration Online form");
         birthRegistration.setRegistrationDate(DateUtils.today());
@@ -229,6 +234,7 @@ public class BirthRegistrationAction extends RegistrationAction {
     }
 
     @Override
+    @Action(value = "/birthRegistration-create", results = { @Result(name = NEW) })
     public String create() {
         if (workFlowType != null && !"".equals(workFlowType) && BndConstants.SCRIPT_SAVE.equals(workFlowType))
             birthRegistration.setStatus(bndCommonService.getStatusByModuleAndCode(BndConstants.BIRTHREGISTRATION,
@@ -423,6 +429,7 @@ public class BirthRegistrationAction extends RegistrationAction {
 
     @SkipValidation
     @Override
+    @Action(value = "/birthRegistration-beforeEdit", results = { @Result(name = NEW) })
     public String beforeEdit() {
         if (mode != null) {
             mode = getMode();
@@ -449,6 +456,7 @@ public class BirthRegistrationAction extends RegistrationAction {
 
     @Override
     @ValidationErrorPage(NEW)
+    @Action(value = "/birthRegistration-edit", results = { @Result(name = NEW) })
     public String edit() {
 
         if (getMode().equals(LOCK)) {

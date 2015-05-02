@@ -57,9 +57,9 @@
 			column="ISACTIVE"
 			type="integer"
 		/>
-        <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" not-null="true" fetch="select" />
+        <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" not-null="true" fetch="select" />
 		
-		<property name="modifiedDate" type="java.util.Date">
+		<property name="lastModifiedDate" type="java.util.Date">
             <column name="updatedTime" length="7" />
         </property>
         

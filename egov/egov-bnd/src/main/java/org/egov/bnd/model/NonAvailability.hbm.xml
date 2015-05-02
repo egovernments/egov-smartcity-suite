@@ -106,11 +106,11 @@
             <column name="CREATEDDATE" length="7" not-null="true" />
         </property>
         
-        <property name="modifiedDate" type="java.util.Date">
-            <column name="MODIFIEDDATE" length="7" />
+        <property name="lastModifiedDate" type="java.util.Date">
+            <column name="lastModifiedDate" length="7" />
         </property>
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY"  fetch="select" />
-        <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" not-null="true" fetch="select" />
+		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="lastModifiedBy"  fetch="select" />
+        <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" not-null="true" fetch="select" />
 	<!-- 	<many-to-one name="transaction" class="org.egov.infstr.transaction.model.TransactionImpl" column="ID_TRANS"  unique="true" cascade="none"/> 
 	
 	<one-to-one name="nonAvlAgent" lazy="proxy" class="com.egov.collection.bnd.NonAvailabilityTxAgent" cascade="none" property-ref="nonAvailabilityRegObj"/> -->

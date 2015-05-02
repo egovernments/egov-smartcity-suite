@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   eGov suite of products aim to improve the internal efficiency,transparency, 
      accountability and the service delivery of the government  organizations.
@@ -38,52 +38,22 @@
   
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<!DOCTYPE hibernate-mapping PUBLIC
-   "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-	
-	<hibernate-mapping>
-    <class name="org.egov.bnd.model.RegistrationHistory" table="VIEW_REGISTRATION_HISTORY" >
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:security="http://www.springframework.org/schema/security"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	   http://www.springframework.org/schema/security
+	   http://www.springframework.org/schema/security/spring-security-3.2.xsd" default-lazy-init="true">
 
-       <id name="historyId" type="long">
-            <column name="HISTORYID" precision="32" scale="0"/>
-       </id>
-                
-       <property name="reportid" type="long">
-            <column name="REPORTID" precision="32" scale="0"/>
-       </property>
-                
-       <property name="type" type="java.lang.String">
-           <column name="TYPE" length="50" />
-       </property>
-       
-        <property name="registrationno" type="java.lang.String">
-            <column name="REGISTRATIONNO" length="50" />
-        </property>
-        
-        <property name="changedValue" type="java.lang.String">
-            <column name="CHANGEDVALUE" length="50" />
-        </property>
-        
-         <property name="lastModifiedDate" type="java.util.Date" >
-            <column  name="lastModifiedDate" />
-        </property>
-        
-         <property name="eventDate" type="java.util.Date" >
-            <column  name="EVENTDATE" />
-        </property>
-        
-         <property name="registrationdate" type="java.util.Date" >
-            <column  name="REGISTRATIONDATE" />
-        </property>
-        
-        <many-to-one name="regUnit" class="org.egov.bnd.model.RegistrationUnit" column="REGISTRATIONUNIT" fetch="select"/>
-        
-        <property name="isStillBirth" type="java.lang.String">
-            <column name="ISSTILLBIRTH" />
-        </property>
-        
-       
-        
-    </class>
-    </hibernate-mapping>
+	<bean id="securityFilterChain" name="securityFilterChain" class="org.springframework.security.web.FilterChainProxy">
+		<constructor-arg>
+			<list>
+				<security:filter-chain pattern="/resources/**" filters="none" />
+				<security:filter-chain pattern="/error/**" filters="none" />
+				<security:filter-chain pattern="/index.jsp" filters="none" />
+				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,simpleSSOFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
+			</list>
+		</constructor-arg>
+	</bean>	
+</beans>

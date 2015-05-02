@@ -40,7 +40,10 @@
 package org.egov.bnd.web.actions.registration;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bnd.model.BirthRegistration;
 import org.egov.bnd.utils.BndConstants;
@@ -52,7 +55,6 @@ import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 import com.opensymphony.xwork2.validator.annotations.ValidatorType;
 
-@SuppressWarnings("serial")
 @Validations(requiredStrings = {
         @RequiredStringValidator(fieldName = "adoptionDetail.adopteeMother.firstName", message = "", key = BndConstants.REQUIRED),
         @RequiredStringValidator(fieldName = "adoptionDetail.adopteeFather.firstName", message = "", key = BndConstants.REQUIRED),
@@ -61,12 +63,10 @@ import com.opensymphony.xwork2.validator.annotations.ValidatorType;
         @RequiredStringValidator(fieldName = "adoptionDetail.adopteeAddress.streetAddress1", message = "", key = BndConstants.REQUIRED) }, emails = {
         @EmailValidator(fieldName = "adoptionDetail.adopteeFather.emailAddress", key = BndConstants.INVALID, message = "", type = ValidatorType.FIELD),
         @EmailValidator(fieldName = "adoptionDetail.adopteeMother.emailAddress", key = BndConstants.INVALID, message = "", type = ValidatorType.FIELD) })
+@Namespace("/registration")
 @ParentPackage("egov")
 public class AdoptionAction extends BirthRegistrationAction {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -7482182954767992184L;
     private final Logger LOGGER = Logger.getLogger(AdoptionAction.class);
     private BirthRegistration birthRegistrationClone;
@@ -83,6 +83,7 @@ public class AdoptionAction extends BirthRegistrationAction {
 
     @Override
     @SkipValidation
+    @Action(value = "/adoption-newform", results = { @Result(name = NEW) })
     public String newform() {
         LOGGER.debug("Load Adoption new form");
         return NEW;
@@ -106,6 +107,7 @@ public class AdoptionAction extends BirthRegistrationAction {
     }
 
     @Override
+    @Action(value = "/adoption-create", results = { @Result(name = NEW) })
     public String create() {
         LOGGER.debug("Start create method");
         birthRegistration.getAdoptionDetail().getAdopteeFather().setGender(Gender.MALE);

@@ -66,7 +66,7 @@
 			<column name="COURTORDERNUMBER"/>
 		</property>	
         
-		<property name="modifiedDate" type="java.util.Date">
+		<property name="lastModifiedDate" type="java.util.Date">
             <column name="LASTMODIFIED" length="7" />
         </property>
         
@@ -74,8 +74,8 @@
             <column name="CREATEDDATE" length="7" not-null="true" />
         </property>
         
-	   <many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY"  fetch="select" />
-       <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" not-null="true" fetch="select" />
+	   <many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="lastModifiedBy"  fetch="select" />
+       <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" not-null="true" fetch="select" />
        
         <property name="remarks">
 			<column name="REMARKS"/>

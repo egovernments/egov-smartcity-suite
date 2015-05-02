@@ -67,7 +67,7 @@
         </property>
         
               
-         <many-to-one name="userId" class="org.egov.lib.rjbac.user.UserImpl" column="USERID" fetch="select" />
+         <many-to-one name="userId" class="org.egov.infra.admin.master.entity.User" column="USERID" fetch="select" />
 
         <property name="valid" access="property">
             <column name="ISVALID" />

@@ -41,12 +41,8 @@ package org.egov.bnd.model;
 
 import java.io.Serializable;
 
-@SuppressWarnings("serial")
 public class RegKeys implements Serializable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 6274918151729233794L;
     private Long id;
     private Long minValue;

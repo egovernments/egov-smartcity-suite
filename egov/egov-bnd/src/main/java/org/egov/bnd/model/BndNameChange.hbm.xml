@@ -84,7 +84,7 @@
 			<column name="REMARKS"/>
 		</property>	
 				
-		<many-to-one name="lastModifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="USERID" fetch="select"/>
+		<many-to-one name="lastlastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="USERID" fetch="select"/>
 		
 		<property name="receiptNo">
 			<column name="VOUCHER_NUM"/>

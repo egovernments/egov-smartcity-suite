@@ -64,7 +64,6 @@ import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
-@SuppressWarnings("serial")
 @Validations(requiredFields = {
         @RequiredFieldValidator(fieldName = "userId", message = "", key = BndConstants.REQUIRED),
         @RequiredFieldValidator(fieldName = "role", message = "", key = BndConstants.REQUIRED),

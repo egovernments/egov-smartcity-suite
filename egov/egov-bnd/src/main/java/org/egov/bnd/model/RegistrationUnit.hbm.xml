@@ -101,7 +101,7 @@
         </property>
         
         <!--<property
-            name="modifiedBy"
+            name="lastModifiedBy"
             type="java.lang.Integer"
             access="property"
         >
@@ -110,10 +110,10 @@
             />
         </property>
         
-        --><many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="UPDATEDBY"  fetch="select" />
-        <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" not-null="true" fetch="select" />
+        --><many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="UPDATEDBY"  fetch="select" />
+        <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" not-null="true" fetch="select" />
         <property
-            name="modifiedDate"
+            name="lastModifiedDate"
             type="java.util.Date"
             access="property"
         >
