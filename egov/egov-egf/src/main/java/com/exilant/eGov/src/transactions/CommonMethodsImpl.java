@@ -343,7 +343,7 @@ public class CommonMethodsImpl implements CommonMethodsI {
 	  /**
 	   * Get the acccount code and name for the account with the purposeid
 	   */
-	public String getCodeName(String purposeId,Connection connection) throws Exception
+	public String getCodeName(String purposeId) throws Exception
 	{
 		String codeAndName="null";
 		try{

@@ -45,14 +45,18 @@
 package com.exilant.eGov.src.reports;
 
 
-import com.exilant.exility.dataservice.*;
-
-import java.util.*;
-import java.sql.*;
-import com.exilant.eGov.src.common.EGovernCommon;
-import com.exilant.exility.common.TaskFailedException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+
+import com.exilant.eGov.src.common.EGovernCommon;
+import com.exilant.exility.common.TaskFailedException;
 
 
 
@@ -62,8 +66,7 @@ public class MonthlyExpRptList {
 	//private final static String datasource = "java:/ezgovOraclePool";
 	private final static String errConnOpenString = "Unable to get a connection from Pool Please make sure that the connection pool is set up properly";
 
-	Connection connection;
-	ResultSet resultset1;
+	List<Object[]> resultset1;
 	TaskFailedException taskExc;
 
 	public MonthlyExpRptList() {}
@@ -197,27 +200,16 @@ public class MonthlyExpRptList {
 	public LinkedList getMonthlyExpRptList(MonthlyExpRptBean reportBean)
 	throws TaskFailedException {
 
-		PreparedStatement prepStmt = null;
-		ResultSet rs =null;
-		Connection conn;
+		Query prepStmt = null;
+		List<Object[]> rs =null;
 		LinkedList links = new LinkedList();
 
-		try
-		{
-			conn = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
-		}
-		catch(Exception exception)
-		{
-			throw new DatabaseConnectionException(errConnOpenString, exception);
-		}
 
-		this.connection = conn;
 
 		String yearName = reportBean.getYearName();
 		String monthName = reportBean.getMonthName();
 		String zoneName = reportBean.getZoneName();
 
-		this.connection = conn;
 		EGovernCommon egc=new EGovernCommon();
 		String finId = reportBean.getYearName();
 		//if(LOGGER.isDebugEnabled())     LOGGER.debug(finId);
@@ -258,8 +250,8 @@ public class MonthlyExpRptList {
 				queryString = queryStringTwo;
 			}
 		try	{
-			prepStmt=conn.prepareStatement(queryString,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
-			rs=prepStmt.executeQuery();
+			prepStmt=HibernateUtil.getCurrentSession().createSQLQuery(queryString);
+			rs=prepStmt.list();
 		}
 		catch(Exception e)
 		{if(LOGGER.isDebugEnabled())     LOGGER.debug("Exception in prepare statement (deptId, accId, nomenclature):"+prepStmt);
@@ -267,29 +259,27 @@ public class MonthlyExpRptList {
 
 		try
 		{
-			while(rs.next())
-				{
+			for(Object[] element : rs){
 				 reportBean= new MonthlyExpRptBean();
 
-				 reportBean.setDeptCode(rs.getString("deptId"));
-				 reportBean.setAccCode(rs.getString("accId"));
-				 reportBean.setNomenName(rs.getString("nomenName"));
+				 reportBean.setDeptCode(element[0].toString());
+				 reportBean.setAccCode(element[1].toString());
+				 reportBean.setNomenName(element[3].toString());
 
 			//Resultset rs1 will give the budget estimate
 
-				 PreparedStatement prepStmt1=null;
-				 ResultSet rs1=null;
-				 this.connection = conn;
+				 Query prepStmt1=null;
+				 List<Object[]> rs1=null;
 
 				 String budEst = "SELECT SUM(bd.ORIGINALAMT)as budgetEstimate FROM egf_budgetdetail bd,egf_budget bm,egf_budgetgroup bg "+
-					" WHERE bm.id=bd.BUDGETID AND bm.ISACTIVEBUDGET=1 AND bm.STATUSID=2 AND (bd.BUDGETCODEID="+rs.getString("accCode")+" OR  bd.BUDGETGROUPID =bg.id "+
-					" AND bg.MAJORCODE=(SELECT parentid FROM chartofaccounts coa WHERE coa.id="+rs.getString("accCode")+")) AND bd.DEPARTMENTID="+rs.getString("deptId") +" AND  "+
+					" WHERE bm.id=bd.BUDGETID AND bm.ISACTIVEBUDGET=1 AND bm.STATUSID=2 AND (bd.BUDGETCODEID="+element[2].toString()+" OR  bd.BUDGETGROUPID =bg.id "+
+					" AND bg.MAJORCODE=(SELECT parentid FROM chartofaccounts coa WHERE coa.id="+element[2].toString()+")) AND bd.DEPARTMENTID="+element[0].toString() +" AND  "+
 					" bm.FINANCIALYEARID="+yearName+"  "+
 					" GROUP BY bd.DEPARTMENTID";
 
 				 try	{
-				 	prepStmt1=conn.prepareStatement(budEst,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
-				 	rs1=prepStmt1.executeQuery();
+				 	prepStmt1=HibernateUtil.getCurrentSession().createSQLQuery(budEst);
+				 	rs1=prepStmt1.list();
 				 }
 				 catch(Exception e)
 					{
@@ -298,9 +288,8 @@ public class MonthlyExpRptList {
 
 				 double budgetAmount= 0.0;
 
-				 if(rs1.next())
-				 {
-				 	budgetAmount = rs1.getDouble("budgetEstimate");
+				 for(Object[] element1 : rs1){
+				 	budgetAmount = Double.parseDouble(element1[0].toString());
 				 }
 			    //if(LOGGER.isDebugEnabled())     LOGGER.debug("budgetAmount is :"+budgetAmount);
 			    String budgetEst = Double.toString(budgetAmount);
@@ -309,15 +298,14 @@ public class MonthlyExpRptList {
 
 			//   Resultset rs2 will give Expenditure upto the previous month
 
-			     PreparedStatement prepStmt2=null;
-				 ResultSet rs2=null;
-				 this.connection = conn;
+			     Query prepStmt2=null;
+			     List<Object[]> rs2=null;
 
 				 String expPrevMonthAll=" ";
 				 String expPrevMonthOne = " SELECT gv.departmentid AS deptcode1, gl.glcode AS acccode1,SUM(sal.netpay)AS expPrevious FROM  VOUCHERHEADER vh ,GENERALLEDGER gl, generalvouchermis gv,"+
 				  "	SALARYBILLDETAIL sal WHERE vh.id =sal.voucherheaderid AND vh.id=gl.voucherheaderid AND vh.id=gv.voucherheaderid AND "+
 				  "	vh.voucherdate >= to_date('"+fiscalStartDate+"','MM-DD-YYYY') AND vh.voucherdate < to_date('"+enterDateStart+"','MM-DD-YYYY') "+
-				  " and gv.departmentid = "+rs.getString("deptId") +"  and gl.glcode = "+rs.getString("accId")+" and gv.zoneid =  "+zoneName+" "+
+				  " and gv.departmentid = "+element[0].toString() +"  and gl.glcode = "+element[1].toString()+" and gv.zoneid =  "+zoneName+" "+
 				  " group by gv.departmentid, gl.glcode"+
 
 				  "	UNION "+
@@ -325,7 +313,7 @@ public class MonthlyExpRptList {
 				  "	SELECT gv.departmentid AS deptcode1, gl.glcode AS acccode1,SUM(cbd.passedamount)AS expPrevious FROM  VOUCHERHEADER vh ,GENERALLEDGER gl, generalvouchermis gv, "+
 				  "	CONTRACTORBILLDETAIL cbd WHERE vh.id =cbd.voucherheaderid AND vh.id=gl.voucherheaderid AND vh.id=gv.voucherheaderid AND "+
 				  "	vh.voucherdate >= to_date('"+fiscalStartDate+"','MM-DD-YYYY') AND vh.voucherdate < to_date('"+enterDateStart+"','MM-DD-YYYY') "+
-				  " and gv.departmentid = "+rs.getString("deptId") +"  and gl.glcode = "+rs.getString("accId")+" and gv.zoneid =  "+zoneName+" "+
+				  " and gv.departmentid = "+element[0].toString() +"  and gl.glcode = "+element[1].toString()+" and gv.zoneid =  "+zoneName+" "+
 				  " group by gv.departmentid, gl.glcode"+
 
 				  "	UNION "+
@@ -333,13 +321,13 @@ public class MonthlyExpRptList {
 				  "	SELECT gv.departmentid AS deptcode1, gl.glcode AS acccode1,SUM(sbd.passedamount)AS expPrevious FROM  VOUCHERHEADER vh ,GENERALLEDGER gl, generalvouchermis gv,  "+
 				  "	SUPPLIERBILLDETAIL sbd WHERE vh.id =sbd.voucherheaderid AND vh.id=gl.voucherheaderid AND vh.id=gv.voucherheaderid AND "+
 				  "	vh.voucherdate >= to_date('"+fiscalStartDate+"','MM-DD-YYYY') AND vh.voucherdate < to_date('"+enterDateStart+"','MM-DD-YYYY') "+
-				  " and gv.departmentid = "+rs.getString("deptId") +"  and gl.glcode = "+rs.getString("accId")+" and gv.zoneid =  "+zoneName+"  "+
+				  " and gv.departmentid = "+element[0].toString() +"  and gl.glcode = "+element[1].toString()+" and gv.zoneid =  "+zoneName+"  "+
 				  " group by gv.departmentid, gl.glcode";
 
 				 String expPrevMonthTwo = " SELECT gv.departmentid AS deptcode1, gl.glcode AS acccode1,SUM(sal.netpay)AS expPrevious FROM  VOUCHERHEADER vh ,GENERALLEDGER gl, generalvouchermis gv,"+
 				  "	SALARYBILLDETAIL sal WHERE vh.id =sal.voucherheaderid AND vh.id=gl.voucherheaderid AND vh.id=gv.voucherheaderid AND "+
 				  "	vh.voucherdate >= to_date('"+fiscalStartDate+"','MM-DD-YYYY') AND vh.voucherdate < to_date('"+enterDateStart+"','MM-DD-YYYY') "+
-				  " and gv.departmentid = "+rs.getString("deptId") +"  and gl.glcode = "+rs.getString("accId")+" "+
+				  " and gv.departmentid = "+element[0].toString() +"  and gl.glcode = "+element[1].toString()+" "+
 				  " group by gv.departmentid, gl.glcode"+
 
 				  "	UNION "+
@@ -347,7 +335,7 @@ public class MonthlyExpRptList {
 				  "	SELECT gv.departmentid AS deptcode1, gl.glcode AS acccode1,SUM(cbd.passedamount)AS expPrevious FROM  VOUCHERHEADER vh ,GENERALLEDGER gl, generalvouchermis gv, "+
 				  "	CONTRACTORBILLDETAIL cbd WHERE vh.id =cbd.voucherheaderid AND vh.id=gl.voucherheaderid AND vh.id=gv.voucherheaderid AND "+
 				  "	vh.voucherdate >= to_date('"+fiscalStartDate+"','MM-DD-YYYY') AND vh.voucherdate < to_date('"+enterDateStart+"','MM-DD-YYYY') "+
-				  " and gv.departmentid = "+rs.getString("deptId") +"  and gl.glcode = "+rs.getString("accId")+" "+
+				  " and gv.departmentid = "+element[0].toString() +"  and gl.glcode = "+element[1].toString()+" "+
 				  " group by gv.departmentid, gl.glcode"+
 
 				  "	UNION "+
@@ -355,7 +343,7 @@ public class MonthlyExpRptList {
 				  "	SELECT gv.departmentid AS deptcode1, gl.glcode AS acccode1,SUM(sbd.passedamount)AS expPrevious FROM  VOUCHERHEADER vh ,GENERALLEDGER gl, generalvouchermis gv,  "+
 				  "	SUPPLIERBILLDETAIL sbd WHERE vh.id =sbd.voucherheaderid AND vh.id=gl.voucherheaderid AND vh.id=gv.voucherheaderid AND "+
 				  "	vh.voucherdate >= to_date('"+fiscalStartDate+"','MM-DD-YYYY') AND vh.voucherdate < to_date('"+enterDateStart+"','MM-DD-YYYY') "+
-				  " and gv.departmentid = "+rs.getString("deptId") +"  and gl.glcode = "+rs.getString("accId")+"  "+
+				  " and gv.departmentid = "+element[0].toString() +"  and gl.glcode = "+element[1].toString()+"  "+
 				  " group by gv.departmentid, gl.glcode ";
 
 
@@ -366,8 +354,8 @@ public class MonthlyExpRptList {
 						expPrevMonthAll = expPrevMonthTwo;
 					}
 				try	{
-					prepStmt2=conn.prepareStatement(expPrevMonthAll,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
-					rs2=prepStmt2.executeQuery();
+					prepStmt2=HibernateUtil.getCurrentSession().createSQLQuery(expPrevMonthAll);
+					rs2=prepStmt2.list();
 				}
 				catch(Exception e)
 				{if(LOGGER.isDebugEnabled())     LOGGER.debug("Exception in prepare statement (Expenditure upto previous month):"+prepStmt);
@@ -375,9 +363,8 @@ public class MonthlyExpRptList {
 
 				 double expPrevMonth= 0.0;
 
-				 while(rs2.next())
-				 {
-				 	double getexpPrevious = rs2.getDouble("expPrevious");
+				 for(Object[] element2 : rs2){
+				 	double getexpPrevious = Double.parseDouble(element2[2].toString());
 				 	expPrevMonth = expPrevMonth + getexpPrevious;
 				 }
 
@@ -389,22 +376,21 @@ public class MonthlyExpRptList {
 
 			//    Resultset rs3 will give Payment upto the previous month
 
-				 PreparedStatement prepStmt3=null;
-				 ResultSet rs3=null;
-				 this.connection = conn;
+				 Query prepStmt3=null;
+				 List<Object[]> rs3=null;
 
 				 String payPrevMonthAll="";
 
 				 String payPrevMonthOne = " SELECT  gv.departmentid AS deptcode2, gl.glcode AS acccode2,SUM(sph.paidamount)AS payPrevious FROM  VOUCHERHEADER vh ,GENERALLEDGER gl, generalvouchermis gv,"+
 				  "	subledgerpaymentheader sph WHERE vh.id =sph.voucherheaderid AND vh.id=gl.voucherheaderid AND vh.id=gv.voucherheaderid AND "+
 				  "	vh.voucherdate >= to_date('"+fiscalStartDate+"','MM-DD-YYYY') AND vh.voucherdate < to_date('"+enterDateStart+"','MM-DD-YYYY')and gv.zoneid =  "+zoneName+" "+
-				  " and gv.departmentid = "+rs.getString("deptId") +"  and gl.glcode = "+rs.getString("accId")+" "+
+				  " and gv.departmentid = "+element[0].toString() +"  and gl.glcode = "+element[1].toString()+" "+
 				  " GROUP BY gv.departmentid, gl.glcode ";
 
 				 String payPrevMonthTwo = " SELECT  gv.departmentid AS deptcode2, gl.glcode AS acccode2,SUM(sph.paidamount)AS payPrevious FROM  VOUCHERHEADER vh ,GENERALLEDGER gl, generalvouchermis gv,"+
 				  "	subledgerpaymentheader sph WHERE vh.id =sph.voucherheaderid AND vh.id=gl.voucherheaderid AND vh.id=gv.voucherheaderid AND "+
 				  "	vh.voucherdate >= to_date('"+fiscalStartDate+"','MM-DD-YYYY') AND vh.voucherdate < to_date('"+enterDateStart+"','MM-DD-YYYY')  "+
-				  " and gv.departmentid = "+rs.getString("deptId") +"  and gl.glcode = "+rs.getString("accId")+" "+
+				  " and gv.departmentid = "+element[0].toString() +"  and gl.glcode = "+element[1].toString()+" "+
 				  " GROUP BY gv.departmentid, gl.glcode ";
 
 
@@ -415,8 +401,8 @@ public class MonthlyExpRptList {
 						payPrevMonthAll = payPrevMonthTwo;
 					}
 				try	{
-					 prepStmt3=conn.prepareStatement(payPrevMonthAll,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
-					rs3=prepStmt3.executeQuery();
+					 prepStmt3=HibernateUtil.getCurrentSession().createSQLQuery(payPrevMonthAll);
+					rs3=prepStmt3.list();
 				}
 				catch(Exception e)
 				{if(LOGGER.isDebugEnabled())     LOGGER.debug("Exception in prepare statement (Payment upto previous month):"+prepStmt);
@@ -425,9 +411,8 @@ public class MonthlyExpRptList {
 
 				 double payPrevMonth= 0.0;
 
-				 while(rs3.next())
-				 {
-				 	double getPayPrevious = rs3.getDouble("payPrevious");
+				 for(Object[] element3 : rs3){
+				 	double getPayPrevious =  Double.parseDouble(element3[2].toString());
 				 	payPrevMonth = payPrevMonth + getPayPrevious;
 				 }
 
@@ -439,15 +424,14 @@ public class MonthlyExpRptList {
 
 			//    Resultset rs4 will give Expenditure during the month
 
-				 PreparedStatement prepStmt4=null;
-				 ResultSet rs4=null;
-				 this.connection = conn;
+				 Query prepStmt4=null;
+				 List<Object[]> rs4=null;
 
 				 String expCurrMonthAll=" ";
 				 String expCurrMonthOne = " SELECT gv.departmentid AS deptcode1, gl.glcode AS acccode1,SUM(sal.netpay)AS expCurrent FROM  VOUCHERHEADER vh ,GENERALLEDGER gl, generalvouchermis gv,"+
 				  "	SALARYBILLDETAIL sal WHERE vh.id =sal.voucherheaderid AND vh.id=gl.voucherheaderid AND vh.id=gv.voucherheaderid AND "+
 				  "	vh.voucherdate >= to_date('"+enterDateStart+"','MM-DD-YYYY') AND vh.voucherdate <= to_date('"+enterDateEnd+"','MM-DD-YYYY') "+
-				  " and gv.departmentid = "+rs.getString("deptId") +"  and gl.glcode = "+rs.getString("accId")+" and gv.zoneid =  "+zoneName+" "+
+				  " and gv.departmentid = "+element[0].toString() +"  and gl.glcode = "+element[1].toString()+" and gv.zoneid =  "+zoneName+" "+
 				  " group by gv.departmentid, gl.glcode"+
 
 				  "	UNION "+
@@ -455,7 +439,7 @@ public class MonthlyExpRptList {
 				  "	SELECT gv.departmentid AS deptcode1, gl.glcode AS acccode1,SUM(cbd.passedamount)AS expCurrent FROM  VOUCHERHEADER vh ,GENERALLEDGER gl, generalvouchermis gv, "+
 				  "	CONTRACTORBILLDETAIL cbd WHERE vh.id =cbd.voucherheaderid AND vh.id=gl.voucherheaderid AND vh.id=gv.voucherheaderid AND "+
 				  "	vh.voucherdate >= to_date('"+enterDateStart+"','MM-DD-YYYY') AND vh.voucherdate <= to_date('"+enterDateEnd+"','MM-DD-YYYY') "+
-				  " and gv.departmentid = "+rs.getString("deptId") +"  and gl.glcode = "+rs.getString("accId")+" and gv.zoneid =  "+zoneName+" "+
+				  " and gv.departmentid = "+element[0].toString() +"  and gl.glcode = "+element[1].toString()+" and gv.zoneid =  "+zoneName+" "+
 				  " group by gv.departmentid, gl.glcode"+
 
 				  "	UNION "+
@@ -463,13 +447,13 @@ public class MonthlyExpRptList {
 				  "	SELECT gv.departmentid AS deptcode1, gl.glcode AS acccode1,SUM(sbd.passedamount)AS expCurrent FROM  VOUCHERHEADER vh ,GENERALLEDGER gl, generalvouchermis gv,  "+
 				  "	SUPPLIERBILLDETAIL sbd WHERE vh.id =sbd.voucherheaderid AND vh.id=gl.voucherheaderid AND vh.id=gv.voucherheaderid AND "+
 				  "	vh.voucherdate >= to_date('"+enterDateStart+"','MM-DD-YYYY') AND vh.voucherdate <= to_date('"+enterDateEnd+"','MM-DD-YYYY') "+
-				  " and gv.departmentid = "+rs.getString("deptId") +"  and gl.glcode = "+rs.getString("accId")+" and gv.zoneid =  "+zoneName+"  "+
+				  " and gv.departmentid = "+element[0].toString() +"  and gl.glcode = "+element[1].toString()+" and gv.zoneid =  "+zoneName+"  "+
 				  " group by gv.departmentid, gl.glcode";
 
 				 String expCurrMonthTwo = " SELECT gv.departmentid AS deptcode1, gl.glcode AS acccode1,SUM(sal.netpay)AS expCurrent FROM  VOUCHERHEADER vh ,GENERALLEDGER gl, generalvouchermis gv,"+
 				  "	SALARYBILLDETAIL sal WHERE vh.id =sal.voucherheaderid AND vh.id=gl.voucherheaderid AND vh.id=gv.voucherheaderid AND "+
 				  "	vh.voucherdate >= to_date('"+enterDateStart+"','MM-DD-YYYY') AND vh.voucherdate <= to_date('"+enterDateEnd+"','MM-DD-YYYY') "+
-				  " and gv.departmentid = "+rs.getString("deptId") +"  and gl.glcode = "+rs.getString("accId")+" "+
+				  " and gv.departmentid = "+element[0].toString() +"  and gl.glcode = "+element[1].toString()+" "+
 				  " group by gv.departmentid, gl.glcode"+
 
 				  "	UNION "+
@@ -477,7 +461,7 @@ public class MonthlyExpRptList {
 				  "	SELECT gv.departmentid AS deptcode1, gl.glcode AS acccode1,SUM(cbd.passedamount)AS expCurrent FROM  VOUCHERHEADER vh ,GENERALLEDGER gl, generalvouchermis gv, "+
 				  "	CONTRACTORBILLDETAIL cbd WHERE vh.id =cbd.voucherheaderid AND vh.id=gl.voucherheaderid AND vh.id=gv.voucherheaderid AND "+
 				  "	vh.voucherdate >= to_date('"+enterDateStart+"','MM-DD-YYYY') AND vh.voucherdate <= to_date('"+enterDateEnd+"','MM-DD-YYYY') "+
-				  " and gv.departmentid = "+rs.getString("deptId") +"  and gl.glcode = "+rs.getString("accId")+" "+
+				  " and gv.departmentid = "+element[0].toString() +"  and gl.glcode = "+element[1].toString()+" "+
 				  " group by gv.departmentid, gl.glcode"+
 
 				  "	UNION "+
@@ -485,7 +469,7 @@ public class MonthlyExpRptList {
 				  "	SELECT gv.departmentid AS deptcode1, gl.glcode AS acccode1,SUM(sbd.passedamount)AS expCurrent FROM  VOUCHERHEADER vh ,GENERALLEDGER gl, generalvouchermis gv,  "+
 				  "	SUPPLIERBILLDETAIL sbd WHERE vh.id =sbd.voucherheaderid AND vh.id=gl.voucherheaderid AND vh.id=gv.voucherheaderid AND "+
 				  "	vh.voucherdate >= to_date('"+enterDateStart+"','MM-DD-YYYY') AND vh.voucherdate <= to_date('"+enterDateEnd+"','MM-DD-YYYY') "+
-				  " and gv.departmentid = "+rs.getString("deptId") +"  and gl.glcode = "+rs.getString("accId")+"  "+
+				  " and gv.departmentid = "+element[0].toString() +"  and gl.glcode = "+element[1].toString()+"  "+
 				  " group by gv.departmentid, gl.glcode ";
 
 				 if(!zoneName.equalsIgnoreCase("")){
@@ -494,8 +478,8 @@ public class MonthlyExpRptList {
 					else{
 						expCurrMonthAll = expCurrMonthTwo;
 					}
-				 try	{ prepStmt4=conn.prepareStatement(expCurrMonthAll,ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-				 		rs4=prepStmt4.executeQuery();
+				 try	{ prepStmt4=HibernateUtil.getCurrentSession().createSQLQuery(expCurrMonthAll);
+				 		rs4=prepStmt4.list();
 					}
 					catch(Exception e)
 					{if(LOGGER.isDebugEnabled())     LOGGER.debug("Exception in prepare statement (Payment upto previous month):"+prepStmt);
@@ -504,9 +488,8 @@ public class MonthlyExpRptList {
 
 				 double expCurrMonth= 0.0;
 
-				 while(rs4.next())
-				 {
-				 	double getexpCurrMonth = rs4.getDouble("expCurrent");
+				 for(Object[] element4 : rs4){
+				 	double getexpCurrMonth =  Double.parseDouble(element4[2].toString());
 				 	expCurrMonth = expCurrMonth + getexpCurrMonth;
 				 }
 
@@ -518,21 +501,20 @@ public class MonthlyExpRptList {
 
 			//    Resultset rs5 will give Payment during the  month
 
-				 PreparedStatement prepStmt5=null;
-				 ResultSet rs5=null;
-				 this.connection = conn;
+				 Query prepStmt5=null;
+				 List<Object[]> rs5=null;
 
 				 String payCurrMonthAll="";
 				 String payCurrMonthOne = " SELECT  gv.departmentid AS deptcode2, gl.glcode AS acccode2,SUM(sph.paidamount)AS payCurrent FROM  VOUCHERHEADER vh ,GENERALLEDGER gl, generalvouchermis gv,"+
 				  "	subledgerpaymentheader sph WHERE vh.id =sph.voucherheaderid AND vh.id=gl.voucherheaderid AND vh.id=gv.voucherheaderid AND "+
 				  "	vh.voucherdate >= to_date('"+enterDateStart+"','MM-DD-YYYY') AND vh.voucherdate <= to_date('"+enterDateEnd+"','MM-DD-YYYY') and gv.zoneid =  "+zoneName+" "+
-				  " and gv.departmentid = "+rs.getString("deptId") +"  and gl.glcode = "+rs.getString("accId")+" "+
+				  " and gv.departmentid = "+element[0].toString() +"  and gl.glcode = "+element[1].toString()+" "+
 				  " GROUP BY gv.departmentid, gl.glcode ";
 
 				 String payCurrMonthTwo = " SELECT  gv.departmentid AS deptcode2, gl.glcode AS acccode2,SUM(sph.paidamount)AS payCurrent FROM  VOUCHERHEADER vh ,GENERALLEDGER gl, generalvouchermis gv,"+
 				  "	subledgerpaymentheader sph WHERE vh.id =sph.voucherheaderid AND vh.id=gl.voucherheaderid AND vh.id=gv.voucherheaderid AND "+
 				  "	vh.voucherdate >= to_date('"+enterDateStart+"','MM-DD-YYYY') AND vh.voucherdate <= to_date('"+enterDateEnd+"','MM-DD-YYYY') "+
-				  " and gv.departmentid = "+rs.getString("deptId") +"  and gl.glcode = "+rs.getString("accId")+" "+
+				  " and gv.departmentid = "+element[0].toString() +"  and gl.glcode = "+element[1].toString()+" "+
 				  " GROUP BY gv.departmentid, gl.glcode ";
 
 				 if(!zoneName.equalsIgnoreCase("")){
@@ -543,8 +525,8 @@ public class MonthlyExpRptList {
 					}
 
 				 try	{
-				 	prepStmt5=conn.prepareStatement(payCurrMonthAll,ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-				 		rs5=prepStmt5.executeQuery();
+				 	prepStmt5=HibernateUtil.getCurrentSession().createSQLQuery(payCurrMonthAll);
+				 		rs5=prepStmt5.list();
 					}
 					catch(Exception e)
 					{if(LOGGER.isDebugEnabled())     LOGGER.debug("Exception in prepare statement (Payment upto previous month):"+prepStmt);
@@ -552,9 +534,8 @@ public class MonthlyExpRptList {
 
 				 double payCurrMonth= 0.0;
 
-				 while(rs5.next())
-				 {
-				 	double getpayCurrMonth = rs5.getDouble("payCurrent");
+				 for(Object[] element5 : rs5){
+				 	double getpayCurrMonth =Double.parseDouble(element5[2].toString());
 				 	payCurrMonth = payCurrMonth + getpayCurrMonth;
 				 }
 
@@ -585,20 +566,6 @@ public class MonthlyExpRptList {
 		}
 			catch(Exception e){if(LOGGER.isDebugEnabled())     LOGGER.debug("Exception in main while loop:"+e);}
 
-			finally
-			{
-				try
-				{
-					rs.close();
-					prepStmt.close();
-					//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(conn,null);
-				}
-				catch(Exception e)
-				{
-					//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(conn,null);
-					if(LOGGER.isDebugEnabled())     LOGGER.debug("Exception in Finally Block"+e);
-				}
-			}
 			return links;
 		}
 }

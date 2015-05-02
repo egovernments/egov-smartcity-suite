@@ -88,15 +88,6 @@ public class CashBook {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside getGeneralLedgerList");
 		LinkedList dataList = new LinkedList();
 		try{
-		try
-		{
-			connection = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();			
-		}
-		catch(Exception exception)
-		{
-			LOGGER.error("Exp in getting connection",exception);
-			throw taskExc;
-		}
 		String isconfirmed="";
 		String glCode1="";
 		String glCode2="";
@@ -138,7 +129,7 @@ public class CashBook {
 		if(LOGGER.isInfoEnabled())     LOGGER.info(" fundId:"+fundId+" fundSourceId:"+fundSourceId);
 		SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy");
 		SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MMM-yyyy");
-		isCurDate(connection,endDate1);
+		isCurDate(endDate1);
 		try
    		{
 			endDate=(String)reportBean.getEndDate();
@@ -162,8 +153,8 @@ public class CashBook {
 		}
 
 		if(startDate.equalsIgnoreCase("null")){
-			String finId=commonFun.getFYID(formendDate,connection);
-			startDate=commonFun.getStartDate(connection,Integer.parseInt(finId));
+			String finId=commonFun.getFYID(formendDate);
+			startDate=commonFun.getStartDate(Integer.parseInt(finId));
 		}
    		else{
    			startDate = formstartDate;
@@ -183,7 +174,7 @@ public class CashBook {
 		
 		
 		setDates(startDate,endDate);
-		String fyId = commonFun.getFYID(endDate,connection);
+		String fyId = commonFun.getFYID(endDate);
 		if(fyId.equalsIgnoreCase("")){
 			if(LOGGER.isInfoEnabled())     LOGGER.info("Financial Year Not Valid");
 			throw taskExc;
@@ -562,7 +553,7 @@ public class CashBook {
 		/** opening balance till the date from the start of the Year **/
 		if(rType.equalsIgnoreCase("gl"))
 		{
-			String startDate=commonFun.getStartDate(connection,Integer.parseInt(fyId));
+			String startDate=commonFun.getStartDate(Integer.parseInt(fyId));
 			if(!fundId.equalsIgnoreCase("")) fundCondition="AND vh.fundId = ? ";
 			if(!fundSourceId.equalsIgnoreCase("")) fundSourceCondition="AND vh.fundId = ? ";
 			String queryTillDateOpBal="";
@@ -796,7 +787,7 @@ public class CashBook {
 
 		return cgn;
 	}
-	 public void isCurDate(Connection conn,String VDate) throws TaskFailedException
+	 public void isCurDate(String VDate) throws TaskFailedException
      {
 
 			EGovernCommon egc=new EGovernCommon();

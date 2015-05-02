@@ -40,18 +40,17 @@
 package com.exilant.eGov.src.reports;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.EGovConfig;
-
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
 
 import com.exilant.exility.common.TaskFailedException;
 
@@ -62,14 +61,12 @@ import com.exilant.exility.common.TaskFailedException;
 public class ConSupReportList 
 {
 
-    Connection connection;
-    Statement statement;
-    ResultSet resultset;
+    Query	 statement;
+    List<Object[]> resultset;
     private static TaskFailedException taskExc;
     private static final Logger LOGGER = Logger.getLogger(ConSupReportList.class);
     public ConSupReportList()
     {
-        connection = null;
         statement = null;
         resultset = null;
     }
@@ -84,14 +81,6 @@ public class ConSupReportList
         dataList = new LinkedList();
         NumberFormat formatter = new DecimalFormat();
 		formatter = new DecimalFormat("###############.00");
-        try
-        {
-            connection = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
-        }
-        catch(Exception exception)
-        {
-            throw new TaskFailedException();
-        }
         String code = reportBean.getCode();
         int conSupType = reportBean.getConSupType();
         String fundId =reportBean.getFundId();
@@ -101,8 +90,8 @@ public class ConSupReportList
         if(LOGGER.isDebugEnabled())     LOGGER.debug((new StringBuilder("query:")).append(query).toString());
         try
         {
-            statement = connection.createStatement(1004, 1007);
-            resultset = statement.executeQuery(query);
+             statement = HibernateUtil.getCurrentSession().createSQLQuery(query);
+             resultset = statement.list();
         }
         catch(Exception e)
         {
@@ -125,13 +114,12 @@ public class ConSupReportList
         BigDecimal orderValue,maxAdv,advPaid,advAdj,amtPaid,billAmount,dedAmount ;
         try
         {
-            while(resultset.next())
-            {
+        	for(Object[] element : resultset){
                 String arr[] = new String[15];
                  totalCount++;
 
-                curCode = resultset.getString("name");
-                curWorkOrderNo = resultset.getString("workOrderNo");
+                curCode = element[0].toString();
+                curWorkOrderNo = element[5].toString();
                 for(int i = 0; i < arr.length; i++)
                 {
                     arr[i] = "";
@@ -142,26 +130,26 @@ public class ConSupReportList
                 if(!curWorkOrderNo.equalsIgnoreCase(prevWorkOrderNo))
                 {
                 	if(!curCode.equalsIgnoreCase(prevCode))
-                    	name=resultset.getString("name"); else name="";
+                    	name=element[0].toString(); else name="";
                 	if(name != null && !name.trim().equals("")) arr[0]=name;
-    				workOrderNo=resultset.getString("workOrderNo"); if(workOrderNo != null && !workOrderNo.trim().equals("")) arr[1]=workOrderNo; else arr[1]="&nbsp;";
-                    workname=resultset.getString("workname"); if(workname != null && !workname.trim().equals("")) arr[2]=workname;else arr[2]="&nbsp;";
-                    orderDate=resultset.getString("orderdate"); if(orderDate != null && !orderDate.trim().equals("")) arr[3]=orderDate;else arr[3]="&nbsp;";
-                    orderValue=resultset.getBigDecimal("orderValue"); if( orderValue != null && orderValue.doubleValue()>0) arr[4]=formatter.format(orderValue); else arr[3]="&nbsp;";
-                    maxAdv=resultset.getBigDecimal("maxAdv"); if( maxAdv != null && maxAdv.doubleValue()>0) arr[5]=formatter.format(maxAdv); else arr[5]="&nbsp;";
-                    advPaid=resultset.getBigDecimal("advPaid"); if( advPaid != null && advPaid.doubleValue()>0) arr[6]=formatter.format(advPaid); else arr[6]="&nbsp;";
-                    advAdj=resultset.getBigDecimal("advAdj"); if( advAdj != null && advAdj.doubleValue()>0) arr[7]=formatter.format(advAdj); else arr[7]="&nbsp;";
-                    amtPaid=resultset.getBigDecimal("amtPaid"); if( amtPaid != null && amtPaid.doubleValue()>0) arr[8]=formatter.format(amtPaid);  else arr[8]="&nbsp;";
-                    billAmount=resultset.getBigDecimal("billtotal"); if( billAmount != null && billAmount.doubleValue()>0) arr[9]=formatter.format(billAmount); else arr[9]="&nbsp;";
-                    relCode=resultset.getString("relcode"); if( relCode != null && !relCode.trim().equals("")) arr[10]=relCode; else arr[10]="&nbsp;";
-                    worksDetailId=resultset.getString("worksdetailid"); if( worksDetailId != null && !worksDetailId.trim().equals("")) arr[11]=worksDetailId; else arr[11]="&nbsp;";
-                    relationType=resultset.getString("relType"); if( relationType != null && !relationType.trim().equals("")) arr[12]=relationType; else arr[12]="&nbsp;";
-                   dedAmount=resultset.getBigDecimal("dedAmount"); if( dedAmount != null && dedAmount.doubleValue()>0) arr[13]=formatter.format(dedAmount); else arr[13]="&nbsp;";
-                   relId=resultset.getString("relId"); if( relId != null && !relId.trim().equals("")) arr[14]=relId; else arr[14]="&nbsp;";
+    				workOrderNo=element[5].toString(); if(workOrderNo != null && !workOrderNo.trim().equals("")) arr[1]=workOrderNo; else arr[1]="&nbsp;";
+                    workname=element[6].toString(); if(workname != null && !workname.trim().equals("")) arr[2]=workname;else arr[2]="&nbsp;";
+                    orderDate=element[7].toString(); if(orderDate != null && !orderDate.trim().equals("")) arr[3]=orderDate;else arr[3]="&nbsp;";
+                    orderValue=new BigDecimal(element[8].toString()); if( orderValue != null && orderValue.doubleValue()>0) arr[4]=formatter.format(orderValue); else arr[3]="&nbsp;";
+                    maxAdv=new BigDecimal(element[9].toString()); if( maxAdv != null && maxAdv.doubleValue()>0) arr[5]=formatter.format(maxAdv); else arr[5]="&nbsp;";
+                    advPaid=new BigDecimal(element[10].toString()); if( advPaid != null && advPaid.doubleValue()>0) arr[6]=formatter.format(advPaid); else arr[6]="&nbsp;";
+                    advAdj=new BigDecimal(element[11].toString()); if( advAdj != null && advAdj.doubleValue()>0) arr[7]=formatter.format(advAdj); else arr[7]="&nbsp;";
+                    amtPaid=new BigDecimal(element[12].toString()); if( amtPaid != null && amtPaid.doubleValue()>0) arr[8]=formatter.format(amtPaid);  else arr[8]="&nbsp;";
+                    billAmount=new BigDecimal(element[13].toString()); if( billAmount != null && billAmount.doubleValue()>0) arr[9]=formatter.format(billAmount); else arr[9]="&nbsp;";
+                    relCode=element[1].toString(); if( relCode != null && !relCode.trim().equals("")) arr[10]=relCode; else arr[10]="&nbsp;";
+                    worksDetailId=element[4].toString(); if( worksDetailId != null && !worksDetailId.trim().equals("")) arr[11]=worksDetailId; else arr[11]="&nbsp;";
+                    relationType=element[3].toString(); if( relationType != null && !relationType.trim().equals("")) arr[12]=relationType; else arr[12]="&nbsp;";
+                   dedAmount=new BigDecimal(element[14].toString()); if( dedAmount != null && dedAmount.doubleValue()>0) arr[13]=formatter.format(dedAmount); else arr[13]="&nbsp;";
+                   relId=element[2].toString(); if( relId != null && !relId.trim().equals("")) arr[14]=relId; else arr[14]="&nbsp;";
                    data.add(arr);
                 }
-                prevCode = resultset.getString("name");
-                prevWorkOrderNo = resultset.getString("workOrderNo");
+                prevCode = element[0].toString();
+                prevWorkOrderNo = element[5].toString();
             }
             String gridData[][] = new String[data.size() + 1][14];
             gridData[0][0] = "Con/Sup name";
@@ -205,7 +193,7 @@ public class ConSupReportList
 
             if(LOGGER.isInfoEnabled())     LOGGER.info("Datalist is filled");
         }
-        catch(SQLException ex)
+        catch(Exception ex)
         {
             LOGGER.error((new StringBuilder("ERROR: ")).append(ex.toString()).toString());
             throw taskExc;

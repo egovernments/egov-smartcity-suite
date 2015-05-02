@@ -313,8 +313,7 @@ HibernateUtil.getCurrentSession().setFlushMode(FlushMode.AUTO);
 				 Transaxtion txnList[]=new Transaxtion[transactions.size()];
 				 txnList=(Transaxtion[])transactions.toArray(txnList);
 				 SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-				 Connection conn = null;
-				 if(!engine.postTransaxtions(txnList, conn,formatter.format(voucherHeader.getVoucherDate())))
+				 if(!engine.postTransaxtions(txnList,formatter.format(voucherHeader.getVoucherDate())))
 				 {
 					 List<ValidationError> errors=new ArrayList<ValidationError>();
 					 errors.add(new ValidationError("exp","Engine Validation failed"));

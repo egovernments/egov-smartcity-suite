@@ -62,7 +62,7 @@ public interface CommonMethodsI {
 	public String getFiscalPeriod(String vDate,Connection connection) throws TaskFailedException,Exception;
 	public String getBankId(int bankAccountId,Connection connection) throws Exception;
 	public double getAccountBalance(int bankAccountId,String vcDate,Connection connection) throws Exception;
-	public String getCodeName(String purposeId,Connection connection) throws Exception;
+	public String getCodeName(String purposeId) throws Exception;
 	public String getNameFromCode(String glcode,Connection connection) throws Exception;
 	public String getGlCode(String glCodeId,Connection connection) throws Exception;
 	public String checkRecordIdInLog(String recordId, int userId, Connection connection) throws Exception;

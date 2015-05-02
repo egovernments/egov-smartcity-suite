@@ -129,7 +129,7 @@ public class RptBillRegisterList {
 		startDate = formstartDate;
 		endDate = formendDate;
 		if(LOGGER.isInfoEnabled())     LOGGER.info("startDate : "+ startDate + " endDate "+ endDate);
-		String fyId = commonFun.getFYID(endDate,connection);
+		String fyId = commonFun.getFYID(endDate);
 		if(LOGGER.isInfoEnabled())     LOGGER.info(" fyId  "+ fyId );
 		if(fyId.equalsIgnoreCase("")){
 			if(LOGGER.isInfoEnabled())     LOGGER.info("Financial Year Not Valid");

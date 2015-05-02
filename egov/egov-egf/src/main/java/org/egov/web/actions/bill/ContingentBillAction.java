@@ -916,7 +916,6 @@ public class ContingentBillAction extends BaseBillAction {
 	
 	@SuppressWarnings("unchecked")
 	private  Cbill createBill() {
-		//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		
 		final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
 		// update DirectBankPayment source path

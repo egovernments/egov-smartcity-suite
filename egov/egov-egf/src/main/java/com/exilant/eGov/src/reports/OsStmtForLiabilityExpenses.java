@@ -39,8 +39,6 @@
  ******************************************************************************/
 package com.exilant.eGov.src.reports;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -49,7 +47,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.NumberToWord;
+import org.hibernate.Query;
 
 
 /**
@@ -67,8 +67,7 @@ public class OsStmtForLiabilityExpenses {
 			String relationId, String param_fromDate, String param_toDate,
 			String param_fund) {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside OsStmtForLiabilityExpenses getReport method");
-		PreparedStatement pstmt = null;
-		Connection con = null;
+		Query pstmt = null;
 		// Statement stmt = null;
 		String query = "";
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -105,7 +104,6 @@ public class OsStmtForLiabilityExpenses {
 				fundCondition = fundCondition + " and v.fundid = ? ";
 			}
 			String whereCondition = "";
-			con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 
 			if (!relationId.equals(""))
 				whereCondition = " and r.id=?";
@@ -141,7 +139,7 @@ public class OsStmtForLiabilityExpenses {
 						// +
 						"  HAVING (s.passedamount > (s.paidamount + s.tdsamount + s.advadjamt + s.otherrecoveries)) "
 						+ " ORDER BY \"NAME\",\"Bill Number\",\"Bill DATE\",\"VHID\" ";
-				pstmt = con.prepareStatement(query);
+				pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
 				int i = 1;
 				if (param_fromDate != null && !param_fromDate.trim().equals("")) {
 					pstmt.setString(i++, fromDate);
@@ -179,7 +177,7 @@ public class OsStmtForLiabilityExpenses {
 						// +
 						"  HAVING (s.passedamount > (s.paidamount + s.tdsamount + s.advadjamt + s.otherrecoveries) )"
 						+ " ORDER BY \"NAME\", \"Bill Number\", \"Bill DATE\",\"VHID\"";
-				pstmt = con.prepareStatement(query);
+				pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
 				int i = 1;
 				if (!relationId.equals("")){
 					pstmt.setString(i++, relationId);
@@ -212,7 +210,7 @@ public class OsStmtForLiabilityExpenses {
 						" HAVING (c.passedamount > (c.paidamount + c.tdsamount + c.advadjamt + c.otherrecoveries) )"
 						+ " ORDER BY \"NAME\", \"Bill Number\",\"Bill DATE\",\"VHID\" ";
 
-				pstmt = con.prepareStatement(query);
+				pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
 				int i = 1;
 				if (!relationId.equals("")){
 					pstmt.setString(i++, relationId);
@@ -230,37 +228,36 @@ public class OsStmtForLiabilityExpenses {
 			if(LOGGER.isInfoEnabled())     LOGGER.info("Query for O/S report=" + query);
 
 			// stmt = con.createStatement();
-			ResultSet rs = pstmt.executeQuery();
+			List<Object[]> rs = pstmt.list();
 
 			HashMap<String, String> osMap = null;
 			Integer srlNo = 1;
 			String tempConSupName = "", tempVHID = "", codeOfAccount = "", cgn = "";
 			String csName = "", natureOfPay = "", billDate = "", billAmt = "", fund = "", billNumber = "";
 			Double tempTotal = 0.0;
-			while (rs.next()) {
+			for(Object[] element : rs){
 				// if same voucher header id, concatenate the account code
-				if (tempVHID.equals(rs.getString("VHID"))
+				if (tempVHID.equals(element[6].toString())
 						|| tempVHID.equals("")) {
 					if (!codeOfAccount.equals(""))
 						codeOfAccount = codeOfAccount + ", "
-								+ rs.getString("Code of Account");
+								+ element[5].toString();
 					else
-						codeOfAccount = rs.getString("Code of Account");
+						codeOfAccount = element[5].toString();
 
-					natureOfPay = (rs.getString("Nature of Payable") == null ? ""
-							: rs.getString("Nature of Payable"))
+					natureOfPay = (element[7].toString() == null ? ""
+							: element[7].toString())
 							+ "/ "
-							+ (rs.getString("Work Order") == null ? "" : rs
-									.getString("Work Order"));
-					billDate = formatter.format(rs.getDate("Bill DATE"));
+							+ (element[8].toString() == null ? "" :element[8].toString());
+					billDate = formatter.format(element[4].toString());
 					billAmt = cf.numberToString(
-							rs.getBigDecimal("Bill Amount").toString())
+							element[3].toString().toString())
 							.toString();
-					billNumber = rs.getString("Bill Number");
-					fund = rs.getString("FUND");
-					cgn = rs.getString("cgn");
-					tempTotal = rs.getDouble("Bill Amount");
-					csName = rs.getString("NAME");
+					billNumber = element[0].toString();
+					fund = element[9].toString();
+					cgn = element[10].toString();
+					tempTotal =Double.parseDouble( element[3].toString());
+					csName = element[2].toString();
 				} else {
 					osMap = new HashMap<String, String>();
 					osMap.put("srlNo", srlNo.toString());
@@ -283,26 +280,25 @@ public class OsStmtForLiabilityExpenses {
 					tempConSupName = csName;
 
 					total = total + tempTotal;
-					codeOfAccount = rs.getString("Code of Account");
-					natureOfPay = (rs.getString("Nature of Payable") == null ? ""
-							: rs.getString("Nature of Payable"))
+					codeOfAccount = element[5].toString();
+					natureOfPay = (element[7].toString() == null ? ""
+							: element[7].toString())
 							+ "/ "
-							+ (rs.getString("Work Order") == null ? "" : rs
-									.getString("Work Order"));
-					billDate = formatter.format(rs.getDate("Bill DATE"));
-					billNumber = rs.getString("Bill Number");
+							+ (element[8].toString() == null ? "" : element[8].toString());
+					billDate = formatter.format(element[4].toString());
+					billNumber = element[0].toString();
 					billAmt = cf.numberToString(
-							rs.getBigDecimal("Bill Amount").toString())
+							element[3].toString())
 							.toString();
-					fund = rs.getString("FUND");
-					cgn = rs.getString("cgn");
-					tempTotal = rs.getDouble("Bill Amount");
-					csName = rs.getString("NAME");
+					fund = element[9].toString();
+					cgn = element[10].toString();
+					tempTotal = Double.parseDouble(element[3].toString());
+					csName = element[2].toString();
 
 					osStmtList.add(osMap);
 					srlNo++;
 				}
-				tempVHID = rs.getString("VHID");
+				tempVHID = element[6].toString();
 			} // end of while loop
 
 			if (tempTotal != 0) // printing the last record
@@ -412,14 +408,7 @@ public class OsStmtForLiabilityExpenses {
 					.error("Exception while getting the O/S stmt for liability expenses report="
 							+ e.getMessage());
 
-		} finally {
-			try {
-				pstmt.close();
-				//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(con, null);
-			} catch (Exception e) {
-				LOGGER.error("Exp in finally...");
-			}
-		}
+		} 
 		returnMap.put("osStmtList", osStmtList);
 		return returnMap;
 	}

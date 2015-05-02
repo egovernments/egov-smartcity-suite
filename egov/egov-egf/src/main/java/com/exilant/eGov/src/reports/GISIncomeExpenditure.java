@@ -43,15 +43,14 @@
  */
 package com.exilant.eGov.src.reports;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.EGovConfig;
-
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 
@@ -65,9 +64,8 @@ public class GISIncomeExpenditure {
 			"", "GISReports");
 	String majorcode = EGovConfig.getProperty("egf_config.xml",
 			"getSubstringValue", "", "GISReports");
-	Connection connection = null;
-	PreparedStatement pst = null;
-	ResultSet rs = null;
+	Query pst = null;
+	List<Object[]> rs = null;
 
 	public Map GISReportData(String reportType) {
 
@@ -82,32 +80,30 @@ public class GISIncomeExpenditure {
 				+ "	a.creditamount > a.debitamount  group by c.name";
 		String repQuery = null;
 		try {
-			connection = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 
 			if (reportType.equalsIgnoreCase("E")) {
 				repQuery = expenseQuery;
-				pst = connection.prepareStatement(repQuery);
+				pst = HibernateUtil.getCurrentSession().createSQLQuery(repQuery);
 				pst.setString(1, majorcode);
 				pst.setString(2, reportType);
 				pst.setString(3, fyear);
 			} else {
 				repQuery = incomeQuery;
-				pst = connection.prepareStatement(repQuery);
+				pst = HibernateUtil.getCurrentSession().createSQLQuery(repQuery);
 				pst.setString(1, majorcode);
 				pst.setString(2, reportType);
 				pst.setString(3, fyear);
 			}
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Type is :" + reportType + " Query :" + repQuery);
 
-			rs = pst.executeQuery();
-			while (rs.next()) {
-				String accCode = rs.getString(1);
-				String amount = rs.getString(2);
+			rs = pst.list();
+			for(Object[] element : rs){
+				String accCode = element[0].toString();
+				String amount = element[1].toString();
 				// if(LOGGER.isDebugEnabled())     LOGGER.debug(">>>>>accCode="+accCode+"  , amount="+amount);
 				hmAcccodeMap.put(accCode, amount);
 			}
 			// if(LOGGER.isDebugEnabled())     LOGGER.debug(">>>>>>hmAcccodeMap="+hmAcccodeMap);
-			rs.close();
 
 		} catch (Exception e) {
 			LOGGER.error("Exp=" + e.getMessage(),e);

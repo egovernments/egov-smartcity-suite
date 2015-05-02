@@ -642,8 +642,7 @@ private List<HashMap<String, Object>>  addSubledgerGroupBy(final List<HashMap<St
 	
 		final CreateVoucher createVoucher = new CreateVoucher();
 		try {
-			//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
-			createVoucher.deleteVoucherdetailAndGL(null/*This fix is for Phoenix Migration.EgovDatabaseManager.openConnection()*/, voucherHeader);
+			createVoucher.deleteVoucherdetailAndGL( voucherHeader);
 		HibernateUtil.getCurrentSession().flush();
 				HashMap<String, Object> detailMap = null;
 				final List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
@@ -670,7 +669,7 @@ private List<HashMap<String, Object>>  addSubledgerGroupBy(final List<HashMap<St
 				Transaxtion txnList[] = new Transaxtion[transactions.size()];
 				txnList = transactions.toArray(txnList);
 				final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
-				if (!engine.postTransaxtions(txnList, null/*This fix is for Phoenix Migration.EgovDatabaseManager.openConnection()*/, formatter.format(voucherHeader.getVoucherDate()))) {
+				if (!engine.postTransaxtions(txnList, formatter.format(voucherHeader.getVoucherDate()))) {
 					throw new ValidationException(Arrays.asList(new ValidationError("Exception While Saving Data", "Transaction Failed")));
 				}
 				

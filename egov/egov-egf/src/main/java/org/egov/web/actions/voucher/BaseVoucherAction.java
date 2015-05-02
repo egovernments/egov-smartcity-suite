@@ -294,7 +294,6 @@ protected HashMap<String, Object> createHeaderAndMisDetails() throws ValidationE
 		
 	} 
 	public CVoucherHeader createVoucherAndledger(List<VoucherDetails> billDetailslist,List<VoucherDetails> subLedgerlist)  {
-		//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		try {
 			final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
 			// update DirectBankPayment source path

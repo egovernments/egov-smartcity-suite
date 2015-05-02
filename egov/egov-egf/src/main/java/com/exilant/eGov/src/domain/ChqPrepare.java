@@ -78,7 +78,6 @@ public class ChqPrepare {
 	public ChqPrepare(String bankId, String name, String amount,
 			String chequeDate) throws TaskFailedException { // this.con=con;
 		textBean = new ChqContent();
-		con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		this.bankId = bankId;
 		textBean.setRs(amount);
 		textBean.setDate(chequeDate);

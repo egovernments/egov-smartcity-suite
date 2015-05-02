@@ -128,7 +128,7 @@ public class GeneralLedgerReport {
 		SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MMM-yyyy");
 		Date dt=new Date();
 		String endDate1=(String)reportBean.getEndDate();
-		isCurDate(null,endDate1);
+		isCurDate(endDate1);
 		try
    		{
 	   		endDate=(String)reportBean.getEndDate();
@@ -147,8 +147,8 @@ public class GeneralLedgerReport {
 			}
 			
 			if(startDate.equalsIgnoreCase("null")){
-				String finId=cmnFun.getFYID(formendDate,null);
-				startDate=cmnFun.getStartDate(null,Integer.parseInt(finId));
+				String finId=cmnFun.getFYID(formendDate);
+				startDate=cmnFun.getStartDate(Integer.parseInt(finId));
 			    // SETTING START DATE IN reportBean 
 				reportBean.setStartDate(startDate);
 				Date dtOBj=sdf.parse(startDate);
@@ -179,7 +179,7 @@ public class GeneralLedgerReport {
 			throw taskExc;
 		}
 		setDates(startDate,endDate);
-		String fyId = cmnFun.getFYID(endDate,null);
+		String fyId = cmnFun.getFYID(endDate);
 		if(fyId.equalsIgnoreCase("")){
 			if(LOGGER.isInfoEnabled())     LOGGER.info("Financial Year Not Valid");
 			throw taskExc;
@@ -960,7 +960,7 @@ public class GeneralLedgerReport {
 		    }
 		   
 		/** opening balance till the date from the start of the Year **/
-			String startDate=cmnFun.getStartDate(null,Integer.parseInt(fyId));
+			String startDate=cmnFun.getStartDate(Integer.parseInt(fyId));
 			if(!fundId.equalsIgnoreCase("")) fundCondition="AND vh.fundId = ? ";
 			if(!fundSourceId.equalsIgnoreCase("")) fundSourceCondition="AND vh.fundId = ? ";
 			if(!StringUtils.isEmpty(functionId))
@@ -1164,21 +1164,17 @@ public class GeneralLedgerReport {
     private String getAccountName(String glCode)throws TaskFailedException
     {
         String accountName="";
-        Connection connection=null;
-        PreparedStatement pst=null;
-        ResultSet resultset=null;
+        Query pst=null;
+        List<Object[]> resultset=null;
          try
          {
-             connection = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
              String query="select glcode as \"glcode\" ,name as \"name\" from  CHARTOFACCOUNTS where GLCODE=?";
-             pst = connection.prepareStatement(query);
+             pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
              pst.setString(1, glCode);
-             resultset=pst.executeQuery();
-             if (resultset!=null && resultset.next())
-             {
-                accountName=resultset.getString("glcode")+" : "+resultset.getString("name");
+             resultset=pst.list();
+             for(Object[] element : resultset){
+                accountName=element[0].toString()+" : "+element[1].toString();
              }
-             pst.close();
          }
          catch(Exception e)
          {
@@ -1191,21 +1187,17 @@ public class GeneralLedgerReport {
     private String getFundName(String fundId)throws TaskFailedException
     {
         String fundName="";
-        Connection connection=null;
-        PreparedStatement pst=null;
-        ResultSet resultset=null;
+        Query pst=null;
+        List<Object[]>  resultset=null;
          try
          {
-             connection = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
              String query="select name as \"name\" from fund where id=?";
-             pst=connection.prepareStatement(query);
+             pst=HibernateUtil.getCurrentSession().createSQLQuery(query);
              pst.setString(1, fundId);
-             resultset=pst.executeQuery();
-             if (resultset!=null && resultset.next())
-             {
-                fundName=resultset.getString("name");
+             resultset=pst.list();
+             for(Object[] element : resultset){
+                fundName=element[0].toString();
              }
-             pst.close();
          }
          catch(Exception e)
          {
@@ -1236,7 +1228,7 @@ public class GeneralLedgerReport {
        if(signBit.equals("-"))strbNumber=strbNumber.insert(0,"-");
         return strbNumber;
     }
-	 public void isCurDate(Connection conn,String VDate) throws TaskFailedException
+	 public void isCurDate(String VDate) throws TaskFailedException
      {
 
 			EGovernCommon egc=new EGovernCommon();

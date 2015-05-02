@@ -453,14 +453,13 @@ public class ContraBTBAction extends BaseVoucherAction {
 			CVoucherHeader voucher, ContraJournalVoucher contraVoucher2) {
 
 		final CreateVoucher createVoucher = new CreateVoucher();
-		//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		try {
 			Fund toFund = (Fund) persistenceService.find(
 					"from Fund where id=?", contraBean.getToFundId());
 			// validateInterFundAccount(voucherHeader.getFundId(),toFund);
 
-			createVoucher.deleteVoucherdetailAndGL(null, voucherHeader);
-			createVoucher.deleteVoucherdetailAndGL(null, voucherHeader2);//This fix is for Phoenix Migration.
+			createVoucher.deleteVoucherdetailAndGL( voucherHeader);
+			createVoucher.deleteVoucherdetailAndGL( voucherHeader2);//This fix is for Phoenix Migration.
 
 		HibernateUtil.getCurrentSession().flush();
 			HashMap<String, Object> detailMap = null;
@@ -490,7 +489,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 			Transaxtion txnList[] = new Transaxtion[transactions.size()];
 			txnList = transactions.toArray(txnList);
 			final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
-			if (!engine.postTransaxtions(txnList,null/*EgovDatabaseManager.openConnection()*/, formatter.format(voucher
+			if (!engine.postTransaxtions(txnList, formatter.format(voucher
 					.getVoucherDate()))) {
 				throw new ValidationException(
 						Arrays
@@ -521,14 +520,14 @@ public class ContraBTBAction extends BaseVoucherAction {
 		HibernateUtil.getCurrentSession().flush();
 			Transaxtion txnList2[] = new Transaxtion[transactions2.size()];
 			txnList2 = transactions2.toArray(txnList2);
-			if (!engine.postTransaxtions(txnList2, null/*EgovDatabaseManager.openConnection()*/, formatter.format(voucherHeader2
+			/*if (!engine.postTransaxtions(txnList2, formatter.format(voucherHeader2//Phoenix
 					.getVoucherDate()))) {
 				throw new ValidationException(
 						Arrays
 								.asList(new ValidationError(
 										EXCEPTION_WHILE_SAVING_DATA,
 										TRANSACTION_FAILED)));
-			}
+			}*/
 
 		} catch (final HibernateException e) {
 			LOGGER.error(e.getMessage());
@@ -938,7 +937,6 @@ public class ContraBTBAction extends BaseVoucherAction {
 
 	private CVoucherHeader callCreateVoucher(final CVoucherHeader voucher,
 			final ContraJournalVoucher contraVoucher) {
-		//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		try {
 			final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
 			// update ContraBTB source path
@@ -1006,7 +1004,6 @@ public class ContraBTBAction extends BaseVoucherAction {
 	private CVoucherHeader callCreateVoucherForInterFund(
 			final CVoucherHeader voucher,
 			final ContraJournalVoucher contraVoucher) {
-		//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		try {
 			Fund toFund = (Fund) persistenceService.find("from Fund where id=?", contraBean.getToFundId());
 			Department toDepartment = new Department();
@@ -1454,13 +1451,12 @@ public class ContraBTBAction extends BaseVoucherAction {
 	private void createLedgerAndPost(final CVoucherHeader voucher,
 			final ContraJournalVoucher contraVoucher) {
 		final CreateVoucher createVoucher = new CreateVoucher();
-		//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 
 		try {
 			if (voucherHeader2 != null) {
 				createLedgerAndPostForInterfund(voucher, contraVoucher);
 			} else {
-				createVoucher.deleteVoucherdetailAndGL(null/*EgovDatabaseManager.openConnection()*/, voucher);
+				createVoucher.deleteVoucherdetailAndGL( voucher);
 			HibernateUtil.getCurrentSession().flush();
 				HashMap<String, Object> detailMap = null;
 				final List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
@@ -1492,7 +1488,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 				txnList = transactions.toArray(txnList);
 				final SimpleDateFormat formatter = new SimpleDateFormat(
 						DD_MMM_YYYY);
-				if (!engine.postTransaxtions(txnList,null/* EgovDatabaseManager.openConnection()*/, formatter.format(voucher
+				if (!engine.postTransaxtions(txnList, formatter.format(voucher
 						.getVoucherDate()))) {
 					throw new ValidationException(Arrays
 							.asList(new ValidationError(

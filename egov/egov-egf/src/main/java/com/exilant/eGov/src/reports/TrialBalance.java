@@ -137,7 +137,7 @@ public class TrialBalance
 			endDate = formatter.format(dt);
 			if(LOGGER.isInfoEnabled())     LOGGER.info("EndDate --> "+endDate);
             setDates(endDate,con);
-            cf.getFundList(con,fundId,startDate,endDate);
+            cf.getFundList(fundId,startDate,endDate);
             reqFundId=cf.reqFundId;
             reqFundName=cf.reqFundName;  
                          

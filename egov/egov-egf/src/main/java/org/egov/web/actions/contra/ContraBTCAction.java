@@ -640,9 +640,8 @@ public class ContraBTCAction extends BaseVoucherAction {
 
 	void createLedgerAndPost(CVoucherHeader voucher) {
 		CreateVoucher createVoucher = new CreateVoucher();
-		//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		try {
-			createVoucher.deleteVoucherdetailAndGL(null/*EgovDatabaseManager.openConnection()*/, voucher);
+			createVoucher.deleteVoucherdetailAndGL( voucher);
 		HibernateUtil.getCurrentSession().flush();
 			final List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
 			final List<HashMap<String, Object>> subledgerDetails = new ArrayList<HashMap<String, Object>>();
@@ -661,7 +660,7 @@ public class ContraBTCAction extends BaseVoucherAction {
 			Transaxtion txnList[] = new Transaxtion[transactions.size()];
 			txnList = transactions.toArray(txnList);
 			SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-			if (!engine.postTransaxtions(txnList, null/*EgovDatabaseManager.openConnection()*/, formatter.format(voucherHeader
+			if (!engine.postTransaxtions(txnList, formatter.format(voucherHeader
 					.getVoucherDate()))) {
 				throw new ValidationException(
 						Arrays

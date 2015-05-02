@@ -324,7 +324,6 @@ public class PayInSlipAction extends BaseVoucherAction {
 	
 
 	private CVoucherHeader callCreateVoucher() {
-		//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		try {
 			 Bankaccount bankaccount = comm.getBankaccountById(Integer.valueOf(contraBean.getAccountNumberId()));
 			final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
@@ -392,7 +391,7 @@ public class PayInSlipAction extends BaseVoucherAction {
 				Transaxtion txnList[] = new Transaxtion[transactions.size()];
 				txnList = transactions.toArray(txnList);
 				final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-				if (!engine.postTransaxtions(txnList,null/*This fix is for Phoenix Migration.EgovDatabaseManager.openConnection()*/, formatter.format(voucherHeader.getVoucherDate()))) {
+				if (!engine.postTransaxtions(txnList, formatter.format(voucherHeader.getVoucherDate()))) {
 					throw new ValidationException(Arrays.asList(new ValidationError("Exception while saving Data", "Transaction failed")));
 				}
 			}catch (ValidationException e) {

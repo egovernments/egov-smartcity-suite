@@ -84,7 +84,6 @@ import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
-
 import org.egov.model.bills.EgBillSubType;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.Miscbilldetail;
@@ -114,6 +113,7 @@ import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
+import com.exilant.exility.common.DataCollection;
 
 
 public class PaymentService extends PersistenceService<Paymentheader,Long> 
@@ -502,13 +502,12 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
 		Paymentheader paymentheader=null;
 		try
 		{
-			final Connection con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 			miscBillList = new ArrayList<Miscbilldetail>();
 			user = (User)persistenceService.find(" from User where id = ?", EGOVThreadLocals.getUserId());
 			Bankaccount ba = (Bankaccount) persistenceService.find("from Bankaccount where id=?",payheader.getBankaccount().getId());
 			paymentheader = (Paymentheader) persistenceService.find(" from Paymentheader where id=? ",payheader.getId());
-			deleteMiscBill(paymentheader.getVoucherheader().getId(),con);
-			CVoucherHeader voucher = updateVoucher(parameters,billList,ba,con,payheader);
+			deleteMiscBill(paymentheader.getVoucherheader().getId());
+			CVoucherHeader voucher = updateVoucher(parameters,billList,ba,payheader);
 			//CVoucherHeader voucher = updateVoucher(parameters,billList,ba,con,payheader);
 			// update payment table
 			paymentheader.setPaymentAmount(new BigDecimal(parameters.get("grandTotal")[0]));
@@ -540,27 +539,27 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed updatePayment.");
 		return paymentheader;
 	}
-	private CVoucherHeader updateVoucher(Map<String,String[]> parameters,List<PaymentBean> billList,Bankaccount ba,Connection con,Paymentheader paymentheader)throws Exception
+	private CVoucherHeader updateVoucher(Map<String,String[]> parameters,List<PaymentBean> billList,Bankaccount ba,Paymentheader paymentheader)throws Exception
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting updateVoucher...");
 		final CreateVoucher createVoucher = new CreateVoucher();
 		final CVoucherHeader existingVH = (CVoucherHeader) persistenceService.find(" from CVoucherHeader where id=?",paymentheader.getVoucherheader().getId());
-		createVoucher.deleteVoucherdetailAndGL(con, existingVH);
-		updateVoucherHeader(parameters,existingVH,paymentheader.getVoucherheader(),con);
+		createVoucher.deleteVoucherdetailAndGL(existingVH);
+		updateVoucherHeader(parameters,existingVH,paymentheader.getVoucherheader());
 		prepareVoucherDetailsForModify(billList,parameters,ba);
 		
 		final List<Transaxtion> transactions = createVoucher.createTransaction(null,accountcodedetails, subledgerdetails, existingVH);
-		//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().flush();
+		HibernateUtil.getCurrentSession().flush();
 		final ChartOfAccounts engine = ChartOfAccounts.getInstance();
 		Transaxtion txnList[] = new Transaxtion[transactions.size()];
 		txnList = transactions.toArray(txnList);
-		/*if (!engine.postTransaxtions(txnList, null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection(), sdf.format(existingVH.getVoucherDate()))) {
+		if (!engine.postTransaxtions(txnList,sdf.format(existingVH.getVoucherDate()))) {
 			throw new ValidationException(Arrays.asList(new ValidationError(EXCEPTION_WHILE_SAVING_DATA, TRANSACTION_FAILED)));
 		}
-		if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed updateVoucher.");*/
+		if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed updateVoucher.");
 		return existingVH;
 	}
-	private void updateVoucherHeader(Map<String,String[]> parameters,CVoucherHeader existingVH,CVoucherHeader voucherHeader,Connection con)throws Exception
+	private void updateVoucherHeader(Map<String,String[]> parameters,CVoucherHeader existingVH,CVoucherHeader voucherHeader)throws Exception
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting updateVoucherHeader...");
 		EGovernCommon eGovernCommon = new EGovernCommon();
@@ -729,14 +728,14 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed prepareMiscBillForSalary.");
 	}
 
-	protected void deleteMiscBill(Long payVHId,Connection con)
+	protected void deleteMiscBill(Long payVHId)
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting deleteMiscBill...");
 		try
 		 {
-			 Statement st = con.createStatement();
-			 st.executeQuery("delete from miscbilldetail where PAYVHID="+payVHId);
-		 }catch(SQLException e)
+			 Query st = HibernateUtil.getCurrentSession().createSQLQuery("delete from miscbilldetail where PAYVHID="+payVHId);
+			 st.executeUpdate();
+		 }catch(Exception e)
 		 {
 			 LOGGER.error("Inside exception deleteMiscBill"+e.getMessage());
 			 throw new EGOVRuntimeException(e.getMessage());

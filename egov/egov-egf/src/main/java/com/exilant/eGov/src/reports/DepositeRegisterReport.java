@@ -40,31 +40,29 @@
 package com.exilant.eGov.src.reports;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.EGovConfig;
-
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 
 public class DepositeRegisterReport 
 {
-	Connection con;
-    Statement statement;
-    ResultSet rs;
-    ResultSet resultset;
-    ResultSet resultset1;
-    ResultSet rs1;
+    Query statement;
+    List<Object[]> rs;
+    List<Object[]> resultset;
+    List<Object[]> resultset1;
+    List<Object[]> rs1;
     String startDate;
     String endDate;
     String fundName;
@@ -109,15 +107,6 @@ public class DepositeRegisterReport
         
         try
         {
-            con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
-        }
-        catch(Exception exception)
-        {
-            LOGGER.error("Could Not Get Connection");
-            throw taskExc;
-        }
-        try
-        {
             startDate = StartDate;
             endDate = EndDate;
             fundName = FundName;
@@ -141,39 +130,36 @@ public class DepositeRegisterReport
             if((startDate == null || startDate.equalsIgnoreCase("")) && (endDate == null || endDate.equalsIgnoreCase("")))
                 try
                 {
-                    statement = con.createStatement();
                     String query = "SELECT TO_CHAR(startingDate, 'dd-Mon-yyyy') AS \"startingDate\" FROM financialYear WHERE startingDate <= SYSDATE AND endingDate >= SYSDATE";
-                    rs = statement.executeQuery(query);
-                    if(rs.next())
-                        startDate = rs.getString("startingDate");
+                    statement=   HibernateUtil.getCurrentSession().createSQLQuery(query);
+                    rs = statement.list();
+                    for(Object[] element : rs){
+                        startDate = element[0].toString();
+                    }
                     if(LOGGER.isDebugEnabled())     LOGGER.debug("in first condition :" + endDate);
-                    rs.close();
                     String query1 = "SELECT TO_CHAR(sysdate, 'dd-Mon-yyyy') AS \"endingDate\" FROM dual";
-                    rs = statement.executeQuery(query1);
-                    if(rs.next())
-                        endDate = rs.getString("endingDate");
+                    rs = HibernateUtil.getCurrentSession().createSQLQuery(query1).list();
+                    for(Object[] element : rs){
+                        endDate = element[0].toString();
+                    }
                     if(LOGGER.isDebugEnabled())     LOGGER.debug("in first condition 1 :" + endDate);
-                    rs.close();
-                    statement.close();
                 }
-                catch(SQLException ex)
+                catch(Exception ex)
                 {
                     throw taskExc;
                 }
             if((startDate == null || startDate.equalsIgnoreCase("")) && (endDate != null && !endDate.equalsIgnoreCase("")))
                 try
                 {
-                    statement = con.createStatement();
                     String query = "SELECT TO_CHAR(startingDate, 'dd-Mon-yyyy') AS \"startingDate\" FROM financialYear WHERE startingDate <= '" + endDate + "' AND endingDate >= '" + endDate + "'";
-                    rs = statement.executeQuery(query);
-                    if(rs.next())
-                        startDate = rs.getString("startingDate");
+                    rs =  HibernateUtil.getCurrentSession().createSQLQuery(query).list();
+                    for(Object[] element : rs){
+                        startDate = element[0].toString();
+                    }
                     if(LOGGER.isDebugEnabled())     LOGGER.debug("in second   condition :" + startDate+" endDate "+endDate);
                     
-                    rs.close();
-                    statement.close();
                 }
-                catch(SQLException ex)
+                catch(Exception ex)
                 {
                     throw taskExc;
                 }
@@ -376,46 +362,44 @@ public class DepositeRegisterReport
            int sno=0;
           
             DepositeRegisterReportBean dBean = null;
-            statement = con.createStatement();
-            rs = statement.executeQuery(query);
+            rs = HibernateUtil.getCurrentSession().createSQLQuery(query).list();
             
-            while(rs.next())
-            {
+            for(Object[] element : rs){
             	sno++;
             	dBean = new DepositeRegisterReportBean();
-            	if(rs.getString("VOUCHERDATE")!= null)
-            		vDate=rs.getString("VOUCHERDATE");
+            	if(element[0].toString()!= null)
+            		vDate=element[0].toString();
             	else
             		vDate="&nbsp;";
             	
-            	if(rs.getString("PAYEENAME")!= null)
-            		partyName=rs.getString("PAYEENAME");
+            	if(element[1].toString()!= null)
+            		partyName=element[1].toString();
             	else
             		partyName="&nbsp;";
              	
-            	if(rs.getString("Mode1")!= null)
-            		modeOfDeposite=rs.getString("Mode1");
+            	if(element[2].toString()!= null)
+            		modeOfDeposite=element[2].toString();
             	else
             		modeOfDeposite="&nbsp;";
              	
-            	if(rs.getString("reciptnumber")!= null)
-            		receiptNumber=rs.getString("reciptnumber");
+            	if(element[4].toString()!= null)
+            		receiptNumber=element[4].toString();
             	else
             		receiptNumber="&nbsp;";
 
-            	dateandVoucher=(rs.getString("vouchernumberanddate")==null)?"&nbsp;":rs.getString("vouchernumberanddate");
-        		amount=(rs.getString("cashamount")==null?(rs.getString("chqamt")==null?"0":rs.getString("chqamt")):rs.getString("cashamount"));
-        		chqAmount=(rs.getString("incomeadjustmentamount")==null?"0":rs.getString("incomeadjustmentamount"));
+            	dateandVoucher=(element[7].toString()==null)?"&nbsp;":element[7].toString();
+        		amount=(element[5].toString()==null?(element[6].toString()==null?"0":element[6].toString()):element[5].toString());
+        		chqAmount=(element[10].toString()==null?"0":element[10].toString());
         		dBean.setAmount(numberToString(amount).toString());
         		dBean.setChequeAmount(numberToString(chqAmount).toString());
 
-        		if(rs.getString("income")!= null)
-            		income=rs.getString("income");
+        		if(element[8].toString()!= null)
+            		income=element[8].toString();
 	         	else
 	         		income="&nbsp;";
             	
-            	if(rs.getString("year")!= null)
-            		fYear=rs.getString("year");
+            	if(element[9].toString()!= null)
+            		fYear=element[9].toString();
 	         	else
 	         		fYear="&nbsp;";
              	

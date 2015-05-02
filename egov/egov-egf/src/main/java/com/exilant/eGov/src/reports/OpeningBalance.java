@@ -43,15 +43,15 @@
  */
 package com.exilant.eGov.src.reports;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
-
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
@@ -59,9 +59,8 @@ import com.exilant.exility.common.TaskFailedException;
 public class OpeningBalance
 {
 
-	Connection con;
-	ResultSet resultset;
-	PreparedStatement pstmt=null;
+	List<Object[]> resultset;
+	Query pstmt=null;
 	private String fundId="",finYear="",deptId="";
 	private double grandTotalDr=0.0,grandTotalCr=0.0;
 	private String fund="",checkFund="";
@@ -75,13 +74,6 @@ public class OpeningBalance
 	//	This method is called by the OpeningBalance.jsp
 	public ArrayList getOBReport(OpeningBalanceInputBean OPBean) throws TaskFailedException
 	{
-		try{
-			con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
-
-		}
-		catch(Exception exception){
-			LOGGER.error("Could Not Get Connection",exception);
-		}
 		//String asOnDate1=OPBean.getAsOnDate();
 		//isCurDate(con,asOnDate1);
 		try{
@@ -133,7 +125,7 @@ public class OpeningBalance
 
 		try {
 			OpeningBalanceBean ob = null;
-			pstmt = con.prepareStatement(query);
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
 			int i = 1;
 			pstmt.setString(i++, finYear);
 			if (!fundId.equalsIgnoreCase("")) {
@@ -142,9 +134,9 @@ public class OpeningBalance
 			if (!deptId.equalsIgnoreCase("")) {
 				pstmt.setString(i++, deptId);
 			}
-			resultset = pstmt.executeQuery();
-			while (resultset.next()) {
-				if (!checkFund.equalsIgnoreCase(resultset.getString("fund"))
+			resultset = pstmt.list();
+			for(Object[] element : resultset){
+				if (!checkFund.equalsIgnoreCase(element[0].toString())
 						&& !checkFund.equalsIgnoreCase("")) {
 					OpeningBalanceBean opeBalDiff = new OpeningBalanceBean();
 					opeBalDiff.setFund("&nbsp;");
@@ -182,12 +174,12 @@ public class OpeningBalance
 					totalDr=0.0;totalCr=0.0;
 				}
 				//if(LOGGER.isDebugEnabled())     LOGGER.debug("totalDr  "+totalDr+"  totalCr  "+totalCr);
-				fund=resultset.getString("fund");
-				glcode=resultset.getString("accountcode");
-				name=resultset.getString("accountname");
-				narration=formatStringToFixedLength(resultset.getString("narration"),30);
-				debit=resultset.getDouble("debit");
-				credit=resultset.getDouble("credit");
+				fund=element[0].toString();
+				glcode=element[1].toString();
+				name=element[2].toString();
+				narration=formatStringToFixedLength(element[3].toString(),30);
+				debit=Double.parseDouble(element[4].toString());
+				credit=Double.parseDouble(element[5].toString());
 				ob=new OpeningBalanceBean();
 				ob.setFund(fund);
 				ob.setAccCode(glcode);
@@ -262,7 +254,7 @@ public class OpeningBalance
 
 
 		}
-		catch(SQLException e)
+		catch(Exception e)
 		{
 			LOGGER.error("Error in getReport",e);
 			throw new SQLException();

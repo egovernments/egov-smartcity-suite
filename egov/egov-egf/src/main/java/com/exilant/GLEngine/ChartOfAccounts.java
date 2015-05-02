@@ -327,7 +327,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc) throws TaskFai
    		//return checkAllMasters(dc,con);
    		return true;
    }
-   public boolean validateGLCode(Transaxtion txn,Connection con) throws Exception{
+   public boolean validateGLCode(Transaxtion txn) throws Exception{
 		// validate each gl code
    	if(LOGGER.isInfoEnabled())     LOGGER.info("Inside the ValidateGLCode1");
 		GLAccount glAcc=(GLAccount)getGlAccountCodes().get(txn.getGlCode());
@@ -478,7 +478,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc) throws TaskFai
 		}
    		return true;
 	}
-	private boolean validateTxns(Transaxtion txnList[],Connection con)throws Exception{
+	private boolean validateTxns(Transaxtion txnList[])throws Exception{
 		// validate the array list for the total number of txns
 		if(txnList.length<2){
 			return false;
@@ -488,7 +488,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc) throws TaskFai
 		try{
 			for(int i=0;i<txnList.length;i++){
 				Transaxtion txn=(Transaxtion)txnList[i];
-				if(!validateGLCode(txn,con))return false;
+				if(!validateGLCode(txn))return false;
 				dbAmt+=Double.parseDouble(txn.getDrAmount());
 				crAmt+=Double.parseDouble(txn.getCrAmount());
 			}
@@ -623,7 +623,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc) throws TaskFai
 	   }
 	   return true;
    }
-    public boolean postTransaxtions(Transaxtion txnList[],Connection con,String vDate)throws Exception,ValidationException
+    public boolean postTransaxtions(Transaxtion txnList[],String vDate)throws Exception,ValidationException
    	{
    		if(!checkBudget(txnList))
    			throw new Exception("Budgetary check is failed");
@@ -637,7 +637,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc) throws TaskFai
       		if(!validPeriod(vDate)){
 		    	throw new TaskFailedException("Voucher Date is not within an open period. Please use an open period for posting");
 			}
-			if(!validateTxns(txnList,con))
+			if(!validateTxns(txnList))
 				return false;
 		}catch(Exception e){
 			LOGGER.error(e.getMessage(), e);

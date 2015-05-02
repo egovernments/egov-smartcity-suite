@@ -1000,7 +1000,6 @@ public class CreateVoucher {
 	 public CVoucherHeader createVoucher(HashMap<String, Object> headerdetails,List<HashMap<String,Object>> accountcodedetails,List<HashMap<String,Object>> subledgerdetails)throws EGOVRuntimeException {
 		 CVoucherHeader vh;
 		 Vouchermis mis;
-		 Connection conn ;
 		 if(LOGGER.isDebugEnabled())     LOGGER.debug("start | createVoucher API");
 		 try{
 			 validateMandateFields(headerdetails);
@@ -1020,7 +1019,7 @@ public class CreateVoucher {
 			 Transaxtion txnList[]=new Transaxtion[transactions.size()];
 			 txnList=(Transaxtion[])transactions.toArray(txnList);
 			 SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
-			 if(!engine.postTransaxtions(txnList, null,formatter.format(vh.getVoucherDate())))
+			 if(!engine.postTransaxtions(txnList,formatter.format(vh.getVoucherDate())))
 			 {
 				 throw new EGOVRuntimeException("Voucher creation Failed");
 			 }
@@ -2221,10 +2220,8 @@ public class CreateVoucher {
 	 {
 		 try
 		 {
-			//This fix is for Phoenix Migration.
-			 Connection conn = null;
 			 //delete the existing voucherdetail, gl entries.
-			 deleteVoucherdetailAndGL(conn,vh);
+			 deleteVoucherdetailAndGL(vh);
 
 			 HashMap<String,Object> detailMap = null;
 			 HashMap<String,Object> subledgerMap = null;
@@ -2266,7 +2263,7 @@ public class CreateVoucher {
 			 Transaxtion txnList[]=new Transaxtion[transactions.size()];
 			 txnList=(Transaxtion[])transactions.toArray(txnList);
 			 SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
-			 if(!engine.postTransaxtions(txnList, conn,formatter.format(vh.getVoucherDate())))
+			 if(!engine.postTransaxtions(txnList,formatter.format(vh.getVoucherDate())))
 			 {
 				 throw new RBACException("Voucher creation Failed");
 			 }
@@ -2276,7 +2273,7 @@ public class CreateVoucher {
 			 throw new EGOVRuntimeException(e.getMessage());
 		 }
 	 }
-	 public void deleteVoucherdetailAndGL(Connection con,CVoucherHeader vh) throws SQLException,EGOVRuntimeException
+	 public void deleteVoucherdetailAndGL(CVoucherHeader vh) throws SQLException,EGOVRuntimeException
 	 {
 		 try
 		 {
@@ -2433,8 +2430,7 @@ public class CreateVoucher {
 			 Transaxtion txnList[]=new Transaxtion[transactions.size()];
 			 txnList=(Transaxtion[])transactions.toArray(txnList);
 			 //SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
-			 Connection con = null;
-			 if(!engine.postTransaxtions(txnList,con,formatter.format(reversalVoucher.getVoucherDate())))
+			 if(!engine.postTransaxtions(txnList,formatter.format(reversalVoucher.getVoucherDate())))
 			 {
 				 throw new EGOVRuntimeException("Voucher Reversal Failed");
 			 }

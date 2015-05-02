@@ -67,7 +67,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EGovConfig;
-
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.eGov.src.transactions.CommonMethodsImpl;
@@ -79,8 +80,9 @@ public class RPReport
 {	
 	private final static String errConnOpenString = "Unable to get a connection from Pool Please make sure that the connection pool is set up properly";
 	Statement statement;
-	ResultSet resultset;
+	List<Object[]> resultset;
 	TaskFailedException taskExc;
+	Connection conn;
 	String effFilter;
 	public String reqFundId[];
 	public String reqFundName[];
@@ -91,7 +93,6 @@ public class RPReport
 	public String startDate = "", endDate = "", prevStartDate = "", prevEndDate = "",fundId = "", obStartDate = "", obEndDate = "", period = "", prevObEndDate;
 	EGovernCommon egc = new EGovernCommon();
 	CommonMethodsImpl cm = new CommonMethodsImpl();
-	Connection conn;
 	List col1 = new ArrayList();
 	List col2 = new ArrayList();
 	List fundList = new ArrayList();	
@@ -115,14 +116,6 @@ public class RPReport
 		//reqFundId
 		totalPrevRcpt = new BigDecimal("0.00");
 		totalPrevPymnt = new BigDecimal("0.00");
-		try
-		{
-			conn = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
-		} 
-		catch (Exception exception)
-		{
-			throw new DatabaseConnectionException(errConnOpenString, exception);
-		}
 		period = reportBean.getPeriod();
 		month = reportBean.getMonth();
 		fundId=reportBean.getFundId();
@@ -132,7 +125,7 @@ public class RPReport
 		
 		try
 		{
-			cashCode = cm.getCodeName(cashPId, conn).split("#");
+			cashCode = cm.getCodeName(cashPId).split("#");
 		} 
 		catch (Exception exception)
 		{
@@ -140,7 +133,7 @@ public class RPReport
 		}
 		int finId = Integer.parseInt(year);
 		int nextYear;
-		startDate = cf.getStartDate(conn, finId);
+		startDate = cf.getStartDate( finId);
 		obStartDate = startDate;
 		nextYear = Integer.parseInt(startDate.split("/")[2]) + 1;
 		prevStartDate = startDate.split("/")[0] + "/" + startDate.split("/")[1]+ "/" + (Integer.parseInt(startDate.split("/")[2]) - 1);
@@ -149,7 +142,7 @@ public class RPReport
 			if(toDate!=null)
 				endDate=toDate;
 			else
-				endDate = cf.getEndDate(conn, finId);
+				endDate = cf.getEndDate(finId);
 			prevEndDate = endDate.split("/")[0] + "/" + endDate.split("/")[1]+ "/" + (Integer.parseInt(endDate.split("/")[2]) - 1);
 		} 
 		else if (period.equals("2"))
@@ -178,7 +171,7 @@ public class RPReport
 		}
 		if(LOGGER.isInfoEnabled())     LOGGER.info("satrtDate:" + startDate + " endDate:" + endDate+ " prevStartDate:" + prevStartDate + " prevEndDate:"+ prevEndDate);
 
-		if (isCurDate(conn, endDate) == -1)
+		if (isCurDate(endDate) == -1)
 		{
 			endDate = egc.getCurrentDate();
 			if (period.equals("3"))
@@ -200,11 +193,11 @@ public class RPReport
 			if(StringUtils.isNotEmpty(reportBean.getScheduleNo())){
 				return (ArrayList)getRPSchedule(amountIn, reportBean.getScheduleNo());
 			}
-			getFundList(conn,dtformatter.format(sdf.parse(prevStartDate)), dtformatter.format(sdf.parse(prevEndDate)));
+			getFundList(dtformatter.format(sdf.parse(prevStartDate)), dtformatter.format(sdf.parse(prevEndDate)));
 			//if(LOGGER.isDebugEnabled())     LOGGER.debug("reqFundId length==============="+reqFundId.length);
-			getPrevYearReport(conn,dtformatter.format(sdf.parse(prevStartDate)), dtformatter.format(sdf.parse(prevEndDate)),cashCode, maxCodeLength, minorCodeLength, amountIn, reqFundId);
+			getPrevYearReport(null,dtformatter.format(sdf.parse(prevStartDate)), dtformatter.format(sdf.parse(prevEndDate)),cashCode, maxCodeLength, minorCodeLength, amountIn, reqFundId);
 			
-			getFundList(conn,dtformatter.format(sdf.parse(startDate)),dtformatter.format(sdf.parse(endDate)));
+			getFundList(dtformatter.format(sdf.parse(startDate)),dtformatter.format(sdf.parse(endDate)));
 			//if(LOGGER.isDebugEnabled())     LOGGER.debug("reqFundId length second ==============="+reqFundId.length);
 			CallableStatement cstmt = conn.prepareCall("{? = call EGF_REPORT.RCPPYMNT(?, ?, ?, ?)}");
 			cstmt.setFetchSize(1000);
@@ -219,28 +212,28 @@ public class RPReport
 			HashMap data = new HashMap();				 
 			String rcptQuery="select distinct RECEIPTSCHEDULEID from chartofaccounts where glcode=?";
 			if(LOGGER.isInfoEnabled())     LOGGER.info("rcptQuery-->"+rcptQuery);
-			PreparedStatement psmt=conn.prepareStatement(rcptQuery);
+			Query psmt=HibernateUtil.getCurrentSession().createSQLQuery(rcptQuery);
 			psmt.setString(1,cashCode[0].substring(0,minorCodeLength));
-			ResultSet rsRcpt = psmt.executeQuery();
+			List<Object[]> rsRcpt = psmt.list();
 			String cashOBScheduleId=null;
 			String cashOBScheduleNo="";
 			String cashOBScheduleName="";
-			while(rsRcpt.next())
-				cashOBScheduleId=rsRcpt.getString("RECEIPTSCHEDULEID");
+			for(Object[] element : rsRcpt){
+				cashOBScheduleId=element[0].toString();
+			}
 			
 			BigDecimal rowTotal=new BigDecimal("0.00");
 			if(cashOBScheduleId!=null)
 			{
 				String schQuery="select schedule, schedulename from schedulemapping where id= ?";
 				if(LOGGER.isInfoEnabled())     LOGGER.info("schQuery-->"+schQuery);
-				PreparedStatement psmt1=conn.prepareStatement(schQuery);
+				Query psmt1=HibernateUtil.getCurrentSession().createSQLQuery(schQuery);
 				psmt1.setString(1,cashOBScheduleId);
-				ResultSet rsSch = psmt1.executeQuery();
+				List<Object[]> rsSch = psmt1.list();
 										
-				if(rsSch.next())
-				{
-					cashOBScheduleNo=rsSch.getString("schedule");
-					cashOBScheduleName=rsSch.getString("schedulename");
+				for(Object[] element : rsSch){
+					cashOBScheduleNo=element[0].toString();
+					cashOBScheduleName=element[1].toString();
 				}
 				data = new HashMap();
 				data.put("accountCode", cashCode[0].substring(0,maxCodeLength));
@@ -285,13 +278,13 @@ public class RPReport
 					dt = sdf.parse(obStartDate);
 					obStartDate=dtformatter.format(dt);
 					if(LOGGER.isInfoEnabled())     LOGGER.info("R-01 obStartDate:"+obStartDate+" obEndDate:"+obEndDate);
-					getOpeningBalanceForCash(conn,"","A","",cashCode[0].substring(0,maxCodeLength),Integer.toString(minorCodeLength),obStartDate,obEndDate,1,reqFundId,opBal);			
+					getOpeningBalanceForCash("","A","",cashCode[0].substring(0,maxCodeLength),Integer.toString(minorCodeLength),obStartDate,obEndDate,1,reqFundId,opBal);			
 				}
 				else
 				{			
 					Date dt=sdf.parse(startDate);
 					startDate=dtformatter.format(dt);
-					cf.getOpeningBalance(conn,"","A","",Integer.toString(minorCodeLength),startDate,startDate,1,reqFundId,opBal);
+					cf.getOpeningBalance("","A","",Integer.toString(minorCodeLength),startDate,startDate,1,reqFundId,opBal);
 				}
 				if(LOGGER.isInfoEnabled())     LOGGER.info("opbal:"+opBal);
 				String query1="select distinct rowconcat('select distinct glcode from chartofaccounts coa1,schedulemapping sm1 where "
@@ -303,13 +296,12 @@ public class RPReport
 				 String cashAccCode=null;
 				 try 
 				 {
-					 PreparedStatement pst=conn.prepareStatement(query1,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);	
+					 Query pst=HibernateUtil.getCurrentSession().createSQLQuery(query1);	
 					 pst.setString(1,cashOBScheduleId);
-			         ResultSet rs1=pst.executeQuery();
-			         while(rs1.next())
-			         {		             
-			        	 cashAccCode=rs1.getString(1);
-			        	 StringTokenizer accList=new StringTokenizer(rs1.getString(1),",");
+					 List<Object[]> rs1=pst.list();
+					 for(Object[] element : rs1){		             
+			        	 cashAccCode=element[0].toString();
+			        	 StringTokenizer accList=new StringTokenizer(element[0].toString(),",");
 			        	 while(accList.hasMoreTokens())
 			        	 {
 			        		 String accntCode=accList.nextToken();		                 
@@ -329,10 +321,8 @@ public class RPReport
 			        		 }//end if		                  
 			        	 }//end while		            
 			         }//end while		        
-			         rs1.close();
-			         pst.close();
 				 }
-				 catch(SQLException e)
+				 catch(Exception e)
 				 {
 					 LOGGER.error("Error in getOBForCashAndBank");
 					 throw taskExc; 
@@ -354,11 +344,11 @@ public class RPReport
 			     if(period.equalsIgnoreCase("3"))
 			     {		    	 
 			    	 //cf.getOpeningBalance(conn,"","A","",Integer.toString(minorCodeLength),dtformatter.format(sdf.parse(startDate)),dtformatter.format(sdf.parse(startDate)),1,reqFundId,prevOpBal);			    	 
-			    	 getOpeningBalanceForCash(conn,"","A","",cashCode[0].substring(0,maxCodeLength),Integer.toString(minorCodeLength),dtformatter.format(sdf.parse(prevStartDate)),dtformatter.format(sdf.parse(prevObEndDate)),1,reqFundId,prevOpBal);
+			    	 getOpeningBalanceForCash("","A","",cashCode[0].substring(0,maxCodeLength),Integer.toString(minorCodeLength),dtformatter.format(sdf.parse(prevStartDate)),dtformatter.format(sdf.parse(prevObEndDate)),1,reqFundId,prevOpBal);
 			     }
 			     else		    	 
 				 {
-			    	 cf.getOpeningBalance(conn,"","A","",Integer.toString(minorCodeLength),dtformatter.format(sdf.parse(prevStartDate)),dtformatter.format(sdf.parse(prevStartDate)),1,reqFundId,prevOpBal);
+			    	 cf.getOpeningBalance("","A","",Integer.toString(minorCodeLength),dtformatter.format(sdf.parse(prevStartDate)),dtformatter.format(sdf.parse(prevStartDate)),1,reqFundId,prevOpBal);
 				 }
 			     BigDecimal prevCashBal=new BigDecimal("0.00");
 			     while(accList.hasMoreTokens())
@@ -437,11 +427,12 @@ public class RPReport
 						rcptSchedulename = rs.getString("schedulename");	
 					rcptQuery="select distinct glcode from chartofaccounts where RECEIPTSCHEDULEID=?";
 					if(LOGGER.isInfoEnabled())     LOGGER.info("rcptQuery-->"+rcptQuery);
-					PreparedStatement psmt2=conn.prepareStatement(rcptQuery);
+					Query psmt2=HibernateUtil.getCurrentSession().createSQLQuery(rcptQuery);
 					psmt2.setString(1, rcptScheduleId);
-					rsRcpt = psmt2.executeQuery();
-					if(rsRcpt.next())
-						rcptAccountCode=rsRcpt.getString("glcode").substring(0,maxCodeLength);
+					rsRcpt = psmt2.list();
+					for(Object[] element : rsRcpt){
+						rcptAccountCode=element[0].toString().substring(0,maxCodeLength);
+					}
 						
 					data.put("accountCode", rcptAccountCode);
 					data.put("schedulename", rcptSchedulename);
@@ -476,7 +467,6 @@ public class RPReport
 						} 
 					}
 					col1.add(data);	
-					psmt2.close();
 				}							
 				else if(rs.getString("repsubtype").equalsIgnoreCase("RNOP"))
 				{	
@@ -488,12 +478,13 @@ public class RPReport
 						rcptSchedulename = rs.getString("schedulename");	
 					rcptQuery="select distinct glcode from chartofaccounts where RECEIPTSCHEDULEID=?";
 					if(LOGGER.isInfoEnabled())     LOGGER.info("rcptQuery-->"+rcptQuery);
-					PreparedStatement psmt2=conn.prepareStatement(rcptQuery);
+					Query psmt2=HibernateUtil.getCurrentSession().createSQLQuery(rcptQuery);
 					if(LOGGER.isInfoEnabled())     LOGGER.info("rcptQuery-->"+rcptQuery);
 					psmt2.setString(1,rcptScheduleId);
-					rsRcpt = psmt2.executeQuery();
-					if(rsRcpt.next())
-						rcptAccountCode=rsRcpt.getString("glcode").substring(0,maxCodeLength);
+					rsRcpt = psmt2.list();
+					for(Object[] element : rsRcpt){
+						rcptAccountCode=element[0].toString().substring(0,maxCodeLength);
+					}
 					
 					if(!prevRcptSubHead.equals("Non-Operating Receipts"))
 					{
@@ -554,22 +545,23 @@ public class RPReport
 						pymntScheduleId=rs.getString("paymentscheduleid");
 					String pymntQuery="select distinct glcode from chartofaccounts where PAYMENTSCHEDULEID=?";
 					if(LOGGER.isInfoEnabled())     LOGGER.info("pymntQuery-->"+pymntQuery);
-					psmt = conn.prepareStatement(pymntQuery);
+					psmt = HibernateUtil.getCurrentSession().createSQLQuery(pymntQuery);
 					psmt.setString(1,pymntScheduleId);
-					ResultSet rsPymnt = psmt.executeQuery();
-					if(rsPymnt.next())
-						pymntAccountCode=rsPymnt.getString("glcode").substring(0,maxCodeLength);
-									
+					List<Object[]> rsPymnt = psmt.list();
+					for(Object[] element : rsPymnt){
+						pymntAccountCode=element[0].toString().substring(0,maxCodeLength);
+					}
 					String remissionQuery="select isremission from schedulemapping where id=?";
 					if(LOGGER.isInfoEnabled())     LOGGER.info("remissionQuery-->"+remissionQuery);
-					psmt = conn.prepareStatement(remissionQuery);
+					psmt = HibernateUtil.getCurrentSession().createSQLQuery(remissionQuery);
 					psmt.setString(1,pymntScheduleId);
-					ResultSet rsRemission = psmt.executeQuery();
-					if(rsRemission.next()&& rsRemission.getString("isremission")!=null && rsRemission.getString("isremission").equals("1"))
+					List<Object[]> rsRemission = psmt.list();
+					for(Object[] element : rsRemission){
+					if(element[0].toString().equals("1"))
 					{
 						pymntAccountCode="*";
 					}
-					psmt.close();
+					}
 					
 					if (rs.getString("schedule") != null)
 						pymntScheduleNo = rs.getString("schedule");
@@ -615,11 +607,12 @@ public class RPReport
 						pymntScheduleId=rs.getString("paymentscheduleid");
 					String pymntQuery="select distinct glcode from chartofaccounts where PAYMENTSCHEDULEID=?";
 					if(LOGGER.isInfoEnabled())     LOGGER.info("pymntQuery-->"+pymntQuery);
-					PreparedStatement psmt1=conn.prepareStatement(pymntQuery);
+					Query psmt1=HibernateUtil.getCurrentSession().createSQLQuery(pymntQuery);
 					psmt1.setString(1,pymntScheduleId);
-					ResultSet rsPymnt = psmt1.executeQuery();
-					if(rsPymnt.next())
-						pymntAccountCode=rsPymnt.getString("glcode").substring(0,maxCodeLength);
+					List<Object[]> rsPymnt = psmt1.list();
+					for(Object[] element : rsPymnt){
+						pymntAccountCode=element[0].toString().substring(0,maxCodeLength);
+					}
 					
 					if(!prevPymntSubHead.equals("Non-Operating Payments"))
 					{					
@@ -914,7 +907,7 @@ public class RPReport
 	 
 	// check whether report date is less than toda'y date if so return 1 else -1
 	// if equal 0
-	public int isCurDate(Connection conn, String VDate)throws TaskFailedException
+	public int isCurDate(String VDate)throws TaskFailedException
 	{
 		int ret;
 		try
@@ -943,9 +936,9 @@ public class RPReport
 		return ret;
 	}
 
-	public void getFundList(Connection conn,String fromDate,String toDate) throws SQLException
+	public void getFundList(String fromDate,String toDate) throws SQLException
 	{
-		PreparedStatement psmt=null;
+		Query psmt=null;
 		try
 		{
 			//String query = "select distinct id,name from fund where id in (select fundid from voucherheader)";
@@ -957,53 +950,45 @@ public class RPReport
 			if(LOGGER.isInfoEnabled())     LOGGER.info("Voucher Date"+fromDate);
 			if(LOGGER.isInfoEnabled())     LOGGER.info("Voucher Date"+toDate);
 			if(LOGGER.isInfoEnabled())     LOGGER.info("getFundList: " + query);
-			psmt = conn.prepareStatement(query,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+			psmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
 			psmt.setString(1,fromDate);
 	    	psmt.setString(2,toDate);
 	    	//psmt.setString(3,fundId);
-			resultset = psmt.executeQuery();  
+	    	List<Object[]> resultset = psmt.list();  
 			   
 			int resSize = 0, i = 0;
 			if(fundId==null){
-			if (resultset.last())
-				resSize = resultset.getRow();
+				resSize = resultset.size();
 			reqFundId = new String[resSize];
 			reqFundName = new String[resSize];
-			resultset.beforeFirst();
-			while (resultset.next())
-				{
-					reqFundId[i] = resultset.getString(1);
-					reqFundName[i] = resultset.getString(2);
+			for(Object[] element : resultset){
+					reqFundId[i] = element[0].toString();
+					reqFundName[i] = element[1].toString();
 					i += 1;
 				}
 			}else{
 				reqFundId = new String[1];
 				reqFundName = new String[1];
-				while (resultset.next())
-				{
-					if(resultset.getString(1).equals(fundId)){
-					reqFundId[i] = resultset.getString(1);
-					reqFundName[i] = resultset.getString(2);
+				for(Object[] element : resultset){
+					if(element[0].toString().equals(fundId)){
+					reqFundId[i] = element[0].toString();
+					reqFundName[i] = element[1].toString();
 					//i += 1;
 					}
 				}
 			}
 		} 
-		catch (SQLException e)     
+		catch (Exception e)     
 		{
 			LOGGER.error("Error in getting fund list"+e.getMessage());
 			throw new SQLException();
 		}
-	 catch (Exception e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
 	}
 	
-	 public void getOpeningBalanceForCash(Connection conn,String fundId, String type1,String type2,String cashCode, String substringVal, String startDate, String endDate, int classification,String reqFundId1[],HashMap openingBal)throws Exception
+	 public void getOpeningBalanceForCash(String fundId, String type1,String type2,String cashCode, String substringVal, String startDate, String endDate, int classification,String reqFundId1[],HashMap openingBal)throws Exception
 	 {
 		 String fundCondition="", tillDateOB="";
-		 PreparedStatement psmt=null;
+		 Query psmt=null;
 	     if(!fundId.equalsIgnoreCase(""))
 	     {
 	    	 System.out.println("Helllo m in>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
@@ -1026,9 +1011,9 @@ public class RPReport
 	     if(LOGGER.isInfoEnabled())     LOGGER.info("getOpeningBalanceForCash query "+query);
 	     try
 	     {   
-	    	 cf.getFundList(conn,fundId,startDate, endDate);
+	    	 cf.getFundList(fundId,startDate, endDate);
 	    	 int j=1;
-	    	 psmt = conn.prepareStatement(query);
+	    	 psmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
 	    	 psmt.setString(j++,startDate);
 	    	 psmt.setString(j++,endDate);
 	    	 if(!fundCondition.equalsIgnoreCase("")){
@@ -1039,14 +1024,13 @@ public class RPReport
 	    	 if(!fundCondition.equalsIgnoreCase("")){
 		    	 psmt.setString(j++,fundId);
 		    }
-	    	 resultset = psmt.executeQuery();
+	    	 List<Object[]>  resultset = psmt.list();
 	    	 Double opeBal = null;
 	    	 HashMap openingBalsubList = null;
-	    	 while(resultset.next())
-	    	 {
-	    		 glcode=resultset.getString("glcode");
-	    		 fuId=resultset.getString("fundid");
-	    		 opeBal=resultset.getDouble("amount");
+	    	 for(Object[] element : resultset){
+	    		 glcode=element[0].toString();
+	    		 fuId=element[1].toString();
+	    		 opeBal=Double.parseDouble(element[2].toString());
 	    		 if(!openingBal.containsKey(glcode))
 	    		 {
 	    			 openingBalsubList=new HashMap();
@@ -1064,7 +1048,6 @@ public class RPReport
 	    			 ((HashMap)openingBal.get(glcode)).put(fuId,opeBal);
 	    		 } 
 	    	 }
-	    	 psmt.close();
         }
         catch(Exception e)
         {
@@ -1202,15 +1185,14 @@ public class RPReport
 	     if(LOGGER.isDebugEnabled())     LOGGER.debug("getOtherReceiptsOrPayments query "+query);
 	     try
 	     {	            
-	    	 PreparedStatement psmt=conn.prepareStatement(query);
+	    	 Query psmt=HibernateUtil.getCurrentSession().createSQLQuery(query);
 	    	 psmt.setString(1, startDate);
 	    	 psmt.setString(2, endDate);
-	    	 resultset = psmt.executeQuery();
+	    	 resultset = psmt.list();
 	    	 Double amount = null;            
-	    	 while(resultset.next())
-	    	 {	               
-	    		 fuId=resultset.getString("fundid");
-	    		 amount=resultset.getDouble("amount");	    		 
+	    	 for(Object[] element : resultset){              
+	    		 fuId=element[0].toString();
+	    		 amount=Double.parseDouble(element[1].toString());	    		 
 	    		 for(int i=0;i<reqFundId.length;i++)
 	    		 {
 	    			 if(reqFundId[i].equalsIgnoreCase(fuId))
@@ -1230,18 +1212,17 @@ public class RPReport
 	 Boolean addSlNoRow = true;
 	 List getRPSchedule(String amountIn, String scheduleNo)throws TaskFailedException,SQLException,ParseException{
 		 List dataList = new ArrayList();
-		 ResultSet rs=null;
-		 getFundList(conn,dtformatter.format(sdf.parse(startDate)), dtformatter.format(sdf.parse(endDate)));
+		 List<Object[]> rs=null;
+		 getFundList(dtformatter.format(sdf.parse(startDate)), dtformatter.format(sdf.parse(endDate)));
 		 if(scheduleNo.equals("viewAllSchedules")){
-				 statement =conn.createStatement();
-				 rs=statement.executeQuery("select id,schedule  schedule from schedulemapping where reporttype='RP' order by schedule");
+				 rs=HibernateUtil.getCurrentSession().createSQLQuery("select id,schedule  schedule from schedulemapping where reporttype='RP' order by schedule").list();
 				 //rs=statement.executeQuery("select id,schedule  schedule from schedulemapping where reporttype='RP' and schedule in('R-01','R-37') order by schedule");
 				 if(LOGGER.isInfoEnabled())     LOGGER.info("All schedules SQL:"+"select id,schedule from schedulemapping where reporttype='RP' order by schedule");
-				 while(rs.next()){
-					 if(rs.getString("schedule").equals(scheduleR_01) || rs.getString("schedule").equals(scheduleR_37)){
-						 dataList.addAll(getRP_R01_R37_Schedule(amountIn, rs.getString("schedule")));
+				 for(Object[] element : rs){
+					 if(element[1].toString().equals(scheduleR_01) || element[1].toString().equals(scheduleR_37)){
+						 dataList.addAll(getRP_R01_R37_Schedule(amountIn, element[1].toString()));
 					 }else{
-						 dataList.addAll(getRPSingleSchedule(amountIn, rs.getString("schedule")));
+						 dataList.addAll(getRPSingleSchedule(amountIn, element[1].toString()));
 					 }
 				 }
 			 }else if(scheduleNo.equals(scheduleR_01)){
@@ -1259,13 +1240,13 @@ public class RPReport
  */
 	 List getRPSingleSchedule(String amountIn, String scheduleNo)throws TaskFailedException,SQLException,ParseException{
 		 List dataList = new ArrayList();
-		 PreparedStatement psmt=null;
+		 Query psmt=null;
 		 try{
 			 
 			 String sql=getRPScheduleSQL(scheduleNo);
 			 if(LOGGER.isInfoEnabled())     LOGGER.info("Inside RPSingleSchedule");
-			 psmt =conn.prepareStatement(sql);
-			 resultset=psmt.executeQuery();
+			 psmt =HibernateUtil.getCurrentSession().createSQLQuery(sql);
+			 resultset=psmt.list();
 
 			 BigDecimal rowTotal = BigDecimal.ZERO;
 			 BigDecimal amt = BigDecimal.ZERO;
@@ -1273,28 +1254,28 @@ public class RPReport
 			 Boolean addHeaderRow = true;
 			 BigDecimal[] fundTotals = new BigDecimal[reqFundId.length];
 			 BigDecimal prevYearTotals=BigDecimal.ZERO;
-			 while(resultset.next()){
+			 for(Object[] element : resultset){
 				 if(addSlNoRow){
 					 dataList.add(putColNoToRPSchedule());
 					 addSlNoRow=false;
 				 }
 				 if(addHeaderRow){
 					 //dataList.add(putColNoToRPSchedule());
-					 dataList.add(putScheduleNoNameToRPSchedule( resultset.getString("schedule"), resultset.getString("schedulename")));
+					 dataList.add(putScheduleNoNameToRPSchedule( element[1].toString(), element[2].toString()));
 					 addHeaderRow=false;
 				 }
 				 Map map = new HashMap();
 				 //map.put("rowHeader", "rowHeader");
-				 map.put("accountcode", resultset.getString("glcode"));
-				 map.put("particulars", resultset.getString("coaname"));
+				 map.put("accountcode", element[5].toString());
+				 map.put("particulars", element[6].toString());
 				 for(int i=0;i<reqFundId.length;i++){
-					 amt=resultset.getBigDecimal(reqFundName[i]);
+					 //Phoenix amt=resultset.getBigDecimal(reqFundName[i]);
 					 map.put(reqFundName[i],cf.formatAmt(amt.toPlainString(),amountIn) );
 					 rowTotal = rowTotal.add(amt);
 					 fundTotals[i]=fundTotals[i]==null?BigDecimal.ZERO.add(amt):fundTotals[i].add(amt);
 				 }
 				 map.put("total", cf.formatAmt(rowTotal.toPlainString(),amountIn));
-				 amt=resultset.getBigDecimal("PrevYearTotal");
+				 amt=new BigDecimal(element[8].toString());
 				 map.put("prevYearTotal",cf.formatAmt(amt.toPlainString(),amountIn) );
 				 prevYearTotals=prevYearTotals==null?amt:prevYearTotals.add(amt);
 				 rowTotal=BigDecimal.ZERO;
@@ -1319,8 +1300,6 @@ public class RPReport
 			 throw taskExc;
 		 }finally{
 			 if(resultset!=null){
-				 psmt.close();
-				 resultset.close();				 
 			 }
 		 }
 		 if(LOGGER.isInfoEnabled())     LOGGER.info("dataList.size()---------------->"+dataList.size());
@@ -1335,16 +1314,16 @@ public class RPReport
 	 String getRPScheduleSQL(String scheduleNo)throws TaskFailedException,SQLException,ParseException{
 		 StringBuffer sbRcp=new StringBuffer(3000);
 		 StringBuffer sbPymt=new StringBuffer(3000);
-		 PreparedStatement psmt=null;
+		 Query psmt=null;
 		 String repsubtype="";
 		 String qry="";
 		 try{
 			 qry="select repsubtype from schedulemapping where schedule=?";
-			 psmt = conn.prepareStatement(qry);
+			 psmt = HibernateUtil.getCurrentSession().createSQLQuery(qry);
 			 psmt.setString(1, scheduleNo);
-			 resultset=psmt.executeQuery();
-			if(resultset.next()){
-				repsubtype=resultset.getString(1);
+			 resultset=psmt.list();
+			 for(Object[] element : resultset){
+				repsubtype=element[0].toString();
 			}
 		 }catch(Exception e){
 			 LOGGER.error(e.getMessage(),e);
@@ -1515,7 +1494,7 @@ public class RPReport
 	 List getRP_R01_R37_Schedule(String amountIn, String scheduleNo)throws TaskFailedException,SQLException,ParseException{
 		 List dataList = new ArrayList();
 		 Map opBalance = new HashMap();
-		 PreparedStatement psmt=null;
+		 Query psmt=null;
 		 try {
 			//current year opbalance starts
 			 if(period.equalsIgnoreCase("3"))
@@ -1558,10 +1537,10 @@ public class RPReport
 					obStartDate=dtformatter.format(dt);
 					if(LOGGER.isInfoEnabled())     LOGGER.info(scheduleNo+" obStartDate:"+obStartDate+" obEndDate:"+obEndDate);
 					if(scheduleR_01.equals(scheduleNo)){
-						getOpeningBalanceForCash(conn,"","A","",cashCode[0].substring(0,maxCodeLength),Integer.toString(minorCodeLength),obStartDate,obEndDate,1,reqFundId,(HashMap)opBalance);
+						getOpeningBalanceForCash("","A","",cashCode[0].substring(0,maxCodeLength),Integer.toString(minorCodeLength),obStartDate,obEndDate,1,reqFundId,(HashMap)opBalance);
 					}else{
 						//cf.getOpeningBalance(conn,"","A","",Integer.toString(minorCodeLength),dtformatter.format(sdf.parse(startDate)),dtformatter.format(sdf.parse(endDate)),1,reqFundId,(HashMap)opBalance);
-						getOpeningBalanceForCash(conn,"","A","",cashCode[0].substring(0,maxCodeLength),Integer.toString(minorCodeLength),obStartDate,dtformatter.format(sdf.parse(endDate)),1,reqFundId,(HashMap)opBalance);
+						getOpeningBalanceForCash("","A","",cashCode[0].substring(0,maxCodeLength),Integer.toString(minorCodeLength),obStartDate,dtformatter.format(sdf.parse(endDate)),1,reqFundId,(HashMap)opBalance);
 					}
 				}
 				else
@@ -1569,10 +1548,10 @@ public class RPReport
 					Date dt=sdf.parse(startDate);
 					startDate=dtformatter.format(dt);
 					if(scheduleR_01.equals(scheduleNo)){
-						cf.getOpeningBalance(conn,"","A","",Integer.toString(minorCodeLength),startDate,startDate,1,reqFundId,(HashMap)opBalance);
+						cf.getOpeningBalance("","A","",Integer.toString(minorCodeLength),startDate,startDate,1,reqFundId,(HashMap)opBalance);
 					}else{
 						//cf.getOpeningBalance(conn,"","A","",Integer.toString(minorCodeLength),startDate,dtformatter.format(sdf.parse(endDate)),1,reqFundId,(HashMap)opBalance);
-						getOpeningBalanceForCash(conn,"","A","",cashCode[0].substring(0,maxCodeLength),Integer.toString(minorCodeLength),dtformatter.format(sdf.parse(obStartDate)),dtformatter.format(sdf.parse(endDate)),1,reqFundId,(HashMap)opBalance);
+						getOpeningBalanceForCash("","A","",cashCode[0].substring(0,maxCodeLength),Integer.toString(minorCodeLength),dtformatter.format(sdf.parse(obStartDate)),dtformatter.format(sdf.parse(endDate)),1,reqFundId,(HashMap)opBalance);
 					}
 				}	
 			//current year opbalance ends
@@ -1581,18 +1560,18 @@ public class RPReport
 		     if(period.equalsIgnoreCase("3"))
 		     {		    	 
 		    	 if(scheduleR_01.equals(scheduleNo)){
-		    		 getOpeningBalanceForCash(conn,"","A","",cashCode[0].substring(0,maxCodeLength),Integer.toString(minorCodeLength),dtformatter.format(sdf.parse(prevStartDate)),dtformatter.format(sdf.parse(prevObEndDate)),1,reqFundId,(HashMap)prevOpBal);
+		    		 getOpeningBalanceForCash("","A","",cashCode[0].substring(0,maxCodeLength),Integer.toString(minorCodeLength),dtformatter.format(sdf.parse(prevStartDate)),dtformatter.format(sdf.parse(prevObEndDate)),1,reqFundId,(HashMap)prevOpBal);
 		    	 }else{
-		    		 getOpeningBalanceForCash(conn,"","A","",cashCode[0].substring(0,maxCodeLength),Integer.toString(minorCodeLength),dtformatter.format(sdf.parse(prevStartDate)),dtformatter.format(sdf.parse(prevEndDate)),1,reqFundId,(HashMap)prevOpBal);
+		    		 getOpeningBalanceForCash("","A","",cashCode[0].substring(0,maxCodeLength),Integer.toString(minorCodeLength),dtformatter.format(sdf.parse(prevStartDate)),dtformatter.format(sdf.parse(prevEndDate)),1,reqFundId,(HashMap)prevOpBal);
 		    	 }
 		     }
 		     else		    	 
 			 {
 		    	 if(scheduleR_01.equals(scheduleNo)){
-		    		 cf.getOpeningBalance(conn,"","A","",Integer.toString(minorCodeLength),dtformatter.format(sdf.parse(prevStartDate)),dtformatter.format(sdf.parse(prevStartDate)),1,reqFundId,(HashMap)prevOpBal);
+		    		 cf.getOpeningBalance("","A","",Integer.toString(minorCodeLength),dtformatter.format(sdf.parse(prevStartDate)),dtformatter.format(sdf.parse(prevStartDate)),1,reqFundId,(HashMap)prevOpBal);
 		    	 }else{
 		    		 //cf.getOpeningBalance(conn,"","A","",Integer.toString(minorCodeLength),dtformatter.format(sdf.parse(prevStartDate)),dtformatter.format(sdf.parse(prevEndDate)),1,reqFundId,(HashMap)prevOpBal);
-		    		 getOpeningBalanceForCash(conn,"","A","",cashCode[0].substring(0,maxCodeLength),Integer.toString(minorCodeLength),dtformatter.format(sdf.parse(prevStartDate)),dtformatter.format(sdf.parse(prevEndDate)),1,reqFundId,(HashMap)prevOpBal);
+		    		 getOpeningBalanceForCash("","A","",cashCode[0].substring(0,maxCodeLength),Integer.toString(minorCodeLength),dtformatter.format(sdf.parse(prevStartDate)),dtformatter.format(sdf.parse(prevEndDate)),1,reqFundId,(HashMap)prevOpBal);
 		    	 }
 			 }
 		     if(LOGGER.isInfoEnabled())     LOGGER.info("opbalance:"+opBalance);
@@ -1600,28 +1579,28 @@ public class RPReport
 		   //prev year obbalance ends
 			 String sql="select coa.glcode glcode ,coa.name coaname, sm.schedule schedule,sm.schedulename schedulename, sm.REPSUBTYPE repsubtype from chartofaccounts coa ,schedulemapping sm where sm.id in (receiptscheduleid, paymentscheduleid) and sm.schedule=? order by sm.schedule";
 			 if(LOGGER.isInfoEnabled())     LOGGER.info("getRP"+scheduleNo+"Schedule SQL:"+sql);
-			 psmt = conn.prepareStatement(sql);
+			 psmt = HibernateUtil.getCurrentSession().createSQLQuery(sql);
 			 psmt.setString(1, scheduleNo);
-			 resultset=psmt.executeQuery();	
+			 resultset=psmt.list();	
 			 BigDecimal[] fundTotals = new BigDecimal[reqFundId.length];
 			 BigDecimal totAmt = BigDecimal.ZERO, tempAmt = BigDecimal.ZERO,prevTotAmt=BigDecimal.ZERO;
 			 Boolean addHeaderRow=true;
-			while (resultset.next()){
+			 for(Object[] element : resultset){
 				if(addSlNoRow){
 					 dataList.add(putColNoToRPSchedule());
 					 addSlNoRow=false;
 				 }
 				if(addHeaderRow){
 					 //dataList.add(putColNoToRPSchedule());
-					 dataList.add(putScheduleNoNameToRPSchedule( resultset.getString("schedule"), resultset.getString("schedulename")));
+					 dataList.add(putScheduleNoNameToRPSchedule( element[2].toString(), element[3].toString()));
 					 addHeaderRow=false;
 				 }
 				 Map map = new HashMap(); 
-				map.put("accountcode", resultset.getString("glcode"));
-				 map.put("particulars", resultset.getString("coaname"));
+				map.put("accountcode", element[0].toString());
+				 map.put("particulars", element[1].toString());
 				 totAmt = BigDecimal.ZERO; tempAmt = BigDecimal.ZERO;
 				 for(int i=0;i<reqFundId.length;i++){
-					 tempAmt= new BigDecimal(opBalance.get(resultset.getString("glcode"))==null?"0.00": ((HashMap)(opBalance.get(resultset.getString("glcode")))).get(reqFundId[i]).toString());
+					 tempAmt= new BigDecimal(opBalance.get(element[0].toString())==null?"0.00": ((HashMap)(opBalance.get(element[0].toString()))).get(reqFundId[i]).toString());
 					 map.put(reqFundName[i],cf.formatAmt(tempAmt.toPlainString(),amountIn)  );
 					 totAmt=totAmt.add(tempAmt);
 					 fundTotals[i]=fundTotals[i]==null?BigDecimal.ZERO.add(tempAmt):fundTotals[i].add(tempAmt);
@@ -1630,7 +1609,7 @@ public class RPReport
 				 //prevyear
 				 totAmt = BigDecimal.ZERO; tempAmt = BigDecimal.ZERO;
 				 for(int i=0;i<reqFundId.length;i++){
-					 tempAmt= new BigDecimal(prevOpBal.get(resultset.getString("glcode"))==null?"0.00": ((HashMap)(prevOpBal.get(resultset.getString("glcode")))).get(reqFundId[i]).toString());
+					 tempAmt= new BigDecimal(prevOpBal.get(element[0].toString())==null?"0.00": ((HashMap)(prevOpBal.get(element[0].toString()))).get(reqFundId[i]).toString());
 					// map.put(reqFundName[i],cf.formatAmt(tempAmt.toPlainString(),amountIn)  );
 					 totAmt=totAmt.add(tempAmt);
 					 prevTotAmt=prevTotAmt.add(tempAmt);

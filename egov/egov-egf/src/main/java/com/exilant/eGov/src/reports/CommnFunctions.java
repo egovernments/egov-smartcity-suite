@@ -87,11 +87,10 @@ public class CommnFunctions
      * @param type2         :The type of account code (A,E,L,I)
      * @throws Exception
      */
-    public void getFundList(Connection conn,String fundId,String startDate, String endDate)throws Exception
+    public void getFundList(String fundId,String startDate, String endDate)throws Exception
     {
         String fundCondition="";
         //String fundCondition1="";
-        con=conn;
         if(!fundId.equalsIgnoreCase(""))
         {
             fundCondition=" AND Id=? ";
@@ -139,7 +138,7 @@ public class CommnFunctions
      * @param openingBal    :This parameter is called by reference so it  acts as input & output
      * @throws Exception
      */
-   public void getOpeningBalance(Connection conn,String fundId, String type1,String type2,String substringVal, String startDate, String endDate, int classification,String reqFundId1[],HashMap openingBal)throws Exception
+   public void getOpeningBalance(String fundId, String type1,String type2,String substringVal, String startDate, String endDate, int classification,String reqFundId1[],HashMap openingBal)throws Exception
    {
        String fundCondition="";
         if(!fundId.equalsIgnoreCase(""))
@@ -156,7 +155,7 @@ public class CommnFunctions
         try
         {
         	int j = 1;
-            getFundList(conn,fundId,startDate, endDate);
+            getFundList(fundId,startDate, endDate);
             pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
             pstmt.setString(j++, type2);
             pstmt.setString(j++, type1);
@@ -452,7 +451,7 @@ public class CommnFunctions
    }
 
    
-   public String getStartDate(Connection con,int finYearId)throws TaskFailedException
+   public String getStartDate(int finYearId)throws TaskFailedException
    {
        String startDate="";
        String query="SELECT TO_CHAR(startingdate,'DD/MM/YYYY') FROM FINANCIALYEAR WHERE id= ?";
@@ -479,7 +478,7 @@ public class CommnFunctions
     * @param finYearId
     * @return
     */
-   public String getEndDate(Connection con,int finYearId)throws TaskFailedException
+   public String getEndDate(int finYearId)throws TaskFailedException
    {
        String endDate="";
        String query="SELECT TO_CHAR(endingdate,'DD/MM/YYYY') FROM FINANCIALYEAR WHERE id= ?";
@@ -531,7 +530,7 @@ public class CommnFunctions
     * @param connection
     * @return
     */
-   public String getFYID(String sDate,Connection connection)throws TaskFailedException{
+   public String getFYID(String sDate)throws TaskFailedException{
 	String fyId="";
 	try{
 		String query = "SELECT id FROM financialYear " +
