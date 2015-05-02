@@ -45,9 +45,6 @@
  */
 package com.exilant.eGov.src.transactions;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -66,6 +63,7 @@ import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.exilant.GLEngine.GeneralLedgerBean;
@@ -79,9 +77,8 @@ import com.exilant.exility.common.TaskFailedException;
  */ 
 public class RptSubLedgerSchedule 
 {
-	Connection connection;
 	double totalDr=0.0,totalCr=0.0,totalOpgBal=0.0,totalClosingBal=0.0;
-	ResultSet resultset;	
+	List<Object[]> resultset;	
 	NumberFormat formatter;
 	TaskFailedException taskExc;
 	String glCode,accEntityId,fundId,fyId,deptId;
@@ -93,22 +90,13 @@ public class RptSubLedgerSchedule
     private boolean isStartDateFirstApril = false;
     @Autowired
     private  CommonsService cms;
-    PreparedStatement pst;
+    Query pst;
 	public RptSubLedgerSchedule(){} 
 	
 	//code for SubLedger type
 	public LinkedList getSubLedgerTypeSchedule(GeneralLedgerBean reportBean)
 	throws TaskFailedException
 	{ 
-	    try
-	    {
-	        connection = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();	
-	    }
-	    catch(Exception exception)
-	    {
-	    	LOGGER.error("Error while setting up connection");
-	        throw new TaskFailedException();
-	    }
 	    formatter = new DecimalFormat();
 	    formatter = new DecimalFormat("###############.00");
 	    glCode = reportBean.getGlcode();
@@ -164,14 +152,6 @@ public class RptSubLedgerSchedule
 		{
 	    	LOGGER.error("Exp="+exception.getMessage());
 		}
-	    finally{
-			try{
-				//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(connection,null);
-			}catch(Exception e){
-				LOGGER.error("Error while releasing Connection"+e.getMessage());
-				throw new TaskFailedException();
-			}
-		}
 	   return dataList;
 	}
 	
@@ -222,8 +202,8 @@ public class RptSubLedgerSchedule
 				+"AND accountdetailtypeid= ? AND fundid= ? AND financialyearid= ? "+departmentConditionTran+" GROUP BY ACCOUNTDETAILKEY ORDER BY accountdetailkey) a3 ON a1.detkeyid=a3.detkeyid";
 			
 			int i = 1;
-			pst = connection.prepareStatement(query);
-			pst.setInt(i++, Integer.parseInt(accEntityId));
+			pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
+			pst.setInteger(i++, Integer.parseInt(accEntityId));
 			pst.setString(i++, glCode);
 			pst.setString(i++, startDate);
 			pst.setString(i++, endDate);
@@ -231,7 +211,7 @@ public class RptSubLedgerSchedule
 				pst.setString(i++, deptId);
 			}
 			pst.setString(i++, fundId);
-			pst.setInt(i++, Integer.parseInt(accEntityId));
+			pst.setInteger(i++, Integer.parseInt(accEntityId));
 			pst.setString(i++, glCode);
 			pst.setString(i++, startDate);
 			pst.setString(i++, endDate);
@@ -295,7 +275,7 @@ public class RptSubLedgerSchedule
 					+ " GROUP BY ACCOUNTDETAILKEY ORDER BY accountdetailkey) a3 ON a2.detkeyid=a3.detkeyid";
 			
 			int i = 1;
-			pst = connection.prepareStatement(query);
+			pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
 			pst.setString(i++, accEntityId);
 			pst.setString(i++, glCode);
 			pst.setString(i++, startDate);
@@ -346,14 +326,13 @@ public class RptSubLedgerSchedule
 		if(LOGGER.isInfoEnabled())     LOGGER.info("QUERY..."+query); 
 		try{
 			GeneralLedgerBean gb=null;
-	 		resultset = pst.executeQuery();
+	 		resultset = pst.list();
 			PersistenceService ps = new PersistenceService();
 			//This fix is for Phoenix Migration.
 		//	ps.setSessionFactory(new SessionFactory());
 			Accountdetailtype accountdetailtype = (Accountdetailtype) ps.find(" from Accountdetailtype where id=?", Integer.valueOf(accEntityId));
 			EntityType entity;
-	 		while(resultset.next())
-	 		{
+			for(Object[] element : resultset){
 	 			gb=new GeneralLedgerBean();  
 	 				double openingBal=0.0;
 	    			double closingBal=0.0;    	
@@ -365,11 +344,11 @@ public class RptSubLedgerSchedule
 	    			double creditamount=0.0; 			
 	    			try
 	    			{
-	    				entity =  (EntityType) ps.find(" from "+accountdetailtype.getFullQualifiedName()+ " where id=? ", Integer.valueOf(resultset.getInt("slid")));
+	    				entity =  (EntityType) ps.find(" from "+accountdetailtype.getFullQualifiedName()+ " where id=? ", Integer.valueOf(element[0].toString()));
 	    			}catch(Exception ee)
 	    			{
 	    				LOGGER.error(ee.getMessage(),ee);
-	    				entity =  (EntityType) ps.find(" from "+accountdetailtype.getFullQualifiedName()+ " where id=? ", Long.valueOf(resultset.getLong("slid")));
+	    				entity =  (EntityType) ps.find(" from "+accountdetailtype.getFullQualifiedName()+ " where id=? ", Long.valueOf(element[0].toString()));
 	    			}
 	    			if(entity!=null){
 	    				gb.setCode(entity.getCode());
@@ -378,20 +357,19 @@ public class RptSubLedgerSchedule
 	    				gb.setCode("");
 		    			gb.setName("");
 	    			}
-	    			gb.setAccEntityKey(resultset.getString("slid"));
-	    			
-	    			if(resultset.getString("Debit")!= null)
-	    				debitamount=resultset.getDouble("Debit");
-    	 			if(resultset.getString("Credit")!= null)
-    	 				creditamount=resultset.getDouble("Credit");
-    	 			if(resultset.getString("OpgCreditBal")!= null)
-    	 				opgCredit=resultset.getDouble("OpgCreditBal");
-    	 			if(resultset.getString("OpgDebitBal")!= null)
-    	 				opgDebit=resultset.getDouble("OpgDebitBal");
-    	 			if(resultset.getString("PrevDebit")!= null)
-    	 				prevDebit=resultset.getDouble("PrevDebit");
-    	 			if(resultset.getString("PrevCredit")!= null)
-    	 				prevCredit=resultset.getDouble("PrevCredit");
+	    			gb.setAccEntityKey(element[0].toString());
+	    			if(element[5].toString()!= null)
+	    				creditamount=Double.parseDouble(element[5].toString());
+    	 			if(element[6].toString()!= null)
+    	 				debitamount=Double.parseDouble(element[6].toString());
+    	 			if(element[1].toString()!= null)
+    	 				opgCredit=Double.parseDouble(element[1].toString());
+    	 			if(element[2].toString()!= null)
+    	 				opgDebit=Double.parseDouble(element[2].toString());
+    	 			if(element[3].toString()!= null)
+    	 				prevDebit=Double.parseDouble(element[3].toString());
+    	 			if(element[4].toString()!= null)
+    	 				prevCredit=Double.parseDouble(element[4].toString());
     	 			
     	 			openingBal=opgCredit+prevCredit-(opgDebit+prevDebit);
     	 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Hello............. "+openingBal+"==");
@@ -493,13 +471,12 @@ public class RptSubLedgerSchedule
 		String accName="";
 		try{
 			String query = "select name from chartofaccounts where glCode= ?";
-			pst = connection.prepareStatement(query);
+			pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
 			pst.setString(1, glCode);
-			ResultSet rset = pst.executeQuery();
-			rset.next();
-			accName = rset.getString(1);
-			rset.close();
-			pst.close();
+			List<Object[]> rset = pst.list();
+			for(Object[] element : rset){
+			accName = element[0].toString();
+			}
 		}catch(Exception sqlex){
 			LOGGER.error("Exp="+sqlex.getMessage(),sqlex);
 			return null;

@@ -44,24 +44,22 @@
 package com.exilant.eGov.src.reports;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
-
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
 
 import com.exilant.exility.common.TaskFailedException;
 
 public class SummaryStatement {
-	Connection con, con1;
-	PreparedStatement pstmt;
-	PreparedStatement pst;
-	ResultSet resultset;
-	ResultSet resultset1;
+	Query pstmt;
+	Query pst;
+	List<Object[]> resultset;
+	List<Object[]> resultset1;
 	String workname, wonumber, sDate;
 	String headOfAccount = "";
 	String workOrderNo = "";
@@ -87,15 +85,6 @@ public class SummaryStatement {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
 		Date dt;
 
-		try {
-			con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
-			con1 = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
-
-		} catch (Exception exception) {
-			LOGGER.error("Could Not Get Connection", exception);
-			throw taskExp;
-		}
-
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Work Number:" + wonumber);
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Work Name:" + workname);
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Date:" + workDate);
@@ -115,8 +104,6 @@ public class SummaryStatement {
 			}
 
 			getReport();
-			con.close();
-			con1.close();
 		} catch (Exception exception) {
 			LOGGER.error("EXP=" + exception.getMessage(), exception);
 			throw taskExp;
@@ -165,7 +152,7 @@ public class SummaryStatement {
 				.append(orderbyquery).toString();
 
 		int j = 1;
-		pstmt = con.prepareStatement(query);
+		pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
 		pstmt.setString(j++, FinancialYear);
 		pstmt.setString(j++, sDate);
 		if (!wonumber.equals(""))
@@ -174,7 +161,7 @@ public class SummaryStatement {
 			pstmt.setString(j++, workname);
 		if (!woDate.equals(""))
 			pstmt.setString(j++, woDate);
-		resultset = pstmt.executeQuery();
+		resultset = pstmt.list();
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Main Query---------->" + query);
 
 		try {
@@ -190,19 +177,17 @@ public class SummaryStatement {
 
 			SummaryStatementBean iutBean = null;
 			list = new ArrayList();
-			while (resultset.next()) {
+			for(Object[] element : resultset){
 
 				iutBean = new SummaryStatementBean();
 
-				headOfAccount = resultset.getString("Head Of Account");
-				WORKNUMBER = resultset.getString("WORKNUMBER");
-				wdPassedAmount = resultset.getString("worksPassedAmount");
-				glcodeIDParam = resultset.getString("glcodeId");
-				nameOfProject = resultset.getString("Project Name");
-				valueOfWorkAmount = resultset
-						.getString("Value ofWork/ContractorAmount");
-				expenditureBillAdmittedAmount = resultset
-						.getString("Expenditure(During this Month)");
+				headOfAccount =element[3].toString();
+				WORKNUMBER = element[1].toString();
+				wdPassedAmount = element[2].toString();
+				glcodeIDParam = element[0].toString();
+				nameOfProject = element[4].toString();
+				valueOfWorkAmount = element[5].toString();
+				expenditureBillAdmittedAmount = element[6].toString();
 
 				if (headOfAccount != null)
 					iutBean.setHeadOfAccount(headOfAccount);
@@ -283,16 +268,16 @@ public class SummaryStatement {
 						+ " GROUP BY gl.GLCODEID,c.GLCODE,C.NAME,w.CODE,w.NAME,w.TOTALVALUE"
 						+ " ORDER BY \"WORKNUMBER\",\"Head Of Account\" ASC ";
 
-				pst = con1.prepareStatement(query1);
+				pst = HibernateUtil.getCurrentSession().createSQLQuery(query1);
 				pst.setString(1, FinancialYear);
 				pst.setString(2, WORKNUMBER);
 				pst.setString(3, glcodeIDParam);
 				pst.setString(4, sDate);
-				resultset1 = pst.executeQuery();
+				resultset1 = pst.list();
 				// if(LOGGER.isInfoEnabled())     LOGGER.info("Query2 for Expenses for Beginning of the month---------->"+query1);
-				if (resultset1.next()) {
-					expenditureAmount = (resultset1.getString("ExpB") == null ? "0.00"
-							: resultset1.getString("ExpB"));
+				for(Object[] element1 : resultset1){
+					expenditureAmount = (element[2].toString() == null ? "0.00"
+							: element[2].toString());
 					iutBean.setExpenditureAmount(""
 							+ new BigDecimal(Double
 									.parseDouble(expenditureAmount)).setScale(
@@ -306,7 +291,7 @@ public class SummaryStatement {
 															.parseDouble(expenditureBillAdmittedAmount))
 											.setScale(2,
 													BigDecimal.ROUND_HALF_UP));
-				} else {
+				} if(resultset1 == null || resultset1.size() == 0)  {
 					expenditureAmount = "0.00";
 					iutBean.setExpenditureAmount("0.00");
 					if (expenditureBillAdmittedAmount != null)
@@ -321,14 +306,10 @@ public class SummaryStatement {
 
 				}
 				// For Inside sub query
-				resultset1.close();
-				pst.close();
 
 				list.add(iutBean);
 			} // main while
 
-			resultset.close();
-			pstmt.close();
 		} catch (Exception e) {
 			LOGGER.error("Error in getReport" + e.getMessage(), e);
 			throw taskExp;

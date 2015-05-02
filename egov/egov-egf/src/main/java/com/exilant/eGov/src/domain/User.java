@@ -46,9 +46,6 @@
 package com.exilant.eGov.src.domain;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -112,12 +109,13 @@ public class User {
 		String query = "select r.Role_name as role from EG_ROLES r, EG_USER u,EG_USERROLE ur where u.user_name=? and ur.id_role=r.id_role and u.id_user=ur.id_user ";
 		String role = "";
 		try {
-			PreparedStatement ps = con.prepareStatement(query);
+			Query ps = HibernateUtil.getCurrentSession().createSQLQuery(query);
 			ps.setString(1, this.userName);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next())
-				role = rs.getString("role");
-		} catch (SQLException ex) {
+			List<Object[]> rs = ps.list();
+			for(Object[] element : rs){
+				role = element[0].toString();	
+			}
+		} catch (Exception ex) {
 			LOGGER.error("Task Failed Error" + ex.getMessage(),ex);
 			throw new TaskFailedException();
 		}

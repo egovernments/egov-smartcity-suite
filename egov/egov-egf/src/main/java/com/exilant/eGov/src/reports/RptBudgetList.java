@@ -44,29 +44,27 @@
 package com.exilant.eGov.src.reports;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
-
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
 
 import com.exilant.exility.common.TaskFailedException;
 
 public class RptBudgetList {
-	Connection connection = null;
-	PreparedStatement pstmt = null;
-	ResultSet resultset = null;
-	ResultSet resultset1 = null;
+	Query pstmt = null;
+	List<Object[]> resultset = null;
+	List<Object[]> resultset1 = null;
 	Date sDate;
 	Date eDate;
 	int totalCount = 0;
 	TaskFailedException taskExc;
-	ResultSet rsset = null;
+	List<Object[]> rsset = null;
 
 	String arr[] = new String[9];
 	ArrayList data = new ArrayList();
@@ -83,13 +81,6 @@ public class RptBudgetList {
 	public LinkedList getRptBudgetList(RptBudgetBean reportBean)
 			throws TaskFailedException {
 		// GET CONNECTION
-		try {
-			connection = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
-		} catch (Exception exception) {
-			LOGGER.error("Inside getRptBudgetList" + exception.getMessage(),
-					exception);
-			throw new TaskFailedException();
-		}
 
 		int finId;
 		finId = reportBean.getFinYear();
@@ -112,12 +103,10 @@ public class RptBudgetList {
 		if(LOGGER.isInfoEnabled())     LOGGER.info("data Query : " + query);
 
 		try {
-			pstmt = connection.prepareStatement(query,
-					ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_READ_ONLY);
-			pstmt.setInt(1, finId);
-			pstmt.setInt(2, AccType);
-			resultset = pstmt.executeQuery();
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
+			pstmt.setInteger(1, finId);
+			pstmt.setInteger(2, AccType);
+			resultset = pstmt.list();
 		} catch (Exception e) {
 			LOGGER.error("Exp=" + e.getMessage(), e);
 		}
@@ -138,7 +127,7 @@ public class RptBudgetList {
 										// ;
 			if(LOGGER.isInfoEnabled())     LOGGER.info(" fin year first part: " + yr);
 			ArrayList<String> al = new ArrayList<String>();
-			while (resultset.next()) {
+			for(Object[] element : resultset){
 				// if(LOGGER.isInfoEnabled())     LOGGER.info("@@@@@@@@"+totalCount);
 				totalCount += 1;
 
@@ -150,13 +139,13 @@ public class RptBudgetList {
 				// String
 				// particulars,code,actPrevYr,budgetCurYr,actUptoDec,revisedBudgetCurYr,budgetNextYr;
 
-				funId = resultset.getString("funId");
-				funname = resultset.getString("funname");
-				funParName = resultset.getString("funParName");
-				funCode = resultset.getString("fCode");
-				groupid = resultset.getString("groupid");
-				groupname = resultset.getString("groupname");
-				code = resultset.getString("coaCodeId");
+				funId = element[0].toString();
+				funname = element[1].toString();
+				funParName = element[2].toString();
+				funCode = element[3].toString();
+				groupid = element[4].toString();
+				groupname = element[5].toString();
+				code = element[6].toString();
 
 				String subcode[] = new String[2];
 				// getting glcode of type 111
@@ -179,8 +168,6 @@ public class RptBudgetList {
 				// if(LOGGER.isInfoEnabled())     LOGGER.info("inside END MAIN while datafilllist : TOTAL COUNT: "+
 				// totalCount);
 			}
-			resultset.close();
-			pstmt.close();
 
 			if (al.size() > 0) {
 				// adding column numbers for linked list
@@ -430,58 +417,58 @@ public class RptBudgetList {
 						+ " AND fun.isactive=1 AND fun.id=" + funId;
 
 				int j = 1;
-				pstmt = connection.prepareStatement(query);
+				pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
 				pstmt.setString(j++, amt);
 				pstmt.setString(j++, amt);
 				pstmt.setString(j++, fiscalPeriodId);
 				if (maxcode != "") {
-					pstmt.setInt(j++, mincodeId);
-					pstmt.setInt(j++, maxcodeId);
+					pstmt.setInteger(j++, mincodeId);
+					pstmt.setInteger(j++, maxcodeId);
 				} else
-					pstmt.setInt(j++, mincodeId);
-				pstmt.setInt(j++, funId);
+					pstmt.setInteger(j++, mincodeId);
+				pstmt.setInteger(j++, funId);
 				pstmt.setString(j++, amt);
 				pstmt.setString(j++, amt);
 				if (maxcode != "") {
-					pstmt.setInt(j++, mincodeId);
-					pstmt.setInt(j++, maxcodeId);
+					pstmt.setInteger(j++, mincodeId);
+					pstmt.setInteger(j++, maxcodeId);
 				} else
-					pstmt.setInt(j++, mincodeId);
-				pstmt.setInt(j++, funId);
-				pstmt.setInt(j++, finId);
-				pstmt.setInt(j++, funId);
-				pstmt.setInt(j++, finId);
-				pstmt.setInt(j++, funId);
-				pstmt.setInt(j++, finId);
-				pstmt.setInt(j++, mincodeId);
-				pstmt.setInt(j++, groupid);
-				pstmt.setInt(j++, finId);
-				pstmt.setInt(j++, funId);
-				rsset = pstmt.executeQuery();
+					pstmt.setInteger(j++, mincodeId);
+				pstmt.setInteger(j++, funId);
+				pstmt.setInteger(j++, finId);
+				pstmt.setInteger(j++, funId);
+				pstmt.setInteger(j++, finId);
+				pstmt.setInteger(j++, funId);
+				pstmt.setInteger(j++, finId);
+				pstmt.setInteger(j++, mincodeId);
+				pstmt.setInteger(j++, groupid);
+				pstmt.setInteger(j++, finId);
+				pstmt.setInteger(j++, funId);
+				rsset = pstmt.list();
 
-				if (rsset.next()) {
+				for(Object[] element : rsset){
 					RptBudgetBean reportBean1 = new RptBudgetBean();
 					reportBean1.setSlno("&nbsp;");
-					reportBean1.setParticulars(rsset.getString("name"));
+					reportBean1.setParticulars(element[0].toString());
 					reportBean1.setCode(groupname); // if(LOGGER.isInfoEnabled())     LOGGER.info("3333");
 
-					temp = rsset.getBigDecimal("amt0");
+					temp = new BigDecimal(element[2].toString());
 					reportBean1.setActPrevYr(temp.toString() + ".00");
 					// if(LOGGER.isInfoEnabled())     LOGGER.info((actPrevYrTotal+Double.parseDouble(temp)));
 					actPrevYrTotal = actPrevYrTotal.add(temp);
 
-					temp = rsset.getBigDecimal("amt1");
+					temp = new BigDecimal(element[3].toString());
 					reportBean1.setBudgetCurYr(temp.toString() + ".00");
 					budgetCurYrTotal = budgetCurYrTotal.add(temp);
 					// if(LOGGER.isInfoEnabled())     LOGGER.info(budgetCurYrTotal +
 					// BigDecimal.parseDouble(temp))
 
-					temp = rsset.getBigDecimal("amt2");
+					temp = new BigDecimal(element[4].toString());
 					reportBean1.setActUptoDec(temp.toString() + ".00");
 					actUptoDecTotal = actUptoDecTotal.add(temp);
 
-					temp = rsset.getBigDecimal("amt3");
-					temp1 = rsset.getBigDecimal("amt5");
+					temp = new BigDecimal(element[5].toString());
+					temp1 = new BigDecimal(element[6].toString());
 					if (temp == null && temp1 == null) {
 						// revisedBudgetCurYrTotal=revisedBudgetCurYrTotal.add(new
 						// BigDecimal(0));
@@ -508,14 +495,12 @@ public class RptBudgetList {
 					// revisedBudgetCurYrTotal =
 					// revisedBudgetCurYrTotal.add(temp);
 
-					temp = rsset.getBigDecimal("amt4");
+					temp = new BigDecimal(element[7].toString());
 					reportBean1.setBudgetNextYr(temp.toString() + ".00"); // if(LOGGER.isInfoEnabled())     LOGGER.info("4444");
 					budgetNextYrTotal = budgetNextYrTotal.add(temp);
 					dataList.add(reportBean1);
 
 				}
-				rsset.close();
-				pstmt.close();
 				// if(LOGGER.isInfoEnabled())     LOGGER.info("after fillData Query ["+i+"]: "+query);
 			}// if(LOGGER.isInfoEnabled())     LOGGER.info("daaaata: "+query);
 
@@ -545,31 +530,25 @@ public class RptBudgetList {
 	String getFiscalPeriodId(int finId) throws SQLException {
 
 		String period = "";
-		PreparedStatement pstmt1 = null;
-		ResultSet rsset1 = null;
+		Query pstmt1 = null;
+		List<Object[]> rsset1 = null;
 		String query;
 		try {
 			query = " select id as \"id\" from FISCALPERIOD where financialyearid=?";
-			pstmt1 = connection.prepareStatement(query,
-					ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_READ_ONLY);
-			pstmt1.setInt(1, finId);
-			rsset1 = pstmt1.executeQuery();
+			pstmt1 = HibernateUtil.getCurrentSession().createSQLQuery(query);
+			pstmt1.setInteger(1, finId);
+			rsset1 = pstmt1.list();
 			int i = 0;
-			while (rsset1.next()) {
+			for(Object[] element : rsset1){
 				if (i == 0)
-					period = "" + rsset1.getString("id");
+					period = "" + element[0].toString();
 				else
-					period = period + "," + rsset1.getString("id");
+					period = period + "," + element[0].toString();
 				i++;
 			}
-			rsset1.close();
-			pstmt1.close();
 			if(LOGGER.isInfoEnabled())     LOGGER.info("getFiscalPeriodId Query : " + query);
 		} catch (Exception e) {
 			LOGGER.error("Inside getFiscalPeriodId" + e.getMessage(), e);
-			rsset1.close();
-			pstmt1.close();
 		}
 
 		return period;
@@ -577,36 +556,30 @@ public class RptBudgetList {
 
 	String getYear(int finId) throws SQLException {
 		String yr = "";
-		PreparedStatement pstmt1 = null;
-		ResultSet rsset1 = null;
+		Query pstmt1 = null;
+		List<Object[]> rsset1 = null;
 		String query;
 		try {
 			query = "select  TO_CHAR(STARTINGDATE,'DD-Mon-YYYY') as \"yr\" from financialyear where isactive=1 and id=?";
-			pstmt = connection.prepareStatement(query,
-					ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_READ_ONLY);
-			pstmt1.setInt(1, finId);
-			rsset1 = pstmt1.executeQuery();
-			while (rsset1.next()) {
-				yr = rsset1.getString("yr");
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
+			pstmt1.setInteger(1, finId);
+			rsset1 = pstmt1.list();
+			for(Object[] element : rsset1){
+				yr = element[0].toString();
 				// if(LOGGER.isInfoEnabled())     LOGGER.info("yr : "+yr+"::"+yr.length());
 				yr = yr.substring(yr.length() - 4, yr.length());
 			}
-			rsset1.close();
-			pstmt1.close();
 			if(LOGGER.isInfoEnabled())     LOGGER.info("getYear Query : " + query);
 		} catch (Exception e) {
 			LOGGER.error("yr" + e, e);
-			rsset1.close();
-			pstmt1.close();
 		}
 		return yr;
 	}
 
 	String getYear1(int CurrentYearId, int whichYear) {
 		String yr = "";
-		PreparedStatement pstmt1 = null;
-		ResultSet rsset1 = null;
+		Query pstmt1 = null;
+		List<Object[]> rsset1 = null;
 		String query = null;
 		try {
 			if (whichYear == -1)// previous year
@@ -615,16 +588,12 @@ public class RptBudgetList {
 				query = " select financialyear from financialyear where  id=?";
 			else if (whichYear == 1) // next year
 				query = " select financialyear from financialyear where startingdate=(select add_months(startingdate,12) from financialyear where id=?)";
-			pstmt1 = connection.prepareStatement(query,
-					ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_READ_ONLY);
-			pstmt1.setInt(1, CurrentYearId);
-			rsset1 = pstmt1.executeQuery();
-			if (rsset1.next()) {
-				yr = rsset1.getString(1);
+			pstmt1 = HibernateUtil.getCurrentSession().createSQLQuery(query);
+			pstmt1.setInteger(1, CurrentYearId);
+			rsset1 = pstmt1.list();
+			for(Object[] element : rsset1){
+				yr = element[0].toString();
 			}
-			rsset1.close();
-			pstmt1.close();
 			if(LOGGER.isInfoEnabled())     LOGGER.info("getYear Query : " + query);
 		} catch (Exception e) {
 			LOGGER.error("yr" + e, e);

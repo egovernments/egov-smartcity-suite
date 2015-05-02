@@ -45,25 +45,25 @@ package com.exilant.eGov.src.reports;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
-
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.FinancialConstants;
+import org.hibernate.Query;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 
 public class RptBillRegisterList {
-	Connection connection=null;
-	ResultSet resultset=null;
-	ResultSet resultset1=null;
+	List<Object[]> resultset=null;
+	List<Object[]> resultset1=null;
 	Date sDate,eDate;
 	int totalCount=0;
 	private static TaskFailedException taskExc;
@@ -77,15 +77,6 @@ public class RptBillRegisterList {
 	{
 		if(LOGGER.isInfoEnabled())     LOGGER.info("Enter<<<<<");
 		LinkedList dataList = new LinkedList();
-		try
-		{
-			connection = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
-		}
-		catch(Exception exception)
-		{
-			LOGGER.error("Inside getRptBillRegisterList"+exception.getMessage(),exception);
-			throw taskExc;
-		}
 
         /**Bug fix for 8532 */
          fundId = reportBean.getFundId();
@@ -141,10 +132,8 @@ public class RptBillRegisterList {
 
 
 		try {
-			PreparedStatement pstmt = connection.prepareStatement(query,
-					ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_READ_ONLY);
-			resultset = pstmt.executeQuery();
+			Query pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
+			resultset = pstmt.list();
 		} catch (Exception e) {
 			LOGGER.error("Exp=" + e.getMessage(),e);
 		}
@@ -154,8 +143,7 @@ public class RptBillRegisterList {
         int canAddToList=1;
         
        	try{
-			while(resultset.next())
-			{
+       		for(Object[] element : resultset){
 				String arr[]=new String[14];
 				totalCount+=1;
 				//initializing array elements to empty
@@ -166,23 +154,23 @@ public class RptBillRegisterList {
 
                 // Assigning value to the array elements
                 arr[0]= Integer.valueOf(totalCount).toString();
-                billDate=resultset.getString("billDate"); if(billDate != null && !billDate.trim().equals("")) arr[1]=billDate;else arr[1]="&nbsp;";
-				conSupName=resultset.getString("conSupName"); if(conSupName != null && !conSupName.trim().equals("")) arr[2]=conSupName; else arr[2]="&nbsp;";
-                particulars=resultset.getString("particulars"); if(particulars != null && !particulars.trim().equals("")) arr[3]=particulars; else arr[3]="&nbsp;";
-                billAmount=resultset.getBigDecimal("billAmount"); if( billAmount != null ) arr[4]=OpeningBalance.numberToString(billAmount.toString()).toString(); else arr[4]="&nbsp;";
-                approvedBy=resultset.getString("approvedBy"); if( approvedBy != null ) arr[5]=approvedBy; else arr[5]="&nbsp;";
-                sanctionedDate=resultset.getString("sanctionedDate"); if( sanctionedDate != null ) arr[6]=sanctionedDate; else arr[6]="&nbsp;";
+                billDate=element[2].toString(); if(billDate != null && !billDate.trim().equals("")) arr[1]=billDate;else arr[1]="&nbsp;";
+				conSupName=element[3].toString(); if(conSupName != null && !conSupName.trim().equals("")) arr[2]=conSupName; else arr[2]="&nbsp;";
+                particulars=element[5].toString(); if(particulars != null && !particulars.trim().equals("")) arr[3]=particulars; else arr[3]="&nbsp;";
+                billAmount=new BigDecimal(element[6].toString()); if( billAmount != null ) arr[4]=OpeningBalance.numberToString(billAmount.toString()).toString(); else arr[4]="&nbsp;";
+                approvedBy=element[7].toString(); if( approvedBy != null ) arr[5]=approvedBy; else arr[5]="&nbsp;";
+                sanctionedDate=element[8].toString(); if( sanctionedDate != null ) arr[6]=sanctionedDate; else arr[6]="&nbsp;";
                 
-                voucherNo = resultset.getString("voucherNo"); if( voucherNo != null ) arr[7]=voucherNo; else arr[7]="&nbsp;";
+                voucherNo = element[16].toString(); if( voucherNo != null ) arr[7]=voucherNo; else arr[7]="&nbsp;";
                 
-                sanctionedAmount=resultset.getBigDecimal("sanctionedAmount"); if( sanctionedAmount != null ) arr[8]=OpeningBalance.numberToString(sanctionedAmount.toString()).toString();else arr[8]="&nbsp;"; 
-                disallowedAmount=resultset.getBigDecimal("disallowedAmount"); if( disallowedAmount != null ) arr[9]=OpeningBalance.numberToString(disallowedAmount.toString()).toString();else arr[9]="&nbsp;";
-                paidAmt = resultset.getString("paidAmt"); if( paidAmt != null ) arr[10]=OpeningBalance.numberToString(paidAmt).toString();else arr[10]="&nbsp;";
-                paymentDate=resultset.getString("paymentDate"); if(paymentDate!=null) arr[11]=paymentDate; else arr[11]="&nbsp;";
+                sanctionedAmount=new BigDecimal(element[9].toString()); if( sanctionedAmount != null ) arr[8]=OpeningBalance.numberToString(sanctionedAmount.toString()).toString();else arr[8]="&nbsp;"; 
+                disallowedAmount=new BigDecimal(element[12].toString()); if( disallowedAmount != null ) arr[9]=OpeningBalance.numberToString(disallowedAmount.toString()).toString();else arr[9]="&nbsp;";
+                paidAmt = element[14].toString(); if( paidAmt != null ) arr[10]=OpeningBalance.numberToString(paidAmt).toString();else arr[10]="&nbsp;";
+                paymentDate=element[10].toString(); if(paymentDate!=null) arr[11]=paymentDate; else arr[11]="&nbsp;";
                 
-                balanceAmount=resultset.getBigDecimal("balanceAmount"); if( balanceAmount != null ) arr[12]=OpeningBalance.numberToString(balanceAmount.toString()).toString(); else arr[12]="&nbsp;"; 
-                remarks=resultset.getString("remarks"); if( remarks != null && !remarks.trim().equals("")) arr[13]=remarks; else arr[13]="&nbsp;";
-                billId =resultset.getString("billId");
+                balanceAmount=new BigDecimal(element[13].toString()); if( balanceAmount != null ) arr[12]=OpeningBalance.numberToString(balanceAmount.toString()).toString(); else arr[12]="&nbsp;"; 
+                remarks=element[15].toString(); if( remarks != null && !remarks.trim().equals("")) arr[13]=remarks; else arr[13]="&nbsp;";
+                billId =element[0].toString();
                 
                 /* for contigency bill and payments */
                 if(billId==null)
@@ -273,7 +261,7 @@ public class RptBillRegisterList {
 			}
 			if(LOGGER.isInfoEnabled())     LOGGER.info("Datalist is filled");
 
-        }catch(SQLException ex)
+        }catch(Exception ex)
             {
 			LOGGER.error("ERROR in getRptBillRegisterList " + ex.toString(),ex);
 			throw taskExc;
@@ -388,7 +376,7 @@ public class RptBillRegisterList {
 			   +" ORDER BY \"billDateForSort\", \"conSupName\",\"conSupId\" NULLS LAST,\"billId\", \"pymtdateSort\" DESC NULLS FIRST";
 	
 	 }    
-	 public void isCurDate(Connection conn,String VDate) throws TaskFailedException
+	 public void isCurDate(String VDate) throws TaskFailedException
      {
 
 			EGovernCommon egc=new EGovernCommon();
@@ -411,15 +399,15 @@ public class RptBillRegisterList {
 	 
 	 public String getFundname(String fName){
 		String fundName="";
-		ResultSet rset=null;
+		List<Object[]> rset=null;
 		try{
 			String query="select name from fund where id=?";
-			PreparedStatement pstmt = connection.prepareStatement(query);
+			Query pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
 			pstmt.setString(1,fName);
-			rset=pstmt.executeQuery();
-			rset.next();
-			fundName = rset.getString(1);
-			rset.close();
+			rset=pstmt.list();
+			for(Object[] element : rset){
+			fundName =element[0].toString();
+			}
 			
 		}catch(Exception sqlex){
 			LOGGER.error("Inside getFundName"+sqlex.getMessage(),sqlex);
@@ -430,17 +418,17 @@ public class RptBillRegisterList {
 	 
       public String getFieldname(String fName){
 		String fundName="";
-		ResultSet rset=null;
+		List<Object[]> rset=null;
 		try{
 			String query="SELECT name FROM EG_BOUNDARY WHERE id_bndry =? and ID_BNDRY_TYPE = (SELECT id_bndry_type FROM EG_BOUNDARY_TYPE WHERE LOWER(name)= 'ward' ";
-			PreparedStatement pstmt = connection.prepareStatement(query);
+			Query pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
 			pstmt.setString(1,fName);
-			rset=pstmt.executeQuery();
-			rset.next();
-			fundName = rset.getString(1);
-			rset.close();
+			rset=pstmt.list();
+			for(Object[] element : rset){
+			fundName = element[0].toString();
+			}
 			
-		}catch(SQLException sqlex){
+		}catch(Exception sqlex){
 			LOGGER.error(sqlex.getMessage(),sqlex);
 			return null;
 		}
@@ -448,17 +436,17 @@ public class RptBillRegisterList {
 		}
       public String getFunctionaryname(String fName){
 		String fundName="";
-		ResultSet rset=null;
+		List<Object[]> rset=null;
 		try{
 			String query="SELECT name  FROM functionaryname  where id = ?";
-			PreparedStatement pstmt = connection.prepareStatement(query);
+			Query pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
 			pstmt.setString(1,fName);
-			rset=pstmt.executeQuery();
-			rset.next();
-			fundName = rset.getString(1);
-			rset.close();
-			pstmt.close();
-		}catch(SQLException sqlex){
+			rset=pstmt.list();
+			for(Object[] element : rset){
+			fundName = element[0].toString();
+			}
+			
+		}catch(Exception sqlex){
 			LOGGER.error(sqlex.getMessage(),sqlex);
 			return null;
 		}
@@ -468,13 +456,13 @@ public class RptBillRegisterList {
       public String getULBname(){
 		String fundName="";
 		try{
-			PreparedStatement pstmt = connection.prepareStatement("select name FROM companyDetail");
-			ResultSet rset = pstmt.executeQuery();
-			rset.next();
-			fundName = rset.getString(1);
-			rset.close();
-			pstmt.close();
-		}catch(SQLException sqlex){
+			Query pstmt = HibernateUtil.getCurrentSession().createSQLQuery("select name FROM companyDetail");
+			List<Object[]> rset = pstmt.list();
+			for(Object[] element : rset){
+			fundName = element[0].toString();
+			}
+			
+		}catch(Exception sqlex){
 			LOGGER.error(sqlex.getMessage(),sqlex);
 			return null;
 		}

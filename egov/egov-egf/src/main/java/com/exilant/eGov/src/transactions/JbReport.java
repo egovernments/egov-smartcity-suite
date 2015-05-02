@@ -44,8 +44,6 @@
 package com.exilant.eGov.src.transactions;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DecimalFormat;
@@ -54,9 +52,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
-
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
 
 import com.exilant.GLEngine.GeneralLedgerBean;
 import com.exilant.eGov.src.common.EGovernCommon;
@@ -64,9 +64,8 @@ import com.exilant.exility.common.TaskFailedException;
 
 public class JbReport 
 {
-	Connection connection;
-	PreparedStatement pst;
-	ResultSet resultset;
+	Query pst;
+	List<Object[]> resultset;
 	TaskFailedException taskExc;
 	String startDate, endDate,fromFund,toFund,fromFundSource,toFundSource,revEntry;
 	String fundSourceCond="";
@@ -81,16 +80,6 @@ public class JbReport
     {     
     	if(LOGGER.isInfoEnabled())     LOGGER.info("entered java file");
         LinkedList dataList = new LinkedList();
-        try
-        {
-            connection = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
-            //if(LOGGER.isDebugEnabled())     LOGGER.debug("connection"+connection);
-
-        }
-        catch(Exception exception)
-        {
-            throw new TaskFailedException();
-        }
         NumberFormat formatter = new DecimalFormat();              
         formatter = new DecimalFormat("###############0.00");       
        // revEntry = reportBean.getRevEntry();
@@ -106,7 +95,7 @@ public class JbReport
 //          
             
             String endDate1=(String)reportBean.getEndDate();
-            isCurDate(connection,endDate1);
+            isCurDate(endDate1);
             try
             {
             endDate=(String)reportBean.getEndDate();
@@ -160,14 +149,15 @@ public class JbReport
             try
             {
             	String query = "SELECT max(id) as \"max\"  FROM fund";
-            	pst = connection.prepareStatement(query);
-                resultset = pst.executeQuery();
-                if(resultset.next())
-                    toFund = resultset.getString("max");
+            	pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
+                resultset = pst.list();
+                for(Object[] element : resultset){
+                    toFund = element[0].toString();
+                }
                 fromFund="1";
                 resultset = null;
             }
-            catch(SQLException ex)
+            catch(Exception ex)
             {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Error getting max fund: " + ex.toString());
                 throw new TaskFailedException();
@@ -185,14 +175,15 @@ public class JbReport
             try
             {
             	String query1 = "SELECT max(id) as \"max\"  FROM fundsource";
-            	pst = connection.prepareStatement(query1);
-                resultset = pst.executeQuery();
-                if(resultset.next())
-                toFundSource = resultset.getString("max");
+            	pst = HibernateUtil.getCurrentSession().createSQLQuery(query1);
+                resultset = pst.list();
+                for(Object[] element : resultset){
+                toFundSource = element[0].toString();
+                }
                 fromFundSource="1";
                 resultset = null;
             }
-            catch(SQLException ex)
+            catch(Exception ex)
             {
                 if(LOGGER.isDebugEnabled())     LOGGER.debug("Error getting max fundSource: " + ex.toString());
                 throw new TaskFailedException();
@@ -229,12 +220,11 @@ public class JbReport
         if(LOGGER.isDebugEnabled())     LOGGER.debug("**************QUERY: " + query);
         try
         {
-            pst.close();
-            pst = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            resultset = pst.executeQuery();
+            pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
+            resultset = pst.list();
 
             /**
-             * When using ResultSet.TYPE_SCROLL_INSENSITIVE in createStatement
+             * When using List<Object[]>.TYPE_SCROLL_INSENSITIVE in createStatement
              * if no records are there, rs.next() will return true
              * but when trying to access (rs.getXXX()), it will throw an error
              **/
@@ -245,26 +235,25 @@ public class JbReport
             Double dr, cr;           
             int totalCount=0, isConfirmedCount=0;
             String vn2="";
-                while(resultset.next())
-                {
-                    voucherNo = resultset.getString("vNumber");
-                    cgn = resultset.getString("cgn");
-                    vhId = resultset.getString("vhId");
-                    vcDate = resultset.getString("vDate");
+            for(Object[] element : resultset){
+                    voucherNo = element[2].toString();
+                    cgn = element[3].toString();
+                    vhId = element[13].toString();
+                    vcDate = element[1].toString();
                     //name = resultset.getString("fund");
-                    glcode = resultset.getString("glcode");
-                    accName = resultset.getString("accountname");
-                    desc = resultset.getString("desc");
-                    dr = resultset.getDouble("debit");                   
-                    cr = resultset.getDouble("credit");
-                    isconfirmed= resultset.getString("isconfirmed")==null?"":resultset.getString("isconfirmed");
-                    vname=resultset.getString("vname");
+                    glcode = element[5].toString();
+                    accName = element[6].toString();
+                    desc = element[7].toString();
+                    dr = Double.parseDouble(element[9].toString());                   
+                    cr = Double.parseDouble(element[10].toString());      
+                    isconfirmed= element[8].toString()==null?"":element[8].toString();
+                    vname=element[11].toString();
                 //  if(LOGGER.isDebugEnabled())     LOGGER.debug("isconfirmed -->   "+isconfirmed);
                     //9 is the dummy value used in the query
 
                     if(!isconfirmed.equalsIgnoreCase(""))
                     {
-                        String vn1=resultset.getString("vNumber");
+                        String vn1=element[2].toString();
                         if(!vn1.equalsIgnoreCase(vn2))
                         {
                             vn2=vn1;
@@ -427,18 +416,20 @@ public class JbReport
         try{
         	 String query = "SELECT id FROM financialYear " +
 				"WHERE startingDate<= ? AND endingDate>= ?";
-             pst=connection.prepareStatement(query);
+             pst=HibernateUtil.getCurrentSession().createSQLQuery(query);
              pst.setString(1, sDate);
              pst.setString(2, sDate);
 
 			//for accross the financial year
-			resultset = pst.executeQuery();
+			resultset = pst.list();
             if(LOGGER.isInfoEnabled())     LOGGER.info("SELECT id FROM financialYear " +
                     "WHERE startingDate<='"+sDate+"' AND endingDate>='"+sDate+"'");
-			if(resultset.next()) fyId = resultset.getString("id");
+            for(Object[] element : resultset){
+            	fyId = element[0].toString();
+            }
 			resultset = null;
 		}
-        catch(SQLException  ex)
+        catch(Exception  ex)
         {
             throw new TaskFailedException();
         }
@@ -450,12 +441,10 @@ public class JbReport
     {
 		String ulbName="";
 		try{
-			Statement st = connection.createStatement();
-			ResultSet rset = st.executeQuery("select name from companydetail");
-			rset.next();
-			ulbName = rset.getString(1);
-			rset.close();
-			st.close();
+			List<Object[]> rset = HibernateUtil.getCurrentSession().createSQLQuery("select name from companydetail").list();
+			for(Object[] element : rset){
+			ulbName = element[0].toString();
+			}
 		}catch(Exception sqlex){
 			LOGGER.error("Inside getULBName"+sqlex.getMessage());
 			return null;
@@ -463,7 +452,7 @@ public class JbReport
 		return ulbName;
 	}
 
-    public void isCurDate(Connection conn,String VDate) throws TaskFailedException
+    public void isCurDate(String VDate) throws TaskFailedException
     {
 
             EGovernCommon egc=new EGovernCommon();
@@ -485,9 +474,9 @@ public class JbReport
         }
     
 	private void setDates(GeneralLedgerBean reportBean) throws TaskFailedException{
-			PreparedStatement pst;
-			ResultSet rs = null;
-			ResultSet rs1 = null;
+			Query pst;
+			List<Object[]> rs = null;
+			List<Object[]> rs1 = null;
 			String formstartDate="";
 			String formendDate="";
 			try
@@ -519,33 +508,34 @@ public class JbReport
 			   try{
 					String query = "SELECT TO_CHAR(startingDate, 'dd-Mon-yyyy') AS \"startingDate\" " +
 									"FROM financialYear WHERE startingDate <= SYSDATE AND endingDate >= SYSDATE";
-					pst = connection.prepareStatement(query);
-					rs = pst.executeQuery();
-					if(rs.next()) startDate = rs.getString("startingDate");
-					rs.close();
+					pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
+					rs = pst.list();
+					for(Object[] element : rs){
+						startDate = element[0].toString();
+					}
 					String query1 = "SELECT TO_CHAR(sysdate, 'dd-Mon-yyyy') AS \"endingDate\" FROM dual";
-					pst = connection.prepareStatement(query1);
-					rs1 = pst.executeQuery();
-					if(rs1.next()) endDate = rs1.getString("endingDate");
-					rs1.close();
-					pst.close();
+					pst = HibernateUtil.getCurrentSession().createSQLQuery(query1);
+					rs1 = pst.list();
+					for(Object[] element : rs1){
+						endDate = element[0].toString();
+					}
 				}
-				catch(SQLException  ex)
+				catch(Exception  ex)
 				{if(LOGGER.isInfoEnabled())     LOGGER.info("eGovFailure"+ "," +"setDates");throw new TaskFailedException();}
 			}
 			if((startDate == null || startDate.equalsIgnoreCase("")) && (endDate != null || !endDate.equalsIgnoreCase("")))
 			{
 				try{
 					String query = "SELECT TO_CHAR(startingDate, 'dd-Mon-yyyy') AS \"startingDate\" FROM financialYear WHERE startingDate <= ? AND endingDate >= ?";
-					pst = connection.prepareStatement(query);
+					pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
 					pst.setString(1, endDate);
 					pst.setString(2, endDate);
-					rs = pst.executeQuery();
-					if(rs.next()) startDate = rs.getString("startingDate");
-					rs.close();
-					pst.close();
+					rs = pst.list();
+					for(Object[] element : rs){
+						startDate = element[0].toString();
 					}
-					catch(SQLException  ex)
+					}
+					catch(Exception  ex)
 					{
                         if(LOGGER.isInfoEnabled())     LOGGER.info("eGovFailure"+ "," +"setDates1");
 						throw new TaskFailedException();
@@ -557,15 +547,15 @@ public class JbReport
 				try{
 					String query = "SELECT TO_CHAR(endingDate, 'dd-Mon-yyyy') AS \"endingDate\" " +
 					"FROM financialYear WHERE startingDate <= ? AND endingDate >= ?";
-					pst = connection.prepareStatement(query);
+					pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
 					pst.setString(1, startDate);
 					pst.setString(2, startDate);
-					rs = pst.executeQuery();
-					if(rs.next()) endDate = rs.getString("endingDate");
-					rs.close();
-					pst.close();
+					rs = pst.list();
+					for(Object[] element : rs){
+						endDate = element[0].toString();
+					}
 					pst = null;
-				}catch(SQLException  ex){if(LOGGER.isInfoEnabled())     LOGGER.info("eGovFailure"+ "," +"setDates2");throw new TaskFailedException();}
+				}catch(Exception  ex){if(LOGGER.isInfoEnabled())     LOGGER.info("eGovFailure"+ "," +"setDates2");throw new TaskFailedException();}
 			}
 			//preYrSDate = startDate.split("-")[0] + "-" + startDate.split("-")[1] + "-" + (Integer.parseInt(startDate.split("-")[2])-1)+"";
 			//preYrEDate = endDate.split("-")[0] + "-" + endDate.split("-")[1] + "-" + (Integer.parseInt(endDate.split("-")[2])-1)+"";

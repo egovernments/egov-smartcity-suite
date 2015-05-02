@@ -44,8 +44,6 @@
 package com.exilant.eGov.src.reports;
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -63,7 +61,6 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
 import org.egov.infstr.utils.HibernateUtil;
-
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
@@ -75,9 +72,8 @@ import com.exilant.exility.common.TaskFailedException;
 public class TrialBalance
 {
 
-	Connection con;
-	PreparedStatement pstmt;
-	ResultSet resultset;
+	Query pstmt;
+	List<Object[]> resultset;
 	String endDate, startDate;
     String fundId;
     public String reqFundId[];
@@ -107,20 +103,11 @@ public class TrialBalance
 	//	This method is called by the TrialBalance.jsp
 	public ArrayList getTBReport(String asOnDate,String fId,String departmentId,String functionaryId,String functionCodeId,String fieldId)throws Exception
 	{
-		try
-		{
-			con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
-
-		}
-		catch(Exception exception) 
-		{
-			LOGGER.error("Could Not Get Connection",exception);
-		}
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("getTBReport | Depaartment ID >>>>>>>>>>>>>>>>>>>>> := "+ departmentId);
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("getTBReport | Functionary ID >>>>>>>>>>>>>>>>>>>>> := "+ functionaryId);
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("getTBReport | Function Code ID >>>>>>>>>>>>>>>>>>>>> := "+ functionCodeId);
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("getTBReport | Field ID >>>>>>>>>>>>>>>>>>>>> := "+ fieldId);
-		isCurDate(con,asOnDate);
+		isCurDate(asOnDate);
 		try
 		{			        
             fundId=fId;            
@@ -136,7 +123,7 @@ public class TrialBalance
 			dt = sdf.parse(asOnDate);
 			endDate = formatter.format(dt);
 			if(LOGGER.isInfoEnabled())     LOGGER.info("EndDate --> "+endDate);
-            setDates(endDate,con);
+            setDates(endDate);
             cf.getFundList(fundId,startDate,endDate);
             reqFundId=cf.reqFundId;
             reqFundName=cf.reqFundName;  
@@ -252,7 +239,7 @@ public String getDateTime() throws Exception
             BigDecimal totalCr[]=new BigDecimal[reqFundId.length+2]; 
 
             int j = 1;
-            pstmt = con.prepareStatement(query);
+            pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
             
             //pstmt.setString(j++, endDate);
             //pstmt.setString(j++, endDate);
@@ -392,14 +379,13 @@ public String getDateTime() throws Exception
             	pstmt.setString(j++, fieldId);
             if(LOGGER.isDebugEnabled())     LOGGER.debug("j value is "+j);
             
-            resultset = pstmt.executeQuery();
-	 		while(resultset.next())
-	 		{
-	 			glcode=resultset.getString("glcode");               
-	 			name=resultset.getString("accountHead"); 
-                fuId=resultset.getString("fundid"); 
+            resultset = pstmt.list();
+            for(Object[] element : resultset){
+	 			glcode=element[0].toString();               
+	 			name=element[1].toString(); 
+                fuId=element[2].toString(); 
                 if(LOGGER.isInfoEnabled())     LOGGER.info("fuId::::"+fuId);
-	 			amount=resultset.getDouble("amount");               
+	 			amount=Double.parseDouble(element[3].toString());               
                 Double debAmt=new Double(0);
                 Double creAmt=new Double(0);                            
                 if(amount>0)
@@ -716,7 +702,7 @@ public String getDateTime() throws Exception
         }            
     }
     	
-	 public void isCurDate(Connection conn,String VDate) throws TaskFailedException{
+	 public void isCurDate(String VDate) throws TaskFailedException{
 			
 			EGovernCommon egc=new EGovernCommon();
 			try{
@@ -742,28 +728,26 @@ public String getDateTime() throws Exception
       * @param con
       * @throws Exception
       */
-        private void setDates(String endDate,Connection con) throws Exception
+        private void setDates(String endDate) throws Exception
         {
 
             try
             {
-                ResultSet rs=null;
+                List<Object[]> rs=null;
                 String query = "SELECT TO_CHAR(startingDate, 'dd-Mon-yyyy') AS \"startingDate\" " +
                                "FROM financialYear WHERE startingDate <= ? AND endingDate >= ?";
-                PreparedStatement pst = con.prepareStatement(query);
+                Query pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
                 pst.setString(1, endDate);
                 pst.setString(2, endDate);
-                rs = pst.executeQuery();
+                rs = pst.list();
                 if(LOGGER.isInfoEnabled())     LOGGER.info("query: "+query);
                 /*rs = stmt.executeQuery(query);*/
-                if(rs.next()){
-                    this.startDate = rs.getString("startingDate");
+                for(Object[] element : rs){
+                    this.startDate = element[0].toString();
                     this.endDate = endDate;
                 }
-                else
+                if(rs == null || rs.size() == 0) 
                 	throw new Exception("Reports not defined for this financial year");
-                rs.close();
-                rs.close();
             }
             catch(Exception  ex)
             {
@@ -799,14 +783,6 @@ public String getDateTime() throws Exception
         //This method is called by the TrialBalance.jsp for single fund and date range
         public ArrayList getTBReportForDateRange(String strtDate,String toDate,String fId,String departmentId,String functionaryId,String functionCodeId,String fieldId)throws TaskFailedException
     	{
-    		try
-    		{
-    			con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
-    		}
-    		catch(Exception exception)
-    		{
-    			LOGGER.error("Could Not Get Connection",exception);
-    		}
     		//isCurDate(con,toDate);
     		if(LOGGER.isDebugEnabled())     LOGGER.debug("getTBReportForDateRange | Depaartment ID >>>>>>>>>>>>>>>>>>>>> := "+ departmentId);
     		if(LOGGER.isDebugEnabled())     LOGGER.debug("getTBReportForDateRange | Functionary ID >>>>>>>>>>>>>>>>>>>>> := "+ functionaryId);

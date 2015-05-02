@@ -39,10 +39,11 @@
  ******************************************************************************/
 package com.exilant.exility.updateservice;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.util.List;
+
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
 
 
 
@@ -69,20 +70,17 @@ public class PrimaryKeyGenerator
 
 	public static long getNextKey(String tableName)
 	{
-		Connection con = null;
 		long key = 0;
 		String sql = "select SEQ_"+tableName+".nextval from dual";
 		try
 		{
-			con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
-			PreparedStatement pst = con.prepareStatement(sql);
-			ResultSet rs = pst.executeQuery();
-			if(rs.next())
-			key = rs.getLong(1);
-			else
+			Query pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
+			List<Object[]> rs = pst.list();
+			for(Object[] element : rs){
+			key =Long.parseLong(element[0].toString());
+			}
+			if(rs == null || rs.size() == 0) 
 			throw new Exception();
-			rs.close();
-			pst.close();
 		}
 		catch(Exception e)
 		{
