@@ -14,8 +14,8 @@
         </id>
         
         <timestamp
-		column="LAST_UPDATED_TIMESTAMP"
-		name="lastUpdatedTimeStamp"
+		column="MODIFIED_DATE"
+		name="modifiedDate"
 		access="property"
 		unsaved-value="null"
 	   />
@@ -38,8 +38,8 @@
         <property name="orderId" type="java.lang.Long">
             <column name="ORDER" not-null="true" />
         </property>
-        <property name="createTimeStamp" type="java.util.Date">
-            <column name="CREATETIMESTAMP"  />
+        <property name="createdDate" type="java.util.Date">
+            <column name="CREATE_DATE"  />
         </property>
     
         <set name="egDemandReasons" table="EG_DEMAND_REASON" >

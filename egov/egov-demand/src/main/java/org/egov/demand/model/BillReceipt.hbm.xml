@@ -19,10 +19,10 @@
 		<property name="isCancelled"  column="IS_CANCELLED" type="yes_no"/>
 		<property name="collectionStatus" column="COLLECTION_STATUS" type="java.lang.String"/>
 		<property name="createdDate" type="java.util.Date">
-			<column name="CREATETIMESTAMP" not-null="true" />
+			<column name="CREATED_DATE" not-null="true" />
 		</property>
-		<property name="lastmodifiedDate" type="java.util.Date">
-			<column name="LASTUPDATEDTIMESTAMP" not-null="true" />
+		<property name="modifiedDate" type="java.util.Date">
+			<column name="MODIFED_DATE" not-null="true" />
 		</property>
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User"
 			cascade="all">

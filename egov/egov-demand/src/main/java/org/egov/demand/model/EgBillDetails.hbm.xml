@@ -17,8 +17,8 @@
             <column name="ID_DEMAND_REASON" />
         </many-to-one>
       
-        <property name="lastUpdatedTimestamp" type="date">
-            <column name="LAST_UPDATED_TIMESTAMP" />
+        <property name="modifiedDate" type="date">
+            <column name="MODIFIED_DATE" />
         </property>
         
         <many-to-one name="egBill" class="org.egov.demand.model.EgBill" >
@@ -30,8 +30,8 @@
             <column name="ID_INSTALLMENT"  />
         </many-to-one>       
         
-        <property name="createTimeStamp" type="java.util.Date">
-            <column name="CREATE_TIME_STAMP" not-null="true" />
+        <property name="createDate" type="java.util.Date">
+            <column name="CREATE_DATE" not-null="true" />
         </property>
         <property name="glcode" type="java.lang.String">
             <column name="GLCODE"  /> 

@@ -13,8 +13,8 @@
 		</generator>
         </id>
    	   <timestamp
-		column="LAST_UPDATED_TIMESTAMP"
-		name="lastUpdatedTimestamp"
+		column="MODIFIED_DATE"
+		name="modifiedDate"
 		access="property"
 		unsaved-value="null"
 	   />
@@ -29,8 +29,8 @@
             <column name="IS_HISTORY"  not-null="true" />
         </property>
        
-        <property name="createTimestamp" type="java.util.Date">
-            <column name="CREATE_TIMESTAMP"  not-null="true" />
+        <property name="createDate" type="java.util.Date">
+            <column name="CREATE_DATE"  not-null="true" />
         </property>
         
         <property name="status" type="java.lang.Character">

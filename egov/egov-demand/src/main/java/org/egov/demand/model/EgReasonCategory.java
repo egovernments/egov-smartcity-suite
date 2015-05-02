@@ -58,22 +58,20 @@ public class EgReasonCategory implements java.io.Serializable {
 	private String code;
 	private Long orderId;
 	private Set egDemandReasonMasters = new HashSet(0);
-	private Date lastUpdatedTimeStamp;
+	private Date modifiedDate;
 
 	public String toString() {
-	    StringBuilder sb = new StringBuilder();
-	    sb.append(name).append("(").append(code).append(")");
-	    return sb.toString();
+		StringBuilder sb = new StringBuilder();
+		sb.append(name).append("(").append(code).append(")");
+		return sb.toString();
 	}
 
-	// Property accessors
-
-	public Date getLastUpdatedTimeStamp() {
-		return lastUpdatedTimeStamp;
+	public Date getModifiedDate() {
+		return modifiedDate;
 	}
 
-	public void setLastUpdatedTimeStamp(Date lastUpdatedTimeStamp) {
-		this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
+	public void setModifiedDate(Date modifiedDate) {
+		this.modifiedDate = modifiedDate;
 	}
 
 	public Long getIdType() {
@@ -91,7 +89,6 @@ public class EgReasonCategory implements java.io.Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-
 
 	public String getCode() {
 		return code;
@@ -117,4 +114,4 @@ public class EgReasonCategory implements java.io.Serializable {
 		this.orderId = orderId;
 	}
 
-	}
+}

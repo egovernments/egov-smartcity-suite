@@ -14,8 +14,8 @@
         </id>
         
 	    <timestamp
-		column="LAST_UPDATED_TIMESTAMP" 
-		name="lastUpdatedTimeStamp"
+		column="MODIFIED_DATE" 
+		name="modifiedDate"
 		access="property"
 		unsaved-value="null"
 	    />

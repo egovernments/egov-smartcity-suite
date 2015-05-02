@@ -14,8 +14,8 @@
         </id>
         
         <timestamp
-		column="LAST_UPDATED_TIMESTAMP"
-		name="lastUpdatedTimestamp"
+		column="MODIFIED_DATE"
+		name="modifiedDate"
 		access="property"
 		unsaved-value="null"
 	    />
@@ -29,16 +29,13 @@
         <many-to-one name="egInstallmentMaster" class="org.egov.commons.Installment" >
             <column name="ID_INSTALLMENT"  not-null="true" />
         </many-to-one>
-        <!-- <many-to-one name="accountHeadMaster" class="org.egov.collection.model.AccountHead" >
-            <column name="ID_ACCOUNT_HEAD"  />
-        </many-to-one>-->
         
          <property name="percentageBasis" type="java.math.BigDecimal">
             <column name="PERCENTAGE_BASIS"   />
         </property>
         
-        <property name="createTimestamp" type="java.util.Date">
-            <column name="CREATE_TIMESTAMP"  not-null="true" />
+        <property name="createDate" type="java.util.Date">
+            <column name="CREATE_DATE"  not-null="true" />
         </property>
         <set name="egDemandDetails" table="EG_DEMAND_DETAILS" >
             <key>

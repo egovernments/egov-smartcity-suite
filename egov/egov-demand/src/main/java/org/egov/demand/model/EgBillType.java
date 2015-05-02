@@ -56,11 +56,10 @@ public class EgBillType implements java.io.Serializable {
 	private Long id;
 	private String name;
 	private String code;
-	private Date createTimeStamp;
-	private Date updatedTimeStamp;
+	private Date createDate;
+	private Date modifiedDate;
 	private Set egBills = new HashSet(0);
 
-	
 	public Long getId() {
 		return this.id;
 	}
@@ -77,20 +76,20 @@ public class EgBillType implements java.io.Serializable {
 		this.name = name;
 	}
 
-	public Date getCreateTimeStamp() {
-		return this.createTimeStamp;
+	public Date getCreateDate() {
+		return createDate;
 	}
 
-	public void setCreateTimeStamp(Date createTimeStamp) {
-		this.createTimeStamp = createTimeStamp;
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
 	}
 
-	public Date getUpdatedTimeStamp() {
-		return this.updatedTimeStamp;
+	public Date getModifiedDate() {
+		return modifiedDate;
 	}
 
-	public void setUpdatedTimeStamp(Date updatedTimeStamp) {
-		this.updatedTimeStamp = updatedTimeStamp;
+	public void setModifiedDate(Date modifiedDate) {
+		this.modifiedDate = modifiedDate;
 	}
 
 	public Set getEgBills() {

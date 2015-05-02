@@ -62,8 +62,8 @@ public class EgDemandDetails implements Serializable, Cloneable {
     private String fileReferenceNo;
     private String remarks;
     private BigDecimal amount = BigDecimal.ZERO;
-    private Date lastUpdatedTimeStamp;
-    private Date createTimestamp;
+    private Date modifiedDate;
+    private Date createDate;
     private BigDecimal amtCollected = BigDecimal.ZERO;
     private Set<EgdmCollectedReceipt> egdmCollectedReceipts = new HashSet<EgdmCollectedReceipt>();
     private BigDecimal amtRebate = BigDecimal.ZERO;
@@ -141,14 +141,6 @@ public class EgDemandDetails implements Serializable, Cloneable {
         }
     }
 
-    public Date getLastUpdatedTimeStamp() {
-        return lastUpdatedTimeStamp;
-    }
-
-    public void setLastUpdatedTimeStamp(Date lastUpdatedTimeStamp) {
-        this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
-    }
-
     public Long getId() {
         return this.id;
     }
@@ -197,14 +189,6 @@ public class EgDemandDetails implements Serializable, Cloneable {
         this.amount = amount;
     }
 
-    public Date getCreateTimestamp() {
-        return createTimestamp;
-    }
-
-    public void setCreateTimestamp(Date createTimestamp) {
-        this.createTimestamp = createTimestamp;
-    }
-
     public BigDecimal getAmtCollected() {
         return amtCollected;
     }
@@ -236,7 +220,23 @@ public class EgDemandDetails implements Serializable, Cloneable {
         return sb.toString();
     }
 
-    /**
+    public Date getModifiedDate() {
+		return modifiedDate;
+	}
+
+	public void setModifiedDate(Date modifiedDate) {
+		this.modifiedDate = modifiedDate;
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+	/**
      * Factory method for convenient creation.
      */
     public static EgDemandDetails fromReasonAndAmounts(BigDecimal demandAmount,
@@ -245,8 +245,8 @@ public class EgDemandDetails implements Serializable, Cloneable {
         dd.setAmount(demandAmount);
         dd.setEgDemandReason(egDemandReason);
         dd.setAmtCollected(collectedAmount);
-        dd.setLastUpdatedTimeStamp(new Date());
-        dd.setCreateTimestamp(new Date());
+        dd.setModifiedDate(new Date());
+        dd.setCreateDate(new Date());
         return dd;
     }
 

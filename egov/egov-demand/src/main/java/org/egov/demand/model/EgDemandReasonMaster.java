@@ -62,8 +62,8 @@ public class EgDemandReasonMaster implements java.io.Serializable {
 	private String isDebit;
 	private String code;
 	private Long orderId;
-	private Date createTimeStamp;
-	private Date lastUpdatedTimeStamp;
+	private Date createDate;
+	private Date modifiedDate;
 	private Set<EgDemandReason> egDemandReasons = new HashSet<EgDemandReason>(0);
 
 	public String toString() {
@@ -126,14 +126,6 @@ public class EgDemandReasonMaster implements java.io.Serializable {
 		this.orderId = orderId;
 	}
 
-	public Date getCreateTimeStamp() {
-		return this.createTimeStamp;
-	}
-
-	public void setCreateTimeStamp(Date createTimeStamp) {
-		this.createTimeStamp = createTimeStamp;
-	}
-
 	public Set<EgDemandReason> getEgDemandReasons() {
 		return this.egDemandReasons;
 	}
@@ -142,12 +134,21 @@ public class EgDemandReasonMaster implements java.io.Serializable {
 		this.egDemandReasons = egDemandReasons;
 	}
 
-	public Date getLastUpdatedTimeStamp() {
-		return lastUpdatedTimeStamp;
+	public Date getCreateDate() {
+		return createDate;
 	}
 
-	public void setLastUpdatedTimeStamp(Date lastUpdatedTimeStamp) {
-		this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
 	}
+
+	public Date getModifiedDate() {
+		return modifiedDate;
+	}
+
+	public void setModifiedDate(Date modifiedDate) {
+		this.modifiedDate = modifiedDate;
+	}
+
 
 }

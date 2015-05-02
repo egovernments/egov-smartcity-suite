@@ -16,11 +16,11 @@
         <property name="code" type="java.lang.String">
             <column name="CODE" />
         </property>
-        <property name="createTimeStamp" type="java.util.Date">
-            <column name="CREATE_TIME_STAMP"  not-null="true" />
+        <property name="createDate" type="java.util.Date">
+            <column name="CREATE_DATE"  not-null="true" />
         </property>
-        <property name="updatedTimeStamp" type="java.util.Date">
-            <column name="UPDATED_TIME_STAMP"  not-null="true" />
+        <property name="modifiedDate" type="java.util.Date">
+            <column name="MODIFIED_DATE"  not-null="true" />
         </property>
         <set name="egBills" inverse="true">
             <key>

@@ -50,15 +50,16 @@ import org.egov.commons.Installment;
  * @author MyEclipse Persistence Tools
  */
 
-public class EgBillDetails implements java.io.Serializable, Comparable<EgBillDetails> {
+public class EgBillDetails implements java.io.Serializable,
+		Comparable<EgBillDetails> {
 
 	// Fields
 
 	private Long id;
 	private EgBill egBill;
-	private Date createTimeStamp;
-	private Date lastUpdatedTimestamp;
-	private String glcode;  
+	private Date createDate;
+	private Date modifiedDate;
+	private String glcode;
 	private BigDecimal collectedAmount;
 	private Integer orderNo;
 	private String functionCode;
@@ -68,8 +69,8 @@ public class EgBillDetails implements java.io.Serializable, Comparable<EgBillDet
 	private Installment egInstallmentMaster;
 	private Integer additionalFlag;
 	private EgDemandReason egDemandReason;
-	
-    @Override
+
+	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("EgBillDetails [glcode=").append(glcode)
@@ -82,22 +83,22 @@ public class EgBillDetails implements java.io.Serializable, Comparable<EgBillDet
 				.append(", egDemandReason=").append(egDemandReason).append("]");
 		return builder.toString();
 	}
-    
-    /**
-     * The "orderNo" field is used as the key to sort bill details.
-     */
-    @Override
-    public int compareTo(EgBillDetails other) {
-        return this.orderNo.compareTo(other.orderNo);
-    }
 
-    /**
-     * Returns the difference between the CR and DR amount. 
-     */
-    public BigDecimal balance() {
-        return crAmount.subtract(drAmount);
-    }
-    
+	/**
+	 * The "orderNo" field is used as the key to sort bill details.
+	 */
+	@Override
+	public int compareTo(EgBillDetails other) {
+		return this.orderNo.compareTo(other.orderNo);
+	}
+
+	/**
+	 * Returns the difference between the CR and DR amount.
+	 */
+	public BigDecimal balance() {
+		return crAmount.subtract(drAmount);
+	}
+
 	public String getDescription() {
 		return description;
 	}
@@ -130,20 +131,20 @@ public class EgBillDetails implements java.io.Serializable, Comparable<EgBillDet
 		this.egBill = egBill;
 	}
 
-	public Date getCreateTimeStamp() {
-		return this.createTimeStamp;
+	public Date getCreateDate() {
+		return createDate;
 	}
 
-	public void setCreateTimeStamp(Date createTimeStamp) {
-		this.createTimeStamp = createTimeStamp;
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
 	}
 
-	public Date getLastUpdatedTimestamp() {
-		return this.lastUpdatedTimestamp;
+	public Date getModifiedDate() {
+		return modifiedDate;
 	}
 
-	public void setLastUpdatedTimestamp(Date lastUpdatedTimestamp) {
-		this.lastUpdatedTimestamp = lastUpdatedTimestamp;
+	public void setModifiedDate(Date modifiedDate) {
+		this.modifiedDate = modifiedDate;
 	}
 
 	public String getGlcode() {
@@ -209,5 +210,5 @@ public class EgBillDetails implements java.io.Serializable, Comparable<EgBillDet
 	public void setEgDemandReason(EgDemandReason egDemandReason) {
 		this.egDemandReason = egDemandReason;
 	}
-	
+
 }

@@ -12,8 +12,8 @@
 			<param name="sequence">SEQ_EG_DEMAND_DETAILS</param>
 		</generator>
 		 </id>		
-        <property name="lastUpdatedTimeStamp" type="timestamp">
-			<column name="LAST_UPDATED_TIMESTAMP" not-null="true" />
+        <property name="modifiedDate" type="timestamp">
+			<column name="MODIFIED_DATE" not-null="true" />
 		</property>
         <many-to-one name="egDemandReason" class="org.egov.demand.model.EgDemandReason" >
             <column name="ID_DEMAND_REASON"  not-null="true" />
@@ -22,8 +22,8 @@
          <many-to-one name="egwStatus" class="org.egov.commons.EgwStatus" >
             <column name="ID_STATUS"  />
         </many-to-one>
-         <property name="createTimestamp" type="java.util.Date">
-            <column name="CREATE_TIME_STAMP"  not-null="true" />
+         <property name="createDate" type="java.util.Date">
+            <column name="CREATE_DATE"  not-null="true" />
         </property>
       
         <property name="fileReferenceNo" type="java.lang.String">

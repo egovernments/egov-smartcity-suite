@@ -13,8 +13,8 @@
 			</generator>
 		</id>
 
-        <property name="lastUpdatedTimeStamp" type="date">
-            <column name="LAST_UPDATED_TIMESTAMP" />
+        <property name="modifiedDate" type="date">
+            <column name="MODIFIED_DATE" />
         </property>
 
 		<many-to-one name="egDemand" class="org.egov.demand.model.EgDemand">
@@ -48,8 +48,8 @@
 		<property name="userId" type="java.lang.Long">
 			<column name="USER_ID" not-null="true" />
 		</property>
-		<property name="createTimeStamp" type="java.util.Date">
-			<column name="CREATE_TIME_STAMP" />
+		<property name="createDate" type="java.util.Date">
+			<column name="CREATE_DATE" />
 		</property>
 
 		<property name="is_History" type="java.lang.String">

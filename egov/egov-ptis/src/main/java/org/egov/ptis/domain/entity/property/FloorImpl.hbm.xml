@@ -45,7 +45,7 @@
 <hibernate-mapping>
 	<class name="org.egov.ptis.domain.entity.property.FloorImpl" table="EGPT_FLOOR_DETAIL">
 		<id
-			name="id" column="ID_FLOOR_DETAIL" type="java.lang.Long">
+			name="id" column="ID" type="java.lang.Long">
 			<generator class="sequence">
 					<param name="sequence">SEQ_EGPT_FLOOR_DETAIL</param>
 			</generator>

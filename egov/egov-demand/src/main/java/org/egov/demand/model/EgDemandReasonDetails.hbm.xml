@@ -15,8 +15,8 @@
         </id>
         
         <timestamp
-		column="LAST_UPDATED_TIMESTAMP"
-		name="lastUpdatedTimeStamp"
+		column="MODIFIED_DATE"
+		name="modifiedDate"
 		access="property"
 		unsaved-value="null"
 	    />
@@ -39,8 +39,8 @@
         <property name="highLimit" type="java.math.BigDecimal">
             <column name="HIGH_LIMIT"  />
         </property>
-        <property name="createTimestamp" type="java.util.Date">
-            <column name="CREATE_TIMESTAMP"  not-null="true" />
+        <property name="createDate" type="java.util.Date">
+            <column name="CREATE_DATE"  not-null="true" />
         </property>
         
          <property name="flatAmount" type="java.math.BigDecimal">

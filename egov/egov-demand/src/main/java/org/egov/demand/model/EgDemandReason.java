@@ -48,8 +48,6 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.EgfAccountcodePurpose;
 import org.egov.commons.Installment;
 
-
-
 /**
  * EgDemandReason entity.
  *
@@ -65,18 +63,19 @@ public class EgDemandReason implements java.io.Serializable {
 	private EgDemandReasonMaster egDemandReasonMaster;
 	private Installment egInstallmentMaster;
 	private BigDecimal percentageBasis;
-	private Date createTimestamp;
-	private Date lastUpdatedTimestamp;
-	private Set<EgDemandReasonDetails> egDemandReasonDetails = new HashSet<EgDemandReasonDetails>(0);
-	//private AccountHead accountHeadMaster=null;
-	private Set<EgDemandDetails> egDemandDetails = new HashSet<EgDemandDetails>(0);
+	private Date createDate;
+	private Date modifieDate;
+	private Set<EgDemandReasonDetails> egDemandReasonDetails = new HashSet<EgDemandReasonDetails>(
+			0);
+	private Set<EgDemandDetails> egDemandDetails = new HashSet<EgDemandDetails>(
+			0);
 	private EgfAccountcodePurpose purposeCode = null;
 	private CChartOfAccounts glcodeId;
 
 	public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(egDemandReasonMaster).append("-").append(egInstallmentMaster);
-        return sb.toString();
+		StringBuilder sb = new StringBuilder();
+		sb.append(egDemandReasonMaster).append("-").append(egInstallmentMaster);
+		return sb.toString();
 	}
 
 	public Long getId() {
@@ -120,36 +119,12 @@ public class EgDemandReason implements java.io.Serializable {
 		this.percentageBasis = percentageBasis;
 	}
 
-	/*public AccountHead getAccountHeadMaster() {
-		return accountHeadMaster;
-	}
-
-	public void setAccountHeadMaster(AccountHead accountHeadMaster) {
-		this.accountHeadMaster = accountHeadMaster;
-	}*/
-
-	public Date getCreateTimestamp() {
-		return this.createTimestamp;
-	}
-
-	public void setCreateTimestamp(Date createTimestamp) {
-		this.createTimestamp = createTimestamp;
-	}
-
-	public Date getLastUpdatedTimestamp() {
-		return this.lastUpdatedTimestamp;
-	}
-
-	public void setLastUpdatedTimestamp(Date lastUpdatedTimestamp) {
-		this.lastUpdatedTimestamp = lastUpdatedTimestamp;
-	}
-
-
 	public Set<EgDemandReasonDetails> getEgDemandReasonDetails() {
 		return egDemandReasonDetails;
 	}
 
-	public void setEgDemandReasonDetails(Set<EgDemandReasonDetails> egDemandReasonDetails) {
+	public void setEgDemandReasonDetails(
+			Set<EgDemandReasonDetails> egDemandReasonDetails) {
 		this.egDemandReasonDetails = egDemandReasonDetails;
 	}
 
@@ -161,26 +136,25 @@ public class EgDemandReason implements java.io.Serializable {
 		this.egDemandDetails = egDemandDetails;
 	}
 
-	public void addEgDemandReasonDetails(EgDemandReasonDetails egDemandReasonDetails)
-	{
+	public void addEgDemandReasonDetails(
+			EgDemandReasonDetails egDemandReasonDetails) {
 		getEgDemandReasonDetails().add(egDemandReasonDetails);
 	}
-	public void removeEgDemandReasonDetails(EgDemandReasonDetails egDemandReasonDetails)
-	{
+
+	public void removeEgDemandReasonDetails(
+			EgDemandReasonDetails egDemandReasonDetails) {
 		getEgDemandReasonDetails().remove(egDemandReasonDetails);
 	}
 
-	public void addEgDemandDetails(EgDemandDetails egDemandDetails)
-	{
+	public void addEgDemandDetails(EgDemandDetails egDemandDetails) {
 		getEgDemandDetails().add(egDemandDetails);
 	}
-	public void removeEgDemandDetails(EgDemandDetails egDemandDetails)
-	{
+
+	public void removeEgDemandDetails(EgDemandDetails egDemandDetails) {
 		getEgDemandDetails().remove(egDemandDetails);
 	}
 
-
-	 public EgfAccountcodePurpose getPurposeCode() {
+	public EgfAccountcodePurpose getPurposeCode() {
 		return purposeCode;
 	}
 
@@ -188,56 +162,70 @@ public class EgDemandReason implements java.io.Serializable {
 		this.purposeCode = purposeCode;
 	}
 
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+	public Date getModifieDate() {
+		return modifieDate;
+	}
+
+	public void setModifieDate(Date modifieDate) {
+		this.modifieDate = modifieDate;
+	}
+
 	/**
 	 * @return Returns if the given Object is equal to PropertyImpl
 	 */
-    public boolean equals(Object obj)
-	{
-		if(obj == null) return false;
+	public boolean equals(Object obj) {
+		if (obj == null)
+			return false;
 
-		if(this == obj) return true;
+		if (this == obj)
+			return true;
 
-		if(! (obj instanceof EgDemandReason)) return false;
+		if (!(obj instanceof EgDemandReason))
+			return false;
 
 		final EgDemandReason other = (EgDemandReason) obj;
 
-		if(getId() != null || other.getId() != null)
-		{
-			if(getId().equals(other.getId()))
-			{
+		if (getId() != null || other.getId() != null) {
+			if (getId().equals(other.getId())) {
 				return true;
 			}
 		}
-        if((getEgDemandReasonMaster() != null || other.getEgDemandReasonMaster() != null)&& (getEgInstallmentMaster() != null || other.getEgInstallmentMaster() != null))
-        {
-            if(getEgDemandReasonMaster().equals(other.getEgDemandReasonMaster()) && getEgInstallmentMaster().equals(other.getEgInstallmentMaster()))
-            {
-                return true;
-            }
-            else
-                return false;
-        }
-		else
+		if ((getEgDemandReasonMaster() != null || other
+				.getEgDemandReasonMaster() != null)
+				&& (getEgInstallmentMaster() != null || other
+						.getEgInstallmentMaster() != null)) {
+			if (getEgDemandReasonMaster().equals(
+					other.getEgDemandReasonMaster())
+					&& getEgInstallmentMaster().equals(
+							other.getEgInstallmentMaster())) {
+				return true;
+			} else
+				return false;
+		} else
 			return false;
 	}
 
-    /**
+	/**
 	 * @return Returns the hashCode
 	 */
-    public int hashCode()
-	{
+	public int hashCode() {
 		int hashCode = 0;
 
-		if(getId() != null)
-		{
+		if (getId() != null) {
 			hashCode = hashCode + this.getId().hashCode();
 		}
-		if(getEgDemandReasonMaster() != null)
-		{
+		if (getEgDemandReasonMaster() != null) {
 			hashCode = hashCode + this.getEgDemandReasonMaster().hashCode();
 		}
-		if(getEgInstallmentMaster() != null)
-		{
+		if (getEgInstallmentMaster() != null) {
 			hashCode = hashCode + this.getEgInstallmentMaster().hashCode();
 		}
 		return hashCode;
@@ -250,8 +238,5 @@ public class EgDemandReason implements java.io.Serializable {
 	public void setGlcodeId(CChartOfAccounts glcodeId) {
 		this.glcodeId = glcodeId;
 	}
-
-	
-
 
 }
