@@ -322,7 +322,7 @@ public class VoucherHeader {
 
 	
 
-	public void insert(Connection connection) throws SQLException,
+	public void insert() throws SQLException,
 			TaskFailedException {
 		String code = EGovConfig.getProperty("egf_config.xml",
 				"confirmoncreate", "", "JournalVoucher");// get from the config
@@ -367,7 +367,7 @@ public class VoucherHeader {
 		if (moduleId == null || moduleId.length() == 0)
 			moduleId = null;
 
-		effectiveDate = commonmethods.getCurrentDateTime(connection);
+		effectiveDate = commonmethods.getCurrentDateTime();
 
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -384,9 +384,9 @@ public class VoucherHeader {
 
 		description = commonmethods.formatString(description);
 		name = commonmethods.formatString(name);
-		PreparedStatement pst = null;
+		Query pst = null;
 		try {
-			lastModifiedDate = commonmethods.getCurrentDateTime(connection);
+			lastModifiedDate = commonmethods.getCurrentDateTime();
 			Date dt = new Date();
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 			SimpleDateFormat formatter = new SimpleDateFormat(
@@ -399,7 +399,7 @@ public class VoucherHeader {
 					+ "VALUES ( ?, ?, to_date(?,'dd-Mon-yyyy HH24:MI:SS'), ?, ?, ?, to_date(?,'dd-Mon-yyyy HH24:MI:SS'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,to_date(?,'dd-Mon-yyyy HH24:MI:SS'))";
 
 			if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
-			pst = connection.prepareStatement(insertQuery);
+			pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 			pst.setString(1, id);
 			pst.setString(2, cgn);
 			pst.setString(3, cgDate);
@@ -427,15 +427,13 @@ public class VoucherHeader {
 		} catch (Exception e) {
 			LOGGER.error("Exception in insert " + e.getMessage(),e);
 			throw taskExc;
-		} finally {
-			pst.close();
-		}
+		} 
 
 	}
 
-	public void update(Connection connection) throws SQLException,
+	public void update() throws SQLException,
 			TaskFailedException {
-			lastModifiedDate = commonmethods.getCurrentDateTime(connection);
+			lastModifiedDate = commonmethods.getCurrentDateTime();
 
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -450,12 +448,12 @@ public class VoucherHeader {
 		if (isId && isField) {
 /*			description = commonmethods.formatString(description);
 			name = commonmethods.formatString(name);*/
-			newUpdate(connection);
+			newUpdate();
 			
 		}
 	}
 
-	public void newUpdate(Connection con) throws TaskFailedException,
+	public void newUpdate() throws TaskFailedException,
 			SQLException {
 		EGovernCommon commommethods = new EGovernCommon();
 		Query pstmt = null;
@@ -603,15 +601,15 @@ public class VoucherHeader {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
 		EGovernCommon cm = new EGovernCommon();
-		today = cm.getCurrentDate(conn);
+		today = cm.getCurrentDate();
 		if(LOGGER.isInfoEnabled())     LOGGER.info("Update the egf_record_status table of original voucher");
 		egfstatus.setEffectiveDate(formatter.format(sdf.parse(today)));
 		egfstatus.setStatus("4");
 		egfstatus.setVoucherheaderId(vid);
-		egfstatus.update(conn);
+		egfstatus.update();
 		if(LOGGER.isInfoEnabled())     LOGGER.info("Update the original voucher");
 		vh.setStatus("" + 4);
-		vh.update(conn);
+		vh.update();
 
 		// Check if there is any related vouchers
 		ps.clearParameters();
@@ -625,10 +623,10 @@ public class VoucherHeader {
 			egfstatusRef.setEffectiveDate(formatter.format(sdf.parse(today)));
 			egfstatusRef.setStatus("4");
 			egfstatusRef.setVoucherheaderId(refVhid);
-			egfstatusRef.update(conn);
+			egfstatusRef.update();
 			vh.setStatus("" + 4);
 			if(LOGGER.isInfoEnabled())     LOGGER.info("before voucher update");
-			vh.update(conn);
+			vh.update();
 		}
 	}
 

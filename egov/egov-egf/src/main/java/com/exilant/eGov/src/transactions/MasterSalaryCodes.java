@@ -212,7 +212,7 @@ public class MasterSalaryCodes extends AbstractTask {
 				salcode.setSalType(salaryCodesGrid[j][3]);
 
 				salcode.setCreatedby(dc.getValue("egUser_id"));
-				today = commonmethod.getCurrentDateTime(con);
+				today = commonmethod.getCurrentDateTime();
 				salcode
 						.setCreatedDate(commonmethod
 								.getSQLDateTimeFormat(today));
@@ -293,7 +293,7 @@ public class MasterSalaryCodes extends AbstractTask {
 				salcode.setSalType(salaryCodesGrid[j][3]);
 
 				salcode.setLastModifiedBy(dc.getValue("egUser_id"));
-				today = commonmethod.getCurrentDateTime(con);
+				today = commonmethod.getCurrentDateTime();
 				salcode.setLastModifiedDate(commonmethod
 						.getSQLDateTimeFormat(today));
 
@@ -354,7 +354,7 @@ public class MasterSalaryCodes extends AbstractTask {
 				salcode.setSalType(salaryCodesGrid[j][3]);
 
 				salcode.setCreatedby(dc.getValue("egUser_id"));
-				today = commonmethod.getCurrentDateTime(con);
+				today = commonmethod.getCurrentDateTime();
 				salcode
 						.setCreatedDate(commonmethod
 								.getSQLDateTimeFormat(today));

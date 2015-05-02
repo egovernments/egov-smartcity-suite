@@ -94,7 +94,7 @@ public class AssetPODetails {
 		Statement statement=null;
 		setId(String.valueOf(PrimaryKeyGenerator.getNextKey("assetPODetails")));
 		try {
-			String lastupdateddate = String.valueOf(commommethods.getCurrentDate(connection));			
+			String lastupdateddate = String.valueOf(commommethods.getCurrentDate());			
 			lastupdateddate = formatter.format(sdf.parse(lastupdateddate));
 			String insertQuery = "INSERT INTO eg_asset_PO (id, assetid, workorderid, lastupdateddate)VALUES ("+ id+ ", "+ assetid+ ", "+ workorderid+ ", '"	+ lastupdateddate + "', ')";
 			statement = connection.createStatement();

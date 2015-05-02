@@ -656,7 +656,7 @@ public class CreateVoucher {
 			 vh.setId(String.valueOf(vouhcerheaderid));
 			 vh.setStatus(status);
 			 Connection con;
-			 vh.update(null);
+			 vh.update();
 		 }
 		 catch(Exception e)
 		 {
@@ -1193,7 +1193,7 @@ public class CreateVoucher {
 			 String vdt = formatter.format(vh.getVoucherDate());
 			 String fiscalPeriod=null;
 			 try {
-				fiscalPeriod=cm.getFiscalPeriod(vdt, conn);
+				fiscalPeriod=cm.getFiscalPeriod(vdt);
 			} catch (TaskFailedException e) {
 				throw new EGOVRuntimeException("error while getting fiscal period");
 			}
@@ -1210,13 +1210,16 @@ public class CreateVoucher {
 			 if(LOGGER.isDebugEnabled())     LOGGER.debug("vType"+vType);
 			 String eg_voucher=null;
 			try {
-				eg_voucher = cm.getEg_Voucher(vType,fiscalPeriod,conn);
+				eg_voucher = cm.getEg_Voucher(vType,fiscalPeriod);
 			} catch (TaskFailedException e) {
 				LOGGER.error(ERR,e);
 				throw new EGOVRuntimeException(e.getMessage());
 			} catch (SQLException e) {
 				LOGGER.error(ERR,e);
 				throw new EGOVRuntimeException(e.getMessage());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			 for(int i=eg_voucher.length();i<10;i++)
 			 {
@@ -1227,15 +1230,12 @@ public class CreateVoucher {
 			 vh.setCgvn(cgNum);
 			
 			 try {
-				if(!cm.isUniqueVN(vh.getVoucherNumber(),vdt, conn))
+				if(!cm.isUniqueVN(vh.getVoucherNumber(),vdt))
 					 throw new ValidationException(Arrays.asList(new ValidationError("Duplicate Voucher Number","Duplicate Voucher Number")));
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				LOGGER.error(ERR,e);
 				throw new 	EGOVRuntimeException(e.getMessage());
-			} catch (TaskFailedException e) {
-				LOGGER.error(ERR,e);
-				throw new	EGOVRuntimeException(e.getMessage());
-			}
+			} 
 			 vh.setCreatedBy(userMngr.getUserById(Long.valueOf(EGOVThreadLocals.getUserId())));
 			 if(LOGGER.isInfoEnabled())     LOGGER.info("++++++++++++++++++"+vh.toString());
 			 cVoucherHeaderSer.persist(vh);
@@ -2167,8 +2167,7 @@ public class CreateVoucher {
 			 billregister.setNarration(supplierBillDetails.get("narration").toString());
 		 }
 		 EgwStatus status = null;
-		 Connection conn = (Connection) null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
-		 status = comm.findEgwStatusById(Integer.valueOf(cm.getEGWStatusId(conn, "PURCHBILL", "Pending")));
+		 status = comm.findEgwStatusById(Integer.valueOf(cm.getEGWStatusId("PURCHBILL", "Pending")));
 		 billregister.setStatus(status);
 		 if(null != EGOVThreadLocals.getUserId()){
 			 billregister.setCreatedBy(userMngr.getUserById(Long.valueOf(EGOVThreadLocals.getUserId())));
@@ -2176,18 +2175,17 @@ public class CreateVoucher {
 		 billregister.setCreatedDate(new DateTime());
 		 SimpleDateFormat df = new SimpleDateFormat(DD_MM_YYYY);
 		 String date = df.format((Date)supplierBillDetails.get("billdate"));
-		 billregister.setBillnumber(cmImpl.getTxnNumber("WBILL",date ,conn));
+		 billregister.setBillnumber(cmImpl.getTxnNumber("WBILL",date ));
 	 }
 	 public void postInEgbillMis(EgBillregister billregister,HashMap<String, Object> supplierBillDetails ) throws Exception{
 
-		 Connection conn = (Connection) null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
 		 EgBillregistermis billMis = new EgBillregistermis();
 		 billMis.setEgBillregister(billregister);
 		 billMis.setFund(((Worksdetail)supplierBillDetails.get("worksdetail")).getFund());
 		 billMis.setFundsource(((Worksdetail)supplierBillDetails.get("worksdetail")).getFundsource());
 		 SimpleDateFormat df = new SimpleDateFormat(DD_MM_YYYY);
 		 String date = df.format((Date)supplierBillDetails.get("billdate"));
-		 String sanctionNo = cmImpl.getTxnNumber("SAN",date, conn);
+		 String sanctionNo = cmImpl.getTxnNumber("SAN",date);
 		 billMis.setSanctiondetail(sanctionNo);
 		 billMis.setSanctiondate(billregister.getBilldate());
 		 billMis.setFinancialyear(comm.getFinancialYearByFinYearRange(date));

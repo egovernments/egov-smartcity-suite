@@ -91,11 +91,11 @@ public class EgRemittanceGldtl
 	public String getRemittedAmt(){ return remittedAmt; }
 	public String getTdsId(){ return tdsId; }
 	
-	public void insert(Connection connection) throws SQLException,TaskFailedException
+	public void insert() throws SQLException,TaskFailedException
 	{						
 		Query pstmt=null;
 		EGovernCommon egc = new EGovernCommon();	
-		lastModifiedDate = egc.getCurrentDateTime(connection);		
+		lastModifiedDate = egc.getCurrentDateTime();		
 	   	try
 	   	{	   		
 	   		SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");

@@ -132,24 +132,24 @@ public class BankEntry extends AbstractTask{
 			voucherHeader_voucherDate = formatter.format( sdf.parse( vdt ));
 
 			//fiscalPid=getFiscalPeriod(dc.getValue("voucherHeader_voucherDate"));
-			fiscalPid=cm.getFiscalPeriod(voucherHeader_voucherDate,conn);
+			fiscalPid=cm.getFiscalPeriod(voucherHeader_voucherDate);
 			String fId=dc.getValue("fund_id").toString();
-			voucherNumber=cm.vNumber(dc, conn,fId,dc.getValue("voucherHeader_voucherNumber"));
+			voucherNumber=cm.vNumber(dc,fId,dc.getValue("voucherHeader_voucherNumber"));
 			vType=voucherNumber.substring(0,2);
 			//if(LOGGER.isDebugEnabled())     LOGGER.debug("aaaaaaaaa  "+vType+"   bbbbbbbb"+voucherNumber);
-			egVoucher=cm.getEg_Voucher(vType,fiscalPid,conn);
+			egVoucher=cm.getEg_Voucher(vType,fiscalPid);
 			for(int i=egVoucher.length();i<5;i++)
 			{
 				 egVoucher="0"+egVoucher;
 			}
 			cgNum=vType+egVoucher;
 			//if(LOGGER.isDebugEnabled())     LOGGER.debug("aaaaaaaaa  "+cgNum);
-			if(!cm.isUniqueVN(dc, conn,voucherNumber))
+			if(!cm.isUniqueVN(dc,voucherNumber))
 			throw new TaskFailedException();
 			postInVoucherHeader(dc,conn);
 			postInBankAccount(dc);
 			postInBankReconciliation(dc);
-			postInVoucherDetail(dc, transactions,conn);
+			postInVoucherDetail(dc, transactions);
 			/*added the necessary data to each of objects*/
     		transactions=addRequiredDataToList(transactions,dc);
 
@@ -158,7 +158,7 @@ public class BankEntry extends AbstractTask{
     		ChartOfAccounts engine=ChartOfAccounts.getInstance();
     		Transaxtion txnList[]=new Transaxtion[transactions.size()];
     		txnList=(Transaxtion[])transactions.toArray(txnList);
-    		if(!engine.postTransaxtions(txnList, connection, dc)){
+    		if(!engine.postTransaxtions(txnList, dc)){
     			//dc.addMessage("exilRPError","Engine Validation Failed");
     			throw taskExc;
     		}
@@ -200,13 +200,13 @@ public class BankEntry extends AbstractTask{
 		vh.setVoucherNumber(voucherNumber);
 		vh.setDescription(dc.getValue("voucherHeader_description"));
 		//vh.setFiscalPeriodId(getFiscalPeriod(dc.getValue("voucherHeader_voucherDate")));
-		vh.setFiscalPeriodId(cm.getFiscalPeriod(voucherHeader_voucherDate,conn));
+		vh.setFiscalPeriodId(cm.getFiscalPeriod(voucherHeader_voucherDate));
 		vh.setCgvn(cgNum);
 	//	vh.setFundId((String)dc.getValue("fund_id"));
 	//	vh.setFunctionId((String)dc.getValue("function_id"));
 	//	vh.setFundSourceId((String)dc.getValue("fundSource_id"));
 		vh.setCreatedby(dc.getValue("current_UserID"));
-		vh.insert(connection);
+		vh.insert();
 		voucherHeaderId = vh.getId();
 	}
 
@@ -313,7 +313,7 @@ public class BankEntry extends AbstractTask{
 	}
 
 	private void postInVoucherDetail(DataCollection dc,
-										ArrayList transactions,Connection conn) throws TaskFailedException, SQLException{
+										ArrayList transactions) throws TaskFailedException, SQLException{
 
 		/***********************************************
 		* if Bank Balance > Account Balance then Credit: Account Head, Debit: Bank Account
@@ -340,7 +340,7 @@ public class BankEntry extends AbstractTask{
    			resultset.next();
    			vd.setLineID(resultset.getInt("LineId") + "");
    			resultset = null;
-   			vd.insert(connection);
+   			vd.insert();
 
    			Transaxtion transaction = new Transaxtion();
    			transaction.setGlCode(gridBankEntry[i][0]);
@@ -355,7 +355,7 @@ public class BankEntry extends AbstractTask{
 
    			/******************* bank account entry ********************/
    			vd.setGLCode(dc.getValue("bankGLCode"));
-   			vd.setAccountName(cm.getCodeName(dc.getValue("bankGLCode"), conn));
+   			vd.setAccountName(cm.getCodeName(dc.getValue("bankGLCode")));
    			vd.setDebitAmount(gridBankEntry[i][3]);   //debit to bank account
    			vd.setCreditAmount(gridBankEntry[i][2]);  //credit to bank account
    			vd.setNarration(gridBankEntry[i][4]);
@@ -365,11 +365,11 @@ public class BankEntry extends AbstractTask{
    			resultset.next();
    			vd.setLineID(resultset.getInt("LineId") + "");
    			resultset = null;
-   			vd.insert(connection);
+   			vd.insert();
 
    			Transaxtion transaction1 = new Transaxtion();
    			transaction1.setGlCode(dc.getValue("bankGLCode"));
-   			transaction1.setGlName(cm.getCodeName(dc.getValue("bankGLCode"), conn));
+   			transaction1.setGlName(cm.getCodeName(dc.getValue("bankGLCode")));
    			transaction1.setDrAmount(gridBankEntry[i][3]);
    			transaction1.setCrAmount(gridBankEntry[i][2]);
    			transaction1.setNarration(gridBankEntry[i][4]);

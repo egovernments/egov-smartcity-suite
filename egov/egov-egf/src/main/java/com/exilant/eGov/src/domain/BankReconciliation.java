@@ -114,7 +114,7 @@ public class BankReconciliation {
 	public void insert(Connection connection) throws SQLException,TaskFailedException
 	{
 		EGovernCommon commommethods = new EGovernCommon();
-		transactionDate = commommethods.getCurrentDateTime(connection);
+		transactionDate = commommethods.getCurrentDateTime();
 		PreparedStatement pst =null;
 		try
    		{

@@ -120,7 +120,7 @@ public class GeneralLedgerReportList{
 		if(snapShotDateTime.equalsIgnoreCase(""))
 		effTime="";
 		else
-		effTime=egc.getEffectiveDateFilter(connection,snapShotDateTime);
+		effTime=egc.getEffectiveDateFilter(snapShotDateTime);
 		}
 		catch(Exception e){
 			LOGGER.error(e.getMessage(),e);
@@ -1226,7 +1226,7 @@ private void setDates(String startDate, String endDate ) throws TaskFailedExcept
 			EGovernCommon egc=new EGovernCommon();
 			try{
 	
-				String today=egc.getCurrentDate(conn);
+				String today=egc.getCurrentDate();
 				String[] dt2 = today.split("/");
 				String[] dt1= VDate.split("/");
 

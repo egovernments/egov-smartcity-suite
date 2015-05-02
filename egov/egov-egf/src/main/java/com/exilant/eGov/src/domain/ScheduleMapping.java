@@ -101,7 +101,7 @@ public class ScheduleMapping {
 		setId(String.valueOf(PrimaryKeyGenerator.getNextKey("schedulemapping")));
 			EGovernCommon common = new EGovernCommon();
 			try {
-				createdDate = common.getCurrentDate(con);
+				createdDate = common.getCurrentDate();
 				// Formatting Date
 				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 				SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
@@ -149,7 +149,7 @@ public class ScheduleMapping {
 	public void newUpdate(Connection con) throws TaskFailedException,
 			SQLException {
 		EGovernCommon commommethods = new EGovernCommon();
-		lastModifiedDate = commommethods.getCurrentDate(con);
+		lastModifiedDate = commommethods.getCurrentDate();
 		PreparedStatement pstmt = null;
 		try {
 			lastModifiedDate = formatter.format(sdf.parse(lastModifiedDate));

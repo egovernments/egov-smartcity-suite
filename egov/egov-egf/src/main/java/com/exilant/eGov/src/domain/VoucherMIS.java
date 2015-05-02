@@ -51,6 +51,8 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
@@ -99,9 +101,9 @@ public class VoucherMIS {
 	 * @param connection
 	 * @throws TaskFailedException
 	 */
-	public void insert(Connection connection) throws TaskFailedException {
-		PreparedStatement pst = null;
-		createTimeStamp = commonmethods.getCurrentDateTime(connection);
+	public void insert() throws TaskFailedException {
+		Query pst = null;
+		createTimeStamp = commonmethods.getCurrentDateTime();
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 			SimpleDateFormat formatter = new SimpleDateFormat(
@@ -119,7 +121,7 @@ public class VoucherMIS {
 
 		if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
 		try {
-			pst = connection.prepareStatement(insertQuery);
+			pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 			pst.setString(1, id);
 			pst.setString(2, voucherheaderid);
 			pst.setString(3, divisionId);
@@ -135,7 +137,6 @@ public class VoucherMIS {
 			pst.setString(13, budgetaryAppnumber);
 			pst.setString(14, function);
 			pst.executeUpdate();
-			pst.close();
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 			throw taskExc;
@@ -148,8 +149,8 @@ public class VoucherMIS {
 	 * @param connection
 	 * @throws TaskFailedException
 	 */
-	public void update(Connection connection) throws TaskFailedException {
-		createTimeStamp = commonmethods.getCurrentDateTime(connection);
+	public void update() throws TaskFailedException {
+		createTimeStamp = commonmethods.getCurrentDateTime();
 
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -158,7 +159,7 @@ public class VoucherMIS {
 			createTimeStamp = formatter.format(sdf.parse(createTimeStamp));
 			setCreateTimeStamp(createTimeStamp);
 
-			newUpdate(connection);
+			newUpdate();
 
 		} catch (Exception e) {
 			LOGGER.error("Error in update: " + e);
@@ -166,9 +167,9 @@ public class VoucherMIS {
 		}
 	}
 
-	public void newUpdate(Connection con) throws TaskFailedException,
+	public void newUpdate() throws TaskFailedException,
 			SQLException {
-		PreparedStatement pstmt = null;
+		Query pstmt = null;
 		StringBuilder query = new StringBuilder(500);
 		query.append("update vouchermis set ");
 		if (voucherheaderid != null)
@@ -202,7 +203,7 @@ public class VoucherMIS {
 		query.append(" where id=?");
 		try {
 			int i = 1;
-			pstmt = con.prepareStatement(query.toString());
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
 			if (voucherheaderid != null)
 				pstmt.setString(i++, voucherheaderid);
 			if (divisionId != null)
@@ -231,16 +232,10 @@ public class VoucherMIS {
 				pstmt.setString(i++, function);
 			pstmt.setString(i++, id);
 
-			pstmt.executeQuery();
+			pstmt.executeUpdate();
 		} catch (Exception e) {
 			LOGGER.error("Exp in update: " + e.getMessage());
 			throw taskExc;
-		} finally {
-			try {
-				pstmt.close();
-			} catch (Exception e) {
-				LOGGER.error("Inside finally block of update");
-			}
 		}
 
 	}

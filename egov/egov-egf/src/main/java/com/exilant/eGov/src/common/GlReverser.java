@@ -45,15 +45,16 @@
  */
 package com.exilant.eGov.src.common;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.GLAccount;
 import com.exilant.eGov.src.domain.ClosedPeriods;
@@ -90,26 +91,31 @@ private static TaskFailedException taskExc;
 public GlReverser(){
 
 }
-public void reverse(Connection con,String cgNo,String newVcno,String effDate,String cgvNo,DataCollection dc)throws TaskFailedException,SQLException{
+public void reverse(String cgNo,String newVcno,String effDate,String cgvNo,DataCollection dc)throws TaskFailedException,SQLException{
 	//ClosedPeriods cp=new ClosedPeriods();
-	if(ClosedPeriods.isClosedForPosting(effDate,con)){
+	if(ClosedPeriods.isClosedForPosting(effDate)){
 		throw new TaskFailedException("Period Is Closed");
 	}
-	if(isReconciled(cgNo,con)){
+	if(isReconciled(cgNo)){
 		throw new TaskFailedException("Reconciliation Done Cant Reverse");
 	}
 	EGovernCommon cm=new EGovernCommon();
-	if(!cm.isUniqueVN(newVcno,effDate,dc,con)){
-		throw new TaskFailedException();
+	try {
+		if(!cm.isUniqueVN(newVcno,effDate,dc)){
+			throw new TaskFailedException();
+		}
+	} catch (Exception e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
 	}
 	try{
-		loadData(cgNo,con);
+		loadData(cgNo);
 		String userId=dc.getValue("current_UserID");
-		String newVhId=postInVoucherHeader(cgNo,newVcno,effDate,cgvNo,con,userId);
+		String newVhId=postInVoucherHeader(cgNo,newVcno,effDate,cgvNo,userId);
 		if(LOGGER.isInfoEnabled())     LOGGER.info("Inserted to VH,VMIS,VR");
 		//postInVoucherDetail(newVhId,con);
-		postInVoucherDetail(newVhId,con);
-		postInGeneralLedger(newVhId,con);
+		postInVoucherDetail(newVhId);
+		postInGeneralLedger(newVhId);
         if(LOGGER.isDebugEnabled())     LOGGER.debug("inserted into vD newVhId="+newVhId);
 	}catch(Exception e){
 		LOGGER.error("Exception in Reverse():"+e.toString());
@@ -119,25 +125,30 @@ public void reverse(Connection con,String cgNo,String newVcno,String effDate,Str
 }
 
 // Reversing Voucher without dc 
-public void reverse(Connection con,String cgNo,String newVcno,String effDate,String cgvNo, int userId)throws TaskFailedException,SQLException
+public void reverse(String cgNo,String newVcno,String effDate,String cgvNo, int userId)throws TaskFailedException,SQLException
 {
-	if(ClosedPeriods.isClosedForPosting(effDate,con))
+	if(ClosedPeriods.isClosedForPosting(effDate))
 	{
 		throw new TaskFailedException("Period Is Closed");
 	}
-	if(isReconciled(cgNo,con))
+	if(isReconciled(cgNo))
 	{
 		throw new TaskFailedException("Reconciliation Done Cant Reverse");
 	}
 	EGovernCommon cm=new EGovernCommon();
-	if(!cm.isUniqueVN(newVcno,effDate,con)){
-		throw new TaskFailedException("Error: Duplicate Voucher Number");
+	try {
+		if(!cm.isUniqueVN(newVcno,effDate)){
+			throw new TaskFailedException("Error: Duplicate Voucher Number");
+		}
+	} catch (Exception e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
 	}
 	try
 	{
-		loadData(cgNo,con);
-		String newVhId=postInVoucherHeader(cgNo,newVcno,effDate,cgvNo,con,Integer.toString(userId));
-		postInVoucherDetail(newVhId,con);
+		loadData(cgNo);
+		String newVhId=postInVoucherHeader(cgNo,newVcno,effDate,cgvNo,Integer.toString(userId));
+		postInVoucherDetail(newVhId);
         if(LOGGER.isDebugEnabled())     LOGGER.debug("inserted into vD newVhId="+newVhId);
 	}catch(Exception e)
 	{
@@ -146,7 +157,7 @@ public void reverse(Connection con,String cgNo,String newVcno,String effDate,Str
 	}
 }
 
-private void loadData(String cgNo,Connection con) throws TaskFailedException{
+private void loadData(String cgNo) throws TaskFailedException{
 	String vhSql="select ID as \"id\" ,CGN as \"cgn\",CGDATE as \"cgDate\",NAME AS \"name\"," +
 			     "TYPE as \"type\",DESCRIPTION as \"description\",EFFECTIVEDATE as \"effectiveDate\", " +
 			     "VOUCHERNUMBER as \"voucherNumber\",VOUCHERDATE as \"voucherDate\", " +
@@ -164,7 +175,7 @@ private void loadData(String cgNo,Connection con) throws TaskFailedException{
 	String extraSQL=" order by GLCODE ";
 	DataExtractor de=DataExtractor.getExtractor();
 	//load voucher header record for the cgn given
-	vcHeader=de.extractIntoMap(vhSql,con,"cgn",VoucherHeader.class);
+	vcHeader=de.extractIntoMap(vhSql,"cgn",VoucherHeader.class);
 	if(vcHeader==null || vcHeader.size()==0){
 		throw new TaskFailedException("Cant Reverse : Record Not Found For CGN Provided"+vhSql);
 	}
@@ -172,16 +183,16 @@ private void loadData(String cgNo,Connection con) throws TaskFailedException{
 	String vcHID=String.valueOf(vhObj.getId());
 	//load vouchermis
 	if(LOGGER.isDebugEnabled())     LOGGER.debug("Calling extraxt map for VoucherMIS  :" +vmisSql+vcHID);
-	vmis=de.extractIntoMap(vmisSql+vcHID,con,"voucherheaderid",VoucherMIS.class);
+	vmis=de.extractIntoMap(vmisSql+vcHID,"voucherheaderid",VoucherMIS.class);
 	if(LOGGER.isDebugEnabled())     LOGGER.debug("Object for voucherMIS"+vmis);
 			
 	//load voucher detail records for that header
-	vcDetail=de.extractIntoMap(vdSql+vcHID+extraSQL,con,"id",VoucherDetail.class);
+	vcDetail=de.extractIntoMap(vdSql+vcHID+extraSQL,"id",VoucherDetail.class);
 	//load General Ledger
-	gLedger=de.extractIntoMap(glSql+vcHID+extraSQL,con,"voucherLineId",GeneralLedger.class);
-	egfDetail=de.extractIntoMap(egfSql+vcHID,con,"id",egfRecordStatus.class);
+	gLedger=de.extractIntoMap(glSql+vcHID+extraSQL,"voucherLineId",GeneralLedger.class);
+	egfDetail=de.extractIntoMap(egfSql+vcHID,"id",egfRecordStatus.class);
 }
-private String postInVoucherHeader(String cgNo,String newVcNo,String effDate,String cgvNo,Connection con,String uId) throws Exception{
+private String postInVoucherHeader(String cgNo,String newVcNo,String effDate,String cgvNo,String uId) throws Exception{
 	String today;
 	//String oldVdId="";
 	VoucherHeader vhObj=(VoucherHeader)vcHeader.get(cgNo);
@@ -197,12 +208,12 @@ private String postInVoucherHeader(String cgNo,String newVcNo,String effDate,Str
 	vhObj.setId(String.valueOf(vhObj.getId()));
 	//oldVdId=String.valueOf(vhObj.getId());
 	vhObj.setStatus("1");
-	vhObj.update(con);
+	vhObj.update();
 
 	SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
 	EGovernCommon cm=new EGovernCommon();
-	today=cm.getCurrentDateTime(con);
+	today=cm.getCurrentDateTime();
 	String dateformat = formatter.format(sdf.parse(today));
 	if(LOGGER.isDebugEnabled())     LOGGER.debug("dateformat is  "+ dateformat);
 	
@@ -214,7 +225,7 @@ private String postInVoucherHeader(String cgNo,String newVcNo,String effDate,Str
 	egfstatus.setEffectiveDate(dateformat);
 	egfstatus.setUserId(uId);
 	//egfstatus.update(con);
-	egfstatus.insert(con);
+	egfstatus.insert();
 	if(LOGGER.isDebugEnabled())     LOGGER.debug("inserted in  EGF as status 2");
 	
 	//insert the old one with status as new
@@ -228,7 +239,7 @@ private String postInVoucherHeader(String cgNo,String newVcNo,String effDate,Str
 	}
 	String oldVHID=String.valueOf(vhObj.getId());
 	if(LOGGER.isDebugEnabled())     LOGGER.debug("vhObj.getVoucherDate()========="+vhObj.getVoucherDate());
-	vhObj.setFiscalPeriodId(cm.getFiscalPeriod(vhObj.getVoucherDate(),con));
+	vhObj.setFiscalPeriodId(cm.getFiscalPeriod(vhObj.getVoucherDate()));
 	vhObj.setStatus("2");
 	vhObj.setOriginalVcId(String.valueOf(vhObj.getId()));
 	vhObj.setCgvn(cgvNo);
@@ -239,7 +250,7 @@ private String postInVoucherHeader(String cgNo,String newVcNo,String effDate,Str
     }
     if(LOGGER.isDebugEnabled())     LOGGER.debug("INSERTING VOUCHERHEADER");
 	vhObj.setCreatedby(uId);
-	vhObj.insert(con);
+	vhObj.insert();
 
 	//	insert the old one with status as cancelled for egf_record_status
 
@@ -250,7 +261,7 @@ private String postInVoucherHeader(String cgNo,String newVcNo,String effDate,Str
 	egfstatus1.setEffectiveDate(formatter.format(sdf.parse(today)));
 	egfstatus1.setUserId(uId);
 	if(LOGGER.isDebugEnabled())     LOGGER.debug("INSERTING VOUCHER STATUS");
-	egfstatus1.insert(con);
+	egfstatus1.insert();
 
 	//Post to VoucherMIS table
 	//if(fieldID != null)
@@ -269,12 +280,12 @@ private String postInVoucherHeader(String cgNo,String newVcNo,String effDate,Str
 		vmObj.setCreateTimeStamp(formatter.format(sdf.parse(today)));
 		vmObj.setFunctionary(vmObj.getFunctionary());
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("INSERTING VOUCHERMIS");
-		vmObj.insert(con);
+		vmObj.insert();
 	}
 	
 	return String.valueOf(vhObj.getId());
 }
-private void postInVoucherDetail(String newVhId, Connection con) throws TaskFailedException,SQLException{
+private void postInVoucherDetail(String newVhId) throws TaskFailedException,SQLException{
 	Iterator it=vcDetail.keySet().iterator();
 	String oldVdId="";
 	while(it.hasNext()){
@@ -288,11 +299,11 @@ private void postInVoucherDetail(String newVhId, Connection con) throws TaskFail
 		}
 		vdObj.setVoucherHeaderID(newVhId);
 		oldVdId=String.valueOf(vdObj.getId());
-		vdObj.insert(con);
+		vdObj.insert();
 		//postInGeneralLedger(String.valueOf(vdObj.getId()),oldVdId,newVhId,con);
 	}
 }
-private void postInGeneralLedger(String newVdId,String oldVdId,String newVhId,Connection con)throws TaskFailedException{
+private void postInGeneralLedger(String newVdId,String oldVdId,String newVhId)throws TaskFailedException{
 	try{
 		String oldGlId="";
 		//String glDetAmt="0";
@@ -316,14 +327,14 @@ private void postInGeneralLedger(String newVdId,String oldVdId,String newVhId,Co
         {
         	glObj.setFunctionId(null);
         }
-		glObj.insert(con);
-		postInGLDetail(String.valueOf(glObj.getId()),oldGlId,con);
+		glObj.insert();
+		postInGLDetail(String.valueOf(glObj.getId()),oldGlId);
 	}catch(Exception e){
 		LOGGER.error("Exp here"+e.toString());
 		throw taskExc;
 	}
 }
-private void postInGeneralLedger(String newVhId,Connection con)throws TaskFailedException{
+private void postInGeneralLedger(String newVhId)throws TaskFailedException{
 	try{
 		Iterator it=gLedger.keySet().iterator();
 		int voucherlineid=1;
@@ -350,8 +361,8 @@ private void postInGeneralLedger(String newVhId,Connection con)throws TaskFailed
         {
         	glObj.setFunctionId(null);
         }
-		glObj.insert(con);
-		postInGLDetail(String.valueOf(glObj.getId()),oldGlId,con);
+		glObj.insert();
+		postInGLDetail(String.valueOf(glObj.getId()),oldGlId);
 		}
 		}catch(Exception e){
 		LOGGER.error("Exp here"+e.toString());
@@ -359,51 +370,56 @@ private void postInGeneralLedger(String newVhId,Connection con)throws TaskFailed
 		}
 }
 
-private void postInGLDetail(String glID,String oldGlId,Connection con) throws TaskFailedException,SQLException{
+private void postInGLDetail(String glID,String oldGlId) throws TaskFailedException,SQLException{
 	String glDSql="select ID as \"id\",GENERALLEDGERID as \"glId\" ,DETAILKEYID as \"detailKeyId\",  DETAILTYPEID as \"detailTypeId\" ,AMOUNT as \"detailAmt\" from GENERALLEDGERDETAIL where GENERALLEDGERID="+oldGlId;
 	DataExtractor de=DataExtractor.getExtractor();
-	gLedgerDetails=de.extractIntoMap(glDSql,con,"id",GeneralLedgerDetail.class);
+	gLedgerDetails=de.extractIntoMap(glDSql,"id",GeneralLedgerDetail.class);
 	Iterator it=gLedgerDetails.keySet().iterator();
 	while(it.hasNext()){
 		GeneralLedgerDetail glDObj=(GeneralLedgerDetail)gLedgerDetails.get(it.next());
 		glDObj.setGLId(glID);
 		//glDObj.setDetailAmt(glDetAmt);// by mani  added in the glDSql query for new subledger screen with multiple entities 
-		glDObj.insert(con);
+		glDObj.insert();
 	}
 }
-public void reverseSubLedger(Connection con,String cgNo,String newVcno,String effDate,String cgvNo,DataCollection dc)throws TaskFailedException,SQLException{
+public void reverseSubLedger(String cgNo,String newVcno,String effDate,String cgvNo,DataCollection dc)throws TaskFailedException,SQLException{
  	//ClosedPeriods cp=new ClosedPeriods();
-	if(ClosedPeriods.isClosedForPosting(effDate,con)){
+	if(ClosedPeriods.isClosedForPosting(effDate)){
 		throw new TaskFailedException("Period Is Closed");
 	}
-	if(isReconciled(cgNo,con)){
+	if(isReconciled(cgNo)){
 		throw new TaskFailedException("Reconciliation Done Cant Reverse");
 	}
 	EGovernCommon cm=new EGovernCommon();
-	if(!cm.isUniqueVN(newVcno,effDate,dc,con)){
-		throw new TaskFailedException();
+	try {
+		if(!cm.isUniqueVN(newVcno,effDate,dc)){
+			throw new TaskFailedException();
+		}
+	} catch (Exception e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
 	}
 	try{
 		//ClosedPeriods cp=new ClosedPeriods();
-		if(ClosedPeriods.isClosedForPosting(effDate,con)){
+		if(ClosedPeriods.isClosedForPosting(effDate)){
 			throw new TaskFailedException("Period Is Closed");
 		}
 
-		if(isReconciled(cgNo,con)){
+		if(isReconciled(cgNo)){
 			throw new TaskFailedException("Reconciliation Done Cant Reverse");
 		}
 
-		if(!cm.isUniqueVN(newVcno,effDate,dc,con)){
+		if(!cm.isUniqueVN(newVcno,effDate,dc)){
 			throw new TaskFailedException();
 		}
-		loadData(cgNo,con);
+		loadData(cgNo);
 		String userId=dc.getValue("current_UserID");
-		String newVhId=postInVoucherHeader(cgNo,newVcno,effDate,cgvNo,con,userId);
+		String newVhId=postInVoucherHeader(cgNo,newVcno,effDate,cgvNo,userId);
 		String reverseType=dc.getValue("reverseType");
 		if(reverseType!=null && (reverseType.equals("cash") || reverseType.length()==0)){
-			postInVoucherDetail(newVhId,con);
+			postInVoucherDetail(newVhId);
 		}else{
-			postInVoucherDetail(dc.getValue("diffDebit"),newVhId,con);
+			postInVoucherDetail(dc.getValue("diffDebit"),newVhId);
 		}
 
 	}catch(Exception e){
@@ -412,7 +428,7 @@ public void reverseSubLedger(Connection con,String cgNo,String newVcno,String ef
 	}
 
 }
-private void postInVoucherDetail(String diffDebitAmount,String newVhId, Connection con) throws Exception{
+private void postInVoucherDetail(String diffDebitAmount,String newVhId) throws Exception{
 	Iterator it=vcDetail.keySet().iterator();
 	String oldVdId="";
 //	VoucherDetail diffVoucherDetail=new VoucherDetail();
@@ -428,8 +444,8 @@ private void postInVoucherDetail(String diffDebitAmount,String newVhId, Connecti
 			vdObj.setCreditAmount(vdObj.getDebitAmount());
 			vdObj.setDebitAmount("0");
 			oldVdId=String.valueOf(vdObj.getId());
-			vdObj.insert(con);
-			postInGeneralLedger(String.valueOf(vdObj.getId()),oldVdId,newVhId,con);
+			vdObj.insert();
+			postInGeneralLedger(String.valueOf(vdObj.getId()),oldVdId,newVhId);
 		}else if(Double.parseDouble(vdObj.getCreditAmount())>0){
 			VoucherDetail diffVoucherDetail=vdObj;
 			if(diffDbAmount>0){
@@ -439,8 +455,8 @@ private void postInVoucherDetail(String diffDebitAmount,String newVhId, Connecti
 				diffVoucherDetail.setCreditAmount("0");
 				diffVoucherDetail.setVoucherHeaderID(newVhId);
 				oldVdId=String.valueOf(diffVoucherDetail.getId());
-				diffVoucherDetail.insert(con);
-				postInGeneralLedger(String.valueOf(diffVoucherDetail.getId()),oldVdId,newVhId,diffDbAmount,0,con);
+				diffVoucherDetail.insert();
+				postInGeneralLedger(String.valueOf(diffVoucherDetail.getId()),oldVdId,newVhId,diffDbAmount,0);
 			}
 			//reassign with original object as they are replaced
 			vdObj=(VoucherDetail)vcDetail.get(tempObj);
@@ -449,12 +465,12 @@ private void postInVoucherDetail(String diffDebitAmount,String newVhId, Connecti
 			vdObj.setCreditAmount("0");
 			vdObj.setVoucherHeaderID(newVhId);
 			oldVdId=String.valueOf(vdObj.getId());
-			vdObj.insert(con);
-			postInGeneralLedger(String.valueOf(vdObj.getId()),oldVdId,newVhId,diffDbAmount,1,con);
+			vdObj.insert();
+			postInGeneralLedger(String.valueOf(vdObj.getId()),oldVdId,newVhId,diffDbAmount,1);
 		}
 	}
 }
-private void postInGeneralLedger(String newVdId,String oldVdId,String newVhId,double diffDbAmount,int usage,Connection con)throws TaskFailedException,SQLException{
+private void postInGeneralLedger(String newVdId,String oldVdId,String newVhId,double diffDbAmount,int usage)throws TaskFailedException,SQLException{
 	String oldGlId="";//,diffGlID="";
 	PreDefinedAccCodes pAccCodes=new PreDefinedAccCodes();
 	GeneralLedger glObj=(GeneralLedger)gLedger.get(oldVdId);
@@ -486,38 +502,35 @@ private void postInGeneralLedger(String newVdId,String oldVdId,String newVhId,do
     {
     	glObj.setFunctionId(null);
     }
-	glObj.insert(con);
-	postInGLDetail(String.valueOf(glObj.getId()),oldGlId,con);
+	glObj.insert();
+	postInGLDetail(String.valueOf(glObj.getId()),oldGlId);
 }
-private boolean isReconciled(String cgNo,Connection con) throws SQLException{
+private boolean isReconciled(String cgNo) throws SQLException{
 	boolean valid=false;
 	String sql="select isreconciled from BANKRECONCILIATION bc ,voucherheader vh where bc.voucherheaderid=vh.id and vh.cgn= ?";
-	PreparedStatement pst=null;
-	ResultSet rset=null;
+	Query pst=null;
+	List<Object[]> rset=null;
 	try{
-		pst=con.prepareStatement(sql);
+		pst=HibernateUtil.getCurrentSession().createSQLQuery(sql);
 		pst.setString(1, cgNo);
-		rset=pst.executeQuery();
-	if(rset.next() && rset.getString(1).equals("1")){
+		rset=pst.list();
+		for(Object[] element : rset){
+			if( element[0].toString().equals("1")){
 
-			valid=true;
+				valid=true;
+			}
 		}
+
 	}catch(Exception e){
 		throw new SQLException();
 	}
-	finally{
-		try{
-			rset.close();
-			pst.close();
-		}catch(Exception e){LOGGER.error("Inside finally block");}
-	}
 	return valid;
 }
-public String reversePT(Connection con,String cgNo,String newVcno,String effDate,String cgvNo,DataCollection dc,String refcgvn1)throws TaskFailedException,SQLException
+public String reversePT(String cgNo,String newVcno,String effDate,String cgvNo,DataCollection dc,String refcgvn1)throws TaskFailedException,SQLException
 {
 	if(LOGGER.isDebugEnabled())     LOGGER.debug("coming..");
     refcgvn=refcgvn1;
-    reverse(con,cgNo,newVcno,effDate,cgvNo,dc);
+    reverse(cgNo,newVcno,effDate,cgvNo,dc);
     return newCessCGN;
 }
 }

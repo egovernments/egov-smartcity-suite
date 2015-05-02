@@ -373,7 +373,7 @@ public class BankBranchModify extends AbstractTask {
 				}
 			} else {
 				EGovernCommon commonmethods = new EGovernCommon();
-				String created = commonmethods.getCurrentDate(con);
+				String created = commonmethods.getCurrentDate();
 				try {
 					SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy",
 							Locale.getDefault());

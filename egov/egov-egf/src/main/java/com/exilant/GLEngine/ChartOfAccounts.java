@@ -99,7 +99,7 @@ public class ChartOfAccounts {
 	private static final String EXP="Exp=";
 	private static final String EXILRPERROR = "exilRPError";
 
-	private ResultSet resultset;
+	private List<Object[]> resultset;
 
 	private static Cache<Object, Object> cache;
 	BudgetDetailsHibernateDAO budgetDetailsDAO = null;
@@ -272,7 +272,7 @@ public class ChartOfAccounts {
 		return null;
 	}
 
-private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con) throws TaskFailedException{
+private boolean validateGLCode(Transaxtion txn,DataCollection dc) throws TaskFailedException{
    		// validate each gl code
    	if(LOGGER.isInfoEnabled())     LOGGER.info("Inside the ValidateGLCode2");
    		HashMap hm = (HashMap)getGlAccountCodes();
@@ -308,8 +308,8 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
    			return false;
    		}
    		//this  can be avoided
-   		if(LOGGER.isInfoEnabled())     LOGGER.info("Classification....in   :"+getClassificationForCode(txn.getGlCode(),con));
-		if(getClassificationForCode(txn.getGlCode(),con)!=4){
+   		if(LOGGER.isInfoEnabled())     LOGGER.info("Classification....in   :"+getClassificationForCode(txn.getGlCode()));
+		if(getClassificationForCode(txn.getGlCode())!=4){
 			if(LOGGER.isInfoEnabled())     LOGGER.info("classification is not detailed code");
 			dc.addMessage("exilNotDetailAccount",txn.getGlCode());
 			return false;
@@ -340,8 +340,8 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
 		if(glAcc.isActiveForPosting()==0){
 			return false;
 		}
-		if(LOGGER.isInfoEnabled())     LOGGER.info("Classification....:"+getClassificationForCode(txn.getGlCode(),con));
-		if(getClassificationForCode(txn.getGlCode(),con)!=4){
+		if(LOGGER.isInfoEnabled())     LOGGER.info("Classification....:"+getClassificationForCode(txn.getGlCode()));
+		if(getClassificationForCode(txn.getGlCode())!=4){
 			if(LOGGER.isInfoEnabled())     LOGGER.info("classification is not detailed code");
 			throw new TaskFailedException("Cannot post to "+ txn.getGlCode());
 			}
@@ -363,7 +363,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
     * @return
     * @throws TaskFailedException
     */
-   private int getClassificationForCode(String glcode,Connection con) throws TaskFailedException
+   private int getClassificationForCode(String glcode) throws TaskFailedException
    {
    	int retVal=0;
    	List<Object[]> rs=null;
@@ -450,7 +450,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
    	 }
    	 return true;
    }
-	private boolean validateTxns(Transaxtion txnList[],DataCollection dc,Connection con)throws TaskFailedException{
+	private boolean validateTxns(Transaxtion txnList[],DataCollection dc)throws TaskFailedException{
 		// validate the array list for the total number of txns
 		if(txnList.length<2){
 			dc.addMessage("exilWrongTrxn");
@@ -461,7 +461,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
 		try{
 			for(int i=0;i<txnList.length;i++){
 				Transaxtion txn=(Transaxtion)txnList[i];
-				if(!validateGLCode(txn,dc,con))return false;
+				if(!validateGLCode(txn,dc))return false;
 				dbAmt+=Double.parseDouble(txn.getDrAmount());
 				crAmt+=Double.parseDouble(txn.getCrAmount());
 			}
@@ -509,7 +509,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
 		}
    		return true;
 	}
-	public boolean postTransaxtions(Transaxtion txnList[],Connection con,DataCollection dc) throws Exception,TaskFailedException, ParseException,SQLException,EGOVException,ValidationException
+	public boolean postTransaxtions(Transaxtion txnList[],DataCollection dc) throws Exception,TaskFailedException, ParseException,SQLException,EGOVException,ValidationException
 	{
 		if(!checkBudget(txnList))
 			throw new TaskFailedException("Budgetary check is failed");
@@ -525,23 +525,23 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
 			SimpleDateFormat formatter = new SimpleDateFormat(Constants.DATEFORMAT,Constants.LOCALE);
 			dt = sdf.parse( vdt );
 			String dateformat = formatter.format(dt);
-		    if(!validPeriod(dateformat,con)){
+		    if(!validPeriod(dateformat)){
 				dc.addMessage("exilPostingPeriodError");
 				return false;
 			}
-			if(!validateTxns(txnList,dc,con))
+			if(!validateTxns(txnList,dc))
 				return false;
 		}catch(Exception e){
 				LOGGER.error("Error in post transaction",e);
    				throw new  TaskFailedException();
 		}
    		if(dc.getValue("modeOfExec").toString().equalsIgnoreCase("edit")){
-   			if(!updateInGL(txnList,con,dc)){
+   			if(!updateInGL(txnList,dc)){
    	   			return false;
    	   		}
    		}
    		else{
-			if(!postInGL(txnList,con,dc)){
+			if(!postInGL(txnList,dc)){
    				return false;
 			}
 		}
@@ -634,7 +634,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
       	}
       	try
       	{
-      		if(!validPeriod(vDate,con)){
+      		if(!validPeriod(vDate)){
 		    	throw new TaskFailedException("Voucher Date is not within an open period. Please use an open period for posting");
 			}
 			if(!validateTxns(txnList,con))
@@ -643,21 +643,20 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
 			LOGGER.error(e.getMessage(), e);
 			throw new TaskFailedException(e.getMessage());
 		}
-		if(!postInGL(txnList,con)){
+		if(!postInGL(txnList)){
 			return false;
         }
    		return true;
    	}
-   private void checkfuctreqd(String glcode, String fuctid,Connection con,DataCollection dc)throws Exception{
+   private void checkfuctreqd(String glcode, String fuctid,DataCollection dc)throws Exception{
 
 	 String sql = "select FUNCTIONREQD from chartofaccounts where glcode = ?";
- 	 PreparedStatement pst=con.prepareStatement(sql);
+ 	 Query pst=HibernateUtil.getCurrentSession().createSQLQuery(sql);
  	 pst.setString(1, glcode);
- 	 ResultSet rs=null;
-   rs = pst.executeQuery();
-   if(rs.next())
-   {
-   	if(rs.getInt(1)==1){
+ 	List<Object[]> rs=null;
+   rs = pst.list();
+   for(Object[] element : rs){
+   	if(Integer.parseInt(element[0].toString())==1){
    	  if(fuctid.length()>0 && fuctid!=null){
    	  	if(LOGGER.isInfoEnabled())     LOGGER.info("in COA33--"+fuctid);
    	  }
@@ -676,7 +675,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
 	  List<CChartOfAccounts> list =(List<CChartOfAccounts>) session.createQuery("from CChartOfAccounts where functionReqd=1 and glcode='"+glcode+"'").list();
 	  return list.size() == 1 ? true:false;
 	 }
-   private boolean postInGL(Transaxtion txnList[],Connection con,DataCollection dc)throws ParseException{
+   private boolean postInGL(Transaxtion txnList[],DataCollection dc)throws ParseException{
    		GeneralLedger gLedger=new GeneralLedger();
 		GeneralLedgerDetail  gLedgerDet=new GeneralLedgerDetail();
 		EgRemittanceGldtl  egRemitGldtl=new EgRemittanceGldtl();
@@ -713,7 +712,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
 				if(fucid!=null && !fucid.equals(""))
 
 				   			try{
-				   				checkfuctreqd(txn.getGlCode(),txn.getFunctionId(),con,dc);
+				   				checkfuctreqd(txn.getGlCode(),txn.getFunctionId(),dc);
 				   				}
 				   				catch(Exception e)
 				   				{
@@ -727,7 +726,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
 
 				try{
 				//	if(LOGGER.isInfoEnabled())     LOGGER.info("inside the postin gl function before insert ----");
-					gLedger.insert(con);
+					gLedger.insert();
 				}catch(Exception e){
 					if(LOGGER.isInfoEnabled())     LOGGER.info("error in the gl++++++++++"+e,e);
 					return false;
@@ -776,17 +775,17 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
 							 		gLedgerDet.setDetailKeyId(detKeyId);
 							 		if(LOGGER.isInfoEnabled())     LOGGER.info("glPrm.getDetailAmt() in tParam:"+tParam.getDetailAmt());
 							 		gLedgerDet.setDetailAmt(tParam.getDetailAmt());
-							 		gLedgerDet.insert(con);
+							 		gLedgerDet.insert();
 							 		try
 								   	 {
-								   		 if(validRecoveryGlcode(gLedger.getGlCodeId(),con) && Double.parseDouble(gLedger.getCreditAmount())>0)
+								   		 if(validRecoveryGlcode(gLedger.getGlCodeId()) && Double.parseDouble(gLedger.getCreditAmount())>0)
 								   		 {
 								   			egRemitGldtl=new EgRemittanceGldtl();
 									   	    egRemitGldtl.setGldtlId(String.valueOf(gLedgerDet.getId()));
 									   	    egRemitGldtl.setGldtlAmt(gLedgerDet.getDetailAmt());
 										   	if(tParam.getTdsId()!=null)
 										   		egRemitGldtl.setTdsId(tParam.getTdsId());
-									   	    egRemitGldtl.insert(con);
+									   	    egRemitGldtl.insert();
 								   		 }
 								   	 }
 								   	catch(Exception e)
@@ -824,7 +823,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
 }
 
 
-   private boolean postInGL(Transaxtion txnList[],Connection con)throws Exception{
+   private boolean postInGL(Transaxtion txnList[])throws Exception{
 	GeneralLedger gLedger=new GeneralLedger();
 	GeneralLedgerDetail  gLedgerDet=new GeneralLedgerDetail();
 	EgRemittanceGldtl  egRemitGldtl=new EgRemittanceGldtl();
@@ -866,7 +865,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
 
 			try{
 			//	if(LOGGER.isInfoEnabled())     LOGGER.info("inside the postin gl function before insert ----");
-				gLedger.insert(con);
+				gLedger.insert();
 			}catch(Exception e){
 				LOGGER.error("error in the gl++++++++++"+e,e);
 					return false;
@@ -917,10 +916,10 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
 						 		gLedgerDet.setDetailTypeId(String.valueOf(glPrm.getDetailId()));
 						 		gLedgerDet.setDetailKeyId(detKeyId);
 						 		gLedgerDet.setDetailAmt(tParam.getDetailAmt());
-						 		gLedgerDet.insert(con);
+						 		gLedgerDet.insert();
 						 		 try
 							   	 {
-							   		if(validRecoveryGlcode(gLedger.getGlCodeId(),con) && Double.parseDouble(gLedger.getCreditAmount())>0)
+							   		if(validRecoveryGlcode(gLedger.getGlCodeId()) && Double.parseDouble(gLedger.getCreditAmount())>0)
 							   		 {
 							   			egRemitGldtl=new EgRemittanceGldtl();
 							   			//if(LOGGER.isInfoEnabled())     LOGGER.info("----------"+gLedger.getGlCodeId());
@@ -928,7 +927,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
 								   	     egRemitGldtl.setGldtlAmt(gLedgerDet.getDetailAmt());
 								   	     if(tParam.getTdsId()!=null)
 								   	    	 egRemitGldtl.setTdsId(tParam.getTdsId());   	     
-								   	     egRemitGldtl.insert(con);
+								   	     egRemitGldtl.insert();
 							   		 }
 							   	 }
 							   	catch(Exception e)
@@ -950,7 +949,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
 }
 
 
-   private boolean updateInGL(Transaxtion txnList[],Connection con,DataCollection dc)throws TaskFailedException,ParseException,SQLException{
+   private boolean updateInGL(Transaxtion txnList[],DataCollection dc)throws TaskFailedException,ParseException,SQLException{
 	GeneralLedger gLedger=new GeneralLedger();
 			GeneralLedgerDetail  gLedgerDet=new GeneralLedgerDetail();
 			EgRemittanceGldtl  egRemitGldtl=new EgRemittanceGldtl();
@@ -960,15 +959,15 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
 			int VoucherHeaderId=Integer.parseInt(txn1.getVoucherHeaderId());
 			if(LOGGER.isInfoEnabled())     LOGGER.info("VoucherHeaderId----"+VoucherHeaderId);
 			String query = "select id from generalledger where voucherheaderid= ? order by id";
-			PreparedStatement pst=con.prepareStatement(query);
-			pst.setInt(1, VoucherHeaderId);
+			Query pst=HibernateUtil.getCurrentSession().createSQLQuery(query);
+			pst.setInteger(1, VoucherHeaderId);
 			if(LOGGER.isInfoEnabled())     LOGGER.info("select id from generalledger where voucherheaderid="+VoucherHeaderId+" order by id");
 
-			resultset = pst.executeQuery();
+			resultset = pst.list();
 			int c=0;
-			while(resultset.next()){
+			for(Object[] element : resultset){
 
-				glHeaderId.add(c,(resultset.getString("id")));
+				glHeaderId.add(c,(element[0].toString()));
 				c++;
 			}
 
@@ -978,13 +977,13 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
 			{
 				try{
 					String delremitsql="delete from eg_remittance_gldtl where gldtlid in (select id from generalledgerdetail where generalledgerid='"+glHeaderId.get(k).toString()+"')";
-					pst = con.prepareStatement(delremitsql);
+					pst = HibernateUtil.getCurrentSession().createSQLQuery(delremitsql);
 					pst.setString(1, glHeaderId.get(k).toString());
 					if(LOGGER.isInfoEnabled())     LOGGER.info("deleting remittance Query "+delremitsql);
 					pst.executeUpdate();
 					if(LOGGER.isInfoEnabled())     LOGGER.info("delete from generalledgerdetail where generalledgerid='"+glHeaderId.get(k).toString()+"'");
 					String delGenLedDet = "delete from generalledgerdetail where generalledgerid= ?";
-					pst = con.prepareStatement(delGenLedDet);
+					pst = HibernateUtil.getCurrentSession().createSQLQuery(delGenLedDet);
 					pst.setString(1, glHeaderId.get(k).toString());
 					int del=pst.executeUpdate();
 				if(del>0)
@@ -1002,8 +1001,8 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
 				try{
 					
 					String genLed = "DELETE FROM generalledger WHERE voucherheaderid= ?";
-					pst = con.prepareStatement(genLed);
-					pst.setInt(1, VoucherHeaderId);
+					pst = HibernateUtil.getCurrentSession().createSQLQuery(genLed);
+					pst.setInteger(1, VoucherHeaderId);
 					int del=pst.executeUpdate();
 				if(del>0)
 					if(LOGGER.isInfoEnabled())     LOGGER.info("DELETE FROM generalledger WHERE voucherheaderid="+VoucherHeaderId);
@@ -1012,8 +1011,6 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
 					if(LOGGER.isInfoEnabled())     LOGGER.info("Exp in reading from generalledger: "+e,e);
 				}
 			}
-			resultset.close();
-			pst.close();
 
 			for(int i=0;i<txnList.length;i++){
 				Transaxtion  txn=txnList[i];
@@ -1029,7 +1026,7 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
 
 				try{
 				//	if(LOGGER.isInfoEnabled())     LOGGER.info("inside the postin gl function before insert ----");
-					gLedger.insert(con);
+					gLedger.insert();
 				}catch(Exception e){
 					if(LOGGER.isInfoEnabled())     LOGGER.info("error in the gl++++++++++"+e,e);
 					dc.addMessage("exilSQLError",e.toString());
@@ -1076,17 +1073,17 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
 							 		gLedgerDet.setDetailTypeId(String.valueOf(glPrm.getDetailId()));
 							 		gLedgerDet.setDetailKeyId(detKeyId);
 							 		gLedgerDet.setDetailAmt(tParam.getDetailAmt());
-							 		gLedgerDet.insert(con);
+							 		gLedgerDet.insert();
 							 		 try
 								   	 {
-								   		if(validRecoveryGlcode(gLedger.getGlCodeId(),con) && Double.parseDouble(gLedger.getCreditAmount())>0)
+								   		if(validRecoveryGlcode(gLedger.getGlCodeId()) && Double.parseDouble(gLedger.getCreditAmount())>0)
 								   		 {
 								   			egRemitGldtl=new EgRemittanceGldtl(); 
 								   			egRemitGldtl.setGldtlId(String.valueOf(gLedgerDet.getId()));
 									   	     egRemitGldtl.setGldtlAmt(gLedgerDet.getDetailAmt());
 									   	     if(tParam.getTdsId()!=null)
 									   	    	 egRemitGldtl.setTdsId(tParam.getTdsId());
-									   	     egRemitGldtl.insert(con);
+									   	     egRemitGldtl.insert();
 								   		 }
 								   	 }
 								   	catch(Exception e)
@@ -1165,9 +1162,9 @@ private boolean validateGLCode(Transaxtion txn,DataCollection dc,Connection con)
    		return fiscalyearid;
 }
  
-   private boolean validPeriod(String vDate,Connection con) throws TaskFailedException{
+   private boolean validPeriod(String vDate) throws TaskFailedException{
    	try{
-   		if(ClosedPeriods.isClosedForPosting(vDate,con)){
+   		if(ClosedPeriods.isClosedForPosting(vDate)){
    			return false;
    		}
    	}catch(Exception e){
@@ -1261,7 +1258,7 @@ public static HashMap getAccountDetailType()
 		return retMap;
 	}
 
-	 private boolean validRecoveryGlcode(String glcodeId,Connection con) throws TaskFailedException{
+	 private boolean validRecoveryGlcode(String glcodeId) throws TaskFailedException{
 	   	try{
 	   		String query="select id from tds where glcodeid= ? and isactive=1";
 	   		Query pst = HibernateUtil.getCurrentSession().createSQLQuery(query);

@@ -51,6 +51,8 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
 
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
@@ -58,7 +60,7 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 public class egfRecordStatus {
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-	private PreparedStatement pstmt = null;
+	private Query pstmt = null;
 	private static final Logger LOGGER = Logger
 			.getLogger(egfRecordStatus.class);
 	private String id = null;
@@ -141,7 +143,7 @@ public class egfRecordStatus {
 		return effectiveDate;
 	}
 
-	public void insert(Connection connection) throws SQLException,
+	public void insert() throws SQLException,
 			TaskFailedException {
 		ResultSet rs = null;
 		// setId(
@@ -156,7 +158,7 @@ public class egfRecordStatus {
 		setId(String.valueOf(PrimaryKeyGenerator
 				.getNextKey("EGF_RECORD_STATUS")));
 		String insertQuery = "Insert into EGF_RECORD_STATUS(ID,voucherheaderid,RECORD_TYPE,STATUS,updatedtime,USERID) values (?,?,?,?,?,?)";
-		pstmt = connection.prepareStatement(insertQuery);
+		pstmt = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 		pstmt.setString(1, id);
 		pstmt.setString(2, voucherheaderId);
 		pstmt.setString(3, record_Type);
@@ -167,16 +169,16 @@ public class egfRecordStatus {
 		pstmt.executeUpdate();
 	}
 
-	public void update(Connection connection) throws SQLException,
+	public void update() throws SQLException,
 			TaskFailedException {
 		if (isId && isField) {
-			newUpdate(connection);
+			newUpdate();
 		}
 	}
 
-	public void newUpdate(Connection con) throws TaskFailedException,
+	public void newUpdate() throws TaskFailedException,
 			SQLException {
-		PreparedStatement pstmt = null;
+		Query pstmt = null;
 		StringBuilder query = new StringBuilder(500);
 		query.append("update egf_record_status set ");
 		if (voucherheaderId != null)
@@ -195,7 +197,7 @@ public class egfRecordStatus {
 		query.append(" where id=?");
 		try {
 			int i = 1;
-			pstmt = con.prepareStatement(query.toString());
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
 
 			if (voucherheaderId != null)
 				pstmt.setString(i++, voucherheaderId);
@@ -209,17 +211,11 @@ public class egfRecordStatus {
 				pstmt.setString(i++, userId);
 			pstmt.setString(i++, id);
 
-			pstmt.executeQuery();
+			pstmt.executeUpdate();
 			
 		} catch (Exception e) {
 			LOGGER.error("Exp in update: "+e.getMessage(),e);
 			throw taskExc;
-		}finally {
-			try {
-				pstmt.close();
-			} catch (Exception e) {
-				LOGGER.error("Inside finally block of update");
-			}
 		}
 	}
 

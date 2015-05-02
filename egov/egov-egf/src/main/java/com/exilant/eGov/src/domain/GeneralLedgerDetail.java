@@ -73,7 +73,7 @@ public class GeneralLedgerDetail {
 	public String getDetailTypeId(){ return detailTypeId; }
 	public String getDetailAmt(){ return detailAmt; }
 	
-	public void insert(Connection connection) throws SQLException
+	public void insert() throws SQLException
 	{						
 		setId( String.valueOf(PrimaryKeyGenerator.getNextKey("GeneralLedgerDetail")) );
 		

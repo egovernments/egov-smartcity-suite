@@ -103,7 +103,7 @@ public class BillCollector
 	public void insert(Connection connection) throws SQLException,TaskFailedException
 	{
 		EGovernCommon commommethods = new EGovernCommon();				
-		created = commommethods.getCurrentDate(connection);
+		created = commommethods.getCurrentDate();
 		Statement statement=null;
 		try
    		{
@@ -137,7 +137,7 @@ public class BillCollector
 		if(isId && isField)
 		{
 			EGovernCommon commommethods = new EGovernCommon();
-			created = commommethods.getCurrentDate(connection);
+			created = commommethods.getCurrentDate();
 			Statement statement = null;
 			try
 	   		{

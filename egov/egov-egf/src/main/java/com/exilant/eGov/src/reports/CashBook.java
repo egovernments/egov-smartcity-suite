@@ -124,7 +124,7 @@ public class CashBook {
 			if(snapShotDateTime.equalsIgnoreCase(""))
 				effTime="";
 			else
-				effTime=egc.getEffectiveDateFilter(connection,snapShotDateTime);
+				effTime=egc.getEffectiveDateFilter(snapShotDateTime);
 		}
 		catch(Exception ex){
 			LOGGER.error("exception in getGeneralLedgerList",ex);
@@ -802,7 +802,7 @@ public class CashBook {
 			EGovernCommon egc=new EGovernCommon();
 			try{
 			
-				String today=egc.getCurrentDate(conn);
+				String today=egc.getCurrentDate();
 				String[] dt2 = today.split("/");
 				String[] dt1= VDate.split("/");
 

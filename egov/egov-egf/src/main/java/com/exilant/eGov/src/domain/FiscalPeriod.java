@@ -91,7 +91,7 @@ public class FiscalPeriod {
 	public void insert(Connection connection) throws SQLException,
 			TaskFailedException {
 		EGovernCommon commommethods = new EGovernCommon();
-		created = commommethods.getCurrentDate(connection);
+		created = commommethods.getCurrentDate();
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 			SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
@@ -134,7 +134,7 @@ public class FiscalPeriod {
 	public void newUpdate(Connection con) throws TaskFailedException,
 			SQLException {
 		EGovernCommon commommethods = new EGovernCommon();
-		created = commommethods.getCurrentDate(con);
+		created = commommethods.getCurrentDate();
 		PreparedStatement pstmt = null;
 		try {
 			created = formatter.format(sdf.parse(created));

@@ -468,7 +468,7 @@ public class JbReport
 
             EGovernCommon egc=new EGovernCommon();
             try{
-                String today=egc.getCurrentDate(conn);
+                String today=egc.getCurrentDate();
                 String[] dt2 = today.split("/");
                 String[] dt1= VDate.split("/");
 

@@ -110,7 +110,7 @@ public class worksmis {
 	 public void insert(Connection connection)  throws TaskFailedException
 	   {  
 	 		PreparedStatement pst = null;
-	   		lastModifiedDate = commonmethods.getCurrentDateTime(connection);
+	   		lastModifiedDate = commonmethods.getCurrentDateTime();
 	   		try{
 		   		SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 				SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
@@ -147,7 +147,7 @@ public class worksmis {
 	 */
 	 public void update (Connection connection) throws TaskFailedException
 	   {
-	   		lastModifiedDate = commonmethods.getCurrentDateTime(connection);
+	   		lastModifiedDate = commonmethods.getCurrentDateTime();
 	   		PreparedStatement pst = null;
 	   		try{
 		   		SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");

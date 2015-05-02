@@ -132,7 +132,7 @@ public class ClosedPeriods
 	}catch(Exception e){	LOGGER.error("Exp in update: "+e.getMessage()); throw taskExc;} finally{try{ pstmt.close(); }catch(Exception e){LOGGER.error("Inside finally block of update");}} 
 	 }
 
-	static public boolean isClosedForPosting(String date, Connection conn)throws TaskFailedException{
+	static public boolean isClosedForPosting(String date)throws TaskFailedException{
 		boolean isClosed = true;
 		String chkqry=null;
 		Query psmt=null;

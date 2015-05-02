@@ -479,7 +479,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 		// change voucher number only if fund is changed 
 		// no need to change voucher number if onlydate is changed since vouchernumber-sequence is for the year not for month
 		try {
-			String fiscalPeriodIdStr = eGovernCommon.getFiscalPeriod(sdf.format(voucherHeader.getVoucherDate()), conn);
+			String fiscalPeriodIdStr = eGovernCommon.getFiscalPeriod(sdf.format(voucherHeader.getVoucherDate()));
 			if(null == fiscalPeriodIdStr){
 				 throw new EGOVRuntimeException("Voucher Date not within an open period or Financial year not open for posting, fiscalPeriod := "+ fiscalPeriodIdStr);
 			 }
@@ -491,7 +491,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 				existingVH.setVoucherNumber(strVoucherNumber);
 				 String vType=voucherHeader.getFundId().getIdentifier()+"/"+autoVoucherType+"/CGVN";
 				 if(LOGGER.isDebugEnabled())     LOGGER.debug("Voucher type  : "+ vType);
-				 String	eg_voucher=eGovernCommon.getEg_Voucher(vType,existingVH.getFiscalPeriodId().toString(),conn);
+				 String	eg_voucher=eGovernCommon.getEg_Voucher(vType,existingVH.getFiscalPeriodId().toString());
 				 for(int i=eg_voucher.length();i<10;i++)
 				 {
 					eg_voucher="0"+eg_voucher;  
@@ -518,7 +518,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 				existingVH.setVoucherNumber(strVoucherNumber);
 				String vType=voucherHeader.getFundId().getIdentifier()+"/"+autoVoucherType+"/CGVN";
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("Voucher type  : "+ vType);
-				String	eg_voucher=eGovernCommon.getEg_Voucher(vType,existingVH.getFiscalPeriodId().toString(),conn);
+				String	eg_voucher=eGovernCommon.getEg_Voucher(vType,existingVH.getFiscalPeriodId().toString());
 				for(int i=eg_voucher.length();i<10;i++)
 				{
 					eg_voucher="0"+eg_voucher;  
@@ -686,7 +686,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 		 try {
 			 String vdt = Constants.DDMMYYYYFORMAT1.format(voucherHeader.getVoucherDate());
 			 String fiscalPeriod=null;
-			 fiscalPeriod=cm.getFiscalPeriod(vdt, conn);
+			 fiscalPeriod=cm.getFiscalPeriod(vdt);
 			 if(null == fiscalPeriod){
 					throw new EGOVRuntimeException("Voucher Date not within an open period or Financial year not open for posting, fiscalPeriod := "+ fiscalPeriod);
 				}
@@ -697,7 +697,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 			 
 			 //String	vType=voucherHeader.getVoucherNumber().substring(0,Integer.parseInt(FinancialConstants.VOUCHERNO_TYPE_LENGTH));
 			 String vType=voucherHeader.getFundId().getIdentifier()+"/"+getCgnType(voucherHeader.getType())+"/CGVN";
-			 String	eg_voucher=cm.getEg_Voucher(vType,fiscalPeriod,conn);
+			 String	eg_voucher=cm.getEg_Voucher(vType,fiscalPeriod);
 			 
 			 for(int i=eg_voucher.length();i<10;i++)
 			 {
@@ -706,7 +706,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 			 String	cgNum=vType+eg_voucher;
 			 voucherHeader.setCgvn(cgNum);
 			 voucherHeader.setEffectiveDate(new Date());
-			 if(!cm.isUniqueVN(voucherHeader.getVoucherNumber(),vdt, conn)) 
+			 if(!cm.isUniqueVN(voucherHeader.getVoucherNumber(),vdt)) 
 					throw new EGOVRuntimeException("Duplicate Voucher Number"); 
 			// vh.setCreatedBy(userMngr.getUserById(Integer.valueOf(EGOVThreadLocals.getUserId())));
 			 voucherHeader.getVouchermis().setVoucherheaderid(voucherHeader);

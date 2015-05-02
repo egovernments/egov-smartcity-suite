@@ -158,7 +158,7 @@ public String getDateTime() throws Exception
 {
 	SimpleDateFormat sdf1 =new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
-	return 	formatter1.format(sdf1.parse(egc.getCurrentDateTime(con)));
+	return 	formatter1.format(sdf1.parse(egc.getCurrentDateTime()));
 }
 	private void getReport(String departmentId,String functionaryId,String functionCodeId,String fieldId) throws Exception
 
@@ -720,7 +720,7 @@ public String getDateTime() throws Exception
 			
 			EGovernCommon egc=new EGovernCommon();
 			try{
-				String today=egc.getCurrentDate(conn);
+				String today=egc.getCurrentDate();
 				String[] dt2 = today.split("/");
 				String[] dt1= VDate.split("/");
 

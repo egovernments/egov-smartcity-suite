@@ -321,7 +321,7 @@ public class ChartOfAccts {
 	public void newUpdate(Connection con) throws TaskFailedException,
 			SQLException {
 		EGovernCommon commommethods = new EGovernCommon();
-		created = commommethods.getCurrentDate(con);
+		created = commommethods.getCurrentDate();
 		Query pstmt = null;
 		try {
 			created = formatter.format(sdf.parse(created));

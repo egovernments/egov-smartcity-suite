@@ -125,7 +125,7 @@ public class AccountChequeRange {
 SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy",Locale.getDefault());
 SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy",Locale.getDefault());
 EGovernCommon commommethods = new EGovernCommon();
-createdDate = commommethods.getCurrentDate(con);
+createdDate = commommethods.getCurrentDate();
 PreparedStatement pstmt = null;
 try {
 	createdDate = formatter.format(sdf.parse(createdDate));

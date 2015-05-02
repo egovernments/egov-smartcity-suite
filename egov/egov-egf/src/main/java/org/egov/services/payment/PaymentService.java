@@ -589,7 +589,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
 		*/
 		String	vType=existingVH.getVoucherNumber().substring(0,Integer.parseInt(FinancialConstants.VOUCHERNO_TYPE_LENGTH));
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Voucher type  : "+ vType);
-		String	eg_voucher=eGovernCommon.getEg_Voucher(vType,existingVH.getFiscalPeriodId().toString(),con);
+		String	eg_voucher=eGovernCommon.getEg_Voucher(vType,existingVH.getFiscalPeriodId().toString());
 		for(int i=eg_voucher.length();i<5;i++)
 		{
 			 eg_voucher="0"+eg_voucher;  

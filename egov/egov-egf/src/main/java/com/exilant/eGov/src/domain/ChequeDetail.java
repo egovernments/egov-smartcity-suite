@@ -146,7 +146,7 @@ public class ChequeDetail
 	public void insert(Connection connection) throws SQLException,TaskFailedException
 	{
 		EGovernCommon commommethods = new EGovernCommon();
-		created = commommethods.getCurrentDate(connection);
+		created = commommethods.getCurrentDate();
 		Statement statement = null;
 		try
    		{
@@ -276,7 +276,7 @@ public class ChequeDetail
 	public void cancel(Connection connection,String vchrNo,String vchrDate)throws Exception
 	{
 		EGovernCommon commommethods = new EGovernCommon();
-		lastModified = commommethods.getCurrentDate(connection);
+		lastModified = commommethods.getCurrentDate();
 		try
    		{
 			lastModified = formatter.format(sdf.parse(lastModified));
@@ -300,7 +300,7 @@ public class ChequeDetail
 		if(isId && isField)
 		{
 			EGovernCommon commommethods = new EGovernCommon();
-			created = commommethods.getCurrentDate(connection);
+			created = commommethods.getCurrentDate();
 			try
 	   		{
 				created = formatter.format(sdf.parse(created));

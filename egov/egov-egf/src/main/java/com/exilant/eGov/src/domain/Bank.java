@@ -172,7 +172,7 @@ public class Bank {
 		try {
 			PreparedStatement pstmt = null;
 
-			created = common.getCurrentDate(con);
+			created = common.getCurrentDate();
 			created = formatter.format(sdf.parse(created));
 			lastModified = created;
 			EgovMasterDataCaching.getInstance().removeFromCache("egf-bank");
@@ -219,7 +219,7 @@ public class Bank {
 	public void newUpdate(Connection con) throws TaskFailedException,
 			SQLException {
 		EGovernCommon commommethods = new EGovernCommon();
-		created = commommethods.getCurrentDate(con);
+		created = commommethods.getCurrentDate();
 		PreparedStatement pstmt = null;
 		try {
 			created = formatter.format(sdf.parse(created));

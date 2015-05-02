@@ -133,7 +133,7 @@ public class BankAccount {
 	public void insert(Connection connection) throws TaskFailedException,
 			SQLException {
 		EGovernCommon commonmethods = new EGovernCommon();
-		created = commonmethods.getCurrentDate(connection);
+		created = commonmethods.getCurrentDate();
 		PreparedStatement pst = null;
 		try {
 			created = formatter.format(sdf.parse(created));
@@ -187,7 +187,7 @@ public class BankAccount {
 	public void newUpdate(Connection con) throws TaskFailedException,
 			SQLException {
 		EGovernCommon commommethods = new EGovernCommon();
-		created = commommethods.getCurrentDate(con);
+		created = commommethods.getCurrentDate();
 		PreparedStatement pstmt = null;
 		try {
 			created = formatter.format(sdf.parse(created));

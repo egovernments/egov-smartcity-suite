@@ -91,7 +91,7 @@ public class IntegrationLog
 	   EGovernCommon commonmethods = new EGovernCommon();
 	   public void insert(Connection connection) throws SQLException,TaskFailedException
 	   {
-	   		transactiondate = commonmethods.getCurrentDateTime(connection);
+	   		transactiondate = commonmethods.getCurrentDateTime();
 	   		try{
 		   		SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
 				SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss");

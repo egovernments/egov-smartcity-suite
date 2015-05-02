@@ -99,7 +99,7 @@ public class BankEntriesDelegate {
 		public String getVoucherNumber(String type,Connection con,String fundid,int fieldid,String vdate)throws Exception{
 			if(LOGGER.isInfoEnabled())     LOGGER.info("Inside getVoucherNumber-->BankEntriesDelegate");
 			String vno=null;
-			vno=ecm.maxVoucherNumber(type,con,fundid);
+			vno=ecm.maxVoucherNumber(type,fundid);
 			return vno;
 		}
 
@@ -116,7 +116,7 @@ public class BankEntriesDelegate {
 			String cgvn=null;
 
 			String vType=voucherNum.substring(0,Integer.parseInt(FinancialConstants.VOUCHERNO_TYPE_LENGTH));
-			cgvn=ecm.getEg_Voucher(vType,fiscalPeriodId,con);
+			cgvn=ecm.getEg_Voucher(vType,fiscalPeriodId);
 			for(int i=cgvn.length();i<5;i++)
 			{
 				cgvn="0"+cgvn;

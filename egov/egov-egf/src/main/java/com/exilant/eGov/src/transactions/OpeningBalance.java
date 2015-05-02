@@ -80,7 +80,7 @@ public class OpeningBalance extends AbstractTask{
 			String serviceType = dc.getValue("ftService_type");
 			
 			 //set lastmodified date
-            lastModifiedDate = cm.getCurrentDateTime(connection);
+            lastModifiedDate = cm.getCurrentDateTime();
 		   	try{
 		   		SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 				SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");

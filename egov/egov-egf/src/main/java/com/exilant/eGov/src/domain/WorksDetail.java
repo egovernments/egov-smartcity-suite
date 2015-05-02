@@ -146,7 +146,7 @@ public class WorksDetail
 	public void insert(Connection connection) throws SQLException,TaskFailedException
 	{
 		setId( String.valueOf(PrimaryKeyGenerator.getNextKey("WorksDetail")) );
-		created = cm.getCurrentDate(connection);
+		created = cm.getCurrentDate();
 		Statement statement =null;
 		try{
 			SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy");
@@ -182,7 +182,7 @@ public class WorksDetail
 
 	public void update (Connection connection) throws SQLException,TaskFailedException
 	{
-		created = cm.getCurrentDate(connection);
+		created = cm.getCurrentDate();
 		String currentdate="";
 		Statement statement = null;
 		try{
@@ -218,7 +218,7 @@ public class WorksDetail
 		if(isId){
 			try{
 				statement=connection.createStatement();
-				created = cm.getCurrentDate(connection);
+				created = cm.getCurrentDate();
 				
 		   			SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy");
 					SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
@@ -249,12 +249,12 @@ public class WorksDetail
 			try
 		   	{
 				statement=connection.createStatement();
-				created = cm.getCurrentDate(connection);
+				created = cm.getCurrentDate();
 	   			SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy");
 				SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
 				created = formatter.format(sdf.parse( created ));
 				setLastmodified(created);
-				setLastmodified(cm.getCurrentDate(connection));
+				setLastmodified(cm.getCurrentDate());
 				String reverseNegative="UPDATE worksDetail SET paidAmount=paidAmount-"+paidAmount+
 				", advanceAdj=advanceAdj-"+adjAmount+", passedAmount=passedAmount-"+passedAmount+
 				", advanceAmount=advanceAmount-"+advanceAmount+" WHERE id="+ id;

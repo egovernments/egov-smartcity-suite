@@ -223,7 +223,7 @@ public class MonthlyExpRptList {
 		//if(LOGGER.isDebugEnabled())     LOGGER.debug(finId);
 
 		// This function returns the financial year date(yyyy-mm-dd)
-		String startDate=egc.getStartDate(conn, finId);
+		String startDate=egc.getStartDate(finId);
 		//if(LOGGER.isDebugEnabled())     LOGGER.debug(startDate);
 
 		// This function returns the exact format of financial year date (dd/mm/yy)

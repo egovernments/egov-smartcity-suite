@@ -180,7 +180,7 @@ public class RPReport
 
 		if (isCurDate(conn, endDate) == -1)
 		{
-			endDate = egc.getCurrentDate(conn);
+			endDate = egc.getCurrentDate();
 			if (period.equals("3"))
 			{
 				if (Integer.parseInt(month) > 3)
@@ -193,7 +193,7 @@ public class RPReport
 					prevEndDate=endDate.split("/")[0] + "/" + month + "/" + (Integer.parseInt(endDate.split("/")[2])-1)+"";					
 				}					
 			}
-			endDate = egc.getCurrentDate(conn);
+			endDate = egc.getCurrentDate();
 		}
 		try
 		{
@@ -278,8 +278,8 @@ public class RPReport
 						obEndDate=c.getActualMaximum(Calendar.DAY_OF_MONTH)+"/"+(Integer.parseInt(tDate.split("/")[1])-1)+"/"+(Integer.parseInt(obdate.split("/")[2]));
 					}
 					prevObEndDate=obEndDate.split("/")[0] + "/" + obEndDate.split("/")[1] + "/" + (Integer.parseInt(obEndDate.split("/")[2])-1)+"";
-					String snapShotDateTime=egc.getCurDateTime(conn);
-					effFilter=egc.getEffectiveDateFilter(conn,snapShotDateTime);
+					String snapShotDateTime=egc.getCurDateTime();
+					effFilter=egc.getEffectiveDateFilter(snapShotDateTime);
 					dt = sdf.parse(obEndDate); 
 					obEndDate = dtformatter.format(dt);
 					dt = sdf.parse(obStartDate);
@@ -919,7 +919,7 @@ public class RPReport
 		int ret;
 		try
 		{
-			String today = egc.getCurrentDate(conn);
+			String today = egc.getCurrentDate();
 			String[] dt2 = today.split("/");
 			String[] dt1 = VDate.split("/");
 
@@ -1550,8 +1550,8 @@ public class RPReport
 						obEndDate=c.getActualMaximum(Calendar.DAY_OF_MONTH)+"/"+(Integer.parseInt(tDate.split("/")[1])-1)+"/"+(Integer.parseInt(obdate.split("/")[2]));
 					}
 					prevObEndDate=obEndDate.split("/")[0] + "/" + obEndDate.split("/")[1] + "/" + (Integer.parseInt(obEndDate.split("/")[2])-1)+"";
-					String snapShotDateTime=egc.getCurDateTime(conn);
-					effFilter=egc.getEffectiveDateFilter(conn,snapShotDateTime);
+					String snapShotDateTime=egc.getCurDateTime();
+					effFilter=egc.getEffectiveDateFilter(snapShotDateTime);
 					dt = sdf.parse(obEndDate); 
 					obEndDate = dtformatter.format(dt);
 					dt = sdf.parse(obdate);

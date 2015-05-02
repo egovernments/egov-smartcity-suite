@@ -72,7 +72,7 @@ public interface CommonMethodsI {
 	//	This method gets the GlCodeId by passing GLCODE as parameter ---added by Sapna
 	public String getGlCodeId(String glCode,Connection connection) throws Exception;
 	public Integer getDivisionIdFromCode(String divisionCode,Connection connection) throws Exception;
-	public String getTxnNumber(String txnType,String vDate,Connection connection) throws Exception;
+	public String getTxnNumber(String txnType,String vDate) throws Exception;
 	public String getTxnNumber(String fundId,String txnType,String vDate,Connection connection) throws Exception;
 	public String getTransRunningNumber(String fundId,String txnType,String vDate,Connection connection) throws Exception;
 }

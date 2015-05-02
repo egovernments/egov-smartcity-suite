@@ -50,6 +50,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
@@ -88,7 +90,7 @@ public class VoucherDetail {
 	}
 
 	/* inserts the Value in VoucherDetail Table */
-	public void insert(Connection connection) throws SQLException,
+	public void insert() throws SQLException,
 			TaskFailedException {
 		EGovernCommon commonmethods = new EGovernCommon();
 		if(LOGGER.isInfoEnabled())     LOGGER.info("Inside VoucherDetail Narration is" + narration);
@@ -100,7 +102,7 @@ public class VoucherDetail {
 				+ "DebitAmount, CreditAmount, Narration) "
 				+ "VALUES( ?, ?, ?, ?, ?, ?, ?, ?)";
 		if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
-		PreparedStatement pst = connection.prepareStatement(insertQuery);
+		Query pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 		pst.setString(1, id);
 		pst.setString(2, lineId);
 		pst.setString(3, voucherHeaderId);
@@ -111,22 +113,21 @@ public class VoucherDetail {
 		pst.setString(8, narration);
 		pst.executeUpdate();
 		updateQuery = "UPDATE voucherdetail SET";
-		pst.close();
 	}
 
-	public void update(Connection connection) throws SQLException,
+	public void update() throws SQLException,
 			TaskFailedException {
 		try {
-			newUpdate(connection);
+			newUpdate();
 		} catch (Exception e) {
 			LOGGER.error("error inside update " + e.getMessage(), e);
 		}
 	}
 
-	public void newUpdate(Connection con) throws TaskFailedException,
+	public void newUpdate() throws TaskFailedException,
 			SQLException {
 		EGovernCommon commommethods = new EGovernCommon();
-		PreparedStatement pstmt = null;
+		Query pstmt = null;
 		if (narration != null && narration.length() != 0)
 			narration = commommethods.formatString(narration);
 		StringBuilder query = new StringBuilder(500);
@@ -150,7 +151,7 @@ public class VoucherDetail {
 		query.append(" where id=?");
 		try {
 			int i = 1;
-			pstmt = con.prepareStatement(query.toString());
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
 			if (lineId != null)
 				pstmt.setString(i++, lineId);
 			if (voucherHeaderId != null)
@@ -167,17 +168,11 @@ public class VoucherDetail {
 				pstmt.setString(i++, narration);
 			pstmt.setString(i++, id);
 
-			pstmt.executeQuery();
+			pstmt.executeUpdate();
 		} catch (Exception e) {
 			LOGGER.error("Exp in update: " + e.getMessage(),e);
 			throw taskExc;
-		} finally {
-			try {
-				pstmt.close();
-			} catch (Exception e) {
-				LOGGER.error("Inside finally block of update");
-			}
-		}
+		} 
 	}
 
 	public String getLineID() {

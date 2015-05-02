@@ -171,7 +171,7 @@ public class MiscBillDetail {
 	public void insert(Connection connection) throws SQLException,
 			TaskFailedException {
 		EGovernCommon commommethods = new EGovernCommon();
-		created = commommethods.getCurrentDate(connection);
+		created = commommethods.getCurrentDate();
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 			SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");

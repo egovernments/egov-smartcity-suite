@@ -733,7 +733,7 @@ public class AdvanceRegister
 
 		EGovernCommon egc=new EGovernCommon();
 		try{
-			String today=egc.getCurrentDate(conn);
+			String today=egc.getCurrentDate();
 			String[] dt2 = today.split("/");
 			String[] dt1= VDate.split("/");
 			int ret = (Integer.parseInt(dt2[2])>Integer.parseInt(dt1[2])) ? 1 : (Integer.parseInt(dt2[2])<Integer.parseInt(dt1[2])) ? -1 : (Integer.parseInt(dt2[1])>Integer.parseInt(dt1[1])) ? 1 : (Integer.parseInt(dt2[1])<Integer.parseInt(dt1[1])) ? -1 : (Integer.parseInt(dt2[0])>Integer.parseInt(dt1[0])) ? 1 : (Integer.parseInt(dt2[0])<Integer.parseInt(dt1[0])) ? -1 : 0 ;

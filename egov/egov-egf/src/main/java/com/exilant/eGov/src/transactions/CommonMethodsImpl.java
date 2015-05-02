@@ -51,25 +51,26 @@ package com.exilant.eGov.src.transactions;
  *
  */
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.CFiscalPeriod;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.seqgen.DatabaseSequenceFirstTimeException;
 import org.egov.utils.VoucherHelper;
+import org.hibernate.Query;
 
 import com.exilant.exility.common.TaskFailedException;
 
 public class CommonMethodsImpl implements CommonMethodsI {
-	PreparedStatement pst;
+	Query pst;
 	Connection connection;
-	ResultSet rset;
+	List<Object[]> rset;
 	private static  final Logger LOGGER = Logger.getLogger(CommonMethodsImpl.class);
 
 	/**
@@ -80,27 +81,19 @@ public class CommonMethodsImpl implements CommonMethodsI {
 	  	try{
 	  		String query = " SELECT a.glcode FROM CHARTOFACCOUNTS a,EG_BOUNDARY b,eg_boundary_type c "+
 	  						" WHERE id=(SELECT cashinhand FROM CODEMAPPING WHERE EG_BOUNDARYID= ? )  and b.ID_BNDRY_TYPE=c.ID_BNDRY_TYPE and b.ID_BNDRY= ?";
-	  		pst=connection.prepareStatement(query);
-	  		pst.setInt(1, BoundaryId);
-	  		pst.setInt(2, BoundaryId);
-			rset=pst.executeQuery();
-			if(rset.next())	cashinHandCode=rset.getString(1);
-			else throw new Exception();
+	  		pst=HibernateUtil.getCurrentSession().createSQLQuery(query);
+	  		pst.setInteger(1, BoundaryId);
+	  		pst.setInteger(2, BoundaryId);
+			rset=pst.list();
+			for(Object[] element : rset){
+				cashinHandCode=element[0].toString();
+			}
+			if(rset == null || rset.size() == 0) throw new Exception();
 			if(LOGGER.isInfoEnabled())     LOGGER.info(">>>cashinHandCode "+cashinHandCode);
 	  	}
 	  	catch(Exception e){
 	  		LOGGER.error(" Glcode for cashinhand not found "+e.toString(),e);
 	  		throw new Exception(e.toString());
-	  	}
-	  	finally{
-	  		try{
-	  			rset.close();
-	  			pst.close();
-	  		}
-	  		catch(Exception e)
-	  		{
-	  			LOGGER.error(e.toString(),e);
-	  		}
 	  	}
 	  	return cashinHandCode;
 	  }
@@ -112,27 +105,19 @@ public class CommonMethodsImpl implements CommonMethodsI {
 	  	try{
 	  		String query = " SELECT a.glcode FROM CHARTOFACCOUNTS a,EG_BOUNDARY b,eg_boundary_type c "+
 			" WHERE id=(SELECT chequeinhand FROM CODEMAPPING WHERE EG_BOUNDARYID= ? )  and b.ID_BNDRY_TYPE=c.ID_BNDRY_TYPE and b.ID_BNDRY= ?";
-	   		pst=connection.prepareStatement(query);
-	   		pst.setInt(1, BoundaryId);
-	   		pst.setInt(2, BoundaryId);
-			rset=pst.executeQuery();
-			if(rset.next()) chequeinHandCode=rset.getString(1);
-			else throw new Exception("Chequeinhand Code not Found");
+	   		pst=HibernateUtil.getCurrentSession().createSQLQuery(query);
+	   		pst.setInteger(1, BoundaryId);
+	   		pst.setInteger(2, BoundaryId);
+			rset=pst.list();
+			for(Object[] element : rset){
+				chequeinHandCode=element[0].toString();
+			}
+			if(rset == null || rset.size() == 0)  throw new Exception("Chequeinhand Code not Found");
 			if(LOGGER.isInfoEnabled())     LOGGER.info(">>>chequeinHandCode "+chequeinHandCode);
 	  	}
 	  	catch(Exception e){
 	  		LOGGER.error(" Glcode for chequeinHandCode not found ",e);
 	  		throw new Exception(e.toString());
-	  	}
-	  	finally{
-	  		try{
-	  			rset.close();
-	  			pst.close();
-	  		}
-	  		catch(Exception e)
-	  		{
-	  			LOGGER.error(e.toString(),e);
-	  		}
 	  	}
 
 	  	return chequeinHandCode;
@@ -149,49 +134,43 @@ public class CommonMethodsImpl implements CommonMethodsI {
 			{
 	  			if(LOGGER.isInfoEnabled())     LOGGER.info("  forYear  "+forYear);
 	  			String query1 = "select financialyear from financialyear  where ? between startingdate and endingdate";
-	  			pst=connection.prepareStatement(query1);
+	  			pst=HibernateUtil.getCurrentSession().createSQLQuery(query1);
 	  			pst.setString(1, forYear);
-				rset=pst.executeQuery();
+				rset=pst.list();
 				String fId="",isOld="";
-				if(rset.next())
-				{
-					if(LOGGER.isInfoEnabled())     LOGGER.info("   inside 1    ");
-					fId=rset.getString(1);
+				for(Object[] element : rset){
+					fId=element[0].toString();
 				}
-				else
+				if(rset == null || rset.size() == 0)
 				{
-					rset.close();
 					String query2 = "select a.glcode,a.name from chartofaccounts a,egf_tax_account_mapping b where b.glcodeid=a.id and upper(b.financialyear)=upper('old')";
-					pst= connection.prepareStatement(query2);
-					rset=pst.executeQuery();
-					if(rset.next())
-					{
-						ptCodeAndName=rset.getString(1);
-						ptCodeAndName=ptCodeAndName+"#"+rset.getString(2);
+					pst= HibernateUtil.getCurrentSession().createSQLQuery(query2);
+					rset=pst.list();
+					for(Object[] element : rset){
+						ptCodeAndName=element[0].toString();
+						ptCodeAndName=ptCodeAndName+"#"+element[1].toString();
 						if(LOGGER.isInfoEnabled())     LOGGER.info(">>>ptCodeAndName "+ptCodeAndName);
 					}
 				}
 				if(!fId.equalsIgnoreCase(""))
 				{
 					String query3 = "select a.isold from egf_tax_account_mapping a,egf_tax_code b,financialyear c where a.taxcodeid=b.id and b.code='PT' and a.financialyear=c.financialyear and c.financialyear= ?";
-					pst = connection.prepareStatement(query3);
+					pst = HibernateUtil.getCurrentSession().createSQLQuery(query3);
 					pst.setString(1, fId);
-					rset=pst.executeQuery();
-					if(rset.next())
-					{
+					rset=pst.list();
+					for(Object[] element : rset){
 						if(LOGGER.isInfoEnabled())     LOGGER.info("   inside 2    ");
-						isOld=rset.getString(1);
+						isOld=element[0].toString();
 					}
 					if(isOld != null && isOld.equals("1"))
 					{
 								if(LOGGER.isInfoEnabled())     LOGGER.info("   inside 4    ");
 								String query4 = "select a.glcode,a.name from chartofaccounts a,egf_tax_account_mapping b where b.glcodeid=a.id and upper(b.financialyear)=upper('old')";
-								pst = connection.prepareStatement(query4);
-								rset=pst.executeQuery();
-								if(rset.next())
-								{
-									ptCodeAndName=rset.getString(1);
-									ptCodeAndName=ptCodeAndName+"#"+rset.getString(2);
+								pst = HibernateUtil.getCurrentSession().createSQLQuery(query4);
+								rset=pst.list();
+								for(Object[] element : rset){
+									ptCodeAndName=element[0].toString();
+									ptCodeAndName=ptCodeAndName+"#"+element[1].toString();
 									if(LOGGER.isInfoEnabled())     LOGGER.info(">>>ptCodeAndName** "+ptCodeAndName);
 								}
 					}
@@ -199,16 +178,15 @@ public class CommonMethodsImpl implements CommonMethodsI {
 					{
 								if(LOGGER.isInfoEnabled())     LOGGER.info("   inside 5   ");
 								String query5 = "select a.glcode,a.name from chartofaccounts a,egf_tax_account_mapping b,egf_tax_code c,financialyear d where b.taxcodeid=c.id and c.code='PT' and b.glcodeid=a.id and b.financialyear=d.financialyear and d.financialyear= ?";
-								pst = connection.prepareStatement(query5);
+								pst = HibernateUtil.getCurrentSession().createSQLQuery(query5);
 								pst.setString(1, fId);
-								rset=pst.executeQuery();
-								if(rset.next())
-								{
-									ptCodeAndName=rset.getString(1);
-									ptCodeAndName=ptCodeAndName+"#"+rset.getString(2);
+								rset=pst.list();
+								for(Object[] element : rset){
+									ptCodeAndName=element[0].toString();
+									ptCodeAndName=ptCodeAndName+"#"+element[1].toString();
 									if(LOGGER.isInfoEnabled())     LOGGER.info(">>>ptCodeAndName "+ptCodeAndName);
 								}
-								else
+								if(rset == null || rset.size() == 0)
 									throw new Exception("Property Tax code not Found for "+forYear);
 
 					}
@@ -218,30 +196,20 @@ public class CommonMethodsImpl implements CommonMethodsI {
 			{
 				//if foryear is not given, then use Sespense code
 				String query = "select a.glcode, a.name from chartofaccounts a,egf_accountcode_purpose b where a.purposeid=b.id and upper(b.name)=upper('SuspenseCode')";
-				pst=connection.prepareStatement(query);
-				rset=pst.executeQuery();
-				if(rset.next()){
-					ptCodeAndName=rset.getString(1);
-					ptCodeAndName=ptCodeAndName+"#"+rset.getString(2);
+				pst=HibernateUtil.getCurrentSession().createSQLQuery(query);
+				rset=pst.list();
+				for(Object[] element : rset){
+					ptCodeAndName=element[0].toString();
+					ptCodeAndName=ptCodeAndName+"#"+element[1].toString();
 					if(LOGGER.isInfoEnabled())     LOGGER.info(">>>ptCodeAndName1 "+ptCodeAndName);
 				}
-				else throw new Exception("Property Tax code not Found for "+forYear);
+				if(rset == null || rset.size() == 0) throw new Exception("Property Tax code not Found for "+forYear);
 			}
 	  	}
 	  	catch(Exception e)
 	  	{
 	  		LOGGER.error(" PT code not found "+e.toString(),e);
 	  		throw new Exception(e.toString());
-	  	}
-	  	finally{
-	  		try{
-	  			rset.close();
-	  			pst.close();
-	  		}
-	  		catch(Exception e)
-	  		{
-	  			LOGGER.error(e.toString(),e);
-	  		}
 	  	}
 	  	return ptCodeAndName;
 	  }
@@ -254,29 +222,19 @@ public class CommonMethodsImpl implements CommonMethodsI {
 	  	String bankCodeAndName="";
 	  	try{
 	  		String query = "select glcode,name from chartofaccounts where id=(select glcodeid from bankaccount where id= ?)";
-	  		pst=connection.prepareStatement(query);
-	  		pst.setInt(1, bankAccountId);
-			rset=pst.executeQuery();
-			if(rset.next()){
-				bankCodeAndName=rset.getString(1);
-				bankCodeAndName=bankCodeAndName+"#"+rset.getString(2);
+	  		pst=HibernateUtil.getCurrentSession().createSQLQuery(query);
+	  		pst.setInteger(1, bankAccountId);
+			rset=pst.list();
+			for(Object[] element : rset){
+				bankCodeAndName=element[0].toString();
+				bankCodeAndName=bankCodeAndName+"#"+element[1].toString();
 				if(LOGGER.isInfoEnabled())     LOGGER.info(">>>bankCodeAndName "+bankCodeAndName);
 			}
-			else throw new Exception("BAnk Code Not Found");
+			if(rset == null || rset.size() == 0) throw new Exception("BAnk Code Not Found");
 	  	}
 	  	catch(Exception e){
 	  		LOGGER.error(" Bank code not found "+e.toString(),e);
 	  		throw new Exception(e.toString());
-	  	}
-	  	finally{
-	  		try{
-	  			rset.close();
-	  			pst.close();
-	  		}
-	  		catch(Exception e)
-	  		{
-	  			LOGGER.error(e.toString(),e);
-	  		}
 	  	}
 	  	return bankCodeAndName;
 	  }
@@ -290,14 +248,14 @@ public class CommonMethodsImpl implements CommonMethodsI {
 		try
 		{
 			String query = "select id from fiscalperiod  where ? between startingdate and endingdate";
-			pst =connection.prepareStatement(query);
+			pst =HibernateUtil.getCurrentSession().createSQLQuery(query);
 			pst.setString(1, vDate);
-			rset=pst.executeQuery();
-			if(rset.next()){
-				fiscalPeriodID=rset.getString(1);
+			rset=pst.list();
+			for(Object[] element : rset){
+				fiscalPeriodID=element[0].toString();
 				if(LOGGER.isInfoEnabled())     LOGGER.info(">>>fiscalPeriodID "+fiscalPeriodID);
 			}
-			else 
+			if(rset == null || rset.size() == 0) 
 				throw new TaskFailedException("fiscal Period Not Found");
 		}
 		catch(TaskFailedException e)
@@ -310,16 +268,6 @@ public class CommonMethodsImpl implements CommonMethodsI {
 			LOGGER.error("failed to get fiscalperiodId "+e.toString(),e);
 			throw new Exception(e.toString());
 		}
-		finally{
-	  		try{
-	  			rset.close();
-	  			pst.close();
-	  		}
-	  		catch(Exception e)
-	  		{
-	  			LOGGER.error("Error:>>"+e.getMessage(),e);
-	  		}
-	  	}
 		return fiscalPeriodID;
 	  }
 
@@ -331,29 +279,19 @@ public class CommonMethodsImpl implements CommonMethodsI {
 	  	String bankAndBranchId="null";
 		try{
 			String sql = "select b.id,c.id from bankaccount a,bankbranch b,bank c where a.branchid=b.id and b.bankid=c.id and a.id= ?";
-			pst=connection.prepareStatement(sql);
-			pst.setInt(1, bankAccountId);
-  	  	rset=pst.executeQuery();
-  	  		if(rset.next()){
-  	  			bankAndBranchId=rset.getString(1);
-  	  			bankAndBranchId=bankAndBranchId+"#"+rset.getString(2);
+			pst=HibernateUtil.getCurrentSession().createSQLQuery(sql);
+			pst.setInteger(1, bankAccountId);
+  	  	rset=pst.list();
+  	  for(Object[] element : rset){
+  	  			bankAndBranchId=element[0].toString();
+  	  			bankAndBranchId=bankAndBranchId+"#"+element[1].toString();
   	  			if(LOGGER.isInfoEnabled())     LOGGER.info(">>>bankAndBranchId "+bankAndBranchId);
   	  		}
-  	  		else throw new Exception("Bank Code Not Found");
+  	if(rset == null || rset.size() == 0)  throw new Exception("Bank Code Not Found");
 		}
 		catch(Exception e){
 			LOGGER.error(" Bank Id not found "+e.toString(),e);
 			throw new Exception(e.toString());
-		}
-		finally{
-  		try{
-  			rset.close();
-  			pst.close();
-  		}
-  		catch(Exception e)
-  		{
-  			LOGGER.error(e.toString(),e);
-  		}
 		}
   		return bankAndBranchId;
 	}
@@ -370,44 +308,34 @@ public class CommonMethodsImpl implements CommonMethodsI {
 				"FROM transactionSummary WHERE financialYearId=( SELECT id FROM financialYear WHERE startingDate <= ?" +
 			   	"AND endingDate >= ?)  AND glCodeId =(select glcodeid from bankaccount where id= ?)";
 		  	if(LOGGER.isInfoEnabled())     LOGGER.info(str);
-		  	pst = connection.prepareStatement(str);
+		  	pst = HibernateUtil.getCurrentSession().createSQLQuery(str);
 		  	pst.setString(1, vcDate);
 		  	pst.setString(2, vcDate);
-		  	pst.setInt(3, bankAccountId);
-		  	rset = pst.executeQuery();
-		  	if(rset.next())
-		  	 	opeAvailable = rset.getDouble("openingBalance");
+		  	pst.setInteger(3, bankAccountId);
+		  	rset = pst.list();
+		    for(Object[] element : rset){
+		  	 	opeAvailable = Double.parseDouble(element[0].toString());
+		    }
 			if(LOGGER.isInfoEnabled())     LOGGER.info("opening balance  "+opeAvailable);
-		    rset.close();
 
 	   		String str1="SELECT (decode(sum(gl.debitAmount),null,0,sum(gl.debitAmount)) - decode(sum(gl.creditAmount),null,0,sum(gl.creditAmount))) + " +opeAvailable+""+
 				" as \"totalAmount\" FROM   generalLedger gl, voucherHeader vh WHERE vh.id = gl.voucherHeaderId AND gl.glCodeid = (select glcodeid from bankaccount where id= ?) AND  "+
 				" vh.voucherDate >=( SELECT TO_CHAR(startingDate, 'dd-Mon-yyyy') FROM financialYear WHERE startingDate <= ? AND endingDate >= ?) AND vh.voucherDate <= ?";
 	   		if(LOGGER.isInfoEnabled())     LOGGER.info(str1);
-	   		pst = connection.prepareStatement(str1);
-	   		pst.setInt(1, bankAccountId);
+	   		pst = HibernateUtil.getCurrentSession().createSQLQuery(str1);
+	   		pst.setInteger(1, bankAccountId);
 	   		pst.setString(2, vcDate);
 	   		pst.setString(3, vcDate);
 	   		pst.setString(4, vcDate);
-	   		rset = pst.executeQuery();
-	 		if(rset.next()){
-		   		 totalAvailable = rset.getDouble("totalAmount");
+	   		rset = pst.list();
+	   		for(Object[] element : rset){
+		   		 totalAvailable =Double.parseDouble( element[0].toString());
 		   		if(LOGGER.isInfoEnabled())     LOGGER.info("total balance  "+totalAvailable);
 	 		}
 
 	  	}catch(Exception e){
 	  		LOGGER.error(" could not get Bankbalance  "+e.toString(),e);
 	  		throw new Exception(e.toString());
-		}
-		finally{
-  		try{
-  			rset.close();
-  			pst.close();
-  		}
-  		catch(Exception e)
-  		{
-  			LOGGER.error(e.toString(),e);
-  		}
 		}
 		return totalAvailable;
 	}
@@ -420,30 +348,19 @@ public class CommonMethodsImpl implements CommonMethodsI {
 		String codeAndName="null";
 		try{
 		String query = "select a.glcode, a.name from chartofaccounts a,egf_accountcode_purpose b where a.purposeid=b.id and b.id= ?";
-	  	pst=connection.prepareStatement(query);
+	  	pst=HibernateUtil.getCurrentSession().createSQLQuery(query);
 	  	pst.setString(1, purposeId);
-  	  	rset=pst.executeQuery();
+  	  	rset=pst.list();
   	  //	for(int i=0;rset.next();i++){
-  	  		while(rset.next()){
-  	  			codeAndName=rset.getString(1);
-  	  			codeAndName=codeAndName+"#"+rset.getString(2);
+  	  for(Object[] element : rset){
+  	  			codeAndName=element[0].toString();
+  	  			codeAndName=codeAndName+"#"+element[1].toString();
   	  		}
 
 		}
 		catch(Exception e){
 			LOGGER.error(" code not found for purpose id "+e.toString(),e);
 			throw new Exception(e.toString());
-		}
-		finally{
-  		try{
-  			rset.close();
-  			pst.close();
-  		}
-  		catch(Exception e)
-  		{
-  			LOGGER.error(e.toString());
-
-  		}
 		}
   		return codeAndName;
 	}
@@ -458,31 +375,19 @@ public class CommonMethodsImpl implements CommonMethodsI {
 		try{
 				String query="select name from chartofaccounts where glcode= ?";
 				if(LOGGER.isInfoEnabled())     LOGGER.info("  query   "+query);
-			  	pst=connection.prepareStatement(query);
+			  	pst=HibernateUtil.getCurrentSession().createSQLQuery(query);
 			  	pst.setString(1, glcode);
-		  	  	rset=pst.executeQuery();
-		  	  	if(rset.next())
-		  	  	{
-		  	  		codeName=rset.getString(1);
+		  	  	rset=pst.list();
+		  	  for(Object[] element : rset){
+		  	  		codeName=element[0].toString();
 		  	  		if(LOGGER.isInfoEnabled())     LOGGER.info("  codeName   "+codeName);
 		  	  	}
-		  	  	else
+		  	if(rset == null || rset.size() == 0) 
 		  	  		throw new Exception("code not found");
 		}
 				catch(Exception e){
 					LOGGER.error(" code not found "+e.toString(),e);
 					throw new Exception(e.toString());
-				}
-				finally{
-		  		try{
-		  			rset.close();
-		  			pst.close();
-		  		}
-		  		catch(Exception e)
-		  		{
-		  			LOGGER.error(e.toString(),e);
-
-		  		}
 				}
   		return codeName;
 	}
@@ -496,31 +401,19 @@ public class CommonMethodsImpl implements CommonMethodsI {
 		try{
 				String query="select glcode from chartofaccounts where id= ?";
 				if(LOGGER.isInfoEnabled())     LOGGER.info("  query   "+query);
-			  	pst=connection.prepareStatement(query);
+			  	pst=HibernateUtil.getCurrentSession().createSQLQuery(query);
 			  	pst.setString(1, glCodeId);
-		  	  	rset=pst.executeQuery();
-		  	  	if(rset.next())
-		  	  	{
-		  	  		glCode=rset.getString(1);
+		  	  	rset=pst.list();
+		  	  for(Object[] element : rset){
+		  	  		glCode=element[0].toString();
 		  	  		if(LOGGER.isInfoEnabled())     LOGGER.info("  glCode   "+glCode);
 		  	  	}
-		  	  	else
+		  	  if(rset == null || rset.size() == 0) 
 		  	  		throw new Exception("id not found");
 		}
 				catch(Exception e){
 					LOGGER.error(" id not found "+e.toString(),e);
 					throw new Exception(e.toString());
-				}
-				finally{
-		  		try{
-		  			rset.close();
-		  			pst.close();
-		  		}
-		  		catch(Exception e)
-		  		{
-		  			LOGGER.error(e.toString());
-
-		  		}
 				}
   		return glCode;
 	}
@@ -535,13 +428,12 @@ public class CommonMethodsImpl implements CommonMethodsI {
 		{
 				String query="SELECT VOUCHERNUMBER FROM integrationlog WHERE RECORDID= ? and USERID= ? order by id desc";
 				if(LOGGER.isInfoEnabled())     LOGGER.info("  query   "+query);
-			  	pst=connection.prepareStatement(query);
+			  	pst=HibernateUtil.getCurrentSession().createSQLQuery(query);
 			  	pst.setString(1, recordId);
-			  	pst.setInt(2, userId);
-		  	  	rset=pst.executeQuery();
-		  	  	if(rset.next())
-		  	  	{
-		  	  		cgn=rset.getString(1);
+			  	pst.setInteger(2, userId);
+		  	  	rset=pst.list();
+		  	  for(Object[] element : rset){
+		  	  		cgn=element[0].toString();
 		  	  		if(LOGGER.isInfoEnabled())     LOGGER.info("  cgn in log  "+cgn);
 		  	  	}
 		}
@@ -563,12 +455,11 @@ public class CommonMethodsImpl implements CommonMethodsI {
 		 if(LOGGER.isDebugEnabled())     LOGGER.debug("Divisio code query-->>>>>>>> "+ sql);
 		try{
 
-			pst=connection.prepareStatement(sql);
-			pst.setInt(1, divid);
-			rset=pst.executeQuery();
-			while(rset.next())
-			{
-				divCode=rset.getString(1);
+			pst=HibernateUtil.getCurrentSession().createSQLQuery(sql);
+			pst.setInteger(1, divid);
+			rset=pst.list();
+			for(Object[] element : rset){
+				divCode=element[0].toString();
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("divCode >>>>>>>"+divCode);
 			}
 
@@ -592,10 +483,11 @@ public class CommonMethodsImpl implements CommonMethodsI {
 		 if(LOGGER.isDebugEnabled())     LOGGER.debug("Division id query-->>>>>>>> "+ sql);
 		try{
 
-			pst=connection.prepareStatement(sql);
-			rset=pst.executeQuery();
-			if(rset.next())
-				divId=rset.getInt(1);
+			pst=HibernateUtil.getCurrentSession().createSQLQuery(sql);
+			rset=pst.list();
+			for(Object[] element : rset){
+				divId=Integer.parseInt(element[0].toString());
+			}
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Division id is >>>>>>>"+divId);
 		}
 		catch(Exception e)
@@ -615,11 +507,10 @@ public class CommonMethodsImpl implements CommonMethodsI {
 	  String sql="select FINANCIALYEAR from FINANCIALYEAR  where '"+vDate+"' between startingdate and endingdate";
 	  try
 	  {
-	  	pst=connection.prepareStatement(sql);
-		rset=pst.executeQuery();
-		while(rset.next())
-		{
-	       finYear=rset.getString(1);
+	  	pst=HibernateUtil.getCurrentSession().createSQLQuery(sql);
+		rset=pst.list();
+		for(Object[] element : rset){
+	       finYear=element[0].toString();
 	       if(LOGGER.isDebugEnabled())     LOGGER.debug("finYear id>>>>>>>"+finYear);
 	    }
 
@@ -641,31 +532,19 @@ public class CommonMethodsImpl implements CommonMethodsI {
 		try{
 				String query="select id from chartofaccounts where glCode like ?";
 				if(LOGGER.isInfoEnabled())     LOGGER.info("  query   "+query);
-			  	pst=connection.prepareStatement(query);
+			  	pst=HibernateUtil.getCurrentSession().createSQLQuery(query);
 			  	pst.setString(1, glCode);
-		  	  	rset=pst.executeQuery();
-		  	  	if(rset.next())
-		  	  	{
-		  	  		glCodeId=rset.getString(1);
+		  	  	rset=pst.list();
+		  	  for(Object[] element : rset){
+		  	  		glCodeId=element[0].toString();
 		  	  		if(LOGGER.isDebugEnabled())     LOGGER.debug("  glCodeId   "+glCodeId);
 		  	  	}
-		  	  	else
+		  	if(rset == null || rset.size() == 0) 
 		  	  		throw new Exception("id not found");
 		}
 				catch(Exception e){
 					LOGGER.error(" id not found "+e.toString(),e);
 					throw new Exception(e.toString());
-				}
-				finally{
-		  		try{
-		  			rset.close();
-		  			pst.close();
-		  		}
-		  		catch(Exception e)
-		  		{
-		  			LOGGER.error(e.toString());
-
-		  		}
 				}
   		return glCodeId;
 	}
@@ -675,7 +554,7 @@ public class CommonMethodsImpl implements CommonMethodsI {
 	 * Input :Type,transaction date and connection
 	 * Output :Transaction number in the format txnType+number+/+month+/+year
 	 */
-	public String getTxnNumber(String txnType,String vDate,Connection con) throws Exception
+	public String getTxnNumber(String txnType,String vDate) throws Exception
 	{
 	  String finYear="";
 	  String fiscalPeriod="";
@@ -693,17 +572,15 @@ public class CommonMethodsImpl implements CommonMethodsI {
 	  if(LOGGER.isInfoEnabled())     LOGGER.info(sql);
 	  try
 	  {
-	  	pst=con.prepareStatement(sql);
+	  	pst=HibernateUtil.getCurrentSession().createSQLQuery(sql);
 	  	pst.setString(1, txndate);
-		rset=pst.executeQuery();
-		if(rset.next())
-		{
-	       finYear=rset.getString(1);
-	       fiscalPeriod=rset.getString(2);
+		rset=pst.list();
+		for(Object[] element : rset){
+	       finYear=element[0].toString();
+	       fiscalPeriod=element[1].toString();
 	       if(LOGGER.isInfoEnabled())     LOGGER.info("finYear id>>>>>>>"+finYear +" fiscalPeriod :"+fiscalPeriod);
-	       rset.close();
 	    }
-		else
+		if(rset == null || rset.size() == 0) 
 			throw new Exception("Year is not defined in the system");
 
 		String year = finYear.substring(2,4)+finYear.substring((finYear.length()-2),(finYear.length()));
@@ -734,10 +611,6 @@ public class CommonMethodsImpl implements CommonMethodsI {
 	  {
 	  	LOGGER.error("Exp="+e.getMessage(),e);
 		throw new Exception(e.toString());
-	  }
-	  finally
-	  {
-	  	pst.close();
 	  }
 	  return retVal;
 	}
@@ -772,28 +645,25 @@ public class CommonMethodsImpl implements CommonMethodsI {
 
 			// This is for getting fund type based on the fund id.
 			String query = "SELECT identifier as \"fund_identi\" from fund where id= ?";
-			pst=con.prepareStatement(query);
+			pst=HibernateUtil.getCurrentSession().createSQLQuery(query);
 			pst.setString(1, fundId);
-			rset = pst.executeQuery();
-			if(rset.next()) {
-			 		fType = rset.getString("fund_identi");
+			rset = pst.list();
+			for(Object[] element : rset){
+			 		fType = element[0].toString();
 
 			 		if(LOGGER.isInfoEnabled())     LOGGER.info("Fund Id--->"+fundId +" Fund Type---->"+fType);
-			rset.close();
 			}
-			else
+			if(rset == null || rset.size() == 0) 
 				throw new Exception("Fund is not defined in the system");
 
-			pst = con.prepareStatement(sql);
-			rset=pst.executeQuery();
-			if(rset.next())
-			{
-		       finYear=rset.getString(1);
-		       fiscalPeriod=rset.getString(2);
+			pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
+			rset=pst.list();
+			for(Object[] element : rset){
+		       finYear=element[0].toString();
+		       fiscalPeriod=element[1].toString();
 		       if(LOGGER.isInfoEnabled())     LOGGER.info("finYear id>>>>>>>"+finYear +" fiscalPeriod :"+fiscalPeriod);
-		       rset.close();
 		    }
-			else
+			if(rset == null || rset.size() == 0) 
 				throw new Exception("Year is not defined in the system");
 			
 			String year = finYear.substring(2,4)+finYear.substring((finYear.length()-2),(finYear.length()));
@@ -826,10 +696,6 @@ public class CommonMethodsImpl implements CommonMethodsI {
 		  	LOGGER.error("Exp="+e.getMessage(),e);
 			throw new Exception(e.toString());
 		  }
-		  finally
-		  {
-		  	pst.close();
-		  }
 		  return retVal;
 	}
 		/*
@@ -858,26 +724,22 @@ public class CommonMethodsImpl implements CommonMethodsI {
 	
 				// This is for getting fund type based on the fund id.
 				String query = "SELECT identifier as \"fund_identi\" from fund where id= ?";
-				pst=con.prepareStatement(query);
+				pst=HibernateUtil.getCurrentSession().createSQLQuery(query);
 				pst.setString(1, fundId);
-				rset = pst.executeQuery();
-				if(rset.next()) {
-					fType = rset.getString("fund_identi");
+				rset = pst.list();
+				for(Object[] element : rset){
+					fType = element[0].toString();
 					if(LOGGER.isInfoEnabled())     LOGGER.info("Fund Id  :--->"+fundId +" Fund Type  :---->"+fType);
-					rset.close();
 				}
-				else
-					throw new Exception("Fund is not defined in the system");
-				pst = con.prepareStatement(sql);
-				rset=pst.executeQuery();
-				if(rset.next())
-				{
-			       finYear=rset.getString(1);
-			       fiscalPeriod=rset.getString(2);
+				if(rset == null || rset.size() == 0) 					throw new Exception("Fund is not defined in the system");
+				pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
+				rset=pst.list();
+				for(Object[] element : rset){
+			       finYear=element[0].toString();
+			       fiscalPeriod=element[1].toString();
 			       if(LOGGER.isDebugEnabled())     LOGGER.debug("finYear id>>>>>>>"+finYear +" fiscalPeriod :"+fiscalPeriod);
-			       rset.close();
 			    }
-				else
+				if(rset == null || rset.size() == 0) 
 					throw new Exception("Year is not defined in the system");
 				
 				txnType = fType.concat(txnType);
@@ -905,10 +767,6 @@ public class CommonMethodsImpl implements CommonMethodsI {
 			  	LOGGER.error("Exp occured in getTransRunningNumber() :"+e.getMessage(),e);
 				throw new Exception(e.toString());
 			  }
-			  finally
-			  {
-			  	pst.close();
-			  }
 			  return retVal;
 		}
 		
@@ -921,11 +779,12 @@ public class CommonMethodsImpl implements CommonMethodsI {
 			Integer divId=null;
 	   	    String sql="Select id_bndry from EG_BOUNDARY where BNDRY_NUM= ? and is_bndry_active=1 order by id_bndry_type desc";
 			if(LOGGER.isInfoEnabled())     LOGGER.info("Sub Field id query-->>>>>>>> "+ sql);
-			pst=connection.prepareStatement(sql);
+			pst=HibernateUtil.getCurrentSession().createSQLQuery(sql);
 			pst.setString(1, divisionCode);
-			rset=pst.executeQuery();
-			if(rset.next())
-				divId=rset.getInt(1);
+			rset=pst.list();
+			for(Object[] element : rset){
+				divId=Integer.parseInt(element[0].toString());
+			}
 			if(LOGGER.isInfoEnabled())     LOGGER.info("Sub Feild id is >>>>>>>"+divId);
 			return divId;
 		}

@@ -785,7 +785,7 @@ private void markForProcessing(String type) {
 		EGovernCommon cm = new EGovernCommon();
 		
 		try {
-			bankBookBalance = cm.getAccountBalance(dateFormatter.format(toDate),null,accountId.toString()).setScale(2, BigDecimal.ROUND_HALF_UP);
+			bankBookBalance = cm.getAccountBalance(dateFormatter.format(toDate),accountId.toString()).setScale(2, BigDecimal.ROUND_HALF_UP);
 		} catch (HibernateException e) {
 			throw new EGOVRuntimeException(e.getMessage());
 		} catch (TaskFailedException e) {

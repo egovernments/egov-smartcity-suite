@@ -81,7 +81,7 @@ public class SurrenderChequeDetail
 	{
 		if(LOGGER.isInfoEnabled())     LOGGER.info("insert inside");
 		EGovernCommon commommethods = new EGovernCommon();
-		created = commommethods.getCurrentDate(connection);
+		created = commommethods.getCurrentDate();
 		try
    		{
    			SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy");

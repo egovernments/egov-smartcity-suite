@@ -156,7 +156,7 @@ public class SubSchemeBean
 			EGovernCommon egov = new EGovernCommon();
 			String[][] schemedetail = (String[][])dc.getGrid("AddScheme_Grid");			
 			Date dt=new Date();
-			String modifiedDate=egov.getCurrentDate(con);
+			String modifiedDate=egov.getCurrentDate();
 			dt = sdf.parse(modifiedDate);
 			modifiedDate = formatter1.format(dt);
 			st=con.createStatement();
@@ -201,7 +201,7 @@ public class SubSchemeBean
 			EGovernCommon egov = new EGovernCommon();
 			String[][] schemedetail = (String[][])dc.getGrid("AddScheme_Grid");			
 			Date dt=new Date();
-			String modifiedDate=egov.getCurrentDate(con);
+			String modifiedDate=egov.getCurrentDate();
 			dt = sdf.parse(modifiedDate);
 			modifiedDate = formatter1.format(dt);
 			st=con.createStatement();

@@ -98,7 +98,7 @@ public class SetUp extends AbstractTask{
                this.connection = con;
                boolean transferred;
                EGovernCommon cm = new EGovernCommon();
-               effectiveDate = cm.getCurrentDateTime(connection);
+               effectiveDate = cm.getCurrentDateTime();
                try{
 			   		SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 					SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");

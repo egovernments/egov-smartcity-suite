@@ -254,9 +254,9 @@ public class ProcmtOrder extends AbstractTask {
         if(LOGGER.isDebugEnabled())     LOGGER.debug(sid+"sub scheme"+ssid);
         EGovernCommon cm=new EGovernCommon();
         if(sid !=null && sid.length()>0)
-        cm.validateScheme(dc.getValue("worksDetail_orderDate1"),dc.getValue("scheme"),con);
+        cm.validateScheme(dc.getValue("worksDetail_orderDate1"),dc.getValue("scheme"));
         if( ssid!=null && ssid.length()>0)
-        cm.validatesubScheme(dc.getValue("worksDetail_orderDate1"),dc.getValue("subscheme"),con);
+        cm.validatesubScheme(dc.getValue("worksDetail_orderDate1"),dc.getValue("subscheme"));
         wm.setSchemeid(dc.getValue("scheme"));
         wm.setSubschemeid(dc.getValue("subscheme"));
         if(LOGGER.isInfoEnabled())     LOGGER.info("Inside postInWorksmis Method var : "+strworkOrderId);

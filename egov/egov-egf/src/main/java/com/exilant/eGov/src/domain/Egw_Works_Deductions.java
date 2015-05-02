@@ -139,7 +139,7 @@ public class Egw_Works_Deductions
 public void insert(Connection connection) throws SQLException,TaskFailedException
 	{
 		setId( String.valueOf(PrimaryKeyGenerator.getNextKey("Egw_Works_Deductions")) );
-		created = cm.getCurrentDate(connection);
+		created = cm.getCurrentDate();
 		try{
 			SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy");
 			SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
@@ -162,7 +162,7 @@ public void insert(Connection connection) throws SQLException,TaskFailedExceptio
 
 	public void update (Connection connection) throws SQLException,TaskFailedException
 	{
-		created = cm.getCurrentDate(connection);
+		created = cm.getCurrentDate();
 		String currentdate="";
 		try{
 			SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy");

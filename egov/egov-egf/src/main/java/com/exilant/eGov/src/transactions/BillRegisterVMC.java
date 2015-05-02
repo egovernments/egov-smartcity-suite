@@ -116,12 +116,12 @@ public class BillRegisterVMC extends AbstractTask {
 		EGovernCommon commonmethod = new EGovernCommon();
 		CommonMethodsImpl cmImpl = new CommonMethodsImpl();
 
-		today=commonmethod.getCurrentDateTime(con);
+		today=commonmethod.getCurrentDateTime();
 	//	boolean answer=false;
 		BillRegisterBean billBean = new BillRegisterBean();
 		//billBean.setId(String.valueOf(PrimaryKeyGenerator.getNextKey("EG_BILLREGISTER")));
 		//billBean.setBillNumber(dc.getValue("bill_Number"));
-		billBean.setBillNumber(cmImpl.getTxnNumber("BILL",dc.getValue("bill_Date"),con));
+		billBean.setBillNumber(cmImpl.getTxnNumber("BILL",dc.getValue("bill_Date")));
 
       	billBean.setBillDate(commonmethod.getSQLDateFormat(dc.getValue("bill_Date")));
       	billBean.setBillAmount(Double.parseDouble(dc.getValue("bill_Amount")));
@@ -164,7 +164,7 @@ public class BillRegisterVMC extends AbstractTask {
 	{
 		EGovernCommon commonmethod = new EGovernCommon();
 		CommonMethodsImpl cmImpl = new CommonMethodsImpl();
-		today=commonmethod.getCurrentDateTime(con);
+		today=commonmethod.getCurrentDateTime();
 		if(LOGGER.isInfoEnabled())     LOGGER.info("Update ID Value is:"+(dc.getValue("bill_Id")));
 //		boolean answer=false;
 		BillRegisterBean billBean = new BillRegisterBean();
@@ -203,7 +203,7 @@ public class BillRegisterVMC extends AbstractTask {
 					 	{
 					 		if(LOGGER.isInfoEnabled())     LOGGER.info("If Fiscal period is different --->Generate new Bill Number");
 
-					 		billBean.setBillNumber(cmImpl.getTxnNumber("BILL",dc.getValue("bill_Date"),con));
+					 		billBean.setBillNumber(cmImpl.getTxnNumber("BILL",dc.getValue("bill_Date")));
 
 					 		String billNoNew=billBean.getBillNumber();
 					 		dc.addValue("bill_Number",billNoNew);

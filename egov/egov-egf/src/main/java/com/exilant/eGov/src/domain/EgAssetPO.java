@@ -81,7 +81,7 @@ public class EgAssetPO {
         Statement st=null;
         EGovernCommon commommethods = new EGovernCommon();
         setId( String.valueOf(PrimaryKeyGenerator.getNextKey("eg_asset_po")) );
-        lastUpdatedDate = commommethods.getCurrentDate(con);
+        lastUpdatedDate = commommethods.getCurrentDate();
         try{
 	        SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy");
 	        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");

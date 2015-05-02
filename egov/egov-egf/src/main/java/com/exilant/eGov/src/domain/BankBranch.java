@@ -269,7 +269,7 @@ public class BankBranch {
 	public void insert(Connection connection) throws TaskFailedException,
 			SQLException {
 		EGovernCommon commommethods = new EGovernCommon();
-		created = commommethods.getCurrentDate(connection);
+		created = commommethods.getCurrentDate();
 		PreparedStatement pst = null;
 		try {
 			/*
@@ -439,7 +439,7 @@ public class BankBranch {
 	public void newUpdate(Connection con) throws TaskFailedException,
 			SQLException {
 		EGovernCommon commommethods = new EGovernCommon();
-		created = commommethods.getCurrentDate(con);
+		created = commommethods.getCurrentDate();
 		try {
 			created = formatter.format(sdf.parse(created));
 		} catch (ParseException parseExp) {

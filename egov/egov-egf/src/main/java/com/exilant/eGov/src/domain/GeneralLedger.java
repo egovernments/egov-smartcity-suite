@@ -100,13 +100,13 @@ public class GeneralLedger {
 		return Integer.valueOf(id).intValue();
 	}
 
-	public void insert(Connection connection) throws SQLException,
+	public void insert() throws SQLException,
 			TaskFailedException {
 		EGovernCommon commommethods = new EGovernCommon();
 		Query pst = null;
 		try {
 			effectiveDate = String.valueOf(commommethods
-					.getCurrentDate(connection));
+					.getCurrentDate());
 			Date dt = new Date();
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 			SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
