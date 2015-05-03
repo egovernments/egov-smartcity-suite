@@ -44,15 +44,19 @@
  * Window - Preferences - Java - Code Style - Code Templates
  */
 package com.exilant.eGov.src.domain;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-
+@Transactional(readOnly=true)
 public class SurrenderChequeDetail
 {
 	private String id = null;
@@ -76,8 +80,8 @@ public class SurrenderChequeDetail
 	public void setCreated(String aCreated){ created = aCreated; /* not said for updation */}
 	public void setVoucherHeaderId(String avoucherHeaderId){ voucherHeaderId = avoucherHeaderId;  updateQuery = updateQuery + " voucherHeaderId='" + voucherHeaderId + "',";}
 	
-	
-	public void insert(Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+	public void insert() throws SQLException,TaskFailedException
 	{
 		if(LOGGER.isInfoEnabled())     LOGGER.info("insert inside");
 		EGovernCommon commommethods = new EGovernCommon();
@@ -95,10 +99,9 @@ public class SurrenderChequeDetail
 
 		String insertQuery = "INSERT INTO eg_surrendered_cheques (Id,BankAccountId, ChequeNumber,ChequeDate,VHID,LastModifiedDate) " +
 		" VALUES(" + id + ","+ BankAccountId +", '" + chequeNumber + "', '" + chequeDate + "','"+voucherHeaderId+"', '"+ lastModified +"')";
-		Statement statement = connection.createStatement();
+		Query statement = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
         if(LOGGER.isDebugEnabled())     LOGGER.debug("insertQuery:"+insertQuery);
-		statement.executeUpdate(insertQuery);
-		statement.close();
+		statement.executeUpdate();
 
 	}
 	

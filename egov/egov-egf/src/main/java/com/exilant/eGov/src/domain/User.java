@@ -51,6 +51,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.exility.common.TaskFailedException;
 
@@ -60,6 +61,7 @@ import com.exilant.exility.common.TaskFailedException;
  *         TODO To change the template for this generated type comment go to
  *         Window - Preferences - Java - Code Style - Code Templates
  */
+@Transactional(readOnly=true)
 public class User {
 	private static final Logger LOGGER = Logger.getLogger(User.class);
 	private String userName;

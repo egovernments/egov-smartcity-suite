@@ -46,12 +46,18 @@
 
 package com.exilant.eGov.src.domain;
 
-import java.sql.*;
-import com.exilant.exility.updateservice.PrimaryKeyGenerator;
+import java.sql.SQLException;
 import java.util.HashMap;
-import org.apache.log4j.Logger;
-import com.exilant.exility.common.TaskFailedException;
+import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.exilant.exility.common.TaskFailedException;
+import com.exilant.exility.updateservice.PrimaryKeyGenerator;
+@Transactional(readOnly=true)
 public class SupplierBillDetail
 {
 	private String id = null;
@@ -108,10 +114,10 @@ public class SupplierBillDetail
 	public void setAssetId(String aAssetId){ assetId = aAssetId;  updateQuery = updateQuery + " assetId = '" + assetId + "',"; isField = true; }
 	public void setCapRev(String acapRev){ capRev = acapRev;  updateQuery = updateQuery + " cap_rev = '" + capRev + "',"; isField = true; }
 	public void setBillId(String abillId){ billId = abillId;  updateQuery = updateQuery + " billId = '" + billId + "',"; isField = true; }
-
-	public void insert(Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+	public void insert() throws SQLException,TaskFailedException
 	{
-		Statement statement=null;
+		Query statement=null;
 		try{
 			
 		setId( String.valueOf(PrimaryKeyGenerator.getNextKey("SupplierBillDetail")) );
@@ -125,115 +131,105 @@ public class SupplierBillDetail
 					+ passedAmount + ", '" + approvedBy + "', " + payableAccount + ", '" + narration
 					+ "', " + worksDetailId +","+ tdsAmount+","+tdsPaidToIt+","+paidAmount+","+advAdjAmt+","+isReversed+","+assetId+","+capRev+","+mrnId+","+billId+")";
 		if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
-		statement = connection.createStatement();
-		statement.executeUpdate(insertQuery);
+		statement = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
+		statement.executeUpdate();
 		}catch(Exception e){
 			LOGGER.error("Inside exp insert"+e.getMessage());
 			throw taskExc;
-		}finally{
-			statement.close();
 		}
-		
 
 	}
-
-	public void update (Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+	public void update () throws SQLException,TaskFailedException
 	{
 		if(isId && isField)
 		{
-			Statement statement = null;
+			Query statement = null;
 			try{
 				
 				updateQuery = updateQuery.substring(0,updateQuery.length()-1);
 				updateQuery = updateQuery + " WHERE id = " + id;
 				if(LOGGER.isInfoEnabled())     LOGGER.info(updateQuery);
-				statement = connection.createStatement();
-				statement.executeUpdate(updateQuery);
+				statement = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
+				statement.executeUpdate();
 			}catch(Exception e){
 				LOGGER.error("Inside exp update"+e.getMessage());
 				throw taskExc;
-			}finally{
-				statement.close();
-			}	
+			}
 			
 			updateQuery="UPDATE SupplierBillDetail SET";
 		}
 	}
-	
-	public void reversePositive (Connection connection,double paidAmount ,double adjAmount,double passedAmount )throws SQLException,TaskFailedException
+	@Transactional
+	public void reversePositive (double paidAmount ,double adjAmount,double passedAmount )throws SQLException,TaskFailedException
 	{
 			if(isId){
-				Statement statement= null;
+				Query statement= null;
 				try{
-				statement=connection.createStatement();
+				
 
 				String reversePositive="UPDATE supplierBillDetail SET paidAmount=paidAmount+"+paidAmount+
 				", advAdjAmt=advAdjAmt+"+adjAmount+", passedAmount=passedAmount+"+passedAmount+"WHERE id="+ id;
 				if(LOGGER.isInfoEnabled())     LOGGER.info(reversePositive);
-				statement.executeQuery(reversePositive);
+				statement=HibernateUtil.getCurrentSession().createSQLQuery(reversePositive);
+				statement.executeUpdate();
 				}catch(Exception e){
 					LOGGER.error("Inside exp reverse positive"+e.getMessage());
 					throw taskExc;
-				}finally{
-					statement.close();
 				}
 			}
 		}
-
-	public void reverseNegative (Connection connection,double paidAmount ,double adjAmount,double passedAmount )throws SQLException,TaskFailedException
+	@Transactional
+	public void reverseNegative (double paidAmount ,double adjAmount,double passedAmount )throws SQLException,TaskFailedException
 	{
 		if(isId){
-			Statement statement= null;
+			Query statement= null;
 			try{
 
-				statement=connection.createStatement();
+				
 
 				String reverseNegative="UPDATE supplierBillDetail SET paidAmount=paidAmount-"+paidAmount+
 				", advAdjAmt=advAdjAmt-"+adjAmount+", passedAmount=passedAmount-"+passedAmount+"WHERE id="+ id;
 				if(LOGGER.isInfoEnabled())     LOGGER.info(reverseNegative);
-				statement.executeQuery(reverseNegative);
+				statement=HibernateUtil.getCurrentSession().createSQLQuery(reverseNegative);
+				statement.executeUpdate();
 			}catch(Exception e){
 				LOGGER.error("Inside exp reverse negative :"+e.getMessage());
 				throw taskExc;
-			}finally{
-				statement.close();
 			}
 		}
 	}
-	
-	public void reverse(Connection connection)throws SQLException,TaskFailedException
+	@Transactional
+	public void reverse()throws SQLException,TaskFailedException
 	{
 		if(isId){
-			Statement statement=null;
+			Query statement=null;
 			try{
-				statement=connection.createStatement();	
+				
 				String reverseQuery="UPDATE supplierBillDetail SET IsReversed=1 WHERE id="+id;
+				statement=HibernateUtil.getCurrentSession().createSQLQuery(reverseQuery);	
 				if(LOGGER.isInfoEnabled())     LOGGER.info(reverseQuery);
-				statement.executeQuery(reverseQuery);
+				statement.executeUpdate();
 			}catch(Exception e){
 				LOGGER.error("Inside exp reverse"+e.getMessage());
 				throw taskExc;
-			}finally{
-				statement.close();
 			}
 		}
 	}
-	
-	public void reversePaid (Connection connection,double paidAmount )throws SQLException,TaskFailedException
+	@Transactional
+	public void reversePaid (double paidAmount )throws SQLException,TaskFailedException
 	{
 			if(isId){
-				Statement statement= null;
+				Query statement= null;
 				try{
-					statement=connection.createStatement();
+					
 					String reverseNegative="UPDATE supplierBillDetail SET paidAmount=paidAmount-"+paidAmount+" WHERE id="+ id;
 					if(LOGGER.isInfoEnabled())     LOGGER.info(reverseNegative);
-					statement.executeQuery(reverseNegative);
-					statement.close();
+					statement=HibernateUtil.getCurrentSession().createSQLQuery(reverseNegative);
+					statement.executeUpdate();
 					}catch(Exception e){
 						LOGGER.error("Inside exp reversePaid"+e.getMessage());
 						throw taskExc;
-					}finally{
-						statement.close();
 					}
 			}
 	}
@@ -244,20 +240,19 @@ public class SupplierBillDetail
 	 * @param con
 	 * @throws Exception
 	 */
-	public void updateForAsset(String assetId,Connection con) throws Exception
+	@Transactional
+	public void updateForAsset(String assetId) throws Exception
 	{
 		
-		Statement statement = null;
+		Query statement = null;
 		try{
 			String updateQuery="update supplierBillDetail set cap_rev=1 where assetid="+assetId;
 			if(LOGGER.isInfoEnabled())     LOGGER.info("updateQuery   "+updateQuery);
-			statement = con.createStatement();
-			statement.executeUpdate(updateQuery);
+			statement = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
+			statement.executeUpdate();
 		}catch(Exception e){
 			LOGGER.error("Inside exp update for Asset"+e.getMessage());
 			throw taskExc;
-		}finally{
-			statement.close();
 		}
 
 	}
@@ -268,28 +263,24 @@ public class SupplierBillDetail
 	 * @return
 	 * @throws Exception
 	 */
-	public HashMap getMrnBillInfo(String mrnno,Connection con) throws Exception
+	public HashMap getMrnBillInfo(String mrnno) throws Exception
 	{
 		HashMap billInfo=new HashMap();
 		String getBillInfo="Select a.billnumber,a.billdate from supplierbilldetail a "+
 			"where a.mrnid=(select b.id from egf_mrnheader b where b.id="+mrnno+" and b.BILLRECEIVED=1)";
 		if(LOGGER.isInfoEnabled())     LOGGER.info("updateQuery   "+getBillInfo);
-		Statement statement = null;
-		ResultSet rs=null;
+		Query statement = null;
+		List<Object[]> rs=null;
 		try{
-			statement = con.createStatement();
-			rs=statement.executeQuery(getBillInfo);
-			if(rs.next())
-			{
-				billInfo.put("billNo",rs.getString(1));
-				billInfo.put("billDate", rs.getString(2));
+			statement = HibernateUtil.getCurrentSession().createSQLQuery(getBillInfo);
+			rs=statement.list();
+			for(Object[] element : rs){
+				billInfo.put("billNo",element[0].toString());
+				billInfo.put("billDate", element[1].toString());
 			}
 		}catch(Exception e){
 			LOGGER.error("Inside exp reversePaid"+e.getMessage());
 			throw taskExc;
-		}finally{
-			rs.close();
-			statement.close();
 		}
 		if(LOGGER.isInfoEnabled())     LOGGER.info("Bill Informatioms for "+mrnno+" is:"+billInfo);
 		return billInfo;

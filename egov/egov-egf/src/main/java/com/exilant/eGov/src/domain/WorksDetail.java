@@ -45,17 +45,21 @@
 package com.exilant.eGov.src.domain;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
-import com.exilant.exility.common.TaskFailedException;
 import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Logger;
-import com.exilant.eGov.src.common.EGovernCommon;
-import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 
+import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.exilant.eGov.src.common.EGovernCommon;
+import com.exilant.exility.common.TaskFailedException;
+import com.exilant.exility.updateservice.PrimaryKeyGenerator;
+@Transactional(readOnly=true)
 public class WorksDetail
 {
 	private static final Logger LOGGER=Logger.getLogger(WorksDetail.class);
@@ -143,11 +147,12 @@ public class WorksDetail
 		updateQuery = updateQuery + " execdeptid = " + execdeptid + ",";
 		isField = true;
 	}
-	public void insert(Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+	public void insert() throws SQLException,TaskFailedException
 	{
 		setId( String.valueOf(PrimaryKeyGenerator.getNextKey("WorksDetail")) );
 		created = cm.getCurrentDate();
-		Statement statement =null;
+		Query statement =null;
 		try{
 			SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy");
 			SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
@@ -167,24 +172,20 @@ public class WorksDetail
 						+ bankGuarantee + "', " + glCodeId + ","+passedAmount+",'"+type+"',"+advanceAdjAmount+","+fundId
 	                    +","+fundSourceId+",'"+sanctionNo+"',"+worksTds+",'"+remarks+"',"+"'"+sanctionDate+"',"+workCategory+","+subCategory+","+execdeptid+")";
 	        if(LOGGER.isDebugEnabled())     LOGGER.debug(insertQuery);
-			statement = connection.createStatement();
-			statement.executeUpdate(insertQuery);
+			statement = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
+			statement.executeUpdate();
 		}catch(Exception e){
 			LOGGER.error("Error in insert: "+e);
 			throw taskExc;
-		}finally{
-   			try{statement.close();
-	   		}catch(Exception e){LOGGER.error(e.getMessage());
-   			}
-   		}
+		}
 		
 	}
-
-	public void update (Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+	public void update () throws SQLException,TaskFailedException
 	{
 		created = cm.getCurrentDate();
 		String currentdate="";
-		Statement statement = null;
+		Query statement = null;
 		try{
 			SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy");
 			SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
@@ -197,27 +198,23 @@ public class WorksDetail
 			updateQuery = updateQuery.substring(0,updateQuery.length()-1);
 			updateQuery = updateQuery + " WHERE id = " + id;
             if(LOGGER.isInfoEnabled())     LOGGER.info(updateQuery);
-			statement = connection.createStatement();
-			statement.executeUpdate(updateQuery);
+			statement = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
+			statement.executeUpdate();
 			updateQuery="UPDATE WorksDetail SET";
 		}
 		}catch(Exception e){
 			LOGGER.error("Error in update: "+e);
 			throw taskExc;
-		}finally{
-   			try{statement.close();
-	   		}catch(Exception e){LOGGER.error(e.getMessage());
-	   			}
-	   		}
+		}
 	}
-
-	public void reversePositive (Connection connection,double paidAmount ,double adjAmount,double passedAmount,double advanceAmount)
+	@Transactional
+	public void reversePositive (double paidAmount ,double adjAmount,double passedAmount,double advanceAmount)
 																			throws SQLException,TaskFailedException
 	{
-		Statement statement=null;
+		Query statement=null;
 		if(isId){
 			try{
-				statement=connection.createStatement();
+				
 				created = cm.getCurrentDate();
 				
 		   			SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy");
@@ -229,26 +226,23 @@ public class WorksDetail
 				", advanceAdj=advanceAdj+"+adjAmount+", passedAmount=passedAmount+"+passedAmount+
 				", advanceAmount=advanceAmount+"+advanceAmount+"WHERE id="+ id;
 				if(LOGGER.isInfoEnabled())     LOGGER.info(reversePositive);
-				statement.executeQuery(reversePositive);
+				statement=HibernateUtil.getCurrentSession().createSQLQuery(reversePositive);
+				statement.executeUpdate();
 		}catch(Exception e){
 			LOGGER.error("Error in reversepostitive: "+e);
 			throw taskExc;
-		}finally{
-			try{statement.close();
-		 		}catch(Exception e){LOGGER.error(e.getMessage());
-				}
-			}
+		}
 		}
 	}
-
-	public void reverseNegative (Connection connection,double paidAmount ,double adjAmount,double passedAmount,double advanceAmount)
+	@Transactional
+	public void reverseNegative (double paidAmount ,double adjAmount,double passedAmount,double advanceAmount)
 																						throws SQLException,TaskFailedException
 	{	
-		Statement statement=null;
+		Query statement=null;
 			if(isId){
 			try
 		   	{
-				statement=connection.createStatement();
+				
 				created = cm.getCurrentDate();
 	   			SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy");
 				SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
@@ -259,46 +253,36 @@ public class WorksDetail
 				", advanceAdj=advanceAdj-"+adjAmount+", passedAmount=passedAmount-"+passedAmount+
 				", advanceAmount=advanceAmount-"+advanceAmount+" WHERE id="+ id;
 				if(LOGGER.isInfoEnabled())     LOGGER.info(reverseNegative);
-				statement.executeQuery(reverseNegative);
+				statement=HibernateUtil.getCurrentSession().createSQLQuery(reverseNegative);
+				statement.executeUpdate();
 			}catch(Exception e){
 				LOGGER.error("Error in reversenegative: "+e);
 				throw taskExc;
-			}finally{
-	   			try{statement.close();
-		   		}catch(Exception e){LOGGER.error(e.getMessage());
-	   			}
-	   		}
+			}
 		}
 	}
 
 	public Map getContractorSupplier(Connection con) throws Exception
 	{
-		Statement statement =null;
-		ResultSet rs=null;
+		Query statement =null;
+		List<Object[]> rs=null;
 	
 		String query="SELECT id , name  FROM relation WHERE isActive=1 order by name";
 		if(LOGGER.isInfoEnabled())     LOGGER.info("  query   "+query);
 		Map hm=new LinkedHashMap();
 		try
 		{
-			statement = con.createStatement();
-			rs=statement.executeQuery(query);
-			while (rs.next())
-			{
-				hm.put(rs.getString(1),rs.getString(2));
+			statement = HibernateUtil.getCurrentSession().createSQLQuery(query);
+			rs=statement.list();
+			for(Object[] element : rs){
+				hm.put(element[0].toString(),element[1].toString());
 			}
 		}
 		catch(Exception e)
 		{
 			LOGGER.error("Exp in getContractorSupplier"+e.getMessage());
 			throw taskExc;
-		}finally{
-   			try{
-   				rs.close();
-   				statement.close();
-	   		}catch(Exception e){LOGGER.error(e.getMessage());
-   			}
-   		}
+		}
 
 		return hm;
 	}

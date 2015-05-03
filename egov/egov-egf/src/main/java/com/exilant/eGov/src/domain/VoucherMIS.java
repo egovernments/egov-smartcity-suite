@@ -45,14 +45,13 @@
  */
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
@@ -64,6 +63,7 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
  *         TODO To change the template for this generated type comment go to
  *         Window - Preferences - Java - Code Style - Code Templates
  */
+@Transactional(readOnly=true)
 public class VoucherMIS {
 	private static final Logger LOGGER = Logger.getLogger(VoucherMIS.class);
 	private String id = "";
@@ -101,6 +101,7 @@ public class VoucherMIS {
 	 * @param connection
 	 * @throws TaskFailedException
 	 */
+	@Transactional
 	public void insert() throws TaskFailedException {
 		Query pst = null;
 		createTimeStamp = commonmethods.getCurrentDateTime();
@@ -149,6 +150,7 @@ public class VoucherMIS {
 	 * @param connection
 	 * @throws TaskFailedException
 	 */
+	@Transactional
 	public void update() throws TaskFailedException {
 		createTimeStamp = commonmethods.getCurrentDateTime();
 

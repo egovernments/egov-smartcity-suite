@@ -45,13 +45,12 @@
  */
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
@@ -63,6 +62,7 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
  *         TODO To change the template for this generated type comment go to
  *         Window - Preferences - Java - Code Style - Code Templates
  */
+@Transactional(readOnly=true)
 public class VoucherDetail {
 	private String id = null;
 	private String lineId = null;
@@ -90,6 +90,7 @@ public class VoucherDetail {
 	}
 
 	/* inserts the Value in VoucherDetail Table */
+	@Transactional
 	public void insert() throws SQLException,
 			TaskFailedException {
 		EGovernCommon commonmethods = new EGovernCommon();
@@ -114,7 +115,7 @@ public class VoucherDetail {
 		pst.executeUpdate();
 		updateQuery = "UPDATE voucherdetail SET";
 	}
-
+	@Transactional
 	public void update() throws SQLException,
 			TaskFailedException {
 		try {

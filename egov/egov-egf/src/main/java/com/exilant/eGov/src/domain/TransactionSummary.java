@@ -44,16 +44,17 @@
 
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-
+@Transactional(readOnly=true)
 public class TransactionSummary {
 	private String id = null;
 	private String financialYearId = null;
@@ -65,7 +66,7 @@ public class TransactionSummary {
 	private String accountDetailTypeId = null;
 	private String accountDetailKey = null;
 	private String fundId = null;
-	private PreparedStatement pstmt = null;
+	private Query pstmt = null;
 	private static TaskFailedException taskExc;
 	private ResultSet rs = null;
 	private String updateQuery = "UPDATE TransactionSummary SET";
@@ -126,8 +127,8 @@ public class TransactionSummary {
 		fundId = aFundId;
 		isField = true;
 	}
-
-	public void insert(Connection connection) throws SQLException {
+	@Transactional
+	public void insert() throws SQLException {
 		// EGovernCommon commommethods = new EGovernCommon();
 
 		setId(String.valueOf(PrimaryKeyGenerator
@@ -135,7 +136,7 @@ public class TransactionSummary {
 
 		String insertQuery = "INSERT INTO TransactionSummary (id, financialYearId, glcodeid,openingdebitbalance, openingcreditbalance, debitamount,creditamount, accountdetailtypeid, ACCOUNTDETAILKEY, fundId) VALUES (?,?,?,?,?,?,?,?,?,?)";
 		if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
-		pstmt = connection.prepareStatement(insertQuery);
+		pstmt = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 		pstmt.setString(1, id);
 		pstmt.setString(2, financialYearId);
 		pstmt.setString(3, glCodeId);
@@ -146,17 +147,17 @@ public class TransactionSummary {
 		pstmt.setString(8, accountDetailTypeId);
 		pstmt.setString(9, accountDetailKey);
 		pstmt.setString(10, fundId);
-		rs = pstmt.executeQuery();
+		pstmt.executeUpdate();
 
 	}
-
-	public void update(Connection connection) throws SQLException ,TaskFailedException{
+	@Transactional
+	public void update() throws SQLException ,TaskFailedException{
 		if (isId && isField) {
-			newUpdate(connection);
+			newUpdate();
 		}
 	}
 
-	public void newUpdate(Connection con) throws TaskFailedException,
+	public void newUpdate() throws TaskFailedException,
 			SQLException {
 		
 		StringBuilder query = new StringBuilder(500);
@@ -184,7 +185,7 @@ public class TransactionSummary {
 		query.append(" where id=?");
 		try {
 			int i = 1;
-			pstmt = con.prepareStatement(query.toString());
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
 			if (financialYearId != null)
 				pstmt.setString(i++, financialYearId);
 			if (glCodeId != null)
@@ -205,17 +206,11 @@ public class TransactionSummary {
 				pstmt.setString(i++, fundId);
 			pstmt.setString(i++, id);
 
-			pstmt.executeQuery();
+			pstmt.executeUpdate();
 		} catch (Exception e) {
 			LOGGER.error("Exp in update: " + e.getMessage(),e);
 			throw taskExc;
-		} finally {
-			try {
-				pstmt.close();
-			} catch (Exception e) {
-				LOGGER.error("Inside finally block of update");
-			}
-		}
+		} 
 	}
 
 }

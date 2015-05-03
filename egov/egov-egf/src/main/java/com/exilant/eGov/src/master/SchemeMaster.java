@@ -68,10 +68,10 @@ public class SchemeMaster extends AbstractTask{
 		SchemeMasterBean schemeMasterBean=new SchemeMasterBean();
 		try{
 			if (dc.getValue("modeOfExec").equalsIgnoreCase("modify")){
-				schemeMasterBean.modify(conn,dc);
+				schemeMasterBean.modify(dc);
 				dc.addMessage("eGovSuccess","Scheme-Update");
 			}else{
-				schemeMasterBean.insert(conn,dc);
+				schemeMasterBean.insert(dc);
 				dc.addMessage("eGovSuccess","Scheme-Create");
 			}
 			return;

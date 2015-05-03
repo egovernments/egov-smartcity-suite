@@ -46,10 +46,13 @@
 package com.exilant.eGov.src.domain;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
+
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
@@ -60,6 +63,7 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+@Transactional(readOnly=true)
 public class worksmis {
 
 	private static final Logger LOGGER=Logger.getLogger(WorksDetail.class);
@@ -107,9 +111,10 @@ public class worksmis {
 	 * @param connection
 	 * @throws TaskFailedException
 	 */
-	 public void insert(Connection connection)  throws TaskFailedException
+	@Transactional
+	 public void insert()  throws TaskFailedException
 	   {  
-	 		PreparedStatement pst = null;
+	 		Query pst = null;
 	   		lastModifiedDate = commonmethods.getCurrentDateTime();
 	   		try{
 		   		SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -123,8 +128,7 @@ public class worksmis {
 				"VALUES ( ?, ?, ?,to_date('" + lastModifiedDate + "','dd-Mon-yyyy HH24:MI:SS'), ?, ?, ?)";
 	
 		   		if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
-		   		pst = connection.prepareStatement(insertQuery);
-		   		pst = connection.prepareStatement(insertQuery);
+		   		pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 				pst.setString(1, id);
 				pst.setString(2, worksdetailid);
 				pst.setString(3, fieldid);
@@ -134,10 +138,6 @@ public class worksmis {
 	   			pst.executeUpdate();
 	   		}catch(Exception e){LOGGER.error(e.getMessage());
 	   			throw taskExc;
-	   		}finally{
-	   			try{pst.close();
-	   		}catch(Exception e){LOGGER.error(e.getMessage());
-	   			}
 	   		}
 	   }
 	/**
@@ -145,10 +145,11 @@ public class worksmis {
 	 * @param connection
 	 * @throws TaskFailedException
 	 */
+	 @Transactional
 	 public void update (Connection connection) throws TaskFailedException
 	   {
 	   		lastModifiedDate = commonmethods.getCurrentDateTime();
-	   		PreparedStatement pst = null;
+	   		Query pst = null;
 	   		try{
 		   		SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 				SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
@@ -158,7 +159,7 @@ public class worksmis {
 				updateQuery = updateQuery.substring(0,updateQuery.length()-1);
 				updateQuery = updateQuery + " WHERE worksdetailid = ?";
 				if(LOGGER.isInfoEnabled())     LOGGER.info(updateQuery);
-				pst = connection.prepareStatement(updateQuery);
+				pst = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
 				pst.setString(1, worksdetailid);
 				pst.executeUpdate();
 				
@@ -167,11 +168,7 @@ public class worksmis {
 		   	}catch(Exception e){
 				LOGGER.error("Error in update: "+e);
 				throw taskExc;
-			}finally{
-	   			try{pst.close();
-		   		}catch(Exception e){LOGGER.error(e.getMessage());
-		   			}
-		   		}
+			}
 	   }
 	
 }

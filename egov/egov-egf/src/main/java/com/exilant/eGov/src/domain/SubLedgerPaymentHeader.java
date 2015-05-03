@@ -45,18 +45,22 @@
  */
 package com.exilant.eGov.src.domain;
 
+import java.sql.SQLException;
+
+import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import org.apache.log4j.Logger;
 /**
  * @author pushpendra.singh
  *
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+@Transactional(readOnly=true)
 public class SubLedgerPaymentHeader
 {
 	private String id = null;
@@ -100,7 +104,8 @@ public class SubLedgerPaymentHeader
 	public void setWorksDetailID(String aWorksDetailID){worksDetailID=aWorksDetailID;updateQuery = updateQuery + " worksDetailID=" + worksDetailID + ","; isField = true;}
 	public void setIsReversed(String aIsReversed){isReversed=aIsReversed;updateQuery = updateQuery + " isReversed=" + isReversed + ","; isField = true;}
 	public void setPaidTo(String aPaidTo){paidTo=aPaidTo;updateQuery = updateQuery + " paidTo=" + paidTo + ","; isField = true;}
-	public void insert(Connection connection) throws SQLException
+	@Transactional
+	public void insert() throws SQLException
 	{
 		EGovernCommon commonMethods = new EGovernCommon();
 		narration = commonMethods.formatString(narration);
@@ -113,7 +118,7 @@ public class SubLedgerPaymentHeader
 							"VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
-		PreparedStatement pst = connection.prepareStatement(insertQuery);
+		Query pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 		pst.setString(1, id);
 		pst.setString(2, voucherHeaderId);
 		pst.setString(3, type);
@@ -133,27 +138,25 @@ public class SubLedgerPaymentHeader
 		pst.setString(17, isReversed);
 		pst.setString(18, paidTo);
 		pst.executeUpdate();
-		pst.close();
 	}
-	public void reverse(Connection connection,String cgNum)throws SQLException{
+	@Transactional
+	public void reverse(String cgNum)throws SQLException{
 		String updateQuery = "update subledgerpaymentheader  set isreversed=1 where voucherheaderid in(select id from voucherheader where cgn= ?)";
 		if(LOGGER.isInfoEnabled())     LOGGER.info(updateQuery);
-		PreparedStatement pst = connection.prepareStatement(updateQuery);
+		Query pst = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
 		pst.setString(1, cgNum);
 		pst.executeUpdate();
-		pst.close();
 	}
-	
-	public void reverse(Connection connection,String paidAmount,String cgNum)throws SQLException{
+	@Transactional
+	public void reverse(String paidAmount,String cgNum)throws SQLException{
 		String updateQuery = "update subledgerpaymentheader  set paidamount=paidamount-"+paidAmount +" where voucherheaderid in(select id from voucherheader where cgn= ?)";
 		if(LOGGER.isInfoEnabled())     LOGGER.info(updateQuery);
-		PreparedStatement pst = connection.prepareStatement(updateQuery);
+		Query pst = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
 		pst.setString(1, cgNum);
 		pst.executeUpdate();
-		pst.close();
 	}
-	
-	public void update (Connection connection) throws SQLException
+	@Transactional
+	public void update () throws SQLException
 	{
 		if(isId && isField)
 		{
@@ -162,10 +165,9 @@ public class SubLedgerPaymentHeader
 			updateQuery = updateQuery.substring(0,updateQuery.length()-1);
 			updateQuery = updateQuery + " WHERE id = ?";
 			if(LOGGER.isInfoEnabled())     LOGGER.info(updateQuery);
-			PreparedStatement pst = connection.prepareStatement(updateQuery);
+			Query pst = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
 			pst.setString(1, id);
 			pst.executeUpdate();
-			pst.close();
 			updateQuery="UPDATE subledgerpaymentheader SET";
 		}
 	}

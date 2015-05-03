@@ -45,13 +45,16 @@
  */
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
@@ -63,6 +66,7 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+@Transactional(readOnly=true)
 public class SubSchemeBean 
 {
 	private String schemecode=null;
@@ -147,10 +151,11 @@ public class SubSchemeBean
 	public void setStartDate(String startDate) {
 		this.startDate = startDate;
 	}
-	 public void insert(Connection con,DataCollection dc,String schemeCode) throws TaskFailedException
+	@Transactional
+	 public void insert(DataCollection dc,String schemeCode) throws TaskFailedException
 	 {
 		//int [] result=new int[10];
-		Statement st=null;
+		Query st=null;
 		try
 		{
 			EGovernCommon egov = new EGovernCommon();
@@ -159,7 +164,7 @@ public class SubSchemeBean
 			String modifiedDate=egov.getCurrentDate();
 			dt = sdf.parse(modifiedDate);
 			modifiedDate = formatter1.format(dt);
-			st=con.createStatement();
+			
 			long subSchemeMaxId=0;
 			String subStartDate="";
 			String subEndDate="",subScheme="";
@@ -175,10 +180,10 @@ public class SubSchemeBean
 					subSchemeMaxId=getId("SUB_SCHEME");
 					subScheme="insert into sub_scheme (ID,CODE,NAME,VALIDFROM,VALIDTO,ISACTIVE,schemeid,lastmodifieddate) values ("+subSchemeMaxId+",'"+schemedetail[j][0]+"','"+schemedetail[j][1]+"','"+subStartDate+"','"+subEndDate+"','"+schemedetail[j][4]+"',"+schemeCode+",'"+modifiedDate+"')";
 					if(LOGGER.isInfoEnabled())     LOGGER.info("sub scheme "+subScheme);
-					st.addBatch(subScheme);
+					st=HibernateUtil.getCurrentSession().createSQLQuery(subScheme);
+					st.executeUpdate();
 				}
 			}
-			st.executeBatch();
 			dc.addMessage("eGovSuccess","Scheme Created");
 		}
 		catch(Exception e)
@@ -186,16 +191,13 @@ public class SubSchemeBean
 			dc.addMessage("exilRPError","Error in Insert"+e.toString());
 			LOGGER.error("Inside insert....."+e.getMessage());
 			throw taskExc;
-		}finally{
-			try{
-				st.close();
-			}catch(Exception e){LOGGER.error("Inside finally.....");}
 		}
 	 }
-	 public void modify(Connection con,DataCollection dc) throws TaskFailedException
+	@Transactional
+	 public void modify(DataCollection dc) throws TaskFailedException
 	 {
 	 	//int [] result=new int[10];
-		Statement st=null;
+		Query st=null;
 		try
 		{
 			EGovernCommon egov = new EGovernCommon();
@@ -204,7 +206,7 @@ public class SubSchemeBean
 			String modifiedDate=egov.getCurrentDate();
 			dt = sdf.parse(modifiedDate);
 			modifiedDate = formatter1.format(dt);
-			st=con.createStatement();
+			
 			long subSchemeMaxId=0;
 			String subStartDate="";
 			String subEndDate="",subScheme="";
@@ -223,7 +225,7 @@ public class SubSchemeBean
 						else
 							code=code+schemedetail[j][0]+"','";
 						
-						if (recordExists(schemedetail[j][0],"sub_scheme",schemeId,con))
+						if (recordExists(schemedetail[j][0],"sub_scheme",schemeId))
 							subScheme="update sub_scheme set VALIDFROM='"+subStartDate+"',VALIDTO='"+subEndDate+"',ISACTIVE='"+schemedetail[j][4]+"',lastmodifieddate='"+modifiedDate+"' where schemeid in (select id from scheme where code='"+dc.getValue("schemecode")+"') and code='"+schemedetail[j][0]+"'";
 						else
 						{
@@ -231,85 +233,73 @@ public class SubSchemeBean
 							subScheme="insert into sub_scheme (ID,CODE,NAME,VALIDFROM,VALIDTO,ISACTIVE,schemeid,lastmodifieddate) values ("+subSchemeMaxId+",'"+schemedetail[j][0]+"','"+schemedetail[j][1]+"','"+subStartDate+"','"+subEndDate+"','"+schemedetail[j][4]+"',"+schemeId+",'"+modifiedDate+"')";
 							if(LOGGER.isInfoEnabled())     LOGGER.info("sub scheme "+subScheme);
 						}
-					st.addBatch(subScheme);
+						st=HibernateUtil.getCurrentSession().createSQLQuery(subScheme);
+					st.executeUpdate();
 				}
 			}
-			st.executeBatch();
 			dc.addMessage("eGovSuccess","Scheme Updated");
-			deleteRecords(code,schemeId,con);
+			deleteRecords(code,schemeId);
 		}
 		catch(Exception e)
 		{
 			dc.addMessage("exilRPError","Error in Modify "+e.toString());
 			LOGGER.error("Inside modify....."+e.getMessage());
 			throw taskExc;
-		}finally{
-			try{
-				st.close();
-			}catch(Exception e){LOGGER.error("Inside finally.modify...");}
 		}
 	 }
-
-		private boolean recordExists(String code,String tableName,String schemeId,Connection con) throws TaskFailedException
+		private boolean recordExists(String code,String tableName,String schemeId) throws TaskFailedException
 		{
-			Statement st=null;
+			Query st=null;
 			boolean flag=false;
-			ResultSet rs= null;
+			List<Object[]> rs= null;
 			try
 			{
-				st=con.createStatement();
+				
 				String query="";
 				if (schemeId==null)
 					query="select count(*) from "+tableName+" where code='"+code+"'";
 				else
 					query="select count(*) from "+tableName+" where code='"+code+"' and schemeid="+Integer.parseInt(schemeId);
 				if(LOGGER.isInfoEnabled())     LOGGER.info("record exists query "+query);
-				rs=st.executeQuery(query);
-				if (rs!=null && rs.next())
-				{
-					if (rs.getString(1)==null)
+				st=HibernateUtil.getCurrentSession().createSQLQuery(query);
+				rs=st.list();
+				for(Object[] element : rs){
+					if (element[0].toString()==null)
 						flag=false;
 					else
 					{
-						if (rs.getInt(1)>0)
+						if (Integer.parseInt(element[0].toString())>0)
 							flag=true;
 						else
 							flag=false;
 					}
 				}
-				else
+				if(rs == null || rs.size() == 0) 
 					flag=false;
 			}
 			catch(Exception e)
 			{
 				LOGGER.error("Inside recordexist....."+e.getMessage());
 				throw taskExc;
-			}finally{
-				try{
-					rs.close();
-					st.close();
-				}catch(Exception e){LOGGER.error("Inside finally.....");}
 			}
 			return flag;
 		}
-		private void deleteRecords(String codes,String schemeId,Connection con) throws TaskFailedException
+		@Transactional
+		private void deleteRecords(String codes,String schemeId) throws TaskFailedException
 		{
-			Statement st=null;
+			Query st=null;
 			try
 			{
-				st=con.createStatement();
+				
 				String query="delete from sub_scheme where code not in "+codes+" and schemeid="+schemeId;
 				if(LOGGER.isInfoEnabled())     LOGGER.info("delete query "+query);
-				st.executeUpdate(query);
+				st=HibernateUtil.getCurrentSession().createSQLQuery(query);
+				st.executeUpdate();
 			}
 			catch(Exception e)
 			{
 				LOGGER.error("Inside delete....."+e.getMessage());
 				throw taskExc;
-			}finally{
-				try{
-					st.close();
-				}catch(Exception e){LOGGER.error("Inside finally.....");}
 			}
 		}
 		private long getId(String tableName)

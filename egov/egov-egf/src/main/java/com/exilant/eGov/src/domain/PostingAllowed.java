@@ -44,14 +44,15 @@
 
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.exility.common.TaskFailedException;
-
+@Transactional(readOnly=true)
 public class PostingAllowed {
 	private final static Logger LOGGER = Logger.getLogger(PostingAllowed.class);
 	private static TaskFailedException taskExc;
@@ -79,34 +80,33 @@ public class PostingAllowed {
 		updateQuery = updateQuery + " glCodeId = " + glCodeId + ",";
 		isField = true;
 	}
-
-	public void insert(Connection connection) throws SQLException {
+	@Transactional
+	public void insert() throws SQLException {
 		String insertQuery = "INSERT INTO PostingAllowed (postingallowed, fiscalperiodid, GLCODEID) "
 				+ "VALUES (?, ?, ?)";
 
-		PreparedStatement pstmt = connection.prepareStatement(insertQuery);
+		Query pstmt = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 		pstmt.setString(1, postingAllowed);
 		pstmt.setString(1, fiscalPeriodId);
 		pstmt.setString(1, glCodeId);
 		pstmt.executeUpdate();
-		pstmt.close();
 		if(LOGGER.isDebugEnabled())     LOGGER.debug(insertQuery);
 	}
-
-	public void update(Connection connection) throws SQLException {
+	@Transactional
+	public void update() throws SQLException {
 		if (isField) {
 
 			try {
-				newUpdate(connection);
+				newUpdate();
 			} catch (TaskFailedException e) {
 				LOGGER.error("Error Inside update" + e.getMessage(), e);
 			}
 		}
 	}
 
-	public void newUpdate(Connection con) throws TaskFailedException,
+	public void newUpdate() throws TaskFailedException,
 			SQLException {
-		PreparedStatement pstmt = null;
+		Query pstmt = null;
 		StringBuilder query = new StringBuilder(500);
 		query.append("update vouchermis set ");
 		if (postingAllowed != null)
@@ -121,7 +121,7 @@ public class PostingAllowed {
 
 		try {
 			int i = 1;
-			pstmt = con.prepareStatement(query.toString());
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
 			if (postingAllowed != null)
 				pstmt.setString(i++, postingAllowed);
 			if (fiscalPeriodId != null)
@@ -130,17 +130,11 @@ public class PostingAllowed {
 				pstmt.setString(i++, glCodeId);
 			// pstmt.setString(i++, id);
 
-			pstmt.executeQuery();
+			pstmt.executeUpdate();
 		} catch (Exception e) {
 			LOGGER.error("Exp in update: " + e.getMessage());
 			throw taskExc;
-		} finally {
-			try {
-				pstmt.close();
-			} catch (Exception e) {
-				LOGGER.error("Inside finally block of update");
-			}
-		}
+		} 
 
 	}
 }

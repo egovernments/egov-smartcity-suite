@@ -139,7 +139,7 @@ public class ScheduleMaster extends AbstractTask {
 		}
 
 		try {
-			sch.insert(con);
+			sch.insert();
 		} catch (SQLException s) {
 			LOGGER.error("exilError"+s.getMessage(),s);
 			dc.addMessage("exilError", " : Error in Schedule Creation");
@@ -241,7 +241,7 @@ public class ScheduleMaster extends AbstractTask {
 		}
 		sch.setId(schMapId + "");
 		try {
-			sch.update(con);
+			sch.update();
 		} catch (SQLException s) {
 			LOGGER.error("Error in Schedule Updation"+s.getMessage(),s);
 			dc.addMessage("exilError", " : Error in Schedule Updation");

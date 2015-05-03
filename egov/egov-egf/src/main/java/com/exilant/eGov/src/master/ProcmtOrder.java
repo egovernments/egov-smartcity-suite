@@ -213,7 +213,7 @@ public class ProcmtOrder extends AbstractTask {
         try{
             if(dc.getValue("modeOfExec").equalsIgnoreCase("new"))
             {
-                wd.insert(con);
+                wd.insert();
                 result=wd.getId();
             }
             else
@@ -221,7 +221,7 @@ public class ProcmtOrder extends AbstractTask {
                 if(LOGGER.isInfoEnabled())     LOGGER.info("Update");
                 result=Integer.parseInt( dc.getValue(WORKSDETAILID));
                 wd.setId(dc.getValue(WORKSDETAILID));
-                wd.update(con);
+                wd.update();
             }
             return result;
         }
@@ -263,7 +263,7 @@ public class ProcmtOrder extends AbstractTask {
         try{
             if(dc.getValue("modeOfExec").equalsIgnoreCase("new"))
             { if(LOGGER.isInfoEnabled())     LOGGER.info("new");
-                wm.insert(con);
+                wm.insert();
 
             }
             else

@@ -44,15 +44,18 @@
 package com.exilant.eGov.src.domain;
 
 
+import java.sql.SQLException;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.sql.SQLException;
-import org.apache.log4j.Logger;
-
+@Transactional(readOnly=true)
 public class SalaryBillDetail {
 	private String id = null;
 	private String voucherHeaderId = null;
@@ -84,8 +87,8 @@ public class SalaryBillDetail {
 		if(billId!=null && !billId.trim().equals("")) 	
 			updateQuery = updateQuery + " billId = '" + billId +"',"; 
 		isField = true; }
-
-	public void insert(Connection connection) throws SQLException
+	@Transactional
+	public void insert() throws SQLException
 	{
 		EGovernCommon commonMethods = new EGovernCommon();
 		narration = commonMethods.formatString(narration);
@@ -98,65 +101,64 @@ public class SalaryBillDetail {
 							+ ", '" + narration +"',"+ financialYearID +", " + isReversed +","+billId+")";
 
 		if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
-		Statement statement = connection.createStatement();
-		statement.executeUpdate(insertQuery);
-		statement.close();
+		Query statement = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
+		statement.executeUpdate();
 	}
-	public void reverse(Connection connection)throws SQLException
+	@Transactional
+	public void reverse()throws SQLException
 	{
 		//	EGovernCommon commommethods=new EGovernCommon();
-			Statement statement=connection.createStatement();
+			
 			String reverseQuery="UPDATE salaryBillDetail SET IsReversed=1 WHERE id="+id;
+			Query statement=HibernateUtil.getCurrentSession().createSQLQuery(reverseQuery);
 			if(LOGGER.isInfoEnabled())     LOGGER.info(reverseQuery);
-			statement.executeQuery(reverseQuery);
-			statement.close();
+			statement.executeUpdate();
 	}
-
-	public void reverseCheck(Connection connection)throws SQLException,TaskFailedException
+	@Transactional
+	public void reverseCheck()throws SQLException,TaskFailedException
 	{
 				String paidAmount="";
 				try{
-				Statement statement=connection.createStatement();
-				ResultSet rset;
+				
+				List<Object[]> rset;
 				String reverseQuery="select paidamount as \"paidamount\" from salarybilldetail where id="+id;
+				Query statement=HibernateUtil.getCurrentSession().createSQLQuery(reverseQuery);
 				if(LOGGER.isInfoEnabled())     LOGGER.info(reverseQuery);
-				rset=statement.executeQuery(reverseQuery);
-				if(rset.next())
-					 paidAmount=rset.getString("paidamount");
-
+				rset  = statement.list();
+				for(Object[] element : rset){
+					 paidAmount=element[0].toString();
+				}
 				if(!paidAmount.equalsIgnoreCase("0")){
 					throw new TaskFailedException("Salary Bill cannot be reversed unless Payments made for this bill is reversed");
 					}
-				statement.close();
 				}
 				catch(Exception e){
 					throw new TaskFailedException("Salary Bill cannot be reversed unless Payments made for this bill is reversed");
 				}
 		}
-	
-	public void update (Connection connection) throws SQLException
+	@Transactional
+	public void update () throws SQLException
 	{
 		if(isId && isField)
 		{
 			updateQuery = updateQuery.substring(0,updateQuery.length()-1);
 			updateQuery = updateQuery + " WHERE id = " + id;
 			if(LOGGER.isInfoEnabled())     LOGGER.info(updateQuery);
-			Statement statement = connection.createStatement();
-			statement.executeUpdate(updateQuery);
-			statement.close();
+			Query statement = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
+			statement.executeUpdate();
 			updateQuery="UPDATE salarybilldetail SET";
 
 		}
 	}
-
-	public void reversePaid (Connection connection,double paidAmount )throws SQLException
+	@Transactional
+	public void reversePaid (double paidAmount )throws SQLException
 	{
 		if(isId){
-				Statement statement=connection.createStatement();
+				
 				String reverseNegative="UPDATE salaryBillDetail SET paidAmount=paidAmount-"+paidAmount+" WHERE id="+ id;
+				Query statement=HibernateUtil.getCurrentSession().createSQLQuery(reverseNegative);
 				if(LOGGER.isInfoEnabled())     LOGGER.info(reverseNegative);
-				statement.executeQuery(reverseNegative);
-				statement.close();
+				statement.executeUpdate();
 		}
 	}
 }

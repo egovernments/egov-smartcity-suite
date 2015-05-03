@@ -173,11 +173,11 @@ public class CloseBalance extends AbstractTask {
 			if (resultset.next()) {
 				resultset.close();
 				pstmt.close();
-				pa.update(connection);
+				pa.update();
 			} else {
 				resultset.close();
 				pstmt.close();
-				pa.insert(connection);
+				pa.insert();
 			}
 
 			pstmt = connection
@@ -199,12 +199,12 @@ public class CloseBalance extends AbstractTask {
 				ts.setCreditAmount(record[5]);
 				ts.setAccountDetailTypeId(record[6]);
 				ts.setAccountDetailKey(record[7]);
-				ts.insert(connection);
+				ts.insert();
 			}
 
 			PostingAllowed pa1 = new PostingAllowed();
 			pa1.setPostingAllowed("1");
-			pa1.update(connection);
+			pa1.update();
 		}
 	}
 }

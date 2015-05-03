@@ -45,7 +45,6 @@
  */
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -53,6 +52,9 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
@@ -64,10 +66,11 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
  *         TODO To change the template for this generated type comment go to
  *         Window - Preferences - Java - Code Style - Code Templates
  */
+@Transactional(readOnly=true)
 public class ScheduleMapping {
 	private static final Logger LOGGER = Logger
 			.getLogger(ScheduleMapping.class);
-	PreparedStatement pstmt = null;
+	Query pstmt = null;
 	private String id = null;
 	private String reportType = null;
 	private String schedule = "0";
@@ -94,8 +97,8 @@ public class ScheduleMapping {
 	public int getId() {
 		return Integer.valueOf(id).intValue();
 	}
-
-	public void insert(Connection con) throws SQLException, TaskFailedException {
+	@Transactional
+	public void insert() throws SQLException, TaskFailedException {
 		// EGovernCommon commommethods = new EGovernCommon();
 
 		setId(String.valueOf(PrimaryKeyGenerator.getNextKey("schedulemapping")));
@@ -117,7 +120,7 @@ public class ScheduleMapping {
 						+ "lastModifiedBy,lastModifiedDate,repSubType,isRemission) "
 						+ "values(?,?,?,?,?,?,?,?,?,?)";
 				if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
-				pstmt = con.prepareStatement(insertQuery);
+				pstmt = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 				pstmt.setString(1, id);
 				pstmt.setString(2, reportType);
 				pstmt.setString(3, schedule);
@@ -132,25 +135,23 @@ public class ScheduleMapping {
 			} catch (Exception e) {
 				LOGGER.error("ERROR" + e.getMessage(), e);
 				throw taskExc;
-			} finally {
-				pstmt.close();
-			}
+			} 
 
 	}
-
-	public void update(Connection con) throws SQLException, TaskFailedException {
+	@Transactional
+	public void update() throws SQLException, TaskFailedException {
 		try {
-			newUpdate(con);
+			newUpdate();
 		} catch (Exception e) {
 			LOGGER.error("Error inside update" + e.getMessage(), e);
 		}
 	}
 
-	public void newUpdate(Connection con) throws TaskFailedException,
+	public void newUpdate() throws TaskFailedException,
 			SQLException {
 		EGovernCommon commommethods = new EGovernCommon();
 		lastModifiedDate = commommethods.getCurrentDate();
-		PreparedStatement pstmt = null;
+		Query pstmt = null;
 		try {
 			lastModifiedDate = formatter.format(sdf.parse(lastModifiedDate));
 		} catch (ParseException parseExp) {
@@ -182,7 +183,7 @@ public class ScheduleMapping {
 		query.append(" where id=?");
 		try {
 			int i = 1;
-			pstmt = con.prepareStatement(query.toString());
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
 			if (reportType != null)
 				pstmt.setString(i++, reportType);
 			if (schedule != null)
@@ -203,17 +204,11 @@ public class ScheduleMapping {
 				pstmt.setString(i++, isRemission);
 			pstmt.setString(i++, id);
 
-			pstmt.executeQuery();
+			pstmt.executeUpdate();
 		} catch (Exception e) {
 			LOGGER.error("Exp in update: " + e.getMessage(), e);
 			throw taskExc;
-		} finally {
-			try {
-				pstmt.close();
-			} catch (Exception e) {
-				LOGGER.error("Inside finally block of update"+e.getMessage(), e);
-			}
-		}
+		} 
 	}
 
 	public String getReportType() {

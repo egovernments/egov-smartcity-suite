@@ -45,17 +45,16 @@
  */
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
@@ -67,6 +66,7 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
  *         TODO To change the template for this generated type comment go to
  *         Window - Preferences - Java - Code Style - Code Templates
  */
+@Transactional(readOnly=true)
 public class VoucherHeader {
 	private static final Logger LOGGER = Logger.getLogger(VoucherHeader.class);
 	private String id = null;
@@ -321,7 +321,7 @@ public class VoucherHeader {
 	}
 
 	
-
+	@Transactional
 	public void insert() throws SQLException,
 			TaskFailedException {
 		String code = EGovConfig.getProperty("egf_config.xml",
@@ -430,7 +430,7 @@ public class VoucherHeader {
 		} 
 
 	}
-
+	@Transactional
 	public void update() throws SQLException,
 			TaskFailedException {
 			lastModifiedDate = commonmethods.getCurrentDateTime();
@@ -571,31 +571,29 @@ public class VoucherHeader {
 			}
 		}
 	}
-
-	public void cancelVouchers(String cgvn, Connection conn) throws Exception {
+	public void cancelVouchers(String cgvn) throws Exception {
 
 		String query = "select id from voucherheader where cgvn= ?";
-		PreparedStatement pst = conn.prepareStatement(query);
+		Query pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
 		pst.setString(1, cgvn);
 		if(LOGGER.isInfoEnabled())     LOGGER.info(query);
-		ResultSet resultset = pst.executeQuery();
+		List<Object[]> resultset = pst.list();
 		String vid = "";
-		if (resultset.next())
-			vid = resultset.getString(1);
-		else
+		for(Object[] element : resultset){
+			vid = element[0].toString();
+		}
+		if(resultset == null || resultset.size() == 0) 
 			throw new Exception("Voucher does not exist.");
-		resultset.close();
-		pst.close();
 
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+		Query ps = null;
+		List<Object[]> rs = null;
 		String today;
 		VoucherHeader vh = new VoucherHeader();
 		String getRefVoucher = "SELECT a.id,a.vouchernumber,a.cgn FROM voucherheader a,voucherheader b "
 				+ "WHERE a.CGN=b.REFCGNO AND b.id=?";
 
 		if(LOGGER.isInfoEnabled())     LOGGER.info("getRefVoucher   " + getRefVoucher);
-		ps = conn.prepareStatement(getRefVoucher);
+		ps = HibernateUtil.getCurrentSession().createSQLQuery(getRefVoucher);
 		vh.setId(vid);
 		egfRecordStatus egfstatus = new egfRecordStatus();
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -612,13 +610,12 @@ public class VoucherHeader {
 		vh.update();
 
 		// Check if there is any related vouchers
-		ps.clearParameters();
 		ps.setString(1, vid);
-		rs = ps.executeQuery();
+		rs = ps.list();
 		// if(LOGGER.isInfoEnabled())     LOGGER.info("if any related vouchers exist then we need to  that also.");
-		if (rs.next()) {
+		for(Object[] element : rs){
 			egfRecordStatus egfstatusRef = new egfRecordStatus();
-			String refVhid = rs.getString(1);
+			String refVhid = element[0].toString();
 			vh.setId(refVhid);
 			egfstatusRef.setEffectiveDate(formatter.format(sdf.parse(today)));
 			egfstatusRef.setStatus("4");

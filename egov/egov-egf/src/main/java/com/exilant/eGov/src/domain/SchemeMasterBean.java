@@ -45,22 +45,25 @@
  */
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-import java.util.Locale;
 /**
  * @author Administrator
  *
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+@Transactional(readOnly=true)
 public class SchemeMasterBean 
 {
 	private String schemecode=null;
@@ -145,10 +148,11 @@ public class SchemeMasterBean
 	public void setStartDate(String startDate) {
 		this.startDate = startDate;
 	}
-	 public void insert(Connection con,DataCollection dc) throws TaskFailedException
+	@Transactional
+	 public void insert(DataCollection dc) throws TaskFailedException
 	 {
 	 	boolean schemeExists=false;
-		PreparedStatement pst=null;
+		Query pst=null;
 		try
 		{
 			String endDate=dc.getValue("endDate");
@@ -159,11 +163,11 @@ public class SchemeMasterBean
 			schemeMaxId=getId("SCHEME");
 			dc.addValue("schemeId",schemeMaxId);
 			String mainScheme="";
-			schemeExists=recordExists(dc.getValue("schemecode"),"scheme",null,con,dc.getValue("fund_id"));
+			schemeExists=recordExists(dc.getValue("schemecode"),"scheme",null,dc.getValue("fund_id"));
 			if(LOGGER.isInfoEnabled())     LOGGER.info("scheme exists :"+schemeExists);
 			mainScheme="insert into scheme (ID,CODE,NAME,VALIDFROM,VALIDTO,ISACTIVE,DESCRIPTION,FUNDID) values (?, ?, ?, ?, ?, ?, ?, ?)";
 			
-			pst=con.prepareStatement(mainScheme);
+			pst=HibernateUtil.getCurrentSession().createSQLQuery(mainScheme);
 			pst.setLong(1, schemeMaxId);
 			pst.setString(2, dc.getValue("schemecode"));
 			pst.setString(3, dc.getValue("schemename"));
@@ -181,15 +185,12 @@ public class SchemeMasterBean
 			else
 				dc.addMessage("exilRPError","Error in Insert "+e.toString());
 			throw taskExc;
-		}finally{
-			try{
-				pst.close();
-			}catch(Exception e){LOGGER.error("Inside the finally block in insert");}
 		}
 	 }
-	 public void modify(Connection con,DataCollection dc) throws TaskFailedException
+	@Transactional
+	 public void modify(DataCollection dc) throws TaskFailedException
 	 {
-		PreparedStatement pst=null;
+		Query pst=null;
 		try
 		{
 			String endDate=dc.getValue("endDate");
@@ -198,7 +199,7 @@ public class SchemeMasterBean
             startDate = formatter1.format(sdf.parse(startDate));
 			String mainScheme="";
 			mainScheme="update scheme set VALIDFROM= ?, VALIDTO= ?, ISACTIVE= ?, DESCRIPTION= ?, FUNDID= ? where code= ?";
-			pst=con.prepareStatement(mainScheme);
+			pst=HibernateUtil.getCurrentSession().createSQLQuery(mainScheme);
 			pst.setString(1, startDate);
 			pst.setString(2, endDate);
 			pst.setString(3, dc.getValue("isActive"));
@@ -211,42 +212,37 @@ public class SchemeMasterBean
 		{
 			dc.addMessage("exilRPError","Error in Update "+e.toString());
 			throw taskExc;
-		}finally{
-			try{
-				pst.close();
-			}catch(Exception e){LOGGER.error("Inside the finally block in insert",e);}
 		}
 	 }
 	 	
-		private boolean recordExists(String code,String tableName,String schemeId,Connection con, String fundId) throws TaskFailedException
+		private boolean recordExists(String code,String tableName,String schemeId, String fundId) throws TaskFailedException
 		{
-			PreparedStatement pst=null;
-			ResultSet rs= null;
+			Query pst=null;
+			List<Object[]> rs= null;
 			boolean flag=false;
 			try
 			{
 				String query="";
 				if (schemeId!=null){
 					query="select count(*) from "+tableName+" where code=? and schemeid= ?";
-					pst=con.prepareStatement(query);
+					pst=HibernateUtil.getCurrentSession().createSQLQuery(query);
 					pst.setString(1, code);
 					pst.setString(2, schemeId);					
 				}				
 				else{
 					query="select count(*) from "+tableName+" where code=? and fundid= ?";
-					pst=con.prepareStatement(query);
+					pst=HibernateUtil.getCurrentSession().createSQLQuery(query);
 					pst.setString(1, code);
 					pst.setString(2, fundId);
 				}
 				if(LOGGER.isInfoEnabled())     LOGGER.info("record exists query "+query);
-				rs=pst.executeQuery();
-				if (rs!=null && rs.next())
-				{
-					if (rs.getString(1)==null)
+				rs=pst.list();
+				for(Object[] element : rs){
+					if (element[0].toString()==null)
 						flag=false;
 					else
 					{
-						if (rs.getInt(1)>0){
+						if (Integer.parseInt(element[0].toString())>0){
 							flag=true;
 							return flag;
 						}
@@ -254,17 +250,12 @@ public class SchemeMasterBean
 							flag=false;
 					}
 				}
-				else
+				if(rs == null || rs.size() == 0) 
 					flag=false;
 			}
 			catch(Exception e)
 			{
 				throw taskExc;
-			}finally{
-				try{
-					rs.close();
-					pst.close();
-				}catch(Exception e){LOGGER.error("Inside the finally block in insert");}
 			}
 			return flag;
 		}
