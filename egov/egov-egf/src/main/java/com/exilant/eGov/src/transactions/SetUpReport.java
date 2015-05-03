@@ -129,7 +129,7 @@ public class SetUpReport extends AbstractTask{
 					coa.setOperation(operation);
 					//if(LOGGER.isDebugEnabled())     LOGGER.debug("***operation: "+operation);
 					try{
-						coa.update(conn);
+						coa.update();
 					}catch(SQLException ex){
 						LOGGER.error(ex.getMessage(), ex);
 						dc.addMessage("eGovFailure", "SetUpReport->Summary Group Updation Failed");
@@ -154,7 +154,7 @@ public class SetUpReport extends AbstractTask{
 			coa.setId(glCodeId);
 			coa.setOperation("N");
 			try{
-				coa.update(conn);
+				coa.update();
 			}catch(SQLException ex){
 				LOGGER.error(ex.getMessage(), ex);
 				dc.addMessage("eGovFailure", "SetUpReport->Summary Group Updation Failed");
@@ -170,7 +170,7 @@ public class SetUpReport extends AbstractTask{
 			coa.setId(glCodeId);
 			coa.setOperation("N");
 			try{
-				coa.update(conn);
+				coa.update();
 			}catch(SQLException ex){
 				LOGGER.error(ex.getMessage(), ex);
 				dc.addMessage("eGovFailure", "SetUpReport->Summary Group Creation Failed");
@@ -193,7 +193,7 @@ public class SetUpReport extends AbstractTask{
 			coa.setId(glCodeId);
 			coa.setOperation("N");
 			try{
-				coa.update(conn);
+				coa.update();
 			}catch(SQLException ex){
 				LOGGER.error(ex.getMessage(), ex);
 				dc.addMessage("eGovFailure", "SetUpReport->Summary Group Updation Failed");
@@ -209,7 +209,7 @@ public class SetUpReport extends AbstractTask{
 			coa.setId(glCodeId);
 			coa.setOperation("N");
 			try{
-				coa.update(conn);
+				coa.update();
 			}catch(SQLException ex){
 				LOGGER.error(ex.getMessage(), ex);
 				dc.addMessage("eGovFailure", "SetUpReport->Summary Group Creation Failed");
@@ -228,7 +228,7 @@ public class SetUpReport extends AbstractTask{
 			coa.setId(glCodeId);
 			coa.setOperation(gridSchedules[index][3]);
 			try{
-				coa.update(conn);
+				coa.update();
 			}catch(SQLException ex){
 				LOGGER.error(ex.getMessage(), ex);
 				dc.addMessage("eGovFailure", "SetUpReport->Summary Group Updation Failed");
@@ -244,7 +244,7 @@ public class SetUpReport extends AbstractTask{
 			coa.setId(glCodeId);
 			coa.setOperation(gridSchedulesNew[index][3]);
 			try{
-				coa.update(conn);
+				coa.update();
 			}catch(SQLException ex){
 				LOGGER.error(ex.getMessage(), ex);
 				dc.addMessage("eGovFailure", "SetUpReport->Summary Group Creation Failed");

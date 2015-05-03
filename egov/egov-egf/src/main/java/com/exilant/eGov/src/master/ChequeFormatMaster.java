@@ -74,12 +74,12 @@ public class ChequeFormatMaster extends AbstractTask
 			{
 				if (dc.getValue("modeOfExec").equalsIgnoreCase("modify"))
 				{
-					chequeFormatMasterBean.modify(conn,dc);
+					chequeFormatMasterBean.modify(dc);
 					dc.addMessage("eGovSuccess","CheckFormats update");	
 				}
 				else
 				{
-					chequeFormatMasterBean.insert(conn,dc);
+					chequeFormatMasterBean.insert(dc);
 					dc.addMessage("eGovSuccess","CheckFormats insert");	
 				}
 			

@@ -39,15 +39,16 @@
  ******************************************************************************/
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
@@ -58,7 +59,7 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 * TODO To change the template for this generated type comment go to
 * Window - Preferences - Java - Code Style - Code Templates
 */
-
+@Transactional(readOnly=true)
 public class BillRegisterBean
 {
 
@@ -95,10 +96,11 @@ public class BillRegisterBean
 			 * @param connection
 			 * @throws TaskFailedException
 			 */
-			public void insert(Connection connection) throws TaskFailedException
+	@Transactional
+			public void insert() throws TaskFailedException
 			{
-				PreparedStatement psmt=null;
-				PreparedStatement psmt1=null;
+				Query psmt=null;
+				Query psmt1=null;
 			   try{
 					SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy",Locale.getDefault());
 					SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy",Locale.getDefault());
@@ -109,7 +111,7 @@ public class BillRegisterBean
 							
 					String insertQuery = "INSERT INTO EG_BILLREGISTER (ID, BILLNUMBER, BILLDATE, BILLAMOUNT,FIELDID,WORKSDETAILID,BILLSTATUS, NARRATION,PASSEDAMOUNT,BILLTYPE,EXPENDITURETYPE,ADVANCEADJUSTED,CREATEDBY,CREATEDDATE,StatusId)"
 					+"VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-					psmt = connection.prepareStatement(insertQuery);
+					psmt = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 					psmt.setString(1,this.id);
 					psmt.setString(2,this.billNumber);
 					psmt.setDate(3,billDatee);
@@ -122,26 +124,17 @@ public class BillRegisterBean
 					psmt.setString(10,this.billType);
 					psmt.setString(11,this.expenditureType);
 					psmt.setDouble(12,this.advanceAdjusted);
-					psmt.setInt(13,this.createdby);
+					psmt.setInteger(13,this.createdby);
 					psmt.setDate(14,getTodayDate());
 					psmt.setString(15,this.billStatusId);
 					psmt.executeUpdate();
 			    if(LOGGER.isDebugEnabled())     LOGGER.debug("INSERT QUERY IS:"+insertQuery);
 				}
-				catch(SQLException e){
+				catch(Exception e){
 					LOGGER.error("Exception inserting to eg_billregister."+e);
 					throw taskExc;
-				}catch(Exception e){
-					LOGGER.error("Unable to convert Date");
-					throw taskExc;
 				}
-				finally{
-		   			try{
-		   				psmt.close();
-		   				psmt1.close();
-		   			}catch(Exception e){LOGGER.error("Inside finally block of insert");}
-		   		}
-			}
+							}
 
 			/**
 			 * This function is to update the status alone
@@ -150,24 +143,21 @@ public class BillRegisterBean
 			 * @param id
 			 * @throws TaskFailedException
 			 */
-		public void updateStatus (String status,Connection connection,String id) throws TaskFailedException
+	@Transactional
+		public void updateStatus (String status,String id) throws TaskFailedException
 		{
-			PreparedStatement psmt=null;
+			Query psmt=null;
 			try{
 				
 				String updateQuery="UPDATE eg_billregister SET BILLSTATUS=? where id=?";
 				if(LOGGER.isDebugEnabled())     LOGGER.debug(updateQuery);
-				psmt = connection.prepareStatement(updateQuery);
+				psmt = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
 				psmt.setString(1,status);
 				psmt.setString(2,id);
 				psmt.executeUpdate();
 			}catch(Exception e){LOGGER.error("Exception in updatestatus"+e);
 				throw taskExc;
-			}finally{
-	   			try{
-	   				psmt.close();
-	   			}catch(Exception e){LOGGER.error("Inside finally block of insert");}
-	   		}
+			}
 
 		}
 
@@ -177,13 +167,13 @@ public class BillRegisterBean
 	 * @param code
 	 * @throws TaskFailedException
 	 */
-
-		public void update(Connection connection,String code)throws TaskFailedException
+		@Transactional
+		public void update(String code)throws TaskFailedException
 		{
-			PreparedStatement psmt=null;
-			PreparedStatement psmt1=null;
+			Query psmt=null;
+			Query psmt1=null;
 			String updateQuery="";
-			ResultSet resultset=null;
+			List<Object[]> resultset=null;
 			updateQuery = "UPDATE EG_BILLREGISTER SET BILLNUMBER = ?,BILLDATE = ?,BILLAMOUNT =?" +
 				",FIELDID = ?,WORKSDETAILID = ?,BILLSTATUS = ?,NARRATION =?,PASSEDAMOUNT = ?" +
 				",BILLTYPE = ?,EXPENDITURETYPE =?,ADVANCEADJUSTED =?"+
@@ -191,7 +181,7 @@ public class BillRegisterBean
 			try{
 				
 				
-				psmt = connection.prepareStatement(updateQuery);
+				psmt = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
 			    psmt.setString(1,this.billNumber);
 			    psmt.setString(2,this.billDate);
 			    psmt.setDouble(3,this.billAmount);
@@ -203,7 +193,7 @@ public class BillRegisterBean
 			    psmt.setString(9,this.billType);
 			    psmt.setString(10,this.expenditureType);
 			    psmt.setDouble(11,this.advanceAdjusted);
-			    psmt.setInt(12,this.lastModifiedBy);
+			    psmt.setInteger(12,this.lastModifiedBy);
 			    psmt.setDate(13,getTodayDate());
 			    psmt.setString(14,id);
 			   
@@ -212,11 +202,7 @@ public class BillRegisterBean
 			}catch(Exception ex){
 				LOGGER.error("Exception in Updating EG_BILLREGISTER:"+ex);
 				throw taskExc;
-			}finally{
-	   			try{
-	   				psmt.close();
-	   			}catch(Exception e){LOGGER.error("Inside finally block of update");}
-	   		}
+			}
 
 	}
 
@@ -225,10 +211,10 @@ public class BillRegisterBean
  * @param connection
  * @throws TaskFailedException
  */
-
-		public void update (Connection connection) throws TaskFailedException
+		@Transactional
+		public void update () throws TaskFailedException
 		{
-			PreparedStatement psmt=null;
+			Query psmt=null;
 			try{
 				if(isId && isField)
 				{
@@ -236,8 +222,8 @@ public class BillRegisterBean
 						+"advanceAdjusted=?, billType=?, expenditureType=?, passedAmount=?,billStatus=?, worksDetailId=?,fieldId=?,"
 						+"lastModifiedBy=?, createdDate=?,lastModifiedDate= to_date(?,'dd-Mon-yyyy HH24:MI:SS'), StatusId=?"
 						 +"where id =?";
-					psmt = connection.prepareStatement(updateQuery1);
-				    psmt.setInt(1,createdby);
+					psmt = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery1);
+				    psmt.setInteger(1,createdby);
 				    psmt.setDouble(2,billAmount);
 				    psmt.setString(3,billDate);
 				    psmt.setString(4,billNarration);
@@ -249,7 +235,7 @@ public class BillRegisterBean
 				    psmt.setString(10,billStatus);
 				    psmt.setString(11,worksDetailId);
 				    psmt.setString(12,fieldId);
-				    psmt.setInt(13,lastModifiedBy);
+				    psmt.setInteger(13,lastModifiedBy);
 				    psmt.setString(14,createdDate);
 				    psmt.setString(15,lastModifiedDate);
 				    psmt.setString(16,billStatusId);
@@ -262,25 +248,22 @@ public class BillRegisterBean
 			}catch(Exception e){
 				LOGGER.error("Exception in update.."+e);
 				throw taskExc;
-			}finally{
-				try{
-					psmt.close();
-				}catch(Exception e){LOGGER.error("Inside finally block of update");}
 			}
 		}
 	
 
 		public Date getTodayDate(){
 			String currentDate=null;
-			ResultSet resultset=null;
-			PreparedStatement psmt=null;
+			List<Object[]> resultset=null;
+			Query psmt=null;
 			Date today=null;
 			try{
 				SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy",Locale.getDefault());
 				SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy",Locale.getDefault());
-				resultset = psmt.executeQuery("select to_char(sysdate,'dd/MM/yyyy') as \"currentDate\" from dual");
-				resultset.next();
-				currentDate = resultset.getString("currentDate");
+				resultset = HibernateUtil.getCurrentSession().createSQLQuery("select to_char(sysdate,'dd/MM/yyyy') as \"currentDate\" from dual").list();
+				for(Object[] element : resultset){
+				currentDate = element[0].toString();
+				}
 				today = (Date)formatter.parse(currentDate);
 			}
 			catch(Exception e){

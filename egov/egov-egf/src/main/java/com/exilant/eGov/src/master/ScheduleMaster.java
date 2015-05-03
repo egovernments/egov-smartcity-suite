@@ -171,7 +171,7 @@ public class ScheduleMaster extends AbstractTask {
 				}
 				coa.setId(glCode);
 				try {
-					coa.update(con);
+					coa.update();
 				} catch (SQLException s) {
 					LOGGER.error("exilError"+s.getMessage(),s);
 					throw new TaskFailedException();
@@ -200,7 +200,7 @@ public class ScheduleMaster extends AbstractTask {
 					
 				}
 				try {  
-					coa.update(con);
+					coa.update();
 				} catch (SQLException s) {   
 					LOGGER.error("SchldGrid"+s.getMessage(),s);
 					throw new TaskFailedException();

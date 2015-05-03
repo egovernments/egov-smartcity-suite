@@ -182,7 +182,7 @@ public class ChartOfAccDetail extends AbstractTask implements
 					ChartOfAccountDetail chartDetail = new ChartOfAccountDetail();
 					chartDetail.setGLCodeId(String.valueOf(coaId));
 					chartDetail.setDetailTypeId(dc.getValue(CHARTOFACCTYPE));
-					chartDetail.insert(conn);
+					chartDetail.insert();
 
 				}
 				String str2 = (String) dc.getValue("chartOfAccounts_funcReqd");
@@ -222,7 +222,7 @@ public class ChartOfAccDetail extends AbstractTask implements
 				}
 				pst.close();
 
-				chart.update(conn);
+				chart.update();
 				String delsql = "DELETE FROM chartofaccountdetail WHERE glcodeid= ?";
 				pst = conn.prepareStatement(delsql);
 				pst.setString(1, dc.getValue(CHARTOFACCID));
@@ -233,7 +233,7 @@ public class ChartOfAccDetail extends AbstractTask implements
 					ChartOfAccountDetail chartDetail = new ChartOfAccountDetail();
 					chartDetail.setGLCodeId(dc.getValue(CHARTOFACCID));
 					chartDetail.setDetailTypeId(dc.getValue(CHARTOFACCTYPE));
-					chartDetail.insert(conn);
+					chartDetail.insert();
 
 				}
 

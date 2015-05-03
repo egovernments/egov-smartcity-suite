@@ -114,7 +114,7 @@ public class BillCollectorNew extends AbstractTask {
 			BC.setIsActive(isActive);
 			BC.setModifiedBy(dc.getValue("egUser_id"));
 			
-			BC.insert(connection);
+			BC.insert();
 			billCollectorId = BC.getId();
 		}
 		
@@ -130,7 +130,7 @@ public class BillCollectorNew extends AbstractTask {
 		//	for(int i=0;i<wards.length;i++){
 				BCD.setWardId((String)dc.getValue("finalWardList"));
 				BCD.setBillCollectorID(billCollectorId + "");
-				BCD.insert(connection);
+				BCD.insert();
 		//	}
 
 			

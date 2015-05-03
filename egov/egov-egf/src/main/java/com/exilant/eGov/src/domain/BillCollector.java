@@ -45,22 +45,25 @@
  */
 package com.exilant.eGov.src.domain;
 
-import com.exilant.eGov.src.common.EGovernCommon;
-import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import com.exilant.exility.common.TaskFailedException;
-import org.apache.log4j.Logger;
 import java.util.Locale;
+
+import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.exilant.eGov.src.common.EGovernCommon;
+import com.exilant.exility.common.TaskFailedException;
+import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 /**
  * @author pushpendra.singh
  *
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-
+@Transactional(readOnly=true)
 public class BillCollector
 {
 	private String id = null;
@@ -99,12 +102,12 @@ public class BillCollector
 	public void setLastModified(String aLastModified){ lastModified = aLastModified; updateQuery = updateQuery + " lastModified='" + lastModified + "',"; isField = true;}
 	public void setCreated(String aCreated){ created = aCreated; updateQuery = updateQuery + " created='" + created + "',"; isField = true;}
 	public void setModifiedBy(String aModifiedBy){ modifiedBy = aModifiedBy; updateQuery = updateQuery + " modifiedBy=" + modifiedBy + ","; isField = true;}
-
-	public void insert(Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+	public void insert() throws SQLException,TaskFailedException
 	{
 		EGovernCommon commommethods = new EGovernCommon();				
 		created = commommethods.getCurrentDate();
-		Statement statement=null;
+		Query statement=null;
 		try
    		{
 			created = formatter.format(sdf.parse(created));   			
@@ -120,25 +123,23 @@ public class BillCollector
 							+ created + "', " + modifiedBy + ")";
 			
 			if(LOGGER.isDebugEnabled())     LOGGER.debug(insertQuery);
-			statement = connection.createStatement();
-			statement.executeUpdate(insertQuery);
+			statement = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
+			statement.executeUpdate();
    		}
 		catch(Exception e){
 			LOGGER.error("Exp in insert :"+e.getMessage());
 			throw taskExc;
-		}finally{
-			statement.close();
 		}
 		
 	}
-	
-	public void update (Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+	public void update () throws SQLException,TaskFailedException
 	{
 		if(isId && isField)
 		{
 			EGovernCommon commommethods = new EGovernCommon();
 			created = commommethods.getCurrentDate();
-			Statement statement = null;
+			Query statement = null;
 			try
 	   		{
 				created = formatter.format(sdf.parse(created));
@@ -147,14 +148,12 @@ public class BillCollector
 				updateQuery = updateQuery.substring(0,updateQuery.length()-1);
 				updateQuery = updateQuery + " WHERE id = " + id;
 				if(LOGGER.isDebugEnabled())     LOGGER.debug(updateQuery);
-				statement = connection.createStatement();
-				statement.executeUpdate(updateQuery);
+				statement = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
+				statement.executeUpdate();
 	   		}
 			catch(Exception e){
 				LOGGER.error("Exp in update :"+e.getMessage());
 				throw taskExc;
-			}finally{
-				statement.close();
 			}
 			updateQuery="UPDATE billcollector SET";
 		}

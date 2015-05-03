@@ -46,13 +46,14 @@
 package com.exilant.eGov.src.domain;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.NumberToWord;
-
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
@@ -63,6 +64,7 @@ import com.exilant.exility.common.TaskFailedException;
  * 			This Class reads the data to be printed on the cheque and
  *         	positions where these datas to be placed in the cheque for printing
  */
+@Transactional(readOnly=true)
 public class ChqPrepare {
 	public ChqPositions position;
 	private final static Logger LOGGER=Logger.getLogger(ChqPrepare.class);
@@ -70,8 +72,8 @@ public class ChqPrepare {
 
 	NumberToWord ntow = new NumberToWord();// to Convert Amount to words
 	Connection con;
-	ResultSet rs;
-	Statement st;
+	List<Object[]> rs;
+	Query st;
 	String bankId;
 	public ChqContent textBean;
 
@@ -169,27 +171,26 @@ public class ChqPrepare {
 
 		position = new ChqPositions();
 		try {
-			st = con.createStatement();
 
 			String getXYs = " Select cf.height, cfd.FIELD,cfd.XVALUE,cfd.YVALUE,cfd.LENGTH from eg_cheque_Format_detail cfd ,eg_cheque_Format cf  where cfd.headerid=cf.id and cf.bankid="
 					+ bankId + " order by cfd.id";
-			rs = st.executeQuery(getXYs);
-			while (rs.next()) {
+			rs = HibernateUtil.getCurrentSession().createSQLQuery(getXYs).list();
+			for(Object[] element : rs){
 				ChqPosition pos = new ChqPosition();
-				pos.setX(rs.getFloat("XVALUE"));
-				pos.setY(rs.getFloat("YVALUE"));
-				pos.setL(rs.getFloat("LENGTH"));
-				if (rs.getString("FIELD").equalsIgnoreCase("date"))
+				pos.setX(Float.parseFloat(element[2].toString()));
+				pos.setY(Float.parseFloat(element[3].toString()));
+				pos.setL(Float.parseFloat(element[4].toString()));
+				if (element[1].toString().equalsIgnoreCase("date"))
 					position.setDate(pos);
-				else if (rs.getString("FIELD").equalsIgnoreCase("pay1"))
+				else if (element[1].toString().equalsIgnoreCase("pay1"))
 					position.setName1(pos);
-				else if (rs.getString("FIELD").equalsIgnoreCase("pay2"))
+				else if (element[1].toString().equalsIgnoreCase("pay2"))
 					position.setName2(pos);
-				else if (rs.getString("FIELD").equalsIgnoreCase("rupees1"))
+				else if (element[1].toString().equalsIgnoreCase("rupees1"))
 					position.setAmount1(pos);
-				else if (rs.getString("FIELD").equalsIgnoreCase("rupees2"))
+				else if (element[1].toString().equalsIgnoreCase("rupees2"))
 					position.setAmount2(pos);
-				else if (rs.getString("FIELD").equalsIgnoreCase("rs"))
+				else if (element[1].toString().equalsIgnoreCase("rs"))
 					position.setRs(pos);
 			}
 

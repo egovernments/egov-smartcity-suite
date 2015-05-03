@@ -788,7 +788,7 @@ public class BankBranchModify extends AbstractTask {
 		if (rs.next()) {
 			// if(LOGGER.isDebugEnabled())     LOGGER.debug("id is present ie inside the update function");
 			chart.setId(rs.getInt("id") + "");
-			chart.update(con);
+			chart.update();
 			// throw new
 			// Exception("bank account modification failed,can not  create account code,please contact adminstrator at egov.");
 		} else {
@@ -805,10 +805,10 @@ public class BankBranchModify extends AbstractTask {
 		cDet.setDetailTypeId(accDetailTypeId);
 		cDet.setGLCodeId(coaID);
 		if (type.equals("insert")) {
-			cDet.insert(con);
+			cDet.insert();
 		} else {
 			cDet.setId(getCOADetID(coaID, accDetailTypeId, defaultID));
-			cDet.update(con);
+			cDet.update();
 		}
 	}
 

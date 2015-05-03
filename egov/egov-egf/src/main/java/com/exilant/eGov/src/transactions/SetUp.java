@@ -874,10 +874,10 @@ public class SetUp extends AbstractTask{
 		cp.setEndingDate(eDate);
 		cp.setIsClosed(hardClose);
 		try{
-			if(id==0) cp.insert(connection);
+			if(id==0) cp.insert();
 			else {
 				cp.setId(id + "");
-				cp.update(connection);
+				cp.update();
 			}
 			success = true;
 		}catch(SQLException ex){

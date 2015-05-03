@@ -44,16 +44,17 @@
 
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-
+@Transactional(readOnly=true)
 public class ChartOfAccountDetail {
 	private String id = null;
 	private String glCodeId = null;
@@ -83,16 +84,16 @@ public class ChartOfAccountDetail {
 		detailTypeId = aDetailTypeId;
 		isField = true;
 	}
-
-	public void insert(Connection connection) throws SQLException,
+	@Transactional
+	public void insert() throws SQLException,
 			TaskFailedException {
-		PreparedStatement pst = null;
+		Query pst = null;
 		try {
 			setId(String.valueOf(PrimaryKeyGenerator
 					.getNextKey("ChartOfAccountDetail")));
 			String insertQuery = "INSERT INTO ChartOfAccountDetail (id, glCodeId, detailTypeId)"
 					+ "VALUES( ?, ?, ?)";
-			pst = connection.prepareStatement(insertQuery);
+			pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 			pst.setString(1, id);
 			pst.setString(2, glCodeId);
 			pst.setString(3, detailTypeId);
@@ -101,21 +102,19 @@ public class ChartOfAccountDetail {
 		} catch (Exception e) {
 			LOGGER.error("Exp in insert:" + e.getMessage(),e);
 			throw taskExc;
-		} finally {
-			pst.close();
-		}
+		} 
 
 	}
-
-	public void update(Connection connection) throws SQLException,
+	@Transactional
+	public void update() throws SQLException,
 			TaskFailedException {
 		if (isId && isField) {
-			PreparedStatement pst = null;
+			Query pst = null;
 			try {
 
 				updateQuery = "UPDATE ChartOfAccountDetail SET glCodeId=? , detailTypeId=?  WHERE id =?";
 				if(LOGGER.isDebugEnabled())     LOGGER.debug(updateQuery);
-				pst = connection.prepareStatement(updateQuery);
+				pst = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
 				pst.setString(1, glCodeId);
 				pst.setString(2, detailTypeId);
 				pst.setString(3, id);
@@ -123,9 +122,7 @@ public class ChartOfAccountDetail {
 			} catch (Exception e) {
 				LOGGER.error("Exp in update:" + e.getMessage(),e);
 				throw taskExc;
-			} finally {
-				pst.close();
-			}
+			} 
 
 		}
 	}

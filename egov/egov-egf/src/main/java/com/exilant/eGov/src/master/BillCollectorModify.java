@@ -106,7 +106,7 @@ public class BillCollectorModify extends AbstractTask {
 		BC.setIsActive(isActive);
 		BC.setModifiedBy(dc.getValue("egUser_id"));
 
-		BC.update(connection);		
+		BC.update();		
 	}
 	
 	private void postInBillCollectorDetail() throws SQLException,TaskFailedException
@@ -141,6 +141,6 @@ public class BillCollectorModify extends AbstractTask {
 		//statement.close();
 		if(dc.getValue("finalWardList").length()>0)
 			BCD.setWardId((String)dc.getValue("finalWardList"));
-		BCD.insert(connection);
+		BCD.insert();
 	}	
 }

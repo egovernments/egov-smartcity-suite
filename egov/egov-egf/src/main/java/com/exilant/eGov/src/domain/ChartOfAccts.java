@@ -45,7 +45,6 @@
 package com.exilant.eGov.src.domain;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -60,11 +59,12 @@ import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-
+@Transactional(readOnly=true)
 public class ChartOfAccts {
 	private String id = null;
 	private String glCode = null;
@@ -225,12 +225,12 @@ public class ChartOfAccts {
 		FIEoperation = eoperation;
 		isField = true;
 	}
-
+	@Transactional
 	public void insert(Connection connection) throws SQLException,
 			TaskFailedException {
 		EGovernCommon commommethods = new EGovernCommon();
 		created = new SimpleDateFormat("dd/mm/yyyy").format(new Date());
-		PreparedStatement pst = null;
+		Query pst = null;
 		try {
 			created = formatter.format(sdf.parse(created));
 			EgovMasterDataCaching.getInstance().removeFromCache(
@@ -309,16 +309,16 @@ public class ChartOfAccts {
 		return glcode1.length() >= majorcodelength ? "'"
 				+ glcode1.substring(0, majorcodelength) + "'" : "''";
 	}
-
-	public void update(Connection connection) throws SQLException,
+	@Transactional
+	public void update() throws SQLException,
 			TaskFailedException {
 		if (isId && isField) {
 
-			newUpdate(connection);
+			newUpdate();
 		}
 	}
 
-	public void newUpdate(Connection con) throws TaskFailedException,
+	public void newUpdate() throws TaskFailedException,
 			SQLException {
 		EGovernCommon commommethods = new EGovernCommon();
 		created = commommethods.getCurrentDate();

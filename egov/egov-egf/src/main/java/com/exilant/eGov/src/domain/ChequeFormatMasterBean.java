@@ -45,14 +45,16 @@
  */
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.sql.PreparedStatement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
@@ -62,6 +64,7 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
  *
  * This Bean Used to hold the Cheque Format values ,insert and update 
  */
+@Transactional(readOnly=true)
 public class ChequeFormatMasterBean 
 {
 	private String id;
@@ -335,12 +338,12 @@ public class ChequeFormatMasterBean
 	 * @throws TaskFailedException
 	 * Used to create new format for the Spacific Bank
 	 */
-	public void insert(Connection con,DataCollection dc) throws TaskFailedException
+	@Transactional
+	public void insert(DataCollection dc) throws TaskFailedException
 	 {
 		boolean formatExists=false;
-		Statement st=null;
-		try
-		{	st=con.createStatement();
+		Query st=null;
+		try{
 			long MaxId=0;
 			MaxId=getId("eg_cheque_format");
 			dc.addValue("id",MaxId);
@@ -350,7 +353,7 @@ public class ChequeFormatMasterBean
             dc.addValue("currDate", currDate);
             // If Cheque Format For bank Selected does not exists record the format else throw exception 
             // in that case only format can be modified
-		    formatExists=recordExists("eg_cheque_format",dc.getValue("BankList"),con);
+		    formatExists=recordExists("eg_cheque_format",dc.getValue("BankList"));
 			if(!formatExists)
 			{
 	            if(LOGGER.isDebugEnabled())     LOGGER.debug("cheFormatExists exists :"+formatExists);
@@ -362,10 +365,11 @@ public class ChequeFormatMasterBean
 				                     dc.getValue("current_UserID") +",' " +  dc.getValue("currDate")+"')" ;
 				    
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("Cheque Format Query :" + mainFormat);
-				st.executeUpdate(mainFormat);
+				st = HibernateUtil.getCurrentSession().createSQLQuery(mainFormat);
+				st.executeUpdate();
 				String subFormat="insert into eg_cheque_format_detail (id,headerid,field,xvalue,yvalue,length,lastmodifiedDate )"+
 									"values(?,?,?,?,?,?,?)";
-				PreparedStatement pst=con.prepareStatement(subFormat);
+				Query pst=HibernateUtil.getCurrentSession().createSQLQuery(subFormat);
 				long subId;
 				String fieldArray[]={"date","pay1","pay2","rupees1","rupees2","rs"};
 				String [][] detailsgrid=dc.getGrid("detailsgrid");
@@ -391,11 +395,7 @@ public class ChequeFormatMasterBean
 				LOGGER.error(e.getMessage());
 				throw taskExc;
 			}
-		finally{
-			try{
-			st.close();
-			}catch(Exception e){LOGGER.error("Inside finally");}
-		}
+		
 	 }
 	
 	/**
@@ -405,12 +405,12 @@ public class ChequeFormatMasterBean
 	 * @throws TaskFailedException
 	 * Modify the pre existing Chequeformat for the spcific bank with new Values
 	 */
-	 public void modify(Connection con,DataCollection dc) throws TaskFailedException
+	@Transactional
+	 public void modify(DataCollection dc) throws TaskFailedException
 	 {
-		Statement st=null;
+		Query st=null;
 		try
 		{
-			st=con.createStatement();
 			Date cDate=new Date();
 			String currDate = formatter1.format(cDate);
 			dc.addValue("currDate", currDate);
@@ -420,10 +420,11 @@ public class ChequeFormatMasterBean
 								",lastmodifiedDate='"+dc.getValue("currDate")+
 								"' where bankId="+dc.getValue("BankList") ;
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Cheque Format Update Query :" + mainFormat);
-			st.executeUpdate(mainFormat);
+			st  = HibernateUtil.getCurrentSession().createSQLQuery(mainFormat);
+			st.executeUpdate();
 			String subFormat="update  eg_cheque_Format_detail set xvalue=?,yvalue=?,length=?,lastmodifiedDate=? "+
 								"where headerid=? and field=?";
-			PreparedStatement pst=con.prepareStatement(subFormat);
+			Query pst=HibernateUtil.getCurrentSession().createSQLQuery(subFormat);
 			String fieldArray[]={"date","pay1","pay2","rupees1","rupees2","rs"};
 			String [][] detailsgrid=dc.getGrid("detailsgrid"); 
 			for(int i=1;i<=6;i++)
@@ -442,10 +443,6 @@ public class ChequeFormatMasterBean
 			LOGGER.error("Exception in modify:"+e.getMessage());
 			dc.addMessage("exilRPError","Error in Update "+e.toString());
 			throw taskExc;
-		}finally{
-			try{
-				st.close();
-			}catch(Exception e){LOGGER.error("Inside finally ...");}
 		}
 	 }
 	 
@@ -461,41 +458,34 @@ public class ChequeFormatMasterBean
 	 * it iis used to allow to create new format or not
 	 * that is if format already exists only it canbe modified 
 	 */ 	
-	 private boolean recordExists(String tableName,String bankid ,Connection con) throws TaskFailedException	{
-			Statement st=null;
+	 private boolean recordExists(String tableName,String bankid ) throws TaskFailedException	{
+			Query st=null;
 			boolean flag=false;
-			ResultSet rs= null;
+			List<Object[]> rs= null;
 			try
 			{
-				st=con.createStatement();
 				String query="";
 				query="select count(*) from "+tableName+" where bankid="+bankid;
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("record exists query "+query);
-				rs=st.executeQuery(query);
-				if (rs!=null && rs.next())
-				{
-					if (rs.getString(1)==null)
+				rs=HibernateUtil.getCurrentSession().createSQLQuery(query).list();
+				for(Object[] element : rs){
+					if (element[0].toString()==null)
 						flag=false;
 					else
 					{
-						if (rs.getInt(1)>0)
+						if (Integer.parseInt(element[0].toString())>0)
 							flag=true;
 						else
 							flag=false;
 					}
 				}
-				else
+				if(rs == null || rs.size() == 0) 
 					flag=false;
 			}
 			catch(Exception e)
 			{
 				LOGGER.error("Inside recordExists"+e.getMessage());
 				throw taskExc;
-			}finally{
-				try{
-					rs.close();
-					st.close();
-				}catch(Exception e){LOGGER.error("Inside finally block");}
 			}
 			return flag;
 		}

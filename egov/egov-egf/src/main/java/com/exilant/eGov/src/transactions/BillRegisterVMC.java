@@ -148,7 +148,7 @@ public class BillRegisterVMC extends AbstractTask {
 				dc.addMessage("userFailure","Duplicate BillNumber Not Allowed");
 				throw new TaskFailedException();
 		}*/
-		billBean.insert(con);
+		billBean.insert();
 
 		String createdBillNo=billBean.getBillNumber();
 		if(LOGGER.isInfoEnabled())     LOGGER.info("CREATED BILL NO IS---->"+createdBillNo);
@@ -272,7 +272,7 @@ public class BillRegisterVMC extends AbstractTask {
 			throw new TaskFailedException("checkBillNumberUniqueUpdate Function Failed");
 		}
 
-		billBean.update(con);
+		billBean.update();
 
 	} // Update method ended.
 

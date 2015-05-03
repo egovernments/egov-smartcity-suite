@@ -45,8 +45,6 @@
  */
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -54,6 +52,7 @@ import org.apache.log4j.Logger;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
@@ -64,14 +63,14 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-
+@Transactional(readOnly=true)
 public class ClosedPeriods
 {
 	private String id =null;
 	private String startingDate = "";
 	private String endingDate = "";
 	private String isClosed = null;
-	PreparedStatement psmt=null;
+	Query psmt=null;
 	private TaskFailedException taskExc;
 	private String updateQuery="UPDATE closedPeriods SET ";
 	private boolean isId=false, isField=false;
@@ -82,28 +81,27 @@ public class ClosedPeriods
 	public void setStartingDate(String aStartingDate){ startingDate = aStartingDate; isField = true;}
 	public void setEndingDate(String aEndingDate){ endingDate = aEndingDate;  isField = true;}
 	public void setIsClosed(String aIsClosed){ isClosed = aIsClosed;isField = true;}
-	
-	public void insert(Connection connection) throws SQLException{	
+	@Transactional
+	public void insert() throws SQLException{	
 		setId( String.valueOf(PrimaryKeyGenerator.getNextKey("ClosedPeriods")) );		
 		String insertQuery = "INSERT INTO closedPeriods (id, startingDate, endingDate, isClosed) " +						 
 						    "VALUES(?,?,?,?)";
 						
-		psmt = connection.prepareStatement(insertQuery);
+		psmt = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 	    psmt.setString(1,id);
 	    psmt.setString(2,startingDate);
 	    psmt.setString(3,endingDate);
 	    psmt.setString(4,isClosed);
 		if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
-		psmt.executeQuery();
-		psmt.close();
+		psmt.executeUpdate();
 	}
-	
-	public void update (Connection connection) throws SQLException
+	@Transactional
+	public void update () throws SQLException
 	{
 		if(isId && isField)
 		{
 			try{
-			newUpdate(connection);
+			newUpdate();
 			}catch(Exception e){
 				LOGGER.error("Error while updating close period");
 			}
@@ -111,9 +109,9 @@ public class ClosedPeriods
 		}
 	}
 	
-	public void newUpdate(Connection con) throws TaskFailedException,SQLException{
+	public void newUpdate() throws TaskFailedException,SQLException{
 	 StringBuilder query=new StringBuilder(500); 
-	 PreparedStatement pstmt=null;
+	 Query pstmt=null;
 	 query.append("update closedPeriods set ");
 	 if(startingDate!=null)	query.append("startingDate=?,");
 	 if(endingDate!=null)	query.append("endingDate=?,");
@@ -122,14 +120,15 @@ public class ClosedPeriods
 	query.deleteCharAt(lastIndexOfComma);
 	query.append(" where id=?");
 	 try{ int i=1;
-	 pstmt=con.prepareStatement(query.toString());
+	 pstmt=HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
 	 if(startingDate!=null)	pstmt.setString(i++,startingDate);
 	 if(endingDate!=null)	pstmt.setString(i++,endingDate);
 	 if(isClosed!=null)	pstmt.setString(i++,isClosed);
 	pstmt.setString(i++,id);
 
-	 pstmt.executeQuery();
-	}catch(Exception e){	LOGGER.error("Exp in update: "+e.getMessage()); throw taskExc;} finally{try{ pstmt.close(); }catch(Exception e){LOGGER.error("Inside finally block of update");}} 
+	 pstmt.executeUpdate();
+	}catch(Exception e){	LOGGER.error("Exp in update: "+e.getMessage()); throw taskExc;} 
+	  
 	 }
 
 	static public boolean isClosedForPosting(String date)throws TaskFailedException{

@@ -44,21 +44,19 @@
  * Window - Preferences - Java - Code Style - Code Templates
  */
 package com.exilant.eGov.src.domain;
-import com.exilant.eGov.src.common.EGovernCommon;
-import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-import org.apache.log4j.Logger;
-import org.egov.infstr.services.PersistenceService;
-import org.egov.model.instrument.InstrumentHeader;
-import org.egov.model.instrument.InstrumentType;
-import org.hibernate.SQLQuery;
-
-import com.exilant.exility.common.TaskFailedException;
-import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.SQLException;
-import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Locale;
+
+import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.exilant.eGov.src.common.EGovernCommon;
+import com.exilant.exility.common.TaskFailedException;
+import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 
 /**
  * @author pushpendra.singh
@@ -66,7 +64,7 @@ import java.util.Locale;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-
+@Transactional(readOnly=true)
 public class ChequeDetail
 {
 	private String id = null;
@@ -106,7 +104,7 @@ public class ChequeDetail
 	private TaskFailedException taskExc;
 	private boolean isId=false, isField=false;
 	private final static Logger LOGGER=Logger.getLogger(ChequeDetail.class);
-	private Statement statement;
+	private Query statement;
 	private String updateChqQuery = "update chequedetail  set isreversed=1 where id=";
 	
 	public void setId(String aId){ id = aId; isId=true;}
@@ -142,12 +140,12 @@ public class ChequeDetail
 		return status;
 	}
 	public void setStatus(String status1) {	status=status1; updateQuery = updateQuery + " chqstatus=" + status + ","; isField = true;}
-
-	public void insert(Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+	public void insert() throws SQLException,TaskFailedException
 	{
 		EGovernCommon commommethods = new EGovernCommon();
 		created = commommethods.getCurrentDate();
-		Statement statement = null;
+		Query statement = null;
 		try
    		{
 			created = formatter.format(sdf.parse(created));
@@ -164,116 +162,110 @@ public class ChequeDetail
 								+ paidById + ", " + approvedBy + ", '" + created + "', " + modifiedBy + ", '"
 								+ lastModified +"',"+isPayCheque+ ",'"+chequeType+ "','"+voucherHeaderId+"', " + isReversed +",'"+bankName+"','"+type+"',"+status+","+detailKeyId+","+detailTypeId+")";
 	
-			statement = connection.createStatement();
+			statement = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 	        if(LOGGER.isDebugEnabled())     LOGGER.debug(insertQuery);
-			statement.executeUpdate(insertQuery);
+			statement.executeUpdate();
    		}
 		catch(Exception e){
 			LOGGER.error("Exp in insert"+e.getMessage());
 			throw taskExc;
 		}
-		finally{
-			statement.close();
-		}
+		
 
 	}
 	
 	
-	public void reverse(Connection connection,String cgNum)throws Exception
+	public void reverse(String cgNum)throws Exception
 	{
-		ResultSet resultset=null;
+		List<Object[]> resultset=null;
 		try{
-			statement = connection.createStatement();
+			
 			String str="select chequedetail.id from chequedetail,paymentheader where "
 	            +" chequedetail.id=paymentheader.chequeid and PAYMENTHEADER.voucherheaderid in(select id from voucherheader where cgn='"+cgNum+"')";
-			resultset= statement.executeQuery(str);
+			statement = HibernateUtil.getCurrentSession().createSQLQuery(str);
+			resultset= statement.list();
 			if(LOGGER.isInfoEnabled())     LOGGER.info(str);
-			if(resultset.next()){
-				int chequeid = Integer.parseInt(resultset.getString(1));
+			for(Object[] element : resultset){
+				int chequeid = Integer.parseInt(element[0].toString());
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside reverse:"+updateChqQuery+chequeid);
-				statement.executeUpdate(updateChqQuery+chequeid);				
-			}else{
+				statement  = HibernateUtil.getCurrentSession().createSQLQuery((updateChqQuery+chequeid));
+				statement.executeUpdate();
+			}if(resultset == null || resultset.size() == 0) {
 				throw new TaskFailedException(" No Record found");
 			}
 		}catch(Exception e){
 			LOGGER.error("Exp in reverse"+e.getMessage());
 			throw taskExc;
 		}
-		finally{
-			resultset.close();
-			statement.close();
-		}
+		
 	}
 
 	
-	public void reverseContra(Connection connection,String cgNum)throws Exception
+	public void reverseContra(String cgNum)throws Exception
 	{
-		ResultSet resultset=null;
+		List<Object[]> resultset=null;
 		try{
-			 statement = connection.createStatement();
-			 resultset= statement.executeQuery("select chequedetail.id from chequedetail ,voucherheader  where "
+			
+			 statement = HibernateUtil.getCurrentSession().createSQLQuery("select chequedetail.id from chequedetail ,voucherheader  where "
 		                        +" chequedetail.voucherheaderid=voucherheader.id and chequedetail.voucherheaderid in(select id from voucherheader where cgn='"+cgNum+"')");
 			if(LOGGER.isInfoEnabled())     LOGGER.info("select chequedetail.id from chequedetail ,voucherheader  where "
 		                        +" chequedetail.voucherheaderid=voucherheader.id and chequedetail.voucherheaderid in(select id from voucherheader where cgn='"+cgNum+"')");
-			 while(resultset.next()){
-				int chequeid = Integer.parseInt(resultset.getString(1));
+			 resultset= statement.list();
+			 for(Object[] element : resultset){
+				int chequeid = Integer.parseInt(element[0].toString());
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside reverse  contra:"+updateChqQuery+chequeid);
-				statement.executeUpdate(updateChqQuery+chequeid);
+				statement  = HibernateUtil.getCurrentSession().createSQLQuery((updateChqQuery+chequeid));
+				statement.executeUpdate();
 			 }
 		}catch(Exception e) {
 			LOGGER.error("Exp IN REVERSE CONTRA	"+e.getMessage());
 			throw taskExc;
-		}finally{
-			resultset.close();
-			statement.close();
 		}
 	}
 
-	public void reverse(Connection connection,String cgNum,String sub)throws Exception
+	public void reverse(String cgNum,String sub)throws Exception
 	{
-		Statement statement = null;
-		ResultSet resultset= null;
+		Query statement = null;
+		List<Object[]> resultset= null;
 		try{
 			
-			statement=connection.createStatement();
 			if(sub.equals("receipt"))
 			{
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("select chequedetail.id from chequedetail,receiptheader where "
 	                    +" chequedetail.id=receiptheader.chequeid and receiptheader.voucherheaderid in(select id from voucherheader where cgn='"+cgNum+"')"
 	                    +"and receiptheader.voucherheaderid=chequedetail.voucherheaderid ");
 	
-				resultset= statement.executeQuery("select chequedetail.id from chequedetail,receiptheader where "
+				statement = HibernateUtil.getCurrentSession().createSQLQuery("select chequedetail.id from chequedetail,receiptheader where "
 				                        +" chequedetail.id=receiptheader.chequeid and receiptheader.voucherheaderid in(select id from voucherheader where cgn='"+cgNum+"')"
 				                        +"and receiptheader.voucherheaderid=chequedetail.voucherheaderid ");
-				while(resultset.next())
-				{
-					int chequeid = Integer.parseInt(resultset.getString(1));
+				resultset=  statement.list();
+				for(Object[] element : resultset){
+					int chequeid = Integer.parseInt(element[0].toString());
 					if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside reverse receipt:"+updateChqQuery+chequeid);
-					statement.executeUpdate(updateChqQuery+chequeid);
+					statement  = HibernateUtil.getCurrentSession().createSQLQuery((updateChqQuery+chequeid));
+					statement.executeUpdate();
 				}
 			}
 			if(sub.equals("subledger"))
 			{
-				resultset= statement.executeQuery("select chequedetail.id from chequedetail,subledgerpaymentheader where "
+				statement = HibernateUtil.getCurrentSession().createSQLQuery("select chequedetail.id from chequedetail,subledgerpaymentheader where "
 		                        +" chequedetail.id=subledgerpaymentheader.chequeid and subledgerpaymentheader.voucherheaderid in(select id from voucherheader where cgn='"+cgNum+"')");
-				while(resultset.next())
-				{
-					int chequeid = Integer.parseInt(resultset.getString(1));
+				resultset=  statement.list();
+				for(Object[] element : resultset){
+					int chequeid = Integer.parseInt(element[0].toString());
 					if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside reverse subledger:"+updateChqQuery+chequeid);
-					statement.executeUpdate(updateChqQuery+chequeid);
+					statement  = HibernateUtil.getCurrentSession().createSQLQuery((updateChqQuery+chequeid));
+					statement.executeUpdate();
 				}
 			}
 		}catch(Exception e){
 			LOGGER.error("Exception in reverse"+e.getMessage());
 			throw taskExc;
-		}finally{
-			resultset.close();
-			statement.close();
 		}
 		
 	}
-
-	public void cancel(Connection connection,String vchrNo,String vchrDate)throws Exception
+	@Transactional
+	public void cancel(String vchrNo,String vchrDate)throws Exception
 	{
 		EGovernCommon commommethods = new EGovernCommon();
 		lastModified = commommethods.getCurrentDate();
@@ -284,18 +276,16 @@ public class ChequeDetail
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("lastModified:2"+lastModified+" vchrDate:"+vchrDate);   		
 			String updateQuery ="update chequedetail set IsDeposited=0,LastModified='"+lastModified+"' where PayInSlipDate='"+vchrDate+"' and PayInSlipNumber='"+vchrNo+"'";
 			if(LOGGER.isDebugEnabled())     LOGGER.debug(updateQuery);
-			statement = connection.createStatement();
-			statement.executeUpdate(updateQuery);
+			statement = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
+			statement.executeUpdate();
    		}
 		catch(Exception e){
 			LOGGER.error("lastemodified and voucherdate date parse error");
 			throw taskExc;
-		}finally{
-			statement.close();
 		}
 	}
-
-	public void update (Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+	public void update () throws SQLException,TaskFailedException
 	{
 		if(isId && isField)
 		{
@@ -307,42 +297,38 @@ public class ChequeDetail
 				setLastModified(created);
 				updateQuery = updateQuery.substring(0,updateQuery.length()-1)+ " WHERE id = " + id;
 				if(LOGGER.isDebugEnabled())     LOGGER.debug(updateQuery);
-				statement = connection.createStatement();
-				statement.executeUpdate(updateQuery);
+				statement = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
+				statement.executeUpdate();
 	   		}catch(Exception e){	   			
 	   			throw taskExc;
-	   		}finally{
-	   			statement.close();
-	   		}			
+	   		}		
 			updateQuery="UPDATE chequedetail SET";
 		}
 	}
-
-	public void reverseUsingVid(Connection connection)throws SQLException,TaskFailedException
+	@Transactional
+	public void reverseUsingVid()throws SQLException,TaskFailedException
 	{
 		try{
-			statement=connection.createStatement();
+			
 			String reverseQuery="UPDATE chequedetail SET IsReversed=1 WHERE id="+id;
 			if(LOGGER.isDebugEnabled())     LOGGER.debug(reverseQuery);
-			statement.executeQuery(reverseQuery);
+			statement=HibernateUtil.getCurrentSession().createSQLQuery(reverseQuery);
+			statement.executeUpdate();
 		}catch(Exception e){
 			throw taskExc;
-		}finally{
-			statement.close();
 		}
 	}
-	
-	public void reverseUsingVhid(Connection connection, String vhId)throws SQLException,TaskFailedException
+	@Transactional
+	public void reverseUsingVhid(String vhId)throws SQLException,TaskFailedException
 	{		
 		try{
-			statement=connection.createStatement();
+			
 			String reverseQuery="UPDATE chequedetail SET IsReversed=1 WHERE voucherheaderid="+vhId;
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("reverseUsingVhid is "+reverseQuery);
-			statement.executeQuery(reverseQuery);
+			statement=HibernateUtil.getCurrentSession().createSQLQuery(reverseQuery);
+			statement.executeUpdate();
 		}catch(Exception e){
 			throw taskExc;
-		}finally{
-			statement.close();
 		}
 	}
 }
