@@ -46,17 +46,20 @@
 
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-import java.util.Locale;
-
+@Transactional(readOnly=true)
 public class AssetPODetails {
 	private String id = null;
 	private String assetid = null;
@@ -87,48 +90,40 @@ public class AssetPODetails {
 		updateQuery = updateQuery + " workorderid = " + workorderid + ",";
 		isField = true;
 	}
-	
-	public void insert(Connection connection) throws TaskFailedException,
+	@Transactional
+	public void insert() throws TaskFailedException,
 			SQLException {
 		EGovernCommon commommethods = new EGovernCommon();
-		Statement statement=null;
+		Query statement=null;
 		setId(String.valueOf(PrimaryKeyGenerator.getNextKey("assetPODetails")));
 		try {
 			String lastupdateddate = String.valueOf(commommethods.getCurrentDate());			
 			lastupdateddate = formatter.format(sdf.parse(lastupdateddate));
 			String insertQuery = "INSERT INTO eg_asset_PO (id, assetid, workorderid, lastupdateddate)VALUES ("+ id+ ", "+ assetid+ ", "+ workorderid+ ", '"	+ lastupdateddate + "', ')";
-			statement = connection.createStatement();
+			statement = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 			if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
-			statement.executeUpdate(insertQuery);
+			statement.executeUpdate();
 		
 		} catch (Exception e) {
 			LOGGER.error("Exp in insert:"+e.getMessage());
 			throw taskExc;
-		}finally{
-			try{
-				statement.close();
-			}catch(Exception e){LOGGER.error("Here in finally exp");}
 		}
 	}
 	
-	public void update(Connection connection) throws SQLException{
-		Statement statement=null;
+	public void update() throws Exception{
+		Query statement=null;
 		if(isId && isField) {
 			updateQuery = updateQuery.substring(0, updateQuery.length() - 1);
 			updateQuery = updateQuery + " WHERE id = " + id;
 			if(LOGGER.isInfoEnabled())     LOGGER.info(updateQuery);
 			try{
-			statement = connection.createStatement();
-			statement.executeUpdate(updateQuery);
+			statement = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
+			statement.executeUpdate();
 			updateQuery = "UPDATE eg_asset_PO SET";
-			}catch(SQLException e)
+			}catch(Exception e)
 			{
 				LOGGER.error("Error while updating records to eg_asset_PO");
 				throw e;
-			}finally{
-				try{
-					statement.close();
-				}catch(Exception e){LOGGER.error("Here in finally exp");}
 			}
 		}
 	}
@@ -137,10 +132,10 @@ public class AssetPODetails {
 	 * This function will accept the assetid and returns the Fundid related to
 	 * that asset.
 	 */
-	public int getFundForAsset(int assetid, Connection con) throws SQLException {
+	public int getFundForAsset(int assetid) throws Exception {
 		int fundid = 0;
-		ResultSet rs = null;
-		Statement statement = null;
+		List<Object[]> rs = null;
+		Query statement = null;
 		try{
 		String qry = "Select fundid AS \"fund\" from worksdetail a,eg_asset_PO b where a.id=b.workorderid and a.ISACTIVE=1 and b.assetid="
 				+ assetid
@@ -148,21 +143,16 @@ public class AssetPODetails {
 				+ " SELECT b.fundid AS \"fund\"  FROM  worksdetail a,egw_works_mis b,eg_asset_PO c WHERE b.worksdetailid =a.ID AND c.workorderid=a.ID AND c.assetid="
 				+ assetid + " ORDER BY \"fund\" ";
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Getting the Fund" + qry);
-		statement = con.createStatement();
-		rs = statement.executeQuery(qry);
-		if(rs.next())
+		statement = HibernateUtil.getCurrentSession().createSQLQuery(qry);
+		rs = statement.list();
+		for(Object[] element : rs)
 			{
-			fundid = rs.getInt(1);
+			fundid = Integer.parseInt(element[0].toString());
 			}
-		}catch(SQLException e)
+		}catch(Exception e)
 		{
 			LOGGER.error("Error while getFundForAsset"+e.getMessage());
 			throw e;
-		}finally{
-			try{
-				rs.close();
-				statement.close();
-			}catch(Exception e){LOGGER.error("Here in finally exp");}
 		}
 		return fundid;
 	}
@@ -171,11 +161,11 @@ public class AssetPODetails {
 	 * This function will accept the assetid and returns the Fundsourceid
 	 * related to that asset.
 	 */
-	public int getFundSourceForAsset(int assetid, Connection con)
-			throws SQLException {
+	public int getFundSourceForAsset(int assetid)
+			throws Exception {
 		int fundsourceid = 0;
-		ResultSet rs = null;
-		Statement statement = null;
+		List<Object[]> rs = null;
+		Query statement = null;
 		try{
 		String qry = "Select fundsourceid AS \"fundsourceid\" from worksdetail a,eg_asset_PO b where a.id=b.workorderid and a.ISACTIVE=1 and b.assetid="
 				+ assetid
@@ -183,21 +173,16 @@ public class AssetPODetails {
 				+ " SELECT financingsourceid AS \"fundsourceid\" FROM worksdetail a,EGW_WORKS_FINANCINGSOURCE b,eg_asset_PO c WHERE a.ID=b.worksdetailid  AND  a.ID=c.workorderid AND c.assetid="
 				+ assetid + " ORDER BY \"fundsourceid\" ";
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Getting the Financing Source" + qry);
-		statement = con.createStatement();
-		rs = statement.executeQuery(qry);
-		if(rs.next())
+		statement = HibernateUtil.getCurrentSession().createSQLQuery(qry);
+		rs = statement.list();
+		for(Object[] element : rs)
 			{
-			fundsourceid = rs.getInt(1);
+			fundsourceid = Integer.parseInt(element[0].toString());
 			}
-		}catch(SQLException e)
+		}catch(Exception e)
 		{
 			LOGGER.error("Error while getFundSourceForAsset"+e.getMessage());
 			throw e;
-		}finally{
-			try{
-				rs.close();
-				statement.close();
-			}catch(Exception e){LOGGER.error("Here in finally getFundSourceForAsset");}
 		}
 			
 		return fundsourceid;
@@ -213,10 +198,10 @@ public class AssetPODetails {
 	 * @param fundId
 	 * @param retValue
 	 * @return
-	 * @throws SQLException
+	 * @throws Exception
 	 */
-	public String getWorkOrderForAsset(int assetid, Connection con,
-			String fundId, String retValue) throws SQLException {
+	public String getWorkOrderForAsset(int assetid,
+			String fundId, String retValue) throws Exception {
 		if(LOGGER.isInfoEnabled())     LOGGER.info("Inside the getWorkOrderForAsset API");
 		String worksDetailId = "";
 		String worksDetailCode = "";
@@ -228,20 +213,20 @@ public class AssetPODetails {
 			{
 			fundCheck = " and a.fundId= " + fundId;
 			}
-		ResultSet rs = null;
-		Statement statement =null;
+		List<Object[]> rs = null;
+		Query statement =null;
 		try{
 			String qry = "Select a.id,a.code from worksdetail a,eg_asset_PO b where a.id=b.workorderid "+ fundCheck
 				+ " and a.ISACTIVE=1 and b.assetid="+ assetid
 				+ " UNION SELECT b.ID,b.code FROM worksdetail b,egw_works_mis a,eg_asset_PO c WHERE b.ID=a.worksdetailid AND  b.ID=c.workorderid"+ fundCheck
 				+ " AND b.STATUSID IN (SELECT id FROM egw_status WHERE moduletype='WO' AND description IN('Billed', 'Completion Certificate Issued')) and c.assetid="+ assetid;
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Query for getting Work Order" + qry);
-			statement = con.createStatement();
-			rs = statement.executeQuery(qry);
-			while (rs.next()) 
+			statement = HibernateUtil.getCurrentSession().createSQLQuery(qry);
+			rs = statement.list();
+			for(Object[] element : rs)
 			{
-				sbuffworksDetailId = sbuffworksDetailId .append(rs.getString(1) .concat( ","));
-				sbuffworksDetailCode = sbuffworksDetailCode.append(rs.getString(2) .concat( ","));
+				sbuffworksDetailId = sbuffworksDetailId .append(element[0].toString() .concat( ","));
+				sbuffworksDetailCode = sbuffworksDetailCode.append(element[1].toString() .concat( ","));
 			}
 			worksDetailId=sbuffworksDetailId.toString();
 			worksDetailCode=sbuffworksDetailCode.toString();
@@ -254,15 +239,10 @@ public class AssetPODetails {
 			{
 				returnVal = worksDetailCode;
 			}
-		}catch(SQLException e)
+		}catch(Exception e)
 		{
 			LOGGER.error("Error while getWorkOrderForAsset"+e.getMessage());
 			throw e;
-		}finally{
-			try{
-				rs.close();
-				statement.close();
-			}catch(Exception e){LOGGER.error("Here in finally getWorkOrderForAsset");}
 		}
 		
 		return returnVal;

@@ -45,17 +45,20 @@
  */
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
@@ -66,7 +69,7 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
  *         TODO To change the template for this generated type comment go to
  *         Window - Preferences - Java - Code Style - Code Templates
  */
-
+@Transactional(readOnly=true)
 public class BankBranch {
 	private String id = null;
 	private String branchCode = null;
@@ -266,11 +269,12 @@ public class BankBranch {
 	 * @throws TaskFailedException
 	 * @throws SQLException
 	 */
-	public void insert(Connection connection) throws TaskFailedException,
+	@Transactional
+	public void insert() throws TaskFailedException,
 			SQLException {
 		EGovernCommon commommethods = new EGovernCommon();
 		created = commommethods.getCurrentDate();
-		PreparedStatement pst = null;
+		Query pst = null;
 		try {
 			/*
 			 * created = cm.assignValue(formatter.format(sdf.parse( created
@@ -286,7 +290,7 @@ public class BankBranch {
 					+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 			if(LOGGER.isDebugEnabled())     LOGGER.debug(insertQuery);
-			pst = connection.prepareStatement(insertQuery);
+			pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 			pst.setString(1, id);
 			pst.setString(2, branchCode);
 			pst.setString(3, branchName);
@@ -309,13 +313,7 @@ public class BankBranch {
 		} catch (Exception e) {
 			LOGGER.error("Exp in insert" + e.getMessage());
 			throw taskExc;
-		} finally {
-			try {
-				pst.close();
-			} catch (Exception e) {
-				LOGGER.error("Inside finally block of insert");
-			}
-		}
+		} 
 	}
 
 	/**
@@ -325,15 +323,15 @@ public class BankBranch {
 	 * @throws TaskFailedException
 	 * @throws SQLException
 	 */
-	public void update(Connection connection) throws TaskFailedException,
+	public void update() throws TaskFailedException,
 			SQLException {
 		
-		newUpdate(connection);
+		newUpdate();
 		
 		/* if (isId && isField) {
 			EGovernCommon commommethods = new EGovernCommon();
 			created = commommethods.getCurrentDate(connection);
-			PreparedStatement pst = null;
+			Query pst = null;
 			try {
 
 				created = formatter.format(sdf.parse(created));
@@ -343,7 +341,7 @@ public class BankBranch {
 						.substring(0, updateQuery.length() - 1);
 				updateQuery = updateQuery + " WHERE id = ?";
 				if(LOGGER.isDebugEnabled())     LOGGER.debug(updateQuery);
-				pst = connection.prepareStatement(updateQuery);
+				pst = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
 				pst.setString(1, id);
 				pst.executeUpdate();
 				updateQuery = "UPDATE bankbranch SET";
@@ -367,32 +365,25 @@ public class BankBranch {
 	 * @return
 	 * @throws TaskFailedException
 	 */
-	public HashMap getBankBranch(Connection con) throws TaskFailedException {
+	public HashMap getBankBranch() throws TaskFailedException {
 		String query = "SELECT  CONCAT(CONCAT(bankBranch.bankId, '-'),bankBranch.ID) as \"bankBranchID\",concat(concat(bank.name , ' '),bankBranch.branchName) as \"bankBranchName\" FROM bank, bankBranch where"
 				+ " bank.isactive=1 and bankBranch.isactive=1 and bank.ID = bankBranch.bankId order by bank.name";
 		if(LOGGER.isInfoEnabled())     LOGGER.info("  query   " + query);
 		Map hm = new LinkedHashMap<String, String>();
-		PreparedStatement pst = null;
-		ResultSet rs = null;
+		Query pst = null;
+		List<Object[]> rs = null;
 
 		try {
-			pst = con.prepareStatement(query);
-			rs = pst.executeQuery();
-			while (rs.next()) {
-				hm.put(rs.getString(1), rs.getString(2));
+			pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
+			rs = pst.list();
+			for(Object[] element : rs){
+				hm.put(element[0].toString(), element[1].toString());
 			}
 
 		} catch (Exception e) {
 			LOGGER.error("Error in getBankBranch ", e);
 			throw taskExc;
-		} finally {
-			try {
-				rs.close();
-				pst.close();
-			} catch (Exception e) {
-				LOGGER.error("Inside finally block of getBankBranch");
-			}
-		}
+		} 
 		return (HashMap) hm;
 	}
 
@@ -404,39 +395,32 @@ public class BankBranch {
 	 * @return
 	 * @throws Exception
 	 */
-	public HashMap getAccNumber(String bankBranchId, Connection con)
+	public HashMap getAccNumber(String bankBranchId)
 			throws TaskFailedException {
 		String id[] = bankBranchId.split("-");
 		String branchId = id[1];
-		PreparedStatement pst = null;
-		ResultSet rs = null;
+		Query pst = null;
+		List<Object[]> rs = null;
 
 		String query = "SELECT  ID, accountNumber from bankAccount WHERE branchId= ? and isactive=1  ORDER BY ID";
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("  query   " + query);
 		Map hm = new HashMap();
 		try {
-			pst = con.prepareStatement(query);
+			pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
 			pst.setString(1, branchId);
-			rs = pst.executeQuery();
-			while (rs.next()) {
-				hm.put(rs.getString(1), rs.getString(2));
+			rs = pst.list();
+			for(Object[] element : rs){
+				hm.put(element[0].toString(), element[1].toString());
 			}
 		} catch (Exception e) {
 			LOGGER.error("Error in getAccNumber ", e);
 			throw taskExc;
-		} finally {
-			try {
-				rs.close();
-				pst.close();
-			} catch (Exception e) {
-				LOGGER.error("Inside finally block of getAccNumber");
-			}
-		}
+		} 
 
 		return (HashMap) hm;
 	}
 
-	public void newUpdate(Connection con) throws TaskFailedException,
+	public void newUpdate() throws TaskFailedException,
 			SQLException {
 		EGovernCommon commommethods = new EGovernCommon();
 		created = commommethods.getCurrentDate();
@@ -484,11 +468,11 @@ public class BankBranch {
 		if (branchMICR != null && !branchMICR.isEmpty() )
 			query.append(",MICR=?");
 		query.append(" where id=?");
-		PreparedStatement pstmt = null;
+		Query pstmt = null;
 		try {
 			
 			int i = 1;
-			pstmt = con.prepareStatement(query.toString());
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
 			if (branchCode != null)
 				pstmt.setString(i++, branchCode);
 			if (branchName != null)
@@ -525,16 +509,10 @@ public class BankBranch {
 				pstmt.setString(i++, branchMICR);
 			pstmt.setString(i++, id);
 
-			pstmt.executeQuery();
+			pstmt.executeUpdate();
 		} catch (Exception e) {
 			LOGGER.error("Exp in update: " + e.getMessage(),e);
 			throw taskExc;
-		} finally {
-			try {
-				pstmt.close();
-			} catch (Exception e) {
-				LOGGER.error("Inside finally block of update");
-			}
-		}
+		} 
 	}
 }

@@ -249,7 +249,7 @@ public class BankEntry extends AbstractTask{
 
 	   		ba.setId(dc.getValue("bankAccount_id"));
 	   		ba.setCurrentBalance(balAvailable + "");
-	   		ba.update(connection);
+	   		ba.update();
 	   	}catch(SQLException sqlEx){
 	   		LOGGER.error(sqlEx.getMessage(), sqlEx);
 	   		dc.addMessage("exilError","no record for account id " + dc.getValue("bankAccount_id") + " in Bankaccount");
@@ -302,7 +302,7 @@ public class BankEntry extends AbstractTask{
    			
 
    			try{
-   				rec.insert(connection);
+   				rec.insert();
    			}catch(SQLException sqlEx){
    				LOGGER.error(sqlEx.getMessage(), sqlEx);
    				dc.addMessage("exilError","insertion failed in BankReconciliation");

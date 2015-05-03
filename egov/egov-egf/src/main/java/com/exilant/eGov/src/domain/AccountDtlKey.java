@@ -46,11 +46,12 @@
 
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
@@ -61,7 +62,7 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
  *         TODO To change the template for this generated type comment go to
  *         Window - Preferences - Java - Code Style - Code Templates
  */
-
+@Transactional(readOnly=true)
 public class AccountDtlKey {
 	private final static Logger LOGGER = Logger.getLogger(AccountDtlKey.class);
 	private String id = "";
@@ -104,10 +105,10 @@ public class AccountDtlKey {
 		detailKey = adetailKey;
 		isField = true;
 	}
-
-	public void insert(final Connection connection) throws SQLException,
+	@Transactional
+	public void insert() throws SQLException,
 			TaskFailedException {
-		PreparedStatement pst = null;
+		Query pst = null;
 		try {
 
 			setID(String.valueOf(PrimaryKeyGenerator
@@ -115,7 +116,7 @@ public class AccountDtlKey {
 			String insertQuery = "insert into AccountDetailKey (id,groupID, glCodeID, detailTypeId, detailName, detailKey)"
 					+ " values ( ?, ?, ?, ?, ?, ?)";
 			if(LOGGER.isDebugEnabled())     LOGGER.debug(insertQuery);
-			pst = connection.prepareStatement(insertQuery);
+			pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 			pst.setString(1, id);
 			pst.setString(2, groupID);
 			pst.setString(3, glCodeID);
@@ -130,33 +131,26 @@ public class AccountDtlKey {
 		} catch (Exception e) {
 			LOGGER.error("Exception in insert:" + e.getMessage(),e);
 			throw taskExc;
-		} finally {
-			try {
-				pst.close();
-			} catch (Exception e) {
-				LOGGER.error("Inside finally block");
-			}
-		}
+		} 
 	}
-
-	public void update(final Connection connection) throws SQLException,
+	@Transactional
+	public void update() throws SQLException,
 			TaskFailedException {
-		PreparedStatement pst = null;
+		Query pst = null;
 		try {
 
 			if (isId && isField) {
-				newUpdate(connection);
+				newUpdate();
 			}
 		} catch (Exception e) {
 			LOGGER.error("Exception in update:" + e.getMessage(),e);
 			throw taskExc;
 		}
 	}
-
-	public void newUpdate(Connection con) throws TaskFailedException,
+	public void newUpdate() throws TaskFailedException,
 			SQLException {
 
-		PreparedStatement pstmt = null;
+		Query pstmt = null;
 		StringBuilder query = new StringBuilder(500);
 		query.append("update accountdetailkey set ");
 		if (groupID != null)
@@ -174,7 +168,7 @@ public class AccountDtlKey {
 		query.append(" where id=?");
 		try {
 			int i = 1;
-			pstmt = con.prepareStatement(query.toString());
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
 			if (groupID != null)
 				pstmt.setString(i++, groupID);
 			if (glCodeID != null)
@@ -187,17 +181,11 @@ public class AccountDtlKey {
 				pstmt.setString(i++, detailKey);
 			pstmt.setString(i++, id);
 
-			pstmt.executeQuery();
+			pstmt.executeUpdate();
 		} catch (Exception e) {
 			LOGGER.error("Exp in update: " + e.getMessage(), e);
 			throw taskExc;
-		} finally {
-			try {
-				pstmt.close();
-			} catch (Exception e) {
-				LOGGER.error("Inside finally block of update");
-			}
-		}
+		} 
 	}
 
 }

@@ -326,7 +326,7 @@ private List getInstrumentListByAccountId(Integer bankAccId) {
 								updateInstrumentReference(instrumentList.get(0),receiptVoucher.getId());
 							}
 
-							be.insert(null);
+							be.insert();
 						}
 						if(bankEntryId[i] != null && bankEntryId[i].length()>0 && isUpdated[i].equalsIgnoreCase("yes"))
 						{
@@ -370,7 +370,7 @@ private List getInstrumentListByAccountId(Integer bankAccId) {
 								be.setVoucherheaderId(receiptVoucher.getId().toString());
 								updateInstrumentReference(instrumentHeader,receiptVoucher.getId());
 							}
-							be.update(null);
+							be.update();
 						}
 					}
 					target = SUCCESS;

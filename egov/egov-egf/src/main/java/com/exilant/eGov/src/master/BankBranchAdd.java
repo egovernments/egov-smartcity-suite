@@ -251,7 +251,7 @@ public class BankBranchAdd extends AbstractTask {
 		table.setIsActive(isActive);
 		table.setModifiedBy(dataCollection.getValue(EGUSERID));
 
-		table.insert(con);
+		table.insert();
 		id = Integer.parseInt(table.getId());
 		dataCollection.addValue("bankBranch_branchId", Integer.toString(id));
 
@@ -302,7 +302,7 @@ public class BankBranchAdd extends AbstractTask {
 					table.setType(accountGrid[i][7]);
 					if (coaID != null && coaID.length() > 0)
 						table.setGlcodeID(coaID);
-					table.insert(con);
+					table.insert();
 				}
 			}
 		}
@@ -343,7 +343,7 @@ public class BankBranchAdd extends AbstractTask {
 		bnk.setNarration(dataCollection.getValue("bank_narration"));
 		bnk.setIsActive(dataCollection.getValue("bank_active"));
 		bnk.setModifiedBy(dataCollection.getValue(EGUSERID));
-		code = bnk.insert(con);
+		code = bnk.insert();
 		dataCollection.addValue("bank_code", code);
 	}
 

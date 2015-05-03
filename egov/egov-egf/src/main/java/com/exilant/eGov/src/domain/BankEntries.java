@@ -45,9 +45,6 @@
  */
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -57,6 +54,9 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.transactions.brs.BrsEntries;
 import com.exilant.exility.common.TaskFailedException;
@@ -67,6 +67,7 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
  * 
  * @Version 1.00
  */
+@Transactional(readOnly=true)
 public class BankEntries {
 	private String id = null;
 	private int bankAccountId;
@@ -108,20 +109,18 @@ public class BankEntries {
 	public void setId(String id) {
 		this.id = id;
 	}
-
-	public void insert(Connection connection) throws TaskFailedException,
+	@Transactional
+	public void insert() throws TaskFailedException,
 			SQLException {
-		PreparedStatement pstmt = null;
+		Query pstmt = null;
 		try {
 			setId(String.valueOf(PrimaryKeyGenerator.getNextKey("bankEntries")));
 			String insertQuery = "INSERT INTO bankEntries (Id, BankAccountId, refNo,type,txndate,txnamount,glcodeid,VoucherHeaderId,remarks,instrumentHeaderId)"
 					+ "VALUES (?,?,?,?,?,?,?,?,?,?)";
 			if(LOGGER.isDebugEnabled())     LOGGER.debug(insertQuery);
-			pstmt = connection.prepareStatement(insertQuery,
-					ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_READ_ONLY);
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 			pstmt.setString(1, id);
-			pstmt.setInt(2, bankAccountId);
+			pstmt.setInteger(2, bankAccountId);
 			pstmt.setString(3, refNo);
 			pstmt.setString(4, type);
 			pstmt.setString(5, txnDate);
@@ -134,23 +133,21 @@ public class BankEntries {
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			throw taskExc;
-		} finally {
-			pstmt.close();
-		}
+		} 
 	}
 
-	public void update(Connection connection) throws TaskFailedException,
+	public void update() throws TaskFailedException,
 			SQLException {
 		try {
-			newUpdate(connection);
+			newUpdate();
 		} catch (Exception e) {
 			LOGGER.error("Error inside update" + e.getMessage(), e);
 		}
 	}
 
-	public void newUpdate(Connection con) throws TaskFailedException,
+	public void newUpdate() throws TaskFailedException,
 			SQLException {
-		PreparedStatement pstmt = null;
+		Query pstmt = null;
 		StringBuilder query = new StringBuilder(500);
 		query.append("update bankentries set ");
 		if (refNo != null)
@@ -174,7 +171,7 @@ public class BankEntries {
 		query.append(" where id=?");
 		try {
 			int i = 1;
-			pstmt = con.prepareStatement(query.toString());
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
 			if (refNo != null)
 				pstmt.setString(i++, refNo);
 			if (type != null)
@@ -193,39 +190,29 @@ public class BankEntries {
 				pstmt.setLong(i++, instrumentHeaderId);
 			pstmt.setString(i++, id);
 
-			pstmt.executeQuery();
+			pstmt.executeUpdate();
 		} catch (Exception e) {
 			LOGGER.error("Exp in update: " + e.getMessage(),e);
 			throw taskExc;
-		} finally {
-			try {
-				pstmt.close();
-			} catch (Exception e) {
-				LOGGER.error("Inside finally block of update");
-			}
-		}
+		} 
 	}
 
-	public void reverse(Connection connection, String cgNum)
+	public void reverse( String cgNum)
 			throws SQLException, TaskFailedException {
-		PreparedStatement pstmt = null;
+		Query pstmt = null;
 		try {
 			String updateQuery = "update bankentries  set isreversed=1 where voucherheaderid in(select id from voucherheader where cgn=?)";
 			if(LOGGER.isDebugEnabled())     LOGGER.debug(updateQuery);
-			pstmt = connection.prepareStatement(updateQuery,
-					ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_READ_ONLY);
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
 			pstmt.setString(1, cgNum);
 			pstmt.executeUpdate();
 		} catch (Exception e) {
 			LOGGER.error("Exp in reverse:" + e.getMessage(), e);
 			throw taskExc;
-		} finally {
-			pstmt.close();
-		}
+		} 
 	}
 
-	public ArrayList getRecords(String bankAccId, Connection con)
+	public ArrayList getRecords(String bankAccId)
 			throws TaskFailedException, SQLException {
 		String query = "SELECT be.id as \"id\", be.refNo as \"refNo\",  be.type as \"type\", "
 				+ " To_Char(be.txnDate,'DD/MM/YYYY') as \"txnDate\", "
@@ -233,48 +220,43 @@ public class BankEntries {
 				+ " be.remarks as \"remarks\",be.glcodeid as \"glcodeid\",be.instrumentHeaderId as\"instrumentHeaderId\" "
 				+ " from bankentries be,bankaccount ba where be.bankaccountid=ba.id and ba.id=? and be.voucherheaderid is null ORDER BY txnDate";
 		if(LOGGER.isInfoEnabled())     LOGGER.info("  query   " + query);
-		PreparedStatement pstmt = null;
+		Query pstmt = null;
 		ArrayList al = new ArrayList();
-		ResultSet rs = null;
+		List<Object[]> rs = null;
 		Date dt;
 		BrsEntries brs;
 		try {
-			pstmt = con.prepareStatement(query,
-					ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_READ_ONLY);
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
 			pstmt.setString(1, bankAccId);
-			rs = pstmt.executeQuery();
+			rs = pstmt.list();
                  
-			while (rs.next()) {
+			for(Object[] element : rs){
 				brs = new BrsEntries();
-				brs.setId(rs.getString("id"));
-				brs.setRefNo(rs.getString("refNo"));
-				brs.setType(rs.getString("type"));
-				dt = sdf1.parse(rs.getString("txnDate"));
+				brs.setId(element[0].toString());
+				brs.setRefNo(element[1].toString());
+				brs.setType(element[2].toString());
+				dt = sdf1.parse(element[3].toString());
 				brs.setTxnDate(formatter.format(dt));
-				brs.setTxnAmount(rs.getString("txnAmount"));
-				brs.setRemarks(rs.getString("remarks"));
-				brs.setGlCodeId(rs.getString("glcodeid"));
-				brs.setInstrumentHeaderId(rs.getString("instrumentHeaderId"));
+				brs.setTxnAmount(element[4].toString());
+				brs.setRemarks(element[5].toString());
+				brs.setGlCodeId(element[6].toString());
+				brs.setInstrumentHeaderId(element[7].toString());
 				al.add(brs);
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			throw taskExc;
-		} finally {
-			rs.close();
-			pstmt.close();
-		}
+		} 
 		return al;
 	}
 
 	// get all ISRECONCILED=0 Cheque details FOR CORE PRODUCT
 	public List getChequeDetails(String mode,Long bankAccId, Long bankId, String chequeNo,
-			String chqFromDate, String chqToDate, Connection con,String vhId)
+			String chqFromDate, String chqToDate,String vhId)
 			throws TaskFailedException, SQLException {
 		if(LOGGER.isInfoEnabled())     LOGGER.info(" INSIDE getChequeDetails()>>>>>>>> ");
-		PreparedStatement pstmt =null;
-		ResultSet rs = null;
+		Query pstmt =null;
+		List<Object[]> rs = null;
 		List al = new ArrayList();
 		try {
 			String detailsQuery = getDetailsQuery(mode,bankAccId, bankId, chequeNo,
@@ -285,9 +267,7 @@ public class BankEntries {
 			LOGGER
 					.debug("  DishonoredCheque getChequeDetails instrument  Query is  "
 							+ detailsQuery);
-			pstmt = con.prepareStatement(detailsQuery,
-					ResultSet.TYPE_SCROLL_INSENSITIVE,   
-					ResultSet.CONCUR_READ_ONLY);
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(detailsQuery);
 			if (bankAccId != null && bankAccId != 0) {
 				count++;
 				pstmt.setLong(count, bankAccId);
@@ -310,45 +290,41 @@ public class BankEntries {
 		} catch (Exception e) {
 			LOGGER.error("Exp in getChequeDetails:" + e.getMessage(), e);
 			throw taskExc;
-		} finally {
-			rs.close();
-			pstmt.close();
-		}
+		} 
 		return al;
 	}
 
-	private ResultSet executeChequeDetailsQuery(List al,
-			PreparedStatement pstmt, String query) throws SQLException,
+	private List<Object[]> executeChequeDetailsQuery(List al,
+			Query pstmt, String query) throws SQLException,
 			ParseException {
-		ResultSet rs;
+		List<Object[]> rs;
 		Date dt;
 		//pstmt.
-		rs = pstmt.executeQuery();
+		rs = pstmt.list();
 		BrsEntries brs;
-		//if(LOGGER.isInfoEnabled())     LOGGER.info("=======================================");
-		while (rs.next()) {
+		for(Object[] element : rs){
 			brs = new BrsEntries();
-			brs.setVoucherNumber(rs.getString("VOUCHERNUMBER"));
-			brs.setCgnum(rs.getString("cgnumber"));
-			brs.setVoucherHeaderId(rs.getString("voucherHeaderId"));
-			brs.setInstrumentHeaderId(rs.getString("instrumentHeaderId"));
-			brs.setPayinSlipVHeaderId(rs.getString("payinVHeaderId"));
-			brs.setVoucherType(rs.getString("type"));
-			brs.setFundId(rs.getString("FUNDID"));
-			brs.setFundSourceId(rs.getString("FUNDSOURCEID"));
-			brs.setChequeNumber(rs.getString("CHEQUENUMBER"));
-			brs.setBankName(rs.getString("bank"));
-			brs.setAccNumber(rs.getString("accNumber"));
-			brs.setAccIdParam(rs.getString("accIdParam"));
-			brs.setPayTo(rs.getString("payTo"));
-			brs.setPayCheque(rs.getString("payCheque"));
+			brs.setVoucherNumber(element[4].toString());
+			brs.setCgnum(element[3].toString()	);
+			brs.setVoucherHeaderId(element[0].toString()	);
+			brs.setInstrumentHeaderId(element[1].toString()	);
+			brs.setPayinSlipVHeaderId(element[2].toString()	);
+			brs.setVoucherType(element[5].toString());
+			brs.setFundId(element[6].toString()	);
+			brs.setFundSourceId(element[7].toString());
+			brs.setChequeNumber(element[8].toString());
+			brs.setBankName(element[11].toString());
+			brs.setAccNumber(element[12].toString());
+			brs.setAccIdParam(element[13].toString());
+			brs.setPayTo(element[14].toString());
+			brs.setPayCheque(element[15].toString());
 			
 		//	dt = sdf1.parse(rs.getString("CHEQUEDATE"));
-			brs.setChequeDate(rs.getString("CHEQUEDATE"));
-			brs.setAmount(rs.getString("AMOUNT"));
-			brs.setDepartmentId(rs.getString("departmentId"));
-			brs.setFunctionaryId(rs.getString("functionaryId"));
-			brs.setFunctionId(rs.getString("functionId"));
+			brs.setChequeDate(element[9].toString());
+			brs.setAmount(element[10].toString());
+			brs.setDepartmentId(element[16].toString());
+			brs.setFunctionaryId(element[17].toString());
+			brs.setFunctionId(element[18].toString());
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("BankEntries | getChequeDetails | departmentId>>>"
 					+ brs.getDepartmentId());
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("BankEntries | getChequeDetails | functionaryId>>>"
@@ -360,7 +336,7 @@ public class BankEntries {
 
 	private String getDetailsQuery(String mode,Long bankAccId, Long bankId,
 			String chequeNo, String chqFromDate, String chqToDate,
-			PreparedStatement pstmt,String vhId) throws SQLException {
+			Query pstmt,String vhId) throws SQLException {
 		int count = 0;
 		StringBuffer basicquery1 = new StringBuffer(
 				"SELECT distinct vh.id as \"voucherHeaderId\",ih.id as \"instrumentHeaderId\",vh.id as \"payinVHeaderId\","

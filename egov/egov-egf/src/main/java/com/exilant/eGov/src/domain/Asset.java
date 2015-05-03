@@ -39,13 +39,16 @@
  ******************************************************************************/
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
+
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-
+@Transactional(readOnly=true)
 public class Asset
 {
 	private final static Logger LOGGER=Logger.getLogger(Asset.class);
@@ -93,10 +96,10 @@ public class Asset
 	public void setDimensions(String aDimensions){ dimensions = aDimensions;  updateQuery = updateQuery + " dimensions = '" + dimensions + "',"; isField = true; }
 	public void setLandId(String aLandId){ landId = aLandId;  updateQuery = updateQuery + " landId = " + landId + ","; isField = true; }
 	public void setUsed(String aUsed){ used = aUsed;  updateQuery = updateQuery + " used = " + used + ","; isField = true; }
-
-	public void insert(Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+	public void insert() throws SQLException,TaskFailedException
 	{
-		Statement statement = null;
+		Query statement = null;
 		try{
 		setId( String.valueOf(PrimaryKeyGenerator.getNextKey("Asset")) );
 
@@ -110,32 +113,29 @@ public class Asset
 								+ maxShifts + ", " + hasDocs + ", '" + surveyNo + "', '" 
 								+ dimensions   + "',"+used+")";
 		if(LOGGER.isDebugEnabled())     LOGGER.debug(insertQuery);
-		statement = connection.createStatement();
-		statement.executeUpdate(insertQuery);
+		
+		statement = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
+		statement.executeUpdate();
 		}catch(Exception e)
 		{
 			LOGGER.error("Exception in insert:"+e.getMessage());
 			throw taskExc;
-		}finally{
-			try{
-				statement.close();
-			}catch(Exception e){LOGGER.error("Inside finally block");}
 		}
 	
 		
 	}
-
-	public void update (Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+	public void update () throws SQLException,TaskFailedException
 	{
-		Statement statement =null;
+		Query statement =null;
 		try{
 		if(isId && isField)
 		{
 			updateQuery = updateQuery.substring(0,updateQuery.length()-1);
 			updateQuery = updateQuery + " WHERE id = " + id;
 			if(LOGGER.isDebugEnabled())     LOGGER.debug(updateQuery);
-			statement = connection.createStatement();
-			statement.executeUpdate(updateQuery);
+			statement = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
+			statement.executeUpdate();
 			updateQuery="UPDATE Asset SET";
 			if(LOGGER.isDebugEnabled())     LOGGER.debug(updateQuery);
 		}
@@ -143,10 +143,6 @@ public class Asset
 	{
 		LOGGER.error("Exception in update:"+e.getMessage());
 		throw taskExc;
-	}finally{
-		try{
-			statement.close();
-		}catch(Exception e){LOGGER.error("Inside finally block");}
 	}
 
 	}

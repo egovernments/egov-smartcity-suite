@@ -176,7 +176,7 @@ public class DishonoredChequeAction extends DispatchAction {
 			DishonoredChequeForm dishonCheqForm=(DishonoredChequeForm)form;
 			BankBranch bb=new BankBranch();
 			if(LOGGER.isInfoEnabled())     LOGGER.info("bank id  "+dishonCheqForm.getBankId());
-			HashMap hm=bb.getAccNumber(dishonCheqForm.getBankId(),null);
+			HashMap hm=bb.getAccNumber(dishonCheqForm.getBankId());
 			//This fix is for Phoenix Migration.reqHibernateUtil.getCurrentSession().setAttribute("accNumberList2", hm);
 			if(LOGGER.isDebugEnabled())     LOGGER.debug(">>> before ending DishonoredChequeAction");
 			target = SUCCESS;
@@ -272,10 +272,10 @@ public class DishonoredChequeAction extends DispatchAction {
 			List<BrsEntries> tempdishonCheqDetails=null;
 			if(vhid!=null)
 			{
-			 tempdishonCheqDetails=be.getChequeDetails(mode,Long.parseLong(dishonCheqForm.getAccId().toString()) , bankId,dishonCheqForm.getChequeNo(),chqFromDate,chqToDate,null,vhid);
+			 tempdishonCheqDetails=be.getChequeDetails(mode,Long.parseLong(dishonCheqForm.getAccId().toString()) , bankId,dishonCheqForm.getChequeNo(),chqFromDate,chqToDate,vhid);
 			}else
 			{
-			tempdishonCheqDetails=be.getChequeDetails(mode,Long.parseLong(dishonCheqForm.getAccId().toString()) , bankId,dishonCheqForm.getChequeNo(),chqFromDate,chqToDate,null,null);
+			tempdishonCheqDetails=be.getChequeDetails(mode,Long.parseLong(dishonCheqForm.getAccId().toString()) , bankId,dishonCheqForm.getChequeNo(),chqFromDate,chqToDate,null);
 			}
 			/*for(BrsEntries brsEntry:tempdishonCheqDetails){
 				if(brsEntry.getPayCheque().equals("0")){
@@ -881,7 +881,7 @@ public class DishonoredChequeAction extends DispatchAction {
 					updateInstrumentVoucherReference(Arrays.asList(instrument), voucherHeader);
 					be.setVoucherheaderId(voucherHeader.getId().toString());
 					be.setInstrumentHeaderId(instrument.getId());
-					be.insert(null);
+					be.insert();
 					bankChargesVhIdValue = voucherHeader.getId().toString();
 				}
 

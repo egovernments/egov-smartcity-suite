@@ -186,10 +186,10 @@ public class AccountDtlKeyAdd extends AbstractTask {
 					aid = rs.getString(1);
 					if(LOGGER.isDebugEnabled())     LOGGER.debug(aid);
 					ADk.setID(aid);
-					ADk.update(connection);
+					ADk.update();
 					// if(LOGGER.isDebugEnabled())     LOGGER.debug("<<<<<<<<<<<<<<<<update service");
 				} else {
-					ADk.insert(connection);
+					ADk.insert();
 				}
 			}
 

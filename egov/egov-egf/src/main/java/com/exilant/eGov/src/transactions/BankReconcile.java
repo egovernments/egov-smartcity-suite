@@ -88,7 +88,7 @@ public class BankReconcile extends AbstractTask{
 				throw taskExc;
 			}
 			try{
-				br.update(conn);
+				br.update();
 			}catch(SQLException sqlEx){
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("SQLEx BankReconciliation : " + sqlEx.toString());
 				dc.addMessage("exilRPError","bankReconciliation Updation Failed");

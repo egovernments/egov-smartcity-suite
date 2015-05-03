@@ -297,7 +297,7 @@ public class BankBranchModify extends AbstractTask {
 		table.setIsActive(isActive);
 		table.setModifiedBy(dc.getValue(EGUSER_ID));
 
-		table.update(con);
+		table.update();
 
 		return true;
 	}
@@ -400,7 +400,7 @@ public class BankBranchModify extends AbstractTask {
 			try {
 				if (fromcheno.length() > 0 && tocheno.length() > 0)
 
-					acr.insert(con);
+					acr.insert();
 			} catch (SQLException sqlEx) {
 				LOGGER.error("postInAccountCheques failed" + sqlEx);
 				dc.addMessage(EXILERROR,
@@ -561,7 +561,7 @@ public class BankBranchModify extends AbstractTask {
 					table.setPayTo(accountGrid[i][8]);
 					table.setType(accountGrid[i][9]);
 					try {
-						table.update(con);
+						table.update();
 
 					} catch (Exception e) {
 						LOGGER.error("error in update" + e.getMessage());
@@ -614,7 +614,7 @@ public class BankBranchModify extends AbstractTask {
 					else
 						table.setGlcodeID("0");
 
-					table.insert(con);
+					table.insert();
 					bankAccountId = String.valueOf(table.getId());
 				} else
 					continue;

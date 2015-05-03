@@ -45,8 +45,6 @@
 package com.exilant.eGov.src.domain;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,13 +57,15 @@ import org.apache.log4j.Logger;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.eGov.src.transactions.brs.BrsDetails;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-
+@Transactional(readOnly=true)
 public class BankReconciliation {
 	private String id = null;
 	private String bankAccountId = null;
@@ -110,12 +110,12 @@ public class BankReconciliation {
 	public void setType(String aType){ type = aType; updateQuery = updateQuery + " type='" + type + "',"; isField = true;}
 	public void setIsDishonored(String aIsDishonored){ isDishonored = aIsDishonored; updateQuery = updateQuery + " isReconciled=" + isDishonored + ","; isField = true;}
 
-
-	public void insert(Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+	public void insert() throws SQLException,TaskFailedException
 	{
 		EGovernCommon commommethods = new EGovernCommon();
 		transactionDate = commommethods.getCurrentDateTime();
-		PreparedStatement pst =null;
+		Query pst =null;
 		try
    		{
 			transactionDate = formatter.format(sdf.parse(transactionDate));
@@ -125,7 +125,7 @@ public class BankReconciliation {
 							"ChequeDate, ChequeNumber, Amount, ReconciliationDate, TransactionDate, TransactionBalance, TransactionType,isReversed,type,recChequeDate,IsDishonored) " +
 							"VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, to_date(?, 'DD-MON-YYYY HH24:MI:SS" + "'), ?, ?, ?, ?, ?, ?)";
 			if(LOGGER.isDebugEnabled())     LOGGER.debug(insertQuery);
-			pst = connection.prepareStatement(insertQuery);
+			pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 			pst.setString(1, id);
 			pst.setString(2, bankAccountId);
 			pst.setString(3, voucherHeaderId);
@@ -145,48 +145,42 @@ public class BankReconciliation {
    		}
    		catch(Exception e){
    			throw taskExc;
-   		}finally{
-   			pst.close();   				
    		}
 	}
-
-	public void update (Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+	public void update () throws SQLException,TaskFailedException
 	{
 		if(isId && isField)
 		{
-			PreparedStatement pst =null;
+			Query pst =null;
 			try{
 				updateQuery = updateQuery.substring(0,updateQuery.length()-1);
 				updateQuery = updateQuery + " WHERE id = ?";
 				if(LOGGER.isDebugEnabled())     LOGGER.debug(updateQuery);
-				pst = connection.prepareStatement(updateQuery);
+				pst = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
 				pst.setString(1, id);
 				pst.executeUpdate();
 			}catch(Exception e){
 	   			throw taskExc;
-	   		}finally{
-				pst.close();   				
 	   		}
 				updateQuery="UPDATE bankReconciliation SET";
 		}
 	}
 
-
-	public void reverse(Connection connection,String cgNum)throws SQLException,TaskFailedException{
+	@Transactional
+	public void reverse(String cgNum)throws SQLException,TaskFailedException{
 			String updateQuery = "update bankreconciliation  set isreversed=1 where voucherheaderid in(select id from voucherheader where cgn='"+cgNum+"')";
-			PreparedStatement pst =null;
+			Query pst =null;
 			try{
-				pst = connection.prepareStatement(updateQuery);
+				pst = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
 				pst.executeUpdate();
 			}catch(Exception e){
 				throw taskExc;
-			}finally{
-				pst.close();   				
 			}
 			if(LOGGER.isDebugEnabled())     LOGGER.debug(updateQuery);
 		}
 
-	public ArrayList getRecordsToReconcile(String bankAccId,String recFromDate,String asOnDate,Connection con) throws TaskFailedException,SQLException
+	public ArrayList getRecordsToReconcile(String bankAccId,String recFromDate,String asOnDate) throws TaskFailedException,SQLException
 	{
 		String FromDateCondition="";
 		if(StringUtils.isNotEmpty(recFromDate)){
@@ -220,43 +214,42 @@ public class BankReconciliation {
 			
 			 
 	 		Date dt;
-			PreparedStatement pst=null;
-			ResultSet rs=null;
-			ResultSet vouchersRS=null;
-			PreparedStatement vouchersPS=con.prepareStatement(vouchersQuery);
+			Query pst=null;
+			List<Object[]> rs=null;
+			List<Object[]> vouchersRS=null;
+			Query vouchersPS=HibernateUtil.getCurrentSession().createSQLQuery(vouchersQuery);
 			try
 			{
-				pst = con.prepareStatement(query);
+				pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
 				pst.setString(1,bankAccId);
 				pst.setString(2, asOnDate);
 				pst.setString(3,bankAccId);
 				pst.setString(4,asOnDate);
-				rs=pst.executeQuery();
+				rs=pst.list();
 				BrsDetails brs;
-				while (rs.next())
-				{
+				for(Object[] element : rs){
 					brs=new BrsDetails();
-					brs.setChequeAmount(rs.getString("chequeamount"));
+					brs.setChequeAmount(element[5].toString()	);
 					dt=new Date();
-					dt = sdf1.parse(rs.getString("chequedate"));
+					dt = sdf1.parse(element[4].toString()	);
 					brs.setChequeDate(formatter.format(dt));
-					brs.setChequeNumber(rs.getString("chequeNumber"));
-					brs.setRecordId(rs.getInt("recid"));
-					brs.setType(rs.getString("type"));
+					brs.setChequeNumber(element[0].toString());
+					brs.setRecordId(Integer.parseInt(element[1].toString()));
+					brs.setType(element[3].toString());
 					//dt=new Date();
 					/*dt = sdf1.parse(rs.getString("voucherdate"));
 					brs.setVoucherDate(formatter.format(dt));*/
 					//brs.setVoucherNumber(rs.getString("vouchernumber"));
 					//brs.setCgnum(rs.getString("cgnumber"));
-					brs.setInstrumentHeaderId(rs.getString("instrumentHeaderId"));
+					brs.setInstrumentHeaderId(element[2].toString());
 					vouchersPS.setLong(1, Long.valueOf(brs.getInstrumentHeaderId()));
-					vouchersRS = vouchersPS.executeQuery();
+					vouchersRS = vouchersPS.list();
 					brs.setVoucherNumbers(new ArrayList<String>());
 					brs.setVoucherHeaderIds(new ArrayList<Long>());
-					while(vouchersRS.next())
-					{
-						brs.getVoucherNumbers().add(vouchersRS.getString("voucherNumber"));
-						brs.getVoucherHeaderIds().add(vouchersRS.getLong("id"));
+					for(Object[] element1 : vouchersRS){
+					
+						brs.getVoucherNumbers().add(element1[0].toString());
+						brs.getVoucherHeaderIds().add(Long.parseLong(element1[0].toString()));
 					}
 					al.add(brs);
 				}
@@ -270,11 +263,7 @@ public class BankReconciliation {
 				LOGGER.error("Exp in getRecordsToReconcile :"+e.getMessage());
 				throw taskExc;
 			}
-			finally
-			{
-				pst.close();
-				rs.close();
-			}
+			
 			return al;
 	}
 //this is commented while changing to Instrument
@@ -295,7 +284,7 @@ public class BankReconciliation {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("  query  in getUnReconciledDrCr: "+query);
 		String unReconciledDrCr="";
 		Statement statement=null;
-		ResultSet rs=null;
+		List<Object[]> rs=null;
 		try
 		{
 			statement = con.createStatement();
@@ -364,8 +353,8 @@ public class BankReconciliation {
 		if(LOGGER.isInfoEnabled())     LOGGER.info("  query  for bankEntries: "+brsEntryQuery);
 		
 		String unReconciledDrCr="";
-		PreparedStatement pst=null;
-		ResultSet rs=null;
+		Query pst=null;
+		List<Object[]> rs=null;
 		String creditTotal=null;
 		String creditOthertotal=null;
 		String debitTotal=null;
@@ -375,42 +364,36 @@ public class BankReconciliation {
 		
 		try
 		{
-			pst = con.prepareStatement(totalQuery);
+			pst = HibernateUtil.getCurrentSession().createSQLQuery(totalQuery);
 			pst.setString(1,bankAccId);
 			pst.setString(2,recDate);
 		
 			
-			rs=pst.executeQuery();
+			rs=pst.list();
 
-			if (rs.next())
-			{
-				if(LOGGER.isDebugEnabled())     LOGGER.debug(rs.getString(1)+"**"+rs.getString(2));
-				creditTotal=rs.getString("brs_creditTotal");
-				debitTotal=rs.getString("brs_debitTotal");
+			for(Object[] element : rs){
+				creditTotal=element[0].toString();
+				debitTotal=element[1].toString();
 				
 				
 			}
-			pst = con.prepareStatement(otherTotalQuery);
+			pst = HibernateUtil.getCurrentSession().createSQLQuery(otherTotalQuery);
 			pst.setString(1,bankAccId);
 			pst.setString(2,recDate);
-			rs=pst.executeQuery();
-			if (rs.next())
-			{
-				if(LOGGER.isDebugEnabled())     LOGGER.debug(rs.getString(1)+"**"+rs.getString(2));
-				creditOthertotal= rs.getString("brs_creditTotalOthers");
-				debitOtherTotal=rs.getString("brs_debitTotalOthers");
+			rs=pst.list();
+			for(Object[] element : rs){
+				creditOthertotal= element[0].toString();
+				debitOtherTotal=element[1].toString();
 		
 			}
 			
-			pst = con.prepareStatement(brsEntryQuery);
+			pst = HibernateUtil.getCurrentSession().createSQLQuery(brsEntryQuery);
 			pst.setString(1,bankAccId);
 			pst.setString(2,recDate);
-			rs=pst.executeQuery();
-			if (rs.next())
-			{
-				if(LOGGER.isDebugEnabled())     LOGGER.debug(rs.getString(1)+"**"+rs.getString(2));
-				creditTotalBrsEntry= rs.getString("brs_creditTotalBrsEntry");
-				debitTotalBrsEntry=rs.getString("brs_debitTotalBrsEntry");
+			rs=pst.list();
+			for(Object[] element : rs){
+				creditTotalBrsEntry= element[0].toString();
+				debitTotalBrsEntry=element[1].toString();
 		
 			}
 			
@@ -423,11 +406,7 @@ public class BankReconciliation {
 			LOGGER.error("Exp in getUnReconciledDrCr"+e.getMessage());
 			throw taskExc;
 		}
-		finally
-		{
-			pst.close();
-			rs.close();
-		}
+		
 		return unReconciledDrCr;
 	}
 	/*will fetch all instruments which are in deposited state
@@ -547,7 +526,7 @@ private String getExcludeStatuses() {
 	return statusExclude;
 	
 }
-	public String getUnRecDrCrAndBankEntries(String bankAccId,String recDate,Connection con) throws Exception
+	public String getUnRecDrCrAndBankEntries(String bankAccId,String recDate) throws Exception
 	{
 
 		String query="SELECT (sum(decode(rec.transactionType, 'Cr',decode(rec.type, 'C', rec.amount,0),0)))+ "
@@ -573,11 +552,11 @@ private String getExcludeStatuses() {
 		if(LOGGER.isInfoEnabled())     LOGGER.info("  query  in getUnRecDrCrAndBankEntries: "+query);
 		
 		String unReconciledDrCr="";
-		PreparedStatement pst=null;
-		ResultSet rs=null;
+		Query pst=null;
+		List<Object[]> rs=null;
 		try
 		{
-			pst = con.prepareStatement(query);
+			pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
 			pst.setString(1,bankAccId);
 			pst.setString(2,recDate);
 			pst.setString(3,bankAccId);
@@ -587,11 +566,9 @@ private String getExcludeStatuses() {
 			pst.setString(7,bankAccId);
 			pst.setString(8,recDate);
 			pst.setString(9,recDate);
-			rs=pst.executeQuery();
-			if (rs.next())
-			{
-				if(LOGGER.isDebugEnabled())     LOGGER.debug(rs.getString(1)+"**"+rs.getString(2)+"***"+rs.getString(3)+"***"+rs.getString(4));
-				unReconciledDrCr=(rs.getString("brs_creditTotal") != null ? rs.getString("brs_creditTotal") : "0" )+"/"+(rs.getString("brs_creditTotalOthers")!= null ? rs.getString("brs_creditTotalOthers") : "0") +"/"+ (rs.getString("brs_debitTotal")!= null ? rs.getString("brs_debitTotal") : "0") +"/"+( rs.getString("brs_debitTotalOthers")!= null ? rs.getString("brs_debitTotalOthers") : "0")+"";
+			rs=pst.list();
+			for(Object[] element : rs){
+				unReconciledDrCr=(element[0].toString() != null ? element[0].toString() : "0" )+"/"+(element[1].toString()!= null ? element[1].toString() : "0") +"/"+ (element[2].toString()!= null ? element[2].toString() : "0") +"/"+( element[3].toString()!= null ? element[3].toString() : "0")+"";
 			}
 		}
 		catch(Exception e)
@@ -599,14 +576,10 @@ private String getExcludeStatuses() {
 			LOGGER.error("Exp in getUnRecDrCrAndBankEntries:"+e.getMessage());
 			throw taskExc;
 		}
-		finally
-		{
-			pst.close();
-			rs.close();
-		}
+		
 		return unReconciledDrCr;
 	}
-	public ArrayList getUnReconciledCheques(String bankAccId,String recDate,Connection con) throws Exception
+	public ArrayList getUnReconciledCheques(String bankAccId,String recDate) throws Exception
 	{
 		String voucherExcludeStatuses=getExcludeStatuses();
 String query="select decode(ih.instrumentNumber,null,'Direct',ih.instrumentNumber) as \"chequeNumber\", " +
@@ -635,27 +608,26 @@ String query="select decode(ih.instrumentNumber,null,'Direct',ih.instrumentNumbe
 */
 		if(LOGGER.isInfoEnabled())     LOGGER.info("Query in getUnReconciledCheques:"+query);
 		ArrayList al=new ArrayList();
-		PreparedStatement pst=null;
-		ResultSet rs=null;
+		Query pst=null;
+		List<Object[]> rs=null;
 		try
 		{
-			pst = con.prepareStatement(query);
+			pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
 			pst.setString(1, bankAccId);
 			pst.setString(2, recDate);
 			pst.setString(3, bankAccId);
 			pst.setString(4, recDate);
 			
 			
-			rs=pst.executeQuery();
+			rs=pst.list();
 			BrsDetails brs;
-			while (rs.next())
-			{
+			for(Object[] element : rs){
 				brs=new BrsDetails();
-				brs.setChequeAmount(rs.getString("chequeamount"));
-				brs.setChequeDate(formatter.format(sdf1.parse(rs.getString("chequedate"))));
-				brs.setChequeNumber(rs.getString("chequeNumber"));
-				brs.setType(rs.getString("type"));
-				brs.setTxnType(rs.getString("txnType"));
+				brs.setChequeAmount(element[2].toString());
+				brs.setChequeDate(formatter.format(sdf1.parse(element[1].toString())));
+				brs.setChequeNumber(element[0].toString());
+				brs.setType(element[4].toString());
+				brs.setTxnType(element[3].toString());
 				al.add(brs);
 			}
 		}
@@ -664,27 +636,24 @@ String query="select decode(ih.instrumentNumber,null,'Direct',ih.instrumentNumbe
 			LOGGER.error("Exp in getUnReconciledCheques:"+e.getMessage());
 			throw taskExc;
 		}
-		finally
-		{
-			pst.close();
-			rs.close();
-		}
+		
 		return al;
 	}
 
 	// update bankReconciliation table for Receipt Reversal -Dishonored Chques Entries
-	public void updateReversalDishonorChque(int payinVHeadId,String recDate,String recChqDate,String chqNumber,Connection connection) 
+	@Transactional
+	public void updateReversalDishonorChque(int payinVHeadId,String recDate,String recChqDate,String chqNumber) 
 										throws SQLException,TaskFailedException
 	{
-		PreparedStatement pst =null;
+		Query pst =null;
 		try{
 				String updateQuery="UPDATE bankReconciliation SET isReconciled=1,isDishonored=1,RECONCILIATIONDATE= ? ,RECCHEQUEDATE= ? "
 				+" where VOUCHERHEADERID= ? and CHEQUENUMBER= ?";
 				if(LOGGER.isDebugEnabled())     LOGGER.debug(updateQuery);
-				pst = connection.prepareStatement(updateQuery);
+				pst = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
 				pst.setString(1, recDate);
 				pst.setString(2, recChqDate);
-				pst.setInt(3, payinVHeadId);
+				pst.setInteger(3, payinVHeadId);
 				pst.setString(4, chqNumber);
 				pst.executeUpdate();
 		}catch(Exception e)
@@ -692,10 +661,7 @@ String query="select decode(ih.instrumentNumber,null,'Direct',ih.instrumentNumbe
 			LOGGER.error("Exp in updateReversalDishonorChque:"+e.getMessage());
 			throw taskExc;
 		}
-		finally
-		{
-			pst.close();
-		}
+		
 	}
 
 }

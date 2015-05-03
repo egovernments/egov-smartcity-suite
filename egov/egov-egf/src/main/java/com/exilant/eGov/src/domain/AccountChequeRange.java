@@ -46,13 +46,14 @@
 package com.exilant.eGov.src.domain;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.common.EGovernCommon;
@@ -84,9 +85,9 @@ public class AccountChequeRange {
 			.getLogger(AccountChequeRange.class);
 	private String updateQuery = "UPDATE bankbranch SET";
 	@Transactional
-	public void insert(final Connection connection) throws SQLException,
+	public void insert() throws SQLException,
 			TaskFailedException {
-		PreparedStatement pst = null;
+		Query pst = null;
 		try {
 			setId(String.valueOf(PrimaryKeyGenerator
 					.getNextKey("EGF_ACCOUNT_CHEQUES")));
@@ -95,7 +96,7 @@ public class AccountChequeRange {
 					+ "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 			if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
-			pst = connection.prepareStatement(insertQuery);
+			pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 			pst.setString(1, id);
 			pst.setString(2, bankAccountID);
 			pst.setString(3, fromChequeNumber);
@@ -112,23 +113,17 @@ public class AccountChequeRange {
 		} catch (Exception e) {
 			LOGGER.error("Exception in insert:" + e.getMessage());
 			throw taskExc;
-		} finally {
-			try {
-				pst.close();
-			} catch (Exception e) {
-				LOGGER.error("Inside finally block" + e.getMessage());
-			}
-		}
+		} 
 
 	}
 	@Transactional
-	public void update(Connection con) throws TaskFailedException,
+	public void update() throws TaskFailedException,
 	SQLException {
 SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy",Locale.getDefault());
 SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy",Locale.getDefault());
 EGovernCommon commommethods = new EGovernCommon();
 createdDate = commommethods.getCurrentDate();
-PreparedStatement pstmt = null;
+Query pstmt = null;
 try {
 	createdDate = formatter.format(sdf.parse(createdDate));
 } catch (ParseException parseExp) {
@@ -165,7 +160,7 @@ query.deleteCharAt(lastIndexOfComma);
 query.append(" where id=?");
 try {
 	int i = 1;
-	pstmt = con.prepareStatement(query.toString());
+	pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
 	if (bankAccountID != null)
 		pstmt.setString(i++, bankAccountID);
 	if (fromChequeNumber != null)
@@ -190,17 +185,11 @@ try {
 		pstmt.setString(i++, lastModifiedDate);
 	pstmt.setString(i++, id);
 
-	pstmt.executeQuery();
+	pstmt.executeUpdate();
 } catch (Exception e) {
 	LOGGER.error("Exp in update: " + e.getMessage(),e);
 	throw taskExc;
-} finally {
-	try {
-		pstmt.close();
-	} catch (Exception e) {
-		LOGGER.error("Inside finally block of update");
-	}
-}
+} 
 }
 
 

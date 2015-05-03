@@ -45,14 +45,15 @@
  */
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
@@ -64,7 +65,7 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
  *         TODO To change the template for this generated type comment go to
  *         Window - Preferences - Java - Code Style - Code Templates
  */
-
+@Transactional(readOnly=true)
 public class BankAccount {
 	private String id = null;
 	private String branchId = null;
@@ -129,12 +130,12 @@ public class BankAccount {
 	 * aType; updateQuery = updateQuery + "type='" + aType + "',"; isField =
 	 * true;}
 	 */
-
-	public void insert(Connection connection) throws TaskFailedException,
+	@Transactional
+	public void insert() throws TaskFailedException,
 			SQLException {
 		EGovernCommon commonmethods = new EGovernCommon();
 		created = commonmethods.getCurrentDate();
-		PreparedStatement pst = null;
+		Query pst = null;
 		try {
 			created = formatter.format(sdf.parse(created));
 			setCreated(created);
@@ -146,7 +147,7 @@ public class BankAccount {
 					+ "values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 			if(LOGGER.isDebugEnabled())     LOGGER.debug(insertQuery);
-			pst = connection.prepareStatement(insertQuery);
+			pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 			pst.setString(1, id);
 			pst.setString(2, branchId);
 			pst.setString(3, accountNumber);
@@ -165,30 +166,24 @@ public class BankAccount {
 		} catch (Exception e) {
 			LOGGER.error("Exp in insert" + e.getMessage(),e);
 			throw taskExc;
-		} finally {
-			try {
-				pst.close();
-			} catch (Exception e) {
-				LOGGER.error("Inside finally block");
-			}
-		}
+		} 
 
 	}
-
-	public void update(Connection connection) throws TaskFailedException,
+	@Transactional
+	public void update() throws TaskFailedException,
 			SQLException {
 		try {
-			newUpdate(connection);
+			newUpdate();
 		} catch (Exception e) {
 			LOGGER.error("Error inside uodating" + e.getMessage(), e);
 		}
 	}
 
-	public void newUpdate(Connection con) throws TaskFailedException,
+	public void newUpdate() throws TaskFailedException,
 			SQLException {
 		EGovernCommon commommethods = new EGovernCommon();
 		created = commommethods.getCurrentDate();
-		PreparedStatement pstmt = null;
+		Query pstmt = null;
 		try {
 			created = formatter.format(sdf.parse(created));
 			narration = commommethods.formatString(narration);
@@ -230,7 +225,7 @@ public class BankAccount {
 		query.append(" where id=?");
 		try {
 			int i = 1;
-			pstmt = con.prepareStatement(query.toString());
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
 			if (branchId != null)
 				pstmt.setString(i++, branchId);
 			if (accountNumber != null)
@@ -259,17 +254,11 @@ public class BankAccount {
 				pstmt.setString(i++, type);
 			pstmt.setString(i++, id);
 
-			pstmt.executeQuery();
+			pstmt.executeUpdate();
 		} catch (Exception e) {
 			LOGGER.error("Exp in update: " + e.getMessage(),e);
 			throw taskExc;
-		} finally {
-			try {
-				pstmt.close();
-			} catch (Exception e) {
-				LOGGER.error("Inside finally block of update");
-			}
-		}
+		} 
 	}
 
 	public String getBranchId() {

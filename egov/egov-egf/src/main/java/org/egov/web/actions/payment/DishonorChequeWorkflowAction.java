@@ -277,7 +277,7 @@ public class DishonorChequeWorkflowAction  extends BaseFormAction {
 			updateInstrumentVoucherReference(Arrays.asList(instrument), BankVoucher);
 			be.setVoucherheaderId(BankVoucher.getId().toString());
 			be.setInstrumentHeaderId(instrument.getId());
-			be.insert(null);
+			be.insert();
 			
 			return BankVoucher;
 		
