@@ -47,6 +47,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintViolation;
 import javax.validation.Path.Node;
 import javax.validation.Validation;
@@ -82,7 +84,10 @@ public class PersistenceService<T, ID extends Serializable> implements GenericDA
     protected org.hibernate.SessionFactory sessionFactory;
     protected Class<T> type;
     private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
-
+    
+    @PersistenceContext
+    EntityManager entityManager;
+    
     public void setType(final Class<T> type) {
         this.type = type;
     }
@@ -92,7 +97,7 @@ public class PersistenceService<T, ID extends Serializable> implements GenericDA
     }
     
     public Session getSession() {
-        return this.sessionFactory.getCurrentSession();
+        return entityManager.unwrap(Session.class);
     }
 
     protected void validate(final T model) {
