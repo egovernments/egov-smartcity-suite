@@ -44,9 +44,7 @@ import java.util.Date;
 import org.egov.infra.workflow.entity.StateAware;
 
 public class SideLetter extends StateAware {
-    /**
-     *
-     */
+
     private static final long serialVersionUID = -4410046131949379719L;
     private Long id;
     private String referenceNumber;

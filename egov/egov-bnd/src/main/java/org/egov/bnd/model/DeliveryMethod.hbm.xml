@@ -43,56 +43,29 @@
    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class
-        name="org.egov.bnd.model.DeliveryMethod" table="EGBD_METHODOFDELIVERYMASTER"
-        dynamic-update="false"
-        dynamic-insert="false"
-        select-before-update="false"
-        optimistic-lock="version"
-    >
-        <cache usage="read-only" />
+	<class name="org.egov.bnd.model.DeliveryMethod" table="EGBD_METHODOFDELIVERYMASTER"
+		dynamic-update="false" dynamic-insert="false" select-before-update="false"
+		optimistic-lock="version">
+		<cache usage="read-only" />
 
-        <id  name="id" type="java.lang.Integer" >
-                <column name="METHODOFDELIVERYMASTERID" />
-            <generator class="native">
-              <!--  
-                  To add non XDoclet generator parameters, create a file named 
-                  hibernate-generator-params-CDeliveryMethod.xml 
-                  containing the additional parameters and place it in your merge dir. 
-              --> 
-            </generator>
-        </id>
+		<id name="id" type="java.lang.Integer">
+			<column name="METHODOFDELIVERYMASTERID" />
+			<generator class="native">
+				<!-- To add non XDoclet generator parameters, create a file named hibernate-generator-params-CDeliveryMethod.xml 
+					containing the additional parameters and place it in your merge dir. -->
+			</generator>
+		</id>
 
-        <property
-            name="deliveryDesc"
-            type="java.lang.String"
-            update="true"
-            insert="true"
-            access="property"
-        >
-            <column
-                name="METHODOFDELIVERYDESC" 
-            />
-        </property>
+		<property name="deliveryDesc" type="java.lang.String" update="true"
+			insert="true" access="property">
+			<column name="METHODOFDELIVERYDESC" />
+		</property>
 
-        <property
-            name="deliveryDescLocal"
-            type="java.lang.String"
-            update="true"
-            insert="true"
-            access="property"
-        >
-            <column
-                name="METHODOFDELIVERYDESCLOCAL" 
-            />
-        </property>
+		<property name="deliveryDescLocal" type="java.lang.String"
+			update="true" insert="true" access="property">
+			<column name="METHODOFDELIVERYDESCLOCAL" />
+		</property>
 
-        <!--
-            To add non XDoclet property mappings, create a file named
-                hibernate-properties-CDeliveryMethod.xml
-            containing the additional properties and place it in your merge dir.
-        -->
-
-    </class>
+	</class>
 
 </hibernate-mapping>

@@ -43,106 +43,66 @@
    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class
-        name="org.egov.bnd.model.RegistrationUnit"
-        table="EGBD_REGISTRATIONUNITMASTER">        
-        <id  name="id">
-        
-       		<column name="ID" />
-            <generator class="sequence">
+	<class name="org.egov.bnd.model.RegistrationUnit" table="EGBD_REGISTRATIONUNITMASTER">
+		<id name="id">
+
+			<column name="ID" />
+			<generator class="sequence">
 				<param name="sequence">SEQ_CRegistrationUnit</param>
 			</generator>
-        </id>
+		</id>
 
-        <property
-            name="regUnitConst"
-            access="property"
-        >
-            <column
-                name="REGUNITCONST" 
-            />
-        </property>
+		<property name="regUnitConst" access="property">
+			<column name="REGUNITCONST" />
+		</property>
 
-        <property
-            name="regUnitDesc"
-            access="property"
-        >
-            <column
-                name="REGUNITDESC" 
-            />
-        </property>
- 
-         <property
-            name="regUnitDescLocal"
-            access="property"
-        >
-            <column
-                name="REGUNITDESCLOCAL" 
-            />
-        </property><!--
-         <property
-            name="createdBy"
-            type="java.lang.Integer"
-            access="property"
-        >
-            <column
-                name="CREATEDBY" 
-            />
-        </property>
-        
-         --><property
-            name="createdDate"
-            type="java.util.Date"
-            access="property"
-        >
-            <column
-                name="CREATEDATE" 
-            />
-        </property>
-        
-        <!--<property
-            name="lastModifiedBy"
-            type="java.lang.Integer"
-            access="property"
-        >
-            <column
-                name="UPDATEDBY" 
-            />
-        </property>
-        
-        --><many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="UPDATEDBY"  fetch="select" />
-        <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" not-null="true" fetch="select" />
-        <property
-            name="lastModifiedDate"
-            type="java.util.Date"
-            access="property"
-        >
-            <column
-                name="UPDATEDATE" 
-            />
-       </property>
-       
-       <property name="ismainregunit" type="boolean">
-         	<column name="ismainregunit" />
-       </property>
-       
-       <property name="isactive">
-       	 <column name="isactive" />
-       </property>
-        
-        <many-to-one name="regUnitAddress" class="org.egov.lib.address.model.Address" column="REGUNITADDRESSID"  unique="true" cascade="save-update,persist"/>
-        
-  		<bag name="districtChangeDetails" table="EGBD_DISTRICTCHANGEDEATILS" 
+		<property name="regUnitDesc" access="property">
+			<column name="REGUNITDESC" />
+		</property>
+
+		<property name="regUnitDescLocal" access="property">
+			<column name="REGUNITDESCLOCAL" />
+		</property>
+		
+		<property name="createdDate" type="java.util.Date" access="property">
+			<column name="CREATEDATE" />
+		</property>
+
+		<many-to-one name="createdBy"
+			class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"
+			not-null="true" fetch="select" />
+			
+		<property name="lastModifiedDate" type="java.util.Date" access="property">
+			<column name="UPDATEDATE" />
+		</property>
+		
+		<many-to-one name="lastModifiedBy"
+			class="org.egov.infra.admin.master.entity.User" column="UPDATEDBY"
+			fetch="select" />
+
+		<property name="ismainregunit" type="boolean">
+			<column name="ismainregunit" />
+		</property>
+
+		<property name="isactive">
+			<column name="isactive" />
+		</property>
+
+		<many-to-one name="regUnitAddress"
+			class="org.egov.infra.admin.master.entity.Address" column="REGUNITADDRESSID"
+			unique="true" cascade="save-update,persist" />
+
+		<bag name="districtChangeDetails" table="EGBD_DISTRICTCHANGEDEATILS"
 			inverse="true" cascade="all-delete-orphan" lazy="false" order-by="EFFECTIVEDATE desc">
-			    <key column="REGUNITID"/>
-			    <one-to-many  class="org.egov.bnd.model.DistrictChangeDetails" />
+			<key column="REGUNITID" />
+			<one-to-many class="org.egov.bnd.model.DistrictChangeDetails" />
 		</bag>
 		<set name="crematoriums" inverse="true">
-            <key>
-                <column name="REGUNITID" precision="22" scale="0" not-null="true" />
-            </key>
-            <one-to-many class="org.egov.bnd.model.CrematoriumMaster" />
-        </set>
-    </class>
+			<key>
+				<column name="REGUNITID" precision="22" scale="0" not-null="true" />
+			</key>
+			<one-to-many class="org.egov.bnd.model.CrematoriumMaster" />
+		</set>
+	</class>
 
 </hibernate-mapping>

@@ -48,9 +48,6 @@ import org.egov.infra.admin.master.entity.Address;
 
 public class DeathRegistration extends Registration implements Cloneable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 5492067132210150290L;
     private int age;
     private AgeType ageType;

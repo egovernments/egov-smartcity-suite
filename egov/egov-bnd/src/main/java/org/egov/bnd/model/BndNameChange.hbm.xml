@@ -43,54 +43,50 @@
    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class
-        name="org.egov.bnd.model.BndNameChange"
-        table="EGBD_NAMECHANGE">
+	<class name="org.egov.bnd.model.BndNameChange" table="EGBD_NAMECHANGE">
 
-        <id
-            name="id"
-            column="ID" type="int">
-           <generator class="sequence">
+		<id name="id" column="ID" type="int">
+			<generator class="sequence">
 				<param name="sequence">SEQ_CITIZENNAMECHANGE</param>
 			</generator>
-        </id>
-          <timestamp
-			column="LASTUPDATEDTIMESTAMP"
-			name="lastUpatedTimestamp"
-			access="property"
-			unsaved-value="null"/>	
-			      	
-        <property name="firstName">
-			<column name="FIRSTNAME"/>
+		</id>
+		<timestamp column="LASTUPDATEDTIMESTAMP" name="lastUpatedTimestamp"
+			access="property" unsaved-value="null" />
+
+		<property name="firstName">
+			<column name="FIRSTNAME" />
 		</property>
-        <property name="middleName">
-			<column name="MIDDLENAME"/>
+		<property name="middleName">
+			<column name="MIDDLENAME" />
 		</property>
-       <property name="lastName">
-			<column name="LASTNAME"/>
+		<property name="lastName">
+			<column name="LASTNAME" />
 		</property>
-		
+
 		<property name="oldfirstname">
-			<column name="OLD_FIRSTNAME"/>
+			<column name="OLD_FIRSTNAME" />
 		</property>
 		<property name="oldmiddlename">
-			<column name="OLD_MIDDLENAME"/>
+			<column name="OLD_MIDDLENAME" />
 		</property>
 		<property name="oldlastname">
-			<column name="OLD_LASTNAME"/>
+			<column name="OLD_LASTNAME" />
 		</property>
-		
+
 		<property name="remarks">
-			<column name="REMARKS"/>
-		</property>	
-				
-		<many-to-one name="lastlastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="USERID" fetch="select"/>
-		
+			<column name="REMARKS" />
+		</property>
+
+		<many-to-one name="lastModifiedBy"
+			class="org.egov.infra.admin.master.entity.User" column="USERID"
+			fetch="select" />
+
 		<property name="receiptNo">
-			<column name="VOUCHER_NUM"/>
-		</property>	
-		
-	<many-to-one name="citizen" class="org.egov.lib.citizen.model.Owner" column="ID_CITIZEN" cascade="save-update"/>
-      </class>
+			<column name="VOUCHER_NUM" />
+		</property>
+
+		<many-to-one name="citizen" class="org.egov.infra.citizen.entity.Citizen"
+			column="ID_CITIZEN" cascade="save-update" />
+	</class>
 
 </hibernate-mapping>

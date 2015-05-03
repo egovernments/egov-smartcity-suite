@@ -62,7 +62,8 @@
 		<property name="description" not-null="true">
 			<column name="DESCRIPTION" />
 		</property>
-		<property name="isActive" column="ISACTIVE" type="integer" not-null="true"/>
+		<property name="isActive" column="ISACTIVE" type="integer"
+			not-null="true" />
 		<property name="amount" column="AMOUNT" type="integer" />
 
 		<many-to-one name="glcodeId" class="org.egov.commons.CChartOfAccounts">

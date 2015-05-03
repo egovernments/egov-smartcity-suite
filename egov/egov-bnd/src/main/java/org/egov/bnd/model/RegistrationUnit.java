@@ -55,16 +55,7 @@ import java.util.Set;
 import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.workflow.entity.StateAware;
 
-/**
- * @author Administrator TODO To change the template for this generated type
- *         comment go to Window - Preferences - Java - Code Style - Code
- *         Templates
- */
-
 public class RegistrationUnit extends StateAware {
-    /**
-     *
-     */
     private static final long serialVersionUID = 2095268643402349855L;
     // private Long id;
     private String regUnitConst;

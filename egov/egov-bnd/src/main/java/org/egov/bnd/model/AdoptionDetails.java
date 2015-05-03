@@ -44,15 +44,8 @@ import java.util.Date;
 import org.egov.infra.admin.master.entity.Address;
 import org.egov.infstr.models.BaseModel;
 
-@SuppressWarnings("serial")
 public class AdoptionDetails extends BaseModel {
-    /**
-     *
-     */
     private static final long serialVersionUID = -8079098623497302378L;
-    /**
-     * Author:Pradeep Kumar C M
-     */
     private Date adoptionDate;
     private BnDCitizen adopteeMother;
     private BnDCitizen adopteeFather;

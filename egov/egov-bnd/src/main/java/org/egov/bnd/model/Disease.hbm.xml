@@ -43,32 +43,30 @@
    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class 
-        name="org.egov.bnd.model.Disease" table="EGBD_DIESASESMASTER"
-        dynamic-update="false"
-        dynamic-insert="false"
-        select-before-update="false"
-        optimistic-lock="version" >
+	<class name="org.egov.bnd.model.Disease" table="EGBD_DIESASESMASTER"
+		dynamic-update="false" dynamic-insert="false" select-before-update="false"
+		optimistic-lock="version">
 
-        <id name="id" type="long" >
-                <column name="DISEASESID" />
-           <generator class="sequence">
+		<id name="id" type="long">
+			<column name="DISEASESID" />
+			<generator class="sequence">
 				<param name="sequence">SEQ_EGBD_DISEASESMASTER</param>
 			</generator>
-        </id>
-        
-        <property name="desc">
-			<column name="CAUSEOFDEATHDESC"/>
+		</id>
+
+		<property name="desc">
+			<column name="CAUSEOFDEATHDESC" />
 		</property>
-        <property name="descLocal">
-			<column name="CAUSEOFDEATHDESCLOCAL"/>
+		<property name="descLocal">
+			<column name="CAUSEOFDEATHDESCLOCAL" />
 		</property>
-       <property name="causeofdeathconst">
-			<column name="CAUSEOFDEATHCONST"/>
+		<property name="causeofdeathconst">
+			<column name="CAUSEOFDEATHCONST" />
 		</property>
-	    <property name="diseasesCode">
-			<column name="DISEASESCODE"/>
-		</property>		
-       	<many-to-one name="parent" class="org.egov.bnd.model.Disease" column="PARENT" />
-  	</class>
+		<property name="diseasesCode">
+			<column name="DISEASESCODE" />
+		</property>
+		<many-to-one name="parent" class="org.egov.bnd.model.Disease"
+			column="PARENT" />
+	</class>
 </hibernate-mapping>

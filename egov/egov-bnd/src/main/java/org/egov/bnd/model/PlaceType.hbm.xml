@@ -42,75 +42,35 @@
    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping
->
-    <class
-        name="org.egov.bnd.model.PlaceType" table="EGBD_PLACETYPEMASTER"
-        dynamic-update="false"
-        dynamic-insert="false"
-        select-before-update="false"
-        optimistic-lock="version"
-    >
-        <cache usage="read-only" />
+<hibernate-mapping>
+	<class name="org.egov.bnd.model.PlaceType" table="EGBD_PLACETYPEMASTER"
+		dynamic-update="false" dynamic-insert="false" select-before-update="false"
+		optimistic-lock="version">
+		<cache usage="read-only" />
 
-        <id
-            name="id"
-            type="java.lang.Integer"
-        >
-                <column
-                    name="PLACEID" 
-                />
-            <generator class="native">
-              <!--  
-                  To add non XDoclet generator parameters, create a file named 
-                  hibernate-generator-params-CPlaceType.xml 
-                  containing the additional parameters and place it in your merge dir. 
-              --> 
-            </generator>
-        </id>
+		<id name="id" type="java.lang.Integer">
+			<column name="PLACEID" />
+			<generator class="native">
+				<!-- To add non XDoclet generator parameters, create a file named hibernate-generator-params-CPlaceType.xml 
+					containing the additional parameters and place it in your merge dir. -->
+			</generator>
+		</id>
 
-        <property
-            name="desc"
-            type="java.lang.String"
-            update="true"
-            insert="true"
-            access="property"
-        >
-            <column
-                name="PLACETYPEDESC" 
-            />
-        </property>
+		<property name="desc" type="java.lang.String" update="true"
+			insert="true" access="property">
+			<column name="PLACETYPEDESC" />
+		</property>
 
-        <property
-            name="descLocal"
-            type="java.lang.String"
-            update="true"
-            insert="true"
-            access="property"
-        >
-            <column
-                name="PLACETYPEDESCLOCAL" 
-            />
-        </property>
+		<property name="descLocal" type="java.lang.String" update="true"
+			insert="true" access="property">
+			<column name="PLACETYPEDESCLOCAL" />
+		</property>
 
-        <property
-            name="typeConst"
-            type="java.lang.String"
-            update="true"
-            insert="true"
-            access="property"
-        >
-            <column
-                name="PLACETYPECONST" 
-            />
-        </property>
+		<property name="typeConst" type="java.lang.String" update="true"
+			insert="true" access="property">
+			<column name="PLACETYPECONST" />
+		</property>
 
-        <!--
-            To add non XDoclet property mappings, create a file named
-                hibernate-properties-CPlaceType.xml
-            containing the additional properties and place it in your merge dir.
-        -->
-
-    </class>
+	</class>
 
 </hibernate-mapping>

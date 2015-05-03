@@ -43,22 +43,22 @@
    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-<class name="org.egov.bnd.model.CRelation" table="EGBD_RELATIONMASTER">
+	<class name="org.egov.bnd.model.CRelation" table="EGBD_RELATIONMASTER">
 		<!-- A squence pk generator -->
-		<id name="id"  unsaved-value="null" >
-			<column name="RELATIONMASTERID" not-null="true"/>
+		<id name="id" unsaved-value="null">
+			<column name="RELATIONMASTERID" not-null="true" />
 			<generator class="sequence">
 				<param name="sequence">S_87_1_EGBD_RELATIONMASTER</param>
 			</generator>
-		</id>				
+		</id>
 		<property name="relatedAsConst">
-			<column name="RELATEDASCONST"/>
+			<column name="RELATEDASCONST" />
 		</property>
 		<property name="desc">
-			<column name="RELATEDASDESC"/>
-		</property>	
+			<column name="RELATEDASDESC" />
+		</property>
 		<property name="descLocal">
-			<column name="RELATEDASDESCLOCAL"/>
-		</property>	
+			<column name="RELATEDASDESCLOCAL" />
+		</property>
 	</class>
 </hibernate-mapping>

@@ -43,56 +43,49 @@
    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class
-        name="org.egov.bnd.model.Registrar"
-        table="EGBD_REGISTRAR">        
-        <id  name="id">
-                <column name="ID" />
-             <generator class="sequence">
+	<class name="org.egov.bnd.model.Registrar" table="EGBD_REGISTRAR">
+		<id name="id">
+			<column name="ID" />
+			<generator class="sequence">
 				<param name="sequence">SEQ_Registrar</param>
 			</generator>
-        </id>
+		</id>
 
-                
-        <many-to-one name="regUnitId" class="org.egov.bnd.model.RegistrationUnit" fetch="select">
-            <column name="REGUNITID" precision="22" scale="0" />
-        </many-to-one>	
+		<many-to-one name="regUnitId" class="org.egov.bnd.model.RegistrationUnit"
+			fetch="select">
+			<column name="REGUNITID" precision="22" scale="0" />
+		</many-to-one>
 
-        <property name="startDate" access="property" >
-            <column  name="STARTDATE"  />
-        </property>
- 
-         <property name="endDate" access="property">
-            <column name="ENDDATE" />
-        </property>
-        
-              
-         <many-to-one name="userId" class="org.egov.infra.admin.master.entity.User" column="USERID" fetch="select" />
+		<property name="startDate" access="property">
+			<column name="STARTDATE" />
+		</property>
 
-        <property name="valid" access="property">
-            <column name="ISVALID" />
-        </property>
-        
-        <many-to-one 
-            name="establishment" 
-            class="org.egov.bnd.model.Establishment"
-            cascade="save-update,persist"
-            outer-join="auto"
-            update="true"
-            insert="true"
-            access="property"
-            column="ESTABLISHMENTMASTERID"
-            unique="false" />
-        
-    </class>
-    
-    <query name="getAllUsersWhoBelongToBnD">
-    	<![CDATA[from UserImpl where id not in (select userId.id from Registrar) and id in(select user.id from UserRole where role.id in(select id from RoleImpl  where  roleName in(:param_0)))]]>
-    </query>
-    
-    <query name="getOnlyBnDRolesOfUser">
-    	<![CDATA[from RoleImpl where id in(select role.id from UserRole where user.id=?) and roleName in(:param_1)]]>
-    </query>
-    
+		<property name="endDate" access="property">
+			<column name="ENDDATE" />
+		</property>
+
+		<many-to-one name="userId"
+			class="org.egov.infra.admin.master.entity.User" column="USERID"
+			fetch="select" />
+
+		<property name="valid" access="property">
+			<column name="ISVALID" />
+		</property>
+
+		<many-to-one name="establishment" class="org.egov.bnd.model.Establishment"
+			cascade="save-update,persist" outer-join="auto" update="true" insert="true"
+			access="property" column="ESTABLISHMENTMASTERID" unique="false" />
+
+	</class>
+
+    <!-- TODO namedquery fix -->
+	<!-- <query name="getAllUsersWhoBelongToBnD">
+    	<![CDATA[from User where id not in (select userId.id from Registrar) and id in(select user.id from UserRole where role.id in(select id from Role  where  roleName in(:param_0)))]]>
+	</query>
+
+	<query name="getOnlyBnDRolesOfUser">
+    	<![CDATA[from Role where id in(select role.id from UserRole where user.id=?) and roleName in(:param_1)]]>
+	</query>
+    -->
 
 </hibernate-mapping>

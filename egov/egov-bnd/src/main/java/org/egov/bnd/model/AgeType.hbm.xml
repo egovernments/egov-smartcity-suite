@@ -43,37 +43,23 @@
    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class
-        name="org.egov.bnd.model.AgeType"
-        table="EGBD_AGETYPE">        
-        <id  name="id">
-                <column
-                    name="AGETYPEID" 
-                />
-            <generator class="native">
-				
+	<class name="org.egov.bnd.model.AgeType" table="EGBD_AGETYPE">
+		<id name="id">
+			<column name="AGETYPEID" />
+			<generator class="native">
+
 			</generator>
-        </id>
+		</id>
 
-        <property
-            name="ageTypedesc"
-            access="property"
-        >
-            <column
-                name="AGETYPEDESC" 
-            />
-        </property>
+		<property name="ageTypedesc" access="property">
+			<column name="AGETYPEDESC" />
+		</property>
 
-        <property
-            name="ageTypedesclocal"
-            access="property"
-        >
-            <column
-                name="AGETYPEDESCLOCAL" 
-            />
-        </property>
+		<property name="ageTypedesclocal" access="property">
+			<column name="AGETYPEDESCLOCAL" />
+		</property>
 
 
-    </class>
+	</class>
 
 </hibernate-mapping>

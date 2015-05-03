@@ -42,170 +42,71 @@
    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping
->
-    <class
-        name="org.egov.bnd.model.CitizenBDDetails"
-        table="EGBD_CITIZENBDDETAILS"
-        dynamic-update="false"
-        dynamic-insert="false"
-        select-before-update="false"
-        optimistic-lock="version"
-    >
+<hibernate-mapping>
+	<class name="org.egov.bnd.model.CitizenBDDetails" table="EGBD_CITIZENBDDETAILS"
+		dynamic-update="false" dynamic-insert="false" select-before-update="false"
+		optimistic-lock="version">
 
-        <id
-            name="id" unsaved-value="null"
-            type="java.lang.Integer"
-        >
-                <column   
-                    name="EGBD_CITIZENDETAILSID" 
-                />
-           <generator class="sequence">
+		<id name="id" unsaved-value="null" type="java.lang.Integer">
+			<column name="EGBD_CITIZENDETAILSID" />
+			<generator class="sequence">
 				<param name="sequence">S_72_1_EGBD_CITIZENBDDETAI</param>
 			</generator>
-        </id>
+		</id>
 
-        <many-to-one
-            name="fatherEducation"
-            class="org.egov.bnd.model.Education"
-            cascade="none"
-            outer-join="auto"
-            update="true"
-            insert="true"
-            access="property"
-            column="FATHEREDUMASTERID"
-            unique="false"
-        />
+		<many-to-one name="fatherEducation" class="org.egov.bnd.model.Education"
+			cascade="none" outer-join="auto" update="true" insert="true" access="property"
+			column="FATHEREDUMASTERID" unique="false" />
 
-        <many-to-one
-            name="fatherOccupation"
-            class="org.egov.bnd.model.Occupation"
-            cascade="none"
-            outer-join="auto"
-            update="true"
-            insert="true"
-            access="property"
-            column="FATHEROCCMASTERID"
-            unique="false"
-        />
+		<many-to-one name="fatherOccupation" class="org.egov.bnd.model.Occupation"
+			cascade="none" outer-join="auto" update="true" insert="true" access="property"
+			column="FATHEROCCMASTERID" unique="false" />
 
-        <many-to-one
-            name="motherEducation"
-            class="org.egov.bnd.model.Education"
-            cascade="none"
-            outer-join="auto"
-            update="true"
-            insert="true"
-            access="property"
-            column="MOTHEREDUMASTERID"
-            unique="false"
-        />
+		<many-to-one name="motherEducation" class="org.egov.bnd.model.Education"
+			cascade="none" outer-join="auto" update="true" insert="true" access="property"
+			column="MOTHEREDUMASTERID" unique="false" />
 
-        <many-to-one
-            name="motherOccupation"
-            class="org.egov.bnd.model.Occupation"
-            cascade="none"
-            outer-join="auto"
-            update="true"
-            insert="true"
-            access="property"
-            column="MOTHEROCCMASTERID"
-            unique="false"
-        />
+		<many-to-one name="motherOccupation" class="org.egov.bnd.model.Occupation"
+			cascade="none" outer-join="auto" update="true" insert="true" access="property"
+			column="MOTHEROCCMASTERID" unique="false" />
 
-        <many-to-one
-            name="occupation"
-            class="org.egov.bnd.model.Occupation"
-            cascade="none"
-            outer-join="auto"
-            update="true"
-            insert="true"
-            access="property"
-            column="OCCUPATIONID"
-            unique="false"
-        />
-        
-          <many-to-one
-            name="informantOccupation"
-            class="org.egov.bnd.model.Occupation"
-            cascade="none"
-            outer-join="auto"
-            update="true"
-            insert="true"
-            access="property"
-            column="INFORMANTOCCMASTERID"
-            unique="false"
-        />
+		<many-to-one name="occupation" class="org.egov.bnd.model.Occupation"
+			cascade="none" outer-join="auto" update="true" insert="true" access="property"
+			column="OCCUPATIONID" unique="false" />
 
-        <property
-            name="ageMomBirth"
-            type="java.lang.Integer"
-            update="true"
-            insert="true"
-            access="property"
-        >
-            <column
-                name="MOTHERAGEATCHILDBIRTH" 
-            />
-        </property>
+		<many-to-one name="informantOccupation" class="org.egov.bnd.model.Occupation"
+			cascade="none" outer-join="auto" update="true" insert="true" access="property"
+			column="INFORMANTOCCMASTERID" unique="false" />
 
-        <property
-            name="ageMomMarriage"
-            type="java.lang.Integer"
-            update="true"
-            insert="true"
-            access="property"
-        >
-            <column
-                name="MOTHERAGEATMARRIAGE" 
-            />
-        </property>
+		<property name="ageMomBirth" type="java.lang.Integer" update="true"
+			insert="true" access="property">
+			<column name="MOTHERAGEATCHILDBIRTH" />
+		</property>
 
-        <property
-            name="noOfChildren"
-            type="java.lang.Integer"
-            update="true"
-            insert="true"
-            access="property"
-        >
-            <column
-                name="NOOFCHILDREN" 
-            />
-        </property>
-        
-        <property
-            name="isStillBirth"
-            type="java.lang.Character"
-            update="true"
-            insert="true"
-            access="property"
-        >
-            <column
-                name="ISSTILLBIRTH" 
-            />
-        </property>
-        
-        
+		<property name="ageMomMarriage" type="java.lang.Integer"
+			update="true" insert="true" access="property">
+			<column name="MOTHERAGEATMARRIAGE" />
+		</property>
 
-        <many-to-one
-            name="religion"
-            class="org.egov.bnd.model.Religion"
-            cascade="none"
-            outer-join="auto"
-            update="true"
-            insert="true"
-            access="property"
-            column="RELIGIONMASTERID"
-            unique="false"
-        />
-        
-		<many-to-one name="causeOfDeath" class="org.egov.bnd.model.Disease" column="ICDCLASSIFICATIONMASTID"  unique="true" />
-        <!--
-            To add non XDoclet property mappings, create a file named
-                hibernate-properties-CCitizenBDDetails.xml
-            containing the additional properties and place it in your merge dir.
-        -->
+		<property name="noOfChildren" type="java.lang.Integer"
+			update="true" insert="true" access="property">
+			<column name="NOOFCHILDREN" />
+		</property>
 
-    </class>
+		<property name="isStillBirth" type="java.lang.Character"
+			update="true" insert="true" access="property">
+			<column name="ISSTILLBIRTH" />
+		</property>
+
+
+
+		<many-to-one name="religion" class="org.egov.bnd.model.Religion"
+			cascade="none" outer-join="auto" update="true" insert="true" access="property"
+			column="RELIGIONMASTERID" unique="false" />
+
+		<many-to-one name="causeOfDeath" class="org.egov.bnd.model.Disease"
+			column="ICDCLASSIFICATIONMASTID" unique="true" />
+
+	</class>
 
 </hibernate-mapping>

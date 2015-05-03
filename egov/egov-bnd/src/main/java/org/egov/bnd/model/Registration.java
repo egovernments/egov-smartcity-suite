@@ -51,9 +51,6 @@ import org.egov.infra.workflow.entity.StateAware;
 
 public class Registration extends StateAware {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -419639557628367259L;
     // private Long id = null;
     private BnDCitizen citizen = null;

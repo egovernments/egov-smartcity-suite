@@ -76,8 +76,8 @@
                 <column name="EVENTDATE" length="7" />
             </property>
             <many-to-one name="establishmentmasterid" class="org.egov.bnd.model.Establishment" column="ESTABLISHMENTMASTERID"  fetch="select" />
-            <many-to-one name="eventaddressid" class="org.egov.lib.address.model.Address" column="EVENTADDRESSID" fetch="select" />
-            <many-to-one name="deceasedaddressid" class="org.egov.lib.address.model.Address" column="DECEASEDADDRESSID" fetch="select" />
+            <many-to-one name="eventaddressid" class="org.egov.infra.admin.master.entity.Address" column="EVENTADDRESSID" fetch="select" />
+            <many-to-one name="deceasedaddressid" class="org.egov.infra.admin.master.entity.Address" column="DECEASEDADDRESSID" fetch="select" />
             <many-to-one name="ageType" class="org.egov.bnd.model.AgeType" column="AGETYPE" fetch="select"/>
 	        <many-to-one name="registrationstatus" class="org.egov.commons.EgwStatus" column="REGISTRATIONSTATUS" fetch="select" />
            

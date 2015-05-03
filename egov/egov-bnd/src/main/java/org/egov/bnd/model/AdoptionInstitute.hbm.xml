@@ -43,34 +43,33 @@
    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
    
 <hibernate-mapping>
-  <class name="org.egov.bnd.model.AdoptionInstitute" table="EGBD_ADOPTIONINSTITUTES">
-       
-       <id name="id"  unsaved-value="null" >
-			<column name="ID" not-null="true"/>
+	<class name="org.egov.bnd.model.AdoptionInstitute" table="EGBD_ADOPTIONINSTITUTES">
+
+		<id name="id" unsaved-value="null">
+			<column name="ID" not-null="true" />
 			<generator class="sequence">
 				<param name="sequence">SEQ_ADOPTIONINSTITUTES</param>
-			</generator>  
-		</id>		
+			</generator>
+		</id>
+
+		<property name="isActive" column="ISACTIVE" type="integer" />
 		
-		<property
-			name="isActive"
-			column="ISACTIVE"
-			type="integer"
-		/>
-        <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" not-null="true" fetch="select" />
-		
+		<many-to-one name="createdBy"
+			class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"
+			not-null="true" fetch="select" />
+
 		<property name="lastModifiedDate" type="java.util.Date">
-            <column name="updatedTime" length="7" />
-        </property>
-        
-		 <property name="institutionName">
-			<column name="institutionName"/>
-		</property>	
-		 <property name="institutionCode">
-			<column name="institutionCode"/>
+			<column name="updatedTime" length="7" />
+		</property>
+
+		<property name="institutionName">
+			<column name="institutionName" />
+		</property>
+		<property name="institutionCode">
+			<column name="institutionCode" />
 		</property>
 		<property name="remarks">
-			<column name="REMARKS"/>
-		</property>	
-  </class>
+			<column name="REMARKS" />
+		</property>
+	</class>
 </hibernate-mapping>

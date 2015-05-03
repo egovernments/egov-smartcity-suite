@@ -43,42 +43,25 @@
    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="org.egov.bnd.model.AttentionDeathType"   table="EGBD_ATTBEFRDEATHMASTER">        
-        <id  name="id">
-                <column
-                    name="ATTBEFOREDEATHMASTID" 
-                />
-            <generator class="sequence">
+	<class name="org.egov.bnd.model.AttentionDeathType" table="EGBD_ATTBEFRDEATHMASTER">
+		<id name="id">
+			<column name="ATTBEFOREDEATHMASTID" />
+			<generator class="sequence">
 				<param name="sequence">S_68_1_EGBD_ATTBEFRDEATHMA</param>
 			</generator>
-        </id>
-        			
-        <property
-            name="attentionDesc"
-            access="property"
-        >
-            <column
-                name="ATTENTIONTYPEDESC" 
-            />
-        </property>
+		</id>
 
-        <property
-            name="attentionDescLocal"
-            access="property"
-        >
-            <column
-                name="ATTENTIONTYPEDESCLOCAL" 
-            />
-        </property>
+		<property name="attentionDesc" access="property">
+			<column name="ATTENTIONTYPEDESC" />
+		</property>
 
-		 <property
-            name="attentionConst"
-            access="property"
-        >
-            <column
-                name="ATTENTIONTYPECONST" 
-            />
-        </property>
-    </class>
+		<property name="attentionDescLocal" access="property">
+			<column name="ATTENTIONTYPEDESCLOCAL" />
+		</property>
+
+		<property name="attentionConst" access="property">
+			<column name="ATTENTIONTYPECONST" />
+		</property>
+	</class>
 
 </hibernate-mapping>

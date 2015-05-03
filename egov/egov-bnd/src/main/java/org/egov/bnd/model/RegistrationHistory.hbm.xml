@@ -65,8 +65,8 @@
             <column name="CHANGEDVALUE" length="50" />
         </property>
         
-         <property name="lastModifiedDate" type="java.util.Date" >
-            <column  name="lastModifiedDate" />
+         <property name="modifiedDate" type="java.util.Date" >
+            <column  name="modifiedDate" />
         </property>
         
          <property name="eventDate" type="java.util.Date" >

@@ -41,12 +41,8 @@ package org.egov.bnd.model;
 
 import org.egov.infra.workflow.entity.StateAware;
 
-@SuppressWarnings("serial")
 public class ReportDetails extends StateAware {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -3575241288223620580L;
     private String month;
     private String regUnit;

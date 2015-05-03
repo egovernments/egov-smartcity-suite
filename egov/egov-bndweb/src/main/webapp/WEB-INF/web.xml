@@ -117,6 +117,11 @@
 	</filter>
 	
 	<filter>
+		<filter-name>ResponseOverrideFilter</filter-name>
+		<filter-class>org.displaytag.filter.ResponseOverrideFilter</filter-class>
+	</filter>
+	
+	<filter>
 		<filter-name>struts2Prepare</filter-name>
 		<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareFilter</filter-class>
 	</filter>
@@ -179,6 +184,12 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	
+    <filter-mapping>
+		<filter-name>ResponseOverrideFilter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+	
 	<filter-mapping>
 		<filter-name>struts2Prepare</filter-name>
 		<url-pattern>*.action</url-pattern>
@@ -218,7 +229,9 @@
 	
 	
 	<!-- Servlet Declaration Starts -->
-    <servlet>
+    <!--
+       As of now not required, only struts2
+      <servlet>
         <servlet-name>bndweb</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
@@ -232,7 +245,7 @@
     <servlet-mapping>
         <servlet-name>bndweb</servlet-name>
         <url-pattern>/</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping> -->
     <!-- Servlet Declaration Ends -->
     
     <jsp-config>

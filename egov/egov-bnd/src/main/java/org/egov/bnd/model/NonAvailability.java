@@ -45,9 +45,6 @@ import org.egov.commons.EgwStatus;
 import org.egov.infra.workflow.entity.StateAware;
 
 public class NonAvailability extends StateAware {
-    /**
-     *
-     */
     private static final long serialVersionUID = 4204662679487898122L;
     private final Long id = null;
     private String registrationNo;

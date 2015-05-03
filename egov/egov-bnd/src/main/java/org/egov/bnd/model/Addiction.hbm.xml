@@ -41,26 +41,26 @@
 <!DOCTYPE hibernate-mapping PUBLIC
    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-	
-	
+
+
 <hibernate-mapping>
 
-<class name="org.egov.bnd.model.Addiction" table="EGBD_ADDICTIONMASTER">
+	<class name="org.egov.bnd.model.Addiction" table="EGBD_ADDICTIONMASTER">
 		<!-- A squence pk generator -->
-		<id name="id"  unsaved-value="null" >
-			<column name="ADDICTIONID" not-null="true"/>
+		<id name="id" unsaved-value="null">
+			<column name="ADDICTIONID" not-null="true" />
 			<generator class="sequence">
 				<param name="sequence">S_66_1_EGBD_ADDICTIONMASTER</param>
 			</generator>
-		</id>				
+		</id>
 		<property name="addictionConst">
-			<column name="ADDICTIONCONST"/>
+			<column name="ADDICTIONCONST" />
 		</property>
 		<property name="desc">
-			<column name="ADDICTIONDESC"/>
-		</property>	
+			<column name="ADDICTIONDESC" />
+		</property>
 		<property name="descLocal">
-			<column name="ADDICTIONDESCLOCAL"/>
-		</property>	
+			<column name="ADDICTIONDESCLOCAL" />
+		</property>
 	</class>
 </hibernate-mapping>

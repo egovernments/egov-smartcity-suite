@@ -66,7 +66,7 @@
 			<column name="COURTORDERNUMBER"/>
 		</property>	
         
-		<property name="lastModifiedDate" type="java.util.Date">
+		<property name="modifiedDate" type="java.util.Date">
             <column name="LASTMODIFIED" length="7" />
         </property>
         
@@ -74,7 +74,7 @@
             <column name="CREATEDDATE" length="7" not-null="true" />
         </property>
         
-	   <many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="lastModifiedBy"  fetch="select" />
+	   <many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="modifiedBy"  fetch="select" />
        <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" not-null="true" fetch="select" />
        
         <property name="remarks">
@@ -83,7 +83,7 @@
 		
         <many-to-one name="adopteeFather" class="org.egov.bnd.model.BnDCitizen" column="ADOPTEEFATHERID"  unique="true" cascade="all"/>
         <many-to-one name="adopteeMother" class="org.egov.bnd.model.BnDCitizen" column="ADOPTEEMOTHERID"  unique="true" cascade="all"/>
-		<many-to-one name="adopteeAddress" class="org.egov.lib.address.model.Address" column="ADOPTEEADDRESSID"  unique="true" cascade="all"/>
+		<many-to-one name="adopteeAddress" class="org.egov.infra.admin.master.entity.Address" column="ADOPTEEADDRESSID"  unique="true" cascade="all"/>
 		<many-to-one name="adoptionInstitute" class="org.egov.bnd.model.AdoptionInstitute" column="ADOPTIONINSTITUTEID"  cascade="all"/>
 	
     </class>

@@ -42,33 +42,21 @@
    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping >
-    <class
-        name="org.egov.bnd.model.BndStatus"  table="EGBD_BNDSTATUS"
-        dynamic-update="false"
-        dynamic-insert="false"
-        select-before-update="false"
-        optimistic-lock="version" >
-        <cache usage="read-only" />
+<hibernate-mapping>
+	<class name="org.egov.bnd.model.BndStatus" table="EGBD_BNDSTATUS"
+		dynamic-update="false" dynamic-insert="false" select-before-update="false"
+		optimistic-lock="version">
+		<cache usage="read-only" />
 
-        <id
-            name="id"
-            type="java.lang.Integer"  >
-                <column  name="STATUS_ID"  />
-                    
-        </id>
+		<id name="id" type="java.lang.Integer">
+			<column name="STATUS_ID" />
+		</id>
 
-        <property
-            name="statusDesc"
-            type="java.lang.String"
-            update="true"
-            insert="true"
-            access="property"    >
-            <column
-                name="STATUSDESC" 
-            />
-        </property>
+		<property name="statusDesc" type="java.lang.String" update="true"
+			insert="true" access="property">
+			<column name="STATUSDESC" />
+		</property>
 
-    </class>
+	</class>
 
 </hibernate-mapping>

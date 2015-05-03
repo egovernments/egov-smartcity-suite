@@ -44,9 +44,6 @@ import org.egov.infra.workflow.entity.StateAware;
 
 public class Place extends StateAware {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -261891252832353016L;
     private PlaceType placeType; /* Can be either hospital, home or other */
     private Address address = null;

@@ -43,24 +43,24 @@
    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="org.egov.bnd.model.CitizenRelation" table="EGBD_CITIZENRELATIONSHIP">
+	<class name="org.egov.bnd.model.CitizenRelation" table="EGBD_CITIZENRELATIONSHIP">
 
-        <id name="id" type="long" unsaved-value="null" >
-             <column name="CITIZENRELATIONSHIPID" />
+		<id name="id" type="long" unsaved-value="null">
+			<column name="CITIZENRELATIONSHIPID" />
 			<generator class="sequence">
 				<param name="sequence">S_74_3_EGBD_CITIZENRELATIO</param>
 			</generator>
-        </id>
-        
+		</id>
+
 		<many-to-one name="relatedAs" class="org.egov.bnd.model.CRelation"
-				 column="RELATIONMASTERID" cascade="none"/>
+			column="RELATIONMASTERID" cascade="none" />
 		<many-to-one name="person" class="org.egov.bnd.model.BnDCitizen"
-				 column="RELATEDCITIZENID" cascade="save-update"  />
-    	 <many-to-one name="cit" class="org.egov.bnd.model.BnDCitizen"
-				 column="CITIZENID" cascade="save-update"/>
-        
-        </class>
-        
-	</hibernate-mapping>
+			column="RELATEDCITIZENID" cascade="save-update" />
+		<many-to-one name="cit" class="org.egov.bnd.model.BnDCitizen"
+			column="CITIZENID" cascade="save-update" />
+
+	</class>
+
+</hibernate-mapping>
         
         
