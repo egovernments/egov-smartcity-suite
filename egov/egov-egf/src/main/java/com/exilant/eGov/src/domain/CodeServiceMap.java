@@ -39,15 +39,16 @@
  ******************************************************************************/
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-
+@Transactional(readOnly=true)
 public class CodeServiceMap {
 	private String id = null;
 	private String serviceId = null;
@@ -63,32 +64,31 @@ public class CodeServiceMap {
 	public int getId() {
 		return Integer.valueOf(id).intValue();
 	}
-
-	public void insert(Connection connection) throws SQLException {
+	@Transactional
+	public void insert() throws SQLException {
 		// EGovernCommon commommethods = new EGovernCommon();
 		setId(String.valueOf(PrimaryKeyGenerator.getNextKey("CodeServiceMap")));
 		String insertQuery = "INSERT INTO CodeServiceMap (id, serviceid, GLCODEID) "
 				+ "VALUES ( ?, ?, ?)";
-		PreparedStatement pst = connection.prepareStatement(insertQuery);
+		Query pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 		pst.setString(1, id);
 		pst.setString(2, serviceId);
 		pst.setString(3, glCodeId);
 		pst.executeUpdate();
-		pst.close();
 		if(LOGGER.isDebugEnabled())     LOGGER.debug(insertQuery);
 	}
-
-	public void update(Connection connection) throws SQLException {
+	@Transactional
+	public void update() throws SQLException {
 		try {
-			newUpdate(connection);
+			newUpdate();
 		} catch (TaskFailedException e) {
 			LOGGER.error("Error inside update"+e.getMessage(),e);
 		}
 	}
-
-	public void newUpdate(Connection con) throws TaskFailedException,
+	@Transactional
+	public void newUpdate() throws TaskFailedException,
 			SQLException {
-		PreparedStatement pstmt = null;
+		Query pstmt = null;
 		StringBuilder query = new StringBuilder(500);
 		query.append("update vouchermis set ");
 		if (serviceId != null)
@@ -100,24 +100,18 @@ public class CodeServiceMap {
 		query.append(" where id=?");
 		try {
 			int i = 1;
-			pstmt = con.prepareStatement(query.toString());
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
 			if (serviceId != null)
 				pstmt.setString(i++, serviceId);
 			if (glCodeId != null)
 				pstmt.setString(i++, glCodeId);
 			pstmt.setString(i++, id);
 
-			pstmt.executeQuery();
+			pstmt.executeUpdate();
 		} catch (Exception e) {
 			LOGGER.error("Exp in update: " + e.getMessage());
 			throw taskExc;
-		} finally {
-			try {
-				pstmt.close();
-			} catch (Exception e) {
-				LOGGER.error("Inside finally block of update");
-			}
-		}
+		} 
 	}
 
 	public String getServiceId() {

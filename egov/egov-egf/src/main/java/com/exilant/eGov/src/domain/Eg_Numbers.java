@@ -40,13 +40,15 @@
 package com.exilant.eGov.src.domain;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-
+@Transactional(readOnly=true)
 public class Eg_Numbers 
 {
 	private String id = null;
@@ -98,34 +100,32 @@ public class Eg_Numbers
 	public String getFiscialPeriodId() {
 		return fiscialPeriodId;
 	}
-
-	public void insert(Connection connection) throws SQLException {
-		PreparedStatement psmt = null;
+	@Transactional
+	public void insert() throws Exception {
+		Query psmt = null;
 		setId(String.valueOf(PrimaryKeyGenerator.getNextKey("eg_numbers")));
 		String insertQuery = "INSERT INTO eg_numbers (Id, VoucherNumber,VoucherType,fiscialPeriodId) values (?,?,?,?)";
 		if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
-		psmt = connection.prepareStatement(insertQuery);
+		psmt = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 		psmt.setString(1, id);
 		psmt.setString(2, voucherNumber);
 		psmt.setString(3, voucherType);
 		psmt.setString(4, fiscialPeriodId);
-		psmt.executeQuery();
-		psmt.close();
+		psmt.executeUpdate();
 	}
-
+	@Transactional
 	public void update (final Connection connection) throws SQLException
 		{
-		    PreparedStatement psmt=null;
+		    Query psmt=null;
 			if(isId && isField)
 			{
 				updateQuery = updateQuery.substring(0,updateQuery.length()-1);
 				updateQuery = updateQuery + " WHERE id = ?";
 				if(LOGGER.isInfoEnabled())     LOGGER.info(updateQuery);
-				psmt=connection.prepareStatement(updateQuery);
+				psmt=HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
 				psmt.setString(1,id);
 				psmt.executeUpdate();
 				
-				psmt.close();
 				updateQuery="UPDATE eg_numbers SET";
 			}
 		}

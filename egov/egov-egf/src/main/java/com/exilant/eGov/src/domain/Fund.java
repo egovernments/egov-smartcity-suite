@@ -45,15 +45,22 @@
  */
 package com.exilant.eGov.src.domain;
 
-import com.exilant.eGov.src.common.EGovernCommon;
-import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
-import com.exilant.exility.common.TaskFailedException;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.EgovMasterDataCaching;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.exilant.eGov.src.common.EGovernCommon;
+import com.exilant.exility.common.TaskFailedException;
+import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 
 /**
  * @author pushpendra.singh
@@ -61,7 +68,7 @@ import org.egov.infstr.utils.EgovMasterDataCaching;
  *         TODO To change the template for this generated type comment go to
  *         Window - Preferences - Java - Code Style - Code Templates
  */
-
+@Transactional(readOnly=true)
 public class Fund {
 	private String id = null;
 	private String code = null;
@@ -184,15 +191,16 @@ public class Fund {
 			throws SQLException, TaskFailedException {
 		String retVal = null;
 		String query = "Select payGlcodeId from fund where id= ?";
-		PreparedStatement pst = connection.prepareStatement(query);
+		Query pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
 		pst.setString(1, fundid);
-		ResultSet rs = pst.executeQuery();
-		if (rs.next())
-			retVal = rs.getString(1);
+		List<Object[]> rs = pst.list();
+		for(Object[] element : rs){
+			retVal = element[0].toString()	;
+		}
 		return retVal;
 	}
-
-	public void insert(Connection connection) throws SQLException,
+	@Transactional
+	public void insert() throws SQLException,
 			TaskFailedException {
 		EGovernCommon commommethods = new EGovernCommon();
 		created = commommethods.getCurrentDate();
@@ -215,7 +223,7 @@ public class Fund {
 				"VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
-		PreparedStatement pst = connection.prepareStatement(insertQuery);
+		Query pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 		pst.setString(1, id);
 		pst.setString(2, code);
 		pst.setString(3, name);
@@ -231,21 +239,20 @@ public class Fund {
 		pst.setString(13, created);
 		pst.setString(14, modifiedBy);
 		pst.executeUpdate();
-		pst.close();
 	}
-
-	public void update(Connection connection) throws SQLException,
+	@Transactional
+	public void update() throws SQLException,
 			TaskFailedException {
 		if (isId && isField) {
-			newUpdate(connection);
+			newUpdate();
 		}
 	}
-	public void newUpdate(Connection con) throws TaskFailedException,
+	public void newUpdate() throws TaskFailedException,
 			SQLException {
 		EGovernCommon commommethods = new EGovernCommon();
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-		PreparedStatement pstmt = null;
+		Query pstmt = null;
 		try {
 			created = formatter.format(sdf.parse(created));
 		} catch (ParseException parseExp) {
@@ -288,7 +295,7 @@ public class Fund {
 		query.append(" where id=?");
 		try {
 			int i = 1;
-			pstmt = con.prepareStatement(query.toString());
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
 			if (code != null)
 				pstmt.setString(i++, code);
 			if (name != null)
@@ -319,17 +326,11 @@ public class Fund {
 				pstmt.setString(i++, payGlcodeId);
 			pstmt.setString(i++, id);
 
-			pstmt.executeQuery();
+			pstmt.executeUpdate();
 		} catch (Exception e) {
 			LOGGER.error("Exp in update: " + e.getMessage(),e);
 			throw taskExc;
-		} finally {
-			try {
-				pstmt.close();
-			} catch (Exception e) {
-				LOGGER.error("Inside finally block of update");
-			}
-		}
+		} 
 	}
 
 	public HashMap getFundList(Connection con) throws Exception {
@@ -337,10 +338,11 @@ public class Fund {
 		if(LOGGER.isInfoEnabled())     LOGGER.info("  query   " + query);
 		HashMap hm = new HashMap();
 		try {
-			PreparedStatement pst = con.prepareStatement(query);
-			ResultSet rs = pst.executeQuery();
-			while (rs.next())
-				hm.put(rs.getString(1), rs.getString(2));
+			Query pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
+			List<Object[]> rs = pst.list();
+			for(Object[] element : rs){
+				hm.put(element[0].toString(), element[1].toString());
+			}
 
 		} catch (Exception e) {
 			LOGGER.error("Exp in getFundList" + e.getMessage(),e);
@@ -354,11 +356,12 @@ public class Fund {
 		if(LOGGER.isInfoEnabled())     LOGGER.info("  query   " + query);
 		String fundId = "";
 		try {
-			PreparedStatement pst = con.prepareStatement(query);
+			Query pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
 			pst.setString(1, accId);
-			ResultSet rs = pst.executeQuery();
-			if (rs.next())
-				fundId = rs.getString(1);
+			List<Object[]> rs = pst.list();
+			for(Object[] element : rs){
+				fundId = element[0].toString();
+			}
 		} catch (Exception e) {
 			LOGGER.error("Exp in getFundForAcc" + e.getMessage(),e);
 			throw taskExc;
@@ -371,10 +374,11 @@ public class Fund {
 		if(LOGGER.isInfoEnabled())     LOGGER.info("  query   " + query);
 		HashMap hm = new HashMap();
 		try {
-			PreparedStatement pst = con.prepareStatement(query);
-			ResultSet rs = pst.executeQuery();
-			while (rs.next())
-				hm.put(rs.getString(1), rs.getString(2));
+			Query pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
+			List<Object[]> rs = pst.list();
+			for(Object[] element : rs){
+				hm.put(element[0].toString(), element[1].toString());
+			}
 		} catch (Exception e) {
 			LOGGER.error("Exp in getFundSourceList" + e.getMessage(),e);
 			throw taskExc;

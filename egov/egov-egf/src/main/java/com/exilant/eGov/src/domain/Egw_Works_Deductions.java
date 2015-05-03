@@ -44,17 +44,18 @@
 
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-
+@Transactional(readOnly=true)
 public class Egw_Works_Deductions
 {
 	private static final Logger LOGGER=Logger.getLogger(Egw_Works_Deductions.class);
@@ -135,8 +136,8 @@ public class Egw_Works_Deductions
 		isField = true;
 	}
 
-
-public void insert(Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+public void insert() throws SQLException,TaskFailedException
 	{
 		setId( String.valueOf(PrimaryKeyGenerator.getNextKey("Egw_Works_Deductions")) );
 		created = cm.getCurrentDate();
@@ -154,13 +155,12 @@ public void insert(Connection connection) throws SQLException,TaskFailedExceptio
 					"VALUES (" + id + ", " + worksdetailid + ", " + glcodeid + ", " + amount + ", "	+ perc + ","
 					+"'" + dedType + "', " + tdsId + ","+"'"+lastmodifieddate+"')";
         if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
-		Statement statement = connection.createStatement();
-		statement.executeUpdate(insertQuery);
-		statement.close();
+		Query statement = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
+		statement.executeUpdate();
 
 	} //insert
-
-	public void update (Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+	public void update () throws SQLException,TaskFailedException
 	{
 		created = cm.getCurrentDate();
 		String currentdate="";
@@ -177,9 +177,8 @@ public void insert(Connection connection) throws SQLException,TaskFailedExceptio
 			updateQuery = updateQuery.substring(0,updateQuery.length()-1);
 			updateQuery = updateQuery + " WHERE worksdetailid = " + worksdetailid;
             if(LOGGER.isInfoEnabled())     LOGGER.info(updateQuery);
-			Statement statement = connection.createStatement();
-			statement.executeUpdate(updateQuery);
-			statement.close();
+			Query statement = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
+			statement.executeUpdate();
 			updateQuery="UPDATE Egw_Works_Deductions SET";
 		}
 	} // update

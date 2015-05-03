@@ -219,7 +219,7 @@ public class MasterSalaryCodes extends AbstractTask {
 
 				if (answer1 != 0 && answer2 != 0) {
 
-					salcode.insert(con);
+					salcode.insert();
 					answer = true;
 				} else {
 					answer = false;
@@ -299,7 +299,7 @@ public class MasterSalaryCodes extends AbstractTask {
 
 				if (answer1 != 0 && answer2 != 0) {
 
-					salcode.update(con);
+					salcode.update();
 					answer = true;
 				} else {
 					answer = false;
@@ -360,7 +360,7 @@ public class MasterSalaryCodes extends AbstractTask {
 								.getSQLDateTimeFormat(today));
 
 				if (answer1 != 0 && answer2 != 0) {
-					salcode.insert(con);
+					salcode.insert();
 					answer = true;
 				} else {
 					answer = false;

@@ -46,13 +46,13 @@
 
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
@@ -64,7 +64,7 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
  * @author Sathish
  * @version 1.1  
  */
-
+@Transactional(readOnly=true)
 public class EgRemittanceGldtl
 {
 	EGovernCommon cm = new EGovernCommon();
@@ -90,7 +90,7 @@ public class EgRemittanceGldtl
 	public String getLastModifiedDate(){ return lastModifiedDate; }
 	public String getRemittedAmt(){ return remittedAmt; }
 	public String getTdsId(){ return tdsId; }
-	
+	@Transactional
 	public void insert() throws SQLException,TaskFailedException
 	{						
 		Query pstmt=null;

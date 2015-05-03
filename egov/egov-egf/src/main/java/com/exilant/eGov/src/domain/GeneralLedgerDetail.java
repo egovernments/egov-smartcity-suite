@@ -44,15 +44,15 @@
 
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-
+@Transactional(readOnly=true)
 public class GeneralLedgerDetail {
 	private String id = null;
 	private String glId = null;
@@ -72,7 +72,7 @@ public class GeneralLedgerDetail {
 	public String getDetailKeyId(){return detailKeyId ; }
 	public String getDetailTypeId(){ return detailTypeId; }
 	public String getDetailAmt(){ return detailAmt; }
-	
+	@Transactional
 	public void insert() throws SQLException
 	{						
 		setId( String.valueOf(PrimaryKeyGenerator.getNextKey("GeneralLedgerDetail")) );

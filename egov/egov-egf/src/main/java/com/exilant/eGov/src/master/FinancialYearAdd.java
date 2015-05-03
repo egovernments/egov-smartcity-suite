@@ -96,7 +96,7 @@ public class FinancialYearAdd extends AbstractTask{
 		FY.setEndingDate(dc.getValue("financialYear_endingDate"));
 		FY.setModifiedBy(dc.getValue("egUser_id"));
 		FY.setIsActive("1");
-		FY.insert(connection);
+		FY.insert();
 		fid=FY.getId();
 	}
   private void postInFiscalPeriod()throws SQLException,TaskFailedException{
@@ -113,7 +113,7 @@ public class FinancialYearAdd extends AbstractTask{
 				FP.setStartingDate(fGrid[i][2]);
 				FP.setEndingDate(fGrid[i][3]);
 				FP.setModifiedBy(dc.getValue("egUser_id"));
-				FP.insert(connection);
+				FP.insert();
   			}
 
 

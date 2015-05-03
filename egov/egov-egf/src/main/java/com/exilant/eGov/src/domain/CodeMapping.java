@@ -46,11 +46,12 @@
 
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
@@ -61,7 +62,7 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
  *         TODO To change the template for this generated type comment go to
  *         Window - Preferences - Java - Code Style - Code Templates
  */
-
+@Transactional(readOnly=true)
 public class CodeMapping {
 
 	private String eg_BoundaryID = null;
@@ -93,13 +94,13 @@ public class CodeMapping {
 	public void setchequeInHand(String xchequeInHand) {
 		chequeInHand = xchequeInHand;
 	}
-
-	public void insert(Connection connection) throws SQLException {
+	@Transactional
+	public void insert() throws Exception {
 		setID(String.valueOf(PrimaryKeyGenerator.getNextKey("CodeMapping")));
 		insertQuery = "insert into CodeMapping (id,eg_BoundaryID,cashInHand,chequeInHand) values(?,?,?,?)";
 		if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
 		// Statement statement = connection.createStatement();
-		PreparedStatement pstmt = connection.prepareStatement(insertQuery);
+		Query pstmt = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 		pstmt.setString(1, ID);
 		pstmt.setString(2, eg_BoundaryID);
 		pstmt.setString(3, cashInHand);
@@ -107,18 +108,18 @@ public class CodeMapping {
 		pstmt.executeUpdate();
 
 	}
-
-	public void update(Connection connection) throws SQLException {
+	@Transactional
+	public void update() throws SQLException {
 		try {
-			newUpdate(connection);
+			newUpdate();
 		} catch (TaskFailedException e) {
 			LOGGER.error("error inside update" + e.getMessage(),e);
 		}
 	}
-
-	public void newUpdate(Connection con) throws TaskFailedException,
+	@Transactional
+	public void newUpdate() throws TaskFailedException,
 			SQLException {
-		PreparedStatement pstmt = null;
+		Query pstmt = null;
 		StringBuilder query = new StringBuilder(500);
 		query.append("update billcollector set ");
 		if (cashInHand != null)
@@ -130,24 +131,18 @@ public class CodeMapping {
 		query.append(" where EG_BOUNDARYID=?");
 		try {
 			int i = 1;
-			pstmt = con.prepareStatement(query.toString());
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
 			if (cashInHand != null)
 				pstmt.setString(i++, cashInHand);
 			if (chequeInHand != null)
 				pstmt.setString(i++, chequeInHand);
 			pstmt.setString(i++, eg_BoundaryID);
 
-			pstmt.executeQuery();
+			pstmt.executeUpdate();
 		} catch (Exception e) {
 			LOGGER.error("Exp in update: " + e.getMessage(),e);
 			throw taskExc;
-		} finally {
-			try {
-				pstmt.close();
-			} catch (Exception e) {
-				LOGGER.error("Inside finally block of update");
-			}
-		}
+		} 
 	}
 
 }

@@ -45,14 +45,15 @@
  */
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
@@ -64,6 +65,7 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
  *          TODO To change the template for this generated type comment go to
  *          Window - Preferences - Java - Code Style - Code Templates
  */
+@Transactional(readOnly=true)
 public class EgfStatusChange {
 	private static final Logger LOGGER = Logger
 			.getLogger(EgfStatusChange.class);
@@ -196,8 +198,9 @@ public class EgfStatusChange {
 	 * @param connection
 	 * @return
 	 */
-	public void insert(Connection connection) throws SQLException {
-		PreparedStatement psmt = null;
+	@Transactional
+	public void insert() throws SQLException {
+		Query psmt = null;
 		try {
 			String insertQuery = "";
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale
@@ -212,7 +215,7 @@ public class EgfStatusChange {
 					+ "values(?,?,?,?,?,?,to_date(?,'dd-Mon-yyyy HH24:MI:SS'))";
 
 			if(LOGGER.isInfoEnabled())     LOGGER.info("insertQuery: " + insertQuery);
-			psmt = connection.prepareStatement(insertQuery);
+			psmt = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 			psmt.setString(1, this.id);
 			psmt.setString(2, this.moduletype);
 			psmt.setString(3, this.moduleid);
@@ -229,22 +232,22 @@ public class EgfStatusChange {
 
 		// if(LOGGER.isInfoEnabled())     LOGGER.info("INSERT QUERY IS:"+insertQuery);
 	}
-
-	public void update(Connection connection) throws SQLException {
-		PreparedStatement psmt = null;
+	@Transactional
+	public void update() throws SQLException {
+		Query psmt = null;
 		try {
 			if (isModuleid && isField) {
-				newUpdate(connection);
+				newUpdate();
 			}
 		} catch (Exception e) {
 			LOGGER.error("Exp in update: " + e.getMessage(), e);
 		}
 	}
 
-	public void newUpdate(Connection con) throws TaskFailedException,
+	public void newUpdate() throws TaskFailedException,
 			SQLException {
 		StringBuilder query = new StringBuilder(500);
-		PreparedStatement pstmt = null;
+		Query pstmt = null;
 		query.append("update EGW_SATUSCHANGE set ");
 		if (moduletype != null)
 			query.append("moduletype=?,");
@@ -263,7 +266,7 @@ public class EgfStatusChange {
 		query.append(" where id=?");
 		try {
 			int i = 1;
-			pstmt = con.prepareStatement(query.toString());
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
 			if (moduletype != null)
 				pstmt.setString(i++, moduletype);
 			if (moduleid != null)
@@ -279,17 +282,11 @@ public class EgfStatusChange {
 
 			pstmt.setString(i++, id);
 
-			pstmt.executeQuery();
+			pstmt.executeUpdate();
 		} catch (Exception e) {
 			LOGGER.error("Exp in update: " + e.getMessage(), e);
 			throw taskExc;
-		} finally {
-			try {
-				pstmt.close();
-			} catch (Exception e) {
-				LOGGER.error("Inside finally block of update");
-			}
-		}
+		} 
 	}
 
 }

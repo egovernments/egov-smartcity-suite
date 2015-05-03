@@ -223,7 +223,7 @@ public class SetUp extends AbstractTask{
                        FinancialYear fy = new FinancialYear();
                        fy.setId(fyId);
                        fy.setIsActiveForPosting("1");
-                       fy.update(connection);
+                       fy.update();
                }catch(SQLException ex){
                        if(LOGGER.isDebugEnabled())     LOGGER.debug("Error (SetUp->openFY): " + ex.toString(),ex);
                        dc.addMessage("exilError", "SetUp->openFY failed");
@@ -249,7 +249,7 @@ public class SetUp extends AbstractTask{
 
                fy.setTransferClosingBalance("1");
                try{
-                       fy.update(connection);
+                       fy.update();
                }catch(SQLException ex){
                 LOGGER.error(ex.getMessage(), ex);
             	   dc.addMessage("exilError", "SetUp->closeFY failed");

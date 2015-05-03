@@ -44,8 +44,6 @@
  */
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -53,10 +51,11 @@ import java.text.SimpleDateFormat;
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-
+@Transactional(readOnly=true)
 public class egfRecordStatus {
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
@@ -142,7 +141,7 @@ public class egfRecordStatus {
 	public String geteffectiveDate() {
 		return effectiveDate;
 	}
-
+	@Transactional
 	public void insert() throws SQLException,
 			TaskFailedException {
 		ResultSet rs = null;
@@ -175,7 +174,7 @@ public class egfRecordStatus {
 			newUpdate();
 		}
 	}
-
+	@Transactional
 	public void newUpdate() throws TaskFailedException,
 			SQLException {
 		Query pstmt = null;

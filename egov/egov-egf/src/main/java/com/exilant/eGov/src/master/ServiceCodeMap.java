@@ -87,7 +87,7 @@ public class ServiceCodeMap extends AbstractTask {
 		csm.setServiceId(srvId);
 		for (int i = 0; i < codeList.length; i++) {
 			csm.setGlCodeId(codeList[i]);
-			csm.insert(conn);
+			csm.insert();
 		}
 		rset.close();
 		pstmt.close();

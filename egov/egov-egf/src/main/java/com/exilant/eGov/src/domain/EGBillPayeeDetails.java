@@ -40,13 +40,16 @@
 package com.exilant.eGov.src.domain;
 
 
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
+
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-
+@Transactional(readOnly=true)
 public class EGBillPayeeDetails  {
 	private static final Logger LOGGER=Logger.getLogger(EGBillPayeeDetails.class);
 
@@ -61,20 +64,19 @@ public class EGBillPayeeDetails  {
 	private String updateQuery="UPDATE EG_BILLPAYEEDETAILS SET";
 	private boolean isId=false,isField=false;
 
-
-	public void insert(Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+	public void insert() throws SQLException,TaskFailedException
 	{
 		setId( String.valueOf(PrimaryKeyGenerator.getNextKey("EG_BILLPAYEEDETAILS")));
 		String insertQuery = "INSERT INTO EG_BILLPAYEEDETAILS (Id, BilldetailId, accountDetailTypeId,accountDetailKeyId, " +
 						"debitamount, creditAmount,lastUpdatedTime,tdsId) " +
 						"VALUES (" + id + ", " + egBilldetailsId + ", " +accountDetailTypeId+", " + accountDetailKeyId +" , " + debitAmount +" ," + creditAmount + ",to_date('"+this.lastUpdatedTime+"','dd-Mon-yyyy HH24:MI:SS'),"+tdsId+")";
 		if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);   
-		Statement statement = connection.createStatement();
-		statement.executeUpdate(insertQuery);
-		statement.close();
+		Query statement = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
+		statement.executeUpdate();
 	}
-
-	public void update (Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+	public void update () throws SQLException,TaskFailedException
 	{
 		if(isId && isField)
 		{
@@ -82,31 +84,29 @@ public class EGBillPayeeDetails  {
 			updateQuery = updateQuery + " WHERE id = " + id;
 
 			if(LOGGER.isInfoEnabled())     LOGGER.info(updateQuery);
-			Statement statement = connection.createStatement();
-			statement.executeUpdate(updateQuery);
-			statement.close();
+			Query statement = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
+			statement.executeUpdate();
 			updateQuery="UPDATE EG_BILLPAYEEDETAILS SET";
 		}
 	}
 
 
-
-public void delete(Connection con)throws SQLException,TaskFailedException
+	@Transactional
+public void delete()throws SQLException,TaskFailedException
 {
 	String delQuery="delete from EG_BILLPAYEEDETAILS where id="+getId() ;
 	if(LOGGER.isInfoEnabled())     LOGGER.info(delQuery);
-	Statement statement = con.createStatement();
-	statement.executeUpdate(delQuery);
-	statement.close();
+	Query statement = HibernateUtil.getCurrentSession().createSQLQuery(delQuery);
+	statement.executeUpdate();
 
 }
-public void deleteByBillDetailId(Connection con)throws SQLException,TaskFailedException
+	@Transactional(readOnly=true)
+public void deleteByBillDetailId()throws SQLException,TaskFailedException
 {
 	String delQuery="delete from EG_BILLPAYEEDETAILS where BilldetailId ="+egBilldetailsId;
 	if(LOGGER.isInfoEnabled())     LOGGER.info(delQuery);
-	Statement statement = con.createStatement();
-	statement.executeUpdate(delQuery);
-	statement.close();
+	Query statement = HibernateUtil.getCurrentSession().createSQLQuery(delQuery);
+	statement.executeUpdate();
 
 }
 public void setId(String aId){ id = aId; isId=true;isField = true;}

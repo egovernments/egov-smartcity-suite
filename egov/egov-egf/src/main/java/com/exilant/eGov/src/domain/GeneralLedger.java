@@ -59,11 +59,12 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-
+@Transactional(readOnly=true)
 public class GeneralLedger {
 	private String id = null;
 	private String voucherLineId = null;
@@ -99,7 +100,7 @@ public class GeneralLedger {
 	public int getId() {
 		return Integer.valueOf(id).intValue();
 	}
-
+	@Transactional
 	public void insert() throws SQLException,
 			TaskFailedException {
 		EGovernCommon commommethods = new EGovernCommon();
@@ -151,22 +152,23 @@ public class GeneralLedger {
 	 * @param connection
 	 * @throws SQLException
 	 */
-	public void update(Connection connection) throws SQLException,
+	@Transactional
+	public void update() throws SQLException,
 			TaskFailedException {
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 			SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
 			created = formatter.format(sdf.parse(created));
-			newUpdate(connection);
+			newUpdate();
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			throw taskExc;
 		}
 	}
 
-	public void newUpdate(Connection con) throws TaskFailedException,
+	public void newUpdate() throws TaskFailedException,
 			SQLException {
-		PreparedStatement pstmt = null;
+		Query pstmt = null;
 		StringBuilder query = new StringBuilder(500);
 		query.append("update generalledger set ");
 		if (voucherLineId != null)
@@ -192,7 +194,7 @@ public class GeneralLedger {
 		query.append(" where id=?");
 		try {
 			int i = 1;
-			pstmt = con.prepareStatement(query.toString());
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
 			if (voucherLineId != null)
 				pstmt.setString(i++, voucherLineId);
 			if (effectiveDate != null)
@@ -213,16 +215,10 @@ public class GeneralLedger {
 				pstmt.setString(i++, functionId);
 			pstmt.setString(i++, id);
 
-			pstmt.executeQuery();
+			pstmt.executeUpdate();
 		} catch (Exception e) {
 			LOGGER.error("Exp in update: " + e.getMessage());
 			throw taskExc;
-		} finally {
-			try {
-				pstmt.close();
-			} catch (Exception e) {
-				LOGGER.error("Inside finally block of update");
-			}
 		}
 	}
 

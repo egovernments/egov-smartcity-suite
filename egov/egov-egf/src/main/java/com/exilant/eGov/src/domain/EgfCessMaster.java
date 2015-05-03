@@ -39,11 +39,16 @@
  ******************************************************************************/
 package com.exilant.eGov.src.domain;
 
-import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-import java.sql.*;
-import com.exilant.exility.common.TaskFailedException;
-import org.apache.log4j.Logger;
+import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.exilant.exility.common.TaskFailedException;
+import com.exilant.exility.updateservice.PrimaryKeyGenerator;
+@Transactional(readOnly=true)
 public class EgfCessMaster
 {
 	private String id = null;
@@ -63,27 +68,25 @@ public class EgfCessMaster
 	public void setGlCodeId(String aGlCodeId){ glCodeId = aGlCodeId; updateQuery = updateQuery + " glCodeId=" + glCodeId + ","; isField = true;}
 	public void setIsActive(String aIsActive){ isActive = aIsActive; updateQuery = updateQuery + " isActive=" + isActive + ","; isField = true;}
 	public void setPercentage(String aPercentage){ percentage = aPercentage; updateQuery = updateQuery + " percentage=" + percentage + ","; isField = true;}
-	
-	public void insert(Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+	public void insert() throws SQLException,TaskFailedException
 	{
 		setId( String.valueOf(PrimaryKeyGenerator.getNextKey("EGF_CESS_MASTER")) );		
 		String insertQuery = "INSERT INTO EGF_CESS_MASTER (Id, financialyearid, taxcodeid, glcodeid, isactive ,percentage)" + 
 						"VALUES (" + id + ", '" +  financialYearId+ "', " + taxCodeId + ", " + glCodeId + ", " + isActive+","+percentage+")";
 		if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
-		Statement statement = connection.createStatement();
-		statement.executeUpdate(insertQuery);
-		statement.close();
+		Query statement = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
+		statement.executeUpdate();
 	}
-	
-	public void update (Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+	public void update () throws SQLException,TaskFailedException
 	{
 		if(isId && isField)
 		{
 			updateQuery = updateQuery.substring(0,updateQuery.length()-1);
 			updateQuery = updateQuery + " WHERE id = " + id;
-			Statement statement = connection.createStatement();
-			statement.executeUpdate(updateQuery);
-			statement.close();
+			Query statement = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
+			statement.executeUpdate();
 			if(LOGGER.isInfoEnabled())     LOGGER.info(updateQuery);
 			updateQuery="UPDATE EGF_CESS_MASTER SET";			
 		}

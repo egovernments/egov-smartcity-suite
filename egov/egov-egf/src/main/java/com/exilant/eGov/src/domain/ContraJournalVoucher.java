@@ -45,12 +45,15 @@
  */
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.SQLException;
+
+import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-import org.apache.log4j.Logger;
 /**
  * @author vijaykumar.b
  *
@@ -58,7 +61,7 @@ import org.apache.log4j.Logger;
  * Window - Preferences - Java - Code Style - Code Templates
  */
 
-
+@Transactional(readOnly=true)
 public class ContraJournalVoucher
 {
 	private String id = null;
@@ -84,7 +87,7 @@ public class ContraJournalVoucher
 	private static final Logger LOGGER=Logger.getLogger(ContraJournalVoucher.class);
 	private boolean isId=false, isField=false;
 
-	private Statement statement;
+	private Query statement;
 
 	public void setId(String aID){ id = aID; isId=true;}
 	public void setVoucherHeaderID(String aVoucherHeaderID){ voucherHeaderID = aVoucherHeaderID;updateQuery = updateQuery + " voucherHeaderID='" + voucherHeaderID + "',"; isField = true;}
@@ -104,8 +107,8 @@ public class ContraJournalVoucher
 	public void setToFundID(String aToFundID){ toFundID = aToFundID; updateQuery = updateQuery + " toFundID='" + toFundID + "',"; isField = true;}
 	public void setToChequeNameId(String aToChequeNameId){ toChequeNameId = aToChequeNameId; updateQuery = updateQuery + " toChequeNameId='" + toChequeNameId + "',"; isField = true;}
 	public void setIsReversed(String aIsReversed){ isReversed = aIsReversed; updateQuery = updateQuery + " isReversed='" + isReversed + "',"; isField = true;}
-
-	public void insert(Connection connection) throws SQLException
+	@Transactional
+	public void insert() throws SQLException
 	{
 		EGovernCommon commommethods = new EGovernCommon();
 		narration = commommethods.formatString(narration);
@@ -121,24 +124,23 @@ public class ContraJournalVoucher
 								toBankAccountId + ", '" + narration + "', " + toCashNameId + ", " +
 								fromCashNameId + ", " + fromFundID + ", " + toFundID +","+ toChequeNameId+","+isReversed+")";
 
-		Statement statement = connection.createStatement();
+		Query statement = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 		if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
-		statement.executeUpdate(insertQuery);
-		statement.close();
+		statement.executeUpdate();
 	}
-	
-	public void reverse(Connection connection)throws SQLException
+	@Transactional
+	public void reverse()throws SQLException
 	{
 		//	EGovernCommon commommethods=new EGovernCommon();
-			Statement statement=connection.createStatement();
+			Query statement;
 			String reverseQuery="UPDATE contraJournalvoucher SET IsReversed=1 WHERE id="+id;
 			if(LOGGER.isInfoEnabled())     LOGGER.info(reverseQuery);
-			statement.executeQuery(reverseQuery);
-			statement.close();
+			statement = HibernateUtil.getCurrentSession().createSQLQuery(reverseQuery);
+			statement.executeUpdate();
 	}
-
+	@Transactional
 	//added by rashmi
-	public void update (Connection connection) throws SQLException
+	public void update () throws SQLException
 	{
 		if(isId && isField)
 		{
@@ -146,9 +148,8 @@ public class ContraJournalVoucher
 			updateQuery = updateQuery.substring(0,updateQuery.length()-1);
 			updateQuery = updateQuery + " WHERE id = " + id;
 			if(LOGGER.isInfoEnabled())     LOGGER.info(updateQuery);
-			statement = connection.createStatement();
-			statement.executeUpdate(updateQuery);
-			statement.close();
+			statement = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
+			statement.executeUpdate();
 			updateQuery="UPDATE ContraJournalVoucher SET";
 		}
 	}

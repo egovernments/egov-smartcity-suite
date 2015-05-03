@@ -45,15 +45,18 @@
  */
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-import java.text.SimpleDateFormat;
 
 /**
  * @author Lakshmi
@@ -61,9 +64,10 @@ import java.text.SimpleDateFormat;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+@Transactional(readOnly=true)
 public class EgAssetPO {
 	private static final Logger LOGGER=Logger.getLogger(EgAssetPO.class);
-	PreparedStatement pstmt=null;
+	Query pstmt=null;
     private String id=null;
     private String assetId=null;
     private String workOrderId=null;
@@ -74,11 +78,11 @@ public class EgAssetPO {
     public void setAssetId(String sAssetId){assetId=sAssetId;updateQuery=updateQuery+" assetid="+assetId+" "; isField=true;}
     public void setWorkOrderId(String sWorkOrderId){workOrderId=sWorkOrderId;updateQuery=updateQuery+" workOrderId="+workOrderId+" ";isField=true;}
     public void setLastUpdatedDate(String sLastUpdatedDate){lastUpdatedDate=sLastUpdatedDate; updateQuery=updateQuery+" lastupdateddate='"+lastUpdatedDate+"' ";isField=true;}
-    
-    public void insert(Connection con)throws SQLException,TaskFailedException 
+    @Transactional
+    public void insert()throws Exception,TaskFailedException 
     {
         String insertQuery="";
-        Statement st=null;
+        Query st=null;
         EGovernCommon commommethods = new EGovernCommon();
         setId( String.valueOf(PrimaryKeyGenerator.getNextKey("eg_asset_po")) );
         lastUpdatedDate = commommethods.getCurrentDate();
@@ -94,26 +98,24 @@ public class EgAssetPO {
         }
         
         insertQuery="insert into eg_asset_po (id,assetid,workorderid,lastupdateddate) values(?,?,?,?)";
-        pstmt=con.prepareStatement(insertQuery);
+        pstmt=HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
         if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
         pstmt.setString(1,id);
         pstmt.setString(2,assetId);
         pstmt.setString(3,workOrderId);
         pstmt.setString(4,lastUpdatedDate);
-        pstmt.executeUpdate(insertQuery);
-        pstmt.close();
+        pstmt.executeUpdate();
     }
-    
-    public void update(Connection con)throws SQLException
+    @Transactional
+    public void update()throws SQLException
     {
         if(isId && isField)
         {
             updateQuery=updateQuery+" WHERE ID= ?";
             if(LOGGER.isInfoEnabled())     LOGGER.info(updateQuery);
-            pstmt=con.prepareStatement(updateQuery);
+            pstmt=HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
             pstmt.setString(1,id);
-            pstmt.executeUpdate(updateQuery);
-            pstmt.close();
+            pstmt.executeUpdate();
             updateQuery="update eg_asset_po set ";
         }
     }

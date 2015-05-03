@@ -45,11 +45,12 @@
  */
 package com.exilant.eGov.src.domain;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
@@ -61,7 +62,7 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
  *         TODO To change the template for this generated type comment go to
  *         Window - Preferences - Java - Code Style - Code Templates
  */
-
+@Transactional(readOnly=true)
 public class PaymentHeader {
 	private String id = null;
 	private String voucherHeaderId = null;
@@ -132,8 +133,8 @@ public class PaymentHeader {
 		narration = aNarration;
 		isField = true;
 	}
-
-	public void insert(Connection connection) throws SQLException {
+	@Transactional
+	public void insert() throws SQLException {
 		EGovernCommon commonMethods = new EGovernCommon();
 		if(LOGGER.isInfoEnabled())     LOGGER.info("Inside PaymentHeader Narration is" + narration);
 
@@ -145,23 +146,21 @@ public class PaymentHeader {
 		String insertQuery = "INSERT INTO paymentheader (Id, VoucherHeaderID, Type,BankAccountNumberId) VALUES ( ?, ?, ?, ?)";
 
 		if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
-		PreparedStatement pst = connection.prepareStatement(insertQuery);
+		Query pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 		pst.setString(1, id);
 		pst.setString(2, voucherHeaderId);
 		pst.setString(3, type);
 		pst.setString(4, bankAccountNumberId);
 		pst.executeUpdate();
-		pst.close();
 	}
-
-	public void reverse(Connection connection, String cgNum)
+	@Transactional
+	public void reverse(String cgNum)
 			throws SQLException {
 		String updateQuery = "update paymentheader  set isreversed=1 where voucherheaderid in(select id from voucherheader where cgn= ?)";
-		PreparedStatement pst = connection.prepareStatement(updateQuery);
+		Query pst = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
 		pst.setString(1, cgNum);
 		if(LOGGER.isInfoEnabled())     LOGGER.info(updateQuery);
 		pst.executeUpdate();
-		pst.close();
 	}
 
 	/**
@@ -170,19 +169,20 @@ public class PaymentHeader {
 	 * @param connection
 	 * @throws SQLException
 	 */
-	public void update(Connection connection) throws SQLException {
+	@Transactional
+	public void update() throws SQLException {
 		if (isId && isField) {
 			try {
-				newUpdate(connection);
+				newUpdate();
 			} catch (Exception e) {
 				LOGGER.error("Updation Failed" + e.getMessage());
 			}
 		}
 	}
 
-	public void newUpdate(Connection con) throws TaskFailedException,
+	public void newUpdate() throws TaskFailedException,
 			SQLException {
-		PreparedStatement pstmt = null;
+		Query pstmt = null;
 		StringBuilder query = new StringBuilder(500);
 		query.append("update paymentheader set ");
 		if (voucherHeaderId != null)
@@ -208,7 +208,7 @@ public class PaymentHeader {
 		query.append(" where id=?");
 		try {
 			int i = 1;
-			pstmt = con.prepareStatement(query.toString());
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query.toString());
 			if (voucherHeaderId != null)
 				pstmt.setString(i++, voucherHeaderId);
 			if (type != null)
@@ -229,17 +229,10 @@ public class PaymentHeader {
 				pstmt.setString(i++, narration);
 			pstmt.setString(i++, id);
 
-			pstmt.executeQuery();
+			pstmt.executeUpdate();
 		} catch (Exception e) {
 			LOGGER.error("Exp in update: " + e.getMessage(), e);
 			throw taskExc;
-		} finally {
-			try {
-				pstmt.close();
-			} catch (Exception e) {
-				LOGGER.error("Inside finally block of update");
-			}
-		}
-	}
+		} 	}
 
 }

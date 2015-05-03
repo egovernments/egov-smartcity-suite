@@ -45,13 +45,16 @@
  */
   package com.exilant.eGov.src.domain;
 
-  import java.sql.*;
   import java.sql.SQLException;
-  import java.sql.ResultSet;
-  import java.sql.PreparedStatement;
-  import org.apache.log4j.Logger;
-  import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-  import com.exilant.exility.common.TaskFailedException;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.exilant.exility.common.TaskFailedException;
+import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 
   /**
   * @author Iliyaraja
@@ -59,13 +62,13 @@
   * TODO To change the template for this generated type comment go to
   * Window - Preferences - Java - Code Style - Code Templates
   */
-
+  @Transactional(readOnly=true)
   public class EGPSalaryBillDetails
   {
 	private static final Logger LOGGER=Logger.getLogger(EGPSalaryBillDetails.class);
-	private PreparedStatement pstmt=null;
+	private Query pstmt=null;
 	private String id=null;
-	ResultSet rs=null;
+	List<Object[]> rs=null;
 	private String billId=null;
 	private String headId=null;
 	private String glcodeId=null;
@@ -88,8 +91,8 @@
 	public void setSalType(String aSalType){ salType = aSalType; updateQuery = updateQuery +" salType='" + salType + "',"; isField = true;}
 	public void setAmount(String aAmount){ amount = aAmount; updateQuery = updateQuery + " amount=" + amount + ","; isField = true;}
 	public void setLastModifiedDate(String aLastModifiedDate){ lastModifiedDate = aLastModifiedDate; updateQuery = updateQuery + " lastModifiedDate=to_date('" + lastModifiedDate + "','dd-Mon-yyyy HH24:MI:SS')"+","; isField = true;}
-
-	public void insert(Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+	public void insert() throws SQLException,TaskFailedException
 	{
 	//	EGovernCommon commommethods = new EGovernCommon();
 		setId( String.valueOf(PrimaryKeyGenerator.getNextKey("EGP_SALARY_BILLDETAILS")));
@@ -97,7 +100,7 @@
 		String insertQuery = "INSERT INTO EGP_SALARY_BILLDETAILS (Id, BillId, HeadId,GlcodeId, " +
 						"SalType, Amount,LastModifiedDate) values(?,?,?,?,?,?,?)";
 		if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
-		pstmt=connection.prepareStatement(insertQuery);
+		pstmt=HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 		pstmt.setString(1,id);
 		pstmt.setString(2,billId);
 		pstmt.setString(3,headId);
@@ -105,33 +108,30 @@
 		pstmt.setString(5,salType);
 		pstmt.setString(6,amount);
 		pstmt.setString(7,this.lastModifiedDate);
-		rs=pstmt.executeQuery();
-		pstmt.close();
+		pstmt.executeUpdate();
 	}
-
-	public void update (Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+	public void update () throws SQLException,TaskFailedException
 	{
 		if(isId && isField)
 		{
 			updateQuery = updateQuery.substring(0,updateQuery.length()-1);
 			updateQuery = updateQuery + " WHERE id = ?";
 			if(LOGGER.isInfoEnabled())     LOGGER.info(updateQuery);
-			pstmt=connection.prepareStatement(updateQuery);
+			pstmt=HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
 			pstmt.setString(1, id);
-			ResultSet rs = pstmt.executeQuery();
-			pstmt.close();
+			pstmt.executeUpdate();
 			updateQuery="UPDATE EGP_SALARY_BILLDETAILS SET";
 		}
 	}
-
-	public void delete(Connection con)throws SQLException,TaskFailedException
+	@Transactional
+	public void delete()throws SQLException,TaskFailedException
 		{
 			String delQuery="delete from EGP_SALARY_BILLDETAILS where id= ?";
 			if(LOGGER.isInfoEnabled())     LOGGER.info(delQuery);
-			pstmt=con.prepareStatement(delQuery);
-			pstmt.setInt(1, getId());
-			rs=pstmt.executeQuery();
-			pstmt.close();	
+			pstmt=HibernateUtil.getCurrentSession().createSQLQuery(delQuery);
+			pstmt.setInteger(1, getId());
+			pstmt.executeUpdate();
 		}
 
 

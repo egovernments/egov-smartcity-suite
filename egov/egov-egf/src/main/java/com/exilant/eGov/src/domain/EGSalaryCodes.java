@@ -45,12 +45,15 @@
  */
   package com.exilant.eGov.src.domain;
 
-  import java.sql.Connection;
-  import java.sql.Statement;
   import java.sql.SQLException;
-  import org.apache.log4j.Logger;
-  import com.exilant.exility.common.TaskFailedException;
-  import com.exilant.exility.updateservice.PrimaryKeyGenerator;
+
+import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.exilant.exility.common.TaskFailedException;
+import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 
 
   /**
@@ -59,7 +62,7 @@
   * TODO To change the template for this generated type comment go to
   * Window - Preferences - Java - Code Style - Code Templates
   */
-
+  @Transactional(readOnly=true)
   public class EGSalaryCodes
   {
 
@@ -91,8 +94,8 @@
 
 	public void setLastModifiedBy(String alastModifiedBy) {lastModifiedBy = alastModifiedBy;updateQuery = updateQuery + " lastModifiedBy=" + lastModifiedBy + ","; isField = true;}
 	public void setLastModifiedDate(String aLastModifiedDate){ lastModifiedDate = aLastModifiedDate; updateQuery = updateQuery + " lastModifiedDate=to_date('" + lastModifiedDate + "','dd-Mon-yyyy HH24:MI:SS')"+","; isField = true;}
-
-	public void insert(Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+	public void insert() throws SQLException,TaskFailedException
 	{
 	//	EGovernCommon commommethods = new EGovernCommon();
 		setId( String.valueOf(PrimaryKeyGenerator.getNextKey("EG_SALARYCODES")));
@@ -101,12 +104,11 @@
 						"SalType, Createdby,createdDate) " +
 						"VALUES (" + id + ", '" + head + "'," + glcodeId + ",'" + salType + "'," + Createdby + ",to_date('"+this.createdDate+"','dd-Mon-yyyy HH24:MI:SS'))";
 		if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
-		Statement statement = connection.createStatement();
-		statement.executeUpdate(insertQuery);
-		statement.close();
+		Query statement = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
+		statement.executeUpdate();
 	}
-
-	public void update (Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+	public void update () throws SQLException,TaskFailedException
 	{
 		if(isId && isField)
 		{
@@ -114,9 +116,8 @@
 			updateQuery = updateQuery + " WHERE id = " + id;
 
 			if(LOGGER.isInfoEnabled())     LOGGER.info(updateQuery);
-			Statement statement = connection.createStatement();
-			statement.executeUpdate(updateQuery);
-			statement.close();
+			Query statement = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
+			statement.executeUpdate();
 			updateQuery="UPDATE EG_SALARYCODES SET";
 		}
 	}

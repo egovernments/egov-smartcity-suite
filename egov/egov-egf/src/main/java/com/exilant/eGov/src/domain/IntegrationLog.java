@@ -45,16 +45,18 @@
  */
 package com.exilant.eGov.src.domain;
 
-import com.exilant.eGov.src.common.EGovernCommon;
-import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
+import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 
 /**
  * @author Tilak
@@ -62,6 +64,7 @@ import com.exilant.exility.common.TaskFailedException;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+@Transactional(readOnly=true)
 public class IntegrationLog
 {
 	   private String id = null;
@@ -89,7 +92,8 @@ public class IntegrationLog
 
 
 	   EGovernCommon commonmethods = new EGovernCommon();
-	   public void insert(Connection connection) throws SQLException,TaskFailedException
+	   @Transactional
+	   public void insert() throws SQLException,TaskFailedException
 	   {
 	   		transactiondate = commonmethods.getCurrentDateTime();
 	   		try{
@@ -107,8 +111,8 @@ public class IntegrationLog
 			" values (?,?,?,?,?,to_date(?,'dd-Mon-yyyy HH24:MI:SS'),?,?,?)";
 
 	   		if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
-	   		PreparedStatement pstmt=null;
-	   		pstmt = connection.prepareStatement(insertQuery,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+	   		Query pstmt=null;
+	   		pstmt = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 	   		pstmt.setString(1,id);
 	   		pstmt.setString(2,recordId);
 	   		pstmt.setString(3,vouchernumber);
@@ -120,7 +124,6 @@ public class IntegrationLog
 	   		pstmt.setString(9,status);
 	   		
 			pstmt.executeUpdate();
-			pstmt.close();
 	   }
 
 

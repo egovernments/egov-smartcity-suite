@@ -45,13 +45,16 @@
  */
   package com.exilant.eGov.src.domain;
 
-  import java.sql.*;
-  import java.sql.PreparedStatement;
   import java.sql.SQLException;
-  import java.sql.ResultSet;
-  import org.apache.log4j.Logger;
-  import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-  import com.exilant.exility.common.TaskFailedException;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.exilant.exility.common.TaskFailedException;
+import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 
   /**
   * @author Iliyaraja
@@ -59,13 +62,13 @@
   * TODO To change the template for this generated type comment go to
   * Window - Preferences - Java - Code Style - Code Templates
   */
-
+  @Transactional(readOnly=true)
   public class EGBillRegisterMis
   {
 
     private static final Logger LOGGER=Logger.getLogger(EGBillRegisterMis.class);
-    private PreparedStatement pstmt=null;
-    ResultSet rs=null;
+    private Query pstmt=null;
+    List<Object[]> rs=null;
 	private String id=null;
 	private String billId=null;
 	private String fundId=null;
@@ -119,8 +122,8 @@
 	public void setMonth(String aMonth){ month = aMonth; updateQuery = updateQuery + " month=" + month + ","; isField = true;}
 	public void setFinancialYearId(String aFinancialYearId){ financialYearId = aFinancialYearId; updateQuery = updateQuery + " financialYearId=" + financialYearId + ","; isField = true;}
 
-
-public void insert(Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+public void insert() throws SQLException,TaskFailedException
 	{
 		//EGovernCommon commommethods = new EGovernCommon();
 		setId( String.valueOf(PrimaryKeyGenerator.getNextKey("EG_BILLREGISTERMIS")));
@@ -131,7 +134,7 @@ public void insert(Connection connection) throws SQLException,TaskFailedExceptio
 						"Values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		
 		if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
-		pstmt=connection.prepareStatement(insertQuery);
+		pstmt=HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 		pstmt.setString(1,id);
 		pstmt.setString(2,billId);
 		pstmt.setString(3,fundId);
@@ -154,21 +157,19 @@ public void insert(Connection connection) throws SQLException,TaskFailedExceptio
 		pstmt.setString(20,month);
 		pstmt.setString(21,financialYearId);
 		
-		rs=pstmt.executeQuery();
-		rs.close();
-		pstmt.close();
+		pstmt.executeUpdate();
 	}
-
-public void update (Connection connection) throws SQLException,TaskFailedException
+	@Transactional
+public void update () throws SQLException,TaskFailedException
 	{
 		if(isBillId && isField)
 		{
 			updateQuery = updateQuery.substring(0,updateQuery.length()-1);
 			updateQuery = "UPDATE EG_BILLREGISTERMIS SET WHERE billId = ?";
-			pstmt=connection.prepareStatement(updateQuery);
+			pstmt=HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
 			pstmt.setString(1,billId);
 			if(LOGGER.isInfoEnabled())     LOGGER.info(updateQuery);
-			rs=pstmt.executeQuery();
+			pstmt.executeUpdate();
 			updateQuery="UPDATE EG_BILLREGISTERMIS SET";
 		}
 	}

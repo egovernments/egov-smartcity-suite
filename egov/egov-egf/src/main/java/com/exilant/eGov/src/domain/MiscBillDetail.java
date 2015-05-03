@@ -51,16 +51,19 @@ package com.exilant.eGov.src.domain;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-import com.exilant.eGov.src.common.EGovernCommon;
-import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
-import com.exilant.exility.common.TaskFailedException;
-import org.apache.log4j.Logger;
+import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.exilant.eGov.src.common.EGovernCommon;
+import com.exilant.exility.common.TaskFailedException;
+import com.exilant.exility.updateservice.PrimaryKeyGenerator;
+@Transactional(readOnly=true)
 public class MiscBillDetail {
 	private String id = null;
 	private String billNumber = "";
@@ -79,7 +82,7 @@ public class MiscBillDetail {
 	private static final Logger LOGGER = Logger.getLogger(MiscBillDetail.class);
 	private String updateQuery = "UPDATE miscBillDetail SET";
 	private boolean isId = false, isField = false;
-	PreparedStatement pst;
+	Query pst;
 	private static TaskFailedException taskExc;
 
 	public void setId(String aId) {
@@ -167,8 +170,8 @@ public class MiscBillDetail {
 		updateQuery = updateQuery + " PAYVHID=" + payVHID + ",";
 		isField = true;
 	}
-
-	public void insert(Connection connection) throws SQLException,
+	@Transactional
+	public void insert() throws SQLException,
 			TaskFailedException {
 		EGovernCommon commommethods = new EGovernCommon();
 		created = commommethods.getCurrentDate();
@@ -188,7 +191,7 @@ public class MiscBillDetail {
 				+ "PaidById,BILLVHID,PAYVHID) "
 				+ "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
-		PreparedStatement pst = connection.prepareStatement(insertQuery);
+		Query pst = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
 		pst.setString(1, id);
 		pst.setString(2, billNumber);
 		pst.setString(3, billDate);
@@ -199,57 +202,54 @@ public class MiscBillDetail {
 		pst.setString(8, BillVHId);
 		pst.setString(9, payVHID);
 		pst.executeUpdate();
-		pst.close();
 	}
 
-	public void reverse(Connection connection, String cgNum)
+	public void reverse( String cgNum)
 			throws SQLException {
 		String query = "select miscbilldetail.id from miscbilldetail,paymentheader where"
 				+ " miscbilldetail.id=paymentheader.miscbilldetailid and voucherheaderid in(select id from voucherheader where cgn= ?)";
-		pst = connection.prepareStatement(query);
+		pst = HibernateUtil.getCurrentSession().createSQLQuery(query);
 		pst.setString(1, cgNum);
-		ResultSet resultset = pst.executeQuery();
-		resultset.next();
-		int miscbilldetailid = Integer.parseInt(resultset.getString(1));
+		List<Object[]> resultset = pst.list();
+		int miscbilldetailid = 0;
+		for(Object[] element : resultset){
+			 miscbilldetailid = Integer.parseInt(element[0].toString());
+		}
 		String updateQuery = "update miscbilldetail  set isreversed=1 where id="
 				+ miscbilldetailid;
 		if(LOGGER.isInfoEnabled())     LOGGER.info(updateQuery);
-		pst = connection.prepareStatement(updateQuery);
+		pst = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
 		pst.executeUpdate();
-		pst.close();
 	}
-
-	public void reverse(Connection connection) throws SQLException {
+	@Transactional
+	public void reverse() throws SQLException {
 		String updateQuery = "update miscbilldetail  set isreversed=1 where id= ?";
-		pst = connection.prepareStatement(updateQuery);
+		pst = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
 		pst.setString(1, id);
 		if(LOGGER.isInfoEnabled())     LOGGER.info(updateQuery);
 		pst.executeUpdate();
-		pst.close();
 	}
-
-	public void reversePositive(Connection connection, double passedAmount)
+	@Transactional
+	public void reversePositive( double passedAmount)
 			throws SQLException {
 		// EGovernCommon commommethods=new EGovernCommon();
 
 		String reversePositive = "UPDATE miscBillDetail SET  passedAmount=passedAmount+"
 				+ passedAmount + "WHERE id= ?";
-		pst = connection.prepareStatement(reversePositive);
+		pst = HibernateUtil.getCurrentSession().createSQLQuery(reversePositive);
 		pst.setString(1, id);
 		if(LOGGER.isInfoEnabled())     LOGGER.info(reversePositive);
-		pst.executeQuery();
-		pst.close();
+		pst.executeUpdate();
 	}
-
-	public void reverseNegative(Connection connection, double paidAmount,
+	@Transactional
+	public void reverseNegative( double paidAmount,
 			double adjAmount, double passedAmount) throws SQLException {
 		String reverseNegative = "UPDATE miscBillDetail SET  passedAmount=passedAmount-"
 				+ passedAmount + "WHERE id= ?";
-		PreparedStatement pst = connection.prepareStatement(reverseNegative);
+		Query pst = HibernateUtil.getCurrentSession().createSQLQuery(reverseNegative);
 		pst.setString(1, id);
 		if(LOGGER.isInfoEnabled())     LOGGER.info(reverseNegative);
-		pst.executeQuery();
-		pst.close();
+		pst.executeUpdate();
 	}
 
 	/**
@@ -258,16 +258,16 @@ public class MiscBillDetail {
 	 * @param connection
 	 * @throws SQLException
 	 */
-	public void update(Connection connection) throws SQLException,
+	@Transactional
+	public void update() throws SQLException,
 			TaskFailedException {
 		if (isId && isField) {
 			updateQuery = updateQuery.substring(0, updateQuery.length() - 1);
 			updateQuery = updateQuery + " WHERE id = ?";
 			if(LOGGER.isInfoEnabled())     LOGGER.info(updateQuery);
-			PreparedStatement pst = connection.prepareStatement(updateQuery);
+			Query pst = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
 			pst.setString(1, id);
 			pst.executeUpdate();
-			pst.close();
 			updateQuery = "UPDATE miscBillDetail SET";
 		}
 	}

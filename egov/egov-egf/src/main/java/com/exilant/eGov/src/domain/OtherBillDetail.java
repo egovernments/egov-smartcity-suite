@@ -52,12 +52,16 @@ package com.exilant.eGov.src.domain;
  * Window - Preferences - Java - Code Style - Code Templates
  */
 
+import java.sql.Statement;
+
+import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
-import java.sql.Connection;
-import java.sql.Statement;
-import org.apache.log4j.Logger;
-
+@Transactional(readOnly=true)
 public class OtherBillDetail {
 
 	private static final Logger LOGGER = Logger
@@ -114,8 +118,9 @@ public class OtherBillDetail {
 	 * @param connection
 	 * @throws TaskFailedException
 	 */
-	public void insert(Connection connection) throws TaskFailedException {
-		Statement statement = null;
+	@Transactional
+	public void insert() throws TaskFailedException {
+		Query statement = null;
 
 		setId(String.valueOf(PrimaryKeyGenerator.getNextKey("otherbilldetail")));
 
@@ -132,9 +137,8 @@ public class OtherBillDetail {
 		if(LOGGER.isInfoEnabled())     LOGGER.info(insertQuery);
 
 		try {
-			statement = connection.createStatement();
-			statement.executeUpdate(insertQuery);
-			statement.close();
+			statement = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
+			statement.executeUpdate();
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(),e);
 			throw taskExc;
@@ -147,16 +151,15 @@ public class OtherBillDetail {
 	 * @param connection
 	 * @throws TaskFailedException
 	 */
-
-	public void updateUsingBillId(Connection connection)
+	@Transactional
+	public void updateUsingBillId()
 			throws TaskFailedException {
 		try {
 			updateQuery = updateQuery.substring(0, updateQuery.length() - 1);
 			updateQuery = updateQuery + " WHERE billid = " + billid;
 			if(LOGGER.isInfoEnabled())     LOGGER.info(updateQuery);
-			Statement statement = connection.createStatement();
-			statement.executeUpdate(updateQuery);
-			statement.close();
+			Query statement = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
+			statement.executeUpdate();
 			updateQuery = "UPDATE otherbilldetail SET";
 
 		} catch (Exception e) {

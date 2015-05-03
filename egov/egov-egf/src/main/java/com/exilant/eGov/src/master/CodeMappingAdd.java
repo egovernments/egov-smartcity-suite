@@ -93,7 +93,12 @@ public class CodeMappingAdd extends AbstractTask {
 		CM.setegBoundaryID((String)dc.getValue("AdminBoundaryId"));
 		CM.setcashInHand((String)dc.getValue("cashInHandId"));
 		CM.setchequeInHand((String)dc.getValue("ChequeInHandId"));	
-		CM.insert(connection);	
+		try {
+			CM.insert();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
 	
 	}
 	private void updateCashChequeDetails() throws SQLException
@@ -105,7 +110,7 @@ public class CodeMappingAdd extends AbstractTask {
 		CM.setegBoundaryID((String)dc.getValue("AdminBoundaryId"));
 		CM.setcashInHand((String)dc.getValue("cashInHandId"));
 		CM.setchequeInHand((String)dc.getValue("ChequeInHandId"));	
-		CM.update(connection);	
+		CM.update();	
 		//if(LOGGER.isDebugEnabled())     LOGGER.debug("aftr CM.update(connection)))))))))))))))))");
 		
 	}

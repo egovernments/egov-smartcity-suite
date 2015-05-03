@@ -301,7 +301,7 @@ public class ProcmtOrder extends AbstractTask {
             egPo.setWorkOrderId(String.valueOf(workOrderId));
             try
             {
-                egPo.insert(con);
+                egPo.insert();
             }
             catch(Exception ex){
                 throw new TaskFailedException(ex);

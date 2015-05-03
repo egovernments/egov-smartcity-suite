@@ -157,7 +157,7 @@ public class FiscalPeriodMod extends AbstractTask {
 		if (open != null && open.length() > 0) {
 			FY.setIsActiveForPosting(open);
 		}
-		FY.update(connection);
+		FY.update();
 		fid = FY.getId();
 	}
 
@@ -204,10 +204,10 @@ public class FiscalPeriodMod extends AbstractTask {
 				// FP.setEndingDate(fGrid[i][3]);
 				FP.setModifiedBy(dc.getValue("egUser_id"));
 				if (fGrid[i][0].equals("")) {
-					FP.insert(connection);
+					FP.insert();
 				} else {
 					FP.setId(fGrid[i][0]);
-					FP.update(connection);
+					FP.update();
 				}
 
 			}
