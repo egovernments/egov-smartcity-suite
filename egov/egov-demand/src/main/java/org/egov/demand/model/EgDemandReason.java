@@ -64,7 +64,7 @@ public class EgDemandReason implements java.io.Serializable {
 	private Installment egInstallmentMaster;
 	private BigDecimal percentageBasis;
 	private Date createDate;
-	private Date modifieDate;
+	private Date modifiedDate;
 	private Set<EgDemandReasonDetails> egDemandReasonDetails = new HashSet<EgDemandReasonDetails>(
 			0);
 	private Set<EgDemandDetails> egDemandDetails = new HashSet<EgDemandDetails>(
@@ -170,12 +170,12 @@ public class EgDemandReason implements java.io.Serializable {
 		this.createDate = createDate;
 	}
 
-	public Date getModifieDate() {
-		return modifieDate;
+	public Date getModifiedDate() {
+		return modifiedDate;
 	}
 
-	public void setModifieDate(Date modifieDate) {
-		this.modifieDate = modifieDate;
+	public void setModifiedDate(Date modifiedDate) {
+		this.modifiedDate = modifiedDate;
 	}
 
 	/**

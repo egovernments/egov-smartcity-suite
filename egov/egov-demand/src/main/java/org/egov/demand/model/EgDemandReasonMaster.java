@@ -51,6 +51,10 @@ import org.egov.infstr.commons.Module;
  * @author MyEclipse Persistence Tools
  */
 
+/**
+ * @author parvati
+ *
+ */
 public class EgDemandReasonMaster implements java.io.Serializable {
 
 	// Fields
@@ -62,7 +66,7 @@ public class EgDemandReasonMaster implements java.io.Serializable {
 	private String isDebit;
 	private String code;
 	private Long orderId;
-	private Date createDate;
+	private Date createdDate;
 	private Date modifiedDate;
 	private Set<EgDemandReason> egDemandReasons = new HashSet<EgDemandReason>(0);
 
@@ -134,12 +138,12 @@ public class EgDemandReasonMaster implements java.io.Serializable {
 		this.egDemandReasons = egDemandReasons;
 	}
 
-	public Date getCreateDate() {
-		return createDate;
+	public Date getCreatedDate() {
+		return createdDate;
 	}
 
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
 	}
 
 	public Date getModifiedDate() {
