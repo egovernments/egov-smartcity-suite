@@ -45,7 +45,13 @@
  */
 package com.exilant.eGov.src.master;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.util.List;
+
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.exilant.exility.common.AbstractTask;
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
@@ -56,6 +62,7 @@ import com.exilant.exility.common.TaskFailedException;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+@Transactional(readOnly=true)
 public class ValidRelation extends AbstractTask{
 	public void execute(String taskName,
 			String gridName,
@@ -68,12 +75,12 @@ public class ValidRelation extends AbstractTask{
 			String oldRelTypeID="";
 			String newRelTypeID=dc.getValue("relation_relationTypeId");
 			String sql="select relationtypeid from relation where id= ?";
-			PreparedStatement pstmt=conn.prepareStatement(sql);
+			Query pstmt=HibernateUtil.getCurrentSession().createSQLQuery(sql);
 			pstmt.setString(1, relationID);
-			ResultSet rset=pstmt.executeQuery();
-			if(rset.next()){
-				oldRelTypeID=rset.getString(1);
-			}else{
+			List<Object[]> rset=pstmt.list();
+			for(Object[] element : rset){
+				oldRelTypeID=element[0].toString();
+			}if(rset == null || rset.size() == 0){
 				dc.addMessage("exilRPError","No Relation");
 				throw new TaskFailedException();
 			}
@@ -82,11 +89,11 @@ public class ValidRelation extends AbstractTask{
 			}
 			String query = "select id from supplierbilldetail where supplierid= ?"+
 			" union all select id from contractorbilldetail where contractorid= ?";
-			PreparedStatement pst=conn.prepareStatement(query);
+			Query pst=HibernateUtil.getCurrentSession().createSQLQuery(query);
 			pst.setString(1, relationID);
 			pst.setString(2, relationID);
-			rset=pst.executeQuery();
-			if(rset.next()){
+			rset=pst.list();
+			for(Object[] element : rset){
 				dc.addMessage("exilRPError","Already Has Posting. Cant Modify Type of Relation");
 				throw new TaskFailedException();
 			}

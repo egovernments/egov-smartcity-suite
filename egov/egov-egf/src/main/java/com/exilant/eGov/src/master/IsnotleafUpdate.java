@@ -39,24 +39,25 @@
  ******************************************************************************/
 package com.exilant.eGov.src.master;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.exility.common.AbstractTask;
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
 
 
-
+@Transactional(readOnly=true)
 public class IsnotleafUpdate extends AbstractTask {
 	private static final Logger LOGGER = Logger.getLogger(IsnotleafUpdate.class);
 	private transient Connection connection;
 	private DataCollection dataCollection;
-	private PreparedStatement pstmt = null;
+	private org.hibernate.Query pstmt = null;
 
 
 	public void execute(String taskName,
@@ -70,34 +71,33 @@ public class IsnotleafUpdate extends AbstractTask {
 			this.connection=conn;
 			isnotleafUpdateF();
 		}
-
+	@Transactional
 		public void isnotleafUpdateF(){
-			final Statement statement;
-			ResultSet rs=null;
+			final Query statement;
+			List<Object[]> rs=null;
 			String qryString = "";
 			final String tName=dataCollection.getValue("tableName");
 			try{	
 					qryString = "Update ?  set isnotleaf = ?";
-					pstmt = connection.prepareStatement(qryString);
+					pstmt = HibernateUtil.getCurrentSession().createSQLQuery(qryString);
 					pstmt.setString(1,tName);
-					pstmt.setInt(2,0);
+					pstmt.setInteger(2,0);
 					if(LOGGER.isInfoEnabled())     LOGGER.info(qryString);
 					
 					
-					rs = pstmt.executeQuery();
+					 pstmt.executeUpdate();
 
 					String subquery="Select unique parentID from ?" ;
-					pstmt = connection.prepareStatement(qryString);
+					pstmt = HibernateUtil.getCurrentSession().createSQLQuery(qryString);
 					pstmt.setString(1,qryString);
 					qryString = "Update ? set isnotleaf = ? where ID in ?";
-					pstmt = connection.prepareStatement(qryString);
+					pstmt = HibernateUtil.getCurrentSession().createSQLQuery(qryString);
 					pstmt.setString(1,tName);
-					pstmt.setInt(2,1);
+					pstmt.setInteger(2,1);
 					if(LOGGER.isInfoEnabled())     LOGGER.info(qryString);
-					rs = pstmt.executeQuery();
-					rs.close();
+					pstmt.executeUpdate();
 				}
-			catch(SQLException sqlex ){
+			catch(Exception sqlex ){
 				sqlex.printStackTrace();
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("ERROR IN POSTING : " + sqlex.toString());
 				sqlex.getMessage();

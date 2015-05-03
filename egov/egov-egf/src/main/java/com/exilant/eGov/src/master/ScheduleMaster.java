@@ -52,23 +52,25 @@ package com.exilant.eGov.src.master;
  * Window - Preferences - Java - Code Style - Code Templates
  */
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.domain.ChartOfAccts;
 import com.exilant.eGov.src.domain.ScheduleMapping;
 import com.exilant.exility.common.AbstractTask;
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
-
+@Transactional(readOnly=true)
 public class ScheduleMaster extends AbstractTask {
 	private Connection con;
 	private DataCollection dc;
-	private PreparedStatement pstmt = null;
+	private Query pstmt = null;
 	private static final Logger LOGGER = Logger.getLogger(ScheduleMaster.class);
 	private static final String SCHNUMBER = "schNumber";
 	private static final String REPTYPE = "repType";
@@ -94,21 +96,20 @@ public class ScheduleMaster extends AbstractTask {
 
 	public boolean addSchedule() throws TaskFailedException {
 		int schId = 0;
-		ResultSet rs = null;
+		List<Object[]> rs = null;
 		final String schNo = dc.getValue(SCHNUMBER);
 		try{
 		String query = "select id from schedulemapping where schedule = ?";
-		pstmt = con.prepareStatement(query);		
+		pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);		
 		pstmt.setString(1,schNo);
 		if(LOGGER.isInfoEnabled())     LOGGER.info(query);
 		
-			rs = pstmt.executeQuery();
+			rs = pstmt.list();
 			/** Checks whether given Schedule Number already Exists **/
-			if (rs.next()) {
+			for(Object[] element : rs){
 				dc.addMessage("exilError",": Duplicate Schedule No.:" + schNo);
 				throw new TaskFailedException();
 			}
-			rs.close();
 			/** If doesnot exist insert into scheduleMapping table and update chartofaccounts table **/
 			schId = postInSchedulemapping();
 			if (schId == 0) {
@@ -116,7 +117,7 @@ public class ScheduleMaster extends AbstractTask {
 				throw new TaskFailedException();
 			}
 			updateChartofaccounts(schId);
-		} catch (SQLException s) {
+		} catch (Exception s) {
 			dc.addMessage("exilError", " : Error in Schedule Creation");
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("ExilError"+s.getMessage(),s);
 			throw new TaskFailedException();
@@ -248,10 +249,10 @@ public class ScheduleMaster extends AbstractTask {
 			throw new TaskFailedException();
 		}
 	}
-
+@Transactional
 	public void resetChartofAccounts(int schMapId) throws TaskFailedException {
 		//int rs = 0;
-		ResultSet rs = null;
+		List<Object[]> rs = null;
 		try{
 		if ("RP".equalsIgnoreCase(dc.getValue(REPTYPE))) {
 			if ("ROP".equalsIgnoreCase(dc.getValue(REPSUBTYPE))|| "RNOP".equalsIgnoreCase(dc.getValue(REPSUBTYPE))) {
@@ -259,36 +260,35 @@ public class ScheduleMaster extends AbstractTask {
 				String query = "update chartofaccounts set Receiptscheduleid = ?,Receiptoperation = ? where Receiptscheduleid= ?";
 				//query=query+" Receiptscheduleid=null,Receiptoperation=null where Receiptscheduleid="+schMapId;
 				//query = sbuffer.toString();
-				pstmt =con.prepareStatement(query);		
+				pstmt =HibernateUtil.getCurrentSession().createSQLQuery(query);		
 				pstmt.setString(1,null);
 				pstmt.setString(2,null);
-				pstmt.setInt(3,schMapId);
+				pstmt.setInteger(3,schMapId);
 				if(LOGGER.isInfoEnabled())     LOGGER.info(query);
-				rs = pstmt.executeQuery();
+			    pstmt.executeUpdate();
 				} 
 				else if ("POP".equalsIgnoreCase(dc.getValue(REPSUBTYPE)) || "PNOP".equalsIgnoreCase(dc.getValue(REPSUBTYPE))) {
 				String query = "update chartofaccounts set Paymentscheduleid = ?,Paymentoperation = ? where Paymentscheduleid = ?";
 				// query=query+" Paymentscheduleid=null,Paymentoperation=null where Paymentscheduleid="+schMapId; 
-				pstmt = con.prepareStatement(query);		
+				pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);		
 				pstmt.setString(1,null);
 				pstmt.setString(2,null);
-				pstmt.setInt(3,schMapId);
+				pstmt.setInteger(3,schMapId);
 				if(LOGGER.isInfoEnabled())     LOGGER.info(query);
-				rs = pstmt.executeQuery();
+				pstmt.executeUpdate();
 			 	}
 		}
 		else {
 			String query = "update chartofaccounts set  ScheduleId= ?,Operation= ? where ScheduleId= ?";
-			pstmt = con.prepareStatement(query);
+			pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
 			pstmt.setString(1,null);
 			pstmt.setString(2,null);
-			pstmt.setInt(3,schMapId);
+			pstmt.setInteger(3,schMapId);
 			if(LOGGER.isInfoEnabled())     LOGGER.info(query);
-			rs = pstmt.executeQuery();
+			pstmt.executeUpdate();
 		}
-		rs.close();
 		}
-		 catch (SQLException s) {
+		 catch (Exception s) {
 			dc.addMessage("exilError", ":Error"+s.getMessage());
 			LOGGER.error("Error in updating Chartofaccounts",s);
 			throw new TaskFailedException();

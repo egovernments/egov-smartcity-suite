@@ -40,23 +40,25 @@
 package com.exilant.eGov.src.master;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.domain.AccountDtlKey;
 import com.exilant.exility.common.AbstractTask;
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
-
+@Transactional(readOnly=true)
 public class AccountDtlKeyAdd extends AbstractTask {
 	private final static Logger LOGGER = Logger
 			.getLogger(AccountDtlKeyAdd.class);
 	private transient Connection connection;
-	private PreparedStatement pstmt = null;
-	private ResultSet resultset;
+	private Query pstmt = null;
+	private List<Object[]> resultset;
 	// private boolean autoCommit=false;
 	// private String currentDate="";
 	private DataCollection dataCollection;
@@ -88,8 +90,8 @@ public class AccountDtlKeyAdd extends AbstractTask {
 		// boolean bothPresent = false;
 		String desc = "";
 		String attrName = "";
-		ResultSet rs = null;
-		ResultSet rst = null;
+		List<Object[]> rs = null;
+		List<Object[]> rst = null;
 		String qryString = "";
 		String type = "cash";
 		String dtlKey = "";
@@ -125,7 +127,7 @@ public class AccountDtlKeyAdd extends AbstractTask {
 						attrName = "organizationStructure_id";
 					}
 					qryString = "Select ID, attributeName from AccountDetailType where attributename = ?";
-					pstmt = connection.prepareStatement(qryString);
+					pstmt = HibernateUtil.getCurrentSession().createSQLQuery(qryString);
 					pstmt.setString(1, attrName);
 
 				} // end of orgstructure
@@ -135,18 +137,18 @@ public class AccountDtlKeyAdd extends AbstractTask {
 							.getValue("accountEntityMaster_detailTypeId");
 					qryString = "Select ID, attributeName from AccountDetailType where id= ? ";
 					if(LOGGER.isDebugEnabled())     LOGGER.debug("<<<<<<<<<<<<<<<<<<<<<<<<<<<<" + qryString);
-					pstmt = connection.prepareStatement(qryString);
+					pstmt = HibernateUtil.getCurrentSession().createSQLQuery(qryString);
 					pstmt.setString(1, str);
 				} else {
 					qryString = "Select ID, attributeName from AccountDetailType where tablename= ? ";
-					pstmt = connection.prepareStatement(qryString);
+					pstmt = HibernateUtil.getCurrentSession().createSQLQuery(qryString);
 					pstmt.setString(1, tName);
 				}
 
-				rst = pstmt.executeQuery();
-				while (rst.next()) {
-					ADk.setdetailTypeId(rst.getString(1));
-					ADk.setdetailName(rst.getString(2));
+				rst = pstmt.list();
+				for(Object[] element : rst){
+					ADk.setdetailTypeId(element[0].toString());
+					ADk.setdetailName(element[1].toString());
 				}
 
 				// select detail key for the code
@@ -155,16 +157,16 @@ public class AccountDtlKeyAdd extends AbstractTask {
 							.getValue("financialYear_financialYear");
 					// if(LOGGER.isDebugEnabled())     LOGGER.debug("*****************"+fYear+"*********");
 					qryString = "Select ID from "+tName+" Where financialYear=?";
-					pstmt = connection.prepareStatement(qryString);
+					pstmt = HibernateUtil.getCurrentSession().createSQLQuery(qryString);
 					pstmt.setString(1, fYear);
 				} else {
 					qryString = "Select ID from "+tName+" where code= ? ";
-					pstmt = connection.prepareStatement(qryString);
+					pstmt = HibernateUtil.getCurrentSession().createSQLQuery(qryString);
 					pstmt.setString(1, code);
 				}
-				rs = pstmt.executeQuery();
-				while (rs.next()) {
-					dtlKey = rs.getString(1);
+				rs = pstmt.list();
+				for(Object[] element : rst){
+					dtlKey = element[0].toString();
 					ADk.setdetailKey(dtlKey);
 				}
 				String qry=null;
@@ -174,21 +176,21 @@ public class AccountDtlKeyAdd extends AbstractTask {
 					qry = "Select Id from AccountDetailKey where detailkey= ? and detailName= ? ";
 				}
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("*********Before prepare Statement*****" + qry);
-				pstmt = connection.prepareStatement(qry);
+				pstmt = HibernateUtil.getCurrentSession().createSQLQuery(qry);
 				if(attrName==""){
 					pstmt.setString(1, dtlKey);
 				}else{
 					pstmt.setString(1, dtlKey);
 					pstmt.setString(2, attrName);
 				}
-				rs = pstmt.executeQuery();
-				if (rs.next()) {
-					aid = rs.getString(1);
+				rs = pstmt.list();
+				for(Object[] element : rst){
+					aid = element[0].toString();
 					if(LOGGER.isDebugEnabled())     LOGGER.debug(aid);
 					ADk.setID(aid);
 					ADk.update();
 					// if(LOGGER.isDebugEnabled())     LOGGER.debug("<<<<<<<<<<<<<<<<update service");
-				} else {
+				} if(rs == null || rs.size() == 0)  {
 					ADk.insert();
 				}
 			}

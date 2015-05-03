@@ -39,9 +39,12 @@
  ******************************************************************************/
 package com.exilant.eGov.src.master;
 import java.sql.Connection;
-import java.sql.Statement;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class OrderNumber
 {
 	private final static Logger LOGGER=Logger.getLogger(OrderNumber.class);
@@ -106,7 +109,8 @@ public class OrderNumber
 	public void setOrderType(char orderType) {
 		this.orderType = orderType;
 	}
-	public boolean insertOrderNumber(Connection connection)
+	@Transactional
+	public boolean insertOrderNumber()
 	{
 
 		String insertQuery="Insert into EG_ORDERNO(ID, ORDERTYPE,ORDERNO,FINANCIALYEARID)Values("+
@@ -114,23 +118,15 @@ public class OrderNumber
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("insertQuery:"+insertQuery);
 		try
 		{
-		Statement statement = connection.createStatement();
-	    statement.executeUpdate(insertQuery);
+		Query statement = HibernateUtil.getCurrentSession().createSQLQuery(insertQuery);
+	    statement.executeUpdate();
 	    if(LOGGER.isDebugEnabled())     LOGGER.debug("insertQuery:"+insertQuery);
-		    try
-		    {
-			    statement.close();
-			    //if(LOGGER.isDebugEnabled())     LOGGER.debug("============");
-		    }
-		    catch(Exception close)
-		    {
-		    	return false;
-		    }
 	   // if(LOGGER.isDebugEnabled())     LOGGER.debug("======**************************======");
 		}
 		catch(Exception insert){if(LOGGER.isDebugEnabled())     LOGGER.debug("Exception in inserting DEPARTMENT:"+insert);return false;}
 		return true;
 	}
+	@Transactional
 	public boolean update(Connection connection,String code)
 	{
 
@@ -138,14 +134,11 @@ public class OrderNumber
 
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("updateQuery:"+updateQuery);
 		try{
-		Statement statement = connection.createStatement();
-	    statement.executeUpdate(updateQuery);
-	   // if(LOGGER.isDebugEnabled())     LOGGER.debug("updateQuery:"+updateQuery);
-	    try{
-	    statement.close();
-	    }catch(Exception close){return false;}
-	    //if(LOGGER.isDebugEnabled())     LOGGER.debug(updateQuery);
+		Query statement = HibernateUtil.getCurrentSession().createSQLQuery(updateQuery);
+	    statement.executeUpdate();
 		}
+	   // if(LOGGER.isDebugEnabled())     LOGGER.debug("updateQuery:"+updateQuery);
+
 		catch(Exception insert){if(LOGGER.isDebugEnabled())     LOGGER.debug("Exception in Updating COSTCENTRE:"+insert);return false;}
 		return true;
 	}

@@ -46,12 +46,14 @@
 package com.exilant.eGov.src.master;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.EGovConfig;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.eGov.src.domain.Bank;
@@ -70,12 +72,13 @@ import com.exilant.exility.common.TaskFailedException;
  */
 // This class updates data of BankBranch - New screen to BankBranch table. and
 // Account datails to Bank Acoount
+@Transactional(readOnly=true)
 public class BankBranchAdd extends AbstractTask {
 
 	private DataCollection dataCollection;
 	private Connection con = null;
-	private PreparedStatement pstmt = null;
-	private ResultSet rs = null;
+	private Query pstmt = null;
+	private List<Object[]> rs = null;
 	private String bankName;
 	private int id;
 	private static final Logger LOGGER = Logger.getLogger(BankBranchAdd.class);
@@ -143,18 +146,18 @@ public class BankBranchAdd extends AbstractTask {
 					"Bank Code is must required field");
 			throw new TaskFailedException("Bank Code cannot be empty.");
 		}
-		pstmt = con.prepareStatement(strQry);
+		pstmt = HibernateUtil.getCurrentSession().createSQLQuery(strQry);
 		pstmt.setString(1, bank_code);
-		rs = pstmt.executeQuery();
-		if (!rs.next()) {
+		rs = pstmt.list();
+		if(rs == null || rs.size() == 0){
 			dataCollection.addMessage("userMessege", "Invalid Bank Code");
 			throw new TaskFailedException("BankId Not Found");
 		}
-
-		String bankId = Integer.toString(rs.getInt(1));
-		bankName = rs.getString(2);
-		rs.close();
-		pstmt.close();
+		String bankId = "";
+		for(Object[] element : rs){
+			bankId = element[0].toString();
+		bankName = element[1].toString();
+		}
 		String isActive = dataCollection.getValue("bankBranch_isActive")
 				.toString();
 		if (isActive != null

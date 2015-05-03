@@ -45,21 +45,24 @@
  */
 package com.exilant.eGov.src.master;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.domain.BillCollector;
 import com.exilant.eGov.src.domain.BillCollectorDetail;
 import com.exilant.exility.common.AbstractTask;
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
-
+@Transactional(readOnly=true)
 public class BillCollectorModify extends AbstractTask {
 	private Connection connection;
 	private DataCollection dc;
-	PreparedStatement pstmt=null; 
+	Query pstmt=null; 
 	
 	
 	public void execute (String taskName,
@@ -111,28 +114,28 @@ public class BillCollectorModify extends AbstractTask {
 	
 	private void postInBillCollectorDetail() throws SQLException,TaskFailedException
 	{
-		ResultSet rset=null;
+		List<Object[]> rset=null;
 		
 		BillCollectorDetail BCD = new BillCollectorDetail();
 		String billColId=(String)dc.getValue("billCollector_ID");
 		BCD.setBillCollectorID(billColId);
 		String selQuery="SELECT ID FROM billCollectorDetail WHERE billCollectorId=?";
-		pstmt=connection.prepareStatement(selQuery);
+		pstmt=HibernateUtil.getCurrentSession().createSQLQuery(selQuery);
 		pstmt.setString(1,billColId);
-		rset=pstmt.executeQuery();
-		//ResultSet rset=statement.executeQuery("SELECT ID FROM billCollectorDetail WHERE billCollectorId="+billColId);
+		rset=pstmt.list();
+		//List<Object[]> rset=statement.executeQuery("SELECT ID FROM billCollectorDetail WHERE billCollectorId="+billColId);
 		String bId="";
 		ArrayList idList=new ArrayList();		
 		try{
-			while(rset.next()){
-				bId=rset.getString(1);
+			for(Object[] element : rset){
+				bId=element[0].toString();
 				idList.add(bId);
 			}
 			for(int i=0;i<idList.size();i++){
 				bId=(String)idList.get(i);
-				pstmt=connection.prepareStatement("DELETE FROM billCollectorDetail WHERE id=?");
+				pstmt=HibernateUtil.getCurrentSession().createSQLQuery("DELETE FROM billCollectorDetail WHERE id=?");
 				pstmt.setString(1,bId);
-				rset=pstmt.executeQuery();
+				rset=pstmt.list();
 				//statement.execute("DELETE FROM billCollectorDetail WHERE id="+bId);
 			}			
 		}catch(Exception e){

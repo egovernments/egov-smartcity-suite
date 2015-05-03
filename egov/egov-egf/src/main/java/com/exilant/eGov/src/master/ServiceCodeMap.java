@@ -40,20 +40,21 @@
 package com.exilant.eGov.src.master;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.domain.CodeServiceMap;
 import com.exilant.exility.common.AbstractTask;
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
-
+@Transactional(readOnly=true)
 public class ServiceCodeMap extends AbstractTask {
-	PreparedStatement pstmt=null; 
-	ResultSet rset=null;
+	org.hibernate.Query pstmt=null; 
+	List<Object[]> rset=null;
 	private static final Logger LOGGER = Logger.getLogger(ServiceCodeMap.class);
 	public void execute(String taskName, String gridName, DataCollection dc,
 			Connection conn, boolean errorOnNoData,
@@ -68,7 +69,7 @@ public class ServiceCodeMap extends AbstractTask {
 			throw new TaskFailedException();
 		}
 	}
-
+	@Transactional
 	public void postInCodeServiceMap(DataCollection dc, Connection conn)
 			throws TaskFailedException {
 
@@ -80,17 +81,15 @@ public class ServiceCodeMap extends AbstractTask {
 		}
 		try{
 		String delQuery="delete FROM codeservicemap WHERE serviceid=?";
-		pstmt=conn.prepareStatement(delQuery);
+		pstmt=HibernateUtil.getCurrentSession().createSQLQuery(delQuery);
 		pstmt.setString(1,srvId);
-		rset=pstmt.executeQuery();
+		pstmt.executeUpdate();
 		CodeServiceMap csm = new CodeServiceMap();
 		csm.setServiceId(srvId);
 		for (int i = 0; i < codeList.length; i++) {
 			csm.setGlCodeId(codeList[i]);
 			csm.insert();
 		}
-		rset.close();
-		pstmt.close();
 		}
 		catch(SQLException ex){ 
 			LOGGER.error("ERROR"+ex.getMessage(),ex);

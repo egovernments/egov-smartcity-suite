@@ -46,13 +46,15 @@
 package com.exilant.eGov.src.master;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.eGov.src.domain.EgAssetPO;
@@ -70,15 +72,15 @@ import com.exilant.exility.common.TaskFailedException;
 /*
  * modified by iliyaraja---Changed the "worksDetail_code" param name in jsp file--->dc.getValue("worksDetail_codeId") Instead of ---->dc.getValue("worksDetail_code")
 */
-
+@Transactional(readOnly=true)
 public class ProcmtOrder extends AbstractTask {
 	private static final Logger LOGGER=Logger.getLogger(ProcmtOrder.class);
 	private static final String WORKSDETAILCODEID = "worksDetail_codeId";
 	private static final String WORKSDETAILID = "worksDetail_ID";
     private DataCollection dc;
     private Connection con=null;
-    private Statement st=null;
-    private ResultSet rs=null;
+    private Query st=null;
+    private List<Object[]> rs=null;
     private int workOrderId=0;
     private int workmisOrderId=0;
     public void execute (String nameTask,
@@ -321,7 +323,7 @@ public class ProcmtOrder extends AbstractTask {
 
 	        String strworkOrderId = Integer.toString(workOrderId);
 	        String tdsList[]=dc.getValueList("tds_List");
-	         st=con.createStatement();
+	         st=con.createQuery();
 	         int rcount=0;
 	         if(LOGGER.isInfoEnabled())     LOGGER.info("Inside postInEgw_Works_Deductions modeOfExec is--->"+dc.getValue("modeOfExec"));
 
@@ -355,8 +357,8 @@ public class ProcmtOrder extends AbstractTask {
 								if(LOGGER.isInfoEnabled())     LOGGER.info("workOrderId"+workOrderId);
 
 
-								// st=con.createStatement();
-								 rcount=st.executeUpdate("delete Egw_Works_Deductions where worksdetailid="+workOrderId);
+								// st=con.createQuery();
+								 rcount=HibernateUtil.getCurrentSession().createSQLQuery("delete Egw_Works_Deductions where worksdetailid="+workOrderId);
 								 if(rcount>0)
 								if(LOGGER.isInfoEnabled())     LOGGER.info("deleted "+rcount+" row from table: Egw_Works_Deductions");
 
@@ -387,8 +389,8 @@ public class ProcmtOrder extends AbstractTask {
 		             	 	if(LOGGER.isInfoEnabled())     LOGGER.info("workOrderId"+workOrderId);
 
 
-		             	 	// st=con.createStatement();
-							 rcount=st.executeUpdate("delete Egw_Works_Deductions where worksdetailid="+workOrderId);
+		             	 	// st=con.createQuery();
+							 rcount=HibernateUtil.getCurrentSession().createSQLQuery("delete Egw_Works_Deductions where worksdetailid="+workOrderId);
 							 if(rcount>0)
 							if(LOGGER.isInfoEnabled())     LOGGER.info("deleted "+rcount+" row from table: Egw_Works_Deductions");
 
@@ -413,8 +415,8 @@ public class ProcmtOrder extends AbstractTask {
     private void editVoucher(DataCollection dc,Connection con)throws TaskFailedException
     {
         /************* validation part Begins************/
-        Statement st=null;
-        ResultSet rset=null;
+        Query st=null;
+        List<Object[]> rset=null;
         try
         {
             /**          Validation Begins            **/
@@ -446,17 +448,18 @@ public class ProcmtOrder extends AbstractTask {
             throw new TaskFailedException(ex);
         }
     }
+    @Transactional
     private void deleteEgfAssetPO(Connection con)throws TaskFailedException
     {
-        Statement st=null;
+        Query st=null;
         int rs;
         String wrkid=dc.getValue(WORKSDETAILID);
         try
         {
-            st=con.createStatement();
-            rs=st.executeUpdate("delete eg_asset_po where workorderid="+wrkid);
-            if(rs>0)
-                if(LOGGER.isInfoEnabled())     LOGGER.info("deleted "+rs+" from table: eg_asset_po");
+            st=HibernateUtil.getCurrentSession().createSQLQuery("delete eg_asset_po where workorderid="+wrkid);
+            
+            if(st.executeUpdate()>0)
+                if(LOGGER.isInfoEnabled())     LOGGER.info("deleted  from table: eg_asset_po");
         }
         catch(Exception e){
             //dc.addMessage("userFailure","Procurement Order Updation Failure");
@@ -466,15 +469,14 @@ public class ProcmtOrder extends AbstractTask {
     public void verifyUniqueness(Connection con,String field1)throws TaskFailedException,SQLException
     {
         if(LOGGER.isInfoEnabled())     LOGGER.info("verifyUniqueness:");
-        Statement st=con.createStatement();
-        ResultSet rs=null;
+        Query st;
+        List<Object[]> rs=null;
         String codeCreated="";
         String code="";
         codeCreated=field1.toLowerCase();
-        rs=st.executeQuery("select code from worksdetail where lower(code)='"+codeCreated+"'");
-        if(rs.next())
-        {
-            code=rs.getString(1);
+        rs =HibernateUtil.getCurrentSession().createSQLQuery("select code from worksdetail where lower(code)='"+codeCreated+"'").list();
+        for(Object[] element : rs){
+            code=element[0].toString();
             if(LOGGER.isInfoEnabled())     LOGGER.info("codeExisting:"+code);
             if(code.equalsIgnoreCase(field1))
             {
@@ -486,15 +488,14 @@ public class ProcmtOrder extends AbstractTask {
     public void verifyUniquenessEdit(Connection con,String field1)throws TaskFailedException,SQLException
 	    {
 	        if(LOGGER.isInfoEnabled())     LOGGER.info("verifyUniqueness:");
-	        Statement st=con.createStatement();
-	        ResultSet rs=null;
+	        Query st;
+	        List<Object[]> rs=null;
 	        String codeCreated="";
 	        String code="";
 	        codeCreated=field1.toLowerCase();
-	        rs=st.executeQuery("select wd.code from worksdetail wd where wd.id !="+dc.getValue(WORKSDETAILID)+" and lower(wd.code)='"+codeCreated+"'");
-	        if(rs.next())
-	        {
-	            code=rs.getString(1);
+	        rs = HibernateUtil.getCurrentSession().createSQLQuery("select wd.code from worksdetail wd where wd.id !="+dc.getValue(WORKSDETAILID)+" and lower(wd.code)='"+codeCreated+"'").list();
+	        for(Object[] element : rs){
+	            code=element[0].toString();
 	            if(LOGGER.isInfoEnabled())     LOGGER.info("codeExisting:"+code);
 	            if(code.equalsIgnoreCase(field1))
 	            {
@@ -506,14 +507,13 @@ public class ProcmtOrder extends AbstractTask {
     public void validateAdvanceAmt(Connection con,String field1,String field2)throws TaskFailedException,SQLException
     {
         if(LOGGER.isInfoEnabled())     LOGGER.info("validateAdvanceAmt:");
-        Statement st=con.createStatement();
-        ResultSet rs=null;
+        Query st;
+        List<Object[]> rs=null;
         double advAmt=0,advAmtPay=0;
         advAmtPay=Double.parseDouble(field1);
-        rs=st.executeQuery("select Advanceamount from worksdetail where id='"+field2+"'");
-        if(rs.next())
-        {
-            advAmt=rs.getDouble(1);
+        rs=HibernateUtil.getCurrentSession().createSQLQuery("select Advanceamount from worksdetail where id='"+field2+"'").list();
+        for(Object[] element : rs){
+            advAmt=Double.parseDouble(element[0].toString());
             if(LOGGER.isInfoEnabled())     LOGGER.info("advAmt:"+advAmt+" advAmtPay: "+advAmtPay);
             if(advAmtPay<advAmt)
             {

@@ -46,13 +46,15 @@
 package com.exilant.eGov.src.master;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.domain.FinancialYear;
 import com.exilant.eGov.src.domain.FiscalPeriod;
@@ -66,13 +68,14 @@ import com.exilant.exility.common.TaskFailedException;
  *         TODO To change the template for this generated type comment go to
  *         Window - Preferences - Java - Code Style - Code Templates
  */
+@Transactional(readOnly=true)
 public class FiscalPeriodMod extends AbstractTask {
 	private static final Logger LOGGER = Logger
 			.getLogger(FiscalPeriodMod.class);
 	private DataCollection dc;
 	private Connection connection = null;
 
-	private PreparedStatement pstmt = null;
+	private Query pstmt = null;
 	int fid;
 	String status;
 
@@ -106,22 +109,20 @@ public class FiscalPeriodMod extends AbstractTask {
 	private void checkFinancialYear() throws Exception {
 		// FinancialYear FY = new FinancialYear();
 
-		ResultSet resultSet = null;
+		List<Object[]> resultSet = null;
 		String finId = dc.getValue("financialYear_ID");
 		// String fid=dc.getValue("financialYear_ID");
 		// if(LOGGER.isDebugEnabled())     LOGGER.debug("fid : " +fid);
 		String query = "select fiscalperiodid from voucherheader where fiscalperiodid in (select fp.id from fiscalperiod fp,financialyear fy where fy.id=fp.financialyearid and fy.id=?)";
-		PreparedStatement pstmt = connection.prepareStatement(query);
+		Query pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
 		pstmt.setString(1, finId);
-		resultSet = pstmt.executeQuery();
-		if (resultSet.next()) {
+		resultSet = pstmt.list();
+		for(Object[] element : resultSet){
 			dc.addMessage("userFailure", " Cannot Modify this financial year "
 					+ dc.getValue("financialYear_financialYear")
 					+ " as records are there for this year.");
 			throw new Exception();
 		}
-		pstmt.close();
-		resultSet.close();
 	}
 
 	private void postInFinancialYear() throws SQLException, TaskFailedException {
@@ -160,11 +161,11 @@ public class FiscalPeriodMod extends AbstractTask {
 		FY.update();
 		fid = FY.getId();
 	}
-
+	@Transactional
 	private void postInFiscalPeriod() throws SQLException, TaskFailedException {
 
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
+		Query pstmt = null;
+		List<Object[]> rs = null;
 		FiscalPeriod FP = new FiscalPeriod();
 		status = dc.getValue("fiscalPeriod");
 		FP.setFinancialYearId(fid + "");
@@ -173,7 +174,7 @@ public class FiscalPeriodMod extends AbstractTask {
 		for (int i = 0; i < fGrid.length; i++) {
 			if (fGrid[i][1].equalsIgnoreCase("")) {
 				String fisGrid = fGrid[i][0];
-				pstmt = connection.prepareStatement(delQuery);
+				pstmt = HibernateUtil.getCurrentSession().createSQLQuery(delQuery);
 				pstmt.setString(1, fisGrid);
 				pstmt.executeUpdate();
 			} else {
