@@ -40,19 +40,14 @@
 package com.exilant.eGov.src.chartOfAccounts;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-
-import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.GLAccount;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.dataservice.DataExtractor;
+@Transactional(readOnly=true)
 public class CodeValidator {
 	//private static HashMap glFilterList;
 	//public static HashMap glAccountCodes;

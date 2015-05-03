@@ -53,6 +53,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
@@ -64,7 +65,7 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
  *         TODO To change the template for this generated type comment go to
  *         Window - Preferences - Java - Code Style - Code Templates
  */
-
+@Transactional(readOnly=true)
 public class AccountChequeRange {
 	private String id = "";
 	private String bankAccountID = "";
@@ -82,7 +83,7 @@ public class AccountChequeRange {
 	private static final Logger LOGGER = Logger
 			.getLogger(AccountChequeRange.class);
 	private String updateQuery = "UPDATE bankbranch SET";
-
+	@Transactional
 	public void insert(final Connection connection) throws SQLException,
 			TaskFailedException {
 		PreparedStatement pst = null;
@@ -120,6 +121,7 @@ public class AccountChequeRange {
 		}
 
 	}
+	@Transactional
 	public void update(Connection con) throws TaskFailedException,
 	SQLException {
 SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy",Locale.getDefault());

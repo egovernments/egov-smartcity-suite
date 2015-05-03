@@ -46,10 +46,14 @@
 package com.exilant.eGov.src.common;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.util.List;
+
 import org.apache.log4j.Logger;
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.exilant.exility.common.AbstractTask;
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
@@ -59,6 +63,7 @@ import com.exilant.exility.common.TaskFailedException;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+@Transactional(readOnly=true)
 public class LoadSubLedgerData extends AbstractTask{
 	private final static Logger LOGGER=Logger.getLogger(LoadSubLedgerData.class);
 	private static TaskFailedException taskExc;
@@ -69,8 +74,8 @@ public class LoadSubLedgerData extends AbstractTask{
 			{
 				//
 				int noOfRec=0;
-				ResultSet rset=null;
-				PreparedStatement pst=null;
+				List<Object[]> rset=null;
+				Query pst=null;
 				
 				String cgn=dc.getValue("drillDownCgn");
 				try{
@@ -80,16 +85,14 @@ public class LoadSubLedgerData extends AbstractTask{
 					String chequeId="";
 					String sql="select sph.type,sph.chequeid from subledgerpaymentheader sph,voucherheader  vh  where "+
 					" sph.voucherheaderid=vh.id and vh.cgn= ?";
-					pst =con.prepareStatement(sql);
+					pst =HibernateUtil.getCurrentSession().createSQLQuery(sql);
 					pst.setString(1, cgn);
-if(LOGGER.isDebugEnabled())     LOGGER.debug(sql);
-					rset=pst.executeQuery();
-					ResultSetMetaData rmeta=rset.getMetaData();
-					if(rset.next()){
-						 relationType=rset.getString(1);
-						 chequeId=rset.getString(2);
+					if(LOGGER.isDebugEnabled())     LOGGER.debug(sql);
+					rset=pst.list();
+					for(Object[] element : rset){
+						 relationType=element[0].toString();
+						 chequeId=element[1].toString();
 					}
-					rset.close();
 					dc.addValue("pay_hide",relationType);
 					if(chequeId==null || chequeId.equals("0")){
 						dc.addValue("subLedgerPaymentHeader_typeOfPayment","Cash");
@@ -107,79 +110,73 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug(sql);
 					" sph.voucherheaderid=vh.id  and f.id=vh.fundid and fsrc.id=vh.fundsourceid" +
 					" and vh.cgn= ?";
 if(LOGGER.isDebugEnabled())     LOGGER.debug(sql);
-					pst = con.prepareStatement(sql);
+					pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
 					pst.setString(1, cgn);
-					rset=pst.executeQuery();
-					rmeta=rset.getMetaData();
-					if(rset.next()){
-						 for(int i=1;i<=rmeta.getColumnCount();i++){
-						 	dc.addValue(rmeta.getColumnName(i),rset.getString(i));
-						 }
+					rset=pst.list();
+					for(Object[] element : rset){
+						 	dc.addValue("pay_type",element[0].toString());
+						 	dc.addValue("payToid",element[1].toString());
+						 	dc.addValue("paidByid",element[2].toString());
+						 	dc.addValue("accId",element[3].toString());
+						 	dc.addValue("worksDetailid",element[4].toString());
+						 	dc.addValue("fund_name",element[5].toString());
+						 	dc.addValue("fund_id",element[6].toString());
+						 	dc.addValue("fundSource_id",element[7].toString());
+						 	dc.addValue("fundSource_name",element[8].toString());
 					}
 					//rset.close();
 					//billcollector
 					sql="select a.name as \"paidBy\",b.glcode as \"billCollector_cashInHandDesc\" from billcollector a,chartofaccounts b where "+
 						" a.cashinhand=b.id and a.id= ?";
 if(LOGGER.isDebugEnabled())     LOGGER.debug(sql);
-					pst = con.prepareStatement(sql);
+					pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
 					pst.setString(1, dc.getValue("paidByid"));
-					rset=pst.executeQuery();
-					rmeta=rset.getMetaData();
-					if(rset.next()){
-						 for(int i=1;i<=rmeta.getColumnCount();i++){
-						 	dc.addValue(rmeta.getColumnName(i),rset.getString(i));
-						 }
-					}
+					rset=pst.list();
+					for(Object[] element : rset){
+					 	dc.addValue("paidBy",element[0].toString());
+					 	dc.addValue("billCollector_cashInHandDesc",element[1].toString());
+				}
 					//rset.close();
 					//supplier/contractor name
 					sql="select name  as \"payTo\" from relation where id= ?";
 if(LOGGER.isDebugEnabled())     LOGGER.debug(sql);
-					pst = con.prepareStatement(sql);
+					pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
 					pst.setString(1, dc.getValue("payToid"));
-					rset=pst.executeQuery();
-					rmeta=rset.getMetaData();
-					if(rset.next()){
-						 for(int i=1;i<=rmeta.getColumnCount();i++){
-						 	dc.addValue(rmeta.getColumnName(i),rset.getString(i));
-						 }
-					}
+					rset=pst.list();
+					for(Object[] element : rset){
+					 	dc.addValue("payTo",element[0].toString());
+				}
 					//rset.close();
 					//	workorder
 					sql="select name  as \"worksDetail_id\" ,advanceamount as \"worksDetail_advanceAmount\" from worksDetail where id= ?";
 if(LOGGER.isDebugEnabled())     LOGGER.debug(sql);
-					pst = con.prepareStatement(sql);
+					pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
 					pst.setString(1, dc.getValue("worksDetailid"));
-					rset=pst.executeQuery();
-					rmeta=rset.getMetaData();
-					if(rset.next()){
-						 for(int i=1;i<=rmeta.getColumnCount();i++){
-						 	dc.addValue(rmeta.getColumnName(i),rset.getString(i));
-						 }
-					}
+					rset=pst.list();
+					for(Object[] element : rset){
+					 	dc.addValue("worksDetail_id",element[0].toString());
+					 	dc.addValue("worksDetail_advanceAmount",element[1].toString());
+				}
 					//rset.close();
 					//bank name
 					sql="select a.name||' '||b.branchname as \"subLedgerPaymentHeader_bankId\" from bank a ,bankbranch b, bankaccount c  where"+
 						" a.id=b.bankid and b.id=c.branchid and c.id= ?";
 if(LOGGER.isDebugEnabled())     LOGGER.debug(sql);
-					pst = con.prepareStatement(sql);
+					pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
 					pst.setString(1, dc.getValue("accId"));
-					rset=pst.executeQuery();
-					rmeta=rset.getMetaData();
-					if(rset.next()){
-						 for(int i=1;i<=rmeta.getColumnCount();i++){
-						 	dc.addValue(rmeta.getColumnName(i),rset.getString(i));
-						 }
+					rset=pst.list();
+					for(Object[] element : rset){
+					 	dc.addValue("subLedgerPaymentHeader_bankId",element[0].toString());
 					}
 					//rset.close();
 					//acount number
 					sql="select accountnumber as \"branchAccountId\" from bankaccount where id= ?";
 if(LOGGER.isDebugEnabled())     LOGGER.debug(sql);
-					pst = con.prepareStatement(sql);
+					pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
 					pst.setString(1, dc.getValue("accId"));
-					rset=pst.executeQuery();
-					rmeta=rset.getMetaData();
-					if(rset.next()){
-						 	dc.addValue("subLedgerPaymentHeader_branchAccountId",rset.getString(1));
+					rset=pst.list();
+					for(Object[] element : rset){
+					 	dc.addValue("branchAccountId",element[0].toString());
 					}
 					//rset.close();
 					sql="select count(*)"+
@@ -192,14 +189,14 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug(sql);
 					" and a."+relationTypeID+"= ? and b.fundid="+
 					" and a.worksdetailid= ?"+" order by a.billDate";
 if(LOGGER.isDebugEnabled())     LOGGER.debug(sql);
-					pst = con.prepareStatement(sql);
+					pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
 					pst.setString(1, cgn);
 					pst.setString(2, dc.getValue("payToid"));
 					pst.setString(3, dc.getValue("fund_id"));
 					pst.setString(4, dc.getValue("worksDetailid"));
-					rset=pst.executeQuery();
-					if(rset.next()){
-						 noOfRec=rset.getInt(1);
+					rset=pst.list();
+					for(Object[] element : rset){
+						 noOfRec=Integer.parseInt(element[0].toString());
 					}
 					//rset.close();
 					if(noOfRec>0){
@@ -219,25 +216,45 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug(sql);
 						" and a."+relationTypeID+"= ? and b.fundid= ?"+
 						" and a.worksdetailid= ? order by a.billDate";
 if(LOGGER.isDebugEnabled())     LOGGER.debug(sql);
-						pst = con.prepareStatement(sql);
+						pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
 						pst.setString(1, cgn);
 						pst.setString(2, dc.getValue("payToid"));
 						pst.setString(3, dc.getValue("fund_id"));
 						pst.setString(4, dc.getValue("worksDetailid"));
-						rset=pst.executeQuery();
-						rmeta=rset.getMetaData();
+						rset=pst.list();
 						//grid[0][x] we filled control name
-						for(int i=1;i<=rmeta.getColumnCount();i++){
-						 	grid[0][i-1]=rmeta.getColumnName(i);
-						}
+						for(Object[] element : rset){
+						 	dc.addValue("billNoId",element[0].toString());
+						 	dc.addValue("billNo",element[1].toString());
+						 	dc.addValue("d_voucherNo",element[2].toString());
+						 	dc.addValue("billDate",element[3].toString());
+						 	dc.addValue("passedAmount",element[4].toString());
+						 	dc.addValue("advance",element[5].toString());
+						 	dc.addValue("tds",element[6].toString());
+						 	dc.addValue("otherRecoveries",element[7].toString());
+						 	dc.addValue("net",element[8].toString());
+						 	dc.addValue("earlierPayment",element[9].toString());
+						 	dc.addValue("slph_paidAmount",element[10].toString());
+						 	dc.addValue("slNo",element[11].toString());
+						 	dc.addValue("billSelect",element[12].toString());
+					}
 						int idx=1;//grid[from 1][x] we start filling data
-						while(rset.next()){
-							for(int i=1;i<=rmeta.getColumnCount();i++){
-							 	grid[idx][i-1]=rset.getString(i);
-							}
+					for(Object[] element : rset){
+							grid[idx][0] = element[0].toString();
+							grid[idx][1] = element[1].toString();
+							grid[idx][2] = element[2].toString();
+							grid[idx][3] = element[3].toString();
+							grid[idx][4] = element[4].toString();
+							grid[idx][5] = element[5].toString();
+							grid[idx][6] = element[6].toString();
+							grid[idx][7] = element[7].toString();
+							grid[idx][8] = element[8].toString();
+							grid[idx][9] = element[9].toString();
+							grid[idx][10] = element[10].toString();
+							grid[idx][11] = element[11].toString();
+							grid[idx][12] = element[12].toString();
 							idx++;
 						}
-						rset.close();
 						dc.addGrid(gridName,grid);
 					}
 					sql="select cgn as \"voucherHeader_cgn\",vouchernumber as \"voucherHeader_voucherNumber\",to_char(voucherdate,'dd-Mon-yyyy') as \"voucherHeader_voucherDate\","+
@@ -249,20 +266,19 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug(sql);
 					" sph.voucherheaderid=vh.id "+
 					" and (chequeid is  null or chequeid=0) and vh.cgn= ?";
 if(LOGGER.isDebugEnabled())     LOGGER.debug(sql);
-					pst = con.prepareStatement(sql);
+					pst = HibernateUtil.getCurrentSession().createSQLQuery(sql);
 					pst.setString(1, cgn);
 					pst.setString(2, cgn);
-					rset=pst.executeQuery();
-					rmeta=rset.getMetaData();
+					rset=pst.list();
 					String columnName="";
-					if(rset.next()){
-						 for(int i=1;i<=rmeta.getColumnCount();i++){
-						 	columnName=rmeta.getColumnName(i);
-						 	if(columnName.equalsIgnoreCase("narration")){
-						 		columnName="subLedgerPaymentHeader_"+columnName;
-						 	}
-						 	dc.addValue(columnName,rset.getString(i));
-						 }
+					for(Object[] element : rset){
+						dc.addValue("voucherHeader_cgn",element[0].toString());
+					 	dc.addValue("voucherHeader_voucherNumber",element[1].toString());
+					 	dc.addValue("voucherHeader_voucherDate",element[2].toString());
+					 	dc.addValue("chequeDetail_chequeNumber",element[3].toString());
+					 	dc.addValue("chequeDetail_chequeDate",element[4].toString());
+					 	dc.addValue("subLedgerPaymentHeader_narration",element[5].toString());
+					 	dc.addValue("fundsource_id",element[6].toString());
 					}
 					//rset.close();
 					//st.close();
@@ -270,11 +286,6 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug(sql);
 					LOGGER.error("Error in executing query");
 					throw taskExc;
 			}
-			finally{
-				try{
-					rset.close();
-					pst.close();
-				}catch(Exception e){LOGGER.error("Inside finally");}
-			}
+			
 			}
 }

@@ -57,6 +57,7 @@ import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.lib.rrbac.model.AccountCodeRuleData;
 import org.hibernate.HibernateException;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.eGov.src.domain.ChartOfAccountDetail;
@@ -65,7 +66,7 @@ import com.exilant.eGov.src.transactions.RoleRuleValidate;
 import com.exilant.exility.common.AbstractTask;
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
-
+@Transactional(readOnly=true)
 public class ChartOfAccDetail extends AbstractTask implements
 		AccountCodeRuleData {
 

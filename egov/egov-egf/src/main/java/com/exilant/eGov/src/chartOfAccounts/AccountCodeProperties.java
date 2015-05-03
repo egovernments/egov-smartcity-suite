@@ -50,11 +50,15 @@ package com.exilant.eGov.src.chartOfAccounts;
  * @author Tilak
  * @version 1.00
  */
+import java.sql.Connection;
+
+import org.egov.infstr.utils.EGovConfig;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.exilant.exility.common.AbstractTask;
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
-import java.sql.Connection;
-import org.egov.infstr.utils.EGovConfig;
+@Transactional(readOnly=true)
 public class AccountCodeProperties extends AbstractTask
 {
 

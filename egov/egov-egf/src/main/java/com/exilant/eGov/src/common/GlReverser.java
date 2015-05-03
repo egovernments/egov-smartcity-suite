@@ -44,7 +44,6 @@
  * Window - Preferences - Java - Code Style - Code Templates
  */
 package com.exilant.eGov.src.common;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
@@ -54,6 +53,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.GLAccount;
@@ -76,6 +76,7 @@ import com.exilant.exility.dataservice.DataExtractor;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+@Transactional(readOnly=true)
 public class GlReverser {
 Map vcHeader;
 Map vcDetail;

@@ -44,8 +44,6 @@
 package com.exilant.eGov.src.common;
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -70,6 +68,7 @@ import org.egov.infstr.utils.seqgen.DatabaseSequence;
 import org.egov.infstr.utils.seqgen.DatabaseSequenceFirstTimeException;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.domain.VoucherHeader;
 import com.exilant.eGov.src.domain.VoucherMIS;
@@ -86,6 +85,7 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
  * This class contains the common methods used for
  * E-Governments applciation
  */
+@Transactional(readOnly=true)
 public class EGovernCommon extends AbstractTask{
 	private static String vouNumber;
 	private static String vouNumberCess;

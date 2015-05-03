@@ -51,9 +51,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.Statement;
 
 import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.exility.common.AbstractTask;
 import com.exilant.exility.common.DataCollection;
@@ -65,6 +65,7 @@ import com.exilant.exility.common.TaskFailedException;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+@Transactional(readOnly=true)
 public class LoadSubLedgerSalaryData extends AbstractTask{
 	private final static Logger LOGGER=Logger.getLogger(LoadSubLedgerSalaryData.class);
 	private static TaskFailedException taskExc;
