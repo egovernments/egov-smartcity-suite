@@ -44,7 +44,10 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bnd.model.CRelation;
 import org.egov.bnd.model.NonAvailability;
@@ -64,7 +67,6 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 import com.opensymphony.xwork2.validator.annotations.ValidatorType;
 
 @ParentPackage("egov")
-@SuppressWarnings("serial")
 @Validations(
 
         requiredStrings = {
@@ -81,11 +83,9 @@ import com.opensymphony.xwork2.validator.annotations.ValidatorType;
                 @RequiredFieldValidator(fieldName = "cost", type = ValidatorType.FIELD, message = "Required", key = "")
 
         })
+@Namespace("/registration")
 public class NonAvailabilityRegistrationAction extends BndCommonAction {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 429651100769629974L;
     private NonAvailability nonAvailableReg = new NonAvailability();
     private static final Logger LOGGER = Logger.getLogger(NonAvailabilityRegistrationAction.class);
@@ -145,8 +145,9 @@ public class NonAvailabilityRegistrationAction extends BndCommonAction {
         return nonAvailableReg;
     }
 
-    @SkipValidation
     @Override
+    @SkipValidation
+    @Action(value = "/nonAvailabilityRegistration-newform", results = { @Result(name = NEW) })
     public String newform() {
         final Registrar registrar = bndCommonService.getRegistrarByLoggedInUser();
         if (registrar == null)

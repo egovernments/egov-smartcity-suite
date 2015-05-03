@@ -44,7 +44,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bnd.client.utils.BndRuleBook;
 import org.egov.bnd.model.AttentionType;
@@ -78,8 +81,7 @@ import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
-@SuppressWarnings("serial")
-@ParentPackage("egov")
+
 @Validations(requiredFields = {
         @RequiredFieldValidator(fieldName = "registrationDate", message = "", key = BndConstants.REQUIRED),
         @RequiredFieldValidator(fieldName = "dateOfEvent", message = "", key = BndConstants.REQUIRED),
@@ -99,6 +101,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @RequiredStringValidator(fieldName = "informantAddress.district", message = "", key = BndConstants.REQUIRED) }
 
 )
+@ParentPackage("egov")
+@Namespace("/registration")
 public class StillBirthRegistrationAction extends RegistrationAction {
 
     private static final long serialVersionUID = -6855607612064252745L;
@@ -166,6 +170,7 @@ public class StillBirthRegistrationAction extends RegistrationAction {
     }
 
     @SkipValidation
+    @Action(value = "/stillBirthRegistration-newform", results = { @Result(name = NEW) })
     public String newOnlineform() {
         LOGGER.debug("New Still Birth Registration Online form");
         stillBirthRegistration.setRegistrationDate(DateUtils.today());
@@ -179,6 +184,7 @@ public class StillBirthRegistrationAction extends RegistrationAction {
     }
 
     @SkipValidation
+    @Action(value = "/stillBirthRegistration-newOfflineForm", results = { @Result(name = NEW) })
     public String newOfflineForm() {
         LOGGER.debug("New still Birth Registration Offline form");
         buildNewBirthForm(stillBirthRegistration);
@@ -193,6 +199,7 @@ public class StillBirthRegistrationAction extends RegistrationAction {
     }
 
     @Override
+    @Action(value = "/stillBirthRegistration-create", results = { @Result(name = NEW) })
     public String create() {
         if (workFlowType != null && !"".equals(workFlowType) && BndConstants.SCRIPT_SAVE.equals(workFlowType))
             stillBirthRegistration.setStatus(bndCommonService.getStatusByModuleAndCode(
@@ -219,6 +226,7 @@ public class StillBirthRegistrationAction extends RegistrationAction {
 
     @SkipValidation
     @Override
+    @Action(value = "/stillBirthRegistration-beforeEdit", results = { @Result(name = NEW) })
     public String beforeEdit() {
         if (mode != null)
             mode = getMode();
@@ -266,6 +274,7 @@ public class StillBirthRegistrationAction extends RegistrationAction {
 
     @Override
     @ValidationErrorPage(NEW)
+    @Action(value = "/stillBirthRegistration-edit", results = { @Result(name = NEW) })
     public String edit() {
         if (getMode().equals(LOCK)) {
             birthRegistrationService.buildAdoptionDetial(stillBirthRegistration);

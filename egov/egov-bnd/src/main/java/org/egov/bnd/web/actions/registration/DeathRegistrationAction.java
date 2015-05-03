@@ -48,7 +48,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bnd.client.utils.BndRuleBook;
 import org.egov.bnd.model.Addiction;
@@ -81,13 +84,13 @@ import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 import com.opensymphony.xwork2.validator.annotations.ValidatorType;
 
-@ParentPackage("egov")
 @Validations(
 
         requiredStrings = {
@@ -119,8 +122,10 @@ import com.opensymphony.xwork2.validator.annotations.ValidatorType;
                 @RequiredFieldValidator(fieldName = "dateOfEvent", type = ValidatorType.FIELD, message = "Required", key = ""),
                 @RequiredFieldValidator(fieldName = "citizen.sex", type = ValidatorType.FIELD, message = "Required", key = ""),
                 @RequiredFieldValidator(fieldName = "ageType", type = ValidatorType.FIELD, message = "Required", key = "")
-
         })
+@Transactional(readOnly = true)
+@Namespace("/registration")
+@ParentPackage("egov")
 public class DeathRegistrationAction extends RegistrationAction {
 
     private static final long serialVersionUID = 1412469733689024605L;
@@ -200,6 +205,7 @@ public class DeathRegistrationAction extends RegistrationAction {
 
     @SkipValidation
     @Override
+    @Action(value = "/deathRegistration-beforeEdit", results = { @Result(name = NEW) })
     public String beforeEdit() {
         if (mode != null)
             mode = getMode();
@@ -209,8 +215,10 @@ public class DeathRegistrationAction extends RegistrationAction {
         return NEW;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
+    @SuppressWarnings("unchecked")
+    @Transactional
+    @Action(value = "/deathRegistration-prepareEdit", results = { @Result(name = NEW) })
     public void prepareEdit() {
         LOGGER.debug("Started prepareEdit method");
         deathRegistration = deathRegistrationService.getDeathRegistrationById(idTemp);
@@ -231,7 +239,9 @@ public class DeathRegistrationAction extends RegistrationAction {
     }
 
     @Override
+    @Transactional
     @ValidationErrorPage(NEW)
+    @Action(value = "/deathRegistration-edit", results = { @Result(name = NEW) })
     public String edit() {
         LOGGER.debug("Started edit method");
         if (getMode().equals(LOCK)) {
@@ -301,9 +311,10 @@ public class DeathRegistrationAction extends RegistrationAction {
         buildPrepareNewForm();
     }
 
+    @Transactional
     @SkipValidation
+    @Action(value = "/deathRegistration-newOnlineform", results = { @Result(name = NEW) })
     public String newOnlineform()
-
     {
         LOGGER.info("Started Death Registration Online form");
         deathRegistration.setRegistrationDate(DateUtils.today());
@@ -338,7 +349,9 @@ public class DeathRegistrationAction extends RegistrationAction {
         buildPrepareNewForm();
     }
 
+    @Transactional
     @SkipValidation
+    @Action(value = "/deathRegistration-newOfflineForm", results = { @Result(name = NEW) })
     public String newOfflineForm() {
 
         LOGGER.info("New newOfflineForm form");
@@ -349,7 +362,10 @@ public class DeathRegistrationAction extends RegistrationAction {
         return NEW;
     }
 
+    
     @Override
+    @Transactional
+    @Action(value = "/deathRegistration-create", results = { @Result(name = NEW) })
     public String create() {
         if (workFlowType != null && !"".equals(workFlowType) && BndConstants.SCRIPT_SAVE.equals(workFlowType))
             deathRegistration.setStatus(bndCommonService.getStatusByModuleAndCode(BndConstants.DEATHREGISTRATION,
@@ -360,6 +376,7 @@ public class DeathRegistrationAction extends RegistrationAction {
     }
 
     @Override
+    @Transactional
     protected void saveOrUpdate() {
         LOGGER.debug("Started saveOrUpdate method");
         buildDeathRegistration();

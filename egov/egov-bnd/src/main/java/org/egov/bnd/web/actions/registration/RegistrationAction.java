@@ -67,16 +67,9 @@ import org.egov.infra.admin.master.entity.enums.Gender;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.reporting.engine.ReportService;
 
-/**
- * @author pritiranjan
- */
 
-@SuppressWarnings("serial")
 public class RegistrationAction extends BndCommonAction {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -8898085487142981653L;
     protected BirthRegistrationService birthRegistrationService;
     protected NumberGenerationService numberGenerationService;
@@ -380,7 +373,6 @@ public class RegistrationAction extends BndCommonAction {
 
     }
 
-    @SuppressWarnings("unchecked")
     protected void buildAddress(final Registration birthRegistration) {
         // birthRegistration.getCitizen().getAddress().clear();
         birthRegistration.getCitizen().getAddress().addAll(citizenAddressSet);
@@ -426,10 +418,6 @@ public class RegistrationAction extends BndCommonAction {
     public Integer getBirthHospitalRegistrarFlag() {
         return birthHospitalRegistrarFlag;
     }
-
-    /*
-     * public State getDefaultState() { return defaultState; }
-     */
 
     public String getRoleName() {
         return roleName;

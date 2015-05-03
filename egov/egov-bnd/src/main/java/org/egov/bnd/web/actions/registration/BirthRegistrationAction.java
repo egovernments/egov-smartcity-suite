@@ -87,10 +87,6 @@ import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 import com.opensymphony.xwork2.validator.annotations.ValidatorType;
 
-/**
- * @author pritiranjan
- */
-
 
 @Validations(requiredFields = {
         @RequiredFieldValidator(fieldName = "registrationDate", message = "", key = BndConstants.REQUIRED),
@@ -220,6 +216,7 @@ public class BirthRegistrationAction extends RegistrationAction {
     }
 
     @SkipValidation
+    @Action(value = "/birthRegistration-newOfflineForm", results = { @Result(name = NEW) })
     public String newOfflineForm() {
         LOGGER.debug("New Birth Registration Offline form");
         buildNewBirthForm(birthRegistration);

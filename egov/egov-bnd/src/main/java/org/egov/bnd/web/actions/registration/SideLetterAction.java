@@ -43,7 +43,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bnd.client.utils.BndRuleBook;
 import org.egov.bnd.model.BirthRegistration;
@@ -66,8 +69,6 @@ import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 import com.opensymphony.xwork2.validator.annotations.ValidatorType;
 
-@ParentPackage("egov")
-@SuppressWarnings("serial")
 @Validations(
 
         requiredStrings = {
@@ -76,9 +77,12 @@ import com.opensymphony.xwork2.validator.annotations.ValidatorType;
                 @RequiredStringValidator(fieldName = "applicantAddress", type = ValidatorType.FIELD, message = "Required", key = "") },
 
                 requiredFields = { @RequiredFieldValidator(fieldName = "applicationDate", type = ValidatorType.FIELD, message = "Required", key = "") })
+@Namespace("/registration")
+@ParentPackage("egov")
 public class SideLetterAction extends BndCommonAction {
 
     private static final long serialVersionUID = 6279292161404254681L;
+    private static final String STRUTS_RESULT_PRINT = "print";
     private SideLetter sideLetter = new SideLetter();
     private static final Logger LOGGER = Logger.getLogger(SideLetterAction.class);
     private SideLetterService sideLetterService;
@@ -136,6 +140,7 @@ public class SideLetterAction extends BndCommonAction {
 
     @Override
     @SkipValidation
+    @Action(value = "/sideLetter-newform", results = { @Result(name = NEW) })
     public String newform() {
         LOGGER.debug("Inside new form method");
         final RegistrationUnit regUnit = bndCommonService.getRegistrarByLoggedInUser().getRegUnitId();
@@ -188,6 +193,7 @@ public class SideLetterAction extends BndCommonAction {
     }
 
     @SkipValidation
+    @Action(value = "/sideLetter-printSideLetter", results = { @Result(name = STRUTS_RESULT_PRINT) })
     public String printSideLetter() {
         prepareBeforeEdit();
 
@@ -208,7 +214,7 @@ public class SideLetterAction extends BndCommonAction {
         else
             sideLetter.getApplicantRelationType().setDesc("W/O");
 
-        return "print";
+        return STRUTS_RESULT_PRINT;
     }
 
     @Override
