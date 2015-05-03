@@ -44,7 +44,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.egov.infstr.security.utils.CryptoHelper;
 
 public class SSOPrincipal implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -53,15 +53,10 @@ public class SSOPrincipal implements Serializable {
 	private String sessionId;
 	private long timestamp;
 	private final Map<String, String> credentials = new HashMap<String, String>();
-	private PasswordEncoder passwordEncoder;
-
-	public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-		this.passwordEncoder = passwordEncoder;
-	}
 
 	public static SSOPrincipal valueOf(final String principalString) {
 		final SSOPrincipal principal = new SSOPrincipal();
-		final String decrypted = principalString;
+		final String decrypted = CryptoHelper.decrypt(principalString);
 		final String[] values = decrypted.split("@@");
 		for (final String pair : values) {
 			final String[] kv = pair.split("=");
@@ -123,7 +118,7 @@ public class SSOPrincipal implements Serializable {
 			builder.append(cred.getKey()).append("=").append(cred.getValue()).append("@@");
 		}
 		builder.append("t=").append(this.timestamp);
-		return passwordEncoder.encode(builder.toString());
+		return CryptoHelper.encrypt(builder.toString());
 	}
 
 	public static void setSessionTimeout(final Integer sessionTimeout) {

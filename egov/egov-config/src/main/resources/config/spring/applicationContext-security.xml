@@ -117,10 +117,9 @@
 		<property name="useForward" value="false" />
 	</bean>
 	
-	<bean id="authenticationSuccessHandler" class="org.egov.infstr.security.spring.AuthenticationSuccessHandler">
+	<bean id="authenticationSuccessHandler" class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
 		<property name="alwaysUseDefaultTargetUrl" value="false" />
 		<property name="defaultTargetUrl" value="/home" />
-		<property name="userService" ref="userService"/>
 	</bean>
 	
 	<bean id="securityContextHolderAwareRequestFilter" class="org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter" />

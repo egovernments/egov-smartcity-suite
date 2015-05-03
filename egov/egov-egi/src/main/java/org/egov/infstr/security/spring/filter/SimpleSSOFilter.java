@@ -221,7 +221,6 @@ public class SimpleSSOFilter implements Filter, LogoutHandler {
 	protected SSOPrincipal getSSOPrincipalFromAuthentication() {
 		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		final SSOPrincipal principal = new SSOPrincipal();
-		principal.setPasswordEncoder(passwordEncoder);
 		principal.setUserName(((SecureUser) authentication.getPrincipal()).getUsername());
 		principal.setTimestamp(System.currentTimeMillis());
 		final HashMap<String, String> creds = (HashMap<String, String>) authentication.getCredentials();

@@ -82,7 +82,7 @@ public class EgovAuthenticationProcessingFilter extends UsernamePasswordAuthenti
 		}
 		if (authResult != null) {
 			final SecureUser principal = (SecureUser) authResult.getPrincipal();
-			request.getSession().setAttribute("com.egov.user.LoginUserId",principal.getUserId());
+			request.getSession().setAttribute("userid",principal.getUserId());
 		}
 		super.successfulAuthentication(request, response, filterChain, authResult);
 	}

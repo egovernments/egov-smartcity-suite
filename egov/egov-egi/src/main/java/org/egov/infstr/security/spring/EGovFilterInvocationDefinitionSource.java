@@ -109,18 +109,15 @@ public class EGovFilterInvocationDefinitionSource implements FilterInvocationSec
 			return null;
 		} else {
 			Action action = this.actionDao.findActionByURL(contextPath, url);
-			if (action == null) {
-				LOG.warn("No action mapping exists for url: " + url);
-				action = this.actionDao.findActionByName("DEFAULT");
-			}
-
-			final Set<Role> actionRoles = action.getRoles();
-			if (actionRoles != null && !actionRoles.isEmpty()) {
-				final List<ConfigAttribute> configAttributes = new ArrayList<ConfigAttribute>();
-				for (final Role role : actionRoles) {
-					configAttributes.add(new SecurityConfig(role.getName()));
+			if (action != null) {
+				final Set<Role> actionRoles = action.getRoles();
+				if (!actionRoles.isEmpty()) {
+					final List<ConfigAttribute> configAttributes = new ArrayList<ConfigAttribute>();
+					for (final Role role : actionRoles) {
+						configAttributes.add(new SecurityConfig(role.getName()));
+					}
+					return configAttributes;
 				}
-				return configAttributes;
 			}
 		}
 		return null;
