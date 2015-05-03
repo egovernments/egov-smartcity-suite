@@ -46,12 +46,11 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
  
  
-    <import resource="classpath*:config/spring/applicationContext-egi.xml"/>
-    <import resource="applicationSecurityContext-egi.xml"/>
+      <import resource="applicationSecurityContext-egi.xml"/>
     
       <context:component-scan base-package="org.egov.egi.web">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
-    </context:component-scan>
+      </context:component-scan>
 	
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
     
