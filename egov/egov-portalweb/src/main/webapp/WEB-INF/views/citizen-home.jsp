@@ -119,56 +119,56 @@
 									<span class="hidden-sm hidden-xs">Grievance Redressal</span>
 								</a>
 							</li>
-							<li data-section="newrequest" data-newreq-section="#section-newrequest-2">
-								<a href="javascript:void(0);">
+							<li data-section="newrequest" data-newreq-section="#section-newrequest-2" class="custom-disabled" data-toggle="tooltip" title="Coming soon">
+								<a href="javascript:void(0);" class="custom-disabled">
 									<div class="text-center"><i class="fa fa-rupee"></i></div>
 									<span class="hidden-sm hidden-xs">Property Tax</span>
 								</a>
 							</li>
-							<li data-section="newrequest" data-newreq-section="#section-newrequest-3">
-								<a href="javascript:void(0);">
+							<li data-section="newrequest" data-newreq-section="#section-newrequest-3" class="custom-disabled" data-toggle="tooltip" title="Coming soon">
+								<a href="javascript:void(0);" class="custom-disabled">
 									<div class="text-center"><i class="fa fa-building-o"></i></div>
 									<span class="hidden-sm hidden-xs">Building Plan Approval</span>
 								</a>
 							</li>
-							<li data-section="newrequest" data-newreq-section="#section-newrequest-4">
-								<a href="javascript:void(0);">
+							<li data-section="newrequest" data-newreq-section="#section-newrequest-4" class="custom-disabled" data-toggle="tooltip" title="Coming soon">
+								<a href="javascript:void(0);" class="custom-disabled">
 									<div class="text-center"><i class="fa fa-medkit"></i></div>
 									<span class="hidden-sm hidden-xs">Birth &amp; Death</span>
 								</a>
 							</li>
-							<li data-section="newrequest" data-newreq-section="#section-newrequest-5">
-								<a href="javascript:void(0);">
+							<li data-section="newrequest" data-newreq-section="#section-newrequest-5" class="custom-disabled" data-toggle="tooltip" title="Coming soon">
+								<a href="javascript:void(0);" class="custom-disabled">
 									<div class="text-center"><i class="fa fa-text-width"></i></div>
 									<span class="hidden-sm hidden-xs">Trade Licence</span>
 								</a>
 							</li>
-							<li data-section="newrequest" data-newreq-section="#section-newrequest-6">
-								<a href="javascript:void(0);">
+							<li data-section="newrequest" data-newreq-section="#section-newrequest-6" class="custom-disabled" data-toggle="tooltip" title="Coming soon">
+								<a href="javascript:void(0);" class="custom-disabled">
 									<div class="text-center"><i class="fa fa-rupee"></i></div>
 									<span class="hidden-sm hidden-xs">Professional Tax</span>
 								</a>
 							</li>
-							<li data-section="newrequest" data-newreq-section="#section-newrequest-7">
-								<a href="javascript:void(0);">
+							<li data-section="newrequest" data-newreq-section="#section-newrequest-7" class="custom-disabled" data-toggle="tooltip" title="Coming soon">
+								<a href="javascript:void(0);" class="custom-disabled">
 									<div class="text-center"><i class="fa fa-rupee"></i></div>
 									<span class="hidden-sm hidden-xs">Company Tax</span>
 								</a>
 							</li>
-							<li data-section="newrequest" data-newreq-section="#section-newrequest-8">
-								<a href="javascript:void(0);">
+							<li data-section="newrequest" data-newreq-section="#section-newrequest-8" class="custom-disabled" data-toggle="tooltip" title="Coming soon">
+								<a href="javascript:void(0);" class="custom-disabled">
 									<div class="text-center"><i class="fa fa-money"></i></div>
 									<span class="hidden-sm hidden-xs">Shops</span>
 								</a>
 							</li>
-							<li data-section="newrequest" data-newreq-section="#section-newrequest-9">
-								<a href="javascript:void(0);">
+							<li data-section="newrequest" data-newreq-section="#section-newrequest-9" class="custom-disabled" data-toggle="tooltip" title="Coming soon">
+								<a href="javascript:void(0);" class="custom-disabled">
 									<div class="text-center"><i class="fa fa-adn"></i></div>
 									<span class="hidden-sm hidden-xs">Advertisement</span>
 								</a>
 							</li>
-							<li data-section="newrequest" data-newreq-section="#section-newrequest-10">
-								<a href="javascript:void(0);">
+							<li data-section="newrequest" data-newreq-section="#section-newrequest-10" class="custom-disabled" data-toggle="tooltip" title="Coming soon">
+								<a href="javascript:void(0);" class="custom-disabled">
 									<div class="text-center"><i class="fa fa-hand-o-right"></i></div>
 									<span class="hidden-sm hidden-xs">Others</span>
 								</a>

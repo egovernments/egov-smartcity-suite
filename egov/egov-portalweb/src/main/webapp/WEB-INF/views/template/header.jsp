@@ -14,7 +14,7 @@
 							<a class="navbar-brand" href="javascript:void(0);">
 								<img src="<c:url value='../egi/resources/global/images/${cityLogo}'/>" height="60">
 								<div>
-									<span class="title2 hidden-sm hidden-xs">${cityName}</span>
+									<span class="title2 hidden-sm hidden-xs citizen-title">Citizen Portal<br>${cityName}</span>
 								</div>
 							</a>
 						</div>
@@ -44,12 +44,12 @@
 									</a>
 									<ul class="right-arrow dropdown-menu" role="menu">
 										<li><a href="#"><i class="fa fa-cog"></i> Change Password</a></li>
-										<li><a href="#"><i class="fa fa-sign-out"></i> Sign out</a></li>
+										<li><a href="/egi/logout.do"><i class="fa fa-sign-out"></i> Sign out</a></li>
 									</ul>
 								</li>
 								
 								<li class="ico-menu">
-									<a href="http://www.egovernments.org" target="_blank">
+									<a href="http://www.egovernments.org" data-strwindname = "egovsite" class="open-popup">
 										<img src="../egi/resources/global/images/logo@2x.png" title="Powered by eGovernments" height="20px">
 									</a>
 								</li>
