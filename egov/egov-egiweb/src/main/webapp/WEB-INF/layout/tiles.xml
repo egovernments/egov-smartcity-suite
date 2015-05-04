@@ -52,6 +52,8 @@
 
 	<definition name="error" template="/WEB-INF/views/template/error.jsp"/>
 	
+	<definition name="login" template="/WEB-INF/views/login.jsp"/>
+	
     <definition name="home" template="/WEB-INF/views/home/home.jsp">
         <put-attribute name="title" value="eGov Urban Portal"/>
     </definition>

@@ -52,7 +52,7 @@
 				<security:filter-chain pattern="/resources/**" filters="none" />
 				<security:filter-chain pattern="/help*" filters="none" />
 				<security:filter-chain pattern="/index.jsp" filters="none" />
-				<security:filter-chain pattern="/login/securityLogin.jsp*" filters="none" />
+				<security:filter-chain pattern="/login/secure**" filters="none" />
 				<security:filter-chain pattern="/login/TerminalAjax.jsp*" filters="none" />
 				<security:filter-chain pattern="/error/**" filters="none" />
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />

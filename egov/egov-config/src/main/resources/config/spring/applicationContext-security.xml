@@ -60,7 +60,7 @@
 	
 	<bean id="concurrentSessionFilter" class="org.springframework.security.web.session.ConcurrentSessionFilter">
 		<constructor-arg index="0" ref="sessionRegistry" />
-		<constructor-arg index="1" value="/login/securityLogin.jsp?sessionExpired=1" />
+		<constructor-arg index="1" value="/login/secure?sessionExpired=1" />
 	</bean>
 	
 	<bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl" />
@@ -102,7 +102,7 @@
 	</bean>
 	
 	<bean id="authenticationFailureHandler" class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
-		<property name="defaultFailureUrl" value="/login/securityLogin.jsp?error=true" />
+		<property name="defaultFailureUrl" value="/login/secure?error=true" />
 		<property name="useForward" value="false" />
 	</bean>
 	
@@ -198,12 +198,8 @@
 		<property name="channelDecisionManager" ref="channelDecisionManager" />
 		<property name="securityMetadataSource">
 			<security:filter-security-metadata-source request-matcher="ant"  lowercase-comparisons="true">
-				<security:intercept-url pattern="/admin/**" />
-				<security:intercept-url pattern="/login/**"/>
+				<security:intercept-url pattern="/login/secure**"/>
 				<security:intercept-url pattern="/j_security_check*"/>
-				<security:intercept-url pattern="/editProfile.html*"/>
-				<security:intercept-url pattern="/signup.html*"/>
-				<security:intercept-url pattern="/saveUser.html*"/>
 			</security:filter-security-metadata-source>
 		</property>
 	</bean>
