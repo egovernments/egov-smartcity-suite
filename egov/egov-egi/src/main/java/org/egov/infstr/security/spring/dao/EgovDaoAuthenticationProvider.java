@@ -75,7 +75,7 @@ public class EgovDaoAuthenticationProvider extends DaoAuthenticationProvider {
 
 	@Override
 	protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-		/*final HashMap<String, String> authenticationCredentials = (HashMap<String, String>) authentication.getCredentials();
+		final HashMap<String, String> authenticationCredentials = (HashMap<String, String>) authentication.getCredentials();
 		if (authentication.getCredentials() == null) {
 			throw new BadCredentialsException(this.messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
 		}
@@ -119,6 +119,6 @@ public class EgovDaoAuthenticationProvider extends DaoAuthenticationProvider {
 					throw new BadCredentialsException(this.messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "This user cannot login from this terminal"));
 				}
 			}
-		}*/
+		}
 	}
 }
