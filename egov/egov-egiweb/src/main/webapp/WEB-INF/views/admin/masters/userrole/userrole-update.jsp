@@ -1,0 +1,126 @@
+<!-- #-------------------------------------------------------------------------------
+# eGov suite of products aim to improve the internal efficiency,transparency, 
+#    accountability and the service delivery of the government  organizations.
+# 
+#     Copyright (C) <2015>  eGovernments Foundation
+# 
+#     The updated version of eGov suite of products as by eGovernments Foundation 
+#     is available at http://www.egovernments.org
+# 
+#     This program is free software: you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License, or
+#     any later version.
+# 
+#     This program is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+# 
+#     You should have received a copy of the GNU General Public License
+#     along with this program. If not, see http://www.gnu.org/licenses/ or 
+#     http://www.gnu.org/licenses/gpl.html .
+# 
+#     In addition to the terms of the GPL license to be adhered to in using this
+#     program, the following additional terms are to be complied with:
+# 
+# 	1) All versions of this program, verbatim or modified must carry this 
+# 	   Legal Notice.
+# 
+# 	2) Any misrepresentation of the origin of the material is prohibited. It 
+# 	   is required that all modified versions of this material be marked in 
+# 	   reasonable ways as different from the original version.
+# 
+# 	3) This license does not grant any rights to any user of the program 
+# 	   with regards to rights under trademark law for use of the trade names 
+# 	   or trademarks of eGovernments Foundation.
+# 
+#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+#------------------------------------------------------------------------------- -->
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<script> 
+$(document).ready( function ()
+		{
+/* 
+$('#userroleUpdateBtn').click(function() {
+	//var url = '/egi/userrole/update/'+ $('#username').val();
+	var url = '/egi/userrole/update/updateUserRole/${user.username}'; 
+	$('#updateuserRoleForm').attr('method', 'post');
+	$('#updateuserRoleForm').attr('action', url);
+}) */
+
+$('#userroleSearchBtn').click(function() {
+	var url = '/egi/userrole/search';
+	$('#updateuserRoleForm').attr('method', 'post');
+	$('#updateuserRoleForm').attr('action', url);
+})
+
+		});
+</script>
+<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
+<div class="row" id="page-content">
+	<div class="col-md-12">
+		<div class="panel" data-collapsed="0">
+			<div class="panel-body">
+				 <c:if test="${not empty message}">
+                    <div id="message" class="success">${message}</div>
+                </c:if>
+		<form:form  id="updateuserRoleForm" action="${user.username}" method ="post"  modelAttribute="user" commandName="user" class="form-horizontal form-groups-bordered" >
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title">
+						<strong><spring:message code="lbl.hdr.modifyuserRole"/></strong>
+					</div>
+				</div> 
+				<div class="panel-body">
+					<div class="row add-border">
+						<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.userrole.selecteduserName" /></div>
+						<div class="col-md-9 col-xs-6 add-margin" id="ct-name">
+							<c:out value="${user.username}"></c:out>
+							<form:hidden path="id" id="id" value="${user.id}"/>
+							<form:hidden path="username" id="username" value="${user.username}"/>
+							<br><br>
+						</div>
+					</div>
+						
+						   <div class="form-group">
+                     <p id="myParagraph2" style="visiblility:hidden;">
+                      <label class="col-sm-3 control-label">
+                            <spring:message code="lbl.userRole"/>
+                            <small><i class="entypo-star error-msg"></i></small>
+                        </label>
+                        <div class="col-sm-6 add-margin">
+                            <form:select path="roles" multiple="true" size="10"
+                                         id="rolesSelect" cssClass="form-control" cssErrorClass="form-control error" required="required">
+                                       <form:options items="${roles}" itemValue="id" itemLabel="name"/>
+                                </form:select>
+                              
+                            <form:errors path="roles" cssClass="error-msg"/>
+                        </div>
+                            <spring:message  code="lbl.userrole.pressCntrlToSelectMultipleRole" />                 
+                        </p>
+                     </div> 		
+				</div>
+			</div>
+			<div class="row">
+				<div class="text-center">
+							<button type="submit" id="userroleUpdateBtn" class="btn btn-primary"><spring:message code="lbl.update"/></button>
+							<button type="submit" id="userroleSearchBtn" class="btn btn-primary"><spring:message code="lbl.search"/></button>
+			        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();"><spring:message code="lbl.close"/></button>
+				</div>
+			</div>
+		</form:form>
+	</div>
+</div>
+
+
+<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js'/>"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js'/>"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
+<script src="<c:url value='/resources/js/app/userrole.js'/>"></script>
+
+

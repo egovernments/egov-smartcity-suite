@@ -37,34 +37,37 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.admin.master.repository;
+package org.egov.infra.web.controller.admin.masters.userrole;
 
-import java.util.Set;
+import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infra.admin.master.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.persistence.QueryHint;
+@Controller
+@RequestMapping(value = "/userrole/view/{name}")
+public class ViewUserRoleController {
+	private UserService userService;
+	private RoleService roleService;
 
-import org.egov.infra.admin.master.entity.Role;
-import org.egov.infra.admin.master.entity.User;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.QueryHints;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+	@Autowired
+	public ViewUserRoleController(UserService userService,
+			RoleService roleService) {
+		this.userService = userService;
+		this.roleService = roleService;
+	}
 
-@Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+	@RequestMapping(method = RequestMethod.GET)
+	public String updateuserRole(@PathVariable("name") String name, Model model) {
+		model.addAttribute("mode", "update");
+		model.addAttribute("user", userService.getUserByUsername(name));
+		model.addAttribute("roles", roleService.getAllRoles());
+		model.addAttribute("currentroles", userService.getRolesByUsername(name));
+		return "userrole-view";
+	}
 
-    public Set<User> findByUsernameContainingIgnoreCase(String userName);
-
-    @QueryHints({
-        @QueryHint(name = "org.hibernate.cacheable", value ="true"),
-        @QueryHint(name="org.hibernate.cacheRegion",value="local-query")
-        })
-    public User findByUsername(String userName);
-    
-    public User findByEmailId(String emailId);
-    
-  	@Query("select distinct bt.roles from User bt where bt.username = :usrName ")
-	public Set<Role> findUserRolesByUserName(@Param("usrName") String  userName);
- 
 }

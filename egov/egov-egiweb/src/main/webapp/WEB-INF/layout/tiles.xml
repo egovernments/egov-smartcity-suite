@@ -68,7 +68,18 @@
     <definition name="error/*" extends="error">
 		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
 	</definition>
-	
+	  <definition name="userrole-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.searchuserRole" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/userrole/userrole-search.jsp"/>
+    </definition>
+    	  <definition name="userrole-update" extends="base_layout">
+        <put-attribute name="page-title" value="title.modifyuserRole" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/userrole/userrole-update.jsp"/>
+    </definition>
+      <definition name="userrole-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.viewuserRole" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/userrole/userrole-view.jsp"/>
+    </definition>
     <definition name="role-form" extends="base_layout">
         <put-attribute name="page-title" value="title.createRole" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/role/role-form.jsp"/>

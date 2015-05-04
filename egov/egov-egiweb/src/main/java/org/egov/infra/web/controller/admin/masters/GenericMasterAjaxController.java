@@ -41,6 +41,7 @@ package org.egov.infra.web.controller.admin.masters;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -50,8 +51,10 @@ import net.sf.json.JSONObject;
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
+import org.egov.infra.admin.master.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -68,6 +71,9 @@ public class GenericMasterAjaxController {
 
     @Autowired
     private BoundaryService boundaryService;
+
+    @Autowired
+    private UserService userService;
 
     @RequestMapping(value = "/boundarytype/ajax/boundarytypelist-for-hierarchy", method = RequestMethod.GET)
     public @ResponseBody void getBoundaryTypeByHierarchyType(@RequestParam Long hierarchyTypeId, HttpServletResponse response) throws IOException {
@@ -128,4 +134,25 @@ public class GenericMasterAjaxController {
         return boundaryType != null ? Boolean.TRUE : Boolean.FALSE;
     }
     
+    @RequestMapping(value = "/userRole/ajax/rolelist-for-user", method = RequestMethod.GET)
+    public @ResponseBody void getRolesByUserName(@RequestParam String username, HttpServletResponse response) throws IOException {
+       if(username!=null){
+    	Set<Role> roles = userService.getRolesByUsername(username);
+
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        IOUtils.write(buildRoles(roles), response.getWriter());
+       }
+    }
+    
+    private String buildRoles(Set<Role> roles) {
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject = null;
+       for (Role role : roles) {
+    	   jsonObject = new JSONObject();
+           jsonObject.put("Value", role.getId());
+           jsonObject.put("Text", role.getName());
+              jsonArray.add(jsonObject);
+        }
+      return jsonArray.toString();
+    }
 }

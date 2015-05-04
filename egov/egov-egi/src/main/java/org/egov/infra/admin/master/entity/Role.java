@@ -39,7 +39,15 @@
  */
 package org.egov.infra.admin.master.entity;
 
+import java.util.Collections;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -68,7 +76,11 @@ public class Role extends AbstractAuditable<User, Long> {
     @SafeHtml
     @Length(max = 150)
     private String description;
-
+/*
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "eg_userrole", joinColumns = @JoinColumn(name = "role"), inverseJoinColumns = @JoinColumn(name = "user"))
+    private Set<User> users = Collections.emptySet();
+*/
     
     public String getName() {
         return name;
@@ -85,7 +97,21 @@ public class Role extends AbstractAuditable<User, Long> {
     public void setDescription(final String description) {
         this.description = description;
     }
+/*
+    public Set<User> getUsers() {
+        return users;
+    }
 
+    public void setUsers(final Set<User> users) {
+        this.users = users;
+    }
 
+    public void addUser(final User user) {
+        this.getUsers().add(user);
+    }
 
+    public void removeRole(final User user) {
+        this.getUsers().remove(user);
+    }
+*/
 }

@@ -39,10 +39,15 @@
  */
 package org.egov.infra.admin.master.service;
 
+import java.util.List;
 import java.util.Set;
 
+import org.egov.config.search.Index;
+import org.egov.config.search.IndexType;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.UserRepository;
+import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.infra.utils.EmailUtils;
 import org.egov.infstr.notification.HTTPSMS;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,10 +76,15 @@ public class UserService {
         return userRepository.findByUsernameContainingIgnoreCase(userName);
     }
 
+    public Set<Role> getRolesByUsername(final String userName) {
+        return userRepository.findUserRolesByUserName(userName);
+    }
     public User getUserById(final Long id) {
         return userRepository.findOne(id);
     }
-
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
     public User getUserByUsername(final String userName) {
         return userRepository.findByUsername(userName);
     }
@@ -110,4 +120,18 @@ public class UserService {
         }
         return hasSent;
     }
+
+    @Transactional
+    public User updateUserRole(String userName, Set<Role> roles) {
+    	
+    	final User userObj= userRepository.findByUsername(userName);
+    	userObj.getRoles().clear();
+    	
+    	for( Role role: roles)
+    		userObj.addRole(role);
+    	
+    	userRepository.saveAndFlush(userObj);
+		return userObj;
+	}
+
 }
