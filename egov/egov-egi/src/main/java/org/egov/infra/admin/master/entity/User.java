@@ -41,6 +41,7 @@ package org.egov.infra.admin.master.entity;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -132,7 +133,7 @@ public class User extends AbstractAuditable<User, Long> {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "eg_userrole", joinColumns = @JoinColumn(name = "userid"), inverseJoinColumns = @JoinColumn(name = "roleid"))
-    private Set<Role> roles = Collections.emptySet();
+    private Set<Role> roles = new HashSet<>();
 
     @Temporal(TemporalType.DATE)
     private Date dob;

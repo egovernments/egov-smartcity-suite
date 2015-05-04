@@ -49,6 +49,7 @@ import org.egov.infra.citizen.entity.Citizen;
 import org.egov.infra.citizen.service.CitizenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -68,9 +69,9 @@ public class CitizenRegistrationController {
 
     @RequestMapping(value = "/register", method = POST)
     public String registerCitizen(@Valid @ModelAttribute Citizen citizen, final BindingResult errors,
-            final RedirectAttributes redirectAttributes) {
+            final RedirectAttributes redirectAttributes,Model model) {
 
-        String SUCCESS = "redirect:/../egi/login/securityLogin.jsp";
+        String SUCCESS = "redirect:/../egi/login/secure";
         try {
             citizenService.create(citizen);
             citizenService.sendActivationMessage(citizen);
@@ -79,6 +80,8 @@ public class CitizenRegistrationController {
         } catch (DuplicateElementException e) {
 
             if (e.getMessage().equals("Mobile Number already exists")) {
+            	redirectAttributes.addFlashAttribute("mobInvalid", "true");
+            	model.addAttribute("mobInvalid", "true");
                 SUCCESS = SUCCESS + "?mobInvalid=true";
             } else if (e.getMessage().equals("Email already exists")) {
                 SUCCESS = SUCCESS + "?emailInvalid=true";

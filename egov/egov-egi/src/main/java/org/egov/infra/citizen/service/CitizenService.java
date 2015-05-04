@@ -46,8 +46,11 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.citizen.entity.Citizen;
 import org.egov.infra.citizen.repository.CitizenRepository;
+import org.egov.infra.citizen.utils.constants.CommonConstants;
 import org.egov.infra.utils.EmailUtils;
 import org.egov.infstr.notification.HTTPSMS;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +72,9 @@ public class CitizenService {
     private HTTPSMS httpSMS;
     
     @Autowired
+    private RoleService roleService;
+    
+    @Autowired
     private PasswordEncoder passwordEncoder;
     
     @Transactional
@@ -82,6 +88,7 @@ public class CitizenService {
         Calendar pwdExpiryDate = Calendar.getInstance();
         pwdExpiryDate.setTime(new Date());
         pwdExpiryDate.add(Calendar.YEAR, 100);
+        citizen.addRole(roleService.getRoleByName(CommonConstants.CITIZEN_ROLE));
         citizen.setPwdExpiryDate(pwdExpiryDate.getTime());
         citizen.setUsername(citizen.getMobileNumber());
         citizen.setPassword(passwordEncoder.encode(citizen.getPassword()));
