@@ -67,7 +67,7 @@
             </key>
             <one-to-many class="org.egov.model.budget.BudgetReAppropriation" />
         </set>
-        <property column="lastModifiedDate" name="modifiedDate" type="timestamp"/>
+        <property column="MODIFIEDDATE" name="lastModifiedDate" type="timestamp"/>
 		<property column="CREATEDDATE" name="createdDate"/>
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"/>
 		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY"/>
