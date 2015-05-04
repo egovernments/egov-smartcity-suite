@@ -41,24 +41,20 @@ package org.egov.collection.web.actions.receipts;
   
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.dispatcher.ServletRedirectResult;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.CVoucherHeader;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.lib.rjbac.jurisdiction.JurisdictionValues;
 import org.egov.web.actions.BaseFormAction;
-
-import com.opensymphony.xwork2.Action;
   
-//@Result(name=Action.SUCCESS, type=ServletRedirectResult.class, value = "bankRemittance.action")  
+@Result(name="success", type="ServletRedirectResult.class", location = "bankRemittance.action")  
   
 @ParentPackage("egov")  
 public class BankRemittanceAction extends BaseFormAction{  
@@ -99,16 +95,13 @@ public class BankRemittanceAction extends BaseFormAction{
 		return NEW;
 	}
 
-	/**
-	 * 
-	 * @return String
-	 */
+	@Action(value="/receipts/bankRemittance-list.action")
 	public String list() {
 		long startTimeMillis = System.currentTimeMillis();
 		User user=collectionsUtil.getLoggedInUser(getSession());
 		
 		StringBuilder jurValuesId = new StringBuilder();
-		/*
+		/* TODO: Uncomment after the getting all jurisdictions
 		for (Iterator iter = user.getAllJurisdictions().iterator(); iter.hasNext();) {
 			JurisdictionValues element = (JurisdictionValues) iter.next();
 			if (jurValuesId.length() > 0) {

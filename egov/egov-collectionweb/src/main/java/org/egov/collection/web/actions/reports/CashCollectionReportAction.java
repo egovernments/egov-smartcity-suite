@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
@@ -269,6 +270,7 @@ public class CashCollectionReportAction extends BaseFormAction {
 	 * 
 	 * @return index
 	 */
+	@Action(value="/reports/cashCollectionReport-criteria.action")
 	public String criteria() {
 		return INDEX;
 	}

@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
@@ -187,6 +188,7 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
 	 * 
 	 * @return index
 	 */
+	@Action(value="/reports/receiptRegisterReport!criteria.action")
 	public String criteria() {
 		// Setup drop down data for department list
 		addRelatedEntity("department", Department.class, "deptName");

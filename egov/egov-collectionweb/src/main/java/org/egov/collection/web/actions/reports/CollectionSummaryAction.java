@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
@@ -132,6 +133,7 @@ public class CollectionSummaryAction extends ReportFormAction {
 	 * 
 	 * @return index
 	 */
+	@Action(value="/reports/collectionSummary-criteria.action")
 	public String criteria() {
 		// Setup drop down data for department list
 		addRelatedEntity("department", Department.class, "deptName");

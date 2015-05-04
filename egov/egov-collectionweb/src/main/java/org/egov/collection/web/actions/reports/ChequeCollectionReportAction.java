@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
@@ -182,7 +183,8 @@ private static final long serialVersionUID = 1L;
 		reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
 		return REPORT;
 	}
-
+	
+	@Action(value="/reports/chequeCollectionReport-criteria.action")
 	public String criteria() {
 		return INDEX;
 	}

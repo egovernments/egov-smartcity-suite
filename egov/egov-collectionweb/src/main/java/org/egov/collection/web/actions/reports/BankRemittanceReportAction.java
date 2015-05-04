@@ -40,6 +40,7 @@
 
 package org.egov.collection.web.actions.reports;
 
+import org.apache.struts2.convention.annotation.Action;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.reporting.engine.ReportConstants.FileFormat;
@@ -92,6 +93,7 @@ public class BankRemittanceReportAction extends ReportFormAction {
 	
 	
 	@Override
+	@Action(value="/reports/bankRemittanceReport-criteria.action")
 	public String criteria() {
 		// Setup drop down data for department list
 		addRelatedEntity("department", Department.class, "deptName");

@@ -96,6 +96,8 @@
 		<property name="reasonForCancellation" type="string">
 			<column name="REASONFORCANCELLATION" length="50" />
 		</property>
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" />
+		<property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp" />
 		<many-to-one name="state" class="org.egov.infra.workflow.entity.State"
 			cascade="all">
 			<column name="state" />
@@ -104,8 +106,6 @@
 			fetch="select">
 			<column name="CREATEDBY" precision="22" scale="0" />
 		</many-to-one>
-		<property name="createdDate" column="CREATEDDATE" type="timestamp" />
-		<property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp" />
 		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User"
 			fetch="select">
 			<column name="LASTMODIFIEDBY" precision="22" scale="0" />

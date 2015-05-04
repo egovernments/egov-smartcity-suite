@@ -56,6 +56,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.AccountPayeeDetail;
@@ -565,6 +566,7 @@ public class ReceiptAction extends BaseFormAction {
 		return receiptDetail;
 	}
 
+	@Action(value="/receipts/receipt-newform.action")
 	public String newform() {
 		String manualReceiptInfoRequired = collectionsUtil.getAppConfigValue(
 				CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.MANUALRECEIPTINFOREQUIRED);
@@ -1225,6 +1227,7 @@ public class ReceiptAction extends BaseFormAction {
 	}
 
 	@ValidationErrorPage(value = "error")
+	@Action(value="/receipts/receipt-cancel.action")
 	public String cancel() {
 		if (getSelectedReceipts() != null && getSelectedReceipts().length > 0) {
 			receipts = new ReceiptHeader[selectedReceipts.length];

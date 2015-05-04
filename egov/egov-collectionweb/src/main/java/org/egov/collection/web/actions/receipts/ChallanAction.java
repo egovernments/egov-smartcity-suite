@@ -53,6 +53,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.AccountPayeeDetail;
@@ -86,7 +87,6 @@ import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.NumberUtil;
-import org.egov.infstr.workflow.Action;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Position;
@@ -225,6 +225,7 @@ public class ChallanAction extends BaseFormAction {
 	 * This method is invoked when the user clicks on Create Challan from Menu Tree
 	 * @return
 	 */
+	@Action(value="/receipts/challan-newform.action")
 	public String newform(){
 		//addDropdownData("designationMasterList",collectionsUtil.
 				//getDesignationsAllowedForChallanApproval(collectionsUtil.getLoggedInUser(getSession()),receiptHeader));
@@ -275,6 +276,7 @@ public class ChallanAction extends BaseFormAction {
 	 * @return the string
 	 */
 	@ValidationErrorPage(value = "createReceipt")
+	@Action(value="/receipts/challan-createReceipt.action")
 	public String createReceipt(){
 		if(challanNumber!=null && !"".equals(challanNumber)){
 			receiptHeader=(ReceiptHeader) persistenceService.findByNamedQuery(
@@ -438,8 +440,8 @@ public class ChallanAction extends BaseFormAction {
 		}
 		
 		if (voucherHeaderList != null && receiptInstrList != null) {
-			/*receiptPayeeDetailsService.updateInstrument(voucherHeaderList,
-					receiptInstrList);*/
+			receiptHeaderService.updateInstrument(voucherHeaderList,
+					receiptInstrList);
 		}
 		
 		
@@ -589,7 +591,7 @@ public class ChallanAction extends BaseFormAction {
 		return SUCCESS;
 	}
 	
-	public List<Action> getValidActions(){
+	/*public List<Action> getValidActions(){
 		Challan challan = receiptHeader.getChallan();
 		if(challan == null)
 			challan = new Challan();
@@ -597,7 +599,7 @@ public class ChallanAction extends BaseFormAction {
 		List<Action> actions = challanWorkflowService.getValidActions(challan);
 		
 		return actions;
-	}
+	}*/
 	
 	/**
 	 * Populate Instrument Details.

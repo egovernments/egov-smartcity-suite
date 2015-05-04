@@ -43,6 +43,7 @@ package org.egov.collection.web.actions.reports;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.struts2.convention.annotation.Action;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.utils.CollectionsUtil;
@@ -75,6 +76,7 @@ public class OnlineTransactionReportAction extends ReportFormAction {
 	}
 
 	@Override
+	@Action(value="/reports/onlineTransactionReport-criteria.action")
 	public String criteria() {
 		// Setup drop down data for department list
 		addRelatedEntity("department", Department.class, "deptName");

@@ -43,7 +43,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title><s:text name="nmc.title"/></title>
+<title><s:text name="page.title"/></title>
 <script type="text/javascript"> 
 <%@ page import="org.egov.erpcollection.web.constants.CollectionConstants" %>
 function onBodyLoad(){

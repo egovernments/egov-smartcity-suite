@@ -58,7 +58,7 @@
 	<field name="receiptDate" class="java.util.Date"/>
 	<field name="paidBy" class="java.lang.String"/>
 	<field name="challan" class="org.egov.collection.entity.ChallanInfo"/>
-	<field name="createdBy" class="org.egov.lib.rjbac.user.UserImpl">
+	<field name="createdBy" class="org.egov.infra.admin.master.entity.User">
 		<fieldDescription><![CDATA[Created By]]></fieldDescription>
 	</field>
 	<variable name="amountReceived" class="java.math.BigDecimal">

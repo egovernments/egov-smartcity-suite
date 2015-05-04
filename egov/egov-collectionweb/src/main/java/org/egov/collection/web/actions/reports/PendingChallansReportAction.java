@@ -41,6 +41,7 @@ package org.egov.collection.web.actions.reports;
 
 import java.util.Date;
 
+import org.apache.struts2.convention.annotation.Action;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.admin.master.entity.Department;
@@ -70,6 +71,7 @@ public class PendingChallansReportAction extends ReportFormAction {
 	}
 
 	@Override
+	@Action(value="/reports/pendingChallansReport-criteria.action")
 	public String criteria() {
 		// Setup drop down data for department list
 		addRelatedEntity("department", Department.class, "deptName");
