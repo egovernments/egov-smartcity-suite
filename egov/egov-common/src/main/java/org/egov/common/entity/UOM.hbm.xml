@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 19, 2007 4:44:16 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="org.egov.common.entity.UOM" table="EG_UOM" >
+    	<cache usage="transactional"/>
+        <id name="id" type="integer">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="native" >
+            <param name="sequence">seq_eg_uom</param>
+            </generator>
+        </id>
+        <many-to-one name="uomCategory" class="org.egov.common.entity.UOMCategory" fetch="select">
+            <column name="UOMCATEGORYID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        <property name="uom" type="string">
+            <column name="UOM" length="30" not-null="true" unique="true" />
+        </property>
+        <property name="narration" type="string">
+            <column name="NARRATION" length="250" />
+        </property>
+        <property name="convFactor" type="big_decimal">
+            <column name="CONV_FACTOR" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="baseuom" type="boolean">
+            <column name="BASEUOM" precision="1" scale="0" not-null="true" />
+        </property>
+        <property name="lastmodified" type="date">
+            <column name="LASTMODIFIED" length="7" not-null="true" />
+        </property>
+        <property name="createddate" type="date">
+            <column name="CREATEDDATE" length="7" not-null="true" />
+        </property>
+        <property name="createdby" type="big_decimal">
+            <column name="CREATEDBY" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="lastmodifiedby" type="big_decimal">
+            <column name="LASTMODIFIEDBY" precision="22" scale="0" />
+        </property>
+    </class>
+ <query name="egi.getAllUomsOfSameCategoryByUOM">
+<![CDATA[
+from  org.egov.common.entity.UOM as uoms where uoms.uomCategory.id =(select uom.uomCategory.id  from org.egov.common.entity.UOM uom where uom.id=?)
+]]>
+</query> 
+
+ <query name="egi.getConversionFactorByUom">
+<![CDATA[
+select uom.convFactor from org.egov.common.entity.UOM as uom where uom.id =?
+]]>
+</query> 
+
+</hibernate-mapping>

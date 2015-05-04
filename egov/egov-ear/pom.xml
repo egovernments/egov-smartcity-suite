@@ -83,6 +83,12 @@
 			<artifactId>egov-config</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-common</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.egov</groupId>
