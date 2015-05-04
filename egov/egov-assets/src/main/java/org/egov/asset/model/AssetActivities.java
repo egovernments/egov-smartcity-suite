@@ -46,8 +46,9 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 import org.egov.asset.util.AssetIdentifier;
+import org.egov.infstr.models.BaseModel;
 
-public class AssetActivities {
+public class AssetActivities extends BaseModel{
 
     /** The asset. */
     private Asset asset;
