@@ -52,7 +52,6 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.dispatcher.ServletActionRedirectResult;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.billsaccounting.services.BillsAccountingService;
 import org.egov.billsaccounting.services.VoucherConstant;
@@ -80,7 +79,6 @@ import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfig;
 import org.egov.infstr.config.AppConfigValues;
-import org.egov.infstr.models.Script;
 import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.SequenceGenerator;
@@ -107,6 +105,7 @@ import org.egov.web.actions.BaseFormAction;
 import org.joda.time.DateTime;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 
@@ -114,7 +113,7 @@ import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 //
 @Results( {
 	@Result(name = "editVoucher", type = "ServletActionRedirectResult.class", location = "journalVoucherModify", params = {"namespace", "/voucher", "method", "beforeModify" })})
-	
+@Transactional(readOnly=true)
 @ParentPackage("egov")
 public class PreApprovedVoucherAction extends BaseFormAction
 {

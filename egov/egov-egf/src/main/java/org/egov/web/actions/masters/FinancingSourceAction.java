@@ -62,12 +62,14 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.services.financingsource.FinancingSourceService;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author manoranjan
  *
  */
 @ParentPackage("egov")
+@Transactional(readOnly=true)
 public class FinancingSourceAction extends BaseFormAction {
 
 	private static final long serialVersionUID = 1L;

@@ -92,12 +92,14 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")  
 @Validation
+@Transactional(readOnly=true)
 public class PaymentAction extends BasePaymentAction{
 	/**
 	 * 

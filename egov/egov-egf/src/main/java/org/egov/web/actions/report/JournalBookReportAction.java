@@ -39,37 +39,31 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFunction;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
-import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.egov.web.actions.BaseFormAction;
-import org.egov.web.actions.voucher.VoucherSearchAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.FlushMode;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.GeneralLedgerBean;
-import com.exilant.eGov.src.reports.GeneralLedgerReport;
 import com.exilant.eGov.src.transactions.JbReport;
 import com.exilant.exility.common.TaskFailedException;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
-
+@Transactional(readOnly=true)
 @ParentPackage("egov")   
 public class JournalBookReportAction extends BaseFormAction{
 

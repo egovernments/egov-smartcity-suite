@@ -57,11 +57,13 @@ import org.egov.infstr.ValidationException;
 import org.egov.masters.model.AccountEntity;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")
 @Validation()
+@Transactional(readOnly=true)
 public class UserDefinedCodesAction extends BaseFormAction{
 
 	private static final long serialVersionUID = 1706040004784954089L;

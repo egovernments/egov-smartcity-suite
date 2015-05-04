@@ -89,12 +89,13 @@ import org.egov.utils.Constants;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.FlushMode;
+import org.springframework.transaction.annotation.Transactional;
 
 @Results(value={
 		@Result(name="PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=BudgetVarianceReport.pdf"}),
 		@Result(name="XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=BudgetVarianceReport.xls"})
 	})
-
+@Transactional(readOnly=true)
 @ParentPackage("egov")
 public class BudgetVarianceReportAction extends BaseFormAction{
 	String jasperpath = "budgetVarianceReport";

@@ -40,6 +40,7 @@
 package org.egov.web.actions.payment;
 
 import org.apache.struts2.convention.annotation.Action;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,7 +67,8 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.model.payment.Paymentheader;
 import org.egov.web.actions.voucher.BaseVoucherAction;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class PaymentReversalAction extends BaseVoucherAction{
 	private VoucherSearchUtil voucherSearchUtil;
 	private Date fromDate;

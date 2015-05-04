@@ -55,6 +55,7 @@ import org.egov.deduction.model.EgRemittanceGldtl;
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * TODO Brief Description of the purpose of the class/interface
@@ -62,7 +63,7 @@ import org.hibernate.Session;
  * @author Sathish
  * @version 1.00 
  */
-
+@Transactional(readOnly=true)
 public class EgRemittanceDetailHibernateDAO extends GenericHibernateDAO
 {
 	public EgRemittanceDetailHibernateDAO(Class persistentClass, Session session)

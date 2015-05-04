@@ -40,6 +40,7 @@
 package org.egov.web.actions.masters;
 
 import org.apache.struts2.convention.annotation.Action;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,11 +59,13 @@ import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")
 @Validation()
+@Transactional(readOnly=true)
 public class FundAction extends BaseFormAction{
 
 	private static final long serialVersionUID = -1076021355881784888L;

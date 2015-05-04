@@ -84,6 +84,7 @@ import org.egov.utils.VoucherHelper;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
@@ -94,6 +95,7 @@ import com.exilant.GLEngine.Transaxtion;
  *
  */
 @ParentPackage("egov")
+@Transactional(readOnly=true)
 public class JournalVoucherModifyAction  extends BaseVoucherAction{
 	
 	private static final long serialVersionUID = 1L;

@@ -42,7 +42,6 @@ package org.egov.web.actions.voucher;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -50,7 +49,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.commons.CVoucherHeader;
 import org.egov.infstr.ValidationError;
@@ -63,7 +61,8 @@ import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.annotation.ValidationErrorPage;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class JournalVoucherReverseAction extends BaseVoucherAction {
 	
 	private static final Logger	LOGGER	= Logger.getLogger(JournalVoucherReverseAction.class);

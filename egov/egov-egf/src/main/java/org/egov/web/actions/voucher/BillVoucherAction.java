@@ -69,12 +69,13 @@ import org.egov.services.bills.BillsService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.VoucherHelper;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author manoranjan
  *
  */
-
+@Transactional(readOnly=true)
 public class BillVoucherAction extends BaseVoucherAction {
 
 	

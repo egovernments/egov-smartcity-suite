@@ -71,6 +71,7 @@ import org.egov.utils.ReportHelper;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.FlushMode;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.util.ValueStack;
@@ -79,6 +80,7 @@ import com.opensymphony.xwork2.util.ValueStack;
 		@Result(name="XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=BudgetReport.xls"})
 	})
 @ParentPackage("egov")
+@Transactional(readOnly=true)
 public class BudgetReportAction extends BaseFormAction{
 	ReportHelper reportHelper;
 	private BudgetDetail budgetDetail = new BudgetDetail();

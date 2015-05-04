@@ -76,6 +76,7 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.egov.web.actions.voucher.BaseVoucherAction;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
@@ -84,6 +85,7 @@ import com.exilant.GLEngine.Transaxtion;
  * @author msahoo
  * This class is used for the Payin Slip(Cheque Deposit).
  */
+@Transactional(readOnly=true)
 public class PayInSlipAction extends BaseVoucherAction {
 	private static final Logger	LOGGER	= Logger.getLogger(PayInSlipAction.class);
 	private static final long serialVersionUID = 1L;

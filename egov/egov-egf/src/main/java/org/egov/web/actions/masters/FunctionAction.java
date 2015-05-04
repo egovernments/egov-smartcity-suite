@@ -55,11 +55,13 @@ import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")
 @Validation()
+@Transactional(readOnly=true)
 public class FunctionAction extends BaseFormAction {
 	
 	private static final long serialVersionUID = -1076021355881784888L;

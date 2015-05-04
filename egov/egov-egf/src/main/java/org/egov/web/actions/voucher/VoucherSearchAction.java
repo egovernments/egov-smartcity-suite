@@ -55,7 +55,6 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.dispatcher.ServletRedirectResult;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Functionary;
@@ -83,12 +82,14 @@ import org.egov.utils.VoucherHelper;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.utils.EgovPaginatedList;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @Result(name=com.opensymphony.xwork2.Action.SUCCESS, type="ServletRedirectResult.class", location = "voucherSearch.action")
 @ParentPackage("egov")
 @Validation
+@Transactional(readOnly=true)
 public class VoucherSearchAction extends BaseFormAction
 {
 	private static final Logger	LOGGER	= Logger.getLogger(VoucherSearchAction.class);

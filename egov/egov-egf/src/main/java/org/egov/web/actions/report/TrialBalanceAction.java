@@ -86,6 +86,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.StringType;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.reports.TrialBalanceBean;
 
@@ -95,6 +96,7 @@ import com.exilant.eGov.src.reports.TrialBalanceBean;
 		@Result(name="trialBalance-HTML",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"text/html","contentDisposition","no-cache;filename=trialBalance.html"})
 	})
 @ParentPackage("egov")
+@Transactional(readOnly=true)
 public class TrialBalanceAction extends BaseFormAction {
 	
 	public class COAcomparator implements Comparator<TrialBalanceBean> {

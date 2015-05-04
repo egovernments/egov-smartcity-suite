@@ -66,12 +66,14 @@ import org.egov.model.instrument.InstrumentHeader;
 import org.egov.utils.ReportHelper;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 @Results(value = {
 		@Result(name = "PDF", type = "stream", location = "inputStream", params = {"inputName", "inputStream", "contentType", "application/pdf","contentDisposition","no-cache;filename=FixedDepositReport.pdf" }),
 		@Result(name = "XLS", type = "stream", location = "inputStream", params = {"inputName", "inputStream", "contentType", "application/xls","contentDisposition","no-cache;filename=FixedDepositReport.xls" }) 
 })
 @ParentPackage("egov")
+@Transactional(readOnly=true)
 public class FixedDepositAction extends BaseFormAction {
 	private static final long serialVersionUID = -145348568312338226L;
 	protected List<FixedDeposit> fixedDepositList;

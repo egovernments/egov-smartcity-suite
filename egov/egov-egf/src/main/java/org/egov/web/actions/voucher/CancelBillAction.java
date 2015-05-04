@@ -61,10 +61,11 @@ import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.domain.BillRegisterBean;
 
-
+@Transactional(readOnly=true)
 public class CancelBillAction extends BaseFormAction  {
 	private static final long serialVersionUID = 1L;
 	private static final Logger	LOGGER	= Logger.getLogger(CancelBillAction.class);

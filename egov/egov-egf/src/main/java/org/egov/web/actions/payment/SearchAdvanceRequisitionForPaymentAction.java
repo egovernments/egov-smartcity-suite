@@ -40,6 +40,7 @@
 package org.egov.web.actions.payment;
 
 import org.apache.struts2.convention.annotation.Action;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -56,7 +57,8 @@ import org.egov.services.voucher.VoucherService;
 import org.egov.utils.VoucherHelper;
 import org.egov.web.actions.SearchFormAction;
 import org.hibernate.FlushMode;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class SearchAdvanceRequisitionForPaymentAction extends SearchFormAction{
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOGGER = Logger.getLogger(SearchAdvanceRequisitionForPaymentAction.class);

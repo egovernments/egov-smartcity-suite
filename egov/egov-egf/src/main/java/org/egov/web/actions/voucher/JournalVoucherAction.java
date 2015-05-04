@@ -72,7 +72,9 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.FlushMode;
+import org.springframework.transaction.annotation.Transactional;
 @ParentPackage("egov")
+@Transactional(readOnly=true)
 public class JournalVoucherAction extends BaseVoucherAction
 {
 	private static final Logger	LOGGER	= Logger.getLogger(JournalVoucherAction.class);

@@ -59,7 +59,8 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.utils.Constants;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.FlushMode;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class ReportAction extends BaseFormAction
 {
 	private static final long serialVersionUID = 1L;

@@ -41,7 +41,8 @@ package org.egov.web.actions.report;
 
 import org.egov.commons.CFunction;
 import org.egov.infra.admin.master.entity.Department;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class BudgetProposalStatus {
 	
 	private Department department;

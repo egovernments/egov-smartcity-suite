@@ -65,6 +65,7 @@ import org.egov.model.budget.BudgetProposalBean;
 import org.egov.services.budget.BudgetDetailService;
 import org.egov.utils.ReportHelper;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.transaction.annotation.Transactional;
 
 /*@Results(value={
 		@Result(name="PDF",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/pdf",Constants.CONTENT_DISPOSITION,"no-cache;filename=ConsolidatedBudgetReport.pdf"}),
@@ -74,6 +75,7 @@ import org.egov.web.actions.BaseFormAction;
 	@Result(name = "reportview", type = "stream", location = "inputStream", params = { "contentType", "${contentType}", "contentDisposition", "attachment; filename=${fileName}" })
 	})
 @ParentPackage("egov") 
+@Transactional(readOnly=true)
 public class ConsolidatedBudgetReportAction extends BaseFormAction { 
 
 	/**

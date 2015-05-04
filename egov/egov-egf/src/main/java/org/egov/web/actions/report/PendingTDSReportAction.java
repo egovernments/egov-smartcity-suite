@@ -81,6 +81,7 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.FlushMode;
+import org.springframework.transaction.annotation.Transactional;
 
 
 
@@ -91,7 +92,7 @@ import org.hibernate.FlushMode;
 		@Result(name="summary-PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=TdsSummaryReport.pdf"}),
 		@Result(name="summary-XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=TdsSummaryReport.xls"})
 	})
-
+@Transactional(readOnly=true)
 @ParentPackage("egov")
 public class PendingTDSReportAction extends BaseFormAction{
 	String jasperpath = "pendingTDSReport";

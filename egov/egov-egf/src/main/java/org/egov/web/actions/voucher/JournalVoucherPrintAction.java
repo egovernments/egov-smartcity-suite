@@ -85,6 +85,7 @@ import org.egov.services.budget.BudgetAppropriationService;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.transaction.annotation.Transactional;
 
 @Results(value={
 	@Result(name="PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=JournalVoucherReport.pdf"}),
@@ -93,6 +94,7 @@ import org.egov.web.actions.BaseFormAction;
 })
 
 @ParentPackage("egov")
+@Transactional(readOnly=true)
 public class JournalVoucherPrintAction extends BaseFormAction{
 	String jasperpath = "/org/egov/web/actions/voucher/journalVoucherReport.jasper";
 	private static final long serialVersionUID = 1L;

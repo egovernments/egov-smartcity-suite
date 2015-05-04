@@ -39,19 +39,20 @@
  ******************************************************************************/
 package org.egov.web.actions.revenue;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.egf.revenue.Grant;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class SearchRevenueReportAction extends BaseRevenueAction {
 /**
 	 * 

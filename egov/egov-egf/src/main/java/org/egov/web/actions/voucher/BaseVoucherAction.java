@@ -92,6 +92,7 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.HibernateException;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 
@@ -99,6 +100,7 @@ import com.exilant.eGov.src.transactions.VoucherTypeForULB;
  * @author msahoo
  *
  */
+@Transactional(readOnly=true)
 public class BaseVoucherAction extends BaseFormAction {                       
 	private static final long serialVersionUID = 1L;	
 	protected final String            INVALIDPAGE   = "invalidPage";

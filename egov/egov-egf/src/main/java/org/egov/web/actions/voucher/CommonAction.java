@@ -112,6 +112,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.LongType;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -128,6 +129,7 @@ import com.exilant.eGov.src.domain.Bank;
 @Results({ 
 	@Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain"})
 })
+@Transactional(readOnly=true)
 public class CommonAction extends BaseFormAction{
 
 

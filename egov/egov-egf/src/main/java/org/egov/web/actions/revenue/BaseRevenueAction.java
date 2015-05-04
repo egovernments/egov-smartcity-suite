@@ -42,15 +42,14 @@ package org.egov.web.actions.revenue;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CVoucherHeader;
-
 import org.egov.egf.revenue.Grant;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.web.actions.BaseFormAction;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class BaseRevenueAction extends BaseFormAction {
 	private static final long serialVersionUID = 1594209619636642478L;
 	protected List<Grant> grantsList;

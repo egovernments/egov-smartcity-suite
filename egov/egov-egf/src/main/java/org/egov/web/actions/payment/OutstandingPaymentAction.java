@@ -70,6 +70,7 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 
 
@@ -78,6 +79,7 @@ import org.hibernate.Query;
 		@Result(name="XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=OutstandingPaymentReport.xls"})
 })
 @ParentPackage("egov")
+@Transactional(readOnly=true)
 public class OutstandingPaymentAction extends BaseFormAction{
 	private static final Logger	LOGGER	= Logger.getLogger(OutstandingPaymentAction.class);
 	private List<Paymentheader> paymentHeaderList = new ArrayList<Paymentheader>();

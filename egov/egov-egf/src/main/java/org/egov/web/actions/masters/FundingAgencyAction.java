@@ -40,6 +40,7 @@
 package org.egov.web.actions.masters;
 
 import org.apache.struts2.convention.annotation.Action;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,8 +53,9 @@ import org.egov.infstr.ValidationException;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.transaction.annotation.Transactional;
 
-
+@Transactional(readOnly=true)
 public class FundingAgencyAction extends BaseFormAction {
 	/**
 	 * 

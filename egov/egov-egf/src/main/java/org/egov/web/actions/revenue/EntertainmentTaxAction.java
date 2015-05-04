@@ -57,11 +57,13 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 @Results(value={
 		@Result(name="PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=EntertainmentTax.pdf"}),
 		@Result(name="XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=EntertainmentTax.xls"})
 })
+@Transactional(readOnly=true)
 public class EntertainmentTaxAction extends BaseRevenueAction {
 	
 	private String jasperpath ="/reports/templates/EntertainmentReport.jasper";

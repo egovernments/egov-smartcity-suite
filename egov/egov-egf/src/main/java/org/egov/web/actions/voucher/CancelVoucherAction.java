@@ -41,6 +41,7 @@ package org.egov.web.actions.voucher;
 
 
 import org.apache.struts2.convention.annotation.Action;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -82,11 +83,13 @@ import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")  
 @Validation
+@Transactional(readOnly=true)
 public class CancelVoucherAction extends BaseFormAction  {
 
 	private static final Logger	LOGGER	= Logger.getLogger(CancelVoucherAction.class);

@@ -67,6 +67,7 @@ import org.egov.services.report.LoanGrantService;
 import org.egov.utils.ReportHelper;
 import org.egov.web.actions.masters.loangrant.LoanGrantBaseAction;
 import org.hibernate.SQLQuery;
+import org.springframework.transaction.annotation.Transactional;
 
 @Results(value={
 		@Result(name="PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=SchemeUtilization.pdf"}),
@@ -75,7 +76,7 @@ import org.hibernate.SQLQuery;
 		
 })
 
-
+@Transactional(readOnly=true)
 public class SchemeUtilizationReportAction extends LoanGrantBaseAction {
 	private static final long	serialVersionUID	= 5416901822456802437L;
 	final static Logger LOGGER=Logger.getLogger(SchemeUtilizationReportAction.class);

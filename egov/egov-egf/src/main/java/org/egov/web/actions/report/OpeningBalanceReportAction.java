@@ -40,6 +40,7 @@
 package org.egov.web.actions.report;
 
 import org.apache.struts2.convention.annotation.Action;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -57,14 +58,16 @@ import org.egov.web.actions.BaseFormAction;
 import org.egov.web.actions.voucher.VoucherSearchAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.FlushMode;
+import org.springframework.transaction.annotation.Transactional;
 import org.egov.infstr.ValidationException;
+
 import com.exilant.eGov.src.reports.OpeningBalance;
 import com.exilant.eGov.src.reports.OpeningBalanceInputBean;
 import com.exilant.exility.common.TaskFailedException;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
-
+@Transactional(readOnly=true)
 @ParentPackage("egov")   
 public class OpeningBalanceReportAction extends BaseFormAction{
 

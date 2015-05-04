@@ -73,7 +73,8 @@ import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.type.*;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class LoanGrantAction extends LoanGrantBaseAction {
 	private static final String	VIEW	= "view";
 	private LoanGrantHeader loanGrantHeader;

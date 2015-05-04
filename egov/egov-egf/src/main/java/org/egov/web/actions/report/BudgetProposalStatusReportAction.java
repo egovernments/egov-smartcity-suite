@@ -56,7 +56,8 @@ import org.egov.pims.model.Assignment;
 import org.egov.utils.BudgetDetailHelper;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.FlushMode;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 @ParentPackage("egov")
 public class BudgetProposalStatusReportAction extends BaseFormAction {
 	

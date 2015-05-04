@@ -57,8 +57,10 @@ import org.egov.services.masters.SubSchemeService;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
+@Transactional(readOnly=true)
 public class SubSchemeAction extends BaseFormAction{
 	private SubScheme subScheme = new SubScheme();
 	private boolean isActive = false;

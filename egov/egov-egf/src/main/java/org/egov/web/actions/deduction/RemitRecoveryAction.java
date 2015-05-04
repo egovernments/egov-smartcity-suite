@@ -105,6 +105,7 @@ import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.payment.BasePaymentAction;
 import org.egov.web.actions.voucher.CommonAction;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
@@ -113,6 +114,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
  * @author manoranjan
  *
  */
+@Transactional(readOnly=true)
 @ParentPackage("egov")
 @Validation
 public class RemitRecoveryAction extends BasePaymentAction{

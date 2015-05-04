@@ -73,6 +73,7 @@ import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -82,7 +83,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 		@Result(name="HTML",type="stream",location="inputStream", params={"inputName","inputStream","contentType","text/html"})
 	})
 @ParentPackage("egov")
-
+@Transactional(readOnly=true)
 public class RtgsIssueRegisterReportAction  extends ReportAction {
 
 	private static final long serialVersionUID = 1L;

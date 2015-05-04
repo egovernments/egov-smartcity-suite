@@ -90,6 +90,7 @@ import org.egov.web.utils.EgovPaginatedList;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 @Results(value={
@@ -98,6 +99,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 	})
 @ParentPackage("egov")
 @Validation
+@Transactional(readOnly=true)
  public class VoucherStatusReportAction extends BaseFormAction
  {
 	private static final Logger	LOGGER	= Logger.getLogger(VoucherSearchAction.class);

@@ -73,6 +73,7 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
+import org.springframework.transaction.annotation.Transactional;
 
 @Results(value = {
 		@Result(name = "PDF", type = "stream", location = "inputStream", params = {
@@ -83,6 +84,7 @@ import org.hibernate.type.LongType;
 				"contentDisposition", "no-cache;filename=FundFlowReport.xls" })
 
 })
+@Transactional(readOnly=true)
 public class FundFlowAction extends BaseFormAction {
 	private static Logger LOGGER = Logger.getLogger(FundFlowAction.class);
 	private static final long serialVersionUID = 1L;

@@ -58,12 +58,14 @@ import org.egov.model.recoveries.EgDeductionDetails;
 import org.egov.model.recoveries.Recovery;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.transaction.annotation.Transactional;
 /**
  * @author Iliyaraja s
  *
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+@Transactional(readOnly=true)
 public class EgDeductionDetailsHibernateDAO extends GenericHibernateDAO
 {
 	private Session session;

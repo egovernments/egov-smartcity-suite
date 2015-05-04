@@ -41,7 +41,6 @@ package org.egov.web.actions.masters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -59,11 +58,13 @@ import org.egov.services.masters.SchemeService;
 import org.egov.utils.Constants;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
             
-@ParentPackage("egov")   
+@ParentPackage("egov")  
+@Transactional(readOnly=true)
 public class SchemeAction extends BaseFormAction{
 
 	private Scheme scheme=new Scheme();

@@ -73,6 +73,7 @@ import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
+import org.springframework.transaction.annotation.Transactional;
 
 @Results(value={
 		@Result(name="PDF",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/pdf",Constants.CONTENT_DISPOSITION,"no-cache;filename=DepartmentwiseExpenditureReport.pdf"}),
@@ -80,6 +81,7 @@ import org.hibernate.transform.Transformers;
 		@Result(name="HTML",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"text/html",Constants.CONTENT_DISPOSITION,"no-cache;filename=DepartmentwiseExpenditureReport.html"})
 	})
 @ParentPackage("egov") 
+@Transactional(readOnly=true)
 public class DepartmentwiseExpenditureReportAction  extends BaseFormAction{
 
 	/**
