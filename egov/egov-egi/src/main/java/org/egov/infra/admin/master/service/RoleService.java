@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -44,7 +44,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.exceptions.DuplicateElementException;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.repository.RoleRepository;
 import org.hibernate.Session;
@@ -56,49 +55,50 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class RoleService {
 
-    private final RoleRepository roleRepository;
+	private final RoleRepository roleRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
+	@PersistenceContext
+	private EntityManager entityManager;
 
-    @Autowired
-    public RoleService(final RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
-    }
+	@Autowired
+	public RoleService(final RoleRepository roleRepository) {
+		this.roleRepository = roleRepository;
+	}
 
-    @Transactional
-    public void createRole(final Role role){
-        roleRepository.saveAndFlush(role);
-    }
+	@Transactional
+	public void createRole(final Role role) {
+		roleRepository.saveAndFlush(role);
+	}
 
-    @Transactional
-    public void update(final Role role) {
-        roleRepository.saveAndFlush(role);
-    }
-    @Transactional
-    public void remove(final Role role) {
-        roleRepository.delete(role);
-    }
-    public List<Role> getAllRoles() {
-        return roleRepository.findAll();
-    }
+	@Transactional
+	public void update(final Role role) {
+		roleRepository.saveAndFlush(role);
+	}
 
-    public Role getRoleById(final Long roleID) {
-        return roleRepository.findOne(roleID);
-    }
+	@Transactional
+	public void remove(final Role role) {
+		roleRepository.delete(role);
+	}
 
-    public Role getRoleByName(final String name) {
-        return roleRepository.findByName(name);
-    }
+	public List<Role> getAllRoles() {
+		return roleRepository.findAll();
+	}
 
-    public List<Role> getRolesByNameLike(final String name) {
-        return roleRepository.findByNameContainingIgnoreCase(name);
-    }
-    
+	public Role getRoleById(final Long roleID) {
+		return roleRepository.findOne(roleID);
+	}
 
-    public Role load(final Long id) {
-        // FIXME alternative ?
-        return (Role) entityManager.unwrap(Session.class).load(Role.class, id);
-    }
+	public Role getRoleByName(final String name) {
+		return roleRepository.findByName(name);
+	}
+
+	public List<Role> getRolesByNameLike(final String name) {
+		return roleRepository.findByNameContainingIgnoreCase(name);
+	}
+
+	public Role load(final Long id) {
+		// FIXME alternative ?
+		return (Role) entityManager.unwrap(Session.class).load(Role.class, id);
+	}
 
 }

@@ -39,7 +39,7 @@
  */
 package org.egov.infra.admin.master.entity;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -127,7 +127,7 @@ public class User extends AbstractAuditable<User, Long> {
     private String aadhaarNumber;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Address> address = Collections.emptyList();
+    private List<Address> address = new ArrayList<>();
 
     private boolean active;
 
