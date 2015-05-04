@@ -53,11 +53,13 @@ import org.egov.payment.dao.PaymentDAOFactory;
 import org.egov.payment.dao.PaymentheaderHibernateDAO;
 import org.egov.payment.dao.SubledgerpaymentheaderHibernateDAO;
 import org.egov.payment.model.Subledgerpaymentheader;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Sathish P
  * @version 1.00
  */
+@Transactional(readOnly=true)
 public class PaymentService   
 {
 	 

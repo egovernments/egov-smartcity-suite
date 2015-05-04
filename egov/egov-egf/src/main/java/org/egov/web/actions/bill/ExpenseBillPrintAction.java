@@ -93,6 +93,7 @@ import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.SQLQuery;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -101,7 +102,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 	@Result(name="XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=ExpenseJournalVoucherReport.xls"}),
 	@Result(name="HTML",type="stream",location="inputStream", params={"inputName","inputStream","contentType","text/html"})
 })
-
+@Transactional(readOnly=true)
 @org.apache.struts2.convention.annotation.ParentPackage("egov")
 public class ExpenseBillPrintAction extends BaseFormAction{
 	final static private Logger LOGGER=Logger.getLogger(ExpenseBillPrintAction.class);

@@ -58,7 +58,8 @@ import org.egov.commons.Fundsource;
 import org.egov.commons.Relation;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
-  
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class WorksBillService   
 { 
 private final static Logger LOGGER=Logger.getLogger(WorksBillService.class);
@@ -220,7 +221,7 @@ private final static Logger LOGGER=Logger.getLogger(WorksBillService.class);
 		 wbForm= wbdelegate.getWorksBillById(billId);
 		 return wbForm;
 	 }*/
-	 
+	 @Transactional
 	 public void  createSupplierbilldetail(Supplierbilldetail sbd)
 	 {
 		 try {
@@ -235,6 +236,7 @@ private final static Logger LOGGER=Logger.getLogger(WorksBillService.class);
 		}
 		 
 	 }
+	 @Transactional
 	 public void createContractorbilldetail( Contractorbilldetail cbd)
 	 {
 		 try {

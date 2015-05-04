@@ -40,6 +40,7 @@
 package org.egov.eb.web.action.master;
 
 import org.apache.struts2.convention.annotation.Action;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -60,10 +61,11 @@ import org.egov.pims.model.EmployeeView;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
-
+@Transactional(readOnly=true)
 public class TargetAreaAction extends BaseFormAction {
 
 	/**
@@ -176,7 +178,7 @@ public class TargetAreaAction extends BaseFormAction {
 		this.targetAreaMappingsList.addAll(targetArea.getTargetAreaMappings());
 		return FinancialConstants.STRUTS_RESULT_PAGE_VIEW;
 	}	
-	
+	@Transactional
 	@SuppressWarnings("unchecked")
 	@ValidationErrorPage(EDIT) 
 	public String edit() {
@@ -244,6 +246,7 @@ public class TargetAreaAction extends BaseFormAction {
 		 })
 	
 	@ValidationErrorPage(FinancialConstants.STRUTS_RESULT_PAGE_RESULT) 
+	@Transactional
 @Action(value="/master/targetArea-create")
 	public String create() {
 		TargetArea duplicateTargetArea = null;

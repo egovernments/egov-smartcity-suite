@@ -55,11 +55,13 @@ import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author sapna     
  *
  */
+@Transactional(readOnly=true)
 public class OtherBillDetailHibernateDAO extends GenericHibernateDAO
 {
 

@@ -62,9 +62,9 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.egov.web.actions.SearchFormAction;
 import org.egov.web.utils.EgovPaginatedList;
-import org.hibernate.FlushMode;
+import org.springframework.transaction.annotation.Transactional;
 
-
+@Transactional(readOnly=true)
 @ParentPackage("egov")   
 public class RtgsPaymentReportAction extends SearchFormAction{
 

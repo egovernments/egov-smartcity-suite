@@ -49,6 +49,7 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.billsaccounting.model.EgwWorksMis;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Admin
@@ -56,6 +57,7 @@ import org.hibernate.Session;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+@Transactional(readOnly=true)
 public class EgwWorksMisHibernateDAO extends GenericHibernateDAO
 {
 

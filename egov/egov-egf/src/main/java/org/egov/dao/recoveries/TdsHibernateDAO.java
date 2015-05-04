@@ -63,6 +63,7 @@ import org.egov.model.recoveries.Recovery;
 import org.hibernate.LockMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * TODO Brief Description of the purpose of the class/interface
@@ -70,6 +71,7 @@ import org.hibernate.Session;
  * @author Sathish
  * @version 1.00
  */
+@Transactional(readOnly=true)
 public class TdsHibernateDAO extends GenericHibernateDAO
 {
 	private final Logger LOGGER = Logger.getLogger(TdsHibernateDAO.class);

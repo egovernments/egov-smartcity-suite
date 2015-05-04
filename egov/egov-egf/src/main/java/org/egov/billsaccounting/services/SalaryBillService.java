@@ -53,11 +53,13 @@ import org.egov.billsaccounting.dao.SalarybilldetailHibernateDAO;
 import org.egov.billsaccounting.model.Salarybilldetail;
 import org.egov.commons.Fundsource;
 import org.egov.infra.admin.master.entity.Department;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Sathish P
  * @version 1.00
  */
+@Transactional(readOnly=true)
 public class SalaryBillService   
 {
 	 
@@ -76,6 +78,7 @@ public class SalaryBillService
 	 * creates salarybilldetail
 	 * 	 * @param salaryBill  void
 	 */
+	@Transactional
 	public void createSalaryBillDetail(Salarybilldetail salaryBill)
 	{
 		SalarybilldetailHibernateDAO salBillDAO=BillsAccountingDAOFactory.getDAOFactory().getSalarybilldetailDAO();

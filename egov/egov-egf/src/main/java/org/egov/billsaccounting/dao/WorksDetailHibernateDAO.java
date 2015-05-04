@@ -58,6 +58,7 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.type.StringType;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Mani
@@ -65,6 +66,7 @@ import org.hibernate.type.StringType;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+@Transactional(readOnly=true)
 public class WorksDetailHibernateDAO extends GenericHibernateDAO
 {
 

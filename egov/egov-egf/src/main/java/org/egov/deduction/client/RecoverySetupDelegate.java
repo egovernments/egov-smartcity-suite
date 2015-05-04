@@ -66,6 +66,7 @@ import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.recoveries.EgDeductionDetails;
 import org.egov.model.recoveries.Recovery;
 import org.egov.services.recoveries.RecoveryService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * TODO Brief Description of the purpose of the class/interface
@@ -73,6 +74,7 @@ import org.egov.services.recoveries.RecoveryService;
  * @author Iliyaraja S mani
  * @version 1.00
  */
+@Transactional(readOnly=true)
 public class RecoverySetupDelegate {
 	public static final Logger LOGGER = Logger.getLogger(RecoverySetupDelegate.class);
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -105,7 +107,7 @@ public class RecoverySetupDelegate {
 		//workDAO = CommonsHibernateDaoFactory.getDAOFactory().getEgwTypeOfWorkDAO();
 		
 	}
-	
+	@Transactional
 	public void createRecovery(RecoverySetupForm rsf, Integer userId) throws Exception {
 		
 		
@@ -271,7 +273,7 @@ public class RecoverySetupDelegate {
 		EgovMasterDataCaching.getInstance().removeFromCache("egi-egwSubTypeOfWork");
 		
 	}
-	
+	@Transactional
 	public void modifyRecovery(RecoverySetupForm rsf, Integer userId) throws Exception {
 		
 		

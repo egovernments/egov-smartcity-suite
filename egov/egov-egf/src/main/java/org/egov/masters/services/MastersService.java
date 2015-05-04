@@ -55,17 +55,19 @@ import org.egov.masters.dao.AccountdetailtypeHibernateDAO;
 import org.egov.masters.dao.MastersDAOFactory;
 import org.egov.masters.model.AccountEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Sathish P
  * @version 1.00
  */
+@Transactional(readOnly=true)
 public class MastersService   
 {
 	private static final Logger LOGGER = Logger.getLogger(MastersService.class);
 	@Autowired
 	private static CommonsService cmnMngr;
-		
+	@Transactional
 	public AccountEntity createAccountEntity(AccountEntity accountEntity)
 	{
 		AccountEntity accEntity=null;
@@ -110,7 +112,7 @@ public class MastersService
 			throw new EGOVRuntimeException("Exception: " +ex.getMessage());
 		}		
 	}
-	
+	@Transactional
 	public void updateAccountEntity(AccountEntity accountEntity)
 	{
 		AccountEntityHibernateDAO accEntDao=MastersDAOFactory.getDAOFactory().getAccountEntityDAO();

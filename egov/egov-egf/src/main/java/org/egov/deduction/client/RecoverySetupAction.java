@@ -59,12 +59,13 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.utils.HibernateUtil;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Iliyaraja S
  * @version 1.00
  */
-
+@Transactional(readOnly=true)
 public class RecoverySetupAction extends DispatchAction {
 	public static final Logger LOGGER = Logger.getLogger(RecoverySetupAction.class);
 	
@@ -96,7 +97,7 @@ public class RecoverySetupAction extends DispatchAction {
 		}
 		return mapping.findForward(target);
 	}
-	
+	@Transactional
 	public ActionForward toModify(ActionMapping mapping, ActionForm form, HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 		String target = "";
 		try {
@@ -152,7 +153,7 @@ public class RecoverySetupAction extends DispatchAction {
 		}
 		return mapping.findForward(target);
 	}
-	
+	@Transactional
 	public ActionForward createRecoveryMaster(ActionMapping mapping, ActionForm form, HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 		String target = "";
 		String alertMessage = null;
@@ -183,7 +184,7 @@ public class RecoverySetupAction extends DispatchAction {
 		req.setAttribute("alertMessage", alertMessage);
 		return mapping.findForward(target);
 	}
-	
+	@Transactional
 	public ActionForward modifyRecoveryMaster(ActionMapping mapping, ActionForm form, HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 		String target = "";
 		String alertMessage = null;

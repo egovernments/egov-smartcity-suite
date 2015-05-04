@@ -99,6 +99,7 @@ import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -106,6 +107,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * @author msahoo
  *
  */
+@Transactional(readOnly=true)
 public class EgovCommon {
 
 	private static final Logger LOGGER = Logger.getLogger(EgovCommon.class);

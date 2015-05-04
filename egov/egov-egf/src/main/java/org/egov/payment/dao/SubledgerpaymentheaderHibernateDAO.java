@@ -53,6 +53,7 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.payment.model.Subledgerpaymentheader;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * TODO Brief Description of the purpose of the class/interface
@@ -60,6 +61,7 @@ import org.hibernate.Session;
  * @author Sathish P
  * @version 1.00 
  */
+@Transactional(readOnly=true)
 public class SubledgerpaymentheaderHibernateDAO extends GenericHibernateDAO
 {
 

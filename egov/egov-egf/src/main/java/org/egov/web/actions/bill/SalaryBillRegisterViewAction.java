@@ -48,7 +48,8 @@ import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.model.bills.EgBillregister;
 import org.egov.web.actions.BaseFormAction;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class SalaryBillRegisterViewAction extends BaseFormAction{
 	private Date fromDate; 
 	private Date toDate;

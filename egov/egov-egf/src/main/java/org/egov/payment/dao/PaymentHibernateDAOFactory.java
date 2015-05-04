@@ -49,13 +49,14 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.payment.Paymentheader;
 import org.egov.payment.model.Subledgerpaymentheader;
 import org.hibernate.Session;
+import org.springframework.transaction.annotation.Transactional;
 /**
  * TODO Brief Description of the purpose of the class/interface
  * 
  * @author Sathish P
  * @version 1.00 
  */
-
+@Transactional(readOnly=true)
 public class PaymentHibernateDAOFactory extends PaymentDAOFactory {
 
 	protected Session getCurrentSession()

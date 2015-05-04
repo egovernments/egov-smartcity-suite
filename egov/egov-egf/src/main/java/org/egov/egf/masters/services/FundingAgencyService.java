@@ -47,11 +47,13 @@ import org.egov.commons.utils.EntityType;
 import org.egov.egf.masters.model.FundingAgency;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
+import org.springframework.transaction.annotation.Transactional;
 /**
  * 
  * @author mani
  * Service class for FundingAgency Object
  */
+@Transactional(readOnly=true)
 public class FundingAgencyService extends PersistenceService<FundingAgency, Integer> implements EntityTypeService {
 	/**
 	 * since it is mapped to only one AccountDetailType -creditor it ignores the input parameter

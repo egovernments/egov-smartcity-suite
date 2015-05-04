@@ -67,6 +67,7 @@ import org.egov.utils.Constants;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -74,6 +75,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * @author Manoranjan
  *
  */
+@Transactional(readOnly=true)
 public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long> {
 	
 	private static final Logger	LOGGER	= Logger.getLogger(VoucherHibernateDAO.class);
@@ -220,6 +222,7 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
 		}*///This fix is for Phoenix Migration.
 		
 	}
+	@Transactional
 	@SuppressWarnings("unchecked")
 	public void deleteGLDetailByVHId(final Object voucherHeaderId){
 		

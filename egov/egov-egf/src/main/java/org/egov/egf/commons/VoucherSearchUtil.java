@@ -56,8 +56,9 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
-
+@Transactional(readOnly=true)
 public class VoucherSearchUtil {
 	private GenericHibernateDaoFactory genericDao;
 	private PersistenceService persistenceService;
