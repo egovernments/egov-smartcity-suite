@@ -1,9 +1,0 @@
-<jboss-web>
-   <!-- Uncomment the security-domain to enable security. You will
-      need to edit the htmladaptor login configuration to setup the
-      login modules used to authentication users.
-      <security-domain>java:/jaas/jmx-console</security-domain>
-   -->
-<security-domain>java:/jaas/egov-security</security-domain> 
-<context-root>/EGF</context-root>       
-</jboss-web>
