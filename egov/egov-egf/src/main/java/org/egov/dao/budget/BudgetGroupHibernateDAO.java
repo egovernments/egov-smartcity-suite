@@ -60,6 +60,7 @@ import org.egov.model.budget.BudgetGroup;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 /** 
  * @author Administrator
@@ -67,6 +68,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+@Transactional(readOnly=true)
 public class BudgetGroupHibernateDAO extends GenericHibernateDAO implements BudgetGroupDAO
 {
 
@@ -84,6 +86,7 @@ public class BudgetGroupHibernateDAO extends GenericHibernateDAO implements Budg
 	public BudgetGroupHibernateDAO(){ 
 		super(null,null);
 	}
+	@Transactional
 	public BudgetGroup createBudgetGroup(BudgetGroup cbg) throws ValidationException
 	{
         BudgetGroup budgetGroup = null;

@@ -90,6 +90,7 @@ import org.egov.utils.BudgetAccountType;
 import org.egov.utils.Constants;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Administrator
@@ -97,6 +98,7 @@ import org.hibernate.Session;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+@Transactional(readOnly=true)
 public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements BudgetDetailsDAO
 {
 	private static final String EGF = "EGF";

@@ -41,7 +41,8 @@ package org.egov.dao.bills;
 
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.EGovConfig;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public abstract class BillsDaoFactory {
 	public BillsDaoFactory()
 	{

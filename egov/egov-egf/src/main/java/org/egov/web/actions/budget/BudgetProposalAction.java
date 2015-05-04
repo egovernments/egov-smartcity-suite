@@ -97,6 +97,7 @@ import org.egov.web.actions.BaseFormAction;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.springframework.transaction.annotation.Transactional;
 /*@Results(value={
 		@Result(name="PDF",type=StreamResult.class,value=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/pdf",Constants.CONTENT_DISPOSITION,"no-cache;filename=BudgetReport.pdf"}),
 		@Result(name="XLS",type=StreamResult.class,value=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/xls",Constants.CONTENT_DISPOSITION,"no-cache;filename=BudgetReport.xls"})
@@ -104,6 +105,7 @@ import org.hibernate.SQLQuery;
 @Results({ 
 	@Result(name = "reportview", type = "stream", location = "inputStream", params = { "contentType", "${contentType}", "contentDisposition", "attachment; filename=${fileName}" })
 	})
+@Transactional(readOnly=true)
 @ParentPackage("egov") 
 public class BudgetProposalAction extends BaseFormAction {
 	private static final long serialVersionUID = 1L;
@@ -983,7 +985,7 @@ int i=0;
 		bpbeanTotal.setBudgetGroup("TOTAL");
 		if(LOGGER.isInfoEnabled())     LOGGER.info("Finished computeTotal");
 	}
-	
+	@Transactional
 	   @SkipValidation
 	    public String update()
 	    {   	
@@ -1055,7 +1057,7 @@ int i=0;
 	    	 if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed updation .....");
 	    	 return "message";    
 	    }
-	    
+	   @Transactional
 	    private void save(BigDecimal multiplicationFactor)
 	    {
 	    	String columntoupdate="originalAmount";
@@ -1120,7 +1122,7 @@ int i=0;
 	    HibernateUtil.getCurrentSession().flush();
 	    	if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed Save .....");
 	    }
-	    
+	   @Transactional
 	    private void saveWithForward(Position pos,String name,boolean hod)
 	    {
 	    	
@@ -1157,7 +1159,7 @@ int i=0;
 	    	if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed saveWithForward .....");
 	    }
 	    
-	    
+	   @Transactional
 	    public String modifyList()
 	    {
 	    	if(budgetDetail.getBudget().getId()!=null)

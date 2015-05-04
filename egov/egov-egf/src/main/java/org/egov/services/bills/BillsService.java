@@ -45,7 +45,8 @@ import org.egov.commons.CVoucherHeader;
 import org.egov.dao.bills.BillsDaoFactory;
 import org.egov.dao.bills.EgBillRegisterHibernateDAO;
 import org.egov.model.bills.EgBillregister;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class BillsService   {
 	public EgBillregister createBillRegister(EgBillregister billregister)
     {

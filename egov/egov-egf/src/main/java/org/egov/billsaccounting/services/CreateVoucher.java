@@ -129,6 +129,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
@@ -146,6 +147,7 @@ import com.exilant.exility.common.TaskFailedException;
  * created on 15-sep-2008
  *
  */
+@Transactional(readOnly=true)
 public class CreateVoucher {
 	private static final String DD_MMM_YYYY = "dd-MMM-yyyy";
 	private static final String DD_MM_YYYY = "dd/MM/yyyy";
@@ -262,6 +264,7 @@ public class CreateVoucher {
 	 * @throws SQLException
 	 * @throws Exception
 	 */
+	@Transactional
 	public long createVoucherFromBill(int billId,String voucherStatus, String voucherNumber, Date voucherDate) throws EGOVRuntimeException, SQLException ,TaskFailedException{
 		CVoucherHeader vh=null;
 		try{
@@ -531,6 +534,7 @@ public class CreateVoucher {
 	 * @throws SQLException
 	 * @throws Exception
 	 */
+	@Transactional
 	public long createVoucherFromBillForPJV(int billId,String voucherStatus,List<PreApprovedVoucher> voucherdetailList,List<PreApprovedVoucher> subLedgerList) throws EGOVRuntimeException, SQLException ,TaskFailedException{
 		CVoucherHeader vh=null;
 		try
@@ -650,6 +654,7 @@ public class CreateVoucher {
 	  * @param status - status of the vouchers.
 	  * @return void - This method does not return anything as its only create the vouchers for the preapproved vouchers.s
 	  */
+	@Transactional
 	 public void  createVoucherFromPreApprovedVoucher(long vouhcerheaderid,String status)throws EGOVRuntimeException {
 		 try{
 			 VoucherHeader vh=new VoucherHeader();
@@ -712,6 +717,7 @@ public class CreateVoucher {
 	  * @return voucherheader object in case of success and null in case of fail.
 	  * @throws EGOVRuntimeException
 	  */
+	@Transactional
 	 public CVoucherHeader createPreApprovedVoucher(HashMap<String, Object> headerdetails,List<HashMap<String,Object>> accountcodedetails,List<HashMap<String,Object>> subledgerdetails)throws EGOVRuntimeException,ValidationException {
 		 PersistenceService<AppConfig, Integer> appConfigSer;
 		 appConfigSer = new PersistenceService<AppConfig, Integer>();
@@ -748,6 +754,7 @@ public class CreateVoucher {
 	 * @param voucherheader
 	 * @throws ValidationException
 	 */
+	@Transactional
 	 public void startWorkflow(CVoucherHeader voucherheader) throws ValidationException
 	 {
 		 try
@@ -915,6 +922,7 @@ public class CreateVoucher {
 	 * @throws ValidationException
 	 *  Uses VoucherWorkflow since contra and brv workflows are same
 	 */
+	 @Transactional
 	public void startWorkflowForCashUpdate(CVoucherHeader voucherHeader) throws ValidationException
 	 {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting  Journal Voucher Workflow.  for contra......");
@@ -997,6 +1005,7 @@ public class CreateVoucher {
 	  * @return voucherheader object in case of success and null in case of fail.
 	  * @throws EGOVRuntimeException
 	  */
+	 @Transactional
 	 public CVoucherHeader createVoucher(HashMap<String, Object> headerdetails,List<HashMap<String,Object>> accountcodedetails,List<HashMap<String,Object>> subledgerdetails)throws EGOVRuntimeException {
 		 CVoucherHeader vh;
 		 Vouchermis mis;
@@ -1181,6 +1190,7 @@ public class CreateVoucher {
 
 	}
 	//used for reversal
+	@Transactional
 	protected void insertIntoVoucherHeader(CVoucherHeader vh) throws EGOVRuntimeException{
 		 if(LOGGER.isDebugEnabled())     LOGGER.debug("start | insertIntoVoucherHeader");
 		 Connection conn = null;
@@ -1274,6 +1284,7 @@ public class CreateVoucher {
 		 }
 		 return cgnType;
 	 }
+	 @Transactional
 	 protected void insertIntoRecordStatus(final CVoucherHeader voucherHeader){
 
 		 EgfRecordStatus recordStatus = new EgfRecordStatus();
@@ -1395,6 +1406,7 @@ public class CreateVoucher {
 		 }
 		 if(!typeFound)throw new EGOVRuntimeException("Voucher type is not valid");
 	 }
+	 @Transactional
 	 @SuppressWarnings("deprecation")
 	 public  CVoucherHeader createVoucherHeader(final HashMap<String, Object> headerdetails) throws EGOVRuntimeException,Exception{
 		 if(LOGGER.isDebugEnabled())     LOGGER.debug("START | createVoucherHeader");
@@ -1639,6 +1651,7 @@ public class CreateVoucher {
 		 return voucherNumberPrefix;
 
 	 }
+	 @Transactional
 	public  Vouchermis createVouchermis(final HashMap<String, Object> headerdetails) throws EGOVRuntimeException{
 		 if(LOGGER.isDebugEnabled())     LOGGER.debug("START | createVouchermis");
 		 Vouchermis vouchermis= new Vouchermis();
@@ -1864,6 +1877,7 @@ public class CreateVoucher {
 		 if(LOGGER.isDebugEnabled())     LOGGER.debug("END | validateTransaction");
 
 	 }
+	 @Transactional
 	 public List<Transaxtion> createTransaction(HashMap<String, Object> headerdetails, List<HashMap<String,Object>> accountcodedetails,List<HashMap<String,Object>> subledgerdetails,CVoucherHeader vh)throws EGOVRuntimeException{
 		 if(LOGGER.isDebugEnabled())     LOGGER.debug("Start | createTransaction ");
 		 List<Transaxtion> transaxtionList = new ArrayList<Transaxtion>();
@@ -1966,6 +1980,7 @@ public class CreateVoucher {
 		 if(LOGGER.isDebugEnabled())     LOGGER.debug("END | createTransaction ");
 		 return transaxtionList;
 	 }
+	 @Transactional
 	 private void insertIntoVoucherDetail(final VoucherDetail vd){
 		 if(LOGGER.isDebugEnabled())     LOGGER.debug("Start | insertIntoVoucherDetail");
 		 PersistenceService<VoucherDetail, Long> voucherDetailSer;
@@ -2138,7 +2153,7 @@ public class CreateVoucher {
 
 		 return collectionMode;
 	 }
-
+	 @Transactional
 	 public EgBillregister createBill(HashMap<String, Object> supplierBillDetails, List<HashMap<String,Object>> ledgerlist) throws EGOVRuntimeException,Exception{
 		 EgBillregister billregister = new EgBillregister();
 
@@ -2150,6 +2165,7 @@ public class CreateVoucher {
 		 return billregister;
 
 	 }
+	 @Transactional
 	 public void postInBillRegister(HashMap<String, Object> supplierBillDetails,EgBillregister billregister) throws EGOVRuntimeException,Exception{
 
 		 billregister.setWorksdetailId(supplierBillDetails.get("worksdetailid").toString());
@@ -2176,6 +2192,7 @@ public class CreateVoucher {
 		 String date = df.format((Date)supplierBillDetails.get("billdate"));
 		 billregister.setBillnumber(cmImpl.getTxnNumber("WBILL",date ));
 	 }
+	 @Transactional
 	 public void postInEgbillMis(EgBillregister billregister,HashMap<String, Object> supplierBillDetails ) throws Exception{
 
 		 EgBillregistermis billMis = new EgBillregistermis();
@@ -2195,6 +2212,7 @@ public class CreateVoucher {
 		 billMis.setLastupdatedtime(new Date());
 		 billregister.setEgBillregistermis(billMis);
 	 }
+	 @Transactional
 	 public void  postinbilldetail(EgBillregister billregister,List<HashMap<String,Object>> ledgerlist){
 
 		 Set<EgBilldetails> egBilldetailes = new HashSet<EgBilldetails>(0);
@@ -2216,6 +2234,7 @@ public class CreateVoucher {
 		 billregister.setEgBilldetailes(egBilldetailes);
 
 	 }
+	 @Transactional
 	 public void updatePJV(CVoucherHeader vh, List<PreApprovedVoucher> detailList,List<PreApprovedVoucher> subledgerlist)  throws EGOVRuntimeException
 	 {
 		 try
@@ -2273,6 +2292,7 @@ public class CreateVoucher {
 			 throw new EGOVRuntimeException(e.getMessage());
 		 }
 	 }
+	 @Transactional
 	 public void deleteVoucherdetailAndGL(CVoucherHeader vh) throws SQLException,EGOVRuntimeException
 	 {
 		 try
@@ -2337,6 +2357,7 @@ public class CreateVoucher {
 	  * @param paramList
 	  * @return
 	  */
+	 @Transactional
 	 public CVoucherHeader reverseVoucher(List<HashMap<String,Object>> paramList) throws EGOVRuntimeException,ParseException
 	 {
 		 // -- Reversal Voucher date check ----
@@ -2381,6 +2402,7 @@ public class CreateVoucher {
 		 reversalVoucher=reverseVoucherAndLedger(reversalVoucher);
 		 return reversalVoucher;
 	 }
+	 @Transactional
 	 private CVoucherHeader reverseVoucherAndLedger(CVoucherHeader reversalVoucher) {
 		 CVoucherHeader originalVocher;
 		 SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
@@ -2451,7 +2473,7 @@ public class CreateVoucher {
 
 		 return reversalVoucher;
 	 }
-
+	 @Transactional
 	 private CVoucherHeader createReversalVoucher(List<HashMap<String, Object>> paramList) throws ParseException
 	 {
 		 CVoucherHeader reversalVoucher;

@@ -51,11 +51,13 @@ import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.masters.model.AccountEntity;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author mani
  *
  */
+@Transactional(readOnly=true)
 public class AccountEntityService extends PersistenceService<AccountEntity, Integer> implements EntityTypeService{
 		public List<EntityType> getAllActiveEntities(Integer accountDetailTypeId) {
 	      List<EntityType> entities=new ArrayList<EntityType>();

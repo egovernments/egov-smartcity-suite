@@ -74,6 +74,8 @@ import org.egov.utils.CheckListHelper;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.egov.web.actions.voucher.BaseVoucherAction;
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class BaseBillAction extends BaseVoucherAction {
 	protected static final long	serialVersionUID	= 6627521670678057404L;
 	protected EisCommonService	eisCommonService;

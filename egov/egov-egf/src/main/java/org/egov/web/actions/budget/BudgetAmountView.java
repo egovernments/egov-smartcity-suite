@@ -42,7 +42,8 @@ package org.egov.web.actions.budget;
 import java.math.BigDecimal;
 
 import org.egov.utils.Constants;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class BudgetAmountView {
 	
 

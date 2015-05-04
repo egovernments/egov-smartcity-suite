@@ -70,11 +70,12 @@ import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
+import org.springframework.transaction.annotation.Transactional;
 @ParentPackage("egov")
 @Results({ 
 	@Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain"})
 })
-
+@Transactional(readOnly=true)
 public class BudgetDetailAction extends BaseBudgetDetailAction{
 	private static final long serialVersionUID = 1L;
 
@@ -103,7 +104,7 @@ public class BudgetDetailAction extends BaseBudgetDetailAction{
 		public BudgetDetailAction(BudgetDetailConfig budgetDetailConfig) {
 		super(budgetDetailConfig);
 	}
-	
+		@Transactional
 	protected void saveAndStartWorkFlow(BudgetDetail detail) {
 		try {
 			if(budgetDocumentNumber!=null && budgetDetail.getBudget()!=null){
@@ -232,10 +233,11 @@ public class BudgetDetailAction extends BaseBudgetDetailAction{
 		 budgetGroupList = sqlQuery.list();    
 		return "budgetGroup";
 		}
-	
+@Transactional
 	public String saveAndNew() {
 		return create();
 	}
+@Transactional
 	public String saveAndNewRe() {
 		return createRe();
 	}
@@ -295,7 +297,7 @@ public class BudgetDetailAction extends BaseBudgetDetailAction{
 	}
 	
 
-	
+	@Transactional
 	protected void saveAndStartWorkFlowForRe(BudgetDetail detail,int index,CFinancialYear finYear,Budget refBudget) {
 		try {
 			if(budgetDocumentNumber!=null && budgetDetail.getBudget()!=null){

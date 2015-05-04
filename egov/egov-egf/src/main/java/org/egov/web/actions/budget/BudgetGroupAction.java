@@ -58,12 +58,14 @@ import org.egov.utils.BudgetAccountType;
 import org.egov.utils.BudgetingType;
 import org.egov.utils.Constants;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @Result(name="success", type="ServletRedirectResult.class", location = "budgetGroup.action")
 @ParentPackage("egov")
 @Validation
+@Transactional(readOnly=true)
 public class BudgetGroupAction extends BaseFormAction{
 	private static final long serialVersionUID = 1L;
 	private BudgetGroup budgetGroup = new BudgetGroup();
@@ -124,6 +126,7 @@ public class BudgetGroupAction extends BaseFormAction{
 	{
 		return NEW;
 	}
+	@Transactional
 	public String create()
 	{
 		if(budgetGroup.getMinCode()!=null && budgetGroup.getMaxCode()==null)
@@ -152,6 +155,7 @@ public class BudgetGroupAction extends BaseFormAction{
 			target="EMPTY";
 		return SEARCH;
 	}
+	@Transactional
 	public String save()
 	{
 		if(budgetGroup.getMinCode()!=null && budgetGroup.getMaxCode()==null)
@@ -169,6 +173,7 @@ public class BudgetGroupAction extends BaseFormAction{
 	private void clearBudgetGroupCache() {
 		EgovMasterDataCaching.getInstance().removeFromCache("egf-budgetGroup");
 	}
+	@Transactional
 	@SkipValidation
 	@Action(value="/budget/budgetGroup-edit")
 	public String edit()

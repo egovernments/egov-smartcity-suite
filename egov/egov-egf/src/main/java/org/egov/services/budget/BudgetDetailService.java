@@ -87,7 +87,8 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 //This fix is for Phoenix Migration.
 public class BudgetDetailService extends PersistenceService<BudgetDetail, Long>{
     protected EisCommonService eisCommonService;

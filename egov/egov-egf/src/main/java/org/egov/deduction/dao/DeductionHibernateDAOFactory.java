@@ -52,6 +52,7 @@ import org.egov.deduction.model.EgRemittanceGldtl;
 import org.egov.deduction.model.Generalledgerdetail;
 import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Session;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * TODO Brief Description of the purpose of the class/interface
@@ -65,7 +66,7 @@ import org.hibernate.Session;
  * are not using the default strategy, which simply delegates to
  * <ttHibernateUtil.getCurrentSession()</tt>,
  */
-
+@Transactional(readOnly=true)
 public class DeductionHibernateDAOFactory extends DeductionDAOFactory
 {
 	protected Session getCurrentSession()

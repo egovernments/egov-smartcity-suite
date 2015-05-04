@@ -104,6 +104,7 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -114,6 +115,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  * @author nayeem
  *
  */
+@Transactional(readOnly=true)
 @ParentPackage(value = "egov")
 public class EBBillInfoFetchAction extends GenericWorkFlowAction {
 	
@@ -210,7 +212,7 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
 					@RequiredFieldValidator(fieldName = "billingCycle", key = FinancialConstants.REQUIRED, message = "")
 					} 
 			)
-	
+	@Transactional
 @Action(value="/bill/eBBillInfoFetch-create")
 	public String create() {
 		if (LOGGER.isDebugEnabled()) {
@@ -360,7 +362,7 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
 		if (LOGGER.isDebugEnabled()) LOGGER.debug("Exiting from viewInboxItem");
 		return FinancialConstants.STRUTS_RESULT_PAGE_VIEW;
 	}
-
+	@Transactional
 	@SkipValidation
 	public String save() throws ParseException{
 		
@@ -622,7 +624,7 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
 		
 		if (isDebugEnabled) LOGGER.debug("Exiting from checkBudget");
 	}
-	
+	@Transactional
 	@SuppressWarnings("unchecked")
 	private String createExpenseBill() {
 		

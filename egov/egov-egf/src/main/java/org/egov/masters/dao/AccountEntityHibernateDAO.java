@@ -47,6 +47,7 @@ package org.egov.masters.dao;
 
 import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Session;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Sathish P
@@ -54,6 +55,7 @@ import org.hibernate.Session;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+@Transactional(readOnly=true)
 public class AccountEntityHibernateDAO extends GenericHibernateDAO
 {
 

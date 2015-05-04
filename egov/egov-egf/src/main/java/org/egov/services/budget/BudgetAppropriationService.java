@@ -56,14 +56,14 @@ import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.utils.BudgetReportEntry;
 import org.egov.utils.Constants;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class BudgetAppropriationService extends PersistenceService{
 	private FinancialYearDAO financialYearDAO;
 	private BudgetDetailsDAO budgetDetailsDAO;

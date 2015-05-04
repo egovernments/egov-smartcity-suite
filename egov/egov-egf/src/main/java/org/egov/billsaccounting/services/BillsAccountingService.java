@@ -54,6 +54,7 @@ import org.egov.model.voucher.PreApprovedVoucher;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
@@ -61,7 +62,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * 
  */
 
-
+@Transactional(readOnly=true)
 public class BillsAccountingService  {
 	
 	private final static Logger LOGGER=Logger.getLogger(BillsAccountingService.class);
@@ -76,6 +77,7 @@ public class BillsAccountingService  {
 	 * @param billId
 	 * @return
 	 */
+	@Transactional
 	public long createPreApprovedVoucherFromBill(int billId, String voucherNumber, Date voucherDate)  throws EGOVRuntimeException,ValidationException
 	{
 		String voucherStatus=null;
@@ -114,6 +116,7 @@ public class BillsAccountingService  {
 	 * @param billId
 	 * @return
 	 */
+	@Transactional
 	public long createPreApprovedVoucherFromBillForPJV(int billId,List<PreApprovedVoucher> voucherdetailList,List<PreApprovedVoucher> subLedgerList)throws EGOVRuntimeException
 	{
 		String voucherStatus=null;
@@ -146,6 +149,7 @@ public class BillsAccountingService  {
 	 * @param vouhcerheaderid
 	 * @return
 	 */
+	@Transactional
 	public void createVoucherfromPreApprovedVoucher(long vouhcerheaderid)throws EGOVRuntimeException
 	{
 		String voucherStatus=null;
@@ -178,6 +182,7 @@ public class BillsAccountingService  {
 	 * @param billId
 	 * @return
 	 */
+	@Transactional
 	public long createVoucherFromBill(int billId)throws EGOVRuntimeException
 	{
 		try {
@@ -202,6 +207,7 @@ public class BillsAccountingService  {
 		}
 		
 	}
+	@Transactional
 	public void updatePJV(CVoucherHeader vh, List<PreApprovedVoucher> detailList,List<PreApprovedVoucher> subledgerlist)  throws EGOVRuntimeException
 	{
 		CreateVoucher cv= new CreateVoucher();
@@ -213,6 +219,7 @@ public class BillsAccountingService  {
 	 * @param billNumber
 	 * @return
 	 */
+	@Transactional
 	public CVoucherHeader getPJVNumberForBill(String billNumber) throws EGOVException
 	{
 		try

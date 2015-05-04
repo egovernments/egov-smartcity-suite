@@ -63,7 +63,8 @@ import org.egov.model.bills.EgBillregister;
 import org.egov.utils.Constants;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.actions.voucher.VoucherSearchAction;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 @ParentPackage("egov")
 public class BillViewAction extends BaseFormAction
  {

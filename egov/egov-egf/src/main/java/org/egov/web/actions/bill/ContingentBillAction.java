@@ -94,6 +94,7 @@ import org.egov.pims.commons.DesignationMaster;
 import org.egov.utils.CheckListHelper;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -104,6 +105,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  * @author mani
  *
  */
+@Transactional(readOnly=true)
 public class ContingentBillAction extends BaseBillAction {
 	public class COAcomparator implements Comparator<CChartOfAccounts> {
 		@Override
@@ -262,6 +264,7 @@ public class ContingentBillAction extends BaseBillAction {
 		}
 		return validButtons;
 	}
+	@Transactional
 	@SkipValidation
 	public String  update(){
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Contingent Bill Action  | update | start");
@@ -334,6 +337,7 @@ public class ContingentBillAction extends BaseBillAction {
 			//Commenting function to revert onefunction center mandatory option
 			//@RequiredFieldValidator(fieldName = "commonBean.functionName",message="",key=REQUIRED)
 	 }) 
+	@Transactional
 	@SkipValidation
 	@ValidationErrorPage(value=NEW)
 	public String create()  
@@ -389,7 +393,7 @@ public class ContingentBillAction extends BaseBillAction {
 		
 		return "messages";
 	}   
-	
+	@Transactional
 	@SkipValidation
 	@ValidationErrorPage(value=EDIT)
 	public String edit()
@@ -575,6 +579,7 @@ public class ContingentBillAction extends BaseBillAction {
 		}                                                                       
 		return billDetailsTableSubledger;
 	}
+	@Transactional
 	@SuppressWarnings("unchecked")
 	private void recreateCheckList(Cbill bill) {
 		List<EgChecklists> checkLists = persistenceService.findAllBy("from org.egov.infstr.models.EgChecklists where objectid=?",billRegisterId);
@@ -584,6 +589,8 @@ public class ContingentBillAction extends BaseBillAction {
 		}		
 		createCheckList(bill);
 	}
+	
+	@Transactional
 	private Cbill updateBill(Cbill bill) {
 		final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
 		headerDetails.put(VoucherConstant.SOURCEPATH, "/EGF/bill/contingentBill!beforeView.action?billRegisterId=");
@@ -913,7 +920,6 @@ public class ContingentBillAction extends BaseBillAction {
 		billDetailslist.add(new VoucherDetails());
 		return NEW;
 	}
-	
 	@SuppressWarnings("unchecked")
 	private  Cbill createBill() {
 		

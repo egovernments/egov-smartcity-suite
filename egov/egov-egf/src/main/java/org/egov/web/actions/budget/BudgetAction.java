@@ -51,7 +51,6 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.dispatcher.ServletRedirectResult;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
@@ -65,12 +64,14 @@ import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.pims.commons.Position;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @Result(name="success", type="ServletRedirectResult.class", location = "budget.action")
 @ParentPackage("egov")
 @Validation
+@Transactional(readOnly=true)
 public class BudgetAction extends BaseFormAction{
 	private static final long serialVersionUID = 1L;
 	private Budget budget=new Budget();
@@ -121,6 +122,7 @@ public class BudgetAction extends BaseFormAction{
 	public String newform(){
 		return NEW;
 	}
+	@Transactional
 	public String create(){
 		addMaterializedPath(budget);
 		budgetService.create(budget);
@@ -202,6 +204,7 @@ public class BudgetAction extends BaseFormAction{
 			return "0"+ val;
 		return String.valueOf(val);
 	}
+	@Transactional
 	public String save()
 	{
 		if(getParentId()!=null &&getParentId()>0)
@@ -225,6 +228,7 @@ public class BudgetAction extends BaseFormAction{
 			target="EMPTY";
 		return SEARCH;  
 	}  
+	@Transactional
 	@SkipValidation
 	@Action(value="/budget/budget-edit")
 	public String edit(){  

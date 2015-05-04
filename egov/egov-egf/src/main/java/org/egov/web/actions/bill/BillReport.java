@@ -48,6 +48,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.voucher.VoucherDetails;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.domain.EGBillPayeeDetails;
 
@@ -55,6 +56,7 @@ import com.exilant.eGov.src.domain.EGBillPayeeDetails;
  * @author mani
  *
  */
+@Transactional(readOnly=true)
 public class BillReport {
 	
 	private PersistenceService persistenceService;

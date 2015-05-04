@@ -66,7 +66,6 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.dispatcher.StreamResult;
 import org.egov.commons.Bank;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
@@ -90,6 +89,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
 import org.jboss.logging.Logger;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
@@ -97,7 +97,7 @@ import com.exilant.exility.common.TaskFailedException;
 @Results(value = {
 		@Result(name = "PDF", type = "stream", location = "inputStream", params = {"inputName", "inputStream", "contentType", "application/pdf",	"contentDisposition","no-cache;filename=AutoReconcileReport.pdf" }),
 		@Result(name = "XLS", type = "stream", location = "inputStream", params = {"inputName", "inputStream", "contentType", "application/xls",	"contentDisposition","no-cache;filename=AutoReconcileReport.xls" }) })
-
+@Transactional(readOnly=true)
 public class AutoReconciliationAction extends BaseFormAction {
 
 
@@ -231,7 +231,7 @@ public class AutoReconciliationAction extends BaseFormAction {
 	{
 		return "upload";
 	}
-
+@Transactional
 	@ValidationErrorPage("upload")
 	public String upload()
 	{
@@ -484,6 +484,7 @@ private BigDecimal getNumericValue(HSSFCell cell) {
 	/**
 	 * @return
 	 */
+@Transactional
 	public String schedule()
 	{
 		//Step1: mark which are all we are going to process
