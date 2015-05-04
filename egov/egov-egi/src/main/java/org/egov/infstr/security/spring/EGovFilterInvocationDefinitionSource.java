@@ -55,12 +55,16 @@ import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * ObjectDefinitionSource for Acegi filter to determine access based on url
  * 
  * @author sahina bose
  */
+@Component
+@Transactional(readOnly=true)
 public class EGovFilterInvocationDefinitionSource implements FilterInvocationSecurityMetadataSource {
 
 	private static final Logger LOG = LoggerFactory.getLogger(EGovFilterInvocationDefinitionSource.class);

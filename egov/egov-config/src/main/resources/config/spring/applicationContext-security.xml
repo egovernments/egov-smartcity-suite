@@ -77,21 +77,10 @@
 		<constructor-arg value="/index.jsp" />
 		<constructor-arg>
 			<list>
-				<ref bean="simpleSSOFilter" />
 				<bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
 			</list>
 		</constructor-arg>
 		<property name="filterProcessesUrl" value="/logout.do" />
-	</bean>
-	
-	<bean id="sessionCache" class="org.egov.infstr.security.utils.SessionCache" />
-	 
-	<bean id="simpleSSOFilter" class="org.egov.infstr.security.spring.filter.SimpleSSOFilter">
-		<property name="authenticationProvider" ref="daoAuthenticationProvider" />
-		<property name="logoutUrl" value="/logout.do" />
-		<property name="sessionTimeout" value="30" />
-		<property name="sessionCache" ref="sessionCache" />
-		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
 	<bean id="authenticationProcessingFilter" class="org.egov.infstr.security.spring.filter.EgovAuthenticationProcessingFilter">
