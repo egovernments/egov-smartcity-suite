@@ -42,6 +42,8 @@ package org.egov.web.actions.report;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class BankAdviceReportInfo {
 	
 	private String partyName;

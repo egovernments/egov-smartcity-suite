@@ -91,6 +91,7 @@ import org.egov.services.budget.BudgetService;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.transaction.annotation.Transactional;
 
 @Results(value = {
 		@Result(name = "department-PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME, Constants.INPUT_STREAM,
@@ -107,6 +108,7 @@ import org.egov.web.actions.BaseFormAction;
 				Constants.CONTENT_TYPE, "text/html" }),
 		@Result(name = "functionwise-dept-HTML", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME, Constants.INPUT_STREAM,
 			Constants.CONTENT_TYPE, "text/html" }) })
+@Transactional(readOnly=true)
 @ParentPackage("egov")
 public class BudgetReportAction extends BaseFormAction {
 	private static final String				DEPTWISEPATH			= "/org/egov/web/actions/budget/departmentWiseBudgetReport.jasper";

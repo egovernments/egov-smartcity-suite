@@ -62,8 +62,10 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.exception.ConstraintViolationException;
 import org.json.JSONArray;
+import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
+@Transactional(readOnly=true)
 public class BankAction extends BaseFormAction {
 	private static final long serialVersionUID = 1L;
 	private Bank bank = new Bank();

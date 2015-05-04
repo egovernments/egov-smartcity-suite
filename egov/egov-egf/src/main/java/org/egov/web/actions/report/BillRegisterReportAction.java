@@ -43,6 +43,7 @@
 package org.egov.web.actions.report;
 
 import org.apache.struts2.convention.annotation.Action;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -88,6 +89,7 @@ import org.egov.web.utils.EgovPaginatedList;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.transaction.annotation.Transactional;
 
 
 
@@ -97,6 +99,7 @@ import org.hibernate.Session;
  */
 @SuppressWarnings("unchecked")
 @ParentPackage("egov")
+@Transactional(readOnly=true)
 public class BillRegisterReportAction   extends SearchFormAction{
 
 	private static final long serialVersionUID = 1L;

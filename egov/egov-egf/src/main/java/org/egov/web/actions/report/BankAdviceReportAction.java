@@ -87,6 +87,7 @@ import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 @Results({ 
 	@Result(name = "reportview", type = "stream", location = "inputStream", params = { "contentType", "${contentType}", "contentDisposition", "attachment; filename=${fileName}" }),
@@ -94,6 +95,7 @@ import org.hibernate.Query;
 	
 	})
 @ParentPackage("egov")
+@Transactional(readOnly=true)
 public class BankAdviceReportAction extends BaseFormAction {
 	
 	private static final String seperatorForIOB = " | ";

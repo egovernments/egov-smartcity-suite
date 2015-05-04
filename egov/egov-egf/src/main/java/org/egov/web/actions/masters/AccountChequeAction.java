@@ -43,6 +43,7 @@
 package org.egov.web.actions.masters;
 
 import org.apache.struts2.convention.annotation.Action;
+
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -68,11 +69,13 @@ import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author manoranjan
  *
  */
+@Transactional(readOnly=true)
 public class AccountChequeAction extends BaseFormAction{
 	
 	private static final long serialVersionUID = 1L;

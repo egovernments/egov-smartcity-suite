@@ -51,7 +51,8 @@ import org.egov.eb.utils.EBConstants;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.commons.Position;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class EBConsumerService implements EntityTypeService{
 //extends PersistenceService<EBConsumer, Long>   {
 

@@ -39,8 +39,6 @@
  ******************************************************************************/
 package org.egov.eb.web.action.master;
 
-import static org.egov.utils.FinancialConstants.REGEXP_ALPHANUMERIC_DOT_COLON_SLASH;
-import static org.egov.utils.FinancialConstants.REGEXP_ALPHANUMERIC_DOT_SLASH;
 import static org.egov.utils.FinancialConstants.REQUIRED;
 
 import java.util.Arrays;
@@ -54,7 +52,6 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.eb.domain.master.entity.EBConsumer;
-import org.egov.eb.domain.master.entity.TargetArea;
 import org.egov.eb.service.master.EBConsumerService;
 import org.egov.eb.service.master.EBDetailsService;
 import org.egov.eb.service.master.TargetAreaService;
@@ -63,7 +60,6 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.services.masters.AccountdetailkeyService;
@@ -72,13 +68,12 @@ import org.egov.utils.VoucherHelper;
 import org.egov.web.actions.SearchFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.egov.web.utils.EgovPaginatedList;
-import org.hibernate.FlushMode;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.opensymphony.xwork2.validator.annotations.RegexFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
-            
+@Transactional(readOnly=true)
 @ParentPackage("egov")   
 public class EBConsumerAction extends SearchFormAction{
 
@@ -198,7 +193,7 @@ public class EBConsumerAction extends SearchFormAction{
 		this.mode=FinancialConstants.STRUTS_RESULT_PAGE_VIEW;
 		return FinancialConstants.STRUTS_RESULT_PAGE_VIEW ;
 	}	
-	
+	@Transactional
 	@SuppressWarnings("unchecked")
 	public String edit() {
 		if (consumer.getIsActive() == null) {
@@ -238,7 +233,7 @@ public class EBConsumerAction extends SearchFormAction{
 					/*@RegexFieldValidator(fieldName = "code", expression = REGEXP_ALPHANUMERIC_DOT_SLASH, message = "", key = "message.validation.validChar"),
 					@RegexFieldValidator(fieldName = "name", expression = REGEXP_ALPHANUMERIC_DOT_COLON_SLASH, message = "", key = "message.validation.validChar")*/
 			})//This fix is for Phoenix Migration.
-
+	@Transactional
 	@ValidationErrorPage(value=NEW)
 	public String create() {    
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("............................Creating New EBConsumer .......................");
@@ -276,7 +271,7 @@ public class EBConsumerAction extends SearchFormAction{
 		mode = "create";
 		return NEW;
 	}
-	
+	@Transactional
 	private void createAccountdetailkey() {   
 		
 		Accountdetailkey accountdetailkey = new Accountdetailkey();

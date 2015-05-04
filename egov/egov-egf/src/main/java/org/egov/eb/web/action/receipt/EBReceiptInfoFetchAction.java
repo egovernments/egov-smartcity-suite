@@ -68,6 +68,7 @@ import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -77,6 +78,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  * @author nayeem
  *
  */
+@Transactional(readOnly=true)
 @ParentPackage(value = "egov")
 public class EBReceiptInfoFetchAction extends BaseFormAction {
 
@@ -124,7 +126,8 @@ public class EBReceiptInfoFetchAction extends BaseFormAction {
 	@Validations (requiredFields = {
 			@RequiredFieldValidator(fieldName = "month", key = FinancialConstants.REQUIRED, message =""),
 			@RequiredFieldValidator(fieldName = "financialYearId", key = FinancialConstants.REQUIRED, message ="") 
-	})	
+	})
+	@Transactional
 @Action(value="/receipt/eBReceiptInfoFetch-create")
 	public String create() {
 		

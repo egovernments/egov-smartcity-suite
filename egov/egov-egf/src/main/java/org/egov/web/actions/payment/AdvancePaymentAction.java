@@ -88,7 +88,8 @@ import org.egov.services.voucher.VoucherService;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.HibernateException;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class AdvancePaymentAction extends BasePaymentAction{
 	private static final Logger	LOGGER	= Logger.getLogger(AdvancePaymentAction.class);
 	private EgAdvanceRequisition advanceRequisition = new EgAdvanceRequisition();

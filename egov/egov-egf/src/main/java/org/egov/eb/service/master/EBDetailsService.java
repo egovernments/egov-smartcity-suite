@@ -45,10 +45,10 @@ import org.egov.eb.domain.master.entity.EBConsumer;
 import org.egov.eb.domain.master.entity.EBDetails;
 import org.egov.eb.utils.EBConstants;
 import org.egov.eis.service.EisCommonService;
-import org.egov.infra.workflow.entity.State;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.commons.Position;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class EBDetailsService{ 
 //extends PersistenceService<EBDetails, Long>{
 	//This fix is for Phoenix Migration.

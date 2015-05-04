@@ -63,8 +63,9 @@ import org.egov.services.recoveries.RecoveryService;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.SearchFormAction;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
-
+@Transactional(readOnly=true)
 @ParentPackage("egov")
 public class AutoRemittanceSchedulerReportAction extends SearchFormAction{
 

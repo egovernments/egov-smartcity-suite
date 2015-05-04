@@ -53,6 +53,7 @@ import org.egov.model.advance.EgAdvanceRequisition;
 import org.egov.model.payment.Paymentheader;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.voucher.BaseVoucherAction;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 
@@ -66,7 +67,7 @@ import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 		@Result(name = "directbankpayment", type = "ServletActionRedirectResult.class", location = "directBankPayment", params = { "namespace", "/payment","method", "viewInboxItem" }) ,
 		@Result(name = "remitRecovery", type = "ServletActionRedirectResult.class", location = "remitRecovery", params = { "namespace", "/deduction","method", "viewInboxItem" }),
 		@Result(name = "contractoradvancepayment", type = "ServletActionRedirectResult.class", location = "advancePayment", params = { "namespace", "/payment", "method", "viewInboxItem" })})
-		
+@Transactional(readOnly=true)	
 public class BasePaymentAction extends BaseVoucherAction {    
 	EisCommonService eisCommonService;
 	private static Logger LOGGER=Logger.getLogger(BasePaymentAction.class);

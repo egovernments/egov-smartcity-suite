@@ -43,7 +43,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.egov.model.instrument.InstrumentVoucher;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class BankBookViewEntry {
 	String receiptVoucherDate;
 	String receiptVoucherNumber;

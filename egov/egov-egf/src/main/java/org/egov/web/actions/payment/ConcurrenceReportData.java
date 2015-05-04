@@ -42,8 +42,8 @@ package org.egov.web.actions.payment;
 import java.math.BigDecimal;
 import java.sql.Date;
 
-import org.egov.utils.Constants;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class ConcurrenceReportData {
 	String departmentName;
 	String functionCode;

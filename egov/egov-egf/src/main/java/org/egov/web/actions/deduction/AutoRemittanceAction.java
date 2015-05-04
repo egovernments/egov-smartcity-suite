@@ -39,8 +39,6 @@
  ******************************************************************************/
 package org.egov.web.actions.deduction;
 
-import org.apache.struts2.convention.annotation.Action;
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,8 +47,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
+import org.apache.struts2.convention.annotation.Action;
 import org.egov.dao.recoveries.TdsHibernateDAO;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
@@ -64,9 +63,10 @@ import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.HibernateException;
+import org.springframework.transaction.annotation.Transactional;
 
 
-
+@Transactional(readOnly=true)
 public class AutoRemittanceAction extends BaseFormAction {
 
 	private final static Logger LOGGER=Logger.getLogger(AutoRemittanceAction.class);

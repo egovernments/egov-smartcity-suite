@@ -52,11 +52,12 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.StringUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.GsonBuilder;
-
+@Transactional(readOnly=true)
 public class BankBranchAction extends JQueryGridActionSupport {
 	private static final long serialVersionUID = 1L;
 	private String mode;

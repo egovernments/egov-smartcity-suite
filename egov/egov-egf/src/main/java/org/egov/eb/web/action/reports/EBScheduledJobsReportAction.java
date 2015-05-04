@@ -47,8 +47,8 @@ import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.SearchFormAction;
-import org.hibernate.FlushMode;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class EBScheduledJobsReportAction extends SearchFormAction {
 
 	

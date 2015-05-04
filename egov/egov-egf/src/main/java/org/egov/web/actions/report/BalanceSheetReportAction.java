@@ -67,13 +67,14 @@ import org.egov.utils.ReportHelper;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 @Results(value={
 		@Result(name="balanceSheet-PDF",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/pdf",Constants.CONTENT_DISPOSITION,"no-cache;filename=BalanceSheet.pdf"}),
 		@Result(name="balanceSheet-XLS",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/xls",Constants.CONTENT_DISPOSITION,"no-cache;filename=BalanceSheet.xls"}),
 		@Result(name="balanceSheet-HTML",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"text/html"})
 	})
-	
+@Transactional(readOnly=true)
 @ParentPackage("egov")
 public class BalanceSheetReportAction extends BaseFormAction{
 	private static final String BALANCE_SHEET_PDF = "balanceSheet-PDF";

@@ -97,12 +97,13 @@ import org.egov.utils.VoucherHelper;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.exilant.eGov.src.domain.BankEntries;
 import com.exilant.exility.common.TaskFailedException;
-
+@Transactional(readOnly=true)
 public class DishonorChequeWorkflowAction  extends BaseFormAction {
 	
 	private static final long serialVersionUID = 1L;

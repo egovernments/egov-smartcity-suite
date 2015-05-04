@@ -39,28 +39,24 @@
  ******************************************************************************/
 package org.egov.eb.web.action.reports;
 
-import org.apache.struts2.convention.annotation.Action;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.eb.domain.master.bean.EBBillReportBean;
-import org.egov.eb.domain.master.entity.TargetArea;
 import org.egov.eb.utils.EBUtils;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQuerySQL;
-import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.egov.web.utils.EgovPaginatedList;
-import org.hibernate.FlushMode;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
-
+@Transactional(readOnly=true)
 public class EBSchedulerReportAction extends EBBillReportAction{
 	
 	private static final Logger	LOGGER = Logger.getLogger(EBSchedulerReportAction.class);

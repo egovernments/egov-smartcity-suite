@@ -43,7 +43,8 @@ import org.egov.commons.Bankaccount;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.pims.commons.DrawingOfficer;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class BankAccountRemittanceCOA{
    
 	private Bankaccount bankAccount;

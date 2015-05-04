@@ -60,10 +60,8 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.config.AppConfigValues;
-import org.egov.infstr.models.Script;
 import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.workflow.Action;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
@@ -73,7 +71,8 @@ import org.egov.pims.model.PersonalInformation;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.Constants;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class BudgetSearchAndModify extends BudgetSearchAction {
     private static final String ACTIONNAME="actionName";
     boolean enableApprovedAmount = false;
@@ -94,7 +93,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
 	public void setScriptService(ScriptService scriptService) {
 		this.scriptService = scriptService;
 	}
-
+	@Transactional
 	public String modifyList(){
         if(LOGGER.isInfoEnabled())     LOGGER.info("Starting modifyList...");
         if(parameters.containsKey(Constants.MODE) && ("approve".equals(parameters.get(Constants.MODE)[0]))){
@@ -123,7 +122,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
  
 /*
  * this api is used fro budget detail workflow list
- */
+ */		@Transactional
   		public String modifyDetailList() {
   			if(LOGGER.isInfoEnabled())     LOGGER.info("starting modifyDetailList...");
   			if(parameters.containsKey(Constants.MODE) && ("approve".equals(parameters.get(Constants.MODE)[0]))){
@@ -206,7 +205,7 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
         addDropdownData("designationList", Collections.EMPTY_LIST);
         addDropdownData("userList", Collections.EMPTY_LIST);
     }
-
+    @Transactional
     public String update(){
         Budget budget=null;
         Budget b=null;

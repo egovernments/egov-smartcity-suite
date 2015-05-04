@@ -63,11 +63,12 @@ import javax.net.ssl.X509TrustManager;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.eb.utils.EBConstants;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class EBReceiptInfoService {
 	
 	private static final Logger LOGGER = Logger.getLogger(EBReceiptInfoService.class);
-	
+	@Transactional
 	public List<Map<String, String>> fetchReceiptInfo(String rtgsNumber) throws MalformedURLException, IOException, NoSuchAlgorithmException, KeyManagementException   {
 		if (LOGGER.isDebugEnabled()) LOGGER.debug("Entered into fetchReceiptInfo, rtgsNumber=" + rtgsNumber);
 		

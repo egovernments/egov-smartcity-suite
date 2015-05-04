@@ -69,12 +69,14 @@ import org.egov.utils.ReportHelper;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
+import org.springframework.transaction.annotation.Transactional;
 
 @Results(value = {
 		@Result(name="PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=ConcurrenceReport.pdf"}),
 		@Result(name="XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=ConcurrenceReport.xls"})
 		 })
 @ParentPackage("egov")
+@Transactional(readOnly=true)
 public class ConcurrenceReportAction extends BaseFormAction {
 	private List<ConcurrenceReportData> paymentHeaderList = new ArrayList<ConcurrenceReportData>();
 	private List<ConcurrenceReportData> paymentHeaderListFnd = new ArrayList<ConcurrenceReportData>();

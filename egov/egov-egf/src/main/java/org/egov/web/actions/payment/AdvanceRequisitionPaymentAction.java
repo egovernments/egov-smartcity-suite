@@ -78,7 +78,8 @@ import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.web.actions.voucher.BaseVoucherAction;
 import org.egov.web.annotation.ValidationErrorPage;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class AdvanceRequisitionPaymentAction extends BaseVoucherAction{
 	private EgAdvanceRequisition advanceRequisition = new EgAdvanceRequisition();
 	private static final Logger	LOGGER	= Logger.getLogger(AdvanceRequisitionPaymentAction.class);

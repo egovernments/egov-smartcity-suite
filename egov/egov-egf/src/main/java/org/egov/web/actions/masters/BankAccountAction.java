@@ -64,7 +64,8 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.StringUtils;
 import org.egov.utils.Constants;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class BankAccountAction extends JQueryGridActionSupport {
 	private static final long serialVersionUID = 1L;
 	private String mode;

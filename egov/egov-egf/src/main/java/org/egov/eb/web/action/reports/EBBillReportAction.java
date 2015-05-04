@@ -66,11 +66,12 @@ import org.egov.web.actions.SearchFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.egov.web.utils.EgovPaginatedList;
 import org.hibernate.FlushMode;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
-
+@Transactional(readOnly=true)
 @ParentPackage("egov")   
 public class EBBillReportAction extends SearchFormAction{
 

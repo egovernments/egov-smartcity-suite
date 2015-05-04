@@ -78,10 +78,11 @@ import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.BudgetDetailHelper;
 import org.egov.utils.Constants;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.util.ValueStack;
-
+@Transactional(readOnly=true)
 @ParentPackage("egov")
 public class BudgetReAppropriationModifyAction extends BaseFormAction{
 	private static final long serialVersionUID = 1L;
@@ -282,7 +283,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction{
 	public Object getModel() {
 		return budgetDetail;
 	}
-
+	@Transactional
 	public String update(){
 		for (BudgetReAppropriationView entry : savedBudgetReAppropriationList) {
 			BudgetReAppropriation reApp = budgetReAppropriationService.findBySequenceNumberAndBudgetDetail(entry.getSequenceNumber(), entry.getBudgetDetail().getId());

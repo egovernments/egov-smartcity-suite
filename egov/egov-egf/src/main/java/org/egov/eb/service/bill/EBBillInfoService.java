@@ -72,12 +72,14 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.commons.Position;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
  * @author nayeem
  * 
  */
+@Transactional(readOnly=true)
 public class EBBillInfoService {
 
 	private static final Logger LOGGER = Logger.getLogger(EBBillInfoService.class);
@@ -94,7 +96,7 @@ public class EBBillInfoService {
 	private static final String EGF_CONFIG_FILE = "egf_config.xml";
 
 	
-	
+	@Transactional
 	public String fetchEBBills(String billingCycle,Long ebLogId) {
 		String resultmessage="";
 		EbSchedulerLog ebLog=null;
@@ -366,7 +368,7 @@ private Integer getMonth(Date dueDate) {
 	calendar.setTime(getBillDate(dueDate));
 	return calendar.get(MONTH) + 1; 
 }
-
+@Transactional
 private EBDetails startWorkflow(EBDetails ebDetails, Position owner) {
 	EBDetails ebDtls = (EBDetails) ebDetails.start().withOwner(owner);
 	ebDetails.transition(true).withStateValue(ebDetails.getStateType()).withNextAction(CODE_BILLINFO_RECEIVED).withOwner(owner).withComments("");

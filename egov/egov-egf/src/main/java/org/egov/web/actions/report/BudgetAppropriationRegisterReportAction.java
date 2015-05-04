@@ -80,12 +80,13 @@ import org.egov.utils.ReportHelper;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
+import org.springframework.transaction.annotation.Transactional;
 
 @Results(value={
 		@Result(name="PDF",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/pdf",Constants.CONTENT_DISPOSITION,"no-cache;filename=BudgetAppropriationRegisterRepor.pdf"}),
 		@Result(name="XLS",type="stream",location=Constants.INPUT_STREAM, params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants.CONTENT_TYPE,"application/xls",Constants.CONTENT_DISPOSITION,"no-cache;filename=BudgetAppropriationRegisterRepor.xls"})
 	})
-
+@Transactional(readOnly=true)
 @ParentPackage("egov")
 public class BudgetAppropriationRegisterReportAction  extends BaseFormAction {
 	private static final Logger LOGGER = Logger.getLogger(BudgetAppropriationRegisterReportAction.class);

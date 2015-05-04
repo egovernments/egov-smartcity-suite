@@ -81,13 +81,14 @@ import org.egov.web.actions.BaseFormAction;
 import org.egov.web.actions.voucher.VoucherReport;
 import org.hibernate.FlushMode;
 import org.hibernate.SQLQuery;
+import org.springframework.transaction.annotation.Transactional;
 
 @Results(value={ 
 	@Result(name="PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=BankPaymentVoucherReport.pdf"}),
 	@Result(name="XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=BankPaymentVoucherReport.xls"}),
 	@Result(name="HTML",type="stream",location="inputStream", params={"inputName","inputStream","contentType","text/html"})
 })
-
+@Transactional(readOnly=true)
 @ParentPackage("egov")
 public class BillPaymentVoucherPrintAction extends BaseFormAction{
 	Long chequeNumberPass;

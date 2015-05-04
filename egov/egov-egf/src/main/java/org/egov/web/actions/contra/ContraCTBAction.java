@@ -40,6 +40,7 @@
 package org.egov.web.actions.contra;
 
 import org.apache.struts2.convention.annotation.Action;
+
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.text.ParseException;
@@ -72,9 +73,11 @@ import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.voucher.BaseVoucherAction;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
+@Transactional(readOnly=true)
 public class ContraCTBAction extends BaseVoucherAction
 {
 	private static final Logger	LOGGER	= Logger.getLogger(ContraCTBAction.class);

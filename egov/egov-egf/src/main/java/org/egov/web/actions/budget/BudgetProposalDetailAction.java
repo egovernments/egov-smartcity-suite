@@ -55,7 +55,6 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.dispatcher.StreamResult;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
@@ -72,11 +71,12 @@ import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
+import org.springframework.transaction.annotation.Transactional;
 @ParentPackage("egov")
 @Results({ 
 	@Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain"})
 })
-
+@Transactional(readOnly=true)
 public class BudgetProposalDetailAction extends BaseBudgetDetailAction{
 	private static final long serialVersionUID = 1L;
 
@@ -105,7 +105,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction{
 		public BudgetProposalDetailAction(BudgetDetailConfig budgetDetailConfig) {
 		super(budgetDetailConfig);
 	}
-	
+		@Transactional
 	protected void saveAndStartWorkFlow(BudgetDetail detail) {
 		try {
 			if(budgetDocumentNumber!=null && budgetDetail.getBudget()!=null){
@@ -221,6 +221,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction{
 		return "newDetail-re";   
 
 	}
+	@Transactional
 	public String addNewDetails() {
 		Long id =  budgetDetail.getBudget().getId(); 
 		addNewDetails=true;
@@ -313,10 +314,11 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction{
 		 budgetGroupList = sqlQuery.list();    
 		return "budgetGroup";
 		}
-	
+@Transactional
 	public String saveAndNew() {
 		return create();
 	}
+@Transactional
 	public String saveAndNewRe() {
 		return createRe();
 	}
@@ -376,7 +378,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction{
 	}
 	
 
-	
+	@Transactional
 	protected void saveAndStartWorkFlowForRe(BudgetDetail detail,int index,CFinancialYear finYear,Budget refBudget) {
 		try {
 			if(budgetDocumentNumber!=null && budgetDetail.getBudget()!=null){

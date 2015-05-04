@@ -41,8 +41,10 @@ package org.egov.web.actions.report;
 
 import java.math.BigDecimal;
 
+import org.springframework.transaction.annotation.Transactional;
 
 
+@Transactional(readOnly=true)
 public class AutoRemittanceBeanReport{
 
 	private String voucherNumber;

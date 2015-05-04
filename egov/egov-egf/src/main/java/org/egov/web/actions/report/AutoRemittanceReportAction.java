@@ -82,6 +82,7 @@ import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
+import org.springframework.transaction.annotation.Transactional;
 
 
 
@@ -94,6 +95,7 @@ import org.hibernate.transform.Transformers;
 	})
      
 @ParentPackage("egov")  
+@Transactional(readOnly=true)
 public class AutoRemittanceReportAction extends BaseFormAction{
 	String deptLevelJasperpath = "AutoRemittanceReport";   
 	String cocLevelJasperpath = "AutoRemittanceCOCLevelReport";   

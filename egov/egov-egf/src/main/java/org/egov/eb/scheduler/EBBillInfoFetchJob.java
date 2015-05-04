@@ -39,17 +39,15 @@
  ******************************************************************************/
 package org.egov.eb.scheduler;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.eb.service.bill.EBBillInfoService;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.utils.EGovConfig;
-import org.egov.infstr.utils.HibernateUtil;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class EBBillInfoFetchJob implements Job {
 
 	private static final Logger LOGGER = Logger.getLogger(EBBillInfoFetchJob.class);
@@ -92,7 +90,7 @@ public class EBBillInfoFetchJob implements Job {
 			LOGGER.debug("Exiting from BillInfoFetchJob.execute");
 		}
 	}
-
+	@Transactional
 	private void executeJob(JobExecutionContext jobExeContext) {
 		Long startTime = System.currentTimeMillis();
 

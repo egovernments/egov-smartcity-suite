@@ -40,6 +40,7 @@
 package org.egov.web.actions.contra;
 
 import org.apache.struts2.convention.annotation.Action;
+
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -65,7 +66,6 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
-
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.model.contra.ContraBean;
 import org.egov.model.contra.ContraJournalVoucher;
@@ -78,10 +78,11 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.voucher.BaseVoucherAction;
 import org.hibernate.HibernateException;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
-
+@Transactional(readOnly=true)
 public class ContraBTCAction extends BaseVoucherAction {
 	private static final String SOURCEPATH = "/EGF/contra/contraBTC!view.action?voucherHeader.id=";
 	private ContraBean contraBean = new ContraBean();
@@ -127,7 +128,7 @@ public class ContraBTCAction extends BaseVoucherAction {
 						.get("cashInHand").toString()
 						: null);
 	}
-
+	@Transactional
 	public String create() {
 		if (validateInputData()) {
 			List<InstrumentHeader> instrumentList = new ArrayList<InstrumentHeader>();
@@ -168,14 +169,14 @@ public class ContraBTCAction extends BaseVoucherAction {
 		return NEW;
 		// return false;
 	}
-
+	@Transactional
 	public String saveAndView() {
 		// if(create()){
 		message = getText("transaction.success")
 				+ voucherHeader.getVoucherNumber();
 		return Constants.VIEW;
 	}
-
+	@Transactional
 	public String saveAndClose() {
 		// if(create()){
 		setClose(true);

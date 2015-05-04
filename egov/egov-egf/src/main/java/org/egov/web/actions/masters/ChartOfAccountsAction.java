@@ -64,10 +64,12 @@ import org.egov.model.masters.AccountCodePurpose;
 import org.egov.utils.Constants;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.SQLQuery;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.exility.common.TaskFailedException;
 @ParentPackage("egov")
+@Transactional(readOnly=true)
 public class ChartOfAccountsAction extends BaseFormAction{
 	private static final long LONG_FOUR = 4l;
 	private static final long LONG_TWO = 2l;

@@ -84,12 +84,13 @@ import org.egov.web.actions.BaseFormAction;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
+import org.springframework.transaction.annotation.Transactional;
 @Results(value={
 		@Result(name="PDF",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/pdf","contentDisposition","no-cache;filename=BankBookReport.pdf"}),
 		@Result(name="XLS",type="stream",location="inputStream", params={"inputName","inputStream","contentType","application/xls","contentDisposition","no-cache;filename=BankBookReport.xls"})
 	})
 	
-
+@Transactional(readOnly=true)
 @ParentPackage("egov")
 public class BankBookReportAction extends BaseFormAction{
 	private static final String EMPTY_STRING = "";

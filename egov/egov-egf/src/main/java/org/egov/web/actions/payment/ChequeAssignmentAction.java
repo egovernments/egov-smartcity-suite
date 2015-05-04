@@ -106,6 +106,7 @@ import org.egov.web.actions.voucher.CommonAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 @Results(value={
@@ -116,6 +117,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")
 @Validation
+@Transactional(readOnly=true)
 public class ChequeAssignmentAction extends BaseVoucherAction 
 {
 	private static final String	SURRENDERSEARCH	= "surrendersearch";

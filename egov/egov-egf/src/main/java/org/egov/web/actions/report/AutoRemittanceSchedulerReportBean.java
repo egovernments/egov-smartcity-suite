@@ -41,6 +41,8 @@ package org.egov.web.actions.report;
 
 import java.util.Date;
 
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class AutoRemittanceSchedulerReportBean {
 	 
 	 private String    recoveryCoa;

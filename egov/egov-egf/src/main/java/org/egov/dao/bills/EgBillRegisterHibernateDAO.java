@@ -54,8 +54,10 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.bills.EgBillregister;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("unchecked")
+@Transactional(readOnly=true)
 public class EgBillRegisterHibernateDAO extends GenericHibernateDAO{
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	private  PersistenceService<EgBillregister, Long> egBillRegisterService;

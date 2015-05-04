@@ -100,6 +100,7 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.HibernateException;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -113,7 +114,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 /**
  * @author mani
  */
-
+@Transactional(readOnly=true)
 public class DirectBankPaymentAction extends BasePaymentAction {
 	private static final String						FAILED_WHILE_REVERSING		= "Failed while Reversing";
 	private static final String						FAILED						= "Transaction failed";

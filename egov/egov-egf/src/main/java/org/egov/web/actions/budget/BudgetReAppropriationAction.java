@@ -83,10 +83,11 @@ import org.egov.utils.BudgetDetailHelper;
 import org.egov.utils.Constants;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.util.ValueStack;
-
+@Transactional(readOnly=true)
 @ParentPackage("egov")
 public class BudgetReAppropriationAction extends BaseFormAction{
 	private static final long serialVersionUID = 1L;
@@ -275,12 +276,12 @@ public class BudgetReAppropriationAction extends BaseFormAction{
 	public Object getModel() {
 		return budgetDetail;
 	}
-	
+	@Transactional
 	public String create() {
 		save(EGOVThreadLocals.getUserId().intValue());
 		return NEW;
 	}
-
+	@Transactional
 	public String createAndForward() {
 		BudgetReAppropriationMisc misc = save(getUserId());
 		Position owner = misc.getState().getOwnerPosition();
@@ -499,6 +500,7 @@ public class BudgetReAppropriationAction extends BaseFormAction{
 		reAppropriationList = getPersistenceService().findAllBy(" from BudgetReAppropriation ba where ba.state.value='END' and "+sql+" order by ba.budgetDetail.fund,ba.budgetDetail.executingDepartment,ba.budgetDetail.function,ba.reAppropriationMisc.sequenceNumber");
 		return "search";
 	}
+	@Transactional
 	private void saveAndStartWorkFlowForNewDetail(String actionName, BudgetDetail detail,BudgetReAppropriationView appropriation,Position position, BudgetReAppropriationMisc misc) {
 		BudgetReAppropriation reAppropriation = new BudgetReAppropriation();
 		detail.setPlanningPercent(appropriation.getPlanningPercent());
@@ -511,6 +513,7 @@ public class BudgetReAppropriationAction extends BaseFormAction{
 		reAppropriation.start().withOwner(position);
 		budgetReAppropriationWorkflowService.transition(actionName, reAppropriation, "");
 	}
+	@Transactional
 	public boolean createReAppropriation(String actionName,List<BudgetReAppropriationView> budgetReAppropriationList,Position position,CFinancialYear financialYear,String beRe, BudgetReAppropriationMisc misc, String asOnDate) {
 		if(budgetReAppropriationList.isEmpty() || !budgetReAppropriationService.rowsToAddForExistingDetails(budgetReAppropriationList))
 			return false;
@@ -523,6 +526,7 @@ public class BudgetReAppropriationAction extends BaseFormAction{
 		}
 		return true;
 	}
+	@Transactional
 	public boolean createReAppropriationForNewBudgetDetail(String actionName, List<BudgetReAppropriationView> newBudgetReAppropriationList,Position position, BudgetReAppropriationMisc misc) {
 		BudgetDetail detail = null;
 		if(newBudgetReAppropriationList.isEmpty() || (!newBudgetReAppropriationList.isEmpty() && !budgetReAppropriationService.rowsToAddExists(newBudgetReAppropriationList)))
@@ -543,6 +547,7 @@ public class BudgetReAppropriationAction extends BaseFormAction{
 		}
 		return true;
 	}
+	@Transactional
 	protected void saveAndStartWorkFlowForExistingdetails(String actionName, BudgetReAppropriationView reAppView,Position position,CFinancialYear financialYear,String beRe, BudgetReAppropriationMisc misc, String asOnDate) {
 		BudgetReAppropriation appropriation = new BudgetReAppropriation();
 		List<BudgetDetail> searchBy = budgetDetailService.searchByCriteriaWithTypeAndFY(financialYear.getId(),beRe,reAppView.getBudgetDetail());

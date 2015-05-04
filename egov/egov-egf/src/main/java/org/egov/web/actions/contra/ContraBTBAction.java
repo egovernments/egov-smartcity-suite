@@ -97,6 +97,7 @@ import org.egov.web.actions.voucher.CommonAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.HibernateException;
 import org.jboss.logging.Logger;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
@@ -106,6 +107,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 /**
  * @author mani
  */
+@Transactional(readOnly=true)
 @ParentPackage("egov")
 @Validation
 public class ContraBTBAction extends BaseVoucherAction {
@@ -229,7 +231,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 	 *             <li>post to ledger</li>
 	 *             </ol>
 	 */
-
+	@Transactional
 	public String create() throws ValidationException {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting Bank to Bank Transfer ...");
 		try {
@@ -293,6 +295,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 	 *         <li>If only instrument date and amount is changed update only
 	 *         instrument</li></ol>
 	 */
+	@Transactional
 @Action(value="/contra/contraBTB-edit")
 	public String edit() {
 		validateFields();
@@ -449,6 +452,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 	 * @param contraVoucher2
 	 * @return
 	 */
+	@Transactional
 	private CVoucherHeader createLedgerAndPostForInterfund(
 			CVoucherHeader voucher, ContraJournalVoucher contraVoucher2) {
 
@@ -650,7 +654,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 		setAmount(null);
 		return NEW;
 	}
-
+	@Transactional
 	@ValidationErrorPage(value = "reverse")
 @Action(value="/contra/contraBTB-reverse")
 	public String reverse() {
@@ -1298,7 +1302,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 	 * @param oldInstrumentHeader
 	 * @param oldInstrumentHeader2
 	 */
-
+	@Transactional
 	private List<Map<String, Object>> createInstruments(final ContraBean cBean,
 			final ContraJournalVoucher cVoucher) {
 		final Map<String, Object> iMap = new HashMap<String, Object>();
@@ -1447,7 +1451,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 		iList.add(iMap);
 		return iList;
 	}
-
+	@Transactional
 	private void createLedgerAndPost(final CVoucherHeader voucher,
 			final ContraJournalVoucher contraVoucher) {
 		final CreateVoucher createVoucher = new CreateVoucher();
@@ -1824,6 +1828,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 	/**
 	 * @param id
 	 */
+	@Transactional
 	private void updateInstrument(final InstrumentHeader ih,
 			final CVoucherHeader vh) {
 		final Map<String, Object> iMap = new HashMap<String, Object>();
