@@ -131,6 +131,6 @@
     <query name="INSTRUMENTHEADERBYID">from InstrumentHeader where id=?</query>
     <query name="INSTRUMENT_STATUS_FOR_DISHONOR">from EgwStatus where moduletype = 'Instrument' and description in('Dishonored','dishonour cheque in workflow')</query>
     <query name="DISHONOR_STATE_OWNERS">
-    <![CDATA[select dc.state.owner from org.egov.model.instrument.DishonorCheque dc where dc.status.moduletype = 'Instrument' and dc.status.description in('Dishonored','dishonour cheque in workflow')]]>
+    <![CDATA[select dc.state.ownerPosition from org.egov.model.instrument.DishonorCheque dc where dc.status.moduletype = 'Instrument' and dc.status.description in('Dishonored','dishonour cheque in workflow')]]>
     </query>
   </hibernate-mapping>
