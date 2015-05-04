@@ -58,10 +58,10 @@
         <many-to-one name="fundsource" class="org.egov.commons.Fundsource" fetch="select">
             <column name="fundsource" precision="22" scale="0" />
         </many-to-one>
-        <many-to-one name="boundary" class="org.egov.lib.admbndry.BoundaryImpl" fetch="select">
+        <many-to-one name="boundary" class="org.egov.infra.admin.master.entity.Boundary" fetch="select">
             <column name="boundary" precision="22" scale="0" />
         </many-to-one>
-        <many-to-one name="department" class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
+        <many-to-one name="department" class="org.egov.infra.admin.master.entity.Department" fetch="select">
             <column name="department" precision="22" scale="0" not-null="true"/>
         </many-to-one>
         
