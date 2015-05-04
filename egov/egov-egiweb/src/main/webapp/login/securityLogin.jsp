@@ -349,7 +349,7 @@
 								</button>
 							</div>
 
-							<div class="form-group">
+							<!-- <div class="form-group">
 								<div class="row">
 									<div class="col-md-12 col-xs-12 text-right">
 										<a href="javascript:void(0)" data-toggle="modal"
@@ -357,7 +357,7 @@
 											Password?</a>
 									</div>
 								</div>
-							</div>
+							</div> -->
 						</form>
 					</div>
 				</div>
