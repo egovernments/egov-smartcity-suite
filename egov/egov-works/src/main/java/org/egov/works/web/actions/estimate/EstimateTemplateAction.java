@@ -46,8 +46,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.egov.common.entity.UOM;
 import org.egov.commons.EgwTypeOfWork;
-import org.egov.infstr.commonMasters.EgUom;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
@@ -115,7 +115,7 @@ public class EstimateTemplateAction extends SearchFormAction{
 		super.prepare();
 		setupDropdownDataExcluding("workType","subType");
 		addDropdownData("parentCategoryList", getPersistenceService().findAllBy("from EgwTypeOfWork etw1 where etw1.parentid is null"));
-		List<EgUom> uomList = getPersistenceService().findAllBy("from EgUom  order by upper(uom)");
+		List<UOM> uomList = getPersistenceService().findAllBy("from UOM  order by upper(uom)");
 		if (!VIEW.equals(mode)) {
 			uomList = abstractEstimateService.prepareUomListByExcludingSpecialUoms(uomList);
 		}

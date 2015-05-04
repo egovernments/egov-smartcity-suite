@@ -52,11 +52,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.core.security.user.UserImpl;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.egov.common.entity.UOM;
 import org.egov.commons.Period;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commonMasters.EgUom;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
@@ -107,7 +107,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
 	
 	public ScheduleOfRateAction() {
 		addRelatedEntity("category", ScheduleCategory.class);
-		addRelatedEntity("uom", EgUom.class);
+		addRelatedEntity("uom", UOM.class);
 		addRelatedEntity("createdBy", UserImpl.class);
 	}
 

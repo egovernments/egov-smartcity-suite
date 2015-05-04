@@ -49,11 +49,11 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
+import org.egov.common.entity.UOM;
 import org.egov.commons.Period;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.ValidationError;
-import org.egov.infstr.commonMasters.EgUom;
 import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.utils.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -72,7 +72,7 @@ public class ScheduleOfRate extends BaseModel {
 	@NotEmpty(message="sor.description.not.empty")
 	private String description;
 	@Required(message="sor.uom.not.null")
-    private EgUom uom; 
+    private UOM uom; 
 	
     private ScheduleOfRateType type;
     
@@ -111,10 +111,10 @@ public class ScheduleOfRate extends BaseModel {
 	public void setDescription(String description) {
 		this.description = StringEscapeUtils.unescapeHtml(description);
 	}
-	public EgUom getUom() {
+	public UOM getUom() {
 		return uom;
 	}
-	public void setUom(EgUom uomid) {
+	public void setUom(UOM uomid) {
 		this.uom = uomid;
 	}
 	public ScheduleOfRateType getType() {

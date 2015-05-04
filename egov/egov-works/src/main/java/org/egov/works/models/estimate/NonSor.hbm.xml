@@ -61,7 +61,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	    column="DESCRIPTION"
 	    type="string" not-null="true"
     />
-	 <many-to-one name="uom" class="org.egov.infstr.commonMasters.EgUom" fetch="select">
+	 <many-to-one name="uom" class="org.egov.common.entity.UOM" fetch="select">
 	    <column name="uom" not-null="true"/>
 	</many-to-one>
 </class>

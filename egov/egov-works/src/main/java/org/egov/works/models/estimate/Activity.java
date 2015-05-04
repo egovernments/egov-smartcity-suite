@@ -47,10 +47,10 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+import org.egov.common.entity.UOM;
 import org.egov.infra.persistence.validator.annotation.GreaterThan;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.ValidationError;
-import org.egov.infstr.commonMasters.EgUom;
 import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.models.Money;
 import org.egov.works.models.masters.ScheduleOfRate;
@@ -65,7 +65,7 @@ public class Activity extends BaseModel {
 	@Valid 
 	private NonSor nonSor;
 	
-	private EgUom uom;
+	private UOM uom;
 
 	@Required(message="activity.rate.not.null")
 	private Money rate=new Money(0.0);
@@ -225,10 +225,10 @@ public class Activity extends BaseModel {
 		return validationErrors;
 	}
 	
-	public EgUom getUom() {
+	public UOM getUom() {
 		return uom;
 	}
-	public void setUom(EgUom uom) {
+	public void setUom(UOM uom) {
 		this.uom = uom;
 	}
 	public double getAmt() {

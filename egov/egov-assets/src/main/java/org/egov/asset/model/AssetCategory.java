@@ -46,12 +46,12 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.egov.asset.util.AssetConstants;
+import org.egov.common.entity.UOM;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infstr.ValidationError;
-import org.egov.infstr.commonMasters.EgUom;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 
@@ -106,7 +106,7 @@ public class AssetCategory extends BaseModel {
     private AssetType assetType;
 
     @Required(message = "assetcat.uom.null")
-    private EgUom uom;
+    private UOM uom;
 
     private AssetCategory parent;
 
@@ -195,11 +195,11 @@ public class AssetCategory extends BaseModel {
         this.assetType = assetType;
     }
 
-    public EgUom getUom() {
+    public UOM getUom() {
         return uom;
     }
 
-    public void setUom(final EgUom uom) {
+    public void setUom(final UOM uom) {
         this.uom = uom;
     }
 

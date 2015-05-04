@@ -53,6 +53,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.egov.common.entity.UOM;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CFinancialYear;
@@ -62,7 +63,6 @@ import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commonMasters.EgUom;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.models.Money;
@@ -1099,10 +1099,10 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
 		return estimateAppropriationService;
 	}
 		
-	public List<EgUom> prepareUomListByExcludingSpecialUoms(List<EgUom> uomList) {
+	public List<UOM> prepareUomListByExcludingSpecialUoms(List<UOM> uomList) {
 		Set<String> exceptionSor = worksService.getExceptionSOR().keySet();
-		List<EgUom> newList = new ArrayList<EgUom>();
-		for (EgUom uom : uomList) {
+		List<UOM> newList = new ArrayList<UOM>();
+		for (UOM uom : uomList) {
 			if (!exceptionSor.contains(uom.getUom())) {
 				newList.add(uom);
 			}

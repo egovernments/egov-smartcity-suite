@@ -40,7 +40,7 @@
 package org.egov.works.models.estimate;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.egov.infstr.commonMasters.EgUom;
+import org.egov.common.entity.UOM;
 import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.utils.StringUtils;
 import org.hibernate.validator.constraints.Length;
@@ -50,7 +50,7 @@ public class NonSor extends BaseModel {
 
 	
 	private String description; 
-	private EgUom uom;
+	private UOM uom;
 	
 	@NotEmpty(message="nonsor.desc.empty") 
 	@Length(max=4000,message="masters.description.length")
@@ -66,10 +66,10 @@ public class NonSor extends BaseModel {
 		this.description = StringEscapeUtils.unescapeHtml(description);
 	}
 	
-	public EgUom getUom() {
+	public UOM getUom() {
 		return uom;
 	}
-	public void setUom(EgUom uom) {
+	public void setUom(UOM uom) {
 		this.uom = uom;
 	}	
 }

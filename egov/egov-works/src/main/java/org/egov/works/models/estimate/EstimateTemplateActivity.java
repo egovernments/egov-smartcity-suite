@@ -44,8 +44,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.egov.common.entity.UOM;
 import org.egov.infstr.ValidationError;
-import org.egov.infstr.commonMasters.EgUom;
 import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.models.Money;
 import org.egov.works.models.masters.ScheduleOfRate;
@@ -59,7 +59,7 @@ public class EstimateTemplateActivity  extends BaseModel{
 	@Valid 
 	private NonSor nonSor;
 	
-	private EgUom uom;
+	private UOM uom;
 	
 	private Money rate=new Money(0.0);
 
@@ -87,11 +87,11 @@ public class EstimateTemplateActivity  extends BaseModel{
 		this.nonSor = nonSor;
 	}
 
-	public EgUom getUom() {
+	public UOM getUom() {
 		return uom;
 	}
 
-	public void setUom(EgUom uom) {
+	public void setUom(UOM uom) {
 		this.uom = uom;
 	}
 

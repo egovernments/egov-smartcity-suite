@@ -54,6 +54,7 @@ import javax.script.ScriptContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.egov.common.entity.UOM;
 import org.egov.commons.service.CommonsService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
@@ -63,7 +64,6 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commonMasters.EgUom;
 import org.egov.infstr.models.Money;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
@@ -284,7 +284,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
 		 
 		super.prepare();
 		setupDropdownDataExcluding("");
-		List<EgUom> uomList = getPersistenceService().findAllBy("from EgUom order by upper(uom)");
+		List<UOM> uomList = getPersistenceService().findAllBy("from UOM order by upper(uom)");
 		if ("createRE".equals(sourcepage) || 
 				(!"search".equals(sourcepage) && (revisionEstimate.getEgwStatus() != null && revisionEstimate.getEgwStatus().getCode().equals("REJECTED"))) ) {
 			uomList = abstractEstimateService.prepareUomListByExcludingSpecialUoms(uomList);
@@ -651,7 +651,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
 		Set<String> exceptionSor = worksService.getExceptionSOR().keySet();
 		for (Activity activity : nonSorActivities) {
 			if (activity != null && activity.getNonSor().getUom() != null) {
-				EgUom nonSorUom = (EgUom) getPersistenceService().find("from EgUom where id = ?",
+				UOM nonSorUom = (UOM) getPersistenceService().find("from UOM where id = ?",
 						activity.getNonSor().getUom().getId());
 				if (nonSorUom != null && exceptionSor.contains(nonSorUom.getUom())) {
 					throw new ValidationException(Arrays.asList(new ValidationError("validate.nonSor.uom",

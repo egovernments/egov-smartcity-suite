@@ -66,6 +66,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.asset.model.Asset;
+import org.egov.common.entity.UOM;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.Fundsource;
@@ -80,7 +81,6 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.commonMasters.EgUom;
 import org.egov.infstr.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infstr.reporting.engine.ReportOutput;
 import org.egov.infstr.reporting.engine.ReportRequest;
@@ -316,7 +316,7 @@ public class AbstractEstimateAction extends BaseFormAction {
 		setupDropdownDataExcluding("ward","category","parentCategory","fundSource","depositCode");
 		 
 		addDropdownData("parentCategoryList", getPersistenceService().findAllBy("from EgwTypeOfWork etw1 where etw1.parentid is null"));
-		List<EgUom> uomList = getPersistenceService().findAllBy("from EgUom  order by upper(uom)");
+		List<UOM> uomList = getPersistenceService().findAllBy("from UOM  order by upper(uom)");
 		if ((id == null && abstractEstimate.getEgwStatus() == null) || ("roadCutDepositWorks".equals(sourcepage)) ||
 				(!SOURCE_SEARCH.equals(sourcepage) && (abstractEstimate.getEgwStatus() != null && abstractEstimate.getEgwStatus().getCode().equals("REJECTED")))
 				|| (id != null && abstractEstimate.getEgwStatus() != null && abstractEstimate.getEgwStatus().getCode().equals("NEW"))) {
@@ -502,7 +502,7 @@ public class AbstractEstimateAction extends BaseFormAction {
 		Set<String> exceptionSor = worksService.getExceptionSOR().keySet();
 		for (Activity activity : nonSorActivities) {
 			if (activity != null && activity.getNonSor().getUom() != null) {
-				EgUom nonSorUom = (EgUom) getPersistenceService().find("from EgUom where id = ?",
+				UOM nonSorUom = (UOM) getPersistenceService().find("from UOM where id = ?",
 						activity.getNonSor().getUom().getId());
 				if (nonSorUom != null && exceptionSor.contains(nonSorUom.getUom())) {
 					setSourcepage("inbox");

@@ -56,13 +56,13 @@ import org.egov.asset.model.DepreciationMetaData;
 import org.egov.asset.model.DepreciationMethod;
 import org.egov.asset.service.AppService;
 import org.egov.asset.service.AssetCategoryService;
+import org.egov.common.entity.UOM;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.ChartOfAccountsDAO;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infstr.commonMasters.EgUom;
 import org.egov.web.actions.BaseFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -114,7 +114,7 @@ public class AssetCategoryAction extends BaseFormAction {
         addRelatedEntity("depExpAccountCode", CChartOfAccounts.class);
         addRelatedEntity("financialYear", CFinancialYear.class);
         addRelatedEntity("department", Department.class);
-        addRelatedEntity("uom", EgUom.class);
+        addRelatedEntity("uom", UOM.class);
     }
 
     @Override
