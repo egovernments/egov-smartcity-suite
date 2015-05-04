@@ -77,12 +77,14 @@ import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 @Validations
+@Transactional(readOnly = true)
 public class SearchAction extends BaseFormAction implements ServletRequestAware {
 	private final Logger LOGGER = Logger.getLogger(getClass());
 

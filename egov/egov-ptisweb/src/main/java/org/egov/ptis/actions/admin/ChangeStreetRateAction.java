@@ -53,12 +53,12 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.transaction.Transactional;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -68,8 +68,11 @@ import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Category;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
+@Transactional(readOnly = true)
+@Namespace("/admin")
 public class ChangeStreetRateAction extends BaseFormAction {
 	private Integer zoneId;
 	private Integer wardId;
@@ -157,7 +160,7 @@ public class ChangeStreetRateAction extends BaseFormAction {
 		LOGGER.debug("Exit from prepareAreaDropDownData");
 	}
 
-	@Action(value="/admin/changeStreetRate-searchForm")
+	@Action(value="/changeStreetRate-searchForm",results = { @Result(name = SEARCH) })
 	public String searchForm() {
 		LOGGER.debug("Entered into searchForm");
 		LOGGER.debug("Exit from searchForm");
@@ -165,7 +168,7 @@ public class ChangeStreetRateAction extends BaseFormAction {
 	}
 
 	@ValidationErrorPage(value = "search")
-	@Action(value="/admin/changeStreetRate-search")
+	@Action(value="/changeStreetRate-search" ,results = { @Result(name = RESULTS) })
 	public String search() {
 		LOGGER.debug("Enered into search");
 		LOGGER.debug("Exit from search");
@@ -174,7 +177,6 @@ public class ChangeStreetRateAction extends BaseFormAction {
 	}
 
 	@SkipValidation
-	@Action(value="/admin/changeStreetRate-showSearchResults")
 	public String showSearchResults() {
 		return searchForCategories();
 	}
@@ -219,7 +221,7 @@ public class ChangeStreetRateAction extends BaseFormAction {
 
 	}
 
-	@Action(value="/admin/changeStreetRate-editPage")
+	@Action(value="/changeStreetRate-editPage",results = { @Result(name = EDIT) })
 	public String editPage() {
 		LOGGER.debug("ChangeStreetRateAction!editPage");
 		LOGGER.debug("Exit from editPage");
@@ -228,7 +230,8 @@ public class ChangeStreetRateAction extends BaseFormAction {
 
 	@SuppressWarnings("unchecked")
 	@ValidationErrorPage(value = "edit")
-	@Action(value="/admin/changeStreetRate-saveData")
+	@Transactional
+	@Action(value="/changeStreetRate-saveData",results = { @Result(name = ACK) })
 	public String saveData() {
 
 		LOGGER.debug("saveData : areaId:" + areaId + ", Current Location Factor:" + currLocFactor + ", Current Rate :"

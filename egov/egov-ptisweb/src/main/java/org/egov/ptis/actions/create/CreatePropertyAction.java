@@ -139,6 +139,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 @Namespace("/create")
+@Transactional(readOnly = true)
 public class CreatePropertyAction extends WorkflowAction {
 	private static final String NO = "No";
 	private static final String YES = "Yes";

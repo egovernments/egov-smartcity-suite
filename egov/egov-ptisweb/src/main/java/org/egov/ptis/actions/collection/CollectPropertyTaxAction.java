@@ -77,6 +77,7 @@ import org.egov.web.annotation.ValidationErrorPage;
 import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
+@Transactional(readOnly = true)
 public class CollectPropertyTaxAction extends BaseFormAction {
 	
 	private static final String STRUTS_RESULT_SHOWPENALTY = "showPenalty";

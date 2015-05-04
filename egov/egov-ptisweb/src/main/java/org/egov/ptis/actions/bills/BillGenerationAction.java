@@ -78,7 +78,9 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.CommonsDAOFactory;
 import org.egov.commons.dao.InstallmentDao;
@@ -113,8 +115,11 @@ import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.notice.PtNotice;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
+@Namespace("/bill")
+@Transactional(readOnly = true)
 public class BillGenerationAction extends PropertyTaxBaseAction {
 	private Logger LOGGER = Logger.getLogger(getClass());
 
@@ -122,6 +127,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	private static final String YES = "Yes";
 	private static final String STATUS_BILLGEN = "billsGenStatus";
 	private static final String STATUS_BILLGEN_BY_PARTNO = "statusByPartNo";
+	private static final String ACK = "ack";
 
 	private ReportService reportService;
 	private PersistenceService<BasicProperty, Long> basicPrpertyService;
@@ -163,7 +169,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	 * 
 	 * @return String
 	 */
-	@Action(value="/bills/billGeneration-generateBill")
+	@Action(value = "/billGeneration-generateBill", results = { @Result(name = BILL) })
 	public String generateBill() {
 
 		LOGGER.debug("Entered into generateBill, Index Number :" + indexNumber);
@@ -249,7 +255,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		return BILL;
 	}
 
-	@Action(value="/bills/billGeneration-billsGenStatus")
+	@Action(value="/billGeneration-billsGenStatus", results = { @Result(name = STATUS_BILLGEN) })
 	public String billsGenStatus() {
 		ReportInfo reportInfo;
 		Integer totalProps = 0;
@@ -315,7 +321,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		return STATUS_BILLGEN;
 	}
 	
-	@Action(value="/bills/billGeneration-billGenStatusByPartNo")
+	@Action(value="/billGeneration-billGenStatusByPartNo", results = { @Result(name = STATUS_BILLGEN_BY_PARTNO) })
 	public String billGenStatusByPartNo() {
 		LOGGER.debug("Entered into billGenStatusByPartNo, wardNum=" + wardNum);
 		
@@ -395,7 +401,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		return STATUS_BILLGEN_BY_PARTNO;
 	}
 
-	@Action(value="/bills/billGeneration-cancelBill")
+	@Action(value="/billGeneration-cancelBill", results = { @Result(name = ACK) })
 	public String cancelBill() {
 		EgBill egBill = (EgBill) persistenceService
 				.find("FROM EgBill " +
@@ -407,7 +413,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 						BILLTYPE_MANUAL, indexNumber);
 		if (egBill == null) {
 			setAckMessage("There is no active Bill exist for index no : " + indexNumber);
-			return "ack";
+			return ACK;
 		} else {
 			egBill.setIs_History("Y");
 			egBill.setIs_Cancelled("Y");
@@ -419,7 +425,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 			basicPrpertyService.update(basicProperty);
 			setAckMessage("Bill successfully cancelled for index no : " + indexNumber);
 		}
-		return "ack";
+		return ACK;
 	}
 
 	private void startWorkFlow() {

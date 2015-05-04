@@ -66,12 +66,14 @@ import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.web.actions.BaseFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 @Validations
+@Transactional(readOnly = true)
 public class CollectionAction extends BaseFormAction {
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	PersistenceService<BasicProperty, Long> basicPrpertyService;

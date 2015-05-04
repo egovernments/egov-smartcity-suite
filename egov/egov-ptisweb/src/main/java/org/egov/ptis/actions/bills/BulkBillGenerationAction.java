@@ -50,6 +50,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.config.AppConfig;
 import org.egov.infstr.config.AppConfigValues;
@@ -57,7 +59,10 @@ import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.web.actions.BaseFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
+@Namespace("/bills")
+@Transactional(readOnly = true)
 public class BulkBillGenerationAction extends BaseFormAction {
 
 	Logger LOGGER = Logger.getLogger(getClass());
@@ -79,12 +84,12 @@ public class BulkBillGenerationAction extends BaseFormAction {
 		return null;
 	}
 
-	@Action(value="/bills/bulkBillGeneration-newForm")
+	@Action(value="/bulkBillGeneration-newForm", results = { @Result(name = NEW) })
 	public String newForm() {
 		wardList = (List<Boundary>) getPersistenceService().findAllBy(
 				"from Boundary BI where BI.boundaryType.name=? and BI.boundaryType.hierarchyType.name=? "
 						+ "and BI.isHistory='N' order by BI.boundaryNum", WARD_BNDRY_TYPE, REVENUE_HIERARCHY_TYPE);
-		return "new";
+		return NEW;
 	}
 	
 	@Override
@@ -98,7 +103,7 @@ public class BulkBillGenerationAction extends BaseFormAction {
 		LOGGER.debug("Exiting from prepare");
 	}
 
-	@Action(value="/bills/bulkBillGeneration-generateBills")
+	@Action(value="/bulkBillGeneration-generateBills", results = { @Result(name = RESULT_ACK) })
 	public String generateBills() {
 		LOGGER.debug("generateBills method started for ward number " + wardId);
 		AppConfigValues appConfigValue = null;

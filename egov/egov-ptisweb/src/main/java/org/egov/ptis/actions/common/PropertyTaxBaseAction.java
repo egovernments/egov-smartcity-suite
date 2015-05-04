@@ -72,6 +72,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Role;
@@ -95,6 +96,7 @@ import org.hibernate.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
+@Namespace("/common")
 @Transactional(readOnly=true)
 public abstract class PropertyTaxBaseAction extends BaseFormAction {
 	private static Logger LOGGER = Logger.getLogger(PropertyTaxBaseAction.class);

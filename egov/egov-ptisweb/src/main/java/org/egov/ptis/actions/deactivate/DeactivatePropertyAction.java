@@ -106,6 +106,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Results({ @Result(name = "workFlowError", type = "Stream", location = "workflow", params = {
 	"namespace", "/workflow", "method", "workFlowError" }) })
 @Namespace("/deactivate")
+@Transactional(readOnly = true)
 public class DeactivatePropertyAction extends WorkflowAction {
 
 	private BasicProperty basicProp;
