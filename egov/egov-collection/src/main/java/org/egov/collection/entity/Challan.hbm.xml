@@ -49,7 +49,7 @@
 				<param name="sequence">SEQ_EGCL_CHALLANHEADER</param>
 			</generator>
 		</id>
-
+        <version name="version" column="VERSION" type="long" /> 
 		<many-to-one name="receiptHeader" class="org.egov.collection.entity.ReceiptHeader" fetch="select">
             <column name="collectionheader" precision="22" scale="0" />
         </many-to-one>
@@ -71,7 +71,7 @@
 		</many-to-one>
 		
 		<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all">
-			<column name="state" />
+			<column name="STATE_ID" />
 		</many-to-one>
 		
 		<many-to-one name="service" class="org.egov.infstr.models.ServiceDetails"
@@ -88,17 +88,18 @@
 			<column name="CREATEDBY" precision="22" scale="0" />
 		</many-to-one>
 		
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User"
+		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User"
 			fetch="select">
 			<column name="LASTMODIFIEDBY" precision="22" scale="0" />
 		</many-to-one>
 		
 		<property name="createdDate" column="CREATEDDATE" type="timestamp" />
-		<property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp" />
+		<property name="lastModifiedDate" column="LASTMODIFIEDDATE" type="timestamp" />
 		
 		<property name="oldChallanNumber" type="string">
 			<column name="oldchallannumber" length="25" />
 		</property>
+		
 	</class>
 	
 	<query name="TOBEEXPIREDCHALLANLIST">
