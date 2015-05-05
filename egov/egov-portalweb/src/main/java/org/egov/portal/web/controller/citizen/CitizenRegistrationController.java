@@ -59,61 +59,63 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/citizen")
 public class CitizenRegistrationController {
-    private CitizenService citizenService;
-    private String mobnumberValid = "false";
+	private CitizenService citizenService;
+	private String mobnumberValid = "false";
 
-    @Autowired
-    public CitizenRegistrationController(CitizenService citizenService) {
-        this.citizenService = citizenService;
-    }
+	@Autowired
+	public CitizenRegistrationController(CitizenService citizenService) {
+		this.citizenService = citizenService;
+	}
 
-    @RequestMapping(value = "/register", method = POST)
-    public String registerCitizen(@Valid @ModelAttribute Citizen citizen, final BindingResult errors,
-            final RedirectAttributes redirectAttributes,Model model) {
+	@RequestMapping(value = "/register", method = POST)
+	public String registerCitizen(@Valid @ModelAttribute Citizen citizen,
+			final BindingResult errors,
+			final RedirectAttributes redirectAttributes) {
 
-        String SUCCESS = "redirect:/../egi/login/secure";
-        try {
-            citizenService.create(citizen);
-            citizenService.sendActivationMessage(citizen);
-            SUCCESS = SUCCESS + "?citizenActivation=true&citizenId=" + citizen.getId();
+		String SUCCESS = "redirect:/../egi/login/secure";
+		try {
+			citizenService.create(citizen);
+			citizenService.sendActivationMessage(citizen);
+			SUCCESS = SUCCESS + "?citizenActivation=true&citizenId="
+					+ citizen.getId();
 
-        } catch (DuplicateElementException e) {
+		} catch (DuplicateElementException e) {
 
-            if (e.getMessage().equals("Mobile Number already exists")) {
-            	redirectAttributes.addFlashAttribute("mobInvalid", "true");
-            	model.addAttribute("mobInvalid", "true");
-                SUCCESS = SUCCESS + "?mobInvalid=true";
-            } else if (e.getMessage().equals("Email already exists")) {
-                SUCCESS = SUCCESS + "?emailInvalid=true";
-            }
-        } catch (EGOVRuntimeException e) {
+			if (e.getMessage().equals("Mobile Number already exists")) {
+				SUCCESS = SUCCESS + "?mobInvalid=true";
+			} else if (e.getMessage().equals("Email already exists")) {
+				SUCCESS = SUCCESS + "?emailInvalid=true";
+			}
+		} catch (EGOVRuntimeException e) {
 
-            SUCCESS = SUCCESS + "?activationCodeSendingFailed=true";
+			SUCCESS = SUCCESS + "?activationCodeSendingFailed=true";
 
-        }
+		}
 
-        return SUCCESS;
-    }
+		return SUCCESS;
+	}
 
-    @RequestMapping(value = "/activation/{citizenId}", method = POST)
-    public String citizenActivation(@PathVariable Long citizenId, @ModelAttribute Citizen model) {
-        Citizen citizen = citizenService.getCitizenById(citizenId);
-        if (citizen.getActivationCode().equals(model.getActivationCode())) {
-            citizen.setActive(true);
-            citizenService.update(citizen);
-            return "redirect:/../egi/login/securityLogin.jsp?citizenActivationSuccess=true";
-        } else {
-            return "redirect:/../egi/login/securityLogin.jsp?citizenActivationFailed=true&citizenId=" + citizenId;
-        }
+	@RequestMapping(value = "/activation/{citizenId}", method = POST)
+	public String citizenActivation(@PathVariable Long citizenId,
+			@ModelAttribute Citizen model) {
+		Citizen citizen = citizenService.getCitizenById(citizenId);
+		if (citizen.getActivationCode().equals(model.getActivationCode())) {
+			citizen.setActive(true);
+			citizenService.update(citizen);
+			return "redirect:/../egi/login/secure?citizenActivationSuccess=true";
+		} else {
+			return "redirect:/../egi/login/secure?citizenActivationFailed=true&citizenId="
+					+ citizenId;
+		}
 
-    }
+	}
 
-    public String getMobnumberValid() {
-        return mobnumberValid;
-    }
+	public String getMobnumberValid() {
+		return mobnumberValid;
+	}
 
-    public void setMobnumberValid(String mobnumberValid) {
-        this.mobnumberValid = mobnumberValid;
-    }
+	public void setMobnumberValid(String mobnumberValid) {
+		this.mobnumberValid = mobnumberValid;
+	}
 
 }
