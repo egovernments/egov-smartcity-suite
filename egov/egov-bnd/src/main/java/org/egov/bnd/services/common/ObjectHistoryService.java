@@ -44,7 +44,9 @@ import org.egov.commons.ObjectType;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class ObjectHistoryService extends PersistenceService<ObjectHistory, Long> {
 
     private ObjectTypeService objectTypeService;
@@ -57,6 +59,7 @@ public class ObjectHistoryService extends PersistenceService<ObjectHistory, Long
         this.objectTypeService = objectTypeService;
     }
 
+    @Transactional
     public ObjectHistory save(final ObjectType objectType, final int objectId, final String remarks, final User user) {
         final ObjectHistory objHistory = new ObjectHistory();
         objHistory.setObjectType(objectType);

@@ -41,7 +41,9 @@ package org.egov.bnd.services.common;
 
 import org.egov.commons.ObjectType;
 import org.egov.infstr.services.PersistenceService;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class ObjectTypeService extends PersistenceService<ObjectType, Long> {
 
     private PersistenceService persistenceService;
@@ -54,6 +56,7 @@ public class ObjectTypeService extends PersistenceService<ObjectType, Long> {
         return objType;
     }
 
+    @Transactional
     public ObjectType getObjectTypebyType(final String type) {
         ObjectType objtype = (ObjectType) persistenceService.find("from ObjectType where type=?", type);
         if (objtype == null)

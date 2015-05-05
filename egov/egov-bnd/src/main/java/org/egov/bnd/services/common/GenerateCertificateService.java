@@ -64,6 +64,7 @@ import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EgovUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This is a common service class defined for bnd module. This class will be
@@ -73,7 +74,7 @@ import org.egov.infstr.utils.EgovUtils;
  * @author Pradeep Kumar
  */
 
-@SuppressWarnings({ "unchecked" })
+@Transactional(readOnly = true)
 public class GenerateCertificateService {
 
     private PersistenceService persistenceService;
@@ -174,6 +175,7 @@ public class GenerateCertificateService {
         return addingReportToSession(reportOutput, session);
     }
 
+    @Transactional
     private ReportRequest buildReportRequestForNARecord(final Long idTemp, final String roleName,
             final String templateName) {
         ReportRequest reportInput;
@@ -186,6 +188,7 @@ public class GenerateCertificateService {
         return reportInput;
     }
 
+    @Transactional
     private HashMap<String, Object> mapForReportGenerationForNARecord(final NonAvailability nonAvailability,
             final String roleName) {
         final HashMap<String, Object> registrationMapObject = new HashMap<String, Object>();
@@ -252,6 +255,7 @@ public class GenerateCertificateService {
         return registrationMapObject;
     }
 
+    @Transactional
     private ReportRequest buildReportRequestForBirthRecord(final Long idTemp, final String roleName,
             final String templateName) {
         ReportRequest reportInput;
@@ -408,6 +412,7 @@ public class GenerateCertificateService {
 
     }
 
+    @Transactional
     private ReportRequest buildReportRequestForDeathRecord(final Long idTemp, final String roleName,
             final String templateName) {
         ReportRequest reportInput;
@@ -494,8 +499,8 @@ public class GenerateCertificateService {
     private StringBuffer buildUrlPatterForDeathCertificate(final DeathRegistration deathRegistration,
             final HttpServletRequest request) {
         final StringBuffer urlPatter = new StringBuffer();
-        // urlPatter.append("http://");
-        String urlStr = HttpUtils.getRequestURL(request).toString();
+
+        String urlStr = request.getRequestURI();
 
         urlStr = EgovUtils.getDomainName(urlStr);
 

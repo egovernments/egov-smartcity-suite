@@ -52,7 +52,9 @@ import org.egov.bnd.services.masters.RegKeyService;
 import org.egov.bnd.utils.BndConstants;
 import org.egov.bnd.utils.BndDateUtils;
 import org.egov.infstr.utils.SequenceGenerator;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class NumberGenerationService {
 
     private static final Logger LOGGER = Logger.getLogger(NumberGenerationService.class);
@@ -75,6 +77,7 @@ public class NumberGenerationService {
      * @returns the registration number for birthRegistartion
      */
 
+    @Transactional
     public String getBirthRegistrationNumber(final Registration birthRegistration, final Integer hospitalUserFlag) {
         String registrationNumber = null;
         if (birthRegistration.getRegistrationUnit() != null) {
@@ -97,6 +100,7 @@ public class NumberGenerationService {
         return registrationNumber;
     }
 
+    @Transactional
     private void updateRegKeys(final Registration registration, final StringBuffer regNumber, final int eventYear,
             final String objectType) {
         final RegKeys regKey = regKeyService.getRegKeyByType(objectType);
@@ -116,7 +120,6 @@ public class NumberGenerationService {
      * @return - It returns object type , which is required to generate the
      *         sequence number for birth registration
      */
-
     public String buildObjectType(final Registration birthRegistration, final int year, final String type) {
         final StringBuffer objectType = new StringBuffer("");
         objectType.append(type);
@@ -137,6 +140,7 @@ public class NumberGenerationService {
      * @return
      */
 
+    @Transactional
     public BirthRegistration reGenerateBirthRegistrationNumber(final BirthRegistration birthreg) {
         if (birthreg.getRegistrationNo() != null && !"".equals(birthreg.getRegistrationNo()))
             if (birthreg.getRegistrationNo().contains(BndConstants.HOSPITALBIRTHSUFFIX)) {
@@ -162,6 +166,7 @@ public class NumberGenerationService {
      * @returns the registration number for StillBirthRegistartion
      */
 
+    @Transactional
     public String getStillBirthRegistrationNumber(final BirthRegistration birthRegistration,
             final Integer hospitalUserFlag) {
         String registrationNumber = null;
@@ -189,7 +194,7 @@ public class NumberGenerationService {
      *            - BirthRegistration object
      * @return
      */
-
+    @Transactional
     public BirthRegistration reGenerateStillBirthRegistrationNumber(final BirthRegistration birthreg) {
         if (birthreg.getRegistrationNo() != null && !"".equals(birthreg.getRegistrationNo()))
             if (birthreg.getRegistrationNo().contains(BndConstants.HOSPITALSTILLBIRTHSUFFIX)) {
@@ -206,6 +211,7 @@ public class NumberGenerationService {
         return birthreg;
     }
 
+    @Transactional
     public String getDeathRegistrationNumber(final DeathRegistration deathRegistration, final Integer hospitalUserFlag) {
         String registrationNumber = null;
         if (deathRegistration.getRegistrationUnit() != null) {
@@ -224,6 +230,7 @@ public class NumberGenerationService {
         return registrationNumber;
     }
 
+    @Transactional
     public DeathRegistration reGenerateDeathRegistrationNumber(final DeathRegistration deathreg) {
         if (deathreg.getRegistrationNo() != null && !"".equals(deathreg.getRegistrationNo()))
             if (deathreg.getRegistrationNo().contains(BndConstants.HOSPITALDEATHSUFFIX)) {
@@ -260,16 +267,19 @@ public class NumberGenerationService {
         return objectType.toString();
     }
 
+    @Transactional
     public String getNonAvailableRegNumber(final NonAvailability nonAvailableReg) {
         final String objectType = buildNonAvailRegObjectType(nonAvailableReg);
         return sequenceGenerator.getNextNumber(objectType, Long.valueOf(1)).getNumber().toString() + SLASH + objectType;
     }
 
+    @Transactional
     public String getSideLetterRefNumber(final SideLetter sideLetter) {
         final String objectType = buildSideLetterObjectType(sideLetter);
         return sequenceGenerator.getNextNumber(objectType, Long.valueOf(1)).getNumber().toString() + SLASH + objectType;
     }
 
+    @Transactional
     public String getNextCertificateNumber() {
         final String objectType = buildCertificateNumberType();
         return sequenceGenerator.getNextNumber(objectType, Long.valueOf(1)).getNumber().toString();

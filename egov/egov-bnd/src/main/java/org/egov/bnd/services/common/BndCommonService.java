@@ -86,6 +86,7 @@ import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This is a common service class defined for bnd module. It is used to interact
@@ -96,6 +97,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 
 @SuppressWarnings({ "unchecked" })
+@Transactional(readOnly = true)
 public class BndCommonService {
 
     private static final String STATEQUERYID = "from org.egov.mdm.masters.administration.State where id=?";
@@ -170,6 +172,7 @@ public class BndCommonService {
         this.registrationTypeServiceMap = registrationTypeServiceMap;
     }
 
+    @Transactional
     public List findAll() {
         return persistenceService.findAll();
     }
@@ -184,15 +187,18 @@ public class BndCommonService {
      * @return
      */
 
+    @Transactional
     public Registrar getRegistrarByLoggedInUser() {
         final Long userId = EGOVThreadLocals.getUserId();
         return (Registrar) persistenceService.find(REGISTRARQUERY, userId);
     }
 
+    @Transactional
     public Registrar getRegistrarByUserId(final Long userId) {
         return (Registrar) persistenceService.find(REGISTRARQUERY, userId);
     }
 
+    @Transactional
     public Address getDefaultAddress(final String addressType) {
         return (Address) persistenceService.find(ADDRESSQUERYTYPE, BndConstants.NOTAVAILABLE, addressType);
     }
@@ -204,10 +210,12 @@ public class BndCommonService {
      * @return
      */
 
+    @Transactional
     public Address getAddressById(final Integer addressId) {
         return (Address) persistenceService.find(ADDRESSQUERYID, addressId);
     }
 
+    @Transactional
     public State getStateByStateConstant(final String stateConst) {
         return (State) persistenceService.find(STATEQUERYCONS, stateConst);
     }
@@ -219,6 +227,7 @@ public class BndCommonService {
      * @return
      */
 
+    @Transactional
     public CRelation getCRelationByRelatedConstant(final String relatedConst) {
         return (CRelation) persistenceService.find(RELATIONQUERY, relatedConst);
     }
@@ -227,6 +236,7 @@ public class BndCommonService {
      * This API is to get PlaceType object by passing placetype description
      */
 
+    @Transactional
     public PlaceType getPlaceType(final String placeType) {
         return (PlaceType) persistenceService.find(PLACETYPEQUERY, placeType);
     }
@@ -249,6 +259,7 @@ public class BndCommonService {
         return configValueList;
     }
 
+    @Transactional
     public State getStateByName(final String name) {
         return (State) persistenceService.find("from org.egov.mdm.masters.administration.State where name=?", name);
     }
@@ -274,6 +285,7 @@ public class BndCommonService {
      * @return list of hospital names
      */
 
+    @Transactional
     public List<Establishment> getHospitalByTypeAndUnit(final Integer hospitalType, final Long regUnit) {
         final Criteria estCriteria = persistenceService.getSession().createCriteria(Establishment.class);
         if (hospitalType != null && hospitalType != -1)
@@ -284,6 +296,7 @@ public class BndCommonService {
         return estCriteria.list();
     }
 
+    @Transactional
     public List<Establishment> getHospitalByRoleAndUnit(final String role, final Long regUnit) {
         final Criteria estCriteria = persistenceService.getSession().createCriteria(Establishment.class);
         if (role != "" && role != null && role.equalsIgnoreCase("HospitalRegistrar"))
@@ -296,11 +309,13 @@ public class BndCommonService {
         return estCriteria.list();
     }
 
+    @Transactional
     public List<Establishment> getHospitalName() {
         return persistenceService.findAllBy(ESTABLISHMENTNAMEQUERY);
 
     }
 
+    @Transactional
     public Establishment getEstablishmentById(final Integer id) {
         return (Establishment) persistenceService.find(ESTABLISHMENTQUERY, Long.valueOf(id));
     }
@@ -313,23 +328,28 @@ public class BndCommonService {
      * @return
      */
 
+    @Transactional
     public EgwStatus getStatusByModuleAndCode(final String module, final String code) {
         return (EgwStatus) persistenceService.find(STATUSQUERY, module, code);
     }
 
+    @Transactional
     public Module getModuleByPassingCode(final String code) {
         return (Module) persistenceService.find(MODULEQUERY, code);
     }
 
+    @Transactional
     public User getUserByPassingUserId(final Long userId) {
         return (User) persistenceService.find(GETUSERBYPASSINGIDQUERY, userId);
 
     }
 
+    @Transactional
     public List<Disease> getCauseofDeathbyParentId(final Long id) {
         return persistenceService.findAllBy(DISEASEQUERY, id);
     }
 
+    @Transactional
     public List<BndFeeTypes> getBndFeeTypes(final String bndFeeType) {
         String typeOfFees = GENERALFEETYPES;
         if (bndFeeType != null)
@@ -340,6 +360,7 @@ public class BndCommonService {
         return persistenceService.findAllBy(BNDFEETYPEQUERYFORGENERALTYPE, typeOfFees);
     }
 
+    @Transactional
     public BndFeeTypes getBndFeeTypesByCode(final String bndFeeTypeCode) {
         if (bndFeeTypeCode != null)
             return (BndFeeTypes) persistenceService.find(GETBNDFEETYPEBYCODE, bndFeeTypeCode);
@@ -370,6 +391,7 @@ public class BndCommonService {
      * @return list of role names assigned to the user
      */
 
+    @Transactional
     public List<String> getRoleNamesByPassingUserId(final Long currUserid) {
         final User user = (User) persistenceService.find(USERQUERY, currUserid);
         final List<String> roleList = new ArrayList<String>();
@@ -378,34 +400,42 @@ public class BndCommonService {
         return roleList;
     }
 
+    @Transactional
     public List<Role> getRoleNamesByUserId(final Long currUserid, final List<String> roleList) {
         return persistenceService.findAllByNamedQuery(BndConstants.QUERY_GETROLES, currUserid, roleList);
 
     }
 
     /**
+     * Gives the registration object
+     *
      * @param id
      * @return registration unit object
      */
 
+    @Transactional
     public RegistrationUnit getRegistrationUnitById(final Long id) {
         return (RegistrationUnit) persistenceService.find(REGUNITQUERY, id);
     }
 
+    @Transactional
     public BnDCitizen getCitizenById(final Integer id) {
         return (BnDCitizen) persistenceService.find(CITIZENQUERY, id);
     }
 
+    @Transactional
     public List<CitizenRelation> getCitizenRelationsByCitizen(final Integer citizenId) {
         return persistenceService.findAllBy("from CitizenRelation rel where rel.cit.citizenID=?", citizenId);
     }
 
+    @Transactional
     public ObjectHistory saveHistory(final Registration registration, final String objectType, final String remarks) {
         final User user = getUserByPassingUserId(EGOVThreadLocals.getUserId());
         return objectHistoryService.save(objectTypeService.getObjectTypebyType(objectType), registration.getId()
                 .intValue(), remarks, user);
     }
 
+    @Transactional
     public AdoptionInstitute getAdoptionInstituteById(final Long id) {
         return (AdoptionInstitute) persistenceService.find(ADOPTIONINSTITUTEQUERY, id);
     }
@@ -436,34 +466,42 @@ public class BndCommonService {
      * persistenceService.find(TALUKBYID, talukId); }
      */
 
+    @Transactional
     public City getCityById(final Integer cityId) {
         return (City) persistenceService.find(CITYBYID, cityId);
     }
 
+    @Transactional
     public List<EstablishmentType> getHospitalType() {
         return persistenceService.findAllBy(HOSPITALTYPEQUERY);
     }
 
+    @Transactional
     public List<RegistrationUnit> getRegistrationUnit() {
         return persistenceService.findAllBy(REGISTRATIONUNITQUERY);
     }
 
+    @Transactional
     public List<User> getUserName(final List<String> roleList) {
         return persistenceService.findAllByNamedQuery(BndConstants.QUERY_GETUSERS, roleList);
     }
 
+    @Transactional
     public List<User> getUserName() {
         return persistenceService.findAllBy(USERNAMEQUERY);
     }
 
+    @Transactional
     public List<Role> getRole() {
         return persistenceService.findAllBy(ROLE);
     }
 
+    @Transactional
     public List findAllBy(final String query) {
         return persistenceService.findAllBy(query);
     }
 
+    @Transactional
     public Object findById(final String query, final Object params) {
         return persistenceService.find(query, params);
     }
@@ -478,12 +516,12 @@ public class BndCommonService {
      */
 
     public Boolean isCreatedByLoggedInUser(final StateAware wfObj) {
-        if (wfObj.getCreatedBy() != null
-                && wfObj.getCreatedBy().getId().equals(EGOVThreadLocals.getUserId()))
+        if (wfObj.getCreatedBy() != null && wfObj.getCreatedBy().getId().equals(EGOVThreadLocals.getUserId()))
             return Boolean.TRUE;
         return Boolean.FALSE;
     }
 
+    @Transactional
     public List<CRelation> getRelationTypesbyConstant(final String[] relation) {
         final Criteria relationCriteria = persistenceService.getSession().createCriteria(CRelation.class,
                 "citizenRelations");
@@ -491,10 +529,12 @@ public class BndCommonService {
         return relationCriteria.list();
     }
 
+    @Transactional
     public List<Position> getPositionsForUser(final Long userId, final Date date) {
         return eisService.getPositionsForUser(Long.valueOf(userId), date);
     }
 
+    @Transactional
     public String validateReceiptNumber(final Long registrationid) {
         final Criteria criteria = null;
         criteria.add(Restrictions.eq("feetypeobj.code", "NAMEINCLUSIONFEE"));
@@ -519,6 +559,7 @@ public class BndCommonService {
      * this column, then india.png image name will be return back as default
      * value.
      */
+    @Transactional
     public String getCityLogoName(final HttpServletRequest request) {
         // HttpServletRequest request=ServletActionContext.getRequest();
         final HttpSession session = request.getSession();
@@ -546,6 +587,7 @@ public class BndCommonService {
 
     }
 
+    @Transactional
     public List findAll(final String query, final String param) {
         return persistenceService.findAllBy(query, param);
     }
