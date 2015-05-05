@@ -211,8 +211,8 @@
             <taglib-location>/WEB-INF/taglib/joda.tld</taglib-location>
         </taglib>
         <taglib>
-            <taglib-uri>http://displaytag.sf.net</taglib-uri>
-            <taglib-location>/WEB-INF/displaytag.tld</taglib-location>
+            <taglib-uri>http://java.sun.com/jsp/jstl/functions</taglib-uri>
+            <taglib-location>/WEB-INF/taglib/fn.tld</taglib-location>
         </taglib>
         <jsp-property-group>
     		<url-pattern>*.jsp</url-pattern>
