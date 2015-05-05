@@ -46,7 +46,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.citizen.entity.Citizen;
 import org.egov.infra.citizen.repository.CitizenRepository;

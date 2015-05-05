@@ -44,8 +44,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.springframework.context.annotation.Description;
 
 @Entity
 @Table(name = "eg_citizen")
