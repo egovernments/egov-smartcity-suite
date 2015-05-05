@@ -46,8 +46,6 @@ jQuery(document).ready(function($) {
 			$(this).val(false);
 		}
 	});
-	var name = $('#comp_type_dept').val();
-	alert(name);
 	
 	$("#buttonCreate").click(function() {
 		$('#complaintTypeViewForm').attr('method', 'get');
