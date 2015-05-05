@@ -50,8 +50,8 @@ import javax.servlet.jsp.tagext.Tag;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.security.AuthorizeRule;
+import org.egov.lib.rrbac.dao.ActionHibernateDAO;
 import org.egov.lib.rrbac.model.Action;
-import org.egov.lib.rrbac.services.RbacService;
 import org.egov.web.utils.ERPWebApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -136,13 +136,14 @@ public class EgovAuthorizeTag extends BodyTagSupport {
 		}
 		final ApplicationContextBeanProvider provider = new ApplicationContextBeanProvider();
 		provider.setApplicationContext(WebApplicationContextUtils.getWebApplicationContext(ERPWebApplicationContext.getServletContext()));
-		final RbacService rbacService = (RbacService) provider.getBean("rbacService");
+		//
+		final ActionHibernateDAO rbacService = (ActionHibernateDAO) provider.getBean("actionDao");
 
 		if (this.actionName != null) {
-			action = rbacService.getActionByName(this.actionName);
+			action = rbacService.findActionByName(this.actionName);
 		}
 		if (this.actionId != null) {
-			action = rbacService.getActionById(this.actionId);
+			action = (Action)rbacService.findById(this.actionId,false);
 		}
 		if (action != null) {
 			// if user's role belongs to action roles

@@ -13,12 +13,6 @@
 		<property name="url" column="Url" type="string" />
 		<property name="queryParams" column="QUERYPARAMS" type="string" />
 		<property name="urlOrderId" column="URLORDERID" type="integer" />
-		<many-to-one name="entityId" class="org.egov.lib.rrbac.model.Entity" column="ENTITYID" />
-		<many-to-one name="taskId" class="org.egov.lib.rrbac.model.Task" column="TASKID" />
-		<set name="ruleGroup" table="EG_ACTIONRG_MAP " cascade="all-delete-orphan">
-			<key column="ACTIONID" />
-			<many-to-many class="org.egov.lib.rrbac.model.RuleGroup" column="RULEGROUPID" />
-		</set>
 		<set name="roles" table="EG_ROLEACTION_MAP">
 			<key column="ACTIONID" />
 			<many-to-many class="org.egov.infra.admin.master.entity.Role" column="ROLEID" />

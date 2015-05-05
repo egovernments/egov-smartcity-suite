@@ -41,7 +41,6 @@ package org.egov.lib.rrbac.model;
 
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.egov.exceptions.RBACException;
@@ -57,9 +56,6 @@ public class Action implements Comparable<Action> {
 	private Integer urlOrderId;
 	private Date updatedTime;
 	private Set roles = new HashSet();
-	private Set ruleGroup = new HashSet();
-	private Entity entityId;
-	private Task taskId;
 	private Module module;
 	private Integer orderNumber;
 	private String displayName;
@@ -165,33 +161,6 @@ public class Action implements Comparable<Action> {
 		this.updatedTime = updatedtime;
 	}
 
-	/**
-	 * @param Entity To set entity for an Action
-	 */
-	public void setEntityId(Entity entityId) {
-		this.entityId = entityId;
-	}
-
-	/**
-	 * @return Return Entity
-	 */
-	public Entity getEntityId() {
-		return this.entityId;
-	}
-
-	/**
-	 * @param Task To set task for an Action
-	 */
-	public void setTaskId(Task taskId) {
-		this.taskId = taskId;
-	}
-
-	/**
-	 * @return Return Task
-	 */
-	public Task getTaskId() {
-		return this.taskId;
-	}
 
 	/**
 	 * @return Returns collections of roles associated with the action.
@@ -228,37 +197,7 @@ public class Action implements Comparable<Action> {
 
 	}*/
 
-	/**
-	 * @return Returns the ruleGroup.
-	 */
-	public Set getRuleGroup() {
-		return ruleGroup;
-	}
-
-	/**
-	 * @param ruleGroup To set ruleGroup for an action
-	 */
-	public void setRuleGroup(Set ruleGroup) {
-		this.ruleGroup = ruleGroup;
-	}
-
-	/**
-	 * @param ruleGroup The ruleGroup to add
-	 */
-	public void addRuleGroup(RuleGroup rg) {
-		getRuleGroup().add(rg);
-	}
-
-	/**
-	 * @param ruleGroup The ruleGroup to Remove
-	 */
-	public void removeRuleGroup(RuleGroup rg) {
-
-		if (getRuleGroup().contains(rg))
-			getRuleGroup().remove(rg);
-
-	}
-
+	
 	/**
 	 * @return Returns the displayName.
 	 */
@@ -359,33 +298,6 @@ public class Action implements Comparable<Action> {
 		return (action == null || action.getName() == null) ? -1 : this.name.compareTo(action.getName());
 	}
 
-	/**
-	 * @return Returns true if conditions are satisfied for the action for a given role and action if rulegroup is specified then action is validated against rules in that rulegroup
-	 */
-	public boolean isValid(RuleData obj, Role role) throws RBACException {
-		Set rg = this.getRuleGroup();
-		boolean retVal = true;
-		for (Iterator ite = rg.iterator(); ite.hasNext();) {
-			RuleGroup ruleGroup = (RuleGroup) ite.next();
-			Role roleObj = ruleGroup.getRoleId();
-			if (role.getId().equals(roleObj.getId())) {
-				retVal = false;
-				String ruleGroupName = ruleGroup.getName();
-				Set ruleList = ruleGroup.getRules();
-				for (Iterator iterator = ruleList.iterator(); iterator.hasNext();) {
-					Rules rules = (Rules) iterator.next();
-					try {
-						retVal = rules.isValid(obj);
-					} catch (RBACException e) {
-						throw e;
-
-					}
-
-				}
-			}
-		}
-		return retVal;
-	}
 
 	/**
 	 * @return Returns true if action is valid for role

@@ -49,7 +49,6 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.security.authentication.SecureUser;
 import org.egov.infstr.commons.EgLoginLog;
 import org.egov.infstr.security.utils.SecurityConstants;
-import org.egov.lib.security.terminal.model.Location;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
@@ -78,11 +77,6 @@ public class AuthenticationSuccessEventAction implements
         final EgLoginLog login = new EgLoginLog();
         login.setLoginTime(new Date(authorizedEvent.getTimestamp()));
         login.setUser(userService.getUserById(((SecureUser) authentication.getPrincipal()).getUserId()));
-        if (org.apache.commons.lang.StringUtils.isNotBlank(credentials.get(SecurityConstants.COUNTER_FIELD))) {
-            final Location location = entityManager.find(Location.class,
-                    Integer.valueOf(credentials.get(SecurityConstants.COUNTER_FIELD)));
-            login.setLocation(location);
-        }
         entityManager.persist(login);
         entityManager.flush();
         final String loginLogID = login.getId().toString();

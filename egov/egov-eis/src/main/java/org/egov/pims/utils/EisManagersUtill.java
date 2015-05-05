@@ -56,11 +56,8 @@ import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CommonsService;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.commons.service.GenericCommonsService;
-import org.egov.lib.rrbac.services.RbacService;
-import org.egov.lib.rrbac.services.RbacServiceImpl;
 import org.egov.pims.commons.service.EisCommonsService;
 import org.egov.pims.commons.service.EisCommonsServiceImpl;
 import org.egov.pims.service.EmployeeService;
@@ -243,11 +240,7 @@ public class EisManagersUtill {
 			return new EmployeeServiceImpl();
 		}
 		
-		public static RbacService getRbacService()
-		{
-			return new RbacServiceImpl();
-		}
-		
+				
 		public static List getSundaysForGivenCurrentFinYear(CFinancialYear financialYear)
 		{
 			if(RESET)

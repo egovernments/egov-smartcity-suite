@@ -42,14 +42,12 @@ package org.egov.infstr.commons;
 import java.util.Date;
 
 import org.egov.infra.admin.master.entity.User;
-import org.egov.lib.security.terminal.model.Location;
 
 public class EgLoginLog implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private User user;
-	private Location location;
 	private Date loginTime;
 	private Date logoutTime;
 
@@ -59,14 +57,6 @@ public class EgLoginLog implements java.io.Serializable {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public Location getLocation() {
-		return location;
-	}
-
-	public void setLocation(Location location) {
-		this.location = location;
 	}
 
 	public Date getLoginTime() {
