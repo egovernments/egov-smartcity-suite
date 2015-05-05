@@ -43,7 +43,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.egov.exceptions.RBACException;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infstr.commons.Module;
 
@@ -302,12 +301,8 @@ public class Action implements Comparable<Action> {
 	/**
 	 * @return Returns true if action is valid for role
 	 */
-	public boolean isActionValid(Role role) throws RBACException {
-		if (this.roles.contains(role))
-			return true;
-		else {
-			throw new RBACException("Unauthorized to Perform this Action ");
-		}
+	public boolean isActionValid(Role role) {
+		return this.roles.contains(role);
 	}
 
 	@Override
