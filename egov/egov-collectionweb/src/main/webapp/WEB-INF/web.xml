@@ -175,10 +175,6 @@
 		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
 	<listener>
-		<description>SessionAttributeListener</description>
-		<listener-class>org.egov.infstr.client.listener.EgovSessionAttributeListener</listener-class>
-	</listener>
-	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 	<listener>

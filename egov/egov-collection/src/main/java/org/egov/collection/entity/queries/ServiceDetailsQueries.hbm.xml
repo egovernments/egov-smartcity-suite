@@ -25,13 +25,13 @@
     <![CDATA[select c from CChartOfAccounts c,InstrumentAccountCodes iac,InstrumentType it where iac.accountCode.id=c.id and iac.instrumentType.id=it.id and it.type=?]]></query>
 
 	<query name="getLocationByUser">
-    <![CDATA[select l from Location l,UserCounterMap ucm,UserImpl uim where uim.id=ucm.userId.id and ucm.counterId.id=l.id and uim.userName=?]]></query>
+    <![CDATA[select l from Location l,UserCounterMap ucm,User uim where uim.id=ucm.userId.id and ucm.counterId.id=l.id and uim.userName=?]]></query>
 
 	<query name="getReceiptHeaderById">
 	<![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh where rh.id=?]]></query>
 
 	<query name="getDepartmentByCode">
-	<![CDATA[select d from DepartmentImpl d where d.deptCode=?]]></query>
+	<![CDATA[select d from Department d where d.deptCode=?]]></query>
 
 	<query name="getFunctionaryByCode">
 	<![CDATA[select f from Functionary f where f.code=?]]></query>
@@ -52,7 +52,7 @@
 	<![CDATA[select ss from SubScheme ss where ss.code=?]]></query>
 	
 	<query name="getDepartmentById">
-	<![CDATA[select d from DepartmentImpl d where d.id=?]]></query>
+	<![CDATA[select d from Department d where d.id=?]]></query>
 	
 	<query name="getAccountDetailtypeById">
 	<![CDATA[select a from Accountdetailtype a where a.id=?]]></query>
@@ -61,7 +61,7 @@
 	<![CDATA[select a from Accountdetailkey a where a.detailkey=? and a.accountdetailtype.id=?]]></query>
 	
 	<query name="getallDepartment">
-	<![CDATA[select d from  DepartmentImpl d order by deptName]]></query>
+	<![CDATA[select d from  Department d order by deptName]]></query>
 	
 	<query name="getallFunction">
 	<![CDATA[select f from  CFunction f where f.isActive=1 and f.isNotLeaf=0  order by f.name]]></query>
@@ -76,7 +76,7 @@
 	<![CDATA[select f  from Fundsource f where f.isactive=1 and f.isnotleaf=0 order by name]]></query>
 	
 	<query name="getallField">
-	<![CDATA[select b  from BoundaryImpl b where lower(b.boundaryType.name)='zone']]></query>
+	<![CDATA[select b  from Boundary b where lower(b.boundaryType.name)='zone']]></query>
 	
 	<query name="SERVICE_BY_ID">
     <![CDATA[select s from ServiceDetails s where s.id = ?]]></query>

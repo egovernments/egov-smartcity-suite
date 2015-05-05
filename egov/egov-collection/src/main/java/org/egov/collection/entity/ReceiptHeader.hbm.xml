@@ -190,9 +190,6 @@
 	<query name="RECEIPTS_FOR_BOUNCED_INSTRUMENTS">
 	<![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh join rh.receiptVoucher as rv where rh.status.code<>? and rv.voucherheader.id in (:param_1)]]></query>
 
-	<query name="RECEIPTS_BY_PAYEEDETAILID">
-    <![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh,ReceiptPayeeDetails rp where rh.receiptPayeeDetails.id=rp.id and rp.id=?]]></query>
-    
     <query name="RECEIPTS_BY_RECEIPTNUM">
     <![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh where rh.receiptnumber=?]]></query>
 
