@@ -70,8 +70,8 @@ import org.egov.infstr.ValidationException;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.utils.DateUtils;
+import org.egov.lib.rrbac.dao.ActionHibernateDAO;
 import org.egov.lib.rrbac.model.Action;
-import org.egov.lib.rrbac.services.RbacService;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.Assignment;
 import org.egov.pims.model.PersonalInformation;
@@ -156,7 +156,7 @@ public class SearchEstimateAction extends SearchFormAction {
 	private String ward="";
 	private String loginUserDeptName="";
 	@Autowired
-	private RbacService rbacService;
+	private ActionHibernateDAO rbacService;
 	private List<Role> roles = new ArrayList<Role>();
 	private String milestoneStatus;
 	private String status2;
@@ -607,7 +607,7 @@ public class SearchEstimateAction extends SearchFormAction {
 			copyEstActionName = actionList.get(actionList.size() - 1);
 	
 			//get the roles for the Copy Estimate action
-			Action copyEstaction = rbacService.getActionByName(copyEstActionName);
+			Action copyEstaction = rbacService.findActionByName(copyEstActionName);
 			copyEstActionRoles.addAll(copyEstaction.getRoles());
 			
 			//check if the userroles contains the copy estimate action roles
@@ -1233,14 +1233,6 @@ public class SearchEstimateAction extends SearchFormAction {
 
 	public void setLoginUserDeptName(String loginUserDeptName) {
 		this.loginUserDeptName = loginUserDeptName;
-	}
-
-	public RbacService getRbacService() {
-		return rbacService;
-	}
-
-	public void setRbacService(RbacService rbacService) {
-		this.rbacService = rbacService;
 	}
 
 	public List<Role> getRoles() {
