@@ -43,6 +43,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -104,6 +107,9 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @ParentPackage("egov")
 @Namespace("/registration")
 public class StillBirthRegistrationAction extends RegistrationAction {
+
+	@PersistenceContext
+	private EntityManager entityManager;
 
     private static final long serialVersionUID = -6855607612064252745L;
     private static final Logger LOGGER = Logger.getLogger(StillBirthRegistrationAction.class);
@@ -292,6 +298,7 @@ public class StillBirthRegistrationAction extends RegistrationAction {
             //change.setCreatedby(EGOVThreadLocals.getUserId());
             // TODO egifix-hibernateutil
             // HibernateUtil.getCurrentSession().persist(change);
+            entityManager.persist(change);
             birthRegistrationService.save(stillBirthRegistration, workFlowType);
         } else if (getMode().equals(UNLOCK)) {
             birthRegistrationService.buildAdoptionDetial(stillBirthRegistration);
@@ -309,6 +316,7 @@ public class StillBirthRegistrationAction extends RegistrationAction {
             //change.setCreatedby(EGOVThreadLocals.getUserId());
             // TODO egifix-hibernateutil
             // HibernateUtil.getCurrentSession().persist(change);
+            entityManager.persist(change);
             birthRegistrationService.save(stillBirthRegistration, workFlowType);
         } else {
             saveOrUpdate();
