@@ -44,7 +44,9 @@ import org.egov.bnd.model.BirthRegistration;
 import org.egov.bnd.model.SideLetter;
 import org.egov.bnd.services.common.NumberGenerationService;
 import org.egov.infstr.services.PersistenceService;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class SideLetterService extends PersistenceService<SideLetter, Long> {
 
     private static final Logger LOGGER = Logger.getLogger(SideLetterService.class);
@@ -58,6 +60,7 @@ public class SideLetterService extends PersistenceService<SideLetter, Long> {
         this.numberGenerationService = numberGenerationService;
     }
 
+    @Transactional
     public SideLetter save(final SideLetter sideLetter, final String workflowAction) {
         LOGGER.info("start save method");
         persist(sideLetter);
@@ -66,14 +69,13 @@ public class SideLetterService extends PersistenceService<SideLetter, Long> {
         return sideLetter;
     }
 
+    @Transactional
     public SideLetter getSidLetterId(final Long id) {
-
         return findById(id);
     }
 
+    @Transactional
     public Boolean sideletterExists(final BirthRegistration birthReg) {
-
         return find("from SideLetter where birthReportId=?", birthReg) == null ? true : false;
-
     }
 }

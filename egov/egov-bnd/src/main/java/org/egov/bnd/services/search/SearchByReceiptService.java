@@ -47,11 +47,14 @@ import org.egov.bnd.model.DeathRegistration;
 import org.egov.bnd.model.Registration;
 import org.egov.bnd.utils.BndConstants;
 import org.egov.infstr.services.PersistenceService;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class SearchByReceiptService extends PersistenceService<Registration, Long> {
 
     private PersistenceService persistenceService;
 
+    @Transactional
     public List searchRecordsByReceipt(final HashMap<String, Object> hashMap) {
 
         if (hashMap.get("REGTYPE").equals(BndConstants.SEARCHDEATH)) {

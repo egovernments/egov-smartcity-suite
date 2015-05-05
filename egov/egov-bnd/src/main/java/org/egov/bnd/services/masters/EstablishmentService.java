@@ -39,17 +39,23 @@
  ******************************************************************************/
 package org.egov.bnd.services.masters;
 
+
 import org.egov.bnd.model.Establishment;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class EstablishmentService extends PersistenceService<Establishment, Long> {
+    
+    @Transactional
     public Establishment save(final Establishment establishment) {
         persist(establishment);
         return establishment;
     }
 
+    @Transactional
     public Boolean checkUniqueHospitalName(final String name) {
         Boolean flag = false;
         final Criteria hospitalCriteria = getSession().createCriteria(Establishment.class);

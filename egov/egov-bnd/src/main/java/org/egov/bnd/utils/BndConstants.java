@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-@SuppressWarnings("serial")
 public interface BndConstants {
 
     public static final String NOTSTATED = "Not Stated";
@@ -305,11 +304,10 @@ public interface BndConstants {
             put("DELAYED", "After one year of occurence");
         }
     };
+   
     public static final String BNDCOMMONSERVICE = "bndCommonService";
+    
     public final Map<Integer, String> MONTHMAP = new TreeMap<Integer, String>() {
-        /**
-         *
-         */
         private static final long serialVersionUID = 4941229249625704832L;
 
         {

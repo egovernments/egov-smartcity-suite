@@ -43,16 +43,18 @@ import org.egov.bnd.model.AdoptionInstitute;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class AdoptionInstituteService extends PersistenceService<AdoptionInstitute, Long> {
 
+    @Transactional
     public AdoptionInstitute save(final AdoptionInstitute adoptionInstitute) {
-
         persist(adoptionInstitute);
         return adoptionInstitute;
-
     }
 
+    @Transactional
     public Boolean checkUniqueAdoptionInstituteCode(final String institutionCode) {
         Boolean flag = false;
         final Criteria adoptionInstituteCriteria = getSession().createCriteria(AdoptionInstitute.class);
@@ -64,6 +66,7 @@ public class AdoptionInstituteService extends PersistenceService<AdoptionInstitu
 
     }
 
+    @Transactional
     public Boolean checkUniqueAdoptionInstituteName(final String institutionName) {
         Boolean flag = false;
         final Criteria adoptionInstituteCriteria = getSession().createCriteria(AdoptionInstitute.class);

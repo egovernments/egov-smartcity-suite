@@ -63,8 +63,10 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.web.utils.EgovPaginatedList;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("unchecked")
+@Transactional(readOnly = true)
 public class ReportService extends PersistenceService<ViewBirthDeathRegistration, Long> {
 
     private static final String MONTH = "MONTH";
@@ -104,13 +106,14 @@ public class ReportService extends PersistenceService<ViewBirthDeathRegistration
         resultMap.put(
                 "Total",
                 (Integer) resultMap.get("numberofcurrentRegistrations")
-                + (Integer) resultMap.get("numberofdelayedRegistrations"));
+                        + (Integer) resultMap.get("numberofdelayedRegistrations"));
         resultMap.put("Duration", BndConstants.MONTHMAP.get(Integer.parseInt(InputMap.get("MONTH").toString())) + " - "
                 + InputMap.get("YEAR").toString());
         LOGGER.debug("Completed delayedRegistration method");
         return resultMap;
     }
 
+    @Transactional
     public Map buildCriteriaCurrent(final Map<String, Object> InputMap, final Map<String, Object> resultMap) {
         LOGGER.debug("Started delayedRegistration method");
         InputMap.put(DELAYED, NO);
@@ -120,6 +123,7 @@ public class ReportService extends PersistenceService<ViewBirthDeathRegistration
         return resultMap;
     }
 
+    @Transactional
     public Map buildCriteriaDelayed(final Map<String, Object> InputMap, final Map<String, Object> resultMap) {
         LOGGER.debug("Started delayedRegistration method");
         InputMap.put(DELAYED, YES);
@@ -130,11 +134,11 @@ public class ReportService extends PersistenceService<ViewBirthDeathRegistration
     }
 
     public Map prepareMap() {
-
         final Map<String, Object> hashMap = new HashMap<String, Object>();
         return hashMap;
     }
 
+    @Transactional
     public EgovPaginatedList getStillBirthDeath(final HashMap<String, Object> InputMap, final Integer page,
             final int pagesize) {
 
@@ -176,6 +180,7 @@ public class ReportService extends PersistenceService<ViewBirthDeathRegistration
         return inputRegMap;
     }
 
+    @Transactional
     public ReportDetails setupReportforRegistration(final ReportDetails reportdet, final Integer monthno,
             final Map<String, Object> InputMap, final Boolean delayedflag, final Boolean progressiveFlag) {
 
@@ -232,6 +237,7 @@ public class ReportService extends PersistenceService<ViewBirthDeathRegistration
 
     }
 
+    @Transactional
     public Criteria prepareRegdetails(final Map<String, Object> inputMap, final Map<String, Object> inputMapReg,
             final String regType, final Integer monthno, final Boolean progressiveFlag) {
 
@@ -258,6 +264,7 @@ public class ReportService extends PersistenceService<ViewBirthDeathRegistration
         return criteria;
     }
 
+    @Transactional
     private Criteria getBuildCriteria(final Map<String, Object> hashMap) {
         LOGGER.debug("Started delayedRegistration method");
         Criteria criteria = null;
@@ -292,8 +299,8 @@ public class ReportService extends PersistenceService<ViewBirthDeathRegistration
                         REGISTRATIONDATE,
                         BndDateUtils.calenderutils(Integer.parseInt((String) hashMap.get(YEAR)),
                                 Integer.parseInt((String) hashMap.get(MONTH))).get(0),
-                                BndDateUtils.calenderutils(Integer.parseInt((String) hashMap.get(YEAR)),
-                                        Integer.parseInt((String) hashMap.get(MONTH))).get(1)));
+                        BndDateUtils.calenderutils(Integer.parseInt((String) hashMap.get(YEAR)),
+                                Integer.parseInt((String) hashMap.get(MONTH))).get(1)));
             if (hashMap.get(FROMDATE) != null && hashMap.get(FROMDATE) != "" && hashMap.get(TODATE) != null
                     && hashMap.get(TODATE) != "")
                 criteria.add(Restrictions.between(REGISTRATIONDATE, hashMap.get(FROMDATE), hashMap.get(TODATE)));
@@ -377,7 +384,6 @@ public class ReportService extends PersistenceService<ViewBirthDeathRegistration
     }
 
     public ReportDetails getUnitwiseRegistrationDetailsHospital(final HashMap<String, Object> InputMap) {
-
         InputMap.put(PLACEOFDEATH, "hospital");
         return getUnitwiseRegistrationDetailsGeneral(InputMap);
 
@@ -418,6 +424,7 @@ public class ReportService extends PersistenceService<ViewBirthDeathRegistration
 
     }
 
+    @Transactional
     public ReportDetails getReportdetailsmonthy(final ReportDetails reportdet, final Map<String, Object> InputMap,
             final Integer monthno, final Boolean delayedFlag, final Boolean progressiveFlag) {
 
@@ -459,6 +466,7 @@ public class ReportService extends PersistenceService<ViewBirthDeathRegistration
         return reportdet;
     }
 
+    @Transactional
     public ReportDetails getReportdetailsregunit(final ReportDetails reportdet, final Integer monthno,
             final HashMap<String, Object> InputMap, final Boolean delayedFlag, final Boolean progressiveFlag) {
 
@@ -582,6 +590,7 @@ public class ReportService extends PersistenceService<ViewBirthDeathRegistration
      * }
      */
 
+    @Transactional
     public long getNumberOfLiveBirths(final HashMap<String, Object> InputMap) {
 
         LOGGER.debug("Started getNumberOfLiveBirths method");
@@ -594,6 +603,7 @@ public class ReportService extends PersistenceService<ViewBirthDeathRegistration
 
     }
 
+    @Transactional
     public long getNumberOfDeaths(final HashMap<String, Object> InputMap) {
         LOGGER.debug("Started getNumberOfDeaths method");
         InputMap.put(REGTYPE, BndConstants.DEATH);
@@ -604,6 +614,7 @@ public class ReportService extends PersistenceService<ViewBirthDeathRegistration
         return criteria.list().isEmpty() ? 0 : criteria.list().size();
     }
 
+    @Transactional
     public long getNumberOfStillBirths(final HashMap<String, Object> InputMap) {
         LOGGER.debug("Started getNumberOfStillBirths method");
         InputMap.put(REGTYPE, BndConstants.STILLBIRTH);
@@ -614,6 +625,7 @@ public class ReportService extends PersistenceService<ViewBirthDeathRegistration
         return criteria.list().isEmpty() ? 0 : criteria.list().size();
     }
 
+    @Transactional
     public long getInfantDeaths(final HashMap<String, Object> InputMap) {
         LOGGER.debug("Started getInfantDeaths method");
         InputMap.put(REGTYPE, BndConstants.DEATH);
@@ -626,8 +638,8 @@ public class ReportService extends PersistenceService<ViewBirthDeathRegistration
         return criteria.list().isEmpty() ? 0 : criteria.list().size();
     }
 
+    @Transactional
     public long getMaternalDeath(final HashMap<String, Object> InputMap) {
-
         LOGGER.debug("Started getMaternalDeath method");
         InputMap.put(REGTYPE, BndConstants.DEATH);
         InputMap.put(PROGRESSIVE, Boolean.TRUE);
@@ -638,6 +650,7 @@ public class ReportService extends PersistenceService<ViewBirthDeathRegistration
         return criteria.list().isEmpty() ? 0 : criteria.list().size();
     }
 
+    @Transactional
     public long getPopulation(final HashMap<String, Object> InputMap) {
         LOGGER.debug("Started getPopulation method");
         Criteria criteria = null;
@@ -657,6 +670,7 @@ public class ReportService extends PersistenceService<ViewBirthDeathRegistration
      * @return
      */
 
+    @Transactional
     public EgovPaginatedList getRegistrationUpdatedList(final Date fromDate, final Date todate, final String regType,
             final String regno, final Integer page, final Integer pageSize) {
         LOGGER.debug("Started getRegistrationUpdatedList method");
@@ -668,6 +682,7 @@ public class ReportService extends PersistenceService<ViewBirthDeathRegistration
         return new EgovPaginatedList(resultPage, result.size());
     }
 
+    @Transactional
     private Criteria buildCriteriaForUpdatedList(final Date fromDate, final Date todate, final String regType,
             final String regNo) {
         LOGGER.debug("Started buildCriteriaForUpdatedList method");
@@ -684,6 +699,7 @@ public class ReportService extends PersistenceService<ViewBirthDeathRegistration
         return registrationHistory;
     }
 
+    @Transactional
     public Map<Integer, String> getStatusMap() {
         STATUSMAP = new TreeMap<Integer, String>();
         final List<EgwStatus> statusList = bndCommonService.findAll("from EgwStatus where moduletype=?",

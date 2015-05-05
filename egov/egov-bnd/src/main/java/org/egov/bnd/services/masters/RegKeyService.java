@@ -44,13 +44,13 @@ import org.egov.bnd.model.RegistrationUnit;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * @author pritiranjan
- */
 
+@Transactional(readOnly = true)
 public class RegKeyService extends PersistenceService<RegKeys, Long> {
 
+    @Transactional
     public RegKeys getRegKeyByType(final String type) {
         return find("from RegKeys where regType = ?", type);
     }
@@ -63,6 +63,7 @@ public class RegKeyService extends PersistenceService<RegKeys, Long> {
      * @return
      */
 
+    @Transactional
     public RegKeys save(final String type, final int year, final Long minValue, final Long maxValue,
             final RegistrationUnit unit) {
         final RegKeys regKey = new RegKeys();
@@ -75,6 +76,7 @@ public class RegKeyService extends PersistenceService<RegKeys, Long> {
         return regKey;
     }
 
+    @Transactional
     public RegKeys getRegKeyByRegUnitAndDate(final RegistrationUnit regUnit, final int year, final String objectType) {
         final Criteria regKeyCrit = getSession().createCriteria(RegKeys.class);
         regKeyCrit.add(Restrictions.eq("registrationUnit", regUnit));

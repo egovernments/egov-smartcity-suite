@@ -60,7 +60,9 @@ import org.egov.pims.service.EisUtilService;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class DeathRegistrationService extends PersistenceService<DeathRegistration, Long> {
 
     private static final Logger LOGGER = Logger.getLogger(DeathRegistrationService.class);
@@ -76,6 +78,7 @@ public class DeathRegistrationService extends PersistenceService<DeathRegistrati
         this.bndCommonService = bndCommonService;
     }
 
+    @Transactional
     public DeathRegistration save(final DeathRegistration deathRegistration, final String workflowAction,
             final List<Addiction> addictionList) {
         LOGGER.info("Started save method");
@@ -170,10 +173,12 @@ public class DeathRegistrationService extends PersistenceService<DeathRegistrati
 
     }
 
+    @Transactional
     public DeathRegistration getDeathRegistrationById(final Long id) {
         return findById(id);
     }
 
+    @Transactional
     public Boolean checkUniqueDeathRegistrationNumber(final Long regUnit, final Long id, final String regNo,
             final Date deathDate) {
         LOGGER.info("Started checkUniqueDeathRegistrationNumber method");
@@ -205,6 +210,7 @@ public class DeathRegistrationService extends PersistenceService<DeathRegistrati
         return !deathCriteria.list().isEmpty();
     }
 
+    @Transactional
     public List<CitizenRelation> getRelativeDetails(final DeathRegistration deathRegistration) {
 
         LOGGER.info("Started getRelativeDetails method");
@@ -236,6 +242,7 @@ public class DeathRegistrationService extends PersistenceService<DeathRegistrati
         this.eisService = eisService;
     }
 
+    @Transactional
     public Boolean isEventAndRegistrationDateDiffGreaterThan21Days(final Long reportId) {
         if (reportId != null) {
             final DeathRegistration dthRegn = getDeathRegistrationById(reportId);

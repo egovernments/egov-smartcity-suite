@@ -58,7 +58,9 @@ import org.egov.pims.commons.Position;
 import org.egov.pims.service.EisUtilService;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class BirthRegistrationService extends PersistenceService<BirthRegistration, Long> {
 
     private static final Logger LOGGER = Logger.getLogger(BirthRegistrationService.class);
@@ -79,6 +81,7 @@ public class BirthRegistrationService extends PersistenceService<BirthRegistrati
      * @return
      */
 
+    @Transactional
     public Registration save(final BirthRegistration birthRegistration, final String workflowAction) {
         LOGGER.debug("strat save method");
         this.birthRegistration = birthRegistration;
@@ -136,10 +139,12 @@ public class BirthRegistrationService extends PersistenceService<BirthRegistrati
         LOGGER.debug("END Adoption detail method");
     }
 
+    @Transactional
     public BirthRegistration getBirthRegistrationById(final Long id) {
         return findById(id);
     }
 
+    @Transactional
     public Boolean issueFreeCertificate(final Long reportId, final String roleName) {
 
         /*
@@ -169,6 +174,7 @@ public class BirthRegistrationService extends PersistenceService<BirthRegistrati
 
     }
 
+    @Transactional
     public Boolean isEventAndRegistrationDateDiffGreaterThan21Days(final Long reportId) {
 
         if (reportId != null) {
@@ -202,6 +208,7 @@ public class BirthRegistrationService extends PersistenceService<BirthRegistrati
      * @returns Boolean value
      */
 
+    @Transactional
     public Boolean checkUniqueRegistrationNumber(final Long regUnit, final Long id, final String regNo,
             final Date birthDate, final String type) {
         final Criteria birthCriteria = getSession().createCriteria(BirthRegistration.class).createAlias(
@@ -238,11 +245,13 @@ public class BirthRegistrationService extends PersistenceService<BirthRegistrati
         return !birthCriteria.list().isEmpty();
     }
 
+    @Transactional
     public void deleteAdoption(final AdoptionDetails adoptionDetail) {
         if (adoptionDetail != null && adoptionDetail.getId() != null)
             adoptionService.delete(adoptionDetail);
     }
 
+    @Transactional
     public AdoptionDetails saveAdoption(final AdoptionDetails adoptionDetail) {
 
         if (adoptionDetail != null)
@@ -258,6 +267,7 @@ public class BirthRegistrationService extends PersistenceService<BirthRegistrati
      * @return
      */
 
+    @Transactional
     public EgwSatuschange saveStatusChange(final EgwSatuschange statusChange) {
         return statusChangeService.persist(statusChange);
     }

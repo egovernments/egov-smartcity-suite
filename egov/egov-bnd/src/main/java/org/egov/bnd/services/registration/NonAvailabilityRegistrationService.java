@@ -47,7 +47,9 @@ import org.egov.bnd.model.NonAvailability;
 import org.egov.bnd.services.common.NumberGenerationService;
 import org.egov.bnd.utils.BndConstants;
 import org.egov.infstr.services.PersistenceService;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class NonAvailabilityRegistrationService extends PersistenceService<NonAvailability, Long> {
 
     private static final Logger LOGGER = Logger.getLogger(NonAvailabilityRegistrationService.class);
@@ -62,6 +64,7 @@ public class NonAvailabilityRegistrationService extends PersistenceService<NonAv
         this.numberGenerationService = numberGenerationService;
     }
 
+    @Transactional
     public NonAvailability save(final NonAvailability nonAvailableReg, final String workflowAction) {
         LOGGER.info("start save method");
         persist(nonAvailableReg);
@@ -70,11 +73,12 @@ public class NonAvailabilityRegistrationService extends PersistenceService<NonAv
         return nonAvailableReg;
     }
 
+    @Transactional
     public NonAvailability getNonAvailableRegById(final Long id) {
-
         return findById(id);
     }
 
+    @Transactional
     public List searchRecordsByReceipt(final HashMap<String, Object> hashMap) {
         List<NonAvailability> nonAvailList = null;
         if (hashMap.get("REGTYPE").equals(BndConstants.SEARCHNONAVAILABILITY))

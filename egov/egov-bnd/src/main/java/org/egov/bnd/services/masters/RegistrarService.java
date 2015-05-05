@@ -43,14 +43,18 @@ import org.egov.bnd.model.Registrar;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class RegistrarService extends PersistenceService<Registrar, Long> {
 
+    @Transactional
     public Registrar save(final Registrar registrar) {
         persist(registrar);
         return registrar;
     }
 
+    @Transactional
     public Boolean checkUniqueUserId(final Long userId) {
         Boolean flag = false;
         final Criteria registrarCriteria = getSession().createCriteria(Registrar.class);

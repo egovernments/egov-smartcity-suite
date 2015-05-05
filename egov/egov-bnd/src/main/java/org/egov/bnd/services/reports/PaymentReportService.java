@@ -52,11 +52,9 @@ import org.egov.web.utils.EgovPaginatedList;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * @author pritiranjan
- */
-
+@Transactional(readOnly = true)
 public class PaymentReportService extends PersistenceService<BndPaymentReport, Long> {
 
     private BndCommonService bndCommonService;
@@ -67,6 +65,7 @@ public class PaymentReportService extends PersistenceService<BndPaymentReport, L
      * @return It returns paginated list of NameInclusionReport
      */
 
+    @Transactional
     @SuppressWarnings("unchecked")
     public EgovPaginatedList getNameInclusionReport(final Date fromDate, final Date toDate, final String regType,
             final Integer page, final Integer pageSize) {
@@ -79,6 +78,7 @@ public class PaymentReportService extends PersistenceService<BndPaymentReport, L
         return pagedResults;
     }
 
+    @Transactional
     private Criteria buildNameInclusionCriteria(final Date fromDate, final Date toDate, final String regType) {
         final Criteria criteria = getSession().createCriteria(BndPaymentReport.class);
         if (fromDate != null && toDate != null)
@@ -95,6 +95,7 @@ public class PaymentReportService extends PersistenceService<BndPaymentReport, L
         return criteria;
     }
 
+    @Transactional
     public Boolean validateReceiptNumber(final Long registrationid, final String receiptNum) {
 
         final Criteria criteria = getSession().createCriteria(BndPaymentReport.class);

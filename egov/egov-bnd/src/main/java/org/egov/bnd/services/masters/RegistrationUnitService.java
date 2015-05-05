@@ -43,15 +43,18 @@ import org.egov.bnd.model.RegistrationUnit;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class RegistrationUnitService extends PersistenceService<RegistrationUnit, Long> {
 
+    @Transactional
     public RegistrationUnit save(final RegistrationUnit registrationUnit) {
-
         persist(registrationUnit);
         return registrationUnit;
     }
 
+    @Transactional
     public Boolean checkUniqueRegUnitDesc(final String regUnitDesc) {
         Boolean flag = false;
         final Criteria regUnitCriteria = getSession().createCriteria(RegistrationUnit.class);
@@ -62,6 +65,7 @@ public class RegistrationUnitService extends PersistenceService<RegistrationUnit
         return flag;
     }
 
+    @Transactional
     public Boolean checkUniqueRegUnitConst(final String regUnitConst) {
         Boolean flag = false;
         final Criteria regUnitCriteria = getSession().createCriteria(RegistrationUnit.class);
@@ -71,5 +75,4 @@ public class RegistrationUnitService extends PersistenceService<RegistrationUnit
         }
         return flag;
     }
-
 }

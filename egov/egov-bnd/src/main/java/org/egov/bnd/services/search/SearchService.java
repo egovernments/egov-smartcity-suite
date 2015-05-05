@@ -63,11 +63,14 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class SearchService extends PersistenceService<Registration, Long> {
 
     private BndCommonService bndCommonService;
 
+    @Transactional
     public EgovPaginatedList searchRecords(final HashMap<String, Object> hashMap, final Integer page, final int pagesize) {
         final Criteria criteria = getBuildCriteria(hashMap);
         final Criteria issueLineCountCriteria = getBuildCriteria(hashMap);
@@ -78,6 +81,7 @@ public class SearchService extends PersistenceService<Registration, Long> {
         return pagedResults;
     }
 
+    @Transactional
     private Criteria getBuildCriteria(final HashMap<String, Object> hashMap) {
         Criteria criteria = null;
         if (hashMap.get("REGTYPE") != null) {
@@ -361,6 +365,7 @@ public class SearchService extends PersistenceService<Registration, Long> {
     /*
      * detached criteria to get father from CitizenRelation
      */
+    @Transactional
     private DetachedCriteria createDetachedCriteriaFather() {
 
         final DetachedCriteria subCriteria = DetachedCriteria.forClass(CitizenRelation.class, "citFather")
@@ -369,12 +374,12 @@ public class SearchService extends PersistenceService<Registration, Long> {
 
         subCriteria.add(Restrictions.ilike("related.desc", BndConstants.FATHER));
         return subCriteria;
-
     }
 
     /*
      * detached criteria to get mother from CitizenRelation
      */
+    @Transactional
     private DetachedCriteria createDetachedCriteriaMother() {
 
         final DetachedCriteria subCriteria = DetachedCriteria.forClass(CitizenRelation.class, "citMother")
@@ -389,6 +394,7 @@ public class SearchService extends PersistenceService<Registration, Long> {
     /*
      * detatched criteria to get adoption details
      */
+    @Transactional
     private DetachedCriteria createDetachedCriteriaAdoption() {
         final DetachedCriteria subCriteria = DetachedCriteria.forClass(BirthRegistration.class, "birthadpt")
                 .createAlias("birthadpt.adoptionDetail", "adoptiondetails")
