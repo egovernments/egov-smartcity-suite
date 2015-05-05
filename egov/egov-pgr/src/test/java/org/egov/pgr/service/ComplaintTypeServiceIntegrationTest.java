@@ -55,6 +55,7 @@ import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ComplaintTypeBuilder;
 import org.egov.search.service.IndexService;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kubek2k.springockito.annotations.ReplaceWithMock;
 import org.kubek2k.springockito.annotations.SpringockitoContextLoader;
@@ -72,6 +73,7 @@ import org.springframework.test.context.ContextConfiguration;
                 "classpath*:config/spring/applicationContext-egi.xml",
                 "classpath*:config/spring/applicationContext-pgr.xml"
         })
+@Ignore
 public class ComplaintTypeServiceIntegrationTest extends PGRAbstractSpringIntegrationTest {
 
     @Autowired

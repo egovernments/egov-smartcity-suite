@@ -54,9 +54,9 @@ public class ComplaintTypeAdaptor implements JsonSerializer<ComplaintType> {
         jsonObject.addProperty("name", compaintType.getName());
         jsonObject.addProperty("department", null != compaintType.getDepartment() ? compaintType.getDepartment()
                 .getName() : "NA");
-        jsonObject.addProperty("locationRequired", compaintType.isLocationRequired());
+        jsonObject.addProperty("locationRequired", compaintType.isLocationRequired() == true ? "Yes" : "No");
         jsonObject.addProperty("code", compaintType.getCode());
-        jsonObject.addProperty("isActive", compaintType.getIsActive());
+        jsonObject.addProperty("isActive", compaintType.getIsActive() == true ? "Yes" : "No");
         jsonObject.addProperty("description", null != compaintType.getDescription() ? compaintType.getDescription() : "N/A");
         return jsonObject;
     }

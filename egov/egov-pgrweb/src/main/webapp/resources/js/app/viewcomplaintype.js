@@ -63,10 +63,10 @@ $(document)
 											"sTitle" : "Department"
 										}, {
 											"mData" : "locationRequired",
-											"sTitle" : "Is Location Required"
+											"sTitle" : "Location Required"
 										}, {
 											"mData" : "isActive",
-											"sTitle" : "Is Active"
+											"sTitle" : "Active"
 										},{
 											"mData" : "description",
 											"sTitle" : "Description"

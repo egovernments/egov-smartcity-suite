@@ -50,6 +50,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.search.domain.Searchable;
@@ -60,19 +62,11 @@ import org.hibernate.validator.constraints.SafeHtml;
 import org.json.simple.JSONObject;
 
 @Entity
-@Table(
-        name = "pgr_complainttype", 
-        uniqueConstraints = 
-            @UniqueConstraint(columnNames = { "name" })
-)
-/*@Unique(
-id = "id",
-tableName = "pgr_complainttype", 
-fields = {"name", "code"}, 
-columnName = {"name", "code"}
-)*/
+@Unique(id = "id", tableName = "pgr_complainttype", fields = { "name", "code" }, columnName = {
+		"name", "code" })
+@Table(name = "pgr_complainttype")
 @Searchable
-public class ComplaintType extends AbstractPersistable<Long> {
+public class ComplaintType extends AbstractAuditable<User, Long> {
     private static final long serialVersionUID = 8904645810221559541L;
    
     @NotBlank
@@ -87,7 +81,6 @@ public class ComplaintType extends AbstractPersistable<Long> {
     @Column(name = "code")
     private String code;
 
-    @Valid
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dept_id")

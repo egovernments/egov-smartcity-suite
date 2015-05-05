@@ -143,7 +143,6 @@ jQuery(document).ready(function($)
 		if (this.value === '') {
 			 $(".optionalmandate").hide();
 			 $("#location").removeAttr('required');
-			 $("#landmarkDetails").removeAttr('required');
 			return;
 		} else {
 			$.ajax({
@@ -155,11 +154,9 @@ jQuery(document).ready(function($)
 				 if(value === true) {
 					 $(".optionalmandate").show();
 					 $("#location").attr('required','required');
-					 $("#landmarkDetails").attr('required','required');
 				 } else {
 					 $(".optionalmandate").hide();
 					 $("#location").removeAttr('required');
-					 $("#landmarkDetails").removeAttr('required');
 					 $("#location").val("");
 					 $("#landmarkDetails").val("");
 				 }
@@ -193,11 +190,9 @@ jQuery(document).ready(function($)
 	if($("#locationRequired").val() === "false") {
 		 $(".optionalmandate").hide();
 		 $("#location").removeAttr('required');
-		 $("#landmarkDetails").removeAttr('required');
 	} else {
 		 $(".optionalmandate").show();
 		 $("#location").attr('required');
-		 $("#landmarkDetails").attr('required');
 	}
 	
 	$('input[type=radio][name=receivingMode]').change(function() {

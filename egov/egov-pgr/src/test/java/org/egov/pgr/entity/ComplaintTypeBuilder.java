@@ -85,7 +85,7 @@ public class ComplaintTypeBuilder {
 
     public ComplaintTypeBuilder withId(final long id) {
         try {
-            final Field idField = complaintType.getClass().getSuperclass().getDeclaredField("id");
+            final Field idField = complaintType.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
             idField.setAccessible(true);
             idField.set(complaintType, id);
         } catch (final Exception e) {
