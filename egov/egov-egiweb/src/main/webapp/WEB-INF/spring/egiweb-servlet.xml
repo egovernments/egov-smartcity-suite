@@ -114,9 +114,9 @@
         <property name="parentMessageSource" ref="parentMessageSource" />
         <property name="basenames">
             <list>
-                <value>config/messages/labels</value>
-                <value>config/messages/errors</value>
-		<value>config/messages/message</value>
+                <value>messages/labels</value>
+                <value>messages/errors</value>
+				<value>messages/message</value>
             </list>
         </property>
         <!-- Disabling caching since on development-->
