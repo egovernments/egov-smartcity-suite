@@ -42,7 +42,7 @@
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
 
-	<display-name>eGov Infrastructure</display-name>
+	<display-name>e-governments collection web</display-name>
 	
 	<!-- Context Params Starts -->
 	<context-param>
@@ -93,19 +93,15 @@
 		<filter-class>net.sf.ehcache.constructs.web.filter.GzipFilter</filter-class>
 	</filter>
 	<filter>
+		<filter-name>openEntityManagerInViewFilter</filter-name>
+		<filter-class>
+			org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
+	</filter>
+	<filter>
 		<filter-name>sessionAttributeHandlerFilter</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
-	<!-- 
-	<filter>
-		<filter-name>hibernateSession</filter-name>
-		<filter-class>org.egov.infstr.client.filter.HibSessionServletFilter</filter-class>
-		<init-param>
-			<param-name>singleSession</param-name>
-			<param-value>true</param-value>
-		</init-param>
-	</filter> -->
-	
+
 	<filter>
 		<filter-name>securityFilterChain</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -136,20 +132,13 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
+		<filter-name>openEntityManagerInViewFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
 		<filter-name>sessionAttributeHandlerFilter</filter-name>
 		<url-pattern>*.do</url-pattern>
 	</filter-mapping>
-	<!-- <filter-mapping>
-		<filter-name>hibernateSession</filter-name>
-		<url-pattern>*.do</url-pattern>
-		<dispatcher>REQUEST</dispatcher>
-		<dispatcher>FORWARD</dispatcher>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>hibernateSession</filter-name>
-		<url-pattern>/j_security_check</url-pattern>
-		<dispatcher>REQUEST</dispatcher>
-	</filter-mapping> -->
 	<filter-mapping>
 		<filter-name>securityFilterChain</filter-name>
 		<url-pattern>*.do</url-pattern>
@@ -190,15 +179,15 @@
 		<url-pattern>/reportViewer</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
-		<welcome-file>/egi/common/homepage.action</welcome-file>
+		<welcome-file>/index.jsp</welcome-file>
 	</welcome-file-list>
 	<error-page>
 		<error-code>404</error-code>
-		<location>/error/pageNotFound.jsp</location>
+		<location>/error/notfound.jsp</location>
 	</error-page>
 	<error-page>
 		<error-code>403</error-code>
-		<location>/error/accessDenied.jsp</location>
+		<location>/error/accessdenied.jsp</location>
 	</error-page>
 	<error-page>
 		<error-code>500</error-code>
@@ -214,28 +203,32 @@
 	</error-page>
 	<jsp-config>
 		<taglib>
-			<taglib-uri>/displaytag</taglib-uri>
-			<taglib-location>/WEB-INF/displaytag.tld</taglib-location>
-		</taglib>
-		<taglib>
 			<taglib-uri>http://displaytag.sf.net</taglib-uri>
-			<taglib-location>/WEB-INF/displaytag.tld</taglib-location>
+			<taglib-location>/WEB-INF/taglib/displaytag.tld</taglib-location>
 		</taglib>
 		<taglib>
 			<taglib-uri>/struts-tags</taglib-uri>
-			<taglib-location>/WEB-INF/struts-tags.tld</taglib-location>
+			<taglib-location>/WEB-INF/taglib/struts-tags.tld</taglib-location>
 		</taglib>
 		<taglib>
 			<taglib-uri>/WEB-INF/struts-dojo-tags.tld</taglib-uri>
-			<taglib-location>/WEB-INF/struts-dojo-tags.tld</taglib-location>
+			<taglib-location>/WEB-INF/taglib/struts-dojo-tags.tld</taglib-location>
 		</taglib>
 		<taglib>
 			<taglib-uri>http://www.opensymphony.com/sitemesh/decorator</taglib-uri>
-			<taglib-location>/WEB-INF/sitemesh-decorator.tld</taglib-location>
+			<taglib-location>/WEB-INF/taglib/sitemesh-decorator.tld</taglib-location>
 		</taglib>
 		<taglib>
 			<taglib-uri>http://www.opensymphony.com/sitemesh/page</taglib-uri>
-			<taglib-location>/WEB-INF/sitemesh-page.tld</taglib-location>
+			<taglib-location>/WEB-INF/taglib/sitemesh-page.tld</taglib-location>
 		</taglib>
 	</jsp-config>
+	<session-config>
+		<cookie-config>
+			<path>/</path>
+			<http-only>true</http-only>
+			<secure>false</secure>
+		</cookie-config>
+		<tracking-mode>COOKIE</tracking-mode>
+	</session-config>
 </web-app>
