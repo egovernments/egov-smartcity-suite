@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -46,7 +46,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.entity.enums.UserType;
@@ -75,146 +74,129 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/complaint-update")
 public class ComplaintUpdationController {
 
-    private ComplaintService complaintService;
-    private ComplaintTypeService complaintTypeService;
-    private CommonService commonService;
-    private ComplaintStatusMappingService complaintStatusMappingService;
-    private SmartValidator validator;
-    @Autowired
-    private DepartmentService departmentService;
-    @Autowired
-    private SecurityUtils securityUtils;
+	private final ComplaintService complaintService;
+	private final ComplaintTypeService complaintTypeService;
+	private final CommonService commonService;
+	private final ComplaintStatusMappingService complaintStatusMappingService;
+	@Autowired
+	private DepartmentService departmentService;
+	@Autowired
+	private SecurityUtils securityUtils;
 
-    @Autowired
-    public ComplaintUpdationController(ComplaintService complaintService, ComplaintTypeService complaintTypeService,
-            CommonService commonService, ComplaintStatusMappingService complaintStatusMappingService,
-            SmartValidator validator) {
-        this.complaintService = complaintService;
-        this.complaintTypeService = complaintTypeService;
-        this.commonService = commonService;
-        this.complaintStatusMappingService = complaintStatusMappingService;
-        this.validator = validator;
+	@Autowired
+	public ComplaintUpdationController(final ComplaintService complaintService,
+			final ComplaintTypeService complaintTypeService, final CommonService commonService,
+			final ComplaintStatusMappingService complaintStatusMappingService, final SmartValidator validator) {
+		this.complaintService = complaintService;
+		this.complaintTypeService = complaintTypeService;
+		this.commonService = commonService;
+		this.complaintStatusMappingService = complaintStatusMappingService;
 
-    }
+	}
 
-    // Dont use this which will query multiple times
-    // Not an issue since hibernate will not load once again but it is confusing
-    // developers
-    @ModelAttribute
-    public Complaint getComplaint(@RequestParam Long id) {
-        Complaint complaint = complaintService.getComplaintById(id);
-        return complaint;
-    }
+	// Dont use this which will query multiple times
+	// Not an issue since hibernate will not load once again but it is confusing
+	// developers
+	@ModelAttribute
+	public Complaint getComplaint(@RequestParam final Long id) {
+		final Complaint complaint = complaintService.getComplaintById(id);
+		return complaint;
+	}
 
-    @ModelAttribute("complaintType")
-    public List<ComplaintType> complaintTypes() {
-        return complaintTypeService.findAll();
-    }
+	@ModelAttribute("complaintType")
+	public List<ComplaintType> complaintTypes() {
+		return complaintTypeService.findAll();
+	}
 
-    @ModelAttribute("status")
-    public List<ComplaintStatus> getStatus(@RequestParam Long id) {
+	@ModelAttribute("status")
+	public List<ComplaintStatus> getStatus(@RequestParam final Long id) {
+		final Set<Role> rolesList = securityUtils.getCurrentUser().getRoles();
+		return complaintStatusMappingService.getStatusByRoleAndCurrentStatus(rolesList, getComplaint(id).getStatus());
+	}
 
-        Set<Role> rolesList = securityUtils.getCurrentUser().getRoles();
+	@RequestMapping(method = RequestMethod.GET)
+	public String edit(final Model model, @RequestParam final Long id) {
+		final User currentUser = securityUtils.getCurrentUser();
+		if (currentUser.getType().equals(UserType.CITIZEN)) {
+			complaintService.getComplaintById(id);
+			return "complaint-citizen-edit";
+		}
 
-        return complaintStatusMappingService.getStatusByRoleAndCurrentStatus(rolesList, getComplaint(id).getStatus());
-    }
+		final Complaint complaint = complaintService.getComplaintById(id);
+		final List<Hashtable<String, Object>> historyTable = complaintService.getHistory(complaint);
+		model.addAttribute("complaintHistory", historyTable);
 
-    @RequestMapping(method = RequestMethod.GET)
-    public String edit(Model model, @RequestParam Long id) {
-        try {
-            User currentUser = securityUtils.getCurrentUser();
-            if (currentUser.getType().equals(UserType.CITIZEN)) {
-                Complaint complaint = complaintService.getComplaintById(id);
-                return "complaint-citizen-edit";
-            }
+		prepareWorkflow(model);
+		// set the defaults
+		// model.addAttribute("zone", Collections.EMPTY_LIST);
+		model.addAttribute("ward", Collections.EMPTY_LIST);
+		model.addAttribute("zone", commonService.getZones());
+		if (complaint.getComplaintType().isLocationRequired())
+			// model.addAttribute("zone", commonService.getZones());
+			if (complaint.getLocation() != null)
+				model.addAttribute("ward", commonService.getWards(complaint.getLocation().getParent().getId()));
 
-            Complaint complaint = complaintService.getComplaintById(id);
-            List<Hashtable<String, Object>> historyTable = complaintService.getHistory(complaint);
-            model.addAttribute("complaintHistory", historyTable);
+		return "complaint-edit";
+	}
 
-            prepareWorkflow(model);
-            // set the defaults
-            // model.addAttribute("zone", Collections.EMPTY_LIST);
-            model.addAttribute("ward", Collections.EMPTY_LIST);
-            model.addAttribute("zone", commonService.getZones());
-            if (complaint.getComplaintType().isLocationRequired()) {
-                // model.addAttribute("zone", commonService.getZones());
-                if (complaint.getLocation() != null) {
-                    model.addAttribute("ward", commonService.getWards(complaint.getLocation().getParent().getId()));
-                }
-            }
-        } catch (Exception e) {
-            throw new EGOVRuntimeException("Missing mandatory fields in the data");
-        }
+	private void prepareWorkflow(final Model model) {
+		model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
 
-        return "complaint-edit";
-    }
+	}
 
-    private void prepareWorkflow(Model model) {
-        model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
+	@RequestMapping(method = RequestMethod.POST)
+	public String update(@ModelAttribute Complaint complaint, final BindingResult errors,
+			final RedirectAttributes redirectAttrs, final Model model, final HttpServletRequest request) {
+		// change this validator to custom as no need to do complete validation
+		// Since the usage of this is screen is very heavy need to consider all
+		// performance fixes
+		// validator.validate(complaint, errors);
+		validateUpdate(complaint, errors, request);
+		Long approvalPosition = 0l;
+		if (null != request.getParameter("approvalPosition") && !request.getParameter("approvalPosition").isEmpty())
+			approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+		String approvalComent = "";
+		if (null != request.getParameter("approvalComent"))
+			approvalComent = request.getParameter("approvalComent");
 
-    }
+		if (!errors.hasErrors()) {
+			complaint = complaintService.update(complaint, approvalPosition, approvalComent);
 
-    @RequestMapping(method = RequestMethod.POST)
-    public String update(@ModelAttribute Complaint complaint, BindingResult errors, RedirectAttributes redirectAttrs,
-            Model model, HttpServletRequest request) {
-        // change this validator to custom as no need to do complete validation
-        // Since the usage of this is screen is very heavy need to consider all
-        // performance fixes
-        // validator.validate(complaint, errors);
-        validateUpdate(complaint, errors, request);
-        Long approvalPosition = 0l;
-        if (null != request.getParameter("approvalPosition") && !request.getParameter("approvalPosition").isEmpty()) {
-            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+			redirectAttrs.addFlashAttribute("message", "Successfully Updated Complaint !");
+		} else {
+			prepareWorkflow(model);
+			model.addAttribute("zone", commonService.getZones());
+			model.addAttribute("ward", Collections.EMPTY_LIST);
 
-        }
-        String approvalComent = "";
-        if (null != request.getParameter("approvalComent")) {
-            approvalComent = request.getParameter("approvalComent");
-        }
+			if (complaint.getComplaintType() != null && complaint.getComplaintType().isLocationRequired())
+				if (complaint.getLocation() != null)
+					model.addAttribute("ward", commonService.getWards(complaint.getLocation().getParent().getId()));
 
-        if (!errors.hasErrors()) {
-            complaint = complaintService.update(complaint, approvalPosition, approvalComent);
+			return "complaint-edit";
 
-            redirectAttrs.addFlashAttribute("message", "Successfully Updated Complaint !");
-        } else {
-            prepareWorkflow(model);
-            model.addAttribute("zone", commonService.getZones());
-            model.addAttribute("ward", Collections.EMPTY_LIST);
+		}
+		return "redirect:/complaint-update?id=" + complaint.getId();
+	}
 
-            if (complaint.getComplaintType() != null && complaint.getComplaintType().isLocationRequired()) {
+	private void validateUpdate(final Complaint complaint, final BindingResult errors, final HttpServletRequest request) {
+		if (null == complaint.getStatus()) {
+			final ObjectError error = new ObjectError("status", "Complaint Status is required");
+			errors.addError(error);
+		}
 
-                if (complaint.getLocation() != null) {
-                    model.addAttribute("ward", commonService.getWards(complaint.getLocation().getParent().getId()));
-                }
+		if (null == complaint.getComplaintType()) {
+			final ObjectError error = new ObjectError("complaintType", "ComplaintType is required");
+			errors.addError(error);
+		}
 
-            }
+		// comenting as only status or complaint type change does not need
+		// coments
+		/*
+		 * if (null == request.getParameter("approvalComent") ||
+		 * request.getParameter("approvalComent").isEmpty()) { ObjectError error
+		 * = new ObjectError("approvalComent",
+		 * "Complaint coments Cannot be null"); errors.addError(error); }
+		 */
 
-            return "complaint-edit";
-
-        }
-        return "redirect:/complaint-update?id=" + complaint.getId();
-    }
-
-    private void validateUpdate(Complaint complaint, BindingResult errors, HttpServletRequest request) {
-        if (null == complaint.getStatus()) {
-            ObjectError error = new ObjectError("status", "Complaint Status is required");
-            errors.addError(error);
-        }
-
-        if (null == complaint.getComplaintType()) {
-            ObjectError error = new ObjectError("complaintType", "ComplaintType is required");
-            errors.addError(error);
-        }
-
-        // comenting as only status or complaint type change does not need
-        // coments
-        /*
-         * if (null == request.getParameter("approvalComent") ||
-         * request.getParameter("approvalComent").isEmpty()) { ObjectError error
-         * = new ObjectError("approvalComent",
-         * "Complaint coments Cannot be null"); errors.addError(error); }
-         */
-
-    }
+	}
 }
