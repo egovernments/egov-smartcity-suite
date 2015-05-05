@@ -45,22 +45,22 @@
  */ 
 package com.exilant.eGov.src.reports;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
-
+import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Query;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 public class BankTransaction 
 {
 	Connection con;
-	ResultSet resultset;
-	PreparedStatement pstmt;
+	List<Object[]> resultset;
+	Query pstmt;
 	TaskFailedException taskExc;	
 	String endDate, startDate;
     String accNum,transactionType,transactionTypeQry="",transactionTypeQry1="";
@@ -75,7 +75,7 @@ public class BankTransaction
 	
 	public ArrayList getbankTranReport(BankTransactionReportBean btBean)throws TaskFailedException
 		{
-			isCurDate(con,btBean.getEndDate());
+			isCurDate(btBean.getEndDate());
 			try
 			{
 				accNum=btBean.getBankAccount_id();
@@ -112,7 +112,7 @@ public class BankTransaction
 			}		
 		return bt;
 	}
-	 public void isCurDate(Connection conn,String VDate) throws TaskFailedException{
+	 public void isCurDate(String VDate) throws TaskFailedException{
 			
 			EGovernCommon egc=new EGovernCommon();
 			try{
@@ -151,15 +151,14 @@ private void getBTReport() throws Exception
 			 if(LOGGER.isInfoEnabled())     LOGGER.info("*******query  "+query);
 		
 			 BankTransactionReportBean btBean=null; 
-			 pstmt = con.prepareStatement(query);
+			 pstmt = HibernateUtil.getCurrentSession().createSQLQuery(query);
 			 pstmt.setString(1, startDate);
 			 pstmt.setString(2, endDate);
 			 pstmt.setString(3, startDate);
 			 pstmt.setString(4, endDate);
-			 resultset = pstmt.executeQuery();
+			 resultset = pstmt.list();
 		 	 int i=1;
-		 		while(resultset.next())
-		 		{	 			
+		 	for(Object[] element : resultset){	 			
 		 			btBean=new BankTransactionReportBean();
 		 				String vhDate="";
 		 				String chqDate="";
@@ -172,46 +171,46 @@ private void getBTReport() throws Exception
 		 				String payinslipNo="";
 		 				String payinslipDate="";
 		 				
-		 				if(resultset.getString("Voucher Date")!= null)
-		 					vhDate=resultset.getString("Voucher Date");
+		 				if(element[2].toString()!= null)
+		 					vhDate=element[2].toString();
 			 			else
 			 				vhDate="&nbsp;";	 				
 		 				
-		 				if(resultset.getString("Cheque Date")!= null)
-		 					chqDate=resultset.getString("Cheque Date");
+		 				if(element[4].toString()!= null)
+		 					chqDate=element[4].toString();
 			 			else
 			 				chqDate="&nbsp;";	 				
 		 				
-		 				if(resultset.getString("Payment Amount")!=null)
-		 					paymentAmt=cf.numberToString(resultset.getString("Payment Amount")).toString();
+		 				if(element[8].toString()!=null)
+		 					paymentAmt=cf.numberToString(element[8].toString()).toString();
 		 				else
 		 					paymentAmt="&nbsp;";
-		 				if(resultset.getString("Receipt Amount")!=null)
-		 					receiptAmt=cf.numberToString(resultset.getString("Receipt Amount")).toString();
+		 				if(element[7].toString()!=null)
+		 					receiptAmt=cf.numberToString(element[7].toString()).toString();
 		 				else
 		 					receiptAmt="&nbsp;";		 				
-		 				if(resultset.getString("Voucher No")!= null)
-		 					vhNo=resultset.getString("Voucher No");
+		 				if(element[1].toString()!= null)
+		 					vhNo=element[1].toString();
 			 			else
 			 				vhNo="&nbsp;";
 		 				
-		 				if(resultset.getString("Cheque No")!= null)
-		 					chqNo=resultset.getString("Cheque No");
+		 				if(element[3].toString()!= null)
+		 					chqNo=element[3].toString();
 			 			else
 			 				chqNo="&nbsp;";			 				
 		 				
-		 				type=resultset.getString("Type");
-		 				cgn=resultset.getString("cgn");
+		 				type=element[6].toString();
+		 				cgn=element[5].toString();
 		 				
 		 				//If transaction type is Receipt show Payinslip no & date 
 		 				if(type.equals("Receipt"))
 		 				{
-		 				if(resultset.getString("Payinslip No")!= null )
-		 					payinslipNo=resultset.getString("Payinslip No");
+		 				if(element[9].toString()!= null )
+		 					payinslipNo=element[9].toString();
 			 			else
 			 				payinslipNo="&nbsp;";	
-		 				if(resultset.getString("Payinslip Date")!= null)
-		 					payinslipDate=resultset.getString("Payinslip Date");
+		 				if(element[10].toString()!= null)
+		 					payinslipDate=element[10].toString();
 			 			else
 			 				payinslipDate="&nbsp;";	
 		 				}
@@ -236,7 +235,7 @@ private void getBTReport() throws Exception
 		 				i++;
 		 			}
 			}
-			catch(SQLException sqlE){
+			catch(Exception sqlE){
 				if(LOGGER.isInfoEnabled())     LOGGER.info("Exception occured in getBTReport() "+ sqlE.getMessage(),sqlE);
 			}
 		 }	 		

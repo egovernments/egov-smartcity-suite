@@ -136,7 +136,7 @@ public class DayBookList
 
 			return monthChanged;
 		}
-	 public void isCurDate(Connection conn,String VDate) throws TaskFailedException{
+	 public void isCurDate(String VDate) throws TaskFailedException{
 
 			EGovernCommon egc=new EGovernCommon();
 			try{
@@ -169,7 +169,7 @@ public class DayBookList
 		Integer fundId=Integer.parseInt(reportBean.getFundId());
          if(LOGGER.isDebugEnabled())     LOGGER.debug("fundid: "+fundId);
 		String endDate1=(String)reportBean.getEndDate();
-		isCurDate(conn,endDate1);
+		isCurDate(endDate1);
 		try
 		{
 			dateStart=covertDate(reportBean.getStartDate());
