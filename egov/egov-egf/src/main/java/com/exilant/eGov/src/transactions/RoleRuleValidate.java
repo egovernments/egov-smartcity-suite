@@ -48,12 +48,10 @@ package com.exilant.eGov.src.transactions;
 
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.RBACException;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.service.RoleService;
+import org.egov.lib.rrbac.dao.ActionHibernateDAO;
 import org.egov.lib.rrbac.model.Action;
-import org.egov.lib.rrbac.model.RuleData;
-import org.egov.lib.rrbac.services.RbacService;
 
 /**
  * @author Administrator
@@ -64,7 +62,7 @@ import org.egov.lib.rrbac.services.RbacService;
 public class RoleRuleValidate {
 	
 	private static final Logger LOGGER = Logger.getLogger(RoleRuleValidate.class);
-	private RbacService rbacService;
+	private ActionHibernateDAO rbacService;
 	private RoleService roleService;
 	
 	public static void main(String args[])
@@ -72,14 +70,14 @@ public class RoleRuleValidate {
 	
 	}
 	
-	public void validateAction(Integer roleId,Integer actionId,RuleData entity) throws RBACException
+	public void validateAction(Integer roleId,Integer actionId)
 	{
 		
 		Role role = roleService.getRoleById(roleId.longValue());
 		String roleName=role.getName();
 		if(LOGGER.isInfoEnabled())     LOGGER.info(" >>>>>name1 "+roleName);
 
-		Action action=rbacService.getActionById(actionId);
+		Action action= (Action)rbacService.findById(actionId,false);
 		String actionName=action.getName();
 		if(LOGGER.isInfoEnabled())     LOGGER.info(" >>>>>name2 "+actionName);
 
@@ -87,8 +85,8 @@ public class RoleRuleValidate {
 		if(LOGGER.isInfoEnabled())     LOGGER.info(" >>>>>bbb "+b);
 		
 		
-		boolean b1=action.isValid(entity,role);
-		if(LOGGER.isInfoEnabled())     LOGGER.info(" >>>>>bbb "+b1);
+		/*boolean b1=action.isValid(entity,role);
+		if(LOGGER.isInfoEnabled())     LOGGER.info(" >>>>>bbb "+b1);*/
 	
 	
 

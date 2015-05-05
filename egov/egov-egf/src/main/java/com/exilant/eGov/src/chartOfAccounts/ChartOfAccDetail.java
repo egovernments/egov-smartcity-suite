@@ -55,7 +55,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.lib.rrbac.model.AccountCodeRuleData;
 import org.hibernate.HibernateException;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,8 +66,7 @@ import com.exilant.exility.common.AbstractTask;
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
 @Transactional(readOnly=true)
-public class ChartOfAccDetail extends AbstractTask implements
-		AccountCodeRuleData {
+public class ChartOfAccDetail extends AbstractTask  {
 
 	private final static Logger LOGGER = Logger
 			.getLogger(ChartOfAccDetail.class);
@@ -108,13 +106,11 @@ public class ChartOfAccDetail extends AbstractTask implements
 				roleId = Integer.parseInt(rset.getString(1));
 
 			}
-			RoleRuleValidate rv = new RoleRuleValidate();
 			// ChartOfAccDetail coa=new ChartOfAccDetail();
 			actionId = Integer.valueOf((Integer.parseInt(dc
 					.getValue("actionId"))));
 			dc.addValue("actionId", actionId);
-			if(LOGGER.isInfoEnabled())     LOGGER.info("Connection in RBAC 1:" + conn.isClosed());
-			rv.validateAction(roleId, actionId, this);
+			
 			if(LOGGER.isInfoEnabled())     LOGGER.info("Connection in RBAC..:" + conn.isClosed());
 		} catch (Exception e) {
 			 

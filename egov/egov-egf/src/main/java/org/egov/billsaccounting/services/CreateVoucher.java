@@ -87,7 +87,6 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
-import org.egov.exceptions.RBACException;
 import org.egov.exceptions.TooManyValuesException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
@@ -2284,7 +2283,7 @@ public class CreateVoucher {
 			 SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
 			 if(!engine.postTransaxtions(txnList,formatter.format(vh.getVoucherDate())))
 			 {
-				 throw new RBACException("Voucher creation Failed");
+				 throw new EGOVRuntimeException("Voucher creation Failed");
 			 }
 		 }catch(Exception e)
 		 {
