@@ -243,47 +243,4 @@
 			</map>
 		</property>
 	</bean>
-	
-	<!-- ACL -->
-	<bean id="businessAccessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
-		<property name="allowIfAllAbstainDecisions" value="false" />
-		<property name="decisionVoters">
-			<list>
-				<ref bean="aclObjectReadVoter" />
-			</list>
-		</property>
-	</bean>
-	
-	<bean id="afterInvocationManager" class="org.springframework.security.access.intercept.AfterInvocationProviderManager">
-		<property name="providers">
-			<list>
-				<ref local="afterAclRead" />
-			</list>
-		</property>
-	</bean>
-	
-	<bean id="afterAclRead" class="org.egov.infstr.security.spring.acl.GenericAclProvider" scope="prototype">
-		<constructor-arg ref="persistenceService" />
-		<constructor-arg>
-			<list>
-				<ref bean="readPermission" />
-			</list>
-		</constructor-arg>
-	</bean>
-	
-	<bean id="administrationPermission" name="administrationPermission" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-		<property name="staticField" value="org.springframework.security.acls.domain.BasePermission.ADMINISTRATION" />
-	</bean>
-	
-	<bean id="readPermission" name="readPermission" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-		<property name="staticField" value="org.springframework.security.acls.domain.BasePermission.READ" />
-	</bean>
-	
-	<bean id="writePermission" name="writePermission" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-		<property name="staticField" value="org.springframework.security.acls.domain.BasePermission.WRITE" />
-	</bean>
-	
-	<bean id="deletePermission" name="deletePermission" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-		<property name="staticField" value="org.springframework.security.acls.domain.BasePermission.DELETE" />
-	</bean>       
 </beans>
