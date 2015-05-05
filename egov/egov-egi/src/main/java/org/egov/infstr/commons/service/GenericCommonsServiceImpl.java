@@ -41,10 +41,10 @@ package org.egov.infstr.commons.service;
 
 import java.util.List;
 
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 
+@Deprecated
 public class GenericCommonsServiceImpl implements GenericCommonsService {
 
 	private GenericHibernateDaoFactory genericHibernateDaoFactory;

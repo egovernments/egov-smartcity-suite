@@ -57,6 +57,7 @@ import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
  * The Class EGovConfig. Used to read the values from properties file and XMl configuration files
  * @author Manu Srivastava
  */
+@Deprecated
 public final class EGovConfig {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EGovConfig.class);

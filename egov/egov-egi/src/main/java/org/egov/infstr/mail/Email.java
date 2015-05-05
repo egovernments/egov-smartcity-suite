@@ -39,6 +39,14 @@
  */
 package org.egov.infstr.mail;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.mail.ByteArrayDataSource;
 import org.apache.commons.mail.DefaultAuthenticator;
@@ -51,13 +59,7 @@ import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
+@Deprecated
 public class Email {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Email.class);
 	private final List<InternetAddress> toList;

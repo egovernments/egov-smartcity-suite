@@ -54,6 +54,7 @@ import java.util.List;
  *
  * @author christian.bauer@jboss.com
  */
+@Deprecated
 public interface GenericDAO<T, ID extends Serializable> {
 
     T findById(ID id, boolean lock);

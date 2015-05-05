@@ -39,15 +39,14 @@
  */
 package org.egov.infstr.dao;
 
-import org.egov.exceptions.EGOVRuntimeException;
+import java.io.Serializable;
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.LockOptions;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Example;
-
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * Implements the generic CRUD data access operations using Hibernate APIs.
@@ -62,6 +61,7 @@ import java.util.List;
  * @see RNDHibernateDAOFactory
  * @author christian.bauer@jboss.com
  */
+@Deprecated
 public class GenericHibernateDAO<T, ID extends Serializable> implements GenericDAO<T, ID> {
 
 	/** The persistent class. */

@@ -44,6 +44,7 @@ import java.util.List;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.commons.Module;
 
+@Deprecated
 public interface GenericCommonsService {
 	/**
 	 * Returns a module object identified by its identifier.

@@ -39,7 +39,6 @@
  */
 package org.egov.infstr.commons.dao;
 
-import org.egov.infstr.commons.Module;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.AppData;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
@@ -49,6 +48,7 @@ import org.egov.infstr.config.dao.AppDataHibernateDAO;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
+@Deprecated
 public class GenericHibernateDaoFactory {
 
     private SessionFactory sessionFactory;
