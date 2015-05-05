@@ -49,7 +49,6 @@ import org.egov.infra.citizen.entity.Citizen;
 import org.egov.infra.citizen.service.CitizenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -60,7 +59,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/citizen")
 public class CitizenRegistrationController {
 	private CitizenService citizenService;
-	private String mobnumberValid = "false";
 
 	@Autowired
 	public CitizenRegistrationController(CitizenService citizenService) {
@@ -108,14 +106,6 @@ public class CitizenRegistrationController {
 					+ citizenId;
 		}
 
-	}
-
-	public String getMobnumberValid() {
-		return mobnumberValid;
-	}
-
-	public void setMobnumberValid(String mobnumberValid) {
-		this.mobnumberValid = mobnumberValid;
 	}
 
 }
