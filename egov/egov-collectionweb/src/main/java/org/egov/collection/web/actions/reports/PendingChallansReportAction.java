@@ -42,16 +42,19 @@ package org.egov.collection.web.actions.reports;
 import java.util.Date;
 
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infstr.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.web.actions.ReportFormAction;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Action class for pending challans report action
  */
+@Transactional(readOnly=true)
 public class PendingChallansReportAction extends ReportFormAction {
 	private static final long serialVersionUID = 1L;
 	// Report parameter names
@@ -71,7 +74,7 @@ public class PendingChallansReportAction extends ReportFormAction {
 	}
 
 	@Override
-	@Action(value="/reports/pendingChallansReport-criteria.action")
+	@Action(value="/reports/pendingChallansReport-criteria",results = { @Result(name = INDEX)})
 	public String criteria() {
 		// Setup drop down data for department list
 		addRelatedEntity("department", Department.class, "deptName");

@@ -9,17 +9,20 @@ import java.util.Map;
 
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infstr.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.web.actions.ReportFormAction;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Action class for the cash collection summary report
  */
 @ParentPackage("egov")	
+@Transactional(readOnly=true)
 public class CollectionSummaryAction extends ReportFormAction {
 
 	private static final long serialVersionUID = 1L;
@@ -133,7 +136,7 @@ public class CollectionSummaryAction extends ReportFormAction {
 	 * 
 	 * @return index
 	 */
-	@Action(value="/reports/collectionSummary-criteria.action")
+	@Action(value="/reports/collectionSummary-criteria",results = { @Result(name = INDEX)})
 	public String criteria() {
 		// Setup drop down data for department list
 		addRelatedEntity("department", Department.class, "deptName");

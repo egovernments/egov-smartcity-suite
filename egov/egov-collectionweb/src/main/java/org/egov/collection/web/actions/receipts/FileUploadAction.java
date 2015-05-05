@@ -92,6 +92,7 @@ import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
 import org.egov.exceptions.EGOVException;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.beanfactory.ApplicationContextBeanProvider;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
@@ -101,9 +102,11 @@ import org.egov.services.receipt.ReceiptService;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.exception.ConstraintViolationException;
 import org.joda.time.DateTime;
+import org.springframework.transaction.annotation.Transactional;
   
   
 @ParentPackage("egov")  
+@Transactional(readOnly=true)
 public class FileUploadAction extends BaseFormAction{  
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOGGER = Logger.getLogger(FileUploadAction.class);
@@ -132,8 +135,6 @@ public class FileUploadAction extends BaseFormAction{
     
     private CommonsServiceImpl commonsServiceImpl;
     
-    private ReceiptService receiptPayeeDetailsService;
-    
     private ReceiptHeaderService receiptHeaderService;
     
 	private ChallanService challanService;
@@ -141,7 +142,7 @@ public class FileUploadAction extends BaseFormAction{
 	/**
 	 * Workflow service for changing the state of the receipt
 	 */
-	//private WorkflowService<ReceiptHeader> receiptWorkflowService;
+	private WorkflowService<ReceiptHeader> receiptWorkflowService;
     
 	private CollectionCommon collectionCommon;
     
@@ -179,14 +180,11 @@ public class FileUploadAction extends BaseFormAction{
 		this.source = source;
 	}
 
-	/*public void setReceiptWorkflowService(
+	public void setReceiptWorkflowService(
 			WorkflowService<ReceiptHeader> receiptWorkflowService) {
 		this.receiptWorkflowService = receiptWorkflowService;
-	}*/
-
-	public void setReceiptHeaderService(ReceiptHeaderService receiptHeaderService) {
-		this.receiptHeaderService = receiptHeaderService;
 	}
+
     
 	public void setCollectionCommon(CollectionCommon collectionCommon) {
 		this.collectionCommon = collectionCommon;
@@ -194,11 +192,6 @@ public class FileUploadAction extends BaseFormAction{
 
 	public void setChallanService(ChallanService challanService) {
 		this.challanService = challanService;
-	}
-
-	public void setReceiptPayeeDetailsService(
-			ReceiptService receiptPayeeDetailsService) {
-		this.receiptPayeeDetailsService = receiptPayeeDetailsService;
 	}
 
 	public void setCommonsManager(CommonsServiceImpl commonsServiceImpl) {
@@ -256,6 +249,7 @@ public class FileUploadAction extends BaseFormAction{
 	 * 
 	 * @return
 	 */
+	@Transactional
 	public String save() {
 		this.readColumn();
 		setSource("upload");
@@ -483,11 +477,11 @@ public class FileUploadAction extends BaseFormAction{
 		
 		if(inputArray[0]==null || CollectionConstants.BLANK.equals(inputArray[0])){
 			errorMsgs+=getErrorMsg(errorMsgs, "Challan Number is null/Empty", null);
-/*			if(errorMsgs.equals(CollectionConstants.BLANK)){
+			if(errorMsgs.equals(CollectionConstants.BLANK)){
 				errorMsgs+="Challan Date is null/Empty";
 			}
 			else
-				errorMsgs+=", Challan Date is null/Empty";*/
+				errorMsgs+=", Challan Date is null/Empty";
 			LOGGER.debug("Challan Number is null/Empty");
 			valid=false;
 		}
@@ -789,6 +783,7 @@ public class FileUploadAction extends BaseFormAction{
 	 * The receipt is actually created later when there is a request for it to be 
 	 * created against the challan.
 	 */
+	@Transactional
 	private ReceiptHeader populateAndPersistChallanReceipt(ReceiptHeader receiptHeader, String functionName){
 
 		receiptHeader.setService((ServiceDetails) persistenceService.findByNamedQuery(
@@ -872,7 +867,8 @@ public class FileUploadAction extends BaseFormAction{
 		receiptPayee.addReceiptHeader(receiptHeader);
 		
 		receiptPayee=receiptPayeeDetailsService.persistChallan(receiptPayee);*/
-		receiptPayeeDetailsService.getSession().flush();
+		receiptHeaderService.persistChallan(receiptHeader);
+		receiptHeaderService.getSession().flush();
 		LOGGER.info("Persisted Challan and Created Receipt In Pending State For the Challan");
 		
 		return receiptHeader;
@@ -899,14 +895,14 @@ public class FileUploadAction extends BaseFormAction{
 		return receiptDetail;
 	}
 	
-	
+	@Transactional
 	private void createChallanReceipt(ReceiptHeader receiptHeader, String[] input,
 			List<String[]> nextRecords){
 		
-		/*// for post remittance cancellation
+		// for post remittance cancellation
 		if(receiptHeader.getReceiptHeader()!=null){
 			collectionCommon.cancelChallanReceiptOnCreation(receiptHeader);
-		}*/
+		}
 		
 		boolean setInstrument=true;
 		List<InstrumentHeader> receiptInstrList=new ArrayList<InstrumentHeader>();
@@ -950,15 +946,14 @@ public class FileUploadAction extends BaseFormAction{
 			receiptHeader.setTotalAmount(cashOrCardInstrumenttotal);
 		}
 		
-		/*receiptPayeeDetailsService.setReceiptNumber(receiptHeader);
+		//receiptPayeeDetailsService.setReceiptNumber(receiptHeader);
 		
-		receiptPayeeDetailsService.persist(receiptHeader.getReceiptPayeeDetails());
-		*/
+		receiptHeaderService.persist(receiptHeader);
+		
 		//Start work flow for all newly created receipts This might internally
 		//create vouchers also based on configuration
-		List<ReceiptHeader> receiptHeaderList = new ArrayList<ReceiptHeader>();
-		receiptHeaderList.add(receiptHeader);
-		receiptHeaderService.startWorkflow(receiptHeaderList,Boolean.TRUE);
+	
+		receiptHeaderService.startWorkflow(receiptHeader,Boolean.TRUE);
 		LOGGER.info("Workflow started for newly created receipts");
 		
 		// transition the receipt header workflow to Approved state
@@ -984,8 +979,8 @@ public class FileUploadAction extends BaseFormAction{
 		}
 		
 		if (voucherHeaderList != null && receiptInstrList != null) {
-			/*receiptPayeeDetailsService.updateInstrument(voucherHeaderList,
-					receiptInstrList);*/
+			receiptHeaderService.updateInstrument(voucherHeaderList,
+					receiptInstrList);
 		}
 		
 	}
@@ -1215,7 +1210,7 @@ public class FileUploadAction extends BaseFormAction{
 		return inputArray;
 	}
 	
-	
+	@Transactional
 	private ReceiptHeader  initialiseValuesForSaveNew(String[] inputArray){
 		
 		ReceiptHeader header = createReceiptHeader(inputArray);
@@ -1362,7 +1357,7 @@ public class FileUploadAction extends BaseFormAction{
 		return subLedgerlist;
 	}
 	
-	
+	@Transactional
 	public String createVouchers(){
 		errorReceiptList.clear();
 		
@@ -1390,8 +1385,8 @@ public class FileUploadAction extends BaseFormAction{
 						List<InstrumentHeader> receiptInstrList = new ArrayList<InstrumentHeader>();
 						receiptInstrList.addAll(receiptHeader.getReceiptInstrument());
 						if (voucherHeaderList != null && !receiptInstrList.isEmpty()) {
-							/*receiptPayeeDetailsService.updateInstrument(voucherHeaderList,
-									receiptInstrList);*/
+							receiptHeaderService.updateInstrument(voucherHeaderList,
+									receiptInstrList);
 						}
 						
 						

@@ -51,8 +51,10 @@ import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.entity.ReceiptMisc;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.EgwStatus;
+import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.lib.security.terminal.model.Location;
+import org.egov.model.instrument.InstrumentHeader;
 import org.joda.time.DateTime;
 
 /**
@@ -102,11 +104,9 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 		}
 
 		// Populate set of instrument headers that belong to this receipt
-		/*TODO: uncomment after adding egf
-		 * for (InstrumentHeader instrumentHeader : receiptHeader
-				.getReceiptInstrument()) {
+		 for (InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument()) {
 			instrumentDetails.add(new ReceiptInstrumentInfoImpl(instrumentHeader));
-		}*/
+		}
 		String receiptStatus = receiptHeader.getStatus().getCode();
 		
 		if (CollectionConstants.RECEIPT_STATUS_CODE_INSTRUMENT_BOUNCED
@@ -128,7 +128,7 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 		
 	}
 	
-	/*public BillReceiptInfoImpl(ReceiptHeader receiptHeader,EgovCommon egovCommon,ReceiptHeader receiptHeaderRefObj) {
+	public BillReceiptInfoImpl(ReceiptHeader receiptHeader,EgovCommon egovCommon,ReceiptHeader receiptHeaderRefObj) {
 		this.receiptHeader = receiptHeader;
 		this.receiptURL = CollectionConstants.RECEIPT_VIEW_SOURCEPATH+receiptHeader.getId();
 
@@ -147,7 +147,7 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 			challan = new ChallanInfo(receiptHeader,egovCommon,receiptHeaderRefObj);
 			challanDetails.add(challan);
 		}
-	}*/
+	}
 	
 	@Override
 	public String toString() {

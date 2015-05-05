@@ -78,8 +78,10 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.web.actions.BaseFormAction;
 import org.joda.time.DateTime;
+import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")  
+@Transactional(readOnly=true)
 public class MiscellaneousFileUploadAction extends BaseFormAction{ 
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOGGER = Logger.getLogger(MiscellaneousFileUploadAction.class);

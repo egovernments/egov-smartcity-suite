@@ -51,8 +51,10 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.transaction.annotation.Transactional;
 
-@ParentPackage("egov") 
+@ParentPackage("egov")
+@Transactional(readOnly=true)
 public class SearchOnlineReceiptAction extends BaseFormAction {
 
 	private static final long serialVersionUID = 1L;

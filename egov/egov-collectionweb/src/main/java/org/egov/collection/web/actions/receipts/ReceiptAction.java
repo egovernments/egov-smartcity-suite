@@ -58,6 +58,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.AccountPayeeDetail;
 import org.egov.collection.entity.ReceiptDetail;
@@ -99,10 +100,12 @@ import org.egov.model.instrument.InstrumentHeader;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.joda.time.DateTime;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 
 @ParentPackage("egov")
+@Transactional(readOnly=true)
 public class ReceiptAction extends BaseFormAction {
 	private static final String ACCOUNT_NUMBER_LIST = "accountNumberList";
 	private static final Logger LOGGER = Logger.getLogger(ReceiptAction.class);
@@ -566,7 +569,7 @@ public class ReceiptAction extends BaseFormAction {
 		return receiptDetail;
 	}
 
-	@Action(value="/receipts/receipt-newform.action")
+	@Action(value="/receipts/receipt-newform",results = { @Result(name = NEW)})
 	public String newform() {
 		String manualReceiptInfoRequired = collectionsUtil.getAppConfigValue(
 				CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.MANUALRECEIPTINFOREQUIRED);
@@ -589,6 +592,7 @@ public class ReceiptAction extends BaseFormAction {
 	 * @return
 	 */
 	@ValidationErrorPage(value = "new")
+	@Transactional
 	public String save() {
 		LOGGER.info("Receipt creation process is started !!!!!!");
 		ReceiptHeader rhForValidation = null ;
@@ -791,6 +795,7 @@ public class ReceiptAction extends BaseFormAction {
 	 * to be shown on the print screen
 	 * 
 	 */
+	@Transactional
 	private void populateAndPersistReceipts() {
 		List<InstrumentHeader> receiptInstrList = new ArrayList<InstrumentHeader>();
 		int noOfNewlyCreatedReceipts = 0;
@@ -906,6 +911,7 @@ public class ReceiptAction extends BaseFormAction {
 		/*List<ReceiptPayeeDetails> receiptPayeePersistedList = receiptPayeeDetailsService
 				.persist(new HashSet<ReceiptPayeeDetails>(modelPayeeList));
 */
+				receiptHeaderService.persist(receiptHeader);
 				receiptHeaderService.getSession().flush();
 
 		LOGGER.info("Persisted receipts");
@@ -915,6 +921,7 @@ public class ReceiptAction extends BaseFormAction {
 		/*for (ReceiptPayeeDetails payeeDetails : receiptPayeePersistedList) {
 			receiptHeaderService.startWorkflow(payeeDetails.getReceiptHeaders(), this.getReceiptBulkUpload());
 		}*/
+		receiptHeaderService.startWorkflow(receiptHeader, this.getReceiptBulkUpload());
 		receiptHeaderService.getSession().flush();
 		LOGGER.info("Workflow started for newly created receipts");
 
@@ -930,8 +937,6 @@ public class ReceiptAction extends BaseFormAction {
 		List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>();
 		Set<ReceiptVoucher> receiptVouchers = new HashSet<ReceiptVoucher>();
 		//TODO: Code change for ReceiptPayeeDetails accordingly since this class is deleted 
-		/*for (ReceiptPayeeDetails payeeDetails : receiptPayeePersistedList) {
-			for (ReceiptHeader receiptHeader : payeeDetails.getReceiptHeaders()) {
 				// If vouchers are created during work flow step, add them to
 				// the list
 				receiptVouchers = receiptHeader.getReceiptVoucher();
@@ -943,20 +948,14 @@ public class ReceiptAction extends BaseFormAction {
 								+ "]", e);
 					}
 				}
-			}
-		}*/
 		// populate all receipt header ids except the cancelled receipt
 		// (in effect the newly created receipts)
 		selectedReceipts = new Long[noOfNewlyCreatedReceipts];
-		/*for (ReceiptPayeeDetails payeeDetails : receiptPayeePersistedList) {
 			int i = 0;
-			for (ReceiptHeader header : payeeDetails.getReceiptHeaders()) {
-				if (!(header.getId().equals(oldReceiptId))) {
-					selectedReceipts[i] = header.getId();
+				if (!(receiptHeader.getId().equals(oldReceiptId))) {
+					selectedReceipts[i] = receiptHeader.getId();
 					i++;
 				}
-			}
-		}*/
 
 		if (voucherHeaderList != null && receiptInstrList != null) {
 			receiptHeaderService.updateInstrument(voucherHeaderList, receiptInstrList);
@@ -1227,7 +1226,7 @@ public class ReceiptAction extends BaseFormAction {
 	}
 
 	@ValidationErrorPage(value = "error")
-	@Action(value="/receipts/receipt-cancel.action")
+	@Action(value="/receipts/receipt-cancel",results = { @Result(name = CANCEL)})
 	public String cancel() {
 		if (getSelectedReceipts() != null && getSelectedReceipts().length > 0) {
 			receipts = new ReceiptHeader[selectedReceipts.length];
@@ -1245,6 +1244,7 @@ public class ReceiptAction extends BaseFormAction {
 	 * 
 	 * @return
 	 */
+	@Transactional
 	public String saveOnCancel() {
 		String instrumentType = "";
 		boolean isInstrumentDeposited = false;

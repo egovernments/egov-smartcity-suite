@@ -49,7 +49,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccountDetail;
@@ -71,14 +73,10 @@ import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.transaction.annotation.Transactional;
 
-
-
-/**
- * @author manoranjan
- *
- */
 @ParentPackage("egov")
+@Transactional(readOnly=true)
 public class ServiceDetailsAction extends BaseFormAction {
 
 	private static final long serialVersionUID = 1L;
@@ -112,7 +110,7 @@ public class ServiceDetailsAction extends BaseFormAction {
 		return serviceDetails;
 	}
 
-	
+	@Action(value="/service/serviceDetails-newform",results = { @Result(name = NEW)})
 	public String newform(){
 		addDropdownData("serviceCategoryList", serviceCategoryService.findAllByNamedQuery("SERVICE_CATEGORY_ALL"));
 		return NEW;

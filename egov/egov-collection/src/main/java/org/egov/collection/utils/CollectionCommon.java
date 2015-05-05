@@ -81,6 +81,7 @@ import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
 import org.egov.commons.service.CommonsServiceImpl;
 import org.egov.commons.utils.EntityType;
+import org.egov.egf.commons.EgovCommon;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
@@ -93,7 +94,8 @@ import org.egov.infstr.utils.EgovUtils;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.model.instrument.InstrumentHeader;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class CollectionCommon {
 
     private static final Logger LOGGER = Logger.getLogger(CollectionCommon.class);
@@ -104,7 +106,7 @@ public class CollectionCommon {
     @Autowired
     private CommonsServiceImpl commonsServiceImpl;
     private BoundaryDAO boundaryDAO;
-   // private EgovCommon egovCommon;
+   private EgovCommon egovCommon;
     private CollectionsUtil collectionsUtil;
     private FinancialsUtil financialsUtil;
 
@@ -218,14 +220,14 @@ public class CollectionCommon {
     public ReceiptDetail addDebitAccountHeadDetails(BigDecimal debitAmount, ReceiptHeader receiptHeader,
             BigDecimal chequeInstrumenttotal, BigDecimal otherInstrumenttotal, String instrumentType) {
 
-        Map<String, Object> cashChequeInfoMap = null;// = egovCommon.getCashChequeInfoForBoundary();
+        Map<String, Object> cashChequeInfoMap  = egovCommon.getCashChequeInfoForBoundary();
         ReceiptDetail newReceiptDetail = new ReceiptDetail();
         if (chequeInstrumenttotal.toString() != null
                 && !chequeInstrumenttotal.toString().trim().equals(CollectionConstants.ZERO_INT)
                 && !chequeInstrumenttotal.toString().trim().equals(CollectionConstants.ZERO_DOUBLE)) {
 
-            String chequeInHandGLCode = null;/* = cashChequeInfoMap.get(CollectionConstants.MAP_KEY_EGOVCOMMON_CHEQUEINHAND)
-                    .toString();*/
+            String chequeInHandGLCode = cashChequeInfoMap.get(CollectionConstants.MAP_KEY_EGOVCOMMON_CHEQUEINHAND)
+                    .toString();
 
             newReceiptDetail.setAccounthead(commonsServiceImpl.getCChartOfAccountsByGlCode(chequeInHandGLCode));
 
@@ -237,7 +239,7 @@ public class CollectionCommon {
         if (otherInstrumenttotal.toString() != null
                 && !otherInstrumenttotal.toString().trim().equals(CollectionConstants.ZERO_INT)
                 && !otherInstrumenttotal.toString().trim().equals(CollectionConstants.ZERO_DOUBLE)) {
-        	/*if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CASH)) {
+        	if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CASH)) {
                 String cashInHandGLCode  = cashChequeInfoMap.get(CollectionConstants.MAP_KEY_EGOVCOMMON_CASHINHAND)
                         .toString();
                  
@@ -255,7 +257,7 @@ public class CollectionCommon {
                 newReceiptDetail.setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
                         CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
                         CollectionConstants.INSTRUMENTTYPE_ONLINE));
-            }*/
+            }
             newReceiptDetail.setDramount(debitAmount);
             newReceiptDetail.setCramount(BigDecimal.valueOf(0));
             newReceiptDetail.setReceiptHeader(receiptHeader);
@@ -267,6 +269,7 @@ public class CollectionCommon {
     /**
      * Updates the billing system with receipt information
      */
+    @Transactional
     public void updateBillingSystemWithReceiptInfo(ReceiptHeader receiptHeader) {
 
         String serviceCode = null;
@@ -402,7 +405,7 @@ public class CollectionCommon {
         Map reportParams = new HashMap<String, Object>();
         reportParams.put(CollectionConstants.REPORT_PARAM_COLLECTIONS_UTIL, collectionsUtil);
         
-       /* if (receiptType == CollectionConstants.RECEIPT_TYPE_CHALLAN) {
+        if (receiptType == CollectionConstants.RECEIPT_TYPE_CHALLAN) {
             reportParams.put(CollectionConstants.REPORT_PARAM_EGOV_COMMON, egovCommon);
             for (ReceiptHeader receiptHeader : receipts) {
                 ReceiptHeader receipHeaderRefObj = (ReceiptHeader) persistenceService.findByNamedQuery(
@@ -413,7 +416,7 @@ public class CollectionCommon {
             for (ReceiptHeader receiptHeader : receipts) {
                 receiptList.add(new BillReceiptInfoImpl(receiptHeader));
             }
-        }*/
+        }
 
         ReportRequest reportInput = new ReportRequest(templateName, receiptList, reportParams);
 
@@ -447,7 +450,7 @@ public class CollectionCommon {
 
         String templateName = CollectionConstants.CHALLAN_TEMPLATE_NAME;
         Map reportParams = new HashMap<String, Object>();
-        //reportParams.put("EGOV_COMMON", egovCommon);
+        reportParams.put("EGOV_COMMON", egovCommon);
         ReportRequest reportInput = new ReportRequest(templateName, receiptList, reportParams);
 
         // Set the flag so that print dialog box is automatically opened
@@ -457,6 +460,7 @@ public class CollectionCommon {
         return ReportViewerUtil.addReportToSession(reportService.createReport(reportInput), session);
     }
 
+    @Transactional
     public PaymentRequest createPaymentRequest(ServiceDetails paymentServiceDetails, ReceiptHeader receiptHeader) {
 
         PaymentGatewayAdaptor paymentGatewayAdaptor = this.getPaymentGatewayAdaptor(paymentServiceDetails.getCode());
@@ -532,8 +536,8 @@ public class CollectionCommon {
                             BigDecimal.ROUND_UP));
                     rInfo.setCreditAmountDetail(BigDecimal.ZERO);
                     rInfo.setDebitAmountDetail(BigDecimal.ZERO);
-                    EntityType entityType = null;/* = egovCommon.getEntityType(aDetail.getAccountDetailType(), aDetail
-                            .getAccountDetailKey().getDetailkey());*/
+                    EntityType entityType = egovCommon.getEntityType(aDetail.getAccountDetailType(), aDetail
+                            .getAccountDetailKey().getDetailkey());
                     if (entityType != null) {
                         rInfo.setDetailCode(entityType.getCode());
                         rInfo.setDetailKey(entityType.getName());
@@ -566,6 +570,7 @@ public class CollectionCommon {
      *            the <code>ReceiptHeader</code> which contains a reference to
      *            the receipt to be cancelled.
      */
+    @Transactional
     public void cancelChallanReceiptOnCreation(ReceiptHeader receiptHeader) {
         ReceiptHeader receiptHeaderToBeCancelled = receiptHeaderService.findById(receiptHeader.getReceiptHeader()
                 .getId(), false);
@@ -587,6 +592,7 @@ public class CollectionCommon {
      *            the instance of <code>ReceiptHeader</code> whose data is to be
      *            copied
      */
+    @Transactional
     public ReceiptHeader createPendingReceiptFromCancelledChallanReceipt(ReceiptHeader oldReceiptHeader) {
 
         ReceiptHeader newReceiptHeader = new ReceiptHeader(true, oldReceiptHeader.getIsModifiable(), oldReceiptHeader
@@ -658,6 +664,7 @@ public class CollectionCommon {
      *            a boolean value indicating if the instrument should be
      *            cancelled
      */
+    @Transactional
     public void cancelChallanReceipt(ReceiptHeader receiptHeader, boolean cancelInstrument) {
         String instrumentType = "";
         /**
@@ -670,7 +677,7 @@ public class CollectionCommon {
         receiptHeader.setIsReconciled(true); // have to check this for
         // scheduler
 
-        if (cancelInstrument) {/*
+        if (cancelInstrument) {
             for (InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument()) {
 
                 instrumentHeader.setStatusId(commonsServiceImpl.getStatusByModuleAndCode(
@@ -679,7 +686,7 @@ public class CollectionCommon {
 
                 instrumentType = instrumentHeader.getInstrumentType().getType();
             }
-        */}
+        }
 
         for (ReceiptVoucher receiptVoucher : receiptHeader.getReceiptVoucher()) {
             receiptHeaderService.createReversalVoucher(receiptVoucher, instrumentType);

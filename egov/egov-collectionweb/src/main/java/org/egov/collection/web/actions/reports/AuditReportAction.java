@@ -43,16 +43,11 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.web.actions.BaseFormAction;
-import org.egov.web.utils.ServletActionRedirectResult;
-
-/**
- * 
- * @author subhash
- *
- */
+import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
-//@Result(name="auditReport",type=ServletActionRedirectResult.class,value="auditReport",params={"moduleName","COLLECTIONS","namespace","/egi/auditing","method","searchForm","actionName","auditReport","prependServletContext","false"})
+@Result(name="auditReport",type="ServletActionRedirectResult.class",location="auditReport",params={"moduleName","COLLECTIONS","namespace","/egi/auditing","method","searchForm","actionName","auditReport","prependServletContext","false"})
+@Transactional(readOnly=true)
 public class AuditReportAction extends BaseFormAction{
 	private static final long serialVersionUID = 1L;
 	

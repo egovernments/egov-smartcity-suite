@@ -45,6 +45,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
@@ -60,10 +62,11 @@ import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.models.ServiceSubledgerInfo;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.HibernateException;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-
+@Transactional(readOnly=true)
 public class AjaxReceiptCreateAction extends BaseFormAction{
 	private static final long serialVersionUID = 1L;
 	private static final String DETAILTYPEID = "detailtypeid";
@@ -398,6 +401,7 @@ public String getMISdetailsForService() {
 	}
   
 	@SuppressWarnings("unchecked")
+	@Action(value="/receipts/ajaxReceiptCreate-ajaxLoadServiceByCategory",results = { @Result(name = "serviceList")})
 	public String ajaxLoadServiceByCategory(){
 		
 		if(null != parameters.get("serviceCatId") && null != parameters.get("serviceCatId")[0] && 
@@ -412,6 +416,7 @@ public String getMISdetailsForService() {
 		
 	}
 	
+	@Action(value="/receipts/ajaxReceiptCreate-ajaxFinMiscDtlsByService",results = { @Result(name = "result")})
 	public String ajaxFinMiscDtlsByService(){
 		
 		Long serviceId = Long.valueOf(parameters.get("serviceId")[0]);
@@ -439,6 +444,8 @@ public String getMISdetailsForService() {
 		return "result";
 		
 	}
+	
+	@Action(value="/receipts/ajaxReceiptCreate-ajaxFinAccDtlsByService",results = { @Result(name = "serviceAccDtls")})
 	public String ajaxFinAccDtlsByService(){
 		
 		Long serviceId = Long.valueOf(parameters.get("serviceId")[0]);
@@ -459,6 +466,7 @@ public String getMISdetailsForService() {
 		
 	}
 	
+	@Action(value="/receipts/ajaxReceiptCreate-ajaxFinSubledgerByService",results = { @Result(name = "subledger")})
 	public String ajaxFinSubledgerByService(){
 		Long serviceId = Long.valueOf(parameters.get("serviceId")[0]);
 		Integer deptId = Integer.valueOf(parameters.get("deptId")[0]);

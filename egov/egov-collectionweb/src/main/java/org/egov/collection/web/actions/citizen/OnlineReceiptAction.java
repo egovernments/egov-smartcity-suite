@@ -54,6 +54,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.dispatcher.StreamResult;
 import org.apache.struts2.interceptor.ServletRequestAware;
@@ -83,8 +84,11 @@ import org.egov.infstr.models.ServiceDetails;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
+@Namespace("/citizen")
+@Transactional(readOnly = true)
 public class OnlineReceiptAction extends BaseFormAction implements ServletRequestAware{
 
     private static final Logger LOGGER = Logger.getLogger(OnlineReceiptAction.class);
@@ -139,6 +143,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         return "PaytGatewayTest";
     }
 
+    @Transactional
     public String saveNew() {
     	/**
 		 * initialise receipt info,persist receipt, create bill desk payment
@@ -315,6 +320,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
      * The reason for payment failure is displayed back to the user
      * 
      */
+    @Transactional
     private void processFailureMsg() {
 
         EgwStatus receiptStatus = collectionsUtil
@@ -359,6 +365,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
      * PENDING state ( and will be reconciled manually).
      * 
      */
+    @Transactional
     private void processSuccessMsg() {
         errors.clear();
         
@@ -450,6 +457,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
      *            size of the array will be 1.
      * 
      */
+    @Transactional
     private void createSuccessPayment(ReceiptHeader receipt, Date transactionDate, String transactionId,
             BigDecimal transactionAmt, String authStatusCode, String remarks) {
         EgwStatus receiptStatus = collectionsUtil
@@ -495,6 +503,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
      * @return
      */
     @ValidationErrorPage(value = "reconresult")
+    @Transactional
     public String reconcileOnlinePayment() {
 
         HashSet<BillReceiptInfo> billReceipts = new HashSet<BillReceiptInfo>();

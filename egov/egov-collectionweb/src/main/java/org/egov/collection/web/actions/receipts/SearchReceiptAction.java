@@ -54,8 +54,10 @@ import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.web.actions.SearchFormAction;
+import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov") 
+@Transactional(readOnly=true)
 public class SearchReceiptAction extends SearchFormAction {
 
 	private static final long serialVersionUID = 1L;

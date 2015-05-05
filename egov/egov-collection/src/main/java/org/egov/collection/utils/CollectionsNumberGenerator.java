@@ -48,7 +48,8 @@ import org.egov.collection.entity.ReceiptHeader;
 import org.egov.commons.CFinancialYear;
 import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.SequenceNumberGenerator;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class CollectionsNumberGenerator {
 	private SequenceNumberGenerator sequenceGenerator;
 	private ScriptService scriptExecutionService;

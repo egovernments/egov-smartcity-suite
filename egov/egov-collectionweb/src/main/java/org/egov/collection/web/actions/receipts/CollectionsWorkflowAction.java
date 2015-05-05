@@ -48,7 +48,6 @@ import java.util.Map;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.dispatcher.ServletActionRedirectResult;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.service.ReceiptHeaderService;
@@ -56,20 +55,22 @@ import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.lib.security.terminal.model.Location;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Action class for "Approve Collections"
  */
 @ParentPackage("egov")
-/*@Results( {
-		@Result(name = "submissionReportCash", type = ServletActionRedirectResult.class, value = "cashCollectionReport", params = {
+@Results( {
+		@Result(name = "submissionReportCash", type = "ServletActionRedirectResult.class", location = "cashCollectionReport", params = {
 				"actionName", "cashCollectionReport.action",
 				"method", "submissionReport.action",
 				"namespace", "/reports" }),
-		@Result(name = "submissionReportCheque", type = ServletActionRedirectResult.class, value = "chequeCollectionReport", params = {
+		@Result(name = "submissionReportCheque", type = "ServletActionRedirectResult.class", location = "chequeCollectionReport", params = {
 				"actionName", "chequeCollectionReport.action",
 				"method", "submissionReport.action",
-				"namespace", "/reports" }) })*/
+				"namespace", "/reports" }) })
+@Transactional(readOnly=true)
 public class CollectionsWorkflowAction extends BaseFormAction {
 
 	private static final long serialVersionUID = 1L;

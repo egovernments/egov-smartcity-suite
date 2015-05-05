@@ -46,6 +46,7 @@ import java.util.Map;
 
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.admin.master.entity.User;
@@ -56,11 +57,10 @@ import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.reporting.util.ReportUtil;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Action class for the cash collection report
- */
 @ParentPackage("egov")
+@Transactional(readOnly=true)
 public class CashCollectionReportAction extends BaseFormAction {
 
 	private static final long serialVersionUID = 1L;
@@ -270,7 +270,7 @@ public class CashCollectionReportAction extends BaseFormAction {
 	 * 
 	 * @return index
 	 */
-	@Action(value="/reports/cashCollectionReport-criteria.action")
+	@Action(value="/reports/cashCollectionReport-criteria",results = { @Result(name = INDEX)})
 	public String criteria() {
 		return INDEX;
 	}

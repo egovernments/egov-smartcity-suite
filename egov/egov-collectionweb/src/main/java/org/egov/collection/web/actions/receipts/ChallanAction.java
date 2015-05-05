@@ -55,6 +55,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.AccountPayeeDetail;
 import org.egov.collection.entity.Challan;
@@ -90,14 +91,15 @@ import org.egov.infstr.utils.NumberUtil;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Position;
-import org.egov.services.receipt.ReceiptService;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.StaleObjectStateException;
 import org.joda.time.DateTime;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @ParentPackage("egov")
+@Transactional(readOnly=true)
 public class ChallanAction extends BaseFormAction {
 	
 	private static final Logger LOGGER = Logger.getLogger(ChallanAction.class);
@@ -110,7 +112,6 @@ public class ChallanAction extends BaseFormAction {
 	private List<ReceiptDetailInfo> billDetailslist;
 	
 	private ReceiptHeader receiptHeader=new ReceiptHeader();
-	private ReceiptService receiptPayeeDetailsService;
 	private ChallanService challanService;
 	private WorkflowService<Challan> challanWorkflowService;
 	
@@ -212,6 +213,7 @@ public class ChallanAction extends BaseFormAction {
 		addRelatedEntity("challan.service", ServiceDetails.class);
 	}
 	
+	@Override
 	public Object getModel() {
 		if(receiptHeader.getReceiptMisc()==null)
 			receiptHeader.setReceiptMisc(new ReceiptMisc());
@@ -225,7 +227,7 @@ public class ChallanAction extends BaseFormAction {
 	 * This method is invoked when the user clicks on Create Challan from Menu Tree
 	 * @return
 	 */
-	@Action(value="/receipts/challan-newform.action")
+	@Action(value="/receipts/challan-newform",results = { @Result(name = NEW) })
 	public String newform(){
 		//addDropdownData("designationMasterList",collectionsUtil.
 				//getDesignationsAllowedForChallanApproval(collectionsUtil.getLoggedInUser(getSession()),receiptHeader));
@@ -242,6 +244,7 @@ public class ChallanAction extends BaseFormAction {
 	 * @return the string
 	 */
 	@ValidationErrorPage(value = "view")
+	@Transactional
 	public String save(){
 				
 		if(!actionName.equals(CollectionConstants.WF_ACTION_NAME_REJECT_CHALLAN)){
@@ -276,7 +279,8 @@ public class ChallanAction extends BaseFormAction {
 	 * @return the string
 	 */
 	@ValidationErrorPage(value = "createReceipt")
-	@Action(value="/receipts/challan-createReceipt.action")
+	@Action(value="/receipts/challan-createReceipt",results = { @Result(name = CollectionConstants.CREATERECEIPT)})
+	@Transactional
 	public String createReceipt(){
 		if(challanNumber!=null && !"".equals(challanNumber)){
 			receiptHeader=(ReceiptHeader) persistenceService.findByNamedQuery(
@@ -310,6 +314,7 @@ public class ChallanAction extends BaseFormAction {
 	
 	
 	@ValidationErrorPage(value = "new")
+	@Transactional
 	public String saveChallan(){
 		
 		receiptHeader.getReceiptDetails().clear();
@@ -343,6 +348,7 @@ public class ChallanAction extends BaseFormAction {
 	 * 
 	 * @return
 	 */
+	@Action(value="/receipts/challan-viewChallan" ,results = { @Result(name = VIEW) })
 	public String viewChallan(){
 		if(challanId==null){
 			receiptHeader=receiptHeaderService.findById(receiptId, false);
@@ -367,6 +373,7 @@ public class ChallanAction extends BaseFormAction {
 	 * @return
 	 */
 	@ValidationErrorPage(value = "createReceipt")
+	@Transactional
 	public String saveOrupdate(){
 		try {
 			errors.clear();
@@ -414,15 +421,12 @@ public class ChallanAction extends BaseFormAction {
 		if(cashOrCardInstrumenttotal!=null && cashOrCardInstrumenttotal.compareTo(BigDecimal.ZERO)!=0){
 			receiptHeader.setTotalAmount(cashOrCardInstrumenttotal);
 		}
-		//receiptPayeeDetailsService.setReceiptNumber(receiptHeader);
 		
-		//receiptPayeeDetailsService.persist(receiptHeader.getReceiptPayeeDetails());
+		receiptHeaderService.persist(receiptHeader);
 		
 		//Start work flow for all newly created receipts This might internally
 		//create vouchers also based on configuration
-		List<ReceiptHeader> receiptHeaderList = new ArrayList<ReceiptHeader>();
-		receiptHeaderList.add(receiptHeader);
-		receiptHeaderService.startWorkflow(receiptHeaderList,Boolean.FALSE);
+		receiptHeaderService.startWorkflow(receiptHeader,Boolean.FALSE);
 		receiptHeaderService.getSession().flush();
 		LOGGER.info("Workflow started for newly created receipts");
 
@@ -506,6 +510,7 @@ public class ChallanAction extends BaseFormAction {
 	 * 
 	 * @return
 	 */
+	@Transactional
 	public String saveOnCancel() {
 		boolean isInstrumentDeposited = false;
 		setSourcePage(CollectionConstants.CANCELRECEIPT);
@@ -560,9 +565,9 @@ public class ChallanAction extends BaseFormAction {
 				// the receipt is cancelled, voucher is reversed, but instrument is not cancelled
 				collectionCommon.cancelChallanReceipt(receiptHeader,false);
 				
-				/*addActionMessage(getText("challan.expired.message", 
+				addActionMessage(getText("challan.expired.message", 
 						"Please note that a new receipt can not be created as the corresponding challan " + 
-						receiptHeader.getChallan().getChallanNumber() + " has expired"));*/
+						receiptHeader.getChallan().getChallanNumber() + " has expired"));
 			}
 		}
 		//if instrument has not been deposited, cancel the old instrument, reverse the
@@ -582,7 +587,7 @@ public class ChallanAction extends BaseFormAction {
 				ReceiptHeader newReceipt=collectionCommon.createPendingReceiptFromCancelledChallanReceipt(
 						receiptHeader);
 				
-				//receiptPayeeDetailsService.persist(newReceipt.getReceiptPayeeDetails());
+				receiptHeaderService.persist(newReceipt);
 				
 				LOGGER.info(" Created a receipt in PENDING status in lieu of the cancelled receipt ");
 			}
@@ -689,6 +694,7 @@ public class ChallanAction extends BaseFormAction {
 	 * The receipt is actually created later when there is a request for it to be 
 	 * created against the challan.
 	 */
+	@Transactional
 	private void populateAndPersistChallanReceipt(){
 
 		if(voucherNumber!=null && !"".equals(voucherNumber)){
@@ -796,7 +802,7 @@ public class ChallanAction extends BaseFormAction {
 					CollectionConstants.QUERY_SERVICE_BY_ID, 
 					receiptHeader.getChallan().getService().getId()));
 		}
-
+		receiptHeaderService.persistChallan(receiptHeader);
 		/*ReceiptPayeeDetails receiptPayee = receiptHeader.getReceiptPayeeDetails();
 		receiptPayee.addReceiptHeader(receiptHeader);
 		
@@ -1248,11 +1254,6 @@ public class ChallanAction extends BaseFormAction {
 		this.collectionsUtil=collectionsUtil;
 	}
 	
-	public void setReceiptPayeeDetailsService(
-			ReceiptService receiptPayeeDetailsService) {
-		this.receiptPayeeDetailsService = receiptPayeeDetailsService;
-	}
-
 	public ReceiptHeader getReceiptHeader() {
 		return receiptHeader;
 	}

@@ -50,7 +50,8 @@ import org.egov.exceptions.NoSuchObjectException;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.model.EmployeeView;
 import org.egov.web.actions.BaseFormAction;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class AjaxChallanApprovalAction extends BaseFormAction{
 	private static final long serialVersionUID = 1L;
 	private static final String USERLIST = "userList";

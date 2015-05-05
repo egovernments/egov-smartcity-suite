@@ -45,14 +45,16 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.transaction.annotation.Transactional;
 
-//@Result(name=Action.SUCCESS, type=ServletRedirectResult.class, value = "receiptNumberSearch-searchResults")  
+@Result(name="success", type="ServletRedirectResult.class", location = "receiptNumberSearch-searchResults")  
 
 @ParentPackage("egov")  
-
+@Transactional(readOnly=true)
 public class ReceiptNumberSearchAction extends BaseFormAction {
 	private static final long serialVersionUID = 1L;
 	private ReceiptHeaderService receiptHeaderService;   

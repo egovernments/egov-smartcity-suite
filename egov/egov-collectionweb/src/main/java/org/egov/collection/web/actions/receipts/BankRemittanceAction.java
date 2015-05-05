@@ -53,10 +53,12 @@ import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.CVoucherHeader;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.transaction.annotation.Transactional;
   
-@Result(name="success", type="ServletRedirectResult.class", location = "bankRemittance.action")  
+@Result(name="success", type="ServletRedirectResult.class", location = "bankRemittance")  
   
 @ParentPackage("egov")  
+@Transactional(readOnly=true)
 public class BankRemittanceAction extends BaseFormAction{  
 	
 	private static final long serialVersionUID = 1L;
@@ -95,7 +97,7 @@ public class BankRemittanceAction extends BaseFormAction{
 		return NEW;
 	}
 
-	@Action(value="/receipts/bankRemittance-list.action")
+	@Action(value="/receipts/bankRemittance-list", results = { @Result(name = NEW) })
 	public String list() {
 		long startTimeMillis = System.currentTimeMillis();
 		User user=collectionsUtil.getLoggedInUser(getSession());
@@ -136,6 +138,7 @@ public class BankRemittanceAction extends BaseFormAction{
 		addDropdownData("accountNumberList", new ArrayList());
 	}	
 
+	@Transactional
 	public String create(){
 		long startTimeMillis = System.currentTimeMillis();
 		voucherHeaderValues=receiptHeaderService.createBankRemittance(getServiceNameArray(),getTotalCashAmountArray(),getTotalChequeAmountArray(),

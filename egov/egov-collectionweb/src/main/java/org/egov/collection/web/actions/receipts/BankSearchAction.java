@@ -46,17 +46,17 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.dispatcher.ServletRedirectResult;
 import org.egov.commons.Bank;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.Action;
 
-//@Result(name=Action.SUCCESS, type=ServletRedirectResult.class, value = "bankSearch-searchResults")  
+@Result(name=Action.SUCCESS, type="ServletRedirectResult.class", location = "bankSearch-searchResults")  
 
 @ParentPackage("egov")  
-
+@Transactional(readOnly=true)
 public class BankSearchAction extends BaseFormAction {
 	private static final long serialVersionUID = 1L;
 	private PersistenceService<Bank,Integer> bankService;  

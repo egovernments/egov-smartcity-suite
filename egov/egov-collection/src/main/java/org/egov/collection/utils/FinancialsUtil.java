@@ -23,11 +23,13 @@ import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.services.contra.ContraService;
 import org.egov.services.instrument.InstrumentService;
 import org.hibernate.SQLQuery;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Utility class for interfacing with financials. This class should be used for
  * calling any financials APIs from erp collections.
  */
+@Transactional(readOnly=true)
 public class FinancialsUtil {
 	private InstrumentService instrumentService;
 	private ContraService contraService;
@@ -61,6 +63,7 @@ public class FinancialsUtil {
 	 * @param isVoucherApproved
 	 * @return
 	 */
+	@Transactional
 	public CVoucherHeader createVoucher(Map<String, Object> headerdetails,
 			List<HashMap<String, Object>> accountcodedetails, List<HashMap<String, Object>> subledgerdetails,
 			Boolean receiptBulkUpload, Boolean isVoucherApproved) {
@@ -94,6 +97,7 @@ public class FinancialsUtil {
 	 * @param subledgerdetails
 	 * @return CVoucherHeader
 	 */
+	@Transactional
 	public CVoucherHeader createPreApprovalVoucher(Map<String, Object> headerdetails,
 			List<HashMap<String, Object>> accountcodedetails, List<HashMap<String, Object>> subledgerdetails)
 			throws EGOVRuntimeException {
@@ -110,6 +114,7 @@ public class FinancialsUtil {
 		return voucherHeaders;
 	}
 
+	@Transactional
 	public CVoucherHeader createApprovedVoucher(Map<String, Object> headerdetails,
 			List<HashMap<String, Object>> accountcodedetails, List<HashMap<String, Object>> subledgerdetails) {
 
@@ -156,6 +161,7 @@ public class FinancialsUtil {
 	 * @param paramList
 	 * @return
 	 */
+	@Transactional
 	public List<InstrumentVoucher> updateInstrument(List<Map<String, Object>> paramList) {
 		List<InstrumentVoucher> instrumentVoucherList = instrumentService.updateInstrumentVoucherReference(paramList);
 		return instrumentVoucherList;
@@ -181,7 +187,7 @@ public class FinancialsUtil {
 	 * @param toBankaccountGlcode
 	 * @param instrumentHeader
 	 */
-
+	@Transactional
 	public void updateCheque_DD_Card_Deposit(Long payInId, String toBankaccountGlcode, InstrumentHeader instrumentHeader,Map<String, Object> instrumentMap) {
 		contraService.updateCheque_DD_Card_Deposit(payInId, toBankaccountGlcode, instrumentHeader,instrumentMap);
 	}
@@ -194,7 +200,7 @@ public class FinancialsUtil {
 	 * @param toBankaccountGlcode
 	 * @param instrumentHeader
 	 */
-
+	@Transactional
 	public void updateCheque_DD_Card_Deposit_Receipt(Long receiptId, String toBankaccountGlcode,
 			InstrumentHeader instrumentHeader,Map<String, Object> instrumentMap) {
 		contraService.updateCheque_DD_Card_Deposit_Receipt(receiptId, toBankaccountGlcode, instrumentHeader,instrumentMap);
@@ -207,6 +213,7 @@ public class FinancialsUtil {
 	 * @param toBankaccountGlcode
 	 * @param instrumentHeader
 	 */
+	@Transactional
 	public void updateCashDeposit(Long payInId, String toBankaccountGlcode, InstrumentHeader instrumentHeader,Map<String, Object> instrumentMap) {
 		contraService.updateCashDeposit(payInId, toBankaccountGlcode, instrumentHeader,instrumentMap);
 	}

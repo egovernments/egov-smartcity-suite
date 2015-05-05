@@ -43,10 +43,12 @@ import org.egov.pims.service.SearchPositionService;
 import org.egov.pims.utils.EisManagersUtill;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Utility methods for ERP collections module
  */
+@Transactional(readOnly=true)
 public class CollectionsUtil {
 	/**
 	 * Map to cache status codes and corresponding status objects

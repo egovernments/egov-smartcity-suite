@@ -54,8 +54,10 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov") 
+@Transactional(readOnly=true)
 public class SearchChallanAction extends BaseFormAction {
 	private static final long serialVersionUID = 1L;
 	private Integer serviceId=-1;

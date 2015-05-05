@@ -41,19 +41,20 @@ package org.egov.collection.web.actions.service;
 
 import java.util.Collection;
 
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.transaction.annotation.Transactional;
 
-//@Result(name = ServiceCategoryAction.SUCCESS, type = ServletRedirectResult.class, value = "serviceCategory.action")
+@Result(name = ServiceCategoryAction.SUCCESS, type = "ServletRedirectResult.class", location = "serviceCategory.action")
 @ParentPackage("egov")
+@Transactional(readOnly=true)
 public class ServiceCategoryAction extends BaseFormAction {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private PersistenceService<ServiceCategory, Long> serviceCategoryService;
 	private Collection<ServiceCategory> serviceCategoryList = null;
@@ -64,6 +65,7 @@ public class ServiceCategoryAction extends BaseFormAction {
 		return list();
 	}
 
+	@Action(value="/service/serviceCategory-newform", results = { @Result(name = NEW)})
 	public String newform() {
 		return NEW;
 	}
@@ -74,6 +76,7 @@ public class ServiceCategoryAction extends BaseFormAction {
 		return INDEX;
 	}
 
+	@Action(value="/service/serviceCategory-edit", results = { @Result(name = EDIT)})
 	public String edit() {
 		serviceCategoryInstance = serviceCategoryService.findById(
 				serviceCategoryInstance.getId(), false);

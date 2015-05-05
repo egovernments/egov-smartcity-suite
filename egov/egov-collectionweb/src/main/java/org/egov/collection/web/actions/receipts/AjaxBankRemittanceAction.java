@@ -57,7 +57,9 @@ import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.model.EmployeeView;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly=true)
 public class AjaxBankRemittanceAction extends BaseFormAction{
 	private static final long serialVersionUID = 1L;
 	private static final String BANKBRANCHLIST = "bankBranchList";

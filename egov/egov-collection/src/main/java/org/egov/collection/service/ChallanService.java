@@ -49,10 +49,12 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Provides services related to receipt header
  */
+@Transactional(readOnly=true)
 public class ChallanService extends PersistenceService<Challan, Long> {
 	
 	private static final Logger LOGGER = Logger.getLogger(ChallanService.class);
