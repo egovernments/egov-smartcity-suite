@@ -53,6 +53,7 @@ import org.egov.bnd.services.masters.EstablishmentService;
 import org.egov.bnd.utils.BndConstants;
 import org.egov.bnd.web.actions.common.BndCommonAction;
 import org.egov.infra.admin.master.entity.Address;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -71,6 +72,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 )
 @Namespace("/masters")
 @ParentPackage("egov")
+@Transactional(readOnly = true)
 public class EstablishmentAction extends BndCommonAction {
 
     private static final long serialVersionUID = -4986288277010359718L;
@@ -115,6 +117,7 @@ public class EstablishmentAction extends BndCommonAction {
     }
 
     @Override
+    @Transactional
     @Action(value = "/establishment-create", results = { @Result(name = NEW) })
     public String create() {
         buildEstablishment();
@@ -143,6 +146,7 @@ public class EstablishmentAction extends BndCommonAction {
                 setIsAuthValue(String.valueOf(0));
     }
 
+    @Transactional
     private void buildPrepareNewFormCreate() {
         bndCommonService.getAppconfigActualValue(BndConstants.BNDMODULE, BndConstants.STATENAME);
         // TODO egifix
@@ -167,6 +171,7 @@ public class EstablishmentAction extends BndCommonAction {
     }
 
     @Override
+    @Transactional
     public void validate() {
         if (establishment != null && establishment.getName() != null && !"".equals(establishment.getName())) {
             final boolean isNameAlreadyExist = establishmentService.checkUniqueHospitalName(establishment.getName());

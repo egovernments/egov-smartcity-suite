@@ -92,7 +92,6 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 import com.opensymphony.xwork2.validator.annotations.ValidatorType;
 
 @Validations(
-
         requiredStrings = {
                 @RequiredStringValidator(fieldName = "placeTypeTemp", type = ValidatorType.FIELD, message = "Required", key = ""),
                 @RequiredStringValidator(fieldName = "citizen.firstName", type = ValidatorType.FIELD, message = "Required", key = ""),
@@ -203,8 +202,8 @@ public class DeathRegistrationAction extends RegistrationAction {
         LOGGER.debug("Completed buildHospitalDiseaseList method");
     }
 
-    @SkipValidation
     @Override
+    @SkipValidation
     @Action(value = "/deathRegistration-beforeEdit", results = { @Result(name = NEW) })
     public String beforeEdit() {
         if (mode != null)
@@ -216,8 +215,8 @@ public class DeathRegistrationAction extends RegistrationAction {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     @Transactional
+    @SuppressWarnings("unchecked")
     @Action(value = "/deathRegistration-prepareEdit", results = { @Result(name = NEW) })
     public void prepareEdit() {
         LOGGER.debug("Started prepareEdit method");
@@ -580,10 +579,8 @@ public class DeathRegistrationAction extends RegistrationAction {
     }
 
     private void buildCitizenRelation() {
-
         deathRegistration.getCitizen().getRelations().clear();
         deathRegistration.getCitizen().getRelations().addAll(getRelationshipdetail());
-
     }
 
     private List<CitizenRelation> getRelationshipdetail() {
@@ -635,7 +632,6 @@ public class DeathRegistrationAction extends RegistrationAction {
     }
 
     private void buildCitizenRelationforModify() {
-
         LOGGER.debug("Started buildCitizenRelationforModify method");
         final List<CitizenRelation> newRelations = new ArrayList<CitizenRelation>();
         Boolean informantFlagLoc = Boolean.TRUE;
@@ -781,6 +777,7 @@ public class DeathRegistrationAction extends RegistrationAction {
         LOGGER.debug("Completed buildDeathRegistrationForViewModify method");
     }
 
+    @Transactional
     public void getRelativeDetail(final DeathRegistration deathRegistration) {
 
         LOGGER.debug("Started getRelativeDetail method");
@@ -822,6 +819,7 @@ public class DeathRegistrationAction extends RegistrationAction {
     }
 
     @Override
+    @Transactional
     public String getAdditionalRule() {
         final Long userId = deathRegistration.getCreatedBy() == null ? Long.valueOf(EGOVThreadLocals.getUserId())
                 : deathRegistration.getCreatedBy().getId();
@@ -832,6 +830,7 @@ public class DeathRegistrationAction extends RegistrationAction {
     }
 
     @Override
+    @Transactional
     public String getNextAction() {
         LOGGER.debug("Completed buildHospitalDiseaseList method");
         WorkFlowMatrix wfMatrix = null;

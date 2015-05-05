@@ -59,6 +59,7 @@ import org.egov.bnd.web.actions.common.BndCommonAction;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -71,6 +72,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 
         )
 @Namespace("/masters")
+@Transactional(readOnly = true)
 public class RegistrarAction extends BndCommonAction {
 
     private static final String STRUTS_RESULT_EDIT = "edit";
@@ -116,6 +118,7 @@ public class RegistrarAction extends BndCommonAction {
 
     }
 
+    @Transactional
     private void buildRegistrar() {
         registrar.setValid(Boolean.TRUE);
         registrar.setStartDate(new Date());
@@ -133,6 +136,7 @@ public class RegistrarAction extends BndCommonAction {
         buildPrepareNewFormCreate();
     }
 
+    @Transactional
     private void buildPrepareNewFormCreate() {
         final List<RegistrationUnit> registrationUnitList = bndCommonService.getRegistrationUnit();
         addDropdownData("registrationUnitList", registrationUnitList);
@@ -144,6 +148,7 @@ public class RegistrarAction extends BndCommonAction {
     }
 
     @Override
+    @Transactional
     @Action(value = "/registrar-create", results = { @Result(name = NEW) })
     public String create() {
         buildRegistrar();
@@ -160,6 +165,7 @@ public class RegistrarAction extends BndCommonAction {
         this.roleList = roleList;
     }
 
+    @Transactional
     private void buildEditRegistrar() {
         final List<RegistrationUnit> registrationUnitList = bndCommonService.getRegistrationUnit();
         addDropdownData("registrationUnitList", registrationUnitList);
@@ -185,6 +191,7 @@ public class RegistrarAction extends BndCommonAction {
     }
 
     @Override
+    @Transactional
     @Action(value = "/registrar-edit", results = { @Result(name = STRUTS_RESULT_EDIT) })
     public String edit() {
 

@@ -24,16 +24,16 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
@@ -42,6 +42,8 @@ package org.egov.bnd.web.actions.common;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -69,6 +71,7 @@ import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.pims.commons.Position;
 import org.egov.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This is a common action class defined for bnd module. It supports for
@@ -78,9 +81,11 @@ import org.egov.web.annotation.ValidationErrorPage;
  * @author pritiranjan
  */
 
-@ParentPackage("egov")
 @Result(name = BndCommonAction.WORKFLOWERROR, location = "bndCommon", type = "redirectAction", params = { "namespace",
         "/common", "method", BndCommonAction.WORKFLOWERROR })
+@Namespace("/common")
+@ParentPackage("egov")
+@Transactional(readOnly = true)
 public class BndCommonAction extends GenericWorkFlowAction {
 
     private static final long serialVersionUID = -5225237259269667373L;
@@ -111,6 +116,7 @@ public class BndCommonAction extends GenericWorkFlowAction {
         return null;
     }
 
+    @Transactional
     public String getRoleNameByLoginUserId() {
         if (EGOVThreadLocals.getUserId() != null) {
             final List<String> roleList = bndCommonService.getRoleNamesByPassingUserId(Long.valueOf(EGOVThreadLocals
@@ -181,6 +187,8 @@ public class BndCommonAction extends GenericWorkFlowAction {
         LOGGER.debug("To Prepare a create method");
     }
 
+    @Transactional
+    @Action(value = "bndCommon-create", results = {@Result(name = NEW)} )
     public String create() {
         saveOrUpdate();
         mode = VIEW;
@@ -192,12 +200,15 @@ public class BndCommonAction extends GenericWorkFlowAction {
     }
 
     @SkipValidation
+    @Action(value = "bndCommon-view", results = {@Result(name = NEW)} )
     public String view() {
         mode = VIEW;
         return NEW;
     }
 
+    @Transactional
     @ValidationErrorPage(NEW)
+    @Action(value = "bndCommon-edit", results = {@Result(name = NEW)} )
     public String edit() {
         saveOrUpdate();
         mode = VIEW;
@@ -213,6 +224,7 @@ public class BndCommonAction extends GenericWorkFlowAction {
     }
 
     @SkipValidation
+    @Action(value = "bndCommon-newform", results = {@Result(name = NEW)} )
     public String newform() {
         return NEW;
     }
@@ -222,14 +234,16 @@ public class BndCommonAction extends GenericWorkFlowAction {
     }
 
     @SkipValidation
+    @Action(value = "bndCommon-edit", results = {@Result(name = NEW)} )
     public String beforeEdit() {
         mode = EDIT;
         return NEW;
     }
 
     @SkipValidation
+    @Transactional
+    @Action(value = "bndCommon-inbox", results = {@Result(name = NEW)} )
     public String inbox() {
-
         if (!validateInboxItemForUser(getModel(), EGOVThreadLocals.getUserId()))
             return WORKFLOWERROR;
         mode = bndCommonService.isCreatedByLoggedInUser(getModel()) ? MODIFY : NOTMODIFY;
@@ -261,6 +275,7 @@ public class BndCommonAction extends GenericWorkFlowAction {
      * @return boolean value.
      **/
 
+    @Transactional
     public Boolean validateInboxItemForUser(final StateAware wfObj, final Long userId) {
         Boolean validateObjectStatus = Boolean.FALSE;
         if (userId != null && wfObj.getCurrentState() != null && !wfObj.getCurrentState().isEnded()) {
@@ -290,5 +305,4 @@ public class BndCommonAction extends GenericWorkFlowAction {
     public void setRegKeyService(final RegKeyService regKeyService) {
         this.regKeyService = regKeyService;
     }
-
 }

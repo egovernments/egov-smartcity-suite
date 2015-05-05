@@ -49,6 +49,7 @@ import org.egov.bnd.services.common.BndCommonService;
 import org.egov.bnd.services.masters.AdoptionInstituteService;
 import org.egov.bnd.utils.BndConstants;
 import org.egov.bnd.web.actions.common.BndCommonAction;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -58,6 +59,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @RequiredFieldValidator(fieldName = "institutionName", message = "", key = BndConstants.REQUIRED) })
 @Namespace("/masters")
 @ParentPackage("egov")
+@Transactional(readOnly = true)
 public class AdoptionInstituteAction extends BndCommonAction {
 
     private static final long serialVersionUID = 9100077427657947811L;
@@ -114,6 +116,7 @@ public class AdoptionInstituteAction extends BndCommonAction {
     }
 
     @Override
+    @Transactional
     @Action(value = "/adoptionInstitute-create", results = { @Result(name = NEW) })
     public String create() {
         adoptionInstituteService.save(adoptionInstitute);
@@ -127,6 +130,7 @@ public class AdoptionInstituteAction extends BndCommonAction {
     }
 
     @Override
+    @Transactional
     public void validate() {
         if (adoptionInstitute.getInstitutionCode() != null && !"".equals(adoptionInstitute.getInstitutionCode())) {
             final boolean isCodeAlreadyExist = adoptionInstituteService

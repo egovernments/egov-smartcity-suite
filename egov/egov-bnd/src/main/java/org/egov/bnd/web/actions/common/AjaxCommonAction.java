@@ -71,10 +71,12 @@ import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.transaction.annotation.Transactional;
 
 @Results({ @Result(name = AjaxCommonAction.AJAX_RESULT, type = "stream", location = "returnStream", params = {
         "contentType", "text/plain" }) })
-@SuppressWarnings({ "serial", "unchecked" })
+@SuppressWarnings("unchecked" )
+@Transactional(readOnly = true)
 public class AjaxCommonAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1129396596379121136L;
@@ -271,11 +273,13 @@ public class AjaxCommonAction extends BaseFormAction {
      * bndCommonService.getTalukByDistrictId(districtId); return "talukNames"; }
      */
 
+    @Transactional
     public String getCityNameByTaluk() {
         cityList = bndCommonService.getCityByTalukId(talukId);
         return "cityNames";
     }
 
+    @Transactional
     public String getRoleNamesByUserID() {
         final List<String> appConfigBnDRoleList = bndCommonService.getAppconfigActualValue(BndConstants.BNDMODULE,
                 BndConstants.BND_ROLE);
@@ -312,6 +316,7 @@ public class AjaxCommonAction extends BaseFormAction {
         return null;
     }
 
+    @Transactional
     public String populateDefaultAddress() {
         final Address address = bndCommonService.getDefaultAddress(addressType);
         populateAddressString(address);
@@ -324,6 +329,7 @@ public class AjaxCommonAction extends BaseFormAction {
         return address;
     }
 
+    @Transactional
     public String populateAddressByEstablishmentJson() {
 
         final Establishment establishment = bndCommonService.getEstablishmentById(establishmentId);
@@ -338,6 +344,7 @@ public class AjaxCommonAction extends BaseFormAction {
         return "establishmentAddress";
     }
 
+    @Transactional
     public String populateAddressByEstablishment() {
 
         final Establishment establishment = bndCommonService.getEstablishmentById(establishmentId);
@@ -418,6 +425,7 @@ public class AjaxCommonAction extends BaseFormAction {
         return REGUNITDESCCHECK;
     }
 
+    @Transactional
     public Boolean getRegUnitDescUniqueCheck() {
         return registrationUnitService.checkUniqueRegUnitDesc(regUnitDesc);
     }
@@ -427,6 +435,7 @@ public class AjaxCommonAction extends BaseFormAction {
         return REGUNITCONSTCHECK;
     }
 
+    @Transactional
     public Boolean getRegUnitConstUniqueCheck() {
         return registrationUnitService.checkUniqueRegUnitConst(regUnitConst);
     }
@@ -440,18 +449,22 @@ public class AjaxCommonAction extends BaseFormAction {
         return USERIDCHECK;
     }
 
+    @Transactional
     public Boolean getAdoptionInstituteCodeUniqueCheck() {
         return adoptionInstituteService.checkUniqueAdoptionInstituteCode(institutionCode);
     }
 
+    @Transactional
     public Boolean getHospitalNameUniqueCheck() {
         return establishmentService.checkUniqueHospitalName(name);
     }
 
+    @Transactional
     public Boolean getAdoptionInstituteNameUniqueCheck() {
         return adoptionInstituteService.checkUniqueAdoptionInstituteName(institutionName);
     }
 
+    @Transactional
     public Boolean getUserIdUniqueCheck() {
         return registrarService.checkUniqueUserId(userId);
     }
@@ -460,6 +473,7 @@ public class AjaxCommonAction extends BaseFormAction {
         return DEATHREGNOCHECK;
     }
 
+    @Transactional
     public String populateRegistrarDetails() {
 
         if (userId != null && !"".equals(userId)) {
@@ -491,6 +505,7 @@ public class AjaxCommonAction extends BaseFormAction {
         return regNoUniqueCheck;
     }
 
+    @Transactional
     public String populateBirthRegNumRange() {
         regNoUniqueCheck = birthRegistrationService.checkUniqueRegistrationNumber(regUnit, birthRegid, regNo,
                 birthDate, BndConstants.BIRTH);
@@ -508,6 +523,7 @@ public class AjaxCommonAction extends BaseFormAction {
         return REGNUMRANGE;
     }
 
+    @Transactional
     public String populateStillBirthNumRange() {
         regNoUniqueCheck = birthRegistrationService.checkUniqueRegistrationNumber(regUnit, birthRegid, regNo,
                 birthDate, BndConstants.STILLBIRTH);
@@ -525,10 +541,12 @@ public class AjaxCommonAction extends BaseFormAction {
         return REGNUMRANGE;
     }
 
+    @Transactional
     public Boolean getDeathRegNoUniqueCheck() {
         return deathRegistrationService.checkUniqueDeathRegistrationNumber(regUnit, deathRegid, regNo, deathDate);
     }
 
+    @Transactional
     public String populateDeathRegNumRange() {
         regNoUniqueCheck = deathRegistrationService.checkUniqueDeathRegistrationNumber(regUnit, deathRegid, regNo,
                 deathDate);
@@ -547,6 +565,7 @@ public class AjaxCommonAction extends BaseFormAction {
         return REGNUMRANGE;
     }
 
+    @Transactional
     public String ajaxLoadActions() {
         String message = "noAuthority";
         Registration reg = null;
@@ -607,11 +626,13 @@ public class AjaxCommonAction extends BaseFormAction {
         this.regKeyService = regKeyService;
     }
 
+    @Transactional
     public String getHospitalNameByType() {
         hospitalList = bndCommonService.getHospitalByTypeAndUnit(hospitalType, regUnit);
         return "hospitalNames";
     }
 
+    @Transactional
     public String getHospitalNameByRole() {
         hospitalList = bndCommonService.getHospitalByRoleAndUnit(role, regUnit);
         return "hospitalNames";
@@ -634,6 +655,7 @@ public class AjaxCommonAction extends BaseFormAction {
         this.birthRegistrationService = birthRegistrationService;
     }
 
+    @Transactional
     public String getDeathcauseByParent() {
         diseaseList = bndCommonService.getCauseofDeathbyParentId(parentDeathCauseId);
         return "deathCause";
@@ -716,6 +738,7 @@ public class AjaxCommonAction extends BaseFormAction {
 
     }
 
+    @Transactional
     public Boolean getValidateReceiptNumber() {
         return paymentReportService.validateReceiptNumber(id, receiptNum);
 

@@ -60,13 +60,14 @@ import org.egov.bnd.web.actions.common.BndCommonAction;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 import com.opensymphony.xwork2.validator.annotations.ValidatorType;
 
-@ParentPackage("egov")
+
 @Validations(
 
         requiredStrings = {
@@ -84,9 +85,13 @@ import com.opensymphony.xwork2.validator.annotations.ValidatorType;
 
         })
 @Namespace("/registration")
+@ParentPackage("egov")
+@Transactional(readOnly = true)
 public class NonAvailabilityRegistrationAction extends BndCommonAction {
 
     private static final long serialVersionUID = 429651100769629974L;
+    private static final String AJAX_RESULT_VIEWCOLLECTTAX = "viewCollectTax";
+    
     private NonAvailability nonAvailableReg = new NonAvailability();
     private static final Logger LOGGER = Logger.getLogger(NonAvailabilityRegistrationAction.class);
     private Integer birtDeathFlag;
@@ -147,6 +152,7 @@ public class NonAvailabilityRegistrationAction extends BndCommonAction {
 
     @Override
     @SkipValidation
+    @Transactional
     @Action(value = "/nonAvailabilityRegistration-newform", results = { @Result(name = NEW) })
     public String newform() {
         final Registrar registrar = bndCommonService.getRegistrarByLoggedInUser();
@@ -182,6 +188,8 @@ public class NonAvailabilityRegistrationAction extends BndCommonAction {
     }
 
     @Override
+    @Transactional
+    @Action(value = "nonAvailability-create", results = {@Result(name = AJAX_RESULT_VIEWCOLLECTTAX)} )
     public String create() {
         saveOrUpdate();
         // FeeCollection feeCollection=saveFeeCollectionObjectAndGenerateBill();
@@ -192,10 +200,11 @@ public class NonAvailabilityRegistrationAction extends BndCommonAction {
         // .getBillXML(bndFeeBillable));
 
         mode = VIEW;
-        return "viewCollectTax";
+        return AJAX_RESULT_VIEWCOLLECTTAX;
     }
 
     @Override
+    @Transactional
     protected void saveOrUpdate() {
 
         LOGGER.debug("Started saveOrUpdate method");
@@ -284,6 +293,7 @@ public class NonAvailabilityRegistrationAction extends BndCommonAction {
     }
 
     @Override
+    @Transactional
     public void prepareBeforeEdit() {
         LOGGER.debug("Started prepareBeforeEdit method");
         nonAvailableReg = nonAvailableRegService.getNonAvailableRegById(idTemp);

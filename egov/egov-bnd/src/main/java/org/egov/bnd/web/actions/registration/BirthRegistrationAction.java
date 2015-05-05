@@ -80,6 +80,7 @@ import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.EmailValidator;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
@@ -117,6 +118,7 @@ import com.opensymphony.xwork2.validator.annotations.ValidatorType;
         @EmailValidator(fieldName = "father.emailAddress", key = BndConstants.INVALID, message = "", type = ValidatorType.FIELD) })
 @Namespace("/registration")
 @ParentPackage("egov")
+@Transactional
 public class BirthRegistrationAction extends RegistrationAction {
 
     private static final long serialVersionUID = 849449050374228871L;
@@ -198,6 +200,7 @@ public class BirthRegistrationAction extends RegistrationAction {
         buildPrepareNewForm();
     }
 
+    @Transactional
     private void buildPrepareNewForm() {
         birthRegistration.setRegistrarId(bndCommonService.getRegistrarByLoggedInUser());
         if (birthRegistration.getRegistrarId() != null)
@@ -206,6 +209,7 @@ public class BirthRegistrationAction extends RegistrationAction {
 
     @Override
     @SkipValidation
+    @Transactional
     @Action(value = "/birthRegistration-newform", results = { @Result(name = NEW) })
     public String newform() {
         LOGGER.info("New Birth Registration Online form");
@@ -216,6 +220,7 @@ public class BirthRegistrationAction extends RegistrationAction {
     }
 
     @SkipValidation
+    @Transactional
     @Action(value = "/birthRegistration-newOfflineForm", results = { @Result(name = NEW) })
     public String newOfflineForm() {
         LOGGER.debug("New Birth Registration Offline form");
@@ -231,6 +236,7 @@ public class BirthRegistrationAction extends RegistrationAction {
     }
 
     @Override
+    @Transactional
     @Action(value = "/birthRegistration-create", results = { @Result(name = NEW) })
     public String create() {
         if (workFlowType != null && !"".equals(workFlowType) && BndConstants.SCRIPT_SAVE.equals(workFlowType))
@@ -248,6 +254,7 @@ public class BirthRegistrationAction extends RegistrationAction {
      */
 
     @Override
+    @Transactional
     protected void saveOrUpdate() {
         birthRegistrationService.buildAdoptionDetial(birthRegistration);
         buildRegistration();
@@ -404,8 +411,9 @@ public class BirthRegistrationAction extends RegistrationAction {
      * This method is to prepare edit method
      */
 
-    @SuppressWarnings("unchecked")
     @Override
+    @Transactional
+    @SuppressWarnings("unchecked")
     public void prepareEdit() {
         birthRegistration = birthRegistrationService.getBirthRegistrationById(idTemp);
         setUpRegistrationDetailsForValidation(birthRegistration);
@@ -424,8 +432,9 @@ public class BirthRegistrationAction extends RegistrationAction {
 
     }
 
-    @SkipValidation
     @Override
+    @SkipValidation
+    @Transactional
     @Action(value = "/birthRegistration-beforeEdit", results = { @Result(name = NEW) })
     public String beforeEdit() {
         if (mode != null) {
@@ -452,6 +461,7 @@ public class BirthRegistrationAction extends RegistrationAction {
      */
 
     @Override
+    @Transactional
     @ValidationErrorPage(NEW)
     @Action(value = "/birthRegistration-edit", results = { @Result(name = NEW) })
     public String edit() {
@@ -548,6 +558,7 @@ public class BirthRegistrationAction extends RegistrationAction {
      */
 
     @Override
+    @Transactional
     public String getAdditionalRule() {
         final Long userId = birthRegistration.getCreatedBy() == null ? Long.valueOf(EGOVThreadLocals.getUserId())
                 : birthRegistration.getCreatedBy().getId();

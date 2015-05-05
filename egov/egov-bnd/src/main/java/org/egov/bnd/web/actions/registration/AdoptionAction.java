@@ -49,6 +49,7 @@ import org.egov.bnd.model.BirthRegistration;
 import org.egov.bnd.utils.BndConstants;
 import org.egov.infra.admin.master.entity.enums.Gender;
 import org.egov.infstr.utils.DateUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.EmailValidator;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
@@ -65,6 +66,7 @@ import com.opensymphony.xwork2.validator.annotations.ValidatorType;
         @EmailValidator(fieldName = "adoptionDetail.adopteeMother.emailAddress", key = BndConstants.INVALID, message = "", type = ValidatorType.FIELD) })
 @Namespace("/registration")
 @ParentPackage("egov")
+@Transactional(readOnly = true)
 public class AdoptionAction extends BirthRegistrationAction {
 
     private static final long serialVersionUID = -7482182954767992184L;
@@ -90,6 +92,7 @@ public class AdoptionAction extends BirthRegistrationAction {
     }
 
     @Override
+    @Transactional
     public void prepareCreate() {
         LOGGER.debug("Start prepare create method");
         birthRegistrationClone = birthRegistrationService.getBirthRegistrationById(getIdTemp());
@@ -107,6 +110,7 @@ public class AdoptionAction extends BirthRegistrationAction {
     }
 
     @Override
+    @Transactional
     @Action(value = "/adoption-create", results = { @Result(name = NEW) })
     public String create() {
         LOGGER.debug("Start create method");

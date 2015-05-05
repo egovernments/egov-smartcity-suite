@@ -56,6 +56,8 @@ import org.egov.infra.admin.master.entity.Address;
 
 
 
+import org.springframework.transaction.annotation.Transactional;
+
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
@@ -73,6 +75,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 )
 @Namespace("/masters")
 @ParentPackage("egov")
+@Transactional(readOnly = true)
 public class RegistrationUnitAction extends BndCommonAction {
 
     private static final long serialVersionUID = -1258956866879658003L;
@@ -126,6 +129,7 @@ public class RegistrationUnitAction extends BndCommonAction {
     }
 
     @Override
+    @Transactional
     @Action(value = "/registrationUnit-create", results = { @Result(name = NEW) })
     public String create() {
         buildRegistrationUnit();
@@ -159,6 +163,7 @@ public class RegistrationUnitAction extends BndCommonAction {
     }
 
     @Override
+    @Transactional
     public void validate() {
         if (registrationUnit.getRegUnitDesc() != null && !"".equals(registrationUnit.getRegUnitDesc())) {
             final boolean isDescAlreadyExist = registrationUnitService.checkUniqueRegUnitDesc(registrationUnit
