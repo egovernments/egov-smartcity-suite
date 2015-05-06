@@ -61,7 +61,7 @@ import com.opensymphony.xwork2.validator.annotations.ValidatorType;
         @RequiredStringValidator(fieldName = "adoptionDetail.adopteeFather.firstName", message = "", key = BndConstants.REQUIRED),
         @RequiredStringValidator(fieldName = "adoptionDetail.adoptionNumber", message = "", key = BndConstants.REQUIRED),
         @RequiredStringValidator(fieldName = "adoptionDetail.affidavitNumber", message = "", key = BndConstants.REQUIRED),
-        @RequiredStringValidator(fieldName = "adoptionDetail.adopteeAddress.streetAddress1", message = "", key = BndConstants.REQUIRED) }, emails = {
+        @RequiredStringValidator(fieldName = "adoptionDetail.adopteeAddress.streetRoadLine", message = "", key = BndConstants.REQUIRED) }, emails = {
         @EmailValidator(fieldName = "adoptionDetail.adopteeFather.emailAddress", key = BndConstants.INVALID, message = "", type = ValidatorType.FIELD),
         @EmailValidator(fieldName = "adoptionDetail.adopteeMother.emailAddress", key = BndConstants.INVALID, message = "", type = ValidatorType.FIELD) })
 @Namespace("/registration")

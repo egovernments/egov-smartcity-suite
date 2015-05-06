@@ -72,6 +72,7 @@ import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.admin.master.entity.CityWebsite;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.entity.enums.AddressType;
 import org.egov.infra.admin.master.service.CityWebsiteService;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
@@ -102,10 +103,11 @@ public class BndCommonService {
 
     private static final String STATEQUERYID = "from org.egov.mdm.masters.administration.State where id=?";
     private static final String GETALLSTATESQUERY = "from org.egov.mdm.masters.administration.State order by id";
-    private static final String ADDRESSQUERYID = "from Address addr where addr.addressID=?";
+    private static final String ADDRESSQUERYID = "from Address addr where addr.ID=?";
     private static final String REGISTRARQUERY = "from Registrar where userId.id=?";
-    private static final String STATEQUERYCONS = "from org.egov.mdm.masters.administration.State where stateConst=?";
-    private static final String ADDRESSQUERYTYPE = "from Address addr where addr.streetAddress1=? and addr.addTypeMaster.addressTypeName=?";
+//    private static final String STATEQUERYCONS = "from org.egov.mdm.masters.administration.State where stateConst=?";
+    private static final String ADDRESSQUERYTYPE = "from Address addr where addr.streetRoadLine=? and addr.type.name=?";
+    private static final String ADDRESSTYPEQUERY  = "from AddressType where name=?";
     private static final String STATUSQUERY = "from EgwStatus where moduleType=? and code=?";
     private static final String PLACETYPEQUERY = "from PlaceType p where p.desc=?";
     private static final String ESTABLISHMENTQUERY = "from Establishment  where id=?";
@@ -215,10 +217,10 @@ public class BndCommonService {
         return (Address) persistenceService.find(ADDRESSQUERYID, addressId);
     }
 
-    @Transactional
+   /* @Transactional
     public State getStateByStateConstant(final String stateConst) {
         return (State) persistenceService.find(STATEQUERYCONS, stateConst);
-    }
+    }*/
 
     /**
      * This API is to get CRelation By Passing related Constant
@@ -230,6 +232,12 @@ public class BndCommonService {
     @Transactional
     public CRelation getCRelationByRelatedConstant(final String relatedConst) {
         return (CRelation) persistenceService.find(RELATIONQUERY, relatedConst);
+    }
+    
+    @Transactional
+    public AddressType getAddressType(String addressTypeName)
+    {
+            return (AddressType)persistenceService.find(ADDRESSTYPEQUERY,addressTypeName);
     }
 
     /**

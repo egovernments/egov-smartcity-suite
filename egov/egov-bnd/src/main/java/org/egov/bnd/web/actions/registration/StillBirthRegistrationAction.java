@@ -317,7 +317,7 @@ public class StillBirthRegistrationAction extends RegistrationAction {
                     BndConstants.APPROVED).getId());
             change.setModuleid(stillBirthRegistration.getId().intValue());
             change.setModuletype(BndConstants.STILLBIRTHREGISTRATIONMODULE);
-            // change.setCreatedby(EGOVThreadLocals.getUserId());
+//             change.setCreatedby(EGOVThreadLocals.getUserId());
             // TODO egifix-hibernateutil
             // HibernateUtil.getCurrentSession().persist(change);
             entityManager.persist(change);
@@ -341,12 +341,8 @@ public class StillBirthRegistrationAction extends RegistrationAction {
             stillBirthRegistration.setEventAddress(null);
         else if (placeTypeTemp != null && BndConstants.HOSPTIAL.equals(placeTypeTemp))
             stillBirthRegistration.setEventAddress(stillBirthRegistration.getEstablishment().getAddress());
-        /*
-         * else stillBirthRegistration.getEventAddress().setAddTypeMaster(
-         * eventAddressType);
-         */
-
-        // stillBirthRegistration.getMotherResidenceAddress().setAddTypeMaster(usualAddressType);
+        else stillBirthRegistration.getEventAddress().setType(eventAddressType);
+         stillBirthRegistration.getMotherResidenceAddress().setType(usualAddressType);
         buildNewAddressFromOldAddress(motherAddressSet, stillBirthRegistration.getMotherResidenceAddress());
         stillBirthRegistration.getInformantAddress().setType(AddressType.CORRESPONDENCE);
     }

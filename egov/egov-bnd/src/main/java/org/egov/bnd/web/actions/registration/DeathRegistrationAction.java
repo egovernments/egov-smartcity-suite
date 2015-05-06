@@ -100,21 +100,21 @@ import com.opensymphony.xwork2.validator.annotations.ValidatorType;
         requiredStrings = {
                 @RequiredStringValidator(fieldName = "placeTypeTemp", type = ValidatorType.FIELD, message = "Required", key = ""),
                 @RequiredStringValidator(fieldName = "citizen.firstName", type = ValidatorType.FIELD, message = "Required", key = ""),
-                @RequiredStringValidator(fieldName = "deceasedAddress.streetAddress1", type = ValidatorType.FIELD, message = "Required", key = ""),
+                @RequiredStringValidator(fieldName = "deceasedAddress.streetRoadLine", type = ValidatorType.FIELD, message = "Required", key = ""),
                 @RequiredStringValidator(fieldName = "deceasedAddress.cityTownVillage", type = ValidatorType.FIELD, message = "Required", key = ""),
                 @RequiredStringValidator(fieldName = "deceasedAddress.district", type = ValidatorType.FIELD, message = "Required", key = ""),
                 @RequiredStringValidator(fieldName = "deceasedAddress.state", type = ValidatorType.FIELD, message = "Required", key = ""),
-                @RequiredStringValidator(fieldName = "permanentCitizenAddress.streetAddress1", type = ValidatorType.FIELD, message = "Required", key = ""),
+                @RequiredStringValidator(fieldName = "permanentCitizenAddress.streetRoadLine", type = ValidatorType.FIELD, message = "Required", key = ""),
                 @RequiredStringValidator(fieldName = "permanentCitizenAddress.cityTownVillage", type = ValidatorType.FIELD, message = "Required", key = ""),
                 @RequiredStringValidator(fieldName = "permanentCitizenAddress.district", type = ValidatorType.FIELD, message = "Required", key = ""),
                 @RequiredStringValidator(fieldName = "permanentCitizenAddress.state", type = ValidatorType.FIELD, message = "Required"),
                 @RequiredStringValidator(fieldName = "mother.firstName", type = ValidatorType.FIELD, message = "Required", key = ""),
-                @RequiredStringValidator(fieldName = "eventAddress.streetAddress1", type = ValidatorType.FIELD, message = "Required", key = ""),
+                @RequiredStringValidator(fieldName = "eventAddress.streetRoadLine", type = ValidatorType.FIELD, message = "Required", key = ""),
                 @RequiredStringValidator(fieldName = "eventAddress.cityTownVillage", type = ValidatorType.FIELD, message = "Required", key = ""),
                 @RequiredStringValidator(fieldName = "eventAddress.district", type = ValidatorType.FIELD, message = "Required", key = ""),
                 @RequiredStringValidator(fieldName = "eventAddress.state", type = ValidatorType.FIELD, message = "Required", key = ""),
                 @RequiredStringValidator(fieldName = "informantCitizen.firstName", type = ValidatorType.FIELD, message = "Required", key = ""),
-                @RequiredStringValidator(fieldName = "informantAddress.streetAddress1", type = ValidatorType.FIELD, message = "Required", key = ""),
+                @RequiredStringValidator(fieldName = "informantAddress.streetRoadLine", type = ValidatorType.FIELD, message = "Required", key = ""),
                 @RequiredStringValidator(fieldName = "informantAddress.cityTownVillage", type = ValidatorType.FIELD, message = "Required", key = ""),
                 @RequiredStringValidator(fieldName = "informantAddress.district", type = ValidatorType.FIELD, message = "Required", key = ""),
                 @RequiredStringValidator(fieldName = "informantAddress.state", type = ValidatorType.FIELD, message = "Required", key = "")
@@ -423,11 +423,9 @@ public class DeathRegistrationAction extends RegistrationAction {
 
     private void buildInfomantDetailsforModify(final DeathRegistration deathRegistration) {
         LOGGER.debug("Started buildInfomantDetailsforModify method");
-        // TODO egifix-addresstype
-        /*
-         * deathRegistration.getInformantAddress().setType(AddressType.
-         * bndCommonService.gett(BndConstants.PRESENTADDRESS));
-         */
+       
+          deathRegistration.getInformantAddress().setType(bndCommonService.getAddressType(BndConstants.PRESENTADDRESS));
+         
         buildNewAddressFromOldAddress(informantAddressSet, deathRegistration.getInformantAddress());
 
         if (deathRegistration.getRelationType() != null
@@ -501,13 +499,10 @@ public class DeathRegistrationAction extends RegistrationAction {
     private void buildAddress() {
         LOGGER.debug("Started buildAddress method");
 
-        if (deceasedAddressFlag != null && deceasedAddressFlag == 1)
-            // TODO egifix-addresstype
-            /*
-             * deathRegistration.getDeceasedAddress().setAddTypeMaster(
-             * bndCommonService.getAddressType(BndConstants.DECEASEDADDRESS));
-             */
+        if (deceasedAddressFlag != null && deceasedAddressFlag == 1){
+             deathRegistration.getDeceasedAddress().setType(bndCommonService.getAddressType(BndConstants.DECEASEDADDRESS));
             deathRegistration.getCitizen().addAddress(deathRegistration.getDeceasedAddress());
+        }
         else
             deathRegistration.setDeceasedAddress(null);
 
@@ -523,12 +518,8 @@ public class DeathRegistrationAction extends RegistrationAction {
             deathRegistration.setEventAddress(deathRegistration.getEstablishment().getAddress());
             deathRegistration.getCitizen().addAddress(deathRegistration.getEventAddress());
         } else
-            // TODO egifix-addresstype
-            /*
-             * deathRegistration.getEventAddress().setAddTypeMaster(
-             * bndCommonService.getAddressType(BndConstants.EVENTADDRESS));
-             */
-            deathRegistration.getCitizen().addAddress(deathRegistration.getEventAddress());
+             deathRegistration.getEventAddress().setType(bndCommonService.getAddressType(BndConstants.EVENTADDRESS));
+             deathRegistration.getCitizen().addAddress(deathRegistration.getEventAddress());
 
         if (deathRegistration.getDeceasedUsualAddress() != null
                 && deathRegistration.getDeceasedUsualAddress().getCityTownVillage() != null
@@ -556,13 +547,11 @@ public class DeathRegistrationAction extends RegistrationAction {
         } else
             deathRegistration.setPermanentCitizenAddress(null);
 
-        if (deceasedAddressFlag != null && deceasedAddressFlag == 1)
-            // TODO egifix-addresstype
-            /*
-             * deathRegistration.getDeceasedAddress().setAddTypeMaster(
-             * bndCommonService.getAddressType(BndConstants.DECEASEDADDRESS));
-             */
+        if (deceasedAddressFlag != null && deceasedAddressFlag == 1){
+             deathRegistration.getDeceasedAddress().setType(
+              bndCommonService.getAddressType(BndConstants.DECEASEDADDRESS));
             buildNewAddressFromOldAddress(citizenAddressSet, deathRegistration.getDeceasedAddress());
+        }
         else
             deathRegistration.setDeceasedAddress(null);
 
@@ -572,18 +561,16 @@ public class DeathRegistrationAction extends RegistrationAction {
             deathRegistration.getEventAddress();
             deathRegistration.setEventAddress(deathRegistration.getEstablishment().getAddress());
         } else
-            // TODO egifix-addresstype
-            /*
-             * deathRegistration.getEventAddress().setAddTypeMaster(
-             * bndCommonService.getAddressType(BndConstants.EVENTADDRESS));
-             */
+          
+              deathRegistration.getEventAddress().setType(
+              bndCommonService.getAddressType(BndConstants.EVENTADDRESS));
+             
 
             if (deathRegistration.getDeceasedUsualAddress() != null)
-                // TODO egifix-addresstype
-                /*
-                 * deathRegistration.getDeceasedUsualAddress().setAddTypeMaster(
-                 * bndCommonService.getAddressType(BndConstants.USUALADDRESS));
-                 */
+            
+                 deathRegistration.getDeceasedUsualAddress().setType(
+                 bndCommonService.getAddressType(BndConstants.USUALADDRESS));
+                
                 buildNewAddressFromOldAddress(citizenAddressSet, deathRegistration.getDeceasedUsualAddress());
         LOGGER.debug("Completed buildAddressforModify method");
     }

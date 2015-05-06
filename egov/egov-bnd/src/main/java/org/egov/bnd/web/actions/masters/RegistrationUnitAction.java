@@ -65,7 +65,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @Validations(requiredFields = {
         @RequiredFieldValidator(fieldName = "regUnitDesc", message = "", key = BndConstants.REQUIRED),
         @RequiredFieldValidator(fieldName = "regUnitConst", message = "", key = BndConstants.REQUIRED),
-        @RequiredFieldValidator(fieldName = "regUnitAddress.streetAddress1", message = "", key = BndConstants.REQUIRED),
+        @RequiredFieldValidator(fieldName = "regUnitAddress.streetRoadLine", message = "", key = BndConstants.REQUIRED),
         @RequiredFieldValidator(fieldName = "regUnitAddress.state", message = "", key = BndConstants.REQUIRED),
         @RequiredFieldValidator(fieldName = "districtName", message = "", key = BndConstants.REQUIRED),
         @RequiredFieldValidator(fieldName = "talukName", message = "", key = BndConstants.REQUIRED),

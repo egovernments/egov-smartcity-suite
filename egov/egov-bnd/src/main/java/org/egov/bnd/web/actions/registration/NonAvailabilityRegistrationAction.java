@@ -162,23 +162,20 @@ public class NonAvailabilityRegistrationAction extends BndCommonAction {
             final RegistrationUnit regUnit = registrar.getRegUnitId();
             if (regUnit != null)
                 // TODO egifix-address
-                /*
-                 * if(regUnit.getRegUnitAddress()!=null&&regUnit.getRegUnitAddress
-                 * ().getTaluk()!=null)
-                 * nonAvailableReg.setTalukName(regUnit.getRegUnitAddress
-                 * ()!=null?regUnit.getRegUnitAddress().getTaluk():"");
-                 */
+                
+                  if(regUnit.getRegUnitAddress()!=null&&regUnit.getRegUnitAddress
+                  ().getSubdistrict()!=null)
+                  nonAvailableReg.setTalukName(regUnit.getRegUnitAddress
+                  ()!=null?regUnit.getRegUnitAddress().getSubdistrict():"");
+                 
                 if (regUnit.getRegUnitAddress() != null && regUnit.getRegUnitAddress().getDistrict() != null)
                     nonAvailableReg.setDistrictName(regUnit.getRegUnitAddress() != null ? regUnit.getRegUnitAddress()
                             .getDistrict() : "");
-            // if (regUnit.getRegUnitAddress() != null &&
-            // regUnit.getRegUnitAddress().getState() != null)
-            // TODO egifix
-            /*
-             * nonAvailableReg.setStateName(regUnit.getRegUnitAddress() != null
-             * ? bndCommonService.getStateById( Integer.parseInt(regUnit
-             * .getRegUnitAddress().getState())).getName() : "");
-             */
+                if (regUnit.getRegUnitAddress() != null && regUnit.getRegUnitAddress().getState() != null){
+                    nonAvailableReg.setStateName(regUnit.getRegUnitAddress() != null ? regUnit
+                            .getRegUnitAddress().getState() : "");
+                }
+             
             nonAvailableReg.setEventType(BndConstants.BIRTH);
             setValuesforNAform(nonAvailableReg);
         }

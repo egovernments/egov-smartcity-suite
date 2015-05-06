@@ -48,13 +48,13 @@
     		"addressID":"<s:property value="%{address.getAddressID()}" />"
     	},
     	{
-    	    "streetAddress1":"<s:property value="%{address.getStreetAddress1()}" />"
+    	    "streetAddress1":"<s:property value="%{address.getStreetRoadLine()}" />"
     	},
     	{
-    	    "streetAddress2":"<s:property value="%{address.getStreetAddress2()}" />"
+    	    "streetAddress2":"<s:property value="%{address.getStreetRoadLine()}" />"
     	},
     	{
-    	    "taluk":"<s:property value="%{address.getTaluk()}" />"
+    	    "taluk":"<s:property value="%{address.getSubdistrict()}" />"
     	},
     	{
     	   "cityTownVillage":"<s:property value="%{address.getCityTownVillage()}" />"

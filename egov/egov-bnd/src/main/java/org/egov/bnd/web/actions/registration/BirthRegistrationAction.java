@@ -101,17 +101,17 @@ import com.opensymphony.xwork2.validator.annotations.ValidatorType;
         @RequiredStringValidator(fieldName = "citizen.firstName", message = "", key = BndConstants.REQUIRED),
         @RequiredStringValidator(fieldName = "father.firstName", message = "", key = BndConstants.REQUIRED),
         @RequiredStringValidator(fieldName = "mother.firstName", message = "", key = BndConstants.REQUIRED),
-        @RequiredStringValidator(fieldName = "eventAddress.streetAddress1", message = "", key = BndConstants.REQUIRED),
+        @RequiredStringValidator(fieldName = "eventAddress.streetRoadLine", message = "", key = BndConstants.REQUIRED),
         @RequiredStringValidator(fieldName = "eventAddress.cityTownVillage", message = "", key = BndConstants.REQUIRED),
         @RequiredStringValidator(fieldName = "eventAddress.district", message = "", key = BndConstants.REQUIRED),
         @RequiredStringValidator(fieldName = "informantCitizen.firstName", message = "", key = BndConstants.REQUIRED),
-        @RequiredStringValidator(fieldName = "informantAddress.streetAddress1", message = "", key = BndConstants.REQUIRED),
+        @RequiredStringValidator(fieldName = "informantAddress.streetRoadLine", message = "", key = BndConstants.REQUIRED),
         @RequiredStringValidator(fieldName = "informantAddress.cityTownVillage", message = "", key = BndConstants.REQUIRED),
         @RequiredStringValidator(fieldName = "informantAddress.district", message = "", key = BndConstants.REQUIRED),
-        @RequiredStringValidator(fieldName = "permanentCitizenAddress.streetAddress1", message = "", key = BndConstants.REQUIRED),
+        @RequiredStringValidator(fieldName = "permanentCitizenAddress.streetRoadLine", message = "", key = BndConstants.REQUIRED),
         @RequiredStringValidator(fieldName = "permanentCitizenAddress.cityTownVillage", message = "", key = BndConstants.REQUIRED),
         @RequiredStringValidator(fieldName = "permanentCitizenAddress.district", message = "", key = BndConstants.REQUIRED),
-        @RequiredStringValidator(fieldName = "parentAddress.streetAddress1", message = "", key = BndConstants.REQUIRED),
+        @RequiredStringValidator(fieldName = "parentAddress.streetRoadLine", message = "", key = BndConstants.REQUIRED),
         @RequiredStringValidator(fieldName = "parentAddress.cityTownVillage", message = "", key = BndConstants.REQUIRED),
         @RequiredStringValidator(fieldName = "parentAddress.district", message = "", key = BndConstants.REQUIRED) }, emails = {
         @EmailValidator(fieldName = "mother.emailAddress", key = BndConstants.INVALID, message = "", type = ValidatorType.FIELD),
@@ -284,8 +284,8 @@ public class BirthRegistrationAction extends RegistrationAction {
         if (placeTypeTemp != null && BndConstants.NOTSTATED.equals(placeTypeTemp))
             birthRegistration.setEventAddress(null);
         else
-            // TODO egifix-addresstype
-            // birthRegistration.getEventAddress().setAddTypeMaster(eventAddressType);
+            
+            birthRegistration.getEventAddress().setType(eventAddressType);
 
             if (parentAddressFlag != null && parentAddressFlag == 1) {
                 birthRegistration.getParentAddress().setType(AddressType.CORRESPONDENCE);
@@ -294,10 +294,10 @@ public class BirthRegistrationAction extends RegistrationAction {
             } else
                 birthRegistration.setParentAddress(null);
 
-        // TODO egifix-addresstype
-        // birthRegistration.getMotherResidenceAddress().setAddTypeMaster(usualAddressType);
+       
+         birthRegistration.getMotherResidenceAddress().setType(usualAddressType);
         buildNewAddressFromOldAddress(motherAddressSet, birthRegistration.getMotherResidenceAddress());
-        // birthRegistration.getInformantAddress().setAddTypeMaster(presentAddressType);
+        birthRegistration.getInformantAddress().setType(presentAddressType);
         LOGGER.debug("End Build citizen Address");
     }
 

@@ -64,6 +64,7 @@ import org.egov.bnd.utils.SexType;
 import org.egov.bnd.web.actions.common.BndCommonAction;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Address;
+import org.egov.infra.admin.master.entity.enums.AddressType;
 import org.egov.infra.admin.master.entity.enums.Gender;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.reporting.engine.ReportService;
@@ -78,7 +79,7 @@ public class RegistrationAction extends BndCommonAction {
     protected BirthRegistrationService birthRegistrationService;
     protected NumberGenerationService numberGenerationService;
     protected String roleName;
-    // protected State defaultState;
+//    protected State defaultState;
     protected static final String WHITESPACE = " ";
     protected static final String OFFLINE = "offline";
     protected Set<Address> citizenAddressSet = new HashSet<Address>(0);
@@ -136,13 +137,12 @@ public class RegistrationAction extends BndCommonAction {
     protected String placeTypeTempDeathHistory;
     protected BnDCitizen informantCitizenDeathHistory;
 
-    // TODO egifix
-    /*
-     * protected AddressTypeMaster usualAddressType; protected AddressTypeMaster
-     * eventAddressType; protected AddressTypeMaster permanentAddressType;
-     * protected AddressTypeMaster presentAddressType; protected
-     * AddressTypeMaster correspondingAddressType;
-     */
+    protected AddressType usualAddressType; 
+    protected AddressType eventAddressType;
+    protected AddressType permanentAddressType;
+    protected AddressType presentAddressType; 
+    protected AddressType correspondingAddressType;
+     
     protected CRelation fatherRelation;
     protected CRelation motherRelation;
     protected CRelation otherRelation;
@@ -162,9 +162,8 @@ public class RegistrationAction extends BndCommonAction {
                 persistenceService.findAllBy("from RegistrationUnit order by regUnitDesc"));
         addDropdownData("sexTypeList", Arrays.asList(SexType.values()));
         addDropdownData("diseaseList", Collections.EMPTY_LIST);
-        // TODO egifix
-        // defaultState =
-        // bndCommonService.getStateByStateConstant(BndConstants.NASTATECONST);
+        
+//         defaultState = bndCommonService.getStateByStateConstant(BndConstants.NASTATECONST);
     }
 
     @Transactional
@@ -203,19 +202,17 @@ public class RegistrationAction extends BndCommonAction {
 
     @Transactional
     protected void getDetailsAddressTypeAndRelation() {
-        // TODO egifix
-        /*
-         * usualAddressType =
-         * bndCommonService.getAddressType(BndConstants.USUALADDRESS) ;
-         * eventAddressType =
-         * bndCommonService.getAddressType(BndConstants.EVENTADDRESS);
-         * permanentAddressType =
-         * bndCommonService.getAddressType(BndConstants.PERMANENTADDRESS);
-         * presentAddressType =
-         * bndCommonService.getAddressType(BndConstants.PRESENTADDRESS);
-         * correspondingAddressType =
-         * bndCommonService.getAddressType(BndConstants.CORRESPONDINGADDRESS);
-         */
+          usualAddressType =
+          bndCommonService.getAddressType(BndConstants.USUALADDRESS) ;
+          eventAddressType =
+          bndCommonService.getAddressType(BndConstants.EVENTADDRESS);
+          permanentAddressType =
+          bndCommonService.getAddressType(BndConstants.PERMANENTADDRESS);
+          presentAddressType =
+          bndCommonService.getAddressType(BndConstants.PRESENTADDRESS);
+          correspondingAddressType =
+          bndCommonService.getAddressType(BndConstants.CORRESPONDINGADDRESS);
+         
         fatherRelation = bndCommonService.getCRelationByRelatedConstant(BndConstants.FATHER.toUpperCase());
         motherRelation = bndCommonService.getCRelationByRelatedConstant(BndConstants.MOTHER.toUpperCase());
         otherRelation = bndCommonService.getCRelationByRelatedConstant(BndConstants.OTHER.toUpperCase());
@@ -227,13 +224,10 @@ public class RegistrationAction extends BndCommonAction {
         else
             for (final Address address : addressSet)
                 if (address.getId().equals(newAddress.getId())) {
-                    // TODO egifix
-                    /*
-                     * address.setStreetAddress1(newAddress.getStreetAddress1());
-                     * address
-                     * .setStreetAddress2(newAddress.getStreetAddress2());
-                     * address.setTaluk(newAddress.getTaluk());
-                     */
+                  
+                      address.setStreetRoadLine(newAddress.getStreetRoadLine());
+                      address.setSubdistrict(newAddress.getSubdistrict());
+                     
                     address.setCityTownVillage(newAddress.getCityTownVillage());
                     address.setPinCode(newAddress.getPinCode());
                     address.setDistrict(newAddress.getDistrict());
@@ -284,12 +278,9 @@ public class RegistrationAction extends BndCommonAction {
      */
 
     private void copyAddressDetails(final Address oldAddress, final Address newAddress) {
-        // TODO egifix
-        /*
-         * newAddress.setStreetAddress1(oldAddress.getStreetAddress1());
-         * newAddress.setStreetAddress2(oldAddress.getStreetAddress2());
-         * newAddress.setTaluk(oldAddress.getTaluk());
-         */
+      
+          newAddress.setStreetRoadLine(oldAddress.getStreetRoadLine());
+         newAddress.setSubdistrict(oldAddress.getSubdistrict());
         newAddress.setCityTownVillage(oldAddress.getCityTownVillage());
         newAddress.setPinCode(oldAddress.getPinCode());
         newAddress.setDistrict(oldAddress.getDistrict());

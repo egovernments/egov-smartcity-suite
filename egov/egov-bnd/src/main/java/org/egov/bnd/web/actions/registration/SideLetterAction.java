@@ -130,12 +130,12 @@ public class SideLetterAction extends BndCommonAction {
         final RegistrationUnit regUnit = bndCommonService.getRegistrarByLoggedInUser().getRegUnitId();
 
         if (regUnit != null)
-            // TODO egifix-address
-            // if (regUnit.getRegUnitAddress() != null &&
-            // regUnit.getRegUnitAddress().getTaluk() != null)
-            // sideLetter.setTalukName(regUnit.getRegUnitAddress() != null ?
-            // regUnit.getRegUnitAddress().getTaluk()
-            // : "");
+             if (regUnit.getRegUnitAddress() != null &&
+             regUnit.getRegUnitAddress().getSubdistrict() != null)
+             sideLetter.setTalukName(regUnit.getRegUnitAddress() != null ?
+             regUnit.getRegUnitAddress().getSubdistrict()
+             : "");
+            
             if (regUnit.getRegUnitAddress() != null && regUnit.getRegUnitAddress().getDistrict() != null)
                 sideLetter.setDistrictName(regUnit.getRegUnitAddress() != null ? regUnit.getRegUnitAddress()
                         .getDistrict() : "");
