@@ -117,8 +117,7 @@ public class ReceiptHeader extends StateAware {
 	private String payeeAddress;
 	private String workflowUserName = "NA";
 	private String instrumentsAsString;
-	private Long version;
-	
+
 	public ReceiptHeader() {
 	}
 
@@ -746,14 +745,4 @@ public class ReceiptHeader extends StateAware {
 		}
 		return instrumentDetailsBuilder.toString();
 	}
-
-	public Long getVersion() {
-		return version;
-	}
-
-	public void setVersion(Long version) {
-		this.version = version;
-	}
-
-
 }
