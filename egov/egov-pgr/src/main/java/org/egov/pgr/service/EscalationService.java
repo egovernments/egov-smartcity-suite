@@ -116,7 +116,11 @@ public class EscalationService {
     }
 
     public Integer getHrsToResolve(final Integer designationId, final Long complaintTypeId) {
-        return escalationRepository.findByDesignationAndComplaintType(designationId, complaintTypeId).getNoOfHrs();
+         Escalation escalation = escalationRepository.findByDesignationAndComplaintType(designationId, complaintTypeId);
+         if(escalation != null)
+        	 return escalation.getNoOfHrs();
+         else
+        	 return 0;
     }
 
     @Transactional
@@ -160,7 +164,7 @@ public class EscalationService {
         }
     }
 
-    private DateTime getExpiryDate(final Complaint complaint) {
+    protected DateTime getExpiryDate(final Complaint complaint) {
 
         DateTime expiryDate = complaint.getEscalationDate();
         final DesignationMaster designation = eisCommonService.getEmployeeDesignation(complaint.getAssignee().getId());
