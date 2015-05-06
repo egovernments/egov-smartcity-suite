@@ -61,20 +61,35 @@
 					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-name">
 						<c:out value="${complaint.complainant.name}"></c:out>
 					</div>
-					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.phoneNumber" /></div>
-					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
-						<c:out value="${complaint.complainant.mobile}"></c:out>
+					<div class="col-md-3 col-xs-6 add-margin">
+						<spring:message code="lbl.phoneNumber" />
+					</div>
+					<div class="col-md-3 col-xs-6 add-margin view-content"
+						id="ct-mobno">
+						<c:choose>
+							<c:when test="${complaint.complainant.mobile !=null}">
+								<c:out value="${complaint.complainant.mobile}"></c:out>
+							</c:when>
+							<c:otherwise>N/A</c:otherwise>
+						</c:choose>
+
 					</div>
 				</div>
 				<div class="row add-border">
-					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.ctn" /></div>
-					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-ctnumber">
+					<div class="col-md-3 col-xs-6 add-margin">
+						<spring:message code="lbl.ctn" />
+					</div>
+					<div class="col-md-3 col-xs-6 add-margin view-content"
+						id="ct-ctnumber">
 						<c:out value="${complaint.CRN}"></c:out>
 					</div>
-					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.complaintDate" /></div>
+					<div class="col-md-3 col-xs-6 add-margin">
+						<spring:message code="lbl.complaintDate" />
+					</div>
 					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-date">
-					<joda:format value="${complaint.createdDate}" var="complaintDate" pattern="yyyy-MM-dd"/>
-					<c:out value="${complaintDate}"></c:out> 
+						<joda:format value="${complaint.createdDate}" var="complaintDate"
+							pattern="dd-MM-yyyy" />
+						<c:out value="${complaintDate}"></c:out>
 					</div>
 				</div>
 				<div class="row add-border">
@@ -84,18 +99,13 @@
 					</div>
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.filedVia" /></div>
 					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-filedvia">
-						Internet</div>
+						<c:out value="${complaint.receivingMode}"/></div>
 				</div>
 				<div class="row add-border">
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.complaintType" /></div>
 					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-type">
 						<c:out value="${complaint.complaintType.name}"></c:out>
 					</div>
-					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.priority" /></div>
-					<div class="col-md-3 col-xs-6 add-margin" id="ct-priority">
-						</div>
-					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-priority">
-						Waterlogged road</div>
 				</div>
 				<div class="row add-border">
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.compDetails" /></div>
@@ -130,7 +140,7 @@
 								</c:forEach>
 							</c:when>
 							<c:otherwise>
-								<div class="col-md-3 col-xs-6 add-margin">No attachments found</div>
+								<div class="col-md-3 col-xs-6 add-margin view-content">No attachments found</div>
 							</c:otherwise>
 						</c:choose>
 					</div>
@@ -178,7 +188,7 @@
 					</div>
 				</div>
 				<div class="panel-body history-slide">
-					<div class="row view-content header-color hidden-xs">
+					<div class="row hidden-xs hidden-sm visible-md visible-lg view-content header-color">
 						<div class="col-md-2 col-xs-6 add-margin">Date</div>
 						<div class="col-md-2 col-xs-6 add-margin">Updater</div>
 						<div class="col-md-2 col-xs-6 add-margin">Status</div>
@@ -190,24 +200,24 @@
 							<c:when test="${!complaintHistory.isEmpty()}">
 								<c:forEach items="${complaintHistory}" var="history">
 								<div class="row  add-border">
-									<div class="col-md-2 col-xs-12 add-margin ">
+									<div class="col-md-2 col-xs-12 add-margin">
 										<fmt:formatDate value="${history.date}" var="historyDate"
-											pattern="HH:MM a E dd MMM yyyy" />
+											pattern="dd-MM-yyyy HH:MM a E " />
 										<c:out value="${historyDate}" />
 									</div>
 									<div class="col-md-2 col-xs-12 add-margin">
 										<c:out value="${history.updater}" />
 									</div>
-									<div class="col-md-2 col-xs-12 add-margin ">
+									<div class="col-md-2 col-xs-12 add-margin">
 										<c:out value="${history.status}" />
 									</div>
-									<div class="col-md-2 col-xs-12 add-margin ">
+									<div class="col-md-2 col-xs-12 add-margin">
 										<c:out value="${history.user}" />
 									</div>
-									<div class="col-md-2 col-xs-12 add-margin ">
+									<div class="col-md-2 col-xs-12 add-margin">
 										<c:out value="${history.department}" />
 									</div>
-									<div class="col-md-2 col-xs-12 add-margin ">
+									<div class="col-md-2 col-xs-12 add-margin">
 										<c:out value="${history.comments}" />&nbsp;
 									</div>
 								</div>
