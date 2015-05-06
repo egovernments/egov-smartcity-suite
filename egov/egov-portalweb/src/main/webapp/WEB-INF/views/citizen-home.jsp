@@ -96,7 +96,7 @@
 										
 										
 										<div class="msg-info">
-											<a href="javascript:void(0);">${inboxMsg.identifier}</a> <span class="dot">&bull;</span> 
+											<a href="${inboxMsg.link}" target="_blank"><u>${inboxMsg.identifier}</u></a> <span class="dot">&bull;</span> 
 											<joda:format value="${inboxMsg.messageDate}" var="messageDate" pattern="dd-MM-yyyy hh:mm:ss"/>
 											<span class="msg-date">${messageDate}</span>
 										</div>
@@ -138,7 +138,7 @@
 											<a href="${myAccountMsg.link}" target="_blank"><i class="fa fa-desktop col-sm-1 col-xs-2 unread-msg" data-toggle="tooltip" title="View Grievance"></i></a>
 										</div>
 										<div class="msg-info">
-											<a href="javascript:void(0);">${myAccountMsg.identifier}</a> <span class="dot">&bull;</span> <span class="msg-date"><joda:format value="${myAccountMsg.messageDate}" var="messageDate" pattern="dd-MM-yyyy hh:mm:ss"/>
+											<a href="${myAccountMsg.link}" target="_blank"><u>${myAccountMsg.identifier}</u></a> <span class="dot">&bull;</span> <span class="msg-date"><joda:format value="${myAccountMsg.messageDate}" var="messageDate" pattern="dd-MM-yyyy hh:mm:ss"/>
 						<span class="msg-date">${messageDate}</span>
 										</div>
 									</header>
