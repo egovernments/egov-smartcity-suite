@@ -49,7 +49,9 @@ import java.util.TreeMap;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.RegistrationExtn;
 import org.egov.bpa.models.extd.ZoneReportResultExtn;
@@ -103,7 +105,7 @@ public class StatusByZoneReportExtnAction extends BaseFormAction {
 	public StatusByZoneReportExtnAction() {
 
 	}
-
+	@Action(value = "/statusByZoneReportExtn-newForm", results = { @Result(name = NEW) })
 	public String newForm() {
 
 		return NEW;
@@ -134,13 +136,14 @@ public class StatusByZoneReportExtnAction extends BaseFormAction {
 	}
 
 	// @ValidationErrorPage(NEW)
+	@Action(value = "/statusByZoneReportExtn-reportResult", results = { @Result(name = NEW) })
 	public String reportResult() {
 		search();
 		setSearchMode("result");
 
 		return NEW;
 	}
-
+	@Action(value = "/statusByZoneReportExtn-showdetail", results = { @Result(name = showdetail) })
 	public String showdetail() {
 		if (getWardcode() != null && "total".equals(getWardcode())) {
 
