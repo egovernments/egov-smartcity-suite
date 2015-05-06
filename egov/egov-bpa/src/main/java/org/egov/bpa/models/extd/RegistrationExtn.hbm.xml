@@ -19,7 +19,7 @@
         <many-to-one name="parent" class="org.egov.bpa.models.extd.RegistrationExtn" fetch="select">
             <column name="PARENT" precision="22" scale="0" />
         </many-to-one>
-        <many-to-one name="owner" class="org.egov.lib.citizen.model.Owner" cascade="all">
+        <many-to-one name="owner" class="org.egov.portal.entity.Citizen" cascade="all">
             <column name="OWNERID" precision="22" scale="0" not-null="true" />
         </many-to-one>
         <many-to-one name="serviceType" class="org.egov.bpa.models.extd.masters.ServiceTypeExtn" fetch="select">

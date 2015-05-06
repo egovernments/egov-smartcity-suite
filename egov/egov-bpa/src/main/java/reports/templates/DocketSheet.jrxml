@@ -70,15 +70,15 @@
 	</field>
 	<field name="serviceType" class="org.egov.bpa.models.extd.masters.ServiceTypeExtn"/>
 	<field name="propertyid" class="java.lang.String"/>
-	<field name="owner" class="org.egov.lib.citizen.model.Owner"/>
+	<field name="owner" class="org.egov.infra.citizen.entity.Citizen"/>
 	<field name="regnDetails" class="org.egov.bpa.models.extd.RegnDetailsExtn"/>
 	<field name="registrationChecklistSet" class="java.util.Collection"/>
 	<field name="bpaOwnerAddress" class="java.lang.String"/>
 	<field name="bpaSiteAddress" class="java.lang.String"/>
 	<field name="surveyorName" class="org.egov.portal.surveyor.model.Surveyor"/>
 	<field name="cmdaRefDate" class="java.util.Date"/>
-	<field name="adminboundaryid" class="org.egov.lib.admbndry.Boundary"/>
-	<field name="locboundaryid" class="org.egov.lib.admbndry.Boundary"/>
+	<field name="adminboundaryid" class="org.egov.infra.admin.master.entity.Boundary"/>
+	<field name="locboundaryid" class="org.egov.infra.admin.master.entity.Boundary"/>
 	<variable name="total" class="java.math.BigDecimal"/>
 	<background>
 		<band height="802">

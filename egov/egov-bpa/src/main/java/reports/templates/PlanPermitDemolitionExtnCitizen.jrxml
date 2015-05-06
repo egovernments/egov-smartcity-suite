@@ -43,9 +43,9 @@
 	<import value="org.egov.infstr.utils.*"/>
 	<field name="bpaSiteAddress" class="java.lang.String"/>
 	<field name="bpaOwnerAddress" class="java.lang.String"/>
-	<field name="owner" class="org.egov.lib.citizen.model.Owner"/>
+	<field name="owner" class="org.egov.infra.citizen.entity.Citizen"/>
 	<field name="planSubmissionNum" class="java.lang.String"/>
-	<field name="adminboundaryid" class="org.egov.lib.admbndry.Boundary"/>
+	<field name="adminboundaryid" class="org.egov.infra.admin.master.entity.Boundary"/>
 	<field name="planSubmissionDate" class="java.util.Date"/>
 	<field name="serviceType" class="org.egov.bpa.models.extd.masters.ServiceTypeExtn"/>
 	<field name="challanDetails" class="org.egov.bpa.models.extd.RegnStatusDetailsExtn"/>

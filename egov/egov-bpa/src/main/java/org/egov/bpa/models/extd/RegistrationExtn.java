@@ -53,17 +53,13 @@ import org.egov.bpa.models.extd.masters.DocumentHistoryExtn;
 import org.egov.bpa.models.extd.masters.ServiceTypeExtn;
 import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgDemand;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infra.admin.master.entity.Role;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.citizen.entity.Citizen;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.BoundaryType;
-import org.egov.infra.admin.master.entity.HierarchyType;
+import org.egov.portal.entity.Citizen;
 
 
-/*import org.egov.lib.citizen.model.Owner;
+/*
 import org.egov.portal.surveyor.model.Surveyor;*/
 
 /**

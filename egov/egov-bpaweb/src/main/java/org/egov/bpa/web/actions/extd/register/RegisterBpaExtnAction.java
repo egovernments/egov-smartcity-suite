@@ -131,7 +131,6 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.citizen.entity.Citizen;
 /*import org.egov.erpcollection.integration.models.BillReceiptInfo;*/
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
@@ -149,6 +148,7 @@ import org.egov.pims.model.EmployeeView;
 import org.egov.pims.model.PersonalInformation;
 /*import org.egov.pims.service.EisManager;*/
 import org.egov.pims.service.EisUtilService;
+import org.egov.portal.entity.Citizen;
 /*import org.egov.portal.surveyor.model.Surveyor;
 import org.egov.portal.surveyor.model.SurveyorDetail;*/
 import org.egov.web.actions.workflow.GenericWorkFlowAction;

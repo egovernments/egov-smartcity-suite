@@ -45,13 +45,13 @@
 		<defaultValueExpression><![CDATA["/home/girish/Drivespace/svncheckouts/COC/buildingplan/coc-bpa/modules/bpa/bpajava/src/reports/templates/"]]></defaultValueExpression>
 	</parameter>
 	<field name="planSubmissionNum" class="java.lang.String"/>
-	<field name="owner" class="org.egov.lib.citizen.model.Owner"/>
+	<field name="owner" class="org.egov.infra.citizen.entity.Citizen"/>
 	<field name="planSubmissionDate" class="java.util.Date"/>
 	<field name="propertyid" class="java.lang.String"/>
 	<field name="rejection" class="org.egov.bpa.models.extd.RejectionExtn"/>
 	<field name="bpaOwnerAddress" class="java.lang.String"/>
 	<field name="serviceType" class="org.egov.bpa.models.extd.masters.ServiceTypeExtn"/>
-	<field name="adminboundaryid" class="org.egov.lib.admbndry.Boundary"/>
+	<field name="adminboundaryid" class="org.egov.infra.admin.master.entity.Boundary"/>
 	<field name="rejectOrdPrepDet" class="org.egov.bpa.models.extd.RegnStatusDetailsExtn"/>
 	<background>
 		<band height="802">

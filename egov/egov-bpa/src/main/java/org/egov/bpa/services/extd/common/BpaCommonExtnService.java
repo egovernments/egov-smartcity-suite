@@ -105,10 +105,8 @@ import org.egov.infstr.workflow.inbox.WorkFlowItemsService;*/
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
-/*import org.egov.lib.citizen.model.Owner;*/
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.citizen.entity.Citizen;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
@@ -142,6 +140,7 @@ import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.EmployeeServiceImpl;
 import org.egov.pims.utils.EisManagersUtill;
+import org.egov.portal.entity.Citizen;
 /*import org.egov.portal.surveyor.model.Surveyor;
 import org.egov.portal.surveyor.model.SurveyorDetail;*/
 import org.hibernate.Criteria;
