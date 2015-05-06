@@ -40,5 +40,5 @@
 package org.egov.infra.citizen.utils.constants;
 
 public class CommonConstants {
-	public static final String CITIZEN_ROLE = "Citizen User";
+	public static final String CITIZEN_ROLE = "Citizen";
 }
