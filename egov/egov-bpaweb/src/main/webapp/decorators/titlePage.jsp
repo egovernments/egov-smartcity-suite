@@ -41,7 +41,6 @@
 
 <%@ page import="java.sql.Connection,java.sql.PreparedStatement,
 org.egov.infstr.client.administration.rjbac.user.UserForm,
-org.egov.infstr.utils.HibernateUtil,
 org.egov.infstr.utils.ServiceLocator,
 org.egov.lib.rjbac.user.User,org.egov.lib.admbndry.BoundaryDAO,
 org.egov.lib.rjbac.user.ejb.api.UserManager,
