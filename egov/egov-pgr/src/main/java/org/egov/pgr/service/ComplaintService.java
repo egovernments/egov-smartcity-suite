@@ -284,12 +284,9 @@ public class ComplaintService {
 				.append(savedComplaint.getCRN())
 				.append(" regarding ")
 				.append(savedComplaint.getComplaintType().getName())
-				.append(" was marked as ")
+				.append(" was ")
 				.append(savedComplaint.getStatus().getName())
-				.append(" by ")
-				.append(savedComplaint.getState().getSenderName().equals("Unknown") ? "you" : savedComplaint.getState()
-						.getSenderName())
-				.append(". Please help us to improve our quality of service by giving your feedback on the quality of service by clicking <a>here</a>.");
+				.append(" by you.");
 		return detailedMessage.toString();
 	}
 
