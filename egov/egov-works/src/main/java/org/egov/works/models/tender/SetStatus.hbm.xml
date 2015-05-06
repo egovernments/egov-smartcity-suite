@@ -42,16 +42,13 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Jul 19, 2007 2:57:28 PM by Hibernate Tools 3.2.0.b9 -->
 <hibernate-mapping>
-	<class name="org.egov.works.models.tender.SetStatus" table="EGW_WORKS_STATUS">
+	<class name="org.egov.works.models.tender.SetStatus" table="EGW_OFFLINE_STATUS">
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">			
-				<param name="sequence">EGW_WORKS_STATUS_SEQ</param>
+				<param name="sequence">SEQ_EGW_OFFLINE_STATUS</param>
 			</generator>
 		</id>
-		<property name="statusDate" type="date">
-			<column name="STATUS_DATE" />
-		</property>
 		<property name="objectType" type="string">
 			<column name="OBJECT_TYPE" not-null="true" />
 		</property>
@@ -60,11 +57,15 @@
 		</property>
 		<many-to-one name="egwStatus"
 			class="org.egov.commons.EgwStatus">
-			<column name="STATUS_ID" />
+			<column name="STATUS_ID" not-null="true"  />
 		</many-to-one>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" not-null="true" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" not-null="true" fetch="select"/>
-		<property name="createdDate" column="CREATED_DATE" type="timestamp" />	
+		<property name="statusDate" type="date">
+			<column name="STATUS_DATE" not-null="true" />
+		</property>
+		
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />	
 		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
 	</class>
 	<query name="getStatusByObjectId">

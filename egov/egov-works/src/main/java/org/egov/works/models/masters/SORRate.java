@@ -49,17 +49,18 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.models.Money;
 
-public class Rate extends BaseModel {
-	private ScheduleOfRate schedule;
+public class SORRate extends BaseModel {
+	private ScheduleOfRate scheduleOfRate;
 	
 	@Valid
 	private Money rate;
 	private Period validity;
-	public ScheduleOfRate getSchedule() {
-		return schedule;
+	
+	public ScheduleOfRate getScheduleOfRate() {
+		return scheduleOfRate;
 	}
-	public void setSchedule(ScheduleOfRate schedule) {
-		this.schedule = schedule;
+	public void setScheduleOfRate(ScheduleOfRate scheduleOfRate) {
+		this.scheduleOfRate = scheduleOfRate;
 	}
 	public Money getRate() {
 		return rate;
@@ -74,8 +75,8 @@ public class Rate extends BaseModel {
 		this.validity = validity;
 	}
 	
-	public Rate() {	}
-	public Rate(Money sorrate){
+	public SORRate() {	}
+	public SORRate(Money sorrate){
 		this.rate = sorrate;
 	}
 	

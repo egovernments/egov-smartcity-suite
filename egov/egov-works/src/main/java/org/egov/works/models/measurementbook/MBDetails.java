@@ -52,155 +52,159 @@ import org.egov.infstr.models.BaseModel;
 import org.egov.works.models.workorder.WorkOrderActivity;
 import org.hibernate.validator.constraints.Length;
 
-
-
 public class MBDetails extends BaseModel {
-	
-	@Required(message = "mbdetails.mbheader.null")
-	private MBHeader mbHeader;
-	@Required(message = "mbdetails.activity.null")
-	private WorkOrderActivity workOrderActivity;
-	@GreaterThan(value=0,message="mbdetails.quantity.non.negative")
-	private double quantity;
-	@Length(max = 400, message = "mbdetails.remark.length")
-	private String remark;
-	
-	//------------------------Fields for calculations---------------------
-	private double prevCumlvQuantity;
-	private double currCumlvQuantity;
-	private double amtForCurrQuantity;
-	private double cumlvAmtForCurrCumlvQuantity;
-	private Date mbdetailsDate;
-	@OptionalPattern(regex=Constants.ALPHANUMERIC_WITHSLASHES,message="mbdetails.ordernumber")
-	private String OrderNumber;
-	//-------------------------------------------------------------------
-	private double totalEstQuantity;		//Added for RE
-	private double amount = 0.0; 		
-	
-	public List<ValidationError> validate() {
-		List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-		if (mbHeader != null
-				&& (mbHeader.getId() == null || mbHeader.getId() == 0 || mbHeader.getId() == -1)) {
-			validationErrors.add(new ValidationError("mbHeader", "mbdetails.mbheader.null"));
-		} 
-		if (workOrderActivity != null
-				&& (workOrderActivity.getId() == null
-						|| workOrderActivity.getId() == 0 || workOrderActivity.getId() == -1)) {
-			validationErrors.add(new ValidationError("workOrderActivity", "mbdetails.activity.null"));
-		} 
-		return validationErrors;
-	}
-	
-	public void setMbHeader(MBHeader mbHeader) {
-		this.mbHeader = mbHeader;
-	}
-	
-	public MBHeader getMbHeader() {
-		return mbHeader;
-	}
-	
-	public void setQuantity(double quantity) {
-		this.quantity = quantity;
-	}
-	public double getQuantity() {
-		return quantity;
-	}
 
-	public WorkOrderActivity getWorkOrderActivity() {
-		return workOrderActivity;
-	}
+    private static final long serialVersionUID = -5088074625605584344L;
+    @Required(message = "mbdetails.mbheader.null")
+    private MBHeader mbHeader;
+    @Required(message = "mbdetails.activity.null")
+    private WorkOrderActivity workOrderActivity;
+    @GreaterThan(value = 0, message = "mbdetails.quantity.non.negative")
+    private double quantity;
+    private double rate;
+    @Length(max = 400, message = "mbdetails.remark.length")
+    private String remarks;
 
-	public void setWorkOrderActivity(WorkOrderActivity workOrderActivity) {
-		this.workOrderActivity = workOrderActivity;
-	}
+    // ------------------------Fields for calculations---------------------
+    private double prevCumlvQuantity;
+    private double currCumlvQuantity;
+    private double amtForCurrQuantity;
+    private double cumlvAmtForCurrCumlvQuantity;
+    private Date mbdetailsDate;
+    @OptionalPattern(regex = Constants.ALPHANUMERIC_WITHSLASHES, message = "mbdetails.ordernumber")
+    private String OrderNumber;
+    // -------------------------------------------------------------------
+    private double totalEstQuantity; // Added for RE
+    private double amount = 0.0;
 
-	public String getRemark() {
-		return remark;
-	}
+    @Override
+    public List<ValidationError> validate() {
+        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        if (mbHeader != null && (mbHeader.getId() == null || mbHeader.getId() == 0 || mbHeader.getId() == -1))
+            validationErrors.add(new ValidationError("mbHeader", "mbdetails.mbheader.null"));
+        if (workOrderActivity != null
+                && (workOrderActivity.getId() == null || workOrderActivity.getId() == 0 || workOrderActivity.getId() == -1))
+            validationErrors.add(new ValidationError("workOrderActivity", "mbdetails.activity.null"));
+        return validationErrors;
+    }
 
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
+    public void setMbHeader(final MBHeader mbHeader) {
+        this.mbHeader = mbHeader;
+    }
 
-	/**
-	 * Get Cumulative quantity upto pervious entry 
-	 */
-	public double getPrevCumlvQuantity() {
-		return prevCumlvQuantity;
-	}
-	
-	public void setPrevCumlvQuantity(double prevCumlvQuantity) {
-		this.prevCumlvQuantity = prevCumlvQuantity;
-	}
+    public MBHeader getMbHeader() {
+        return mbHeader;
+    }
 
-	/**
-	 * Get Cumulative quantity including current entry
-	 */
-	public double getCurrCumlvQuantity() {
-		return currCumlvQuantity;
-	}
+    public void setQuantity(final double quantity) {
+        this.quantity = quantity;
+    }
 
-	public void setCurrCumlvQuantity(double currCumlvQuantity) {
-		this.currCumlvQuantity = currCumlvQuantity;
-	}
+    public double getQuantity() {
+        return quantity;
+    }
 
-	/**
-	 * Get Amount for current entry 
-	 */
-	public double getAmtForCurrQuantity() {
-		return amtForCurrQuantity;
-	}
+    public WorkOrderActivity getWorkOrderActivity() {
+        return workOrderActivity;
+    }
 
-	public void setAmtForCurrQuantity(double amtForCurrQuantity) {
-		this.amtForCurrQuantity = amtForCurrQuantity;
-	}
+    public void setWorkOrderActivity(final WorkOrderActivity workOrderActivity) {
+        this.workOrderActivity = workOrderActivity;
+    }
 
-	/**
-	 * Get Cumulative amount including current entry
-	 */
-	public double getCumlvAmtForCurrCumlvQuantity() {
-		return cumlvAmtForCurrCumlvQuantity;
-	}
+    public String getRemarks() {
+        return remarks;
+    }
 
-	public void setCumlvAmtForCurrCumlvQuantity(double cumlvAmtForCurrCumlvQuantity) {
-		this.cumlvAmtForCurrCumlvQuantity = cumlvAmtForCurrCumlvQuantity;
-	}
+    public void setRemarks(final String remarks) {
+        this.remarks = remarks;
+    }
 
-	public Date getMbdetailsDate() {
-		return mbdetailsDate;
-	}
+    /**
+     * Get Cumulative quantity upto pervious entry
+     */
+    public double getPrevCumlvQuantity() {
+        return prevCumlvQuantity;
+    }
 
-	public void setMbdetailsDate(Date mbdetailsDate) {
-		this.mbdetailsDate = mbdetailsDate;
-	}
+    public void setPrevCumlvQuantity(final double prevCumlvQuantity) {
+        this.prevCumlvQuantity = prevCumlvQuantity;
+    }
 
-	public String getOrderNumber() {
-		return OrderNumber;
-	}
+    /**
+     * Get Cumulative quantity including current entry
+     */
+    public double getCurrCumlvQuantity() {
+        return currCumlvQuantity;
+    }
 
-	public void setOrderNumber(String orderNumber) {
-		OrderNumber = orderNumber;
-	}
+    public void setCurrCumlvQuantity(final double currCumlvQuantity) {
+        this.currCumlvQuantity = currCumlvQuantity;
+    }
 
-	public double getTotalEstQuantity() {
-		return totalEstQuantity;
-	}
+    /**
+     * Get Amount for current entry
+     */
+    public double getAmtForCurrQuantity() {
+        return amtForCurrQuantity;
+    }
 
-	public void setTotalEstQuantity(double totalEstQuantity) {
-		this.totalEstQuantity = totalEstQuantity;
-	}
-	
-	public double getAmount() {
-		if(workOrderActivity.getActivity().getNonSor()==null){
-			amount = workOrderActivity.getApprovedRate()*quantity*workOrderActivity.getConversionFactor();
-		}
-		else{
-			amount=workOrderActivity.getApprovedRate()*quantity;
-		}
-		return amount;
-	}
+    public void setAmtForCurrQuantity(final double amtForCurrQuantity) {
+        this.amtForCurrQuantity = amtForCurrQuantity;
+    }
 
-	public void setAmount(double amount) {
-		this.amount = amount;
-	}
+    /**
+     * Get Cumulative amount including current entry
+     */
+    public double getCumlvAmtForCurrCumlvQuantity() {
+        return cumlvAmtForCurrCumlvQuantity;
+    }
+
+    public void setCumlvAmtForCurrCumlvQuantity(final double cumlvAmtForCurrCumlvQuantity) {
+        this.cumlvAmtForCurrCumlvQuantity = cumlvAmtForCurrCumlvQuantity;
+    }
+
+    public Date getMbdetailsDate() {
+        return mbdetailsDate;
+    }
+
+    public void setMbdetailsDate(final Date mbdetailsDate) {
+        this.mbdetailsDate = mbdetailsDate;
+    }
+
+    public String getOrderNumber() {
+        return OrderNumber;
+    }
+
+    public void setOrderNumber(final String orderNumber) {
+        OrderNumber = orderNumber;
+    }
+
+    public double getTotalEstQuantity() {
+        return totalEstQuantity;
+    }
+
+    public void setTotalEstQuantity(final double totalEstQuantity) {
+        this.totalEstQuantity = totalEstQuantity;
+    }
+
+    public double getAmount() {
+        if (workOrderActivity.getActivity().getNonSor() == null)
+            amount = workOrderActivity.getApprovedRate() * quantity * workOrderActivity.getConversionFactor();
+        else
+            amount = workOrderActivity.getApprovedRate() * quantity;
+        return amount;
+    }
+
+    public void setAmount(final double amount) {
+        this.amount = amount;
+    }
+
+    public double getRate() {
+        return rate;
+    }
+
+    public void setRate(final double rate) {
+        this.rate = rate;
+    }
 }

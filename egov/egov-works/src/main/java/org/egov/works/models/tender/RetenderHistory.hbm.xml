@@ -46,7 +46,7 @@
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">			
-				<param name="sequence">EGW_RETENDER_HISTORY_SEQ</param>
+				<param name="sequence">SEQ_EGW_RETENDER_HISTORY</param>
 			</generator>
 		</id>
 		<property name="statusDate" type="date">
@@ -61,9 +61,9 @@
 		<many-to-one name="egwStatus" class="org.egov.commons.EgwStatus">
 			<column name="STATUS_ID" not-null="true" />
 		</many-to-one>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" not-null="true" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" not-null="true" fetch="select"/>
-		<property name="createdDate" column="CREATED_DATE" type="timestamp" />	
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />	
 		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
 	</class>
 </hibernate-mapping>

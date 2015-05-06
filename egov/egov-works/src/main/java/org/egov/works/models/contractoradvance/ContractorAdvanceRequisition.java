@@ -43,89 +43,91 @@ import org.egov.model.advance.EgAdvanceRequisition;
 import org.egov.pims.commons.DrawingOfficer;
 import org.egov.works.models.workorder.WorkOrderEstimate;
 
-public class ContractorAdvanceRequisition extends EgAdvanceRequisition{
-	
-	public enum ContractorAdvanceRequisitionStatus {   
-		NEW,CREATED,CHECKED,REJECTED,RESUBMITTED,CANCELLED,APPROVED
-	}
-	
-	private WorkOrderEstimate workOrderEstimate;
-	private DrawingOfficer drawingOfficer;
-	
-	private Long workflowDepartmentId;
-	private Integer workflowDesignationId;
-	private Integer workflowApproverUserId;
-	private Integer workflowWardId;
-	private String workflowapproverComments;
-	private String ownerName;
-	
-	@Override
-	public String getStateDetails() {
-		return "Contractor ARF : " + getAdvanceRequisitionNumber();
-	}
+public class ContractorAdvanceRequisition extends EgAdvanceRequisition {
 
-	public WorkOrderEstimate getWorkOrderEstimate() {
-		return workOrderEstimate;
-	}
+    private static final long serialVersionUID = -8267145890478916279L;
 
-	public void setWorkOrderEstimate(WorkOrderEstimate workOrderEstimate) {
-		this.workOrderEstimate = workOrderEstimate;
-	}
+    public enum ContractorAdvanceRequisitionStatus {
+        NEW, CREATED, CHECKED, REJECTED, RESUBMITTED, CANCELLED, APPROVED
+    }
 
-	public DrawingOfficer getDrawingOfficer() {
-		return drawingOfficer;
-	}
+    private WorkOrderEstimate workOrderEstimate;
+    private DrawingOfficer drawingOfficer;
 
-	public void setDrawingOfficer(DrawingOfficer drawingOfficer) {
-		this.drawingOfficer = drawingOfficer;
-	}
+    private Long workflowDepartmentId;
+    private Integer workflowDesignationId;
+    private Integer workflowApproverUserId;
+    private Integer workflowWardId;
+    private String workflowapproverComments;
+    private String ownerName;
 
-	public Long getWorkflowDepartmentId() {
-		return workflowDepartmentId;
-	}
+    @Override
+    public String getStateDetails() {
+        return "Contractor ARF : " + getAdvanceRequisitionNumber();
+    }
 
-	public void setWorkflowDepartmentId(Long workflowDepartmentId) {
-		this.workflowDepartmentId = workflowDepartmentId;
-	}
+    public WorkOrderEstimate getWorkOrderEstimate() {
+        return workOrderEstimate;
+    }
 
-	public Integer getWorkflowDesignationId() {
-		return workflowDesignationId;
-	}
+    public void setWorkOrderEstimate(final WorkOrderEstimate workOrderEstimate) {
+        this.workOrderEstimate = workOrderEstimate;
+    }
 
-	public void setWorkflowDesignationId(Integer workflowDesignationId) {
-		this.workflowDesignationId = workflowDesignationId;
-	}
+    public DrawingOfficer getDrawingOfficer() {
+        return drawingOfficer;
+    }
 
-	public Integer getWorkflowApproverUserId() {
-		return workflowApproverUserId;
-	}
+    public void setDrawingOfficer(final DrawingOfficer drawingOfficer) {
+        this.drawingOfficer = drawingOfficer;
+    }
 
-	public void setWorkflowApproverUserId(Integer workflowApproverUserId) {
-		this.workflowApproverUserId = workflowApproverUserId;
-	}
+    public Long getWorkflowDepartmentId() {
+        return workflowDepartmentId;
+    }
 
-	public Integer getWorkflowWardId() {
-		return workflowWardId;
-	}
+    public void setWorkflowDepartmentId(final Long workflowDepartmentId) {
+        this.workflowDepartmentId = workflowDepartmentId;
+    }
 
-	public void setWorkflowWardId(Integer workflowWardId) {
-		this.workflowWardId = workflowWardId;
-	}
+    public Integer getWorkflowDesignationId() {
+        return workflowDesignationId;
+    }
 
-	public String getWorkflowapproverComments() {
-		return workflowapproverComments;
-	}
+    public void setWorkflowDesignationId(final Integer workflowDesignationId) {
+        this.workflowDesignationId = workflowDesignationId;
+    }
 
-	public void setWorkflowapproverComments(String workflowapproverComments) {
-		this.workflowapproverComments = workflowapproverComments;
-	}
+    public Integer getWorkflowApproverUserId() {
+        return workflowApproverUserId;
+    }
 
-	public String getOwnerName() {
-		return ownerName;
-	}
+    public void setWorkflowApproverUserId(final Integer workflowApproverUserId) {
+        this.workflowApproverUserId = workflowApproverUserId;
+    }
 
-	public void setOwnerName(String ownerName) {
-		this.ownerName = ownerName;
-	}
+    public Integer getWorkflowWardId() {
+        return workflowWardId;
+    }
+
+    public void setWorkflowWardId(final Integer workflowWardId) {
+        this.workflowWardId = workflowWardId;
+    }
+
+    public String getWorkflowapproverComments() {
+        return workflowapproverComments;
+    }
+
+    public void setWorkflowapproverComments(final String workflowapproverComments) {
+        this.workflowapproverComments = workflowapproverComments;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(final String ownerName) {
+        this.ownerName = ownerName;
+    }
 
 }

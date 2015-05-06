@@ -49,55 +49,62 @@ import org.egov.works.models.masters.OverheadRate;
 import org.joda.time.LocalDate;
 
 public class OverheadValue extends BaseModel {
-	private Overhead overhead;
-	private Money amount;
-	private AbstractEstimate abstractEstimate;
-	public AbstractEstimate getAbstractEstimate() {
-		return abstractEstimate;
-	}
-	public void setAbstractEstimate(AbstractEstimate abstractEstimate) {
-		this.abstractEstimate = abstractEstimate;
-	}
-	public OverheadValue() {
-	}
-	public OverheadValue(Money amount, Overhead overhead) {
-		super();
-		this.amount = amount;
-		this.overhead = overhead;
-	}
-	public Overhead getOverhead() {
-		return overhead;
-	}
-	public void setOverhead(Overhead overhead) {
-		this.overhead = overhead;
-	}
-	public Money getAmount() {
-		return amount;
-	}
-	public void setAmount(Money amount) {
-		this.amount = amount;
-	}
+   
+    private static final long serialVersionUID = -2562352896664615339L;
+    private Overhead overhead;
+    private Money amount;
+    private AbstractEstimate abstractEstimate;
 
-	public OverheadRate getOverheadRateOn(Date estimateDate) {
-		
-		for (OverheadRate overheadRate : overhead.getOverheadRates()) {
-			if (overheadRate != null && isWithin(overheadRate.getValidity(), estimateDate)) {
-				return overheadRate;
-			}
-		}
+    public AbstractEstimate getAbstractEstimate() {
+        return abstractEstimate;
+    }
 
-		return null;
-	}
-	public boolean isWithin(Period period, Date dateTime) {
-		LocalDate start = new LocalDate(period.getStartDate());
-		LocalDate end = new LocalDate(period.getEndDate());
-		LocalDate date = new LocalDate(dateTime);
-		if (period.getEndDate() == null) {
-			return start.compareTo(date) <= 0;
-		} else {
-			return start.compareTo(date) <= 0 && end.compareTo(date) >= 0;
-		}
-	}
-	
+    public void setAbstractEstimate(final AbstractEstimate abstractEstimate) {
+        this.abstractEstimate = abstractEstimate;
+    }
+
+    public OverheadValue() {
+    }
+
+    public OverheadValue(final Money amount, final Overhead overhead) {
+        super();
+        this.amount = amount;
+        this.overhead = overhead;
+    }
+
+    public Overhead getOverhead() {
+        return overhead;
+    }
+
+    public void setOverhead(final Overhead overhead) {
+        this.overhead = overhead;
+    }
+
+    public Money getAmount() {
+        return amount;
+    }
+
+    public void setAmount(final Money amount) {
+        this.amount = amount;
+    }
+
+    public OverheadRate getOverheadRateOn(final Date estimateDate) {
+
+        for (final OverheadRate overheadRate : overhead.getOverheadRates())
+            if (overheadRate != null && isWithin(overheadRate.getValidity(), estimateDate))
+                return overheadRate;
+
+        return null;
+    }
+
+    public boolean isWithin(final Period period, final Date dateTime) {
+        final LocalDate start = new LocalDate(period.getStartDate());
+        final LocalDate end = new LocalDate(period.getEndDate());
+        final LocalDate date = new LocalDate(dateTime);
+        if (period.getEndDate() == null)
+            return start.compareTo(date) <= 0;
+        else
+            return start.compareTo(date) <= 0 && end.compareTo(date) >= 0;
+    }
 
 }

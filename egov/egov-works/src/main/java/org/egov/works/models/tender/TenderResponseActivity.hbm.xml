@@ -47,11 +47,11 @@
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">EGW_TEND_RESP_ACT_SEQ</param>
+				<param name="sequence">SEQ_EGW_TENDER_RESPONSE_ACTIVITY</param>
 			</generator>
 		</id>
 		<many-to-one name="tenderResponse" column="TENDER_RESPONSE_ID" not-null="true" insert="false" update="false" fetch="select"/>
-		<many-to-one name="activity" class="org.egov.works.models.estimate.Activity" column="ACTIVITY_ID" not-null="true" fetch="select"/>
+		<many-to-one name="activity" class="org.egov.works.models.estimate.Activity" column="ESTIMATE_ACTIVITY_ID" not-null="true" fetch="select"/>
 		
 		<property name="negotiatedRate" type="double">
             <column name="NEGOTIATED_RATE" precision="20" not-null="true" />
@@ -59,14 +59,15 @@
         <property name="negotiatedQuantity" type="double">
             <column name="NEGOTIATED_QUANTITY" precision="20" not-null="true" />
         </property>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" not-null="true" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" not-null="true" fetch="select"/>
-		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
+        
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />
 		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
 		
 		<list name="tenderResponseQuotes" cascade="all,delete-orphan">
 			<key column="TENDER_RESPONSE_ACTIVITY_ID" not-null="true" />
-			<list-index column="tra_index" />
+			<list-index column="tra_quotes_index" />
 			<one-to-many class="org.egov.works.models.tender.TenderResponseQuotes" />
 		</list>		
 	</class>

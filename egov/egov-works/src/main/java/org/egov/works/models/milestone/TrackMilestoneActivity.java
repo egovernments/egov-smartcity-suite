@@ -39,7 +39,6 @@
  */
 package org.egov.works.models.milestone;
 
-
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -53,78 +52,75 @@ import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.utils.StringUtils;
 import org.hibernate.validator.constraints.Length;
 
-/**
- * @author vikas
- */
 
-public class TrackMilestoneActivity extends BaseModel{
+public class TrackMilestoneActivity extends BaseModel {
 
-	private TrackMilestone trackMilestone;
-	private MilestoneActivity milestoneActivity;
-	
-	@Required(message="trackmilestoneActivity.status.null")
-	private String status;
+    private static final long serialVersionUID = -6037373912017416277L;
+    private TrackMilestone trackMilestone;
+    private MilestoneActivity milestoneActivity;
 
-	@Min(value=0, message="trackmilestoneActivity.percentage.min.valid")
-	@Max(value=100,message="trackmilestoneActivity.percentage.max.valid")
-	private BigDecimal complPercentage;
+    @Required(message = "trackmilestoneActivity.status.null")
+    private String status;
 
-	@Length(max=1024,message="trackmilestoneActivity.remarks.length")
-	private String remarks;
+    @Min(value = 0, message = "trackmilestoneActivity.percentage.min.valid")
+    @Max(value = 100, message = "trackmilestoneActivity.percentage.max.valid")
+    private BigDecimal complPercentage;
 
-	@DateFormat(message="trackmilestoneActivity.completionDate.valid") 
-	private Date completionDate;
+    @Length(max = 1024, message = "trackmilestoneActivity.remarks.length")
+    private String remarks;
 
-	public TrackMilestone getTrackMilestone() {
-		return trackMilestone;
-	}
+    @DateFormat(message = "trackmilestoneActivity.completionDate.valid")
+    private Date completionDate;
 
-	public void setTrackMilestone(TrackMilestone trackMilestone) {
-		this.trackMilestone = trackMilestone;
-	}
+    public TrackMilestone getTrackMilestone() {
+        return trackMilestone;
+    }
 
-	public MilestoneActivity getMilestoneActivity() {
-		return milestoneActivity;
-	}
+    public void setTrackMilestone(final TrackMilestone trackMilestone) {
+        this.trackMilestone = trackMilestone;
+    }
 
-	public void setMilestoneActivity(MilestoneActivity milestoneActivity) {
-		this.milestoneActivity = milestoneActivity;
-	}
+    public MilestoneActivity getMilestoneActivity() {
+        return milestoneActivity;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public void setMilestoneActivity(final MilestoneActivity milestoneActivity) {
+        this.milestoneActivity = milestoneActivity;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public BigDecimal getComplPercentage() {
-		return complPercentage;
-	}
+    public void setStatus(final String status) {
+        this.status = status;
+    }
 
-	public void setComplPercentage(BigDecimal complPercentage) {
-		this.complPercentage = complPercentage;
-	}
+    public BigDecimal getComplPercentage() {
+        return complPercentage;
+    }
 
-	public String getRemarks() {
-		return remarks;
-	}
+    public void setComplPercentage(final BigDecimal complPercentage) {
+        this.complPercentage = complPercentage;
+    }
 
-	public Date getCompletionDate() {
-		return completionDate;
-	}
+    public String getRemarks() {
+        return remarks;
+    }
 
-	public void setCompletionDate(Date completionDate) {
-		this.completionDate = completionDate;
-	}
-	
-	public String getRemarksJS() {
-		return StringUtils.escapeJavaScript(remarks);
-	}
-	
-	public void setRemarks(String remarks) {
-		this.remarks = StringEscapeUtils.unescapeHtml(remarks);
-	}
+    public Date getCompletionDate() {
+        return completionDate;
+    }
+
+    public void setCompletionDate(final Date completionDate) {
+        this.completionDate = completionDate;
+    }
+
+    public String getRemarksJS() {
+        return StringUtils.escapeJavaScript(remarks);
+    }
+
+    public void setRemarks(final String remarks) {
+        this.remarks = StringEscapeUtils.unescapeHtml(remarks);
+    }
 }
-

@@ -217,7 +217,7 @@ function validateSearch()
 							<legend >Executing Dept:</legend>
 							<s:select data-mini="true" id="execDeptId"
 								name="execDeptId"  headerKey="-1" headerValue="%{getText('estimate.default.select')}"
-								list="dropdownData.execDeptList" listKey="id" listValue="deptName" value="%{execDeptId}" >
+								list="dropdownData.execDeptList" listKey="id" listValue="name" value="%{execDeptId}" >
 							</s:select>
 						</fieldset>
 					</div>

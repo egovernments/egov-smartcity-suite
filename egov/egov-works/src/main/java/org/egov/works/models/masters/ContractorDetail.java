@@ -44,6 +44,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.egov.commons.ContractorGrade;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Period;
 import org.egov.infra.admin.master.entity.Department;

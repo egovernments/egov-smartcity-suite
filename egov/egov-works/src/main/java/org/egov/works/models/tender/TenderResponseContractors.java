@@ -45,49 +45,50 @@ import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.models.masters.Contractor;
 
-public class TenderResponseContractors extends BaseModel{
-	
-	
-	@Valid
-	private TenderResponse tenderResponse;
-	
-	@Required(message="tenderResponseContractors.contractor.not.null")
-	private Contractor contractor;
-	
-	private String status;
+public class TenderResponseContractors extends BaseModel {
 
-	private String statusCode;
+    private static final long serialVersionUID = -1945464312468501940L;
 
-	public TenderResponse getTenderResponse() {
-		return tenderResponse;
-	}
+    @Valid
+    private TenderResponse tenderResponse;
 
-	public void setTenderResponse(TenderResponse tenderResponse) {
-		this.tenderResponse = tenderResponse;
-	}
+    @Required(message = "tenderResponseContractors.contractor.not.null")
+    private Contractor contractor;
 
-	public Contractor getContractor() {
-		return contractor;
-	}
+    private String status;
 
-	public void setContractor(Contractor contractor) {
-		this.contractor = contractor;
-	}
+    private String statusCode;
 
-	public String getStatus() {
-		return status;
-	}
+    public TenderResponse getTenderResponse() {
+        return tenderResponse;
+    }
 
-	public void setStatus(String status) { 
-		this.status = status;
-	}
+    public void setTenderResponse(final TenderResponse tenderResponse) {
+        this.tenderResponse = tenderResponse;
+    }
 
-	public String getStatusCode() {
-		return statusCode;
-	}
+    public Contractor getContractor() {
+        return contractor;
+    }
 
-	public void setStatusCode(String statusCode) {
-		this.statusCode = statusCode;
-	}
-	
+    public void setContractor(final Contractor contractor) {
+        this.contractor = contractor;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(final String status) {
+        this.status = status;
+    }
+
+    public String getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(final String statusCode) {
+        this.statusCode = statusCode;
+    }
+
 }

@@ -42,25 +42,27 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 	<!-- Generated on 8th dec 09 -->
 <hibernate-mapping>
-	<class name="org.egov.works.models.contractorBill.AssetForBill" table="EGW_ASSETFORBILL">
+	<class name="org.egov.works.models.contractorBill.AssetForBill" table="EGW_CONTRACTORBILL_ASSETS">
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">EGW_ASSETFORBILL_SEQ</param>
+				<param name="sequence">SEQ_EGW_CONTRACTORBILL_ASSETS</param>
 			</generator>
 		</id>
-		<many-to-one name="egbill" class="org.egov.model.bills.EgBillregister" column="ID_BILL" insert="false" update="false"/>
-		<many-to-one name="asset" class="org.egov.asset.model.Asset" column="ID_ASSET" fetch="select" />
-		<many-to-one name="coa" class="org.egov.commons.CChartOfAccounts" column="ID_COA" fetch="select" />
+		<many-to-one name="egbill" class="org.egov.model.bills.EgBillregister" column="BILLREGISTER_ID" insert="false" update="false"/>
+		<many-to-one name="asset" class="org.egov.asset.model.Asset" column="ASSET_ID" fetch="select" />
+		<many-to-one name="coa" class="org.egov.commons.CChartOfAccounts" column="COA_ID" fetch="select" />
 		<property name="amount">
 			<column name="AMOUNT" not-null="true"/>
 		</property>
-	<property name="description">
+		<property name="description">
 			<column name="NARRATION"/>
 		</property>
 		<many-to-one name="workOrderEstimate" column="WORKORDER_ESTIMATE_ID" not-null="true" fetch="select"/>
-		 <property name="isProcessed" type="java.lang.Boolean">
-            <column name="ISPROCESSED" precision="1" scale="0" />
-        </property>
+		
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />	
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />	
 	</class>  
 </hibernate-mapping>

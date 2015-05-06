@@ -70,6 +70,8 @@ public class Activity extends BaseModel {
 	@Required(message="activity.rate.not.null")
 	private Money rate=new Money(0.0);
 	
+        private Money sorRate=new Money(0.0);
+	
 	@Required(message="activity.quantity.not.null")  
 	@GreaterThan(value=0,message="activity.quantity.non.negative")
 	private double quantity;
@@ -263,5 +265,11 @@ public class Activity extends BaseModel {
 	public void setSignValue(String signValue) {
 		this.signValue = signValue;
 	}
+    public Money getSorRate() {
+        return sorRate;
+    }
+    public void setSorRate(Money sorRate) {
+        this.sorRate = sorRate;
+    }
 	
 }

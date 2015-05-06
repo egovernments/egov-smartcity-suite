@@ -37,37 +37,80 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.masters;
+package org.egov.works.models.estimate;
+
+import java.io.File;
+import java.util.Date;
 
 import org.egov.infstr.models.BaseModel;
 
-/**
- * This class represents document tamplate object.
- * @author prashant.gaurav
- *
- */
-public class DocumnetTemplate extends BaseModel{
-	private String departmentName;
-	private String template;
-	
-	
-	/**
-	 * Default constructor
-	 */
-	public DocumnetTemplate() {	}
-	
-	public String getDepartmentName() {
-		return departmentName;
-	}
-	public void setDepartmentName(String departmentName) {
-		this.departmentName = departmentName;
-	}
-	public String getTemplate() {
-		return template;
-	}
-	public void setTemplate(String template) {
-		this.template = template;
-	}
-	
-	
+public class EstimatePhotographs extends BaseModel {
+   
+    private static final long serialVersionUID = -4760202350886149567L;
+    private Double latitude;
+    private Double longitude;
+    private String description;
+    private Date dateOfCapture;
+    private AbstractEstimate estimate;
+    private File fileUpload;
+    private byte[] image;
+
+    public EstimatePhotographs() {
+    }
+
+    public File getFileUpload() {
+        return fileUpload;
+    }
+
+    public void setFileUpload(final File fileUpload) {
+        this.fileUpload = fileUpload;
+    }
+
+    public AbstractEstimate getEstimate() {
+        return estimate;
+    }
+
+    public void setEstimate(final AbstractEstimate estimate) {
+        this.estimate = estimate;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(final byte[] image) {
+        this.image = image;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLatitude(final Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(final Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+
+    public Date getDateOfCapture() {
+        return dateOfCapture;
+    }
+
+    public void setDateOfCapture(final Date dateOfCapture) {
+        this.dateOfCapture = dateOfCapture;
+    }
 }

@@ -230,7 +230,7 @@ function validateCancel() {
 				</display:column>
 
 				<display:column title="Department" titleKey='wp.dept'
-					property="userDepartment.deptName" headerClass="pagetableth"
+					property="department.name" headerClass="pagetableth"
 					class="pagetabletd" style="width:5%;text-align:left">
 				</display:column>
 

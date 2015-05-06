@@ -46,27 +46,36 @@
 	<joined-subclass name="ContractorBillRegister" table="EGW_CONTRACTORBILL"
 		extends="org.egov.model.bills.EgBillregister">
 		<key column="ID" />
-		<list name="assetDetailsList" inverse="false" cascade="all,delete-orphan">
-			<key column="ID_BILL" not-null="true" />
-			<list-index column="asset_index" />
-			<one-to-many class="org.egov.works.models.contractorBill.AssetForBill" />
-		</list>
-		<list name="deductionTypeList" inverse="false" cascade="all,delete-orphan">
-			<key column="ID_BILL" not-null="true" />
-			<list-index column="deductionbill_index" />
-			<one-to-many class="org.egov.works.models.contractorBill.DeductionTypeForBill" />
-		</list>
-		
-		<list name="statutoryDeductionsList" inverse="false" cascade="all,delete-orphan">
-			<key column="ID_BILL" not-null="true" />
-			<list-index column="statutorydeductionbill_index" />
-			<one-to-many class="org.egov.works.models.contractorBill.StatutoryDeductionsForBill" />
-		</list> 
 		
 		<property name="partbillNo">
 			<column name="PART_BILLNUMBER"/>
 		</property>
-		<property name="documentNumber" type="long"><column name="DOCUMENT_NUMBER" /></property>
+		<property name="documentNumber" type="long">
+			<column name="DOCUMENT_NUMBER" />
+		</property>
+		
+		<property name="approvedDate" type="date">
+			<column name="APPROVED_DATE" length="7"/>
+		</property>
+		
+		<list name="assetDetailsList" inverse="false" cascade="all,delete-orphan">
+			<key column="BILLREGISTER_ID" not-null="true" />
+			<list-index column="bill_asset_index" />
+			<one-to-many class="org.egov.works.models.contractorBill.AssetForBill" />
+		</list>
+		
+		<list name="deductionTypeList" inverse="false" cascade="all,delete-orphan">
+			<key column="BILLREGISTER_ID" not-null="true" />
+			<list-index column="stddeductionsbill_index" />
+			<one-to-many class="org.egov.works.models.contractorBill.DeductionTypeForBill" />
+		</list>
+		
+		<list name="statutoryDeductionsList" inverse="false" cascade="all,delete-orphan">
+			<key column="BILLREGISTER_ID" not-null="true" />
+			<list-index column="statutorydeductionbill_index" />
+			<one-to-many class="org.egov.works.models.contractorBill.StatutoryDeductionsForBill" />
+		</list> 
+		
 	</joined-subclass>
 	<query name="RetentionMoneyDeductionList">
 		<![CDATA[

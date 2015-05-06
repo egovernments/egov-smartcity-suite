@@ -43,81 +43,72 @@
 <!-- Generated on 8th dec 09 -->
 <hibernate-mapping>
 	<class name="org.egov.works.models.workorder.WorkOrder"
-		table="EGW_WORK_ORDER">
+		table="EGW_WORKORDER">
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">EGW_WORK_ORDER_SEQ</param>
+				<param name="sequence">SEQ_EGW_WORKORDER</param>
 			</generator>
-		</id>				
-		<many-to-one name="contractor" class="org.egov.works.models.masters.Contractor" column="CONTRACTOR_ID" not-null="true" fetch="select"/>
-		<many-to-one name="engineerIncharge"
-		    class="org.egov.pims.model.PersonalInformation" column="ENGINEER_INCHARGE"
-			 fetch="select" />
-			
-	    <many-to-one name="workOrderPreparedBy" class="org.egov.pims.model.PersonalInformation" column="PREPAREDBY" fetch="select" />
-			
+		</id>			
+		
+		<property name="workOrderNumber" type="string" >
+			<column name="WORKORDER_NUMBER" length="256" not-null="true" />
+		</property>		
+		 <property name="workOrderDate" type="date">
+			<column name="WORKORDER_DATE" length="7" not-null="true" />
+		</property>	
+		<many-to-one name="contractor" class="org.egov.works.models.masters.Contractor" column="CONTRACTOR_ID" not-null="true" fetch="select"/>					
+	    <many-to-one name="workOrderPreparedBy" class="org.egov.pims.model.PersonalInformation" column="PREPAREDBY" fetch="select" not-null="true" />
+		<many-to-one name="engineerIncharge"  class="org.egov.pims.model.PersonalInformation" column="ENGINEER_INCHARGE1" fetch="select" not-null="true" />			
 	    <many-to-one name="engineerIncharge2" class="org.egov.pims.model.PersonalInformation" column="ENGINEER_INCHARGE2" fetch="select" />
-		
-		<property name="workOrderNumber" type="string">
-			<column name="WORKORDER_NUMBER" length="256" />
-		</property>
-		
-		<!-- added for capturing emd amount  -->
+
 		<property name="emdAmountDeposited" type="double" precision="2"	scale="20" column="EMD_AMOUNT_DEPOSITED" />
-		<property name="securityDeposit" type="double" precision="2"	scale="20" column="SECURITY_DEPOSIT" />
+		<property name="securityDeposit" type="double" precision="2" scale="20" column="SECURITY_DEPOSIT" />
 		<property name="labourWelfareFund" type="double" precision="2"	scale="20" column="LABOUR_WELFARE_FUND" />
-		<property name="workCompletionDate" column="WORK_COMPLETION_DATE" />	
-		<property name="packageNumber" column="PACKAGE_NO" />	
-		<property name="workOrderAmount" column="WORKORDER_AMOUNT" />	
-		<property name="tenderNumber" column="TENDER_NO" />	
-		<property name="negotiationNumber" column="NEGOTIATION_NO" />		
+		<property name="packageNumber" column="WP_NUMBER" />	
+		<property name="tenderNumber" column="TENDER_NUMBER" />	
+		<property name="negotiationNumber" column="NEGOTIATION_NUMBER" />	
+		<property name="contractPeriod" column="CONTRACT_PERIOD" type="double" precision="2" scale="10" />	
+		<property name="defectLiabilityPeriod" type="double" precision="2" scale="10" column="DEFECT_LIABILITY_PERIOD"/>				
 		<property name="workOrderDetails" column="WORK_ORDER_DETAILS" />	
-		<property name="contractPeriod" column="CONTRACT_PERIOD" />	
 		<property name="agreementDetails" column="AGREEMENT_DETAILS" />	
 		<property name="paymentTerms" column="PAYMENT_TERMS" />	
 		<many-to-one name="egwStatus" column="STATUS_ID" />
-				
-        <property name="workOrderDate" type="date">
-			<column name="WORKORDER_DATE" length="7" />
-		</property>		
+		<many-to-one name="state" class="org.egov.infstr.models.State"
+			cascade="all">
+			<column name="STATE_ID" />
+		</many-to-one>
+		<property name="workOrderAmount" column="WORKORDER_AMOUNT" not-null="true" />			
+       	<property name="documentNumber" type="long">
+			<column name="DOCUMENT_NUMBER" />
+		</property>
+		<many-to-one name="parent" column="PARENTID" />
+		<property name="approvedDate" type="date">
+			<column name="APPROVED_DATE" length="7"/>
+		</property>
+					
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY" fetch="select"/>
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" not-null="true" />	
+		<property name="modifiedDate" column="MODIFIEDDATE" type="timestamp" />
 		
 		<list name="workOrderEstimates" cascade="all,delete-orphan">
 			<key column="WORKORDER_ID" not-null="true" />
 			<list-index column="WORKORDER_ESTIMATE_INDEX" />
 			<one-to-many class="org.egov.works.models.workorder.WorkOrderEstimate" />
-		</list>
-		
+		</list>		
 		<set name="mbHeaders" inverse="true" >
 			<key column="WORKORDER_ID" />
 			<one-to-many class="org.egov.works.models.measurementbook.MBHeader"  />
-		</set>
-		
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" not-null="true" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY" not-null="true" fetch="select"/>
-		<property name="createdDate" column="CREATEDDATE" type="timestamp" />	
-		<property name="modifiedDate" column="MODIFIEDDATE" type="timestamp" />
-		<property name="documentNumber" type="long">
-			<column name="DOCUMENT_NUMBER" />
-		</property>
-		<many-to-one name="state" class="org.egov.infstr.models.State"
-			cascade="all">
-			<column name="STATE_ID" />
-		</many-to-one>
-				<set name="setStatuses" inverse="true" >
+		</set>		
+		<set name="setStatuses" inverse="true" >
 			<key column="OBJECT_ID" />
 			<one-to-many class="org.egov.works.models.tender.SetStatus"  />
-		</set>
-		<many-to-one name="parent" column="PARENTID" />
+		</set>		
 		<set name="revisionWOs" inverse="true" >
 			<key column="PARENTID" />
 			<one-to-many class="org.egov.works.models.workorder.WorkOrder"  />
-		</set>
-		<property name="approvedDate" type="date">
-			<column name="APPROVEDDATE" length="7"/>
-		</property>
-		<property name="defectLiabilityPeriod" type="double" precision="2" scale="10" column="DEFECT_LIABILITY_PERIOD"/>
-		
+		</set>		
 	</class>
 	
 	<query name="getContractorsWithWO">

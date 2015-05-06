@@ -386,8 +386,8 @@ public class TenderNegotiationAction extends SearchFormAction  {
 				if(id != null)
 					worksPackage=tenderResponse.getTenderEstimate().getWorksPackage();
 				if(worksPackage != null) {
-					addDropdownData(DEPARTMENT_LIST,Arrays.asList(worksPackage.getUserDepartment()));
-					populatePreparedByList(ajaxEstimateAction,worksPackage.getUserDepartment().getId()!= null);
+					addDropdownData(DEPARTMENT_LIST,Arrays.asList(worksPackage.getDepartment()));
+					populatePreparedByList(ajaxEstimateAction,worksPackage.getDepartment().getId()!= null);
 					tenderResponse.setNegotiationPreparedBy(getEmployee());	
 				}
 			}
@@ -415,7 +415,7 @@ public class TenderNegotiationAction extends SearchFormAction  {
 	
 	protected void populatePreparedByList(AjaxEstimateAction ajaxEstimateAction,boolean departID){
 		if (departID) {
-			ajaxEstimateAction.setExecutingDepartment(worksPackage.getUserDepartment().getId());
+			ajaxEstimateAction.setExecutingDepartment(worksPackage.getDepartment().getId());
 		if(StringUtils.isNotBlank(loggedInUserEmployeeCode)) {
 			ajaxEstimateAction.setEmployeeCode(loggedInUserEmployeeCode); 
 		}
@@ -434,7 +434,7 @@ public class TenderNegotiationAction extends SearchFormAction  {
 
     @SkipValidation
 	public String newform(){
-    	setDeptId(worksPackage.getUserDepartment().getId());
+    	setDeptId(worksPackage.getDepartment().getId());
 		return NEW;
 	}
     
@@ -810,7 +810,7 @@ public class TenderNegotiationAction extends SearchFormAction  {
 		if(entity.getTenderEstimate().getAbstractEstimate()!=null && estNum[0].equals(entity.getTenderEstimate().getAbstractEstimate().getExecutingDepartment().getCode()) && estNum[2].equals(financialYear.getFinYearRange())){
 			return false;
 		}
-		else if(entity.getTenderEstimate().getWorksPackage()!=null && estNum[0].equals(entity.getTenderEstimate().getWorksPackage().getUserDepartment().getCode()) && estNum[2].equals(financialYear.getFinYearRange())){
+		else if(entity.getTenderEstimate().getWorksPackage()!=null && estNum[0].equals(entity.getTenderEstimate().getWorksPackage().getDepartment().getCode()) && estNum[2].equals(financialYear.getFinYearRange())){
 			return false;
 		}
 		return true;
@@ -1586,7 +1586,7 @@ public class TenderNegotiationAction extends SearchFormAction  {
 					" or tenderResponse.tenderEstimate.worksPackage.id in " +
 					"(select tr.tenderEstimate.worksPackage.id from TenderResponse tr " +
 						" where tr.tenderEstimate.abstractEstimate.id=null and  tr.tenderEstimate.worksPackage.id!=null and" +
-						" tr.tenderEstimate.worksPackage.userDepartment.id= ?)) ";
+						" tr.tenderEstimate.worksPackage.department.id= ?)) ";
 			paramList.add(departmentId);
 			paramList.add(departmentId);
 		}

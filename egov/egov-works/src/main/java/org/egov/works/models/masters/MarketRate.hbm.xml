@@ -45,20 +45,21 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	<class name="org.egov.works.models.masters.MarketRate" table="EGW_MARKETRATE">
 		<id name="id" column="ID" type="long" unsaved-value="null">
 			<generator class="native">
-				<param name="sequence">EGW_MARKETRATE_SEQ</param>
+				<param name="sequence">SEQ_EGW_MARKETRATE</param>
 			</generator>
-		</id>
-		<property column="MODIFIED_DATE" name="modifiedDate" />
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
-		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
+		</id>		
 		<component name="marketRate">
-			<property name="value" type="double" precision="2"	scale="20" column="VALUE" />
+			<property name="value" type="double" precision="2"	scale="20" column="VALUE" not-null="true" />
 		</component>
-		<many-to-one name="schedule" column="SCHEDULEOFRATE_ID" not-null="true" insert="false" update="false" />
+		<many-to-one name="scheduleOfRate" column="SCHEDULEOFRATE_ID" not-null="true" insert="false" update="false" />
 		<component name="validity">
 			<property name="startDate" type="date" />
 			<property name="endDate" type="date" />
 		</component>
+
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" fetch="select" not-null="true" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true"/>
+		<property column="MODIFIED_DATE" name="modifiedDate" />
 	</class>
 </hibernate-mapping>

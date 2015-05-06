@@ -45,10 +45,19 @@
 		<id name="id" type="long" unsaved-value="null" >
 			<column name="ID" not-null="true"/>
 			<generator class="sequence">
-				<param name="sequence">EGW_DEPOSITWORKS_USAGE_SEQ</param>
+				<param name="sequence">SEQ_EGW_DEPOSITWORKS_USAGE</param>
 			</generator>
 		</id>
-		<many-to-one name="abstractEstimate" class="org.egov.works.models.estimate.AbstractEstimate" column="ABSTRACTESTIMATE_ID"  unique="true" />
+		<many-to-one name="abstractEstimate" class="org.egov.works.models.estimate.AbstractEstimate" column="ABSTRACTESTIMATE_ID" not-null="true" unique="true" />
+		<many-to-one name="depositCode" class="org.egov.works.models.masters.DepositCode" fetch="select">
+			<column name="DEPOSITCODE_ID" not-null="true"/>
+		</many-to-one>
+		<many-to-one name="coa" class="org.egov.commons.CChartOfAccounts" fetch="select">
+			<column name="COA_ID" not-null="true"/>
+		</many-to-one>
+		<many-to-one name="financialYear" class="org.egov.commons.CFinancialYear" fetch="select">
+			<column name="FINANCIALYEAR_ID" not-null="true"/>
+		</many-to-one>
 		<property name="totalDepositAmount">
 			<column name="TOTAL_DEPOSIT_AMOUNT" />
 		</property>
@@ -59,22 +68,16 @@
 			<column name="RELEASED_AMT" />
 		</property>
 		<property name="appropriationNumber" >
-			<column name="APPROPRIATION_NUMBER" />
+			<column name="APPROPRIATION_NUMBER" not-null="true"/>
 		</property>
 		<property name="appropriationDate" type="date">
-			<column name="APPROPRIATION_DATE" length="7" />
+			<column name="APPROPRIATION_DATE" length="7" not-null="true"/>
 		</property>
-		<many-to-one name="depositCode" class="org.egov.works.models.masters.DepositCode" fetch="select">
-			<column name="DEPOSITCODE_ID" />
-		</many-to-one>
-		<many-to-one name="coa" class="org.egov.commons.CChartOfAccounts" fetch="select">
-			<column name="COA_ID" />
-		</many-to-one>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
-		<property name="createdDate" column="CREATED_DATE" type="timestamp" />		
+		
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" fetch="select" not-null="true" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />		
 		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
-		<property name="financialYearId" column="FINANCIALYEARID" type="int" not-null="true"/>
 		
 	</class>
 	<query name="getDepositWorksUsageListForDepositFolio">

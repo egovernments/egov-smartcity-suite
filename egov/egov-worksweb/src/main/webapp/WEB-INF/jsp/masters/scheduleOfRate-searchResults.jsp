@@ -44,7 +44,7 @@
     "Result":[
     <s:iterator var="s" value="scheduleOfRateList" status="status">  
     {"key":"<s:property value="%{id}" />",
-    "value":"<s:property value="%{summary}" />(<s:property value="%{code}" />) under '<s:property value="%{category.code}" />'->'<s:property value="%{category.parent.description}" />'"
+    "value":"<s:property value="%{summary}" />(<s:property value="%{code}" />) under '<s:property value="%{scheduleCategory.code}" />' />'"
     }<s:if test="!#status.last">,</s:if>
     </s:iterator>       
     ]

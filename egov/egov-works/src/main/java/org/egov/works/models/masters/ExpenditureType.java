@@ -39,19 +39,22 @@
  */
 package org.egov.works.models.masters;
 
-public class ExpenditureType{
-	private String value;
-	private ExpenditureType() {}
-	public ExpenditureType(String value) {
-		this.value=value;
-	}
+public class ExpenditureType {
+    private String value;
 
-	public String getValue() {
-		return value;
-	}
+    private ExpenditureType() {
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
-	
+    public ExpenditureType(final String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(final String value) {
+        this.value = value;
+    }
+
 }

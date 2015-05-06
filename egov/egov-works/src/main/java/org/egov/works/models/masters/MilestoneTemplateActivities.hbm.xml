@@ -42,19 +42,19 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="org.egov.works.models.masters.MilestoneTemplateActivity" table="EGW_MILESTONE_TEMP_ACTIVITY " >
+    <class name="org.egov.works.models.masters.MilestoneTemplateActivity" table="EGW_MILESTONE_TEMPL_ACTIVITY " >
   		<id
 			name="id"
 			column="ID"
 			type="long"
 			unsaved-value="null">
 			<generator class="sequence">
-          	<param name="sequence">EGW_MILESTONE_TEM_ACTIVITY_SEQ</param>
+          	<param name="sequence">SEQ_EGW_MILESTONE_TEMPL_ACTIVITY</param>
             </generator>
         </id>
         <many-to-one name="milestoneTemplate" class="org.egov.works.models.masters.MilestoneTemplate" 
         	fetch="select" insert="false" update="false">
-            <column name="TEMPLATEID" precision="22" scale="0" not-null="true"/>
+            <column name="MILESTONE_TEMPLATE_ID" precision="22" scale="0" not-null="true"/>
         </many-to-one>
         <property name="description" type="java.lang.String">
             <column name="DESCRIPTION" length="1024" not-null="true" />
@@ -65,9 +65,11 @@
         <property name="stageOrderNo" type="java.math.BigDecimal">
             <column name="STAGE_ORDER_NO"  precision="5" scale="0" not-null="true" />
         </property>
-         <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY"/>
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY"/>
+        
+        <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" not-null="true" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY"/>
+	    <property name="createdDate" column="CREATEDDATE" not-null="true" />
         <property name="modifiedDate" column="MODIFIEDDATE" type="timestamp"/>
-		<property name="createdDate" column="CREATEDDATE" />
+	
     </class>
 </hibernate-mapping>

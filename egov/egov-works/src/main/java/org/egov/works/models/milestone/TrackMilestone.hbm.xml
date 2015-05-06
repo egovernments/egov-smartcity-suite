@@ -50,29 +50,33 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 			type="long"
 			unsaved-value="null">
 			<generator class="sequence">
-				<param name="sequence">EGW_TRACK_MILESTONE_SEQ</param>
+				<param name="sequence">SEQ_EGW_TRACK_MILESTONE</param>
 			</generator>
 		</id>
-		<property name="total" type="java.math.BigDecimal">
-            <column name="TOTAL_PERCENTAGE"  precision="5" scale="0"/>
-        </property>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
-		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
-		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
-		<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
-			<column name="STATE_ID" />
-		</many-to-one>
 		<many-to-one name="milestone" class="org.egov.works.models.milestone.Milestone" column="MILESTONE_ID" not-null="true" fetch="select" />
 		<many-to-one name="egwStatus" class="org.egov.commons.EgwStatus" column="STATUS_ID" not-null="true" fetch="select" />
 
+		<property name="total" type="java.math.BigDecimal">
+            <column name="TOTAL_PERCENTAGE"  precision="5" scale="0"/>
+        </property>
+		<many-to-one name="state" class="org.egov.infstr.models.State" cascade="all">
+			<column name="STATE_ID" />
+		</many-to-one>
 		<property name="isProjectCompleted" type="boolean">
 			<column name="IS_PROJECT_COMPLETED" />
 		</property>
+		<property name="approvedDate" type="date">
+			<column name="APPROVED_DATE" length="7"/>
+		</property>
+		
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" fetch="select" not-null="true" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
 		
 		<list name="activities" cascade="all,delete-orphan">
-			<key column="TrackMilestone_ID" not-null="true" />
-			<list-index column="activity_index" />
+			<key column="TRACKMILESTONE_ID" not-null="true" />
+			<list-index column="trackmilestone_activity_index" />
 			<one-to-many
 				class="org.egov.works.models.milestone.TrackMilestoneActivity" />
 		</list>

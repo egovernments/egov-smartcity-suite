@@ -43,22 +43,22 @@
 <!-- Generated Jul 19, 2007 2:57:28 PM by Hibernate Tools 3.2.0.b9 -->
 <hibernate-mapping>
 	<class name="org.egov.works.models.estimate.OverheadValue"
-		table="EGW_OVERHEADVALUES">
+		table="EGW_ESTIMATE_OVERHEADS">
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">EGW_OVERHEADVALUES_SEQ</param>
+				<param name="sequence">SEQ_EGW_ESTIMATE_OVERHEADS</param>
 			</generator>
-		</id>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
-		<property name="createdDate" column="CREATED_DATE" type="timestamp" />		
-    		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />	
+		</id>		
 		<many-to-one name="abstractEstimate" column="ABSTRACTESTIMATE_ID" not-null="true" insert="false" update="false"/>
 		<many-to-one name="overhead" column="OVERHEAD_ID"/>
 		<component name="amount">
-			<property name="value" type="double" precision="2"
+			<property name="value" type="double" column="AMOUNT" precision="2" not-null="true"
 				scale="20" />
 		</component>
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" fetch="select" not-null="true" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />		
+    	<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />	
 	</class>
 </hibernate-mapping>

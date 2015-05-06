@@ -263,9 +263,9 @@
        			<td width="15%" class="greyboxwk" id="function1"><span class="mandatory">*</span><s:text name='subledgerCode.function'/> : </td>
             	<td width="53%" class="greybox2wk" ><s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="function" id="function" cssClass="selectwk" list="dropdownData.functionList" listKey="id" listValue="name" value="%{function.id}" /></td>
           	</s:if>  
-         	<s:if test="%{list.contains('worksType')}" >
-           		<td width="15%" class="greyboxwk" id="worksType1" ><span class="mandatory">*</span><s:text name="subledgerCode.natureOfWork" />:</td>
-           		<td width="53%" class="greybox2wk"><s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="worksType" id="worksType" cssClass="selectwk" list="dropdownData.worksTypeList" listKey="id" listValue="name" value="%{worksType.id}" /></td>
+         	<s:if test="%{list.contains('natureOfWork')}" >
+           		<td width="15%" class="greyboxwk" id="natureOfWork1" ><span class="mandatory">*</span><s:text name="subledgerCode.natureOfWork" />:</td>
+           		<td width="53%" class="greybox2wk"><s:select headerKey="-1" headerValue="%{getText('default.dropdown.select')}" name="natureOfWork" id="natureOfWork" cssClass="selectwk" list="dropdownData.natureOfWorkList" listKey="id" listValue="name" value="%{natureOfWork.id}" /></td>
        		</s:if>
       </tr>
         

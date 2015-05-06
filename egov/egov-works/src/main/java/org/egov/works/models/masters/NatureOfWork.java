@@ -37,48 +37,52 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.estimate;
+package org.egov.works.models.masters;
 
 import javax.validation.constraints.NotNull;
 
 import org.egov.infstr.models.BaseModel;
-import org.egov.works.models.masters.ExpenditureType;
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class WorkType extends BaseModel {
+public class NatureOfWork extends BaseModel {
 
-	@NotEmpty
-	private String name;
-	@NotNull
-	private ExpenditureType expenditureType;
-	private String code;
-	public WorkType(){}
-	public WorkType(String name, ExpenditureType expenditureType) {
-		super();
-		this.name = name;
-		this.expenditureType = expenditureType;
-	}
+    private static final long serialVersionUID = -8350958038107099411L;
+    @NotEmpty
+    private String name;
+    @NotNull
+    private ExpenditureType expenditureType;
+    private String code;
 
-	public String getName() {
-		return name;
-	}
+    public NatureOfWork() {
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public NatureOfWork(final String name, final ExpenditureType expenditureType) {
+        super();
+        this.name = name;
+        this.expenditureType = expenditureType;
+    }
 
-	public ExpenditureType getExpenditureType() {
-		return expenditureType;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setExpenditureType(ExpenditureType expenditureType) {
-		this.expenditureType = expenditureType;
-	}
-	public String getCode() {
-		return code;
-	}
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public ExpenditureType getExpenditureType() {
+        return expenditureType;
+    }
+
+    public void setExpenditureType(final ExpenditureType expenditureType) {
+        this.expenditureType = expenditureType;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(final String code) {
+        this.code = code;
+    }
 }
-      

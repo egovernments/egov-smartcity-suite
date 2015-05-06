@@ -45,20 +45,12 @@
         <id name="id" type="long">
             <column name="ID"/>
             <generator class="sequence" >
-            <param name="sequence">EGW_PROJECTCODE_SEQ</param>
+            <param name="sequence">SEQ_EGW_PROJECTCODE</param>
             </generator>
         </id>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
-		<property name="createdDate" column="CREATED_DATE" type="timestamp" />		
-        <property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
-        <set name="estimates" cascade="all,delete-orphan" inverse="true" table = "EGW_ABSTRACTESTIMATE">
-            <key column="PROJECTCODE_ID" />
-            <one-to-many class="org.egov.works.models.estimate.AbstractEstimate" />  
-        </set>
-        
+		      
 		<property name="code" type="string">
-            <column name="CODE" length="256" not-null="true"/>
+            <column name="CODE" length="256" not-null="true" unique="true" />
         </property>
         
         <property name="isActive" type="java.lang.Boolean">
@@ -80,21 +72,27 @@
 		<property name="projectValue" type="double">
 		  <column name="PROJECT_VALUE" precision="2" scale="20" />
 		</property>
-		
-		<property name="isFinalBill" type="java.lang.Boolean">
-			<column name="IS_FINAL_BILL" precision="1" scale="0" />
-   		</property>	
+		 
+        <set name="estimates" cascade="all,delete-orphan" inverse="true" table = "EGW_ABSTRACTESTIMATE">
+            <key column="PROJECTCODE_ID" />
+            <one-to-many class="org.egov.works.models.estimate.AbstractEstimate" />  
+        </set>
+          		
+   		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" fetch="select" not-null="true" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />		
+        <property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
 	</class>
 	
     <query name="ALL_ACTIVEPROJECTCODES">
     <![CDATA[
-        select distinct pc from ProjectCode as pc left join pc.estimates as e where e.state.value not in('CANCEL','COMP_CERTIFICATE') order by pc.code
+        select distinct pc from ProjectCode as pc left join pc.estimates as e where e.egwStatus.code not in('CANCELLED') order by pc.code
     ]]>
     </query>
     
     <query name="GET_ACTIVEPROJECTCODE_BY_CODE">
     <![CDATA[
-        select distinct pc from ProjectCode as pc left join pc.estimates as e where e.state.value not in('CANCEL','COMP_CERTIFICATE') and pc.code = ?
+        select distinct pc from ProjectCode as pc left join pc.estimates as e where e.egwStatus.code not in('CANCELLED') and pc.code = ?
     ]]>
     </query>
     

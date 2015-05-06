@@ -60,8 +60,8 @@ import org.egov.pims.service.PersonalInformationService;
 import org.egov.web.actions.SearchFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.egov.works.models.estimate.AbstractEstimate;
-import org.egov.works.models.estimate.WorkType;
 import org.egov.works.models.masters.Contractor;
+import org.egov.works.models.masters.NatureOfWork;
 import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.services.AbstractEstimateService;
@@ -103,7 +103,7 @@ public class SearchEstimateForREAction extends SearchFormAction {
 		addRelatedEntity("category", EgwTypeOfWork.class);
 		addRelatedEntity("parentCategory", EgwTypeOfWork.class);
 		addRelatedEntity("executingDepartment", Department.class);
-		addRelatedEntity("type", WorkType.class);
+		addRelatedEntity("type", NatureOfWork.class);
 		
 	}
 

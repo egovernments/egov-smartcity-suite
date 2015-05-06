@@ -42,17 +42,17 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 	<class name="org.egov.works.models.estimate.FinancingSource"
-		table="EGW_FINANCINGSOURCE">
+		table="EGW_ESTIMATE_FINANCINGSOURCE">
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">SEQ_EGW_FINANCING_SOURCE</param>
+				<param name="sequence">SEQ_EGW_ESTIMATE_FINANCINGSOURCE</param>
 			</generator>
 		</id>
+		<many-to-one name="financialDetail" column="FINANCIALDETAIL_ID" not-null="true" />
+		<many-to-one name="fundSource" column="FUNDSOURCE_ID" not-null="true" />				
+		<property name="percentage" column="PERCENTAGE" type="double" not-null="true" />
 		<property name="lastModifiedDate" column="LASTMODIFIEDDATE" type="timestamp" />
-		<property name="percentage" column="PERCENTAGE" type="double" />
-		<many-to-one name="financialDetail" column="FINANCIALDETAILID"/>
-		<many-to-one name="fundSource" column="FUNDSOURCEID"/>
 		
 	</class>
 </hibernate-mapping>

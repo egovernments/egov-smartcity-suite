@@ -88,8 +88,8 @@ import org.egov.pims.model.PersonalInformation;
 import org.egov.web.actions.SearchFormAction;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.AbstractEstimateAppropriation;
-import org.egov.works.models.estimate.WorkType;
 import org.egov.works.models.masters.Contractor;
+import org.egov.works.models.masters.NatureOfWork;
 import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.milestone.Milestone;
 import org.egov.works.models.milestone.MilestoneActivity;
@@ -182,8 +182,8 @@ public class WorkProgressRegisterAction extends SearchFormAction {
 		addDropdownData("parentCategoryList",getPersistenceService().findAllBy("from EgwTypeOfWork etw where etw.parentid is null"));
 		addDropdownData(ASSIGNED_USER_LIST1,getPersistenceService().findAllBy("select distinct wo.engineerIncharge from  WorkOrder wo where wo.engineerIncharge.employeeName is not null"));
 		addDropdownData(ASSIGNED_USER_LIST2,getPersistenceService().findAllBy("select distinct wo.engineerIncharge2 from  WorkOrder wo where wo.engineerIncharge2.employeeName is not null"));
-		addDropdownData("typeList", getPersistenceService().findAllBy("from WorkType dt"));
-		addDropdownData("executingDepartmentList",getPersistenceService().findAllBy("from DepartmentImpl order by upper(deptName)"));
+		addDropdownData("typeList", getPersistenceService().findAllBy("from NatureOfWork dt"));
+		addDropdownData("executingDepartmentList",getPersistenceService().findAllBy("from Department order by upper(ame)"));
 		
 		List<EgwStatus> workOrdStatusList = getPersistenceService().findAllBy("from EgwStatus st where st.moduletype=? and st.code in (?,?,?,?)", 
 				WO_OBJECT_TYPE, WorksConstants.APPROVED, WorksConstants.WO_STATUS_WOACKNOWLEDGED, WorksConstants.WO_STATUS_WOSITEHANDEDOVER, 
@@ -336,7 +336,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
 					}
 					else{
 						if(estimateApp.getDepositWorksUsage().getConsumedAmount().equals(BigDecimal.ZERO)){
-							String finyearRange=commonsService.getFinancialYearById(estimateApp.getDepositWorksUsage().getFinancialYearId().longValue()).getFinYearRange();
+							String finyearRange=commonsService.getFinancialYearById(estimateApp.getDepositWorksUsage().getFinancialYear().getId().longValue()).getFinYearRange();
 							if(apprDetails!=null){
 								apprDetails=apprDetails+", "+count+")"+finyearRange+", "+NumberUtil.formatNumber(new BigDecimal(estimateApp.getBudgetUsage().getConsumedAmount()));
 							}
@@ -758,7 +758,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
 		}
 
 		if(expenditureType!=-1){
-			WorkType wtype = (WorkType) getPersistenceService().find("from WorkType where id=?",expenditureType);
+			NatureOfWork wtype = (NatureOfWork) getPersistenceService().find("from WorkType where id=?",expenditureType);
 			srchCrit.append(" with Nature of Work "+ wtype.getName());
 			query.append(" and woe.estimate.type.id=?");
 			paramList.add(expenditureType);

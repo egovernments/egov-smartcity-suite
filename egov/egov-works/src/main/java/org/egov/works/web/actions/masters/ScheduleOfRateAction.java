@@ -63,7 +63,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.web.actions.SearchFormAction;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.masters.MarketRate;
-import org.egov.works.models.masters.Rate;
+import org.egov.works.models.masters.SORRate;
 import org.egov.works.models.masters.ScheduleCategory;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.models.workorder.WorkOrder;
@@ -85,7 +85,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
 	private String displData;
 
 	@Required(message = "sor.category.not.null")
-	private Long categry = -1l;
+	private Long scheduleCategoryId = -1l;
 	private String code;
 	private String description;
 	
@@ -96,17 +96,17 @@ public class ScheduleOfRateAction extends SearchFormAction {
 	private Date estimateDate;
 	public static final String flagValue="yes";
 	
-	private List<Rate> actionRates = new LinkedList<Rate>();
+	private List<SORRate> actionRates = new LinkedList<SORRate>();
 	private List<MarketRate> actionMarketRates=new LinkedList<MarketRate>();
 	
 	private List abstractEstimateList=null;
 	private List woeList =null;
 	private Date woDate;
 	private String woDateFlag = "no";
-	private List<Rate> editableRateList=new ArrayList<Rate>();
+	private List<SORRate> editableRateList=new ArrayList<SORRate>();
 	
 	public ScheduleOfRateAction() {
-		addRelatedEntity("category", ScheduleCategory.class);
+		addRelatedEntity("scheduleCategory", ScheduleCategory.class);
 		addRelatedEntity("uom", UOM.class);
 		addRelatedEntity("createdBy", UserImpl.class);
 	}
@@ -169,14 +169,14 @@ public class ScheduleOfRateAction extends SearchFormAction {
 	}
 	
 	 protected void populateRates() {
-		 for(Rate rate: actionRates) {
+		 for(SORRate rate: actionRates) {
 			 if (validRate(rate)) {				 
-				 scheduleOfRate.addRate(rate);
+				 scheduleOfRate.addSorRate(rate);
 			 }
 		 }
 	 }
 	 
-	 protected boolean validRate(Rate rate){		
+	 protected boolean validRate(SORRate rate){		
 		 if (rate != null){			 
 			 return true;
 		 }
@@ -218,15 +218,15 @@ public class ScheduleOfRateAction extends SearchFormAction {
 		super.prepare();
 		setupDropdownDataExcluding();
 		List<ScheduleOfRate> categories = (List<ScheduleOfRate>) scheduleOfRateService.findAllBy("from ScheduleCategory sc");
-		addDropdownData("categorylist", categories);
-		addDropdownData("uomlist", scheduleOfRateService.findAllBy("from EgUom  order by upper(uom)"));
+		addDropdownData("scheduleCategoryList", categories);
+		addDropdownData("uomlist", scheduleOfRateService.findAllBy("from Uom  order by upper(uom)"));
 	}
 
 	private void getPersistedRateDetails(ScheduleOfRate sor){
-		List<Rate> rateList=null;		
-		 rateList = scheduleOfRate.getRates();
+		List<SORRate> rateList=null;		
+		 rateList = scheduleOfRate.getSorRates();
 		
-		 for(Rate rt : rateList){
+		 for(SORRate rt : rateList){
 			 if(rt.getId()!=null){
 				 editableRateList.add(rt);
 			 }
@@ -283,20 +283,20 @@ public class ScheduleOfRateAction extends SearchFormAction {
 	}
 
 	/**
-	 * @return the categry
+	 * @return the scheduleCategoryId
 	 * @Validation
 	 * @RequiredStringValidator(message="Please select a category")
 	 */
-	public Long getCategry() {
-		return categry;
+	public Long getScheduleCategoryId() {
+		return scheduleCategoryId;
 	}
 
 	/**
-	 * @param categry
-	 *            the categry to set
+	 * @param scheduleCategoryId
+	 *            the scheduleCategoryId to set
 	 */
-	public void setCategry(Long categry) {
-		this.categry = categry;
+	public void setScheduleCategoryId(Long scheduleCategoryId) {
+		this.scheduleCategoryId = scheduleCategoryId;
 	}
 
 	/**
@@ -315,7 +315,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
 	}
 
 	public String searchSorDetails() {
-		if(categry == -1){
+		if(scheduleCategoryId == -1){
 			messageKey = "sor.category.not.null";
 			addActionError(getText(messageKey, "Please Select Category"));			
 			return "searchpage";
@@ -368,23 +368,23 @@ public class ScheduleOfRateAction extends SearchFormAction {
 	 }
 	 
 	
-	 public void iterateRateList(List<Rate> rateList,boolean validationMessageRequired){		
+	 public void iterateRateList(List<SORRate> rateList,boolean validationMessageRequired){		
 		 abstractEstimateList = getPersistenceService().findAllBy("select ae from AbstractEstimate ae, Activity act where act.abstractEstimate=ae and act.abstractEstimate.parent is null and act.abstractEstimate.egwStatus.code <> 'CANCELLED' and act.schedule.id = "+ scheduleOfRate.getId());
-		  Rate rate = rateList.get(rateList.size()-1);
+		  SORRate rate = rateList.get(rateList.size()-1);
 	 	     if(!abstractEstimateList.isEmpty()){   	
 	 	    	 iterateAbstractList(abstractEstimateList,rate,validationMessageRequired);
 	 	     }
 	 }
 	 
-	 public void iterateRateListForRE(List<Rate> rateList,boolean validationMessageFlag){
+	 public void iterateRateListForRE(List<SORRate> rateList,boolean validationMessageFlag){
 		woeList = getPersistenceService().findAllBy("select distinct(woa.workOrderEstimate) from WorkOrderActivity woa where woa.workOrderEstimate.estimate.parent.id is not null and woa.workOrderEstimate.estimate.egwStatus.code<> 'CANCELLED' and exists (select sor.id from ScheduleOfRate sor where sor.id = woa.activity.schedule.id and sor.id = ? )", scheduleOfRate.getId());
-		 Rate rate = rateList.get(rateList.size()-1);
+		 SORRate rate = rateList.get(rateList.size()-1);
 	 	     if(!woeList.isEmpty()){   	
 				iterateWOList(woeList,rate,validationMessageFlag);
 			}
 	 }
 	 
-	 public void iterateAbstractList(List abstractEstimateList,Rate rate,boolean validationMessageRequired){
+	 public void iterateAbstractList(List abstractEstimateList,SORRate rate,boolean validationMessageRequired){
 		 AbstractEstimate abstractEstimate = null;
 		 Map<Integer,String> trackFlagMap=new HashMap<Integer,String>();
 		 for(int i = 0; i < abstractEstimateList.size(); i++){
@@ -423,7 +423,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
 	 }
 	 
 	 
-	 public void iterateWOList(List woeList,Rate rate,boolean validationMessageFlag){
+	 public void iterateWOList(List woeList,SORRate rate,boolean validationMessageFlag){
 		 WorkOrder revisionWO = null;
 		 WorkOrder parentWO = null;
 		 WorkOrderEstimate woe = null;
@@ -558,14 +558,14 @@ public class ScheduleOfRateAction extends SearchFormAction {
 	/**
 	 * @return the actionRates
 	 */
-	public List<Rate> getActionRates() {
+	public List<SORRate> getActionRates() {
 		return actionRates;
 	}
 
 	/**
 	 * @param actionRates the actionRates to set
 	 */
-	public void setActionRates(List<Rate> actionRates) {
+	public void setActionRates(List<SORRate> actionRates) {
 		this.actionRates = actionRates;
 	}
 
@@ -602,8 +602,8 @@ public class ScheduleOfRateAction extends SearchFormAction {
 		StringBuffer scheduleOfRateSql = new StringBuffer(100);
 		String scheduleOfRateStr = "";
 		List<Object> paramList = new ArrayList<Object>();		
-		scheduleOfRateSql.append(" from ScheduleOfRate sor where sor.category.id=?");
-		paramList.add(getCategry()); 
+		scheduleOfRateSql.append(" from ScheduleOfRate sor where sor.scheduleCategory.id=?");
+		paramList.add(scheduleCategoryId); 
 		
 		if (getCode() != null && !getCode().equals("")) {
 			scheduleOfRateSql.append(" and UPPER(sor.code) like ?");
@@ -653,11 +653,11 @@ public class ScheduleOfRateAction extends SearchFormAction {
 		this.woeList = woeList;
 	}
 
-	public List<Rate> getEditableRateList() {
+	public List<SORRate> getEditableRateList() {
 		return editableRateList;
 	}
 
-	public void setEditableRateList(List<Rate> editableRateList) {
+	public void setEditableRateList(List<SORRate> editableRateList) {
 		this.editableRateList = editableRateList;
 	}
 }

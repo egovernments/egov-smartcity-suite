@@ -40,149 +40,162 @@
 package org.egov.works.models.contractorBill;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.egov.model.bills.EgBillregister;
 
-public class ContractorBillRegister extends EgBillregister{
-	public enum BillStatus{
-		CREATED,APPROVED,REJECTED,CANCELLED
-	}
-	private Integer partbillNo;
-	private List<AssetForBill> assetDetailsList = new LinkedList<AssetForBill>();
-	private List<DeductionTypeForBill> deductionTypeList = new LinkedList<DeductionTypeForBill>();
-	private Long documentNumber;
-	private String owner;
-	private List<String> billActions = new ArrayList<String>();
-	private long workOrderId;
-	private Long workflowDepartmentId;
-	private Integer workflowDesignationId;
-	private Integer workflowApproverUserId;
-	private Integer workflowWardId;
-	private String workflowapproverComments;
-	
-	private List<StatutoryDeductionsForBill> statutoryDeductionsList = new LinkedList<StatutoryDeductionsForBill>();
+public class ContractorBillRegister extends EgBillregister {
 
-	@Override
-	public String getStateDetails() {
-		return "Contractor Bill No: " + getBillnumber(); 
-	} 
-	
-	public List<AssetForBill> getAssetDetailsList() {
-		return assetDetailsList;
-	}
+    private static final long serialVersionUID = 2425646766274071912L;
 
-	public void setAssetDetailsList(List<AssetForBill> assetDetailsList) {
-		this.assetDetailsList = assetDetailsList;
-	}
-	
-	public void addAssetDetails(AssetForBill assetForBill) {
-		this.assetDetailsList.add(assetForBill);
-	}
-	
-	public void addDeductionType(DeductionTypeForBill deductionTypeForBill) {
-		this.deductionTypeList.add(deductionTypeForBill);
-	}
+    public enum BillStatus {
+        CREATED, APPROVED, REJECTED, CANCELLED
+    }
 
-	public List<DeductionTypeForBill> getDeductionTypeList() {
-		return deductionTypeList;
-	}
+    private Integer partbillNo;
+    private List<AssetForBill> assetDetailsList = new LinkedList<AssetForBill>();
+    private List<DeductionTypeForBill> deductionTypeList = new LinkedList<DeductionTypeForBill>();
+    private Long documentNumber;
+    private String owner;
+    private List<String> billActions = new ArrayList<String>();
+    private long workOrderId;
+    private Long workflowDepartmentId;
+    private Integer workflowDesignationId;
+    private Integer workflowApproverUserId;
+    private Integer workflowWardId;
+    private String workflowapproverComments;
+    private Date approvedDate;
 
-	public void setDeductionTypeList(List<DeductionTypeForBill> deductionTypeList) {
-		this.deductionTypeList = deductionTypeList;
-	}
+    private List<StatutoryDeductionsForBill> statutoryDeductionsList = new LinkedList<StatutoryDeductionsForBill>();
 
-	public Integer getPartbillNo() {
-		return partbillNo;
-	}
+    @Override
+    public String getStateDetails() {
+        return "Contractor Bill No: " + getBillnumber();
+    }
 
-	public void setPartbillNo(Integer partbillNo) {
-		this.partbillNo = partbillNo;
-	}
+    public List<AssetForBill> getAssetDetailsList() {
+        return assetDetailsList;
+    }
 
-	public Long getDocumentNumber() {
-		return documentNumber;
-	}
+    public void setAssetDetailsList(final List<AssetForBill> assetDetailsList) {
+        this.assetDetailsList = assetDetailsList;
+    }
 
-	public void setDocumentNumber(Long documentNumber) {
-		this.documentNumber = documentNumber;
-	}
+    public void addAssetDetails(final AssetForBill assetForBill) {
+        assetDetailsList.add(assetForBill);
+    }
 
-	public String getOwner() {
-		return owner;
-	}
+    public void addDeductionType(final DeductionTypeForBill deductionTypeForBill) {
+        deductionTypeList.add(deductionTypeForBill);
+    }
 
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
+    public List<DeductionTypeForBill> getDeductionTypeList() {
+        return deductionTypeList;
+    }
 
-	public List<String> getBillActions() {
-		return billActions;
-	}
+    public void setDeductionTypeList(final List<DeductionTypeForBill> deductionTypeList) {
+        this.deductionTypeList = deductionTypeList;
+    }
 
-	public void setBillActions(List<String> billActions) {
-		this.billActions = billActions;
-	}
+    public Integer getPartbillNo() {
+        return partbillNo;
+    }
 
-	public long getWorkOrderId() {
-		return workOrderId;
-	}
+    public void setPartbillNo(final Integer partbillNo) {
+        this.partbillNo = partbillNo;
+    }
 
-	public void setWorkOrderId(long workOrderId) {
-		this.workOrderId = workOrderId;
-	}
+    public Long getDocumentNumber() {
+        return documentNumber;
+    }
 
-	public Long getWorkflowDepartmentId() {
-		return workflowDepartmentId;
-	}
+    public void setDocumentNumber(final Long documentNumber) {
+        this.documentNumber = documentNumber;
+    }
 
-	public void setWorkflowDepartmentId(Long workflowDepartmentId) {
-		this.workflowDepartmentId = workflowDepartmentId;
-	}
+    public String getOwner() {
+        return owner;
+    }
 
-	public Integer getWorkflowDesignationId() {
-		return workflowDesignationId;
-	}
+    public void setOwner(final String owner) {
+        this.owner = owner;
+    }
 
-	public void setWorkflowDesignationId(Integer workflowDesignationId) {
-		this.workflowDesignationId = workflowDesignationId;
-	}
+    public List<String> getBillActions() {
+        return billActions;
+    }
 
-	public Integer getWorkflowApproverUserId() {
-		return workflowApproverUserId;
-	}
+    public void setBillActions(final List<String> billActions) {
+        this.billActions = billActions;
+    }
 
-	public void setWorkflowApproverUserId(Integer workflowApproverUserId) {
-		this.workflowApproverUserId = workflowApproverUserId;
-	}
+    public long getWorkOrderId() {
+        return workOrderId;
+    }
 
-	public Integer getWorkflowWardId() {
-		return workflowWardId;
-	}
+    public void setWorkOrderId(final long workOrderId) {
+        this.workOrderId = workOrderId;
+    }
 
-	public void setWorkflowWardId(Integer workflowWardId) {
-		this.workflowWardId = workflowWardId;
-	}
+    public Long getWorkflowDepartmentId() {
+        return workflowDepartmentId;
+    }
 
-	public String getWorkflowapproverComments() {
-		return workflowapproverComments;
-	}
+    public void setWorkflowDepartmentId(final Long workflowDepartmentId) {
+        this.workflowDepartmentId = workflowDepartmentId;
+    }
 
-	public void setWorkflowapproverComments(String workflowapproverComments) {
-		this.workflowapproverComments = workflowapproverComments;
-	}
+    public Integer getWorkflowDesignationId() {
+        return workflowDesignationId;
+    }
 
-	public List<StatutoryDeductionsForBill> getStatutoryDeductionsList() {
-		return statutoryDeductionsList;
-	}
+    public void setWorkflowDesignationId(final Integer workflowDesignationId) {
+        this.workflowDesignationId = workflowDesignationId;
+    }
 
-	public void setStatutoryDeductionsList(
-			List<StatutoryDeductionsForBill> statutoryDeductionsList) {
-		this.statutoryDeductionsList = statutoryDeductionsList;
-	}
-	
-	public void addStatutoryDeductions(StatutoryDeductionsForBill statutoryDeductionsForBill) {
-		this.statutoryDeductionsList.add(statutoryDeductionsForBill);
-	}
+    public Integer getWorkflowApproverUserId() {
+        return workflowApproverUserId;
+    }
+
+    public void setWorkflowApproverUserId(final Integer workflowApproverUserId) {
+        this.workflowApproverUserId = workflowApproverUserId;
+    }
+
+    public Integer getWorkflowWardId() {
+        return workflowWardId;
+    }
+
+    public void setWorkflowWardId(final Integer workflowWardId) {
+        this.workflowWardId = workflowWardId;
+    }
+
+    public String getWorkflowapproverComments() {
+        return workflowapproverComments;
+    }
+
+    public void setWorkflowapproverComments(final String workflowapproverComments) {
+        this.workflowapproverComments = workflowapproverComments;
+    }
+
+    public List<StatutoryDeductionsForBill> getStatutoryDeductionsList() {
+        return statutoryDeductionsList;
+    }
+
+    public void setStatutoryDeductionsList(final List<StatutoryDeductionsForBill> statutoryDeductionsList) {
+        this.statutoryDeductionsList = statutoryDeductionsList;
+    }
+
+    public void addStatutoryDeductions(final StatutoryDeductionsForBill statutoryDeductionsForBill) {
+        statutoryDeductionsList.add(statutoryDeductionsForBill);
+    }
+
+    public Date getApprovedDate() {
+        return approvedDate;
+    }
+
+    public void setApprovedDate(final Date approvedDate) {
+        this.approvedDate = approvedDate;
+    }
 }

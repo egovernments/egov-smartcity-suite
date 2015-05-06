@@ -138,7 +138,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator{
 			}			
 			String deptName="";			
 			if(YES.equalsIgnoreCase(worksPackgeReq)){	
-				deptName=tenderResponse.getTenderEstimate().getWorksPackage().getUserDepartment().getName(); 				
+				deptName=tenderResponse.getTenderEstimate().getWorksPackage().getDepartment().getName(); 				
 				document.add(makePara(deptName, Element.ALIGN_RIGHT));				
 				if(getWardList(worksPackage)!=null){
 					 document.add(makePara(pdfLabel.get("tenderNegotiationpdf.ward")+"/"+pdfLabel.get("tenderNegotiationpdf.zone")+getWardList(worksPackage),Element.ALIGN_LEFT));

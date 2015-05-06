@@ -129,7 +129,7 @@ public class EstimateTemplateAction extends SearchFormAction{
 	 }
 	 
 	public String save(){
-		 estimateTemplate.getActivities().clear();
+		 estimateTemplate.getEstimateTemplateActivities().clear();
 		 populateSorActivities();
 		 populateNonSorActivities();
 		 populateActivities();
@@ -167,7 +167,7 @@ public class EstimateTemplateAction extends SearchFormAction{
 		 }
 	 }
 	 private void populateActivities() {
-		 for(EstimateTemplateActivity activity: estimateTemplate.getActivities()) {
+		 for(EstimateTemplateActivity activity: estimateTemplate.getEstimateTemplateActivities()) {
 			 activity.setEstimateTemplate(estimateTemplate);
 		 }
 	 }

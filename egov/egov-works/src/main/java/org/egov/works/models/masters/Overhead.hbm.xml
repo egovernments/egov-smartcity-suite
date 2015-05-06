@@ -46,21 +46,20 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 		table="EGW_OVERHEAD">
 		<id name="id" column="ID" type="long" unsaved-value="null">
 			<generator class="native">
-				<param name="sequence">EGW_OVERHEAD_SEQ</param>
+				<param name="sequence">SEQ_EGW_OVERHEAD</param>
 			</generator>
 		</id>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
-		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
-		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
-		<property name="description" column="DESCRIPTION" type="string" />
+		<property name="name" column="NAME" type="string" not-null="true" />
+		<property name="description" column="DESCRIPTION" type="string" not-null="true" />
 		<component name="expenditureType" >
 			<property name="value" type="string" column="EXPENDITURE_TYPE" />
-		</component>
+		</component>		
+		<many-to-one  name="accountCode" column="ACCOUNTCODE_ID"/>		
 		
-		<many-to-one  name="account"/>
-		<property name="name" column="NAME" type="string" />
-		
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" fetch="select" not-null="true" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select" />
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" /> 
 		    
     <list name="overheadRates" cascade="all,delete-orphan" fetch="join" >
         	<key column="overhead_id" not-null="true" />

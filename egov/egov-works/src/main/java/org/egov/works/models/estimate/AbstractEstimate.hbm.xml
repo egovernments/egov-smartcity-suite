@@ -47,182 +47,151 @@
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">EGW_ABSTRACTESTIMATE_SEQ</param>
+				<param name="sequence">SEQ_EGW_ABSTRACTESTIMATE</param>
 			</generator>
 		</id>
 		
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY" fetch="select"/>
-		<property name="createdDate" column="CREATEDDATE" type="timestamp" />
-		<property column="MODIFIEDDATE" name="modifiedDate" type="timestamp" />
-		
-		<many-to-one name="egwStatus" column="STATUS_ID" /> 
-		
-		<many-to-one name="ward"
-			class="org.egov.lib.admbndry.BoundaryImpl">
-			<column name="WARD" />
-		</many-to-one>
-		<component name="workValue">
-			<property name="value" type="double" precision="2"
-				scale="20" />
-		</component>
-		<many-to-one name="state" class="org.egov.infstr.models.State"
-			cascade="all">
-			<column name="STATE_ID" />
-		</many-to-one>
-
-		<list name="overheadValues" cascade="all,delete-orphan">
-			<key column="abstractestimate_id" not-null="true" />
-			<list-index column="oh_index" />
-			<one-to-many
-				class="org.egov.works.models.estimate.OverheadValue" />
-		</list>
-		<list name="assetValues" cascade="all,delete-orphan">
-			<key column="abstractestimate_id" not-null="true" />
-			<list-index column="ass_index" />
-			<one-to-many
-				class="org.egov.works.models.estimate.AssetsForEstimate" />
-		</list>
-		<list name="multiYearEstimates" cascade="all,delete-orphan">
-			<key column="abstractestimate_id" not-null="true" />
-			<list-index column="my_index" />
-			<one-to-many
-				class="org.egov.works.models.estimate.MultiYearEstimate" />
-		</list>
-		
-		<list name="financialDetails" cascade="all,delete-orphan">
-			<key column="abstractestimate_id" not-null="true" />
-			<list-index column="fin_index" />
-			<one-to-many
-				class="org.egov.works.models.estimate.FinancialDetail" />
-		</list>
-		<list name="activities" cascade="all,delete-orphan">
-			<key column="abstractestimate_id" not-null="true" />
-			<list-index column="activity_index" />
-			<one-to-many
-				class="org.egov.works.models.estimate.Activity" />
-		</list>
-		<property name="estimateDate" type="date">
-			<column name="ESTIMATEDATE" length="7" />
+		<property name="estimateNumber" type="string" >
+			<column name="ESTIMATE_NUMBER" length="256" unique="true" not-null="true" />
 		</property>
+		<property name="estimateDate" type="date">
+			<column name="ESTIMATE_DATE" length="7" not-null="true" />
+		</property>		
 		<property name="name" type="string">
-			<column name="NAME" length="1024" not-null="true" /> 
+			<column name="NAMEOFWORK" length="1024" not-null="true" /> 
 		</property>
 		<property name="description" type="string">
 			<column name="DESCRIPTION" length="1024" not-null="true"/>
 		</property>
+		<many-to-one name="ward" class="org.egov.infra.admin.master.entity.Boundary">
+			<column name="JURISDICTION" not-null="true"/>
+		</many-to-one>
+		<many-to-one name="type"
+			class="org.egov.works.models.masters.NatureOfWork" fetch="select">
+			<column name="NATUREOFWORK" not-null="true"/>
+		</many-to-one>
 		<property name="location" type="string">
 			<column name="LOCATION" length="250" /> 
 		</property>
-		<many-to-one name="type"
-			class="org.egov.works.models.estimate.WorkType" fetch="select">
-			<column name="TYPE" />
-		</many-to-one>
-		<many-to-one name="depositCode"
-			class="org.egov.works.models.masters.DepositCode" fetch="select">
-			<column name="DESPOSITCODE_ID" />
+		<property name="latitude">
+			<column name="LATITUDE"  />
+		</property>
+		<property name="longitude">
+			<column name="LONGITUDE" />
+		</property>
+		<many-to-one name="parentCategory"
+			class="org.egov.commons.EgwTypeOfWork" fetch="select"> 
+			<column name="WORK_TYPE" />
 		</many-to-one>
 		<many-to-one name="category"
-			class="org.egov.commons.EgwTypeOfWork" fetch="select"> 
-			<column name="CATEGORY" />
-		</many-to-one>
-		<many-to-one name="parentCategory"
 			class="org.egov.commons.EgwTypeOfWork" fetch="select">
-			<column name="PARENT_CATEGORY" />
+			<column name="WORK_SUBTYPE" />
 		</many-to-one>
 		<many-to-one name="userDepartment"
-			class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
-			<column name="USERDEPARTMENT" />
+			class="org.egov.infra.admin.master.entity.Department" fetch="select">
+			<column name="USER_DEPARTMENT" not-null="true"/>
 		</many-to-one>
 		<many-to-one name="executingDepartment"
-			class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
-			<column name="EXECUTINGDEPARTMENT" />
+			class="org.egov.infra.admin.master.entity.Department" fetch="select">
+			<column name="EXECUTING_DEPARTMENT" not-null="true"/>
 		</many-to-one>
+		<component name="workValue">
+			<property name="value" type="double" precision="2"
+				scale="20" column="WORK_VALUE"  />
+		</component>
+		<component name="estimateValue">
+			<property name="value" type="double" precision="2"
+				scale="20" column="ESTIMATE_VALUE"  />
+		</component>
 		<many-to-one name="estimatePreparedBy"
 			class="org.egov.pims.model.PersonalInformation">
-			<column name="PREPAREDBY" />
+			<column name="PREPAREDBY" not-null="true"/>
 		</many-to-one>
-		<many-to-one name="projectCode" column="PROJECTCODE_ID"
-			class="org.egov.works.models.estimate.ProjectCode"
-			not-null="false">
+		<many-to-one name="fundSource" class="org.egov.commons.Fundsource" fetch="select">
+			<column name="FUNDSOURCE_ID" not-null="true"/>
 		</many-to-one>
-		<property name="estimateNumber" type="string">
-			<column name="ESTIMATE_NUMBER" length="256" />
-		</property>
-		<property name="budgetApprNo" type="string">
-			<column name="BUDGETAPPRNO" length="256" />
-		</property>		
 		<property name="documentNumber" type="long">
             <column name="DOCUMENT_NUMBER"/>
-        </property>
-        <!-- on March23 -->
-        <property name="resolutionNumber" type="string">
-			<column name="RESOLUTION_NUMBER" length="256" />
-		</property>
-		<property name="resolutionDate" type="date">
-			<column name="RESOLUTION_DATE" length="7" />
-		</property>		
-		<many-to-one name="fundSource" class="org.egov.commons.Fundsource" fetch="select">
-			<column name="FUNDSOURCEID" />
+        </property>		
+		<many-to-one name="egwStatus" column="STATUS_ID" /> 		
+		<many-to-one name="state" class="org.egov.infra.workflow.entity.State"
+			cascade="all">
+			<column name="STATE_ID" />
 		</many-to-one>
-        <property name="document" type="text">
-        	<column name="DOCUMENT"></column>
-        </property>
-        <property name="budgetAvailable">
+		<property name="budgetApprNo" type="string">
+			<column name="BUDGETAPPRNO" length="256" />
+		</property>	
+		<property name="budgetApprDate" type="date">
+			<column name="BUDGET_APPRN_DATE" length="7" />
+		</property>
+		<property name="budgetAvailable">
 			<column name="BUDGETAVAILABLE" />
 		</property>	
 		<property name="budgetRejectionNo" type="string">
 			<column name="BUDGETREJECTIONNO" length="256" />
 		</property>
+		<many-to-one name="depositCode"
+			class="org.egov.works.models.masters.DepositCode" fetch="select">
+			<column name="DESPOSITCODE_ID" />
+		</many-to-one>
+		<many-to-one name="projectCode" column="PROJECTCODE_ID"
+			class="org.egov.works.models.estimate.ProjectCode" >
+		</many-to-one>
+		<many-to-one name="parent" column="PARENTID" />
+		<property name="approvedDate" type="date">
+			<column name="APPROVED_DATE" length="7" />
+		</property>	
+		<property name="isCopiedEst" type="string">
+			<column name="IS_COPIED_EST" length="1" />
+		</property>	
 		
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" fetch="select" not-null="true" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY" fetch="select"/>
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" not-null="true" />
+		<property column="MODIFIEDDATE" name="modifiedDate" type="timestamp" />
+		
+		<list name="multiYearEstimates" cascade="all,delete-orphan">
+			<key column="abstractestimate_id" not-null="true" />
+			<list-index column="multiyear_estimate_index" />
+			<one-to-many
+				class="org.egov.works.models.estimate.MultiYearEstimate" />
+		</list>
+		<list name="activities" cascade="all,delete-orphan">
+			<key column="abstractestimate_id" not-null="true" />
+			<list-index column="estimate_activity_index" />
+			<one-to-many
+				class="org.egov.works.models.estimate.Activity" />
+		</list>
+		<list name="assetValues" cascade="all,delete-orphan">
+			<key column="abstractestimate_id" not-null="true" />
+			<list-index column="estimate_asset_index" />
+			<one-to-many
+				class="org.egov.works.models.estimate.AssetsForEstimate" />
+		</list>
+		<list name="overheadValues" cascade="all,delete-orphan">
+			<key column="abstractestimate_id" not-null="true" />
+			<list-index column="estimate_overhead_index" />
+			<one-to-many
+				class="org.egov.works.models.estimate.OverheadValue" />
+		</list>	
+		<list name="financialDetails" cascade="all,delete-orphan">
+			<key column="abstractestimate_id" not-null="true" />
+			<list-index column="estimate_findtl_index" />
+			<one-to-many
+				class="org.egov.works.models.estimate.FinancialDetail" />
+		</list>
 		<set name="abstractEstimateAppropriations" inverse="true" >
 			<key column="ABSTRACTESTIMATE_ID" />
 			<one-to-many class="org.egov.works.models.estimate.AbstractEstimateAppropriation"  />
 		</set>
-		<many-to-one name="oldWard"
-			class="org.egov.lib.admbndry.BoundaryImpl">
-			<column name="OLD_WARD" />
-		</many-to-one>
-		<many-to-one name="oldExecDepartment"
-			class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
-			<column name="OLD_EXEC_DEPARTMENT" />
-		</many-to-one>
-		<many-to-one name="oldUserDepartment"
-			class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
-			<column name="OLD_USER_DEPARTMENT" />
-		</many-to-one>
-		<many-to-one name="previousUserDepartment"
-			class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
-			<column name="OLD_USER_DEPT_ID" />
-		</many-to-one>
-		<property name="budgetApprDate" type="date">
-			<column name="BUDGET_APPRN_DATE" length="7" />
-		</property>
-		<property name="oldEstimateNumber" type="string">
-			<column name="OLD_ESTIMATE_NUMBER" length="64"/>
-		</property>
-		<many-to-one name="parent" column="PARENTID" />
-		<property name="approvedDate" type="date">
-			<column name="approveddate" length="7" />
-		</property>	
-		
-		<property name="isCopiedEst" type="string">
-			<column name="IS_COPIED_EST" length="1" />
-		</property>	
-		<list name="photoList" cascade="all,delete-orphan">
+		<list name="estimatePhotographsList" cascade="all,delete-orphan">
 			<key column="abstractestimate_id" not-null="true" />
-			<list-index column="col_index" />
+			<list-index column="est_photo_index" />
 			<one-to-many
-				class="org.egov.works.models.estimate.EstimatePhoto" />
-		</list>
-		<property name="lat">
-			<column name="LAT"  />
-		</property>
-		<property name="lon">
-			<column name="LON" />
-		</property>
-		
+				class="org.egov.works.models.estimate.EstimatePhotographs" />
+		</list>		
 	</class>
+	
 	<query name="MY_NEW_ESTIMATES">
 		<![CDATA[
      	from AbstractEstimate as ae where ae.parent is null and ae.egwStatus.code='CREATED' and ae.createdBy=?
@@ -240,12 +209,12 @@
 	</query>
 	<query name="ALL_ESTIMATES_BY_STATUS">
 		<![CDATA[
-     	from AbstractEstimate as ae where ae.parent is null and ae.egwStatus.code=? order by ae.executingDepartment.deptName
+     	from AbstractEstimate as ae where ae.parent is null and ae.egwStatus.code=? order by ae.executingDepartment.name
     ]]>
 	</query>
 	<query name="ALL_ESTIMATES_BY_EXECUTINGDEPARTMENT">
 		<![CDATA[
-     	from AbstractEstimate as ae where ae.parent is null and ae.egwStatus.code=? and ae.executingDepartment.deptName = ? order by ae.executingDepartment.deptName
+     	from AbstractEstimate as ae where ae.parent is null and ae.egwStatus.code=? and ae.executingDepartment.name = ? order by ae.executingDepartment.name
     ]]>
 	</query>
 	<query name="MY_TECH_SANCTIONED_ESTIMATES">

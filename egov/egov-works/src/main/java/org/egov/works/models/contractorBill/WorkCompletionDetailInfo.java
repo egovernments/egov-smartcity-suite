@@ -39,62 +39,59 @@
  */
 package org.egov.works.models.contractorBill;
 
-
-
 import org.egov.works.models.workorder.WorkOrderActivity;
 
 public class WorkCompletionDetailInfo {
 
-	private WorkOrderActivity workOrderActivity;
-	private double executionQuantity; 
-	private double tenderAmount;
-	private double executionAmount;
-	private double executionRate;
-	
-	
-	public WorkCompletionDetailInfo(WorkOrderActivity workOrderActivity,double executionQuantity){
-		this.workOrderActivity=workOrderActivity;
-		this.executionQuantity=executionQuantity;
-	}
-	
-	public WorkOrderActivity getWorkOrderActivity(){
-		return workOrderActivity;
-	}
-	
-	public double getExecutionQuantity(){
-		return executionQuantity;
-	}
+    private WorkOrderActivity workOrderActivity;
+    private double executionQuantity;
+    private double tenderAmount;
+    private double executionAmount;
+    private double executionRate;
 
-	public double getTenderAmount() {
-		return tenderAmount;
-	}
+    public WorkCompletionDetailInfo(final WorkOrderActivity workOrderActivity, final double executionQuantity) {
+        this.workOrderActivity = workOrderActivity;
+        this.executionQuantity = executionQuantity;
+    }
 
-	public void setTenderAmount(double tenderAmount) {
-		this.tenderAmount = tenderAmount;
-	}
-	
-	public double getExecutionAmount() {
-		return executionAmount;
-	}
+    public WorkOrderActivity getWorkOrderActivity() {
+        return workOrderActivity;
+    }
 
-	public void setExecutionAmount(double executionAmount) {
-		this.executionAmount = executionAmount;
-	}
+    public double getExecutionQuantity() {
+        return executionQuantity;
+    }
 
-	public void setWorkOrderActivity(WorkOrderActivity workOrderActivity) {
-		this.workOrderActivity = workOrderActivity;
-	}
+    public double getTenderAmount() {
+        return tenderAmount;
+    }
 
-	public void setExecutionQuantity(double executionQuantity) {
-		this.executionQuantity = executionQuantity;
-	}
+    public void setTenderAmount(final double tenderAmount) {
+        this.tenderAmount = tenderAmount;
+    }
 
-	public double getExecutionRate() {
-		return executionRate;
-	}
+    public double getExecutionAmount() {
+        return executionAmount;
+    }
 
-	public void setExecutionRate(double executionRate) {
-		this.executionRate = executionRate;
-	}
-	
+    public void setExecutionAmount(final double executionAmount) {
+        this.executionAmount = executionAmount;
+    }
+
+    public void setWorkOrderActivity(final WorkOrderActivity workOrderActivity) {
+        this.workOrderActivity = workOrderActivity;
+    }
+
+    public void setExecutionQuantity(final double executionQuantity) {
+        this.executionQuantity = executionQuantity;
+    }
+
+    public double getExecutionRate() {
+        return executionRate;
+    }
+
+    public void setExecutionRate(final double executionRate) {
+        this.executionRate = executionRate;
+    }
+
 }

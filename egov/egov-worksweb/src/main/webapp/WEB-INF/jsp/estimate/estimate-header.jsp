@@ -329,8 +329,8 @@ function openMap()
 	              'fullscreen=yes' 
 	          ].join(',');
 	var popup ;
-	var  lat = document.getElementById("lat").value ;
-	var lon = document.getElementById("lon").value ;
+	var  lat = document.getElementById("latitude").value ;
+	var lon = document.getElementById("longitude").value ;
 	var status = '<s:property value="%{egwStatus.code}" />';
 	if(status==null || status=='' || status =='NEW' || status=='REJECTED')
 	{
@@ -358,15 +358,15 @@ function updateLocation(values)
 {
 	if(values!=null && values.length>0)
 	{
-		document.getElementById("lat").value=values[0];
-		document.getElementById("lon").value=values[1];
+		document.getElementById("latitude").value=values[0];
+		document.getElementById("longitude").value=values[1];
 		document.getElementById("location").value=values[2];
 		document.getElementById("latlonDiv").style.display="";
 	}
 	if(values==null)
 	{
-		document.getElementById("lat").value="";
-		document.getElementById("lon").value="";
+		document.getElementById("latitude").value="";
+		document.getElementById("longitude").value="";
 		document.getElementById("location").value="";
 		document.getElementById("latlonDiv").style.display="none";	
 	}			
@@ -440,9 +440,9 @@ function jurisdictionSearchParameters(){
               </tr>
               <tr id="latlonDiv" style="display:none;">
 	                <td width="11%" class="whiteboxwk"><s:text name="estimate.latitude" />:</td>
-	                <td width="21%" class="whitebox2wk"><s:textfield name="lat" value="%{lat}" id="lat" readonly='true' cssClass="selectwk" /></td>
+	                <td width="21%" class="whitebox2wk"><s:textfield name="latitude" value="%{latitude}" id="latitude" readonly='true' cssClass="selectwk" /></td>
 	                <td width="15%" class="whiteboxwk"><s:text name="estimate.longitude" />:</td>
-	                <td width="53%" class="whitebox2wk"><s:textfield name="lon" value="%{lon}" id="lon" readonly='true' cssClass="selectwk" /></td>
+	                <td width="53%" class="whitebox2wk"><s:textfield name="longitude" value="%{longitude}" id="longitude" readonly='true' cssClass="selectwk" /></td>
               </tr>
               <tr>
                 <td class="greyboxwk"><span class="mandatory">*</span><s:text name="estimate.work.name" />:</td>

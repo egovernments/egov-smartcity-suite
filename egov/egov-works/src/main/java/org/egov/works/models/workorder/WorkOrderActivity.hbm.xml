@@ -43,15 +43,15 @@
 <!-- Generated on 8th dec 09 -->
 <hibernate-mapping>		
 		<class name="org.egov.works.models.workorder.WorkOrderActivity"
-		table="EGW_WORK_ORDER_ACTIVITY">
+		table="EGW_WORKORDER_ACTIVITY">
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">EGW_WORK_ORDER_ACTIVITY_SEQ</param>
+				<param name="sequence">SEQ_EGW_WORKORDER_ACTIVITY</param>
 			</generator>
 		</id>
 		<many-to-one name="workOrderEstimate" column="WORKORDER_ESTIMATE_ID" not-null="true" insert="false" update="false" fetch="select"/>
-		<many-to-one name="activity" class="org.egov.works.models.estimate.Activity" column="ACTIVITY_ID" not-null="true" fetch="join"/>
+		<many-to-one name="activity" class="org.egov.works.models.estimate.Activity" column="ESTIMATE_ACTIVITY_ID" not-null="true" fetch="join"/>
 		
 		<property name="approvedRate" type="double">
             <column name="APPROVED_RATE" precision="20" not-null="true" />
@@ -62,11 +62,12 @@
         <property name="approvedAmount" type="double">
             <column name="APPROVED_AMOUNT" precision="20" not-null="true" />
         </property>     
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" not-null="true" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY" not-null="true" fetch="select"/>
-		<property name="createdDate" column="CREATEDDATE" type="timestamp" />	
-		<property name="modifiedDate" column="MODIFIEDDATE" type="timestamp" />	
-		<property name="remarks" column="REMARKS" />	
+        <property name="remarks" column="REMARKS" />
+        
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY" fetch="select"/>
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" not-null="true" />	
+		<property name="modifiedDate" column="MODIFIEDDATE" type="timestamp" />				
 	</class>
 	
 	<query name="getallWorkOrderActivityWithMB">

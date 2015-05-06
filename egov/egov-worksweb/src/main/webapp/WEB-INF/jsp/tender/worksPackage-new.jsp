@@ -291,34 +291,8 @@ function validateCancel() {
 	}
 }
 
-function validateManualWPNumber(text)
-{
-	if((text=='submit_for_approval' || text=='approve') &&  dom.get("manualWPNumber").value=='')
-	{
-		<s:if test="%{model.id==null}">
-			dom.get("wp_error").innerHTML='<s:text name="wp.enter.manual.wpnumber"/>'; 
-	        dom.get("wp_error").style.display='';
-	        return false;
-		</s:if>
-		<s:if test="%{model.id!=null && model.egwStatus.code=='NEW'}">
-			dom.get("wp_error").innerHTML='<s:text name="wp.enter.manual.wpnumber"/>'; 
-	        dom.get("wp_error").style.display='';
-	        return false;
-		</s:if>
-		<s:if test="%{model.id!=null && model.egwStatus.code!='NEW'}">
-			dom.get("wp_error").innerHTML='<s:text name="wp.cannot.forward.without.manual.wpno"/>'; 
-	        dom.get("wp_error").style.display='';
-	        return false;
-		</s:if>
-
-	}	
-	return true;
-}
-
 function validate(text){
 	if(!validateUser(text))
-		return false;
-	if(!validateManualWPNumber(text))
 		return false;
 	enableSelect();
 	return true;
@@ -411,8 +385,8 @@ function enablePreparedBy(){
 			</tr>
 		    <tr>
 		         <td width="11%" class="greyboxwk"><span class="mandatory">*</span><s:text name="wp.dept"/>:</td>
-		         <td width="21%" class="greybox2wk"><s:select id="department" name="userDepartment" headerKey="-1" headerValue="---select---" 
-		         cssClass="selectwk" list="%{dropdownData.departmentList}"  listKey="id" listValue="deptName" value="%{userDepartment.id}"
+		         <td width="21%" class="greybox2wk"><s:select id="department" name="department" headerKey="-1" headerValue="---select---" 
+		         cssClass="selectwk" list="%{dropdownData.departmentList}"  listKey="id" listValue="deptName" value="%{department.id}"
 		         onChange="setupPreparedByList(this);clearDesignation(this);"/>
 		         <s:hidden name="loggedInUserEmployeeCode" id="loggedInUserEmployeeCode"/>   
 		          <s:if test="%{dropdownData.departmentList.size==1}" >
@@ -423,7 +397,7 @@ function enablePreparedBy(){
 		         </td>
 		         <td width="15%" class="greyboxwk"><span class="mandatory">*</span><s:text name="wp.date"/>:</td>
 		         <td width="53%" class="greybox2wk"><s:date name="model.packageDate" var="packageDateFormat" format="dd/MM/yyyy"/>
-		         <s:hidden name="hiddenDate" id="hiddenDate" ></s:hidden> <s:hidden name="hiddenDept" id="hiddenDept" value="%{userDepartment.id}"></s:hidden>
+		         <s:hidden name="hiddenDate" id="hiddenDate" ></s:hidden> <s:hidden name="hiddenDept" id="hiddenDept" value="%{department.id}"></s:hidden>
         		 <s:textfield name="packageDate" value="%{packageDateFormat}" id="packageDate" cssClass="selectboldwk" 
         		 onfocus="javascript:vDateType='3';" 
         		 onkeyup="DateFormat(this,this.value,event,false,'3')"  onblur="dateChange()"/>
@@ -441,8 +415,8 @@ function enablePreparedBy(){
 		         	<s:textfield name="tenderFileNumber" value="%{tenderFileNumber}" id="tenderFileNumber" cssClass="selectwk" onblur="uniqueCheckOntenderFileNumber(this);" />
 		         </td>
 				 <egov:uniquecheck id="wp_error" fields="['Value']" url='tender/ajaxWorksPackage!tenderFileNumberUniqueCheck.action' />
-		         <td width="15%" class="whiteboxwk"><span class="mandatory">*</span><s:text name="wp.manual.wpnumber"/>:</td>
-		         <td width="53%" class="whitebox2wk"><s:textfield name="manualWPNumber" value="%{manualWPNumber}" id="manualWPNumber" cssClass="selectwk" /></td>
+		         <td width="11%" class="whiteboxwk">&nbsp;</td>
+		         <td width="21%" class=whitebox2wk>&nbsp;</td>
 		   </tr>
 		   <tr>
 				 <td width="11%" class="greyboxwk"><span class="mandatory">*</span><s:text name="wp.emp"/>:</td>

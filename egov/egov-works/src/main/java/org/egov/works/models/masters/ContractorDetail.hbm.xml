@@ -47,23 +47,20 @@
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">EGW_CONTRACTOR_DETAIL_SEQ</param>
+				<param name="sequence">SEQ_EGW_CONTRACTOR_DETAIL</param>
 			</generator>
 		</id>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY" fetch="select"/>
-		<property name="createdDate" column="CREATEDDATE" type="timestamp" />
-		<property name="modifiedDate" column="MODIFIEDDATE" type="timestamp" />	
+		
 		<many-to-one name="contractor" class="org.egov.works.models.masters.Contractor" fetch="select" insert="false" update="false">
             <column name="CONTRACTOR_ID" precision="22" scale="0" not-null="true" />
         </many-to-one>
-		<many-to-one name="department" class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
+		<many-to-one name="department" class="org.egov.infra.admin.master.entity.Department" fetch="select">
 			<column name="DEPARTMENT_ID" />
 		</many-to-one>
 		<property name="registrationNumber" type="string" >
 			<column name="REGISTRATION_NUMBER" length="50" />
 		</property>
-		<many-to-one name="grade" class="org.egov.works.models.masters.ContractorGrade" not-null="false">
+		<many-to-one name="grade" class="org.egov.commons.ContractorGrade" not-null="false">
 			<column name="CONTRACTOR_GRADE_ID" />
 		</many-to-one>
 		<many-to-one name="status" class="org.egov.commons.EgwStatus" fetch="select">
@@ -73,5 +70,10 @@
 			<property name="startDate" type="date" />
 			<property name="endDate" type="date" />
 		</component>
+		
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" fetch="select" not-null="true" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY" fetch="select"/>
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" not-null="true" />
+		<property name="modifiedDate" column="MODIFIEDDATE" type="timestamp" />	
 	</class>
 </hibernate-mapping>

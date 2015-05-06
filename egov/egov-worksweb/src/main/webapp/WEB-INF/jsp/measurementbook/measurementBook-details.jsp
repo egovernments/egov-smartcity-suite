@@ -484,7 +484,7 @@ var makeMBDataTable = function() {
             {key:"approvedAmtval" ,hidden:true,formatter:approvedAmtFormatter,sortable:false, resizeable:false},
             {key:"orderNumber",label:'<span class="mandatory">*</span><s:text name="measurementbook.mb.ordernumbe"/>',hidden:false, formatter:textboxFormatter, sortable:false, resizeable:false},
             {key:"mbdetailsDate", label:'<span class="mandatory">*</span>Order Date',formatter:dateformatterMBDate,sortable:false, resizeable:false},
-            {key:"remark",label:'<s:text name="measurementbook.remark"/>', formatter:remarkTextboxFormatter, sortable:false, resizeable:true},
+            {key:"remarks",label:'<s:text name="measurementbook.remark"/>', formatter:remarkTextboxFormatter, sortable:false, resizeable:true},
             {key:'Delete',label:'<s:text name="column.title.delete"/>',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}
            ];
 
@@ -723,7 +723,7 @@ myActFailureHandler= function(){
                                         <s:else>
                                         mbdetailsDate: '<s:property value="mbdetailsDate"/>',
                                         </s:else>
-				                        remark:'<s:property value="remark"/>',
+				                        remarks:'<s:property value="remarks"/>',
 				                        prevCumlv:'<s:property value="prevCumlvQuantity"/>',
 				                        prevCumlvval:'<s:property value="prevCumlvQuantity"/>',
 				                        currCumlv:'<s:property value="currCumlvQuantity"/>',
@@ -775,7 +775,7 @@ myActFailureHandler= function(){
                                         <s:else>
                                         mbdetailsDate: '<s:property value="mbdetailsDate"/>',
                                         </s:else>
-				                        remark:'<s:property value="remark"/>',
+				                        remarks:'<s:property value="remarks"/>',
 				                        prevCumlv:'<s:property value="prevCumlvQuantity"/>',
 				                        prevCumlvval:'<s:property value="prevCumlvQuantity"/>',
 				                        currCumlv:'<s:property value="currCumlvQuantity"/>',

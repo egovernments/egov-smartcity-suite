@@ -326,19 +326,19 @@ public class SetStatusAction extends BaseFormAction{
 							addFieldError(getText("wp.retender.enter.reason"),
 									getText("wp.retender.enter.reason"));
 						}	
-						if(ret.getDate()==null)
+						if(ret.getRetenderDate()==null)
 						{
 							addFieldError(getText("wp.retender.enter.date"),
 									getText("wp.retender.enter.date"));
 						}
-						if(ret.getDate()!=null && maxRetenderHistoryDate.after(ret.getDate()))
+						if(ret.getRetenderDate()!=null && maxRetenderHistoryDate.after(ret.getRetenderDate()))
 						{
 							addFieldError(getText("wp.retender.date.less.than.statusdate"),
 									getText("wp.retender.date.less.than.statusdate"));
 						}
 						for(Retender re:worksPackage.getRetenderDetails())
 						{
-							if(re!=null && re.getDate()!=null & re.getDate().after(ret.getDate()))
+							if(re!=null && re.getRetenderDate()!=null & re.getRetenderDate().after(ret.getRetenderDate()))
 							{
 								addFieldError(getText("wp.retender.increasing.date"),
 										getText("wp.retender.increasing.date"));

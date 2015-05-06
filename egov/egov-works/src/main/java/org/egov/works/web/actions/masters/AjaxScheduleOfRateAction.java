@@ -106,7 +106,7 @@ public class AjaxScheduleOfRateAction extends BaseFormAction implements ServletR
 	}
 
 	private String codeNo;
-	private Long categoryTypeId;
+	private Long scheduleCategoryId;
 
 	public String codeNumberUniqueCheck(){
 		return codeNumberUniqueCheck;
@@ -115,7 +115,7 @@ public class AjaxScheduleOfRateAction extends BaseFormAction implements ServletR
 	public boolean getCodenoCheck(){
 		ScheduleOfRate scheduleOfRate = null;
 		boolean codeNoexistsOrNot = false;
-		scheduleOfRate =scheduleOfRateService.find("from ScheduleOfRate sor where sor.code=? and sor.category.id=?",codeNo,categoryTypeId);
+		scheduleOfRate =scheduleOfRateService.find("from ScheduleOfRate sor where sor.code=? and sor.scheduleCategory.id=?",codeNo,scheduleCategoryId);
 		if(scheduleOfRate!=null) {
 			codeNoexistsOrNot=true;
 		}
@@ -191,8 +191,8 @@ public class AjaxScheduleOfRateAction extends BaseFormAction implements ServletR
 		this.codeNo = codeNo;
 	}
 	
-	public void setCategoryTypeId(Long categoryTypeId) {
-		this.categoryTypeId = categoryTypeId;
+	public void setScheduleCategoryId(Long scheduleCategoryId) {
+		this.scheduleCategoryId = scheduleCategoryId;
 	}
 
 	public void setScheduleOfRateService(

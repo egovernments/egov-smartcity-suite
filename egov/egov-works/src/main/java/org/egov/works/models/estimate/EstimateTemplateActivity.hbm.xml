@@ -42,21 +42,17 @@
 PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-<class name="org.egov.works.models.estimate.EstimateTemplateActivity" table="EGW_EST_TEMP_ACTIVITY">
+<class name="org.egov.works.models.estimate.EstimateTemplateActivity" table="EGW_EST_TEMPLATE_ACTIVITY">
 		<id
 			name="id"
 			column="ID"
 			type="long"
 			unsaved-value="null">
 			<generator class="native">
-				<param name="sequence">EGW_EST_TEMP_ACTIVITY_SEQ</param>
+				<param name="sequence">SEQ_EGW_EST_TEMPLATE_ACTIVITY</param>
 			</generator>
 		</id>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
-		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
-		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
-       
+		
        <many-to-one name="estimateTemplate" class="org.egov.works.models.estimate.EstimateTemplate" fetch="select" insert="false" update="false">
             <column name="ESTIMATE_TEMPLATE_ID" precision="22" scale="0" not-null="true" />
         </many-to-one>
@@ -70,9 +66,14 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
             <column name="NONSOR_ID" precision="22" scale="0" />
         </many-to-one>
         
-     <component name="rate">
-		<property name="value" type="double" precision="2" scale="20" not-null="true"/>
-	</component>
-		   
+    	 <component name="rate">
+			<property name="value" type="double" precision="2" scale="20" not-null="true"/>
+		</component>
+		
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" fetch="select" not-null="true" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+       
 </class>
 </hibernate-mapping>

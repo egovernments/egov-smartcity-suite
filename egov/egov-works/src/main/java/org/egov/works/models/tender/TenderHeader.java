@@ -55,59 +55,65 @@ import org.egov.works.utils.DateConversionUtil;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
 
-public class TenderHeader extends BaseModel{
-	
-	@Required(message="tenderHeader.tenderNo.null")
-	@Length(max=50,message="tenderHeader.tenderNo.length")
-	@OptionalPattern(regex=WorksConstants.alphaNumericwithspecialchar,message="tenderHeader.tenderNo.alphaNumeric")
-	private String tenderNo;
-	 
-	@Required(message="tenderHeader.tenderDate.null")
-	@DateFormat(message="invalid.fieldvalue.tenderDate") 
-	private Date tenderDate;
-	
-	@Valid
-	private List<TenderEstimate> tenderEstimates = new LinkedList<TenderEstimate>();
+public class TenderHeader extends BaseModel {
 
-	public String getTenderNo() {
-		return tenderNo;
-	}
+    private static final long serialVersionUID = 6208133912780798895L;
 
-	public void setTenderNo(String tenderNo) {
-		this.tenderNo = tenderNo;
-	}
+    @Required(message = "tenderHeader.tenderNo.null")
+    @Length(max = 50, message = "tenderHeader.tenderNo.length")
+    @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "tenderHeader.tenderNo.alphaNumeric")
+    private String tenderNo;
 
-	public Date getTenderDate() {
-		return tenderDate;
-	}
+    @Required(message = "tenderHeader.tenderDate.null")
+    @DateFormat(message = "invalid.fieldvalue.tenderDate")
+    private Date tenderDate;
 
-	public void setTenderDate(Date tenderDate) {
-		this.tenderDate = tenderDate;
-	}
+    @Valid
+    private List<TenderEstimate> tenderEstimates = new LinkedList<TenderEstimate>();
 
-	public List<TenderEstimate> getTenderEstimates() {
-		return tenderEstimates;
-	}
+    public String getTenderNo() {
+        return tenderNo;
+    }
 
-	public void setTenderEstimates(List<TenderEstimate> tenderEstimates) {
-		this.tenderEstimates = tenderEstimates;
-	}
-	
-	public void addTenderEstimate(TenderEstimate tenderEstimate) {
-		this.tenderEstimates.add(tenderEstimate);
-	}
-	public List<ValidationError> validate()	{
-		List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-		for (TenderEstimate tenderEstimate : tenderEstimates) {
-			if(tenderDate!=null){
-				if(tenderEstimate.getAbstractEstimate()!=null && DateConversionUtil.isBeforeByDate(tenderDate,tenderEstimate.getAbstractEstimate().getEstimateDate())){
-					validationErrors.add(new ValidationError("tenderDate", "tenderEstimate.tenderDate.cannot_greaterthan_estimateDate"));
-				}
-				else if(tenderEstimate.getWorksPackage()!=null && DateConversionUtil.isBeforeByDate(tenderDate,tenderEstimate.getWorksPackage().getPackageDate())){
-					validationErrors.add(new ValidationError("tenderDate", "tenderEstimate.tenderDate.cannot_greaterthan_packageDate"));
-				}
-			}
-		}
-		return validationErrors;
-	}
+    public void setTenderNo(final String tenderNo) {
+        this.tenderNo = tenderNo;
+    }
+
+    public Date getTenderDate() {
+        return tenderDate;
+    }
+
+    public void setTenderDate(final Date tenderDate) {
+        this.tenderDate = tenderDate;
+    }
+
+    public List<TenderEstimate> getTenderEstimates() {
+        return tenderEstimates;
+    }
+
+    public void setTenderEstimates(final List<TenderEstimate> tenderEstimates) {
+        this.tenderEstimates = tenderEstimates;
+    }
+
+    public void addTenderEstimate(final TenderEstimate tenderEstimate) {
+        tenderEstimates.add(tenderEstimate);
+    }
+
+    @Override
+    public List<ValidationError> validate() {
+        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        for (final TenderEstimate tenderEstimate : tenderEstimates)
+            if (tenderDate != null)
+                if (tenderEstimate.getAbstractEstimate() != null
+                && DateConversionUtil.isBeforeByDate(tenderDate, tenderEstimate.getAbstractEstimate()
+                        .getEstimateDate()))
+                    validationErrors.add(new ValidationError("tenderDate",
+                            "tenderEstimate.tenderDate.cannot_greaterthan_estimateDate"));
+                else if (tenderEstimate.getWorksPackage() != null
+                        && DateConversionUtil.isBeforeByDate(tenderDate, tenderEstimate.getWorksPackage()
+                                .getPackageDate()))
+                    validationErrors.add(new ValidationError("tenderDate",
+                            "tenderEstimate.tenderDate.cannot_greaterthan_packageDate"));
+        return validationErrors;
+    }
 }

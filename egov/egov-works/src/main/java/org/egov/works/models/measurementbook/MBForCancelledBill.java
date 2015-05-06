@@ -43,24 +43,25 @@ import org.egov.infstr.models.BaseModel;
 import org.egov.model.bills.EgBillregister;
 
 public class MBForCancelledBill extends BaseModel {
-	
-	private MBHeader mbHeader;
-	private EgBillregister egBillregister;
-		
-	public MBHeader getMbHeader() {
-		return mbHeader;
-	}
 
-	public void setMbHeader(MBHeader mbHeader) {
-		this.mbHeader = mbHeader;
-	}
+    private static final long serialVersionUID = -6540546979562987332L;
+    private MBHeader mbHeader;
+    private EgBillregister egBillregister;
 
-	public EgBillregister getEgBillregister() {
-		return egBillregister;
-	}
+    public MBHeader getMbHeader() {
+        return mbHeader;
+    }
 
-	public void setEgBillregister(EgBillregister egBillregister) {
-		this.egBillregister = egBillregister;
-	}
-	
+    public void setMbHeader(final MBHeader mbHeader) {
+        this.mbHeader = mbHeader;
+    }
+
+    public EgBillregister getEgBillregister() {
+        return egBillregister;
+    }
+
+    public void setEgBillregister(final EgBillregister egBillregister) {
+        this.egBillregister = egBillregister;
+    }
+
 }

@@ -94,7 +94,7 @@
                 <s:iterator id="rateIterator" value="scheduleOfRateList" status="row_status">
                 <tr>
                		<!-- <td width="10%"><s:property value="%{id}" /> </td> -->	
-                	<td width="12%"><s:property value="%{category.code}" /></td>
+                	<td width="12%"><s:property value="%{scheduleCategory.code}" /></td>
 					<td width="13%"><s:property value="%{code}" /> </td>	   
 					<td width="51%"><s:property value="%{description}" /></td>
 					<td width="9%"><s:property value="%{uom.uom}" /></td>					

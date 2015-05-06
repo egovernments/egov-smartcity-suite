@@ -295,7 +295,7 @@ public class WorkOrderAction extends BaseFormAction{
 		super.prepare();
 		if(tenderResponse!=null) {
 			if(tenderResponse.getTenderEstimate().getAbstractEstimate()==null)
-				deptId = tenderResponse.getTenderEstimate().getWorksPackage().getUserDepartment().getId();					
+				deptId = tenderResponse.getTenderEstimate().getWorksPackage().getDepartment().getId();					
 			else
 				deptId = tenderResponse.getTenderEstimate().getAbstractEstimate().getExecutingDepartment().getId();
 		}
@@ -314,8 +314,8 @@ public class WorkOrderAction extends BaseFormAction{
 			defaultDepartmentId = deptId;
 			if(tenderResponse!=null && tenderResponse.getTenderEstimate()!=null 
 					&& tenderResponse.getTenderEstimate().getWorksPackage()!=null
-					&& tenderResponse.getTenderEstimate().getWorksPackage().getUserDepartment()!=null)
-				addDropdownData(DEPARTMENT_LIST,Arrays.asList(tenderResponse.getTenderEstimate().getWorksPackage().getUserDepartment()));
+					&& tenderResponse.getTenderEstimate().getWorksPackage().getDepartment()!=null)
+				addDropdownData(DEPARTMENT_LIST,Arrays.asList(tenderResponse.getTenderEstimate().getWorksPackage().getDepartment()));
 			
 			setCreatedBySelection(getCreatedBy());
 		}
@@ -374,7 +374,7 @@ public class WorkOrderAction extends BaseFormAction{
 		{
 			if(tenderResponse!=null) {
 				if(tenderResponse.getTenderEstimate().getAbstractEstimate()==null)
-					ajaxEstimateAction.setExecutingDepartment(tenderResponse.getTenderEstimate().getWorksPackage().getUserDepartment().getId());					
+					ajaxEstimateAction.setExecutingDepartment(tenderResponse.getTenderEstimate().getWorksPackage().getDepartment().getId());					
 				else
 					ajaxEstimateAction.setExecutingDepartment(tenderResponse.getTenderEstimate().getAbstractEstimate().getExecutingDepartment().getId());
 			}

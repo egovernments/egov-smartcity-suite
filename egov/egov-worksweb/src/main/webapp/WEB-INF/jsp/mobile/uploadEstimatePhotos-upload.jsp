@@ -87,7 +87,7 @@ function successFunction(position) {
  jQuery('#longitude').val(position.coords.longitude);
 }
 function fileSelected() {
-    var fup = document.getElementById('photoList['+PIC_INDEX+'].fileUpload').files[0];
+    var fup = document.getElementById('estimatePhotographsList['+PIC_INDEX+'].fileUpload').files[0];
     var fileName = fup.name;
     var ext = fileName.substring(fileName.lastIndexOf('.') + 1);
     if(ext == "gif" || ext == "GIF" || ext == "JPEG" || ext == "jpeg" || ext == "jpg" || ext == "JPG" || ext == "png" || ext == "PNG"  )
@@ -99,7 +99,7 @@ function fileSelected() {
     } 
     else
     {		
-		document.getElementById('photoList['+PIC_INDEX+'].fileUpload').value = '';
+		document.getElementById('estimatePhotographsList['+PIC_INDEX+'].fileUpload').value = '';
 		alert("Upload files with these formats : gif,jpg,jpeg,png");
 		return false;
     }
@@ -179,14 +179,14 @@ function addPhoto()
 function generateNewFileAttachmentDiv()
 {
 	var divString = '<div data-role="content"  align="center" name="photoUploadDiv" class="ui-input-text ui-shadow-inset ui-corner-all ui-btn-shadow ui-body-c ui-content">'+
-	'<label for="photoList['+PIC_INDEX+'].fileUpload"> Attach Photo<br/> </label>'+ 
-	'<div class="ui-input-text ui-shadow-inset ui-corner-all ui-btn-shadow ui-body-c"><input type="file" name="photoList['+PIC_INDEX+'].fileUpload" id="photoList['+PIC_INDEX+'].fileUpload" accept="/*;capture=camera" onchange="fileSelected();" /></div>'+
+	'<label for="estimatePhotographsList['+PIC_INDEX+'].fileUpload"> Attach Photo<br/> </label>'+ 
+	'<div class="ui-input-text ui-shadow-inset ui-corner-all ui-btn-shadow ui-body-c"><input type="file" name="estimatePhotographsList['+PIC_INDEX+'].fileUpload" id="estimatePhotographsList['+PIC_INDEX+'].fileUpload" accept="/*;capture=camera" onchange="fileSelected();" /></div>'+
 	'<div id="messages['+PIC_INDEX+']"></div>'+
-	'<s:hidden id="photoList['+PIC_INDEX+'].imageDetail" name="photoList['+PIC_INDEX+'].imageDetail" />'+
+	'<s:hidden id="estimatePhotographsList['+PIC_INDEX+'].imageDetail" name="estimatePhotographsList['+PIC_INDEX+'].imageDetail" />'+
 	'</div>'+
 	'<div data-role="content" class="ui-content" align="center" name="textareaDiv" style="display:none;">'+
-	'<label data-mini="true" id="whatLabel" for="photoList['+PIC_INDEX+'].description">Details :</label>'+
-	'<textarea data-mini="true" class="ui-input-text ui-body-c ui-corner-all ui-shadow-inset ui-mini" cols="40" rows="8" id="photoList['+PIC_INDEX+'].description" name="photoList['+PIC_INDEX+'].description"  maxlength="512"></textarea>'+
+	'<label data-mini="true" id="whatLabel" for="estimatePhotographsList['+PIC_INDEX+'].description">Details :</label>'+
+	'<textarea data-mini="true" class="ui-input-text ui-body-c ui-corner-all ui-shadow-inset ui-mini" cols="40" rows="8" id="estimatePhotographsList['+PIC_INDEX+'].description" name="estimatePhotographsList['+PIC_INDEX+'].description"  maxlength="512"></textarea>'+
 	'</div>';
 	return divString;
 
@@ -244,15 +244,15 @@ function validateUpload()
 					</div>
 				</fieldset>
 				<div data-role="content" align="center" name="photoUploadDiv" >
-					<label for="photoList[0].fileUpload"> Attach Photo </label>
-					<input type="file" name="photoList[0].fileUpload" id="photoList[0].fileUpload"
+					<label for="estimatePhotographsList[0].fileUpload"> Attach Photo </label>
+					<input type="file" name="estimatePhotographsList[0].fileUpload" id="estimatePhotographsList[0].fileUpload"
 						accept="/*;capture=camera" onchange="fileSelected();" />
 					<div id="messages[0]"></div>
-					<s:hidden id="photoList[0].imageDetail" name="photoList[0].imageDetail" />
+					<s:hidden id="estimatePhotographsList[0].imageDetail" name="estimatePhotographsList[0].imageDetail" />
 				</div>
 				<div data-role="content"  align="center" name="textareaDiv" style="display:none;" >
-					<label data-mini="true" id="whatLabel" for="photoList[0].description">Photo Details :</label>
-					<s:textarea data-mini="true" cols="40" rows="8" id="photoList[0].description" name="photoList[0].description" maxlength="512"/>
+					<label data-mini="true" id="whatLabel" for="estimatePhotographsList[0].description">Photo Details :</label>
+					<s:textarea data-mini="true" cols="40" rows="8" id="estimatePhotographsList[0].description" name="estimatePhotographsList[0].description" maxlength="512"/>
 				</div>
 			</div>
 		</s:push>

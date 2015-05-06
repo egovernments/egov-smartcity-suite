@@ -106,7 +106,6 @@ public class CopyEstimateAction extends BaseFormAction{
             copyEstimate.setMultiYearEstimates(cloneMultiYearEstimate(abstractEstimate.getMultiYearEstimates()));
             
             copyEstimate.setWorkValue(abstractEstimate.getWorkValue());
-            copyEstimate.setDocument(abstractEstimate.getDocument());
             copyEstimate.setDocumentNumber(abstractEstimate.getDocumentNumber());
             copyEstimate.setIsCopiedEst("Y");
             

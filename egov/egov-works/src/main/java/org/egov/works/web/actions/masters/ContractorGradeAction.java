@@ -46,272 +46,250 @@ import java.util.regex.Pattern;
 
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.egov.commons.ContractorGrade;
 import org.egov.infra.validation.regex.Constants;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.web.actions.SearchFormAction;
-import org.egov.works.models.masters.ContractorGrade;
 import org.egov.works.utils.WorksConstants;
 
 import com.opensymphony.xwork2.Action;
 
-
-@Result(name=Action.SUCCESS, type="ServletRedirectResult.class", location = "contractor.action")
-@ParentPackage("egov") 
+@Result(name = Action.SUCCESS, type = "ServletRedirectResult.class", location = "contractor.action")
+@ParentPackage("egov")
 public class ContractorGradeAction extends SearchFormAction {
-private ContractorGrade contractorGrade=new ContractorGrade();
-private PersistenceService<ContractorGrade,Long> contractorGradeService;
-private List<ContractorGrade> contractorGradeList=null;
+    
+    private static final long serialVersionUID = 4500128509093695097L;
+    private ContractorGrade contractorGrade = new ContractorGrade();
+    private PersistenceService<ContractorGrade, Long> contractorGradeService;
+    private List<ContractorGrade> contractorGradeList = null;
 
-private Long id;
-private String grade;
-private double minAmount=-1L;
-private double maxAmount=-1L;
-private String displData;
-private String mode;
-private List<String> maxAmountList;
-private List<String> minAmountList;
+    private Long id;
+    private String grade;
+    private double minAmount = -1L;
+    private double maxAmount = -1L;
+    private String displData;
+    private String mode;
+    private List<String> maxAmountList;
+    private List<String> minAmountList;
 
-public String save(){  
-	   contractorGrade=contractorGradeService.persist(contractorGrade);
-	   String messageKey="contractor.grade.save.success";
-	   addActionMessage(getText(messageKey,"The Contractor Grade was saved successfully"));		
-	   contractorGradeList=new ArrayList<ContractorGrade>(); 
-	   contractorGradeList.add(contractorGrade);
-		return INDEX;    
-	   
-}
+    public String save() {
+        contractorGrade = contractorGradeService.persist(contractorGrade);
+        final String messageKey = "contractor.grade.save.success";
+        addActionMessage(getText(messageKey, "The Contractor Grade was saved successfully"));
+        contractorGradeList = new ArrayList<ContractorGrade>();
+        contractorGradeList.add(contractorGrade);
+        return INDEX;
 
-public String newform()	{
-		return NEW;
-	}
+    }
 
-public String viewContractorGrade() {
-	return "searchPage";
-}
+    public String newform() {
+        return NEW;
+    }
 
-public void prepare() {
-	if (id != null) {
-		contractorGrade= contractorGradeService.findById(id, false);
-	}
-	List<Double> tempMaxAmountList=persistenceService.findAllByNamedQuery("getContractorGradeMaxAmountList");
-	List<Double> tempMinAmountList=persistenceService.findAllByNamedQuery("getContractorGradeMinAmountList");
-	maxAmountList=new ArrayList<String>();
-	minAmountList=new ArrayList<String>();
-	
-	NumberFormat numberFormat = NumberFormat.getInstance();
-	numberFormat.setMinimumFractionDigits(2);
-	numberFormat.setMaximumFractionDigits(2);
-	numberFormat.setGroupingUsed(false);
-	for(Double maxValue :tempMaxAmountList){
-		String max=numberFormat.format(maxValue.doubleValue());
-		getMaxAmountList().add(max);
-	 }
-	for(Double minValue :tempMinAmountList){
-		String min=numberFormat.format(minValue.doubleValue());
-		getMinAmountList().add(min);
-	 }
-  	
-   super.prepare();
-}
-		
-public String list() {  
-	contractorGradeList=(List<ContractorGrade>) contractorGradeService.findAll();
-	return INDEX;  
-}  
+    public String viewContractorGrade() {
+        return "searchPage";
+    }
 
-public String edit(){ 
-	contractorGrade=contractorGradeService.findById(contractorGrade.getId(), false);
-	return EDIT;
-}	
+    @Override
+    public void prepare() {
+        if (id != null)
+            contractorGrade = contractorGradeService.findById(id, false);
+        final List<Double> tempMaxAmountList = persistenceService
+                .findAllByNamedQuery("getContractorGradeMaxAmountList");
+        final List<Double> tempMinAmountList = persistenceService
+                .findAllByNamedQuery("getContractorGradeMinAmountList");
+        maxAmountList = new ArrayList<String>();
+        minAmountList = new ArrayList<String>();
 
-public String execute() {  
-	return list();
-} 
+        final NumberFormat numberFormat = NumberFormat.getInstance();
+        numberFormat.setMinimumFractionDigits(2);
+        numberFormat.setMaximumFractionDigits(2);
+        numberFormat.setGroupingUsed(false);
+        for (final Double maxValue : tempMaxAmountList) {
+            final String max = numberFormat.format(maxValue.doubleValue());
+            getMaxAmountList().add(max);
+        }
+        for (final Double minValue : tempMinAmountList) {
+            final String min = numberFormat.format(minValue.doubleValue());
+            getMinAmountList().add(min);
+        }
 
-public String searchGradeDetails() {
-		boolean hasNoErrors = true;
-        
-		contractorGrade=(ContractorGrade) getModel();
-		String s=contractorGrade.getMinAmountString();
-		String s1=contractorGrade.getMaxAmountString();
-		if(contractorGrade.getMaxAmountString()==null){
-			setMinAmount(-1L);
-		 }
-		else{
-		setMinAmount(Double.parseDouble(s));
-		}
-		if(contractorGrade.getMaxAmountString()==null){
-			setMaxAmount(-1L);
-		}else{
-			setMaxAmount(Double.parseDouble(s1));
-		}
-			
-		
-		if (grade != null && !grade.equals("")) {
-			hasNoErrors = Pattern.matches(
-					Constants.ALPHANUMERIC_WITHSPACE, grade);
-			if (hasNoErrors == false) {
-				String messageKey = "contractorGrade.grade.alphaNumeric";
-				addActionError(getText(messageKey,
-						"Special Characters are not allowed in Contractor Grade"));
-			}
-		}
-		if (minAmount != -1 && maxAmount != -1) {
-			if (minAmount >= maxAmount) {
-				String messageKey = "contractor.grade.maxamount.invalid";
-				addActionError(getText(messageKey,
-						"Maximum amount must be greater than minimum amount"));
-				return "searchPage";
+        super.prepare();
+    }
 
-			}
-		}
-		if (hasNoErrors == false){
-			return "searchPage";
-		}
-		setPageSize(WorksConstants.PAGE_SIZE);
-		search();
+    public String list() {
+        contractorGradeList = contractorGradeService.findAll();
+        return INDEX;
+    }
 
-		if (searchResult.getFullListSize() == 0) {
-			setDisplData("noData");
-		} else {
-			setDisplData(WorksConstants.YES);
-		}
-        		
-		return "searchPage";
-	}
+    public String edit() {
+        contractorGrade = contractorGradeService.findById(contractorGrade.getId(), false);
+        return EDIT;
+    }
 
-public String getDisplData() {
-	return displData;
-}
+    @Override
+    public String execute() {
+        return list();
+    }
 
-public void setDisplData(String displData) {
-	this.displData = displData;
-}
+    public String searchGradeDetails() {
+        boolean hasNoErrors = true;
 
-public Long getId() {
-	return id;
-}
+        contractorGrade = (ContractorGrade) getModel();
+        final String s = contractorGrade.getMinAmountString();
+        final String s1 = contractorGrade.getMaxAmountString();
+        if (contractorGrade.getMaxAmountString() == null)
+            setMinAmount(-1L);
+        else
+            setMinAmount(Double.parseDouble(s));
+        if (contractorGrade.getMaxAmountString() == null)
+            setMaxAmount(-1L);
+        else
+            setMaxAmount(Double.parseDouble(s1));
 
-public void setId(Long id) {
-	this.id = id;
-}
+        if (grade != null && !grade.equals("")) {
+            hasNoErrors = Pattern.matches(Constants.ALPHANUMERIC_WITHSPACE, grade);
+            if (hasNoErrors == false) {
+                final String messageKey = "contractorGrade.grade.alphaNumeric";
+                addActionError(getText(messageKey, "Special Characters are not allowed in Contractor Grade"));
+            }
+        }
+        if (minAmount != -1 && maxAmount != -1)
+            if (minAmount >= maxAmount) {
+                final String messageKey = "contractor.grade.maxamount.invalid";
+                addActionError(getText(messageKey, "Maximum amount must be greater than minimum amount"));
+                return "searchPage";
 
+            }
+        if (hasNoErrors == false)
+            return "searchPage";
+        setPageSize(WorksConstants.PAGE_SIZE);
+        search();
 
+        if (searchResult.getFullListSize() == 0)
+            setDisplData("noData");
+        else
+            setDisplData(WorksConstants.YES);
 
-public String getGrade() {
-	return grade;
-}
+        return "searchPage";
+    }
 
-public void setGrade(String grade) {
-	this.grade = grade;
-}
+    public String getDisplData() {
+        return displData;
+    }
 
-public double getMinAmount() {
-	return minAmount;
-}
+    public void setDisplData(final String displData) {
+        this.displData = displData;
+    }
 
-public void setMinAmount(double minAmount) {
-	this.minAmount = minAmount;
-}
+    public Long getId() {
+        return id;
+    }
 
-public double getMaxAmount() {
-	return maxAmount;
-}
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-public void setMaxAmount(double maxAmount) {
-	this.maxAmount = maxAmount;
-}
+    public String getGrade() {
+        return grade;
+    }
 
-public ContractorGrade getContractorGrade() {
-		return contractorGrade;
-	}
+    public void setGrade(final String grade) {
+        this.grade = grade;
+    }
 
+    public double getMinAmount() {
+        return minAmount;
+    }
 
-public void setContractorGradeService(PersistenceService<ContractorGrade, Long> contractorGradeService) {
-		this.contractorGradeService = contractorGradeService;
-	}
+    public void setMinAmount(final double minAmount) {
+        this.minAmount = minAmount;
+    }
 
-public void setContractorGrade(ContractorGrade contractorGrade) {
-		this.contractorGrade = contractorGrade;
-	}
+    public double getMaxAmount() {
+        return maxAmount;
+    }
 
-public Object getModel()    {
-		return contractorGrade;
-	}
+    public void setMaxAmount(final double maxAmount) {
+        this.maxAmount = maxAmount;
+    }
 
-public String getMode() {
-	return mode;
-}
+    public ContractorGrade getContractorGrade() {
+        return contractorGrade;
+    }
 
+    public void setContractorGradeService(final PersistenceService<ContractorGrade, Long> contractorGradeService) {
+        this.contractorGradeService = contractorGradeService;
+    }
 
-public void setMode(String mode) {
-	this.mode = mode;
-}
-  
-       
-public List<ContractorGrade> getContractorGradeList() {
-	return contractorGradeList;
-}
+    public void setContractorGrade(final ContractorGrade contractorGrade) {
+        this.contractorGrade = contractorGrade;
+    }
 
+    @Override
+    public Object getModel() {
+        return contractorGrade;
+    }
 
+    public String getMode() {
+        return mode;
+    }
 
-@Override
-public SearchQuery prepareQuery(String sortField, String sortOrder){
-	StringBuffer contractorGradeSql = new StringBuffer(100);
-	String contractorGradeStr = "";
-	List<Object> paramList = new ArrayList<Object>();		
-	contractorGradeSql.append(" from ContractorGrade cg");
-	
-	if((getGrade() != null && !getGrade().trim().equals("")) || getMinAmount() != -1 || getMaxAmount() != -1 ){
-		contractorGradeSql.append(" where 1=1");
-	}
-	
-	if (getGrade() != null && !getGrade().trim().equals("")) {
-		contractorGradeSql.append(" and UPPER(cg.grade) like ?");
-		paramList.add("%"+getGrade().trim().toUpperCase()+"%");
-	}
-   
-	if(getMinAmount() != -1){
-		contractorGradeSql.append(" and cg.minAmount = ?");
-		paramList.add(getMinAmount());
-	}
-	
-	if(getMaxAmount() != -1){
-		contractorGradeSql.append(" and cg.maxAmount = ?");
-		paramList.add(getMaxAmount());
-	}
-	contractorGradeSql.append(" order by cg.id");
-	contractorGradeStr = contractorGradeSql.toString();
-	String countQuery = "select count(*) " + contractorGradeStr;
-	return new SearchQueryHQL(contractorGradeStr, countQuery, paramList);
-	
-}
+    public void setMode(final String mode) {
+        this.mode = mode;
+    }
 
-public List<String> getMaxAmountList() {
-	return maxAmountList;
-}
+    public List<ContractorGrade> getContractorGradeList() {
+        return contractorGradeList;
+    }
 
-public void setMaxAmountList(List<String> maxAmountList) {
-	this.maxAmountList = maxAmountList;
-}
+    @Override
+    public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
+        final StringBuffer contractorGradeSql = new StringBuffer(100);
+        String contractorGradeStr = "";
+        final List<Object> paramList = new ArrayList<Object>();
+        contractorGradeSql.append(" from ContractorGrade cg");
 
-public List<String> getMinAmountList() {
-	return minAmountList;
-}
+        if (getGrade() != null && !getGrade().trim().equals("") || getMinAmount() != -1 || getMaxAmount() != -1)
+            contractorGradeSql.append(" where 1=1");
 
-public void setMinAmountList(List<String> minAmountList) {
-	this.minAmountList = minAmountList;
-}
+        if (getGrade() != null && !getGrade().trim().equals("")) {
+            contractorGradeSql.append(" and UPPER(cg.grade) like ?");
+            paramList.add("%" + getGrade().trim().toUpperCase() + "%");
+        }
 
+        if (getMinAmount() != -1) {
+            contractorGradeSql.append(" and cg.minAmount = ?");
+            paramList.add(getMinAmount());
+        }
 
+        if (getMaxAmount() != -1) {
+            contractorGradeSql.append(" and cg.maxAmount = ?");
+            paramList.add(getMaxAmount());
+        }
+        contractorGradeSql.append(" order by cg.id");
+        contractorGradeStr = contractorGradeSql.toString();
+        final String countQuery = "select count(*) " + contractorGradeStr;
+        return new SearchQueryHQL(contractorGradeStr, countQuery, paramList);
 
+    }
+
+    public List<String> getMaxAmountList() {
+        return maxAmountList;
+    }
+
+    public void setMaxAmountList(final List<String> maxAmountList) {
+        this.maxAmountList = maxAmountList;
+    }
+
+    public List<String> getMinAmountList() {
+        return minAmountList;
+    }
+
+    public void setMinAmountList(final List<String> minAmountList) {
+        this.minAmountList = minAmountList;
+    }
 
 }
-
-  
-  
-  
- 
-

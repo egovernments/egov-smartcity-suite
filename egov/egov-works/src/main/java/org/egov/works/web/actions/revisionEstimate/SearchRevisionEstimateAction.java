@@ -71,7 +71,7 @@ import org.egov.web.actions.SearchFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
 import org.egov.works.models.estimate.AbstractEstimate;
-import org.egov.works.models.estimate.WorkType;
+import org.egov.works.models.masters.NatureOfWork;
 import org.egov.works.models.measurementbook.MBDetails;
 import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.revisionEstimate.RevisionAbstractEstimate;
@@ -132,7 +132,7 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
 		addRelatedEntity("category", EgwTypeOfWork.class);
 		addRelatedEntity("parentCategory", EgwTypeOfWork.class);
 		addRelatedEntity("executingDepartment", Department.class);
-		addRelatedEntity("type", WorkType.class);
+		addRelatedEntity("type", NatureOfWork.class);
 		addRelatedEntity("egwStatus", EgwStatus.class);		
 	}
 

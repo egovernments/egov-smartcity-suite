@@ -172,58 +172,13 @@ function validateLineBreaksInDescription(){
 	dom.get("description").value = descriptionText;
 }
 
-function checkDWSor(obj){ 
-	   if(obj.checked){
-		   	document.getElementById('isDepositWorksSOR').value= true;
-		 	document.getElementById('isDepositWorksSOR').checked=true;
-		}
-		else if(!obj.checked){
-			document.getElementById('isDepositWorksSOR').value=false;
-			document.getElementById('isDepositWorksSOR').checked=false;
-		}
-}
-
-function validateForDWSORs(obj){
-	var sorId = document.getElementById("id").value;
-	if(!obj.checked && sorId!=null && sorId!=''){
-		checkForEstimatesAttached(sorId);
-	}
-}
-
-function checkForEstimatesAttached(scheduleId){
-	makeJSONCall(["Value"],'${pageContext.request.contextPath}/masters/ajaxScheduleOfRate!checkIfEstimateExists.action',{scheduleId:scheduleId},estimateCheckSuccessHandler,estimateCheckFailureHandler);
-}
-
-estimateCheckSuccessHandler = function(req,res){
-	  results=res.results;
-	  var checkResult='';
-	  if(results != '') {
-		checkResult =   results[0].Value;
-	  }
-		if(checkResult != '' && checkResult=='yes'){
-			dom.get("sor_error").innerHTML='<s:text name="sor.rcEstimate.check" />';
-		    dom.get("sor_error").style.display='';	
-			document.scheduleOfRate.isDepositWorksSOR.checked = true;
-			document.getElementById('isDepositWorksSOR').value=true;
-		}	
-		else {
-			document.scheduleOfRate.isDepositWorksSOR.checked = false;
-			document.getElementById('isDepositWorksSOR').value=false;
-		}
-}
-
-estimateCheckFailureHandler= function(){
-    dom.get("sor_error").style.display='';
-	document.getElementById("sor_error").innerHTML='<s:text name="sor.dwEstimates.check.failure" />';
-}
-
 function UniqueCheckOnCodenumber() {
 	codeno = dom.get('code').value;
-	categoryType = dom.get('category').value;
-	if(categoryType==-1 && codeno!='')
+	scheduleCategory = dom.get('scheduleCategory').value;
+	if(scheduleCategory==-1 && codeno!='')
 		dom.get("selectcategory").style.display = "";
 	else {
-		populatenumberunique({codeNo:codeno,categoryTypeId:categoryType});
+		populatenumberunique({codeNo:codeno,scheduleCategoryId:scheduleCategory});
 		dom.get("selectcategory").style.display = "none";
 	}
 }
@@ -339,21 +294,12 @@ var makeScheduleOfRateDataTable = function() {
         	</tr>
         	<tr>
         		<td width="11%" class="whiteboxwk"><span class="mandatory">*</span><s:text name="master.sor.category" />:</td>
-          		<td width="21%" class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="category" id="category" cssClass="selectwk" list="dropdownData.categorylist" listKey="id" listValue="code" value="%{category.id}" onchange="UniqueCheckOnCodenumber();"/> </td>
+          		<td width="21%" class="whitebox2wk"><s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="scheduleCategory" id="scheduleCategory" cssClass="selectwk" list="dropdownData.scheduleCategoryList" listKey="id" listValue="code" value="%{scheduleCategory.id}" onchange="UniqueCheckOnCodenumber();"/> </td>
                 <td width="15%" class="whiteboxwk"><span class="mandatory">*</span><s:text name="master.sor.code" />:</td>
           		<td width="53%" class="whitebox2wk"><s:textfield name="code" cssClass="selectwk" id="code" value = "%{code}" maxlength = "50" autocomplete="off" 	onkeyup="UniqueCheckOnCodenumber();" onblur="checkForCode();validateLineBreaks();" />
 					<egov:uniquecheck id="numberunique" fields="['Value']" url='/masters/ajaxScheduleOfRate!codeNumberUniqueCheck.action' key='codenumber.already.exists' />
 				</td>
 			</tr>
-			<tr>
-           		<td class="whiteboxwk">
-					<s:text name="sor.depositWorks.checkbox" />:</td>
-	   			<td class="whitebox2wk">
-   					<s:checkbox name="isDepositWorksSOR" id="isDepositWorksSOR" value="%{isDepositWorksSOR}" onclick="checkDWSor(this);validateForDWSORs(this);"  />
-	   			</td>
-	   			<td class="whiteboxwk" colspan="2" />
-	   		
-	   		</tr>
 			<tr>
 				<td width="11%" class="greyboxwk"><span class="mandatory">*</span><s:text name="master.sor.description" />:</td>
             	<td width="21%" class="greybox2wk"><span class="greybox2wk">
@@ -387,7 +333,7 @@ var makeScheduleOfRateDataTable = function() {
 			<div id="scheduleOfRateTable"></div>
 	<script>
             makeScheduleOfRateDataTable();
-         <s:iterator id="rateIterator" value="model.rates" status="rate_row_status">
+         <s:iterator id="rateIterator" value="model.sorRates" status="rate_row_status">
 				        scheduleOfRateDataTable.addRow(
 			        						{id:'<s:property value="id"/>',											
 			                                SlNo:'<s:property value="#rate_row_status.count"/>',

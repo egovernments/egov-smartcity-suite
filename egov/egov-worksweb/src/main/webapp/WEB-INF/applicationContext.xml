@@ -78,13 +78,7 @@
 	</bean>
 	<bean id="worksStatusService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.works.models.tender.SetStatus" />
-	</bean>
-	<bean id="departmentService" parent="persistenceService" scope="prototype">
-	  	<property name="type" value="org.egov.lib.rjbac.dept.Department"></property>
-	</bean>
-	<bean id="workTypeService" parent="persistenceService" scope="prototype">
-	  	<property name="type" value="org.egov.works.models.estimate.WorkType"></property>
-	</bean>
+	</bean>n>
 	<bean id="scriptService" parent="persistenceService" scope="prototype">
 	  	<property name="type" value="org.egov.infstr.models.Script"></property>
 	</bean>
@@ -92,8 +86,6 @@
 		<property name="estimateNumberGenerator" ref="estimateNumberGenerator"/>
 		<property name="projectcodeGenerator" ref="projectcodeGenerator"/>
 		<property name="budgetNumberGenerator" ref="budgetNumberGenerator"/>
-		<property name="estimateApprovalNumberGenerator" ref="estimateApprovalNumberGenerator"/>
-		<property name="projectCodeService" ref="projectCodeService"/>
 		<property name="budgetDetailsDAO" ref="budgetDetailsDAO"/>
 		<property name="genericHibDao" ref="genericHibDao"/> 
 		<property name="eisManager" ref="eisManager"/>
@@ -447,7 +439,7 @@
 	 </bean>
 	 
 	 <bean id="contractorGradeService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.works.models.masters.ContractorGrade" />
+		<property name="type" value="org.egov.commons.ContractorGrade" />
 	</bean>
 	 <bean id="tenderResponseContractorsService" parent="persistenceService" scope="prototype">
 	  	<property name="type" value="org.egov.works.models.tender.TenderResponseContractors"></property>

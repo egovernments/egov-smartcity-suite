@@ -84,7 +84,7 @@ public class Contractor  extends BaseModel implements EntityType{
 	@Length(max=100,message="contractor.email.length")
 	private String email;
 	
-	@Length(max=250,message="contractor.narration.length")
+	@Length(max=1024,message="contractor.narration.length")
 	private String narration;
 	
 	@Length(max=14,message="contractor.panNumber.length")

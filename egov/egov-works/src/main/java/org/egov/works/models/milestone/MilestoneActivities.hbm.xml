@@ -49,7 +49,7 @@
 			type="long"
 			unsaved-value="null">
 			<generator class="sequence">
-          	<param name="sequence">EGW_MILESTONE_ACTIVITY_SEQ</param>
+          	<param name="sequence">SEQ_EGW_MILESTONE_ACTIVITY</param>
             </generator>
         </id>
         <many-to-one name="milestone" class="org.egov.works.models.milestone.Milestone" 
@@ -65,9 +65,9 @@
         <property name="stageOrderNo" type="java.math.BigDecimal">
             <column name="STAGE_ORDER_NO"  precision="5" scale="0" not-null="true" />
         </property>
-         <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY"/>
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY"/>
-        <property name="modifiedDate" column="MODIFIEDDATE" type="timestamp"/>
-		<property name="createdDate" column="CREATEDDATE" />
+         <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" not-null="true" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY"/>
+        <property name="modifiedDate" column="MODIFIEDDATE" type="timestamp" not-null="true" />
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" />
     </class>
 </hibernate-mapping>

@@ -46,7 +46,7 @@
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">EGW_ESTIMATE_APPROPRIATION_SEQ</param>
+				<param name="sequence">SEQ_EGW_ESTIMATE_APPROPRIATION</param>
 			</generator>
 		</id> 
 			
@@ -81,24 +81,9 @@
     	]]>
 	</query>  
 	
-	<!--
-
-	<query name="getBudgetUsageForEstimateByFinYear">
-		<![CDATA[
-     	from AbstractEstimateAppropriation aep where aep.abstractEstimate.id=? and aep.financialYearId=?
-    	]]>
-	</query>
-
-	<query name="getLatestBudgetUsageForEstimate">
-		<![CDATA[
-     	from AbstractEstimateAppropriation aep where aep.budgetUsage.id=(select max(budgetUsage.id) from AbstractEstimateAppropriation aep where aep.abstractEstimate.id=?)
-    	]]>
-	</query>
-	
-	-->
 	<query name="getDepositWorksUsageForEstimateByFinYear">
 		<![CDATA[
-     	from AbstractEstimateAppropriation aep where aep.abstractEstimate.id=? and aep.depositWorksUsage.financialYearId=?
+     	from AbstractEstimateAppropriation aep where aep.abstractEstimate.id=? and aep.depositWorksUsage.financialYear.id=?
     	]]>
 	</query>
 	

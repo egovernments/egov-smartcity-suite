@@ -105,8 +105,8 @@
 								</td>
 								<td width="21%" class="whitebox2wk">
 									<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}"
-										name="categry" id="category" cssClass="selectwk"
-										list="dropdownData.categorylist" listKey="id"
+										name="scheduleCategoryId" id="scheduleCategory" cssClass="selectwk"
+										list="dropdownData.scheduleCategorylist" listKey="id"
 										listValue="code"/>		
 								</td>
 								<td width="11%" class="whiteboxwk">
@@ -174,7 +174,7 @@
 													
 													<display:column headerClass="pagetableth" class="pagetabletd" 
 														title="Category Type" titleKey="master.sor.category"
-														style="width:10%;text-align:left" property="category.code">
+														style="width:10%;text-align:left" property="scheduleCategory.code">
 													</display:column>
 													
 													<display:column headerClass="pagetableth" class="pagetabletd" 

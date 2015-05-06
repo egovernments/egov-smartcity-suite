@@ -42,121 +42,123 @@ package org.egov.works.models.milestone;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.validation.Valid;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.egov.commons.EgwStatus;
 import org.egov.infstr.ValidationError;
 import org.egov.works.models.workflow.WorkFlow;
 
-public class TrackMilestone extends WorkFlow  {
-	
-	public enum TrackMilestoneStatus{
-		CREATED,APPROVED,REJECTED,CANCELLED,RESUBMITTED
-	}
+public class TrackMilestone extends WorkFlow {
 
-	public enum Actions{
-		SUBMIT_FOR_APPROVAL,APPROVE,REJECT,CANCEL;
+    private static final long serialVersionUID = 765700374368314216L;
 
-		public String toString() {
-			return this.name().toLowerCase();
-		}
-	}
-	
-	private Milestone milestone;
-	private BigDecimal total; 
-	private EgwStatus egwStatus;
-	private Boolean isProjectCompleted;
-	private String ownerName;
-	
-	
-	@Valid
-	private List<TrackMilestoneActivity> activities = new LinkedList<TrackMilestoneActivity>();
-	
+    public enum TrackMilestoneStatus {
+        CREATED, APPROVED, REJECTED, CANCELLED, RESUBMITTED
+    }
 
+    public enum Actions {
+        SUBMIT_FOR_APPROVAL, APPROVE, REJECT, CANCEL;
 
-	public List<TrackMilestoneActivity> getActivities() {
-		return activities;
-	}
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
+    }
 
-	public void setActivities(
-			List<TrackMilestoneActivity> activities) {
-		this.activities = activities;
-	}
+    private Milestone milestone;
+    private BigDecimal total;
+    private EgwStatus egwStatus;
+    private Boolean isProjectCompleted;
+    private String ownerName;
+    private Date approvedDate;
 
-	public void addActivity(TrackMilestoneActivity activity) {
-		this.activities.add(activity);
-	}
+    @Valid
+    private List<TrackMilestoneActivity> activities = new LinkedList<TrackMilestoneActivity>();
 
-	
-	public Milestone getMilestone() {
-		return milestone;
-	}
+    public List<TrackMilestoneActivity> getActivities() {
+        return activities;
+    }
 
-	public void setMilestone(Milestone milestone) {
-		this.milestone = milestone;
-	}
+    public void setActivities(final List<TrackMilestoneActivity> activities) {
+        this.activities = activities;
+    }
 
-	public EgwStatus getEgwStatus() {
-		return egwStatus;
-	}
+    public void addActivity(final TrackMilestoneActivity activity) {
+        activities.add(activity);
+    }
 
-	public void setEgwStatus(EgwStatus egwStatus) {
-		this.egwStatus = egwStatus;
-	}
-	
-	public BigDecimal getTotal() {
-		return total;
-	}
+    public Milestone getMilestone() {
+        return milestone;
+    }
 
-	public void setTotal(BigDecimal total) {
-		this.total = total;
-	}
+    public void setMilestone(final Milestone milestone) {
+        this.milestone = milestone;
+    }
 
-	@Override
-	public String getStateDetails() {
-		return "Estimate Number : "+this.milestone.getWorkOrderEstimate().getEstimate().getEstimateNumber();
-	}
-	
-	public Collection<TrackMilestoneActivity> getStages() {
-		return CollectionUtils.select(activities, new Predicate(){
-			public boolean evaluate(Object activity) {
-				return true;
-			}});
-	}
-	
-	public List<ValidationError> validateActivities() {
-		List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-		for(TrackMilestoneActivity activity: activities) {
-			validationErrors.addAll(activity.validate());
-		}
-		return validationErrors;
-	}
+    public EgwStatus getEgwStatus() {
+        return egwStatus;
+    }
 
-	public List<ValidationError> validate() {
-		List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-		validationErrors.addAll(validateActivities());
-		return validationErrors;
-	}
+    public void setEgwStatus(final EgwStatus egwStatus) {
+        this.egwStatus = egwStatus;
+    }
 
-	public Boolean getIsProjectCompleted() {
-		return isProjectCompleted;
-	}
+    public BigDecimal getTotal() {
+        return total;
+    }
 
-	public void setIsProjectCompleted(Boolean isProjectCompleted) {
-		this.isProjectCompleted = isProjectCompleted;
-	}
+    public void setTotal(final BigDecimal total) {
+        this.total = total;
+    }
 
-	public String getOwnerName() {
-		return ownerName;
-	}
+    @Override
+    public String getStateDetails() {
+        return "Estimate Number : " + milestone.getWorkOrderEstimate().getEstimate().getEstimateNumber();
+    }
 
-	public void setOwnerName(String ownerName) {
-		this.ownerName = ownerName;
-	}
+    public Collection<TrackMilestoneActivity> getStages() {
+        return CollectionUtils.select(activities, activity -> true);
+    }
+
+    public List<ValidationError> validateActivities() {
+        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        for (final TrackMilestoneActivity activity : activities)
+            validationErrors.addAll(activity.validate());
+        return validationErrors;
+    }
+
+    public List<ValidationError> validate() {
+        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        validationErrors.addAll(validateActivities());
+        return validationErrors;
+    }
+
+    public Boolean getIsProjectCompleted() {
+        return isProjectCompleted;
+    }
+
+    public void setIsProjectCompleted(final Boolean isProjectCompleted) {
+        this.isProjectCompleted = isProjectCompleted;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(final String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public Date getApprovedDate() {
+        return approvedDate;
+    }
+
+    public void setApprovedDate(final Date approvedDate) {
+        this.approvedDate = approvedDate;
+    }
 }
-

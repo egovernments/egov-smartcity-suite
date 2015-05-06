@@ -46,14 +46,14 @@
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">EGW_MB_HEAD_CANCEL_BILL_SEQ</param>
+				<param name="sequence">SEQ_EGW_CANCELLED_BILL</param>
 			</generator>
 		</id>
 		<many-to-one name="mbHeader"
 			class="org.egov.works.models.measurementbook.MBHeader" column="MBHEADER_ID"
 			not-null="true" fetch="select" />
 		
-		<many-to-one name="egBillregister" class="org.egov.model.bills.EgBillregister" column="BILLREGISTER_ID" fetch="select" />
+		<many-to-one name="egBillregister" class="org.egov.model.bills.EgBillregister" column="BILLREGISTER_ID" fetch="select" not-null="true" />
 	</class>
 	<query name="getMBListForCancelledBill">
 		<![CDATA[

@@ -138,7 +138,7 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
 				depositWorksUsage.setAppropriationNumber(revisionEstimate.getBudgetRejectionNo());
 				depositWorksUsage.setAbstractEstimate(revisionEstimate);
 				depositWorksUsage.setAppropriationDate(new Date());
-				depositWorksUsage.setFinancialYearId(estimateAppropriation.getDepositWorksUsage().getFinancialYearId());
+				depositWorksUsage.setFinancialYear(estimateAppropriation.getDepositWorksUsage().getFinancialYear());
 				depositWorksUsage.setCoa(financialDetail.getCoa());
 				depositWorksUsage.setDepositCode(financialDetail.getAbstractEstimate().getDepositCode());
 				depositWorksUsage=depositWorksUsageService.persist(depositWorksUsage);
@@ -231,7 +231,7 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
 			depositWorksUsage.setAppropriationNumber(revisionEstimate.getBudgetApprNo());
 			depositWorksUsage.setAbstractEstimate(revisionEstimate);
 			depositWorksUsage.setAppropriationDate(appDate);
-			depositWorksUsage.setFinancialYearId(budgetApprDate_finYear.getId().intValue());
+			depositWorksUsage.setFinancialYear(budgetApprDate_finYear);
 			depositWorksUsage.setDepositCode(financialDetail.getAbstractEstimate().getDepositCode());
 			depositWorksUsage.setCoa(financialDetail.getCoa());
 			depositWorksUsage=depositWorksUsageService.persist(depositWorksUsage);

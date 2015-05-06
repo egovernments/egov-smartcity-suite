@@ -46,7 +46,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.web.actions.BaseFormAction;
-import org.egov.works.models.masters.Rate;
+import org.egov.works.models.masters.SORRate;
 import org.egov.works.models.masters.ScheduleOfRate;
 
 import com.opensymphony.xwork2.Action;
@@ -59,7 +59,7 @@ public class ScheduleOfRateSearchAction extends BaseFormAction {
 	//private static final String PUNCTUATIONS_AND_SPECIALCHARS = "[^\\w\\d\\.]";
 	private static final String SEARCH_RESULTS = "searchResults";
 	private ScheduleOfRate sor = new ScheduleOfRate();
-	private Rate currentRate;
+	private SORRate currentRate;
 	private String sorID;
 	private Date estimateDate;
 	private String query;	
@@ -120,7 +120,7 @@ public class ScheduleOfRateSearchAction extends BaseFormAction {
 		this.sor = scheduleOfRateInstance;
 	}
 
-	public Rate getCurrentRate() {
+	public SORRate getCurrentRate() {
 		return currentRate;
 	}
 

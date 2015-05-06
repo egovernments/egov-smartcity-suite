@@ -42,28 +42,29 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 	<class name="org.egov.works.models.estimate.FinancialDetail"
-		table="EGW_FINANCIALDETAIL">
+		table="EGW_ESTIMATE_FINANCIALDETAIL">
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">EGW_FINANCIALDETAIL_SEQ</param>
+				<param name="sequence">SEQ_EGW_ESTIMATE_FINANCIALDETAIL</param>
 			</generator>
-		</id>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
-		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
-		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+		</id>		
 		<many-to-one name="abstractEstimate" column="ABSTRACTESTIMATE_ID" not-null="true" insert="false" update="false"/>
 		<many-to-one name="fund" column="FUND_ID" not-null="true" />
-		<many-to-one name="function" column="FUNCTION_ID" not-null="false" />
-		<many-to-one name="functionary" column="FUNCTIONARY_ID" not-null="false" />
-		<many-to-one name="scheme" column="SCHEME_ID" not-null="false"/>
-		<many-to-one name="subScheme" column="SUBSCHEME_ID" not-null="false" />
-		<many-to-one name="budgetGroup" column="BUDGETGROUP_ID" not-null="false" />
-		<many-to-one name="coa" column="COA_ID" not-null="false" />
+		<many-to-one name="function" column="FUNCTION_ID" />
+		<many-to-one name="functionary" column="FUNCTIONARY_ID" />
+		<many-to-one name="scheme" column="SCHEME_ID" />
+		<many-to-one name="subScheme" column="SUBSCHEME_ID" />
+		<many-to-one name="budgetGroup" column="BUDGETGROUP_ID" />
+		<many-to-one name="coa" column="COA_ID" />
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" fetch="select" not-null="true" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+		
 		<list name="financingSources" cascade="all,delete-orphan">
-        	<key column="FINANCIALDETAILID" not-null="false"/>
-        	<list-index column="FINSOURCE_INDEX"/>
+        	<key column="FINANCIALDETAIL_ID" not-null="false"/>
+        	<list-index column="estimate_finsource_index"/>
         	<one-to-many class="org.egov.works.models.estimate.FinancingSource"/>
         </list>
 	</class>

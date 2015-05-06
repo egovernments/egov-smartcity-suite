@@ -103,8 +103,8 @@ function loadDepositDetails(){
 }
 function showHideMap()
 {
-	var lat = document.getElementById("lat").value ;
-	var lon = document.getElementById("lon").value ;
+	var lat = document.getElementById("latitude").value ;
+	var lon = document.getElementById("longitude").value ;
 	if(lat!='' && lon!='')
 	{
 		document.getElementById("latlonDiv").style.display="";

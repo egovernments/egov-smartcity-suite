@@ -46,7 +46,7 @@
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">EGW_MB_DETAILS_SEQ</param>
+				<param name="sequence">SEQ_EGW_MB_DETAILS</param>
 			</generator>
 		</id>
 		<many-to-one name="mbHeader"
@@ -59,23 +59,27 @@
 		<property name="quantity" type="double">
 			<column name="QUANTITY" precision="20" not-null="true"/>
 		</property>
-		
-		<property name="remark" type="string">
-			<column name="REMARK" length="400" />
+		 <property name="rate" type="double">
+            <column name="RATE" precision="20" />
+        </property>
+        <property name="amount" type="double">
+            <column name="AMOUNT" precision="20" />
+        </property>     
+		<property name="remarks" type="string">
+			<column name="REMARKS" length="400" />
 		</property>
          
-         <property name="mbdetailsDate" type="date">
-			<column name="MBDETAIL_DATE"/>
-		</property>
-		
 		<property name="OrderNumber" type="string">
 			<column name="ORDER_NUMER"/>
 		</property>
-
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" not-null="true" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" not-null="true" fetch="select"/>
+         <property name="mbdetailsDate" type="date">
+			<column name="ORDER_DATE"/>
+		</property>
+		
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
 		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true"/>	
-		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" not-null="true"/>
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
 	</class>	
 	<query name="prevCumulativeQuantity">
 		<![CDATA[

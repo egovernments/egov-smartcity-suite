@@ -49,15 +49,15 @@
 			type="long"
 			unsaved-value="null">
 			<generator class="sequence">
-          	<param name="sequence">EGW_TRACK_MILESTONE_ACT_SEQ</param>
+          	<param name="sequence">SEQ_EGW_TRACK_MILESTONE_ACTIVITY</param>
             </generator>
         </id>
         <many-to-one name="trackMilestone" class="org.egov.works.models.milestone.TrackMilestone" 
         	fetch="select" insert="false" update="false">
-            <column name="TrackMilestone_ID" precision="22" scale="0" not-null="true"/>
+            <column name="TRACKMILESTONE_ID" precision="22" scale="0" not-null="true"/>
         </many-to-one>
         <many-to-one name="milestoneActivity" class="org.egov.works.models.milestone.MilestoneActivity" fetch="select">
-            <column name="Milestone_Activity_id" precision="22" scale="0" not-null="true"/>
+            <column name="MILESTONE_ACTIVITY_ID" precision="22" scale="0" not-null="true"/>
         </many-to-one>
         <property name="status" type="java.lang.String">
             <column name="STATUS" length="50" />
@@ -69,9 +69,9 @@
             <column name="REMARKS" length="1024" />
         </property>
         <property name="completionDate" column="COMPLETETION_DATE " type="timestamp"/>
-        <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY"/>
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY"/>
-        <property name="modifiedDate" column="MODIFIEDDATE" type="timestamp"/>
+        <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" not-null="true"/>
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY"/>
+        <property name="modifiedDate" column="MODIFIEDDATE" type="timestamp" not-null="true"/>
 		<property name="createdDate" column="CREATEDDATE" />
     </class>
 </hibernate-mapping>

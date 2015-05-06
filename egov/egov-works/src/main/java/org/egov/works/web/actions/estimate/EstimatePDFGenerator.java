@@ -43,7 +43,6 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -136,27 +135,13 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator  {
 			headerTextPara.setAlignment(Element.ALIGN_CENTER);
 			document.add(headerTextPara);
 			document.add(makePara("Executing Department:"+estimate.getExecutingDepartment().getName(), Element.ALIGN_LEFT));
-			if(estimate.getPreviousUserDepartment()!=null && estimate.getBudgetApprDate()!=null)
-			{
-					Calendar calWithApprnDate = Calendar.getInstance();
-					calWithApprnDate.setTime(estimate.getBudgetApprDate());
-					calWithApprnDate.add(Calendar.DATE, -1);
-					document.add(makePara("User Department:"+estimate.getPreviousUserDepartment().getName()+" ("+DateUtils.getDefaultFormattedDate(estimate.getEstimateDate())+" to "+DateUtils.getDefaultFormattedDate(calWithApprnDate.getTime())+")", Element.ALIGN_LEFT));
-					document.add(makePara("User Department:"+estimate.getUserDepartment().getName()+" (From "+DateUtils.getDefaultFormattedDate(estimate.getBudgetApprDate())+")", Element.ALIGN_LEFT));
-			}
-			else
-				document.add(makePara("User Department:"+estimate.getUserDepartment().getName(), Element.ALIGN_LEFT));
-			if(estimate.getOldExecDepartment()!=null)
-				document.add(makePara("Old Department:"+estimate.getOldExecDepartment().getName(), Element.ALIGN_LEFT));
-			
+			document.add(makePara("User Department:"+estimate.getUserDepartment().getName(), Element.ALIGN_LEFT));
 			
 			CFinancialYear estimateFinancialYear = estimate.getMultiYearEstimates().isEmpty()?financialYear:estimate.getMultiYearEstimates().get(0).getFinancialYear();
 			addZoneYearHeader(estimate, estimateFinancialYear);
 						
 			document.add(makePara("Name of Work: " + estimate.getName(),Element.ALIGN_LEFT));
 			document.add(makePara("Description: " + estimate.getDescription(),Element.ALIGN_LEFT)); 
-			if(estimate.getOldEstimateNumber()!=null)
-				oldEstNo="\n"+"Old Estimate Number: "+estimate.getOldEstimateNumber();
 			
 			if(estimate.getProjectCode()!=null){
 	        	projectCode="Project Code : "+estimate.getProjectCode().getCode();
@@ -227,7 +212,7 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator  {
 				PdfPTable BudgetaryAppropriationTable = createBudgetaryAppropriationTable(estimate);
 				String estimateNumber=estimate.getEstimateNumber();
 			    if (BudgetaryAppropriationTable.getRows().size()!=1) {
-			      if(getBudgetDetailUsage(estimateNumber).size()!=0 || ( estimate.getOldEstimateNumber()!=null && getBudgetDetailUsage(estimate.getOldEstimateNumber()).size()!=0) && estimate.getBudgetApprNo()!=null){
+			      if(getBudgetDetailUsage(estimateNumber).size()!=0 && estimate.getBudgetApprNo()!=null){
 					 document.newPage();
 					 document.add(spacer());
 					 document.add(makePara("Budgetary Appropriation")); 
@@ -491,83 +476,30 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator  {
 			} 
 	  }  
 		PdfPTable appropriationDetailTable = new PdfPTable(8);
-		if(estimate.getOldEstimateNumber()==null){
-			int count = 0;
-			for(AbstractEstimateAppropriation abstractEstimateAppropriation:abstractEstimateAppropriationList){
-				if(abstractEstimateAppropriation.getBudgetUsage().getConsumedAmount()!=0){
-					Department dept = getDeptFromBudgtAppropriationNo(abstractEstimateAppropriation.getBudgetUsage().getAppropriationnumber());
-					totalGrant=abstractEstimateService.getTotalGrantForYearAsOnDate(financialdetails.get(0),abstractEstimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(),Integer.parseInt(dept.getId().toString()),abstractEstimateAppropriation.getBudgetUsage().getUpdatedTime());
-					BigDecimal planningBudgetPerc = abstractEstimateService.getPlanningBudgetPercentage(financialdetails.get(0),abstractEstimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(),Integer.parseInt(dept.getId().toString()));
-					if(planningBudgetPerc!=null && !planningBudgetPerc.equals(0)) {
-						totGrantafterMultiFactor=totalGrant.multiply(planningBudgetPerc.divide(new BigDecimal(100)));   
-						appValue = planningBudgetPerc.divide(new BigDecimal(100)).toString();
-					}
-					budgetAvailable=abstractEstimateAppropriation.getBalanceAvailable();
-					balOnHand=budgetAvailable.add(new BigDecimal(abstractEstimateAppropriation.getBudgetUsage().getConsumedAmount()));
-					amtAppropriated=totGrantafterMultiFactor.subtract(balOnHand);
-					//Print only for the first time
-					if(count==0)
-					{
-						addRow(BudgetaryAppropriationTable, false,makePara(""),centerPara("Financial Year Wise Appropriation Details "));
-						addRow(appropriationDetailTable, true,makePara(8f,"Department"),makePara(8f,"Appropriation Number"),makePara(8f,"Total Grant"),makePara(8f,appValue + " Times Total Grant"),makePara(8f,"Amount Appropriated so far"),makePara(8f,"Amount Appropriated"),makePara(8f,"Balance on Hand"),makePara(8f,"Balance After Appropriation"));
-					}
-					addRow(appropriationDetailTable, true,rightPara(8f,dept.getName()),makePara(8f,abstractEstimateAppropriation.getBudgetUsage().getAppropriationnumber()),rightPara(8f,toCurrency(totalGrant.doubleValue())),rightPara(8f,toCurrency(totGrantafterMultiFactor.doubleValue())),rightPara(8f,toCurrency(amtAppropriated.doubleValue())),rightPara(8f,toCurrency(abstractEstimateAppropriation.getBudgetUsage().getConsumedAmount())),rightPara(8f,toCurrency(balOnHand.doubleValue())),rightPara(8f,toCurrency(budgetAvailable.doubleValue())));
-					count++;
-				}
-			}
-		}
-		else if(estimate.getOldEstimateNumber()!=null){
-			int count = 0;
-			for(AbstractEstimateAppropriation abstractEstimateAppropriation:abstractEstimateAppropriationList){
-			// Old Executing Department
-				if(abstractEstimateAppropriation.getBudgetUsage().getBudgetDetail().getExecutingDepartment().getId()==estimate.getOldExecDepartment().getId()){
-					if(abstractEstimateAppropriation.getBudgetUsage().getConsumedAmount()!=0){
-						Department dept = getDeptFromBudgtAppropriationNo(abstractEstimateAppropriation.getBudgetUsage().getAppropriationnumber());
-						totalGrant=abstractEstimateService.getTotalGrantForYearAsOnDate(financialdetails.get(0),abstractEstimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(),Integer.parseInt(dept.getId().toString()),abstractEstimateAppropriation.getBudgetUsage().getUpdatedTime());
-						BigDecimal planningBudgetPerc = abstractEstimateService.getPlanningBudgetPercentage(financialdetails.get(0),abstractEstimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(),Integer.parseInt(dept.getId().toString()));
-						if(planningBudgetPerc!=null && !planningBudgetPerc.equals(0)) {
-							totGrantafterMultiFactor=totalGrant.multiply(planningBudgetPerc.divide(new BigDecimal(100)));
-							appValue = planningBudgetPerc.divide(new BigDecimal(100)).toString();
-						}
-						budgetAvailable=abstractEstimateAppropriation.getBalanceAvailable();
-						balOnHand=budgetAvailable.add(new BigDecimal(abstractEstimateAppropriation.getBudgetUsage().getConsumedAmount()));
-						amtAppropriated=totGrantafterMultiFactor.subtract(balOnHand);
-						//Print only for the first time
-						if(count==0)
-						{
-							addRow(BudgetaryAppropriationTable, false,makePara(""),centerPara("Financial Year Wise Appropriation Details "));
-							addRow(appropriationDetailTable, true,makePara(8f,"Department"),makePara(8f,"Appropriation Number"),makePara(8f,"Total Grant"),makePara(8f,appValue + " Times Total Grant"),makePara(8f,"Amount Appropriated so far"),makePara(8f,"Amount Appropriated"),makePara(8f,"Balance on Hand"),makePara(8f,"Balance After Appropriation"));
-						}
-						addRow(appropriationDetailTable, true,rightPara(8f,dept.getName()),makePara(8f,abstractEstimateAppropriation.getBudgetUsage().getAppropriationnumber()),rightPara(8f,toCurrency(totalGrant.doubleValue())),rightPara(8f,toCurrency(totGrantafterMultiFactor.doubleValue())),rightPara(8f,toCurrency(amtAppropriated.doubleValue())),rightPara(8f,toCurrency(abstractEstimateAppropriation.getBudgetUsage().getConsumedAmount())),rightPara(8f,toCurrency(balOnHand.doubleValue())),rightPara(8f,toCurrency(budgetAvailable.doubleValue())));
-						count++;
-					}
-				}
-				// New Executing Department
-				else if(abstractEstimateAppropriation.getBudgetUsage().getBudgetDetail().getExecutingDepartment().getId()==estimate.getUserDepartment().getId()){
-					if(abstractEstimateAppropriation.getBudgetUsage().getConsumedAmount()!=0){
-						Department dept = getDeptFromBudgtAppropriationNo(abstractEstimateAppropriation.getBudgetUsage().getAppropriationnumber());
-						totalGrant=abstractEstimateService.getTotalGrantForYearAsOnDate(financialdetails.get(0),abstractEstimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(),Integer.parseInt(dept.getId().toString()),abstractEstimateAppropriation.getBudgetUsage().getUpdatedTime());
-						BigDecimal planningBudgetPerc = abstractEstimateService.getPlanningBudgetPercentage(financialdetails.get(0),abstractEstimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(),Integer.parseInt(dept.getId().toString()));
-						if(planningBudgetPerc!=null && !planningBudgetPerc.equals(0)) {
-							totGrantafterMultiFactor=totalGrant.multiply(planningBudgetPerc.divide(new BigDecimal(100)));  
-							appValue = planningBudgetPerc.divide(new BigDecimal(100)).toString();
-						}
-						
-						budgetAvailable=abstractEstimateAppropriation.getBalanceAvailable();
-						balOnHand=budgetAvailable.add(new BigDecimal(abstractEstimateAppropriation.getBudgetUsage().getConsumedAmount()));
-						amtAppropriated=totGrantafterMultiFactor.subtract(balOnHand);
-						//Print only for the first time
-						if(count==0)
-						{
-							addRow(BudgetaryAppropriationTable, false,makePara(""),centerPara("Financial Year Wise Appropriation Details "));
-							addRow(appropriationDetailTable, true,makePara(8f,"Department"),makePara(8f,"Appropriation Number"),makePara(8f,"Total Grant"),makePara(8f,appValue + " Times Total Grant"),makePara(8f,"Amount Appropriated so far"),makePara(8f,"Amount Appropriated"),makePara(8f,"Balance on Hand"),makePara(8f,"Balance After Appropriation"));
-						}
-						addRow(appropriationDetailTable, true,rightPara(8f,dept.getName()),makePara(8f,abstractEstimateAppropriation.getBudgetUsage().getAppropriationnumber()),rightPara(8f,toCurrency(totalGrant.doubleValue())),rightPara(8f,toCurrency(totGrantafterMultiFactor.doubleValue())),rightPara(8f,toCurrency(amtAppropriated.doubleValue())),rightPara(8f,toCurrency(abstractEstimateAppropriation.getBudgetUsage().getConsumedAmount())),rightPara(8f,toCurrency(balOnHand.doubleValue())),rightPara(8f,toCurrency(budgetAvailable.doubleValue())));
-						count++;
-					}
-				}
-			} 
-		}
+		int count = 0;
+                for(AbstractEstimateAppropriation abstractEstimateAppropriation:abstractEstimateAppropriationList){
+                        if(abstractEstimateAppropriation.getBudgetUsage().getConsumedAmount()!=0){
+                                Department dept = getDeptFromBudgtAppropriationNo(abstractEstimateAppropriation.getBudgetUsage().getAppropriationnumber());
+                                totalGrant=abstractEstimateService.getTotalGrantForYearAsOnDate(financialdetails.get(0),abstractEstimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(),Integer.parseInt(dept.getId().toString()),abstractEstimateAppropriation.getBudgetUsage().getUpdatedTime());
+                                BigDecimal planningBudgetPerc = abstractEstimateService.getPlanningBudgetPercentage(financialdetails.get(0),abstractEstimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(),Integer.parseInt(dept.getId().toString()));
+                                if(planningBudgetPerc!=null && !planningBudgetPerc.equals(0)) {
+                                        totGrantafterMultiFactor=totalGrant.multiply(planningBudgetPerc.divide(new BigDecimal(100)));   
+                                        appValue = planningBudgetPerc.divide(new BigDecimal(100)).toString();
+                                }
+                                budgetAvailable=abstractEstimateAppropriation.getBalanceAvailable();
+                                balOnHand=budgetAvailable.add(new BigDecimal(abstractEstimateAppropriation.getBudgetUsage().getConsumedAmount()));
+                                amtAppropriated=totGrantafterMultiFactor.subtract(balOnHand);
+                                //Print only for the first time
+                                if(count==0)
+                                {
+                                        addRow(BudgetaryAppropriationTable, false,makePara(""),centerPara("Financial Year Wise Appropriation Details "));
+                                        addRow(appropriationDetailTable, true,makePara(8f,"Department"),makePara(8f,"Appropriation Number"),makePara(8f,"Total Grant"),makePara(8f,appValue + " Times Total Grant"),makePara(8f,"Amount Appropriated so far"),makePara(8f,"Amount Appropriated"),makePara(8f,"Balance on Hand"),makePara(8f,"Balance After Appropriation"));
+                                }
+                                addRow(appropriationDetailTable, true,rightPara(8f,dept.getName()),makePara(8f,abstractEstimateAppropriation.getBudgetUsage().getAppropriationnumber()),rightPara(8f,toCurrency(totalGrant.doubleValue())),rightPara(8f,toCurrency(totGrantafterMultiFactor.doubleValue())),rightPara(8f,toCurrency(amtAppropriated.doubleValue())),rightPara(8f,toCurrency(abstractEstimateAppropriation.getBudgetUsage().getConsumedAmount())),rightPara(8f,toCurrency(balOnHand.doubleValue())),rightPara(8f,toCurrency(budgetAvailable.doubleValue())));
+                                count++;
+                        }
+                }	
+		
 		
 		PdfPCell appDetailpdfCell=new PdfPCell(appropriationDetailTable); 	 
 		appropriationDetailTable.setWidthPercentage(100);
@@ -864,31 +796,19 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator  {
 			rateYearPara=makePara("Schedule Rate Year: "+getSORYear(), Element.ALIGN_RIGHT);
 		}
 		addRow(headerTable, false,makePara("Estimate Number: " +estimate.getEstimateNumber(), Element.ALIGN_LEFT), financialYearPara);
-		if(estimate.getOldEstimateNumber()!=null)
-			addRow(headerTable, false,makePara("Old Estimate Number: " +estimate.getOldEstimateNumber(), Element.ALIGN_LEFT),rateYearPara);
-		else
-			addRow(headerTable, false,new Paragraph(), rateYearPara); 
+		addRow(headerTable, false,new Paragraph(), rateYearPara); 
 		
 		document.add(headerTable); 
 		if(estimate.getWard()!=null && "Ward".equalsIgnoreCase(estimate.getWard().getBoundaryType().getName()) && estimate.getWard().getParent()!=null && estimate.getWard().getParent().getName() !=null){
 			document.add(makePara("Ward: " + estimate.getWard().getName()+ " / Zone: " + estimate.getWard().getParent().getName(),
-					Element.ALIGN_RIGHT));
-			if(estimate.getOldWard()!=null)
-				document.add(makePara("Old Ward: " + estimate.getOldWard().getName()+ " / Old Zone: " + estimate.getOldWard().getParent().getName(),
-						Element.ALIGN_RIGHT));
+					Element.ALIGN_RIGHT));			
 		}else if(estimate.getWard()!=null && "Zone".equalsIgnoreCase(estimate.getWard().getBoundaryType().getName()) && estimate.getWard().getParent()!=null && estimate.getWard().getParent().getName() !=null){
 			document.add(makePara("Zone: " + estimate.getWard().getName()+ " / Region: " + estimate.getWard().getParent().getName(),
 					Element.ALIGN_RIGHT));
-			if(estimate.getOldWard()!=null)
-				document.add(makePara("Old Zone: " + estimate.getOldWard().getName()+ " / Old Region: " + estimate.getOldWard().getParent().getName(),
-						Element.ALIGN_RIGHT));
 		}
 		else if(estimate.getWard()!=null){
 			document.add(makePara("Jurisdiction: " + estimate.getWard().getName()+ "(" + estimate.getWard().getBoundaryType().getName()+ ")",
 					Element.ALIGN_RIGHT));
-			if(estimate.getOldWard()!=null) 
-				document.add(makePara("Old Jurisdiction: " + estimate.getOldWard().getName()+ "(" + estimate.getOldWard().getBoundaryType().getName()+ ")",
-						Element.ALIGN_RIGHT));
 			
 		}
 		document.add(spacer());
@@ -911,22 +831,13 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator  {
 		if(estimate.getWard()!=null && "Ward".equalsIgnoreCase(estimate.getWard().getBoundaryType().getName()) && estimate.getWard().getParent()!=null && estimate.getWard().getParent().getName() !=null){
 			document.add(makePara("Ward: " + estimate.getWard().getName()+ " / Zone: " + estimate.getWard().getParent().getName(),
 					Element.ALIGN_RIGHT));
-			if(estimate.getOldWard()!=null)
-				document.add(makePara("Old Ward: " + estimate.getOldWard().getName()+ " / Old Zone: " + estimate.getOldWard().getParent().getName(),
-						Element.ALIGN_RIGHT));
 		}else if(estimate.getWard()!=null && "Zone".equalsIgnoreCase(estimate.getWard().getBoundaryType().getName()) && estimate.getWard().getParent()!=null && estimate.getWard().getParent().getName() !=null){
 			document.add(makePara("Zone: " + estimate.getWard().getName()+ " / Region: " + estimate.getWard().getParent().getName(),
 					Element.ALIGN_RIGHT));
-			if(estimate.getOldWard()!=null)
-				document.add(makePara("Old Zone: " + estimate.getOldWard().getName()+ " / Old Region: " + estimate.getOldWard().getParent().getName(),
-						Element.ALIGN_RIGHT));
 		}
 		else if(estimate.getWard()!=null){
 			document.add(makePara("Jurisdiction: " + estimate.getWard().getName()+ "(" + estimate.getWard().getBoundaryType().getName()+ ")",
 					Element.ALIGN_RIGHT));
-			if(estimate.getOldWard()!=null) 
-				document.add(makePara("Old Jurisdiction: " + estimate.getOldWard().getName()+ "(" + estimate.getOldWard().getBoundaryType().getName()+ ")",
-						Element.ALIGN_RIGHT));
 		}
 		document.add(spacer());
 	}

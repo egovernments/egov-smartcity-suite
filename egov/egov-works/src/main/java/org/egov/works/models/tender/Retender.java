@@ -45,45 +45,53 @@ import java.util.List;
 
 import org.egov.infstr.models.BaseModel;
 
-public class Retender extends BaseModel{
-	
-	private static final long serialVersionUID = 1L;
-	private WorksPackage worksPackage;
-	private List<RetenderHistory> retenderHistoryDetails = new LinkedList<RetenderHistory>();
-	private String reason;
-	private Date date;
-	private Integer iterationNumber;
-	
-	public WorksPackage getWorksPackage() {
-		return worksPackage;
-	}
-	public void setWorksPackage(WorksPackage worksPackage) {
-		this.worksPackage = worksPackage;
-	}
-	public String getReason() {
-		return reason;
-	}
-	public Date getDate() {
-		return date;
-	}
-	public void setReason(String reason) {
-		this.reason = reason;
-	}
-	public void setDate(Date date) {
-		this.date = date;
-	}
-	public Integer getIterationNumber() {
-		return iterationNumber;
-	}
-	public void setIterationNumber(Integer iterationNumber) {
-		this.iterationNumber = iterationNumber;
-	}
-	public List<RetenderHistory> getRetenderHistoryDetails() {
-		return retenderHistoryDetails;
-	}
-	public void setRetenderHistoryDetails(
-			List<RetenderHistory> retenderHistoryDetails) {
-		this.retenderHistoryDetails = retenderHistoryDetails;
-	}
-	
+public class Retender extends BaseModel {
+
+    private static final long serialVersionUID = -8004618443430435287L;
+    private WorksPackage worksPackage;
+    private List<RetenderHistory> retenderHistoryDetails = new LinkedList<RetenderHistory>();
+    private String reason;
+    private Date retenderDate;
+    private Integer iterationNumber;
+
+    public WorksPackage getWorksPackage() {
+        return worksPackage;
+    }
+
+    public void setWorksPackage(final WorksPackage worksPackage) {
+        this.worksPackage = worksPackage;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public Date getRetenderDate() {
+        return retenderDate;
+    }
+
+    public void setReason(final String reason) {
+        this.reason = reason;
+    }
+
+    public void setRetenderDate(final Date retenderDate) {
+        this.retenderDate = retenderDate;
+    }
+
+    public Integer getIterationNumber() {
+        return iterationNumber;
+    }
+
+    public void setIterationNumber(final Integer iterationNumber) {
+        this.iterationNumber = iterationNumber;
+    }
+
+    public List<RetenderHistory> getRetenderHistoryDetails() {
+        return retenderHistoryDetails;
+    }
+
+    public void setRetenderHistoryDetails(final List<RetenderHistory> retenderHistoryDetails) {
+        this.retenderHistoryDetails = retenderHistoryDetails;
+    }
+
 }

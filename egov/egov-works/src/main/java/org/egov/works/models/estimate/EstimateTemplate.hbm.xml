@@ -49,11 +49,11 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 			type="long"
 			unsaved-value="null">
 			<generator class="native">
-				<param name="sequence">EGW_ESTIMATE_TEMPLATE_SEQ</param>
+				<param name="sequence">SEQ_EGW_ESTIMATE_TEMPLATE</param>
 			</generator>
 		</id>
 		<property name="code" type="string">
-			<column name="CODE" length="256" not-null="true" unique="true"/> 
+			<column name="CODE" length="100" not-null="true" unique="true"/> 
 		</property>
 		<property name="name" type="string">
 			<column name="NAME" length="256" not-null="true" /> 
@@ -64,21 +64,24 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 		<property name="status" type="int">
 			<column name="STATUS" /> 
 		</property>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
-		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
-		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
-       	<many-to-one name="workType"
+		<many-to-one name="workType"
 			class="org.egov.commons.EgwTypeOfWork" fetch="select">
 			<column name="WORKTYPE_ID" not-null="true" />
 		</many-to-one>
         <many-to-one name="subType"
 			class="org.egov.commons.EgwTypeOfWork" fetch="select"> 
-			<column name="SUBTYPE_ID" />
+			<column name="WORKSUBTYPE_ID" />
 		</many-to-one>
-		<list name="activities" cascade="all,delete-orphan">
+		
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" fetch="select" not-null="true" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+		
+       
+		<list name="estimateTemplateActivities" cascade="all,delete-orphan">
 			<key column="ESTIMATE_TEMPLATE_ID" not-null="true" />
-			<list-index column="activity_index" />
+			<list-index column="template_activity_index" />
 			<one-to-many
 				class="org.egov.works.models.estimate.EstimateTemplateActivity" />
 		</list>

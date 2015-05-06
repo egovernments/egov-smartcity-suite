@@ -72,7 +72,7 @@ public class EstimateTemplate extends BaseModel {
 	private EgwTypeOfWork subType;
 	
 	@Valid
-	private List<EstimateTemplateActivity> activities = new LinkedList<EstimateTemplateActivity>();
+	private List<EstimateTemplateActivity> estimateTemplateActivities = new LinkedList<EstimateTemplateActivity>();
 	
 	public String getCode() {
 		return code;
@@ -110,26 +110,26 @@ public class EstimateTemplate extends BaseModel {
 	public void setSubType(EgwTypeOfWork subType) {
 		this.subType = subType;
 	}
-	public List<EstimateTemplateActivity> getActivities() {
-		return activities;
+	public List<EstimateTemplateActivity> getEstimateTemplateActivities() {
+		return estimateTemplateActivities;
 	}
-	public void setActivities(List<EstimateTemplateActivity> activities) {
-		this.activities = activities;
+	public void setActivities(List<EstimateTemplateActivity> estimateTemplateActivities) {
+		this.estimateTemplateActivities = estimateTemplateActivities;
 	}
 	
-	public void addActivity(EstimateTemplateActivity activity) {
-		this.activities.add(activity);
+	public void addActivity(EstimateTemplateActivity estimateTemplateActivity) {
+		this.estimateTemplateActivities.add(estimateTemplateActivity);
 	}
 	
 	public Collection<EstimateTemplateActivity> getSORActivities() {
-		return CollectionUtils.select(activities, new Predicate(){
+		return CollectionUtils.select(estimateTemplateActivities, new Predicate(){
 			public boolean evaluate(Object activity) {
 				return ((EstimateTemplateActivity)activity).getSchedule()!=null;
 			}});
 	}
 	
 	public Collection<EstimateTemplateActivity> getNonSORActivities() {
-		return CollectionUtils.select(activities, new Predicate(){
+		return CollectionUtils.select(estimateTemplateActivities, new Predicate(){
 			public boolean evaluate(Object activity) {
 				return ((EstimateTemplateActivity)activity).getNonSor()!=null;
 			}});
@@ -137,8 +137,8 @@ public class EstimateTemplate extends BaseModel {
 	
 	public List<ValidationError> validateActivities() {
 		List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-		for(EstimateTemplateActivity activity: activities) {
-			validationErrors.addAll(activity.validate());
+		for(EstimateTemplateActivity estimateTemplateActivity: estimateTemplateActivities) {
+			validationErrors.addAll(estimateTemplateActivity.validate());
 		}
 		return validationErrors;
 	}

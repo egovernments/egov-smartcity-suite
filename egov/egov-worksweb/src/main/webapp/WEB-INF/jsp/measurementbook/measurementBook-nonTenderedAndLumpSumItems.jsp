@@ -430,7 +430,7 @@ var makeMBNonTendetedTable = function() {
 	                 {key:"orderNumber",label:'<span class="mandatory">*</span><s:text name="measurementbook.mb.ordernumbe"/>',hidden:false, formatter:textboxFormatterNT, sortable:false, resizeable:false},
 	                 {key:"mbdetailsDate", label:'<span class="mandatory">*</span>Order Date',formatter:dateformatterMBDateNT,sortable:false, resizeable:false},
 	                 {key:"approvedAmt",label:'<s:text name="measurementbook.approved.amount"/>', sortable:false, resizeable:false},
-	                 {key:"remark",label:'<s:text name="measurementbook.remark"/>', formatter:remarkTextboxFormatterNT, sortable:false, resizeable:true},
+	                 {key:"remarks",label:'<s:text name="measurementbook.remark"/>', formatter:remarkTextboxFormatterNT, sortable:false, resizeable:true},
 	                 {key:'Delete',label:'<s:text name="column.title.delete"/>',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")},
 	                 {key:"descriptionval" ,hidden:true,formatter:descFormatterNT,sortable:false, resizeable:false},
 	                 {key:"nonsordescriptionval" ,hidden:true,formatter:nonsordescFormatterNT,sortable:false, resizeable:false},
@@ -505,7 +505,7 @@ var makeMBLumpSumTable = function() {
 	                 {key:"orderNumber",label:'<span class="mandatory">*</span><s:text name="measurementbook.mb.ordernumbe"/>',hidden:false, formatter:textboxFormatterLS, sortable:false, resizeable:false},
 	                 {key:"mbdetailsDate", label:'<span class="mandatory">*</span>Order Date',formatter:dateformatterMBDateLS,sortable:false, resizeable:false},
 	                 {key:"approvedAmt",label:'<s:text name="measurementbook.approved.amount"/>', sortable:false, resizeable:false},
-	                 {key:"remark",label:'<s:text name="measurementbook.remark"/>', formatter:remarkTextboxFormatterLS, sortable:false, resizeable:true},
+	                 {key:"remarks",label:'<s:text name="measurementbook.remark"/>', formatter:remarkTextboxFormatterLS, sortable:false, resizeable:true},
 	                 {key:'Delete',label:'<s:text name="column.title.delete"/>',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")},
 	                 {key:"descriptionval" ,hidden:true,formatter:descFormatterLS,sortable:false, resizeable:false},
 	                 {key:"nonsordescriptionval" ,hidden:true,formatter:nonsordescFormatterLS,sortable:false, resizeable:false},
@@ -704,7 +704,7 @@ function addOtherActivityInYUI(resultdatas,mode){
                     approvedAmt:roundTo(eval(resultdatas[0].xApprdQunty)*eval(resultdatas[0].xApprdRate)*eval(resultdatas[0].xUomFactor)),
                     approvedAmtval:eval(eval(resultdatas[0].xApprdQunty)*eval(resultdatas[0].xApprdRate)*eval(resultdatas[0].xUomFactor)),                 
                     fullDescription:resultdatas[0].xSORDesc,
-                    remark:resultdatas[0].activityRemarks});
+                    remarks:resultdatas[0].activityRemarks});
    		}
 	}
 	else
@@ -729,7 +729,7 @@ function addOtherActivityInYUI(resultdatas,mode){
 	                approvedAmt:roundTo(eval(resultdatas[0].xApprdQunty)*eval(resultdatas[0].xApprdRate)*eval(resultdatas[0].xUomFactor)),
 	                approvedAmtval:eval(eval(resultdatas[0].xApprdQunty)*eval(resultdatas[0].xApprdRate)*eval(resultdatas[0].xUomFactor)),                   
                     fullDescription:resultdatas[0].xNonSORDesc,
-                    remark:resultdatas[0].activityRemarks});
+                    remarks:resultdatas[0].activityRemarks});
    		}
 	}		
 }
@@ -895,7 +895,7 @@ function hideOther(recordId,mode){
                                         <s:else>
                                         mbdetailsDate: '<s:property value="mbdetailsDate"/>',
                                         </s:else>
-				                        remark:'<s:property value="remark"/>',
+				                        remarks:'<s:property value="remarks"/>',
 				                        prevCumlv:'<s:property value="prevCumlvQuantity"/>',
 				                        prevCumlvval:'<s:property value="prevCumlvQuantity"/>',
 				                        currCumlv:'<s:property value="currCumlvQuantity"/>',
@@ -980,7 +980,7 @@ function hideOther(recordId,mode){
 	                                    <s:else>
 	                                    mbdetailsDate: '<s:property value="mbdetailsDate"/>',
 	                                    </s:else>
-				                        remark:'<s:property value="remark"/>',
+				                        remarks:'<s:property value="remarks"/>',
 				                        prevCumlv:'<s:property value="prevCumlvQuantity"/>',
 				                        prevCumlvval:'<s:property value="prevCumlvQuantity"/>',
 				                        currCumlv:'<s:property value="currCumlvQuantity"/>',

@@ -70,9 +70,9 @@ function addRTTable(tabid)
 	tabObj=document.getElementById(tabid);
 	tabObj.style.display="";
 	noOfRows = tabObj.rows.length;
-	var uobjNameDate =  'retenderInfoList['+RETENDER_LIST_INDEX+'].date';
+	var uobjNameDate =  'retenderInfoList['+RETENDER_LIST_INDEX+'].retenderDate';
 	var uobjNameReason =  'retenderInfoList['+RETENDER_LIST_INDEX+'].reason';
-	var uobjIdDate =  'retenderInfoList['+eval(noOfRows-1)+'].date';
+	var uobjIdDate =  'retenderInfoList['+eval(noOfRows-1)+'].retenderDate';
 	var uobjIdReason =  'retenderInfoList['+eval(noOfRows-1)+'].reason';
 
 	// Increment the RETENDER_LIST_INDEX
@@ -673,7 +673,7 @@ function validateDataBeforeSubmit()
 				return false;
 			}
 		}
-		obj = document.getElementById("retenderInfoList["+i+"].date");
+		obj = document.getElementById("retenderInfoList["+i+"].retenderDate");
 		if(obj)
 		{
 			if(obj.value=='')
@@ -700,8 +700,8 @@ function validateDataBeforeSubmit()
 	var obj2;
 	for(i=0;i<noOfRows-2;i++)
 	{
-		obj = document.getElementById("retenderInfoList["+i+"].date");
-		obj2 = document.getElementById("retenderInfoList["+eval(i+1)+"].date");
+		obj = document.getElementById("retenderInfoList["+i+"].retenderDate");
+		obj2 = document.getElementById("retenderInfoList["+eval(i+1)+"].retenderDate");
 		if(obj && obj2 &&  !compareDate(obj.value,obj2.value))
 		{
 			dom.get("ws_error").innerHTML='<s:text name ="wp.retender.increasing.date" />'; 
@@ -1019,8 +1019,8 @@ function addElementsInLastColumn()
 									<textarea cols="60" rows="3" id='retenderInfoList[<s:property value="%{#iterStatus.index}" />].reason' class="selectboldwk" disabled="true" ><s:property value="%{reason}"/></textarea>
 						       	</td>
 						       	<td  class="whitebox3wka" width="20%">
-						       		<s:date name="date" var="statusDateFormat" format="dd/MM/yyyy"/>
-									<s:textfield value="%{statusDateFormat}" size="25" id='retenderInfoList[%{#iterStatus.index}].date' cssClass="selectboldwk" 
+						       		<s:date name="retenderDate" var="statusDateFormat" format="dd/MM/yyyy"/>
+									<s:textfield value="%{statusDateFormat}" size="25" id='retenderInfoList[%{#iterStatus.index}].retenderDate' cssClass="selectboldwk" 
 						        		 disabled="true" />
 						        		 <a href="#" name="dateHref" id='dateHref[0]'>
 						        		 <img src="${pageContext.request.contextPath}/image/calendar.png" id="wsDateImg" alt="Calendar" width="16" height="16" 

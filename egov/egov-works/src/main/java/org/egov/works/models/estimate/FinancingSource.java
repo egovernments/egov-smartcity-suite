@@ -49,77 +49,62 @@ import org.egov.commons.Fundsource;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.models.BaseModel;
 
-/**
- * This class represents the entity EGW_FINANCINGSOURCE
- * 
- * @author Divya
- * @version 1.0, July 2, 2009
- */
 public class FinancingSource extends BaseModel {
-	
-	public FinancingSource(){
-	}
 
-	private Long id;
-	
-	@Min(value=0,message="financingsource.percentage.not.negative")
-	private double percentage;
-	
-	private Fundsource fundSource;
-	private FinancialDetail financialDetail;
-	
-	private Date lastModifiedDate;
+    private static final long serialVersionUID = 8308765350444092816L;
 
-	public Long getId() {
-		return id;
-	}
+    public FinancingSource() {
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Min(value = 0, message = "financingsource.percentage.not.negative")
+    private double percentage;
 
-	public double getPercentage() {
-		return percentage;
-	}
+    private Fundsource fundSource;
+    private FinancialDetail financialDetail;
 
-	public void setPercentage(double percentage) {
-		this.percentage = percentage;
-	}
+    private Date lastModifiedDate;
 
-	public Fundsource getFundSource() {
-		return fundSource;
-	}
+    public double getPercentage() {
+        return percentage;
+    }
 
-	public void setFundSource(Fundsource fundSource) {
-		this.fundSource = fundSource;
-	}
+    public void setPercentage(final double percentage) {
+        this.percentage = percentage;
+    }
 
-	public FinancialDetail getFinancialDetail() {
-		return financialDetail;
-	}
+    public Fundsource getFundSource() {
+        return fundSource;
+    }
 
-	public void setFinancialDetail(FinancialDetail financialDetail) {
-		this.financialDetail = financialDetail;
-	}
+    public void setFundSource(final Fundsource fundSource) {
+        this.fundSource = fundSource;
+    }
 
-	public Date getLastModifiedDate() {
-		return lastModifiedDate;
-	}
+    public FinancialDetail getFinancialDetail() {
+        return financialDetail;
+    }
 
-	public void setLastModifiedDate(Date lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
-	
-	public List<ValidationError> validate(){
-		List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-		
-		if(fundSource==null || fundSource.getCode()==null) {
-			validationErrors.add(new ValidationError("invalidpercentage","financingsource.fundsource.null"));
-		}
-			
-		if(percentage <= 0.0 || percentage > 100){
-			validationErrors.add(new ValidationError("invalidpercentage","financingsource.invalid.percentage"));
-		}
-		return validationErrors;
-	}
+    public void setFinancialDetail(final FinancialDetail financialDetail) {
+        this.financialDetail = financialDetail;
+    }
+
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(final Date lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    @Override
+    public List<ValidationError> validate() {
+        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+
+        if (fundSource == null || fundSource.getCode() == null)
+            validationErrors.add(new ValidationError("invalidpercentage", "financingsource.fundsource.null"));
+
+        if (percentage <= 0.0 || percentage > 100)
+            validationErrors.add(new ValidationError("invalidpercentage", "financingsource.invalid.percentage"));
+        return validationErrors;
+    }
 }

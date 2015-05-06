@@ -50,20 +50,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class WorksPackageNumberGenerator {
     @Autowired
     private SequenceGenerator sequenceGenerator;
-    //private PersistenceService<Script, Long> scriptService;
+    // private PersistenceService<Script, Long> scriptService;
     @Autowired
     private ScriptService scriptService;
-	
-	public String getWorksPackageNumber(WorksPackage entity,CFinancialYear finYear){
-	    try{
-                ScriptContext scriptContext = ScriptService.createContext("worksPackage",entity,"finYear",finYear,"sequenceGenerator",sequenceGenerator);
-                return scriptService.executeScript("works.wpNumber.generator", scriptContext).toString();
-            }
-            catch (ValidationException sequenceException) {
-                throw sequenceException;
-            }
-		//List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT", "works.wpNumber.generator");
-		//return scripts.get(0).eval(Script.createContext("worksPackage",entity,"finYear",finYear,"sequenceGenerator",sequenceGenerator)).toString();
-	}
+
+    public String getWorksPackageNumber(final WorksPackage entity, final CFinancialYear finYear) {
+        try {
+            final ScriptContext scriptContext = ScriptService.createContext("worksPackage", entity, "finYear", finYear,
+                    "sequenceGenerator", sequenceGenerator);
+            return scriptService.executeScript("works.wpNumber.generator", scriptContext).toString();
+        } catch (final ValidationException sequenceException) {
+            throw sequenceException;
+        }
+        // List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT",
+        // "works.wpNumber.generator");
+        // return
+        // scripts.get(0).eval(Script.createContext("worksPackage",entity,"finYear",finYear,"sequenceGenerator",sequenceGenerator)).toString();
+    }
 
 }

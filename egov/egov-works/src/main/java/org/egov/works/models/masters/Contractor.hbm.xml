@@ -47,13 +47,9 @@
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">EGW_CONTRACTOR_SEQ</param>
+				<param name="sequence">SEQ_EGW_CONTRACTOR</param>
 			</generator>
 		</id>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY" fetch="select"/>
-		<property name="createdDate" column="CREATEDDATE" type="timestamp" />
-		<property name="modifiedDate" column="MODIFIEDDATE" type="timestamp" />	
 		<property name="code" type="string" >
 			<column name="CODE" length="50" not-null="true" unique="true" />
 		</property>
@@ -74,7 +70,7 @@
 			<column name="EMAIL" length="100" />
 		</property>
 		<property name="narration" type="string">
-			<column name="NARRATION" length="250" />
+			<column name="NARRATION" length="1024" />
 		</property>
 		<property name="panNumber" type="string">
 			<column name="PAN_NUMBER" length="14" />
@@ -99,6 +95,11 @@
 		<property name="isEditEnabled" type="boolean">
 			<column name="EDIT_ENABLED" />
 		</property>
+		
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" fetch="select" not-null="true" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY" fetch="select"/>
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" not-null="true" />
+		<property name="modifiedDate" column="MODIFIEDDATE" type="timestamp" />	
 		
 		<list name="contractorDetails" cascade="all,delete-orphan">
 	    	<key column="CONTRACTOR_ID"  not-null="true" />

@@ -54,7 +54,6 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infstr.models.BaseModel;
-import org.egov.works.models.estimate.WorkType;
 import org.hibernate.validator.constraints.Length;
 
 @Unique(fields={"code"},id="id", tableName="EGW_DEPOSITCODE",columnName={"CODE"},message="depositCode.isUnique")
@@ -63,7 +62,7 @@ public class DepositCode extends BaseModel implements EntityType {
 	private String code;
 	@Length(max=1024,message="depositCode.description.length")
 	private String description;
-	private WorkType worksType;
+	private NatureOfWork natureOfWork;
 	
 	@Required(message="depositCode.workName.null")
 	@Length(max=256,message="depositCode.workName.length")
@@ -96,11 +95,11 @@ public class DepositCode extends BaseModel implements EntityType {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public WorkType getWorksType() {
-		return worksType;
+	public NatureOfWork getNatureOfWork() {
+		return natureOfWork;
 	}
-	public void setWorksType(WorkType worksType) {
-		this.worksType = worksType;
+	public void setNatureOfWork(NatureOfWork natureOfWork) {
+		this.natureOfWork = natureOfWork;
 	}
 	public String getCodeName() {
 		return codeName;

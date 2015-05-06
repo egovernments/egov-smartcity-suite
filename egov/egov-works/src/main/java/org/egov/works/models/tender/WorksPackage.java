@@ -69,391 +69,396 @@ import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class WorksPackage extends WorkFlow{
-	public enum WorkPacakgeStatus{
-		CREATED,CHECKED,APPROVED,REJECTED,CANCELLED,RESUBMITTED
-	}
-	public enum Actions{
-		SUBMIT_FOR_APPROVAL,APPROVE,REJECT,CANCEL;
+public class WorksPackage extends WorkFlow {
+    
+    private static final long serialVersionUID = -4874817415037202881L;
 
-		public String toString() {
-			return this.name().toLowerCase();
-		}
-	}
+    public enum WorkPacakgeStatus {
+        CREATED, CHECKED, APPROVED, REJECTED, CANCELLED, RESUBMITTED
+    }
 
-	@NotEmpty(message="wp.name.is.null")
-	@Length(max=1024,message="workspackage.name.length")
-	private String name;
-	@Length(max=1024,message="workspackage.description.length")
-	private String description;
-	@NotNull(message="wp.userDepartment.is.null")
-	private Department userDepartment;
-	@NotNull(message="wp.preparedBy.is.null")
-	private PersonalInformation preparedBy; 
-	@NotNull(message="wp.packageDate.is.null")
-	@ValidateDate(allowPast=true, dateFormat="dd/MM/yyyy",message="invalid.packagedate")
-	private Date packageDate;
-	@NotEmpty(message="wp.wpNumber.is.null")
-	private String wpNumber;
-	private String employeeName;
-	private Money workValueIncludingTaxes;
-	private List<WorksPackageDetails> worksPackageDetails = new LinkedList<WorksPackageDetails>();
-	private List<RetenderHistory> retenderHistoryDetails = new LinkedList<RetenderHistory>();
-	private List<Retender> retenderDetails = new LinkedList<Retender>();
-	
-	@NotEmpty(message="wp.tenderFileNumber.is.null")
-	@Length(max=50,message="wp.tenderFileNumber.length")
-	@OptionalPattern(regex=WorksConstants.alphaNumericwithspecialchar,message="wp.tenderFileNumber.alphaNumeric")
-	private String tenderFileNumber;
-	private Long documentNumber;
-	private EgwStatus egwStatus;
-	private String manualWPNumber;
-	private String wpOfflineStatus;
-	private SetStatus latestOfflineStatus;
-	private Set<SetStatus> setStatuses = new LinkedHashSet<SetStatus>();
-	private double totalAmount;
-	private List<String> worksPackageActions = new LinkedList<String>();
-	private String worksPackageStatus;
-	
-	private Set<TenderEstimate> tenderEstimateSet = new HashSet<TenderEstimate>();
-	
-	public Long getDocumentNumber() {
-		return documentNumber;
-	}
-	public void setDocumentNumber(Long documentNumber) {
-		this.documentNumber = documentNumber;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	public Department getUserDepartment() {
-		return userDepartment;
-	}
-	public void setUserDepartment(Department userDepartment) {
-		this.userDepartment = userDepartment;
-	}
-	public PersonalInformation getPreparedBy() {
-		return preparedBy;
-	}
-	public void setPreparedBy(PersonalInformation preparedBy) {
-		this.preparedBy = preparedBy;
-	}
-	public Date getPackageDate() {
-		return packageDate;
-	}
-	public void setPackageDate(Date packageDate) {
-		this.packageDate = packageDate;
-	}
-	public String getWpNumber() {
-		return wpNumber;
-	}
-	public void setWpNumber(String wpNumber) {
-		this.wpNumber = wpNumber;
-	}
-	
-	public void addEstimates(WorksPackageDetails wpDetailsObj)
-	{
-		this.worksPackageDetails.add(wpDetailsObj);
-	}
-		
-	public List<ValidationError> validate() {
-		List<ValidationError> errors = new ArrayList<ValidationError>();
-		if(worksPackageDetails.isEmpty())
-		{
-			errors.add(new ValidationError("estimates",
-			"estimates.null"));
-		}
-		return errors;
-	}
-	public List<WorksPackageDetails> getWorksPackageDetails() {
-		return worksPackageDetails;
-	}
-	public void setWorksPackageDetails(List<WorksPackageDetails> worksPackageDetails) {
-		this.worksPackageDetails = worksPackageDetails;
-	}
-	
-	public String getStateDetails() {
-		return "WorksPackage : " + getWpNumber();
-	}
-	public String getEmployeeName() {
-		return employeeName;
-	}
-	public void setEmployeeName(String employeeName) {
-		this.employeeName = employeeName;
-	}
-	public Money getWorkValueIncludingTaxes() {
-		double amt=0;
-		if(!worksPackageDetails.isEmpty()){
-			for(WorksPackageDetails wpd:worksPackageDetails) {
-				amt+= wpd.getEstimate().getWorkValueIncludingTaxes().getValue();
-			}
-		}
-		workValueIncludingTaxes=new Money(amt);
-		return workValueIncludingTaxes;
-	}
-	public void setWorkValueIncludingTaxes(Money workValueIncludingTaxes) {
-		this.workValueIncludingTaxes = workValueIncludingTaxes;
-	}
-	
-	public Collection<EstimateLineItemsForWP> getActivitiesForEstimate()
-	{
-		Map<Long,EstimateLineItemsForWP> resultMap = new HashMap<Long, EstimateLineItemsForWP>();
-		for(Activity act:getAllActivities())
-		{			
-			EstimateLineItemsForWP estlineItem = new EstimateLineItemsForWP();
-			if(act.getSchedule()!=null){
-				if(resultMap.containsKey(act.getSchedule().getId())){
-					EstimateLineItemsForWP preEstlineItem = resultMap.get(act.getSchedule().getId()); 
-					preEstlineItem.setQuantity(act.getQuantity() + preEstlineItem.getQuantity());
-					if(DateUtils.compareDates(act.getAbstractEstimate().getEstimateDate(),
-				  			preEstlineItem.getEstimateDate())){
-				  		preEstlineItem.setRate(act.getSORCurrentRate().getValue());
-				  		preEstlineItem.setAmt(preEstlineItem.getQuantity()*act.getRate().getValue());
-				  		preEstlineItem.setActivity(act);
-				  		if(act.getSchedule().hasValidMarketRateFor(act.getAbstractEstimate().getEstimateDate())){
-				  			preEstlineItem.setMarketRate(preEstlineItem.getQuantity()*act.getSORCurrentMarketRate().getValue());
-				  		}
-				  		else{ 
-				  			preEstlineItem.setMarketRate(act.getAmount().getValue()); 
-				  		} 
-			  		}
-					else{
-							preEstlineItem.setRate(preEstlineItem.getRate());
-					  		preEstlineItem.setAmt((preEstlineItem.getQuantity()*preEstlineItem.getRate())*act.getConversionFactor());
-					  		preEstlineItem.setActivity(act);
-					  		if(act.getSchedule().hasValidMarketRateFor(act.getAbstractEstimate().getEstimateDate())){
-					  			preEstlineItem.setMarketRate(preEstlineItem.getQuantity()*act.getSORCurrentMarketRate().getValue());
-					  		}
-					  		else{ 
-					  			preEstlineItem.setMarketRate(act.getAmount().getValue()); 
-					  		} 
-					}
-				  	resultMap.put(act.getSchedule().getId(), preEstlineItem);
-				}
-				else{
-					addEstLineItem(act, estlineItem);
-					resultMap.put(act.getSchedule().getId(), estlineItem); 
-				}
-			}
-			if(act.getNonSor()!=null)
-			{
-				addEstLineItem(act, estlineItem);
-				resultMap.put(act.getNonSor().getId(), estlineItem);
-			}
-		}
-		return getEstLineItemsWithSrlNo(resultMap.values());
-	}	
+    public enum Actions {
+        SUBMIT_FOR_APPROVAL, APPROVE, REJECT, CANCEL;
 
-	private void addEstLineItem(Activity act,EstimateLineItemsForWP estlineItem) {
-		if(act.getSchedule()==null){
-			estlineItem.setCode("");
-			estlineItem.setSummary("");
-			estlineItem.setDescription(act.getNonSor().getDescription());
-			estlineItem.setRate(act.getRate().getValue());
-			estlineItem.setMarketRate(act.getAmount().getValue());
-		}
-		else{
-			estlineItem.setCode(act.getSchedule().getCode());
-			estlineItem.setDescription(act.getSchedule().getDescription());
-			estlineItem.setRate(act.getSORCurrentRate().getValue());
-			if(act.getSchedule().hasValidMarketRateFor(act.getAbstractEstimate().getEstimateDate())){
-				estlineItem.setMarketRate(act.getQuantity()*act.getSORCurrentMarketRate().getValue());
-			}
-			else{
-				estlineItem.setMarketRate(act.getAmount().getValue()); 
-			}
-			estlineItem.setSummary(act.getSchedule().getSummary());
-		}
-					
-		estlineItem.setActivity(act);
-		estlineItem.setAmt(act.getQuantity()*act.getRate().getValue());
-		estlineItem.setEstimateDate(act.getAbstractEstimate().getEstimateDate()); 
-		estlineItem.setQuantity(act.getQuantity());
-		estlineItem.setUom(act.getUom().getUom());
-		estlineItem.setConversionFactor(act.getConversionFactor());
-	}
-	
-	
-	public List<Activity> getAllActivities()
-	{		
-		List<Activity> actList = new ArrayList<Activity>();
-		for(AbstractEstimate ab:getAllEstimates())
-			actList.addAll(ab.getActivities());
-		return actList;
-	}
-	
-	public List<Activity> getSorActivities()
-	{		
-		List<Activity> actList = Collections.EMPTY_LIST;
-		for(Activity act:getAllActivities()){
-			if(act.getSchedule()!=null)
-				actList.add(act);
-		}
-		return actList;
-	}
-	
-	public List<Activity> getNonSorActivities()
-	{		
-		List<Activity> actList = Collections.EMPTY_LIST;
-		for(Activity act:getAllActivities()){
-			if(act.getNonSor()!=null)
-				actList.add(act);
-		}
-		return actList;
-	}
-	
-	public double getTotalAmount()
-	{
-		double totalAmt=0;
-		for(EstimateLineItemsForWP act:getActivitiesForEstimate()){
-			totalAmt+=act.getAmt();
-		}
-		return totalAmt;
-	}
-	
-	public void setTotalAmount(double totalAmount) {
-		this.totalAmount = totalAmount;
-	}
-	
-	public double getMarketRateTotalAmount()
-	{
-		double totalAmt=0;
-		for(EstimateLineItemsForWP act:getActivitiesForEstimate())
-		   totalAmt+=act.getMarketRate();
-		return totalAmt;
-	}
-	
-	private Collection<EstimateLineItemsForWP> getEstLineItemsWithSrlNo(Collection<EstimateLineItemsForWP> actList)
-	{
-		int i=1;
-		Collection<EstimateLineItemsForWP> latestEstLineItemList = new ArrayList<EstimateLineItemsForWP>();
-		for(EstimateLineItemsForWP act:actList){
-		   act.setSrlNo(i);
-		   latestEstLineItemList.add(act);
-			i++;
-		}
-		return latestEstLineItemList;
-	}
-	
-	public List<AbstractEstimate> getAllEstimates() {
-		List<AbstractEstimate> abList = new ArrayList<AbstractEstimate>();
-		if(this!=null && !this.getWorksPackageDetails().isEmpty())
-		{
-			for(WorksPackageDetails wpd:this.getWorksPackageDetails())
-				abList.add(wpd.getEstimate());
-		}
-		return abList;
-	}
-	public String getTenderFileNumber() {
-		return tenderFileNumber;
-	}
-	public void setTenderFileNumber(String tenderFileNumber) {
-		this.tenderFileNumber = tenderFileNumber;
-	}
-	public String getPackageNumberWithoutWP() {
-		if(StringUtils.isNotBlank(this.wpNumber)){
-			String number[] =  this.wpNumber.split("/");
-			return number.length==0?"0":number[2]+"/"+number[3];
-		}
-		return "0";
-	}
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
+    }
 
-	public String getNegotiationNumber() {
-		String negotiationNumber="";
-		for(TenderEstimate te : getTenderEstimateSet()) {
-			for(TenderResponse tr : te.getTenderResponseSet()) {
-				if(WorksConstants.APPROVED.equals(tr.getEgwStatus().getCode())) {
-					negotiationNumber = tr.getNegotiationNumber();
-					break;
-				}
-			}
-		}
-		return negotiationNumber;
-	}
-	
-	public Set<SetStatus> getSetStatuses() {
-		Set<SetStatus> returnList = new LinkedHashSet<SetStatus>();
-		//Get only statuses which are of WorksPackage
-		if(setStatuses!=null && setStatuses.size()>0)
-		{
-			for(SetStatus ss:setStatuses)
-			{
-				if(ss.getObjectType()!=null && ss.getObjectType().equalsIgnoreCase("WorksPackage") )
-					returnList.add(ss);
-			}
-		}
-		return returnList;
-	}
+    @NotEmpty(message = "wp.name.is.null")
+    @Length(max = 1024, message = "workspackage.name.length")
+    private String name;
+    @Length(max = 1024, message = "workspackage.description.length")
+    private String description;
+    @NotNull(message = "wp.userDepartment.is.null")
+    private Department department;
+    @NotNull(message = "wp.preparedBy.is.null")
+    private PersonalInformation preparedBy;
+    @NotNull(message = "wp.packageDate.is.null")
+    @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "invalid.packagedate")
+    private Date packageDate;
+    @NotEmpty(message = "wp.wpNumber.is.null")
+    private String wpNumber;
+    private String employeeName;
+    private Money workValueIncludingTaxes;
+    private List<WorksPackageDetails> worksPackageDetails = new LinkedList<WorksPackageDetails>();
+    private List<RetenderHistory> retenderHistoryDetails = new LinkedList<RetenderHistory>();
+    private List<Retender> retenderDetails = new LinkedList<Retender>();
 
-	public void setSetStatuses(Set<SetStatus> setStatuses) {
-		this.setStatuses = setStatuses;
-	}
-	
-	public EgwStatus getEgwStatus() {
-		return egwStatus;
-	}
-	
-	public void setEgwStatus(EgwStatus egwStatus) {
-		this.egwStatus = egwStatus;
-	}
+    @NotEmpty(message = "wp.tenderFileNumber.is.null")
+    @Length(max = 50, message = "wp.tenderFileNumber.length")
+    @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "wp.tenderFileNumber.alphaNumeric")
+    private String tenderFileNumber;
+    private Long documentNumber;
+    private EgwStatus egwStatus;
+    private String wpOfflineStatus;
+    private SetStatus latestOfflineStatus;
+    private Set<SetStatus> setStatuses = new LinkedHashSet<SetStatus>();
+    private List<String> worksPackageActions = new LinkedList<String>();
+    private String worksPackageStatus;
+    private Date approvedDate;
+    
+    private Set<TenderEstimate> tenderEstimateSet = new HashSet<TenderEstimate>();
 
-	public String getWpOfflineStatus() {
-		return wpOfflineStatus;
-	}
-	public void setWpOfflineStatus(String wpOfflineStatus) {
-		this.wpOfflineStatus = wpOfflineStatus;
-	}
-	
-	public Set<TenderEstimate> getTenderEstimateSet() {
-		return tenderEstimateSet;
-	}
-	public void setTenderEstimateSet(Set<TenderEstimate> tenderEstimateSet) {
-		this.tenderEstimateSet = tenderEstimateSet;
-	}
-	public String getManualWPNumber() {
-		return manualWPNumber;
-	}
-	public void setManualWPNumber(String manualWPNumber) {
-		this.manualWPNumber = manualWPNumber;
-	}
-	public List<RetenderHistory> getRetenderHistoryDetails() {
-		return retenderHistoryDetails;
-	}
-	public void setRetenderHistoryDetails(
-			List<RetenderHistory> retenderHistoryDetails) {
-		this.retenderHistoryDetails = retenderHistoryDetails;
-	}
-	public List<Retender> getRetenderDetails() {
-		return retenderDetails;
-	}
-	public void setRetenderDetails(List<Retender> retenderDetails) {
-		this.retenderDetails = retenderDetails;
-	}
-	public SetStatus getLatestOfflineStatus() {
-		return latestOfflineStatus;
-	}
-	public void setLatestOfflineStatus(SetStatus latestOfflineStatus) {
-		this.latestOfflineStatus = latestOfflineStatus;
-	}
-	public List<String> getWorksPackageActions() {
-		return worksPackageActions;
-	}
-	public void setWorksPackageActions(List<String> worksPackageActions) {
-		this.worksPackageActions = worksPackageActions;
-	}
-	public String getWorksPackageStatus() {
-		return worksPackageStatus;
-	}
-	public void setWorksPackageStatus(String worksPackageStatus) {
-		this.worksPackageStatus = worksPackageStatus;
-	}
+    public Long getDocumentNumber() {
+        return documentNumber;
+    }
+
+    public void setDocumentNumber(final Long documentNumber) {
+        this.documentNumber = documentNumber;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(final Department department) {
+        this.department = department;
+    }
+
+    public PersonalInformation getPreparedBy() {
+        return preparedBy;
+    }
+
+    public void setPreparedBy(final PersonalInformation preparedBy) {
+        this.preparedBy = preparedBy;
+    }
+
+    public Date getPackageDate() {
+        return packageDate;
+    }
+
+    public void setPackageDate(final Date packageDate) {
+        this.packageDate = packageDate;
+    }
+
+    public String getWpNumber() {
+        return wpNumber;
+    }
+
+    public void setWpNumber(final String wpNumber) {
+        this.wpNumber = wpNumber;
+    }
+
+    public void addEstimates(final WorksPackageDetails wpDetailsObj) {
+        worksPackageDetails.add(wpDetailsObj);
+    }
+
+    public List<ValidationError> validate() {
+        final List<ValidationError> errors = new ArrayList<ValidationError>();
+        if (worksPackageDetails.isEmpty())
+            errors.add(new ValidationError("estimates", "estimates.null"));
+        return errors;
+    }
+
+    public List<WorksPackageDetails> getWorksPackageDetails() {
+        return worksPackageDetails;
+    }
+
+    public void setWorksPackageDetails(final List<WorksPackageDetails> worksPackageDetails) {
+        this.worksPackageDetails = worksPackageDetails;
+    }
+
+    @Override
+    public String getStateDetails() {
+        return "WorksPackage : " + getWpNumber();
+    }
+
+    public String getEmployeeName() {
+        return employeeName;
+    }
+
+    public void setEmployeeName(final String employeeName) {
+        this.employeeName = employeeName;
+    }
+
+    public Money getWorkValueIncludingTaxes() {
+        double amt = 0;
+        if (!worksPackageDetails.isEmpty())
+            for (final WorksPackageDetails wpd : worksPackageDetails)
+                amt += wpd.getEstimate().getWorkValueIncludingTaxes().getValue();
+        workValueIncludingTaxes = new Money(amt);
+        return workValueIncludingTaxes;
+    }
+
+    public void setWorkValueIncludingTaxes(final Money workValueIncludingTaxes) {
+        this.workValueIncludingTaxes = workValueIncludingTaxes;
+    }
+
+    public Collection<EstimateLineItemsForWP> getActivitiesForEstimate() {
+        final Map<Long, EstimateLineItemsForWP> resultMap = new HashMap<Long, EstimateLineItemsForWP>();
+        for (final Activity act : getAllActivities()) {
+            final EstimateLineItemsForWP estlineItem = new EstimateLineItemsForWP();
+            if (act.getSchedule() != null)
+                if (resultMap.containsKey(act.getSchedule().getId())) {
+                    final EstimateLineItemsForWP preEstlineItem = resultMap.get(act.getSchedule().getId());
+                    preEstlineItem.setQuantity(act.getQuantity() + preEstlineItem.getQuantity());
+                    if (DateUtils.compareDates(act.getAbstractEstimate().getEstimateDate(),
+                            preEstlineItem.getEstimateDate())) {
+                        preEstlineItem.setRate(act.getSORCurrentRate().getValue());
+                        preEstlineItem.setAmt(preEstlineItem.getQuantity() * act.getRate().getValue());
+                        preEstlineItem.setActivity(act);
+                        if (act.getSchedule().hasValidMarketRateFor(act.getAbstractEstimate().getEstimateDate()))
+                            preEstlineItem.setMarketRate(preEstlineItem.getQuantity()
+                                    * act.getSORCurrentMarketRate().getValue());
+                        else
+                            preEstlineItem.setMarketRate(act.getAmount().getValue());
+                    } else {
+                        preEstlineItem.setRate(preEstlineItem.getRate());
+                        preEstlineItem.setAmt(preEstlineItem.getQuantity() * preEstlineItem.getRate()
+                                * act.getConversionFactor());
+                        preEstlineItem.setActivity(act);
+                        if (act.getSchedule().hasValidMarketRateFor(act.getAbstractEstimate().getEstimateDate()))
+                            preEstlineItem.setMarketRate(preEstlineItem.getQuantity()
+                                    * act.getSORCurrentMarketRate().getValue());
+                        else
+                            preEstlineItem.setMarketRate(act.getAmount().getValue());
+                    }
+                    resultMap.put(act.getSchedule().getId(), preEstlineItem);
+                } else {
+                    addEstLineItem(act, estlineItem);
+                    resultMap.put(act.getSchedule().getId(), estlineItem);
+                }
+            if (act.getNonSor() != null) {
+                addEstLineItem(act, estlineItem);
+                resultMap.put(act.getNonSor().getId(), estlineItem);
+            }
+        }
+        return getEstLineItemsWithSrlNo(resultMap.values());
+    }
+
+    private void addEstLineItem(final Activity act, final EstimateLineItemsForWP estlineItem) {
+        if (act.getSchedule() == null) {
+            estlineItem.setCode("");
+            estlineItem.setSummary("");
+            estlineItem.setDescription(act.getNonSor().getDescription());
+            estlineItem.setRate(act.getRate().getValue());
+            estlineItem.setMarketRate(act.getAmount().getValue());
+        } else {
+            estlineItem.setCode(act.getSchedule().getCode());
+            estlineItem.setDescription(act.getSchedule().getDescription());
+            estlineItem.setRate(act.getSORCurrentRate().getValue());
+            if (act.getSchedule().hasValidMarketRateFor(act.getAbstractEstimate().getEstimateDate()))
+                estlineItem.setMarketRate(act.getQuantity() * act.getSORCurrentMarketRate().getValue());
+            else
+                estlineItem.setMarketRate(act.getAmount().getValue());
+            estlineItem.setSummary(act.getSchedule().getSummary());
+        }
+
+        estlineItem.setActivity(act);
+        estlineItem.setAmt(act.getQuantity() * act.getRate().getValue());
+        estlineItem.setEstimateDate(act.getAbstractEstimate().getEstimateDate());
+        estlineItem.setQuantity(act.getQuantity());
+        estlineItem.setUom(act.getUom().getUom());
+        estlineItem.setConversionFactor(act.getConversionFactor());
+    }
+
+    public List<Activity> getAllActivities() {
+        final List<Activity> actList = new ArrayList<Activity>();
+        for (final AbstractEstimate ab : getAllEstimates())
+            actList.addAll(ab.getActivities());
+        return actList;
+    }
+
+    public List<Activity> getSorActivities() {
+        final List<Activity> actList = Collections.EMPTY_LIST;
+        for (final Activity act : getAllActivities())
+            if (act.getSchedule() != null)
+                actList.add(act);
+        return actList;
+    }
+
+    public List<Activity> getNonSorActivities() {
+        final List<Activity> actList = Collections.EMPTY_LIST;
+        for (final Activity act : getAllActivities())
+            if (act.getNonSor() != null)
+                actList.add(act);
+        return actList;
+    }
+
+    public double getTotalAmount() {
+        double totalAmt = 0;
+        for (final EstimateLineItemsForWP act : getActivitiesForEstimate())
+            totalAmt += act.getAmt();
+        return totalAmt;
+    }
+
+    public void setTotalAmount(final double totalAmount) {
+    }
+
+    public double getMarketRateTotalAmount() {
+        double totalAmt = 0;
+        for (final EstimateLineItemsForWP act : getActivitiesForEstimate())
+            totalAmt += act.getMarketRate();
+        return totalAmt;
+    }
+
+    private Collection<EstimateLineItemsForWP> getEstLineItemsWithSrlNo(final Collection<EstimateLineItemsForWP> actList) {
+        int i = 1;
+        final Collection<EstimateLineItemsForWP> latestEstLineItemList = new ArrayList<EstimateLineItemsForWP>();
+        for (final EstimateLineItemsForWP act : actList) {
+            act.setSrlNo(i);
+            latestEstLineItemList.add(act);
+            i++;
+        }
+        return latestEstLineItemList;
+    }
+
+    public List<AbstractEstimate> getAllEstimates() {
+        final List<AbstractEstimate> abList = new ArrayList<AbstractEstimate>();
+        if (this != null && !getWorksPackageDetails().isEmpty())
+            for (final WorksPackageDetails wpd : getWorksPackageDetails())
+                abList.add(wpd.getEstimate());
+        return abList;
+    }
+
+    public String getTenderFileNumber() {
+        return tenderFileNumber;
+    }
+
+    public void setTenderFileNumber(final String tenderFileNumber) {
+        this.tenderFileNumber = tenderFileNumber;
+    }
+
+    public String getPackageNumberWithoutWP() {
+        if (StringUtils.isNotBlank(wpNumber)) {
+            final String number[] = wpNumber.split("/");
+            return number.length == 0 ? "0" : number[2] + "/" + number[3];
+        }
+        return "0";
+    }
+
+    public String getNegotiationNumber() {
+        String negotiationNumber = "";
+        for (final TenderEstimate te : getTenderEstimateSet())
+            for (final TenderResponse tr : te.getTenderResponseSet())
+                if (WorksConstants.APPROVED.equals(tr.getEgwStatus().getCode())) {
+                    negotiationNumber = tr.getNegotiationNumber();
+                    break;
+                }
+        return negotiationNumber;
+    }
+
+    public Set<SetStatus> getSetStatuses() {
+        final Set<SetStatus> returnList = new LinkedHashSet<SetStatus>();
+        // Get only statuses which are of WorksPackage
+        if (setStatuses != null && setStatuses.size() > 0)
+            for (final SetStatus ss : setStatuses)
+                if (ss.getObjectType() != null && ss.getObjectType().equalsIgnoreCase("WorksPackage"))
+                    returnList.add(ss);
+        return returnList;
+    }
+
+    public void setSetStatuses(final Set<SetStatus> setStatuses) {
+        this.setStatuses = setStatuses;
+    }
+
+    public EgwStatus getEgwStatus() {
+        return egwStatus;
+    }
+
+    public void setEgwStatus(final EgwStatus egwStatus) {
+        this.egwStatus = egwStatus;
+    }
+
+    public String getWpOfflineStatus() {
+        return wpOfflineStatus;
+    }
+
+    public void setWpOfflineStatus(final String wpOfflineStatus) {
+        this.wpOfflineStatus = wpOfflineStatus;
+    }
+
+    public Set<TenderEstimate> getTenderEstimateSet() {
+        return tenderEstimateSet;
+    }
+
+    public void setTenderEstimateSet(final Set<TenderEstimate> tenderEstimateSet) {
+        this.tenderEstimateSet = tenderEstimateSet;
+    }
+
+    public List<RetenderHistory> getRetenderHistoryDetails() {
+        return retenderHistoryDetails;
+    }
+
+    public void setRetenderHistoryDetails(final List<RetenderHistory> retenderHistoryDetails) {
+        this.retenderHistoryDetails = retenderHistoryDetails;
+    }
+
+    public List<Retender> getRetenderDetails() {
+        return retenderDetails;
+    }
+
+    public void setRetenderDetails(final List<Retender> retenderDetails) {
+        this.retenderDetails = retenderDetails;
+    }
+
+    public SetStatus getLatestOfflineStatus() {
+        return latestOfflineStatus;
+    }
+
+    public void setLatestOfflineStatus(final SetStatus latestOfflineStatus) {
+        this.latestOfflineStatus = latestOfflineStatus;
+    }
+
+    public List<String> getWorksPackageActions() {
+        return worksPackageActions;
+    }
+
+    public void setWorksPackageActions(final List<String> worksPackageActions) {
+        this.worksPackageActions = worksPackageActions;
+    }
+
+    public String getWorksPackageStatus() {
+        return worksPackageStatus;
+    }
+
+    public void setWorksPackageStatus(final String worksPackageStatus) {
+        this.worksPackageStatus = worksPackageStatus;
+    }
+
+    public Date getApprovedDate() {
+        return approvedDate;
+    }
+
+    public void setApprovedDate(Date approvedDate) {
+        this.approvedDate = approvedDate;
+    }
 }

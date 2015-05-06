@@ -47,29 +47,30 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class NonSor extends BaseModel {
+  
+    private static final long serialVersionUID = 3303219241315381108L;
+    private String description;
+    private UOM uom;
 
-	
-	private String description; 
-	private UOM uom;
-	
-	@NotEmpty(message="nonsor.desc.empty") 
-	@Length(max=4000,message="masters.description.length")
-	public String getDescription() {
-		return description;
-	}
-	
-	public String getDescriptionJS() {
-		return StringUtils.escapeJavaScript(description);
-	}
-	
-	public void setDescription(String description) {
-		this.description = StringEscapeUtils.unescapeHtml(description);
-	}
-	
-	public UOM getUom() {
-		return uom;
-	}
-	public void setUom(UOM uom) {
-		this.uom = uom;
-	}	
+    @NotEmpty(message = "nonsor.desc.empty")
+    @Length(max = 4000, message = "masters.description.length")
+    public String getDescription() {
+        return description;
+    }
+
+    public String getDescriptionJS() {
+        return StringUtils.escapeJavaScript(description);
+    }
+
+    public void setDescription(final String description) {
+        this.description = StringEscapeUtils.unescapeHtml(description);
+    }
+
+    public UOM getUom() {
+        return uom;
+    }
+
+    public void setUom(final UOM uom) {
+        this.uom = uom;
+    }
 }

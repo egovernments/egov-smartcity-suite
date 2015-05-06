@@ -47,23 +47,23 @@
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">EGW_TENDER_HEADER_SEQ</param>
+				<param name="sequence">SEQ_EGW_TENDER_HEADER</param>
 			</generator>
 		</id>
 		<property name="tenderNo" type="string" >
-			<column name="TENDER_NO" length="50" not-null="true" />
+			<column name="TENDER_NO" length="100" not-null="true" />
 		</property>
 		<property name="tenderDate" type="date">
 			<column name="TENDER_DATE" length="7" not-null="true" />
 		</property>
 		<list name="tenderEstimates" cascade="all,delete-orphan">
 			<key column="TENDER_HEADER_ID" not-null="true" />
-			<list-index column="te_index" />
+			<list-index column="tender_estimate_index" />
 			<one-to-many class="org.egov.works.models.tender.TenderEstimate" />
 		</list>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" not-null="true" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" not-null="true" fetch="select"/>
-		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />
 		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />			
 	</class>
     

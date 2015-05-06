@@ -51,33 +51,37 @@
 			</generator>
 		</id>
 		<many-to-one name="workOrder" column="WORKORDER_ID" not-null="true" insert="false" update="false" fetch="select"/>
-		<many-to-one name="estimate" class="org.egov.works.models.estimate.AbstractEstimate" column="ESTIMATE_ID" not-null="true" fetch="join"/>
-		<property name="workCompletionDate" column="WORK_COMPLETION_DATE" />	
+		<many-to-one name="estimate" class="org.egov.works.models.estimate.AbstractEstimate" column="ABSTRACTESTIMATE_ID" not-null="true" fetch="join"/>
+		<property name="workCompletionDate" column="WORK_COMPLETION_DATE" />
+		<property name="estimateWOAmount" column="ESTIMATE_WO_AMOUNT" not-null="true" />	
+		
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY" fetch="select"/>
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" not-null="true" />	
+		<property name="modifiedDate" column="MODIFIEDDATE" type="timestamp" />	
+						
 		<list name="workOrderActivities" cascade="all,delete-orphan">
 			<key column="WORKORDER_ESTIMATE_ID" not-null="true" />
-			<list-index column="WORKORDER_INDEX" />
+			<list-index column="WORKORDER_ESTIMATE_INDEX" />
 			<one-to-many class="org.egov.works.models.workorder.WorkOrderActivity" />
 		</list>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" not-null="true" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY" not-null="true" fetch="select"/>
-		<property name="createdDate" column="CREATEDDATE" type="timestamp" />	
-		<property name="modifiedDate" column="MODIFIEDDATE" type="timestamp" />	
+		
 		<set name="mbHeaders" inverse="true" >
-			<key column="WORKORDER_EST_ID" />
+			<key column="WORKORDER_ESTIMATE_ID" />
 			<one-to-many class="org.egov.works.models.measurementbook.MBHeader"  />
 		</set>
 		<list name="assetValues" cascade="all,delete-orphan">
 			<key column="WORKORDER_ESTIMATE_ID" not-null="true" />
-			<list-index column="ass_index" />
+			<list-index column="wo_est_asset_index" />
 			<one-to-many
 				class="org.egov.works.models.workorder.AssetsForWorkOrder" />
 		</list>
 		<set name="milestone" inverse="true" >
-			<key column="WORKORDER_EST_ID" />
+			<key column="WORKORDER_ESTIMATE_ID" />
 			<one-to-many class="org.egov.works.models.milestone.Milestone"  />
 		</set>
 		<set name="contractorAdvanceRequisitions" inverse="true" >
-			<key column="WORKORDERESTIMATE_ID" />
+			<key column="WORKORDER_ESTIMATE_ID" />
 			<one-to-many class="org.egov.works.models.contractoradvance.ContractorAdvanceRequisition"  />
 		</set>
 	</class>

@@ -311,12 +311,12 @@ function retenderonclick(obj)
 													:
 												</td>
 												<td width="21%" class="whitebox2wk">
-													<s:select id="department" name="userDepartment"
+													<s:select id="department" name="department"
 														cssClass="selectwk"
-														list="%{dropdownData.userDepartmentList}" listKey="id"
+														list="%{dropdownData.departmentList}" listKey="id"
 														listValue="deptName" value="%{execDept}" />
 												</td>
-												<s:if test="%{negoCreatedBy=='no' && dropdownData.userDepartmentList.size==1}">
+												<s:if test="%{negoCreatedBy=='no' && dropdownData.departmentList.size==1}">
 													<script>
 											    		disableDept(); 
 											    	</script>
@@ -328,11 +328,11 @@ function retenderonclick(obj)
 													:
 												</td>
 												<td width="21%" class="whitebox2wk">
-													<s:select id="department" name="userDepartment"
+													<s:select id="department" name="department"
 														headerKey="-1" headerValue="---select---"
 														cssClass="selectwk"
-														list="%{dropdownData.userDepartmentList}" listKey="id"
-														listValue="deptName" value="%{userDepartment.id}" />
+														list="%{dropdownData.departmentList}" listKey="id"
+														listValue="deptName" value="%{department.id}" />
 												</td>
 											</s:else>
 											<td width="15%" class="whiteboxwk">

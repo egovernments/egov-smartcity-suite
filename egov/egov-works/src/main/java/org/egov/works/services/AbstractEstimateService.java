@@ -952,7 +952,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
 			depositWorksUsage.setAppropriationNumber(financialDetail.getAbstractEstimate().getBudgetApprNo());
 			depositWorksUsage.setAbstractEstimate(financialDetail.getAbstractEstimate());
 			depositWorksUsage.setAppropriationDate(appDate);
-			depositWorksUsage.setFinancialYearId(budgetApprDate_finYear.getId().intValue());
+			depositWorksUsage.setFinancialYear(budgetApprDate_finYear);
 			depositWorksUsage.setDepositCode(financialDetail.getAbstractEstimate().getDepositCode());
 			depositWorksUsage.setCoa(financialDetail.getCoa());
 			depositWorksUsage=depositWorksUsageService.persist(depositWorksUsage);
@@ -977,7 +977,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
 		depositWorksUsage.setAppropriationNumber(financialDetail.getAbstractEstimate().getBudgetRejectionNo());
 		depositWorksUsage.setAbstractEstimate(financialDetail.getAbstractEstimate());
 		depositWorksUsage.setAppropriationDate(new Date());
-		depositWorksUsage.setFinancialYearId(estimateAppropriation.getDepositWorksUsage().getFinancialYearId());
+		depositWorksUsage.setFinancialYear(estimateAppropriation.getDepositWorksUsage().getFinancialYear());
 		depositWorksUsage.setCoa(financialDetail.getCoa());
 		depositWorksUsage.setDepositCode(financialDetail.getAbstractEstimate().getDepositCode());
 		depositWorksUsage=depositWorksUsageService.persist(depositWorksUsage);

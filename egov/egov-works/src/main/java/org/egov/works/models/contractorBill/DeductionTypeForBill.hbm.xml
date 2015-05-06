@@ -42,20 +42,23 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 	<!-- Generated on 8th dec 09 -->
 <hibernate-mapping>
-	<class name="org.egov.works.models.contractorBill.DeductionTypeForBill" table="EGW_DEDUCTIONTYPE_BILL">
+	<class name="org.egov.works.models.contractorBill.DeductionTypeForBill" table="EGW_STANDARD_DEDUCTIONS_BILL">
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">EGW_DEDUCTIONTYPE_BILL_SEQ</param>
+				<param name="sequence">SEQ_EGW_STANDARD_DEDUCTIONS_BILL</param>
 			</generator>
 		</id>
+		<many-to-one name="egbill" class="org.egov.model.bills.EgBillregister" column="BILLREGISTER_ID" not-null="true" insert="false" update="false"/>
 		<many-to-one name="workOrder"
-			class="org.egov.works.models.workorder.WorkOrder" column="ID_WORKORDER"
+			class="org.egov.works.models.workorder.WorkOrder" column="WORKORDER_ID"
 			not-null="true" fetch="select" />
-		<many-to-one name="egbill" class="org.egov.model.bills.EgBillregister" column="ID_BILL" insert="false" update="false"/>
-		<many-to-one name="coa" class="org.egov.commons.CChartOfAccounts" column="ID_COA" fetch="select" />
+		<many-to-one name="workOrderEstimate"
+			class="org.egov.works.models.workorder.WorkOrderEstimate" column="WORKORDER_ESTIMATE_ID"
+			fetch="select" />		
+		<many-to-one name="coa" class="org.egov.commons.CChartOfAccounts" column="COA_ID" not-null="true" fetch="select" />
 		<property name="deductionType">
-			<column name="DEDUCTIONTYPE" not-null="true"/>
+			<column name="DEDUCTION_TYPE" not-null="true"/>
 		</property>
 		<property name="creditamount">
 			<column name="AMOUNT" not-null="true"/>
@@ -63,6 +66,11 @@
 		<property name="narration">
 			<column name="NARRATION"/>
 		</property>
+		
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select" />
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true"/>	
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
 	</class>  
 	
 </hibernate-mapping>

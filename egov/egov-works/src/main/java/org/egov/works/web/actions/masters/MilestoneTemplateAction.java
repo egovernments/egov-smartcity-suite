@@ -114,7 +114,7 @@ public class MilestoneTemplateAction extends SearchFormAction{
 		setupDropdownDataExcluding("workType","subType");
 		addDropdownData("parentCategoryList",getPersistenceService().findAllBy("from EgwTypeOfWork etw where etw.parentid is null"));
 		populateCategoryList(ajaxEstimateAction, template.getWorkType() != null);
-		addDropdownData("executingDepartmentList",getPersistenceService().findAllBy("from DepartmentImpl order by upper(deptName)")); 
+		addDropdownData("executingDepartmentList",getPersistenceService().findAllBy("from Department order by upper(dept)")); 
 	 }
 	
 	@Override
@@ -288,12 +288,12 @@ public class MilestoneTemplateAction extends SearchFormAction{
 	public void validate() {
 		populateActivities();
 		
-		if(null == template.getActivities() || template.getActivities().size() ==0){
+		if(null == template.getMilestoneTemplateActivities() || template.getMilestoneTemplateActivities().size() ==0){
 			 
 			addFieldError("milestone.activity.missing", "Template Activity is not added");
 		}
 		BigDecimal percentage = BigDecimal.ZERO;
-		for (MilestoneTemplateActivity templateActivities : template.getActivities()) {
+		for (MilestoneTemplateActivity templateActivities : template.getMilestoneTemplateActivities()) {
 			if(templateActivities.getPercentage()!=null){
 				percentage = percentage.add(templateActivities.getPercentage());
 			}
@@ -318,11 +318,11 @@ public class MilestoneTemplateAction extends SearchFormAction{
 
 
 	 public void populateActivities(){
-		template.getActivities().clear();
+		template.getMilestoneTemplateActivities().clear();
 		for (MilestoneTemplateActivity activity :templateActivities)
 		{
 			if(activity!=null){
-			template.addActivity(activity);
+			template.addMilestoneTemplateActivity(activity);
 			}
 		}
 	 }

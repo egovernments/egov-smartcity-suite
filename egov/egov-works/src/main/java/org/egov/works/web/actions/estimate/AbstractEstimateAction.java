@@ -99,10 +99,10 @@ import org.egov.works.models.estimate.Activity;
 import org.egov.works.models.estimate.AssetsForEstimate;
 import org.egov.works.models.estimate.MultiYearEstimate;
 import org.egov.works.models.estimate.OverheadValue;
-import org.egov.works.models.estimate.WorkType;
 import org.egov.works.models.masters.DepositCode;
 import org.egov.works.models.masters.Overhead;
 import org.egov.works.models.masters.ScheduleOfRate;
+import org.egov.works.models.masters.NatureOfWork;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.ContractorBillService;
 import org.egov.works.services.WorksService;
@@ -203,7 +203,7 @@ public class AbstractEstimateAction extends BaseFormAction {
 		addRelatedEntity("userDepartment", Department.class);
 		addRelatedEntity("executingDepartment", Department.class);
 		addRelatedEntity("ward", Boundary.class);
-		addRelatedEntity("type", WorkType.class);
+		addRelatedEntity("type", NatureOfWork.class);
 		addRelatedEntity("category", EgwTypeOfWork.class);
 		addRelatedEntity("parentCategory", EgwTypeOfWork.class);
 		addRelatedEntity("depositCode", DepositCode.class);
@@ -474,7 +474,7 @@ public class AbstractEstimateAction extends BaseFormAction {
 	
 	private void validateForLatLongSelection()
 	{
-		if(abstractEstimate.getLat()==null || abstractEstimate.getLon()==null || StringUtils.isBlank(abstractEstimate.getLocation()))
+		if(abstractEstimate.getLatitude()==null || abstractEstimate.getLongitude()==null || StringUtils.isBlank(abstractEstimate.getLocation()))
 		{
 			String cutOffDateStr = worksService.getWorksConfigValue("LAT_LON_CUT_OFF_DATE");
 			if(StringUtils.isNotBlank(cutOffDateStr))
@@ -795,14 +795,8 @@ public class AbstractEstimateAction extends BaseFormAction {
 		try {
 			HashMap<String,Object> criteriaParams =new HashMap<String,Object>();
 			criteriaParams.put("departmentId", abstractEstimate.getExecutingDepartment().getId());
-			//criteriaParams.put("isPrimary", "Y");
 			usersInOldAndNewExecutingDepartment=personalInformationService.getListOfEmployeeViewBasedOnCriteria(criteriaParams, -1, -1);
-			if(abstractEstimate.getOldExecDepartment()!=null) {
-				criteriaParams.clear();
-				criteriaParams.put("departmentId", abstractEstimate.getOldExecDepartment().getId());
-				//criteriaParams.put("isPrimary", "Y");
-				usersInOldAndNewExecutingDepartment.addAll(personalInformationService.getListOfEmployeeViewBasedOnCriteria(criteriaParams, -1, -1));
-			}
+			
 			if(usersInOldAndNewExecutingDepartment==null || usersInOldAndNewExecutingDepartment.size()==0) {
 				usersInOldAndNewExecutingDepartment=Collections.EMPTY_LIST;
 			}

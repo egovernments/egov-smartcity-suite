@@ -44,7 +44,7 @@ import java.util.Date;
 
 import org.egov.web.actions.BaseFormAction;
 import org.egov.works.models.estimate.EstimateTemplate;
-import org.egov.works.models.masters.Rate;
+import org.egov.works.models.masters.SORRate;
 
 public class AjaxEstimateTemplateAction extends BaseFormAction {
 	
@@ -56,7 +56,7 @@ public class AjaxEstimateTemplateAction extends BaseFormAction {
     private String code;
     private long workTypeId;
     private long subTypeId;
-    private Rate currentRate;
+    private SORRate currentRate;
     private Date estimateDate;
     private String query;
 	
@@ -154,11 +154,11 @@ public class AjaxEstimateTemplateAction extends BaseFormAction {
 		this.subTypeId = subTypeId;
 	}
 
-	public Rate getCurrentRate() {
+	public SORRate getCurrentRate() {
 		return currentRate;
 	}
 
-	public void setCurrentRate(Rate currentRate) {
+	public void setCurrentRate(SORRate currentRate) {
 		this.currentRate = currentRate;
 	}
 

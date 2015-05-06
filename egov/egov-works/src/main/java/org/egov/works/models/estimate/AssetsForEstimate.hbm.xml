@@ -41,21 +41,20 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.egov.works.models.estimate.AssetsForEstimate" table="EGW_ASSETSFORESTIMATE" >
+    <class name="org.egov.works.models.estimate.AssetsForEstimate" table="EGW_ESTIMATE_ASSETS" >
         <id name="id" type="long">
             <column name="ID"/>
             <generator class="sequence" >
-            <param name="sequence">EGW_ASSETSFORESTIMATE_SEQ</param>
+            <param name="sequence">SEQ_EGW_ESTIMATE_ASSETS</param>
             </generator>
-        </id>
-    	
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
-		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
-		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+        </id>    	
 		<many-to-one name="abstractEstimate" column="ABSTRACTESTIMATE_ID" not-null="true" insert="false" update="false"/>
 		<many-to-one name="asset" column="ASSET_ID" not-null="true"/>
 		
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" fetch="select" not-null="true" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
 	</class>
        
     <query name="ASSETS_FOR_PROJECTCODE">

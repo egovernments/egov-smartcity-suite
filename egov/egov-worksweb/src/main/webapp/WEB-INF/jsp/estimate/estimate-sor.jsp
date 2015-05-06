@@ -88,18 +88,9 @@ function afterSORResults(sType,results){
 }
 
 function sorSearchParameters(){
-	var rcRelatedParam = "";
-	var dwRCRelatedParam = "";
-	
-	<s:if test="%{fromRateContract==true}" >
-		rcRelatedParam = "&showRCRelatedSORs=true"; 
-	</s:if>
-	<s:if test="applicationRequest.depositWorksCategory==@org.egov.works.models.depositWorks.DepositWorksCategory@REPAIRSANDMAINTENANCE && applicationRequest.isSchemeBased==true">
-	   rcRelatedParam = "&showRCRelatedSORs=true"; 
-	</s:if>
 	
 	if(dom.get('scheduleCategory').value!=-1){
-	   	return "estimateDate="+dom.get('estimateDate').value+"&scheduleCategoryId="+dom.get('scheduleCategory').value+rcRelatedParam;
+	   	return "estimateDate="+dom.get('estimateDate').value+"&scheduleCategoryId="+dom.get('scheduleCategory').value;
 	}
 	else{
 		return "estimateDate="+dom.get('estimateDate').value+rcRelatedParam;

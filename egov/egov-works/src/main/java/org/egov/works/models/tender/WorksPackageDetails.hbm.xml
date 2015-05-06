@@ -46,19 +46,19 @@
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">			
-				<param name="sequence">EGW_WORKSPACKAGE_DETAILS_SEQ</param>
+				<param name="sequence">SEQ_EGW_WORKSPACKAGE_DETAILS</param>
 			</generator>
 		</id>
 		<many-to-one name="worksPackage" class="org.egov.works.models.tender.WorksPackage" insert="false" update="false" fetch="select">
-			<column name="ID_WORKSPACKAGE" not-null="true" />
+			<column name="WORKSPACKAGE_ID" not-null="true" />
 		</many-to-one>
 		<many-to-one name="estimate"
 			class="org.egov.works.models.estimate.AbstractEstimate" >
-			<column name="ID_ESTIMATE" not-null="true"/>
+			<column name="ABSTRACTESTIMATE_ID" not-null="true"/>
 		</many-to-one>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
-		<property name="createdDate" column="CREATED_DATE" type="timestamp" />		
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" fetch="select" not-null="true" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />		
     	<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />	
 		
 	</class>

@@ -43,29 +43,17 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 <class name="org.egov.works.models.masters.ScheduleCategory" table="EGW_SCHEDULECATEGORY">
-		<id
-			name="id"
-			column="ID"
-			type="long"
-			unsaved-value="null">
+		<id name="id" column="ID" type="long" unsaved-value="null">
 			<generator class="native">
-				<param name="sequence">EGW_SCHEDULECATEGORY_SEQ</param>
+				<param name="sequence">SEQ_EGW_SCHEDULECATEGORY</param>
 			</generator>
 		</id>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
-		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
+   		<property name="code" column="CODE" type="string" unique="true" not-null="true" />
+   		<property name="description" column="DESCRIPTION" type="string" not-null="true" />  	
+   
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" fetch="select" not-null="true" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />
 		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
-   <property
-	    name="code"
-	    column="CODE"
-	    type="string"
-    />
-   <property
-	    name="description"
-	    column="DESCRIPTION"
-	    type="string"
-    />  	
-   <many-to-one name="parent"/>
 </class>
 </hibernate-mapping>

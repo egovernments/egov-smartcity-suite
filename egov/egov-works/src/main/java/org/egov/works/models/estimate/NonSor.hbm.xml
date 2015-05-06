@@ -43,26 +43,19 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 <class name="org.egov.works.models.estimate.NonSor" table="EGW_NONSOR">
-		<id
-			name="id"
-			column="ID"
-			type="long"
-			unsaved-value="null">
+		<id name="id" column="ID" type="long" unsaved-value="null">
 			<generator class="native">
-				<param name="sequence">EGW_NONSOR_SEQ</param>
+				<param name="sequence">SEQ_EGW_NONSOR</param>
 			</generator>
 		</id>
-	<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
-	<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
-	<property name="createdDate" column="CREATED_DATE" type="timestamp" />		
-	<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
-	<property
-	    name="description"
-	    column="DESCRIPTION"
-	    type="string" not-null="true"
-    />
+	<property name="description" column="DESCRIPTION" type="string" not-null="true" />
 	 <many-to-one name="uom" class="org.egov.common.entity.UOM" fetch="select">
-	    <column name="uom" not-null="true"/>
+	    <column name="UOM_ID" not-null="true"/>
 	</many-to-one>
+	<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" fetch="select" not-null="true"/>
+	<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
+	<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />		
+	<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+	
 </class>
 </hibernate-mapping>

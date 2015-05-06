@@ -44,7 +44,9 @@
 	<class name="org.egov.works.models.masters.DepositCode" table="EGW_DEPOSITCODE">
 		<id name="id" type="long">
 			<column name="ID" />
-			<generator class="sequence"> <param name="sequence">EGW_DEPOSITCODE_SEQ</param></generator>
+			<generator class="sequence"> 
+				<param name="sequence">SEQ_EGW_DEPOSITCODE</param>
+			</generator>
 		</id>
 		
 		<property name="code" type="string">
@@ -55,7 +57,7 @@
 			<column name="DESCRIPTION" length="1024" />
 		</property>
 	
-		<many-to-one name="worksType" class="org.egov.works.models.estimate.WorkType" column="WORKSTYPE_ID" fetch="select" />
+		<many-to-one name="natureOfWork" class="org.egov.works.models.masters.NatureOfWork" column="NATUREOFWORK_ID" fetch="select" />
 	
 		 <property name="codeName" type="string">
 			<column name="DEPOSIT_WORKNAME" length="256" not-null="true" />
@@ -68,17 +70,17 @@
 		<many-to-one name="subScheme" class="org.egov.commons.SubScheme" column="SUBSCHEME_ID"  fetch="select" />
 		
 		<many-to-one name="department"
-			class="org.egov.lib.rjbac.dept.DepartmentImpl"  fetch="select" >
+			class="org.egov.infra.admin.master.entity.Department"  fetch="select" >
 			<column name="DEPARTMENT_ID" />
 		</many-to-one>
 		
 		<many-to-one name="ward"
-			class="org.egov.lib.admbndry.BoundaryImpl"  fetch="select" >
+			class="org.egov.infra.admin.master.entity.Boundary"  fetch="select" >
 			<column name="WARD_ID" />
 		</many-to-one>
 		
 		<many-to-one name="zone"
-			class="org.egov.lib.admbndry.BoundaryImpl"  fetch="select" >
+			class="org.egov.infra.admin.master.entity.Boundary"  fetch="select" >
 			<column name="ZONE_ID"/>
 		</many-to-one>
 		
@@ -106,9 +108,9 @@
          	<column name="ISACTIVE" precision="1" scale="0" />
 		</property>
 		
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" fetch="select"/>
-		<property name="createdDate" column="CREATED_DATE" type="timestamp" />		
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" fetch="select" not-null="true" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />		
 		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />	
 	</class>
 	<query name="EGW_getActiveDepositCodes">select dc from DepositCode dc where dc.isActive = 1</query>

@@ -38,44 +38,29 @@
   
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+<!DOCTYPE hibernate-mapping
+PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated Jul 19, 2007 2:57:28 PM by Hibernate Tools 3.2.0.b9 -->
 <hibernate-mapping>
-	<class name="org.egov.works.models.masters.ContractorGrade"
-		table="EGW_CONTRACTOR_GRADE">
-		<id name="id" type="long">
-			<column name="ID" />
-			<generator class="sequence">
-				<param name="sequence">EGW_CONTRACTOR_GRADE_SEQ</param>
+	<class name="org.egov.works.models.masters.SORRate" table="EGW_SOR_RATE">
+		<id name="id" column="ID" type="long" unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">SEQ_EGW_SOR_RATE</param>
 			</generator>
 		</id>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIEDBY" fetch="select"/>
-		<property name="createdDate" column="CREATEDDATE" type="timestamp" />		
-		<property name="modifiedDate" column="MODIFIEDDATE" type="timestamp" />	
-		<property name="grade" type="string" >
-			<column name="GRADE" length="20" not-null="true" unique="true" />
-		</property>
-		<property name="description" type="string">
-			<column name="DESCRIPTION" length="100" not-null="true" />
-		</property>
-		<property name="minAmount" type="double">
-            <column name="MIN_AMOUNT" precision="2" scale="20" not-null="true" />
-        </property>
-        <property name="maxAmount" type="double">
-            <column name="MAX_AMOUNT" precision="2" scale="20" not-null="true" />
-        </property>
 		
+		<component name="rate">
+			<property name="value" type="double" precision="2"	scale="20" column="VALUE" />
+		</component>
+		<many-to-one name="scheduleOfRate" column="SCHEDULEOFRATE_ID" not-null="true" insert="false" update="false" />
+		<component name="validity">
+			<property name="startDate" type="date" />
+			<property name="endDate" type="date" />
+		</component>
+		
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" fetch="select" not-null="true" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
 	</class>
-	<query name="getContractorGradeMaxAmountList">
-		<![CDATA[
-     	select distinct(maxAmount) from ContractorGrade cg order by cg.maxAmount
-    	]]>
-	</query>
-	<query name="getContractorGradeMinAmountList">
-		<![CDATA[
-     	select distinct(minAmount) from ContractorGrade cg order by cg.minAmount
-    	]]>
-	</query>
 </hibernate-mapping>

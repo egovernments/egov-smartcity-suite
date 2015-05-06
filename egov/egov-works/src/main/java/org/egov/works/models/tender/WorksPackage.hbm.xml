@@ -46,11 +46,14 @@
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="sequence">			
-				<param name="sequence">EGW_WORKSPACKAGE_SEQ</param>
+				<param name="sequence">SEQ_EGW_WORKSPACKAGE</param>
 			</generator>
 		</id>
+		<property name="wpNumber" type="string">
+			<column name="WP_NUMBER" />
+		</property>	
 		<property name="packageDate" type="date">
-			<column name="PACKAGEDATE" />
+			<column name="WP_DATE" not-null="true"/>
 		</property>
 		<property name="name" type="string">
 			<column name="NAME" not-null="true" />
@@ -58,30 +61,51 @@
 		<property name="description" type="string">
 			<column name="DESCRIPTION" />
 		</property>	
-		<property name="wpNumber" type="string">
-			<column name="WPNUMBER" />
-		</property>		 
+			 
 		<property name="tenderFileNumber" type="string">
 			<column name="TENDER_FILE_NUMBER" not-null="true"/>
 		</property>	 
 		<property name="documentNumber" type="long">
 			<column name="DOCUMENT_NUMBER" />
 		</property>	
-		 	        			        	
-		<many-to-one name="userDepartment"
-			class="org.egov.lib.rjbac.dept.DepartmentImpl" fetch="select">
-			<column name="DEPARTMENT" />
-		</many-to-one>
 		<many-to-one name="preparedBy"
 			class="org.egov.pims.model.PersonalInformation"> 
-			<column name="PREPAREDBY" />
+			<column name="PREPAREDBY" not-null="true" />
+		</many-to-one>     			        	
+		<many-to-one name="department"
+			class="org.egov.infra.admin.master.entity.Department" fetch="select">
+			<column name="DEPARTMENT_ID" />
 		</many-to-one>
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY" not-null="true" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" not-null="true" fetch="select"/>
-		<property name="createdDate" column="CREATED_DATE" type="timestamp" />	
+		
+		<many-to-one name="state" class="org.egov.infstr.models.State"
+			cascade="all">
+			<column name="STATE_ID" />
+		</many-to-one>
+		
+		<many-to-one name="latestOfflineStatus" class="org.egov.works.models.tender.SetStatus" >
+			<column name="LATEST_OFFLINE_STATUS" />
+		</many-to-one>		
+		<many-to-one name="egwStatus" column="STATUS_ID" /> 
+		<property name="approvedDate" type="date">
+			<column name="APPROVED_DATE" length="7" />
+		</property>	
+		
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />	
 		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+		
+		<set name="setStatuses" inverse="true" >
+			<key column="OBJECT_ID" />
+			<one-to-many class="org.egov.works.models.tender.SetStatus"  />
+		</set>
+		
+		<set name="tenderEstimateSet" inverse="true" >
+			<key column="WORKS_PACKAGE_ID" />
+			<one-to-many class="org.egov.works.models.tender.TenderEstimate"  />
+		</set>
 		<list name="worksPackageDetails" cascade="all,delete-orphan">
-			<key column="ID_WORKSPACKAGE" not-null="true" />
+			<key column="WORKSPACKAGE_ID" not-null="true" />
 			<list-index column="wp_index" />
 			<one-to-many
 				class="org.egov.works.models.tender.WorksPackageDetails" />
@@ -96,29 +120,6 @@
 			<list-index column="retender_history_index" />
 			<one-to-many class="org.egov.works.models.tender.RetenderHistory" />
 		</list>
-		<many-to-one name="state" class="org.egov.infstr.models.State"
-			cascade="all">
-			<column name="STATE_ID" />
-		</many-to-one>
-		
-		<many-to-one name="latestOfflineStatus" class="org.egov.works.models.tender.SetStatus" >
-			<column name="LATEST_OFFLINE_STATUS" />
-		</many-to-one>
-		
-		<many-to-one name="egwStatus" column="STATUS_ID" /> 
-
-		<set name="setStatuses" inverse="true" >
-			<key column="OBJECT_ID" />
-			<one-to-many class="org.egov.works.models.tender.SetStatus"  />
-		</set>
-		
-		<set name="tenderEstimateSet" inverse="true" >
-			<key column="WORKS_PACKAGE_ID" />
-			<one-to-many class="org.egov.works.models.tender.TenderEstimate"  />
-		</set>
-		<property name="manualWPNumber" type="string">
-			<column name="MANUAL_WP_NUMBER"/>
-		</property>
 	</class>
 	<query name="TenderFileNumberUniqueCheck">
     	<![CDATA[
