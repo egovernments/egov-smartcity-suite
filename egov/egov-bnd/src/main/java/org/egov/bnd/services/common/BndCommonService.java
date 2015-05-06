@@ -547,6 +547,7 @@ public class BndCommonService {
 
     }
 
+    @Transactional
     public void getAllStatesOfCountry() {
         final List<State> stateList = findAllBy(GETALLSTATESQUERY);
         for (final State state : stateList)

@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.bnd.client.utils.BndRuleBook;
 import org.egov.bnd.model.BirthRegistration;
 import org.egov.bnd.model.BnDCitizen;
@@ -66,8 +67,11 @@ import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.admin.master.entity.enums.Gender;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.reporting.engine.ReportService;
+import org.springframework.transaction.annotation.Transactional;
 
 
+@ParentPackage("egov")
+@Transactional(readOnly = true)
 public class RegistrationAction extends BndCommonAction {
 
     private static final long serialVersionUID = -8898085487142981653L;
@@ -163,6 +167,7 @@ public class RegistrationAction extends BndCommonAction {
         // bndCommonService.getStateByStateConstant(BndConstants.NASTATECONST);
     }
 
+    @Transactional
     protected void setDifferentActionsForRole() {
         final BndRuleBook ruleBook = BndRuleBook.getInstance();
         final List<String> roleList = bndCommonService.getRoleNamesByPassingUserId(Long.valueOf(EGOVThreadLocals
@@ -196,6 +201,7 @@ public class RegistrationAction extends BndCommonAction {
 
     }
 
+    @Transactional
     protected void getDetailsAddressTypeAndRelation() {
         // TODO egifix
         /*
@@ -242,7 +248,7 @@ public class RegistrationAction extends BndCommonAction {
      *
      * @param registration
      */
-
+    @Transactional
     protected void buildNewFormForHospital(final Registration registration) {
         if (registration.getRegistrarId() == null)
             throw new EGOVRuntimeException(getMessage("user.registrar.error"));

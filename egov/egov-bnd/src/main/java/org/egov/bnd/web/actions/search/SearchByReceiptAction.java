@@ -48,14 +48,11 @@ import org.egov.bnd.services.registration.NonAvailabilityRegistrationService;
 import org.egov.bnd.services.search.SearchByReceiptService;
 import org.egov.bnd.utils.BndConstants;
 import org.egov.bnd.web.actions.common.BndCommonAction;
+import org.springframework.transaction.annotation.Transactional;
 
-@SuppressWarnings("serial")
 @ParentPackage("egov")
+@Transactional(readOnly = true)
 public class SearchByReceiptAction extends BndCommonAction {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -1997201664458515658L;
     private String regType = null;
     private String searchMode;
@@ -70,6 +67,7 @@ public class SearchByReceiptAction extends BndCommonAction {
         return "search";
     }
 
+    @Transactional
     public String searchresults() {
 
         final HashMap<String, Object> hashMap = new HashMap<String, Object>();

@@ -53,13 +53,11 @@ import org.egov.bnd.utils.SexType;
 import org.egov.bnd.web.actions.common.BndCommonAction;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.search.SearchQuery;
+import org.springframework.transaction.annotation.Transactional;
 
-@SuppressWarnings("serial")
+@Transactional(readOnly = true)
 public class SearchAction extends BndCommonAction {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -1756028116762763554L;
     private String regType;
     private String hiddenRegType;
@@ -85,6 +83,7 @@ public class SearchAction extends BndCommonAction {
     private static final Logger LOGGER = Logger.getLogger(SearchAction.class);
 
     @Override
+    @Transactional
     public void prepare() {
         super.prepare();
         addDropdownData("sexTypeList", Arrays.asList(SexType.values()));
@@ -149,7 +148,6 @@ public class SearchAction extends BndCommonAction {
 
     @Override
     public SearchQuery prepareQuery(final String arg0, final String arg1) {
-        // TODO Auto-generated method stub
         return null;
     }
 

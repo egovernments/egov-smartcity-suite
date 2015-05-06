@@ -63,6 +63,7 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
@@ -77,8 +78,10 @@ import com.opensymphony.xwork2.validator.annotations.ValidatorType;
                 @RequiredStringValidator(fieldName = "applicantAddress", type = ValidatorType.FIELD, message = "Required", key = "") },
 
                 requiredFields = { @RequiredFieldValidator(fieldName = "applicationDate", type = ValidatorType.FIELD, message = "Required", key = "") })
-@Namespace("/registration")
+
 @ParentPackage("egov")
+@Namespace("/registration")
+@Transactional(readOnly = true)
 public class SideLetterAction extends BndCommonAction {
 
     private static final long serialVersionUID = 6279292161404254681L;
@@ -121,6 +124,7 @@ public class SideLetterAction extends BndCommonAction {
     }
 
     @Override
+    @Transactional    
     public void prepareNewform() {
         LOGGER.debug("To Prepare a new form method");
         final RegistrationUnit regUnit = bndCommonService.getRegistrarByLoggedInUser().getRegUnitId();
@@ -139,6 +143,7 @@ public class SideLetterAction extends BndCommonAction {
     }
 
     @Override
+    @Transactional
     @SkipValidation
     @Action(value = "/sideLetter-newform", results = { @Result(name = NEW) })
     public String newform() {
@@ -163,6 +168,7 @@ public class SideLetterAction extends BndCommonAction {
     }
 
     @Override
+    @Transactional
     protected void saveOrUpdate() {
         LOGGER.debug("Started saveOrUpdate method");
         sideLetter.setEventType(BndConstants.BIRTH);
@@ -177,6 +183,7 @@ public class SideLetterAction extends BndCommonAction {
     }
 
     @Override
+    @Transactional
     public void prepareView() {
         LOGGER.debug("Started prepareView method");
         sideLetter = sideLetterService.getSidLetterId(idTemp);
@@ -185,6 +192,7 @@ public class SideLetterAction extends BndCommonAction {
     }
 
     @Override
+    @Transactional
     public void prepareBeforeEdit() {
         LOGGER.debug("Started prepareBeforeEdit method");
         sideLetter = sideLetterService.getSidLetterId(idTemp);

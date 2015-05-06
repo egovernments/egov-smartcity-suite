@@ -65,14 +65,12 @@ import org.egov.bnd.utils.BndDateUtils;
 import org.egov.bnd.web.actions.common.BndCommonAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.egov.web.utils.EgovPaginatedList;
+import org.springframework.transaction.annotation.Transactional;
 
-@SuppressWarnings("serial")
 @ParentPackage("egov")
+@Transactional(readOnly = true)
 public class ReportAction extends BndCommonAction {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 6161737564229417153L;
     private static final String SUMMARYMONTHLYREPORT = "summaryMonthlyReport";
     private static final String AGGREGATEREPORT = "aggregateReport";
@@ -148,6 +146,7 @@ public class ReportAction extends BndCommonAction {
     }
 
     @Override
+    @Transactional
     public void prepare() {
         super.prepare();
         final List<RegistrationUnit> registrationUnitList = bndCommonService.getRegistrationUnit();
@@ -172,6 +171,7 @@ public class ReportAction extends BndCommonAction {
         return AGGREGATEREPORT;
     }
 
+    @Transactional
     @SuppressWarnings("unchecked")
     public String aggregateReportResult() {
 
@@ -199,6 +199,7 @@ public class ReportAction extends BndCommonAction {
         return AGGREGATEREPORT;
     }
 
+    @Transactional
     @SuppressWarnings("unchecked")
     public String yearlyWiseReportResult() {
         LOGGER.debug("Started yearlyWiseReportResult method");
@@ -227,6 +228,7 @@ public class ReportAction extends BndCommonAction {
         return REGUNITWISEREPORT;
     }
 
+    @Transactional
     @SuppressWarnings("unchecked")
     public String regUnitWiseReportResult() {
 
@@ -280,6 +282,7 @@ public class ReportAction extends BndCommonAction {
         return SUMMARYMONTHLYREPORT;
     }
 
+    @Transactional
     @SuppressWarnings("unchecked")
     public String efficiencyReportResult() {
 
@@ -331,6 +334,7 @@ public class ReportAction extends BndCommonAction {
 
     }
 
+    @Transactional
     @SuppressWarnings("unchecked")
     public String summaryReportResult() {
 
@@ -354,6 +358,7 @@ public class ReportAction extends BndCommonAction {
 
     }
 
+    @Transactional
     @SuppressWarnings("unchecked")
     public String delayedRegistrationResult() {
 
@@ -374,6 +379,7 @@ public class ReportAction extends BndCommonAction {
 
     }
 
+    @Transactional
     @SuppressWarnings("unchecked")
     public String summaryDetailedReport() {
 
@@ -433,7 +439,8 @@ public class ReportAction extends BndCommonAction {
         LOGGER.debug("Completed hospitalRegReport method");
         return HOSPITALREGREPORT;
     }
-
+    
+    @Transactional
     @SuppressWarnings("unchecked")
     public String hospitalRegReportResult() {
 
@@ -483,6 +490,7 @@ public class ReportAction extends BndCommonAction {
             addFieldError("fromDate", getMessage("fromDate.toDate.validate"));
     }
 
+    @Transactional
     @ValidationErrorPage(NAMEINCLUSIONSTATUSREPORT)
     public String nameInclusionReportResult() throws ParseException {
         searchMode = RESULT;
@@ -505,6 +513,7 @@ public class ReportAction extends BndCommonAction {
         return UPDATEDREGISTRATIONREPORT;
     }
 
+    @Transactional
     public String updatedRegistrationReportResult() {
         pagedResults = viewReportService.getRegistrationUpdatedList(fromDate, toDate, regType, regNo, getPage(),
                 getPageSize());
@@ -541,6 +550,7 @@ public class ReportAction extends BndCommonAction {
         return CERTIFICATEREPORT;
     }
 
+    @Transactional
     @SuppressWarnings("unchecked")
     public String certificateReportResult() {
 
@@ -578,6 +588,7 @@ public class ReportAction extends BndCommonAction {
         return CANCELLEDREPORT;
     }
 
+    @Transactional
     public String cancelledReportResult() {
 
         LOGGER.debug("Started cancelledReportResult method");
@@ -600,6 +611,7 @@ public class ReportAction extends BndCommonAction {
         return CANCELLEDREPORT;
     }
 
+    @Transactional
     @SuppressWarnings("unchecked")
     public void setStateNameinRegistration(final PaginatedList birthDeathList) {
 

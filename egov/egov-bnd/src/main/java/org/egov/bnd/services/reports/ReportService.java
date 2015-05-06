@@ -395,6 +395,7 @@ public class ReportService extends PersistenceService<ViewBirthDeathRegistration
         return getUnitwiseRegistrationDetailsGeneral(InputMap);
     }
 
+    @Transactional
     public List<ReportDetails> getCompleteRegistrationDetails(final HashMap<String, Object> InputMap) {
 
         LOGGER.debug("Started getCompleteRegistrationDetails method");

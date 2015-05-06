@@ -79,11 +79,11 @@ import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
-
 
 @Validations(requiredFields = {
         @RequiredFieldValidator(fieldName = "registrationDate", message = "", key = BndConstants.REQUIRED),
@@ -103,13 +103,14 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @RequiredStringValidator(fieldName = "informantAddress.cityTownVillage", message = "", key = BndConstants.REQUIRED),
         @RequiredStringValidator(fieldName = "informantAddress.district", message = "", key = BndConstants.REQUIRED) }
 
-)
+        )
 @ParentPackage("egov")
 @Namespace("/registration")
+@Transactional(readOnly = true)
 public class StillBirthRegistrationAction extends RegistrationAction {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     private static final long serialVersionUID = -6855607612064252745L;
     private static final Logger LOGGER = Logger.getLogger(StillBirthRegistrationAction.class);
@@ -205,6 +206,7 @@ public class StillBirthRegistrationAction extends RegistrationAction {
     }
 
     @Override
+    @Transactional
     @Action(value = "/stillBirthRegistration-create", results = { @Result(name = NEW) })
     public String create() {
         if (workFlowType != null && !"".equals(workFlowType) && BndConstants.SCRIPT_SAVE.equals(workFlowType))
@@ -217,6 +219,7 @@ public class StillBirthRegistrationAction extends RegistrationAction {
     }
 
     @Override
+    @Transactional
     protected void saveOrUpdate() {
         buildRegistration();
         if (stillBirthRegistration.getRegistrationNo() == null
@@ -275,10 +278,11 @@ public class StillBirthRegistrationAction extends RegistrationAction {
         LOGGER.info("Mother Education-------:::" + stillBirthRegistration.getCitizenBDDetails().getMotherEducation());
         if (stillBirthRegistration.getCitizenBDDetails().getCauseOfDeath() == null)
             stillBirthRegistration.getCitizenBDDetails()
-                    .setCauseOfDeath(stillBirthRegistration.getCauseOfDeathParent());
+            .setCauseOfDeath(stillBirthRegistration.getCauseOfDeathParent());
     }
 
     @Override
+    @Transactional
     @ValidationErrorPage(NEW)
     @Action(value = "/stillBirthRegistration-edit", results = { @Result(name = NEW) })
     public String edit() {
@@ -295,7 +299,7 @@ public class StillBirthRegistrationAction extends RegistrationAction {
                     BndConstants.LOCK).getId());
             change.setModuleid(stillBirthRegistration.getId().intValue());
             change.setModuletype(BndConstants.STILLBIRTHREGISTRATIONMODULE);
-            //change.setCreatedby(EGOVThreadLocals.getUserId());
+            // change.setCreatedby(EGOVThreadLocals.getUserId());
             // TODO egifix-hibernateutil
             // HibernateUtil.getCurrentSession().persist(change);
             entityManager.persist(change);
@@ -313,7 +317,7 @@ public class StillBirthRegistrationAction extends RegistrationAction {
                     BndConstants.APPROVED).getId());
             change.setModuleid(stillBirthRegistration.getId().intValue());
             change.setModuletype(BndConstants.STILLBIRTHREGISTRATIONMODULE);
-            //change.setCreatedby(EGOVThreadLocals.getUserId());
+            // change.setCreatedby(EGOVThreadLocals.getUserId());
             // TODO egifix-hibernateutil
             // HibernateUtil.getCurrentSession().persist(change);
             entityManager.persist(change);
@@ -366,12 +370,12 @@ public class StillBirthRegistrationAction extends RegistrationAction {
         if (OFFLINE.equals(mode) && stillBirthRegistration.getRegistrationNo() != null
                 && !EMPTY.equals(stillBirthRegistration.getRegistrationNo().trim()))
             if (stillBirthRegistration.getRegistrationUnit() != null
-                    && birthRegistrationService.checkUniqueRegistrationNumber(
-                            stillBirthRegistration.getRegistrationUnit().getId(),
-                            stillBirthRegistration.getId(),
-                            stillBirthRegistration.getRegistrationNo(),
-                            BndConstants.REGISTRATIONDATE.equalsIgnoreCase(numberGenKey) ? stillBirthRegistration
-                                    .getRegistrationDate() : stillBirthRegistration.getDateOfEvent(),
+            && birthRegistrationService.checkUniqueRegistrationNumber(
+                    stillBirthRegistration.getRegistrationUnit().getId(),
+                    stillBirthRegistration.getId(),
+                    stillBirthRegistration.getRegistrationNo(),
+                    BndConstants.REGISTRATIONDATE.equalsIgnoreCase(numberGenKey) ? stillBirthRegistration
+                            .getRegistrationDate() : stillBirthRegistration.getDateOfEvent(),
                             BndConstants.STILLBIRTHNUM))
                 addActionError(getMessage("registration.number.exists"));
 
@@ -379,15 +383,15 @@ public class StillBirthRegistrationAction extends RegistrationAction {
                 final int eventYear = BndConstants.REGISTRATIONDATE.equalsIgnoreCase(numberGenKey) ? BndDateUtils
                         .getCurrentYear(stillBirthRegistration.getRegistrationDate()) : BndDateUtils
                         .getCurrentYear(stillBirthRegistration.getDateOfEvent());
-                final RegKeys regNumRange = regKeyService.getRegKeyByRegUnitAndDate(stillBirthRegistration
-                        .getRegistrationUnit(), eventYear, numberGenerationService.buildObjectType(
-                        stillBirthRegistration, eventYear, BndConstants.STILLBIRTHNUM));
-                if (regNumRange != null) {
-                    final Integer regNumber = Integer.valueOf(stillBirthRegistration.getRegistrationNo());
-                    if (regNumber >= regNumRange.getMinValue())
-                        addActionError(getMessage("regNumber.minvalue.validate").concat(" ").concat(
-                                regNumRange.getMinValue().toString()));
-                }
+                        final RegKeys regNumRange = regKeyService.getRegKeyByRegUnitAndDate(stillBirthRegistration
+                                .getRegistrationUnit(), eventYear, numberGenerationService.buildObjectType(
+                                        stillBirthRegistration, eventYear, BndConstants.STILLBIRTHNUM));
+                        if (regNumRange != null) {
+                            final Integer regNumber = Integer.valueOf(stillBirthRegistration.getRegistrationNo());
+                            if (regNumber >= regNumRange.getMinValue())
+                                addActionError(getMessage("regNumber.minvalue.validate").concat(" ").concat(
+                                        regNumRange.getMinValue().toString()));
+                        }
             }
 
     }
@@ -462,6 +466,7 @@ public class StillBirthRegistrationAction extends RegistrationAction {
     }
 
     @Override
+    @Transactional
     public String getAdditionalRule() {
 
         final Long userId = stillBirthRegistration.getCreatedBy() == null ? Long.valueOf(EGOVThreadLocals.getUserId())
