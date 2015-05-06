@@ -137,6 +137,9 @@ public class ComplaintService {
 
 	@Autowired
 	private ApplicationNumberGenerator applicationNumberGenerator;
+	
+	@Autowired
+	private EscalationService escalationService;
 
 	@Transactional
 	@Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
@@ -153,11 +156,12 @@ public class ComplaintService {
 		complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
 		final Position assignee = complaintRouterService.getAssignee(complaint);
 		complaint.transition(true).start().withSenderName(complaint.getComplainant().getUserDetail().getName())
-				.withComments("complaint registered with crn : " + complaint.getCRN())
+				.withComments("Complaint registered with Complaint tracking Number : " + complaint.getCRN())
 				.withStateValue(complaint.getStatus().getName()).withOwner(assignee).withDateInfo(new Date());
 
 		complaint.setAssignee(assignee);
 		complaint.setEscalationDate(new DateTime());
+		complaint.setEscalationDate(escalationService.getExpiryDate(complaint));
 		if (complaint.getLocation() == null && complaint.getLat() != 0.0 && complaint.getLng() != 0.0) {
 			final Long bndryId = commonsService.getBndryIdFromShapefile(complaint.getLat(), complaint.getLng());
 			if (bndryId != null) {
@@ -171,7 +175,7 @@ public class ComplaintService {
 		sendEmailandSms(complaint);
 		return savedComplaint;
 	}
-
+	
 	/**
 	 * @param complaint
 	 * @param approvalPosition
@@ -186,7 +190,6 @@ public class ComplaintService {
 	@Transactional
 	@Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
 	public Complaint update(final Complaint complaint, final Long approvalPosition, final String approvalComent) {
-		//
 
 		if (false == complaint.getComplaintType().isLocationRequired())
 			complaint.setLocation(null);
@@ -206,7 +209,7 @@ public class ComplaintService {
 		} else
 			complaint.transition(true).withComments(approvalComent).withSenderName(userName)
 					.withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
-
+        
 		final Complaint savedComplaint = complaintRepository.saveAndFlush(complaint);
 		pushMessage(savedComplaint);
 		return savedComplaint;
@@ -334,7 +337,6 @@ public class ComplaintService {
 					.getDeptId().getName() : "");
 		}
 		historyTable.add(map);
-
 		return historyTable;
 	}
 
