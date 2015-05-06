@@ -39,14 +39,15 @@
  */
 package org.egov.bpa.web.actions.extd.report;
 
-
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.bpa.constants.BpaConstants;
@@ -58,89 +59,91 @@ import org.egov.bpa.utils.ApplicationMode;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
+
 @ParentPackage("egov")
-public class RegisterReportExtnAction extends BaseFormAction{
-	
-	
+public class RegisterReportExtnAction extends BaseFormAction {
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	protected Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
+
 	public static final String showdetail = "showdetail";
 	private List<EgwStatus> statusList = new ArrayList<EgwStatus>(0);
-	private  List<ServiceTypeExtn> servicelist=new ArrayList<ServiceTypeExtn>(0);
-	private List<RegistrationExtn> regList=new ArrayList<RegistrationExtn>(0);
-	
-    private Long serviceType;
+	private List<ServiceTypeExtn> servicelist = new ArrayList<ServiceTypeExtn>(
+			0);
+	private List<RegistrationExtn> regList = new ArrayList<RegistrationExtn>(0);
+
+	private Long serviceType;
 	private Integer egwStatus;
 	private Long stateid;
 	private String appMode;
-	private String searchMode;	
+	private String searchMode;
 	private Integer adminboundaryid;
 	private Integer locboundaryid;
 	private Date applicationFromDate;
 	private Date applicationToDate;
-	private String  statecode;
+	private String statecode;
 	private Long servcode;
 	private BpaCommonExtnService bpaCommonExtnService;
-	private Map<String, TreeMap<String,Long>> statusmap= new TreeMap<String,TreeMap<String,Long>>();
-	 StringBuffer qryStr = new StringBuffer();
-	
- 
-	public RegisterReportExtnAction(){
-		
+	private Map<String, TreeMap<String, Long>> statusmap = new TreeMap<String, TreeMap<String, Long>>();
+	StringBuffer qryStr = new StringBuffer();
+
+	public RegisterReportExtnAction() {
+
 	}
-	
-	public String newform()
-	{
+
+	public String newform() {
 		return NEW;
 	}
 
 	@SuppressWarnings("unchecked")
-	public String showdetail(){
-		if(getServcode()!=null && getServcode()==0)
-			qryStr.append( " from RegistrationExtn reg where id is not null and reg.egwStatus.code= :statcode ") ;
+	public String showdetail() {
+		if (getServcode() != null && getServcode() == 0)
+			qryStr.append(" from RegistrationExtn reg where id is not null and reg.egwStatus.code= :statcode ");
 		else
-		qryStr.append( " from RegistrationExtn reg where id is not null and reg.serviceType.code = :servecode and reg.egwStatus.code= :statcode ") ;
+			qryStr.append(" from RegistrationExtn reg where id is not null and reg.serviceType.code = :servecode and reg.egwStatus.code= :statcode ");
 		getappendquery();
 		qryStr.append(" order by id");
-	
-			Query query = HibernateUtil.getCurrentSession().createQuery(qryStr.toString());
-			if(getServcode()!=null && getServcode()!=0)
-			 query.setLong("servecode", getServcode()!=null?getServcode():getServiceType());
-	
-			 query.setString("statcode", getStatecode());
-			 if(getStatecode()==null)
-			 {
-				 query.setInteger("statcode", getEgwStatus()); 
-			 }
-			 if(getApplicationFromDate()!=null)
-			   {
-			   query.setDate("fromdate", getApplicationFromDate());
-			   }
-			  if( getApplicationToDate()!=null)
-			   {
-				  query.setDate("todate", getApplicationToDate());
-			   }
-			  if(getAdminboundaryid()!=null && getAdminboundaryid()!=-1){
-				  query.setInteger("adminid", getAdminboundaryid());
-			  }
-			   if(getLocboundaryid()!=null && getLocboundaryid()!=-1){
-				   query.setInteger("locid", getLocboundaryid());
-				  
-			   }
-			   if(getAppMode()!=null && !"-1".equals(getAppMode() ))
-			   {
-				   query.setString("appmodename", getAppMode());
-			   }
-			regList=query.list();
-     //  regList=persistenceService.findAllBy("from Registration where serviceType.id=? and egwStatus.code=? order by id",getServcode(),getStatecode());
+
+		Query query = getCurrentSession().createQuery(qryStr.toString());
+		if (getServcode() != null && getServcode() != 0)
+			query.setLong("servecode", getServcode() != null ? getServcode()
+					: getServiceType());
+
+		query.setString("statcode", getStatecode());
+		if (getStatecode() == null) {
+			query.setInteger("statcode", getEgwStatus());
+		}
+		if (getApplicationFromDate() != null) {
+			query.setDate("fromdate", getApplicationFromDate());
+		}
+		if (getApplicationToDate() != null) {
+			query.setDate("todate", getApplicationToDate());
+		}
+		if (getAdminboundaryid() != null && getAdminboundaryid() != -1) {
+			query.setInteger("adminid", getAdminboundaryid());
+		}
+		if (getLocboundaryid() != null && getLocboundaryid() != -1) {
+			query.setInteger("locid", getLocboundaryid());
+
+		}
+		if (getAppMode() != null && !"-1".equals(getAppMode())) {
+			query.setString("appmodename", getAppMode());
+		}
+		regList = query.list();
+		// regList=persistenceService.findAllBy("from Registration where serviceType.id=? and egwStatus.code=? order by id",getServcode(),getStatecode());
 		return showdetail;
 	}
-	
+
 	@ValidationErrorPage(NEW)
-	public String searchResults(){
+	public String searchResults() {
 		search();
 		setSearchMode("result");
 		return NEW;
@@ -148,174 +151,186 @@ public class RegisterReportExtnAction extends BaseFormAction{
 
 	public void prepare() {
 		super.prepare();
-		addDropdownData("statusList", persistenceService.findAllBy("from EgwStatus where moduletype=? order by code ",BpaConstants.NEWBPAREGISTRATIONMODULE));	
-		addDropdownData("serviceTypeList", persistenceService.findAllBy("from ServiceTypeExtn order by code"));
-		 addDropdownData("applicationModeList",Arrays.asList(ApplicationMode.values()));
+		addDropdownData("statusList", persistenceService.findAllBy(
+				"from EgwStatus where moduletype=? order by code ",
+				BpaConstants.NEWBPAREGISTRATIONMODULE));
+		addDropdownData("serviceTypeList",
+				persistenceService
+						.findAllBy("from ServiceTypeExtn order by code"));
+		addDropdownData("applicationModeList",
+				Arrays.asList(ApplicationMode.values()));
 	}
-	
-	public void getappendquery()
-	{
-		if(getApplicationFromDate()!=null)
-		{
-			qryStr.append(" and reg.planSubmissionDate>= :fromdate " );
+
+	public void getappendquery() {
+		if (getApplicationFromDate() != null) {
+			qryStr.append(" and reg.planSubmissionDate>= :fromdate ");
 		}
-		if( getApplicationToDate()!=null)
-		{
+		if (getApplicationToDate() != null) {
 			qryStr.append(" and reg.planSubmissionDate<= :todate ");
 		}
-		if(getAdminboundaryid()!=null && getAdminboundaryid()!=-1 ){
-		Boundary boundary=(Boundary)persistenceService.find("from BoundaryImpl where id=?",getAdminboundaryid());
-		
-		if(boundary!=null && boundary.getBoundaryType().getName().equals("Ward")){
-			
-			qryStr.append(" and reg.adminboundaryid.id= :adminid"); 
-			}
-		else if(boundary!=null && boundary.getBoundaryType().getName().equals("Zone"))
-		{
-			qryStr.append(" and reg.adminboundaryid.id in (select id from BoundaryImpl where parent.id= :adminid )");
-		
-		}
-		else if(boundary!=null && boundary.getBoundaryType().getName().equals("Region"))
-		{
-			qryStr.append(" and reg.adminboundaryid.id in (select id from BoundaryImpl where parent.parent.id= :adminid )");
-		
-		}
-		}
-		if(getLocboundaryid()!=null && getLocboundaryid()!=-1){
-			Boundary boundaryLoc=(Boundary)persistenceService.find("from BoundaryImpl where id=?",getLocboundaryid());
-			
-			if(boundaryLoc!=null && boundaryLoc.getBoundaryType().getName().equals("Street"))
-			{
-				qryStr.append(" and reg.locboundaryid.id= :locid ");
-				}
+		if (getAdminboundaryid() != null && getAdminboundaryid() != -1) {
+			Boundary boundary = (Boundary) persistenceService.find(
+					"from BoundaryImpl where id=?", getAdminboundaryid());
 
-			else if(boundaryLoc!=null && boundaryLoc.getBoundaryType().getName().equals("Locality") )
-				{
+			if (boundary != null
+					&& boundary.getBoundaryType().getName().equals("Ward")) {
+
+				qryStr.append(" and reg.adminboundaryid.id= :adminid");
+			} else if (boundary != null
+					&& boundary.getBoundaryType().getName().equals("Zone")) {
+				qryStr.append(" and reg.adminboundaryid.id in (select id from BoundaryImpl where parent.id= :adminid )");
+
+			} else if (boundary != null
+					&& boundary.getBoundaryType().getName().equals("Region")) {
+				qryStr.append(" and reg.adminboundaryid.id in (select id from BoundaryImpl where parent.parent.id= :adminid )");
+
+			}
+		}
+		if (getLocboundaryid() != null && getLocboundaryid() != -1) {
+			Boundary boundaryLoc = (Boundary) persistenceService.find(
+					"from BoundaryImpl where id=?", getLocboundaryid());
+
+			if (boundaryLoc != null
+					&& boundaryLoc.getBoundaryType().getName().equals("Street")) {
+				qryStr.append(" and reg.locboundaryid.id= :locid ");
+			}
+
+			else if (boundaryLoc != null
+					&& boundaryLoc.getBoundaryType().getName()
+							.equals("Locality")) {
 				qryStr.append("	and (reg.locboundaryid.id in (select id from BoundaryImpl where parent.id= :locid) OR  reg.locboundaryid.id= :locid ) ");
-				}
-			else if(boundaryLoc!=null && boundaryLoc.getBoundaryType().getName().equals("Area"))
-			{
+			} else if (boundaryLoc != null
+					&& boundaryLoc.getBoundaryType().getName().equals("Area")) {
 				qryStr.append(" and (reg.locboundaryid.id in (select id from BoundaryImpl where parent.id= :locid OR parent.id in (select id from BoundaryImpl where parent.id= :locid) ) OR reg.locboundaryid.id= :locid) ");
-				
+
 			}
-			}
-		if(getAppMode()!=null && !"-1".equals(getAppMode() ))
-	
+		}
+		if (getAppMode() != null && !"-1".equals(getAppMode()))
+
 		{
-			qryStr.append(" and reg.appMode= :appmodename"); 
+			qryStr.append(" and reg.appMode= :appmodename");
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public void search() {
-		 	 
-          if(getEgwStatus()!=-1){
-		 statusList= persistenceService.findAllBy("from EgwStatus where moduletype=? and id=? order by code",BpaConstants.NEWBPAREGISTRATIONMODULE,getEgwStatus());	
-           }
-           else
-        	   statusList= persistenceService.findAllBy("from EgwStatus where moduletype=? order by code",BpaConstants.NEWBPAREGISTRATIONMODULE);	
 
-           if(getServiceType()!=-1){
-        	   servicelist=persistenceService.findAllBy("from ServiceTypeExtn where id=? order by code",getServiceType());
-           }
-           else
-        	   servicelist=persistenceService.findAllBy("from ServiceTypeExtn order by code");
-		 
-		 for(EgwStatus status:statusList){
-			 TreeMap<String, Long> servicemap = getEmptyServiceCodeWithZeroValue(servicelist);
-			 statusmap.put(status.getCode(), servicemap);
+		if (getEgwStatus() != -1) {
+			statusList = persistenceService.findAllBy(
+					"from EgwStatus where moduletype=? and id=? order by code",
+					BpaConstants.NEWBPAREGISTRATIONMODULE, getEgwStatus());
+		} else
+			statusList = persistenceService.findAllBy(
+					"from EgwStatus where moduletype=? order by code",
+					BpaConstants.NEWBPAREGISTRATIONMODULE);
+
+		if (getServiceType() != -1) {
+			servicelist = persistenceService.findAllBy(
+					"from ServiceTypeExtn where id=? order by code",
+					getServiceType());
+		} else
+			servicelist = persistenceService
+					.findAllBy("from ServiceTypeExtn order by code");
+
+		for (EgwStatus status : statusList) {
+			TreeMap<String, Long> servicemap = getEmptyServiceCodeWithZeroValue(servicelist);
+			statusmap.put(status.getCode(), servicemap);
 		}
-		 //StringBuffer qryStr = new StringBuffer();
-		 qryStr.append("SELECT DISTINCT reg.serviceType.code as servicetypecode ,COUNT(reg.id) as count,reg.egwStatus.code as statusName from RegistrationExtn reg where id is not null");
-		/* Registration reg=null;
-		 reg.getServiceType().getId()*/
+		// StringBuffer qryStr = new StringBuffer();
+		qryStr.append("SELECT DISTINCT reg.serviceType.code as servicetypecode ,COUNT(reg.id) as count,reg.egwStatus.code as statusName from RegistrationExtn reg where id is not null");
+		/*
+		 * Registration reg=null; reg.getServiceType().getId()
+		 */
 
-		 if(getEgwStatus()!=null && getEgwStatus()!=-1)
-		    {
-		    	qryStr.append(" and reg.egwStatus.id= :statusid ");
-		 }
-		    if(getServiceType()!=null && getServiceType()!=-1)
-		    {
-		    	qryStr.append(" and reg.serviceType.id= :serviceid ");
-		    }
-		 if(applicationFromDate!=null && applicationToDate!=null && !DateUtils.compareDates(getApplicationToDate(),getApplicationFromDate()))
-				addFieldError("fromDate",getText("greaterthan.endDate.fromDate"));
-			if(applicationToDate!=null && !DateUtils.compareDates(new Date(),getApplicationToDate()))
-				addFieldError("toDate",getText("greaterthan.endDate.currentdate"));
-			
+		if (getEgwStatus() != null && getEgwStatus() != -1) {
+			qryStr.append(" and reg.egwStatus.id= :statusid ");
+		}
+		if (getServiceType() != null && getServiceType() != -1) {
+			qryStr.append(" and reg.serviceType.id= :serviceid ");
+		}
+		if (applicationFromDate != null
+				&& applicationToDate != null
+				&& !DateUtils.compareDates(getApplicationToDate(),
+						getApplicationFromDate()))
+			addFieldError("fromDate", getText("greaterthan.endDate.fromDate"));
+		if (applicationToDate != null
+				&& !DateUtils.compareDates(new Date(), getApplicationToDate()))
+			addFieldError("toDate", getText("greaterthan.endDate.currentdate"));
+
 		getappendquery();
 		qryStr.append(" GROUP BY  reg.serviceType.code, reg.egwStatus.code");
 		qryStr.append(" order by reg.egwStatus.code");
-		   Query query = HibernateUtil.getCurrentSession().createQuery(qryStr.toString());
-		//   query.setLong("servicetypeid", getServiceType());
-		  // query.setInteger("statusid", getEgwStatus());
-		   if(getEgwStatus()!=null && getEgwStatus()!=-1){
-			   query.setInteger("statusid", getEgwStatus());
-			   }
-			   if(getServiceType()!=null && getServiceType()!=-1){
-			   query.setLong("serviceid", getServiceType());
-			   }
-	   if(getApplicationFromDate()!=null)
-	   {
-	   query.setDate("fromdate", getApplicationFromDate());
-	   }
-	  if( getApplicationToDate()!=null)
-	   {
-		  query.setDate("todate", getApplicationToDate());
-	   }
-	  if(getAdminboundaryid()!=null && getAdminboundaryid()!=-1){
-		  query.setInteger("adminid", getAdminboundaryid());
-	  }
-	   if(getLocboundaryid()!=null && getLocboundaryid()!=-1){
-		   query.setInteger("locid", getLocboundaryid());
-		  
-	   }
-	   if(getAppMode()!=null &&  !"-1".equals(getAppMode() ))
-	   {
-		   query.setString("appmodename", getAppMode());
-	   }
-	 query.setResultTransformer(Transformers.aliasToBean(ReportResultExtn.class));                                                                                                                                                                                          
-		
-	
-		List<ReportResultExtn> reportList=query.list();
-		for(ReportResultExtn result:reportList){
-			
-			statecode=result.getStatusName();
-					//getStatus().getCode();
-			
-			  TreeMap<String,Long> tempserviceMap= statusmap.get(statecode);//	new HashMap<String,Integer>();	
-			  tempserviceMap.put(result.getServicetypecode().toUpperCase(),result.getCount());
-			  tempserviceMap.put("total", tempserviceMap.get("total")+result.getCount());
-			  statusmap.put(statecode,tempserviceMap);
-		}  
+		Query query = getCurrentSession().createQuery(qryStr.toString());
+		// query.setLong("servicetypeid", getServiceType());
+		// query.setInteger("statusid", getEgwStatus());
+		if (getEgwStatus() != null && getEgwStatus() != -1) {
+			query.setInteger("statusid", getEgwStatus());
+		}
+		if (getServiceType() != null && getServiceType() != -1) {
+			query.setLong("serviceid", getServiceType());
+		}
+		if (getApplicationFromDate() != null) {
+			query.setDate("fromdate", getApplicationFromDate());
+		}
+		if (getApplicationToDate() != null) {
+			query.setDate("todate", getApplicationToDate());
+		}
+		if (getAdminboundaryid() != null && getAdminboundaryid() != -1) {
+			query.setInteger("adminid", getAdminboundaryid());
+		}
+		if (getLocboundaryid() != null && getLocboundaryid() != -1) {
+			query.setInteger("locid", getLocboundaryid());
 
-		/*for (Map.Entry<String, TreeMap<String,Long>> entry : statusmap.entrySet())
-		{
-			
-		    System.out.println(entry.getKey() + "/" + entry.getValue());
-		   
-		}*/
+		}
+		if (getAppMode() != null && !"-1".equals(getAppMode())) {
+			query.setString("appmodename", getAppMode());
+		}
+		query.setResultTransformer(Transformers
+				.aliasToBean(ReportResultExtn.class));
 
+		List<ReportResultExtn> reportList = query.list();
+		for (ReportResultExtn result : reportList) {
+
+			statecode = result.getStatusName();
+			// getStatus().getCode();
+
+			TreeMap<String, Long> tempserviceMap = statusmap.get(statecode);// new
+																			// HashMap<String,Integer>();
+			tempserviceMap.put(result.getServicetypecode().toUpperCase(),
+					result.getCount());
+			tempserviceMap.put("total",
+					tempserviceMap.get("total") + result.getCount());
+			statusmap.put(statecode, tempserviceMap);
+		}
+
+		/*
+		 * for (Map.Entry<String, TreeMap<String,Long>> entry :
+		 * statusmap.entrySet()) {
+		 * 
+		 * System.out.println(entry.getKey() + "/" + entry.getValue());
+		 * 
+		 * }
+		 */
 
 	}
-	
-	private TreeMap<String, Long> getEmptyServiceCodeWithZeroValue(List<ServiceTypeExtn> getservicelist) {
-		TreeMap<String,Long> servicemap = new TreeMap<String,Long>();
 
-			for(ServiceTypeExtn service:getservicelist){
-				servicemap.put(service.getCode(), (long)0);
-				
-			}
-			servicemap.put("total",0L);
-			return servicemap;
+	private TreeMap<String, Long> getEmptyServiceCodeWithZeroValue(
+			List<ServiceTypeExtn> getservicelist) {
+		TreeMap<String, Long> servicemap = new TreeMap<String, Long>();
+
+		for (ServiceTypeExtn service : getservicelist) {
+			servicemap.put(service.getCode(), (long) 0);
+
+		}
+		servicemap.put("total", 0L);
+		return servicemap;
 	}
-	
-	public  String getUsertName(Integer id)
-    {
-		String owner=bpaCommonExtnService.getUsertName(id);
+
+	public String getUsertName(Integer id) {
+		String owner = bpaCommonExtnService.getUsertName(id);
 		return owner;
-    }
-	
+	}
+
 	@Override
 	public Object getModel() {
 		// TODO Auto-generated method stub
@@ -329,8 +344,6 @@ public class RegisterReportExtnAction extends BaseFormAction{
 	public void setStatusList(List<EgwStatus> statusList) {
 		this.statusList = statusList;
 	}
-
-	
 
 	public Date getApplicationFromDate() {
 		return applicationFromDate;
@@ -347,7 +360,7 @@ public class RegisterReportExtnAction extends BaseFormAction{
 	public void setApplicationToDate(Date applicationToDate) {
 		this.applicationToDate = applicationToDate;
 	}
-    
+
 	public String getStatecode() {
 		return statecode;
 	}
@@ -388,8 +401,6 @@ public class RegisterReportExtnAction extends BaseFormAction{
 		return serviceType;
 	}
 
-
-
 	public List<ServiceTypeExtn> getServicelist() {
 		return servicelist;
 	}
@@ -406,12 +417,12 @@ public class RegisterReportExtnAction extends BaseFormAction{
 		this.regList = regList;
 	}
 
-	
 	public BpaCommonExtnService getBpaCommonExtnService() {
 		return bpaCommonExtnService;
 	}
 
-	public void setBpaCommonExtnService(BpaCommonExtnService bpaCommonExtnService) {
+	public void setBpaCommonExtnService(
+			BpaCommonExtnService bpaCommonExtnService) {
 		this.bpaCommonExtnService = bpaCommonExtnService;
 	}
 
@@ -455,7 +466,4 @@ public class RegisterReportExtnAction extends BaseFormAction{
 		this.appMode = appMode;
 	}
 
-
 }
-
-

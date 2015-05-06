@@ -39,23 +39,27 @@
  */
 package org.egov.bpa.services.extd.common;
 
-import static org.egov.bpa.constants.BpaConstants.APPLICATION_FWDED_TO_LS;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.bpa.constants.BpaConstants;
-import org.egov.bpa.models.extd.RegistrationExtn;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infra.admin.master.entity.Boundary;
 /*import org.egov.portal.surveyor.model.Surveyor;//Phionix TODO
-import org.egov.portal.surveyor.model.SurveyorDetail;*/
+ import org.egov.portal.surveyor.model.SurveyorDetail;*/
 import org.hibernate.Query;
+import org.hibernate.Session;
 
 public class UtilsExtnService {
 	private PersistenceService persistenceService;
-	
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	protected Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
 
 	/*
 	 * Return the Surveyor for given BPA registration based on below rules 1.
@@ -63,101 +67,94 @@ public class UtilsExtnService {
 	 * assigned to a zone then in a order of Surveyor registration in a zone and
 	 * work load on Surveyor
 	 */
-	/*public Surveyor getSurveyorForBpa(RegistrationExtn registration) {
-		Surveyor surveyor = null;
-		
-		
-		 * SELECT surv.id, surv.code,COUNT(DISTINCT psn_num) AS totalalloted
-		 * FROM EGP_SURVEYOR surv left outer join EGP_SURVEYORSERVICEREQREGISTRY
-		 * service ON service.PORTALUSERID= surv.id left outer join
-		 * EGBPAEXTND_REGISTRATION regn ON regn.REQUEST_NUMBER=service.REQUESTID
-		 * left outer join EGP_SURVEYORDETAILS survdtl ON
-		 * surv.id=survdtl.ID_SURVEYOR -- WHERE ID_BOUNDARY=18883 AND
-		 * regn.statusid=966 WHERE surv.id IN ( 901,922) GROUP BY surv.code,
-		 * surv.id ORDER BY COUNT(DISTINCT psn_num) ASC
-		 
-		Long pendingCount = Long.valueOf(0);
-		Long tempCount = Long.valueOf(0);
-		Boundary zone = registration.getAdminboundaryid().getParent();
-		List<SurveyorDetail> zonalSurveyors = (List<SurveyorDetail>) persistenceService.findAllBy(
-				"select sd from SurveyorDetail sd where sd.boundary=? order by sd.id", zone);
-		for (SurveyorDetail zoneSurveyor : zonalSurveyors) {
-			if (pendingCount == 0) {
-				tempCount = getPendingWfCountForSurveyor(zoneSurveyor.getSurveyor());
-				surveyor = zoneSurveyor.getSurveyor();
-				pendingCount = tempCount;
-			} else {
-				tempCount = getPendingWfCountForSurveyor(zoneSurveyor.getSurveyor());
-				if (pendingCount > tempCount) {
-					surveyor = zoneSurveyor.getSurveyor();
-				}
-			}
-		}
-		return surveyor;
-	}*/
-	//Phionix TODO
+	/*
+	 * public Surveyor getSurveyorForBpa(RegistrationExtn registration) {
+	 * Surveyor surveyor = null;
+	 * 
+	 * 
+	 * SELECT surv.id, surv.code,COUNT(DISTINCT psn_num) AS totalalloted FROM
+	 * EGP_SURVEYOR surv left outer join EGP_SURVEYORSERVICEREQREGISTRY service
+	 * ON service.PORTALUSERID= surv.id left outer join EGBPAEXTND_REGISTRATION
+	 * regn ON regn.REQUEST_NUMBER=service.REQUESTID left outer join
+	 * EGP_SURVEYORDETAILS survdtl ON surv.id=survdtl.ID_SURVEYOR -- WHERE
+	 * ID_BOUNDARY=18883 AND regn.statusid=966 WHERE surv.id IN ( 901,922) GROUP
+	 * BY surv.code, surv.id ORDER BY COUNT(DISTINCT psn_num) ASC
+	 * 
+	 * Long pendingCount = Long.valueOf(0); Long tempCount = Long.valueOf(0);
+	 * Boundary zone = registration.getAdminboundaryid().getParent();
+	 * List<SurveyorDetail> zonalSurveyors = (List<SurveyorDetail>)
+	 * persistenceService.findAllBy(
+	 * "select sd from SurveyorDetail sd where sd.boundary=? order by sd.id",
+	 * zone); for (SurveyorDetail zoneSurveyor : zonalSurveyors) { if
+	 * (pendingCount == 0) { tempCount =
+	 * getPendingWfCountForSurveyor(zoneSurveyor.getSurveyor()); surveyor =
+	 * zoneSurveyor.getSurveyor(); pendingCount = tempCount; } else { tempCount
+	 * = getPendingWfCountForSurveyor(zoneSurveyor.getSurveyor()); if
+	 * (pendingCount > tempCount) { surveyor = zoneSurveyor.getSurveyor(); } } }
+	 * return surveyor; }
+	 */
+	// Phionix TODO
 	/*
 	 * Returns boolean value for given Surveyor is having pending workflow items
 	 * or not
 	 */
-	/*public Boolean doSurveyorHavePendingWFBefore(Surveyor surveyor) {
-		Boolean doLSHavePending = Boolean.FALSE;
-		Long count = getPendingWfCountForSurveyor(surveyor);
-		if (count > 0) {
-			doLSHavePending = Boolean.TRUE;
-		}
-		return doLSHavePending;
-	}*///Phionix TODO
+	/*
+	 * public Boolean doSurveyorHavePendingWFBefore(Surveyor surveyor) { Boolean
+	 * doLSHavePending = Boolean.FALSE; Long count =
+	 * getPendingWfCountForSurveyor(surveyor); if (count > 0) { doLSHavePending
+	 * = Boolean.TRUE; } return doLSHavePending; }
+	 */// Phionix TODO
 
-	/*//Phionix TODO
-	 * Returns count of pending workflow items for given Surveyor
+	/*
+	 * //Phionix TODO Returns count of pending workflow items for given Surveyor
 	 */
-/*	public Long getPendingWfCountForSurveyor(Surveyor surveyor) {
-		Long pendingCount = Long.valueOf(0);
-		pendingCount = (Long) persistenceService.find(
-				"select count(srr.id) from org.egov.portal.surveyor.model.SurveyorServiceRequestRegistry srr, RegistrationExtn bpareg "
-						+ "where srr.requestID=bpareg.request_number and srr.requestStatus=? and srr.portalUser=? ",
-				APPLICATION_FWDED_TO_LS, surveyor);
-		return pendingCount;
-	}
-	*/
-	
+	/*
+	 * public Long getPendingWfCountForSurveyor(Surveyor surveyor) { Long
+	 * pendingCount = Long.valueOf(0); pendingCount = (Long)
+	 * persistenceService.find(
+	 * "select count(srr.id) from org.egov.portal.surveyor.model.SurveyorServiceRequestRegistry srr, RegistrationExtn bpareg "
+	 * +
+	 * "where srr.requestID=bpareg.request_number and srr.requestStatus=? and srr.portalUser=? "
+	 * , APPLICATION_FWDED_TO_LS, surveyor); return pendingCount; }
+	 */
+
 	/**
 	 * @description returns Approvers having less work load
 	 * @param desId
 	 * @param posId
 	 * @return
 	 */
-	public List<Object[]> getLessLoadedApproversForBpa(List<Long> desId, List<Long> posId){
-		List<Object[]> result=new ArrayList<Object[]>();
-		
-		String query ="SELECT empinfo.POS_ID, count(wfstate.id) " +
-				" FROM EG_EIS_EMPLOYEEINFO empinfo" +
-				" LEFT OUTER JOIN EG_WF_STATES wfstate on wfstate.owner=empinfo.POS_ID and wfstate.type=:wfStateType and wfstate.value!='NEW' " +
-				" and exists (select 1 from EGBPAEXTND_REGISTRATION bpareg, EGW_STATUS status  where bpareg.STATUSID=status.id and " +
-				" status.CODE not in (:statuses) and " +
-				" status.moduletype=:moduleType and bpareg.STATEID=wfstate.id) " +
-				" where empinfo.DESIGNATIONID in (:desId) and empinfo.POS_ID in (:posId) group by empinfo.POS_ID order by count(wfstate.id) asc"; 
-		Query sqlQuery = HibernateUtil.getCurrentSession().createSQLQuery(String.valueOf(query));
-		List<String> status=new ArrayList<String>();
-		status.add((BpaConstants.CANCELLED).toUpperCase()); 
-		status.add((BpaConstants.ORDERISSUEDTOAPPLICANT).toUpperCase()); 
-		status.add((BpaConstants.REJECTIONAPPROVED).toUpperCase()); 
-		status.add((BpaConstants.REJECTORDERISSUED).toUpperCase()); 
-		sqlQuery.setParameterList("statuses",status);   
+	public List<Object[]> getLessLoadedApproversForBpa(List<Long> desId,
+			List<Long> posId) {
+		List<Object[]> result = new ArrayList<Object[]>();
+
+		String query = "SELECT empinfo.POS_ID, count(wfstate.id) "
+				+ " FROM EG_EIS_EMPLOYEEINFO empinfo"
+				+ " LEFT OUTER JOIN EG_WF_STATES wfstate on wfstate.owner=empinfo.POS_ID and wfstate.type=:wfStateType and wfstate.value!='NEW' "
+				+ " and exists (select 1 from EGBPAEXTND_REGISTRATION bpareg, EGW_STATUS status  where bpareg.STATUSID=status.id and "
+				+ " status.CODE not in (:statuses) and "
+				+ " status.moduletype=:moduleType and bpareg.STATEID=wfstate.id) "
+				+ " where empinfo.DESIGNATIONID in (:desId) and empinfo.POS_ID in (:posId) group by empinfo.POS_ID order by count(wfstate.id) asc";
+		Query sqlQuery = getCurrentSession().createSQLQuery(
+				String.valueOf(query));
+		List<String> status = new ArrayList<String>();
+		status.add((BpaConstants.CANCELLED).toUpperCase());
+		status.add((BpaConstants.ORDERISSUEDTOAPPLICANT).toUpperCase());
+		status.add((BpaConstants.REJECTIONAPPROVED).toUpperCase());
+		status.add((BpaConstants.REJECTORDERISSUED).toUpperCase());
+		sqlQuery.setParameterList("statuses", status);
 		sqlQuery.setString("moduleType", BpaConstants.NEWBPAREGISTRATIONMODULE);
-		sqlQuery.setString("wfStateType", BpaConstants.NEWREGISTRATION_WFSTATETYPE);
-		if(!desId .isEmpty())
-		{
-			sqlQuery.setParameterList("desId", desId); 
-		} 
-		if(!posId.isEmpty()){
-			sqlQuery.setParameterList("posId",posId);
+		sqlQuery.setString("wfStateType",
+				BpaConstants.NEWREGISTRATION_WFSTATETYPE);
+		if (!desId.isEmpty()) {
+			sqlQuery.setParameterList("desId", desId);
 		}
-		result = (List<Object[]>)sqlQuery.list();
+		if (!posId.isEmpty()) {
+			sqlQuery.setParameterList("posId", posId);
+		}
+		result = (List<Object[]>) sqlQuery.list();
 		return result;
 	}
-	
 
 	public void setPersistenceService(PersistenceService persistenceService) {
 		this.persistenceService = persistenceService;
