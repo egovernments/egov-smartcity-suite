@@ -50,6 +50,7 @@
 		<title>eGov Urban Portal</title>
 		
 		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/bootstrap/bootstrap.css">
+		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/font-icons/entypo/css/entypo.css">
 		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/egov/custom.css">
 		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/egov/header-custom.css">
 		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/jquery.js"></script>
@@ -113,17 +114,17 @@
 								
 								<div class="panel-body">
 									
-									<div class="row">
+									<div class="row add-border">
 										<div class="col-md-3 col-xs-6 add-margin">
 											Complaint Date
 										</div>
-										<div class="col-md-3 col-xs-6 add-margin" id="ct-date">
+										<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-date">
 											Tue, 23 Dec 2014 04:44PM
 										</div>
 										<div class="col-md-3 col-xs-6 add-margin">
 											Name
 										</div>
-										<div class="col-md-3 col-xs-6 add-margin" id="ct-name">
+										<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-name">
 											Sundharajan
 										</div>
 									</div>
@@ -131,13 +132,13 @@
 										<div class="col-md-3 col-xs-6 add-margin">
 											Phone Number
 										</div>
-										<div class="col-md-3 col-xs-6 add-margin" id="ct-mobno">
+										<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
 											987654332
 										</div>
 										<div class="col-md-3 col-xs-6 add-margin">
 											Email
 										</div>
-										<div class="col-md-3 col-xs-6 add-margin" id="ct-email">
+										<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-email">
 											sundar@google.com
 										</div>
 									</div>
@@ -171,17 +172,17 @@
 								
 								<div class="panel-body">
 									
-									<div class="row">
+									<div class="row add-border ">
 										<div class="col-md-3 col-xs-6 add-margin">
 											Complaint Type
 										</div>
-										<div class="col-md-3 col-xs-6 add-margin" id="ct-type">
+										<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-type">
 											Removal of garbage
 										</div>
 										<div class="col-md-3 col-xs-6 add-margin">
 											Complaint Title
 										</div>
-										<div class="col-md-3 col-xs-6 add-margin" id="ct-title">
+										<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-title">
 											Removal of garbage
 										</div>
 									</div>
@@ -189,7 +190,7 @@
 										<div class="col-md-3 col-xs-6 add-margin">
 											Complaint Details
 										</div>
-										<div class="col-md-9 col-xs-6 add-margin" id="ct-details">
+										<div class="col-md-9 col-xs-6 add-margin view-content" id="ct-details">
 											asd
 										</div>
 									</div>
@@ -209,20 +210,21 @@
 											</a>
 										</div>
 									</div>
-									<div class="row">
+									<div class="row add-border">
 										
 										<div class="col-md-3 col-xs-6 add-margin">
 											Location
 										</div>
-										<div class="col-md-9 col-xs-6 add-margin" id="ct-location">
-											Area - 7h Bus Stand/Locality - Mugappair Street - 11th Block Parisalai
+										<div class="col-md-9 col-xs-6 add-margin view-content" id="ct-location">
+											<span class="map-tool-class btn-secondary" data-toggle="tooltip" title="Locate on map" data-work="Locate on map" onclick="jQuery('#complaint-locate').modal('show', {backdrop: 'static'});"><i class="entypo-globe"></i></span>
+											<span id="address_locate">KIADB, 28, Hoodi Main Road, KEB Colony, Industrial Area, Hoodi, Bengaluru, Karnataka 560048, India</span>
 										</div>
 									</div>
 									<div class="row">
 										<div class="col-md-3 col-xs-6 add-margin">
 											Landmark
 										</div>
-										<div class="col-md-3 col-xs-6 add-margin" id="ct-landmark">
+										<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-landmark">
 											N/A
 										</div>
 									</div>
@@ -288,6 +290,46 @@
 			</div>
 		</div>
 		
+		<!-- Modal 6 (Long Modal)-->
+		<div class="modal fade" id="complaint-locate">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					
+					<div class="modal-body">
+						
+						<div class="row">
+							
+							<div class="col-md-12">
+								<div class="panel panel-primary" data-collapsed="0"><!-- to apply shadow add class "panel-shadow" -->
+									<!-- panel head -->
+									<div class="panel-heading">
+										<div class="panel-title" id="show_address_in_map">Complaint Location</div>
+										
+									</div>
+									
+									<!-- panel body -->
+									<div class="panel-body no-padding">
+										
+										<script src="https://maps.googleapis.com/maps/api/js"></script>
+										
+										<div id="normal" class="img-prop"></div>
+										
+									</div>
+									
+								</div>
+							</div>
+							
+						</div>
+						
+						
+					</div>
+					
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
 		
 		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap.js"></script>
 		
@@ -296,6 +338,7 @@
 		
 		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/image-gallery/js/jquery.blueimp-gallery.min.js"></script>
 		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/image-gallery/js/bootstrap-image-gallery.js"></script>
-		
+		<script src="../js/app/complaintsuccess.js"></script>
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/egov/custom.js"></script>
 	</body>
 </html>											
