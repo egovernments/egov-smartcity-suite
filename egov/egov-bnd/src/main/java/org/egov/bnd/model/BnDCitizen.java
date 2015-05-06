@@ -47,251 +47,255 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.Address;
-import org.egov.infra.citizen.entity.Citizen;
+import org.egov.portal.entity.Citizen;
 
 public class BnDCitizen extends Citizen {
 
-    /**
+	/**
      *
      */
-    private static final long serialVersionUID = 8739168927130968076L;
+	private static final long serialVersionUID = 8739168927130968076L;
 
-    public BnDCitizen() {
-        super();
+	public BnDCitizen() {
+		super();
 
-    }
+	}
 
-    // private Long m_citizenId = null;
-    private String firstNameCorrected;
-    private String middleNameCorrected;
-    private String lastNameCorrected;
-    // private Address address = null;
+	// private Long m_citizenId = null;
+	private String firstNameCorrected;
+	private String middleNameCorrected;
+	private String lastNameCorrected;
+	// private Address address = null;
 
-    private List<BndNameChange> newcitizenname = new ArrayList<BndNameChange>(); // collection
-    // of
-    // citizen
-    // name
+	private List<BndNameChange> newcitizenname = new ArrayList<BndNameChange>(); // collection
+	// of
+	// citizen
+	// name
 
-    private List<CitizenRelation> relations = new ArrayList<CitizenRelation>();// Collection
-    // of
-    // CCitizenRelation
-    // objects
+	private List<CitizenRelation> relations = new ArrayList<CitizenRelation>();// Collection
+	// of
+	// CCitizenRelation
+	// objects
 
-    protected final Logger logger = Logger.getLogger(getClass().getName());
+	protected final Logger logger = Logger.getLogger(getClass().getName());
 
-    // private List nameInclusion =new ArrayList();
+	// private List nameInclusion =new ArrayList();
 
-    /**
-     * @return Returns the firstNameCorrected.
-     */
-    public String getFirstNameCorrected() {
-        return firstNameCorrected;
-    }
+	/**
+	 * @return Returns the firstNameCorrected.
+	 */
+	public String getFirstNameCorrected() {
+		return firstNameCorrected;
+	}
 
-    /**
-     * @param firstNameCorrected
-     *            The firstNameCorrected to set.
-     */
-    public void setFirstNameCorrected(final String firstNameCorrected) {
-        this.firstNameCorrected = firstNameCorrected;
-    }
+	/**
+	 * @param firstNameCorrected
+	 *            The firstNameCorrected to set.
+	 */
+	public void setFirstNameCorrected(final String firstNameCorrected) {
+		this.firstNameCorrected = firstNameCorrected;
+	}
 
-    /**
-     * @return Returns the lastNameCorrected.
-     */
-    public String getLastNameCorrected() {
-        return lastNameCorrected;
-    }
+	/**
+	 * @return Returns the lastNameCorrected.
+	 */
+	public String getLastNameCorrected() {
+		return lastNameCorrected;
+	}
 
-    /**
-     * @param lastNameCorrected
-     *            The lastNameCorrected to set.
-     */
-    public void setLastNameCorrected(final String lastNameCorrected) {
-        this.lastNameCorrected = lastNameCorrected;
-    }
+	/**
+	 * @param lastNameCorrected
+	 *            The lastNameCorrected to set.
+	 */
+	public void setLastNameCorrected(final String lastNameCorrected) {
+		this.lastNameCorrected = lastNameCorrected;
+	}
 
-    /**
-     * @return Returns the middleNameCorrected.
-     */
-    public String getMiddleNameCorrected() {
-        return middleNameCorrected;
-    }
+	/**
+	 * @return Returns the middleNameCorrected.
+	 */
+	public String getMiddleNameCorrected() {
+		return middleNameCorrected;
+	}
 
-    /**
-     * @param middleNameCorrected
-     *            The middleNameCorrected to set.
-     */
-    public void setMiddleNameCorrected(final String middleNameCorrected) {
-        this.middleNameCorrected = middleNameCorrected;
-    }
+	/**
+	 * @param middleNameCorrected
+	 *            The middleNameCorrected to set.
+	 */
+	public void setMiddleNameCorrected(final String middleNameCorrected) {
+		this.middleNameCorrected = middleNameCorrected;
+	}
 
-    /**
-     * @return Returns the address.
-     */
-    /*
-     * public Address getAddress() { return address; }
-     */
-    /**
-     * @param address
-     *            The address to set.
-     */
-    /*
-     * public void setAddress(Address address) { this.address = address; }
-     */
-    /**
-     * @return Returns the relations.
-     */
-    public List<CitizenRelation> getRelations() {
-        return relations;
-    }
+	/**
+	 * @return Returns the address.
+	 */
+	/*
+	 * public Address getAddress() { return address; }
+	 */
+	/**
+	 * @param address
+	 *            The address to set.
+	 */
+	/*
+	 * public void setAddress(Address address) { this.address = address; }
+	 */
+	/**
+	 * @return Returns the relations.
+	 */
+	public List<CitizenRelation> getRelations() {
+		return relations;
+	}
 
-    /**
-     * @param relations
-     *            The relations to set.
-     */
-    public void setRelations(final List<CitizenRelation> relations) {
-        this.relations = relations;
-    }
+	/**
+	 * @param relations
+	 *            The relations to set.
+	 */
+	public void setRelations(final List<CitizenRelation> relations) {
+		this.relations = relations;
+	}
 
-    /**
-     * @param relatedCost
-     *            a string value that defines the relationship.
-     * @return A Citizen object that satisfies the relationship This method is a
-     *         helper method to get the person associated with a relationship.
-     *         We assume that there is only one person of a particular relation.
-     */
+	/**
+	 * @param relatedCost
+	 *            a string value that defines the relationship.
+	 * @return A Citizen object that satisfies the relationship This method is a
+	 *         helper method to get the person associated with a relationship.
+	 *         We assume that there is only one person of a particular relation.
+	 */
 
-    public BnDCitizen getRelatedPerson(final String relatedCost) {
-        BnDCitizen person = null;
-        if (relations != null && !relations.isEmpty()) {
-            final Iterator<CitizenRelation> itr = relations.iterator();
-            while (itr.hasNext()) {
-                final CitizenRelation citRelation = itr.next();
-                if (citRelation != null)
-                    if (citRelation.getRelatedAs() != null
-                    && relatedCost.equals(citRelation.getRelatedAs().getRelatedAsConst())) {
-                        person = citRelation.getPerson();
-                        break;
-                    }
-            }
-        }
-        return person;
-    }
+	public BnDCitizen getRelatedPerson(final String relatedCost) {
+		BnDCitizen person = null;
+		if (relations != null && !relations.isEmpty()) {
+			final Iterator<CitizenRelation> itr = relations.iterator();
+			while (itr.hasNext()) {
+				final CitizenRelation citRelation = itr.next();
+				if (citRelation != null)
+					if (citRelation.getRelatedAs() != null
+							&& relatedCost.equals(citRelation.getRelatedAs()
+									.getRelatedAsConst())) {
+						person = citRelation.getPerson();
+						break;
+					}
+			}
+		}
+		return person;
+	}
 
-    /**
-     * @param relatedCost
-     *            a string value that defines the relationship.
-     * @return A Citizen object that satisfies the relationship This method is a
-     *         helper method to get the person associated with a relationship.
-     *         We assume that there is only one person of a particular relation.
-     */
+	/**
+	 * @param relatedCost
+	 *            a string value that defines the relationship.
+	 * @return A Citizen object that satisfies the relationship This method is a
+	 *         helper method to get the person associated with a relationship.
+	 *         We assume that there is only one person of a particular relation.
+	 */
 
-    @SuppressWarnings("unchecked")
-    public Address getRelatedAddress(final String relatedCost) {
-        Address returnAddress = null;
-        final Set<Address> addressSet = (Set<Address>) getAddress();
-        if (addressSet != null && !addressSet.isEmpty()) {
-            final Iterator<Address> itr = addressSet.iterator();
-            while (itr.hasNext()) {
-                final Address address = itr.next();
-                if (address != null)
-                    if (address.getType() != null && relatedCost.equals(address.getType().name())) {
-                        returnAddress = address;
-                        break;
-                    }
-            }
-        }
-        return returnAddress;
-    }
+	@SuppressWarnings("unchecked")
+	public Address getRelatedAddress(final String relatedCost) {
+		Address returnAddress = null;
+		final Set<Address> addressSet = (Set<Address>) getAddress();
+		if (addressSet != null && !addressSet.isEmpty()) {
+			final Iterator<Address> itr = addressSet.iterator();
+			while (itr.hasNext()) {
+				final Address address = itr.next();
+				if (address != null)
+					if (address.getType() != null
+							&& relatedCost.equals(address.getType().name())) {
+						returnAddress = address;
+						break;
+					}
+			}
+		}
+		return returnAddress;
+	}
 
-    /**
-     * @param relation
-     *            A BnDCitizen object that is related to this citizen
-     * @return A CRelation object that defines the relationship This method is a
-     *         helper method to get the relation associated with a person
-     *         object. We assume that every relation has only one person
-     *         associated with it.
-     */
-    public CRelation getRelation(final BnDCitizen relation) {
+	/**
+	 * @param relation
+	 *            A BnDCitizen object that is related to this citizen
+	 * @return A CRelation object that defines the relationship This method is a
+	 *         helper method to get the relation associated with a person
+	 *         object. We assume that every relation has only one person
+	 *         associated with it.
+	 */
+	public CRelation getRelation(final BnDCitizen relation) {
 
-        if (relation != null)
-            if (relations != null && !relations.isEmpty()) {
-                final Iterator<CitizenRelation> itr = relations.iterator();
-                while (itr.hasNext()) {
-                    final CitizenRelation citRelation = itr.next();
-                    if (citRelation != null)
-                        if (citRelation.getPerson() != null
-                        && citRelation.getPerson().getId().intValue() == relation.getId().intValue()) {
-                            logger.info("inside get relation getRelatedAs==" + citRelation.getRelatedAs().getDesc());
-                            return citRelation.getRelatedAs();
-                        }
-                }
-            }
-        return null;
-    }
+		if (relation != null)
+			if (relations != null && !relations.isEmpty()) {
+				final Iterator<CitizenRelation> itr = relations.iterator();
+				while (itr.hasNext()) {
+					final CitizenRelation citRelation = itr.next();
+					if (citRelation != null)
+						if (citRelation.getPerson() != null
+								&& citRelation.getPerson().getId().intValue() == relation
+										.getId().intValue()) {
+							logger.info("inside get relation getRelatedAs=="
+									+ citRelation.getRelatedAs().getDesc());
+							return citRelation.getRelatedAs();
+						}
+				}
+			}
+		return null;
+	}
 
-    public List<BndNameChange> addcitizenname(final BndNameChange citizen) {
-        logger.debug(" Citizen new name add Invoked");
-        citizen.setCitizen(this);
-        getNewcitizenname().add(citizen);
-        return newcitizenname;
-    }
+	public List<BndNameChange> addcitizenname(final BndNameChange citizen) {
+		logger.debug(" Citizen new name add Invoked");
+		citizen.setCitizen(this);
+		getNewcitizenname().add(citizen);
+		return newcitizenname;
+	}
 
-    public List<BndNameChange> removecitizenname(final BndNameChange citizen) {
-        logger.debug("Citizen new name remove Invoked");
-        getNewcitizenname().remove(citizen);
-        return newcitizenname;
-    }
+	public List<BndNameChange> removecitizenname(final BndNameChange citizen) {
+		logger.debug("Citizen new name remove Invoked");
+		getNewcitizenname().remove(citizen);
+		return newcitizenname;
+	}
 
-    /**
-     * @return Returns the newcitizenname.
-     */
-    public List<BndNameChange> getNewcitizenname() {
-        return newcitizenname;
-    }
+	/**
+	 * @return Returns the newcitizenname.
+	 */
+	public List<BndNameChange> getNewcitizenname() {
+		return newcitizenname;
+	}
 
-    /**
-     * @param newcitizenname
-     *            The newcitizenname to set.
-     */
+	/**
+	 * @param newcitizenname
+	 *            The newcitizenname to set.
+	 */
 
-    public void setNewcitizenname(final List<BndNameChange> newcitizenname) {
-        this.newcitizenname = newcitizenname;
-    }
+	public void setNewcitizenname(final List<BndNameChange> newcitizenname) {
+		this.newcitizenname = newcitizenname;
+	}
 
-    /**
-     * This method is to update existing citizen details name with new citizen
-     * details
-     *
-     * @param newCitizen
-     */
+	/**
+	 * This method is to update existing citizen details name with new citizen
+	 * details
+	 *
+	 * @param newCitizen
+	 */
 
-    public void updateCitizenName(final BnDCitizen newCitizen) {
-        // TODO egifix
-        /*
-         * this.setFirstName(newCitizen.getName());
-         * this.setLastName(newCitizen.getLastName());
-         * this.setMiddleName(newCitizen.getMiddleName());
-         * setMobileNumber(newCitizen.getMobileNumber());
-         */
-        setEmailId(newCitizen.getEmailId());
-    }
+	public void updateCitizenName(final BnDCitizen newCitizen) {
+		// TODO egifix
+		/*
+		 * this.setFirstName(newCitizen.getName());
+		 * this.setLastName(newCitizen.getLastName());
+		 * this.setMiddleName(newCitizen.getMiddleName());
+		 * setMobileNumber(newCitizen.getMobileNumber());
+		 */
+		setEmailId(newCitizen.getEmailId());
+	}
 
-    @Override
-    public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        // TODO egifix
-        /*
-         * builder.append("ID  :").append(getId()).append(" First Name :")
-         * .append(this.getFirstName() == null ? " " :
-         * this.getFirstName()).append(" Middle Name :")
-         * .append(this.getMiddleName() == null ? " " :
-         * this.getMiddleName()).append(" Last Name : ")
-         * .append(this.getLastName() == null ? " " :
-         * this.getLastName()).append(" Sex : ").append(getGender());
-         */
-        return builder.toString();
-    }
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		// TODO egifix
+		/*
+		 * builder.append("ID  :").append(getId()).append(" First Name :")
+		 * .append(this.getFirstName() == null ? " " :
+		 * this.getFirstName()).append(" Middle Name :")
+		 * .append(this.getMiddleName() == null ? " " :
+		 * this.getMiddleName()).append(" Last Name : ")
+		 * .append(this.getLastName() == null ? " " :
+		 * this.getLastName()).append(" Sex : ").append(getGender());
+		 */
+		return builder.toString();
+	}
 
 }

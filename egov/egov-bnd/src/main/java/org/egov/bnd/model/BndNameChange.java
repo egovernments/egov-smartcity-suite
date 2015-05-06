@@ -43,120 +43,120 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.citizen.entity.Citizen;
+import org.egov.portal.entity.Citizen;
 
 public class BndNameChange {
 
-    private Integer id;
-    private String firstName;
-    private String middleName;
-    private String lastName;
-    private String oldfirstname;
-    private String oldmiddlename;
-    private String oldlastname;
-    private String remarks;
-    private User lastModifiedBy;
-    private Date lastUpatedTimestamp;
-    // private BnDCitizen citizen;
-    private Citizen citizen;
-    private String receiptNo;
+	private Integer id;
+	private String firstName;
+	private String middleName;
+	private String lastName;
+	private String oldfirstname;
+	private String oldmiddlename;
+	private String oldlastname;
+	private String remarks;
+	private User lastModifiedBy;
+	private Date lastUpatedTimestamp;	
+	// private BnDCitizen citizen;
+	private Citizen citizen;
+	private String receiptNo;
 
-    protected final Logger logger = Logger.getLogger(getClass().getName());
+	protected final Logger logger = Logger.getLogger(getClass().getName());
 
-    public String getFirstName() {
-        return firstName;
-    }
+	public String getFirstName() {
+		return firstName;
+	}
 
-    public void setFirstName(final String firstName) {
-        this.firstName = firstName;
-    }
+	public void setFirstName(final String firstName) {
+		this.firstName = firstName;
+	}
 
-    public Integer getId() {
-        return id;
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    public void setId(final Integer id) {
-        this.id = id;
-    }
+	public void setId(final Integer id) {
+		this.id = id;
+	}
 
-    public String getLastName() {
-        return lastName;
-    }
+	public String getLastName() {
+		return lastName;
+	}
 
-    public void setLastName(final String lastName) {
-        this.lastName = lastName;
-    }
+	public void setLastName(final String lastName) {
+		this.lastName = lastName;
+	}
 
-    public String getMiddleName() {
-        return middleName;
-    }
+	public String getMiddleName() {
+		return middleName;
+	}
 
-    public void setMiddleName(final String middleName) {
-        this.middleName = middleName;
-    }
+	public void setMiddleName(final String middleName) {
+		this.middleName = middleName;
+	}
 
-    public String getRemarks() {
-        return remarks;
-    }
+	public String getRemarks() {
+		return remarks;
+	}
 
-    public void setRemarks(final String remarks) {
-        this.remarks = remarks;
-    }
+	public void setRemarks(final String remarks) {
+		this.remarks = remarks;
+	}
 
-    public Citizen getCitizen() {
-        return citizen;
-    }
+	public Citizen getCitizen() {
+		return citizen;
+	}
 
-    public void setCitizen(final Citizen citizen) {
-        this.citizen = citizen;
-    }
+	public void setCitizen(final Citizen citizen) {
+		this.citizen = citizen;
+	}
 
-    public String getReceiptNo() {
-        return receiptNo;
-    }
+	public String getReceiptNo() {
+		return receiptNo;
+	}
 
-    public void setReceiptNo(final String receiptNo) {
-        this.receiptNo = receiptNo;
-    }
+	public void setReceiptNo(final String receiptNo) {
+		this.receiptNo = receiptNo;
+	}
 
-    public String getOldfirstname() {
-        return oldfirstname;
-    }
+	public String getOldfirstname() {
+		return oldfirstname;
+	}
 
-    public void setOldfirstname(final String oldfirstname) {
-        this.oldfirstname = oldfirstname;
-    }
+	public void setOldfirstname(final String oldfirstname) {
+		this.oldfirstname = oldfirstname;
+	}
 
-    public String getOldlastname() {
-        return oldlastname;
-    }
+	public String getOldlastname() {
+		return oldlastname;
+	}
 
-    public void setOldlastname(final String oldlastname) {
-        this.oldlastname = oldlastname;
-    }
+	public void setOldlastname(final String oldlastname) {
+		this.oldlastname = oldlastname;
+	}
 
-    public String getOldmiddlename() {
-        return oldmiddlename;
-    }
+	public String getOldmiddlename() {
+		return oldmiddlename;
+	}
 
-    public Date getLastUpatedTimestamp() {
-        return lastUpatedTimestamp;
-    }
+	public Date getLastUpatedTimestamp() {
+		return lastUpatedTimestamp;
+	}
 
-    public void setLastUpatedTimestamp(final Date lastUpatedTimestamp) {
-        this.lastUpatedTimestamp = lastUpatedTimestamp;
-    }
+	public void setLastUpatedTimestamp(final Date lastUpatedTimestamp) {
+		this.lastUpatedTimestamp = lastUpatedTimestamp;
+	}
 
-    public void setOldmiddlename(final String oldmiddlename) {
-        this.oldmiddlename = oldmiddlename;
-    }
+	public void setOldmiddlename(final String oldmiddlename) {
+		this.oldmiddlename = oldmiddlename;
+	}
 
-    public User getLastModifiedBy() {
-        return lastModifiedBy;
-    }
+	public User getLastModifiedBy() {
+		return lastModifiedBy;
+	}
 
-    public void setLastModifiedBy(final User lastModifiedBy) {
-        this.lastModifiedBy = lastModifiedBy;
-    }
+	public void setLastModifiedBy(final User lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
+	}
 
 }
