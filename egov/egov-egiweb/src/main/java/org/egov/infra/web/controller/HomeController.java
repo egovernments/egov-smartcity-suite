@@ -90,7 +90,7 @@ public class HomeController {
     @RequestMapping
     public String showHome(final HttpSession session, final ModelMap modelData) {
         final User user = securityUtils.getCurrentUser();
-        if (user.getType().equals(UserType.EMPLOYEE))
+        if (securityUtils.currentUserType().equals(UserType.EMPLOYEE))
             return prepareOfficialHomePage(user, session, modelData);
         else
             return "redirect:/../portal/home";

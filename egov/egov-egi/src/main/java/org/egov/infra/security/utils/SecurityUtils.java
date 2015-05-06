@@ -42,6 +42,7 @@ package org.egov.infra.security.utils;
 import java.util.Optional;
 
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.entity.enums.UserType;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.security.authentication.SecureUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +67,10 @@ public class SecurityUtils {
 
     }
 
+    public UserType currentUserType() {
+    	return ((SecureUser) getCurrentAuthentication().get().getPrincipal()).getUserType();
+    }
+    
     public boolean isCurrentUserAuthenticated() {
     	Optional<Authentication> authentication = getCurrentAuthentication();
         return authentication.isPresent() ? authentication.get().isAuthenticated() : false;
