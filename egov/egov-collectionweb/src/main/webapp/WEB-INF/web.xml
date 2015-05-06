@@ -47,8 +47,7 @@
 	<!-- Context Params Starts -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>/WEB-INF/applicationContext.xml 
-		/WEB-INF/applicationQuartzContext-collection.xml</param-value>
+		<param-value>classpath*:config/spring/applicationContext-collectionweb.xml</param-value>
 	</context-param>
 	<context-param>
 		<param-name>locatorFactorySelector</param-name>
@@ -58,6 +57,11 @@
 		<param-name>parentContextKey</param-name>
 		<param-value>erpApplicationContext</param-value>
 	</context-param>
+	<filter>
+		<filter-name>CacheControlFilter</filter-name>
+		<filter-class>org.egov.infstr.client.filter.CacheControlFilter</filter-class>
+	</filter>
+	
 	<filter>
 		<filter-name>CharacterEncodingFilter</filter-name>
 		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -70,40 +74,36 @@
 			<param-value>true</param-value>
 		</init-param>
 	</filter>
-	<filter>
-	<filter-name>threadLocalsHandlerFilter</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>threadLocalsHandlerFilter</filter-name>
-		<url-pattern>*.do</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>threadLocalsHandlerFilter</filter-name>
-		<url-pattern>*.action</url-pattern>
-	</filter-mapping>
 	
-	<filter-mapping>
-		<filter-name>threadLocalsHandlerFilter</filter-name>
-		<url-pattern>*.jsp</url-pattern>
-	</filter-mapping>
-
 	<filter>
 		<filter-name>gzipFilter</filter-name>
 		<filter-class>net.sf.ehcache.constructs.web.filter.GzipFilter</filter-class>
 	</filter>
+	
+	<filter>
+		<filter-name>threadLocalsHandlerFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	
 	<filter>
 		<filter-name>openEntityManagerInViewFilter</filter-name>
 		<filter-class>
-			org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
+			org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter
+		</filter-class>
 	</filter>
-	<filter>
-		<filter-name>sessionAttributeHandlerFilter</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-	</filter>
-
+	
 	<filter>
 		<filter-name>securityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	
+	<filter>
+	    <filter-name>springSessionRepositoryFilter</filter-name>
+	    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	
+	<filter>
+		<filter-name>sessionAttributeHandlerFilter</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
 	
@@ -111,84 +111,111 @@
 		<filter-name>ResponseOverrideFilter</filter-name>
 		<filter-class>org.displaytag.filter.ResponseOverrideFilter</filter-class>
 	</filter>
+	
 	<filter>
 		<filter-name>struts2Prepare</filter-name>
 		<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareFilter</filter-class>
 	</filter>
+
 	<filter>
 		<filter-name>struts2Execute</filter-name>
 		<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsExecuteFilter</filter-class>
 	</filter>
+
 	<filter>
 		<filter-name>sitemesh</filter-name>
 		<filter-class>com.opensymphony.sitemesh.webapp.SiteMeshFilter</filter-class>
 	</filter>
+	
+	<!-- Filter Declaration Ends -->
+	
+	<!-- Filter Mapping Starts -->	
+	<filter-mapping>
+	    <filter-name>springSessionRepositoryFilter</filter-name>
+	    <url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<filter-mapping>
+		<filter-name>CacheControlFilter</filter-name>
+		<url-pattern>*.js</url-pattern>
+		<url-pattern>*.css</url-pattern>
+		<url-pattern>*.jpg</url-pattern>
+		<url-pattern>*.png</url-pattern>
+		<url-pattern>*.gif</url-pattern>
+		<url-pattern>*.ico</url-pattern>
+	</filter-mapping>
+	
 	<filter-mapping>
 		<filter-name>CharacterEncodingFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	
 	<filter-mapping>
 		<filter-name>gzipFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	
+	<filter-mapping>
+		<filter-name>threadLocalsHandlerFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
 	<filter-mapping>
 		<filter-name>openEntityManagerInViewFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	<filter-mapping>
-		<filter-name>sessionAttributeHandlerFilter</filter-name>
-		<url-pattern>*.do</url-pattern>
-	</filter-mapping>
+	
 	<filter-mapping>
 		<filter-name>securityFilterChain</filter-name>
-		<url-pattern>*.do</url-pattern>
+		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	
 	<filter-mapping>
-		<filter-name>ResponseOverrideFilter</filter-name>
-		<url-pattern>*.do</url-pattern>
+		<filter-name>sessionAttributeHandlerFilter</filter-name>
+		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	
+    <filter-mapping>
+		<filter-name>ResponseOverrideFilter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+	
 	<filter-mapping>
 		<filter-name>struts2Prepare</filter-name>
 		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
+	
 	<filter-mapping>
 		<filter-name>sitemesh</filter-name>
-		<url-pattern>/*</url-pattern>
+		  <url-pattern>/*</url-pattern>
 	</filter-mapping>
+	
 	<filter-mapping>
 		<filter-name>struts2Execute</filter-name>
 		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
-	<listener>
-		<listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
-	</listener>
+	
 	<servlet>
 		<servlet-name>reportViewer</servlet-name>
 		<servlet-class>org.egov.infstr.reporting.viewer.ReportViewer</servlet-class>
 		<load-on-startup>3</load-on-startup>
 	</servlet>
+	
 	<servlet-mapping>
 		<servlet-name>reportViewer</servlet-name>
 		<url-pattern>/reportViewer</url-pattern>
 	</servlet-mapping>
-	<welcome-file-list>
-		<welcome-file>/index.jsp</welcome-file>
-	</welcome-file-list>
-	<error-page>
-		<error-code>404</error-code>
-		<location>/error/notfound.jsp</location>
-	</error-page>
-	<error-page>
-		<error-code>403</error-code>
-		<location>/error/accessdenied.jsp</location>
-	</error-page>
-	<error-page>
-		<error-code>500</error-code>
-		<location>/error/error.jsp</location>
-	</error-page>
+	<!-- Filter Mapping Ends -->
+	
+	<!-- Listeners Starts -->	
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	
+	<listener>
+		<listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
+	</listener>
 	<jsp-config>
 		<taglib>
 			<taglib-uri>http://displaytag.sf.net</taglib-uri>
