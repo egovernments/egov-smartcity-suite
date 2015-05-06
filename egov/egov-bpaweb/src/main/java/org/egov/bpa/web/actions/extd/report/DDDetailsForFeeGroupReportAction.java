@@ -51,7 +51,9 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.FeesGroupEnum;
 import org.egov.bpa.models.extd.FeesReportResultExtn;
@@ -115,11 +117,11 @@ public class DDDetailsForFeeGroupReportAction extends BaseFormAction {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	@Action(value = "/dDDetailsForFeeGroupReport-newform", results = { @Result(name = NEW) })
 	public String newform() {
 		return NEW;
 	}
-
+	@Action(value = "/dDDetailsForFeeGroupReport-searchResults", results = { @Result(name = NEW) })
 	public String searchResults() {
 		search();
 		setSearchMode("result");

@@ -48,6 +48,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.LetterToPartyExtn;
 import org.egov.bpa.models.extd.LpChecklistExtn;
@@ -92,7 +94,7 @@ public class BpaReportExtnAction extends BaseFormAction{
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	@Action(value = "/bpaReportExtn-printReport", results = { @Result(name = "report") })
 	public String printReport()
 	{
 		

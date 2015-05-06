@@ -48,7 +48,7 @@
 		<id name="id" type="long" unsaved-value="null">
 			<column name="CITIZENRELATIONSHIPID" />
 			<generator class="sequence">
-				<param name="sequence">S_74_3_EGBD_CITIZENRELATIO</param>
+				<param name="sequence">SEQ_EGBD_CITIZENRELATIONSHIP</param>
 			</generator>
 		</id>
 

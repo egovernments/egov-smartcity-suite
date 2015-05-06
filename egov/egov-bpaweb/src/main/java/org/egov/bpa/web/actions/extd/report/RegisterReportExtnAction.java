@@ -49,7 +49,9 @@ import java.util.TreeMap;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.RegistrationExtn;
 import org.egov.bpa.models.extd.ReportResultExtn;
@@ -67,6 +69,7 @@ import org.hibernate.transform.Transformers;
 
 @ParentPackage("egov")
 public class RegisterReportExtnAction extends BaseFormAction {
+	
 	@PersistenceContext
 	private EntityManager entityManager;
 
@@ -98,12 +101,13 @@ public class RegisterReportExtnAction extends BaseFormAction {
 	public RegisterReportExtnAction() {
 
 	}
-
+	@Action(value = "/registerReportExtn-newform", results = { @Result(name = NEW) })
 	public String newform() {
 		return NEW;
 	}
 
 	@SuppressWarnings("unchecked")
+	@Action(value = "/registerReportExtn-showdetail", results = { @Result(name = showdetail) })
 	public String showdetail() {
 		if (getServcode() != null && getServcode() == 0)
 			qryStr.append(" from RegistrationExtn reg where id is not null and reg.egwStatus.code= :statcode ");
@@ -143,6 +147,7 @@ public class RegisterReportExtnAction extends BaseFormAction {
 	}
 
 	@ValidationErrorPage(NEW)
+	@Action(value = "/registerReportExtn-searchResults", results = { @Result(name = NEW) })
 	public String searchResults() {
 		search();
 		setSearchMode("result");

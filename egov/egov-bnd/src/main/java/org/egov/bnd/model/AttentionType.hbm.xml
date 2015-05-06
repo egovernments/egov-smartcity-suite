@@ -48,8 +48,7 @@
         <id  name="id">
             <column name="ATTENTIONATDELIVERYMASTERID"/>
             <generator class="sequence">
-				<param name="sequence">S_69_1_EGBD_ATTENTIONATDEL
-				</param>
+				<param name="sequence">SEQ_EGBD_ATTENTIONATDELIVERY</param>
 			</generator>
         </id>
 

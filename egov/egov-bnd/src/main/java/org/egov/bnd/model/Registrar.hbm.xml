@@ -47,7 +47,7 @@
 		<id name="id">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">SEQ_Registrar</param>
+				<param name="sequence">SEQ_EGBD_REGISTRAR</param>
 			</generator>
 		</id>
 
