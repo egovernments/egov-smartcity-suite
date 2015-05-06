@@ -47,7 +47,7 @@
 		<id name="id">
 			<column name="ATTBEFOREDEATHMASTID" />
 			<generator class="sequence">
-				<param name="sequence">S_68_1_EGBD_ATTBEFRDEATHMA</param>
+				<param name="sequence">SEQ_EGBD_ATTBEFRDEATHMASTER</param>
 			</generator>
 		</id>
 

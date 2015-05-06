@@ -47,7 +47,7 @@
 		<id name="id">
 			<column name="ID" />
 			<generator class="sequence">
-				<param name="sequence">seq_egbd_feeTypes</param>
+				<param name="sequence">SEQ_EGBD_FEETYPES</param>
 			</generator>
 		</id>
 
