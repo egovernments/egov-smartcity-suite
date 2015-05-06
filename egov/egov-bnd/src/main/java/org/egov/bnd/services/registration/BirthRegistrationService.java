@@ -51,11 +51,11 @@ import org.egov.bnd.services.common.BndCommonService;
 import org.egov.bnd.utils.BndConstants;
 import org.egov.bnd.utils.BndDateUtils;
 import org.egov.commons.EgwSatuschange;
+import org.egov.eis.service.EisCommonService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
-import org.egov.pims.service.EisUtilService;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,7 +67,7 @@ public class BirthRegistrationService extends PersistenceService<BirthRegistrati
     private PersistenceService<AdoptionDetails, Long> adoptionService;
     private PersistenceService<EgwSatuschange, Integer> statusChangeService;
     private BndCommonService bndCommonService;
-    private EisUtilService eisService;
+    private EisCommonService eisCommonService;
     private String workflowAction;
     private BirthRegistration birthRegistration;
 
@@ -95,8 +95,7 @@ public class BirthRegistrationService extends PersistenceService<BirthRegistrati
     private void startWorkFlow() {
         LOGGER.debug("START Birth Registration workflow ");
         if (birthRegistration.getState() == null) {
-            final Position pos = eisService.getPrimaryPositionForUser(birthRegistration.getCreatedBy().getId(),
-                    new Date());
+            final Position pos = eisCommonService.getPositionByUserId(birthRegistration.getCreatedBy().getId());
             if (pos == null)
                 throw new EGOVRuntimeException("User Position is Null");
             birthRegistration.transition(true).start().withOwner(pos).withComments("Birth Record created.");
@@ -145,34 +144,38 @@ public class BirthRegistrationService extends PersistenceService<BirthRegistrati
     }
 
     @Transactional
-    public Boolean issueFreeCertificate(final Long reportId, final String roleName) {
+	public Boolean issueFreeCertificate(final Long reportId,
+			final String roleName) {
 
-        /*
-         * If the certificate is already issued or event and registration date
-         * difference is greater than 21 days, then donot issue free certificate
-         */
-        if (reportId != null) {
+		/*
+		 * If the certificate is already issued or event and registration date
+		 * difference is greater than 21 days, then donot issue free certificate
+		 */
+		if (reportId != null) {
 
-            final BirthRegistration birthRegistration = getBirthRegistrationById(reportId);
+			final BirthRegistration birthRegistration = getBirthRegistrationById(reportId);
 
-            if (birthRegistration != null && birthRegistration.getDateOfEvent() != null
-                    && birthRegistration.getRegistrationDate() != null) {
+			if (birthRegistration != null
+					&& birthRegistration.getDateOfEvent() != null
+					&& birthRegistration.getRegistrationDate() != null) {
 
-                long diff = birthRegistration.getRegistrationDate().getTime()
-                        - birthRegistration.getDateOfEvent().getTime();
-                diff = diff / (1000 * 60 * 60 * 24);
+				long diff = birthRegistration.getRegistrationDate().getTime()
+						- birthRegistration.getDateOfEvent().getTime();
+				diff = diff / (1000 * 60 * 60 * 24);
 
-                if (birthRegistration.getIsCertIssued() != null
-                        && birthRegistration.getIsCertIssued().equalsIgnoreCase("Y") || diff > 21 && roleName != null
-                        && !roleName.equals(BndConstants.HOSPITALUSER))
-                    return Boolean.FALSE;
-                else
-                    return Boolean.TRUE;
-            }
-        }
-        return null;
+				if (birthRegistration.getIsCertIssued() != null
+						&& birthRegistration.getIsCertIssued()
+								.equalsIgnoreCase("Y") || diff > 21
+						&& roleName != null
+						&& !roleName.equals(BndConstants.HOSPITALUSER))
+					return Boolean.FALSE;
+				else
+					return Boolean.TRUE;
+			}
+		}
+		return null;
 
-    }
+	}
 
     @Transactional
     public Boolean isEventAndRegistrationDateDiffGreaterThan21Days(final Long reportId) {
@@ -280,11 +283,17 @@ public class BirthRegistrationService extends PersistenceService<BirthRegistrati
         this.adoptionService = adoptionService;
     }
 
-    public void setEisService(final EisUtilService eisService) {
-        this.eisService = eisService;
-    }
 
-    public void setBirthRegistrationWorkflowService(
+
+    public EisCommonService getEisCommonService() {
+		return eisCommonService;
+	}
+
+	public void setEisCommonService(EisCommonService eisCommonService) {
+		this.eisCommonService = eisCommonService;
+	}
+
+	public void setBirthRegistrationWorkflowService(
             final WorkflowService<BirthRegistration> birthRegistrationWorkflowService) {
     }
 

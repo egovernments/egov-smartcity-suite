@@ -53,10 +53,10 @@ import org.egov.bnd.model.DeathRegistration;
 import org.egov.bnd.services.common.BndCommonService;
 import org.egov.bnd.utils.BndConstants;
 import org.egov.bnd.utils.BndDateUtils;
+import org.egov.eis.service.EisCommonService;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
-import org.egov.pims.service.EisUtilService;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
@@ -68,7 +68,7 @@ public class DeathRegistrationService extends PersistenceService<DeathRegistrati
     private static final Logger LOGGER = Logger.getLogger(DeathRegistrationService.class);
     private BndCommonService bndCommonService;
     private WorkflowService<DeathRegistration> deathRegistrationWorkflowService;
-    private EisUtilService eisService;
+    private EisCommonService eisCommonService;
 
     public BndCommonService getBndCommonService() {
         return bndCommonService;
@@ -92,8 +92,7 @@ public class DeathRegistrationService extends PersistenceService<DeathRegistrati
     public void startWorkFlow(final DeathRegistration deathRegistration, final String workflowAction) {
         LOGGER.debug("START Death Registration workflow method");
         if (deathRegistration.getState() == null) {
-            final Position position = eisService.getPrimaryPositionForUser(deathRegistration.getCreatedBy().getId(),
-                    new Date());
+            final Position position = eisCommonService.getPositionByUserId(deathRegistration.getCreatedBy().getId());
             deathRegistration.transition(true).start().withOwner(position).withComments("Death Record created.");
         }
         if (workflowAction != null && !"".equals(workflowAction)
@@ -229,18 +228,22 @@ public class DeathRegistrationService extends PersistenceService<DeathRegistrati
         return deathRegistrationWorkflowService;
     }
 
-    public EisUtilService getEisService() {
-        return eisService;
-    }
+   
 
-    public void setDeathRegistrationWorkflowService(
+    public EisCommonService getEisCommonService() {
+		return eisCommonService;
+	}
+
+	public void setEisCommonService(EisCommonService eisCommonService) {
+		this.eisCommonService = eisCommonService;
+	}
+
+	public void setDeathRegistrationWorkflowService(
             final WorkflowService<DeathRegistration> deathRegistrationWorkflowService) {
         this.deathRegistrationWorkflowService = deathRegistrationWorkflowService;
     }
 
-    public void setEisService(final EisUtilService eisService) {
-        this.eisService = eisService;
-    }
+  
 
     @Transactional
     public Boolean isEventAndRegistrationDateDiffGreaterThan21Days(final Long reportId) {
