@@ -37,15 +37,30 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.citizen.repository;
+package org.egov.portal.entity;
 
-import org.egov.infra.citizen.entity.Citizen;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
-@Repository
-public interface CitizenRepository extends JpaRepository<Citizen, Long> {
+import org.egov.infra.admin.master.entity.User;
+
+@Entity
+@Table(name = "eg_citizen")
+@DiscriminatorValue("CITIZEN")
+public class Citizen extends User {
+
+    private static final long serialVersionUID = -521416613072970524L;
     
-    Citizen findByEmailId(String emailId);
-    Citizen findByUsername(String userName);
+    private String activationCode;
+
+    public String getActivationCode() {
+        return activationCode;
+    }
+
+    public void setActivationCode(String activationCode) {
+        this.activationCode = activationCode;
+    }
+    
+
 }

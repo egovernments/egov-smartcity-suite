@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.citizen.utils.constants;
+package org.egov.portal.utils.constants;
 
 public class CommonConstants {
 	public static final String CITIZEN_ROLE = "Citizen";

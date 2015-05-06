@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.citizen.service;
+package org.egov.portal.service;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -47,11 +47,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.service.RoleService;
-import org.egov.infra.citizen.entity.Citizen;
-import org.egov.infra.citizen.repository.CitizenRepository;
-import org.egov.infra.citizen.utils.constants.CommonConstants;
 import org.egov.infra.utils.EmailUtils;
 import org.egov.infstr.notification.HTTPSMS;
+import org.egov.portal.entity.Citizen;
+import org.egov.portal.repository.CitizenRepository;
+import org.egov.portal.utils.constants.CommonConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

@@ -45,8 +45,8 @@ import javax.validation.Valid;
 
 import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.citizen.entity.Citizen;
-import org.egov.infra.citizen.service.CitizenService;
+import org.egov.portal.entity.Citizen;
+import org.egov.portal.service.CitizenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
