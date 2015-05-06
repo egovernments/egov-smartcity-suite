@@ -103,9 +103,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Namespace("/portal")
 @SuppressWarnings("serial")
 @Results({ 
-	@Result(name = "NOACCESS", type = "strem", location = "returnStream", params = { "contentType", "text/plain"}),
-	@Result(name = CitizenRegisterBpaExtnAction.FEE_PAYMENT_PDF, type = "strem", location = "feePaymentReportPDF", params = { "contentType", "application/pdf"}),
-	@Result(name = CitizenRegisterBpaExtnAction.DOWNLOAD, type ="strem", location = "fileInputStream",  params = { "contentType","${attachmentType}","contentDisposition", "filename=\"${attachmentName}\"" })
+	@Result(name = "NOACCESS", type = "stream", location = "returnStream", params = { "contentType", "text/plain"}),
+	@Result(name = CitizenRegisterBpaExtnAction.FEE_PAYMENT_PDF, type = "stream", location = "feePaymentReportPDF", params = { "contentType", "application/pdf"}),
+	@Result(name = CitizenRegisterBpaExtnAction.DOWNLOAD, type ="stream", location = "fileInputStream",  params = { "contentType","${attachmentType}","contentDisposition", "filename=\"${attachmentName}\"" })
 
 })
 @ParentPackage("egov")
