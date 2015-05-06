@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bpa.constants.BpaConstants;
@@ -64,7 +65,10 @@ import org.egov.bpa.services.extd.masters.BuildingUsageExtnService;
 import org.egov.bpa.services.extd.register.RegisterBpaExtnService;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
+@Namespace("/buildingdetails")
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 public class BuildingDetailsExtnAction extends BaseFormAction{

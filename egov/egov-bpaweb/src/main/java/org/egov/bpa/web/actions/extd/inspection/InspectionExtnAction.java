@@ -54,8 +54,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -96,7 +96,10 @@ import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
+@Namespace("/inspection")
 @SuppressWarnings("serial")
 @Results({ 
 	@Result(name = "NOACCESS", type = "stream", location = "returnStream", params = { "contentType", "text/plain"})

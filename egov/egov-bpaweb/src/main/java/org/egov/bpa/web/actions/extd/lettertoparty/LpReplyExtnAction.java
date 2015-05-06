@@ -50,6 +50,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bpa.constants.BpaConstants;
@@ -72,8 +73,11 @@ import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.infstr.utils.StringUtils;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.transaction.annotation.Transactional;
 
 
+@Transactional(readOnly = true)
+@Namespace("/lettertoparty")
 @ParentPackage("egov")
 public class LpReplyExtnAction extends BaseFormAction{
 

@@ -62,7 +62,8 @@ import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.web.actions.SearchFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly = true)
 @ParentPackage("egov")
 public class SearchExtnAction extends SearchFormAction{
 	private static final Logger LOGGER = Logger.getLogger(SearchExtnAction.class);

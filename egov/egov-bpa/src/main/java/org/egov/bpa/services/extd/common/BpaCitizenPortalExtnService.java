@@ -39,16 +39,13 @@
  */
 package org.egov.bpa.services.extd.common;
 
-import static org.egov.bpa.constants.BpaConstants.APPLICATION_FWDED_TO_LS;
-import static org.egov.bpa.constants.BpaConstants.CITIZENAPPLICATIONREGISTERED;
+import org.springframework.transaction.annotation.Transactional;
 ////phionix TODO import static org.egov.portal.utils.ServiceConstants.USER_TYPE_CITIZEN;
-
-import org.egov.bpa.constants.BpaConstants;
-import org.egov.bpa.models.extd.RegistrationExtn;
 /*import org.egov.portal.model.ActiveServiceRegistry;
 import org.egov.portal.model.ServiceRequestRegistry;  //phionix TODO
 import org.egov.portal.services.PortalIntegrationService;*/
 
+@Transactional(readOnly=true)
 public class BpaCitizenPortalExtnService {
 	//phionix TODO
 //	private PortalIntegrationService portalIntegrationService;

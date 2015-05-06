@@ -39,9 +39,7 @@
  */
 package org.egov.bpa.services.extd.bill;
 
-import static org.egov.bpa.constants.BpaConstants.APPLICATION_FWDED_TO_LS;
 import static org.egov.bpa.constants.BpaConstants.BPAMODULENAME;
-import static org.egov.bpa.constants.BpaConstants.EXTD_SERVICE_CODE;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -71,11 +69,14 @@ import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infstr.commons.Module;
+import org.egov.infstr.commons.dao.ModuleDao;
 /*import org.egov.infstr.commons.dao.GenericDaoFactory;*/
 import org.egov.infstr.services.PersistenceService;
 /*import org.egov.infstr.workflow.WorkflowService;*/
 import org.egov.pims.commons.Position;
+import org.springframework.beans.factory.annotation.Autowired;
 /*import org.egov.portal.surveyor.model.Surveyor;*/
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @SuppressWarnings("unchecked")
 public class BpaFeeCollectionExtn extends TaxCollection {
@@ -89,7 +90,9 @@ public class BpaFeeCollectionExtn extends TaxCollection {
 	private UtilsExtnService utilsExtnService;
 	private BigDecimal receiptTotalAmount = BigDecimal.ZERO;
 	private BpaSurvayorPortalExtnService bpaSurvayorPortalExtnService;
-
+	@Autowired
+	@Qualifier(value = "moduleDAO")
+	private ModuleDao moduleDao;
 	@Override
 	public void updateDemandDetails(BillReceiptInfo billRcptInfo) {
 		LOGGER.debug("updateDemandDetails : Updating Demand Details Started, billRcptInfo : " + billRcptInfo);
@@ -219,7 +222,7 @@ public class BpaFeeCollectionExtn extends TaxCollection {
 
 		if (eventType.equals(EVENT_RECEIPT_CANCELLED))
 			demand.setAmtCollected(demand.getAmtCollected().subtract(totalAmountCollected));
-		demand.setLastUpdatedTimestamp(new Date());
+		demand.setModifiedDate(new Date());
 		return totalAmountCollected;
 	}
 
@@ -247,9 +250,9 @@ public class BpaFeeCollectionExtn extends TaxCollection {
 					demand.setAmtCollected(demand.getAmtCollected().add(recAccInfo.getCrAmount()));
 					totalAmountCollected = totalAmountCollected.add(recAccInfo.getCrAmount());
 				}
-				demandDetail.setLastUpdatedTimeStamp(new Date());
+				demandDetail.setModifiedDate(new Date());
 			}
-			demand.setLastUpdatedTimestamp(new Date());
+			demand.setModifiedDate(new Date());
 		}
 		return totalAmountCollected;
 	}
@@ -285,9 +288,9 @@ public class BpaFeeCollectionExtn extends TaxCollection {
 
 	@Override
 	protected Module module() {
-		return null;
-		//return GenericDaoFactory.getDAOFactory().getModuleDao().getModuleByName(BPAMODULENAME);
-	//TODO Phinix 
+		Module module = moduleDao.getModuleByName(BPAMODULENAME);
+		 return  module;
+		
 	}
 
 	public void setCollectionCommon(CollectionCommon collectionCommon) {

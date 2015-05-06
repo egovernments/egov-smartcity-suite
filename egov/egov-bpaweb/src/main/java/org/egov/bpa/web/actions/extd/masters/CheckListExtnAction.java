@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bpa.models.extd.masters.CheckListDetailsExtn;
@@ -53,7 +54,10 @@ import org.egov.bpa.utils.CheckList;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
+@Namespace("/masters")
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 public class CheckListExtnAction extends BaseFormAction

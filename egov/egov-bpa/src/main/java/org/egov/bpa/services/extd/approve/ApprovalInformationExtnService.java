@@ -46,9 +46,10 @@ import java.util.Map;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.RegnApprovalInformationExtn;
 import org.egov.infstr.services.PersistenceService;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class ApprovalInformationExtnService extends PersistenceService<RegnApprovalInformationExtn, Long>{
-
+	@Transactional
 	public RegnApprovalInformationExtn save(RegnApprovalInformationExtn approveInfo) {
 
 		if (approveInfo.getIsForwardToCmda() == null) {

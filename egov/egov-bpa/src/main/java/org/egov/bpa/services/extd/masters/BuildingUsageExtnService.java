@@ -43,7 +43,8 @@ import java.util.List;
 
 import org.egov.bpa.models.extd.masters.BuildingUsageExtn;
 import org.egov.infstr.services.PersistenceService;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class BuildingUsageExtnService extends PersistenceService<BuildingUsageExtn, Long>{
 	
 	private PersistenceService persistenceService;

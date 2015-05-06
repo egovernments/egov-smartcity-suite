@@ -49,13 +49,14 @@ import org.egov.bpa.services.extd.bill.BpaBillExtnServiceImpl;
 import org.egov.bpa.services.extd.bill.BpaBillableExtn;
 import org.egov.bpa.services.extd.register.RegisterBpaExtnService;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
  * @author Pradeep Kumar
  *
  */
-
+@Transactional(readOnly = true)
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 public class BpaFeeCollectionExtnAction  extends BaseFormAction{

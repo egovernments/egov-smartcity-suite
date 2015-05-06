@@ -45,13 +45,15 @@ import java.util.Date;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.bpa.models.extd.masters.ServiceTypeExtn;
 import org.egov.infstr.services.PersistenceService;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class ServiceTypeExtnService extends PersistenceService<ServiceTypeExtn, Long>
 {
 	@SuppressWarnings("rawtypes")
 	private PersistenceService persistenceService;
 	public static final String EDIT = "edit";
 
+	@Transactional
 	public ServiceTypeExtn save(ServiceTypeExtn serviceType)
 	{
 		

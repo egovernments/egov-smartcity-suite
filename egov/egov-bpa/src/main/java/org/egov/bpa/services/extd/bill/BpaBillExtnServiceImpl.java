@@ -128,8 +128,8 @@ public class BpaBillExtnServiceImpl extends BillServiceInterface{
 		EgBillDetails billdetail = new EgBillDetails();
 		billdetail.setFunctionCode(getFunctionCode()); //TODO ADD FUNCTIONCODE
 		billdetail.setOrderNo(orderNo);
-		billdetail.setCreateTimeStamp(new Date());
-		billdetail.setLastUpdatedTimestamp(new Date());
+		billdetail.setCreateDate(new Date());
+		billdetail.setModifiedDate(new Date());
 		billdetail.setCrAmount(creditAmount);
 		billdetail.setDrAmount(debitAmount);
 		billdetail.setGlcode(glCodeForDemandDetail);

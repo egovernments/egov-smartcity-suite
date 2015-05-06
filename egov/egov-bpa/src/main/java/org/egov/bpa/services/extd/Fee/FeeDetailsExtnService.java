@@ -56,7 +56,8 @@ import org.egov.bpa.services.extd.common.BpaDmdCollExtnService;
 import org.egov.bpa.services.extd.common.FeeExtnService;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infstr.services.PersistenceService;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class FeeDetailsExtnService extends PersistenceService{
 	
 	private BpaDmdCollExtnService bpaDmdCollExtnService;
@@ -98,7 +99,7 @@ public class FeeDetailsExtnService extends PersistenceService{
 	public void setBpaDmdCollExtnService(BpaDmdCollExtnService bpaDmdCollService) {
 		this.bpaDmdCollExtnService = bpaDmdCollService;
 	}
-
+	@Transactional
 	public RegistrationExtn save(List<BpaFeeExtn> santionFeeList, RegistrationExtn registrationObj) {
 		LOGGER.debug("Enter save ");
 		

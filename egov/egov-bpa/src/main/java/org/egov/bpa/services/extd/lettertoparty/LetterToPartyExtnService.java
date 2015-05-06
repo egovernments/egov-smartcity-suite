@@ -17,7 +17,9 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly=true)
 public class LetterToPartyExtnService extends PersistenceService<LetterToPartyExtn, Long>{
 	
 	private Logger LOGGER = Logger.getLogger(getClass());

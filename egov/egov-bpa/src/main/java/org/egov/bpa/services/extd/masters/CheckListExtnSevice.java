@@ -50,10 +50,9 @@ import java.util.Set;
 import org.egov.bpa.models.extd.masters.CheckListDetailsExtn;
 import org.egov.bpa.models.extd.masters.ChecklistExtn;
 import org.egov.infstr.services.PersistenceService;
-
-
-
-	public class CheckListExtnSevice extends PersistenceService<ChecklistExtn, Long>
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
+public class CheckListExtnSevice extends PersistenceService<ChecklistExtn, Long>
 	{
 		
 		
@@ -64,7 +63,7 @@ import org.egov.infstr.services.PersistenceService;
 		
 		
 		
-
+		@Transactional
 		public ChecklistExtn save(ChecklistExtn checkList,List<CheckListDetailsExtn> checkListDetailList)
 		{
 			

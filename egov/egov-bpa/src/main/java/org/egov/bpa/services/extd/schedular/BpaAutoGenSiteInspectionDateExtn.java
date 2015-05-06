@@ -56,6 +56,7 @@ import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infstr.utils.DateUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
@@ -63,6 +64,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @author Pradeep Kumar C M
  *
  */
+@Transactional(readOnly=true)
 @SuppressWarnings("unchecked")
 public class BpaAutoGenSiteInspectionDateExtn  extends AbstractQuartzJob{
 	
@@ -73,6 +75,7 @@ public class BpaAutoGenSiteInspectionDateExtn  extends AbstractQuartzJob{
 	private List<InspectionExtn> existingInspectionDetails=new ArrayList<InspectionExtn>();
 	private InspectionExtnService inspectionExtnService;
 	
+	@Transactional
 	@Override
 	public void executeJob() {
 		LOGGER.debug("Start Time ------->"+DateUtils.now());

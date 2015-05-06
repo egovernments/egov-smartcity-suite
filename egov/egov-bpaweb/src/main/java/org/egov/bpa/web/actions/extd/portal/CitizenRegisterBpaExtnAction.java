@@ -61,6 +61,7 @@ import net.sf.jasperreports.engine.JRException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -99,8 +100,10 @@ import org.egov.pims.commons.Position;
 import org.egov.pims.model.EmployeeView;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Criteria;
+import org.springframework.transaction.annotation.Transactional;
 
-
+@Transactional(readOnly = true)
+@Namespace("/portal")
 @SuppressWarnings("ser	ial")
 @Results({ 
 	@Result(name = "NOACCESS", type = "strem", location = "returnStream", params = { "contentType", "text/plain"}),

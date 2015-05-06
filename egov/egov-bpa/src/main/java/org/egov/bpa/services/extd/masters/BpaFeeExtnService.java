@@ -57,7 +57,8 @@ import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class BpaFeeExtnService extends PersistenceService<BpaFeeExtn, Long>
 {
 	
@@ -107,7 +108,7 @@ public Long getMaxFeeOrderNum(Long serviceTypeId){
 		return (Long) feeCrit.uniqueResult();
 	}
 		
-
+	@Transactional
 	public BpaFeeExtn save(BpaFeeExtn bpafee,List<BpaFeeDetailExtn> feeDetailList,BigDecimal fixedPrice,String mode)
 	{
 		

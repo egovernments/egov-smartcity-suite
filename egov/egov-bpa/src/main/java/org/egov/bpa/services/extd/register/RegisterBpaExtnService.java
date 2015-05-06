@@ -127,8 +127,9 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.transaction.annotation.Transactional;
 
-
+@Transactional(readOnly=true)
 public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn, Long> {
 
 	private Logger LOGGER = Logger.getLogger(getClass());
@@ -170,6 +171,7 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 	/**
 	* Code Reviewed By Gauthami.
 	*/
+	@Transactional
 	public RegistrationExtn closeRegistration(RegistrationExtn registration,
 			String workFlowAction, String approverComments) {
 		
@@ -198,6 +200,7 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 		
 		
 	}
+	@Transactional
 	public RegistrationExtn createBpa( RegistrationExtn registration,BpaAddressExtn applicantrAddress,String autoDcr,BpaAddressExtn siteAddress,Long boundaryStateId,String workFlowAction,String approverComments, Long existingbuildingCategoryId, Long proposedbuildingCategoryId,Boolean callWorkFlow, Position position)
 	{
 		oldStatus=registration.getEgwStatus();
@@ -911,7 +914,7 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 	}
 	
  
-	
+	@Transactional
 		public RegistrationExtn createLetterToParty(LetterToPartyExtn letterToParty,List<LpChecklistExtn> chkListDet,
 				RegistrationExtn registrationObj,String workFlowAction, String approverComments){
 			
@@ -1076,7 +1079,7 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 			return registration;
 		}
 		
-		
+		@Transactional
 		public RegistrationExtn updateSignature(RegistrationExtn registration) {
 			EgwStatus oldStatus = registration.getEgwStatus();
 			
@@ -1089,7 +1092,7 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 			}
 			return registration;
 		}
-		
+		@Transactional
 		public RegistrationExtn updateOrderPrepStatus(RegistrationExtn registration) {
 			EgwStatus oldStatus = registration.getEgwStatus();
 			
@@ -1104,7 +1107,7 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 			}
 			return registration;
 		}
-		
+		@Transactional
 		public RegistrationExtn updateOrderIssueStatus(RegistrationExtn registration) {
 			EgwStatus oldStatus = registration.getEgwStatus();
 			
@@ -1119,7 +1122,7 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 			}
 			return registration;
 		}
-
+@Transactional
 		public RegistrationExtn rejectOrderPrepStatus(RegistrationExtn registration) {
 			EgwStatus oldStatus = registration.getEgwStatus();
 			
@@ -1134,7 +1137,7 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 			}
 			return registration;
 		}
-		
+		@Transactional
 		public RegistrationExtn rejectOrderIssueStatus(RegistrationExtn registration) {
 			EgwStatus oldStatus = registration.getEgwStatus();
 			
@@ -1356,6 +1359,7 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 		}
 		return reportId;
 	}
+	@Transactional
 	public RegistrationExtn createCMDALetterToParty(CMDALetterToPartyExtn letterToParty,
 			RegistrationExtn registrationObj,String workFlowAction, String approverComments){
 		

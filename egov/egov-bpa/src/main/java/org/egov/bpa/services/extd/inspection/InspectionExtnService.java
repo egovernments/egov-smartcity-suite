@@ -63,8 +63,9 @@ import org.egov.infra.admin.master.entity.User;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.transaction.annotation.Transactional;
 
-
+@Transactional(readOnly=true)
 public class InspectionExtnService extends PersistenceService<InspectionExtn, Long>{
 
 	private PersistenceService persistenceService;
@@ -114,7 +115,7 @@ public class InspectionExtnService extends PersistenceService<InspectionExtn, Lo
 		return (List<InspectionExtn>) findAllBy("from InspectionExtn where registration=? and isInspected=? order by id desc,inspectionDate desc",registrationObj,Boolean.TRUE);
 }
 
-
+	@Transactional
 	public InspectionExtn save(InspectionExtn inspection,User loginuser,String postponeReason,Boolean isInspected,EgwStatus  status) {
 		//inspection.getInspectionDetails().setId(inspection.getId());
 		

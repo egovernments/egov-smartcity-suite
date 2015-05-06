@@ -31,7 +31,10 @@ import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly=true)
 public class BpaDmdCollExtnService {
 	private FeeExtnService feeExtnService ;
 	private static final Logger LOGGER = Logger.getLogger(BpaDmdCollExtnService.class);
@@ -40,14 +43,18 @@ public class BpaDmdCollExtnService {
 	protected PersistenceService<EgDemandReason,Long> demandReasonService;
 	protected PersistenceService<EgDemand,Long> egDemandService;
     //private PersistenceService persistenceService;
-	
+	@Autowired
+	@Qualifier(value = "moduleDAO")
+	private ModuleDao moduleDao;
+	@Autowired
+	private InstallmentDao installmentDao;
 	/**
 	 * @param serviceTypeId
 	 * @param areasqmt
 	 * @param feeType
 	 * @return EgDemand
 	 */
-	
+	@Transactional
 	public EgDemand createDemand(Long serviceTypeId, BigDecimal areasqmt, String feeType) {
 		EgDemand demand = null;
 		Set<EgDemandDetails> demandDetailSet = new HashSet<EgDemandDetails>();
@@ -103,8 +110,8 @@ public class BpaDmdCollExtnService {
 		dmd.setAmtRebate(BigDecimal.ZERO);
 		dmd.setBaseDemand(totaldmdAmt);
 		dmd.setIsHistory("N");
-		dmd.setLastUpdatedTimestamp(new Date());
-		dmd.setCreateTimestamp(new Date());
+		dmd.setModifiedDate(new Date());
+		dmd.setCreateDate(new Date());
 		dmd.setEgInstallmentMaster(installment);
 		
 		return dmd;
@@ -116,8 +123,8 @@ public class BpaDmdCollExtnService {
 		dmdDet.setAmtCollected(BigDecimal.ZERO);
 		dmdDet.setAmtRebate(BigDecimal.ZERO);
 		dmdDet.setEgDemandReason(getEgDemandReason(feeDet));
-		dmdDet.setCreateTimestamp(new Date());
-		dmdDet.setLastUpdatedTimeStamp(new Date());
+		dmdDet.setCreateDate(new Date());
+		dmdDet.setModifiedDate(new Date());
 		return dmdDet;
 	}
 	
@@ -129,6 +136,7 @@ public class BpaDmdCollExtnService {
 	 * @return EgDemand
 	 * This api used only first time when admission fee collected.
 	 */
+	@Transactional
 	public EgDemand updateDemand(Long serviceTypeId, BigDecimal areasqmt, String feeType, EgDemand demand) {
 		//Set<EgDemandDetails> demandDetailSet = new HashSet<EgDemandDetails>();
 		//Set<EgDemandDetails> removeDmdDetSet = new HashSet<EgDemandDetails>();
@@ -164,7 +172,7 @@ public class BpaDmdCollExtnService {
 					      if (!feeDet.getAmount().equals(BigDecimal.ZERO) && !(dmdDtl.getAmount().compareTo(feeDet.getAmount())==0)) {
 						    dmdDtl.getEgDemand().setBaseDemand(dmdDtl.getEgDemand().getBaseDemand().add(feeDet.getAmount()).subtract(dmdDtl.getAmount()));
 						    dmdDtl.setAmount(feeDet.getAmount());
-						    demand.setLastUpdatedTimestamp(new Date());
+						    demand.setModifiedDate(new Date());
 						    updateDemandFlag=true;
 							//totaldmdAmt = totaldmdAmt.add(feeDet.getAmount());
 							//persistenceService.setType(EgDemandDetails.class);
@@ -187,7 +195,7 @@ public class BpaDmdCollExtnService {
 									updateDemandFlag=true;
 									   dmdDtl.getEgDemand().setBaseDemand(dmdDtl.getEgDemand().getBaseDemand().add(feeDet.getAmount()).subtract(dmdDtl.getAmount()));
 									    dmdDtl.setAmount(feeDet.getAmount());
-									    demand.setLastUpdatedTimestamp(new Date());
+									    demand.setModifiedDate(new Date());
 									
 								}
 							}
@@ -202,7 +210,7 @@ public class BpaDmdCollExtnService {
 									demand.addEgDemandDetails(dmdDet);
 								}
 								
-								 demand.setLastUpdatedTimestamp(new Date());
+								 demand.setModifiedDate(new Date());
 								 updateDemandFlag=true;
 							}
 						}
@@ -258,7 +266,7 @@ public class BpaDmdCollExtnService {
 				//generate demand only when amount exists
 				if (isAmountExist) {
 					demand.setBaseDemand(totaldmdAmt);
-					demand.setLastUpdatedTimestamp(new Date());
+					demand.setModifiedDate(new Date());
 
 					persistenceService.setType(EgDemand.class);
 					persistenceService.update(demand);
@@ -275,19 +283,13 @@ public class BpaDmdCollExtnService {
 	}
 	
 	/**
-	 * @return Installment..TODO PHIONIX
+	 * @return Installment..added ModuleDao changes
 	 */
 	public Installment getCurrentInstallment() {
-		InstallmentDao installmentDao = null;
-		Installment installment=null;
-				//CommonsDaoFactory.getDAOFactory().getInstallmentDao();
-		ModuleDao moduleDao =null;
-				//GenericDaoFactory.getDAOFactory().getModuleDao();
-		if(moduleDao!=null){
+		Installment installment = null;
 		Module module = moduleDao.getModuleByName(BPAMODULENAME);
+		installment = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
 		
-		 installment = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
-		}
 		return installment;
 	}
 	
@@ -354,8 +356,8 @@ public class BpaDmdCollExtnService {
 			egDmdRsnMstr.setOrderId(Long.valueOf("1"));
 			egDmdRsnMstr.setEgReasonCategory(egRsnCategory);
 			egDmdRsnMstr.setIsDebit("N");
-			egDmdRsnMstr.setCreateTimeStamp(new Date());
-			egDmdRsnMstr.setLastUpdatedTimeStamp(new Date());
+			egDmdRsnMstr.setCreatedDate(new Date());
+			egDmdRsnMstr.setModifiedDate(new Date());
 			egDemandReasonMasterService.persist(egDmdRsnMstr);
 			
 			//Create defaultly demand reason along with demand master
@@ -398,8 +400,8 @@ public class BpaDmdCollExtnService {
 		egDmdRsn.setEgDemandReasonMaster(egDemandReasonMaster);
 		egDmdRsn.setEgInstallmentMaster(getCurrentInstallment());
 		egDmdRsn.setGlcodeId(bpaFee.getGlcode());
-		egDmdRsn.setCreateTimestamp(new Date());
-		egDmdRsn.setLastUpdatedTimestamp(new Date());
+		egDmdRsn.setCreateDate(new Date());
+		egDmdRsn.setModifiedDate(new Date());
 		 demandReasonService.persist(egDmdRsn);
 		return egDmdRsn;
 	}
@@ -438,7 +440,7 @@ public class BpaDmdCollExtnService {
 			PersistenceService<EgDemand, Long> egDemandService) {
 		this.egDemandService = egDemandService;
 	}
-
+	@Transactional
 	public RegistrationExtn generateDemandUsingSanctionFeeList(
 			List<BpaFeeExtn> santionFeeList, RegistrationExtn registrationObj) {
 		
@@ -595,7 +597,7 @@ public class BpaDmdCollExtnService {
 		demand.setAmtCollected(BigDecimal.ZERO);
 		demand.setAmtRebate(BigDecimal.ZERO);
 		demand.setIsHistory("N");
-		demand.setLastUpdatedTimestamp(new Date());
+		demand.setModifiedDate(new Date());
 		demand.setCreateTimestamp(new Date());
 		if (installment == null) {
 			throw new EGOVRuntimeException("Installment is null");

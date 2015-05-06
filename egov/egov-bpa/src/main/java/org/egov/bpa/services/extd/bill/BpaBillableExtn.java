@@ -39,6 +39,8 @@
  */
 package org.egov.bpa.services.extd.bill;
 
+import static org.egov.bpa.constants.BpaConstants.BPAMODULENAME;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,8 +59,11 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.utils.DemandConstants;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.Module;
+import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @SuppressWarnings("unchecked")
 public class BpaBillableExtn  extends AbstractBillable  {
@@ -69,6 +74,9 @@ public class BpaBillableExtn  extends AbstractBillable  {
 	public static final String ADDRESSTYPEASOWNER = "OWNER";
 	private PersistenceService persistenceService;
 	private RegistrationExtn registration;
+	@Autowired
+	@Qualifier(value = "moduleDAO")
+	private ModuleDao moduleDao;
 	private BpaCommonExtnService bpaCommonExtnService;	
 	@Override
 	public String getBillPayee() {
@@ -187,8 +195,9 @@ public class BpaBillableExtn  extends AbstractBillable  {
 
 	@Override
 	public Module getModule() {
-		return null;//TODO Phinix
-		// return  GenericDaoFactory.getDAOFactory().getModuleDao().getModuleByName(BpaConstants.BPAMODULENAME);
+		
+		Module module = moduleDao.getModuleByName(BPAMODULENAME);
+		 return  module;
      }
 
 	@Override

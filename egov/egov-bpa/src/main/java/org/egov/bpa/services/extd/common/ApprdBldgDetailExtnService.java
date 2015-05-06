@@ -47,10 +47,12 @@ import org.egov.bpa.models.extd.ApprdBuildingDetailsExtn;
 import org.egov.bpa.models.extd.ApprdBuildingFloorDtlsExtn;
 import org.egov.bpa.models.extd.RegistrationExtn;
 import org.egov.infstr.services.PersistenceService;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly=true)
 public class ApprdBldgDetailExtnService extends PersistenceService<ApprdBuildingDetailsExtn, Long>{
 	private PersistenceService persistenceService;
-
+	@Transactional
 	public ApprdBuildingDetailsExtn saveApprdBldgDetail(ApprdBuildingDetailsExtn apprdBldgDtls) {
 		apprdBldgDtls = (ApprdBuildingDetailsExtn) persist(apprdBldgDtls);
 		

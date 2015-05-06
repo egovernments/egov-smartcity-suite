@@ -63,7 +63,8 @@ import org.egov.bpa.services.extd.register.RegisterBpaExtnService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.web.actions.BaseFormAction;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional(readOnly = true)
 @Results( { @Result(name = AjaxExtnCommonAction.AJAX_RESULT, type = "stream", location = "returnStream", params = { "contentType","text/plain" }) })
 @ParentPackage("egov")
 public class AjaxExtnCommonAction extends BaseFormAction {

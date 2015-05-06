@@ -43,6 +43,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bpa.constants.BpaConstants;
@@ -55,7 +56,10 @@ import org.egov.bpa.services.extd.register.RegisterBpaExtnService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
+@Namespace("/approve")
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 public class ApprovalInformationExtnAction extends BaseFormAction{

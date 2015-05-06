@@ -47,7 +47,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.RegistrationExtn;
 import org.egov.bpa.models.extd.RegistrationFeeDetailExtn;
@@ -58,317 +57,370 @@ import org.egov.bpa.services.extd.common.BpaNumberGenerationExtnService;
 import org.egov.bpa.services.extd.common.BpaPimsInternalExtnServiceFactory;
 import org.egov.commons.EgwSatuschange;
 import org.egov.commons.EgwStatus;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.workflow.entity.State;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 /*import org.egov.infstr.workflow.WorkflowService;*/
-
 import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.transaction.annotation.Transactional;
 
-public class RegistrationFeeExtnService extends PersistenceService<RegistrationFeeExtn, Long>{
+@Transactional(readOnly = true)
+public class RegistrationFeeExtnService extends
+		PersistenceService<RegistrationFeeExtn, Long> {
 
-private PersistenceService persistenceService;
-//private WorkflowService <RegistrationFeeExtn> registrationFeeWorkflowExtnService;
-private BpaPimsInternalExtnServiceFactory bpaPimsExtnFactory;
-private Long approverId; 
-private BpaCommonExtnService bpaCommonExtnService;
-private BpaNumberGenerationExtnService bpaNumberGenerationExtnService;
-private Date feeDate=new Date();
-private final static  Logger LOGGER=Logger.getLogger(RegistrationFeeExtnService.class);
+	private PersistenceService persistenceService;
+	// private WorkflowService <RegistrationFeeExtn>
+	// registrationFeeWorkflowExtnService;
+	private BpaPimsInternalExtnServiceFactory bpaPimsExtnFactory;
+	private Long approverId;
+	private BpaCommonExtnService bpaCommonExtnService;
+	private BpaNumberGenerationExtnService bpaNumberGenerationExtnService;
+	private Date feeDate = new Date();
+	private final static Logger LOGGER = Logger
+			.getLogger(RegistrationFeeExtnService.class);
 
-public Date getFeeDate() {
-	return feeDate;
-}
+	public Date getFeeDate() {
+		return feeDate;
+	}
 
-public void setFeeDate(Date feeDate) {
-	this.feeDate = feeDate;
-}
+	public void setFeeDate(Date feeDate) {
+		this.feeDate = feeDate;
+	}
 
-public BpaNumberGenerationExtnService getBpaNumberGenerationExtnService() {
-	return bpaNumberGenerationExtnService;
-}
+	public BpaNumberGenerationExtnService getBpaNumberGenerationExtnService() {
+		return bpaNumberGenerationExtnService;
+	}
 
-public void setBpaNumberGenerationExtnService(
-		BpaNumberGenerationExtnService bpaNumberGenerationService) {
-	this.bpaNumberGenerationExtnService = bpaNumberGenerationService;
-}
+	public void setBpaNumberGenerationExtnService(
+			BpaNumberGenerationExtnService bpaNumberGenerationService) {
+		this.bpaNumberGenerationExtnService = bpaNumberGenerationService;
+	}
 
-public BpaCommonExtnService getBpaCommonExtnService() {
-	return bpaCommonExtnService;
-}
+	public BpaCommonExtnService getBpaCommonExtnService() {
+		return bpaCommonExtnService;
+	}
 
-public void setBpaCommonExtnService(BpaCommonExtnService bpaCommonService) {
-	this.bpaCommonExtnService = bpaCommonService;
-}
+	public void setBpaCommonExtnService(BpaCommonExtnService bpaCommonService) {
+		this.bpaCommonExtnService = bpaCommonService;
+	}
 
+	public BpaPimsInternalExtnServiceFactory getBpaPimsExtnFactory() {
+		return bpaPimsExtnFactory;
+	}
 
-public BpaPimsInternalExtnServiceFactory getBpaPimsExtnFactory() {
-	return bpaPimsExtnFactory;
-}
+	public void setBpaPimsExtnFactory(
+			BpaPimsInternalExtnServiceFactory bpaPimsFactory) {
+		this.bpaPimsExtnFactory = bpaPimsFactory;
+	}
 
-public void setBpaPimsExtnFactory(BpaPimsInternalExtnServiceFactory bpaPimsFactory) {
-	this.bpaPimsExtnFactory = bpaPimsFactory;
-}
+	/*
+	 * public WorkflowService<RegistrationFeeExtn>
+	 * getRegistrationFeeWorkflowExtnService() { return
+	 * registrationFeeWorkflowExtnService; }
+	 * 
+	 * public void setRegistrationFeeWorkflowExtnService(
+	 * WorkflowService<RegistrationFeeExtn> registrationFeeWorkflowService) {
+	 * this.registrationFeeWorkflowExtnService = registrationFeeWorkflowService;
+	 * }
+	 */
+	public PersistenceService getPersistenceService() {
+		return persistenceService;
+	}
 
-/*public WorkflowService<RegistrationFeeExtn> getRegistrationFeeWorkflowExtnService() {
-	return registrationFeeWorkflowExtnService;
-}
+	public void setPersistenceService(PersistenceService persistenceService) {
+		this.persistenceService = persistenceService;
+	}
 
-public void setRegistrationFeeWorkflowExtnService(
-		WorkflowService<RegistrationFeeExtn> registrationFeeWorkflowService) {
-	this.registrationFeeWorkflowExtnService = registrationFeeWorkflowService;
-}
-*/
-public PersistenceService getPersistenceService() {
-	return persistenceService;
-}
+	public RegistrationExtn saveLegecyFeesinRegistrationFee(
+			RegistrationExtn registrationObj, List<BpaFeeExtn> santionFeeList,
+			Date feeDate) {
 
-public void setPersistenceService(PersistenceService persistenceService) {
-	this.persistenceService = persistenceService;
-}
+		this.feeDate = feeDate;
+		LOGGER.debug("Saving legacy feedetails in RegistrationFee");
+		return saveFeesinRegistrationFee(registrationObj, santionFeeList);
+	}
 
-public RegistrationExtn saveLegecyFeesinRegistrationFee(RegistrationExtn registrationObj,List<BpaFeeExtn> santionFeeList,Date feeDate) {
-	
-	this.feeDate=feeDate;
-	 LOGGER.debug("Saving legacy feedetails in RegistrationFee");
-	return saveFeesinRegistrationFee(registrationObj,santionFeeList);
-}
-
-public RegistrationExtn saveFeesinRegistrationFee(RegistrationExtn registrationObj,List<BpaFeeExtn> santionFeeList) {
-	   LOGGER.debug("Enter saveFeesinRegistrationFee");
-		RegistrationFeeExtn registrationFee=new RegistrationFeeExtn();
-		if(feeDate!=null)
-		registrationFee.setFeeDate(new Date());
+	@Transactional
+	public RegistrationExtn saveFeesinRegistrationFee(
+			RegistrationExtn registrationObj, List<BpaFeeExtn> santionFeeList) {
+		LOGGER.debug("Enter saveFeesinRegistrationFee");
+		RegistrationFeeExtn registrationFee = new RegistrationFeeExtn();
+		if (feeDate != null)
+			registrationFee.setFeeDate(new Date());
 		else
 			registrationFee.setFeeDate(feeDate);
-		registrationFee.setEgwStatus(bpaCommonExtnService.getstatusbyCode(BpaConstants.BPAREGISTRATIONFEEMODULESTATUSAPPROVED, BpaConstants.BPAREGISTRATIONFEEMODULE));
-		Boundary zone=(Boundary) bpaCommonExtnService.getZoneNameFromAdminboundaryid(registrationObj.getAdminboundaryid());
-		registrationFee.setChallanNumber(bpaNumberGenerationExtnService.generateChallanNumberFormat(zone));
+		registrationFee.setEgwStatus(bpaCommonExtnService.getstatusbyCode(
+				BpaConstants.BPAREGISTRATIONFEEMODULESTATUSAPPROVED,
+				BpaConstants.BPAREGISTRATIONFEEMODULE));
+		Boundary zone = (Boundary) bpaCommonExtnService
+				.getZoneNameFromAdminboundaryid(registrationObj
+						.getAdminboundaryid());
+		registrationFee.setChallanNumber(bpaNumberGenerationExtnService
+				.generateChallanNumberFormat(zone));
 		registrationFee.setRegistration(registrationObj);
 		registrationFee.setFeeRemarks(registrationObj.getFeeRemarks());
 		registrationFee.setIsRevised(Boolean.FALSE);
-		Set<RegistrationFeeDetailExtn>	registrationFeeDetailsSet=new HashSet<RegistrationFeeDetailExtn>();
-		
-		for(BpaFeeExtn fee:santionFeeList){
-			RegistrationFeeDetailExtn registrationFeeDetail=new RegistrationFeeDetailExtn();
+		Set<RegistrationFeeDetailExtn> registrationFeeDetailsSet = new HashSet<RegistrationFeeDetailExtn>();
+
+		for (BpaFeeExtn fee : santionFeeList) {
+			RegistrationFeeDetailExtn registrationFeeDetail = new RegistrationFeeDetailExtn();
 			registrationFeeDetail.setBpaFee(fee);
-			registrationFeeDetail.setAmount((fee.getFeeAmount()!=null && !"".equals(fee.getFeeAmount()))?fee.getFeeAmount():BigDecimal.ZERO);
+			registrationFeeDetail.setAmount((fee.getFeeAmount() != null && !""
+					.equals(fee.getFeeAmount())) ? fee.getFeeAmount()
+					: BigDecimal.ZERO);
 			registrationFeeDetail.setRegistrationFee(registrationFee);
 			registrationFeeDetailsSet.add(registrationFeeDetail);
 		}
-		
+
 		registrationFee.setRegistrationFeeDetailsSet(registrationFeeDetailsSet);
 		persistenceService.getSession().clear();
 		persist(registrationFee);
-		 LOGGER.debug("Saved RegistrationFee");
-		
-		registrationObj.setRegistrationFeeChallanNumber(registrationFee.getChallanNumber());
-		  LOGGER.debug("Exit saveFeesinRegistrationFee");
+		LOGGER.debug("Saved RegistrationFee");
+
+		registrationObj.setRegistrationFeeChallanNumber(registrationFee
+				.getChallanNumber());
+		LOGGER.debug("Exit saveFeesinRegistrationFee");
 		return registrationObj;
 	}
 
-public RegistrationFeeExtn getNonRevisedRegistrationFees(Long id) {
-	 LOGGER.debug("Enter getNonRevisedRegistrationFees");
-	Criteria feeCrit=persistenceService.getSession().createCriteria(RegistrationFeeExtn.class);
-	feeCrit.add(Restrictions.eq("registration.id", id));
-	feeCrit.add(Restrictions.eq("isRevised", Boolean.FALSE));
-	 LOGGER.debug("Exit getNonRevisedRegistrationFees");
-	return (RegistrationFeeExtn) feeCrit.uniqueResult();
-}
- 
-
-@SuppressWarnings("unchecked")
-public List<RegistrationFeeExtn> getPriorFeeDetailsExcludingCurrentRegFeeId(Long registrationId,Long registrationFeeId) {
-	 LOGGER.debug("Enter getPriorFeeDetailsExcludingCurrentRegFeeId");
-	Criteria feeCrit=persistenceService.getSession().createCriteria(RegistrationFeeExtn.class).createAlias("egwStatus", "status");
-	feeCrit.add(Restrictions.eq("registration.id", registrationId));
-	if(registrationFeeId!=null)
-		feeCrit.add(Restrictions.ne("id", registrationFeeId));
-	feeCrit.add(Restrictions.ne("status.code", "Cancelled"));
-	feeCrit.addOrder(Order.desc("id"));
-	 LOGGER.debug("Exit getPriorFeeDetailsExcludingCurrentRegFeeId");
-	return feeCrit.list();
-	
-}
-
-@SuppressWarnings("unchecked")
-public List<RegistrationFeeExtn> getpreviousFeeDetails(Long registrationId) {
-	
-	 LOGGER.debug("Enter getpreviousFeeDetails");
-	
-	Criteria feeCrit=persistenceService.getSession().createCriteria(RegistrationFeeExtn.class).createAlias("egwStatus", "status");
-	feeCrit.add(Restrictions.eq("registration.id", registrationId));
-	feeCrit.add(Restrictions.eq("status.code", "Approved"));
-	feeCrit.addOrder(Order.asc("feeRemarks"));
-	 LOGGER.debug("Exit getpreviousFeeDetails");
-	return feeCrit.list();
-	
-}
-
-
-
-
-public Integer getRevisedApprovedRegistrationFeeSize(Long registrationId) {
-	 LOGGER.debug("Enter getRevisedApprovedRegistrationFeeSize");
-	Criteria feeCrit=persistenceService.getSession().createCriteria(RegistrationFeeExtn.class).createAlias("egwStatus", "status");
-	feeCrit.add(Restrictions.eq("registration.id", registrationId));
-	feeCrit.add(Restrictions.eq("status.code", "Approved"));
-	feeCrit.add(Restrictions.eq("isRevised", Boolean.TRUE));
-	 LOGGER.debug("Exit getRevisedApprovedRegistrationFeeSize");
-	return feeCrit.list().size();
-}
-
-public List<RegistrationFeeDetailExtn> getRegistrationFeeDetails(Long registrationFeeId) {
-	 LOGGER.debug("Enter getRegistrationFeeDetails in registrationfeeservice " );
-	 if(registrationFeeId!=null){
-			Criteria feedtlCrit=persistenceService.getSession().createCriteria(RegistrationFeeDetailExtn.class);
-			feedtlCrit.add(Restrictions.eq("registrationFee.id", registrationFeeId));
-			 LOGGER.debug("Exit getRegistrationFeeDetails inside registrationfeeservice");
-			 return feedtlCrit.list();
-			 }
-			return Collections.EMPTY_LIST;
-	
-}
-
-public RegistrationFeeExtn getRegistrationFeeById(Long registrationFeeId) {
-	
-	return findById(registrationFeeId);
-}
-
-public Integer getAlreadyCreatedRegistrationFee(Long registrationId) {
-	 LOGGER.debug("Enter getAlreadyCreatedRegistrationFee");
-	Criteria feeCrit=persistenceService.getSession().createCriteria(RegistrationFeeExtn.class).createAlias("egwStatus", "status");
-	feeCrit.add(Restrictions.eq("registration.id", registrationId));
-	String [] statusarr=new String[2];
-	statusarr[0]="Created";
-	statusarr[1]="Rejected";
-	feeCrit.add(Restrictions.in("status.code", statusarr));
-	feeCrit.add(Restrictions.eq("isRevised", Boolean.TRUE));
-	 LOGGER.debug("Exit getAlreadyCreatedRegistrationFee");
-	return feeCrit.list().size();
-}
-
-
-public RegistrationFeeExtn saveRegistrationFee(RegistrationFeeExtn registrationFee,List<RegistrationFeeDetailExtn> newfeeDetailsList,String workflowaction,String approvercomments) {
-
-	 LOGGER.debug("Enter saveRegistrationFee");
-	
-	registrationFee=buildFeeDetails(registrationFee,newfeeDetailsList);
-	
-	  if(registrationFee.getApproverPositionId()!=null && registrationFee.getApproverPositionId()!=-1)
-	   {
-		  approverId= registrationFee.getApproverPositionId();
-	   }
-	if(registrationFee.getId()==null){ 
-		
-		registrationFee.setEgwStatus(bpaCommonExtnService.getstatusbyCode("Created",BpaConstants.BPAREGISTRATIONFEEMODULE));
-		registrationFee=persist(registrationFee);
+	public RegistrationFeeExtn getNonRevisedRegistrationFees(Long id) {
+		LOGGER.debug("Enter getNonRevisedRegistrationFees");
+		Criteria feeCrit = persistenceService.getSession().createCriteria(
+				RegistrationFeeExtn.class);
+		feeCrit.add(Restrictions.eq("registration.id", id));
+		feeCrit.add(Restrictions.eq("isRevised", Boolean.FALSE));
+		LOGGER.debug("Exit getNonRevisedRegistrationFees");
+		return (RegistrationFeeExtn) feeCrit.uniqueResult();
 	}
-	else{
-		
-		registrationFee=merge(registrationFee);
-	}
-	   if(approverId!=null)
-		   registrationFee.setApproverPositionId(approverId);
-	
-	registrationFee =	createWorkflow(registrationFee,workflowaction,approvercomments);
-	 LOGGER.debug("Exit saveRegistrationFee");
-	return registrationFee;
-	
-}
 
-private RegistrationFeeExtn createWorkflow(RegistrationFeeExtn registrationFee,String workFlowAction,String approverComments) 
-{ LOGGER.debug("Enter createWorkflow");
-	try
-	{	
-		if(registrationFee.getState()== null){
-			Position pos = bpaPimsExtnFactory.getPositionByUserId((EGOVThreadLocals.getUserId()));			
-		//	registrationFee = (RegistrationFeeExtn) registrationFeeWorkflowExtnService.start(registrationFee, pos, "Revised Fee created.");
+	@SuppressWarnings("unchecked")
+	public List<RegistrationFeeExtn> getPriorFeeDetailsExcludingCurrentRegFeeId(
+			Long registrationId, Long registrationFeeId) {
+		LOGGER.debug("Enter getPriorFeeDetailsExcludingCurrentRegFeeId");
+		Criteria feeCrit = persistenceService.getSession()
+				.createCriteria(RegistrationFeeExtn.class)
+				.createAlias("egwStatus", "status");
+		feeCrit.add(Restrictions.eq("registration.id", registrationId));
+		if (registrationFeeId != null)
+			feeCrit.add(Restrictions.ne("id", registrationFeeId));
+		feeCrit.add(Restrictions.ne("status.code", "Cancelled"));
+		feeCrit.addOrder(Order.desc("id"));
+		LOGGER.debug("Exit getPriorFeeDetailsExcludingCurrentRegFeeId");
+		return feeCrit.list();
+
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<RegistrationFeeExtn> getpreviousFeeDetails(Long registrationId) {
+
+		LOGGER.debug("Enter getpreviousFeeDetails");
+
+		Criteria feeCrit = persistenceService.getSession()
+				.createCriteria(RegistrationFeeExtn.class)
+				.createAlias("egwStatus", "status");
+		feeCrit.add(Restrictions.eq("registration.id", registrationId));
+		feeCrit.add(Restrictions.eq("status.code", "Approved"));
+		feeCrit.addOrder(Order.asc("feeRemarks"));
+		LOGGER.debug("Exit getpreviousFeeDetails");
+		return feeCrit.list();
+
+	}
+
+	public Integer getRevisedApprovedRegistrationFeeSize(Long registrationId) {
+		LOGGER.debug("Enter getRevisedApprovedRegistrationFeeSize");
+		Criteria feeCrit = persistenceService.getSession()
+				.createCriteria(RegistrationFeeExtn.class)
+				.createAlias("egwStatus", "status");
+		feeCrit.add(Restrictions.eq("registration.id", registrationId));
+		feeCrit.add(Restrictions.eq("status.code", "Approved"));
+		feeCrit.add(Restrictions.eq("isRevised", Boolean.TRUE));
+		LOGGER.debug("Exit getRevisedApprovedRegistrationFeeSize");
+		return feeCrit.list().size();
+	}
+
+	public List<RegistrationFeeDetailExtn> getRegistrationFeeDetails(
+			Long registrationFeeId) {
+		LOGGER.debug("Enter getRegistrationFeeDetails in registrationfeeservice ");
+		if (registrationFeeId != null) {
+			Criteria feedtlCrit = persistenceService.getSession()
+					.createCriteria(RegistrationFeeDetailExtn.class);
+			feedtlCrit.add(Restrictions.eq("registrationFee.id",
+					registrationFeeId));
+			LOGGER.debug("Exit getRegistrationFeeDetails inside registrationfeeservice");
+			return feedtlCrit.list();
 		}
-		 
-		if(workFlowAction!=null && !"".equals(workFlowAction) && !BpaConstants.SCRIPT_SAVE.equalsIgnoreCase(workFlowAction)){
-			String comments= (approverComments==null || "".equals(approverComments.trim()))?"":approverComments;
-			
-			/*
-			 * In case of rejection, get previous state of record from matrix table. Search previous state owner from workflow state (registration.getHistory()).
-			 */
-			if(BpaConstants.SCRIPT_REJECT.equalsIgnoreCase(workFlowAction) )
-			{
-				LOGGER.debug("started  reject  ");
-				WorkFlowMatrix wfMatrix= bpaCommonExtnService.getPreviousStateFromWfMatrix(registrationFee.getStateType(),null,null,null,registrationFee.getCurrentState().getValue(),registrationFee.getCurrentState().getNextAction());
-				if(wfMatrix!=null)
-				{
-					registrationFee.setPreviousObjectState(wfMatrix.getCurrentState());
-					registrationFee.setPreviousObjectAction(wfMatrix.getPendingActions());
-					
-					/*for(State state: registrationFee.getHistory())
-					{
-						 if (state.getValue().equalsIgnoreCase(wfMatrix.getCurrentState()))
-						 {
-							 registrationFee.setPreviousStateOwnerId(state.getOwner().getId());
-							 break;
-						 }
-					}*/
+		return Collections.EMPTY_LIST;
+
+	}
+
+	public RegistrationFeeExtn getRegistrationFeeById(Long registrationFeeId) {
+
+		return findById(registrationFeeId);
+	}
+
+	public Integer getAlreadyCreatedRegistrationFee(Long registrationId) {
+		LOGGER.debug("Enter getAlreadyCreatedRegistrationFee");
+		Criteria feeCrit = persistenceService.getSession()
+				.createCriteria(RegistrationFeeExtn.class)
+				.createAlias("egwStatus", "status");
+		feeCrit.add(Restrictions.eq("registration.id", registrationId));
+		String[] statusarr = new String[2];
+		statusarr[0] = "Created";
+		statusarr[1] = "Rejected";
+		feeCrit.add(Restrictions.in("status.code", statusarr));
+		feeCrit.add(Restrictions.eq("isRevised", Boolean.TRUE));
+		LOGGER.debug("Exit getAlreadyCreatedRegistrationFee");
+		return feeCrit.list().size();
+	}
+
+	@Transactional
+	public RegistrationFeeExtn saveRegistrationFee(
+			RegistrationFeeExtn registrationFee,
+			List<RegistrationFeeDetailExtn> newfeeDetailsList,
+			String workflowaction, String approvercomments) {
+
+		LOGGER.debug("Enter saveRegistrationFee");
+
+		registrationFee = buildFeeDetails(registrationFee, newfeeDetailsList);
+
+		if (registrationFee.getApproverPositionId() != null
+				&& registrationFee.getApproverPositionId() != -1) {
+			approverId = registrationFee.getApproverPositionId();
+		}
+		if (registrationFee.getId() == null) {
+
+			registrationFee.setEgwStatus(bpaCommonExtnService.getstatusbyCode(
+					"Created", BpaConstants.BPAREGISTRATIONFEEMODULE));
+			registrationFee = persist(registrationFee);
+		} else {
+
+			registrationFee = merge(registrationFee);
+		}
+		if (approverId != null)
+			registrationFee.setApproverPositionId(approverId);
+
+		registrationFee = createWorkflow(registrationFee, workflowaction,
+				approvercomments);
+		LOGGER.debug("Exit saveRegistrationFee");
+		return registrationFee;
+
+	}
+
+	private RegistrationFeeExtn createWorkflow(
+			RegistrationFeeExtn registrationFee, String workFlowAction,
+			String approverComments) {
+		LOGGER.debug("Enter createWorkflow");
+		try {
+			if (registrationFee.getState() == null) {
+				Position pos = bpaPimsExtnFactory
+						.getPositionByUserId((EGOVThreadLocals.getUserId()));
+				// registrationFee = (RegistrationFeeExtn)
+				// registrationFeeWorkflowExtnService.start(registrationFee,
+				// pos, "Revised Fee created.");
+			}
+
+			if (workFlowAction != null
+					&& !"".equals(workFlowAction)
+					&& !BpaConstants.SCRIPT_SAVE
+							.equalsIgnoreCase(workFlowAction)) {
+				String comments = (approverComments == null || ""
+						.equals(approverComments.trim())) ? ""
+						: approverComments;
+
+				/*
+				 * In case of rejection, get previous state of record from
+				 * matrix table. Search previous state owner from workflow state
+				 * (registration.getHistory()).
+				 */
+				if (BpaConstants.SCRIPT_REJECT.equalsIgnoreCase(workFlowAction)) {
+					LOGGER.debug("started  reject  ");
+					WorkFlowMatrix wfMatrix = bpaCommonExtnService
+							.getPreviousStateFromWfMatrix(registrationFee
+									.getStateType(), null, null, null,
+									registrationFee.getCurrentState()
+											.getValue(), registrationFee
+											.getCurrentState().getNextAction());
+					if (wfMatrix != null) {
+						registrationFee.setPreviousObjectState(wfMatrix
+								.getCurrentState());
+						registrationFee.setPreviousObjectAction(wfMatrix
+								.getPendingActions());
+
+						/*
+						 * for(State state: registrationFee.getHistory()) { if
+						 * (state
+						 * .getValue().equalsIgnoreCase(wfMatrix.getCurrentState
+						 * ())) {
+						 * registrationFee.setPreviousStateOwnerId(state.getOwner
+						 * ().getId()); break; } }
+						 */
+					}
+
 				}
-			
-			} 
-			LOGGER.debug("starting  workflowtransition  ");
-			/*bpaCommonExtnService.workFlowTransition(registrationFee,workFlowAction, 
-								comments);*/
-					
+				LOGGER.debug("starting  workflowtransition  ");
+				/*
+				 * bpaCommonExtnService.workFlowTransition(registrationFee,
+				 * workFlowAction, comments);
+				 */
+
+			}
+		} catch (ValidationException ex) {
+
+			ex.printStackTrace();
+			throw ex;
+		} catch (Exception ex) {
+
+			ex.printStackTrace();
+			throw new EGOVRuntimeException(ex.getMessage()
+					+ "--Error in create Workflow");
 		}
-	}catch(ValidationException ex)
-	{
-		
-		ex.printStackTrace();
-		throw ex;
+		LOGGER.debug("Exit createWorkflow");
+		return registrationFee;
 	}
-	catch(Exception ex)
-	{
-		
-		ex.printStackTrace();
-		 throw new EGOVRuntimeException(ex.getMessage()+"--Error in create Workflow");
+
+	private RegistrationFeeExtn buildFeeDetails(
+			RegistrationFeeExtn registrationFee,
+			List<RegistrationFeeDetailExtn> regFeeDtlList) {
+		LOGGER.debug("Enter buildFeeDetails");
+		Set<RegistrationFeeDetailExtn> regFeeDetailSet = new HashSet<RegistrationFeeDetailExtn>();
+		for (RegistrationFeeDetailExtn feedetail : regFeeDtlList) {
+			feedetail.setRegistrationFee(registrationFee);
+			regFeeDetailSet.add(feedetail);
+		}
+		registrationFee.getRegistrationFeeDetailsSet().clear();
+		registrationFee.getRegistrationFeeDetailsSet().addAll(regFeeDetailSet);
+		LOGGER.debug("Exit buildFeeDetails");
+		return registrationFee;
 	}
-	LOGGER.debug("Exit createWorkflow");
-	return registrationFee;
-}
 
-private RegistrationFeeExtn buildFeeDetails(RegistrationFeeExtn registrationFee,List<RegistrationFeeDetailExtn> regFeeDtlList)
-{   LOGGER.debug("Enter buildFeeDetails");
-	Set<RegistrationFeeDetailExtn> regFeeDetailSet=new HashSet<RegistrationFeeDetailExtn>();
-	for(RegistrationFeeDetailExtn feedetail:regFeeDtlList)
-	{
-		feedetail.setRegistrationFee(registrationFee);
-		regFeeDetailSet.add(feedetail);
+	public List<EgwSatuschange> getFileConsiderationCheckedDate(
+			RegistrationExtn registration) {
+		// EgwStatus fileConsiderationCheckedStatus=
+		// (EgwStatus)persistenceService.find("from EgwStatus where moduletype=? and code=?",BpaConstants.REGISTRATIONMODULE,BpaConstants.FILECONSIDERATIONCHECKED);
+		LOGGER.debug("Enter getFileConsiderationCheckedDate");
+		EgwStatus fileConsiderationCheckedStatus = bpaCommonExtnService
+				.getstatusbyCode(BpaConstants.FILECONSIDERATIONCHECKED,
+						BpaConstants.REGISTRATIONMODULE);
+		if (fileConsiderationCheckedStatus != null) {
+			Criteria statuschangeCriteria = persistenceService.getSession()
+					.createCriteria(EgwSatuschange.class, "statuschange");
+			statuschangeCriteria.add(Restrictions.eq("moduleid",
+					(registration.getId().intValue())));
+			statuschangeCriteria.add(Restrictions.eq("moduletype",
+					BpaConstants.REGISTRATIONMODULE));
+			statuschangeCriteria.add(Restrictions.eq("tostatus",
+					fileConsiderationCheckedStatus.getId()));
+			statuschangeCriteria.addOrder(Order.desc("id"));
+			LOGGER.debug("Exit getFileConsiderationCheckedDate");
+			return statuschangeCriteria.list();
+		}
+		return null;
 	}
-	registrationFee.getRegistrationFeeDetailsSet().clear();
-	registrationFee.getRegistrationFeeDetailsSet().addAll(regFeeDetailSet);
-	LOGGER.debug("Exit buildFeeDetails");
-	return registrationFee;
-}
-
-public List<EgwSatuschange> getFileConsiderationCheckedDate(RegistrationExtn registration) {
-	//EgwStatus fileConsiderationCheckedStatus= (EgwStatus)persistenceService.find("from EgwStatus where moduletype=? and code=?",BpaConstants.REGISTRATIONMODULE,BpaConstants.FILECONSIDERATIONCHECKED);
-	LOGGER.debug("Enter getFileConsiderationCheckedDate");
-	EgwStatus fileConsiderationCheckedStatus= bpaCommonExtnService.getstatusbyCode(BpaConstants.FILECONSIDERATIONCHECKED,BpaConstants.REGISTRATIONMODULE);
-	if(fileConsiderationCheckedStatus!=null){
-	Criteria statuschangeCriteria= persistenceService.getSession().createCriteria(EgwSatuschange.class,"statuschange");			
-	statuschangeCriteria.add(Restrictions.eq("moduleid",(registration.getId().intValue())));
-	statuschangeCriteria.add(Restrictions.eq("moduletype",BpaConstants.REGISTRATIONMODULE));	
-	statuschangeCriteria.add(Restrictions.eq("tostatus",fileConsiderationCheckedStatus.getId()));
-	statuschangeCriteria.addOrder(Order.desc("id"));
-	LOGGER.debug("Exit getFileConsiderationCheckedDate");
-	return statuschangeCriteria.list();
-	}
-	return null;
-}
-
-
 
 }

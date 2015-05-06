@@ -153,9 +153,10 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.ActionSupport;
-
+@Transactional(readOnly = true)
 @SuppressWarnings("unchecked")
 public class BpaCommonExtnService extends ActionSupport  {
 	

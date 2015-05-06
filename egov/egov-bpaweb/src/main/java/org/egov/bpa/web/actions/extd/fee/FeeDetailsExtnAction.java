@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -73,10 +74,13 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.web.actions.workflow.GenericWorkFlowAction;
+import org.springframework.transaction.annotation.Transactional;
 
 @Results({
 	@Result(name = "NOACCESS", type = "stream", location = "returnStream", params = { "contentType", "text/plain"})
 	})
+@Transactional(readOnly = true)
+@Namespace("/fee")
 @ParentPackage("egov")
 public class FeeDetailsExtnAction extends GenericWorkFlowAction{
 

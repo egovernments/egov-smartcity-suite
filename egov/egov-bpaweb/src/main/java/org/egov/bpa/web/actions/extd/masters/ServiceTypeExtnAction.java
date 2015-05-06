@@ -43,6 +43,7 @@ package org.egov.bpa.web.actions.extd.masters;
 
 import java.util.List;
 
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bpa.models.extd.masters.ServiceTypeExtn;
@@ -50,8 +51,10 @@ import org.egov.bpa.services.extd.masters.ServiceTypeExtnService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.transaction.annotation.Transactional;
 	
-
+@Transactional(readOnly = true)
+@Namespace("/masters")
 @ParentPackage("egov")
 @SuppressWarnings("serial")
 public class ServiceTypeExtnAction extends BaseFormAction
