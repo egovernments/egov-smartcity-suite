@@ -58,6 +58,7 @@
 		
 		<script src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+		<script src="<c:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/js/app/homepage.js' context='/egi'/>"></script>
@@ -79,6 +80,51 @@
                 </div>
              <tiles:insertAttribute name="footer"/>
         </div>
+        <div class="modal fade change-password" data-backdrop="static">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title">Change Password</h4>
+					</div>
+					
+					<div class="modal-body">
+						<form id="password-form" class="form-horizontal form-groups-bordered">
+							<div class="form-group">
+								<div class="col-md-4">
+									<label class="control-label">Old Password</label>
+								</div>
+								<div class="col-md-8 add-margin">
+									<input type="password" class="form-control" id="old-pass">
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-md-4">
+									<label class="control-label">New Password</label>
+								</div>
+								<div class="col-md-8 add-margin">
+									<input type="password" class="form-control check-password" id="new-pass">
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-md-4">
+									<label class="control-label">Re-type Password</label>
+								</div>
+								<div class="col-md-8 add-margin">
+									<input type="password" class="form-control check-password" id="retype-pass">
+									<div class="password-error error-msg display-hide">Password is incorrect</div>
+								</div>
+							</div>
+							<div class="form-group text-right">
+								<button type="submit" class="btn btn-primary">Change Password</button>
+								<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
         
         <div class="modal fade loader-class" data-backdrop="static">
 			<div class="modal-dialog">

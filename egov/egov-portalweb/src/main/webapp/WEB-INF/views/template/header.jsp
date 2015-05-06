@@ -82,7 +82,7 @@
 										<i class="fa fa-user"></i>
 									</a>
 									<ul class="right-arrow dropdown-menu" role="menu">
-										<li><a href="#"><i class="fa fa-cog"></i> Change Password</a></li>
+										<li><a href="javascript:void(0);" onclick="jQuery('.change-password').modal('show', {backdrop: 'static'});"><i class="fa fa-cog"></i> Change Password</a></li>
 										<li><a href="/egi/logout.do"><i class="fa fa-sign-out"></i> Sign out</a></li>
 									</ul>
 								</li>
