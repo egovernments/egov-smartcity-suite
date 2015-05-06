@@ -85,7 +85,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
       
 		<list name="milestoneTemplateActivities" cascade="all,delete-orphan">
 			<key column="MILESTONE_TEMPLATE_ID" not-null="true" />
-			<list-index column="milestone_activity_index" />
+			<list-index column="milestonetempl_activity_index" />
 			<one-to-many
 				class="org.egov.works.models.masters.MilestoneTemplateActivity" />
 		</list>      
