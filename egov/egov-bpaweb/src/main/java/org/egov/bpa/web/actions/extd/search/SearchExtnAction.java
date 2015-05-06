@@ -47,7 +47,9 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.BpaAddressExtn;
 import org.egov.bpa.models.extd.RegistrationExtn;
@@ -98,12 +100,14 @@ public class SearchExtnAction extends SearchFormAction{
 		 addDropdownData("statusList", bpaCommonExtnService.getAllStatusForBPA());  
 		 
 	}
-
+	@Action(value = "/searchExtn-searchForm", results = { @Result(name = NEW) })
 	public String searchForm(){
 		return NEW;
 	}
 	
 	@ValidationErrorPage(NEW)
+	@Action(value = "/searchExtn-searchResults", results = { @Result(name = NEW) })
+	@Transactional
 	public String searchResults(){
 		
 			super.search();

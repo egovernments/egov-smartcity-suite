@@ -44,8 +44,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.CMDALetterToPartyExtn;
@@ -66,14 +68,14 @@ import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Transactional(readOnly = true)
 @Namespace("/lettertoparty")
 @ParentPackage("egov")
-public class LpReplyCmdaExtnAction extends BaseFormAction{
+public class LpReplyCmdaExtnAction extends BaseFormAction {
 
 	private RegistrationExtn registration;
-	private static final Logger LOGGER					= Logger.getLogger(LpReplyCmdaExtnAction.class);
+	private static final Logger LOGGER = Logger
+			.getLogger(LpReplyCmdaExtnAction.class);
 	private CMDALetterToPartyExtn letterParty;
 	private Long registrationId;
 	private String requestID;
@@ -89,224 +91,270 @@ public class LpReplyCmdaExtnAction extends BaseFormAction{
 	private String mode;
 	private ReportService reportService;
 	private Integer reportId = -1;
-	//private EisManager eisManager;
+	// private EisManager eisManager;
 	private String documentNum;
 	private String existLpNum;
 	private String fromAddressToLp;
 	private RegisterBpaExtnService registerBpaExtnService;
 	private Long letterToPartyId;
+
 	public void prepare() {
 		super.prepare();
-		loginUser=inspectionExtnService.getUserbyId((EGOVThreadLocals.getUserId()));
-		
-		if(registration!=null && registration.getRequest_number()!=null) {
-			registration=registerBpaExtnService.getRegistrationByPassingRequestNumber(registration.getRequest_number());
+		loginUser = inspectionExtnService.getUserbyId((EGOVThreadLocals
+				.getUserId()));
+
+		if (registration != null && registration.getRequest_number() != null) {
+			registration = registerBpaExtnService
+					.getRegistrationByPassingRequestNumber(registration
+							.getRequest_number());
+		} else if (!"".equals(getRequestID()) && getRequestID() != null) {
+			registration = registerBpaExtnService
+					.getRegistrationByPassingRequestNumber(getRequestID());
 		}
-		else if(!"".equals(getRequestID()) && getRequestID()!=null){
-			registration=registerBpaExtnService.getRegistrationByPassingRequestNumber(getRequestID());
-		}
-		
-		if(!"".equals(getRequestID()) && getRequestID()!=null && registration!=null){
-			registration = letterToPartyExtnService.getRegistrationObjectbyId(registration.getId());
-			//letterParty = letterToPartyExtnService.getLatestCMDALetterToPartyForRegObj(registration);
-			letterParty = letterToPartyExtnService.getLatestCMDALetterToPartyForRegObj(registration);
-			if(letterParty != null) {
+
+		if (!"".equals(getRequestID()) && getRequestID() != null
+				&& registration != null) {
+			registration = letterToPartyExtnService
+					.getRegistrationObjectbyId(registration.getId());
+			// letterParty =
+			// letterToPartyExtnService.getLatestCMDALetterToPartyForRegObj(registration);
+			letterParty = letterToPartyExtnService
+					.getLatestCMDALetterToPartyForRegObj(registration);
+			if (letterParty != null) {
 				getLetterToPartyDetails(letterParty);
-				//showCheckList();
+				// showCheckList();
 			}
 		}
-		if (getRegistrationId() != null)  {
-			registration = letterToPartyExtnService.getRegistrationObjectbyId(getRegistrationId());
-			//letterParty = letterToPartyExtnService.getLatestCMDALetterToPartyForRegObj(registration);
-			letterParty = letterToPartyExtnService.getLatestCMDALetterToPartyForRegObj(registration);
-			if(letterParty != null) {
+		if (getRegistrationId() != null) {
+			registration = letterToPartyExtnService
+					.getRegistrationObjectbyId(getRegistrationId());
+			// letterParty =
+			// letterToPartyExtnService.getLatestCMDALetterToPartyForRegObj(registration);
+			letterParty = letterToPartyExtnService
+					.getLatestCMDALetterToPartyForRegObj(registration);
+			if (letterParty != null) {
 				getLetterToPartyDetails(letterParty);
 			}
 		}
-		if(letterParty!=null && letterParty.getDocumentid()!=null)			
+		if (letterParty != null && letterParty.getDocumentid() != null)
 			this.setDocumentNum(letterParty.getDocumentid());
 	}
+
 	@SkipValidation
+	@Action(value = "/lpReplyCmdaExtn-newForm", results = { @Result(name = NEW) })
 	public String newForm() {
-		
-		if (letterParty == null || 
-				(letterParty != null && letterParty.getIsHistory() != null && letterParty.getIsHistory().equals('Y'))) {
-			
+
+		if (letterParty == null
+				|| (letterParty != null && letterParty.getIsHistory() != null && letterParty
+						.getIsHistory().equals('Y'))) {
+
 			if (letterParty == null) {
-				
+
 				addActionMessage(getMessage("lpreply.noLpresent.validate"));
-			}
-			else if (letterParty.getIsHistory().equals('Y')) {
+			} else if (letterParty.getIsHistory().equals('Y')) {
 				addActionMessage(getMessage("lpreply.Lpreceived.validate"));
 				setMode(BpaConstants.MODEVIEW);
 			}
-			
-			
+
 			return NEW;
-		} 
-		else if(letterParty.getRegistration()!=null && letterParty.getRegistration().getEgwStatus()!=null && letterParty.getRegistration().getEgwStatus().getCode()!=null && 
-				letterParty.getRegistration().getEgwStatus().getCode().equals(BpaConstants.CMDALETTERTOPARTYSENT)) {
-			//letterParty.getRegistration().getEgwStatus().getCode().equals(BpaConstants.CMDALETTERTOPARTYSENT)
-			
-			/*List<LetterToPartyExtn>	 lpParty=letterToPartyExtnService.getLetterToPartyForRegnByComparingLPSentDateWithSysDateToTenDays(registration, letterParty.getLetterToParty().getSentDate());
-			if(lpParty.size()>0) 
-			{
-				addActionMessage(getMessage("lpreply.actionvalidate.message"));
-				setMode(BpaConstants.MODEVIEW);
-			}
-			else
-			{*/
-				getLetterToPartyDetails(letterParty);
-				setMode("NEW");
-				return NEW;
-			//}
-		}
-		else if(letterParty!=null && letterParty.getRegistration().getEgwStatus()!=null && letterParty.getRegistration().getEgwStatus().getCode()!=null && 
-				letterParty.getRegistration().getEgwStatus().getCode().equals(BpaConstants.CMDACREATEDLETTERTOPARTY))
-			//letterParty.getRegistration().getEgwStatus().getCode().equals(BpaConstants.CMDACREATEDLETTERTOPARTY)
+		} else if (letterParty.getRegistration() != null
+				&& letterParty.getRegistration().getEgwStatus() != null
+				&& letterParty.getRegistration().getEgwStatus().getCode() != null
+				&& letterParty.getRegistration().getEgwStatus().getCode()
+						.equals(BpaConstants.CMDALETTERTOPARTYSENT)) {
+			// letterParty.getRegistration().getEgwStatus().getCode().equals(BpaConstants.CMDALETTERTOPARTYSENT)
+
+			/*
+			 * List<LetterToPartyExtn> lpParty=letterToPartyExtnService.
+			 * getLetterToPartyForRegnByComparingLPSentDateWithSysDateToTenDays
+			 * (registration, letterParty.getLetterToParty().getSentDate());
+			 * if(lpParty.size()>0) {
+			 * addActionMessage(getMessage("lpreply.actionvalidate.message"));
+			 * setMode(BpaConstants.MODEVIEW); } else {
+			 */
+			getLetterToPartyDetails(letterParty);
+			setMode("NEW");
+			return NEW;
+			// }
+		} else if (letterParty != null
+				&& letterParty.getRegistration().getEgwStatus() != null
+				&& letterParty.getRegistration().getEgwStatus().getCode() != null
+				&& letterParty.getRegistration().getEgwStatus().getCode()
+						.equals(BpaConstants.CMDACREATEDLETTERTOPARTY))
+		// letterParty.getRegistration().getEgwStatus().getCode().equals(BpaConstants.CMDACREATEDLETTERTOPARTY)
 		{
 			addActionMessage(getMessage("lpreply.noLpresent.validate"));
 		}
 		setMode("noEditMode");
 		return NEW;
 	}
-	
+
 	private void getLetterToPartyDetails(CMDALetterToPartyExtn letterParty) {
-		setExistLpReason(letterParty.getLetterToParty().getLetterToPartyReason().getCode());
-		setExistLpRemarks(letterParty.getLetterToParty().getLetterToPartyRemarks());
+		setExistLpReason(letterParty.getLetterToParty()
+				.getLetterToPartyReason().getCode());
+		setExistLpRemarks(letterParty.getLetterToParty()
+				.getLetterToPartyRemarks());
 		setExistLpNum(letterParty.getLetterToPartyNumber());
 	}
-	protected String getMessage(String key)
-	{
+
+	protected String getMessage(String key) {
 		return getText(key);
 	}
 
-	@ValidationErrorPage(NEW)	
-	   public String createLpReply() {
-		
-		try{
-	   EgwStatus oldStatus = letterParty.getRegistration().getEgwStatus();
-		String ackNum = bpaNumberGenerationExtnService.generateLetterToReplycmdaAckNumber();
-		EgwStatus egwStatus =bpaCommonExtnService.getstatusbyCode(BpaConstants.CMDALPREPLYRECEIVED,BpaConstants.NEWBPAREGISTRATIONMODULE); 
-		letterParty.setReplyDate(new Date());
-		letterParty.setIsHistory('Y');
-		letterParty.setLpReplyDescription(letterPartyReply.getLpReplyDescription());
-		letterParty.setLpReplyRemarks(letterPartyReply.getLpReplyRemarks());
-		letterParty.setAcknowledgementNumber(ackNum);
-		letterParty.getRegistration().setEgwStatus(egwStatus);
-		setDocumentNumberForLetterToParty();
-		addActionMessage("Letter To Party Reply Details Saved Successfully");
-		bpaCommonExtnService.createStatusChange(registration, oldStatus);
-		setMode(BpaConstants.MODEVIEW);
-		setRegistrationId(registrationId);
-		setLetterParty(letterParty);
-		setLetterPartyReply(letterParty);
-	
-		}catch (Exception e)
-		{
+	@ValidationErrorPage(NEW)
+	@Action(value = "/lpReplyCmdaExtn-createLpReply", results = { @Result(name = NEW) })
+	public String createLpReply() {
+
+		try {
+			EgwStatus oldStatus = letterParty.getRegistration().getEgwStatus();
+			String ackNum = bpaNumberGenerationExtnService
+					.generateLetterToReplycmdaAckNumber();
+			EgwStatus egwStatus = bpaCommonExtnService.getstatusbyCode(
+					BpaConstants.CMDALPREPLYRECEIVED,
+					BpaConstants.NEWBPAREGISTRATIONMODULE);
+			letterParty.setReplyDate(new Date());
+			letterParty.setIsHistory('Y');
+			letterParty.setLpReplyDescription(letterPartyReply
+					.getLpReplyDescription());
+			letterParty.setLpReplyRemarks(letterPartyReply.getLpReplyRemarks());
+			letterParty.setAcknowledgementNumber(ackNum);
+			letterParty.getRegistration().setEgwStatus(egwStatus);
+			setDocumentNumberForLetterToParty();
+			addActionMessage("Letter To Party Reply Details Saved Successfully");
+			bpaCommonExtnService.createStatusChange(registration, oldStatus);
+			setMode(BpaConstants.MODEVIEW);
+			setRegistrationId(registrationId);
+			setLetterParty(letterParty);
+			setLetterPartyReply(letterParty);
+
+		} catch (Exception e) {
 			e.printStackTrace();
-			throw new EGOVRuntimeException(" Error in Creating LP reply " + e.getMessage());
+			throw new EGOVRuntimeException(" Error in Creating LP reply "
+					+ e.getMessage());
 		}
 		return NEW;
 	}
-	
 
 	protected void setDocumentNumberForLetterToParty() {
-		if(getDocumentNum()!=null && !getDocumentNum().equals(""))
-		{	
+		if (getDocumentNum() != null && !getDocumentNum().equals("")) {
 			letterParty.setDocumentid(getDocumentNum());
 		}
-		
-		if(letterParty!=null && letterParty.getDocumentid()!=null)
-		{	this.setDocumentNum(letterParty.getDocumentid());
+
+		if (letterParty != null && letterParty.getDocumentid() != null) {
+			this.setDocumentNum(letterParty.getDocumentid());
 		}
 	}
-
+	@Action(value = "/lpReplyCmdaExtn-ackPrint", results = { @Result(name = "ackReport") })
 	public String ackPrint() {
-		try{
+		try {
 			ReportRequest reportRequest = null;
 			Map<String, Object> reportParams = new HashMap<String, Object>();
-			 if(!"".equals(getRequestID()) && getRequestID()!=null){
-				registration=registerBpaExtnService.getRegistrationByPassingRequestNumber(getRequestID());
+			if (!"".equals(getRequestID()) && getRequestID() != null) {
+				registration = registerBpaExtnService
+						.getRegistrationByPassingRequestNumber(getRequestID());
+			} else if (getRegistrationId() != null) {
+				registration = letterToPartyExtnService
+						.getRegistrationObjectbyId(registrationId);
 			}
-			 else if(getRegistrationId()!=null){
-			registration=letterToPartyExtnService.getRegistrationObjectbyId(registrationId);
-		}
-			Map<String,Object> reportData = constructLpReplyReportData(registration);
+			Map<String, Object> reportData = constructLpReplyReportData(registration);
 			reportParams.put("lpDate", reportData.get("lpDate"));
 			reportParams.put("cmdaDate", reportData.get("cmdaDate"));
-			reportRequest = new ReportRequest(BpaConstants.CMDALPREPLYNOTICEACKREPORT, reportData, reportParams);
+			reportRequest = new ReportRequest(
+					BpaConstants.CMDALPREPLYNOTICEACKREPORT, reportData,
+					reportParams);
 			reportRequest.setPrintDialogOnOpenReport(true);
-			reportId = ReportViewerUtil.addReportToSession(reportService.createReport(reportRequest), getSession());
+			reportId = ReportViewerUtil.addReportToSession(
+					reportService.createReport(reportRequest), getSession());
 
 			return "ackReport";
-		} catch (Exception e) { 
+		} catch (Exception e) {
 			throw new EGOVRuntimeException("Exception : " + e);
 		}
-		
+
 	}
-	
-	private Map<String,Object> constructLpReplyReportData(RegistrationExtn registration) {
-		Map<String,Object> reportData = new HashMap<String,Object>();
-		CMDALetterToPartyExtn lpReply = letterToPartyExtnService.getLatestCMDALetterToPartyForRegObj(registration);
+
+	private Map<String, Object> constructLpReplyReportData(
+			RegistrationExtn registration) {
+		Map<String, Object> reportData = new HashMap<String, Object>();
+		CMDALetterToPartyExtn lpReply = letterToPartyExtnService
+				.getLatestCMDALetterToPartyForRegObj(registration);
 		String address = registration.getBpaOwnerAddress();
-		
+
 		String EMPTYSTRING = "";
-		if(registration!=null && registration.getAdminboundaryid()!=null)
-		{
-		if(registration.getAdminboundaryid().getParent()!=null && registration.getAdminboundaryid().getParent().getParent()!=null)
-		{
-			System.out.println("region name "+ registration.getAdminboundaryid().getParent().getParent().getName());
-			reportData.put("region",registration.getAdminboundaryid().getParent().getParent().getName());
-		}
-		if(registration.getAdminboundaryid().getParent()!=null)
-			reportData.put("zone", registration.getAdminboundaryid().getParent().getName());
-		else
-			reportData.put("zone", EMPTYSTRING);
-		
-		reportData.put("ward", registration.getAdminboundaryid().getName());
-		
-		}
-		if(lpReply!=null && lpReply.getRegistration().getAdminboundaryid()!=null && lpReply.getRegistration().getAdminboundaryid().getParent()!=null && lpReply.getRegistration().getAdminboundaryid().getParent().getParent()!=null)
-			
-			if(lpReply.getRegistration().getAdminboundaryid().getParent().getParent().getName().equalsIgnoreCase(BpaConstants.NORTHREGION))
-			{
-				fromAddressToLp=BpaConstants.ASSISTANTADDRESS+ "\n" +BpaConstants.NORTHREGION_ADDRESS;
+		if (registration != null && registration.getAdminboundaryid() != null) {
+			if (registration.getAdminboundaryid().getParent() != null
+					&& registration.getAdminboundaryid().getParent()
+							.getParent() != null) {
+				System.out.println("region name "
+						+ registration.getAdminboundaryid().getParent()
+								.getParent().getName());
+				reportData.put("region", registration.getAdminboundaryid()
+						.getParent().getParent().getName());
 			}
-			else if(lpReply.getRegistration().getAdminboundaryid().getParent().getParent().getName().equalsIgnoreCase(BpaConstants.SOUTHREGION))
-			{
-				fromAddressToLp=BpaConstants.ASSISTANTADDRESS + "\n"  + BpaConstants.SOUTHREGION_ADDRESS;
-										
-			}
-			else if(lpReply.getRegistration().getAdminboundaryid().getParent().getParent().getName().equalsIgnoreCase(BpaConstants.CENTRALREGION))
-			{
-				fromAddressToLp=BpaConstants.ASSISTANTADDRESS + "\n" + BpaConstants.CENTRALREGION_ADDRESS;
-			}
+			if (registration.getAdminboundaryid().getParent() != null)
+				reportData.put("zone", registration.getAdminboundaryid()
+						.getParent().getName());
 			else
-			{
-				fromAddressToLp=EMPTYSTRING;
+				reportData.put("zone", EMPTYSTRING);
+
+			reportData.put("ward", registration.getAdminboundaryid().getName());
+
+		}
+		if (lpReply != null
+				&& lpReply.getRegistration().getAdminboundaryid() != null
+				&& lpReply.getRegistration().getAdminboundaryid().getParent() != null
+				&& lpReply.getRegistration().getAdminboundaryid().getParent()
+						.getParent() != null)
+
+			if (lpReply.getRegistration().getAdminboundaryid().getParent()
+					.getParent().getName()
+					.equalsIgnoreCase(BpaConstants.NORTHREGION)) {
+				fromAddressToLp = BpaConstants.ASSISTANTADDRESS + "\n"
+						+ BpaConstants.NORTHREGION_ADDRESS;
+			} else if (lpReply.getRegistration().getAdminboundaryid()
+					.getParent().getParent().getName()
+					.equalsIgnoreCase(BpaConstants.SOUTHREGION)) {
+				fromAddressToLp = BpaConstants.ASSISTANTADDRESS + "\n"
+						+ BpaConstants.SOUTHREGION_ADDRESS;
+
+			} else if (lpReply.getRegistration().getAdminboundaryid()
+					.getParent().getParent().getName()
+					.equalsIgnoreCase(BpaConstants.CENTRALREGION)) {
+				fromAddressToLp = BpaConstants.ASSISTANTADDRESS + "\n"
+						+ BpaConstants.CENTRALREGION_ADDRESS;
+			} else {
+				fromAddressToLp = EMPTYSTRING;
 			}
 		reportData.put("fromAddressToLp", fromAddressToLp);
-		reportData.put("planSubmissionNum", registration.getPlanSubmissionNum());
-		if( registration!=null && registration.getOwner()!=null)
+		reportData
+				.put("planSubmissionNum", registration.getPlanSubmissionNum());
+		if (registration != null && registration.getOwner() != null)
 			reportData.put("applicantName", registration.getOwner().getName());
 		else
 			reportData.put("applicantName", EMPTYSTRING);
-		reportData.put("cmdaDate", registration.getCmdaRefDate()!=null ? registration.getCmdaRefDate():null);
-		reportData.put("cmdaNumber", registration.getCmdaNum()!=null && registration.getCmdaNum()!=""? registration.getCmdaNum():"");
+		reportData.put(
+				"cmdaDate",
+				registration.getCmdaRefDate() != null ? registration
+						.getCmdaRefDate() : null);
+		reportData.put("cmdaNumber", registration.getCmdaNum() != null
+				&& registration.getCmdaNum() != "" ? registration.getCmdaNum()
+				: "");
 		reportData.put("address", address);
 		reportData.put("lpdescription", lpReply.getLpReplyDescription());
 		reportData.put("ackNo", lpReply.getAcknowledgementNumber());
 		reportData.put("replyDate", lpReply.getReplyDate());
-		reportData.put("lpDate", lpReply.getLetterToParty().getLetterDate()!=null ?lpReply.getLetterToParty().getLetterDate():null);
+		reportData.put("lpDate",
+				lpReply.getLetterToParty().getLetterDate() != null ? lpReply
+						.getLetterToParty().getLetterDate() : null);
 		reportData.put("lpNumber", lpReply.getLetterToPartyNumber());
 		reportData.put("lpReason", lpReply.getLpReason());
-		
-		if(lpReply.getLpReplyRemarks()!=null) {
+
+		if (lpReply.getLpReplyRemarks() != null) {
 			reportData.put("remarks", lpReply.getLpReplyRemarks());
 		}
 		return reportData;
 	}
+
 	@Override
 	public Object getModel() {
 		return letterPartyReply;
@@ -316,13 +364,14 @@ public class LpReplyCmdaExtnAction extends BaseFormAction{
 		return registrationId;
 	}
 
-
 	public CMDALetterToPartyExtn getLetterParty() {
 		return letterParty;
 	}
+
 	public void setLetterParty(CMDALetterToPartyExtn letterParty) {
 		this.letterParty = letterParty;
 	}
+
 	public void setRegistrationId(Long registrationId) {
 		this.registrationId = registrationId;
 	}
@@ -331,7 +380,8 @@ public class LpReplyCmdaExtnAction extends BaseFormAction{
 		return letterToPartyExtnService;
 	}
 
-	public void setLetterToPartyExtnService(LetterToPartyExtnService letterToPartyService) {
+	public void setLetterToPartyExtnService(
+			LetterToPartyExtnService letterToPartyService) {
 		this.letterToPartyExtnService = letterToPartyService;
 	}
 
@@ -351,7 +401,6 @@ public class LpReplyCmdaExtnAction extends BaseFormAction{
 		this.existLpRemarks = existLpRemarks;
 	}
 
-	
 	public InspectionExtnService getInspectionExtnService() {
 		return inspectionExtnService;
 	}
@@ -371,9 +420,11 @@ public class LpReplyCmdaExtnAction extends BaseFormAction{
 	public User getLoginUser() {
 		return loginUser;
 	}
+
 	public void setLoginUser(User loginUser) {
 		this.loginUser = loginUser;
 	}
+
 	public RegistrationExtn getRegistration() {
 		return registration;
 	}
@@ -390,12 +441,12 @@ public class LpReplyCmdaExtnAction extends BaseFormAction{
 		this.serviceTypeId = serviceTypeId;
 	}
 
-	
 	public BpaNumberGenerationExtnService getBpaNumberGenerationExtnService() {
 		return bpaNumberGenerationExtnService;
 	}
 
-	public void setBpaNumberGenerationExtnService(BpaNumberGenerationExtnService bpaNumberGenerationService) {
+	public void setBpaNumberGenerationExtnService(
+			BpaNumberGenerationExtnService bpaNumberGenerationService) {
 		this.bpaNumberGenerationExtnService = bpaNumberGenerationService;
 	}
 
@@ -423,13 +474,12 @@ public class LpReplyCmdaExtnAction extends BaseFormAction{
 		this.reportId = reportId;
 	}
 
-	/*public EisManager getEisManager() {
-		return eisManager;
-	}
-
-	public void setEisManager(EisManager eisManager) {
-		this.eisManager = eisManager;
-	}*/
+	/*
+	 * public EisManager getEisManager() { return eisManager; }
+	 * 
+	 * public void setEisManager(EisManager eisManager) { this.eisManager =
+	 * eisManager; }
+	 */
 
 	public String getExistLpNum() {
 		return existLpNum;
@@ -438,42 +488,52 @@ public class LpReplyCmdaExtnAction extends BaseFormAction{
 	public void setExistLpNum(String existLpNum) {
 		this.existLpNum = existLpNum;
 	}
+
 	public RegisterBpaExtnService getRegisterBpaExtnService() {
 		return registerBpaExtnService;
 	}
-	public void setRegisterBpaExtnService(RegisterBpaExtnService registerBpaService) {
+
+	public void setRegisterBpaExtnService(
+			RegisterBpaExtnService registerBpaService) {
 		this.registerBpaExtnService = registerBpaService;
 	}
-	
+
 	public Long getLetterToPartyId() {
 		return letterToPartyId;
 	}
+
 	public void setLetterToPartyId(Long letterToPartyId) {
 		this.letterToPartyId = letterToPartyId;
 	}
-	
+
 	public String getRequestID() {
 		return requestID;
 	}
+
 	public void setRequestID(String requestID) {
 		this.requestID = requestID;
 	}
-	
+
 	public String getDocumentNum() {
 		return documentNum;
 	}
+
 	public void setDocumentNum(String documentNum) {
 		this.documentNum = documentNum;
 	}
+
 	public CMDALetterToPartyExtn getLetterPartyReply() {
 		return letterPartyReply;
 	}
+
 	public void setLetterPartyReply(CMDALetterToPartyExtn letterPartyReply) {
 		this.letterPartyReply = letterPartyReply;
 	}
+
 	public String getFromAddressToLp() {
 		return fromAddressToLp;
 	}
+
 	public void setFromAddressToLp(String fromAddressToLp) {
 		this.fromAddressToLp = fromAddressToLp;
 	}

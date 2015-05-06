@@ -43,8 +43,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bpa.models.extd.masters.CheckListDetailsExtn;
 import org.egov.bpa.models.extd.masters.ChecklistExtn;
@@ -91,6 +93,7 @@ public class CheckListExtnAction extends BaseFormAction
 	}
 	
 	@SkipValidation
+	@Action(value = "/checkListExtn-newform", results = { @Result(name = NEW) })
 	public String newform()
 	{    
 		if(validateCheckListType()){
@@ -105,6 +108,7 @@ public class CheckListExtnAction extends BaseFormAction
 	
 
 	@SkipValidation	
+	@Action(value = "/checkListExtn-search", results = { @Result(name = LIST) })
 	public String search()
 	{ 
 		return LIST;
@@ -113,7 +117,8 @@ public class CheckListExtnAction extends BaseFormAction
 
 	
 	@ValidationErrorPage(LIST)
-	@SkipValidation	
+	@SkipValidation
+	@Action(value = "/checkListExtn-view", results = { @Result(name = NEW) })
 	public String view()
 	{
 		if(!validateCheckListType())
@@ -134,6 +139,7 @@ public class CheckListExtnAction extends BaseFormAction
 	
 	    @ValidationErrorPage(LIST)	
 		@SkipValidation	
+		@Action(value = "/checkListExtn-modify", results = { @Result(name = NEW) })
 		public String modify()
 		{  
 	    	
@@ -258,8 +264,8 @@ public class CheckListExtnAction extends BaseFormAction
 	     // TODO Auto-generated method stub
 	      return getText(key);
      }
-	
-	 
+	@Transactional
+	 @Action(value = "/checkListExtn-create", results = { @Result(name = NEW) })
 	public String create()
 	{
 		for(CheckListDetailsExtn unitDetail: checkListDetailsList) {

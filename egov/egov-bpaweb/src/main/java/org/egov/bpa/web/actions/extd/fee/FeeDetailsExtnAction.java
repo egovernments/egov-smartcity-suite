@@ -51,11 +51,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.dispatcher.StreamResult;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.InspectionExtn;
@@ -76,36 +76,36 @@ import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.web.actions.workflow.GenericWorkFlowAction;
 import org.springframework.transaction.annotation.Transactional;
 
-@Results({
-	@Result(name = "NOACCESS", type = "stream", location = "returnStream", params = { "contentType", "text/plain"})
-	})
+@Results({ @Result(name = "NOACCESS", type = "stream", location = "returnStream", params = {
+		"contentType", "text/plain" }) })
 @Transactional(readOnly = true)
 @Namespace("/fee")
 @ParentPackage("egov")
-public class FeeDetailsExtnAction extends GenericWorkFlowAction{
+public class FeeDetailsExtnAction extends GenericWorkFlowAction {
 
 	protected Long registrationId;
-	private final static  Logger LOGGER=Logger.getLogger(FeeDetailsExtnAction.class);
+	private final static Logger LOGGER = Logger
+			.getLogger(FeeDetailsExtnAction.class);
 	protected RegistrationExtn registrationObj;
 	private InspectionExtnService inspectionExtnService;
 	protected FeeExtnService feeExtnService;
-	protected List<BpaFeeExtn> santionFeeList=new ArrayList();
+	protected List<BpaFeeExtn> santionFeeList = new ArrayList();
 	private Boolean isAutoCalculate;
 	protected FeeDetailsExtnService feeDetailsExtnService;
 	protected String mode;
 	protected BpaCommonExtnService bpaCommonExtnService;
-	private String returnStream ="You Have no permission to view";
+	private String returnStream = "You Have no permission to view";
 	private String fromreg;
 	private EgwStatus oldStatus;
 	private String feeRemarks;
 	private String latestFeeRemarks;
-	private SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy");
-	private List<BpaFeeExtn> CMDAFeeList=new ArrayList();
-	private List<BpaFeeExtn> COCFeeList=new ArrayList();
-	private List<BpaFeeExtn> MWGWFFeeList=new ArrayList();
-	
+	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+	private List<BpaFeeExtn> CMDAFeeList = new ArrayList();
+	private List<BpaFeeExtn> COCFeeList = new ArrayList();
+	private List<BpaFeeExtn> MWGWFFeeList = new ArrayList();
+
 	private String feeSubTypeAsBuilding = "BUILDING";
-	
+
 	public List<BpaFeeExtn> getCMDAFeeList() {
 		return CMDAFeeList;
 	}
@@ -137,24 +137,28 @@ public class FeeDetailsExtnAction extends GenericWorkFlowAction{
 	public void setLatestFeeRemarks(String latestFeeRemarks) {
 		this.latestFeeRemarks = latestFeeRemarks;
 	}
-	private BigDecimal feeTotal=BigDecimal.ZERO;
 
-	 public BigDecimal getFeeTotal() {
+	private BigDecimal feeTotal = BigDecimal.ZERO;
+
+	public BigDecimal getFeeTotal() {
 		return feeTotal;
 	}
 
 	public void setFeeTotal(BigDecimal feeTotal) {
 		this.feeTotal = feeTotal;
 	}
-	protected RegistrationFeeExtnService registrationFeeExtnService;
-		public RegistrationFeeExtnService getRegistrationFeeExtnService() {
-			return registrationFeeExtnService;
-		}
 
-		public void setRegistrationFeeExtnService(
-				RegistrationFeeExtnService registrationFeeService) {
-			this.registrationFeeExtnService = registrationFeeService;
-		}
+	protected RegistrationFeeExtnService registrationFeeExtnService;
+
+	public RegistrationFeeExtnService getRegistrationFeeExtnService() {
+		return registrationFeeExtnService;
+	}
+
+	public void setRegistrationFeeExtnService(
+			RegistrationFeeExtnService registrationFeeService) {
+		this.registrationFeeExtnService = registrationFeeService;
+	}
+
 	public String getFeeRemarks() {
 		return feeRemarks;
 	}
@@ -192,238 +196,306 @@ public class FeeDetailsExtnAction extends GenericWorkFlowAction{
 	}
 
 	public InputStream getReturnStream() {
-		return  new ByteArrayInputStream(returnStream.getBytes());
+		return new ByteArrayInputStream(returnStream.getBytes());
 
 	}
 
 	public String getMode() {
 		return mode;
 	}
+
 	public void setMode(String mode) {
 		this.mode = mode;
 	}
+
 	public FeeDetailsExtnService getFeeDetailsExtnService() {
 		return feeDetailsExtnService;
 	}
+
 	public void setFeeDetailsExtnService(FeeDetailsExtnService feeDetailsService) {
 		this.feeDetailsExtnService = feeDetailsService;
 	}
+
 	public Boolean getIsAutoCalculate() {
 		return isAutoCalculate;
 	}
+
 	public void setIsAutoCalculate(Boolean isAutoCalculate) {
 		this.isAutoCalculate = isAutoCalculate;
 	}
+
 	public List<BpaFeeExtn> getSantionFeeList() {
 		return santionFeeList;
 	}
+
 	public void setSantionFeeList(List<BpaFeeExtn> santionFeeList) {
 		this.santionFeeList = santionFeeList;
 	}
+
 	public FeeExtnService getFeeExtnService() {
 		return feeExtnService;
 	}
+
 	public void setFeeExtnService(FeeExtnService feeService) {
 		this.feeExtnService = feeService;
 	}
+
 	public InspectionExtnService getInspectionExtnService() {
 		return inspectionExtnService;
 	}
+
 	public void setInspectionExtnService(InspectionExtnService inspectionService) {
 		this.inspectionExtnService = inspectionService;
 	}
+
 	public Long getRegistrationId() {
 		return registrationId;
 	}
+
 	public void setRegistrationId(Long registrationId) {
 		this.registrationId = registrationId;
 	}
 
-
-
-	public void prepare()
-	{
-		//setRegistrationId(1L);
+	public void prepare() {
+		// setRegistrationId(1L);
 		super.prepare();
-		LOGGER.info(".......Registration Id----->"+getRegistrationId());
-		if(getRegistrationId()!=null){
-			registrationObj=inspectionExtnService.getRegistrationObjectbyId(getRegistrationId());
+		LOGGER.info(".......Registration Id----->" + getRegistrationId());
+		if (getRegistrationId() != null) {
+			registrationObj = inspectionExtnService
+					.getRegistrationObjectbyId(getRegistrationId());
 		}
 
 	}
 
-	public void validate(){
+	public void validate() {
 		LOGGER.debug("Start validate");
-		Boolean noerror=Boolean.TRUE;
-		for (BpaFeeExtn sanctionfees: getSantionFeeList()){
-			if(sanctionfees.getIsMandatory()){
-				if(sanctionfees.getFeeAmount()==null||sanctionfees.getFeeAmount().equals("")||sanctionfees.getFeeAmount().equals(BigDecimal.ZERO)){
-					addActionError("Fee Amount is required for "+sanctionfees.getFeeDescription());
-					noerror=Boolean.FALSE;
+		Boolean noerror = Boolean.TRUE;
+		for (BpaFeeExtn sanctionfees : getSantionFeeList()) {
+			if (sanctionfees.getIsMandatory()) {
+				if (sanctionfees.getFeeAmount() == null
+						|| sanctionfees.getFeeAmount().equals("")
+						|| sanctionfees.getFeeAmount().equals(BigDecimal.ZERO)) {
+					addActionError("Fee Amount is required for "
+							+ sanctionfees.getFeeDescription());
+					noerror = Boolean.FALSE;
 					break;
 				}
 			}
 		}
-		if(!noerror)
-		preparNewForm();
+		if (!noerror)
+			preparNewForm();
 		LOGGER.debug("Exit validate");
 	}
 
 	@SkipValidation
-	public String newForm(){
+	@Action(value = "/feeDetailsExtn-newForm", results = { @Result(name = NEW) })
+	public String newForm() {
 		LOGGER.debug("Start newForm");
 		preparNewForm();
 
-		if(null!=registrationObj && registrationObj.getServiceType()!=null && registrationObj.getServiceType().getCode()!=null &&
-				(registrationObj.getServiceType().getCode().equals(BpaConstants.NEWBUILDINGONVACANTPLOTCODE) ||
-						registrationObj.getServiceType().getCode().equals(BpaConstants.DEMOLITIONRECONSTRUCTIONCODE) ||
-								registrationObj.getServiceType().getCode().equals(BpaConstants.ADDITIONALCONSTRUCTIONCODE)) ){
-			//setMode("readOnlyMode");
+		if (null != registrationObj
+				&& registrationObj.getServiceType() != null
+				&& registrationObj.getServiceType().getCode() != null
+				&& (registrationObj.getServiceType().getCode()
+						.equals(BpaConstants.NEWBUILDINGONVACANTPLOTCODE)
+						|| registrationObj
+								.getServiceType()
+								.getCode()
+								.equals(BpaConstants.DEMOLITIONRECONSTRUCTIONCODE) || registrationObj
+						.getServiceType().getCode()
+						.equals(BpaConstants.ADDITIONALCONSTRUCTIONCODE))) {
+			// setMode("readOnlyMode");
 			setMode(BpaConstants.MODEVIEW);
-			}
+		}
 		LOGGER.debug("Exit newForm");
 		return NEW;
 	}
 
 	private void preparNewForm() {
 		LOGGER.debug("Start preparNewForm");
-		//Getting all the sanction fees for the service type and putting inside the sanctionfeelist<BpaFee> and iterating this list in the jsp.
-		if(registrationObj!=null){
-			santionFeeList=	feeExtnService.getAllSanctionedFeesbyServiceType(registrationObj.getServiceType().getId());
-			
-			List<InspectionExtn> inspectionList=inspectionExtnService.getSiteInspectionListforRegistrationObject(registrationObj);
-			   if(inspectionList!=null && inspectionList.isEmpty())
-			   {
-					addActionError("Inspection is mandatory. Please enter site inspection details before calculating Fee.");
-					
-			   }else
-			   {
-					for(BpaFeeExtn fe:santionFeeList){
-						fe.setFeeAmount(BigDecimal.ZERO);
-					}
-					
-					if(null!=registrationObj && inspectionList.get(0)!=null && registrationObj.getServiceType()!=null && registrationObj.getServiceType().getCode()!=null &&
-							(registrationObj.getServiceType().getCode().equals(BpaConstants.NEWBUILDINGONVACANTPLOTCODE) ||
-									registrationObj.getServiceType().getCode().equals(BpaConstants.DEMOLITIONRECONSTRUCTIONCODE) ||
-										registrationObj.getServiceType().getCode().equals(BpaConstants.ADDITIONALCONSTRUCTIONCODE)) ){
-				
-						calculateFee(santionFeeList,registrationObj,inspectionList.get(0));
-					}
-		   	     }	
-			   }	
-			
+		// Getting all the sanction fees for the service type and putting inside
+		// the sanctionfeelist<BpaFee> and iterating this list in the jsp.
+		if (registrationObj != null) {
+			santionFeeList = feeExtnService
+					.getAllSanctionedFeesbyServiceType(registrationObj
+							.getServiceType().getId());
+
+			List<InspectionExtn> inspectionList = inspectionExtnService
+					.getSiteInspectionListforRegistrationObject(registrationObj);
+			if (inspectionList != null && inspectionList.isEmpty()) {
+				addActionError("Inspection is mandatory. Please enter site inspection details before calculating Fee.");
+
+			} else {
+				for (BpaFeeExtn fe : santionFeeList) {
+					fe.setFeeAmount(BigDecimal.ZERO);
+				}
+
+				if (null != registrationObj
+						&& inspectionList.get(0) != null
+						&& registrationObj.getServiceType() != null
+						&& registrationObj.getServiceType().getCode() != null
+						&& (registrationObj
+								.getServiceType()
+								.getCode()
+								.equals(BpaConstants.NEWBUILDINGONVACANTPLOTCODE)
+								|| registrationObj
+										.getServiceType()
+										.getCode()
+										.equals(BpaConstants.DEMOLITIONRECONSTRUCTIONCODE) || registrationObj
+								.getServiceType()
+								.getCode()
+								.equals(BpaConstants.ADDITIONALCONSTRUCTIONCODE))) {
+
+					calculateFee(santionFeeList, registrationObj,
+							inspectionList.get(0));
+				}
+			}
+		}
+
 		setFeeRemarks(BpaConstants.FeeRemarks);
 		splitFeelistintosublists();
 		LOGGER.debug("Exit preparNewForm");
 	}
 
-	private void calculateFee(List<BpaFeeExtn> feeList, RegistrationExtn registration,
-			InspectionExtn inspectionExtn) {
+	private void calculateFee(List<BpaFeeExtn> feeList,
+			RegistrationExtn registration, InspectionExtn inspectionExtn) {
 
 		for (BpaFeeExtn feeObject : feeList) {
 
 			// Check is required to calculate for current service type ?
-			if (feeDetailsExtnService.isFeeCalculationRequiredForServiceType(inspectionExtn,registration,feeObject.getFeeCode(),
+			if (feeDetailsExtnService.isFeeCalculationRequiredForServiceType(
+					inspectionExtn, registration, feeObject.getFeeCode(),
 					registration.getServiceType().getCode())) {
-				feeDetailsExtnService.calculateFeeByServiceType(feeObject, registration, inspectionExtn);
+				feeDetailsExtnService.calculateFeeByServiceType(feeObject,
+						registration, inspectionExtn);
 			}
 		}
 	}
 
-	
-
-	//Getting COC based fee from demand ,cmda and mwgwf from registrationfeedetails table .Could have got all the fees
-	//from registrationfeedetails but coouldnot as the revised fee was implemented after fee and there was no registrationfeedetails table to save.
-	//For new records this is available
-	//For those which are not there in the registrationfeedetails table the only way i can show fees is by getting it from demand.
+	// Getting COC based fee from demand ,cmda and mwgwf from
+	// registrationfeedetails table .Could have got all the fees
+	// from registrationfeedetails but coouldnot as the revised fee was
+	// implemented after fee and there was no registrationfeedetails table to
+	// save.
+	// For new records this is available
+	// For those which are not there in the registrationfeedetails table the
+	// only way i can show fees is by getting it from demand.
 
 	@SkipValidation
-	public void buildVieworModify(RegistrationExtn registrationObj){
+	public void buildVieworModify(RegistrationExtn registrationObj) {
 		LOGGER.debug("Start buildVieworModify");
-		if(registrationObj.getEgDemand()!=null&&registrationObj.getEgDemand().getEgDemandDetails()!=null){
-		Set<EgDemandDetails> demandDetailsSet=registrationObj.getEgDemand().getEgDemandDetails();
-		HashMap<String,BigDecimal> feecodeamountmap=new HashMap<String,BigDecimal>();
-		HashMap<String,Long> feecodedemanddetailsIdmap=new HashMap<String,Long>();
+		if (registrationObj.getEgDemand() != null
+				&& registrationObj.getEgDemand().getEgDemandDetails() != null) {
+			Set<EgDemandDetails> demandDetailsSet = registrationObj
+					.getEgDemand().getEgDemandDetails();
+			HashMap<String, BigDecimal> feecodeamountmap = new HashMap<String, BigDecimal>();
+			HashMap<String, Long> feecodedemanddetailsIdmap = new HashMap<String, Long>();
 
-		//Getting fee amounts from demand to  set into the sanctionfees
+			// Getting fee amounts from demand to set into the sanctionfees
 
-		for(EgDemandDetails demandDetails:demandDetailsSet){
-			feecodeamountmap.put(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode(), demandDetails.getAmount());
-			feecodedemanddetailsIdmap.put(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode(), demandDetails.getId());
-		}
+			for (EgDemandDetails demandDetails : demandDetailsSet) {
+				feecodeamountmap.put(demandDetails.getEgDemandReason()
+						.getEgDemandReasonMaster().getCode(),
+						demandDetails.getAmount());
+				feecodedemanddetailsIdmap.put(demandDetails.getEgDemandReason()
+						.getEgDemandReasonMaster().getCode(),
+						demandDetails.getId());
+			}
 
-		//Getting fee amounts from registrationdfeedetails to  set into the sanctionfees
-		RegistrationFeeExtn latesetregistrationFeeObj= bpaCommonExtnService.getLatestApprovedRegistrationFee(registrationObj);
-		if(latesetregistrationFeeObj!=null){
-			Set<RegistrationFeeDetailExtn>	regFeeDtlSet= latesetregistrationFeeObj.getRegistrationFeeDetailsSet();
-			for(RegistrationFeeDetailExtn regFeeDtl:regFeeDtlSet){
-				if(feecodeamountmap.get(regFeeDtl.getBpaFee().getFeeCode())==null){
-					feecodeamountmap.put(regFeeDtl.getBpaFee().getFeeCode(), regFeeDtl.getAmount());
+			// Getting fee amounts from registrationdfeedetails to set into the
+			// sanctionfees
+			RegistrationFeeExtn latesetregistrationFeeObj = bpaCommonExtnService
+					.getLatestApprovedRegistrationFee(registrationObj);
+			if (latesetregistrationFeeObj != null) {
+				Set<RegistrationFeeDetailExtn> regFeeDtlSet = latesetregistrationFeeObj
+						.getRegistrationFeeDetailsSet();
+				for (RegistrationFeeDetailExtn regFeeDtl : regFeeDtlSet) {
+					if (feecodeamountmap
+							.get(regFeeDtl.getBpaFee().getFeeCode()) == null) {
+						feecodeamountmap.put(
+								regFeeDtl.getBpaFee().getFeeCode(),
+								regFeeDtl.getAmount());
+					}
 				}
 			}
+
+			santionFeeList = feeExtnService
+					.getAllSanctionedFeesbyServiceType(registrationObj
+							.getServiceType().getId());
+			for (BpaFeeExtn fees : santionFeeList) {
+				if (fees.getFeeGroup().equals(BpaConstants.COCFEE)) {
+					fees.setFeeAmount(feecodeamountmap.get(fees.getFeeCode()) != null ? feecodeamountmap
+							.get(fees.getFeeCode()) : BigDecimal.ZERO);
+					fees.setDemandDetailId(feecodedemanddetailsIdmap.get(fees
+							.getFeeCode()));
+					feeTotal = feeTotal.add(fees.getFeeAmount());
+				} else if (fees.getFeeGroup().equals(BpaConstants.CMDAFEE)) {
+					fees.setFeeAmount(feecodeamountmap.get(fees.getFeeCode()) != null ? feecodeamountmap
+							.get(fees.getFeeCode()) : BigDecimal.ZERO);
+					fees.setDemandDetailId(feecodedemanddetailsIdmap.get(fees
+							.getFeeCode()));
+					feeTotal = feeTotal.add(fees.getFeeAmount());
+					// TODO: WE MAY NEED TO PASS DEMANDDETAILID ALONG WITH UI.
+				} else if (fees.getFeeGroup().equals(BpaConstants.MWGWFFEE)) {
+					fees.setFeeAmount(feecodeamountmap.get(fees.getFeeCode()) != null ? feecodeamountmap
+							.get(fees.getFeeCode()) : BigDecimal.ZERO);
+					fees.setDemandDetailId(feecodedemanddetailsIdmap.get(fees
+							.getFeeCode()));
+					feeTotal = feeTotal.add(fees.getFeeAmount());
+					// TODO: WE MAY NEED TO PASS DEMANDDETAILID ALONG WITH UI.
+				}
 			}
 
-		santionFeeList=	feeExtnService.getAllSanctionedFeesbyServiceType(registrationObj.getServiceType().getId());
-		for(BpaFeeExtn fees:santionFeeList){
-			if(fees.getFeeGroup().equals(BpaConstants.COCFEE)){
-			fees.setFeeAmount(feecodeamountmap.get(fees.getFeeCode())!=null?feecodeamountmap.get(fees.getFeeCode()):BigDecimal.ZERO);
-			fees.setDemandDetailId(feecodedemanddetailsIdmap.get(fees.getFeeCode()));
-			feeTotal =feeTotal.add(fees.getFeeAmount());
-			}else if(fees.getFeeGroup().equals(BpaConstants.CMDAFEE)){
-				fees.setFeeAmount(feecodeamountmap.get(fees.getFeeCode())!=null?feecodeamountmap.get(fees.getFeeCode()):BigDecimal.ZERO);
-				fees.setDemandDetailId(feecodedemanddetailsIdmap.get(fees.getFeeCode()));
-				feeTotal =feeTotal.add(fees.getFeeAmount());
-				//TODO: WE MAY NEED TO PASS DEMANDDETAILID ALONG WITH UI.
-			}else if(fees.getFeeGroup().equals(BpaConstants.MWGWFFEE)){
-				fees.setFeeAmount(feecodeamountmap.get(fees.getFeeCode())!=null?feecodeamountmap.get(fees.getFeeCode()):BigDecimal.ZERO);
-				fees.setDemandDetailId(feecodedemanddetailsIdmap.get(fees.getFeeCode()));
-				feeTotal =feeTotal.add(fees.getFeeAmount());
-				//TODO: WE MAY NEED TO PASS DEMANDDETAILID ALONG WITH UI.
+			if (latesetregistrationFeeObj != null) {
+				registrationObj
+						.setRegistrationFeeChallanNumber(latesetregistrationFeeObj
+								.getChallanNumber());
+
+			} else
+				registrationObj.setRegistrationFeeChallanNumber("NA");
+
+			if (latesetregistrationFeeObj != null) {
+				setFeeRemarks(latesetregistrationFeeObj.getFeeRemarks());
+				registrationObj.setFeeDate(sdf.format(latesetregistrationFeeObj
+						.getFeeDate()));
+			} else {
+				setFeeRemarks(registrationObj.getFeeRemarks());
+				registrationObj.setFeeDate(null); // get date from demanddetl
 			}
 		}
-
-
-		if(latesetregistrationFeeObj!=null){
-		registrationObj.setRegistrationFeeChallanNumber(latesetregistrationFeeObj.getChallanNumber());
-
-		}else
-			registrationObj.setRegistrationFeeChallanNumber("NA");
-
-		if(latesetregistrationFeeObj!=null){
-			setFeeRemarks(latesetregistrationFeeObj.getFeeRemarks());
-		    registrationObj.setFeeDate(sdf.format(latesetregistrationFeeObj.getFeeDate()));
-		}else{
-			setFeeRemarks(registrationObj.getFeeRemarks());
-			 registrationObj.setFeeDate(null); //get date from demanddetl
-		}
-	}
 		splitFeelistintosublists();
 		LOGGER.debug("Exit buildVieworModify");
-		}
+	}
 
-
-	public String create(){
+	@Action(value = "/feeDetailsExtn-create", results = { @Result(name = NEW) })
+	public String create() {
 		LOGGER.debug("Start create");
 		mergeSublistintoFees();
-		oldStatus=registrationObj.getEgwStatus();
+		oldStatus = registrationObj.getEgwStatus();
 		LOGGER.debug("Saving revised registration fees");
-		registrationObj=feeDetailsExtnService.save(getSantionFeeList(),registrationObj);
+		registrationObj = feeDetailsExtnService.save(getSantionFeeList(),
+				registrationObj);
 		registrationObj.setFeeRemarks(getFeeRemarks());
-		if(getMode()!=null&&getMode().equalsIgnoreCase("modify")){
-			RegistrationFeeExtn registrationFee=registrationFeeExtnService.getNonRevisedRegistrationFees(registrationObj.getId());
-			if(registrationFee!=null){
-				if(!registrationFee.getRegistrationFeeDetailsSet().isEmpty()){
+		if (getMode() != null && getMode().equalsIgnoreCase("modify")) {
+			RegistrationFeeExtn registrationFee = registrationFeeExtnService
+					.getNonRevisedRegistrationFees(registrationObj.getId());
+			if (registrationFee != null) {
+				if (!registrationFee.getRegistrationFeeDetailsSet().isEmpty()) {
 					modifyRegistrationFeeDetails(registrationFee);
-				}else{
+				} else {
 					LOGGER.debug("Saving fees in registration fee table");
-					registrationObj=	 registrationFeeExtnService.saveFeesinRegistrationFee(registrationObj,getSantionFeeList());
+					registrationObj = registrationFeeExtnService
+							.saveFeesinRegistrationFee(registrationObj,
+									getSantionFeeList());
 				}
 			}
-		}else{
+		} else {
 			LOGGER.debug("Saving fees in registration fee table");
-			 registrationFeeExtnService.saveFeesinRegistrationFee(registrationObj,getSantionFeeList());
+			registrationFeeExtnService.saveFeesinRegistrationFee(
+					registrationObj, getSantionFeeList());
 		}
-		registrationObj.setEgwStatus(bpaCommonExtnService.getstatusbyCode(BpaConstants.FEESCREATED));
+		registrationObj.setEgwStatus(bpaCommonExtnService
+				.getstatusbyCode(BpaConstants.FEESCREATED));
 		registrationObj.setIsSanctionFeeRaised(Boolean.TRUE);
 
 		registrationObj.setFeeDate(sdf.format(new Date()));
@@ -431,24 +503,36 @@ public class FeeDetailsExtnAction extends GenericWorkFlowAction{
 		setMode(BpaConstants.MODEVIEW);
 		addActionMessage("Fee Details Saved Successfully");
 
-		bpaCommonExtnService.createStatusChange(registrationObj,oldStatus);
+		bpaCommonExtnService.createStatusChange(registrationObj, oldStatus);
 		LOGGER.debug("Exit create");
 		return NEW;
 	}
 
-	protected void modifyRegistrationFeeDetails(RegistrationFeeExtn registrationFee) {
+	protected void modifyRegistrationFeeDetails(
+			RegistrationFeeExtn registrationFee) {
 		LOGGER.debug("Start modifyRegistrationFeeDetails");
 
-		List<RegistrationFeeDetailExtn> regFeeList=Arrays.asList(registrationFee.getRegistrationFeeDetailsSet().toArray(new RegistrationFeeDetailExtn[registrationFee.getRegistrationFeeDetailsSet().size()]));
-		int index=-1;
-		for(int i=0;i<regFeeList.size();i++){
-			if(index!=-1)
+		List<RegistrationFeeDetailExtn> regFeeList = Arrays
+				.asList(registrationFee.getRegistrationFeeDetailsSet().toArray(
+						new RegistrationFeeDetailExtn[registrationFee
+								.getRegistrationFeeDetailsSet().size()]));
+		int index = -1;
+		for (int i = 0; i < regFeeList.size(); i++) {
+			if (index != -1)
 				getSantionFeeList().remove(index);
-			for(int j=0;j<getSantionFeeList().size();j++){
+			for (int j = 0; j < getSantionFeeList().size(); j++) {
 
-				if(regFeeList.get(i).getBpaFee().getId().equals(getSantionFeeList().get(j).getId())){
-					regFeeList.get(i).setAmount((getSantionFeeList().get(j).getFeeAmount()!=null && !"".equals(getSantionFeeList().get(j).getFeeAmount()))?getSantionFeeList().get(j).getFeeAmount():BigDecimal.ZERO);
-					index=j;
+				if (regFeeList.get(i).getBpaFee().getId()
+						.equals(getSantionFeeList().get(j).getId())) {
+					regFeeList
+							.get(i)
+							.setAmount(
+									(getSantionFeeList().get(j).getFeeAmount() != null && !""
+											.equals(getSantionFeeList().get(j)
+													.getFeeAmount())) ? getSantionFeeList()
+											.get(j).getFeeAmount()
+											: BigDecimal.ZERO);
+					index = j;
 					break;
 				}
 			}
@@ -456,10 +540,9 @@ public class FeeDetailsExtnAction extends GenericWorkFlowAction{
 		LOGGER.debug("Exit modifyRegistrationFeeDetails");
 	}
 
-
-
 	@SkipValidation
-	public String view(){
+	@Action(value = "/feeDetailsExtn-view", results = { @Result(name = NEW) })
+	public String view() {
 		LOGGER.debug("Start view");
 
 		buildVieworModify(registrationObj);
@@ -469,44 +552,55 @@ public class FeeDetailsExtnAction extends GenericWorkFlowAction{
 	}
 
 	@SkipValidation
-	public String modify(){
+	@Action(value = "/feeDetailsExtn-modify", results = { @Result(name = NEW) })
+	public String modify() {
 		LOGGER.debug("Start modify");
 
 		buildVieworModify(registrationObj);
-		
-		if(null!=registrationObj && registrationObj.getServiceType()!=null && registrationObj.getServiceType().getCode()!=null &&
-				(registrationObj.getServiceType().getCode().equals(BpaConstants.NEWBUILDINGONVACANTPLOTCODE) ||
-						registrationObj.getServiceType().getCode().equals(BpaConstants.DEMOLITIONRECONSTRUCTIONCODE) ||
-								registrationObj.getServiceType().getCode().equals(BpaConstants.ADDITIONALCONSTRUCTIONCODE)) ){
-			//setMode("readOnlyMode");
+
+		if (null != registrationObj
+				&& registrationObj.getServiceType() != null
+				&& registrationObj.getServiceType().getCode() != null
+				&& (registrationObj.getServiceType().getCode()
+						.equals(BpaConstants.NEWBUILDINGONVACANTPLOTCODE)
+						|| registrationObj
+								.getServiceType()
+								.getCode()
+								.equals(BpaConstants.DEMOLITIONRECONSTRUCTIONCODE) || registrationObj
+						.getServiceType().getCode()
+						.equals(BpaConstants.ADDITIONALCONSTRUCTIONCODE))) {
+			// setMode("readOnlyMode");
 			setMode(BpaConstants.MODEVIEW);
-			}else{
-		setMode("modify");
-			}
+		} else {
+			setMode("modify");
+		}
 		LOGGER.debug("Exit modify");
 		return NEW;
 	}
 
 	@SkipValidation
-	public String showFeeDetailsinRegistration(){
+	@Action(value = "/feeDetailsExtn-showFeeDetailsinRegistration", results = { @Result(name = "feeDetailsRegistration") })
+	public String showFeeDetailsinRegistration() {
 		LOGGER.debug("Start showFeeDetailsinRegistration");
-		if(EGOVThreadLocals.getUserId()!=null){
-			List<String> roleList = bpaCommonExtnService.getRoleNamesByPassingUserId((EGOVThreadLocals.getUserId()));
-			if(!BpaExtnRuleBook.getInstance().checkViewsforRoles(roleList,BpaConstants.FEEDETAILS)){
-				returnStream=returnStream.concat(" Fee Details");
+		if (EGOVThreadLocals.getUserId() != null) {
+			List<String> roleList = bpaCommonExtnService
+					.getRoleNamesByPassingUserId((EGOVThreadLocals.getUserId()));
+			if (!BpaExtnRuleBook.getInstance().checkViewsforRoles(roleList,
+					BpaConstants.FEEDETAILS)) {
+				returnStream = returnStream.concat(" Fee Details");
 				return BpaConstants.NOACCESS;
 			}
 		}
 
-
-		if(registrationObj!=null)
+		if (registrationObj != null)
 			buildVieworModify(registrationObj);
 		setMode(BpaConstants.MODEVIEW);
 		LOGGER.debug("Exit showFeeDetailsinRegistration");
 		return "feeDetailsRegistration";
 	}
 
-	public String showFeeDetailsinRevisedFee(){
+	@Action(value = "/feeDetailsExtn-showFeeDetailsinRevisedFee", results = { @Result(name = "feeDetailsRevisedFee") })
+	public String showFeeDetailsinRevisedFee() {
 		showFeeDetailsinRegistration();
 		return "feeDetailsRevisedFee";
 	}
@@ -516,44 +610,41 @@ public class FeeDetailsExtnAction extends GenericWorkFlowAction{
 
 		return null;
 	}
+
 	public RegistrationExtn getRegistrationObj() {
 		return registrationObj;
 	}
 
-
-	public void splitFeelistintosublists(){
+	public void splitFeelistintosublists() {
 		LOGGER.debug("Start splitFeelistintosublists");
 		CMDAFeeList.clear();
 		COCFeeList.clear();
 		MWGWFFeeList.clear();
-		for(BpaFeeExtn fees:santionFeeList){
+		for (BpaFeeExtn fees : santionFeeList) {
 
-			if(fees.getFeeGroup()!=null){
-			if(fees.getFeeGroup().equals(BpaConstants.CMDAFEE)){
-				CMDAFeeList.add(fees);
-			}
-			else if(fees.getFeeGroup().equals(BpaConstants.COCFEE)){
-				COCFeeList.add(fees);
-			}
-			else if(fees.getFeeGroup().equals(BpaConstants.MWGWFFEE)){
-				MWGWFFeeList.add(fees);
-			}
+			if (fees.getFeeGroup() != null) {
+				if (fees.getFeeGroup().equals(BpaConstants.CMDAFEE)) {
+					CMDAFeeList.add(fees);
+				} else if (fees.getFeeGroup().equals(BpaConstants.COCFEE)) {
+					COCFeeList.add(fees);
+				} else if (fees.getFeeGroup().equals(BpaConstants.MWGWFFEE)) {
+					MWGWFFeeList.add(fees);
+				}
 			}
 		}
 
 		LOGGER.debug("Exit splitFeelistintosublists");
 	}
 
-
-	public void mergeSublistintoFees(){
+	public void mergeSublistintoFees() {
 		LOGGER.debug("Start mergeSublistintoFees");
-		for(BpaFeeExtn fees:CMDAFeeList){
+		for (BpaFeeExtn fees : CMDAFeeList) {
 			santionFeeList.add(fees);
 		}
-		for(BpaFeeExtn fees:COCFeeList){
+		for (BpaFeeExtn fees : COCFeeList) {
 			santionFeeList.add(fees);
 		}
-		for(BpaFeeExtn fees:MWGWFFeeList){
+		for (BpaFeeExtn fees : MWGWFFeeList) {
 			santionFeeList.add(fees);
 		}
 		LOGGER.debug("Exit mergeSublistintoFees");

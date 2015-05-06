@@ -50,8 +50,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.LetterToPartyExtn;
@@ -80,7 +82,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Namespace("/lettertoparty")
 @ParentPackage("egov")
 public class LpReplyExtnAction extends BaseFormAction{
-
+	
 	private RegistrationExtn registration;
 	private static final Logger LOGGER					= Logger.getLogger(LpReplyExtnAction.class);
 	private LetterToPartyExtn letterParty;
@@ -135,6 +137,7 @@ public class LpReplyExtnAction extends BaseFormAction{
 			this.setDocumentNum(letterParty.getDocumentid());
 	}
 	@SkipValidation
+	@Action(value = "/lpReplyExtn-newForm", results = { @Result(name = NEW) })
 	public String newForm() {
 		
 		if (letterParty == null || 
@@ -189,6 +192,7 @@ public class LpReplyExtnAction extends BaseFormAction{
 
 	
 	@ValidationErrorPage(NEW)	
+	@Action(value = "/lpReplyExtn-createLpReply", results = { @Result(name = NEW) })
 	   public String createLpReply() {
 		
 		try{
@@ -399,6 +403,7 @@ public class LpReplyExtnAction extends BaseFormAction{
 		}
 	}
 	@SkipValidation
+	@Action(value = "/lpReplyExtn-showCheckList", results = { @Result(name = "checklist") })
 	public String showCheckList() {
 		
 		if(lpChkListDet.size() == 0) {
@@ -418,7 +423,7 @@ public class LpReplyExtnAction extends BaseFormAction{
 		}
 		return "checklist";
 	}
-	
+	@Action(value = "/lpReplyExtn-ackPrint", results = { @Result(name = "ackReport") })
 	public String ackPrint() {
 		try{
 			ReportRequest reportRequest = null;

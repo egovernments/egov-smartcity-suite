@@ -43,8 +43,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.RegistrationExtn;
@@ -125,6 +127,7 @@ public class ApprovalInformationExtnAction extends BaseFormAction{
 		
 	}
 	@SkipValidation
+	@Action(value = "/approvalInformationExtn-newForm", results = { @Result(name = NEW) })
 	public String newForm(){
 		if(getRegnApprovalInfoId()!=null)
 		{
@@ -169,6 +172,8 @@ public class ApprovalInformationExtnAction extends BaseFormAction{
 		return null;
 	}
 	@ValidationErrorPage(NEW)
+	@Transactional
+	@Action(value = "/approvalInformationExtn-create", results = { @Result(name = NEW) })
 	public String create()
 	{
 		approvaInfoExtnService.save(approveInfo);

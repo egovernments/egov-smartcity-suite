@@ -55,7 +55,9 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly=true)
 public class FeeExtnService extends PersistenceService<BpaFeeExtn, Long>{
 	
 	

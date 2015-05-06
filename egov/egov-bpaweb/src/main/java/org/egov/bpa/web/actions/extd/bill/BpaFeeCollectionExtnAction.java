@@ -42,7 +42,9 @@ package org.egov.bpa.web.actions.extd.bill;
 import java.net.URLEncoder;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bpa.models.extd.RegistrationExtn;
 import org.egov.bpa.services.extd.bill.BpaBillExtnServiceImpl;
@@ -88,6 +90,7 @@ public class BpaFeeCollectionExtnAction  extends BaseFormAction{
 	
 	@SuppressWarnings("deprecation")
 	@SkipValidation
+	@Action(value = "/bpaFeeCollectionExtn-create", results = { @Result(name = "viewCollectFee") })
 	public String viewUnitCollectTax() {
 		
 		if(registrationId!=null)

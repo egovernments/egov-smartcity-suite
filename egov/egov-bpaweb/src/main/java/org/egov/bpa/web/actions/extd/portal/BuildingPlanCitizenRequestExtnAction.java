@@ -43,7 +43,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.bpa.models.extd.AutoDcrDtlsExtn;
 import org.egov.bpa.models.extd.RegistrationExtn;
 import org.egov.bpa.models.extd.RegnAutoDcrDtlsExtn;
@@ -58,7 +60,7 @@ import org.egov.web.actions.BaseFormAction;
 public class BuildingPlanCitizenRequestExtnAction extends BaseFormAction {
 	private String serviceRegId;
 	private String requestID;
-	private String NEW= "new";
+	//private String NEW= "new";
 	private String AUTODCR= "autodcr";
 	//private PortalIntegrationService portalIntegrationService;
 	private Logger LOGGER = Logger.getLogger(BuildingPlanCitizenRequestExtnAction.class);
@@ -68,6 +70,7 @@ public class BuildingPlanCitizenRequestExtnAction extends BaseFormAction {
 	private List<AutoDcrDtlsExtn> autoDcrList = new ArrayList<AutoDcrDtlsExtn>();
 	private String serviceType;
 
+	@Action(value = "/buildingPlanCitizenRequestExtn-newAppInvacantPlot", results = { @Result(name = NEW) })
 	public String newAppInvacantPlot()
 	{
 		LOGGER.info(" serviceRegId" + getServiceRegId() + " Request Id " + getRequestID());
@@ -75,7 +78,7 @@ public class BuildingPlanCitizenRequestExtnAction extends BaseFormAction {
 		validateForm(Boolean.FALSE);
 			return NEW;
 	}
-	
+	@Action(value = "/buildingPlanCitizenRequestExtn-demolition", results = { @Result(name = NEW) })
 	public String demolition()
 	{ 
 		LOGGER.info(" serviceRegId" + getServiceRegId() + " Request Id " + getRequestID());
@@ -83,36 +86,45 @@ public class BuildingPlanCitizenRequestExtnAction extends BaseFormAction {
 		validateForm(Boolean.FALSE);
 		return NEW;
 	}
+	@Action(value = "/buildingPlanCitizenRequestExtn-demolitionAndReconstruction", results = { @Result(name = NEW) })
 	public String demolitionAndReconstruction()
 	{	
 		setServiceType(getSeriveTypeIdByPassingCode(ServiceType.DEMOLITIONRECONSTRUCTIONCODE.getCode()));
 		validateForm(Boolean.FALSE);
 		return NEW;
 	}
+	@Action(value = "/buildingPlanCitizenRequestExtn-subDivision", results = { @Result(name = NEW) })
 	public String subDivision()
 	{
 		setServiceType(getSeriveTypeIdByPassingCode(ServiceType.SUBDIVISIONOFLANDCODE.getCode()));
 		validateForm(Boolean.FALSE);
 		return NEW;
 	}
+	@Action(value = "/buildingPlanCitizenRequestExtn-layoutApproval", results = { @Result(name = NEW) })
 	public String layoutApproval()
 	{
 		setServiceType(getSeriveTypeIdByPassingCode(ServiceType.LAYOUTAPPPROVALCODE.getCode()));
 		validateForm(Boolean.FALSE);
 		return NEW;
 	}
+	
+	@Action(value = "/buildingPlanCitizenRequestExtn-additionalConstruction", results = { @Result(name = NEW) })
 	public String additionalConstruction()
 	{
 		setServiceType(getSeriveTypeIdByPassingCode(ServiceType.ADDITIONALCONSTRUCTIONCODE.getCode()));
 		validateForm(Boolean.FALSE);
 		return NEW;
 	}
+	
+	@Action(value = "/buildingPlanCitizenRequestExtn-cmdaType", results = { @Result(name = NEW) })
 	public String cmdaType()
 	{
 		setServiceType(getSeriveTypeIdByPassingCode(ServiceType.CMDACODE.getCode()));
 		validateForm(Boolean.FALSE);
 		return NEW;
 	}
+	
+	@Action(value = "/buildingPlanCitizenRequestExtn-reclassification", results = { @Result(name = NEW) })
 	public String reclassification()
 	{
 		setServiceType(getSeriveTypeIdByPassingCode(ServiceType.RECLASSIFICATIONCODE.getCode()));
@@ -128,6 +140,7 @@ public class BuildingPlanCitizenRequestExtnAction extends BaseFormAction {
 		else
 			return null;
 	}
+	@Action(value = "/buildingPlanCitizenRequestExtn-validateForm", results = { @Result(name = NEW) })
 	public String validateForm(Boolean autoDcrCheckRequired){
 		
 		LOGGER.info("   userid "+(EGOVThreadLocals.getUserId()));

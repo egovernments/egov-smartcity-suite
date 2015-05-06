@@ -43,8 +43,10 @@ package org.egov.bpa.web.actions.extd.masters;
 
 import java.util.List;
 
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bpa.models.extd.masters.ServiceTypeExtn;
 import org.egov.bpa.services.extd.masters.ServiceTypeExtnService;
@@ -84,13 +86,15 @@ public class ServiceTypeExtnAction extends BaseFormAction
 		addDropdownData("servicetypeList", persistenceService.findAllBy(" from ServiceTypeExtn order by code "));
 	}
 	
-	@SkipValidation	
+	@SkipValidation
+	@Action(value = "/serviceTypeExtn-newform", results = { @Result(name = NEW) })
 	public String newform(){
 		 return NEW;
 	}
 			
 	@ValidationErrorPage("search")	
 	@SkipValidation	
+	@Action(value = "/serviceTypeExtn-modify", results = { @Result(name = NEW) })
 	public String modify()
 	{
 		serviceTypeExtn=serviceTypeExtnService.getservicetypeById(getIdTemp());
@@ -100,6 +104,7 @@ public class ServiceTypeExtnAction extends BaseFormAction
 
 	@ValidationErrorPage("search")
 	@SkipValidation	
+	@Action(value = "/serviceTypeExtn-view", results = { @Result(name = NEW) })
 	public String view()
 	{
 		serviceTypeExtn=serviceTypeExtnService.getservicetypeById(getIdTemp());
@@ -111,13 +116,14 @@ public class ServiceTypeExtnAction extends BaseFormAction
 
 	@ValidationErrorPage("search")
 	@SkipValidation	
+	@Action(value = "/serviceTypeExtn-searchList", results = { @Result(name = LIST) })
 	public String searchList()
 	{ 
 		return LIST;
 	}
 	
-	
-	
+	@Transactional
+	@Action(value = "/serviceTypeExtn-create", results = { @Result(name = NEW) })
 	public String create()
 	{    
 		serviceTypeExtn=serviceTypeExtnService.save(serviceTypeExtn);

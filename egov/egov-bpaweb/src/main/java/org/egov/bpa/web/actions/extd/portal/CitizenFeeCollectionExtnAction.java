@@ -40,7 +40,9 @@
 package org.egov.bpa.web.actions.extd.portal;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.bpa.web.actions.extd.bill.BpaFeeCollectionExtnAction;
 
 @SuppressWarnings("serial")
@@ -51,6 +53,7 @@ public class CitizenFeeCollectionExtnAction extends BpaFeeCollectionExtnAction{
 	{
 		super.prepare(); 
 	}
+	@Action(value = "/citizenFeeCollectionExtn-citizenFeeCollectionExtn", results = { @Result(name = "onlineCollectTax") })
 	public String viewUnitCollectTax() {
 		LOGGER.debug("CitizenFeeCollectionAction || viewUnitCollectTax || start ");
 		super.viewUnitCollectTax();

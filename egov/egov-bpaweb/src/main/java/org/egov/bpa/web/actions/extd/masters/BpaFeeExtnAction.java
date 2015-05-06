@@ -44,8 +44,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.masters.BpaFeeDetailExtn;
@@ -96,6 +98,7 @@ public class BpaFeeExtnAction extends BaseFormAction
 		return bpafeeExtn;
 	}
 	@SkipValidation	
+	@Action(value = "/bpaFeeExtn-newform", results = { @Result(name = NEW) })
 	public String newform()
 	{
 		
@@ -104,6 +107,7 @@ public class BpaFeeExtnAction extends BaseFormAction
 	}
 	
 	@SkipValidation	
+	@Action(value = "/bpaFeeExtn-search", results = { @Result(name = LIST) })
 	public String search()
 	{ 
 		return LIST;
@@ -112,6 +116,7 @@ public class BpaFeeExtnAction extends BaseFormAction
 	
 		@ValidationErrorPage("search")	
 		@SkipValidation	
+		@Action(value = "/bpaFeeExtn-modify", results = { @Result(name = NEW) })
 		public String modify()
 		{
 			buildFeeDetail();
@@ -121,6 +126,7 @@ public class BpaFeeExtnAction extends BaseFormAction
 		
 		@ValidationErrorPage("search")
 		@SkipValidation	
+		@Action(value = "/bpaFeeExtn-view", results = { @Result(name = NEW) })
 		public String view()
 		{
 			buildFeeDetail();
@@ -295,7 +301,8 @@ public class BpaFeeExtnAction extends BaseFormAction
 	      return getText(key);
       }
 
-
+   	@Action(value = "/bpaFeeExtn-create", results = { @Result(name = NEW) })
+   	@Transactional
 		public String create()
 	    {   
 			if(bpafeeExtn.getIsActive()==null && getMode().equals(EDIT))
@@ -325,6 +332,7 @@ public class BpaFeeExtnAction extends BaseFormAction
 			addDropdownData("feeGroupList", (Arrays.asList(BpaConstants.COCFEE,BpaConstants.CMDAFEE,BpaConstants.MWGWFFEE)));
 		}
 		@SkipValidation
+		@Action(value = "/bpaFeeExtn-codeUniqueCheck", results = { @Result(name = "codeUniqueCheck") })
 		public String codeUniqueCheck(){
 			return "codeUniqueCheck" ;
 		} 	

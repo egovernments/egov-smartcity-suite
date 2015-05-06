@@ -43,7 +43,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.AutoDcrExtn;
 import org.egov.infstr.search.SearchQuery;
@@ -72,7 +74,7 @@ public class SearchAutoDcrExtnAction extends SearchFormAction
 		// addDropdownData("autoDcrList",persistenceService.findAllBy("from SearchAutoDcr order by autoDcrNum"));
 			
 	}
-	
+	@Action(value = "/searchAutoDcrExtn-searchAuto", results = { @Result(name = NEW) })
 	public String searchAuto() {
 	
 		return NEW;
@@ -84,6 +86,8 @@ public class SearchAutoDcrExtnAction extends SearchFormAction
 		return searchAutoDcr;
 	}
 	@ValidationErrorPage(NEW)
+	@Transactional
+	@Action(value = "/searchAutoDcrExtn-searchResults", results = { @Result(name = NEW) })
 	public String searchResults(){
 		
 		super.search();

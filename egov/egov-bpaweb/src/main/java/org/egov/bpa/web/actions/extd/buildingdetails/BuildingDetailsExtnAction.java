@@ -48,8 +48,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.ApprdBuildingDetailsExtn;
@@ -119,6 +121,7 @@ public class BuildingDetailsExtnAction extends BaseFormAction{
 	}
 
 	@SkipValidation
+	@Action(value = "/buildingDetailsExtn-newForm", results = { @Result(name = NEW) })
 	public String newForm() {
 
 		if(serviceType.equals(BpaConstants.NEWBUILDINGONVACANTPLOTCODE)
@@ -254,6 +257,8 @@ public class BuildingDetailsExtnAction extends BaseFormAction{
 	}
 
 	@ValidationErrorPage(NEW)
+	@Transactional
+	@Action(value = "/buildingDetailsExtn-save", results = { @Result(name = NEW) })
 	public String save()
 	  {
 		apprdBldgDetExtnService.createApprdBldgDetail(apprdBldgDetails,builflorlsList, registration);
