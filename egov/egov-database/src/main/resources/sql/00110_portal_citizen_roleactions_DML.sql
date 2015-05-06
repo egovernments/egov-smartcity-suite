@@ -7,7 +7,7 @@ delete from eg_role  where name ='Citizen User';
 DELETE FROM EG_ROLEACTION_MAP WHERE ACTIONID IN ((select id FROM eg_action  WHERE name = 'ComplaintRegisteration')) AND ROLEID IN (select id from eg_role where UPPER(name) LIKE 'SUPERUSER'));
 
 
-update eg_user set username = '9999999999', mobile where username ='citizenUser';
+update eg_user set username = '9999999999', mobilenumber = '9999999999' where username ='citizenUser';
 
 
 
