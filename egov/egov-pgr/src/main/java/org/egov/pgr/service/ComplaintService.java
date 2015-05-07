@@ -264,7 +264,7 @@ public class ComplaintService {
 
 		citizenInboxBuilder.module((Module) hql.uniqueResult());
 		citizenInboxBuilder.identifier(savedComplaint.getCRN());
-		citizenInboxBuilder.link("/pgr/complaint/view/" + savedComplaint.getCRN());
+		citizenInboxBuilder.link("/pgr/complaint/update/" + savedComplaint.getCRN());   
 		citizenInboxBuilder.state(savedComplaint.getState());
 		citizenInboxBuilder.status(savedComplaint.getStatus().getName());
 

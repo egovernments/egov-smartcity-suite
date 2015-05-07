@@ -47,7 +47,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.admin.master.entity.Role;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.entity.enums.UserType;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -65,15 +64,18 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value = "/complaint-update")
+@RequestMapping(value="/complaint/update/{crnNo}")
 public class ComplaintUpdationController {
 
+	private static final String REDIRECT_COMPLAINT_UPDATE = "redirect:/complaint/update/";
+	private static final String COMPLAINT_EDIT = "complaint-edit";
+	private static final String COMPLAINT_CITIZEN_EDIT = "complaint-citizen-edit";
 	private final ComplaintService complaintService;
 	private final ComplaintTypeService complaintTypeService;
 	private final CommonService commonService;
@@ -94,49 +96,50 @@ public class ComplaintUpdationController {
 
 	}
 
-	// Dont use this which will query multiple times
-	// Not an issue since hibernate will not load once again but it is confusing
-	// developers
 	@ModelAttribute
-	public Complaint getComplaint(@RequestParam final Long id) {
-		final Complaint complaint = complaintService.getComplaintById(id);
+	public Complaint getComplaint(@PathVariable final String  crnNo) {
+		final Complaint complaint = complaintService.getComplaintByCrnNo(crnNo);
 		return complaint;
 	}
 
-	@ModelAttribute("complaintType")
 	public List<ComplaintType> complaintTypes() {
 		return complaintTypeService.findAll();
 	}
 
 	@ModelAttribute("status")
-	public List<ComplaintStatus> getStatus(@RequestParam final Long id) {
+	public List<ComplaintStatus> getStatus(@PathVariable final String  crnNo) {
 		final Set<Role> rolesList = securityUtils.getCurrentUser().getRoles();
-		return complaintStatusMappingService.getStatusByRoleAndCurrentStatus(rolesList, getComplaint(id).getStatus());
+		return complaintStatusMappingService.getStatusByRoleAndCurrentStatus(rolesList, getComplaint(crnNo).getStatus());
+	}
+	
+
+	private String citizenEdit(final Model model,Complaint complaint) {
+		final List<Hashtable<String, Object>> historyTable = complaintService.getHistory(complaint);
+		model.addAttribute("complaintHistory", historyTable);
+		return COMPLAINT_CITIZEN_EDIT;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String edit(final Model model, @RequestParam final Long id) {
-		final User currentUser = securityUtils.getCurrentUser();
-		if (currentUser.getType().equals(UserType.CITIZEN)) {
-			complaintService.getComplaintById(id);
-			return "complaint-citizen-edit";
-		}
+	public String edit(final Model model, @PathVariable final String  crnNo) {
 
-		final Complaint complaint = complaintService.getComplaintById(id);
+		final Complaint complaint =	getComplaint(crnNo);
+		if (securityUtils.currentUserType().equals(UserType.CITIZEN)) {
+			return citizenEdit(model,complaint);
+		}
 		final List<Hashtable<String, Object>> historyTable = complaintService.getHistory(complaint);
 		model.addAttribute("complaintHistory", historyTable);
+		//model.addAttribute("status",getStatus(complaint.getStatus()));
+		model.addAttribute("complaintType",complaintTypes());
+		//model.addAttribute("complaint",complaint);
 
 		prepareWorkflow(model);
 		// set the defaults
-		// model.addAttribute("zone", Collections.EMPTY_LIST);
 		model.addAttribute("ward", Collections.EMPTY_LIST);
 		model.addAttribute("zone", commonService.getZones());
 		if (complaint.getComplaintType().isLocationRequired())
-			// model.addAttribute("zone", commonService.getZones());
 			if (complaint.getLocation() != null)
 				model.addAttribute("ward", commonService.getWards(complaint.getLocation().getParent().getId()));
-
-		return "complaint-edit";
+		return COMPLAINT_EDIT;
 	}
 
 	private void prepareWorkflow(final Model model) {
@@ -144,38 +147,68 @@ public class ComplaintUpdationController {
 
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
-	public String update(@ModelAttribute Complaint complaint, final BindingResult errors,
-			final RedirectAttributes redirectAttrs, final Model model, final HttpServletRequest request) {
-		// change this validator to custom as no need to do complete validation
-		// Since the usage of this is screen is very heavy need to consider all
-		// performance fixes
-		// validator.validate(complaint, errors);
-		validateUpdate(complaint, errors, request);
-		Long approvalPosition = 0l;
-		if (null != request.getParameter("approvalPosition") && !request.getParameter("approvalPosition").isEmpty())
-			approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+	@RequestMapping(method =RequestMethod.POST)
+	public String update(@ModelAttribute Complaint complaint, final BindingResult errors,final RedirectAttributes redirectAttrs, final Model model, final HttpServletRequest request) {
 		String approvalComent = "";
 		if (null != request.getParameter("approvalComent"))
 			approvalComent = request.getParameter("approvalComent");
-
-		if (!errors.hasErrors()) {
+		//this validation is common for citizen and official. Any more specific validation required for official then write different method
+		
+		validateUpdate(complaint, errors, request);
+		
+		
+		if(securityUtils.currentUserType().equals(UserType.CITIZEN))
+		{
+			return updateCitizen(complaint,approvalComent,redirectAttrs,errors);
+		}
+		
+		Long approvalPosition = 0l;
+	
+		if (null != request.getParameter("approvalPosition") && !request.getParameter("approvalPosition").isEmpty())
+			approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+		
+		String result="";
+		if (!errors.hasErrors()) 
+		{
 			complaint = complaintService.update(complaint, approvalPosition, approvalComent);
-
 			redirectAttrs.addFlashAttribute("message", "Successfully Updated Complaint !");
-		} else {
+			result=REDIRECT_COMPLAINT_UPDATE + complaint.getCRN();	
+		} 
+		else {
+			final List<Hashtable<String, Object>> historyTable = complaintService.getHistory(complaint);
+			model.addAttribute("complaintHistory", historyTable);
+			model.addAttribute("complaintType",complaintTypes());
 			prepareWorkflow(model);
 			model.addAttribute("zone", commonService.getZones());
 			model.addAttribute("ward", Collections.EMPTY_LIST);
-
 			if (complaint.getComplaintType() != null && complaint.getComplaintType().isLocationRequired())
 				if (complaint.getLocation() != null)
 					model.addAttribute("ward", commonService.getWards(complaint.getLocation().getParent().getId()));
+			result= COMPLAINT_EDIT;
+		}
 
-			return "complaint-edit";
+		return result;
+
+	}
+
+	private String updateCitizen(Complaint complaint, String approvalComent, RedirectAttributes redirectAttrs, BindingResult errors) {
+		String result="";
+		try {
+			if (errors.hasErrors()) {
+				result=COMPLAINT_CITIZEN_EDIT;
+			}
+			else{
+			complaint.setStatus(complaint.getStatus());
+			complaintService.update(complaint, null, approvalComent);
+			redirectAttrs.addFlashAttribute("message", "Successfully Updated Complaint !");
+			result= REDIRECT_COMPLAINT_UPDATE + complaint.getCRN();
+			}
+		} catch (Exception e) {
+			result= COMPLAINT_CITIZEN_EDIT;
 
 		}
-		return "redirect:/complaint-update?id=" + complaint.getId();
+		return result;
+
 	}
 
 	private void validateUpdate(final Complaint complaint, final BindingResult errors, final HttpServletRequest request) {
@@ -183,20 +216,14 @@ public class ComplaintUpdationController {
 			final ObjectError error = new ObjectError("status", "Complaint Status is required");
 			errors.addError(error);
 		}
+		
+		 if (null == request.getParameter("approvalComent") || request.getParameter("approvalComent").isEmpty()) 
+		 {
+			 ObjectError error = new ObjectError("approvalComent", "Complaint coments Cannot be null"); 
+			 errors.addError(error);
+		 }
+				 
 
-		if (null == complaint.getComplaintType()) {
-			final ObjectError error = new ObjectError("complaintType", "ComplaintType is required");
-			errors.addError(error);
-		}
-
-		// comenting as only status or complaint type change does not need
-		// coments
-		/*
-		 * if (null == request.getParameter("approvalComent") ||
-		 * request.getParameter("approvalComent").isEmpty()) { ObjectError error
-		 * = new ObjectError("approvalComent",
-		 * "Complaint coments Cannot be null"); errors.addError(error); }
-		 */
 
 	}
 }

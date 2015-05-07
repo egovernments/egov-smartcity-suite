@@ -138,7 +138,7 @@
 				<div class="col-md-3 col-xs-12 add-margin">
 					<select name="approvalPosition" id="approvalPosition"
 						class="form-control">
-						<option value=""><spring:message code="lbl.selectuser" /></option>
+						<option value=""><spring:message code="lbl.select" /></option>
 
 					</select>
 					
@@ -147,10 +147,10 @@
 			
 			<div class="form-group">
 				<div class="col-md-3 add-margin">
-					<spring:message code="lbl.include.message" />
+					<spring:message code="lbl.include.message" /><span class="mandatory"></span>
 				</div>
 				<div class="col-md-9 add-margin">
-					<textarea class="form-control" id="inc_messge" placeholder=""
+					<textarea class="form-control" id="inc_messge" placeholder="" required="required"
 						maxlength="400" name="approvalComent"></textarea>
 				</div>
 			</div>
