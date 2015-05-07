@@ -40,7 +40,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@taglib  uri="http://www.joda.org/joda/time/tags" prefix="joda"%>
 
-		<link rel="icon" href="../egi/resources/global/images/chennai_fav.ico" sizes="32x32">
+		<link rel="icon" href="../egi/resources/global/images/favicon.ico" sizes="32x32">
 		<link rel="stylesheet" href="../egi/resources/global/css/font-icons/entypo/css/entypo.css">
 		<link rel="stylesheet" href="../egi/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css">
 		<script type="text/javascript">

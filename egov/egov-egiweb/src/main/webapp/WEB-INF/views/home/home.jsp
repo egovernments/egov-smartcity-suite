@@ -62,7 +62,7 @@
 				}
 			};
 		</script>
-		<link rel="icon" href="<c:url value='/resources/global/images/chennai_fav.ico'/>" sizes="32x32">
+		<link rel="icon" href="<c:url value='/resources/global/images/favicon.ico'/>" sizes="32x32">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css'/>">
@@ -155,7 +155,7 @@
 									</a>
 								</li>
 								<li>
-									<a href="/egi/logout.do">
+									<a href="/egi/logout">
 										<i class="fa fa-sign-out"></i>
 										<span class="title signout">Sign Out</span>
 									</a>
@@ -164,7 +164,7 @@
 						</li>
 						
 						<li class="dropdown visible-xs hidden-sm">
-							<a href="/egi/logout.do" class="tooltip-secondary signout" data-toggle="tooltip" title="Sign Out">
+							<a href="/egi/logout" class="tooltip-secondary signout" data-toggle="tooltip" title="Sign Out">
 								<i class="entypo-logout"></i>
 							</a>
 						</li>

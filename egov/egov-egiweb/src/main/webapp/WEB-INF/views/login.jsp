@@ -51,7 +51,7 @@
 
 <title>eGov Urban Portal Login</title>
 
-<link rel="icon" href="/egi/resources/global/images/chennai_fav.ico"
+<link rel="icon" href="/egi/resources/global/images/favicon.png"
 	sizes="32x32">
 <link rel="stylesheet"
 	href="/egi/resources/global/css/bootstrap/bootstrap-datepicker.css">

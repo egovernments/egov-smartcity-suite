@@ -81,7 +81,7 @@
 				<bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
 			</list>
 		</constructor-arg>
-		<property name="filterProcessesUrl" value="/logout.do" />
+		<property name="filterProcessesUrl" value="/logout" />
 	</bean>
 	
 	<bean id="authenticationProcessingFilter" class="org.egov.infstr.security.spring.filter.EgovAuthenticationProcessingFilter">
