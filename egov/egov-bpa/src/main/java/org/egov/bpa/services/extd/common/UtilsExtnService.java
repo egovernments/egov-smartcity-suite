@@ -130,7 +130,7 @@ public class UtilsExtnService {
 
 		String query = "SELECT empinfo.POS_ID, count(wfstate.id) "
 				+ " FROM EG_EIS_EMPLOYEEINFO empinfo"
-				+ " LEFT OUTER JOIN EG_WF_STATES wfstate on wfstate.owner=empinfo.POS_ID and wfstate.type=:wfStateType and wfstate.value!='NEW' "
+				+ " LEFT OUTER JOIN EG_WF_STATES wfstate on wfstate.owner_pos=empinfo.POS_ID and wfstate.type=:wfStateType and wfstate.value!='NEW' "
 				+ " and exists (select 1 from EGBPAEXTND_REGISTRATION bpareg, EGW_STATUS status  where bpareg.STATUSID=status.id and "
 				+ " status.CODE not in (:statuses) and "
 				+ " status.moduletype=:moduleType and bpareg.STATEID=wfstate.id) "
