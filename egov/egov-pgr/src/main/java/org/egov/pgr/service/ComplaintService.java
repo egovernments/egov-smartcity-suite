@@ -51,6 +51,7 @@ import static org.egov.pgr.utils.constants.CommonConstants.DASH_DELIM;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
@@ -296,35 +297,14 @@ public class ComplaintService {
 	public List<Hashtable<String, Object>> getHistory(final Complaint complaint) {
 		User user = null;
 		final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
-		if (!complaint.getStateHistory().isEmpty() && complaint.getStateHistory() != null)
-			for (final StateHistory stateHistory : complaint.getStateHistory()) {
-				final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
-				map.put("date", stateHistory.getDateInfo());
-				map.put("comments", stateHistory.getComments());
-				map.put("updater", stateHistory.getLastModifiedBy().getName());
-				map.put("status", stateHistory.getValue());
-				final Position ownerPosition = stateHistory.getOwnerPosition();
-				user = stateHistory.getOwnerUser();
-				if (null != user) {
-					map.put("user", user.getUsername());
-					map.put("department",
-							null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
-									.getDepartmentForUser(user.getId()).getName() : "");
-				} else if (null != ownerPosition && null != ownerPosition.getDeptDesigId()) {
-					user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
-					map.put("user", null != user.getUsername() ? user.getUsername() : "");
-					map.put("department", null != ownerPosition.getDeptDesigId().getDeptId() ? ownerPosition
-							.getDeptDesigId().getDeptId().getName() : "");
-				}
-				historyTable.add(map);
-			}
 		final State state = complaint.getState();
 		final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
 		map.put("date", state.getDateInfo());
 		map.put("comments", state.getComments());
-		map.put("updater", state.getLastModifiedBy().getName());
+		map.put("updatedBy", state.getLastModifiedBy().getName());
 		map.put("status", state.getValue());
 		final Position ownerPosition = state.getOwnerPosition();
+		user = state.getOwnerUser();
 		user = state.getOwnerUser();
 		if (null != user) {
 			map.put("user", user.getUsername());
@@ -337,6 +317,29 @@ public class ComplaintService {
 					.getDeptId().getName() : "");
 		}
 		historyTable.add(map);
+		if (!complaint.getStateHistory().isEmpty() && complaint.getStateHistory() != null)
+			Collections.reverse(complaint.getStateHistory());
+			for (final StateHistory stateHistory : complaint.getStateHistory()) {
+				final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
+				HistoryMap.put("date", stateHistory.getDateInfo());
+				HistoryMap.put("comments", stateHistory.getComments());
+				HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getName());
+				HistoryMap.put("status", stateHistory.getValue());
+				final Position owner = stateHistory.getOwnerPosition();
+				user = stateHistory.getOwnerUser();
+				if (null != user) {
+					HistoryMap.put("user", user.getUsername());
+					HistoryMap.put("department",
+							null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
+									.getDepartmentForUser(user.getId()).getName() : "");
+				} else if (null != owner && null != owner.getDeptDesigId()) {
+					user = eisCommonService.getUserForPosition(owner.getId(), new Date());
+					HistoryMap.put("user", null != user.getUsername() ? user.getUsername() : "");
+					HistoryMap.put("department", null != owner.getDeptDesigId().getDeptId() ? owner
+							.getDeptDesigId().getDeptId().getName() : "");
+				}
+				historyTable.add(HistoryMap);
+			}
 		return historyTable;
 	}
 

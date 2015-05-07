@@ -206,7 +206,7 @@
 										<c:out value="${historyDate}" />
 									</div>
 									<div class="col-md-2 col-xs-12 add-margin">
-										<c:out value="${history.updater}" />
+										<c:out value="${history.updatedBy}" />
 									</div>
 									<div class="col-md-2 col-xs-12 add-margin">
 										<c:out value="${history.status}" />
