@@ -55,9 +55,9 @@ import org.egov.exceptions.InvalidPropertyException;
 import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.citizen.entity.Citizen;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.joda.time.DateTime;
+import org.egov.portal.entity.Citizen;
 
 /**
  * This is the interface for the Property which reperesents the Status and

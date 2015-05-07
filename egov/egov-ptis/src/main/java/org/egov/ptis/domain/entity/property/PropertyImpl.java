@@ -49,7 +49,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 
 import java.math.BigDecimal;
-import java.security.acl.Owner;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -63,8 +62,8 @@ import org.egov.commons.Installment;
 import org.egov.exceptions.InvalidPropertyException;
 import org.egov.infra.admin.master.entity.Address;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.citizen.entity.Citizen;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.portal.entity.Citizen;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.joda.time.DateTime;
 
