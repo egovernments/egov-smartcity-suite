@@ -38,297 +38,209 @@
   
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<web-app version="2.5" xmlns:j2ee="http://java.sun.com/xml/ns/javaee"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
-    http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
-
-    <display-name>eGov Assets</display-name>
-
-    <!-- Context Configuration locations for Spring XML files -->
-    <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>
-            classpath*:/applicationContext.xml
-            /WEB-INF/applicationContext*.xml 
-            /WEB-INF/security.xml
-        </param-value>
-    </context-param>
-    
-    <!-- ParentContext which loads all beans that are shared across modules -->
-    <context-param>
-        <param-name>locatorFactorySelector</param-name>
-        <param-value>classpath*:org/egov/infstr/beanfactory/erpApplicationContext.xml</param-value>
-    </context-param>
-    <context-param>
-        <param-name>parentContextKey</param-name>
-        <param-value>erpApplicationContext</param-value>
-    </context-param>
-    
-    <filter>
-	    <filter-name>CacheControlFilter</filter-name>
-	    <filter-class>org.egov.infstr.client.filter.CacheControlFilter</filter-class>
-		<!--The below init-param is only required if you want to cache your static content more than a  month or less, by default CacheControlFilter is configured for 1 month cache-->
-	    <init-param>
-		<param-name>expireInSeconds</param-name>
-		<param-value>2592000</param-value>
-		 </init-param>
-    </filter>
-    <filter>
-        <filter-name>CharacterEncodingFilter</filter-name>
-        <filter-class> org.springframework.web.filter.CharacterEncodingFilter </filter-class>
-        <init-param>
-            <param-name>encoding</param-name>
-            <param-value>UTF-8</param-value>
-        </init-param>
-        <init-param>
-            <param-name>forceEncoding</param-name>
-            <param-value>true</param-value>
-        </init-param>
-    </filter>
-
-     <filter-mapping>
-	    <filter-name>CacheControlFilter</filter-name>
-	    <url-pattern>*.js</url-pattern>
-	    <url-pattern>*.css</url-pattern>
-	    <url-pattern>*.jpg</url-pattern>
-	    <url-pattern>*.png</url-pattern>
-	    <url-pattern>*.gif</url-pattern>
-	    <url-pattern>*.ico</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>CharacterEncodingFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
-    <!-- JNDI Session Filter -->
-    <filter>
-        <filter-name>JSPJNDISession</filter-name>
-        <filter-class>
-            org.egov.infstr.client.filter.SetThreadLocals
-        </filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>JSPJNDISession</filter-name>
-        <url-pattern>*.do</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>JSPJNDISession</filter-name>
-        <url-pattern>*.action</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>JSPJNDISession</filter-name>
-        <url-pattern>*.jsp</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>JSPJNDISession</filter-name>
-        <url-pattern>/j_security_check</url-pattern>
-    </filter-mapping>
-
-    <!-- Hibernate Session Filter -->
-    <filter>
-        <filter-name>hibernateSession</filter-name>
-        <filter-class>
-            org.egov.infstr.client.filter.HibSessionServletFilter
-        </filter-class>
-        <init-param>
-            <param-name>singleSession</param-name>
-            <param-value>true</param-value>
-        </init-param>
-    </filter>
-    <filter-mapping>
-        <filter-name>hibernateSession</filter-name>
-        <url-pattern>*.do</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>hibernateSession</filter-name>
-        <url-pattern>*.jsp</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>hibernateSession</filter-name>
-        <url-pattern>*.action</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>hibernateSession</filter-name>
-        <url-pattern>/j_security_check</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-    </filter-mapping>
-
-    <!-- ACEGI Security Filter -->
-    <filter>
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+	<display-name>eGov Assets</display-name>
+	<!-- Context Params Starts -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath*:config/spring/applicationContext-assetsweb.xml</param-value>
+	</context-param>
+	<context-param>
+		<param-name>locatorFactorySelector</param-name>
+		<param-value>classpath*:config/spring/applicationContext-erp.xml</param-value>
+	</context-param>
+	<context-param>
+		<param-name>parentContextKey</param-name>
+		<param-value>erpApplicationContext</param-value>
+	</context-param>
+	<!-- Context Params Ends Filter Declaration Starts -->
+	<filter>
+		<filter-name>CacheControlFilter</filter-name>
+		<filter-class>org.egov.infstr.client.filter.CacheControlFilter</filter-class>
+	</filter>
+	<filter>
+		<filter-name>CharacterEncodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter>
+		<filter-name>gzipFilter</filter-name>
+		<filter-class>net.sf.ehcache.constructs.web.filter.GzipFilter</filter-class>
+	</filter>
+	<filter>
+		<filter-name>threadLocalsHandlerFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter>
+		<filter-name>openEntityManagerInViewFilter</filter-name>
+		<filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
+	</filter>
+	<filter>
 		<filter-name>securityFilterChain</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
-
-    <filter-mapping>
-        <filter-name>securityFilterChain</filter-name>
-        <url-pattern>*.jsp</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>securityFilterChain</filter-name>
-        <url-pattern>*.do</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>securityFilterChain</filter-name>
-        <url-pattern>*.action</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>securityFilterChain</filter-name>
-        <url-pattern>/j_security_check</url-pattern>
-    </filter-mapping>
-
-    <!-- Security Filter -->
-    <filter>
-        <filter-name>security-filter</filter-name>
-        <filter-class>
-            org.egov.infstr.client.filter.SetSessionVarFilter
-        </filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>security-filter</filter-name>
-        <url-pattern>*.jsp</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>security-filter</filter-name>
-        <url-pattern>*.do</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>security-filter</filter-name>
-        <url-pattern>*.action</url-pattern>
-        <url-pattern>*.htm</url-pattern>
-    </filter-mapping>
-
-    <!-- Enable this filter to prevent from XSS attack -->
-    <filter>
-        <filter-name>XSSFilter</filter-name>
-        <filter-class>org.egov.infstr.security.filter.XSSFilter</filter-class>
-    </filter>
-    <!-- Enable this filter to prevent from XSS attack -->
-    <filter-mapping>
-        <filter-name>XSSFilter</filter-name>
-        <url-pattern>*.do</url-pattern>
-        <url-pattern>*.jsp</url-pattern>
-    </filter-mapping>
-    
-    <!-- for siteMesh put  sitemesh-2.2.1.jar in WEB_INF/lib-->
-    <filter>
-        <filter-name>sitemesh</filter-name>
-        <filter-class>
-            com.opensymphony.module.sitemesh.filter.PageFilter
-        </filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>sitemesh</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
-    <!-- Response Override Filter-->
-    <filter>
-        <filter-name>ResponseOverrideFilter</filter-name>
-        <filter-class>
-            org.displaytag.filter.ResponseOverrideFilter
-        </filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>ResponseOverrideFilter</filter-name>
-        <url-pattern>*.do</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>ResponseOverrideFilter</filter-name>
-        <url-pattern>*.jsp</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>ResponseOverrideFilter</filter-name>
-        <url-pattern>*.action</url-pattern>
-    </filter-mapping>
-
-    <!-- Listeners -->
-    <listener>
-        <description>SessionAttributeListener</description>
-        <listener-class>
-            org.egov.infstr.client.listener.EgovSessionAttributeListener
-        </listener-class>
-    </listener>
-    <listener>
-        <listener-class>
-            org.springframework.web.context.ContextLoaderListener
-        </listener-class>
-    </listener>
-    <!-- used to track session events (single user session) -->
-    <listener>
-        <listener-class>
-            org.acegisecurity.ui.session.HttpSessionEventPublisher
-        </listener-class>
-    </listener>
-
-    <!-- Filter Dispatcher for Struts 2 -->
-    <filter>
-        <filter-name>struts2</filter-name>
-        <filter-class>
-            org.apache.struts2.dispatcher.FilterDispatcher
-        </filter-class>
-        <init-param>
-            <param-name>actionPackages</param-name>
-            <param-value>org.egov.asset.web.action</param-value>
-        </init-param>
-        <init-param>
-            <param-name>struts.codebehind.pathPrefix</param-name>
-            <param-value>/WEB-INF/jsp/assets/</param-value>
-        </init-param>
-    </filter>
-    <filter-mapping>
-        <filter-name>struts2</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
-    <!-- Welcome Page -->
-    <welcome-file-list>
-        <welcome-file>eGov.jsp</welcome-file>
-    </welcome-file-list>
-
-    <!-- Error Page -->
-    <error-page>
-        <error-code>500</error-code>
-        <location>/error/error.jsp</location>
-    </error-page>
-
-    <!-- Tag Library Descriptors -->
-    <taglib>
-        <taglib-uri>/struts-tags</taglib-uri>
-        <taglib-location>/WEB-INF/struts-tags.tld</taglib-location>
-    </taglib>
-    
-    <taglib>
-        <taglib-uri>/struts-bean</taglib-uri>
-        <taglib-location>/WEB-INF/struts-bean.tld</taglib-location>
-    </taglib>
-    
-    <taglib>
-        <taglib-uri>/struts-html</taglib-uri>
-        <taglib-location>/WEB-INF/struts-html.tld</taglib-location>
-    </taglib>
-    
-    <taglib>
-         <taglib-uri>http://displaytag.sf.net</taglib-uri>
-         <taglib-location>/WEB-INF/displaytag.tld</taglib-location>
-    </taglib>
-    
-    <taglib>
-        <taglib-uri>/sitemesh-page</taglib-uri>
-        <taglib-location>/WEB-INF/sitemesh-page.tld</taglib-location>
-    </taglib>
-    
-    <taglib>
-        <taglib-uri>/sitemesh-decorator</taglib-uri>
-        <taglib-location>
-            /WEB-INF/sitemesh-decorator.tld
-        </taglib-location>
-    </taglib>
-
+	<filter>
+		<filter-name>springSessionRepositoryFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter>
+		<filter-name>sessionAttributeHandlerFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter>
+		<filter-name>ResponseOverrideFilter</filter-name>
+		<filter-class>org.displaytag.filter.ResponseOverrideFilter</filter-class>
+	</filter>
+	<filter>
+		<filter-name>struts2Prepare</filter-name>
+		<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareFilter</filter-class>
+	</filter>
+	<filter>
+		<filter-name>struts2Execute</filter-name>
+		<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsExecuteFilter</filter-class>
+	</filter>
+	<filter>
+		<filter-name>sitemesh</filter-name>
+		<filter-class>com.opensymphony.sitemesh.webapp.SiteMeshFilter</filter-class>
+	</filter>
+	<!-- Filter Declaration Ends Filter Mapping Starts -->
+	<filter-mapping>
+		<filter-name>springSessionRepositoryFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CacheControlFilter</filter-name>
+		<url-pattern>*.js</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CharacterEncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>gzipFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>threadLocalsHandlerFilter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+		<url-pattern>*.do</url-pattern>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>openEntityManagerInViewFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>securityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>sessionAttributeHandlerFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>securityFilterChain</filter-name>
+		<url-pattern>*.do</url-pattern>
+		<url-pattern>*.jsp</url-pattern>
+		<url-pattern>*.action</url-pattern>
+		<url-pattern>/j_security_check</url-pattern>
+	</filter-mapping>
+	
+	<filter-mapping>
+		<filter-name>ResponseOverrideFilter</filter-name>
+		<url-pattern>*.do</url-pattern>
+		<url-pattern>*.jsp</url-pattern>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>struts2Prepare</filter-name>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>sitemesh</filter-name>
+		<url-pattern>*.action</url-pattern>
+		<url-pattern>*.do</url-pattern>
+		<url-pattern>*.jsp</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>INCLUDE</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>struts2Execute</filter-name>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+	<!-- Filter Mapping Ends Listeners Starts -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
+	</listener>
+	<!-- Listeners Ends Servlet Declaration Starts -->
+	<servlet>
+		<servlet-name>action</servlet-name>
+		<servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+		<init-param>
+			<param-name>config</param-name>
+			<param-value>/WEB-INF/struts-config.xml</param-value>
+		</init-param>
+		<init-param>
+			<param-name>debug</param-name>
+			<param-value>2</param-value>
+		</init-param>
+		<init-param>
+			<param-name>detail</param-name>
+			<param-value>2</param-value>
+		</init-param>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+	<servlet>
+		<servlet-name>reportViewer</servlet-name>
+		<servlet-class>org.egov.infstr.reporting.viewer.ReportViewer</servlet-class>
+		<load-on-startup>3</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>action</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>reportViewer</servlet-name>
+		<url-pattern>/reportViewer</url-pattern>
+	</servlet-mapping>
+	<session-config>
+		<cookie-config>
+			<name>test</name>
+			<path>/</path>
+			<http-only>true</http-only>
+			<secure>false</secure>
+		</cookie-config>
+		<tracking-mode>COOKIE</tracking-mode>
+	</session-config>
+	<welcome-file-list>
+		<welcome-file>/index.jsp</welcome-file>
+	</welcome-file-list>
+	<!-- Servlet Declaration Ends -->
+	<jsp-config>
+		<taglib>
+			<taglib-uri>http://java.sun.com/jsp/jstl/core</taglib-uri>
+			<taglib-location>WEB-INF/c.tld</taglib-location>
+		</taglib>
+		<taglib>
+			<taglib-uri>http://displaytag.sf.net</taglib-uri>
+			<taglib-location>WEB-INF/displaytag.tld</taglib-location>
+		</taglib>
+		<jsp-property-group>
+			<url-pattern>*.jsp</url-pattern>
+			<page-encoding>UTF-8</page-encoding>
+		</jsp-property-group>
+	</jsp-config>
 </web-app>

@@ -44,5 +44,5 @@ package org.egov.asset.util;
  * Asset Improvement. M -Asset Repair/Maintenance.
  */
 public enum AssetIdentifier {
-    C, I, M, R
+	C, I, M, R
 }

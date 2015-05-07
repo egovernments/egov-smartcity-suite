@@ -43,61 +43,65 @@ import java.util.List;
 
 import org.egov.asset.model.AssetCategory;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class AjaxAssetCategoryAction extends BaseFormAction {
 
-    /**
+	/**
      *
      */
-    private static final long serialVersionUID = -8703869606104325609L;
-    public static final String PARENT_CATEGORIES = "parentcategories";
-    public static final String ASSET_CAT_DETAILS = "assetcatdetails";
-    private String assetType; // Set by Ajax call
-    private Long parentCatId; // Set by Ajax call
-    private AssetCategory parentCategory;
-    private List<AssetCategory> assetCategoryList;
+	private static final long serialVersionUID = -8703869606104325609L;
+	public static final String PARENT_CATEGORIES = "parentcategories";
+	public static final String ASSET_CAT_DETAILS = "assetcatdetails";
+	private String assetType; // Set by Ajax call
+	private Long parentCatId; // Set by Ajax call
+	private AssetCategory parentCategory;
+	private List<AssetCategory> assetCategoryList;
 
-    @Override
-    public Object getModel() {
-        return null;
-    }
+	@Override
+	public Object getModel() {
+		return null;
+	}
 
-    @Override
-    public String execute() {
-        return SUCCESS;
-    }
+	@Override
+	public String execute() {
+		return SUCCESS;
+	}
 
-    public String populateParentCategories() {
-        if (assetType.equalsIgnoreCase("-1"))
-            assetCategoryList = getPersistenceService().findAllBy("from AssetCategory");
-        else
-            assetCategoryList = getPersistenceService().findAllBy("from AssetCategory where assetType = ?",
-                    assetType);
+	public String populateParentCategories() {
+		if (assetType.equalsIgnoreCase("-1"))
+			assetCategoryList = getPersistenceService().findAllBy(
+					"from AssetCategory");
+		else
+			assetCategoryList = getPersistenceService().findAllBy(
+					"from AssetCategory where assetType = ?", assetType);
 
-        return PARENT_CATEGORIES;
-    }
+		return PARENT_CATEGORIES;
+	}
 
-    public String populateParentDetails() {
-        parentCategory = (AssetCategory) getPersistenceService().find("from AssetCategory where id=?", parentCatId);
-        return ASSET_CAT_DETAILS;
-    }
+	public String populateParentDetails() {
+		parentCategory = (AssetCategory) getPersistenceService().find(
+				"from AssetCategory where id=?", parentCatId);
+		return ASSET_CAT_DETAILS;
+	}
 
-    // Property accessors
+	// Property accessors
 
-    public void setAssetType(final String assetType) {
-        this.assetType = assetType;
-    }
+	public void setAssetType(final String assetType) {
+		this.assetType = assetType;
+	}
 
-    public void setParentCatId(final Long parentCatId) {
-        this.parentCatId = parentCatId;
-    }
+	public void setParentCatId(final Long parentCatId) {
+		this.parentCatId = parentCatId;
+	}
 
-    public List<AssetCategory> getAssetCategoryList() {
-        return assetCategoryList;
-    }
+	public List<AssetCategory> getAssetCategoryList() {
+		return assetCategoryList;
+	}
 
-    public AssetCategory getParentCategory() {
-        return parentCategory;
-    }
+	public AssetCategory getParentCategory() {
+		return parentCategory;
+	}
 
 }
