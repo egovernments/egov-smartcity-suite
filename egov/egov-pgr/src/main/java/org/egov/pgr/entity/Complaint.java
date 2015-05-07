@@ -152,6 +152,12 @@ public class Complaint extends StateAware {
 		CRN = cRN;
 	}
 
+	@Override
+	public String myLinkId() {
+	  return CRN;	
+	
+	}
+
 	public ComplaintType getComplaintType() {
 		return complaintType;
 	}

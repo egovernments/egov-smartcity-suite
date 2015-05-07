@@ -43,7 +43,9 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-
+<c:if test="${not empty message}">
+					<div id="message" class="success">${message}</div>
+				</c:if>
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
@@ -53,9 +55,7 @@
 				</div>
 			</div>
 			<div class="panel-body">
-				<c:if test="${not empty message}">
-					<div id="message" class="success">${message}</div>
-				</c:if>
+				
 				<div class="row add-border">
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.name" /></div>
 					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-name">
