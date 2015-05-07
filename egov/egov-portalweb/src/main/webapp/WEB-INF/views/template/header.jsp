@@ -59,7 +59,7 @@
 						</div>
 						<div class="nav-menu col-lg-4 col-md-6 col-sm-7 col-xs-12">
 							<ul class="hr-menu text-center">
-								<li class="active"><a class="menu-item " href="javascript:void(0);" data-show-screen="#inbox-template"> <span class="title">Inbox</span><span id="unreadMessageCount" class="badge custom-badge">
+								<li class="active"><a class="menu-item " href="/portal/home" data-show-screen="#inbox-template"> <span class="title">Inbox</span><span id="unreadMessageCount" class="badge custom-badge">
 								 </span></a></li>
 								<span class="separator">|</span>
 								<li><a class="menu-item" href="javascript:void(0);" data-show-screen="#myaccount">My Account</a></li>
