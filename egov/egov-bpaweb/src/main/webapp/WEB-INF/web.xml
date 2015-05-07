@@ -47,11 +47,9 @@
    <!-- Context Configuration locations for Spring XML files -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>
-			/WEB-INF/applicationContext*.xml 
-		</param-value>
+		<param-value>classpath*:config/spring/applicationContext-bpaweb.xml</param-value>
 	</context-param>
-   <context-param>
+	<context-param>
 		<param-name>locatorFactorySelector</param-name>
 		<param-value>classpath*:config/spring/applicationContext-erp.xml</param-value>
 	</context-param>
