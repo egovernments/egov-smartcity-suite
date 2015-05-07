@@ -44,8 +44,6 @@ import java.util.List;
 
 import org.egov.infstr.dao.GenericDAO;
 import org.egov.ptis.domain.entity.property.Category;
-import org.egov.ptis.domain.entity.property.PropertyUsage;
-import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.hibernate.criterion.Criterion;
 
 /**

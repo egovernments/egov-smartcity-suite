@@ -45,7 +45,6 @@ import java.util.Comparator;
 
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
-import org.egov.ptis.constants.PropertyTaxConstants;
 
 /**
  * The Class DemandDetailsComparator. Compares the demand details using the id

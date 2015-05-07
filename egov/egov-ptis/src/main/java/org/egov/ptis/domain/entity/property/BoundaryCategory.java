@@ -41,8 +41,8 @@ package org.egov.ptis.domain.entity.property;
 
 import java.util.Date;
 
-import org.egov.infstr.models.BaseModel;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infstr.models.BaseModel;
 
 /**
  * Link table between Category and the Boundary. Boundary might belong belong to

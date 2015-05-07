@@ -133,9 +133,11 @@ public class DefaultersReportAction extends BaseFormAction {
 		@SuppressWarnings("unchecked")
 		List<Boundary> zoneList = persistenceService.findAllBy("FROM BoundaryImpl BI "
 				+ "WHERE BI.boundaryType.name=? " + "AND BI.boundaryType.heirarchyType.name=? "
-				+ "AND BI.isHistory='N' " + "ORDER BY BI.id", ZONE_BNDRY_TYPE, REVENUE_HIERARCHY_TYPE);
+				+ "AND BI.isHistory='N' " + "ORDER BY BI.id", ZONE_BNDRY_TYPE,
+				REVENUE_HIERARCHY_TYPE);
 		setZoneBndryMap(CommonServices.getFormattedBndryMap(zoneList));
-		prepareWardDropDownData(zoneId != null && !zoneId.equals(-1), wardId != null && !wardId.equals(-1));
+		prepareWardDropDownData(zoneId != null && !zoneId.equals(-1),
+				wardId != null && !wardId.equals(-1));
 		if (wardId == null || wardId.equals(-1)) {
 			addDropdownData("partNumbers", Collections.EMPTY_LIST);
 		} else {
@@ -151,9 +153,11 @@ public class DefaultersReportAction extends BaseFormAction {
 	@SuppressWarnings("unchecked")
 	private void prepareReportInfo() {
 		LOGGER.debug("Entered into prepareReportInfo method");
-		String boundaryQuery = "FROM BoundaryImpl BI " + "WHERE BI.id = ? " + "AND BI.boundaryType.name = ? "
-				+ "AND BI.boundaryType.heirarchyType.name = ? " + "AND BI.isHistory = 'N' " + "ORDER BY BI.id";
-		ward = (Boundary) persistenceService.find(boundaryQuery, getWardId(), WARD_BNDRY_TYPE, REVENUE_HIERARCHY_TYPE);
+		String boundaryQuery = "FROM BoundaryImpl BI " + "WHERE BI.id = ? "
+				+ "AND BI.boundaryType.name = ? " + "AND BI.boundaryType.heirarchyType.name = ? "
+				+ "AND BI.isHistory = 'N' " + "ORDER BY BI.id";
+		ward = (Boundary) persistenceService.find(boundaryQuery, getWardId(), WARD_BNDRY_TYPE,
+				REVENUE_HIERARCHY_TYPE);
 		String[] amounts = amountRange.split(" ");
 		StringBuilder query = new StringBuilder(100);
 		query.append(
@@ -161,11 +165,8 @@ public class DefaultersReportAction extends BaseFormAction {
 				.append("year(dmv.fromDate) as fromYear, year(dmv.toDate) as toYear, (pmv.aggrArrDmd - pmv.aggrArrColl) as arrearsDue, (pmv.aggrCurrDmd - pmv.aggrCurrColl) as currentDue,")
 				.append("  (pmv.aggrArrDmd - pmv.aggrArrColl + pmv.aggrCurrDmd - pmv.aggrCurrColl) as total ")
 				.append("from DefaultersMaterializedView dmv, PropertyMaterlizeView pmv where dmv.basicPropertyId = pmv.basicPropertyID and pmv.propTypeMstrID.code not in ('")
-				.append(PROPTYPE_STATE_GOVT)
-				.append("', '")
-				.append(PROPTYPE_CENTRAL_GOVT)
-				.append("') ")
-				.append("and pmv.zone.id = :zoneId and pmv.ward.id = :wardId ");
+				.append(PROPTYPE_STATE_GOVT).append("', '").append(PROPTYPE_CENTRAL_GOVT)
+				.append("') ").append("and pmv.zone.id = :zoneId and pmv.ward.id = :wardId ");
 		if (amounts[0].equals("100001")) {
 			query.append("and (pmv.aggrArrDmd - pmv.aggrArrColl) > :fromAmt ");
 		} else {
@@ -176,8 +177,9 @@ public class DefaultersReportAction extends BaseFormAction {
 		}
 		query.append("order by to_number(regexp_substr(pmv.houseNo, '" + PATTERN_BEGINS_WITH_1TO9
 				+ "')), pmv.houseNo asc");
-		Query hqlQry = getPersistenceService().getSession().createQuery(query.toString()).setInteger("zoneId", zoneId)
-				.setInteger("wardId", wardId).setBigDecimal("fromAmt", new BigDecimal(amounts[0]));
+		Query hqlQry = getPersistenceService().getSession().createQuery(query.toString())
+				.setInteger("zoneId", zoneId).setInteger("wardId", wardId)
+				.setBigDecimal("fromAmt", new BigDecimal(amounts[0]));
 		if (!amounts[0].equals("100001")) {
 			hqlQry.setBigDecimal("toAmt", new BigDecimal(amounts[1]));
 		}
@@ -197,8 +199,9 @@ public class DefaultersReportAction extends BaseFormAction {
 		if (zoneExists && wardExists) {
 			List<Boundary> wardNewList = new ArrayList<Boundary>();
 			wardNewList = getPersistenceService().findAllBy(
-					"FROM BoundaryImpl BI " + "WHERE BI.boundaryType.name=? " + "AND BI.parent.id = ? "
-							+ "AND BI.isHistory='N' " + "ORDER BY BI.name ", WARD_BNDRY_TYPE, getZoneId());
+					"FROM BoundaryImpl BI " + "WHERE BI.boundaryType.name=? "
+							+ "AND BI.parent.id = ? " + "AND BI.isHistory='N' "
+							+ "ORDER BY BI.name ", WARD_BNDRY_TYPE, getZoneId());
 			addDropdownData("Wards", wardNewList);
 		} else {
 			addDropdownData("Wards", Collections.EMPTY_LIST);
@@ -207,13 +210,13 @@ public class DefaultersReportAction extends BaseFormAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/defaultersReport.action", results = { @Result(name = RESULT_NEW) })
+	@Action(value = "/defaultersReport.action", results = { @Result(name = RESULT_NEW, location = "/defaultersReport-new.jsp") })
 	public String newForm() {
 		return RESULT_NEW;
 	}
 
 	@ValidationErrorPage(value = "new")
-	@Action(value = "/defaultersReport-generateReport", results = { @Result(name = RESULT_RESULT) })
+	@Action(value = "/defaultersReport-generateReport", results = { @Result(name = RESULT_RESULT, location = "/defaultersReport-result.jsp") })
 	public String generateReport() {
 		LOGGER.debug("Entered into generateReport");
 		Long startTime = System.currentTimeMillis();
@@ -234,42 +237,48 @@ public class DefaultersReportAction extends BaseFormAction {
 		reportOutput.setReportOutputData(outputBytes.toByteArray());
 		reportOutput.setReportFormat(FileFormat.PDF);
 		reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
-		LOGGER.info("Defaulters report took = " + ((System.currentTimeMillis() - startTime) / 1000) + "sec(s)....");
+		LOGGER.info("Defaulters report took = " + ((System.currentTimeMillis() - startTime) / 1000)
+				+ "sec(s)....");
 		return RESULT_RESULT;
 	}
 
-	private JasperPrint generateDefaultersReport(List<DefaultersInfo> defaulters) throws JRException,
-			ColumnBuilderException, ClassNotFoundException {
+	private JasperPrint generateDefaultersReport(List<DefaultersInfo> defaulters)
+			throws JRException, ColumnBuilderException, ClassNotFoundException {
 		FastReportBuilder drb = new FastReportBuilder();
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		Calendar today = Calendar.getInstance();
 		today.setTime(new Date());
-		today.set(Calendar.DAY_OF_MONTH,today.get(Calendar.DAY_OF_MONTH)-1);
+		today.set(Calendar.DAY_OF_MONTH, today.get(Calendar.DAY_OF_MONTH) - 1);
 		String reportDateStr = sdf.format(today.getTime());
 		drb.setPrintBackgroundOnOddRows(false).setWhenNoData(REPORT_NO_DATA, null)
-				.setDefaultStyles(getTitleStyle(), getSubTitleStyle(), STYLE_BLANK, STYLE_BLANK).setDetailHeight(20)
-				.setUseFullPageWidth(true).setTitleHeight(50).setPageSizeAndOrientation(Page.Page_A4_Landscape())
+				.setDefaultStyles(getTitleStyle(), getSubTitleStyle(), STYLE_BLANK, STYLE_BLANK)
+				.setDetailHeight(20).setUseFullPageWidth(true).setTitleHeight(50)
+				.setPageSizeAndOrientation(Page.Page_A4_Landscape())
 				.setOddRowBackgroundStyle(STYLE_BLANK).setWhenResourceMissingShowKey();
 
 		drb.addColumn("Ward No", "wardNo", String.class.getName(), 2, getTextStyleLeftBorder(),
 				getHeaderStyleLeftAlign())
-				.addColumn("Part No", "partNo", String.class.getName(), 2, getTextStyle(), getHeaderStyleLeftAlign())
-				.addColumn("Index No", "indexNo", String.class.getName(), 5, getTextStyle(), getHeaderStyleLeftAlign())
-				.addColumn("House No", "houseNo", String.class.getName(), 5, getTextStyle(), getHeaderStyleLeftAlign())
-				.addColumn("Property Owner Name", "ownerName", String.class.getName(), 15, getTextStyle(),
+				.addColumn("Part No", "partNo", String.class.getName(), 2, getTextStyle(),
 						getHeaderStyleLeftAlign())
+				.addColumn("Index No", "indexNo", String.class.getName(), 5, getTextStyle(),
+						getHeaderStyleLeftAlign())
+				.addColumn("House No", "houseNo", String.class.getName(), 5, getTextStyle(),
+						getHeaderStyleLeftAlign())
+				.addColumn("Property Owner Name", "ownerName", String.class.getName(), 15,
+						getTextStyle(), getHeaderStyleLeftAlign())
 				.addColumn("From Year", "fromYear", Integer.class.getName(), 2, getTextStyle(),
 						getHeaderStyleLeftAlign())
-				.addColumn("To Year", "toYear", Integer.class.getName(), 2, getTextStyle(), getHeaderStyleLeftAlign())
-				.addColumn("Arrears Balance", "arrearsDue", BigDecimal.class.getName(), 3, getAmountStyle(),
-						getHeaderStyleRightAlign())
-				.addColumn("Current Balance", "currentDue", BigDecimal.class.getName(), 3, getAmountStyle(),
-						getHeaderStyleRightAlign())
+				.addColumn("To Year", "toYear", Integer.class.getName(), 2, getTextStyle(),
+						getHeaderStyleLeftAlign())
+				.addColumn("Arrears Balance", "arrearsDue", BigDecimal.class.getName(), 3,
+						getAmountStyle(), getHeaderStyleRightAlign())
+				.addColumn("Current Balance", "currentDue", BigDecimal.class.getName(), 3,
+						getAmountStyle(), getHeaderStyleRightAlign())
 				.addColumn("Total", "total", BigDecimal.class.getName(), 3, getAmountStyle(),
 						getHeaderStyleRightAlign());
 
-		drb.addAutoText(AutoText.AUTOTEXT_PAGE_X, AutoText.POSITION_HEADER, AutoText.ALIGMENT_RIGHT,
-				AutoText.DEFAULT_WIDTH, AutoText.DEFAULT_WIDTH);
+		drb.addAutoText(AutoText.AUTOTEXT_PAGE_X, AutoText.POSITION_HEADER,
+				AutoText.ALIGMENT_RIGHT, AutoText.DEFAULT_WIDTH, AutoText.DEFAULT_WIDTH);
 		String reportSubTitle = " List of Defaulters ";
 
 		if (ward != null) {
@@ -283,8 +292,8 @@ public class DefaultersReportAction extends BaseFormAction {
 			reportSubTitle += "          (As on date " + reportDateStr + ")";
 		}
 
-		drb.setTitle(REPORT_TITLE).setTitleStyle(getTitleStyle()).setSubtitle(reportSubTitle + "\\n")
-				.setSubtitleStyle(getSubTitleStyle());
+		drb.setTitle(REPORT_TITLE).setTitleStyle(getTitleStyle())
+				.setSubtitle(reportSubTitle + "\\n").setSubtitleStyle(getSubTitleStyle());
 		DynamicReport dr = drb.build();
 		dr.setWhenNoDataShowColumnHeader(false);
 		dr.setWhenNoDataShowTitle(false);
@@ -455,5 +464,5 @@ public class DefaultersReportAction extends BaseFormAction {
 	public void setResultPage(Boolean resultPage) {
 		this.resultPage = resultPage;
 	}
-	
+
 }

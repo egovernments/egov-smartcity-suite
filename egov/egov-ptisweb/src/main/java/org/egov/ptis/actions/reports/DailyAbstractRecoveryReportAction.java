@@ -92,7 +92,7 @@ public class DailyAbstractRecoveryReportAction extends BaseFormAction {
 		return null;
 	}
 
-	@Action(value = "/reports/dailyAbstractRecoveryReport.action", results = { @Result(name = REPORT) })
+	@Action(value = "/reports/dailyAbstractRecoveryReport.action")
 	public String execute() {
 		List<RecoveryInfo> resultList = new ArrayList<RecoveryInfo>();
 		StringBuffer qryString = new StringBuffer("select CREATED_DATE, ")

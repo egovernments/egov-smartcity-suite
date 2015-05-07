@@ -41,14 +41,14 @@ package org.egov.ptis.actions.search;
 
 import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.AREA_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.GISCITY;
 import static org.egov.ptis.constants.PropertyTaxConstants.GISVERSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -119,7 +119,7 @@ public class GisSearchPropertyAction extends BaseFormAction {
 	private String gisVersion;
 	private String gisCity;
 	private Map<Long, String> ZoneBndryMap;
-	
+
 	@Autowired
 	private BoundaryDAO boundaryDAO;
 
@@ -131,7 +131,8 @@ public class GisSearchPropertyAction extends BaseFormAction {
 
 	@SkipValidation
 	public void gisFormRedirect() {
-		LOGGER.debug("Entered into gisFormRedirect method : GISVERSION : " + GISVERSION + " GISCITY : " + GISCITY);
+		LOGGER.debug("Entered into gisFormRedirect method : GISVERSION : " + GISVERSION
+				+ " GISCITY : " + GISCITY);
 		HttpServletResponse response = ServletActionContext.getResponse();
 		try {
 			response.sendRedirect(response.encodeRedirectURL(GISVERSION + GISCITY
@@ -144,7 +145,7 @@ public class GisSearchPropertyAction extends BaseFormAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/gisSearchProperty-gisSearchForm", results = { @Result(name = NEW) })
+	@Action(value = "/gisSearchProperty-gisSearchForm", results = { @Result(name = NEW, location = "/gisSearchProperty-new.jsp") })
 	public String gisSearchForm() {
 		LOGGER.debug("Entered into gisSearchForm method");
 		String target = null;
@@ -169,8 +170,9 @@ public class GisSearchPropertyAction extends BaseFormAction {
 	@ValidationErrorPage(value = "bndry")
 	public String srchByBndry() {
 		LOGGER.debug("Entered into srchByBndry method");
-		LOGGER.debug("srchByBndry : Zone Id : " + zoneId + ", " + "ward Id: " + wardId + ", " + "House Num : "
-				+ houseNum + ", " + "Owner Name :" + ownerName + ", " + "Session : " + SESSION);
+		LOGGER.debug("srchByBndry : Zone Id : " + zoneId + ", " + "ward Id: " + wardId + ", "
+				+ "House Num : " + houseNum + ", " + "Owner Name :" + ownerName + ", "
+				+ "Session : " + SESSION);
 		String strZoneNum = boundaryDAO.getBoundary(zoneId).getName();
 		String strWardNum = "";
 		String target = null;
@@ -228,8 +230,8 @@ public class GisSearchPropertyAction extends BaseFormAction {
 				}
 				setSearchUri("../search/searchProperty!srchByBndryForm.action");
 				setSearchCreteria("Search By Zone, Ward,Area, Plot No/House No,Owner Name");
-				setSearchValue("Zone Num: " + strZoneNum + ", Ward Num: " + strWardNum + ", Plot No/House No: "
-						+ houseNum);
+				setSearchValue("Zone Num: " + strZoneNum + ", Ward Num: " + strWardNum
+						+ ", Plot No/House No: " + houseNum);
 				LOGGER.debug("Search Criteria : " + getSearchCreteria());
 				LOGGER.debug("Search Value : " + getSearchValue());
 				setSESSION(getSESSION());
@@ -250,12 +252,14 @@ public class GisSearchPropertyAction extends BaseFormAction {
 	public String srchByPropType() {
 
 		LOGGER.debug("Entered into srchByPropType method");
-		LOGGER.debug("Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", " + "Property Type : " + propTypeId);
+		LOGGER.debug("Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", "
+				+ "Property Type : " + propTypeId);
 		String strZoneNum = boundaryDAO.getBoundary(zoneId).getName();
 		String strWardNum = "";
 		String target = null;
 		String propTypeName = "";
-		PropertyTypeMasterDAO propTypeMstrDAO = PropertyDAOFactory.getDAOFactory().getPropertyTypeMasterDAO();
+		PropertyTypeMasterDAO propTypeMstrDAO = PropertyDAOFactory.getDAOFactory()
+				.getPropertyTypeMasterDAO();
 		if (propTypeId != null && propTypeId != -1) {
 			propTypeName = propTypeMstrDAO.getPropertyTypeMasterById(propTypeId).getType();
 		}
@@ -308,8 +312,8 @@ public class GisSearchPropertyAction extends BaseFormAction {
 				}
 				setSearchUri("../search/searchProperty!srchByPropType.action");
 				setSearchCreteria("Search By Zone, Ward,Area,Property Type");
-				setSearchValue("Zone Num: " + strZoneNum + ", Ward Num: " + strWardNum + ", Property Type: "
-						+ propTypeName);
+				setSearchValue("Zone Num: " + strZoneNum + ", Ward Num: " + strWardNum
+						+ ", Property Type: " + propTypeName);
 				LOGGER.debug("Search Criteria : " + getSearchCreteria());
 				LOGGER.debug("Search Value : " + getSearchValue());
 				setSESSION(getSESSION());
@@ -330,13 +334,15 @@ public class GisSearchPropertyAction extends BaseFormAction {
 	@ValidationErrorPage(value = "demand")
 	public String srchByDemand() {
 		LOGGER.debug("Entered into srchByDemand method");
-		LOGGER.debug("Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", " + "Property Type : " + propTypeId
-				+ ", " + "Demand from amt : " + demandFromAmt + ", " + "Demand To amt : " + demandToAmt);
+		LOGGER.debug("Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", "
+				+ "Property Type : " + propTypeId + ", " + "Demand from amt : " + demandFromAmt
+				+ ", " + "Demand To amt : " + demandToAmt);
 		String strZoneNum = boundaryDAO.getBoundary(zoneId).getName();
 		String strWardNum = "";
 		String target = null;
 		String propTypeName = "";
-		PropertyTypeMasterDAO propTypeMstrDAO = PropertyDAOFactory.getDAOFactory().getPropertyTypeMasterDAO();
+		PropertyTypeMasterDAO propTypeMstrDAO = PropertyDAOFactory.getDAOFactory()
+				.getPropertyTypeMasterDAO();
 		if (propTypeId != null && propTypeId != -1) {
 			propTypeName = propTypeMstrDAO.getPropertyTypeMasterById(propTypeId).getType();
 		}
@@ -397,8 +403,8 @@ public class GisSearchPropertyAction extends BaseFormAction {
 				}
 				setSearchUri("../search/searchProperty!srchByDemand.action");
 				setSearchCreteria("Search By Zone, Ward,Area,Property Type,Demand");
-				setSearchValue("Zone Num: " + strZoneNum + ", Ward Num: " + strWardNum + ", Property Type: "
-						+ propTypeName);
+				setSearchValue("Zone Num: " + strZoneNum + ", Ward Num: " + strWardNum
+						+ ", Property Type: " + propTypeName);
 				LOGGER.debug("Search Criteria : " + getSearchCreteria());
 				LOGGER.debug("Search Value : " + getSearchValue());
 				setSESSION(getSESSION());
@@ -419,13 +425,15 @@ public class GisSearchPropertyAction extends BaseFormAction {
 	@ValidationErrorPage(value = "defaulter")
 	public String srchByDefaulter() {
 		LOGGER.debug("Entered into srchByDefaulter method");
-		LOGGER.debug("Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", " + "Property Type : " + propTypeId
-				+ ", " + "Defaulter from amt : " + defaulterFromAmt + ", " + "Defaulter To amt : " + defaulterToAmt);
+		LOGGER.debug("Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", "
+				+ "Property Type : " + propTypeId + ", " + "Defaulter from amt : "
+				+ defaulterFromAmt + ", " + "Defaulter To amt : " + defaulterToAmt);
 		String strZoneNum = boundaryDAO.getBoundary(zoneId).getName();
 		String strWardNum = "";
 		String target = null;
 		String propTypeName = "";
-		PropertyTypeMasterDAO propTypeMstrDAO = PropertyDAOFactory.getDAOFactory().getPropertyTypeMasterDAO();
+		PropertyTypeMasterDAO propTypeMstrDAO = PropertyDAOFactory.getDAOFactory()
+				.getPropertyTypeMasterDAO();
 		if (propTypeId != null && propTypeId != -1) {
 			propTypeName = propTypeMstrDAO.getPropertyTypeMasterById(propTypeId).getType();
 		}
@@ -486,8 +494,8 @@ public class GisSearchPropertyAction extends BaseFormAction {
 				}
 				setSearchUri("../search/searchProperty!srchByDefaulter.action");
 				setSearchCreteria("Search By Zone, Ward,Area,Property Type,Defaulter");
-				setSearchValue("Zone Num: " + strZoneNum + ", Ward Num: " + strWardNum + ", Property Type: "
-						+ propTypeName);
+				setSearchValue("Zone Num: " + strZoneNum + ", Ward Num: " + strWardNum
+						+ ", Property Type: " + propTypeName);
 				LOGGER.debug("Search Criteria : " + getSearchCreteria());
 				LOGGER.debug("Search Value : " + getSearchValue());
 				setSESSION(getSESSION());
@@ -505,19 +513,22 @@ public class GisSearchPropertyAction extends BaseFormAction {
 
 	}
 
+	@Override
 	@SkipValidation
 	public void prepare() {
 		LOGGER.debug("Entered into prepare method");
 		List<Boundary> zoneList = getPersistenceService().findAllBy(
 				"from BoundaryImpl BI where BI.boundaryType.name=? and BI.boundaryType.heirarchyType.name=? "
-						+ "and BI.isHistory='N' order by BI.id", ZONE_BNDRY_TYPE, REVENUE_HIERARCHY_TYPE);
+						+ "and BI.isHistory='N' order by BI.id", ZONE_BNDRY_TYPE,
+				REVENUE_HIERARCHY_TYPE);
 
 		setZoneBndryMap(CommonServices.getFormattedBndryMap(zoneList));
 
 		LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);
 		prepareWardDropDownData(zoneId != null, wardId != null);
 		prepareAreaDropDownData(wardId != null, areaId != null);
-		List<PropertyTypeMaster> propTypeList = getPersistenceService().findAllBy("from PropertyTypeMaster");
+		List<PropertyTypeMaster> propTypeList = getPersistenceService().findAllBy(
+				"from PropertyTypeMaster");
 		LOGGER.debug("PropTypeList : " + (propTypeList != null ? propTypeList : ZERO));
 		addDropdownData("PropType", propTypeList);
 		LOGGER.debug("Zone List : " + (zoneList != null ? zoneList : ZERO));
@@ -560,12 +571,14 @@ public class GisSearchPropertyAction extends BaseFormAction {
 		LOGGER.debug("Entered into getSearchResults method");
 		LOGGER.debug("Index Number : " + indexNumber);
 		PTISCacheManagerInteface ptisCachMgr = new PTISCacheManager();
-		BasicPropertyDAO basicPropertyDAO = PropertyDAOFactory.getDAOFactory().getBasicPropertyDAO();
+		BasicPropertyDAO basicPropertyDAO = PropertyDAOFactory.getDAOFactory()
+				.getBasicPropertyDAO();
 		PtDemandDao ptDemandDao = PropertyDAOFactory.getDAOFactory().getPtDemandDao();
 
 		if (indexNumber != null || StringUtils.isNotEmpty(indexNumber)) {
 
-			BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(indexNumber);
+			BasicProperty basicProperty = basicPropertyDAO
+					.getBasicPropertyByPropertyID(indexNumber);
 			LOGGER.debug("Basic Property : " + basicProperty);
 			if (basicProperty != null) {
 				Property property = basicProperty.getProperty();
@@ -577,14 +590,17 @@ public class GisSearchPropertyAction extends BaseFormAction {
 				searchResultMap.put("indexNum", indexNumber);
 				searchResultMap.put("ownerName", ptisCachMgr.buildOwnerFullName(ownerSet));
 				searchResultMap.put("parcelId", basicProperty.getGisReferenceNo());
-				searchResultMap.put("address", ptisCachMgr.buildAddressByImplemetation(basicProperty.getAddress()));
+				searchResultMap.put("address",
+						ptisCachMgr.buildAddressByImplemetation(basicProperty.getAddress()));
 				searchResultMap.put("currDemand", demandCollMap.get(CURR_DMD_STR).toString());
 				searchResultMap.put("arrDemand", demandCollMap.get(ARR_DMD_STR).toString());
-				searchResultMap.put("currDemandDue",
-						(demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR))).toString());
-				LOGGER.debug("Index Number : " + searchResultMap.get("indexNum") + ", " + "Owner Name : "
-						+ searchResultMap.get("ownerName") + ", " + "Parcel id : " + searchResultMap.get("parcelId")
-						+ ", " + "Address : " + searchResultMap.get("address") + ", " + "Current Demand : "
+				searchResultMap
+						.put("currDemandDue", (demandCollMap.get(CURR_DMD_STR)
+								.subtract(demandCollMap.get(CURR_COLL_STR))).toString());
+				LOGGER.debug("Index Number : " + searchResultMap.get("indexNum") + ", "
+						+ "Owner Name : " + searchResultMap.get("ownerName") + ", "
+						+ "Parcel id : " + searchResultMap.get("parcelId") + ", " + "Address : "
+						+ searchResultMap.get("address") + ", " + "Current Demand : "
 						+ searchResultMap.get("currDemand") + ", " + "Arrears Demand Due : "
 						+ searchResultMap.get("arrDemandDue") + ", " + "Current Demand Due : "
 						+ searchResultMap.get("currDemandDue"));
@@ -632,8 +648,9 @@ public class GisSearchPropertyAction extends BaseFormAction {
 			currDemandDue.append("^");
 
 		}
-		concatResult.append(indexNum).append("@").append(ownerName).append("@").append(parcelId).append("@")
-				.append(currDemand).append("@").append(arrDemand).append("@").append(currDemandDue);
+		concatResult.append(indexNum).append("@").append(ownerName).append("@").append(parcelId)
+				.append("@").append(currDemand).append("@").append(arrDemand).append("@")
+				.append(currDemandDue);
 
 		LOGGER.debug("Search Results String : " + concatResult);
 		LOGGER.debug("Exit from getSearchResultsString method");
@@ -655,8 +672,10 @@ public class GisSearchPropertyAction extends BaseFormAction {
 				searchResultMap.put("parcelId", pmv.getGisRefNo());
 				searchResultMap.put("address", pmv.getPropertyAddress());
 				searchResultMap.put("currDemand", pmv.getAggrCurrDmd().toString());
-				searchResultMap.put("currDemandDue", (pmv.getAggrCurrDmd().subtract(pmv.getAggrCurrColl())).toString());
-				searchResultMap.put("arrDemand", (pmv.getAggrArrDmd().subtract(pmv.getAggrArrColl())).toString());
+				searchResultMap.put("currDemandDue",
+						(pmv.getAggrCurrDmd().subtract(pmv.getAggrCurrColl())).toString());
+				searchResultMap.put("arrDemand",
+						(pmv.getAggrArrDmd().subtract(pmv.getAggrArrColl())).toString());
 				searchList.add(searchResultMap);
 			}
 		}
@@ -886,5 +905,4 @@ public class GisSearchPropertyAction extends BaseFormAction {
 		ZoneBndryMap = zoneBndryMap;
 	}
 
-	
 }

@@ -87,7 +87,6 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.client.model.AreaTaxCalculationInfo;
 import org.egov.ptis.client.model.MiscellaneousTax;
 import org.egov.ptis.client.model.MiscellaneousTaxDetail;

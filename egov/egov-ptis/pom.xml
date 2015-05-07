@@ -31,6 +31,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.egov</groupId>
+			<artifactId>egov-portal</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.egov</groupId>
 			<artifactId>egov-demand</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
@@ -131,6 +136,7 @@
 			<groupId>com.jgeppert.struts2.jquery</groupId>
 			<artifactId>struts2-jquery-plugin</artifactId>
 		</dependency>
+				
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>

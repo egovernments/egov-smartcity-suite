@@ -94,8 +94,8 @@ import org.springframework.transaction.annotation.Transactional;
  * 
  */
 @ParentPackage("egov")
-@Results( { @Result(name = "invalidUser", type = "Stream", location = "workflow", params = {
-		"namespace", "/workflow", "method", "inboxItemViewErrorUserInvalid" }) })
+@Results({ @Result(name = "invalidUser", location = "workflow", params = { "namespace",
+		"/workflow", "method", "inboxItemViewErrorUserInvalid" }) })
 @Transactional(readOnly = true)
 public class RecoveryAction extends BaseRecoveryAction {
 
@@ -114,6 +114,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 	private static String PRINT = "print";
 
 	private UserService userService;
+
 	public RecoveryAction() {
 
 		addRelatedEntity("basicProperty", BasicPropertyImpl.class);
@@ -133,7 +134,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 	public void prepare() {
 		// to merge the new values from jsp with existing
 		if (recovery.getId() != null) {
-			recovery = (Recovery) recoveryService.findById(recovery.getId(), false);
+			recovery = recoveryService.findById(recovery.getId(), false);
 		}
 		super.prepare();
 		setUserInfo();
@@ -143,18 +144,22 @@ public class RecoveryAction extends BaseRecoveryAction {
 		String returnStr = MESSAGE;
 		recovery.setBasicProperty(getPropertyView(parameters.get("propertyId")[0]));
 		Map<String, String> wfMap = recovery.getBasicProperty().getPropertyWfStatus();
-		BigDecimal totalArrDue = BigDecimal.valueOf((Double.valueOf(viewMap.get("totalArrDue").toString())));
+		BigDecimal totalArrDue = BigDecimal.valueOf((Double.valueOf(viewMap.get("totalArrDue")
+				.toString())));
 		StringBuffer consumerId = new StringBuffer();
 		consumerId.append(recovery.getBasicProperty().getUpicNo()).append("(Zone:")
-			.append(recovery.getBasicProperty().getPropertyID().getZone().getBoundaryNum())
-			.append(" Ward:").append(recovery.getBasicProperty().getPropertyID().getWard().getBoundaryNum()).append(")");
-		
+				.append(recovery.getBasicProperty().getPropertyID().getZone().getBoundaryNum())
+				.append(" Ward:")
+				.append(recovery.getBasicProperty().getPropertyID().getWard().getBoundaryNum())
+				.append(")");
+
 		EgBill bill = getBil(consumerId.toString());
-		
+
 		if (wfMap.get(PropertyTaxConstants.WFSTATUS).equalsIgnoreCase(Boolean.TRUE.toString())
 				&& StringUtils.isNotEmpty(wfMap.get(PropertyTaxConstants.WFOWNER))) {
 			addActionMessage(getText("property.state.recovery"));
-		} else if (wfMap.get(PropertyTaxConstants.WFSTATUS).equalsIgnoreCase(Boolean.TRUE.toString())
+		} else if (wfMap.get(PropertyTaxConstants.WFSTATUS).equalsIgnoreCase(
+				Boolean.TRUE.toString())
 				&& StringUtils.isEmpty(wfMap.get(PropertyTaxConstants.WFOWNER))) {
 			addActionMessage(getText("property.state.in.recovery"));
 		} else if (null == bill) {
@@ -181,7 +186,8 @@ public class RecoveryAction extends BaseRecoveryAction {
 		IntimationNotice intimationNotice = recovery.getIntimationNotice();
 		intimationNotice.setRecovery(recovery);
 		recoveryService.persist(recovery);
-		//Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		// Position position =
+		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
 		Position position = null;
 		recovery.transition(true).start().withOwner(position);
 		updateWfstate("Notice 155");
@@ -191,22 +197,28 @@ public class RecoveryAction extends BaseRecoveryAction {
 	}
 
 	public String view() {
-		if(!authenticateInboxItemRqst(recovery.getState())){
+		if (!authenticateInboxItemRqst(recovery.getState())) {
 			return "invalidUser";
 		}
 		getPropertyView(recovery.getBasicProperty().getUpicNo());
 		setupWorkflowDetails();
-		if (recovery.getStatus().getCode().equalsIgnoreCase(PropertyTaxConstants.RECOVERY_NOTICE155GENERATED)) {
+		if (recovery.getStatus().getCode()
+				.equalsIgnoreCase(PropertyTaxConstants.RECOVERY_NOTICE155GENERATED)) {
 			return WARRANTAPPLICATIONNEW;
-		} else if (recovery.getStatus().getCode().equalsIgnoreCase(PropertyTaxConstants.RECOVERY_WARRANTPREPARED)) {
+		} else if (recovery.getStatus().getCode()
+				.equalsIgnoreCase(PropertyTaxConstants.RECOVERY_WARRANTPREPARED)) {
 			return WARRANTAPPLICATIONVIEW;
-		} else if (recovery.getStatus().getCode().equalsIgnoreCase(PropertyTaxConstants.RECOVERY_WARRANTAPPROVED)) {
+		} else if (recovery.getStatus().getCode()
+				.equalsIgnoreCase(PropertyTaxConstants.RECOVERY_WARRANTAPPROVED)) {
 			return NOTICE156NEW;
-		} else if (recovery.getStatus().getCode().equalsIgnoreCase(PropertyTaxConstants.RECOVERY_WARRANTNOTICECREATED)) {
+		} else if (recovery.getStatus().getCode()
+				.equalsIgnoreCase(PropertyTaxConstants.RECOVERY_WARRANTNOTICECREATED)) {
 			return NOTICE156VIEW;
-		} else if (recovery.getStatus().getCode().equalsIgnoreCase(PropertyTaxConstants.RECOVERY_WARRANTNOTICEISSUED)) {
+		} else if (recovery.getStatus().getCode()
+				.equalsIgnoreCase(PropertyTaxConstants.RECOVERY_WARRANTNOTICEISSUED)) {
 			return NOTICE159NEW;
-		} else if (recovery.getStatus().getCode().equalsIgnoreCase(PropertyTaxConstants.RECOVERY_CEASENOTICECREATED)) {
+		} else if (recovery.getStatus().getCode()
+				.equalsIgnoreCase(PropertyTaxConstants.RECOVERY_CEASENOTICECREATED)) {
 			return NOTICE159VIEW;
 		}
 		return "view";
@@ -221,20 +233,23 @@ public class RecoveryAction extends BaseRecoveryAction {
 	@ValidationErrorPage(value = "view")
 	public String generateNotice155() {
 		LOGGER.debug("RecoveryAction | generateNotice155 | start" + recovery.getIntimationNotice());
-		String noticeNo = propertyTaxNumberGenerator.generateRecoveryNotice(PropertyTaxConstants.NOTICE155);
+		String noticeNo = propertyTaxNumberGenerator
+				.generateRecoveryNotice(PropertyTaxConstants.NOTICE155);
 		recovery.setStatus(getEgwStatusForModuleAndCode(PropertyTaxConstants.RECOVERY_MODULE,
 				PropertyTaxConstants.RECOVERY_NOTICE155GENERATED));
 		updateWfstate("Notice 155 Generated");
 		Map<String, Object> paramMap = new HashMap<String, Object>();
-		CFinancialYear currentFinancialYear = propertyTaxUtil.getFinancialYearforDate(getCurrentDate());
+		CFinancialYear currentFinancialYear = propertyTaxUtil
+				.getFinancialYearforDate(getCurrentDate());
 		String currFinYear = currentFinancialYear.getFinYearRange();
 		paramMap.put("paasoon", currFinYear);
 		paramMap.put("currentDate", DDMMYYYYFORMATS.format(getCurrentDate()));
 		paramMap.put("noticeNo", noticeNo);
 		PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
-		Map<String, Map<String, BigDecimal>> reasonwiseDues = propertyTaxUtil.getDemandDues(recovery.getBasicProperty()
-				.getUpicNo());
-		PropertyBillInfo propertyBillInfo = new PropertyBillInfo(reasonwiseDues, recovery.getBasicProperty(), null);
+		Map<String, Map<String, BigDecimal>> reasonwiseDues = propertyTaxUtil
+				.getDemandDues(recovery.getBasicProperty().getUpicNo());
+		PropertyBillInfo propertyBillInfo = new PropertyBillInfo(reasonwiseDues,
+				recovery.getBasicProperty(), null);
 		ReportRequest reportRequest = new ReportRequest("Notice-155", propertyBillInfo, paramMap);
 		reportRequest.setPrintDialogOnOpenReport(true);
 		ReportOutput reportOutput = reportService.createReport(reportRequest);
@@ -252,34 +267,37 @@ public class RecoveryAction extends BaseRecoveryAction {
 
 	@ValidationErrorPage(value = "warrantApplicationNew")
 	public String warrantApplication() {
-		LOGGER.debug("RecoveryAction | warrantApplication | Start" );
+		LOGGER.debug("RecoveryAction | warrantApplication | Start");
 		HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
 		setupWorkflowDetails();
 		List<WarrantFee> warrantFess = new LinkedList<WarrantFee>();
 		for (WarrantFee warrantFee : recovery.getWarrant().getWarrantFees()) {
-			EgDemandReason demandReason = (EgDemandReason) persistenceService.find(" from EgDemandReason where id="
-					+ warrantFee.getDemandReason().getId());
+			EgDemandReason demandReason = (EgDemandReason) persistenceService
+					.find(" from EgDemandReason where id=" + warrantFee.getDemandReason().getId());
 			warrantFee.setDemandReason(demandReason);
 			warrantFess.add(warrantFee);
 			LOGGER.debug("RecoveryAction | warrantApplication | Warrant Fee" + warrantFee);
 		}
 		recovery.getWarrant().getWarrantFees().clear();
 		recovery.getWarrant().getWarrantFees().addAll(warrantFess);
-		recovery.getBasicProperty().setStatus(getPropStatusByStatusCode(PropertyTaxConstants.RECOVERY_WARRANTPREPARED));
+		recovery.getBasicProperty().setStatus(
+				getPropStatusByStatusCode(PropertyTaxConstants.RECOVERY_WARRANTPREPARED));
 		recovery.setStatus(getEgwStatusForModuleAndCode(PropertyTaxConstants.RECOVERY_MODULE,
 				PropertyTaxConstants.RECOVERY_WARRANTPREPARED));
 		updateWfstate("Warrant Application");
 		LOGGER.debug("RecoveryAction | warrantApplication | end" + recovery.getWarrant());
 		HibernateUtil.getCurrentSession().flush();
 		addActionMessage(getText("warrantApp.success"));
-		
+
 		return MESSAGE;
 	}
 
 	@ValidationErrorPage(value = "warrantApplicationView")
 	public String generateWarrantApplicaton() {
-		String noticeNo = propertyTaxNumberGenerator.generateRecoveryNotice(PropertyTaxConstants.WARRANT_APPLICATION);
-		recovery.getBasicProperty().setStatus(getPropStatusByStatusCode(PropertyTaxConstants.RECOVERY_WARRANTAPPROVED));
+		String noticeNo = propertyTaxNumberGenerator
+				.generateRecoveryNotice(PropertyTaxConstants.WARRANT_APPLICATION);
+		recovery.getBasicProperty().setStatus(
+				getPropStatusByStatusCode(PropertyTaxConstants.RECOVERY_WARRANTAPPROVED));
 		recovery.setStatus(getEgwStatusForModuleAndCode(PropertyTaxConstants.RECOVERY_MODULE,
 				PropertyTaxConstants.RECOVERY_WARRANTAPPROVED));
 
@@ -288,18 +306,20 @@ public class RecoveryAction extends BaseRecoveryAction {
 		BigDecimal noticeFee = BigDecimal.ZERO;
 		BigDecimal warrantFee = BigDecimal.ZERO;
 		for (WarrantFee fee : recovery.getWarrant().getWarrantFees()) {
-			if (fee.getDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(DEMANDRSN_CODE_WARRANT_FEE)) {
+			if (fee.getDemandReason().getEgDemandReasonMaster().getCode()
+					.equalsIgnoreCase(DEMANDRSN_CODE_WARRANT_FEE)) {
 				warrantFee = fee.getAmount();
-			} else if (fee.getDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(
-					DEMANDRSN_CODE_COURT_FEE)) {
+			} else if (fee.getDemandReason().getEgDemandReasonMaster().getCode()
+					.equalsIgnoreCase(DEMANDRSN_CODE_COURT_FEE)) {
 				courtFee = fee.getAmount();
-			} else if (fee.getDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(
-					DEMANDRSN_CODE_NOTICE_FEE)) {
+			} else if (fee.getDemandReason().getEgDemandReasonMaster().getCode()
+					.equalsIgnoreCase(DEMANDRSN_CODE_NOTICE_FEE)) {
 				noticeFee = fee.getAmount();
 			}
 		}
 		Map<String, Object> paramMap = new HashMap<String, Object>();
-		CFinancialYear currentFinancialYear = propertyTaxUtil.getFinancialYearforDate(getCurrentDate());
+		CFinancialYear currentFinancialYear = propertyTaxUtil
+				.getFinancialYearforDate(getCurrentDate());
 		String currFinYear = currentFinancialYear.getFinYearRange();
 		paramMap.put("paasoon", currFinYear);
 		paramMap.put("noticeDate", new Date());
@@ -307,27 +327,33 @@ public class RecoveryAction extends BaseRecoveryAction {
 		paramMap.put("warrantFee", warrantFee.toString());
 		paramMap.put("courtFee", courtFee.toString());
 		paramMap.put("noticeFee", noticeFee.toString());
-		paramMap.put("zoneNum", recovery.getBasicProperty().getPropertyID().getZone().getBoundaryNum().toString());
+		paramMap.put("zoneNum", recovery.getBasicProperty().getPropertyID().getZone()
+				.getBoundaryNum().toString());
 		paramMap.put("noticeNo", noticeNo);
 		PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
-		Map<String, Map<String, BigDecimal>> reasonwiseDues = propertyTaxUtil.getDemandDues(recovery.getBasicProperty()
-				.getUpicNo());
-		PropertyBillInfo propertyBillInfo = new PropertyBillInfo(reasonwiseDues, recovery.getBasicProperty(), null);
-		BigDecimal totalRecoverAmt = (propertyBillInfo.getGrandTotal().add(courtFee.add(warrantFee))).setScale(2);
+		Map<String, Map<String, BigDecimal>> reasonwiseDues = propertyTaxUtil
+				.getDemandDues(recovery.getBasicProperty().getUpicNo());
+		PropertyBillInfo propertyBillInfo = new PropertyBillInfo(reasonwiseDues,
+				recovery.getBasicProperty(), null);
+		BigDecimal totalRecoverAmt = (propertyBillInfo.getGrandTotal()
+				.add(courtFee.add(warrantFee))).setScale(2);
 		paramMap.put("totalAmt", totalRecoverAmt.toString());
-		ReportRequest reportRequest = new ReportRequest(PropertyTaxConstants.WARRANT_APPLICATION, propertyBillInfo,
-				paramMap);
+		ReportRequest reportRequest = new ReportRequest(PropertyTaxConstants.WARRANT_APPLICATION,
+				propertyBillInfo, paramMap);
 		reportRequest.setPrintDialogOnOpenReport(true);
 		ReportOutput reportOutput = reportService.createReport(reportRequest);
 		reportId = addingReportToSession(reportOutput);
 		if (reportOutput != null && reportOutput.getReportOutputData() != null) {
-			InputStream warrantApplPDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
-			PtNotice ptNotice = noticeService.saveNotice(noticeNo, PropertyTaxConstants.WARRANT_APPLICATION,
-					recovery.getBasicProperty(), warrantApplPDF);
+			InputStream warrantApplPDF = new ByteArrayInputStream(
+					reportOutput.getReportOutputData());
+			PtNotice ptNotice = noticeService.saveNotice(noticeNo,
+					PropertyTaxConstants.WARRANT_APPLICATION, recovery.getBasicProperty(),
+					warrantApplPDF);
 			recovery.getWarrant().setNotice(ptNotice);
 		}
 		return PRINT;
 	}
+
 	@ValidationErrorPage(value = "notice156New")
 	public String warrantNotice() {
 		LOGGER.debug("RecoveryAction | warrantNotice | Start" + recovery.getWarrantNotice());
@@ -345,7 +371,8 @@ public class RecoveryAction extends BaseRecoveryAction {
 
 	public String generateWarrantNotice() {
 		LOGGER.debug("RecoveryAction | generateWarrantNotice | Start" + recovery.getWarrantNotice());
-		String noticeNo = propertyTaxNumberGenerator.generateRecoveryNotice(PropertyTaxConstants.NOTICE156);
+		String noticeNo = propertyTaxNumberGenerator
+				.generateRecoveryNotice(PropertyTaxConstants.NOTICE156);
 		recovery.getBasicProperty().setStatus(
 				getPropStatusByStatusCode(PropertyTaxConstants.RECOVERY_WARRANTNOTICEISSUED));
 		recovery.setStatus(getEgwStatusForModuleAndCode(PropertyTaxConstants.RECOVERY_MODULE,
@@ -355,14 +382,19 @@ public class RecoveryAction extends BaseRecoveryAction {
 		PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 		Map<String, Object> paramMap = getNotice156Param(recovery);
 		PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
-		Map<String, Map<String, BigDecimal>> reasonwiseDues = propertyTaxUtil.getDemandDues(recovery.getBasicProperty()
-				.getUpicNo());
-		PropertyBillInfo propertyBillInfo = new PropertyBillInfo(reasonwiseDues, recovery.getBasicProperty(), null);
-		String adress = ptisCacheMgr.buildAddressByImplemetation(recovery.getBasicProperty().getAddress());
-		BigDecimal totalRecoverAmt = propertyBillInfo.getGrandTotal().add(
-				BigDecimal.valueOf(Double.valueOf(paramMap.get("totalWarrantFees").toString()))).setScale(2);
+		Map<String, Map<String, BigDecimal>> reasonwiseDues = propertyTaxUtil
+				.getDemandDues(recovery.getBasicProperty().getUpicNo());
+		PropertyBillInfo propertyBillInfo = new PropertyBillInfo(reasonwiseDues,
+				recovery.getBasicProperty(), null);
+		String adress = ptisCacheMgr.buildAddressByImplemetation(recovery.getBasicProperty()
+				.getAddress());
+		BigDecimal totalRecoverAmt = propertyBillInfo
+				.getGrandTotal()
+				.add(BigDecimal.valueOf(Double.valueOf(paramMap.get("totalWarrantFees").toString())))
+				.setScale(2);
 		paramMap.put("adress", adress);
-		paramMap.put("zoneNum", recovery.getBasicProperty().getPropertyID().getZone().getBoundaryNum().toString());
+		paramMap.put("zoneNum", recovery.getBasicProperty().getPropertyID().getZone()
+				.getBoundaryNum().toString());
 		paramMap.put("totalRecoverAmt", totalRecoverAmt.toString());
 		ReportRequest reportRequest = new ReportRequest("Warrent", propertyBillInfo, paramMap);
 		reportRequest.setPrintDialogOnOpenReport(true);
@@ -396,31 +428,37 @@ public class RecoveryAction extends BaseRecoveryAction {
 	@ValidationErrorPage(value = "notice159View")
 	public String generateCeaseNotice() {
 		LOGGER.debug("RecoveryAction | generateCeaseNotice | Start" + recovery.getCeaseNotice());
-		String noticeNo = propertyTaxNumberGenerator.generateRecoveryNotice(PropertyTaxConstants.NOTICE159);
+		String noticeNo = propertyTaxNumberGenerator
+				.generateRecoveryNotice(PropertyTaxConstants.NOTICE159);
 		recovery.getBasicProperty().setStatus(
 				getPropStatusByStatusCode(PropertyTaxConstants.RECOVERY_CEASENOTICEISSUED));
 		recovery.setStatus(getEgwStatusForModuleAndCode(PropertyTaxConstants.RECOVERY_MODULE,
 				PropertyTaxConstants.RECOVERY_CEASENOTICEISSUED));
-        //FIX ME
-		//Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		// FIX ME
+		// Position position =
+		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
 		Position position = null;
-		recovery.transition(true).transition().withNextAction("END")
-				.withStateValue("END").withOwner(position)
-				.withComments(workflowBean.getComments());
+		recovery.transition(true).transition().withNextAction("END").withStateValue("END")
+				.withOwner(position).withComments(workflowBean.getComments());
 
 		Map<String, Object> paramMap = getNotice159Param(recovery);
 		PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
-		Map<String, Map<String, BigDecimal>> reasonwiseDues = propertyTaxUtil.getDemandDues(recovery.getBasicProperty()
-				.getUpicNo());
-		PropertyBillInfo propertyBillInfo = new PropertyBillInfo(reasonwiseDues, recovery.getBasicProperty(), null);
-		BigDecimal totalRecoverAmt = propertyBillInfo.getGrandTotal().add(
-				BigDecimal.valueOf(Double.valueOf(paramMap.get("totalWarrantFees").toString()))).setScale(2);
+		Map<String, Map<String, BigDecimal>> reasonwiseDues = propertyTaxUtil
+				.getDemandDues(recovery.getBasicProperty().getUpicNo());
+		PropertyBillInfo propertyBillInfo = new PropertyBillInfo(reasonwiseDues,
+				recovery.getBasicProperty(), null);
+		BigDecimal totalRecoverAmt = propertyBillInfo
+				.getGrandTotal()
+				.add(BigDecimal.valueOf(Double.valueOf(paramMap.get("totalWarrantFees").toString())))
+				.setScale(2);
 		paramMap.put("totalRecoverAmt", totalRecoverAmt.toString());
-		paramMap.put("executionDate", DDMMYYYYFORMATS.format(recovery.getCeaseNotice().getExecutionDate()));
+		paramMap.put("executionDate",
+				DDMMYYYYFORMATS.format(recovery.getCeaseNotice().getExecutionDate()));
 		paramMap.put("currentDate", DDMMYYYYFORMATS.format(new Date()));
 		paramMap.put("north", recovery.getBasicProperty().getPropertyID().getNorthBoundary());
 		paramMap.put("south", recovery.getBasicProperty().getPropertyID().getSouthBoundary());
-		paramMap.put("zoneNum", recovery.getBasicProperty().getPropertyID().getZone().getBoundaryNum().toString());
+		paramMap.put("zoneNum", recovery.getBasicProperty().getPropertyID().getZone()
+				.getBoundaryNum().toString());
 		paramMap.put("east", recovery.getBasicProperty().getPropertyID().getEastBoundary());
 		paramMap.put("west", recovery.getBasicProperty().getPropertyID().getWestBoundary());
 		ReportRequest reportRequest = new ReportRequest("Notice-159", propertyBillInfo, paramMap);
@@ -444,47 +482,54 @@ public class RecoveryAction extends BaseRecoveryAction {
 
 	private void updateWfstate(String value) {
 		LOGGER.debug("RecoveryAction | updateStateAndStatus | Start");
-		
+
 		if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workflowBean.getActionName())) {
-			//FIX ME
-			//Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+			// FIX ME
+			// Position position =
+			// eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
 			Position position = null;
-			recovery.transition(true).transition().withNextAction("Saved : " + value).withOwner(position).withComments(workflowBean.getComments());
+			recovery.transition(true).transition().withNextAction("Saved : " + value)
+					.withOwner(position).withComments(workflowBean.getComments());
 			addActionMessage(getText("file.save"));
 
 		} else if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workflowBean.getActionName())) {
-			//FIX ME
-			//Position position = eisCommonsManager.getPositionByUserId(workflowBean.getApproverUserId());
+			// FIX ME
+			// Position position =
+			// eisCommonsManager.getPositionByUserId(workflowBean.getApproverUserId());
 			Position position = null;
-			User approverUser = userService.getUserById(workflowBean.getApproverUserId().longValue());
-			recovery.transition(true).transition().withNextAction("Forwarded : " + value).withStateValue("Forward/Approve").withOwner(position).withComments(workflowBean.getComments());
-			addActionMessage(getText("recovery.forward", new String[] { approverUser.getUsername() }));
+			User approverUser = userService.getUserById(workflowBean.getApproverUserId()
+					.longValue());
+			recovery.transition(true).transition().withNextAction("Forwarded : " + value)
+					.withStateValue("Forward/Approve").withOwner(position)
+					.withComments(workflowBean.getComments());
+			addActionMessage(getText("recovery.forward",
+					new String[] { approverUser.getUsername() }));
 
 		} else if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workflowBean.getActionName())) {
-			//Position position = eisCommonsManager.getPositionByUserId(recovery.getCreatedBy().getId());
+			// Position position =
+			// eisCommonsManager.getPositionByUserId(recovery.getCreatedBy().getId());
 			Position position = null;
 			User approverUser = userService.getUserById(recovery.getCreatedBy().getId());
 
-			recovery.transition(true)
-					.transition()
-					.withNextAction("Approved : " + value)
-					.withStateValue(
-							getNextState(recovery.getStatus().getCode()))
-					.withOwner(position)
-					.withComments(workflowBean.getComments());
-			addActionMessage(getText("recovery.approve", new String[] { approverUser.getUsername() }));
+			recovery.transition(true).transition().withNextAction("Approved : " + value)
+					.withStateValue(getNextState(recovery.getStatus().getCode()))
+					.withOwner(position).withComments(workflowBean.getComments());
+			addActionMessage(getText("recovery.approve",
+					new String[] { approverUser.getUsername() }));
 
 		} else {
-			//FIX ME
-			//Position position = eisCommonsManager.getPositionByUserId(workflowBean.getApproverUserId());
+			// FIX ME
+			// Position position =
+			// eisCommonsManager.getPositionByUserId(workflowBean.getApproverUserId());
 			Position position = null;
-			User approverUser = userService.getUserById(workflowBean.getApproverUserId().longValue());
-			
+			User approverUser = userService.getUserById(workflowBean.getApproverUserId()
+					.longValue());
+
 			recovery.transition(true).start().withNextAction(value)
-					.withStateValue(recovery.getStatus().getCode())
-					.withOwner(position)
+					.withStateValue(recovery.getStatus().getCode()).withOwner(position)
 					.withComments(workflowBean.getComments());
-			addActionMessage(getText("recovery.approve", new String[] { approverUser.getUsername() }));
+			addActionMessage(getText("recovery.approve",
+					new String[] { approverUser.getUsername() }));
 
 		}
 

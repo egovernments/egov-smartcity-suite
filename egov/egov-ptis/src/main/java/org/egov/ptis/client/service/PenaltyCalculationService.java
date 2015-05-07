@@ -41,12 +41,12 @@ package org.egov.ptis.client.service;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_LP_DATE_BREAKUP;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_LP_DATE_CONSTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.LP_PERCENTAGE_CONSTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE127;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE134;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_PRATIVRUTTA;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
-import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -61,15 +61,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EgovUtils;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.client.bill.PenaltyBill;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;

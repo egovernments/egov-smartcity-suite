@@ -68,7 +68,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.StringUtils;
 import org.egov.ptis.actions.workflow.WorkflowAction;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -82,8 +81,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
-@Results({ @Result(name = "workFlowError", type = "Stream", location = "workflow", params = {
-	"namespace", "/workflow", "method", "workFlowError" }) })
+@Results({ @Result(name = "workFlowError", location = "workflow", params = { "namespace",
+		"/workflow", "method", "workFlowError" }) })
 @Transactional(readOnly = true)
 @Namespace("/modify")
 public class ChangePropertyAddressAction extends WorkflowAction {
@@ -105,10 +104,10 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	private static final String MSG_REJECT_SUCCESS = " Change Property Rejected Successfully ";
 
 	private String docNumber;
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private EisCommonService eisCommonService;
 
@@ -129,10 +128,10 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	 */
 
 	@SkipValidation
-	@Action(value = "/changePropertyAddress-newForm", results = { @Result(name = NEW) })
+	@Action(value = "/changePropertyAddress-newForm", results = { @Result(name = NEW, location = "/changePropertyAddress-new.jsp") })
 	public String newForm() {
-		LOGGER.debug("Entered into the newForm method, Index Number " + indexNumber + ", BasicProperty: "
-				+ basicProperty);
+		LOGGER.debug("Entered into the newForm method, Index Number " + indexNumber
+				+ ", BasicProperty: " + basicProperty);
 		String target = "";
 		Map<String, String> wfMap = basicProperty.getPropertyWfStatus();
 		String wfStatus = wfMap.get(WFSTATUS);
@@ -152,7 +151,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/changePropertyAddress-view", results = { @Result(name = VIEW) })
+	@Action(value = "/changePropertyAddress-view", results = { @Result(name = VIEW, location = "/changePropertyAddress-view.jsp") })
 	public String view() {
 
 		LOGGER.debug("Entered into view method, ModelId: " + getModelId() + ", Address: " + address);
@@ -182,28 +181,23 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 		address.setExtraField2(isBlank(addFields[6]) ? null : addFields[6]);
 		address.setExtraField3(isBlank(addFields[7]) ? null : addFields[7]);
 		address.setExtraField4(isBlank(addFields[8]) ? null : addFields[8]);
-		
+
 		if (userDesgn.equalsIgnoreCase(END_APPROVER_DESGN)) {
 			setIsApprPageReq(Boolean.FALSE);
 		}
-		
+
 		setDocNumber(property.getDocNumber());
 		LOGGER.debug("Address: " + address + "\nExit from view method");
 
-		/*if (PTCREATOR_ROLE.equals(userRole)) {
-			if (address.getDoorNumOld().equals("N/A")) {
-				address.setDoorNumOld("");
-			}
-			if (address.getMobileNo().equals("N/A")) {
-				address.setMobileNo("");
-			}
-			if (getDocNumber() != null && getDocNumber() != "") {
-				setDocNumber(getDocNumber());
-			} else {
-				setDocNumber(basicProperty.getProperty().getDocNumber());
-			}
-			return NEW;
-		}*/
+		/*
+		 * if (PTCREATOR_ROLE.equals(userRole)) { if
+		 * (address.getDoorNumOld().equals("N/A")) { address.setDoorNumOld("");
+		 * } if (address.getMobileNo().equals("N/A")) { address.setMobileNo("");
+		 * } if (getDocNumber() != null && getDocNumber() != "") {
+		 * setDocNumber(getDocNumber()); } else {
+		 * setDocNumber(basicProperty.getProperty().getDocNumber()); } return
+		 * NEW; }
+		 */
 		return VIEW;
 	}
 
@@ -214,11 +208,11 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	 */
 
 	@ValidationErrorPage(value = "new")
-	@Action(value = "/changePropertyAddress-save", results = { @Result(name = ACK) })
+	@Action(value = "/changePropertyAddress-save", results = { @Result(name = ACK, location = "/changePropertyAddress-ack.jsp") })
 	public String save() {
 
-		LOGGER.debug("Entered into the newForm method, Index Number : " + indexNumber + ", Address : " + address
-				+ "BasicProperty: " + basicProperty);
+		LOGGER.debug("Entered into the newForm method, Index Number : " + indexNumber
+				+ ", Address : " + address + "BasicProperty: " + basicProperty);
 		String addrStr1 = address.getLandmark();
 		addrStr1 = propertyTaxUtil.antisamyHackReplace(addrStr1);
 		address.setLandmark(addrStr1);
@@ -230,7 +224,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 			basicProperty.addDocs(pd);
 		}
 
-		//propertyImplService.update(property);
+		// propertyImplService.update(property);
 		basicProperty = basicPrpertyService.update(basicProperty);
 		getWorkflowBean().setActionName(WFLOW_ACTION_NAME_CREATE);
 
@@ -240,23 +234,24 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/changePropertyAddress-save", results = { @Result(name = FORWARD_ACK) })
+	@Action(value = "/changePropertyAddress-forward", results = { @Result(name = FORWARD_ACK, location = "/changePropertyAddress-forwardAck.jsp") })
 	public String forward() {
 
-		LOGGER.debug("Entered into forward, BasicProperty: " + basicProperty + ", Address: " + address);
+		LOGGER.debug("Entered into forward, BasicProperty: " + basicProperty + ", Address: "
+				+ address);
 
 		// try {
 		String propDocNum = "";
-		
+
 		/**
-		 * commented as roleName is already been getting by calling to setUserInfo
+		 * commented as roleName is already been getting by calling to
+		 * setUserInfo
 		 */
-		/*for (Role role : user.getRoles()) {
-			if (role.getRoleName().equalsIgnoreCase(ASSISTANT_ROLE)) {
-				roleName = role.getRoleName();
-				break;
-			}
-		}*/
+		/*
+		 * for (Role role : user.getRoles()) { if
+		 * (role.getRoleName().equalsIgnoreCase(ASSISTANT_ROLE)) { roleName =
+		 * role.getRoleName(); break; } }
+		 */
 		if (userRole.equalsIgnoreCase(ASSISTANT_ROLE) && isBlank(getModelId())) {
 
 			this.validate();
@@ -291,13 +286,14 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 
 		} else {
 			super.validate();
-			if (hasErrors()) {				
+			if (hasErrors()) {
 				return view();
 			}
 		}
 
 		transitionWorkFlow();
-		User approverUser = userService.getUserById(getWorkflowBean().getApproverUserId().longValue());
+		User approverUser = userService.getUserById(getWorkflowBean().getApproverUserId()
+				.longValue());
 		setAckMessage("Property " + basicProperty.getUpicNo() + " Successfully Forwarded to "
 				+ approverUser.getUsername());
 		/*
@@ -311,7 +307,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/changePropertyAddress-approve", results = { @Result(name = ACK) })
+	@Action(value = "/changePropertyAddress-approve", results = { @Result(name = ACK, location = "/changePropertyAddress-ack.jsp") })
 	public String approve() {
 
 		LOGGER.debug("Enetered into approve, BasicProperty: " + basicProperty + ", Address : "
@@ -320,7 +316,8 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 
 		try {
 			PropertyImpl nonHistProperty = (PropertyImpl) getPersistenceService().findByNamedQuery(
-					QUERY_PROPERTY_BY_UPICNO_AND_STATUS, property.getBasicProperty().getUpicNo(), STATUS_ISACTIVE);
+					QUERY_PROPERTY_BY_UPICNO_AND_STATUS, property.getBasicProperty().getUpicNo(),
+					STATUS_ISACTIVE);
 			nonHistProperty.setStatus(STATUS_ISHISTORY);
 			property.setStatus(STATUS_ISACTIVE);
 
@@ -347,43 +344,47 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/changePropertyAddress-reject", results = { @Result(name = FORWARD_ACK) })
+	@Action(value = "/changePropertyAddress-reject", results = { @Result(name = FORWARD_ACK, location = "/changePropertyAddress-forwardAck.jsp") })
 	public String reject() {
 		LOGGER.debug("reject: Change Property rejection started");
 		LOGGER.debug("reject: Property: " + property);
 		BasicProperty basicProperty = property.getBasicProperty();
 		LOGGER.debug("reject: BasicProperty: " + basicProperty);
-		
+
 		transitionWorkFlow();
-		
+
 		if (WORKFLOW_END.equalsIgnoreCase(property.getState().getValue())) {
-            basicProperty.getProperty().setStatus(STATUS_ISHISTORY);
+			basicProperty.getProperty().setStatus(STATUS_ISHISTORY);
 			property.setStatus(STATUS_ISACTIVE);
 			setAckMessage(MSG_REJECT_SUCCESS);
 			propertyImplService.update(property);
 			basicPrpertyService.update(basicProperty);
 		} else {
-			setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to initiator : "+ property.getCreatedBy().getUsername());
+			setAckMessage(MSG_REJECT_SUCCESS + " and forwarded to initiator : "
+					+ property.getCreatedBy().getUsername());
 		}
-				
+
 		LOGGER.debug("reject: BasicProperty: " + basicProperty + "AckMessage: " + getAckMessage());
 		LOGGER.debug("reject: Change Property rejection ended");
 
 		return FORWARD_ACK;
 	}
 
+	@Override
 	public void prepare() {
 
-		LOGGER.debug("Entered into prepare, ModelId: " + getModelId() + ", IndexNumber: " + indexNumber);
+		LOGGER.debug("Entered into prepare, ModelId: " + getModelId() + ", IndexNumber: "
+				+ indexNumber);
 
 		if (getModelId() != null && !getModelId().isEmpty()) {
-			property = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
-					Long.valueOf(getModelId()));
+			property = (PropertyImpl) getPersistenceService().findByNamedQuery(
+					QUERY_PROPERTYIMPL_BYID, Long.valueOf(getModelId()));
 			LOGGER.debug("prepare: Property by model id: " + property);
 		}
 
 		if (indexNumber != null && !indexNumber.equals("")) {
-			basicProperty = basicPrpertyService.findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO, indexNumber);
+			basicProperty = basicPrpertyService.findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO,
+					indexNumber);
 			LOGGER.debug("prepare: BasicProperty by index number : " + basicProperty);
 		}
 		setupWorkflowDetails();
@@ -394,27 +395,32 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	@Override
 	public void validate() {
 
-		LOGGER.debug("Entered into the validate method Address : " + address.getLandmark() + " HouseNo"
-				+ address.getHouseNoBldgApt() + "DoorNumOld " + address.getDoorNumOld() + " PinCode" + address.getPinCode());
+		LOGGER.debug("Entered into the validate method Address : " + address.getLandmark()
+				+ " HouseNo" + address.getHouseNoBldgApt() + "DoorNumOld "
+				+ address.getDoorNumOld() + " PinCode" + address.getPinCode());
 
 		/* Validates the input data in case the form is submitted */
 
-		if (address.getLandmark() == null || StringUtils.equals(address.getLandmark(), "")
-				|| StringUtils.isEmpty(address.getLandmark())) {
+		if (address.getLandmark() == null
+				|| org.apache.commons.lang.StringUtils.equals(address.getLandmark(), "")
+				|| org.apache.commons.lang.StringUtils.isEmpty(address.getLandmark())) {
 			addActionError(getText("mandatory.addr"));
 		}
-		if (address.getHouseNoBldgApt() == null || StringUtils.equals(address.getHouseNoBldgApt(), "")) {
+		if (address.getHouseNoBldgApt() == null
+				|| org.apache.commons.lang.StringUtils.equals(address.getHouseNoBldgApt(), "")) {
 			addActionError(getText("mandatory.houseNo"));
 		} else {
-			validateHouseNumber(basicProperty.getPropertyID().getWard().getId(), address.getHouseNoBldgApt(), basicProperty);
+			validateHouseNumber(basicProperty.getPropertyID().getWard().getId(),
+					address.getHouseNoBldgApt(), basicProperty);
 		}
 		if (address.getPinCode() != null) {
-			String pincode = StringUtils.trim(address.getPinCode().toString());
+			String pincode = org.apache.commons.lang.StringUtils.trim(address.getPinCode()
+					.toString());
 			if (!pincode.equals("") && pincode.length() < 6) {
 				addActionError(getText("mandatory.pincode.size"));
 			}
 		}
-		String mobNo = StringUtils.trim(address.getMobileNo());
+		String mobNo = org.apache.commons.lang.StringUtils.trim(address.getMobileNo());
 
 		if (mobNo != null && !mobNo.equals("") && mobNo.length() < 10) {
 			addActionError(getText("mandatory.mobileNo.size"));
@@ -435,33 +441,35 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 	}
 
 	private void transitionWorkFlow() {
-		
-		LOGGER.debug("Entered method : transitionWorkFlow"); 
-		
+
+		LOGGER.debug("Entered method : transitionWorkFlow");
+
 		if (workflowBean == null) {
 			LOGGER.debug("transitionWorkFlow: workflowBean is NULL");
 		} else {
-			LOGGER.debug("transitionWorkFlow - action : " + workflowBean.getActionName() + "property: " + property);
+			LOGGER.debug("transitionWorkFlow - action : " + workflowBean.getActionName()
+					+ "property: " + property);
 		}
-		
+
 		workflowAction = propertyTaxUtil.initWorkflowAction(property, workflowBean,
-				EGOVThreadLocals.getUserId(),eisCommonService );
-		
+				EGOVThreadLocals.getUserId(), eisCommonService);
+
 		if (workflowAction.isNoWorkflow()) {
 			startWorkFlow();
 		}
-		
-		if (workflowAction.isStepRejectAndOwnerNextPositionSame() || workflowAction.isApproveOrSave()) {
+
+		if (workflowAction.isStepRejectAndOwnerNextPositionSame()
+				|| workflowAction.isApproveOrSave()) {
 			endWorkFlow();
 		} else {
 			workflowAction.changeState();
 		}
-		
-		
-		LOGGER.debug("transitionWorkFlow: Property transitioned to " + property.getState().getValue());
+
+		LOGGER.debug("transitionWorkFlow: Property transitioned to "
+				+ property.getState().getValue());
 		propertyImplService.persist(property);
 
-		LOGGER.debug("Exiting method : transitionWorkFlow");		
+		LOGGER.debug("Exiting method : transitionWorkFlow");
 	}
 
 	public BasicProperty getBasicProperty() {
@@ -516,6 +524,7 @@ public class ChangePropertyAddressAction extends WorkflowAction {
 		this.addr = addr;
 	}
 
+	@Override
 	public void setProperty(PropertyImpl property) {
 		this.property = property;
 	}

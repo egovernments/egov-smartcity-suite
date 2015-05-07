@@ -45,8 +45,10 @@
 
 package org.egov.ptis.actions.bills;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_OBJ;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_CREATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STRING_EMPTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_AMALGAMATE;
@@ -63,8 +65,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOT
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATION_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -82,7 +82,6 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.commons.Installment;
-import org.egov.commons.dao.CommonsDAOFactory;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgBill;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -102,9 +101,9 @@ import org.egov.pims.commons.Position;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.bean.ReportInfo;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -169,7 +168,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	 * 
 	 * @return String
 	 */
-	@Action(value = "/billGeneration-generateBill", results = { @Result(name = BILL) })
+	@Action(value = "/billGeneration-generateBill")
 	public String generateBill() {
 
 		LOGGER.debug("Entered into generateBill, Index Number :" + indexNumber);
@@ -255,7 +254,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		return BILL;
 	}
 
-	@Action(value="/billGeneration-billsGenStatus", results = { @Result(name = STATUS_BILLGEN) })
+	@Action(value = "/billGeneration-billsGenStatus", results = { @Result(name = STATUS_BILLGEN, location = "/billGeneration-billsGenStatus.jsp") })
 	public String billsGenStatus() {
 		ReportInfo reportInfo;
 		Integer totalProps = 0;
@@ -286,23 +285,23 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		billQuery.setDate("FromDate", currInst.getFromDate());
 		billQuery.setDate("ToDate", currInst.getToDate());
 		billQuery.setString("BillType", BILLTYPE_MANUAL);
-		List<Object> billList = (List<Object>) billQuery.list();
+		List<Object> billList = billQuery.list();
 		LOGGER.info("billList : " + billList);
 		Query propQuery = getPersistenceService().getSession().createQuery(propQueryString.toString());
-		List<Object> propList = (List<Object>) propQuery.list();
+		List<Object> propList = propQuery.list();
 		LOGGER.info("propList : " + propList);
 
 		for (Object props : propList) {
 			reportInfo = new ReportInfo();
 			Object[] propObj = (Object[]) props;
-			reportInfo.setWardNo(String.valueOf((BigInteger) propObj[0]));
+			reportInfo.setWardNo(String.valueOf(propObj[0]));
 			reportInfo.setTotalNoProps(Integer.valueOf(((Long) propObj[1]).toString()));
 
 			reportInfo.setTotalGenBills(0);
 			String wardNo;
 			for (Object bills : billList) {
 				Object[] billObj = (Object[]) bills;
-				wardNo = String.valueOf((BigInteger) billObj[0]);
+				wardNo = String.valueOf(billObj[0]);
 				if (reportInfo.getWardNo().equals(wardNo)) {
 					reportInfo.setTotalGenBills(Integer.valueOf(((Long) billObj[1]).toString()));
 					break;
@@ -321,7 +320,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		return STATUS_BILLGEN;
 	}
 	
-	@Action(value="/billGeneration-billGenStatusByPartNo", results = { @Result(name = STATUS_BILLGEN_BY_PARTNO) })
+	@Action(value="/billGeneration-billGenStatusByPartNo", results = { @Result(name = STATUS_BILLGEN_BY_PARTNO, location="/billGeneration-statusByPartNo.jsp") })
 	public String billGenStatusByPartNo() {
 		LOGGER.debug("Entered into billGenStatusByPartNo, wardNum=" + wardNum);
 		
@@ -360,11 +359,11 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		billQuery.setDate("ToDate", currInst.getToDate());
 		billQuery.setString("BillType", BILLTYPE_MANUAL);
 		
-		List<Object> billList = (List<Object>) billQuery.list();
+		List<Object> billList = billQuery.list();
 		
 		Query propQuery = getPersistenceService().getSession().createQuery(propQueryString.toString());
 		propQuery.setBigInteger("bndryNum", new BigInteger(wardNum));
-		List<Object> propList = (List<Object>) propQuery.list();
+		List<Object> propList = propQuery.list();
 		
 		for (Object props : propList) {
 			reportInfo = new ReportInfo();
@@ -401,7 +400,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		return STATUS_BILLGEN_BY_PARTNO;
 	}
 
-	@Action(value="/billGeneration-cancelBill", results = { @Result(name = ACK) })
+	@Action(value="/billGeneration-cancelBill", results = { @Result(name = ACK, location="/billGeneration-ack.jsp") })
 	public String cancelBill() {
 		EgBill egBill = (EgBill) persistenceService
 				.find("FROM EgBill " +
@@ -560,10 +559,12 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		this.reportId = reportId;
 	}
 
+	@Override
 	public String getIndexNumber() {
 		return indexNumber;
 	}
 
+	@Override
 	public void setIndexNumber(String indexNumber) {
 		this.indexNumber = indexNumber;
 	}

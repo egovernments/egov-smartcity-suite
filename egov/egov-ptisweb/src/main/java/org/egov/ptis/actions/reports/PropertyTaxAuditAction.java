@@ -43,12 +43,12 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.web.actions.BaseFormAction;
-import org.egov.web.utils.ServletActionRedirectResult;
 
 @ParentPackage("egov")
-@Result(name="auditReport",type="Stream",location="auditReport",
-params={"moduleName","PROPERTYTAX","namespace","/egi/auditing","method","searchForm","actionName","auditReport","prependServletContext","false"})
-public class PropertyTaxAuditAction  extends BaseFormAction{
+@Result(name = "auditReport", location = "auditReport", params = { "moduleName", "PROPERTYTAX",
+		"namespace", "/egi/auditing", "method", "searchForm", "actionName", "auditReport",
+		"prependServletContext", "false" })
+public class PropertyTaxAuditAction extends BaseFormAction {
 
 	@SkipValidation
 	public String auditReport() {
@@ -60,5 +60,5 @@ public class PropertyTaxAuditAction  extends BaseFormAction{
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 }

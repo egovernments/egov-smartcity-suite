@@ -197,6 +197,11 @@
 							<groupId>org.egov</groupId>
 							<artifactId>egov-collectionweb</artifactId>
 							<contextRoot>/collection</contextRoot>
+						</webModule>
+						<webModule>
+							<groupId>org.egov</groupId>
+							<artifactId>egov-ptisweb</artifactId>
+							<contextRoot>/ptis</contextRoot>
 						</webModule> -->
 						<webModule>
 							<groupId>org.egov</groupId>

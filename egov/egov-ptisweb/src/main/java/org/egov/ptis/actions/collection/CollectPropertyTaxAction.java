@@ -79,12 +79,11 @@ import org.springframework.transaction.annotation.Transactional;
 @ParentPackage("egov")
 @Transactional(readOnly = true)
 public class CollectPropertyTaxAction extends BaseFormAction {
-	
+
 	private static final String STRUTS_RESULT_SHOWPENALTY = "showPenalty";
 	private static final String VIEW = "view";
 	private static final Logger LOGGER = Logger.getLogger(CollectPropertyTaxAction.class);
-	
-	
+
 	PersistenceService<BasicProperty, Long> basicPrpertyService;
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 	PropertyTaxCollection propertyTaxCollection;
@@ -95,114 +94,119 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 	private String collectXML = "";
 	private Boolean levyPenalty;
 	private Boolean isPenaltyConfirmed = false;
-	private List<PropertyInstTaxBean> instTaxBeanList = new ArrayList<PropertyInstTaxBean>();		
+	private List<PropertyInstTaxBean> instTaxBeanList = new ArrayList<PropertyInstTaxBean>();
 	private Map<Integer, Installment> installmentAndId = new HashMap<Integer, Installment>();
 	private Map<Installment, EgDemandDetails> installmentAndDemandDetails = new HashMap<Installment, EgDemandDetails>();
-	
+
 	@Override
 	public Object getModel() {
 		return null;
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public void prepare() {
 		LOGGER.debug("Entered into prepare, propertyId=" + propertyId);
-		
+
 		if (isPenaltyConfirmed) {
 			List<EgDemandDetails> penaltyDemandDetails = persistenceService.findAllBy(
 					"select dmdDtls from EgDemandDetails dmdDtls left join fetch dmdDtls.egDemandReason dmdRsn "
 							+ "left join fetch dmdRsn.egInstallmentMaster installment "
 							+ "left join dmdDtls.egDemand.egptProperty property "
-							+ "left join property.basicProperty bp "
-							+ "where bp.upicNo = ? "
+							+ "left join property.basicProperty bp " + "where bp.upicNo = ? "
 							+ "and (property.status = 'A' or property.status = 'I') "
 							+ "and dmdRsn.egDemandReasonMaster.code = ?", propertyId,
 					PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES);
 
 			for (EgDemandDetails penaltyDmdDtl : penaltyDemandDetails) {
-				installmentAndDemandDetails.put(penaltyDmdDtl.getEgDemandReason().getEgInstallmentMaster(),
-						penaltyDmdDtl);
+				installmentAndDemandDetails.put(penaltyDmdDtl.getEgDemandReason()
+						.getEgInstallmentMaster(), penaltyDmdDtl);
 			}
-			
+
 			LOGGER.debug("prepare - installmentAndDemandDetails=" + installmentAndDemandDetails);
-			
+
 			if (!instTaxBeanList.isEmpty()) {
 				installmentAndId = getInstallmentAndIdAsMap();
 			}
 		}
-		
+
 		LOGGER.debug("Exiting from prepare, propertyId=" + propertyId);
 	}
-	
+
 	@Override
 	public void validate() {
-		LOGGER.debug("Entered into validate, propertyId=" + propertyId + ", isPenaltyConfirmed=" + isPenaltyConfirmed);
-		
+		LOGGER.debug("Entered into validate, propertyId=" + propertyId + ", isPenaltyConfirmed="
+				+ isPenaltyConfirmed);
+
 		EgDemandDetails penaltyDmdDtls = null;
 		Boolean isPenaltyLessThanCollection = true;
 		List<String> installmentDescriptions = new ArrayList<String>();
 		Installment installment = null;
 		boolean thereIsPenalty = false;
-		
+
 		if (isPenaltyConfirmed) {
 			for (PropertyInstTaxBean propertyInstTaxBean : instTaxBeanList) {
 				installment = installmentAndId.get(propertyInstTaxBean.getInstallmentId());
 				penaltyDmdDtls = installmentAndDemandDetails.get(installment);
 				thereIsPenalty = propertyInstTaxBean.getInstPenaltyAmt().compareTo(BigDecimal.ZERO) > 0;
-				
+
 				if (penaltyDmdDtls != null && thereIsPenalty) {
-					
+
 					isPenaltyLessThanCollection = propertyInstTaxBean.getInstPenaltyAmt()
-							.add(penaltyDmdDtls.getAmtCollected()).compareTo(penaltyDmdDtls.getAmtCollected()) < 0;
-					
+							.add(penaltyDmdDtls.getAmtCollected())
+							.compareTo(penaltyDmdDtls.getAmtCollected()) < 0;
+
 					if (isPenaltyLessThanCollection) {
 						installmentDescriptions.add(installment.getDescription());
 					}
 				}
 			}
-			
+
 			if (installmentDescriptions.size() > 0) {
-				String inst = installmentDescriptions.toString().replace('[', ' ').replace(']', ' ');
+				String inst = installmentDescriptions.toString().replace('[', ' ')
+						.replace(']', ' ');
 				List<String> msgParams = new ArrayList<String>();
 				msgParams.add(inst);
 				addActionError(getText("confirmPenalty.penaltyMsg", msgParams));
 			}
 		}
-		
+
 		LOGGER.debug("Exiting  from validate, propertyId=" + propertyId);
 	}
-	
+
 	@ValidationErrorPage(value = STRUTS_RESULT_SHOWPENALTY)
-	@Action(value = "/collectPropertyTax-save", results = { @Result(name = VIEW) })
+	@Action(value = "/collectPropertyTax-save", results = { @Result(name = VIEW, location = "/collectPropertyTax-view.jsp") })
 	public String save() {
-		LOGGER.info("Entered method generatePropertyTaxBill, Generating bill for index no : " + propertyId);
-		
+		LOGGER.info("Entered method generatePropertyTaxBill, Generating bill for index no : "
+				+ propertyId);
+
 		PropertyTaxBillable nmcPTBill = new PropertyTaxBillable();
 		Map<Installment, PropertyInstTaxBean> instTaxBean = new HashMap<Installment, PropertyInstTaxBean>();
-		
+
 		BasicProperty basicProperty = basicPrpertyService.findByNamedQuery(
 				PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO, propertyId);
-		
+
 		LOGGER.debug("generatePropertyTaxBill : BasicProperty :" + basicProperty);
 
 		for (PropertyInstTaxBean propertyInstTaxBean : instTaxBeanList) {
-			instTaxBean.put(installmentAndId.get(propertyInstTaxBean.getInstallmentId()), propertyInstTaxBean);
+			instTaxBean.put(installmentAndId.get(propertyInstTaxBean.getInstallmentId()),
+					propertyInstTaxBean);
 		}
-		
+
 		nmcPTBill.setInstTaxBean(instTaxBean);
 		nmcPTBill.setLevyPenalty(levyPenalty);
 		nmcPTBill.setBasicProperty(basicProperty);
 		nmcPTBill.setUserId(Long.valueOf(propertyTaxUtil.getLoggedInUser(getSession()).getId()));
-		nmcPTBill.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty.getPropertyID()
-				.getWard().getBoundaryNum().toString()));
+		nmcPTBill.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty
+				.getPropertyID().getWard().getBoundaryNum().toString()));
 		nmcPTBill.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_AUTO));
-		
+
 		setPenaltyToExistingPenalty(instTaxBean);
-		
+
 		String billXml = nmcPtBillServiceImpl.getBillXML(nmcPTBill);
 		collectXML = URLEncoder.encode(billXml);
-		LOGGER.info("Exiting method generatePropertyTaxBill, collectXML (before decode): " + billXml);
+		LOGGER.info("Exiting method generatePropertyTaxBill, collectXML (before decode): "
+				+ billXml);
 		return "view";
 	}
 
@@ -211,83 +215,89 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 	 */
 	private Map<Integer, Installment> getInstallmentAndIdAsMap() {
 		List<Integer> installmentIds = new ArrayList<Integer>();
-		
+
 		for (PropertyInstTaxBean propertyInstTaxBean : instTaxBeanList) {
 			installmentIds.add(propertyInstTaxBean.getInstallmentId());
 		}
-		
+
 		@SuppressWarnings("unchecked")
-		List<Installment> installments = persistenceService.findAllBy("from Installment where id in " + installmentIds
-				.toString().replace('[', '(').replace(']', ')'));
-		
+		List<Installment> installments = persistenceService
+				.findAllBy("from Installment where id in "
+						+ installmentIds.toString().replace('[', '(').replace(']', ')'));
+
 		Map<Integer, Installment> installmentAndId = new HashMap<Integer, Installment>();
-		
+
 		for (Installment installment : installments) {
 			installmentAndId.put(installment.getId(), installment);
 		}
 		return installmentAndId;
 	}
-		
+
 	@SuppressWarnings("unchecked")
 	@Transactional
-	private void setPenaltyToExistingPenalty(Map<Installment, PropertyInstTaxBean> installmentTaxBeanMap) {
+	private void setPenaltyToExistingPenalty(
+			Map<Installment, PropertyInstTaxBean> installmentTaxBeanMap) {
 		EgDemandDetails penaltyDmdDtls = null;
-		EgDemandDetailsDao demandDetailsDao = PropertyDAOFactory.getDAOFactory().getEgDemandDetailsDao();
+		EgDemandDetailsDao demandDetailsDao = PropertyDAOFactory.getDAOFactory()
+				.getEgDemandDetailsDao();
 		boolean isUpdated = false;
-		
+
 		for (Map.Entry<Installment, PropertyInstTaxBean> entry : installmentTaxBeanMap.entrySet()) {
 			penaltyDmdDtls = installmentAndDemandDetails.get(entry.getKey());
-			
+
 			if (penaltyDmdDtls != null) {
-				penaltyDmdDtls.setAmount(penaltyDmdDtls.getAmtCollected().add(entry.getValue().getInstPenaltyAmt()));
+				penaltyDmdDtls.setAmount(penaltyDmdDtls.getAmtCollected().add(
+						entry.getValue().getInstPenaltyAmt()));
 				demandDetailsDao.update(penaltyDmdDtls);
 				isUpdated = true;
 			}
 		}
-		
+
 		if (isUpdated) {
 			HibernateUtil.getCurrentSession().flush();
 		}
 	}
 
 	@ValidationErrorPage(value = STRUTS_RESULT_SHOWPENALTY)
-	@Action(value = "/collectPropertyTax-showPenalty", results = { @Result(name = STRUTS_RESULT_SHOWPENALTY) })
+	@Action(value = "/collectPropertyTax-showPenalty", results = { @Result(name = STRUTS_RESULT_SHOWPENALTY, location = "/collectPropertyTax-showPenalty.jsp") })
 	public String showPenalty() {
 		LOGGER.info("Entered method showPenalty, propertyId: " + propertyId);
-		
+
 		String noBillMessage = "Bill is not available penalty calculation for " + propertyId;
 		BasicProperty basicProperty = basicPrpertyService.findByNamedQuery(
 				PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO, propertyId);
-		
+
 		PropertyTaxBillable nmcPTBill = new PropertyTaxBillable();
 		LOGGER.debug("generatePropertyTaxBill : BasicProperty :" + basicProperty);
 		nmcPTBill.setLevyPenalty(Boolean.TRUE);
 		nmcPTBill.setBasicProperty(basicProperty);
-		
-		Map<Installment, PropertyInstTaxBean> penaltyMap = new TreeMap<Installment, PropertyInstTaxBean>();   
-				
+
+		Map<Installment, PropertyInstTaxBean> penaltyMap = new TreeMap<Installment, PropertyInstTaxBean>();
+
 		try {
 			penaltyMap = nmcPTBill.getCalculatedPenalty();
 		} catch (ValidationException ve) {
-			throw new ValidationException(Arrays.asList(new ValidationError(noBillMessage , noBillMessage)));
+			throw new ValidationException(Arrays.asList(new ValidationError(noBillMessage,
+					noBillMessage)));
 		}
-		
+
 		for (Map.Entry<Installment, PropertyInstTaxBean> mapEntry : penaltyMap.entrySet()) {
 			getInstTaxBeanList().add(mapEntry.getValue());
 		}
-		
+
 		LOGGER.debug("before comparator, instTaxBeanListTemp: " + getInstTaxBeanList());
 		Collections.sort(getInstTaxBeanList(), new Comparator<PropertyInstTaxBean>() {
+			@Override
 			public int compare(PropertyInstTaxBean bean1, PropertyInstTaxBean bean2) {
-				return bean1.getInstallment().getFromDate().compareTo(bean2.getInstallment().getFromDate());
+				return bean1.getInstallment().getFromDate()
+						.compareTo(bean2.getInstallment().getFromDate());
 			}
 		});
-		
+
 		LOGGER.debug("after comparator, instTaxBeanListTemp: " + getInstTaxBeanList());
 		LOGGER.debug("Exiting method showPenalty, penaltyMap: " + penaltyMap);
 		return STRUTS_RESULT_SHOWPENALTY;
 	}
-
 
 	public void setBasicPrpertyService(PersistenceService<BasicProperty, Long> basicPrpertyService) {
 		this.basicPrpertyService = basicPrpertyService;

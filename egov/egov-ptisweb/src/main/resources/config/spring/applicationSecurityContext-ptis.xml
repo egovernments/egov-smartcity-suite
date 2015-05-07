@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   eGov suite of products aim to improve the internal efficiency,transparency, 
      accountability and the service delivery of the government  organizations.
@@ -36,17 +36,27 @@
   	   with regards to rights under trademark law for use of the trade names 
   	   or trademarks of eGovernments Foundation.
   
-    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
+    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<hibernate-mapping package="org.egov.ptis.domain.entity.property">
-	<joined-subclass name="PropertyOwner" table="EGPT_PROPERTY_OWNER"
-		extends="org.egov.portal.entity.Citizen">
-		<key column="OWNERID" />
-		<many-to-one name="property" column="ID_PROPERTY"
-			not-null="true" class="org.egov.ptis.domain.entity.property.PropertyImpl" insert="false" update="false" fetch="select" />
-		<many-to-one name="source"
-			class="org.egov.ptis.domain.entity.property.PropertySource" column="ID_SOURCE" />
-		<property name="orderNo" column="ORDERNO" />
-	</joined-subclass>
-</hibernate-mapping>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:security="http://www.springframework.org/schema/security"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	   http://www.springframework.org/schema/security
+	   http://www.springframework.org/schema/security/spring-security-3.2.xsd" default-lazy-init="true">
+
+	<bean id="securityFilterChain" name="securityFilterChain" class="org.springframework.security.web.FilterChainProxy">
+		<constructor-arg>
+			<list>
+				<security:filter-chain pattern="/resources/**" filters="none" />
+				<security:filter-chain pattern="/citizen/register" filters="anonymousAuthenticationFilter"/>
+				<security:filter-chain pattern="/citizen/activation/**" filters="anonymousAuthenticationFilter"/>
+				<security:filter-chain pattern="/error/**" filters="none" />
+				<security:filter-chain pattern="/index.jsp" filters="none" />
+				<security:filter-chain pattern="/image/**" filters="none" />
+				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
+			</list>
+		</constructor-arg>
+	</bean>	
+</beans>

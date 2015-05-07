@@ -44,7 +44,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCAT
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATEGOVT_BUILDING_ALV_PERCENTAGE;
-import static org.egov.ptis.constants.PropertyTaxConstants.dateFormat;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -60,13 +59,13 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.client.model.MiscellaneousTax;
 import org.egov.ptis.client.model.TaxCalculationInfo;
 import org.egov.ptis.client.model.UnitTaxCalculationInfo;
 import org.egov.ptis.client.util.AreaTaxInfoComparator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.client.util.UnitTaxInfoComparator;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.FloorIF;
 import org.egov.ptis.domain.entity.property.FloorImpl;

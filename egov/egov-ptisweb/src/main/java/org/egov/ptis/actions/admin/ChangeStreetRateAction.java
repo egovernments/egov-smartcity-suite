@@ -160,7 +160,7 @@ public class ChangeStreetRateAction extends BaseFormAction {
 		LOGGER.debug("Exit from prepareAreaDropDownData");
 	}
 
-	@Action(value="/changeStreetRate-searchForm",results = { @Result(name = SEARCH) })
+	@Action(value="/changeStreetRate-searchForm",results = { @Result(name = SEARCH, location="/changeStreetRate-search.jsp") })
 	public String searchForm() {
 		LOGGER.debug("Entered into searchForm");
 		LOGGER.debug("Exit from searchForm");
@@ -168,7 +168,7 @@ public class ChangeStreetRateAction extends BaseFormAction {
 	}
 
 	@ValidationErrorPage(value = "search")
-	@Action(value="/changeStreetRate-search" ,results = { @Result(name = RESULTS) })
+	@Action(value="/changeStreetRate-search")
 	public String search() {
 		LOGGER.debug("Enered into search");
 		LOGGER.debug("Exit from search");
@@ -221,7 +221,7 @@ public class ChangeStreetRateAction extends BaseFormAction {
 
 	}
 
-	@Action(value="/changeStreetRate-editPage",results = { @Result(name = EDIT) })
+	@Action(value="/changeStreetRate-editPage")
 	public String editPage() {
 		LOGGER.debug("ChangeStreetRateAction!editPage");
 		LOGGER.debug("Exit from editPage");
@@ -231,7 +231,7 @@ public class ChangeStreetRateAction extends BaseFormAction {
 	@SuppressWarnings("unchecked")
 	@ValidationErrorPage(value = "edit")
 	@Transactional
-	@Action(value="/changeStreetRate-saveData",results = { @Result(name = ACK) })
+	@Action(value="/changeStreetRate-saveData")
 	public String saveData() {
 
 		LOGGER.debug("saveData : areaId:" + areaId + ", Current Location Factor:" + currLocFactor + ", Current Rate :"

@@ -50,11 +50,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATION_PENDING;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
@@ -66,19 +62,31 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
-@Results( {
-	@Result(name = "createView", type = "Stream", location = "createProperty", params = {
-			"namespace", "/create", "method", "view", "modelId", "${workFlowPropId}" }),
-	@Result(name = "modifyView", type = "Stream", location = "modifyProperty", params = {
-			"namespace", "/modify", "method", "view", "modelId", "${workFlowPropId}"  }),		
-	@Result(name = "deactivateView", type = "Stream", location = "deactivateProperty", params = {
-			"namespace", "/deactivate", "method", "viewForm", "modelId", "${workFlowPropId}"  }),
-	@Result(name = "transferView", type = "Stream", location = "transferProperty", params = {
-			"namespace", "/transfer", "method", "view", "modelId", "${workFlowPropId}"  }),
-	@Result(name = "changePropAddressView", type = "Stream", location = "changePropertyAddress", params = {
-			"namespace", "/modify", "method", "view", "modelId", "${workFlowPropId}"  }) })
-@Transactional(readOnly=true)
-//@Namespace("/workflow")
+/*
+ * @Results( {
+ * 
+ * @Result(name = "createView", type = "Stream", location = "createProperty",
+ * params = { "namespace", "/create", "method", "view", "modelId",
+ * "${workFlowPropId}" }),
+ * 
+ * @Result(name = "modifyView", type = "Stream", location = "modifyProperty",
+ * params = { "namespace", "/modify", "method", "view", "modelId",
+ * "${workFlowPropId}" }),
+ * 
+ * @Result(name = "deactivateView", type = "Stream", location =
+ * "deactivateProperty", params = { "namespace", "/deactivate", "method",
+ * "viewForm", "modelId", "${workFlowPropId}" }),
+ * 
+ * @Result(name = "transferView", type = "Stream", location =
+ * "transferProperty", params = { "namespace", "/transfer", "method", "view",
+ * "modelId", "${workFlowPropId}" }),
+ * 
+ * @Result(name = "changePropAddressView", type = "Stream", location =
+ * "changePropertyAddress", params = { "namespace", "/modify", "method", "view",
+ * "modelId", "${workFlowPropId}" }) })
+ */
+@Transactional(readOnly = true)
+// @Namespace("/workflow")
 public class WorkflowAction extends PropertyTaxBaseAction {
 
 	private final Logger LOGGER = Logger.getLogger(getClass());
@@ -98,27 +106,29 @@ public class WorkflowAction extends PropertyTaxBaseAction {
 		return propertyModel;
 	}
 
+	@Override
 	@SkipValidation
 	public void prepare() {
 		LOGGER.debug("prepare : Entered into method prepare");
 		LOGGER.debug("prepare : Workflow Property id : " + workFlowPropId);
 		setupWorkflowDetails();
 		if (workFlowPropId != null && !workFlowPropId.isEmpty()) {
-			propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
-					Long.valueOf(workFlowPropId));
+			propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(
+					QUERY_PROPERTYIMPL_BYID, Long.valueOf(workFlowPropId));
 		}
 		LOGGER.debug("prepare : Property in Workflow : " + propertyModel);
 		LOGGER.debug("prepare : Exit from method prepare");
 	}
 
 	@SkipValidation
-	//@Action(value = "/workFLow-viewProperty", results = { @Result(name = "target") })
+	// @Action(value = "/workFLow-viewProperty", results = { @Result(name =
+	// "target") })
 	public String viewProperty() {
 		LOGGER.debug("Entered into method viewProperty");
 		LOGGER.debug("viewProperty : Property : " + propertyModel);
 		String target = "";
 		String currState = propertyModel.getState().getValue();
-		
+
 		if (currState.contains(WFLOW_ACTION_NAME_CREATE)) {
 			target = "createView";
 		} else if (currState.contains(WFLOW_ACTION_NAME_MODIFY)) {
@@ -129,7 +139,8 @@ public class WorkflowAction extends PropertyTaxBaseAction {
 			} else {
 				target = "modifyForm";
 			}
-		} else if (currState.contains(WFLOW_ACTION_NAME_BIFURCATE) || currState.contains(WFLOW_ACTION_NAME_AMALGAMATE)) {
+		} else if (currState.contains(WFLOW_ACTION_NAME_BIFURCATE)
+				|| currState.contains(WFLOW_ACTION_NAME_AMALGAMATE)) {
 			target = "modifyView";
 		} else if (currState.contains(WFLOW_ACTION_NAME_DEACTIVATE)) {
 			target = "deactivateView";
@@ -152,24 +163,27 @@ public class WorkflowAction extends PropertyTaxBaseAction {
 		return "error";
 	}
 
-	
 	public String inboxItemViewErrorUserInvalid() {
 		LOGGER.debug("Entered into method inboxItemViewErrorUserInvalid");
 		getSession().get(WFOWNER);
-		setWfErrorMsg("The User is not authenticated to view the inbox item " );
+		setWfErrorMsg("The User is not authenticated to view the inbox item ");
 		LOGGER.debug("WorkFlow error message : " + getWfErrorMsg());
 		LOGGER.debug("Exit from method inboxItemViewErrorUserInvalid");
 		return "error";
 	}
-	
+
 	public void startWorkFlow() {
 		LOGGER.debug("Entered into startWorkFlow, UserId: " + EGOVThreadLocals.getUserId());
-		LOGGER.debug("startWorkFlow: Workflow is starting for Property: " + workflowAction.getPropertyModel());
-		//Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		LOGGER.debug("startWorkFlow: Workflow is starting for Property: "
+				+ workflowAction.getPropertyModel());
+		// Position position =
+		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
 		Position position = null;
-		//propertyWorkflowService.start(workflowAction.getPropertyModel(), position, "Property Workflow Started");
-		workflowAction.getPropertyModel().transition(true).start().withOwner(position).withComments("Property Workflow Started");
-		
+		// propertyWorkflowService.start(workflowAction.getPropertyModel(),
+		// position, "Property Workflow Started");
+		workflowAction.getPropertyModel().transition(true).start().withOwner(position)
+				.withComments("Property Workflow Started");
+
 		LOGGER.debug("Exiting from startWorkFlow, Workflow started");
 	}
 
@@ -178,11 +192,15 @@ public class WorkflowAction extends PropertyTaxBaseAction {
 	 */
 	public void endWorkFlow() {
 		LOGGER.debug("Enter method endWorkFlow, UserId: " + EGOVThreadLocals.getUserId());
-		LOGGER.debug("endWorkFlow: Workflow will end for Property: " + workflowAction.getPropertyModel());
-		//Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		LOGGER.debug("endWorkFlow: Workflow will end for Property: "
+				+ workflowAction.getPropertyModel());
+		// Position position =
+		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
 		Position position = null;
-		//propertyWorkflowService.end(workflowAction.getPropertyModel(), position, "Property Workflow End");
-		workflowAction.getPropertyModel().transition(true).end().withOwner(position).withComments("Property Workflow End");
+		// propertyWorkflowService.end(workflowAction.getPropertyModel(),
+		// position, "Property Workflow End");
+		workflowAction.getPropertyModel().transition(true).end().withOwner(position)
+				.withComments("Property Workflow End");
 		LOGGER.debug("Exit method endWorkFlow, Workflow ended");
 	}
 

@@ -55,7 +55,6 @@ import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.utils.SequenceNumberGenerator;
 import org.egov.infstr.utils.StringUtils;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

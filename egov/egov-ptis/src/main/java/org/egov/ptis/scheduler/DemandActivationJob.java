@@ -56,7 +56,6 @@ import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.demand.Ptdemand;

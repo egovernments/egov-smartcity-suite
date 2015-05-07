@@ -40,7 +40,6 @@
 package org.egov.ptis.domain.entity.demand;
 
 import org.egov.demand.model.EgDemand;
-import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 
 public class Ptdemand extends EgDemand {

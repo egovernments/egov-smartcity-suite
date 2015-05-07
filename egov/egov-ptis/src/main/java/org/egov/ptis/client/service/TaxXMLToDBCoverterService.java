@@ -42,6 +42,8 @@ package org.egov.ptis.client.service;
 import static java.math.BigDecimal.ROUND_HALF_UP;
 import static java.math.BigDecimal.ZERO;
 import static org.egov.infstr.utils.EgovUtils.roundOffTwo;
+import static org.egov.ptis.client.util.PropertyTaxUtil.isNotNull;
+import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
 import static org.egov.ptis.constants.PropertyTaxConstants.CENTRAL_GOVT_SHORTFORM;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD;
@@ -77,8 +79,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRAT
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_MIGRATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.TENANT_OCC;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_OCC;
-import static org.egov.ptis.client.util.PropertyTaxUtil.isNotNull;
-import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -103,7 +103,6 @@ import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.client.model.AreaTaxCalculationInfo;
 import org.egov.ptis.client.model.MiscellaneousTax;
 import org.egov.ptis.client.model.MiscellaneousTaxDetail;

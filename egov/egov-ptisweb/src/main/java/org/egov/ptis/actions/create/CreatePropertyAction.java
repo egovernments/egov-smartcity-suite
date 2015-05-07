@@ -40,6 +40,9 @@
 package org.egov.ptis.actions.create;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang.StringUtils.removeStart;
 import static org.egov.ptis.constants.PropertyTaxConstants.AREA_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.AUDITDATA_STRING_SEP;
@@ -49,28 +52,28 @@ import static org.egov.ptis.constants.PropertyTaxConstants.END_APPROVER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE127;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE134;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNER_ADDR_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CAT_RESD_CUM_NON_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_ADDR_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.RESIDENTIAL_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_NOTCREATED;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.VOUCH_CREATE_RSN_CREATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATION_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNER_ADDR_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROP_ADDR_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -83,8 +86,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -101,11 +102,9 @@ import org.egov.infra.admin.master.entity.enums.AddressType;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.StringUtils;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.actions.workflow.WorkflowAction;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -133,8 +132,6 @@ import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.utils.OwnerNameComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
@@ -211,7 +208,6 @@ public class CreatePropertyAction extends WorkflowAction {
 	private String citySurveyNumber;
 	private String sheetNumber;
 
-	private HttpServletRequest servletRequest;
 	private PropertyTypeMaster propTypeMstr;
 
 	private String docNumber;
@@ -249,13 +245,13 @@ public class CreatePropertyAction extends WorkflowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/createProperty-newForm", results = { @Result(name = RESULT_NEW) })
+	@Action(value = "/create/createProperty-newForm")
 	public String newForm() {
 		return RESULT_NEW;
 	}
 
 	@Transactional
-	@Action(value = "/createProperty-create", results = { @Result(name = RESULT_ACK) })
+	@Action(value = "/createProperty-create")
 	public String create() {
 		LOGGER.debug("create: Property creation started, Property: " + property + ", zoneId: " + zoneId + ", wardId: "
 				+ wardId + ", areaId: " + areaId + ", areaOfPlot: " + areaOfPlot + ", dateOfCompletion: "
@@ -271,7 +267,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		basicProperty.setUpicNo(indexNum);
 		basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
 		
-		if (StringUtils.isNotBlank(getDocNumber())) {		
+		if (isNotBlank(getDocNumber())) {		
 			PropertyDocs pd = createPropertyDocs(basicProperty, getDocNumber());
 			basicProperty.addDocs(pd);
 		}
@@ -309,7 +305,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/createProperty-view", results = { @Result(name = RESULT_ACK) })
+	@Action(value = "/createProperty-view")
 	public String view() {
 		LOGGER.debug("Entered into view, BasicProperty: " + basicProp + ", Property: " + property + ", userDesgn: "
 				+ userDesgn);
@@ -353,7 +349,7 @@ public class CreatePropertyAction extends WorkflowAction {
 
 	@SkipValidation
 	@Transactional
-	@Action(value = "/createProperty-forward", results = { @Result(name = RESULT_VIEW) })
+	@Action(value = "/createProperty-forward")
 	public String forward() {
 		LOGGER.debug("forward: Property forward started " + property);
 		long startTimeMillis = System.currentTimeMillis();		
@@ -427,7 +423,7 @@ public class CreatePropertyAction extends WorkflowAction {
 
 	@SkipValidation
 	@Transactional
-	@Action(value = "/createProperty-approve", results = { @Result(name = RESULT_ACK) })
+	@Action(value = "/createProperty-approve")
 	public String approve() {
 		LOGGER.debug("approve: Property approval started");
 		LOGGER.debug("approve: Property: " + property);
@@ -457,7 +453,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	}
 	
 	@SkipValidation
-	@Action(value = "/createProperty-reject", results = { @Result(name = RESULT_ACK) })
+	@Action(value = "/createProperty-reject")
 	public String reject() {
 		LOGGER.debug("reject: Property rejection started");		
 		transitionWorkFlow();
@@ -485,7 +481,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	private boolean checkCorrespondingAddress() {
 		LOGGER.debug("Entered into checkCorrespondingAddress, Property: " + property);
 		PropertyOwner owner = property.getPropertyOwnerSet().iterator().next();
-		Address address = (Address) owner.getAddress().iterator().next();
+		Address address = owner.getAddress().iterator().next();
 		LOGGER.debug("checkCorrespondingAddress: Property Address: " + address);
 		if (address.getLandmark() != null && !address.getLandmark().isEmpty() || address.getAreaLocalitySector() != null && !address.getAreaLocalitySector().isEmpty()
 				|| address.getPinCode() != null) {
@@ -512,6 +508,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		return new ArrayList<FloorIF>(property.getPropertyDetail().getFloorDetails());
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	@SkipValidation
 	public void prepare() {
@@ -520,7 +517,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				+ zoneId + ", WardId: " + wardId);
 
 		setUserInfo();
-		if (StringUtils.isNotBlank(getModelId())) {
+		if (isNotBlank(getModelId())) {
 			
 			property = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
 					Long.valueOf(getModelId()));
@@ -703,7 +700,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				"from PropertyStatus where statusCode=?", "ASSESSED");
 
 		//saving partno by removing preceding zeros ("0")
-		basicProperty.setPartNo(StringUtils.removeStart(partNo, "0"));
+		basicProperty.setPartNo(removeStart(partNo, "0"));
 		basicProperty.setActive(Boolean.TRUE);
 		basicProperty.setGisReferenceNo(getParcelID());
 		basicProperty.setAddress(createPropAddress());
@@ -769,7 +766,7 @@ public class CreatePropertyAction extends WorkflowAction {
 				+ parcelID + ", wardId: " + wardId);
 		PropertyImpl newProperty = new PropertyImpl();
 		//saving partno by removing preceding zeros ("0")
-		basicProp.setPartNo(StringUtils.removeStart(partNo, "0"));
+		basicProp.setPartNo(removeStart(partNo, "0"));
 		basicProp.setGisReferenceNo(getParcelID());
 		basicProp.setAddress(createPropAddress());
 		basicProp.setPropertyID(createPropertyID(basicProp));
@@ -980,16 +977,16 @@ public class CreatePropertyAction extends WorkflowAction {
 		propertyId.setModifiedDate(new Date());
 		propertyId.setArea(boundaryDao.getBoundary(getAreaId()));
 
-		if (getNorthBound() != null && !StringUtils.isEmpty(getNorthBound().trim())) {
+		if (getNorthBound() != null && !isEmpty(getNorthBound().trim())) {
 			propertyId.setNorthBoundary(getNorthBound());
 		}
-		if (getSouthBound() != null && !StringUtils.isEmpty(getSouthBound().trim())) {
+		if (getSouthBound() != null && !isEmpty(getSouthBound().trim())) {
 			propertyId.setSouthBoundary(getSouthBound());
 		}
-		if (getEastBound() != null && !StringUtils.isEmpty(getEastBound().trim())) {
+		if (getEastBound() != null && !isEmpty(getEastBound().trim())) {
 			propertyId.setEastBoundary(getEastBound());
 		}
-		if (getWestBound() != null && !StringUtils.isEmpty(getWestBound().trim())) {
+		if (getWestBound() != null && !isEmpty(getWestBound().trim())) {
 			propertyId.setWestBoundary(getWestBound());
 		}
 
@@ -998,6 +995,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		return propertyId;
 	}
 
+	@Override
 	public void validate() {
 		LOGGER.debug("Entered into validate\nZoneId: " + zoneId + ", WardId: " + wardId + ", AreadId: " + areaId
 				+ ", HouseNumber: " + houseNumber + ", MobileNo: " + mobileNo + ", PinCode: " + pinCode + ", ParcelID:"
@@ -1013,7 +1011,7 @@ public class CreatePropertyAction extends WorkflowAction {
 			validateHouseNumber(wardId, houseNumber, basicProp);
 		}
 
-		if (StringUtils.isBlank(partNo)) {
+		if (isBlank(partNo)) {
 			addActionError(getText("mandatory.partNo"));
 		}
 		for (PropertyOwner owner : property.getPropertyOwnerProxy()) {
@@ -1056,10 +1054,10 @@ public class CreatePropertyAction extends WorkflowAction {
 				"from PropertyMutationMaster pmm where pmm.type=? AND pmm.idMutation=?", PROP_CREATE_RSN, 
 				getMutationId());
 		if (propertyMutationMaster != null) {
-			if (StringUtils.equals(propertyMutationMaster.getCode(), PROP_CREATE_RSN_BIFUR)) {
+			if (org.apache.commons.lang.StringUtils.equals(propertyMutationMaster.getCode(), PROP_CREATE_RSN_BIFUR)) {
 				BasicProperty basicProperty = basicPrpertyService.findByNamedQuery(
 						PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO, getParentIndex());
-				if (getParentIndex() == null || StringUtils.isEmpty(getParentIndex())) {
+				if (getParentIndex() == null || isEmpty(getParentIndex())) {
 					addActionError(getText("mandatory.parentIndex"));
 				} else if (basicProperty == null) {
 					addActionError(getText("mandatory.parentIndexNotFound"));
@@ -1076,7 +1074,7 @@ public class CreatePropertyAction extends WorkflowAction {
 			if (propTypeMstr != null) {
 				if (propTypeMstr.getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
 					if (property.getPropertyDetail().getExtra_field5().equalsIgnoreCase(PROPTYPE_CAT_RESD_CUM_NON_RESD)) {
-						if (StringUtils.isBlank(nonResPlotArea)) {
+						if (isBlank(nonResPlotArea)) {
 							addActionError(getText("mandatory.nonResPlotArea"));
 						} else if ((new Float(areaOfPlot)).compareTo(new Float(nonResPlotArea)) <= 0) {
 							addActionError(getText("validNonResPlotArea"));
@@ -1327,10 +1325,12 @@ public class CreatePropertyAction extends WorkflowAction {
 		//propertyTaxUtil.generateAuditEvent(action, basicProperty, auditDetail1.toString(), auditDetails2);
 	}
 	
+	@Override
 	public PropertyImpl getProperty() {
 		return property;
 	}
 
+	@Override
 	public void setProperty(PropertyImpl property) {
 		this.property = property;
 	}
@@ -1595,10 +1595,12 @@ public class CreatePropertyAction extends WorkflowAction {
 		this.empGuaCess = empGuaCess;
 	}
 
+	@Override
 	public String getGenWaterRate() {
 		return genWaterRate;
 	}
 
+	@Override
 	public void setGenWaterRate(String genWaterRate) {
 		this.genWaterRate = genWaterRate;
 	}
@@ -1717,7 +1719,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	}
 
 	public Address getCorrAddress() {
-		return (Address) property.getPropertyOwnerProxy().get(0).getAddress().iterator().next();
+		return property.getPropertyOwnerProxy().get(0).getAddress().iterator().next();
 	}
 
 	public Map<Long, String> getZoneBndryMap() {

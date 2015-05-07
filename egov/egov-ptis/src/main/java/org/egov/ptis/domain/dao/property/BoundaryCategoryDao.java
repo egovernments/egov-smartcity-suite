@@ -42,8 +42,8 @@ package org.egov.ptis.domain.dao.property;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.infstr.dao.GenericDAO;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infstr.dao.GenericDAO;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.PropertyUsage;

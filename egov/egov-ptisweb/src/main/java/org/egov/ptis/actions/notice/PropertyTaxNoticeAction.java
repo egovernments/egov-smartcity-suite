@@ -54,11 +54,11 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_N
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_NOTICE127;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_NOTICE134;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_NOTICE_PRATIVRUTTA;
+import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_GENERATE_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATION_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -112,9 +112,9 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 	private String noticeType;
 	private String indexNumber;
 	private InputStream NoticePDF;
-	private Boolean isPreviewPVR; 
+	private Boolean isPreviewPVR;
 	private Long basicPropId;
-	
+
 	public PropertyTaxNoticeAction() {
 	}
 
@@ -123,23 +123,23 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 		return null;
 	}
 
-	@Action(value = "/propertyTaxNotice-generateNotice", results = { @Result(name = NOTICE) })
+	@Action(value = "/propertyTaxNotice-generateNotice", results = { @Result(name = NOTICE, location = "/propertyTaxNotice-notice.jsp") })
 	public String generateNotice() {
 		LOGGER.debug("Entered into generateNotice method");
-		LOGGER.info("Index Number : " + indexNumber+" Notice Type : " + noticeType
-				+" BasicPropertyId : " + basicPropId);
+		LOGGER.info("Index Number : " + indexNumber + " Notice Type : " + noticeType
+				+ " BasicPropertyId : " + basicPropId);
 		Boolean saveToDMS = FALSE;
 		Map reportParams = new HashMap<String, Object>();
 		ReportRequest reportInput = null;
 		Integer userId = (Integer) session().get(SESSIONLOGINID);
-		BasicPropertyImpl basicProperty = (BasicPropertyImpl) getPersistenceService().findByNamedQuery(
-				QUERY_BASICPROPERTY_BY_BASICPROPID, basicPropId);
+		BasicPropertyImpl basicProperty = (BasicPropertyImpl) getPersistenceService()
+				.findByNamedQuery(QUERY_BASICPROPERTY_BY_BASICPROPID, basicPropId);
 		property = (PropertyImpl) basicProperty.getProperty();
-		
-		if(property == null) {
+
+		if (property == null) {
 			property = (PropertyImpl) basicProperty.getWFProperty();
 		}
-		
+
 		LOGGER.debug("BasicProperty : " + basicProperty);
 		LOGGER.debug("Property : " + property);
 		// Notice 125 need not to be saved
@@ -149,52 +149,60 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 		PropertyNoticeInfo propertyNotice = null;
 		String noticeNo = null;
 		if (!MUTATION_CERTIFICATE.equals(noticeType)) {
-			if(!isPreviewPVR) {
-				noticeNo= propertyTaxNumberGenerator.generateNoticeNumber(noticeType);
+			if (!isPreviewPVR) {
+				noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(noticeType);
 			}
-	        Boolean instwiseNoticeReport=TRUE;
-	        LOGGER.debug("Notice number generated : " + noticeNo);
+			Boolean instwiseNoticeReport = TRUE;
+			LOGGER.debug("Notice number generated : " + noticeNo);
 			propertyNotice = new PropertyNoticeInfo(property, noticeNo, instwiseNoticeReport);
 		}
 
 		if (NOTICE127.equals(noticeType)) {
-			reportInput = new ReportRequest(REPORT_TEMPLATENAME_NOTICE127, propertyNotice, reportParams);
+			reportInput = new ReportRequest(REPORT_TEMPLATENAME_NOTICE127, propertyNotice,
+					reportParams);
 		} else if (NOTICE134.equals(noticeType)) {
-			reportInput = new ReportRequest(REPORT_TEMPLATENAME_NOTICE134, propertyNotice, reportParams);
+			reportInput = new ReportRequest(REPORT_TEMPLATENAME_NOTICE134, propertyNotice,
+					reportParams);
 		} else if (NOTICE_PRATIVRUTTA.equals(noticeType)) {
-			reportInput = new ReportRequest(REPORT_TEMPLATENAME_NOTICE_PRATIVRUTTA, propertyNotice, reportParams);
+			reportInput = new ReportRequest(REPORT_TEMPLATENAME_NOTICE_PRATIVRUTTA, propertyNotice,
+					reportParams);
 		} else if (NOTICE125.equals(noticeType)) {
-			reportInput = new ReportRequest(REPORT_TEMPLATENAME_NOTICE125, propertyNotice, reportParams);
+			reportInput = new ReportRequest(REPORT_TEMPLATENAME_NOTICE125, propertyNotice,
+					reportParams);
 		} else if (MUTATION_CERTIFICATE.equals(noticeType)) {
 			PropertyMutation propMutation = getLatestPropMutation(basicProperty);
-			PropertyMutationInfo propMutationInfo = populatePropMutationInfo(propMutation, basicProperty);
-			reportInput = new ReportRequest(REPORT_TEMPLATENAME_MUTATION_CERTIFICATE, propMutationInfo, null);
-			noticeNo= MUTATION_CERTIFICATE_NOTICENO_PREFIX + propMutation.getApplicationNo();
+			PropertyMutationInfo propMutationInfo = populatePropMutationInfo(propMutation,
+					basicProperty);
+			reportInput = new ReportRequest(REPORT_TEMPLATENAME_MUTATION_CERTIFICATE,
+					propMutationInfo, null);
+			noticeNo = MUTATION_CERTIFICATE_NOTICENO_PREFIX + propMutation.getApplicationNo();
 			LOGGER.debug("Mutation Certificate number generated : " + noticeNo);
 		}
 
 		reportInput.setPrintDialogOnOpenReport(true);
-		reportId = ReportViewerUtil.addReportToSession(reportService.createReport(reportInput), getSession());
-		
-		//The following code must be executed if its not Preview Prativrutta
-		if(!isPreviewPVR) {
+		reportId = ReportViewerUtil.addReportToSession(reportService.createReport(reportInput),
+				getSession());
+
+		// The following code must be executed if its not Preview Prativrutta
+		if (!isPreviewPVR) {
 			ReportOutput reportOutput = reportService.createReport(reportInput);
 			if (reportOutput != null && reportOutput.getReportOutputData() != null) {
 				NoticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
 			}
-			
+
 			if (saveToDMS) {
 				noticeService.saveNotice(noticeNo, noticeType, basicProperty, NoticePDF);
 			}
-			if (NOTICE127.equals(noticeType) || NOTICE134.equals(noticeType) || MUTATION_CERTIFICATE.equals(noticeType)) {
+			if (NOTICE127.equals(noticeType) || NOTICE134.equals(noticeType)
+					|| MUTATION_CERTIFICATE.equals(noticeType)) {
 				property.setExtra_field3(YES);
 			}
 			if (NOTICE_PRATIVRUTTA.equals(noticeType)) {
 				property.setExtra_field4(YES);
 			}
-			//for mutation Prativrutta generation is not required 
-			//as migrated property does not have enough data to generate it.
-			if (MUTATION_CERTIFICATE.equals(noticeType)) { 
+			// for mutation Prativrutta generation is not required
+			// as migrated property does not have enough data to generate it.
+			if (MUTATION_CERTIFICATE.equals(noticeType)) {
 				if (YES.equals(property.getExtra_field3())) {
 					workflowBean.setActionName(WFLOW_ACTION_NAME_GENERATE_NOTICE + ":"
 							+ WFLOW_ACTION_STEP_NOTICE_GENERATED);// <actionname>:<wflowstep>
@@ -202,8 +210,10 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 				}
 			} else {
 				if (!NOTICE125.equals(noticeType)) {
-					if (YES.equals(property.getExtra_field3()) && YES.equals(property.getExtra_field4())
-							&& property.getState().getValue().endsWith(WF_STATE_NOTICE_GENERATION_PENDING)) {
+					if (YES.equals(property.getExtra_field3())
+							&& YES.equals(property.getExtra_field4())
+							&& property.getState().getValue()
+									.endsWith(WF_STATE_NOTICE_GENERATION_PENDING)) {
 						if (property.getState().getValue().contains(WFLOW_ACTION_NAME_MODIFY)
 								&& PROPERTY_MODIFY_REASON_OBJ.equals(property.getPropertyDetail()
 										.getPropertyMutationMaster().getCode())) {
@@ -221,25 +231,31 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 				}
 			}
 		}
-		
+
 		LOGGER.debug("Exit from generateNotice method");
 		return NOTICE;
 	}
-	
-	private PropertyMutationInfo populatePropMutationInfo(PropertyMutation propMutation, BasicPropertyImpl basicProperty) {
+
+	private PropertyMutationInfo populatePropMutationInfo(PropertyMutation propMutation,
+			BasicPropertyImpl basicProperty) {
 		PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 		PropertyMutationInfo propMutationInfo = new PropertyMutationInfo();
 		propMutationInfo.setReceiptNo(propMutation.getReceiptNum());
-		propMutationInfo.setApplicationDate(DateUtils.getDefaultFormattedDate(propMutation.getNoticeDate()));
+		propMutationInfo.setApplicationDate(DateUtils.getDefaultFormattedDate(propMutation
+				.getNoticeDate()));
 		if (propMutation.getDeedDate() != null) {
-			propMutationInfo.setDocumentDate(DateUtils.getDefaultFormattedDate(propMutation.getDeedDate()));
+			propMutationInfo.setDocumentDate(DateUtils.getDefaultFormattedDate(propMutation
+					.getDeedDate()));
 		}
 		propMutationInfo.setNoticeDate(DateUtils.getDefaultFormattedDate(new Date()));
-		propMutationInfo.setZoneNo(StringUtils.leftPad(basicProperty.getPropertyID().getZone().getBoundaryNum().toString(), 2, '0'));
+		propMutationInfo.setZoneNo(org.apache.commons.lang.StringUtils.leftPad(basicProperty.getPropertyID().getZone()
+				.getBoundaryNum().toString(), 2, '0'));
 		propMutationInfo.setZoneName(basicProperty.getPropertyID().getZone().getName());
-		propMutationInfo.setWardNo(StringUtils.leftPad(basicProperty.getPropertyID().getWard().getBoundaryNum().toString(), 2, '0'));
+		propMutationInfo.setWardNo(org.apache.commons.lang.StringUtils.leftPad(basicProperty.getPropertyID().getWard()
+				.getBoundaryNum().toString(), 2, '0'));
 		propMutationInfo.setHouseNo(basicProperty.getAddress().getHouseNoBldgApt());
-		propMutationInfo.setNewOwnerName(ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerSet()));
+		propMutationInfo.setNewOwnerName(ptisCacheMgr.buildOwnerFullName(property
+				.getPropertyOwnerSet()));
 		propMutationInfo.setOldOwnerName(propMutation.getOwnerNameOld());
 		propMutationInfo.setAddress(ptisCacheMgr.buildAddress(basicProperty));
 		return propMutationInfo;
@@ -268,17 +284,18 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 	private void endWorkFlow() {
 		LOGGER.debug("Enter method endWorkFlow, UserId: " + EGOVThreadLocals.getUserId());
 		LOGGER.debug("endWorkFlow: Workflow will end for Property: " + property);
-		//FIX ME
-		//Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		// FIX ME
+		// Position position =
+		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
 		Position position = null;
 		property.transition(true).start().withOwner(position).withComments("Property Workflow End");
 		LOGGER.debug("Exit method endWorkFlow, Workflow ended");
 	}
-	
+
 	private void transitionWorkFlow() {
 		if (workflowBean != null) {
-			LOGGER.debug("Entered method : transitionWorkFlow. Action : " + workflowBean.getActionName() + "Property: "
-					+ property);
+			LOGGER.debug("Entered method : transitionWorkFlow. Action : "
+					+ workflowBean.getActionName() + "Property: " + property);
 		} else {
 			LOGGER.debug("transitionWorkFlow: workflowBean is NULL");
 		}
@@ -292,16 +309,19 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 			endWorkFlow();
 		}
 
-		LOGGER.debug("transitionWorkFlow: Property transitioned to " + property.getState().getValue());
+		LOGGER.debug("transitionWorkFlow: Property transitioned to "
+				+ property.getState().getValue());
 		propertyImplService.persist(property);
 
 		LOGGER.debug("Exiting method : transitionWorkFlow");
 	}
-	
+
+	@Override
 	public String getIndexNumber() {
 		return indexNumber;
 	}
 
+	@Override
 	public void setIndexNumber(String indexNumber) {
 		this.indexNumber = indexNumber;
 	}

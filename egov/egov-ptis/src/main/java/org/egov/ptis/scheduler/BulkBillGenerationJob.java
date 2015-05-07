@@ -54,7 +54,6 @@ import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;

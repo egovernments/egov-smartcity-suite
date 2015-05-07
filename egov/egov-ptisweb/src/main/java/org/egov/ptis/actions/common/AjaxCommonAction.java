@@ -63,8 +63,6 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.dispatcher.StreamResult;
 import org.egov.commons.Functionary;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -89,8 +87,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
-@Results({ @Result(name = "AJAX_RESULT", type = "Stream", location = "returnStream", params = {
-		"contentType", "text/plain" }) })
+/*
+ * @Results({ @Result(name = "AJAX_RESULT", type = "Stream", location =
+ * "returnStream", params = { "contentType", "text/plain" }) })
+ */
 @Transactional(readOnly = true)
 @Namespace("/common")
 public class AjaxCommonAction extends BaseFormAction {
@@ -102,7 +102,7 @@ public class AjaxCommonAction extends BaseFormAction {
 	private static final String PROP_TYPE_CATEGORY = "propCategory";
 	private static final String RESULT_STRUCTURAL = "structural";
 	private static final String RESULT_PART_NUMBER = "partNumber";
-	
+
 	private Integer zoneId;
 	private Integer wardId;
 	private Integer areaId;
@@ -118,7 +118,7 @@ public class AjaxCommonAction extends BaseFormAction {
 	private List<DesignationMaster> designationMasterList = new ArrayList<DesignationMaster>();
 	private List<User> userList = new ArrayList<User>();
 	private List<Category> categoryList;
-	private List<StructureClassification> structuralClassifications; 
+	private List<StructureClassification> structuralClassifications;
 	private String returnStream = "";
 	private Map<String, String> propTypeCategoryMap = new TreeMap<String, String>();
 	private Date completionOccupationDate;
@@ -160,8 +160,9 @@ public class AjaxCommonAction extends BaseFormAction {
 	public String populateDesignationsByDept() {
 		LOGGER.debug("Entered into populateUsersByDesignation : departmentId : " + departmentId);
 		if (departmentId != null) {
-			//FIX ME
-			//designationMasterList = eisManager.getAllDesignationByDept(departmentId);
+			// FIX ME
+			// designationMasterList =
+			// eisManager.getAllDesignationByDept(departmentId);
 			designationMasterList = null;
 		}
 
@@ -194,13 +195,13 @@ public class AjaxCommonAction extends BaseFormAction {
 
 	public String categoryByRateUsageAndStructClass() {
 
-		LOGGER.debug("Entered into categoryByRateUsageAndStructClass method, Usage Factor: " + usageFactor
-				+ ", Structure Classification: " + structFactor);
+		LOGGER.debug("Entered into categoryByRateUsageAndStructClass method, Usage Factor: "
+				+ usageFactor + ", Structure Classification: " + structFactor);
 
 		PropertyUsage propUsage = (PropertyUsage) getPersistenceService().find(
 				"from PropertyUsage pu where pu.usageName=?", usageFactor);
-		StructureClassification structureClass = (StructureClassification) getPersistenceService().find(
-				"from StructureClassification sc where sc.typeName=?", structFactor);
+		StructureClassification structureClass = (StructureClassification) getPersistenceService()
+				.find("from StructureClassification sc where sc.typeName=?", structFactor);
 		CategoryDao catDao = PropertyDAOFactory.getDAOFactory().getCategoryDao();
 
 		if (propUsage != null && structureClass != null && revisedRate != null) {
@@ -223,8 +224,7 @@ public class AjaxCommonAction extends BaseFormAction {
 		addDropdownData("categoryList", categoryList);
 		LOGGER.debug("Exiting from categoryByRateUsageAndStructClass method");
 		if (categoryList == null) {
-			LOGGER
-					.debug("categoryByRateUsageAndStructClass: categoryList is NULL \n Exiting from categoryByRateUsageAndStructClass");
+			LOGGER.debug("categoryByRateUsageAndStructClass: categoryList is NULL \n Exiting from categoryByRateUsageAndStructClass");
 			return FAILURE;
 		} else {
 			LOGGER.debug("categoryByRateUsageAndStructClass: categoryList:" + categoryList
@@ -236,12 +236,13 @@ public class AjaxCommonAction extends BaseFormAction {
 	public String usageByPropType() {
 		LOGGER.debug("Entered into usageByPropType, propTypeId: " + propTypeId);
 		setPropUsageList(CommonServices.usagesForPropType(propTypeId));
-		LOGGER.debug("Exiting from usageByPropType, No of Usages: " + ((propUsageList != null) ? propUsageList : ZERO));
+		LOGGER.debug("Exiting from usageByPropType, No of Usages: "
+				+ ((propUsageList != null) ? propUsageList : ZERO));
 		return USAGE;
 	}
 
 	@SuppressWarnings("unchecked")
-	@Action(value="/ajaxCommon-propTypeCategoryByPropType",results = { @Result(name = PROP_TYPE_CATEGORY) })
+	@Action(value = "/ajaxCommon-propTypeCategoryByPropType", results = { @Result(name = PROP_TYPE_CATEGORY, location = "/ajaxCommon-propCategory.jsp") })
 	public String propTypeCategoryByPropType() {
 		LOGGER.debug("Entered into propTypeCategoryByPropType, propTypeId: " + propTypeId);
 		PropertyTypeMaster propType = (PropertyTypeMaster) getPersistenceService().find(
@@ -250,7 +251,8 @@ public class AjaxCommonAction extends BaseFormAction {
 			if (propType.getCode().equalsIgnoreCase(PROPTYPE_RESD)) {
 				propTypeCategoryMap.putAll(PropertyTaxConstants.RESIDENTIAL_PROPERTY_TYPE_CATEGORY);
 			} else if (propType.getCode().equalsIgnoreCase(PROPTYPE_NON_RESD)) {
-				propTypeCategoryMap.putAll(PropertyTaxConstants.NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY);
+				propTypeCategoryMap
+						.putAll(PropertyTaxConstants.NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY);
 			} else if (propType.getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
 				propTypeCategoryMap.putAll(PropertyTaxConstants.OPEN_PLOT_PROPERTY_TYPE_CATEGORY);
 
@@ -263,27 +265,28 @@ public class AjaxCommonAction extends BaseFormAction {
 				+ ((propTypeCategoryMap != null) ? propTypeCategoryMap.size() : ZERO));
 		return PROP_TYPE_CATEGORY;
 	}
-	
-	public String locationFactorsByWard(){
+
+	public String locationFactorsByWard() {
 		LOGGER.debug("Entered into locationFactorsByWard, wardId: " + wardId);
-		
+
 		categoryList = new ArrayList<Category>();
 		categoryList.addAll(getPersistenceService().findAllBy(
-				"select bc.category from BoundaryCategory bc where bc.bndry.id = ? " +
-				"and bc.category.propUsage = null and bc.category.structureClass = null", wardId));
-		
+				"select bc.category from BoundaryCategory bc where bc.bndry.id = ? "
+						+ "and bc.category.propUsage = null and bc.category.structureClass = null",
+				wardId));
+
 		LOGGER.debug("locationFactorsByWard: categories - " + categoryList);
 		LOGGER.debug("Exiting from locationFactorsByWard");
-		
+
 		return CATEGORY;
 	}
-	
-	public String populateStructuralClassifications(){
+
+	public String populateStructuralClassifications() {
 		LOGGER.debug("Entered into getStructureClassifications, Date: " + completionOccupationDate);
 		structuralClassifications = new ArrayList<StructureClassification>();
 		try {
-			if (completionOccupationDate.after(new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY)
-					.parse(DATE_CONSTANT))) {
+			if (completionOccupationDate.after(new SimpleDateFormat(
+					PropertyTaxConstants.DATE_FORMAT_DDMMYYY).parse(DATE_CONSTANT))) {
 				LOGGER.debug("Base Rate - Structural Factors");
 				structuralClassifications.addAll(getPersistenceService().findAllBy(
 						"from StructureClassification where code like 'R%'"));
@@ -292,17 +295,19 @@ public class AjaxCommonAction extends BaseFormAction {
 				structuralClassifications.addAll(getPersistenceService().findAllBy(
 						"from StructureClassification where code like 'R%'"));
 			}
-		} catch (ParseException pe){
+		} catch (ParseException pe) {
 			LOGGER.error("Error while parsing Floor Completion / occupation", pe);
 			throw new EGOVRuntimeException("Error while parsing Floor Completion / occupation", pe);
 		}
-		Collections.sort(structuralClassifications, new Comparator(){
-			public int compare(Object object1, Object object2){
+		Collections.sort(structuralClassifications, new Comparator() {
+			@Override
+			public int compare(Object object1, Object object2) {
 				return ((StructureClassification) object1).getTypeName().compareTo(
 						((StructureClassification) object2).getTypeName());
 			}
 		});
-		LOGGER.info("getStructureClassifications - Structural Factors : " + structuralClassifications);
+		LOGGER.info("getStructureClassifications - Structural Factors : "
+				+ structuralClassifications);
 		LOGGER.debug("Exiting from getStructureClassifications");
 		return RESULT_STRUCTURAL;
 	}
@@ -310,19 +315,18 @@ public class AjaxCommonAction extends BaseFormAction {
 	public String partNumbersByWard() {
 		LOGGER.debug("Entered into areaByWard, wardId: " + wardId);
 		partNumbers = new ArrayList<String>();
-		partNumbers = getPersistenceService()
-				.findAllBy(
-						"SELECT distinct pmv.partNo FROM PropertyMaterlizeView pmv " +
-						"WHERE pmv.ward.id = ? order by pmv.partNo asc", getWardId());
-		
+		partNumbers = getPersistenceService().findAllBy(
+				"SELECT distinct pmv.partNo FROM PropertyMaterlizeView pmv "
+						+ "WHERE pmv.ward.id = ? order by pmv.partNo asc", getWardId());
+
 		LOGGER.debug("Exiting from partNumbersByWard");
 		return RESULT_PART_NUMBER;
 	}
-	
+
 	public Integer getZoneId() {
 		return zoneId;
 	}
- 
+
 	public void setZoneId(Integer zoneId) {
 		this.zoneId = zoneId;
 	}
@@ -473,6 +477,6 @@ public class AjaxCommonAction extends BaseFormAction {
 
 	public void setPartNumbers(List<String> partNumbers) {
 		this.partNumbers = partNumbers;
-	}		
-    
+	}
+
 }

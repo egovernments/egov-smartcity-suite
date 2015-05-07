@@ -80,15 +80,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgdmCollectedReceipt;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.utils.MoneyUtils;
 import org.egov.infstr.utils.NumberToWord;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.demand.Ptdemand;

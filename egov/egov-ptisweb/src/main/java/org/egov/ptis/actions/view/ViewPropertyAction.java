@@ -71,7 +71,6 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.FloorIF;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDocs;
@@ -84,7 +83,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Namespace("/view")
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 public class ViewPropertyAction extends BaseFormAction {
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	private String propertyId;
@@ -107,7 +106,7 @@ public class ViewPropertyAction extends BaseFormAction {
 	private boolean isDemandActive;
 	private String demandEffectiveYear;
 	private Integer noOfDaysForInactiveDemand;
-	
+
 	@Autowired
 	private UserService UserService;
 
@@ -117,16 +116,20 @@ public class ViewPropertyAction extends BaseFormAction {
 		return null;
 	}
 
-	@Action(value = "/view-viewForm", results = { @Result(name = "view") })
+	@Action(value = "/view-viewForm", results = { @Result(name = "view", location = "/viewProperty-view.jsp") })
 	public String viewForm() {
 		LOGGER.debug("Entered into viewForm method");
 		String target = "";
 		try {
-			LOGGER.debug("viewForm : Index Num in View Property : " + propertyId + ", " + "Parcel Id : " + parcelID);
+			LOGGER.debug("viewForm : Index Num in View Property : " + propertyId + ", "
+					+ "Parcel Id : " + parcelID);
 			viewMap = new HashMap<String, Object>();
-			BasicPropertyDAO basicPropertyDAO = PropertyDAOFactory.getDAOFactory().getBasicPropertyDAO();
-			if (getParcelID() != null || StringUtils.isNotEmpty(getParcelID()) || StringUtils.isBlank(getParcelID())) {
-				BasicProperty bp = basicPropertyDAO.getBasicPropertyByIndexNumAndParcelID(propertyId, parcelID);
+			BasicPropertyDAO basicPropertyDAO = PropertyDAOFactory.getDAOFactory()
+					.getBasicPropertyDAO();
+			if (getParcelID() != null || StringUtils.isNotEmpty(getParcelID())
+					|| StringUtils.isBlank(getParcelID())) {
+				BasicProperty bp = basicPropertyDAO.getBasicPropertyByIndexNumAndParcelID(
+						propertyId, parcelID);
 				LOGGER.debug("viewForm : BasicProperty : " + bp);
 				if (bp != null) {
 					setPropertyId(bp.getUpicNo());
@@ -139,25 +142,30 @@ public class ViewPropertyAction extends BaseFormAction {
 			PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 			Set<PropertyStatusValues> propStatusValSet = new HashSet<PropertyStatusValues>();
 			Property property = getBasicProperty().getProperty();
-			
-			if (!basicProperty.getStatus().getStatusCode().equalsIgnoreCase(PropertyTaxConstants.STATUS_OBJECTED_STR)
+
+			if (!basicProperty.getStatus().getStatusCode()
+					.equalsIgnoreCase(PropertyTaxConstants.STATUS_OBJECTED_STR)
 					&& property.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
 				basicProperty.setIsDemandActive(false);
 				demandEffectiveYear = PropertyTaxUtil.getRevisedDemandYear(property);
-				noOfDaysForInactiveDemand = PropertyTaxUtil.getNoticeDaysForInactiveDemand(property);
+				noOfDaysForInactiveDemand = PropertyTaxUtil
+						.getNoticeDaysForInactiveDemand(property);
 			} else {
 				basicProperty.setIsDemandActive(true);
 			}
-			
+
 			LOGGER.debug("viewForm : Property : " + property);
-			viewMap.put("ownerName", ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerSet()));
-			viewMap.put("propAddress", ptisCacheMgr.buildAddressByImplemetation(getBasicProperty().getAddress()));
-			if(property.getPropertyDetail().getExtra_field6()!=null){
-				viewMap.put("propertyCategory",
-						(Category) persistenceService.find("from Category c where c.id = ?",
+			viewMap.put("ownerName",
+					ptisCacheMgr.buildOwnerFullName(property.getPropertyOwnerSet()));
+			viewMap.put("propAddress",
+					ptisCacheMgr.buildAddressByImplemetation(getBasicProperty().getAddress()));
+			if (property.getPropertyDetail().getExtra_field6() != null) {
+				viewMap.put(
+						"propertyCategory",
+						persistenceService.find("from Category c where c.id = ?",
 								Long.valueOf(property.getPropertyDetail().getExtra_field6())));
 			} else {
-				viewMap.put("propertyCategory", PropertyTaxConstants.NOTAVAIL);			
+				viewMap.put("propertyCategory", PropertyTaxConstants.NOTAVAIL);
 			}
 
 			Set<PropertyOwner> ownerSet = property.getPropertyOwnerSet();
@@ -169,25 +177,29 @@ public class ViewPropertyAction extends BaseFormAction {
 						break;
 					}
 				}
-				viewMap.put("ownerAddress", ownerAddress == null ? PropertyTaxConstants.NOTAVAIL : ownerAddress);
+				viewMap.put("ownerAddress", ownerAddress == null ? PropertyTaxConstants.NOTAVAIL
+						: ownerAddress);
 			}
 			PtDemandDao ptDemandDao = PropertyDAOFactory.getDAOFactory().getPtDemandDao();
 			Map<String, BigDecimal> demandCollMap = ptDemandDao.getDemandCollMap(property);
 			viewMap.put("currTax", demandCollMap.get(CURR_DMD_STR).toString());
-			viewMap.put("currTaxDue", (demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)))
-					.toString());
-			viewMap.put("totalArrDue", (demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)))
-					.toString());
-			setGenWaterRate(CommonServices.getWaterMeterDtls(getBasicProperty().getProperty().getPropertyDetail()
-					.getExtra_field1()));
-			viewMap.put("genWaterRate", CommonServices.getWaterMeterDtls(getBasicProperty().getProperty()
+			viewMap.put("currTaxDue", (demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap
+					.get(CURR_COLL_STR))).toString());
+			viewMap.put("totalArrDue", (demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap
+					.get(ARR_COLL_STR))).toString());
+			setGenWaterRate(CommonServices.getWaterMeterDtls(getBasicProperty().getProperty()
 					.getPropertyDetail().getExtra_field1()));
+			viewMap.put(
+					"genWaterRate",
+					CommonServices.getWaterMeterDtls(getBasicProperty().getProperty()
+							.getPropertyDetail().getExtra_field1()));
 			setFloorDetails(property);
 			getBasicProperty().getObjections();
 			propStatusValSet = getBasicProperty().getPropertyStatusValuesSet();
 			for (PropertyStatusValues propStatusVal : propStatusValSet) {
 				LOGGER.debug("viewForm : Property Status Values : " + propStatusVal);
-				if (propStatusVal.getPropertyStatus().getStatusCode().equals(PROPERTY_STATUS_MARK_DEACTIVE)) {
+				if (propStatusVal.getPropertyStatus().getStatusCode()
+						.equals(PROPERTY_STATUS_MARK_DEACTIVE)) {
 					markedForDeactive = "Y";
 				}
 				LOGGER.debug("Marked for Deactivation ? : " + markedForDeactive);
@@ -196,17 +208,19 @@ public class ViewPropertyAction extends BaseFormAction {
 			if (userId != null) {
 				setRoleName(getRolesForUserId(userId));
 			}
-			if(!getBasicProperty().getPropertyDocsSet().isEmpty() && getBasicProperty().getPropertyDocsSet()!=null){
-				for(PropertyDocs propDocs:getBasicProperty().getPropertyDocsSet()){
+			if (!getBasicProperty().getPropertyDocsSet().isEmpty()
+					&& getBasicProperty().getPropertyDocsSet() != null) {
+				for (PropertyDocs propDocs : getBasicProperty().getPropertyDocsSet()) {
 					setDocNumber(propDocs.getDocNumber());
 				}
 			}
-		//	setPropDocsSet(getBasicProperty().getPropertyDocsSet());
-			LOGGER.debug("viewForm : Owner Name : " + viewMap.get(ownerName) + ", " + "Property Address : "
-					+ viewMap.get(propAddress) + ", " + "Owner Address : " + viewMap.get(ownerAddress) + ", "
-					+ "Current Tax : " + viewMap.get(currTax) + ", " + "Current Tax Due : " + viewMap.get(currTaxDue)
-					+ ", " + "Total Arrears Tax Due : " + viewMap.get(totalArrDue) + ", " + "General Water Rate : "
-					+ viewMap.get(genWaterRate));
+			// setPropDocsSet(getBasicProperty().getPropertyDocsSet());
+			LOGGER.debug("viewForm : Owner Name : " + viewMap.get(ownerName) + ", "
+					+ "Property Address : " + viewMap.get(propAddress) + ", " + "Owner Address : "
+					+ viewMap.get(ownerAddress) + ", " + "Current Tax : " + viewMap.get(currTax)
+					+ ", " + "Current Tax Due : " + viewMap.get(currTaxDue) + ", "
+					+ "Total Arrears Tax Due : " + viewMap.get(totalArrDue) + ", "
+					+ "General Water Rate : " + viewMap.get(genWaterRate));
 			LOGGER.debug("Exit from method viewForm");
 			return "view";
 		} catch (Exception e) {
@@ -214,7 +228,7 @@ public class ViewPropertyAction extends BaseFormAction {
 			throw new EGOVRuntimeException("Exception : " + e);
 		}
 	}
-	
+
 	private String getRolesForUserId(Long userId) {
 		LOGGER.debug("Entered into method getRolesForUserId");
 		LOGGER.debug("User id : " + userId);
@@ -225,7 +239,8 @@ public class ViewPropertyAction extends BaseFormAction {
 			roleName = role.getName() != null ? role.getName() : "";
 			roleNameList.add(roleName);
 		}
-		LOGGER.debug("Exit from method getRolesForUserId with return value : " + roleNameList.toString().toUpperCase());
+		LOGGER.debug("Exit from method getRolesForUserId with return value : "
+				+ roleNameList.toString().toUpperCase());
 		return roleNameList.toString().toUpperCase();
 	}
 
@@ -245,15 +260,15 @@ public class ViewPropertyAction extends BaseFormAction {
 	public String getAmenitiesDtls(String mstrCode) {
 		return CommonServices.getAmenitiesDtls(mstrCode);
 	}
-	
+
 	public String getUnitTypeCategory(String unitTypeCode, String categoryCode) {
 		return CommonServices.getUnitTypeCategory(unitTypeCode, categoryCode);
 	}
-	
+
 	public String getWaterMeterDtls(String mstrCode) {
 		return CommonServices.getWaterMeterDtls(mstrCode);
 	}
-	
+
 	public String getPropertyId() {
 		return propertyId;
 	}
@@ -369,7 +384,7 @@ public class ViewPropertyAction extends BaseFormAction {
 	public void setParcelID(String parcelID) {
 		this.parcelID = parcelID;
 	}
-	
+
 	public Set<PropertyDocs> getPropDocsSet() {
 		return propDocsSet;
 	}

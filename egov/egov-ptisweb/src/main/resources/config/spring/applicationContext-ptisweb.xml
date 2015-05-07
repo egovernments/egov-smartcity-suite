@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   eGov suite of products aim to improve the internal efficiency,transparency, 
      accountability and the service delivery of the government  organizations.
@@ -36,17 +36,21 @@
   	   with regards to rights under trademark law for use of the trade names 
   	   or trademarks of eGovernments Foundation.
   
-    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
+    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<hibernate-mapping package="org.egov.ptis.domain.entity.property">
-	<joined-subclass name="PropertyOwner" table="EGPT_PROPERTY_OWNER"
-		extends="org.egov.portal.entity.Citizen">
-		<key column="OWNERID" />
-		<many-to-one name="property" column="ID_PROPERTY"
-			not-null="true" class="org.egov.ptis.domain.entity.property.PropertyImpl" insert="false" update="false" fetch="select" />
-		<many-to-one name="source"
-			class="org.egov.ptis.domain.entity.property.PropertySource" column="ID_SOURCE" />
-		<property name="orderNo" column="ORDERNO" />
-	</joined-subclass>
-</hibernate-mapping>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+ 
+    <import resource="applicationSecurityContext-ptis.xml"/>
+    
+	<context:component-scan base-package="org.egov.ptis.web">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+    
+</beans>

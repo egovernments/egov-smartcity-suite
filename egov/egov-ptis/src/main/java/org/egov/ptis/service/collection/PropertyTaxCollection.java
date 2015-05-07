@@ -51,6 +51,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_STREET
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_WATER_BENEFIT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_ADVANCE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DMD_STATUS_CHEQUE_BOUNCED;
 import static org.egov.ptis.constants.PropertyTaxConstants.FIRST_REBATETAX_PERC;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_ARREARTAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_CURRENTTAX;
@@ -58,9 +59,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_ARREARTAX
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_CURRENTTAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_ADVANCE;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_TAXREBATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.SECOND_REBATETAX_PERC;
-import static org.egov.ptis.constants.PropertyTaxConstants.DMD_STATUS_CHEQUE_BOUNCED;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.SECOND_REBATETAX_PERC;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -93,7 +93,6 @@ import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovUtils;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.client.service.CollectionApportioner;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
