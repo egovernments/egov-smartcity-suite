@@ -91,7 +91,7 @@ public class CitizenService {
         citizen.setPwdExpiryDate(pwdExpiryDate.getTime());
         citizen.setUsername(citizen.getMobileNumber());
         citizen.setPassword(passwordEncoder.encode(citizen.getPassword()));
-        citizen.setActivationCode(RandomStringUtils.random(5, Boolean.TRUE, Boolean.TRUE));
+        citizen.setActivationCode(RandomStringUtils.random(5, Boolean.TRUE, Boolean.TRUE).toUpperCase());
         citizenRepository.save(citizen);
     }
 
