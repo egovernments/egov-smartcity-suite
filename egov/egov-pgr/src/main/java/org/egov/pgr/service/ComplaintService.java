@@ -256,7 +256,7 @@ public class ComplaintService {
 
 		final CitizenInboxBuilder citizenInboxBuilder = new CitizenInboxBuilder(MessageType.USER_MESSAGE,
 				getHeaderMessage(savedComplaint), getDetailedMessage(savedComplaint), savedComplaint.getCreatedDate(),
-				securityUtils.getCurrentUser(), Priority.High);
+				savedComplaint.getCreatedBy(), Priority.High);
 		final String strQuery = "select md from Module md where md.moduleName=:name";
 		final Query hql = getCurrentSession().createQuery(strQuery);
 		hql.setParameter("name", "PGR");
@@ -289,7 +289,7 @@ public class ComplaintService {
 				.append(savedComplaint.getComplaintType().getName())
 				.append(" was ")
 				.append(savedComplaint.getStatus().getName())
-				.append(" by you.");
+				.append(savedComplaint.getLastModifiedBy().getType().equals(UserType.CITIZEN) ? " by you.":".");
 		return detailedMessage.toString();
 	}
 
