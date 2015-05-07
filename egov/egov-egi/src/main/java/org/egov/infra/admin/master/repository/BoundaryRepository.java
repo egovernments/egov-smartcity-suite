@@ -42,6 +42,7 @@ package org.egov.infra.admin.master.repository;
 import java.util.List;
 
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.BoundaryType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -59,4 +60,7 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
     List<Boundary> findBoundariesByBoundaryType(@Param("boundaryTypeId") Long boundaryTypeId);
     
     Page<Boundary> findBoundariesByBoundaryType(@Param("boundaryTypeId") Long boundaryTypeId, Pageable page);
+    
+    Boundary findBoundarieByBoundaryTypeAndBoundaryNum(@Param("boundaryType") BoundaryType boundaryType,@Param("boundaryNum") Long boundaryNum);
+
 }

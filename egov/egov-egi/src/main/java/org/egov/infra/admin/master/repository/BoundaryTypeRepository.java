@@ -51,6 +51,7 @@ import org.springframework.stereotype.Repository;
 public interface BoundaryTypeRepository extends JpaRepository<BoundaryType, Long> {
 	
 	BoundaryType findByName(String name);
+	BoundaryType findByNameContainingIgnoreCase(String name);
 	
 	@Query("select bt from BoundaryType bt where bt.hierarchyType.name=:hierarchyName and bt.hierarchy=:hierarchyLevel")
         public BoundaryType findByHierarchyTypeNameAndLevel(@Param("hierarchyName") String name,@Param("hierarchyLevel")Long hierarchyLevel);

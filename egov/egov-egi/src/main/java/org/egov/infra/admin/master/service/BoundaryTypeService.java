@@ -73,7 +73,7 @@ public class BoundaryTypeService {
     }
 
     public BoundaryType getBoundaryTypeByName(String name) {
-        return boundaryTypeRepository.findByName(name);
+        return boundaryTypeRepository.findByNameContainingIgnoreCase(name);
     }
     
     public List<BoundaryType> getAllBoundaryTypes() {

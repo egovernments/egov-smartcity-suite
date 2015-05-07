@@ -93,6 +93,10 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.ObjectTypeDAO;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
@@ -110,6 +114,8 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -122,7 +128,10 @@ public class CommonsServiceImpl implements CommonsService {
 	private CommonsDAOFactory commonsDAOFactory;
 	private GenericHibernateDaoFactory genericHibernateDaoFactory;
 	private SessionFactory sessionFactory;
-
+        @Autowired
+        public BoundaryService boundaryService;
+        @Autowired
+        public BoundaryTypeService boundaryTypeService;
 	public CommonsServiceImpl(CommonsDAOFactory commonsDAOFactory, GenericHibernateDaoFactory genericHibernateDaoFactory, SessionFactory sessionFactory) {
 		this.commonsDAOFactory = commonsDAOFactory;
 		this.genericHibernateDaoFactory = genericHibernateDaoFactory;
@@ -995,50 +1004,61 @@ public class CommonsServiceImpl implements CommonsService {
 	public Functionary getFunctionaryByName(final String name) {
 		return commonsDAOFactory.getFunctionaryDAO().getFunctionaryByName(name);
 	}
-	 @Override
-	    public Long getBndryIdFromShapefile(Double latitude,Double longitude) {
-			try {
-				if(latitude!=null && longitude!=null){
-					URL shapefile =Thread.currentThread().getContextClassLoader().getResource("shapefiles/coc_wards.shp");
-					Map<String,URL> map = new HashMap<String,URL>();
-					map.put( "url", shapefile );
-					DataStore dataStore = DataStoreFinder.getDataStore(map);
-					String typeName = dataStore.getTypeNames()[0];
-					FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(typeName);
-					FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures();
-					Iterator<SimpleFeature> iterator =  collection.iterator();
-					GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory( null );
-					Coordinate coord = new Coordinate( longitude,latitude);
-					Point point = geometryFactory.createPoint( coord );
-					try {
-						while( iterator.hasNext() ){
-							SimpleFeature  feature = (SimpleFeature) iterator.next();
-							Geometry geom = (Geometry)feature.getDefaultGeometry();
+	@Override
+        public Long getBndryIdFromShapefile(final Double latitude, final Double longitude) {
+        Long boundaryId = 0L;
+        try {
+            if (latitude != null && longitude != null) {
+                final URL shapefile = Thread.currentThread().getContextClassLoader()
+                        .getResource("shapefiles/coc_wards.shp");
+                final Map<String, URL> map = new HashMap<String, URL>();
+                map.put("url", shapefile);
+                final DataStore dataStore = DataStoreFinder.getDataStore(map);
+                final String typeName = dataStore.getTypeNames()[0];
+                final FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(typeName);
+                final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures();
+                final Iterator<SimpleFeature> iterator = collection.iterator();
+                final GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
+                final Coordinate coord = new Coordinate(longitude, latitude);
+                final Point point = geometryFactory.createPoint(coord);
+                LOG.debug("The selected point lies in (coord): -----" + coord);
+                try {
+                    while (iterator.hasNext()) {
+                        final SimpleFeature feature = iterator.next();
+                        final Geometry geom = (Geometry) feature.getDefaultGeometry();
+                        if (geom.contains(point)) {
 
-							if(geom.contains(point))
-							{
-								LOG.info("The selected point lies in (bndryid): -----"+feature.getAttribute("wardid") );
-						 		return  (Long) feature.getAttribute("wardid");
-							}
-						}
-						return null;
-					}
-					finally {
-						collection.close( iterator );
-					}
+                            final Long boundaryNum = (Long) feature.getAttribute("bndrynum");
+                            final String bndryType = (String) feature.getAttribute("bndrytype");
+                            LOG.info("(boundaryNum): -----" + feature.getAttribute("bndrynum"));
+                            LOG.info("(bndryType): -----" + feature.getAttribute("bndrytype"));
+                            if (boundaryNum != null && bndryType != null && !bndryType.isEmpty()) {
+                                final BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeByName(bndryType);
+                                Boundary boundary = null;
+                                if (boundaryType != null)
+                                    boundary = boundaryService.getBoundaryByTypeAndNo(boundaryType, boundaryNum);
+                                if (boundary != null)
+                                    boundaryId = boundary.getBndryId();
+                            }
+                            LOG.info("The selected point lies in (boundaryId): -----" + boundaryId);
+                            return boundaryId;
+                        }
+                    }
+                    return null;
+                } finally {
+                    collection.close(iterator);
+                }
 
-
-				}else
-					return null;
-				} catch (IOException e) {
-					LOG.error(e.getMessage());
-					throw new EGOVRuntimeException("Error occurred while getting wardid from shapefile", e);
-					}catch(Exception e)
-					{
-						LOG.error(e.getMessage());
-						throw new EGOVRuntimeException("Error occurred while getting wardid from shapefile", e);
-					}
-		}
+            } else
+                return null;
+        } catch (final IOException e) {
+            LOG.error(e.getMessage());
+            throw new EGOVRuntimeException("Error occurred while getting wardid from shapefile", e);
+        } catch (final Exception e) {
+            LOG.error(e.getMessage());
+            throw new EGOVRuntimeException("Error occurred while getting wardid from shapefile", e);
+        }
+    }
 	 
 	 public CFinancialYear getFinYearByDate(final Date date) {
              final FinancialYearDAO finYearDAO = commonsDAOFactory.getFinancialYearDAO();

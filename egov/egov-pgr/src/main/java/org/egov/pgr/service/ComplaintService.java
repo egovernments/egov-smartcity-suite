@@ -165,7 +165,7 @@ public class ComplaintService {
 		complaint.setEscalationDate(escalationService.getExpiryDate(complaint));
 		if (complaint.getLocation() == null && complaint.getLat() != 0.0 && complaint.getLng() != 0.0) {
 			final Long bndryId = commonsService.getBndryIdFromShapefile(complaint.getLat(), complaint.getLng());
-			if (bndryId != null) {
+			if (bndryId != null && bndryId!=0L) {
 				final Boundary location = boundaryDAO.getAllBoundaryById(bndryId);
 				complaint.setLocation(location);
 			}

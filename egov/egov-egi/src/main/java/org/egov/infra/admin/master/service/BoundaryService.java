@@ -42,6 +42,7 @@ package org.egov.infra.admin.master.service;
 import java.util.List;
 
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -102,5 +103,9 @@ public class BoundaryService {
     public Page<Boundary> getPageOfBoundaries(Integer pageNumber, Integer pageSize, Long boundaryTypeId) {
         Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "name");
         return boundaryRepository.findBoundariesByBoundaryType(boundaryTypeId, pageable);
+    }
+    @Transactional
+    public Boundary getBoundaryByTypeAndNo(BoundaryType boundaryType, Long boundaryNum) {
+        return boundaryRepository.findBoundarieByBoundaryTypeAndBoundaryNum(boundaryType, boundaryNum);
     }
 }
