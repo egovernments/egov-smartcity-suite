@@ -38,7 +38,7 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld"%>
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>     

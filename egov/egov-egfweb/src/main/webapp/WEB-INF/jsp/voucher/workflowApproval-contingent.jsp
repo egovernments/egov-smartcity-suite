@@ -37,7 +37,7 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld"%>
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <div align="center"  ><br>
 	<div  class="subheadnew" >Approval Information</div><br>

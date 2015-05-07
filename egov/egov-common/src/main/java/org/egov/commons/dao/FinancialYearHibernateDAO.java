@@ -44,6 +44,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.CFinancialYear;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.dao.GenericHibernateDAO;
@@ -59,6 +62,19 @@ public class FinancialYearHibernateDAO extends GenericHibernateDAO implements Fi
 	public FinancialYearHibernateDAO(final Class persistentClass, final Session session) {
 		super(persistentClass, session);
 
+	}
+	
+	public FinancialYearHibernateDAO(final Session session) {
+		super(CFinancialYear.class, session);
+	}
+	
+	@PersistenceContext
+	private EntityManager entityManager;
+	
+	
+	public Session getCurrentSession()
+	{
+		return entityManager.unwrap(Session.class);
 	}
 
 	@Override

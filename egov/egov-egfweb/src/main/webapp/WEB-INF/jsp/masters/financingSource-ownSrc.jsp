@@ -38,7 +38,7 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------
 <%@ page contentType="text/json" %>
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld" %> 
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %> 
 {
 "ResultSet": {
     "Result":[

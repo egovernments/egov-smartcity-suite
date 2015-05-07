@@ -38,7 +38,7 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------
 <%@ page contentType="text/json"%><%@ taglib prefix="s"
-	uri="/WEB-INF/struts-tags.tld"%><s:if test="targetAreaCode==null">Please Enter TargetArea Code </s:if>
+	uri="/WEB-INF/tags/struts-tags.tld"%><s:if test="targetAreaCode==null">Please Enter TargetArea Code </s:if>
 <s:else>
 	<s:if test="targetAreaCodeList.size == 0 "> Nothing found to display
 </s:if>

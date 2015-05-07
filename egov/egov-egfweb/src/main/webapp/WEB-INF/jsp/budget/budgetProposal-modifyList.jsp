@@ -37,7 +37,7 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld"%>
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <script>
 <s:set var="colratio" value="%{'[50,80,80,200,80,80,80,80,80,80,80,80,150,150,200,150]'}"/>
 <s:if test="%{isConsolidatedScreen()}">

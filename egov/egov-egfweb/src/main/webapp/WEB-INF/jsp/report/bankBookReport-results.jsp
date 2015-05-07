@@ -38,7 +38,7 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------
 <script language="javascript" src="../script/jsCommonMethods.js"></script>
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld" %>
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %>
 
 <s:if test="%{bankBookViewEntries.size()>0}">
 <br/>

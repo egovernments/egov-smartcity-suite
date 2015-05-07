@@ -37,7 +37,7 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld" %>
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %>
 
 <div id="budgetSearchGrid" style="width:1250px;overflow-x:auto; overflow-y:hidden;">
 <br/>

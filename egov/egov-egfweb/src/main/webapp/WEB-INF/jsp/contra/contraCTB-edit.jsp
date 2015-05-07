@@ -37,7 +37,7 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld"%>
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ page language="java"%>
 <%@ taglib uri="/tags/struts-bean" prefix="bean"%>
 <%@ taglib uri="/tags/struts-html" prefix="html"%>
@@ -81,7 +81,7 @@
 <font  style='color: red ; font-weight:bold '> 
 <p class="error-block" id="lblError" ></p></font>
 		
-		<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld"%>
+		<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 	<table border="0" width="100%">
 	<tr>
 		  <s:if test="%{shouldShowHeaderField('vouchernumber')}">

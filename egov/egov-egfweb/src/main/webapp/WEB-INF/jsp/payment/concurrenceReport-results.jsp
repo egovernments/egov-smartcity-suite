@@ -37,7 +37,7 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld" %>
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %>
 <s:if test="%{paymentHeaderListFnd.size()>0}">
 <br/>
 <div class="subheadnew">List Of Payments Made</div>

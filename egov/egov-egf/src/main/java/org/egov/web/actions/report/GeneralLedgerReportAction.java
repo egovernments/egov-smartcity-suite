@@ -58,6 +58,7 @@ import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.utils.FinancialConstants;
+import org.egov.web.actions.BaseFormAction;
 import org.egov.web.actions.voucher.VoucherSearchAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.FlushMode;
@@ -72,7 +73,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @Transactional(readOnly=true)
 @ParentPackage("egov")   
-public class GeneralLedgerReportAction extends VoucherSearchAction{
+public class GeneralLedgerReportAction extends BaseFormAction {
 
 	private static final Logger	LOGGER = Logger.getLogger(GeneralLedgerReportAction.class);
 	private GeneralLedgerReportBean generalLedgerReport = new GeneralLedgerReportBean() ;
@@ -82,7 +83,7 @@ public class GeneralLedgerReportAction extends VoucherSearchAction{
 	String heading = "";
 
 	public GeneralLedgerReportAction() {
-		super();
+		LOGGER.error("creating instance of GeneralLedgerReportAction ");
 	}
 	
 	@Override
@@ -101,7 +102,7 @@ public class GeneralLedgerReportAction extends VoucherSearchAction{
 	}
 
 	@SkipValidation
-@Action(value="/report/generalLedgerReport-newForm")
+	@Action(value="/report/generalLedgerReport-newForm")
 	public String newForm() {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("..Inside NewForm method..");
 		return FinancialConstants.STRUTS_RESULT_PAGE_SEARCH;

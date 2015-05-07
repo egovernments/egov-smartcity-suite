@@ -1240,7 +1240,7 @@ public String ajaxLoadCheckList()
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Completed accountCodes.");
 	    return "searchAccountCodes";
 	}
-@Action(value="/voucher/common-ajaxLoadBanks")
+@Action(value="/voucher/common-ajaxLoadBanksWithAssignedRTGS")
 public String ajaxLoadBanksWithAssignedRTGS() {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting ajaxLoadBanksWithAssignedCheques...");
 		try {
@@ -1279,7 +1279,7 @@ public String ajaxLoadBanksWithAssignedRTGS() {
 	/**
 	 *This method will load the bank and branch for which there are cheqeues assigned and the cheque status is "NEW"
 	 */
-@Action(value="/voucher/common-ajaxLoadBanks")
+@Action(value="/voucher/common-ajaxLoadBanksWithAssignedCheques")
 	public String ajaxLoadBanksWithAssignedCheques() {
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting ajaxLoadBanksWithAssignedCheques...");
 		try {
@@ -1318,7 +1318,7 @@ public String ajaxLoadBanksWithAssignedRTGS() {
 	 * @return
 	 */
 		@SuppressWarnings("unchecked")
-@Action(value="/voucher/common-ajaxLoadBanks")
+@Action(value="/voucher/common-ajaxLoadBanksAccountsWithAssignedRTGS")
 		public String ajaxLoadBanksAccountsWithAssignedRTGS(){
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting ajaxLoadBanksAccountsWithAssignedCheques...");
 			try {
@@ -1677,7 +1677,7 @@ public String ajaxLoadBanksWithAssignedRTGS() {
 		return "bank";
 	}
 	@SuppressWarnings("unchecked")
-@Action(value="/voucher/common-ajaxLoadBanks")
+@Action(value="/voucher/common-ajaxLoadBanksWithRtgsPayments")
 	public String ajaxLoadBanksWithRtgsPayments(){          
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Starting ajaxLoadBanksWithApprovedPayments...");
 		try {

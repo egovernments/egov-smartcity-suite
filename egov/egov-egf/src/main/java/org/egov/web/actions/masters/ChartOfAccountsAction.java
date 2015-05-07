@@ -410,10 +410,10 @@ public class ChartOfAccountsAction extends BaseFormAction{
 				return true;
 			}
 		}
-		return false;
+		return false;   
 	}
 
-@Action(value="/masters/chartOfAccounts-addNew")
+@Action(value="/masters/chartOfAccounts-addNewCoa")
 	public String addNewCoa() throws Exception {
 		chartOfAccounts = new CChartOfAccounts();
 		if(parentId != null)

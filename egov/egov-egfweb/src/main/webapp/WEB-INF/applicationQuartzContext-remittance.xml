@@ -3,7 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-		  <bean name="remittanceSchedular" id="remittanceSchedular" parent="egovSchedular">
+		 <!--  <bean name="remittanceSchedular" id="remittanceSchedular" parent="egovSchedular">
 		<property name="schedulerName" value="remittance-scheduler"/>
 		<property name="triggers">
 	    	<list>
@@ -22,7 +22,7 @@
 		<property name="applicationContextSchedulerContextKey" value="applicationQuartzContext-remittance" /> 
  	 </bean>   
 	
-     <!-- Income Tax Capital  Bean -->
+     Income Tax Capital  Bean
  	    <bean name="incometaxCapitalJobScheduler" id="incometaxCapitalJobScheduler" class="org.springframework.scheduling.quartz.JobDetailBean"> 
 		<property name="group" value="REMITTANCE_JOB_GROUP"/>
    		<property name="name" value="Income Tax Capital Job"/> 
@@ -48,12 +48,12 @@
 		<property name="jobDetail" ref="incometaxCapitalJobScheduler" />
 		<property name="group" value="REMITTANCE_TRIGGER_GROUP"/>
 		<property name="name" value="Income Tax Capital Trigger"/>   
-	    <property name="cronExpression" value="0 0 * * * ?" />     <!--    Every Monday @ 4 p.m -->
+	    <property name="cronExpression" value="0 0 * * * ?" />        Every Monday @ 4 p.m
 		</bean>    
 	
-	<!-- End of Income Capital Tax Bean -->  
+	End of Income Capital Tax Bean  
 	
-	<!-- Income Tax Revenue Bean -->
+	Income Tax Revenue Bean
  	    <bean name="incometaxRevenueJobScheduler" id="incometaxRevenueJobScheduler" class="org.springframework.scheduling.quartz.JobDetailBean"> 
 		<property name="group" value="REMITTANCE_JOB_GROUP"/>
    		<property name="name" value="Income Tax Revenue Job"/> 
@@ -79,12 +79,12 @@
 		<property name="jobDetail" ref="incometaxRevenueJobScheduler" />
 		<property name="group" value="REMITTANCE_TRIGGER_GROUP"/>
 		<property name="name" value="Income Tax Revenue Trigger"/>   
-	    <property name="cronExpression" value="0 10 * * * ?" />     <!--    Every Monday @ 4 p.m -->
+	    <property name="cronExpression" value="0 10 * * * ?" />        Every Monday @ 4 p.m
 		</bean>    
 	
-	<!-- End of Income Tax Revenue Bean --> 
+	End of Income Tax Revenue Bean 
 	
-	<!-- Income Tax Scrap  Bean -->
+	Income Tax Scrap  Bean
  	    <bean name="incometaxScrapJobScheduler" id="incometaxScrapJobScheduler" class="org.springframework.scheduling.quartz.JobDetailBean"> 
 		<property name="group" value="REMITTANCE_JOB_GROUP"/>
    		<property name="name" value="Income Tax Scrap Job"/> 
@@ -110,12 +110,12 @@
 		<property name="jobDetail" ref="incometaxScrapJobScheduler" />
 		<property name="group" value="REMITTANCE_TRIGGER_GROUP"/>
 		<property name="name" value="Income Tax Scrap Trigger"/>   
-	    <property name="cronExpression" value="0 20  * * * ?" />     <!--    Every 20 th minute -->
+	    <property name="cronExpression" value="0 20  * * * ?" />        Every 20 th minute
 		</bean>    
 	
-	<!-- End of Income Tax  Scrap Bean -->  
+	End of Income Tax  Scrap Bean  
      
-    <!-- Sales Tax Capital Bean -->
+    Sales Tax Capital Bean
    	 <bean name="salestaxCapitalJobScheduler" id="salestaxCapitalJobScheduler" class="org.springframework.scheduling.quartz.JobDetailBean"> 
 			<property name="group" value="REMITTANCE_JOB_GROUP"/>
    			<property name="name" value="Sales Tax Capital Job"/> 
@@ -141,12 +141,12 @@
 		<property name="jobDetail" ref="salestaxCapitalJobScheduler" />
 		<property name="group" value="REMITTANCE_TRIGGER_GROUP"/>
 		<property name="name" value="Sales Tax Capital Trigger"/>
-		<property name="cronExpression" value="0 5 * * * ?" />  <!-- 15th of every month AT 10 a.m.--> 
+		<property name="cronExpression" value="0 5 * * * ?" />  15th of every month AT 10 a.m. 
 	</bean> 
 	
-	<!-- End of Sales Tax Capital Bean --> 
+	End of Sales Tax Capital Bean 
 	
-	 <!-- Sales Tax Revenue Bean -->
+	 Sales Tax Revenue Bean
    	 <bean name="salestaxRevenueJobScheduler" id="salestaxRevenueJobScheduler" class="org.springframework.scheduling.quartz.JobDetailBean"> 
 			<property name="group" value="REMITTANCE_JOB_GROUP"/>
    			<property name="name" value="Sales Tax Revenue Job"/> 
@@ -172,13 +172,13 @@
 		<property name="jobDetail" ref="salestaxRevenueJobScheduler" />
 		<property name="group" value="REMITTANCE_TRIGGER_GROUP"/>
 		<property name="name" value="Sales Tax Revenue Trigger"/>
-		<property name="cronExpression" value="0 15 * * * ?" />  <!-- 15th of every month AT 10 a.m.--> 
+		<property name="cronExpression" value="0 15 * * * ?" />  15th of every month AT 10 a.m. 
 	</bean> 
 	
-	<!-- End of Sales Tax Revenue Bean --> 
+	End of Sales Tax Revenue Bean 
 	
 	
-	 <!-- Sales Tax TenderForm Bean -->
+	 Sales Tax TenderForm Bean
    	 <bean name="salestaxTenderFormJobScheduler" id="salestaxTenderFormJobScheduler" class="org.springframework.scheduling.quartz.JobDetailBean"> 
 			<property name="group" value="REMITTANCE_JOB_GROUP"/>
    			<property name="name" value="Sales Tax TenderForm Job"/> 
@@ -204,12 +204,12 @@
 		<property name="jobDetail" ref="salestaxTenderFormJobScheduler" />
 		<property name="group" value="REMITTANCE_TRIGGER_GROUP"/>
 		<property name="name" value="Sales Tax TenderForm Trigger"/>
-		<property name="cronExpression" value="0 25 * * * ?" />  <!-- 15th of every month AT 10 a.m.--> 
+		<property name="cronExpression" value="0 25 * * * ?" />  15th of every month AT 10 a.m. 
 	</bean> 
 	
-	<!-- End of Sales Tax TenderForm Bean --> 
+	End of Sales Tax TenderForm Bean 
 	
-	<!-- Start of Service Tax Bean --> 
+	Start of Service Tax Bean 
 	 <bean name="servicetaxJobScheduler" id="servicetaxJobScheduler" class="org.springframework.scheduling.quartz.JobDetailBean"> 
 			<property name="group" value="REMITTANCE_JOB_GROUP"/>
    			<property name="name" value="Service Tax Job"/> 
@@ -235,12 +235,12 @@
 		<property name="jobDetail" ref="servicetaxJobScheduler" />
 		<property name="group" value="REMITTANCE_TRIGGER_GROUP"/>
 		<property name="name" value="Service Tax Trigger"/>  
-		<property name="cronExpression" value="0 30 * * * ?" />    <!-- at 10:10 a.m. 3rd friday of every month -->
+		<property name="cronExpression" value="0 30 * * * ?" />    at 10:10 a.m. 3rd friday of every month
 	</bean> 
 	
-	<!-- End of Service Tax Bean --> 
+	End of Service Tax Bean 
 	
-     <!-- Start of Manual Worker’s Welfare Fund BuldingPlan  --> 
+     Start of Manual Worker’s Welfare Fund BuldingPlan  
 	
 	 <bean name="manualWorkerWelfareFundBuldingPlanJobScheduler" id="manualWorkerWelfareFundBuldingPlanJobScheduler" class="org.springframework.scheduling.quartz.JobDetailBean"> 
 			<property name="group" value="REMITTANCE_JOB_GROUP"/>
@@ -268,12 +268,12 @@
 		<property name="jobDetail" ref="manualWorkerWelfareFundBuldingPlanJobScheduler" />
 		<property name="group" value="REMITTANCE_TRIGGER_GROUP"/>
 		<property name="name" value="Manual Worker Welfare Fund BuldingPlan Trigger"/>
-		<property name="cronExpression" value="0 40 * * * ?" />   <!-- 4th of every month at 4.40 p.m. --> 
+		<property name="cronExpression" value="0 40 * * * ?" />   4th of every month at 4.40 p.m. 
 	</bean>   
 	
-	<!-- End of Manual Worker’s Welfare Fund BuldingPlan --> 
+	End of Manual Worker’s Welfare Fund BuldingPlan 
 	
-	 <!-- Start of Manual Worker’s Welfare Fund Maintenance Works --> 
+	 Start of Manual Worker’s Welfare Fund Maintenance Works 
 	
 	 <bean name="manualWorkerWelfareFundMaintenanceWorksJobScheduler" id="manualWorkerWelfareFundMaintenanceWorksJobScheduler" class="org.springframework.scheduling.quartz.JobDetailBean"> 
 			<property name="group" value="REMITTANCE_JOB_GROUP"/>
@@ -301,12 +301,12 @@
 		<property name="jobDetail" ref="manualWorkerWelfareFundMaintenanceWorksJobScheduler" />
 		<property name="group" value="REMITTANCE_TRIGGER_GROUP"/>
 		<property name="name" value="Manual Worker Welfare Fund Maintenance Works Trigger"/>
-		<property name="cronExpression" value="0 50 * * * ?" />   <!-- 4th of every month at 4.40 p.m. --> 
+		<property name="cronExpression" value="0 50 * * * ?" />   4th of every month at 4.40 p.m. 
 	</bean>   
 	
-	<!-- End of Manual Worker’s Welfare Fund MaintenanceWorks--> 
+	End of Manual Worker’s Welfare Fund MaintenanceWorks 
 	
-	 <!-- Start of Manual Worker’s Welfare Fund Capital Works --> 
+	 Start of Manual Worker’s Welfare Fund Capital Works 
 	
 	 <bean name="manualWorkerWelfareFundCapitalWorksJobScheduler" id="manualWorkerWelfareFundCapitalWorksJobScheduler" class="org.springframework.scheduling.quartz.JobDetailBean"> 
 			<property name="group" value="REMITTANCE_JOB_GROUP"/>
@@ -334,10 +334,10 @@
 		<property name="jobDetail" ref="manualWorkerWelfareFundCapitalWorksJobScheduler" />
 		<property name="group" value="REMITTANCE_TRIGGER_GROUP"/>
 		<property name="name" value="Manual Worker Welfare Fund Capital Works Trigger"/>
-		<property name="cronExpression" value="0 55 * * * ?" />   <!-- 4th of every month at 4.40 p.m. --> 
+		<property name="cronExpression" value="0 55 * * * ?" />   4th of every month at 4.40 p.m. 
 	</bean>   
 	
-	<!-- End of Manual Worker’s Welfare Fund CapitalWorks --> 
+	 --><!-- End of Manual Worker’s Welfare Fund CapitalWorks --> 
      
 </beans>
     

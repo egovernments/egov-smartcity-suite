@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #      accountability and the service delivery of the government  organizations.
 #   
@@ -36,13 +36,13 @@
 #   	   or trademarks of eGovernments Foundation.
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
-<%@ include file="/includes/taglibs.jsp" %>
+#-------------------------------------------------------------------------------  -->
+<%@ include file="../includes/taglibs.jsp" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator"%>
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/page" prefix="page"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld" %>  
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %>  
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 

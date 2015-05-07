@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #      accountability and the service delivery of the government  organizations.
 #   
@@ -36,8 +36,8 @@
 #   	   or trademarks of eGovernments Foundation.
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld"%>
+#-------------------------------------------------------------------------------  -->
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <tr>
 	<s:if test="%{shouldShowHeaderField('fund')}">
@@ -48,7 +48,7 @@
 	<s:if test="%{shouldShowHeaderField('department')}">
 		<td class="bluebox"><s:text name="voucher.department"/>
 		<s:if test="%{isFieldMandatory('department')}"><span class="mandatory">*</span></s:if></td>
-		<td class="bluebox"><s:select name="vouchermis.departmentid" id="vouchermis.departmentid" list="dropdownData.departmentList" listKey="id" listValue="deptName" headerKey="-1" headerValue="----Choose----"  value="%{vouchermis.departmentid.id}"/></td>
+		<td class="bluebox"><s:select name="vouchermis.departmentid" id="vouchermis.departmentid" list="dropdownData.departmentList" listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----"  value="%{vouchermis.departmentid.id}"/></td>
 	</s:if>
 </tr>
 <tr>

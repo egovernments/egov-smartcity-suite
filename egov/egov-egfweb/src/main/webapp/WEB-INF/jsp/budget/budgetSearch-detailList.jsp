@@ -37,7 +37,7 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld"%>
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ page language="java"%>
 <%@ taglib uri="/tags/struts-bean" prefix="bean"%>
@@ -63,7 +63,7 @@
         	<jsp:param name="heading" value="Budget Details" />
 		</jsp:include> 
 		<s:if test="%{not savedbudgetDetailList.empty}">
-			<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld"%>
+			<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 			<div class="yui-skin-sam">
 				<div id="budgetDetailTable" style="width:100%;overflow-x:auto; overflow-y:hidden;"></div>
 			</div>

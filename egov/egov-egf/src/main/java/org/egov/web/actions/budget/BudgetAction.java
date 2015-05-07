@@ -68,7 +68,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
-@Result(name="success", type="ServletRedirectResult.class", location = "budget.action")
+@Result(name="success", type="redirect", location = "budget.action")
 @ParentPackage("egov")
 @Validation
 @Transactional(readOnly=true)

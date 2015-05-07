@@ -86,7 +86,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
-@Result(name=com.opensymphony.xwork2.Action.SUCCESS, type="ServletRedirectResult.class", location = "voucherSearch.action")
+@Result(name=com.opensymphony.xwork2.Action.SUCCESS, type="redirect", location = "voucherSearch.action")
 @ParentPackage("egov")
 @Validation
 @Transactional(readOnly=true)
@@ -124,6 +124,7 @@ public class VoucherSearchAction extends BaseFormAction
 	
 	public VoucherSearchAction()
 	{
+		LOGGER.error("creating instance of VoucherSearchAction ");
 		voucherHeader.setVouchermis(new Vouchermis());
 		addRelatedEntity("vouchermis.departmentid", Department.class);
 		addRelatedEntity("fundId", Fund.class);
@@ -140,7 +141,7 @@ public class VoucherSearchAction extends BaseFormAction
 		getHeaderFields();
 		populateSourceMap();
 		if(headerFields.contains("department")){
-			addDropdownData("departmentList", persistenceService.findAllBy("from Department order by deptName"));
+			addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
 		}
 		if(headerFields.contains("functionary")){
 			addDropdownData("functionaryList", persistenceService.findAllBy(" from Functionary where isactive=1 order by name"));
@@ -395,7 +396,7 @@ public class VoucherSearchAction extends BaseFormAction
 		this.financialYearDAO = financialYearDAO;
 	}
 
-	protected void getHeaderFields() 
+	protected void getHeaderFields()
 	{
 		List<AppConfig> appConfigList = (List<AppConfig>) persistenceService.findAllBy("from AppConfig where key_name = 'DEFAULT_SEARCH_MISATTRRIBUTES'");
 		for (AppConfig appConfig : appConfigList) 

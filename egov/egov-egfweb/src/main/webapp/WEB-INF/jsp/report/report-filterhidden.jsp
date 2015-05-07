@@ -37,7 +37,7 @@
 #   
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld"%>
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <input type="hidden" name="model.fund.id" value='<s:property value="model.fund.id"/>'/>
 <input type="hidden" name="model.department.id" value='<s:property value="model.department.id"/>'/>
 <input type="hidden" name="model.function.id" value='<s:property value="model.function.id"/>'/>

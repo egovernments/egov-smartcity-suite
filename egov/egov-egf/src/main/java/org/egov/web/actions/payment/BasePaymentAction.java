@@ -48,7 +48,6 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.advance.EgAdvanceRequisition;
 import org.egov.model.payment.Paymentheader;
 import org.egov.utils.FinancialConstants;
@@ -62,11 +61,11 @@ import com.exilant.eGov.src.transactions.VoucherTypeForULB;
  */
 
 @Results( {
-		@Result(name = "billpayment", type = "ServletActionRedirectResult.class", location = "payment", params = { "namespace", "/payment", "method", "view" }),
-		@Result(name = "advancepayment", type = "ServletActionRedirectResult.class", location = "payment", params = { "namespace", "/payment", "method", "advanceView" }),
-		@Result(name = "directbankpayment", type = "ServletActionRedirectResult.class", location = "directBankPayment", params = { "namespace", "/payment","method", "viewInboxItem" }) ,
-		@Result(name = "remitRecovery", type = "ServletActionRedirectResult.class", location = "remitRecovery", params = { "namespace", "/deduction","method", "viewInboxItem" }),
-		@Result(name = "contractoradvancepayment", type = "ServletActionRedirectResult.class", location = "advancePayment", params = { "namespace", "/payment", "method", "viewInboxItem" })})
+		@Result(name = "billpayment", type = "redirectAction", location = "payment", params = { "namespace", "/payment", "method", "view" }),
+		@Result(name = "advancepayment", type = "redirectAction", location = "payment", params = { "namespace", "/payment", "method", "advanceView" }),
+		@Result(name = "directbankpayment", type = "redirectAction", location = "directBankPayment", params = { "namespace", "/payment","method", "viewInboxItem" }) ,
+		@Result(name = "remitRecovery", type = "redirectAction", location = "remitRecovery", params = { "namespace", "/deduction","method", "viewInboxItem" }),
+		@Result(name = "contractoradvancepayment", type = "redirectAction", location = "advancePayment", params = { "namespace", "/payment", "method", "viewInboxItem" })})
 @Transactional(readOnly=true)	
 public class BasePaymentAction extends BaseVoucherAction {    
 	EisCommonService eisCommonService;

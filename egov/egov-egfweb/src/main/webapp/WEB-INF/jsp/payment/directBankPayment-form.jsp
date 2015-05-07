@@ -38,7 +38,7 @@
 #     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------
 	<jsp:include page="../voucher/vouchertrans-filter-new.jsp"/>
-	<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld"%>
+	<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <tr>
 		<td  class="greybox"></td>
 		<td class="greybox"><s:text name="bank"/>

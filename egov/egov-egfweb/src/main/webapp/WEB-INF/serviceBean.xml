@@ -5,10 +5,9 @@
             http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd"
        default-lazy-init="true">
        
-	<bean id="egovSessionFactory" class="org.egov.infstr.services.SessionFactory" />
-	<bean id="persistenceService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
-		<property name="sessionFactory" ref="egovSessionFactory" />
-	</bean>
+	
+	<bean id="persistenceService" class="org.egov.infstr.services.PersistenceService" scope="prototype"/>
+	
 	
 	<bean id="functionaryService" parent="persistenceService" lazy-init="true">
       <property name="type">

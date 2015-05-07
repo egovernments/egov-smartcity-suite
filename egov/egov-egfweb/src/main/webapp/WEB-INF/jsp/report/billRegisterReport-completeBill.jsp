@@ -39,7 +39,7 @@
 #-------------------------------------------------------------------------------
 <%@page contentType="text/html"%>
 <%@page pageEncoding="UTF-8"%>
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld"%>
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ page language="java"%>
 

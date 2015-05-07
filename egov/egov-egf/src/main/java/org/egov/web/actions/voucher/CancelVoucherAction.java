@@ -41,6 +41,8 @@ package org.egov.web.actions.voucher;
 
 
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -142,7 +144,7 @@ public class CancelVoucherAction extends BaseFormAction  {
 	}
 	
 	@SkipValidation
-@Action(value="/voucher/cancelVoucher-beforeSearch")
+	@Action(value="/voucher/cancelVoucher-beforeSearch")
 	public String beforeSearch() {
 		voucherHeader.reset();
 		setFromDate(null);
@@ -445,7 +447,7 @@ public class CancelVoucherAction extends BaseFormAction  {
 	private void loadDropDowns() {
 
 		if(headerFields.contains("department")){
-			addDropdownData("departmentList", persistenceService.findAllBy("from Department order by deptName"));
+			addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name")); 
 		}
 		if(headerFields.contains("functionary")){
 			addDropdownData("functionaryList", persistenceService.findAllBy(" from Functionary where isactive=1 order by name"));

@@ -164,6 +164,9 @@
 	<bean id="bankAccountDao" class="org.egov.commons.dao.BankaccountDAO">
 		<constructor-arg ref="sessionFactory" />
 	</bean>
+	
+	
+	<bean id="financialYearDAO" class="org.egov.commons.dao.FinancialYearHibernateDAO"/>
 
 	<bean id="bankBranchDao" class="org.egov.commons.dao.BankbranchDAO">
 		<constructor-arg ref="sessionFactory" />
