@@ -175,6 +175,7 @@
 	
 	<bean id="daoAuthenticationProvider" class="org.egov.infstr.security.spring.dao.EgovDaoAuthenticationProvider">
 		<property name="userDetailsService" ref="userDetailsService" />
+		<property name="preAuthenticationChecks" ref="activationPreAuthenticationChecker"></property>
 	</bean>
 	
 	<bean id="anonymousAuthenticationProvider" class="org.springframework.security.authentication.AnonymousAuthenticationProvider">

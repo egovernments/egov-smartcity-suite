@@ -112,7 +112,9 @@ public class CitizenService {
         return citizenRepository.findByUsername(userName);
     }
 
-
+    public Citizen getCitizenByActivationCode(final String activationCode) {
+        return citizenRepository.findByActivationCode(activationCode);
+    }
     public void sendActivationMessage(Citizen citizen) throws EGOVRuntimeException {
 
         boolean hasSent = false;

@@ -108,6 +108,10 @@
 							Your password has been expired, Please click 
 							<a href="#" target="_blank" style="color: blue">here</a> to change your password.
 						</c:when>
+						<c:when
+								test="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message == 'OTP not activated'}">
+							<input type="hidden" name="citizenActivation"	id="citizenActivation" value="true" />
+						</c:when>
 							<c:otherwise>
 							User Name or Password is invalid or you are not allowed to login from this terminal.
 						</c:otherwise>
@@ -364,9 +368,20 @@
 					<div class="login-body">
 						<form method="post" role="form" id="citizenactivationform"
 							modelAttribute="citizen">
-							<div class="form-group text-left">Registration Successful.
-								Enter your 5 digit activation code sent to your registered email
-								or mobile to activate your account here.</div>
+							<c:choose>
+     							 <c:when test="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message == 'OTP not activated'}">
+     							 	<div class="form-group text-left">
+										Your account is inactive, Please activate here.
+									</div>
+     							 </c:when>
+
+     							 <c:otherwise>
+     								<div class="form-group text-left">Registration Successful.
+										Enter your 5 digit activation code sent to your registered email
+										or mobile to activate your account here.
+									</div>
+      							</c:otherwise>
+							</c:choose>
 							<div class="form-group">
 								<div class="input-group">
 									<div class="input-group-addon">

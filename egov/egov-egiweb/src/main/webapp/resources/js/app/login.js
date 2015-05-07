@@ -134,7 +134,11 @@ $(document).ready(function()
 		return false;
 	});
 	$('form#citizenactivationform').submit(function(){
-		$('#citizenactivationform').attr('action', '/portal/citizen/activation/'+$('#citizenId').val()).trigger('submit');
+		if($('#citizenId').val()===""){
+			$('#citizenactivationform').attr('action', '/portal/citizen/activation').trigger('submit');
+		}else{
+			$('#citizenactivationform').attr('action', '/portal/citizen/activation/'+$('#citizenId').val()).trigger('submit');
+		}
 		return false;
 	});
 	

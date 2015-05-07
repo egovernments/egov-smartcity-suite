@@ -107,5 +107,23 @@ public class CitizenRegistrationController {
 		}
 
 	}
+	@RequestMapping(value = "/activation", method = POST)
+	public String citizenOTPActivation(@ModelAttribute Citizen model) {
+		Citizen citizen = citizenService.getCitizenByActivationCode(model.getActivationCode());
+		if(citizen!=null){
+			if (citizen.getActivationCode().equals(model.getActivationCode()) && !citizen.isActive()) {
+				citizen.setActive(true);
+				citizenService.update(citizen);
+				return "redirect:/../egi/login/secure?citizenActivationSuccess=true";
+			} else {
+				return "redirect:/../egi/login/secure?citizenActivationFailed=true";
+			
+			}
+		}else {
+			return "redirect:/../egi/login/secure?citizenActivationFailed=true";
+					
+		}
+
+	}
 
 }
