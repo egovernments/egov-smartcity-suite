@@ -61,9 +61,6 @@
 
 					<form:select path="status" data-first-option="false" id="status"
 						cssClass="form-control" cssErrorClass="form-control error">
-						<%-- <form:option value="">
-							<spring:message code="lbl.select" />
-						</form:option> --%>
 						<form:options items="${status}" itemValue="id" itemLabel="name" />
 					</form:select>
 					<form:errors path="status" cssClass="error-msg" />
@@ -119,7 +116,7 @@
 						id="approvalDepartment" cssClass="form-control"
 						cssErrorClass="form-control error">
 						<form:option value="">
-							<spring:message code="lbl.select" />
+							<spring:message code="lbl.selectdepartment" />
 						</form:option>
 						<form:options items="${approvalDepartmentList}" itemValue="id"
 							itemLabel="name" />     
@@ -131,7 +128,7 @@
 						id="approvalDesignation" cssClass="form-control"
 						cssErrorClass="form-control error">  
 						<form:option value="">
-							<spring:message code="lbl.select" />
+							<spring:message code="lbl.selectdesignation" />
 						</form:option>
 						<form:options items="${approvalDesignationList}" itemValue="id"
 							itemLabel="name" />
@@ -141,7 +138,7 @@
 				<div class="col-md-3 col-xs-12 add-margin">
 					<select name="approvalPosition" id="approvalPosition"
 						class="form-control">
-						<option value=""><spring:message code="lbl.select" /></option>
+						<option value=""><spring:message code="lbl.selectuser" /></option>
 
 					</select>
 					
@@ -150,7 +147,7 @@
 			
 			<div class="form-group">
 				<div class="col-md-3 add-margin">
-					<spring:message code="lbl.include.message" /><span class="mandatory"></span>
+					<spring:message code="lbl.include.message" />
 				</div>
 				<div class="col-md-9 add-margin">
 					<textarea class="form-control" id="inc_messge" placeholder=""

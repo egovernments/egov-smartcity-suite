@@ -190,7 +190,7 @@
 				<div class="panel-body history-slide">
 					<div class="row hidden-xs hidden-sm visible-md visible-lg view-content header-color">
 						<div class="col-md-2 col-xs-6 add-margin">Date</div>
-						<div class="col-md-2 col-xs-6 add-margin">Updater</div>
+						<div class="col-md-2 col-xs-6 add-margin">Updated By</div>
 						<div class="col-md-2 col-xs-6 add-margin">Status</div>
 						<div class="col-md-2 col-xs-6 add-margin">Current Owner</div>
 						<div class="col-md-2 col-xs-6 add-margin">Department</div>
@@ -202,7 +202,7 @@
 								<div class="row  add-border">
 									<div class="col-md-2 col-xs-12 add-margin">
 										<fmt:formatDate value="${history.date}" var="historyDate"
-											pattern="dd-MM-yyyy HH:MM a E " />
+											pattern="dd-MM-yyyy HH:mm a E" />
 										<c:out value="${historyDate}" />
 									</div>
 									<div class="col-md-2 col-xs-12 add-margin">
