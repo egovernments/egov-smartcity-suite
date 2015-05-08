@@ -76,6 +76,7 @@ public class HomeController {
     public @ResponseBody Integer refreshInbox(@RequestParam Long citizenInboxId) {
 		CitizenInbox citizenInbox = citizenInboxService.getInboxMessageById(citizenInboxId);
 		citizenInbox.setRead(true);
+		citizenInboxService.updateMessage(citizenInbox);
 		return citizenInboxService.findUnreadMessagesCount(securityUtils.getCurrentUser());
     }
 
