@@ -48,7 +48,7 @@
 				var unreadMessageCount = "${unreadMessageCount}";
 				document.getElementById("unreadMessageCount").innerHTML=unreadMessageCount;
 			}
-			function refreshInbox(obj){
+			function refreshInbox(obj, elem){
 				$.ajax({
 					url: "/portal/home/refreshInbox",
 					type : "GET",
@@ -56,9 +56,10 @@
 						citizenInboxId : obj
 					},
 					success : function(response) {
-		                document.getElementById("unreadMessageCount").innerHTML=response;
+						document.getElementById("unreadMessageCount").innerHTML=response;
 		            }
 		        });
+				$(elem).find("i").removeClass('unread-msg').addClass('read-msg');
 			}
 		</script>
 		<div class="citizen-screens" id="inbox-template">
@@ -85,12 +86,18 @@
 						<div class="row container-msgs">
 							
 							<section class="col-lg-12">
-								<c:forEach var="inboxMsg" items="${inboxMessages}">
-								<div class="msg" data-toggle="collapse" data-target="#${inboxMsg.id}" aria-expanded="true" onclick="refreshInbox(${inboxMsg.id})">
+								<c:forEach var="inboxMsg" items="${inboxMessages}" varStatus="status">
+								<div class="msg" data-toggle="collapse" data-target="#${inboxMsg.id}" aria-expanded="true" onclick="refreshInbox(${inboxMsg.id}, this)">
 									<header>
 										
 										<div class="row">
-											<i class="user-msg fa fa-user col-sm-1 col-xs-2 read-msg"></i><h3 class="col-sm-11 col-xs-10">
+											<c:if test="${inboxMsg.read}">
+											<i class="user-msg fa fa-user col-sm-1 col-xs-2 read-msg"></i>
+											</c:if>
+											<c:if test="${!inboxMsg.read}">
+											 <i class="user-msg fa fa-user col-sm-1 col-xs-2 unread-msg"></i>
+											</c:if>
+											<h3 class="col-sm-11 col-xs-10">
 											${inboxMsg.headerMessage}<span class="msg-status">${inboxMsg.status}</span> </h3> 
 										</div>
 										
@@ -102,11 +109,21 @@
 										</div>
 									</header>
 									
-									<div id="${inboxMsg.id}" class="msg-content collapse in">
-										<p> 
-											${inboxMsg.detailedMessage} 
-										</p>
-									</div>
+									 <c:if test="${status.first}">
+										<div id="${inboxMsg.id}" class="msg-content collapse in">
+											<p> 
+												${inboxMsg.detailedMessage} 
+											</p>
+										</div>
+									 </c:if>
+									 <c:if test="${!status.first}">
+									 	<div id="${inboxMsg.id}" class="msg-content collapse">
+											<p> 
+												${inboxMsg.detailedMessage} 
+											</p>
+										</div>
+									 </c:if> 
+										
 								</div>
 								</c:forEach> 
 							</section>
