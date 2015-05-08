@@ -41,7 +41,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <html>
 	<head>
-		<sx:head />
+		<%-- <sx:head /> --%>
 		<script type="text/javascript">
 			function populateWard() {
 				populatewardId( {

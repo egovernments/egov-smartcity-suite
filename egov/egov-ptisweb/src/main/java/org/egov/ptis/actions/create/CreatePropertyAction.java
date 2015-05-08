@@ -245,7 +245,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/create/createProperty-newForm")
+	@Action(value = "/create/createProperty-newForm", results= { @Result(name=RESULT_NEW, location="/WEB-INF/jsp/create/createProperty-new.jsp")})
 	public String newForm() {
 		return RESULT_NEW;
 	}

@@ -145,7 +145,7 @@ public class SearchPropertyAction extends BaseFormAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/searchProperty-searchForm.action", results={@Result(name=NEW, location="/WEB-INF/jsp/search/searchProperty-new.jsp")})
+	@Action(value = "/searchProperty-searchForm", results={@Result(name=NEW, location="/WEB-INF/jsp/search/searchProperty-new.jsp")})
 	public String searchForm() {
 		return NEW;
 	}
