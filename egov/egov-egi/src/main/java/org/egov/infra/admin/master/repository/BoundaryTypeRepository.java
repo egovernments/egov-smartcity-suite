@@ -42,6 +42,7 @@ package org.egov.infra.admin.master.repository;
 import java.util.List;
 
 import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.entity.HierarchyType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -67,4 +68,13 @@ public interface BoundaryTypeRepository extends JpaRepository<BoundaryType, Long
     @Query("select bt from BoundaryType bt where bt.id = :id and bt.hierarchyType.id = :hierarchyId")
     public BoundaryType findByIdAndHierarchy(@Param("id") Long id, @Param("hierarchyId") Long hierarchyId);
 
+    public BoundaryType findByNameAndHierarchyType(String name, HierarchyType hierarchyType);
+
+    @Query("select bt from BoundaryType bt where bt.id = :id and bt.hierarchyType.name = :hierarchyTypeName")
+    public BoundaryType findByNameAndHierarchyTypeName(@Param("name") String name,
+            @Param("hierarchyTypeName") String hierarchyTypeName);
+
+    @Query("select bt from BoundaryType bt where bt.parent is not null and bt.hierarchyType =: hierarchyType")
+    public List<BoundaryType> findAllByHierarchyTypeWhenParentIsNotNull(
+            @Param("hierarchyType") HierarchyType hierarchyType);
 }

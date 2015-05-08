@@ -39,10 +39,16 @@
  */
 package org.egov.infra.admin.master.service;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.egov.exceptions.NoSuchObjectException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -108,5 +114,75 @@ public class BoundaryService {
     @Transactional
     public Boundary getBoundaryByTypeAndNo(final BoundaryType boundaryType, final Long boundaryNum) {
         return boundaryRepository.findBoundarieByBoundaryTypeAndBoundaryNum(boundaryType, boundaryNum);
+    }
+
+    // TODO - Later - Use materializedPath instead of recursive calling
+    public List<Boundary> getParentBoundariesByBoundaryId(final Long boundaryId) throws NoSuchObjectException {
+        List<Boundary> boundaryList = new ArrayList<Boundary>();
+        final Boundary bndry = getBoundaryById(boundaryId);
+        if (bndry != null) {
+            boundaryList.add(bndry);
+            if (bndry.getParent() != null)
+                boundaryList = getParentBoundariesByBoundaryId(bndry.getParent().getId());
+        } else
+            throw new NoSuchObjectException("bndry.Obj.null");
+        return boundaryList;
+    }
+
+    public Map<String, List<Boundary>> getSecondLevelBoundaryByHierarchyType(final HierarchyType hierarchyType) {
+        List<Boundary> boundaryList = new ArrayList<Boundary>();
+        final Map<String, List<Boundary>> boundaryMap = new HashMap<String, List<Boundary>>();
+
+        boundaryList = boundaryRepository.findActiveBoundariesByHierarchyTypeAndLevelAndAsOnDate(hierarchyType, 2l,
+                new Date());
+        String bryName = null;
+        for (final Boundary boundary : boundaryList)
+            bryName = boundary.getBoundaryType().getName();
+        if (bryName != null)
+            boundaryMap.put(bryName, boundaryList);
+
+        return boundaryMap;
+    }
+
+    public Boundary getActiveBoundaryByIdAsOnCurrentDate(final Long id) {
+        return boundaryRepository.findActiveBoundaryByIdAndAsOnDate(id, new Date());
+    }
+
+    public Boundary getActiveBoundaryById(final Long id) {
+        return boundaryRepository.findActiveBoundaryById(id);
+    }
+
+    public List<Boundary> getActiveBoundariesByBoundaryTypeId(final Long boundaryTypeId) {
+        return boundaryRepository.findActiveBoundariesByBoundaryTypeId(boundaryTypeId);
+    }
+
+    public List<Boundary> getTopLevelBoundaryByHierarchyType(final HierarchyType hierarchyType) {
+        return boundaryRepository.findActiveBoundariesByHierarchyTypeAndLevelAndAsOnDate(hierarchyType, 1l, new Date());
+    }
+
+    public List<Boundary> getActiveChildBoundariesByBoundaryId(final Long boundaryId) {
+        return boundaryRepository.findActiveChildBoundariesByBoundaryIdAndAsOnDate(boundaryId, new Date());
+    }
+
+    public List<Boundary> getChildBoundariesByBoundaryId(final Long boundaryId) {
+        return boundaryRepository.findChildBoundariesByBoundaryIdAndAsOnDate(boundaryId, new Date());
+    }
+
+    public Boundary getActiveBoundaryByBndryNumAndTypeAndHierarchyTypeCode(final Long bndryNum,
+            final String boundaryType, final String hierarchyTypeCode) {
+        return boundaryRepository.findActiveBoundaryByBndryNumAndTypeAndHierarchyTypeCodeAndAsOnDate(bndryNum,
+                boundaryType, hierarchyTypeCode, new Date());
+    }
+
+    public List<Boundary> getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(final String boundaryTypeName,
+            final String hierarchyTypeName) {
+        return boundaryRepository.findActiveBoundariesByBndryTypeNameAndHierarchyTypeName(boundaryTypeName,
+                hierarchyTypeName);
+    }
+
+    public List<Boundary> getBoundariesByBndryTypeNameAndHierarchyTypeName(final String boundaryTypeName,
+            final String hierarchyTypeName) {
+        return boundaryRepository
+                .findBoundariesByBndryTypeNameAndHierarchyTypeName(boundaryTypeName, hierarchyTypeName);
     }
 }

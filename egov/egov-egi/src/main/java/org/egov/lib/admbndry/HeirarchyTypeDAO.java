@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,27 +18,29 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.lib.admbndry;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -48,6 +50,8 @@ import org.egov.exceptions.DuplicateElementException;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.exceptions.NoSuchObjectException;
 import org.egov.exceptions.TooManyValuesException;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -59,9 +63,9 @@ import org.slf4j.LoggerFactory;
 public class HeirarchyTypeDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HeirarchyTypeDAO.class);
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
-    public HeirarchyTypeDAO(SessionFactory sessionFactory) {
+    public HeirarchyTypeDAO(final SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
@@ -134,9 +138,8 @@ public class HeirarchyTypeDAO {
 
     public HierarchyType getHierarchyTypeByName(final String name) throws NoSuchObjectException, TooManyValuesException {
 
-        if (name == null) {
+        if (name == null)
             throw new EGOVRuntimeException("heirarchyType.name.null");
-        }
 
         try {
             HierarchyType heirarchyType = null;
@@ -144,21 +147,71 @@ public class HeirarchyTypeDAO {
             final String ucaseName = name.toUpperCase();
             qry.setString("name", ucaseName);
             final List<HierarchyType> heirarchyTypeList = qry.list();
-            if (heirarchyTypeList.size() == 0) {
+            if (heirarchyTypeList.size() == 0)
                 throw new NoSuchObjectException("heirarchyType.object.notFound");
-            }
-            if (heirarchyTypeList.size() > 1) {
+            if (heirarchyTypeList.size() > 1)
                 throw new TooManyValuesException("heirarchyType.multiple.objectsFound");
-            }
-            if (heirarchyTypeList.size() == 1) {
+            if (heirarchyTypeList.size() == 1)
                 heirarchyType = heirarchyTypeList.get(0);
-            }
             return heirarchyType;
 
         } catch (final Exception e) {
             LOGGER.error("Error occurred in getHierarchyTypeByName", e);
             throw new EGOVRuntimeException("system.error", e);
         }
+    }
+
+    /**
+     * returns set of parent boundary for the given child boundary
+     * 
+     * @param childBoundary
+     * @return
+     */
+    public Set getCrossHeirarchyParent(final Boundary childBoundary) {
+        final Set parentBoundarySet = new HashSet();
+        if (childBoundary == null)
+            throw new EGOVRuntimeException("Childbndry.object.null");
+        else {
+            final Query qry = getSession().createQuery(
+                    "select CI.parent from CrossHeirarchyImpl CI where CI.child = :childBoundary");
+            qry.setEntity("childBoundary", childBoundary);
+
+            for (final Iterator iter = qry.iterate(); iter.hasNext();) {
+                final Boundary bndryObj = (Boundary) iter.next();
+                parentBoundarySet.add(bndryObj);
+
+            }
+
+        }
+        return parentBoundarySet;
+    }
+
+    /**
+     * returns set of child boundary for the given parent boundary and
+     * childBoundaryType
+     * 
+     * @param parentBoundary
+     * @return
+     */
+    public Set getCrossHeirarchyChildren(final Boundary parentBoundary, final BoundaryType childBoundaryType) {
+        final Set childBoundarySet = new HashSet();
+        if (parentBoundary == null || childBoundaryType == null)
+            throw new EGOVRuntimeException("parentBoundary.childBoundaryType.object.null");
+        else {
+            final Query qry = getSession()
+                    .createQuery(
+                            "select CI.child from CrossHeirarchyImpl CI, Boundary BI where CI.parent = :parentBoundary and CI.child=BI and BI.boundaryType = :childBoundaryType order by BI.name ");
+            qry.setEntity("parentBoundary", parentBoundary);
+            qry.setEntity("childBoundaryType", childBoundaryType);
+
+            for (final Iterator iter = qry.iterate(); iter.hasNext();) {
+                final Boundary bndryObj = (Boundary) iter.next();
+                childBoundarySet.add(bndryObj);
+            }
+
+        }
+        return childBoundarySet;
+
     }
 
 }

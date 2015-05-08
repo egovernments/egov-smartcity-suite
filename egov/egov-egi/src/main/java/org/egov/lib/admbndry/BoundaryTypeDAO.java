@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -59,65 +59,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@Deprecated
 public class BoundaryTypeDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BoundaryTypeDAO.class);
 
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
-    public BoundaryTypeDAO(SessionFactory sessionFactory) {
+    public BoundaryTypeDAO(final SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
     private Session getSession() {
-        return this.sessionFactory.getCurrentSession();
-    }
-
-    public void createBoundaryType(final BoundaryType bndryType) {
-        try {
-            getSession().save(bndryType);
-        } catch (final HibernateException e) {
-            LOGGER.error("Exception occurred in createBoundaryType", e);
-            throw new EGOVRuntimeException("Exception occurred in createBoundaryType", e);
-        }
-    }
-
-    public void removeBoundaryType(final BoundaryType bndryType) {
-        try {
-            getSession().delete(bndryType);
-        } catch (final HibernateException e) {
-            LOGGER.error("Exception occurred in removeBoundaryType", e);
-            throw new EGOVRuntimeException("Exception occurred in removeBoundaryType", e);
-        } catch (final Exception e) {
-            LOGGER.error("Exception occurred in removeBoundaryType", e);
-            throw new EGOVRuntimeException("Exception occurred in removeBoundaryType", e);
-        }
-    }
-
-    public void updateBoundaryType(final BoundaryType bndryType) {
-        try {
-            getSession().saveOrUpdate(bndryType);
-        } catch (final HibernateException e) {
-            LOGGER.error("Exception occurred in updateBoundaryType", e);
-            throw new EGOVRuntimeException("Exception occurred in updateBoundaryType", e);
-        } catch (final Exception se) {
-            LOGGER.error("Exception occurred in updateBoundaryType", se);
-            throw new EGOVRuntimeException("Exception occurred in updateBoundaryType", se);
-        }
-    }
-
-    public BoundaryType getBoundaryType(final short heirarchylevel, final HierarchyType hierarchyType) {
-        try {
-            final Query qry = getSession()
-                    .createQuery(
-                            "from BoundaryType BT left join fetch BT.childBoundaryTypes where BT.hierarchy = :hirchy and BT.HierarchyType = :HierarchyType");
-            qry.setShort("hirchy", heirarchylevel);
-            qry.setEntity("hierarchyType", hierarchyType);
-            return (BoundaryType) qry.uniqueResult();
-        } catch (final HibernateException e) {
-            LOGGER.error("Exception occurred in getBoundaryType", e);
-            throw new EGOVRuntimeException("Exception occurred in getBoundaryType", e);
-        }
+        return sessionFactory.getCurrentSession();
     }
 
     public BoundaryType getBoundaryType(final String bndryTypeName, final HierarchyType hierarchyType) {
@@ -126,17 +80,6 @@ public class BoundaryTypeDAO {
                     "from BoundaryType BT where upper(NAME) = upper(:name) and BT.hierarchyType = :hierarchyType");
             qry.setString("name", bndryTypeName);
             qry.setEntity("hierarchyType", hierarchyType);
-            return (BoundaryType) qry.uniqueResult();
-        } catch (final HibernateException e) {
-            LOGGER.error("Exception occurred in getBoundaryType", e);
-            throw new EGOVRuntimeException("Exception occurred in getBoundaryType", e);
-        }
-    }
-
-    public BoundaryType getBoundaryType(final Integer id) {
-        try {
-            final Query qry = getSession().createQuery("from BoundaryType BT where id=:id");
-            qry.setInteger("id", id);
             return (BoundaryType) qry.uniqueResult();
         } catch (final HibernateException e) {
             LOGGER.error("Exception occurred in getBoundaryType", e);
@@ -155,16 +98,13 @@ public class BoundaryTypeDAO {
             final BoundaryDAO bndryDAO = new BoundaryDAO(sessionFactory);
             final Boundary bndry = bndryDAO.getBoundary(boundaryId);
             if (bndry != null) {
-                this.boundaryList.add(bndry);
-                if (bndry.getParent() != null) {
-                    this.boundaryList = getParentBoundaryList(bndry.getParent().getId());
-                }
-            } else {
+                boundaryList.add(bndry);
+                if (bndry.getParent() != null)
+                    boundaryList = getParentBoundaryList(bndry.getParent().getId());
+            } else
                 throw new NoSuchObjectException("bndry.Obj.null");
 
-            }
-
-            return this.boundaryList;
+            return boundaryList;
         } catch (final Exception e) {
             LOGGER.error("Exception occurred in getParentBoundaryList", e);
             throw new EGOVRuntimeException("system.error", e);
@@ -224,12 +164,10 @@ public class BoundaryTypeDAO {
                     qry1.setEntity("boundaryType", boundry);
                     qry1.setDate("currDate", currDate);
                     boundaryList = qry1.list();
-                    for (final Boundary boundary : boundaryList) {
+                    for (final Boundary boundary : boundaryList)
                         bryName = boundary.getBoundaryType().getName();
-                    }
-                    if (bryName != null) {
+                    if (bryName != null)
                         retSet.put(bryName, boundaryList);
-                    }
                 }
             }
             return retSet;
@@ -239,44 +177,4 @@ public class BoundaryTypeDAO {
             throw new EGOVRuntimeException("system.error", e);
         }
     }
-
-    public Map<String, List<Boundary>> getBoundaryMapByPassingHirarchy(final HierarchyType hierarchyType)
-            throws EGOVRuntimeException {
-        try {
-            String bryName = null;
-            final Date currDate = new Date();
-            List<BoundaryType> boundaryTypeList = new ArrayList<BoundaryType>();
-            final Map<String, List<Boundary>> retSet = new HashMap<String, List<Boundary>>();
-            if (hierarchyType != null) {
-                final Query qry = getSession().createQuery(
-                        "from BoundaryType BT where BT.parent is not null and  BT.hierarchyType = :hierarchyType");
-                qry.setEntity("hierarchyType", hierarchyType);
-                boundaryTypeList = qry.list();
-
-                for (final BoundaryType boundaryType : boundaryTypeList) {
-                    final Query qry1 = getSession().createQuery(
-                            "from Boundary BI where " + "BI.boundaryType = :boundaryType "
-                                    + " and BI.isHistory='N' AND ("
-                                    + "(BI.toDate IS NULL AND BI.fromDate <= :currDate) " + "OR "
-                                    + "(BI.fromDate <= :currDate AND BI.toDate >= :currDate)) "
-                                    + "order by BI.boundaryNum");
-                    qry1.setEntity("boundaryType", boundaryType);
-                    qry1.setDate("currDate", currDate);
-                    this.boundaryList = qry1.list();
-                    for (final Boundary boundary : this.boundaryList) {
-                        bryName = boundary.getBoundaryType().getName();
-                    }
-                    if (bryName != null) {
-                        retSet.put(bryName, this.boundaryList);
-                    }
-                }
-            }
-            return retSet;
-
-        } catch (final Exception e) {
-            LOGGER.error("Exception occurred in getParentBoundaryTypeByHirarchy", e);
-            throw new EGOVRuntimeException("system.error", e);
-        }
-    }
-
 }
