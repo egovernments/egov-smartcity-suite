@@ -50,7 +50,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.web.actions.BaseFormAction;
 import org.springframework.transaction.annotation.Transactional;
 
-@Result(name = ServiceCategoryAction.SUCCESS, type = "ServletRedirectResult.class", location = "serviceCategory.action")
+@Result(name = ServiceCategoryAction.SUCCESS, type = "redirect", location = "serviceCategory.action")
 @ParentPackage("egov")
 @Transactional(readOnly=true)
 public class ServiceCategoryAction extends BaseFormAction {
@@ -65,7 +65,7 @@ public class ServiceCategoryAction extends BaseFormAction {
 		return list();
 	}
 
-	@Action(value="/service/serviceCategory-newform", results = { @Result(name = NEW)})
+	@Action(value="/service/serviceCategory-newform", results = { @Result(name = NEW,type="redirect")})
 	public String newform() {
 		return NEW;
 	}
@@ -76,7 +76,7 @@ public class ServiceCategoryAction extends BaseFormAction {
 		return INDEX;
 	}
 
-	@Action(value="/service/serviceCategory-edit", results = { @Result(name = EDIT)})
+	@Action(value="/service/serviceCategory-edit", results = { @Result(name = EDIT,type="redirect")})
 	public String edit() {
 		serviceCategoryInstance = serviceCategoryService.findById(
 				serviceCategoryInstance.getId(), false);

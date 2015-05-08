@@ -92,7 +92,7 @@ public class BankRemittanceReportAction extends ReportFormAction {
 	
 	
 	@Override
-	@Action(value="/reports/bankRemittanceReport-criteria",results = { @Result(name = INDEX)})
+	@Action(value="/reports/bankRemittanceReport-criteria",results = { @Result(name = INDEX,type="redirect")})
 	public String criteria() {
 		// Setup drop down data for department list
 		addRelatedEntity("department", Department.class, "deptName");

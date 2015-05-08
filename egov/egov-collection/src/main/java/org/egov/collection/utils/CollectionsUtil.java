@@ -1,10 +1,45 @@
 /**
- * 
+ * eGov suite of products aim to improve the internal efficiency,transparency, 
+   accountability and the service delivery of the government  organizations.
+
+    Copyright (C) <2015>  eGovernments Foundation
+
+    The updated version of eGov suite of products as by eGovernments Foundation 
+    is available at http://www.egovernments.org
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    http://www.gnu.org/licenses/gpl.html .
+
+    In addition to the terms of the GPL license to be adhered to in using this
+    program, the following additional terms are to be complied with:
+
+	1) All versions of this program, verbatim or modified must carry this 
+	   Legal Notice.
+
+	2) Any misrepresentation of the origin of the material is prohibited. It 
+	   is required that all modified versions of this material be marked in 
+	   reasonable ways as different from the original version.
+
+	3) This license does not grant any rights to any user of the program 
+	   with regards to rights under trademark law for use of the trade names 
+	   or trademarks of eGovernments Foundation.
+
+  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.collection.utils;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -30,6 +65,7 @@ import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.commons.service.GenericCommonsService;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.models.Script;
+import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.lib.security.terminal.model.Location;
 import org.egov.pims.commons.DesignationMaster;
@@ -38,63 +74,25 @@ import org.egov.pims.commons.service.EisCommonsServiceImpl;
 import org.egov.pims.model.Assignment;
 import org.egov.pims.model.EmployeeView;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.SearchPositionService;
 import org.egov.pims.utils.EisManagersUtill;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Utility methods for ERP collections module
- */
 @Transactional(readOnly=true)
 public class CollectionsUtil {
-	/**
-	 * Map to cache status codes and corresponding status objects
-	 */
 	private final Map<String, EgwStatus> statusMap = new HashMap<String, EgwStatus>();
-
 	private PersistenceService persistenceService;
-	@Autowired
-	private EisCommonsServiceImpl eisCommonsServiceImpl;
-	@Autowired
+	private EisCommonsServiceImpl eisCommonsService;
 	private GenericCommonsService genericCommonsService;
-	@Autowired
 	private UserService userService;
-	@Autowired
 	private CommonsService commonsService;
 	private PersistenceService<Script, Long> scriptService;
 	private GenericHibernateDaoFactory genericDao;
-	private EisUtilService eisService;
+	private EISServeable eisService;
 	private SearchPositionService searchPositionService;
-	//private AuditEventService auditEventService;
-	private DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a");
-
-	public void setBeanProvider(ApplicationContextBeanProvider beanProvider) {
-		this.beanProvider = beanProvider;
-	}
-
 	private ApplicationContextBeanProvider beanProvider;
-
 	private static final Logger LOGGER = Logger.getLogger(CollectionsUtil.class);
-
-	/**
-	 * 
-	 * @param genericDao
-	 *            the Generic Hibernate Dao Factory instance
-	 */
-	public void setGenericDao(GenericHibernateDaoFactory genericDao) {
-		this.genericDao = genericDao;
-	}
-
-	/**
-	 * @param persistenceService
-	 *            the genericPersistenceService to set
-	 */
-	public void setPersistenceService(PersistenceService persistenceService) {
-		this.persistenceService = persistenceService;
-	}
 
 	/**
 	 * Returns the Status object for given status code for a receipt
@@ -104,7 +102,7 @@ public class CollectionsUtil {
 	 * @return the Status object for given status code for a receipt
 	 */
 	public EgwStatus getReceiptStatusForCode(String statusCode) {
-		EgwStatus status = (EgwStatus) statusMap.get(statusCode);
+		EgwStatus status = statusMap.get(statusCode);
 
 		synchronized (this) {
 			if (status == null) {
@@ -287,7 +285,7 @@ public class CollectionsUtil {
 	 * @return Position of logged in user
 	 */
 	public Position getPositionOfUser(User user) {
-		return eisCommonsServiceImpl.getCurrentPositionByUser(user);
+		return eisCommonsService.getCurrentPositionByUser(user);
 	}
 
 	/**
@@ -298,7 +296,7 @@ public class CollectionsUtil {
 	 * @return Position object for given position name
 	 */
 	public Position getPositionByName(String positionName) {
-		return eisCommonsServiceImpl.getPositionByName(positionName);
+		return eisCommonsService.getPositionByName(positionName);
 	}
 
 	/**
@@ -439,7 +437,7 @@ public class CollectionsUtil {
 	 * @return Position object for given position id
 	 */
 	public Position getPositionById(Integer positionId) {
-		return eisCommonsServiceImpl.getPositionById(positionId);
+		return eisCommonsService.getPositionById(positionId);
 	}
 
 	/**
@@ -503,7 +501,7 @@ public class CollectionsUtil {
 		try {
 			HashMap<String, String> paramMap = new HashMap<String, String>();
 			paramMap.put("code", EisManagersUtill.getEmployeeService().getEmpForUserId(user.getId()).getCode());
-			List<EmployeeView> employeeViewList = eisService.getEmployeeInfoList(paramMap);
+			List<EmployeeView> employeeViewList = null;//(List<EmployeeView>) eisService.getEmployeeInfoList(paramMap);
 			if (!employeeViewList.isEmpty()) {
 				for (EmployeeView employeeView : employeeViewList) {
 					if (employeeView.getAssignment().getIsPrimary() == 'N') {
@@ -602,18 +600,6 @@ public class CollectionsUtil {
 		return retValue;
 	}
 
-	/**
-	 * @param eisService
-	 *            the eisService to set
-	 */
-	public void setEisService(EisUtilService eisService) {
-		this.eisService = eisService;
-	}
-
-	/**
-	 * @param searchPositionService
-	 *            the searchPositionService to set
-	 */
 	public void setSearchPositionService(SearchPositionService searchPositionService) {
 		this.searchPositionService = searchPositionService;
 	}
@@ -623,70 +609,47 @@ public class CollectionsUtil {
 
 		return searchPositionService.getPositionBySearchParameters(beginsWith, desId, deptId, Long.valueOf(jurdId), roleId, userDate, maxResults);
 
+
 	}
 
-	public void auditEventForReceiptEntity(ReceiptHeader receiptHeader, String action) {/*
-		StringBuffer details1 = new StringBuffer("Service Name: ").append(receiptHeader.getService().getServiceName());
-		StringBuffer details2 = new StringBuffer("Status: ").append(receiptHeader.getStatus().getDescription()).append('\n').append("Amount: Rs.")
-				.append(receiptHeader.getTotalAmount() != null ? receiptHeader.getTotalAmount() : "0");
-		AuditEvent auditEvent = new AuditEvent(AuditModule.COLLECTIONS, AuditEntity.COLLECTIONS_RECEIPTHEADER, action, receiptHeader.getReceiptnumber(), details1.toString());
-		auditEvent.setPkId(receiptHeader.getId());
-		auditEvent.setDetails2(details2.toString());
-		this.auditEventService.createAuditEvent(auditEvent, ReceiptHeader.class);
-	*/}
-
-	public void auditEventForChallanEntity(ReceiptHeader receiptHeader, String action) {/*
-		Challan challan = receiptHeader.getChallan();
-		if (challan != null) {
-			StringBuffer details1 = new StringBuffer("Challan Number: ").append(challan.getChallanNumber());
-			if (action != null && action.equals(WF_ACTION_NAME_NEW_CHALLAN)) {
-				details1.append('\n').append("Challan date: ").append(dateFormatter.format(challan.getChallanDate())).append('\n').append("Valid upto date: ")
-						.append(dateFormatter.format(challan.getValidUpto()));
-			} else {
-				details1.append('\n').append("Challan date: ").append(dateFormatter.format(challan.getChallanDate()));
-			}
-
-			StringBuffer details2 = new StringBuffer("Status: ").append(challan.getStatus().getDescription()).append('\n').append("Amount: Rs.")
-					.append(receiptHeader.getTotalAmount());
-			AuditEvent auditEvent = new AuditEvent(AuditModule.COLLECTIONS, AuditEntity.COLLECTIONS_CHALLAN, action, challan.getChallanNumber(), details1.toString());
-			auditEvent.setPkId(challan.getId());
-			this.auditEventService.createAuditEvent(auditEvent, Challan.class);
-			auditEvent.setDetails2(details2.toString());
-		}
-	*/}
-
-	/**
-	 * @param userId
-	 *            userId
-	 * @return User object for given userId
-	 */
 	public User getUserById(Long userId) {
 		return userService.getUserById(userId);
 	}
 
-	/**
-	 * @param user
-	 *            User
-	 * @return Location object for given user
-	 */
 	public Location getLocationByUser(Long userId) {
 		User user = userService.getUserById(userId);
 		return (Location) persistenceService.findByNamedQuery(CollectionConstants.QUERY_LOCATION_BY_USER, user.getUsername());
 	}
 
-	/**
-	 * @param auditEventService
-	 *            the auditEventService to set
-	 *//*
-	public void setAuditEventService(AuditEventService auditEventService) {
-		this.auditEventService = auditEventService;
+	public void seteisCommonsService(EisCommonsServiceImpl eisCommonsService) {
+		this.eisCommonsService = eisCommonsService;
 	}
 
-	*//**
-	 * @return the auditEventService
-	 *//*
-	public AuditEventService getAuditEventService() {
-		return auditEventService;
-	}*/
+	public void setGenericCommonsService(GenericCommonsService genericCommonsService) {
+		this.genericCommonsService = genericCommonsService;
+	}
 
+	public void setUserService(UserService userService) {
+		this.userService = userService;
+	}
+
+	public void setCommonsService(CommonsService commonsService) {
+		this.commonsService = commonsService;
+	}
+	
+	public void setBeanProvider(ApplicationContextBeanProvider beanProvider) {
+		this.beanProvider = beanProvider;
+	}
+	
+	public void setGenericDao(GenericHibernateDaoFactory genericDao) {
+		this.genericDao = genericDao;
+	}
+
+	public void setPersistenceService(PersistenceService persistenceService) {
+		this.persistenceService = persistenceService;
+	}
+
+	public void setEisService(EISServeable eisService) {
+		this.eisService = eisService;
+	}
 }

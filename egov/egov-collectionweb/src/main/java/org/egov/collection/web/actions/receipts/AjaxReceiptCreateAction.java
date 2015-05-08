@@ -401,7 +401,7 @@ public String getMISdetailsForService() {
 	}
   
 	@SuppressWarnings("unchecked")
-	@Action(value="/receipts/ajaxReceiptCreate-ajaxLoadServiceByCategory",results = { @Result(name = "serviceList")})
+	@Action(value="/receipts/ajaxReceiptCreate-ajaxLoadServiceByCategory",results = { @Result(name = "serviceList", type="redirect")})
 	public String ajaxLoadServiceByCategory(){
 		
 		if(null != parameters.get("serviceCatId") && null != parameters.get("serviceCatId")[0] && 
@@ -416,7 +416,7 @@ public String getMISdetailsForService() {
 		
 	}
 	
-	@Action(value="/receipts/ajaxReceiptCreate-ajaxFinMiscDtlsByService",results = { @Result(name = "result")})
+	@Action(value="/receipts/ajaxReceiptCreate-ajaxFinMiscDtlsByService",results = { @Result(name = "result",type="redirect")})
 	public String ajaxFinMiscDtlsByService(){
 		
 		Long serviceId = Long.valueOf(parameters.get("serviceId")[0]);
@@ -445,7 +445,7 @@ public String getMISdetailsForService() {
 		
 	}
 	
-	@Action(value="/receipts/ajaxReceiptCreate-ajaxFinAccDtlsByService",results = { @Result(name = "serviceAccDtls")})
+	@Action(value="/receipts/ajaxReceiptCreate-ajaxFinAccDtlsByService",results = { @Result(name = "serviceAccDtls",type="redirect")})
 	public String ajaxFinAccDtlsByService(){
 		
 		Long serviceId = Long.valueOf(parameters.get("serviceId")[0]);
@@ -466,7 +466,7 @@ public String getMISdetailsForService() {
 		
 	}
 	
-	@Action(value="/receipts/ajaxReceiptCreate-ajaxFinSubledgerByService",results = { @Result(name = "subledger")})
+	@Action(value="/receipts/ajaxReceiptCreate-ajaxFinSubledgerByService",results = { @Result(name = "subledger",type="redirect")})
 	public String ajaxFinSubledgerByService(){
 		Long serviceId = Long.valueOf(parameters.get("serviceId")[0]);
 		Integer deptId = Integer.valueOf(parameters.get("deptId")[0]);

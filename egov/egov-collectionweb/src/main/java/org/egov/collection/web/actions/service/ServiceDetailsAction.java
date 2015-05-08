@@ -50,6 +50,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.collection.constants.CollectionConstants;
@@ -77,6 +78,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
 @Transactional(readOnly=true)
+@Namespace("/service") 
 public class ServiceDetailsAction extends BaseFormAction {
 
 	private static final long serialVersionUID = 1L;
@@ -106,11 +108,10 @@ public class ServiceDetailsAction extends BaseFormAction {
 
 	@Override
 	public ServiceDetails getModel() {
-	
 		return serviceDetails;
 	}
 
-	@Action(value="/service/serviceDetails-newform",results = { @Result(name = NEW)})
+	@Action(value="/serviceDetails-newform",results = { @Result(name= NEW,location="/WEB-INF/jsp/service/serviceDetails-new.jsp", type="redirect")})
 	public String newform(){
 		addDropdownData("serviceCategoryList", serviceCategoryService.findAllByNamedQuery("SERVICE_CATEGORY_ALL"));
 		return NEW;

@@ -270,7 +270,7 @@ public class CashCollectionReportAction extends BaseFormAction {
 	 * 
 	 * @return index
 	 */
-	@Action(value="/reports/cashCollectionReport-criteria",results = { @Result(name = INDEX)})
+	@Action(value="/reports/cashCollectionReport-criteria",results = { @Result(name = INDEX,type="redirect")})
 	public String criteria() {
 		return INDEX;
 	}

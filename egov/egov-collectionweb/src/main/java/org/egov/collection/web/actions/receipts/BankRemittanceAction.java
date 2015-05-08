@@ -55,7 +55,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.web.actions.BaseFormAction;
 import org.springframework.transaction.annotation.Transactional;
   
-@Result(name="success", type="ServletRedirectResult.class", location = "bankRemittance")  
+@Result(name="success", type="redirect", location = "bankRemittance")  
   
 @ParentPackage("egov")  
 @Transactional(readOnly=true)
@@ -97,7 +97,7 @@ public class BankRemittanceAction extends BaseFormAction{
 		return NEW;
 	}
 
-	@Action(value="/receipts/bankRemittance-list", results = { @Result(name = NEW) })
+	@Action(value="/receipts/bankRemittance-list", results = { @Result(name = NEW,type="redirect") })
 	public String list() {
 		long startTimeMillis = System.currentTimeMillis();
 		User user=collectionsUtil.getLoggedInUser(getSession());

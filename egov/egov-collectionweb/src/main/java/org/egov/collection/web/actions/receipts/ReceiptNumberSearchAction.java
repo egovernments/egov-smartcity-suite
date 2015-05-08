@@ -51,7 +51,7 @@ import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.web.actions.BaseFormAction;
 import org.springframework.transaction.annotation.Transactional;
 
-@Result(name="success", type="ServletRedirectResult.class", location = "receiptNumberSearch-searchResults")  
+@Result(name="success", type="redirectAction", location = "receiptNumberSearch-searchResults")  
 
 @ParentPackage("egov")  
 @Transactional(readOnly=true)
@@ -61,7 +61,6 @@ public class ReceiptNumberSearchAction extends BaseFormAction {
 	private static final String SEARCH_RESULTS = "searchResults";
 	private static final String MANUALRECEIPTNUMBER_SEARCH_RESULTS = "manualReceiptNumberResults";
 	private List<ReceiptHeader> receiptNumberList = new ArrayList<ReceiptHeader>();
-	private List<ReceiptHeader> manualReceiptNumberList  = new ArrayList<ReceiptHeader>();
 	private String query;
 	
 	public String getQuery() {

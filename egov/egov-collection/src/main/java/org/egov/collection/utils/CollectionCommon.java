@@ -93,7 +93,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovUtils;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.model.instrument.InstrumentHeader;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 public class CollectionCommon {
@@ -103,10 +102,9 @@ public class CollectionCommon {
     protected PersistenceService persistenceService;
     private ReceiptHeaderService receiptHeaderService;
 
-    @Autowired
     private CommonsServiceImpl commonsServiceImpl;
     private BoundaryDAO boundaryDAO;
-   private EgovCommon egovCommon;
+    private EgovCommon egovCommon;
     private CollectionsUtil collectionsUtil;
     private FinancialsUtil financialsUtil;
 

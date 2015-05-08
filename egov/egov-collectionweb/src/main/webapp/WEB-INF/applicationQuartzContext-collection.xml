@@ -60,7 +60,7 @@
 		<property name="applicationContextSchedulerContextKey" value="applicationQuartzContext-collection" />   
         <property name="schedulerContextAsMap">
         	<map>
-				<entry key="userManager" value-ref="userManager"/>
+				<entry key="userService" value-ref="userService"/>
 				<entry key="cities" value-ref="cities"/>
 			</map>
         </property>

@@ -62,11 +62,11 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @ParentPackage("egov")
 @Results( {
-		@Result(name = "submissionReportCash", type = "ServletActionRedirectResult.class", location = "cashCollectionReport", params = {
+		@Result(name = "submissionReportCash", type = "redirectAction", location = "cashCollectionReport", params = {
 				"actionName", "cashCollectionReport.action",
 				"method", "submissionReport.action",
 				"namespace", "/reports" }),
-		@Result(name = "submissionReportCheque", type = "ServletActionRedirectResult.class", location = "chequeCollectionReport", params = {
+		@Result(name = "submissionReportCheque", type = "redirectAction", location = "chequeCollectionReport", params = {
 				"actionName", "chequeCollectionReport.action",
 				"method", "submissionReport.action",
 				"namespace", "/reports" }) })
@@ -401,7 +401,6 @@ public class CollectionsWorkflowAction extends BaseFormAction {
 				changedReceipt.transition(true).start().withSenderName(receiptHeader.getCreatedBy().getName()).withComments("Receipt Approved - Workflow ends")
  				.withStateValue(CollectionConstants.WF_STATE_NEW).withOwner(collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy())).withDateInfo(new Date());
 			}
-			collectionsUtil.auditEventForReceiptEntity(changedReceipt, changedReceipt.getState().getValue());
 		}
 
 		// Add the selected receipt ids to session. This is used later by the

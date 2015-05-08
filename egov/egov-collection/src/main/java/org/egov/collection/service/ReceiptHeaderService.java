@@ -106,7 +106,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         return entityManager.unwrap(Session.class);
     }*/
 
-	@Autowired
 	private CollectionsUtil collectionsUtil;
 	private CollectionsNumberGenerator collectionsNumberGenerator;
 	private FinancialsUtil financialsUtil;
@@ -1402,6 +1401,22 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 		instrumentDepositeMap.put("ispaycheque", instrumentHeader.getIsPayCheque());
 		instrumentDepositeMap.put("payinid", voucherHeader.getId());
 		return instrumentDepositeMap;
+	}
+
+	public void setCollectionsUtil(CollectionsUtil collectionsUtil) {
+		this.collectionsUtil = collectionsUtil;
+	}
+
+	public void setFinancialsUtil(FinancialsUtil financialsUtil) {
+		this.financialsUtil = financialsUtil;
+	}
+
+	public void setPersistenceService(PersistenceService persistenceService) {
+		this.persistenceService = persistenceService;
+	}
+
+	public void setCommonsServiceImpl(CommonsServiceImpl commonsServiceImpl) {
+		this.commonsServiceImpl = commonsServiceImpl;
 	}
 
 }

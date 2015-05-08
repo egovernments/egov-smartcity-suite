@@ -227,7 +227,7 @@ public class ChallanAction extends BaseFormAction {
 	 * This method is invoked when the user clicks on Create Challan from Menu Tree
 	 * @return
 	 */
-	@Action(value="/receipts/challan-newform",results = { @Result(name = NEW) })
+	@Action(value="/receipts/challan-newform",results = { @Result(name = NEW,type="redirect") })
 	public String newform(){
 		//addDropdownData("designationMasterList",collectionsUtil.
 				//getDesignationsAllowedForChallanApproval(collectionsUtil.getLoggedInUser(getSession()),receiptHeader));
@@ -267,8 +267,6 @@ public class ChallanAction extends BaseFormAction {
 		challanService.workflowtransition(
 				receiptHeader.getChallan(), position, actionName, approvalRemarks);
 
-		collectionsUtil.auditEventForChallanEntity(receiptHeader, actionName);
-		
 		return SUCCESS;
 	}
 	
@@ -279,7 +277,7 @@ public class ChallanAction extends BaseFormAction {
 	 * @return the string
 	 */
 	@ValidationErrorPage(value = "createReceipt")
-	@Action(value="/receipts/challan-createReceipt",results = { @Result(name = CollectionConstants.CREATERECEIPT)})
+	@Action(value="/receipts/challan-createReceipt",results = { @Result(name = CollectionConstants.CREATERECEIPT,type="redirect")})
 	@Transactional
 	public String createReceipt(){
 		if(challanNumber!=null && !"".equals(challanNumber)){
@@ -334,8 +332,6 @@ public class ChallanAction extends BaseFormAction {
 		addActionMessage(getText("challan.savechallan.success",
 				new String[]{receiptHeader.getChallan().getChallanNumber()}));
 
-		collectionsUtil.auditEventForChallanEntity(receiptHeader, actionName);
-		
 		if(CollectionConstants.WF_ACTION_NAME_VALIDATE_CHALLAN.equals(actionName)){
 			return SUCCESS;
 		}
@@ -348,7 +344,7 @@ public class ChallanAction extends BaseFormAction {
 	 * 
 	 * @return
 	 */
-	@Action(value="/receipts/challan-viewChallan" ,results = { @Result(name = VIEW) })
+	@Action(value="/receipts/challan-viewChallan" ,results = { @Result(name = VIEW,type="redirect") })
 	public String viewChallan(){
 		if(challanId==null){
 			receiptHeader=receiptHeaderService.findById(receiptId, false);
@@ -452,8 +448,6 @@ public class ChallanAction extends BaseFormAction {
 		ReceiptHeader[] receipts = new ReceiptHeader[1];
 		receipts[0]=receiptHeader;
 
-		collectionsUtil.auditEventForReceiptEntity(receiptHeader, RCPT_CREATE);
-		
 		try {
 			reportId=collectionCommon.generateReport(
 					receipts, getSession(), true);
@@ -592,7 +586,6 @@ public class ChallanAction extends BaseFormAction {
 				LOGGER.info(" Created a receipt in PENDING status in lieu of the cancelled receipt ");
 			}
 		}
-		collectionsUtil.auditEventForReceiptEntity(receiptHeader, RCPT_CANCEL);
 		return SUCCESS;
 	}
 	

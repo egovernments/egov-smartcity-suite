@@ -569,7 +569,7 @@ public class ReceiptAction extends BaseFormAction {
 		return receiptDetail;
 	}
 
-	@Action(value="/receipts/receipt-newform",results = { @Result(name = NEW)})
+	@Action(value="/receipts/receipt-newform",results = { @Result(name = NEW,type="redirect")})
 	public String newform() {
 		String manualReceiptInfoRequired = collectionsUtil.getAppConfigValue(
 				CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.MANUALRECEIPTINFOREQUIRED);
@@ -637,7 +637,6 @@ public class ReceiptAction extends BaseFormAction {
 			populateAndPersistReceipts();
 	
 			ReceiptHeader rh = null ;//modelPayeeList.get(0).getReceiptHeaders().iterator().next();
-			collectionsUtil.auditEventForReceiptEntity(rh, RCPT_CREATE);
 			long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
 			LOGGER.info("$$$$$$ Receipt Persisted with Receipt Number: " + rh.getReceiptnumber()
 					+ (rh.getConsumerCode() != null ? " and consumer code: " + rh.getConsumerCode() : "")
@@ -1226,7 +1225,7 @@ public class ReceiptAction extends BaseFormAction {
 	}
 
 	@ValidationErrorPage(value = "error")
-	@Action(value="/receipts/receipt-cancel",results = { @Result(name = CANCEL)})
+	@Action(value="/receipts/receipt-cancel",results = { @Result(name = CANCEL,type="redirect")})
 	public String cancel() {
 		if (getSelectedReceipts() != null && getSelectedReceipts().length > 0) {
 			receipts = new ReceiptHeader[selectedReceipts.length];
@@ -1319,7 +1318,6 @@ public class ReceiptAction extends BaseFormAction {
 					+ receiptHeaderToBeCancelled.getReceiptnumber() + "; Consumer Code: "
 					+ receiptHeaderToBeCancelled.getConsumerCode());
 		}
-		collectionsUtil.auditEventForReceiptEntity(receiptHeaderToBeCancelled, RCPT_CANCEL);
 		target = "cancel";
 		return INDEX;
 	}

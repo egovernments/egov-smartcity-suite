@@ -191,7 +191,7 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
 	 * 
 	 * @return index
 	 */
-	@Action(value="/reports/receiptRegisterReport!criteria", results = { @Result(name = INDEX)})
+	@Action(value="/reports/receiptRegisterReport!criteria", results = { @Result(name = INDEX,type="redirect")})
 	public String criteria() {
 		// Setup drop down data for department list
 		addRelatedEntity("department", Department.class, "deptName");

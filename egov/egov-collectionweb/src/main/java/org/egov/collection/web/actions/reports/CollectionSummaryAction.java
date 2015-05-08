@@ -136,7 +136,7 @@ public class CollectionSummaryAction extends ReportFormAction {
 	 * 
 	 * @return index
 	 */
-	@Action(value="/reports/collectionSummary-criteria",results = { @Result(name = INDEX)})
+	@Action(value="/reports/collectionSummary-criteria",results = { @Result(name = INDEX,type="redirect")})
 	public String criteria() {
 		// Setup drop down data for department list
 		addRelatedEntity("department", Department.class, "deptName");

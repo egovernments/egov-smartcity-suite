@@ -53,7 +53,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.Action;
 
-@Result(name=Action.SUCCESS, type="ServletRedirectResult.class", location = "bankSearch-searchResults")  
+@Result(name=Action.SUCCESS, type="redirect", location = "bankSearch-searchResults")  
 
 @ParentPackage("egov")  
 @Transactional(readOnly=true)

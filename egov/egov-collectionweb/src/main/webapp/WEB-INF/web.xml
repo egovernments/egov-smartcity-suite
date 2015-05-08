@@ -157,6 +157,7 @@
 	<filter-mapping>
 		<filter-name>threadLocalsHandlerFilter</filter-name>
 		<url-pattern>/*</url-pattern>
+		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
 	
 	<filter-mapping>
@@ -165,15 +166,16 @@
 	</filter-mapping>
 	
 	<filter-mapping>
-		<filter-name>securityFilterChain</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	
-	<filter-mapping>
 		<filter-name>sessionAttributeHandlerFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	
+		<filter-mapping>
+		<filter-name>securityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+		<url-pattern>*.jsp</url-pattern>
+		<url-pattern>*.action</url-pattern>
+		<url-pattern>/j_security_check</url-pattern>
+	</filter-mapping>
     <filter-mapping>
 		<filter-name>ResponseOverrideFilter</filter-name>
 		<url-pattern>*.jsp</url-pattern>
@@ -187,7 +189,6 @@
 	<filter-mapping>
 		<filter-name>sitemesh</filter-name>
 		<url-pattern>*.action</url-pattern>
-		<url-pattern>*.do</url-pattern>
 		<url-pattern>*.jsp</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
@@ -203,7 +204,6 @@
 		<servlet-class>org.egov.infstr.reporting.viewer.ReportViewer</servlet-class>
 		<load-on-startup>3</load-on-startup>
 	</servlet>
-	
 	<servlet-mapping>
 		<servlet-name>reportViewer</servlet-name>
 		<url-pattern>/reportViewer</url-pattern>
@@ -231,15 +231,15 @@
 			<taglib-uri>/WEB-INF/struts-dojo-tags.tld</taglib-uri>
 			<taglib-location>/WEB-INF/taglib/struts-dojo-tags.tld</taglib-location>
 		</taglib>
-		<taglib>
-			<taglib-uri>http://www.opensymphony.com/sitemesh/decorator</taglib-uri>
-			<taglib-location>/WEB-INF/taglib/sitemesh-decorator.tld</taglib-location>
-		</taglib>
-		<taglib>
-			<taglib-uri>http://www.opensymphony.com/sitemesh/page</taglib-uri>
-			<taglib-location>/WEB-INF/taglib/sitemesh-page.tld</taglib-location>
-		</taglib>
+		<jsp-property-group>
+    		<url-pattern>*.jsp</url-pattern>
+    		<page-encoding>UTF-8</page-encoding>
+    	</jsp-property-group> 
 	</jsp-config>
+	<welcome-file-list>
+		<welcome-file>/index.jsp</welcome-file>
+	</welcome-file-list>
+	
 	<session-config>
 		<cookie-config>
 			<path>/</path>

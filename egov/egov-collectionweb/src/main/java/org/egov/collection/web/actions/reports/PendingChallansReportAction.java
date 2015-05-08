@@ -74,7 +74,7 @@ public class PendingChallansReportAction extends ReportFormAction {
 	}
 
 	@Override
-	@Action(value="/reports/pendingChallansReport-criteria",results = { @Result(name = INDEX)})
+	@Action(value="/reports/pendingChallansReport-criteria",results = { @Result(name = INDEX,type="redirect")})
 	public String criteria() {
 		// Setup drop down data for department list
 		addRelatedEntity("department", Department.class, "deptName");

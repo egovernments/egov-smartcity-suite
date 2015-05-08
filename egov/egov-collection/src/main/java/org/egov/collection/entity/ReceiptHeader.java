@@ -41,6 +41,7 @@ package org.egov.collection.entity;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -327,7 +328,7 @@ public class ReceiptHeader extends StateAware {
 	 * @return Returns list of instruments of this instrument type. Useful to
 	 *         get all cheque instruments or all bank instruments.
 	 */
-	/*public List<InstrumentHeader> getInstruments(String type) {
+	public List<InstrumentHeader> getInstruments(String type) {
 		ArrayList<InstrumentHeader> instrumentList = new ArrayList<InstrumentHeader>();
 		for (InstrumentHeader instrument : getReceiptInstrument()) {
 			if (type.equals(instrument.getInstrumentType().getType())) {
@@ -335,7 +336,7 @@ public class ReceiptHeader extends StateAware {
 			}
 		}
 		return instrumentList;
-	}*/
+	}
 
 	/**
 	 * @return the receiptVoucher

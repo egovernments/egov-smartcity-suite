@@ -187,7 +187,7 @@ private static final long serialVersionUID = 1L;
 		return REPORT;
 	}
 	
-	@Action(value="/reports/chequeCollectionReport-criteria",results = { @Result(name = INDEX)})
+	@Action(value="/reports/chequeCollectionReport-criteria",results = { @Result(name = INDEX,type="redirect")})
 	public String criteria() {
 		return INDEX;
 	}
