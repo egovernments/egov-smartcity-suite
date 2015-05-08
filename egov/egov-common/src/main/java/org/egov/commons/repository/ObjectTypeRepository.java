@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.commons.repository;
+package org.egov.commons.repository;
 
 import org.egov.commons.ObjectType;
 import org.springframework.data.jpa.repository.JpaRepository;

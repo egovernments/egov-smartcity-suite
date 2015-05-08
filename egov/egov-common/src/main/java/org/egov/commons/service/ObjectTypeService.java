@@ -37,10 +37,10 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.commons.service;
+package org.egov.commons.service;
 
 import org.egov.commons.ObjectType;
-import org.egov.infra.commons.repository.ObjectTypeRepository;
+import org.egov.commons.repository.ObjectTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

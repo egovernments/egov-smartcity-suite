@@ -1,0 +1,1 @@
+update eg_wf_types set link='/pgr/complaint/update/:ID' where "type"='Complaint'
