@@ -73,10 +73,10 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
     @Query("select b from Boundary b where b.isHistory='N' AND b.id=:id AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate))")
     Boundary findActiveBoundaryByIdAndAsOnDate(@Param("id") Long id, @Param("asOnDate") Date asOnDate);
 
-    @Query("select b from Boundary b where and b.isHistory='N' AND b.id=:id")
+    @Query("select b from Boundary b where b.isHistory='N' AND b.id = :id ")
     Boundary findActiveBoundaryById(@Param("id") Long id);
 
-    @Query("select b from Boundary b where b.isHistory='N' AND b.boundaryType.id=:boundaryTypeId order by b.name")
+    @Query("select b from Boundary b where b.isHistory='N' AND b.boundaryType.id =:boundaryTypeId order by b.name")
     List<Boundary> findActiveBoundariesByBoundaryTypeId(@Param("boundaryTypeId") Long boundaryTypeId);
 
     @Query("select b from Boundary b where b.isHistory='N' AND b.boundaryType.hierarchyType = :hierarchyType AND b.boundaryType.hierarchy = :hierarchyLevel AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate)) order by b.name")
