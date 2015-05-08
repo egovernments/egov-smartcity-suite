@@ -70,10 +70,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class ComplaintTypeService {
 
     private final ComplaintTypeRepository complaintTypeRepository;
-
-    @PersistenceContext
+    
+    @Autowired
     private EntityManager entityManager;
-
+    
     @Autowired
     public ComplaintTypeService(final ComplaintTypeRepository complaintTypeRepository) {
         this.complaintTypeRepository = complaintTypeRepository;
@@ -107,8 +107,7 @@ public class ComplaintTypeService {
     }
 
     public ComplaintType load(final Long id) {
-        // FIXME alternative ?
-        return (ComplaintType) entityManager.unwrap(Session.class).load(ComplaintType.class, id);
+        return complaintTypeRepository.getOne(id);
     }
 
     public Page<ComplaintType> getListOfComplaintTypes(Integer pageNumber, Integer pageSize) {

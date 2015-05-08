@@ -47,7 +47,7 @@ import static org.egov.pgr.entity.enums.ComplaintStatus.FORWARDED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.REGISTERED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.REJECTED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.WITHDRAWN;
-import static org.egov.pgr.utils.constants.CommonConstants.DASH_DELIM;
+import static org.egov.pgr.utils.constants.PGRConstants.DASH_DELIM;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -66,6 +66,7 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.entity.enums.UserType;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
@@ -75,7 +76,6 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.notification.HTTPSMS;
 import org.egov.infstr.services.EISServeable;
-import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.enums.ComplaintStatus;
 import org.egov.pgr.repository.ComplaintRepository;
@@ -128,7 +128,7 @@ public class ComplaintService {
     private CommonsService commonsService;
 
     @Autowired
-    private BoundaryDAO boundaryDAO;
+    private BoundaryService boundaryService;
 
     @Autowired
     private EmailUtils emailUtils;
@@ -166,7 +166,7 @@ public class ComplaintService {
         if (complaint.getLocation() == null && complaint.getLat() != 0.0 && complaint.getLng() != 0.0) {
             final Long bndryId = commonsService.getBndryIdFromShapefile(complaint.getLat(), complaint.getLng());
             if (bndryId != null && bndryId != 0L) {
-                final Boundary location = boundaryDAO.getAllBoundaryById(bndryId);
+                final Boundary location = boundaryService.getBoundaryById(bndryId);
                 complaint.setLocation(location);
             }
 

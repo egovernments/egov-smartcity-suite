@@ -48,7 +48,6 @@ import org.egov.commons.service.ObjectTypeService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.EmailUtils;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.notification.HTTPSMS;
@@ -56,7 +55,7 @@ import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.Escalation;
 import org.egov.pgr.repository.ComplaintRepository;
 import org.egov.pgr.repository.EscalationRepository;
-import org.egov.pgr.utils.constants.CommonConstants;
+import org.egov.pgr.utils.constants.PGRConstants;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
 import org.joda.time.DateTime;
@@ -88,9 +87,6 @@ public class EscalationService {
     @Autowired
     private ComplaintRepository complaintRepository;
 
-    @Autowired
-    private GenericHibernateDaoFactory genericHibernateDaoFactory;
-    
     @Autowired
     private HTTPSMS httpSMS;
 
@@ -126,9 +122,9 @@ public class EscalationService {
     @Transactional
     public void escalateComplaint() {
         final AppConfigValues appConfigValue = appConfigValuesDAO.getConfigValuesByModuleAndKey(
-                CommonConstants.MODULE_NAME, "SENDEMAILFORESCALATION").get(0);
+                PGRConstants.MODULE_NAME, "SENDEMAILFORESCALATION").get(0);
         final Boolean isEmailNotificationSet = "YES".equalsIgnoreCase(appConfigValue.getValue());
-        final ObjectType objectType = objectTypeService.getObjectTypeByName(CommonConstants.EG_OBJECT_TYPE_COMPLAINT);
+        final ObjectType objectType = objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
         final List<Complaint> escalationComplaints = complaintService.getComplaintsEligibleForEscalation();
 
         for (final Complaint complaint : escalationComplaints) {

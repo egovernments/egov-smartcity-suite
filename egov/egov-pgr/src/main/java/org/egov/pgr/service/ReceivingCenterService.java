@@ -41,12 +41,8 @@ package org.egov.pgr.service;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.pgr.entity.ReceivingCenter;
 import org.egov.pgr.repository.ReceivingCenterRepository;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,8 +51,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ReceivingCenterService {
 
-    @PersistenceContext
-    private EntityManager entityManager;
     private final ReceivingCenterRepository receivingCenterRepository;
 
     @Autowired
@@ -73,6 +67,6 @@ public class ReceivingCenterService {
     }
 
     public ReceivingCenter load(final Long receivingCenterId) {
-        return (ReceivingCenter) entityManager.unwrap(Session.class).load(ReceivingCenter.class, receivingCenterId);
+        return receivingCenterRepository.getOne(receivingCenterId);
     }
 }

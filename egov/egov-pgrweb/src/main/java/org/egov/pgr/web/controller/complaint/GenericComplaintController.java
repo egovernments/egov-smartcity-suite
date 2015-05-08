@@ -52,7 +52,7 @@ import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.service.ReceivingCenterService;
-import org.egov.pgr.utils.constants.CommonConstants;
+import org.egov.pgr.utils.constants.PGRConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -93,7 +93,7 @@ public abstract class GenericComplaintController {
                             throw new EGOVRuntimeException("Error occurred while getting inputstream",e);
                         }
                     })
-                    .collect(Collectors.toSet()), CommonConstants.MODULE_NAME);
+                    .collect(Collectors.toSet()), PGRConstants.MODULE_NAME);
         } else {
             return null;
         }

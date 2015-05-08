@@ -80,9 +80,9 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.name"/></label>
+						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.name"/><span class="mandatory"></span></label>
 						<div class="col-sm-6 add-margin">
-							<form:input  class="form-control" path="complainant.name" id="f-name" placeholder="Name"/>
+							<form:input  class="form-control" path="complainant.name" id="f-name" placeholder="Name" required="required"/>
 							<form:errors path="complainant.name" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
