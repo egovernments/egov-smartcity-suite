@@ -188,15 +188,6 @@ public class RptBudgetList {
 		} catch (SQLException ex) {
 			LOGGER.error("ERROR: " + ex.toString(), ex);
 			throw new TaskFailedException();
-		} finally {
-			try {
-				//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(connection, pstmt);
-			} catch (Exception efinally) {
-				//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(connection, pstmt);
-				LOGGER
-						.error("Exception in Finally Block " + efinally,
-								efinally);
-			}
 		}
 		if(LOGGER.isInfoEnabled())     LOGGER.info("returning from java file");
 		return dataList;

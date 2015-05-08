@@ -114,9 +114,8 @@ public class BankReconciliationAction extends DispatchAction {
 		try{
 				if(LOGGER.isInfoEnabled())     LOGGER.info(">>> inside toLoad");
 				BankBranch bb=new BankBranch();
-				//This fix is for Phoenix Migration.
-				Map hm=null;//bb.getBankBranch(null);
-				//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().setAttribute("bankBranchList", hm);
+				Map hm=bb.getBankBranch();
+				req.getSession().setAttribute("bankBranchList", hm);
 				if(LOGGER.isDebugEnabled())     LOGGER.debug(">>> before ending BankReconciliationAction");
 				target = "success";
 
@@ -142,10 +141,9 @@ public class BankReconciliationAction extends DispatchAction {
 					org.apache.struts.action.DynaActionForm bankRecForm = (org.apache.struts.action.DynaActionForm)form;
 					BankBranch bb=new BankBranch();
 					if(LOGGER.isDebugEnabled())     LOGGER.debug("bank id  "+bankRecForm.get("bankId"));
-					//This fix is for Phoenix Migration.
-					HashMap hm=null;//bb.getAccNumber(((String)bankRecForm.get("bankId")),null);
+					HashMap hm=bb.getAccNumber(((String)bankRecForm.get("bankId")));
 					if(LOGGER.isDebugEnabled())     LOGGER.debug(">>> after list creation BankReconciliationAction");
-					//This fix is for Phoenix Migration.reqHibernateUtil.getCurrentSession().setAttribute("accNumberList1", hm);
+					req.getSession().setAttribute("accNumberList1", hm);
 					if(LOGGER.isInfoEnabled())     LOGGER.info(">>> before ending BankReconciliationAction");
 					target = "success";
 
@@ -171,10 +169,9 @@ public class BankReconciliationAction extends DispatchAction {
 				org.apache.struts.action.DynaActionForm bankRecForm = (org.apache.struts.action.DynaActionForm)form;
 				BankBranch bb=new BankBranch();
 				if(LOGGER.isInfoEnabled())     LOGGER.info("bank id  "+bankRecForm.get("bankId"));
-				//This fix is for Phoenix Migration.
-				HashMap hm=null;//bb.getAccNumber(((String)bankRecForm.get("bankId")),null);
+				HashMap hm=bb.getAccNumber(((String)bankRecForm.get("bankId")));
 				if(LOGGER.isDebugEnabled())     LOGGER.debug(">>> after list creation BankReconciliationAction");
-				//This fix is for Phoenix Migration.reqHibernateUtil.getCurrentSession().setAttribute("accNumberList3", hm);
+				req.getSession().setAttribute("accNumberList3", hm);
 				if(LOGGER.isDebugEnabled())     LOGGER.debug(">>> before ending BankReconciliationAction");
 				target = "success";
 
@@ -210,12 +207,10 @@ public class BankReconciliationAction extends DispatchAction {
 				Date fromDate = sdf.parse((String)bankRecForm.get("recFromDate"));
 				recFromDate=StringUtils.isNotBlank(recFromDate)?formatter.format(sdf.parse((String)bankRecForm.get("recFromDate"))):"";
 				if(LOGGER.isInfoEnabled())     LOGGER.info("recFromDate  "+recFromDate);
-				//This fix is for Phoenix Migration.
-				ArrayList al=null;//br.getRecordsToReconcile((String)bankRecForm.get("accId"),recFromDate,recToDate,null);
+				ArrayList al=br.getRecordsToReconcile((String)bankRecForm.get("accId"),recFromDate,recToDate);
 				if(LOGGER.isDebugEnabled())     LOGGER.debug(">>> after list creation BankReconciliationAction");
 				req.setAttribute("brsDetails", al);
-				//This fix is for Phoenix Migration.
-				BigDecimal accountBalance = null;//cm.getAccountBalance(recToDate,null,(String)bankRecForm.get("accId")).setScale(2, BigDecimal.ROUND_HALF_UP);
+				BigDecimal accountBalance = cm.getAccountBalance(recToDate,(String)bankRecForm.get("accId")).setScale(2, BigDecimal.ROUND_HALF_UP);
 				req.setAttribute("accountBalance", ""+accountBalance);
 
 				String bankAccIdStr= (String)bankRecForm.get("accId");
@@ -279,8 +274,7 @@ public class BankReconciliationAction extends DispatchAction {
 					String recDate = formatter.format(dt);
 					Date fromDate = finYearByDate.getStartingDate();
 					if(LOGGER.isInfoEnabled())     LOGGER.info("recDate  "+recDate);
-					//This fix is for Phoenix Migration.
-					BigDecimal accountBalance = null;//cm.getAccountBalance(recDate,null,(String)bankRecForm.get("accId")).setScale(2, BigDecimal.ROUND_HALF_UP);
+					BigDecimal accountBalance = cm.getAccountBalance(recDate,(String)bankRecForm.get("accId")).setScale(2, BigDecimal.ROUND_HALF_UP);
 					req.setAttribute("accountBalance", ""+accountBalance);
 
 					String bankAccIdStr= (String)bankRecForm.get("accId");

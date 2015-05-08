@@ -78,8 +78,6 @@ public class SchemeMaster extends AbstractTask{
 		}catch(Exception e){
 //			dc.addMessage("exilRPError",e.getMessage());
 			throw new TaskFailedException(e.toString());
-		}finally{
-			//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(conn,null);
 		}
 	}
 	

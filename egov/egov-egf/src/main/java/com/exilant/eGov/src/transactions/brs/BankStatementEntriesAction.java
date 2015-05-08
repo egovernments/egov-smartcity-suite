@@ -63,6 +63,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.jackrabbit.core.SessionFactory;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -71,6 +72,7 @@ import org.apache.struts.actions.DispatchAction;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.Bankaccount;
+import org.egov.commons.Bankreconciliation;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
@@ -84,6 +86,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.instrument.InstrumentOtherDetails;
+import org.egov.model.instrument.InstrumentType;
 import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.services.instrument.InstrumentService;
 import org.egov.utils.Constants;
@@ -131,8 +134,8 @@ public class BankStatementEntriesAction extends DispatchAction {
 		try{
 				if(LOGGER.isInfoEnabled())     LOGGER.info(">>> inside toLoad");
 				BankBranch bb=new BankBranch();
-				HashMap hm=null;//bb.getBankBranch(null);
-				//This fix is for Phoenix Migration.reqHibernateUtil.getCurrentSession().setAttribute("bankBranchList", hm);
+				HashMap hm=bb.getBankBranch();
+				req.getSession().setAttribute("bankBranchList", hm);
 				CommonsService serviceLocal;
 				if(LOGGER.isInfoEnabled())     LOGGER.info(">>> before ending BankStatementEntriesAction");
 				target = SUCCESS;
@@ -159,8 +162,8 @@ public class BankStatementEntriesAction extends DispatchAction {
 					org.apache.struts.action.DynaActionForm bankRecForm = (org.apache.struts.action.DynaActionForm)form;
 					BankBranch bb=new BankBranch();
 					if(LOGGER.isInfoEnabled())     LOGGER.info("bank id  "+bankRecForm.get("bankId"));
-					HashMap hm=null;//bb.getAccNumber(((String)bankRecForm.get("bankId")),null);
-					//This fix is for Phoenix Migration.	reqHibernateUtil.getCurrentSession().setAttribute("accNumberList2", hm);
+					HashMap hm=bb.getAccNumber(((String)bankRecForm.get("bankId")));
+					req.getSession().setAttribute("accNumberList2", hm);
 					if(LOGGER.isDebugEnabled())     LOGGER.debug(">>> before ending BankStatementEntriesAction");
 					target = SUCCESS;
 
@@ -186,12 +189,10 @@ public class BankStatementEntriesAction extends DispatchAction {
 				org.apache.struts.action.DynaActionForm bankRecForm = (org.apache.struts.action.DynaActionForm)form;
 				if(LOGGER.isInfoEnabled())     LOGGER.info("bankacc id  "+bankRecForm.get(ACCID));
 				BankEntries be=new BankEntries();
-				//This fix is for Phoenix Migration.
-				ArrayList al=null;//be.getRecords((String)bankRecForm.get(ACCID),null);
+				ArrayList al=be.getRecords((String)bankRecForm.get(ACCID));
 				//List instrumentList=getInstrumentListByAccountId(Integer.valueOf((String)bankRecForm.get(ACCID)));
 				Fund fu=new Fund();
-				//This fix is for Phoenix Migration.
-				HashMap fudList=null;//fu.getFundList(null);
+				HashMap fudList=fu.getFundList(null);
 				
 				
 				List departmentList = deptManager.getAllDepartments();
@@ -276,7 +277,7 @@ private List getInstrumentListByAccountId(Integer bankAccId) {
 					List<InstrumentHeader> instrumentList=null;
 					setInstrumentRelatedServices();
 					
-					int userId=0;//This fix is for Phoenix Migration.((Integer)reqHibernateUtil.getCurrentSession().getAttribute("com.egov.user.LoginUserId")).intValue();
+					int userId=((Integer)req.getSession().getAttribute("com.egov.user.LoginUserId")).intValue();
 					for(int i=0; i < refNo.length; i++)
 					{
 						if(LOGGER.isDebugEnabled())     LOGGER.debug(">... bankEntryId[i] >....."+bankEntryId[i]);
@@ -585,33 +586,26 @@ private List getInstrumentListByAccountId(Integer bankAccId) {
 	 * 
 	 */
 	private void setInstrumentRelatedServices() {
-		//This fix is for Phoenix Migration.
-		/*instrumentService=new InstrumentService();
+		instrumentService=new InstrumentService();
 		persistenceService=new PersistenceService();
-		persistenceService.setSessionFactory(new SessionFactory());
 		instrumentService.setPersistenceService( persistenceService);
 		
 		PersistenceService<InstrumentHeader, Long> iHeaderService= new PersistenceService<InstrumentHeader, Long>();
 		iHeaderService.setType(InstrumentHeader.class);
-		iHeaderService.setSessionFactory(new SessionFactory());
 		instrumentService.setInstrumentHeaderService(iHeaderService);
 	
 		PersistenceService<InstrumentType, Long> iTypeService= new PersistenceService<InstrumentType, Long>();
 		iTypeService.setType(InstrumentType.class);
-		iTypeService.setSessionFactory(new SessionFactory());
 		instrumentService.setInstrumentTypeService(iTypeService);
 		PersistenceService<InstrumentVoucher, Long> iVoucherService= new PersistenceService<InstrumentVoucher, Long>();
 		iVoucherService.setType(InstrumentVoucher.class);
-		iVoucherService.setSessionFactory(new SessionFactory());
 		instrumentService.setInstrumentVouherService(iVoucherService);
 		PersistenceService<Bankreconciliation, Integer> bankreconciliationService= new PersistenceService<Bankreconciliation, Integer>();
 		bankreconciliationService.setType(Bankreconciliation.class);
-		bankreconciliationService.setSessionFactory(new SessionFactory());
 		instrumentService.setBankreconciliationService(bankreconciliationService);
 		PersistenceService<InstrumentOtherDetails, Long> iOtherDetailsService= new PersistenceService<InstrumentOtherDetails, Long>();
 		iOtherDetailsService.setType(InstrumentOtherDetails.class);
-		iOtherDetailsService.setSessionFactory(new SessionFactory());
-		instrumentService.setInstrumentOtherDetailsService(iOtherDetailsService);*/
+		instrumentService.setInstrumentOtherDetailsService(iOtherDetailsService);
 	}
 	
 

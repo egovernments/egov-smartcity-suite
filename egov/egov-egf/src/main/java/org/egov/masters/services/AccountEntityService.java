@@ -49,6 +49,7 @@ import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.masters.model.AccountEntity;
 import org.hibernate.Query;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,7 +100,7 @@ public class AccountEntityService extends PersistenceService<AccountEntity, Inte
 				}
 			
 			 List<EntityType> entities=new ArrayList<EntityType>();
-			 Query entitysQuery = null;//This fix is for Phoenix Migration.HibernateUtil.getCurrentSession().createQuery(" from AccountEntity where id in ( :IDS )");
+			 Query entitysQuery = HibernateUtil.getCurrentSession().createQuery(" from AccountEntity where id in ( :IDS )");
 			 entitysQuery.setParameterList("IDS", ids);
 			 entities = entitysQuery.list();
 			return entities;

@@ -86,7 +86,7 @@ public class RecoverySetupAction extends DispatchAction {
 	public ActionForward toView(ActionMapping mapping, ActionForm form, HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 		String target = "";
 		try {
-			//This fix is for Phoenix Migration.reqHibernateUtil.getCurrentSession().setAttribute("mode", "searchView");
+			req.getSession().setAttribute("mode", "searchView");
 			target = "success";
 		} catch (Exception ex) {
 			target = "error";
@@ -102,7 +102,7 @@ public class RecoverySetupAction extends DispatchAction {
 		String target = "";
 		try {
 			
-			//This fix is for Phoenix Migration.reqHibernateUtil.getCurrentSession().setAttribute("mode", "searchModify");
+			req.getSession().setAttribute("mode", "searchModify");
 			target = "success";
 		} catch (Exception ex) {
 			target = "error";
@@ -121,7 +121,7 @@ public class RecoverySetupAction extends DispatchAction {
 			RecoverySetupDelegate rsDelegate = new RecoverySetupDelegate();
 			rsDelegate.getRecoveryAndPopulateBean(rsf);
 			
-			//This fix is for Phoenix Migration.reqHibernateUtil.getCurrentSession().setAttribute("mode", "view");
+			req.getSession().setAttribute("mode", "view");
 			target = "success";
 			
 		} catch (Exception ex) {
@@ -141,7 +141,7 @@ public class RecoverySetupAction extends DispatchAction {
 			RecoverySetupForm rsf = (RecoverySetupForm) form;
 			RecoverySetupDelegate rsDelegate = new RecoverySetupDelegate();
 			rsDelegate.getRecoveryAndPopulateBean(rsf);
-			//This fix is for Phoenix Migration.reqHibernateUtil.getCurrentSession().setAttribute("mode", "modify");
+			req.getSession().setAttribute("mode", "modify");
 			target = "success";
 			
 		} catch (Exception ex) {
@@ -162,7 +162,7 @@ public class RecoverySetupAction extends DispatchAction {
 				resetToken(req);
 			RecoverySetupForm rsf = (RecoverySetupForm) form;
 			RecoverySetupDelegate rsDelegate = new RecoverySetupDelegate();
-			Integer userId = (Integer) 0;//This fix is for Phoenix Migration.reqHibernateUtil.getCurrentSession().getAttribute("com.egov.user.LoginUserId");
+			Integer userId = (Integer) req.getSession().getAttribute("com.egov.user.LoginUserId");
 			rsDelegate.createRecovery(rsf, userId);
 			
 			req.setAttribute("buttonType", req.getParameter("button"));
@@ -193,7 +193,7 @@ public class RecoverySetupAction extends DispatchAction {
 				resetToken(req);
 			RecoverySetupForm rsf = (RecoverySetupForm) form;
 			RecoverySetupDelegate rsDelegate = new RecoverySetupDelegate();
-			Integer userId = (Integer) 0;//This fix is for Phoenix Migration.reqHibernateUtil.getCurrentSession().getAttribute("com.egov.user.LoginUserId");
+			Integer userId = (Integer) req.getSession().getAttribute("com.egov.user.LoginUserId");
 			
 			rsDelegate.modifyRecovery(rsf, userId);
 			

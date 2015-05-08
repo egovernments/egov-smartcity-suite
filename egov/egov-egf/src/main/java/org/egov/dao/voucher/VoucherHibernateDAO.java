@@ -63,9 +63,11 @@ import org.egov.infstr.ValidationException;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.Constants;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
@@ -139,8 +141,8 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
 	public CVoucherHeader getVoucherHeaderById(final Long voucherId){
 		
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("VoucherHibernateDAO | getVoucherHeaderById | Start ");
-		List<CVoucherHeader> vhList = null;//HibernateUtil.getCurrentSession().createCriteria(CVoucherHeader.class).
-	//	add(Restrictions.eq("id", voucherId)).list();///This fix is for Phoenix Migration.
+		List<CVoucherHeader> vhList = (List<CVoucherHeader>) HibernateUtil.getCurrentSession().createCriteria(CVoucherHeader.class).
+				add(Restrictions.eq("id", voucherId)).list();
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("numer of voucher with voucherheaderid "+voucherId+"="+vhList.size());
 		return vhList.get(0);
 	}
@@ -154,17 +156,15 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
 	@SuppressWarnings("unchecked")
 	public List<CGeneralLedgerDetail> getGeneralledgerdetail(final Integer gledgerId){
 	
-		Criteria criteria = null;//HibernateUtil.getCurrentSession().createCriteria(CGeneralLedgerDetail.class);
+		Criteria criteria = HibernateUtil.getCurrentSession().createCriteria(CGeneralLedgerDetail.class);
 		criteria.add(Restrictions.eq("generalLedgerId", gledgerId));
-		//This fix is for Phoenix Migration.
 		return criteria.list();
 		
 	}
 	public Accountdetailtype getAccountDetailById(final Integer accDetailTypeId){
 		
-		Criteria criteria = null;/*HibernateUtil.getCurrentSession().createCriteria(Accountdetailtype.class);
-		criteria.add(Restrictions.eq("id", accDetailTypeId));*/
-		//This fix is for Phoenix Migration.
+		Criteria criteria = HibernateUtil.getCurrentSession().createCriteria(Accountdetailtype.class);
+		criteria.add(Restrictions.eq("id", accDetailTypeId));
 		return (Accountdetailtype)criteria.list().get(0);
 		
 	}
@@ -210,7 +210,7 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
 	}
 	public void deleteVoucherDetailByVHId(final Object voucherHeaderId){
 		
-		/*try {
+		try {
 			Query qry =HibernateUtil.getCurrentSession().createQuery("delete from VoucherDetail where voucherHeaderId.id=:vhid");
 			qry.setLong("vhid", Long.parseLong(voucherHeaderId.toString()));
 			qry.executeUpdate();
@@ -219,7 +219,7 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
 			throw new HibernateException("exception in voucherHibDao while deleting from voucher detail"+e);
 		}catch (EGOVRuntimeException e) {
 			throw new EGOVRuntimeException("exception in voucherHibDao while deleting from voucher detail"+e);
-		}*///This fix is for Phoenix Migration.
+		}
 		
 	}
 	@Transactional
@@ -230,7 +230,7 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
 			/**
 			 *  Deleting record from general ledger detail.
 			 */
-			/*List<CGeneralLedger> glList = getGLInfo(Long.parseLong(voucherHeaderId.toString()));
+			List<CGeneralLedger> glList = getGLInfo(Long.parseLong(voucherHeaderId.toString()));
 			for (CGeneralLedger generalLedger : glList) {
 				List<CGeneralLedgerDetail> glDetailList =(List<CGeneralLedgerDetail>)HibernateUtil.getCurrentSession().
 				createCriteria(CGeneralLedgerDetail.class).add(Restrictions.eq("generalLedgerId", Integer.valueOf(generalLedger.getId().toString()))).list();
@@ -242,7 +242,7 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
 				Query qry =HibernateUtil.getCurrentSession().createQuery("delete from CGeneralLedgerDetail where generalLedgerId=:glId");
 				qry.setInteger("glId", Integer.valueOf(generalLedger.getId().toString()));
 				qry.executeUpdate();
-			}*///This fix is for Phoenix Migration.
+			}
 			/**
 			 *  Deleting record from general ledger .
 			 */

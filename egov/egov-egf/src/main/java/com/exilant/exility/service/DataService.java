@@ -74,17 +74,13 @@ public class DataService implements ExilServiceInterface{
 		Connection con = null;
 		try{
 			JobService jobService = JobService.getInstance();
-			con = null;//This fix is for Phoenix Migration.EgovDatabaseManager.openConnection();
-			//con.setReadOnly(true);
+			con = null;
 			jobService.doService(dc,con);
 
 		}catch(Exception e){
 			LOGGER.error("Inside doService"+e.getMessage(),e);
 			dc.addMessage("exilDBError", e.toString());
-		}finally{
-			//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(con,null);
 		}
-
 		/*try{
 			con.close();
 		}catch (Exception e){

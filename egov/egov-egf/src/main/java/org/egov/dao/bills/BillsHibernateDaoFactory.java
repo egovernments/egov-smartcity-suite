@@ -52,8 +52,6 @@ public class BillsHibernateDaoFactory extends BillsDaoFactory
 	}
 	protected Session getCurrentSession()
 	{
-		//.HibernateUtil.beginTransaction();
-		//This fix is for Phoenix Migration.
 		return HibernateUtil.getCurrentSession();
 	}
 	@Override

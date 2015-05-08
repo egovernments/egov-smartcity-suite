@@ -86,14 +86,12 @@ public class ContractorBillHibernateDAO extends GenericHibernateDAO
         StringBuffer qryStr = new StringBuffer();
         List<Contractorbilldetail> billDetailList=null;
         qryStr.append("select distinct cb From org.egov.billsaccounting.model.Contractorbilldetail cb where cb.voucherHeaderId in ( select vh.id from CVoucherHeader vh where vh.status = 0)");
-        //This fix is for Phoenix Migration.
-        //qry =HibernateUtil.getCurrentSession().createQuery(qryStr.toString()) ;
+       qry =HibernateUtil.getCurrentSession().createQuery(qryStr.toString()) ;
                     
         if(statusId!=null)
         {
             qryStr.append(" and (cb.egwStatus.id in (:statusId) )");
-          //This fix is for Phoenix Migration.
-            //qry =HibernateUtil.getCurrentSession().createQuery(qryStr.toString());
+            qry =HibernateUtil.getCurrentSession().createQuery(qryStr.toString());
         }
         
         if(billNo!=null && !billNo.equals(""))
@@ -105,13 +103,11 @@ public class ContractorBillHibernateDAO extends GenericHibernateDAO
         if(billDate!=null)
         {
             qryStr.append(" and (cb.billdate = :billdate)");
-          //This fix is for Phoenix Migration.
-            //qry =HibernateUtil.getCurrentSession().createQuery(qryStr.toString()) ;
+            qry =HibernateUtil.getCurrentSession().createQuery(qryStr.toString()) ;
         }
         if(wdCode != null && !wdCode.equals(""))
         {
             qryStr.append(" and (upper(cb.worksdetail.code) like :wdCode)");
-          //This fix is for Phoenix Migration.
             
         }    
         
@@ -134,33 +130,28 @@ public class ContractorBillHibernateDAO extends GenericHibernateDAO
         StringBuffer qryStr = new StringBuffer();
         List<Contractorbilldetail> finalBillDetailList=null;
         qryStr.append("select distinct cb From org.egov.billsaccounting.model.Contractorbilldetail cb, Worksdetail wd where cb.worksdetail=wd.id and wd.statusid!=8");
-      //This fix is for Phoenix Migration.
-        //qry =HibernateUtil.getCurrentSession().createQuery(qryStr.toString()) ;
+        qry =HibernateUtil.getCurrentSession().createQuery(qryStr.toString()) ;
         
         if(billNo!=null && !billNo.equals(""))
         {
             qryStr.append(" and (upper(cb.billnumber) like :billnumber)");
-          //This fix is for Phoenix Migration.
-            //qry =HibernateUtil.getCurrentSession().createQuery(qryStr.toString()) ;
+            qry =HibernateUtil.getCurrentSession().createQuery(qryStr.toString()) ;
         }
        
         if(billDate!=null)
         {
             qryStr.append(" and (cb.billdate = :billdate)");
-          //This fix is for Phoenix Migration.
-            //qry =HibernateUtil.getCurrentSession().createQuery(qryStr.toString()) ;
+            qry =HibernateUtil.getCurrentSession().createQuery(qryStr.toString()) ;
         }            
         if(statusId!=null)
         {
             qryStr.append(" and (cb.egwStatus.id in (:statusId) )");
-          //This fix is for Phoenix Migration.
-            //qry =HibernateUtil.getCurrentSession().createQuery(qryStr.toString());
+            qry =HibernateUtil.getCurrentSession().createQuery(qryStr.toString());
         }
         
         if(billType!=null && !billType.equals(""))
         {
             qryStr.append(" and cb.billtype =:billType)");
-          //This fix is for Phoenix Migration.
             qry =HibernateUtil.getCurrentSession().createQuery(qryStr.toString()) ;
         }
        

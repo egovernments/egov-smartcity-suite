@@ -91,13 +91,6 @@ public class OpeningBalance
 		catch(SQLException exception){
 			LOGGER.error("EXP="+exception.getMessage(),exception);
 		}
-		finally{
-			try{
-				//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(con,null);
-			}catch(Exception e){
-				LOGGER.error("Error in release connection",e);
-			}
-		}
 
 		return al;
 

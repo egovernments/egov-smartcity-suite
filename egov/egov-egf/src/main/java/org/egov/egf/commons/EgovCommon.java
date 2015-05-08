@@ -806,14 +806,14 @@ public class EgovCommon {
 					"configuration.parameter.missing",
 					"boundaryforaccounts is missing in appconfig master")));
 
-		List<BoundaryType> listBoundType = null;/*//This fix is for Phoenix Migration. (List<BoundaryType>) persistenceService
+		List<BoundaryType> listBoundType = (List<BoundaryType>) persistenceService
 				.findAllBy(
 						"from BoundaryType where lower(name)=? and lower(heirarchyType.name)='administration'",
-						boundaryTypeval.toLowerCase());*/
+						boundaryTypeval.toLowerCase());
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("listBoundType size   = " + listBoundType.size());
 		Long boundaryTypeId = listBoundType.get(0).getId();
-		List<Boundary> listBndryLvl = null;/*(List<Boundary>) persistenceService.findAllBy("from Boundary where boundaryType.id=?",
-						boundaryTypeId);*///This fix is for Phoenix Migration.
+		List<Boundary> listBndryLvl = (List<Boundary>) persistenceService.findAllBy("from Boundary where boundaryType.id=?",
+						boundaryTypeId);
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("listBndryLvl size   = " + listBndryLvl.size());
 		if (null != listBndryLvl && !listBndryLvl.isEmpty()) {
 			Boundary boundary = listBndryLvl.get(0);
@@ -1356,20 +1356,19 @@ public class EgovCommon {
 
 	@SuppressWarnings("unchecked")
 	public List<Bankbranch> getActiveBankBranchForActiveBanks() {
-		return null;//This fix is for Phoenix Migration.persistenceService.findAllBy("from Bankbranch bankBranch where  bank.isactive=1  and isactive=1");
+		return persistenceService.findAllBy("from Bankbranch bankBranch where  bank.isactive=1  and isactive=1");
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<CChartOfAccounts> getSubledgerAccountCodesForAccountDetailTypeAndNonSubledgers(
 			Integer accountDetailTypeId) {
-		/*if (accountDetailTypeId == 0 || accountDetailTypeId == -1)
+		if (accountDetailTypeId == 0 || accountDetailTypeId == -1)
 			return persistenceService
 					.findAllBy("from CChartOfAccounts  a LEFT JOIN  fetch a.chartOfAccountDetails  b where size(b) = 0 and a.isActiveForPosting=1 and a.classification=4 order by a.id");
 		else
 			return persistenceService
 					.findAllBy("from CChartOfAccounts  a LEFT JOIN  fetch a.chartOfAccountDetails  b where (size(b) = 0 or b.detailTypeId.id=?)and a.isActiveForPosting=1 and a.classification=4 order by a.id",
-							accountDetailTypeId);*/
-		return null;//This fix is for Phoenix Migration.
+							accountDetailTypeId);
 	}
 
 /**

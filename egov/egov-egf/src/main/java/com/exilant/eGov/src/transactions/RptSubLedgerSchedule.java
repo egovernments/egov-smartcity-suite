@@ -328,8 +328,6 @@ public class RptSubLedgerSchedule
 			GeneralLedgerBean gb=null;
 	 		resultset = pst.list();
 			PersistenceService ps = new PersistenceService();
-			//This fix is for Phoenix Migration.
-		//	ps.setSessionFactory(new SessionFactory());
 			Accountdetailtype accountdetailtype = (Accountdetailtype) ps.find(" from Accountdetailtype where id=?", Integer.valueOf(accEntityId));
 			EntityType entity;
 			for(Object[] element : resultset){

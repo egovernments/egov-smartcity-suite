@@ -61,6 +61,7 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.utils.seqgen.DatabaseSequence;
 import org.egov.infstr.utils.seqgen.DatabaseSequenceFirstTimeException;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.Query;
@@ -593,8 +594,7 @@ public class CommonMethodsImpl implements CommonMethodsI {
 		CFiscalPeriod fiscalPeriodObj=(CFiscalPeriod) persistenceService.find("from CFiscalPeriod where id=?",Long.parseLong(fiscalPeriod));
 		//Sequence name will be SQ_U_DBP_CGVN_FP7 for txnType U/DBP/CGVN and fiscalPeriodIdStr 7
 		String sequenceName = VoucherHelper.sequenceNameFor(txnType, fiscalPeriodObj.getName());
-		//This fix is for Phoenix Migration.
-		Long runningNumber = null;//= DatabaseSequence.named(sequenceName).createIfNecessary().nextVal();
+		Long runningNumber = DatabaseSequence.named(sequenceName,persistenceService.getSession()).createIfNecessary().nextVal();
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("----- Txn Number : "+runningNumber);
 		//---
 		
@@ -678,8 +678,7 @@ public class CommonMethodsImpl implements CommonMethodsI {
 			CFiscalPeriod fiscalPeriodObj=(CFiscalPeriod) persistenceService.find("from CFiscalPeriod where id=?",Long.parseLong(fiscalPeriod));
 			//Sequence name will be SQ_U_DBP_CGVN_FP7 for txnType U/DBP/CGVN and fiscalPeriodIdStr 7
 			String sequenceName = VoucherHelper.sequenceNameFor(txnType, fiscalPeriodObj.getName());
-			//This fix is for Phoenix Migration.
-			Long runningNumber = null;//DatabaseSequence.named(sequenceName).createIfNecessary().nextVal();
+			Long runningNumber = DatabaseSequence.named(sequenceName,persistenceService.getSession()).createIfNecessary().nextVal();
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("----- Txn Number : "+runningNumber);
 			//---
 			
@@ -751,8 +750,7 @@ public class CommonMethodsImpl implements CommonMethodsI {
 				CFiscalPeriod fiscalPeriodObj=(CFiscalPeriod) persistenceService.find("from CFiscalPeriod where id=?",Long.parseLong(fiscalPeriod));
 				//Sequence name will be SQ_U_DBP_CGVN_FP7 for txnType U/DBP/CGVN and fiscalPeriodIdStr 7
 				String sequenceName = VoucherHelper.sequenceNameFor(txnType, fiscalPeriodObj.getName());
-				//This fix is for Phoenix Migration.
-				Long runningNumber = null;// DatabaseSequence.named(sequenceName).createIfNecessary().nextVal();
+				Long runningNumber = DatabaseSequence.named(sequenceName,persistenceService.getSession()).createIfNecessary().nextVal();
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("----- Running Number : "+runningNumber);
 				//---
 				retVal = runningNumber.toString();

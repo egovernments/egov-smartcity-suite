@@ -107,9 +107,7 @@ public class GISIncomeExpenditure {
 
 		} catch (Exception e) {
 			LOGGER.error("Exp=" + e.getMessage(),e);
-		} finally {
-			//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(connection, pst);
-		}
+		} 
 		return hmAcccodeMap;
 	}
 

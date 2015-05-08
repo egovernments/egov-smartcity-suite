@@ -46,6 +46,7 @@
 
 package org.egov.eb.webservice.tneb.corp;
 
+
 public class FetchData_ServiceLocator {
 /*extends org.apache.axis.client.Service implements FetchData_Service {
 
@@ -79,17 +80,16 @@ public class FetchData_ServiceLocator {
         FetchDataPortWSDDServiceName = name;
     }
 
-    public FetchData_PortType getFetchDataPort() {
-    	/*throws javax.xml.rpc.ServiceException {
-    }
+    public FetchData_PortType getFetchDataPort() throws javax.xml.rpc.ServiceException {
+    
        java.net.URL endpoint;
         try {
             endpoint = new java.net.URL(FetchDataPort_address);
         }
         catch (java.net.MalformedURLException e) {
             throw new javax.xml.rpc.ServiceException(e);
-        }*/
-        return null;////This fix is for Phoenix Migration.getFetchDataPort(endpoint);
+        }
+        return getFetchDataPort(endpoint);
     }
 
     public FetchData_PortType getFetchDataPort(java.net.URL portAddress ){
@@ -138,8 +138,7 @@ public class FetchData_ServiceLocator {
      * If this service has no port for the given interface,
      * then ServiceException is thrown.
      */
-    public java.rmi.Remote getPort(javax.xml.namespace.QName portName, Class serviceEndpointInterface) {
-    	/*throws javax.xml.rpc.ServiceException {
+    public java.rmi.Remote getPort(javax.xml.namespace.QName portName, Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
     
         if (portName == null) {
             return getPort(serviceEndpointInterface);
@@ -150,10 +149,9 @@ public class FetchData_ServiceLocator {
         }
         else  {
             java.rmi.Remote _stub = getPort(serviceEndpointInterface);
-            ((org.apache.axis.client.Stub) _stub).setPortName(portName);
+           // ((Object) _stub).setPortName(portName);
             return _stub;
-        }*/
-    	return null;
+        }
     	//This fix is for Phoenix Migration.
     }
 

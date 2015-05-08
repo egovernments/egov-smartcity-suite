@@ -216,10 +216,5 @@ public class EBConsumer extends BaseModel implements java.io.Serializable, Entit
 		return null;
 	}
 
-/*	@Override
-	public EgwStatus getEgwStatus() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-*///This fix is for Phoenix Migration.
+
 }

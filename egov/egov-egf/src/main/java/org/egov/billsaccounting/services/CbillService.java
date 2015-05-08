@@ -59,7 +59,7 @@ import org.egov.model.bills.EgBillregister;
  * @version 1.0
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
- *///This fix is for Phoenix Migration.
+ */
 public interface CbillService 
 {
 	

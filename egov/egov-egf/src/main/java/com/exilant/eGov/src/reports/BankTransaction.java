@@ -103,13 +103,6 @@ public class BankTransaction
 			{
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("EXP="+exception.getMessage(),exception);
 			}
-			finally{
-						try{
-							//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(con,null);
-						}catch(Exception e){
-							LOGGER.error(e.getMessage(),e);
-						}
-			}		
 		return bt;
 	}
 	 public void isCurDate(String VDate) throws TaskFailedException{
@@ -125,7 +118,6 @@ public class BankTransaction
 				}
 			}catch(Exception ex){
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("Exception ",ex);
-				//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(con,null);
 				throw new TaskFailedException("Date Should be within the today's date");
 			}
 		}

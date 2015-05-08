@@ -88,6 +88,7 @@ import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.models.Script;
 import org.egov.infstr.services.ScriptService;
 import org.egov.infstr.utils.DateUtils;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBillSubType;
@@ -167,7 +168,7 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
 	public void prepare() {
 		super.prepare();
 		if (ebDetails.getId() != null) {
-			ebDetails = null;////This fix is for Phoenix Migration.ebDetailsService.findById(ebDetails.getId(), true);
+			ebDetails = ebDetailsService.findById(ebDetails.getId(), true);
 			eBBillGroup = EBUtils.getEBBillGroup(ebDetails);
 			String[] billGroupParts = eBBillGroup.split("-");
 			monthAndYear = EBUtils.getShortMonthName(Integer.valueOf(billGroupParts[0])) + "-" + billGroupParts[1];
@@ -181,7 +182,7 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
 		addDropdownData("billingCycles", EBUtils.TNEB_BILLING_TYPES);
 		
 		if (ebDetails.getId() != null) {
-			ebDetails = null;//ebDetailsService.findById(ebDetails.getId(), true);
+			ebDetails = ebDetailsService.findById(ebDetails.getId(), true);
 			//This fix is for Phoenix Migration.
 			eBBillGroup = EBUtils.getEBBillGroup(ebDetails);
 			String[] billGroupParts = eBBillGroup.split("-");
@@ -719,11 +720,10 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
 		
 		egBillregistermis.setPayto(appConfigPayTo.get(0).getValue());
 */
-		EgBillSubType egBillSutType =null; /*(EgBillSubType)HibernateUtil.getCurrentSession()
+		EgBillSubType egBillSutType =(EgBillSubType) HibernateUtil.getCurrentSession()
 				.createQuery("from EgBillSubType where name = :name and expenditureType = :expType")
 				.setString("name", EBConstants.BILL_SUB_TYPE_NAME)
-				.setString("expType", EBConstants.BILL_EXPENDITURE_TYPE).list().get(0);
-*///This fix is for Phoenix Migration.
+				.setString("expType", EBConstants.BILL_EXPENDITURE_TYPE).list();
 		egBillregistermis.setEgBillSubType(egBillSutType);
 		egBillregistermis.setFund(fund);
 		egBillregistermis.setEgDepartment(department);

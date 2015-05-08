@@ -55,6 +55,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.jackrabbit.core.SessionFactory;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFiscalPeriod;
 import org.egov.exceptions.EGOVException;
@@ -981,8 +982,6 @@ public class EGovernCommon extends AbstractTask{
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug(" In EGovernCommon :getEg_Voucher method ");
 		PersistenceService persistenceService = new PersistenceService();
-		//This fix is for Phoenix Migration.
-		//persistenceService.setSessionFactory(new SessionFactory());
 		persistenceService.setType(CFiscalPeriod.class);
 		CFiscalPeriod fiscalPeriod=(CFiscalPeriod) persistenceService.find("from CFiscalPeriod where id=?",Long.parseLong(fiscalPeriodIdStr));
 		Long cgvn=null ;

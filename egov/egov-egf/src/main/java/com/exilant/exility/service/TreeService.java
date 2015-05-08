@@ -84,8 +84,6 @@ public class TreeService implements ExilServiceInterface{
 		{
 			LOGGER.error("SQLTask execution failed"+e.getMessage(),e);
 			dc.addMessage("exilServerError",e.getMessage());
-		}finally{
-			//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(con,null);
 		}
 
 	}

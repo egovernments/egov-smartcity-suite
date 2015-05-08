@@ -52,6 +52,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.eb.domain.master.entity.EBConsumer;
+import org.egov.eb.domain.master.entity.TargetArea;
 import org.egov.eb.service.master.EBConsumerService;
 import org.egov.eb.service.master.EBDetailsService;
 import org.egov.eb.service.master.TargetAreaService;
@@ -60,6 +61,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
+import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.services.masters.AccountdetailkeyService;
@@ -155,7 +157,7 @@ public class EBConsumerAction extends SearchFormAction{
 @Action(value="/master/eBConsumer-beforeEdit")
 	public String beforeEdit(){
 		prepareNewForm();
-	/*	this.consumer = (EBConsumer) eBConsumerService.find("from EBConsumer where id=?", this.consumer.getId());
+		this.consumer = (EBConsumer) eBConsumerService.find("from EBConsumer where id=?", this.consumer.getId());
 		if(consumer.getWard()!=null){
 		TargetArea ta = targetAreaService.find("select ta from TargetArea ta ,TargetAreaMappings tam where ta.id = tam.area.id and tam.boundary.id=?",consumer.getWard().getId());
 		if(ta!=null){
@@ -163,7 +165,7 @@ public class EBConsumerAction extends SearchFormAction{
 			consumer.setTargetArea(ta.getName());
 		       }
 		   }
-		}*///This fix is for Phoenix Migration.
+		}
 		 if(ebDetailsService.hasValidEBDetails(consumer.getId())){
 			hasValidEBDetails = "true";
 		 }
@@ -180,7 +182,7 @@ public class EBConsumerAction extends SearchFormAction{
 @Action(value="/master/eBConsumer-beforeView")
 	public String beforeView(){
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("..Inside Before View Method..");
-		/*
+		
 		this.consumer = (EBConsumer) eBConsumerService.find("from EBConsumer where id=?", this.consumer.getId());
 		if(consumer.getWard()!=null){
 		TargetArea ta = targetAreaService.find("select ta from TargetArea ta ,TargetAreaMappings tam where ta.id = tam.area.id and tam.boundary.id=?",consumer.getWard().getId());
@@ -189,7 +191,7 @@ public class EBConsumerAction extends SearchFormAction{
 			consumer.setTargetArea(ta.getName());
 		      }
 		   }
-		}*///This fix is for Phoenix Migration.
+		}
 		this.mode=FinancialConstants.STRUTS_RESULT_PAGE_VIEW;
 		return FinancialConstants.STRUTS_RESULT_PAGE_VIEW ;
 	}	
@@ -232,7 +234,7 @@ public class EBConsumerAction extends SearchFormAction{
 			regexFields = {
 					/*@RegexFieldValidator(fieldName = "code", expression = REGEXP_ALPHANUMERIC_DOT_SLASH, message = "", key = "message.validation.validChar"),
 					@RegexFieldValidator(fieldName = "name", expression = REGEXP_ALPHANUMERIC_DOT_COLON_SLASH, message = "", key = "message.validation.validChar")*/
-			})//This fix is for Phoenix Migration.
+			})
 	@Transactional
 	@ValidationErrorPage(value=NEW)
 	public String create() {    
@@ -246,13 +248,13 @@ public class EBConsumerAction extends SearchFormAction{
 		consumer.setCreatedBy(getLoggedInUser());
 		consumer.setCreatedDate(new Date());
 		try {
-			/*resultSet =  eBConsumerService.findAllBy("from EBConsumer where upper(code)=? or upper(name) = ?", consumer.getCode().toUpperCase(),consumer.getName().toUpperCase());
+			resultSet =  eBConsumerService.findAllBy("from EBConsumer where upper(code)=? or upper(name) = ?", consumer.getCode().toUpperCase(),consumer.getName().toUpperCase());
 			if(resultSet.size()==0){
 				eBConsumerService.persist(consumer);
 			createAccountdetailkey();
 			}else{
 				addActionMessage(getText("TNEB Account Already exists"));
-			}*/
+			}
 		} catch (ValidationException e) {
 			LOGGER.error("ValidationException in create EBConsumer" + e.getMessage());
 			throw e;
@@ -261,11 +263,11 @@ public class EBConsumerAction extends SearchFormAction{
 			throw new ValidationException(Arrays.asList(new ValidationError("An error occured contact Administrator",
 					"An error occured contact Administrator")));
 		}
-/*		
+		
 		if(resultSet.size()==0){
 		addActionMessage(getText("TNEB Account Created Successfully"));
 		}
-		*/
+		
 		if (LOGGER.isDebugEnabled()) 			LOGGER.debug("TNEB Account Created successfully");
 		prepareNewForm();
 		mode = "create";
@@ -393,7 +395,7 @@ public class EBConsumerAction extends SearchFormAction{
 	}
 	
 	private User getLoggedInUser() {
-		 return null;////This fix is for Phoenix Migration.(User)persistenceService.getSession().load(User.class, Integer.valueOf(EGOVThreadLocals.getUserId()));
+		 return (User)persistenceService.getSession().load(User.class, Long.valueOf(EGOVThreadLocals.getUserId()));
 	}
 	
 	public String getMode() {

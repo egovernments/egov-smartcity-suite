@@ -97,8 +97,6 @@ if(LOGGER.isDebugEnabled())     LOGGER.debug(" tasks executed in " + i + " for s
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Exp="+e.getMessage());
 			//if(LOGGER.isDebugEnabled())     LOGGER.debug("DataBase error in ListService"));
 			dc.addMessage("exilDBError", e.getMessage());
-		}finally{
-			//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(con,null);
 		}
 
 		/*try

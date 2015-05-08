@@ -124,8 +124,6 @@ public class DescriptionService implements ExilServiceInterface
 		{
 			LOGGER.error("SQLTask failed "+e.getMessage(),e);
 			dc.addMessage("exilDBError", e.getMessage());
-		}finally{
-			//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(con,null);
 		}
 	}
 	/*public static void main(String[] args)

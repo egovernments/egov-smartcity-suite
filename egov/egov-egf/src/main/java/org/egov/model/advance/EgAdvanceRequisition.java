@@ -157,6 +157,6 @@ public EgAdvanceRequisition(Long id, String advanceRequisitionNumber,
 
 public String toString()
 {
-	return "";//This fix is for Phoenix Migration.("EgAdvanceRequisition ( Id :  "+ (null != this.id?this.id:"") + "EgAdvanceRequisition arftype: " +(null != this.getArftype()?this.getArftype():"") +")");
+	return ("EgAdvanceRequisition ( Id :  "+ (null != this.getId()?this.getId():"") + "EgAdvanceRequisition arftype: " +(null != this.getArftype()?this.getArftype():"") +")");
 }
 }

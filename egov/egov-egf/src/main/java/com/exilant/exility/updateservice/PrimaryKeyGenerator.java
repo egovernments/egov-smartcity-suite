@@ -87,11 +87,7 @@ public class PrimaryKeyGenerator
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Exp="+e.getMessage());
 			if(LOGGER.isDebugEnabled())     LOGGER.debug("Error getting value from sequence "+e.toString());
 		}
-		finally
-		{
-			//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(con,null);
-		}
-
+		
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("PK for "+tableName+" is "+key);
 		return key;
 	}

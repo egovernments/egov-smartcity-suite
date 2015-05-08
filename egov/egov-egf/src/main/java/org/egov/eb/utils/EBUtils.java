@@ -51,6 +51,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.service.CommonsService;
 import org.egov.eb.domain.master.entity.EBDetails;
 import org.egov.infstr.ValidationError;
@@ -67,7 +68,7 @@ public class EBUtils {
 	public static final BigDecimal EBBILL_VARIANCE_PERCENTAGE2 = new BigDecimal("20");
 	@Autowired
 	private static CommonsService commonsService ;
-	
+	private static EgwStatusHibernateDAO egwStatusHibernateDAO;
 	public static final List<String> TNEB_BILLING_TYPES = new ArrayList<String>() {
 		{
 			add(EBConstants.Billing_Odd_Month);
@@ -131,10 +132,8 @@ public class EBUtils {
 	 * @return
 	 */
 	public static EgwStatus getBillEgwStatusByCode(String statusCode) {
-		return null;/*CommonsDaoFactory.getDAOFactory().getEgwStatusDAO()
-				.getStatusByModuleAndCode(STATUS_TNEB_BILL, statusCode);
-				//This fix is for Phoenix Migration.
-*/	}
+		return egwStatusHibernateDAO.getStatusByModuleAndCode(STATUS_TNEB_BILL, statusCode);
+	}
 	
 	/**
 	 * Gives the current financial year
@@ -160,4 +159,13 @@ public class EBUtils {
 		CFinancialYear financialYear = commonsService.getFinancialYearByDate(date);
 		return financialYear;
 	}
+
+	public EgwStatusHibernateDAO getEgwStatusHibernateDAO() {
+		return egwStatusHibernateDAO;
+	}
+
+	public void setEgwStatusHibernateDAO(EgwStatusHibernateDAO egwStatusHibernateDAO) {
+		this.egwStatusHibernateDAO = egwStatusHibernateDAO;
+	}
+	
 }

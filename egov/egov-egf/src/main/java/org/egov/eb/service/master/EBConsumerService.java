@@ -49,12 +49,12 @@ import org.egov.commons.utils.EntityType;
 import org.egov.eb.domain.master.entity.EBConsumer;
 import org.egov.eb.utils.EBConstants;
 import org.egov.infstr.ValidationException;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.commons.Position;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
-public class EBConsumerService implements EntityTypeService{
-//extends PersistenceService<EBConsumer, Long>   {
+public class EBConsumerService extends PersistenceService<EBConsumer, Long> implements EntityTypeService    {
 
 	private static final String FALSE = "false";
 	private static final boolean TRUE = false;

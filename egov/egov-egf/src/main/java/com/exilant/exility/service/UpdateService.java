@@ -84,15 +84,7 @@ public class UpdateService implements ExilServiceInterface
 			{
 				LOGGER.error("Exp="+se.getMessage(),se);
 			}
-		} finally {
-			try{
-				//con.close();
-				//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(con,null);
-			}catch (Exception e){
-				LOGGER.error("EgovDatabaseManager release connection failed "+e.getMessage(),e);
-			}
-		}
-
+		} 
 	}
 
 

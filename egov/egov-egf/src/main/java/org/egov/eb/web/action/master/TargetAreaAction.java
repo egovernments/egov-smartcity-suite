@@ -138,8 +138,7 @@ public class TargetAreaAction extends BaseFormAction {
 		List<Boundary> wards = new ArrayList<Boundary>();
 		wards = persistenceService.findAllBy("from Boundary where boundaryType.id in(select id from BoundaryType where name='Ward') " +
 				" and id not in (select boundary.id from TargetAreaMappings) ORDER BY NAME");
-		//this.targetArea = targetAreaService.findByNamedQuery("TARGETAREABYID", this.targetArea.getId());
-		//This fix is for Phoenix Migration.
+		this.targetArea = targetAreaService.findByNamedQuery("TARGETAREABYID", this.targetArea.getId());
 		this.targetAreaMappingsList.addAll(targetArea.getTargetAreaMappings());
 		for (TargetAreaMappings mapping : targetAreaMappingsList) {
 			wards.add(mapping.getBoundary());
@@ -173,8 +172,7 @@ public class TargetAreaAction extends BaseFormAction {
 @Action(value="/master/targetArea-beforeView")
 	public String beforeView(){
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("..Inside Before View Method..");
-		//this.targetArea = targetAreaService.findByNamedQuery("TARGETAREABYID", this.targetArea.getId());
-		//This fix is for Phoenix Migration.
+		this.targetArea = targetAreaService.findByNamedQuery("TARGETAREABYID", this.targetArea.getId());
 		this.targetAreaMappingsList.addAll(targetArea.getTargetAreaMappings());
 		return FinancialConstants.STRUTS_RESULT_PAGE_VIEW;
 	}	
@@ -183,8 +181,7 @@ public class TargetAreaAction extends BaseFormAction {
 	@ValidationErrorPage(EDIT) 
 	public String edit() {
 		
-		TargetArea targetAreaFromDB = null;//targetAreaService.findByNamedQuery("TARGETAREABYID", this.targetArea.getId());
-		//This fix is for Phoenix Migration.
+		TargetArea targetAreaFromDB =targetAreaService.findByNamedQuery("TARGETAREABYID", this.targetArea.getId());
 		Set<TargetAreaMappings> oldMappings = targetAreaFromDB.getTargetAreaMappings();
 		Set<TargetAreaMappings> newMappings = new HashSet<TargetAreaMappings>(targetAreaMappingsResultList);	
 		
@@ -311,7 +308,7 @@ public class TargetAreaAction extends BaseFormAction {
 	}
 
 	private User getLoggedInUser() {
-		return null;//This fix is for Phoenix Migration.(User) persistenceService.getSession().load(User.class, Integer.valueOf(EGOVThreadLocals.getUserId()));
+		return (User) persistenceService.getSession().load(User.class, Long.valueOf(EGOVThreadLocals.getUserId()));
 	}
 
 	public TargetAreaService getTargetAreaService() {

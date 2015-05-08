@@ -53,7 +53,7 @@ public class FetchDataProxy implements FetchData_PortType {
   }
   
   private void _initFetchDataProxy() {
-    /*try {
+    try {
       fetchData_PortType = (new FetchData_ServiceLocator()).getFetchDataPort();
       if (fetchData_PortType != null) {
         if (_endpoint != null)
@@ -63,7 +63,7 @@ public class FetchDataProxy implements FetchData_PortType {
       }
       
     }
-    catch (javax.xml.rpc.ServiceException serviceException) {}*///This fix is for Phoenix Migration.
+    catch (javax.xml.rpc.ServiceException serviceException) {}
   }
   
   public String getEndpoint() {
@@ -71,10 +71,10 @@ public class FetchDataProxy implements FetchData_PortType {
   }
   
   public void setEndpoint(String endpoint) {
-   /* _endpoint = endpoint;
+    _endpoint = endpoint;
     if (fetchData_PortType != null)
       ((javax.xml.rpc.Stub)fetchData_PortType)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
-    *///This fix is for Phoenix Migration.
+   
   }
   
   public FetchData_PortType getFetchData_PortType() {

@@ -67,19 +67,18 @@ public class SecurityGuard {
 				principalName = principalName.substring(0,userLen);
 			}
 
-			//This fix is for Phoenix Migration.
-			/*dc.addValue("current_loginName",principalName);
-			if (requestHibernateUtil.getCurrentSession().getAttribute("current_UserID") == null)
+			dc.addValue("current_loginName",principalName);
+			if (request.getSession().getAttribute("current_UserID") == null)
 			{
 				if(LOGGER.isDebugEnabled())     LOGGER.debug("getting $$$UsesrID$$$ = " );
 				User aUser = new User(principalName);
 				if(LOGGER.isDebugEnabled())     LOGGER.debug(" got " + aUser.getId());
-				requestHibernateUtil.getCurrentSession().setAttribute("current_UserID",String.valueOf(aUser.getId()));
-				requestHibernateUtil.getCurrentSession().setAttribute("current_loginName",principalName);
+				request.getSession().setAttribute("current_UserID",String.valueOf(aUser.getId()));
+				request.getSession().setAttribute("current_loginName",principalName);
 			}
-			dc.addValue("current_UserID",requestHibernateUtil.getCurrentSession().getAttribute("current_UserID").toString());
-			dc.addValue("egUser_id",requestHibernateUtil.getCurrentSession().getAttribute("current_UserID").toString());
-			if(LOGGER.isDebugEnabled())     LOGGER.debug("$$$UsesrID$$$ = " + requestHibernateUtil.getCurrentSession().getAttribute("current_UserID"));*/
+			dc.addValue("current_UserID",request.getSession().getAttribute("current_UserID").toString());
+			dc.addValue("egUser_id",request.getSession().getAttribute("current_UserID").toString());
+			if(LOGGER.isDebugEnabled())     LOGGER.debug("$$$UsesrID$$$ = " + request.getSession().getAttribute("current_UserID"));
 		}
 		else
 		{

@@ -808,9 +808,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 			
 			SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy",Constants.LOCALE);
 	        FinancialYearHibernateDAO findao = new FinancialYearHibernateDAO(CFinancialYear.class,HibernateUtil.getCurrentSession());
-	        String finid = null;//findao.getFinancialYearId(sdf.format(asondate));
-	      //This fix is for Phoenix Migration.
-	        CFinancialYear finyear = findao.getFinancialYearById(Long.valueOf(finid));
+	        CFinancialYear finyear = findao.getFinancialYearByDate(asondate);
 	        if(finyear==null)
 	        	throw new ValidationException(EMPTY_STRING,"Financial year is not fefined for this date ["+sdf.format(asondate)+"]");
 	        fromdate = finyear.getStartingDate();
@@ -944,9 +942,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 			
 			SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy",Constants.LOCALE);
 	        FinancialYearHibernateDAO findao = new FinancialYearHibernateDAO(CFinancialYear.class,HibernateUtil.getCurrentSession());
-	        String finid = null;//findao.getFinancialYearId(sdf.format(asondate));
-	      //This fix is for Phoenix Migration.
-	        CFinancialYear finyear = findao.getFinancialYearById(Long.valueOf(finid));
+	        CFinancialYear finyear = findao.getFinancialYearByDate(asondate);
 	        if(finyear==null)
 	        	throw new ValidationException(EMPTY_STRING,"Financial year is not fefined for this date ["+sdf.format(asondate)+"]");
 	        fromdate = finyear.getStartingDate();
@@ -1587,20 +1583,16 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 				paramMap.put("glcodeid", coa.getId());
 				// get the financialyear from asondate
 				FinancialYearHibernateDAO finDAO = new FinancialYearHibernateDAO(CFinancialYear.class,HibernateUtil.getCurrentSession());
-				String finyearid = null;//finDAO.getFinancialYearId(new SimpleDateFormat("dd-MMM-yyyy",Constants.LOCALE).format(asondate));
-				//This fix is for Phoenix Migration.
-				if(EMPTY_STRING.equals(finyearid))
+				CFinancialYear finyear= finDAO.getFinancialYearByDate(asondate);
+				if(finyear==null)
 					throw new ValidationException(EMPTY_STRING,"Financial Year is not defined for-"+asondate);
 				SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy",Constants.LOCALE);
-		        CFinancialYear finyear = finDAO.getFinancialYearById(Long.valueOf(finyearid));
-		        if(finyear==null)
-		        	throw new ValidationException(EMPTY_STRING,"Financial year is not fefined for this date ["+sdf.format(asondate)+"]");
 		        fromdate = finyear.getStartingDate();
 		       
 		        paramMap.put("fromdate", fromdate);
 			//Here as on date is overridden by Financialyear ending date to check all budget appropriation irrespective of date	
 		        paramMap.put(Constants.ASONDATE, finyear.getEndingDate());
-				paramMap.put("financialyearid", Long.valueOf(finyearid));
+				paramMap.put("financialyearid", Long.valueOf(finyear.getId()));
 				
 				paramMap.put(BUDGETHEADID, budgetHeadListByGlcode);
 				
@@ -1956,18 +1948,13 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 					
 					// get the financialyear from asondate
 					FinancialYearHibernateDAO finDAO = new FinancialYearHibernateDAO(CFinancialYear.class,HibernateUtil.getCurrentSession());
-					String finyearid = null;//finDAO.getFinancialYearId(new SimpleDateFormat("dd-MMM-yyyy",Constants.LOCALE).format(asondate));
-					//This fix is for Phoenix Migration.
-					if(EMPTY_STRING.equals(finyearid))
-						throw new ValidationException(EMPTY_STRING,"Financial Year is not defined for-"+asondate);
-					
+					CFinancialYear finyear =finDAO.getFinancialYearByDate(asondate);
 					SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy",Constants.LOCALE);
-			        CFinancialYear finyear = finDAO.getFinancialYearById(Long.valueOf(finyearid));
 			        if(finyear==null)
 			        	throw new ValidationException(EMPTY_STRING,"Financial year is not defined for this date ["+sdf.format(asondate)+"]");
 			        fromdate = finyear.getStartingDate();
 			        
-					paramMap.put("financialyearid", Long.valueOf(finyearid));
+					paramMap.put("financialyearid", Long.valueOf(finyear.getId()));
 					paramMap.put(BUDGETHEADID, budgetHeadListByGlcode);
 					paramMap.put("fromdate", fromdate);
 					paramMap.put(Constants.ASONDATE, finyear.getEndingDate());
@@ -2082,18 +2069,13 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 			
 			// get the financialyear from asondate
 			FinancialYearHibernateDAO finDAO = new FinancialYearHibernateDAO(CFinancialYear.class,HibernateUtil.getCurrentSession());
-			String finyearid = null;//finDAO.getFinancialYearId(new SimpleDateFormat("dd-MMM-yyyy",Constants.LOCALE).format(asondate));
-			//This fix is for Phoenix Migration.
-			if(EMPTY_STRING.equals(finyearid))
-				throw new ValidationException(EMPTY_STRING,"Financial Year is not defined for-"+asondate);
-			
+			CFinancialYear finyear = finDAO.getFinancialYearByDate(asondate);
 			SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy",Constants.LOCALE);
-	        CFinancialYear finyear = finDAO.getFinancialYearById(Long.valueOf(finyearid));
 	        if(finyear==null)
 	        	throw new ValidationException(EMPTY_STRING,"Financial year is not defined for this date ["+sdf.format(asondate)+"]");
 	        fromdate = finyear.getStartingDate();
 	        
-			paramMap.put("financialyearid", Long.valueOf(finyearid));
+			paramMap.put("financialyearid", Long.valueOf(finyear.getId()));
 			paramMap.put("fromdate", fromdate);
 			paramMap.put(Constants.ASONDATE, finyear.getEndingDate());
 		

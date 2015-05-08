@@ -768,10 +768,9 @@ public class CreateVoucher {
 				 if(billtype==null)
 				 {
 					 SimpleWorkflowService<CVoucherHeader> voucherWorkflowService =  (SimpleWorkflowService) applicationContext.getBean("voucherWorkflowService");
-					//This fix is for Phoenix Migration.
 					 voucherheader.start().withOwner(getPosition());
 					// voucherWorkflowService.transition("aa_approve", voucherheader, "Created");    // action name need to pass
-					Position position = eisCommonService.getPositionByUserId(EGOVThreadLocals.getUserId());
+					//Position position = eisCommonService.getPositionByUserId(EGOVThreadLocals.getUserId());
 					 
 					 VoucherService vs = (VoucherService)applicationContext.getBean("voucherService");
 					PersistenceService persistenceService = (PersistenceService)applicationContext.getBean("persistenceService");

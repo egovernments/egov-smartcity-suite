@@ -90,10 +90,6 @@ public class ChequeFormatMaster extends AbstractTask
 				dc.addMessage("exilRPError",e.getMessage());
 				throw new TaskFailedException(e.toString());
 			}
-		/*	finally
-			{
-				//This fix is for Phoenix Migration.EgovDatabaseManager.releaseConnection(conn,null);
-			}*/
 	}
 	
 }

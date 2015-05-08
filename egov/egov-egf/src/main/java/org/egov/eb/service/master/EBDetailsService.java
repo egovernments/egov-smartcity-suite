@@ -45,13 +45,12 @@ import org.egov.eb.domain.master.entity.EBConsumer;
 import org.egov.eb.domain.master.entity.EBDetails;
 import org.egov.eb.utils.EBConstants;
 import org.egov.eis.service.EisCommonService;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.commons.Position;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
-public class EBDetailsService{ 
-//extends PersistenceService<EBDetails, Long>{
-	//This fix is for Phoenix Migration.
+public class EBDetailsService extends PersistenceService<EBDetails, Long>{
 	private static String EBDETAILS_BY_CONSUMER = "from EBDetails where ebConsumer = :consumer";
 	private static String EBDETAILS_BY_CONSUMER_AND_STATUSCODE  = EBDETAILS_BY_CONSUMER + " and month = :month " +
 			"and status.code <> :statusCode";

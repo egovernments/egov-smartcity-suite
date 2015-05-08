@@ -43,12 +43,11 @@ import java.util.List;
 
 import org.egov.eb.domain.master.entity.EBConsumer;
 import org.egov.eb.domain.master.entity.TargetArea;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
-public class TargetAreaService{
-	//extends PersistenceService<TargetArea, Long> {
-	//This fix is for Phoenix Migration.
+public class TargetAreaService extends PersistenceService<TargetArea, Long> {
 
 	public List<TargetArea> getAllTargetAreas()
 	{

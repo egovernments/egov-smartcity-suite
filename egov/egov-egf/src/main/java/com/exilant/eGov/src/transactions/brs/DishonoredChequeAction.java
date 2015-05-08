@@ -106,6 +106,7 @@ import org.egov.services.instrument.InstrumentService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
+import org.joda.time.DateTime;
 
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.eGov.src.domain.BankBranch;
@@ -145,23 +146,22 @@ public class DishonoredChequeAction extends DispatchAction {
 	List<DesignationMaster> designationList=Collections.EMPTY_LIST;
 	List<String> dishonorReasonsList = Collections.EMPTY_LIST;
 	public ActionForward toLoad(ActionMapping mapping,ActionForm form,HttpServletRequest req,HttpServletResponse res)throws IOException,ServletException{
-		//This fix is for Phoenix Migration.
-		/*try{
+		try{
 			if(LOGGER.isInfoEnabled())     LOGGER.info(">>> inside toLoad");
-			String todayDt=cm.getCurrentDate(null);
+			String todayDt=cm.getCurrentDate();
 			if(LOGGER.isInfoEnabled())     LOGGER.info(">>> inside toLoad ********** getCurrentDate-->TODAY DATE IS"+todayDt);
-			reqHibernateUtil.getCurrentSession().setAttribute("todayDate", todayDt);
+			req.getSession().setAttribute("todayDate", todayDt);
 
 			BankBranch bb=new BankBranch();
 			//use persistence service
-			Map hm=bb.getBankBranch(null);
-			reqHibernateUtil.getCurrentSession().setAttribute("bankBranchList", hm);
+			Map hm=bb.getBankBranch();
+			req.getSession().setAttribute("bankBranchList", hm);
 			if(LOGGER.isInfoEnabled())     LOGGER.info(">>> before ending DishonoredChequeAction");
 			target = SUCCESS;
 		}catch(Exception ex){
 			target = ERROR;
 			LOGGER.error("Exception Encountered!!!"+ex.getMessage(),ex);
-		}*/
+		}
 		return mapping.findForward(target);
 
 	}
@@ -177,7 +177,7 @@ public class DishonoredChequeAction extends DispatchAction {
 			BankBranch bb=new BankBranch();
 			if(LOGGER.isInfoEnabled())     LOGGER.info("bank id  "+dishonCheqForm.getBankId());
 			HashMap hm=bb.getAccNumber(dishonCheqForm.getBankId());
-			//This fix is for Phoenix Migration.reqHibernateUtil.getCurrentSession().setAttribute("accNumberList2", hm);
+			req.getSession().setAttribute("accNumberList2", hm);
 			if(LOGGER.isDebugEnabled())     LOGGER.debug(">>> before ending DishonoredChequeAction");
 			target = SUCCESS;
 		}catch(Exception ex){
@@ -212,7 +212,7 @@ public class DishonoredChequeAction extends DispatchAction {
 			for (String reason : dishonorReasonsList) {
 				hm.put(reason, reason);
 				}
-			//This fix is for Phoenix Migration.reqHibernateUtil.getCurrentSession().setAttribute("dishonorReasonsList", hm);
+			req.getSession().setAttribute("dishonorReasonsList", hm);
 			String [] passVoucher=dishonCheqForm.getVoucherId();
 			String [] marked=dishonCheqForm.getPostTxn();
 			String [] bankChargeAmt=dishonCheqForm.getBankChargeAmt();
@@ -567,13 +567,12 @@ public class DishonoredChequeAction extends DispatchAction {
 				InstrumentOtherDetails iob= (InstrumentOtherDetails)persistenceService.find("from InstrumentOtherDetails where instrumentHeaderId.id=?",instHeader.getId());
 				PersonalInformation loggedInEmp=eisCommonService.getEmployeeByUserId(iob.getCreatedBy().getId());                  
 				nextUser=iob.getPayinslipId().getCreatedBy();
-				//This fix is for Phoenix Migration.
-				/*dishonorChq.setPayinSlipCreatorUser(nextUser);
-				dishonorChq.setPayinSlipCreator(nextUser.getId())  ;     
+				dishonorChq.setPayinSlipCreatorUser(nextUser);
+				dishonorChq.setPayinSlipCreator(nextUser.getId().intValue())  ;     
 				 approvePos = eisService.getPrimaryPositionForUser(nextUser.getId(),new Date());
 				if(null!=approvePos) {
-					dishonorChq.setApproverPositionId(approvePos.getId());
-				}*/
+					/*dishonorChq.setApproverPositionId(approvePos.getId().int);*/
+				}
 				int deailIndex=0;
 				if(vTypeParam.equalsIgnoreCase(RECEIPT) || JOURNAL_VOUCHER.equalsIgnoreCase(vTypeParam) ){
 					for(String detailGlCodeId:debitGlcodes){
@@ -612,10 +611,9 @@ public class DishonoredChequeAction extends DispatchAction {
 				getNextAction(dishonorChq,req)	;
 				User logginUser=(User)persistenceService.find("from User where id=?", EGOVThreadLocals.getUserId());
 				dishonorChq.setCreatedBy(nextUser);   
-				//This fix is for Phoenix Migration.
-				/*dishonorChq.setCreatedDate(new Date());
-				dishonorChq.setModifiedBy(logginUser);
-				dishonorChq.setModifiedDate(new Date());*/
+				dishonorChq.setCreatedDate(new DateTime());
+				dishonorChq.setLastModifiedBy(logginUser);
+				dishonorChq.setLastModifiedDate(new DateTime());
 				//dishonourChqDetails.setHeader(dishonorChq);
 				//dishonorChq.addDishonorChqDetails(dishonourChqDetails);
 				dishonorChqService.approve(dishonorChq, null,null); 
@@ -659,7 +657,6 @@ public class DishonoredChequeAction extends DispatchAction {
 	}
 	private void populateReceiptCreatorAndForward(HttpServletRequest req, InstrumentHeader instHeader)
 			throws Exception {
-		//This fix is for Phoenix Migration.
 		InstrumentOtherDetails iob= (InstrumentOtherDetails)persistenceService.findAllBy("from InstrumentOtherDetails where instrumentHeaderId=?",instHeader.getId());
 		PersonalInformation loggedInEmp=getEisCommonService().getEmployeeByUserId(iob.getCreatedBy().getId());
 		Assignment asignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(loggedInEmp.getId(), DateUtils.today());
