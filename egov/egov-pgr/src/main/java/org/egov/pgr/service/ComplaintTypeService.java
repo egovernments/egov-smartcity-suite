@@ -71,7 +71,7 @@ public class ComplaintTypeService {
 
     private final ComplaintTypeRepository complaintTypeRepository;
     
-    @Autowired
+    @PersistenceContext
     private EntityManager entityManager;
     
     @Autowired
