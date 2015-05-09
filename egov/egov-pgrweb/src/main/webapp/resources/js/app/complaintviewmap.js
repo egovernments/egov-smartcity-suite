@@ -43,22 +43,11 @@ $(document).ready(function(){
 	var map, geocoder, geolocate, marker;  
 	$('#complaint-locate').on('show.bs.modal', function() {
 		//Must wait until the render of the modal appear, thats why we use the resizeMap and NOT resizingMap!! ;-)
-		
+		alert(lat);
 		//complaint view(update) map
 		$('#show_address_in_map').html($('#address_locate').html());
-		$.ajax({
-			type: "POST",
-			url: 'https://maps.googleapis.com/maps/api/geocode/json?address='+$('#address_locate').html(),
-			dataType: 'json',
-			success : function(data){
-				//console.log(JSON.stringify(data.results[0].geometry.location));
-				lat = JSON.stringify(data.results[0].geometry.location.lat);
-				longe = JSON.stringify(data.results[0].geometry.location.lng);
-				
-				myCenter=new google.maps.LatLng(lat, longe);
-				initialize();
-			}
-		});
+		myCenter=new google.maps.LatLng(lat, lng);
+		initialize();
 		resizeMap();
 	});
 	

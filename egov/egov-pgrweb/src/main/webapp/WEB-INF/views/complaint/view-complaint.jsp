@@ -301,3 +301,7 @@
 <script	src="<c:url value='/resources/global/js/image-gallery/js/bootstrap-image-gallery.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/js/app/complaintview.js'/>"></script>
 <script src="<c:url value='/resources/js/app/complaintviewmap.js'/>"></script>
+<script>
+var lat = '${complaint.lat}';
+var lng = '${complaint.lng}';
+</script>

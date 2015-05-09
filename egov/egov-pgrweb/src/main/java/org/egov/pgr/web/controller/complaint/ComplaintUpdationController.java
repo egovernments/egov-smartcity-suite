@@ -70,10 +70,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value="/complaint/update/{crnNo}")
+@RequestMapping(value = "/complaint/update/{crnNo}")
 public class ComplaintUpdationController {
 
-	private static final String REDIRECT_COMPLAINT_UPDATE = "redirect:/complaint/update/";
+	private static final String COMPLAINT_UPDATE_SUCCESS = "complaint-update-success";
 	private static final String COMPLAINT_EDIT = "complaint-edit";
 	private static final String COMPLAINT_CITIZEN_EDIT = "complaint-citizen-edit";
 	private final ComplaintService complaintService;
@@ -87,17 +87,19 @@ public class ComplaintUpdationController {
 
 	@Autowired
 	public ComplaintUpdationController(final ComplaintService complaintService,
-			final ComplaintTypeService complaintTypeService, final CommonService commonService,
-			final ComplaintStatusMappingService complaintStatusMappingService, final SmartValidator validator) {
+			final ComplaintTypeService complaintTypeService,
+			final CommonService commonService,
+			final ComplaintStatusMappingService complaintStatusMappingService,
+			final SmartValidator validator) {
 		this.complaintService = complaintService;
 		this.complaintTypeService = complaintTypeService;
 		this.commonService = commonService;
 		this.complaintStatusMappingService = complaintStatusMappingService;
 
 	}
-
+	
 	@ModelAttribute
-	public Complaint getComplaint(@PathVariable final String  crnNo) {
+	public Complaint getComplaint(@PathVariable final String crnNo) {
 		final Complaint complaint = complaintService.getComplaintByCrnNo(crnNo);
 		return complaint;
 	}
@@ -106,124 +108,94 @@ public class ComplaintUpdationController {
 		return complaintTypeService.findAll();
 	}
 
-	@ModelAttribute("status")
-	public List<ComplaintStatus> getStatus(@PathVariable final String  crnNo) {
+	public List<ComplaintStatus> getStatus(ComplaintStatus status) {
 		final Set<Role> rolesList = securityUtils.getCurrentUser().getRoles();
-		return complaintStatusMappingService.getStatusByRoleAndCurrentStatus(rolesList, getComplaint(crnNo).getStatus());
-	}
-	
-
-	private String citizenEdit(final Model model,Complaint complaint) {
-		final List<Hashtable<String, Object>> historyTable = complaintService.getHistory(complaint);
-		model.addAttribute("complaintHistory", historyTable);
-		return COMPLAINT_CITIZEN_EDIT;
+		return complaintStatusMappingService.getStatusByRoleAndCurrentStatus(rolesList, status);
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String edit(final Model model, @PathVariable final String  crnNo) {
+	public String edit(final Model model, @PathVariable final String crnNo) {
 
-		final Complaint complaint =	getComplaint(crnNo);
-		if (securityUtils.currentUserType().equals(UserType.CITIZEN)) {
-			return citizenEdit(model,complaint);
-		}
+		final Complaint complaint = getComplaint(crnNo);
 		final List<Hashtable<String, Object>> historyTable = complaintService.getHistory(complaint);
 		model.addAttribute("complaintHistory", historyTable);
-		//model.addAttribute("status",getStatus(complaint.getStatus()));
-		model.addAttribute("complaintType",complaintTypes());
-		//model.addAttribute("complaint",complaint);
+		model.addAttribute("status", getStatus(complaint.getStatus()));
+		model.addAttribute("complaint",complaint);
 
-		prepareWorkflow(model);
-		// set the defaults
-		model.addAttribute("ward", Collections.EMPTY_LIST);
-		model.addAttribute("zone", commonService.getZones());
-		if (complaint.getComplaintType().isLocationRequired())
-			if (complaint.getLocation() != null)
-				model.addAttribute("ward", commonService.getWards(complaint.getLocation().getParent().getId()));
-		return COMPLAINT_EDIT;
+		if (securityUtils.currentUserType().equals(UserType.CITIZEN)) {
+			return COMPLAINT_CITIZEN_EDIT;
+		} else {
+			prepareWorkflow(model);
+			model.addAttribute("complaintType", complaintTypes());
+			// set the defaults
+			model.addAttribute("ward", Collections.EMPTY_LIST);
+			model.addAttribute("zone", commonService.getZones());
+			if (complaint.getComplaintType().isLocationRequired()) {
+				if (complaint.getLocation() != null)
+					model.addAttribute("ward",commonService.getWards(complaint.getLocation().getParent().getId()));
+			}
+			return COMPLAINT_EDIT;
+		}
 	}
 
 	private void prepareWorkflow(final Model model) {
-		model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
-
+		model.addAttribute("approvalDepartmentList",departmentService.getAllDepartments());
 	}
 
-	@RequestMapping(method =RequestMethod.POST)
-	public String update(@ModelAttribute Complaint complaint, final BindingResult errors,final RedirectAttributes redirectAttrs, final Model model, final HttpServletRequest request) {
+	@RequestMapping(method = RequestMethod.POST)
+	public String update(@ModelAttribute Complaint complaint,final BindingResult errors, final RedirectAttributes redirectAttrs,
+			final Model model, final HttpServletRequest request) {
 		String approvalComent = "";
+		String result = "";
+		validateUpdate(complaint, errors, request);
+		Long approvalPosition = 0l;
+		
 		if (null != request.getParameter("approvalComent"))
 			approvalComent = request.getParameter("approvalComent");
-		//this validation is common for citizen and official. Any more specific validation required for official then write different method
+		// this validation is common for citizen and official. Any more specific
+		// validation required for official then write different method
 		
-		validateUpdate(complaint, errors, request);
-		
-		
-		if(securityUtils.currentUserType().equals(UserType.CITIZEN))
-		{
-			return updateCitizen(complaint,approvalComent,redirectAttrs,errors);
-		}
-		
-		Long approvalPosition = 0l;
-	
-		if (null != request.getParameter("approvalPosition") && !request.getParameter("approvalPosition").isEmpty())
+		if (null != request.getParameter("approvalPosition")
+				&& !request.getParameter("approvalPosition").isEmpty())
 			approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 		
-		String result="";
-		if (!errors.hasErrors()) 
-		{
-			complaint = complaintService.update(complaint, approvalPosition, approvalComent);
-			redirectAttrs.addFlashAttribute("message", "Successfully Updated Complaint !");
-			result=REDIRECT_COMPLAINT_UPDATE + complaint.getCRN();	
-		} 
-		else {
+		if (!errors.hasErrors()) {
+			complaint = complaintService.update(complaint, approvalPosition,approvalComent);
+			redirectAttrs.addFlashAttribute("complaint", complaint);
+			result = COMPLAINT_UPDATE_SUCCESS;
+		} else {
 			final List<Hashtable<String, Object>> historyTable = complaintService.getHistory(complaint);
 			model.addAttribute("complaintHistory", historyTable);
-			model.addAttribute("complaintType",complaintTypes());
+			model.addAttribute("complaintType", complaintTypes());
 			prepareWorkflow(model);
 			model.addAttribute("zone", commonService.getZones());
 			model.addAttribute("ward", Collections.EMPTY_LIST);
-			if (complaint.getComplaintType() != null && complaint.getComplaintType().isLocationRequired())
+			if (complaint.getComplaintType() != null && complaint.getComplaintType().isLocationRequired()) {
 				if (complaint.getLocation() != null)
-					model.addAttribute("ward", commonService.getWards(complaint.getLocation().getParent().getId()));
-			result= COMPLAINT_EDIT;
-		}
-
-		return result;
-
-	}
-
-	private String updateCitizen(Complaint complaint, String approvalComent, RedirectAttributes redirectAttrs, BindingResult errors) {
-		String result="";
-		try {
-			if (errors.hasErrors()) {
-				result=COMPLAINT_CITIZEN_EDIT;
+					model.addAttribute("ward",commonService.getWards(complaint.getLocation().getParent().getId()));
 			}
-			else{
-			complaint.setStatus(complaint.getStatus());
-			complaintService.update(complaint, null, approvalComent);
-			redirectAttrs.addFlashAttribute("message", "Successfully Updated Complaint !");
-			result= REDIRECT_COMPLAINT_UPDATE + complaint.getCRN();
-			}
-		} catch (Exception e) {
-			result= COMPLAINT_CITIZEN_EDIT;
-
+			if (securityUtils.currentUserType().equals(UserType.CITIZEN))
+				result =  COMPLAINT_CITIZEN_EDIT;
+			else
+			    result = COMPLAINT_EDIT;
 		}
 		return result;
-
 	}
 
-	private void validateUpdate(final Complaint complaint, final BindingResult errors, final HttpServletRequest request) {
+	private void validateUpdate(final Complaint complaint,
+			final BindingResult errors, final HttpServletRequest request) {
 		if (null == complaint.getStatus()) {
-			final ObjectError error = new ObjectError("status", "Complaint Status is required");
+			final ObjectError error = new ObjectError("status",
+					"Complaint Status is required");
 			errors.addError(error);
 		}
-		
-		 if (null == request.getParameter("approvalComent") || request.getParameter("approvalComent").isEmpty()) 
-		 {
-			 ObjectError error = new ObjectError("approvalComent", "Complaint coments Cannot be null"); 
-			 errors.addError(error);
-		 }
-				 
 
+		if (null == request.getParameter("approvalComent")
+				|| request.getParameter("approvalComent").isEmpty()) {
+			ObjectError error = new ObjectError("approvalComent",
+					"Complaint coments Cannot be null");
+			errors.addError(error);
+		}
 
 	}
 }
