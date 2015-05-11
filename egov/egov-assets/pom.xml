@@ -17,12 +17,7 @@
             <groupId>org.egov</groupId>
             <artifactId>egov-egi</artifactId>
             <version>1.0-SNAPSHOT</version>
-        </dependency>
-         <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
+        </dependency>        
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>egov-eis</artifactId>
