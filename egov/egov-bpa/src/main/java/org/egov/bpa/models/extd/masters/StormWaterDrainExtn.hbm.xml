@@ -1,20 +1,36 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated Oct 30, 2014 4:07:49 PM by Hibernate Tools 3.4.0.CR1 -->
+
 <hibernate-mapping>
-    <joined-subclass name="org.egov.bpa.models.extd.masters.StormWaterDrainExtn" extends="org.egov.infstr.models.BaseModel" table="STORMWATERDRAINEXTN" lazy="false">
-        <key>
-            <column name="ID" />
-        </key>
-        <property name="name" type="java.lang.String">
-            <column name="NAME" />
+    <class name="org.egov.bpa.models.extd.masters.StormWaterDrainExtn" table="EGBPAEXTND_STORMWATERDRAIN">
+        <id name="id">
+            <column name="ID" precision="22" scale="0" />
+            <generator class="sequence">
+				<param name="sequence">SEQ_EGBPAEXTND_STORMWATERDRAIN</param> 
+			</generator>
+        </id>
+         <many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
+            <column name="MODIFIEDBY" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        <property name="lastModifiedDate" type="java.util.Date"> 
+            <column name="MODIFIEDDATE" not-null="true" />
         </property>
-        <property name="dimension" type="java.lang.String">
-            <column name="DIMENSION" />
+        <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" fetch="select">
+            <column name="CREATEDBY" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="NAME" length="126" not-null="true" unique="true"/>
         </property>
-        <property name="description" type="java.lang.String">
-            <column name="DESCRIPTION" />
+          <property name="dimension" type="string">
+            <column name="DIMENSION" length="126" not-null="true" unique="true"/>
         </property>
-    </joined-subclass>
+         <property name="description" type="string">
+            <column name="DESCRIPTION" length="126" />
+        </property>
+        <property name="createdDate" type="timestamp">
+            <column name="CREATEDDATE" not-null="true" />
+        </property>
+        
+      </class>
 </hibernate-mapping>

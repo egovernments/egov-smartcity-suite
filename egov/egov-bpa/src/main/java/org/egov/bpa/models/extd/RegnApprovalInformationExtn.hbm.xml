@@ -16,7 +16,7 @@
         <many-to-one name="registration" class="org.egov.bpa.models.extd.RegistrationExtn" fetch="select">
             <column name="REGISTRATIONID" precision="22" scale="0" not-null="true" />
         </many-to-one>
-         <many-to-one name="createdBy" class="org.egov.infra.workflow.entity.State" fetch="select">
+         <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
             <column name="CREATEDBY" precision="22" scale="0" not-null="true" />
         </many-to-one>
         
@@ -37,9 +37,7 @@
         <property name="commApprovalDate" type="java.util.Date">
             <column name="COMM_APPROVED_DATE"  not-null="true" />
         </property>
-       
-        
-        <property name="modifiedDate" type="timestamp">
+          <property name="lastModifiedDate" type="java.util.Date"> 
             <column name="MODIFIEDDATE" not-null="true" />
         </property>
    </class>

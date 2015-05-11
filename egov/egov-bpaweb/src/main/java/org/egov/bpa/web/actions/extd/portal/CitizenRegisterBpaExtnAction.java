@@ -263,7 +263,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 		{
 			addFieldError("registration.siteAddress.CityTown", getMessage("siteAddress.CityTown.required"));
 		}
-		if(getBoundaryStateId()==null || getBoundaryStateId()==-1)
+		if(getBoundaryStateId()==null ||  "".equals(getBoundaryStateId() ))
 		{
 			addFieldError("registration.siteAddress.State", getMessage("siteAddress.StateName.required"));
 		}

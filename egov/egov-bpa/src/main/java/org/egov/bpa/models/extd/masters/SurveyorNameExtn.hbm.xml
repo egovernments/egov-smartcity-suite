@@ -22,7 +22,7 @@
         <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
             <column name="CREATEDBY" precision="22" scale="0" not-null="true" />
         </many-to-one>
-        <property name="modifiedDate" type="timestamp">
+         <property name="lastModifiedDate" type="java.util.Date"> 
             <column name="MODIFIEDDATE" not-null="true" />
         </property>
     </class>

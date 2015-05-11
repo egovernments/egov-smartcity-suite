@@ -13,7 +13,7 @@
   		<many-to-one name="surveyorName" class="org.egov.portal.surveyor.model.Surveyor" fetch="select">
             <column name="SURVEYORID" precision="22" scale="0" />
         </many-to-one>
-        <many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
+        <many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
             <column name="MODIFIEDBY" precision="22" scale="0" not-null="true" />
         </many-to-one>
         <many-to-one name="parent" class="org.egov.bpa.models.extd.RegistrationExtn" fetch="select">
@@ -87,7 +87,7 @@
        	<property name="securityKey" type="java.lang.String">
            <column name="SECURITYKEY" length="512" />
         </property>
-        <property name="modifiedDate" type="timestamp"> 
+        <property name="lastModifiedDate" type="java.util.Date"> 
             <column name="MODIFIEDDATE" not-null="true" />
         </property>
          <property name="feeRemarks" type="java.lang.String">
@@ -101,10 +101,10 @@
             <column name="SERVICEREGISTRYID"  />
         </property>
          
-        <many-to-one name="locboundaryid" class="org.egov.infra.admin.master.entity.User" fetch="select">
+        <many-to-one name="locboundaryid" class="org.egov.infra.admin.master.entity.Boundary" fetch="select">
             <column name="LOCBOUNDARYID" precision="22" scale="0" />
 		</many-to-one>
-		<many-to-one name="adminboundaryid" class="org.egov.infra.admin.master.entity.User" fetch="select">
+		<many-to-one name="adminboundaryid" class="org.egov.infra.admin.master.entity.Boundary" fetch="select">
 			<column name="ADMINBOUNDARYID" precision="22" scale="0"/>
 	    </many-to-one>
         <one-to-one name="regnDetails" lazy="proxy" class="org.egov.bpa.models.extd.RegnDetailsExtn" property-ref="registration"

@@ -104,7 +104,7 @@ public class BpaBillableExtn  extends AbstractBillable  {
 					billingAddress.append(bpaAddress.getVillageName()!=null&&bpaAddress.getVillageName().getName()!=null?","+bpaAddress.getVillageName().getName():" ");
 					//billingAddress.append(((bpaAddress.getVillageName().getName()==null)?" ":","+bpaAddress.getVillageName().getName()));
 					billingAddress.append(((bpaAddress.getCityTown()==null)?" ":","+bpaAddress.getCityTown()));
-					billingAddress.append(((bpaAddress.getIndianState()==null)?"":","+bpaAddress.getIndianState().getValue()));
+					billingAddress.append(((bpaAddress.getIndianState()==null)?"":","+bpaAddress.getIndianState()));
 					billingAddress.append(((bpaAddress.getPincode()==null)?"":","+bpaAddress.getPincode()));
 			
 				}

@@ -10,15 +10,15 @@
 				<param name="sequence">SEQ_EGBPAEXTND_ADDRESS</param>
 			</generator>
         </id>
-        <many-to-one name="addressTypeMaster" class="org.egov.lib.address.model.AddressTypeMaster" fetch="select">
-            <column name="ADDRESSTYPEID" precision="22" scale="0" />
-        </many-to-one>
+        <property name="addressTypeMaster" type="string">
+            <column name="ADDRESSTYPEID" length="512" not-null="true" />
+        </property>
         <many-to-one name="registration" class="org.egov.bpa.models.extd.RegistrationExtn" fetch="select">
             <column name="REGISTRATIONID" precision="22" scale="0" not-null="true" />
         </many-to-one>
-        <many-to-one name="indianState" class="org.egov.mdm.masters.administration.State" cascade="all">
-            <column name="STATEID" precision="22" scale="0"  />
-        </many-to-one>
+        <property name="indianState" type="string">
+            <column name="STATEID" length="512" />
+        </property>
         <property name="plotDoorNumber" type="string">
             <column name="PLOTDOORNUMBER" length="32" />
         </property>

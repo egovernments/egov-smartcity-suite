@@ -179,7 +179,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	protected RegisterBpaExtnService registerBpaExtnService;
 	private String mode;
 	protected Long registrationId;
-	protected Long boundaryStateId;
+	protected String boundaryStateId;
 	private FeeExtnService feeExtnService;
 	protected BpaAddressExtn applicantrAddress;
 	protected BpaAddressExtn siteAddress;
@@ -1499,9 +1499,8 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 						&& BpaConstants.PROPERTY_ADDRESS.equals(bpaAddressObj
 								.getAddressTypeMaster())) {// Phionix TODO
 					if (null != bpaAddressObj.getIndianState()
-							&& bpaAddressObj.getIndianState().getId() != null) {
-						setBoundaryStateId(bpaAddressObj.getIndianState()
-								.getId());
+							&& bpaAddressObj.getIndianState() != null) {
+						setBoundaryStateId(bpaAddressObj.getIndianState());
 					}
 					setSiteAddress(bpaAddressObj);
 				} else if (null != bpaAddressObj.getAddressTypeMaster()
@@ -2032,7 +2031,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 			addFieldError("registration.siteAddress.CityTown",
 					getMessage("siteAddress.CityTown.required"));
 		}
-		if (getBoundaryStateId() == null || getBoundaryStateId() == -1) {
+		if (getBoundaryStateId() == null || "".equals(getBoundaryStateId() )) {
 			addFieldError("registration.siteAddress.State",
 					getMessage("siteAddress.StateName.required"));
 		}
@@ -4023,14 +4022,6 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 		this.registrationId = registrationId;
 	}
 
-	public Long getBoundaryStateId() {
-		return boundaryStateId;
-	}
-
-	public void setBoundaryStateId(Long boundaryStateId) {
-		this.boundaryStateId = boundaryStateId;
-	}
-
 	public FeeExtnService getFeeExtnService() {
 		return feeExtnService;
 	}
@@ -4831,6 +4822,14 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 
 	public void setLetterToPartyCmdaId(Long letterToPartyCmdaId) {
 		this.letterToPartyCmdaId = letterToPartyCmdaId;
+	}
+
+	public String getBoundaryStateId() {
+		return boundaryStateId;
+	}
+
+	public void setBoundaryStateId(String boundaryStateId) {
+		this.boundaryStateId = boundaryStateId;
 	}
 
 }

@@ -10,9 +10,10 @@
 				<param name="sequence">SEQ_EGBPAEXTND_MSTR_BLGUSAGE</param>
 			</generator>
         </id>
-        <many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
+       <many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
             <column name="MODIFIEDBY" precision="22" scale="0" not-null="true" />
         </many-to-one>
+       
         <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
             <column name="CREATEDBY" precision="22" scale="0" not-null="true" />
         </many-to-one>
@@ -22,8 +23,8 @@
         <property name="description" type="string">
             <column name="DESCRIPTION" length="256" not-null="true" />
         </property>
-        <property name="modifiedDate" type="timestamp">
-            <column name="MODIFIEDDATE" length="7" not-null="true" />
+           <property name="lastModifiedDate" type="java.util.Date"> 
+            <column name="MODIFIEDDATE" not-null="true" />
         </property>
         <property name="isActive" type="java.lang.Boolean">
             <column name="ISACTIVE" not-null="true" />

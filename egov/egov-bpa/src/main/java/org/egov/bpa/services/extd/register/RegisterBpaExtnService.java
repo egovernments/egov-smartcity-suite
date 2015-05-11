@@ -201,7 +201,7 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 		
 	}
 	@Transactional
-	public RegistrationExtn createBpa( RegistrationExtn registration,BpaAddressExtn applicantrAddress,String autoDcr,BpaAddressExtn siteAddress,Long boundaryStateId,String workFlowAction,String approverComments, Long existingbuildingCategoryId, Long proposedbuildingCategoryId,Boolean callWorkFlow, Position position)
+	public RegistrationExtn createBpa( RegistrationExtn registration,BpaAddressExtn applicantrAddress,String autoDcr,BpaAddressExtn siteAddress,String boundaryStateId,String workFlowAction,String approverComments, Long existingbuildingCategoryId, Long proposedbuildingCategoryId,Boolean callWorkFlow, Position position)
 	{
 		oldStatus=registration.getEgwStatus();
 		/**
@@ -489,13 +489,13 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 	 * @param cityTown
 	 * @param  state
 	 */
-	private BpaAddressExtn createSitetAddress(RegistrationExtn registration,BpaAddressExtn siteAddress,Long boundaryStateId) {
+	private BpaAddressExtn createSitetAddress(RegistrationExtn registration,BpaAddressExtn siteAddress,String boundaryStateId) {
 		AddressType addressTypeMaster = getAddressTypeMasterByName(PROPERTY_ADDRESS);
-		org.egov.infra.workflow.entity.State st = (org.egov.infra.workflow.entity.State) getPersistenceService().find(
-				"from State ATM where ATM.id=?",boundaryStateId);
+		/*org.egov.infra.workflow.entity.State st = (org.egov.infra.workflow.entity.State) getPersistenceService().find(
+				"from State ATM where ATM.id=?",boundaryStateId);*/
 		
 		siteAddress.setAddressTypeMaster(addressTypeMaster);
-		siteAddress.setIndianState(st);
+		siteAddress.setIndianState(boundaryStateId);
 		siteAddress.setRegistration(registration);
 		   return siteAddress;
 	}

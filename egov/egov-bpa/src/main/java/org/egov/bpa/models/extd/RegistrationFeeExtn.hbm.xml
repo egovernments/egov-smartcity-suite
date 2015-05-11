@@ -30,15 +30,16 @@
         <many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all">
             <column name="STATEID" precision="22" scale="0"  />
         </many-to-one>
-		 <many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
-            <column name="MODIFIEDBY" precision="22" scale="0"  />
+		   <many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
+            <column name="MODIFIEDBY" precision="22" scale="0" not-null="true" />
         </many-to-one>
+        <property name="lastModifiedDate" type="java.util.Date"> 
+            <column name="MODIFIEDDATE" not-null="true" />
+        </property>
           <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
             <column name="CREATEDBY" precision="22" scale="0" not-null="true" />
         </many-to-one>
-         <property name="modifiedDate" type="timestamp">
-            <column name="MODIFIEDDATE" not-null="true" />
-        </property>
+         
          <set name="registrationFeeDetailsSet" table="EGBPAEXTND_REGNFEEDETAIL" inverse="true" lazy="true" cascade="all">
             <key>
                 <column name="REGISTRATIONFEEID" precision="22" scale="0" />

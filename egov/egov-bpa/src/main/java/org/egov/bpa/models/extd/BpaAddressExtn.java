@@ -65,7 +65,7 @@ public class BpaAddressExtn extends BaseModel {
 	private String streetAddress2;
 	private String cityTown;
 	private VillageNameExtn villageName;
-	private State indianState;
+	private String indianState;
 	private Integer pincode;
 	private String plotSurveyType;
 
@@ -166,11 +166,12 @@ public class BpaAddressExtn extends BaseModel {
 		this.pincode = pincode;
 	}
 
-	public State getIndianState() {
+	
+	public String getIndianState() {
 		return indianState;
 	}
 
-	public void setIndianState(State indianState) {
+	public void setIndianState(String indianState) {
 		this.indianState = indianState;
 	}
 
