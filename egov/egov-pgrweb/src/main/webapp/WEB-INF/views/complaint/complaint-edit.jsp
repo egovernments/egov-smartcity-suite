@@ -87,7 +87,7 @@
 					<form:select path="" data-first-option="false" id="ct-sel-jurisd"
 						cssClass="form-control" cssErrorClass="form-control error">
 						<form:option value="">
-							<spring:message code="lbl.select" />
+							<spring:message code="lbl.selectzone" />
 						</form:option>
 						<form:options items="${zone}" itemValue="id"
 							itemLabel="localName" />
@@ -100,7 +100,7 @@
 						id="location" cssClass="form-control"
 						cssErrorClass="form-control error">
 						<form:option value="">
-							<spring:message code="lbl.select" />
+							<spring:message code="lbl.selectward" />
 						</form:option>
 						<form:options items="${ward}" itemValue="id"
 							itemLabel="localName" />

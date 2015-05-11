@@ -85,7 +85,7 @@ $(document).ready(function()
 				$('#location').append($("<option value=''>Select</option>"));
 				$.each(response, function(index, value) {
 					
-				     $('#location').append($('<option>').text(value.name).attr('value', value.id));
+				     $('#location').append($('<option>').text(value.localName).attr('value', value.id));
 				});
 				
 			}, 
