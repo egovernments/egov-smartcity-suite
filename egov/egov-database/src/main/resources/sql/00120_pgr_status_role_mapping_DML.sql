@@ -1,0 +1,1 @@
+delete from pgr_complaintstatus_mapping where role_id in(select id from eg_role where name='COMPLAINANT');
