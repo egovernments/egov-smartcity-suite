@@ -138,7 +138,7 @@
 				<div class="col-md-3 col-xs-12 add-margin">
 					<select name="approvalPosition" id="approvalPosition"
 						class="form-control">
-						<option value=""><spring:message code="lbl.select" /></option>
+						<option value=""><spring:message code="lbl.selectuser" /></option>
 
 					</select>
 					
