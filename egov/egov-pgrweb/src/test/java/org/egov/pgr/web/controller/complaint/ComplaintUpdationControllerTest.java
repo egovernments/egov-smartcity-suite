@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -67,7 +67,6 @@ import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
-import org.egov.pgr.service.CommonService;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusMappingService;
 import org.egov.pgr.service.ComplaintStatusService;
@@ -84,6 +83,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
 import org.springframework.web.util.NestedServletException;
+
 @Ignore
 public class ComplaintUpdationControllerTest extends AbstractContextControllerTest<ComplaintUpdationController> {
     @Mock
@@ -92,9 +92,6 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
     private ComplaintService complaintService;
     @Mock
     private BoundaryService boundaryService;
-
-    @Mock
-    private CommonService commonService;
 
     @Mock
     private ComplaintStatusService complaintStatusService;
@@ -114,6 +111,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
     private MockMvc mockMvc;
     @Mock
     ComplaintTypeService complaintTypeService;
+
     private Long id;
     private ComplaintType complaintType;
 
@@ -133,8 +131,8 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
     protected ComplaintUpdationController initController() {
         initMocks(this);
 
-        ComplaintUpdationController complaintUpdationController = new ComplaintUpdationController(complaintService,
-                complaintTypeService, commonService, complaintStatusMappingService, smartValidator);
+        final ComplaintUpdationController complaintUpdationController = new ComplaintUpdationController(complaintService,
+                complaintTypeService, complaintStatusMappingService, smartValidator);
         // when(complaintUpdationController.getStatus()).thenReturn(value,
         // values);
 
@@ -151,21 +149,21 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         when(complaintService.getComplaintById(id)).thenReturn(complaint);
 
         complaintType = new ComplaintType();
-        List ctList = new ArrayList<ComplaintType>();
+        final List ctList = new ArrayList<ComplaintType>();
         ctList.add(complaintType);
         when(complaintTypeService.findAll()).thenReturn(ctList);
 
-        List<ComplaintStatus> csList = new ArrayList<ComplaintStatus>();
-        ComplaintStatus cs = new ComplaintStatus();
+        final List<ComplaintStatus> csList = new ArrayList<ComplaintStatus>();
+        final ComplaintStatus cs = new ComplaintStatus();
 
-        Role r = new Role();
-        Set<Role> roleList = new HashSet<Role>();
+        final Role r = new Role();
+        final Set<Role> roleList = new HashSet<Role>();
         roleList.add(r);
         EGOVThreadLocals.setUserId(1l);
         when(userService.getUserById(Matchers.anyLong())).thenReturn(user);
         when(user.getRoles()).thenReturn(roleList);
         csList.add(cs);
-        List<Department> departmentList = new ArrayList<Department>();
+        final List<Department> departmentList = new ArrayList<Department>();
         when(departmentService.getAllDepartments()).thenReturn(departmentList);
 
         when(complaintStatusMappingService.getStatusByRoleAndCurrentStatus(roleList, cs)).thenReturn(csList);
@@ -178,7 +176,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         complaintType.setLocationRequired(false);
         complaint.setComplaintType(complaintType);
         complaint.setDetails("Already Registered complaint");
-        MvcResult result = this.mockMvc.perform(get("/complaint-update?id=1")).andReturn();
+        mockMvc.perform(get("/complaint-update?id=1")).andReturn();
     }
 
     @Test
@@ -189,10 +187,10 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         complaint.setDetails("Already Registered complaint");
         when(complaintService.getComplaintById(id)).thenReturn(complaint);
 
-        MvcResult result = this.mockMvc.perform(get("/complaint-update?id=2")).andExpect(view().name("complaint-edit"))
+        final MvcResult result = mockMvc.perform(get("/complaint-update?id=2")).andExpect(view().name("complaint-edit"))
                 .andExpect(model().attributeExists("complaint")).andReturn();
 
-        Complaint existing = (Complaint) result.getModelAndView().getModelMap().get("complaint");
+        final Complaint existing = (Complaint) result.getModelAndView().getModelMap().get("complaint");
         assertEquals(complaint.getDetails(), existing.getDetails());
 
     }
@@ -206,10 +204,10 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         id = 2L;
         when(complaintService.getComplaintById(id)).thenReturn(complaint);
 
-        MvcResult result = this.mockMvc.perform(get("/complaint-update?id=2")).andExpect(status().isOk())
+        final MvcResult result = mockMvc.perform(get("/complaint-update?id=2")).andExpect(status().isOk())
                 .andExpect(view().name("complaint-edit")).andExpect(model().attributeExists("complaint")).andReturn();
 
-        Complaint existing = (Complaint) result.getModelAndView().getModelMap().get("complaint");
+        final Complaint existing = (Complaint) result.getModelAndView().getModelMap().get("complaint");
         assertEquals(complaint.getDetails(), existing.getDetails());
 
     }
@@ -220,8 +218,8 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         complaintType.setLocationRequired(true);
         complaint.setComplaintType(complaintType);
         complaint.setDetails("Already Registered complaint");
-        Boundary ward = new Boundary();
-        Boundary zone = new Boundary();
+        final Boundary ward = new Boundary();
+        final Boundary zone = new Boundary();
 
         try {
             Field idField = ward.getClass().getSuperclass().getDeclaredField("id");
@@ -234,24 +232,24 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
             throw new RuntimeException(e);
         }
         ward.setParent(zone);
-        
+
         complaint.setLocation(ward);
         id = 2L;
         when(complaintService.getComplaintById(id)).thenReturn(complaint);
-        List<Boundary> wards = new ArrayList<Boundary>();
-        when(commonService.getWards(ward.getId())).thenReturn(wards);
+        final List<Boundary> wards = new ArrayList<Boundary>();
+        when(boundaryService.getChildBoundariesByBoundaryId(ward.getId())).thenReturn(wards);
 
-        MvcResult result = this.mockMvc.perform(get("/complaint-update?id=2")).andExpect(status().isOk())
+        final MvcResult result = mockMvc.perform(get("/complaint-update?id=2")).andExpect(status().isOk())
                 .andExpect(view().name("complaint-edit")).andExpect(model().attributeExists("complaint")).andReturn();
 
-        Complaint existing = (Complaint) result.getModelAndView().getModelMap().get("complaint");
+        final Complaint existing = (Complaint) result.getModelAndView().getModelMap().get("complaint");
         assertEquals(complaint.getDetails(), existing.getDetails());
 
     }
 
     @Test
     public void updateWithoutComplaintType() throws Exception {
-        ComplaintStatus cs1 = new ComplaintStatus();
+        final ComplaintStatus cs1 = new ComplaintStatus();
         complaint1.setStatus(cs1);
         complaintType.setLocationRequired(true);
         complaint1.setComplaintType(complaintType);
@@ -259,7 +257,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         id = 2L;
         when(complaintService.getComplaintById(id)).thenReturn(complaint1);
         when(complaint1.getId()).thenReturn(2L);
-        this.mockMvc.perform(post("/complaint-update").param("id", "2").param("complaintStatus", "2")).andDo(print())
+        mockMvc.perform(post("/complaint-update").param("id", "2").param("complaintStatus", "2")).andDo(print())
                 .andExpect(status().is3xxRedirection()).andReturn();
 
     }
@@ -268,7 +266,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
     // Ignoring test now since domain class conversion is not incorporated
     public void updateWithComplaintType() throws Exception {
 
-        ComplaintStatus cs = new ComplaintStatus();
+        final ComplaintStatus cs = new ComplaintStatus();
         cs.setName("Forwarded");
         complaint1.setStatus(cs);
         complaintType.setLocationRequired(true);
@@ -278,11 +276,8 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
         when(complaintService.getComplaintById(id)).thenReturn(complaint1);
         when(complaint1.getId()).thenReturn(2L);
         when(complaintTypeService.load(id)).thenReturn(complaintType);
-        this.mockMvc
-                .perform(
-                        post("/complaint-update").param("id", "2").param("complaintStatus", "2")
-                                .param("complaintType", "2")).andExpect(flash().attributeExists("message"))
-                .andExpect(status().is3xxRedirection()).andReturn();
+        mockMvc.perform(post("/complaint-update").param("id", "2").param("complaintStatus", "2").param("complaintType", "2"))
+                .andExpect(flash().attributeExists("message")).andExpect(status().is3xxRedirection()).andReturn();
 
     }
 

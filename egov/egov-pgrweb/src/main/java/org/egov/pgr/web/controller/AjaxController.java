@@ -41,15 +41,17 @@ package org.egov.pgr.web.controller;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter;
 import org.egov.infra.web.support.json.adapter.UserAdaptor;
-import org.egov.pgr.service.CommonService;
+import org.egov.infstr.services.EISServeable;
 import org.egov.pims.commons.DesignationMaster;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -67,24 +69,21 @@ import com.google.gson.reflect.TypeToken;
 @Controller
 public class AjaxController {
 
-    private CommonService commonService;
+	@Autowired
+    private BoundaryService boundaryService;
 
-    @Autowired
-    public AjaxController(CommonService commonService) {
-        this.commonService = commonService;
-    }
+	@Autowired
+	private EISServeable eisService;
 
     @RequestMapping(value = "/ajax-getWards", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Boundary> getWardsForZone(@RequestParam Long id) {
-        return commonService.getWards(id);
+        return boundaryService.getChildBoundariesByBoundaryId(id);
     }
 
     @RequestMapping(value = "/ajax-approvalDesignations", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<DesignationMaster> getDesignations(
             @ModelAttribute("designations") @RequestParam Integer approvalDepartment) {
-        List<DesignationMaster> designations = commonService.getDesignations(approvalDepartment);
-        designations.forEach(designation -> designation.toString());
-        return designations;
+        return eisService.getAllDesignationByDept(approvalDepartment, new Date());
     }
 
     /**
@@ -99,7 +98,7 @@ public class AjaxController {
     @RequestMapping(value = "/ajax-approvalPositions", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String getPositions(@RequestParam Integer approvalDepartment,
             @RequestParam Integer approvalDesignation, HttpServletResponse response) throws IOException {
-        List<User> users = commonService.getPosistions(approvalDepartment, approvalDesignation);
+        List<User> users = eisService.getUsersByDeptAndDesig(approvalDepartment, approvalDesignation, new Date());
         // below line should be removed once the commonService.getPosistions
         // apis query joins and returns user
         Gson jsonCreator = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
