@@ -86,7 +86,7 @@
 		
 		<dependency>
 			<groupId>org.egov</groupId>
-			<artifactId>egov-common</artifactId>
+			<artifactId>egov-commons</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 

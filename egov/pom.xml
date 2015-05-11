@@ -16,7 +16,7 @@
         <module>egov-config</module>
      	<module>egov-database</module>
         <module>egov-egi</module>
-	<module>egov-common</module>
+	<module>egov-commons</module>
         <module>egov-eis</module>
        <!--  <module>egov-egf</module> -->
         <module>egov-portal</module>

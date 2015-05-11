@@ -40,7 +40,7 @@
         
 		<dependency>
 			<groupId>org.egov</groupId>
-			<artifactId>egov-common</artifactId>
+			<artifactId>egov-commons</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 				

@@ -9,8 +9,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>e-governments common</name>
-    <artifactId>egov-common</artifactId>
+    <name>e-governments commons</name>
+    <artifactId>egov-commons</artifactId>
 
     <dependencies>
         <dependency>
