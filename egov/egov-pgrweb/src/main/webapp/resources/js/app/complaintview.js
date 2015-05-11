@@ -39,19 +39,6 @@
 #-------------------------------------------------------------------------------*/
 $(document).ready(function()
 {
-	$('#toggleactions').click(function(){
-		if($(this).html()== "More..")
-		{
-			$(this).html('Less..');
-			$('.show-action-more').show();
-		}else
-		{
-			$(this).html('More..');
-			$('.show-action-more').hide();
-		}
-		
-	});
-	
 	$("#btn_submit").click(function(){
 		alert("hello"+$("#btn_submit").name)
 		if($("#btn_submit").name=='Close')

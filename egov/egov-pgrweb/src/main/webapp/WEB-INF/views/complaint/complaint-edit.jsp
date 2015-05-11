@@ -79,7 +79,7 @@
 				</div>
 			</div>
 
-			<div class="form-group display-hide show-action-more">
+			<div class="form-group">
 				<div class="col-md-3 col-xs-12 add-margin">
 					<spring:message code="lbl.change.jurisdiction" />
 				</div>
@@ -156,8 +156,6 @@
 			</div>
 	<div class="form-group">
 		<div class="text-center">
-			<a href="javascript:void(0);" id="toggleactions"
-				class="btn btn-primary"><spring:message code="lbl.more" />..</a>
 			<button type="submit" class="btn btn-success">
 				<spring:message code="lbl.submit" />
 			</button>
