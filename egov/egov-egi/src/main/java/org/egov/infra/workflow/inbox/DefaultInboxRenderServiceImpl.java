@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -50,82 +50,80 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
+import org.hibernate.FetchMode;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 
 /**
- * Every module which is having StateAware should initialize this with their own StateAware persistence service<br/>
+ * Every module which is having StateAware should initialize this with their own
+ * StateAware persistence service<br/>
  * eg:
+ * 
  * <pre>
  *      &lt;bean id="myStateAwarePersistenceService" parent="persistenceService"&gt;
-                &lt;property name="type" value="org.egov.web.actions.common.MyStateAware" /&gt;
-        &lt;/bean>
-        
-        &lt;bean id="MyStateAwareInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl"&gt;
-                &lt;constructor-arg index="0" ref="myStateAwarePersistenceService"/&gt;
-        &lt;/bean&gt;
+ *                 &lt;property name="type" value="org.egov.web.actions.common.MyStateAware" /&gt;
+ *         &lt;/bean>
+ *         
+ *         &lt;bean id="MyStateAwareInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl"&gt;
+ *                 &lt;constructor-arg index="0" ref="myStateAwarePersistenceService"/&gt;
+ *         &lt;/bean&gt;
  * </pre>
+ * 
  * <br/>
- * id or name attribute value of the workflowTypeService bean definition should follow a strict naming convention as follows<br/>
+ * id or name attribute value of the workflowTypeService bean definition should
+ * follow a strict naming convention as follows<br/>
  * <code>
  * <YourStateAwareClassName>InboxRenderService
- * </code>
- * This is how, {@link InboxRenderServiceDeligate} will detect the appropriate {@link InboxRenderService} and render the inbox items.
+ * </code> This is how, {@link InboxRenderServiceDeligate} will detect the
+ * appropriate {@link InboxRenderService} and render the inbox items.
  **/
 @SuppressWarnings("all")
 public class DefaultInboxRenderServiceImpl<T extends StateAware> implements InboxRenderService<T> {
 
-    private Class<T> stateAwareType;
-    private final PersistenceService<T,Long> stateAwarePersistenceService;
+    private final Class<T> stateAwareType;
+    private final PersistenceService<T, Long> stateAwarePersistenceService;
 
-    public DefaultInboxRenderServiceImpl(final PersistenceService<T,Long> stateAwarePersistenceService) {
+    public DefaultInboxRenderServiceImpl(final PersistenceService<T, Long> stateAwarePersistenceService) {
         this.stateAwarePersistenceService = stateAwarePersistenceService;
         this.stateAwareType = stateAwarePersistenceService.getType();
     }
 
     @Override
     public List<T> getAssignedWorkflowItems(final Long userId, final List<Long> owners) {
-        this.stateAwarePersistenceService.getSession().setFlushMode(FlushMode.MANUAL);
-        final StringBuilder query = new StringBuilder("FROM ");
-        query.append(this.stateAwareType.getName())
-                .append(" WF where WF.state.type=:wfType and WF.state.ownerPosition.id in(:owner) and WF.state.status !=:end and not (WF.state.status =:new and WF.createdBy.id =:userId) order by WF.state.createdDate DESC");
-        final Query qry = this.stateAwarePersistenceService.getSession().createQuery(query.toString());
-        qry.setParameterList(OWNER, owners);
-        qry.setString(WFTYPE, this.stateAwareType.getSimpleName());
-        qry.setParameter("end", StateStatus.ENDED);
-        qry.setParameter("new", StateStatus.STARTED);
-        qry.setLong("userId", userId);
-        qry.setReadOnly(true);
-        return qry.list();
+        return this.stateAwarePersistenceService.getSession().createCriteria(this.stateAwareType)
+                .setFetchMode("state", FetchMode.JOIN).createAlias("state", "state")
+                .setFlushMode(FlushMode.MANUAL).setReadOnly(true).setCacheable(true)
+                .add(Restrictions.eq("state.type", this.stateAwareType.getSimpleName()))
+                .add(Restrictions.in("state.ownerPosition.id", owners))
+                .add(Restrictions.ne("state.status", StateStatus.ENDED))
+                .add(Restrictions.not(Restrictions.conjunction().add(Restrictions.eq("state.status", StateStatus.STARTED))
+                        .add(Restrictions.eq("createdBy.id", userId)))).addOrder(Order.desc("state.createdDate"))
+                        .list();
     }
 
     @Override
-    public List<T> getDraftWorkflowItems(final Long userId, final List<Long> owners)  {
-        this.stateAwarePersistenceService.getSession().setFlushMode(FlushMode.MANUAL);
-        final StringBuilder query = new StringBuilder("FROM ");
-        query.append(this.stateAwareType.getName())
-                .append(" WF where WF.state.type=:wfType and WF.state.ownerPosition.id in (:owner) and WF.createdBy.id =:userId and WF.state.status =:new");
-        final Query qry = this.stateAwarePersistenceService.getSession().createQuery(query.toString());
-        qry.setParameterList(OWNER, owners);
-        qry.setString(WFTYPE, this.stateAwareType.getSimpleName());
-        qry.setLong("userId", userId);
-        qry.setParameter("new", StateStatus.STARTED);
-        qry.setReadOnly(true);
-        return qry.list();
+    public List<T> getDraftWorkflowItems(final Long userId, final List<Long> owners) {
+        return this.stateAwarePersistenceService.getSession().createCriteria(this.stateAwareType)
+                .setFetchMode("state", FetchMode.JOIN).createAlias("state", "state")
+                .setFlushMode(FlushMode.MANUAL).setReadOnly(true).setCacheable(true)
+                .add(Restrictions.eq("state.type", this.stateAwareType.getSimpleName()))
+                .add(Restrictions.in("state.ownerPosition.id", owners)).add(Restrictions.eq("createdBy.id", userId))
+                .add(Restrictions.eq("state.status", StateStatus.STARTED)).addOrder(Order.asc("state.createdDate"))
+                .list();
     }
 
     @Override
-    public List<T> getFilteredWorkflowItems(final Long owner, final Long userId, final Long sender,
-            final Date fromDate, final Date toDate) {
-        
-        //FIXME this wont work with current design need to change
+    public List<T> getFilteredWorkflowItems(final Long owner, final Long userId, final Long sender, final Date fromDate,
+            final Date toDate) {
+
+        // FIXME this wont work with current design need to change
         this.stateAwarePersistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         final StringBuilder query = new StringBuilder("from ");
         query.append(this.stateAwareType.getName()).append(" WF where WF.state.type=:wfType and WF.state.ownerPosition =:owner ")
-                .append(sender == 0 ? "" : "and WF.state.senderName=:sender ")
-                .append(" and WF.state.createdDate ");
-        query.append(fromDate == null && toDate == null ? "IS NOT NULL "
-                : " >= :fromDate and WF.state.createdDate <:toDate ");
+        .append(sender == 0 ? "" : "and WF.state.senderName=:sender ").append(" and WF.state.createdDate ");
+        query.append(fromDate == null && toDate == null ? "IS NOT NULL " : " >= :fromDate and WF.state.createdDate <:toDate ");
         query.append("  and WF.state.value !=:end and not (WF.state.value =:newState and WF.createdBy =:userId) order by WF.state.createdDate DESC");
         final Query qry = this.stateAwarePersistenceService.getSession().createQuery(query.toString());
         qry.setLong(OWNER, owner);
@@ -154,7 +152,7 @@ public class DefaultInboxRenderServiceImpl<T extends StateAware> implements Inbo
 
     @Override
     public List<T> getWorkflowItems(final Map<String, Object> criteria) {
-        //FIXME won't work with current
+        // FIXME won't work with current
         this.stateAwarePersistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         final StringBuilder queryString = new StringBuilder("from ");
         queryString.append(this.stateAwareType.getName()).append(
@@ -168,11 +166,11 @@ public class DefaultInboxRenderServiceImpl<T extends StateAware> implements Inbo
 
         if (criteria.containsKey(IDENTIFIER))
             queryString
-                    .append("and WF.")
-                    .append(criteria.get("searchField"))
-                    .append(getOperator((String) criteria.get(SEARCH_OP)))
-                    .append(((String) criteria.get(SEARCH_OP)).equals("between") ? " :identifier and :identifier2 "
-                            : criteria.get(SEARCH_OP).toString().equals("in") ? " (:identifier) " : " :identifier ");
+            .append("and WF.")
+            .append(criteria.get("searchField"))
+            .append(getOperator((String) criteria.get(SEARCH_OP)))
+            .append(((String) criteria.get(SEARCH_OP)).equals("between") ? " :identifier and :identifier2 " : criteria
+                            .get(SEARCH_OP).toString().equals("in") ? " (:identifier) " : " :identifier ");
 
         if (criteria.containsKey(FROMDATE) || criteria.containsKey(TODATE))
             queryString.append("and WF.state.createdDate >= :fromDate and WF.state.createdDate < :toDate ");
@@ -249,7 +247,7 @@ public class DefaultInboxRenderServiceImpl<T extends StateAware> implements Inbo
 
     /**
      * To covert the Search annotation operator to DB specific operator
-     * 
+     *
      * @param searchOpVal
      *            the search operator value
      * @return DB specific operator

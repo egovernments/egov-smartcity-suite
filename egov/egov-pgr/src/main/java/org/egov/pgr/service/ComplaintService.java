@@ -156,7 +156,7 @@ public class ComplaintService {
         }
         complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
         final Position assignee = complaintRouterService.getAssignee(complaint);
-        complaint.transition(true).start().withSenderName(complaint.getComplainant().getUserDetail().getName())
+        complaint.transition().start().withSenderName(complaint.getComplainant().getUserDetail().getName())
         .withComments("Complaint registered with Complaint tracking Number : " + complaint.getCRN())
         .withStateValue(complaint.getStatus().getName()).withOwner(assignee).withDateInfo(new Date());
 
