@@ -47,7 +47,7 @@ import org.egov.infstr.models.BaseModel;
 public class CChartOfAccounts extends BaseModel {
 	private static final long serialVersionUID = 1L;
 
-	private Long id = null;
+	//private Long id = null;
 	private String glcode;
 	private String name;
 	private String purposeId;
@@ -110,17 +110,17 @@ public class CChartOfAccounts extends BaseModel {
 
 	/**
 	 * @return Returns the id.
-	 */
+	 
 	public Long getId() {
 		return id;
 	}
-
+*/
 	/**
 	 * @param id The id to set.
-	 */
+	 
 	public void setId(Long id) {
 		this.id = id;
-	}
+	}*/
 
 	/**
 	 * @return Returns the name.
@@ -189,17 +189,17 @@ public class CChartOfAccounts extends BaseModel {
 
 	/**
 	 * @param functionReqd The functionReqd to set.
-	 */
+	*/
 	public void setFunctionReqd(Long functionReqd) {
 		this.functionReqd = functionReqd;
 	}
 
-	public void setFunctionReqd(boolean functionReqd) {
+	/**public void setFunctionReqd(boolean functionReqd) {
 		if (functionReqd == true)
 			this.functionReqd = Long.valueOf("1");
 		else
 			this.functionReqd = Long.valueOf("0");
-	}
+	} */
 
 	/**
 	 * @return Returns the isActiveForPosting.
@@ -215,12 +215,12 @@ public class CChartOfAccounts extends BaseModel {
 		this.isActiveForPosting = isActiveForPosting;
 	}
 
-	public void setIsActiveForPosting(boolean isActiveForPosting) {
+	/*public void setIsActiveForPosting(boolean isActiveForPosting) {
 		if (isActiveForPosting == true)
 			this.isActiveForPosting = Long.valueOf("1");
 		else
 			this.isActiveForPosting = Long.valueOf("0");
-	}
+	}*/
 
 	/**
 	 * @return Returns the operation.
@@ -298,10 +298,10 @@ public class CChartOfAccounts extends BaseModel {
 		this.budgetCheckReq = budgetCheckReq;
 	}
 
-	public void setBudgetCheckReq(boolean budgetCheckReq) {
+/*	public void setBudgetCheckReq(boolean budgetCheckReq) {
 		if (budgetCheckReq == true)
 			this.budgetCheckReq = Long.valueOf("1");
 		else
 			this.budgetCheckReq = Long.valueOf("0");
-	}
+	}*/
 }

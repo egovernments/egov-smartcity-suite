@@ -44,18 +44,18 @@ import org.egov.infstr.models.BaseModel;
 public class CChartOfAccountDetail extends BaseModel {
 
 	private static final long serialVersionUID = 1L;
-	private Long id;
+	//private Long id;
 	private CChartOfAccounts glCodeId;
 	private Accountdetailtype detailTypeId;
 
-	public Long getId() {
+/*	public Long getId() {
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
 	}
-
+*/
 	public CChartOfAccounts getGlCodeId() {
 		return glCodeId;
 	}

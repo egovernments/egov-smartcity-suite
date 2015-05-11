@@ -157,8 +157,8 @@ public class ComplaintService {
         complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
         final Position assignee = complaintRouterService.getAssignee(complaint);
         complaint.transition(true).start().withSenderName(complaint.getComplainant().getUserDetail().getName())
-                .withComments("Complaint registered with Complaint tracking Number : " + complaint.getCRN())
-                .withStateValue(complaint.getStatus().getName()).withOwner(assignee).withDateInfo(new Date());
+        .withComments("Complaint registered with Complaint tracking Number : " + complaint.getCRN())
+        .withStateValue(complaint.getStatus().getName()).withOwner(assignee).withDateInfo(new Date());
 
         complaint.setAssignee(assignee);
         complaint.setEscalationDate(new DateTime());
@@ -200,16 +200,16 @@ public class ComplaintService {
                 || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString())) {
             LOG.debug("Terminating Complaint Workflow");
             complaint.transition(true).withComments(approvalComent).withStateValue(complaint.getStatus().getName())
-                    .withSenderName(userName).withDateInfo(new Date()).end();
+            .withSenderName(userName).withDateInfo(new Date()).end();
 
         } else if (null != approvalPosition && !approvalPosition.equals(Long.valueOf(0))) {
             final Position owner = eisService.getPrimaryPositionForUser(approvalPosition, new Date());
             complaint.setAssignee(owner);
             complaint.transition(true).withOwner(owner).withComments(approvalComent).withSenderName(userName)
-                    .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
+            .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
         } else
             complaint.transition(true).withComments(approvalComent).withSenderName(userName)
-                    .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
+            .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
 
         final Complaint savedComplaint = complaintRepository.saveAndFlush(complaint);
         pushMessage(savedComplaint);
@@ -243,10 +243,10 @@ public class ComplaintService {
 
         criteria.add(
                 Restrictions.disjunction().add(Restrictions.eq("complaintStatus.name", COMPLETED.name()))
-                        .add(Restrictions.eq("complaintStatus.name", REJECTED.name()))
-                        .add(Restrictions.eq("complaintStatus.name", WITHDRAWN.name()))
-                        .add(Restrictions.eq("complaintStatus.name", FORWARDED.name()))
-                        .add(Restrictions.eq("complaintStatus.name", REGISTERED.name())))
+                .add(Restrictions.eq("complaintStatus.name", REJECTED.name()))
+                .add(Restrictions.eq("complaintStatus.name", WITHDRAWN.name()))
+                .add(Restrictions.eq("complaintStatus.name", FORWARDED.name()))
+                .add(Restrictions.eq("complaintStatus.name", REGISTERED.name())))
                 .add(Restrictions.lt("complaint.escalationDate", new DateTime().toDate()))
                 .setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
@@ -284,9 +284,9 @@ public class ComplaintService {
     private String getDetailedMessage(final Complaint savedComplaint) {
         final StringBuilder detailedMessage = new StringBuilder();
         detailedMessage.append("Complaint No. ").append(savedComplaint.getCRN()).append(" regarding ")
-                .append(savedComplaint.getComplaintType().getName()).append(" was ")
-                .append(savedComplaint.getStatus().getName())
-                .append(savedComplaint.getLastModifiedBy().getType().equals(UserType.CITIZEN) ? " by you." : ".");
+        .append(savedComplaint.getComplaintType().getName()).append(" was ")
+        .append(savedComplaint.getStatus().getName())
+        .append(savedComplaint.getLastModifiedBy().getType().equals(UserType.CITIZEN) ? " by you." : ".");
         return detailedMessage.toString();
     }
 
@@ -345,18 +345,18 @@ public class ComplaintService {
                 .toDate());
 
         final StringBuffer emailBody = new StringBuffer()
-                .append("Dear ")
-                .append(complaint.getComplainant().getName())
-                .append(",\n \n \tThank you for registering a complaint (")
-                .append(complaint.getCRN())
-                .append("). Your complaint is registered successfully.\n \tPlease use this number for all future references.")
-                .append("\n \n Complaint Details - \n \n Complaint type - ")
-                .append(complaint.getComplaintType().getName());
+        .append("Dear ")
+        .append(complaint.getComplainant().getName())
+        .append(",\n \n \tThank you for registering a complaint (")
+        .append(complaint.getCRN())
+        .append("). Your complaint is registered successfully.\n \tPlease use this number for all future references.")
+        .append("\n \n Complaint Details - \n \n Complaint type - ")
+        .append(complaint.getComplaintType().getName());
         if (complaint.getLocation() != null)
             emailBody.append(" \n Location details - ").append(complaint.getLocation().getName());
         emailBody.append("\n Complaint description - ").append(complaint.getDetails()).append("\n Complaint status -")
-                .append(complaint.getStatus().getName()).append("\n Complaint Registration Date - ")
-                .append(formattedCreatedDate);
+        .append(complaint.getStatus().getName()).append("\n Complaint Registration Date - ")
+        .append(formattedCreatedDate);
         final StringBuffer emailSubject = new StringBuffer().append("Registered Complaint -")
                 .append(complaint.getCRN()).append(" successfuly");
         final StringBuffer smsBody = new StringBuffer().append("Dear ").append(complaint.getComplainant().getName())
