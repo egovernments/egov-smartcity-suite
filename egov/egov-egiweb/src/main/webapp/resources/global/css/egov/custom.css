@@ -562,6 +562,18 @@ table .replace-inputs input {
 	margin-bottom: 16px;
 }
 
+.page-container.horizontal-menu header.navbar ul.nav > li.dropdown > a.workspace {
+	border-radius:50%;
+}
+
+.page-container.horizontal-menu header.navbar ul.nav > li.dropdown > a.workspace:hover, .page-container.horizontal-menu header.navbar ul.nav > li.dropdown > a.workspace.active{
+	-webkit-box-shadow: 0 0 20px rgba(255,255,255,.6), inset 0 0 20px rgba(255,255,255,1);
+	-moz-box-shadow: 0 0 20px rgba(255,255,255,.6), inset 0 0 20px rgba(255,255,255,1);
+	box-shadow: 0 0 20px rgba(255,255,255,.6), inset 0 0 20px rgba(255,255,255,1);
+	border-radius:50%;
+	background:rgb(107,79,44);
+}
+
 .page-container.horizontal-menu header.navbar ul.nav > li.menu-responsive > a:hover, .page-container.horizontal-menu header.navbar .navbar-right > li ul li a:hover{
 	color:#fff;
 	background-color: #f2851f;
@@ -591,9 +603,9 @@ table .replace-inputs input {
 	color: #ffffff;
 }
 
-.page-container.horizontal-menu header.navbar ul.nav > li > a i, .page-container.horizontal-menu header.navbar ul.nav > li > span i {
+/* .page-container.horizontal-menu header.navbar ul.nav > li > a i, .page-container.horizontal-menu header.navbar ul.nav > li > span i {
 	margin-right: 5px;
-}
+} */
 
 .page-container.horizontal-menu header.navbar ul.nav > li .horizontal-mobile-menu a {
 	display: inline-block;
@@ -1062,8 +1074,9 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 }
 
 .table-header{
-	line-height: 1.8;
-	font-size: 18px;
+	/* line-height: 1.8; */
+	font-size: 20px;
+	font-family: semibold;
 }
 
 .dynamic-span span , .dynamic-span span label{
@@ -1926,4 +1939,22 @@ ul li a span{
 
 #official_inbox tbody, #official_drafts tbody, #official_notify tbody{
 	font-size:13px;
+}
+
+.notificaton-card .msg{
+	padding:5px 15px;
+}
+
+.msg header span.sender{
+	margin:0;
+	font-size:15px;
+	font-family:semibold;
+}
+
+.msg header .msg-info.notify {
+  padding-left: 0px;
+}
+
+.msg-content > p.notify {
+  margin: 5px 20px 0px 0px;
 }
