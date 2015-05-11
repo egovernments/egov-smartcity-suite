@@ -1,4 +1,3 @@
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <html> 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">

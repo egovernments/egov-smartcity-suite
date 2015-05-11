@@ -57,8 +57,8 @@ public class EgovSpringContextHolder implements BeanFactoryAware {
     private static BeanFactory beanFactory;
 
     @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = beanFactory;
+    public void setBeanFactory(BeanFactory beanFactoryRef) throws BeansException {
+        beanFactory = beanFactoryRef;
     }
 
     /**

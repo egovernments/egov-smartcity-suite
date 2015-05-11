@@ -1,5 +1,4 @@
 <%@ page language="java" pageEncoding="UTF-8" isErrorPage="true"%>
-<%@ taglib prefix="html" uri="/WEB-INF/struts-html.tld"%>
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -21,9 +20,6 @@
 							</td>
                             <td>
 							    <span class="bold">Server has encountered a problem. Please try again or contact system administrator if the problem persists.</span>
-							</td>
-							 <td>
-							    <html:errors/>
 							</td>
 						</tr>
 					</table>

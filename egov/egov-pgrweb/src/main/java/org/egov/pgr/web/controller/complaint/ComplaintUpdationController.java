@@ -112,7 +112,7 @@ public class ComplaintUpdationController {
             model.addAttribute("ward", Collections.EMPTY_LIST);
             model.addAttribute("zone", boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName("ZONE", "ADMINISTRATION"));
             if (complaint.getComplaintType().isLocationRequired() && complaint.getLocation() != null)
-                model.addAttribute("ward", boundaryService.getChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
+                model.addAttribute("ward", boundaryService.getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
             return COMPLAINT_EDIT;
         }
     }
@@ -147,7 +147,7 @@ public class ComplaintUpdationController {
             model.addAttribute("zone", boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName("ZONE", "ADMINISTRATION"));
             model.addAttribute("ward", Collections.EMPTY_LIST);
             if (complaint.getComplaintType() != null && complaint.getComplaintType().isLocationRequired() && complaint.getLocation() != null)
-                model.addAttribute("ward", boundaryService.getChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
+                model.addAttribute("ward", boundaryService.getActiveChildBoundariesByBoundaryId(complaint.getLocation().getParent().getId()));
             if (securityUtils.currentUserType().equals(UserType.CITIZEN))
                 result = COMPLAINT_CITIZEN_EDIT;
             else

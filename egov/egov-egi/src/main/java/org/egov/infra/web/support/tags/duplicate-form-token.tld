@@ -12,7 +12,7 @@
 	<tag>
 		<description>Renders an hidden input field which stores form token.</description>
 		<name>token</name>
-		<tag-class>org.egov.infra.web.support.tags.DuplicateFormSubmission</tag-class>
+		<tag-class>org.egov.infra.web.support.tags.DuplicateFormSubmissionTokenTag</tag-class>
 		<body-content>JSP</body-content>		
 	</tag>
 </taglib>

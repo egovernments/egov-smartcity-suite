@@ -37,9 +37,8 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ include file="/includes/taglibs.jsp" %>
 <%@page import="java.util.*,
-                org.egov.infstr.utils.EgovMasterDataCaching,org.egov.lib.rjbac.dept.DepartmentImpl"
+                org.egov.infstr.utils.EgovMasterDataCaching"
     %>
 
 <script>
