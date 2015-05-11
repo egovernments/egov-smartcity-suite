@@ -47,11 +47,12 @@ import org.egov.works.models.estimate.EstimateTemplate;
 import org.egov.works.models.masters.SORRate;
 
 public class AjaxEstimateTemplateAction extends BaseFormAction {
-	
-	private EstimateTemplate estimateTemplate=new EstimateTemplate();
+
+    private static final long serialVersionUID = 4779374304829178146L;
+    private EstimateTemplate estimateTemplate = new EstimateTemplate();
     private static final String CODEUNIQUECHECK = "codeUniqueCheck";
     private static final String SEARCH_RESULTS = "searchResults";
-    private static final String ACTIVITIES="activities";
+    private static final String ACTIVITIES = "activities";
     private int status;
     private String code;
     private long workTypeId;
@@ -59,123 +60,122 @@ public class AjaxEstimateTemplateAction extends BaseFormAction {
     private SORRate currentRate;
     private Date estimateDate;
     private String query;
-	
+
+    @Override
     public Object getModel() {
         // TODO Auto-generated method stub
         return estimateTemplate;
     }
-    
-	public String searchAjax(){
-		return SEARCH_RESULTS;
-	}
-	
-	public Collection<EstimateTemplate> getEstimateTemplateList(){
-		String strquery="";
-		if(workTypeId>0){
-			strquery="from EstimateTemplate et where upper(et.code) like '"+query.toUpperCase()+"%' and et.workType.id="+ workTypeId;
-		}
-		if(subTypeId>0){
-			strquery+=" and et.subType.id="+subTypeId;
-		}
-		if(status==1)
-		{
-			strquery+=" and et.status="+status;
-		}
-		return getPersistenceService().findAllBy(strquery);
-	}
-	public String findCodeAjax(){
-		estimateTemplate=(EstimateTemplate) getPersistenceService().find("from EstimateTemplate where upper(code)=?", code.toUpperCase());
-		
-		return ACTIVITIES;
-	}
-    public String codeUniqueCheck(){
+
+    public String searchAjax() {
+        return SEARCH_RESULTS;
+    }
+
+    public Collection<EstimateTemplate> getEstimateTemplateList() {
+        String strquery = "";
+        if (workTypeId > 0)
+            strquery = "from EstimateTemplate et where upper(et.code) like '" + query.toUpperCase()
+            + "%' and et.workType.id=" + workTypeId;
+        if (subTypeId > 0)
+            strquery += " and et.subType.id=" + subTypeId;
+        if (status == 1)
+            strquery += " and et.status=" + status;
+        return getPersistenceService().findAllBy(strquery);
+    }
+
+    public String findCodeAjax() {
+        estimateTemplate = (EstimateTemplate) getPersistenceService().find("from EstimateTemplate where upper(code)=?",
+                code.toUpperCase());
+
+        return ACTIVITIES;
+    }
+
+    public String codeUniqueCheck() {
         return CODEUNIQUECHECK;
     }
+
     public boolean getCodeCheck() {
-    	boolean codeexistsOrNot = false;
-    	Long estimateTemplateId=null;
-    	if(code!=null){
-    		if(getPersistenceService().findByNamedQuery("EstimateTemplateCodeUniqueCheck",code.toUpperCase())!=null){
-    			estimateTemplateId=(Long) getPersistenceService().findByNamedQuery("EstimateTemplateCodeUniqueCheck",code.toUpperCase());
-    		}
-    	}
-    	if(estimateTemplateId!=null){
-    		codeexistsOrNot=true;
-    	}
-    	else{
-    		codeexistsOrNot=false;
-    	}
-    		
-    	return codeexistsOrNot;
+        boolean codeexistsOrNot = false;
+        Long estimateTemplateId = null;
+        if (code != null)
+            if (getPersistenceService().findByNamedQuery("EstimateTemplateCodeUniqueCheck", code.toUpperCase()) != null)
+                estimateTemplateId = (Long) getPersistenceService().findByNamedQuery("EstimateTemplateCodeUniqueCheck",
+                        code.toUpperCase());
+        if (estimateTemplateId != null)
+            codeexistsOrNot = true;
+        else
+            codeexistsOrNot = false;
+
+        return codeexistsOrNot;
     }
-    
-	public EstimateTemplate getEstimateTemplate() {
-		return estimateTemplate;
-	}
 
-	public void setEstimateTemplate(EstimateTemplate estimateTemplate) {
-		this.estimateTemplate = estimateTemplate;
-	}
+    public EstimateTemplate getEstimateTemplate() {
+        return estimateTemplate;
+    }
 
-	public int getStatus() {
-		return status;
-	}
+    public void setEstimateTemplate(final EstimateTemplate estimateTemplate) {
+        this.estimateTemplate = estimateTemplate;
+    }
 
-	public void setStatus(int status) {
-		this.status = status;
-	}
-	
-	public void setStatus(String status) {
-		if(status!=null && !status.equalsIgnoreCase(""))
-			this.status = Integer.parseInt(status);
-	}
+    public int getStatus() {
+        return status;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public void setStatus(final int status) {
+        this.status = status;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public void setStatus(final String status) {
+        if (status != null && !status.equalsIgnoreCase(""))
+            this.status = Integer.parseInt(status);
+    }
 
-	public long getWorkTypeId() {
-		return workTypeId;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setWorkTypeId(long workTypeId) {
-		this.workTypeId = workTypeId;
-	}
+    public void setCode(final String code) {
+        this.code = code;
+    }
 
-	public long getSubTypeId() {
-		return subTypeId;
-	}
+    public long getWorkTypeId() {
+        return workTypeId;
+    }
 
-	public void setSubTypeId(long subTypeId) {
-		this.subTypeId = subTypeId;
-	}
+    public void setWorkTypeId(final long workTypeId) {
+        this.workTypeId = workTypeId;
+    }
 
-	public SORRate getCurrentRate() {
-		return currentRate;
-	}
+    public long getSubTypeId() {
+        return subTypeId;
+    }
 
-	public void setCurrentRate(SORRate currentRate) {
-		this.currentRate = currentRate;
-	}
+    public void setSubTypeId(final long subTypeId) {
+        this.subTypeId = subTypeId;
+    }
 
-	public Date getEstimateDate() {
-		return estimateDate;
-	}
+    public SORRate getCurrentRate() {
+        return currentRate;
+    }
 
-	public void setEstimateDate(Date estimateDate) {
-		this.estimateDate = estimateDate;
-	}
+    public void setCurrentRate(final SORRate currentRate) {
+        this.currentRate = currentRate;
+    }
 
-	public String getQuery() {
-		return query;
-	}
+    public Date getEstimateDate() {
+        return estimateDate;
+    }
 
-	public void setQuery(String query) {
-		this.query = query;
-	}
+    public void setEstimateDate(final Date estimateDate) {
+        this.estimateDate = estimateDate;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(final String query) {
+        this.query = query;
+    }
 
 }

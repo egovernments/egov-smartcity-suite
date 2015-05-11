@@ -48,76 +48,75 @@ import org.egov.commons.SubScheme;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.works.models.masters.Contractor;
 
-public class AjaxWorkProgressAction  extends BaseFormAction {
+public class AjaxWorkProgressAction extends BaseFormAction {
 
-	private Integer schemeId;
-	private List<SubScheme> subSchemes;
-	private static final String SUBSCHEMES = "subschemes";
-	private String query;
-	private List<Contractor> contractorList = new LinkedList<Contractor>();
-	
-	@Override
-	public Object getModel() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	public AjaxWorkProgressAction()
-	{
-		
-	}
-	
+    private static final long serialVersionUID = -8272472599041291866L;
+    private Integer schemeId;
+    private List<SubScheme> subSchemes;
+    private static final String SUBSCHEMES = "subschemes";
+    private String query;
+    private List<Contractor> contractorList = new LinkedList<Contractor>();
 
-	public String loadSubSchemes() {
-		subSchemes = getPersistenceService().findAllBy("from org.egov.commons.SubScheme where scheme.id=?", schemeId);
-		return SUBSCHEMES;
-	}
-//TODO: check only for approved work orders
-	public String searchAllContractorsForWorkOrder(){
-		if(!StringUtils.isEmpty(query))
-		{
-			StringBuilder strquery=new StringBuilder(300);
-			ArrayList<Object> params=new ArrayList<Object>();
-			strquery.append("select distinct(woe.workOrder.contractor) from WorkOrderEstimate woe where upper(woe.workOrder.contractor.name) like '%'||?||'%'" );
-			strquery.append(" or upper(woe.workOrder.contractor.code) like '%'||?||'%'");
-			strquery.append(" and woe.workOrder.egwStatus.code='APPROVED'");
-			params.add(query.toUpperCase());
-			params.add(query.toUpperCase());
-			contractorList = getPersistenceService().findAllBy(strquery.toString(), params.toArray());
-		}	
-		return "contractorNameSearchResults";
-	}
-	
-	public Integer getSchemeId() {
-		return schemeId;
-	}
+    @Override
+    public Object getModel() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	public void setSchemeId(Integer schemeId) {
-		this.schemeId = schemeId;
-	}
+    public AjaxWorkProgressAction() {
 
-	public List<SubScheme> getSubSchemes() {
-		return subSchemes;
-	}
+    }
 
-	public void setSubSchemes(List<SubScheme> subSchemes) {
-		this.subSchemes = subSchemes;
-	}
+    public String loadSubSchemes() {
+        subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=?", schemeId);
+        return SUBSCHEMES;
+    }
 
-	public String getQuery() {
-		return query;
-	}
+    // TODO: check only for approved work orders
+    public String searchAllContractorsForWorkOrder() {
+        if (!StringUtils.isEmpty(query)) {
+            final StringBuilder strquery = new StringBuilder(300);
+            final ArrayList<Object> params = new ArrayList<Object>();
+            strquery.append("select distinct(woe.workOrder.contractor) from WorkOrderEstimate woe where upper(woe.workOrder.contractor.name) like '%'||?||'%'");
+            strquery.append(" or upper(woe.workOrder.contractor.code) like '%'||?||'%'");
+            strquery.append(" and woe.workOrder.egwStatus.code='APPROVED'");
+            params.add(query.toUpperCase());
+            params.add(query.toUpperCase());
+            contractorList = getPersistenceService().findAllBy(strquery.toString(), params.toArray());
+        }
+        return "contractorNameSearchResults";
+    }
 
-	public void setQuery(String query) {
-		this.query = query;
-	}
+    public Integer getSchemeId() {
+        return schemeId;
+    }
 
-	public List<Contractor> getContractorList() {
-		return contractorList;
-	}
+    public void setSchemeId(final Integer schemeId) {
+        this.schemeId = schemeId;
+    }
 
-	public void setContractorList(List<Contractor> contractorList) {
-		this.contractorList = contractorList;
-	}
-	
+    public List<SubScheme> getSubSchemes() {
+        return subSchemes;
+    }
+
+    public void setSubSchemes(final List<SubScheme> subSchemes) {
+        this.subSchemes = subSchemes;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(final String query) {
+        this.query = query;
+    }
+
+    public List<Contractor> getContractorList() {
+        return contractorList;
+    }
+
+    public void setContractorList(final List<Contractor> contractorList) {
+        this.contractorList = contractorList;
+    }
+
 }

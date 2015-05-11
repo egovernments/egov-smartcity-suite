@@ -39,29 +39,25 @@
  */
 package org.egov.works.web.actions.tender;
 
-/**
- * @author Vaibhav.K
- *
- */
 public class ContractorInfo {
-	
-	private String name;
-	private String code;
 
-	public String getCode() {
-		return code;
-	}
+    private String name;
+    private String code;
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setCode(final String code) {
+        this.code = code;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
 
 }

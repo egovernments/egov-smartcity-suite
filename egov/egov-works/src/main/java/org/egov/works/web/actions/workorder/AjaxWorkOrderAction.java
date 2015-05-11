@@ -60,7 +60,6 @@ import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.services.ScriptService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EmployeeService;
@@ -78,381 +77,415 @@ import org.egov.works.services.MeasurementBookService;
 import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class AjaxWorkOrderAction extends BaseFormAction{
+public class AjaxWorkOrderAction extends BaseFormAction {
 
-	private String departmentName;
-	private Long desgId;
-	private static final String WORKORDER_DESIG_LIST = "workOrderDesignations";
-	private static final String WORKORDER_USER_LIST = "workOrderUsers";
-	private static final String WORKORDER_ASSIGNED_LIST="workOrderAssignedUsers";
-	private List<DesignationMaster> workOrderDesigList=new ArrayList<DesignationMaster>();
-	private String traIds;
-	private List<TenderResponseActivity> tenderResponseActivitylist=new ArrayList<TenderResponseActivity>();
-	private PersistenceService<TenderResponseActivity, Long> tenderResponseActivityService;
-	private Long executingDepartment;
-	private PersonalInformationService personalInformationService;
-	private List userList;
-	private MeasurementBookService measurementBookService;
-	List <MBHeader> approvedMBList = new ArrayList<MBHeader>();; 
-	private Long workOrderId;
-	private String query = "";
-	private List<AbstractEstimate> estimateList = new LinkedList<AbstractEstimate>();
-	private List<WorkOrder> workOrderList = new LinkedList<WorkOrder>();
-	private String trackMlsCheck;
-	private String yearEndApprCheck;
-	@Autowired
-        private CommonsService commonsService;
-	private String estimateNo;
-	private static final String VALID = "valid";
-	private static final String INVALID = "invalid";
-	private String advanceRequisitionNo;
-	private String owner = "";
-	private String arfInWorkFlowCheck;
-	private ContractorAdvanceService contractorAdvanceService;
-	@Autowired
-        private EmployeeService employeeService;
-	private static final String ARF_IN_WORKFLOW_CHECK="arfInWorkflowCheck"; 
-	 @Autowired
-         private ScriptService scriptService;
-	
-	
-	public Object getModel() {
-		return null;
-	}
- 
-	public  String getDesignationByDeptId() {
-		//List<Script> scriptList = persistenceService.findAllByNamedQuery(Script.BY_NAME,"workOrder.Designation.ByDepartment");
-		if(StringUtils.isNotBlank(departmentName)){
-			//List<String> list = (List<String>) scriptList.get(0).eval(Script.createContext("department",departmentName));	
-			 ScriptContext scriptContext = ScriptService.createContext("department",departmentName);
-	                 List<String> desglist = (List<String>)scriptService.executeScript("workOrder.Designation.ByDepartment", scriptContext);
-	                 workOrderDesigList.addAll(getPersistenceService().findAllByNamedQuery("getDesignationForListOfDesgNames", desglist));
-		}
-		return WORKORDER_DESIG_LIST;
-	}
-	
-	public String getUsersForDesg() {
-		try {
-			HashMap<String,Object> criteriaParams =new HashMap<String,Object>();
-			criteriaParams.put("designationId", desgId.intValue());
-			criteriaParams.put("departmentId", executingDepartment);
-			if(executingDepartment==null || executingDepartment==-1)
-				userList=Collections.EMPTY_LIST;
-			else
-				userList=personalInformationService.getListOfEmployeeViewBasedOnCriteria(criteriaParams, -1, -1);
-		} catch (Exception e) {
-			throw new EGOVRuntimeException("user.find.error", e);
-		}
-		return WORKORDER_USER_LIST;
-	}
-	
-	public String getWOAssignedTo1ForDepartment() {
-		try {
-			if(executingDepartment==null || executingDepartment==-1)
-				userList=Collections.EMPTY_LIST;
-			else {
-				userList=persistenceService.findAllBy("select distinct woe.workOrder.engineerIncharge from  WorkOrderEstimate woe where woe.estimate.executingDepartment.id=?",executingDepartment);
-			}
-		} catch (Exception e) {
-			throw new EGOVRuntimeException("user.find.error", e);
-		}
-		return WORKORDER_ASSIGNED_LIST;
-	}
+    private static final long serialVersionUID = 6775725729956509634L;
+    private String departmentName;
+    private Long desgId;
+    private static final String WORKORDER_DESIG_LIST = "workOrderDesignations";
+    private static final String WORKORDER_USER_LIST = "workOrderUsers";
+    private static final String WORKORDER_ASSIGNED_LIST = "workOrderAssignedUsers";
+    private List<DesignationMaster> workOrderDesigList = new ArrayList<DesignationMaster>();
+    private String traIds;
+    private List<TenderResponseActivity> tenderResponseActivitylist = new ArrayList<TenderResponseActivity>();
+    private PersistenceService<TenderResponseActivity, Long> tenderResponseActivityService;
+    private Long executingDepartment;
+    private PersonalInformationService personalInformationService;
+    private List userList;
+    private MeasurementBookService measurementBookService;
+    List<MBHeader> approvedMBList = new ArrayList<MBHeader>();;
+    private Long workOrderId;
+    private String query = "";
+    private List<AbstractEstimate> estimateList = new LinkedList<AbstractEstimate>();
+    private List<WorkOrder> workOrderList = new LinkedList<WorkOrder>();
+    private String trackMlsCheck;
+    private String yearEndApprCheck;
+    @Autowired
+    private CommonsService commonsService;
+    private String estimateNo;
+    private static final String VALID = "valid";
+    private static final String INVALID = "invalid";
+    private String advanceRequisitionNo;
+    private String owner = "";
+    private String arfInWorkFlowCheck;
+    private ContractorAdvanceService contractorAdvanceService;
+    @Autowired
+    private EmployeeService employeeService;
+    private static final String ARF_IN_WORKFLOW_CHECK = "arfInWorkflowCheck";
+    @Autowired
+    private ScriptService scriptService;
 
-	public String getWOAssignedTo2ForDepartment() {
-		try {
-			if(executingDepartment==null || executingDepartment==-1)
-				userList=Collections.EMPTY_LIST;
-			else {
-				userList=persistenceService.findAllBy("select distinct woe.workOrder.engineerIncharge2 from  WorkOrderEstimate woe where woe.estimate.executingDepartment.id=?",executingDepartment);
-			}
-		} catch (Exception e) {
-			throw new EGOVRuntimeException("user.find.error", e);
-		}
-		return WORKORDER_ASSIGNED_LIST;
-	}
+    @Override
+    public Object getModel() {
+        return null;
+    }
 
-	public String getTenderResponseActivityList(){
-		if(StringUtils.isNotBlank(traIds)){
-			Set<Long> traIdentifierSet = new HashSet<Long>();
-			Map<Long,Double> traMap=new HashMap<Long,Double>();
-			String[] values = traIds.split("\\^");//To split the data (For Eg:1^2) 
-			Long[] traIdLong=new Long[values.length];
-			int j=0;
-			for(int i=0;i<values.length;i++){
-				if(StringUtils.isNotBlank(values[i])){
-					traIdLong[j] = Long.valueOf(values[i].split("~")[0].trim());//selected TenderResponseActivity Id
-					traMap.put(traIdLong[j], Double.valueOf(values[i].split("~")[1]));//selected TenderResponseActivity 's UnAssigned Qty
-					j++;
-				}
-			}
-			traIdentifierSet.addAll(Arrays.asList(traIdLong));
-			List<TenderResponseActivity> tempList=new ArrayList<TenderResponseActivity>();
-			tempList=(List<TenderResponseActivity>)tenderResponseActivityService.findAllByNamedQuery("getTenderResponseActivityByIds", traIdentifierSet);
-			for(TenderResponseActivity tenderResponseActivity:tempList){
-				Double unAssignedQuantity=traMap.get(tenderResponseActivity.getId());
-				tenderResponseActivity.setNegotiatedQuantity(unAssignedQuantity);//Temperorily setting UnAssigned Qty instead of Negotiated Qty
-				HibernateUtil.getCurrentSession().evict(tenderResponseActivity);//To evict the changes done on tenderResponseActivity not to be committed.
-				tenderResponseActivitylist.add(tenderResponseActivity);
-			}
-		}
-		return "tenderResponseActivities";
-	}
-	
-	public String getApprovedMBsForWorkOrder() {		
-		approvedMBList = measurementBookService.findAllBy(" from MBHeader where workOrder.id=? and egwStatus.code<>'CANCELLED'", workOrderId);
-		return "approvedMBs";
-	}
-	
-	
-	public String advanceRequisitionInWorkflowCheck() {
-		arfInWorkFlowCheck = VALID;
-		List<WorkOrderEstimate> woeList = (List<WorkOrderEstimate>) persistenceService.findAllBy(" from WorkOrderEstimate woe where woe.workOrder.id = ? ",workOrderId);
-		if(woeList.size()==1){
-			ContractorAdvanceRequisition arf =  contractorAdvanceService.getContractorARFInWorkflowByWOEId(woeList.get(0).getId());				
-			if(arf != null) {
-				arfInWorkFlowCheck = INVALID;
-				advanceRequisitionNo = arf.getAdvanceRequisitionNumber();
-				estimateNo = arf.getWorkOrderEstimate().getEstimate().getEstimateNumber();
-				PersonalInformation emp = employeeService.getEmployeeforPosition(arf.getCurrentState().getOwnerPosition());
-				if(emp!=null){
-					owner = emp.getUserMaster().getName();
-				}
-			}
-		} 
-		return ARF_IN_WORKFLOW_CHECK;
-	}
-	
-	public String trackMilestoneForBillCreationCheck() {
-		List<TrackMilestone> tm = (List<TrackMilestone>) persistenceService.findAllBy(" select trmls from WorkOrderEstimate as woe left join woe.milestone mls left join mls.trackMilestone trmls where trmls.egwStatus.code='APPROVED' and woe.workOrder.id = ? and trmls.total>0 ",workOrderId);
-		trackMlsCheck = "invalid";
-		if(tm != null && !tm.isEmpty() && tm.get(0)!=null)
-			trackMlsCheck = "valid";
-		return "trackMlsForBillCreationCheck";
-	}
-	
-	public String yearEndApprForBillCreationCheck() {
-		List<WorkOrderEstimate> woeList = (List<WorkOrderEstimate>) persistenceService.findAllBy(" from WorkOrderEstimate woe where woe.workOrder.id = ? ",workOrderId);
-		yearEndApprCheck = VALID;
-		Long currentFinYearId=0l;
-		if(woeList.size()==1){
-			estimateNo = woeList.get(0).getEstimate().getEstimateNumber();
-			CFinancialYear currFinancialYear;
-			try{
-				currFinancialYear = commonsService.getFinancialYearByDate(new Date());
-			}
-			catch (Exception e) { 
-				throw new ValidationException(Arrays.asList(new ValidationError("yrEnd.appr.verification.for.bill.financialyear.invalid","yrEnd.appr.verification.for.bill.financialyear.invalid")));
-			}
-			
-			if(currFinancialYear!=null) {
-				currentFinYearId=currFinancialYear.getId();
-			}
-			
-			if(woeList.get(0).getEstimate().getDepositCode()==null){
-				AbstractEstimateAppropriation aeaObj = (AbstractEstimateAppropriation) persistenceService.findByNamedQuery("getLatestBudgetUsageForEstimate", woeList.get(0).getEstimate().getId());
-				if(aeaObj!=null && aeaObj.getBudgetUsage().getConsumedAmount()>0){
-					if(aeaObj.getBudgetUsage().getFinancialYearId().intValue()!=currentFinYearId.intValue()){
-						yearEndApprCheck = INVALID;
-					}
-				}
-				else{
-					yearEndApprCheck = INVALID;
-				}
-			}
-		}
-		return "yearEndApprForBillCreationCheck";
-	}
-	
-	public String searchEstimateNumber(){
-		String strquery="";
-		ArrayList<Object> params=new ArrayList<Object>();
-		if(!StringUtils.isEmpty(query)) {
-			strquery="select woe.estimate from WorkOrderEstimate woe where woe.workOrder.parent is null and UPPER(woe.estimate.estimateNumber) like '%'||?||'%' " +
-			" and woe.workOrder.egwStatus.code = ? )";
-			params.add(query.toUpperCase());
-			params.add("APPROVED");
-			estimateList = getPersistenceService().findAllBy(strquery,params.toArray());
-		}
-		return "estimateNoSearchResults";
-	}
-	
-	public String searchWorkOrderNumber(){
-		String strquery="";
-		ArrayList<Object> params=new ArrayList<Object>();
-		if(!StringUtils.isEmpty(query)) {
-			strquery=" from WorkOrder wo where wo.parent is null and UPPER(wo.workOrderNumber) like '%'||?||'%' " +
-			"and wo.egwStatus.code = ? ";
-			params.add(query.toUpperCase());
-			params.add("APPROVED");		
-			workOrderList = getPersistenceService().findAllBy(strquery,params.toArray());
-		}
-		return "workOrderNoSearchResults";
-	}
-	
-	public String getDepartmentName() {
-		return departmentName;
-	}
+    public String getDesignationByDeptId() {
+        // List<Script> scriptList =
+        // persistenceService.findAllByNamedQuery(Script.BY_NAME,"workOrder.Designation.ByDepartment");
+        if (StringUtils.isNotBlank(departmentName)) {
+            // List<String> list = (List<String>)
+            // scriptList.get(0).eval(Script.createContext("department",departmentName));
+            final ScriptContext scriptContext = ScriptService.createContext("department", departmentName);
+            final List<String> desglist = (List<String>) scriptService.executeScript(
+                    "workOrder.Designation.ByDepartment", scriptContext);
+            workOrderDesigList.addAll(getPersistenceService().findAllByNamedQuery("getDesignationForListOfDesgNames",
+                    desglist));
+        }
+        return WORKORDER_DESIG_LIST;
+    }
 
-	public void setDepartmentName(String departmentName) {
-		this.departmentName = departmentName;
-	}
+    public String getUsersForDesg() {
+        try {
+            final HashMap<String, Object> criteriaParams = new HashMap<String, Object>();
+            criteriaParams.put("designationId", desgId.intValue());
+            criteriaParams.put("departmentId", executingDepartment);
+            if (executingDepartment == null || executingDepartment == -1)
+                userList = Collections.EMPTY_LIST;
+            else
+                userList = personalInformationService.getListOfEmployeeViewBasedOnCriteria(criteriaParams, -1, -1);
+        } catch (final Exception e) {
+            throw new EGOVRuntimeException("user.find.error", e);
+        }
+        return WORKORDER_USER_LIST;
+    }
 
-	public List<DesignationMaster> getWorkOrderDesigList() {
-		return workOrderDesigList;
-	}
+    public String getWOAssignedTo1ForDepartment() {
+        try {
+            if (executingDepartment == null || executingDepartment == -1)
+                userList = Collections.EMPTY_LIST;
+            else
+                userList = persistenceService
+                .findAllBy(
+                        "select distinct woe.workOrder.engineerIncharge from  WorkOrderEstimate woe where woe.estimate.executingDepartment.id=?",
+                        executingDepartment);
+        } catch (final Exception e) {
+            throw new EGOVRuntimeException("user.find.error", e);
+        }
+        return WORKORDER_ASSIGNED_LIST;
+    }
 
-	public void setWorkOrderDesigList(List<DesignationMaster> workOrderDesigList) {
-		this.workOrderDesigList = workOrderDesigList;
-	}
+    public String getWOAssignedTo2ForDepartment() {
+        try {
+            if (executingDepartment == null || executingDepartment == -1)
+                userList = Collections.EMPTY_LIST;
+            else
+                userList = persistenceService
+                .findAllBy(
+                        "select distinct woe.workOrder.engineerIncharge2 from  WorkOrderEstimate woe where woe.estimate.executingDepartment.id=?",
+                        executingDepartment);
+        } catch (final Exception e) {
+            throw new EGOVRuntimeException("user.find.error", e);
+        }
+        return WORKORDER_ASSIGNED_LIST;
+    }
 
-	public void setDesgId(Long desgId) {
-		this.desgId = desgId;
-	}
+    public String getTenderResponseActivityList() {
+        if (StringUtils.isNotBlank(traIds)) {
+            final Set<Long> traIdentifierSet = new HashSet<Long>();
+            final Map<Long, Double> traMap = new HashMap<Long, Double>();
+            final String[] values = traIds.split("\\^");// To split the data
+                                                        // (For
+            // Eg:1^2)
+            final Long[] traIdLong = new Long[values.length];
+            int j = 0;
+            for (final String value : values)
+                if (StringUtils.isNotBlank(value)) {
+                    traIdLong[j] = Long.valueOf(value.split("~")[0].trim());// selected
+                                                                            // TenderResponseActivity
+                                                                            // Id
+                    traMap.put(traIdLong[j], Double.valueOf(value.split("~")[1]));// selected
+                                                                                  // TenderResponseActivity
+                                                                                  // 's
+                                                                                  // UnAssigned
+                                                                                  // Qty
+                    j++;
+                }
+            traIdentifierSet.addAll(Arrays.asList(traIdLong));
+            List<TenderResponseActivity> tempList = new ArrayList<TenderResponseActivity>();
+            tempList = tenderResponseActivityService.findAllByNamedQuery("getTenderResponseActivityByIds",
+                    traIdentifierSet);
+            for (final TenderResponseActivity tenderResponseActivity : tempList) {
+                final Double unAssignedQuantity = traMap.get(tenderResponseActivity.getId());
+                tenderResponseActivity.setNegotiatedQuantity(unAssignedQuantity);// Temperorily
+                // setting
+                // UnAssigned
+                // Qty
+                // instead
+                // of
+                // Negotiated
+                // Qty
+                getPersistenceService().getSession().evict(tenderResponseActivity);// To
+                // evict
+                // the
+                // changes
+                // done
+                // on
+                // tenderResponseActivity
+                // not
+                // to
+                // be
+                // committed.
+                tenderResponseActivitylist.add(tenderResponseActivity);
+            }
+        }
+        return "tenderResponseActivities";
+    }
 
-	public String getTraIds() {
-		return traIds;
-	}
+    public String getApprovedMBsForWorkOrder() {
+        approvedMBList = measurementBookService.findAllBy(
+                " from MBHeader where workOrder.id=? and egwStatus.code<>'CANCELLED'", workOrderId);
+        return "approvedMBs";
+    }
 
-	public void setTraIds(String traIds) {
-		this.traIds = traIds;
-	}
+    public String advanceRequisitionInWorkflowCheck() {
+        arfInWorkFlowCheck = VALID;
+        final List<WorkOrderEstimate> woeList = persistenceService.findAllBy(
+                " from WorkOrderEstimate woe where woe.workOrder.id = ? ", workOrderId);
+        if (woeList.size() == 1) {
+            final ContractorAdvanceRequisition arf = contractorAdvanceService.getContractorARFInWorkflowByWOEId(woeList
+                    .get(0).getId());
+            if (arf != null) {
+                arfInWorkFlowCheck = INVALID;
+                advanceRequisitionNo = arf.getAdvanceRequisitionNumber();
+                estimateNo = arf.getWorkOrderEstimate().getEstimate().getEstimateNumber();
+                final PersonalInformation emp = employeeService.getEmployeeforPosition(arf.getCurrentState()
+                        .getOwnerPosition());
+                if (emp != null)
+                    owner = emp.getUserMaster().getName();
+            }
+        }
+        return ARF_IN_WORKFLOW_CHECK;
+    }
 
-	public List<TenderResponseActivity> getTenderResponseActivitylist() {
-		return tenderResponseActivitylist;
-	}
+    public String trackMilestoneForBillCreationCheck() {
+        final List<TrackMilestone> tm = persistenceService
+                .findAllBy(
+                        " select trmls from WorkOrderEstimate as woe left join woe.milestone mls left join mls.trackMilestone trmls where trmls.egwStatus.code='APPROVED' and woe.workOrder.id = ? and trmls.total>0 ",
+                        workOrderId);
+        trackMlsCheck = "invalid";
+        if (tm != null && !tm.isEmpty() && tm.get(0) != null)
+            trackMlsCheck = "valid";
+        return "trackMlsForBillCreationCheck";
+    }
 
-	public void setTenderResponseActivitylist(
-			List<TenderResponseActivity> tenderResponseActivitylist) {
-		this.tenderResponseActivitylist = tenderResponseActivitylist;
-	}
+    public String yearEndApprForBillCreationCheck() {
+        final List<WorkOrderEstimate> woeList = persistenceService.findAllBy(
+                " from WorkOrderEstimate woe where woe.workOrder.id = ? ", workOrderId);
+        yearEndApprCheck = VALID;
+        Long currentFinYearId = 0l;
+        if (woeList.size() == 1) {
+            estimateNo = woeList.get(0).getEstimate().getEstimateNumber();
+            CFinancialYear currFinancialYear;
+            try {
+                currFinancialYear = commonsService.getFinancialYearByDate(new Date());
+            } catch (final Exception e) {
+                throw new ValidationException(Arrays.asList(new ValidationError(
+                        "yrEnd.appr.verification.for.bill.financialyear.invalid",
+                        "yrEnd.appr.verification.for.bill.financialyear.invalid")));
+            }
 
-	public void setTenderResponseActivityService(
-			PersistenceService<TenderResponseActivity, Long> tenderResponseActivityService) {
-		this.tenderResponseActivityService = tenderResponseActivityService;
-	}
+            if (currFinancialYear != null)
+                currentFinYearId = currFinancialYear.getId();
 
-	public Long getExecutingDepartment() {
-		return executingDepartment;
-	}
+            if (woeList.get(0).getEstimate().getDepositCode() == null) {
+                final AbstractEstimateAppropriation aeaObj = (AbstractEstimateAppropriation) persistenceService
+                        .findByNamedQuery("getLatestBudgetUsageForEstimate", woeList.get(0).getEstimate().getId());
+                if (aeaObj != null && aeaObj.getBudgetUsage().getConsumedAmount() > 0) {
+                    if (aeaObj.getBudgetUsage().getFinancialYearId().intValue() != currentFinYearId.intValue())
+                        yearEndApprCheck = INVALID;
+                } else
+                    yearEndApprCheck = INVALID;
+            }
+        }
+        return "yearEndApprForBillCreationCheck";
+    }
 
-	public void setExecutingDepartment(Long executingDepartment) {
-		this.executingDepartment = executingDepartment;
-	}
+    public String searchEstimateNumber() {
+        String strquery = "";
+        final ArrayList<Object> params = new ArrayList<Object>();
+        if (!StringUtils.isEmpty(query)) {
+            strquery = "select woe.estimate from WorkOrderEstimate woe where woe.workOrder.parent is null and UPPER(woe.estimate.estimateNumber) like '%'||?||'%' "
+                    + " and woe.workOrder.egwStatus.code = ? )";
+            params.add(query.toUpperCase());
+            params.add("APPROVED");
+            estimateList = getPersistenceService().findAllBy(strquery, params.toArray());
+        }
+        return "estimateNoSearchResults";
+    }
 
-	public void setPersonalInformationService(
-			PersonalInformationService personalInformationService) {
-		this.personalInformationService = personalInformationService;
-	}
-	
-	public List getUserList(){
-		return userList;
-	}
-	public void setUserList(List userList) {
-		this.userList = userList;
-	}
+    public String searchWorkOrderNumber() {
+        String strquery = "";
+        final ArrayList<Object> params = new ArrayList<Object>();
+        if (!StringUtils.isEmpty(query)) {
+            strquery = " from WorkOrder wo where wo.parent is null and UPPER(wo.workOrderNumber) like '%'||?||'%' "
+                    + "and wo.egwStatus.code = ? ";
+            params.add(query.toUpperCase());
+            params.add("APPROVED");
+            workOrderList = getPersistenceService().findAllBy(strquery, params.toArray());
+        }
+        return "workOrderNoSearchResults";
+    }
 
-	public void setMeasurementBookService(
-			MeasurementBookService measurementBookService) {
-		this.measurementBookService = measurementBookService;
-	}
+    public String getDepartmentName() {
+        return departmentName;
+    }
 
-	public List<MBHeader> getApprovedMBList() {
-		return approvedMBList;
-	}
+    public void setDepartmentName(final String departmentName) {
+        this.departmentName = departmentName;
+    }
 
-	public void setApprovedMBList(List<MBHeader> approvedMBList) {
-		this.approvedMBList = approvedMBList;
-	}
+    public List<DesignationMaster> getWorkOrderDesigList() {
+        return workOrderDesigList;
+    }
 
-	public Long getWorkOrderId() {
-		return workOrderId;
-	}
+    public void setWorkOrderDesigList(final List<DesignationMaster> workOrderDesigList) {
+        this.workOrderDesigList = workOrderDesigList;
+    }
 
-	public void setWorkOrderId(Long workOrderId) {
-		this.workOrderId = workOrderId;
-	}
+    public void setDesgId(final Long desgId) {
+        this.desgId = desgId;
+    }
 
-	public List<AbstractEstimate> getEstimateList() {
-		return estimateList;
-	}
+    public String getTraIds() {
+        return traIds;
+    }
 
-	public void setEstimateList(List<AbstractEstimate> estimateList) {
-		this.estimateList = estimateList;
-	}
+    public void setTraIds(final String traIds) {
+        this.traIds = traIds;
+    }
 
-	public List<WorkOrder> getWorkOrderList() {
-		return workOrderList;
-	}
+    public List<TenderResponseActivity> getTenderResponseActivitylist() {
+        return tenderResponseActivitylist;
+    }
 
-	public void setWorkOrderList(List<WorkOrder> workOrderList) {
-		this.workOrderList = workOrderList;
-	}
+    public void setTenderResponseActivitylist(final List<TenderResponseActivity> tenderResponseActivitylist) {
+        this.tenderResponseActivitylist = tenderResponseActivitylist;
+    }
 
-	public String getQuery() {
-		return query;
-	}
+    public void setTenderResponseActivityService(
+            final PersistenceService<TenderResponseActivity, Long> tenderResponseActivityService) {
+        this.tenderResponseActivityService = tenderResponseActivityService;
+    }
 
-	public void setQuery(String query) {
-		this.query = query;
-	}
+    public Long getExecutingDepartment() {
+        return executingDepartment;
+    }
 
-	public String getTrackMlsCheck() {
-		return trackMlsCheck;
-	}
+    public void setExecutingDepartment(final Long executingDepartment) {
+        this.executingDepartment = executingDepartment;
+    }
 
-	public String getYearEndApprCheck() {
-		return yearEndApprCheck;
-	}
+    public void setPersonalInformationService(final PersonalInformationService personalInformationService) {
+        this.personalInformationService = personalInformationService;
+    }
 
-	public void setYearEndApprCheck(String yearEndApprCheck) {
-		this.yearEndApprCheck = yearEndApprCheck;
-	}
+    public List getUserList() {
+        return userList;
+    }
 
-	public void setCommonsService(CommonsService commonsService) {
-		this.commonsService = commonsService;
-	}
+    public void setUserList(final List userList) {
+        this.userList = userList;
+    }
 
-	public String getEstimateNo() {
-		return estimateNo;
-	}
+    public void setMeasurementBookService(final MeasurementBookService measurementBookService) {
+        this.measurementBookService = measurementBookService;
+    }
 
-	public void setEstimateNo(String estimateNo) {
-		this.estimateNo = estimateNo;
-	}
+    public List<MBHeader> getApprovedMBList() {
+        return approvedMBList;
+    }
 
-	public String getAdvanceRequisitionNo() {
-		return advanceRequisitionNo;
-	}
+    public void setApprovedMBList(final List<MBHeader> approvedMBList) {
+        this.approvedMBList = approvedMBList;
+    }
 
-	public void setAdvanceRequisitionNo(String advanceRequisitionNo) {
-		this.advanceRequisitionNo = advanceRequisitionNo;
-	}
+    public Long getWorkOrderId() {
+        return workOrderId;
+    }
 
-	public String getOwner() {
-		return owner;
-	}
+    public void setWorkOrderId(final Long workOrderId) {
+        this.workOrderId = workOrderId;
+    }
 
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
+    public List<AbstractEstimate> getEstimateList() {
+        return estimateList;
+    }
 
-	public String getArfInWorkFlowCheck() {
-		return arfInWorkFlowCheck;
-	}
+    public void setEstimateList(final List<AbstractEstimate> estimateList) {
+        this.estimateList = estimateList;
+    }
 
-	public void setArfInWorkFlowCheck(String arfInWorkFlowCheck) {
-		this.arfInWorkFlowCheck = arfInWorkFlowCheck;
-	}
+    public List<WorkOrder> getWorkOrderList() {
+        return workOrderList;
+    }
 
-	public void setContractorAdvanceService(
-			ContractorAdvanceService contractorAdvanceService) {
-		this.contractorAdvanceService = contractorAdvanceService;
-	}
+    public void setWorkOrderList(final List<WorkOrder> workOrderList) {
+        this.workOrderList = workOrderList;
+    }
 
-	public void setEmployeeService(EmployeeService employeeService) {
-		this.employeeService = employeeService;
-	}
-	
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(final String query) {
+        this.query = query;
+    }
+
+    public String getTrackMlsCheck() {
+        return trackMlsCheck;
+    }
+
+    public String getYearEndApprCheck() {
+        return yearEndApprCheck;
+    }
+
+    public void setYearEndApprCheck(final String yearEndApprCheck) {
+        this.yearEndApprCheck = yearEndApprCheck;
+    }
+
+    public void setCommonsService(final CommonsService commonsService) {
+        this.commonsService = commonsService;
+    }
+
+    public String getEstimateNo() {
+        return estimateNo;
+    }
+
+    public void setEstimateNo(final String estimateNo) {
+        this.estimateNo = estimateNo;
+    }
+
+    public String getAdvanceRequisitionNo() {
+        return advanceRequisitionNo;
+    }
+
+    public void setAdvanceRequisitionNo(final String advanceRequisitionNo) {
+        this.advanceRequisitionNo = advanceRequisitionNo;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(final String owner) {
+        this.owner = owner;
+    }
+
+    public String getArfInWorkFlowCheck() {
+        return arfInWorkFlowCheck;
+    }
+
+    public void setArfInWorkFlowCheck(final String arfInWorkFlowCheck) {
+        this.arfInWorkFlowCheck = arfInWorkFlowCheck;
+    }
+
+    public void setContractorAdvanceService(final ContractorAdvanceService contractorAdvanceService) {
+        this.contractorAdvanceService = contractorAdvanceService;
+    }
+
+    public void setEmployeeService(final EmployeeService employeeService) {
+        this.employeeService = employeeService;
+    }
 
 }

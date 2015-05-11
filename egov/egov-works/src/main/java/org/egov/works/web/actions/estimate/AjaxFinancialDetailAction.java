@@ -57,146 +57,147 @@ import org.egov.web.actions.BaseFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class AjaxFinancialDetailAction extends BaseFormAction {
-	private static final Logger logger = Logger.getLogger(AjaxFinancialDetailAction.class);
-	private BudgetGroupDAO budgetGroupDAO;
-	private static final String SUBSCHEMES = "subschemes";
-	private static final String SCHEMES = "schemes";
-	private static final String BUDGETGROUPS = "budgetgroups";
-	private List<SubScheme> subSchemes;
-	private List<Scheme> schemes;
-	private List<BudgetGroup> budgetGroups;
-	private Integer schemeId;
-	private Integer fundId; 
-	private Long functionId;
-	private Date estimateDate;
-	@Autowired
-        private CommonsService commonsService;
-	private String loadBudgetGroupsValidationError="";
-	
-	public Date getEstimateDate() {
-		return estimateDate;
-	}
+   
+    private static final long serialVersionUID = 7300734573956975326L;
+    private static final Logger logger = Logger.getLogger(AjaxFinancialDetailAction.class);
+    private BudgetGroupDAO budgetGroupDAO;
+    private static final String SUBSCHEMES = "subschemes";
+    private static final String SCHEMES = "schemes";
+    private static final String BUDGETGROUPS = "budgetgroups";
+    private List<SubScheme> subSchemes;
+    private List<Scheme> schemes;
+    private List<BudgetGroup> budgetGroups;
+    private Integer schemeId;
+    private Integer fundId;
+    private Long functionId;
+    private Date estimateDate;
+    @Autowired
+    private CommonsService commonsService;
+    private String loadBudgetGroupsValidationError = "";
 
-	public void setEstimateDate(Date estimateDate) {
-		this.estimateDate = estimateDate;
-	}
+    public Date getEstimateDate() {
+        return estimateDate;
+    }
 
-	public AjaxFinancialDetailAction()
-	{
-		
-	}
-	
-	public String loadSchemes() {
-		schemes = getPersistenceService().findAllBy(
-				"from org.egov.commons.Scheme sc where sc.isactive=1 and sc.fund.id=? and ? between validfrom and validto",fundId,estimateDate);
-		return SCHEMES;
-	}
+    public void setEstimateDate(final Date estimateDate) {
+        this.estimateDate = estimateDate;
+    }
 
-	public String loadSubSchemes() {
-		subSchemes = getPersistenceService().findAllBy("from org.egov.commons.SubScheme where scheme.id=? and ? between validfrom and validto", schemeId,estimateDate);
-		return SUBSCHEMES;
-	}
-	
-	public String loadBudgetGroups() {
-		try {
-			if(functionId==-1){
-				budgetGroups = (List<BudgetGroup>) budgetGroupDAO.getBudgetGroupList();
-			}
-			else{
-			CFunction function = (CFunction) getPersistenceService().find("from org.egov.commons.CFunction where id = ? ", functionId);
-			if(function==null){
-				throw new ValidationException(Arrays.asList(new ValidationError("nobudgetforfunction","Budget head information not available for the chosen function")));
-			}
-			else{
-			budgetGroups = (List<BudgetGroup>)budgetGroupDAO.getBudgetHeadByFunction(function.getCode());
-			}
-			}
-		} catch (ValidationException egovEx) {
-			logger.error("Unable to load budget head information>>>"+egovEx.getMessage());
-			budgetGroups = new ArrayList<BudgetGroup>();
-			addActionError("Unable to load budget head information");
-			return BUDGETGROUPS;
-			
-		} catch (Exception e) {
-			logger.error("Budgetunavailable : Unable to load budget head information>>>"+e.getMessage());
-			addFieldError("budgetunavailable", "Unable to load budget head information");
-		}
-		return BUDGETGROUPS;
-	}
-	
-	public Integer getSchemeId() {
-		return schemeId;
-	}
+    public AjaxFinancialDetailAction() {
 
-	public void setSchemeId(Integer schemeId) {
-		this.schemeId = schemeId;
-	}
+    }
 
-	public Integer getFundId() {
-		return fundId;
-	}
+    public String loadSchemes() {
+        schemes = getPersistenceService()
+                .findAllBy(
+                        "from org.egov.commons.Scheme sc where sc.isactive=1 and sc.fund.id=? and ? between validfrom and validto",
+                        fundId, estimateDate);
+        return SCHEMES;
+    }
 
-	public void setFundId(Integer fundId) {
-		this.fundId = fundId;
-	}
-	
+    public String loadSubSchemes() {
+        subSchemes = getPersistenceService().findAllBy(
+                "from org.egov.commons.SubScheme where scheme.id=? and ? between validfrom and validto", schemeId,
+                estimateDate);
+        return SUBSCHEMES;
+    }
 
-	public Long getFunctionId() {
-		return functionId;
-	}
+    public String loadBudgetGroups() {
+        try {
+            if (functionId == -1)
+                budgetGroups = budgetGroupDAO.getBudgetGroupList();
+            else {
+                final CFunction function = (CFunction) getPersistenceService().find(
+                        "from org.egov.commons.CFunction where id = ? ", functionId);
+                if (function == null)
+                    throw new ValidationException(Arrays.asList(new ValidationError("nobudgetforfunction",
+                            "Budget head information not available for the chosen function")));
+                else
+                    budgetGroups = budgetGroupDAO.getBudgetHeadByFunction(function.getCode());
+            }
+        } catch (final ValidationException egovEx) {
+            logger.error("Unable to load budget head information>>>" + egovEx.getMessage());
+            budgetGroups = new ArrayList<BudgetGroup>();
+            addActionError("Unable to load budget head information");
+            return BUDGETGROUPS;
 
-	public void setFunctionId(Long functionId) {
-		this.functionId = functionId;
-	}
-	
-	
-	public List<SubScheme> getSubSchemes() {
-		return subSchemes;
-	}
+        } catch (final Exception e) {
+            logger.error("Budgetunavailable : Unable to load budget head information>>>" + e.getMessage());
+            addFieldError("budgetunavailable", "Unable to load budget head information");
+        }
+        return BUDGETGROUPS;
+    }
 
-	public void setSubSchemes(List<SubScheme> subSchemes) {
-		this.subSchemes = subSchemes;
-	}
+    public Integer getSchemeId() {
+        return schemeId;
+    }
 
-	public List<Scheme> getSchemes() {
-		return schemes;
-	}
+    public void setSchemeId(final Integer schemeId) {
+        this.schemeId = schemeId;
+    }
 
-	public void setSchemes(List<Scheme> schemes) {
-		this.schemes = schemes;
-	}
+    public Integer getFundId() {
+        return fundId;
+    }
 
-	public List<BudgetGroup> getBudgetGroups() {
-		return budgetGroups;
-	}
+    public void setFundId(final Integer fundId) {
+        this.fundId = fundId;
+    }
 
-	public void setBudgetGroups(List<BudgetGroup> budgetGroups) {
-		this.budgetGroups = budgetGroups;
-	}
+    public Long getFunctionId() {
+        return functionId;
+    }
 
+    public void setFunctionId(final Long functionId) {
+        this.functionId = functionId;
+    }
 
-	public void setBudgetGroupDAO(BudgetGroupDAO budgetGroupDAO) {
-		this.budgetGroupDAO = budgetGroupDAO;
-	}
-	
-	public BudgetGroupDAO getBudgetGroupDAO() {
-		return budgetGroupDAO;
-	}
+    public List<SubScheme> getSubSchemes() {
+        return subSchemes;
+    }
 
-	public Object getModel() {
-		return null;
-	}
-	
-	public void setCommonsService(CommonsService commonsService) {
-		this.commonsService = commonsService;
-	}
-	
-	public String getLoadBudgetGroupsValidationError() {
-		return loadBudgetGroupsValidationError;
-	}
+    public void setSubSchemes(final List<SubScheme> subSchemes) {
+        this.subSchemes = subSchemes;
+    }
 
-	public void setLoadBudgetGroupsValidationError(
-			String loadBudgetGroupsValidationError) {
-		this.loadBudgetGroupsValidationError = loadBudgetGroupsValidationError;
-	}
+    public List<Scheme> getSchemes() {
+        return schemes;
+    }
+
+    public void setSchemes(final List<Scheme> schemes) {
+        this.schemes = schemes;
+    }
+
+    public List<BudgetGroup> getBudgetGroups() {
+        return budgetGroups;
+    }
+
+    public void setBudgetGroups(final List<BudgetGroup> budgetGroups) {
+        this.budgetGroups = budgetGroups;
+    }
+
+    public void setBudgetGroupDAO(final BudgetGroupDAO budgetGroupDAO) {
+        this.budgetGroupDAO = budgetGroupDAO;
+    }
+
+    public BudgetGroupDAO getBudgetGroupDAO() {
+        return budgetGroupDAO;
+    }
+
+    @Override
+    public Object getModel() {
+        return null;
+    }
+
+    public void setCommonsService(final CommonsService commonsService) {
+        this.commonsService = commonsService;
+    }
+
+    public String getLoadBudgetGroupsValidationError() {
+        return loadBudgetGroupsValidationError;
+    }
+
+    public void setLoadBudgetGroupsValidationError(final String loadBudgetGroupsValidationError) {
+        this.loadBudgetGroupsValidationError = loadBudgetGroupsValidationError;
+    }
 }

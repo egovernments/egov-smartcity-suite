@@ -49,49 +49,50 @@ import org.egov.works.models.masters.DepositCode;
 
 import com.opensymphony.xwork2.Action;
 
-@Result(name=Action.SUCCESS, type="ServletRedirectResult.class", location = "depositCodeSearch-searchResults")  
-
-@ParentPackage("egov")  
-
+@Result(name = Action.SUCCESS, type = "ServletRedirectResult.class", location = "depositCodeSearch-searchResults")
+@ParentPackage("egov")
 public class DepositCodeSearchAction extends BaseFormAction {
-	private PersistenceService<DepositCode,Long> depositCodeService;  
-	private static final String SEARCH_RESULTS = "searchResults";
-	private static final String SEARCH_DC_RESULTS = "searchDepCodeResults";
-	private String query;
-	private Integer fundId;
-	
-	public void setQuery(String query) {
-		this.query = query;
-	}
+   
+    private static final long serialVersionUID = 7203092403134880647L;
+    private PersistenceService<DepositCode, Long> depositCodeService;
+    private static final String SEARCH_RESULTS = "searchResults";
+    private static final String SEARCH_DC_RESULTS = "searchDepCodeResults";
+    private String query;
+    private Integer fundId;
 
-	public String searchAjax(){
-		return SEARCH_RESULTS;
-	}
-	
-	public String searchDepositCodeAjax(){
-		return SEARCH_DC_RESULTS;
-	}
+    public void setQuery(final String query) {
+        this.query = query;
+    }
 
-	public Object getModel() {
-		return null;
-	}
+    public String searchAjax() {
+        return SEARCH_RESULTS;
+    }
 
-	public Collection<DepositCode> getDepositCodeList() {
-		return depositCodeService.findAllBy("from DepositCode where isActive=1 and fund.id=? and upper(code) like ? || '%'", fundId, query.toUpperCase());
-	}
-	
-	public void setDepositCodeService(
-			PersistenceService<DepositCode, Long> depositCodeService) {
-		this.depositCodeService = depositCodeService;
-	}
+    public String searchDepositCodeAjax() {
+        return SEARCH_DC_RESULTS;
+    }
 
-	public Integer getFundId() {
-		return fundId;
-	}
+    @Override
+    public Object getModel() {
+        return null;
+    }
 
-	public void setFundId(Integer fundId) {
-		this.fundId = fundId;
-	}
+    public Collection<DepositCode> getDepositCodeList() {
+        return depositCodeService.findAllBy(
+                "from DepositCode where isActive=1 and fund.id=? and upper(code) like ? || '%'", fundId,
+                query.toUpperCase());
+    }
 
+    public void setDepositCodeService(final PersistenceService<DepositCode, Long> depositCodeService) {
+        this.depositCodeService = depositCodeService;
+    }
+
+    public Integer getFundId() {
+        return fundId;
+    }
+
+    public void setFundId(final Integer fundId) {
+        this.fundId = fundId;
+    }
 
 }

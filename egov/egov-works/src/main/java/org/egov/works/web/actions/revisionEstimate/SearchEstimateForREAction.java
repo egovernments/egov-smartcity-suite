@@ -70,319 +70,313 @@ import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 
-/**
- * @author Sathish P
- *
- */
 @ParentPackage("egov")
 public class SearchEstimateForREAction extends SearchFormAction {
 
-	private static final long serialVersionUID = 1L;
-	private AbstractEstimate estimates = new AbstractEstimate();
-	private WorkOrder workOrder= new WorkOrder();
-	private String searchType="searchType";
-	private Date fromDate;
-	private Date toDate;
-	private PersonalInformationService personalInformationService;
-	public static final Locale LOCALE = new Locale("en","IN");
-	public static final SimpleDateFormat  DDMMYYYYFORMATS= new SimpleDateFormat("dd/MM/yyyy",LOCALE);
-	private WorkOrderService workOrderService;
-	private Integer deptId;
-	private WorksService worksService;
-	public final static String APPROVED="APPROVED";
-	private String estimateNumber;
-	private Long typeId;
-	private String workOrderNumber;
-	private Long parentCategory;
-	private Long category;
-	private Long contractorId;
-	private Long execDept;
-	private AbstractEstimateService abstractEstimateService;
-	
-	public SearchEstimateForREAction(){		
-		addRelatedEntity("category", EgwTypeOfWork.class);
-		addRelatedEntity("parentCategory", EgwTypeOfWork.class);
-		addRelatedEntity("executingDepartment", Department.class);
-		addRelatedEntity("type", NatureOfWork.class);
-		
-	}
+    private static final long serialVersionUID = -8446251759865551258L;
+    private AbstractEstimate estimates = new AbstractEstimate();
+    private WorkOrder workOrder = new WorkOrder();
+    private String searchType = "searchType";
+    private Date fromDate;
+    private Date toDate;
+    private PersonalInformationService personalInformationService;
+    public static final Locale LOCALE = new Locale("en", "IN");
+    public static final SimpleDateFormat DDMMYYYYFORMATS = new SimpleDateFormat("dd/MM/yyyy", LOCALE);
+    private WorkOrderService workOrderService;
+    private Integer deptId;
+    private WorksService worksService;
+    public final static String APPROVED = "APPROVED";
+    private String estimateNumber;
+    private Long typeId;
+    private String workOrderNumber;
+    private Long parentCategory;
+    private Long category;
+    private Long contractorId;
+    private Long execDept;
+    private AbstractEstimateService abstractEstimateService;
 
-	@Override
-	public Object getModel() {
-		return estimates;
-	}
-	
-	@Override
-	public void prepare() {
-		
-		super.prepare();
-		AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
-		ajaxEstimateAction.setPersistenceService(getPersistenceService());
-		ajaxEstimateAction.setPersonalInformationService(personalInformationService);
-		addDropdownData("executingDepartmentList", worksService.getAllDeptmentsForLoggedInUser());
-		addDropdownData("typeList", persistenceService.findAllBy("from WorkType dt"));
-		addDropdownData("parentCategoryList", getPersistenceService().findAllBy("from EgwTypeOfWork etw1 where etw1.parentid is null")); 
-		addDropdownData("categoryList", Collections.emptyList());
-		populateCategoryList(ajaxEstimateAction, estimates.getParentCategory() != null);
-		if(abstractEstimateService.getLatestAssignmentForCurrentLoginUser()!=null) {
-			execDept=abstractEstimateService.getLatestAssignmentForCurrentLoginUser().getDeptId().getId();			
-		}
-	}
-	
-	@ValidationErrorPage(value="searchWO")
-	public String searchWorkOrder(){
-		
-		return "searchWO";
-	}
-	
-	private Map getQuery(){
-		StringBuffer query = new StringBuffer(700);
-		List<Object> paramList = new ArrayList<Object>();
-		HashMap<String,Object> queryAndParams=new HashMap<String,Object>();
-			query.append("from WorkOrderEstimate woe where woe.workOrder.id is not null and woe.workOrder.parent is null and woe.workOrder.egwStatus.code<>? " +
-					"and woe.workOrder.egwStatus.code = ? and woe.estimate.parent is null");
-			paramList.add("NEW");
-			paramList.add("APPROVED");
-		if(getDeptId()!=null && getDeptId()!= -1){		
-			query.append(" and woe.estimate.executingDepartment.id=? ");
-			paramList.add(getDeptId());
-		}			
-		if(getTypeId()!= -1){
-			query.append(" and woe.estimate.type.id=? ");
-			paramList.add(Long.valueOf(getTypeId()));
-		}
-		if(StringUtils.isNotBlank(getEstimateNumber())){
-			query.append(" and UPPER(woe.estimate.estimateNumber) like '%'||?||'%'");
-			paramList.add(StringUtils.trim(getEstimateNumber()).toUpperCase());
-		}
+    public SearchEstimateForREAction() {
+        addRelatedEntity("category", EgwTypeOfWork.class);
+        addRelatedEntity("parentCategory", EgwTypeOfWork.class);
+        addRelatedEntity("executingDepartment", Department.class);
+        addRelatedEntity("type", NatureOfWork.class);
 
-		if(StringUtils.isNotBlank(getWorkOrderNumber())){
-			query.append(" and UPPER(woe.workOrder.workOrderNumber) like '%'||?||'%'");
-			paramList.add(StringUtils.trim(getWorkOrderNumber()).toUpperCase());
-		}
+    }
 
-		if(estimates.getCategory()!=null){
-			query.append(" and woe.estimate.category.id=?");
-			paramList.add(estimates.getCategory().getId());
-		}
-		if(estimates.getParentCategory()!=null){
-			query.append(" and woe.estimate.parentCategory.id=?");
-			paramList.add(estimates.getParentCategory().getId());
-		}
-		
-		if(getContractorId()!= -1){
-			query.append(" and woe.workOrder.contractor.id=? ");
-			paramList.add(Long.valueOf(getContractorId()));
-		}
-		
-		if(fromDate!=null && toDate!=null && getFieldErrors().isEmpty()){
-			query.append(" and woe.workOrder.workOrderDate between ? and ? ");
-			paramList.add(fromDate);
-			paramList.add(toDate);
-		}
-		query.append("and woe.id not in (select distinct mbh.workOrderEstimate.id from MBHeader mbh where" +
-				" mbh.egwStatus.code = ? and (mbh.egBillregister.billstatus <> ? and mbh.egBillregister.billtype = ?) and" +
-				" mbh.workOrderEstimate.workOrder.egwStatus.code='APPROVED' and mbh.workOrderEstimate.estimate.egwStatus.code=?) " +
-				//" and woe.workOrder.id not in (select wo1.parent.id from WorkOrder wo1 where wo1.parent is not null and wo1.egwStatus.code not in ('APPROVED','CANCELLED')) " +
-				"and woe.estimate.id not in " +
-				"(select ae.parent.id from AbstractEstimate ae where ae.parent is not null and ae.egwStatus.code not in ('APPROVED','CANCELLED'))");
-		paramList.add(MBHeader.MeasurementBookStatus.APPROVED.toString());		
-		paramList.add(MBHeader.MeasurementBookStatus.CANCELLED.toString());	
-		paramList.add(getFinalBillTypeConfigValue());
-		paramList.add(AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
-		queryAndParams.put("query", query.toString());
-		queryAndParams.put("params", paramList);
-		
-		return queryAndParams;
-	}
+    @Override
+    public Object getModel() {
+        return estimates;
+    }
 
-	@Override
-	public SearchQuery prepareQuery(String sortField, String sortOrder) {
-		
-		String query =null;
-		String countQuery = null;
-		Map queryAndParms=null;
-		List<Object> paramList = new ArrayList<Object>();
-			queryAndParms=getQuery();
-			paramList=(List<Object>)queryAndParms.get("params");
-			query=(String) queryAndParms.get("query");
-			countQuery="select count(distinct woe.id) " + query;
-			query="select distinct woe "+query;
-			return new SearchQueryHQL(query, countQuery, paramList);
-	}
+    @Override
+    public void prepare() {
 
-	@Override
-	public String search() {
-		boolean isError=false;
-		if(fromDate!=null && toDate==null){
-			addFieldError("enddate",getText("search.endDate.null"));
-			isError=true;
-		}
-		if(toDate!=null && fromDate==null){
-			addFieldError("startdate",getText("search.startDate.null"));		
-			isError=true;
-		}
-		
-		if(!DateUtils.compareDates(getToDate(),getFromDate())){
-			addFieldError("enddate",getText("greaterthan.endDate.fromDate"));
-			isError=true;
-		}
-		
-		if(isError){
-			return "searchWO";
-		}
+        super.prepare();
+        final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
+        ajaxEstimateAction.setPersistenceService(getPersistenceService());
+        ajaxEstimateAction.setPersonalInformationService(personalInformationService);
+        addDropdownData("executingDepartmentList", worksService.getAllDeptmentsForLoggedInUser());
+        addDropdownData("typeList", persistenceService.findAllBy("from NatureOfWork "));
+        addDropdownData("parentCategoryList",
+                getPersistenceService().findAllBy("from EgwTypeOfWork etw1 where etw1.parentid is null"));
+        addDropdownData("categoryList", Collections.emptyList());
+        populateCategoryList(ajaxEstimateAction, estimates.getParentCategory() != null);
+        if (abstractEstimateService.getLatestAssignmentForCurrentLoginUser() != null)
+            execDept = abstractEstimateService.getLatestAssignmentForCurrentLoginUser().getDeptId().getId();
+    }
 
-		setPageSize(WorksConstants.PAGE_SIZE);
-		super.search();
-		return "searchWO";
-	}
-	
-	protected void populateCategoryList(
-			AjaxEstimateAction ajaxEstimateAction, boolean categoryPopulated) {
-		if (categoryPopulated) {
-			ajaxEstimateAction.setCategory(estimates.getParentCategory().getId());
-			ajaxEstimateAction.subcategories();
-			addDropdownData("categoryList", ajaxEstimateAction.getSubCategories());		
-		}
-		else {
-			addDropdownData("categoryList", Collections.emptyList());
-		}
-	}
-	public Map<String,Object> getContractorForApprovedWorkOrder() {
-		Map<String,Object> contractorsWithWOList = new LinkedHashMap<String, Object>();		
-		if(workOrderService.getContractorsWithWO()!=null) {
-			for(Contractor contractor :workOrderService.getContractorsWithWO()){
-				contractorsWithWOList.put(contractor.getId()+"", contractor.getCode()+" - "+contractor.getName());
-			}			
-		}
-		return contractorsWithWOList; 
-	}
-	
-	public String getFinalBillTypeConfigValue() {		
-		return worksService.getWorksConfigValue("FinalBillType");
-	}
-	
-	public String getApprovedValue() {
-		return worksService.getWorksConfigValue("WORKS_PACKAGE_STATUS");
-	}
-	public AbstractEstimate getEstimates() {
-		return estimates;
-	}
+    @ValidationErrorPage(value = "searchWO")
+    public String searchWorkOrder() {
 
-	public void setEstimates(AbstractEstimate estimates) {
-		this.estimates = estimates;
-	}
-	public String getSearchType() {
-		return searchType;
-	}
-	public void setSearchType(String searchType) {
-		this.searchType = searchType;
-	}
+        return "searchWO";
+    }
 
-	public Date getFromDate() {
-		return fromDate;
-	}
+    private Map getQuery() {
+        final StringBuffer query = new StringBuffer(700);
+        final List<Object> paramList = new ArrayList<Object>();
+        final HashMap<String, Object> queryAndParams = new HashMap<String, Object>();
+        query.append("from WorkOrderEstimate woe where woe.workOrder.id is not null and woe.workOrder.parent is null and woe.workOrder.egwStatus.code<>? "
+                + "and woe.workOrder.egwStatus.code = ? and woe.estimate.parent is null");
+        paramList.add("NEW");
+        paramList.add("APPROVED");
+        if (getDeptId() != null && getDeptId() != -1) {
+            query.append(" and woe.estimate.executingDepartment.id=? ");
+            paramList.add(getDeptId());
+        }
+        if (getTypeId() != -1) {
+            query.append(" and woe.estimate.type.id=? ");
+            paramList.add(Long.valueOf(getTypeId()));
+        }
+        if (StringUtils.isNotBlank(getEstimateNumber())) {
+            query.append(" and UPPER(woe.estimate.estimateNumber) like '%'||?||'%'");
+            paramList.add(StringUtils.trim(getEstimateNumber()).toUpperCase());
+        }
 
-	public Date getToDate() {
-		return toDate;
-	}
+        if (StringUtils.isNotBlank(getWorkOrderNumber())) {
+            query.append(" and UPPER(woe.workOrder.workOrderNumber) like '%'||?||'%'");
+            paramList.add(StringUtils.trim(getWorkOrderNumber()).toUpperCase());
+        }
 
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
+        if (estimates.getCategory() != null) {
+            query.append(" and woe.estimate.category.id=?");
+            paramList.add(estimates.getCategory().getId());
+        }
+        if (estimates.getParentCategory() != null) {
+            query.append(" and woe.estimate.parentCategory.id=?");
+            paramList.add(estimates.getParentCategory().getId());
+        }
 
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
+        if (getContractorId() != -1) {
+            query.append(" and woe.workOrder.contractor.id=? ");
+            paramList.add(Long.valueOf(getContractorId()));
+        }
 
-	public void setPersonalInformationService(
-			PersonalInformationService personalInformationService) {
-		this.personalInformationService = personalInformationService;
-	}
+        if (fromDate != null && toDate != null && getFieldErrors().isEmpty()) {
+            query.append(" and woe.workOrder.workOrderDate between ? and ? ");
+            paramList.add(fromDate);
+            paramList.add(toDate);
+        }
+        query.append("and woe.id not in (select distinct mbh.workOrderEstimate.id from MBHeader mbh where"
+                + " mbh.egwStatus.code = ? and (mbh.egBillregister.billstatus <> ? and mbh.egBillregister.billtype = ?) and"
+                + " mbh.workOrderEstimate.workOrder.egwStatus.code='APPROVED' and mbh.workOrderEstimate.estimate.egwStatus.code=?) "
+                +
+                // " and woe.workOrder.id not in (select wo1.parent.id from WorkOrder wo1 where wo1.parent is not null and wo1.egwStatus.code not in ('APPROVED','CANCELLED')) "
+                // +
+                "and woe.estimate.id not in "
+                + "(select ae.parent.id from AbstractEstimate ae where ae.parent is not null and ae.egwStatus.code not in ('APPROVED','CANCELLED'))");
+        paramList.add(MBHeader.MeasurementBookStatus.APPROVED.toString());
+        paramList.add(MBHeader.MeasurementBookStatus.CANCELLED.toString());
+        paramList.add(getFinalBillTypeConfigValue());
+        paramList.add(AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
+        queryAndParams.put("query", query.toString());
+        queryAndParams.put("params", paramList);
 
-	public WorkOrder getWorkOrder() {
-		return workOrder;
-	}
+        return queryAndParams;
+    }
 
-	public void setWorkOrder(WorkOrder workOrder) {
-		this.workOrder = workOrder;
-	}
+    @Override
+    public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
 
-	public void setWorkOrderService(WorkOrderService workOrderService) {
-		this.workOrderService = workOrderService;
-	}
+        String query = null;
+        String countQuery = null;
+        Map queryAndParms = null;
+        List<Object> paramList = new ArrayList<Object>();
+        queryAndParms = getQuery();
+        paramList = (List<Object>) queryAndParms.get("params");
+        query = (String) queryAndParms.get("query");
+        countQuery = "select count(distinct woe.id) " + query;
+        query = "select distinct woe " + query;
+        return new SearchQueryHQL(query, countQuery, paramList);
+    }
 
-	public Integer getDeptId() {
-		return deptId;
-	}
+    @Override
+    public String search() {
+        boolean isError = false;
+        if (fromDate != null && toDate == null) {
+            addFieldError("enddate", getText("search.endDate.null"));
+            isError = true;
+        }
+        if (toDate != null && fromDate == null) {
+            addFieldError("startdate", getText("search.startDate.null"));
+            isError = true;
+        }
 
-	public void setDeptId(Integer deptId) {
-		this.deptId = deptId;
-	}
+        if (!DateUtils.compareDates(getToDate(), getFromDate())) {
+            addFieldError("enddate", getText("greaterthan.endDate.fromDate"));
+            isError = true;
+        }
 
-	public void setWorksService(WorksService worksService) {
-		this.worksService = worksService;
-	}
+        if (isError)
+            return "searchWO";
 
-	public String getEstimateNumber() {
-		return estimateNumber;
-	}
+        setPageSize(WorksConstants.PAGE_SIZE);
+        super.search();
+        return "searchWO";
+    }
 
-	public void setEstimateNumber(String estimateNumber) {
-		this.estimateNumber = estimateNumber;
-	}
+    protected void populateCategoryList(final AjaxEstimateAction ajaxEstimateAction, final boolean categoryPopulated) {
+        if (categoryPopulated) {
+            ajaxEstimateAction.setCategory(estimates.getParentCategory().getId());
+            ajaxEstimateAction.subcategories();
+            addDropdownData("categoryList", ajaxEstimateAction.getSubCategories());
+        } else
+            addDropdownData("categoryList", Collections.emptyList());
+    }
 
-	public Long getTypeId() {
-		return typeId;
-	}
+    public Map<String, Object> getContractorForApprovedWorkOrder() {
+        final Map<String, Object> contractorsWithWOList = new LinkedHashMap<String, Object>();
+        if (workOrderService.getContractorsWithWO() != null)
+            for (final Contractor contractor : workOrderService.getContractorsWithWO())
+                contractorsWithWOList.put(contractor.getId() + "", contractor.getCode() + " - " + contractor.getName());
+        return contractorsWithWOList;
+    }
 
-	public void setTypeId(Long typeId) {
-		this.typeId = typeId;
-	}
+    public String getFinalBillTypeConfigValue() {
+        return worksService.getWorksConfigValue("FinalBillType");
+    }
 
-	public String getWorkOrderNumber() {
-		return workOrderNumber;
-	}
+    public String getApprovedValue() {
+        return worksService.getWorksConfigValue("WORKS_PACKAGE_STATUS");
+    }
 
-	public void setWorkOrderNumber(String workOrderNumber) {
-		this.workOrderNumber = workOrderNumber;
-	}
+    public AbstractEstimate getEstimates() {
+        return estimates;
+    }
 
-	public Long getParentCategory() {
-		return parentCategory;
-	}
+    public void setEstimates(final AbstractEstimate estimates) {
+        this.estimates = estimates;
+    }
 
-	public void setParentCategory(Long parentCategory) {
-		this.parentCategory = parentCategory;
-	}
+    public String getSearchType() {
+        return searchType;
+    }
 
-	public Long getCategory() {
-		return category;
-	}
+    public void setSearchType(final String searchType) {
+        this.searchType = searchType;
+    }
 
-	public void setCategory(Long category) {
-		this.category = category;
-	}
+    public Date getFromDate() {
+        return fromDate;
+    }
 
-	public Long getContractorId() {
-		return contractorId;
-	}
+    public Date getToDate() {
+        return toDate;
+    }
 
-	public void setContractorId(Long contractorId) {
-		this.contractorId = contractorId;
-	}
+    public void setFromDate(final Date fromDate) {
+        this.fromDate = fromDate;
+    }
 
-	public Long getExecDept() {
-		return execDept;
-	}
+    public void setToDate(final Date toDate) {
+        this.toDate = toDate;
+    }
 
-	public void setExecDept(Long execDept) {
-		this.execDept = execDept;
-	}
+    public void setPersonalInformationService(final PersonalInformationService personalInformationService) {
+        this.personalInformationService = personalInformationService;
+    }
 
-	public void setAbstractEstimateService(
-			AbstractEstimateService abstractEstimateService) {
-		this.abstractEstimateService = abstractEstimateService;
-	}
+    public WorkOrder getWorkOrder() {
+        return workOrder;
+    }
+
+    public void setWorkOrder(final WorkOrder workOrder) {
+        this.workOrder = workOrder;
+    }
+
+    public void setWorkOrderService(final WorkOrderService workOrderService) {
+        this.workOrderService = workOrderService;
+    }
+
+    public Integer getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(final Integer deptId) {
+        this.deptId = deptId;
+    }
+
+    public void setWorksService(final WorksService worksService) {
+        this.worksService = worksService;
+    }
+
+    public String getEstimateNumber() {
+        return estimateNumber;
+    }
+
+    public void setEstimateNumber(final String estimateNumber) {
+        this.estimateNumber = estimateNumber;
+    }
+
+    public Long getTypeId() {
+        return typeId;
+    }
+
+    public void setTypeId(final Long typeId) {
+        this.typeId = typeId;
+    }
+
+    public String getWorkOrderNumber() {
+        return workOrderNumber;
+    }
+
+    public void setWorkOrderNumber(final String workOrderNumber) {
+        this.workOrderNumber = workOrderNumber;
+    }
+
+    public Long getParentCategory() {
+        return parentCategory;
+    }
+
+    public void setParentCategory(final Long parentCategory) {
+        this.parentCategory = parentCategory;
+    }
+
+    public Long getCategory() {
+        return category;
+    }
+
+    public void setCategory(final Long category) {
+        this.category = category;
+    }
+
+    public Long getContractorId() {
+        return contractorId;
+    }
+
+    public void setContractorId(final Long contractorId) {
+        this.contractorId = contractorId;
+    }
+
+    public Long getExecDept() {
+        return execDept;
+    }
+
+    public void setExecDept(final Long execDept) {
+        this.execDept = execDept;
+    }
+
+    public void setAbstractEstimateService(final AbstractEstimateService abstractEstimateService) {
+        this.abstractEstimateService = abstractEstimateService;
+    }
 
 }

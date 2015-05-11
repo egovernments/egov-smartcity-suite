@@ -54,11 +54,12 @@ import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.utils.WorksConstants;
 
 public class AjaxMilestoneAction extends BaseFormAction {
-	
-	private MilestoneTemplate milestoneTemplate=new MilestoneTemplate();
+
+    private static final long serialVersionUID = -6739009668177776477L;
+    private MilestoneTemplate milestoneTemplate = new MilestoneTemplate();
     private static final String MILESTONECHECK = "milestoneCheck";
     private static final String SEARCH_RESULTS = "searchResults";
-    private static final String ACTIVITIES="activities";
+    private static final String ACTIVITIES = "activities";
     private int status;
     private String code;
     private long workTypeId;
@@ -70,218 +71,223 @@ public class AjaxMilestoneAction extends BaseFormAction {
     private static final String OBJECT_TYPE = "WorkOrder";
     private List<Milestone> workOrdEstList = new LinkedList<Milestone>();
     private String workOrderEstimates;
-    private List<ProjectCode> projectCodeList=new LinkedList<ProjectCode>();
+    private List<ProjectCode> projectCodeList = new LinkedList<ProjectCode>();
     private List<WorkOrder> workOrderList = new LinkedList<WorkOrder>();
-	private List<AbstractEstimate> estimateList = new LinkedList<AbstractEstimate>();
+    private List<AbstractEstimate> estimateList = new LinkedList<AbstractEstimate>();
 
+    @Override
     public Object getModel() {
         // TODO Auto-generated method stub
         return milestoneTemplate;
     }
-    
-	public String searchAjax(){
-		return SEARCH_RESULTS;
-	}
-	
-	public Collection<MilestoneTemplate> getMilestoneTemplateList(){
-		String strquery="";
-		ArrayList<Object> params=new ArrayList<Object>();
-		if(workTypeId>0){
-			strquery="from MilestoneTemplate mt where upper(mt.code) like '%'||?||'%'"+" and mt.workType.id=?";
-			params.add(query.toUpperCase());
-			params.add(workTypeId);
-		}
-		if(subTypeId>0){
-			strquery+=" and mt.subType.id=?";
-			params.add(subTypeId);
-		}
-		return getPersistenceService().findAllBy(strquery,params.toArray());
-	}
-	public String findByCode(){
-		milestoneTemplate=(MilestoneTemplate) getPersistenceService().find("from MilestoneTemplate where upper(code)=?", code.toUpperCase());
-		
-		return ACTIVITIES;
-	}
-	public String checkMilestone(){
-		getMilestoneCheck();
+
+    public String searchAjax() {
+        return SEARCH_RESULTS;
+    }
+
+    public Collection<MilestoneTemplate> getMilestoneTemplateList() {
+        String strquery = "";
+        final ArrayList<Object> params = new ArrayList<Object>();
+        if (workTypeId > 0) {
+            strquery = "from MilestoneTemplate mt where upper(mt.code) like '%'||?||'%'" + " and mt.workType.id=?";
+            params.add(query.toUpperCase());
+            params.add(workTypeId);
+        }
+        if (subTypeId > 0) {
+            strquery += " and mt.subType.id=?";
+            params.add(subTypeId);
+        }
+        return getPersistenceService().findAllBy(strquery, params.toArray());
+    }
+
+    public String findByCode() {
+        milestoneTemplate = (MilestoneTemplate) getPersistenceService().find(
+                "from MilestoneTemplate where upper(code)=?", code.toUpperCase());
+
+        return ACTIVITIES;
+    }
+
+    public String checkMilestone() {
+        getMilestoneCheck();
         return MILESTONECHECK;
     }
 
     public void getMilestoneCheck() {
-    	milestoneexistsOrNot = false;
-    	woWorkCommenced=false;
-    	Long milestoneId=null;
-    	if(workOrderEstimateId!=null){
-    		if(getPersistenceService().find("from Milestone where workOrderEstimate.id=? and egwStatus.code<>?", workOrderEstimateId,"CANCELLED")!=null){
-    			milestoneId=(Long) getPersistenceService().find("select m.id from Milestone m where m.workOrderEstimate.id=? and egwStatus.code<>?", workOrderEstimateId,"CANCELLED");
-    		}
-    	}
-    	if(milestoneId!=null){
-    		milestoneexistsOrNot=true;
-    		if(getPersistenceService().find("from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code=?  and woe.id=? and woe.workOrder.id in ( select stat.objectId from " +
-    				" SetStatus stat where stat.egwStatus.code= ? and stat.id = (select max(stat1.id) from SetStatus stat1 where stat1.objectType='"+OBJECT_TYPE+"' and woe.workOrder.id=stat1.objectId))","APPROVED",workOrderEstimateId,"Work commenced")!=null){
-    			woWorkCommenced=true;
-    		}
-    	}
-    	else{
-    		milestoneexistsOrNot=false;
-    		woWorkCommenced=false;
-    	}
+        milestoneexistsOrNot = false;
+        woWorkCommenced = false;
+        Long milestoneId = null;
+        if (workOrderEstimateId != null)
+            if (getPersistenceService().find("from Milestone where workOrderEstimate.id=? and egwStatus.code<>?",
+                    workOrderEstimateId, "CANCELLED") != null)
+                milestoneId = (Long) getPersistenceService().find(
+                        "select m.id from Milestone m where m.workOrderEstimate.id=? and egwStatus.code<>?",
+                        workOrderEstimateId, "CANCELLED");
+        if (milestoneId != null) {
+            milestoneexistsOrNot = true;
+            if (getPersistenceService()
+                    .find("from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code=?  and woe.id=? and woe.workOrder.id in ( select stat.objectId from "
+                            + " SetStatus stat where stat.egwStatus.code= ? and stat.id = (select max(stat1.id) from SetStatus stat1 where stat1.objectType='"
+                            + OBJECT_TYPE + "' and woe.workOrder.id=stat1.objectId))", "APPROVED", workOrderEstimateId,
+                            "Work commenced") != null)
+                woWorkCommenced = true;
+        } else {
+            milestoneexistsOrNot = false;
+            woWorkCommenced = false;
+        }
     }
-    
-	public String searchProjectCodeForMileStone(){
-		if(!StringUtils.isEmpty(query))
-		{
-			String strquery="";
-			ArrayList<Object> params=new ArrayList<Object>();
-			strquery="select distinct(ms.workOrderEstimate.estimate.projectCode) from Milestone ms where upper(ms.workOrderEstimate.estimate.projectCode.code) like '%'||?||'%'"+" and ms.workOrderEstimate.estimate.egwStatus.code=? and ms.egwStatus.code=?";
-			params.add(query.toUpperCase());
-			params.add(WorksConstants.ADMIN_SANCTIONED_STATUS);
-			params.add(WorksConstants.APPROVED);
-			projectCodeList=getPersistenceService().findAllBy(strquery,params.toArray());
-		}	
-		return "projectCodeSearchResults";
-	}
-	
-	public String searchEstimateForMileStone(){
-		if(!StringUtils.isEmpty(query))
-		{
-			String strquery="";
-			ArrayList<Object> params=new ArrayList<Object>();
-			strquery="select ms.workOrderEstimate.estimate from Milestone ms where upper(ms.workOrderEstimate.estimate.estimateNumber) like '%'||?||'%'"+" and ms.workOrderEstimate.estimate.egwStatus.code=? and ms.egwStatus.code=? ";
-			params.add(query.toUpperCase());
-			params.add(WorksConstants.ADMIN_SANCTIONED_STATUS);
-			params.add(WorksConstants.APPROVED);
-			estimateList=getPersistenceService().findAllBy(strquery,params.toArray());
-		}	
-		return "estimateSearchResults";
-	}
-	
-	public String searchWorkOrdNumForMileStone() {
-		if(!StringUtils.isEmpty(query))
-		{
-			String strquery="";
-			ArrayList<Object> params=new ArrayList<Object>();
-			strquery="select distinct(ms.workOrderEstimate.workOrder) from Milestone ms where upper(ms.workOrderEstimate.workOrder.workOrderNumber) like '%'||?||'%'"+" and ms.workOrderEstimate.workOrder.egwStatus.code=? and ms.egwStatus.code=?";
-			params.add(query.toUpperCase());
-			params.add(WorksConstants.APPROVED);
-			params.add(WorksConstants.APPROVED);
-			workOrderList=getPersistenceService().findAllBy(strquery,params.toArray());
-		}	
-		return "workOrderNoSearchResults";
-	}
-	
-	public MilestoneTemplate getMilestoneTemplate() {
-		return milestoneTemplate;
-	}
 
-	public void setMilestoneTemplate(MilestoneTemplate milestoneTemplate) {
-		this.milestoneTemplate = milestoneTemplate;
-	}
+    public String searchProjectCodeForMileStone() {
+        if (!StringUtils.isEmpty(query)) {
+            String strquery = "";
+            final ArrayList<Object> params = new ArrayList<Object>();
+            strquery = "select distinct(ms.workOrderEstimate.estimate.projectCode) from Milestone ms where upper(ms.workOrderEstimate.estimate.projectCode.code) like '%'||?||'%'"
+                    + " and ms.workOrderEstimate.estimate.egwStatus.code=? and ms.egwStatus.code=?";
+            params.add(query.toUpperCase());
+            params.add(WorksConstants.ADMIN_SANCTIONED_STATUS);
+            params.add(WorksConstants.APPROVED);
+            projectCodeList = getPersistenceService().findAllBy(strquery, params.toArray());
+        }
+        return "projectCodeSearchResults";
+    }
 
-	public int getStatus() {
-		return status;
-	}
+    public String searchEstimateForMileStone() {
+        if (!StringUtils.isEmpty(query)) {
+            String strquery = "";
+            final ArrayList<Object> params = new ArrayList<Object>();
+            strquery = "select ms.workOrderEstimate.estimate from Milestone ms where upper(ms.workOrderEstimate.estimate.estimateNumber) like '%'||?||'%'"
+                    + " and ms.workOrderEstimate.estimate.egwStatus.code=? and ms.egwStatus.code=? ";
+            params.add(query.toUpperCase());
+            params.add(WorksConstants.ADMIN_SANCTIONED_STATUS);
+            params.add(WorksConstants.APPROVED);
+            estimateList = getPersistenceService().findAllBy(strquery, params.toArray());
+        }
+        return "estimateSearchResults";
+    }
 
-	public void setStatus(int status) {
-		this.status = status;
-	}
+    public String searchWorkOrdNumForMileStone() {
+        if (!StringUtils.isEmpty(query)) {
+            String strquery = "";
+            final ArrayList<Object> params = new ArrayList<Object>();
+            strquery = "select distinct(ms.workOrderEstimate.workOrder) from Milestone ms where upper(ms.workOrderEstimate.workOrder.workOrderNumber) like '%'||?||'%'"
+                    + " and ms.workOrderEstimate.workOrder.egwStatus.code=? and ms.egwStatus.code=?";
+            params.add(query.toUpperCase());
+            params.add(WorksConstants.APPROVED);
+            params.add(WorksConstants.APPROVED);
+            workOrderList = getPersistenceService().findAllBy(strquery, params.toArray());
+        }
+        return "workOrderNoSearchResults";
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public MilestoneTemplate getMilestoneTemplate() {
+        return milestoneTemplate;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public void setMilestoneTemplate(final MilestoneTemplate milestoneTemplate) {
+        this.milestoneTemplate = milestoneTemplate;
+    }
 
-	public long getWorkTypeId() {
-		return workTypeId;
-	}
+    public int getStatus() {
+        return status;
+    }
 
-	public void setWorkTypeId(long workTypeId) {
-		this.workTypeId = workTypeId;
-	}
+    public void setStatus(final int status) {
+        this.status = status;
+    }
 
-	public long getSubTypeId() {
-		return subTypeId;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setSubTypeId(long subTypeId) {
-		this.subTypeId = subTypeId;
-	}
+    public void setCode(final String code) {
+        this.code = code;
+    }
 
-	public String getQuery() {
-		return query;
-	}
+    public long getWorkTypeId() {
+        return workTypeId;
+    }
 
-	public void setQuery(String query) {
-		this.query = query;
-	}
+    public void setWorkTypeId(final long workTypeId) {
+        this.workTypeId = workTypeId;
+    }
 
-	public Long getWorkOrderEstimateId() {
-		return workOrderEstimateId;
-	}
+    public long getSubTypeId() {
+        return subTypeId;
+    }
 
-	public void setWorkOrderEstimateId(Long workOrderEstimateId) {
-		this.workOrderEstimateId = workOrderEstimateId;
-	}
+    public void setSubTypeId(final long subTypeId) {
+        this.subTypeId = subTypeId;
+    }
 
-	public boolean isMilestoneexistsOrNot() {
-		return milestoneexistsOrNot;
-	}
+    public String getQuery() {
+        return query;
+    }
 
-	public void setMilestoneexistsOrNot(boolean milestoneexistsOrNot) {
-		this.milestoneexistsOrNot = milestoneexistsOrNot;
-	}
+    public void setQuery(final String query) {
+        this.query = query;
+    }
 
-	public boolean isWoWorkCommenced() {
-		return woWorkCommenced;
-	}
+    public Long getWorkOrderEstimateId() {
+        return workOrderEstimateId;
+    }
 
-	public void setWoWorkCommenced(boolean woWorkCommenced) {
-		this.woWorkCommenced = woWorkCommenced;
-	}
+    public void setWorkOrderEstimateId(final Long workOrderEstimateId) {
+        this.workOrderEstimateId = workOrderEstimateId;
+    }
 
-	public List<Milestone> getWorkOrdEstList() {
-		return workOrdEstList;
-	}
+    public boolean isMilestoneexistsOrNot() {
+        return milestoneexistsOrNot;
+    }
 
-	public void setWorkOrdEstList(List<Milestone> workOrdEstList) {
-		this.workOrdEstList = workOrdEstList;
-	}
+    public void setMilestoneexistsOrNot(final boolean milestoneexistsOrNot) {
+        this.milestoneexistsOrNot = milestoneexistsOrNot;
+    }
 
-	public String getWorkOrderEstimates() {
-		return workOrderEstimates;
-	}
+    public boolean isWoWorkCommenced() {
+        return woWorkCommenced;
+    }
 
-	public void setWorkOrderEstimates(String workOrderEstimates) {
-		this.workOrderEstimates = workOrderEstimates;
-	}
+    public void setWoWorkCommenced(final boolean woWorkCommenced) {
+        this.woWorkCommenced = woWorkCommenced;
+    }
 
-	public List<ProjectCode> getProjectCodeList() {
-		return projectCodeList;
-	}
+    public List<Milestone> getWorkOrdEstList() {
+        return workOrdEstList;
+    }
 
-	public void setProjectCodeList(List<ProjectCode> projectCodeList) {
-		this.projectCodeList = projectCodeList;
-	}
+    public void setWorkOrdEstList(final List<Milestone> workOrdEstList) {
+        this.workOrdEstList = workOrdEstList;
+    }
 
-	public List<WorkOrder> getWorkOrderList() {
-		return workOrderList;
-	}
+    public String getWorkOrderEstimates() {
+        return workOrderEstimates;
+    }
 
-	public void setWorkOrderList(List<WorkOrder> workOrderList) {
-		this.workOrderList = workOrderList;
-	}
+    public void setWorkOrderEstimates(final String workOrderEstimates) {
+        this.workOrderEstimates = workOrderEstimates;
+    }
 
-	public List<AbstractEstimate> getEstimateList() {
-		return estimateList;
-	}
+    public List<ProjectCode> getProjectCodeList() {
+        return projectCodeList;
+    }
 
-	public void setEstimateList(List<AbstractEstimate> estimateList) {
-		this.estimateList = estimateList;
-	}
+    public void setProjectCodeList(final List<ProjectCode> projectCodeList) {
+        this.projectCodeList = projectCodeList;
+    }
 
+    public List<WorkOrder> getWorkOrderList() {
+        return workOrderList;
+    }
+
+    public void setWorkOrderList(final List<WorkOrder> workOrderList) {
+        this.workOrderList = workOrderList;
+    }
+
+    public List<AbstractEstimate> getEstimateList() {
+        return estimateList;
+    }
+
+    public void setEstimateList(final List<AbstractEstimate> estimateList) {
+        this.estimateList = estimateList;
+    }
 
 }

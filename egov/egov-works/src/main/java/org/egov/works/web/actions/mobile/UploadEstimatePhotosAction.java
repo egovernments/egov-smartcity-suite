@@ -51,10 +51,12 @@ import org.egov.web.actions.BaseFormAction;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.EstimatePhotographs;
 import org.egov.works.services.AbstractEstimateService;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 @SuppressWarnings("serial")
 public class UploadEstimatePhotosAction extends BaseFormAction {
-   
+
     private static final long serialVersionUID = -8691126456751483363L;
     private final String SEARCH = "search";
     private final String SEARCH_LIST = "searchList";
@@ -110,6 +112,7 @@ public class UploadEstimatePhotosAction extends BaseFormAction {
         return UPLOAD;
     }
 
+    @Transactional
     public String savePhotos() {
         final AbstractEstimate ae = abstractEstimateService.find(" from AbstractEstimate where id = ?", estId);
         if (abstractEstimate != null && abstractEstimate.getEstimatePhotographsList() != null

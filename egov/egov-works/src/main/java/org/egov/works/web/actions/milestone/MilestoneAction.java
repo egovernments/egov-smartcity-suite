@@ -62,295 +62,286 @@ import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * @author vikas
- *
- */
+@Transactional(readOnly = true)
 @ParentPackage("egov")
-public class MilestoneAction extends BaseFormAction{
+public class MilestoneAction extends BaseFormAction {
 
-	private static final long serialVersionUID = 1L;
-	private Milestone milestone = new Milestone();
-	private PersistenceService<Milestone,Long> milestoneService;
-	private Long id;
-	private Long woEstimateId;
-	private String mode="";
-	private WorkflowService<Milestone> milestoneWorkflowService;
-	private static final String SAVE_ACTION = "save";
-	private String messageKey;
-	private static final String MILESTONE_MODULE_KEY = "Milestone";
-	@Autowired
-        private CommonsService commonsService;
-	@Autowired
-        private UserService userService;
-	private String actionName;
-	private String sourcepage;
-	private String nextEmployeeName;
-	private String nextDesignation;
-	private String designation;
-	private WorksService worksService;
-	private List<MilestoneActivity> milestoneActivities = new LinkedList<MilestoneActivity>();
-	private static final String SOURCE_INBOX = "inbox";
+    private static final long serialVersionUID = -415095644985621213L;
+    private Milestone milestone = new Milestone();
+    private PersistenceService<Milestone, Long> milestoneService;
+    private Long id;
+    private Long woEstimateId;
+    private String mode = "";
+    private WorkflowService<Milestone> milestoneWorkflowService;
+    private static final String SAVE_ACTION = "save";
+    private String messageKey;
+    private static final String MILESTONE_MODULE_KEY = "Milestone";
+    @Autowired
+    private CommonsService commonsService;
+    @Autowired
+    private UserService userService;
+    private String actionName;
+    private String sourcepage;
+    private String nextEmployeeName;
+    private String nextDesignation;
+    private String designation;
+    private WorksService worksService;
+    private List<MilestoneActivity> milestoneActivities = new LinkedList<MilestoneActivity>();
+    private static final String SOURCE_INBOX = "inbox";
 
+    public MilestoneAction() {
+        addRelatedEntity("workOrderEstimate", WorkOrderEstimate.class);
+        addRelatedEntity("workType", EgwTypeOfWork.class);
+        addRelatedEntity("subType", EgwTypeOfWork.class);
+    }
 
-	public MilestoneAction() {
-		addRelatedEntity("workOrderEstimate", WorkOrderEstimate.class);
-		addRelatedEntity("workType", EgwTypeOfWork.class);
-		addRelatedEntity("subType", EgwTypeOfWork.class);
-	}
+    @Override
+    public void prepare() {
 
-	public void prepare(){
+        if (id != null)
+            milestone = milestoneService.findById(id, false);
 
-		if(id != null){
-			milestone=milestoneService.findById(id, false);
-		}
-		
-		if(woEstimateId != null){
-			milestone.setWorkOrderEstimate((WorkOrderEstimate)getPersistenceService().find("from WorkOrderEstimate where id=?",woEstimateId));
-		}
-		super.prepare();
-		AjaxEstimateAction ajaxEstimateAction =new AjaxEstimateAction();
-		ajaxEstimateAction.setPersistenceService(getPersistenceService());
-		setupDropdownDataExcluding("workType","subType","workOrderEstimate");
-		addDropdownData("parentCategoryList",getPersistenceService().findAllBy("from EgwTypeOfWork etw where etw.parentid is null"));
-		addDropdownData("categoryList", Collections.emptyList());
-		addDropdownData("executingDepartmentList",getPersistenceService().findAllBy("from DepartmentImpl order by upper(deptName)")); 
-	 }
-	
-	@Override
-	public Object getModel() {
-	
-		return milestone;
-	}
-	
-	@SkipValidation
-	public String newform(){
-		
-		return "new";
-	}
-	
-	public String save(){
-		String actionName = parameters.get("actionName")[0];
-		
-		if(id==null){
-			milestone.setEgwStatus(commonsService.getStatusByModuleAndCode(MILESTONE_MODULE_KEY,"NEW"));
-		}
+        if (woEstimateId != null)
+            milestone.setWorkOrderEstimate((WorkOrderEstimate) getPersistenceService().find(
+                    "from WorkOrderEstimate where id=?", woEstimateId));
+        super.prepare();
+        final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
+        ajaxEstimateAction.setPersistenceService(getPersistenceService());
+        setupDropdownDataExcluding("workType", "subType", "workOrderEstimate");
+        addDropdownData("parentCategoryList",
+                getPersistenceService().findAllBy("from EgwTypeOfWork etw where etw.parentid is null"));
+        addDropdownData("categoryList", Collections.emptyList());
+        addDropdownData("executingDepartmentList",
+                getPersistenceService().findAllBy("from Department order by upper(name)"));
+    }
 
-		milestone = milestoneService.persist(milestone);
-		milestoneWorkflowService.transition(actionName, milestone, milestone.getWorkflowapproverComments());
-		milestone = milestoneService.persist(milestone);
-		messageKey="milestone."+actionName;
-		addActionMessage(getText(messageKey,"The Milestone was saved successfully"));
-		getDesignation(milestone);
-		
-		if(SAVE_ACTION.equals(actionName)){
-			sourcepage="inbox";
-		}
+    @Override
+    public Object getModel() {
 
-		return SAVE_ACTION.equals(actionName)?EDIT:SUCCESS;
+        return milestone;
+    }
 
-	}
-	
-	public String cancel(){
-		if(milestone.getId()!=null){
-			milestoneWorkflowService.transition(Milestone.Actions.CANCEL.toString(), milestone,milestone.getWorkflowapproverComments());
-			milestone=milestoneService.persist(milestone);
-		}
-		messageKey="milestone.cancel";	
-		getDesignation(milestone);
-		return SUCCESS;
-	}	
+    @SkipValidation
+    public String newform() {
 
-	public String reject(){
-		milestoneWorkflowService.transition(Milestone.Actions.REJECT.toString(),milestone,milestone.getWorkflowapproverComments());
-		milestone=milestoneService.persist(milestone);
-		messageKey="milestone.reject";	
-		getDesignation(milestone);
-		return SUCCESS;
-	}	
+        return "new";
+    }
 
-	public void getDesignation(Milestone milestone){
-		if(milestone.getEgwStatus()!= null 
-				&& !(WorksConstants.NEW).equalsIgnoreCase(milestone.getEgwStatus().getCode())) {
-			String result = worksService.getEmpNameDesignation(milestone.getState().getOwnerPosition(), milestone.getState().getCreatedDate().toDate());
-			if(result != null && !"@".equalsIgnoreCase(result)) {
-				String empName = result.substring(0,result.lastIndexOf('@'));
-				String designation =result.substring(result.lastIndexOf('@')+1,result.length());
-				setNextEmployeeName(empName);
-				setNextDesignation(designation);
-			}
-		}
-	}
+    @Transactional
+    public String save() {
+        final String actionName = parameters.get("actionName")[0];
 
-	public String getActionName() {
-		return actionName;
-	}
+        if (id == null)
+            milestone.setEgwStatus(commonsService.getStatusByModuleAndCode(MILESTONE_MODULE_KEY, "NEW"));
 
-	public void setActionName(String actionName) {
-		this.actionName = actionName;
-	}
+        milestone = milestoneService.persist(milestone);
+        milestoneWorkflowService.transition(actionName, milestone, milestone.getWorkflowapproverComments());
+        milestone = milestoneService.persist(milestone);
+        messageKey = "milestone." + actionName;
+        addActionMessage(getText(messageKey, "The Milestone was saved successfully"));
+        getDesignation(milestone);
 
-	public String getMessageKey() {
-		return messageKey;
-	}
+        if (SAVE_ACTION.equals(actionName))
+            sourcepage = "inbox";
 
-	public void setMessageKey(String messageKey) {
-		this.messageKey = messageKey;
-	}
+        return SAVE_ACTION.equals(actionName) ? EDIT : SUCCESS;
 
-	public String getSourcepage() {
-		return sourcepage;
-	}
+    }
 
-	public void setSourcepage(String sourcepage) {
-		this.sourcepage = sourcepage;
-	}
+    @Transactional
+    public String cancel() {
+        if (milestone.getId() != null) {
+            milestoneWorkflowService.transition(Milestone.Actions.CANCEL.toString(), milestone,
+                    milestone.getWorkflowapproverComments());
+            milestone = milestoneService.persist(milestone);
+        }
+        messageKey = "milestone.cancel";
+        getDesignation(milestone);
+        return SUCCESS;
+    }
 
-	public String getNextEmployeeName() {
-		return nextEmployeeName;
-	}
+    @Transactional
+    public String reject() {
+        milestoneWorkflowService.transition(Milestone.Actions.REJECT.toString(), milestone,
+                milestone.getWorkflowapproverComments());
+        milestone = milestoneService.persist(milestone);
+        messageKey = "milestone.reject";
+        getDesignation(milestone);
+        return SUCCESS;
+    }
 
-	public void setNextEmployeeName(String nextEmployeeName) {
-		this.nextEmployeeName = nextEmployeeName;
-	}
+    public void getDesignation(final Milestone milestone) {
+        if (milestone.getEgwStatus() != null
+                && !WorksConstants.NEW.equalsIgnoreCase(milestone.getEgwStatus().getCode())) {
+            final String result = worksService.getEmpNameDesignation(milestone.getState().getOwnerPosition(), milestone
+                    .getState().getCreatedDate().toDate());
+            if (result != null && !"@".equalsIgnoreCase(result)) {
+                final String empName = result.substring(0, result.lastIndexOf('@'));
+                final String designation = result.substring(result.lastIndexOf('@') + 1, result.length());
+                setNextEmployeeName(empName);
+                setNextDesignation(designation);
+            }
+        }
+    }
 
-	public String getNextDesignation() {
-		return nextDesignation;
-	}
+    public String getActionName() {
+        return actionName;
+    }
 
-	public void setNextDesignation(String nextDesignation) {
-		this.nextDesignation = nextDesignation;
-	}
+    public void setActionName(final String actionName) {
+        this.actionName = actionName;
+    }
 
-	public String getDesignation() {
-		return designation;
-	}
+    public String getMessageKey() {
+        return messageKey;
+    }
 
-	public void setDesignation(String designation) {
-		this.designation = designation;
-	}
+    public void setMessageKey(final String messageKey) {
+        this.messageKey = messageKey;
+    }
 
-	
-	@SkipValidation
-	public String edit(){
-		if(SOURCE_INBOX.equalsIgnoreCase(sourcepage) || (milestone.getEgwStatus()!=null &&
-				milestone.getEgwStatus().getCode().equals(WorksConstants.NEW))){
-			User user=userService.getUserById(worksService.getCurrentLoggedInUserId());
-			boolean isValidUser=worksService.validateWorkflowForUser(milestone,user);
-			if(isValidUser){
-					throw new EGOVRuntimeException("Error: Invalid Owner - No permission to view this page.");
-			}
-		}
-		else if(StringUtils.isEmpty(sourcepage)){
-			sourcepage="search";
-		}
+    public String getSourcepage() {
+        return sourcepage;
+    }
 
-		return "edit";
-	}
-	
-	@SkipValidation
-	public String search(){
-		
-		return "search";
-	}
+    public void setSourcepage(final String sourcepage) {
+        this.sourcepage = sourcepage;
+    }
 
+    public String getNextEmployeeName() {
+        return nextEmployeeName;
+    }
 
-	 
-	public void validate() {
-		populateActivities();
-		
-		if(null == milestone.getActivities() || milestone.getActivities().size() ==0){
-			 
-			addFieldError("milestone.activity.missing", "Milestone Activity is not added");
-		}
-		BigDecimal percentage = BigDecimal.ZERO;
-		for (MilestoneActivity milestoneActivity : milestone.getActivities()) {
-			if(milestoneActivity.getPercentage()!=null){
-				percentage = percentage.add(milestoneActivity.getPercentage());
-			}
-		}
-		if(percentage.compareTo(BigDecimal.valueOf(100)) !=0){
-			addFieldError("milestone.activity.total.percentage", "Total activity percentage should be equal to 100%");
-			 
-		}
-	}
+    public void setNextEmployeeName(final String nextEmployeeName) {
+        this.nextEmployeeName = nextEmployeeName;
+    }
 
-	 public void populateActivities(){
-		 milestone.getActivities().clear();
+    public String getNextDesignation() {
+        return nextDesignation;
+    }
 
-		for (MilestoneActivity activity : milestoneActivities) {
-			if(activity!=null){
-				milestone.addActivity(activity);
-			}
-		}
-	 }
+    public void setNextDesignation(final String nextDesignation) {
+        this.nextDesignation = nextDesignation;
+    }
 
+    public String getDesignation() {
+        return designation;
+    }
 
-	public Milestone getMilestone() {
-		return milestone;
-	}
-	public void setMilestone(Milestone milestone) {
-		this.milestone = milestone;
-	}
-	public PersistenceService<Milestone, Long> getMilestoneService() {
-		return milestoneService;
-	}
-	public void setMilestoneService(
-			PersistenceService<Milestone, Long> milestoneService) {
-		this.milestoneService = milestoneService;
-	}
-	public void setMode(String mode) {
-		this.mode = mode;
-	}
+    public void setDesignation(final String designation) {
+        this.designation = designation;
+    }
 
-	public String getMode() {
-		return mode;
-	}
+    @SkipValidation
+    public String edit() {
+        if (SOURCE_INBOX.equalsIgnoreCase(sourcepage) || milestone.getEgwStatus() != null
+                && milestone.getEgwStatus().getCode().equals(WorksConstants.NEW)) {
+            final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
+            final boolean isValidUser = worksService.validateWorkflowForUser(milestone, user);
+            if (isValidUser)
+                throw new EGOVRuntimeException("Error: Invalid Owner - No permission to view this page.");
+        } else if (StringUtils.isEmpty(sourcepage))
+            sourcepage = "search";
 
-	public Long getId() {
-		return id;
-	}
+        return "edit";
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public List<org.egov.infstr.workflow.Action> getValidActions(){
-		return milestoneWorkflowService.getValidActions(milestone); 		
-	}
-	
-	public void setMilestoneWorkflowService(WorkflowService<Milestone> milestoneWorkflowService) {
-		this.milestoneWorkflowService = milestoneWorkflowService;
-	}
+    @SkipValidation
+    public String search() {
 
-	public void setCommonsService(CommonsService commonsService) {
-		this.commonsService = commonsService;
-	}
+        return "search";
+    }
 
-	public void setWorksService(WorksService worksService) {
-		this.worksService = worksService;
-	}
+    @Override
+    public void validate() {
+        populateActivities();
 
-	public List<MilestoneActivity> getMilestoneActivities() {
-		return milestoneActivities;
-	}
+        if (null == milestone.getActivities() || milestone.getActivities().size() == 0)
+            addFieldError("milestone.activity.missing", "Milestone Activity is not added");
+        BigDecimal percentage = BigDecimal.ZERO;
+        for (final MilestoneActivity milestoneActivity : milestone.getActivities())
+            if (milestoneActivity.getPercentage() != null)
+                percentage = percentage.add(milestoneActivity.getPercentage());
+        if (percentage.compareTo(BigDecimal.valueOf(100)) != 0)
+            addFieldError("milestone.activity.total.percentage", "Total activity percentage should be equal to 100%");
+    }
 
-	public void setMilestoneActivities(
-			List<MilestoneActivity> milestoneActivities) {
-		this.milestoneActivities = milestoneActivities;
-	}
+    public void populateActivities() {
+        milestone.getActivities().clear();
 
-	public Long getWoEstimateId() {
-		return woEstimateId;
-	}
+        for (final MilestoneActivity activity : milestoneActivities)
+            if (activity != null)
+                milestone.addActivity(activity);
+    }
 
-	public void setWoEstimateId(Long woEstimateId) {
-		this.woEstimateId = woEstimateId;
-	}
+    public Milestone getMilestone() {
+        return milestone;
+    }
 
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
+    public void setMilestone(final Milestone milestone) {
+        this.milestone = milestone;
+    }
+
+    public PersistenceService<Milestone, Long> getMilestoneService() {
+        return milestoneService;
+    }
+
+    public void setMilestoneService(final PersistenceService<Milestone, Long> milestoneService) {
+        this.milestoneService = milestoneService;
+    }
+
+    public void setMode(final String mode) {
+        this.mode = mode;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public List<org.egov.infstr.workflow.Action> getValidActions() {
+        return milestoneWorkflowService.getValidActions(milestone);
+    }
+
+    public void setMilestoneWorkflowService(final WorkflowService<Milestone> milestoneWorkflowService) {
+        this.milestoneWorkflowService = milestoneWorkflowService;
+    }
+
+    public void setCommonsService(final CommonsService commonsService) {
+        this.commonsService = commonsService;
+    }
+
+    public void setWorksService(final WorksService worksService) {
+        this.worksService = worksService;
+    }
+
+    public List<MilestoneActivity> getMilestoneActivities() {
+        return milestoneActivities;
+    }
+
+    public void setMilestoneActivities(final List<MilestoneActivity> milestoneActivities) {
+        this.milestoneActivities = milestoneActivities;
+    }
+
+    public Long getWoEstimateId() {
+        return woEstimateId;
+    }
+
+    public void setWoEstimateId(final Long woEstimateId) {
+        this.woEstimateId = woEstimateId;
+    }
+
+    public void setUserService(final UserService userService) {
+        this.userService = userService;
+    }
 
 }

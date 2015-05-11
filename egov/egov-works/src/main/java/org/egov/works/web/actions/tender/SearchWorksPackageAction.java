@@ -65,7 +65,9 @@ import org.egov.works.services.WorksPackageService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class SearchWorksPackageAction extends SearchFormAction {
 
     private static final long serialVersionUID = -6268869129605734393L;
@@ -206,7 +208,7 @@ public class SearchWorksPackageAction extends SearchFormAction {
             worksPackageActions = new ArrayList<String>();
     }
 
-    void setOnlineOrOfflineStatusForWp(final WorksPackage wp) {
+    private void setOnlineOrOfflineStatusForWp(final WorksPackage wp) {
         if (wp.getEgwStatus() != null && wp.getEgwStatus().getCode().equals(WorksConstants.APPROVED)) {
             if (wp.getLatestOfflineStatus() != null && wp.getLatestOfflineStatus().getEgwStatus() != null
                     && StringUtils.isNotBlank(wp.getLatestOfflineStatus().getEgwStatus().getDescription()))
@@ -218,7 +220,7 @@ public class SearchWorksPackageAction extends SearchFormAction {
     }
 
     public String getApprovedValue() {
-        return worksService.getWorksConfigValue("WORKS_PACKAGE_STATUS");
+        return worksService.getWorksConfigValue("WORKS_PACKAGE_STiATUS");
     }
 
     public String getLastStatus() {
@@ -482,6 +484,7 @@ public class SearchWorksPackageAction extends SearchFormAction {
         return new SearchQueryHQL(query, countQuery, paramList);
     }
 
+    @Transactional
     public String cancelWP() {
         final WorksPackage worksPackage = workspackageService.findById(wpCancelId, false);
         final PersonalInformation prsnlInfo = employeeService.getEmpForUserId(worksService.getCurrentLoggedInUserId());

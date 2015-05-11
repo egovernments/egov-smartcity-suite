@@ -42,126 +42,124 @@ package org.egov.works.web.actions.reports;
 import java.math.BigDecimal;
 
 public class RetentionMoneyRecoveryRegisterBean {
-	
-	private String billDepartment;
-	
-	private String contractorCode;
-	
-	private String contractorName;
-	
-	private String projectCode;
-	
-	private String projectName;
-	
-	private String billNumber;
-	
-	private String billType;
-	
-	private String billDate;
-	
-	private String voucherNumber;
-	
-	private BigDecimal billAmount;
-	
-	private BigDecimal retentionMoneyRecoveredAmount;
-	
-	private String refundDate;
 
-	
-	public String getRefundDate() {
-		return refundDate;
-	}
+    private String billDepartment;
 
-	public void setRefundDate(String refundDate) {
-		this.refundDate = refundDate;
-	}
+    private String contractorCode;
 
-	public String getBillDepartment() {
-		return billDepartment;
-	}
+    private String contractorName;
 
-	public void setBillDepartment(String billDepartment) {
-		this.billDepartment = billDepartment;
-	}
+    private String projectCode;
 
-	public String getContractorCode() {
-		return contractorCode;
-	}
+    private String projectName;
 
-	public void setContractorCode(String contractorCode) {
-		this.contractorCode = contractorCode;
-	}
+    private String billNumber;
 
-	public String getContractorName() {
-		return contractorName;
-	}
+    private String billType;
 
-	public void setContractorName(String contractorName) {
-		this.contractorName = contractorName;
-	}
+    private String billDate;
 
-	public String getProjectCode() {
-		return projectCode;
-	}
+    private String voucherNumber;
 
-	public void setProjectCode(String projectCode) {
-		this.projectCode = projectCode;
-	}
+    private BigDecimal billAmount;
 
-	public String getProjectName() {
-		return projectName;
-	}
+    private BigDecimal retentionMoneyRecoveredAmount;
 
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
-	}
+    private String refundDate;
 
-	public String getBillNumber() {
-		return billNumber;
-	}
+    public String getRefundDate() {
+        return refundDate;
+    }
 
-	public void setBillNumber(String billNumber) {
-		this.billNumber = billNumber;
-	}
+    public void setRefundDate(final String refundDate) {
+        this.refundDate = refundDate;
+    }
 
-	public String getBillType() {
-		return billType;
-	}
+    public String getBillDepartment() {
+        return billDepartment;
+    }
 
-	public void setBillType(String billType) {
-		this.billType = billType;
-	}
+    public void setBillDepartment(final String billDepartment) {
+        this.billDepartment = billDepartment;
+    }
 
-	public String getBillDate() {
-		return billDate;
-	}
+    public String getContractorCode() {
+        return contractorCode;
+    }
 
-	public void setBillDate(String billDate) {
-		this.billDate = billDate;
-	}
+    public void setContractorCode(final String contractorCode) {
+        this.contractorCode = contractorCode;
+    }
 
-	public String getVoucherNumber() {
-		return voucherNumber;
-	}
+    public String getContractorName() {
+        return contractorName;
+    }
 
-	public void setVoucherNumber(String voucherNumber) {
-		this.voucherNumber = voucherNumber;
-	}
+    public void setContractorName(final String contractorName) {
+        this.contractorName = contractorName;
+    }
 
-	public BigDecimal getBillAmount() {
-		return billAmount;
-	}
+    public String getProjectCode() {
+        return projectCode;
+    }
 
-	public void setBillAmount(BigDecimal billAmount) {
-		this.billAmount = billAmount;
-	}
+    public void setProjectCode(final String projectCode) {
+        this.projectCode = projectCode;
+    }
 
-	public BigDecimal getRetentionMoneyRecoveredAmount() {
-		return retentionMoneyRecoveredAmount;
-	}
+    public String getProjectName() {
+        return projectName;
+    }
 
-	public void setRetentionMoneyRecoveredAmount(
-			BigDecimal retentionMoneyRecoveredAmount) {
-		this.retentionMoneyRecoveredAmount = retentionMoneyRecoveredAmount;
-	}	
+    public void setProjectName(final String projectName) {
+        this.projectName = projectName;
+    }
+
+    public String getBillNumber() {
+        return billNumber;
+    }
+
+    public void setBillNumber(final String billNumber) {
+        this.billNumber = billNumber;
+    }
+
+    public String getBillType() {
+        return billType;
+    }
+
+    public void setBillType(final String billType) {
+        this.billType = billType;
+    }
+
+    public String getBillDate() {
+        return billDate;
+    }
+
+    public void setBillDate(final String billDate) {
+        this.billDate = billDate;
+    }
+
+    public String getVoucherNumber() {
+        return voucherNumber;
+    }
+
+    public void setVoucherNumber(final String voucherNumber) {
+        this.voucherNumber = voucherNumber;
+    }
+
+    public BigDecimal getBillAmount() {
+        return billAmount;
+    }
+
+    public void setBillAmount(final BigDecimal billAmount) {
+        this.billAmount = billAmount;
+    }
+
+    public BigDecimal getRetentionMoneyRecoveredAmount() {
+        return retentionMoneyRecoveredAmount;
+    }
+
+    public void setRetentionMoneyRecoveredAmount(final BigDecimal retentionMoneyRecoveredAmount) {
+        this.retentionMoneyRecoveredAmount = retentionMoneyRecoveredAmount;
+    }
 }

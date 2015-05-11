@@ -53,224 +53,213 @@ import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksPackageService;
 
 public class AjaxWorksPackageAction extends BaseFormAction {
-	private static final String ESTIMATE_LIST = "estList";
-	private List<AbstractEstimate> abstractEstimateList=new ArrayList<AbstractEstimate>();
-	private AbstractEstimateService abstractEstimateService;
-	private Money worktotalValue;
-	private String estId;
-	private String wpId;
-	
-	private WorksPackage worksPackage=new WorksPackage(); 
-	
-	
-	private static final String TENDERFILENUMBERUNIQUECHECK = "tenderFileNumberUniqueCheck";
-	private Long id;
-	private String tenderFileNumber;
-	private WorksPackageService workspackageService;
-	private static final String TENDER_RESPONSE_CHECK = "tenderResponseCheck";
-	private boolean tenderResponseCheck;
-	private String tenderNegotiationNo;
-	private String query = "";
-	private List<WorksPackage> wpList = new LinkedList<WorksPackage>();
-	private static final String WP_NUMBER_SEARCH_RESULTS = "wpNoSearchResults";
-	private static final String TENDER_FILE_NUMBER_SEARCH_RESULTS = "tenderFileNoSearchResults";
-	private String mode ;
-	private List<String> estimateNumberSearchList = new LinkedList<String>();
-	private static final String ESTIMATE_NUMBER_SEARCH_RESULTS = "estimateNoSearchResults";
-	
-	
-	
-	
-	public String estimateList()
-	{
-		if(StringUtils.isNotBlank(estId)){
-			abstractEstimateList=abstractEstimateService.getAbEstimateListById(estId);
-			setWorktotalValue(abstractEstimateService.getWorkValueIncludingTaxesForEstList(abstractEstimateList));
-		}
-		return ESTIMATE_LIST;
-	}
-	
-	public String tenderFileNumberUniqueCheck(){
-		return TENDERFILENUMBERUNIQUECHECK;
-	}
-	
-	public boolean getTenderFileNumberCheck() {
-		boolean tenderFileNoexistsOrNot = false;
-		Long wpId=null;
-		if(id==null || id==0) {
-			if(getPersistenceService().findByNamedQuery("TenderFileNumberUniqueCheck",tenderFileNumber)!=null)
-				wpId=(Long) getPersistenceService().findByNamedQuery("TenderFileNumberUniqueCheck",tenderFileNumber);
-		}else{
-			if(getPersistenceService().findByNamedQuery("TenderFileNumberUniqueCheckForEdit",tenderFileNumber,id)!=null)
-				wpId=(Long) getPersistenceService().findByNamedQuery("TenderFileNumberUniqueCheckForEdit",tenderFileNumber,id);
-		}
-		
-		if(wpId!=null)
-			worksPackage= workspackageService.findById(wpId, false);
-			
-		if(worksPackage!=null && worksPackage.getId()!=null)
-			tenderFileNoexistsOrNot=true;
-		
-		return tenderFileNoexistsOrNot;
-	}
-	
-	public String isTRPresentForWPCheck()
-	{
-		tenderResponseCheck =false;
-		tenderNegotiationNo="";
-		if(!StringUtils.isEmpty(wpId))
-		{
-			String query = "from TenderResponse tr where tr.tenderEstimate.worksPackage.id=? and tr.egwStatus.code!='CANCELLED'";
-			List<Object> paramList = new ArrayList<Object>();
-			paramList.add(Long.valueOf(wpId));	
-			List<TenderResponse> trList = getPersistenceService().findAllBy(query, paramList.toArray());
-			if(trList!=null && trList.size()>0)
-			{
-				tenderResponseCheck=true;
-				tenderNegotiationNo = trList.get(0).getNegotiationNumber();
-			}
-		}
-		return TENDER_RESPONSE_CHECK;
-	}
-	
-	public String searchWorksPackageNumber(){
-		String strquery="";
-		ArrayList<Object> params=new ArrayList<Object>();
-		if(!StringUtils.isEmpty(query)) {
-			if(mode!=null && mode.equalsIgnoreCase("cancelWP"))
-			{
-				strquery="from WorksPackage as wp where wp.wpNumber like '%'||?||'%' and wp.egwStatus.code=? " ;
-				params.add(query.toUpperCase());
-				params.add("APPROVED");
-			}
-			else
-			{
-				strquery="from WorksPackage as wp where wp.wpNumber like '%'||?||'%' and wp.egwStatus.code<>? " ;
-				params.add(query.toUpperCase());
-				params.add("NEW");
-			}
-			
-			wpList = getPersistenceService().findAllBy(strquery,params.toArray());
-		}
-		return WP_NUMBER_SEARCH_RESULTS;
-	}
-	
-	public String searchTenderFileNumber(){
-		String strquery="";
-		ArrayList<Object> params=new ArrayList<Object>();
-		if(!StringUtils.isEmpty(query)) {
-				strquery="from WorksPackage as wp where wp.tenderFileNumber like '%'||?||'%' and wp.egwStatus.code<>?" ;
-				params.add(query.toUpperCase());
-				params.add("NEW");
-				wpList = getPersistenceService().findAllBy(strquery,params.toArray());
-		}
-		return TENDER_FILE_NUMBER_SEARCH_RESULTS;
-	}
-	
-	public String searchEstimateNumber(){
-		String strquery="";
-		ArrayList<Object> params=new ArrayList<Object>();
-		if(!StringUtils.isEmpty(query)) {
-			strquery="select distinct(wpd.estimate.estimateNumber) from WorksPackageDetails wpd where wpd.worksPackage.egwStatus.code<>? and wpd.estimate.estimateNumber like '%'||?||'%' ";
-			params.add("NEW");
-			params.add(query.toUpperCase());
-			estimateNumberSearchList = getPersistenceService().findAllBy(strquery,params.toArray());
-		}
-		return ESTIMATE_NUMBER_SEARCH_RESULTS;
-	}
+    
+    private static final long serialVersionUID = -5753205367102548473L;
+    private static final String ESTIMATE_LIST = "estList";
+    private List<AbstractEstimate> abstractEstimateList = new ArrayList<AbstractEstimate>();
+    private AbstractEstimateService abstractEstimateService;
+    private Money worktotalValue;
+    private String estId;
+    private String wpId;
 
-	public Money getWorktotalValue() {
-		return worktotalValue;
-	}
+    private WorksPackage worksPackage = new WorksPackage();
 
-	public void setWorktotalValue(Money worktotalValue) {
-		this.worktotalValue = worktotalValue;
-	}
+    private static final String TENDERFILENUMBERUNIQUECHECK = "tenderFileNumberUniqueCheck";
+    private Long id;
+    private String tenderFileNumber;
+    private WorksPackageService workspackageService;
+    private static final String TENDER_RESPONSE_CHECK = "tenderResponseCheck";
+    private boolean tenderResponseCheck;
+    private String tenderNegotiationNo;
+    private String query = "";
+    private List<WorksPackage> wpList = new LinkedList<WorksPackage>();
+    private static final String WP_NUMBER_SEARCH_RESULTS = "wpNoSearchResults";
+    private static final String TENDER_FILE_NUMBER_SEARCH_RESULTS = "tenderFileNoSearchResults";
+    private String mode;
+    private List<String> estimateNumberSearchList = new LinkedList<String>();
+    private static final String ESTIMATE_NUMBER_SEARCH_RESULTS = "estimateNoSearchResults";
 
-	public String getEstId() {
-		return estId;
-	}
+    public String estimateList() {
+        if (StringUtils.isNotBlank(estId)) {
+            abstractEstimateList = abstractEstimateService.getAbEstimateListById(estId);
+            setWorktotalValue(abstractEstimateService.getWorkValueIncludingTaxesForEstList(abstractEstimateList));
+        }
+        return ESTIMATE_LIST;
+    }
 
-	public void setEstId(String estId) {
-		this.estId = estId;
-	}
+    public String tenderFileNumberUniqueCheck() {
+        return TENDERFILENUMBERUNIQUECHECK;
+    }
 
-	public Object getModel() {
-		return null;
-	}
+    public boolean getTenderFileNumberCheck() {
+        boolean tenderFileNoexistsOrNot = false;
+        Long wpId = null;
+        if (id == null || id == 0) {
+            if (getPersistenceService().findByNamedQuery("TenderFileNumberUniqueCheck", tenderFileNumber) != null)
+                wpId = (Long) getPersistenceService().findByNamedQuery("TenderFileNumberUniqueCheck", tenderFileNumber);
+        } else if (getPersistenceService().findByNamedQuery("TenderFileNumberUniqueCheckForEdit", tenderFileNumber, id) != null)
+            wpId = (Long) getPersistenceService().findByNamedQuery("TenderFileNumberUniqueCheckForEdit",
+                    tenderFileNumber, id);
 
-	public void setAbstractEstimateService(
-			AbstractEstimateService abstractEstimateService) {
-		this.abstractEstimateService = abstractEstimateService;
-	}
+        if (wpId != null)
+            worksPackage = workspackageService.findById(wpId, false);
 
-	public List<AbstractEstimate> getAbstractEstimateList() {
-		return abstractEstimateList;
-	}
+        if (worksPackage != null && worksPackage.getId() != null)
+            tenderFileNoexistsOrNot = true;
 
-	public void setAbstractEstimateList(List<AbstractEstimate> abstractEstimateList) {
-		this.abstractEstimateList = abstractEstimateList;
-	}
+        return tenderFileNoexistsOrNot;
+    }
 
-	public WorksPackage getWorksPackage() {
-		return worksPackage;
-	}
+    public String isTRPresentForWPCheck() {
+        tenderResponseCheck = false;
+        tenderNegotiationNo = "";
+        if (!StringUtils.isEmpty(wpId)) {
+            final String query = "from TenderResponse tr where tr.tenderEstimate.worksPackage.id=? and tr.egwStatus.code!='CANCELLED'";
+            final List<Object> paramList = new ArrayList<Object>();
+            paramList.add(Long.valueOf(wpId));
+            final List<TenderResponse> trList = getPersistenceService().findAllBy(query, paramList.toArray());
+            if (trList != null && trList.size() > 0) {
+                tenderResponseCheck = true;
+                tenderNegotiationNo = trList.get(0).getNegotiationNumber();
+            }
+        }
+        return TENDER_RESPONSE_CHECK;
+    }
 
-	public void setWorksPackage(WorksPackage worksPackage) {
-		this.worksPackage = worksPackage;
-	}
+    public String searchWorksPackageNumber() {
+        String strquery = "";
+        final ArrayList<Object> params = new ArrayList<Object>();
+        if (!StringUtils.isEmpty(query)) {
+            if (mode != null && mode.equalsIgnoreCase("cancelWP")) {
+                strquery = "from WorksPackage as wp where wp.wpNumber like '%'||?||'%' and wp.egwStatus.code=? ";
+                params.add(query.toUpperCase());
+                params.add("APPROVED");
+            } else {
+                strquery = "from WorksPackage as wp where wp.wpNumber like '%'||?||'%' and wp.egwStatus.code<>? ";
+                params.add(query.toUpperCase());
+                params.add("NEW");
+            }
 
-	
-	public Long getId() {
-		return id;
-	}
+            wpList = getPersistenceService().findAllBy(strquery, params.toArray());
+        }
+        return WP_NUMBER_SEARCH_RESULTS;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public String searchTenderFileNumber() {
+        String strquery = "";
+        final ArrayList<Object> params = new ArrayList<Object>();
+        if (!StringUtils.isEmpty(query)) {
+            strquery = "from WorksPackage as wp where wp.tenderFileNumber like '%'||?||'%' and wp.egwStatus.code<>?";
+            params.add(query.toUpperCase());
+            params.add("NEW");
+            wpList = getPersistenceService().findAllBy(strquery, params.toArray());
+        }
+        return TENDER_FILE_NUMBER_SEARCH_RESULTS;
+    }
 
-	public String getTenderFileNumber() {
-		return tenderFileNumber;
-	}
+    public String searchEstimateNumber() {
+        String strquery = "";
+        final ArrayList<Object> params = new ArrayList<Object>();
+        if (!StringUtils.isEmpty(query)) {
+            strquery = "select distinct(wpd.estimate.estimateNumber) from WorksPackageDetails wpd where wpd.worksPackage.egwStatus.code<>? and wpd.estimate.estimateNumber like '%'||?||'%' ";
+            params.add("NEW");
+            params.add(query.toUpperCase());
+            estimateNumberSearchList = getPersistenceService().findAllBy(strquery, params.toArray());
+        }
+        return ESTIMATE_NUMBER_SEARCH_RESULTS;
+    }
 
-	public void setTenderFileNumber(String tenderFileNumber) {
-		this.tenderFileNumber = tenderFileNumber;
-	}
+    public Money getWorktotalValue() {
+        return worktotalValue;
+    }
 
-	public void setWorkspackageService(WorksPackageService workspackageService) {
-		this.workspackageService = workspackageService;
-	}
+    public void setWorktotalValue(final Money worktotalValue) {
+        this.worktotalValue = worktotalValue;
+    }
 
-	public void setWpId(String wpId) {
-		this.wpId = wpId;
-	}
+    public String getEstId() {
+        return estId;
+    }
 
-	public boolean getTenderResponseCheck() {
-		return tenderResponseCheck;
-	}
+    public void setEstId(final String estId) {
+        this.estId = estId;
+    }
 
-	public String getTenderNegotiationNo() {
-		return tenderNegotiationNo;
-	}
+    @Override
+    public Object getModel() {
+        return null;
+    }
 
-	public String getQuery() {
-		return query;
-	}
+    public void setAbstractEstimateService(final AbstractEstimateService abstractEstimateService) {
+        this.abstractEstimateService = abstractEstimateService;
+    }
 
-	public void setQuery(String query) {
-		this.query = query;
-	}
+    public List<AbstractEstimate> getAbstractEstimateList() {
+        return abstractEstimateList;
+    }
 
-	public List<WorksPackage> getWpList() {
-		return wpList;
-	}
+    public void setAbstractEstimateList(final List<AbstractEstimate> abstractEstimateList) {
+        this.abstractEstimateList = abstractEstimateList;
+    }
 
-	public void setMode(String mode) {
-		this.mode = mode;
-	}
+    public WorksPackage getWorksPackage() {
+        return worksPackage;
+    }
 
-	public List<String> getEstimateNumberSearchList() {
-		return estimateNumberSearchList;
-	}
+    public void setWorksPackage(final WorksPackage worksPackage) {
+        this.worksPackage = worksPackage;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public String getTenderFileNumber() {
+        return tenderFileNumber;
+    }
+
+    public void setTenderFileNumber(final String tenderFileNumber) {
+        this.tenderFileNumber = tenderFileNumber;
+    }
+
+    public void setWorkspackageService(final WorksPackageService workspackageService) {
+        this.workspackageService = workspackageService;
+    }
+
+    public void setWpId(final String wpId) {
+        this.wpId = wpId;
+    }
+
+    public boolean getTenderResponseCheck() {
+        return tenderResponseCheck;
+    }
+
+    public String getTenderNegotiationNo() {
+        return tenderNegotiationNo;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(final String query) {
+        this.query = query;
+    }
+
+    public List<WorksPackage> getWpList() {
+        return wpList;
+    }
+
+    public void setMode(final String mode) {
+        this.mode = mode;
+    }
+
+    public List<String> getEstimateNumberSearchList() {
+        return estimateNumberSearchList;
+    }
 
 }

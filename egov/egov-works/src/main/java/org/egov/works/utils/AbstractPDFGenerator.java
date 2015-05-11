@@ -55,102 +55,102 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
 public class AbstractPDFGenerator {
-	public static final int LARGE_FONT=14;
-	protected Document document;
-	protected final OutputStream out;
-	public AbstractPDFGenerator(OutputStream out,String type){
-		this.out = out;
-		try {
-			if(type!=null && "landscape".equalsIgnoreCase(type))
-				document = new Document(PageSize.A4.rotate());
-			else
-				document = new Document();
-			
-			PdfWriter.getInstance(document, out);
-			document.open();
-		} catch (Exception e) {
-			throw new EGOVRuntimeException("estimate.pdf.error", e);
-		}		
-	}
-	
-	protected void addRow(PdfPTable table, boolean needsBorder, Paragraph... elements) {
-		for (Paragraph element : elements) {
-			PdfPCell cell = new PdfPCell(element);
-		//	cell.setHorizontalAlignment(element.getAlignment());
-			cell.setVerticalAlignment(Element.ALIGN_TOP);
-			if(!needsBorder){
-				cell.setBorderWidth(0);
-			}
-			table.addCell(cell);
-		}
-	}
+    public static final int LARGE_FONT = 14;
+    protected Document document;
+    protected final OutputStream out;
 
-	protected Paragraph spacer() {
-		return new Paragraph(" ");
-	}
+    public AbstractPDFGenerator(final OutputStream out, final String type) {
+        this.out = out;
+        try {
+            if (type != null && "landscape".equalsIgnoreCase(type))
+                document = new Document(PageSize.A4.rotate());
+            else
+                document = new Document();
 
-	protected Paragraph makePara(Object value, int alignment) {
-		Paragraph header = new Paragraph(value == null ? "" : value.toString());
-		header.setAlignment(alignment);
-		return header;
-	}
-	
-	protected Paragraph makeParaWithFont(float fontSize, Object value, int alignment) {
-		Font font=new Font();
-		font.setSize(fontSize);
-		Paragraph header = new Paragraph(value == null ? "" : value.toString(), font);
-		header.setAlignment(alignment);
-		return header;
-	}
+            PdfWriter.getInstance(document, out);
+            document.open();
+        } catch (final Exception e) {
+            throw new EGOVRuntimeException("estimate.pdf.error", e);
+        }
+    }
 
-	protected Paragraph makePara(Object value) {
-		return new Paragraph(value == null ? "" : value.toString());
-	}
-	
-	protected Paragraph makeParaWithFont(float fontSize, Object value) {
-		Font font=new Font();
-		font.setSize(fontSize);
-		return new Paragraph(value == null ? "" : value.toString(),font);
-	}
+    protected void addRow(final PdfPTable table, final boolean needsBorder, final Paragraph... elements) {
+        for (final Paragraph element : elements) {
+            final PdfPCell cell = new PdfPCell(element);
+            // cell.setHorizontalAlignment(element.getAlignment());
+            cell.setVerticalAlignment(Element.ALIGN_TOP);
+            if (!needsBorder)
+                cell.setBorderWidth(0);
+            table.addCell(cell);
+        }
+    }
 
-	protected Paragraph makePara(float size,Object value) {
-		Font font=new Font();
-		font.setSize(size);
-		return new Paragraph(value == null ? "" : value.toString(),font);
-	}
+    protected Paragraph spacer() {
+        return new Paragraph(" ");
+    }
 
-	protected Paragraph centerPara(Object value) {
-		return makePara(value, Element.ALIGN_CENTER);
-	}
-	
-	protected Paragraph centerPara(float fontSize,Object value) {
-		return makeParaWithFont(fontSize, value, Element.ALIGN_CENTER);
-	}
+    protected Paragraph makePara(final Object value, final int alignment) {
+        final Paragraph header = new Paragraph(value == null ? "" : value.toString());
+        header.setAlignment(alignment);
+        return header;
+    }
 
-	protected Paragraph rightPara(Object value) {
-		return makePara(value, Element.ALIGN_RIGHT);
-	}
-	
-	protected Paragraph rightPara(float size,Object value) {
-		Font font=new Font();
-		font.setSize(size);
-		Paragraph header = new Paragraph(value == null ? "" : value.toString(),font);
-		header.setAlignment(Element.ALIGN_RIGHT);
-		return header;
-	}
+    protected Paragraph makeParaWithFont(final float fontSize, final Object value, final int alignment) {
+        final Font font = new Font();
+        font.setSize(fontSize);
+        final Paragraph header = new Paragraph(value == null ? "" : value.toString(), font);
+        header.setAlignment(alignment);
+        return header;
+    }
 
-	
-	protected Font getUnderlinedFont() {
-		return new Font(Font.UNDEFINED, Font.UNDEFINED, Font.UNDERLINE, null);
-	}
-	
-	public String toCurrency(Money money){
-		return toCurrency(money.getValue());
-	}
-	public String toCurrency(double money){
-		double rounded=Math.round(money*100)/100.0;
-		DecimalFormat formatter = new DecimalFormat("0.00");
-		formatter.setDecimalSeparatorAlwaysShown(true);
-		return formatter.format(rounded);
-	}
+    protected Paragraph makePara(final Object value) {
+        return new Paragraph(value == null ? "" : value.toString());
+    }
+
+    protected Paragraph makeParaWithFont(final float fontSize, final Object value) {
+        final Font font = new Font();
+        font.setSize(fontSize);
+        return new Paragraph(value == null ? "" : value.toString(), font);
+    }
+
+    protected Paragraph makePara(final float size, final Object value) {
+        final Font font = new Font();
+        font.setSize(size);
+        return new Paragraph(value == null ? "" : value.toString(), font);
+    }
+
+    protected Paragraph centerPara(final Object value) {
+        return makePara(value, Element.ALIGN_CENTER);
+    }
+
+    protected Paragraph centerPara(final float fontSize, final Object value) {
+        return makeParaWithFont(fontSize, value, Element.ALIGN_CENTER);
+    }
+
+    protected Paragraph rightPara(final Object value) {
+        return makePara(value, Element.ALIGN_RIGHT);
+    }
+
+    protected Paragraph rightPara(final float size, final Object value) {
+        final Font font = new Font();
+        font.setSize(size);
+        final Paragraph header = new Paragraph(value == null ? "" : value.toString(), font);
+        header.setAlignment(Element.ALIGN_RIGHT);
+        return header;
+    }
+
+    protected Font getUnderlinedFont() {
+        return new Font(Font.UNDEFINED, Font.UNDEFINED, Font.UNDERLINE, null);
+    }
+
+    public String toCurrency(final Money money) {
+        return toCurrency(money.getValue());
+    }
+
+    public String toCurrency(final double money) {
+        final double rounded = Math.round(money * 100) / 100.0;
+        final DecimalFormat formatter = new DecimalFormat("0.00");
+        formatter.setDecimalSeparatorAlwaysShown(true);
+        return formatter.format(rounded);
+    }
 }

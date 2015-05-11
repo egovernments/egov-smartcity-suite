@@ -81,11 +81,13 @@ import org.egov.works.services.WorksPackageService;
 import org.egov.works.services.WorksService;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 @Result(name = WorksPackageAction.PRINT, type = "StreamResult.class", location = "WorkspackagePDF", params = {
         "inputName", "WorkspackagePDF", "contentType", "application/pdf", "contentDisposition", "no-cache" })
 public class WorksPackageAction extends BaseFormAction {
-  
+
     private static final long serialVersionUID = -6365331777546797839L;
     private String editableDate = "yes";
     private String createdBySelection = "no";
@@ -212,6 +214,7 @@ public class WorksPackageAction extends BaseFormAction {
         return EDIT;
     }
 
+    @Transactional
     public String save() {
         if (validTenderFileNo())
             throw new ValidationException(Arrays.asList(new ValidationError("wp.tenderfilenumber.isunique",
@@ -302,6 +305,7 @@ public class WorksPackageAction extends BaseFormAction {
         }
     }
 
+    @Transactional
     public String cancelWorkflow() {
         if (worksPackage.getId() != null) {
             workflowService.transition(WorksPackage.Actions.CANCEL.toString(), worksPackage,
