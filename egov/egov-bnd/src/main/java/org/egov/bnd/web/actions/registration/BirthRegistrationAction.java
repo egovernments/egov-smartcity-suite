@@ -210,7 +210,7 @@ public class BirthRegistrationAction extends RegistrationAction {
     @Override
     @SkipValidation
     @Transactional    
-    @Action(value = "/registration/birthRegistration-newform", results = { @Result(location = "/WEB-INF/jsp/registration/birthRegistration-new.jsp") })
+    @Action(value = "/registration/birthRegistration-newform", results = { @Result(name = NEW, location = "/WEB-INF/jsp/registration/birthRegistration-new.jsp") })
     public String newform() {
         LOGGER.info("New Birth Registration Online form");
         birthRegistration.setRegistrationDate(DateUtils.today());

@@ -57,7 +57,7 @@
             
     </excludes>
     <decorator name="mainpopup" page="default.jsp">
-      <pattern>/*</pattern>
+      <pattern>/*.action</pattern>
      </decorator>
    
     <decorator name="default" page="titlePage.jsp">
