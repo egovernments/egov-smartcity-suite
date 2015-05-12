@@ -116,7 +116,7 @@ import com.opensymphony.xwork2.validator.annotations.ValidatorType;
         @RequiredStringValidator(fieldName = "parentAddress.district", message = "", key = BndConstants.REQUIRED) }, emails = {
         @EmailValidator(fieldName = "mother.emailAddress", key = BndConstants.INVALID, message = "", type = ValidatorType.FIELD),
         @EmailValidator(fieldName = "father.emailAddress", key = BndConstants.INVALID, message = "", type = ValidatorType.FIELD) })
-@Namespace("/registration")
+//@Namespace("/registration")
 @ParentPackage("egov")
 @Transactional
 public class BirthRegistrationAction extends RegistrationAction {
@@ -209,8 +209,8 @@ public class BirthRegistrationAction extends RegistrationAction {
 
     @Override
     @SkipValidation
-    @Transactional
-    @Action(value = "/birthRegistration-newform", results = { @Result(name = NEW) })
+    @Transactional    
+    @Action(value = "/registration/birthRegistration-newform", results = { @Result(location = "/WEB-INF/jsp/registration/birthRegistration-new.jsp") })
     public String newform() {
         LOGGER.info("New Birth Registration Online form");
         birthRegistration.setRegistrationDate(DateUtils.today());
@@ -221,7 +221,7 @@ public class BirthRegistrationAction extends RegistrationAction {
 
     @SkipValidation
     @Transactional
-    @Action(value = "/birthRegistration-newOfflineForm", results = { @Result(name = NEW) })
+    @Action(value = "/birthRegistration-newOfflineForm", results = { @Result(name = NEW, type = "dispatcher") })
     public String newOfflineForm() {
         LOGGER.debug("New Birth Registration Offline form");
         buildNewBirthForm(birthRegistration);
@@ -237,7 +237,7 @@ public class BirthRegistrationAction extends RegistrationAction {
 
     @Override
     @Transactional
-    @Action(value = "/birthRegistration-create", results = { @Result(name = NEW) })
+    @Action(value = "/birthRegistration-create", results = { @Result(name = NEW, type = "dispatcher") })
     public String create() {
         if (workFlowType != null && !"".equals(workFlowType) && BndConstants.SCRIPT_SAVE.equals(workFlowType))
             birthRegistration.setStatus(bndCommonService.getStatusByModuleAndCode(BndConstants.BIRTHREGISTRATION,
@@ -435,7 +435,7 @@ public class BirthRegistrationAction extends RegistrationAction {
     @Override
     @SkipValidation
     @Transactional
-    @Action(value = "/birthRegistration-beforeEdit", results = { @Result(name = NEW) })
+    @Action(value = "/birthRegistration-beforeEdit", results = { @Result(name = NEW, type = "dispatcher") })
     public String beforeEdit() {
         if (mode != null) {
             mode = getMode();
@@ -463,7 +463,7 @@ public class BirthRegistrationAction extends RegistrationAction {
     @Override
     @Transactional
     @ValidationErrorPage(NEW)
-    @Action(value = "/birthRegistration-edit", results = { @Result(name = NEW) })
+    @Action(value = "/birthRegistration-edit", results = { @Result(name = NEW, type = "dispatcher") })
     public String edit() {
 
         if (getMode().equals(LOCK)) {

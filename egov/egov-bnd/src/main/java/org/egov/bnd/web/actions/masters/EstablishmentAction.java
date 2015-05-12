@@ -118,7 +118,7 @@ public class EstablishmentAction extends BndCommonAction {
 
     @Override
     @Transactional
-    @Action(value = "/establishment-create", results = { @Result(name = NEW) })
+    @Action(value = "/establishment-create", results = { @Result(name = NEW, type = "dispatcher") })
     public String create() {
         buildEstablishment();
         establishmentService.save(establishment);

@@ -85,7 +85,7 @@ public class AdoptionAction extends BirthRegistrationAction {
 
     @Override
     @SkipValidation
-    @Action(value = "/adoption-newform", results = { @Result(name = NEW) })
+    @Action(value = "/adoption-newform", results = { @Result(name = NEW, type = "dispatcher") })
     public String newform() {
         LOGGER.debug("Load Adoption new form");
         return NEW;
@@ -111,7 +111,7 @@ public class AdoptionAction extends BirthRegistrationAction {
 
     @Override
     @Transactional
-    @Action(value = "/adoption-create", results = { @Result(name = NEW) })
+    @Action(value = "/adoption-create", results = { @Result(name = NEW, type = "dispatcher") })
     public String create() {
         LOGGER.debug("Start create method");
         birthRegistration.getAdoptionDetail().getAdopteeFather().setGender(Gender.MALE);

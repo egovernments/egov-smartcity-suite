@@ -58,8 +58,6 @@
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="objectTypeService" ref="objectTypeService"/>
 	 	<property name="objectHistoryService" ref="objectHistoryService"/>
-	 	<property name="appConfigValuesDAO" ref="appConfigValuesDAO" />
-	 	<property name="eisService"   ref="eisService" />
 	 	<property name="registrationTypeServiceMap">
 	 		<map>
         	<entry>
@@ -112,7 +110,6 @@
 	 <bean id="birthRegistrationService" class="org.egov.bnd.services.registration.BirthRegistrationService" parent="persistenceService">
 	    <property name="type" value="org.egov.bnd.model.BirthRegistration"/>
 	    <property name="adoptionService" ref="adoptionService"/>
-	    <property name="eisService" ref="eisService"/>
 	    <property name="statusChangeService" ref="statusChangeService"/>
 	    <property name="birthRegistrationWorkflowService" ref="birthRegistrationWorkflowService"/>
 	    <property name="bndCommonService" ref="bndCommonService"/>
@@ -140,7 +137,6 @@
     <bean id="deathRegistrationService" class="org.egov.bnd.services.registration.DeathRegistrationService" parent="persistenceService">
  	    <property name="type" value="org.egov.bnd.model.DeathRegistration"/>
  	    <property name="bndCommonService" ref="bndCommonService"/>
- 	     <property name="eisService" ref="eisService"/>
 	    <property name="deathRegistrationWorkflowService" ref="deathRegistrationWorkflowService"/>
 	</bean>	
 	

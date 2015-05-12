@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.bnd.web.actions.common;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -81,8 +82,8 @@ import org.springframework.transaction.annotation.Transactional;
  * @author pritiranjan
  */
 
-@Result(name = BndCommonAction.WORKFLOWERROR, location = "bndCommon", type = "redirectAction", params = { "namespace",
-        "/common", "method", BndCommonAction.WORKFLOWERROR })
+/*@Result(name = BndCommonAction.WORKFLOWERROR, location = "bndCommon", type = "redirectAction", params = { "namespace",
+        "/common", "method", BndCommonAction.WORKFLOWERROR })*/
 @Namespace("/common")
 @ParentPackage("egov")
 @Transactional(readOnly = true)
@@ -115,7 +116,7 @@ public class BndCommonAction extends GenericWorkFlowAction {
     public StateAware getModel() {
         return null;
     }
-
+    
     @Transactional
     public String getRoleNameByLoginUserId() {
         if (EGOVThreadLocals.getUserId() != null) {
@@ -147,7 +148,8 @@ public class BndCommonAction extends GenericWorkFlowAction {
         final List<EstablishmentType> hospitalTypeList = EgovMasterDataCaching.getInstance().get(
                 "bnd-establishmentType");
         addDropdownData("hospitalTypeList", hospitalTypeList);
-        final List<Establishment> hospitalList = EgovMasterDataCaching.getInstance().get("bnd-establishmentNames");
+       // final List<Establishment> hospitalList = EgovMasterDataCaching.getInstance().get("bnd-establishmentNames");
+        final List<Establishment> hospitalList = Collections.EMPTY_LIST;
         addDropdownData("hospitalList", hospitalList);
         final List<CRelation> relationTypeList = EgovMasterDataCaching.getInstance().get("bnd-relationType");
         addDropdownData("relationTypeList", relationTypeList);
@@ -156,7 +158,8 @@ public class BndCommonAction extends GenericWorkFlowAction {
         final List<Establishment> adoptionInstitueList = EgovMasterDataCaching.getInstance()
                 .get("bnd-adoptionInstitue");
         addDropdownData("adoptionInstitueList", adoptionInstitueList);
-        final List<CrematoriumMaster> crematoriumList = EgovMasterDataCaching.getInstance().get("bnd-crematoriumNames");
+        //final List<CrematoriumMaster> crematoriumList = EgovMasterDataCaching.getInstance().get("bnd-crematoriumNames");
+        final List<CrematoriumMaster> crematoriumList = Collections.EMPTY_LIST;
         addDropdownData("crematoriumList", crematoriumList);
         final List<AgeType> ageTypeList = EgovMasterDataCaching.getInstance().get("bnd-ageType");
         addDropdownData("ageTypeList", ageTypeList);
@@ -188,7 +191,7 @@ public class BndCommonAction extends GenericWorkFlowAction {
     }
 
     @Transactional
-    @Action(value = "bndCommon-create", results = {@Result(name = NEW)} )
+    @Action(value = "bndCommon-create", results = {@Result(name = NEW, type = "dispatcher")} )
     public String create() {
         saveOrUpdate();
         mode = VIEW;
@@ -200,7 +203,7 @@ public class BndCommonAction extends GenericWorkFlowAction {
     }
 
     @SkipValidation
-    @Action(value = "bndCommon-view", results = {@Result(name = NEW)} )
+    @Action(value = "bndCommon-view", results = {@Result(name = NEW, type = "dispatcher")} )
     public String view() {
         mode = VIEW;
         return NEW;
@@ -208,7 +211,7 @@ public class BndCommonAction extends GenericWorkFlowAction {
 
     @Transactional
     @ValidationErrorPage(NEW)
-    @Action(value = "bndCommon-edit", results = {@Result(name = NEW)} )
+    @Action(value = "bndCommon-edit", results = {@Result(name = NEW, type = "dispatcher")} )
     public String edit() {
         saveOrUpdate();
         mode = VIEW;
@@ -224,7 +227,7 @@ public class BndCommonAction extends GenericWorkFlowAction {
     }
 
     @SkipValidation
-    @Action(value = "bndCommon-newform", results = {@Result(name = NEW)} )
+    @Action(value = "bndCommon-newform", results = {@Result(name = NEW, type = "dispatcher")} )
     public String newform() {
         return NEW;
     }
@@ -234,7 +237,7 @@ public class BndCommonAction extends GenericWorkFlowAction {
     }
 
     @SkipValidation
-    @Action(value = "bndCommon-edit", results = {@Result(name = NEW)} )
+    @Action(value = "bndCommon-beforeEdit", results = {@Result(name = NEW, type = "dispatcher")} )
     public String beforeEdit() {
         mode = EDIT;
         return NEW;
@@ -242,7 +245,7 @@ public class BndCommonAction extends GenericWorkFlowAction {
 
     @SkipValidation
     @Transactional
-    @Action(value = "bndCommon-inbox", results = {@Result(name = NEW)} )
+    @Action(value = "bndCommon-inbox", results = {@Result(name = NEW, type = "dispatcher")} )
     public String inbox() {
         if (!validateInboxItemForUser(getModel(), EGOVThreadLocals.getUserId()))
             return WORKFLOWERROR;
@@ -286,6 +289,7 @@ public class BndCommonAction extends GenericWorkFlowAction {
         return validateObjectStatus;
     }
 
+    @Action(value = "bndCommon-workFlowError", results = {@Result(name = INBOXERROR, type = "dispatcher")} )
     public String workFlowError() {
         return INBOXERROR;
     }

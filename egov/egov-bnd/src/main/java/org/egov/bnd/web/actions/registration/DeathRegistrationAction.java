@@ -212,7 +212,7 @@ public class DeathRegistrationAction extends RegistrationAction {
 
     @SkipValidation
     @Override
-    @Action(value = "/deathRegistration-beforeEdit", results = { @Result(name = NEW) })
+    @Action(value = "/deathRegistration-beforeEdit", results = { @Result(name = NEW, type = "dispatcher") })
     public String beforeEdit() {
         if (mode != null)
             mode = getMode();
@@ -225,7 +225,7 @@ public class DeathRegistrationAction extends RegistrationAction {
     @Override
     @SuppressWarnings("unchecked")
     @Transactional
-    @Action(value = "/deathRegistration-prepareEdit", results = { @Result(name = NEW) })
+    @Action(value = "/deathRegistration-prepareEdit", results = { @Result(name = NEW, type = "dispatcher") })
     public void prepareEdit() {
         LOGGER.debug("Started prepareEdit method");
         deathRegistration = deathRegistrationService.getDeathRegistrationById(idTemp);
@@ -248,7 +248,7 @@ public class DeathRegistrationAction extends RegistrationAction {
     @Override
     @Transactional
     @ValidationErrorPage(NEW)
-    @Action(value = "/deathRegistration-edit", results = { @Result(name = NEW) })
+    @Action(value = "/deathRegistration-edit", results = { @Result(name = NEW, type = "dispatcher") })
     public String edit() {
         LOGGER.debug("Started edit method");
         if (getMode().equals(LOCK)) {
@@ -322,7 +322,7 @@ public class DeathRegistrationAction extends RegistrationAction {
 
     @Transactional
     @SkipValidation
-    @Action(value = "/deathRegistration-newOnlineform", results = { @Result(name = NEW) })
+    @Action(value = "/deathRegistration-newOnlineform", results = { @Result(name = NEW, type = "dispatcher") })
     public String newOnlineform()
     {
         LOGGER.info("Started Death Registration Online form");
@@ -360,7 +360,7 @@ public class DeathRegistrationAction extends RegistrationAction {
 
     @Transactional
     @SkipValidation
-    @Action(value = "/deathRegistration-newOfflineForm", results = { @Result(name = NEW) })
+    @Action(value = "/deathRegistration-newOfflineForm", results = { @Result(name = NEW, type = "dispatcher") })
     public String newOfflineForm() {
 
         LOGGER.info("New newOfflineForm form");
@@ -374,7 +374,7 @@ public class DeathRegistrationAction extends RegistrationAction {
     
     @Override
     @Transactional
-    @Action(value = "/deathRegistration-create", results = { @Result(name = NEW) })
+    @Action(value = "/deathRegistration-create", results = { @Result(name = NEW, type = "dispatcher") })
     public String create() {
         if (workFlowType != null && !"".equals(workFlowType) && BndConstants.SCRIPT_SAVE.equals(workFlowType))
             deathRegistration.setStatus(bndCommonService.getStatusByModuleAndCode(BndConstants.DEATHREGISTRATION,

@@ -46,6 +46,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.bnd.client.utils.BndRuleBook;
@@ -77,6 +79,7 @@ import org.springframework.transaction.annotation.Transactional;
         "contentType", "text/plain" }) })
 @SuppressWarnings("unchecked" )
 @Transactional(readOnly = true)
+@Namespace("/common")
 public class AjaxCommonAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1129396596379121136L;
@@ -135,6 +138,12 @@ public class AjaxCommonAction extends BaseFormAction {
     private final SimpleDateFormat sf = new SimpleDateFormat("yyyy");
     private Boolean hospitalRegistered;
 
+    
+    @Action(value = "/ajaxCommon-dummyform", results = { @Result(name = "dummy", type = "dispatcher") })
+    public String dummyform() {
+        return "dummy";
+    }
+    
     public Boolean getHospitalRegistered() {
         return hospitalRegistered;
     }

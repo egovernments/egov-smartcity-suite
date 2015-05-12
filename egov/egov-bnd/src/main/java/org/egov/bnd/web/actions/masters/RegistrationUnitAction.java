@@ -130,7 +130,7 @@ public class RegistrationUnitAction extends BndCommonAction {
 
     @Override
     @Transactional
-    @Action(value = "/registrationUnit-create", results = { @Result(name = NEW) })
+    @Action(value = "/registrationUnit-create", results = { @Result(name = NEW, type = "dispatcher") })
     public String create() {
         buildRegistrationUnit();
         registrationUnitService.save(registrationUnit);

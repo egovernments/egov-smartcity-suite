@@ -177,7 +177,7 @@ public class StillBirthRegistrationAction extends RegistrationAction {
     }
 
     @SkipValidation
-    @Action(value = "/stillBirthRegistration-newform", results = { @Result(name = NEW) })
+    @Action(value = "/stillBirthRegistration-newform", results = { @Result(name = NEW, type = "dispatcher") })
     public String newOnlineform() {
         LOGGER.debug("New Still Birth Registration Online form");
         stillBirthRegistration.setRegistrationDate(DateUtils.today());
@@ -191,7 +191,7 @@ public class StillBirthRegistrationAction extends RegistrationAction {
     }
 
     @SkipValidation
-    @Action(value = "/stillBirthRegistration-newOfflineForm", results = { @Result(name = NEW) })
+    @Action(value = "/stillBirthRegistration-newOfflineForm", results = { @Result(name = NEW, type = "dispatcher") })
     public String newOfflineForm() {
         LOGGER.debug("New still Birth Registration Offline form");
         buildNewBirthForm(stillBirthRegistration);
@@ -207,7 +207,7 @@ public class StillBirthRegistrationAction extends RegistrationAction {
 
     @Override
     @Transactional
-    @Action(value = "/stillBirthRegistration-create", results = { @Result(name = NEW) })
+    @Action(value = "/stillBirthRegistration-create", results = { @Result(name = NEW, type = "dispatcher") })
     public String create() {
         if (workFlowType != null && !"".equals(workFlowType) && BndConstants.SCRIPT_SAVE.equals(workFlowType))
             stillBirthRegistration.setStatus(bndCommonService.getStatusByModuleAndCode(
@@ -235,7 +235,7 @@ public class StillBirthRegistrationAction extends RegistrationAction {
 
     @SkipValidation
     @Override
-    @Action(value = "/stillBirthRegistration-beforeEdit", results = { @Result(name = NEW) })
+    @Action(value = "/stillBirthRegistration-beforeEdit", results = { @Result(name = NEW, type = "dispatcher") })
     public String beforeEdit() {
         if (mode != null)
             mode = getMode();
@@ -284,7 +284,7 @@ public class StillBirthRegistrationAction extends RegistrationAction {
     @Override
     @Transactional
     @ValidationErrorPage(NEW)
-    @Action(value = "/stillBirthRegistration-edit", results = { @Result(name = NEW) })
+    @Action(value = "/stillBirthRegistration-edit", results = { @Result(name = NEW, type = "dispatcher") })
     public String edit() {
         if (getMode().equals(LOCK)) {
             birthRegistrationService.buildAdoptionDetial(stillBirthRegistration);

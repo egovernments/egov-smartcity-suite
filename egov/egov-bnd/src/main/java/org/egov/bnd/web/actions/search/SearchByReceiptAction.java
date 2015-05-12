@@ -42,7 +42,10 @@ package org.egov.bnd.web.actions.search;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.bnd.model.Registration;
 import org.egov.bnd.services.registration.NonAvailabilityRegistrationService;
 import org.egov.bnd.services.search.SearchByReceiptService;
@@ -52,8 +55,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
 @Transactional(readOnly = true)
+@Namespace("/search")
 public class SearchByReceiptAction extends BndCommonAction {
     private static final long serialVersionUID = -1997201664458515658L;
+    private static final String STRUTS_RESULT_SEARCH = "search";
+    
     private String regType = null;
     private String searchMode;
     private String receiptNo;
@@ -62,12 +68,14 @@ public class SearchByReceiptAction extends BndCommonAction {
     private SearchByReceiptService searchByReceiptService;
     private NonAvailabilityRegistrationService nonAvailableRegService;
 
+    @Action(value = "/searchByReceipt-searchbyReceiptForm", results = { @Result(name = STRUTS_RESULT_SEARCH, type = "dispatcher") })
     public String searchbyReceiptForm() {
         setRegType(BndConstants.SEARCHBIRTH);
         return "search";
     }
 
     @Transactional
+    @Action(value = "/searchByReceipt-searchresults", results = { @Result(name = STRUTS_RESULT_SEARCH, type = "dispatcher") })
     public String searchresults() {
 
         final HashMap<String, Object> hashMap = new HashMap<String, Object>();
@@ -90,7 +98,7 @@ public class SearchByReceiptAction extends BndCommonAction {
         }
 
         setSearchMode("result");
-        return "search";
+        return STRUTS_RESULT_SEARCH;
     }
 
     public String getRegType() {

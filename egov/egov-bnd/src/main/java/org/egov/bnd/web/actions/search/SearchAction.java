@@ -45,6 +45,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.bnd.client.utils.BndRuleBook;
 import org.egov.bnd.model.Registration;
 import org.egov.bnd.services.search.SearchService;
@@ -55,10 +58,13 @@ import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.search.SearchQuery;
 import org.springframework.transaction.annotation.Transactional;
 
+@Namespace("/search")
 @Transactional(readOnly = true)
 public class SearchAction extends BndCommonAction {
 
     private static final long serialVersionUID = -1756028116762763554L;
+    private static final String STRUTS_RESULT_SEARCH = "search";
+    
     private String regType;
     private String hiddenRegType;
     private String regNo;
@@ -96,19 +102,22 @@ public class SearchAction extends BndCommonAction {
     }
 
     /* to search locked records and unlock them */
+    @Action(value = "/search-searchLockedRecordsForm", results = { @Result(name = STRUTS_RESULT_SEARCH, type = "dispatcher") })
     public String searchLockedRecordsForm() {
         LOGGER.info("Inside searchLockedRecordsForm");
         setRegType(BndConstants.SEARCHBIRTH);
         mode = BndConstants.MODEUNLOCK;
-        return "search";
+        return STRUTS_RESULT_SEARCH;
     }
 
+    @Action(value = "/search-searchForm", results = { @Result(name = STRUTS_RESULT_SEARCH, type = "dispatcher") })
     public String searchForm() {
         LOGGER.info("Inside searchForm");
         setRegType(BndConstants.SEARCHBIRTH);
-        return "search";
+        return STRUTS_RESULT_SEARCH;
     }
 
+    @Action(value = "/search-searchresults", results = { @Result(name = STRUTS_RESULT_SEARCH, type = "dispatcher") })
     public String searchresults() {
         LOGGER.info("Inside searchResult");
         final HashMap<String, Object> hashMap = new HashMap<String, Object>();
@@ -143,7 +152,7 @@ public class SearchAction extends BndCommonAction {
 
         setSearchMode("result");
         setMode(getMode());
-        return "search";
+        return STRUTS_RESULT_SEARCH;
     }
 
     @Override

@@ -145,7 +145,7 @@ public class SideLetterAction extends BndCommonAction {
     @Override
     @Transactional
     @SkipValidation
-    @Action(value = "/sideLetter-newform", results = { @Result(name = NEW) })
+    @Action(value = "/sideLetter-newform", results = { @Result(name = NEW, type = "dispatcher") })
     public String newform() {
         LOGGER.debug("Inside new form method");
         final RegistrationUnit regUnit = bndCommonService.getRegistrarByLoggedInUser().getRegUnitId();
@@ -201,7 +201,7 @@ public class SideLetterAction extends BndCommonAction {
     }
 
     @SkipValidation
-    @Action(value = "/sideLetter-printSideLetter", results = { @Result(name = STRUTS_RESULT_PRINT) })
+    @Action(value = "/sideLetter-printSideLetter", results = { @Result(name = STRUTS_RESULT_PRINT, type = "dispatcher") })
     public String printSideLetter() {
         prepareBeforeEdit();
 

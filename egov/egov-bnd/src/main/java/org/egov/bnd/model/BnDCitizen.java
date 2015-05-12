@@ -51,9 +51,6 @@ import org.egov.portal.entity.Citizen;
 
 public class BnDCitizen extends Citizen {
 
-	/**
-     *
-     */
 	private static final long serialVersionUID = 8739168927130968076L;
 
 	public BnDCitizen() {

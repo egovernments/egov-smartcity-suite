@@ -50,7 +50,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.displaytag.pagination.PaginatedList;
 import org.displaytag.tags.TableTagParameters;
 import org.displaytag.util.ParamEncoder;
@@ -67,6 +70,7 @@ import org.egov.web.annotation.ValidationErrorPage;
 import org.egov.web.utils.EgovPaginatedList;
 import org.springframework.transaction.annotation.Transactional;
 
+@Namespace("/reports")
 @ParentPackage("egov")
 @Transactional(readOnly = true)
 public class ReportAction extends BndCommonAction {
@@ -137,6 +141,7 @@ public class ReportAction extends BndCommonAction {
         return birthdeathview;
     }
 
+    @Action(value = "/report-delayedRegistration", results = { @Result(name = DELAYEDREGREPORT, type = "dispatcher") })
     public String delayedRegistration() {
         LOGGER.debug("Started delayedRegistration method");
         setReportType(DELAYEDREGREPORT);
@@ -154,6 +159,7 @@ public class ReportAction extends BndCommonAction {
         addDropdownData("establishmentList", bndCommonService.getHospitalName());
     }
 
+    @Action(value = "/report-yearlyWiseReport", results = { @Result(name = YEARWISEREPORT, type = "dispatcher") })
     public String yearlyWiseReport() {
         LOGGER.debug("Started yearlyWiseReport method");
         setReportType(YEARWISEREPORT);
@@ -161,6 +167,7 @@ public class ReportAction extends BndCommonAction {
         return YEARWISEREPORT;
     }
 
+    @Action(value = "/report-aggregateReport", results = { @Result(name = AGGREGATEREPORT, type = "dispatcher") })
     public String aggregateReport() {
 
         LOGGER.debug("Started aggregateReport method");
@@ -173,6 +180,7 @@ public class ReportAction extends BndCommonAction {
 
     @Transactional
     @SuppressWarnings("unchecked")
+    @Action(value = "/report-aggregateReportResult", results = { @Result(name = AGGREGATEREPORT, type = "dispatcher") })
     public String aggregateReportResult() {
 
         LOGGER.debug("Started aggregateReportResult method");
@@ -201,6 +209,7 @@ public class ReportAction extends BndCommonAction {
 
     @Transactional
     @SuppressWarnings("unchecked")
+    @Action(value = "/report-yearlyWiseReportResult", results = { @Result(name = YEARWISEREPORT, type = "dispatcher") })
     public String yearlyWiseReportResult() {
         LOGGER.debug("Started yearlyWiseReportResult method");
         final HashMap<String, Object> InputMap = createMap();
@@ -221,6 +230,7 @@ public class ReportAction extends BndCommonAction {
         return jspprefix + "Print";
     }
 
+    @Action(value = "/report-regUnitWiseReport", results = { @Result(name = REGUNITWISEREPORT, type = "dispatcher") })
     public String regUnitWiseReport() {
         LOGGER.debug("Started regUnitWiseReport method");
         setReportType(REGUNITWISEREPORT);
@@ -230,6 +240,7 @@ public class ReportAction extends BndCommonAction {
 
     @Transactional
     @SuppressWarnings("unchecked")
+    @Action(value = "/report-regUnitWiseReportResult", results = { @Result(name = REGUNITWISEREPORT, type = "dispatcher") })
     public String regUnitWiseReportResult() {
 
         LOGGER.debug("Started regUnitWiseReportResult method");
@@ -273,6 +284,7 @@ public class ReportAction extends BndCommonAction {
         return jspprefix + "Print";
     }
 
+    @Action(value = "/report-summaryReport", results = { @Result(name = SUMMARYMONTHLYREPORT, type = "dispatcher") })
     public String summaryReport() {
 
         LOGGER.debug("Started summaryReport method");
@@ -284,6 +296,7 @@ public class ReportAction extends BndCommonAction {
 
     @Transactional
     @SuppressWarnings("unchecked")
+    @Action(value = "/report-efficiencyReportResult", results = { @Result(name = EFFICIENCYREPORT, type = "dispatcher") })
     public String efficiencyReportResult() {
 
         LOGGER.debug("Started efficiencyReportResult method");
@@ -336,6 +349,7 @@ public class ReportAction extends BndCommonAction {
 
     @Transactional
     @SuppressWarnings("unchecked")
+    @Action(value = "/report-summaryReportResult", results = { @Result(name = SUMMARYMONTHLYREPORT, type = "dispatcher") })
     public String summaryReportResult() {
 
         LOGGER.debug("Started summaryReportResult method");
@@ -360,6 +374,7 @@ public class ReportAction extends BndCommonAction {
 
     @Transactional
     @SuppressWarnings("unchecked")
+    @Action(value = "/report-delayedRegistrationResult", results = { @Result(name = DELAYEDREGREPORT, type = "dispatcher") })
     public String delayedRegistrationResult() {
 
         LOGGER.debug("Started delayedRegistrationResult method");
@@ -381,6 +396,7 @@ public class ReportAction extends BndCommonAction {
 
     @Transactional
     @SuppressWarnings("unchecked")
+    @Action(value = "/report-summaryDetailedReport", results = { @Result(name = NEW, type = "dispatcher") })
     public String summaryDetailedReport() {
 
         LOGGER.debug("Started summaryDetailedReport method");
@@ -431,6 +447,7 @@ public class ReportAction extends BndCommonAction {
 
     }
 
+    @Action(value = "/report-hospitalRegReport", results = { @Result(name = HOSPITALREGREPORT, type = "dispatcher") })
     public String hospitalRegReport() {
 
         LOGGER.debug("Started hospitalRegReport method");
@@ -442,6 +459,7 @@ public class ReportAction extends BndCommonAction {
     
     @Transactional
     @SuppressWarnings("unchecked")
+    @Action(value = "/report-hospitalRegReportResult", results = { @Result(name = HOSPITALREGREPORT, type = "dispatcher") })
     public String hospitalRegReportResult() {
 
         LOGGER.debug("Started hospitalRegReportResult method");
@@ -472,6 +490,7 @@ public class ReportAction extends BndCommonAction {
         return pagedResults;
     }
 
+    @Action(value = "/report-nameIncusionStatusReport", results = { @Result(name = NAMEINCLUSIONSTATUSREPORT, type = "dispatcher") })
     public String nameIncusionStatusReport() {
         fromDate = null;
         toDate = null;
@@ -492,6 +511,7 @@ public class ReportAction extends BndCommonAction {
 
     @Transactional
     @ValidationErrorPage(NAMEINCLUSIONSTATUSREPORT)
+    @Action(value = "/report-nameInclusionReportResult", results = { @Result(name = NAMEINCLUSIONSTATUSREPORT, type = "dispatcher") })
     public String nameInclusionReportResult() throws ParseException {
         searchMode = RESULT;
         export();
@@ -508,12 +528,14 @@ public class ReportAction extends BndCommonAction {
 
     }
 
+    @Action(value = "/report-updatedRegistrationReport", results = { @Result(name = UPDATEDREGISTRATIONREPORT, type = "dispatcher") })
     public String updatedRegistrationReport() {
         setRegType(BIRTH);
         return UPDATEDREGISTRATIONREPORT;
     }
 
     @Transactional
+    @Action(value = "/report-updatedRegistrationReportResult", results = { @Result(name = UPDATEDREGISTRATIONREPORT, type = "dispatcher") })
     public String updatedRegistrationReportResult() {
         pagedResults = viewReportService.getRegistrationUpdatedList(fromDate, toDate, regType, regNo, getPage(),
                 getPageSize());
@@ -529,18 +551,21 @@ public class ReportAction extends BndCommonAction {
         this.establishment = establishment;
     }
 
+    @Action(value = "/report-efficiencyReport", results = { @Result(name = EFFICIENCYREPORT, type = "dispatcher") })
     public String efficiencyReport() {
 
         setReportType(EFFICIENCYREPORT);
         return EFFICIENCYREPORT;
     }
 
+    @Action(value = "/report-delayedregistration", results = { @Result(name = DELAYEDREGREPORT, type = "dispatcher") })
     public String delayedregistration() {
 
         setReportType(DELAYEDREGREPORT);
         return DELAYEDREGREPORT;
     }
 
+    @Action(value = "/report-certificateReport", results = { @Result(name = CERTIFICATEREPORT, type = "dispatcher") })
     public String certificateReport() {
 
         LOGGER.debug("Started certificateReport method");
@@ -552,6 +577,7 @@ public class ReportAction extends BndCommonAction {
 
     @Transactional
     @SuppressWarnings("unchecked")
+    @Action(value = "/report-certificateReportResult", results = { @Result(name = CERTIFICATEREPORT, type = "dispatcher") })
     public String certificateReportResult() {
 
         LOGGER.debug("Started certificateReportResult method");
@@ -579,6 +605,7 @@ public class ReportAction extends BndCommonAction {
 
     }
 
+    @Action(value = "/report-cancelledReport", results = { @Result(name = CANCELLEDREPORT, type = "dispatcher") })
     public String cancelledReport() {
 
         LOGGER.debug("Started cancelledReport method");
@@ -589,6 +616,7 @@ public class ReportAction extends BndCommonAction {
     }
 
     @Transactional
+    @Action(value = "/report-cancelledReportResult", results = { @Result(name = CANCELLEDREPORT, type = "dispatcher") })
     public String cancelledReportResult() {
 
         LOGGER.debug("Started cancelledReportResult method");

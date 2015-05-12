@@ -49,7 +49,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.bnd.client.utils.BndRuleBook;
 import org.egov.bnd.model.BirthRegistration;
 import org.egov.bnd.model.BnDCitizen;
@@ -71,6 +74,7 @@ import org.egov.infstr.reporting.engine.ReportService;
 import org.springframework.transaction.annotation.Transactional;
 
 
+@Namespace("/registration")
 @ParentPackage("egov")
 @Transactional(readOnly = true)
 public class RegistrationAction extends BndCommonAction {
@@ -155,11 +159,17 @@ public class RegistrationAction extends BndCommonAction {
     protected Integer reportId = -1;
     protected HashMap<String, Object> registrationMapObject = new HashMap<String, Object>();
 
+    
+    @Action(value = "/registratin-dummy", results = { @Result(name = "dummy", type = "dispatcher") })
+    public String dummy() {
+        return "dummy";
+    }
+    
     @Override
     public void prepare() {
         super.prepare();
-        addDropdownData("registrationUnitList",
-                persistenceService.findAllBy("from RegistrationUnit order by regUnitDesc"));
+        //persistenceService.findAllBy("from RegistrationUnit order by regUnitDesc")
+        addDropdownData("registrationUnitList", Collections.EMPTY_LIST);
         addDropdownData("sexTypeList", Arrays.asList(SexType.values()));
         addDropdownData("diseaseList", Collections.EMPTY_LIST);
         
@@ -195,8 +205,8 @@ public class RegistrationAction extends BndCommonAction {
             gracePeriod = bndCommonService.getAppconfigValueResult(BndConstants.BNDMODULE, BndConstants.GRACEPERIODKEY,
                     "0");
 
-        numberGenKey = bndCommonService.getAppconfigValueResult(BndConstants.BNDMODULE, BndConstants.NUMBERGENKEY,
-                BndConstants.REGISTRATIONDATE);
+        /*numberGenKey = bndCommonService.getAppconfigValueResult(BndConstants.BNDMODULE, BndConstants.NUMBERGENKEY,
+                BndConstants.REGISTRATIONDATE);*/
 
     }
 
@@ -385,11 +395,11 @@ public class RegistrationAction extends BndCommonAction {
     }
 
     protected void buildNewBirthForm(final Registration registration) {
-        if (registration.getRegistrarId() == null)
+        /*if (registration.getRegistrarId() == null)
             throw new EGOVRuntimeException(getMessage("user.registrar.error"));
 
         if (registration.getRegistrarId() != null && registration.getRegistrarId().getRegUnitId() == null)
-            throw new EGOVRuntimeException(getMessage("user.registrationunit.error"));
+            throw new EGOVRuntimeException(getMessage("user.registrationunit.error"));*/
 
         nameOfchildFlag = 1;
         permanentAddressFlag = 1;

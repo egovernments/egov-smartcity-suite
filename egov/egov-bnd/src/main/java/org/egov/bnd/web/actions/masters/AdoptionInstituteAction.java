@@ -110,14 +110,14 @@ public class AdoptionInstituteAction extends BndCommonAction {
 
     @Override
     @SkipValidation
-    @Action(value = "/adoptionInstitute-newform", results = { @Result(name = NEW) })
+    @Action(value = "/adoptionInstitute-newform", results = { @Result(name = NEW, type = "dispatcher") })
     public String newform() {
         return NEW;
     }
 
     @Override
     @Transactional
-    @Action(value = "/adoptionInstitute-create", results = { @Result(name = NEW) })
+    @Action(value = "/adoptionInstitute-create", results = { @Result(name = NEW, type = "dispatcher") })
     public String create() {
         adoptionInstituteService.save(adoptionInstitute);
         mode = VIEW;

@@ -138,17 +138,19 @@ public class BndCommonService {
     private PersistenceService persistenceService;
     private ObjectHistoryService objectHistoryService;
     private ObjectTypeService objectTypeService;
+    
+    @Autowired
     private AppConfigValuesHibernateDAO appConfigValuesDAO;
-    private EISServeable eisService;
+//    private EISServeable eisService;
 
     @Autowired
     private CityWebsiteService cityWebsiteService;
 
     public Map<Long, String> ADDRESSMAP = new HashMap<Long, String>();
 
-    public void setEisService(final EISServeable eisService) {
+   /* public void setEisService(final EISServeable eisService) {
         this.eisService = eisService;
-    }
+    }*/
 
     public void setAppConfigValuesDAO(final AppConfigValuesHibernateDAO appConfigValuesDAO) {
         this.appConfigValuesDAO = appConfigValuesDAO;
@@ -539,7 +541,7 @@ public class BndCommonService {
 
     @Transactional
     public List<Position> getPositionsForUser(final Long userId, final Date date) {
-        return eisService.getPositionsForUser(Long.valueOf(userId), date);
+        return new ArrayList<Position>(); //eisService.getPositionsForUser(Long.valueOf(userId), date);
     }
 
     @Transactional

@@ -153,7 +153,7 @@ public class NonAvailabilityRegistrationAction extends BndCommonAction {
     @Override
     @SkipValidation
     @Transactional
-    @Action(value = "/nonAvailabilityRegistration-newform", results = { @Result(name = NEW) })
+    @Action(value = "/nonAvailabilityRegistration-newform", results = { @Result(name = NEW, type = "dispatcher") })
     public String newform() {
         final Registrar registrar = bndCommonService.getRegistrarByLoggedInUser();
         if (registrar == null)
@@ -186,7 +186,7 @@ public class NonAvailabilityRegistrationAction extends BndCommonAction {
 
     @Override
     @Transactional
-    @Action(value = "nonAvailability-create", results = {@Result(name = AJAX_RESULT_VIEWCOLLECTTAX)} )
+    @Action(value = "nonAvailability-create", results = {@Result(name = AJAX_RESULT_VIEWCOLLECTTAX, type = "dispatcher")} )
     public String create() {
         saveOrUpdate();
         // FeeCollection feeCollection=saveFeeCollectionObjectAndGenerateBill();
@@ -271,13 +271,13 @@ public class NonAvailabilityRegistrationAction extends BndCommonAction {
         LOGGER.debug("Completed prepareView method");
     }
 
-    @SkipValidation
+    /*@SkipValidation
     public String print() {
 
         reportId = generateCertificateService.generateCertificate(idTemp, BndConstants.SEARCHNONAVAILABILITY,
                 getRoleNameByLoginUserId(), BndConstants.NONAVLREGN_TEMPLATE, getSession());
         return "report";
-        /*
+        
          * ReportOutput reportOutput =
          * generateCertificateService.generateCertificateBirthDeathNA(idTemp,
          * BndConstants.SEARCHNONAVAILABILITY,getRoleNameByLoginUserId(),
@@ -286,8 +286,8 @@ public class NonAvailabilityRegistrationAction extends BndCommonAction {
          * nonAvailCertificatePDF = new
          * ByteArrayInputStream(reportOutput.getReportOutputData()); return
          * PRINTNA;
-         */
-    }
+         
+    }*/
 
     @Override
     @Transactional

@@ -149,7 +149,7 @@ public class RegistrarAction extends BndCommonAction {
 
     @Override
     @Transactional
-    @Action(value = "/registrar-create", results = { @Result(name = NEW) })
+    @Action(value = "/registrar-create", results = { @Result(name = NEW, type = "dispatcher") })
     public String create() {
         buildRegistrar();
         registrarService.save(registrar);
@@ -185,14 +185,14 @@ public class RegistrarAction extends BndCommonAction {
 
     @Override
     @SkipValidation
-    @Action(value = "/registrar-beforeEdit", results = { @Result(name = STRUTS_RESULT_EDIT) })
+    @Action(value = "/registrar-beforeEdit", results = { @Result(name = STRUTS_RESULT_EDIT, type = "dispatcher") })
     public String beforeEdit() {
         return STRUTS_RESULT_EDIT;
     }
 
     @Override
     @Transactional
-    @Action(value = "/registrar-edit", results = { @Result(name = STRUTS_RESULT_EDIT) })
+    @Action(value = "/registrar-edit", results = { @Result(name = STRUTS_RESULT_EDIT, type = "dispatcher") })
     public String edit() {
 
         buildEditRegistrar();
