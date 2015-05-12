@@ -53,13 +53,13 @@ import org.egov.pims.model.Assignment;
 import org.egov.pims.model.EmployeeDepartment;
 import org.egov.pims.model.PersonalInformation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.expression.spel.ast.Assign;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * This service class provides API(s) which are required by modules depending on EIS
- * 
+ * This service class provides API(s) which are required by modules depending on
+ * EIS
+ *
  * @author Vaibhav.K
  */
 @Service
@@ -74,16 +74,16 @@ public class EisCommonService {
 
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private PersonalInformationService personalInformationService;
-    
+
     @Autowired
     private EmployeeDepartmentRepository employeeDepartmentRepository;
 
     /**
      * Returns the superior employee position
-     * 
+     *
      * @param objectId
      * @param posId
      * @return returns position object
@@ -93,8 +93,8 @@ public class EisCommonService {
     }
 
     /**
-     * Returns the superior employee position 
-     * 
+     * Returns the superior employee position
+     *
      * @param objectId
      * @param objectSubType
      * @param posId
@@ -108,7 +108,7 @@ public class EisCommonService {
 
     /**
      * Returns user for the given position
-     * 
+     *
      * @param posId
      * @param givenDate
      * @return User object
@@ -125,7 +125,7 @@ public class EisCommonService {
 
     /**
      * Returns employee designation for position
-     * 
+     *
      * @param posId
      * @return Designation object
      */
@@ -135,7 +135,7 @@ public class EisCommonService {
 
     /**
      * Returns employee department for user
-     * 
+     *
      * @param userId
      * @return Department object
      */
@@ -145,109 +145,117 @@ public class EisCommonService {
 
     /**
      * Returns employee position for user
-     * 
+     *
      * @param userId
      * @return Position object
      */
     public Position getPositionByUserId(final Long userId) {
         return assignmentService.getPrimaryAssignmentForUser(userId).getPosition();
     }
-    
+
     /**
-     * Returns employee assignment 
-     * 
+     * Returns employee assignment
+     *
      * @param empId
      * @return Assignment object
      */
     public Assignment getLatestAssignmentForEmployee(final Integer empId) {
-        return assignmentService.getPriamryAssignmentForEmployee(empId);        
+        return assignmentService.getPriamryAssignmentForEmployee(empId);
     }
 
     /**
-     * Returns latest employee primary assignment for a given date and employee id
-     * 
+     * Returns latest employee primary assignment for a given date and employee
+     * id
+     *
      * @param empId
      * @param toDate
      * @return Assignment object
      */
-    public Assignment getLatestAssignmentForEmployeeByToDate(final Integer empId,final Date toDate) {
-        return assignmentService.getPrimaryAssignmentForEmployeeByToDate(empId,toDate);
+    public Assignment getLatestAssignmentForEmployeeByToDate(final Integer empId, final Date toDate) {
+        return assignmentService.getPrimaryAssignmentForEmployeeByToDate(empId, toDate);
     }
-    
+
     /**
      * Returns primary assignment position for employee id
-     * 
+     *
      * @param empId
      * @return Position object
      */
     public Position getPrimaryAssignmentPositionForEmp(final Integer empId) {
         return assignmentService.getPriamryAssignmentForEmployee(empId).getPosition();
     }
-    
+
     /**
      * Returns primary assignment's employee for position
-     * 
+     *
      * @param posId
      * @return PersonalInformation object
      */
     public PersonalInformation getPrimaryAssignmentEmployeeForPos(final Long posId) {
         return assignmentService.getPrimaryAssignmentForPositon(posId).getEmployee();
     }
-    
+
     /**
      * Returns list of positions for an employee
-     * 
+     *
      * @param empId
      * @return List of position objects
      */
     public List<Position> getPositionsForEmployee(final Integer empId) {
-        List<Position> posList = null;
-        List<Assignment> assignList = assignmentService.getAllAssignmentsByEmpId(empId);
-        for(Assignment assign:assignList) {
+        final List<Position> posList = null;
+        final List<Assignment> assignList = assignmentService.getAllAssignmentsByEmpId(empId);
+        for (final Assignment assign : assignList)
             posList.add(assign.getPosition());
-        }
-        
+
         return posList;
     }
-    
+
     /**
      * Returns list of employee for a given position
-     * 
+     *
      * @param posId
      * @return List of PersonalInformation
      */
     public List<PersonalInformation> getEmployeesForPosition(final Long posId) {
-        List<PersonalInformation> empList = null;
-        
-        List<Assignment> assignList = assignmentService.getAssignmentsForPosition(posId);
-        for(Assignment assign:assignList) {
+        final List<PersonalInformation> empList = null;
+
+        final List<Assignment> assignList = assignmentService.getAssignmentsForPosition(posId);
+        for (final Assignment assign : assignList)
             empList.add(assign.getEmployee());
-        }
-        
+
         return empList;
     }
-    
+
     /**
      * Returns employee for user
-     * 
+     *
      * @param userId
      * @return PersonalInformation object
      */
     public PersonalInformation getEmployeeByUserId(final Long userId) {
         return personalInformationService.getEmployeeByUserId(userId);
     }
-    
+
     /**
      * Returns true if the given employee is an HOD
-     * 
+     *
      * @param assignId
-     * @return true if HOD else false 
+     * @return true if HOD else false
      */
     public Boolean isHod(final Long assignId) {
-        List<EmployeeDepartment> hodList=employeeDepartmentRepository.getAllHodDepartments(assignId);
+        final List<EmployeeDepartment> hodList = employeeDepartmentRepository.getAllHodDepartments(assignId);
         return !hodList.isEmpty();
     }
-    
-    
-    
+
+    /**
+     * Returns employee object for position id and given date
+     *
+     * @param posId
+     * @param givenDate
+     * @return Employee object
+     */
+    public PersonalInformation getPrimaryAssignmentForPositionAndDate(final Long posId, final Date givenDate) {
+        return assignmentService.getPrimaryAssignmentForPositionAndDate(posId, givenDate).getEmployee();
+    }
+
 }

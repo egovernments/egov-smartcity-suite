@@ -50,6 +50,7 @@ import org.springframework.stereotype.Repository;
 
 /**
  * This repository intends to serve all required API(s) wrt employee assignment
+ * 
  * @author Vaibhav.K
  */
 @Repository
@@ -76,11 +77,19 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
 
     @Query(" from Assignment A where A.fromDate<=:givenDate and A.toDate>=:givenDate and A.isPrimary='Y' and A.employee.idPersonalInformation=:empId ")
     public Assignment getAssignmentByEmpAndDate(@Param("empId") Integer empId, @Param("givenDate") Date givenDate);
-    
+
     @Query(" from Assignment A where A.fromDate<=current_date and A.toDate>=current_date and A.isPrimary='Y' and A.employee.idPersonalInformation=:empId")
-    public Assignment getPrimaryAssignmentForEmployee(@Param("empId")Integer empId);
-    
+    public Assignment getPrimaryAssignmentForEmployee(@Param("empId") Integer empId);
+
     @Query(" from Assignment A where A.position.id=:posId and A.fromDate<=:current_date and A.toDate>=:current_date order by A.fromDate")
-    public List<Assignment> getAssignmentsForPosition(@Param("posId")Long posId);
-    
+    public List<Assignment> getAssignmentsForPosition(@Param("posId") Long posId);
+
+    @Query(" from Assignment A where A.position.id=:posId and A.fromDate<=:givenDate and A.toDate>=:givenDate and A.isPrimary='Y'")
+    public Assignment getPrimaryAssignmentForPositionAndDate(@Param("posId") Long posId,
+            @Param("givenDate") Date givenDate);
+
+    @Query(" from Assignment A where A.employee.idPersonalInformation=:empId and A.isPrimary='Y' and A.fromDate<=:fromDate and A.toDate<=:toDate")
+    public Assignment getPrimaryAssignmentForGivenRange(@Param("empId") Integer idPersonalInformation,
+            @Param("fromDate") Date fromDate, @Param("toDate") Date toDate);
+
 }
