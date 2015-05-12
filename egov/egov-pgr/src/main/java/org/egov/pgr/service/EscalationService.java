@@ -47,6 +47,7 @@ import org.egov.commons.ObjectType;
 import org.egov.commons.service.ObjectTypeService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EmailUtils;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
@@ -96,6 +97,9 @@ public class EscalationService {
         this.escalationRepository = escalationRepository;
     }
 
+    @Autowired
+    private SecurityUtils securityUtils;
+    
     @Transactional
     public void create(final Escalation escalation) {
         escalationRepository.save(escalation);
@@ -134,7 +138,9 @@ public class EscalationService {
             final User superiorUser = eisCommonService.getUserForPosition(superiorPosition.getId(), new Date());
             complaint.setEscalationDate(getExpiryDate(complaint));
             complaint.setAssignee(superiorPosition);
-            complaint.transition().withOwner(superiorPosition);
+            complaint.transition().withOwner(superiorPosition).withComments("Complaint is escalated")
+			.withDateInfo(complaint.getEscalationDate().toDate()).withStateValue(complaint.getStatus().getName())
+			.withSenderName(securityUtils.getCurrentUser().getName());
             complaintRepository.save(complaint);
             if (isEmailNotificationSet) {
                 final String formattedEscalationDate = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(complaint
