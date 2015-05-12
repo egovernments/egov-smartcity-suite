@@ -83,7 +83,10 @@ public class AjaxController {
     @RequestMapping(value = "/ajax-approvalDesignations", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<DesignationMaster> getDesignations(
             @ModelAttribute("designations") @RequestParam final Integer approvalDepartment) {
-        return eisService.getAllDesignationByDept(approvalDepartment, new Date());
+        List<DesignationMaster> designations =  eisService.getAllDesignationByDept(approvalDepartment, new Date());
+        //FIXME this is hack for lazy loaded collection
+        designations.forEach(designation -> designation.toString());
+        return designations;
     }
 
     /**
