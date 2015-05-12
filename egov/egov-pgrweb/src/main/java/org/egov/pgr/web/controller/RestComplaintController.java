@@ -24,43 +24,53 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.pgr.web.controller;
 
+import static java.util.Arrays.asList;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.config.search.Index;
+import org.egov.config.search.IndexType;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter;
-import org.egov.pgr.entity.Complainant;
+import org.egov.infstr.services.EISServeable;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintRestAdaptor;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ComplaintTypeRestAdaptor;
 import org.egov.pgr.entity.RestComplaint;
 import org.egov.pgr.service.ComplaintStatusService;
+import org.egov.pgr.web.contract.ComplaintSearchRequest;
 import org.egov.pgr.web.controller.complaint.GenericComplaintController;
+import org.egov.search.domain.Document;
+import org.egov.search.domain.Page;
+import org.egov.search.domain.SearchResult;
+import org.egov.search.domain.Sort;
+import org.egov.search.service.SearchService;
 import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -77,36 +87,30 @@ public class RestComplaintController extends GenericComplaintController {
 
     @Autowired
     protected ComplaintStatusService complaintStatusService;
+    @Autowired
+    private EISServeable eisService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private SearchService searchService;
 
-    @RequestMapping(value = { "rest/complaint/showcomplaint" }, method = GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String testInstances() {
-        final RestComplaint restcomplaint = new RestComplaint();
-        restcomplaint.setName("Satyam K Ashish");
-        restcomplaint.setEmail("satyamashish@gmail.com");
-        restcomplaint.setMobile("9741129330");
-        restcomplaint.setLat(12.9797732);
-        restcomplaint.setLng(77.6402478);
-        restcomplaint.setDescription("Testing");
-        final Complainant complainant = new Complainant();
-        complainant.setName("Satyam K Ashish");
-        complainant.setEmail("satyamashish@gmail.com");
-        complainant.setMobile("9741129330");
-        restcomplaint.setComplainant(complainant);
-        final ComplaintType complaintType = complaintTypeService.getListOfComplaintTypes(1, 5).getContent().get(0);
-        restcomplaint.setComplaintType(complaintType);
+    @RequestMapping(value = { "rest/showAllcomplaint" }, method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String testInstances(@RequestBody final ComplaintSearchRequest searchRequest) {
+
+        final SearchResult searchResult = searchService.search(asList(Index.PGR.toString()),
+                asList(IndexType.COMPLAINT.toString()), searchRequest.searchQuery(), searchRequest.searchFilters(),
+                Sort.NULL, Page.NULL);
+        final List<Document> documents = searchResult.getDocuments();
+        // .registerTypeAdapter(Document.class, new DocumentRestAdaptor())
         final Gson jsonCreator = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
                 .disableHtmlEscaping().create();
-        // Gson jsonCreator = new
-        // GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
-        // .disableHtmlEscaping().registerTypeAdapter(RestComplaint.class, new
-        // RestComplaintAdaptor()).create();
-        final String json = jsonCreator.toJson(restcomplaint);// jsonCreator.toJson(restcomplaint,
-        // new
-        // TypeToken<RestComplaint>().getType());
+        final String json = jsonCreator.toJson(documents, new TypeToken<Collection<Document>>() {
+        }.getType());
+
         return json;
     }
 
-    @RequestMapping(value = { "rest/complaint/complaintTypes" }, method = GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = { "rest/complaintTypes" }, method = GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String getAllComplaintTypes() {
         final List<ComplaintType> complaintTypes = complaintTypeService.findAll();
         final Gson jsonCreator = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
@@ -119,7 +123,7 @@ public class RestComplaintController extends GenericComplaintController {
 
     @RequestMapping(value = "rest/complaint", method = RequestMethod.POST)
     @ResponseBody
-    public String createComplaints(@RequestBody Complaint complaint) {
+    public String createComplaints(@RequestBody final Complaint complaint) {
 
         String json = "";
         try {
@@ -147,23 +151,31 @@ public class RestComplaintController extends GenericComplaintController {
 
     @RequestMapping(value = "rest/complaint/{complaintno}", method = RequestMethod.PUT)
     @ResponseBody
-    public void putComputer(@PathVariable final String complaintno, @RequestBody final Model model,
+    public String putComputer(@PathVariable final String complaintno, @RequestBody final RestComplaint restComplaint,
             final HttpServletRequest request) {
 
         Complaint complaint = complaintService.getComplaintByCrnNo(complaintno);
         Long approvalPosition = 0l;
-        if (null != request.getParameter("approvalPosition") && !request.getParameter("approvalPosition").isEmpty())
-            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+        Long userId = 0L;
+        if (restComplaint.getApprovalUserName() != null) {
+            userId = userService.getUserByUsername(restComplaint.getApprovalUserName()).getId();
+            if (userId != 0L)
+                approvalPosition = eisService.getPrimaryPositionForUser(userId, new Date()).getId();
+            // eisService.getEmployeeInfoList("","");
+
+        }
         String approvalComent = "";
-        if (null != request.getParameter("approvalComent"))
-            approvalComent = request.getParameter("approvalComent");
+        if (null != restComplaint.getApprovalComment())
+            approvalComent = restComplaint.getApprovalComment();
         String status = "";
-        if (null != request.getParameter("status")) {
-            status = request.getParameter("status");
+        if (null != restComplaint.getStatus()) {
+            status = restComplaint.getStatus();
             complaint.setStatus(complaintStatusService.getByName(status));
         }
 
         complaint = complaintService.update(complaint, approvalPosition, approvalComent);
+        return "Complaint with tracking number " + complaintno + "updated with Status: " + restComplaint.getStatus()
+                + " to " + restComplaint.getApprovalUserName() + " ";
 
     }
 
