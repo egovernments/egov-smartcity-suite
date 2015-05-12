@@ -133,6 +133,7 @@ public class EscalationService {
                             .getComplaintType().getName(), complaint.getAssignee().getId());
             final User superiorUser = eisCommonService.getUserForPosition(superiorPosition.getId(), new Date());
             complaint.setEscalationDate(getExpiryDate(complaint));
+            complaint.setAssignee(superiorPosition);
             complaint.transition().withOwner(superiorPosition);
             complaintRepository.save(complaint);
             if (isEmailNotificationSet) {
