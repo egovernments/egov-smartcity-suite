@@ -61,13 +61,24 @@
 		        });
 				$(elem).find("i").removeClass('unread-msg').addClass('read-msg');
 			}
+			function search(elem) {
+				var searchText = $(elem).val(); 
+			    $(".msg").each(function() {
+			         var $this = $(this)
+			         if ($this.find('div').text().toUpperCase().search(searchText.toUpperCase()) === -1) {
+			             $this.hide();
+			         }else {
+				         $this.show();
+				     }
+			    });
+			};
 		</script>
 		<div class="citizen-screens" id="inbox-template">
 						
 						<div class="row padding-tb"><!-- padding-tb -->
 							<div class="search-box col-md-9 col-sm-8">
 								<i class="fa fa-search"></i>
-								<input type="text" class="form-control" placeholder="Search">
+								<input type="text" class="form-control" placeholder="Search" onkeyup="search(this)">
 							</div>
 							<div class="col-md-3 col-sm-4 text-center xs-margin-top-10">
 								<div class="btn-group btn-input clearfix" id="sortby_drop">
@@ -86,7 +97,9 @@
 						<div class="row container-msgs">
 							
 							<section class="col-lg-12">
+								<table>
 								<c:forEach var="inboxMsg" items="${inboxMessages}" varStatus="status">
+								<tr id="#${inboxMsg.id}">
 								<div class="msg" data-toggle="collapse" data-target="#${inboxMsg.id}" aria-expanded="true" onclick="refreshInbox(${inboxMsg.id}, this)">
 									<header>
 										
@@ -125,7 +138,9 @@
 									 </c:if> 
 										
 								</div>
-								</c:forEach> 
+								</tr>
+								</c:forEach>
+								</table>
 							</section>
 					</div>
 					
