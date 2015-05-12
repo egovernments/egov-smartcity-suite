@@ -46,7 +46,6 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,7 +87,6 @@ import org.egov.model.bills.EgBillregistermis;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.voucher.PreApprovedVoucher;
 import org.egov.model.voucher.VoucherDetails;
-import org.egov.pims.commons.Position;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.egov.web.actions.BaseFormAction;
@@ -521,7 +519,7 @@ public class ExpenseBillPrintAction extends BaseFormAction{
 				paramMap.put("functionName", functionById.getName());
 				}
 				CChartOfAccounts coa =(CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id=?",Long.valueOf(glcodeid.toString()));
-				if(budgetcheck &&  coa.getBudgetCheckReq()!=null && coa.getBudgetCheckReq()==1)
+				if(budgetcheck &&  coa.getBudgetCheckReq()!=null && coa.getBudgetCheckReq())
 				{
 					budgetApprDetails = getBudgetDetails(coa,detail,functionById.getName());
 					budget.add(budgetApprDetails);
@@ -593,7 +591,7 @@ public class ExpenseBillPrintAction extends BaseFormAction{
 				paramMap.put("functionName", functionById.getName());
 				}
 				CChartOfAccounts coa =(CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id=?",Long.valueOf(glcodeid.toString()));
-				if(budgetcheck &&  coa.getBudgetCheckReq()!=null && coa.getBudgetCheckReq()==1)
+				if(budgetcheck &&  coa.getBudgetCheckReq()!=null && coa.getBudgetCheckReq())
 				{
 					budgetApprDetails = getBudgetDetails(coa,detail,functionName);
 					budget.add(budgetApprDetails);

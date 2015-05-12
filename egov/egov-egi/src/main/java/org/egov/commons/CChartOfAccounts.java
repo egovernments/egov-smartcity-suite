@@ -52,14 +52,14 @@ public class CChartOfAccounts extends BaseModel {
 	private String name;
 	private String purposeId;
 	private String desc;
-	private Long isActiveForPosting;
+	private Boolean isActiveForPosting;
 	private Long parentId;
 	private Long schedule;
 	private Character operation;
 	private Character type;
 	private Long classification;
-	private Long functionReqd;
-	private Long budgetCheckReq;
+	private Boolean functionReqd;
+	private Boolean budgetCheckReq;
 	private String majorCode;
 	private Long myClass;
 	private Set<CChartOfAccountDetail> chartOfAccountDetails = new HashSet<CChartOfAccountDetail>();
@@ -181,7 +181,7 @@ public class CChartOfAccounts extends BaseModel {
 	/**
 	 * @return Returns the functionReqd.
 	 */
-	public Long getFunctionReqd() {
+	public Boolean getFunctionReqd() {
 
 		return functionReqd;
 
@@ -190,7 +190,7 @@ public class CChartOfAccounts extends BaseModel {
 	/**
 	 * @param functionReqd The functionReqd to set.
 	*/
-	public void setFunctionReqd(Long functionReqd) {
+	public void setFunctionReqd(Boolean functionReqd) {
 		this.functionReqd = functionReqd;
 	}
 
@@ -204,14 +204,14 @@ public class CChartOfAccounts extends BaseModel {
 	/**
 	 * @return Returns the isActiveForPosting.
 	 */
-	public Long getIsActiveForPosting() {
+	public Boolean getIsActiveForPosting() {
 		return isActiveForPosting;
 	}
 
 	/**
 	 * @param isActiveForPosting The isActiveForPosting to set.
 	 */
-	public void setIsActiveForPosting(Long isActiveForPosting) {
+	public void setIsActiveForPosting(Boolean isActiveForPosting) {
 		this.isActiveForPosting = isActiveForPosting;
 	}
 
@@ -290,11 +290,11 @@ public class CChartOfAccounts extends BaseModel {
 		return (Integer.valueOf(glcode));
 	}
 
-	public Long getBudgetCheckReq() {
+	public Boolean getBudgetCheckReq() {
 		return budgetCheckReq;
 	}
 
-	public void setBudgetCheckReq(Long budgetCheckReq) {
+	public void setBudgetCheckReq(Boolean budgetCheckReq) {
 		this.budgetCheckReq = budgetCheckReq;
 	}
 

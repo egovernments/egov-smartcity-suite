@@ -121,7 +121,7 @@ public class BudgetAppropriationService extends PersistenceService{
     	List<AppConfigValues> list = null;//This fix is for Phoenix Migration. genericDao.getAppConfigValuesDAO().getConfigValuesByModuleAndKey("EGF","budgetCheckRequired");
     	boolean checkReq=false;
     	if("Y".equalsIgnoreCase(((AppConfigValues)list.get(0)).getValue())){
-			if(null!=coa &&  null!= coa.getBudgetCheckReq() &&  coa.getBudgetCheckReq()==1){	
+			if(null!=coa &&  null!= coa.getBudgetCheckReq() &&  coa.getBudgetCheckReq()){	
 				checkReq=true;
 			}
 		}

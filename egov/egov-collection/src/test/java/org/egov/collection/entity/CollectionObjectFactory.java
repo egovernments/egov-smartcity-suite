@@ -506,7 +506,7 @@ public class CollectionObjectFactory {
 		Date date = new Date();
 		account.setGlcode(glCode + getRandomNumber(9999));
 		account.setName("testAccountName" + glCode);
-		account.setIsActiveForPosting(1l);
+		account.setIsActiveForPosting(true);
 		account.setCreatedBy(user);
 		account.setModifiedBy(user);
 		account.setCreatedDate(date);

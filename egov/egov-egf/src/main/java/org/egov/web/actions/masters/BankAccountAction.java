@@ -47,7 +47,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
@@ -229,7 +228,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
 		chart.setType('A');
 		chart.setMyClass(Long.parseLong("5")); // This is the leaf level number.
 		chart.setClassification(Long.parseLong("4"));
-		chart.setIsActiveForPosting(Long.parseLong("1"));
+		chart.setIsActiveForPosting(true);
 		chart.setMajorCode(chart.getGlcode().substring(0,majorCodeLength));
 		chartOfAccountService.persist(chart);
 		return String.valueOf(chart.getId());

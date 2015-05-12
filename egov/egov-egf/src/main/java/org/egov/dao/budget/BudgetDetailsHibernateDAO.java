@@ -1564,7 +1564,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 			// check the account code needs budget checking
 			ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO = new ChartOfAccountsHibernateDAO(CChartOfAccounts.class,HibernateUtil.getCurrentSession());
 			CChartOfAccounts coa = chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(glCode);
-			if(coa.getBudgetCheckReq()!=null && coa.getBudgetCheckReq().intValue()==1)
+			if(coa.getBudgetCheckReq()!=null && coa.getBudgetCheckReq())
 			{
 				// get budgethead for the glcode
 				//BudgetGroup bg = getBudgetHeadByGlcode(coa,paramMap);
@@ -1935,7 +1935,7 @@ public class BudgetDetailsHibernateDAO extends GenericHibernateDAO implements Bu
 				// check the account code needs budget checking
 				ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO = new ChartOfAccountsHibernateDAO(CChartOfAccounts.class,HibernateUtil.getCurrentSession());
 				CChartOfAccounts coa = chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(glCode);
-				if(coa.getBudgetCheckReq()!=null && coa.getBudgetCheckReq().intValue()==1)
+				if(coa.getBudgetCheckReq()!=null && coa.getBudgetCheckReq())
 				{
 					// get budgethead for the glcode
 					List<BudgetGroup> budgetHeadListByGlcode = getBudgetHeadByGlcode(coa);
