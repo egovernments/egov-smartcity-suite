@@ -93,7 +93,7 @@ public class CheckListExtnAction extends BaseFormAction
 	}
 	
 	@SkipValidation
-	@Action(value = "/checkListExtn-newform", results = { @Result(name = NEW) })
+	@Action(value = "/checkListExtn-newform", results = { @Result(name = NEW,type = "dispatcher") })
 	public String newform()
 	{    
 		if(validateCheckListType()){
@@ -108,7 +108,7 @@ public class CheckListExtnAction extends BaseFormAction
 	
 
 	@SkipValidation	
-	@Action(value = "/checkListExtn-search", results = { @Result(name = LIST) })
+	@Action(value = "/checkListExtn-search", results = { @Result(name = LIST,type = "dispatcher") })
 	public String search()
 	{ 
 		return LIST;
@@ -118,7 +118,7 @@ public class CheckListExtnAction extends BaseFormAction
 	
 	@ValidationErrorPage(LIST)
 	@SkipValidation
-	@Action(value = "/checkListExtn-view", results = { @Result(name = NEW) })
+	@Action(value = "/checkListExtn-view", results = { @Result(name = NEW,type = "dispatcher") })
 	public String view()
 	{
 		if(!validateCheckListType())
@@ -139,7 +139,7 @@ public class CheckListExtnAction extends BaseFormAction
 	
 	    @ValidationErrorPage(LIST)	
 		@SkipValidation	
-		@Action(value = "/checkListExtn-modify", results = { @Result(name = NEW) })
+		@Action(value = "/checkListExtn-modify", results = { @Result(name = NEW,type = "dispatcher") })
 		public String modify()
 		{  
 	    	
@@ -265,7 +265,7 @@ public class CheckListExtnAction extends BaseFormAction
 	      return getText(key);
      }
 	@Transactional
-	 @Action(value = "/checkListExtn-create", results = { @Result(name = NEW) })
+	 @Action(value = "/checkListExtn-create", results = { @Result(name = NEW,type = "dispatcher") })
 	public String create()
 	{
 		for(CheckListDetailsExtn unitDetail: checkListDetailsList) {

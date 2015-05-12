@@ -10,9 +10,9 @@
 				<param name="sequence">SEQ_EGBPAEXTND_REGISTRATION</param>
 			</generator>
         </id>
-  		<many-to-one name="surveyorName" class="org.egov.portal.surveyor.model.Surveyor" fetch="select">
+  		<!-- <many-to-one name="surveyorName" class="org.egov.portal.surveyor.model.Surveyor" fetch="select">
             <column name="SURVEYORID" precision="22" scale="0" />
-        </many-to-one>
+        </many-to-one> -->
         <many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
             <column name="MODIFIEDBY" precision="22" scale="0" not-null="true" />
         </many-to-one>

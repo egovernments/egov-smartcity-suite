@@ -44,10 +44,10 @@
          <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
             <column name="CREATEDBY" precision="22" scale="0" not-null="true" />
         </many-to-one>
-        <many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
+        <many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
             <column name="MODIFIEDBY" precision="22" scale="0" not-null="true" />
         </many-to-one>
-        <property name="lastModifiedDate" type="java.util.Date"> 
+        <property name="modifiedDate" type="java.util.Date"> 
             <column name="MODIFIEDDATE" not-null="true" />
         </property>
     </class>

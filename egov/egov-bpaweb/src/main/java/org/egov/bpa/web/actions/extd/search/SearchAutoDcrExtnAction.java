@@ -74,7 +74,7 @@ public class SearchAutoDcrExtnAction extends SearchFormAction
 		// addDropdownData("autoDcrList",persistenceService.findAllBy("from SearchAutoDcr order by autoDcrNum"));
 			
 	}
-	@Action(value = "/searchAutoDcrExtn-searchAuto", results = { @Result(name = NEW) })
+	@Action(value = "/searchAutoDcrExtn-searchAuto", results = { @Result(name = NEW,type = "dispatcher") })
 	public String searchAuto() {
 	
 		return NEW;
@@ -87,7 +87,7 @@ public class SearchAutoDcrExtnAction extends SearchFormAction
 	}
 	@ValidationErrorPage(NEW)
 	@Transactional
-	@Action(value = "/searchAutoDcrExtn-searchResults", results = { @Result(name = NEW) })
+	@Action(value = "/searchAutoDcrExtn-searchResults", results = { @Result(name = NEW,type = "dispatcher") })
 	public String searchResults(){
 		
 		super.search();

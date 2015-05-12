@@ -53,7 +53,7 @@ public class CitizenFeeCollectionExtnAction extends BpaFeeCollectionExtnAction{
 	{
 		super.prepare(); 
 	}
-	@Action(value = "/citizenFeeCollectionExtn-citizenFeeCollectionExtn", results = { @Result(name = "onlineCollectTax") })
+	@Action(value = "/citizenFeeCollectionExtn-citizenFeeCollectionExtn", results = { @Result(name = "onlineCollectTax",type = "dispatcher") })
 	public String viewUnitCollectTax() {
 		LOGGER.debug("CitizenFeeCollectionAction || viewUnitCollectTax || start ");
 		super.viewUnitCollectTax();

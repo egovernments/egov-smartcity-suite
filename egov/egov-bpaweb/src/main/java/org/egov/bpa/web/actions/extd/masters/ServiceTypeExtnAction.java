@@ -87,14 +87,14 @@ public class ServiceTypeExtnAction extends BaseFormAction
 	}
 	
 	@SkipValidation
-	@Action(value = "/serviceTypeExtn-newform", results = { @Result(name = NEW) })
+	@Action(value = "/serviceTypeExtn-newform", results = { @Result(name = NEW,type = "dispatcher") })
 	public String newform(){
 		 return NEW;
 	}
 			
 	@ValidationErrorPage("search")	
 	@SkipValidation	
-	@Action(value = "/serviceTypeExtn-modify", results = { @Result(name = NEW) })
+	@Action(value = "/serviceTypeExtn-modify", results = { @Result(name = NEW,type = "dispatcher") })
 	public String modify()
 	{
 		serviceTypeExtn=serviceTypeExtnService.getservicetypeById(getIdTemp());
@@ -104,7 +104,7 @@ public class ServiceTypeExtnAction extends BaseFormAction
 
 	@ValidationErrorPage("search")
 	@SkipValidation	
-	@Action(value = "/serviceTypeExtn-view", results = { @Result(name = NEW) })
+	@Action(value = "/serviceTypeExtn-view", results = { @Result(name = NEW,type = "dispatcher") })
 	public String view()
 	{
 		serviceTypeExtn=serviceTypeExtnService.getservicetypeById(getIdTemp());
@@ -116,14 +116,14 @@ public class ServiceTypeExtnAction extends BaseFormAction
 
 	@ValidationErrorPage("search")
 	@SkipValidation	
-	@Action(value = "/serviceTypeExtn-searchList", results = { @Result(name = LIST) })
+	@Action(value = "/serviceTypeExtn-searchList", results = { @Result(name = LIST,type = "dispatcher") })
 	public String searchList()
 	{ 
 		return LIST;
 	}
 	
 	@Transactional
-	@Action(value = "/serviceTypeExtn-create", results = { @Result(name = NEW) })
+	@Action(value = "/serviceTypeExtn-create", results = { @Result(name = NEW,type = "dispatcher") })
 	public String create()
 	{    
 		serviceTypeExtn=serviceTypeExtnService.save(serviceTypeExtn);

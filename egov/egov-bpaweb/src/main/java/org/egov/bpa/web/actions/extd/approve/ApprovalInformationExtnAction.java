@@ -127,7 +127,7 @@ public class ApprovalInformationExtnAction extends BaseFormAction{
 		
 	}
 	@SkipValidation
-	@Action(value = "/approvalInformationExtn-newForm", results = { @Result(name = NEW) })
+	@Action(value = "/approvalInformationExtn-newForm", results = { @Result(name = NEW ,type = "dispatcher") })
 	public String newForm(){
 		if(getRegnApprovalInfoId()!=null)
 		{
@@ -173,7 +173,7 @@ public class ApprovalInformationExtnAction extends BaseFormAction{
 	}
 	@ValidationErrorPage(NEW)
 	@Transactional
-	@Action(value = "/approvalInformationExtn-create", results = { @Result(name = NEW) })
+	@Action(value = "/approvalInformationExtn-create", results = { @Result(name = NEW,type = "dispatcher") })
 	public String create()
 	{
 		approvaInfoExtnService.save(approveInfo);

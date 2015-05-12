@@ -463,7 +463,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 	 * Ajax call On Change of Street As of now its disable and populate Surveyor Dropdown Based on Zones...
 	 */
 	@SkipValidation
-	@Action(value = "/citizenRegisterBpaExtn-getSurveyorDeatilList", results = { @Result(name = "surveyor") })
+	@Action(value = "/citizenRegisterBpaExtn-getSurveyorDeatilList", results = { @Result(name = "surveyor",type = "dispatcher") })
 	public String getSurveyorDeatilList() 
 	{
 		 Boundary boundary=null;
@@ -505,7 +505,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 		}
 	}
 	@SkipValidation
-	@Action(value = "/citizenRegisterBpaExtn-newCitizenForm", results = { @Result(name = NEW) })
+	@Action(value = "/citizenRegisterBpaExtn-newCitizenForm", results = { @Result(name = NEW,type = "dispatcher") })
 	public String newCitizenForm() {	
 		
 		setApplicantrAddress(new BpaAddressExtn());
@@ -533,7 +533,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 	 */
 	@SuppressWarnings("unchecked")
 	@SkipValidation
-	@Action(value = "/citizenRegisterBpaExtn-autoCompleteapprovedAutoDcrNUmber", results = { @Result(name = "autoDcr") })
+	@Action(value = "/citizenRegisterBpaExtn-autoCompleteapprovedAutoDcrNUmber", results = { @Result(name = "autoDcr",type = "dispatcher") })
 	public String autoCompleteapprovedAutoDcrNUmber() {
 		approvedAutoDcrList=persistenceService.findAllBy("from AutoDcrDtlsExtn auto where auto.id is not null and not exists (select 1 from RegnAutoDcrDtlsExtn regnautodcr, RegistrationExtn reg" +
 				" where auto.autoDcrNum=regnautodcr.autoDcrNum and reg.id=regnautodcr.registration.id and reg.egwStatus.moduletype=? and reg.egwStatus.code not in(?,?)) and auto.autoDcrNum like ?", BpaConstants.NEWBPAREGISTRATIONMODULE,BpaConstants.NEWBPACANCELLEDSTATUS,BpaConstants.REJECTORDISSUED,"%"+autoDcrNumberAutocomplete.toUpperCase()+"%");
@@ -595,7 +595,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 	}
 	
 	@ValidationErrorPage(NEW)
-	@Action(value = "/citizenRegisterBpaExtn-save", results = { @Result(name = SUCCESS) })
+	@Action(value = "/citizenRegisterBpaExtn-save", results = { @Result(name = SUCCESS,type = "dispatcher") })
 	public String save() {
 		Position position=null;
 		LOGGER.info(" RegisterBpaExtnAction || Save || Start");
@@ -853,7 +853,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 			}
 		 }
 		@SkipValidation
-		@Action(value = "/citizenRegisterBpaExtn-downLoadFile", results = { @Result(name = DOWNLOAD) })
+		@Action(value = "/citizenRegisterBpaExtn-downLoadFile", results = { @Result(name = DOWNLOAD,type = "dispatcher") })
 		public String downLoadFile()   
 		{
 			RegDocumentUpload docUpld= regDocUploadService.findById(regDocUpldDtlsId, false);
@@ -961,7 +961,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 	
 	@SuppressWarnings("unchecked")
 	@SkipValidation
-	@Action(value = "/citizenRegisterBpaExtn-modifyForm", results = { @Result(name = NEW) })
+	@Action(value = "/citizenRegisterBpaExtn-modifyForm", results = { @Result(name = NEW,type = "dispatcher") })
 	public String modifyForm()
 	{	
 		LOGGER.info(" CitizenRegisterBpaExtnAction || Modify || Start");
@@ -1022,7 +1022,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 	}
 	
 	@SkipValidation
-	@Action(value = "/citizenRegisterBpaExtn-viewForm", results = { @Result(name = NEW) })
+	@Action(value = "/citizenRegisterBpaExtn-viewForm", results = { @Result(name = NEW,type = "dispatcher") })
 	public String viewForm() 
 	{		
 		
@@ -1220,7 +1220,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 	}*/
 	
 	@SkipValidation
-	@Action(value = "/citizenRegisterBpaExtn-onlineFeePayment", results = { @Result(name = "viewCollectFee") })
+	@Action(value = "/citizenRegisterBpaExtn-onlineFeePayment", results = { @Result(name = "viewCollectFee",type = "dispatcher") })
 	public String onlineFeePayment()
 	{ 
 		BigDecimal totalAmount = bpaCommonExtnService.isFeeCollectionPending(registration);			
@@ -1239,7 +1239,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 	}
 	
 	@SkipValidation
-	@Action(value = "/citizenRegisterBpaExtn-showLettertoParty", results = { @Result(name = "lettertoparty") })
+	@Action(value = "/citizenRegisterBpaExtn-showLettertoParty", results = { @Result(name = "lettertoparty",type = "dispatcher") })
 	public String showLettertoParty()
 	{
 		
@@ -1256,7 +1256,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 
 	}
 	@SkipValidation
-	@Action(value = "/citizenRegisterBpaExtn-feePaymentPdf", results = { @Result(name = FEE_PAYMENT_PDF) })
+	@Action(value = "/citizenRegisterBpaExtn-feePaymentPdf", results = { @Result(name = FEE_PAYMENT_PDF,type = "dispatcher") })
 	public String feePaymentPdf()  throws JRException, Exception {
 		feePaymentReportPDF = generateFeePaymentReportPDF();
 		return FEE_PAYMENT_PDF;
@@ -1304,7 +1304,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 		return reportParams; 
 	}
 	@SkipValidation
-	@Action(value = "/citizenRegisterBpaExtn-showCollectedFeeReceipts", results = { @Result(name = "receipts") })
+	@Action(value = "/citizenRegisterBpaExtn-showCollectedFeeReceipts", results = { @Result(name = "receipts",type = "dispatcher") })
 	public String showCollectedFeeReceipts()
 	{
 		if(registration!=null){

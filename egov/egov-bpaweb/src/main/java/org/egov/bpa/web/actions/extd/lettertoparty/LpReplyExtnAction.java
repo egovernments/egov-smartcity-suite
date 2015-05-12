@@ -137,7 +137,7 @@ public class LpReplyExtnAction extends BaseFormAction{
 			this.setDocumentNum(letterParty.getDocumentid());
 	}
 	@SkipValidation
-	@Action(value = "/lpReplyExtn-newForm", results = { @Result(name = NEW) })
+	@Action(value = "/lpReplyExtn-newForm", results = { @Result(name = NEW,type = "dispatcher") })
 	public String newForm() {
 		
 		if (letterParty == null || 
@@ -192,7 +192,7 @@ public class LpReplyExtnAction extends BaseFormAction{
 
 	
 	@ValidationErrorPage(NEW)	
-	@Action(value = "/lpReplyExtn-createLpReply", results = { @Result(name = NEW) })
+	@Action(value = "/lpReplyExtn-createLpReply", results = { @Result(name = NEW,type = "dispatcher") })
 	   public String createLpReply() {
 		
 		try{
@@ -403,7 +403,7 @@ public class LpReplyExtnAction extends BaseFormAction{
 		}
 	}
 	@SkipValidation
-	@Action(value = "/lpReplyExtn-showCheckList", results = { @Result(name = "checklist") })
+	@Action(value = "/lpReplyExtn-showCheckList", results = { @Result(name = "checklist",type = "dispatcher") })
 	public String showCheckList() {
 		
 		if(lpChkListDet.size() == 0) {
@@ -423,7 +423,7 @@ public class LpReplyExtnAction extends BaseFormAction{
 		}
 		return "checklist";
 	}
-	@Action(value = "/lpReplyExtn-ackPrint", results = { @Result(name = "ackReport") })
+	@Action(value = "/lpReplyExtn-ackPrint", results = { @Result(name = "ackReport",type = "dispatcher") })
 	public String ackPrint() {
 		try{
 			ReportRequest reportRequest = null;

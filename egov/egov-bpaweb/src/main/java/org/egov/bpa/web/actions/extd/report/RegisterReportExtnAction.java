@@ -101,13 +101,13 @@ public class RegisterReportExtnAction extends BaseFormAction {
 	public RegisterReportExtnAction() {
 
 	}
-	@Action(value = "/registerReportExtn-newform", results = { @Result(name = NEW) })
+	@Action(value = "/registerReportExtn-newform", results = { @Result(name = NEW,type = "dispatcher") })
 	public String newform() {
 		return NEW;
 	}
 
 	@SuppressWarnings("unchecked")
-	@Action(value = "/registerReportExtn-showdetail", results = { @Result(name = showdetail) })
+	@Action(value = "/registerReportExtn-showdetail", results = { @Result(name = showdetail,type = "dispatcher") })
 	public String showdetail() {
 		if (getServcode() != null && getServcode() == 0)
 			qryStr.append(" from RegistrationExtn reg where id is not null and reg.egwStatus.code= :statcode ");
@@ -147,7 +147,7 @@ public class RegisterReportExtnAction extends BaseFormAction {
 	}
 
 	@ValidationErrorPage(NEW)
-	@Action(value = "/registerReportExtn-searchResults", results = { @Result(name = NEW) })
+	@Action(value = "/registerReportExtn-searchResults", results = { @Result(name = NEW,type = "dispatcher") })
 	public String searchResults() {
 		search();
 		setSearchMode("result");

@@ -10,7 +10,7 @@
             	<param name="sequence">SEQ_EGBPAEXTND_INSPECTION</param>
             </generator> 
         </id>
-          <many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
+          <many-to-one name="ModifiedBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
             <column name="MODIFIEDBY" precision="22" scale="0" not-null="true" />
         </many-to-one>
      
@@ -41,7 +41,7 @@
         <property name="postponementReason" type="string">
             <column name="POSTPONEMENTREASON" length="256" />
         </property>
-          <property name="lastModifiedDate" type="java.util.Date"> 
+          <property name="modifiedDate" type="java.util.Date"> 
             <column name="MODIFIEDDATE" not-null="true" />
         </property>
         <property name="inspectionRemarks" type="string">

@@ -98,7 +98,7 @@ public class BpaFeeExtnAction extends BaseFormAction
 		return bpafeeExtn;
 	}
 	@SkipValidation	
-	@Action(value = "/bpaFeeExtn-newform", results = { @Result(name = NEW) })
+	@Action(value = "/bpaFeeExtn-newform", results = { @Result(name = NEW,type = "dispatcher") })
 	public String newform()
 	{
 		
@@ -107,7 +107,7 @@ public class BpaFeeExtnAction extends BaseFormAction
 	}
 	
 	@SkipValidation	
-	@Action(value = "/bpaFeeExtn-search", results = { @Result(name = LIST) })
+	@Action(value = "/bpaFeeExtn-search", results = { @Result(name = LIST,type = "dispatcher") })
 	public String search()
 	{ 
 		return LIST;
@@ -116,7 +116,7 @@ public class BpaFeeExtnAction extends BaseFormAction
 	
 		@ValidationErrorPage("search")	
 		@SkipValidation	
-		@Action(value = "/bpaFeeExtn-modify", results = { @Result(name = NEW) })
+		@Action(value = "/bpaFeeExtn-modify", results = { @Result(name = NEW,type = "dispatcher") })
 		public String modify()
 		{
 			buildFeeDetail();
@@ -126,7 +126,7 @@ public class BpaFeeExtnAction extends BaseFormAction
 		
 		@ValidationErrorPage("search")
 		@SkipValidation	
-		@Action(value = "/bpaFeeExtn-view", results = { @Result(name = NEW) })
+		@Action(value = "/bpaFeeExtn-view", results = { @Result(name = NEW,type = "dispatcher") })
 		public String view()
 		{
 			buildFeeDetail();
@@ -301,7 +301,7 @@ public class BpaFeeExtnAction extends BaseFormAction
 	      return getText(key);
       }
 
-   	@Action(value = "/bpaFeeExtn-create", results = { @Result(name = NEW) })
+   	@Action(value = "/bpaFeeExtn-create", results = { @Result(name = NEW,type = "dispatcher") })
    	@Transactional
 		public String create()
 	    {   
@@ -332,7 +332,7 @@ public class BpaFeeExtnAction extends BaseFormAction
 			addDropdownData("feeGroupList", (Arrays.asList(BpaConstants.COCFEE,BpaConstants.CMDAFEE,BpaConstants.MWGWFFEE)));
 		}
 		@SkipValidation
-		@Action(value = "/bpaFeeExtn-codeUniqueCheck", results = { @Result(name = "codeUniqueCheck") })
+		@Action(value = "/bpaFeeExtn-codeUniqueCheck", results = { @Result(name = "codeUniqueCheck",type = "dispatcher") })
 		public String codeUniqueCheck(){
 			return "codeUniqueCheck" ;
 		} 	

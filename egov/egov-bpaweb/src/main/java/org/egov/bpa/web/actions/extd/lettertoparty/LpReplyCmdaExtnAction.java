@@ -141,7 +141,7 @@ public class LpReplyCmdaExtnAction extends BaseFormAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/lpReplyCmdaExtn-newForm", results = { @Result(name = NEW) })
+	@Action(value = "/lpReplyCmdaExtn-newForm", results = { @Result(name = NEW,type = "dispatcher") })
 	public String newForm() {
 
 		if (letterParty == null
@@ -202,7 +202,7 @@ public class LpReplyCmdaExtnAction extends BaseFormAction {
 	}
 
 	@ValidationErrorPage(NEW)
-	@Action(value = "/lpReplyCmdaExtn-createLpReply", results = { @Result(name = NEW) })
+	@Action(value = "/lpReplyCmdaExtn-createLpReply", results = { @Result(name = NEW,type = "dispatcher") })
 	public String createLpReply() {
 
 		try {
@@ -244,7 +244,7 @@ public class LpReplyCmdaExtnAction extends BaseFormAction {
 			this.setDocumentNum(letterParty.getDocumentid());
 		}
 	}
-	@Action(value = "/lpReplyCmdaExtn-ackPrint", results = { @Result(name = "ackReport") })
+	@Action(value = "/lpReplyCmdaExtn-ackPrint", results = { @Result(name = "ackReport",type = "dispatcher") })
 	public String ackPrint() {
 		try {
 			ReportRequest reportRequest = null;

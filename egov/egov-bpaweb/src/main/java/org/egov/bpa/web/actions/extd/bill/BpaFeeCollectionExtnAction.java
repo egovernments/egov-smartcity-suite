@@ -90,7 +90,7 @@ public class BpaFeeCollectionExtnAction  extends BaseFormAction{
 	
 	@SuppressWarnings("deprecation")
 	@SkipValidation
-	@Action(value = "/bpaFeeCollectionExtn-create", results = { @Result(name = "viewCollectFee") })
+	@Action(value = "/bpaFeeCollectionExtn-create", results = { @Result(name = "viewCollectFee",type = "dispatcher") })
 	public String viewUnitCollectTax() {
 		
 		if(registrationId!=null)

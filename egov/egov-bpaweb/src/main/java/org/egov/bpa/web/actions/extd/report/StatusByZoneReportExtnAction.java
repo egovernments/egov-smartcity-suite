@@ -105,7 +105,7 @@ public class StatusByZoneReportExtnAction extends BaseFormAction {
 	public StatusByZoneReportExtnAction() {
 
 	}
-	@Action(value = "/statusByZoneReportExtn-newForm", results = { @Result(name = NEW) })
+	@Action(value = "/statusByZoneReportExtn-newForm", results = { @Result(name = NEW,type = "dispatcher") })
 	public String newForm() {
 
 		return NEW;
@@ -136,14 +136,14 @@ public class StatusByZoneReportExtnAction extends BaseFormAction {
 	}
 
 	// @ValidationErrorPage(NEW)
-	@Action(value = "/statusByZoneReportExtn-reportResult", results = { @Result(name = NEW) })
+	@Action(value = "/statusByZoneReportExtn-reportResult", results = { @Result(name = NEW,type = "dispatcher") })
 	public String reportResult() {
 		search();
 		setSearchMode("result");
 
 		return NEW;
 	}
-	@Action(value = "/statusByZoneReportExtn-showdetail", results = { @Result(name = showdetail) })
+	@Action(value = "/statusByZoneReportExtn-showdetail", results = { @Result(name = showdetail,type = "dispatcher") })
 	public String showdetail() {
 		if (getWardcode() != null && "total".equals(getWardcode())) {
 

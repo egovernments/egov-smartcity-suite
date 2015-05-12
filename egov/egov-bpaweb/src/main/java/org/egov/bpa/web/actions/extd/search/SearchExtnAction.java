@@ -48,6 +48,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.bpa.constants.BpaConstants;
@@ -57,6 +58,7 @@ import org.egov.bpa.models.extd.masters.ServiceTypeExtn;
 import org.egov.bpa.services.extd.common.BpaCommonExtnService;
 import org.egov.bpa.utils.ApplicationMode;
 import org.egov.bpa.web.actions.extd.common.BpaExtnRuleBook;
+import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.search.SearchQuery;
@@ -67,6 +69,7 @@ import org.egov.web.annotation.ValidationErrorPage;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @ParentPackage("egov")
+//@Namespace("/extd/search")
 public class SearchExtnAction extends SearchFormAction{
 	private static final Logger LOGGER = Logger.getLogger(SearchExtnAction.class);
 	private RegistrationExtn registration=new RegistrationExtn();
@@ -96,17 +99,17 @@ public class SearchExtnAction extends SearchFormAction{
 	{
 		 super.prepare();
 		 addDropdownData("applicationModeList",Arrays.asList(ApplicationMode.values()));
-		 addDropdownData("serviceTypeList", bpaCommonExtnService.getAllServiceTypeList());
-		 addDropdownData("statusList", bpaCommonExtnService.getAllStatusForBPA());  
+		 addDropdownData("serviceTypeList",new ArrayList<ServiceTypeExtn>());
+		 addDropdownData("statusList", new ArrayList<EgwStatus>());  
 		 
 	}
-	@Action(value = "/searchExtn-searchForm", results = { @Result(name = NEW) })
+	@Action(value = "/extd/search/searchExtn-searchForm", results = { @Result(name = "/WEB-INF/jsp/extd/search/searchExtn-new.jsp",type = "dispatcher") })
 	public String searchForm(){
 		return NEW;
 	}
 	
 	@ValidationErrorPage(NEW)
-	@Action(value = "/searchExtn-searchResults", results = { @Result(name = NEW) })
+	@Action(value = "/searchExtn-searchResults", results = { @Result(name = NEW,type = "dispatcher") })
 	@Transactional
 	public String searchResults(){
 		

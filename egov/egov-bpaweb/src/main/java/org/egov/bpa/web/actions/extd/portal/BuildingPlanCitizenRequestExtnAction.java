@@ -70,7 +70,7 @@ public class BuildingPlanCitizenRequestExtnAction extends BaseFormAction {
 	private List<AutoDcrDtlsExtn> autoDcrList = new ArrayList<AutoDcrDtlsExtn>();
 	private String serviceType;
 
-	@Action(value = "/buildingPlanCitizenRequestExtn-newAppInvacantPlot", results = { @Result(name = NEW) })
+	@Action(value = "/buildingPlanCitizenRequestExtn-newAppInvacantPlot", results = { @Result(name = NEW,type = "dispatcher") })
 	public String newAppInvacantPlot()
 	{
 		LOGGER.info(" serviceRegId" + getServiceRegId() + " Request Id " + getRequestID());
@@ -78,7 +78,7 @@ public class BuildingPlanCitizenRequestExtnAction extends BaseFormAction {
 		validateForm(Boolean.FALSE);
 			return NEW;
 	}
-	@Action(value = "/buildingPlanCitizenRequestExtn-demolition", results = { @Result(name = NEW) })
+	@Action(value = "/buildingPlanCitizenRequestExtn-demolition", results = { @Result(name = NEW,type = "dispatcher") })
 	public String demolition()
 	{ 
 		LOGGER.info(" serviceRegId" + getServiceRegId() + " Request Id " + getRequestID());
@@ -86,21 +86,21 @@ public class BuildingPlanCitizenRequestExtnAction extends BaseFormAction {
 		validateForm(Boolean.FALSE);
 		return NEW;
 	}
-	@Action(value = "/buildingPlanCitizenRequestExtn-demolitionAndReconstruction", results = { @Result(name = NEW) })
+	@Action(value = "/buildingPlanCitizenRequestExtn-demolitionAndReconstruction", results = { @Result(name = NEW,type = "dispatcher") })
 	public String demolitionAndReconstruction()
 	{	
 		setServiceType(getSeriveTypeIdByPassingCode(ServiceType.DEMOLITIONRECONSTRUCTIONCODE.getCode()));
 		validateForm(Boolean.FALSE);
 		return NEW;
 	}
-	@Action(value = "/buildingPlanCitizenRequestExtn-subDivision", results = { @Result(name = NEW) })
+	@Action(value = "/buildingPlanCitizenRequestExtn-subDivision", results = { @Result(name = NEW,type = "dispatcher") })
 	public String subDivision()
 	{
 		setServiceType(getSeriveTypeIdByPassingCode(ServiceType.SUBDIVISIONOFLANDCODE.getCode()));
 		validateForm(Boolean.FALSE);
 		return NEW;
 	}
-	@Action(value = "/buildingPlanCitizenRequestExtn-layoutApproval", results = { @Result(name = NEW) })
+	@Action(value = "/buildingPlanCitizenRequestExtn-layoutApproval", results = { @Result(name = NEW,type = "dispatcher") })
 	public String layoutApproval()
 	{
 		setServiceType(getSeriveTypeIdByPassingCode(ServiceType.LAYOUTAPPPROVALCODE.getCode()));
@@ -108,7 +108,7 @@ public class BuildingPlanCitizenRequestExtnAction extends BaseFormAction {
 		return NEW;
 	}
 	
-	@Action(value = "/buildingPlanCitizenRequestExtn-additionalConstruction", results = { @Result(name = NEW) })
+	@Action(value = "/buildingPlanCitizenRequestExtn-additionalConstruction", results = { @Result(name = NEW,type = "dispatcher") })
 	public String additionalConstruction()
 	{
 		setServiceType(getSeriveTypeIdByPassingCode(ServiceType.ADDITIONALCONSTRUCTIONCODE.getCode()));
@@ -116,7 +116,7 @@ public class BuildingPlanCitizenRequestExtnAction extends BaseFormAction {
 		return NEW;
 	}
 	
-	@Action(value = "/buildingPlanCitizenRequestExtn-cmdaType", results = { @Result(name = NEW) })
+	@Action(value = "/buildingPlanCitizenRequestExtn-cmdaType", results = { @Result(name = NEW,type = "dispatcher") })
 	public String cmdaType()
 	{
 		setServiceType(getSeriveTypeIdByPassingCode(ServiceType.CMDACODE.getCode()));
@@ -124,7 +124,7 @@ public class BuildingPlanCitizenRequestExtnAction extends BaseFormAction {
 		return NEW;
 	}
 	
-	@Action(value = "/buildingPlanCitizenRequestExtn-reclassification", results = { @Result(name = NEW) })
+	@Action(value = "/buildingPlanCitizenRequestExtn-reclassification", results = { @Result(name = NEW,type = "dispatcher") })
 	public String reclassification()
 	{
 		setServiceType(getSeriveTypeIdByPassingCode(ServiceType.RECLASSIFICATIONCODE.getCode()));
@@ -140,7 +140,7 @@ public class BuildingPlanCitizenRequestExtnAction extends BaseFormAction {
 		else
 			return null;
 	}
-	@Action(value = "/buildingPlanCitizenRequestExtn-validateForm", results = { @Result(name = NEW) })
+	@Action(value = "/buildingPlanCitizenRequestExtn-validateForm", results = { @Result(name = NEW,type = "dispatcher") })
 	public String validateForm(Boolean autoDcrCheckRequired){
 		
 		LOGGER.info("   userid "+(EGOVThreadLocals.getUserId()));

@@ -37,7 +37,7 @@
         <property name="commApprovalDate" type="java.util.Date">
             <column name="COMM_APPROVED_DATE"  not-null="true" />
         </property>
-          <property name="lastModifiedDate" type="java.util.Date"> 
+          <property name="modifiedDate" type="java.util.Date"> 
             <column name="MODIFIEDDATE" not-null="true" />
         </property>
    </class>

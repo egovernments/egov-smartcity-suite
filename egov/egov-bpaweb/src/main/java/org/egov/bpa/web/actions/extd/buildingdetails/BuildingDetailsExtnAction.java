@@ -121,7 +121,7 @@ public class BuildingDetailsExtnAction extends BaseFormAction{
 	}
 
 	@SkipValidation
-	@Action(value = "/buildingDetailsExtn-newForm", results = { @Result(name = NEW) })
+	@Action(value = "/buildingDetailsExtn-newForm", results = { @Result(name = NEW,type = "dispatcher") })
 	public String newForm() {
 
 		if(serviceType.equals(BpaConstants.NEWBUILDINGONVACANTPLOTCODE)
@@ -258,7 +258,7 @@ public class BuildingDetailsExtnAction extends BaseFormAction{
 
 	@ValidationErrorPage(NEW)
 	@Transactional
-	@Action(value = "/buildingDetailsExtn-save", results = { @Result(name = NEW) })
+	@Action(value = "/buildingDetailsExtn-save", results = { @Result(name = NEW,type = "dispatcher") })
 	public String save()
 	  {
 		apprdBldgDetExtnService.createApprdBldgDetail(apprdBldgDetails,builflorlsList, registration);

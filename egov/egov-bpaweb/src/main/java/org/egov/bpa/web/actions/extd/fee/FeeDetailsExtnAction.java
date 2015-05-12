@@ -288,7 +288,7 @@ public class FeeDetailsExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/feeDetailsExtn-newForm", results = { @Result(name = NEW) })
+	@Action(value = "/feeDetailsExtn-newForm", results = { @Result(name = NEW,type = "dispatcher") })
 	public String newForm() {
 		LOGGER.debug("Start newForm");
 		preparNewForm();
@@ -467,7 +467,7 @@ public class FeeDetailsExtnAction extends GenericWorkFlowAction {
 		LOGGER.debug("Exit buildVieworModify");
 	}
 
-	@Action(value = "/feeDetailsExtn-create", results = { @Result(name = NEW) })
+	@Action(value = "/feeDetailsExtn-create", results = { @Result(name = NEW,type = "dispatcher") })
 	public String create() {
 		LOGGER.debug("Start create");
 		mergeSublistintoFees();
@@ -541,7 +541,7 @@ public class FeeDetailsExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/feeDetailsExtn-view", results = { @Result(name = NEW) })
+	@Action(value = "/feeDetailsExtn-view", results = { @Result(name = NEW,type = "dispatcher") })
 	public String view() {
 		LOGGER.debug("Start view");
 
@@ -552,7 +552,7 @@ public class FeeDetailsExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/feeDetailsExtn-modify", results = { @Result(name = NEW) })
+	@Action(value = "/feeDetailsExtn-modify", results = { @Result(name = NEW,type = "dispatcher") })
 	public String modify() {
 		LOGGER.debug("Start modify");
 
@@ -579,7 +579,7 @@ public class FeeDetailsExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/feeDetailsExtn-showFeeDetailsinRegistration", results = { @Result(name = "feeDetailsRegistration") })
+	@Action(value = "/feeDetailsExtn-showFeeDetailsinRegistration", results = { @Result(name = "feeDetailsRegistration",type = "dispatcher") })
 	public String showFeeDetailsinRegistration() {
 		LOGGER.debug("Start showFeeDetailsinRegistration");
 		if (EGOVThreadLocals.getUserId() != null) {
@@ -599,7 +599,7 @@ public class FeeDetailsExtnAction extends GenericWorkFlowAction {
 		return "feeDetailsRegistration";
 	}
 
-	@Action(value = "/feeDetailsExtn-showFeeDetailsinRevisedFee", results = { @Result(name = "feeDetailsRevisedFee") })
+	@Action(value = "/feeDetailsExtn-showFeeDetailsinRevisedFee", results = { @Result(name = "feeDetailsRevisedFee",type = "dispatcher") })
 	public String showFeeDetailsinRevisedFee() {
 		showFeeDetailsinRegistration();
 		return "feeDetailsRevisedFee";

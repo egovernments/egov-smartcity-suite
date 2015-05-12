@@ -94,7 +94,7 @@ public class BpaReportExtnAction extends BaseFormAction{
 		// TODO Auto-generated method stub
 		return null;
 	}
-	@Action(value = "/bpaReportExtn-printReport", results = { @Result(name = "report") })
+	@Action(value = "/bpaReportExtn-printReport", results = { @Result(name = "report",type = "dispatcher") })
 	public String printReport()
 	{
 		

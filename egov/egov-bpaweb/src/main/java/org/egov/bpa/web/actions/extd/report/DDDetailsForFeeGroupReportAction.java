@@ -117,11 +117,11 @@ public class DDDetailsForFeeGroupReportAction extends BaseFormAction {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	@Action(value = "/dDDetailsForFeeGroupReport-newform", results = { @Result(name = NEW) })
+	@Action(value = "/dDDetailsForFeeGroupReport-newform", results = { @Result(name = NEW,type = "dispatcher") })
 	public String newform() {
 		return NEW;
 	}
-	@Action(value = "/dDDetailsForFeeGroupReport-searchResults", results = { @Result(name = NEW) })
+	@Action(value = "/dDDetailsForFeeGroupReport-searchResults", results = { @Result(name = NEW,type = "dispatcher") })
 	public String searchResults() {
 		search();
 		setSearchMode("result");

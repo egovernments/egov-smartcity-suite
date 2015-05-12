@@ -22,7 +22,7 @@
         <property name="createdDate" type="timestamp">
             <column name="CREATEDDATE" not-null="true" />
         </property>
-            <property name="lastModifiedDate" type="java.util.Date"> 
+            <property name="modifiedDate" type="java.util.Date"> 
             <column name="MODIFIEDDATE" not-null="true" />
         </property>
         <property name="isActive" type="java.lang.Boolean">

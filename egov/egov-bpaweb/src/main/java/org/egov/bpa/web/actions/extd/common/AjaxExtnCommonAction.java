@@ -127,7 +127,7 @@ public class AjaxExtnCommonAction extends BaseFormAction {
 		return null;
 	}
 
-	@Action(value = "/ajaxExtnCommon-wardByZone", results = { @Result(name = "ward") })
+	@Action(value = "/ajaxExtnCommon-wardByZone", results = { @Result(name = "ward",type = "dispatcher") })
 	public String wardByZone() {
 		LOGGER.debug("Entered into wardByZone, zoneId: " + zoneId);
 		wardList = new ArrayList<Boundary>();
@@ -140,7 +140,7 @@ public class AjaxExtnCommonAction extends BaseFormAction {
 		return "ward";
 	}
 
-	@Action(value = "/ajaxExtnCommon-streetByWard", results = { @Result(name = "street") })
+	@Action(value = "/ajaxExtnCommon-streetByWard", results = { @Result(name = "street",type = "dispatcher") })
 	public String streetByWard() {
 		LOGGER.debug("Entered into streetByWard, wardId: " + wardId);
 		streetList = new ArrayList<Boundary>();
@@ -186,7 +186,7 @@ public class AjaxExtnCommonAction extends BaseFormAction {
 	public void setStreetList(List<Boundary> streetList) {
 		this.streetList = streetList;
 	}
-	@Action(value = "/ajaxExtnCommon-getCrossHierarchyBoundaries", results = { @Result(name = AJAX_RESULT) })
+	@Action(value = "/ajaxExtnCommon-getCrossHierarchyBoundaries", results = { @Result(name = AJAX_RESULT,type = "dispatcher") })
 	public String getCrossHierarchyBoundaries() {
 		List<Boundary> bndryList = bpaCommonExtnService.populateArea(boundaryId);
 		StringBuffer bndryString = new StringBuffer();
@@ -198,7 +198,7 @@ public class AjaxExtnCommonAction extends BaseFormAction {
 		returnStream = bndryString.toString();
 		return AJAX_RESULT;
 	}
-	@Action(value = "/ajaxExtnCommon-getChildBoundaries", results = { @Result(name =AJAX_RESULT) })
+	@Action(value = "/ajaxExtnCommon-getChildBoundaries", results = { @Result(name =AJAX_RESULT,type = "dispatcher") })
 	public String getChildBoundaries() {
 		List<Boundary> bndryList = new ArrayList<Boundary>();
 		bndryList.addAll(boundaryDAO.getAllchildBoundaries(boundaryId));
@@ -211,7 +211,7 @@ public class AjaxExtnCommonAction extends BaseFormAction {
 		returnStream = bndryString.toString();
 		return AJAX_RESULT;
 	}
-	@Action(value = "/ajaxExtnCommon-newForm", results = { @Result(name = AJAX_RESULT) })
+	@Action(value = "/ajaxExtnCommon-newForm", results = { @Result(name = AJAX_RESULT,type = "dispatcher") })
 	public String newForm(){
 		returnStream ="agvasdg sdg ";
 		return AJAX_RESULT;
@@ -225,7 +225,7 @@ public class AjaxExtnCommonAction extends BaseFormAction {
 	}
 
 
-	@Action(value = "/ajaxExtnCommon-ajaxLoadActionsForSearch", results = { @Result(name = AJAX_RESULT) })
+	@Action(value = "/ajaxExtnCommon-ajaxLoadActionsForSearch", results = { @Result(name = AJAX_RESULT,type = "dispatcher") })
 	public String ajaxLoadActionsForSearch(){
 
 		RegistrationExtn registration=null;
@@ -244,7 +244,7 @@ public class AjaxExtnCommonAction extends BaseFormAction {
 	public void setArguments(String arguments) {
 		this.arguments = arguments;
 	}
-	@Action(value = "/ajaxExtnCommon-ajaxGetAdmissionFeeAmount", results = { @Result(name =AJAX_RESULT) })
+	@Action(value = "/ajaxExtnCommon-ajaxGetAdmissionFeeAmount", results = { @Result(name =AJAX_RESULT,type = "dispatcher") })
 	public String ajaxGetAdmissionFeeAmount(){
 		BigDecimal admissionfeeAmount = BigDecimal.ZERO;
 	//	BpaFee fee=(BpaFee)persistenceService.find("from BpaFee where serviceType.id=? ", serviceTypeId);
@@ -255,7 +255,7 @@ public class AjaxExtnCommonAction extends BaseFormAction {
 		return AJAX_RESULT;
 
 	}
-	@Action(value = "/ajaxExtnCommon-getSurveyObjectforZone", results = { @Result(name = AJAX_RESULT) })
+	@Action(value = "/ajaxExtnCommon-getSurveyObjectforZone", results = { @Result(name = AJAX_RESULT,type = "dispatcher") })
 	public String getSurveyObjectforZone()
 	{
 		String surveyorCode="";
@@ -280,7 +280,7 @@ public class AjaxExtnCommonAction extends BaseFormAction {
 	/**
 	 * @return Surveyor Id-Code-Name-MobileNo
 	 */
-	@Action(value = "/ajaxExtnCommon-getSurveyDetailbyParam", results = { @Result(name = "surveyor") })
+	@Action(value = "/ajaxExtnCommon-getSurveyDetailbyParam", results = { @Result(name = "surveyor",type = "dispatcher") })
 	public String getSurveyDetailbyParam(){
 	/*	if(surveyorCode!=null && surveyorCode!=""){
 			surveyorDetail=bpaCommonExtnService.getSurveyourDetailbyCodeNameMobNo(null, null, surveyorCode);
@@ -293,7 +293,7 @@ public class AjaxExtnCommonAction extends BaseFormAction {
 		}*/
 		return "surveyor"; 
 	}
-	@Action(value = "/ajaxExtnCommon-ajaxGetMandatoryFieldsForServiceType", results = { @Result(name = AJAX_RESULT) })
+	@Action(value = "/ajaxExtnCommon-ajaxGetMandatoryFieldsForServiceType", results = { @Result(name = AJAX_RESULT,type = "dispatcher") })
 	public String ajaxGetMandatoryFieldsForServiceType(){
 		Boolean isCMDA=Boolean.FALSE;
 		Boolean isAutoDcrReq=Boolean.FALSE;

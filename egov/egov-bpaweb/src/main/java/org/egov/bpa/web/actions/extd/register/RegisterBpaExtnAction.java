@@ -156,7 +156,7 @@ import org.hibernate.Criteria;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
-@Namespace("/register")
+@Namespace("/extd/register")
 @SuppressWarnings("serial")
 @Results({ // Phionix TODO
 		@Result(name = "NOACCESS", type = "stream", location = "returnStream", params = {
@@ -403,7 +403,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-newForm", results = { @Result(name = NEW) })
+	@Action(value = "/registerBpaExtn-newForm", results = { @Result(name = NEW,type = "dispatcher") })
 	public String newForm() {
 		setApplicantrAddress(new BpaAddressExtn());
 		setSiteAddress(new BpaAddressExtn());
@@ -443,7 +443,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@ValidationErrorPage(NEW)
-	@Action(value = "/registerBpaExtn-closeRegistration", results = { @Result(name = NEW) })
+	@Action(value = "/registerBpaExtn-closeRegistration", results = { @Result(name = NEW,type = "dispatcher") })
 	public String closeRegistration() {
 
 		LOGGER.info(" closeRegistration || start");
@@ -487,7 +487,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@ValidationErrorPage(NEW)
-	@Action(value = "/registerBpaExtn-save", results = { @Result(name = NEW) })
+	@Action(value = "/registerBpaExtn-save", results = { @Result(name = NEW,type = "dispatcher") })
 	public String save() {
 
 		LOGGER.info(" RegisterBpaAction || Save || Start");
@@ -1291,7 +1291,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-orderForm", results = { @Result(name = NEW) })
+	@Action(value = "/registerBpaExtn-viewForm", results = { @Result(name = NEW,type = "dispatcher") })
 	public String viewForm() {
 		LOGGER.info(" RegisterBpaAction || viewForm || Start");
 		buildRegistrationForViewModify();
@@ -1302,7 +1302,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 
 	@SuppressWarnings("unchecked")
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-modifyForm", results = { @Result(name = NEW) })
+	@Action(value = "/registerBpaExtn-modifyForm", results = { @Result(name = NEW,type = "dispatcher") })
 	public String modifyForm() {
 		LOGGER.info(" RegisterBpaAction || Save || Start");
 		buildRegistrationForViewModify();
@@ -1744,7 +1744,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-showSurveyorDocHistoryDetails", results = { @Result(name = "showSurveyordocHistory") })
+	@Action(value = "/registerBpaExtn-showSurveyorDocHistoryDetails", results = { @Result(name = "showSurveyordocHistory",type = "dispatcher") })
 	public String showSurveyorDocHistoryDetails() {
 		if (registrationId != null)
 			registration = registerBpaExtnService.findById(registrationId,
@@ -1820,7 +1820,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	 * To Call Ajax for Exist PPA Number Onchange validation
 	 */
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-existPPAnumberforRegistration", results = { @Result(name = "ppanum") })
+	@Action(value = "/registerBpaExtn-existPPAnumberforRegistration", results = { @Result(name = "ppanum",type = "dispatcher") })
 	public String existPPAnumberforRegistration() {
 		ppanum = registerBpaExtnService.checkPPANumberIsValid(existPpaNumber,
 				registration.getId());
@@ -1831,7 +1831,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	 * To Call Ajax for Exist BA Number Onchange validation
 	 */
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-existBanumberCheckForAjax", results = { @Result(name = "showCheckList") })
+	@Action(value = "/registerBpaExtn-existBanumberCheckForAjax", results = { @Result(name = "ppanum",type = "dispatcher") })
 	public String existBanumberCheckForAjax() {
 		ppanum = registerBpaExtnService.checkBuildingApprovalNumberIsValid(
 				existBaNumber, registration.getId());
@@ -2331,7 +2331,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-showCheckList", results = { @Result(name = "checklist") })
+	@Action(value = "/registerBpaExtn-showCheckList", results = { @Result(name = "checklist",type = "dispatcher") })
 	public String showCheckList() {
 		LOGGER.info(" RegisterBpaExtnAction || showCheckList || Start");
 		chkListDet.clear();
@@ -2655,7 +2655,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-getActionsByLoginUserId", results = { @Result(name = "actionbuttons") })
+	@Action(value = "/registerBpaExtn-getActionsByLoginUserId", results = { @Result(name = "actionbuttons",type = "dispatcher") })
 	public String getActionsByLoginUserId() {
 		loggedInUserActions();
 		return "actionbuttons";
@@ -2706,7 +2706,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-print", results = { @Result(name = "report") })
+	@Action(value = "/registerBpaExtn-print", results = { @Result(name = "report",type = "dispatcher") })
 	public String print() {
 		LOGGER.debug("Entered into print method");
 		// LOGGER.debug("Plan Submission Number in print : " +
@@ -2724,7 +2724,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-printInspectionDetails", results = { @Result(name = "report") })
+	@Action(value = "/registerBpaExtn-printInspectionDetails", results = { @Result(name = "report",type = "dispatcher") })
 	public String printInspectionDetails() {
 		if (getRegistrationId() != null) {
 			registration = registerBpaExtnService.findById(getRegistrationId(),
@@ -2764,7 +2764,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 		return "report";
 	}
 
-	@Action(value = "/registerBpaExtn-printDocketSheet", results = { @Result(name = "report") })
+	@Action(value = "/registerBpaExtn-printDocketSheet", results = { @Result(name = "report",type = "dispatcher") })
 	public String printDocketSheet() {
 		LOGGER.debug("Entered into print docket sheet method");
 
@@ -2782,7 +2782,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-printDocumentHistory", results = { @Result(name = "report") })
+	@Action(value = "/registerBpaExtn-printDocumentHistory", results = { @Result(name = "report",type = "dispatcher") })
 	public String printDocumentHistory() {
 		if (getRegistrationId() != null) {
 			registration = registerBpaExtnService.findById(getRegistrationId(),
@@ -2824,7 +2824,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-saveLetterToParty", results = { @Result(name = SUCCESS) })
+	@Action(value = "/registerBpaExtn-saveLetterToParty", results = { @Result(name = SUCCESS,type = "dispatcher") })
 	public String saveLetterToParty() {
 		String userNameWithDesignation = "@";
 		RegistrationExtn newregistration = registerBpaExtnService
@@ -2910,7 +2910,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-saveLetterToCMDA", results = { @Result(name = SUCCESS) })
+	@Action(value = "/registerBpaExtn-saveLetterToCMDA", results = { @Result(name = SUCCESS,type = "dispatcher") })
 	public String saveLetterToCMDA() {
 		String userNameWithDesignation = "@";
 		RegistrationExtn newregistration = registerBpaExtnService
@@ -2998,7 +2998,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-showLetterToPartyCheckList", results = { @Result(name = "lettertopartychecklist") })
+	@Action(value = "/registerBpaExtn-showLetterToPartyCheckList", results = { @Result(name = "lettertopartychecklist",type = "dispatcher") })
 	public String showLetterToPartyCheckList() {
 		ServiceTypeExtn serviceType = registerBpaExtnService
 				.getServiceTypeById(serviceTypeIdTemp);
@@ -3024,7 +3024,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-showExistingLetterToPartyDetails", results = { @Result(name = "existingLetterToPartyDtls") })
+	@Action(value = "/registerBpaExtn-showExistingLetterToPartyDetails", results = { @Result(name = "existingLetterToPartyDtls",type = "dispatcher") })
 	public String showExistingLetterToPartyDetails() {
 
 		if (EGOVThreadLocals.getUserId() != null) {
@@ -3048,7 +3048,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-showExistingLetterToPartyCMDADetails", results = { @Result(name = "existingCmdaLetterToPartyDtls") })
+	@Action(value = "/registerBpaExtn-showExistingLetterToPartyCMDADetails", results = { @Result(name = "existingCmdaLetterToPartyDtls",type = "dispatcher") })
 	public String showExistingLetterToPartyCMDADetails() {
 
 		if (EGOVThreadLocals.getUserId() != null) {
@@ -3075,7 +3075,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-viewLetterToPartyForm", results = { @Result(name = LETTERTOPARTYFORM) })
+	@Action(value = "/registerBpaExtn-viewLetterToPartyForm", results = { @Result(name = LETTERTOPARTYFORM,type = "dispatcher") })
 	public String viewLetterToPartyForm() {
 		registration = registerBpaExtnService
 				.getRegistrationById(registrationId);
@@ -3091,7 +3091,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-modifyLetterToPartyForm", results = { @Result(name = LETTERTOPARTYFORM) })
+	@Action(value = "/registerBpaExtn-modifyLetterToPartyForm", results = { @Result(name = LETTERTOPARTYFORM,type = "dispatcher") })
 	public String modifyLetterToPartyForm() {
 		letterToParty = registerBpaExtnService
 				.getLetterToPartyById(letterToPartyId);
@@ -3225,14 +3225,14 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-showOrderDetails", results = { @Result(name = "existingOrdDet") })
+	@Action(value = "/registerBpaExtn-showOrderDetails", results = { @Result(name = "existingOrdDet",type = "dispatcher") })
 	public String showOrderDetails() {
 		buildOrderDetails();
 		return "existingOrdDet";
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-updateOrders", results = { @Result(name = SUCCESS) })
+	@Action(value = "/registerBpaExtn-updateOrders", results = { @Result(name = SUCCESS,type = "dispatcher") })
 	public String updateOrders() {
 		LOGGER.info("Within updateOrders method-Before existReg");
 		// existReg =
@@ -3356,7 +3356,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-orderForm", results = { @Result(name = "orderDetForm") })
+	@Action(value = "/registerBpaExtn-orderForm", results = { @Result(name = "orderDetForm",type = "dispatcher") })
 	public String orderForm() {
 		buildOrderDetails();
 		setMode(EDIT);
@@ -3372,7 +3372,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 
 	@SuppressWarnings("unchecked")
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-rejectForm", results = { @Result(name = NEW) })
+	@Action(value = "/registerBpaExtn-rejectForm", results = { @Result(name = NEW,type = "dispatcher") })
 	public String rejectForm() {
 
 		LOGGER.info(" RegisterBpaAction || Save || Start");
@@ -3416,7 +3416,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-letterToPartyForm", results = { @Result(name = LETTERTOPARTYFORM) })
+	@Action(value = "/registerBpaExtn-letterToPartyForm", results = { @Result(name = LETTERTOPARTYFORM,type = "dispatcher") })
 	public String letterToPartyForm() {
 		registration = registerBpaExtnService
 				.getRegistrationById(registrationId);
@@ -3445,7 +3445,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-letterToCMDAForm", results = { @Result(name = "letterToCMDA") })
+	@Action(value = "/registerBpaExtn-letterToCMDAForm", results = { @Result(name = "letterToCMDA",type = "dispatcher") })
 	public String letterToCMDAForm() {
 		registration = registerBpaExtnService
 				.getRegistrationById(registrationId);
@@ -3563,7 +3563,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-printLettertoParty", results = { @Result(name = "lpReportPrint") })
+	@Action(value = "/registerBpaExtn-printLettertoParty", results = { @Result(name = "lpReportPrint",type = "dispatcher") })
 	public String printLettertoParty() {
 		try {
 			ReportRequest reportRequest = null;
@@ -3671,7 +3671,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-feePaymentPdf", results = { @Result(name = FEE_PAYMENT_PDF) })
+	@Action(value = "/registerBpaExtn-feePaymentPdf", results = { @Result(name = FEE_PAYMENT_PDF,type = "dispatcher") })
 	public String feePaymentPdf() throws JRException, Exception {
 		if (registrationId != null)
 			registration = registerBpaExtnService.findById(registrationId,
@@ -3684,7 +3684,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-getCollectedReceipts", results = { @Result(name = "receipts") })
+	@Action(value = "/registerBpaExtn-getCollectedReceipts", results = { @Result(name = "receipts",type = "dispatcher") })
 	public String getCollectedReceipts() {
 
 		if (registrationId != null)
@@ -3705,7 +3705,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-showLetterToPartyReplyCheckList", results = { @Result(name = "lettertopartyreplychklist") })
+	@Action(value = "/registerBpaExtn-showLetterToPartyReplyCheckList", results = { @Result(name = "lettertopartyreplychklist",type = "dispatcher") })
 	public String showLetterToPartyReplyCheckList() {
 		ServiceTypeExtn serviceType = registerBpaExtnService
 				.getServiceTypeById(serviceTypeIdTemp);
@@ -3731,7 +3731,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-captureDDForm", results = { @Result(name = "ddForm") })
+	@Action(value = "/registerBpaExtn-captureDDForm", results = { @Result(name = "ddForm",type = "dispatcher") })
 	public String captureDDForm() {
 		buildDDDetails();
 		/*
@@ -3789,7 +3789,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 
 	@Transactional
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-captureDDdetails", results = { @Result(name = "ddForm") })
+	@Action(value = "/registerBpaExtn-captureDDdetails", results = { @Result(name = "ddForm",type = "dispatcher") })
 	public String captureDDdetails() {
 		// Date tempDate= registration.getExternalfeecollectedDate();
 		// registration=registerBpaService.find("from Registration where id=?",getRegistrationId());
@@ -3905,7 +3905,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-viewDDForm", results = { @Result(name = "ddForm") })
+	@Action(value = "/registerBpaExtn-viewDDForm", results = { @Result(name = "ddForm",type = "dispatcher") })
 	public String viewDDForm() {
 		// addDropdownData("bankList",bpaCommonService.getAllBanks());
 		buildDDDetails();
@@ -3920,7 +3920,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/registerBpaExtn-printExternalFeeDetails", results = { @Result(name = "externalFeeDetails") })
+	@Action(value = "/registerBpaExtn-printExternalFeeDetails", results = { @Result(name = "externalFeeDetails",type = "dispatcher") })
 	public String printExternalFeeDetails() {
 		registration = registerBpaExtnService.findById(getRegistrationId(),
 				false);

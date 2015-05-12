@@ -443,7 +443,7 @@ public class InspectionExtnAction extends BaseFormAction {
 		}
 	}
 
-	@Action(value = "/inspectionExtn-printDocketSheet", results = { @Result(name = "report") })
+	@Action(value = "/inspectionExtn-printDocketSheet", results = { @Result(name = "report",type = "dispatcher") })
 	public String printDocketSheet() {
 		LOGGER.debug("Entered into print docket sheet method");
 		RegistrationExtn registration = registerBpaExtnService.findById(
@@ -508,7 +508,7 @@ public class InspectionExtnAction extends BaseFormAction {
 		return penaltyPeriodLst;
 	}
 
-	@Action(value = "/inspectionExtn-newForm", results = { @Result(name = NEW) })
+	@Action(value = "/inspectionExtn-newForm", results = { @Result(name = NEW,type = "dispatcher") })
 	public String newForm() {
 		showInspectionDetails();
 		if (postponedInspectionDetails.size() != 0) {
@@ -574,7 +574,7 @@ public class InspectionExtnAction extends BaseFormAction {
 		return false;
 	}
 
-	@Action(value = "/inspectionExtn-inspectionForm", results = { @Result(name = "inspectionForm") })
+	@Action(value = "/inspectionExtn-inspectionForm", results = { @Result(name = "inspectionForm",type = "dispatcher") })
 	public String inspectionForm() {
 		inspection.setInspectedBy(loginUser);
 
@@ -624,13 +624,13 @@ public class InspectionExtnAction extends BaseFormAction {
 		}
 	}
 
-	@Action(value = "/inspectionExtn-showInspectioninRegistration", results = { @Result(name = "registrationinspection") })
+	@Action(value = "/inspectionExtn-showInspectioninRegistration", results = { @Result(name = "registrationinspection",type = "dispatcher") })
 	public String showInspectioninRegistration() {
 		showInspectionDetails();
 		return "registrationinspection";
 	}
 
-	@Action(value = "/inspectionExtn-viewForm", results = { @Result(name = NEW) })
+	@Action(value = "/inspectionExtn-viewForm", results = { @Result(name = NEW,type = "dispatcher") })
 	public String viewForm() {
 		return BpaConstants.MODEVIEW;
 	}
@@ -641,7 +641,7 @@ public class InspectionExtnAction extends BaseFormAction {
 		return inspection;
 	}
 
-	@Action(value = "/inspectionExtn-create", results = { @Result(name = SUCCESS) })
+	@Action(value = "/inspectionExtn-create", results = { @Result(name = SUCCESS,type = "dispatcher") })
 	public String create() {
 		if (inspection.getInspectionDate() == null
 				|| inspection.getInspectionDate().equals("")) {
@@ -684,7 +684,7 @@ public class InspectionExtnAction extends BaseFormAction {
 		return SUCCESS;
 	}
 
-	@Action(value = "/inspectionExtn-createSiteInspection", results = { @Result(name = SUCCESS) })
+	@Action(value = "/inspectionExtn-createSiteInspection", results = { @Result(name = SUCCESS,type = "dispatcher") })
 	public String createSiteInspection() {
 
 		Set<InspectMeasurementDtlsExtn> inspectionmeasuredtls = new HashSet<InspectMeasurementDtlsExtn>(
@@ -940,7 +940,7 @@ public class InspectionExtnAction extends BaseFormAction {
 		}
 	}
 
-	@Action(value = "/inspectionExtn-showPlanDetails", results = { @Result(name = "plandetails") })
+	@Action(value = "/inspectionExtn-showPlanDetails", results = { @Result(name = "plandetails",type = "dispatcher") })
 	public String showPlanDetails() {
 		buildPlanDetails();
 		return "plandetails";
@@ -1021,7 +1021,7 @@ public class InspectionExtnAction extends BaseFormAction {
 
 	}
 
-	@Action(value = "/inspectionExtn-showConstructionDetails", results = { @Result(name = "constructiondetails") })
+	@Action(value = "/inspectionExtn-showConstructionDetails", results = { @Result(name = "constructiondetails",type = "dispatcher") })
 	public String showConstructionDetails() {
 		buildConstructionDetails();
 		return "constructiondetails";
@@ -1105,7 +1105,7 @@ public class InspectionExtnAction extends BaseFormAction {
 		}
 	}
 
-	@Action(value = "/inspectionExtn-showCheckList", results = { @Result(name = "checklist") })
+	@Action(value = "/inspectionExtn-showCheckList", results = { @Result(name = "checklist",type = "dispatcher") })
 	public String showCheckList() {
 		buildChecklist();
 		return "checklist";
@@ -1145,7 +1145,7 @@ public class InspectionExtnAction extends BaseFormAction {
 
 	}
 
-	@Action(value = "/inspectionExtn-viewInspectionForm", results = { @Result(name = "inspectionForm") })
+	@Action(value = "/inspectionExtn-viewInspectionForm", results = { @Result(name = "inspectionForm",type = "dispatcher") })
 	public String viewInspectionForm() {
 
 		inspection = inspectionExtnService.getInspectionbyId(getInspectionId());
@@ -1169,7 +1169,7 @@ public class InspectionExtnAction extends BaseFormAction {
 		return "inspectionForm";
 	}
 
-	@Action(value = "/inspectionExtn-modifyInspectionForm", results = { @Result(name = "inspectionForm") })
+	@Action(value = "/inspectionExtn-modifyInspectionForm", results = { @Result(name = "inspectionForm",type = "dispatcher") })
 	public String modifyInspectionForm() {
 		inspection = inspectionExtnService.getInspectionbyId(getInspectionId());
 		if (!isUserMappedToSurveyorRole()
@@ -1203,7 +1203,7 @@ public class InspectionExtnAction extends BaseFormAction {
 		return "inspectionForm";
 	}
 
-	@Action(value = "/inspectionExtn-showMeasurementDetails", results = { @Result(name = "measurement") })
+	@Action(value = "/inspectionExtn-showMeasurementDetails", results = { @Result(name = "measurement",type = "dispatcher") })
 	public String showMeasurementDetails() {
 		setServiceTypeCode(registrationObj.getServiceType().getCode());
 		buildPlanDetails();
@@ -1223,7 +1223,7 @@ public class InspectionExtnAction extends BaseFormAction {
 		return "measurement";
 	}
 
-	@Action(value = "/inspectionExtn-showSurveyorMeasurementDetails", results = { @Result(name = "measurement") })
+	@Action(value = "/inspectionExtn-showSurveyorMeasurementDetails", results = { @Result(name = "measurement",type = "dispatcher") })
 	public String showSurveyorMeasurementDetails() {
 		setServiceTypeCode(registrationObj.getServiceType().getCode());
 		List<InspectionExtn> survyrInspList = inspectionExtnService
@@ -1245,7 +1245,7 @@ public class InspectionExtnAction extends BaseFormAction {
 		return "measurement";
 	}
 
-	@Action(value = "/inspectionExtn-showExistingInspectionMeasurementDetails", results = { @Result(name = "existingmeasurement") })
+	@Action(value = "/inspectionExtn-showExistingInspectionMeasurementDetails", results = { @Result(name = "existingmeasurement",type = "dispatcher") })
 	public String showExistingInspectionMeasurementDetails() {
 
 		if (EGOVThreadLocals.getUserId() != null) {
