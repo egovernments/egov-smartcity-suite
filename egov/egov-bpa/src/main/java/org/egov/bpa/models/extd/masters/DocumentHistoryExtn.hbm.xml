@@ -23,7 +23,7 @@
      <property name="documentNum" type="string">
             <column name="DOC_ENCLOSED_NUMBER" length="256" />
         </property>
-          <property name="lastModifiedDate" type="java.util.Date"> 
+          <property name="modifiedDate" type="java.util.Date"> 
             <column name="MODIFIEDDATE" not-null="true" />
         </property>
        
