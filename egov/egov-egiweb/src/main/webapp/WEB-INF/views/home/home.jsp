@@ -107,7 +107,7 @@
 					<ul class="nav navbar-right pull-right">
 						
 						<li class="dropdown">
-							<a href="javascript:void(0);" class="tooltip-secondary workspace" data-toggle="tooltip" title="Worklist" data-work="worklist">
+							<a href="javascript:void(0);" class="tooltip-secondary workspace active" data-toggle="tooltip" title="Worklist" data-work="worklist">
 								<i class="entypo-list"></i>
 							</a>
 						</li>

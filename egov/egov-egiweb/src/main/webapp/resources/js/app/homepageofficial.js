@@ -135,6 +135,8 @@ $(document).ready(function()
 	
 	$('.workspace').click(function(){
 		$('.main-space').hide();
+		$('.workspace').removeClass('active');
+		$(this).addClass('active');
 		if($(this).attr('data-work') == 'worklist' ){
 			tableContainer1 = $("#official_inbox"); 
 			tableContainer1.dataTable({

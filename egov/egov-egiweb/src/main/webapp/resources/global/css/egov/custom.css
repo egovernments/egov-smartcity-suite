@@ -1958,3 +1958,19 @@ ul li a span{
 .msg-content > p.notify {
   margin: 5px 20px 0px 0px;
 }
+
+#normal .centerMarker{
+position:absolute;
+/*url of the marker*/
+background:url(http://maps.gstatic.com/mapfiles/markers2/marker.png) no-repeat;
+/*center the marker*/
+top:50%;left:50%;
+z-index:1;
+/*fix offset when needed*/
+margin-left:-10px;
+margin-top:-34px;
+/*size of the image*/
+height:34px;
+width:20px;
+cursor:pointer;
+}

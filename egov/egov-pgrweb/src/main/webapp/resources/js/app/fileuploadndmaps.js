@@ -136,7 +136,10 @@ $(document).ready(function(){
 							myCenter=new google.maps.LatLng(formatted_lat, formatted_long);
 							$('#lat').val(formatted_lat);
 							$('#lng').val(formatted_long);
-							setmarkerfromimage();
+							lat = formatted_lat;
+							lng = formatted_long;
+							//setmarkerfromimage();
+						    	map.setCenter(myCenter);
 						}
 					});
 					//console.log(EXIF.pretty(this));
@@ -197,26 +200,31 @@ $(document).ready(function(){
 	
 	
 	var map, geocoder, geolocate, marker, mapProp;    
-    var lat, lng, address;
+        var lat, lng, address;
 	myCenter=new google.maps.LatLng(13.081604, 80.275183);
 	
 	function initialize() {
 		
-		marker=new google.maps.Marker();
+		//marker=new google.maps.Marker();
 		
-		mapprop();
+		//mapprop();
+		var mapOptions = {
+			zoom: 10,
+			mapTypeControl: false,
+			navigationControl: false,
+		};
 		
 		geocoder = new google.maps.Geocoder();
-		map=new google.maps.Map(document.getElementById("normal"),mapProp);
+		map=new google.maps.Map(document.getElementById("normal"),mapOptions);
 		
 		var GeoMarker = new GeolocationMarker(map);
-		
-		marker.setMap(map);
+		$('<div/>').addClass('centerMarker').appendTo(map.getDiv());
+		//marker.setMap(map);
 		
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(function (position) {
 				
-				var userLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+				/*var userLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 				lat = position.coords.latitude;
 				lng = position.coords.longitude;
 				$.ajax({
@@ -236,16 +244,41 @@ $(document).ready(function(){
 				
 				map.setCenter(userLatLng);
 				
-				dragendmarker();
+				dragendmarker();*/
+
+				var userLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+				lat = position.coords.latitude;
+				lng = position.coords.longitude;
+				
+				getAddress(lat, lng);
+
+				map.setCenter(userLatLng);
 				
 				}, function error(err) {
 				console.log('error: ' + err.message);        
 			});
 		}
+
+		google.maps.event.addListener(map, 'center_changed', function() {
+			var location = map.getCenter();
+			//console.log(location.lat()+"<=======>"+location.lng());
+			getAddress(location.lat(), location.lng());
+		});
 		
 	};
 	
-	function setmarkerfromimage()
+	function getAddress(lat, lng){
+		$.ajax({
+			type: "POST",
+			url: 'http://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng+'&sensor=true',
+			dataType: 'json',
+			success : function(data){
+				 address = data.results[0].formatted_address;
+			}
+		});	
+	}
+
+	/*function setmarkerfromimage()
 	{
 		marker.setMap(null);
 
@@ -287,7 +320,7 @@ $(document).ready(function(){
 				}
 			});
 		});
-	}
+	}*/
 	
 	google.maps.event.addDomListener(window, 'load', initialize);
 	
@@ -313,9 +346,18 @@ $(document).ready(function(){
 	}
 	
 	$('.btn-save-location').click(function(){
+		var location = map.getCenter();
+		//console.log(location.lat()+"<=======>"+location.lng());
+		lat = location.lat();
+		lng = location.lng();
 		$('#location').typeahead('val', address);
 		$('#lat').val(lat);
 		$('#lng').val(lng);
+	});
+
+	$('#modal-6').on('hidden.bs.modal', function () {
+	    var userLatLng = new google.maps.LatLng(lat, lng);
+	    map.setCenter(userLatLng);
 	});
 	
 });
