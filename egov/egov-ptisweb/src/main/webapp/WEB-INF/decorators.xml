@@ -37,7 +37,7 @@
   
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<decorators defaultdir="/WEB-INF/jsp/decorators">
+<decorators defaultdir="/decorators">
     <excludes>
         <pattern>/40*.jsp</pattern>       	
         <pattern>/commonyui/egov/genericScreenWithLeaf.jsp</pattern>
@@ -47,7 +47,6 @@
         <pattern>/*decorate=false*</pattern>
     </excludes>
     <decorator name="default" page="default.jsp">
-      <pattern>/*.action</pattern>
-      <pattern>/*.do</pattern>
+      <pattern>/*</pattern>
     </decorator>
 </decorators>

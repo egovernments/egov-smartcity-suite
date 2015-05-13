@@ -66,9 +66,14 @@
   	<mvc:view-controller path="/error/400" view-name="error/400"/>
   	<mvc:view-controller path="/help" view-name="help"/>
   	<mvc:view-controller path="/login/secure" view-name="login"/>
-  	
-    <mvc:resources mapping="/resources/**" location="/resources/"/>
 
+    <mvc:resources mapping="/resources/**" location="/resources/"/>
+    <mvc:resources mapping="/commonjs/**" location="/commonjs/"/>
+    <mvc:resources mapping="/commonyui/**" location="/commonyui/"/>
+    <mvc:resources mapping="/css/**" location="/css/"/>
+    <mvc:resources mapping="/images/**" location="/images/"/>
+	<mvc:resources mapping="/javascript/**" location="/javascript/"/>
+	
 	<bean id="conversionService" class="org.springframework.core.convert.support.DefaultConversionService"/>
 	
 	<!-- <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">

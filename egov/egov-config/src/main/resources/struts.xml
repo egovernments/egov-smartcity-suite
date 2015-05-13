@@ -44,7 +44,7 @@
 
 <struts>
 	<!-- Production Performance Environment Setting, Change to inverse value of the same in Development Environment -->
-	<constant name="struts.devMode" value="false" />
+	<constant name="struts.devMode" value="true" />
 	<constant name="struts.freemarker.templatesCache" value="true" />
 	<constant name="struts.xslt.nocache" value="false" />
 	<constant name="struts.ognl.logMissingProperties" value="false" />
@@ -76,6 +76,7 @@
 		rather than /hello-world By default Struts2 uses the SEOActionNameBuilder. -->
 	<bean type="org.apache.struts2.convention.ActionNameBuilder" name="defaultActionNameBuilder" class="org.apache.struts2.convention.DefaultActionNameBuilder" />
 	<constant name="struts.convention.actionNameBuilder" value="defaultActionNameBuilder" />
+	<constant name="struts.convention.action.name.lowercase" value="true"/>
 
 	<package name="egov" extends="struts-default">
 		<interceptors>

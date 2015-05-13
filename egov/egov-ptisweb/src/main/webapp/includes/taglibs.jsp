@@ -52,4 +52,4 @@
 <%@ taglib uri="/WEB-INF/struts-nested.tld" prefix="nested" %>
 <%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld" %>  
 <%@ taglib prefix="sx" uri="/WEB-INF/struts-dojo-tags.tld" %> 
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="egov" uri="/WEB-INF/taglibs" %>

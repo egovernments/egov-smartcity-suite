@@ -37,7 +37,9 @@
  
    	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<%@ include file="/includes/taglibs.jsp"%>
+<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld" %>  
+<%@ taglib prefix="sx" uri="/WEB-INF/struts-dojo-tags.tld" %> 
+<%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <html>
 	<head>
@@ -65,7 +67,6 @@
 			    	<s:actionmessage theme="simple"/>
 			    </div>
 			</s:if>
-			<center>
 				<table border="0" cellspacing="0" cellpadding="0" width="100%">
 						<s:form action="searchProperty" name="indexform" theme="simple">
 							<div class="formheading"></div>
@@ -138,7 +139,7 @@
 								<span class="mandatory">*</span> :
 							</td>
 							<td class="bluebox">
-								<s:select name="zoneId" id="zoneId" list="ZoneBndryMap"
+								<s:select name="zoneId" id="zoneId" list="zoneBndryMap"
 									listKey="key" listValue="value" headerKey="-1"
 									headerValue="%{getText('default.select')}" value="%{zoneId}"
 									onchange="populateWard()" />
@@ -198,10 +199,7 @@
 						</tr>
 					</s:form>
 				</table>
-				</center>
 				<br>
-				<center>
-			
 				<table  border="0" cellspacing="0" cellpadding="0" width="100%">
 				<s:form name="areaform" theme="simple">
 					<tr>
@@ -354,7 +352,6 @@
 			* <s:text name="mandtryFlds"></s:text>
 			</div>
 					
-			</center>
 		</div>
 	</body>
 </html>

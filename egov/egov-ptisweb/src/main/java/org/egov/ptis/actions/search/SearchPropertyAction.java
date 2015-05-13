@@ -50,6 +50,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYP
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
+import static org.egov.web.actions.BaseFormAction.NEW;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -67,6 +68,8 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.ResultPath;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -101,8 +104,12 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 @Validations
-@Namespace("/search")
 @Transactional(readOnly = true)
+@Namespace("/search")
+@ResultPath("/WEB-INF/jsp/")
+@Results({
+    @Result(name=NEW,location="search/searchProperty-new.jsp")  
+  })
 public class SearchPropertyAction extends BaseFormAction {
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	public static final String TARGET = "result";
@@ -145,7 +152,7 @@ public class SearchPropertyAction extends BaseFormAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/searchProperty-searchForm", results={@Result(name=NEW, location="/WEB-INF/jsp/search/searchProperty-new.jsp")})
+	@Action(value = "/searchProperty-searchForm")
 	public String searchForm() {
 		return NEW;
 	}
