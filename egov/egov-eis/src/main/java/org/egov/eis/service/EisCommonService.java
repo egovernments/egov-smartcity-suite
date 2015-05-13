@@ -254,7 +254,7 @@ public class EisCommonService {
      * @param givenDate
      * @return Employee object
      */
-    public PersonalInformation getPrimaryAssignmentForPositionAndDate(final Long posId, final Date givenDate) {
+    public PersonalInformation getEmployeeForPositionAndDate(final Long posId, final Date givenDate) {
         return assignmentService.getPrimaryAssignmentForPositionAndDate(posId, givenDate).getEmployee();
     }
 
