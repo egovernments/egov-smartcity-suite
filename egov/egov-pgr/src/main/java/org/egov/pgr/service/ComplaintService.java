@@ -173,7 +173,7 @@ public class ComplaintService {
         }
         final Complaint savedComplaint = complaintRepository.save(complaint);
         pushMessage(savedComplaint);
-        //sendEmailandSms(complaint);
+        sendEmailandSms(complaint);
         return savedComplaint;
     }
 
