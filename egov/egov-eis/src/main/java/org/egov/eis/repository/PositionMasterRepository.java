@@ -50,7 +50,7 @@ import org.springframework.stereotype.Repository;
  *
  */
 @Repository
-public interface PositionMasterRepository extends JpaRepository<Position, Integer>{
+public interface PositionMasterRepository extends JpaRepository<Position, Long>{
 	
 	Position findByName(String name);
 	List<Position> findByNameContainingIgnoreCase(String name);

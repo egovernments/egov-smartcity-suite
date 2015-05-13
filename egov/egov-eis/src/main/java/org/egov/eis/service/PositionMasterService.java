@@ -81,7 +81,7 @@ public class PositionMasterService {
 		return positionMasterRepository.findByName(name);
 	}
 	
-	public Position getPositionById(final Integer posId){
+	public Position getPositionById(final Long posId){
 		return positionMasterRepository.findOne(posId);
 	}
 	

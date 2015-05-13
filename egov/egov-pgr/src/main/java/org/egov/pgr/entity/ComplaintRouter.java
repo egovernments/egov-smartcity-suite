@@ -43,31 +43,28 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.Position;
 
 @Entity
 @Table(name = "pgr_router")
-public class ComplaintRouter extends AbstractPersistable<Long> {
+public class ComplaintRouter extends AbstractAuditable<User,Long> {
 
     private static final long serialVersionUID = 5691022600220045218L;
 
     @ManyToOne
-    @Valid
     @JoinColumn(name = "complainttypeid")
     private ComplaintType complaintType;
 
     @ManyToOne
-    @Valid
     @JoinColumn(name = "bndryid")
     private Boundary boundary;
 
     @ManyToOne
-    @Valid
     @NotNull
     @JoinColumn(name = "position")
     private Position position;

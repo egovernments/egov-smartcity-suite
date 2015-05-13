@@ -37,39 +37,141 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
+//Instantiate the Bloodhound suggestion engine
 jQuery(document).ready(function($)
 {
-	
-	// Instantiate the Bloodhound suggestion engine
-	var position = new Bloodhound({
+	// Complaint Type auto-complere 
+	var complaintType = new Bloodhound({
 		datumTokenizer: function (datum) {
 			return Bloodhound.tokenizers.whitespace(datum.value);
 		},
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		remote: {
-			url: '/pgr/complaint/complaintsTypes?q=%QUERY',
+			url: '/pgr/complaint/router/complaintTypes?complaintTypeName=%QUERY',
 			filter: function (data) {
 				// Map the remote source JSON array to a JavaScript object array
 				return $.map(data, function (ct) {
 					return {
-						value: ct.name
+						name:ct.name,
+						value: ct.id
 					};
 				});
 			}
 		}
 	});
 	
-	// Initialize the Bloodhound suggestion engine
-	position.initialize();
+	complaintType.initialize();
 	
-	// Instantiate the Typeahead UI
-	$('.typeahead').typeahead({
+	$('#com_type').typeahead({
 		hint: true,
 		highlight: true,
 		minLength: 3
 		}, {
-		displayKey: 'value',
-		source: position.ttAdapter()
+		displayKey: 'name',
+		source: complaintType.ttAdapter()
+		}).on('typeahead:selected', function(event, data){            
+			$("#complaintTypeId").val(data.value);    
+	    }).on('change',function(event,data){
+    		if($('#com_type').val() == ''){
+    			$("#complaintTypeId").val('');
+    		}
+        });
+	
+	//Position auto-complete
+	var position = new Bloodhound({
+		datumTokenizer: function (datum) {
+			return Bloodhound.tokenizers.whitespace(datum.value);
+		},
+		queryTokenizer: Bloodhound.tokenizers.whitespace,
+		remote: {
+			url: '/pgr/complaint/router/position?positionName=%QUERY',
+			filter: function (data) {
+				// Map the remote source JSON array to a JavaScript object array
+				return $.map(data, function (pos) {
+					return {
+						name: pos.name,
+						value: pos.id
+					};
+				});
+			}
+		}
 	});
 	
+	position.initialize();
+	
+	$('#com_position').typeahead({
+		hint: true,
+		highlight: true,
+		minLength: 3
+		}, {
+		displayKey: 'name',
+		source: position.ttAdapter()
+		}).on('typeahead:selected', function(event, data){            
+			$("#positionId").val(data.value);    
+	    }).on('change',function(event,data){
+    		if($('#com_position').val() == ''){
+    			$("#positionId").val('');
+    		}
+        }); 
+	
+	//Boundary auto-complete
+	$("#boundary_type_id").change(function(){
+		$('#com_boundry').typeahead('destroy');
+		var b_id = $("#boundary_type_id").val();
+		var boundaries = new Bloodhound(
+				{
+					datumTokenizer : function(datum) {
+						return Bloodhound.tokenizers
+								.whitespace(datum.value);
+					},
+					queryTokenizer : Bloodhound.tokenizers.whitespace,
+					remote : {
+						url : '/pgr/complaint/router/boundaries-by-type?boundaryName=%QUERY&boundaryTypeId='+ b_id,
+						filter : function(data) {
+							// Map the remote source JSON array to a
+							// JavaScript object array
+							return $.map(data, function(boundList) {
+								return {
+									name: boundList.localName,
+									value: boundList.id
+								};
+							});
+						}
+					}
+				});
+	boundaries.initialize();
+	$('#com_boundry').typeahead({
+		hint: true,
+		highlight: true,
+		minLength: 3
+		}, {
+		displayKey: 'name',
+		source: boundaries.ttAdapter()
+		}).on('typeahead:selected', function(event, data){            
+			$("#boundaryId").val(data.value);    
+	    }).on('change',function(event,data){
+    		if($('#com_boundry').val() == ''){
+    			$("#boundaryId").val('');
+    		}
+        });
+	});
+	
+	//onSubmit validation
+	$("#createRouter").submit(function(e){
+		$('.loader-class').modal('hide');
+		$('.all-errors').hide();
+		if($('#positionId').val() == ""){
+			$('.positionerror').html('Position is required').show();
+			e.preventDefault();
+		}else if($("#boundary_type_id").val() != 0 && $('#boundaryId').val()== ""){
+			$('.boundaryerror').html('Boundary is required').show();
+			e.preventDefault();
+		}else if($('#com_type').val()== "" && $('#com_boundry').val()== ""){
+			$('.eithererror').html('Complaint Type or Boundary should be selected').show();
+			e.preventDefault();
+		}else{
+			$('.loader-class').modal('show', {backdrop: 'static'});
+		}
+	});
+
 });

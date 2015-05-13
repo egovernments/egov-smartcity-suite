@@ -123,4 +123,8 @@ public class BoundaryTypeService {
     public List<BoundaryType> getNonRootBoundaryTypesByHierarchyType(final HierarchyType hierarchyType) {
         return boundaryTypeRepository.findAllByHierarchyTypeWhenParentIsNotNull(hierarchyType);
     }
+    
+    public List<BoundaryType> getBoundaryTypeByHierarchyTypeName(String name) {
+        return boundaryTypeRepository.findByHierarchyTypeName(name);
+    }
 }

@@ -105,4 +105,6 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
     List<Boundary> findBoundariesByBndryTypeNameAndHierarchyTypeName(
             @Param("boundaryTypeName") String boundaryTypeName, @Param("hierarchyTypeName") String hierarchyTypeName);
 
+    @Query("select b from Boundary b where b.isHistory='N' and UPPER(b.name) like UPPER(:boundaryName) and b.boundaryType.id=:boundaryTypeId order by b.localName asc")
+    List<Boundary> findByNameAndBoundaryType(@Param("boundaryName") String boundaryName,@Param("boundaryTypeId")Long boundaryTypeId);
 }

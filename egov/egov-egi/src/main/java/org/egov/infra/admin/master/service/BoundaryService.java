@@ -178,4 +178,8 @@ public class BoundaryService {
 		return boundaryRepository
 				.findBoundariesByBndryTypeNameAndHierarchyTypeName(boundaryTypeName, hierarchyTypeName);
 	}
+	
+	public List<Boundary> getBondariesByNameAndType(String boundaryName,Long boundaryTypeId) {
+	        return boundaryRepository.findByNameAndBoundaryType(boundaryName, boundaryTypeId);
+	}
 }

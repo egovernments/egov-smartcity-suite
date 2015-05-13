@@ -117,4 +117,13 @@
         <put-attribute name="body" value="/WEB-INF/views/masters/complaintType-success.jsp"/>
     </definition>
     
+    <definition name="router-create" extends="base_layout">
+    <put-attribute name="page-title" value="title.routerCreate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/router-create.jsp"/>
+    </definition>
+    
+    <definition name="router-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.routerCreate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/router-success.jsp"/>
+    </definition>
 </tiles-definitions>
