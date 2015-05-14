@@ -11,40 +11,26 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.BoundaryTypeService;
+import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.lib.admbndry.BoundaryTypeDAO;
-import org.egov.lib.admbndry.HeirarchyTypeDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 public class BoundaryUtil {
 	
+	@Autowired
+	private HierarchyTypeService hierarchyTypeService;
 	
-	HeirarchyTypeDAO heirarchyTypeDao;
-	BoundaryTypeDAO boundaryTypeDao;
-	BoundaryDAO boundaryDao;
-	//static UserDAO userDao;
+	@Autowired
+	private BoundaryTypeService boundaryTypeService;
+	@Autowired
+	private BoundaryService boundaryService;
 	static String userRole;
-	public HeirarchyTypeDAO getHeirarchyTypeDao() {
-		return heirarchyTypeDao;
-	}
-	public void setHeirarchyTypeDao(HeirarchyTypeDAO heirarchyTypeDao) {
-		this.heirarchyTypeDao = heirarchyTypeDao;
-	}
 	
-	 public BoundaryTypeDAO getBoundaryTypeDao() {
-		return boundaryTypeDao;
-	}
-	public void setBoundaryTypeDao(BoundaryTypeDAO boundaryTypeDao) {
-		this.boundaryTypeDao = boundaryTypeDao;
-	}
 	
-	public BoundaryDAO getBoundaryDao() {
-		return boundaryDao;
-	}
-	public void setBoundaryDao(BoundaryDAO boundaryDao) {
-		this.boundaryDao = boundaryDao;
-	}
 	/*public UserDAO getUserDao() {
 		return userDao;
 	}
@@ -63,7 +49,7 @@ public class BoundaryUtil {
 	 */ 
 	public Map<BoundaryType, List<Boundary>> getMapofBndryTypeAndValues(Long adminBoundaryId, Long locationBoundaryId) {
 		Map<BoundaryType, List<Boundary>> bndryTypeValuesMap = new LinkedHashMap<BoundaryType, List<Boundary>>();
-		Set<HierarchyType> heirarchyTypeSet =heirarchyTypeDao.getAllHeirarchyTypes();
+		List<HierarchyType> heirarchyTypeSet =hierarchyTypeService.getAllHierarchyTypes();
 		
 		 Map<String,List <Boundary>> boundaryTypeValues = new HashMap<String,List <Boundary>>();
 		
@@ -74,9 +60,9 @@ public class BoundaryUtil {
 			 boundaryTypeValues.putAll(getMapofBndryTypeNameToBndryValues(locationBoundaryId));		
 		}
 		for(HierarchyType hType: heirarchyTypeSet){
-			List<BoundaryType> bTypes = boundaryTypeDao.getParentBoundaryTypeByHirarchy(hType);
-			boundaryTypeValues.putAll( boundaryTypeDao.getSecondLevelBoundaryByPassingHeirarchy(hType));
-
+			List<BoundaryType> bTypes = boundaryTypeService.getNonRootBoundaryTypesByHierarchyType(hType);//TODOD pHinix:changing  getParentBoundaryTypeByHirarchy=>getNonRootBoundaryTypesByHierarchyType
+		//	boundaryTypeValues.putAll( boundaryTypeService.getSecondLevelBoundaryByPassingHeirarchy(hType));
+//commenting f=cos no API with this in boundaryTypeService :todo Phionx
 			for (BoundaryType bType: bTypes) {
 				
 				if (boundaryTypeValues.containsKey(bType.getName())){
@@ -100,7 +86,7 @@ public class BoundaryUtil {
 		Map<String, Long> selectedBndryTypeValueMap = new HashMap<String, Long>();
 		 Boundary boundary;
 		 if (adminBoundaryId != null){
-			 boundary = boundaryDao.getBoundary(adminBoundaryId);
+			 boundary = boundaryService.getBoundaryById(adminBoundaryId);
 			
 			do {
 				selectedBndryTypeValueMap.put(boundary.getBoundaryType().getName(),boundary.getId());
@@ -108,7 +94,7 @@ public class BoundaryUtil {
 			}	while( boundary!= null );	
 		}
 		 if (locationBoundaryId != null){
-			 boundary = boundaryDao.getBoundary(locationBoundaryId);
+			 boundary = boundaryService.getBoundaryById(locationBoundaryId);
 				
 				do {
 					selectedBndryTypeValueMap.put(boundary.getBoundaryType().getName(),boundary.getId());
@@ -127,7 +113,7 @@ public class BoundaryUtil {
 	 */
 	private Map<String, List<Boundary>> getMapofBndryTypeNameToBndryValues(Long boundaryId) {
 		Map<String, List<Boundary>> boundaryTypeValues = new HashMap<String, List<Boundary>>();
-		Boundary boundary = boundaryDao.getBoundary(boundaryId);
+		Boundary boundary = boundaryService.getBoundaryById(boundaryId);
 		if (boundary == null)
 			throw new EGOVRuntimeException("Boundary does not exist for this id -" + boundaryId);
 		Boundary parentBoundary = boundary.getParent();

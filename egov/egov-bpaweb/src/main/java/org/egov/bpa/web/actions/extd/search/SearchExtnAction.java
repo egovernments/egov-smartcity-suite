@@ -66,6 +66,7 @@ import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.web.actions.SearchFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @ParentPackage("egov")
@@ -99,11 +100,11 @@ public class SearchExtnAction extends SearchFormAction{
 	{
 		 super.prepare();
 		 addDropdownData("applicationModeList",Arrays.asList(ApplicationMode.values()));
-		 addDropdownData("serviceTypeList",new ArrayList<ServiceTypeExtn>());
-		 addDropdownData("statusList", new ArrayList<EgwStatus>());  
+		 addDropdownData("serviceTypeList", bpaCommonExtnService.getAllServiceTypeList());
+		 addDropdownData("statusList", bpaCommonExtnService.getAllStatusForBPA());
 		 
 	}
-	@Action(value = "/extd/search/searchExtn-searchForm", results = { @Result(name = "/WEB-INF/jsp/extd/search/searchExtn-new.jsp",type = "dispatcher") })
+	@Action(value = "/extd/search/searchExtn-searchForm", results = { @Result(name = NEW,location = "/WEB-INF/jsp/extd/search/searchExtn-new.jsp") })
 	public String searchForm(){
 		return NEW;
 	}
@@ -509,13 +510,7 @@ public class SearchExtnAction extends SearchFormAction{
 		this.searchMode = searchMode;
 	}
 
-	public BpaCommonExtnService getBpaCommonExtnService() {
-		return bpaCommonExtnService;
-	}
-
-	public void setBpaCommonExtnService(BpaCommonExtnService bpaCommonService) {
-		this.bpaCommonExtnService = bpaCommonService;
-	}
+	
 
 	public String getAutoDCRNo() {
 		return autoDCRNo;
@@ -539,6 +534,14 @@ public class SearchExtnAction extends SearchFormAction{
 
 	public void setRowId(Integer rowId) {
 		this.rowId = rowId;
+	}
+
+	public BpaCommonExtnService getBpaCommonExtnService() {
+		return bpaCommonExtnService;
+	}
+
+	public void setBpaCommonExtnService(BpaCommonExtnService bpaCommonExtnService) {
+		this.bpaCommonExtnService = bpaCommonExtnService;
 	}
 	
 }

@@ -91,15 +91,6 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PersonalInformationService;
 import org.egov.exceptions.EGOVRuntimeException;
-/*import org.egov.demand.dao.DemandGenericDao;
-import org.egov.demand.dao.DemandGenericHibDao;
-import org.egov.demand.model.BillReceipt;
-import org.egov.demand.model.EgDemandDetails;
-import org.egov.dms.services.FileManagementService;
-import org.egov.erpcollection.integration.models.BillReceiptInfo;
-import org.egov.erpcollection.integration.services.CollectionIntegrationServiceImpl;*/
-import org.egov.exceptions.NoSuchObjectException;
-import org.egov.exceptions.TooManyValuesException;
 /*import org.egov.infstr.workflow.WorkflowService;
 import org.egov.infstr.workflow.inbox.WorkFlowItemsService;*/
 import org.egov.infra.admin.master.entity.Boundary;
@@ -107,6 +98,9 @@ import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.BoundaryTypeService;
+import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
@@ -121,10 +115,6 @@ import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.StringUtils;
 import org.egov.infstr.workflow.WorkFlowMatrix;
-import org.egov.lib.admbndry.BoundaryDAO;
-import org.egov.lib.admbndry.BoundaryTypeDAO;
-/*import org.egov.lib.admbndry.HeirarchyType;*/
-import org.egov.lib.admbndry.HeirarchyTypeDAO;
 /*import org.egov.lib.rjbac.user.UserRole;*/
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.commons.DesignationMaster;
@@ -152,18 +142,33 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.opensymphony.xwork2.ActionSupport;
+/*import org.egov.demand.dao.DemandGenericDao;
+import org.egov.demand.dao.DemandGenericHibDao;
+import org.egov.demand.model.BillReceipt;
+import org.egov.demand.model.EgDemandDetails;
+import org.egov.dms.services.FileManagementService;
+import org.egov.erpcollection.integration.models.BillReceiptInfo;
+import org.egov.erpcollection.integration.services.CollectionIntegrationServiceImpl;*/
+/*import org.egov.lib.admbndry.HeirarchyType;*/
 @Transactional(readOnly = true)
 @SuppressWarnings("unchecked")
+
 public class BpaCommonExtnService extends ActionSupport  {
 	
-	private HeirarchyTypeDAO heirarchyTypeDao;
+	@Autowired
+	private HierarchyTypeService hierarchyTypeService;
+	
 	private static final String hierarchyTypeName 		= "LOCATION";
 	private static final Logger LOGGER					= Logger.getLogger(BpaCommonExtnService.class);
-	private BoundaryTypeDAO boundaryTypeDao;
-	private BoundaryDAO boundaryDAO;
+	@Autowired
+	private BoundaryTypeService boundaryTypeService;
+	@Autowired
+	private BoundaryService boundaryService;
 	private PersistenceService persistenceService;
 	private PersistenceService regnPersistenceExtnService;
 	private EisUtilService eisService;
@@ -213,13 +218,13 @@ public class BpaCommonExtnService extends ActionSupport  {
 		HierarchyType hType = null;
 		List<Boundary> areaList=Collections.EMPTY_LIST;
 		try{
-			hType = heirarchyTypeDao.getHierarchyTypeByName(hierarchyTypeName);
+			hType = hierarchyTypeService.getHierarchyTypeByName(hierarchyTypeName);
 		}catch(Exception e){
 			LOGGER.error("Error while loading areas - areas." + e.getMessage());
 			throw new EGOVRuntimeException("Unable to load areas information",e);
 		}
-		BoundaryType childBoundaryType =boundaryTypeDao.getBoundaryType("Area", hType);
-		Boundary parentBoundary = boundaryDAO.getBoundaryById((long)wardId.intValue());
+		BoundaryType childBoundaryType =boundaryTypeService.getBoundaryTypeByNameAndHierarchyType("Area", hType);
+		Boundary parentBoundary = boundaryService.getBoundaryById((long)wardId.intValue());
 		if(wardId!=-1){
 			
 		}
@@ -1814,34 +1819,7 @@ public void setPersistenceService(PersistenceService persistenceService) {
 }
 
 
-public HeirarchyTypeDAO getHeirarchyTypeDao() {
-	return heirarchyTypeDao;
-}
 
-
-public void setHeirarchyTypeDao(HeirarchyTypeDAO heirarchyTypeDao) {
-	this.heirarchyTypeDao = heirarchyTypeDao;
-}
-
-
-public BoundaryTypeDAO getBoundaryTypeDao() {
-	return boundaryTypeDao;
-}
-
-
-public void setBoundaryTypeDao(BoundaryTypeDAO boundaryTypeDao) {
-	this.boundaryTypeDao = boundaryTypeDao;
-}
-
-
-public BoundaryDAO getBoundaryDAO() {
-	return boundaryDAO;
-}
-
-
-public void setBoundaryDAO(BoundaryDAO boundaryDAO) {
-	this.boundaryDAO = boundaryDAO;
-}
 public InspectionExtnService getInspectionExtnService() {
 	return inspectionExtnService;
 }
@@ -2272,16 +2250,16 @@ return siteInspectionDatesList;
 		{
 			HierarchyType hierarchy=null;
 			try {
-				hierarchy = getHeirarchyTypeDao().getHierarchyTypeByName(heirarchyType);
-			} catch (NoSuchObjectException e) {
+				hierarchy = hierarchyTypeService.getHierarchyTypeByName(heirarchyType);
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (TooManyValuesException e) {
+			} /*catch (TooManyValuesException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
 			if(hierarchy!=null)
-				return getBoundaryTypeDao().getBoundaryType(boundaryType,hierarchy);
+				return boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(boundaryType,hierarchy);
 			
 			return null;
 		}
@@ -2292,8 +2270,8 @@ return siteInspectionDatesList;
 		{
 			Set<Boundary> wardboundry=new HashSet<Boundary>();
 			if(adminBoundaryId!=null){
-			Boundary childrenBoundary=boundaryDAO.getBoundaryById(adminBoundaryId);
-			wardboundry = boundaryDAO.getCrossHeirarchyParent(childrenBoundary);
+			Boundary childrenBoundary=boundaryService.getActiveBoundaryByIdAsOnCurrentDate(adminBoundaryId);
+			//wardboundry = hierarchyTypeService.getCrossHeirarchyParent(childrenBoundary);TODO phionix
 			}
 			return wardboundry;
 		}

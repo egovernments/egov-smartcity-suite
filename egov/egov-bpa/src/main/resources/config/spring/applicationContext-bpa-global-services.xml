@@ -17,8 +17,13 @@
 	<bean id="eisService" class="org.egov.pims.service.EisUtilService" scope="prototype">
 		<property name="persistenceService" ref="persistenceService"/>
 	</bean>
-
-	<bean id="registrationWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
+		<!-- <bean id="fileManagementService" class="org.egov.dms.services.FileManagementService" scope="prototype">
+		<property name="scriptExecuter" ref="scriptExecutionService"/>
+		<property name="sequenceGenerator" ref="sequenceGenerator"/>
+		<property name="persistenceService" ref="persistenceService"/>
+		<property name="eisService" ref="eisService"/>
+	</bean> -->
+	<!-- <bean id="registrationWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
 		<constructor-arg ref="regnPersistenceService"/>
 		<constructor-arg value="org.egov.bpa.models.Registration"/>
 	</bean>
@@ -63,12 +68,7 @@
 		<property name="persistenceService" ref="persistenceService"/>
 	</bean> 
 		
-	<bean id="fileManagementService" class="org.egov.dms.services.FileManagementService" scope="prototype">
-		<property name="scriptExecuter" ref="scriptExecutionService"/>
-		<property name="sequenceGenerator" ref="sequenceGenerator"/>
-		<property name="persistenceService" ref="persistenceService"/>
-		<property name="eisService" ref="eisService"/>
-	</bean>
+	
 	
 	<bean id="statusChangeService" class="org.egov.infstr.services.PersistenceService" parent="persistenceService" scope="prototype">
 	    <property name="type" value="org.egov.commons.EgwSatuschange"/>
@@ -92,7 +92,7 @@
 		<constructor-arg ref="regnFeePersistenceService"/>
 		<constructor-arg value="org.egov.bpa.models.RegistrationFee"/>
 	</bean>
-
+ -->
 	 <!--BPA new enhancement changes DEFINITION STARTS -->  
 	
 	<bean id="bpaCitizenPortalExtnService" class="org.egov.bpa.services.extd.common.BpaCitizenPortalExtnService" scope="prototype" >
@@ -128,9 +128,6 @@
 	
 	
 	<bean id="bpaCommonExtnService" class="org.egov.bpa.services.extd.common.BpaCommonExtnService" scope="prototype">		
-		<property name="heirarchyTypeDao" ref="heirarchyTypeDao"/>
-		<property name="boundaryTypeDao" ref="boundaryTypeDao"/>
-		<property name="boundaryDAO" ref="boundaryDAO"/>
 		<property name="persistenceService" ref="persistenceService"/>
 		<property name="inspectionExtnService" ref="inspectionExtnService"/>
 		<property name="eisService" ref="eisService"/>
@@ -142,8 +139,7 @@
 	    <property name="registrationFeeWorkflowExtnService" ref="registrationFeeWorkflowExtnService"/>
 	    <property name="eisCommonsManager" ref="eisCommonsManager"/>
 	    <property name="regnPersistenceExtnService" ref="regnPersistenceExtnService"/>	    
-	    <property name="eisManager" ref="eisManager"/>
-	    <property name="genericDao" ref="genericDao"/>
+	   <property name="genericDao" ref="genericDao"/>
 	    <property name="reportService" ref="reportService"/>
 	    <property name="bpaCitizenPortalExtnService" ref="bpaCitizenPortalExtnService"/>
 	    <property name="bpaSurvayorPortalExtnService" ref="bpaSurvayorPortalExtnService"/>
@@ -164,7 +160,7 @@
 	</bean>
 	
 	<bean id="bpaSurvayorPortalExtnService" class="org.egov.bpa.services.extd.common.BpaSurvayorPortalExtnService" scope="prototype" >
-	 <property name="portalIntegrationService" ref="portalIntegrationService"/>   
+	<!--  <property name="portalIntegrationService" ref="portalIntegrationService"/>  -->  
 	</bean> 
 	
 	</beans>
