@@ -101,7 +101,7 @@ public class CreateComplaintTypeControllerTest extends AbstractContextController
 
    @Before
     public void before() throws Exception {
-        final Department department = new DepartmentBuilder().withId(1).withCode("DC").build();
+        final Department department = new DepartmentBuilder().withId(1l).withCode("DC").build();
         when(departmentService.getDepartmentById(any(Long.class))).thenReturn(department);
         FormattingConversionService formatterService = new FormattingConversionService();
         formatterService.addFormatter(new Formatter<Department>() {

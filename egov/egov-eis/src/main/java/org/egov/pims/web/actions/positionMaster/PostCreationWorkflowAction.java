@@ -176,8 +176,8 @@ public class PostCreationWorkflowAction extends EisCommonWorkflowAction{
 				deptDesig = new DeptDesig();
 				deptDesig.setSanctionedPosts(1);
 				deptDesig.setOutsourcedPosts(0);
-				deptDesig.setDeptId(empPosition.getDeptId());
-				deptDesig.setDesigId((DesignationMaster)getPersistenceService().getSession().load(DesignationMaster.class, Long.valueOf(getDesignationId())));
+				deptDesig.setDepartment(empPosition.getDeptId());
+				deptDesig.setDesignation((DesignationMaster)getPersistenceService().getSession().load(DesignationMaster.class, Long.valueOf(getDesignationId())));
 			}
 			Position position = new Position();
 			position.setName(empPosition.getPostName());

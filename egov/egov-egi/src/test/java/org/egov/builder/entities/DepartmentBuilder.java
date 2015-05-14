@@ -47,7 +47,7 @@ public class DepartmentBuilder {
 
     private final Department department;
 
-    private static int count;
+    private static long count;
 
     public DepartmentBuilder() {
         department = new Department();
@@ -72,7 +72,7 @@ public class DepartmentBuilder {
         return this;
     }
     
-    public DepartmentBuilder withId(final int id) {
+    public DepartmentBuilder withId(final Long id) {
         try {
             final Field idField = department.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
             idField.setAccessible(true);

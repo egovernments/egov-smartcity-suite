@@ -309,8 +309,8 @@ public class ComplaintService {
         } else if (null != ownerPosition && null != ownerPosition.getDeptDesigId()) {
             user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
             map.put("user", null != user.getUsername() ? user.getUsername() : "");
-            map.put("department", null != ownerPosition.getDeptDesigId().getDeptId() ? ownerPosition.getDeptDesigId()
-                    .getDeptId().getName() : "");
+            map.put("department", null != ownerPosition.getDeptDesigId().getDepartment() ? ownerPosition.getDeptDesigId()
+                    .getDepartment().getName() : "");
         }
         historyTable.add(map);
         if (!complaint.getStateHistory().isEmpty() && complaint.getStateHistory() != null)
@@ -331,8 +331,8 @@ public class ComplaintService {
             } else if (null != owner && null != owner.getDeptDesigId()) {
                 user = eisCommonService.getUserForPosition(owner.getId(), new Date());
                 HistoryMap.put("user", null != user.getUsername() ? user.getUsername() : "");
-                HistoryMap.put("department", null != owner.getDeptDesigId().getDeptId() ? owner.getDeptDesigId()
-                        .getDeptId().getName() : "");
+                HistoryMap.put("department", null != owner.getDeptDesigId().getDepartment() ? owner.getDeptDesigId()
+                        .getDepartment().getName() : "");
             }
             historyTable.add(HistoryMap);
         }

@@ -210,8 +210,8 @@ public class PositionMasterAction extends BaseFormAction {
 						deptDesig=new DeptDesig();
 						deptDesig.setSanctionedPosts(getSanctionedPosts());
 						deptDesig.setOutsourcedPosts(getOutsourcedPosts());
-						deptDesig.setDeptId( ( (Department)persistenceService.find("from Department where id=?", getDepartmentId()) ));
-						deptDesig.setDesigId( ((DesignationMaster)persistenceService.find("from DesignationMaster where designationId=?", getDesignationId())));
+						deptDesig.setDepartment( ( (Department)persistenceService.find("from Department where id=?", getDepartmentId()) ));
+						deptDesig.setDesignation( ((DesignationMaster)persistenceService.find("from DesignationMaster where designationId=?", getDesignationId())));
 						position.setDeptDesigId(deptDesig);
 					}
 					else{			
