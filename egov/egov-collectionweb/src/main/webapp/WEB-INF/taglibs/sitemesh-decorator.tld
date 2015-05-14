@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  eGov suite of products aim to improve the internal efficiency,transparency, 
+     accountability and the service delivery of the government  organizations.
+  
+      Copyright (C) <2015>  eGovernments Foundation
+  
+      The updated version of eGov suite of products as by eGovernments Foundation 
+      is available at http://www.egovernments.org
+  
+      This program is free software: you can redistribute it and/or modify
+      it under the terms of the GNU General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      any later version.
+  
+      This program is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+      GNU General Public License for more details.
+  
+      You should have received a copy of the GNU General Public License
+      along with this program. If not, see http://www.gnu.org/licenses/ or 
+      http://www.gnu.org/licenses/gpl.html .
+  
+      In addition to the terms of the GPL license to be adhered to in using this
+      program, the following additional terms are to be complied with:
+  
+  	1) All versions of this program, verbatim or modified must carry this 
+  	   Legal Notice.
+  
+  	2) Any misrepresentation of the origin of the material is prohibited. It 
+  	   is required that all modified versions of this material be marked in 
+  	   reasonable ways as different from the original version.
+  
+  	3) This license does not grant any rights to any user of the program 
+  	   with regards to rights under trademark law for use of the trade names 
+  	   or trademarks of eGovernments Foundation.
+  
+    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+-->
+<!DOCTYPE taglib
+  PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
+  "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
+
+<taglib>
+
+    <tlib-version>1.0</tlib-version>
+    <jsp-version>1.2</jsp-version>
+    <short-name>sitemesh-decorator</short-name>
+    <uri>http://www.opensymphony.com/sitemesh/decorator</uri>
+    <display-name>SiteMesh Decorator Tags</display-name>
+
+    <tag>
+        <name>head</name>
+        <tag-class>com.opensymphony.module.sitemesh.taglib.decorator.HeadTag</tag-class>
+        <body-content>JSP</body-content>
+    </tag>
+
+    <tag>
+        <name>body</name>
+        <tag-class>com.opensymphony.module.sitemesh.taglib.decorator.BodyTag</tag-class>
+        <body-content>JSP</body-content>
+    </tag>
+
+    <tag>
+        <name>title</name>
+        <tag-class>com.opensymphony.module.sitemesh.taglib.decorator.TitleTag</tag-class>
+        <body-content>JSP</body-content>
+        <attribute>
+            <name>default</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>getProperty</name>
+        <tag-class>com.opensymphony.module.sitemesh.taglib.decorator.PropertyTag</tag-class>
+        <body-content>JSP</body-content>
+        <attribute>
+            <name>property</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>default</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>writeEntireProperty</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>usePage</name>
+        <tag-class>com.opensymphony.module.sitemesh.taglib.decorator.UsePageTag</tag-class>
+        <tei-class>com.opensymphony.module.sitemesh.taglib.decorator.UsePageTEI</tei-class>
+        <body-content>JSP</body-content>
+        <attribute>
+            <name>id</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>useHtmlPage</name>
+        <tag-class>com.opensymphony.module.sitemesh.taglib.decorator.UsePageTag</tag-class>
+        <tei-class>com.opensymphony.module.sitemesh.taglib.decorator.UseHTMLPageTEI</tei-class>
+        <body-content>JSP</body-content>
+        <attribute>
+            <name>id</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+    </tag>
+
+</taglib>

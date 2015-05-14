@@ -78,7 +78,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
 @Transactional(readOnly=true)
-@Namespace("/service") 
 public class ServiceDetailsAction extends BaseFormAction {
 
 	private static final long serialVersionUID = 1L;
@@ -111,7 +110,7 @@ public class ServiceDetailsAction extends BaseFormAction {
 		return serviceDetails;
 	}
 
-	@Action(value="/serviceDetails-newform",results = { @Result(name= NEW,location="/WEB-INF/jsp/service/serviceDetails-new.jsp", type="redirect")})
+	@Action(value="/service/serviceDetails-newform",results = { @Result(name = NEW,location="/WEB-INF/jsp/service/serviceDetails-new.jsp")})
 	public String newform(){
 		addDropdownData("serviceCategoryList", serviceCategoryService.findAllByNamedQuery("SERVICE_CATEGORY_ALL"));
 		return NEW;

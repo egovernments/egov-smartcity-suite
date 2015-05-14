@@ -54,13 +54,13 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 		<property name="isActive" column="ISACTIVE" type="java.lang.Boolean"/>
 		
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
-			<column name="CREATED_BY" precision="22" scale="0" />
+			<column name="CREATEDBY" precision="22" scale="0" />
 		</many-to-one>
 		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" fetch="select">
-			<column name="MODIFIED_BY" precision="22" scale="0" />
+			<column name="LASTMODIFIEDBY" precision="22" scale="0" />
 		</many-to-one>
-		<property name="createdDate" column="CREATED_DATE"  type="date"/>
-		<property name="modifiedDate" column="MODIFIED_DATE" type="date"/>
+		<property name="createdDate" column="CREATEDDATE"  type="date"/>
+		<property name="modifiedDate" column="LASTMODIFIEDDATE" type="date"/>
 		
 		<set name="services" inverse="true" cascade="all,delete-orphan" >
 			<key>

@@ -45,9 +45,11 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.service.ServiceCategoryService;
 import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Result(name = ServiceCategoryAction.SUCCESS, type = "redirect", location = "serviceCategory.action")
@@ -56,7 +58,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ServiceCategoryAction extends BaseFormAction {
 
 	private static final long serialVersionUID = 1L;
-	private PersistenceService<ServiceCategory, Long> serviceCategoryService;
+	@Autowired
+	private ServiceCategoryService serviceCategoryService;
 	private Collection<ServiceCategory> serviceCategoryList = null;
 	private ServiceCategory serviceCategoryInstance = new ServiceCategory();
 
@@ -65,21 +68,19 @@ public class ServiceCategoryAction extends BaseFormAction {
 		return list();
 	}
 
-	@Action(value="/service/serviceCategory-newform", results = { @Result(name = NEW,type="redirect")})
+	@Action(value="/service/serviceCategory-newform", results = { @Result(name = NEW,location="/WEB-INF/jsp/service/serviceCategory-new.jsp")})
 	public String newform() {
 		return NEW;
 	}
 
 	public String list() {
-		serviceCategoryList = serviceCategoryService
-				.findAll(CollectionConstants.SERVICECATEGORY_CODE);
+		serviceCategoryList = serviceCategoryService.getAllServiceCategoriesByCodeLike(CollectionConstants.SERVICECATEGORY_CODE);
 		return INDEX;
 	}
 
-	@Action(value="/service/serviceCategory-edit", results = { @Result(name = EDIT,type="redirect")})
+	@Action(value="/service/serviceCategory-edit", results = { @Result(name = EDIT,location="/WEB-INF/jsp/service/serviceCategory-new.jsp")})
 	public String edit() {
-		serviceCategoryInstance = serviceCategoryService.findById(
-				serviceCategoryInstance.getId(), false);
+		serviceCategoryInstance = serviceCategoryService.findById(serviceCategoryInstance.getId());
 		return EDIT;
 	}
 
@@ -107,14 +108,4 @@ public class ServiceCategoryAction extends BaseFormAction {
 	public Collection<ServiceCategory> getServiceCategoryList() {
 		return serviceCategoryList;
 	}
-
-	/**
-	 * @param serviceCategoryService
-	 *            the serviceCategoryService to set
-	 */
-	public void setServiceCategoryService(
-			PersistenceService<ServiceCategory, Long> serviceCategoryService) {
-		this.serviceCategoryService = serviceCategoryService;
-	}
-
 }

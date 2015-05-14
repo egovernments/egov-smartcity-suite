@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   /**
    * eGov suite of products aim to improve the internal efficiency,transparency, 
@@ -40,25 +41,16 @@
    */
 -->
 <decorators defaultdir="/decorators">
-    <excludes>
-            <pattern>/40*.jsp</pattern>       	
-            <pattern>/commonyui/egov/genericScreenWithLeaf.jsp</pattern>
-            <pattern>/commonyui/egov/menutree.jsp</pattern>
-            <pattern>/*Ajax.action</pattern>
-            <pattern>/*Ajax.do</pattern>
-    </excludes>
-    <decorator name="default" page="default.jsp">
-
-      <pattern>/index.jsp</pattern>
-      <pattern>/*.action</pattern>
-      <pattern>/*.do</pattern>
-
-    </decorator>
-   
-    <decorator name="defaultmain" page="defaultmain.jsp">
-	<pattern>/index.jsp</pattern>
-	
-    </decorator>
-	
-	
+	<excludes>
+		<pattern>/40*.jsp</pattern>
+		<pattern>/commonyui/egov/genericScreenWithLeaf.jsp</pattern>
+		<pattern>/commonyui/egov/menutree.jsp</pattern>
+		<pattern>/*Ajax.action</pattern>
+		<pattern>/*Ajax.do</pattern>
+	</excludes>
+	<decorator name="default" page="default.jsp">
+		<pattern>/index.jsp</pattern>
+		<pattern>/*.action</pattern>
+		<pattern>/*.jsp</pattern>
+	</decorator>
 </decorators>
