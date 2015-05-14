@@ -37,10 +37,7 @@
  
    	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator"%>
-<%@ taglib uri="http://www.opensymphony.com/sitemesh/page" prefix="page"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
+<%@ include file="/includes/taglibs.jsp" %>
 <html>
     <head>
         <%@ include file="/includes/meta.jsp" %>

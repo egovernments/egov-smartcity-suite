@@ -37,7 +37,7 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld" %>  
+<%@ taglib prefix="s" uri="/WEB-INF/taglibs/struts-tags.tld" %>  
 <s:if	test="basicProperty.objections.size()>0">
 		<tr>
 			<td colspan="5">

@@ -1,5 +1,5 @@
 <%@ tag dynamic-attributes="true" isELIgnored="false"%>
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld" %>  
+<%@ taglib prefix="s" uri="/WEB-INF/taglibs/struts-tags.tld" %>  
 
 <%@ attribute name="formName" required="true" %>
 

@@ -37,10 +37,8 @@
  
    	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld" %>  
-<%@ taglib prefix="sx" uri="/WEB-INF/struts-dojo-tags.tld" %> 
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<%@ include file="/includes/taglibs.jsp" %>
 <html>
 	<head>
 		<%-- <sx:head /> --%>

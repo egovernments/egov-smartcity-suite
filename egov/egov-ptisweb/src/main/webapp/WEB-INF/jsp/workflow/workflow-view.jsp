@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,7 +36,7 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------- -->
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp" %>
 
@@ -53,8 +53,7 @@
    		setPropCreatedDate();
 	}
  function setCorrCheckBox(){
-    
-     <s:if test="%{isAddressCheck()}">
+      <s:if test="%{isAddressCheck()}">
 			document.getElementById("chkIsCorrIsDiff").checked=true;
 	</s:if>
    }
