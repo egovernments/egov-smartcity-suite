@@ -1754,18 +1754,17 @@ label.disable-label, input[type="text"]:disabled  + .input-with-text {
 	vertical-align: top;
 }
 
-.table-row{
-	/* display:table-row; */
+.home-container{
 	display:block;
 	width:100%;
 }
 
 #menu.homepage{
-	position:relative;display:table-cell;float:left;
+	position:relative;display:inline-block;float:left;
 }
 
 .inline-main-content{
-	display:table-cell;float:left;padding: 18px; width: calc(100% - 250px);
+	display:inline-block;float:right;padding: 18px; width: calc(100% - 250px);
 	overflow-x: hidden;
 }
 

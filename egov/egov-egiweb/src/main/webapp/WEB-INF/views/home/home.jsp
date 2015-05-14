@@ -179,7 +179,7 @@
 			</header>
 			
 			<!--New side bar menu content-->
-			<div class="table-row">
+			<div class="home-container">
 				
 				<div id="menu" class="homepage">
 					
