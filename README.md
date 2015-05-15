@@ -124,12 +124,12 @@ $ ./deploy-local.sh
 This section is to be referred only if you want the application to run using any ip address or domain name.
 
 ###### 1. To access the application using IP address:
-* Have an entry in eg_city_website table in database with an IP address of the machine where application server is running (for ex: citibaseurl="ip172:16:2:164") to access application using IP address.
+* Have an entry in eg_city_website table in database with an IP address of the machine where application server is running (for ex: citibaseurl="172.16.2.164") to access application using IP address.
 * Access the application using an url http://172.16.2.164:8080/egi/ where 172.16.2.164 is the IP and 8080 is the port of the machine where application server is running.
 
 ###### 2. To access the application using domain name:
 
-* Have an entry in eg_city_website table in database with domain name (for ex: citibaseurl= "egoverpphoenix") to access application using domain name.
+* Have an entry in eg_city_website table in database with domain name (for ex: citibaseurl= "www.egoverpphoenix.org") to access application using domain name.
 * Add the entry in hosts file of your system with details as 172.16.2.164    www.egoverpphoenix.org (This needs to be done both in server machine as well as the machines in which the application needs to be accessed since this is not a public domain).
 * Access the application  using an url http://www.egoverpphoenix.org:8080/egi/ where www.egoverpphoenix.org is the domain name and 8080 is the port of the machine where application server is running.
 
@@ -170,7 +170,7 @@ __Note__: Please check in [eGov Tools Repository] for any of the above software 
 
 * TODO - Contribute
 
-##### 3. Database SQL files
+##### 3. Database Migration Procedure
 
 * Any new sql files created should be added under directory `<CLONED_REPO_DIR>/egov/egov-database/src/main/resources/sql`
 * Uses the database properties from `<CLONED_REPO_DIR>/egov/egov-database/src/main/resources/liquibase.properties` for migration
@@ -182,7 +182,7 @@ __Note__: Please check in [eGov Tools Repository] for any of the above software 
 1_egi_create-deparment_DDL.sql
 2_eis_add-employee-role_DML.sql
 ```
-For More details refer (Liquibase)[Liquibase]
+For More details refer [Liquibase]
 
 
 ##### 4. Targets to Build, Package and Upgrade database
@@ -196,7 +196,6 @@ mvn -s settings.xml package       ## Cleans, compiles, tests and generates ear a
 ```bash
 mvn -s settings.xml package -Pdb  ## Cleans, compiles, tests, migrates database and generates ear artifact along with jars and wars approproiately
 ```
-To skip database upgrading use -Dliquibase.should.run=false
 
 
 [Git]: http://help.github.com/set-up-git-redirect
