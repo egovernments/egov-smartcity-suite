@@ -31,7 +31,7 @@ transport.tcp.port: 9300 ## This is the default port
 ```bash
 $ mkdir egovgithub
 $ cd egovgithub
-$ git https://github.com/egovernments/eGov.git
+$ git clone https://github.com/egovernments/eGov.git
 ```
 2. Change directory to `<CLONED_REPO_DIR>/egov/egov-config/main/resources/config/` and create a file called `egov-erp-<username>.properties` and enter the following values based on your environment config.
 
@@ -129,7 +129,7 @@ This section is to be referred only if you want the application to run using any
 
 ###### 2. To access the application using domain name:
 
-* Have an entry in eg_city_website table in database with domain name (for ex: citibaseurl= "www.egoverpphoenix.org") to access application using domain name.
+* Have an entry in eg_city_website table in database with domain name (for ex: citibaseurl= "egoverpphoenix") to access application using domain name.
 * Add the entry in hosts file of your system with details as 172.16.2.164    www.egoverpphoenix.org (This needs to be done both in server machine as well as the machines in which the application needs to be accessed since this is not a public domain).
 * Access the application  using an url http://www.egoverpphoenix.org:8080/egi/ where www.egoverpphoenix.org is the domain name and 8080 is the port of the machine where application server is running.
 
