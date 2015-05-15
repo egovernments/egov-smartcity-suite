@@ -47,5 +47,10 @@
 
     <import resource="classpath*:config/spring/applicationContext-bpa.xml"/>
 	<import resource="applicationSecurityContext-bpa.xml"/>
+    <!-- <context:component-scan base-package="org.egov.bpa.web">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan> -->
+	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
     
 </beans>

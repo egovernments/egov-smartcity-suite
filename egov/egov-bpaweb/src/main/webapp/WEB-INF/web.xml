@@ -242,11 +242,11 @@
 		</taglib>
 		<taglib>
 			<taglib-uri>http://www.opensymphony.com/sitemesh/decorator</taglib-uri>
-			<taglib-location>/WEB-INF/taglibs/sitemesh-decorator.tld</taglib-location>
+			<taglib-location>/WEB-INF/sitemesh-decorator.tld</taglib-location>
 		</taglib>
 		<taglib>
 			<taglib-uri>http://www.opensymphony.com/sitemesh/page</taglib-uri>
-			<taglib-location>/WEB-INF/taglibs/sitemesh-page.tld</taglib-location>
+			<taglib-location>/WEB-INF/sitemesh-page.tld</taglib-location>
 		</taglib>
 		<jsp-property-group>
 			<url-pattern>*.jsp</url-pattern>

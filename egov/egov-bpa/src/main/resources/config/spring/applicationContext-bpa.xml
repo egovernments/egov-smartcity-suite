@@ -49,31 +49,13 @@
 		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd" default-lazy-init="true">
 
 	
-	<!-- <bean id="serviceTypeService" class="org.egov.bpa.services.masters.ServiceTypeService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.bpa.models.masters.ServiceType" />
-		<property name="persistenceService" ref="persistenceService"/>
-	</bean> 
-	
-	<bean id="bpaFeeService" class="org.egov.bpa.services.masters.BpaFeeService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.bpa.models.masters.BpaFee" />
-		<property name="persistenceService" ref="persistenceService"/>
-	</bean> 
-	
-	<bean id="checkListService" class="org.egov.bpa.services.masters.CheckListSevice" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.bpa.models.masters.Checklist" />
-		<property name="persistenceService" ref="persistenceService"/>
-	</bean> 
-	 -->
 	<bean id="boundaryUtil" class="org.egov.bpa.utils.BoundaryUtil">
 		<!-- <property name="heirarchyTypeDao" ref="heirarchyTypeDao"/>
 		<property name="boundaryTypeDao" ref="boundaryTypeDao"/>
 		<property name="boundaryDao" ref="boundaryDAO"/> -->
 	</bean>
 	
-	<!-- <bean id="bpaBillable" class="org.egov.bpa.services.bill.BpaBillable" scope="prototype">
- 		<property name="persistenceService" ref="persistenceService"/>
-		<property name="bpaCommonService" ref="bpaCommonService"/>  
- 	</bean> -->
+
  	<bean id="bpaReportExtnService" class="org.egov.bpa.services.extd.report.BpaReportExtnService" scope="prototype">
  		<property name="collectionIntegrationService" ref="collectionIntegrationService"/>  
  		<property name="feeExtnService" ref="feeExtnService"/>
@@ -81,25 +63,7 @@
 		<property name="bpaCommonExtnService" ref="bpaCommonExtnService"/>  
  	</bean>
 	
- <!-- 	<bean id="bpaBillServiceImpl" class="org.egov.bpa.services.bill.BpaBillServiceImpl" scope="prototype">
- 		<property name="persistenceService" ref="persistenceService"/>
- 		<property name="bpaCommonService" ref="bpaCommonService"/>  
-	</bean>
- 		
-	<bean id="registerBpaService" class="org.egov.bpa.services.register.RegisterBpaService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.bpa.models.Registration" />
-		<property name="persistenceService" ref="persistenceService"/>
-		<property name="bpaNumberGenerationService" ref="bpaNumberGenerationService"/>
-		<property name="bpaDmdCollService" ref="bpaDmdCollService"/>
-		<property name="registrationWorkflowService" ref="registrationWorkflowService"/>
-		<property name="bpaPimsFactory" ref="bpaPimsFactory"/>
-		<property name="autoDcrService" ref="autoDcrService"/>
-		<property name="bpaCommonService" ref="bpaCommonService"/>
-		<property name="eisMgr" ref="eisMgr"/>  
-		<property name="regnStatusDetService" ref="regnStatusDetService"/>
-		<property name="feeService" ref="feeService"/>
-		<property name="reportService" ref="reportService"/>
-	</bean> 
+ 
 	
 	<bean id="bpaDmdCollService" class="org.egov.bpa.services.common.BpaDmdCollService" scope="prototype" >
  		<property name="feeService" ref="feeService"/>
@@ -121,34 +85,6 @@
 		<property name="type" value="org.egov.demand.model.EgDemandReasonMaster" />
 	</bean>
 	
-	<bean id="regnPersistenceService" parent="persistenceService" scope="prototype">
-	<property name="type" value="org.egov.bpa.models.Registration"/>
-	</bean>
-	
-	<bean id="bpaPimsFactory" class="org.egov.bpa.services.common.BpaPimsInternalServiceFactory" lazy-init="false" scope="prototype">
-	<property name="persistenceService" ref="persistenceService"/>
-	<property name="eisMgr" ref="eisMgr"/>
-	<property name="eisService" ref="eisService"/>
-	<property name="bpaCommonService" ref="bpaCommonService"/>
-	<property name="userDao" ref="userDao"/>
-	</bean>
-	
-	<bean id="registrationWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" lazy-init="false" scope="prototype">
-	<constructor-arg ref="regnPersistenceService"/>
-	<constructor-arg value="org.egov.bpa.models.Registration"/>
-	</bean>
-	
-
-	<bean id="eisMgr" class="org.springframework.ejb.access.LocalStatelessSessionProxyFactoryBean" lazy-init="true">
-	<property name="jndiName"><value>EisManagerHome</value></property>
-	<property name="resourceRef"><value>false</value></property>
-	<property name="businessInterface"><value>org.egov.pims.service.EisManager</value></property>
-	</bean>
-	
-	<bean id="feeDetailsService" class="org.egov.bpa.services.Fee.FeeDetailsService" scope="prototype">
-	<property name="persistenceService" ref="persistenceService"/>
-	<property name="bpaDmdCollService" ref="bpaDmdCollService"/>
-	</bean> -->
 
 	<bean id="feeDetailsExtnService" class="org.egov.bpa.services.extd.Fee.FeeDetailsExtnService" scope="prototype">
 	<property name="persistenceService" ref="persistenceService"/>
@@ -156,45 +92,8 @@
 	<property name="feeExtnService" ref="feeExtnService"/>
 	<property name="bpaCommonExtnService" ref="bpaCommonExtnService"/>
 	</bean>
-	
-	<!-- <bean id="letterToPartyService" class="org.egov.bpa.services.lettertoparty.LetterToPartyService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.bpa.models.LetterToParty"/>
-		<property name="persistenceService" ref="persistenceService"/>
-		<property name="bpaNumberGenerationService" ref="bpaNumberGenerationService"/>
-	</bean> 
-	
-	<bean id="autoDcrService" class="org.egov.bpa.services.autoDcr.AutoDcrService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.bpa.models.RegnAutoDcr"/>
-		<property name="persistenceService" ref="persistenceService"/>
-	</bean> 
 
-	<bean id="regnStatusDetService" class="org.egov.bpa.services.common.RegnStatusDetailService" parent="persistenceService" scope="prototype">
-	    <property name="type" value="org.egov.bpa.models.RegnStatusDetails"/>
-	    <property name="persistenceService" ref="persistenceService"/>
-   </bean>
-   
-   	<bean id="bldgUsageService" class="org.egov.bpa.services.masters.BuildingUsageService" parent="persistenceService" scope="prototype">
-	    <property name="type" value="org.egov.bpa.models.masters.BuildingUsage"/>
-	    <property name="persistenceService" ref="persistenceService"/>
-   </bean>
-   <bean id="apprdBldgDetService" class="org.egov.bpa.services.common.ApprdBldgDetailService" parent="persistenceService" scope="prototype">
-	    <property name="type" value="org.egov.bpa.models.ApprdBuildingDetails"/>
-	    <property name="persistenceService" ref="persistenceService"/>
-   </bean>
-    <bean id="approvaInfoService" class="org.egov.bpa.services.approve.ApprovalInformationService" parent="persistenceService" scope="prototype">
-	    <property name="type" value="org.egov.bpa.models.RegnApprovalInformation"/>
-   </bean>
-   	<bean id="registrationFeeService" class="org.egov.bpa.services.Fee.RegistrationFeeService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.bpa.models.RegistrationFee" />
-		<property name="persistenceService" ref="persistenceService"/>
-		<property name="bpaPimsFactory" ref="bpaPimsFactory"/>
-		<property name="bpaCommonService" ref="bpaCommonService"/>
-		<property name="registrationFeeWorkflowService" ref="registrationFeeWorkflowService"/>
-		<property name="bpaNumberGenerationService" ref="bpaNumberGenerationService"/>
-		??TODO Phionix 
-	</bean> -->
-	
-	 <!--BPA new enhancement changes DEFINITION STARTS -->  
+	<!--BPA new enhancement changes DEFINITION STARTS -->  
 	 
 	 <bean id="serviceTypeExtnService" class="org.egov.bpa.services.extd.masters.ServiceTypeExtnService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.bpa.models.extd.masters.ServiceTypeExtn" />
@@ -229,8 +128,8 @@
 		<property name="persistenceService" ref="persistenceService"/>
 		<property name="bpaNumberGenerationExtnService" ref="bpaNumberGenerationExtnService"/>
 		<property name="bpaDmdCollExtnService" ref="bpaDmdCollExtnService"/>
-		<!-- <property name="registrationWorkflowExtnService" ref="registrationWorkflowExtnService"/>
-		 --><property name="bpaPimsExtnFactory" ref="bpaPimsExtnFactory"/>
+		 <property name="registrationWorkflowExtnService" ref="registrationWorkflowExtnService"/>
+		 <property name="bpaPimsExtnFactory" ref="bpaPimsExtnFactory"/>
 		<property name="autoDcrExtnService" ref="autoDcrExtnService"/>
 		<property name="bpaCommonExtnService" ref="bpaCommonExtnService"/>
 		<!-- <property name="eisMgr" ref="eisMgr"/>  
@@ -241,10 +140,10 @@
 		<property name="regnOfficialActionsExtnService" ref="regnOfficialActionsExtnService"/>
 	</bean> 
 	
-   	<!-- <bean id="registrationWorkflowExtnService" class="org.egov.infstr.workflow.SimpleWorkflowService" lazy-init="false" scope="prototype">
+   	 <bean id="registrationWorkflowExtnService" class="org.egov.infra.workflow.service.SimpleWorkflowService" lazy-init="false" scope="prototype">
 	<constructor-arg ref="regnPersistenceExtnService"/>
 	<constructor-arg value="org.egov.bpa.models.extd.RegistrationExtn"/>
-	</bean>  -->
+	</bean>  
 	
    	<bean id="bpaDmdCollExtnService" class="org.egov.bpa.services.extd.common.BpaDmdCollExtnService" scope="prototype" >
  		<property name="feeExtnService" ref="feeExtnService"/>
@@ -295,8 +194,8 @@
 		<property name="persistenceService" ref="persistenceService"/>
 		<property name="bpaPimsExtnFactory" ref="bpaPimsExtnFactory"/>
 		<property name="bpaCommonExtnService" ref="bpaCommonExtnService"/> 
-		<!-- <property name="registrationFeeWorkflowExtnService" ref="registrationFeeWorkflowExtnService"/>
-		 --><property name="bpaNumberGenerationExtnService" ref="bpaNumberGenerationExtnService"/>
+		<property name="registrationFeeWorkflowExtnService" ref="registrationFeeWorkflowExtnService"/>
+		<property name="bpaNumberGenerationExtnService" ref="bpaNumberGenerationExtnService"/>
 	</bean>
 	<bean id="utilsExtnService" class="org.egov.bpa.services.extd.common.UtilsExtnService" scope="prototype">
 		<property name="persistenceService" ref="persistenceService"/>
