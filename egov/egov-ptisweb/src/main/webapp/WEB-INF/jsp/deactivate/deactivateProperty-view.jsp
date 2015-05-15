@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -35,9 +35,9 @@
 # 	   with regards to rights under trademark law for use of the trade names 
 # 	   or trademarks of eGovernments Foundation.
 # 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+#   In case of any queries, you can reach eGovernments Foundation at contact@egovernment -->s.org.
 #-------------------------------------------------------------------------------
-<%@ page language="java" pageEncoding="UTF-8" import="org.egov.ptis.client.constants.*"%>
+<%@ page language="java" pageEncoding="UTF-8" %>
 <%@include file="/includes/taglibs.jsp"%>
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />

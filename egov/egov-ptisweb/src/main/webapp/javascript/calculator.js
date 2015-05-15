@@ -1,6 +1,6 @@
-#-------------------------------------------------------------------------------
-# /**
-#  * eGov suite of products aim to improve the internal efficiency,transparency, 
+/*#-------------------------------------------------------------------------------
+#
+#   eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
 #     Copyright (C) <2015>  eGovernments Foundation
@@ -37,8 +37,8 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#  */
-#-------------------------------------------------------------------------------
+#  
+#-------------------------------------------------------------------------------*/
 /** This function is the reimplementation of Calculator.
 *** This takes the collection made and splits up the collection into arrears, penalty and current year
 *** PT and calculates the balance. 

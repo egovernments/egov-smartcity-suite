@@ -1,5 +1,4 @@
-#-------------------------------------------------------------------------------
-# /**
+/*#-------------------------------------------------------------------------------
 #  * eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -37,8 +36,9 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#  */
-#-------------------------------------------------------------------------------
+#  
+#-------------------------------------------------------------------------------*/
+
 var topic_data = [
 	[10, 'IDH_Topic10', 'Topics/IDH_Topic10.htm'],
 	[20, 'IDH_Topic20', 'Topics/IDH_Topic20.htm'],

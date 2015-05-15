@@ -40,7 +40,6 @@
 $(document).ready(function()
 {
 	$("#btn_submit").click(function(){
-		alert("hello"+$("#btn_submit").name)
 		if($("#btn_submit").name=='Close')
 			{
 			return true;
@@ -51,7 +50,6 @@ $(document).ready(function()
 		}else
 		{
 			document.forms[0].submit();
-			//alert("Submitted Successfully");
 			$('#inc_messge').removeClass('error');
 		}
 		
@@ -96,7 +94,6 @@ $(document).ready(function()
 	});
 	
 	$('#approvalDepartment').change(function(){
-		//alert("came approvalDepartment");
 		$.ajax({
 			url: "/pgr/ajax-approvalDesignations",     
 			type: "GET",
@@ -107,7 +104,6 @@ $(document).ready(function()
 			success: function (response) {
 				console.log("success"+response);
 				$('#approvalDesignation').empty();
-				//alert(document.getElementById('approvalDesignation'));
 				$('#approvalDesignation').append($("<option value=''>Select</option>"));
 				$.each(response, function(index, value) {
 					$('#approvalDesignation').append($('<option>').text(value.designationName).attr('value', value.designationId));

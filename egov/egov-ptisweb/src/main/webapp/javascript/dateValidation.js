@@ -1,5 +1,4 @@
-#-------------------------------------------------------------------------------
-# /**
+/*#-------------------------------------------------------------------------------
 #  * eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -37,8 +36,8 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#  */
-#-------------------------------------------------------------------------------
+#  
+#-------------------------------------------------------------------------------*/
 /*
 * Added By Rajalakshmi D.N. on 06/02/2007
 * Checks whether the date Parameters are filled correctly and whether they are within the current date...before submitting the form

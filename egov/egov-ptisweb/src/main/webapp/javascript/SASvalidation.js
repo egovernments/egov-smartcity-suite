@@ -1,6 +1,6 @@
-#-------------------------------------------------------------------------------
-# /**
-#  * eGov suite of products aim to improve the internal efficiency,transparency, 
+/*#-------------------------------------------------------------------------------
+# 
+#   eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
 #     Copyright (C) <2015>  eGovernments Foundation
@@ -37,8 +37,8 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#  */
-#-------------------------------------------------------------------------------
+#  
+#-------------------------------------------------------------------------------*/
 /***********************************************
 * @FileName	:	SASvalidation.js
 * @author	:	Rajalakshmi D.N.
