@@ -51,6 +51,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.exceptions.AuthorizationException;
 import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.web.utils.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,51 +59,42 @@ import org.springframework.core.env.Environment;
 
 public class ThreadLocalsHandlerFilter implements Filter {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ThreadLocalsHandlerFilter.class);
-	
-	@Autowired
-	private Environment environment;
+    private static final Logger LOG = LoggerFactory.getLogger(ThreadLocalsHandlerFilter.class);
 
-	@Override
-	public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
-			throws IOException, ServletException {
-		try {
+    @Autowired
+    private Environment environment;
 
-			final String domainName = extractRequestedDomainName((HttpServletRequest) request);
-        	EGOVThreadLocals.setDomainName(domainName);
-			EGOVThreadLocals.setServletContext(((HttpServletRequest) request).getServletContext());
-			EGOVThreadLocals.setTenantID(environment.getProperty("tenant." + domainName));
+    @Override
+    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
+            throws IOException, ServletException {
+        try {
 
-			chain.doFilter(request, response);
+            final String domainName = WebUtils.extractRequestedDomainName((HttpServletRequest) request);
+            EGOVThreadLocals.setDomainName(domainName);
+            EGOVThreadLocals.setServletContext(((HttpServletRequest) request).getServletContext());
+            EGOVThreadLocals.setTenantID(environment.getProperty("tenant." + domainName));
 
-			EGOVThreadLocals.clearValues();
+            chain.doFilter(request, response);
 
-		} catch (final AuthorizationException e) {
-			throw e;
-		} catch (final Throwable e) {
-			LOG.error("Error occurred in SetThreadLocals Filter", e);
-			throw new EGOVRuntimeException("Internal Server Error", e);
-		}
+            EGOVThreadLocals.clearValues();
 
-	}
+        } catch (final AuthorizationException e) {
+            throw e;
+        } catch (final Throwable e) {
+            LOG.error("Error occurred in SetThreadLocals Filter", e);
+            throw new EGOVRuntimeException("Internal Server Error", e);
+        }
 
-	private String extractRequestedDomainName(final HttpServletRequest httpRequest) {
-		final String requestURL = httpRequest.getRequestURL().toString();
-		final int domainNameStartIndex = requestURL.indexOf("://")+3;
-		String domainName = requestURL.substring(domainNameStartIndex,requestURL.indexOf('/',domainNameStartIndex));
-		if (domainName.contains(":"))
-			domainName = domainName.split(":")[0];
-		return domainName;
-	}
+    }
 
-	@Override
-	public void init(final FilterConfig filterConfig) throws ServletException {
+    @Override
+    public void init(final FilterConfig filterConfig) throws ServletException {
 
-	}
+    }
 
-	@Override
-	public void destroy() {
+    @Override
+    public void destroy() {
 
-	}
+    }
 
 }

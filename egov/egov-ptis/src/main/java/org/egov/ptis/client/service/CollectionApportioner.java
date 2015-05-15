@@ -59,7 +59,7 @@ import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.utils.EgovUtils;
+import org.egov.infstr.utils.MoneyUtils;
 import org.egov.ptis.constants.PropertyTaxConstants;
 
 public class CollectionApportioner {
@@ -149,7 +149,7 @@ public class CollectionApportioner {
 					 * tax
 					 */
 					if (isPartialPayment && rebate.compareTo(BigDecimal.ZERO) == 1 && currInst.equals(installment)) {
-						halfRebate = EgovUtils.roundOff(rebate.divide(new BigDecimal(2)));
+						halfRebate = MoneyUtils.roundOff(rebate.divide(new BigDecimal(2)));
 						if (balance.plus(halfRebate).isGreaterThanOrEqualTo((instDmd.divide(new BigDecimal(2))))) {
 							rebate = halfRebate;
 						}

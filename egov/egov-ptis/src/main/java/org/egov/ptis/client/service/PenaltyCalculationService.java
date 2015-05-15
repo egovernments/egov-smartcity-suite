@@ -66,8 +66,8 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.utils.EgovUtils;
 import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.utils.MoneyUtils;
 import org.egov.ptis.client.bill.PenaltyBill;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -254,7 +254,7 @@ public class PenaltyCalculationService {
 
 		LOGGER.debug("calcPanalty - before rounding -  noOfMonths={}, penalty={}", noOfMonths, penalty);
 		
-		penalty = EgovUtils.roundOff(penalty);
+		penalty = MoneyUtils.roundOff(penalty);
 		
 		LOGGER.debug("calcPanalty - after rounding -  noOfMonths={}, penalty={}", noOfMonths, penalty);
 		

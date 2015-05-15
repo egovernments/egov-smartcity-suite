@@ -39,9 +39,6 @@
  */
 package org.egov.infstr.client.filter;
 
-import static org.egov.infstr.utils.EgovUtils.getDomainName;
-import static org.egov.infstr.utils.EgovUtils.getPrincipalName;
-
 import java.io.IOException;
 import java.security.Principal;
 import java.util.HashMap;
@@ -61,6 +58,7 @@ import org.egov.infra.admin.master.entity.CityWebsite;
 import org.egov.infra.admin.master.service.CityWebsiteService;
 import org.egov.infra.config.security.authentication.SecureUser;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.web.utils.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,63 +67,62 @@ import org.springframework.security.core.Authentication;
 @SuppressWarnings("all")
 public class SessionAttributeHandlerFilter implements Filter {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(SessionAttributeHandlerFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SessionAttributeHandlerFilter.class);
 
-	@Autowired
-	private SecurityUtils securityUtils;
+    @Autowired
+    private SecurityUtils securityUtils;
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	@Autowired
-	private CityWebsiteService cityWebsiteService;
+    @Autowired
+    private CityWebsiteService cityWebsiteService;
 
-	@Override
-	public void init(final FilterConfig config) {
-	}
+    @Override
+    public void init(final FilterConfig config) {
+    }
 
-	@Override
-	public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
-			throws IOException, ServletException {
-		final HttpServletRequest httpRequest = (HttpServletRequest) request;
-		final HttpSession httpSession = httpRequest.getSession();
+    @Override
+    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
+            throws IOException, ServletException {
+        final HttpServletRequest httpRequest = (HttpServletRequest) request;
+        final HttpSession httpSession = httpRequest.getSession();
 
-		if (httpSession.getAttribute("cityBoundaryId") == null) {
-			final CityWebsite city = cityWebsiteService.getCityWebSiteByURL(getDomainName(httpRequest.getRequestURL()
-					.toString()));
-			httpSession.setAttribute("cityBoundaryId", city.getBoundary().getId().toString());
-			httpSession.setAttribute("cityurl", city.getCityBaseURL());
-			httpSession.setAttribute("cityname", city.getCityName());
-			httpSession.setAttribute("citylogo", city.getLogo());
-			httpSession.setAttribute("citynamelocal", city.getCityNameLocal());
-		}
+        if (httpSession.getAttribute("cityBoundaryId") == null) {
+            final CityWebsite city = cityWebsiteService.getCityWebSiteByURL(WebUtils.extractRequestedDomainName(httpRequest));
+            httpSession.setAttribute("cityBoundaryId", city.getBoundary().getId().toString());
+            httpSession.setAttribute("cityurl", city.getCityBaseURL());
+            httpSession.setAttribute("cityname", city.getCityName());
+            httpSession.setAttribute("citylogo", city.getLogo());
+            httpSession.setAttribute("citynamelocal", city.getCityNameLocal());
+        }
 
-		final Principal principal = httpRequest.getUserPrincipal();
-		if (principal != null) {
-			final String prinName = getPrincipalName(principal.getName());
-			final String attr = (String) httpSession.getAttribute("username");
-			if (attr == null || prinName != null && !prinName.equalsIgnoreCase(attr)) {
-				final Authentication authentication = securityUtils.getCurrentAuthentication().get();
-				final HashMap<String, String> credentials = (HashMap<String, String>) authentication.getCredentials();
-				httpSession.setAttribute("locationId", credentials.get("locationId"));
-				httpSession.setAttribute("counterId", credentials.get("counterId"));
-				httpSession.setAttribute("userid", ((SecureUser) authentication.getPrincipal()).getUserId());
-				httpSession.setAttribute("username", authentication.getName());
-			}
-			if (httpSession.getAttribute("userid") != null) {
-				LOGGER.info("Setting User Id to EgovThreadLocal");
-				EGOVThreadLocals.setUserId((Long)httpSession.getAttribute("userid"));
-			}
+        final Principal principal = httpRequest.getUserPrincipal();
+        if (principal != null) {
+            final String prinName = principal.getName();
+            final String attr = (String) httpSession.getAttribute("username");
+            if (attr == null || prinName != null && !prinName.equalsIgnoreCase(attr)) {
+                final Authentication authentication = securityUtils.getCurrentAuthentication().get();
+                final HashMap<String, String> credentials = (HashMap<String, String>) authentication.getCredentials();
+                httpSession.setAttribute("locationId", credentials.get("locationId"));
+                httpSession.setAttribute("counterId", credentials.get("counterId"));
+                httpSession.setAttribute("userid", ((SecureUser) authentication.getPrincipal()).getUserId());
+                httpSession.setAttribute("username", authentication.getName());
+            }
+            if (httpSession.getAttribute("userid") != null) {
+                LOGGER.info("Setting User Id to EgovThreadLocal");
+                EGOVThreadLocals.setUserId((Long) httpSession.getAttribute("userid"));
+            }
 
-		} else
-			EGOVThreadLocals.setUserId(null);
-		
-		chain.doFilter(request, response);
+        } else
+            EGOVThreadLocals.setUserId(null);
 
-	}
+        chain.doFilter(request, response);
 
-	@Override
-	public void destroy() {
-	}
+    }
+
+    @Override
+    public void destroy() {
+    }
 
 }

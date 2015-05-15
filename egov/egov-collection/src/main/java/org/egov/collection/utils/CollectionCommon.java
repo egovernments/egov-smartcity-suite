@@ -90,7 +90,7 @@ import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovUtils;
+import org.egov.infstr.utils.MoneyUtils;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.model.instrument.InstrumentHeader;
 import org.springframework.transaction.annotation.Transactional;
@@ -873,7 +873,7 @@ public class CollectionCommon {
         }
         if (paytInfoChequeDD.getInstrumentNumber() == null
                 || CollectionConstants.BLANK.equals(paytInfoChequeDD.getInstrumentNumber())
-                || !EgovUtils.isInteger(paytInfoChequeDD.getInstrumentNumber())
+                || !MoneyUtils.isInteger(paytInfoChequeDD.getInstrumentNumber())
                 || paytInfoChequeDD.getInstrumentNumber().length() != 6) {
             invalidChequeDDPaytMsg += "Invalid Cheque/DD Instrument Number[" + paytInfoChequeDD.getInstrumentNumber()
                     + "]. \n";

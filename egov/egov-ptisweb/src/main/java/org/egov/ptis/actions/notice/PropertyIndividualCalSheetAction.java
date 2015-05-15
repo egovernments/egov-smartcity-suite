@@ -39,21 +39,21 @@
  ******************************************************************************/
 package org.egov.ptis.actions.notice;
 
-import static org.egov.infstr.utils.EgovUtils.roundOffTwo;
+import static org.egov.infstr.utils.MoneyUtils.roundOffTwo;
+import static org.egov.infstr.utils.MoneyUtils.roundOff;
+import static org.egov.ptis.client.util.PropertyTaxUtil.isNotNull;
+import static org.egov.ptis.client.util.PropertyTaxUtil.isNotZero;
+import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
 import static org.egov.ptis.constants.PropertyTaxConstants.CENTRALGOVT_BUILDING_ALV_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTAVAIL;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_CENTRAL_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPENPLOT_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATEGOVT_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_STATE_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_CALSHEET_FOR_GOVT_PROPS;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_DEMAND_CALSHEET;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATEGOVT_BUILDING_ALV_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.SqFt;
-import static org.egov.ptis.client.util.PropertyTaxUtil.isNotNull;
-import static org.egov.ptis.client.util.PropertyTaxUtil.isNotZero;
-import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -66,14 +66,12 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.convention.annotation.Namespace;
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.commons.Installment;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.reporting.viewer.ReportViewerUtil;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.utils.EgovUtils;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.bean.PropertyCalSheetInfo;
 import org.egov.ptis.client.model.AreaTaxCalculationInfo;
@@ -368,7 +366,7 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 			}
 			
 			unitTaxInfo.setUnitArea(roundOffTwo(totalUnitArea));
-			unitTaxInfo.setMonthlyRent(EgovUtils.roundOff(totalMonthlyRent));
+			unitTaxInfo.setMonthlyRent(roundOff(totalMonthlyRent));
 			unitTaxInfo.setUnitAreaInSqFt(roundOffTwo(totalUnitArea.multiply(SqFt)));
 			unitTaxes.add(unitTaxInfo);
 		}

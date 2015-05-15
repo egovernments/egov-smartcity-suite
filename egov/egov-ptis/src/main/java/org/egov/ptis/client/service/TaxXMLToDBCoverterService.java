@@ -41,7 +41,6 @@ package org.egov.ptis.client.service;
 
 import static java.math.BigDecimal.ROUND_HALF_UP;
 import static java.math.BigDecimal.ZERO;
-import static org.egov.infstr.utils.EgovUtils.roundOffTwo;
 import static org.egov.ptis.client.util.PropertyTaxUtil.isNotNull;
 import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
 import static org.egov.ptis.constants.PropertyTaxConstants.CENTRAL_GOVT_SHORTFORM;
@@ -79,6 +78,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRAT
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_MIGRATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.TENANT_OCC;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_OCC;
+import static org.egov.infstr.utils.MoneyUtils.roundOffTwo;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;

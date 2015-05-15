@@ -180,8 +180,8 @@ import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.utils.EgovUtils;
 import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.utils.MoneyUtils;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.EisCommonsService;
@@ -1899,7 +1899,7 @@ public class PropertyTaxUtil {
 	}
 
 	public static BigDecimal roundOffTax(BigDecimal tax) {
-		return EgovUtils.roundOff(tax);
+		return MoneyUtils.roundOff(tax);
 	}
 
 	/**
@@ -2330,7 +2330,7 @@ public class PropertyTaxUtil {
 		DesignationMaster designation = null;
 		if (userId != null && userId.intValue() != 0) {
 			position = eisCommonsService.getPositionByUserId(userId);
-			designation = position.getDeptDesigId().getDesigId();
+			designation = position.getDeptDesigId().getDesignation();
 		}
 		return designation;
 	}

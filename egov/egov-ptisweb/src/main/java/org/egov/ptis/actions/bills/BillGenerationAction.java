@@ -520,7 +520,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 				if (property.getBasicProperty().getAllChangesCompleted()) {
 					nextStateValue = nextStateValue.append(WF_STATE_NOTICE_GENERATION_PENDING);
 				} else {
-					nextStateValue = nextStateValue.append(nextPosition.getDeptDesigId().getDeptId().getName()).append("_")
+					nextStateValue = nextStateValue.append(nextPosition.getDeptDesigId().getDepartment().getName()).append("_")
 							.append(WF_STATE_APPROVAL_PENDING);
 				}
 			} else {

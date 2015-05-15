@@ -43,6 +43,7 @@ import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_NON_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_OPENPLOT;
 import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_RESD;
+import static org.egov.infstr.utils.MoneyUtils.roundOff;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -51,7 +52,6 @@ import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infstr.utils.EgovUtils;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
@@ -158,10 +158,10 @@ public class BoundaryWisePropUsgeDelegate {
 					}
 				}
 				bndryBean = new BoundryWisePropUsgeBean();
-				bndryBean.setArrDmd(EgovUtils.roundOff(aggArrearDmdTot));
-				bndryBean.setCurrDmd(EgovUtils.roundOff(aggCurrentDmdTot));
+				bndryBean.setArrDmd(roundOff(aggArrearDmdTot));
+				bndryBean.setCurrDmd(roundOff(aggCurrentDmdTot));
 				bndryBean.setPropCount(aggTotalProps);
-				bndryBean.setTotalDemand(EgovUtils.roundOff(aggArrearDmdTot.add(aggCurrentDmdTot)));
+				bndryBean.setTotalDemand(roundOff(aggArrearDmdTot.add(aggCurrentDmdTot)));
 				LOGGER.debug("Total Properties : " + bndryBean.getPropCount() + ", " + 
 							"Arrears Demand : " + bndryBean.getArrDmd() + ", " + 
 							"Current Demand : " + bndryBean.getArrDmd() + ", " + 
@@ -203,10 +203,10 @@ public class BoundaryWisePropUsgeDelegate {
 					}
 					indTotBean = new BoundryWisePropUsgeBean();
 					indTotBean.setPropCount((Integer) totList[1]);
-					indTotBean.setArrDmd(EgovUtils.roundOff((BigDecimal) totList[2]));
-					indTotBean.setCurrDmd(EgovUtils.roundOff((BigDecimal) totList[3]));
+					indTotBean.setArrDmd(roundOff((BigDecimal) totList[2]));
+					indTotBean.setCurrDmd(roundOff((BigDecimal) totList[3]));
 					totalDemand = totalDemand.add((BigDecimal) totList[2]).add((BigDecimal) totList[3]);
-					indTotBean.setTotalDemand(EgovUtils.roundOff(totalDemand));
+					indTotBean.setTotalDemand(roundOff(totalDemand));
 					propUsag.put(indPropCount, indTotBean);
 					LOGGER.debug("Individual Aggregate Property count : " + indaggPropCnt + ", " + 
 								"Individual Current Demand : " + indCurrDemand + ", " + 
@@ -214,9 +214,9 @@ public class BoundaryWisePropUsgeDelegate {
 								"Individual Total Demand : " + indTotalDemand);
 				}
 				indAggTotBean = new BoundryWisePropUsgeBean();
-				indAggTotBean.setArrDmd(EgovUtils.roundOff(indAggDemand));
-				indAggTotBean.setCurrDmd(EgovUtils.roundOff(indCurrDemand));
-				indAggTotBean.setTotalDemand(EgovUtils.roundOff(indTotalDemand));
+				indAggTotBean.setArrDmd(roundOff(indAggDemand));
+				indAggTotBean.setCurrDmd(roundOff(indCurrDemand));
+				indAggTotBean.setTotalDemand(roundOff(indTotalDemand));
 				indAggTotBean.setPropCount(indaggPropCnt);
 				LOGGER.debug("Total Properties : " + indAggTotBean.getPropCount() + ", " + 
 							"Arrears Demand : " + indAggTotBean.getArrDmd() + ", " + 
@@ -268,10 +268,10 @@ public class BoundaryWisePropUsgeDelegate {
 		} else if (usgage != null && usgage.equals("withUsage")) {
 			propId = Integer.valueOf(((Long) bndryObj[1]).intValue());
 		}
-		bndryBean.setArrDmd(EgovUtils.roundOff(arrDmd));
-		bndryBean.setCurrDmd(EgovUtils.roundOff(currDmd));
+		bndryBean.setArrDmd(roundOff(arrDmd));
+		bndryBean.setCurrDmd(roundOff(currDmd));
 		bndryBean.setPropCount(propCount);
-		bndryBean.setTotalDemand(EgovUtils.roundOff(totalDemand));
+		bndryBean.setTotalDemand(roundOff(totalDemand));
 		propUsageIDMap.put(propId, bndryBean);
 		LOGGER.debug("Property Id : " + propId + ", "
 				+ "Total Properties : " + bndryBean.getPropCount() + ", " + "Arrears Demand : " + bndryBean.getArrDmd()

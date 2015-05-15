@@ -91,8 +91,8 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovUtils;
 import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.utils.MoneyUtils;
 import org.egov.ptis.client.service.CollectionApportioner;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -541,18 +541,18 @@ public class PropertyTaxCollection extends TaxCollection {
 		if (today.before(firstRebateDate.getTime()) || today.equals(firstRebateDate.getTime())) {
 			if (collection.compareTo(BigDecimal.ZERO) == 1) {
 				if (collection.compareTo(halfYearTax) <= 0) {
-					rebate = EgovUtils.roundOff((rebateApplTaxAmt.multiply(SECOND_REBATETAX_PERC)).divide(BigDecimal
+					rebate = MoneyUtils.roundOff((rebateApplTaxAmt.multiply(SECOND_REBATETAX_PERC)).divide(BigDecimal
 							.valueOf(100)));
 				} else {
 					rebate = BigDecimal.ZERO;
 				}
 			} else {
-				rebate = EgovUtils.roundOff((rebateApplTaxAmt.multiply(FIRST_REBATETAX_PERC)).divide(BigDecimal
+				rebate = MoneyUtils.roundOff((rebateApplTaxAmt.multiply(FIRST_REBATETAX_PERC)).divide(BigDecimal
 						.valueOf(100)));
 			}
 		} else if (today.before(secondRebateDate.getTime()) || today.equals(secondRebateDate.getTime())) {
 			if (collection.compareTo(halfYearTax) <= 0) {
-				rebate = EgovUtils.roundOff((rebateApplTaxAmt.multiply(SECOND_REBATETAX_PERC)).divide(BigDecimal
+				rebate = MoneyUtils.roundOff((rebateApplTaxAmt.multiply(SECOND_REBATETAX_PERC)).divide(BigDecimal
 						.valueOf(100)));
 			} else {
 				rebate = BigDecimal.ZERO;

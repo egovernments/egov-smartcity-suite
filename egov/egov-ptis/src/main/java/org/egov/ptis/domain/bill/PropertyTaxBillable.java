@@ -78,8 +78,8 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.dao.ModuleDao;
-import org.egov.infstr.utils.EgovUtils;
 import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.utils.MoneyUtils;
 import org.egov.ptis.client.model.PropertyInstTaxBean;
 import org.egov.ptis.client.service.Amount;
 import org.egov.ptis.client.service.PenaltyCalculationService;
@@ -417,7 +417,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 					.multiply(BigDecimal.valueOf(noOfMonths));
 
 		}
-		return EgovUtils.roundOff(penalty);
+		return MoneyUtils.roundOff(penalty);
 	}
 
 	public BigDecimal calcCurrPenalty(Date latestCollRcptDate, BigDecimal amount) {
@@ -461,7 +461,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 					.multiply(new BigDecimal(noOfMonths));
 		}
 
-		return EgovUtils.roundOff(penalty);
+		return MoneyUtils.roundOff(penalty);
 	}
 
 	@Override
