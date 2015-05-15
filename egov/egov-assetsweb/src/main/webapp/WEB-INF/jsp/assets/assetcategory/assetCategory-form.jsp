@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency,
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,7 +36,7 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------- -->
 <%@ taglib prefix="s" uri="/struts-tags"%>
 
 <style type="text/css">
@@ -48,12 +48,12 @@
 <script>
 function goBack()
 {
-	window.location="${pageContext.request.contextPath}/assetcategory/assetCategory!edit.action";	
+	window.location="${pageContext.request.contextPath}/assetcategory/assetCategory-edit.action";	
 }
 
 function goNewForm()
 {
-	window.location="${pageContext.request.contextPath}/assetcategory/assetCategory!newform.action";	
+	window.location="${pageContext.request.contextPath}/assetcategory/assetCategory-newform.action";	
 }
 
 function setupAjaxAssettype(elem){
@@ -94,7 +94,7 @@ function resetParentFields(){
 
 mySuccessHandler = function(req,res){
   results=res.results;
-     asset_type_id=document.assetCategoryForm.assettype.value;
+     asset_type_id=document.assetCategoryForm.assetType.value;
     if(asset_type_id!=1){
   if(results[0].xDepreciationMethod!="")
 	document.getElementById('depreciationMethod').value=results[0].xDepreciationMethod;
@@ -198,10 +198,10 @@ parentCatDetailsSuccessHandler = function(req,res){
 						<s:select headerKey="-1" disabled="%{sDisabled}"
 							headerValue="%{getText('list.default.select')}" name="assetType"
 							id="assetType" cssClass="selectwk"
-							list="dropdownData.assetTypeList" listKey="value" listValue='value'
+							list="dropdownData.assetTypeList" 
 							onChange="setupAjaxAssettype(this);"/>
 						<egov:ajaxdropdown id="populateParentcat" fields="['Text','Value']" 
-							dropdownId='parentcat' url='assetcategory/ajaxAssetCategory!populateParentCategories.action' 
+							dropdownId='parentcat' url='assetcategory/ajaxAssetCategory-populateParentCategories.action' 
 							selectedValue="%{parent.id}"/>
 					</td>
 				</tr>
@@ -225,7 +225,7 @@ parentCatDetailsSuccessHandler = function(req,res){
 						<s:select headerKey="-1" disabled="%{sDisabled}"
 							headerValue="%{getText('list.default.select')}" name="depreciationMethod"
 							id="depreciationMethod" cssClass="selectwk"
-							list="dropdownData.depreciationMethodList" listKey="value" listValue='value' />
+							list="dropdownData.depreciationMethodList"/>
 					</td>
 				</tr>
 				<tr>

@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency,
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,7 +36,7 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------- -->
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <html>
 	<head>  
@@ -104,7 +104,7 @@
 						//$('catAttrTemplate').value = $F('catTemVal').toJSON();
 						document.getElementById('catAttrTemplate').value=document.getElementById('catTemVal').value;
 				    	enableFields();
-				    	document.assetCategoryForm.action='${pageContext.request.contextPath}/assetcategory/assetCategory!save.action';
+				    	document.assetCategoryForm.action='${pageContext.request.contextPath}/assetcategory/assetCategory-save.action';
 				    	document.assetCategoryForm.submit();
 				    }
 				 }
@@ -147,7 +147,7 @@
 					<div class="buttonholderwk" id="divButRow1" name="divButRow1">
 						<input type="submit" class="buttonfinal" value="SAVE"
 							id="saveButton" name="button"
-							onclick="validateFormAndSubmit();" />
+							onclick="return validateFormAndSubmit();" />
 						<!--input type="button" class="buttonfinal" value="CANCEL"
 							id="cancelButton" name="button"
 							onclick="alert('Pressed!');" /-->

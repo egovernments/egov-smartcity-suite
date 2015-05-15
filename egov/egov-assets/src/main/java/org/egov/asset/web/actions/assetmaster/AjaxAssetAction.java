@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.asset.web.action.assetmaster;
+package org.egov.asset.web.actions.assetmaster;
 
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -56,9 +56,7 @@ import org.egov.lib.admbndry.BoundaryTypeDAO;
 import org.egov.lib.admbndry.HeirarchyTypeDAO;
 import org.egov.web.actions.BaseFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 public class AjaxAssetAction extends BaseFormAction {
 
 	private static final long serialVersionUID = 2501333661006168742L;

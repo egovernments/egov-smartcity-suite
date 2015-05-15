@@ -58,9 +58,7 @@ import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.lib.admbndry.BoundaryTypeDAO;
 import org.egov.lib.admbndry.HeirarchyTypeDAO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 public class AssetCommonUtil {
 
 	private static final Logger LOGGER = Logger

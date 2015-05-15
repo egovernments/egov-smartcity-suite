@@ -56,36 +56,36 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv="Pragma" content="no-cache"/>
-<link href="<egov:url path='/css/assetmanagement.css'/>" rel="stylesheet" type="text/css" />
-<link href="<egov:url path='/css/commonegov.css'/>" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" type="text/css" href="<egov:url prefix='/egi'  path='/commonyui/yui2.7/fonts/fonts-min.css'/>" />
-<link rel="stylesheet" type="text/css" href="<egov:url prefix='/egi'  path='/commonyui/yui2.7/datatable/assets/skins/sam/datatable.css'/>" />
+<link href="<c:url value='/css/assetmanagement.css'/>" rel="stylesheet" type="text/css" />
+<link href="<c:url value='/css/commonegov.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/fonts/fonts-min.css"/>
+<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/datatable/assets/skins/sam/datatable.css"/>
 
-<link rel="stylesheet" type="text/css" href="<egov:url prefix='/egi'  path='/commonyui/yui2.7/assets/skins/sam/autocomplete.css'/>" />
+<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/assets/skins/sam/autocomplete.css'/>" />
 
-<script type="text/javascript" src="<egov:url prefix='/egi'  path='/commonyui/yui2.7/yahoo-dom-event/yahoo-dom-event.js'/>"></script>
-<script type="text/javascript" src="<egov:url prefix='/egi'  path='/commonyui/yui2.7/dragdrop/dragdrop.js'/>"></script>
-<script type="text/javascript" src="<egov:url prefix='/egi'  path='/commonyui/yui2.7/element/element.js'/>"></script>
-<script type="text/javascript" src="<egov:url prefix='/egi'  path='/commonyui/yui2.7/connection/connection-min.js'/>"></script>
-<script type="text/javascript" src="<egov:url prefix='/egi'  path='/commonyui/yui2.7/datasource/datasource-min.js'/>"></script>
+<script type="text/javascript" src="/egi/commonyui/yui2.7/yahoo-dom-event/yahoo-dom-event.js"></script>
+<script type="text/javascript" src="/egi/commonyui/build/dragdrop/dragdrop.js"></script>
+<script type="text/javascript" src="/egi/commonyui/yui2.7/element/element.js"></script>
+<script type="text/javascript" src="/egi/commonyui/yui2.7/connection/connection-min.js"></script>
+<script type="text/javascript" src="/egi/commonyui/yui2.7/datasource/datasource-min.js"></script>
 
-<script type="text/javascript" src="<egov:url prefix='/egi'  path='/commonyui/yui2.7/autocomplete/autocomplete-min.js'/>"></script>
-<script type="text/javascript" src="<egov:url prefix='/egi'  path='/commonyui/yui2.7/datatable/datatable.js'/>"></script>
+<script type="text/javascript" src="/egi/commonyui/build/autocomplete/autocomplete-min.js"></script>
+<script type="text/javascript" src="/egi/commonyui/yui2.7/datatable/datatable.js"></script>
 
-<script type="text/javascript" src="<egov:url prefix='/egi'  path='/commonyui/yui2.7/animation/animation-min.js'/>"></script>
-<script type="text/javascript" src="<egov:url path='/js/helper.js'/>"></script>
-<script type="text/javascript" src="<egov:url path='/js/prototype.js'/>"></script>
+<script type="text/javascript" src="/egi/commonyui/build/animation/animation-min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/js/helper.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/js/prototype.js'/>"></script>
 
-<script type="text/javascript" src="/egi/script/calendar.js"></script>
-<script type="text/javascript" src="/egi/javascript/calender.js"></script>
-<script type="text/javascript" src="/egi/script/jsCommonMethods.js"></script>
-<script type="text/javascript" src="/egi/commonjs/ajaxCommonFunctions.js"></script>
-<script type="text/javascript" src="/egi/javascript/validations.js"></script>
+<script type="text/javascript" src="<c:url value='/script/calendar.js'/>" ></script>
+<script type="text/javascript" src="<c:url value='/javascript/calender.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/script/jsCommonMethods.js' />"></script>
+<script type="text/javascript" src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/javascript/validations.js'/>"></script>
 
-<script type="text/javascript" src="/egassets/js/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="/egassets/js/jquery-ui-1.8.22.custom.min.js"></script>  
-<link rel="stylesheet" type="text/css" href="/egassets/css/jquery-ui/css/ui-lightness/jquery-ui-1.8.4.custom.css" />
-<script type="text/javascript" src="/egassets/js/ajax-script.js"></script>
+<script type="text/javascript" src="/egov-assetsweb/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/egov-assetsweb/js/jquery-ui-1.8.22.custom.min.js"></script>  
+<link rel="stylesheet" type="text/css" href="/egov-assetsweb/css/jquery-ui/css/ui-lightness/jquery-ui-1.8.4.custom.css" />
+<script type="text/javascript" src="/egov-assetsweb/js/ajax-script.js"></script>
 
 <script type="text/javascript" >
 window.document.onkeydown = function(event) { 
@@ -106,13 +106,12 @@ window.document.onkeydown = function(event) {
 
 </head>
 <body id="Home">
-<div id="loadingMask" style="display:none;overflow:none;scroll:none;" ><img src="/egi/images/bar_loader.gif"> <span id="message">Please wait....</span></div>
+<div id="loadingMask" style="display:none;overflow:none;scroll:none;" ><img src="/egi/images/loadbar.gif"> <span id="message">Please wait....</span></div>
 	<div class="topbar">
 		<div style="margin-top:10px">eGov Assets <decorator:title/> </div>
 	</div>
 <div class="navibarwk">
 <div class="piconwk">
-<!--  a href="#"><img src="<egov:url path='/image/help.png'/>" alt="Print" width="16" height="16" border="0" /></a -->
 </div>
 </div>
 <div class="navibarshadowwk"></div>

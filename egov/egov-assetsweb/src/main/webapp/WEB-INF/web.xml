@@ -131,21 +131,24 @@
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>threadLocalsHandlerFilter</filter-name>
-		<url-pattern>*.jsp</url-pattern>
-		<url-pattern>*.do</url-pattern>
+		<!-- <url-pattern>*.jsp</url-pattern>
+		<url-pattern>*.do</url-pattern> -->
 		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>openEntityManagerInViewFilter</filter-name>
-		<url-pattern>/*</url-pattern>
+		<!-- <url-pattern>/*</url-pattern> -->
+		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>securityFilterChain</filter-name>
-		<url-pattern>/*</url-pattern>
+		<!-- <url-pattern>/*</url-pattern> -->
+		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>sessionAttributeHandlerFilter</filter-name>
-		<url-pattern>/*</url-pattern>
+		<!-- <url-pattern>/*</url-pattern> -->
+		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>securityFilterChain</filter-name>
@@ -157,8 +160,8 @@
 	
 	<filter-mapping>
 		<filter-name>ResponseOverrideFilter</filter-name>
-		<url-pattern>*.do</url-pattern>
-		<url-pattern>*.jsp</url-pattern>
+	<!--<url-pattern>*.do</url-pattern>
+		<url-pattern>*.jsp</url-pattern> -->
 		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
@@ -168,8 +171,8 @@
 	<filter-mapping>
 		<filter-name>sitemesh</filter-name>
 		<url-pattern>*.action</url-pattern>
-		<url-pattern>*.do</url-pattern>
-		<url-pattern>*.jsp</url-pattern>
+		<!-- <url-pattern>*.do</url-pattern>
+		<url-pattern>*.jsp</url-pattern> -->
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>INCLUDE</dispatcher>
@@ -238,6 +241,14 @@
 			<taglib-uri>http://displaytag.sf.net</taglib-uri>
 			<taglib-location>WEB-INF/displaytag.tld</taglib-location>
 		</taglib>
+		<taglib>
+			<taglib-uri>http://www.opensymphony.com/sitemesh/decorator</taglib-uri>
+			<taglib-location>/WEB-INF/sitemesh-decorator.tld</taglib-location>
+ 		</taglib>
+ 		<taglib>
+			<taglib-uri>http://www.opensymphony.com/sitemesh/page</taglib-uri>
+			<taglib-location>/WEB-INF/sitemesh-page.tld</taglib-location>
+ 		</taglib>
 		<jsp-property-group>
 			<url-pattern>*.jsp</url-pattern>
 			<page-encoding>UTF-8</page-encoding>

@@ -42,14 +42,12 @@ package org.egov.asset.service;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.commons.dao.GenericHibernateDaoFactory;
 import org.egov.infstr.config.AppConfigValues;
-import org.springframework.transaction.annotation.Transactional;
+import org.egov.infstr.config.dao.AppConfigValuesHibernateDAO;
 
-@Transactional(readOnly = true)
 public class AppService {
 	private static final Logger logger = Logger.getLogger(AppService.class);
-	private GenericHibernateDaoFactory genericHibDao;
+	private AppConfigValuesHibernateDAO appConfigValuesDAO;
 
 	/**
 	 * This method will return the value in AppConfigValue table for the given
@@ -61,7 +59,7 @@ public class AppService {
 	 */
 	public List<AppConfigValues> getAppConfigValue(final String moduleName,
 			final String key) {
-		return genericHibDao.getAppConfigValuesDAO()
+		return appConfigValuesDAO
 				.getConfigValuesByModuleAndKey(moduleName, key);
 	}
 
@@ -94,8 +92,9 @@ public class AppService {
 	}
 
 	// Spring Injection
-	public void setGenericHibDao(final GenericHibernateDaoFactory genericHibDao) {
-		this.genericHibDao = genericHibDao;
+	public void setAppConfigValuesDAO(
+			AppConfigValuesHibernateDAO appConfigValuesDAO) {
+		this.appConfigValuesDAO = appConfigValuesDAO;
 	}
 
 }

@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.asset.web.action.assetmaster;
+package org.egov.asset.web.actions.assetmaster;
 
 import static java.lang.Boolean.FALSE;
 import static org.egov.asset.util.AssetConstants.CREATEASSET;
@@ -88,7 +88,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
-@Result(name = "success", type = "ServletRedirectResult.class", location = "asset.action")
+@Result(name = "success", type = "redirect", location = "asset.action")
 @Transactional(readOnly = true)
 public class AssetAction extends SearchFormAction {
 
@@ -343,13 +343,12 @@ public class AssetAction extends SearchFormAction {
 	 *
 	 * @return a <code>String</code> representing the value 'NEW'
 	 */
-	@Action(value = "/assetmaster/asset-newform.action")
+	@Action(value = "/assetmaster/asset-newform", results = @Result(name = NEW, location = "/WEB-INF/jsp/assets/assetmaster/asset-new.jsp"))
 	public String newform() {
 		userMode = NEW;
 		return showform();
 	}
 
-	@Action(value = "/assetmaster/asset-showform.action")
 	public String showform() {
 		LOGGER.info("****User Mode: " + userMode);
 		String result = null;
@@ -491,13 +490,13 @@ public class AssetAction extends SearchFormAction {
 		return zoneList;
 	}
 
-	@Action(value = "/assetmaster/asset-edit.action")
+	@Action(value = "/assetmaster/asset-edit", results = @Result(name = SEARCH, location = "/WEB-INF/jsp/assets/assetmaster/asset-edit.jsp"))
 	public String edit() {
 		userMode = EDIT;
 		return SEARCH;
 	}
 
-	@Action(value = "/assetmaster/asset-view.action")
+	@Action(value = "/assetmaster/asset-view", results = @Result(name = SEARCH, location = "/WEB-INF/jsp/assets/assetmaster/asset-search.jsp"))
 	public String view() {
 		userMode = VIEW;
 		return SEARCH;
@@ -508,7 +507,7 @@ public class AssetAction extends SearchFormAction {
 	 *
 	 * @throws Exception
 	 */
-	@Action(value = "/assetmaster/asset-list.action")
+	@Action(value = "/assetmaster/asset-list", results = @Result(name = SEARCH, location = "/WEB-INF/jsp/assets/assetmaster/assetCategory-new.jsp"))
 	public String list() throws Exception {
 		setXmlconfigname(xmlconfigname);
 		setCategoryname(categoryname);
@@ -586,13 +585,13 @@ public class AssetAction extends SearchFormAction {
 	/**
 	 * asset search plugin for other modules - works and stores
 	 */
-	@Action(value = "/assetmaster/asset-showSearchPage.action")
+	@Action(value = "/assetmaster/asset-showSearchPage", results = @Result(name = SEARCH_PLUGIN, location = "/WEB-INF/jsp/assets/assetmaster/assetCategory-search.jsp"))
 	public String showSearchPage() {
 		setupRequestData();
 		return SEARCH_PLUGIN;
 	}
 
-	@Action(value = "/assetmaster/asset-showSerachResult.action")
+	@Action(value = "/assetmaster/asset-showSerachResult")
 	public String showSerachResult() throws Exception {
 		setStatusList();
 		if (statusId != null && !statusId.isEmpty())
@@ -606,7 +605,7 @@ public class AssetAction extends SearchFormAction {
 	/**
 	 * test page for search plugin - not in use
 	 */
-	@Action(value = "/assetmaster/asset-showPlugin.action")
+	@Action(value = "/assetmaster/asset-showPlugin")
 	public String showPlugin() {
 		return "plugin";
 	}

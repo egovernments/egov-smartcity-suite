@@ -37,15 +37,13 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.asset.web.action.assetcategory;
+package org.egov.asset.web.actions.assetcategory;
 
 import java.util.List;
 
 import org.egov.asset.model.AssetCategory;
 import org.egov.web.actions.BaseFormAction;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 public class AjaxAssetCategoryAction extends BaseFormAction {
 
 	/**

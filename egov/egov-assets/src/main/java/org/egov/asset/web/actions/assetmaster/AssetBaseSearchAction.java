@@ -37,7 +37,7 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.asset.web.action.assetmaster;
+package org.egov.asset.web.actions.assetmaster;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -53,9 +53,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.web.actions.SearchFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 public abstract class AssetBaseSearchAction extends SearchFormAction {
 
 	private static final long serialVersionUID = 1L;
