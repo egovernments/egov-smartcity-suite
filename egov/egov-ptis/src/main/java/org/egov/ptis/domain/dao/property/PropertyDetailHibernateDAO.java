@@ -39,32 +39,36 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
-import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * TODO Brief Description of the purpose of the class/interface
- * 
- * @author Neetu
- * @version 2.00
- */
-
-public class PropertyDetailHibernateDAO extends GenericHibernateDAO implements PropertyDetailDAO {
-	/**
-	 * @param persistentClass
-	 * @param session
-	 */
+@Repository(value = "propertyDetailDAO")
+@Transactional(readOnly = true)
+public class PropertyDetailHibernateDAO implements PropertyDetailDAO {
 
 	private static final Logger LOGGER = Logger.getLogger(PropertyDetailHibernateDAO.class);
 
-	public PropertyDetailHibernateDAO(Class persistentClass, Session session) {
-		super(persistentClass, session);
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
 	}
+
+	@Autowired
+	private BasicPropertyDAO basicPropertyDAO;
 
 	/*
 	 * public PropertyDetail getPropertyDetailByPropertyDetailsID(String
@@ -74,6 +78,7 @@ public class PropertyDetailHibernateDAO extends GenericHibernateDAO implements P
 	 * (PropertyDetail)qry.uniqueResult(); }
 	 */
 
+	@Override
 	public PropertyDetail getPropertyDetailByProperty(Property property) {
 		Query qry = getCurrentSession().createQuery(
 				"from PropertyDetail PD where PD.property = :property ");
@@ -81,6 +86,7 @@ public class PropertyDetailHibernateDAO extends GenericHibernateDAO implements P
 		return (PropertyDetail) qry.uniqueResult();
 	}
 
+	@Override
 	public PropertyDetail getPropertyDetailBySurveyNumber(String surveyNumber) {
 		Query qry = getCurrentSession().createQuery(
 				"from PropertyDetail PD where PD.property.surveyNumber =: SURVEY_NUM ");
@@ -88,11 +94,10 @@ public class PropertyDetailHibernateDAO extends GenericHibernateDAO implements P
 		return (PropertyDetail) qry.uniqueResult();
 	}
 
+	@Override
 	public PropertyDetail getPropertyDetailByRegNum(String regNum) {
 		LOGGER.info("getPropertyDetailByRegNum Invoked");
 
-		BasicPropertyDAO basicPropertyDAO = PropertyDAOFactory.getDAOFactory()
-				.getBasicPropertyDAO();
 		BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByRegNum(regNum);
 
 		LOGGER.info("basicProperty : " + basicProperty);
@@ -107,6 +112,36 @@ public class PropertyDetailHibernateDAO extends GenericHibernateDAO implements P
 		qry1.setEntity("Property", property);
 
 		return (PropertyDetail) qry1.uniqueResult();
+	}
+
+	@Override
+	public PropertyDetail findById(Integer id, boolean lock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<PropertyDetail> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PropertyDetail create(PropertyDetail propertyDetail) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(PropertyDetail propertyDetail) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public PropertyDetail update(PropertyDetail propertyDetail) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

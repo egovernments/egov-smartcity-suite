@@ -40,30 +40,31 @@
 package org.egov.ptis.domain.dao.property;
 
 import java.util.Date;
+import java.util.List;
 
-import org.egov.infstr.dao.GenericHibernateDAO;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * This Class implememets the PropertyOccupationDAO for the Hibernate specific
- * Implementation
- * 
- * @author Neetu
- * @version 2.00
- */
+@Repository(value = "propertyOccupationDAO")
+@Transactional(readOnly = true)
+public class PropertyOccupationHibernateDAO implements PropertyOccupationDAO {
 
-public class PropertyOccupationHibernateDAO extends GenericHibernateDAO implements PropertyOccupationDAO {
-	/**
-	 * @param persistentClass
-	 * @param session
-	 */
-	public PropertyOccupationHibernateDAO(Class persistentClass, Session session) {
-		super(persistentClass, session);
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
 	}
 
-	public PropertyOccupation getPropertyOccupationByOccCodeAndUsage(String occCode, Long propertyUsage) {
+	@Override
+	public PropertyOccupation getPropertyOccupationByOccCodeAndUsage(String occCode,
+			Long propertyUsage) {
 		Query qry = null;
 		PropertyOccupation propOcc = null;
 		if (occCode != null && propertyUsage != null) {
@@ -79,6 +80,7 @@ public class PropertyOccupationHibernateDAO extends GenericHibernateDAO implemen
 		return propOcc;
 	}
 
+	@Override
 	public PropertyOccupation getPropertyOccupationByOccCode(String occCode) {
 		PropertyOccupation propOcc = null;
 		Query qry = null;
@@ -95,6 +97,7 @@ public class PropertyOccupationHibernateDAO extends GenericHibernateDAO implemen
 		return propOcc;
 	}
 
+	@Override
 	public PropertyOccupation getPropertyOccupationByOccCodeAndDate(String occCode, Date fromDate) {
 		PropertyOccupation propOcc = null;
 		Query qry = null;
@@ -109,5 +112,35 @@ public class PropertyOccupationHibernateDAO extends GenericHibernateDAO implemen
 				propOcc = (PropertyOccupation) qry.uniqueResult();
 		}
 		return propOcc;
+	}
+
+	@Override
+	public PropertyOccupation findById(Long id, boolean lock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<PropertyOccupation> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PropertyOccupation create(PropertyOccupation propertyOccupation) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(PropertyOccupation propertyOccupation) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public PropertyOccupation update(PropertyOccupation propertyOccupation) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

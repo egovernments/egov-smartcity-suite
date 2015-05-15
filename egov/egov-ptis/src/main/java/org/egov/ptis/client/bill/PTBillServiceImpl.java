@@ -77,7 +77,6 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
-import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
@@ -92,6 +91,8 @@ public class PTBillServiceImpl extends BillServiceInterface {
 	@Autowired
 	@Qualifier(value = "moduleDAO")
 	private ModuleDao moduleDao;
+	@Autowired
+	private PtDemandDao PtDemandDAO;
 
 	@Override
 	public String getBillXML(Billable billObj) {
@@ -131,14 +132,13 @@ public class PTBillServiceImpl extends BillServiceInterface {
 			return billDetails;
 		}
 
-		PtDemandDao ptDemandDao = PropertyDAOFactory.getDAOFactory().getPtDemandDao();
 		Property activeProperty = nmcBillable.getBasicProperty().getProperty();
 		BigDecimal rebateAmt = BigDecimal.ZERO;
 		String key = "";
 		BigDecimal balance = BigDecimal.ZERO;
 		List<EgDemandDetails> pendmdList = new ArrayList<EgDemandDetails>();
 
-		Ptdemand ptDemand = ptDemandDao.getNonHistoryCurrDmdForProperty(activeProperty);
+		Ptdemand ptDemand = PtDemandDAO.getNonHistoryCurrDmdForProperty(activeProperty);
 		Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment();
 
 		HashMap<String, Integer> orderMap = propertyTaxUtil.generateOrderForDemandDetails(

@@ -38,11 +38,14 @@
   
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd"
-       default-lazy-init="true">
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       
+	<context:component-scan base-package="org.egov.ptis" />
 	
 	<bean id="basicPrpertyService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.ptis.domain.entity.property.BasicPropertyImpl" />
@@ -82,7 +85,7 @@
 	<bean id="transferOwnerService" class="org.egov.ptis.domain.service.transfer.TransferOwnerService">
 		<property name="trnsfOwnerPerService" ref="persistenceService"/>
 		<property name="basicPrpertyService" ref="basicPrpertyService"/>
-		<property name="propertyTaxNumberGenerator" ref="propertyTaxNumberGenerator"/>
+		<!-- <property name="propertyTaxNumberGenerator" ref="propertyTaxNumberGenerator"/> -->
 	</bean> 
 	
 	<bean id="propService" class="org.egov.ptis.domain.service.property.PropertyService" scope="prototype" >
@@ -91,7 +94,7 @@
 		<property name="taxCalculator" ref="taxCalculator" />
 		<property name="eisCommonsManager" ref="eisCommonsManager" />
 		<property name="basicPrpertyService" ref="basicPrpertyService" />
-		<property name="ptNumberGenerator" ref="propertyTaxNumberGenerator" />  
+		<!-- <property name="ptNumberGenerator" ref="propertyTaxNumberGenerator" /> -->  
 	</bean> 
     
     <bean id="residentialUnitTaxCalculator" class="org.egov.ptis.client.service.ResidentialUnitTaxCalculator" scope="prototype">
@@ -129,22 +132,22 @@
     
    <bean id="workflowBean" class="org.egov.ptis.domain.entity.property.WorkflowBean" scope="prototype" />
   	
-  	<bean id="propertyWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
+  	<!-- <bean id="propertyWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
 		<constructor-arg index="0" ref="propertyImplService"/>
-	</bean>
+	</bean> -->
 	<bean id="objectionService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.ptis.domain.entity.objection.Objection" />
 	</bean>
-	<bean id="objectionWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
+	<!-- <bean id="objectionWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
 		<constructor-arg index="0" ref="objectionService"/>
-	</bean>
+	</bean> -->
 	
 	<bean id="recoveryService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.ptis.domain.entity.recovery.Recovery" />
 	</bean>
-	<bean id="recoveryWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
+	<!-- <bean id="recoveryWorkflowService" class="org.egov.infstr.workflow.SimpleWorkflowService" scope="prototype">
 		<constructor-arg index="0" ref="recoveryService"/>
-	</bean>
+	</bean> -->
 	
 	<bean id="propertyMutationService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.ptis.domain.entity.property.PropertyMutation" />
@@ -161,7 +164,7 @@
 	    <property name="noticeService" ref="noticeService"/>
 	    <property name="propertyTaxUtil" ref="propertyTaxUtil"/>
 	    <property name="nmcPtBillServiceImpl" ref="nmcPtBillServiceImpl"/>
-	    <property name="propertyTaxNumberGenerator" ref="propertyTaxNumberGenerator"/>	    
+	    <!-- <property name="propertyTaxNumberGenerator" ref="propertyTaxNumberGenerator"/> -->	    
 	</bean>	
 	
 	<bean id="floorDemandCalcService" parent="persistenceService" scope="prototype">
@@ -172,5 +175,5 @@
 		<property name="type" value="org.egov.ptis.domain.entity.property.MigratedPropertyFloor" />
 	</bean>	
 	
-	<bean id="egovSessionFactory" class="org.egov.infstr.services.SessionFactory" />
+	<!-- <bean id="egovSessionFactory" class="org.egov.infstr.services.SessionFactory" /> -->
 </beans>

@@ -39,21 +39,54 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import org.egov.infstr.dao.GenericHibernateDAO;
-import org.hibernate.Session;
+import java.util.List;
 
-/**
- * This Class implememets the PropertyModifyReasonsDAO for the Hibernate specific 
- * Implementation 
- * 
- * @author Ramakrishna
- * @version 2.00
- */
-public class PropertyModifyReasonsHibernateDAO extends GenericHibernateDAO implements PropertyModifyReasonsDAO
-{
-	public PropertyModifyReasonsHibernateDAO(Class persistentClass, Session session)
-	{
-		super(persistentClass, session);
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.egov.ptis.domain.entity.property.PropertyModifyReason;
+import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+@Repository(value = "propertyModifyReasonsDAO")
+@Transactional(readOnly = true)
+public class PropertyModifyReasonsHibernateDAO implements PropertyModifyReasonsDAO {
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
+
+	@Override
+	public PropertyModifyReason findById(Integer id, boolean lock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<PropertyModifyReason> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PropertyModifyReason create(PropertyModifyReason propertyModifyReason) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(PropertyModifyReason propertyModifyReason) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public PropertyModifyReason update(PropertyModifyReason propertyModifyReason) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

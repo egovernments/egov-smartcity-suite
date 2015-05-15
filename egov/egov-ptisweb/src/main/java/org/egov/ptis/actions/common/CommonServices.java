@@ -65,13 +65,19 @@ import java.util.TreeMap;
 import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class CommonServices {
+
+	@Autowired
+	private static PropertyUsageDAO propertyUsageDAO;
+	@Autowired
+	private static PropertyTypeMasterDAO propertyTypeMasterDAO;
+
 	public static Map<String, Integer> getWaterMeterRateMstr() {
 		Map<String, Integer> waterMeterMap = new HashMap<String, Integer>();
 		waterMeterMap.put("WATER_METER", 0);
@@ -93,7 +99,7 @@ public class CommonServices {
 
 	public static String getWaterMeterDtls(String mstrCode) {
 		Map<String, String> waterMeterMstr = getWaterMeterMstr();
-		return (waterMeterMstr.get(mstrCode)==null) ? "N/A" : waterMeterMstr.get(mstrCode);
+		return (waterMeterMstr.get(mstrCode) == null) ? "N/A" : waterMeterMstr.get(mstrCode);
 	}
 
 	public static TreeMap<Integer, String> floorMap() {
@@ -179,9 +185,12 @@ public class CommonServices {
 
 	public static Map<String, String> getAmenities() {
 		Map<String, String> amenitiesMap = new HashMap<String, String>();
-		amenitiesMap.put(PropertyTaxConstants.AMENITY_TYPE_FULL, PropertyTaxConstants.AMENITY_TYPE_FULL);
-		amenitiesMap.put(PropertyTaxConstants.AMENITY_TYPE_PARTIAL, PropertyTaxConstants.AMENITY_TYPE_PARTIAL);
-		amenitiesMap.put(PropertyTaxConstants.AMENITY_TYPE_NIL, PropertyTaxConstants.AMENITY_TYPE_NIL);
+		amenitiesMap.put(PropertyTaxConstants.AMENITY_TYPE_FULL,
+				PropertyTaxConstants.AMENITY_TYPE_FULL);
+		amenitiesMap.put(PropertyTaxConstants.AMENITY_TYPE_PARTIAL,
+				PropertyTaxConstants.AMENITY_TYPE_PARTIAL);
+		amenitiesMap.put(PropertyTaxConstants.AMENITY_TYPE_NIL,
+				PropertyTaxConstants.AMENITY_TYPE_NIL);
 
 		return amenitiesMap;
 	}
@@ -194,21 +203,21 @@ public class CommonServices {
 	public static Map<Long, String> getFormattedBndryMap(List<Boundary> zoneList) {
 		Map<Long, String> zoneMap = new TreeMap<Long, String>();
 		for (Boundary boundary : zoneList) {
-			zoneMap.put(boundary.getId(), StringUtils.leftPad(boundary.getBoundaryNum().toString(), 2, "0") + '-'
-					+ boundary.getName());
+			zoneMap.put(boundary.getId(),
+					StringUtils.leftPad(boundary.getBoundaryNum().toString(), 2, "0") + '-'
+							+ boundary.getName());
 		}
 		return zoneMap;
 	}
 
 	public static List<PropertyUsage> usagesForPropType(Integer propTypeId) {
-		PropertyUsageDAO propertyUsageDAO = PropertyDAOFactory.getDAOFactory().getPropertyUsageDAO();
-		PropertyTypeMasterDAO propertyTypeMasterDAO = PropertyDAOFactory.getDAOFactory().getPropertyTypeMasterDAO();
 		List<PropertyUsage> propUsageList = new ArrayList<PropertyUsage>();
 		List<PropertyUsage> usagesList = propertyUsageDAO.findAll();
 		PropertyTypeMaster propType = null;
 
 		if (!propTypeId.toString().equals("-1")) {
-			propType = (PropertyTypeMaster) propertyTypeMasterDAO.findById(propTypeId.longValue(), false);
+			propType = propertyTypeMasterDAO.findById(propTypeId,
+					false);
 		} else {
 			return Collections.EMPTY_LIST;
 		}
@@ -235,19 +244,21 @@ public class CommonServices {
 						propUsageList.add(pu);
 					}
 				}
-			} 
+			}
 		}
 
 		return propUsageList;
 	}
-	
+
 	public static List<String> getTaxExemptedList() {
-		return Arrays.asList("Agiaries", "Andhalaya", "Beggars Home", "Budh Vihar", "Burial ground", "Charitable",
-				"Church", "Dharmshala", "Durgahs", "Government Tenant", "Gurudwara", "Jain Temple", "Mosque",
-				"Musafirkhana", "Orphanages Asylum", "Place of cremation/burning ghat", "Prayer Halls", "Remand Home",
-				"School and Hostels for the physically challenged", "Synagogues", "Temple");
+		return Arrays.asList("Agiaries", "Andhalaya", "Beggars Home", "Budh Vihar",
+				"Burial ground", "Charitable", "Church", "Dharmshala", "Durgahs",
+				"Government Tenant", "Gurudwara", "Jain Temple", "Mosque", "Musafirkhana",
+				"Orphanages Asylum", "Place of cremation/burning ghat", "Prayer Halls",
+				"Remand Home", "School and Hostels for the physically challenged", "Synagogues",
+				"Temple");
 	}
-	
+
 	public static String getUnitTypeCategory(String unitTypeCode, String categoryCode) {
 		String categoryValue = null;
 		if (unitTypeCode.equals(UNITTYPE_OPEN_PLOT)) {
@@ -259,12 +270,12 @@ public class CommonServices {
 		}
 		return categoryValue;
 	}
-	
+
 	public static final LinkedHashMap<String, String> outstandingAmountRanges = new LinkedHashMap<String, String>() {
 		{
 			put("5000 25000", "5000-25000");
 			put("25001 50000", "25001-50000");
-			put("50001 100000", "50001-100000"); 
+			put("50001 100000", "50001-100000");
 			put("100001", "100001 & Above");
 		}
 	};

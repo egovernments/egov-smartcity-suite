@@ -79,7 +79,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.actions.workflow.WorkflowAction;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
@@ -146,12 +145,16 @@ public class TransferPropertyAction extends WorkflowAction {
 	private Integer idMutationMaster;
 	private List<PropertyOwner> propOwnerProxy = new ArrayList<PropertyOwner>();
 	private BillReceiptInfo billReceiptInfo;
-
 	@Autowired
 	private UserService UserService;
-
 	@Autowired
 	private EisCommonService eisCommonService;
+	@Autowired
+	private BasicPropertyDAO basicPropertyDAO;
+	@Autowired
+	private PropertyMutationMasterDAO propertyMutationMasterDAO;
+	@Autowired
+	private PtDemandDao ptDemandDAO;
 
 	@Override
 	public Object getModel() {
@@ -242,8 +245,6 @@ public class TransferPropertyAction extends WorkflowAction {
 		LOGGER.debug("Entered into save method");
 		LOGGER.debug("save : Index Number : " + indexNumber);
 		String target = "failure";
-		BasicPropertyDAO basicPropertyDAO = PropertyDAOFactory.getDAOFactory()
-				.getBasicPropertyDAO();
 		BasicProperty basicProp = basicPropertyDAO.getBasicPropertyByPropertyID(indexNumber);
 		LOGGER.debug("save : BasicProperty : " + basicProp);
 		// upload docs
@@ -346,9 +347,6 @@ public class TransferPropertyAction extends WorkflowAction {
 		LOGGER.debug("Entered into forward method");
 		String target = "failure";
 		LOGGER.debug("forward : Index Number : " + indexNumber);
-
-		BasicPropertyDAO basicPropertyDAO = PropertyDAOFactory.getDAOFactory()
-				.getBasicPropertyDAO();
 		Long userId = propertyTaxUtil.getLoggedInUser(getSession()).getId();
 		User user = UserService.getUserById(userId);
 		String propDocNum = "";
@@ -486,9 +484,8 @@ public class TransferPropertyAction extends WorkflowAction {
 			setBasicProperty(property.getBasicProperty());
 			LOGGER.debug("prepare : Property : " + property);
 		}
-		PropertyMutationMasterDAO propMutMasterDAO = PropertyDAOFactory.getDAOFactory()
-				.getPropertyMutationMstrDAO();
-		List mutRsnMstrList = propMutMasterDAO.getAllPropertyMutationMastersByType("TRANSFER");
+		List mutRsnMstrList = propertyMutationMasterDAO
+				.getAllPropertyMutationMastersByType("TRANSFER");
 		addDropdownData("MutationReason", mutRsnMstrList);
 		setupWorkflowDetails();
 		setUserInfo();
@@ -503,14 +500,11 @@ public class TransferPropertyAction extends WorkflowAction {
 		LOGGER.debug("Entered intocheckForDemandBal  method");
 		LOGGER.debug("checkForDemandBal : Index Number : " + indexNumber);
 		boolean flag = false;
-		PtDemandDao ptDemandDao = PropertyDAOFactory.getDAOFactory().getPtDemandDao();
-		BasicPropertyDAO basicPropertyDAO = PropertyDAOFactory.getDAOFactory()
-				.getBasicPropertyDAO();
 		BasicProperty bp = basicPropertyDAO.getBasicPropertyByPropertyID(indexNumber);
 		LOGGER.debug("checkForDemandBal : Basicproperty : " + bp);
 		Property chkBalProp = bp.getProperty();
 		LOGGER.debug("checkForDemandBal : Property (Demand balance to be checked) : " + chkBalProp);
-		Map<String, BigDecimal> demandCollMap = ptDemandDao.getDemandCollMap(chkBalProp);
+		Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(chkBalProp);
 		currDemand = demandCollMap.get(CURR_DMD_STR);
 		LOGGER.debug("checkForDemandBal : Current Demand : " + currDemand);
 		arrDemand = demandCollMap.get(ARR_DMD_STR);

@@ -39,20 +39,54 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import org.egov.infstr.dao.GenericHibernateDAO;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * @author Admin
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
-public class PropertyMutationHibDAO extends GenericHibernateDAO implements PropertyMutationDAO{
+@Repository(value = "propertyMutationDAO")
+@Transactional(readOnly = true)
+public class PropertyMutationHibDAO implements PropertyMutationDAO {
 
-	public PropertyMutationHibDAO(Class persistentClass, Session session)
-	{
-		super(persistentClass, session);
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
 	}
 
+	@Override
+	public PropertyMutation findById(Integer id, boolean lock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<PropertyMutation> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PropertyMutation create(PropertyMutation propertyMutation) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(PropertyMutation propertyMutation) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public PropertyMutation update(PropertyMutation propertyMutation) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

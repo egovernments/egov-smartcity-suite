@@ -105,7 +105,6 @@ import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -148,12 +147,15 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	private List<ReportInfo> reportInfos = new ArrayList<ReportInfo>();
 	InputStream billPDF;
 	private String wardNum;
-	
+
 	@Autowired
 	private ModuleDao moduleDao;
-	
+
 	@Autowired
 	private InstallmentDao isntalDao;
+	
+	@Autowired
+	private BasicPropertyDAO basicPropertyDAO;
 
 	@Override
 	public Object getModel() {
@@ -172,37 +174,35 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	public String generateBill() {
 
 		LOGGER.debug("Entered into generateBill, Index Number :" + indexNumber);
-		BasicPropertyDAO basicPropertyDAO = PropertyDAOFactory.getDAOFactory().getBasicPropertyDAO();
 
 		basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(indexNumber);
 		property = (PropertyImpl) basicProperty.getProperty();
 
-		EgBill egBill = (EgBill) persistenceService
-									.find("FROM EgBill WHERE module = ? " +
-											"AND egBillType.code = ? " +
-											"AND SUBSTRING(consumerId, 1, (LOCATE('(', consumerId)-1)) = ? " +
-											"AND is_history = 'N'",
-											moduleDao.getModuleByName(PTMODULENAME),
-											BILLTYPE_MANUAL, basicProperty.getUpicNo());
+		EgBill egBill = (EgBill) persistenceService.find("FROM EgBill WHERE module = ? "
+				+ "AND egBillType.code = ? "
+				+ "AND SUBSTRING(consumerId, 1, (LOCATE('(', consumerId)-1)) = ? "
+				+ "AND is_history = 'N'", moduleDao.getModuleByName(PTMODULENAME), BILLTYPE_MANUAL,
+				basicProperty.getUpicNo());
 		ReportOutput reportOutput = null;
 
 		if (egBill == null) {
-			reportOutput = getBillService().generateBill(basicProperty, EGOVThreadLocals.getUserId().intValue());
+			reportOutput = getBillService().generateBill(basicProperty,
+					EGOVThreadLocals.getUserId().intValue());
 			basicProperty.setIsBillCreated(STATUS_BILL_CREATED);
 			basicProperty.setBillCrtError(STRING_EMPTY);
 		} else {
 			String query = "SELECT notice FROM EgBill bill, PtNotice notice left join notice.basicProperty bp "
-					+ "WHERE bill.is_History = 'N' " 
+					+ "WHERE bill.is_History = 'N' "
 					+ "AND bill.egBillType.code = ? "
-					+ "AND bill.billNo = notice.noticeNo " 
-					+ "AND notice.noticeType = ? " 
+					+ "AND bill.billNo = notice.noticeNo "
+					+ "AND notice.noticeType = ? "
 					+ "AND bp = ?";
-			PtNotice ptNotice = (PtNotice) persistenceService.find(query, BILLTYPE_MANUAL, NOTICE_TYPE_BILL,
-					basicProperty);
+			PtNotice ptNotice = (PtNotice) persistenceService.find(query, BILLTYPE_MANUAL,
+					NOTICE_TYPE_BILL, basicProperty);
 			reportOutput = new ReportOutput();
 			if (ptNotice.getIsBlob().equals('N')) {
-				AssociatedFile file = documentManagerService.getFileFromDocumentObject(ptNotice.getNoticeNo(), "PT",
-						ptNotice.getNoticeNo() + ".pdf");
+				AssociatedFile file = documentManagerService.getFileFromDocumentObject(
+						ptNotice.getNoticeNo(), "PT", ptNotice.getNoticeNo() + ".pdf");
 				InputStream inputStream = file.getFileInputStream();
 				ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 				int returnedByte;
@@ -212,7 +212,8 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 						byteArrayOutputStream.write(returnedByte);
 					} catch (IOException e) {
 						LOGGER.error("Error while reading existing Demand bill", e);
-						throw new EGOVRuntimeException("Error while reading existing Demand bill", e);
+						throw new EGOVRuntimeException("Error while reading existing Demand bill",
+								e);
 					}
 				} while (returnedByte != -1);
 
@@ -225,7 +226,8 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 
 		reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
 
-		if (PROPERTY_MODIFY_REASON_OBJ.equals(property.getPropertyDetail().getPropertyMutationMaster().getCode())) {
+		if (PROPERTY_MODIFY_REASON_OBJ.equals(property.getPropertyDetail()
+				.getPropertyMutationMaster().getCode())) {
 			// to make Property status value from W to Y ,since memo generation
 			// can happen on this condition
 			propService.setWFPropStatValActive(basicProperty);
@@ -235,16 +237,16 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		if (YES.equals(property.getExtra_field3()) && YES.equals(property.getExtra_field4())
 				&& property.getState().getValue().endsWith(WF_STATE_NOTICE_GENERATION_PENDING)) {
 			if (property.getState().getValue().contains(WFLOW_ACTION_NAME_MODIFY)
-					&& PROPERTY_MODIFY_REASON_OBJ.equals(property.getPropertyDetail().getPropertyMutationMaster()
-							.getCode())) {
+					&& PROPERTY_MODIFY_REASON_OBJ.equals(property.getPropertyDetail()
+							.getPropertyMutationMaster().getCode())) {
 				if (YES.equals(property.getExtra_field5())) {
 					workflowBean.setActionName(WFLOW_ACTION_NAME_GENERATE_NOTICE + ":"
 							+ WFLOW_ACTION_STEP_NOTICE_GENERATED);
 					transitionWorkFlow();
 				}
 			} else {
-				workflowBean
-						.setActionName(WFLOW_ACTION_NAME_GENERATE_NOTICE + ":" + WFLOW_ACTION_STEP_NOTICE_GENERATED);// <actionname>:<wflowstep>
+				workflowBean.setActionName(WFLOW_ACTION_NAME_GENERATE_NOTICE + ":"
+						+ WFLOW_ACTION_STEP_NOTICE_GENERATED);// <actionname>:<wflowstep>
 				transitionWorkFlow();
 			}
 		}
@@ -259,35 +261,35 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		ReportInfo reportInfo;
 		Integer totalProps = 0;
 		Integer totalBillsGen = 0;
-		Installment currInst = isntalDao.getInsatllmentByModuleForGivenDate(nmcPtBillServiceImpl.getModule(),
-				new Date());
+		Installment currInst = isntalDao.getInsatllmentByModuleForGivenDate(
+				nmcPtBillServiceImpl.getModule(), new Date());
 		StringBuilder billQueryString = new StringBuilder();
 		StringBuilder propQueryString = new StringBuilder();
-		billQueryString.append("select bndry.boundaryNum, count(bndry.boundaryNum) ")
+		billQueryString
+				.append("select bndry.boundaryNum, count(bndry.boundaryNum) ")
 				.append("from EgBill bill, BoundaryImpl bndry, PtNotice notice left join notice.basicProperty bp ")
-				.append("where bp.propertyID.ward.id=bndry.id ")
-				.append("and bp.active = true ")
-				.append("and bill.is_History = 'N' ")
-				.append("and :FromDate <= bill.issueDate ")
+				.append("where bp.propertyID.ward.id=bndry.id ").append("and bp.active = true ")
+				.append("and bill.is_History = 'N' ").append("and :FromDate <= bill.issueDate ")
 				.append("and :ToDate >= bill.issueDate ")
 				.append("and bill.egBillType.code = :BillType ")
 				.append("and bill.billNo = notice.noticeNo ")
 				.append("and notice.noticeType = 'Bill' ")
-				.append("and notice.noticeFile is not null ")
-				.append("group by bndry.boundaryNum ")
+				.append("and notice.noticeFile is not null ").append("group by bndry.boundaryNum ")
 				.append("order by bndry.boundaryNum");
 
 		propQueryString.append("select bndry.boundaryNum, count(bndry.boundaryNum) ")
 				.append("from BoundaryImpl bndry, PropertyID pid left join pid.basicProperty bp ")
-				.append("where bp.active = true and pid.ward.id = bndry.id ").append("group by bndry.boundaryNum ")
-				.append("order by bndry.boundaryNum");
-		Query billQuery = getPersistenceService().getSession().createQuery(billQueryString.toString());
+				.append("where bp.active = true and pid.ward.id = bndry.id ")
+				.append("group by bndry.boundaryNum ").append("order by bndry.boundaryNum");
+		Query billQuery = getPersistenceService().getSession().createQuery(
+				billQueryString.toString());
 		billQuery.setDate("FromDate", currInst.getFromDate());
 		billQuery.setDate("ToDate", currInst.getToDate());
 		billQuery.setString("BillType", BILLTYPE_MANUAL);
 		List<Object> billList = billQuery.list();
 		LOGGER.info("billList : " + billList);
-		Query propQuery = getPersistenceService().getSession().createQuery(propQueryString.toString());
+		Query propQuery = getPersistenceService().getSession().createQuery(
+				propQueryString.toString());
 		List<Object> propList = propQuery.list();
 		LOGGER.info("propList : " + propList);
 
@@ -316,55 +318,55 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		reportInfoCount.setTotalNoProps(totalProps);
 		reportInfoCount.setTotalGenBills(totalBillsGen);
 		getReportInfos().add(reportInfoCount);
-		
+
 		return STATUS_BILLGEN;
 	}
-	
-	@Action(value="/billGeneration-billGenStatusByPartNo", results = { @Result(name = STATUS_BILLGEN_BY_PARTNO, location="/billGeneration-statusByPartNo.jsp") })
+
+	@Action(value = "/billGeneration-billGenStatusByPartNo", results = { @Result(name = STATUS_BILLGEN_BY_PARTNO, location = "/billGeneration-statusByPartNo.jsp") })
 	public String billGenStatusByPartNo() {
 		LOGGER.debug("Entered into billGenStatusByPartNo, wardNum=" + wardNum);
-		
+
 		ReportInfo reportInfo;
 		Integer totalProps = 0;
 		Integer totalBillsGen = 0;
 		Installment currInst = PropertyTaxUtil.getCurrentInstallment();
-		
+
 		StringBuilder billQueryString = new StringBuilder();
 		StringBuilder propQueryString = new StringBuilder();
-		
-		billQueryString.append("select bp.partNo, count(bp.partNo) ")
+
+		billQueryString
+				.append("select bp.partNo, count(bp.partNo) ")
 				.append("from EgBill bill, BoundaryImpl bndry, PtNotice notice left join notice.basicProperty bp ")
 				.append("where bp.propertyID.ward.id=bndry.id ")
-				.append("and bndry.boundaryNum = :bndryNum ")
-				.append("and bill.is_History = 'N' ")
+				.append("and bndry.boundaryNum = :bndryNum ").append("and bill.is_History = 'N' ")
 				.append("and :FromDate <= bill.issueDate ")
 				.append("and :ToDate >= bill.issueDate ")
 				.append("and bill.egBillType.code = :BillType ")
 				.append("and bill.billNo = notice.noticeNo ")
 				.append("and notice.noticeType = 'Bill' ")
-				.append("and notice.noticeFile is not null ")
-				.append("group by bp.partNo ")
+				.append("and notice.noticeFile is not null ").append("group by bp.partNo ")
 				.append("order by bp.partNo");
 
 		propQueryString.append("select bp.partNo, count(bp.partNo) ")
 				.append("from BoundaryImpl bndry, PropertyID pid left join pid.basicProperty bp ")
 				.append("where bp.active = true and pid.ward.id = bndry.id ")
-				.append("and bndry.boundaryNum = :bndryNum ")
-				.append("group by bp.partNo ")
+				.append("and bndry.boundaryNum = :bndryNum ").append("group by bp.partNo ")
 				.append("order by bp.partNo");
-		
-		Query billQuery = getPersistenceService().getSession().createQuery(billQueryString.toString());
+
+		Query billQuery = getPersistenceService().getSession().createQuery(
+				billQueryString.toString());
 		billQuery.setBigInteger("bndryNum", new BigInteger(wardNum));
 		billQuery.setDate("FromDate", currInst.getFromDate());
 		billQuery.setDate("ToDate", currInst.getToDate());
 		billQuery.setString("BillType", BILLTYPE_MANUAL);
-		
+
 		List<Object> billList = billQuery.list();
-		
-		Query propQuery = getPersistenceService().getSession().createQuery(propQueryString.toString());
+
+		Query propQuery = getPersistenceService().getSession().createQuery(
+				propQueryString.toString());
 		propQuery.setBigInteger("bndryNum", new BigInteger(wardNum));
 		List<Object> propList = propQuery.list();
-		
+
 		for (Object props : propList) {
 			reportInfo = new ReportInfo();
 			Object[] propObj = (Object[]) props;
@@ -373,43 +375,40 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 
 			reportInfo.setTotalGenBills(0);
 			String partNo;
-			
+
 			for (Object bills : billList) {
-				
+
 				Object[] billObj = (Object[]) bills;
 				partNo = String.valueOf(billObj[0]);
-				
+
 				if (reportInfo.getPartNo().equals(partNo)) {
 					reportInfo.setTotalGenBills(Integer.valueOf(((Long) billObj[1]).toString()));
 					break;
 				}
 			}
-			
+
 			totalProps = totalProps + reportInfo.getTotalNoProps();
 			totalBillsGen = totalBillsGen + reportInfo.getTotalGenBills();
 			getReportInfos().add(reportInfo);
 		}
-		
+
 		ReportInfo reportInfoCount = new ReportInfo();
 		reportInfoCount.setPartNo("Total :");
 		reportInfoCount.setTotalNoProps(totalProps);
 		reportInfoCount.setTotalGenBills(totalBillsGen);
 		getReportInfos().add(reportInfoCount);
-		
-		LOGGER.debug("Exiting from billGenStatusByPartNo");		
+
+		LOGGER.debug("Exiting from billGenStatusByPartNo");
 		return STATUS_BILLGEN_BY_PARTNO;
 	}
 
-	@Action(value="/billGeneration-cancelBill", results = { @Result(name = ACK, location="/billGeneration-ack.jsp") })
+	@Action(value = "/billGeneration-cancelBill", results = { @Result(name = ACK, location = "/billGeneration-ack.jsp") })
 	public String cancelBill() {
-		EgBill egBill = (EgBill) persistenceService
-				.find("FROM EgBill " +
-						"WHERE module = ? " +
-						"AND egBillType.code = ? " +
-						"AND SUBSTRING(consumerId, 1, (LOCATE('(', consumerId)-1)) = ? " +
-						"AND is_history = 'N'",
-						moduleDao.getModuleByName(PTMODULENAME),
-						BILLTYPE_MANUAL, indexNumber);
+		EgBill egBill = (EgBill) persistenceService.find("FROM EgBill " + "WHERE module = ? "
+				+ "AND egBillType.code = ? "
+				+ "AND SUBSTRING(consumerId, 1, (LOCATE('(', consumerId)-1)) = ? "
+				+ "AND is_history = 'N'", moduleDao.getModuleByName(PTMODULENAME), BILLTYPE_MANUAL,
+				indexNumber);
 		if (egBill == null) {
 			setAckMessage("There is no active Bill exist for index no : " + indexNumber);
 			return ACK;
@@ -417,7 +416,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 			egBill.setIs_History("Y");
 			egBill.setIs_Cancelled("Y");
 			egBill.setModifiedDate(new Date());
-			BasicProperty basicProperty = PropertyDAOFactory.getDAOFactory().getBasicPropertyDAO()
+			BasicProperty basicProperty = basicPropertyDAO
 					.getBasicPropertyByPropertyID(indexNumber);
 			basicProperty.setIsBillCreated(PropertyTaxConstants.STATUS_BILL_NOTCREATED);
 			basicProperty.setBillCrtError(STRING_EMPTY);
@@ -430,12 +429,13 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	private void startWorkFlow() {
 		LOGGER.debug("Entered into startWorkFlow, UserId: " + EGOVThreadLocals.getUserId());
 		LOGGER.debug("startWorkFlow: Workflow is starting for Property: " + property);
-		//Position position = eisCommonsManager.(Integer.valueOf(EGOVThreadLocals.getUserId()));
-		//FIX ME
+		// Position position =
+		// eisCommonsManager.(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		// FIX ME
 		Position position = null;
-		//propertyWorkflowService.start(property, position, "Property Workflow Started");
-		property.transition(true).start()
-				.withSenderName(property.getCreatedBy().getUsername())
+		// propertyWorkflowService.start(property, position,
+		// "Property Workflow Started");
+		property.transition(true).start().withSenderName(property.getCreatedBy().getUsername())
 				.withComments("Property Workflow Started").withOwner(position);
 
 		LOGGER.debug("Exiting from startWorkFlow, Workflow started");
@@ -447,21 +447,23 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 	private void endWorkFlow() {
 		LOGGER.debug("Enter method endWorkFlow, UserId: " + EGOVThreadLocals.getUserId());
 		LOGGER.debug("endWorkFlow: Workflow will end for Property: " + property);
-		//FIX ME
-		//Position position = eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
+		// FIX ME
+		// Position position =
+		// eisCommonsManager.getPositionByUserId(Integer.valueOf(EGOVThreadLocals.getUserId()));
 		Position position = null;
-		/*propertyWorkflowService
-				.end(property, position, "Property Workflow End");*/
-		property.transition(true).end()
-				.withSenderName(property.getCreatedBy().getUsername())
+		/*
+		 * propertyWorkflowService .end(property, position,
+		 * "Property Workflow End");
+		 */
+		property.transition(true).end().withSenderName(property.getCreatedBy().getUsername())
 				.withComments("Property Workflow End").withOwner(position);
 		LOGGER.debug("Exit method endWorkFlow, Workflow ended");
 	}
 
 	private void transitionWorkFlow() {
 		if (workflowBean != null) {
-			LOGGER.debug("Entered method : transitionWorkFlow. Action : " + workflowBean.getActionName() + "Property: "
-					+ property);
+			LOGGER.debug("Entered method : transitionWorkFlow. Action : "
+					+ workflowBean.getActionName() + "Property: " + property);
 		} else {
 			LOGGER.debug("transitionWorkFlow: workflowBean is NULL");
 		}
@@ -474,8 +476,9 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		String wflowAction = null;
 		StringBuffer nextStateValue = new StringBuffer();
 		if (workflowBean.getApproverUserId() != null)
-			//FIX ME
-			//nextPosition = eisCommonsManager.getPositionByUserId(workflowBean.getApproverUserId());
+			// FIX ME
+			// nextPosition =
+			// eisCommonsManager.getPositionByUserId(workflowBean.getApproverUserId());
 			nextPosition = null;
 		String beanActionName[] = workflowBean.getActionName().split(":");
 		String actionName = beanActionName[0];
@@ -498,54 +501,58 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 			nextStateValue = nextStateValue.append(WFLOW_ACTION_NAME_CHANGEADDRESS).append(":");
 		}
 		if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(wflowAction)) {
-			if (WFLOW_ACTION_NAME_DEACTIVATE.equals(actionName) || WFLOW_ACTION_NAME_CHANGEADDRESS.equals(actionName)) {
+			if (WFLOW_ACTION_NAME_DEACTIVATE.equals(actionName)
+					|| WFLOW_ACTION_NAME_CHANGEADDRESS.equals(actionName)) {
 				endWorkFlow();
 			} else {
 				nextStateValue = nextStateValue.append(WF_STATE_NOTICE_GENERATION_PENDING);
-				//FIX ME
-				//nextPosition = eisCommonsManager.getPositionByUserId(property.getCreatedBy().getId());
+				// FIX ME
+				// nextPosition =
+				// eisCommonsManager.getPositionByUserId(property.getCreatedBy().getId());
 				nextPosition = null;
-				//property.changeState(nextStateValue.toString(), nextPosition, workflowBean.getComments());
-				property.transition(true).start()
-						.withStateValue(nextStateValue.toString())
-						.withOwner(nextPosition)
-						.withComments(workflowBean.getComments());
+				// property.changeState(nextStateValue.toString(), nextPosition,
+				// workflowBean.getComments());
+				property.transition(true).start().withStateValue(nextStateValue.toString())
+						.withOwner(nextPosition).withComments(workflowBean.getComments());
 			}
 		} else if (WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(wflowAction)) {
-			//FIX ME
-			//nextPosition = eisCommonsManager.getPositionByUserId(propertyTaxUtil.getLoggedInUser(getSession()).getId());
+			// FIX ME
+			// nextPosition =
+			// eisCommonsManager.getPositionByUserId(propertyTaxUtil.getLoggedInUser(getSession()).getId());
 			nextPosition = null;
-			if (WFLOW_ACTION_NAME_CREATE.equals(actionName) || WFLOW_ACTION_NAME_MODIFY.equals(actionName)
+			if (WFLOW_ACTION_NAME_CREATE.equals(actionName)
+					|| WFLOW_ACTION_NAME_MODIFY.equals(actionName)
 					|| (fromDataEntry != null && fromDataEntry.equals("true"))) {
 				if (property.getBasicProperty().getAllChangesCompleted()) {
 					nextStateValue = nextStateValue.append(WF_STATE_NOTICE_GENERATION_PENDING);
 				} else {
-					nextStateValue = nextStateValue.append(nextPosition.getDeptDesigId().getDepartment().getName()).append("_")
-							.append(WF_STATE_APPROVAL_PENDING);
+					nextStateValue = nextStateValue
+							.append(nextPosition.getDeptDesigId().getDepartment().getName())
+							.append("_").append(WF_STATE_APPROVAL_PENDING);
 				}
 			} else {
 				nextStateValue = nextStateValue.append(WF_STATE_NOTICE_GENERATION_PENDING);
 			}
 			propertyImplService.persist(property);
-			//property.changeState(nextStateValue.toString(), nextPosition, workflowBean.getComments());
-			property.transition(true).start()
-					.withStateValue(nextStateValue.toString())
-					.withOwner(nextPosition)
-					.withComments(workflowBean.getComments());
+			// property.changeState(nextStateValue.toString(), nextPosition,
+			// workflowBean.getComments());
+			property.transition(true).start().withStateValue(nextStateValue.toString())
+					.withOwner(nextPosition).withComments(workflowBean.getComments());
 		} else if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(wflowAction)) {
-			DesignationMaster nextDesn = propertyTaxUtil.getDesignationForUser(workflowBean.getApproverUserId().longValue());
+			DesignationMaster nextDesn = propertyTaxUtil.getDesignationForUser(workflowBean
+					.getApproverUserId().longValue());
 			nextStateValue = nextStateValue.append(nextDesn.getDesignationName()).append("_")
 					.append(WF_STATE_APPROVAL_PENDING);
-			//property.changeState(nextStateValue.toString(), nextPosition, workflowBean.getComments());
-			property.transition(true).start()
-					.withStateValue(nextStateValue.toString())
-					.withOwner(nextPosition)
-					.withComments(workflowBean.getComments());
+			// property.changeState(nextStateValue.toString(), nextPosition,
+			// workflowBean.getComments());
+			property.transition(true).start().withStateValue(nextStateValue.toString())
+					.withOwner(nextPosition).withComments(workflowBean.getComments());
 		} else if (WFLOW_ACTION_STEP_NOTICE_GENERATED.equalsIgnoreCase(wflowAction)) {
 			endWorkFlow();
 		}
 
-		LOGGER.debug("transitionWorkFlow: Property transitioned to " + property.getState().getValue());
+		LOGGER.debug("transitionWorkFlow: Property transitioned to "
+				+ property.getState().getValue());
 		propertyImplService.persist(property);
 
 		LOGGER.debug("Exiting method : transitionWorkFlow");
@@ -597,7 +604,8 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		return documentManagerService;
 	}
 
-	public void setDocumentManagerService(DocumentManagerService<DocumentObject> documentManagerService) {
+	public void setDocumentManagerService(
+			DocumentManagerService<DocumentObject> documentManagerService) {
 		this.documentManagerService = documentManagerService;
 	}
 

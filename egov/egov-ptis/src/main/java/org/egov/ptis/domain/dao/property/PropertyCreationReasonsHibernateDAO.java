@@ -39,27 +39,54 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import org.egov.infstr.dao.GenericHibernateDAO;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.egov.ptis.domain.entity.property.PropertyCreationReason;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * This Class implememets the PropertyCreationReasonsDAO for the Hibernate specific 
- * Implementation 
- * 
- * @author Neetu
- * @version 2.00
- */
+@Repository(value = "propertyCreationReasonsDAO")
+@Transactional(readOnly = true)
+public class PropertyCreationReasonsHibernateDAO implements PropertyCreationReasonsDAO {
+	@PersistenceContext
+	private EntityManager entityManager;
 
-public class PropertyCreationReasonsHibernateDAO extends GenericHibernateDAO implements PropertyCreationReasonsDAO
-{
-	/**
-	 * @param persistentClass
-	 * @param session
-	 */
-	public PropertyCreationReasonsHibernateDAO(Class persistentClass, Session session)
-	{
-		super(persistentClass, session);
+	@SuppressWarnings("unused")
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
+
+	@Override
+	public PropertyCreationReason findById(Integer id, boolean lock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<PropertyCreationReason> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PropertyCreationReason create(PropertyCreationReason propertyCreationReason) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(PropertyCreationReason propertyCreationReason) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public PropertyCreationReason update(PropertyCreationReason propertyCreationReason) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
-  
-

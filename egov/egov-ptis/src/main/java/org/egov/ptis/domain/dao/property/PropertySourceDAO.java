@@ -39,18 +39,21 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
+import java.util.List;
+
 import org.egov.ptis.domain.entity.property.PropertySource;
 
-/**
-   * <p>This is an interface which would be implemented by the 
- * Individual Frameworks  for all the CRUD (create, read, update, delete) basic data 
- * access operations for PropertySource
- * 
- * @author Neetu
- * @version 2.00
- */
+public interface PropertySourceDAO {
 
-public interface PropertySourceDAO extends org.egov.infstr.dao.GenericDAO
-{
 	PropertySource getPropertySourceByCode(String propSrcCode);
+
+	public PropertySource findById(Integer id, boolean lock);
+
+	public List<PropertySource> findAll();
+
+	public PropertySource create(PropertySource propertySource);
+
+	public void delete(PropertySource propertySource);
+
+	public PropertySource update(PropertySource propertySource);
 }

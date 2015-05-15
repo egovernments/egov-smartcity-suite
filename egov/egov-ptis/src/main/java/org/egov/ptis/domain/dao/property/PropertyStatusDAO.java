@@ -39,19 +39,23 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
+import java.util.List;
+
 import org.egov.ptis.domain.entity.property.PropertyStatus;
 
-/**
- * <p>This is an interface which would be implemented by the 
- * Individual Frameworks  for all the CRUD (create, read, update, delete) basic data 
- * access operations for PropertyStatus
- * 
- * @author Neetu
- * @version 2.00
- */
+public interface PropertyStatusDAO {
 
-public interface PropertyStatusDAO extends org.egov.infstr.dao.GenericDAO
-{
 	public PropertyStatus getPropertyStatusByName(String status);
+
 	public PropertyStatus getPropertyStatusByCode(String statusCode);
+
+	public PropertyStatus findById(Integer id, boolean lock);
+
+	public List<PropertyStatus> findAll();
+
+	public PropertyStatus create(PropertyStatus propertyStatus);
+
+	public void delete(PropertyStatus propertyStatus);
+
+	public PropertyStatus update(PropertyStatus propertyStatus);
 }

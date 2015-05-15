@@ -58,10 +58,10 @@ import org.egov.ptis.client.integration.impl.PropertyImpl;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class Property {
 
@@ -84,6 +84,8 @@ public abstract class Property {
 	private BillReceiptInfo billreceiptInfo;
 	private String receiptNo;
 	private int infoFlag;
+	@Autowired
+	private BasicPropertyDAO basicPropertyDAO;
 
 	protected abstract Billable getBillable();
 
@@ -107,8 +109,7 @@ public abstract class Property {
 	 *            populated in the returned property object.
 	 * @return
 	 */
-	public static Property fromPropertyID(String propertyID, String receiptNo,
-			int flag) {
+	public static Property fromPropertyID(String propertyID, String receiptNo, int flag) {
 		LOGGER.info("fromPropertyID : propertyID " + propertyID);
 		Property p = new PropertyImpl();
 		p.propertyID = propertyID;
@@ -123,11 +124,8 @@ public abstract class Property {
 	}
 
 	private void initBasicProperty() {
-		BasicPropertyDAO basicPropertyDAO = PropertyDAOFactory.getDAOFactory()
-				.getBasicPropertyDAO();
 		if (getPropertyID() != null) {
-			basicProperty = basicPropertyDAO
-					.getAllBasicPropertyByPropertyID(getPropertyID());
+			basicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(getPropertyID());
 		}
 	}
 
@@ -170,8 +168,8 @@ public abstract class Property {
 			return;
 		}
 		this.propertyID = basicProperty.getUpicNo();
-		this.citizenName = ptisCacheMgr.buildOwnerFullName(basicProperty
-				.getProperty().getPropertyOwnerSet());
+		this.citizenName = ptisCacheMgr.buildOwnerFullName(basicProperty.getProperty()
+				.getPropertyOwnerSet());
 		if (basicProperty.getPropertyID() != null
 				&& basicProperty.getPropertyID().getWard() != null) {
 			this.wardName = basicProperty.getPropertyID().getWard().getName();
@@ -244,8 +242,7 @@ public abstract class Property {
 		if ((propertyID == null || propertyID.trim().equals(""))) {
 			throw new EGOVRuntimeException("PropertyID was null or empty!");
 		}
-		if (isReceiptInfoRequested()
-				&& (receiptNo == null || receiptNo.equals(""))) {
+		if (isReceiptInfoRequested() && (receiptNo == null || receiptNo.equals(""))) {
 			throw new EGOVRuntimeException("receiptNo was null or empty!");
 		}
 	}

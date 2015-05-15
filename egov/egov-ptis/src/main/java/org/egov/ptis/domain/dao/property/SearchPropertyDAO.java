@@ -47,11 +47,8 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.SearchResult;
 import org.egov.ptis.exceptions.PropertyNotFoundException;
 
-/**
- * @author Gayathri
- * @version 2.00
- */
 public interface SearchPropertyDAO {
+	
 	public SearchResult getBasicPropertyByRegNum(String regNum) throws PropertyNotFoundException;
 
 	public List getPropertyByBoundry(Integer zoneID, Integer wardID, Integer colonyID)
@@ -90,7 +87,8 @@ public interface SearchPropertyDAO {
 
 	public List getPropertyByBoundryAndOwnerNameAndHouseNo(Integer boundryID, String ownerName,
 			String houseNo, String oldHouseNo) throws PropertyNotFoundException;
-	
-	public List<Property> getPropertyByObjectionDetails(Long propertyTypeMasterId,String objectionNumber, Date fromObjection,
-			Date toObjection) throws ValidationException ;
+
+	public List<Property> getPropertyByObjectionDetails(Long propertyTypeMasterId,
+			String objectionNumber, Date fromObjection, Date toObjection)
+			throws ValidationException;
 }

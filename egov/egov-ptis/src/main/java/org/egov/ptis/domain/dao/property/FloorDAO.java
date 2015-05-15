@@ -39,16 +39,19 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-/**
- * <p>This is an interface which would be implemented by the 
- * Individual Frameworks  for all the CRUD (create, read, update, delete) basic data 
- * access operations for Floor
- * 
- * @author Neetu
- * @version 2.00
- */
+import java.util.List;
 
-public interface FloorDAO extends org.egov.infstr.dao.GenericDAO
-{
+import org.egov.ptis.domain.entity.property.FloorIF;
 
+public interface FloorDAO {
+	
+	public FloorIF findById(Integer id, boolean lock);
+
+	public List<FloorIF> findAll();
+
+	public FloorIF create(FloorIF floorIF);
+
+	public void delete(FloorIF floorIF);
+
+	public FloorIF update(FloorIF floorIF);
 }

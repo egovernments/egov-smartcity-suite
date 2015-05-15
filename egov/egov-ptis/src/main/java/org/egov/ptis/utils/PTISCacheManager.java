@@ -57,7 +57,6 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.ptis.domain.dao.property.CategoryDao;
-import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
 import org.egov.ptis.domain.dao.property.PropertyOccupationDAO;
 import org.egov.ptis.domain.dao.property.PropertySourceDAO;
@@ -87,8 +86,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class PTISCacheManager implements PTISCacheManagerInteface {
 
-	private static final Logger LOGGER = Logger
-			.getLogger(PTISCacheManager.class);
+	private static final Logger LOGGER = Logger.getLogger(PTISCacheManager.class);
 	private static boolean reset = true;
 	private static ArrayList propertyCreationReasonsList = new ArrayList();
 	private static ArrayList structuralFactorslist = new ArrayList();
@@ -109,12 +107,29 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 	private static HashMap propertyCreationReasonsMap = new HashMap();
 	private static HashMap boundaryMap = new HashMap();
 	public String cityName = EGovConfig.getProperty("CITY", "", "PT");
-	public String block = EGovConfig.getProperty("ptis_egov_config.xml",
-			"BNDRYTYPNAME3", "", "PT");
-	public String street = EGovConfig.getProperty("ptis_egov_config.xml",
-			"BNDRYTYPNAME4", "", "PT");
+	public String block = EGovConfig.getProperty("ptis_egov_config.xml", "BNDRYTYPNAME3", "", "PT");
+	public String street = EGovConfig
+			.getProperty("ptis_egov_config.xml", "BNDRYTYPNAME4", "", "PT");
 	@Autowired
 	private static BoundaryService boundaryService;
+	@Autowired
+	private static PropertyTypeMasterDAO propertyTypeMasterDAO;
+	@Autowired
+	private static PropertyUsageDAO propertyUsageDAO;
+	@Autowired
+	private static StructureClassificationDAO structureClassificationDAO;
+	@Autowired
+	private static PropertyMutationMasterDAO propertyMutationMasterDAO;
+	@Autowired
+	private static PropertySourceDAO propertySourceDAO;
+	@Autowired
+	private static PropertyStatusDAO propertyStatusDAO;
+	@Autowired
+	private static PropertyOccupationDAO propertyOccupationDAO;
+	@Autowired
+	private static TaxPercDAO taxPercDAO;
+	@Autowired
+	private static CategoryDao categoryDAO;
 
 	@Override
 	public List getAllDepreciationRates() {
@@ -229,13 +244,11 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 	}
 
 	@Override
-	public StructureClassification getStructureClassificationById(
-			Integer strucClssfnId) {
+	public StructureClassification getStructureClassificationById(Integer strucClssfnId) {
 		if (reset) {
 			update();
 		}
-		return (StructureClassification) structuralFactorsMap
-				.get(strucClssfnId);
+		return (StructureClassification) structuralFactorsMap.get(strucClssfnId);
 	}
 
 	@Override
@@ -263,19 +276,16 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 	}
 
 	private static synchronized void update() {
-		LOGGER.debug("Starting update in PTISCacheManager util.........."
-				+ reset);
-		String cessLibId = EGovConfig.getProperty("ptis_egov_config.xml",
-				"LIB_CESSID", "", "PT");
+		LOGGER.debug("Starting update in PTISCacheManager util.........." + reset);
+		String cessLibId = EGovConfig.getProperty("ptis_egov_config.xml", "LIB_CESSID", "", "PT");
 		LOGGER.info("cessLibId" + cessLibId);
-		String cessBegId = EGovConfig.getProperty("ptis_egov_config.xml",
-				"BEG_CESSID", "", "PT");
+		String cessBegId = EGovConfig.getProperty("ptis_egov_config.xml", "BEG_CESSID", "", "PT");
 		LOGGER.info("cessBegId" + cessBegId);
-		String cessHelthId = EGovConfig.getProperty("ptis_egov_config.xml",
-				"HLTH_CESSID", "", "PT");
+		String cessHelthId = EGovConfig
+				.getProperty("ptis_egov_config.xml", "HLTH_CESSID", "", "PT");
 		LOGGER.info("cessHelthId" + cessHelthId);
-		String totalCessId = EGovConfig.getProperty("ptis_egov_config.xml",
-				"TOTAL_CESSID", "", "PT");
+		String totalCessId = EGovConfig.getProperty("ptis_egov_config.xml", "TOTAL_CESSID", "",
+				"PT");
 		LOGGER.info("totalCessId" + totalCessId);
 		propertyCreationReasonsList = new ArrayList();
 		structuralFactorslist = new ArrayList();
@@ -296,74 +306,68 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 		allCategorieslist = new ArrayList();
 		allDepreciationRates = new ArrayList();
 		try {
-			PropertyTypeMasterDAO propTypeMstrDao = PropertyDAOFactory
-					.getDAOFactory().getPropertyTypeMasterDAO();
-			PropertyUsageDAO propertyUsageDAO = PropertyDAOFactory
-					.getDAOFactory().getPropertyUsageDAO();
-			StructureClassificationDAO strucClsfnDao = PropertyDAOFactory
-					.getDAOFactory().getStructureClassificationDAO();
-			PropertyMutationMasterDAO propMutMstrDao = PropertyDAOFactory
-					.getDAOFactory().getPropertyMutationMstrDAO();
-			PropertySourceDAO propSrcDao = PropertyDAOFactory.getDAOFactory()
-					.getPropertySourceDAO();
-			PropertyStatusDAO propStatusDao = PropertyDAOFactory
-					.getDAOFactory().getPropertyStatusDAO();
-			PropertyUsageDAO propUsageDAO = PropertyDAOFactory.getDAOFactory()
-					.getPropertyUsageDAO();
-			PropertyOccupationDAO propOccDAO = PropertyDAOFactory
-					.getDAOFactory().getPropertyOccupationDAO();
-			TaxPercDAO taxPercDAO = PropertyDAOFactory.getDAOFactory()
-					.getTaxPercDao();
-			CategoryDao categoryDao = PropertyDAOFactory.getDAOFactory()
-					.getCategoryDao();
+			/*
+			 * PropertyTypeMasterDAO propTypeMstrDao = PropertyDAOFactory
+			 * .getDAOFactory().getPropertyTypeMasterDAO(); PropertyUsageDAO
+			 * propertyUsageDAO = PropertyDAOFactory
+			 * .getDAOFactory().getPropertyUsageDAO();
+			 * StructureClassificationDAO strucClsfnDao = PropertyDAOFactory
+			 * .getDAOFactory().getStructureClassificationDAO();
+			 * PropertyMutationMasterDAO propMutMstrDao = PropertyDAOFactory
+			 * .getDAOFactory().getPropertyMutationMstrDAO(); PropertySourceDAO
+			 * propSrcDao = PropertyDAOFactory.getDAOFactory()
+			 * .getPropertySourceDAO(); PropertyStatusDAO propStatusDao =
+			 * PropertyDAOFactory .getDAOFactory().getPropertyStatusDAO();
+			 * PropertyUsageDAO propUsageDAO =
+			 * PropertyDAOFactory.getDAOFactory() .getPropertyUsageDAO();
+			 * PropertyOccupationDAO propOccDAO = PropertyDAOFactory
+			 * .getDAOFactory().getPropertyOccupationDAO(); TaxPercDAO
+			 * taxPercDAO = PropertyDAOFactory.getDAOFactory() .getTaxPercDao();
+			 * CategoryDao categoryDao = PropertyDAOFactory.getDAOFactory()
+			 * .getCategoryDao();
+			 */
 
 			DepreciationMasterDao deprMstrDao = DCBDaoFactory.getDaoFactory()
 					.getDepreciationMasterDao();
 
-			allPropertySourcelist = (ArrayList) propSrcDao.findAll();
-			Iterator allPropertySourcelistIter = allPropertySourcelist
-					.iterator();
+			allPropertySourcelist = (ArrayList) propertySourceDAO.findAll();
+			Iterator allPropertySourcelistIter = allPropertySourcelist.iterator();
 			while (allPropertySourcelistIter.hasNext()) {
-				PropertySource obj = (PropertySource) allPropertySourcelistIter
-						.next();
-				PropertySource propertySource = (PropertySource) propSrcDao
-						.findById(obj.getID(), false);
+				PropertySource obj = (PropertySource) allPropertySourcelistIter.next();
+				PropertySource propertySource = (PropertySource) propertySourceDAO.findById(
+						obj.getID(), false);
 				allPropertySourceMap.put(obj.getID(), propertySource);
 			}
-			allPropertyStatuslist = (ArrayList) propStatusDao.findAll();
-			Iterator allPropertyStatuslistIter = allPropertyStatuslist
-					.iterator();
+			allPropertyStatuslist = (ArrayList) propertyStatusDAO.findAll();
+			Iterator allPropertyStatuslistIter = allPropertyStatuslist.iterator();
 			while (allPropertyStatuslistIter.hasNext()) {
-				PropertyStatus obj = (PropertyStatus) allPropertyStatuslistIter
-						.next();
-				PropertyStatus propertyStatus = (PropertyStatus) propStatusDao
-						.findById(obj.getID(), false);
+				PropertyStatus obj = (PropertyStatus) allPropertyStatuslistIter.next();
+				PropertyStatus propertyStatus = (PropertyStatus) propertyStatusDAO.findById(
+						obj.getID(), false);
 				allPropertyStatusMap.put(obj.getID(), propertyStatus);
 			}
-			allPropUsagelist = (ArrayList) propUsageDAO.findAll();
+			allPropUsagelist = (ArrayList) propertyUsageDAO.findAll();
 			Iterator allPropUsagelistIter = allPropUsagelist.iterator();
 			while (allPropUsagelistIter.hasNext()) {
 				PropertyUsage obj = (PropertyUsage) allPropUsagelistIter.next();
-				PropertyUsage propertyUsage = (PropertyUsage) propUsageDAO
-						.findById(obj.getId(), false);
+				PropertyUsage propertyUsage = (PropertyUsage) propertyUsageDAO.findById(
+						obj.getId(), false);
 				allPropUsageMap.put(obj.getId(), propertyUsage);
 			}
-			allPropOccTypeslist = (ArrayList) propOccDAO.findAll();
+			allPropOccTypeslist = (ArrayList) propertyOccupationDAO.findAll();
 			Iterator allPropOccTypeslistIter = allPropOccTypeslist.iterator();
 			while (allPropOccTypeslistIter.hasNext()) {
-				PropertyOccupation obj = (PropertyOccupation) allPropOccTypeslistIter
-						.next();
-				PropertyOccupation propertyOccupation = (PropertyOccupation) propOccDAO
+				PropertyOccupation obj = (PropertyOccupation) allPropOccTypeslistIter.next();
+				PropertyOccupation propertyOccupation = (PropertyOccupation) propertyOccupationDAO
 						.findById(obj.getId(), false);
 				allPropOccTypesMap.put(obj.getId(), propertyOccupation);
 			}
-			structuralFactorslist = (ArrayList) strucClsfnDao.findAll();
-			Iterator structuralFactorslistIter = structuralFactorslist
-					.iterator();
+			structuralFactorslist = (ArrayList) structureClassificationDAO.findAll();
+			Iterator structuralFactorslistIter = structuralFactorslist.iterator();
 			while (structuralFactorslistIter.hasNext()) {
 				StructureClassification obj = (StructureClassification) structuralFactorslistIter
 						.next();
-				StructureClassification structureClassification = (StructureClassification) strucClsfnDao
+				StructureClassification structureClassification = (StructureClassification) structureClassificationDAO
 						.findById(obj.getId(), false);
 				structuralFactorsMap.put(obj.getId(), structureClassification);
 			}
@@ -383,12 +387,11 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 			}
 
 			allAllTaxRatelist = (ArrayList) taxPercDAO.findAll();
-			allCategorieslist = (ArrayList) categoryDao.findAll();
+			allCategorieslist = (ArrayList) categoryDAO.findAll();
 			allDepreciationRates = (ArrayList) deprMstrDao.findAll();
 
 		} catch (Exception sqe) {
-			LOGGER.info("Exception in update()-----PTISCacheManager----"
-					+ sqe.getMessage());
+			LOGGER.info("Exception in update()-----PTISCacheManager----" + sqe.getMessage());
 			throw new EGOVRuntimeException(sqe.getMessage());
 		}
 		reset = false;
@@ -402,8 +405,7 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 	@Override
 	public String buildAddress(BasicProperty basicProperty) {
 		if (basicProperty == null) {
-			throw new EGOVRuntimeException(
-					"Internal Server Error  BasicProperty is Null!!");
+			throw new EGOVRuntimeException("Internal Server Error  BasicProperty is Null!!");
 		}
 		Address address = basicProperty.getAddress();
 		String addressStr = "";
@@ -433,9 +435,8 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 		Set<String> ownerNameSet = new HashSet<String>();
 		for (PropertyOwner propOwner : ownerSet) {
 
-			LOGGER.debug("buildOwnerFullName : Owner id "+ propOwner.getId());
-			if (propOwner.getName() != null
-					&& !propOwner.getName().trim().equals("")) {
+			LOGGER.debug("buildOwnerFullName : Owner id " + propOwner.getId());
+			if (propOwner.getName() != null && !propOwner.getName().trim().equals("")) {
 				if (!ownerNameSet.contains(propOwner.getName().trim())) {
 					if (!ownerFullName.trim().equals("")) {
 						if (!ownerFullName.equals("")) {
@@ -443,10 +444,8 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 						}
 					}
 					ownerNameSet.add(propOwner.getName().trim());
-					ownerFullName = (propOwner.getName() == null ? ""
-							: propOwner.getName());
-					LOGGER.debug("buildOwnerFullName : ownerFullNameEnglish : "
-							+ ownerFullName);
+					ownerFullName = (propOwner.getName() == null ? "" : propOwner.getName());
+					LOGGER.debug("buildOwnerFullName : ownerFullNameEnglish : " + ownerFullName);
 				}
 			}
 
@@ -496,15 +495,12 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 	public String buildAddressFromAddress(Address address) {
 		String addressStr = "";
 		if (address != null) {
-			addressStr = (address.getHouseNoBldgApt() == null ? " " : address
-					.getHouseNoBldgApt());
+			addressStr = (address.getHouseNoBldgApt() == null ? " " : address.getHouseNoBldgApt());
 			if (!addressStr.trim().equals("")) {
 				addressStr = addressStr
-						+ (address.getLandmark()== null ? " " : ", "
-								+ address.getLandmark());
+						+ (address.getLandmark() == null ? " " : ", " + address.getLandmark());
 			} else {
-				addressStr = (address.getLandmark() == null ? " "
-						: address.getLandmark());
+				addressStr = (address.getLandmark() == null ? " " : address.getLandmark());
 			}
 
 			if (!addressStr.trim().equals("")) {
@@ -521,8 +517,8 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 				addressStr = addressStr
 						+ (address.getAreaLocalitySector() == null ? "" : ", "
 								+ address.getAreaLocalitySector());
-				addressStr = (address.getCityTownVillage() == null ? ""
-						: address.getCityTownVillage());
+				addressStr = (address.getCityTownVillage() == null ? "" : address
+						.getCityTownVillage());
 
 				if (!addressStr.trim().equals("")) {
 					addressStr = addressStr
@@ -530,8 +526,7 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 									+ address.getPinCode().toString());
 				} else {
 					addressStr = addressStr
-							+ (address.getPinCode() == null ? "" : address
-									.getPinCode().toString());
+							+ (address.getPinCode() == null ? "" : address.getPinCode().toString());
 				}
 			}
 		}
@@ -545,8 +540,8 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 	 */
 	@Override
 	public String buildAddressByImplemetation(Address address) {
-		String impName = EGovConfig.getProperty("ptis_egov_config.xml",
-				"IMPLEMENTATION_NAME", "", "PT");
+		String impName = EGovConfig.getProperty("ptis_egov_config.xml", "IMPLEMENTATION_NAME", "",
+				"PT");
 		if (impName == null || impName.trim().equals("")) {
 			throw new EGOVRuntimeException("Implementation Name is null");
 		}
@@ -554,28 +549,23 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 		String addressStr = "";
 		if (address != null) {
 			if (impName.equals("CHENNAI")) {
-				addressStr = (address.getHouseNoBldgApt() == null ? " "
-						: address.getHouseNoBldgApt());
+				addressStr = (address.getHouseNoBldgApt() == null ? " " : address
+						.getHouseNoBldgApt());
 				CharSequence cs = "PropertyAddress";
 				if (address.getClass().getName().contains(cs)) {
 					PropertyAddress propAddr = (PropertyAddress) address;
-					if (propAddr.getSubNumber() != null
-							&& !propAddr.getSubNumber().equals("")) {
+					if (propAddr.getSubNumber() != null && !propAddr.getSubNumber().equals("")) {
 						addressStr = addressStr + "/" + propAddr.getSubNumber();
 					}
-					if (propAddr.getDoorNumOld() != null
-							&& !propAddr.getDoorNumOld().equals("")) {
-						addressStr = addressStr + "("
-								+ propAddr.getDoorNumOld() + ")";
+					if (propAddr.getDoorNumOld() != null && !propAddr.getDoorNumOld().equals("")) {
+						addressStr = addressStr + "(" + propAddr.getDoorNumOld() + ")";
 					}
 				}
 				if (!addressStr.trim().equals("")) {
 					addressStr = addressStr
-							+ (address.getLandmark() == null ? " " : ", "
-									+ address.getLandmark());
+							+ (address.getLandmark() == null ? " " : ", " + address.getLandmark());
 				} else {
-					addressStr = (address.getLandmark() == null ? " "
-							: address.getLandmark());
+					addressStr = (address.getLandmark() == null ? " " : address.getLandmark());
 				}
 
 				addressStr = addressStr
@@ -591,48 +581,44 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 		}
 		if (address != null) {
 			if (impName.equals("Chennai")) {
-				addressStr = (address.getHouseNoBldgApt() == null ? " "
-						: address.getHouseNoBldgApt());
+				addressStr = (address.getHouseNoBldgApt() == null ? " " : address
+						.getHouseNoBldgApt());
 				CharSequence cs = "PropertyAddress";
 				if (address.getClass().getName().contains(cs)) {
 					PropertyAddress propAddr = (PropertyAddress) address;
-					if (propAddr.getSubNumber() != null
-							&& !propAddr.getSubNumber().equals("")) {
+					if (propAddr.getSubNumber() != null && !propAddr.getSubNumber().equals("")) {
 						addressStr = addressStr + "/" + propAddr.getSubNumber();
 					}
-					if (propAddr.getDoorNumOld() != null
-							&& !propAddr.getDoorNumOld().equals("")) {
-						addressStr = addressStr + "("
-								+ propAddr.getDoorNumOld() + ")";
+					if (propAddr.getDoorNumOld() != null && !propAddr.getDoorNumOld().equals("")) {
+						addressStr = addressStr + "(" + propAddr.getDoorNumOld() + ")";
 					}
 				}
 				if (!addressStr.trim().equals("")) {
 					addressStr = addressStr
-							+ (StringUtils.isBlank(address.getLandmark()) ? ""
-									: ", " + address.getLandmark());
+							+ (StringUtils.isBlank(address.getLandmark()) ? "" : ", "
+									+ address.getLandmark());
 				} else {
-					addressStr = (StringUtils.isBlank(address
-							.getLandmark()) ? "" : address
+					addressStr = (StringUtils.isBlank(address.getLandmark()) ? "" : address
 							.getLandmark());
 				}
 
 				if (address.getClass().getName().contains(cs)) {
 					PropertyAddress propAddr = (PropertyAddress) address;
 					addressStr = addressStr
-							+ (StringUtils.isBlank(propAddr.getExtraField1()) ? ""
-									: ", " + propAddr.getExtraField1());
+							+ (StringUtils.isBlank(propAddr.getExtraField1()) ? "" : ", "
+									+ propAddr.getExtraField1());
 
 					addressStr = addressStr
-							+ (StringUtils.isBlank(propAddr.getExtraField2()) ? ""
-									: ", " + propAddr.getExtraField2());
+							+ (StringUtils.isBlank(propAddr.getExtraField2()) ? "" : ", "
+									+ propAddr.getExtraField2());
 
 					addressStr = addressStr
-							+ (StringUtils.isBlank(propAddr.getExtraField3()) ? ""
-									: ", " + propAddr.getExtraField3());
+							+ (StringUtils.isBlank(propAddr.getExtraField3()) ? "" : ", "
+									+ propAddr.getExtraField3());
 
 					addressStr = addressStr
-							+ (StringUtils.isBlank(propAddr.getExtraField4()) ? ""
-									: ", " + propAddr.getExtraField4());
+							+ (StringUtils.isBlank(propAddr.getExtraField4()) ? "" : ", "
+									+ propAddr.getExtraField4());
 				}
 
 				addressStr = addressStr

@@ -42,18 +42,12 @@ package org.egov.ptis.domain.dao.property;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.infstr.dao.GenericDAO;
 import org.egov.ptis.domain.entity.property.Category;
 import org.hibernate.criterion.Criterion;
 
-/**
- * TODO Brief Description of the puprpose of the class/interface
- * 
- * @author Administrator
- * @version 2.00
- */
-public interface CategoryDao extends GenericDAO {
-	public List getAllCategoriesbyHistory();
+public interface CategoryDao {
+
+	public List<Category> getAllCategoriesbyHistory();
 
 	public Float getCategoryAmount(Integer usageId, Integer bndryId);
 
@@ -65,7 +59,16 @@ public interface CategoryDao extends GenericDAO {
 	public Category getCategoryByCategoryNameAndUsage(Criterion criterion);
 
 	public List<Category> getCategoryByCatAmtAndUsage(Criterion criterion);
-	
+
 	public List<Category> getCategoryByRateUsageAndStructClass(Criterion criterion);
 
+	public Category findById(Integer id, boolean lock);
+
+	public List<Category> findAll();
+
+	public Category create(Category category);
+
+	public void delete(Category category);
+
+	public Category update(Category category);
 }

@@ -47,6 +47,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.dao.DemandGenericDao;
@@ -56,11 +59,8 @@ import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.dao.ModuleDao;
-import org.egov.infstr.dao.GenericHibernateDAO;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyDAO;
-import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
@@ -73,8 +73,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository(value = "ptDemandDAO")
 @Transactional(readOnly = true)
-public class PtDemandHibernateDao extends GenericHibernateDAO implements
-		PtDemandDao {
+public class PtDemandHibernateDao implements PtDemandDao {
 	private static final String BILLID_PARAM = "billid";
 	private static final String PROPERTY = "property";
 	@Autowired
@@ -84,10 +83,16 @@ public class PtDemandHibernateDao extends GenericHibernateDAO implements
 	private InstallmentDao installmentDao;
 	@Autowired
 	@Qualifier(value = "demandGenericDAO")
-	private DemandGenericDao demandGenericDao;
+	private DemandGenericDao demandGenericDAO;
 
-	public PtDemandHibernateDao(Class persistentClass, Session session) {
-		super(persistentClass, session);
+	@Autowired
+	private PropertyDAO propertyDAO;
+
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
 	}
 
 	/**
@@ -110,8 +115,7 @@ public class PtDemandHibernateDao extends GenericHibernateDAO implements
 		BigDecimal currentDemand = BigDecimal.ZERO;
 		Query qry = null;
 		if (property != null) {
-			qry = HibernateUtil
-					.getCurrentSession()
+			qry = getCurrentSession()
 					.createQuery(
 							" select sum(DmdDetails.amount) from  EgptPtdemand egDemand left join  egDemand.egDemandDetails DmdDetails where "
 									+ " egDemand.egptProperty =:property  and egDemand.isHistory='N'   ");
@@ -143,14 +147,12 @@ public class PtDemandHibernateDao extends GenericHibernateDAO implements
 	 */
 
 	@Override
-	public Character whetherBillExistsForProperty(Property property,
-			String billnum, Module module) {
+	public Character whetherBillExistsForProperty(Property property, String billnum, Module module) {
 		Character status = null;
 		Query qry = null;
 		List<EgBill> list;
 		if (property != null && billnum != null) {
-			List<EgBill> egBillList = demandGenericDao.getBillsByBillNumber(
-					billnum, module);
+			List<EgBill> egBillList = demandGenericDAO.getBillsByBillNumber(billnum, module);
 			if (egBillList == null || egBillList.isEmpty()) {
 				status = 'N';
 			} else {
@@ -158,8 +160,7 @@ public class PtDemandHibernateDao extends GenericHibernateDAO implements
 				if (egBill == null) {
 					status = 'N';
 				} else {
-					qry = HibernateUtil
-							.getCurrentSession()
+					qry = getCurrentSession()
 							.createQuery(
 									"select egBill from  EgptPtdemand egptDem , EgBill egBill  where egptDem.egptProperty =:property and :egBill in elements(egptDem.egBills)   ");
 					qry.setEntity(PROPERTY, property);
@@ -197,10 +198,8 @@ public class PtDemandHibernateDao extends GenericHibernateDAO implements
 		Ptdemand egptPtdemand = null;
 
 		if (property != null) {
-			qry = HibernateUtil
-					.getCurrentSession()
-					.createQuery(
-							"from  Ptdemand egptDem where egptDem.egptProperty =:property   ");
+			qry = getCurrentSession().createQuery(
+					"from  Ptdemand egptDem where egptDem.egptProperty =:property   ");
 			qry.setEntity(PROPERTY, property);
 			if (qry.list().size() == 1) {
 				egptPtdemand = (Ptdemand) qry.uniqueResult();
@@ -234,8 +233,7 @@ public class PtDemandHibernateDao extends GenericHibernateDAO implements
 	// COC) propertyId is not unique ,It is unique within the Division Boundary
 	// check the demandReasonMaster list . It is not working
 	@Override
-	public List getDmdDetailsByPropertyIdBoundary(BasicProperty basicProperty,
-			Boundary divBoundary) {
+	public List getDmdDetailsByPropertyIdBoundary(BasicProperty basicProperty, Boundary divBoundary) {
 		String divStatus = "N";
 		List list = new ArrayList();
 		StringBuffer qry = new StringBuffer(50);
@@ -254,8 +252,7 @@ public class PtDemandHibernateDao extends GenericHibernateDAO implements
 				qry.append(" and ppid.wardId =:divBoundary  ");
 			}
 
-			Query query = HibernateUtil.getCurrentSession().createQuery(
-					qry.toString());
+			Query query = getCurrentSession().createQuery(qry.toString());
 			query.setEntity("basicProperty", basicProperty);
 			if ("Y".equals(divStatus)) {
 				query.setEntity("divBoundary", divBoundary);
@@ -265,14 +262,13 @@ public class PtDemandHibernateDao extends GenericHibernateDAO implements
 		return list;
 	}
 
-	public List getTransactionByBasicProperty(BasicProperty basicProperty,
-			Installment installment, String is_cancelled) {
+	public List getTransactionByBasicProperty(BasicProperty basicProperty, Installment installment,
+			String is_cancelled) {
 		Query qry = null;
 		List list = new ArrayList(0);
-		if (basicProperty != null && installment != null
-				&& is_cancelled != null && !is_cancelled.equals("")) {
-			qry = HibernateUtil
-					.getCurrentSession()
+		if (basicProperty != null && installment != null && is_cancelled != null
+				&& !is_cancelled.equals("")) {
+			qry = getCurrentSession()
 					.createQuery(
 							" select TD from PropertyTaxTxAgent txAgent left join txAgent.myTransactions header "
 									+ " left join header.transactionDetails TD where  header.isCancelled =:is_cancelled and "
@@ -306,16 +302,14 @@ public class PtDemandHibernateDao extends GenericHibernateDAO implements
 	public Map getAllDemands(BasicProperty basicProperty, Boundary divBoundary) {
 		List<EgDemandDetails> demandDetailsList;
 		BigDecimal amount = BigDecimal.ZERO;
-		demandDetailsList = getDmdDetailsByPropertyIdBoundary(basicProperty,
-				divBoundary);
+		demandDetailsList = getDmdDetailsByPropertyIdBoundary(basicProperty, divBoundary);
 		Map<EgDemandReason, BigDecimal> dmdMap = new HashMap<EgDemandReason, BigDecimal>();
 		Iterator iter = demandDetailsList.iterator();
 		while (iter.hasNext()) {
 			EgDemandDetails egDemandDetails = (EgDemandDetails) iter.next();
 			if (egDemandDetails.getEgDemandReason() != null) {
 				if (dmdMap.containsKey(egDemandDetails.getEgDemandReason())) {
-					dmdMap.put(egDemandDetails.getEgDemandReason(),
-							egDemandDetails.getAmount());
+					dmdMap.put(egDemandDetails.getEgDemandReason(), egDemandDetails.getAmount());
 				} else {
 					amount = amount.add(egDemandDetails.getAmount());
 					dmdMap.put(egDemandDetails.getEgDemandReason(), amount);
@@ -332,17 +326,13 @@ public class PtDemandHibernateDao extends GenericHibernateDAO implements
 	@Override
 	public List<BigDecimal> getCurrentAmountsFromBill(Long billId) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT").append("    SUM(det.amount),")
-				.append("    SUM(det.amt_collected),")
-				.append("    SUM(det.amt_rebate)").append(" FROM ")
-				.append("    eg_bill bill,")
-				.append("    eg_demand_details det,")
-				.append("    eg_demand_reason reas,")
+		sb.append("SELECT").append("    SUM(det.amount),").append("    SUM(det.amt_collected),")
+				.append("    SUM(det.amt_rebate)").append(" FROM ").append("    eg_bill bill,")
+				.append("    eg_demand_details det,").append("    eg_demand_reason reas,")
 				.append("    eg_demand_reason_master reasm,")
 				.append("    eg_reason_category reascat,")
-				.append("    eg_installment_master inst,")
-				.append("    eg_module module").append(" WHERE ")
-				.append("    bill.id = :").append(BILLID_PARAM).append(" AND")
+				.append("    eg_installment_master inst,").append("    eg_module module")
+				.append(" WHERE ").append("    bill.id = :").append(BILLID_PARAM).append(" AND")
 				.append("    det.id_demand = bill.id_demand AND")
 				.append("    det.id_demand_reason = reas.id AND")
 				.append("    reas.id_installment = inst.id_installment AND")
@@ -365,12 +355,7 @@ public class PtDemandHibernateDao extends GenericHibernateDAO implements
 
 	@Override
 	public Map<String, BigDecimal> getDemandCollMap(Property property) {
-		PropertyDAO propertyDao = PropertyDAOFactory.getDAOFactory()
-				.getPropertyDAO();
-		PtDemandDao eGPTDemandDao = PropertyDAOFactory.getDAOFactory()
-				.getPtDemandDao();
-		Ptdemand currDemand = eGPTDemandDao
-				.getNonHistoryCurrDmdForProperty(property);
+		Ptdemand currDemand = getNonHistoryCurrDmdForProperty(property);
 		Installment installment = null;
 		Installment currInst = null;
 		Integer instId = null;
@@ -379,19 +364,16 @@ public class PtDemandHibernateDao extends GenericHibernateDAO implements
 		BigDecimal currCollection = BigDecimal.ZERO;
 		BigDecimal arrColelection = BigDecimal.ZERO;
 		Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>();
-		List dmdCollList = propertyDao.getDmdCollAmtInstWise(currDemand);
-		Module module = moduleDao
-				.getModuleByName(PropertyTaxConstants.PTMODULENAME);
-		currInst = installmentDao.getInsatllmentByModuleForGivenDate(module,
-				new Date());
+		List dmdCollList = propertyDAO.getDmdCollAmtInstWise(currDemand);
+		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+		currInst = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
 		for (Object object : dmdCollList) {
 			Object[] listObj = (Object[]) object;
 			instId = Integer.valueOf(((BigDecimal) listObj[0]).toString());
 			installment = (Installment) installmentDao.findById(instId, false);
 			if (currInst.equals(installment)) {
 				if (listObj[2] != null && !listObj[2].equals(BigDecimal.ZERO)) {
-					currCollection = currCollection
-							.add((BigDecimal) listObj[2]);
+					currCollection = currCollection.add((BigDecimal) listObj[2]);
 				}
 				/*
 				 * adding rebate to collection (commenting this code because,
@@ -400,15 +382,13 @@ public class PtDemandHibernateDao extends GenericHibernateDAO implements
 				 * view property screen)
 				 */
 				if (listObj[3] != null && !listObj[3].equals(BigDecimal.ZERO)) {
-					currCollection = currCollection
-							.add((BigDecimal) listObj[3]);
+					currCollection = currCollection.add((BigDecimal) listObj[3]);
 				}
 				currDmd = currDmd.add((BigDecimal) listObj[1]);
 			} else {
 				arrDmd = arrDmd.add((BigDecimal) listObj[1]);
 				if (listObj[2] != null && !listObj[2].equals(BigDecimal.ZERO)) {
-					arrColelection = arrColelection
-							.add((BigDecimal) listObj[2]);
+					arrColelection = arrColelection.add((BigDecimal) listObj[2]);
 				}
 				/*
 				 * adding rebate to collection (commenting this code because,
@@ -416,8 +396,7 @@ public class PtDemandHibernateDao extends GenericHibernateDAO implements
 				 * as a negative amt in search results and view property screen)
 				 */
 				if (listObj[3] != null && !listObj[3].equals(BigDecimal.ZERO)) {
-					arrColelection = arrColelection
-							.add((BigDecimal) listObj[3]);
+					arrColelection = arrColelection.add((BigDecimal) listObj[3]);
 				}
 			}
 		}
@@ -447,8 +426,7 @@ public class PtDemandHibernateDao extends GenericHibernateDAO implements
 		Ptdemand egptPtdemand = null;
 
 		if (property != null) {
-			qry = HibernateUtil
-					.getCurrentSession()
+			qry = getCurrentSession()
 					.createQuery(
 							"from  Ptdemand egptDem where egptDem.egptProperty =:property and (egptDem.egInstallmentMaster.fromDate <= :fromYear and egptDem.egInstallmentMaster.toDate >=:toYear) ");
 			qry.setEntity(PROPERTY, property);
@@ -461,6 +439,36 @@ public class PtDemandHibernateDao extends GenericHibernateDAO implements
 			}
 		}
 		return egptPtdemand;
+	}
+
+	@Override
+	public List findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Ptdemand findById(Integer id, boolean lock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Ptdemand create(Ptdemand ptdemand) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(Ptdemand ptdemand) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Ptdemand update(Ptdemand ptdemand) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

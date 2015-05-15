@@ -39,10 +39,20 @@
  */
 package org.egov.demand.dao;
 
-import org.egov.infstr.dao.GenericDAO;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 
-@Transactional
-public interface EgDemandDetailsDao extends GenericDAO{
+import org.egov.demand.model.EgDemandDetails;
+
+public interface EgDemandDetailsDao {
+
+	public EgDemandDetails findById(Integer id, boolean lock);
+
+	public List<EgDemandDetails> findAll();
+
+	public EgDemandDetails create(EgDemandDetails egDemandDetails);
+
+	public void delete(EgDemandDetails egDemandDetails);
+
+	public EgDemandDetails update(EgDemandDetails egDemandDetails);
 
 }

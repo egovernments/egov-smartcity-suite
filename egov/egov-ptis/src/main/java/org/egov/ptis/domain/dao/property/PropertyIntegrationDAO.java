@@ -39,9 +39,19 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import org.egov.infstr.dao.GenericDAO;
+import java.util.List;
 
-public interface PropertyIntegrationDAO extends GenericDAO
-{
-	
+import org.egov.ptis.domain.entity.property.PropertyIntegration;
+
+public interface PropertyIntegrationDAO {
+
+	public PropertyIntegration findById(Integer id, boolean lock);
+
+	public List<PropertyIntegration> findAll();
+
+	public PropertyIntegration create(PropertyIntegration propertyIntegration);
+
+	public void delete(PropertyIntegration propertyIntegration);
+
+	public PropertyIntegration update(PropertyIntegration propertyIntegration);
 }

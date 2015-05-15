@@ -52,11 +52,11 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.egov.exceptions.EGOVException;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.web.actions.BaseFormAction;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This Action class is used to generate the a report called Zone wise Property
@@ -70,7 +70,10 @@ public class BoundaryWisePropUsgeDemandAction extends BaseFormAction {
 
 	// private static final long serialVersionUID = 1L;
 	private static final Logger LOGGER = Logger.getLogger(BoundaryWisePropUsgeDemandAction.class);
-	private final PropertyUsageDAO propUsgeDao = PropertyDAOFactory.getDAOFactory().getPropertyUsageDAO();
+	@Autowired
+	private PropertyUsageDAO propertyUsageDAO;
+	@Autowired
+	private PropertyTypeMasterDAO propertyTypeMasterDAO;
 	List bndryPropUseList = new ArrayList();
 	private Map<Integer, TreeMap<Integer, BoundryWisePropUsgeBean>> bndryMap;
 	private Map<Integer, Map<String, BoundryWisePropUsgeBean>> zoneMap;
@@ -80,57 +83,56 @@ public class BoundaryWisePropUsgeDemandAction extends BaseFormAction {
 	private String wardParam = null;
 	private String isPrint = null;
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public String execute() throws EGOVException {
 		LOGGER.debug("Entered into execute method");
 		String target = "failure";
 		try {
 			HttpServletRequest request = ServletActionContext.getRequest();
-			PropertyTypeMasterDAO propTypeMstrDao = PropertyDAOFactory.getDAOFactory().getPropertyTypeMasterDAO();
 			bndryParamStr = getParameterValue("bndryParam");
 			isPrint = getParameterValue("isPrint");
-			LOGGER.debug("Boundary Param String : " + bndryParamStr + ", " + "Is Print ? : " + isPrint);
+			LOGGER.debug("Boundary Param String : " + bndryParamStr + ", " + "Is Print ? : "
+					+ isPrint);
 			bndryDel = new BoundaryWisePropUsgeDelegate();
-			List<PropertyTypeMaster> propMstrList = propTypeMstrDao.findAll();
+			List<PropertyTypeMaster> propMstrList = propertyTypeMasterDAO.findAll();
 			// If bndryParamStr is null then the list we get is zoneList
 			// Any value i.e zone number then the list we get is ward list
 			if (bndryParamStr == null) {
 				List zoneList = bndryDel.getZoneList();
-				bndryMap = (Map<Integer, TreeMap<Integer, BoundryWisePropUsgeBean>>) bndryDel.getBoundaryWiseList(
-						zoneList, null, propMstrList);
-				if(bndryMap != null){
-					zoneMap = (Map<Integer, Map<String, BoundryWisePropUsgeBean>>) bndryDel
-						.getZoneAndPropertyTypeWiseList(bndryMap);
-				}else{
+				bndryMap = bndryDel.getBoundaryWiseList(zoneList, null, propMstrList);
+				if (bndryMap != null) {
+					zoneMap = bndryDel.getZoneAndPropertyTypeWiseList(bndryMap);
+				} else {
 					LOGGER.debug("Error in getting boundary wise list");
 				}
 
 			} else {
 				List wardList = bndryDel.getWardList(Integer.parseInt(bndryParamStr));
-				bndryMap = (Map<Integer, TreeMap<Integer, BoundryWisePropUsgeBean>>) bndryDel.getBoundaryWiseList(
-						wardList, Integer.parseInt(bndryParamStr),propMstrList);
-				if(bndryMap != null){
-					zoneMap = (Map<Integer, Map<String, BoundryWisePropUsgeBean>>) bndryDel
-						.getZoneAndPropertyTypeWiseList(bndryMap);
-				}else{
+				bndryMap = bndryDel.getBoundaryWiseList(wardList, Integer.parseInt(bndryParamStr),
+						propMstrList);
+				if (bndryMap != null) {
+					zoneMap = bndryDel.getZoneAndPropertyTypeWiseList(bndryMap);
+				} else {
 					LOGGER.debug("Error in getting boundary wise list");
 				}
 				request.setAttribute("bndryParamStr", bndryParamStr);
 			}
-			LOGGER.debug("Boundary Map size : " + (bndryMap != null ? bndryMap.size() : ZERO) + ", " +
-					"Zone Map size : " + (zoneMap != null ? zoneMap.size() : ZERO));
+			LOGGER.debug("Boundary Map size : " + (bndryMap != null ? bndryMap.size() : ZERO)
+					+ ", " + "Zone Map size : " + (zoneMap != null ? zoneMap.size() : ZERO));
 			if (isPrint != null && isPrint.equals("TRUE")) {
 				target = "printResult";
 			} else {
 				target = INDEX;
 			}
-			LOGGER.info("zoneMap========="+zoneMap);
+			LOGGER.info("zoneMap=========" + zoneMap);
 			request.setAttribute("zoneMap", zoneMap);
 			request.setAttribute("bndryPropUsgeDelgte", bndryDel);
 
 		} catch (Exception e) {
 			target = "failure";
-			LOGGER.error("--error in BoundaryWisePropUsgeDemand-in execute() method--" + e.getMessage());
+			LOGGER.error("--error in BoundaryWisePropUsgeDemand-in execute() method--"
+					+ e.getMessage());
 			throw new EGOVRuntimeException("Error in ZoneWiseDemandAction---------------", e);
 		}
 		LOGGER.debug("Exit from execute method");
@@ -161,10 +163,6 @@ public class BoundaryWisePropUsgeDemandAction extends BaseFormAction {
 		this.zoneMap = zoneMap;
 	}
 
-	public PropertyUsageDAO getPropUsgeDao() {
-		return propUsgeDao;
-	}
-
 	public String getParameterValue(String param) {
 		Object varr = getParameters().get(param);
 		if (varr == null)
@@ -176,6 +174,7 @@ public class BoundaryWisePropUsgeDemandAction extends BaseFormAction {
 		return parameters;
 	}
 
+	@Override
 	public void setParameters(Map parameters) {
 		this.parameters = parameters;
 	}

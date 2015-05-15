@@ -41,23 +41,26 @@ package org.egov.ptis.domain.dao.property;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.TaxPerc;
 
+public interface TaxPercDAO {
+	
+	public TaxPerc getTaxPerc(Category category, PropertyUsage propertyUsage, BigDecimal amount,
+			Date date);
 
-/**
- * <p>This is an interface which would be implemented by the 
- * Individual Frameworks  for all the CRUD (create, read, update, delete) basic data 
- * access operations for Tax Perc
- * 
- * @author Neetu
- * @version 2.00 
- */
-
-public interface TaxPercDAO extends org.egov.infstr.dao.GenericDAO
-{
-	public TaxPerc getTaxPerc(Category category, PropertyUsage propertyUsage,BigDecimal amount,Date date);
 	public Float getTaxPerc(Integer usageId);
+
+	public TaxPerc findById(Integer id, boolean lock);
+
+	public List<TaxPerc> findAll();
+
+	public TaxPerc create(TaxPerc taxPerc);
+
+	public void delete(TaxPerc taxPerc);
+
+	public TaxPerc update(TaxPerc taxPerc);
 }

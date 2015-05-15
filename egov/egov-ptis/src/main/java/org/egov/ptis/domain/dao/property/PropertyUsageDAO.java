@@ -44,20 +44,26 @@ import java.util.List;
 
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 
-/**
- * <p>This is an interface which would be implemented by the 
- * Individual Frameworks  for all the CRUD (create, read, update, delete) basic data 
- * access operations for PropertyUsage
- * 
- * @author Neetu
- * @version 2.00
- */
+public interface PropertyUsageDAO {
 
-public interface PropertyUsageDAO extends org.egov.infstr.dao.GenericDAO {
-	
 	PropertyUsage getPropertyUsage(String usageCode);
+
 	PropertyUsage getPropertyUsage(String usageCode, Date fromDate);
+
 	List<PropertyUsage> getAllActivePropertyUsage();
+
 	List<PropertyUsage> getAllPropertyUsage();
+
 	public List getPropUsageAscOrder();
+
+	public PropertyUsage findById(Long id, boolean lock);
+
+	public List<PropertyUsage> findAll();
+
+	public PropertyUsage create(PropertyUsage propertyUsage);
+
+	public void delete(PropertyUsage propertyUsage);
+
+	public PropertyUsage update(PropertyUsage propertyUsage);
+
 }

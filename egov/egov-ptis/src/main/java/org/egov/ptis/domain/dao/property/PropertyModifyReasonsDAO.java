@@ -39,14 +39,19 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-/**
- * <p>This is an interface which would be implemented by the 
- * Individual Frameworks  for all the CRUD (create, read, update, delete) basic data 
- * access operations for PropertyModifyReason
- * 
- * @author Ramakrishna
- * @version 2.00
- */
-public interface PropertyModifyReasonsDAO extends org.egov.infstr.dao.GenericDAO{
+import java.util.List;
 
+import org.egov.ptis.domain.entity.property.PropertyModifyReason;
+
+public interface PropertyModifyReasonsDAO {
+
+	public PropertyModifyReason findById(Integer id, boolean lock);
+
+	public List<PropertyModifyReason> findAll();
+
+	public PropertyModifyReason create(PropertyModifyReason propertyModifyReason);
+
+	public void delete(PropertyModifyReason propertyModifyReason);
+
+	public PropertyModifyReason update(PropertyModifyReason propertyModifyReason);
 }

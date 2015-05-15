@@ -39,27 +39,50 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import org.egov.infstr.dao.GenericHibernateDAO;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.egov.ptis.domain.entity.property.ConstructionTypeSet;
 import org.hibernate.Session;
 
-/**
- * This Class implememets the ConstructionTypeSetDAO for the Hibernate specific 
- * Implementation 
- * 
- * @author Neetu
- * @version 2.00
- */
+public class ConstructionTypeSetHibernateDAO implements ConstructionTypeSetDAO {
+	@PersistenceContext
+	private EntityManager entityManager;
 
-public class ConstructionTypeSetHibernateDAO extends GenericHibernateDAO implements ConstructionTypeSetDAO
-{
-	/**
-	 * @param persistentClass
-	 * @param session
-	 */
-	public ConstructionTypeSetHibernateDAO(Class persistentClass, Session session)
-	{
-		super(persistentClass, session);
+	@SuppressWarnings("unused")
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
+
+	@Override
+	public ConstructionTypeSet findById(Integer id, boolean lock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ConstructionTypeSet> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ConstructionTypeSet create(ConstructionTypeSet constructionTypeSet) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(ConstructionTypeSet constructionTypeSet) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public ConstructionTypeSet update(ConstructionTypeSet constructionTypeSet) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
-  
-

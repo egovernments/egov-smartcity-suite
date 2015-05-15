@@ -43,9 +43,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infstr.dao.GenericHibernateDAO;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
@@ -58,23 +59,15 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Hibernate implementation of BoundaryCategoryDao
- *
- * @author Manu
- * @version 2.00
- */
 @Repository(value = "boundaryCategoryDAO")
 @Transactional(readOnly = true)
-public class BoundaryCategoryHibDao extends GenericHibernateDAO implements
-		BoundaryCategoryDao {
+public class BoundaryCategoryHibDao implements BoundaryCategoryDao {
 
-	/**
-	 * @param persistentClass
-	 * @param session
-	 */
-	public BoundaryCategoryHibDao(Class persistentClass, Session session) {
-		super(persistentClass, session);
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
 	}
 
 	public static final String BOUNDARY = "bndry";
@@ -84,12 +77,10 @@ public class BoundaryCategoryHibDao extends GenericHibernateDAO implements
 		Category category = null;
 		Query qry = null;
 		if (bndry != null) {
-			qry = getCurrentSession()
-					.createQuery(
-							"select C from Category C inner join C.catBoundaries BC where BC.bndry = :bndry AND ("
-									+ "(BC.toDate IS NULL AND BC.fromDate <= :currDate) "
-									+ "OR "
-									+ "(BC.fromDate <= :currDate AND BC.toDate >= :currDate)) ");
+			qry = getCurrentSession().createQuery(
+					"select C from Category C inner join C.catBoundaries BC where BC.bndry = :bndry AND ("
+							+ "(BC.toDate IS NULL AND BC.fromDate <= :currDate) " + "OR "
+							+ "(BC.fromDate <= :currDate AND BC.toDate >= :currDate)) ");
 			qry.setEntity(BOUNDARY, bndry);
 			qry.setDate("currDate", new Date());
 			if (qry.list().size() == 1)
@@ -103,12 +94,10 @@ public class BoundaryCategoryHibDao extends GenericHibernateDAO implements
 		Category category = null;
 		Query qry = null;
 		if (bndry != null && date != null) {
-			qry = getCurrentSession()
-					.createQuery(
-							"select C from Category C inner join C.catBoundaries BC where BC.bndry = :bndry AND ("
-									+ "(BC.toDate IS NULL AND BC.fromDate <= :date) "
-									+ "OR "
-									+ "(BC.fromDate <= :date AND BC.toDate >= :date)) ");
+			qry = getCurrentSession().createQuery(
+					"select C from Category C inner join C.catBoundaries BC where BC.bndry = :bndry AND ("
+							+ "(BC.toDate IS NULL AND BC.fromDate <= :date) " + "OR "
+							+ "(BC.fromDate <= :date AND BC.toDate >= :date)) ");
 			qry.setEntity(BOUNDARY, bndry);
 			qry.setDate("date", date);
 			if (qry.list().size() == 1)
@@ -122,12 +111,10 @@ public class BoundaryCategoryHibDao extends GenericHibernateDAO implements
 		BoundaryCategory bndryCategory = null;
 		Query qry = null;
 		if (bndry != null) {
-			qry = getCurrentSession()
-					.createQuery(
-							"from BoundaryCategory BC where BC.bndry = :bndry AND ("
-									+ "(BC.toDate IS NULL AND BC.fromDate <= :currDate) "
-									+ "OR "
-									+ "(BC.fromDate <= :currDate AND BC.toDate >= :currDate)) ");
+			qry = getCurrentSession().createQuery(
+					"from BoundaryCategory BC where BC.bndry = :bndry AND ("
+							+ "(BC.toDate IS NULL AND BC.fromDate <= :currDate) " + "OR "
+							+ "(BC.fromDate <= :currDate AND BC.toDate >= :currDate)) ");
 			qry.setEntity(BOUNDARY, bndry);
 			qry.setDate("currDate", new Date());
 
@@ -138,17 +125,14 @@ public class BoundaryCategoryHibDao extends GenericHibernateDAO implements
 	}
 
 	@Override
-	public BoundaryCategory getBoundaryCategoryByBoundryAndDate(Boundary bndry,
-			Date date) {
+	public BoundaryCategory getBoundaryCategoryByBoundryAndDate(Boundary bndry, Date date) {
 		BoundaryCategory bndryCategory = null;
 		Query qry = null;
 		if (bndry != null && date != null) {
-			qry = getCurrentSession()
-					.createQuery(
-							"from BoundaryCategory BC where BC.bndry = :bndry AND ("
-									+ "(BC.toDate IS NULL AND BC.fromDate <= :date) "
-									+ "OR "
-									+ "(BC.fromDate <= :date AND BC.toDate >= :date)) ");
+			qry = getCurrentSession().createQuery(
+					"from BoundaryCategory BC where BC.bndry = :bndry AND ("
+							+ "(BC.toDate IS NULL AND BC.fromDate <= :date) " + "OR "
+							+ "(BC.fromDate <= :date AND BC.toDate >= :date)) ");
 			qry.setEntity(BOUNDARY, bndry);
 			qry.setDate("date", date);
 			if (qry.list().size() == 1)
@@ -158,8 +142,7 @@ public class BoundaryCategoryHibDao extends GenericHibernateDAO implements
 	}
 
 	@Override
-	public Category getCategoryByBoundryAndUsage(Boundary bndry,
-			PropertyUsage propertyUsage) {
+	public Category getCategoryByBoundryAndUsage(Boundary bndry, PropertyUsage propertyUsage) {
 		Category category = null;
 		Query qry = null;
 		if (bndry != null && propertyUsage != null) {
@@ -201,18 +184,15 @@ public class BoundaryCategoryHibDao extends GenericHibernateDAO implements
 
 	// get BoundaryCategory by boundary and category by passing criterion as
 	// parameter
+
 	@Override
-	public BoundaryCategory getBoundaryCategoryByBoundaryAndCategory(
-			Criterion criterion) {
-		Criteria criteria = getCurrentSession().createCriteria(
-				BoundaryCategory.class);
+	public BoundaryCategory getBoundaryCategoryByBoundaryAndCategory(Criterion criterion) {
+		Criteria criteria = getCurrentSession().createCriteria(BoundaryCategory.class);
 		BoundaryCategory boundaryCategory = null;
 		if (criterion != null) {
-			Criterion dateCondn1 = Restrictions.and(
-					Restrictions.le("fromDate", new Date()),
+			Criterion dateCondn1 = Restrictions.and(Restrictions.le("fromDate", new Date()),
 					Restrictions.isNull("toDate"));
-			Criterion dateCondn2 = Restrictions.and(
-					Restrictions.le("fromDate", new Date()),
+			Criterion dateCondn2 = Restrictions.and(Restrictions.le("fromDate", new Date()),
 					Restrictions.ge("toDate", new Date()));
 			Criterion dateCondn = Restrictions.or(dateCondn1, dateCondn2);
 
@@ -235,12 +215,40 @@ public class BoundaryCategoryHibDao extends GenericHibernateDAO implements
 		 * "AND bcat.id_bndry =:bndryId ";
 		 */
 
-		Query qry = HibernateUtil
-				.getCurrentSession()
-				.createQuery(
-						"select bc.category from BoundaryCategory bc where bc.bndry =:Boundary");
+		Query qry = getCurrentSession().createQuery(
+				"select bc.category from BoundaryCategory bc where bc.bndry =:Boundary");
 		qry.setEntity("Boundary", bndry);
 		list = qry.list();
 		return list;
+	}
+
+	@Override
+	public Category findById(Integer id, boolean lock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Category create(Category category) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(Category category) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Category update(Category category) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Category> findAll() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

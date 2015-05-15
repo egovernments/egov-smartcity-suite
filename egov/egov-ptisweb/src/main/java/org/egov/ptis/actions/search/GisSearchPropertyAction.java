@@ -71,11 +71,10 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.lib.admbndry.BoundaryDAO;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
@@ -121,7 +120,12 @@ public class GisSearchPropertyAction extends BaseFormAction {
 	private Map<Long, String> ZoneBndryMap;
 
 	@Autowired
-	private BoundaryDAO boundaryDAO;
+	private BoundaryService boundaryService;
+	@Autowired
+	private PropertyTypeMasterDAO propertyTypeMasterDAO;
+	@Autowired
+	private BasicPropertyDAO basicPropertyDAO;
+	private PtDemandDao ptDemandDAO;
 
 	@Override
 	public Object getModel() {
@@ -173,7 +177,7 @@ public class GisSearchPropertyAction extends BaseFormAction {
 		LOGGER.debug("srchByBndry : Zone Id : " + zoneId + ", " + "ward Id: " + wardId + ", "
 				+ "House Num : " + houseNum + ", " + "Owner Name :" + ownerName + ", "
 				+ "Session : " + SESSION);
-		String strZoneNum = boundaryDAO.getBoundary(zoneId).getName();
+		String strZoneNum = boundaryService.getBoundaryById(zoneId).getName();
 		String strWardNum = "";
 		String target = null;
 		if (zoneId != null && zoneId != -1) {
@@ -254,14 +258,12 @@ public class GisSearchPropertyAction extends BaseFormAction {
 		LOGGER.debug("Entered into srchByPropType method");
 		LOGGER.debug("Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", "
 				+ "Property Type : " + propTypeId);
-		String strZoneNum = boundaryDAO.getBoundary(zoneId).getName();
+		String strZoneNum = boundaryService.getBoundaryById(zoneId).getName();
 		String strWardNum = "";
 		String target = null;
 		String propTypeName = "";
-		PropertyTypeMasterDAO propTypeMstrDAO = PropertyDAOFactory.getDAOFactory()
-				.getPropertyTypeMasterDAO();
 		if (propTypeId != null && propTypeId != -1) {
-			propTypeName = propTypeMstrDAO.getPropertyTypeMasterById(propTypeId).getType();
+			propTypeName = propertyTypeMasterDAO.getPropertyTypeMasterById(propTypeId).getType();
 		}
 		if (zoneId != null && zoneId != -1) {
 			try {
@@ -337,14 +339,12 @@ public class GisSearchPropertyAction extends BaseFormAction {
 		LOGGER.debug("Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", "
 				+ "Property Type : " + propTypeId + ", " + "Demand from amt : " + demandFromAmt
 				+ ", " + "Demand To amt : " + demandToAmt);
-		String strZoneNum = boundaryDAO.getBoundary(zoneId).getName();
+		String strZoneNum = boundaryService.getBoundaryById(zoneId).getName();
 		String strWardNum = "";
 		String target = null;
 		String propTypeName = "";
-		PropertyTypeMasterDAO propTypeMstrDAO = PropertyDAOFactory.getDAOFactory()
-				.getPropertyTypeMasterDAO();
 		if (propTypeId != null && propTypeId != -1) {
-			propTypeName = propTypeMstrDAO.getPropertyTypeMasterById(propTypeId).getType();
+			propTypeName = propertyTypeMasterDAO.getPropertyTypeMasterById(propTypeId).getType();
 		}
 		if (zoneId != null && zoneId != -1) {
 			try {
@@ -428,14 +428,12 @@ public class GisSearchPropertyAction extends BaseFormAction {
 		LOGGER.debug("Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", "
 				+ "Property Type : " + propTypeId + ", " + "Defaulter from amt : "
 				+ defaulterFromAmt + ", " + "Defaulter To amt : " + defaulterToAmt);
-		String strZoneNum = boundaryDAO.getBoundary(zoneId).getName();
+		String strZoneNum = boundaryService.getBoundaryById(zoneId).getName();
 		String strWardNum = "";
 		String target = null;
 		String propTypeName = "";
-		PropertyTypeMasterDAO propTypeMstrDAO = PropertyDAOFactory.getDAOFactory()
-				.getPropertyTypeMasterDAO();
 		if (propTypeId != null && propTypeId != -1) {
-			propTypeName = propTypeMstrDAO.getPropertyTypeMasterById(propTypeId).getType();
+			propTypeName = propertyTypeMasterDAO.getPropertyTypeMasterById(propTypeId).getType();
 		}
 		if (zoneId != null && zoneId != -1) {
 			try {
@@ -571,9 +569,6 @@ public class GisSearchPropertyAction extends BaseFormAction {
 		LOGGER.debug("Entered into getSearchResults method");
 		LOGGER.debug("Index Number : " + indexNumber);
 		PTISCacheManagerInteface ptisCachMgr = new PTISCacheManager();
-		BasicPropertyDAO basicPropertyDAO = PropertyDAOFactory.getDAOFactory()
-				.getBasicPropertyDAO();
-		PtDemandDao ptDemandDao = PropertyDAOFactory.getDAOFactory().getPtDemandDao();
 
 		if (indexNumber != null || StringUtils.isNotEmpty(indexNumber)) {
 
@@ -584,7 +579,7 @@ public class GisSearchPropertyAction extends BaseFormAction {
 				Property property = basicProperty.getProperty();
 				LOGGER.debug("Property : " + property);
 				Set<PropertyOwner> ownerSet = property.getPropertyOwnerSet();
-				Map<String, BigDecimal> demandCollMap = ptDemandDao.getDemandCollMap(property);
+				Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
 
 				Map<String, String> searchResultMap = new HashMap<String, String>();
 				searchResultMap.put("indexNum", indexNumber);

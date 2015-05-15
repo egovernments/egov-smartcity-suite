@@ -42,28 +42,43 @@ package org.egov.ptis.domain.dao.property;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.egov.infstr.dao.GenericHibernateDAO;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-public class PropertyStatusValuesHibernateDAO extends GenericHibernateDAO implements PropertyStatusValuesDAO {
-	public PropertyStatusValuesHibernateDAO(Class persistentClass, Session session) {
-		super(persistentClass, session);
+@Repository(value = "propertyStatusValuesDAO")
+@Transactional(readOnly = true)
+public class PropertyStatusValuesHibernateDAO implements PropertyStatusValuesDAO {
+
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
 	}
 
-	public PropertyStatusValues getLatestPropertyStatusValuesByPropertyIdAndCode(String PropertyId, List Code) {
-		Query qry = getCurrentSession().createQuery(
-				"from PropertyStatusValues PSV " + "left join fetch PSV.basicProperty BP "
-						+ "left join fetch PSV.propertyStatus PS "
-						+ "where PSV.isActive ='Y' and BP.upicNo =:PropertyId and PS.statusCode in (:Code) "
-						+ "order by PSV.createdDate desc").setMaxResults(1);
+	@Override
+	public PropertyStatusValues getLatestPropertyStatusValuesByPropertyIdAndCode(String PropertyId,
+			List Code) {
+		Query qry = getCurrentSession()
+				.createQuery(
+						"from PropertyStatusValues PSV "
+								+ "left join fetch PSV.basicProperty BP "
+								+ "left join fetch PSV.propertyStatus PS "
+								+ "where PSV.isActive ='Y' and BP.upicNo =:PropertyId and PS.statusCode in (:Code) "
+								+ "order by PSV.createdDate desc").setMaxResults(1);
 		qry.setString("PropertyId", PropertyId);
 		qry.setParameterList("Code", Code);
 		return (PropertyStatusValues) qry.uniqueResult();
 	}
 
+	@Override
 	public List<PropertyStatusValues> getParentBasicPropsForChild(BasicProperty basicProperty) {
 		List<PropertyStatusValues> propStatValueList = new ArrayList<PropertyStatusValues>();
 		if (basicProperty != null) {
@@ -74,6 +89,36 @@ public class PropertyStatusValuesHibernateDAO extends GenericHibernateDAO implem
 			propStatValueList = qry.list();
 		}
 		return propStatValueList;
+	}
+
+	@Override
+	public PropertyStatusValues findById(Integer id, boolean lock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<PropertyStatusValues> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PropertyStatusValues create(PropertyStatusValues propertyStatusValues) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(PropertyStatusValues propertyStatusValues) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public PropertyStatusValues update(PropertyStatusValues propertyStatusValues) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

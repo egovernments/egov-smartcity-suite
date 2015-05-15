@@ -129,7 +129,6 @@ import org.egov.ptis.client.workflow.WorkflowDetails;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.dao.property.PropertyStatusValuesDAO;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
@@ -219,8 +218,8 @@ public class ModifyPropertyAction extends WorkflowAction {
 	private String[] floorNoStr = new String[100]; // Increased from 20 to 100
 													// bcoz of
 													// ArrayIndexOutOfBoundsException
-	private BasicPropertyDAO basicPropertyDAO = PropertyDAOFactory.getDAOFactory()
-			.getBasicPropertyDAO();
+	@Autowired
+	private BasicPropertyDAO basicPropertyDAO;
 	List<ValidationError> errors = new ArrayList<ValidationError>();
 	private PTISCacheManagerInteface ptisCacheMgr = new PTISCacheManager();
 	final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -256,6 +255,12 @@ public class ModifyPropertyAction extends WorkflowAction {
 
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private PropertyTypeMasterDAO propertyTypeMasterDAO;
+	@Autowired
+	private PropertyStatusValuesDAO propertyStatusValuesDAO;
+	@Autowired
+	private PtDemandDao ptDemandDAO;
 
 	public ModifyPropertyAction() {
 		super();
@@ -1175,9 +1180,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		Date propCompletionDate = null;
 		String mutationCode = null;
 		Character status = STATUS_WORKFLOW;
-		PropertyTypeMasterDAO propTypeMstrDao = PropertyDAOFactory.getDAOFactory()
-				.getPropertyTypeMasterDAO();
-		PropertyTypeMaster proptypeMstr = propTypeMstrDao.getPropertyTypeMasterById(Integer
+		PropertyTypeMaster proptypeMstr = propertyTypeMasterDAO.getPropertyTypeMasterById(Integer
 				.valueOf(propTypeId));
 		if (!proptypeMstr.getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
 			if ((proptypeMstr.getCode().equalsIgnoreCase(PROPTYPE_STATE_GOVT) || proptypeMstr
@@ -1568,9 +1571,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		Date propCompletionDate = null;
 		String mutationCode = null;
 		PropertyDetail propDet = null;
-		PropertyTypeMasterDAO propTypeMstrDao = PropertyDAOFactory.getDAOFactory()
-				.getPropertyTypeMasterDAO();
-		PropertyTypeMaster proptypeMstr = propTypeMstrDao.getPropertyTypeMasterById(Integer
+		PropertyTypeMaster proptypeMstr = propertyTypeMasterDAO.getPropertyTypeMasterById(Integer
 				.valueOf(propTypeId));
 
 		if (!proptypeMstr.getCode().equalsIgnoreCase("OPEN_PLOT")) {
@@ -1700,9 +1701,6 @@ public class ModifyPropertyAction extends WorkflowAction {
 		LOGGER.debug("Entered into checkAmalgStatus, OldPropId: " + oldpropId);
 
 		List<String> code = new ArrayList<String>();
-		PropertyStatusValuesDAO propStatusValDAO = PropertyDAOFactory.getDAOFactory()
-				.getPropertyStatusValuesDAO();
-		PtDemandDao ptDemandDao = PropertyDAOFactory.getDAOFactory().getPtDemandDao();
 		BigDecimal currDemand = BigDecimal.ZERO;
 		BigDecimal currDemandDue = BigDecimal.ZERO;
 		BigDecimal currCollection = BigDecimal.ZERO;
@@ -1716,7 +1714,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 		Map<String, String> wfMap = null;
 		String wfStatus = null;
 		if (amalgPropBasicProp != null) {
-			propStatVal = propStatusValDAO.getLatestPropertyStatusValuesByPropertyIdAndCode(
+			propStatVal = propertyStatusValuesDAO.getLatestPropertyStatusValuesByPropertyIdAndCode(
 					oldpropId, code);
 			wfMap = amalgPropBasicProp.getPropertyWfStatus();
 			wfStatus = wfMap.get(WFSTATUS);
@@ -1726,7 +1724,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 				setOldPropAddress(ptisCacheMgr.buildAddressByImplemetation(amalgPropBasicProp
 						.getAddress()));
 
-				Map<String, BigDecimal> DmdCollMap = ptDemandDao.getDemandCollMap(oldProp);
+				Map<String, BigDecimal> DmdCollMap = ptDemandDAO.getDemandCollMap(oldProp);
 				currDemand = DmdCollMap.get("CURR_DMD");
 				arrDemand = DmdCollMap.get("ARR_DMD");
 				currCollection = DmdCollMap.get("CURR_COLL");
@@ -2163,9 +2161,7 @@ public class ModifyPropertyAction extends WorkflowAction {
 				+ ", statusModifyRsn: " + modifyRsn + ", ReasonForModify: " + reasonForModify);
 
 		Date propCompletionDate = null;
-		PropertyTypeMasterDAO propTypeMstrDao = PropertyDAOFactory.getDAOFactory()
-				.getPropertyTypeMasterDAO();
-		PropertyTypeMaster proptypeMstr = propTypeMstrDao.getPropertyTypeMasterById(Integer
+		PropertyTypeMaster proptypeMstr = propertyTypeMasterDAO.getPropertyTypeMasterById(Integer
 				.valueOf(propTypeId));
 		if (!proptypeMstr.getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
 			if ((proptypeMstr.getCode().equalsIgnoreCase(PROPTYPE_STATE_GOVT) || proptypeMstr

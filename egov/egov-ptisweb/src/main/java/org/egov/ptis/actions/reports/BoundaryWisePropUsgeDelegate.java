@@ -40,10 +40,10 @@
 package org.egov.ptis.actions.reports;
 
 import static java.math.BigDecimal.ZERO;
+import static org.egov.infstr.utils.MoneyUtils.roundOff;
 import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_NON_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_OPENPLOT;
 import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_RESD;
-import static org.egov.infstr.utils.MoneyUtils.roundOff;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -52,9 +52,8 @@ import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.lib.admbndry.BoundaryDAO;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.ptis.domain.dao.property.PropertyDAO;
-import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
@@ -70,31 +69,33 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class BoundaryWisePropUsgeDelegate {
 	private static final Logger LOGGER = Logger.getLogger(BoundaryWisePropUsgeDelegate.class);
-	PropertyUsageDAO propUsageDao = PropertyDAOFactory.getDAOFactory().getPropertyUsageDAO();
-	PropertyTypeMasterDAO propTypeMstrDao = PropertyDAOFactory.getDAOFactory().getPropertyTypeMasterDAO();
-	
-	PropertyDAO propertyDao = PropertyDAOFactory.getDAOFactory().getPropertyDAO();
-	
 	@Autowired
-	private BoundaryDAO boundaryDao;
+	PropertyUsageDAO propertyUsageDAO;
+	@Autowired
+	PropertyTypeMasterDAO propertyTypeMasterDAO;
+	@Autowired
+	PropertyDAO propertyDAO;
+
+	@Autowired
+	private BoundaryService boundaryService;
 
 	/**
 	 * To get the Map of Zone wise property usage and Demand in the current
 	 * financial year. i.e(Map(zone,Map(propertyUsage,Bean)))
 	 * 
-	 *@param java
+	 * @param java
 	 *            .util.List boundaryList
-	 *@param Integer
+	 * @param Integer
 	 *            bndryNo
 	 * 
-	 *@return Map.
+	 * @return Map.
 	 * 
 	 */
-	public Map<Integer, TreeMap<Integer, BoundryWisePropUsgeBean>> getBoundaryWiseList(List boundaryList,
-			Integer bndryNo,List<PropertyTypeMaster> propMstrList) {
+	public Map<Integer, TreeMap<Integer, BoundryWisePropUsgeBean>> getBoundaryWiseList(
+			List boundaryList, Integer bndryNo, List<PropertyTypeMaster> propMstrList) {
 		LOGGER.debug("Entered into getBoundaryWiseList method");
-		LOGGER.debug("Boundary number : " + bndryNo + ", " + 
-					"Boundary List : "	+ (boundaryList != null ? boundaryList : ZERO));
+		LOGGER.debug("Boundary number : " + bndryNo + ", " + "Boundary List : "
+				+ (boundaryList != null ? boundaryList : ZERO));
 		TreeMap<Integer, TreeMap<Integer, BoundryWisePropUsgeBean>> boundaryMap = null;
 		TreeMap<Integer, BoundryWisePropUsgeBean> propUsageIDMap = null;
 		TreeMap<Integer, BoundryWisePropUsgeBean> propUsag = null;
@@ -143,16 +144,18 @@ public class BoundaryWisePropUsgeDelegate {
 						} else {
 							if (propUsageIDMap.containsKey(propTypeId)) {
 								bndryBean = propUsageIDMap.get(propTypeId);
-								prpUsageMap(bndryBean, innrBndryObj, propUsageIDMap, "withUsage", null);
+								prpUsageMap(bndryBean, innrBndryObj, propUsageIDMap, "withUsage",
+										null);
 								aggTotalProps = aggTotalProps + (Integer) innrBndryObj[4];
 								aggArrearDmdTot = aggArrearDmdTot.add((BigDecimal) innrBndryObj[2]);
-								aggCurrentDmdTot = aggCurrentDmdTot.add((BigDecimal) innrBndryObj[3]);
+								aggCurrentDmdTot = aggCurrentDmdTot
+										.add((BigDecimal) innrBndryObj[3]);
 							}
 
 						}
-						LOGGER.debug("Aggregate Total Properties : "	+ aggTotalProps + ", " + 
-									"Aggregate Total Arrears Demand : " + aggArrearDmdTot + ", " + 
-									"Aggregate Total Current Demand : " + aggCurrentDmdTot);
+						LOGGER.debug("Aggregate Total Properties : " + aggTotalProps + ", "
+								+ "Aggregate Total Arrears Demand : " + aggArrearDmdTot + ", "
+								+ "Aggregate Total Current Demand : " + aggCurrentDmdTot);
 					} else {
 						break;
 					}
@@ -171,7 +174,8 @@ public class BoundaryWisePropUsgeDelegate {
 
 			}
 			List propIndTotList = getTotPropUsage(bndryNo);
-			LOGGER.debug("propIndTotList size : " + (propIndTotList != null ? propIndTotList.size() : ZERO));
+			LOGGER.debug("propIndTotList size : "
+					+ (propIndTotList != null ? propIndTotList.size() : ZERO));
 			if (propIndTotList != null && !propIndTotList.isEmpty()) {
 				int propUsageIndTot = 2500;
 				propUsag = new TreeMap<Integer, BoundryWisePropUsgeBean>();
@@ -190,14 +194,16 @@ public class BoundaryWisePropUsgeDelegate {
 						indPropCount = propNullId;
 						indAggDemand = indAggDemand.add((BigDecimal) totList[2]);
 						indCurrDemand = indCurrDemand.add((BigDecimal) totList[3]);
-						indTotalDemand = indTotalDemand.add((BigDecimal) totList[2]).add((BigDecimal) totList[3]);
+						indTotalDemand = indTotalDemand.add((BigDecimal) totList[2]).add(
+								(BigDecimal) totList[3]);
 						indaggPropCnt = indaggPropCnt + (Integer) totList[1];
 
 					} else {
-						indPropCount = Integer.valueOf(((Long)totList[0]).intValue());
+						indPropCount = Integer.valueOf(((Long) totList[0]).intValue());
 						indAggDemand = indAggDemand.add((BigDecimal) totList[2]);
 						indCurrDemand = indCurrDemand.add((BigDecimal) totList[3]);
-						indTotalDemand = indTotalDemand.add((BigDecimal) totList[2]).add((BigDecimal) totList[3]);
+						indTotalDemand = indTotalDemand.add((BigDecimal) totList[2]).add(
+								(BigDecimal) totList[3]);
 						indaggPropCnt = indaggPropCnt + (Integer) totList[1];
 
 					}
@@ -208,20 +214,20 @@ public class BoundaryWisePropUsgeDelegate {
 					totalDemand = totalDemand.add((BigDecimal) totList[2]).add((BigDecimal) totList[3]);
 					indTotBean.setTotalDemand(roundOff(totalDemand));
 					propUsag.put(indPropCount, indTotBean);
-					LOGGER.debug("Individual Aggregate Property count : " + indaggPropCnt + ", " + 
-								"Individual Current Demand : " + indCurrDemand + ", " + 
-								"Individual Arrears Demand : " + indAggDemand + ", " + 
-								"Individual Total Demand : " + indTotalDemand);
+					LOGGER.debug("Individual Aggregate Property count : " + indaggPropCnt + ", "
+							+ "Individual Current Demand : " + indCurrDemand + ", "
+							+ "Individual Arrears Demand : " + indAggDemand + ", "
+							+ "Individual Total Demand : " + indTotalDemand);
 				}
 				indAggTotBean = new BoundryWisePropUsgeBean();
 				indAggTotBean.setArrDmd(roundOff(indAggDemand));
 				indAggTotBean.setCurrDmd(roundOff(indCurrDemand));
 				indAggTotBean.setTotalDemand(roundOff(indTotalDemand));
 				indAggTotBean.setPropCount(indaggPropCnt);
-				LOGGER.debug("Total Properties : " + indAggTotBean.getPropCount() + ", " + 
-							"Arrears Demand : " + indAggTotBean.getArrDmd() + ", " + 
-							"Current Demand : " + indAggTotBean.getCurrDmd() + ", " + 
-							"Total Demand : " + indAggTotBean.getTotalDemand());
+				LOGGER.debug("Total Properties : " + indAggTotBean.getPropCount() + ", "
+						+ "Arrears Demand : " + indAggTotBean.getArrDmd() + ", "
+						+ "Current Demand : " + indAggTotBean.getCurrDmd() + ", "
+						+ "Total Demand : " + indAggTotBean.getTotalDemand());
 				propUsag.put(propUsageIndTot, indAggTotBean);
 				boundaryMap.put(propIndTotNum, propUsag);
 			}
@@ -237,16 +243,16 @@ public class BoundaryWisePropUsgeDelegate {
 	 * internally from the method getBoundaryWiseList(List boundaryList,Integer
 	 * bndryNo)
 	 * 
-	 *@param org
-	 *            .egov.ptis.property.client.struts2.reports.coc.BoundryWisePropUsgeBean
-	 *            bndryBean
-	 *@param java
+	 * @param org
+	 *            .egov.ptis.property.client.struts2.reports.coc.
+	 *            BoundryWisePropUsgeBean bndryBean
+	 * @param java
 	 *            .lang.Object[] bndryObj
-	 *@param java
+	 * @param java
 	 *            .util.TreeMap<Integer, BoundryWisePropUsgeBean> propUsageIDMap
-	 *@param java
+	 * @param java
 	 *            .lang.String usage
-	 *@param java
+	 * @param java
 	 *            .lang.Integer propNullId
 	 * 
 	 */
@@ -273,8 +279,8 @@ public class BoundaryWisePropUsgeDelegate {
 		bndryBean.setPropCount(propCount);
 		bndryBean.setTotalDemand(roundOff(totalDemand));
 		propUsageIDMap.put(propId, bndryBean);
-		LOGGER.debug("Property Id : " + propId + ", "
-				+ "Total Properties : " + bndryBean.getPropCount() + ", " + "Arrears Demand : " + bndryBean.getArrDmd()
+		LOGGER.debug("Property Id : " + propId + ", " + "Total Properties : "
+				+ bndryBean.getPropCount() + ", " + "Arrears Demand : " + bndryBean.getArrDmd()
 				+ ", " + "Current Demand : " + bndryBean.getCurrDmd() + ", " + "Total Demand : "
 				+ bndryBean.getTotalDemand());
 		LOGGER.debug("Exit from prpUsageMap method");
@@ -288,16 +294,16 @@ public class BoundaryWisePropUsgeDelegate {
 	 * zone if there is no data for any usage then in result screen Zero needs
 	 * to be shown.
 	 * 
-	 *@param org
-	 *            .egov.ptis.property.client.struts2.reports.coc.BoundryWisePropUsgeBean
-	 *            bndryBean
-	 *@param java
+	 * @param org
+	 *            .egov.ptis.property.client.struts2.reports.coc.
+	 *            BoundryWisePropUsgeBean bndryBean
+	 * @param java
 	 *            .lang.Object[] bndryObj
-	 *@param java
+	 * @param java
 	 *            .util.TreeMap<Integer, BoundryWisePropUsgeBean> propUsageIDMap
-	 *@param java
+	 * @param java
 	 *            .lang.String usage
-	 *@param java
+	 * @param java
 	 *            .lang.Integer propNullId
 	 * 
 	 */
@@ -305,9 +311,10 @@ public class BoundaryWisePropUsgeDelegate {
 	public void prpUsageMapWithDmyVals(Map<Integer, BoundryWisePropUsgeBean> propUsageIDMap,
 			Map<Integer, BoundryWisePropUsgeBean> propUsag, List<PropertyTypeMaster> propMstrList) {
 		LOGGER.debug("Entered into prpUsageMapWithDmyVals method");
-		LOGGER.debug("PropertyUsageId Map size : " + (propUsageIDMap != null ? propUsageIDMap.size() : ZERO));
+		LOGGER.debug("PropertyUsageId Map size : "
+				+ (propUsageIDMap != null ? propUsageIDMap.size() : ZERO));
 		LOGGER.debug("PropertyUsage Map size : " + (propUsag != null ? propUsag.size() : ZERO));
-		//List allPropUsgList = propUsageDao.getPropUsageAscOrder();
+		// List allPropUsgList = propUsageDao.getPropUsageAscOrder();
 		LOGGER.debug("All Property Usage List : " + (propMstrList != null ? propMstrList : ZERO));
 		for (int propUsge = 0; propUsge < propMstrList.size(); propUsge++) {
 			BoundryWisePropUsgeBean beanWithZeroVal = new BoundryWisePropUsgeBean();
@@ -315,34 +322,39 @@ public class BoundaryWisePropUsgeDelegate {
 			beanWithZeroVal.setCurrDmd(ZERO);
 			beanWithZeroVal.setPropCount(0);
 			beanWithZeroVal.setTotalDemand(ZERO);
-			LOGGER.debug("Total Properties : " + beanWithZeroVal.getPropCount() + ", " + 
-						"Arrears Demand : " + beanWithZeroVal.getArrDmd() + ", " + 
-						"Current Demand : " + beanWithZeroVal.getCurrDmd() + ", " + 
-						"Total Demand : " + beanWithZeroVal.getTotalDemand());
+			LOGGER.debug("Total Properties : " + beanWithZeroVal.getPropCount() + ", "
+					+ "Arrears Demand : " + beanWithZeroVal.getArrDmd() + ", "
+					+ "Current Demand : " + beanWithZeroVal.getCurrDmd() + ", " + "Total Demand : "
+					+ beanWithZeroVal.getTotalDemand());
 			if (propUsageIDMap == null) {
-				propUsag.put(((PropertyTypeMaster)propMstrList.get(propUsge)).getId().intValue(), beanWithZeroVal);
+				propUsag.put(propMstrList.get(propUsge).getId().intValue(),
+						beanWithZeroVal);
 			} else {
-				propUsageIDMap.put(((PropertyTypeMaster)propMstrList.get(propUsge)).getId().intValue(), beanWithZeroVal);
+				propUsageIDMap.put(propMstrList.get(propUsge).getId()
+						.intValue(), beanWithZeroVal);
 			}
 		}
 		LOGGER.debug("Exit from prpUsageMapWithDmyVals method");
 	}
 
-	public void propNAUsageMapWithDmyVals(Map<Integer, BoundryWisePropUsgeBean> propUsageIDMap, Integer propNAUsgeId,
-			Map<Integer, BoundryWisePropUsgeBean> propUsag, List<PropertyTypeMaster> propMstrList) {
+	public void propNAUsageMapWithDmyVals(Map<Integer, BoundryWisePropUsgeBean> propUsageIDMap,
+			Integer propNAUsgeId, Map<Integer, BoundryWisePropUsgeBean> propUsag,
+			List<PropertyTypeMaster> propMstrList) {
 		LOGGER.debug("Entered into propNAUsageMapWithDmyVals method");
-		LOGGER.debug("PropertyUsageId Map size : " + (propUsageIDMap != null ? propUsageIDMap.size() : ZERO));
+		LOGGER.debug("PropertyUsageId Map size : "
+				+ (propUsageIDMap != null ? propUsageIDMap.size() : ZERO));
 		LOGGER.debug("PropetyNAUsageId : " + propNAUsgeId);
 		LOGGER.debug("PropertyUsage Map size : " + (propUsag != null ? propUsag.size() : ZERO));
-		//List<PropertyUsage> allPropUsgList = propUsageDao.getPropUsageAscOrder();
+		// List<PropertyUsage> allPropUsgList =
+		// propUsageDao.getPropUsageAscOrder();
 		for (int propUsge = 0; propUsge < propMstrList.size(); propUsge++) {
 			BoundryWisePropUsgeBean beanWithZeroVal = new BoundryWisePropUsgeBean();
 			beanWithZeroVal.setArrDmd(ZERO);
 			beanWithZeroVal.setCurrDmd(ZERO);
 			beanWithZeroVal.setPropCount(0);
 			beanWithZeroVal.setTotalDemand(ZERO);
-			LOGGER.debug("Total Properties : "
-					+ beanWithZeroVal.getPropCount() + ", " + "Arrears Demand : " + beanWithZeroVal.getArrDmd() + ", "
+			LOGGER.debug("Total Properties : " + beanWithZeroVal.getPropCount() + ", "
+					+ "Arrears Demand : " + beanWithZeroVal.getArrDmd() + ", "
 					+ "Current Demand : " + beanWithZeroVal.getCurrDmd() + ", " + "Total Demand : "
 					+ beanWithZeroVal.getTotalDemand());
 			if (propUsageIDMap == null) {
@@ -358,17 +370,18 @@ public class BoundaryWisePropUsgeDelegate {
 		LOGGER.debug("Entered into getZoneList method");
 		List zoneList = null;
 		Criterion criterion = null;
-		Projection projection = Projections.projectionList().add(Projections.property("zone.id")).add(
-				Projections.property("propTypeMstrID.id")).add(Projections.sum("aggrArrDmd")).add(
-				Projections.sum("aggrCurrDmd")).add(Projections.count("basicPropertyID"))
-				.add(Projections.groupProperty("zone.id")).add(Projections.groupProperty("propTypeMstrID"));
+		Projection projection = Projections.projectionList().add(Projections.property("zone.id"))
+				.add(Projections.property("propTypeMstrID.id")).add(Projections.sum("aggrArrDmd"))
+				.add(Projections.sum("aggrCurrDmd")).add(Projections.count("basicPropertyID"))
+				.add(Projections.groupProperty("zone.id"))
+				.add(Projections.groupProperty("propTypeMstrID"));
 		Order order = Order.asc("zone.id");
 
 		/*
 		 * Integer vacTypeId = getPropertyIdbyCode("OPEN_PLOT"); criterion =
 		 * Restrictions.ne("propTypeMstrID", vacTypeId);
 		 */
-		zoneList = propertyDao.getPropMaterlizeViewList(projection, criterion, order);
+		zoneList = propertyDAO.getPropMaterlizeViewList(projection, criterion, order);
 		LOGGER.debug("Zone list : " + (zoneList != null ? zoneList : ZERO));
 		LOGGER.debug("Exit from getZoneList method");
 		return zoneList;
@@ -381,10 +394,11 @@ public class BoundaryWisePropUsgeDelegate {
 		Criterion criterion = null;
 		Criterion vacantCrit = null;
 		Conjunction conjun = Restrictions.conjunction();
-		Projection projection = Projections.projectionList().add(Projections.property("propTypeMstrID.id")).add(
-				Projections.count("basicPropertyID")).add(Projections.sum("aggrArrDmd")).add(
-				Projections.sum("aggrCurrDmd")).add(
-				Projections.groupProperty("propTypeMstrID"));
+		Projection projection = Projections.projectionList()
+				.add(Projections.property("propTypeMstrID.id"))
+				.add(Projections.count("basicPropertyID")).add(Projections.sum("aggrArrDmd"))
+				.add(Projections.sum("aggrCurrDmd"))
+				.add(Projections.groupProperty("propTypeMstrID"));
 		if (bndryNo != null) {
 			criterion = Restrictions.like("zone.id", bndryNo);
 			conjun.add(criterion);
@@ -393,7 +407,7 @@ public class BoundaryWisePropUsgeDelegate {
 		 * Integer vacTypeId = getPropertyIdbyCode("OPEN_PLOT"); vacantCrit =
 		 * Restrictions.ne("propTypeMstrID", vacTypeId); conjun.add(vacantCrit);
 		 */
-		wardList = propertyDao.getPropMaterlizeViewList(projection, conjun, null);
+		wardList = propertyDAO.getPropMaterlizeViewList(projection, conjun, null);
 		LOGGER.debug("Ward list : " + (wardList != null ? wardList : ZERO));
 		LOGGER.debug("Exit from getTotPropUsage method");
 		return wardList;
@@ -412,13 +426,15 @@ public class BoundaryWisePropUsgeDelegate {
 			// vacTypeId);
 			// conjun.add(anothercriterion);
 
-			Projection projection = Projections.projectionList().add(Projections.property("ward.id")).add(
-					Projections.property("propTypeMstrID.id")).add(Projections.sum("aggrArrDmd")).add(
-					Projections.sum("aggrCurrDmd")).add(Projections.count("basicPropertyID")).add(
-					Projections.groupProperty("ward.id")).add(
-					Projections.groupProperty("propTypeMstrID"));
+			Projection projection = Projections.projectionList()
+					.add(Projections.property("ward.id"))
+					.add(Projections.property("propTypeMstrID.id"))
+					.add(Projections.sum("aggrArrDmd")).add(Projections.sum("aggrCurrDmd"))
+					.add(Projections.count("basicPropertyID"))
+					.add(Projections.groupProperty("ward.id"))
+					.add(Projections.groupProperty("propTypeMstrID"));
 			Order order = Order.asc("ward.id");
-			wardList = propertyDao.getPropMaterlizeViewList(projection, conjun, order);
+			wardList = propertyDAO.getPropMaterlizeViewList(projection, conjun, order);
 		}
 		LOGGER.debug("Ward list : " + (wardList != null ? wardList : ZERO));
 		LOGGER.debug("Exit from getWardList method");
@@ -430,7 +446,7 @@ public class BoundaryWisePropUsgeDelegate {
 		LOGGER.debug("Boundary Id : " + bndryID);
 		String bndName = null;
 		if (bndryID > 0) {
-			Boundary bndryObj = boundaryDao.getBoundary(bndryID);
+			Boundary bndryObj = boundaryService.getBoundaryById(bndryID);
 			if (bndryObj != null) {
 				bndName = bndryObj.getName();
 			}
@@ -442,8 +458,7 @@ public class BoundaryWisePropUsgeDelegate {
 
 	private Integer getPropertyIdbyCode(String code) {
 		LOGGER.debug("Entered into getPropertyIdbyCode method");
-		PropertyTypeMasterDAO propTypeMstrDao = PropertyDAOFactory.getDAOFactory().getPropertyTypeMasterDAO();
-		PropertyTypeMaster vacMaster = propTypeMstrDao.getPropertyTypeMasterByCode(code);
+		PropertyTypeMaster vacMaster = propertyTypeMasterDAO.getPropertyTypeMasterByCode(code);
 		LOGGER.debug("Exit from getPropertyIdbyCode method");
 		return vacMaster.getId().intValue();
 
@@ -477,16 +492,20 @@ public class BoundaryWisePropUsgeDelegate {
 				if (propTypeId > 1900) {
 					propTypeMap.put("TotalAgg", propTypesMap.get(propTypeId));
 				} else if (propTypeId < 1900 && propTypeId > 900) {
-					//propTypeMap.put("NoUsage", propTypesMap.get(propTypeId));
+					// propTypeMap.put("NoUsage", propTypesMap.get(propTypeId));
 					continue;
 				} else {
-					/*PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) propTypeMstrDao.findById(propTypeId.longValue(), false);
-					String propTypeName = propTypeMstr.getType();
-					LOGGER.debug("PropertyType Name : " + propTypeName);
-					if (USAGES_FOR_RESD.contains(propTypeName) || USAGES_FOR_NON_RESD.contains(propTypeName)
-							|| USAGES_FOR_OPENPLOT.contains(propTypeName)) {
-						sumUsagesByCategory(getPropertyType(propTypeName), propTypeMap, usagesMap.get(usageId));
-					}*/
+					/*
+					 * PropertyTypeMaster propTypeMstr = (PropertyTypeMaster)
+					 * propTypeMstrDao.findById(propTypeId.longValue(), false);
+					 * String propTypeName = propTypeMstr.getType();
+					 * LOGGER.debug("PropertyType Name : " + propTypeName); if
+					 * (USAGES_FOR_RESD.contains(propTypeName) ||
+					 * USAGES_FOR_NON_RESD.contains(propTypeName) ||
+					 * USAGES_FOR_OPENPLOT.contains(propTypeName)) {
+					 * sumUsagesByCategory(getPropertyType(propTypeName),
+					 * propTypeMap, usagesMap.get(usageId)); }
+					 */
 					propTypeMap.put(propTypeId.toString(), propTypesMap.get(propTypeId));
 				}
 
@@ -494,7 +513,8 @@ public class BoundaryWisePropUsgeDelegate {
 			LOGGER.debug("PropertyType map : " + (propTypeMap != null ? propTypeMap : ZERO));
 			zonePropertyTypeMap.put(zoneId, propTypeMap);
 		}
-		LOGGER.debug("ZonePropertyType map : " + (zonePropertyTypeMap != null ? zonePropertyTypeMap : ZERO));
+		LOGGER.debug("ZonePropertyType map : "
+				+ (zonePropertyTypeMap != null ? zonePropertyTypeMap : ZERO));
 		LOGGER.debug("Exit from getZoneAndPropertyTypeWiseList method");
 		return zonePropertyTypeMap;
 	}
@@ -507,8 +527,8 @@ public class BoundaryWisePropUsgeDelegate {
 	 * @param propTypeMap
 	 * @param bean
 	 */
-	private void sumUsagesByCategory(String propType, Map<String, BoundryWisePropUsgeBean> propTypeMap,
-			BoundryWisePropUsgeBean bean) {
+	private void sumUsagesByCategory(String propType,
+			Map<String, BoundryWisePropUsgeBean> propTypeMap, BoundryWisePropUsgeBean bean) {
 		LOGGER.debug("Entered into sumUsagesByCategory method");
 		LOGGER.debug("Property Type : " + propType);
 		LOGGER.debug("PropTypeMap : " + (propTypeMap != null ? propTypeMap : ZERO));
@@ -516,21 +536,21 @@ public class BoundaryWisePropUsgeDelegate {
 		BoundryWisePropUsgeBean newBean = new BoundryWisePropUsgeBean();
 		BoundryWisePropUsgeBean existingBean = propTypeMap.get(propType);
 		LOGGER.debug("Existing Bean Details : ");
-		LOGGER.debug("Total Properties : "
-				+ existingBean.getPropCount() + ", " + "Arrears Demand : " + existingBean.getArrDmd() + ", "
-				+ "Current Demand : " + existingBean.getCurrDmd() + ", " + "Total Demand : "
+		LOGGER.debug("Total Properties : " + existingBean.getPropCount() + ", "
+				+ "Arrears Demand : " + existingBean.getArrDmd() + ", " + "Current Demand : "
+				+ existingBean.getCurrDmd() + ", " + "Total Demand : "
 				+ existingBean.getTotalDemand());
 		newBean.setArrDmd(existingBean.getArrDmd().add(bean.getArrDmd()));
 		newBean.setCurrDmd(existingBean.getCurrDmd().add(bean.getCurrDmd()));
 
 		newBean.setTotalDemand(existingBean.getTotalDemand().add(bean.getTotalDemand()));
 		newBean.setPropCount(existingBean.getPropCount() + bean.getPropCount());
-		
+
 		propTypeMap.remove(propType);
 		propTypeMap.put(propType, newBean);
 		LOGGER.debug("New Bean Details : ");
-		LOGGER.debug("Total Properties : " + newBean.getPropCount() + ", "
-				+ "Arrears Demand : " + newBean.getArrDmd() + ", " + "Current Demand : " + newBean.getCurrDmd() + ", "
+		LOGGER.debug("Total Properties : " + newBean.getPropCount() + ", " + "Arrears Demand : "
+				+ newBean.getArrDmd() + ", " + "Current Demand : " + newBean.getCurrDmd() + ", "
 				+ "Total Demand : " + newBean.getTotalDemand());
 		LOGGER.debug("Exit from sumUsagesByCategory method");
 	}
@@ -543,7 +563,7 @@ public class BoundaryWisePropUsgeDelegate {
 	 */
 	@SuppressWarnings("unchecked")
 	private String getPropertyType(String usageName) {
-		
+
 		LOGGER.debug("Entered into getPropertyType method");
 		LOGGER.debug("Usage Name : " + usageName);
 		String propertyType = null;
@@ -572,8 +592,9 @@ public class BoundaryWisePropUsgeDelegate {
 	 * @return propTypeMap
 	 */
 
-	private Map<String, BoundryWisePropUsgeBean> initPropTypeMap(Map<String, BoundryWisePropUsgeBean> propTypeMap) {
-		
+	private Map<String, BoundryWisePropUsgeBean> initPropTypeMap(
+			Map<String, BoundryWisePropUsgeBean> propTypeMap) {
+
 		LOGGER.debug("Entered into initPropTypeMap method");
 		LOGGER.debug("PropTypeMap : " + (propTypeMap != null ? propTypeMap : ZERO));
 		BoundryWisePropUsgeBean bean = new BoundryWisePropUsgeBean();
@@ -582,14 +603,13 @@ public class BoundaryWisePropUsgeDelegate {
 		bean.setCurrDmd(ZERO);
 		bean.setTotalDemand(ZERO);
 		bean.setPropCount(0);
-		List<PropertyTypeMaster> propTypeMstrList = propTypeMstrDao.findAll();
-		for (PropertyTypeMaster propTypeMstr :propTypeMstrList) {
+		List<PropertyTypeMaster> propTypeMstrList = propertyTypeMasterDAO.findAll();
+		for (PropertyTypeMaster propTypeMstr : propTypeMstrList) {
 			propTypeMap.put(propTypeMstr.getId().toString(), bean);
 		}
 		LOGGER.debug("PropTypeMap : " + (propTypeMap != null ? propTypeMap : ZERO));
 		LOGGER.debug("Exit from initPropTypeMap method");
 		return propTypeMap;
 	}
-
 
 }

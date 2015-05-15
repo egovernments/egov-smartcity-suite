@@ -44,8 +44,21 @@ import java.util.List;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 
-public interface PropertyStatusValuesDAO extends org.egov.infstr.dao.GenericDAO
-{
-	public PropertyStatusValues getLatestPropertyStatusValuesByPropertyIdAndCode(String PropertyId,List Code);
+public interface PropertyStatusValuesDAO {
+
+	public PropertyStatusValues getLatestPropertyStatusValuesByPropertyIdAndCode(String PropertyId,
+			List Code);
+
 	public List<PropertyStatusValues> getParentBasicPropsForChild(BasicProperty basicProperty);
+
+	public PropertyStatusValues findById(Integer id, boolean lock);
+
+	public List<PropertyStatusValues> findAll();
+
+	public PropertyStatusValues create(PropertyStatusValues propertyStatusValues);
+
+	public void delete(PropertyStatusValues propertyStatusValues);
+
+	public PropertyStatusValues update(PropertyStatusValues propertyStatusValues);
+
 }

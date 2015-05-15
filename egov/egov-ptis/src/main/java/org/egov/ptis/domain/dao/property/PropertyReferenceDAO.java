@@ -39,14 +39,20 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import org.egov.infstr.dao.GenericDAO;
+import java.util.List;
 
-/**
- * @author Administrator
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
+import org.egov.ptis.domain.entity.property.PropertyReference;
 
-public interface PropertyReferenceDAO extends GenericDAO {
+public interface PropertyReferenceDAO {
+	
+	public PropertyReference findById(Integer id, boolean lock);
+
+	public List<PropertyReference> findAll();
+
+	public PropertyReference create(PropertyReference propertyReference);
+
+	public void delete(PropertyReference propertyReference);
+
+	public PropertyReference update(PropertyReference propertyReference);
 
 }

@@ -39,42 +39,70 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import org.egov.infstr.dao.GenericHibernateDAO;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.ptis.domain.entity.property.PropertyStatus;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * This Class implememets the PropertyStatusDAO for the Hibernate specific 
- * Implementation 
- * 
- * @author Neetu
- * @version 2.00
- */
-
-public class PropertyStatusHibernateDAO extends GenericHibernateDAO implements PropertyStatusDAO
-{
-	/**
-	 * @param persistentClass
-	 * @param session
-	 */
-	public PropertyStatusHibernateDAO(Class persistentClass, Session session)
-	{
-		super(persistentClass, session);
-	}
+@Repository(value = "propertyStatusDAO")
+@Transactional(readOnly = true)
+public class PropertyStatusHibernateDAO implements PropertyStatusDAO {
 	
-	public PropertyStatus getPropertyStatusByName(String name) 
-	{
-		Query qry = getCurrentSession().createQuery("from PropertyStatus PS where PS.name =:name ");
-		qry.setString("name", name);        
-		return (PropertyStatus)qry.uniqueResult();
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
 	}
-	public PropertyStatus getPropertyStatusByCode(String statusCode)
-	{
-		Query qry = getCurrentSession().createQuery("from PropertyStatus PS where PS.statusCode =:statusCode ");
-		qry.setString("statusCode", statusCode);        
-		return (PropertyStatus)qry.uniqueResult();
+
+	@Override
+	public PropertyStatus getPropertyStatusByName(String name) {
+		Query qry = getCurrentSession().createQuery("from PropertyStatus PS where PS.name =:name ");
+		qry.setString("name", name);
+		return (PropertyStatus) qry.uniqueResult();
+	}
+
+	@Override
+	public PropertyStatus getPropertyStatusByCode(String statusCode) {
+		Query qry = getCurrentSession().createQuery(
+				"from PropertyStatus PS where PS.statusCode =:statusCode ");
+		qry.setString("statusCode", statusCode);
+		return (PropertyStatus) qry.uniqueResult();
+	}
+
+	@Override
+	public PropertyStatus findById(Integer id, boolean lock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<PropertyStatus> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PropertyStatus create(PropertyStatus propertyStatus) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(PropertyStatus propertyStatus) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public PropertyStatus update(PropertyStatus propertyStatus) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
-  
-

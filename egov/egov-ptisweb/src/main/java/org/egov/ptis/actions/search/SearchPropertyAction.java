@@ -75,15 +75,14 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.dao.property.SearchPropertyHibernateDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
@@ -107,9 +106,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @Transactional(readOnly = true)
 @Namespace("/search")
 @ResultPath("/WEB-INF/jsp/")
-@Results({
-    @Result(name=NEW,location="search/searchProperty-new.jsp")  
-  })
+@Results({ @Result(name = NEW, location = "search/searchProperty-new.jsp") })
 public class SearchPropertyAction extends BaseFormAction {
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	public static final String TARGET = "result";
@@ -131,7 +128,6 @@ public class SearchPropertyAction extends BaseFormAction {
 	private String searchValue;
 	List<Map<String, String>> searchList = new ArrayList<Map<String, String>>();
 	private String roleName;
-	// String target = "failure";
 	private String objectionNumber;
 	private Date objectionFromDate;
 	private Date objectionToDate;
@@ -141,10 +137,16 @@ public class SearchPropertyAction extends BaseFormAction {
 	private boolean isDemandActive;
 
 	@Autowired
-	private BoundaryDAO boundaryDAO;
+	private BoundaryService boundaryService;
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private BasicPropertyDAO basicPropertyDAO;
+
+	@Autowired
+	private PtDemandDao ptDemandDAO;
 
 	@Override
 	public Object getModel() {
@@ -163,8 +165,6 @@ public class SearchPropertyAction extends BaseFormAction {
 		LOGGER.debug("Entered into srchByIndex  method");
 		LOGGER.debug("Index Number : " + indexNum + ", " + " parcelId :" + gisId);
 		try {
-			BasicPropertyDAO basicPropertyDAO = PropertyDAOFactory.getDAOFactory()
-					.getBasicPropertyDAO();
 			BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByIndexNumAndParcelID(
 					indexNum, gisId);
 			LOGGER.debug("srchByIndex : BasicProperty : " + basicProperty);
@@ -200,8 +200,8 @@ public class SearchPropertyAction extends BaseFormAction {
 		LOGGER.debug("Entered into srchByBndry method");
 		LOGGER.debug("srchByBndry : Zone Id : " + zoneId + ", " + "ward Id : " + wardId + ", "
 				+ "House Num : " + houseNumBndry + ", " + "Owner Name : " + ownerNameBndry);
-		String strZoneNum = boundaryDAO.getBoundary(zoneId).getName();
-		String strWardNum = boundaryDAO.getBoundary(wardId).getName();
+		String strZoneNum = boundaryService.getBoundaryById(zoneId).getName();
+		String strWardNum = boundaryService.getBoundaryById(wardId).getName();
 
 		if ((zoneId != null && zoneId != -1) && (wardId != null && wardId != -1)) {
 
@@ -401,10 +401,6 @@ public class SearchPropertyAction extends BaseFormAction {
 		LOGGER.debug("Entered into getSearchResults method");
 		LOGGER.debug("Index Number : " + indexNumber);
 		PTISCacheManagerInteface ptisCachMgr = new PTISCacheManager();
-		BasicPropertyDAO basicPropertyDAO = PropertyDAOFactory.getDAOFactory()
-				.getBasicPropertyDAO();
-		PtDemandDao ptDemandDao = PropertyDAOFactory.getDAOFactory().getPtDemandDao();
-
 		if (indexNumber != null || org.apache.commons.lang.StringUtils.isNotEmpty(indexNumber)) {
 
 			BasicProperty basicProperty = basicPropertyDAO
@@ -417,7 +413,7 @@ public class SearchPropertyAction extends BaseFormAction {
 				checkIsDemandActive(property);
 
 				Set<PropertyOwner> ownerSet = property.getPropertyOwnerSet();
-				Map<String, BigDecimal> demandCollMap = ptDemandDao.getDemandCollMap(property);
+				Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
 
 				Map<String, String> searchResultMap = new HashMap<String, String>();
 				searchResultMap.put("indexNum", indexNumber);

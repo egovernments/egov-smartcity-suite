@@ -38,31 +38,33 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
+
 import java.util.Date;
 import java.util.List;
 
 import org.egov.ptis.domain.entity.property.StructureClassification;
 
-/**
- * <p>This is an interface which would be implemented by the 
- * Individual Frameworks  for all the CRUD (create, read, update, delete) basic data 
- * access operations for StructureClassification
- * 
- * @author Neetu
- * @version 2.00
- * @author Srikanth
- * Changing method name and adding new function declaration to get factor
- */
+public interface StructureClassificationDAO {
 
-public interface StructureClassificationDAO extends org.egov.infstr.dao.GenericDAO {
+	List<StructureClassification> getAllStructureClassification();
 
-	List <StructureClassification> getAllStructureClassification();
- 
 	StructureClassification getStructureClassification(String constrTypeCode, Integer floorNum);
-	
-	StructureClassification getStructureClassification(String constrTypeCode, Date fromDate,Integer floorNum);
-	
+
+	StructureClassification getStructureClassification(String constrTypeCode, Date fromDate,
+			Integer floorNum);
+
 	StructureClassification getStructureClassification(String constrTypeCode);
 
 	StructureClassification getStructureClassification(String constrTypeCode, Date fromDate);
+
+	public StructureClassification findById(Long id, boolean lock);
+
+	public List<StructureClassification> findAll();
+
+	public StructureClassification create(StructureClassification structureClassification);
+
+	public void delete(StructureClassification structureClassification);
+
+	public StructureClassification update(StructureClassification structureClassification);
+
 }

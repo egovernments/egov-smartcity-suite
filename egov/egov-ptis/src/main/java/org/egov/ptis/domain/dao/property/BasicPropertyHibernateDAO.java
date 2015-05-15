@@ -44,9 +44,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyID;
@@ -55,34 +57,22 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * This Class implememets the BasicPropertyDAO for the Hibernate specific
- * Implementation
- * 
- * @author Neetu
- * @version 2.00
- */
-
 @Repository(value = "basicPropertyDAO")
 @Transactional(readOnly = true)
-public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements
-		BasicPropertyDAO {
-	private final static Logger LOGGER = Logger
-			.getLogger(BasicPropertyHibernateDAO.class);
+public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
+	private final static Logger LOGGER = Logger.getLogger(BasicPropertyHibernateDAO.class);
 
-	/**
-	 * @param persistentClass
-	 * @param session
-	 */
-	public BasicPropertyHibernateDAO(Class persistentClass, Session session) {
-		super(persistentClass, session);
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
 	}
 
 	@Override
 	public BasicProperty getBasicPropertyByRegNum(String RegNum) {
-		Query qry = getCurrentSession()
-				.createQuery(
-						"from BasicPropertyImpl BP where BP.regNum =:RegNum and BP.active='Y' ");
+		Query qry = getCurrentSession().createQuery(
+				"from BasicPropertyImpl BP where BP.regNum =:RegNum and BP.active='Y' ");
 
 		qry.setString("RegNum", RegNum);
 		// qry.setMaxResults(1);
@@ -105,12 +95,9 @@ public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements
 						+ "left join fetch ptdcb.dcb dcb "
 						+ "left join fetch dcb.currentDemand currDmd "
 						+ "left join fetch dcb.aggArrearsDemand arrDmd "
-						+ "left join fetch arrDmd.dcb "
-						+ "left join fetch currDmd.dcb "
-						+ "left join fetch currDmd.cesses "
-						+ "left join fetch currDmd.penalties "
-						+ "left join fetch currDmd.exemptions "
-						+ "left join fetch arrDmd.cesses "
+						+ "left join fetch arrDmd.dcb " + "left join fetch currDmd.dcb "
+						+ "left join fetch currDmd.cesses " + "left join fetch currDmd.penalties "
+						+ "left join fetch currDmd.exemptions " + "left join fetch arrDmd.cesses "
 						+ "left join fetch arrDmd.penalties "
 						+ "left join fetch arrDmd.exemptions "
 						+ "where BP.regNum =:RegNum and BP.active='Y' ");
@@ -124,9 +111,8 @@ public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements
 		Query qry = null;
 		BasicProperty basicProperty = null;
 		if (propertyId != null && !propertyId.equals("")) {
-			qry = getCurrentSession()
-					.createQuery(
-							"from BasicPropertyImpl BP where BP.upicNo =:propertyId and BP.active='Y' ");
+			qry = getCurrentSession().createQuery(
+					"from BasicPropertyImpl BP where BP.upicNo =:propertyId and BP.active='Y' ");
 			qry.setString("propertyId", propertyId);
 			basicProperty = (BasicProperty) qry.uniqueResult();
 		}
@@ -151,9 +137,8 @@ public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements
 	@Override
 	public BasicProperty getBasicPropertyByPropertyID(PropertyID propertyID) {
 
-		Query qry = getCurrentSession()
-				.createQuery(
-						"from BasicPropertyImpl BP where BP.propertyID =:PropertyID and BP.active='Y' ");
+		Query qry = getCurrentSession().createQuery(
+				"from BasicPropertyImpl BP where BP.propertyID =:PropertyID and BP.active='Y' ");
 		qry.setEntity("PropertyID", propertyID);
 		return (BasicProperty) qry.uniqueResult();
 	}
@@ -170,9 +155,8 @@ public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements
 		Query qry = null;
 		BasicProperty basicProperty = null;
 		if (propertyId != null && !propertyId.equals("")) {
-			qry = getCurrentSession()
-					.createQuery(
-							"from BasicPropertyImpl BP where BP.upicNo =:propertyId and BP.active='N' ");
+			qry = getCurrentSession().createQuery(
+					"from BasicPropertyImpl BP where BP.upicNo =:propertyId and BP.active='N' ");
 			qry.setString("propertyId", propertyId);
 			basicProperty = (BasicProperty) qry.uniqueResult();
 		}
@@ -193,24 +177,20 @@ public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements
 		Integer regNum = null;
 		ResultSet resultSet = null;
 		try {
-			Query query = getCurrentSession().createSQLQuery(
-					"SELECT REG_NUM.NEXTVAL from dual");
+			Query query = getCurrentSession().createSQLQuery("SELECT REG_NUM.NEXTVAL from dual");
 
 			resultSet = (ResultSet) query.list();
 			if (resultSet.next()) {
 				regNum = resultSet.getInt(1);
 			} else {
-				throw new EGOVRuntimeException(
-						"Could not generate Reg Num. Result is empty.");
+				throw new EGOVRuntimeException("Could not generate Reg Num. Result is empty.");
 			}
 
 		} catch (SQLException e) {
-			LOGGER.info("Exception in getRegNum()--- BasicPropertyHibernateDAO---"
-					+ e.getMessage());
+			LOGGER.info("Exception in getRegNum()--- BasicPropertyHibernateDAO---" + e.getMessage());
 			throw new EGOVRuntimeException("Could not generate Reg Num, " + e);
 		} catch (Exception e) {
-			LOGGER.info("Exception in getRegNum()--- BasicPropertyHibernateDAO---"
-					+ e);
+			LOGGER.info("Exception in getRegNum()--- BasicPropertyHibernateDAO---" + e);
 			throw new EGOVRuntimeException("Could not generate Reg Num, " + e);
 		} finally {
 			try {
@@ -233,20 +213,17 @@ public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements
 			if (resultSet.next()) {
 				voucherNum = resultSet.getInt(1);
 			} else {
-				throw new EGOVRuntimeException(
-						"Could not generate Voucher Num. Result is empty.");
+				throw new EGOVRuntimeException("Could not generate Voucher Num. Result is empty.");
 			}
 
 		} catch (SQLException e) {
 			LOGGER.info("Exception in getVoucherNum()--- BasicPropertyHibernateDAO---"
 					+ e.getMessage());
-			throw new EGOVRuntimeException("Could not generate Voucher Num, "
-					+ e);
+			throw new EGOVRuntimeException("Could not generate Voucher Num, " + e);
 		} catch (Exception e) {
 			LOGGER.info("Exception in getVoucherNum()--- BasicPropertyHibernateDAO---"
 					+ e.getMessage());
-			throw new EGOVRuntimeException("Could not generate Voucher Num, "
-					+ e);
+			throw new EGOVRuntimeException("Could not generate Voucher Num, " + e);
 		}
 		return voucherNum;
 	}
@@ -255,6 +232,7 @@ public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements
 	 * added by suhasini by passing oldMuncipalNo as parameter this method will
 	 * give list of BasicProeprty Objects.
 	 */
+
 	@Override
 	public List getBasicPropertyByOldMunipalNo(String oldMuncipalNo) {
 		// logger.info(">>>>>>>>>>>>>>>>>> oldMuncipalNo"+oldMuncipalNo);
@@ -267,8 +245,7 @@ public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements
 	}
 
 	@Override
-	public List<BasicPropertyImpl> getChildBasicPropsForParent(
-			BasicProperty basicProperty) {
+	public List<BasicPropertyImpl> getChildBasicPropsForParent(BasicProperty basicProperty) {
 		List<BasicPropertyImpl> basicPropList = new ArrayList<BasicPropertyImpl>();
 		if (basicProperty != null) {
 			Query qry = getCurrentSession()
@@ -281,8 +258,7 @@ public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements
 	}
 
 	@Override
-	public BasicProperty getBasicPropertyByIndexNumAndParcelID(String indexNum,
-			String parcelID) {
+	public BasicProperty getBasicPropertyByIndexNumAndParcelID(String indexNum, String parcelID) {
 		Query qry = null;
 		BasicProperty basicProperty = null;
 		Boolean indexFound = Boolean.FALSE;
@@ -306,6 +282,36 @@ public class BasicPropertyHibernateDAO extends GenericHibernateDAO implements
 		}
 		basicProperty = (BasicProperty) qry.uniqueResult();
 		return basicProperty;
+	}
+
+	@Override
+	public BasicProperty findById(Integer id, boolean lock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<BasicProperty> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BasicProperty create(BasicProperty entity) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(BasicProperty entity) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public BasicProperty update(BasicProperty entity) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

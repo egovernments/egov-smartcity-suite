@@ -39,14 +39,19 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import org.egov.infstr.dao.GenericDAO;
+import java.util.List;
 
-/**
- * @author Admin
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
-public interface PropertyMutationDAO extends GenericDAO{
+import org.egov.ptis.domain.entity.property.PropertyMutation;
 
+public interface PropertyMutationDAO {
+	
+	public PropertyMutation findById(Integer id, boolean lock);
+
+	public List<PropertyMutation> findAll();
+
+	public PropertyMutation create(PropertyMutation propertyMutation);
+
+	public void delete(PropertyMutation propertyMutation);
+
+	public PropertyMutation update(PropertyMutation propertyMutation);
 }

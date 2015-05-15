@@ -68,7 +68,6 @@ import org.egov.infstr.utils.StringUtils;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyOwner;
@@ -99,9 +98,13 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 	private Long userId;
 	List<Map<String, String>> searchList = new ArrayList<Map<String, String>>();
 	String target = "failure";
-	
+
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private BasicPropertyDAO basicPropertyDAO;
+	@Autowired
+	private PtDemandDao ptDemandDAO;
 
 	@Override
 	public Object getModel() {
@@ -112,6 +115,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 		return "new";
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public void prepare() {
 		LOGGER.debug("Entered into prepare method");
@@ -124,12 +128,11 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 	}
 
 	@ValidationErrorPage(value = "new")
-	@Action(value="/search/searchAction-srchByIndex")
+	@Action(value = "/search/searchAction-srchByIndex")
 	public String srchByIndex() {
 		LOGGER.info("Entered into srchByIndex  method");
 		LOGGER.info("Index Number : " + indexNum);
 		try {
-			BasicPropertyDAO basicPropertyDAO = PropertyDAOFactory.getDAOFactory().getBasicPropertyDAO();
 			BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(indexNum);
 			LOGGER.debug("srchByIndex : BasicProperty : " + basicProperty);
 			if (basicProperty != null) {
@@ -153,8 +156,8 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 	@Override
 	public void validate() {
 		LOGGER.info("Entered into validate method");
-		if (StringUtils.equals(mode, "index")) {
-			if ((StringUtils.isEmpty(indexNum) || StringUtils.isBlank(indexNum))) {
+		if (org.apache.commons.lang.StringUtils.equals(mode, "index")) {
+			if ((org.apache.commons.lang.StringUtils.isEmpty(indexNum) || org.apache.commons.lang.StringUtils.isBlank(indexNum))) {
 				addActionError(getText("mandatory.indexNumber"));
 			}
 		}
@@ -165,12 +168,11 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 		LOGGER.debug("Entered into getSearchResults method");
 		LOGGER.debug("Index Number : " + indexNumber);
 		PTISCacheManagerInteface ptisCachMgr = new PTISCacheManager();
-		BasicPropertyDAO basicPropertyDAO = PropertyDAOFactory.getDAOFactory().getBasicPropertyDAO();
-		PtDemandDao ptDemandDao = PropertyDAOFactory.getDAOFactory().getPtDemandDao();
 
-		if (indexNumber != null || StringUtils.isNotEmpty(indexNumber)) {
+		if (indexNumber != null || org.apache.commons.lang.StringUtils.isNotEmpty(indexNumber)) {
 
-			BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(indexNumber);
+			BasicProperty basicProperty = basicPropertyDAO
+					.getBasicPropertyByPropertyID(indexNumber);
 			LOGGER.debug("BasicProperty : " + basicProperty);
 			if (basicProperty != null) {
 				Property property = basicProperty.getProperty();
@@ -181,13 +183,15 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 				searchResultMap.put("indexNum", indexNumber);
 				searchResultMap.put("ownerName", ptisCachMgr.buildOwnerFullName(ownerSet));
 				searchResultMap.put("parcelId", basicProperty.getGisReferenceNo());
-				searchResultMap.put("address", ptisCachMgr.buildAddressByImplemetation(basicProperty.getAddress()));
-				Map<String, BigDecimal> demandCollMap = ptDemandDao.getDemandCollMap(property);
+				searchResultMap.put("address",
+						ptisCachMgr.buildAddressByImplemetation(basicProperty.getAddress()));
+				Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
 				searchResultMap.put("currDemand", demandCollMap.get(CURR_DMD_STR).toString());
-				searchResultMap.put("arrDemandDue", (demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap
-						.get(ARR_COLL_STR))).toString());
-				searchResultMap.put("currDemandDue", (demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap
-						.get(CURR_COLL_STR))).toString());
+				searchResultMap.put("arrDemandDue", (demandCollMap.get(ARR_DMD_STR)
+						.subtract(demandCollMap.get(ARR_COLL_STR))).toString());
+				searchResultMap
+						.put("currDemandDue", (demandCollMap.get(CURR_DMD_STR)
+								.subtract(demandCollMap.get(CURR_COLL_STR))).toString());
 				searchList.add(searchResultMap);
 			}
 		}
@@ -243,10 +247,11 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 	public void setSearchValue(String searchValue) {
 		this.searchValue = searchValue;
 	}
-    @Override
-    @SkipValidation
-    public void setServletRequest(HttpServletRequest arg0) {
-        this.request = arg0;
-    }
+
+	@Override
+	@SkipValidation
+	public void setServletRequest(HttpServletRequest arg0) {
+		this.request = arg0;
+	}
 
 }

@@ -73,7 +73,6 @@ import org.egov.pims.model.EmployeeView;
 import org.egov.pims.service.EisUtilService;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.CategoryDao;
-import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
@@ -83,6 +82,7 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("serial")
@@ -124,6 +124,8 @@ public class AjaxCommonAction extends BaseFormAction {
 	private Date completionOccupationDate;
 	private Logger LOGGER = Logger.getLogger(getClass());
 	private List<String> partNumbers;
+	@Autowired
+	private CategoryDao categoryDAO;
 
 	@Override
 	public Object getModel() {
@@ -202,7 +204,6 @@ public class AjaxCommonAction extends BaseFormAction {
 				"from PropertyUsage pu where pu.usageName=?", usageFactor);
 		StructureClassification structureClass = (StructureClassification) getPersistenceService()
 				.find("from StructureClassification sc where sc.typeName=?", structFactor);
-		CategoryDao catDao = PropertyDAOFactory.getDAOFactory().getCategoryDao();
 
 		if (propUsage != null && structureClass != null && revisedRate != null) {
 			Criterion usgId = null;
@@ -217,7 +218,7 @@ public class AjaxCommonAction extends BaseFormAction {
 			conjunction.add(catAmt);
 
 			Criterion criterion = conjunction;
-			categoryList = catDao.getCategoryByRateUsageAndStructClass(criterion);
+			categoryList = categoryDAO.getCategoryByRateUsageAndStructClass(criterion);
 
 		}
 

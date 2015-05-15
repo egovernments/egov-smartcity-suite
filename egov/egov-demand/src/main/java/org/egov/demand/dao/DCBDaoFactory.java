@@ -49,8 +49,6 @@ public abstract class DCBDaoFactory {
 
     public abstract EgBillReceiptDao getEgBillReceiptDao();
 
-    public abstract EgDemandDetailsDao getEgDemandDetailsDao();
-
     public abstract EgDemandReasonMasterDao getEgDemandReasonMasterDao();
 
     public abstract EgdmCollectedReceiptDao getEgdmCollectedReceiptsDao();

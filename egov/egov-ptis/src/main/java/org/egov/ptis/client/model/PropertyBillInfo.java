@@ -90,15 +90,17 @@ import org.egov.infstr.utils.NumberToWord;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
-import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class PropertyBillInfo {
 
+	@Autowired
+	private PtDemandDao ptDemandDAO;
 	private Map<String, Map<String, BigDecimal>> reasonwiseDues;
 	private BasicProperty basicProperty;
 	private String billNo;
@@ -135,18 +137,19 @@ public class PropertyBillInfo {
 
 	private String firstSixMonthsPeriod;
 	private String secondSixMonthsPeriod;
-	
+
 	private Installment currentInstallment;
 
 	public PropertyBillInfo() {
 	}
 
-	public PropertyBillInfo(Map<String, Map<String, BigDecimal>> reasonwiseDues, BasicProperty basicProperty,
-			String billNo) {
+	public PropertyBillInfo(Map<String, Map<String, BigDecimal>> reasonwiseDues,
+			BasicProperty basicProperty, String billNo) {
 		this.reasonwiseDues = reasonwiseDues;
 		this.basicProperty = basicProperty;
 		this.billNo = billNo;
-		String propType = getBasicProperty().getProperty().getPropertyDetail().getPropertyTypeMaster().getType();
+		String propType = getBasicProperty().getProperty().getPropertyDetail()
+				.getPropertyTypeMaster().getType();
 		if (propType != null && PROPTYPE_CENTGOVT_STR.equals(propType)) {
 			isCentralGovtProp = 1;
 		}
@@ -164,53 +167,66 @@ public class PropertyBillInfo {
 
 	private void setCurrentHalfYearTaxes() {
 		BigDecimal[] halfYearTaxes = new BigDecimal[2];
-		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_SEWERAGE_TAX));
+		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(
+				DEMANDRSN_CODE_SEWERAGE_TAX));
 		firstHalfCurrentSewerageTax = halfYearTaxes[0];
 		secondHalfCurrentSewerageTax = halfYearTaxes[1];
 
-		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_FIRE_SERVICE_TAX));
+		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(
+				DEMANDRSN_CODE_FIRE_SERVICE_TAX));
 		firstHalfCurrentFireServiceTax = halfYearTaxes[0];
 		secondHalfCurrentFireServiceTax = halfYearTaxes[1];
 
-		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_GENERAL_TAX));
+		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(
+				DEMANDRSN_CODE_GENERAL_TAX));
 		firstHalfCurrentGeneralTax = halfYearTaxes[0];
 		secondHalfCurrentGeneralTax = halfYearTaxes[1];
 
-		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_GENERAL_WATER_TAX));
+		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(
+				DEMANDRSN_CODE_GENERAL_WATER_TAX));
 		firstHalfCurrentWaterTax = halfYearTaxes[0];
 		secondHalfCurrentWaterTax = halfYearTaxes[1];
 
-		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_LIGHTINGTAX));
+		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(
+				DEMANDRSN_CODE_LIGHTINGTAX));
 		firstHalfCurrentLightTax = halfYearTaxes[0];
 		secondHalfCurrentLightTax = halfYearTaxes[1];
-		
-		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_SEWERAGE_BENEFIT_TAX));
+
+		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(
+				DEMANDRSN_CODE_SEWERAGE_BENEFIT_TAX));
 		firstHalfCurrentSewerageBenefitTax = halfYearTaxes[0];
 		secondHalfCurrentSewerageBenefitTax = halfYearTaxes[1];
-		
-		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_WATER_BENEFIT_TAX));
+
+		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(
+				DEMANDRSN_CODE_WATER_BENEFIT_TAX));
 		firstHalfCurrentWaterBenefitTax = halfYearTaxes[0];
 		secondHalfCurrentWaterBenefitTax = halfYearTaxes[1];
-		
-		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_STREET_TAX));
+
+		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(
+				DEMANDRSN_CODE_STREET_TAX));
 		firstHalfCurrentRoadTax = halfYearTaxes[0];
 		secondHalfCurrentRoadTax = halfYearTaxes[1];
-		
-		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_MUNICIPAL_EDUCATIONAL_CESS));
+
+		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(
+				DEMANDRSN_CODE_MUNICIPAL_EDUCATIONAL_CESS));
 		firstHalfCurrentMunicipalEduCess = halfYearTaxes[0];
 		secondHalfCurrentMunicipalEduCess = halfYearTaxes[1];
 
-		BigDecimal edCessRes = reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD);
-		BigDecimal edCessNonRes = reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD);
+		BigDecimal edCessRes = reasonwiseDues.get(CURRENT_DMD).get(
+				DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD);
+		BigDecimal edCessNonRes = reasonwiseDues.get(CURRENT_DMD).get(
+				DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD);
 		halfYearTaxes = getHalfYearTaxes(edCessRes.add(edCessNonRes));
 		firstHalfCurrentEduCess = halfYearTaxes[0];
 		secondHalfCurrentEduCess = halfYearTaxes[1];
 
-		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX));
+		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(
+				DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX));
 		firstHalfCurrentEgCess = halfYearTaxes[0];
 		secondHalfCurrentEgCess = halfYearTaxes[1];
 
-		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX));
+		halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(
+				DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX));
 		firstHalfCurrentBigBuildingCess = halfYearTaxes[0];
 		secondHalfCurrentBigBuildingCess = halfYearTaxes[1];
 	}
@@ -261,40 +277,45 @@ public class PropertyBillInfo {
 	public BigDecimal getArrWaterTax() {
 		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_GENERAL_WATER_TAX).setScale(2);
 	}
-	
+
 	public BigDecimal getArrLightTax() {
 		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_LIGHTINGTAX).setScale(2);
 	}
-	
+
 	public BigDecimal getArrSewerageBenefitTax() {
 		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_SEWERAGE_BENEFIT_TAX).setScale(2);
 	}
-	
+
 	public BigDecimal getArrWaterBenefitTax() {
 		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_WATER_BENEFIT_TAX).setScale(2);
 	}
-	
+
 	public BigDecimal getArrRoadTax() {
 		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_STREET_TAX).setScale(2);
 	}
-	
+
 	public BigDecimal getArrMunicipalEduCessTax() {
-		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_MUNICIPAL_EDUCATIONAL_CESS).setScale(2);
+		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_MUNICIPAL_EDUCATIONAL_CESS)
+				.setScale(2);
 	}
 
 	public BigDecimal getArrEdCess() {
-		BigDecimal edCessRes = reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD);
-		BigDecimal edCessNonRes = reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD);
+		BigDecimal edCessRes = reasonwiseDues.get(ARREARS_DMD).get(
+				DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD);
+		BigDecimal edCessNonRes = reasonwiseDues.get(ARREARS_DMD).get(
+				DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD);
 
 		return edCessRes.add(edCessNonRes).setScale(2);
 	}
 
 	public BigDecimal getArrEgCess() {
-		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX).setScale(2);
+		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX)
+				.setScale(2);
 	}
 
 	public BigDecimal getArrBigRes() {
-		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX).setScale(2);
+		return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX)
+				.setScale(2);
 	}
 
 	public BigDecimal getArrBuildCess() {
@@ -328,8 +349,10 @@ public class PropertyBillInfo {
 
 	public BigDecimal getCurrEdCess() {
 
-		BigDecimal edCessRes = reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD);
-		BigDecimal edCessNonRes = reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD);
+		BigDecimal edCessRes = reasonwiseDues.get(CURRENT_DMD).get(
+				DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD);
+		BigDecimal edCessNonRes = reasonwiseDues.get(CURRENT_DMD).get(
+				DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD);
 
 		if (edCessRes.equals(BigDecimal.ZERO)) {
 			return edCessNonRes.setScale(2);
@@ -339,11 +362,13 @@ public class PropertyBillInfo {
 	}
 
 	public BigDecimal getCurrEgCess() {
-		return reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX).setScale(2);
+		return reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX)
+				.setScale(2);
 	}
 
 	public BigDecimal getCurrBigRes() {
-		return reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX).setScale(2);
+		return reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX)
+				.setScale(2);
 	}
 
 	public BigDecimal getCurrBuildCess() {
@@ -426,8 +451,8 @@ public class PropertyBillInfo {
 	}
 
 	public EgdmCollectedReceipt getLastCollectedReceipt() {
-		PtDemandDao ptDemandDao = PropertyDAOFactory.getDAOFactory().getPtDemandDao();
-		EgDemand egDemand = ptDemandDao.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
+		EgDemand egDemand = ptDemandDAO
+				.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
 		Date lastPayDate = null;
 		Date newDate = null;
 		EgdmCollectedReceipt lastColReceipt = null;
@@ -486,7 +511,8 @@ public class PropertyBillInfo {
 	}
 
 	public String getPropertyType() {
-		return getBasicProperty().getProperty().getPropertyDetail().getPropertyTypeMaster().getType();
+		return getBasicProperty().getProperty().getPropertyDetail().getPropertyTypeMaster()
+				.getType();
 	}
 
 	public int getIsCentralGovtProp() {
@@ -532,19 +558,19 @@ public class PropertyBillInfo {
 	public BigDecimal getFirstHalfCurrentFireServiceTax() {
 		return firstHalfCurrentFireServiceTax;
 	}
-	
+
 	public BigDecimal getFirstHalfCurrentSewerageBenefitTax() {
 		return firstHalfCurrentSewerageBenefitTax;
 	}
-	
+
 	public BigDecimal getFirstHalfCurrentWaterBenefitTax() {
 		return firstHalfCurrentWaterBenefitTax;
 	}
-	
+
 	public BigDecimal getFirstHalfCurrentRoadTax() {
 		return firstHalfCurrentRoadTax;
 	}
-	
+
 	public BigDecimal getFirstHalfCurrentMunicipalEduCess() {
 		return firstHalfCurrentMunicipalEduCess;
 	}
@@ -584,19 +610,19 @@ public class PropertyBillInfo {
 	public BigDecimal getSecondHalfCurrentFireServiceTax() {
 		return secondHalfCurrentFireServiceTax;
 	}
-	
+
 	public BigDecimal getSecondHalfCurrentSewerageBenefitTax() {
 		return secondHalfCurrentSewerageBenefitTax;
 	}
-	
+
 	public BigDecimal getSecondHalfCurrentWaterBenefitTax() {
 		return secondHalfCurrentWaterBenefitTax;
 	}
-	
+
 	public BigDecimal getSecondHalfCurrentRoadTax() {
 		return secondHalfCurrentRoadTax;
 	}
-	
+
 	public BigDecimal getSecondHalfCurrentMunicipalEduCess() {
 		return secondHalfCurrentMunicipalEduCess;
 	}
@@ -661,7 +687,8 @@ public class PropertyBillInfo {
 		BigDecimal totalALV = BigDecimal.ZERO;
 
 		if (this.taxCalcInfo.getUnitTaxCalculationInfos().get(0) instanceof List) {
-			for (List<UnitTaxCalculationInfo> unitTaxCalcs : this.taxCalcInfo.getUnitTaxCalculationInfos()) {
+			for (List<UnitTaxCalculationInfo> unitTaxCalcs : this.taxCalcInfo
+					.getUnitTaxCalculationInfos()) {
 				for (UnitTaxCalculationInfo unitTax : unitTaxCalcs) {
 					if (usages.contains(unitTax.getUnitUsage())) {
 						totalALV = totalALV.add(unitTax.getAnnualRentAfterDeduction());
@@ -670,8 +697,8 @@ public class PropertyBillInfo {
 			}
 		} else {
 			for (int i = 0; i < this.taxCalcInfo.getUnitTaxCalculationInfos().size(); i++) {
-				UnitTaxCalculationInfo unitTax = (UnitTaxCalculationInfo) this.taxCalcInfo.getUnitTaxCalculationInfos()
-						.get(i);
+				UnitTaxCalculationInfo unitTax = (UnitTaxCalculationInfo) this.taxCalcInfo
+						.getUnitTaxCalculationInfos().get(i);
 				if (usages.contains(unitTax.getUnitUsage())) {
 					totalALV = totalALV.add(unitTax.getAnnualRentAfterDeduction());
 				}
@@ -729,7 +756,7 @@ public class PropertyBillInfo {
 	public void setSecondSixMonthsPeriod(String secondSixMonthsPeriod) {
 		this.secondSixMonthsPeriod = secondSixMonthsPeriod;
 	}
-	
+
 	public String getFinancialYear() {
 		DateTime fromDate = new DateTime(currentInstallment.getFromDate());
 		DateTime toDate = new DateTime(currentInstallment.getToDate());

@@ -39,47 +39,78 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import org.egov.infstr.dao.GenericHibernateDAO;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * This Class implememets the PropertyTypeMasterDAO for the Hibernate specific 
- * Implementation 
- * 
- * @author Neetu
- * @version 2.00
- */
-
-public class PropertyTypeMasterHibernateDAO extends GenericHibernateDAO implements PropertyTypeMasterDAO
-{
-	/**
-	 * @param persistentClass
-	 * @param session
-	 */
-	public PropertyTypeMasterHibernateDAO(Class persistentClass, Session session)
-	{
-		super(persistentClass, session);
-	}
+@Repository(value = "propertyTypeMasterDAO")
+@Transactional(readOnly = true)
+public class PropertyTypeMasterHibernateDAO implements PropertyTypeMasterDAO {
 	
-	public  PropertyTypeMaster getPropertyTypeMasterByName(String type)
-	{
-		Query qry = getCurrentSession().createQuery("from PropertyTypeMaster P where P.type =:type ");
-		qry.setString("type", type);
-		return (PropertyTypeMaster)qry.uniqueResult();
-	}
-    public  PropertyTypeMaster getPropertyTypeMasterById(Integer id){
-        Query qry = getCurrentSession().createQuery("from PropertyTypeMaster P where P.id =:id ");
-        qry.setInteger("id", id);
-        return (PropertyTypeMaster)qry.uniqueResult(); 
-    }
-    public PropertyTypeMaster getPropertyTypeMasterByCode(String code)
-    {
-    	Query qry = getCurrentSession().createQuery("from PropertyTypeMaster P where P.code =:Code ");
-        qry.setString("Code", code);
-        return (PropertyTypeMaster)qry.uniqueResult(); 
-    }
-}
-  
+	@PersistenceContext
+	private EntityManager entityManager;
 
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
+
+	@Override
+	public PropertyTypeMaster getPropertyTypeMasterByName(String type) {
+		Query qry = getCurrentSession().createQuery(
+				"from PropertyTypeMaster P where P.type =:type ");
+		qry.setString("type", type);
+		return (PropertyTypeMaster) qry.uniqueResult();
+	}
+
+	@Override
+	public PropertyTypeMaster getPropertyTypeMasterById(Integer id) {
+		Query qry = getCurrentSession().createQuery("from PropertyTypeMaster P where P.id =:id ");
+		qry.setInteger("id", id);
+		return (PropertyTypeMaster) qry.uniqueResult();
+	}
+
+	@Override
+	public PropertyTypeMaster getPropertyTypeMasterByCode(String code) {
+		Query qry = getCurrentSession().createQuery(
+				"from PropertyTypeMaster P where P.code =:Code ");
+		qry.setString("Code", code);
+		return (PropertyTypeMaster) qry.uniqueResult();
+	}
+
+	@Override
+	public PropertyTypeMaster findById(Integer id, boolean lock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<PropertyTypeMaster> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PropertyTypeMaster create(PropertyTypeMaster propertyTypeMaster) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(PropertyTypeMaster propertyTypeMaster) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public PropertyTypeMaster update(PropertyTypeMaster propertyTypeMaster) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+}

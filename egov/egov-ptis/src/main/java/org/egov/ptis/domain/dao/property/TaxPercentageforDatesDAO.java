@@ -49,19 +49,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-
-
-
-/**
- * <p>This is an interface which would be implemented by the 
- * Individual Frameworks  for all the CRUD (create, read, update, delete) basic data 
- * access operations for Tax Perc
- * 
- * @author Lokesh
- * @version 2.00 
- */
-
-public interface TaxPercentageforDatesDAO extends org.egov.infstr.dao.GenericDAO
-{
-	public List getTaxPercentageforDates(Integer type, BigDecimal amount,Date installmentStartDate,Date installmentEndDate);
+public interface TaxPercentageforDatesDAO {
+	public List getTaxPercentageforDates(Integer type, BigDecimal amount,
+			Date installmentStartDate, Date installmentEndDate);
 }

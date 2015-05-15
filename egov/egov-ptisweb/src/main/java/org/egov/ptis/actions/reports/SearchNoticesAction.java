@@ -84,7 +84,6 @@ import org.egov.infstr.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.ptis.actions.common.CommonServices;
-import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
@@ -95,6 +94,7 @@ import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.egov.web.actions.SearchFormAction;
 import org.egov.web.utils.EgovPaginatedList;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lowagie.text.Document;
@@ -149,6 +149,8 @@ public class SearchNoticesAction extends SearchFormAction {
 	private Long contentLength;
 	DocumentManagerService<DocumentObject> documentManagerService;
 	private String partNo;
+	@Autowired
+	private PropertyTypeMasterDAO propertyTypeMasterDAO;
 
 	public SearchNoticesAction() {
 		super();
@@ -394,9 +396,7 @@ public class SearchNoticesAction extends SearchFormAction {
 	public String getPropType(String propertyType) {
 		LOGGER.debug("Entered into getPropType method");
 		LOGGER.debug("Property type id : " + propertyType);
-		PropertyTypeMasterDAO propTypeMstrDao = PropertyDAOFactory.getDAOFactory()
-				.getPropertyTypeMasterDAO();
-		PropertyTypeMaster propTypeMstr = propTypeMstrDao.getPropertyTypeMasterById(Integer
+		PropertyTypeMaster propTypeMstr = propertyTypeMasterDAO.getPropertyTypeMasterById(Integer
 				.valueOf(propertyType));
 		LOGGER.debug("Property type : " + propTypeMstr);
 		LOGGER.debug("Exit from getPropType method");

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<!-- Configuration file common for all eGov Applications -->
+
+<properties>
+
+	<variables> 
+		<variable name="JBOSS_HOME" value="F:/egov/jboss-4.0.2"/>
+		<variable name="JBOSS_DEPLOY" value="F:/egov/jboss-4.0.2/server/default/deploy"/>
+	</variables>
+
+	<ADMBNDRY>
+		<!-- Exclude the following levels--> 
+		<EXCLUDE_LEVEL>CITY </EXCLUDE_LEVEL>
+		<LEVEL>ZONE</LEVEL>
+	</ADMBNDRY>
+
+ 	<EGI>
+       		<MODULE_NAME>Administration</MODULE_NAME> 	
+       		
+     	</EGI>
+	<JNDIURL>
+		<localhost>java:/ezgovDatabasePool</localhost>
+		<ip192:168:1:46>java:/ezgovDatabasePool</ip192:168:1:46>
+		<ip125:99:252:89>java:/ezgovDatabasePool</ip125:99:252:89>
+		<ip192:168:1:44>java:/ezgovDatabasePool</ip192:168:1:44>
+		<ip125:99:252:88>java:/ezgovDatabasePool</ip125:99:252:88>
+	</JNDIURL>
+
+	<HibernateFactory>
+		<localhost>java:/hibernate/EGovHibernateFactory</localhost>
+		<ip192:168:1:46>java:/hibernate/EGovHibernateFactory</ip192:168:1:46>
+		<ip125:99:252:89>java:/hibernate/EGovHibernateFactory</ip125:99:252:89>
+		<ip192:168:1:44>java:/hibernate/EGovHibernateFactory</ip192:168:1:44>
+		<ip125:99:252:88>java:/hibernate/EGovHibernateFactory</ip125:99:252:88>
+	</HibernateFactory>
+	
+	<!-- List of roles whose users should not be cached by the infrastructure -->
+	<EXCLUDE_ROLES></EXCLUDE_ROLES>
+   	<SelectModule> 
+	     
+	     <headername>Module</headername> 
+	     
+	     <parentquery>SELECT ID_MODULE\, MODULE_NAME\, MODULE_DESC FROM EG_MODULE WHERE PARENTID IS NULL ORDER BY MODULE_NAME</parentquery> 
+	     
+	     <intermediatequery>SELECT ID_MODULE\, MODULE_NAME\, MODULE_DESC FROM EG_MODULE WHERE PARENTID = #1 ORDER BY MODULE_NAME</intermediatequery> 
+	     
+	     <childquery></childquery> 
+	     
+	   </SelectModule> 
+ 
+  <SelectBndry> 
+       
+       <headername>BOUNDARY</headername> 
+       
+       <parentquery>SELECT ID_BNDRY\, NAME\, ID_BNDRY_TYPE FROM EG_BOUNDARY WHERE PARENT IS NULL AND IS_HISTORY = 'N' ORDER BY NAME</parentquery> 
+       
+       <intermediatequery>SELECT ID_BNDRY\, NAME\, ID_BNDRY_TYPE FROM EG_BOUNDARY WHERE PARENT = #1 AND IS_HISTORY = 'N' ORDER BY NAME</intermediatequery> 
+       
+       <childquery></childquery> 
+       
+   </SelectBndry> 
+   
+   <IP-BASED-LOGIN>
+	<UNIQUEIP>TRUE</UNIQUEIP>
+	<!-- Include the following roles for location based login--> 
+	<INCLUDE_ROLES>Admin\,Operator</INCLUDE_ROLES>
+   </IP-BASED-LOGIN>
+   
+
+<!-- to check for mandatory fields specify the field name as per in Form Bean -->
+  <MandatoryFields>
+  boundaryNum
+  </MandatoryFields>
+  
+  
+  
+  
+  <INITIAL_LOOKUP>
+  
+	  <JAVA_NAMING_FACTORY_INITIAL>org/jnp/interfaces/NamingContextFactory</JAVA_NAMING_FACTORY_INITIAL>
+
+	  <JAVA_NAMING_PROVIDER_URL>jnp://localhost:1099 </JAVA_NAMING_PROVIDER_URL>
+
+	  <JAVA_NAMING_FACTORY_URL_PKGS>org/jboss/naming:org/jnp/interfaces</JAVA_NAMING_FACTORY_URL_PKGS>
+  
+  </INITIAL_LOOKUP>
+  
+</properties>

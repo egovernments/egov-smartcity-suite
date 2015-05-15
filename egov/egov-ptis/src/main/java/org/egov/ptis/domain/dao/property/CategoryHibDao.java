@@ -42,8 +42,10 @@ package org.egov.ptis.domain.dao.property;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.ptis.domain.entity.property.Category;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -51,34 +53,28 @@ import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Hibernate implementation of CategoryDao
- * 
- * @author Administrator
- * @version 2.00
- */
-public class CategoryHibDao extends GenericHibernateDAO implements CategoryDao {
+@Repository
+@Transactional(readOnly = true)
+public class CategoryHibDao implements CategoryDao {
 
-	/**
-	 * @param persistentClass
-	 * @param session
-	 */
 	public static final String FROM_DATE = "fromDate";
 	public static final String TO_DATE = "toDate";
 
-	public CategoryHibDao(Class persistentClass, Session session) {
-		super(persistentClass, session);
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
 	}
 
 	@Override
 	public List getAllCategoriesbyHistory() {
-		Query qry = getCurrentSession()
-				.createQuery(
-						"from Category C where "
-								+ "(C.toDate IS NULL AND C.fromDate <= :currDate) "
-								+ "OR "
-								+ "(C.fromDate <= :currDate AND C.toDate >= :currDate)) ");
+		Query qry = getCurrentSession().createQuery(
+				"from Category C where " + "(C.toDate IS NULL AND C.fromDate <= :currDate) "
+						+ "OR " + "(C.fromDate <= :currDate AND C.toDate >= :currDate)) ");
 		qry.setDate("currDate", new Date());
 		return qry.list();
 	}
@@ -104,8 +100,8 @@ public class CategoryHibDao extends GenericHibernateDAO implements CategoryDao {
 	}
 
 	@Override
-	public Float getCategoryAmountByUsageAndBndryAndDate(Integer usageId,
-			Integer bndryId, Date fromDate) {
+	public Float getCategoryAmountByUsageAndBndryAndDate(Integer usageId, Integer bndryId,
+			Date fromDate) {
 		Query qry = null;
 		Float catAmt = null;
 		if (usageId != null && bndryId != null && fromDate != null) {
@@ -127,9 +123,8 @@ public class CategoryHibDao extends GenericHibernateDAO implements CategoryDao {
 	@Override
 	public Float getCatAmntByPropertyId(String pid) {
 
-		Query qry = getCurrentSession()
-				.createQuery(
-						"select bp.boundary from BasicPropertyImpl bp where bp.upicNo like :pid");
+		Query qry = getCurrentSession().createQuery(
+				"select bp.boundary from BasicPropertyImpl bp where bp.upicNo like :pid");
 		qry.setString("pid", pid);
 		Boundary bndry = (Boundary) qry.uniqueResult();
 
@@ -150,16 +145,15 @@ public class CategoryHibDao extends GenericHibernateDAO implements CategoryDao {
 	 * @param criterion
 	 * @return Category.
 	 **/
+
 	@Override
 	public Category getCategoryByCategoryNameAndUsage(Criterion criterion) {
 		Criteria criteria = getCurrentSession().createCriteria(Category.class);
 		Category category = null;
 		if (criterion != null) {
-			Criterion dateCondn1 = Restrictions.and(
-					Restrictions.le(FROM_DATE, new Date()),
+			Criterion dateCondn1 = Restrictions.and(Restrictions.le(FROM_DATE, new Date()),
 					Restrictions.isNull(TO_DATE));
-			Criterion dateCondn2 = Restrictions.and(
-					Restrictions.le(FROM_DATE, new Date()),
+			Criterion dateCondn2 = Restrictions.and(Restrictions.le(FROM_DATE, new Date()),
 					Restrictions.ge(TO_DATE, new Date()));
 			Criterion dateCondn = Restrictions.or(dateCondn1, dateCondn2);
 
@@ -178,15 +172,14 @@ public class CategoryHibDao extends GenericHibernateDAO implements CategoryDao {
 	 * @param criterion
 	 * @return List Category.
 	 **/
+
 	@Override
 	public List<Category> getCategoryByCatAmtAndUsage(Criterion criterion) {
 		Criteria criteria = getCurrentSession().createCriteria(Category.class);
 		if (criterion != null) {
-			Criterion dateCondn1 = Restrictions.and(
-					Restrictions.le(FROM_DATE, new Date()),
+			Criterion dateCondn1 = Restrictions.and(Restrictions.le(FROM_DATE, new Date()),
 					Restrictions.isNull(TO_DATE));
-			Criterion dateCondn2 = Restrictions.and(
-					Restrictions.le(FROM_DATE, new Date()),
+			Criterion dateCondn2 = Restrictions.and(Restrictions.le(FROM_DATE, new Date()),
 					Restrictions.ge(TO_DATE, new Date()));
 			Criterion dateCondn = Restrictions.or(dateCondn1, dateCondn2);
 
@@ -202,14 +195,44 @@ public class CategoryHibDao extends GenericHibernateDAO implements CategoryDao {
 	 * @param criterion
 	 * @return List Category
 	 */
+
 	@Override
-	public List<Category> getCategoryByRateUsageAndStructClass(
-			Criterion criterion) {
+	public List<Category> getCategoryByRateUsageAndStructClass(Criterion criterion) {
 		Criteria criteria = getCurrentSession().createCriteria(Category.class);
 		if (criterion != null) {
 			criteria.add(criterion);
 			criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		}
 		return criteria.list();
+	}
+
+	@Override
+	public Category findById(Integer id, boolean lock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Category> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Category create(Category category) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(Category category) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Category update(Category category) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -38,19 +38,27 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
+
+import java.util.List;
+
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
-/**
- * TODO Brief Description of the purpose of the class/interface
- * 
- * @author Neetu
- * @version 2.00
- */
 
-public interface PropertyDetailDAO extends org.egov.infstr.dao.GenericDAO
-{
-	 
+public interface PropertyDetailDAO {
+
 	public PropertyDetail getPropertyDetailByProperty(Property property);
+
 	public PropertyDetail getPropertyDetailBySurveyNumber(String surveyNumber);
+
 	public PropertyDetail getPropertyDetailByRegNum(String regNum);
+
+	public PropertyDetail findById(Integer id, boolean lock);
+
+	public List<PropertyDetail> findAll();
+
+	public PropertyDetail create(PropertyDetail propertyDetail);
+
+	public void delete(PropertyDetail propertyDetail);
+
+	public PropertyDetail update(PropertyDetail propertyDetail);
 }

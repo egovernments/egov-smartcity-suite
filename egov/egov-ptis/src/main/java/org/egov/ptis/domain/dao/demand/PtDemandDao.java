@@ -45,21 +45,11 @@ import java.util.Map;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infstr.commons.Module;
-import org.egov.infstr.dao.GenericDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 
-/**
- * TODO Brief Description of the puprpose of the class/interface
- * 
- * @author Administrator
- * @version 1.00
- * @see
- * @see
- * @since 1.00
- */
-public interface PtDemandDao extends GenericDAO {
+public interface PtDemandDao {
 	/**
 	 * This method called getCurrentDemandforProperty gets Total Current Demand
 	 * Amount .
@@ -180,4 +170,15 @@ public interface PtDemandDao extends GenericDAO {
 	public Map<String, BigDecimal> getDemandCollMap(Property property);
 
 	public Ptdemand getNonHistoryCurrDmdForProperty(Property property);
+
+	public Ptdemand findById(Integer id, boolean lock);
+
+	public List<Ptdemand> findAll();
+
+	public Ptdemand create(Ptdemand ptdemand);
+
+	public void delete(Ptdemand ptdemand);
+
+	public Ptdemand update(Ptdemand ptdemand);
+
 }

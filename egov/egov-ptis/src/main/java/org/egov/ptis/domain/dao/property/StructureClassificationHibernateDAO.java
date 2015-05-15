@@ -42,97 +42,143 @@ package org.egov.ptis.domain.dao.property;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.infstr.dao.GenericHibernateDAO;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * This Class implememets the StructureClassificationDAO for the Hibernate specific 
- * Implementation 
- * @author Neetu
- * @version 2.00
- * @author Srikanth
- * Added new method for factor retrieval
- */
+@Repository(value = "structureClassificationDAO")
+@Transactional(readOnly = true)
+public class StructureClassificationHibernateDAO implements StructureClassificationDAO {
 
-public class StructureClassificationHibernateDAO extends GenericHibernateDAO implements StructureClassificationDAO {
+	@PersistenceContext
+	private EntityManager entityManager;
 
-	/**
-	 * @param persistentClass
-	 * @param session
-	 */
-	public StructureClassificationHibernateDAO(Class persistentClass, Session session) {
-		super(persistentClass, session);
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
 	}
 
 	/**
 	 * To get all StructuralClassification data
+	 * 
 	 * @return {@link StructureClassification} List
 	 * */
-	public List  getAllStructureClassification() {
-		Query qry = getCurrentSession().createQuery("FROM StructureClassification SC WHERE ((SC.toDate IS NULL AND SC.fromDate <= :currDate) "+ 
-		"OR (SC.fromDate <= :currDate AND SC.toDate >= :currDate))");
+	@Override
+	public List getAllStructureClassification() {
+		Query qry = getCurrentSession().createQuery(
+				"FROM StructureClassification SC WHERE ((SC.toDate IS NULL AND SC.fromDate <= :currDate) "
+						+ "OR (SC.fromDate <= :currDate AND SC.toDate >= :currDate))");
 		qry.setDate("currDate", new Date());
 		return qry.list();
 	}
 
 	/**
 	 * To get the construction cost by Construction Type Code and Floor Number
+	 * 
 	 * @param constrTypeCode
 	 * @param floorNum
 	 * @return {@link StructureClassification} StructureClassification
 	 * */
-	public StructureClassification getStructureClassification(String constrTypeCode, Integer floorNum) {
-		Query qry = getCurrentSession().createQuery("FROM StructureClassification SC WHERE SC.constrTypeCode =:constrTypeCode AND SC.floorNum =:floorNum");
-		qry.setString("constrTypeCode",constrTypeCode);
-		qry.setInteger("floorNum",floorNum);
-		return  (StructureClassification)qry.uniqueResult();
+	@Override
+	public StructureClassification getStructureClassification(String constrTypeCode,
+			Integer floorNum) {
+		Query qry = getCurrentSession()
+				.createQuery(
+						"FROM StructureClassification SC WHERE SC.constrTypeCode =:constrTypeCode AND SC.floorNum =:floorNum");
+		qry.setString("constrTypeCode", constrTypeCode);
+		qry.setInteger("floorNum", floorNum);
+		return (StructureClassification) qry.uniqueResult();
 	}
 
 	/**
-	 * To get the construction cost by Construction Type Code, From Date and Floor Number
+	 * To get the construction cost by Construction Type Code, From Date and
+	 * Floor Number
+	 * 
 	 * @param constrTypeCode
 	 * @param fromDate
 	 * @param floorNum
 	 * @return {@link StructureClassification} StructureClassification
 	 **/
-	public StructureClassification getStructureClassification(String constrTypeCode, Date fromDate,Integer floorNum) {
-		Query qry = getCurrentSession().createQuery("FROM StructureClassification SC WHERE SC.constrTypeCode =:constrTypeCode "+
-				"AND SC.floorNum =:floorNum AND ((SC.toDate IS NULL AND SC.fromDate <= :fromDate) "+ 
-		"OR (SC.fromDate <= :fromDate AND SC.toDate >= :fromDate))");
-		qry.setString("constrTypeCode",constrTypeCode);
-		qry.setInteger("floorNum",floorNum);
-		qry.setDate("fromDate",fromDate);
-		return  (StructureClassification)qry.uniqueResult();
+	@Override
+	public StructureClassification getStructureClassification(String constrTypeCode, Date fromDate,
+			Integer floorNum) {
+		Query qry = getCurrentSession()
+				.createQuery(
+						"FROM StructureClassification SC WHERE SC.constrTypeCode =:constrTypeCode "
+								+ "AND SC.floorNum =:floorNum AND ((SC.toDate IS NULL AND SC.fromDate <= :fromDate) "
+								+ "OR (SC.fromDate <= :fromDate AND SC.toDate >= :fromDate))");
+		qry.setString("constrTypeCode", constrTypeCode);
+		qry.setInteger("floorNum", floorNum);
+		qry.setDate("fromDate", fromDate);
+		return (StructureClassification) qry.uniqueResult();
 	}
-
 
 	/**
 	 * To get the construction cost by Construction Type
+	 * 
 	 * @param constrTypeCode
 	 * @return {@link StructureClassification}StructureClassification
 	 * */
+	@Override
 	public StructureClassification getStructureClassification(String constrTypeCode) {
-		Query qry = getCurrentSession().createQuery("FROM StructureClassification SC WHERE SC.constrTypeCode =:constrTypeCode " +
-		"AND ((SC.toDate IS NULL AND SC.fromDate <= :currDate) OR (SC.fromDate <= :currDate AND SC.toDate >= :currDate))");
-		qry.setString("constrTypeCode",constrTypeCode);
+		Query qry = getCurrentSession()
+				.createQuery(
+						"FROM StructureClassification SC WHERE SC.constrTypeCode =:constrTypeCode "
+								+ "AND ((SC.toDate IS NULL AND SC.fromDate <= :currDate) OR (SC.fromDate <= :currDate AND SC.toDate >= :currDate))");
+		qry.setString("constrTypeCode", constrTypeCode);
 		qry.setDate("currDate", new Date());
-		return  (StructureClassification)qry.uniqueResult();
+		return (StructureClassification) qry.uniqueResult();
 	}
-
 
 	/**
 	 * To get the construction cost by Construction Type Code and From Date
+	 * 
 	 * @param constrTypeCode
 	 * @param fromDate
 	 * @return {@link StructureClassification} StructureClassification
-	 **/ 
+	 **/
+	@Override
 	public StructureClassification getStructureClassification(String constrTypeCode, Date fromDate) {
-		Query qry = getCurrentSession().createQuery("FROM StructureClassification SC WHERE SC.constrTypeCode =:constrTypeCode " +
-		"AND ((SC.toDate IS NULL AND SC.fromDate <= :fromDate) OR (SC.fromDate <= :fromDate AND SC.toDate >= :fromDate))");
-		qry.setString("constrTypeCode",constrTypeCode);
-		qry.setDate("fromDate",fromDate);
-		return  (StructureClassification)qry.uniqueResult();
+		Query qry = getCurrentSession()
+				.createQuery(
+						"FROM StructureClassification SC WHERE SC.constrTypeCode =:constrTypeCode "
+								+ "AND ((SC.toDate IS NULL AND SC.fromDate <= :fromDate) OR (SC.fromDate <= :fromDate AND SC.toDate >= :fromDate))");
+		qry.setString("constrTypeCode", constrTypeCode);
+		qry.setDate("fromDate", fromDate);
+		return (StructureClassification) qry.uniqueResult();
+	}
+
+	@Override
+	public StructureClassification findById(Long id, boolean lock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<StructureClassification> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public StructureClassification create(StructureClassification structureClassification) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(StructureClassification structureClassification) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public StructureClassification update(StructureClassification structureClassification) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

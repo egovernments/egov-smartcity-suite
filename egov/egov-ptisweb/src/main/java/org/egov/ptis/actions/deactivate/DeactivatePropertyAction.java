@@ -81,7 +81,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.actions.workflow.WorkflowAction;
 import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -96,6 +95,7 @@ import org.egov.ptis.exceptions.PropertyNotFoundException;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("serial")
@@ -140,6 +140,10 @@ public class DeactivatePropertyAction extends WorkflowAction {
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	private UserService userService;
 	private EisCommonService eisCommonService;
+	@Autowired
+	private PropertyMutationMasterDAO propertyMutationMasterDAO;
+	@Autowired
+	private PropertyStatusDAO propertyStatusDAO;
 
 	public DeactivatePropertyAction() {
 	}
@@ -240,8 +244,6 @@ public class DeactivatePropertyAction extends WorkflowAction {
 			LOGGER.debug("prepare: BasicProperty: " + basicProp);
 		}
 
-		PropertyMutationMasterDAO propertyMutationMasterDAO = PropertyDAOFactory.getDAOFactory()
-				.getPropertyMutationMstrDAO();
 		List<PropertyMutationMaster> propMutationMstr = propertyMutationMasterDAO
 				.getAllPropertyMutationMastersByType(PROP_STATUS_TYPE_DEACT);
 		addDropdownData("Reason", propMutationMstr);
@@ -265,8 +267,6 @@ public class DeactivatePropertyAction extends WorkflowAction {
 					.createVoucher(basicProp.getUpicNo(), amounts, VOUCH_CREATE_RSN_DEACTIVATE);
 			basicProp.setActive(false);
 
-			PropertyStatusDAO propertyStatusDAO = PropertyDAOFactory.getDAOFactory()
-					.getPropertyStatusDAO();
 			PropertyStatus propertyStatus = propertyStatusDAO
 					.getPropertyStatusByCode(PROP_STATUS_INACTIVE);
 			LOGGER.debug("save: PropertyStatus: " + propertyStatus);
@@ -333,8 +333,6 @@ public class DeactivatePropertyAction extends WorkflowAction {
 					property.setDocNumber(propDocNum);
 					basicProp.addProperty(property);
 
-					PropertyStatusDAO propertyStatusDAO = PropertyDAOFactory.getDAOFactory()
-							.getPropertyStatusDAO();
 					PropertyStatus propertyStatus = propertyStatusDAO
 							.getPropertyStatusByCode(PROP_STATUS_INACTIVE);
 
@@ -382,8 +380,6 @@ public class DeactivatePropertyAction extends WorkflowAction {
 			nonHistProperty.setStatus(STATUS_ISHISTORY);
 			property.setStatus(STATUS_ISACTIVE);
 			transitionWorkFlow();
-			PropertyStatusDAO propertyStatusDAO = PropertyDAOFactory.getDAOFactory()
-					.getPropertyStatusDAO();
 			PropertyStatus propertyStatus = propertyStatusDAO
 					.getPropertyStatusByCode(PROP_STATUS_INACTIVE);
 			propStatusVal = (PropertyStatusValues) getPersistenceService()

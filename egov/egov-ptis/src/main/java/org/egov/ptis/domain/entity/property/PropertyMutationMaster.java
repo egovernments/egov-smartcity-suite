@@ -46,12 +46,6 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-/**
- * @author Suhasini.CH TODO To change the template for this generated type
- *         comment go to Window - Preferences - Java - Code Style - Code
- *         Templates
- */
-
 public class PropertyMutationMaster {
 	private Integer idMutation = null;
 	private String mutationName = null;
@@ -154,8 +148,8 @@ public class PropertyMutationMaster {
 	public String toString() {
 		StringBuilder objStr = new StringBuilder();
 
-		objStr.append("Id: ").append(getIdMutation()).append("|Name: ").append(getMutationName()).append("|Type: ")
-				.append(getType());
+		objStr.append("Id: ").append(getIdMutation()).append("|Name: ").append(getMutationName())
+				.append("|Type: ").append(getType());
 
 		return objStr.toString();
 	}

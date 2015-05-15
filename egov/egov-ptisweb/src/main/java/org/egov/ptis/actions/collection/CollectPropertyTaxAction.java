@@ -52,6 +52,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -62,18 +65,18 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.model.PropertyInstTaxBean;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
-import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
@@ -97,6 +100,15 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 	private List<PropertyInstTaxBean> instTaxBeanList = new ArrayList<PropertyInstTaxBean>();
 	private Map<Integer, Installment> installmentAndId = new HashMap<Integer, Installment>();
 	private Map<Installment, EgDemandDetails> installmentAndDemandDetails = new HashMap<Installment, EgDemandDetails>();
+	@Autowired
+	private EgDemandDetailsDao egDemandDetailsDAO;
+
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
 
 	@Override
 	public Object getModel() {
@@ -238,8 +250,6 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 	private void setPenaltyToExistingPenalty(
 			Map<Installment, PropertyInstTaxBean> installmentTaxBeanMap) {
 		EgDemandDetails penaltyDmdDtls = null;
-		EgDemandDetailsDao demandDetailsDao = PropertyDAOFactory.getDAOFactory()
-				.getEgDemandDetailsDao();
 		boolean isUpdated = false;
 
 		for (Map.Entry<Installment, PropertyInstTaxBean> entry : installmentTaxBeanMap.entrySet()) {
@@ -248,13 +258,13 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 			if (penaltyDmdDtls != null) {
 				penaltyDmdDtls.setAmount(penaltyDmdDtls.getAmtCollected().add(
 						entry.getValue().getInstPenaltyAmt()));
-				demandDetailsDao.update(penaltyDmdDtls);
+				egDemandDetailsDAO.update(penaltyDmdDtls);
 				isUpdated = true;
 			}
 		}
 
 		if (isUpdated) {
-			HibernateUtil.getCurrentSession().flush();
+			getCurrentSession().flush();
 		}
 	}
 

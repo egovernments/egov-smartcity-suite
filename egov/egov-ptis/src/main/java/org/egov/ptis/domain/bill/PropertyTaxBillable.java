@@ -87,7 +87,6 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyDAO;
-import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
@@ -952,7 +951,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 	private BigDecimal getTaxforReason(Property property, String demandReason) {
 		BigDecimal reasonTax = BigDecimal.ZERO;
 		Installment inst = PropertyTaxUtil.getCurrentInstallment();
-		PtDemandDao ptDemandDao = PropertyDAOFactory.getDAOFactory().getPtDemandDao();
 		EgDemand egDemand = ptDemandDao.getNonHistoryCurrDmdForProperty(property);
 		for (EgDemandDetails dmdDet : egDemand.getEgDemandDetails()) {
 			if (dmdDet.getEgDemandReason().getEgInstallmentMaster().equals(inst)

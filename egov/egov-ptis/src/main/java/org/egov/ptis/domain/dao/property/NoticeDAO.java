@@ -48,32 +48,43 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.notice.SearchNoticeForm;
 import org.hibernate.Query;
+import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+@Repository(value = "noticeDAO")
+@Transactional(readOnly = true)
 public class NoticeDAO {
+
 	public final static Logger LOGGER = Logger.getLogger(NoticeDAO.class);
+
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
 
 	public boolean saveNoticeDetails(PtNotice notice, InputStream noticeDocFis) {
 		boolean isNoticeSaved = false;
 		try {
-			Query query = HibernateUtil
-					.getCurrentSession()
+			Query query = getCurrentSession()
 					.createSQLQuery(
 							"insert into EGPT_NOTICE (ID,ID_MODULE,NOTICETYPE,NOTICENO,NOTICEDATE,ID_USER) "
 									+ "values (SEQ_EGPT_NOTICE.nextval,?,?,?,sysdate,?")
-					.setParameter(0, notice.getModuleId())
-					.setParameter(1, notice.getNoticeType())
-					.setParameter(2, notice.getNoticeNo())
-					.setParameter(3, notice.getUserId());
+					.setParameter(0, notice.getModuleId()).setParameter(1, notice.getNoticeType())
+					.setParameter(2, notice.getNoticeNo()).setParameter(3, notice.getUserId());
 			query.executeUpdate();
 			isNoticeSaved = true;
 		} catch (Exception e) {
-			LOGGER.info("Exception in saveNoticeDetails()--- NoticeDao--"
-					+ e.getMessage());
+			LOGGER.info("Exception in saveNoticeDetails()--- NoticeDao--" + e.getMessage());
 		}
 		return isNoticeSaved;
 	}
@@ -89,8 +100,7 @@ public class NoticeDAO {
 		InputStream istream = null;
 		String isBlob = null;
 		try {
-			List results = HibernateUtil
-					.getCurrentSession()
+			List results = getCurrentSession()
 					.createSQLQuery(
 							"select DOCUMENT,IS_BLOB,DOCUMENT1 from notice where NOTICENO = ? and OBJECTNO = ?")
 					.setParameter(0, noticeNo).setParameter(1, objectNo).list();
@@ -99,14 +109,12 @@ public class NoticeDAO {
 				isBlob = (String) objects[1];
 				if (isBlob != null && isBlob.equals("Y")) {
 					istream = (InputStream) objects[2];
-				} else if ((isBlob == null)
-						|| (isBlob != null && isBlob.equals("N"))) {
+				} else if ((isBlob == null) || (isBlob != null && isBlob.equals("N"))) {
 					istream = (InputStream) objects[0];
 				}
 			}
 		} catch (Exception e) {
-			LOGGER.info("Exception in getNoticeDocument()--- NoticeDao--"
-					+ e.getMessage());
+			LOGGER.info("Exception in getNoticeDocument()--- NoticeDao--" + e.getMessage());
 		}
 		return istream;
 	}
@@ -137,8 +145,7 @@ public class NoticeDAO {
 					params.add(sdf.format(toDate));
 				}
 				queryStr.append(" order by NOTICEDATE desc ");
-				Query query = HibernateUtil.getCurrentSession().createSQLQuery(
-						queryStr.toString());
+				Query query = getCurrentSession().createSQLQuery(queryStr.toString());
 				int i = 0;
 				for (Object param : params) {
 					query.setParameter(i, param);
@@ -154,8 +161,7 @@ public class NoticeDAO {
 				}
 			}
 		} catch (Exception e) {
-			LOGGER.info("Exception in getNoticeDetails()--- NoticeDao--"
-					+ e.getMessage());
+			LOGGER.info("Exception in getNoticeDetails()--- NoticeDao--" + e.getMessage());
 		}
 		return searchNoticeList;
 	}

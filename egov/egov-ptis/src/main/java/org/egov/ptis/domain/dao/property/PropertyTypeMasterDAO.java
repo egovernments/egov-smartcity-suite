@@ -39,23 +39,26 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
+import java.util.List;
+
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 
-
-
-
-/**
- * <p>This is an interface which would be implemented by the 
- * Individual Frameworks  for all the CRUD (create, read, update, delete) basic data 
- * access operations for PropertyTypeMaster Entity
- * 
- * @author Neetu
- * @version 2.00
- */
-
-public interface PropertyTypeMasterDAO extends org.egov.infstr.dao.GenericDAO
-{
+public interface PropertyTypeMasterDAO {
+	
 	public PropertyTypeMaster getPropertyTypeMasterByName(String type);
-    public PropertyTypeMaster getPropertyTypeMasterById(Integer id);
-    public PropertyTypeMaster getPropertyTypeMasterByCode(String code);
+
+	public PropertyTypeMaster getPropertyTypeMasterById(Integer id);
+
+	public PropertyTypeMaster getPropertyTypeMasterByCode(String code);
+
+	public PropertyTypeMaster findById(Integer id, boolean lock);
+
+	public List<PropertyTypeMaster> findAll();
+
+	public PropertyTypeMaster create(PropertyTypeMaster propertyTypeMaster);
+
+	public void delete(PropertyTypeMaster propertyTypeMaster);
+
+	public PropertyTypeMaster update(PropertyTypeMaster propertyTypeMaster);
+
 }

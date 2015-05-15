@@ -39,13 +39,56 @@
  */
 package org.egov.demand.dao;
 
-import org.egov.infstr.dao.GenericHibernateDAO;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.egov.demand.model.EgDemandDetails;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-public class EgDemandDetailsHibDao  extends GenericHibernateDAO implements EgDemandDetailsDao{
+@Repository(value = "egDemandDetailsDAO")
+@Transactional(readOnly = true)
+public class EgDemandDetailsHibDao implements EgDemandDetailsDao {
 
-	public EgDemandDetailsHibDao(Class persistentClass, Session session) {
-		super(persistentClass, session);
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	@SuppressWarnings("unused")
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
+
+	@Override
+	public EgDemandDetails findById(Integer id, boolean lock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<EgDemandDetails> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public EgDemandDetails create(EgDemandDetails egDemandDetails) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(EgDemandDetails egDemandDetails) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public EgDemandDetails update(EgDemandDetails egDemandDetails) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

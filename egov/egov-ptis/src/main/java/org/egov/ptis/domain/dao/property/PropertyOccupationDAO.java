@@ -40,23 +40,27 @@
 package org.egov.ptis.domain.dao.property;
 
 import java.util.Date;
+import java.util.List;
 
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
 
-/**
- * <p>
- * This is an interface which would be implemented by the Individual Frameworks
- * for all the CRUD (create, read, update, delete) basic data access operations
- * for PropertyOccupation
- * 
- * @author Neetu
- * @version 2.00
- */
-
-public interface PropertyOccupationDAO extends org.egov.infstr.dao.GenericDAO {
-	public PropertyOccupation getPropertyOccupationByOccCodeAndUsage(String occCode, Long propertyUsage);
+public interface PropertyOccupationDAO {
+	
+	public PropertyOccupation getPropertyOccupationByOccCodeAndUsage(String occCode,
+			Long propertyUsage);
 
 	public PropertyOccupation getPropertyOccupationByOccCode(String occCode);
 
 	public PropertyOccupation getPropertyOccupationByOccCodeAndDate(String occCode, Date frmDate);
+
+	public PropertyOccupation findById(Long id, boolean lock);
+
+	public List<PropertyOccupation> findAll();
+
+	public PropertyOccupation create(PropertyOccupation propertyOccupation);
+
+	public void delete(PropertyOccupation propertyOccupation);
+
+	public PropertyOccupation update(PropertyOccupation propertyOccupation);
+
 }

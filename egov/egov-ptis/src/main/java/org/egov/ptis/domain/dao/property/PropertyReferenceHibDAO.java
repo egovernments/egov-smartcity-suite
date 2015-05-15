@@ -39,23 +39,55 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import org.egov.infstr.dao.GenericHibernateDAO;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.egov.ptis.domain.entity.property.PropertyReference;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * @author suhasini CH
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
+@Repository(value = "propertyReferenceDAO")
+@Transactional(readOnly = true)
+public class PropertyReferenceHibDAO implements PropertyReferenceDAO {
 
-public class PropertyReferenceHibDAO extends GenericHibernateDAO implements
-        PropertyReferenceDAO {
-    /**
-     * @param persistentClass
-     * @param session
-     */
-    public PropertyReferenceHibDAO(Class persistentClass, Session session)
-    {
-        super(persistentClass, session);
-    }
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	@SuppressWarnings("unused")
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
+
+	@Override
+	public PropertyReference findById(Integer id, boolean lock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<PropertyReference> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PropertyReference create(PropertyReference propertyReference) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(PropertyReference propertyReference) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public PropertyReference update(PropertyReference propertyReference) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

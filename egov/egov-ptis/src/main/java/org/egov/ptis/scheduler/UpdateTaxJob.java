@@ -52,17 +52,20 @@ import org.egov.ptis.client.model.TaxCalculationInfo;
 import org.egov.ptis.client.model.UnitTaxCalculationInfo;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
+import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
 import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.FloorIF;
 import org.quartz.StatefulJob;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class UpdateTaxJob extends AbstractQuartzJob implements StatefulJob {
 
 	private static final long serialVersionUID = 1L;
+	@Autowired
+	private PtDemandDao ptDemandDAO;
 
 	protected PersistenceService persistenceService;
 	private PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
@@ -109,10 +112,10 @@ public class UpdateTaxJob extends AbstractQuartzJob implements StatefulJob {
 		for (Object indexNumber : indexNumbers) {
 
 			basicProperty = (BasicProperty) getPersistenceService().find(
-					"from BasicPropertyImpl where active = true and upicNo = ?", indexNumber.toString());
+					"from BasicPropertyImpl where active = true and upicNo = ?",
+					indexNumber.toString());
 			if (basicProperty != null) {
-				ptDemand = PropertyDAOFactory.getDAOFactory().getPtDemandDao()
-						.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
+				ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
 
 				floorDemands = ptDemand.getDmdCalculations().getFlrwiseDmdCalculations();
 
@@ -121,12 +124,14 @@ public class UpdateTaxJob extends AbstractQuartzJob implements StatefulJob {
 				if (taxCalInfo != null) {
 					if (floorDemands.isEmpty()) {
 
-						LOGGER.info("Floor demand calculations does not exists for " + indexNumber.toString());
+						LOGGER.info("Floor demand calculations does not exists for "
+								+ indexNumber.toString());
 
-						for (FloorIF floor : basicProperty.getProperty().getPropertyDetail().getFloorDetails()) {
+						for (FloorIF floor : basicProperty.getProperty().getPropertyDetail()
+								.getFloorDetails()) {
 
-							FloorwiseDemandCalculations flrDmdCalc = createFloorDmdCalc(ptDemand.getDmdCalculations(),
-									floor, taxCalInfo);
+							FloorwiseDemandCalculations flrDmdCalc = createFloorDmdCalc(
+									ptDemand.getDmdCalculations(), floor, taxCalInfo);
 
 							ptDemand.getDmdCalculations().addFlrwiseDmdCalculations(flrDmdCalc);
 							getPersistenceService().setType(FloorwiseDemandCalculations.class);
@@ -135,15 +140,19 @@ public class UpdateTaxJob extends AbstractQuartzJob implements StatefulJob {
 					} else {
 
 						if (taxCalInfo.getUnitTaxCalculationInfos().get(0) instanceof List) {
-							for (List<UnitTaxCalculationInfo> units : taxCalInfo.getUnitTaxCalculationInfos()) {
+							for (List<UnitTaxCalculationInfo> units : taxCalInfo
+									.getUnitTaxCalculationInfos()) {
 								for (UnitTaxCalculationInfo unit : units) {
 									for (Object flrDmdCalc : floorDemands) {
 
-										FloorIF floor = ((FloorwiseDemandCalculations) flrDmdCalc).getFloor();
+										FloorIF floor = ((FloorwiseDemandCalculations) flrDmdCalc)
+												.getFloor();
 
 										if (propertyTaxUtil.isMatch(unit, floor)) {
-											setFloorDmdCalTax(unit, ((FloorwiseDemandCalculations) flrDmdCalc));
-											getPersistenceService().setType(FloorwiseDemandCalculations.class);
+											setFloorDmdCalTax(unit,
+													((FloorwiseDemandCalculations) flrDmdCalc));
+											getPersistenceService().setType(
+													FloorwiseDemandCalculations.class);
 											getPersistenceService().update(flrDmdCalc);
 											break;
 										}
@@ -158,11 +167,14 @@ public class UpdateTaxJob extends AbstractQuartzJob implements StatefulJob {
 
 								for (Object flrDmdCalc : floorDemands) {
 
-									FloorIF floor = ((FloorwiseDemandCalculations) flrDmdCalc).getFloor();
+									FloorIF floor = ((FloorwiseDemandCalculations) flrDmdCalc)
+											.getFloor();
 
 									if (propertyTaxUtil.isMatch(unit, floor)) {
-										setFloorDmdCalTax(unit, ((FloorwiseDemandCalculations) flrDmdCalc));
-										getPersistenceService().setType(FloorwiseDemandCalculations.class);
+										setFloorDmdCalTax(unit,
+												((FloorwiseDemandCalculations) flrDmdCalc));
+										getPersistenceService().setType(
+												FloorwiseDemandCalculations.class);
 										getPersistenceService().update(flrDmdCalc);
 										break;
 									}
@@ -177,13 +189,13 @@ public class UpdateTaxJob extends AbstractQuartzJob implements StatefulJob {
 			}
 		}
 
-		LOGGER.info("Index numbers updated in " + ((System.currentTimeMillis() - currentTimeMillis) / 1000) + " sec(s)");
+		LOGGER.info("Index numbers updated in "
+				+ ((System.currentTimeMillis() - currentTimeMillis) / 1000) + " sec(s)");
 
 	}
 
-
-	private FloorwiseDemandCalculations createFloorDmdCalc(PTDemandCalculations ptDmdCal, FloorIF floor,
-			TaxCalculationInfo taxCalcInfo) {
+	private FloorwiseDemandCalculations createFloorDmdCalc(PTDemandCalculations ptDmdCal,
+			FloorIF floor, TaxCalculationInfo taxCalcInfo) {
 		FloorwiseDemandCalculations floorDmdCalc = new FloorwiseDemandCalculations();
 
 		floorDmdCalc.setPTDemandCalculations(ptDmdCal);
@@ -201,7 +213,8 @@ public class UpdateTaxJob extends AbstractQuartzJob implements StatefulJob {
 		} else {
 			for (int i = 0; i < taxCalcInfo.getUnitTaxCalculationInfos().size(); i++) {
 
-				UnitTaxCalculationInfo unit = (UnitTaxCalculationInfo) taxCalcInfo.getUnitTaxCalculationInfos().get(i);
+				UnitTaxCalculationInfo unit = (UnitTaxCalculationInfo) taxCalcInfo
+						.getUnitTaxCalculationInfos().get(i);
 
 				if (propertyTaxUtil.isMatch(unit, floor)) {
 					setFloorDmdCalTax(unit, floorDmdCalc);
@@ -213,27 +226,37 @@ public class UpdateTaxJob extends AbstractQuartzJob implements StatefulJob {
 		return floorDmdCalc;
 	}
 
-	private void setFloorDmdCalTax(UnitTaxCalculationInfo unitTax, FloorwiseDemandCalculations floorDmdCalc) {
+	private void setFloorDmdCalTax(UnitTaxCalculationInfo unitTax,
+			FloorwiseDemandCalculations floorDmdCalc) {
 		floorDmdCalc.setAlv(unitTax.getAnnualRentAfterDeduction());
 		for (MiscellaneousTax miscTax : unitTax.getMiscellaneousTaxes()) {
 			for (MiscellaneousTaxDetail taxDetail : miscTax.getTaxDetails()) {
-				if (PropertyTaxConstants.DEMANDRSN_CODE_FIRE_SERVICE_TAX.equals(miscTax.getTaxName())) {
+				if (PropertyTaxConstants.DEMANDRSN_CODE_FIRE_SERVICE_TAX.equals(miscTax
+						.getTaxName())) {
 					floorDmdCalc.setTax1(taxDetail.getCalculatedTaxValue());
-				} else if (PropertyTaxConstants.DEMANDRSN_CODE_LIGHTINGTAX.equals(miscTax.getTaxName())) {
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_LIGHTINGTAX.equals(miscTax
+						.getTaxName())) {
 					floorDmdCalc.setTax2(taxDetail.getCalculatedTaxValue());
-				} else if (PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX.equals(miscTax.getTaxName())) {
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX.equals(miscTax
+						.getTaxName())) {
 					floorDmdCalc.setTax3(taxDetail.getCalculatedTaxValue());
-				} else if (PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX.equals(miscTax.getTaxName())) {
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX.equals(miscTax
+						.getTaxName())) {
 					floorDmdCalc.setTax4(taxDetail.getCalculatedTaxValue());
-				} else if (PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_WATER_TAX.equals(miscTax.getTaxName())) {
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_WATER_TAX.equals(miscTax
+						.getTaxName())) {
 					floorDmdCalc.setTax5(taxDetail.getCalculatedTaxValue());
-				} else if (PropertyTaxConstants.DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX.equals(miscTax.getTaxName())) {
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX
+						.equals(miscTax.getTaxName())) {
 					floorDmdCalc.setTax6(taxDetail.getCalculatedTaxValue());
-				} else if (PropertyTaxConstants.DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX.equals(miscTax.getTaxName())) {
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX
+						.equals(miscTax.getTaxName())) {
 					floorDmdCalc.setTax7(taxDetail.getCalculatedTaxValue());
-				} else if (PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD.equals(miscTax.getTaxName())) {
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD.equals(miscTax
+						.getTaxName())) {
 					floorDmdCalc.setTax8(taxDetail.getCalculatedTaxValue());
-				} else if (PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD.equals(miscTax.getTaxName())) {
+				} else if (PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD
+						.equals(miscTax.getTaxName())) {
 					floorDmdCalc.setTax9(taxDetail.getCalculatedTaxValue());
 				}
 			}

@@ -69,7 +69,6 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.FloorIF;
 import org.egov.ptis.domain.entity.property.Property;
@@ -106,6 +105,10 @@ public class ViewPropertyAction extends BaseFormAction {
 	private boolean isDemandActive;
 	private String demandEffectiveYear;
 	private Integer noOfDaysForInactiveDemand;
+	@Autowired
+	private BasicPropertyDAO basicPropertyDAO;
+	@Autowired
+	private PtDemandDao ptDemandDAO;
 
 	@Autowired
 	private UserService UserService;
@@ -124,8 +127,6 @@ public class ViewPropertyAction extends BaseFormAction {
 			LOGGER.debug("viewForm : Index Num in View Property : " + propertyId + ", "
 					+ "Parcel Id : " + parcelID);
 			viewMap = new HashMap<String, Object>();
-			BasicPropertyDAO basicPropertyDAO = PropertyDAOFactory.getDAOFactory()
-					.getBasicPropertyDAO();
 			if (getParcelID() != null || StringUtils.isNotEmpty(getParcelID())
 					|| StringUtils.isBlank(getParcelID())) {
 				BasicProperty bp = basicPropertyDAO.getBasicPropertyByIndexNumAndParcelID(
@@ -180,8 +181,7 @@ public class ViewPropertyAction extends BaseFormAction {
 				viewMap.put("ownerAddress", ownerAddress == null ? PropertyTaxConstants.NOTAVAIL
 						: ownerAddress);
 			}
-			PtDemandDao ptDemandDao = PropertyDAOFactory.getDAOFactory().getPtDemandDao();
-			Map<String, BigDecimal> demandCollMap = ptDemandDao.getDemandCollMap(property);
+			Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
 			viewMap.put("currTax", demandCollMap.get(CURR_DMD_STR).toString());
 			viewMap.put("currTaxDue", (demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap
 					.get(CURR_COLL_STR))).toString());

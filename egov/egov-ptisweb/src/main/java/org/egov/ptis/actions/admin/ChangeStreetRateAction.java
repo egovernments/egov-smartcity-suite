@@ -63,11 +63,11 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.ptis.domain.dao.property.BoundaryCategoryDao;
-import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Category;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
@@ -87,6 +87,8 @@ public class ChangeStreetRateAction extends BaseFormAction {
 	private String searchValue;
 	private String saveAction;
 	private Boundary boundary;
+	@Autowired
+	private BoundaryCategoryDao boundaryCategoryDAO;
 
 	private static final String SEARCH = "search";
 	private static final String RESULTS = "results";
@@ -187,8 +189,7 @@ public class ChangeStreetRateAction extends BaseFormAction {
 
 		boundary = (Boundary) getPersistenceService().find("from BoundaryImpl b where b.id=?", areaId);
 		try {
-			BoundaryCategoryDao boundaryCat = PropertyDAOFactory.getDAOFactory().getBoundaryCategoryDao();
-			List<Category> list = boundaryCat.getCategoriesByBoundry(boundary);
+			List<Category> list = boundaryCategoryDAO.getCategoriesByBoundry(boundary);
 			Map<String, String> fields = null;
 			for (Category cat : list) {
 				if (cat != null) {

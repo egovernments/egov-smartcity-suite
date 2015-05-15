@@ -45,18 +45,9 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyID;
 
-/**
- * <p>
- * This is an interface which would be implemented by the Individual Frameworks
- * for all the CRUD (create, read, update, delete) basic data access operations
- * for Basic Property Entity
- *
- * @author Neetu
- * @version 2.00
- */
+public interface BasicPropertyDAO {
 
-public interface BasicPropertyDAO extends org.egov.infstr.dao.GenericDAO {
-	public BasicProperty getBasicPropertyByRegNum(String RegNum) ;
+	public BasicProperty getBasicPropertyByRegNum(String RegNum);
 
 	public BasicProperty getBasicPropertyByPropertyID(PropertyID propertyID);
 
@@ -79,4 +70,15 @@ public interface BasicPropertyDAO extends org.egov.infstr.dao.GenericDAO {
 	public List<BasicPropertyImpl> getChildBasicPropsForParent(BasicProperty basicProperty);
 
 	public BasicProperty getBasicPropertyByIndexNumAndParcelID(String indexNum, String parcelID);
+
+	public BasicProperty findById(Integer id, boolean lock);
+
+	public List<BasicProperty> findAll();
+
+	public BasicProperty create(BasicProperty basicProperty);
+
+	public void delete(BasicProperty basicProperty);
+
+	public BasicProperty update(BasicProperty basicProperty);
+
 }

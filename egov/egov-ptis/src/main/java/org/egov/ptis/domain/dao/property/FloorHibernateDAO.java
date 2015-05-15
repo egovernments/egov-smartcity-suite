@@ -39,27 +39,51 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import org.egov.infstr.dao.GenericHibernateDAO;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.egov.ptis.domain.entity.property.FloorIF;
 import org.hibernate.Session;
 
-/**
- * This Class implememets the FloorDAO for the Hibernate specific 
- * Implementation 
- * 
- * @author Neetu
- * @version 2.00
- */
+public class FloorHibernateDAO implements FloorDAO {
 
-public class FloorHibernateDAO extends GenericHibernateDAO implements FloorDAO
-{
-	/**
-	 * @param persistentClass
-	 * @param session
-	 */
-	public FloorHibernateDAO(Class persistentClass, Session session)
-	{
-		super(persistentClass, session);
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
 	}
-}
-  
 
+	@Override
+	public FloorIF findById(Integer id, boolean lock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<FloorIF> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public FloorIF create(FloorIF floorIF) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(FloorIF floorIF) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public FloorIF update(FloorIF floorIF) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

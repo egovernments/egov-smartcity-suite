@@ -43,12 +43,14 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infstr.dao.GenericHibernateDAO;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -68,34 +70,21 @@ import org.hibernate.criterion.Projection;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * This Class implememets the PropertyDAO for the Hibernate specific
- * Implementation
- * 
- * @author Neetu
- * @version 2.00
- */
-
 @Repository(value = "propertyDAO")
 @Transactional(readOnly = true)
-public class PropertyHibernateDAO extends GenericHibernateDAO implements
-		PropertyDAO {
-	private static final Logger LOGGER = Logger
-			.getLogger(PropertyHibernateDAO.class);
+public class PropertyHibernateDAO implements PropertyDAO {
+	private static final Logger LOGGER = Logger.getLogger(PropertyHibernateDAO.class);
 
-	/*
-	 * 
-	 * @param persistentClass
-	 * 
-	 * @param session
-	 */
-	public PropertyHibernateDAO(Class persistentClass, Session session) {
-		super(persistentClass, session);
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
 	}
 
+	@Override
 	public Property getPropertyByID(String propID) {
-		Query qry = getCurrentSession().createQuery(
-				"from PropertyImpl P where P.id =:ID ");
+		Query qry = getCurrentSession().createQuery("from PropertyImpl P where P.id =:ID ");
 		qry.setString("ID", propID);
 		return (Property) qry.uniqueResult();
 	}
@@ -105,6 +94,7 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 	 * Src of Info But in this method We return only one of the Property
 	 * entities.
 	 */
+	@Override
 	public Property getPropertyByBasicPropertyID(BasicProperty basicProperty) {
 		Query qry = getCurrentSession().createQuery(
 				"from PropertyImpl P where P.basicProperty =:basicProperty");
@@ -119,13 +109,14 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 	 * @param wardId
 	 * @return List of onlinewards objects
 	 */
+	@Override
 	public List getOnlineDateByWardID(Integer wardId) {
-		Query qry = getCurrentSession().createQuery(
-				"from OnlineWards P where P.wardId =:wardId ");
+		Query qry = getCurrentSession().createQuery("from OnlineWards P where P.wardId =:wardId ");
 		qry.setInteger("wardId", wardId);
 		return qry.list();
 	}
 
+	@Override
 	public List getAllNonDefaultProperties(BasicProperty basicProperty) {
 		Query qry = getCurrentSession()
 				.createQuery(
@@ -134,10 +125,10 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 		return qry.list();
 	}
 
+	@Override
 	public List getAllProperties(BasicProperty basicProperty) {
-		Query qry = getCurrentSession()
-				.createQuery(
-						"from PropertyImpl P where P.basicProperty =:basicProperty  and P.status='N' ");
+		Query qry = getCurrentSession().createQuery(
+				"from PropertyImpl P where P.basicProperty =:basicProperty  and P.status='N' ");
 		qry.setEntity("basicProperty", basicProperty);
 		return qry.list();
 	}
@@ -147,8 +138,9 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 	 * BasicProperty,assessmentYearand ProeprtySource, may throw exception in
 	 * case of multiple resultset.
 	 */
-	public Property getPropertyForInstallment(BasicProperty basicProperty,
-			Installment insatllment, PropertySource src) {
+	@Override
+	public Property getPropertyForInstallment(BasicProperty basicProperty, Installment insatllment,
+			PropertySource src) {
 		try {
 			Property prop = null;
 			Query qry = getCurrentSession()
@@ -163,13 +155,12 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 			}
 			return prop;
 		} catch (Exception e) {
-			LOGGER.error("Exception in  getPropertyForInstalment in DAO : "
-					+ e.getMessage());
-			throw new EGOVRuntimeException(
-					"Exception in  getPropertyForInstalment" + e);
+			LOGGER.error("Exception in  getPropertyForInstalment in DAO : " + e.getMessage());
+			throw new EGOVRuntimeException("Exception in  getPropertyForInstalment" + e);
 		}
 	}
 
+	@Override
 	public List getAllHistories(BasicProperty bp, PropertySource src) {
 		Query qry = getCurrentSession()
 				.createQuery(
@@ -179,27 +170,26 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 		return qry.list();
 	}
 
+	@Override
 	public List getWardWiseProperties() {
 		StringBuffer selectProperties = new StringBuffer(1500);
 
 		selectProperties
 				.append("select count(propusage.idUsage),propusage.usageName,BndryImpl.id,BndryImpl.boundaryNum ");
-		selectProperties
-				.append("from BasicPropertyImpl BP left join BP.property prop ");
+		selectProperties.append("from BasicPropertyImpl BP left join BP.property prop ");
 		selectProperties.append("inner join prop.propertyDetail propdetail ");
-		selectProperties
-				.append("inner join propdetail.PropertyUsage propusage ");
+		selectProperties.append("inner join propdetail.PropertyUsage propusage ");
 		selectProperties.append("left join BP.propertyID propid ");
 		selectProperties.append("left join propid.wardId BndryImpl ");
 		selectProperties
 				.append("group by (propusage.usageName,BndryImpl.id,BndryImpl.boundaryNum) ");
 		selectProperties.append("order by BndryImpl.boundaryNum");
 
-		Query qry = getCurrentSession()
-				.createQuery(selectProperties.toString());
+		Query qry = getCurrentSession().createQuery(selectProperties.toString());
 		return qry.list();
 	}
 
+	@Override
 	public Property getPropertyBySource(String src) {
 		Query qry = getCurrentSession().createQuery(
 				"from PropertyImpl P where P.propertySource.name like :src ");
@@ -207,16 +197,14 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 		return (Property) qry.uniqueResult();
 	}
 
-	public List getAllPropertiesForGivenBndryListAndSrc(List bndryList,
-			String src) {
+	@Override
+	public List getAllPropertiesForGivenBndryListAndSrc(List bndryList, String src) {
 		List propList = new ArrayList();
-		if (src != null && !src.isEmpty() && bndryList != null
-				&& !bndryList.isEmpty()) {
-			LOGGER.debug("getAllPropertiesForGivenBndryListAndSrc : bndryList : "
-					+ bndryList + " : src : " + src);
+		if (src != null && !src.isEmpty() && bndryList != null && !bndryList.isEmpty()) {
+			LOGGER.debug("getAllPropertiesForGivenBndryListAndSrc : bndryList : " + bndryList
+					+ " : src : " + src);
 			StringBuffer strBuffer = new StringBuffer(200);
-			strBuffer
-					.append("select prop from BasicPropertyImpl BP left join BP.property prop ");
+			strBuffer.append("select prop from BasicPropertyImpl BP left join BP.property prop ");
 			if (src != null && !src.equals("")) {
 				strBuffer.append(" left join prop.propertySource propsrc ");
 				strBuffer.append(" where propsrc.name like :src and ");
@@ -228,20 +216,21 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 			Query qry = getCurrentSession().createQuery(strBuffer.toString());
 			qry.setString("src", src);
 			qry.setParameterList("bndryList", bndryList);
-			propList = (List) qry.list();
+			propList = qry.list();
 		}
 		LOGGER.debug("getAllPropertiesForGivenBndryListAndSrc : propList.size() : "
 				+ propList.size());
 		return propList;
 	}
 
-	public List getAllPropertiesForGivenBndryListSrcAndInst(List bndryList,
-			String src, Installment inst) {
+	@Override
+	public List getAllPropertiesForGivenBndryListSrcAndInst(List bndryList, String src,
+			Installment inst) {
 		List propList = new ArrayList(0);
-		if (bndryList != null && !bndryList.isEmpty() && src != null
-				&& !src.isEmpty() && inst != null) {
-			LOGGER.debug("getAllPropertiesForGivenBndryListSrcAndInst : bndryList : "
-					+ bndryList + " : src : " + src + " : inst : " + inst);
+		if (bndryList != null && !bndryList.isEmpty() && src != null && !src.isEmpty()
+				&& inst != null) {
+			LOGGER.debug("getAllPropertiesForGivenBndryListSrcAndInst : bndryList : " + bndryList
+					+ " : src : " + src + " : inst : " + inst);
 			Query qry = getCurrentSession()
 					.createQuery(
 							"select prop from BasicPropertyImpl BP, PropertyImpl prop left join prop.propertySource propsrc "
@@ -249,17 +238,16 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 			qry.setString("src", src);
 			qry.setEntity("inst", inst);
 			qry.setParameterList("bndryList", bndryList);
-			propList = (List) qry.list();
+			propList = qry.list();
 		}
-		LOGGER.debug("getAllPropertiesForGivenBndryListSrcAndInst propList() : "
-				+ propList.size());
+		LOGGER.debug("getAllPropertiesForGivenBndryListSrcAndInst propList() : " + propList.size());
 		return propList;
 	}
 
 	// this method will give list of properties which dont have history by
 	// passing parameters as basicproperty and propertysrc objects
-	public List getAllNonHistoryPropertiesForSrc(BasicProperty basicProperty,
-			PropertySource src) {
+	@Override
+	public List getAllNonHistoryPropertiesForSrc(BasicProperty basicProperty, PropertySource src) {
 		List propList = new ArrayList(0);
 		if (basicProperty != null && src != null) {
 			Query qry = getCurrentSession()
@@ -267,10 +255,9 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 							"from PropertyImpl P where P.basicProperty =:basicProperty and P.status='N' and P.propertySource =:src");
 			qry.setEntity("basicProperty", basicProperty);
 			qry.setEntity("src", src);
-			propList = (List) qry.list();
+			propList = qry.list();
 		}
-		LOGGER.debug("getAllNonHistoryPropertiesForSrc propList() : "
-				+ propList.size());
+		LOGGER.debug("getAllNonHistoryPropertiesForSrc propList() : " + propList.size());
 		return propList;
 	}
 
@@ -278,13 +265,13 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 	 * getPropertyBySrcAndBp(BasicProperty basicProperty,PropertySource src)
 	 * will give property for basicproperty and source
 	 */
-	public Property getPropertyBySrcAndBp(BasicProperty basicProperty,
-			PropertySource src) throws EGOVRuntimeException {
+	@Override
+	public Property getPropertyBySrcAndBp(BasicProperty basicProperty, PropertySource src)
+			throws EGOVRuntimeException {
 		Property prop = null;
 		try {
 			if (basicProperty != null && src != null) {
-				LOGGER.debug("getPropertyBySrcAndBp basicProperty : "
-						+ basicProperty);
+				LOGGER.debug("getPropertyBySrcAndBp basicProperty : " + basicProperty);
 				Query qry = getCurrentSession()
 						.createQuery(
 								"from PropertyImpl P where P.basicProperty =:basicProperty and  P.status='N' and P.propertySource =:src");
@@ -294,10 +281,8 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 			}
 			return prop;
 		} catch (Exception e) {
-			LOGGER.error("Exception in getPropertyBySrcAndBp : "
-					+ e.getMessage());
-			throw new EGOVRuntimeException(
-					"Exception in  getPropertyBySrcAndBp", e);
+			LOGGER.error("Exception in getPropertyBySrcAndBp : " + e.getMessage());
+			throw new EGOVRuntimeException("Exception in  getPropertyBySrcAndBp", e);
 		}
 	}
 
@@ -307,8 +292,8 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 	 * @param bndryList
 	 * @return
 	 */
-	public boolean checkIfPropCountExceeds500(List bndryList)
-			throws EGOVRuntimeException {
+	@Override
+	public boolean checkIfPropCountExceeds500(List bndryList) throws EGOVRuntimeException {
 		boolean chkCntExcds500 = false;
 		int count = 0;
 		try {
@@ -321,41 +306,36 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 				if (count > 500) {
 					chkCntExcds500 = true;
 				}
-				LOGGER.debug("checkIfPropCountExceeds500 chkCntExcds500 : "
-						+ chkCntExcds500);
+				LOGGER.debug("checkIfPropCountExceeds500 chkCntExcds500 : " + chkCntExcds500);
 			}
 		} catch (HibernateException e) {
 			LOGGER.error("Error occured in PropertyHibernateDao.checkIfPropCountExceeds500"
 					+ e.getMessage());
-			throw new EGOVRuntimeException(
-					"Hibernate Exception in checkIfPropCountExceeds500: "
-							+ e.getMessage(), e);
+			throw new EGOVRuntimeException("Hibernate Exception in checkIfPropCountExceeds500: "
+					+ e.getMessage(), e);
 		} catch (Exception e1) {
 			LOGGER.error("Error occured in PropertyHibernateDao.checkIfPropCountExceeds500"
 					+ e1.getMessage());
-			throw new EGOVRuntimeException(
-					"Exception in checkIfPropCountExceeds500 : "
-							+ e1.getMessage(), e1);
+			throw new EGOVRuntimeException("Exception in checkIfPropCountExceeds500 : "
+					+ e1.getMessage(), e1);
 		}
 		return chkCntExcds500;
 	}
 
-	public List getBasicPropertyListByDcNo(String dcNo)
-			throws EGOVRuntimeException {
+	@Override
+	public List getBasicPropertyListByDcNo(String dcNo) throws EGOVRuntimeException {
 		List bpList = null;
 		try {
 			if (dcNo != null) {
-				Query qry = getCurrentSession()
-						.createQuery(
-								"from BasicPropertyImpl BP where BP.dcRegister.id=:dcNo and BP.active='Y'");
+				Query qry = getCurrentSession().createQuery(
+						"from BasicPropertyImpl BP where BP.dcRegister.id=:dcNo and BP.active='Y'");
 				qry.setString("dcNo", dcNo);
 				bpList = qry.list();
 			}
 		} catch (Exception e) {
 			LOGGER.error("Error occured in PropertyHibernateDao.getBasicPropertyListByDcNo"
 					+ e.getMessage());
-			throw new EGOVRuntimeException(
-					"Exception in checkIfPropCountExceeds500 : " + e);
+			throw new EGOVRuntimeException("Exception in checkIfPropCountExceeds500 : " + e);
 		}
 		return bpList;
 	}
@@ -363,6 +343,7 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 	/**
 	 * This is used to get all the proposed arv's for that particular property.
 	 */
+	@Override
 	public List getPtDemandArvProposedList(Property property) {
 		Query qry = getCurrentSession()
 				.createQuery(
@@ -371,6 +352,7 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 		return qry.list();
 	}
 
+	@Override
 	public Citizen getOwnerByOwnerId(Long citizenId) {
 		Citizen owner = null;
 		Query qry = getCurrentSession().createQuery(" FROM Citizen citizen where citizen.id =:id ");
@@ -378,10 +360,11 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 		owner = (Citizen) qry.uniqueResult();
 		return owner;
 	}
-	 
+
+	@Override
 	public List getPropertyDemand(String propertyId) {
-		final String rebate = EGovConfig.getProperty("ptis_egov_config.xml",
-				"ACCOUNT_HEAD_REBATE", "", "PT");
+		final String rebate = EGovConfig.getProperty("ptis_egov_config.xml", "ACCOUNT_HEAD_REBATE",
+				"", "PT");
 		Query qry = getCurrentSession()
 				.createQuery(
 						" select sum(dd.amount) from PropertyTaxDemand pt left join "
@@ -391,9 +374,10 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 		return qry.list();
 	}
 
+	@Override
 	public List getPropertyRebate(String propertyId) {
-		final String rebate = EGovConfig.getProperty("ptis_egov_config.xml",
-				"ACCOUNT_HEAD_REBATE", "", "PT");
+		final String rebate = EGovConfig.getProperty("ptis_egov_config.xml", "ACCOUNT_HEAD_REBATE",
+				"", "PT");
 		Query qry = getCurrentSession()
 				.createQuery(
 						" select sum(dd.amount) from PropertyTaxDemand pt left join "
@@ -404,6 +388,7 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 		return qry.list();
 	}
 
+	@Override
 	public List getPropertyCollection(String propertyId) {
 		Query qry = getCurrentSession()
 				.createQuery(
@@ -413,6 +398,7 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 		return qry.list();
 	}
 
+	@Override
 	public List getPTDemandArvByNoticeNumber(String noticeNo) {
 		Query qry = getCurrentSession()
 				.createQuery(
@@ -421,8 +407,8 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 		return qry.list();
 	}
 
-	public List getPropsMrkdForDeactByWard(Boundary boundary)
-			throws PropertyNotFoundException {
+	@Override
+	public List getPropsMrkdForDeactByWard(Boundary boundary) throws PropertyNotFoundException {
 		List propertyList = new ArrayList();
 		try {
 			if (boundary != null) {
@@ -436,7 +422,7 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 										+ " and ps.statusCode='MARK_DEACTIVE' and psv.isActive='Y' ");
 
 				qry.setEntity("boundary", boundary);
-				propertyList = (List) qry.list();
+				propertyList = qry.list();
 			}
 
 			LOGGER.info("List of properties By Query" + propertyList.size());
@@ -445,16 +431,14 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 			LOGGER.error("Error occured in PropertyHibernateDao.getPropsMrkdForDeactByWard"
 					+ e.getMessage());
 			PropertyNotFoundException er = new PropertyNotFoundException(
-					"Hibernate Exception In getAllPropertiesMarkedForDeactivationByWard: "
-							+ e);
+					"Hibernate Exception In getAllPropertiesMarkedForDeactivationByWard: " + e);
 			er.initCause(e);
 			throw er;
 		} catch (Exception e) {
 			LOGGER.error("Error occured in PropertyHibernateDao.getPropsMrkdForDeactByWard"
 					+ e.getMessage());
 			throw new EGOVRuntimeException(
-					"Exception in  getAllPropertiesMarkedForDeactivationByWard"
-							+ e);
+					"Exception in  getAllPropertiesMarkedForDeactivationByWard" + e);
 		}
 	}
 
@@ -475,10 +459,9 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 	 * 
 	 */
 
-	public List getPropMaterlizeViewList(Projection projection,
-			Criterion criterion, Order order) {
-		Criteria criteria = getCurrentSession().createCriteria(
-				PropertyMaterlizeView.class);
+	@Override
+	public List getPropMaterlizeViewList(Projection projection, Criterion criterion, Order order) {
+		Criteria criteria = getCurrentSession().createCriteria(PropertyMaterlizeView.class);
 		if (projection != null) {
 			criteria.setProjection(projection);
 		}
@@ -510,8 +493,9 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 	 * 
 	 */
 
-	public List getResultsList(Class classObj, Projection projection,
-			Criterion criterion, Order order) {
+	@Override
+	public List getResultsList(Class classObj, Projection projection, Criterion criterion,
+			Order order) {
 		Criteria criteria = getCurrentSession().createCriteria(classObj);
 		if (projection != null) {
 			criteria.setProjection(projection);
@@ -535,15 +519,16 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 	 * @return Projection list(i.e mentioned in DetachedCriteria).
 	 * 
 	 */
+	@Override
 	public List getResultsList(DetachedCriteria detachedCriteria) {
 		Criteria criteria = null;
 		if (detachedCriteria != null) {
-			criteria = detachedCriteria
-					.getExecutableCriteria(getCurrentSession());
+			criteria = detachedCriteria.getExecutableCriteria(getCurrentSession());
 		}
 		return criteria.list();
 	}
 
+	@Override
 	public List getDmdCollAmtInstWise(EgDemand egDemand) {
 		List list = new ArrayList();
 		StringBuffer strBuf = new StringBuffer(2000);
@@ -560,15 +545,14 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 				+ "','"
 				+ PropertyTaxConstants.LPPAY_PENALTY_DMDRSNCODE
 				+ "')"
-				+ "group by dmdRes.id_installment, inst.start_date "
-				+ "order by inst.start_date ");
-		Query qry = getCurrentSession().createSQLQuery(strBuf.toString())
-				.setLong("dmdId", egDemand.getId());
+				+ "group by dmdRes.id_installment, inst.start_date " + "order by inst.start_date ");
+		Query qry = getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId",
+				egDemand.getId());
 		return qry.list();
 	}
 
-	public List getDmdDetIdFromInstallandEgDemand(Installment installment,
-			EgDemand egDemand) {
+	@Override
+	public List getDmdDetIdFromInstallandEgDemand(Installment installment, EgDemand egDemand) {
 		List dmdIdList = new ArrayList();
 		if (egDemand != null && installment != null) {
 			StringBuffer strBuf = new StringBuffer(2000);
@@ -592,6 +576,7 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 	 * 
 	 */
 
+	@Override
 	public BigDecimal getEgptPropertyFromBillId(Long billId) {
 		BigDecimal propertyId = null;
 		if (billId != null) {
@@ -617,16 +602,15 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 	 *         basicProperty. If the basicPrperty is null then null is returned
 	 * 
 	 */
+	@Override
 	public List getAllDemands(BasicProperty basicProperty) {
 		List demandIds = null;
 		if (basicProperty != null) {
 			demandIds = new ArrayList();
-			String qryStr = "SELECT ptdem.id_demand "
-					+ "FROM egpt_basic_property bas, "
+			String qryStr = "SELECT ptdem.id_demand " + "FROM egpt_basic_property bas, "
 					+ "  egpt_property prop, " + "  egpt_ptdemand ptdem "
 					+ "WHERE bas.ID_BASIC_PROPERTY =prop.ID_BASIC_PROPERTY "
-					+ "AND prop.id_property =ptdem.ID_PROPERTY "
-					+ "AND bas.propertyid =:PropId ";
+					+ "AND prop.id_property =ptdem.ID_PROPERTY " + "AND bas.propertyid =:PropId ";
 
 			Query qry = getCurrentSession().createSQLQuery(qryStr);
 			qry.setString("PropId", basicProperty.getUpicNo());
@@ -650,8 +634,9 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 	 * 
 	 */
 
-	public List getDmdDetIdFromInstallandEgDemand(Installment installment,
-			EgDemand egDemand, String demandReasonMasterCode) {
+	@Override
+	public List getDmdDetIdFromInstallandEgDemand(Installment installment, EgDemand egDemand,
+			String demandReasonMasterCode) {
 		List dmdIdList = new ArrayList();
 		if (egDemand != null && installment != null) {
 			StringBuffer strBuf = new StringBuffer(2000);
@@ -676,6 +661,7 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 	 *         and rebate.
 	 * 
 	 */
+	@Override
 	public List getDmdCollForAllDmdReasons(EgDemand egDemand) {
 		List list = new ArrayList();
 		StringBuffer strBuf = new StringBuffer(2000);
@@ -685,11 +671,40 @@ public class PropertyHibernateDAO extends GenericHibernateDAO implements
 				+ "and dmdDet.id_demand =:dmdId "
 				+ "and dmdRes.id_installment = inst.id_installment "
 				+ "and dmdresmas.id = dmdres.id_demand_reason_master "
-				+ "group by dmdRes.id_installment, inst.start_date "
-				+ "order by inst.start_date ");
-		Query qry = getCurrentSession().createSQLQuery(strBuf.toString())
-				.setLong("dmdId", egDemand.getId());
+				+ "group by dmdRes.id_installment, inst.start_date " + "order by inst.start_date ");
+		Query qry = getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId",
+				egDemand.getId());
 		return qry.list();
+	}
+
+	@Override
+	public Property findById(Integer id, boolean lock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Property> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Property create(Property property) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(Property property) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Property update(Property property) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -10,7 +10,6 @@ import org.egov.demand.model.DepreciationMaster;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
-import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.demand.model.EgReasonCategory;
@@ -81,11 +80,6 @@ public class DCBHibernateDaoFactory extends DCBDaoFactory {
 	public EgBillDetailsDao getEgBillDetailsDao()
 	{
 		return new EgBillDetailsHibDao(EgBillDetails.class,getCurrentSession());
-	}
-	
-	public EgDemandDetailsDao getEgDemandDetailsDao()
-	{
-		return new EgDemandDetailsHibDao(EgDemandDetails.class,getCurrentSession());
 	}
 	
 	public EgDemandReasonMasterDao getEgDemandReasonMasterDao()

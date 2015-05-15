@@ -39,35 +39,63 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import org.egov.infstr.dao.GenericHibernateDAO;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.ptis.domain.entity.property.PropertySource;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * This Class implememets the PropertySourceDAO for the Hibernate specific 
- * Implementation 
- * 
- * @author Neetu
- * @version 2.00
- */
+@Repository(value = "propertySourceDAO")
+@Transactional(readOnly = true)
+public class PropertySourceHibernateDAO implements PropertySourceDAO {
 
-public class PropertySourceHibernateDAO extends GenericHibernateDAO implements PropertySourceDAO
-{
-	/**
-	 * @param persistentClass
-	 * @param session
-	 */
-	public PropertySourceHibernateDAO(Class persistentClass, Session session)
-	{
-		super(persistentClass, session);
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
 	}
-	public PropertySource getPropertySourceByCode(String propSrcCode)
-	{
-		Query qry = getCurrentSession().createQuery("from PropertySource PS where PS.propSrcCode =:propSrcCode ");
-		qry.setString("propSrcCode",propSrcCode);
-		return  (PropertySource)qry.uniqueResult();
+
+	@Override
+	public PropertySource getPropertySourceByCode(String propSrcCode) {
+		Query qry = getCurrentSession().createQuery(
+				"from PropertySource PS where PS.propSrcCode =:propSrcCode ");
+		qry.setString("propSrcCode", propSrcCode);
+		return (PropertySource) qry.uniqueResult();
+	}
+
+	@Override
+	public PropertySource findById(Integer id, boolean lock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<PropertySource> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PropertySource create(PropertySource propertySource) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(PropertySource propertySource) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public PropertySource update(PropertySource propertySource) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
-  
-

@@ -39,14 +39,55 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import org.egov.infstr.dao.GenericHibernateDAO;
-import org.hibernate.Session;
+import java.util.List;
 
-public class PropertyIntegrationHibDAO extends GenericHibernateDAO implements PropertyIntegrationDAO
-{
-	public PropertyIntegrationHibDAO(Class persistentClass, Session session)
-	{
-		super(persistentClass, session);
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.egov.ptis.domain.entity.property.PropertyIntegration;
+import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+@Repository(value = "propertyIntegrationDAO")
+@Transactional(readOnly = true)
+public class PropertyIntegrationHibDAO implements PropertyIntegrationDAO {
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	@SuppressWarnings("unused")
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
 	}
-	
+
+	@Override
+	public PropertyIntegration findById(Integer id, boolean lock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<PropertyIntegration> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PropertyIntegration create(PropertyIntegration propertyIntegration) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(PropertyIntegration propertyIntegration) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public PropertyIntegration update(PropertyIntegration propertyIntegration) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

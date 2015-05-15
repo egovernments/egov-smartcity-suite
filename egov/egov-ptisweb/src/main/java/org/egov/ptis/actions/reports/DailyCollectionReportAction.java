@@ -92,7 +92,6 @@ import org.egov.ptis.bean.TaxCollectionInfo;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.dao.property.PropertyDAOFactory;
 import org.egov.web.actions.BaseFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
 import org.hibernate.Query;
@@ -120,7 +119,8 @@ public class DailyCollectionReportAction extends BaseFormAction {
 	private String CURRENT = "Current";
 	private String ARREAR = "Arrears";
 	private String REBATE = "Rebate";
-	BasicPropertyDAO basicPropertyDAO = PropertyDAOFactory.getDAOFactory().getBasicPropertyDAO();
+	@Autowired
+	private BasicPropertyDAO basicPropertyDAO;
 	private ReportService reportService;
 	private Integer reportId;
 	ReceiptInfo totalRcptInfo = new ReceiptInfo();
