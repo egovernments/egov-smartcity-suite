@@ -41,7 +41,7 @@ package org.egov.eis.repository;
 
 import java.util.List;
 
-import org.egov.eis.entity.DrawingOfficer;
+import org.egov.pims.commons.DrawingOfficer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

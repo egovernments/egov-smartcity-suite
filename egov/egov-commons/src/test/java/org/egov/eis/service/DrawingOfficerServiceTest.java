@@ -44,7 +44,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-import org.egov.eis.entity.DrawingOfficer;
+import org.egov.pims.commons.DrawingOfficer;
 import org.egov.eis.entity.DrawingOfficerBuilder;
 import org.egov.eis.repository.DrawingOfficerRepository;
 import org.egov.pims.commons.Position;
