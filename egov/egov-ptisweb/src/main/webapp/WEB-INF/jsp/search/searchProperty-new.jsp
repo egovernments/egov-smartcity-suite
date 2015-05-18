@@ -48,7 +48,11 @@
 					zoneId : document.getElementById("zoneId").value
 				});
 			}
-			
+			function populateStreet() {
+				populateareaId( {
+					wardId : document.getElementById("wardId").value
+				});
+			}
 		</script>
 		<title><s:text name="searchProp.title"></s:text></title>
 	</head>
@@ -142,7 +146,7 @@
 									headerValue="%{getText('default.select')}" value="%{zoneId}"
 									onchange="populateWard()" />
 								<egov:ajaxdropdown id="wardId" fields="['Text','Value']"
-									dropdownId="wardId" url="common/ajaxCommon!wardByZone.action" />
+									dropdownId="wardId" url="common/ajaxCommon-wardByZone.action" />
 							</td>
 							<td class="bluebox">&nbsp;</td>
 						</tr>
@@ -155,7 +159,9 @@
 							<td class="greybox">
 								<s:select name="wardId" id="wardId" list="dropdownData.wardList"
 									listKey="id" listValue="name" headerKey="-1"
-									headerValue="%{getText('default.select')}" value="%{wardId}" />
+									headerValue="%{getText('default.select')}" value="%{wardId}" onchange="populateStreet();"/>
+									<egov:ajaxdropdown id="areaId" fields="['Text','Value']"
+									dropdownId="areaId" url="common/ajaxCommon-streetByWard.action" />
 							</td>
 							<td class="greybox">&nbsp;</td>
 						</tr>
@@ -211,11 +217,10 @@
 					<tr>
 						<td class="bluebox">&nbsp;</td>
 						<td class="bluebox">
-							<s:text name="Area" />
-							:
+							<s:text name="Area" />:
 						</td>
 						<td class="bluebox">
-							<s:select name="areaId" id="areaId" list="dropdownData.Area" cssStyle="width: 150px;" listKey="id" listValue="name"
+							<s:select name="areaId" id="areaId" list="dropdownData.Street" cssStyle="width: 150px;" listKey="id" listValue="name"
 								headerKey="-1" headerValue="----Choose----" value="%{areaId}" />
 						</td>
 						<td class="bluebox">&nbsp;</td>
@@ -313,7 +318,7 @@
 						</td>
 						<td class="bluebox">
 							<s:textfield name="objectionFromDate" id="objectionFromDate" maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')" size="10"/>
-							<a href="javascript:show_calendar('objectionForm.objectionFromDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
+							<a href="javascript:show_calendar('objectionForm.objectionFromDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/resources/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
 						</td>
 						<td class="bluebox">&nbsp;</td>
 					</tr>
@@ -324,7 +329,7 @@
 						</td>
 						<td class="greybox">
 							<s:textfield name="objectionToDate" id="objectionToDate" maxlength="10" onkeyup="DateFormat(this,this.value,event,false,'3')" size="10"/>
-								<a href="javascript:show_calendar('objectionForm.objectionToDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
+								<a href="javascript:show_calendar('objectionForm.objectionToDate',null,null,'DD/MM/YYYY');" style="text-decoration:none">&nbsp;<img src="${pageContext.request.contextPath}/resources/image/calendaricon.gif" border="0"/></a>(dd/mm/yyyy)
 						</td>
 						<td class="greybox">&nbsp;</td>
 					</tr>

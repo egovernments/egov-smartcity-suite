@@ -74,6 +74,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.VOUCH_CREATE_RSN_CREA
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATION_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
+import static org.egov.web.actions.BaseFormAction.NEW;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -92,6 +94,8 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.ResultPath;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Installment;
 import org.egov.eis.service.EisCommonService;
@@ -136,6 +140,8 @@ import org.springframework.transaction.annotation.Transactional;
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 @Namespace("/create")
+@ResultPath("/WEB-INF/jsp/")
+@Results({ @Result(name = "new", location = "create/createProperty-new.jsp") })
 @Transactional(readOnly = true)
 public class CreatePropertyAction extends WorkflowAction {
 	private static final String NO = "No";
@@ -245,7 +251,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	}
 
 	@SkipValidation
-	@Action(value = "/create/createProperty-newForm", results= { @Result(name=RESULT_NEW, location="/WEB-INF/jsp/create/createProperty-new.jsp")})
+	@Action(value = "/createProperty-newForm")
 	public String newForm() {
 		return RESULT_NEW;
 	}
@@ -445,7 +451,6 @@ public class CreatePropertyAction extends WorkflowAction {
 		
 		basicPrpertyService.update(basicProp);
 		transitionWorkFlow();
-		this.createPropertyAuditTrail(basicProp, property, CREATE_AUDIT_ACTION, null);
 		setAckMessage("Property Created Successfully in System with Index Number : ");
 		LOGGER.debug("approve: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
 		LOGGER.debug("approve: Property approval ended");
@@ -550,8 +555,8 @@ public class CreatePropertyAction extends WorkflowAction {
 		}
 
 		List<Boundary> wardList = getPersistenceService().findAllBy(
-				"from BoundaryImpl BI where BI.boundaryType.name=? and BI.boundaryType.heirarchyType.name=? "
-						+ "and BI.isHistory='N' order by BI.id", WARD_BNDRY_TYPE, REVENUE_HIERARCHY_TYPE);
+				"from Boundary BI where BI.boundaryType.name=? and BI.boundaryType.heirarchyType.name=? "
+						+ "and BI.isHistory='N' order by BI.id", "Ward", ADMIN_HIERARCHY_TYPE);
 		List<PropertyTypeMaster> propTypeList = getPersistenceService().findAllBy(
 				"from PropertyTypeMaster order by orderNo");
 		List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");
@@ -662,8 +667,8 @@ public class CreatePropertyAction extends WorkflowAction {
 		if (zoneExists) {
 			wardNewList = getPersistenceService()
 					.findAllBy(
-							"from BoundaryImpl BI where BI.boundaryType.name=? and BI.parent.id = ? and BI.isHistory='N' order by BI.id ",
-							WARD_BNDRY_TYPE, getZoneId());
+							"from Boundary BI where BI.boundaryType.name=? and BI.parent.id = ? and BI.isHistory='N' order by BI.id ",
+							"Ward", getZoneId());
 			addDropdownData("wardList", wardNewList);
 		} else {
 			addDropdownData("wardList", Collections.EMPTY_LIST);
@@ -677,17 +682,17 @@ public class CreatePropertyAction extends WorkflowAction {
 	@SuppressWarnings("unchecked")
 	private void prepareAreaDropDownData(boolean wardExists) {
 		LOGGER.debug("Entered into prepareAreaDropDownData, WardId: " + getWardId());
-		List<Boundary> areaNewList = new ArrayList<Boundary>();
+		List<Boundary> streetList = new ArrayList<Boundary>();
 		if (wardExists) {
-			areaNewList = getPersistenceService()
+			streetList = getPersistenceService()
 					.findAllBy(
-							"from BoundaryImpl BI where BI.boundaryType.name=? and BI.parent.id = ? and BI.isHistory='N' order by BI.name ",
-							AREA_BNDRY_TYPE, getWardId());
-			addDropdownData("areaList", areaNewList);
+							"from Boundary BI where BI.boundaryType.name=? and BI.parent.id = ? and BI.isHistory='N' order by BI.name ",
+							"Street", getWardId());
+			addDropdownData("streetList", streetList);
 		} else {
-			addDropdownData("areaList", Collections.EMPTY_LIST);
+			addDropdownData("streetList", Collections.EMPTY_LIST);
 		}
-		LOGGER.debug("NoOfAreas in the ward: " + ((areaNewList != null) ? areaNewList.size() : "List is NULL")
+		LOGGER.debug("NoOfAreas in the ward: " + ((streetList != null) ? streetList.size() : "List is NULL")
 				+ "\nExiting from prepareAreaDropDownData");
 	}
 
@@ -1266,63 +1271,6 @@ public class CreatePropertyAction extends WorkflowAction {
 			addDropdownData("UsageList", CommonServices.usagesForPropType(Integer.parseInt(propTypeId)));
 		}
 		LOGGER.debug("Exiting from prepareUsageList");
-	}
-
-	private void createPropertyAuditTrail(BasicProperty basicProperty, 
-			Property property, String action, String auditDetails2) {
-		Map<String,String> propTypeCategoryMap = new TreeMap<String, String>();
-		String propCat = "";
-		String locFact = "";
-		StringBuilder auditDetail1 = new StringBuilder();
-		if(property.getPropertyDetail().getExtra_field5() != null) {
-			PropertyTypeMaster propType = property.getPropertyDetail().getPropertyTypeMaster();
-			
-			if (propType != null) {
-				if (propType.getCode().equalsIgnoreCase(PROPTYPE_RESD)) {
-					propTypeCategoryMap.putAll(PropertyTaxConstants.RESIDENTIAL_PROPERTY_TYPE_CATEGORY);
-				} else if (propType.getCode().equalsIgnoreCase(PROPTYPE_NON_RESD)) {
-					propTypeCategoryMap.putAll(PropertyTaxConstants.NON_RESIDENTIAL_PROPERTY_TYPE_CATEGORY);
-				} else if (propType.getCode().equalsIgnoreCase(PROPTYPE_OPEN_PLOT)) {
-					propTypeCategoryMap.putAll(PropertyTaxConstants.OPEN_PLOT_PROPERTY_TYPE_CATEGORY);
-				}
-			}
-			propCat = propTypeCategoryMap.get(property.getPropertyDetail().getExtra_field5());
-		}
-		if(property.getPropertyDetail().getExtra_field6() != null) {
-			Category category = (Category) persistenceService.find("from Category c where c.id = ?",
-					Long.valueOf(property.getPropertyDetail().getExtra_field6()));
-			locFact = category.getCategoryName();
-		}
-		auditDetail1
-				.append("Reason For Creation : ")
-				.append(property.getPropertyDetail().getPropertyMutationMaster() != null ? property.getPropertyDetail()
-						.getPropertyMutationMaster().getMutationName() : "")
-				.append(AUDITDATA_STRING_SEP)
-				.append("Property Type : ")
-				.append(property.getPropertyDetail().getPropertyTypeMaster().getType() != null ? property
-						.getPropertyDetail().getPropertyTypeMaster().getType() : "")
-				.append(AUDITDATA_STRING_SEP)
-				.append("Property Category : ")
-				.append(propCat)
-				.append(AUDITDATA_STRING_SEP)
-				.append("Area of Plot : ")
-				.append(property.getPropertyDetail().getSitalArea() != null ? property.getPropertyDetail()
-						.getSitalArea().getArea() : "")
-				.append(AUDITDATA_STRING_SEP)
-				.append("Location Factor : ")
-				.append(locFact)
-				.append(AUDITDATA_STRING_SEP)
-				.append("Exempted From Tax : ")
-				.append(property.getIsExemptedFromTax() != null ? property.getIsExemptedFromTax() : "")
-				.append(AUDITDATA_STRING_SEP)
-				.append("Notice to be generated : ")
-				.append(property.getExtra_field2() != null ? property.getExtra_field2() : "")
-				.append(AUDITDATA_STRING_SEP)
-				.append("Area : ")
-				.append(basicProperty.getPropertyID().getArea() != null ? basicProperty.getPropertyID().getArea()
-						.getName() : "");
-		LOGGER.debug("Audit String : "+auditDetail1.toString());
-		//propertyTaxUtil.generateAuditEvent(action, basicProperty, auditDetail1.toString(), auditDetails2);
 	}
 	
 	@Override

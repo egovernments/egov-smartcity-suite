@@ -45,7 +45,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DATE_CONSTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_OPEN_PLOT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+
+import static org.egov.web.actions.BaseFormAction.NEW;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -63,6 +65,8 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.ResultPath;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Functionary;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -93,6 +97,11 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional(readOnly = true)
 @Namespace("/common")
+@ResultPath("/WEB-INF/jsp/common/")
+@Results({
+    @Result(name="ward",location="ajaxCommon-ward.jsp") ,
+    @Result(name="street",location="ajaxCommon-street.jsp")  
+  })
 public class AjaxCommonAction extends BaseFormAction {
 
 	private static final String AJAX_RESULT = "AJAX_RESULT";
@@ -102,10 +111,11 @@ public class AjaxCommonAction extends BaseFormAction {
 	private static final String PROP_TYPE_CATEGORY = "propCategory";
 	private static final String RESULT_STRUCTURAL = "structural";
 	private static final String RESULT_PART_NUMBER = "partNumber";
+	private static final String WARD = "ward";
 
-	private Integer zoneId;
-	private Integer wardId;
-	private Integer areaId;
+	private Long zoneId;
+	private Long wardId;
+	private Long areaId;
 	private Integer departmentId;
 	private Integer designationId;
 	private Integer propTypeId;
@@ -114,6 +124,7 @@ public class AjaxCommonAction extends BaseFormAction {
 	private Float revisedRate;
 	private List<Boundary> wardList;
 	private List<Boundary> areaList;
+	private List<Boundary> streetList;
 	private List<PropertyUsage> propUsageList;
 	private List<DesignationMaster> designationMasterList = new ArrayList<DesignationMaster>();
 	private List<User> userList = new ArrayList<User>();
@@ -133,18 +144,18 @@ public class AjaxCommonAction extends BaseFormAction {
 	}
 
 	@SuppressWarnings("unchecked")
+	@Action(value = "/ajaxCommon-wardByZone")
 	public String wardByZone() {
 		LOGGER.debug("Entered into wardByZone, zoneId: " + zoneId);
 		wardList = new ArrayList<Boundary>();
 		wardList = getPersistenceService()
-				.findAllBy(
-						"from BoundaryImpl BI where BI.boundaryType.name=? and BI.parent.id = ? and BI.isHistory='N' order by BI.id ",
-						WARD_BNDRY_TYPE, getZoneId());
+				.findAllBy("from Boundary BI where BI.boundaryType.name=? and BI.parent.id = ? and BI.isHistory='N' order by BI.id ",
+						"Ward", getZoneId());
 		LOGGER.debug("Exiting from wardByZone, No of wards in zone: " + zoneId + "are "
 				+ ((wardList != null) ? wardList : ZERO));
-		return "ward";
+		return WARD;
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	public String areaByWard() {
 		LOGGER.debug("Entered into areaByWard, wardId: " + wardId);
@@ -156,6 +167,17 @@ public class AjaxCommonAction extends BaseFormAction {
 		LOGGER.debug("Exiting from areaByWard, No of areas in ward: " + wardId + " are "
 				+ ((areaList != null) ? areaList : ZERO));
 		return "area";
+	}
+
+	@SuppressWarnings("unchecked")
+	@Action(value = "/ajaxCommon-streetByWard")
+	public String streetByWard() {
+		LOGGER.debug("Entered into streetByWard, wardId: " + wardId);
+		streetList = new ArrayList<Boundary>();
+		streetList = getPersistenceService().findAllBy("select CH.child from CrossHeirarchyImpl CH where CH.parent.id = ? ",getWardId());
+		LOGGER.debug("Exiting from streetByWard, No of streets in ward: " + wardId + " are "
+				+ ((streetList != null) ? streetList : ZERO));
+		return "street";
 	}
 
 	@SuppressWarnings("unchecked")
@@ -324,27 +346,28 @@ public class AjaxCommonAction extends BaseFormAction {
 		return RESULT_PART_NUMBER;
 	}
 
-	public Integer getZoneId() {
+	
+	public Long getZoneId() {
 		return zoneId;
 	}
 
-	public void setZoneId(Integer zoneId) {
+	public void setZoneId(Long zoneId) {
 		this.zoneId = zoneId;
 	}
 
-	public Integer getWardId() {
+	public Long getWardId() {
 		return wardId;
 	}
 
-	public void setWardId(Integer wardId) {
+	public void setWardId(Long wardId) {
 		this.wardId = wardId;
 	}
 
-	public Integer getAreaId() {
+	public Long getAreaId() {
 		return areaId;
 	}
 
-	public void setAreaId(Integer areaId) {
+	public void setAreaId(Long areaId) {
 		this.areaId = areaId;
 	}
 
@@ -388,12 +411,12 @@ public class AjaxCommonAction extends BaseFormAction {
 		this.wardList = wardList;
 	}
 
-	public List<Boundary> getAreaList() {
-		return areaList;
+	public List<Boundary> getStreetList() {
+		return streetList;
 	}
 
-	public void setAreaList(List<Boundary> areaList) {
-		this.areaList = areaList;
+	public void setStreetList(List<Boundary> streetList) {
+		this.streetList = streetList;
 	}
 
 	public Integer getDepartmentId() {

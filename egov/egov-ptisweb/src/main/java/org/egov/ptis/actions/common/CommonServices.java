@@ -205,7 +205,7 @@ public class CommonServices {
 		for (Boundary boundary : zoneList) {
 			zoneMap.put(boundary.getId(),
 					StringUtils.leftPad(boundary.getBoundaryNum().toString(), 2, "0") + '-'
-							+ boundary.getName());
+							+ boundary.getLocalName());
 		}
 		return zoneMap;
 	}

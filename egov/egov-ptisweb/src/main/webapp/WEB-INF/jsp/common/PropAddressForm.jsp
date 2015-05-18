@@ -45,9 +45,9 @@
 	
   <tr>
   	<td class="greybox2">&nbsp;</td>
-  	<egov:ajaxdropdown id="areaId" fields="['Text','Value']" dropdownId="areaId" url="common/ajaxCommon!areaByWard.action" />
+  	<egov:ajaxdropdown id="areaId" fields="['Text','Value']" dropdownId="areaId" url="common/ajaxCommon-streetByWard.action" />
 	<td class="greybox"><s:text name="Area"/><span class="mandatory1">*</span> : </td>
-	<td class="greybox"><s:select name="areaId" id="areaId" list="dropdownData.areaList"
+	<td class="greybox"><s:select name="areaId" id="areaId" list="dropdownData.streetList"
 	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{areaId}"/>
 	</td>
     <td class="greybox" colspan="2">&nbsp;</td>

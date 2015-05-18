@@ -40,16 +40,17 @@
 package org.egov.ptis.actions.search;
 
 import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.AREA_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
+import static org.egov.ptis.constants.PropertyTaxConstants.STREET;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 import static org.egov.web.actions.BaseFormAction.NEW;
 
 import java.math.BigDecimal;
@@ -324,20 +325,18 @@ public class SearchPropertyAction extends BaseFormAction {
 		LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);
 		List<Boundary> zoneList = getPersistenceService().findAllBy(
 				"from Boundary BI where BI.boundaryType.name=? and BI.boundaryType.hierarchyType.name=? "
-						+ "and BI.isHistory='N' order by BI.id", ZONE_BNDRY_TYPE,
-				REVENUE_HIERARCHY_TYPE);
+						+ "and BI.isHistory='N' order by BI.id", "Zone",
+				 ADMIN_HIERARCHY_TYPE);
 		LOGGER.debug("Zone List : " + (zoneList != null ? zoneList : ZERO));
-		List<Boundary> areaList = getPersistenceService()
-				.findAllBy(
-						"from Boundary BI where BI.boundaryType.name=? and BI.isHistory='N' order by BI.name ",
-						AREA_BNDRY_TYPE);
-		LOGGER.debug("Area List : " + (areaList != null ? areaList : ZERO));
+		List<Boundary> streetList = getPersistenceService()
+				.findAllBy("from Boundary BI where BI.boundaryType.name=? and BI.isHistory='N' order by BI.name ",
+						"Street");
+		LOGGER.debug("Area List : " + (streetList != null ? streetList : ZERO));
 		setZoneBndryMap(CommonServices.getFormattedBndryMap(zoneList));
 		prepareWardDropDownData(zoneId != null, wardId != null);
-		addDropdownData("Area", areaList);
+		addDropdownData("Street", streetList);
 		addDropdownData("PropTypeMaster",
-				getPersistenceService()
-						.findAllByNamedQuery(PropertyTaxConstants.GET_PROPERTY_TYPES));
+				getPersistenceService().findAllByNamedQuery(PropertyTaxConstants.GET_PROPERTY_TYPES));
 		Long userId = (Long) session().get(SESSIONLOGINID);
 		if (mode != null && userId != null) {
 			setRoleName(getRolesForUserId(userId));
