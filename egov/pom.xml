@@ -997,8 +997,9 @@
                 <artifactId>wildfly-maven-plugin</artifactId>
                 <version>1.0.2.Final</version>
                 <configuration>
-                    <username>egov</username>
-                    <password>egov</password>
+                	<!-- TODO to externalize this -->
+                    <username>egovgitqa</username>
+                    <password>egovgitqa</password>
                     <skip>true</skip>
                 </configuration>
             </plugin>
