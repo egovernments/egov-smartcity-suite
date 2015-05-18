@@ -527,9 +527,9 @@ public class MeasurementBookAction extends BaseFormAction {
         if (mbHeader.getCurrentState() != null
                 && mbHeader.getCurrentState().getOwnerPosition() != null
                 && mbHeader.getCurrentState().getOwnerPosition().getDeptDesigId() != null
-                && mbHeader.getCurrentState().getOwnerPosition().getDeptDesigId().getDesigId() != null
-                && mbHeader.getCurrentState().getOwnerPosition().getDeptDesigId().getDesigId().getDesignationName() != null)
-            currentDesgination = mbHeader.getCurrentState().getOwnerPosition().getDeptDesigId().getDesigId()
+                && mbHeader.getCurrentState().getOwnerPosition().getDeptDesigId().getDesignation() != null
+                && mbHeader.getCurrentState().getOwnerPosition().getDeptDesigId().getDesignation().getDesignationName() != null)
+            currentDesgination = mbHeader.getCurrentState().getOwnerPosition().getDeptDesigId().getDesignation()
             .getDesignationName();
         if (designWhoCanModify != null && currentDesgination != null
                 && designWhoCanModify.equalsIgnoreCase(currentDesgination))

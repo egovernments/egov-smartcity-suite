@@ -46,8 +46,8 @@ import java.util.List;
 
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.EgwStatus;
+import org.egov.eis.entity.DrawingOfficer;
 import org.egov.infstr.ValidationException;
-import org.egov.pims.commons.DrawingOfficer;
 import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
 import org.egov.works.models.estimate.AbstractEstimate;
 

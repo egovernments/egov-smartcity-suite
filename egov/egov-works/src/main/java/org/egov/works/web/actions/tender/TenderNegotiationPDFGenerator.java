@@ -259,7 +259,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
                                 Integer.parseInt(previous.getOwnerPosition().getId().toString()));
                         addRow(approvaldetailsTable, true, makePara(status.getDescription()),
                                 makePara(emp.getEmployeeName()), makePara(previous.getOwnerPosition().getDeptDesigId()
-                                        .getDesigId().getDesignationName()), makePara(getDateInFormat(ad
+                                        .getDesignation().getDesignationName()), makePara(getDateInFormat(ad
                                                 .getCreatedDate().toString())), rightPara(ad.getComments()));
                     }
                     previous = ad;

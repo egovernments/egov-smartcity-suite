@@ -47,7 +47,7 @@
         <many-to-one name="workOrderEstimate" class="org.egov.works.models.workorder.WorkOrderEstimate" cascade="all" fetch="select">
             <column name="WORKORDER_ESTIMATE_ID" precision="22" scale="0" not-null="true" />
         </many-to-one>
-        <many-to-one name="drawingOfficer" class="org.egov.pims.commons.DrawingOfficer" fetch="select" >
+        <many-to-one name="drawingOfficer" class="org.egov.eis.entity.DrawingOfficer" fetch="select" >
 			<column name="DRAWING_OFFICER" precision="22" scale="0" not-null="true"  />
 		</many-to-one>
 	</joined-subclass>

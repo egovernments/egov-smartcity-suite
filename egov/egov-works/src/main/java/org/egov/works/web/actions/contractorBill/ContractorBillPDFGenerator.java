@@ -894,7 +894,7 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator{
 				//if(ad.getPrevious()==null){
 					positionId = ad.getOwnerPosition().getId();
 					deptdesig= ad.getOwnerPosition().getDeptDesigId();
-					desgName = deptdesig.getDesigId().getDesignationName();
+					desgName = deptdesig.getDesignation().getDesignationName();
 				/*}
 				else{
 					positionId =ad.getPrevious().getOwner().getId();

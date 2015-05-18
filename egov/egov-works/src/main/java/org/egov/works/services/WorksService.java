@@ -153,7 +153,7 @@ public class WorksService {
         String empName = "";
         String designationName = "";
         final DeptDesig deptDesig = position.getDeptDesigId();
-        final DesignationMaster designationMaster = deptDesig.getDesigId();
+        final DesignationMaster designationMaster = deptDesig.getDesignation();
         designationName = designationMaster.getDesignationName();
         PersonalInformation personalInformation = null;
         try {
