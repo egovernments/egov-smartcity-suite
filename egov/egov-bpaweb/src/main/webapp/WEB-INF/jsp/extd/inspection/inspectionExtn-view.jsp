@@ -39,7 +39,7 @@
 # #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 # #------------------------------------------------------------------------------- -->
 #-------------------------------------------------------------------------------
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld"%>
+<%@ taglib prefix="s" uri="/WEB-INF/taglibs/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ include file="/includes/taglibs.jsp" %>
 <% response.setHeader("Cache-Control","no-cache"); //HTTP 1.1 

@@ -39,11 +39,7 @@
 # */ -->
 <%@ include file="/includes/taglibs.jsp" %>
    <%@ include file="/includes/meta.jsp" %>
-<%@page import="org.egov.lib.admbndry.BoundaryDAO,
-		org.egov.lib.rrbac.services.RbacManager,
-  		org.egov.lib.rrbac.services.RbacManagerHome,
-  		org.egov.infstr.utils.ServiceLocator,
-		org.egov.lib.rrbac.model.Action" %>
+
 <html > 
     <head> 
       
@@ -51,32 +47,22 @@
 		<link rel="stylesheet" type="text/css" href="<c:url value='/common/css/bpa.css'/>" />
         <link rel="stylesheet" type="text/css" media="all" href="<c:url value='/common/css/commonegov.css'/>" />
       	      	  
-      	<link rel="stylesheet" type="text/css" href="<c:url value='/commonyui/yui2.7/reset/reset.css'/>" />
-		<link rel="stylesheet" type="text/css" href="<c:url value='/commonyui/yui2.7/assets/skins/sam/autocomplete.css'/>" />
+      	<link rel="stylesheet" type="text/css" href="<c:url value='/egi/commonyui/yui2.7/reset/reset.css'/>" />
+		<link rel="stylesheet" type="text/css" href="<c:url value='/egi/commonyui/yui2.7/assets/skins/sam/autocomplete.css'/>" />
 		
 	<link rel="stylesheet" type="text/css" href="<c:url value='/common/css/jquery/jquery-ui-1.8.22.custom.css'/>" />
 
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.7/yahoo/yahoo.js'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.7/dom/dom.js'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.7/event/event-debug.js'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.7/connection/connection-min.js'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.7/animation/animation.js'/>"></script>
-	<!-- <script type="text/javascript" src="<c:url value='/commonyui/yui2.7/datasource/datasource-beta.js' />"></script>  -->
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.7/json/json-min.js' />"></script> 
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.7/yahoo-dom-event/yahoo-dom-event.js'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.7/dragdrop/dragdrop.js'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.7/element/element.js'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.7/connection/connection-min.js'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.7/datasource/datasource-min.js'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.7/autocomplete/autocomplete-min.js'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.7/datatable/datatable.js'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.7/animation/animation-min.js'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.7/element/element-min.js'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.7/container/container_core-min.js'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.7/menu/menu-min.js'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.7/button/button-min.js'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.7/editor/editor-min.js'/>"></script>
-	
+		<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/fonts/fonts-min.css"/>
+		<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/datatable/assets/skins/sam/datatable.css"/>
+		
+		<script type="text/javascript" src="/egi/commonyui/yui2.7/yuiloader/yuiloader-min.js"></script>
+		<script type="text/javascript" src="/egi/commonyui/yui2.7/yahoo-dom-event/yahoo-dom-event.js"></script>
+		<script type="text/javascript" src="/egi/commonyui/yui2.7/element/element.js"></script>
+		<script type="text/javascript" src="/egi/commonyui/yui2.7/connection/connection-min.js"></script>
+		<script type="text/javascript" src="/egi/commonyui/yui2.7/datasource/datasource-min.js"></script>
+		<script type="text/javascript" src="/egi/commonyui/yui2.7/datatable/datatable.js"></script>
+		<script type="text/javascript" src="/egi/commonyui/build/autocomplete/autocomplete-debug.js"></script>
+		
 	 <script type="text/javascript" src="<c:url value='/javascript/calender.js'/>"></script>
     
 
@@ -84,77 +70,27 @@
 	<SCRIPT type="text/javascript" src="<c:url value='/script/jsCommonMethods.js' />"></SCRIPT>
 	<script type="text/javascript" src="/egi/script/calendar.js" ></script>
 	
-	<script type="text/javascript" src="/egi/jsutils/prototype/prototype.js"></script>
-<script type="text/javascript"  src="<c:url value='/common/js/helper.js'/>"></script>
-   	<script type="text/javascript" src="<c:url value='/common/js/jquery/jquery-1.7.2.min.js'/>"></script>
-   	<script type="text/javascript" src="<c:url value='/common/js/jquery/jquery-ui-1.8.22.custom.min.js'/>"></script>
-<script type="text/javascript"  src="<c:url value='/common/js/bpa.js'/>"></script>	
+		<script type="text/javascript" src="<c:url value='/commonyui/build/yahoo/yahoo.js' context='/egi'/>"></script>
+		<script type="text/javascript" src="<c:url value='/commonyui/build/dom/dom.js' context='/egi'/>"></script>
+		<script type="text/javascript" src="<c:url value='/commonyui/build/autocomplete/autocomplete-debug.js' context='/egi'/>"></script>
+		<script type="text/javascript" src="<c:url value='/commonyui/build/event/event-debug.js' context='/egi'/>"></script>
+		<script type="text/javascript" src="<c:url value='/commonyui/build/animation/animation.js' context='/egi'/>"></script>
+		<script type="text/javascript" src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
+		
+		<link rel="stylesheet" type="text/css" href="<c:url value='/css/jquery/jquery-ui-1.8.4.custom.css' context='/egi'/>" />
+	    <script type="text/javascript" src="<c:url value='/javascript/jquery/jquery-1.7.2.min.js' context='/egi'/>"></script>
+	    <script type="text/javascript" src="<c:url value='/javascript/jquery/jquery-ui-1.8.22.custom.min.js' context='/egi'/>"></script>
+	    <script type="text/javascript" src="<c:url value='/javascript/jquery/ajax-script.js' context='/egi'/>"></script>
+    	
   <decorator:head/>
-  
-  <script type="text/javascript" >
 
-</script>
   
     </head>
 
- <%
- String cityName="india";
-if(session.getAttribute("cityName")!=null)
-	cityName=(String)session.getAttribute("cityName");
-else
-{
-	if(session.getAttribute("org.egov.topBndryID")!=null)
-		{
-		BoundaryDAO boundaryDao= new BoundaryDAO();
-		cityName=boundaryDao.getBoundaryNameForID(new Integer((String)session.getAttribute("org.egov.topBndryID")));
-		cityName=cityName.toUpperCase();
-		session.setAttribute("cityName",cityName);
-		}
-				
-
-}	    
-
-//Here we get the help url associated with this url
-
-ServiceLocator serviceloc = ServiceLocator.getInstance();
-RbacManagerHome rbacMangrHome=null;
-RbacManager rbacManager=null;
-rbacMangrHome=(RbacManagerHome)serviceloc.getLocalHome("RbacManagerHome");
-rbacManager=rbacMangrHome.create();
-Integer  actId=null;
-String helpUrl=null;
-Action actobj=null;
-String actionId=null;
-actionId =(String)request.getParameter("actionid");
-	
-if((actionId != null && !actionId.equals("")))
-{
-
-  actId=Integer.valueOf(actionId);
- 
- actobj= rbacManager.getActionById(actId);
- helpUrl=actobj.getHelpURL();
-}
-else
-{  
-	String queryStr=request.getQueryString();
-	String  url=request.getRequestURI().substring(request.getContextPath().length());
-	url=url+"?"+queryStr;
-	   
-	actobj= rbacManager.getActionByURL(url);
-	if(actobj!=null)
-		helpUrl=actobj.getHelpURL();
-}
-
-
-%>
 <body <decorator:getProperty property="body.id" writeEntireProperty="yes"/><decorator:getProperty property="body.class" writeEntireProperty="true"/> <decorator:getProperty property="body.onload" writeEntireProperty="true"/>  >
-
-
-<egovtags:breadcrumb/>
-  <div class="headlargenew"><decorator:title/></div>
-  <div id="loadingMask" style="display:none"><p align="center"><img src="../common/image/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
-	<decorator:body/>
-</body>
-
+	    <div id="BreadCrumb">
+	    <egov:breadcrumb/>
+	    </div>
+	    <decorator:body/>
+    </body>
 </html>

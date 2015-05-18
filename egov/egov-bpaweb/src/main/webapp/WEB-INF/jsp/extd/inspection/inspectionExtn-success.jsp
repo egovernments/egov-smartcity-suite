@@ -41,9 +41,9 @@
 #-------------------------------------------------------------------------------
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp" %>
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld"%>
+<%@ taglib prefix="s" uri="/WEB-INF/taglibs/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<%@taglib prefix="sj" uri="/WEB-INF/struts-jquery-tags.tld"%>
+<%@taglib prefix="sj" uri="/WEB-INF/taglibs/struts-jquery-tags.tld"%>
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
 <html>

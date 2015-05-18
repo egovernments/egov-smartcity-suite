@@ -48,9 +48,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator"%>
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/page" prefix="page"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
-<%@ taglib uri="/WEB-INF/struts-nested.tld" prefix="nested" %>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="egovtags"%>
+<%@ taglib prefix="s" uri="/WEB-INF/taglibs/struts-tags.tld" %>  
+<%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
+
 

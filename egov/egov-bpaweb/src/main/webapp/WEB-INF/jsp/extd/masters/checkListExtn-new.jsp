@@ -41,7 +41,7 @@
 # # #------------------------------------------------------------------------------- -->
 # #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld"%>
+<%@ taglib prefix="s" uri="/WEB-INF/taglibs/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>

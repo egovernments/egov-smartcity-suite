@@ -128,7 +128,7 @@
 		<property name="persistenceService" ref="persistenceService"/>
 		<property name="bpaNumberGenerationExtnService" ref="bpaNumberGenerationExtnService"/>
 		<property name="bpaDmdCollExtnService" ref="bpaDmdCollExtnService"/>
-		 <property name="registrationWorkflowExtnService" ref="registrationWorkflowExtnService"/>
+		<!--  <property name="registrationWorkflowExtnService" ref="registrationWorkflowExtnService"/> -->
 		 <property name="bpaPimsExtnFactory" ref="bpaPimsExtnFactory"/>
 		<property name="autoDcrExtnService" ref="autoDcrExtnService"/>
 		<property name="bpaCommonExtnService" ref="bpaCommonExtnService"/>
@@ -140,10 +140,10 @@
 		<property name="regnOfficialActionsExtnService" ref="regnOfficialActionsExtnService"/>
 	</bean> 
 	
-   	 <bean id="registrationWorkflowExtnService" class="org.egov.infra.workflow.service.SimpleWorkflowService" lazy-init="false" scope="prototype">
+  <!--  	 <bean id="registrationWorkflowExtnService" class="org.egov.infra.workflow.service.SimpleWorkflowService" lazy-init="false" scope="prototype">
 	<constructor-arg ref="regnPersistenceExtnService"/>
 	<constructor-arg value="org.egov.bpa.models.extd.RegistrationExtn"/>
-	</bean>  
+	</bean>   -->
 	
    	<bean id="bpaDmdCollExtnService" class="org.egov.bpa.services.extd.common.BpaDmdCollExtnService" scope="prototype" >
  		<property name="feeExtnService" ref="feeExtnService"/>

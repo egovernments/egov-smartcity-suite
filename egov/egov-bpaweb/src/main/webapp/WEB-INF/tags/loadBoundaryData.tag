@@ -18,7 +18,7 @@
 		org.egov.infra.admin.master.entity.BoundaryType" %>
 		
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/taglibs/struts-html.tld" prefix="html" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>  
 <!--
   eGov suite of products aim to improve the internal efficiency,transparency, 

@@ -41,7 +41,7 @@
 #-------------------------------------------------------------------------------
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld"%>
+<%@ taglib prefix="s" uri="/WEB-INF/taglibs/struts-tags.tld"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">

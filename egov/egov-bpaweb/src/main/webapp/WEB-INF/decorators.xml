@@ -39,47 +39,28 @@
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
     <excludes>
-        <pattern>/40*.jsp</pattern>
-        <pattern>/inbox/InboxAjaxDetails*</pattern>	
-           <pattern>/commonyui/egov/genericScreenWithLeaf.jsp</pattern>
-        <pattern>/commonyui/egov/menutree.jsp</pattern>    
-        <pattern>/inspection/inspection!showPlanDetails.action</pattern>  
-        <pattern>/inspection/inspection!showConstructionDetails.action</pattern>    
-        <pattern>/inspection/inspection!showCheckList.action</pattern>     
+     <pattern>/40*.jsp</pattern>       	
+        <pattern>/commonyui/egov/genericScreenWithLeaf.jsp</pattern>
+        <pattern>/commonyui/egov/menutree.jsp</pattern>
+        <pattern>/*Ajax.action</pattern>
+        <pattern>/*Ajax.do</pattern>
+        <pattern>/*decorate=false*</pattern>
       
          <pattern>/extd/inspection/inspectionExtn!showPlanDetails.action</pattern>  
         <pattern>/extd/inspection/inspectionExtn!showConstructionDetails.action</pattern>    
         <pattern>/extd/inspection/inspectionExtn!showCheckList.action</pattern>     
       
-        <pattern>/**/*registerBpa!showCheckList*</pattern>     
-        <pattern>/**/*registerBpaExtn!showCheckList*</pattern>
-        <pattern>/inspection/inspection!showMeasurementDetails.action</pattern>        
-        <pattern>/extd/inspection/inspectionExtn!showMeasurementDetails.action</pattern>
-         <pattern>/register/registerBpa!viewPostPonedDetails.action</pattern>   
-         <pattern>/extd/register/registerBpaExtn!registerBpaExtn.action</pattern>
+       <pattern>/extd/inspection/inspectionExtn!showMeasurementDetails.action</pattern>
+       <pattern>/extd/register/registerBpaExtn!registerBpaExtn.action</pattern>
          
           <pattern>/extd/inspection/inspectionExtn!showExistingInspectionMeasurementDetails.action</pattern>    
          <pattern>/extd/inspection/inspectionExtn!showInspectioninRegistration.action</pattern>  
          <pattern>/extd/inspection/inspectionExtn!showPlotDetails.action</pattern> 
          
-          <pattern>/inspection/inspection!showExistingInspectionMeasurementDetails.action</pattern>    
-         <pattern>/inspection/inspection!showInspectioninRegistration.action</pattern>  
-         <pattern>/inspection/inspection!showPlotDetails.action</pattern>  
-       
-          <pattern>/fee/feeDetails!showFeeDetailsinRegistration.action</pattern>  
-          <pattern>/extd/fee/feeDetailsExtn!showFeeDetailsinRegistration.action</pattern>
-           <pattern>/register/registerBpa!getActionsByLoginUserId.action</pattern>  
-           <pattern>/extd/register/registerBpaExtn!getActionsByLoginUserId.action</pattern>
+       <pattern>/extd/fee/feeDetailsExtn!showFeeDetailsinRegistration.action</pattern>
+         <pattern>/extd/register/registerBpaExtn!getActionsByLoginUserId.action</pattern>
            
-          <pattern>/register/registerBpa!showExistingLetterToPartyDetails.action</pattern>
-          <pattern>/register/registerBpa!showLetterToPartyCheckList.action</pattern>
-                    
-		  <pattern>/lettertoparty/lpReply!showCheckList.action</pattern>
-		  <pattern>/register/registerBpa!showOrderDetails.action</pattern>
-		  <pattern>/register/registerBpa!getCollectedReceipts.action</pattern>
-		  <pattern>/register/registerBpa!showLetterToPartyReplyCheckList.action</pattern>
-		    <pattern>/register/registerBpa!showExistingLetterToPartyCMDADetails.action</pattern>
-		     <pattern>/extd/register/registerBpaExtn!showExistingLetterToPartyCMDADetails.action</pattern>
+           <pattern>/extd/register/registerBpaExtn!showExistingLetterToPartyCMDADetails.action</pattern>
 		  
 		  <pattern>/extd/register/registerBpaExtn!showOrderDetails.action</pattern>
 		  <pattern>/extd/register/registerBpaExtn!getCollectedReceipts.action</pattern>
@@ -88,13 +69,10 @@
 		   <pattern>/citizen/citizenSearch!showLetterToPartyCheckList.action</pattern>
 		  <pattern>/citizen/citizenSearch!showLetterToPartyReplyCheckList.action</pattern>
 		    <pattern>/citizen/citizenSearch!sendSecurityKey.action</pattern>
-		    <pattern>/fee/revisedFee!showFeeDetails.action</pattern>
-		    <pattern>/fee/revisedFee!showExistingFeeDetails.action</pattern>
-		    
+		  
 		    <pattern>/extd/fee/revisedFeeExtn!showFeeDetails.action</pattern>
 		    <pattern>/extd/fee/revisedFeeExtn!showExistingFeeDetails.action</pattern>
 		    		    
-	      <pattern>/fee/feeDetails!showFeeDetailsinRevisedFee.action</pattern>
 	      <pattern>/extd/register/registerBpaExtn!showLetterToPartyCheckList.action</pattern>
 	      <pattern>/extd/lettertoparty/lpReplyExtn!showCheckList.action</pattern>
 	      <pattern>/extd/register/registerBpaExtn!showExistingLetterToPartyDetails.action</pattern>
@@ -104,17 +82,9 @@
 	        <pattern>/extd/portal/citizenRegisterBpaExtn!showTermsandConditions.action</pattern>
 	</excludes>  
    
-
-	<decorator name="default" page="default.jsp">
-      <pattern>/index.jsp</pattern>      
-      <pattern>/*.action</pattern>  
+ <decorator name="default" page="default.jsp">
+      <pattern>/*</pattern>
     </decorator>
-    
-    
-    <decorator name="title" page="titlePage.jsp">
-      <pattern>/index.jsp</pattern> 
-    </decorator>
-       
   
   
 </decorators>

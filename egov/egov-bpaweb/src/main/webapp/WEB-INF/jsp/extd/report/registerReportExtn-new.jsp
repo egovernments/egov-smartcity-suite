@@ -39,11 +39,11 @@
 # #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 # #------------------------------------------------------------------------------- -->
 #-------------------------------------------------------------------------------
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld"%>
+<%@ taglib prefix="s" uri="/WEB-INF/taglibs/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@	taglib uri="http://displaytag.sf.net" prefix="display" %>
 <%@ include file="/includes/taglibs.jsp" %>
-<%@taglib prefix="sj" uri="/WEB-INF/struts-jquery-tags.tld"%>
+<%@taglib prefix="sj" uri="/WEB-INF/taglibs/struts-jquery-tags.tld"%>
 
 <%@ include file="/includes/taglibs.jsp" %>
 <html>

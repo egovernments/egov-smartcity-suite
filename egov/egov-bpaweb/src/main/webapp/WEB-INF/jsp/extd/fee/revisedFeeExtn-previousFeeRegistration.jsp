@@ -39,8 +39,8 @@
 # #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 # #------------------------------------------------------------------------------- -->
 #-------------------------------------------------------------------------------
- <%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld"%>
- <%@taglib prefix="sj" uri="/WEB-INF/struts-jquery-tags.tld"%>
+ <%@ taglib prefix="s" uri="/WEB-INF/taglibs/struts-tags.tld"%>
+ <%@taglib prefix="sj" uri="/WEB-INF/taglibs/struts-jquery-tags.tld"%>
 <%@page pageEncoding="utf-8" contentType="text/html; charset=utf-8"%>
 
 <s:set name="theme" value="simple" scope="page" />

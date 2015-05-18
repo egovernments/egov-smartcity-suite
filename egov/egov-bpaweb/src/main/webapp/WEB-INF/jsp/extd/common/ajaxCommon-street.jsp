@@ -1,5 +1,4 @@
-<%@ page contentType="text/json" %>
-#-------------------------------------------------------------------------------
+
 # <!-- #-------------------------------------------------------------------------------
 # # eGov suite of products aim to improve the internal efficiency,transparency, 
 # #    accountability and the service delivery of the government  organizations.
@@ -39,8 +38,8 @@
 # # 
 # #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 # #------------------------------------------------------------------------------- -->
-#-------------------------------------------------------------------------------
-<%@ taglib prefix="s" uri="/WEB-INF/struts-tags.tld" %> 
+<%@ page contentType="text/json" %>
+<%@ taglib prefix="s" uri="/WEB-INF/taglibs/struts-tags.tld" %> 
 {
 "ResultSet": {
     "Result":[

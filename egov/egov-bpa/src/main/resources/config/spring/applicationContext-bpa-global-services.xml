@@ -28,18 +28,18 @@
 		<property name="persistenceService" ref="persistenceService"/>
 	</bean> 
 	
-	<bean id="registrationFeeWorkflowExtnService" class="org.egov.infra.workflow.service.SimpleWorkflowService" scope="prototype">
+<!-- 	<bean id="registrationFeeWorkflowExtnService" class="org.egov.infra.workflow.service.SimpleWorkflowService" scope="prototype">
 		<constructor-arg ref="regnFeePersistenceExtnService"/>
 		<constructor-arg value="org.egov.bpa.models.extd.RegistrationFeeExtn"/>
-	</bean>
+	</bean> -->
 	<bean id="regnPersistenceExtnService" parent="persistenceService" scope="prototype">
 	<property name="type" value="org.egov.bpa.models.extd.RegistrationExtn"/>
 	</bean>
 		
-	<bean id="registrationWorkflowExtnService" class="org.egov.infra.workflow.service.SimpleWorkflowService" scope="prototype">
+<!-- 	<bean id="registrationWorkflowExtnService" class="org.egov.infra.workflow.service.SimpleWorkflowService" scope="prototype">
 		<constructor-arg ref="regnPersistenceExtnService"/>
 		<constructor-arg value="org.egov.bpa.models.extd.RegistrationExtn"/>
-	</bean>
+	</bean> -->
 	
 	<bean id="regnFeePersistenceExtnService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.bpa.models.extd.RegistrationFeeExtn"/>
@@ -54,9 +54,6 @@
 		<property name="feeExtnService" ref="feeExtnService"/>
 	<!-- 	<property name="fileManagementService" ref="fileManagementService"/> -->
 		<property name="collectionIntegrationService" ref="collectionIntegrationService"/>
-	    <property name="registrationWorkflowExtnService" ref="registrationWorkflowExtnService"/>
-	    <property name="registrationFeeWorkflowExtnService" ref="registrationFeeWorkflowExtnService"/>
-	<!--     <property name="eisCommonsManager" ref="eisCommonsManager"/> -->
 	    <property name="regnPersistenceExtnService" ref="regnPersistenceExtnService"/>	    
 	   <property name="genericDao" ref="genericDao"/>
 	    <property name="reportService" ref="reportService"/>
