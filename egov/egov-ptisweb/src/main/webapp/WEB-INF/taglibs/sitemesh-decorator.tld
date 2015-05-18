@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
 <!DOCTYPE taglib
   PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
   "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
@@ -37,6 +38,27 @@
     <tag>
         <name>getProperty</name>
         <tag-class>com.opensymphony.module.sitemesh.taglib.decorator.PropertyTag</tag-class>
+        <body-content>JSP</body-content>
+        <attribute>
+            <name>property</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>default</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>writeEntireProperty</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>extractProperty</name>
+        <tag-class>com.opensymphony.module.sitemesh.multipass.ExtractPropertyTag</tag-class>
         <body-content>JSP</body-content>
         <attribute>
             <name>property</name>

@@ -87,5 +87,10 @@
             <artifactId>hibernate-validator</artifactId>
         </dependency>
         <!-- HIBERNATE END -->
+        
+        <dependency>
+            <groupId>opensymphony</groupId>
+            <artifactId>sitemesh</artifactId>
+        </dependency>
     </dependencies>
 </project>

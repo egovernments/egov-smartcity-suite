@@ -215,7 +215,7 @@
 							:
 						</td>
 						<td class="bluebox">
-							<s:select name="areaId" id="areaId" list="dropdownData.Area" style="width: 150px;" listKey="id" listValue="name"
+							<s:select name="areaId" id="areaId" list="dropdownData.Area" cssStyle="width: 150px;" listKey="id" listValue="name"
 								headerKey="-1" headerValue="----Choose----" value="%{areaId}" />
 						</td>
 						<td class="bluebox">&nbsp;</td>
