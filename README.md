@@ -3,7 +3,7 @@ eGov suite of products aim to improve the internal efficiency,transparency, acco
 #### Issue Tracking
 Report issues via the [eGov Opensource JIRA][].
 #### License
-The eGov Suit is released under version 3.0 of the [GPL][].
+The eGov suit is released under version 3.0 of the [GPL][].
 ## User Guide
 This section contains steps that are involved in build and deploy the application.
 
@@ -12,7 +12,7 @@ This section contains steps that are involved in build and deploy the applicatio
 * Install [maven >= v3.2.x][Maven]
 * Install [PostgreSQL >= v9.3 ][PostgreSQL]
 * Install [Elastic Search >= v1.4.2][Elastic Search]
-* Install [Jboss Wildfly v8.2.x][Wildfly Customized]
+* Install [Jboss Wildfly v9.0.x][Wildfly Customized]
 * [Git][] and [JDK 8 update 20 or later][JDK8 build]
 
 #### Database Setup
@@ -139,7 +139,7 @@ Always start the wildfly server with the below command to access the application
 ```
 
 ## Developer Guide
-This section will mention the steps that are to be followed when developing new features on the downloaded application.
+This section gives more details regarding developing and contributing to eGov suit.
 
 #### Repository Structure
 `egov` - folder contains all the source code of eGov opensource projects
@@ -151,7 +151,7 @@ This section will mention the steps that are to be followed when developing new 
 * Install your favorite IDE for java project. Recommended Eclipse or IntelliJ
 * Install [PostgreSQL >= v9.3 ][PostgreSQL]
 * Install [Elastic Search >= v1.4.2][Elastic Search]
-* Install [Jboss Wildfly v8.2.x][Wildfly Customized]
+* Install [Jboss Wildfly v9.0.x][Wildfly Customized]
 * [Git][] and [JDK 8 update 20 or later][JDK8 build]
 
 __Note__: Please check in [eGov Tools Repository] for any of the above software installables before downloading from internet.
@@ -201,7 +201,7 @@ mvn -s settings.xml package -Pdb  ## Cleans, compiles, tests, migrates database 
 [Git]: http://help.github.com/set-up-git-redirect
 [JDK8 build]: http://www.oracle.com/technetwork/java/javase/downloads
 [eGov Opensource JIRA]: http://issues.egovernments.org/browse/PHOENIX
-[Wildfly Customized]: http://downloads.egovernments.org/wildfly-8.2.0.Final-v1.tar.gz
+[Wildfly Customized]: http://downloads.egovernments.org/wildfly-9.0.0.CR1.zip
 [Elastic Search]: https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.2.zip
 [Spring Profiles]: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-environment
 [Liquibase]: http://www.liquibase.org/documentation/index.html
