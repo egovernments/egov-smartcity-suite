@@ -58,7 +58,7 @@ jQuery(document).ready(function ($) {
 	});
 	
     $('#searchComplaints').click(function () {
-        $.post("/pgr/complaint/citizen/anonymous/search", $('#searchComplaintForm').serialize())
+    	$.post("/pgr/complaint/citizen/anonymous/search", $('#searchComplaintForm').serialize())
 		.done(function (searchResult) {
 			console.log(JSON.stringify(searchResult));
 			
@@ -73,11 +73,12 @@ jQuery(document).ready(function ($) {
 				data: searchResult,
 				columns: [
 				{title: 'Complaint Number', data: 'resource.searchable.crn'},
-				{title: 'User', data: 'resource.common.citizen.name'},
-				{title: 'Location', data: ''},
+				{title: 'Complaint Type', data: 'resource.searchable.complaintType.name'},
+				{title: 'Name', data: 'resource.common.citizen.name'},
+				{title: 'Location', data: 'resource.searchable.boundary.name'},
 				{title: 'Status', data: 'resource.clauses.status.name'},
 				{title: 'Department', data: 'resource.searchable.complaintType.department.name'},
-				{title: 'Registration Date', data: ''},
+				{title: 'Registration Date', data: 'resource.common.createdDate'},
 				{title: 'Expiry Date', data: ''}
 				]
 			});
@@ -282,6 +283,7 @@ jQuery(document).ready(function ($) {
 	}
 	
 	$("form").submit(function(event){
+		alert("inside submit");
 		if($("select#when_date option:selected").index() == 0){
 			
 			}else{
