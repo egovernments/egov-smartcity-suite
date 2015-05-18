@@ -41,7 +41,7 @@ package org.egov.eis.service;
 
 import java.util.List;
 
-import org.egov.pims.commons.DrawingOfficer;
+import org.egov.eis.entity.DrawingOfficer;
 import org.egov.eis.repository.DrawingOfficerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

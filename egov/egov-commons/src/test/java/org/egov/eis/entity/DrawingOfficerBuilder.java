@@ -43,7 +43,6 @@ import java.lang.reflect.Field;
 
 import org.egov.commons.Bank;
 import org.egov.commons.Bankbranch;
-import org.egov.pims.commons.DrawingOfficer;
 import org.egov.pims.commons.Position;
 
 public class DrawingOfficerBuilder {

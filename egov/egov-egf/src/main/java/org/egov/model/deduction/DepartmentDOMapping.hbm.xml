@@ -50,7 +50,7 @@
         <many-to-one name="department" class="org.egov.infra.admin.master.entity.Department" fetch="select">
             <column name="DEPARTMENT_ID" precision="22" scale="0" />
         </many-to-one>
-         <many-to-one name="drawingOfficer" class="org.egov.pims.commons.DrawingOfficer" fetch="select">
+         <many-to-one name="drawingOfficer" class="org.egov.eis.entity.DrawingOfficer" fetch="select">
            <column name="DRAWINGOFFICER_ID" precision="22" scale="0" />
          </many-to-one>
         
