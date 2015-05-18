@@ -47,13 +47,13 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
+import org.egov.eis.entity.DrawingOfficer;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.masters.model.BillNumberMaster;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.commons.DesignationMaster;
-import org.egov.pims.commons.DrawingOfficer;
 import org.egov.pims.commons.Position;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Criteria;
@@ -119,7 +119,7 @@ public class PositionMasterAction extends BaseFormAction {
 	public String createOrModify() 
 	{
 		DeptDesig deptDesig=(DeptDesig)persistenceService.find(
-				" from DeptDesig where deptId.id=? and desigId.designationId=? ",getDepartmentId(),getDesignationId());
+				" from DeptDesig where department.id=? and designation.designationId=? ",getDepartmentId(),getDesignationId());
 		billNumberHeaderList=(List<BillNumberMaster>)persistenceService.findAllBy("from BillNumberMaster where department.id=?", departmentId);
 		if(null!=deptDesig )
 		{

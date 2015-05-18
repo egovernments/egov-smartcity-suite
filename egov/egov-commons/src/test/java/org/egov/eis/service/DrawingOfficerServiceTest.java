@@ -37,15 +37,55 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.eis.repository;
+package org.egov.eis.service;
 
-import org.egov.pims.commons.DeptDesig;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
-@Repository
-public interface DeptDesigRepository extends JpaRepository<DeptDesig, Long> {
+import org.egov.eis.entity.DrawingOfficer;
+import org.egov.eis.entity.DrawingOfficerBuilder;
+import org.egov.eis.repository.DrawingOfficerRepository;
+import org.egov.pims.commons.Position;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
 
-    public DeptDesig findByDepartment_IdAndDesignation_DesignationId(Long id, Integer designationId);
+public class DrawingOfficerServiceTest {
+
+    private DrawingOfficerService drawingOfficerService;
+
+    @Mock
+    private DrawingOfficerRepository drawingOfficerRepository;
+
+    Position pos;
+    DrawingOfficer drawingOfficer;
+
+    @Before
+    public void before() {
+        initMocks(this);
+        drawingOfficerService = new DrawingOfficerService(drawingOfficerRepository);
+        sample();
+    }
+
+    private void sample() {
+        pos = new Position();
+        pos.setName("test-pos");
+        drawingOfficer = new DrawingOfficerBuilder().withName("test-do").withAccountNumber("123").withCode("do-1")
+                .withPosition(pos).build();
+        drawingOfficerService.create(drawingOfficer);
+    }
+
+    @Test
+    public void createDrawingOfficer() {
+        assertNotNull(drawingOfficer);
+    }
+
+    @Test
+    public void findByName() {
+        when(drawingOfficerRepository.findByName(drawingOfficer.getName())).thenReturn(drawingOfficer);
+        assertEquals("test-do", drawingOfficerService.getDrawingOfficerByName("test-do").getName());
+    }
 
 }

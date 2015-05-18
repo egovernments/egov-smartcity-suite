@@ -39,13 +39,23 @@
  */
 package org.egov.eis.repository;
 
-import org.egov.pims.commons.DeptDesig;
+import java.util.List;
+
+import org.egov.eis.entity.DrawingOfficer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DeptDesigRepository extends JpaRepository<DeptDesig, Long> {
-
-    public DeptDesig findByDepartment_IdAndDesignation_DesignationId(Long id, Integer designationId);
+public interface DrawingOfficerRepository extends JpaRepository<DrawingOfficer, Long>{
+    
+    public DrawingOfficer findByName(String name);
+    
+    public DrawingOfficer findByCode(String code);
+    
+    public DrawingOfficer findByPosition_Id(Long id);
+    
+    List<DrawingOfficer> findByNameContainingIgnoreCase(String name);
+    
+    List<DrawingOfficer> findByCodeContainingIgnoreCase(String code);
 
 }
