@@ -50,7 +50,9 @@ import static org.egov.search.domain.Filter.queryStringFilter;
 public class ComplaintSearchRequest {
     private String searchText;
     private String complaintNumber;
-
+    private String complainantName;
+    private String complaintStatus;
+ 
     public void setSearchText(String searchText) {
         this.searchText = searchText;
     }
@@ -58,10 +60,20 @@ public class ComplaintSearchRequest {
     public void setComplaintNumber(String complaintNumber) {
         this.complaintNumber = complaintNumber;
     }
+    
+    public void setComplaintStatus(String complaintStatus) {
+        this.complaintStatus = complaintStatus;
+    }
+    
+    public void setComplainantName(String complainantName) {
+        this.complainantName = complainantName;
+    }
 
     public Filters searchFilters() {
         List<Filter> andFilters = new ArrayList<>();
         andFilters.add(queryStringFilter("searchable.crn", complaintNumber));
+        andFilters.add(queryStringFilter("common.citizen.name", complainantName));
+        andFilters.add(queryStringFilter("claused.status.name", complaintStatus));
         return Filters.withAndFilters(andFilters);
     }
 
