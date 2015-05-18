@@ -76,6 +76,7 @@ public class Boundary extends AbstractAuditable<User, Long> {
 	private static final long serialVersionUID = -224771387323975327L;
 
 	@Length(max = 512)
+	@Searchable(name = "name")
 	private String name;
 
 	private Long boundaryNum;
@@ -111,9 +112,11 @@ public class Boundary extends AbstractAuditable<User, Long> {
 	@Length(max = 32)
 	private String materializedPath;
 
-	@Transient
-	@Searchable(name = "detail")
-	private JSONObject boundaryJson;
+	/*
+	 * @Transient
+	 * 
+	 * @Searchable(name = "detail") private JSONObject boundaryJson;
+	 */
 
 	@Transient
 	private Long parentBoundaryNum;
@@ -288,13 +291,15 @@ public class Boundary extends AbstractAuditable<User, Long> {
 		if (getId() != null && getId().equals(other.getId()))
 			return true;
 		// Boundary number can be null
-		if (getBoundaryNum() != null && !getBoundaryNum().equals(other.getBoundaryNum()))
+		if (getBoundaryNum() != null
+				&& !getBoundaryNum().equals(other.getBoundaryNum()))
 			return false;
 		if (!getBoundaryType().equals(other.getBoundaryType()))
 			return false;
 		if (getName() != null && !getName().equals(other.getName()))
 			return false;
-		if (getLocalName() != null && !getLocalName().equals(other.getLocalName()))
+		if (getLocalName() != null
+				&& !getLocalName().equals(other.getLocalName()))
 			return false;
 		if (getParent() != null && !getParent().equals(other.getParent()))
 			return false;
@@ -356,21 +361,21 @@ public class Boundary extends AbstractAuditable<User, Long> {
 
 	@Override
 	public String toString() {
-		return new StringBuilder().append("Boundary [id=").append(getId()).append(", boundaryType=")
-				.append(boundaryType).append(", name: ").append(name).append(", number=").append(boundaryNum)
-				.append(", parentBoundaryNum=").append(parentBoundaryNum).append(", isHistory=").append(isHistory)
-				.append(", materializedPath: ").append(materializedPath).append("]").toString();
+		return new StringBuilder().append("Boundary [id=").append(getId())
+				.append(", boundaryType=").append(boundaryType)
+				.append(", name: ").append(name).append(", number=")
+				.append(boundaryNum).append(", parentBoundaryNum=")
+				.append(parentBoundaryNum).append(", isHistory=")
+				.append(isHistory).append(", materializedPath: ")
+				.append(materializedPath).append("]").toString();
 	}
 
-	public JSONObject getBoundaryJson() {
-		final Map<String, Object> map = new HashMap<>();
-		addNameAndValue(map);
-		return new JSONObject(map);
-	}
-
-	public void addNameAndValue(final Map<String, Object> map) {
-		map.put(getBoundaryType().getName(), getName());
-		if (getParent() != null)
-			getParent().addNameAndValue(map);
-	}
+	/*
+	 * public JSONObject getBoundaryJson() { final Map<String, Object> map = new
+	 * HashMap<>(); addNameAndValue(map); return new JSONObject(map); }
+	 * 
+	 * public void addNameAndValue(final Map<String, Object> map) {
+	 * map.put(getBoundaryType().getName(), getName()); if (getParent() != null)
+	 * getParent().addNameAndValue(map); }
+	 */
 }
