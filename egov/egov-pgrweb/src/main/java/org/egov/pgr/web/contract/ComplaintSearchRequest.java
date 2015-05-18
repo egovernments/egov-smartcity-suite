@@ -52,7 +52,11 @@ public class ComplaintSearchRequest {
     private String complaintNumber;
     private String complainantName;
     private String complaintStatus;
- 
+    private String complainantPhoneNumber;
+    private String complainantEmail;
+    private String receivingCenter;
+    private String complaintType;
+    
     public void setSearchText(String searchText) {
         this.searchText = searchText;
     }
@@ -68,12 +72,33 @@ public class ComplaintSearchRequest {
     public void setComplainantName(String complainantName) {
         this.complainantName = complainantName;
     }
+    
+    public void setComplainantPhoneNumber(String phoneNumber) {
+        this.complainantPhoneNumber = phoneNumber;
+    }
+    
+    public void setComplainantEmail(String email) {
+        this.complainantEmail = email;
+    }
+    
+    public void setReceivingCenter(String receivingCenter) {
+        this.receivingCenter = receivingCenter;
+    }
 
+    public void setComplaintType(String complaintType) {
+        this.complaintType = complaintType;
+    }
+ 
     public Filters searchFilters() {
         List<Filter> andFilters = new ArrayList<>();
         andFilters.add(queryStringFilter("searchable.crn", complaintNumber));
         andFilters.add(queryStringFilter("common.citizen.name", complainantName));
-        andFilters.add(queryStringFilter("claused.status.name", complaintStatus));
+        andFilters.add(queryStringFilter("common.citizen.mobile", complainantPhoneNumber));
+        andFilters.add(queryStringFilter("common.citizen.email", complainantEmail));
+        andFilters.add(queryStringFilter("clauses.status.name", complaintStatus));
+        andFilters.add(queryStringFilter("clauses.receivingMode", receivingCenter));
+        andFilters.add(queryStringFilter("searchable.complaintType.name", complaintType));
+        
         return Filters.withAndFilters(andFilters);
     }
 

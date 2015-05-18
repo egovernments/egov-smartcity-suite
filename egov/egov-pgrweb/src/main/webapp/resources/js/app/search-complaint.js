@@ -79,7 +79,6 @@ jQuery(document).ready(function ($) {
 				{title: 'Status', data: 'resource.clauses.status.name'},
 				{title: 'Department', data: 'resource.searchable.complaintType.department.name'},
 				{title: 'Registration Date', data: 'resource.common.createdDate'},
-				{title: 'Expiry Date', data: ''}
 				]
 			});
 		})

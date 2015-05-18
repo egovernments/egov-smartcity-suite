@@ -129,7 +129,7 @@
 								placeholder="<spring:message code='lbl.name'/>" />
 						</div>
 						<div class="col-md-4 add-margin">
-							<input type="text" name="" class="form-control" id="ct-mobno"
+							<input type="text" name="complainantPhoneNumber" class="form-control" id="ct-mobno"
 								placeholder="<spring:message code='lbl.phoneNumber'/>" />
 						</div>
 
@@ -138,45 +138,13 @@
 					<div class="form-group show-searchcomp-more display-hide">
 
 						<div class="col-md-4 add-margin">
-							<input type="text" name="" class="form-control" id="ct-email"
+							<input type="text" name="complainantEmail" class="form-control" id="ct-email"
 								placeholder="<spring:message code='lbl.email'/>" />
 						</div>
 						<div class="col-md-4 add-margin">
-							<input type="text" name="" class="form-control" id="ct-type"
+							<input type="text" name="complaintType" class="form-control" id="ct-type"
 								placeholder="<spring:message code='lbl.complaintType'/>" />
 						</div>
-						<div class="col-md-4 add-margin">
-							<input type="text" name="" class="form-control" id=""
-								placeholder="<spring:message code='lbl.complaint.registrationNumber'/>" />
-						</div>
-					</div>
-
-					<div class="form-group show-searchcomp-more display-hide">
-
-						<div class="col-md-4 add-margin">
-							<select name="complaintStatus" id="ct-sel-status" class="form-control"
-								data-first-option="false">
-								<option><spring:message code='lbl.status' /></option>
-								<option value="FORWARDED">FORWARDED</option>
-								<option value="CLOSED">CLOSED</option>
-								<option value="REGISTERED">REGISTERED</option>
-							</select>
-						</div>
-					</div>
-
-					<div class="form-group show-searchcomp-more display-hide">
-
-						<div class="col-md-4 add-margin">
-							<select name="test" id="ct-sel-recenter" class="form-control"
-								data-first-option="false">
-								<option><spring:message code='lbl.receivingcenter' /></option>
-								<option value="1">Complaint Cell</option>
-								<option value="2">Mayor</option>
-								<option value="3">Zone office</option>
-							</select>
-						</div>
-
-
 						<div class="col-md-4 add-margin">
 							<select name="test" id="ct-sel-dept" class="form-control"
 								data-first-option="false">
@@ -185,6 +153,40 @@
 								<option value="2">ELECTRICAL</option>
 							</select>
 						</div>
+					</div>
+
+					<div class="form-group show-searchcomp-more display-hide">
+
+						<div class="col-md-4 add-margin">
+							<select name="complaintStatus" id="ct-sel-status" class="form-control"
+								data-first-option="false" >
+								<option value=""><spring:message code='lbl.status' /></option>
+								<option value="REGISTERED">REGISTERED</option>
+								<option value="FORWARDED">FORWARDED</option>
+								<option value="CLOSED">CLOSED</option>
+								
+							</select>
+						</div>
+						<div class="col-md-4 add-margin">
+							<select name="receivingCenter" id="ct-sel-recenter" class="form-control"
+								data-first-option="false">
+								<option  value=""><spring:message code='lbl.receivingcenter' /></option>
+								<option value="CALL">Complaint Cell</option>
+								<option value="SMS">SMS</option>
+								<option value="WEBSITE">Website</option>
+								<option value="EMAIL">Email</option>
+								<option value="PAPER">Paper</option>
+								<option value="MOBILE">Mobile</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group show-searchcomp-more display-hide">
+
+						
+
+
+						
 
 					</div>
 
