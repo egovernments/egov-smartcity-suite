@@ -47,5 +47,4 @@
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator"%>
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/page" prefix="page"%>
 <%@ taglib prefix="s" uri="/WEB-INF/taglibs/struts-tags.tld" %>  
-<%@ taglib prefix="sx" uri="/WEB-INF/taglibs/struts-dojo-tags.tld" %> 
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
