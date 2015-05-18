@@ -56,9 +56,11 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.egov.search.domain.Searchable;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
+@Searchable
 public abstract class AbstractAuditable<U, PK extends Serializable> extends AbstractPersistable<PK> {
 
     private static final long serialVersionUID = 8330295040331880486L;
@@ -69,7 +71,8 @@ public abstract class AbstractAuditable<U, PK extends Serializable> extends Abst
     private U createdBy;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @CreatedDate
+    @CreatedDate    
+    @Searchable(name = "createdDate", group = Searchable.Group.COMMON)
     private Date createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
