@@ -37,84 +37,83 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@taglib uri="http://www.joda.org/joda/time/tags" prefix="joda"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
 <div class="row">
 	<div class="col-md-12">
-		<div class="panel panel-primary" data-collapsed="0">
-			<div class="panel-heading">
-				<div class="panel-title text-center no-float">
-					<strong><spring:message code="msg.router.success"/></strong>
-				</div>
-			</div>
-			<form:form id="routerFormSuccess" method="get" class="form-horizontal form-groups-bordered" modelAttribute="complaintRouter">
+		<form:form  id="complaintRouterSuccess" method ="post" 
+		 class="form-horizontal form-groups-bordered" modelAttribute="complaintRouter" >
+		 		<c:if test="${not empty message}">
+                    <div id="message" class="success">${message}</div>
+                </c:if>
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title">
+						<strong>${routerHeading}</strong>
+					</div>
+				</div> 
 				<div class="panel-body">
-					<div class="row">
-						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.router.complaintType" />
-						</div>
-						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-name">
+					<div class="row add-border">
+						<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.router.complaintType"/></div>
+						<div class="col-md-9 col-xs-6 add-margin" id="ct-name">
 							<c:choose>
 								<c:when test="${not empty complaintRouter.complaintType.name}">
-								${complaintRouter.complaintType.name}
+									<strong><c:out value="${complaintRouter.complaintType.name}"></c:out></strong>
 								</c:when>
 								<c:otherwise>N/A</c:otherwise>
 							</c:choose>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.router.boundaryType" />
-						</div>
-						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-dept">
+					<div class="row add-border">
+						<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.router.boundaryType"/></div>
+						<div class="col-md-9 col-xs-6 add-margin" id="bt-name">
 							<c:choose>
 								<c:when test="${not empty complaintRouter.boundary.boundaryType.name}">
-								${complaintRouter.boundary.boundaryType.name}
+									<strong><c:out value="${complaintRouter.boundary.boundaryType.name}"></c:out></strong>
 								</c:when>
 								<c:otherwise>N/A</c:otherwise>
 							</c:choose>
+							<input id="routerId" type="hidden" value="<c:out value="${complaintRouter.id}" />" />  
 						</div>
 					</div>
-					<div class="row">
-						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.router.boundary" />
-						</div>
-						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-dept">
+					<div class="row add-border">
+						<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.router.boundary"/></div>
+						<div class="col-md-9 col-xs-6 add-margin" id="b-name">
 							<c:choose>
 								<c:when test="${not empty complaintRouter.boundary.name}">
-								${complaintRouter.boundary.name}
+									<strong><c:out value="${complaintRouter.boundary.name}"></c:out></strong>
 								</c:when>
 								<c:otherwise>N/A</c:otherwise>
 							</c:choose>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.router.position" />
-						</div>
-						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-dept">
-							<c:out value="${complaintRouter.position.name}"></c:out>
+					<div class="row add-border">
+						<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.router.position"/></div>
+						<div class="col-md-9 col-xs-6 add-margin" id="pos-name">
+							<strong><c:out value="${complaintRouter.position.name}"></c:out></strong>
 						</div>
 					</div>
 				</div>
-				<div class="row text-center">
-					<div class="row">
-						<div class="text-center">
-							<button type="submit" id="buttonCreate" class="btn btn-success">
-								<spring:message code="lbl.create" />
-							</button>
-							<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
-								<spring:message code="lbl.close"/>
-							</button>
-						</div>
-					</div>
+			</div>
+			<div class="row">
+				<div class="text-center">
+							<button type="submit" id="routerCreateBtn" class="btn btn-success">
+                            	<spring:message code="lbl.create"/>
+                            </button>
+                            <button type="submit" id="routerUpdateBtn" class="btn btn-success">
+                            	<spring:message code="lbl.edit"/>
+                            </button>
+                            <button type="submit" id="routerDeleteBtn" class="btn btn-success">
+                            	<spring:message code="lbl.delete"/>
+                            </button>	
+			       <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()"><spring:message code="lbl.close"/></button>
 				</div>
-			</form:form>
-		</div>
+			</div>
+		</form:form>
 	</div>
 </div>
 
-<script src="<c:url value='/resources/js/app/complaintrouting.js'/>"></script>
+<script src="<c:url value='/resources/js/app/complaintroutingsuccess.js'/>"></script>

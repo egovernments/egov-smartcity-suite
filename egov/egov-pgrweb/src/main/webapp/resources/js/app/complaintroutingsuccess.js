@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+/*#-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,40 +36,26 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------*/
+//Instantiate the Bloodhound suggestion engine
+$(document).ready(function()
+{
+	$('#routerCreateBtn').click(function() {
+		$('#complaintRouterSuccess').attr('method', 'get');
+		$('#complaintRouterSuccess').attr('action', '/pgr/router/create');
+	})
 
-lbl.select=Select
-lbl.submit=Submit
-lbl.reset=Reset
-lbl.ok=OK
-lbl.close=Close
-lbl.cancel=Cancel
-lbl.print=Print
-lbl.yes=Yes
-lbl.no=No
-lbl.department=Department
-lbl.name=Name
-lbl.contactNo=Contact Number
-lbl.email=Email
-lbl.mobileNo=Mobile Number
-lbl.priority=Priority
-lbl.location=Location
-lbl.more=More
-lbl.when=When
-lbl.today=Today
-lbl.contact.info=Contact Information
-lbl.fromDate=From Date
-lbl.toDate=To Date
-lbl.status=Status
-lbl.search=Search
+	$('#routerUpdateBtn').click(function() {
+		var url = '/pgr/router/update/'+ $('#routerId').val();
+		$('#complaintRouterSuccess').attr('method', 'get');
+		$('#complaintRouterSuccess').attr('action', url);
+	})
+	
+	$('#routerDeleteBtn').click(function() {
+		var url = '/pgr/router/delete/'+ $('#routerId').val();
+		$('#complaintRouterSuccess').attr('method', 'post');
+		$('#complaintRouterSuccess').attr('action', url);
+	})
+	
+});
 
-lbl.create=Create
-lbl.edit=Edit
-lbl.delete=Delete
-lbl.update=Update
-
-lbl.selectdepartment=Select Department
-lbl.selectdesignation=Select Designation
-lbl.selectuser=Select User
-lbl.selectzone=Select Zone
-lbl.selectward=Select Ward

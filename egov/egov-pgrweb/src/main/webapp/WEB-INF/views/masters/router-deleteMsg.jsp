@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+<!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,40 +36,43 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------- -->
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-lbl.select=Select
-lbl.submit=Submit
-lbl.reset=Reset
-lbl.ok=OK
-lbl.close=Close
-lbl.cancel=Cancel
-lbl.print=Print
-lbl.yes=Yes
-lbl.no=No
-lbl.department=Department
-lbl.name=Name
-lbl.contactNo=Contact Number
-lbl.email=Email
-lbl.mobileNo=Mobile Number
-lbl.priority=Priority
-lbl.location=Location
-lbl.more=More
-lbl.when=When
-lbl.today=Today
-lbl.contact.info=Contact Information
-lbl.fromDate=From Date
-lbl.toDate=To Date
-lbl.status=Status
-lbl.search=Search
+<div class="row">
+	<div class="col-md-12">
+		<form:form  id="complaintRouterSuccess" method ="post" 
+		 class="form-horizontal form-groups-bordered" modelAttribute="complaintRouter" >
+		 		
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title">
+						<strong>${routerHeading}</strong>
+					</div>
+				</div> 
+                <div class="panel-body">
+					<div class="row add-border">
+						<div class="col-md-9 col-xs-6 add-margin" id="ct-name">
+							<strong><c:out value="${message}"></c:out></strong>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="text-center">
+					<button type="submit" id="routerCreateBtn" class="btn btn-success">
+                    	<spring:message code="lbl.create"/>
+					</button>
+			       <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
+			       		<spring:message code="lbl.close"/>
+			       </button>
+				</div>
+			</div>
+		</form:form>
+	</div>
+</div>
 
-lbl.create=Create
-lbl.edit=Edit
-lbl.delete=Delete
-lbl.update=Update
-
-lbl.selectdepartment=Select Department
-lbl.selectdesignation=Select Designation
-lbl.selectuser=Select User
-lbl.selectzone=Select Zone
-lbl.selectward=Select Ward
+<script src="<c:url value='/resources/js/app/complaintroutingsuccess.js'/>"></script>

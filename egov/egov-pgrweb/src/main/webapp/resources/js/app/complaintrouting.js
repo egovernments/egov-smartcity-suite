@@ -38,7 +38,7 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 //Instantiate the Bloodhound suggestion engine
-jQuery(document).ready(function($)
+$(document).ready(function()
 {
 	// Complaint Type auto-complere 
 	var complaintType = new Bloodhound({
@@ -166,12 +166,16 @@ jQuery(document).ready(function($)
 		}else if($("#boundary_type_id").val() != 0 && $('#boundaryId').val()== ""){
 			$('.boundaryerror').html('Boundary is required').show();
 			e.preventDefault();
-		}else if($('#com_type').val()== "" && $('#com_boundry').val()== ""){
+		}else if(($('#com_type').val()!= "" && $("#complaintTypeId").val() == "") && $('#com_boundry').val()== ""){
 			$('.eithererror').html('Complaint Type or Boundary should be selected').show();
 			e.preventDefault();
-		}else{
+		}else if(($('#com_type').val() == "" && $("#complaintTypeId").val() == "") && $('#com_boundry').val()== ""){
+			$('.eithererror').html('Complaint Type or Boundary should be selected').show();
+			e.preventDefault();
+		}
+		else{
 			$('.loader-class').modal('show', {backdrop: 'static'});
 		}
 	});
-
+	
 });

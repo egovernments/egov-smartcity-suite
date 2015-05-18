@@ -115,6 +115,16 @@ public class ComplaintRouterService {
         return complaintRouterRepository.save(complaintRouter);
     }
 
+    @Transactional
+    public ComplaintRouter updateComplaintRouter(final ComplaintRouter complaintRouter) {
+        return complaintRouterRepository.save(complaintRouter);
+    }
+
+    @Transactional
+    public void deleteComplaintRouter(final ComplaintRouter complaintRouter) {
+        complaintRouterRepository.delete(complaintRouter);
+    }
+
     public Boolean validateRouter(final ComplaintRouter complaintRouter) {
         Boolean exist = false;
         ComplaintRouter queryResult = null;
@@ -134,4 +144,9 @@ public class ComplaintRouterService {
             exist = true;
         return exist;
     }
+
+    public ComplaintRouter getRouterById(final Long id) {
+        return complaintRouterRepository.findOne(id);
+    }
+
 }

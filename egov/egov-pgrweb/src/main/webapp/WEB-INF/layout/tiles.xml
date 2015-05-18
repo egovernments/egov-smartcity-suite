@@ -123,7 +123,18 @@
     </definition>
     
     <definition name="router-success" extends="base_layout">
-        <put-attribute name="page-title" value="title.routerCreate" cascade="true"/>
+        <put-attribute name="page-title" value="title.router" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/router-success.jsp"/>
     </definition>
+    
+    <definition name="router-update" extends="base_layout">
+        <put-attribute name="page-title" value="title.router" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/router-update.jsp"/>
+    </definition>
+    
+    <definition name="router-deleteMsg" extends="base_layout">
+    	<put-attribute name="page-title" value="title.router" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/router-deleteMsg.jsp"/>
+    </definition>
+    
 </tiles-definitions>
