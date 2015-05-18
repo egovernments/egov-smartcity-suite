@@ -32,7 +32,7 @@
 # 	   reasonable ways as different from the original version.
 # 
 # 	3) This license does not grant any rights to any user of the program 
-# 	   with regards to rights under trademark law for use of the trade names 
+# 	   with regards to rights under tradecomplaintTypeServicemark law for use of the trade names 
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -87,21 +87,13 @@
 								<option value=""><spring:message code='lbl.select' />
 								</option>
 								<option value="lastyear"><spring:message
-										code='lbl.complaint.search.lfyear' /></option>
+										code='lbl.complaint.search.all' /></option>
 								<option value="thisyear"><spring:message
-										code='lbl.complaint.search.cfyear' /></option>
+										code='lbl.complaint.search.l7d' /></option>
 								<option value="lastquarter"><spring:message
-										code='lbl.complaint.search.lqtr' /></option>
+										code='lbl.complaint.search.l30d' /></option>
 								<option value="thisquarter"><spring:message
-										code='lbl.complaint.search.cqtr' /></option>
-								<option value="lastmonth"><spring:message
-										code='lbl.complaint.search.lmnth' /></option>
-								<option value="thismonth"><spring:message
-										code='lbl.complaint.search.cmnth' /></option>
-								<option value="lastweek"><spring:message
-										code='lbl.complaint.search.lweek' /></option>
-								<option value="thisweek"><spring:message
-										code='lbl.complaint.search.cweek' /></option>
+										code='lbl.complaint.search.l90d' /></option>
 								<option value="today"><spring:message code='lbl.today' /></option>
 							</select>
 						</div>
@@ -133,7 +125,7 @@
 								placeholder="<spring:message code='lbl.complaint.number'/>" />
 						</div>
 						<div class="col-md-4 add-margin">
-							<input type="text" name="" class="form-control" id="ct-name"
+							<input type="text" name="complainantName" class="form-control" id="ct-name"
 								placeholder="<spring:message code='lbl.name'/>" />
 						</div>
 						<div class="col-md-4 add-margin">
@@ -162,12 +154,12 @@
 					<div class="form-group show-searchcomp-more display-hide">
 
 						<div class="col-md-4 add-margin">
-							<select name="test" id="ct-sel-status" class="form-control"
+							<select name="complaintStatus" id="ct-sel-status" class="form-control"
 								data-first-option="false">
 								<option><spring:message code='lbl.status' /></option>
-								<option value="1">FORWARDED</option>
-								<option value="2">CLOSED</option>
-								<option value="3">REGISTERED</option>
+								<option value="FORWARDED">FORWARDED</option>
+								<option value="CLOSED">CLOSED</option>
+								<option value="REGISTERED">REGISTERED</option>
 							</select>
 						</div>
 					</div>
@@ -204,7 +196,7 @@
 							<button type="reset" class="btn btn-default">
 				<spring:message code="lbl.reset" />
 			</button>
-							<a href="javascript:void(0);" id="searchComplaints"
+							<a href="javascript:void(0);" id="closeComplaints"
 								class="btn btn-default" onclick="self.close()"><spring:message code='lbl.close' /></a>
 						</div>
 					</div>
