@@ -54,8 +54,10 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.pims.commons.Position;
+import org.egov.search.domain.Searchable;
 
 @MappedSuperclass
+@Searchable
 public abstract class StateAware extends AbstractAuditable<User, Long> {
     private static final long serialVersionUID = 5776408218810221246L;
     
