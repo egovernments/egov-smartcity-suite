@@ -1,42 +1,42 @@
-/**
+/*******************************************************************************
  * eGov suite of products aim to improve the internal efficiency,transparency, 
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation 
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this 
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- */
+ *    accountability and the service delivery of the government  organizations.
+ * 
+ *     Copyright (C) <2015>  eGovernments Foundation
+ * 
+ *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *     is available at http://www.egovernments.org
+ * 
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ * 
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ * 
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     http://www.gnu.org/licenses/gpl.html .
+ * 
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ * 
+ * 	1) All versions of this program, verbatim or modified must carry this 
+ * 	   Legal Notice.
+ * 
+ * 	2) Any misrepresentation of the origin of the material is prohibited. It 
+ * 	   is required that all modified versions of this material be marked in 
+ * 	   reasonable ways as different from the original version.
+ * 
+ * 	3) This license does not grant any rights to any user of the program 
+ * 	   with regards to rights under trademark law for use of the trade names 
+ * 	   or trademarks of eGovernments Foundation.
+ * 
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ ******************************************************************************/
 package org.egov.dcb.service;
 
 import java.math.BigDecimal;
@@ -56,9 +56,7 @@ import org.egov.dcb.bean.DCBRecord;
 import org.egov.dcb.bean.DCBReport;
 import org.egov.dcb.bean.Receipt;
 import org.egov.dcb.bean.ReceiptDetail;
-import org.egov.demand.dao.DCBDaoFactory;
 import org.egov.demand.dao.DemandGenericDao;
-import org.egov.demand.dao.DemandGenericHibDao;
 import org.egov.demand.dao.EgDemandReasonMasterDao;
 import org.egov.demand.dao.EgReasonCategoryDao;
 import org.egov.demand.interfaces.Billable;
@@ -68,16 +66,17 @@ import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.demand.model.EgReasonCategory;
 import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.infstr.commons.Module;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class DCBServiceImpl implements DCBService {
 
 	private static final Logger LOGGER = Logger.getLogger(DCBServiceImpl.class);
 	private CommonsDAOFactory commonsDAOFactory;
-	private EgReasonCategoryDao reasonCategoryDAO = DCBDaoFactory
-			.getDaoFactory().getEgReasonCategoryDao();
-	private EgDemandReasonMasterDao reasonMasterDAO = DCBDaoFactory
-			.getDaoFactory().getEgDemandReasonMasterDao();
-	private DemandGenericDao dmdGenDao = new DemandGenericHibDao();
+	@Autowired
+	private EgReasonCategoryDao egReasonCategoryDAO;
+	@Autowired
+	private EgDemandReasonMasterDao egDemandReasonMasterDAO;
+	private DemandGenericDao demandGenericDAO;
 	private Billable billable;
 
 	/**
@@ -101,8 +100,7 @@ public class DCBServiceImpl implements DCBService {
 	@Override
 	public DCBReport getCurrentDCBAndReceipts(final DCBDisplayInfo dcbDispInfo) {
 		validate();
-		LOGGER.info("getCurrentDCBAndReceipts() called for: "
-				+ billable.getPropertyId());
+		LOGGER.info("getCurrentDCBAndReceipts() called for: " + billable.getPropertyId());
 		final DCBReport dcbReport = new DCBReport();
 		populateDCB(dcbDispInfo, dcbReport);
 		populateReceipts(dcbReport);
@@ -113,8 +111,7 @@ public class DCBServiceImpl implements DCBService {
 	@Override
 	public DCBReport getCurrentDCBOnly(final DCBDisplayInfo dcbDispInfo) {
 		validate();
-		LOGGER.info("getCurrentDCBOnly() called for: "
-				+ billable.getPropertyId());
+		LOGGER.info("getCurrentDCBOnly() called for: " + billable.getPropertyId());
 		final DCBReport dcbReport = new DCBReport();
 		populateDCB(dcbDispInfo, dcbReport);
 		LOGGER.info("getCurrentDCBOnly() returned: " + dcbReport);
@@ -131,17 +128,14 @@ public class DCBServiceImpl implements DCBService {
 		return dcbReport;
 	}
 
-	private void populateDCB(final DCBDisplayInfo dcbDispInfo,
-			final DCBReport report) {
+	private void populateDCB(final DCBDisplayInfo dcbDispInfo, final DCBReport report) {
 		final EgDemand egDemand = billable.getCurrentDemand();
-		final List<EgDemandReasonMaster> reasonMaster = prepareReasonMasters(
-				egDemand, dcbDispInfo);
-		final List<String> fieldNames = prepareFieldNames(reasonMaster,
-				dcbDispInfo);
+		final List<EgDemandReasonMaster> reasonMaster = prepareReasonMasters(egDemand, dcbDispInfo);
+		final List<String> fieldNames = prepareFieldNames(reasonMaster, dcbDispInfo);
 		final Module module = getModuleFromDemand(egDemand);
 		Map<Installment, DCBRecord> dcbReportMap = new TreeMap<Installment, DCBRecord>();
-		dcbReportMap = iterateDCB(dmdGenDao.getDCB(egDemand, module),
-				dcbReportMap, fieldNames, egDemand);
+		dcbReportMap = iterateDCB(demandGenericDAO.getDCB(egDemand, module), dcbReportMap,
+				fieldNames, egDemand);
 		report.setFieldNames(fieldNames);
 		report.setRecords(dcbReportMap);
 		LOGGER.debug("Got DCB...");
@@ -176,8 +170,8 @@ public class DCBServiceImpl implements DCBService {
 	 * @return java.util.Map<Installment, DCBRecord>
 	 */
 	Map<Installment, DCBRecord> iterateDCB(final List dcbList,
-			final Map<Installment, DCBRecord> dcbReportMap,
-			final List<String> fieldNames, final EgDemand dmd) {
+			final Map<Installment, DCBRecord> dcbReportMap, final List<String> fieldNames,
+			final EgDemand dmd) {
 		if (dcbList != null && fieldNames != null && !fieldNames.isEmpty()) {
 			Installment installment = null;
 			Map<String, BigDecimal> demands = null;
@@ -185,20 +179,18 @@ public class DCBServiceImpl implements DCBService {
 			Map<String, BigDecimal> rebates = null;
 			for (int i = 0; i < dcbList.size();) {
 				final Object[] dcbData = (Object[]) dcbList.get(i);
-				installment = (Installment) commonsDAOFactory
-						.getInstallmentDao().findById(
-								Integer.parseInt(dcbData[0].toString()), false);
+				installment = (Installment) commonsDAOFactory.getInstallmentDao().findById(
+						Integer.parseInt(dcbData[0].toString()), false);
 				DCBRecord dcbRecord = null;
 				demands = new HashMap<String, BigDecimal>();
 				collections = new HashMap<String, BigDecimal>();
 				rebates = new HashMap<String, BigDecimal>();
-				initDemandAndCollectionMap(fieldNames, demands, collections,
-						rebates);
+				initDemandAndCollectionMap(fieldNames, demands, collections, rebates);
 				for (int j = i; j < dcbList.size(); j++, i++) {
 					final Object[] dcbData2 = (Object[]) dcbList.get(i);
 					if (dcbData[0].equals(dcbData2[0]))
-						dcbRecord = prepareDCMap(dcbData2, dcbRecord, demands,
-								collections, rebates, dmd, fieldNames);
+						dcbRecord = prepareDCMap(dcbData2, dcbRecord, demands, collections,
+								rebates, dmd, fieldNames);
 					else
 						break;
 					dcbReportMap.put(installment, dcbRecord);
@@ -230,20 +222,14 @@ public class DCBServiceImpl implements DCBService {
 	 */
 
 	DCBRecord prepareDCMap(final Object[] dcbData2, DCBRecord dcbRecord,
-			final Map<String, BigDecimal> demands,
-			final Map<String, BigDecimal> collections,
-			final Map<String, BigDecimal> rebates, final EgDemand dmd,
-			final List<String> fieldNames) {
+			final Map<String, BigDecimal> demands, final Map<String, BigDecimal> collections,
+			final Map<String, BigDecimal> rebates, final EgDemand dmd, final List<String> fieldNames) {
 		if (dcbData2 != null && dmd != null) {
 			final String reason = getReason(dcbData2, fieldNames);
-			if (reason != null && demands != null
-					&& demands.containsKey(reason)) {
-				demands.put(reason,
-						demands.get(reason).add((BigDecimal) dcbData2[1]));
-				collections.put(reason,
-						collections.get(reason).add((BigDecimal) dcbData2[2]));
-				rebates.put(reason,
-						rebates.get(reason).add((BigDecimal) dcbData2[5]));
+			if (reason != null && demands != null && demands.containsKey(reason)) {
+				demands.put(reason, demands.get(reason).add((BigDecimal) dcbData2[1]));
+				collections.put(reason, collections.get(reason).add((BigDecimal) dcbData2[2]));
+				rebates.put(reason, rebates.get(reason).add((BigDecimal) dcbData2[5]));
 			}
 			dcbRecord = new DCBRecord(demands, collections, rebates);
 		}
@@ -267,10 +253,10 @@ public class DCBServiceImpl implements DCBService {
 	String getReason(final Object[] dcbData2, final List<String> fieldNames) {
 		String reason = "";
 		if (dcbData2 != null && fieldNames != null && !fieldNames.isEmpty()) {
-			final EgReasonCategory reasonCategory = (EgReasonCategory) reasonCategoryDAO
-					.findById(Long.parseLong(dcbData2[4].toString()), false);
-			final EgDemandReasonMaster reasonMaster = (EgDemandReasonMaster) reasonMasterDAO
-					.findById(Long.parseLong(dcbData2[3].toString()), false);
+			final EgReasonCategory reasonCategory = (EgReasonCategory) egReasonCategoryDAO
+					.findById((Integer) dcbData2[4], false);
+			final EgDemandReasonMaster reasonMaster = (EgDemandReasonMaster) egDemandReasonMasterDAO
+					.findById((Integer) dcbData2[3], false);
 			if (reasonCategory != null && fieldNames != null
 					&& fieldNames.contains(reasonCategory.getName()))
 				reason = reasonCategory.getName();
@@ -290,8 +276,7 @@ public class DCBServiceImpl implements DCBService {
 	 * @param collection
 	 */
 	void initDemandAndCollectionMap(final List<String> prepareFieldNames,
-			final Map<String, BigDecimal> demand,
-			final Map<String, BigDecimal> collection,
+			final Map<String, BigDecimal> demand, final Map<String, BigDecimal> collection,
 			final Map<String, BigDecimal> rebates) {
 		if (prepareFieldNames != null && !prepareFieldNames.isEmpty())
 			for (final String fieldName : prepareFieldNames) {
@@ -312,23 +297,19 @@ public class DCBServiceImpl implements DCBService {
 	 * @return java.util.List<String>
 	 */
 
-	List<String> prepareFieldNames(
-			final List<EgDemandReasonMaster> dmdReasonMasters,
+	List<String> prepareFieldNames(final List<EgDemandReasonMaster> dmdReasonMasters,
 			final DCBDisplayInfo dcbDisPlayInfo) {
 		final List<String> fieldNames = new ArrayList<String>();
 		if (dmdReasonMasters != null && !dmdReasonMasters.isEmpty()) {
 			List<String> reasonCatgoryCodes = null;
-			if (dcbDisPlayInfo != null
-					&& dcbDisPlayInfo.getReasonCategoryCodes() != null
+			if (dcbDisPlayInfo != null && dcbDisPlayInfo.getReasonCategoryCodes() != null
 					&& !dcbDisPlayInfo.getReasonCategoryCodes().isEmpty()) {
 				reasonCatgoryCodes = dcbDisPlayInfo.getReasonCategoryCodes();
 				fieldNames.addAll(getNamesFromCodes(reasonCatgoryCodes));
 			}
 			for (final EgDemandReasonMaster reasonMaster : dmdReasonMasters)
-				if (reasonMaster != null
-						&& reasonMaster.getEgReasonCategory() != null) {
-					final String categoryReason = reasonMaster
-							.getEgReasonCategory().getName();
+				if (reasonMaster != null && reasonMaster.getEgReasonCategory() != null) {
+					final String categoryReason = reasonMaster.getEgReasonCategory().getName();
 					if (!fieldNames.contains(categoryReason))
 						fieldNames.add(reasonMaster.getReasonMaster());
 				}
@@ -339,8 +320,8 @@ public class DCBServiceImpl implements DCBService {
 	public List<String> getNamesFromCodes(final List<String> reasonCatgoryCodes) {
 		final List<String> categoryMasters = new ArrayList<String>();
 		for (final String reasonMasterCode : reasonCatgoryCodes)
-			categoryMasters.add(dmdGenDao.getReasonCategoryByCode(
-					reasonMasterCode).getName());
+			categoryMasters.add(demandGenericDAO.getReasonCategoryByCode(reasonMasterCode)
+					.getName());
 		return categoryMasters;
 	}
 
@@ -361,11 +342,9 @@ public class DCBServiceImpl implements DCBService {
 		if (demand != null) {
 			final Module module = getModuleFromDemand(demand);
 			if (module == null)
-				throw new DCBException(
-						" EgModule are missing for the provided EgDemand Id ="
-								+ demand.getId());
-			if (dcbDisPlayInfo != null
-					&& dcbDisPlayInfo.getReasonMasterCodes() != null
+				throw new DCBException(" EgModule are missing for the provided EgDemand Id ="
+						+ demand.getId());
+			if (dcbDisPlayInfo != null && dcbDisPlayInfo.getReasonMasterCodes() != null
 					&& !dcbDisPlayInfo.getReasonMasterCodes().isEmpty())
 				RsonMasterCodes = dcbDisPlayInfo.getReasonMasterCodes();
 			if (RsonMasterCodes == null || RsonMasterCodes.isEmpty())
@@ -386,16 +365,14 @@ public class DCBServiceImpl implements DCBService {
 	 * @return java.util.List<EgDemandReasonMaster> - All the ReasonMaster
 	 *         Objects for the given Master codes
 	 */
-	List<EgDemandReasonMaster> getEgdemandReasonMasters(
-			final List<String> demandReasonMsterCodes, final Module module) {
+	List<EgDemandReasonMaster> getEgdemandReasonMasters(final List<String> demandReasonMsterCodes,
+			final Module module) {
 		List<EgDemandReasonMaster> reasonMsters = null;
-		if (demandReasonMsterCodes != null && !demandReasonMsterCodes.isEmpty()
-				&& module != null) {
+		if (demandReasonMsterCodes != null && !demandReasonMsterCodes.isEmpty() && module != null) {
 			reasonMsters = new ArrayList<EgDemandReasonMaster>();
 			for (final String dmdReasonMasterCode : demandReasonMsterCodes) {
-				final EgDemandReasonMaster dmdReasonMaster = dmdGenDao
-						.getDemandReasonMasterByCode(dmdReasonMasterCode,
-								module);
+				final EgDemandReasonMaster dmdReasonMaster = demandGenericDAO
+						.getDemandReasonMasterByCode(dmdReasonMasterCode, module);
 				if (dmdReasonMaster != null)
 					reasonMsters.add(dmdReasonMaster);
 			}
@@ -416,16 +393,13 @@ public class DCBServiceImpl implements DCBService {
 		Module module = null;
 		List demandRsonMastersList = new ArrayList();
 		if (demand != null) {
-			demandRsonMastersList = dmdGenDao
-					.getEgDemandReasonMasterIds(demand);
-			if (demandRsonMastersList == null
-					|| demandRsonMastersList.isEmpty())
+			demandRsonMastersList = demandGenericDAO.getEgDemandReasonMasterIds(demand);
+			if (demandRsonMastersList == null || demandRsonMastersList.isEmpty())
 				throw new DCBException(
 						"EgDemandReasonMasters missing for the provided EgDemand Id "
 								+ demand.getId());
-			module = ((EgDemandReasonMaster) reasonMasterDAO.findById(Long
-					.valueOf(new BigDecimal(demandRsonMastersList.get(0)
-							.toString()).toString()), false)).getEgModule();
+			module = ((EgDemandReasonMaster) egDemandReasonMasterDAO.findById(
+					(Integer) demandRsonMastersList.get(0), false)).getEgModule();
 		}
 		return module;
 	}
@@ -444,7 +418,7 @@ public class DCBServiceImpl implements DCBService {
 	List<EgDemandReasonMaster> getEgdemandReasonMasters(final Module module) {
 		List<EgDemandReasonMaster> reasonMsters = null;
 		if (module != null)
-			reasonMsters = dmdGenDao.getDemandReasonMasterByModule(module);
+			reasonMsters = demandGenericDAO.getDemandReasonMasterByModule(module);
 		return reasonMsters;
 	}
 
@@ -458,11 +432,9 @@ public class DCBServiceImpl implements DCBService {
 		InstallmentReceiptTuple tuple = null;
 		for (final EgDemand demand : billable.getAllDemands())
 			for (final EgDemandDetails det : demand.getEgDemandDetails())
-				for (final EgdmCollectedReceipt collReceipt : det
-						.getEgdmCollectedReceipts()) {
+				for (final EgdmCollectedReceipt collReceipt : det.getEgdmCollectedReceipts()) {
 					tuple = new InstallmentReceiptTuple(det.getEgDemandReason()
-							.getEgInstallmentMaster(),
-							Receipt.mapFrom(collReceipt));
+							.getEgInstallmentMaster(), Receipt.mapFrom(collReceipt));
 					allReceiptTuples.add(tuple);
 				}
 
@@ -482,8 +454,7 @@ public class DCBServiceImpl implements DCBService {
 		final Map<Installment, List<Receipt>> consolidated = new HashMap<Installment, List<Receipt>>();
 
 		for (final InstallmentReceiptTuple t : tuples) {
-			List<Receipt> receiptsForInstallment = consolidated
-					.get(t.installment);
+			List<Receipt> receiptsForInstallment = consolidated.get(t.installment);
 			if (receiptsForInstallment == null) { // does not exist
 				receiptsForInstallment = new ArrayList<Receipt>();
 				consolidated.put(t.installment, receiptsForInstallment);
@@ -494,8 +465,7 @@ public class DCBServiceImpl implements DCBService {
 				// already there
 				receiptsForInstallment.add(t.receipt);
 		}
-		LOGGER.info("consolidateTuplesInstallmentWise() returned: "
-				+ consolidated);
+		LOGGER.info("consolidateTuplesInstallmentWise() returned: " + consolidated);
 		return consolidated;
 	}
 
@@ -531,32 +501,7 @@ public class DCBServiceImpl implements DCBService {
 
 	private void validate() {
 		if (billable == null)
-			throw new IllegalStateException(
-					"Please call the setBillable() method first!");
-	}
-
-	public DemandGenericDao getDmdGenDao() {
-		return dmdGenDao;
-	}
-
-	public void setDmdGenDao(final DemandGenericDao dmdGenDao) {
-		this.dmdGenDao = dmdGenDao;
-	}
-
-	public EgReasonCategoryDao getReasonCategoryDAO() {
-		return reasonCategoryDAO;
-	}
-
-	public void setReasonCategoryDAO(final EgReasonCategoryDao reasonCategoryDAO) {
-		this.reasonCategoryDAO = reasonCategoryDAO;
-	}
-
-	public EgDemandReasonMasterDao getReasonMasterDAO() {
-		return reasonMasterDAO;
-	}
-
-	public void setReasonMasterDAO(final EgDemandReasonMasterDao reasonMasterDAO) {
-		this.reasonMasterDAO = reasonMasterDAO;
+			throw new IllegalStateException("Please call the setBillable() method first!");
 	}
 
 	/**
@@ -564,13 +509,11 @@ public class DCBServiceImpl implements DCBService {
 	 * combinations. (We can't use a BidiMap because there is duplication of
 	 * both values.)
 	 */
-	private static class InstallmentReceiptTuple implements
-			Comparable<InstallmentReceiptTuple> {
+	private static class InstallmentReceiptTuple implements Comparable<InstallmentReceiptTuple> {
 		private final Installment installment;
 		private final Receipt receipt;
 
-		private InstallmentReceiptTuple(final Installment installment,
-				final Receipt receipt) {
+		private InstallmentReceiptTuple(final Installment installment, final Receipt receipt) {
 			this.installment = installment;
 			this.receipt = receipt;
 		}

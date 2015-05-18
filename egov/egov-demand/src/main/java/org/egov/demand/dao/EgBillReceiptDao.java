@@ -39,11 +39,23 @@
  */
 package org.egov.demand.dao;
 
+import java.util.List;
+
 import org.egov.demand.model.BillReceipt;
 import org.egov.demand.model.EgBill;
-import org.egov.infstr.dao.GenericDAO;
 
-public interface EgBillReceiptDao extends GenericDAO{
+public interface EgBillReceiptDao {
+
 	public BillReceipt getBillReceiptByEgBill(EgBill bill);
+
+	public BillReceipt findById(Integer id, boolean lock);
+
+	public List<BillReceipt> findAll();
+
+	public BillReceipt create(BillReceipt egBill);
+
+	public void delete(BillReceipt egBill);
+
+	public BillReceipt update(BillReceipt egBill);
 
 }

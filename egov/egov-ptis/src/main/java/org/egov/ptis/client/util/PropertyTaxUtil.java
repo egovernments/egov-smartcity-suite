@@ -259,7 +259,7 @@ public class PropertyTaxUtil {
 	private BoundaryCategoryDao boundaryCategoryDao;
 
 	@Autowired
-	@Qualifier(value = "demandGenericHibDAO")
+	@Qualifier(value = "demandGenericDAO")
 	private DemandGenericHibDao demandGenericHibDao;
 
 	@Autowired

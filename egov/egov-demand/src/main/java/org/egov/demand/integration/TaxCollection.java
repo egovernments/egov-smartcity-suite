@@ -1,42 +1,42 @@
-/**
+/*******************************************************************************
  * eGov suite of products aim to improve the internal efficiency,transparency, 
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation 
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this 
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- */
+ *    accountability and the service delivery of the government  organizations.
+ * 
+ *     Copyright (C) <2015>  eGovernments Foundation
+ * 
+ *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *     is available at http://www.egovernments.org
+ * 
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ * 
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ * 
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     http://www.gnu.org/licenses/gpl.html .
+ * 
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ * 
+ * 	1) All versions of this program, verbatim or modified must carry this 
+ * 	   Legal Notice.
+ * 
+ * 	2) Any misrepresentation of the origin of the material is prohibited. It 
+ * 	   is required that all modified versions of this material be marked in 
+ * 	   reasonable ways as different from the original version.
+ * 
+ * 	3) This license does not grant any rights to any user of the program 
+ * 	   with regards to rights under trademark law for use of the trade names 
+ * 	   or trademarks of eGovernments Foundation.
+ * 
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ ******************************************************************************/
 package org.egov.demand.integration;
 
 import java.math.BigDecimal;
@@ -48,14 +48,13 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.InvalidAccountHeadException;
+import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.CommonsDAOFactory;
-import org.egov.collection.entity.ReceiptDetail;
-import org.egov.demand.dao.DCBDaoFactory;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.dao.DemandGenericHibDao;
 import org.egov.demand.dao.EgBillDao;
@@ -74,6 +73,7 @@ import org.egov.demand.utils.DemandConstants;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.commons.Module;
 import org.hibernate.ObjectNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This class is used to persist Bills with Collection Details(i.e received from
@@ -86,9 +86,14 @@ public abstract class TaxCollection implements BillingIntegrationService {
 
 	private static final Logger LOGGER = Logger.getLogger(TaxCollection.class);
 
-	private EgBillDao billDao;
-	private EgBillDetailsDao billDetDao;
-	private EgBillReceiptDao billRctDao;
+	@Autowired
+	private EgBillDao egBillDAO;
+	@Autowired
+	private EgBillDetailsDao egBillDetailsDAO;
+	@Autowired
+	private EgBillReceiptDao egBillReceiptDAO;
+	@Autowired
+	private EgdmCollectedReceiptDao egdmCollectedReceiptDAO;
 	private CommonsDAOFactory commonsDAOFactory;
 
 	public TaxCollection() {
@@ -115,9 +120,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
 				LOGGER.debug("-----updateReceiptDetails is called----------------");
 				updateNewReceipt(bri);
 			} catch (Exception e) {
-				LOGGER.error(
-						"Exception while updating receipt details in billing system",
-						e);
+				LOGGER.error("Exception while updating receipt details in billing system", e);
 				throw new EGOVRuntimeException("", e);
 			}
 
@@ -133,8 +136,8 @@ public abstract class TaxCollection implements BillingIntegrationService {
 	 * @param org
 	 *            .egov.infstr.collections.integration.models.BillReceiptInfo
 	 */
-	private void updateNewReceipt(BillReceiptInfo bri)
-			throws InvalidAccountHeadException, ObjectNotFoundException {
+	private void updateNewReceipt(BillReceiptInfo bri) throws InvalidAccountHeadException,
+			ObjectNotFoundException {
 		LOGGER.info("-----updateNewReceipt is called----------------");
 		linkBillToReceipt(bri);
 		updateBillDetails(bri);
@@ -156,40 +159,30 @@ public abstract class TaxCollection implements BillingIntegrationService {
 	 *
 	 * @throws InvalidAccountHeadException
 	 */
-	BillReceipt linkBillToReceipt(BillReceiptInfo bri)
-			throws InvalidAccountHeadException, ObjectNotFoundException {
+	BillReceipt linkBillToReceipt(BillReceiptInfo bri) throws InvalidAccountHeadException,
+			ObjectNotFoundException {
 		LOGGER.debug("-----Start of linkBillToReceipt----------------");
-		billDao = DCBDaoFactory.getDaoFactory().getEgBillDao();
-		billDetDao = DCBDaoFactory.getDaoFactory().getEgBillDetailsDao();
-		billRctDao = DCBDaoFactory.getDaoFactory().getEgBillReceiptDao();
 		BillReceipt billRecpt = null;
 		if (bri == null) {
 			throw new EGOVRuntimeException(" BillReceiptInfo Object is null ");
 		}
-		EgBill egBill = (EgBill) billDao.findById(
-				new Long(bri.getBillReferenceNum()), false);
+		EgBill egBill = egBillDAO.findById(Integer.valueOf(bri.getBillReferenceNum()),
+				false);
 		if (egBill == null) {
-			throw new EGOVRuntimeException(
-					" EgBill Object is null for the Bill Number"
-							+ bri.getBillReferenceNum());
+			throw new EGOVRuntimeException(" EgBill Object is null for the Bill Number"
+					+ bri.getBillReferenceNum());
 		}
-		List<EgBillDetails> billDetList = billDetDao
-				.getBillDetailsByBill(egBill);
-		BigDecimal totalCollectedAmt = calculateTotalCollectedAmt(bri,
-				billDetList);
+		List<EgBillDetails> billDetList = egBillDetailsDAO.getBillDetailsByBill(egBill);
+		BigDecimal totalCollectedAmt = calculateTotalCollectedAmt(bri, billDetList);
 		if (bri.getEvent() == null) {
-			throw new EGOVRuntimeException(
-					" Event in BillReceiptInfo Object is Null");
+			throw new EGOVRuntimeException(" Event in BillReceiptInfo Object is Null");
 		}
-		if (bri.getEvent().equals(
-				BillingIntegrationService.EVENT_RECEIPT_CREATED)) {
+		if (bri.getEvent().equals(BillingIntegrationService.EVENT_RECEIPT_CREATED)) {
 			billRecpt = prepareBillReceiptBean(bri, egBill, totalCollectedAmt);
-			billRctDao.create(billRecpt);
+			egBillReceiptDAO.create(billRecpt);
 
-		} else if (bri.getEvent().equals(
-				BillingIntegrationService.EVENT_RECEIPT_CANCELLED)) {
-			billRecpt = updateBillReceiptForCancellation(bri, egBill,
-					totalCollectedAmt);
+		} else if (bri.getEvent().equals(BillingIntegrationService.EVENT_RECEIPT_CANCELLED)) {
+			billRecpt = updateBillReceiptForCancellation(bri, egBill, totalCollectedAmt);
 		}
 		LOGGER.debug("-----End of linkBillToReceipt----------------");
 		return billRecpt;
@@ -248,31 +241,25 @@ public abstract class TaxCollection implements BillingIntegrationService {
 	 *
 	 *
 	 */
-	BillReceipt updateBillReceiptForCancellation(BillReceiptInfo bri,
-			EgBill egBill, BigDecimal totalCollectedAmt) {
+	BillReceipt updateBillReceiptForCancellation(BillReceiptInfo bri, EgBill egBill,
+			BigDecimal totalCollectedAmt) {
 		BillReceipt billRecpt = null;
 		if (bri == null) {
 			throw new EGOVRuntimeException(" BillReceiptInfo Object is null ");
 		}
 		if (egBill != null && totalCollectedAmt != null) {
-			billRctDao = DCBDaoFactory.getDaoFactory().getEgBillReceiptDao();
-			billRecpt = billRctDao.getBillReceiptByEgBill(egBill);
+			billRecpt = egBillReceiptDAO.getBillReceiptByEgBill(egBill);
 			if (billRecpt == null) {
-				throw new EGOVRuntimeException(
-						" Bill receipt Object is null for the EgBill "
-								+ egBill.getId());
+				throw new EGOVRuntimeException(" Bill receipt Object is null for the EgBill "
+						+ egBill.getId());
 			}
-			if (bri.getEvent().equals(
-					BillingIntegrationService.EVENT_RECEIPT_CANCELLED)) {
+			if (bri.getEvent().equals(BillingIntegrationService.EVENT_RECEIPT_CANCELLED)) {
 				billRecpt.setIsCancelled(Boolean.TRUE);
 			}
-			billRecpt.setReceiptAmt(totalCollectedAmt.subtract(billRecpt
-					.getReceiptAmt()));
+			billRecpt.setReceiptAmt(totalCollectedAmt.subtract(billRecpt.getReceiptAmt()));
 		} else {
-			throw new EGOVRuntimeException(
-					" EgBill Object is null for the Bill Number"
-							+ bri.getBillReferenceNum()
-							+ "in updateBillReceiptForCancellation method");
+			throw new EGOVRuntimeException(" EgBill Object is null for the Bill Number"
+					+ bri.getBillReferenceNum() + "in updateBillReceiptForCancellation method");
 		}
 		return billRecpt;
 	}
@@ -291,29 +278,21 @@ public abstract class TaxCollection implements BillingIntegrationService {
 	 *
 	 * @throws InvalidAccountHeadException
 	 */
-	EgBill updateBillDetails(BillReceiptInfo bri)
-			throws InvalidAccountHeadException {
+	EgBill updateBillDetails(BillReceiptInfo bri) throws InvalidAccountHeadException {
 		LOGGER.debug("-----Start of updateBillDetails----------------");
 		EgBill egBill = null;
-		billDao = DCBDaoFactory.getDaoFactory().getEgBillDao();
-		billDetDao = DCBDaoFactory.getDaoFactory().getEgBillDetailsDao();
 		if (bri == null) {
 			throw new EGOVRuntimeException(" BillReceiptInfo Object is null ");
 		}
-		egBill = (EgBill) billDao.findById(new Long(bri.getBillReferenceNum()),
-				false);
-		List<EgBillDetails> billDetList = billDetDao
-				.getBillDetailsByBill(egBill);
+		egBill = egBillDAO.findById(Integer.valueOf(bri.getBillReferenceNum()), false);
+		List<EgBillDetails> billDetList = egBillDetailsDAO.getBillDetailsByBill(egBill);
 
 		if (bri.getEvent() != null
-				&& bri.getEvent().equals(
-						BillingIntegrationService.EVENT_RECEIPT_CREATED)) {
-			BigDecimal totalCollectedAmt = calculateTotalCollectedAmt(bri,
-					billDetList);
+				&& bri.getEvent().equals(BillingIntegrationService.EVENT_RECEIPT_CREATED)) {
+			BigDecimal totalCollectedAmt = calculateTotalCollectedAmt(bri, billDetList);
 			egBill = updateBill(bri, egBill, totalCollectedAmt);
 		} else if (bri.getEvent() != null
-				&& bri.getEvent().equals(
-						BillingIntegrationService.EVENT_INSTRUMENT_BOUNCED)) {
+				&& bri.getEvent().equals(BillingIntegrationService.EVENT_INSTRUMENT_BOUNCED)) {
 			egBill = updateBillForChqBounce(bri, egBill, getTotalChequeAmt(bri));
 		}
 		LOGGER.debug("-----End of updateBillDetails----------------");
@@ -336,15 +315,10 @@ public abstract class TaxCollection implements BillingIntegrationService {
 	 *
 	 */
 
-	public EgBill updateBillForChqBounce(BillReceiptInfo bri, EgBill egBill,
-			BigDecimal totalChqAmt) {
-		billDetDao = DCBDaoFactory.getDaoFactory().getEgBillDetailsDao();
-		billDao = DCBDaoFactory.getDaoFactory().getEgBillDao();
+	public EgBill updateBillForChqBounce(BillReceiptInfo bri, EgBill egBill, BigDecimal totalChqAmt) {
 		BigDecimal zeroVal = BigDecimal.ZERO;
-		if (totalChqAmt != null && !totalChqAmt.equals(zeroVal)
-				&& egBill != null) {
-			List<EgBillDetails> billList = new ArrayList<EgBillDetails>(
-					egBill.getEgBillDetails());
+		if (totalChqAmt != null && !totalChqAmt.equals(zeroVal) && egBill != null) {
+			List<EgBillDetails> billList = new ArrayList<EgBillDetails>(egBill.getEgBillDetails());
 			// Reversed the list because the knocking off the amount should
 			// start from current Installment to least Installment.
 			Collections.reverse(billList);
@@ -365,12 +339,12 @@ public abstract class TaxCollection implements BillingIntegrationService {
 					}
 					if (remAmount.compareTo(zeroVal) > 0) {
 						billdet.setCollectedAmount(remAmount);
-						billDetDao.update(billdet);
+						egBillDetailsDAO.update(billdet);
 					}
 				}
 			}
 			egBill.setTotalCollectedAmount(totalChqAmt);
-			billDao.update(egBill);
+			egBillDAO.update(egBill);
 		}
 		return egBill;
 	}
@@ -396,13 +370,10 @@ public abstract class TaxCollection implements BillingIntegrationService {
 	 *
 	 */
 
-	EgBill updateBillByCancelledRct(BillReceiptInfo bri, EgBill egBill,
-			BigDecimal totalCollectedAmt) throws InvalidAccountHeadException {
-		billDao = DCBDaoFactory.getDaoFactory().getEgBillDao();
-		billDetDao = DCBDaoFactory.getDaoFactory().getEgBillDetailsDao();
+	EgBill updateBillByCancelledRct(BillReceiptInfo bri, EgBill egBill, BigDecimal totalCollectedAmt)
+			throws InvalidAccountHeadException {
 		if (bri != null && egBill != null && totalCollectedAmt != null) {
-			List<EgBillDetails> billList = new ArrayList<EgBillDetails>(
-					egBill.getEgBillDetails());
+			List<EgBillDetails> billList = new ArrayList<EgBillDetails>(egBill.getEgBillDetails());
 			// Reversed the list because the knocking off the amount should
 			// start from current up to least installment.
 			Collections.reverse(billList);
@@ -412,18 +383,17 @@ public abstract class TaxCollection implements BillingIntegrationService {
 				for (ReceiptAccountInfo acctDet : bri.getAccountDetails()) {
 					if (billDet.getGlcode().equals(acctDet.getGlCode())) {
 						glCodeExist = true;
-						billDet.setCollectedAmount(acctDet.getCrAmount()
-								.subtract(balanceAmt));
-						billDetDao.update(billDet);
+						billDet.setCollectedAmount(acctDet.getCrAmount().subtract(balanceAmt));
+						egBillDetailsDAO.update(billDet);
 					}
 				}
 				if (!glCodeExist) {
-					throw new InvalidAccountHeadException(
-							"GlCode does not exist for " + billDet.getGlcode());
+					throw new InvalidAccountHeadException("GlCode does not exist for "
+							+ billDet.getGlcode());
 				}
 			}
 			egBill.setTotalCollectedAmount(totalCollectedAmt);
-			billDao.update(egBill);
+			egBillDAO.update(egBill);
 		}
 		return egBill;
 	}
@@ -447,10 +417,8 @@ public abstract class TaxCollection implements BillingIntegrationService {
 	 *
 	 */
 
-	private EgBill updateBill(BillReceiptInfo bri, EgBill egBill,
-			BigDecimal totalCollectedAmt) throws InvalidAccountHeadException {
-		billDao = DCBDaoFactory.getDaoFactory().getEgBillDao();
-		billDetDao = DCBDaoFactory.getDaoFactory().getEgBillDetailsDao();
+	private EgBill updateBill(BillReceiptInfo bri, EgBill egBill, BigDecimal totalCollectedAmt)
+			throws InvalidAccountHeadException {
 		if (bri != null) {
 			for (EgBillDetails billDet : egBill.getEgBillDetails()) {
 				Boolean glCodeExist = false;
@@ -461,19 +429,18 @@ public abstract class TaxCollection implements BillingIntegrationService {
 						if (amtCollected == null) {
 							amtCollected = BigDecimal.ZERO;
 						}
-						billDet.setCollectedAmount(acctDet.getCrAmount()
-								.subtract(amtCollected));
-						billDetDao.update(billDet);
+						billDet.setCollectedAmount(acctDet.getCrAmount().subtract(amtCollected));
+						egBillDetailsDAO.update(billDet);
 					}
 				}
 				if (!glCodeExist) {
-					throw new InvalidAccountHeadException(
-							"GlCode does not exist for " + billDet.getGlcode());
+					throw new InvalidAccountHeadException("GlCode does not exist for "
+							+ billDet.getGlcode());
 				}
 			}
 			egBill.setTotalCollectedAmount(totalCollectedAmt);
 
-			billDao.update(egBill);
+			egBillDAO.update(egBill);
 		}
 		return egBill;
 	}
@@ -505,20 +472,17 @@ public abstract class TaxCollection implements BillingIntegrationService {
 					for (ReceiptAccountInfo acctDet : bri.getAccountDetails()) {
 						if (billDet.getGlcode().equals(acctDet.getGlCode())) {
 							glCodeExist = true;
-							totalCollAmt = totalCollAmt.add(acctDet
-									.getCrAmount());
+							totalCollAmt = totalCollAmt.add(acctDet.getCrAmount());
 						}
 					}
 					if (!glCodeExist) {
-						throw new InvalidAccountHeadException(
-								"GlCode does not exist for "
-										+ billDet.getGlcode());
+						throw new InvalidAccountHeadException("GlCode does not exist for "
+								+ billDet.getGlcode());
 					}
 				}
 			}
 		} catch (EGOVRuntimeException e) {
-			throw new EGOVRuntimeException(
-					"Exception in calculate Total Collected Amt" + e);
+			throw new EGOVRuntimeException("Exception in calculate Total Collected Amt" + e);
 		}
 
 		return totalCollAmt;
@@ -540,17 +504,14 @@ public abstract class TaxCollection implements BillingIntegrationService {
 		BigDecimal totalCollAmt = BigDecimal.ZERO;
 		try {
 			if (bri != null) {
-				for (ReceiptInstrumentInfo rctInst : bri
-						.getBouncedInstruments()) {
+				for (ReceiptInstrumentInfo rctInst : bri.getBouncedInstruments()) {
 					if (rctInst.getInstrumentAmount() != null) {
-						totalCollAmt = totalCollAmt.add(rctInst
-								.getInstrumentAmount());
+						totalCollAmt = totalCollAmt.add(rctInst.getInstrumentAmount());
 					}
 				}
 			}
 		} catch (EGOVRuntimeException e) {
-			throw new EGOVRuntimeException(
-					"Exception in calculate Total Collected Amt" + e);
+			throw new EGOVRuntimeException("Exception in calculate Total Collected Amt" + e);
 		}
 
 		return totalCollAmt;
@@ -606,8 +567,8 @@ public abstract class TaxCollection implements BillingIntegrationService {
 	 * @return
 	 */
 	protected Installment getInstallmentForDate(Date date) {
-		return commonsDAOFactory.getInstallmentDao()
-				.getInsatllmentByModuleForGivenDate(module(), date);
+		return commonsDAOFactory.getInstallmentDao().getInsatllmentByModuleForGivenDate(module(),
+				date);
 	}
 
 	/**
@@ -625,8 +586,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
 	 * @return
 	 */
 	protected List<Installment> getAllInstallments() {
-		return commonsDAOFactory.getInstallmentDao()
-				.getInsatllmentByModule(module());
+		return commonsDAOFactory.getInstallmentDao().getInsatllmentByModule(module());
 	}
 
 	/**
@@ -648,12 +608,11 @@ public abstract class TaxCollection implements BillingIntegrationService {
 	 * @param code
 	 * @return
 	 */
-	public EgDemandDetails getDemandDetail(EgDemand egDemand,
-			Installment instl, String code) {
+	public EgDemandDetails getDemandDetail(EgDemand egDemand, Installment instl, String code) {
 		DemandGenericDao dmdGenericDao = new DemandGenericHibDao();
 		EgDemandDetails dmdDet = null;
-		List<EgDemandDetails> dmdDetList = dmdGenericDao.getDmdDetailList(
-				egDemand, instl, module(), getDemandReasonMaster(code));
+		List<EgDemandDetails> dmdDetList = dmdGenericDao.getDmdDetailList(egDemand, instl,
+				module(), getDemandReasonMaster(code));
 		if (!dmdDetList.isEmpty()) {
 			dmdDet = dmdDetList.get(0);
 		}
@@ -667,12 +626,10 @@ public abstract class TaxCollection implements BillingIntegrationService {
 	 * @param reasonMasterCode
 	 * @return
 	 */
-	protected EgDemandReason getCurrentReason(String categoryCode,
-			String reasonMasterCode) {
+	protected EgDemandReason getCurrentReason(String categoryCode, String reasonMasterCode) {
 		DemandGenericDao dmdGenDao = new DemandGenericHibDao();
-		EgDemandReason reason = dmdGenDao
-				.getEgDemandReasonByCodeInstallmentModule(reasonMasterCode,
-						getCurrentInstallment(), module(), categoryCode);
+		EgDemandReason reason = dmdGenDao.getEgDemandReasonByCodeInstallmentModule(
+				reasonMasterCode, getCurrentInstallment(), module(), categoryCode);
 		return reason;
 	}
 
@@ -684,11 +641,9 @@ public abstract class TaxCollection implements BillingIntegrationService {
 	 * @param billRcptInfo
 	 * @return egDmCollectedReceipt
 	 */
-	protected EgdmCollectedReceipt persistCollectedReceipts(
-			EgDemandDetails egDemandDetails, String receiptNumber,
-			BigDecimal receiptAmount, Date receiptDate, BigDecimal reasonAmount) {
-		EgdmCollectedReceiptDao egdmCollectedReceiptDao = DCBDaoFactory
-				.getDaoFactory().getEgdmCollectedReceiptsDao();
+	protected EgdmCollectedReceipt persistCollectedReceipts(EgDemandDetails egDemandDetails,
+			String receiptNumber, BigDecimal receiptAmount, Date receiptDate,
+			BigDecimal reasonAmount) {
 		EgdmCollectedReceipt egDmCollectedReceipt = new EgdmCollectedReceipt();
 		egDmCollectedReceipt.setReceiptNumber(receiptNumber);
 		egDmCollectedReceipt.setReceiptDate(receiptDate);
@@ -696,7 +651,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
 		egDmCollectedReceipt.setReasonAmount(reasonAmount);
 		egDmCollectedReceipt.setStatus(DemandConstants.NEWRECEIPT);
 		egDmCollectedReceipt.setEgdemandDetail(egDemandDetails);
-		egdmCollectedReceiptDao.create(egDmCollectedReceipt);
+		egdmCollectedReceiptDAO.create(egDmCollectedReceipt);
 		return egDmCollectedReceipt;
 	}
 
@@ -712,18 +667,16 @@ public abstract class TaxCollection implements BillingIntegrationService {
 				.getAllEgdmCollectedReceipts(receiptNumber);
 		if (egdmCollectedReceipts != null && !egdmCollectedReceipts.isEmpty()) {
 			for (EgdmCollectedReceipt egDmCollectedReceipt : egdmCollectedReceipts) {
-				egDmCollectedReceipt
-						.setStatus(DemandConstants.CANCELLED_RECEIPT);
+				egDmCollectedReceipt.setStatus(DemandConstants.CANCELLED_RECEIPT);
 				egDmCollectedReceipt.setUpdatedTime(new Date());
 			}
 		}
 	}
 
 	@Override
-	public void apportionPaidAmount(String billReferenceNumber,
-			BigDecimal actualAmountPaid, ArrayList<ReceiptDetail> receiptDetails) {
-		apportionCollection(billReferenceNumber, actualAmountPaid,
-				receiptDetails);
+	public void apportionPaidAmount(String billReferenceNumber, BigDecimal actualAmountPaid,
+			ArrayList<ReceiptDetail> receiptDetails) {
+		apportionCollection(billReferenceNumber, actualAmountPaid, receiptDetails);
 	}
 
 	/**
@@ -751,5 +704,5 @@ public abstract class TaxCollection implements BillingIntegrationService {
 	public void setCommonsDAOFactory(CommonsDAOFactory commonsDAOFactory) {
 		this.commonsDAOFactory = commonsDAOFactory;
 	}
-	
+
 }

@@ -63,7 +63,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.egov.commons.Installment;
-import org.egov.demand.dao.DCBDaoFactory;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.dao.EgDemandDao;
@@ -320,7 +319,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 			demands = new ArrayList<EgDemand>();
 			Iterator iter = demandIds.iterator();
 			while (iter.hasNext()) {
-				demands.add((EgDemand) demandDao.findById(Long.valueOf(iter.next().toString()),
+				demands.add((EgDemand) demandDao.findById(Integer.valueOf(iter.next().toString()),
 						false));
 			}
 		}
@@ -496,7 +495,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable,
 	@Override
 	public EgBillType getBillType() {
 		if (billType == null) {
-			EgBillDao egBillDao = DCBDaoFactory.getDaoFactory().getEgBillDao();
 			if (getUserId() != null && !getUserId().equals("")) {
 				String loginUser = userService.getUserById(getUserId()).getName();
 				if (loginUser.equals(PropertyTaxConstants.CITIZENUSER)) {

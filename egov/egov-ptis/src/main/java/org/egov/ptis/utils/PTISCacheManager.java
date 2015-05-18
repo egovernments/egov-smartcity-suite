@@ -49,7 +49,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.egov.demand.dao.DCBDaoFactory;
 import org.egov.demand.dao.DepreciationMasterDao;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Address;
@@ -130,6 +129,8 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 	private static TaxPercDAO taxPercDAO;
 	@Autowired
 	private static CategoryDao categoryDAO;
+	@Autowired
+	private static DepreciationMasterDao depreciationMasterDAO;
 
 	@Override
 	public List getAllDepreciationRates() {
@@ -327,9 +328,6 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 			 * .getCategoryDao();
 			 */
 
-			DepreciationMasterDao deprMstrDao = DCBDaoFactory.getDaoFactory()
-					.getDepreciationMasterDao();
-
 			allPropertySourcelist = (ArrayList) propertySourceDAO.findAll();
 			Iterator allPropertySourcelistIter = allPropertySourcelist.iterator();
 			while (allPropertySourcelistIter.hasNext()) {
@@ -388,7 +386,7 @@ public class PTISCacheManager implements PTISCacheManagerInteface {
 
 			allAllTaxRatelist = (ArrayList) taxPercDAO.findAll();
 			allCategorieslist = (ArrayList) categoryDAO.findAll();
-			allDepreciationRates = (ArrayList) deprMstrDao.findAll();
+			allDepreciationRates = (ArrayList) depreciationMasterDAO.findAll();
 
 		} catch (Exception sqe) {
 			LOGGER.info("Exception in update()-----PTISCacheManager----" + sqe.getMessage());

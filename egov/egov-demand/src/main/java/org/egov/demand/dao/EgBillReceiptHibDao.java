@@ -39,34 +39,73 @@
  */
 package org.egov.demand.dao;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.demand.model.BillReceipt;
 import org.egov.demand.model.EgBill;
-import org.egov.infstr.dao.GenericHibernateDAO;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-public class EgBillReceiptHibDao extends GenericHibernateDAO implements EgBillReceiptDao{
+@Repository(value = "egBillReceiptDAO")
+@Transactional(readOnly = true)
+public class EgBillReceiptHibDao implements EgBillReceiptDao {
 
-	public EgBillReceiptHibDao(Class persistentClass, Session session) {
-		super(persistentClass, session);
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	private Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
 	}
 
-	public BillReceipt getBillReceiptByEgBill(EgBill bill)
-	{
+	@Override
+	public BillReceipt getBillReceiptByEgBill(EgBill bill) {
 		BillReceipt billRecpt = null;
-		if(bill!=null)
-		{
-			Criteria criteria =getCurrentSession().createCriteria(BillReceipt.class)
-			.add(Restrictions.eq("billId", bill));
-			if(criteria.list()!=null && !criteria.list().isEmpty())
-			{
-				billRecpt=(BillReceipt)criteria.list().get(0);
+		if (bill != null) {
+			Criteria criteria = getCurrentSession().createCriteria(BillReceipt.class).add(
+					Restrictions.eq("billId", bill));
+			if (criteria.list() != null && !criteria.list().isEmpty()) {
+				billRecpt = (BillReceipt) criteria.list().get(0);
 			}
 		}
 
 		return billRecpt;
 
+	}
+
+	@Override
+	public BillReceipt findById(Integer id, boolean lock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<BillReceipt> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BillReceipt create(BillReceipt billReceipt) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(BillReceipt billReceipt) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public BillReceipt update(BillReceipt billReceipt) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

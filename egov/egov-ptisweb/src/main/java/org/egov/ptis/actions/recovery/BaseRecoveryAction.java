@@ -56,7 +56,6 @@ import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
-import org.egov.demand.dao.DCBDaoFactory;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgDemand;
@@ -68,7 +67,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
-import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.dao.ModuleDao;
 import org.egov.infstr.commons.dao.ModuleHibDao;
@@ -81,7 +79,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.actions.view.ViewPropertyAction;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -94,6 +91,7 @@ import org.egov.ptis.domain.entity.recovery.WarrantFee;
 import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.utils.PTISCacheManager;
 import org.egov.ptis.utils.PTISCacheManagerInteface;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
@@ -118,6 +116,9 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 	protected NoticeService noticeService;
 	private InstallmentDao instalDao;
 	private ModuleDao moduleDao;
+	@Autowired
+	private EgBillDao egBillDAO;
+	
 	@Override
 	public Object getModel() {
 		
@@ -273,8 +274,7 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 		currentDemand.setEgDemandDetails(demandDetails);
 		currentBill.setTotalAmount(totalDemandAmt);
 		currentBill.setEgDemand(currentDemand);
-		EgBillDao billDAO = DCBDaoFactory.getDaoFactory().getEgBillDao();
-		billDAO.update(currentBill);
+		egBillDAO.update(currentBill);
 		
 		Map<Installment, Map<String, BigDecimal>> amounts = new HashMap<Installment, Map<String,BigDecimal>>();
 		Map<String, BigDecimal> voucherDemandMap = new HashMap<String, BigDecimal>(); // Map for create voucher
