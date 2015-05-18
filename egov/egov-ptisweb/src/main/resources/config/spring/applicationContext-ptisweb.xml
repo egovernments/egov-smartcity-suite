@@ -48,8 +48,6 @@
     <import resource="applicationSecurityContext-ptis.xml"/>
     <import resource="classpath*:config/spring/applicationContext-ptis.xml"/>
     
-	<context:component-scan base-package="org.egov.ptis"/>
-	
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
     
 </beans>
