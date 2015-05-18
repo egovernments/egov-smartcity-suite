@@ -39,6 +39,8 @@
  */
 package org.egov.commons.dao;
 
+import java.sql.Connection;
+import java.util.Collection;
 import java.util.List;
 
 import org.egov.commons.Accountdetailtype;
@@ -47,28 +49,28 @@ import org.egov.exceptions.EGOVException;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.dao.GenericDAO;
 
-public interface ChartOfAccountsDAO extends GenericDAO {
+public interface ChartOfAccountsDAO extends GenericDAO{
+//	public Collection getAccountCodeList();
+	@Deprecated
+	public Collection getAccountCodeListForDetails();
+	@Deprecated
+	public CChartOfAccounts findCodeByPurposeId(int purposeId) throws Exception;
 	public CChartOfAccounts getCChartOfAccountsByGlCode(String glCode);
-
-	public List getGlcode(String minGlcode, String maxGlcode, String majGlcode) throws Exception;
-
-	public List<CChartOfAccounts> getActiveAccountsForType(char c) throws EGOVException;
-
+	@Deprecated
+	public List getChartOfAccountsForTds();
+	@Deprecated
+	public int getDetailTypeId(String glCode,Connection connection) throws Exception;
+	@Deprecated
+	public int getDetailTypeIdByName(String glCode,Connection connection,String name) throws Exception;
+	public List getGlcode(String minGlcode,String maxGlcode,String majGlcode) throws Exception;
+	public List<CChartOfAccounts> getActiveAccountsForType(char c)throws EGOVException;
 	public List<CChartOfAccounts> getAccountCodeByPurpose(Integer purposeId) throws EGOVException;
-
 	public List<CChartOfAccounts> getNonControlCodeList() throws EGOVException;
-
 	public List<Accountdetailtype> getAccountdetailtypeListByGLCode(final String glCode) throws EGOVException;
-
-	public Accountdetailtype getAccountDetailTypeIdByName(String glCode, String name) throws Exception;
-
-	public List<CChartOfAccounts> getDetailedAccountCodeList() throws EGOVException;
-
-	public List<CChartOfAccounts> getActiveAccountsForTypes(char[] type) throws ValidationException;
-
+	public Accountdetailtype getAccountDetailTypeIdByName(String glCode,String name) throws Exception;
+	public List<CChartOfAccounts> getDetailedAccountCodeList()throws EGOVException;
+	public List<CChartOfAccounts> getActiveAccountsForTypes(char[] type)throws ValidationException;
 	public List<CChartOfAccounts> getAccountCodeByListOfPurposeId(Integer[] purposeId) throws ValidationException;
-
 	public List<CChartOfAccounts> getListOfDetailCode(final String glCode) throws ValidationException;
-
 	public List<CChartOfAccounts> getBankChartofAccountCodeList();
-}
+	}

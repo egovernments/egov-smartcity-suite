@@ -40,7 +40,7 @@
 package org.egov.model.deduction;
 
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.pims.commons.DrawingOfficer;
+import org.egov.eis.entity.DrawingOfficer;
 
 public class DepartmentDOMapping {
    

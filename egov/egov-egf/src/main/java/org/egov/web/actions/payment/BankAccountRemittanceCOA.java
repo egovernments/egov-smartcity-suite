@@ -42,7 +42,7 @@ package org.egov.web.actions.payment;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.pims.commons.DrawingOfficer;
+import org.egov.eis.entity.DrawingOfficer;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 public class BankAccountRemittanceCOA{

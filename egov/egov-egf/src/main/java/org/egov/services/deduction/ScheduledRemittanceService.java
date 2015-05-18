@@ -83,7 +83,7 @@ import org.egov.model.payment.Paymentheader;
 import org.egov.model.recoveries.Recovery;
 import org.egov.model.recoveries.RemittanceSchedulePayment;
 import org.egov.model.recoveries.RemittanceSchedulerLog;
-import org.egov.pims.commons.DrawingOfficer;
+import org.egov.eis.entity.DrawingOfficer;
 import org.egov.pims.commons.Position;
 import org.egov.services.payment.PaymentService;
 import org.egov.services.recoveries.RecoveryService;

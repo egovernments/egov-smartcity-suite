@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 19, 2007 2:41:18 PM by Hibernate Tools 3.2.0.b9 -->
 <hibernate-mapping>
     <class name="org.egov.commons.Relation" table="RELATION" >
         <id name="id" type="integer">
@@ -94,11 +95,22 @@
         <property name="bankname" type="string">
             <column name="BANKNAME" length="50" />
         </property>
+        		
         <property name="ifsccode" type="string">
             <column name="IFSCCODE" length="50" />
         </property>
         <property name="modeofpay" type="string">
             <column name="MODEOFPAY" length="10" />
         </property>
+         <property name="itexempted" type="java.lang.Boolean">
+            <column name="ITEXEMPTED" precision="1" scale="0" />
+        </property>
+        <many-to-one name="bankId" class="org.egov.commons.Bank" fetch="join">            
+            <column name="BANKID" precision="22" scale="0" />
+        </many-to-one>
+      <!--    <many-to-one name="bankBranchId" class="org.egov.commons.Bankbranch" fetch="select">
+            <column name="BANKBRANCHID" precision="22" scale="0" />
+        </many-to-one>--> 
+       
     </class>
 </hibernate-mapping>

@@ -44,28 +44,48 @@ import java.util.List;
 import org.egov.commons.utils.EntityType;
 import org.egov.infstr.ValidationException;
 
+/**
+ * 
+ * @author mani
+ * Every sevice  of model  which implements EntityType should implement this service.
+ *
+ */
 public interface EntityTypeService {
 	/**
-	 * to get the list of active Entities that will used for posting. if Entity is mapped to multiple AccountDetailTypes 
-	 * consider the passed input parameter for eg: AccountEntity will have master list of Telephone as well as 
-	 * Electricity as AccountDetailTypes
+	 * to get the list of active Entities that will used for posting.
+	 * if Entity is mapped to multiple AccountDetailTypes consider the passed input parameter
+	 * for eg: AccountEntity will have master list of Telephone as well as Electricity as AccountDetailTypes
+	 *         
 	 * @param accountDetailTypeId
 	 * @return
 	 */
 	public List<? extends EntityType> getAllActiveEntities(Integer accountDetailTypeId);
 
 	/**
-	 * Returns the list of active entities filtered using the given filter key. This is mainly used for filtering 
-	 * entities to be shown in auto-complete boxes on UI. It is expected that the implementation of this 
-	 * method uses both the "name" and "code" to perform the filtering, and supports text
+	 * Returns the list of active entities filtered using the given filter key.
+	 * This is mainly used for filtering entities to be shown in auto-complete
+	 * boxes on UI. It is expected that the implementation of this method uses
+	 * both the "name" and "code" to perform the filtering, and supports text
 	 * searches (LIKE clause)
-	 * @param filterKey The filter key
-	 * @param maxRecords Maximum number of records to be returned. If this is passed as -1, 
-	 * the method should return all the records.
-	 * @param accountDetailTypeId The account detail type id
+	 * 
+	 * @param filterKey
+	 *            The filter key
+	 * @param maxRecords
+	 *            Maximum number of records to be returned. If this is passed as
+	 *            -1, the method should return all the records.
+	 * @param accountDetailTypeId
+	 *            The account detail type id
 	 * @return List of filtered active entities
 	 */
 	public List<? extends EntityType> filterActiveEntities(String filterKey, int maxRecords, Integer accountDetailTypeId);
+
+	/**
+	 * Returns the list of Asset Codes linked to  accountdetailkey (projectCodeId).
+	 *         
+	 * @param accountdetailkey
+	 * @return List of filtered Asset Codes
+	 * @throws ValidationException
+	 */
 	public List getAssetCodesForProjectCode(Integer accountdetailkey) throws ValidationException;
 
 	/**
@@ -84,4 +104,5 @@ public interface EntityTypeService {
     * will return entities for the given ids which are same as accountdetailkeyid
     */
    public List<? extends EntityType> getEntitiesById(List<Long> idsList) throws ValidationException;
+
 }

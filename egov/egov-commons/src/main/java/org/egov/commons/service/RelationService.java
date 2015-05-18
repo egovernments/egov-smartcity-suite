@@ -39,51 +39,39 @@
  */
 package org.egov.commons.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.commons.Relation;
 import org.egov.commons.utils.EntityType;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
+import org.hibernate.Query;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class RelationService extends PersistenceService<Relation, Integer> implements EntityTypeService, BidderTypeService {
-
+/**
+ * 
+ * @author mani
+ * Service class for Relation Object
+ */
+public class RelationService extends PersistenceService<Relation, Integer> implements EntityTypeService {
 	/**
 	 * since it is mapped to only one AccountDetailType -creditor it ignores the input parameter
 	 */
-	@Override
-	public List<EntityType> getAllActiveEntities(final Integer accountDetailTypeId) {
-		final List<EntityType> entities = new ArrayList<EntityType>();
-		entities.addAll(findAllBy("from Relation r where r.isactive=?", true));
-		return entities;
+	public List<EntityType> getAllActiveEntities(Integer accountDetailTypeId) {
+      List<EntityType> entities=new ArrayList<EntityType>();
+		entities.addAll(findAllBy("from Relation r where r.isactive=?",true));
+       return entities;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<EntityType> filterActiveEntities(String filterKey, final int maxRecords, final Integer accountDetailTypeId) {
-		final Integer pageSize = (maxRecords > 0 ? maxRecords : null);
-		final List<EntityType> entities = new ArrayList<EntityType>();
-		filterKey = "%" + filterKey + "%";
-		final String qry = "from Relation r where upper(code) like upper(?) or upper(name) like upper(?) and r.isactive=? order by code,name";
-		entities.addAll(findPageBy(qry, 0, pageSize, filterKey, filterKey, true).getList());
-		return entities;
-	}
-
-	@Override
-	public List<Relation> getAllActiveBidders() {
-		final List<Relation> entities = new ArrayList<Relation>();
-		entities.addAll(findAllBy("from Relation r where r.isactive=? and relationtype.name=?", true, "Supplier"));
-		return entities;
-	}
-
-	@Override
-	public Relation getBidderById(final Integer bidderId) {
-		return findById(bidderId, Boolean.TRUE);
-	}
-
-	@Override
-	public Relation getBidderByCode(final String code) {
-		return find("from Relation where code=?", code);
+	public List<EntityType> filterActiveEntities(String filterKey, int maxRecords, Integer accountDetailTypeId) {
+		Integer pageSize = (maxRecords > 0 ? maxRecords : null);
+		  List<EntityType> entities=new ArrayList<EntityType>();
+		  filterKey="%"+filterKey+"%";
+			String qry="from Relation r where upper(code) like upper(?) or upper(name) like upper(?) and r.isactive=? order by code,name";
+			entities.addAll((List<EntityType>)findPageBy(qry, 0, pageSize,filterKey,filterKey,true).getList());
+	       return entities;
 	}
 
 	@Override
@@ -92,18 +80,46 @@ public class RelationService extends PersistenceService<Relation, Integer> imple
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public List<? extends EntityType> validateEntityForRTGS(List<Long> idsList)
-			throws ValidationException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<? extends EntityType> getEntitiesById(List<Long> idsList)
-			throws ValidationException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
+	public List<EntityType> getAllActiveEntities() {
+	      List<EntityType> entities=new ArrayList<EntityType>();
+			entities.addAll(findAllBy("from Relation r where r.isactive=?",true));
+	       return entities;
+		}
+	public List<Relation> validateEntityForRTGS(List<Long> idsList) throws ValidationException {
+		 
+		List<Integer> ids=new ArrayList<Integer>();
+		if(idsList!=null)
+		{
+			for(Long id:idsList)
+			{
+				ids.add(id.intValue());
+			}
+		}
+	 
+	 List<Relation> entities=null;
+	 Query entitysQuery = getSession().createQuery(" from Relation where tinno is null or bankname is null or bankaccount is null and id in ( :IDS )");
+	 entitysQuery.setParameterList("IDS", ids);
+	 entities = entitysQuery.list();
+	return entities;
+		 
+	 }
+	
+	 public List<Relation> getEntitiesById(List<Long> idsList) throws ValidationException {
+		 List<Integer> ids=new ArrayList<Integer>();
+			if(idsList!=null)
+			{
+				for(Long id:idsList)
+				{
+					ids.add(id.intValue());
+				}
+			}
+		 
+		 List<Relation> entities=null;
+		 Query entitysQuery = getSession().createQuery(" from Relation where id in ( :IDS )");
+		 entitysQuery.setParameterList("IDS", ids);
+		 entities = entitysQuery.list();
+		return entities;
+		 
+	 }
 }

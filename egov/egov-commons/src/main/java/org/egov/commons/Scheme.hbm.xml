@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 10, 2008 5:15:10 AM by Hibernate Tools 3.2.0.b9 -->
 <hibernate-mapping>
     <class name="org.egov.commons.Scheme" table="SCHEME" >
+    	<cache usage="transactional"/>
         <id name="id" type="integer">
             <column name="ID" precision="10" scale="0" />
             <generator class="sequence" >
@@ -24,7 +26,7 @@
         <property name="validto" type="date">
             <column name="VALIDTO" length="7" />
         </property>
-        <property name="isactive" type="string">
+        <property name="isactive" type="java.lang.Boolean">
             <column name="ISACTIVE" length="1" />
         </property>
         <property name="description" type="string">
@@ -39,7 +41,20 @@
         <property name="fieldid" type="big_decimal">
             <column name="FIELDID" precision="22" scale="0" />
         </property>
+	    <property name="createdDate" type="date">
+		    <column name="CREATEDDATE"></column>
+	    </property>
+	      <property name="lastModifiedDate" type="date">
+		    <column name="LASTMODIFIEDDATE"></column>
+	    </property>
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User">
+			<column name="CREATEDBY"></column>
+		</many-to-one>
+		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User">
+			<column name="LASTMODIFIEDBY"></column>
+		</many-to-one>
         <set name="subSchemes" inverse="true">
+        	<cache usage="transactional"/>
             <key>
                 <column name="SCHEMEID" precision="22" scale="0" not-null="true" />
             </key>
