@@ -46,7 +46,7 @@ import java.util.Date;
 
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.model.bills.Miscbilldetail;
-import org.egov.eis.entity.DrawingOfficer;
+import org.egov.pims.commons.DrawingOfficer;
 import org.egov.utils.FinancialConstants;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CVoucherHeader;

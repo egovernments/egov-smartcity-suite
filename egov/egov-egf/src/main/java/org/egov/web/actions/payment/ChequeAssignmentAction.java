@@ -91,7 +91,7 @@ import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.model.payment.ChequeAssignment;
 import org.egov.model.recoveries.Recovery;
 import org.egov.payment.client.BankAdviceForm;
-import org.egov.eis.entity.DrawingOfficer;
+import org.egov.pims.commons.DrawingOfficer;
 import org.egov.services.cheque.ChequeService;
 import org.egov.services.contra.ContraService;
 import org.egov.services.instrument.InstrumentService;

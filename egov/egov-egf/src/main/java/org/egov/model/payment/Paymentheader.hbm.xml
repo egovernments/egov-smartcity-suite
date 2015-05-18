@@ -70,7 +70,7 @@
         <property name="paymentAmount">
 			<column name="PAYMENTAMOUNT"/>
 		</property>	
-	   <many-to-one name="drawingOfficer" class="org.egov.eis.entity.DrawingOfficer" fetch="select">
+	   <many-to-one name="drawingOfficer" class="org.egov.pims.commons.DrawingOfficer" fetch="select">
           <column name="DRAWINGOFFICER_ID" precision="22" scale="0" />
        </many-to-one>
     </class>

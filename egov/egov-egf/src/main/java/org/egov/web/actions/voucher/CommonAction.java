@@ -96,7 +96,7 @@ import org.egov.model.bills.EgBillSubType;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.voucher.CommonBean;
-import org.egov.eis.entity.DrawingOfficer;
+import org.egov.pims.commons.DrawingOfficer;
 import org.egov.pims.model.EmployeeView;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;

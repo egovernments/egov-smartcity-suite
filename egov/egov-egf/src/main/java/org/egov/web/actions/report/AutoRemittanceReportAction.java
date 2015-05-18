@@ -73,7 +73,7 @@ import org.egov.infstr.reporting.engine.ReportRequest;
 import org.egov.infstr.reporting.engine.ReportService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.recoveries.Recovery;
-import org.egov.eis.entity.DrawingOfficer;
+import org.egov.pims.commons.DrawingOfficer;
 import org.egov.services.deduction.RemitRecoveryService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
