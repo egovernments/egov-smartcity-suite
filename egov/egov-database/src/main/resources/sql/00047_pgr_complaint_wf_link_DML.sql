@@ -1,5 +1,5 @@
 insert into eg_modules (id,name,description)
-values((select max(id)+1 from eg_modules),'PGR','Public Grievance Module');
+values(nextval('seq_eg_modules'),'PGR','Public Grievance Module');
 
 --rollback delete from eg_modules where name='PGR';
 

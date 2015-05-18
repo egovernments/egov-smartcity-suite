@@ -12,10 +12,10 @@ is_enabled, action_help_url, context_root) VALUES (nextval('seq_eg_action'), 'In
 null,(Select id_module from eg_module where module_name='egi'), null, 'Inbox History', 0, null, 'egi');
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where url='/inbox'),(Select id from eg_role where name='SuperUser'));
+values((select id from eg_action where url='/inbox'),(Select id from eg_role where name='Super User'));
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where url='/inbox/draft'),(Select id from eg_role where name='SuperUser'));
+values((select id from eg_action where url='/inbox/draft'),(Select id from eg_role where name='Super User'));
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where url='/inbox/history'),(Select id from eg_role where name='SuperUser'));
+values((select id from eg_action where url='/inbox/history'),(Select id from eg_role where name='Super User'));

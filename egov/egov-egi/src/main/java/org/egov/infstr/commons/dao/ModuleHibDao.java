@@ -85,7 +85,9 @@ public class ModuleHibDao implements ModuleDao {
 
 		sql.append("SELECT DISTINCT mod.module_name,mod.baseurl,mod.module_desc, ");
 		sql.append("mod.id_module FROM eg_module mod,eg_action act,eg_roleaction_map ram ");
-		sql.append("WHERE act.id=ram.actionid AND act.module_id=mod.id_module ");
+		// removed "AND act.module_id=mod.id_module"  from below line to fix module not being 
+		//displayed if at least 1 action is mapped to root module
+		sql.append("WHERE act.id=ram.actionid ");
 		sql.append("AND act.id IN (SELECT DISTINCT actionid FROM eg_roleaction_map ");
 		sql.append("WHERE roleid IN ( ");
 

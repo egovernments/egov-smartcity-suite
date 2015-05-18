@@ -6,7 +6,7 @@ null,(Select id_module from eg_module where module_name='PGR'), null, 'Update Co
 --rollback delete from eg_action where url='/complaint-update';
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where url='/complaint-update'),(Select id_role from eg_roles where role_name='SuperUser'));
+values((select id from eg_action where url='/complaint-update'),(Select id_role from eg_roles where role_name='Super User'));
 
 --rollback delete from eg_roleaction_map where actionid=(select id from eg_action where url='/complaint-update');
 

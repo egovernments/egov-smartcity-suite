@@ -5,7 +5,7 @@ Values (nextval('seq_eg_action'), 'viewComplaintTypeResult', NULL, NULL, now(), 
 
 --rollback delete from eg_action where url='/view-complaintType/result' and name='viewComplaintTypeResult';
 
-INSERT INTO EG_ROLEACTION_MAP (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPERUSER') ,(select id FROM eg_action  WHERE name = 'viewComplaintTypeResult'));
+INSERT INTO EG_ROLEACTION_MAP (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'viewComplaintTypeResult'));
 
 --rollback delete from eg_roleaction_map where actionid=(select id from eg_action where url='/view-complaintType/result' and name='viewComplaintTypeResult' );
 

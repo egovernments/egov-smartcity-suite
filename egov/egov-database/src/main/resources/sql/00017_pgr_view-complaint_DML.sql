@@ -6,7 +6,7 @@ now(), '/view-complaint', 'complaintId=', null,(Select id_module FROM eg_module 
 
 
 INSERT INTO eg_roleaction_map (Actionid,roleid)
-VALUES((SELECT id FROM eg_action WHERE url='/view-complaint'),(Select id_role FROM eg_roles WHERE role_name='SuperUser'));
+VALUES((SELECT id FROM eg_action WHERE url='/view-complaint'),(Select id_role FROM eg_roles WHERE role_name='Super User'));
 
 --rollback delete from eg_roleaction_map where actionid=(select id from eg_action where url='/view-complaint');
 

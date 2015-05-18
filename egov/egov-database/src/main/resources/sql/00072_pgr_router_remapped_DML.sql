@@ -1,16 +1,16 @@
 
-update eg_employee set id_user=72 where name='HO';
+--update eg_employee set id_user=72 where name='HO';
 
-update eg_emp_assignment set position_id=7,id_employee=(select id from eg_employee where name='HO') where id=4;
+--update eg_emp_assignment set position_id=7,id_employee=(select id from eg_employee where name='HO') where id=4;
 
 delete from pgr_router ;
 
-insert into pgr_router (id,complainttypeid,position,bndryid,version,createdby,createddate,lastmodifiedby,lastmodifieddate)
-values (nextval('seq_pgr_router'),null,7,1,0,1,now(),1,now());
+--insert into pgr_router (id,complainttypeid,position,bndryid,version,createdby,createddate,lastmodifiedby,lastmodifieddate)
+--values (nextval('seq_pgr_router'),null,7,1,0,1,now(),1,now());
 
-delete from eg_action where name ='DEFAULT';
+--delete from eg_action where name ='DEFAULT';
 
-insert into eg_roleaction_map (select id,(select id from eg_action where url='/complaint-update') from eg_role );
+--insert into eg_roleaction_map (select id,(select id from eg_action where url='/complaint-update') from eg_role );
 
 
 
@@ -44,10 +44,10 @@ update eg_user set locale='en_IN';
 UPDATE EG_USER SET NAME=USERNAME;
 
 
-insert into EGEIS_DEPTDESIG (id,desig_id,dept_id,outsourced_posts,sanctioned_posts)
-values(nextval('SEQ_EIS_DEPTDESIG'),3,10,null,null);
+--insert into EGEIS_DEPTDESIG (id,desig_id,dept_id,outsourced_posts,sanctioned_posts)
+--values(nextval('SEQ_EIS_DEPTDESIG'),3,10,null,null);
 
-update eg_position set deptdesig=(select id from  EGEIS_DEPTDESIG where desig_id=3 and dept_id=10) where id=7
+--update eg_position set deptdesig=(select id from  EGEIS_DEPTDESIG where desig_id=3 and dept_id=10) where id=7
 
 
 

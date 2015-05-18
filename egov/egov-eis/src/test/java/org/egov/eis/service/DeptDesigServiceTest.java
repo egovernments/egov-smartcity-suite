@@ -52,12 +52,14 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.commons.DesignationMaster;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 
 /**
  * @author Vaibhav.K
  */
+@Ignore
 public class DeptDesigServiceTest {
 
     @Mock

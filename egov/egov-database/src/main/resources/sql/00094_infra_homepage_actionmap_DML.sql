@@ -3,7 +3,6 @@ is_enabled, action_help_url, context_root) VALUES (nextval('seq_eg_action'), 'Of
 null,(Select id_module from eg_module where module_name='egi'), null, 'OfficialsProfileEdit', 0, null, 'egi');
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where "name"='OfficialsProfileEdit'),(Select id from eg_role where name='SuperUser'));
+values((select id from eg_action where "name"='OfficialsProfileEdit'),(Select id from eg_role where name='Super User'));
 
-update eg_user set createdby=1,lastmodifiedby=1;
 

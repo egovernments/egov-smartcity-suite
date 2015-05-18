@@ -85,9 +85,6 @@ ALTER TABLE eg_userrole DROP COLUMN fromdate;
 ALTER TABLE eg_userrole DROP COLUMN todate;
 ALTER TABLE eg_userrole DROP COLUMN is_history;
 
-UPDATE eg_user set type='EMPLOYEE';
-UPDATE eg_user set isactive=true;
-delete from eg_userrole where role in(select role from eg_userrole group by role having count(*) >1);
-update eg_userrole set "user"=1;
-delete from eg_userrole where role in(select id from eg_role where name in ('Operator', 'Admin'));
-insert into eg_userrole values (1,1);
+
+
+

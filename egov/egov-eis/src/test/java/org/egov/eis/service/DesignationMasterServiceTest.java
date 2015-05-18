@@ -46,6 +46,7 @@ import java.util.List;
 import org.egov.eis.EISAbstractSpringIntegrationTest;
 import org.egov.eis.entity.DesignationMasterBuilder;
 import org.egov.pims.commons.DesignationMaster;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -53,7 +54,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Vaibhav.K
  *
  */
-
+@Ignore
 public class DesignationMasterServiceTest extends EISAbstractSpringIntegrationTest{
 	
 	@Autowired	

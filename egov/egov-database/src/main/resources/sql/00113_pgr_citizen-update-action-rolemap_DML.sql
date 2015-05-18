@@ -1,6 +1,6 @@
 
 
-delete from eg_roleaction_map where actionid=(select id  from eg_action where url like '%/complaint-update%');
+delete from eg_roleaction_map where actionid in (select id  from eg_action where url like '%/complaint-update%');
 delete from eg_action where url like '%/complaint-update%';
 
 
@@ -11,14 +11,18 @@ null,(Select id_module from eg_module where module_name='PGR'), null, 'Citizen U
 
 --rollback delete from eg_action where url='/complaint/update/';
 
-insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where url='/complaint/update/'),(Select id from eg_role where name='Citizen'));
+--insert into eg_roleaction_map (Actionid,roleid)
+--values((select id from eg_action where url='/complaint/update/'),(Select id from eg_role where name='Citizen'));
 
 --rollback delete from eg_roleaction_map where actionid=(select id from eg_action where url='/complaint/update/citizen/');
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where url='/complaint/update/'),(Select id from eg_role where name='SuperUser'));
+values((select id from eg_action where url='/complaint/update/'),(Select id from eg_role where name='Super User'));
 
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where url='/complaint/update/'),(Select id from eg_role where name='PGR_Officer'));
+values((select id from eg_action where url='/complaint/update/'),(Select id from eg_role where name='Grievance Officer'));
+
+insert into eg_roleaction_map (Actionid,roleid)
+values((select id from eg_action where url='/complaint/update/'),(Select id from eg_role where name='Citizen'));
+

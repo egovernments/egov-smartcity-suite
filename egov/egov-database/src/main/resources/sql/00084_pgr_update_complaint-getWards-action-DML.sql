@@ -7,12 +7,10 @@ null,(Select id_module from eg_module where module_name='PGR'), null, 'load Ward
 --rollback delete from eg_action where url='/ajax-getWards';
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where url='/ajax-getWards'),(Select id from eg_role where name='SuperUser'));
+values((select id from eg_action where url='/ajax-getWards'),(Select id from eg_role where name='Super User'));
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where url='/ajax-getWards'),(Select id from eg_role where name='PGR_Officer'));
+values((select id from eg_action where url='/ajax-getWards'),(Select id from eg_role where name='Grievance Officer'));
 
-update eg_boundary set version=0;
-update eg_boundary_type set version=0;
-update eg_hierarchy_type set version=0;
+
 

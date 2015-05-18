@@ -44,7 +44,8 @@ import java.lang.reflect.Field;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.commons.DesignationMaster;
-
+import org.junit.Ignore;
+@Ignore
 public class DeptDesigBuilder {
 
     private final DeptDesig deptDesig;

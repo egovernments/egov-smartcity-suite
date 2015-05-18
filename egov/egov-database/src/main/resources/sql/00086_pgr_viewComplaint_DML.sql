@@ -4,6 +4,6 @@ Values (nextval('seq_eg_action'), 'viewComplaintImages', NULL, NULL, now(), '/co
 
 --rollback delete from eg_action where url='/controller/downloadfile' and name='viewComplaintImages';
 
-INSERT INTO EG_ROLEACTION_MAP (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPERUSER') ,(select id FROM eg_action  WHERE name = 'viewComplaintImages'));
+INSERT INTO EG_ROLEACTION_MAP (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'viewComplaintImages'));
 
 --rollback delete from eg_roleaction_map where actionid=(select id from eg_action where url='/controller/downloadfile' and name='viewComplaintImages' );

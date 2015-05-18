@@ -3,7 +3,7 @@ VALUES ((select nextval('seq_eg_action')), 'EmpMaster', NULL,NULL, (select curre
 (SELECT id_module FROM EG_MODULE WHERE module_name LIKE 'Employee'), 4, 'New Emp Create', 1, NULL, 'eis');
 
 INSERT INTO eg_roleaction_map(ROLEID,ACTIONID)
-(SELECT (SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPERUSER') AS roleid,id FROM eg_action
+(SELECT (SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPER USER') AS roleid,id FROM eg_action
  WHERE name IN('EmpMaster'));
  
 INSERT INTO eg_action (ID, NAME, ENTITYID, TASKID, UPDATEDTIME, URL, QUERYPARAMS, URLORDERID, MODULE_ID, ORDER_NUMBER, DISPLAY_NAME, IS_ENABLED, ACTION_HELP_URL, CONTEXT_ROOT)
@@ -11,7 +11,7 @@ VALUES ((select nextval('seq_eg_action')), 'getAllDesigAjax', NULL,NULL, (select
 (SELECT id_module FROM EG_MODULE WHERE module_name LIKE 'Employee'), NULL, 'getAllDesigAjax', 0, NULL, 'eis');
 
 INSERT INTO eg_roleaction_map(ROLEID,ACTIONID)
-(SELECT (SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPERUSER') AS roleid,id FROM eg_action
+(SELECT (SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPER USER') AS roleid,id FROM eg_action
  WHERE name IN('getAllDesigAjax'));
  
 INSERT INTO eg_action (ID, NAME, ENTITYID, TASKID, UPDATEDTIME, URL, QUERYPARAMS, URLORDERID, MODULE_ID, ORDER_NUMBER, DISPLAY_NAME, IS_ENABLED, ACTION_HELP_URL, CONTEXT_ROOT)
@@ -19,7 +19,7 @@ VALUES ((select nextval('seq_eg_action')), 'getAllUnmappedUsers', NULL,NULL, (se
 (SELECT id_module FROM EG_MODULE WHERE module_name LIKE 'Employee'), NULL, 'getAllUnmappedUsers', 0, NULL, 'eis');
 
 INSERT INTO eg_roleaction_map(ROLEID,ACTIONID)
-(SELECT (SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPERUSER') AS roleid,id FROM eg_action
+(SELECT (SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPER USER') AS roleid,id FROM eg_action
  WHERE name IN('getAllUnmappedUsers'));
  
 INSERT INTO eg_action (ID, NAME, ENTITYID, TASKID, UPDATEDTIME, URL, QUERYPARAMS, URLORDERID, MODULE_ID, ORDER_NUMBER, DISPLAY_NAME, IS_ENABLED, ACTION_HELP_URL, CONTEXT_ROOT)
@@ -27,7 +27,7 @@ VALUES ((select nextval('seq_eg_action')), 'getPositionsForAssignment', NULL,NUL
 (SELECT id_module FROM EG_MODULE WHERE module_name LIKE 'Employee'), NULL, 'getPositionsForAssignment', 0, NULL, 'eis');
 
 INSERT INTO eg_roleaction_map(ROLEID,ACTIONID)
-(SELECT (SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPERUSER') AS roleid,id FROM eg_action
+(SELECT (SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPER USER') AS roleid,id FROM eg_action
  WHERE name IN('getPositionsForAssignment')); 
  
 INSERT INTO eg_action (ID, NAME, ENTITYID, TASKID, UPDATEDTIME, URL, QUERYPARAMS, URLORDERID, MODULE_ID, ORDER_NUMBER, DISPLAY_NAME, IS_ENABLED, ACTION_HELP_URL, CONTEXT_ROOT)
@@ -35,7 +35,7 @@ VALUES ((select nextval('seq_eg_action')), 'empMasterSave', NULL,NULL, (select c
 (SELECT id_module FROM EG_MODULE WHERE module_name LIKE 'Employee'), NULL, 'empMasterSave', 0, NULL, 'eis');
 
 INSERT INTO eg_roleaction_map(ROLEID,ACTIONID)
-(SELECT (SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPERUSER') AS roleid,id FROM eg_action
+(SELECT (SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPER USER') AS roleid,id FROM eg_action
  WHERE name IN('empMasterSave'));
  
 INSERT INTO eg_action (ID, NAME, ENTITYID, TASKID, UPDATEDTIME, URL, QUERYPARAMS, URLORDERID, MODULE_ID, ORDER_NUMBER, DISPLAY_NAME, IS_ENABLED, ACTION_HELP_URL, CONTEXT_ROOT)
@@ -43,7 +43,7 @@ VALUES ((select nextval('seq_eg_action')), 'empMasterModify', NULL,NULL, (select
 (SELECT id_module FROM EG_MODULE WHERE module_name LIKE 'Employee'), NULL, 'empMasterModify', 0, NULL, 'eis');
 
 INSERT INTO eg_roleaction_map(ROLEID,ACTIONID)
-(SELECT (SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPERUSER') AS roleid,id FROM eg_action
+(SELECT (SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPER USER') AS roleid,id FROM eg_action
  WHERE name IN('empMasterModify'));
  
 INSERT INTO eg_action (ID, NAME, ENTITYID, TASKID, UPDATEDTIME, URL, QUERYPARAMS, URLORDERID, MODULE_ID, ORDER_NUMBER, DISPLAY_NAME, IS_ENABLED, ACTION_HELP_URL, CONTEXT_ROOT)
@@ -51,7 +51,7 @@ VALUES ((select nextval('seq_eg_action')), 'empMasterView', NULL,NULL, (select c
 (SELECT id_module FROM EG_MODULE WHERE module_name LIKE 'Employee'), NULL, 'empMasterView', 0, NULL, 'eis');
 
 INSERT INTO eg_roleaction_map(ROLEID,ACTIONID)
-(SELECT (SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPERUSER') AS roleid,id FROM eg_action
+(SELECT (SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPER USER') AS roleid,id FROM eg_action
  WHERE name IN('empMasterView')); 
  
 INSERT INTO eg_action (ID, NAME, ENTITYID, TASKID, UPDATEDTIME, URL, QUERYPARAMS, URLORDERID, MODULE_ID, ORDER_NUMBER, DISPLAY_NAME, IS_ENABLED, ACTION_HELP_URL, CONTEXT_ROOT)
@@ -63,40 +63,40 @@ VALUES ((select nextval('seq_eg_action')), 'panNoUniqueCheck', NULL,NULL, (selec
 (SELECT id_module FROM EG_MODULE WHERE module_name LIKE 'Employee'), NULL, 'panNoUniqueCheck', 0, NULL, 'eis');
 
 INSERT INTO eg_roleaction_map(ROLEID,ACTIONID)
-(SELECT (SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPERUSER') AS roleid,id FROM eg_action
+(SELECT (SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPER USER') AS roleid,id FROM eg_action
  WHERE name IN('empCodeUniqueCheck'));
  
 INSERT INTO eg_roleaction_map(ROLEID,ACTIONID)
-(SELECT (SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPERUSER') AS roleid,id FROM eg_action
+(SELECT (SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPER USER') AS roleid,id FROM eg_action
  WHERE name IN('panNoUniqueCheck'));  
  
 
 --rollback DELETE FROM eg_roleaction_map WHERE ACTIONID IN(SELECT id FROM eg_action WHERE name IN('panNoUniqueCheck')) AND 
---rollback  ROLEID IN(SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPERUSER');
+--rollback  ROLEID IN(SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPER USER');
  
 --rollback DELETE FROM eg_roleaction_map WHERE ACTIONID IN(SELECT id FROM eg_action WHERE name IN('empCodeUniqueCheck')) AND 
---rollback  ROLEID IN(SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPERUSER');
+--rollback  ROLEID IN(SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPER USER');
  
 --rollback DELETE FROM eg_roleaction_map WHERE ACTIONID IN(SELECT id FROM eg_action WHERE name IN('empMasterView')) AND 
---rollback  ROLEID IN(SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPERUSER'); 
+--rollback  ROLEID IN(SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPER USER'); 
  
 --rollback DELETE FROM eg_roleaction_map WHERE ACTIONID IN(SELECT id FROM eg_action WHERE name IN('empMasterModify')) AND 
---rollback  ROLEID IN(SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPERUSER'); 
+--rollback  ROLEID IN(SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPER USER'); 
  
 --rollback DELETE FROM eg_roleaction_map WHERE ACTIONID IN(SELECT id FROM eg_action WHERE name IN('empMasterSave')) AND 
---rollback  ROLEID IN(SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPERUSER'); 
+--rollback  ROLEID IN(SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPER USER'); 
  
 --rollback DELETE FROM eg_roleaction_map WHERE ACTIONID IN(SELECT id FROM eg_action WHERE name IN('getPositionsForAssignment')) AND 
---rollback  ROLEID IN(SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPERUSER'); 
+--rollback  ROLEID IN(SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPER USER'); 
  
 --rollback DELETE FROM eg_roleaction_map WHERE ACTIONID IN(SELECT id FROM eg_action WHERE name IN('getAllUnmappedUsers')) AND 
---rollback  ROLEID IN(SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPERUSER');  
+--rollback  ROLEID IN(SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPER USER');  
  
 --rollback DELETE FROM eg_roleaction_map WHERE ACTIONID IN(SELECT id FROM eg_action WHERE name IN('getAllDesigAjax')) AND 
---rollback  ROLEID IN(SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPERUSER'); 
+--rollback  ROLEID IN(SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPER USER'); 
  
 --rollback DELETE FROM eg_roleaction_map WHERE ACTIONID IN(SELECT id FROM eg_action WHERE name IN('EmpMaster')) AND 
---rollback  ROLEID IN(SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPERUSER');  
+--rollback  ROLEID IN(SELECT id_role FROM eg_roles WHERE UPPER(role_name) LIKE 'SUPER USER');  
  
 --rollback DELETE FROM eg_action WHERE name IN('panNoUniqueCheck'); 
 --rollback DELETE FROM eg_action WHERE name IN('empCodeUniqueCheck');

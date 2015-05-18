@@ -41,11 +41,13 @@ package org.egov.eis.entity;
 
 import org.egov.commons.CChartOfAccounts;
 import org.egov.pims.commons.DesignationMaster;
+import org.junit.Ignore;
 
 /**
  * @author Vaibhav.K
  *
  */
+@Ignore
 public class DesignationMasterBuilder {
 
 	private final DesignationMaster designationMaster;

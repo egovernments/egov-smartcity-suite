@@ -2,7 +2,7 @@ INSERT INTO EG_ACTION(ID, NAME, ENTITYID, TASKID, UPDATEDTIME, URL, QUERYPARAMS,
 Values (nextval('SEQ_EG_ACTION'), 'AddChildBoundaryType', NULL, NULL, now(), '/controller/boundaryType/addChild', NULL, NULL, (SELECT ID_MODULE FROM EG_MODULE WHERE MODULE_DESC = 'Jurisdiction'),
 0, 'Add Child Boundary Type', 1, NULL, 'egi');
 
-INSERT INTO EG_ROLEACTION_MAP (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPERUSER') ,(select id FROM eg_action  WHERE name = 'AddChildBoundaryType'));
+INSERT INTO EG_ROLEACTION_MAP (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'AddChildBoundaryType'));
 
 DROP SEQUENCE seq_eg_boundary_type;
 

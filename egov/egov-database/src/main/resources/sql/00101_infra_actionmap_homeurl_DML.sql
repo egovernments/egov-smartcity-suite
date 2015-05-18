@@ -7,10 +7,10 @@ is_enabled, action_help_url, context_root) VALUES (nextval('seq_eg_action'), 'Of
 null,(Select id_module from eg_module where module_name='egi'), null, 'OfficialChangePassword', 0, null, 'egi');
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where "name"='OfficialSentFeedBack'),(Select id from eg_role where name='SuperUser'));
+values((select id from eg_action where "name"='OfficialSentFeedBack'),(Select id from eg_role where name='Super User'));
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where "name"='OfficialChangePassword'),(Select id from eg_role where name='SuperUser'));
+values((select id from eg_action where "name"='OfficialChangePassword'),(Select id from eg_role where name='Super User'));
 
 update eg_action set url='/home/favourite/add' where url='/home/add-favourite';
 

@@ -6,7 +6,7 @@ null,(Select id_module from eg_module where module_name='PGRComplaints'), null, 
 --rollback delete from eg_action where name='ComplaintRegisterationOfficials' and context_root='pgr';
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where name='ComplaintRegisterationOfficials'),(Select id_role from eg_roles where role_name='SuperUser'));
+values((select id from eg_action where name='ComplaintRegisterationOfficials'),(Select id_role from eg_roles where role_name='Super User'));
 
 --rollback delete from eg_roleaction_map where actionid=(select id from eg_action where name='ComplaintRegisterationOfficials' and context_root='pgr');
 
@@ -17,7 +17,7 @@ null,(Select id_module from eg_module where module_name='PGRComplaints'), null, 
 --rollback delete from eg_action where name='ComplaintTypeAjaxOfficials' and context_root='pgr';
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where name='ComplaintTypeAjaxOfficials'),(Select id_role from eg_roles where role_name='SuperUser'));
+values((select id from eg_action where name='ComplaintTypeAjaxOfficials'),(Select id_role from eg_roles where role_name='Super User'));
 
 --rollback delete from eg_roleaction_map where actionid=(select id from eg_action where name='ComplaintTypeAjaxOfficials' and context_root='pgr');
 
@@ -28,7 +28,7 @@ null,(Select id_module from eg_module where module_name='PGRComplaints'), null, 
 --rollback delete from eg_action where name='ComplaintSaveOfficials' and context_root='pgr';
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where name='ComplaintSaveOfficials'),(Select id_role from eg_roles where role_name='SuperUser'));
+values((select id from eg_action where name='ComplaintSaveOfficials'),(Select id_role from eg_roles where role_name='Super User'));
 
 --rollback delete from eg_roleaction_map where actionid=(select id from eg_action where name='ComplaintSaveOfficials' and context_root='pgr');
 
@@ -39,7 +39,7 @@ null,(Select id_module from eg_module where module_name='PGRComplaints'), null, 
 --rollback delete from eg_action where name='ComplaintLocationRequiredOfficials' and context_root='pgr';
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where name='ComplaintLocationRequiredOfficials'),(Select id_role from eg_roles where role_name='SuperUser'));
+values((select id from eg_action where name='ComplaintLocationRequiredOfficials'),(Select id_role from eg_roles where role_name='Super User'));
 
 --rollback delete from eg_roleaction_map where actionid=(select id from eg_action where name='ComplaintLocationRequiredOfficials' and context_root='pgr');
 
@@ -50,7 +50,7 @@ null,(Select id_module from eg_module where module_name='PGRComplaints'), null, 
 --rollback delete from eg_action where name='ComplaintLocationsOfficials' and context_root='pgr';
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where name='ComplaintLocationsOfficials'),(Select id_role from eg_roles where role_name='SuperUser'));
+values((select id from eg_action where name='ComplaintLocationsOfficials'),(Select id_role from eg_roles where role_name='Super User'));
 
 --rollback delete from eg_roleaction_map where actionid=(select id from eg_action where name='ComplaintLocationsOfficials' and context_root='pgr');
 

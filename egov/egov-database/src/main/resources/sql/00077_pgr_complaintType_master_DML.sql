@@ -5,7 +5,7 @@ Values (nextval('seq_eg_action'), 'UpdateComplaintType', NULL, NULL, now(), '/co
 
 --rollback delete from eg_action where url='/complaint-type/update' and name='UpdateComplaintType';
 
-INSERT INTO EG_ROLEACTION_MAP (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPERUSER') ,(select id FROM eg_action  WHERE name = 'UpdateComplaintType'));
+INSERT INTO EG_ROLEACTION_MAP (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'UpdateComplaintType'));
 
 --rollback delete from eg_roleaction_map where actionid=(select id from eg_action where url='/complaint-type/update' and name='UpdateComplaintType' );
 
@@ -15,6 +15,6 @@ Values (nextval('seq_eg_action'), 'ViewComplaintType', NULL, NULL, now(), '/view
 
 --rollback delete from eg_action where url='/view-complaintType/form';
 
-INSERT INTO EG_ROLEACTION_MAP (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPERUSER') ,(select id FROM eg_action  WHERE name = 'ViewComplaintType'));
+INSERT INTO EG_ROLEACTION_MAP (ROLEID, ACTIONID) values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'ViewComplaintType'));
 
 --rollback delete from eg_roleaction_map where actionid=(select id from eg_action where url='/view-complaintType/form');

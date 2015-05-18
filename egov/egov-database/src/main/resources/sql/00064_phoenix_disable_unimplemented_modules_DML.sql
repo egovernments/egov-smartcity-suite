@@ -1,4 +1,3 @@
-update eg_module set isenabled=0 where module_name  not in ('PGR','Administration','EIS') and parentid is null ;
 
 DROP VIEW eg_eis_employeeinfo;
 

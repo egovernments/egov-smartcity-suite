@@ -47,6 +47,7 @@ import java.util.Date;
 import org.egov.eis.EISAbstractSpringIntegrationTest;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.pims.commons.Position;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -54,6 +55,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Vaibhav.K
  *
  */
+@Ignore
 public class EisCommonServiceTest extends EISAbstractSpringIntegrationTest{
     
     @Autowired

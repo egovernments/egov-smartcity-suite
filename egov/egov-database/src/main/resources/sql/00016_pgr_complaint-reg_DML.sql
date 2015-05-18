@@ -11,7 +11,7 @@ null,(Select id_module from eg_module where module_name='PGRComplaints'), null, 
 --rollback delete from eg_action where name='ComplaintRegisteration' and context_root='pgr';
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where name='ComplaintRegisteration'),(Select id_role from eg_roles where role_name='SuperUser'));
+values((select id from eg_action where name='ComplaintRegisteration'),(Select id_role from eg_roles where role_name='Super User'));
 
 --rollback delete from eg_roleaction_map where actionid=(select id from eg_action where name='ComplaintRegisteration' and context_root='pgr');
 
@@ -22,7 +22,7 @@ null,(Select id_module from eg_module where module_name='PGRComplaints'), null, 
 --rollback delete from eg_action where name='ComplaintTypeAjax' and context_root='pgr';
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where name='ComplaintTypeAjax'),(Select id_role from eg_roles where role_name='SuperUser'));
+values((select id from eg_action where name='ComplaintTypeAjax'),(Select id_role from eg_roles where role_name='Super User'));
 
 --rollback delete from eg_roleaction_map where actionid=(select id from eg_action where name='ComplaintTypeAjax' and context_root='pgr');
 
@@ -33,7 +33,7 @@ null,(Select id_module from eg_module where module_name='PGRComplaints'), null, 
 --rollback delete from eg_action where name='ComplaintSave' and context_root='pgr';
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where name='ComplaintSave'),(Select id_role from eg_roles where role_name='SuperUser'));
+values((select id from eg_action where name='ComplaintSave'),(Select id_role from eg_roles where role_name='Super User'));
 
 --rollback delete from eg_roleaction_map where actionid=(select id from eg_action where name='ComplaintSave' and context_root='pgr');
 
@@ -44,7 +44,7 @@ null,(Select id_module from eg_module where module_name='PGRComplaints'), null, 
 --rollback delete from eg_action where name='ComplaintLocationRequired' and context_root='pgr';
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where name='ComplaintLocationRequired'),(Select id_role from eg_roles where role_name='SuperUser'));
+values((select id from eg_action where name='ComplaintLocationRequired'),(Select id_role from eg_roles where role_name='Super User'));
 
 --rollback delete from eg_roleaction_map where actionid=(select id from eg_action where name='ComplaintLocationRequired' and context_root='pgr');
 
@@ -55,22 +55,8 @@ null,(Select id_module from eg_module where module_name='PGRComplaints'), null, 
 --rollback delete from eg_action where name='ComplaintLocations' and context_root='pgr';
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where name='ComplaintLocations'),(Select id_role from eg_roles where role_name='SuperUser'));
+values((select id from eg_action where name='ComplaintLocations'),(Select id_role from eg_roles where role_name='Super User'));
 
 --rollback delete from eg_roleaction_map where actionid=(select id from eg_action where name='ComplaintLocations' and context_root='pgr');
 
-INSERT INTO eg_user(
-            id_user, title, salutation, first_name, middle_name, last_name, 
-            dob, id_department, locale, user_name, pwd, pwd_reminder, updatetime, 
-            updateuserid, extrafield1, extrafield2, extrafield3, extrafield4, 
-            is_suspended, id_top_bndry, reportsto, isactive, fromdate, todate, 
-            user_sign, pwd_updated_date, organizationid, mobilenumber, alternatenumber, 
-            addressid, email, isportaluser)
-    VALUES (nextval('seq_eg_user'), null, null, 'Anonymous', null, null, 
-            null, null, null, 'anonymous', 'anonymous', 'anonymous', '2015-01-01', 
-            null, null, null, null, null, 
-            'Y', null, null, 0, '2015-01-01', '2100-01-01', 
-            null, null, null, null, null, 
-            null, null, 0);
-            
---rollback delete from eg_user where user_name='anonymous';
+

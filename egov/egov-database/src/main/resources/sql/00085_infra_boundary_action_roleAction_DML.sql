@@ -12,12 +12,12 @@ Values (nextval('SEQ_EG_ACTION'), 'UpdateBoundary', NULL, NULL, now(), '/control
 
 
 INSERT INTO EG_ROLEACTION_MAP (ROLEID, ACTIONID) 
-values ((select id from eg_role where UPPER(name) LIKE 'SUPERUSER') ,(select id FROM eg_action  WHERE name = 'CreateBoundaryForm'));
+values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'CreateBoundaryForm'));
 
 INSERT INTO EG_ROLEACTION_MAP (ROLEID, ACTIONID) 
-values ((select id from eg_role where UPPER(name) LIKE 'SUPERUSER') ,(select id FROM eg_action  WHERE name = 'ViewBoundary'));
+values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'ViewBoundary'));
 
 INSERT INTO EG_ROLEACTION_MAP (ROLEID, ACTIONID) 
-values ((select id from eg_role where UPPER(name) LIKE 'SUPERUSER') ,(select id FROM eg_action  WHERE name = 'UpdateBoundary'));
+values ((select id from eg_role where UPPER(name) LIKE 'SUPER USER') ,(select id FROM eg_action  WHERE name = 'UpdateBoundary'));
 
 

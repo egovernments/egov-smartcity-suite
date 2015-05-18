@@ -42,11 +42,13 @@ package org.egov.eis.entity;
 import java.lang.reflect.Field;
 
 import org.egov.pims.commons.Position;
+import org.junit.Ignore;
 
 /**
  * @author Vaibhav.K
  *
  */
+@Ignore
 public class PositionBuilder {
 	
 	private final Position position;

@@ -1,0 +1,6 @@
+Insert into EGEIS_GRADE_MSTR (GRADE_ID,GRADE_VALUE,START_DATE,END_DATE,AGE) values (1,'A',to_date('01-04-00','DD-MM-RR'),to_date('01-04-99','DD-MM-RR'),60);
+Insert into EGEIS_GRADE_MSTR (GRADE_ID,GRADE_VALUE,START_DATE,END_DATE,AGE) values (2,'B',to_date('01-04-00','DD-MM-RR'),to_date('01-04-99','DD-MM-RR'),60);
+Insert into EGEIS_GRADE_MSTR (GRADE_ID,GRADE_VALUE,START_DATE,END_DATE,AGE) values (3,'C',to_date('01-04-00','DD-MM-RR'),to_date('01-04-99','DD-MM-RR'),60);
+Insert into EGEIS_GRADE_MSTR (GRADE_ID,GRADE_VALUE,START_DATE,END_DATE,AGE) values (4,'D',to_date('01-04-00','DD-MM-RR'),to_date('01-04-99','DD-MM-RR'),60);
+
+

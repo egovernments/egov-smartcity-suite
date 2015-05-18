@@ -7,10 +7,10 @@ null,(Select id_module from eg_module where module_name='PGR'), null, 'load Desi
 --rollback delete from eg_action where url='/ajax-approvalDesignations';
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where url='/ajax-approvalDesignations'),(Select id from eg_role where name='SuperUser'));
+values((select id from eg_action where url='/ajax-approvalDesignations'),(Select id from eg_role where name='Super User'));
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where url='/ajax-approvalDesignations'),(Select id from eg_role where name='PGR_Officer'));
+values((select id from eg_action where url='/ajax-approvalDesignations'),(Select id from eg_role where name='Grievance Officer'));
 
 
 --rollback delete from eg_roleaction_map where actionid=(select id from eg_action where url='/ajax-approvalDesignations');
@@ -26,9 +26,9 @@ null,(Select id_module from eg_module where module_name='PGR'), null, 'load Posi
 --rollback delete from eg_action where url='/ajax-approvalPositions';
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where url='/ajax-approvalPositions'),(Select id from eg_role where name='SuperUser'));
+values((select id from eg_action where url='/ajax-approvalPositions'),(Select id from eg_role where name='Super User'));
 
 insert into eg_roleaction_map (Actionid,roleid)
-values((select id from eg_action where url='/ajax-approvalPositions'),(Select id from eg_role where name='PGR_Officer'));
+values((select id from eg_action where url='/ajax-approvalPositions'),(Select id from eg_role where name='Grievance Officer'));
 
 ----rollback delete from eg_roleaction_map where actionid=(select id from eg_action where url='/ajax-approvalPositions');
