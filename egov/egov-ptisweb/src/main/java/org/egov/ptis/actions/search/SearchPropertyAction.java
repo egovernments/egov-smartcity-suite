@@ -45,12 +45,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
-import static org.egov.ptis.constants.PropertyTaxConstants.STREET;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 import static org.egov.web.actions.BaseFormAction.NEW;
 
 import java.math.BigDecimal;
