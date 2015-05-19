@@ -152,7 +152,6 @@ public class FetchData_ServiceLocator {
            // ((Object) _stub).setPortName(portName);
             return _stub;
         }
-    	//This fix is for Phoenix Migration.
     }
 
     public javax.xml.namespace.QName getServiceName() {

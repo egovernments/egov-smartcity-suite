@@ -68,8 +68,6 @@ public class EBBillInfoFetchJob implements Job {
 		try {
 			setTractionalSupport();
 			
-			//This fix is for Phoenix Migration.
-			//.HibernateUtil.beginTransaction();*/
 			
 			//EGOVThreadLocals.setUserId((Long) jobExeContext.getJobDetail().getJobDataMap().get("loggedInUserId"));
 			//TODO use new quartz class from egi		
@@ -81,9 +79,6 @@ public class EBBillInfoFetchJob implements Job {
 			LOGGER.error("Unable to complete execution Scheduler ", ex);
 			 
 			throw new JobExecutionException("Unable to execute job Scheduler", ex, false);
-		}
-		finally {
-			//.HibernateUtil.closeSession();*/
 		}
 		
 		if (isDebugEnabled) {

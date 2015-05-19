@@ -52,6 +52,7 @@ import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.commons.Position;
+import org.hibernate.Query;
 import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 public class EBConsumerService extends PersistenceService<EBConsumer, Long> implements EntityTypeService    {
@@ -59,9 +60,8 @@ public class EBConsumerService extends PersistenceService<EBConsumer, Long> impl
 	private static final String FALSE = "false";
 	private static final boolean TRUE = false;
 
-	/*@Override
-	public List<EntityType> getAllActiveEntities(
-			Integer accountDetailTypeId) {
+	@Override
+	public List<EntityType> getAllActiveEntities(Integer accountDetailTypeId) {
 		List<EntityType> entities=new ArrayList<EntityType>();
 		entities.addAll(findAllBy("from EBConsumer r where r.isActive=?",true));
        return entities;
@@ -102,8 +102,7 @@ public class EBConsumerService extends PersistenceService<EBConsumer, Long> impl
 		 entities = entitysQuery.list();
 		return entities;
 		 
-	}*/
-	//This fix is for Phoenix Migration.
+	}
 	public boolean isNameUnique(String name, Long id)
 	{
 		boolean isunique = false;
@@ -254,38 +253,5 @@ public class EBConsumerService extends PersistenceService<EBConsumer, Long> impl
 		return detailsByConsumer;
 	}
 
-	@Override
-	public List<? extends EntityType> getAllActiveEntities(
-			Integer accountDetailTypeId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
-	public List<? extends EntityType> filterActiveEntities(String filterKey,
-			int maxRecords, Integer accountDetailTypeId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List getAssetCodesForProjectCode(Integer accountdetailkey)
-			throws ValidationException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<? extends EntityType> validateEntityForRTGS(List<Long> idsList)
-			throws ValidationException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<? extends EntityType> getEntitiesById(List<Long> idsList)
-			throws ValidationException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

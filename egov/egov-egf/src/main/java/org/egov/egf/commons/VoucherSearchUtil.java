@@ -361,8 +361,7 @@ public class VoucherSearchUtil {
 	}
 
 	public boolean validateFinancialYearForPosting(Date fromDate, Date toDate) {
-    	return false;//financialYearDAO.isFinancialYearActiveForPosting(fromDate, toDate);
-    	//This fix is for Phoenix Migration.
+    	return financialYearDAO.isFinancialYearActiveForPosting(fromDate, toDate);
 	}
 
 	public void setFinancialYearDAO(FinancialYearDAO financialYearDAO) {

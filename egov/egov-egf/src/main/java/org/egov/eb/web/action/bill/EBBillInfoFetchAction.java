@@ -183,7 +183,6 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
 		
 		if (ebDetails.getId() != null) {
 			ebDetails = ebDetailsService.findById(ebDetails.getId(), true);
-			//This fix is for Phoenix Migration.
 			eBBillGroup = EBUtils.getEBBillGroup(ebDetails);
 			String[] billGroupParts = eBBillGroup.split("-");
 			monthAndYear = EBUtils.getShortMonthName(Integer.valueOf(billGroupParts[0])) + "-" + billGroupParts[1];
@@ -240,7 +239,7 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
 		ebLog.setSchedulerStatus(FinancialConstants.SCHEDULER_STATUS_SCHEDULED);
 		
 		ebSchedulerLogService.persist(ebLog);
-		//ebSchedulerLogService.getSession.flush();
+		ebSchedulerLogService.getSession().flush();
 		
 		if (StringUtils.isNotBlank(type) && "manual".equalsIgnoreCase(type)) {
 			
@@ -395,8 +394,7 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
 						ebDtlsDb.setIsProcess(ebDtls.getIsProcess());
 						ebDtlsDb.setComments(parameters.get("approverComments")[0]);
 						if(actionNm.equalsIgnoreCase("forward")){
-							//This fix is for Phoenix Migration.
-					//	ebDtlsDb.setApproverPositionId(Integer.parseInt(parameters.get("approverPositionId")[0]));
+						ebDtlsDb.setPosition((Position)persistenceService.find("from Position where id = ? ", Long.parseLong(parameters.get("approverPositionId")[0])));
 						}
 					}
 					break;
@@ -430,9 +428,7 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
 				if (ebDetail.getIsProcess()) {
 					returnValue = forward(ebDetail, actionNm,
 							null != parameters.get("approverComments") ? parameters.get("approverComments")[0] : null);
-					//This fix is for Phoenix Migration.
-					//nextUser = (EmployeeView) persistenceService.find("from EmployeeView where position.id=?",
-							//ebDetail.getApproverPositionId());
+					nextUser = (EmployeeView) persistenceService.find("from EmployeeView where position.id=?",ebDetail.getPosition().getId());
 
 					if (!remarksByEbDetailsId.isEmpty()) {
 						//This fix is for Phoenix Migration.
@@ -518,8 +514,7 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
 		ebDetailsWorkflowService.transition(workFlowAction.toLowerCase(),ebDetail, comments);
 		User approverUser=(User)persistenceService.find("from User where id=?",ebDetail.getCreatedBy().getId());
 		Position approvePos = eisService.getPrimaryPositionForUser(approverUser.getId(),new Date());
-		//ebDetail.setApproverPositionId(approvePos.getId());
-		//This fix is for Phoenix Migration.
+		ebDetail.setPosition(approvePos);
 		
 		if (LOGGER.isDebugEnabled()) LOGGER.debug("Exiting from reject");
 		
@@ -537,9 +532,9 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
 		}
 		String comments= ((null == approverComments) || "".equals(approverComments.trim()))?"":approverComments;
 		ebDetailsWorkflowService.transition(workFlowAction.toLowerCase(),ebDetail, comments);
-		/*EBDetails eBDetail=ebDetailsService.find("from EBDetails where id = ? ",ebDetail.getId());
+		EBDetails eBDetail=ebDetailsService.find("from EBDetails where id = ? ",ebDetail.getId());
 		eBDetail.setStatus(getCancelledStatus());            
-		ebDetailsService.persist(eBDetail);*/
+		ebDetailsService.persist(eBDetail);
 		//This fix is for Phoenix Migration.
 		if (LOGGER.isDebugEnabled()) LOGGER.debug("Exiting from cancel");
 		
@@ -638,16 +633,13 @@ public class EBBillInfoFetchAction extends GenericWorkFlowAction {
 		BigDecimal sumOfBillAmounts = BigDecimal.ZERO;
 
 		List<AppConfigValues> appConfigValues =null;
-		//This fix is for Phoenix Migration.
-		/*.HibernateUtil
-				.getCurrentSession()
+		HibernateUtil.getCurrentSession()
 				.createQuery(
 						"from AppConfigValues v inner join fetch v.key k where k.keyName in ('"
 								+ FinancialConstants.EB_VOUCHER_PROPERTY_FUND + "', '"
 								+ FinancialConstants.EB_VOUCHER_PROPERTY_DEPARTMENT + "', '"
 								+ FinancialConstants.EB_VOUCHER_PROPERTY_FUNCTION + "')").list();
-		*/
-		if (appConfigValues == null || appConfigValues.isEmpty()) {
+				if (appConfigValues == null || appConfigValues.isEmpty()) {
 			String errorMsg = "Fund, Department and Function are not configured into the system";
 			
 			if (isDebugEnabled) LOGGER.debug(errorMsg);

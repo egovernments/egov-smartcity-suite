@@ -58,6 +58,7 @@ import org.egov.exceptions.EGOVRuntimeException;
  */
 public class billUtils {
 	public static  final Logger LOGGER = Logger.getLogger(billUtils.class);
+	private static RelationHibernateDAO relationHibernateDAO = new RelationHibernateDAO();
 	/**
 	 * Get the relation Object 
 	 * @param id
@@ -67,11 +68,16 @@ public class billUtils {
  	{
      	try {
      		if(LOGGER.isInfoEnabled())     LOGGER.info("id == "+id );
-			RelationHibernateDAO relDAO= null;//This fix is for Phoenix Migration.CommonsDaoFactory.getDAOFactory().getRelationDAO();
-			return (Relation)relDAO.findById(id,false);
+			return (Relation)relationHibernateDAO.findById(id,false);
 		} catch (RuntimeException e) {
 			throw new EGOVRuntimeException(e.getMessage(),e);
 		}
      }
+	public RelationHibernateDAO getRelationHibernateDAO() {
+		return relationHibernateDAO;
+	}
+	public void setRelationHibernateDAO(RelationHibernateDAO relationHibernateDAO) {
+		this.relationHibernateDAO = relationHibernateDAO;
+	}
 
 }
