@@ -51,6 +51,8 @@ import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.egov.lib.admbndry.BoundaryTypeDAO;
 import org.egov.lib.admbndry.HeirarchyTypeDAO;
@@ -98,6 +100,10 @@ public class AjaxAssetAction extends BaseFormAction {
 	private BoundaryDAO boundaryDAO;
 	@Autowired
 	private BoundaryTypeDAO boundaryTypeDAO;
+	@Autowired
+	private BoundaryService boundaryService;
+	@Autowired
+	private BoundaryTypeService boundaryTypeService;
 
 	@Override
 	public Object getModel() {
@@ -113,11 +119,11 @@ public class AjaxAssetAction extends BaseFormAction {
 	 * Populate the Area list by ward
 	 */
 	public String populateArea() {
-		final Boundary boundary = boundaryDAO.getBoundaryInclgHxById(wardId);
+		final Boundary boundary = boundaryService.getBoundaryById(wardId);
 
 		if (wardId != -1)
-			areaList.add(boundaryDAO.getBoundaryInclgHxById(boundary
-					.getParent().getId()));
+			areaList.add(boundaryService.getBoundaryById(boundary.getParent()
+					.getId()));
 		else
 			areaList = Collections.EMPTY_LIST;
 
@@ -138,9 +144,10 @@ public class AjaxAssetAction extends BaseFormAction {
 			throw new EGOVRuntimeException("Unable to load areas information",
 					e);
 		}
-		final BoundaryType bType = boundaryTypeDAO.getBoundaryType(
-				AREA_BOUNDARY_TYPE, hType);
-		areaList = boundaryDAO.getAllBoundariesInclgHxByBndryTypeId(bType
+		final BoundaryType bType = boundaryTypeService
+				.getBoundaryTypeByNameAndHierarchyType(AREA_BOUNDARY_TYPE,
+						hType);
+		areaList = boundaryService.getAllBoundariesByBoundaryTypeId(bType
 				.getId());
 		LOGGER.info("***********Ajax AreaList: " + areaList.toString());
 		return AREAS;
@@ -152,9 +159,9 @@ public class AjaxAssetAction extends BaseFormAction {
 	public String populateLocations() {
 		try {
 			if (areaId != -1) {
-				final Boundary boundary = boundaryDAO
-						.getBoundaryInclgHxById(areaId);
-				locationList.add(boundaryDAO.getBoundaryInclgHxById(boundary
+				final Boundary boundary = boundaryService
+						.getBoundaryById(areaId);
+				locationList.add(boundaryService.getBoundaryById(boundary
 						.getParent().getId()));
 			} else
 				locationList = Collections.EMPTY_LIST;
@@ -174,7 +181,7 @@ public class AjaxAssetAction extends BaseFormAction {
 	 */
 	public String populateWard() {
 		try {
-			zoneList = boundaryDAO.getChildBoundariesInclgHx(zoneId);
+			zoneList = boundaryService.getChildBoundariesByBoundaryId(zoneId);
 		} catch (final Exception e) {
 			LOGGER.error("Error while loading warda - wards." + e.getMessage());
 			addFieldError("location", "Unable to load ward information");
@@ -200,12 +207,12 @@ public class AjaxAssetAction extends BaseFormAction {
 			throw new EGOVRuntimeException(
 					"Unable to load Streets information", e);
 		}
-		final BoundaryType childBoundaryType = boundaryTypeDAO.getBoundaryType(
-				"Street", hType);
+		final BoundaryType childBoundaryType = boundaryTypeService
+				.getBoundaryTypeByNameAndHierarchyType("Street", hType);
 		if (wardId != -1) {
-			final Boundary parentBoundary = boundaryDAO
-					.getBoundaryInclgHxById(wardId);
-			final Set<Boundary> boundarySet = boundaryDAO
+			final Boundary parentBoundary = boundaryService
+					.getBoundaryById(wardId);
+			final Set<Boundary> boundarySet = heirarchyTypeDAO
 					.getCrossHeirarchyChildren(parentBoundary,
 							childBoundaryType);
 			streetList = new LinkedList<Boundary>(boundarySet);
@@ -225,7 +232,8 @@ public class AjaxAssetAction extends BaseFormAction {
 	 */
 	public String populateStreetsByLocation() throws Exception {
 		if (locationId != -1)
-			street2List = boundaryDAO.getChildBoundariesInclgHx(locationId);
+			street2List = boundaryService
+					.getChildBoundariesByBoundaryId(locationId);
 		return STREETS2;
 	}
 
@@ -271,7 +279,8 @@ public class AjaxAssetAction extends BaseFormAction {
 	public String populateLocationsByArea() {
 		try {
 			if (areaId != -1)
-				locationList = boundaryDAO.getChildBoundariesInclgHx(areaId);
+				locationList = boundaryService
+						.getChildBoundariesByBoundaryId(areaId);
 			else
 				locationList = Collections.EMPTY_LIST;
 		} catch (final Exception e) {

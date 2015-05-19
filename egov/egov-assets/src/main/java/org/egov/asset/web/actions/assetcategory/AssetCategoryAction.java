@@ -279,7 +279,7 @@ public class AssetCategoryAction extends BaseFormAction {
 	}
 
 	@Transactional
-	@Action(value = "/assetcategory/assetCategory-save", results = @Result(name = EDIT, location = "/WEB-INF/jsp/assets/assetcategory/assetCategory-search.jsp"))
+	@Action(value = "/assetcategory/assetCategory-save", results = @Result(name = SEARCH, location = "/WEB-INF/jsp/assets/assetcategory/assetCategory-new.jsp"))
 	public String save() throws NumberFormatException, EGOVException {
 		addDepMetaDatas();
 
@@ -342,6 +342,7 @@ public class AssetCategoryAction extends BaseFormAction {
 		try {
 			final List categoryList = persistenceService.getSession()
 					.createSQLQuery(query).list();
+
 			if (categoryList != null && !categoryList.isEmpty()) {
 				final Iterator assetCatIterator = categoryList.iterator();
 				Object[] assetCategoryObject;

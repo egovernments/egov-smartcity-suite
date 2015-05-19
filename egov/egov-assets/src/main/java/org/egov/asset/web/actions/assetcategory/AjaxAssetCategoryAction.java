@@ -41,6 +41,8 @@ package org.egov.asset.web.actions.assetcategory;
 
 import java.util.List;
 
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Result;
 import org.egov.asset.model.AssetCategory;
 import org.egov.web.actions.BaseFormAction;
 
@@ -67,6 +69,7 @@ public class AjaxAssetCategoryAction extends BaseFormAction {
 		return SUCCESS;
 	}
 
+	@Action(value = "/ajaxAssetCategory-populateParentCategories", results = @Result(name = PARENT_CATEGORIES, type = "dispatcher"))
 	public String populateParentCategories() {
 		if (assetType.equalsIgnoreCase("-1"))
 			assetCategoryList = getPersistenceService().findAllBy(

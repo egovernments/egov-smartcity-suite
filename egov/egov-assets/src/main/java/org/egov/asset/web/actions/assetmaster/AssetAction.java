@@ -73,13 +73,13 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.HierarchyType;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.config.AppConfigValues;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
-import org.egov.lib.admbndry.BoundaryDAO;
-import org.egov.lib.admbndry.BoundaryTypeDAO;
 import org.egov.lib.admbndry.HeirarchyTypeDAO;
 import org.egov.web.actions.SearchFormAction;
 import org.egov.web.annotation.ValidationErrorPage;
@@ -163,9 +163,9 @@ public class AssetAction extends SearchFormAction {
 	@Autowired
 	private HeirarchyTypeDAO heirarchyTypeDAO;
 	@Autowired
-	private BoundaryDAO boundaryDAO;
+	private BoundaryService boundaryService;
 	@Autowired
-	private BoundaryTypeDAO boundaryTypeDAO;
+	private BoundaryTypeService boundaryTypeService;
 
 	/**
 	 * Default Constructor
@@ -216,9 +216,10 @@ public class AssetAction extends SearchFormAction {
 		 */
 		List<Boundary> areaList = new ArrayList<Boundary>();
 		if (asset.getArea() != null || areaId != null) {
-			final BoundaryType bType = boundaryTypeDAO.getBoundaryType(
-					AREA_BOUNDARY_TYPE, hType);
-			areaList = boundaryDAO.getAllBoundariesInclgHxByBndryTypeId(bType
+			final BoundaryType bType = boundaryTypeService
+					.getBoundaryTypeByNameAndHierarchyType(AREA_BOUNDARY_TYPE,
+							hType);
+			areaList = boundaryService.getAllBoundariesByBoundaryTypeId(bType
 					.getId());
 		}
 		addDropdownData("areaList", areaList);
@@ -235,10 +236,11 @@ public class AssetAction extends SearchFormAction {
 		List<Boundary> locationList = new ArrayList<Boundary>();
 		try {
 			if (asset.getArea() != null)
-				locationList = boundaryDAO.getChildBoundariesInclgHx(asset
-						.getArea().getId());
+				locationList = boundaryService
+						.getChildBoundariesByBoundaryId(asset.getArea().getId());
 			if (areaId != null)
-				locationList = boundaryDAO.getChildBoundariesInclgHx(areaId);
+				locationList = boundaryService
+						.getChildBoundariesByBoundaryId(areaId);
 		} catch (final Exception e) {
 			LOGGER.error("Error while loading location - location."
 					+ e.getMessage());
@@ -254,7 +256,8 @@ public class AssetAction extends SearchFormAction {
 		} else {
 			List<Boundary> wardList = null;
 			try {
-				wardList = boundaryDAO.getChildBoundariesInclgHx(zoneId);
+				wardList = boundaryService
+						.getChildBoundariesByBoundaryId(zoneId);
 			} catch (final Exception e) {
 				LOGGER.error("Error while loading wards - wards."
 						+ e.getMessage());
@@ -272,20 +275,22 @@ public class AssetAction extends SearchFormAction {
 		 */
 		List<Boundary> streetList = new ArrayList<Boundary>();
 		if (wardId != null) {
-			final BoundaryType childBoundaryType = boundaryTypeDAO
-					.getBoundaryType("Street", hType);
-			final Boundary parentBoundary = boundaryDAO
-					.getBoundaryInclgHxById(wardId);
-			streetList = new LinkedList(boundaryDAO.getCrossHeirarchyChildren(
-					parentBoundary, childBoundaryType));
+			final BoundaryType childBoundaryType = boundaryTypeService
+					.getBoundaryTypeByNameAndHierarchyType("Street", hType);
+			final Boundary parentBoundary = boundaryService
+					.getBoundaryById(wardId);
+			streetList = new LinkedList(
+					heirarchyTypeDAO.getCrossHeirarchyChildren(parentBoundary,
+							childBoundaryType));
 		}
 		if (asset.getWard() != null) {
-			final BoundaryType childBoundaryType = boundaryTypeDAO
-					.getBoundaryType("Street", hType);
-			final Boundary parentBoundary = boundaryDAO
-					.getBoundaryInclgHxById(asset.getWard().getId());
-			streetList = new LinkedList(boundaryDAO.getCrossHeirarchyChildren(
-					parentBoundary, childBoundaryType));
+			final BoundaryType childBoundaryType = boundaryTypeService
+					.getBoundaryTypeByNameAndHierarchyType("Street", hType);
+			final Boundary parentBoundary = boundaryService
+					.getBoundaryById(asset.getWard().getId());
+			streetList = new LinkedList(
+					heirarchyTypeDAO.getCrossHeirarchyChildren(parentBoundary,
+							childBoundaryType));
 		}
 		addDropdownData("streetList", streetList);
 
@@ -298,7 +303,8 @@ public class AssetAction extends SearchFormAction {
 		} else {
 			List<Boundary> street2List = null;
 			try {
-				street2List = boundaryDAO.getChildBoundariesInclgHx(locationId);
+				street2List = boundaryService
+						.getChildBoundariesByBoundaryId(locationId);
 			} catch (final Exception e) {
 				LOGGER.error("Error while loading wards - wards."
 						+ e.getMessage());
@@ -389,8 +395,9 @@ public class AssetAction extends SearchFormAction {
 		if (asset.getArea() != null) {
 			List<Boundary> locationList = new LinkedList<Boundary>();
 			try {
-				locationList = boundaryDAO.getChildBoundaries(asset.getArea()
-						.getId());
+				locationList = boundaryService
+						.getActiveChildBoundariesByBoundaryId(asset.getArea()
+								.getId());
 			} catch (final Exception e) {
 				LOGGER.error("Error while loading locations - locations."
 						+ e.getMessage());
@@ -417,8 +424,9 @@ public class AssetAction extends SearchFormAction {
 			setZoneId(asset.getWard().getParent().getId());
 			List<Boundary> wardList = null;
 			try {
-				wardList = boundaryDAO.getChildBoundaries(String
-						.valueOf(zoneId));
+				wardList = boundaryService
+						.getActiveChildBoundariesByBoundaryId(Long
+								.valueOf(String.valueOf(zoneId)));
 			} catch (final Exception e) {
 				LOGGER.error("Error while loading wards - wards."
 						+ e.getMessage());
@@ -438,9 +446,11 @@ public class AssetAction extends SearchFormAction {
 					Unable_To_Load_Heirarchy_Information, e);
 		}
 		List<Boundary> locationList = null;
-		final BoundaryType bType = boundaryTypeDAO.getBoundaryType(
-				LOACTION_BOUNDARY_TYPE, hType);
-		locationList = boundaryDAO.getAllBoundariesByBndryTypeId(bType.getId());
+		final BoundaryType bType = boundaryTypeService
+				.getBoundaryTypeByNameAndHierarchyType(LOACTION_BOUNDARY_TYPE,
+						hType);
+		locationList = boundaryService
+				.getActiveBoundariesByBoundaryTypeId(bType.getId());
 		return locationList;
 	}
 
@@ -455,9 +465,10 @@ public class AssetAction extends SearchFormAction {
 					Unable_To_Load_Heirarchy_Information, e);
 		}
 		List<Boundary> wardList = null;
-		final BoundaryType bType = boundaryTypeDAO.getBoundaryType(
-				WARD_BOUNDARY_TYPE, hType);
-		wardList = boundaryDAO.getAllBoundariesInclgHxByBndryTypeId(bType
+		final BoundaryType bType = boundaryTypeService
+				.getBoundaryTypeByNameAndHierarchyType(WARD_BOUNDARY_TYPE,
+						hType);
+		wardList = boundaryService.getAllBoundariesByBoundaryTypeId(bType
 				.getId());
 		return wardList;
 	}
@@ -473,20 +484,22 @@ public class AssetAction extends SearchFormAction {
 					Unable_To_Load_Heirarchy_Information, e);
 		}
 		List<Boundary> zoneList = null;
-		final BoundaryType bType = boundaryTypeDAO.getBoundaryType(
-				Zone_BOUNDARY_TYPE, hType);
+		final BoundaryType bType = boundaryTypeService
+				.getBoundaryTypeByNameAndHierarchyType(Zone_BOUNDARY_TYPE,
+						hType);
 		if (actionType == null)
 			actionType = "";
 		if (actionType.equalsIgnoreCase(CREATEASSET))
-			zoneList = boundaryDAO.getAllBoundariesByBndryTypeId(bType.getId());
+			zoneList = boundaryService
+					.getActiveBoundariesByBoundaryTypeId(bType.getId());
 		else if (actionType == "" || actionType.equalsIgnoreCase(VIEWASSET)
 				|| actionType.equalsIgnoreCase(MODIFYASSET))
 			if ("edit".equalsIgnoreCase(userMode))
-				zoneList = boundaryDAO.getAllBoundariesByBndryTypeId(bType
-						.getId());
+				zoneList = boundaryService
+						.getActiveBoundariesByBoundaryTypeId(bType.getId());
 			else
-				zoneList = boundaryDAO
-						.getAllBoundariesInclgHxByBndryTypeId(bType.getId());
+				zoneList = boundaryService
+						.getAllBoundariesByBoundaryTypeId(bType.getId());
 		return zoneList;
 	}
 

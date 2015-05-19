@@ -73,17 +73,35 @@
 			function validateFormAndSubmit(){
 				var code= dom.get("code").value;
 				var name= dom.get("name").value;
+				var assetType = dom.get("assetType").value;
+				var revAccountCode = dom.get("revAccountCode").value;
+				var assetAccountCode  = dom.get("assetAccountCode").value;
+				var uom  = dom.get("uom").value;
 				var pattern=/[^0-9a-zA-Z-&:/ ]/;
 				var namepattern=/[^0-9a-zA-Z-&:/ ]/;
+				alert("inside validate");
 				if(code.match(pattern)){
-				dom.get("category_error").style.display='';
-				   document.getElementById("category_error").innerHTML='<s:text name='assetcat.code.alphaNumericwithspecialchar' />'
-				    	return;
+				   showMessage('category_error', '<s:text name="assetcat.code.alphaNumericwithspecialchar" />');
+					return false;
 				}else if(name.match(namepattern) ){
-				  dom.get("category_error").style.display='';
-				   document.getElementById("category_error").innerHTML='<s:text name='assetcat.name.alphaNumericwithspecialchar' />'
-				    	return;
-				}else{
+				   showMessage('category_error', '<s:text name="assetcat.name.alphaNumericwithspecialchar" />');
+					return false;
+				} else if (name == '' || name == null){
+					showMessage('category_error', '<s:text name="assetcat.name.null" />');
+					return false;
+				} else if (assetType == -1){
+					showMessage('category_error', '<s:text name="assetcat.assettype.null" />');
+					return false;
+				} else if (assetAccountCode == -1){
+					showMessage('category_error', '<s:text name="assetcat.assetaccountcode.null" />');
+					return false;
+				} else if (revAccountCode == -1){
+					showMessage('category_error', '<s:text name="assetcat.revaccountcode.null" />');
+					return false;
+				} else if (uom == -1){
+					showMessage('category_error', '<s:text name="assetcat.uom.null" />');
+					return false;
+				} else {
 				    clearMessage('category_error')
 					links=document.assetCategoryForm.getElementsByTagName("span");
 					errors=false;
