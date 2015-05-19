@@ -1,0 +1,356 @@
+CREATE SEQUENCE seq_eg_remittance
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE seq_eg_remittance_detail
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE seq_eg_remittance_gldtl
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE seq_generalledgerdetail
+    START WITH 2
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE seq_egf_ebconsumer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 20;
+CREATE SEQUENCE seq_egf_wardtargetarea_mapping
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 20;
+
+CREATE SEQUENCE seq_egf_ebschedulerlog
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 20;
+
+CREATE SEQUENCE seq_egf_ebschedulerlogdetails
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 20;
+
+CREATE SEQUENCE seq_egf_fundingagency
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 20;
+
+
+
+CREATE SEQUENCE seq_egf_loangrantdetail
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 20;
+
+
+CREATE SEQUENCE seq_egf_loangrantheader
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 20;
+
+CREATE SEQUENCE seq_egf_loangrantreceiptdetail
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 20;
+
+CREATE SEQUENCE seq_egf_scheme_bankaccount
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 20;
+
+CREATE SEQUENCE seq_egf_subscheme_project
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 20;
+CREATE SEQUENCE seq_eg_advancereqpayeedetails
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE seq_egf_fixeddeposit
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE seq_egf_grant
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE seq_eg_advancerequisition
+    START WITH 2
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE seq_eg_advancerequisitionmis
+    START WITH 2
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE seq_eg_billdetails
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE seq_eg_billpayeedetails
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE seq_eg_billregister
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE seq_eg_billregistermis
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE seq_eg_bill_subtype
+    START WITH 26
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE seq_miscbilldetail
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE seq_egf_budget
+    START WITH 6
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE seq_egf_budgetdetail
+    START WITH 14
+    INCREMENT BY 1
+    MINVALUE 0
+    MAXVALUE 99999999999999
+    CACHE 1;
+CREATE SEQUENCE seq_egf_budgetgroup
+    START WITH 4
+    INCREMENT BY 1
+    MINVALUE 0
+    MAXVALUE 99999999999999
+    CACHE 1;
+CREATE SEQUENCE seq_egf_reappropriation_misc
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE seq_egf_budget_usage
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE seq_egf_account_cheques
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE seq_contrajournalvoucher
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE seq_transactionsummary
+    START WITH 3
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE seq_eg_dept_do_mapping
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 20;
+
+
+CREATE SEQUENCE seq_egf_instrumentaccountcodes
+    START WITH 6
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE seq_egf_instrumentheader
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE seq_egf_instrumentotherdetails
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE seq_egf_instrumenttype
+    START WITH 11
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE seq_egf_instrumentvoucher
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+
+
+CREATE SEQUENCE seq_paymentheader
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE seq_eg_deduction_details
+    START WITH 6
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+
+
+CREATE SEQUENCE seq_tds
+    START WITH 7
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE seq_egf_recovery_bankdetails
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 20;
+
+
+CREATE SEQUENCE seq_egf_remittance_scheduler
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 20;
+
+CREATE SEQUENCE seq_egf_fundflow
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+CREATE SEQUENCE seq_eg_advancereqdetails
+    START WITH 3
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE seq_egf_reappropriation
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE seq_departmentfunctionmap
+    START WITH 339
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+CREATE SEQUENCE seq_egf_dishonorchq
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE seq_egf_dishonorchqdet
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE seq_generalledger
+    START WITH 6
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE seq_egf_ecstype
+    START WITH 21
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 20;
+
+CREATE SEQUENCE seq_egw_typeofwork
+    START WITH 15
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+
