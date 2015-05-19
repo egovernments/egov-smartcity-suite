@@ -1580,7 +1580,7 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 		newProperty.setStatus(STATUS_WORKFLOW);
 		// Setting the property state to the objection workflow initiator
 		Position owner = eisCommonsService.getPositionByUserId(objWfInitiator.getId());
-		String desigName = owner.getDeptDesigId().getDesignation().getDesignationName();
+		String desigName = owner.getDeptDesigId().getDesignation().getName();
 		String value = WFLOW_ACTION_NAME_MODIFY + ":" + desigName + "_" + WF_STATE_APPROVAL_PENDING;
 
 		newProperty.transition(true).start().withSenderName(objWfInitiator.getName())

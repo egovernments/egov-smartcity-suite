@@ -60,8 +60,8 @@ public class DeptDesigService {
         return deptDesigRepository.findOne(id);
     }
 
-    public DeptDesig findByDepartmentAndDesignation(final Long id, final Integer designationId) {
-        return deptDesigRepository.findByDepartment_IdAndDesignation_DesignationId(id, designationId);
+    public DeptDesig findByDepartmentAndDesignation(final Long id, final Long designationId) {
+        return deptDesigRepository.findByDepartment_IdAndDesignation_Id(id, designationId);
     }
 
     @Transactional

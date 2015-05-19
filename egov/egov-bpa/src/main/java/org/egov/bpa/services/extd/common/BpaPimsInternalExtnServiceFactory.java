@@ -292,7 +292,7 @@ public class BpaPimsInternalExtnServiceFactory {
 				Functionary functionary=	(Functionary) persistenceService.find("from Functionary where name=?",BpaConstants.TOWNPLANNINGFUNCTIONARY);
 				EgwStatus status=(EgwStatus) persistenceService.find("from EgwStatus mod where moduletype=? and code=?",BpaConstants.PIMSMODULETYPE,BpaConstants.PIMSEMPLOYEDCODE);
 				if(designation!=null){
-					paramMap.put("designationId",Integer.toString(designation.getDesignationId()) );	 	
+					paramMap.put("designationId",designation.getId() );	 	
 				}
 				if(functionary!=null)
 				paramMap.put("functionaryId", Integer.toString(functionary.getId()));
@@ -371,7 +371,7 @@ public class BpaPimsInternalExtnServiceFactory {
 				Functionary functionary = (Functionary) persistenceService.find("from Functionary where name=?",BpaConstants.TOWNPLANNINGFUNCTIONARY);
 				EgwStatus status = (EgwStatus) persistenceService.find("from EgwStatus mod where moduletype=? and code=?",BpaConstants.PIMSMODULETYPE,BpaConstants.PIMSEMPLOYEDCODE);
 				if (designation != null) {
-					paramMap.put("designationId",Integer.toString(designation.getDesignationId()) );	 	
+					paramMap.put("designationId",designation.getId() );	 	
 				}
 				if (functionary != null) {
 					paramMap.put("functionaryId", Integer.toString(functionary.getId()));
@@ -418,7 +418,7 @@ public class BpaPimsInternalExtnServiceFactory {
 				BoundaryType bndryType=getBpaCommonExtnService().getBoundaryTypeByPassingBoundaryTypeAndHierarchy(BpaConstants.BOUNDARYTYPE,BpaConstants.HEIRARCHYTYPE);
 				
 				if(designation!=null){
-					paramMap.put("designationId",Integer.toString(designation.getDesignationId()) );	 	
+					paramMap.put("designationId",designation.getId() );	 	
 				}
 				if(functionary!=null)
 				paramMap.put("functionaryId", Integer.toString(functionary.getId()));
@@ -469,7 +469,7 @@ public class BpaPimsInternalExtnServiceFactory {
 				BoundaryType bndryType=getBpaCommonExtnService().getBoundaryTypeByPassingBoundaryTypeAndHierarchy(BpaConstants.BOUNDARYTYPE,BpaConstants.HEIRARCHYTYPE);
 				
 				if(designation!=null){
-					paramMap.put("designationId",Integer.toString(designation.getDesignationId()) );	 	
+					paramMap.put("designationId",designation.getId() );	 	
 				}
 				//TODO: CHECK AND ADD THIS CONDITION. WHETHER USER NEED TO MAP TO "TP" FUNCTIONARY
 				if(functionary!=null)
@@ -519,7 +519,7 @@ public class BpaPimsInternalExtnServiceFactory {
 				BoundaryType bndryType=getBpaCommonExtnService().getBoundaryTypeByPassingBoundaryTypeAndHierarchy(BpaConstants.BOUNDARYTYPE,BpaConstants.HEIRARCHYTYPE);
 				
 				if(designation!=null){
-					paramMap.put("designationId",Integer.toString(designation.getDesignationId()));	 	
+					paramMap.put("designationId",designation.getId());	 	
 				}
 				if(functionary!=null)
 				paramMap.put("functionaryId", Integer.toString(functionary.getId()));

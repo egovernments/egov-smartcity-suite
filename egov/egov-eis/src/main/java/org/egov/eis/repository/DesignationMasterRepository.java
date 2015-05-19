@@ -52,7 +52,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DesignationMasterRepository extends JpaRepository<DesignationMaster,Integer>{
 	
-	DesignationMaster findByDesignationName(String designationName);
-	List<DesignationMaster> findByDesignationNameContainingIgnoreCase(String designationName);
+	DesignationMaster findByName(String designationName);
+	List<DesignationMaster> findByNameContainingIgnoreCase(String designationName);
 
 }

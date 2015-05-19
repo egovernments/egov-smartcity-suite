@@ -318,7 +318,7 @@ public class EmployeeMasterAction extends BaseFormAction
                         Position position = (Position)persistenceService.getSession().load(Position.class, empAssign.getPosition().getId());
                         empAssign.setPosition(position);
                         
-                        DesignationMaster designation = (DesignationMaster)persistenceService.getSession().load(DesignationMaster.class, empAssign.getDesigId().getDesignationId());
+                        DesignationMaster designation = (DesignationMaster)persistenceService.getSession().load(DesignationMaster.class, empAssign.getDesigId().getId());
                         empAssign.setDesigId(designation);
                         
                         Department department = (Department)persistenceService.getSession().load(Department.class, empAssign.getDeptId().getId());

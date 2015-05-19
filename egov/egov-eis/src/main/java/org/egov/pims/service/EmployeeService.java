@@ -105,7 +105,7 @@ public interface EmployeeService
 	public List getListOfEmployeeWithoutAssignment(Date fromdate);/*new*/
 	public Assignment getLatestAssignmentForEmployeeByToDate(Integer empId,Date todate) throws Exception;
 	public PersonalInformation getEmployee(Integer deptId, Integer designationId, Long Boundaryid)throws TooManyValuesException, NoSuchObjectException;
-	public PersonalInformation getEmployeeByFunctionary(Integer deptId, Integer designationId, Long Boundaryid,Integer functionaryId)throws TooManyValuesException, NoSuchObjectException;
+	public PersonalInformation getEmployeeByFunctionary(Long deptId, Long designationId, Long Boundaryid,Integer functionaryId)throws TooManyValuesException, NoSuchObjectException;
 	public Assignment getLastAssignmentByEmp(Integer empId);
 
 	//to delete grade master

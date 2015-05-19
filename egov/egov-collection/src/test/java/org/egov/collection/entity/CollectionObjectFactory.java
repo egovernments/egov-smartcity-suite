@@ -1289,7 +1289,7 @@ public class CollectionObjectFactory {
 
 	public Position createPosition(DesignationMaster desig) {
 		Position position = new Position();
-		position.setName(desig.getDesignationName() + "pos");
+		position.setName(desig.getName() + "pos");
 		//position.setDeptDesigId(desig);
 		session.saveOrUpdate(position);
 		return position;
@@ -1316,8 +1316,8 @@ public class CollectionObjectFactory {
 			String designationName) {
 		DesignationMaster designation = new DesignationMaster();
 		//designation.setDeptId(deptId);
-		designation.setDesignationName(designationName);
-		designation.setDesignationDescription(designationName);
+		designation.setName(designationName);
+		designation.setDescription(designationName);
 		session.saveOrUpdate(designation);
 		return designation;
 	}

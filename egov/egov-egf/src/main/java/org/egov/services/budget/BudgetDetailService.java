@@ -1498,7 +1498,7 @@ if(mandatoryFields.contains(Constants.EXECUTING_DEPARTMENT)){
                     consolidateBudget=Boolean.TRUE;
                     break;
                 }
-            }else if(designation.getDesignationName().equalsIgnoreCase(strObj)){
+            }else if(designation.getName().equalsIgnoreCase(strObj)){
                 consolidateBudget=Boolean.TRUE;
                 break;
             }else{

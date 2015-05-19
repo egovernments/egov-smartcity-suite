@@ -79,7 +79,7 @@ public class DeptDesigServiceTest {
     }
 
     private void sampleDeptDesig() {
-        designation = new DesignationMasterBuilder().withName("test-desig").withId(1).build();
+        designation = new DesignationMasterBuilder().withName("test-desig").withId(1l).build();
         department = new DepartmentBuilder().withName("test-dept").withCode("test-code").withId(1l).build();
         deptDesig = new DeptDesigBuilder().withDesignation(designation).withDepartment(department)
                 .withSanctionedPosts(5).withOutsourcedPosts(2).build();
@@ -94,10 +94,10 @@ public class DeptDesigServiceTest {
     @Test
     public void getByDeptAndDesig() {
         when(
-                deptDesigRepository.findByDepartment_IdAndDesignation_DesignationId(department.getId(),
-                        designation.getDesignationId())).thenReturn(deptDesig);
+                deptDesigRepository.findByDepartment_IdAndDesignation_Id(department.getId(),
+                        designation.getId())).thenReturn(deptDesig);
         final Integer sancPosts = deptDesigService.findByDepartmentAndDesignation(department.getId(),
-                designation.getDesignationId()).getSanctionedPosts();
+                designation.getId()).getSanctionedPosts();
         assertEquals(sancPosts, Integer.valueOf(5));
     }
 

@@ -46,6 +46,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DeptDesigRepository extends JpaRepository<DeptDesig, Long> {
 
-    public DeptDesig findByDepartment_IdAndDesignation_DesignationId(Long id, Integer designationId);
+    public DeptDesig findByDepartment_IdAndDesignation_Id(Long id, Long desId);
 
 }

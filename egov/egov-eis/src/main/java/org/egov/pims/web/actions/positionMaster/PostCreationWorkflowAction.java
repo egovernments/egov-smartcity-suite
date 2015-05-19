@@ -85,7 +85,7 @@ public class PostCreationWorkflowAction extends EisCommonWorkflowAction{
 	private String positionName;
 
 	//Used to get the designation coz DesignationMaster pojo doesn't contain getId() method
-	private Integer designationId;
+	private Long designationId;
 	
 	public PostCreationWorkflowAction()
 	{
@@ -128,7 +128,7 @@ public class PostCreationWorkflowAction extends EisCommonWorkflowAction{
 		empPosition = (EmpPosition) persistenceService.getSession().load(EmpPosition.class, getModel().getId());
 		if(null != empPosition)
 		{
-		    setDesignationId(empPosition.getDesigId().getDesignationId());
+		    setDesignationId(empPosition.getDesigId().getId());
 			currentStateId = empPosition.getCurrentState().getId();
 		}
 	return	super.inbox();
@@ -232,11 +232,11 @@ public class PostCreationWorkflowAction extends EisCommonWorkflowAction{
 		this.approverPositionId = approverPositionId;
 	}
 
-	public Integer getDesignationId() {
+	public Long getDesignationId() {
 		return designationId;
 	}
 
-	public void setDesignationId(Integer designationId) {
+	public void setDesignationId(Long designationId) {
 		this.designationId = designationId;
 	}
 

@@ -85,7 +85,7 @@ public abstract class EisCommonWorkflowAction extends GenericWorkFlowAction{
 	protected Integer empId;
 	protected String mode="";
 	//Used to get the designation coz DesignationMaster pojo doesn't contain getId() method
-	protected Integer designationId;
+	protected Long designationId;
 	
 	//this method should define the actions done on final approval of workflow object
 	protected abstract void saveToOriginal();
@@ -244,11 +244,11 @@ public abstract class EisCommonWorkflowAction extends GenericWorkFlowAction{
 		this.commonsService = commonsService;
 	}
 
-	public Integer getDesignationId() {
+	public Long getDesignationId() {
 		return designationId;
 	}
 
-	public void setDesignationId(Integer designationId) {
+	public void setDesignationId(Long designationId) {
 		this.designationId = designationId;
 	}
 

@@ -115,7 +115,7 @@ public class EscalationService {
         escalationRepository.delete(escalation);
     }
 
-    public Integer getHrsToResolve(final Integer designationId, final Long complaintTypeId) {
+    public Integer getHrsToResolve(final Long designationId, final Long complaintTypeId) {
          Escalation escalation = escalationRepository.findByDesignationAndComplaintType(designationId, complaintTypeId);
          if(escalation != null)
         	 return escalation.getNoOfHrs();
@@ -171,7 +171,7 @@ public class EscalationService {
 
         DateTime expiryDate = complaint.getEscalationDate();
         final DesignationMaster designation = eisCommonService.getEmployeeDesignation(complaint.getAssignee().getId());
-        final Integer noOfhrs = getHrsToResolve(designation.getDesignationId(), complaint.getComplaintType().getId());
+        final Integer noOfhrs = getHrsToResolve(designation.getId(), complaint.getComplaintType().getId());
         expiryDate = expiryDate.plusHours(noOfhrs);
         return expiryDate;
     }

@@ -469,7 +469,7 @@ public class CollectionsUtil {
 	 * @return PersonalInformation
 	 */
 
-	public PersonalInformation getEmployeeByDepartmentDesignationBoundaryandFunctionary(Integer deptId, Integer designationId, Integer boundaryId, Integer functionaryId) {
+	public PersonalInformation getEmployeeByDepartmentDesignationBoundaryandFunctionary(Long deptId, Long designationId, Integer boundaryId, Integer functionaryId) {
 		PersonalInformation personalInformation = null;
 		try {
 			personalInformation = EisManagersUtill.getEmployeeService().getEmployeeByFunctionary(deptId, designationId, Long.valueOf(boundaryId), functionaryId);

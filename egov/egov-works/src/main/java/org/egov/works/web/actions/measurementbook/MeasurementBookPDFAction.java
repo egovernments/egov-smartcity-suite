@@ -269,7 +269,7 @@ public class MeasurementBookPDFAction extends BaseFormAction {
                         // if(state.getPrevious()==null){
                         positionId = state.getOwnerPosition().getId();
                         deptdesig = state.getOwnerPosition().getDeptDesigId();
-                        desgName = deptdesig.getDesignation().getDesignationName();
+                        desgName = deptdesig.getDesignation().getName();
                         // }
                         /*
                          * else{ positionId

@@ -80,7 +80,7 @@ public class EscalationServiceTest {
     }
     
     private void sampleEscalation() {
-        designation = new DesignationMasterBuilder().withName("test-desig").withId(1).build();
+        designation = new DesignationMasterBuilder().withName("test-desig").withId(1l).build();
         compType = new ComplaintTypeBuilder().withDefaults().build();
         escalation = new EscalationBuilder().withDesignation(designation).withComplaintType(compType).withHrs(23).build();
         escalationService.create(escalation);
@@ -93,9 +93,9 @@ public class EscalationServiceTest {
     
     @Test
     public void getNoOfHrs() {
-        when(escalationRepository.findByDesignationAndComplaintType(designation.getDesignationId(),compType.getId())).thenReturn((escalation));
+        when(escalationRepository.findByDesignationAndComplaintType(designation.getId(),compType.getId())).thenReturn((escalation));
     
-        Integer hrsToResolve = escalationService.getHrsToResolve(designation.getDesignationId(),compType.getId());
+        Integer hrsToResolve = escalationService.getHrsToResolve(designation.getId(),compType.getId());
         assertEquals(hrsToResolve, Integer.valueOf(23));
     }
 

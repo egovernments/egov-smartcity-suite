@@ -315,7 +315,7 @@ public class MeasurementBookAction extends BaseFormAction {
                     defaultPreparedById = ((List<EmployeeView>) ajaxEstimateAction.getUsersInExecutingDepartment())
                             .get(0).getId();
                     defaultDesgination = ((List<EmployeeView>) ajaxEstimateAction.getUsersInExecutingDepartment())
-                            .get(0).getDesigId().getDesignationName();
+                            .get(0).getDesigId().getName();
                 }
                 addDropdownData("preparedByList", ajaxEstimateAction.getUsersInExecutingDepartment());
             } else {
@@ -528,9 +528,9 @@ public class MeasurementBookAction extends BaseFormAction {
                 && mbHeader.getCurrentState().getOwnerPosition() != null
                 && mbHeader.getCurrentState().getOwnerPosition().getDeptDesigId() != null
                 && mbHeader.getCurrentState().getOwnerPosition().getDeptDesigId().getDesignation() != null
-                && mbHeader.getCurrentState().getOwnerPosition().getDeptDesigId().getDesignation().getDesignationName() != null)
+                && mbHeader.getCurrentState().getOwnerPosition().getDeptDesigId().getDesignation().getName() != null)
             currentDesgination = mbHeader.getCurrentState().getOwnerPosition().getDeptDesigId().getDesignation()
-            .getDesignationName();
+            .getName();
         if (designWhoCanModify != null && currentDesgination != null
                 && designWhoCanModify.equalsIgnoreCase(currentDesgination))
             result = true;

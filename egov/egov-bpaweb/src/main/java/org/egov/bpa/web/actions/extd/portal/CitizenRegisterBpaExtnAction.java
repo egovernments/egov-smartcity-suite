@@ -571,11 +571,11 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 				empViewList_AEE=getZonalLevelDesignatedUser(BpaConstants.ASSISTANTEXECUTIVEENGINEERDESIGNATION);
 				if (empViewList_AE != null && empViewList_AE.size() != 0) {
 					 employeeViewList.addAll(empViewList_AE);
-					 designationId.add(empViewList_AE.get(0).getDesigId()!=null?(long)empViewList_AE.get(0).getDesigId().getDesignationId():null);
+					 designationId.add(empViewList_AE.get(0).getDesigId()!=null?(long)empViewList_AE.get(0).getDesigId().getId():null);
 				}
 				if (empViewList_AEE != null && empViewList_AEE.size() != 0) {
 					 employeeViewList.addAll(empViewList_AEE);
-					 designationId.add(empViewList_AEE.get(0).getDesigId()!=null?(long)empViewList_AEE.get(0).getDesigId().getDesignationId():null);
+					 designationId.add(empViewList_AEE.get(0).getDesigId()!=null?(long)empViewList_AEE.get(0).getDesigId().getId():null);
 				}
 				return autoSelectApproverPosition(employeeViewList,designationId);
 			 }else if(registration.getServiceType().getCode().equals(BpaConstants.APPLICATIONFORDEMOLITIONCODE)) {
@@ -588,7 +588,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 		}
 		employeeViewList=getZonalLevelDesignatedUser(designationName);
 		if (employeeViewList != null && employeeViewList.size() != 0) {
-			 designationId.add(employeeViewList.get(0).getDesigId()!=null?(long)employeeViewList.get(0).getDesigId().getDesignationId():null);
+			 designationId.add(employeeViewList.get(0).getDesigId()!=null?(long)employeeViewList.get(0).getDesigId().getId():null);
 		}
 		return autoSelectApproverPosition(employeeViewList,designationId);
 	

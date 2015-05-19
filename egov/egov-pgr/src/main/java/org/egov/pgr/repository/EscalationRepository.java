@@ -52,7 +52,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EscalationRepository extends JpaRepository<Escalation, Long> {
     
-    @Query(" from Escalation E where E.designation.designationId=:designationId and E.complaintType.id=:comTypeId")
-    public Escalation findByDesignationAndComplaintType(@Param("designationId")Integer designationId,@Param("comTypeId")Long comTypeId);
+    @Query(" from Escalation E where E.designation.id=:designationId and E.complaintType.id=:comTypeId")
+    public Escalation findByDesignationAndComplaintType(@Param("designationId")Long designationId,@Param("comTypeId")Long comTypeId);
 
 }

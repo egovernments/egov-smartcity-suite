@@ -136,13 +136,13 @@ public class BudgetProposalStatusReportAction extends BaseFormAction {
 				if(assignment != null){
 					if(eisCommonService.isHod(assignment.getId()))
 						budgetProposalStatus.setHod(this.heavyCheckMark);
-					else if(assignment.getDesigId().getDesignationName().equals(this.asstBudDesg) && assignment.getFunctionary().getName().equals(this.asstBudFunc))
+					else if(assignment.getDesigId().getName().equals(this.asstBudDesg) && assignment.getFunctionary().getName().equals(this.asstBudFunc))
 						budgetProposalStatus.setAsstBud(this.heavyCheckMark);
-					else if(assignment.getDesigId().getDesignationName().equals(this.smBudDesg) && assignment.getFunctionary().getName().equals(this.smBudFunc))
+					else if(assignment.getDesigId().getName().equals(this.smBudDesg) && assignment.getFunctionary().getName().equals(this.smBudFunc))
 						budgetProposalStatus.setSmBud(this.heavyCheckMark);
-					else if(assignment.getDesigId().getDesignationName().equals(this.aoBudDesg) && assignment.getFunctionary().getName().equals(this.aoBudFunc))
+					else if(assignment.getDesigId().getName().equals(this.aoBudDesg) && assignment.getFunctionary().getName().equals(this.aoBudFunc))
 						budgetProposalStatus.setAoBud(this.heavyCheckMark);
-					else if(assignment.getDesigId().getDesignationName().equals(this.caoBudDesg) && assignment.getFunctionary().getName().equals(this.caoBudFunc))
+					else if(assignment.getDesigId().getName().equals(this.caoBudDesg) && assignment.getFunctionary().getName().equals(this.caoBudFunc))
 						budgetProposalStatus.setCaoBud(this.heavyCheckMark);
 				}
 			}
@@ -165,9 +165,9 @@ public class BudgetProposalStatusReportAction extends BaseFormAction {
 			if(budgetDetail != null && budgetDetail.getState() != null && budgetDetail.getState().getOwnerPosition() != null){
 				Assignment assignment = (Assignment) persistenceService.find("from Assignment where isPrimary=? and position=?", 'Y', budgetDetail.getState().getOwnerPosition());
 				if(assignment != null){
-					if(assignment.getDesigId().getDesignationName().equals(this.asstAdminDesg) && assignment.getFunctionary().getName().equals(this.asstAdminFunc))
+					if(assignment.getDesigId().getName().equals(this.asstAdminDesg) && assignment.getFunctionary().getName().equals(this.asstAdminFunc))
 						budgetProposalStatus.setAsstAdmin(this.heavyCheckMark);
-					else if(assignment.getDesigId().getDesignationName().equals(this.smAdminDesg) && assignment.getFunctionary().getName().equals(this.smAdminFunc))
+					else if(assignment.getDesigId().getName().equals(this.smAdminDesg) && assignment.getFunctionary().getName().equals(this.smAdminFunc))
 						budgetProposalStatus.setSmAdmin(this.heavyCheckMark);
 					else if(eisCommonService.isHod(assignment.getId()))
 						budgetProposalStatus.setHod(this.heavyCheckMark);

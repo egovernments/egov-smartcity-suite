@@ -100,12 +100,12 @@ public class DesignationCreateModifyAction extends BaseFormAction {
 	public void validateSaveDesignation()
 	{
 		
-		if(designation.getDesignationName().length() == 0 || null == designation.getDesignationName())
+		if(designation.getName().length() == 0 || null == designation.getName())
 		{
 			addFieldError("designationName", "Please enter designation name");
 		}
 
-		if(designation.getDesignationDescription().length() == 0 || null == designation.getDesignationDescription())
+		if(designation.getDescription().length() == 0 || null == designation.getDescription())
 		{
 			addFieldError("designationDescription", "Please enter designation description");
 		}
@@ -114,7 +114,7 @@ public class DesignationCreateModifyAction extends BaseFormAction {
 	
 	public void validateModifyDesignation()
 	{
-		if(designation.getDesignationId() == null  || designation.getDesignationId() == 0)
+		if(designation.getId() == null  || designation.getId() == 0)
 		{
 			addFieldError("designationId", "Please select a designation");
 		}
@@ -124,7 +124,7 @@ public class DesignationCreateModifyAction extends BaseFormAction {
 	
 	public void validateViewDesignation()
 	{
-		if(designation.getDesignationId() == null  || designation.getDesignationId() == 0)
+		if(designation.getId() == null  || designation.getId() == 0)
 		{
 			addFieldError("designationId", "Please select a designation");
 		}
@@ -136,7 +136,7 @@ public class DesignationCreateModifyAction extends BaseFormAction {
 	public String saveDesignation()
 	{
 		this.persistenceService.getSession().save(designation);
-		addActionMessage(getText("designation.save.message",new String[]{designation.getDesignationName()}));
+		addActionMessage(getText("designation.save.message",new String[]{designation.getName()}));
 		this.mode = "view";
 		return "new";
 	}
@@ -167,7 +167,7 @@ public class DesignationCreateModifyAction extends BaseFormAction {
 	public String saveModifiedDesignation()
 	{
 		this.persistenceService.getSession().merge(designation);
-		addActionMessage(getText("designation.saveModified.message",new String[]{designation.getDesignationName()}));
+		addActionMessage(getText("designation.saveModified.message",new String[]{designation.getName()}));
 		mode = "view";
 		return "new";
 	}
@@ -191,11 +191,11 @@ public class DesignationCreateModifyAction extends BaseFormAction {
 	private void getdesignationById()
 	{
 		Query query = persistenceService.getSession().createQuery("from DesignationMaster where designationId=:designationId");
-		query.setParameter("designationId",designation.getDesignationId());
+		query.setParameter("designationId",designation.getId());
 		DesignationMaster designationToModify = (DesignationMaster)query.uniqueResult();
-		designation.setDesignationName(designationToModify.getDesignationName());
-		designation.setDesignationDescription(designationToModify.getDesignationDescription());
-		designation.setDesignationId(designationToModify.getDesignationId());
+		designation.setName(designationToModify.getName());
+		designation.setDescription(designationToModify.getDescription());
+		//designation.setDesignationId(designationToModify.getId());
 	}
 	
 	

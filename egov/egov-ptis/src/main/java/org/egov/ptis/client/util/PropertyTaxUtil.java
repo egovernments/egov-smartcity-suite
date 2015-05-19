@@ -3945,7 +3945,7 @@ public class PropertyTaxUtil {
 
 	public String getDesignationName(Long userId) {
 		LOGGER.debug("Entered into getDesignationName, userId=" + userId);
-		return getAssignment(userId).getDesigId().getDesignationName();
+		return getAssignment(userId).getDesigId().getName();
 	}
 
 	public WorkflowDetails initWorkflowAction(PropertyImpl propertyModel,

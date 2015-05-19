@@ -1129,7 +1129,7 @@ public class BudgetReportAction extends BaseFormAction {
 		PersonalInformation emp = eisCommonService.getEmployeeByUserId(EGOVThreadLocals.getUserId());
 		Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(emp.getIdPersonalInformation(),new Date());
 		DesignationMaster designation = empAssignment.getDesigId();
-		if(designation.getDesignationName().equalsIgnoreCase(value))
+		if(designation.getName().equalsIgnoreCase(value))
 		{
 			finalApprover=true;
 		}

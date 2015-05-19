@@ -194,7 +194,7 @@ public class SearchEmpDTO implements java.io.Serializable
 		for(Iterator iter = list.iterator();iter.hasNext();)
 		{
 			DesignationMaster desig = (DesignationMaster)iter.next();
-			desMap.put(desig.getDesignationId(), desig.getDesignationName());
+			desMap.put(desig.getId(), desig.getName());
 		}
 		return desMap;
 		

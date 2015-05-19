@@ -160,7 +160,7 @@ public class WorksPackageAction extends BaseFormAction {
                 loggedInUserEmployeeCode = worksPackage.getPreparedBy().getEmployeeCode();
             if (worksPackage.getDepartment() == null) {
                 worksPackage.setDepartment(latestAssignment.getDeptId());
-                setDesignation(latestAssignment.getDesigId().getDesignationName());
+                setDesignation(latestAssignment.getDesigId().getName());
             }
         }
 
@@ -207,7 +207,7 @@ public class WorksPackageAction extends BaseFormAction {
         } else if (StringUtils.isEmpty(sourcepage))
             sourcepage = "search";
 
-        setDesignation(getAssignment(worksPackage.getPreparedBy()).getDesigId().getDesignationName());
+        setDesignation(getAssignment(worksPackage.getPreparedBy()).getDesigId().getName());
         setEmpId(worksPackage.getPreparedBy().getIdPersonalInformation());
         abstractEstimateList = workspackageService.getAbStractEstimateListByWorksPackage(worksPackage);
         setWorktotalValue(abstractEstimateService.getWorkValueIncludingTaxesForEstList(abstractEstimateList));

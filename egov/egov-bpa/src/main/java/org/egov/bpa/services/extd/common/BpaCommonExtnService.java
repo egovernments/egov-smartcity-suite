@@ -2131,7 +2131,7 @@ return siteInspectionDatesList;
 
 					DesignationMaster designationMaster = deptDesig.getDesignation();
 					if(designationMaster!=null)
-						designationName = designationMaster.getDesignationName();
+						designationName = designationMaster.getName();
 
 				}
 			}

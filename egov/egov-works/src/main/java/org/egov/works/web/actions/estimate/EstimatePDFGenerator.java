@@ -840,7 +840,7 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
             // if(ad.getPrevious()==null){
             positionId = ad.getOwnerPosition().getId();
             deptdesig = ad.getOwnerPosition().getDeptDesigId();
-            desgName = deptdesig.getDesignation().getDesignationName();
+            desgName = deptdesig.getDesignation().getName();
             /*
              * } else{ positionId =ad.getPrevious().getOwner().getId();
              * deptdesig= ad.getPrevious().getOwner().getDeptDesigId(); desgName

@@ -840,7 +840,7 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 
 				DesignationMaster designationMaster = deptDesig.getDesignation();
 				if(designationMaster!=null)
-					designationName = designationMaster.getDesignationName();
+					designationName = designationMaster.getName();
 
 			}
 		}
@@ -875,7 +875,7 @@ public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn,
 			if (approverDesignation != null) {
 				DesignationMaster designation=	(DesignationMaster) persistenceService.find("from DesignationMaster where designationId=?",approverDesignation);
 				if(designation!=null)
-					designationName = designation.getDesignationName();
+					designationName = designation.getName();
 
 			}
 		}

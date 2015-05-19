@@ -71,16 +71,16 @@ public class DesignationMasterServiceTest extends EISAbstractSpringIntegrationTe
 	public void createDesignation()	{
 		sampleDesignation();		
 		
-		assertEquals("ASSISTANT1",designationMasterService.getDesignationByName("ASSISTANT1").getDesignationName());
+		assertEquals("ASSISTANT1",designationMasterService.getDesignationByName("ASSISTANT1").getName());
 	}
 	
 	@Test
 	public void updateDesignation()	{
 		sampleDesignation();
-		designation.setDesignationDescription("FORTESTING");
+		designation.setDescription("FORTESTING");
 		designationMasterService.updateDesignation(designation);
 		
-		assertEquals("FORTESTING", designation.getDesignationDescription());
+		assertEquals("FORTESTING", designation.getDescription());
 	}
 	
 	@Test

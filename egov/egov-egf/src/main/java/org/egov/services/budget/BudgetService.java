@@ -319,7 +319,7 @@ public class BudgetService extends PersistenceService<Budget,Long>{
 	public String getEmployeeNameAndDesignationForPosition(Position pos)throws EGOVRuntimeException{
 		PersonalInformation pi =eisCommonService.getPrimaryAssignmentEmployeeForPos(pos.getId());
 		Assignment assignment = eisCommonService.getLatestAssignmentForEmployee(pi.getIdPersonalInformation());
-		return pi.getEmployeeFirstName()+" ("+assignment.getDesigId().getDesignationName()+")";
+		return pi.getEmployeeFirstName()+" ("+assignment.getDesigId().getName()+")";
 	}
 	
 	public PersonalInformation getEmpForCurrentUser(){

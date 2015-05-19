@@ -294,7 +294,7 @@ public class TenderNegotiationAction extends SearchFormAction {
         }
         if (getAssignment(tenderResponse.getNegotiationPreparedBy()) != null) {
             setDesignationNegotiation(getAssignment(tenderResponse.getNegotiationPreparedBy()).getDesigId()
-                    .getDesignationName());
+                    .getName());
             setDeptId(getAssignment(tenderResponse.getNegotiationPreparedBy()).getDeptId().getId());
         }
         final List<Contractor> contractorList = new ArrayList<Contractor>();
@@ -375,7 +375,7 @@ public class TenderNegotiationAction extends SearchFormAction {
             tenderResponse.setWorkflowDepartmentId(abstractEstimateService.getLatestAssignmentForCurrentLoginUser()
                     .getDeptId().getId());
             if (tenderResponse.getNegotiationPreparedBy() == null) {
-                setDesignationNegotiation(latestAssignment.getDesigId().getDesignationName());
+                setDesignationNegotiation(latestAssignment.getDesigId().getName());
                 loggedInUserEmployeeCode = latestAssignment.getEmployee().getCode();
             } else
                 loggedInUserEmployeeCode = tenderResponse.getNegotiationPreparedBy().getEmployeeCode();

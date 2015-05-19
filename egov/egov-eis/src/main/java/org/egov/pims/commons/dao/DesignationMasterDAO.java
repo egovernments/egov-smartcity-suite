@@ -116,7 +116,7 @@ public class DesignationMasterDAO
             Query qry = getCurrentSession().createQuery("from DesignationMaster DM ");
             Map retMap = new LinkedHashMap();
             DesignationMaster designation=null;
-            for(Iterator iter = qry.iterate(); iter.hasNext(); retMap.put(designation.getDesignationId(), designation.getDesignationName()))
+            for(Iterator iter = qry.iterate(); iter.hasNext(); retMap.put(designation.getId(), designation.getName()))
             {
                 designation = (DesignationMaster)(DesignationMaster)iter.next();
             }

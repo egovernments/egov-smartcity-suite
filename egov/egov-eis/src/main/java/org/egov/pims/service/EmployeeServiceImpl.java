@@ -1545,7 +1545,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @throws TooManyValuesException
      * @throws NoSuchObjectException
      */
-    public PersonalInformation getEmployeeByFunctionary(Integer deptId, Integer designationId, Long Boundaryid,
+    public PersonalInformation getEmployeeByFunctionary(Long deptId, Long designationId, Long Boundaryid,
             Integer functionaryId) throws TooManyValuesException, NoSuchObjectException {
         PersonalInformation personalInformation = null;
 

@@ -535,7 +535,7 @@ public class RegisterBpaExtnAction extends GenericWorkFlowAction {
 					if (employeeList != null && employeeList.size() != 0) {
 						designationId
 								.add(employeeList.get(0).getDesigId() != null ? (long) employeeList
-										.get(0).getDesigId().getDesignationId()
+										.get(0).getDesigId().getId()
 										: null);
 					}// Phionix TODO
 					registration

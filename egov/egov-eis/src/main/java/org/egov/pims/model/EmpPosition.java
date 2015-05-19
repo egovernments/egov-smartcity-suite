@@ -146,7 +146,7 @@ public class EmpPosition extends StateAware {
     @Override
     public String getStateDetails() {
 
-        return "" + getDeptId().getName() + "-" + getDesigId().getDesignationName() + "-" + getPostName();
+        return "" + getDeptId().getName() + "-" + getDesigId().getName() + "-" + getPostName();
     }
 
 }

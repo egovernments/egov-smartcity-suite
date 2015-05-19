@@ -856,7 +856,7 @@ public class CreateVoucher {
 		   
 		PersonalInformation employeeByFunctionary=null;
 		try {
-			employeeByFunctionary = personalInformationDAO.getEmployeeByFunctionary(department.getId().intValue(),next_desig.getDesignationId(),boundaryForUser.getId(),functionary.getId());
+			employeeByFunctionary = personalInformationDAO.getEmployeeByFunctionary(department.getId(),next_desig.getId(),boundaryForUser.getId(),functionary.getId());
 		} catch (TooManyValuesException e) {
 			LOGGER.error(e.getMessage(),e);
 			List<ValidationError> errors=new ArrayList<ValidationError>();

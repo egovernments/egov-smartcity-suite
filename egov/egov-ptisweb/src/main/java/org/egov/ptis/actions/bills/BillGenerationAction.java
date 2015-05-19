@@ -541,7 +541,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 		} else if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(wflowAction)) {
 			DesignationMaster nextDesn = propertyTaxUtil.getDesignationForUser(workflowBean
 					.getApproverUserId().longValue());
-			nextStateValue = nextStateValue.append(nextDesn.getDesignationName()).append("_")
+			nextStateValue = nextStateValue.append(nextDesn.getName()).append("_")
 					.append(WF_STATE_APPROVAL_PENDING);
 			// property.changeState(nextStateValue.toString(), nextPosition,
 			// workflowBean.getComments());

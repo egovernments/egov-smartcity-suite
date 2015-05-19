@@ -368,7 +368,7 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
         final List<HashMap> drawingOfficers = new ArrayList<HashMap>();
         try {
             final List<DesignationMaster> designationsList = new LinkedList<DesignationMaster>();
-            final List<Integer> designationsIdList = new LinkedList<Integer>();
+            final List<Long> designationsIdList = new LinkedList<Long>();
             final String drawingOfficerDesignations = worksService
                     .getWorksConfigValue("CONTRACTORADVANCE_DRAWINGOFFICER_DESIGNATIONS");
 
@@ -379,7 +379,7 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
                         desgListUpper));
             }
             for (final DesignationMaster desigMaster : designationsList)
-                designationsIdList.add(desigMaster.getDesignationId());
+                designationsIdList.add(desigMaster.getId());
 
             drawingOfficers.addAll(eisService.getListOfDrawingOfficers(designationsIdList, advanceRequisitionDate,
                     query));

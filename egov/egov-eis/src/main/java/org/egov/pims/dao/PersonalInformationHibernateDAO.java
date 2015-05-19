@@ -348,7 +348,7 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 	 * @throws TooManyValuesException
 	 * @throws NoSuchObjectException
 	 */
-	public PersonalInformation getEmployeeByFunctionary(Integer deptId, Integer designationId, Long boundaryId,Integer functionaryId)throws TooManyValuesException, NoSuchObjectException
+	public PersonalInformation getEmployeeByFunctionary(Long deptId, Long designationId, Long boundaryId,Integer functionaryId)throws TooManyValuesException, NoSuchObjectException
 	{
 		PersonalInformation personalInformation= null;
 		Query qry1=null;
@@ -380,8 +380,8 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 						"(A.toDate IS NULL and A.fromDate <= :currDate) " +
 						"OR " +
 						"(A.fromDate <= :currDate and A.toDate >= :currDate))");  
-		qry1.setInteger("deptId",deptId);
-		qry1.setInteger("designationId", designationId);
+		qry1.setLong("deptId",deptId);
+		qry1.setLong("designationId", designationId);
 		qry1.setInteger("functionaryId", functionaryId);
 		qry1.setParameterList("userObjList",userList);
 		qry1.setDate(STR_CURRDATE,currDate);
@@ -397,8 +397,8 @@ public class PersonalInformationHibernateDAO extends GenericHibernateDAO impleme
 					"(A.toDate IS NULL and A.fromDate <= :currDate) " +
 					"OR " +
 					"(A.fromDate <= :currDate and A.toDate >= :currDate))");  
-			qry1.setInteger("deptId",deptId);
-			qry1.setInteger("designationId", designationId);
+			qry1.setLong("deptId",deptId);
+			qry1.setLong("designationId", designationId);
 			qry1.setInteger("functionaryId", functionaryId);
 			qry1.setParameterList("userObjList",userList);
 			qry1.setDate(STR_CURRDATE,currDate);

@@ -2798,7 +2798,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
 	{
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside getFunctionaryAndDesignation...");
 		Assignment assignment = getAssignment();
-		return assignment.getFunctionary().getName()+"-"+assignment.getDesigId().getDesignationName();
+		return assignment.getFunctionary().getName()+"-"+assignment.getDesigId().getName();
 	}
 	public Assignment getAssignment()
 	{
@@ -2821,7 +2821,7 @@ public class PaymentService extends PersistenceService<Paymentheader,Long>
 		if(LOGGER.isDebugEnabled())     LOGGER.debug("Inside getEmployeeNameForPositionId...");
 		PersonalInformation pi = eisCommonService.getPrimaryAssignmentEmployeeForPos(pos.getId());
 		Assignment assignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(pi.getIdPersonalInformation(),new Date());
-		return pi.getEmployeeFirstName()+" ("+assignment.getFunctionary().getName()+"-"+assignment.getDesigId().getDesignationName()+")";
+		return pi.getEmployeeFirstName()+" ("+assignment.getFunctionary().getName()+"-"+assignment.getDesigId().getName()+")";
 	}
 	public void finalApproval(Long voucherid)
 	{

@@ -39,6 +39,8 @@
  */
 package org.egov.eis.entity;
 
+import java.lang.reflect.Field;
+
 import org.egov.commons.CChartOfAccounts;
 import org.egov.pims.commons.DesignationMaster;
 import org.junit.Ignore;
@@ -52,7 +54,7 @@ public class DesignationMasterBuilder {
 
 	private final DesignationMaster designationMaster;
 	
-	private static int count=0;
+	private static long count=0;
 	
 	public DesignationMasterBuilder(){
 		designationMaster = new DesignationMaster();
@@ -64,12 +66,12 @@ public class DesignationMasterBuilder {
 	}
 	
 	public DesignationMasterBuilder withName(String designationName){
-		designationMaster.setDesignationName(designationName);
+		designationMaster.setName(designationName);
 		return this;
 	}
 	
 	public DesignationMasterBuilder withDescription(String designationDescription){
-		designationMaster.setDesignationDescription(designationDescription);
+		designationMaster.setDescription(designationDescription);
 		return this;
 	}
 	
@@ -78,18 +80,24 @@ public class DesignationMasterBuilder {
 		return this;
 	}
 	
-	public DesignationMasterBuilder withId(Integer designationId){
-		 designationMaster.setDesignationId(designationId);
+	 public DesignationMasterBuilder withId(final long id) {
+	        try {
+	            final Field idField = designationMaster.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
+	            idField.setAccessible(true);
+	            idField.set(designationMaster, id);
+	        } catch (final Exception e) {
+	            throw new RuntimeException(e);
+	        }
 	        return this;
 	    }
 	
 	public DesignationMasterBuilder withDefaults()
 	{
-	    if(null==designationMaster.getDesignationId())
+	    if(null==designationMaster.getId())
 	    {
 	        withId(count);
 	    }
-	    if(null==designationMaster.getDesignationName())
+	    if(null==designationMaster.getName())
 	    {
 	        withName("test-designation-"+count);
 	    }
@@ -105,7 +113,7 @@ public class DesignationMasterBuilder {
 	public DesignationMasterBuilder withDbDefaults()
         {
           
-            if(null==designationMaster.getDesignationName())
+            if(null==designationMaster.getName())
             {
                 withName("test-designation-"+count);
             }

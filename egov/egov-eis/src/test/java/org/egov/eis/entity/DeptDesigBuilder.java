@@ -83,8 +83,7 @@ public class DeptDesigBuilder {
 
     public DeptDesigBuilder withId(final long id) {
         try {
-            final Field idField = deptDesig.getClass().getSuperclass().getSuperclass().getSuperclass()
-                    .getDeclaredField("id");
+            final Field idField = deptDesig.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
             idField.setAccessible(true);
             idField.set(deptDesig, id);
         } catch (final Exception e) {

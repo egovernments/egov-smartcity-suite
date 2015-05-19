@@ -293,12 +293,12 @@ public class WorkOrderAction extends BaseFormAction {
                 setAssignedTo1(Long.valueOf(employeeService
                         .getAssignmentByEmpAndDate(new Date(),
                                 workOrder.getEngineerIncharge().getIdPersonalInformation()).getDesigId()
-                        .getDesignationId()));
+                        .getId()));
             if (workOrder.getEngineerIncharge2() != null && getAssignedTo2() == null)
                 setAssignedTo2(Long.valueOf(employeeService
                         .getAssignmentByEmpAndDate(new Date(),
                                 workOrder.getEngineerIncharge2().getIdPersonalInformation()).getDesigId()
-                        .getDesignationId()));
+                        .getId()));
 
             setWorkOrderActivities(workOrder);
         }

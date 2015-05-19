@@ -520,7 +520,7 @@ public class EisUtilService implements EISServeable {
      * @see org.egov.infstr.services.EISServeable#getListOfDrawingOfficers(java.util.List, java.lang.String, java.lang.String)
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public List<HashMap> getListOfDrawingOfficers(List<Integer> desigList,Date assignDate,String codeOrName)
+    public List<HashMap> getListOfDrawingOfficers(List<Long> desigList,Date assignDate,String codeOrName)
     {
             ArrayList results = new ArrayList();
             if(null==assignDate)
@@ -544,7 +544,7 @@ public class EisUtilService implements EISServeable {
             return results;
     }
     
-    private Query getQueryForDrawingOfficer(List<Integer> desigList,Integer doId,Date assignDate,String codeOrName)
+    private Query getQueryForDrawingOfficer(List<Long> desigList,Integer doId,Date assignDate,String codeOrName)
     {
             StringBuffer qry = new StringBuffer("select distinct eee.id as empid,eee.name as empname,eee.code as empcode," +
                             " do.id as doid,do.name as doname,do.code as docode from eg_eis_employeeinfo eee" +

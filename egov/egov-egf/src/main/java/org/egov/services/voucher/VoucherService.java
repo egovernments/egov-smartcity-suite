@@ -147,7 +147,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 	{
 		PersonalInformation pi = eisCommonService.getPrimaryAssignmentEmployeeForPos(pos.getId());
 		Assignment assignment = eisCommonService.getLatestAssignmentForEmployee(pi.getIdPersonalInformation());
-		return pi.getEmployeeFirstName()+" ("+assignment.getDesigId().getDesignationName()+")";
+		return pi.getEmployeeFirstName()+" ("+assignment.getDesigId().getName()+")";
 	}
 	public Department getCurrentDepartment()
 	{
@@ -235,8 +235,8 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 					if(LOGGER.isDebugEnabled())     LOGGER.debug("Designation and Functionary  Name  = "+ desgFuncryName);
 					try {
 						designation =new DesignationMasterDAO().getDesignationByDesignationName(desgFuncryName.substring(desgFuncryName.indexOf('-')+1));
-						desgFuncryMap.put("designationName",(desgFuncryName.substring(0,desgFuncryName.indexOf('-'))).split("~")[0] +"-"+ designation.getDesignationName()  );
-						desgFuncryMap.put("designationId",designation.getDesignationId()+"-"+desgFuncryName.substring(0,desgFuncryName.indexOf('-')));
+						desgFuncryMap.put("designationName",(desgFuncryName.substring(0,desgFuncryName.indexOf('-'))).split("~")[0] +"-"+ designation.getName()  );
+						desgFuncryMap.put("designationId",designation.getId()+"-"+desgFuncryName.substring(0,desgFuncryName.indexOf('-')));
 						designationList.add(desgFuncryMap);
 					} catch (NoSuchObjectException e) {
 						LOGGER.error(e);
@@ -811,8 +811,8 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 					if(LOGGER.isDebugEnabled())     LOGGER.debug("Designation and Functionary  Name  = "+ desgFuncryName);
 					try {
 						designation =new DesignationMasterDAO().getDesignationByDesignationName(desgFuncryName.substring(desgFuncryName.indexOf('-')+1));
-						desgFuncryMap.put("designationName", designation.getDesignationName());
-						desgFuncryMap.put("designationId",designation.getDesignationId()+"-"+desgFuncryName.substring(0,desgFuncryName.indexOf('-')));
+						desgFuncryMap.put("designationName", designation.getName());
+						desgFuncryMap.put("designationId",designation.getId()+"-"+desgFuncryName.substring(0,desgFuncryName.indexOf('-')));
 						designationList.add(desgFuncryMap);
 					} catch (NoSuchObjectException e) {
 						LOGGER.error(e);
@@ -843,8 +843,8 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 					if(LOGGER.isDebugEnabled())     LOGGER.debug("Designation and Functionary  Name  = "+ desgFuncryName);
 					try {
 						designation =new DesignationMasterDAO().getDesignationByDesignationName(desgFuncryName.substring(desgFuncryName.indexOf('-')+1));
-						desgFuncryMap.put("designationName", designation.getDesignationName());
-						desgFuncryMap.put("designationId",designation.getDesignationId()+"-"+desgFuncryName.substring(0,desgFuncryName.indexOf('-')));
+						desgFuncryMap.put("designationName", designation.getName());
+						desgFuncryMap.put("designationId",designation.getId()+"-"+desgFuncryName.substring(0,desgFuncryName.indexOf('-')));
 						designationList.add(desgFuncryMap);
 					} catch (NoSuchObjectException e) {
 						LOGGER.error(e);
@@ -875,8 +875,8 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 					if(LOGGER.isDebugEnabled())     LOGGER.debug("Designation and Functionary  Name  = "+ desgFuncryName);
 					try {
 						designation =new DesignationMasterDAO().getDesignationByDesignationName(desgFuncryName.substring(desgFuncryName.indexOf('-')+1));
-						desgFuncryMap.put("designationName", designation.getDesignationName());
-						desgFuncryMap.put("designationId",designation.getDesignationId()+"-"+desgFuncryName.substring(0,desgFuncryName.indexOf('-')));
+						desgFuncryMap.put("designationName", designation.getName());
+						desgFuncryMap.put("designationId",designation.getId()+"-"+desgFuncryName.substring(0,desgFuncryName.indexOf('-')));
 						designationList.add(desgFuncryMap);
 					} catch (NoSuchObjectException e) {
 						LOGGER.error(e);
@@ -909,8 +909,8 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 					if(LOGGER.isDebugEnabled())     LOGGER.debug("Designation and Functionary  Name  = "+ desgFuncryName);
 					try {
 						designation =new DesignationMasterDAO().getDesignationByDesignationName(desgFuncryName.substring(desgFuncryName.indexOf('-')+1));
-						desgFuncryMap.put("designationName", designation.getDesignationName());
-						desgFuncryMap.put("designationId",designation.getDesignationId()+"-"+desgFuncryName.substring(0,desgFuncryName.indexOf('-')));
+						desgFuncryMap.put("designationName", designation.getName());
+						desgFuncryMap.put("designationId",designation.getId()+"-"+desgFuncryName.substring(0,desgFuncryName.indexOf('-')));
 						designationList.add(desgFuncryMap);
 						map.put("wfitemstate", desgFuncryName);
 					} catch (NoSuchObjectException e) {
