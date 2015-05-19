@@ -62,7 +62,6 @@ import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.collection.utils.CollectionCommon;
 import org.egov.commons.EgwStatus;
-import org.egov.demand.dao.DCBDaoFactory;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.integration.TaxCollection;
 import org.egov.demand.model.EgBill;
@@ -91,13 +90,16 @@ public class BpaFeeCollectionExtn extends TaxCollection {
 	private BigDecimal receiptTotalAmount = BigDecimal.ZERO;
 	private BpaSurvayorPortalExtnService bpaSurvayorPortalExtnService;
 	@Autowired
+	@Qualifier(value = "egBillDAO")
+	private EgBillDao egBillDao;
+	@Autowired
 	@Qualifier(value = "moduleDAO")
 	private ModuleDao moduleDao;
 	@Override
 	public void updateDemandDetails(BillReceiptInfo billRcptInfo) {
 		LOGGER.debug("updateDemandDetails : Updating Demand Details Started, billRcptInfo : " + billRcptInfo);
 		receiptTotalAmount = billRcptInfo.getTotalAmount();
-		EgDemand demand = (EgDemand) getDemandFromBillNo(Long.valueOf(billRcptInfo.getBillReferenceNum()));
+		EgDemand demand = (EgDemand) getDemandFromBillNo(Integer.valueOf(billRcptInfo.getBillReferenceNum()));
 		LOGGER.info("updateDemandDetails : collection back update started for Extended BPA : "
 				//+ ((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader().getConsumerCode()
 				+ " and receipt event is " + billRcptInfo.getEvent() + ". Total Receipt amount is."
@@ -257,10 +259,9 @@ public class BpaFeeCollectionExtn extends TaxCollection {
 		return totalAmountCollected;
 	}
 
-	private EgDemand getDemandFromBillNo(Long billId) {
+	private EgDemand getDemandFromBillNo(Integer billId) {
 		EgDemand egDemand = null;
 		if (billId != null) {
-			EgBillDao egBillDao = DCBDaoFactory.getDaoFactory().getEgBillDao();
 			EgBill egBill = (EgBill) egBillDao.findById(billId, false);
 			if (egBill != null) {
 				egDemand = egBill.getEgDemand();

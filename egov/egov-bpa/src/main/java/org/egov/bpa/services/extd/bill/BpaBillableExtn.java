@@ -50,13 +50,11 @@ import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.BpaAddressExtn;
 import org.egov.bpa.models.extd.RegistrationExtn;
 import org.egov.bpa.services.extd.common.BpaCommonExtnService;
-import org.egov.demand.dao.DCBHibernateDaoFactory;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.model.AbstractBillable;
 import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
-import org.egov.demand.utils.DemandConstants;
 import org.egov.infstr.client.filter.EGOVThreadLocals;
 import org.egov.infstr.commons.Module;
 import org.egov.infstr.commons.dao.ModuleDao;
@@ -78,6 +76,9 @@ public class BpaBillableExtn  extends AbstractBillable  {
 	@Qualifier(value = "moduleDAO")
 	private ModuleDao moduleDao;
 	private BpaCommonExtnService bpaCommonExtnService;	
+	@Autowired
+	@Qualifier(value = "egBillDAO")
+	private EgBillDao egBillDao;
 	@Override
 	public String getBillPayee() {
 		StringBuffer billPayee = new StringBuffer();
@@ -129,7 +130,8 @@ public class BpaBillableExtn  extends AbstractBillable  {
 
 	@Override
 	public EgBillType getBillType() {
-		   EgBillDao egBillDao = DCBHibernateDaoFactory.getDaoFactory().getEgBillDao();
+		
+		  
 		     return egBillDao.getBillTypeByCode(AUTO);
 	}
 
