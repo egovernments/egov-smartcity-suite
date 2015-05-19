@@ -58,8 +58,13 @@
 			<version>${project.parent.version}</version>
 			<type>war</type>
 		</dependency>
-		
 		<!-- <dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-assetsweb</artifactId>
+			<version>${project.parent.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-bndweb</artifactId>
 			<version>${project.parent.version}</version>
@@ -129,6 +134,11 @@
 		</dependency>
 		
 		<!-- <dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-assets</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-bnd</artifactId>
 			<version>${project.parent.version}</version>
@@ -213,7 +223,12 @@
 							<artifactId>egov-portalweb</artifactId>
 							<contextRoot>/portal</contextRoot>
 						</webModule>
-						<!-- <webModule>
+						<!--<webModule>
+							<groupId>org.egov</groupId>
+							<artifactId>egov-assetsweb</artifactId>
+							<contextRoot>/egassets</contextRoot>
+						</webModule> 
+						<webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-bndweb</artifactId>
 							<contextRoot>/bnd</contextRoot>
