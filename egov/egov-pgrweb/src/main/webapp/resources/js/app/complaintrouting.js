@@ -177,5 +177,4 @@ $(document).ready(function()
 			$('.loader-class').modal('show', {backdrop: 'static'});
 		}
 	});
-	
 });

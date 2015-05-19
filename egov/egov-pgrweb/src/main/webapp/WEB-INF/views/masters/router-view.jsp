@@ -51,11 +51,11 @@
 				<c:if test="${not empty warning}">
                 	<div id="message" class="success">${warning}</div>
            		</c:if>
-				<form:form id="createRouter" method="post" class="form-horizontal form-groups-bordered" modelAttribute="complaintRouter">
+				<form:form id="viewRouter" method="post" class="form-horizontal form-groups-bordered" modelAttribute="complaintRouter">
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading ">
 							<div class="panel-title">
-								<strong><spring:message code="lbl.router.heading.create"/></strong>
+								<strong><spring:message code="lbl.router.heading.view"/></strong>
 							</div>
 						</div> 
 						<div class="panel-body custom-form">
@@ -63,7 +63,7 @@
 								<label class="col-sm-3 control-label"><spring:message code="lbl.router.complaintType" /> 
 								</label>
 								<div class="col-sm-6">
-									<input id="com_type" type="text" class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" />
+									<form:input id="com_type" path="complaintType.name" type="text" class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" disabled="true"/>
 									<form:hidden path="complaintType" id="complaintTypeId"/>
 									<form:errors path="complaintType" cssClass="add-margin error-msg"/>
 									<div class="error-msg eithererror all-errors display-hide"></div>
@@ -72,20 +72,22 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message code="lbl.router.boundaryType" /></label>
 								<div class="col-sm-6 add-margin">
-                     				<select id="boundary_type_id" class="form-control">
-                         				<option value="0"> <spring:message code="lbl.select"/> </option>
-                         				<c:forEach items="${boundaryTypes}" var="boundaryType">
-                         					<option value="${boundaryType.id}"> ${boundaryType.name}</option>
-                         				</c:forEach>
-                     				</select>
+                     				<form:select path="boundary.boundaryType" id="boundary_type_id"
+									cssClass="form-control" cssErrorClass="form-control error" disabled="true" >
+									<form:option value="">
+										<spring:message code="lbl.select" />
+									</form:option>
+									<form:options items="${boundaryTypes}" itemValue="id"
+										itemLabel="name" />
+								</form:select>
 		                   		</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label"><spring:message code="lbl.router.boundary"/>
 								</label>
 								<div class="col-sm-6">
-									<input id="com_boundry" type="text" class="form-control typeahead" placeholder="" autocomplete="off" />
-									<form:hidden path="boundary" id="boundaryId"/>
+									<form:input id="com_boundry" path="boundary.name" type="text" class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" disabled="true"/>
+									<form:hidden path="boundary" id='boundaryId'/>
 									<form:errors path="boundary" cssClass="error-msg"/>
 			                    	<div class="error-msg boundaryerror all-errors display-hide"></div>
 								</div>
@@ -94,7 +96,7 @@
 								<label class="col-sm-3 control-label"><spring:message code="lbl.router.position" /><small><i
 									class="entypo-star error-msg"></i></small></label>
 								<div class="col-sm-6">
-									<input id="com_position" type="text" class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" />
+									<form:input id="com_position" path="position.name" type="text" class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" disabled="true"/>
 									<form:hidden path="position" id="positionId"/>
 									<form:errors path="position" cssClass="error-msg" />
 									<div class="error-msg positionerror all-errors display-hide"></div>
@@ -102,7 +104,6 @@
 							</div>
 							<div class="form-group">
 								<div class="text-center">
-									<button type="submit" class="btn btn-success" id="submitRouter">Submit</button>
 									<a href="javascript:void(0);" onclick="self.close()" class="btn btn-default">Close</a>
 								</div>
 							</div>
@@ -113,7 +114,20 @@
 		</div>
 	</div>
 </div>
-
+<script>
+	var positionId= '${complaintRouter.position.id}';
+	if(positionId !== ''){
+		$("#positionId").val(positionId);    
+	}
+	var complaintTypeId= '${complaintRouter.complaintType.id}';
+	if(complaintTypeId !== ''){
+		$("#complaintTypeId").val(complaintTypeId);
+	}
+	var boundaryId= '${complaintRouter.boundary.id}';
+	if(boundaryId !== ''){
+		$("#boundaryId").val(boundaryId);    
+	}
+</script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>

@@ -43,6 +43,8 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.pgr.entity.ComplaintRouter;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pims.commons.Position;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -73,4 +75,27 @@ public interface ComplaintRouterRepository extends JpaRepository<ComplaintRouter
     @Query("select cr from ComplaintRouter cr where cr.boundary=:boundary and cr.position=:position and cr.complaintType is null")
     public ComplaintRouter findByBoundaryAndPosition(@Param("boundary") Boundary boundary,
             @Param("position") Position position);
+
+    @Query("select cr from ComplaintRouter cr where cr.boundary.boundaryType.id=:boundaryTypeId ")
+    Page<ComplaintRouter> findRoutersByBoundaryType(@Param("boundaryTypeId") Long boundaryTypeId, Pageable page);
+
+    @Query("select cr from ComplaintRouter cr ")
+    Page<ComplaintRouter> findRoutersByAll(Pageable page);
+
+    @Query("select cr from ComplaintRouter cr where cr.boundary.boundaryType.id=:boundaryTypeId and cr.boundary.id=:boundaryId")
+    Page<ComplaintRouter> findRoutersByBoundaryAndBoundaryType(@Param("boundaryTypeId") Long boundaryTypeId,
+            @Param("boundaryId") Long boundaryId, Pageable page);
+
+    @Query("select cr from ComplaintRouter cr where cr.complaintType.id=:complaintTypeId ")
+    Page<ComplaintRouter> findRoutersByComplaintType(@Param("complaintTypeId") Long complaintTypeId, Pageable page);
+
+    @Query("select cr from ComplaintRouter cr where cr.complaintType.id=:complaintTypeId and cr.boundary.boundaryType.id=:boundaryTypeId")
+    Page<ComplaintRouter> findRoutersByComplaintTypeAndBoundaryType(@Param("complaintTypeId") Long complaintTypeId,
+            @Param("boundaryTypeId") Long boundaryTypeId, Pageable page);
+
+    @Query("select cr from ComplaintRouter cr where cr.complaintType.id=:complaintTypeId and cr.boundary.boundaryType.id=:boundaryTypeId and cr.boundary.id=:boundaryId")
+    Page<ComplaintRouter> findRoutersByComplaintTypeAndBoundaryTypeAndBoundary(
+            @Param("complaintTypeId") Long complaintTypeId, @Param("boundaryTypeId") Long boundaryTypeId,
+            @Param("boundaryId") Long boundaryId, Pageable page);
+
 }

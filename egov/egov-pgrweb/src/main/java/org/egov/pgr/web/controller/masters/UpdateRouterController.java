@@ -49,6 +49,16 @@ class UpdateRouterController {
         return "router-update";
     }
 
+    @RequestMapping(value = "/update-search/{id}", method = GET)
+    public String updatefromSearchRouterForm(final Model model, @PathVariable final Long id) {
+        return "router-updateSearch";
+    }
+
+    @RequestMapping(value = "/view/{id}", method = GET)
+    public String viewRouterForm(final Model model, @PathVariable final Long id) {
+        return "router-view";
+    }
+
     @RequestMapping(value = "/update/{id}", method = POST)
     public String update(@Valid @ModelAttribute final ComplaintRouter complaintRouter, final BindingResult errors,
             final RedirectAttributes redirectAttrs, final Model model) {
@@ -60,6 +70,19 @@ class UpdateRouterController {
         model.addAttribute("routerHeading", "Update Complaint Router");
         model.addAttribute("message", "Complaint Router updated successfully");
         return "router-success";
+    }
+
+    @RequestMapping(value = "/update-search/{id}", method = POST)
+    public String searchupdate(@Valid @ModelAttribute final ComplaintRouter complaintRouter,
+            final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model) {
+        if (errors.hasErrors())
+            return "router-updateSearch";
+
+        complaintRouterService.updateComplaintRouter(complaintRouter);
+        redirectAttrs.addFlashAttribute("complaintRouter", complaintRouter);
+        model.addAttribute("routerHeading", "Update Complaint Router");
+        model.addAttribute("message", "Complaint Router updated successfully");
+        return "router-updateSuccess";
     }
 
     @RequestMapping(value = "/delete/{id}", method = POST)

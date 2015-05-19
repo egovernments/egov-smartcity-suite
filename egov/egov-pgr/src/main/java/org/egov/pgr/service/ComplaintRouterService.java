@@ -45,6 +45,10 @@ import org.egov.pgr.entity.ComplaintRouter;
 import org.egov.pgr.repository.ComplaintRouterRepository;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -149,4 +153,22 @@ public class ComplaintRouterService {
         return complaintRouterRepository.findOne(id);
     }
 
+    public Page<ComplaintRouter> getPageOfRouters(final Integer pageNumber, final Integer pageSize,
+            final Long boundaryTypeId, final Long complaintTypeId, final Long boundaryId) {
+        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "position");
+        if (boundaryId != 0 && complaintTypeId != 0 && boundaryTypeId != 0)
+            return complaintRouterRepository.findRoutersByComplaintTypeAndBoundaryTypeAndBoundary(complaintTypeId,
+                    boundaryTypeId, boundaryId, pageable);
+        else if (boundaryTypeId != 0 && boundaryId == 0 && complaintTypeId != 0)
+            return complaintRouterRepository.findRoutersByComplaintTypeAndBoundaryType(complaintTypeId, boundaryTypeId,
+                    pageable);
+        else if (boundaryTypeId != 0 && boundaryId != 0 && complaintTypeId == 0)
+            return complaintRouterRepository.findRoutersByBoundaryAndBoundaryType(boundaryTypeId, boundaryId, pageable);
+        else if (boundaryTypeId != 0 && boundaryId == 0 && complaintTypeId == 0)
+            return complaintRouterRepository.findRoutersByBoundaryType(boundaryTypeId, pageable);
+        else if (boundaryTypeId == 0 && boundaryId == 0 && complaintTypeId != 0)
+            return complaintRouterRepository.findRoutersByComplaintType(complaintTypeId, pageable);
+        else
+            return complaintRouterRepository.findRoutersByAll(pageable);
+    }
 }

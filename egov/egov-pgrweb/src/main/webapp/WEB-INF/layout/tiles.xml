@@ -118,7 +118,7 @@
     </definition>
     
     <definition name="router-create" extends="base_layout">
-    <put-attribute name="page-title" value="title.routerCreate" cascade="true"/>
+    <put-attribute name="page-title" value="title.router" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/router-create.jsp"/>
     </definition>
     
@@ -137,4 +137,28 @@
         <put-attribute name="body" value="/WEB-INF/views/masters/router-deleteMsg.jsp"/>
     </definition>
     
+    <definition name="router-searchView" extends="base_layout">
+    	<put-attribute name="page-title" value="title.router" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/router-searchView.jsp"/>
+    </definition>
+    
+    <definition name="router-searchUpdate" extends="base_layout">
+    	<put-attribute name="page-title" value="title.router" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/router-searchUpdate.jsp"/>
+    </definition>
+    
+    <definition name="router-view" extends="base_layout">
+    	<put-attribute name="page-title" value="title.router" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/router-view.jsp"/>
+    </definition>
+    
+    <definition name="router-updateSearch" extends="base_layout">
+    	<put-attribute name="page-title" value="title.router" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/router-updateSearch.jsp"/>
+    </definition>
+    
+    <definition name="router-updateSuccess" extends="base_layout">
+    	<put-attribute name="page-title" value="title.router" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/router-updateSuccess.jsp"/>
+    </definition>
 </tiles-definitions>

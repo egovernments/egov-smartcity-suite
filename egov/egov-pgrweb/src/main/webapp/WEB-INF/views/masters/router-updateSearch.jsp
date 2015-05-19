@@ -123,22 +123,22 @@
 	var positionId= '${complaintRouter.position.id}';
 	if(positionId !== ''){
 		$("#positionId").val(positionId);    
-	}else $("#positionId").val('');    
-	
+	}else
+		$("#positionId").val(''); 
 	var complaintTypeId= '${complaintRouter.complaintType.id}';
 	if(complaintTypeId !== ''){
 		$("#complaintTypeId").val(complaintTypeId);
 	}else
 		$("#complaintTypeId").val('');
-	
 	var boundaryId= '${complaintRouter.boundary.id}';
 	if(boundaryId !== ''){
 		$("#boundaryId").val(boundaryId);    
-	}else $("#boundaryId").val(''); 
+	}else $("#boundaryId").val('');   
 </script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/js/app/complaintrouting.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/app/complaintroutingupdate.js'/>"></script>
 
 		
