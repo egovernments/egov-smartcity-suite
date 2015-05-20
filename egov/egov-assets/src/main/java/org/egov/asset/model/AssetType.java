@@ -39,7 +39,14 @@
  */
 package org.egov.asset.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 public enum AssetType {
 
-    Land, MovableAsset, ImmovableAsset
+    LAND, MOVABLEASSET, IMMOVABLEASSET;
+
+    @Override
+    public String toString() {
+        return StringUtils.capitalize(name());
+    }
 }

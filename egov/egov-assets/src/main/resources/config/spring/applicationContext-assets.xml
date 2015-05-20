@@ -57,8 +57,7 @@
 			<bean parent="persistenceService">
 				<property name="type" value="org.egov.asset.model.AssetCategory" />
 			</bean>
-		</constructor-arg>			
-		<property name="genericService" ref="persistenceService" />		
+		</constructor-arg>	
 		<property name="appService" ref="appService" />
 		<property name="assetCategoryNumberGenrator" ref="assetCategoryNumberGenrator"/>
 	</bean>

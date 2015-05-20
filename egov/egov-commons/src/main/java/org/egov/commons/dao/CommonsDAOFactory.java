@@ -39,6 +39,9 @@
  */
 package org.egov.commons.dao;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bank;
@@ -70,18 +73,14 @@ import org.egov.commons.Status;
 import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 
 public class CommonsDAOFactory {
 
-    private SessionFactory sessionFactory;
-
-    public CommonsDAOFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-
+    @PersistenceContext
+    EntityManager entityManager;
+    
     protected Session getCurrentSession() {
-        return sessionFactory.getCurrentSession();
+        return entityManager.unwrap(Session.class);
     }
 
     public InstallmentDao getInstallmentDao() {

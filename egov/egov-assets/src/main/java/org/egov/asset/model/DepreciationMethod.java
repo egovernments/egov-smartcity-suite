@@ -39,7 +39,14 @@
  */
 package org.egov.asset.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 public enum DepreciationMethod {
 
-    StraightLineMethod, WrittenDownValueMethod
+    STRAIGHT_LINE_METHOD, WRITTENDOWN_VALUE_METHOD;
+
+    @Override
+    public String toString() {
+        return StringUtils.capitalize(name());
+    }
 }

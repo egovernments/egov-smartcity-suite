@@ -219,7 +219,7 @@ function validateDuplicate(records,oArgs){
 			</div>
 			<script>
 				makeDepDetailDataTable();		    	
-				<s:iterator id="depDetailIterator" value="depreciationMetaDatas" status="row_status">
+				<s:iterator id="depDetailIterator" value="depreciationMetaDataList" status="row_status">
 			        depDetailDataTable.addRow(
 		                                {SlNo:'<s:property value="#row_status.count"/>',
 		        						financialYear:'<s:property value="financialYear.id"/>',

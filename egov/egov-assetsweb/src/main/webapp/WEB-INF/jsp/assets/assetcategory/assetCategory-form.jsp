@@ -58,19 +58,20 @@ function goNewForm()
 
 function setupAjaxAssettype(elem){
     resetParentFields();
-	populateparentcat({assetType:elem.value});
+    //TODO : Phoenix migration - commented out since ajax call giving an exception
+	//populateparentcat({assetType:elem.value});
 	disableDepreciation(elem.value);
 }
 function disableDepreciation(assettype){
-if(assettype == '<s:property value="@org.egov.asset.model.AssetType@Land" />'){
-document.getElementById('depreciationMethod').disabled=true;
-document.getElementById('accDepAccountCode').disabled=true;
-document.getElementById('depExpAccountCode').disabled=true;
-}else{
-document.getElementById('depreciationMethod').disabled=false;
-document.getElementById('accDepAccountCode').disabled=false;
-document.getElementById('depExpAccountCode').disabled=false;
-}
+	if(assettype == '<s:property value="@org.egov.asset.model.AssetType@LAND" />'){
+		document.getElementById('depreciationMethod').disabled=true;
+		document.getElementById('accDepAccountCode').disabled=true;
+		document.getElementById('depExpAccountCode').disabled=true;
+	}else{
+		document.getElementById('depreciationMethod').disabled=false;
+		document.getElementById('accDepAccountCode').disabled=false;
+		document.getElementById('depExpAccountCode').disabled=false;
+	}
 }
 function setupAjaxParentcat(elem){
 	
@@ -83,13 +84,13 @@ function setupAjaxParentcat(elem){
 }
 
 function resetParentFields(){
-	document.getElementById('depreciationMethod').value='-1';
+	//document.getElementById('depreciationMethod').value='-1';
 	document.getElementById('assetAccountCode').value=-1;
 	document.getElementById('accDepAccountCode').value=-1;
 	document.getElementById('revAccountCode').value=-1;
 	document.getElementById('depExpAccountCode').value=-1;
 	document.getElementById('uom').value=-1;
-	document.getElementById('catTemVal').value='';
+	//document.getElementById('catTemVal').value='';
 }
 
 mySuccessHandler = function(req,res){

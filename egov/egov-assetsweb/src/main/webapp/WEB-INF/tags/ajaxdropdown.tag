@@ -48,42 +48,45 @@
 <%@ attribute name="contextToBeUsed" required="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <script>
-
-${id}SuccessHandler=function(data, textStatus, xhr){
-
-  $('#${dropdownId} option[value != ""]').remove();
-  
-  $.each(data, function (i, item) {
-	  $('#${dropdownId}').append($('<option>', { 
-	        value: item.Value,
-	        text : item.Text 
-	  }));
-   });
-
-  $('#${dropdownId}').prop('selectedIndex', 0);
-
-  <% if(afterSuccess != null && !afterSuccess.trim().equals("")) {%>
+<%
+String[] optionAttributeList=new String[0];
+if(optionAttributes!=null && !"".equals(optionAttributes.trim())){
+    optionAttributeList=optionAttributes.split(",");
+    for(int i=0;i<optionAttributeList.length;i++){
+        optionAttributeList[i]=optionAttributeList[i].trim();
+    }
+}
+%>
+${id}SuccessHandler=function(req,res){
+  ${id}Dropdown=dom.get("${dropdownId}");
+  var resLength =res.results.length+1;
+  var dropDownLength = ${id}Dropdown.length;
+  for(i=0;i<res.results.length;i++){
+    ${id}Dropdown.options[i+1]=new Option(res.results[i].Text,res.results[i].Value);
+    if(res.results[i].Value=='<%=selectedValue%>')   ${id}.Dropdown.selectedIndex = i;
+    <%for(int i=0;i<optionAttributeList.length;i++){%>
+    ${id}Dropdown.options[i+1].<%=optionAttributeList[i]%>=res.results[i].<%=optionAttributeList[i]%>;
+    <%}%>
+  }
+ while(dropDownLength>resLength)
+ {
+     ${id}Dropdown.options[res.results.length+1] = null;
+      dropDownLength=dropDownLength-1;
+ }
+  <% if(afterSuccess!=null && !afterSuccess.trim().equals("")){%>
      ${afterSuccess}(req,res)
   <%}%>
 }
 ${id}FailureHandler=function(){
-  console.log('Unable to load ${dropdownId}');
+  alert('Unable to load ${dropdownId}');
 }
 
 function populate${dropdownId}(params){
-   <% if(contextToBeUsed != null && !contextToBeUsed.trim().equals("")) { %>
+   <% if(contextToBeUsed!=null && !contextToBeUsed.trim().equals("")){%>
    		<c:set var="contextRoot" value="${contextToBeUsed}" />
    <% } else  {%>
    		<c:set var="contextRoot" value="${pageContext.request.contextPath}" />
    <% } %>
-   
-   $.ajax({
-		type: "GET",
-		url: '${contextRoot}/${url}',
-		data: params,
-		dataType: "json",
-		success: ${id}SuccessHandler, 
-		error: ${id}FailureHandler
-	});
+   makeJSONCall(${fields},'${contextRoot}/${url}',params,${id}SuccessHandler,${id}FailureHandler) ;
 }
 </script>

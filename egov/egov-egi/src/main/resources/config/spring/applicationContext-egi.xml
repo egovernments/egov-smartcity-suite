@@ -63,7 +63,6 @@
 	</bean>
 
 	<bean id="commonsDAOFactory" class="org.egov.commons.dao.CommonsDAOFactory">
-		<constructor-arg ref="sessionFactory" />
 	</bean>
 
 	<bean id="commonsService" class="org.egov.commons.service.CommonsServiceImpl">

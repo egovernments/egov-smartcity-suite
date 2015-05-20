@@ -38,6 +38,7 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
 <html>
 	<head>  
 	    <s:if test="%{userMode=='new'}">
@@ -79,7 +80,6 @@
 				var uom  = dom.get("uom").value;
 				var pattern=/[^0-9a-zA-Z-&:/ ]/;
 				var namepattern=/[^0-9a-zA-Z-&:/ ]/;
-				alert("inside validate");
 				if(code.match(pattern)){
 				   showMessage('category_error', '<s:text name="assetcat.code.alphaNumericwithspecialchar" />');
 					return false;
@@ -117,9 +117,6 @@
 				    	return;
 				    }
 				    else{
-				    	//alert(document.getElementById('catTemVal').value);
-						//alert($F('catAttrTemplate'));
-						//$('catAttrTemplate').value = $F('catTemVal').toJSON();
 						document.getElementById('catAttrTemplate').value=document.getElementById('catTemVal').value;
 				    	enableFields();
 				    	document.assetCategoryForm.action='${pageContext.request.contextPath}/assetcategory/assetCategory-save.action';
@@ -166,9 +163,6 @@
 						<input type="submit" class="buttonfinal" value="SAVE"
 							id="saveButton" name="button"
 							onclick="return validateFormAndSubmit();" />
-						<!--input type="button" class="buttonfinal" value="CANCEL"
-							id="cancelButton" name="button"
-							onclick="alert('Pressed!');" /-->
 						<input type="button" class="buttonfinal" value="CLOSE"
 							id="closeButton" name="button"
 							onclick="window.close();" />
@@ -189,18 +183,12 @@
 						<input type="submit" class="buttonfinal" value="SAVE"
 							id="saveButton" name="button"
 							onclick="validateFormAndSubmit();" />
-						<!-- input type="button" class="buttonfinal" value="CANCEL"
-							id="cancelButton" name="button"
-							onclick="alert('Pressed!');" /-->
 						<input type="button" class="buttonfinal" value="CLOSE"
 							id="closeButton" name="button"
 							onclick="window.close();" />
 						<input type="button" class="buttonfinal" value="SEARCH"
 							id="backButton" name="button"
 							onclick="goBack();" />
-						<!-- input type="button" class="buttonfinal" value="NEW"
-							id="newButton" name="button"
-							onclick="goNewForm();" /-->
 					</div>
 				</s:elseif>
 			</s:push>

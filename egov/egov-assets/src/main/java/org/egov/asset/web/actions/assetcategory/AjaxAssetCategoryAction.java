@@ -42,67 +42,73 @@ package org.egov.asset.web.actions.assetcategory;
 import java.util.List;
 
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.ResultPath;
+import org.apache.struts2.convention.annotation.Results;
 import org.egov.asset.model.AssetCategory;
 import org.egov.web.actions.BaseFormAction;
 
+@Namespace("/assetcategory")
+@Results({
+    @Result(name=AjaxAssetCategoryAction.PARENT_CATEGORIES,location="/WEB-INF/jsp/assets/assetcategory/ajaxAssetCategory-parentcategories.jsp")  ,
+    @Result(name=AjaxAssetCategoryAction.ASSET_CAT_DETAILS,location="/WEB-INF/jsp/assets/assetcategory/ajaxAssetCategory-assetcatdetails.jsp")
+  })
 public class AjaxAssetCategoryAction extends BaseFormAction {
 
-	/**
+    /**
      *
      */
-	private static final long serialVersionUID = -8703869606104325609L;
-	public static final String PARENT_CATEGORIES = "parentcategories";
-	public static final String ASSET_CAT_DETAILS = "assetcatdetails";
-	private String assetType; // Set by Ajax call
-	private Long parentCatId; // Set by Ajax call
-	private AssetCategory parentCategory;
-	private List<AssetCategory> assetCategoryList;
+    private static final long serialVersionUID = -8703869606104325609L;
+    public static final String PARENT_CATEGORIES = "parentcategories";
+    public static final String ASSET_CAT_DETAILS = "assetcatdetails";
+    private String assetType; // Set by Ajax call
+    private Long parentCatId; // Set by Ajax call
+    private AssetCategory parentCategory;
+    private List<AssetCategory> assetCategoryList;
 
-	@Override
-	public Object getModel() {
-		return null;
-	}
+    @Override
+    public Object getModel() {
+        return null;
+    }
 
-	@Override
-	public String execute() {
-		return SUCCESS;
-	}
+    @Override
+    public String execute() {
+        return SUCCESS;
+    }
 
-	@Action(value = "/ajaxAssetCategory-populateParentCategories", results = @Result(name = PARENT_CATEGORIES, type = "dispatcher"))
-	public String populateParentCategories() {
-		if (assetType.equalsIgnoreCase("-1"))
-			assetCategoryList = getPersistenceService().findAllBy(
-					"from AssetCategory");
-		else
-			assetCategoryList = getPersistenceService().findAllBy(
-					"from AssetCategory where assetType = ?", assetType);
+    @Action(value = "/ajaxAssetCategory-populateParentCategories")
+    public String populateParentCategories() {
+        if (assetType.equalsIgnoreCase("-1"))
+            assetCategoryList = getPersistenceService().findAllBy("from AssetCategory");
+        else
+            assetCategoryList = getPersistenceService().findAllBy("from AssetCategory where assetType = ?", assetType);
 
-		return PARENT_CATEGORIES;
-	}
+        return PARENT_CATEGORIES;
+    }
+    
+    @Action(value = "/ajaxAssetCategory-populateParentDetails")
+    public String populateParentDetails() {
+        parentCategory = (AssetCategory) getPersistenceService().find("from AssetCategory where id=?", parentCatId);
+        return ASSET_CAT_DETAILS;
+    }
 
-	public String populateParentDetails() {
-		parentCategory = (AssetCategory) getPersistenceService().find(
-				"from AssetCategory where id=?", parentCatId);
-		return ASSET_CAT_DETAILS;
-	}
+    // Property accessors
 
-	// Property accessors
+    public void setAssetType(final String assetType) {
+        this.assetType = assetType;
+    }
 
-	public void setAssetType(final String assetType) {
-		this.assetType = assetType;
-	}
+    public void setParentCatId(final Long parentCatId) {
+        this.parentCatId = parentCatId;
+    }
 
-	public void setParentCatId(final Long parentCatId) {
-		this.parentCatId = parentCatId;
-	}
+    public List<AssetCategory> getAssetCategoryList() {
+        return assetCategoryList;
+    }
 
-	public List<AssetCategory> getAssetCategoryList() {
-		return assetCategoryList;
-	}
-
-	public AssetCategory getParentCategory() {
-		return parentCategory;
-	}
+    public AssetCategory getParentCategory() {
+        return parentCategory;
+    }
 
 }
