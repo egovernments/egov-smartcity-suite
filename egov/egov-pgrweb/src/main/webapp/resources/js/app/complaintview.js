@@ -106,7 +106,7 @@ $(document).ready(function()
 				$('#approvalDesignation').empty();
 				$('#approvalDesignation').append($("<option value=''>Select</option>"));
 				$.each(response, function(index, value) {
-					$('#approvalDesignation').append($('<option>').text(value.designationName).attr('value', value.designationId));
+					$('#approvalDesignation').append($('<option>').text(value.name).attr('value', value.id));
 				});
 				
 			}, 

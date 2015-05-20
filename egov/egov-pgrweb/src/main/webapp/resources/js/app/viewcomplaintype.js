@@ -48,6 +48,7 @@ $(document)
 										sort : false,
 										filter : true,
 										responsive : true,
+										"autoWidth": false,
 										ajax : "/pgr/complainttype/ajax/result",
 										"aLengthMenu" : [ [ 10, 25, 50, -1 ],
 												[ 10, 25, 50, "All" ] ],

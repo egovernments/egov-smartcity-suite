@@ -43,7 +43,6 @@ $(document).ready(function(){
 	var map, geocoder, geolocate, marker;  
 	$('#complaint-locate').on('show.bs.modal', function() {
 		//Must wait until the render of the modal appear, thats why we use the resizeMap and NOT resizingMap!! ;-)
-		alert(lat);
 		//complaint view(update) map
 		$('#show_address_in_map').html($('#address_locate').html());
 		myCenter=new google.maps.LatLng(lat, lng);
