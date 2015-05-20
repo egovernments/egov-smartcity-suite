@@ -91,6 +91,7 @@ $(document).ready(function () {
 				var itemHref = $item.find( 'a:first' ).attr( 'href' );
 				var windowObjectReference = window.open(itemHref, ''+$item.attr('id')+'', 'width=900, height=700, top=300, left=260,scrollbars=yes'); 
 				openedWindows.push(windowObjectReference);
+				windowObjectReference.focus();
 			}
 		},
 		onGroupItemClick: function () {
@@ -206,12 +207,14 @@ $(document).ready(function () {
 		// Ratio the hight to the width as the user screen ratio
 		var windowObjectReference = window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=260,scrollbars=yes'); 
 		openedWindows.push(windowObjectReference);
+		windowObjectReference.focus();
 		return false;
 	});
 	
 	$(document).on('click', 'a.open-popup', function() {
 		var windowObjectReference = window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=260,scrollbars=yes'); 
 		openedWindows.push(windowObjectReference);
+		windowObjectReference.focus();
 		return false;
 	});
 	
