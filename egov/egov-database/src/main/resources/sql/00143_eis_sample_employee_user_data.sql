@@ -83,7 +83,7 @@ insert into eg_userrole (roleid,userid) values ((select id from eg_role where na
 (select id from eg_user where username='julian'));
 
 
-update eg_user set username='surya' where username='surya '
+update eg_user set username='surya' where username='surya ';
 
 insert into eg_userrole (roleid,userid) values ((select id from eg_role where name='Redressal Officer'),
 (select id from eg_user where username='surya'));
