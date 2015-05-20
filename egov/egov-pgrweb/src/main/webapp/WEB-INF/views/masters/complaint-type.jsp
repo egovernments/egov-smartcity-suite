@@ -134,8 +134,8 @@
 							<div class="col-sm-6 add-margin">
 								<form:textarea path="description" id="comp_type_desc"
 									cssClass="form-control is_valid_alphabet"
-									cssErrorClass="form-control error" maxlength="50"/>
-								<%-- <form:errors path="description" cssClass="error-msg" /> --%>
+									cssErrorClass="form-control error" maxlength="100"/>
+								<div class="text-left"><small><spring:message code="lbl.comp.type.details"/></small></div>
 							</div>
 						</div>
 						

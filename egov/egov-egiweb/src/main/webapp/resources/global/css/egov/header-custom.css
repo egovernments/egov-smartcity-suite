@@ -66,6 +66,7 @@ a:hover, a:focus, a:active {
 	height:72px;	
 	padding: 5px 10px;
 	padding-left: 20px;
+	cursor:default;
 }
 
 .navbar-header > a > img, .navbar-header > a > div

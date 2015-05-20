@@ -829,7 +829,7 @@ table .replace-inputs input {
 
 .panel-primary > .panel-heading
 {
-	cursor:pointer;
+	cursor:default;
 	position: relative;
 }
 
