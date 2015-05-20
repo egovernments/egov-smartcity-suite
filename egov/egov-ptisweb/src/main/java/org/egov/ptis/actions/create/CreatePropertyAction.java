@@ -190,6 +190,7 @@ public class CreatePropertyAction extends WorkflowAction {
 	private String genWaterRate;
 	private BasicProperty basicProp;
 	private Map<String, String> waterMeterMap;
+	@Autowired
 	private PropertyService propService;
 	private Map<String, String> amenitiesMap;
 	private Integer mutationId;
@@ -521,7 +522,8 @@ public class CreatePropertyAction extends WorkflowAction {
 		LOGGER.debug("Entered into prepare, ModelId: " + getModelId() + ", PropTypeId: " + propTypeId + ", ZoneId: "
 				+ zoneId + ", WardId: " + wardId);
 
-		setUserInfo();
+		//TODO FIX ME
+		//setUserInfo();
 		if (isNotBlank(getModelId())) {
 			
 			property = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
@@ -555,7 +557,7 @@ public class CreatePropertyAction extends WorkflowAction {
 		}
 
 		List<Boundary> wardList = getPersistenceService().findAllBy(
-				"from Boundary BI where BI.boundaryType.name=? and BI.boundaryType.heirarchyType.name=? "
+				"from Boundary BI where BI.boundaryType.name=? and BI.boundaryType.hierarchyType.name=? "
 						+ "and BI.isHistory='N' order by BI.id", "Ward", ADMIN_HIERARCHY_TYPE);
 		List<PropertyTypeMaster> propTypeList = getPersistenceService().findAllBy(
 				"from PropertyTypeMaster order by orderNo");
@@ -565,9 +567,10 @@ public class CreatePropertyAction extends WorkflowAction {
 		List<String> authPropList = new ArrayList<String>();
 
 		List<Boundary> zoneList = persistenceService.findAllBy(
-				"from BoundaryImpl BI where BI.boundaryType.name=? and BI.boundaryType.heirarchyType.name=? "
-						+ "and BI.isHistory='N' order by BI.id", ZONE_BNDRY_TYPE, REVENUE_HIERARCHY_TYPE);
-		List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
+				"from Boundary BI where BI.boundaryType.name=? and BI.boundaryType.hierarchyType.name=? "
+						+ "and BI.isHistory='N' order by BI.id", "Zone", ADMIN_HIERARCHY_TYPE);
+		//List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
+		List<String> ageFacList = new ArrayList<String>(0);
 
 		authPropList.add(YES);
 		authPropList.add(NO);
@@ -638,9 +641,10 @@ public class CreatePropertyAction extends WorkflowAction {
 			}
 		}
 		
-		setupWorkflowDetails();
+		//TODO FIX ME
+		//setupWorkflowDetails();
 		
-		super.prepare();
+		//super.prepare();
 		LOGGER.debug("prepare: PropTypeList: "
 				+ ((propTypeList != null) ? propTypeList : "NULL")
 				+ ", PropOccuList: "

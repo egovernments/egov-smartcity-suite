@@ -2186,4 +2186,13 @@ public class PropertyService extends PersistenceService<PropertyImpl, Long> {
 	public void setPtNumberGenerator(PropertyTaxNumberGenerator ptNumberGenerator) {
 		this.ptNumberGenerator = ptNumberGenerator;
 	}
+
+	public EisCommonsService getEisCommonsService() {
+		return eisCommonsService;
+	}
+
+	public void setEisCommonsService(EisCommonsService eisCommonsService) {
+		this.eisCommonsService = eisCommonsService;
+	}
+	
 }

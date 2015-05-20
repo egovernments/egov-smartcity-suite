@@ -49,7 +49,7 @@
       	<link rel="stylesheet" type="text/css" href="<c:url value='/commonyui/build/reset/reset.css'/>" />
 		<link rel="stylesheet" type="text/css" href="<c:url value='/commonyui/build/fonts/fonts.css'/>" /> -->
 
-		<link href="<c:url value='/resources/old/css/propertytax.css'/>" rel="stylesheet" type="text/css" />
+		<link href="<c:url value='/resources/css/propertytax.css'/>" rel="stylesheet" type="text/css" />
 		<link href="<c:url value='/css/commonegov.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 		<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/fonts/fonts-min.css"/>
 		<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.7/datatable/assets/skins/sam/datatable.css"/>

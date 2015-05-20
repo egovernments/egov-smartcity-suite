@@ -77,6 +77,8 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.pims.commons.DesignationMaster;
 import org.egov.pims.commons.Position;
@@ -93,6 +95,7 @@ import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
 import org.egov.web.actions.BaseFormAction;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @ParentPackage("egov")
@@ -103,6 +106,10 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 	private static final long serialVersionUID = 1L;
 
 	protected PropertyTaxUtil propertyTaxUtil;
+	@Autowired
+    private SecurityUtils securityUtils;
+	@Autowired
+	private UserService userService;
 	protected WorkflowBean workflowBean;
 	protected String userDesgn;
 	protected Boolean isApprPageReq = Boolean.TRUE;
@@ -596,14 +603,12 @@ public abstract class PropertyTaxBaseAction extends BaseFormAction {
 	public void setUserInfo() {
 		LOGGER.debug("Entered into setUserInfo");
 
-		//UserDAO userDao = new UserDAO();
-		Long userId = propertyTaxUtil.getLoggedInUser(getSession()).getId();
+		Long userId = securityUtils.getCurrentUser().getId();
 		LOGGER.debug("setUserInfo: Logged in userId" + userId);
-		DesignationMaster desgn = propertyTaxUtil.getDesignationForUser(userId);
-		setUserDesgn(desgn.getName());
-		//FIX ME
-		//User user = userDao.getUserByID(userId);
-		User user = null;
+                //TODO FIX ME
+		/*DesignationMaster desgn = propertyTaxUtil.getDesignationForUser(userId);
+		setUserDesgn(desgn.getDesignationName());*/
+		User user = userService.getUserById(userId);
 		for (Role role : user.getRoles()) {
 			if (role.getName().equalsIgnoreCase(PropertyTaxConstants.ASSISTANT_ROLE)) {
 				setUserRole(role.getName());
