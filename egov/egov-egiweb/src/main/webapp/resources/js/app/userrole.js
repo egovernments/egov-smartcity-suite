@@ -58,10 +58,6 @@ $(document).ready( function ()
 		}
 		});
 
-$('#userroleUpdateBtn').click(function() {
-	var url = '/egi/userrole/update/'+ $('#username').val();
-	$('#userrolesearchform').attr('method', 'post');
-	$('#userrolesearchform').attr('action', url);
-})
+
 
 

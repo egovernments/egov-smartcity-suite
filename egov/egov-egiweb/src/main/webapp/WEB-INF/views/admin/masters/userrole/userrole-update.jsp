@@ -41,25 +41,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<script> 
-$(document).ready( function ()
-		{
-/* 
-$('#userroleUpdateBtn').click(function() {
-	//var url = '/egi/userrole/update/'+ $('#username').val();
-	var url = '/egi/userrole/update/updateUserRole/${user.username}'; 
-	$('#updateuserRoleForm').attr('method', 'post');
-	$('#updateuserRoleForm').attr('action', url);
-}) */
-
-$('#userroleSearchBtn').click(function() {
-	var url = '/egi/userrole/search';
-	$('#updateuserRoleForm').attr('method', 'post');
-	$('#updateuserRoleForm').attr('action', url);
-})
-
-		});
-</script>
 <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
 <div class="row" id="page-content">
@@ -110,18 +91,21 @@ $('#userroleSearchBtn').click(function() {
 			<div class="row">
 				<div class="text-center">
 							<button type="submit" id="userroleUpdateBtn" class="btn btn-primary"><spring:message code="lbl.update"/></button>
-							<button type="submit" id="userroleSearchBtn" class="btn btn-primary"><spring:message code="lbl.search"/></button>
+							<button type="button" id="userroleSearchBtn" class="btn btn-primary"><spring:message code="lbl.search"/></button>
 			        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();"><spring:message code="lbl.close"/></button>
 				</div>
 			</div>
 		</form:form>
 	</div>
 </div>
-
-
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/exif.js'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
 <script src="<c:url value='/resources/js/app/userrole.js'/>"></script>
+<script> 
 
+$('#userroleSearchBtn').click(function() {
+	window.location = '/egi/userrole/search';
+})
+</script>
 

@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,100 +18,61 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.infra.web.controller.admin.masters.userrole;
 
-import java.util.List;
 import java.util.Set;
 
-import javax.validation.Valid;
-
-import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/userrole")
+@RequestMapping("/userrole/search")
 public class SearchUserRoleController {
-	private UserService userService;
-	private RoleService roleService;
+    private final UserService userService;
 
-	@Autowired
-	public SearchUserRoleController(UserService userService,
-			RoleService roleService) {
-		this.userService = userService;
-		this.roleService = roleService;
-	}
+    @Autowired
+    public SearchUserRoleController(final UserService userService) {
+        this.userService = userService;
+    }
 
-	@ModelAttribute
-	public User userroleModel() {
-		return new User();
-	}
+    @ModelAttribute("users")
+    public Set<User> users() {
+        return userService.getActiveUsers();
+    }
 
-	@ModelAttribute("roles")
-	public List<Role> roles() {
-		return roleService.getAllRoles();
-	}
+    @RequestMapping
+    public String viewSearch(final Model model) {
+        return "userrole-search";
+    }
 
-	@ModelAttribute("users")
-	public Set<User> users() {
-		return userService.getActiveUsers();
-	}
+    @RequestMapping(params = { "username" })
+    public String searchUserRole(@RequestParam final String username) {
+        return "redirect:/userrole/update/" + username;
 
-	@RequestMapping(value = "/viewsearch", method = RequestMethod.GET)
-	public String viewSearch(Model model) {
-		model.addAttribute("mode", "view");
-		return "userrole-search";
-
-	}
-
-	@RequestMapping(value = "/search", method = RequestMethod.POST)
-	public String searchUserRole(Model model) {
-		model.addAttribute("mode", "view");
-		return "userrole-search";
-
-	}
-
-	@RequestMapping(value = "/view", method = RequestMethod.POST)
-	public String viewUserRole(@Valid @ModelAttribute User user,
-			final BindingResult errors, RedirectAttributes redirectAttrs) {
-
-		return "redirect:/userrole/view/" + user.getUsername();
-
-	}
-
-	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public String updateUserRole(@Valid @ModelAttribute User user,
-			final BindingResult errors, RedirectAttributes redirectAttrs) {
-
-		return "redirect:/userrole/update/" + user.getUsername();
-	}
-
+    }
 }

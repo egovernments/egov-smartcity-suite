@@ -42,19 +42,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
-<script> 
-$(document).ready( function ()
-		{
-
-$('#userroleUpdateBtn').click(function() {
-	//var url = '/egi/userrole/update/'+ $('#username').val();
-	var url = '/egi/userrole/update';
-	$('#userrolesearchform').attr('method', 'post');
-	$('#userrolesearchform').attr('action', url);
-})
-		});
-</script>
-
 <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
 <div class="row" id="page-content">
@@ -64,7 +51,7 @@ $('#userroleUpdateBtn').click(function() {
 				 <c:if test="${not empty message}">
                     <div id="message" class="success">${message}</div>
                 </c:if>
-		<form:form  mothod ="post" class="form-horizontal form-groups-bordered" modelAttribute="user" id="userrolesearchform" >
+		<form:form action="search" method ="get" class="form-horizontal form-groups-bordered"  id="userrolesearchform" >
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -78,29 +65,25 @@ $('#userroleUpdateBtn').click(function() {
                             <small><i class="entypo-star error-msg"></i></small>
                         </label>
                          <div class="col-sm-6 add-margin">
-                            <form:select path="username"
-                                         id="username" cssClass="form-control" cssErrorClass="form-control error"  onchange="populateUserRoles(this); return checkUserRolePresent();" required="required">
-                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
-                                <form:options items="${users}" itemValue="username" itemLabel="username"/>
-                            </form:select>
-                            <form:errors path="username" cssClass="error-msg"/>
+                            <select name="username"
+                                         id="username" class="form-control" onchange="populateUserRoles(this); return checkUserRolePresent();" required="required">
+                                <option value=""> <spring:message code="lbl.select"/> </option>
+                                <c:forEach items="${users}" var="user">
+                                <option value="${user.username}">${user.username}</option>
+                                </c:forEach>
+                            </select>
                         </div> 
                       </div>
                      <div class="form-group">
                       <label class="col-sm-3 control-label">
                             <spring:message code="lbl.current.userRole"/>
-                          
                         </label>
                         <div class="col-sm-6 add-margin">
-                        <egov:ajaxdropdown id="rolesAjax" fields="['Value','Text']"
+                        	<egov:ajaxdropdown id="rolesAjax" fields="['Value','Text']"
 												dropdownId="rolesSelect" url="userRole/ajax/rolelist-for-user" />
-		                         	
-                            <form:select path="roles" multiple="true" size="10"
-                                         id="rolesSelect" cssClass="form-control" cssErrorClass="form-control error" >
-                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
-                                </form:select>
-                            <form:errors path="roles" cssClass="error-msg"/>
-                        </div>
+                            <select  id="rolesSelect" class="form-control" multiple="multiple" size="10" readonly="readonly">
+                                </select>
+                            </div>
                      </div> 
                      
                     
