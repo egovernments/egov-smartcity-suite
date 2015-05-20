@@ -55,66 +55,70 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class UserService {
 
-	@Autowired
-	private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-	@Autowired
-	private HTTPSMS httpSMS;
+    @Autowired
+    private HTTPSMS httpSMS;
 
-	@Autowired
-	private EmailUtils emailUtils;
+    @Autowired
+    private EmailUtils emailUtils;
 
-	@Transactional
-	public User updateUser(final User user) {
-		return userRepository.saveAndFlush(user);
-	}
+    @Transactional
+    public User updateUser(final User user) {
+        return userRepository.saveAndFlush(user);
+    }
 
-	public Set<User> getUsersByUsernameLike(final String userName) {
-		return userRepository.findByUsernameContainingIgnoreCase(userName);
-	}
+    public Set<User> getUsersByUsernameLike(final String userName) {
+        return userRepository.findByUsernameContainingIgnoreCase(userName);
+    }
 
-	public Set<Role> getRolesByUsername(final String userName) {
-		return userRepository.findUserRolesByUserName(userName);
-	}
+    public Set<Role> getRolesByUsername(final String userName) {
+        return userRepository.findUserRolesByUserName(userName);
+    }
 
-	public User getUserById(final Long id) {
-		return userRepository.findOne(id);
-	}
+    public User getUserById(final Long id) {
+        return userRepository.findOne(id);
+    }
 
-	public List<User> getAllUsers() {
-		return userRepository.findAll();
-	}
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
 
-	public User getUserByUsername(final String userName) {
-		return userRepository.findByUsername(userName);
-	}
+    public Set<User> getActiveUsers() {
+        return userRepository.findByActiveTrue();
+    }
 
-	public User getUserByEmailId(final String emailId) {
-		return userRepository.findByEmailId(emailId);
-	}
+    public User getUserByUsername(final String userName) {
+        return userRepository.findByUsername(userName);
+    }
 
-	// TODO This is to be changed like eg:facebook forget password
-	public boolean sentPasswordRecovery(final String emailOrMobNum) {
-		User user;
-		boolean hasSent = false;
-		if (emailOrMobNum.indexOf('@') != -1)
-			user = getUserByEmailId(emailOrMobNum);
-		else
-			user = getUserByUsername(emailOrMobNum);
-		if (user != null) {
-			final String pwd = "nopassword";// CryptoHelper.decrypt(user.getPassword());
-			if (user.getEmailId() != null && !user.getEmailId().isEmpty())
-				hasSent = emailUtils.sendMail(user.getEmailId(), new StringBuilder(
-						"Hello,\r\n Your login credential is given below \r\n User Name : ").append(user.getUsername())
-						.append("\r\n Password : ").append(pwd).toString(), "Password Recovery");
+    public User getUserByEmailId(final String emailId) {
+        return userRepository.findByEmailId(emailId);
+    }
 
-			hasSent = httpSMS.sendSMS("Your login credential, User Name : " + user.getUsername() + " and Password : "
-					+ pwd, "91" + user.getMobileNumber())
-					|| hasSent;
+    // TODO This is to be changed like eg:facebook forget password
+    public boolean sentPasswordRecovery(final String emailOrMobNum) {
+        User user;
+        boolean hasSent = false;
+        if (emailOrMobNum.indexOf('@') != -1)
+            user = getUserByEmailId(emailOrMobNum);
+        else
+            user = getUserByUsername(emailOrMobNum);
+        if (user != null) {
+            final String pwd = "nopassword";// CryptoHelper.decrypt(user.getPassword());
+            if (user.getEmailId() != null && !user.getEmailId().isEmpty())
+                hasSent = emailUtils.sendMail(user.getEmailId(),
+                        new StringBuilder("Hello,\r\n Your login credential is given below \r\n User Name : ")
+                                .append(user.getUsername()).append("\r\n Password : ").append(pwd).toString(),
+                        "Password Recovery");
 
-		} else
-			hasSent = false;
-		return hasSent;
-	}
+            hasSent = httpSMS.sendSMS("Your login credential, User Name : " + user.getUsername() + " and Password : " + pwd,
+                    "91" + user.getMobileNumber()) || hasSent;
+
+        } else
+            hasSent = false;
+        return hasSent;
+    }
 
 }

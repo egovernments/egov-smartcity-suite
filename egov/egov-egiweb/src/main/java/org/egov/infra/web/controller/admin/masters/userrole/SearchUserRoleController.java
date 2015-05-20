@@ -40,6 +40,7 @@
 package org.egov.infra.web.controller.admin.masters.userrole;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -80,8 +81,8 @@ public class SearchUserRoleController {
 	}
 
 	@ModelAttribute("users")
-	public List<User> users() {
-		return userService.getAllUsers();
+	public Set<User> users() {
+		return userService.getActiveUsers();
 	}
 
 	@RequestMapping(value = "/viewsearch", method = RequestMethod.GET)

@@ -54,15 +54,16 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-	Set<User> findByUsernameContainingIgnoreCase(String userName);
+    Set<User> findByUsernameContainingIgnoreCase(String userName);
 
-	@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true"),
-			@QueryHint(name = "org.hibernate.cacheRegion", value = "local-query") })
-	User findByUsername(String userName);
+    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true"),
+            @QueryHint(name = "org.hibernate.cacheRegion", value = "local-query") })
+    User findByUsername(String userName);
 
-	User findByEmailId(String emailId);
+    User findByEmailId(String emailId);
 
-	@Query("select distinct usr.roles from User usr where usr.username = :usrName ")
-	Set<Role> findUserRolesByUserName(@Param("usrName") String userName);
+    @Query("select distinct usr.roles from User usr where usr.username = :usrName ")
+    Set<Role> findUserRolesByUserName(@Param("usrName") String userName);
 
+    Set<User> findByActiveTrue();
 }
