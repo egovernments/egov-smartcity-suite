@@ -98,12 +98,12 @@
 							</select>
 						</div>
 						<div class="col-md-3 add-margin">
-							<input type="text" class="form-control datepicker checkdate"
+							<input type="text" name="fromDate" class="form-control datepicker checkdate"
 								id="start_date" data-inputmask="'mask': 'd/m/y'"
 								placeholder="<spring:message code='lbl.fromDate'/>" />
 						</div>
 						<div class="col-md-3 add-margin">
-							<input type="text" class="form-control datepicker checkdate"
+							<input type="text" name="toDate" class="form-control datepicker checkdate"
 								id="end_date" data-inputmask="'mask': 'd/m/y'"
 								placeholder="<spring:message code='lbl.toDate'/>" />
 						</div>

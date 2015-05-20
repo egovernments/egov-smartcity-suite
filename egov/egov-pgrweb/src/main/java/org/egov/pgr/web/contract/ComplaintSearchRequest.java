@@ -42,9 +42,14 @@ package org.egov.pgr.web.contract;
 import org.egov.search.domain.Filter;
 import org.egov.search.domain.Filters;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.text.*;
+
 import org.jboss.logging.Logger;
+
 import static org.egov.search.domain.Filter.queryStringFilter;
 import static org.egov.search.domain.Filter.rangeFilter;
 
@@ -60,6 +65,9 @@ public class ComplaintSearchRequest {
 	private String complaintDate;
 	private String complaintDateFrom;
 	private String complaintDateTo;
+	private String fromDate;
+	private String toDate;
+	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
 	private static final Logger logger = Logger
 			.getLogger(ComplaintSearchRequest.class);
@@ -96,29 +104,49 @@ public class ComplaintSearchRequest {
 		this.complaintType = complaintType;
 	}
 
+	public void setFromDate(String fromDate) {
+		this.fromDate = fromDate;
+		/*
+		 * if(null!=fromDate){
+		 * 
+		 * try {logger.info("Date Range From start.. :"+ft.parse(fromDate));
+		 * this.fromDate=ft.format(ft.parse(fromDate)); }catch(Exception e){} }
+		 * logger.info("Date Range From :"+fromDate);
+		 */
+	}
+
+	public void setToDate(String toDate) {
+		this.toDate = toDate;
+	}
+
 	public void setComplaintDate(String complaintDate) {
 		this.complaintDate = complaintDate;
 		if (null != complaintDate) {
+			Date today = new Date();
+			Calendar cal = Calendar.getInstance();
+
+			logger.info("String today date... " + ft.format(today));
+			complaintDateTo = ft.format(today);
+
 			if (complaintDate.equalsIgnoreCase("today")) {
 				logger.info("This is today selection");
-				complaintDateFrom = "2015-05-19";
-				complaintDateTo = "2015-05-19";
+				complaintDateFrom = complaintDateTo;
 			} else if (complaintDate.equalsIgnoreCase("all")) {
 				complaintDateFrom = null;
 				complaintDateTo = null;
 			} else if (complaintDate.equalsIgnoreCase("lastsevendays")) {
-				complaintDateFrom = "2015-05-19";
-				complaintDateTo = "2015-05-19";
+				cal.add(Calendar.DATE, -6);
+				complaintDateFrom = ft.format(cal.getTime());
 			} else if (complaintDate.equalsIgnoreCase("lastthirtydays")) {
-				complaintDateFrom = "2015-05-19";
-				complaintDateTo = "2015-05-19";
+				cal.add(Calendar.DATE, -29);
+				complaintDateFrom = ft.format(cal.getTime());
 			} else if (complaintDate.equalsIgnoreCase("lastninetydays")) {
-				complaintDateFrom = "2015-05-19";
-				complaintDateTo = "2015-05-19";
+				cal.add(Calendar.DATE, -89);
+				complaintDateFrom = ft.format(cal.getTime());
 			} else {
 				logger.info("Else section in date range");
-				complaintDateFrom = "2015-05-19";
-				complaintDateTo = "2015-05-19";
+				complaintDateFrom = null;
+				complaintDateTo = null;
 			}
 		}
 
@@ -141,7 +169,9 @@ public class ComplaintSearchRequest {
 				complaintType));
 		andFilters.add(rangeFilter("common.createdDate", complaintDateFrom,
 				complaintDateTo));
-
+		// andFilters.add(rangeFilter("common.createdDate", ft.format(fromDate),
+		// ft.format(toDate)));
+		logger.info("finished filters");
 		return Filters.withAndFilters(andFilters);
 	}
 
