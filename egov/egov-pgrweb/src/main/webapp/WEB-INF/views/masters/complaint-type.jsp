@@ -105,7 +105,7 @@
 							</label>
 
 							<div class="col-sm-1 col-xs-12 add-margin">
-								<form:radiobutton path="locationRequired" id="comp_type_loc_yes" value="yes"/>
+								<form:radiobutton path="locationRequired" id="comp_type_loc_yes" value="yes" checked="true"/>
 								<label>Yes</label>
 							</div>
 							<div class="col-sm-1 col-xs-12 add-margin">
@@ -153,4 +153,10 @@
 		</div>
 	</div>
 </div>
-
+<script>
+var complaintTypeId = '${complaintType.id}';
+if (complaintTypeId == '') {
+ $("#comp_type_loc_yes").prop('checked',true);
+ $("#comp_type_isactive").prop('checked',true);
+}
+</script>

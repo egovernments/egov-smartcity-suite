@@ -88,10 +88,10 @@ public class ComplaintType extends AbstractAuditable<User, Long> {
     private Department department;
 
     @Column(name = "location_required")
-    private boolean locationRequired = true;
+    private boolean locationRequired;
     
     @Column(name = "isActive")
-    private boolean isActive = true;
+    private boolean isActive;
     
     @Length(max = 100)
     @SafeHtml

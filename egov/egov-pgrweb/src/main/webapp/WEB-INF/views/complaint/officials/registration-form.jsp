@@ -111,8 +111,10 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintType"/><span class="mandatory"></span></label>
 						<div class="col-sm-6">
-							<form:input path="complaintType.name" id="complaintTypeName" cssClass="form-control typeahead is_valid_alphabet" cssErrorClass="form-control error" placeholder="" autocomplete="off" required="required"/>
-							<form:hidden path="complaintType" id="complaintTypeId" value="${complaintType.id}"/>
+							<input id="complaintTypeName" class="form-control typeahead is_valid_alphabet" placeholder=""
+								autocomplete="off" required="required" value="${complaint.complaintType.name}"/>
+							<form:hidden path="complaintType" id="complaintTypeId" value="0"/>
+							<form:hidden path="complaintType.locationRequired" id="locationRequired" disabled="true"/>
 							<form:errors path="complaintType" cssClass="add-margin error-msg"/>
 							<c:forEach items="${complaintTypes}" var="complaintType">
 								<a onclick="setComplaintTypeId(<c:out value="${complaintType.id}"/>)" href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct"><c:out
@@ -125,7 +127,7 @@
 						<label class="col-sm-3 control-label"><spring:message code="lbl.compDetails"/> <span class="mandatory"></span></label>
 						<div class="col-sm-6">
 							<form:textarea path="details" id="doc" placeholder="" maxlength="500" cssClass="form-control autogrow" required="required"/>
-							<div class="text-right"><small id="rcc"><spring:message code="lbl.remainingChars"/> : 500</small></div>
+							<div class="text-left"><small><spring:message code="lbl.comp.details"/></small></div>
 							<form:errors path="details" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
@@ -160,13 +162,12 @@
 						<label class="col-sm-3 control-label"><spring:message code="lbl.complaintLoc"/><span class="mandatory"></span></label>
 						<div class="col-sm-6">
 							<div class="input-group">
-								<input id="location" type="text" class="form-control low-width" placeholder="" autocomplete="off" required="required"/>
+								<input id="location" type="text" value="${complaint.location.name}" class="form-control low-width" placeholder="" autocomplete="off" required="required"/>
 								<span class="input-group-addon map-class btn-secondary" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="entypo-globe"></i></span>
 								<form:hidden path="location" id="locationid"/>
 								<form:errors path="location" cssClass="add-margin error-msg"/>
 				   				<form:hidden path="lat" id="lat"/>
                    				<form:hidden path="lng" id="lng"/>
-                   				<form:hidden path="complaintType.locationRequired" id="locationRequired" disabled="true"/>
 							</div>
 						</div>
 					</div>
@@ -221,15 +222,18 @@
 		</div>
 	</div>
 </div>
+<script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
+<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/js/app/complaint.js'/>"></script>
 <script>
 	var complaintTypeId= '${complaint.complaintType.id}';
 	if(complaintTypeId !== ''){
 		$("#complaintTypeId").val(complaintTypeId);
 	}
+	var locationid = '${complaint.location.id}';
+	if(locationid !== ''){
+		$("#locationid").val(locationid);
+	}
 </script>
-<script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
-<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
-
-<script src="<c:url value='/resources/js/app/complaint.js'/>"></script>

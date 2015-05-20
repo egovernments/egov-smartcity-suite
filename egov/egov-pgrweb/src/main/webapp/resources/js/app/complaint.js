@@ -61,16 +61,15 @@ jQuery(document).ready(function($)
 	
 	// Initialize the Bloodhound suggestion engine
 	complaintype.initialize();
-	
 	// Instantiate the Typeahead UI
 	$('.typeahead').typeahead({
 		  hint: true,
 		  highlight: true,
-		  minLength: 3
+		  minLength: 1
 		}, {
 		displayKey: 'name',
 		source: complaintype.ttAdapter()
-	}).on('typeahead:selected', function(event, data){
+	}).on('typeahead:selected typeahead:autocompleted typeahead:matched', function(event, data){
 		$("#complaintTypeId").val(data.value);    
     });
 	
@@ -101,7 +100,7 @@ jQuery(document).ready(function($)
 	$('#location').typeahead({
 		  hint: true,
 		  highlight: true,
-		  minLength: 5
+		  minLength: 3
 		}, {
 		displayKey: 'name',
 		source: complaintlocation.ttAdapter()
@@ -125,11 +124,11 @@ jQuery(document).ready(function($)
 		}
 	});
 	
-	$('#doc').bind('input propertychange', function() {
+	/*$('#doc').bind('input propertychange', function() {
 		var remchar = parseInt(500 - ($('#doc').val().length));
 		$('#rcc').html('Remaining Characters : '+remchar);
 		
-	});
+	});*/
 	
 	$('.freq-ct').click(function(){ 
 		$('#complaintTypeName').typeahead('val',$(this).html().trim());
