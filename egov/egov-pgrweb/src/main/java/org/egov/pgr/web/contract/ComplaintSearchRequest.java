@@ -44,66 +44,108 @@ import org.egov.search.domain.Filters;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import org.jboss.logging.Logger;
 import static org.egov.search.domain.Filter.queryStringFilter;
+import static org.egov.search.domain.Filter.rangeFilter;
 
 public class ComplaintSearchRequest {
-    private String searchText;
-    private String complaintNumber;
-    private String complainantName;
-    private String complaintStatus;
-    private String complainantPhoneNumber;
-    private String complainantEmail;
-    private String receivingCenter;
-    private String complaintType;
-    
-    public void setSearchText(String searchText) {
-        this.searchText = searchText;
-    }
+	private String searchText;
+	private String complaintNumber;
+	private String complainantName;
+	private String complaintStatus;
+	private String complainantPhoneNumber;
+	private String complainantEmail;
+	private String receivingCenter;
+	private String complaintType;
+	private String complaintDate;
+	private String complaintDateFrom;
+	private String complaintDateTo;
 
-    public void setComplaintNumber(String complaintNumber) {
-        this.complaintNumber = complaintNumber;
-    }
-    
-    public void setComplaintStatus(String complaintStatus) {
-        this.complaintStatus = complaintStatus;
-    }
-    
-    public void setComplainantName(String complainantName) {
-        this.complainantName = complainantName;
-    }
-    
-    public void setComplainantPhoneNumber(String phoneNumber) {
-        this.complainantPhoneNumber = phoneNumber;
-    }
-    
-    public void setComplainantEmail(String email) {
-        this.complainantEmail = email;
-    }
-    
-    public void setReceivingCenter(String receivingCenter) {
-        this.receivingCenter = receivingCenter;
-    }
+	private static final Logger logger = Logger
+			.getLogger(ComplaintSearchRequest.class);
 
-    public void setComplaintType(String complaintType) {
-        this.complaintType = complaintType;
-    }
- 
-    public Filters searchFilters() {
-        List<Filter> andFilters = new ArrayList<>();
-        andFilters.add(queryStringFilter("searchable.crn", complaintNumber));
-        andFilters.add(queryStringFilter("common.citizen.name", complainantName));
-        andFilters.add(queryStringFilter("common.citizen.mobile", complainantPhoneNumber));
-        andFilters.add(queryStringFilter("common.citizen.email", complainantEmail));
-        andFilters.add(queryStringFilter("clauses.status.name", complaintStatus));
-        andFilters.add(queryStringFilter("clauses.receivingMode", receivingCenter));
-        andFilters.add(queryStringFilter("searchable.complaintType.name", complaintType));
-        
-        return Filters.withAndFilters(andFilters);
-    }
+	public void setSearchText(String searchText) {
+		this.searchText = searchText;
+	}
 
+	public void setComplaintNumber(String complaintNumber) {
+		this.complaintNumber = complaintNumber;
+	}
 
-    public String searchQuery() {
-        return searchText;
-    }
+	public void setComplaintStatus(String complaintStatus) {
+		this.complaintStatus = complaintStatus;
+	}
+
+	public void setComplainantName(String complainantName) {
+		this.complainantName = complainantName;
+	}
+
+	public void setComplainantPhoneNumber(String phoneNumber) {
+		this.complainantPhoneNumber = phoneNumber;
+	}
+
+	public void setComplainantEmail(String email) {
+		this.complainantEmail = email;
+	}
+
+	public void setReceivingCenter(String receivingCenter) {
+		this.receivingCenter = receivingCenter;
+	}
+
+	public void setComplaintType(String complaintType) {
+		this.complaintType = complaintType;
+	}
+
+	public void setComplaintDate(String complaintDate) {
+		this.complaintDate = complaintDate;
+		if (null != complaintDate) {
+			if (complaintDate.equalsIgnoreCase("today")) {
+				logger.info("This is today selection");
+				complaintDateFrom = "2015-05-19";
+				complaintDateTo = "2015-05-19";
+			} else if (complaintDate.equalsIgnoreCase("all")) {
+				complaintDateFrom = null;
+				complaintDateTo = null;
+			} else if (complaintDate.equalsIgnoreCase("lastsevendays")) {
+				complaintDateFrom = "2015-05-19";
+				complaintDateTo = "2015-05-19";
+			} else if (complaintDate.equalsIgnoreCase("lastthirtydays")) {
+				complaintDateFrom = "2015-05-19";
+				complaintDateTo = "2015-05-19";
+			} else if (complaintDate.equalsIgnoreCase("lastninetydays")) {
+				complaintDateFrom = "2015-05-19";
+				complaintDateTo = "2015-05-19";
+			} else {
+				logger.info("Else section in date range");
+				complaintDateFrom = "2015-05-19";
+				complaintDateTo = "2015-05-19";
+			}
+		}
+
+	}
+
+	public Filters searchFilters() {
+		List<Filter> andFilters = new ArrayList<>();
+		andFilters.add(queryStringFilter("searchable.crn", complaintNumber));
+		andFilters
+				.add(queryStringFilter("common.citizen.name", complainantName));
+		andFilters.add(queryStringFilter("common.citizen.mobile",
+				complainantPhoneNumber));
+		andFilters.add(queryStringFilter("common.citizen.email",
+				complainantEmail));
+		andFilters
+				.add(queryStringFilter("clauses.status.name", complaintStatus));
+		andFilters.add(queryStringFilter("clauses.receivingMode",
+				receivingCenter));
+		andFilters.add(queryStringFilter("searchable.complaintType.name",
+				complaintType));
+		andFilters.add(rangeFilter("common.createdDate", complaintDateFrom,
+				complaintDateTo));
+
+		return Filters.withAndFilters(andFilters);
+	}
+
+	public String searchQuery() {
+		return searchText;
+	}
 }

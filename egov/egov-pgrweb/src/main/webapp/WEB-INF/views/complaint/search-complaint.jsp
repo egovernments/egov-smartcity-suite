@@ -82,17 +82,17 @@
 							<label><spring:message code='lbl.when' /> </label>
 						</div>
 						<div class="col-md-3 add-margin">
-							<select name="dateselect" id="when_date" class="form-control"
+							<select name="complaintDate" id="when_date" class="form-control"
 								data-first-option="false">
 								<option value=""><spring:message code='lbl.select' />
 								</option>
-								<option value="lastyear"><spring:message
+								<option value="all"><spring:message
 										code='lbl.complaint.search.all' /></option>
-								<option value="thisyear"><spring:message
+								<option value="lastsevendays"><spring:message
 										code='lbl.complaint.search.l7d' /></option>
-								<option value="lastquarter"><spring:message
+								<option value="lastthirtydays"><spring:message
 										code='lbl.complaint.search.l30d' /></option>
-								<option value="thisquarter"><spring:message
+								<option value="lastninetydays"><spring:message
 										code='lbl.complaint.search.l90d' /></option>
 								<option value="today"><spring:message code='lbl.today' /></option>
 							</select>
