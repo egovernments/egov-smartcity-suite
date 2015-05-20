@@ -143,7 +143,7 @@
 		
 <div class="row text-center">
 	<div class="add-margin">
-		<button type="submit" class="btn btn-default"><spring:message code="lbl.print"/></button>
+		<button type="submit" class="btn btn-default" onclick="window.print()"><spring:message code="lbl.print"/></button>
 		<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 	</div>
 </div>

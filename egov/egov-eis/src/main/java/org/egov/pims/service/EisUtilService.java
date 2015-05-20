@@ -434,8 +434,9 @@ public class EisUtilService implements EISServeable {
     public List<User> getUsersByDeptAndDesig(Integer deptId, Integer desigId, Date date) {
         date = date == null ? new Date() : date;
         Long dept = deptId.longValue();
+        Long desig = desigId.longValue();
         Criteria criteria = persistenceService.getSession().createCriteria(EmployeeView.class, "emp")
-                .add(Restrictions.eq("deptId.id", dept)).add(Restrictions.eq("desigId.designationId", desigId))
+                .add(Restrictions.eq("deptId.id", dept)).add(Restrictions.eq("desigId.id", desig))
                 .add(Restrictions.le("emp.fromDate", date))
                 .add(Restrictions.or(Restrictions.ge("emp.toDate", date), Restrictions.isNull("emp.toDate")))
                 .add(Restrictions.isNotNull("emp.userMaster"));
