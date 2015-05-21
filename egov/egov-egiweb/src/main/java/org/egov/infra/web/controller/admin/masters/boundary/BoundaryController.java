@@ -94,7 +94,7 @@ public class BoundaryController {
         return "boundary-view";
     }
 
-    @RequestMapping(value = "/create-boundary/{ids}", method = RequestMethod.GET)
+    @RequestMapping(value = "/create-boundary/{ids}", method = RequestMethod.POST)
     public String showCreateBoundaryForm(Model model) {
         model.addAttribute("isUpdate", false);
         return "boundary-create";
@@ -106,7 +106,7 @@ public class BoundaryController {
         return "boundary-create";
     }
     
-    @RequestMapping(value = "/list-boundaries/{ids}", method = RequestMethod.GET)
+    @RequestMapping(value = "/list-boundaries/{ids}", method = RequestMethod.POST)
     public String showPaginationForm(Model model) {
         return "view-boundaries";
     }

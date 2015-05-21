@@ -50,15 +50,18 @@ function populateBoundaries(dropdown) {
 }
 
 $('#buttonView').click(function() {
-	$('#boundarySearchForm').attr('action', 'list-boundaries');
+	var pathvars = $("#hierarchyTypeSelect").val()+","+$("#boundaryTypeSelect").val();
+	$('#boundarySearchForm').attr('action', 'list-boundaries/'+pathvars);
 })
 
 $('#buttonCreate').click(function() {
-	$('#boundarySearchForm').attr('action', 'create-boundary');
+	var pathvars = $("#hierarchyTypeSelect").val()+","+$("#boundaryTypeSelect").val();
+	$('#boundarySearchForm').attr('action', 'create-boundary/'+pathvars);
 })
 
 $('#buttonUpdate').click(function() {
 	$('#boundarySearchForm').attr('action', 'update-boundary');
+	$('#boundarySearchForm').attr('method', 'get');
 })
 
 /**
@@ -106,14 +109,13 @@ $('#boundaryTypeUpdateBtn').click(function() {
 
 $('#buttonCreate').click(function() {
 	var pathVars = "/" + $('#btnHierarchyType').val() + "," + $('#btnBoundaryType').val();
-	$('#boundaryViewForm').attr('method', 'get');
-	$('#boundaryViewForm').attr('action', 'create-boundary'+pathVars);
+	$('#boundaryViewForm').attr('action', '/egi/create-boundary'+pathVars);
 })
 
 $('#buttonEdit').click(function() {
 	var pathVars = "/" + $('#btnHierarchyType').val() + "," + $('#btnBoundaryType').val() + "," + $('#btnBoundary').val();
 	$('#boundaryViewForm').attr('method', 'get');
-	$('#boundaryViewForm').attr('action', 'update-boundary'+pathVars);
+	$('#boundaryViewForm').attr('action', '/egi/update-boundary'+pathVars);
 })
 
 

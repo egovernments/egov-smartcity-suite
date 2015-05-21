@@ -58,7 +58,7 @@
 				<c:set value="" var="actionUrl" />
 			</c:when>
 			<c:otherwise>
-				<c:set value="boundary/create" var="actionUrl" />
+				<c:set value="/egi/boundary/create" var="actionUrl" />
 			</c:otherwise>
 		</c:choose>
 		<form:form  method="post" action="${actionUrl}" class="form-horizontal form-groups-bordered" commandName="boundary" id="boundaryCreateOrUpdate" >
@@ -141,10 +141,9 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
-				   <button type="submit" class="btn btn-success">
-                          <spring:message code="lbl.submit"/>
-                   </button>
-			       <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
+					<button type="button" class="btn btn-default" onclick="history.back()"><spring:message code="lbl.back"/></button>
+					<button type="submit" class="btn btn-success"><spring:message code="lbl.submit"/></button>
+			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 				</div>
 			</div>
 		</form:form>

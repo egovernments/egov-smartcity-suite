@@ -42,7 +42,6 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
 <link rel="stylesheet"	href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
-<script	src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
 <script	src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 <script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
@@ -85,5 +84,10 @@
 </div>
 <table class="table table-bordered datatable" id="view-boundaries">
 </table>
-
+<div class="row">
+	<div class="text-center">
+		<button type="button" class="btn btn-default" onclick="history.back()"><spring:message code="lbl.back"/></button>
+		<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()" ><spring:message code="lbl.close"/></button>
+	</div>
+</div>
 <script src="<c:url value='/resources/js/app/viewboundaries.js'/>"></script>

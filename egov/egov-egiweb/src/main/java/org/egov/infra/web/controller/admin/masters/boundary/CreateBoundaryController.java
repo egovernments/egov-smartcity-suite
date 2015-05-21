@@ -72,8 +72,7 @@ public class CreateBoundaryController {
     }
     
     @RequestMapping(value = "/boundary/create", method = RequestMethod.POST)
-    public String createOrUpdateBoundary(@Valid @ModelAttribute Boundary boundary, Model model,
-            BindingResult errors, RedirectAttributes redirectAttributes) {
+    public String createOrUpdateBoundary(@Valid @ModelAttribute Boundary boundary, BindingResult errors, RedirectAttributes redirectAttributes) {
 
         if (errors.hasErrors()) {
             return "boundary-create";

@@ -46,7 +46,7 @@ $(document).ready(function() {
 	        filter:true,
 	        responsive:true,        
 	        ajax: {
-	        	url : "list-boundaries",
+	        	url : "/egi/list-boundaries",
 	        	data : {
 	        		boundaryTypeId : $('#btnBoundaryType').val()
 	        	}
